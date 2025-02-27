@@ -1,59 +1,79 @@
-Return-Path: <linux-kernel+bounces-535171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36872A46FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:00:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C75A46FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9EB3AFEF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794B5188CFB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69D679CF;
-	Thu, 27 Feb 2025 00:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4883D1FC8;
+	Thu, 27 Feb 2025 00:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bEIOLwsm"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJiViAXP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41AB1FC8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957CA79CF;
+	Thu, 27 Feb 2025 00:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740614437; cv=none; b=MYldOIEe9BU97CQwe6sR+G/F+16blHqwVEuZr9u7lOGeHoVJGBUBuGIc6OaWCBKsWnTHOfa62uXCuBsu+sn9aHRfkrzLi/cuWM6hnsOghO5ayQFtIN6nhSXZbT7aYcYKCXJm+/IMAIHcMjCYe3SqfhCAtmV0Zow43oJHenTLaBE=
+	t=1740614458; cv=none; b=M0/ooC/K3ZSMk5sg90KaRA/fzeFXQfi1k7wnTqRGBpG2IVxmGjHGLN1yN283fSMIio9Mpz15K9DkAu+/mAWTWlpYUVnRW1/DL4tHIB5Y0D6GY73oJZ0wGeMDPgwjno4gOdlf8FuT5pIxskMXSJbKW+7+eUYGXOf0WDicjZ3rY1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740614437; c=relaxed/simple;
-	bh=nfHEX4wecSpOYGYuoY+3dKBNs1jUcg8WeLZ83fxlWT0=;
+	s=arc-20240116; t=1740614458; c=relaxed/simple;
+	bh=qd5L09r8BbWtp3sAdRkvQxm/boMlegFYOUTq9AxcaRA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZzJmzjFYrW5sqku759DeY3Hxdp11OGwFJYwy7/s8Pvn1B/GGKlDK2i9xjluANa+FXHKkYfBIoUcYm3Ua2Kqxl2NgRgsdhhZO+bGLEUdlKjj/XM9iSBFljhT6Dq7Cb9TH9ycaOavWAe5sou7AvGhCI684UIrYrInOQCmbBuBWak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bEIOLwsm; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 27 Feb 2025 00:00:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740614432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lZF8l/6nKdJOw4wJVKCersbjISsxoghQ1nANtX1CqBI=;
-	b=bEIOLwsm3ncqczp/Vdewq3DRMAeuJM57tPvyoFbWb8dSKpn+c5XrKn5D5RO7ftTn/K2nTI
-	JdVSGtPOFX4iEBUFZBrZn99vHjobZGDh1xOWebsjao2oLpsPLT4PfO6ERhJ78HhQFJ8v95
-	7bkKrpxsDU6QlK8pYG+Wh+zu/DQc0v4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, akpm@linux-foundation.org,
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-Message-ID: <Z7-rG7Y3DK33MyCl@google.com>
-References: <20250225213200.729056-1-nphamcs@gmail.com>
- <Z76Go1VGw272joly@google.com>
- <20250226045727.GB1775487@cmpxchg.org>
- <Z780VzBOE3LKY0yi@google.com>
- <CAKEwX=PR3tJM4X00hSua-w-FNR_ZwQ1oRqdT2Cgj_FV9cCUing@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7ZBJL+fsXq0FpoVcI6zcBgG/7Tw2WcWzM/i2cB54cy+Of8d/Uy1NjYw+lIHOYe4v8g1FvfueKcgcfQ/lZBcQE1k2A47EseOfFB95Bb1hW07bpQbVm4jueyYJq9nZvATJ/nEnq1Vl3Pl2PwucPHQ8yFzbz7P0bFv8xVdYS7GlUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJiViAXP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F154EC4CED6;
+	Thu, 27 Feb 2025 00:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740614458;
+	bh=qd5L09r8BbWtp3sAdRkvQxm/boMlegFYOUTq9AxcaRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JJiViAXPMxyzFzf9Hv16zUQzj8/qcVzYFJj7H31yYwopnzVcgJ3IWMgfHJ+14Oawi
+	 FH/2zQ38hXIe2aBZp+k+W5gHvA14Ols6fXDb2nobInHVV9tZuM6fyRIVKnpX3rbSE/
+	 S19H8+xhIluAVHCe3LrlHXrLWswcBkjjlrOH/VfX/SdIq/8LgFQBU7vIeh06BAMDzV
+	 /XKxRxaQP2UfjOsbZKRHTRhCx0Ozbdy0Apq0EMTCr2HEQfQpk1RSjZunhinNdVW28S
+	 /sguI1ft/UZy/3f5o7gSzvdrZJWwnBHVbnYDea42DQwCuDW4sMzAxs15CFkGwqajov
+	 yLqLq3Dn7PJJQ==
+Date: Wed, 26 Feb 2025 16:00:55 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 0/8] perf: Support multiple system call tables in the
+ build
+Message-ID: <Z7-rN8iGUpPe6b-1@google.com>
+References: <20250219185657.280286-1-irogers@google.com>
+ <Z702_CQ7nMx9fZQn@google.com>
+ <CAP-5=fWYiQP84BMjm69xud4vYaRrutRG-RASKbxQaGSisRm7jA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,59 +83,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKEwX=PR3tJM4X00hSua-w-FNR_ZwQ1oRqdT2Cgj_FV9cCUing@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAP-5=fWYiQP84BMjm69xud4vYaRrutRG-RASKbxQaGSisRm7jA@mail.gmail.com>
 
-On Wed, Feb 26, 2025 at 03:20:13PM -0800, Nhat Pham wrote:
-> On Wed, Feb 26, 2025 at 7:33 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
+On Mon, Feb 24, 2025 at 08:22:50PM -0800, Ian Rogers wrote:
+> On Mon, Feb 24, 2025 at 7:20 PM Namhyung Kim <namhyung@kernel.org> wrote:
 > >
-> > On Tue, Feb 25, 2025 at 11:57:27PM -0500, Johannes Weiner wrote:
-> > > On Wed, Feb 26, 2025 at 03:12:35AM +0000, Yosry Ahmed wrote:
-> > > > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> > > > > Currently, we crash the kernel when a decompression failure occurs in
-> > > > > zswap (either because of memory corruption, or a bug in the compression
-> > > > > algorithm). This is overkill. We should only SIGBUS the unfortunate
-> > > > > process asking for the zswap entry on zswap load, and skip the corrupted
-> > > > > entry in zswap writeback.
-> > > >
-> > > > Some relevant observations/questions, but not really actionable for this
-> > > > patch, perhaps some future work, or more likely some incoherent
-> > > > illogical thoughts :
-> > > >
-> > > > (1) It seems like not making the folio uptodate will cause shmem faults
-> > > > to mark the swap entry as hwpoisoned, but I don't see similar handling
-> > > > for do_swap_page(). So it seems like even if we SIGBUS the process,
-> > > > other processes mapping the same page could follow in the same
-> > > > footsteps.
+> > On Wed, Feb 19, 2025 at 10:56:49AM -0800, Ian Rogers wrote:
+> > > This work builds on the clean up of system call tables and removal of
+> > > libaudit by Charlie Jenkins <charlie@rivosinc.com>.
 > > >
-> > > It's analogous to what __end_swap_bio_read() does for block backends,
-> > > so it's hitchhiking on the standard swap protocol for read failures.
-> >
-> > Right, that's also how I got the idea when I did the same for large
-> > folios handling.
-> 
-> And your handling of the large folio (along with the comment in the
-> other thread) was how I got the idea for this patch :)
-> 
-> >
+> > > The system call table in perf trace is used to map system call numbers
+> > > to names and vice versa. Prior to these changes, a single table
+> > > matching the perf binary's build was present. The table would be
+> > > incorrect if tracing say a 32-bit binary from a 64-bit version of
+> > > perf, the names and numbers wouldn't match.
 > > >
-> > > The page sticks around if there are other users. It can get reclaimed,
-> > > but since it's not marked dirty, it won't get overwritten. Another
-> > > access will either find it in the swapcache and die on !uptodate; if
-> > > it was reclaimed, it will attempt another decompression. If all
-> > > references have been killed, zswap_invalidate() will finally drop it.
-> > >
-> > > Swapoff actually poisons the page table as well (unuse_pte).
+> > > Change the build so that a single system call file is built and the
+> > > potentially multiple tables are identifiable from the ELF machine type
+> > > of the process being examined. To determine the ELF machine type, the
+> > > executable's header is read from /proc/pid/exe with fallbacks to using
+> > > the perf's binary type when unknown.
 > >
-> > Right. My question was basically why don't we also poison the page table
-> > in do_swap_page() in this case. It's like that we never swapoff.
+> > Hmm.. then this is limited to live mode and potentially detect wrong
+> > machine type if it reads an old data, right?
+> >
+> > Also IIUC fallback to the perf binary means it cannot use cross-machine
+> > table.  For example, it cannot process data from ARM64 on x86, no?  It
+> > seems it should use perf_env.arch.
 > 
-> That would require a rmap walk right? To also poison the other PTEs
-> that point to the faulty (z)swap entry?
-> 
-> Or am I misunderstanding your point :)
+> The perf env arch is kind of horrid. On x86 it has the value x86 and
+> then there is an extra 64bit flag, who knows how x32 should be encoded
+> - but we barely support x32 as-is. I'd rather we added a new feature
+> for the e_machine/e_flags of the executable and worked with those, but
+> it is kind of weird with doing system wide mode. I didn't want to drag
+> that into this patch series anyway as there is already enough here.
 
-Oh I meant why not just mark the entry where the fault happened as
-poisoned at least. Finding other PTEs that point to the swap entry is a
-different story. I don't think we can even use the rmap here.
+Right, I don't know how to handle x32 properly.  Maybe we can just
+ignore it for now.
+
+But anyway looking at /proc/PID for recorded data doesn't seem correct.
+Can you please add a flag to do that only from trace__run() and just use
+EM_HOST for trace__replay()?
+
+Later, we may need to add a misc flag or so to PERF_RECORD_FORK (and
+PERF_RECORD_COMM with MISC_COMM_EXEC) to indicate non-standard ABI for a
+new thread.  But it's not clear how to make it arch-independent.
+
+> 
+> > One more concern is BPF.  The BPF should know about the ABI of the
+> > current process so that it can augment the syscall arguments correctly.
+> > Currently it only checks the syscall number but it can be different on
+> > 32-bit and 64-bit.
+> 
+> That's right. This change is trying to clean up
+> tools/perf/util/syscalltbl.c and the perf trace usage. I didn't go as
+> far as making BPF programs pair system call number with e_machine and
+> e_flags, there is enough here and the behavior after these patches
+> matches the behavior before - that is to assume the system call ABI
+> matches that of the perf binary.
+
+Right, the next step would be adding a BPF kfunc to identify the current
+ABI.
+
+Thanks,
+Namhyung
+
 
