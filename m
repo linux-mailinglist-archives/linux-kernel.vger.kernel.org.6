@@ -1,181 +1,86 @@
-Return-Path: <linux-kernel+bounces-536818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFE3A484A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:20:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDFFA484BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B97188F7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9021B17D3DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127E61BEF87;
-	Thu, 27 Feb 2025 16:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573B726D5AE;
+	Thu, 27 Feb 2025 16:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="bBnWSgf2"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fZ0Z6IUw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A15C1B3950;
-	Thu, 27 Feb 2025 16:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A01B424E;
+	Thu, 27 Feb 2025 16:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672483; cv=none; b=kTxZxy+4148zgOkISEAk+FoKwph6rCriIGZ5oHykr45/aff3HiuALa4NwsGMRYrNhaAuigjShXKia/7XCe5BSuBQeVMu2iD2CXfP70nSOon0V4ftilRlJK+y+GfzTXjVUPFdHMWwt7C6GlfgmpTZyYo9vMvpIt8QQrMqtO5e2kU=
+	t=1740672485; cv=none; b=cL7JzZetCKwNUmf9yvBcYQfFpyp2F0Y7kaytSP2nfDgQ3ZoOKMYd+qrtIsB0sBM0gWrVauoXpMwQSgcmvXlB4ghzTZQeXAyihPrJwcYTOoojdVeDQhbQaHKJ0BVKnL0CDqAWeIDXXobAkBMhZ7JCcEA2VAcHpOfSBLmuuMuBSGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672483; c=relaxed/simple;
-	bh=N7+PIP/u/EXnsYW1te2ETYmSDhz1b3A22sY96b93gQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCaxuxyaLuihGHeYxNZlx87heTBYDi7O7aEjcdW5LbBtPOx6uCLHAhDCs/RTCba5lG34jgNKwy9feLKiTpuFQpWS1K4982CqFmRlxsQMTxSZy0kPXDnSyh1p/X2bG3qUifI6wU20mgphyDdNADTMj/kCYbHnijlmVcNbzXwReJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=bBnWSgf2; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z3bpb3VrFz8srK;
-	Thu, 27 Feb 2025 17:07:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1740672471; bh=1ZhNgcCn5cZnUuzeMSL8VZ2F71Q+VzQTBJcd0+1+j1o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From:To:CC:
-	 Subject;
-	b=bBnWSgf2rQDw0eQmbPQOGBqE+dif5J/EtcnklD8jOSWYiNFw53zbUkG0Zna5udkgL
-	 C2Q/GiKEq6PNkyCJRReUGY6xiCVFlSp7c3rDGGhXljMuB6RO8u8GR5PH1SgYFPEIQW
-	 rpMk0HV4yPJvu9GMfVfd/zErRXXE8M6DMTii+rC2h6MJyZa4/w+p9/pboVf19pYfQx
-	 c0S0b7pUbQ/pQiYh7Qzs8dDgOjHuspheIfC5qzZ2SHs7eNHCgGiLEVEeV6oolqCmqM
-	 ziDFbYCl7vIgXdnPFLribmG6A2OY0BwyiuzRWcqhCHtU4H3TMcTouCeRzQkIvIBQva
-	 Er4gB2fFkIkdw==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 91.57.235.199
-Received: from [192.168.212.208] (p5b39ebc7.dip0.t-ipconnect.de [91.57.235.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX18yIGrez3keadnnnZZCFhsb+TdVPKW3B3A=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z3bpW05Kjz8sc4;
-	Thu, 27 Feb 2025 17:07:46 +0100 (CET)
-Message-ID: <e8041b56-396b-427f-b9cb-d51004a40f57@fau.de>
-Date: Thu, 27 Feb 2025 17:07:43 +0100
+	s=arc-20240116; t=1740672485; c=relaxed/simple;
+	bh=CgaSpzeKgn2SkFZRdWkritV3DHz34KyQBsN6j8KTXmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOkI5+0uLGIhJoFIJy5VKj1hCWoYaI/bEfXm75Efo5+mP1+kjlQ7NYTGRdcTdA+X1XoAygdIiF/Wu90Iu5WTN98i7KbBdzG6IareWjRr0ig09Usz7iHEDc7BY/2VZEc9x0TbyScLoVJPkMy8LHECia6T5rdAc+SI7dqn8Yu15BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fZ0Z6IUw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CND/AWjqWtefCR2+bz8yg6Rc6Qum2wM65PkiDHxFQKA=; b=fZ0Z6IUwpZBeYWfehdeZd8LTTq
+	fWrQj/7RaPs53mZOEgMIB+pGKvLf8bb6zvQgPHHJ45OOSIGB0Gze9Nws3AX7jY94oQPYdg1qQ0uQs
+	T1009zcHl7phWIDtAD7WrLJEiSbTGf1n5C8nWsteHhn4GohocKhajcus+RHV5/8iDH4E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tngQT-000e7u-Fr; Thu, 27 Feb 2025 17:07:53 +0100
+Date: Thu, 27 Feb 2025 17:07:53 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
+Message-ID: <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+References: <mpearson-lenovo@squebb.ca>
+ <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+ <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/9] bpf: Fall back to nospec if v1 verification fails
-To: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
- Xu Kuohai <xukuohai@huaweicloud.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Henriette Herzog <henriette.herzog@rub.de>,
- Cupertino Miranda <cupertino.miranda@oracle.com>,
- Matan Shachnai <m.shachnai@gmail.com>,
- Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>,
- bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: Maximilian Ott <ott@cs.fau.de>, Milan Stephan <milan.stephan@fau.de>
-References: <20250224203619.594724-1-luis.gerhorst@fau.de>
- <20250224204744.599963-1-luis.gerhorst@fau.de>
-Content-Language: en-US, de-DE
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-Autocrypt: addr=luis.gerhorst@fau.de; keydata=
- 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
- Bjq2LIJlJ8czDxmxpGv0CjsHjGkXwBgsoeAK9A==
-Organization: I4
-In-Reply-To: <20250224204744.599963-1-luis.gerhorst@fau.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
 
-On 24/02/2025 21:47, Luis Gerhorst wrote:
-> +		} else if (error_recoverable_with_nospec(err) && state->speculative) 
-> {
-> +			WARN_ON_ONCE(env->bypass_spec_v1);
-> +			WARN_ON_ONCE(env->cur_state != state);
-> +
-> +			/* Prevent this speculative path from ever reaching the
-> +			 * insn that would have been unsafe to execute.
-> +			 */
-> +			cur_aux(env)->nospec = true;
+> >> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
+> >
+> > Please add some #define for these magic numbers, so we have some idea
+> > what PHY register you are actually reading. That in itself might help
+> > explain how the workaround actually works.
+> >
+> 
+> I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
 
-This allows us to accept more programs, but it has the downside that 
-Spectre v1 mitigation now requires BPF_NOSPEC to be emitted by every JIT 
-for archs vulnerable to Spectre v1. This currently is not the case, and 
-this patch therefore may regress BPF's security.
+What PHY is it? Often it is just a COTS PHY, and the datasheet might
+be available.
 
-The regression is limited to systems vulnerable to Spectre v1, have 
-unprivileged BPF enabled, and do NOT emit insns for BPF_NOSPEC. The 
-latter is not the case for x86 64- and 32-bit, arm64, and powerpc 64-bit 
-and they are therefore not affected by the regression. According to [1], 
-LoongArch and mips are not vulnerable to Spectre v1 and therefore also 
-not affected by the regression.
+Given your setup description, pause seems like the obvious thing to
+check. When trying to debug this, did you look at pause settings?
+Knowing what this register is might also point towards pause, or
+something totally different.
 
-Also, if any of those regressed systems is also vulnerable to Spectre 
-v4, the system was already vulnerable to Spectre v4 attacks based on 
-unpriv BPF before this patch and the impact is therefore further 
-limited.
-
-As far as I am aware, it is unclear which other architectures (besides 
-x86 64- and 32-bit, arm64, powerpc 64-bit, LoongArch, and mips) 
-supported by the kernel are vulnerable to Spectre v1 but not to Spectre 
-v4. Also, I am not sure if barriers are available on these 
-architectures. Implementing BPF_NOSPEC on these architectures therefore 
-appears non-trivial (probably impossible) to me. Searching gcc / the 
-kernel for speculation barrier implementations for these architectures 
-yielded no result. Any input is very welcome.
-
-As an alternative, one could still reject programs if the architecture 
-does not emit BPF_NOSPEC (e.g., by removing the empty BPF_NOSPEC-case 
-from all JITs except for LoongArch and mips where they appear 
-justified). However, this will cause rejections on these archs and some 
-may have to re-add the empty case. Even if this happens, some may not do 
-it and only rejecting the programs on some archs might complicate BPF 
-selftests.
-
-Do you think the potential regression is acceptable or should we err on 
-the side of caution?
-
-[1] a6f6a95f25803500079513780d11a911ce551d76 ("LoongArch, bpf: Fix jit 
-to skip speculation barrier opcode")
+	Andrew
 
