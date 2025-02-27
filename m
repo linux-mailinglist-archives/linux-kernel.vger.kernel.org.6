@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-536349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C01A47E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D20A47E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D6116C5E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE3C188BCD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4A922CBC9;
-	Thu, 27 Feb 2025 13:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9195822CBF9;
+	Thu, 27 Feb 2025 13:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXyEjgji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OJIDkf8H"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17071DFCB
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF841DFCB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661432; cv=none; b=MHeOBlFahtNxvZFD0uBhw88GYE0d5f9h68V1LMJ5XTYI8eTryBz+helJv3SACHt1XYbBLvlOxbyGSB5v3DOCw4Dg9u5KKuHBglHDQZIbeu44QTswopOdJuJ/6CpHfhGPICkFDzysaQHF3+yGk8jctUOOwBjquchqS8ISc9cYIKo=
+	t=1740661466; cv=none; b=aLGT8mgnVqjUx9DZzgTENJ3WMKNokv7cpY9bXDki1LSfLY+lw7htuVfrsFSdu796PP+kWel7M6rjLV84twdyiKcwt3DnMF7paP7K1Umgn9PKckElPsJNRV7DS1BWaCAS2+W/rhU1L5OLeU1cdLcZKJxpOKPmacn0bx7pnuWi80g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661432; c=relaxed/simple;
-	bh=WCRFtwHSLg5bn3nZuqbUlnrk/01hPwi2oWsj/vbyA9o=;
+	s=arc-20240116; t=1740661466; c=relaxed/simple;
+	bh=9kiQuA2m35ZE51KLo3D1I8ky3OfsGFbf1SjCVbpu2ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmHgKsqX45lerxTpHhBah94mFfMsAh4WEQvPGmnnvTKTqmc2z3jgOi3jOIk62004Sm1N132hT31XWi+uN3YVa/171GZiLqJL6WgjTMmAy3BqcNjGq4lBO8CffT8ew70za70RgA+H6PJd5zMoVkIgNGnd5MdovHtmcjMTQlu/gpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXyEjgji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC439C4CEDD;
-	Thu, 27 Feb 2025 13:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740661432;
-	bh=WCRFtwHSLg5bn3nZuqbUlnrk/01hPwi2oWsj/vbyA9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iXyEjgjilGZM7A6kfroTSd/PwWtDqRVfYIMNoS4YdMXlFCqhXMcIrglu4HXBtEUEW
-	 bajWTOo7HThbzh7UKGtDJIi6ZN7mv4zie5FVAQLR9/d5Du9BqCOxMmkSjN0d60lC1T
-	 k0z4ORvpDGgu2pMUL00T4nzq98WbRDHAm2yQW+hSAixfQ68r0vN3jwhCIOBghzVPyt
-	 j1Y3b2cfWHuK7XmH42PctaCSzWLXF0dDRhBma4FYkU/Y8b0wFpj7m8J4mJHy7kzsAI
-	 dVdVtFwul0UllSA7aK/Bx/B8Ju7beJv7WLg53xfViXJ1v4LRanJNBUouSgSSERoWA2
-	 mjyYOR0GrhFDA==
-Date: Thu, 27 Feb 2025 14:03:41 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
-	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, jane.chu@oracle.com, osalvador@suse.de,
-	tglx@linutronix.de
-Subject: Re: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
-Message-ID: <Z8BirVtqibWY6zaT@gmail.com>
-References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
- <20241212080904.2089632-3-kevin.brodsky@arm.com>
- <Z8BiUnkPnvrx06vp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SPm1b//Dx9dm2bFon2gjE3tbFeBZRauO1dEcsZrCcx626Xxj0RiynQgV56YdhZiFmwP7gbDyRQH/+3PwireSja/yb/ncL1c94Fr9PP6xsyTMiLecZIEXIr2Nz8jGKD6D8yShM1M1/RnEGjE9VIHq58ZCuMq4404q4uhBezCtWYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OJIDkf8H; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22349dc31bcso14334005ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:04:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740661464; x=1741266264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZY3lPWTmNqZZsigW6fCcCa9W0h1dzQbk+JMMnksNz2M=;
+        b=OJIDkf8HJwwlxc0hYo+oc3pO1XAvU9f7Iq3oP8ubj6Uv4LBziDafPXYaogOtvVhHQV
+         cw1+tShZllK/cRvddPoXawOABvhX3Vp3vVcCZbQxvEUDn27jlpYMvw6R+9Cz5GxheuzR
+         Q0jxfWgeW0G9dMGQtbJOrMZVryxXOCjfR/2To=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740661464; x=1741266264;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZY3lPWTmNqZZsigW6fCcCa9W0h1dzQbk+JMMnksNz2M=;
+        b=uwyTuz767cIowpz0nzn5vE7uV13WFIbXPETRicR4ch1AB3L8cWA27u373w0pXmGxL1
+         09bxOBiWe58gpC5U7AvSNLrimTsZNmsdYFaotgHzrsI9EU0kJnhgJfk8iNNjSzkxg8nO
+         TCDA1ADE0K1lIIylS7TLwwqm9ZOqgjqAlpnguxYOyA+PGdq/4W9TFiCUH5ZrQ9LFK4fg
+         J6o1Puzb/CUy4CU/bp9Q25wODbjSGUgI9+rE+56zYUMm00pVBW8kp6uhc7JiP/Z4rFnw
+         bcUn5/FlJT7d1qlkP0Aidz6uwn0WxLhmst8j9KjbdwZM0JzRtczAIQaAnxvW/hWpDwlj
+         n0FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWO7WX/QH4Lgcgy/PbJd3RhvG81zTySAEqvIIRsSEZiUPnk8gSJHEuIG58LBwXy2oQpX4RugEHsUXX3kUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpV9a1Z3aThzlwGxvy3jeToQHklEXmBq7TdAbsnYBkZpoYhCwS
+	k9vTq+4qqYIbwGQ/npfwNogCswvVosDhditnEf98GBaJYBxRHu+8m35tUJN8e3ZPkfFjW4a+hmg
+	=
+X-Gm-Gg: ASbGncvMNie5k2mNceHSjruTIJaeDKk/zrqRjcr0NkIZTEEnJT/6QTvn+3yxIACba1L
+	fXMh2dfxFUh635MCKmAL/Ag8/9rFXQPl8G+4cL1L6p6gtuw0pNzF7ScPJTqvC/rVkPUxW3qXVig
+	OiPSJXRykjNrzzV5C9X+KX6C0QdWq25OkUJHAXDMnIvteFeq8U9/x4xks5AG96bzp7Umlu3Dlbh
+	y+MyTYfjqksdpIKzZRQuo9m8uWxOzGHxa2/xIuqOt7K0RuhwxWNMOEjfnh/snVYTFGoFsTCq9Iz
+	fmOcU7zxPZgU30TXUdfuUVX7+062wA==
+X-Google-Smtp-Source: AGHT+IFNvd0ElV4B1D48R80ma4vVr+h2GufsMAxOmLWTJtIzhmY2T9t1CiXv7N665sHiIvewZmOTJw==
+X-Received: by 2002:a05:6a20:7286:b0:1ee:afa2:4e86 with SMTP id adf61e73a8af0-1eef5559342mr49520291637.28.1740661463832;
+        Thu, 27 Feb 2025 05:04:23 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:a9c0:1bc1:74e3:3e31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe48865sm1520971b3a.50.2025.02.27.05.04.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:04:23 -0800 (PST)
+Date: Thu, 27 Feb 2025 22:04:16 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, 
+	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v8 01/17] zram: sleepable entry locking
+Message-ID: <mwpl64zfj4zlv5bwysfzryjpnh6lg5tridhya3t7ly2ax2vt7x@jhmdmh7gwrmn>
+References: <20250221222958.2225035-1-senozhatsky@chromium.org>
+ <20250221222958.2225035-2-senozhatsky@chromium.org>
+ <20250224081956.knanS8L_@linutronix.de>
+ <i2kgeeehfwzwo22vazakcq4at2m223nebb2xfrqfvsgawpmqya@zjhqhjshvhi3>
+ <20250227120532.OsZr4v2A@linutronix.de>
+ <irpjhnu7utkhf4dds5ghklsbdug6nf32ulsp52ibvym6t3wqfg@pqu7w6uvgbvw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8BiUnkPnvrx06vp@gmail.com>
+In-Reply-To: <irpjhnu7utkhf4dds5ghklsbdug6nf32ulsp52ibvym6t3wqfg@pqu7w6uvgbvw>
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> So I tried to pick up this patch belatedly, but there's more places 
-> that mistakenly learned to rely on the stray <linux/mm.h> inclusion, 
-> for example on x86 defconfig-ish kernels:
+On (25/02/27 21:42), Sergey Senozhatsky wrote:
+> > ach. Got it. What about
+> > 
+> > | static void zram_slot_lock_init(struct zram *zram, u32 index)
+> > | {
+> > | 	static struct lock_class_key __key;
+> > | 
+> > | 	lockdep_init_map(slot_dep_map(zram, index),
+> > | 			 "zram->table[index].lock",
+> > | 			 &__key, 0);
+> > | }
+> > 
+> > So every lock coming from zram belongs to the same class. Otherwise each
+> > lock coming from zram_slot_lock_init() would belong to a different class
+> > and for lockdep it would look like they are different locks. But they
+> > are used always in the same way.
 > 
-> 
->   In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
->   ./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name ‘pgprot_t’
->   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
->   |                                                         ^~~~~~~~
+> I see.  I thought that they key was "shared" between zram meta table
+> entries because the key is per-zram device, which sort of made sense
+> (we can have different zram devices in a system - one swap, a bunch
+> mounted with various file-systems on them).
 
-BTW., I did a few touchups to the changelog (see below) - mind picking 
-that up once you submit -v2?
+So the lock class is registered dynamically for each zram device
 
-Thanks,
+zram_add()
+	lockdep_register_key(&zram->lock_class);
 
-	Ingo
+and then we use that zram->lock_class to init zram->table entries.
 
-======================>
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-Date: Thu, 12 Dec 2024 08:09:04 +0000
-Subject: [PATCH] x86/mm: Reduce header dependencies in <asm/set_memory.h>
+We unregister the lock_class during each zram device destruction
 
-Commit:
+zram_remove()
+	lockdep_unregister_key(&zram->lock_class);
 
-  03b122da74b2 ("x86/sgx: Hook arch_memory_failure() into mainline code")
-
-... added <linux/mm.h> to <asm/set_memory.h> to provide some helpers.
-
-However the following commit:
-
-  b3fdf9398a16 ("x86/mce: relocate set{clear}_mce_nospec() functions")
-
-... moved the inline definitions someplace else, and now <asm/set_memory.h>
-just declares a bunch of mostly self-contained functions.
-
-No need for the whole <linux/mm.h> inclusion to declare functions; just
-remove that include. This helps avoid circular dependency headaches
-(e.g. if <linux/mm.h> ends up including <linux/set_memory.h>).
-
-This change requires a couple of include fixups not to break the
-build:
-
-* <asm/smp.h>: including <asm/thread_info.h> directly relies on
-  <linux/thread_info.h> having already been included, because the
-  former needs the BAD_STACK/NOT_STACK constants defined in the
-  latter. This is no longer the case when <asm/smp.h> is included from
-  some driver file - just include <linux/thread_info.h> to stay out
-  of trouble.
-
-* sev-guest.c relies on <asm/set_memory.h> including <linux/mm.h>,
-  so we just need to make that include explicit.
-
-[ mingo: Cleaned up the changelog ]
-
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
-Link: https://lore.kernel.org/r/20241212080904.2089632-3-kevin.brodsky@arm.com
----
- arch/x86/include/asm/set_memory.h       | 1 -
- arch/x86/include/asm/smp.h              | 2 +-
- drivers/virt/coco/sev-guest/sev-guest.c | 1 +
- 3 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index cc62ef70ccc0..023994fe6115 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -2,7 +2,6 @@
- #ifndef _ASM_X86_SET_MEMORY_H
- #define _ASM_X86_SET_MEMORY_H
- 
--#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm-generic/set_memory.h>
- 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index ca073f40698f..2ca1da5f16d9 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -3,10 +3,10 @@
- #define _ASM_X86_SMP_H
- #ifndef __ASSEMBLY__
- #include <linux/cpumask.h>
-+#include <linux/thread_info.h>
- 
- #include <asm/cpumask.h>
- #include <asm/current.h>
--#include <asm/thread_info.h>
- 
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index 264b6523fe52..ddec5677e247 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -23,6 +23,7 @@
- #include <linux/cleanup.h>
- #include <linux/uuid.h>
- #include <linux/configfs.h>
-+#include <linux/mm.h>
- #include <uapi/linux/sev-guest.h>
- #include <uapi/linux/psp-sev.h>
- 
+Does this still put zram->table entries into different lock classes?
 
