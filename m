@@ -1,186 +1,180 @@
-Return-Path: <linux-kernel+bounces-536324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AE1A47E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:47:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D37A47E2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0D923A7B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D2A3A4041
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E922D7B2;
-	Thu, 27 Feb 2025 12:46:55 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AB11DFFC;
+	Thu, 27 Feb 2025 12:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANaK0pc+"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9E22EB11;
-	Thu, 27 Feb 2025 12:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE42CA48
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740660415; cv=none; b=mnga0R0zGK4ZDjdjoyg37hYBFZWZkteQpWP57pNbz3a4iSvKC2Dq21TpV71BnhOyx1OVdlP3XfQ0/tKq5ogZq2TPMKED8tIh6AayqR+hO7+RDj74LVL3asP+Mv1DrWJjsoimHihl2vWtXs1G4M08PZ9qwU6qqrqCyreJOxlI8eQ=
+	t=1740660433; cv=none; b=sOQEslV3zVvkOYj4113ukY5kYHIJR+BsEOio7Xmsix8CdFCmjGVTv9XAo7cnN3Bbv1CJO+OgFHGVw5gqumB7YmZt76C82c6cROTxsS8zY6RChEY1fwMZwcNMsXwCI9DFzxJdyaJa71zdJNeOlbVGrhB+B+k/rOnuID8/7RcAGcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740660415; c=relaxed/simple;
-	bh=U7PCzUZnVYRvejULBSq6O8X9s2whc0HDjN7qBWSOoYE=;
+	s=arc-20240116; t=1740660433; c=relaxed/simple;
+	bh=27TEdDkNVWz2XKb1y1K0Mm6R7JBGLRCjeyYTzkaZGT4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJR65yDJ1DalgxdSeAvNQtGI2X5SOOlKnzqHa37ShjGyXeqe4inRPTSXHIVIYEg7xuufkMaifZbPXJbTUICekhZDcUAVUn+t8RAN/XDy3sYS1z7/nZsNSO3j886m7ReWHwZvTJHPtzdulfzcdiL6uMmvfmpVXCHyQaGTQhBzuig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	 To:Cc:Content-Type; b=dF5aLq7DkcZWKDBuce5eLwW4eqANZOSKC+g7WjIu5mN9u2A9aLB72xKWlgJJHxMoLbBTSdtQ/S8FkcJEjwBbmQzOny9++HRWPRzw79TnqnAl3T7x9CLIbrBJXmy5zuAyKe+WJN6L/X+RVaGw4+6QkC/oX2UoJci3eEeOofgBMPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANaK0pc+; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso10860791fa.2;
-        Thu, 27 Feb 2025 04:46:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740660411; x=1741265211;
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e4bed34bccso1184220a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:47:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740660430; x=1741265230; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wTt5QbyADMJ+0WvsKLYId9FZQBGxvlR5X8sImHZOIM4=;
-        b=B/ceRzhz6Ickyx7fg4XKjE4TnJ2LhcXE28GHNpGaNhRohHA+nlxOffkzeNo+g46XEW
-         cgI6CCq7omYr4zj+vaheadxbiytn6arWTIEs4Gw2bGuZPQukQb9oCAuwbMddlOdgLR9J
-         U7uZl8BRQDO7bR3CL6NBWz1MXM9n2Q55C1Dv0exnKhfw8eI/9CTy8fkp8Qh1kjF6PTuj
-         CwT7j9mCQcKaeI7pDjF84k6859VHBNpoCsNR9BZBIP1KnCTq+Fa1wbqsGNk7O3UBPyau
-         a7iliZhM3mXyMen98ZZavxy1TptfTbJoToNzpFekyvDCfWTXm95GOk8B5qZRN+Sp4v0o
-         wJVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZUMOWfW0X2mtdAeKulkTF22SypV+vg2iAVhkzets8bJfUoVCvt6DLoH5e6P9AsxQ3veqIXKaorW7s4w==@vger.kernel.org, AJvYcCWA54vcKmBKdvWeGBpuU2CIKp8jvMgOOiXN54Wtvr0mLXeIeBOl9aMdMaIM8c/IumehyCx6+E60ogpr@vger.kernel.org, AJvYcCX1Hi5mYBXhgCgxER8u8AyfdczF3EiEx7Hbfi6vzRy+yxHQfCCYaYHerPb3Cs2xPyNivD0MOB8/mKR/R+8L@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVoYcpMGyfDepJuiM+7vM8TMR37gveFg9tYCm+1LJ6kCZCwQN2
-	JiIxeAUnwfluc/2OQCXcYYf5RPX/hHVcENH5ydVOJ5n+QS0k9FZwn/tugWqX
-X-Gm-Gg: ASbGncs5LDroJONOovx3rTRrBmkI5HpDP0plr6+3ToLADl/pT538i9qxjQAJT0n8GW5
-	Faq5hHvfCbxZS8fbj3IgzeSxclluQI0VZFhlF2nam78y6Jnlgb7+GAPDqBoEuX0863HTfxsOpno
-	bgCWl2J3YE1SgqXRS6lQrx1aQFspyqOnVjKMJ9MnnhNXPKZ17maFAAOjugWm3/ENlC5La1Bt7U8
-	6xP3lRg6eMqtuubDoButHfRCfozRAMnjPZXDfB1ObHWq4ujN5UUXLuA6umJCRVTMqTQJKAN7xpk
-	WlaueMjsx0qh0i2HdwpnAqNZorac2H/WmIH5ZLZWFqAzRAedz/WfnCfK6uc=
-X-Google-Smtp-Source: AGHT+IH/TbUuTK566vWhxF15bp6nFz2gE52GHN85DStmE4iVQlV87kNNgIsyqNczRtMJsnsCMh84OA==
-X-Received: by 2002:a2e:b386:0:b0:308:e803:1175 with SMTP id 38308e7fff4ca-30a59777b35mr103031201fa.0.1740660410378;
-        Thu, 27 Feb 2025 04:46:50 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a74c4sm1570121fa.19.2025.02.27.04.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 04:46:49 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso10860391fa.2;
-        Thu, 27 Feb 2025 04:46:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZKG1YK37945gsD7pbKKTsfWiE6BEOvKKcwOtPyoq1vDqzBSJdQjBA6bvN3gYYZEhOOvpyGuVnou857g==@vger.kernel.org, AJvYcCWwhdsbRT2LwbcNTmzhjowap4WE8qvZnN2jE5wzewtaWn5yS1M9qTaiVgEBJqKYUK2wxa5oTuK46RAY@vger.kernel.org, AJvYcCXL3lqjoqmXnj1NqmYN9LwAlu1sfsE2s3zr+nWQmUvOs4AMzL+X2cT75cIGSYOFY1F9BWn4SnoutL98xQX5@vger.kernel.org
-X-Received: by 2002:a2e:8743:0:b0:308:eb34:1037 with SMTP id
- 38308e7fff4ca-30a599702f2mr99762991fa.23.1740660409212; Thu, 27 Feb 2025
- 04:46:49 -0800 (PST)
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YvqGa2htjWCzP2pH+g/TGswl5kcWxTHqgNmoSeJM+0U=;
+        b=ANaK0pc+ZLcN6j+KqDGQSOGwr7r5gi4wyfbBSftax8BsTdPOR1+mAe/8BjQ8t2o6HA
+         FZZeu8GymLuyi+EwIPw2LTfkiV6DUthbf9H8C4DxznkAZJBA/5rJMrkCCyJAqwlenM/1
+         S1uOb0saq1gI36jXe/A4x0Ec9UpOMGiTkrBhWT4Nx5AoPt2eyyhSX9Wwp8BOttjVI98P
+         Nu9W9chPxrvKCJWs5egHapqjxmtgjV9BU3YQsMyj3+Ahcv1tufKsFSDtuxeKTLWNoJW8
+         pwg56JKyLUYMaVwREd1E0J2ljh3d5ozTnUugWdPYQSA+5vw8+dazKju2ChAtJKMIqAtj
+         n5KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740660430; x=1741265230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YvqGa2htjWCzP2pH+g/TGswl5kcWxTHqgNmoSeJM+0U=;
+        b=tTDRnzu73wLG0whmXKxskX6jOYtxaabWOeT6peWOmH/n5bnP7qek/6hRnEK9fvssZ7
+         sZyNRVk5plF8jWTcrKtttfMWY1gxQvbLo3W+90x7G0tJLvQd1Jenxs+WGlQoagiuuORi
+         HNh0JIRNa9qI3V2Zx37B9yAPy8To2I/xT/VB+lMacBb+sLd9W6tzc/Js5GytvNzBxpZV
+         7asvQkT8paRMoW16kZEft9dNturNIn/6hTROeWZhCyscK+fOe8/9VvFmZsjLBMN9Z4IZ
+         3XNRJP0EYEYCKMhSEVhyVzu0rjTlblc77t9MKVTQgo7VJcnsvMOTs/kVYcm1TI1061Mv
+         RzDA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2UWnqLv2y9tSgDgA92GlybqIJMeRU/fSMV2LkK8NNoaMwd2vjdK3JUUyMVIN+bDSEcNAu/mupiXSTQW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz800uQeWIfnSVUuz6scU+lKqKbi+WvGitMZrtYbs8Q246mu/3z
+	KJeC9mcFCbybqLRyLChvPNAfg13Gurd6G7g935/Ce6tgFEtptz2p+LpenSn4djtlqeJaBMMXJo1
+	S6RL1rX31TtiwECDUySdONaMfF7k=
+X-Gm-Gg: ASbGnctRdHkg859fmonZnkILQ+5ihNaJbnoB1lvc+72LcT2SIV6AI+A/haVFt1av4lN
+	lw3uLM8P8N6hjKCnhX7oxcz2v7Cc3nJYtovVVGra2M5GqdiAcUAIfHAeFU359gDzyFzhHaMvssf
+	F3XvAgND805Hei0VUBcntlQ0QFiBQLimIJs/7uuQ==
+X-Google-Smtp-Source: AGHT+IF5pHJNn+tt/WfllGhbNqS4qLd4mb6/LfonGkNV4Oa8GE6ZIsw0d+OoyLIIjPpLDYr6fDaJJccyenyFvF2Bjw4=
+X-Received: by 2002:a05:6402:350e:b0:5dc:c9ce:b029 with SMTP id
+ 4fb4d7f45d1cf-5e4a0d45cd5mr9264486a12.5.1740660429726; Thu, 27 Feb 2025
+ 04:47:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214003734.14944-1-andre.przywara@arm.com>
- <20250214003734.14944-7-andre.przywara@arm.com> <173949598874.895319.6861900349653451498.robh@kernel.org>
- <20250227114611.67a1ba00@donnerap.manchester.arm.com>
-In-Reply-To: <20250227114611.67a1ba00@donnerap.manchester.arm.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 27 Feb 2025 20:46:37 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66eOuT+0n71OEPUky_rLd37_msT4b1+QC+8Nyhwtqarng@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrl692zM4GeD3auZTYmCOG5P6JcCZDXCDM_tdSURnSO6l5VyT64A9SuHe4
-Message-ID: <CAGb2v66eOuT+0n71OEPUky_rLd37_msT4b1+QC+8Nyhwtqarng@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] dt-bindings: pinctrl: add compatible for Allwinner A523/T527
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Samuel Holland <samuel@sholland.org>
+References: <20250227042058.409003-1-vignesh.raman@collabora.com>
+In-Reply-To: <20250227042058.409003-1-vignesh.raman@collabora.com>
+From: Helen Mae Koike Fornazier <helen.fornazier@gmail.com>
+Date: Thu, 27 Feb 2025 09:46:58 -0300
+X-Gm-Features: AQ5f1Jq7lUOKGmVudQItPekhexMxviW5zGUOt-yAkW-BhET87g_wogjP2LmxMqI
+Message-ID: <CAPW4XYagd1TPQ6j6uEzOrcPpyA_+Ldpx86-MTzpb5iV+b+zRaQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/ci: fix merge request rules
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, airlied@gmail.com, 
+	simona.vetter@ffwll.ch, robdclark@gmail.com, dmitry.baryshkov@linaro.org, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	valentine.burley@collabora.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 7:46=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
+Em qui., 27 de fev. de 2025 =C3=A0s 01:21, Vignesh Raman
+<vignesh.raman@collabora.com> escreveu:
 >
-> On Thu, 13 Feb 2025 19:19:48 -0600
-> "Rob Herring (Arm)" <robh@kernel.org> wrote:
+> Merge request pipelines were only created when changes
+> were made to drivers/gpu/drm/ci/, causing MRs that
+> didn't touch this path to break. Fix MR pipeline rules
+> to trigger jobs for all changes.
 >
-> Hi Rob,
+> Run jobs automatically for marge-bot and scheduled
+> pipelines, but in all other cases run manually. Also
+> remove CI_PROJECT_NAMESPACE checks specific to mesa.
 >
-> > On Fri, 14 Feb 2025 00:37:32 +0000, Andre Przywara wrote:
-> > > The A523 contains a pin controller similar to previous SoCs, although
-> > > using 10 GPIO banks (PortB-PortK), all of them being IRQ capable.
-> > > With this SoC we introduce a new style of binding, where the pinmux v=
-alues
-> > > for each pin group are stored in the new "allwinner,pinmux" property =
-in
-> > > the DT node, instead of requiring every driver to store a mapping bet=
-ween
-> > > the function names and the required pinmux.
-> > >
-> > > Add a new binding file, since all the different variants of the old
-> > > binding are making the file a bit unwieldy to handle already, and the=
- new
-> > > property would make the situation worse.
-> > >
-> > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > > ---
-> > >  .../allwinner,sun55i-a523-pinctrl.yaml        | 177 ++++++++++++++++=
-++
-> > >  1 file changed, 177 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/allwinn=
-er,sun55i-a523-pinctrl.yaml
-> > >
-> >
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> >
-> > yamllint warnings/errors:
-> >
-> > dtschema/dtc warnings/errors:
-> > Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl=
-.example.dts:24:18: fatal error: dt-bindings/clock/sun55i-a523-r-ccu.h: No =
-such file or directory
-> >    24 |         #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
-> >       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Ah yeah, of course, that's in another series. What's the best approach
-> here? I could cheekily import an existing header file, the symbol names i=
-n
-> there are often the same (ccu-sun20i-d1-r.h defines the same symbol, even
-> with the same number).
-> Or I just replace it below with the number "1"?
+> Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 
-This, or just drop in a random number.
+Acked-by: Helen Koike <helen.fornazier@gmail.com>
 
-ChenYu
+> ---
+>
+> v2:
+>   - Run jobs automatically for marge-bot and scheduled
+>     pipelines, but in all other cases run manually. Also
+>     remove CI_PROJECT_NAMESPACE checks specific to mesa.
+>
+> ---
+>  drivers/gpu/drm/ci/gitlab-ci.yml | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab=
+-ci.yml
+> index f04aabe8327c..f4e324e156db 100644
+> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+> @@ -143,11 +143,11 @@ stages:
+>      # Pre-merge pipeline
+>      - if: &is-pre-merge $CI_PIPELINE_SOURCE =3D=3D "merge_request_event"
+>      # Push to a branch on a fork
+> -    - if: &is-fork-push $CI_PROJECT_NAMESPACE !=3D "mesa" && $CI_PIPELIN=
+E_SOURCE =3D=3D "push"
+> +    - if: &is-fork-push $CI_PIPELINE_SOURCE =3D=3D "push"
+>      # nightly pipeline
+>      - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE =3D=3D "schedule"
+>      # pipeline for direct pushes that bypassed the CI
+> -    - if: &is-direct-push $CI_PROJECT_NAMESPACE =3D=3D "mesa" && $CI_PIP=
+ELINE_SOURCE =3D=3D "push" && $GITLAB_USER_LOGIN !=3D "marge-bot"
+> +    - if: &is-direct-push $CI_PIPELINE_SOURCE =3D=3D "push" && $GITLAB_U=
+SER_LOGIN !=3D "marge-bot"
+>
+>
+>  # Rules applied to every job in the pipeline
+> @@ -170,26 +170,15 @@ stages:
+>      - !reference [.disable-farm-mr-rules, rules]
+>      # Never run immediately after merging, as we just ran everything
+>      - !reference [.never-post-merge-rules, rules]
+> -    # Build everything in merge pipelines, if any files affecting the pi=
+peline
+> -    # were changed
+> +    # Build everything in merge pipelines
+>      - if: *is-merge-attempt
+> -      changes: &all_paths
+> -      - drivers/gpu/drm/ci/**/*
+>        when: on_success
+>      # Same as above, but for pre-merge pipelines
+>      - if: *is-pre-merge
+> -      changes:
+> -        *all_paths
+> -      when: manual
+> -    # Skip everything for pre-merge and merge pipelines which don't chan=
+ge
+> -    # anything in the build
+> -    - if: *is-merge-attempt
+> -      when: never
+> -    - if: *is-pre-merge
+> -      when: never
+> +    - when: manual
+>      # Build everything after someone bypassed the CI
+>      - if: *is-direct-push
+> -      when: on_success
+> +    - when: manual
+>      # Build everything in scheduled pipelines
+>      - if: *is-scheduled-pipeline
+>        when: on_success
+> --
+> 2.47.2
+>
 
-> Or let git format-patch append the patch-id of the clock binding header
-> patch?
->
-> Cheers,
-> Andre
->
-> > compilation terminated.
-> > make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindi=
-ngs/pinctrl/allwinner,sun55i-a523-pinctrl.example.dtb] Error 1
-> > make[2]: *** Waiting for unfinished jobs....
-> > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_b=
-inding_check] Error 2
-> > make: *** [Makefile:251: __sub-make] Error 2
-> >
-> > doc reference errors (make refcheckdocs):
-> >
-> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/2025=
-0214003734.14944-7-andre.przywara@arm.com
-> >
-> > The base for the series is generally the latest rc1. A different depend=
-ency
-> > should be noted in *this* patch.
-> >
-> > If you already ran 'make dt_binding_check' and didn't see the above
-> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> > date:
-> >
-> > pip3 install dtschema --upgrade
-> >
-> > Please check and re-submit after running the above command yourself. No=
-te
-> > that DT_SCHEMA_FILES can be set to your schema file to speed up checkin=
-g
-> > your schema. However, it must be unset to test all examples with your s=
-chema.
-> >
->
->
+
+--=20
+Helen Koike
 
