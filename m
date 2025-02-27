@@ -1,77 +1,128 @@
-Return-Path: <linux-kernel+bounces-535975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3394BA479ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:15:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18947A47AAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAA73A4BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A633AFC8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70752224249;
-	Thu, 27 Feb 2025 10:15:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D606227EAE
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740651303; cv=none; b=mA2f8FNbWGvzC2rycuRc8ZyvTta2Sz9WQimFoOjJjROKSTCyqjiG6srfGWOpY61lGkewe5WD3o83ULjhUJfgprka8hh+HQsFkY+7+9xZZ5/L6BzFaNx5JPorceRb8gIkgS8KixeTkwHj+3UIaBPE75fTs2nVdLpxs8uhceD3tsw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740651303; c=relaxed/simple;
-	bh=IevIaMQCzfsDmg7WOYc0m5DEYfnu5ZmgBReJtOPZ1pU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eIbPRHx2FoGbDAwGPSUsSRz/5iWkWYCbq8MUpJB0wmBfIU+Hv67Vbua543ZVm6dRJ7KsZoY0mYB2s5/eVPmQbzug+BfnO9KRiqDnXUSOSwDN26bhenBTSH7kHlV6rQ44D+DpYjqTLC9oh5OaLS/m0Yg+Fl7BNtO2up09+FXaKaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 292AE2BCC;
-	Thu, 27 Feb 2025 02:15:16 -0800 (PST)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9FCE23F673;
-	Thu, 27 Feb 2025 02:14:59 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Andrei Homescu <ahomescu@google.com>
-Subject: Re: [PATCH 1/2] firmware: arm_ffa: Explicitly cast return value from FFA_VERSION before comparison
-Date: Thu, 27 Feb 2025 10:14:57 +0000
-Message-Id: <174065123542.2364600.7340078100778272878.b4-ty@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8E22A1EF;
+	Thu, 27 Feb 2025 10:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="HzBrk/ch"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C007421D5BD;
+	Thu, 27 Feb 2025 10:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740653170; cv=pass; b=i3O758Ra4VmswP/sdVJ44n8bLghYCzh+Ze1D48JJ6+plAq6/BhBZcKFmd5L6X/4sR3EI1bomZw/LuysN0z/l4XChwDMeFdOmuc6T8WUoSktpUWtEplEhPDj7dMmIi7KyeRegxSNND5YKKcHgfnHAgBy4fr33cP1WfgX9F4AwcBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740653170; c=relaxed/simple;
+	bh=RXp2uaebMws9GNxExFb5p/bX6mABVj8stv4/Nt9JqqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I49j/62Q+Vrf9XR2I3tWjeMHgVHdniSmMlgFqd7d1ifZLG/aFSPrL9Pi9MGpypZr7p9pMFHa8rm9eam3JnaiQFywx1Q7Dk6y6Xrq7tCiuSvrwlY/MKiUNrcETpjpUt1lcbmgYMqXb3TsEdGrYEXVadwV1QdEam6a3JdAzVJ6n5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=HzBrk/ch; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740653142; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QAqzH5e51QC84Asy5Gl6+jDY5aBORBuqA/YYneZYe++tHqB4ySvWRpbyVED+qn4z2uYqIq8Re2ZLdxe32tAzrqjFO07xlXaN+ZfbXy1Am8H9VIywDBL8fTqB+nnGC+ZQmKSnddZIvYFmHw8oscZyJVTT6w9Uh8+QtgqZACvlGYo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740653142; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Wq4e2lGDf1gHX1jSVAhR7jrg4z/HzsOIQlyDC5+tZVw=; 
+	b=b5lWyWkHbT53yMUATnvFKjV2OqmhV43NhHwKGJCpx49IVzNfFOmM80SjLml1XZu1Puzrw7UbLQ31E4Qj/3IhDC3lQIlxBEx3OVvAWFxpZSSVFcEGNzrJj4uIo6ip6XteVvclI/mBQM8dge2k0Y1DFsTpUOh7bgbD9feiQtG4F8g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740653142;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=Wq4e2lGDf1gHX1jSVAhR7jrg4z/HzsOIQlyDC5+tZVw=;
+	b=HzBrk/ch7TSIAAEK9P9IqNeuu0hbXLlCk6nlqbhFwnuJ+VTVf7fvGJ2eACP+WMeq
+	AnrKCa3JpxEZUdA5qJ3scY0aRtIE8LFgUpaN5a185P4Q3NIgIJnn1ZP6+MwenvFVgS1
+	eqsQELM1xit8D4dVXsqIc1VqIAL5UgGs+3AEf2K0=
+Received: by mx.zohomail.com with SMTPS id 174065153918225.04211908368677;
+	Thu, 27 Feb 2025 02:18:59 -0800 (PST)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v1 1/1] cxl/mem: Do not return error if CONFIG_CXL_MCE unset
+Date: Thu, 27 Feb 2025 18:18:48 +0800
+Message-Id: <20250227101848.388595-1-ming.li@zohomail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221095633.506678-1-sudeep.holla@arm.com>
-References: <20250221095633.506678-1-sudeep.holla@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Feedback-ID: rr0801122716de977bd9e00a2b5c28e18100002d32307e1d5f90d233a291772ea7b3708ac78ed75be54432b0:zu08011227ef38a246c8a88b2f526a8e4500005b3e5ae75bf88b4d49f780fc15784300101d8f7c1cd7676f21:rf0801122d33b1b5e1b2c61fe3edadcd170000391eae13e37c3bc7e9c9e8a25b36e94bcccdc3cb3223ad2b7bad279585b042:ZohoMail
+X-ZohoMailClient: External
 
-On Fri, 21 Feb 2025 09:56:31 +0000, Sudeep Holla wrote:
-> The return value ver.a0 is unsigned long type and FFA_RET_NOT_SUPPORTED
-> is a negative value.
->
-> Since the return value from the firmware can be just 32-bit even on
-> 64-bit systems as FFA specification mentions it as int32 error code in
-> w0 register, explicitly casting to s32 ensures correct sign interpretation
-> when comparing against a signed error code FFA_RET_NOT_SUPPORTED.
->
-> [...]
+CONFIG_CXL_MCE depends on CONFIG_MEMORY_FAILURE, if
+CONFIG_CXL_MCE is not set, devm_cxl_register_mce_notifier() will return
+an -EOPNOTSUPP, it will cause cxl_mem_state_create() failure , and then
+cxl pci device probing failed. In this case, it should not break cxl pci
+device probing.
 
-Applied to sudeep.holla/linux (for-next/ffa/updates), thanks!
+Add a checking in cxl_mem_state_create() to check if the returned value
+of devm_cxl_register_mce_notifier() is -EOPNOTSUPP, if yes, just output
+a warning log, do not let cxl_mem_state_create() return an error.
 
-[1/2] firmware: arm_ffa: Explicitly cast return value from FFA_VERSION before comparison
-      https://git.kernel.org/sudeep.holla/c/cecf6a504137
-[2/2] firmware: arm_ffa: Explicitly cast return value from NOTIFICATION_INFO_GET
-      https://git.kernel.org/sudeep.holla/c/3e282f41585c
+Signed-off-by: Li Ming <ming.li@zohomail.com>
+---
+I hit this issue on my cxl_test environment with latest cxl-next. If
+CONFIG_MEMORY_FAILURE is unset, all cxl pci devices will fail to probe.
 
---
-Regards,
-Sudeep
+...
+[    6.337952] cxl_mock_mem cxl_mem.6: probe with driver cxl_mock_mem failed with error -95
+[    6.338880] cxl_mock_mem cxl_mem.4: probe with driver cxl_mock_mem failed with error -95
+[    6.339593] cxl_mock_mem cxl_mem.9: probe with driver cxl_mock_mem failed with error -95
+[    6.340588] cxl_mock_mem cxl_mem.2: probe with driver cxl_mock_mem failed with error -95
+[    6.340914] cxl_mock_mem cxl_mem.0: probe with driver cxl_mock_mem failed with error -95
+[    6.345762] cxl_mock_mem cxl_rcd.10: probe with driver cxl_mock_mem failed with error -95
+[    6.345793] cxl_mock_mem cxl_mem.7: probe with driver cxl_mock_mem failed with error -95
+...
+[    6.519824] cxl_pci 0000:c4:00.0: probe with driver cxl_pci failed with error -95
+[    6.520178] cxl_pci 0000:38:00.0: probe with driver cxl_pci failed with error -95
+...
+
+base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
+---
+ drivers/cxl/core/mbox.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+index 13cac98846bc..d72764056ce6 100644
+--- a/drivers/cxl/core/mbox.c
++++ b/drivers/cxl/core/mbox.c
+@@ -1503,7 +1503,9 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
+ 	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
+ 
+ 	rc = devm_cxl_register_mce_notifier(dev, &mds->mce_notifier);
+-	if (rc)
++	if (rc == -EOPNOTSUPP)
++		dev_warn(dev, "CXL MCE unsupported\n");
++	else if (rc)
+ 		return ERR_PTR(rc);
+ 
+ 	return mds;
+-- 
+2.34.1
 
 
