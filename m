@@ -1,162 +1,136 @@
-Return-Path: <linux-kernel+bounces-536955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0850EA4863A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:08:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38387A48650
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7873AFE81
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0013D1881E01
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EA61DE3A4;
-	Thu, 27 Feb 2025 17:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2F41D9A7F;
+	Thu, 27 Feb 2025 17:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3O0spDc"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BERq+M6+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACFA1BD000;
-	Thu, 27 Feb 2025 17:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDB91D5AD3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740676071; cv=none; b=BhnZ+H8cmGgXPo8X3WOVwtLEB1tCiPStFs1CR8lK9WY6q33vypY93lpCclDJDwuUkYrNAdpzR9JGsNk01lW7kdXCg0ORPeGraoGrXRIECAYpvjIrEqH66SpYICm5/3wJHN+bV8DMfUBP47/rINCDr3hzsu+3pYF4LcSFb+fYCBk=
+	t=1740676224; cv=none; b=WZf2KTZOI5aaBtyCNjnOiKcocUP+A1e5ThnmUyVxpNxg5f5PRkr7Zcwbt1dMW2x1gKLZn5xgpxxfGg0gx8oYSmp8zjBjcXPRj8QqkF2QCQoxQNg2RmkZGjUD2vc/0jNJ6W21wF5xlHi6S5y9a8uRDBcQUIrfp5wgUKddO0QEvAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740676071; c=relaxed/simple;
-	bh=7R74lr5594kAGxToaxvz8tq6hjGiWqrgb978VHTWwxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UmakwwgqzyKaFBySloAK1nfm7bLENN9YuBzoTbAXC/LLVFAWo6EDxmaczMxjOVfvLY4GG/YT+tVy6byrvnam/0uIKQ2Ds2UphUf/UoMSxPVki0iOpeEIVRq7f7oJcqEYLnYWfe0k7ONijIRUGKNrBLod//Xp89vqzIZlg8TQRik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3O0spDc; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a69c1a8d3so13594511fa.3;
-        Thu, 27 Feb 2025 09:07:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740676067; x=1741280867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+oxit/fbFATP5S0oI9jk02pT67RxLAecxX72TBSPrJ4=;
-        b=I3O0spDcuG5jYOEDLH+hgxhYYjVot0ZYNtyeNpFXH0AfOZvtOFxecwdCThLChyPKN9
-         Vl/yzEw7YqEdYVt9wEyjS6K40YppBS2yu0j7Ri6Mf0qK/INtj7dp9GedtXNfR7kmn04T
-         rrU/f3uyAxVPEMivtipT9zSdv0S8NFvzaIojFgp3EhEBUFbnF8ZJCSWvUOM6JlO3ddx3
-         tomPyO9Awhvq2XHYFkTqcpanpSXvzngLy1krtDp8bJalrzWl5jGMI3aGuOI+bPhqRxLu
-         6CN1AYRfb2aZxdixhSWnkS62NLtQwHjTnaxO+G5hV3qie4/9xPMeLsCKKCAMqN+hjgJT
-         8OBg==
+	s=arc-20240116; t=1740676224; c=relaxed/simple;
+	bh=1g9zGpMtV/3hFLrkn0fT/XCmZn80mQtN2HY9mqPIfMI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nuFM3Vv7AA6LJXEQuVMNkHjMEPwZRvET3HKtuuM6/FXgGZDthKywzxp9TOS0yPe1tmAKYegDcDfHfcq6kmDn/UjUOd8jlj86f/ZmdM9NKUFqBOPJt3wRulGJZmEIQXkDONNir5sCoAEacU5+VEjXaVgNoUvLcinq8YFeDKUJdaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BERq+M6+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9O5Ea021581
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:10:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TBqpguxGGsbuHVyIoyeYvAcOEVkUt7dp6bLQG0fntUQ=; b=BERq+M6+nBauRddH
+	EEW4jz44O3mA6RP8mXiK0q7+x58Wp91sL6LI2Ywy42Y7jSQyzKBAAQlE/z/ibh+w
+	UwY0z9dJLNhY+75yX1jU0O0r/4w/hWAnhWiF0dOvnxlhbRkMJ7HT1eFLyltvw5RX
+	2f6iw3TSrJrlr5WXauV5NABby1uXa6Oxcl8JuuluDFlAgm+0h4LT5CMN5u0hJMAp
+	O7SymVQHZuP/1tSUDlvV9tM4sCgh6zw7gXkd3WxYBOYoCzRVrCIXsuy8dsQ11c0T
+	IBKTbtWIXEiFXao3g81e2abtsAvDVdZ9xZMi5TGDkHMr4A45Pfegx8RmFtj9ns9G
+	BOnCog==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prkphe2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:10:21 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22339923628so32114365ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:10:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740676067; x=1741280867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740676220; x=1741281020;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+oxit/fbFATP5S0oI9jk02pT67RxLAecxX72TBSPrJ4=;
-        b=AcFY3xMK1SRBlaszJ0ZJDE/r3nPQM7ca4uaMcW9XjZjHQgdomDd/ZbxK4NQqcDVhA9
-         gWm5AM6X0jca4TJB0m5XGPJl361jdRWc1Q1ttmkRzbzTqCNL09LYtT+d2Ksbw+TXP7do
-         qiSBHFSp5IXJd6S+WqlYws1wOLImIgvzjrl+vC1YVNw2GHC45FdVB97ieYK8zXuM6QGg
-         qaIHiVfgBT5UdGef+xGdsc4e/aFntrW5oVTRiygfP0gfb4rDtBSIEHQq9mKZbe2WwmDh
-         zgtReWHLqAXQsCQaca5LhzFVKdc8yZCd5HTPzL4oJRS0VFwh2IVNBp1Gm5MPjau2twQP
-         RzwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Hw20j1HXYRM9pnGe5fuRMtXLV8jfmtAh5UNeNWxPDYI47rN/etmPRefv2LTyUNtqfxyCFHVgbTqH@vger.kernel.org, AJvYcCWUJSWceahPpuZL4KoU6XcbjSswk+COUha2CVTtmKxJ51wo1tavYZWNP2mIDe1OxX2X8JKpv7u32Xnz8wkb@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx24nIrk8RZfD+veT236dEgPsY2lhSiXOYvqkIxBYkpChE9qBy
-	ufwzmxrpvxiCrH7j1HD+FrcMplNxm0S/e3iWWIKjfaA+eLhkJ2kI1XV4f/iUzul49+E2LlnelzL
-	TT+o53+PRgpYb7JpFVZ3burdx35g=
-X-Gm-Gg: ASbGncuRGBzjpq4r/qlKdIVKvWz2CLyDaddguqo2lQeanAmWIUCNaBM5tMlR4UZiTki
-	n4nOwMPQFXecWAKZ+xga/q75RFQ8g0PDEGpswurtcq+GskmSOiyFYdNufCE0qjLsJBK9N8UInvP
-	IeP2J8KD+2Ds/+lZTnaTuFIAFxfuOskwd9ft+Dxxw=
-X-Google-Smtp-Source: AGHT+IGbHwFw3Ei173z0Un2b6hE6mBlb5qScKRe0aoWLTdNiy0wIyLsDV/TjbMoZKWKVOebKb7C9sd0SzZzc+u29lkw=
-X-Received: by 2002:a05:6512:3b11:b0:549:490e:240d with SMTP id
- 2adb3069b0e04-5494c320d47mr80269e87.28.1740676066843; Thu, 27 Feb 2025
- 09:07:46 -0800 (PST)
+        bh=TBqpguxGGsbuHVyIoyeYvAcOEVkUt7dp6bLQG0fntUQ=;
+        b=xF1wfvI9shHu/1+NygyFtjLx4qYwdnK1VCnINnmLzzCtghQsq8AWVUPvehCFP1Qekk
+         8Q1W+hNHyI+zW3bVot9HUFlDlW2G1A4o745Dbju3SNAuH+ekD8i5lREKJht75ZXq670T
+         j9//6t+sux5csWb8tJ6dZOlf99rLrOclqPpNYwC9w3DMNGLVOlBwvV9F/94y0cw5mw1+
+         YjfSwe84TFbVtPAerNkU31NQA8ecx0NklpNfXJO69b7XvyEHdslYDX2dFUeXILW2neJD
+         UaLYwgki7U4qnuFxvH+wKgN4A0x4C1WDPA0Rsq2l6SWPRRog/WpRBheArqrExZQeOHay
+         a81w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdDKGToxREu6mVV3+IwF1KcnQ8xio3n4AYfod7W6g+KisJEo7gh0SZQC5XYHCxxKHTFoJQDWLnZDlkeWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLTCjwFegaqlqR8024KBmR+0qCfrwwnX9gcrccB/PvfcnvcwzP
+	J2MU7ONFhG2QQccng/AE1vymqLmtNmvepg5lioMocBqCEt2PnkSVwK9fYaLLuOQ+/mIINp3NPfv
+	QZkCUSeVsEXU+tV2+4uxFkFnnosgEMBAcHugOFx2Rdxe2+v+tnp0js31daolkRFQ=
+X-Gm-Gg: ASbGncsDBocjoBPU8lfranMvs9rM3l3bPVEQex1yOE4+EJwMqFbPdgaXVxUYc7yrzQo
+	vCAZkNYoicAc7+/SXZwbgOyHCeGF0EnLX6eOnroBVlrKMoayS6lPWgFVG2jwYVLSKQ/u0TE8+I1
+	2EFDGX0RZzEPXuTXIulGhY5NtL1YGSI5dDrQ3YTx7iwk9iXIHrlkxqtQxqFCByKS8BSHM7y9Oac
+	9tVfV57nNqIDzk4J7rKAH0IrnDILTX8Hr4O2B2i78fQ9Tskx3o1FOCIcpu9Rxby/q8KFm8w/FJ/
+	JTYNrRQ795t2/DtRPKm3JGUAQ/nMhKp3y7azX0O+k5/bYAth7wkY
+X-Received: by 2002:a05:6a00:4c8e:b0:725:f1e9:5334 with SMTP id d2e1a72fcca58-7349d2f3d9emr8293953b3a.8.1740676220218;
+        Thu, 27 Feb 2025 09:10:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGAgr/wxwNt0KZqGBy+I7l36MHGLD404qGwiZ4rO8yQRGGh2MVohZXLl3ovVhLQ8DhfSndYDw==
+X-Received: by 2002:a05:6a00:4c8e:b0:725:f1e9:5334 with SMTP id d2e1a72fcca58-7349d2f3d9emr8293899b3a.8.1740676219808;
+        Thu, 27 Feb 2025 09:10:19 -0800 (PST)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe2a61fsm1896855b3a.8.2025.02.27.09.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 09:10:19 -0800 (PST)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: jjohnson@kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ath11k@lists.infradead.org
+In-Reply-To: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
+References: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2 0/3] wifi: ath11k/ath12k: IRQ affinity fixes
+Message-Id: <174067621913.3801911.12667754541994215143.b4-ty@oss.qualcomm.com>
+Date: Thu, 27 Feb 2025 09:10:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227170556.589668-1-ernest.vanhoecke@toradex.com>
-In-Reply-To: <20250227170556.589668-1-ernest.vanhoecke@toradex.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 27 Feb 2025 14:07:35 -0300
-X-Gm-Features: AQ5f1JoOSEVimzZP3To5R1UEdgKOEY0K6S3WLSXvUvHm17C771vmwEyHDgADBUM
-Message-ID: <CAOMZO5C0uS3jes=tbnM1D75n-OoAVDXQrfyn0cPZKwdNPViFxA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] ARM: dts: apalis/colibri-imx6: Add support for v1.2
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>, 
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-Proofpoint-GUID: FXjNdl7WVzuaAGHBG5MMxwoAMRQ5vgm4
+X-Proofpoint-ORIG-GUID: FXjNdl7WVzuaAGHBG5MMxwoAMRQ5vgm4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 phishscore=0 mlxlogscore=813 mlxscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270128
 
-Adding Francesco to help review.
 
-On Thu, Feb 27, 2025 at 2:06=E2=80=AFPM Ernest Van Hoecke
-<ernestvanhoecke@gmail.com> wrote:
->
-> Apalis/Colibri iMX6 V1.2 replaced the STMPE811 ADC/touch controller,
-> which is EOL, with the TLA2024 ADC and AD7879 touch controller.
->
-> Accurately describe the new hardware.
->
-> v1.1 of these SoMs is still described by the following DTSI files:
-> imx6qdl-apalis.dtsi
-> imx6qdl-colibri.dtsi
->
-> The STMPE811 touchscreen controller is no longer disabled by default.
-> The STMPE811 is self contained within the SoM, therefore, disabling it
-> is not the correct default behavior.
->
-> v1.2 is now supported by a DTSI that modifies v1.1:
-> imx6qdl-apalis-v1.2.dtsi
-> imx6qdl-colibri-v1.2.dtsi
->
-> For each carrier board using these modules, a new DTS file was added
-> that includes the v1.1 DTS and modifies it with this v1.2 DTSI.
->
-> The original DTS can be used for modules up to and including v1.1.
->
-> Ernest Van Hoecke (2):
->   ARM: dts: apalis/colibri-imx6: Enable STMPE811 TS
->   ARM: dts: apalis/colibri-imx6: Add support for v1.2
->
->  arch/arm/boot/dts/nxp/imx/Makefile            |  9 +++
->  .../dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts | 11 ++++
->  .../nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts   | 11 ++++
->  .../nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts   | 11 ++++
->  .../dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts  | 11 ++++
->  .../nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts   | 11 ++++
->  .../dts/nxp/imx/imx6q-apalis-v1.2-eval.dts    | 11 ++++
->  .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts  | 11 ++++
->  .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts  | 11 ++++
->  .../dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts   | 11 ++++
->  .../boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi | 57 +++++++++++++++++++
->  arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi |  1 -
->  .../dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi     | 57 +++++++++++++++++++
->  .../arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi |  1 -
->  14 files changed, 222 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.d=
-ts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3=
-.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2=
-.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dt=
-s
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2=
-.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.=
-1.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.=
-2.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi
->  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi
->
-> --
-> 2.43.0
->
+On Tue, 25 Feb 2025 11:04:44 +0530, Manivannan Sadhasivam wrote:
+> This series fixes a warning from kernel IRQ core that gets triggered in the
+> error path of QCA6390 probe. While fixing that I also noticed the same issue in
+> the ath12k driver, so added an untested patch for the same.
+> 
+> Finally, updated the irq_set_affinity_hint() API in both drivers as it was
+> deprecated.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/3] wifi: ath11k: Clear affinity hint before calling ath11k_pcic_free_irq() in error path
+      commit: 68410c5bd381a81bcc92b808e7dc4e6b9ed25d11
+[2/3] wifi: ath12k: Clear affinity hint before calling ath12k_pci_free_irq() in error path
+      commit: b43b1e2c52db77c872bd60d30cdcc72c47df70c7
+[3/3] wifi: ath11k/ath12k: Replace irq_set_affinity_hint() with irq_set_affinity_and_hint()
+      commit: 6f2d839d11b36c630dbcad2c68613f15409de392
+
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+
 
