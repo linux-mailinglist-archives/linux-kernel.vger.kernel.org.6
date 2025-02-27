@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-536011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A6BA47A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:40:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0B9A47A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA9D16D62E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:40:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00C927A0F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96022A1ED;
-	Thu, 27 Feb 2025 10:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314A422A4C5;
+	Thu, 27 Feb 2025 10:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPeGQvTV"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FX/8b6Ri";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gfRWGEKB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4EE21ABB4;
-	Thu, 27 Feb 2025 10:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7327A22689C;
+	Thu, 27 Feb 2025 10:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740652796; cv=none; b=k6jMpBwxPAiFVeD2VoDohm0ni2APzfAITvBN+RzPP0oP6m/+dvl00ViHzCCzy7tACLPY/vsVAPN2++wjBKwKSj7xk6cTlOnwyg1zTWYq2QgU8pVYyH2IgKAvcs9CtQ70Zr5wlqOycyJZYoJvzl1aAh0xWt7f3h91exMbBOoEyIw=
+	t=1740652934; cv=none; b=iI9HBft8IAyJKOwnFehT9BTLVh/AXxF33Z6lektPvNrFiI+2c4VlXi+tXGesb0nzcX/GxCe1OTOUuoNobaRPxgHwDgb9WUkrMMCSFcdEnnPjTFfJ6THlqpdEiJtOBCGxVd1l5W9+d6bjzlei/uTxCZmCMhVmHp43C5Y3qw0cAj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740652796; c=relaxed/simple;
-	bh=4Z5THPHBB0PyNdgQ73XQc7tWD13PorYiOsgFnskGl+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gz/tb17Awrdi9283PtHqebGIklOeFRhYPEHA7+E0G+EUYoosLcaYPbB2OV+oq+ifzc74lb2162qr1Zsv3tNlnziXtWsT3B4p21vxt5BjKKxnAfSZxXous4AfwrmW3KFl0BqSHWciSttYit/zdkEaeC8kThROkRzPO+Thdszkjos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPeGQvTV; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f325dd9e6so400764f8f.1;
-        Thu, 27 Feb 2025 02:39:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740652793; x=1741257593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBNOuunCwK0S7uvVT7lUa1QkbPinEv6RhOlxsz3h1co=;
-        b=fPeGQvTVE58N6BSy+ua7dqbVmtpdoXnQ0OZyp8fluuahv4wBqhf2g806jGP/3pA/ba
-         bRskVGUZRiF1qd6C0ClBXPEmMfSDHCKWS2JYIr3AWoQp1UNGbd1nWpTR7/ORAFY3e89R
-         6RXM5sW45KPizUM5xrzwQRZj6C9+Ri3r22L5y905ySDOl6uc++8dqcprLt+SY6asO847
-         GqI2ev8noZUoUnKdqeF78V08X/Ru3sZcln2dD4714qy9Bq31w5sNX0zZB9MTHUcW2fWe
-         eFxXoKVUZBWj8ePq6Wd5Zl4h1sutwBLQebYHv7LwHgn3/xeo5kg+89MvdLKiiJ+GCD3N
-         QO7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740652793; x=1741257593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PBNOuunCwK0S7uvVT7lUa1QkbPinEv6RhOlxsz3h1co=;
-        b=t9DNkrFXoPg6XE+tRsWLw56/CwPpdZ0pwtHMLoFUL4K5aHVpU7oIy7oDf/Q1q6z+Oo
-         x2ajE5M9ntpRNC0jIOfa+60M7IZ/X/JUPgI8AIuic3xYoeZuFX9PG3qi5PZ8GSIubh3B
-         gfipqTTIcvfaQFII+evrTQ4Ex/MbX9scfgI/BSqQEOKcfElX6je/CyEg3mbUEl/cB8/U
-         a8RNjWJ3tyFtkOOrMPoT0w01E0E+boRGhK20ukjQ5UK0UjbcGxds04x3cUYAPYpw5w9w
-         7RaSrGuBuR4+5PggagbvsrvqWXyddNaZMLkUgXaPCDmLUHvLmbdwEd7GCY1htTdHJDju
-         vzzw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4wpdcA9cDeEDa0A5LhQ/ZQJKiShgH/2/T0p3AHNs1JQcOFOvSD7Q2RLJ8Fqn3T7THntZxrtv0PdHfXcI=@vger.kernel.org, AJvYcCWYWmbhcReL0uaMc9Bs7U3CZxhVisMlp/JB+7HE+fn114jw/5nWFK54NLoo4e5urJXL0EaFZc0Sm4xD@vger.kernel.org, AJvYcCXc7U4HSXEa6cZW+uRAYqMCAGUbSkGQ/iK8Bckdp+TDHN9XIagjwg399Tys07yQ2GmkIeyA8TvyrW2a1l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPwXB64j06MIXjqLfp3wyz2qsnH8tiZUIJi/o+fpIrmbsNx+Zk
-	3pfgeQ911apkZOJsAKgxx5Duq0a9y5kHyNbyDH2gOLtZNGFCs37n
-X-Gm-Gg: ASbGncu2nww71Pp4nxQqQ3h3H1LDae3221cLZic4JMnFyP+DcL0SACuxfWnSM6UJlc1
-	qNKt1hbWLe1i+Ahlsf3s/VY4wPLEcOLd639vTpJGzhLh1CYR1BIWTToculSTMiyAlHI3lNm1vhn
-	rc34Zr0xRYQQFqbSH7y6IlbgKD8Q5avF5PxFXHTGkfemOP832fIkddUo6vIu7z1zYUVSH2KyTQP
-	jBbVHAjJW0svIbkUZZS7jjcBmBcENs41Rx9YgW9s/B5Pv4xHX8cc16+Xpe6kdtvK/5k4WS4siKI
-	ofgLNHpWlaF+sQQluI0iaP9tFjzVo/Y1voMueSZEd38DQHNnzjsNwyaI5xbOLQWYYEG1fUXnPuG
-	Oy912AAPvvBMY
-X-Google-Smtp-Source: AGHT+IH+VMXOi+Mhh3bGfInYKPLcazEFfAbSm2XIe+YZ54dISGf+tuIRq1SvNTEluwvTdl0cMpYLsg==
-X-Received: by 2002:a5d:5f8a:0:b0:38f:260f:b319 with SMTP id ffacd0b85a97d-390d4f84733mr7161091f8f.44.1740652792586;
-        Thu, 27 Feb 2025 02:39:52 -0800 (PST)
-Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479652dsm1644708f8f.16.2025.02.27.02.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 02:39:51 -0800 (PST)
-Date: Thu, 27 Feb 2025 11:39:49 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, 
-	broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
-Subject: Re: [PATCH v2 1/6] arm64: tegra: Configure QSPI clocks and add DMA
-Message-ID: <a26g7pt3pll5d6jmkucdychrectbaa27ft65cuw7mrlirupx63@ijeqgow2s4ij>
-References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
- <20250212144651.2433086-1-va@nvidia.com>
- <20250212144651.2433086-2-va@nvidia.com>
+	s=arc-20240116; t=1740652934; c=relaxed/simple;
+	bh=nm88BKYtxUlLzh777GJzHj76kgv/QcyKMEWBGAVZhTk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=EkrVKJYylYId0pBXXO6WEgditBYxI2WKzbV1r4kphnxlfa4mlhSnpnf0fZyKeh6o85Ac+XRMM0IekdltC/KZIjxX+2FG3t7IzhIM/TAouZfckNZZnqFfea84xC+sxVfCUZioGIo+CVNoe2nHxcGmxpCotTSL7BdnD88Y7oXUhk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FX/8b6Ri; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gfRWGEKB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 10:42:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740652929;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SORaws+keb0b10VeP6oZvKm/X+VkQEadjJgBi5duzm0=;
+	b=FX/8b6RiQIRp8R3HxcnjtrDWAFClOFe4NkRjmYPsHZTffgZovCqICwb87aDK2hYWzfvSnu
+	H3BGcmRJ+OtfI2CjpcS1qoFOx5dmE86CKJiM86aEGE14BOVvCHA81S/dicOuTo5O/GMDXm
+	yw3YfkZWZi4tqrARuH1ZBBHo+VzONAEl0cJ8Wk08yhAS2sOE6iqJ4TwtxTTF9WCN5cczj9
+	hMKwWQzhs8gd+V6hnHlXU/TjYv+XAokBYPKnLxWTxgNjML/2NG/zW+aTxkqN552tNsqCF8
+	Kh7PORr+9HLTbFZjNjdcL1SM0G99N3M/GjoW+QQtK2imbS7KigLH7B9DrCsbMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740652929;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SORaws+keb0b10VeP6oZvKm/X+VkQEadjJgBi5duzm0=;
+	b=gfRWGEKBXqrvK+V7jWD6RDARw7hPgaRNgek+61ovdOA2sb8otOUEeqqufqcBKEyOJrF8PN
+	uMt947vaKmrmvoCg==
+From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/platform: Only allow CONFIG_EISA for 32-bit
+Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250226213714.4040853-11-arnd@kernel.org>
+References: <20250226213714.4040853-11-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4znkw4cymmoafvku"
-Content-Disposition: inline
-In-Reply-To: <20250212144651.2433086-2-va@nvidia.com>
+Message-ID: <174065292696.10177.7788333309494763418.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/cpu branch of tip:
 
---4znkw4cymmoafvku
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/6] arm64: tegra: Configure QSPI clocks and add DMA
-MIME-Version: 1.0
+Commit-ID:     976ba8da2f3c2f1e997f4f620da83ae65c0e3728
+Gitweb:        https://git.kernel.org/tip/976ba8da2f3c2f1e997f4f620da83ae65c0e3728
+Author:        Arnd Bergmann <arnd@arndb.de>
+AuthorDate:    Wed, 26 Feb 2025 22:37:14 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 11:22:16 +01:00
 
-On Wed, Feb 12, 2025 at 02:46:46PM +0000, Vishwaroop A wrote:
-> Set QSPI0_2X_PM to 199.99 MHz and QSPI0_PM to 99.99 MHz using
-> PLLC as the parent clock. These frequencies allow Quad IO DT
-> reads up to 99.99 MHz, which is the fastest that can be
-> achieved considering various PLL and clock divider constraints.
->=20
-> Populate the DMA and IOMMU properties for the Tegra234 QSPI devices to
-> enable DMA support.
->=20
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra234.dtsi
-> index 2601b43b2d8c..0ac2d3aba930 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> @@ -2948,6 +2948,13 @@
->  				 <&bpmp TEGRA234_CLK_QSPI0_PM>;
->  			clock-names =3D "qspi", "qspi_out";
->  			resets =3D <&bpmp TEGRA234_RESET_QSPI0>;
-> +			assigned-clocks =3D <&bpmp TEGRA234_CLK_QSPI0_2X_PM>,
-> +					  <&bpmp TEGRA234_CLK_QSPI0_PM>;
-> +			assigned-clock-rates =3D <199999999 99999999>;
-> +			assigned-clock-parents =3D <&bpmp TEGRA234_CLK_PLLC>;
-> +			dma-names =3D "rx", "tx";
+x86/platform: Only allow CONFIG_EISA for 32-bit
 
-Other than the dma-names property which was already discussed, this
-looks fine.
+The CONFIG_EISA menu was cleaned up in 2018, but this inadvertently
+brought the option back on 64-bit machines: ISA remains guarded by
+a CONFIG_X86_32 check, but EISA no longer depends on ISA.
 
-Thierry
+The last Intel machines ith EISA support used a 82375EB PCI/EISA bridge
+from 1993 that could be paired with the 440FX chipset on early Pentium-II
+CPUs, long before the first x86-64 products.
 
---4znkw4cymmoafvku
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 6630a8e50105 ("eisa: consolidate EISA Kconfig entry in drivers/eisa")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250226213714.4040853-11-arnd@kernel.org
+---
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAQPUACgkQ3SOs138+
-s6GgyQ//S5JgXIXb+r9r+GLX2BMYavKQT5LaHF3pKS453MqqbEXkhJX2/AH5w0yX
-uPjL5JuS47HyBaey26DxbHmoKUwdaFOFmstOJCs8qmzeox34XrXOeZpeXr2rhBCF
-y0Irvpw7HOvDGjYplqLur9NW+KQgOM6eJrGyes1Mc3hbVsUlWVFPNofN0eh4+aI5
-b0nwV3+93VvLYjPwr6Zi9SbVt+pjdhj+iPbZym3L7ZV0qo8R+SZ7ON+cB4lf3QWe
-dfC8FPNaD1dit/fOmpAM2BpPFBMnhg74i8kqkg8OqL2RpsjLqp+Tcm+U1TK0INiz
-NIcXtdqbXhk8Bornqwuxq3pA9E8xrpfZTrClLRR+HdgyR6I0ad0BxHYwyEPy60ZJ
-w0CzeZXlyjZeVaAqHPjPiY1e6oVAYDK0DqR34KgIiUS26XmliQgDGWdXQ5AcDLGe
-Wyp0tiHwVyvyAvTuOgZ1GkpmOZkppo7KNm9dvANgjS8fvxJVv5EAyIGRKEz9a3wi
-TtaUUFmBsZX9H8kcHAVs0mra5qLG6HTQ/tmu6wEQhf5jhNXYpFvCSZdfNgsOPV5h
-G3xw/r85MPogzEcIfAchOGW7G91XVnPeoF3NDlv6M5X/xoloveFwmN9qiJriuknt
-T2R+pHbXdKcvoKWnSJsV5aO55NzEjRRT4YHkV4mBD29AXM50LMs=
-=zY8k
------END PGP SIGNATURE-----
-
---4znkw4cymmoafvku--
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 383b145..aa90f03 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -233,7 +233,7 @@ config X86
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI	if X86_64
+ 	select HAVE_EBPF_JIT
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+-	select HAVE_EISA
++	select HAVE_EISA			if X86_32
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
 
