@@ -1,82 +1,143 @@
-Return-Path: <linux-kernel+bounces-536971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984E5A48687
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:26:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28570A48679
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73C8E16CD05
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:22:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 822487A743C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D9A1DDA2F;
-	Thu, 27 Feb 2025 17:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E061DDC30;
+	Thu, 27 Feb 2025 17:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hH5GT0bU"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLlli9RC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE661D934D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B121A3178;
+	Thu, 27 Feb 2025 17:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740676971; cv=none; b=V/vEg5P35jYvpFhjfzNf09+5Wsh1TL8v/7crdccLI4U+9uJR6F9yLEjmeJL01empWBeFM36lvkgPZsVcBpz++vCGoRgzQaBMk/OvDK5l52HMBzy5xEHKrGakTEtikLD1nimLYgVwmGpeCIaxBwccmVkmarkiOPcMECNp5htGRDw=
+	t=1740676982; cv=none; b=cQ3bcRhEzpREUbqimVkzVxfHZq2g50cGsuArlsI10KFkQ+LXic6Bzb+795nKHab95F0xG6BZG8stSnl5fhm2bANlJHGsI+0otiaJak92rkm99Cen8vYVAPH1HV5iCiLY7u1T6nETfvzHyaGnUb8rrdJPaaXCkSO7PPrDNBIrPeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740676971; c=relaxed/simple;
-	bh=eErh/pyXl+8fq+iSD8/YfcDSs8fSgQFFow7b5b199hE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r6WoKFBrPtnAU4nKC69LJ5TPkk9aQwZ6zOXnBpoJAQT/dFcKKAaWi6Rou+TWgwOvDyFJv09j2G5Rl0O5CVVGEqG+tu/tw59mnNrnmqOtze46OXfG0/9QfJ2p9iymTU9qB/Xz6APOzu7sPCxn3ixe4Q9nr4HcnhGuFbhB696oQyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hH5GT0bU; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740676957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kfcjng9ue/GFFUTz6SkApgIWXnYnxsO5SWJB9+YG+is=;
-	b=hH5GT0bU8q1SUKh1CHIVq7AO0U5yazpDEixxp8YOjO8H3XNyfgWEKMbz+/QtXpK4WiW+l9
-	ncf238qh0YSAB1ey8/AUxPhQcLJsk1mmY4QNpXWy5/HhioqreIxVtGj23JrCMJVd8Jj4E6
-	ItaY62C1opm+Y+rvWdFnmQ4/ba30niY=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bcachefs: Remove unnecessary byte allocation
-Date: Thu, 27 Feb 2025 18:21:57 +0100
-Message-ID: <20250227172155.4224-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740676982; c=relaxed/simple;
+	bh=JkGpybMCuNUorSQNS9AQSV0Uqu4j4/+ypLnwebjcqLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsorA+RicvwnKAk1MCJMBq1xIzwUdjIqw1S3mN+LemtAGCwmevvRBoXIAJzoPWNqsVo3teLYBih41Ag3E3tqDbsWx49WOLjxAosTvNhbCirXW9/SHvNICCfjPsH5bjOtwfPxbD23hGVY7N1kVWew8R5CD5UzAnGTj/eBkVq4jTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLlli9RC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C098FC4CEDD;
+	Thu, 27 Feb 2025 17:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740676982;
+	bh=JkGpybMCuNUorSQNS9AQSV0Uqu4j4/+ypLnwebjcqLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLlli9RCpdQCuAsBdWqfHmp7qixapnVQZ/yolrYRPuNVwSLv2DoIEnneEWgeJ0nj4
+	 kzslxwyRk4X5rONRKO1bqgqSt9C3pC9FU+Dw5jqRoegd3rg9l1CUAmQ1OuaG7KeJc6
+	 miM13dNF1MOvnEIBQo4iLOJv/M89KGdRvYKH0JQ9WAmgtq8oVlFge2R6aLoYdrh1uc
+	 ZUDwQIzQhGwRdkR9Y79KCrgmF6zl0wVlq4LvDI2EyxTmbe+bq1PXrGqbnKdO3ZjJqI
+	 dQ7uWYdutGW1tJU1mc/f27f8ak/hFR6odrvuxZfzbqaEidm4f3FdDLn/LWlXP8GFbc
+	 SA8lIAmdy0sxQ==
+Date: Thu, 27 Feb 2025 17:22:55 +0000
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Price <steven.price@arm.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v7 09/11] arm64: Enable memory encrypt for Realms
+Message-ID: <20250227172254.GB25617@willie-the-truck>
+References: <20241017131434.40935-1-steven.price@arm.com>
+ <20241017131434.40935-10-steven.price@arm.com>
+ <5aeb6f47-12be-40d5-be6f-847bb8ddc605@arm.com>
+ <Z79lZdYqWINaHfrp@arm.com>
+ <20250227002330.GA24899@willie-the-truck>
+ <Z8BEhK8P7FXgG11f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8BEhK8P7FXgG11f@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The extra byte is not used - remove it.
+On Thu, Feb 27, 2025 at 10:55:00AM +0000, Catalin Marinas wrote:
+> On Thu, Feb 27, 2025 at 12:23:31AM +0000, Will Deacon wrote:
+> > On Wed, Feb 26, 2025 at 07:03:01PM +0000, Catalin Marinas wrote:
+> > > On Wed, Feb 19, 2025 at 02:30:28PM +0000, Steven Price wrote:
+> > > > > @@ -23,14 +25,16 @@ bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED
+> > > > >  bool can_set_direct_map(void)
+> > > > >  {
+> > > > >  	/*
+> > > > > -	 * rodata_full and DEBUG_PAGEALLOC require linear map to be
+> > > > > -	 * mapped at page granularity, so that it is possible to
+> > > > > +	 * rodata_full, DEBUG_PAGEALLOC and a Realm guest all require linear
+> > > > > +	 * map to be mapped at page granularity, so that it is possible to
+> > > > >  	 * protect/unprotect single pages.
+> > > > >  	 *
+> > > > >  	 * KFENCE pool requires page-granular mapping if initialized late.
+> > > > > +	 *
+> > > > > +	 * Realms need to make pages shared/protected at page granularity.
+> > > > >  	 */
+> > > > >  	return rodata_full || debug_pagealloc_enabled() ||
+> > > > > -	       arm64_kfence_can_set_direct_map();
+> > > > > +		arm64_kfence_can_set_direct_map() || is_realm_world();
+> > > > >  }
+> > > > 
+> > > > Aneesh pointed out that this call to is_realm_world() is now too early 
+> > > > since the decision to delay the RSI detection. The upshot is that a 
+> > > > realm guest which doesn't have page granularity forced for other reasons 
+> > > > will fail to share pages with the host.
+> > > > 
+> > > > At the moment I can think of a couple of options:
+> > > > 
+> > > > (1) Make rodata_full a requirement for realm guests. 
+> > > >     CONFIG_RODATA_FULL_DEFAULT_ENABLED is already "default y" so this 
+> > > >     isn't a big ask.
+> > > > 
+> > > > (2) Revisit the idea of detecting when running as a realm guest early. 
+> > > >     This has the advantage of also "fixing" earlycon (no need to 
+> > > >     manually specify the shared-alias of an unprotected UART).
+> > > > 
+> > > > I'm currently leaning towards (1) because it's the default anyway. But 
+> > > > if we're going to need to fix earlycon (or indeed find other similar 
+> > > > issues) then (2) would obviously make sense.
+> > > 
+> > > I'd go with (1) since the end result is the same even if we implemented
+> > > (2) - i.e. we still avoid block mappings in realms.
+> > 
+> > Is it, though? The config option is about the default behaviour but there's
+> > still an "rodata=" option on the command-line.
+> 
+> Yeah, that's why I suggested the pr_err() to only state that it cannot
+> set the direct map and consider rodata=full rather than a config option.
+> We already force CONFIG_STRICT_KERNEL_RWX.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/bcachefs/fs-ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+rodata=full has absolutely nothing to do with realms, though. It just
+happens to result in the linear map being created at page granularity
+and I don't think we should expose that implementation detail like this.
 
-diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
-index 15725b4ce393..4adeddebaae8 100644
---- a/fs/bcachefs/fs-ioctl.c
-+++ b/fs/bcachefs/fs-ioctl.c
-@@ -218,7 +218,7 @@ static int bch2_ioc_reinherit_attrs(struct bch_fs *c,
- 	int ret = 0;
- 	subvol_inum inum;
- 
--	kname = kmalloc(BCH_NAME_MAX + 1, GFP_KERNEL);
-+	kname = kmalloc(BCH_NAME_MAX, GFP_KERNEL);
- 	if (!kname)
- 		return -ENOMEM;
- 
--- 
-2.48.1
+> But we can also revisit the decision not to probe the RSI early.
 
+Alternatively, could we predicate realm support on BBM level-3 w/o TLB
+conflicts? Then we could crack the blocks in the linear map.
+
+Will
 
