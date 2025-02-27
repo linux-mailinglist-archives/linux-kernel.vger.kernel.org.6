@@ -1,72 +1,112 @@
-Return-Path: <linux-kernel+bounces-536995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5267A486C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:37:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F438A486CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0212164D40
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC6C1653B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2E91DE3B7;
-	Thu, 27 Feb 2025 17:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5DC1FFC54;
+	Thu, 27 Feb 2025 17:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DIvKo15a"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2CPtnoX"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE521DDC29;
-	Thu, 27 Feb 2025 17:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B5C1DDC29;
+	Thu, 27 Feb 2025 17:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677817; cv=none; b=mH32EgEN1yvxA3YASSkD6c02upIoD9lnqaBbqNFdZKgeHtIglLxJwoivnFv7AhKD6VcEVBKJX0myYXSq1LTge4hhv2/rFaYjE0IthGfoXsU9PaaEFLkcB8OHMIWFzsoF3IEFpyJxKeWkvHerqezw8Tj9ggYL8wGYEQv5lozmhYQ=
+	t=1740677828; cv=none; b=AR7wnk5c7f5o3Bjl2LIZjcz9dZUsLwuhSv1GPJbV6vNm5abTB0epkSduUZhg7ofTw936rF1Z7lLqxUxBlfhYbbcDK4yN9BbdpIvHBRjOg7Vzw16pdplOytspWD0GZYDsbmnfZIfoK8pQzK+dazbtRvVZczNRiM+Knlfq9xsUEh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677817; c=relaxed/simple;
-	bh=HU/ZgWB55HHOxXUiyhhiiBr4JziGCTmAXOKdugCeFFo=;
+	s=arc-20240116; t=1740677828; c=relaxed/simple;
+	bh=3VhhTqGt87a5LXVZ8xAbJKCD+r0MSBo9AvP4EXdhZvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VcSvXarCklOy0RNbE0MUD2TLleWC46ndmrzZxhcXi4jUpX4o34EiDS7NZeygAcFtYjW/lwGBDJjTe19DrG2O/ygly1mF+hfIDUXVatPsQS8Vj6e75hJ74L4rO/OqqGkI88TZwA6CbAxVS5+ezRUBJQWDndlV1R4Ciey47MaOcuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DIvKo15a; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D57C144517;
-	Thu, 27 Feb 2025 17:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740677812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSkiEkBXDYScEZ5ofMG9zWS4tKdrzFrmkGZ34AMFarA=;
-	b=DIvKo15afjSNGSOcvCupB0MV/J3WwoCrlldJWszOmh/qtQDfA/7dL5t8NYBJeTk7Dd7vQN
-	vQs+JEPAWAg5ux9R8tmZ0xGdcsrPOmqMT9GoqFHIOnOaDaEMvlfLFufaKH0kQahQiCCS30
-	mZWUhQkuAdu6cPTv2PCEL1A2NUe9Ux7+Ued0hAFNm+mMsvX786rZPfMFuNkIVTN3YAkCk6
-	Z3eze4n9SwXeuv8pUIK2hXAtECFqjLpdW9wRv+Li0ecCaT2K/GkPAVW1CAgIZF4413DC3x
-	hfvt3FGGI1ms4pxOirPcPIZZWMPD46L7Oqrm6oSW2OJa1A2Wr277sHHwJCC0Vg==
-Date: Thu, 27 Feb 2025 18:36:51 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	=?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dharma.B@microchip.com,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
- Overflow etc. events
-Message-ID: <202502271736515748ffda@mail.local>
-References: <Z7h0AXV1zlgp9Nw-@ishi>
- <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
- <Z7vihBqOgP3fBUVq@ishi>
- <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
- <Z7_xTQeTzD-RH3nH@ishi>
- <20250227135330.GC182392@tpx1.home>
- <Z8B1LDT-n2XTTp8q@ishi>
- <202502271437280a6701d8@mail.local>
- <Z8CA9RTZWChh9cJW@ishi>
- <Z8CKQvRjqH9lwzgO@ishi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ezwsb0trh6xyZeC+AoW6+B+ljnMChTreoH31oFLGPbRllrsMUlUjfhGqF33Ol1UH0l2W94vCQxc6AW+5+flmKmwHXo2VWkYwpm8GeT0u4ZqoF2IVVKy4ZqlYyE+00iA9tSHrrIPMbw0iejaa7+kzwWEDMDSwR68BAlLu+ShxVzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2CPtnoX; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223378e2b0dso20452605ad.0;
+        Thu, 27 Feb 2025 09:37:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740677826; x=1741282626; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VUAFuA6WyxlqIwMao9P+DyP+C2TxjteBYJ1MyyDLQfw=;
+        b=k2CPtnoXP+Nu/D9591DpLIaKIB63ulgvz8LnuAS0Gvpy9tT7B2X8uSVT7amvEwHYN5
+         xVS9I4r+3RVO5D94QO85PqOFY6Zp3qgx98bOkOWLt4Wiu4tiG3UvwEUzcWqicEPZg3wW
+         DrpkJcct3mPAd/teLAglXvpBIOZv2OhEqbg7BVLvTD4piL1wskgOYWI2OFLey43KQVwz
+         JujPkxDVtkSPoC9Y01eeNxNLX06GizP3MKRHs/aT0whflsBfOXPBPxHEMdx10HKEdUdm
+         nHuxJQeCsYqKcBCUaLS1TSAkaUoK/66c657XNZ7MzdvTOdCV8F7+j+hc7+9LtJ8CFncw
+         YQlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740677826; x=1741282626;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VUAFuA6WyxlqIwMao9P+DyP+C2TxjteBYJ1MyyDLQfw=;
+        b=CBW51xVRP/LaIIU1A6CZ4OkqZgrUu7nfhjFZxIgfGDo1MHeLTMhoBk9ls9aSHnsDEJ
+         Hq+I/rEhi3ZvI+LTdwCfGZPul2qRFflSFwVypc9sxMGK/73EaXD81gNmJRO0ZxnRshjC
+         7byUXeIDC5XhpRRdk/keR4/Vqaj2Sj0ftemu+0NRgC7BFGizWLQ1wt1UjWNHW1fnLBHZ
+         hBc+KIaV2cj5yQ7MPhgs3lgClVUJC0CF+Nfh7gwYi28ihhiy7Ar+Vi5sw+vXQ/R8/cB4
+         vZNw/Bb2hoblNmV89dDBLZrPAHpgzRpiI9+tsCit7EyEDhQ7BOiCMi9O+FIj2ZOp5UCx
+         nSBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9j0q98O9kyB9dWy5+b/tCfcMULttjt2DdRUxvfMxTLipKIVPbXk36nnKn8ofIZXzKtnv5o5EW8XCJzfM2@vger.kernel.org, AJvYcCUU6DzcBdtZZlq0E1+Y65cMvM5A/vA56hExKka8pqUJSXol/OIszuzTLD7LRf8m3msgoow=@vger.kernel.org, AJvYcCUWoy5TgbRAMHlO22hv3NOK7IdgC4Dqz/uXeEKAGFFb9bQuPI97kIfvolb6QfhpcjBc5CtbcUB/iRGVdqj1Gf0=@vger.kernel.org, AJvYcCVYyDkiB2aBGstAzk7mXzYSeUUTbes3GGJGZGd7CCnrhDl1n3r5rSSQJf5eVYm6EFMZ+GdoGX19igFjUuk=@vger.kernel.org, AJvYcCVlFQZSDXAlsbdAdSwO1zAj04bh4oPZ6xPbwX22YjTub52352CSEKLD7CiQJjZrQp2E8tAUgrr4@vger.kernel.org, AJvYcCWOtFmG0JEQTKrqkgsWR/0Jav2B60EvClk8mWib2+01meIMohoVedGCHepPH//u4qoj5PIzSpZ0IxR9GjhB@vger.kernel.org, AJvYcCX1xVA7bQ90BxTYRQOzgeZ8GmLaqz5Ju20K54lixDEkIlByWx1apZHF9TG2jT8v5/Uayny7RHf4pqeUhPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKRHiQFsKxRA/aOoRfrGExObZRfbhIy6eAK1GbCUQvo3xvzOUH
+	3M6UBSB0EaoN1bNAwSbbAuGw2bfeZfCy/gR4LMK0dymuk5b6Uu7C
+X-Gm-Gg: ASbGncs53cL6ikyZG4g3aeg9EySDog3pal+DI2I48LU8w6YCk+ekeaiHRf1K53mh2y3
+	+BhxobvZ76YBn+DXHMq12bFe97eX0jQCyuuMCYylHw/Yl/UWSsJL7WF44n/xXJwCHvhQO3q69oK
+	PQEoouzvrFevT7/yAsIhAfYkD4XLbcRjcDMf9yazm7xeSU+LjSo/YWFwTqWWODEmrdwY+0WHVjl
+	kowOZGonIYgf+9GfkpJfBDRu880K4DuM4v/Di256mKI0+MTK6v6SiD+1ohubIjOVNmk3ePSNKRL
+	mggknlz/2No67vWDjkJj+nM45VuFkp/IJl9vmpaBeLYcQM2g9w==
+X-Google-Smtp-Source: AGHT+IGK2yvXxMwGzFuS4qAPXT9dc4oLUeTze+y8wAtciDVfBiItiQouqHwlR4imml9fxjD4qYJfDg==
+X-Received: by 2002:a05:6a20:9146:b0:1ee:d6da:b651 with SMTP id adf61e73a8af0-1f0fc993ffdmr22305716637.35.1740677825727;
+        Thu, 27 Feb 2025 09:37:05 -0800 (PST)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de19d3fsm1745501a12.18.2025.02.27.09.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 09:37:05 -0800 (PST)
+Date: Thu, 27 Feb 2025 12:37:02 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, hpa@zytor.com, alistair@popple.id.au,
+	linux@rasmusvillemoes.dk, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
+Message-ID: <Z8Civv0QaBzmFPTq@thinkpad>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-3-visitorckw@gmail.com>
+ <Z7zIBwH4aUA7G9MY@thinkpad>
+ <Z73FxIv353lbXO3A@visitorckw-System-Product-Name>
+ <b5236ae4-7ebe-4a88-bbc9-3b9b3374de53@kernel.org>
+ <Z79ebv630yuNOJKV@thinkpad>
+ <a8c29dec-6178-4f8f-80f5-aece636c410b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,75 +115,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8CKQvRjqH9lwzgO@ishi>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekkedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegukeejvgemudgsudgsmeeltdekgeemtggtfhgtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegukeejvgemudgsudgsmeeltdekgeemtggtfhgtpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopeifsghgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghsohhkrghsr
- dgsvghntggvsehprhholhgrnhdrhhhupdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeffhhgrrhhmrgdrueesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehluhguohhvihgtrdguvghsrhhotghhvghssehmihgtrhhotghhihhprdgtohhm
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <a8c29dec-6178-4f8f-80f5-aece636c410b@kernel.org>
 
-On 28/02/2025 00:52:34+0900, William Breathitt Gray wrote:
-> On Fri, Feb 28, 2025 at 12:13:00AM +0900, William Breathitt Gray wrote:
-> > On Thu, Feb 27, 2025 at 03:37:28PM +0100, Alexandre Belloni wrote:
-> > > On 27/02/2025 23:22:36+0900, William Breathitt Gray wrote:
-> > > > Skimming through the driver, it looks like what we'll need is for
-> > > > mchp_tc_counts[] to have all three TCCs defined, then have
-> > > > mchp_tc_probe() match on a TCB node and configure each TCC. Once that's
-> > > > setup, then whenever we need to identify which TCC a callback is
-> > > > exposing, we can get it from count->id.
-> > > > 
-> > > > So for example, the TC_CV register offset is calculated as 0x00 +
-> > > > channel * 0x40 + 0x10. In the count_read() callback we can leverage
-> > > > count->id to identify the TCC and thus get the respective TC_CV register
-> > > > at offset + count->id * 0x40 + 0x10.
-> > > > 
-> > > 
-> > > We can't do that because the TCC of a single TCB can have a mix of
-> > > different features. I struggled with the breakage to move away from the
-> > > one TCB, one feature state we had.
-> > > Be fore this, it was not possible to mix features on a single TCB, now,
-> > > we can have e.g. the clocksource on TCC 0 and 1 of TCB0 and a PWM on
-> > > TCC 2. mchp_tc_probe must not match on a TCB node...
+On Thu, Feb 27, 2025 at 07:38:58AM +0100, Jiri Slaby wrote:
+> On 26. 02. 25, 19:33, Yury Norov wrote:
+> > > Not in cases where macros are inevitable. I mean, do we need parityXX() for
+> > > XX in (8, 16, 32, 64) at all? Isn't the parity() above enough for everybody?
 > > 
-> > Okay I see what you mean, if we match on a TCB mode then we wouldn't be
-> > able to define the cases where one TCC is different from the next in the
-> > same TCB.
+> > The existing codebase has something like:
 > > 
-> > The goal however isn't to support all functionality (i.e. PWM-related
-> > settings, etc.) in the counter driver, but just expose the TCB
-> > configuration options that affect the TCCs when configured for counter
-> > mode. For example, the sysfs attributes can be created, but they don't
-> > have to be available until the TCC is in the appropriate mode (e.g.
-> > return -EBUSY until they are in a counter mode).
+> >          int ret;
 > > 
-> > Is there a way to achieve that? Maybe there's a way we can populate the
-> > sysfs tree on the first encountered TCC, and then somehow indicate when
-> > additional TCCs match. Attributes can become available then dynamically
-> > based on the TCCs that match.
+> >          ret = i3c_master_get_free_addr(m, last_addr + 1);
+> >          ret |= parity8(ret) ? 0 : BIT(7)
 > > 
-> > William Breathitt Gray
+> > So if we'll switch it to a macro like one above, it will become a
+> > 32-bit parity. It wouldn't be an error because i3c_master_get_free_addr()
+> > returns an u8 or -ENOMEM, and the error code is checked explicitly.
+> > 
+> > But if we decide to go with parity() only, some users will have to
+> > call it like parity((u8)val) explicitly. Which is not bad actually.
 > 
-> Sorry, let me step back for a moment because maybe I'm trying to solve
-> a problem that might not actually be a problem.
-> 
-> I see functionality settings available in the TC Block Mode Register
-> (BMR) that can affect multiple TCCs at a time. Are these BMR settings
-> exposed already to users in someway? If not, do we have a way to
-> introduce these settings if someone wants them; e.g. would the
-> AutoCorrection function enable bit be exposed as a sysfs attribute, or
-> configured in the devicetree?
+> That cast looks ugly -- we apparently need parityXX(). (In this particular
+> case we could do parity8(last_addr), but I assume there are more cases like
+> this.) Thanks for looking up the case for this.
 
-BMR is already available and used by the individual drivers. The current
-microchip-tcb-capture already uses it to enable qdec mode.
-timer-atmel-tcb uses it to chain timers.
+This parity8() is used in just 2 drivers - i3c and hwmon/spd5118. The hwmon
+driver looks good. I3C, yeah, makes this implied typecast, which is nasty
+regardless.
 
-Note that we already have a driver for the pwm function too in
-drivers/pwm/pwm-atmel-tcb.c. In fact all the other TCB drivers predate
-the microchip-tcb-capture driver.
+This is the new code, and I think if we all agree that generic parity()
+would be a better API, it's a good time to convert existing users now.
 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Yury
 
