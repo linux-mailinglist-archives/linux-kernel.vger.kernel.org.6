@@ -1,124 +1,167 @@
-Return-Path: <linux-kernel+bounces-537481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431A6A48C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:13:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C875BA48C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F4C1890A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6882C188DCE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798F2274245;
-	Thu, 27 Feb 2025 23:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BD0272914;
+	Thu, 27 Feb 2025 23:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XipCgQP5"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e60UYRhq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC5272914
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C3D2309A3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697984; cv=none; b=VXnwG2M8FEyaHl1U3x6Eogl/bUJkituplPRDg3VQ2YVeDqQoeXqRK8r1LtMzrLJocVvps2nhDSJGuo5nskYD8b5NUCBKBro36pF2b3i03abAobr06r7xczEDTNgTI7Il5XT5i+oS0cUzXbZRa8F0gyGyr5M0YMFreACKo5NROU4=
+	t=1740698031; cv=none; b=dzhCiwj0w0EaL6hHKtI1rIcJMfq0wIV3bPKBEit1FYBuTejRMKqsJBVYB8SVKUAKcvyuBlbkAjrutlXImuUBkeUMRR9+QM9anyi2PrZJE+GAyr7VstiaGRA1WFyW9LLTtFCQFoQ4Q2Vyb47xcaYQqeUhunQPFTZlz8faDY+J/PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697984; c=relaxed/simple;
-	bh=VrMyULN9yRhX0362jZvsXqzL/blFpYThDTo1AkO/c30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9MvKPOHO8lASXYiEqgkbOoNseYXmimB80+Qnj4/eYxg+1ZdkuunPl9VxmFUWfRykdue9zl4qpaNFYIEFHp1cE/WLCH4XPkW2KSdr+yzzoFKVpA2h2Z9MFnHuYzPSFf4Cnr5Ta4FHymzo/4OHwnpgGGwO7U+m7RnkcdXOdK94YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XipCgQP5; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5494bc4d741so532839e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740697981; x=1741302781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YmkybCOSFne6yK3kY+Du84AtHtcKYiWZlsF8gbRhEyU=;
-        b=XipCgQP5AMF9HQZrYR98rzjGwiwORxjbfuqc08WQYkF5sJfbva3dXBMA18/bZAYruq
-         lYzFIm066i1nKA/I7Wzwj6MRBy+0n/39lK+vm6FC6CVRgGDu7WVqIrB8ipuDCvhsn2zX
-         gv0fpICwmOY5QulyxYLrcoOFj5IBGXjw4THDC8H5KzFtAVKQ4BSA0oM7EMfJbsaTTsxD
-         VZVNpjtUVnbHGmSynxMcIgz16aEeDQ4C2vuh5WGjDtLxJlH3J37QUF3px8FPH2CV6ejF
-         XHzz6NQx80JJCWwT0F7ydmGCbLFt4WTzVd+9gutJtxv6qDO2V0i8yvXAaddp2Q2ZPUFr
-         Z/gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697981; x=1741302781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YmkybCOSFne6yK3kY+Du84AtHtcKYiWZlsF8gbRhEyU=;
-        b=F/r8MMntzdWL9/F5DQo4VxsaB5vQkT9D448ehj0Gy7KPrg8PMRkiH3NzVA5JODANm4
-         pF8zBekUK5qgPAYEivyZu3FBvQcnddLXz+buJeKULCcCk6G1Z/z8W9ubjE4kaxttm5yX
-         4gp9dTVRsJGiiOxQZJXjt5gPyWgwW09mWLqb1fAZGAm46nnLOQatOZ0WQ9k4bgJ/zsGG
-         tC0InxyjVWIa7lIU03t4b6z/aslEPLpvgUbM2tK7lmWl+1UajWr0Vpx0oCUVlrHoo4xf
-         n9tjth7iKa+jFn/pwVcWBd7esNnNbgj4N/UCFP6Za0bTB1QoeG8sThQEpVEwL2Fy4sMN
-         nexw==
-X-Forwarded-Encrypted: i=1; AJvYcCWV+o23eQI0RMqBSd9YdO8CVJ+rh5+k1vtz0UCzcZq7me99a/LmCVrw5nBJdT4djzmT9gnDuMr8PvHAYzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUubcMpvAHpaaXdq7tBivV7IzRgSwm+TfEoE1cEPyPg33r+Y1V
-	R741tQzjHnXM/5SBxuLbz/1t5UHYcFn9MQ8H8t4cx3I7Zxh8dXYxVKJ6/BFvDhqO/kHbTpIqgEF
-	SPmF82Z+sJjgrVTLgdnPnlH1oR8vR7JdwJEyGZQ==
-X-Gm-Gg: ASbGncsELJW2jfBKIg2j9+2M7mRYitsrI9TEQfwbzw4XQbzutxA/Yms5CA/x0WO3TLU
-	V+skaypzGamnN+aZrtRbCDOQ8DZMnQJzBqOR56ag5700fdBuEJS3uGed1vWN9dRmNYizuBiYjeU
-	mELJ5POpw=
-X-Google-Smtp-Source: AGHT+IHLcUchRQ5RHejMZKQOgPdGa2RgldlYInULBrGmDbyHiaxGOnJDGcYbTPdwNuvGN5wuzKGCGgT0iWuzwLntJq0=
-X-Received: by 2002:ac2:4e0e:0:b0:545:2fa9:8cf5 with SMTP id
- 2adb3069b0e04-5494c354e58mr578980e87.49.1740697980909; Thu, 27 Feb 2025
- 15:13:00 -0800 (PST)
+	s=arc-20240116; t=1740698031; c=relaxed/simple;
+	bh=YxE5PbthybxzU4+96qEkLJpOorLgZO9Gyydc3c1Dw4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pF70kBzNpF9XhYVlzwQ0cWl1CvlB4c4sAxVAuo75RWQPpppEs/M2LOO6t+z5hymb97id3D7HGQXK3CSSmr3S9rDLtym5Pd9WvMM1/rBaTy0HxnUamtql+fEaF7mxf8BPQOUKYRdKqnMVNLjMLqGpVsWkH98YKdd6iyQQTYdcm/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e60UYRhq; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740698029; x=1772234029;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=YxE5PbthybxzU4+96qEkLJpOorLgZO9Gyydc3c1Dw4k=;
+  b=e60UYRhq+XeNC/z4ni4Ipp/8HtqYjA7JoAs6YloCIMGyDE/13IeqE9RI
+   8WilKkQrmEOGuM6HiRofDv6r1GvMkRc27lbYrKNRaVsb2FKb05rsdEFZF
+   DE/NYmt6GctqXNs/I6HsDCXhNUoha58KPaDCo17eV94HvJvogPqtoOBkI
+   6EajSpFss0YCK0ed78udnncGnaNn3sMdZs/dDJ5Gi3NZfTpltig0WENAY
+   ZI7/yt/7+WXpei9pjzmHX8/EaiXmzahOq6C/aAJ9gUO6n5TnCdsCj8uTW
+   w7RBpvW1/kbSixXpoHYYQJl0dqiUcWqoCw9fFXKxfIG69aMJrszJrjd5v
+   A==;
+X-CSE-ConnectionGUID: m3/s/QsGS8e2C95QOWS4SA==
+X-CSE-MsgGUID: CIcQ31wGRruv22UcHsAO8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52246811"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="52246811"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 15:13:49 -0800
+X-CSE-ConnectionGUID: TtVG0Xe0TKO6gnDOVb1pKQ==
+X-CSE-MsgGUID: nGRSvO7vTByIbJgRhtJWQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="140391404"
+Received: from jgarnacx-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.170])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 15:13:49 -0800
+Date: Thu, 27 Feb 2025 15:13:42 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/speculation: Simplify and make CALL_NOSPEC consistent
+Message-ID: <20250227231342.jh67quujcd3tgmft@desk>
+References: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
+ <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
+ <20250227184133.lxm43awa2jgdpl4q@desk>
+ <15253834-fb89-408f-8269-65413ad29f7a@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com> <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
-In-Reply-To: <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 00:12:48 +0100
-X-Gm-Features: AQ5f1Jra6Y1TNly1NYmSkFPtENvNIwlGHtsux17X3bXg-g3qhlo7h9G9hMQoxr8
-Message-ID: <CACRpkdZV4EHGxYrX77FgsZvPrHohCEixXX6dkEoVSYSsaAzbYg@mail.gmail.com>
-Subject: Re: [PATCH *-next 15/18] mfd: db8500-prcmu: Remove needless return in
- three void APIs
-To: Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Will Deacon <will@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Lee Jones <lee@kernel.org>, Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Zijun Hu <zijun_hu@icloud.com>, linux-arch@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <15253834-fb89-408f-8269-65413ad29f7a@citrix.com>
 
-On Fri, Feb 21, 2025 at 2:03=E2=80=AFPM Zijun Hu <quic_zijuhu@quicinc.com> =
-wrote:
+On Thu, Feb 27, 2025 at 06:57:37PM +0000, Andrew Cooper wrote:
+> On 27/02/2025 6:41 pm, Pawan Gupta wrote:
+> > On Thu, Feb 27, 2025 at 12:49:48AM +0000, Andrew Cooper wrote:
+> >> On 26/02/2025 9:03 pm, Pawan Gupta wrote:
+> >>> @@ -420,20 +420,28 @@ static inline void call_depth_return_thunk(void) {}
+> >>>  
+> >>>  #ifdef CONFIG_X86_64
+> >>>  
+> >>> +/*
+> >>> + * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
+> >>> + * to the retpoline thunk with a CS prefix when the register requires
+> >>> + * a REX prefix byte to encode. Also see apply_retpolines().
+> >>> + */
+> >> Technically, both comments aren't quite accurate.  __CS_PREFIX() emits a
+> >> conditional CS prefix in a manner compatible with
+> >> -mindirect-branch-cs-prefix, not the full 5/6 byte jmp/call.
+> > You are right, I will update the comment, and also the ASSEMBLY version
+> > where this comment came from:
+> >
+> >   /*
+> >    * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
+> >    * to the retpoline thunk with a CS prefix when the register requires
+> >    * a REX prefix byte to encode. Also see apply_retpolines().
+> >    */
+> >   .macro __CS_PREFIX reg:req
+> >           .irp rs,r8,r9,r10,r11,r12,r13,r14,r15
+> >           .ifc \reg,\rs
+> >           .byte 0x2e
+> >           .endif
+> >           .endr
+> >   .endm
+> >
+> >>> +#define __CS_PREFIX(reg)				\
+> >>> +	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15;		\
+> >>> +	.ifc \\rs, \reg;				\
+> >> Why are these escaped differently?  Given they're all \r of some form or
+> >> another, I guess something is going wonky with __stringify(), but its
+> >> still weird for them to be different.
+> >>
+> >> Do you have a fully pre-processed source to hand to see how CALL_NOSPEC
+> >> ends up?
+> > Below is the pre-processed source for test_cc() generated with "make arch/x86/kvm/emulate.i".
+> >
+> > - This is with double backslash in ".ifc \\rs, \reg":
+> >
+> > 	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \\rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "call __x86_indirect_thunk_%V[thunk_target]\n"
+> >                                                                                   ^
+> > 	This ends up emitting the CS prefix byte correctly:
+> >
+> > 	2e e8 51 c9 32 01       cs call ffffffff824289e0
+> >
+> > - This is with single backslash in ".ifc \\rs, \reg":
+> >
+> > 	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "c      all __x86_indirect_thunk_%V[thunk_target]\n"
+> >                                                                                   ^
+> > 	This version does not emit the CS prefix byte:
+> >
+> > 	e8 52 c9 32 01          call   ffffffff824289e0
+> >
+> > I tried looking in gcc inline assembly documentation but could not find
+> > anything that would explain this. :(
+> 
+> It's because it's about plain C strings.
+> 
+> \r (from \rs) is Carriage Return (ASCII 0x0d).
 
-> Remove needless 'return' in the following void APIs:
->
->  prcmu_early_init()
->  prcmu_system_reset()
->  prcmu_modem_reset()
->
-> Since both the API and callee involved are void functions.
->
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Ah, right.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> After AS's macro expansion, \reg becomes \% which is not a valid escape
+> character, so the \ gets left intact.
+> 
+> \reg should become \\reg or you'll probably get a compiler complaining
+> eventually.
 
-Yours,
-Linus Walleij
+Using \\ for reg like this:
+
+ .ifc \\rs, \\reg
+
+is not emitting the CS prefix. I am trying to wrap my head around the
+magic.
+
+Below is the pre-processor output:
+
+	asm("push %[flags]; popf; " ".irp rs,r8,rax,r9,r10,r11,r12,r13,r14,r15; .ifc \\rs, \\%V[thunk_target]; .byte 0x2e; .endif; .end      r;" "call __x86_indirect_thunk_%V[thunk_target]\n"
+	: "=a"(rc), "+r" (current_stack_pointer) : [thunk_target]"r"(fop), [flags]"r"(flags));
 
