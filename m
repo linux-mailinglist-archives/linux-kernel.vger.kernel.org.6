@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-536002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72B9A47A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:34:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E0FA47A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63ED7A3FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C997A2419
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2822A1EC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AB122AE49;
 	Thu, 27 Feb 2025 10:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="KrKtpelL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="SubI7WfL"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C92229B3D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DFE22A1E4
 	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740652436; cv=none; b=h1IfVLwtW4MCePqmDMR7lDUVxcNUfb+tLwInj41b7rLVn9IewY56viBCRCjOPxkWF8Pn//vSBujlR6xAj/AbjV0ewnDCL91XAbljKLAUEvv5IFG4p+fxrryBslZpx0zVReSiqH+2UyKvI+eNuS8ehIIqI254SM7Y306mY91eSZw=
+	t=1740652436; cv=none; b=LyeL2MtbIo/HC4KlZyH4qOVnCrCaqe79M7XPqb8u13LTDc97Uce/0DvUsHubn5v37RzQKgbe8hv7xCDyrj1TNkSqgCFw8nLhPNn5vqAVYjH/xyH5NvALQSZO8ikdhSLm/SZLFm1okrsbxdPpuYBUWQBo/ek/NdDzQXHpN0LyTpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740652436; c=relaxed/simple;
-	bh=yNg0EW/sSTagffgojXuqqjjQihItDBy+BD9n5x9G7iU=;
+	bh=Xaj4oMjuSjNjpSa3ETbZtATmjQ7K0I0WckpYcuhf1ko=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sKqBPrBp6w3SO+qPbkcXalTGVw/7CytH+ZMy7rufB28tcaOpg9ngqLnKGjvn8ge4qReQJGebLyKGw9wdzgNEXBBOVuUGPvC3ZZYds8aBmeVrXyor4gsJv9OPFqQhG3w3Rx2nOkcn1S5Qr4aWF/K2I3vHE2fYiPonte/d481bB6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=KrKtpelL; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:To:Cc; b=tb8tqheN8P9JREoNatG8haMJGz+og5qLcyrR7bMa90gfYKjwGyjoYsrFrUfNBM61YPob6kuGnKFPYhjlChypJrBGu05AtWsPmkv/T7sq//+MQ2EWYjZuSuAf2pQe/zA0Y+CZrZ7Z5PGvYbKUtnZBu0CXko/kx5Pf4iZ43216+es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=SubI7WfL; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f488f3161so404744f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:33:53 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-438a39e659cso5014675e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:33:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1740652432; x=1741257232; darn=vger.kernel.org;
+        d=fairphone.com; s=fair; t=1740652433; x=1741257233; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m6I9Y2sm2ZO37jUC9MCmxExXieoBlnX+XT5yv3CFjg4=;
-        b=KrKtpelLhQZkTVtkt4uBTi1dJlqgq62w57BMfhUah4dK7iAXWCow6YEK0+uSieNpSJ
-         e+lgAM87LbDXBvJv89ujLZ8K8LPPkCU5GaPeLJy039jB4pE7uitCKy0GHZycSQXFQU9m
-         739vz1FQO6Mbg75ygwxYE9HmtAdHX7yEfoxAC5aBiyytjVb+N6Edn51TyH025QpAZOif
-         mG/KYXOZ1BJB19kubx798uwA5bh/uSgBhXFzYujhzNFH0nI0hf+W8fO9xkKbrTMIAzZm
-         NS1SPYiiHdBo7Pby/u2GctH7ow4L1o95AWfOFTATGQyO1t61nx5mgbE9Eo4q7bDShbo/
-         8LHA==
+        bh=3kV/+mEBoYkvFSCaizpCuqTX8PtS4kw7sxZJGfAJUIw=;
+        b=SubI7WfLLOXCfqidbCuBBJEE58WiPBSloJKxTO+BU+QWzxpXlQ3zWMBVRf5rQatEU7
+         RymSShOIb7YGMaHaqg3zGfX6SaaScK1KmrksAVSxI009Su6+AWLcmbK5BNBqg7TcRYAg
+         /3qO38WSDyEn1fLsNgq3JHLLEVcPiSrPK7saiFkMS/9DRTNnnCZChOZSVJIfYEdLjqK1
+         WEsbKDx3BzbGSOvH6k+k281M+zFDdxofOKpFDOQ1+yCHZY+ovCCeZRdB2xq02Znd9Qrr
+         N2yuBje4zAEkrxNBDUbCkg3Bn797hKpA8rD1+5FzjQ10pjuhBBaqnlDAO2XHtXx+47Co
+         LG7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740652432; x=1741257232;
+        d=1e100.net; s=20230601; t=1740652433; x=1741257233;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m6I9Y2sm2ZO37jUC9MCmxExXieoBlnX+XT5yv3CFjg4=;
-        b=mW2AEqZcm8DqwN+hJDBUyQ8AsdEcPqGlr2gZIUp+x4XzDwMJHm50je2JCVSR+u/Azw
-         VjfCDXo3Gk39eRXsmvhkUvu5aQNgpR9euCr7q4KEV8WKHqkw4sWxUipwHhw58DuilyKV
-         d6RdP6x8dzAZhC5JJhuULYj8C7SB3PxxS6oWWKth8zQOeuVxfil64Jw9liwUk7GMXgoU
-         RBJfHYzriZaQHi48PXdwwInWIsAZSuxbmWDiNKCv9JHzmfYXDYrJ2DJGHpvS3ZtxehAu
-         0WCnb2BZSiDNwJTD89HUkRmk8geYooYq8dgcBHzKS4sdGWpJSq4qjHvBkC2ZMP7nuKqd
-         TA4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUT7Q+7v1Af9b95SOM9SICbs5PpzBgjlC2sPRS19hZEDVZHTH/cTcYjkx8H6eAGuaoJBF7gEQ3h0hXLwgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5i9RZy+YA1ouwt6L7vJdEeGSOEdBRNbpMJ8cnI52mx5X2GUQb
-	GAVUf2HLQZgkG1iZ02f/QrV5pYlcPJAQfcRpdjckiv5G9qv+XJJ/gzKmKrXh9Pk=
-X-Gm-Gg: ASbGncvCKfOQFjVAqUdyFJByRMQhW76tJOn2J5SewPmcAXeRU+WVwMtw/ECoVzZd+px
-	Ro0K7zPPRl9bVisJJM9KIKdpUYkz1Tpqf8nuMj2G79MWDgwez6qYMpjxGIcdgtGxGxvrA56sQML
-	zbwjY0y1HxKJPfSHmgE3VvO4g2PLLQSmB6Q8eftjfnX9sJAKmbb9JcgYuMo/lNsR8RrUGfCwjts
-	N5Kh48Mr8vUELObaRYzN9cipum6qQ8PFxUSdUVCO849dutMZFJBYJjvJo3D+rXZQ1cKB0tiyrOx
-	hdnxYX2ulAWI6ih+d2ng57aY0J+T4If/ZkF9iPuCMx5W07XMup2W95slci7LiXJopYmFXq4bad0
+        bh=3kV/+mEBoYkvFSCaizpCuqTX8PtS4kw7sxZJGfAJUIw=;
+        b=dZNfIZfME/bUKMY5zDuXIU25pbTfc97iR5fAzQhChFqS1quAowuKRnVPhIATVREcSJ
+         rh0RPJ5ekgzrelHzxSDMqTO7GidMG5Ii4gF/C/PAnNApUNMrKBMWLrGWGB4eGCsu9OY5
+         7ch+EcYNCIaSISW1LzbKeGUSKHYtTz7/8KN9N2DfhAM/sm4iZ6a97cOBSQ8s42pvlxjS
+         9jRxYlIlve+Qe+9D7apmPiDMcjTsP4glWryPfmhdEK1uN1m7U8gJp2Pg0zd0GV9LgoTW
+         7w+Kz5N+B/f9Nc4TYjxdH7ZRA1cNP7Ovg/tCPo8wnvxGYjB6cLjWgoLtHvLlTBq4dqIX
+         s97A==
+X-Forwarded-Encrypted: i=1; AJvYcCULfVfxTYDKXaWmRRkWb02gLOAFZtkSvezlOCFflRe6Q4aUk6R9BaMYKskumkbBys006zFaTp1LWc1ANh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWaqhQQzJpBwh7FY53xafoVqmY6IollGAC9eKIEpVzcwtLBy3V
+	nopf34YhhI2BVs05fqxPUZc+mX3E381CIM5Ub1ks7VCKzXm9XS5NdvAEnzGgnxgloPnsauS8Bz6
+	P
+X-Gm-Gg: ASbGncvzDlxk01VyMp55A+Cu8xyMCbNkYhZR+Q6AeJBZsBEp4qKXkDFsHukrqKmcFMG
+	ShLyg0PPACQNMmd3xh0QRiY/U8q+wcdrGN6Jrg4YWWnyBY/oVcCaZl64Vag2GBo9aepkZ6Qkad8
+	pGSTK2wMOTGs0OrG5MGWFobf2yrVZ2kno2yrpq9wTKZ2SPsnGUx8/fO5SsMGkfysujHssCN5yFl
+	tV4oyInngwXQXmhgCXscUMmlyjb4cSqE7QCjofxSNNPFImycTp6bnR7HEg+eUTv2iEif0oWcFNc
+	BA7VCQkD4h0ob0H3Wxx2Zq4QkIg7jLlcxdoXwpc4x9LeSq0soZ32IMlqJz9uvTdbQ7ME795IitU
 	=
-X-Google-Smtp-Source: AGHT+IFCt9u0coO8uHw2mLPkv/N6QOb1W05JtNtgr7XbEDzVKeQRsZ/jpOW0SzEfoBUonlsoaSDtAw==
-X-Received: by 2002:a5d:6c6e:0:b0:38d:cdac:fc02 with SMTP id ffacd0b85a97d-38f70772b89mr17494957f8f.4.1740652432196;
+X-Google-Smtp-Source: AGHT+IGUfMm+wQqSIMbXYaeRiTXSjbtLUzOin3rGEggSO6N1QUyFM5nBpMlk0cSmhBIeKP8kb1PaJA==
+X-Received: by 2002:a05:600c:4507:b0:439:8e95:795b with SMTP id 5b1f17b1804b1-439aebf38b2mr220117645e9.31.1740652432678;
         Thu, 27 Feb 2025 02:33:52 -0800 (PST)
 Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27ab2asm17854305e9.32.2025.02.27.02.33.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27ab2asm17854305e9.32.2025.02.27.02.33.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 02:33:51 -0800 (PST)
+        Thu, 27 Feb 2025 02:33:52 -0800 (PST)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 27 Feb 2025 11:33:41 +0100
-Subject: [PATCH 2/3] net: ipa: Fix QSB data for v4.7
+Date: Thu, 27 Feb 2025 11:33:42 +0100
+Subject: [PATCH 3/3] net: ipa: Enable checksum for
+ IPA_ENDPOINT_AP_MODEM_{RX,TX} for v4.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-ipa-v4-7-fixes-v1-2-a88dd8249d8a@fairphone.com>
+Message-Id: <20250227-ipa-v4-7-fixes-v1-3-a88dd8249d8a@fairphone.com>
 References: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
 In-Reply-To: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
 To: Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -94,30 +96,36 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.2
 
-As per downstream reference, max_writes should be 12 and max_reads
-should be 13.
+Enable the checksum option for these two endpoints in order to allow
+mobile data to actually work. Without this, no packets seem to make it
+through the IPA.
 
 Fixes: b310de784bac ("net: ipa: add IPA v4.7 support")
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- drivers/net/ipa/data/ipa_data-v4.7.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ipa/data/ipa_data-v4.7.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/ipa/data/ipa_data-v4.7.c b/drivers/net/ipa/data/ipa_data-v4.7.c
-index 7e315779e66480c2a3f2473a068278ab5e513a3d..e63dcf8d45567b0851393c2cea7a0d630afa20cd 100644
+index e63dcf8d45567b0851393c2cea7a0d630afa20cd..41f212209993f10fee338e28027739a7402d5089 100644
 --- a/drivers/net/ipa/data/ipa_data-v4.7.c
 +++ b/drivers/net/ipa/data/ipa_data-v4.7.c
-@@ -38,8 +38,8 @@ enum ipa_rsrc_group_id {
- /* QSB configuration data for an SoC having IPA v4.7 */
- static const struct ipa_qsb_data ipa_qsb_data[] = {
- 	[IPA_QSB_MASTER_DDR] = {
--		.max_writes		= 8,
--		.max_reads		= 0,	/* no limit (hardware max) */
-+		.max_writes		= 12,
-+		.max_reads		= 13,
- 		.max_reads_beats	= 120,
- 	},
- };
+@@ -104,6 +104,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
+ 			.filter_support	= true,
+ 			.config = {
+ 				.resource_group	= IPA_RSRC_GROUP_SRC_UL_DL,
++				.checksum       = true,
+ 				.qmap		= true,
+ 				.status_enable	= true,
+ 				.tx = {
+@@ -127,6 +128,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
+ 		.endpoint = {
+ 			.config = {
+ 				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL,
++				.checksum       = true,
+ 				.qmap		= true,
+ 				.aggregation	= true,
+ 				.rx = {
 
 -- 
 2.48.1
