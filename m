@@ -1,182 +1,116 @@
-Return-Path: <linux-kernel+bounces-536989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF8AA486BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:35:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134DAA486BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A79E1888BFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903BE3B5CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057031DE3DC;
-	Thu, 27 Feb 2025 17:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BF1E51E8;
+	Thu, 27 Feb 2025 17:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="aZh7svt8"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011027.outbound.protection.outlook.com [52.103.67.27])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFTWj5Mn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8D1D63CF;
-	Thu, 27 Feb 2025 17:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677709; cv=fail; b=d2UrdubDmlexa6zsMCVEBdMvER8xNQnycECSsVfvjI27z9Lpww24hyxq9jWGDX7EqJrGDEBl+m5KfuIASx7qNaZrSZQD2Pr7l9+B1vHPz/tWUda/SI6VfWk7KgKJteWoExOqiLUUpSS59uVY2Lff877cwW4FPse4thC2MBodQAk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677709; c=relaxed/simple;
-	bh=eFqnGs/8/i44OtRFQ+w//BfIyVvfgW6k1ilbQIKRSF4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iC77zP3eeBQYFUw6nOqTVE8uDFbxTl+YK6gc/1c1S2TtOzUmSAiWQO8tPFT+PcLfn7GgaqvJvxUxkeY9mY95c70EK2Mh88tJV+ccUNhgmFod1sDWIZuJUZBr3PRy4JU0AjJHn/8wTdzi9KKs4w+ahLTiEeuUm86Tyt4cYiTpdvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=aZh7svt8; arc=fail smtp.client-ip=52.103.67.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qdYrnVEJsu7uRKdRNKQsqO3tueFU1SsyP4G0pQ2OahnsT40El4jm3YHkTqw/dvCzG6LPvk7HOkYQNAzIKZiigM9fOqveRo+OlzApI24e/uh4/H4viukr57VDHC9voMqck8UWQfLDCyQcpmaZBqyw05ns6bxUkEhEw+3bNGwzkWiqZzLFYlzyoL5hyto74GGoEpH2o93kQYZjtbgf+/5pjHdIl0vbSZbGmLOSBaNA+y3XKuVn3tR74jOkI7zO1npvZRKP+3ZzCknIfWWNDYTrgYP2GiTAFmXIB1dUnRjD8etTkxO7FuBhNGN+QZF+je0ZWFsMQeS+ODwWDuSkQGtdsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HjSltGec9qsTH8QrOjYyF6dlhYH67W89spYjkatgt+8=;
- b=gch2zmSokrdHGMtcFAVzteCZuhFdM8sFWGETAUpowSVVBPISnZ1pgyUu9TwmAUWYBmNe0QvRP+5Aj7fV5ZPuRqPSX5W1j+33qAL+w1M/pANnuvy0AYaNOgg1xLYrkWjQvPehqWISNAkIEuWg3ttCFg2AnCSonoKq61kc+NNfEmI5Svq+/AWMLXmJDOORoGXKXjUusi0RsZB+CVBvTR2rIXwQ8L03bBeaUifwJ+eC6A4+x0tTVS2UJbSs67NmhAr7tGP3uHVtutkvnSuJoK2KV9hXoX0uLwJr9xtda80J8Vlq0/S/jGuORSffP+vvugKPMsnelsad5vNR/x42HG5dfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HjSltGec9qsTH8QrOjYyF6dlhYH67W89spYjkatgt+8=;
- b=aZh7svt85IqCftuYjHZ7Jtq21Du2rkcRfcXRAeLyhA1NTDqzt4uhzKyhiiw58NxfW9zCyKam3UhercWfUHWDYx4Rr5nCvRs3IV6vjJdMa+l370E8gY0E9p5/0MNtj7sD4IcDM/Ik+gIH8ooSQzzXwsXDm23etyprKILc6lfCUR0pUPk3lKI05Iy7IQ3MExr26AIcuw4RvZ13GxI+qbUNSFKbVB9qYExNcL+lVec6rj+bluK62KdDfd1RYyxR41R0CKFDYvhulRep3QOB6PEh7Te7I0bZ4Es36AA5FhDP25dAuG/OBGkSkuZkj1C73lMDnCqhvYeOBpNbuVyeODpFOA==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MA0PR01MB7281.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:34::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Thu, 27 Feb
- 2025 17:35:03 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.021; Thu, 27 Feb 2025
- 17:35:03 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>
-Subject: [PATCH 3/5] HID: multitouch: take cls->maxcontacts into account for
- Apple Touch Bar even without a HID_DG_CONTACTMAX field
-Thread-Topic: [PATCH 3/5] HID: multitouch: take cls->maxcontacts into account
- for Apple Touch Bar even without a HID_DG_CONTACTMAX field
-Thread-Index: AQHbiT3ulHkDk4jwuEGhkRU3zGWpBg==
-Date: Thu, 27 Feb 2025 17:35:03 +0000
-Message-ID: <F648B94F-AF64-49B1-AC91-EFBD0F8E216E@live.com>
-References: <4C367CCA-2994-46EA-A139-7B4E23E33ADF@live.com>
-In-Reply-To: <4C367CCA-2994-46EA-A139-7B4E23E33ADF@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA0PR01MB7281:EE_
-x-ms-office365-filtering-correlation-id: 2399d519-5f52-49e2-242d-08dd5755115b
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|461199028|7092599003|8062599003|19110799003|8060799006|102099032|3412199025|440099028|21061999003|12071999003|11091999006;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?CImvZB9JwQfiyOHDjuEGqt8greztP1bM2OJ20tvIecqlyrlnR+YRqKG6ztLM?=
- =?us-ascii?Q?e3V2UyLW3X0IXH+sftQc5EIXwi5d3Xs0ya7DrehIZy7rDjmtSzMAzuI1rJEu?=
- =?us-ascii?Q?HTHCAGWG6nDEGl14nCLkkCbmCIwPEid12K0dA/KzFvUKanKBGaxQ6fHg+3k4?=
- =?us-ascii?Q?sWL7gMkVWzbtCXmkcM/MM+XlGY/o9VTxxnhR/DxzcN+IM+HSmY7G42NPhcwy?=
- =?us-ascii?Q?WsEdW/UXwaO4RJW13LMbhZZ7fxQ3u96GwI2rZEIfw1EeNoS2dVOGVsQTIwjr?=
- =?us-ascii?Q?PCnVcp9+i9PklnFsuqfOI0GfewVtgp/yZpuPSZj+09lLIPMLZkSlb0mU70Hh?=
- =?us-ascii?Q?EaIWEbv27Sh8RUILPTDZJsSHew/oJ2WnW/cbmgc8toBCJeWK0Y8NjArlWbvv?=
- =?us-ascii?Q?i330E0gQ6w0r7IDEl4/1dis6egKFT4CojD0oqc/cJaWdn8Bu1HlyPOVnPiKC?=
- =?us-ascii?Q?xTS57Fz6YQxpuKTYzWc9tmg08OTRWTLNnAp4d9VSQnjFC1o9UUtVM94O+rW+?=
- =?us-ascii?Q?JZXp+lvs9Y28zbNjYwgEBovS1Vt3fVe0yDkebt2cWARXHk9ufI01xoNM+8yx?=
- =?us-ascii?Q?i/kBsJftaiPYcd6yS0CL585oHJAEPGKUcy5CsBk8xw7J65FPvRYPY8iANyBY?=
- =?us-ascii?Q?0jqUyBj0zO/JgZK17EsBWV/gVgGZmoPyToBqMI8e9O/c0NpqZzQ08XpYdVJ4?=
- =?us-ascii?Q?lZi681JuvW2kQaFX0SznTSzoaZH7B4LOPhkZC3hq1ffbam9LNceOoU7BxGcg?=
- =?us-ascii?Q?wcuk8U1y91oY4UqS3VXm1huxCh6C2c5pkPRrYKnffV5itlK0tS9igvbJfAq+?=
- =?us-ascii?Q?u3Wf1L8kLnUzjnC+YhdOmrLXbEVFQQF3vzH2gzlDSdzsu7oRs49awWknRQKY?=
- =?us-ascii?Q?Je5H8BOMQN6fUFmjn3WAIAoCokWkmn2GsdxURr7s7u4cMjlhIpNQZi7w0JZi?=
- =?us-ascii?Q?U/2rMFFKNnQ0tLAFf8HNn2HtXp6wPPJVhQTgnGtUcY0qXFNKyObe2zade6HA?=
- =?us-ascii?Q?hSvqAtp6ygJIKOvpYl9isGf3brtU/6jdkK10XtPPHHTGX7MtnhEsQ8ZRjR+l?=
- =?us-ascii?Q?wBimbV6K54FcF5ONp6iJ69u5C3LqUUhyvzpFkUCuHyMSGL3jLRFwxeS0kVAu?=
- =?us-ascii?Q?rSkbfnkwkdypM8E8eYp9gaHWqyrio3AeGAZCmxk4jgQD/OqcDAoT5O4=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1Rw+7g/kdgr0PYeRyH3peZ6i/Ttdn+nGycDyvAegdALmRPH5ekvynXdDTzej?=
- =?us-ascii?Q?KHq13S1y6QTkYjBWmqAiYfAhkeHAjKjhD83jrjAmAqRMWg8e5lHsJaR59D1H?=
- =?us-ascii?Q?e1Lme480aXfK8ZLYDvN2bBmEwJccV3XLCp8GSDF4FRMJeD2OY+efSjuP/6hp?=
- =?us-ascii?Q?m8xy4sCeIzbp1C2wrOpCKPe4+Ddpy7JTDnr/2X3uJ08v8szxhQV6mxfsNjeg?=
- =?us-ascii?Q?ZtVN551ZTJUH/cI1DcKeRtrKbe4vkNlNDk/YupeuW1zW8eRdmoqSV41J1pfj?=
- =?us-ascii?Q?mUNqPOLIYeLhYVW3T93mGeE+YNuGeNMMl7fDqTb89e0jZNRwsfDfIPgrC+kg?=
- =?us-ascii?Q?ZVQoo+TD/UA4TAMG/rOQxc3XvDRWyP3GVzLahW0DVutZ6JYFuEookJnSXGzN?=
- =?us-ascii?Q?FwuMZFo5ExhK4QNPwaKKtP5FJRGLyd/iwUKb/gtXMXfn6yeHc0Nncnz9ORvz?=
- =?us-ascii?Q?g+4iiHELXH+bPxNCORNK/FfQHxgVeskjjcAv3HiqPPaL53vglmdRbehbvEZN?=
- =?us-ascii?Q?LqN9SuWXJ8xCEWYcyigyPzUAOdLVcm1i/7BuYyimZiCvIviWk7fthuShhCmY?=
- =?us-ascii?Q?k5tUhEj9u6tx9FR9prZNo+jP/HbitLouIC+Z/xUkZIBB2lBDRGBvEJrNxsMu?=
- =?us-ascii?Q?R3dwpAGgn961Yq0nPTepMR5xCn2xCqw3uIHqt8vw7Kfo8/SF4GHRbuSrUkIR?=
- =?us-ascii?Q?zU/w3R03MYPcV9OHb+ybTL7w++gPj9JMpK0ReyOFCC8XHqqd/Scd7pEFzniq?=
- =?us-ascii?Q?bhaKVVOC3EsgHFkHD23dPL05IQf1BWL8GwayEIxvpem6DIUGyFgmO4z940F0?=
- =?us-ascii?Q?dlhxKyLI2mfeofeisxeJ1ExmzE5qo/ZQGr7NHm3v+U2opFXSTZ88zZAQGURK?=
- =?us-ascii?Q?p1DbCPi4SD4O1JbZ8XZDtFmpSZkhFU+UL/cIn+o3OOLmafbG7Q1rvaViygvr?=
- =?us-ascii?Q?F5tqiYVXPEN7rtpQSIo1o17sOKjKH1OkFtScnQ2xDOWV6EP+bR0fQAyk+F2v?=
- =?us-ascii?Q?Ua9pF1ALNJcVhtErn3mjQ/excB5vGRn2FOEyh01Z92PRExL92SvU+ewE4XN7?=
- =?us-ascii?Q?SmNiXSgEc9kP8QtBd54vq8960xtuRn8QcuJXMTsBtTqPYiiRrnHMvy6GTvUb?=
- =?us-ascii?Q?XhZyz10Dl059e4qo3P/CGa8vk6ovHre8XxdI7F0F+j/9F2mjGwZncVV7bLK2?=
- =?us-ascii?Q?vu7ANQHFsL4YlQoi/IvM7LociqZkUTQfuMSl01Y8lI4Zw96qXN2/+RHurHA8?=
- =?us-ascii?Q?8b5TTUqBvjA5+4Mz7y4noC8yfJ+PchP/LxhT9Dm/xKgI9GNcLKnmsCLYZl6V?=
- =?us-ascii?Q?i7NdYlDJOPjhOWtQBaIb0BRi?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <733DB41099EC54418A21AB886B6E9FE8@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2DE1DEFFD;
+	Thu, 27 Feb 2025 17:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740677711; cv=none; b=RSrZo6JcumRRruAYYsDbidVPPCql8N1BmKLwVEGvTf50Nq6aLG2Vky3P9LL1hOFhNGrLOs+hbowMJxp7S3FojzqQLJqxpFWh3njhQKfs9IccmnNOSOlJ5SS7hy+A953goMk8UU9OBr8ny368dxcEwfHGGzk4UtFQrd7II7Wg4xU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740677711; c=relaxed/simple;
+	bh=ey8ABS/p5vUBXOFJPmbtoJ/tRFgZYhZrBVTq4JyjQDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFt9XywtVO0fvLX5gPlnCEkuFObNDfegMhOoaEn/y122qY7yY3z6MHsH++Lt5C1hxI1yeeVp8ZIK5l4Y9D0hKykrHLoS6dgNF5UQb0ry1DY6B8U+KGf1dJl9xYxOvSZEsLQA1iYl0t+fpWK3K4y7MWOnRnnYpupRwMNNrM5VFjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFTWj5Mn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FDCC4CEDD;
+	Thu, 27 Feb 2025 17:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740677710;
+	bh=ey8ABS/p5vUBXOFJPmbtoJ/tRFgZYhZrBVTq4JyjQDQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=lFTWj5MnYrsCAgU0ARCWVNpj30xfhEtQfvYkdsW5Tew7TwJHMLPOxTUQpZOctEPh9
+	 UheY0twEBzeznHFgD4dlAEt+fPgORW40apw+ROIvO4NrhM1SNbXtvCEjdiC4HEcUrj
+	 G7ahZrvE7gsp5eQ4UOY/epkXJR07JL5kiMwpBxMB3mHPRJ0KRVA0/gJZaS7yK8GrxJ
+	 8ur/P5TwncksU7+2+xkIuPhNr7SnH20OGfVC/kcj/iRwKBAvXhEZxIR1jzTk+P17Yq
+	 CcL4aXH3KhbovABO3AjLSK30mYqLowBxg8VJFEghgWneCbm+8i6oyyqIfqNcnTOBsK
+	 c62We2LEAkrzA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 8EEA2CE0799; Thu, 27 Feb 2025 09:35:10 -0800 (PST)
+Date: Thu, 27 Feb 2025 09:35:10 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Martin Uecker <uecker@tugraz.at>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>,
+	Ventura Jack <venturajack85@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com,
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de,
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <54b92e98-cabf-4ddc-b51b-496626ac3ccb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+ <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+ <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+ <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+ <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+ <09e282a9c02fb07ba4fc248f14c0173d9b19179a.camel@tugraz.at>
+ <CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
+ <2f5a537b895250c40676d122a08d31e23a575b81.camel@tugraz.at>
+ <20250227092949.137a39e9@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2399d519-5f52-49e2-242d-08dd5755115b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 17:35:03.0961
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB7281
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250227092949.137a39e9@gandalf.local.home>
 
-From: Kerem Karabay <kekrby@gmail.com>
+On Thu, Feb 27, 2025 at 09:29:49AM -0500, Steven Rostedt wrote:
+> On Thu, 27 Feb 2025 07:56:47 +0100
+> Martin Uecker <uecker@tugraz.at> wrote:
+> 
+> > Observable is I/O and volatile accesses.  These are things considered
+> > observable from the outside of a process and the only things an
+> > optimizer has to preserve.  
+> > 
+> > Visibility is related to when stores are visible to other threads of
+> > the same process. But this is just an internal concept to give
+> > evaluation of expressions semantics in a multi-threaded 
+> > program when objects are accessed from different threads. But 
+> > the compiler is free to change any aspect of it, as  long as the 
+> > observable behavior stays the same.
+> > 
+> > In practice the difference is not so big for a traditional
+> > optimizer that only has a limited local view and where
+> > "another thread" is basically part of the "outside world".
+> 
+> So basically you are saying that if the compiler has access to the entire
+> program (sees the use cases for variables in all threads) that it can
+> determine what is visible to other threads and what is not, and optimize
+> accordingly?
+> 
+> Like LTO in the kernel?
 
-In Apple Touch Bar, the HID_DG_CONTACTMAX is not present, but the maximum
-contact count is still greater than the default. Add quirks for the same.
+LTO is a small step in that direction.  In the most extreme case, the
+compiler simply takes a quick glance at the code and the input data and
+oracularly generates the output.
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-multitouch.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Which is why my arguments against duplicating atomic loads have been
+based on examples where doing so breaks basic arithmetic.  :-/
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 70fdd8cf9..f7fe6aab8 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1335,6 +1335,13 @@ static int mt_touch_input_configured(struct hid_devi=
-ce *hdev,
- 	struct input_dev *input =3D hi->input;
- 	int ret;
-=20
-+	/*
-+	 * HID_DG_CONTACTMAX field is not present on Apple Touch Bars,
-+	 * but the maximum contact count is greater than the default.
-+	 */
-+	if (cls->quirks & MT_QUIRK_APPLE_TOUCHBAR && cls->maxcontacts)
-+		td->maxcontacts =3D cls->maxcontacts;
-+
- 	if (!td->maxcontacts)
- 		td->maxcontacts =3D MT_DEFAULT_MAXCONTACT;
-=20
---=20
-2.43.0
-
+							Thanx, Paul
 
