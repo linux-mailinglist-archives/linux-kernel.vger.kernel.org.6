@@ -1,243 +1,92 @@
-Return-Path: <linux-kernel+bounces-536418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2DBA47F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B01A47F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260031896749
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88BAF3AB58A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C074522D7A0;
-	Thu, 27 Feb 2025 13:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462A422F397;
+	Thu, 27 Feb 2025 13:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OYvCZrDj"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksKRITal"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01119221574
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E965224246;
+	Thu, 27 Feb 2025 13:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663290; cv=none; b=F43W/wZeGReOKf1ir0/+8vM6swsSDT66j4X8aUUaV5Dec0KxdvbqePU42aOsScexviyKY2UpdiBn/FYq/SL71QGaH1ll7SmUzNwKnhDRLUaC072DpilbJzTrFgqkScyy4E0P6T87txdLPHurdazy7KAdY3OauNidm5rYiyuIHNk=
+	t=1740663311; cv=none; b=ep0afLqNqSpiKELh3gk7+r2xuXYOj1LwpU3d27oqfgluruNOMIVj07TfnbSAf8Yj+IPEzDQwXUPWY70I/WyUvQmqo7ToSsr8kexi50v+nE60JmV9l/nrrXanIfth//vSg81YMnh/aoIaE40/m3Wjy1MW+xWC0akihropiPQdW2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663290; c=relaxed/simple;
-	bh=0M2WmYjO1xgOd0eFwiKYedB9fY112jhiSfw4FJkXC6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kUmdGCxTfrxkoHzwqWts5TWxXDvlA+wZ1/U+u3StbX/yzcCGJjNjvnek8WSy2guWWjKhZMbCPdXgLfNYNP1y2YnO3Al8wOHZCvFYRXD0SvCrBg+UMCUKBTcT2belPhVfw4HE+RQtwdeGKf1gECsURB4Rau1PIvbPV6/QB8TCGhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OYvCZrDj; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5484fa1401cso827816e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:34:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740663286; x=1741268086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SiVrC1DW5CsgsTGK3acbzw2cH0RgjFdHaGDXEJuK9h0=;
-        b=OYvCZrDjjm5KXRegAtU2wU+KgFizQi18mzsDlBu43RR3rwqdDHmdkAMHIh9GTeNUSR
-         Flsi3fk53/bFJ74dMtNJnn+Y9qWjT5d9Obf6g4FUle/WhAHHLA6ZWg2f72TL0AXuTWWy
-         9UV4ckqusBP0nXBsEAdbOrwYkDzf+aWUaKKlOYs/2W6E/cmVhaq/YeVbs2HcvqbTYJIN
-         ZkoKw4JX24kxkcvM3saSbX42ggPiPncOqeDYw1MAGkvADwYBZQPr0uHBlIo9AvWYsHmT
-         xZuuNDTSFzLtnfIMyi/WslZjczqPM3He6EW5CJQk5XRimuOvKSkx3VblfHNEqntZXLhB
-         bcTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740663286; x=1741268086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SiVrC1DW5CsgsTGK3acbzw2cH0RgjFdHaGDXEJuK9h0=;
-        b=in5gpR0BUE6/2u3+Gu1PTFJvgkamOTrvh6jlmU9mBZy/Tb0V9T7Yh+GYF/EUEvXeoP
-         Nh2nDTYawEH/LyDQJKeGFLeLNBTD7/r1a6Efd30si5CC6BIA0S1eMYckPedhktRzn5EA
-         Op5FFnEmH//Mlr9NT5VQRo8bSrRkrjDCAPxdpxFnVDNNXS3YoDJql5B1Ps3/qdkGEfJT
-         32eftGYdwJm2wEtd+ITLaHVa4+6HVUq2o4T1h8LIIVyPPRY25ifAghUJySyXxglb5wyD
-         lHNa0QJUDEk1D5MGZMRaA5wDjYkhHzMeM6hN2tSL4H973lkkMylWTWz9izF+s3r1OgDu
-         BGyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXak4PicdcVa842zkeeDwO6EXHnJfeRAy6P4kRzbv/CGa5T6JkBUukE7H4d3LDnD9NG6Gs4qzGlgHk48LM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymDDZqKDK8xvxo5OCXq2NmfRvLJOFFngBDLTePwObjSHRYcswB
-	eyFqkOFBEiVi49TDWjStaZZhqeFPTZ9uNE7mk8nv2UL6w6LHg92bHCR0gQIIHNcwdXRD/Y5w2rX
-	fTK1SXeLeDB7seEzQazRTTMl+O3myYunCWg0f0A==
-X-Gm-Gg: ASbGncs4y0INYK2druZ0D3CTI0prsjPo6/M1ME1GpjycFOpEusgxKi0Yx75067m0C+O
-	Q8zgQTtV+25lSEar2T/qkwOZRVcqE1Mrr5y92bLWYYZCWllNpmTHiZktGOHpGWnKr3v568CL4fs
-	fSzE4lUuIZYyF+YEP0gb47TKwXk4RYtoQVijW8i7Vi
-X-Google-Smtp-Source: AGHT+IEMYsWO2UIj0uiCuxX0dhE2DmSJ//u+MeU1Hr0gD69Zne7Tj0URYXPsU1WOs0JmyPPuY5gjM6VLHyGQ1Y3kV0g=
-X-Received: by 2002:a05:6512:3a82:b0:545:271d:f92 with SMTP id
- 2adb3069b0e04-5493c57ef04mr4211562e87.25.1740663286036; Thu, 27 Feb 2025
- 05:34:46 -0800 (PST)
+	s=arc-20240116; t=1740663311; c=relaxed/simple;
+	bh=Rr/ZAs6GmOH5Zx/oWHv7ST2gf2X9v75nhFcxZDN+WmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQ/mqXUO0wFqz7n9k9VCjwggTSgbelrpj6Cdtj133YeQfywrIyZNwvDAWewUQyPMUxzYtcNj/2Uh8v1NyoTJYI9qamMkUZVmZS0ShlUhQ+o/YiGZ99Zhf98GYLefjZty9APQaaF63NuZBqlOcj85lrTZXUXNgRD5DobAwVkKbiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksKRITal; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42518C4CEDD;
+	Thu, 27 Feb 2025 13:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740663311;
+	bh=Rr/ZAs6GmOH5Zx/oWHv7ST2gf2X9v75nhFcxZDN+WmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ksKRITalBMRrx8PI2TYjkm6vqOT15c6BEkYcq9R7/5hpch/3Nw6p4/kOieKMPaw4J
+	 7GgLzIYzIMOBgD6A/WdxtiUD0jaj+36l+qoiwF7o9rCr7lxIn3NzgJKZJ9j0D1iHPd
+	 HTuST4IABwd0KVMebmBehOzqITu+4rkxfhtZfXTAMs+hD48dp9n85DgtJgIhJlA921
+	 zM5Ta2d5Rd16mLjG5ab3OBw7XqdyINkexNUjcIGdgxTpU+1iULIfNJeNBneD52cXh2
+	 ZSbo62gxrAsG0IrH64z3y41cNX7KDfO22hj4zMDV0REErtAlWEPDCwRNTIJqyVwW7U
+	 gUmGMdpg4PVLw==
+Date: Thu, 27 Feb 2025 07:35:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Guo Ren <guoren@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: reset: add generic bit reset
+ controller
+Message-ID: <20250227133509.GA2021892-robh@kernel.org>
+References: <20250226234234.125305-1-inochiama@gmail.com>
+ <20250226234234.125305-2-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227114141.242421-1-marco.crivellari@suse.com>
- <20250227114141.242421-2-marco.crivellari@suse.com> <CAAhV-H4MVzL6A6_nxPHTX-2XpaA8tgH56P_R9_RNDp2PFY5W+Q@mail.gmail.com>
-In-Reply-To: <CAAhV-H4MVzL6A6_nxPHTX-2XpaA8tgH56P_R9_RNDp2PFY5W+Q@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Thu, 27 Feb 2025 14:34:35 +0100
-X-Gm-Features: AQ5f1JoC2nl_WtMTZXWtXGvEMS_G_IxHiXHcjmzOeEHpt9wlGnQYVBm3RfDjQPo
-Message-ID: <CAAofZF7bZDJcDBqUanFxnnbxkiAeDkv60=NGXnT+5cbHfye2=g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] MIPS: Fix idle VS timer enqueue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, "Maciej W . Rozycki" <macro@orcam.me.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226234234.125305-2-inochiama@gmail.com>
 
-Hi Huacai,
+On Thu, Feb 27, 2025 at 07:42:29AM +0800, Inochi Amaoto wrote:
+> Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
+> a simple reset controller by toggling bit. It is a hard time
+> for each device to add its own compatible to the driver.
 
-sorry, I completely forgot to check the comments!
+It's a 1 line change. That isn't hard.
 
+> Since these devices share a common design, it is possible to
+> add a common device to reduce these unnecessary change for
+> the driver.
+> 
+> Add common binding for these kind generic reset controller.
+> Check the binding description for its requirement and
+> suitable scenarios.
 
+We generally don't want 1 register per node type bindings. That level of 
+detail in DT has proven impossible to get right.
 
-
-
-On Thu, Feb 27, 2025 at 12:56=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org=
-> wrote:
->
-> Hi, Marco,
->
-> On Thu, Feb 27, 2025 at 7:41=E2=80=AFPM Marco Crivellari
-> <marco.crivellari@suse.com> wrote:
-> >
-> > MIPS re-enables interrupts on its idle routine and performs
-> > a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
-> >
-> > The IRQs firing between the check and the 'wait' instruction may set th=
-e
-> > TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
-> > interrupting __r4k_wait() rollback their return address to the
-> > beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
-> > again before going back to sleep.
-> >
-> > However idle IRQs can also queue timers that may require a tick
-> > reprogramming through a new generic idle loop iteration but those timer=
-s
-> > would go unnoticed here because __r4k_wait() only checks
-> > TIF_NEED_RESCHED. It doesn't check for pending timers.
-> >
-> > Fix this with fast-forwarding idle IRQs return address to the end of th=
-e
-> > idle routine instead of the beginning, so that the generic idle loop
-> > handles both TIF_NEED_RESCHED and pending timers.
-> >
-> > CONFIG_CPU_MICROMIPS has been removed along with the nop instructions.
-> > There, NOPs are 2 byte in size, so change the code with 3 _ssnop which =
-are
-> > always 4 byte and remove the ifdef. Added ehb to make sure the hazard
-> > is always cleared.
-> >
-> > Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> > ---
-> >  arch/mips/kernel/genex.S | 40 ++++++++++++++++++++++------------------
-> >  arch/mips/kernel/idle.c  |  1 -
-> >  2 files changed, 22 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> > index a572ce36a24f..7b66ab239049 100644
-> > --- a/arch/mips/kernel/genex.S
-> > +++ b/arch/mips/kernel/genex.S
-> > @@ -104,25 +104,28 @@ handle_vcei:
-> >
-> >         __FINIT
-> >
-> > -       .align  5       /* 32 byte rollback region */
-> > +       .align  5
-> >  LEAF(__r4k_wait)
-> >         .set    push
-> >         .set    noreorder
-> > -       /* start of rollback region */
-> > -       LONG_L  t0, TI_FLAGS($28)
-> > -       nop
-> > -       andi    t0, _TIF_NEED_RESCHED
-> > -       bnez    t0, 1f
-> > -        nop
-> > -       nop
-> > -       nop
-> > -#ifdef CONFIG_CPU_MICROMIPS
-> > -       nop
-> > -       nop
-> > -       nop
-> > -       nop
-> > -#endif
-> > +       /* start of idle interrupt region */
-> > +       MFC0    t0, CP0_STATUS
-> > +       /* Enable Interrput */
-> > +       ori     t0, 0x1f
-> > +       xori    t0, 0x1e
-> > +       MTC0    t0, CP0_STATUS
-> > +       _ssnop
-> > +       _ssnop
-> > +       _ssnop
-> > +       _ehb
-> >         .set    MIPS_ISA_ARCH_LEVEL_RAW
-> > +       /*
-> > +        * If an interrupt lands here, between enabling interrupts abov=
-e and
-> > +        * going idle on the next instruction, we must *NOT* go idle si=
-nce the
-> > +        * interrupt could have set TIF_NEED_RESCHED or caused a timer =
-to need
-> > +        * resched. Fall through -- see rollback_handler below -- and h=
-ave
-> > +        * the idle loop take care of things.
-> > +        */
-> >         wait
-> >         /* end of rollback region (the region size must be power of two=
-) */
-> Now you add a _ehb in this version, so "(the region size must be power
-> of two)" should be removed.
->
-> >  1:
-> > @@ -136,9 +139,10 @@ LEAF(__r4k_wait)
-> >         .set    push
-> >         .set    noat
-> >         MFC0    k0, CP0_EPC
-> > -       PTR_LA  k1, __r4k_wait
-> > -       ori     k0, 0x1f        /* 32 byte rollback region */
-> > -       xori    k0, 0x1f
-> > +       PTR_LA  k1, 1b
-> > +       /* 32 byte idle interrupt region */
-> And now the region is 36 bytes. :)
->
-> Huacai
->
-> > +       ori     k0, 0x1f
-> > +       PTR_ADDIU       k0, 5
-> >         bne     k0, k1, \handler
-> >         MTC0    k0, CP0_EPC
-> >         .set pop
-> > diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
-> > index 5abc8b7340f8..1f74c0589f7e 100644
-> > --- a/arch/mips/kernel/idle.c
-> > +++ b/arch/mips/kernel/idle.c
-> > @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
-> >
-> >  void __cpuidle r4k_wait(void)
-> >  {
-> > -       raw_local_irq_enable();
-> >         __r4k_wait();
-> >         raw_local_irq_disable();
-> >  }
-> > --
-> > 2.48.1
-> >
-
-
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
+Rob
 
