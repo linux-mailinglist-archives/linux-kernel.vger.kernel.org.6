@@ -1,262 +1,229 @@
-Return-Path: <linux-kernel+bounces-535199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8035AA4700C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:15:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E52AA47019
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133021884E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAE43AE9F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A6D1BC2A;
-	Thu, 27 Feb 2025 00:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99764C7C;
+	Thu, 27 Feb 2025 00:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="f7Z/syY5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF821348;
-	Thu, 27 Feb 2025 00:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDD0iNjF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B35A55;
+	Thu, 27 Feb 2025 00:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740615300; cv=none; b=Jy6zaCVRCPG8ZvzKkW94F3Fg/71MzYSiN22AU9VUfBHx8IvrEGoIpHyUWBao+B9EtB4G0+kwgUvLC5LRYxebMvgaXzRJXqEcWi/VQOFtPZMe6qa+2oOCKpNLcvcwstSnfhtytCbSQ7vOKmPueYGE/+d4+r9HfoXPgznporaiTKI=
+	t=1740615514; cv=none; b=ty0lk4sl//UpXJSjzTjK+3EY5ajb4PVx4lSg+uXxm9Jfz1UsGxMGA+vCy2qwvcSz64t4WQyFk8kmAbK0PDir6MVdGhJQsrDkXep5dms9gFa4Fc84Xo7f51zrfA+9Nrr3+7DwiA83xq1p/KUUB04Ioo/qH3YbfdCpReftvYJmmLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740615300; c=relaxed/simple;
-	bh=Mr1gbzUbQ0j3qkkUKPjWHD46E5NJpSmdXGoeAOqoSBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLLpOSQCUemzCUpZwVSzt+m1vpMOYk1cidPoRV/vWvCT3Ej+7Oqw7zvhZHQDCXuelVwkb7tAs2MAGztQo07fMQyYosIL+84LXeR4/fOnHYH+gRfjRsojR+KufrorUdYOvR3q72TErkx2VmJvd5qlN5zAgjJ6soT2sGNfRf0SbH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=f7Z/syY5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E44CF2109CE5;
-	Wed, 26 Feb 2025 16:14:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E44CF2109CE5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740615298;
-	bh=MuT+XOUJkIW730Xeyu4axAApZR2vytUBgr+CCuYTT6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f7Z/syY5hyUuZiiRnIJ6umWHxoN3Zf0T26PyoAugM6sJ0lSKf9Ae3QRjAf4KlztcD
-	 Cn4UWQu5r7mzCrEvOct1kHBlgCgoFxPYYp5w4lN+J6nmtqM9ZMtrLMV/gBHmBZNeF5
-	 FG7nWaHfVjTm3UMdkHIXEu62AowbjhyvTOAU/7fM=
-Message-ID: <45a1b6b5-407c-4518-9ea2-05341e93a67e@linux.microsoft.com>
-Date: Wed, 26 Feb 2025 16:14:57 -0800
+	s=arc-20240116; t=1740615514; c=relaxed/simple;
+	bh=zy/JC+sJhhNV8yGVMMwVPJdDAc7mBSWAHJKrnS3U5tI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sofr++uFbOwbskBX/tFu4spS6nDIuDJvoCqEuLFN2CfncI4HAmSfZTLoDh5sl8eAWkasLbmGdmnWSkRW/JS2kcELN5Vs6PKPZOP8NV9GuK5G1HfmKZR7C5qffDlGlQM3Dv+cfTzkXuzQfc3MrPa4Olgr843xmc5i1eh8UOCjmH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDD0iNjF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740615513; x=1772151513;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=zy/JC+sJhhNV8yGVMMwVPJdDAc7mBSWAHJKrnS3U5tI=;
+  b=iDD0iNjFxbRBTBlxLFKuedeYhEZAlB/LBujeEUyPlAobKGng1cLubBZY
+   aJf1xMPW+7oVNs2OzQ8ORkIXtGY9fBxOLqDXsvYMvSUG18n8GrfYTatMI
+   ie+7UbbLC3nbiPYpjUfuw07nRz+6BwWBGSjFUwNC74AnFvx0Tcmm2r74D
+   3HPk/p9++Y5lNPk2vp14wf/hk93w0mRhgwLoIIvXBch9VTYbhMMDOY1Mq
+   MTfCH+cGPpPLFiv07PmoTPMS0G5qskbH86bBUUflr9y1olBW5XwlB66Sg
+   vstz05UW3qw77TMGc5OdM2MmzDKqFhxm/Z80B8YVO6M2mQMMM+zWMa/0/
+   A==;
+X-CSE-ConnectionGUID: 9rhi4EZ6QbCB1y6jwip5bg==
+X-CSE-MsgGUID: J5Kn6D6bTE2pzX/17FwjpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41687877"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41687877"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 16:18:30 -0800
+X-CSE-ConnectionGUID: q3bKHKf9QhS0Sk5zTXJc3A==
+X-CSE-MsgGUID: nv5vN+BjR+uo9yCn+g0iAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="116889473"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa006.jf.intel.com with ESMTP; 26 Feb 2025 16:18:29 -0800
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v3.1 14/15] perf/x86: Simplify Intel PMU initialization
+Date: Thu, 27 Feb 2025 00:16:15 +0000
+Message-ID: <20250227001615.1231958-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250219184133.816753-15-sohil.mehta@intel.com>
+References: <20250219184133.816753-15-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] Drivers: hv: Introduce hv_hvcall_*() functions for
- hypercall arguments
-To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
-Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20250226200612.2062-1-mhklinux@outlook.com>
- <20250226200612.2062-3-mhklinux@outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250226200612.2062-3-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/26/2025 12:06 PM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Current code allocates the "hyperv_pcpu_input_arg", and in
-> some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
-> page of memory allocated per-vCPU. A hypercall call site disables
-> interrupts, then uses this memory to set up the input parameters for
-> the hypercall, read the output results after hypercall execution, and
-> re-enable interrupts. The open coding of these steps leads to
-> inconsistencies, and in some cases, violation of the generic
-> requirements for the hypercall input and output as described in the
-> Hyper-V Top Level Functional Spec (TLFS)[1].
-> 
-> To reduce these kinds of problems, introduce a family of inline
-> functions to replace the open coding. The functions provide a new way
-> to manage the use of this per-vCPU memory that is usually the input and
-> output arguments to Hyper-V hypercalls. The functions encapsulate
-> key aspects of the usage and ensure that the TLFS requirements are
-> met (max size of 1 page each for input and output, no overlap of
-> input and output, aligned to 8 bytes, etc.). Conceptually, there
-> is no longer a difference between the "per-vCPU input page" and
-> "per-vCPU output page". Only a single per-vCPU page is allocated, and
-> it provides both hypercall input and output memory. All current
-> hypercalls can fit their input and output within that single page,
-> though the new code allows easy changing to two pages should a future
-> hypercall require a full page for each of the input and output.
-> 
-> The new functions always zero the fixed-size portion of the hypercall
-> input area so that uninitialized memory is not inadvertently passed
-> to the hypercall. Current open-coded hypercall call sites are
-> inconsistent on this point, and use of the new functions addresses
-> that inconsistency. The output area is not zero'ed by the new code
-> as it is Hyper-V's responsibility to provide legal output.
-> 
-> When the input or output (or both) contain an array, the new functions
-> calculate and return how many array entries fit within the per-cpu
-> memory page, which is effectively the "batch size" for the hypercall
-> processing multiple entries. This batch size can then be used in the
-> hypercall control word to specify the repetition count. This
-> calculation of the batch size replaces current open coding of the
-> batch size, which is prone to errors. Note that the array portion of
-> the input area is *not* zero'ed. The arrays are almost always 64-bit
-> GPAs or something similar, and zero'ing that much memory seems
-> wasteful at runtime when it will all be overwritten. The hypercall
-> call site is responsible for ensuring that no part of the array is
-> left uninitialized (just as with current code).
-> 
-> The new functions are realized as a single inline function that
-> handles the most complex case, which is a hypercall with input
-> and output, both of which contain arrays. Simpler cases are mapped to
-> this most complex case with #define wrappers that provide zero or NULL
-> for some arguments. Several of the arguments to this new function are
-> expected to be compile-time constants generated by "sizeof()"
-> expressions. As such, most of the code in the new function can be
-> evaluated by the compiler, with the result that the code paths are
-> no longer than with the current open coding. The one exception is
-> new code generated to zero the fixed-size portion of the input area
-> in cases where it is not currently done.
-> 
-> [1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/tlfs
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  include/asm-generic/mshyperv.h | 102 +++++++++++++++++++++++++++++++++
->  1 file changed, 102 insertions(+)
-> 
-> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-> index b13b0cda4ac8..0c8a9133cf1a 100644
-> --- a/include/asm-generic/mshyperv.h
-> +++ b/include/asm-generic/mshyperv.h
-> @@ -135,6 +135,108 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
->  	return status;
->  }
->  
-> +/*
-> + * Hypercall input and output argument setup
-> + */
-> +
-> +/* Temporary mapping to be removed at the end of the patch series */
-> +#define hyperv_pcpu_arg hyperv_pcpu_input_arg
-> +
-> +/*
-> + * Allocate one page that is shared between input and output args, which is
-> + * sufficient for all current hypercalls. If a future hypercall requires
-> + * more space, change this value to "2" and everything will work.
-> + */
-> +#define HV_HVCALL_ARG_PAGES 1
-> +
-> +/*
-> + * Allocate space for hypercall input and output arguments from the
-> + * pre-allocated per-cpu hyperv_pcpu_args page(s). A NULL value for the input
-> + * or output indicates to allocate no space for that argument. For input and
-> + * for output, specify the size of the fixed portion, and the size of an
-> + * element in a variable size array. A zero value for entry_size indicates
-> + * there is no array. The fixed size space for the input is zero'ed.
-> + *
-It might be worth explicitly mentioning that interrupts should be disabled when
-calling this function.
+Architectural Perfmon was introduced on the Family 6 "Core" processors
+starting with Yonah. Processors before Yonah need their own customized
+PMU initialization.
 
-> + * When variable size arrays are present, the function returns the number of
-> + * elements (i.e, the batch size) that fit in the available space.
-> + *
-> + * The four "size" arguments are expected to be constants, in which case the
-> + * compiler does most of the calculations. Then the generated inline code is no
-> + * larger than if open coding the access to the hyperv_pcpu_arg and doing
-> + * memset() on the input.
-> + */
-> +static inline int hv_hvcall_inout_array(
-> +			void *input, u32 in_size, u32 in_entry_size,
-> +			void *output, u32 out_size, u32 out_entry_size)
-Is there a reason input and output are void * instead of void ** here?
+p6_pmu_init() is expected to provide that initialization for early
+Family 6 processors. But, currently, it could get called for any Family
+6 processor if the architectural perfmon feature is disabled on that
+processor. To simplify, restrict the P6 PMU initialization to early
+Family 6 processors that do not have architectural perfmon support and
+truly need the special handling.
 
-> +{
-> +	u32 in_batch_count = 0, out_batch_count = 0, batch_count;
-> +	u32 in_total_size, out_total_size, offset;
-> +	u32 batch_space = HV_HYP_PAGE_SIZE * HV_HVCALL_ARG_PAGES;
-> +	void *space;
-> +
-> +	/*
-> +	 * If input and output have arrays, allocate half the space to input
-> +	 * and half to output. If only input has an array, the array can use
-> +	 * all the space except for the fixed size output (but not to exceed
-> +	 * one page), and vice versa.
-> +	 */
-> +	if (in_entry_size && out_entry_size)
-> +		batch_space = batch_space / 2;
-> +	else if (in_entry_size)
-> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - out_size);
-> +	else if (out_entry_size)
-> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - in_size);
-> +
-> +	if (in_entry_size)
-> +		in_batch_count = (batch_space - in_size) / in_entry_size;
-> +	if (out_entry_size)
-> +		out_batch_count = (batch_space - out_size) / out_entry_size;
-> +
-> +	/*
-> +	 * If input and output have arrays, use the smaller of the two batch
-> +	 * counts, in case they are different. If only one has an array, use
-> +	 * that batch count. batch_count will be zero if neither has an array.
-> +	 */
-> +	if (in_batch_count && out_batch_count)
-> +		batch_count = min(in_batch_count, out_batch_count);
-> +	else
-> +		batch_count = in_batch_count | out_batch_count;
-> +
-> +	in_total_size = ALIGN(in_size + (in_entry_size * batch_count), 8);
-> +	out_total_size = ALIGN(out_size + (out_entry_size * batch_count), 8);
-> +
-> +	space = *this_cpu_ptr(hyperv_pcpu_arg);
-> +	if (input) {
-> +		*(void **)input = space;
-> +		if (space)
-> +			/* Zero the fixed size portion, not any array portion */
-> +			memset(space, 0, ALIGN(in_size, 8));
-> +	}
-> +
-> +	if (output) {
-> +		if (in_total_size + out_total_size <= HV_HYP_PAGE_SIZE) {
-> +			offset = in_total_size;
-> +		} else {
-> +			offset = HV_HYP_PAGE_SIZE;
-> +			/* Need more than 1 page, but only 1 was allocated */
-> +			BUILD_BUG_ON(HV_HVCALL_ARG_PAGES == 1);
-Interesting... so the compiler is not compiling this BUILD_BUG_ON in your patchset
-because in_total_size + out_total_size <= HV_HYP_PAGE_SIZE is always known at
-compile-time?
-So will this also fail if any of the args in_size, in_entry_size, out_size,
-out_entry_size are runtime-known?
+As a result, the "unsupported" console print becomes practically
+unreachable because all the released P6 processors are covered by the
+switch cases. Move the console print to a common location where it can
+cover all modern processors (including Family >15) that may not have
+architectural perfmon support enumerated.
 
-Nuno
+Also, use this opportunity to get rid of the unnecessary switch cases in
+P6 initialization. Only the Pentium Pro processor needs a quirk, and the
+rest of the processors do not need any special handling. The gaps in the
+case numbers are only due to no processor with those model numbers being
+released.
 
-> +		}
-> +		*(void **)output = space + offset;
-> +	}
-> +
-> +	return batch_count;
-> +}
-> +
-> +/* Wrappers for some of the simpler cases with only input, or with no arrays */
-> +#define hv_hvcall_in(input, in_size) \
-> +	hv_hvcall_inout_array(input, in_size, 0, NULL, 0, 0)
-> +
-> +#define hv_hvcall_inout(input, in_size, output, out_size) \
-> +	hv_hvcall_inout_array(input, in_size, 0, output, out_size, 0)
-> +
-> +#define hv_hvcall_in_array(input, in_size, in_entry_size) \
-> +	hv_hvcall_inout_array(input, in_size, in_entry_size, NULL, 0, 0)
-> +
->  /* Generate the guest OS identifier as described in the Hyper-V TLFS */
->  static inline u64 hv_generate_guest_id(u64 kernel_version)
->  {
+Use decimal numbers for Intel Family numbers. Also, convert one of the
+last few Intel x86_model comparison to a VFM based one.
+
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+---
+Sending an updated version for this one since it's the only one with a
+change. This would make it feasible to pickup the entire patchset in
+this cycle if desired.
+
+v3.1: Move the default case outside of the switch.
+      Pickup the Reviewed-by tag from Kan Liang.
+
+v3: Restrict calling p6_pmu_init() to only when needed.
+    Move the console print to a common location.
+
+v2: No change.
+---
+ arch/x86/events/intel/core.c | 14 ++++++++++----
+ arch/x86/events/intel/p6.c   | 26 +++-----------------------
+ 2 files changed, 13 insertions(+), 27 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 7601196d1d18..ef59643a9d23 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -6466,15 +6466,21 @@ __init int intel_pmu_init(void)
+ 	char *name;
+ 	struct x86_hybrid_pmu *pmu;
+ 
++	/* Architectural Perfmon was introduced starting with Core "Yonah" */
+ 	if (!cpu_has(&boot_cpu_data, X86_FEATURE_ARCH_PERFMON)) {
+ 		switch (boot_cpu_data.x86) {
+-		case 0x6:
+-			return p6_pmu_init();
+-		case 0xb:
++		case 6:
++			if (boot_cpu_data.x86_vfm < INTEL_CORE_YONAH)
++				return p6_pmu_init();
++			break;
++		case 11:
+ 			return knc_pmu_init();
+-		case 0xf:
++		case 15:
+ 			return p4_pmu_init();
+ 		}
++
++		pr_cont("unsupported CPU family %d model %d ",
++			boot_cpu_data.x86, boot_cpu_data.x86_model);
+ 		return -ENODEV;
+ 	}
+ 
+diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
+index a6cffb4f4ef5..65b45e9d7016 100644
+--- a/arch/x86/events/intel/p6.c
++++ b/arch/x86/events/intel/p6.c
+@@ -2,6 +2,8 @@
+ #include <linux/perf_event.h>
+ #include <linux/types.h>
+ 
++#include <asm/cpu_device_id.h>
++
+ #include "../perf_event.h"
+ 
+ /*
+@@ -248,30 +250,8 @@ __init int p6_pmu_init(void)
+ {
+ 	x86_pmu = p6_pmu;
+ 
+-	switch (boot_cpu_data.x86_model) {
+-	case  1: /* Pentium Pro */
++	if (boot_cpu_data.x86_vfm == INTEL_PENTIUM_PRO)
+ 		x86_add_quirk(p6_pmu_rdpmc_quirk);
+-		break;
+-
+-	case  3: /* Pentium II - Klamath */
+-	case  5: /* Pentium II - Deschutes */
+-	case  6: /* Pentium II - Mendocino */
+-		break;
+-
+-	case  7: /* Pentium III - Katmai */
+-	case  8: /* Pentium III - Coppermine */
+-	case 10: /* Pentium III Xeon */
+-	case 11: /* Pentium III - Tualatin */
+-		break;
+-
+-	case  9: /* Pentium M - Banias */
+-	case 13: /* Pentium M - Dothan */
+-		break;
+-
+-	default:
+-		pr_cont("unsupported p6 CPU model %d ", boot_cpu_data.x86_model);
+-		return -ENODEV;
+-	}
+ 
+ 	memcpy(hw_cache_event_ids, p6_hw_cache_event_ids,
+ 		sizeof(hw_cache_event_ids));
+-- 
+2.43.0
 
 
