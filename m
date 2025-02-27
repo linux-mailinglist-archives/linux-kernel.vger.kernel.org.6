@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-536634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB630A48204
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:51:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF1AA48248
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DF13A5AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D95170CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF58B25D1F0;
-	Thu, 27 Feb 2025 14:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D1525DCEA;
+	Thu, 27 Feb 2025 14:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="kxuWw/FV"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3hfEzj2"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E6F25CC99
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159FD25CC7B;
+	Thu, 27 Feb 2025 14:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667832; cv=none; b=BHv6WvK9R+Iozh+QB4AGJrWvDxG2x/dkDZnyVXzK7LMpspPw8C8PiJyq3uE9MOy5KxjIaTTE5aR/sl9Ceh0zLz+wGEHq56zczeN9+hqhBq7u2m/7+2vL/WjFvGQ5lIrNG0AjWx1R2F4Hny6Gzf/Pv4B6zjtszcF7wDUQOnzVve8=
+	t=1740668001; cv=none; b=XFq2774RxCPlYI/CtNRkb1coSnJI6RkJwcCzWibUUXHXcxpBxf96ntshVgNQRFu29RUiNOd8jrJgNPB0xLbKPZVQofK8XYsnlRHenbBKiwOS8btMjQmVVl/IJBDc3vbQ45a2h4Kwgtbaa3oeSooqC+pXyqmN0BHJU4RucCZAC8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667832; c=relaxed/simple;
-	bh=xKewhvd61D34B7/4mI+vcI04M2ezWfrHW8vP8EGROvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JsiFwRfPkdMzgtj/LRGIEcGi22lQF212pJGN2Jcxc2r1NxAC0Nzrwi/ViZYcQ6LQUTYFFb4OiXWdp8ip6BYsP2LeP0mNOiBvrbOjkyR61WFFPgQGwoLLie4BYYCJisFYrg4MX1fT7AfO6YN1e4lFjepL5ia+2l8Nimf93lZrdbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=kxuWw/FV; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5deb1266031so1634860a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:50:29 -0800 (PST)
+	s=arc-20240116; t=1740668001; c=relaxed/simple;
+	bh=q2GwVWz1/9PKFbqsPfnaphn+KW1rK4B8wqH9lN+LYOg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BsqfEljdgVfv6PmWLpUMV9NDAZjDZcKlRLS+sTyAiXN3fjsqjkXHKUXuLFJztg5bdZL3poob0e7X2vF3OtQfXGJzuY/f74S4YEZPUHQbUzw4ePRR2JBDhpNBcwBtMQlYq6RM/GoRkur+gGq7UCRH/3ZvSr20zute2SPYwUBLHxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3hfEzj2; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7430e27b2so166531366b.3;
+        Thu, 27 Feb 2025 06:53:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.com; s=cloud; t=1740667828; x=1741272628; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DL7GQVjUzjLg9lk8430dC5QosMySgAdQwlmn75yWWQY=;
-        b=kxuWw/FVYEmROqj0tTxz/1a+8VKWaZsPX54cqhdTCArS21r2M2TNTQF9tQRRq88wQh
-         GJPMY9ajQ8SnqJwo03yn+pXW3gGkorjfgGKOeX6WMDTs6mlP0FcGuXGm14QdhbSFSxW3
-         AvwEnTDcc6mIktKGUGvi4qPH7TbxozgSaVTDo=
+        d=gmail.com; s=20230601; t=1740667998; x=1741272798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=btvFNagWkKH+cMrctRR0r6pBNr9QjhwzZ0RP7CAU4ao=;
+        b=B3hfEzj2l6G3+7dgEspuM0Fz1Pc9R9NoXuFkSpgnUVBDjRI6hWrVqtzzAiW6dfXKWC
+         Uz5c0TrTK7GqCzGM7RKUemhrGjaNqABjurWgD3vzitGzNZAOqpACQEFrRp7evpQU1FJu
+         0F6VWhUZmBYv6zjhQs/QXKNR6sa+uZ8a1O9d8j0JzpWNulU8qYdZHKAoAY688Ac8g2h7
+         qY/zI+UDIECSTMF3aDqXEyXlo2Nobr+/osPqbkQ49U4wLLcKzxlJLdsdFuS5Gn4TsCeb
+         j/vPmZouwHpnrK+PUA2Mj3EZ9u8dO8BgCfq3RDmJ/lRgYtoAjiP0JkUr8ciRWkir+lVG
+         MVEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740667828; x=1741272628;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DL7GQVjUzjLg9lk8430dC5QosMySgAdQwlmn75yWWQY=;
-        b=qpqYteTfrwRE0FmHR7mzAKTf2/uIY7iWf2kmZ2RB9haFH+w9V8o0BdwGggtqFQooIU
-         ApP2h/i9/8q6g6aGTtv4zOIDDXlFPOOHsz0nGC36ub/tN/3k6k8uNxbfRsaZ98wkNIIC
-         NdRZpIQSheehGecRHRl00KgpMOLe6kxjOf/wLMCdueVajNx8lCaDArJyFXwz89Nu/GpJ
-         gviuHxjDtoqET8KR7rBbesEegU5XqPQSSFmh/1bEwXE5d873azEN23L4pxFL9lDGGWFC
-         LMkakZQmKkn7I3AsHOKZlkeQZmtb7tCoaEutY5K1l+SAkTKO4e33ipR5bRlevxrJnDLu
-         H+ig==
-X-Forwarded-Encrypted: i=1; AJvYcCU3NJobr1WNGLl0oPdYKq4lkXdWiJZCCUdTH7gZi7GkP34lrjNj5glVScEtpw2PRge6xpz9Gdt7WWE7uXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrmUvhGEM5yw/bwZRPFzoM6O1V/j6g7PC5TxgEQitnMnK01uLA
-	ELHAw/2OpxfwKIfS6fDRJ6tK/fXky8JWBByH3SHJ3z2J73H+2yoxl1P+g0BoKn6ryTMiN5JVFfl
-	E
-X-Gm-Gg: ASbGncsy3fjVluT388AjHkLdmItvYiU8pwSieeDvh8nOKuCZlwlkL/zVlJgxQVu9TLF
-	pyXw68X/9bdVphQ8f+v8r2w2SXcDfs2NMmTPg9TeGxhcLLfiHbNPmmCCNFQ6NjooGxpTEmsF3/m
-	SJVYWaL71FetvK1XFsaHHKQgakBozdT8Lt6M6TOMoSsSJwc2Hh3ZF5n50T/r08NfQ/oD9KBnw8W
-	GjXLVh2qnErDPcLZp0e9QuXkA1mR4mqdOx2xaw4y9QbKFIRMgmZWWKw077jfgwxYOuM34IBBMnU
-	cIDt3QFplThEmqhR9FDYIitmTfW5WcLb9nFz5o9x74cGYNCz3ZmY6vCe9oWx7j/JYA==
-X-Google-Smtp-Source: AGHT+IGRvMe2rXEL5ocoy5Zl+QpTBISfmDkxZx112r9QomOkAyIB+XxUpSAYrFRY61XCOHlRKjn34w==
-X-Received: by 2002:a05:6402:430f:b0:5e0:4710:5f47 with SMTP id 4fb4d7f45d1cf-5e0b7243e16mr27359409a12.23.1740667827673;
-        Thu, 27 Feb 2025 06:50:27 -0800 (PST)
-Received: from fziglio-xenia-fedora.eng.citrite.net ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb5927sm1169710a12.53.2025.02.27.06.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 06:50:26 -0800 (PST)
-From: Frediano Ziglio <frediano.ziglio@cloud.com>
-To: xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Cc: Frediano Ziglio <frediano.ziglio@cloud.com>,
-	"Juergen Gross" <jgross@suse.com>,
-	"Stefano Stabellini" <sstabellini@kernel.org>,
-	"Oleksandr Tyshchenko" <oleksandr_tyshchenko@epam.com>,
-	"Bjorn Helgaas" <bhelgaas@google.com>
-Subject: [PATCH v2] xen: Add support for XenServer 6.1 platform device
-Date: Thu, 27 Feb 2025 14:50:15 +0000
-Message-ID: <20250227145016.25350-1-frediano.ziglio@cloud.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225140400.23992-1-frediano.ziglio@cloud.com>
-References: <20250225140400.23992-1-frediano.ziglio@cloud.com>
+        d=1e100.net; s=20230601; t=1740667998; x=1741272798;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=btvFNagWkKH+cMrctRR0r6pBNr9QjhwzZ0RP7CAU4ao=;
+        b=Zvaj5j3vvpj1qhRAl9o2G9cXCEQADK6ETPWsm8X75TvEPWvjFM3AnTFSpvbkISDr4r
+         Aq7QEqJk3fCgrfHHxAnzCw1XGMSkPyj27GS6KBCPLx9yHUHBe3CAi9cJCOF/9YaozhYN
+         lCrMZmtMXFGS8VzcZ2/AzcSrX9bzm8+pMBmJzQTJyj+iffqkGveSpOOCs12/yg/tJZRj
+         ewjgel+WfpzeGllLuNeAhy0g1yY2siL/TN6bSFPiPQ2TEpPbxjs2ARc9A5ctuoaOwgzX
+         YRj/xpDgygjkdTOP9UujkyNaFE0ugmVe2leBaxrixb7zBlOsGeEFXUbnXLSWPLCb1Sp0
+         J19g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwluOYb1IK//VA3Oeuja/WxIIKb3Wes6Sdy+zCMMXk0u5JYuFRLeHM1h3qxmUkO9jP81dC0w2ovA==@vger.kernel.org, AJvYcCXpCTshoMObynd9NCArYDpOWhh/4mpn2eR1aGmh+VVo0mqd3r/vauXDaz+KfwUYTgebOYVZO70Wy/8CViEA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFIjwhcy77JaSefMz4Ka9aDQ0RQ9ZsxT9LHLXaueD4k+2MtqKy
+	Fn2bv2xbmJ4tX9fH/Htv5SF2PJExRLBlDWj+yJWs4YT4qZNWY64/
+X-Gm-Gg: ASbGncsvhdpT+T4qPBgtHW/LJus2QZXLPD3/TLHotgLEWZVxJN3Tzvl23Sq/pa/RjgA
+	rIT/Vmoal8kjpL6Rni0potuc9qEI4z12+trPQe+fGU1MOwz+gC5zWaNd3b6AYu3ZdJlRWxZy+Fz
+	R1WphZ+KEe8vcoIsXOqupkGk/HbOb8RXxoWurg2FY+lbYNpZwxeUFUfDjv1eXVZQyQeH4sLo8IL
+	8zbEQon8N3DwSUvS01VNP/AgaqqvOGQGnDgyTFhwroyYjlo0vz9IZp9tgtBkUOiD/AjoM4cdOBk
+	UG9BG4pLEgg59U7ues/pzL4EOvQY1yfwkfvhosaepoV5ZI+EHrN+e7upmsw=
+X-Google-Smtp-Source: AGHT+IGn2fQD/9JMxb/2MtYLyJoSzNKDGBGxmXzWMWKWGR6SXcgpDtXhBLIo9EQkQaZSTh0DKetUoA==
+X-Received: by 2002:a17:907:9619:b0:abe:ebe2:6747 with SMTP id a640c23a62f3a-abeebe26b4amr1107777966b.9.1740667998056;
+        Thu, 27 Feb 2025 06:53:18 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:4215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf1d1a84b7sm57963466b.19.2025.02.27.06.53.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 06:53:17 -0800 (PST)
+Message-ID: <1e84c070-ab32-4617-bd6a-352f2a744004@gmail.com>
+Date: Thu, 27 Feb 2025 14:54:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/net: fix build warning for !CONFIG_COMPAT
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Gabriel Krisman Bertazi <krisman@suse.de>,
+ David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250227132018.1111094-1-arnd@kernel.org>
+ <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
+Content-Language: en-US
+In-Reply-To: <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On XenServer on Windows machine a platform device with ID 2 instead of
-1 is used.
+On 2/27/25 13:49, Pavel Begunkov wrote:
+> On 2/27/25 13:20, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> A code rework resulted in an uninitialized return code when COMPAT
+>> mode is disabled:
+> 
+> As mentioned in the lkp report, it should be a false positive.
+> 
+>>
+>> io_uring/net.c:722:6: error: variable 'ret' is used uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
+>>    722 |         if (io_is_compat(req->ctx)) {
+>>        |             ^~~~~~~~~~~~~~~~~~~~~~
+>> io_uring/net.c:736:15: note: uninitialized use occurs here
+>>    736 |         if (unlikely(ret))
+>>        |                      ^~~
+>>
+>> Since io_is_compat() turns into a compile-time 'false', the #ifdef
+>> here is completely unnecessary, and removing it avoids the warning.
+> 
+> I don't think __get_compat_msghdr() and other helpers are
+> compiled for !COMPAT. I'd just silence it like:
 
-This device is mainly identical to device 1 but due to some Windows
-update behaviour it was decided to use a device with a different ID.
+I guess we're relying on dead code elimination to prevent
+linking against them, if that's a normal practise and we
+do mandate compilers to do that, then it looks fine to me
 
-This causes compatibility issues with Linux which expects, if Xen
-is detected, to find a Xen platform device (5853:0001) otherwise code
-will crash due to some missing initialization (specifically grant
-tables). Specifically from dmesg
+> 
+> if (io_is_compat(req->ctx)) {
+>      ret = -EFAULT;
+> #ifdef CONFIG_COMPAT
+>      ...
+> #endif CONFIG_COMPAT
+> }
+> 
+> Let's see if Jens wants to fix it up in the tree.
+> 
 
-    RIP: 0010:gnttab_expand+0x29/0x210
-    Code: 90 0f 1f 44 00 00 55 31 d2 48 89 e5 41 57 41 56 41 55 41 89 fd
-          41 54 53 48 83 ec 10 48 8b 05 7e 9a 49 02 44 8b 35 a7 9a 49 02
-          <8b> 48 04 8d 44 39 ff f7 f1 45 8d 24 06 89 c3 e8 43 fe ff ff
-          44 39
-    RSP: 0000:ffffba34c01fbc88 EFLAGS: 00010086
-    ...
-
-The device 2 is presented by Xapi adding device specification to
-Qemu command line.
-
-Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
----
- drivers/xen/platform-pci.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/xen/platform-pci.c b/drivers/xen/platform-pci.c
-index 544d3f9010b9..1db82da56db6 100644
---- a/drivers/xen/platform-pci.c
-+++ b/drivers/xen/platform-pci.c
-@@ -26,6 +26,8 @@
- 
- #define DRV_NAME    "xen-platform-pci"
- 
-+#define PCI_DEVICE_ID_XEN_PLATFORM_XS61	0x0002
-+
- static unsigned long platform_mmio;
- static unsigned long platform_mmio_alloc;
- static unsigned long platform_mmiolen;
-@@ -174,6 +176,8 @@ static int platform_pci_probe(struct pci_dev *pdev,
- static const struct pci_device_id platform_pci_tbl[] = {
- 	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-+	{PCI_VENDOR_ID_XEN, PCI_DEVICE_ID_XEN_PLATFORM_XS61,
-+		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
- 	{0,}
- };
- 
 -- 
-2.48.1
+Pavel Begunkov
+
 
