@@ -1,248 +1,219 @@
-Return-Path: <linux-kernel+bounces-536490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77994A4806E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:04:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF6A4806C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DF01898BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031043A5900
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B57F22FE15;
-	Thu, 27 Feb 2025 14:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7A9230D35;
+	Thu, 27 Feb 2025 14:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cElZXzl2"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="REWKJsac"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A2214222
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41110213E90;
+	Thu, 27 Feb 2025 14:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664866; cv=none; b=baZX2/eBkF0VtslRcGhKvoeMKg4J5X+Is3v5UNBd69uAd/yTJJV8tlooPZ9sLEFXjOpO0yDbt/i7iAdvKcAH2H1cR6f+ugsUNtWgAEQw+EQBs7xzXmTMzq90FEgVr/fSia5dRfoVUsfQeqdV/AzaUImCC+MntnGeNe/2klJ7Nok=
+	t=1740664949; cv=none; b=r6mJzDCMlpZnZgxN1xwh0kARmFI8OpU60TrwYEGx39Nd1NFA+JR4jUEwhzZHbVp1LDPtAt2wSPJ1GE66o2Euzyr1OfndndbhcRCYypfoDTQGm6vjiYTWHdofOaiClkD52HzSMq/CTkMWu46DAQ4xWKLN3xY2MHIVy2wbysMkbTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664866; c=relaxed/simple;
-	bh=SRFDgDNdWZ5zf1bg96IKeBhSU3dvgKDPRtiXI4vFnac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=FKGm4uEbSjiMV1LnoIxouOkz5y1KY4z5Hwi/R5GpYWl0SDtB/A5Vns9ceomTPS0t3GCqm/7FuM8vu6sUhxMHlqS81LF3MylQIq+vkSov7Rg20S58/kve5NyWlfKUyi6VndL1tgDqQ7M8jc77KpJpbDiw09uejUybnYfAJQ5+n88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cElZXzl2; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250227140054euoutp02d24321bb7b3f090e740b590369631848~oFXaRvoFA2692326923euoutp02H
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250227140054euoutp02d24321bb7b3f090e740b590369631848~oFXaRvoFA2692326923euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740664855;
-	bh=XFri3rmlbUoKmwQLzTUXC+1AppVaa7YSM5vKQGK1m3Y=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=cElZXzl2KwIg7sfpVd0XQwtQav9WKBuoeGWPCyMZgB2NrE2uIhoTR4VSJzrbo2ztM
-	 KtP1sypFNIELlxlBZNI9vpgA3NHO83ygLtNwHvRPWp7K2TKTYE3vVdxKor/ln1nzxX
-	 kVMNR133k9uHoM6jxK1675Aj1LUhGbEVaAuxEQF8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250227140054eucas1p1754395c6b5e264d4ca1ff0bc2962ff38~oFXZ4v-sU3188831888eucas1p1r;
-	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 3B.9E.20821.61070C76; Thu, 27
-	Feb 2025 14:00:54 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf~oFXZi0fGN1024710247eucas1p2N;
-	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250227140054eusmtrp2292600fafa893e3fd7a23cc81fbe9e81~oFXZiJiU_0637906379eusmtrp2R;
-	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-da-67c07016c72d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C1.2C.19920.61070C76; Thu, 27
-	Feb 2025 14:00:54 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250227140053eusmtip203ef929152989046c51f8a0e822f6667~oFXYmY1Bc2598525985eusmtip2B;
-	Thu, 27 Feb 2025 14:00:53 +0000 (GMT)
-Message-ID: <ab3e42c0-70fa-48e0-ac93-ecbffef63507@samsung.com>
-Date: Thu, 27 Feb 2025 15:00:52 +0100
+	s=arc-20240116; t=1740664949; c=relaxed/simple;
+	bh=rEMh9PsJCZ3kkmRhx+jQzcCgEnXbGpK8dPaS0dhS4eo=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AZtmKpDjl0RJwr41Ck1l2PrXnrwoz83JGzu/kGuzKK1TCdhc7ylPnlPjKKHPTTJiJ/GLqjNcYkFFPJD+7oXyi4gA03ICpaNqvejHR9ev4r70CbOYgtxJRY1gv6SUv24JJjpTrUTr1YD0camqrslTZfxZnwqJQ8P6xKkRYa/YpxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=REWKJsac; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740664947; x=1772200947;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rEMh9PsJCZ3kkmRhx+jQzcCgEnXbGpK8dPaS0dhS4eo=;
+  b=REWKJsacXYNBX1pzpahFFnJ+9DkoYTbBdeyvzkzC6b6ma1ZPLnL2SgLB
+   Ul8J/3Vudebe9TBhxmlshkk+nmMjQwVHl8uo1TZaI1GZIhYYjpaX41nAL
+   nuFz9fQ4ZMshIewiLshEF6Q6fCFSP3PQAogMD2VJJzdp0Fn8fAdH3Za9d
+   k6nVnqcdfb4e2kFiwotBMPgO+s2kyAX9qY33RYeMwHxsMcTSC00748QyL
+   grRcV8B/Rbu70WYZhX55+ezODFB3aVD3Nl+J3d5vPTvSkQZOYBpXhyv0c
+   pLWOVM4x+aF29cF26KD9/88CWrLCppp9Wj4x1KV4NR8EoufDLUtWrqToj
+   A==;
+X-CSE-ConnectionGUID: RJfhoAa9SzSibRLlFpyMtA==
+X-CSE-MsgGUID: mWZCra9gSIClJrlqnmP9Uw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41752241"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41752241"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:02:26 -0800
+X-CSE-ConnectionGUID: QU4ZCot/QdOAxSVr4FukTQ==
+X-CSE-MsgGUID: bo8p130TRX6bVzX3qXS1/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="122149363"
+Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
+  by fmviesa004.fm.intel.com with ESMTP; 27 Feb 2025 06:02:18 -0800
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-next v6 0/9] igc: Add support for Frame Preemption feature in IGC
+Date: Thu, 27 Feb 2025 09:01:48 -0500
+Message-Id: <20250227140158.2129988-1-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/15] gpiolib: introduce gpio_chip setters that
- return values
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
-	<linus.walleij@linaro.org>, Michael Walle <mwalle@kernel.org>, Bamvor Jian
-	Zhang <bamv2005@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Keerthy <j-keerthy@ti.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<ukleinek@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250220-gpio-set-retval-v2-5-bc4cfd38dae3@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djP87piBQfSDTbekrbo/jCd2WLFtzVM
-	FrsebGOzmDt7EqPFqe1NTBZT/ixnstg8/w+jxeVdc9gs7t5dxWjx++dcZouf8y+yOnB7LL52
-	m9Vj4lldj52z7rJ7bFrVyeZx59oeNo/jN7YzeXzeJBfAHsVlk5Kak1mWWqRvl8CV0bDtCHvB
-	DYWKnQ2XmRoYV0p2MXJySAiYSDR0T2PrYuTiEBJYwSix7+VPKOcLo0Try1lQzmdGif937zPB
-	tGz8vZEJIrGcUWLPjgPMEM5HRonvi/YDORwcvAJ2EptXxYE0sAioSuxs/ssKYvMKCEqcnPmE
-	BcQWFZCXuH9rBjuILSwQLrFiziMwW0RgOZNE/05VkJnMAhOBFizcygaSYBYQl7j1ZD7YFWwC
-	hhJdb7vA4pwCLhI7Zk1mhqiRl9j+dg7YQRIC3ZwS579+ZIY420Xi8rP7bBC2sMSr41vYIWwZ
-	if875zNBNLQzSiz4fR/KmcAo0fD8FiNElbXEnXO/2EBeYxbQlFi/Sx8i7Chx6+EKsI8lBPgk
-	brwVhDiCT2LStulQYV6JjjYhiGo1iVnH18GtPXjhEvMERqVZSOEyC8mbs5C8Mwth7wJGllWM
-	4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBCez0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd5Z
-	sQfShXhTEiurUovy44tKc1KLDzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl4uCUamBqeXyN
-	zeKReVf7z2qPvroS0fuRfflbPzsEGgZeZbS1Kj93fpnxPJe1e1477OFifafz/NqO7+eDZDbM
-	KzL6doF737dX53e9ODGjYcnaAA4XeZWFqz4FlLJFy1ydaZl12uq0xS61lnqDPZyrxCebC3lr
-	65r1N/O882i0OXK0bOrcFw2zW07UsbicWXepqrBqhpHRsdnKV2Yyf3U4ojKlUOPwqV1C9YIi
-	W885yWpYFc7btl+JYfaNA8/dT3Q0rP3s5lVQtlvPV7bXQNNadGnMmvOqHy7XfTwjxef24M1c
-	TmH3yTolP49/77Ph1BN9ct238GSE05Vik0dv03+eFCo6v0v0opnn5QJZt5uvEgXzhESVWIoz
-	Eg21mIuKEwG2JnH8zwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7piBQfSDTa/ZLHo/jCd2WLFtzVM
-	FrsebGOzmDt7EqPFqe1NTBZT/ixnstg8/w+jxeVdc9gs7t5dxWjx++dcZouf8y+yOnB7LL52
-	m9Vj4lldj52z7rJ7bFrVyeZx59oeNo/jN7YzeXzeJBfAHqVnU5RfWpKqkJFfXGKrFG1oYaRn
-	aGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX0bDtCHvBDYWKnQ2XmRoYV0p2MXJySAiY
-	SGz8vZGpi5GLQ0hgKaPEzNXX2CASMhInpzWwQtjCEn+udYHFhQTeM0q0/vTtYuTg4BWwk9i8
-	Kg4kzCKgKrGz+S9YOa+AoMTJmU9YQGxRAXmJ+7dmsIPYwgLhEksm9zCC7BIRWM4k0dnxkREk
-	wSwwkVFi2c0ciPm1Ei8+d7NBxMUlbj2ZzwRiswkYSnS9hbiBU8BFYsesycwQNWYSXVu7oObI
-	S2x/O4d5AqPQLCR3zEIyahaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjNZt
-	x35u3sE479VHvUOMTByMhxglOJiVRHhnxR5IF+JNSaysSi3Kjy8qzUktPsRoCgyMicxSosn5
-	wHSRVxJvaGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMHp1QD056ktR8Zk25n
-	HOg9OJuv3+eZeMI57l72wwnxLZoO71i1khn2dKnNOdudeHpBx10v7lmhjVPrDtyMlzxTrHrj
-	g7T7bJ3+uW/OfD1wWcvXYu/2j5enpUR13syvWn9ly4mnBrnmlw8uCH/xi+W7auxzKZ7pn0xe
-	F+8z7oras8vw6ZV4s1/nVHrMTnV4vrsSnJzz2sB4iWSeyobjiu98H/NOuOF9IePqjdu9y91P
-	6SfMitr2ujV0VntLq+R59S93ou29XhxP4vf323/3G9cC7x3yyZzSU++85nvcFXhaenp8Ie/V
-	n/c4tQObDvrnN1UWpwa47xK1Xz8vufja4Q7PjpmeG3M3rnzfYht/6dSUtS4VAkosxRmJhlrM
-	RcWJAME63CZfAwAA
-X-CMS-MailID: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
-References: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
-	<20250220-gpio-set-retval-v2-5-bc4cfd38dae3@linaro.org>
-	<CGME20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 20.02.2025 10:57, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Add new variants of the set() and set_multiple() callbacks that have
-> integer return values allowing to indicate failures to users of the GPIO
-> consumer API. Until we convert all GPIO providers treewide to using
-> them, they will live in parallel to the existing ones.
->
-> Make sure that providers cannot define both. Prefer the new ones and
-> only use the old ones as fallback.
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/gpio/gpiolib.c      | 27 +++++++++++++++++++++++++--
->   include/linux/gpio/driver.h | 10 ++++++++++
->   2 files changed, 35 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index b1e7d368bc7d..19f78ffcc3c1 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -926,6 +926,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->   	int base = 0;
->   	int ret = 0;
->   
-> +	/* Only allow one set() and one set_multiple(). */
-> +	if ((gc->set && gc->set_rv) ||
-> +	    (gc->set_multiple && gc->set_multiple_rv))
-> +		return -EINVAL;
-> +
->   	/*
->   	 * First: allocate and populate the internal stat container, and
->   	 * set up the struct device.
-> @@ -2757,11 +2762,21 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
->   
->   static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
->   {
-> +	int ret;
-> +
->   	lockdep_assert_held(&gc->gpiodev->srcu);
->   
-> -	if (WARN_ON(unlikely(!gc->set)))
-> +	if (WARN_ON(unlikely(!gc->set && !gc->set_rv)))
->   		return -EOPNOTSUPP;
->   
-> +	if (gc->set_rv) {
-> +		ret = gc->set_rv(gc, offset, value);
-> +		if (ret > 0)
-> +			ret = -EBADE;
-> +
-> +		return ret;
-> +	}
-> +
->   	gc->set(gc, offset, value);
->   	return 0;
->   }
-> @@ -3501,9 +3516,17 @@ static int gpiochip_set_multiple(struct gpio_chip *gc,
->   
->   	lockdep_assert_held(&gc->gpiodev->srcu);
->   
-> -	if (WARN_ON(unlikely(!gc->set_multiple && !gc->set)))
-> +	if (WARN_ON(unlikely(!gc->set_multiple && !gc->set_multiple_rv)))
->   		return -EOPNOTSUPP;
+Introduces support for the FPE feature in the IGC driver.
 
-The above change issues a warning on gpio controllers that doesn't 
-support set_multiple() callbacks at all. I think that this wasn't intended.
+The patches aligns with the upstream FPE API:
+https://patchwork.kernel.org/project/netdevbpf/cover/20230220122343.1156614-1-vladimir.oltean@nxp.com/
+https://patchwork.kernel.org/project/netdevbpf/cover/20230119122705.73054-1-vladimir.oltean@nxp.com/
 
->   
-> +	if (gc->set_multiple_rv) {
-> +		ret = gc->set_multiple_rv(gc, mask, bits);
-> +		if (ret > 0)
-> +			ret = -EBADE;
-> +
-> +		return ret;
-> +	}
-> +
->   	if (gc->set_multiple) {
->   		gc->set_multiple(gc, mask, bits);
->   		return 0;
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index 10544f4a03e5..b2627c8ed513 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -347,6 +347,10 @@ struct gpio_irq_chip {
->    *	stores them in "bits", returns 0 on success or negative error
->    * @set: assigns output value for signal "offset"
->    * @set_multiple: assigns output values for multiple signals defined by "mask"
-> + * @set_rv: assigns output value for signal "offset", returns 0 on success or
-> + *          negative error value
-> + * @set_multiple_rv: assigns output values for multiple signals defined by
-> + *                   "mask", returns 0 on success or negative error value
->    * @set_config: optional hook for all kinds of settings. Uses the same
->    *	packed config format as generic pinconf.
->    * @to_irq: optional hook supporting non-static gpiod_to_irq() mappings;
-> @@ -442,6 +446,12 @@ struct gpio_chip {
->   	void			(*set_multiple)(struct gpio_chip *gc,
->   						unsigned long *mask,
->   						unsigned long *bits);
-> +	int			(*set_rv)(struct gpio_chip *gc,
-> +					  unsigned int offset,
-> +					  int value);
-> +	int			(*set_multiple_rv)(struct gpio_chip *gc,
-> +						   unsigned long *mask,
-> +						   unsigned long *bits);
->   	int			(*set_config)(struct gpio_chip *gc,
->   					      unsigned int offset,
->   					      unsigned long config);
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+It builds upon earlier work:
+https://patchwork.kernel.org/project/netdevbpf/cover/20220520011538.1098888-1-vinicius.gomes@intel.com/
+
+The patch series adds the following functionalities to the IGC driver:
+a) Configure FPE using `ethtool --set-mm`.
+b) Display FPE settings via `ethtool --show-mm`.
+c) View FPE statistics using `ethtool --include-statistics --show-mm'.
+e) Block setting preemptible tc in taprio since it is not supported yet.
+   Existing code already blocks it in mqprio.
+
+Tested:
+Enabled CONFIG_PROVE_LOCKING, CONFIG_DEBUG_ATOMIC_SLEEP, CONFIG_DMA_API_DEBUG, and CONFIG_KASAN
+1) selftests
+2) netdev down/up cycles
+3) suspend/resume cycles
+4) fpe verification
+
+No bugs or unusual dmesg logs were observed.
+Ran 1), 2) and 3) with and without the patch series, compared dmesg and selftest logs — no differences found.
+
+Change Log:
+v5 -> v6:
+- Added Tested-by: Furong Xu for patch 1/9 (Vladimir, Furong Xu)
+- Updated logic in ethtool_mmsv_link_state_handle() (Vladimir, Furong Xu)
+- Swap sequence of function call in stmmac_set_mm() (Furong Xu)
+- Log an error if igc_enable_empty_addr_recv() fails (Vladimir)
+- Move the patch ".. Block setting preemptible traffic .." before ".. Add support to get MAC Merge data .." (Vladimir)
+- Move mmsv function kernel-doc from .h to .c file (Vladimir)
+
+v4 -> v5:
+- Remove "igc: Add support for preemptible traffic class in taprio" patch (Vladimir)
+- Add a new patch "igc: Block setting preemptible traffic classes in taprio" (Vladimir)
+- Add kernel-doc for mmsv api (Vladimir)
+- olininfo_status to use host byte order (Simon)
+- status_error should host byte type (Simon)
+- Some code was misplaced in the wrong patch (Vladimir)
+- Mix of tabs and spaces in patch description (Vladimir)
+- Created igc_is_pmac_enabled() to reduce code repetition (Vladimir)
+
+v3 -> v4:
+- Fix compilation warnings introduced by this patch series
+
+v2 -> v3:
+- Implement configure_tx() mmsv callback (Vladimir)
+- Use static_branch_inc() and static_branch_dec() (Vladimir)
+- Add adapter->fpe.mmsv.pmac_enabled as extra check (Vladimir)
+- Remove unnecessary error check in igc_fpe_init_tx_descriptor() (Vladimir)
+- Additional places to use FIELD_PREP() instead of manual bit manipulation (Vladimir)
+- IGC_TXD_POPTS_SMD_V and IGC_TXD_POPTS_SMD_R type change to enum (Vladimir)
+- Remove unnecessary netif_running() check in igc_fpe_xmit_frame (Vladimir)
+- Rate limit print in igc_fpe_send_mpacket (Vladimir)
+
+v1 -> v2:
+- Extract the stmmac verification logic into a common library (Vladimir)
+- igc to use common library for verification (Vladimir)
+- Fix syntax for kernel-doc to use "Return:" (Vladimir)
+- Use FIELD_GET instead of manual bit masking (Vladimir)
+- Don't assign 0 to statistics counter in igc_ethtool_get_mm_stats() (Vladimir)
+- Use pmac-enabled as a condition to allow MAC address value 0 (Vladimir)
+- Define macro register value in increasing value order (Vladimir)
+- Fix tx-min-frag-size handling for igc (Vladimir)
+- Handle link state changes with verification in igc (Vladimir)
+- Add static key for fast path code (Vladimir)
+- rx_min_frag_size get from constant (Vladimir)
+
+v1: https://patchwork.kernel.org/project/netdevbpf/cover/20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com/
+v2: https://patchwork.kernel.org/project/netdevbpf/cover/20250205100524.1138523-1-faizal.abdul.rahim@linux.intel.com/
+v3: https://patchwork.kernel.org/project/netdevbpf/cover/20250207165649.2245320-1-faizal.abdul.rahim@linux.intel.com/
+v4: https://patchwork.kernel.org/project/netdevbpf/cover/20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com/
+v5: https://patchwork.kernel.org/project/netdevbpf/cover/20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com/
+
+Faizal Rahim (8):
+  igc: Rename xdp_get_tx_ring() for non-xdp usage
+  igc: Optimize the TX packet buffer utilization
+  igc: Set the RX packet buffer size for TSN mode
+  igc: Add support for frame preemption verification
+  igc: Add support to set tx-min-frag-size
+  igc: Block setting preemptible traffic class in taprio
+  igc: Add support to get MAC Merge data via ethtool
+  igc: Add support to get frame preemption statistics via ethtool
+
+Vladimir Oltean (1):
+  net: ethtool: mm: extract stmmac verification logic into common
+    library
+
+ drivers/net/ethernet/intel/igc/igc.h          |  15 +-
+ drivers/net/ethernet/intel/igc/igc_base.h     |   1 +
+ drivers/net/ethernet/intel/igc/igc_defines.h  |  15 +-
+ drivers/net/ethernet/intel/igc/igc_ethtool.c  |  76 +++++
+ drivers/net/ethernet/intel/igc/igc_main.c     |  67 ++++-
+ drivers/net/ethernet/intel/igc/igc_regs.h     |  16 +
+ drivers/net/ethernet/intel/igc/igc_tsn.c      | 193 +++++++++++-
+ drivers/net/ethernet/intel/igc/igc_tsn.h      |  52 ++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  16 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  41 +--
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 174 +++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  |   5 -
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |   8 +-
+ include/linux/ethtool.h                       |  73 +++++
+ net/ethtool/mm.c                              | 281 +++++++++++++++++-
+ 15 files changed, 816 insertions(+), 217 deletions(-)
+
+--
+2.34.1
 
 
