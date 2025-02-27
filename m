@@ -1,106 +1,92 @@
-Return-Path: <linux-kernel+bounces-537511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E05A48CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A13D3A48CD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:31:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7FF1887914
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2531887ADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642B5276D1F;
-	Thu, 27 Feb 2025 23:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C1323E347;
+	Thu, 27 Feb 2025 23:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sR5ay0+J"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06945276D15
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RMvSoDI4"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F042B276D1C;
+	Thu, 27 Feb 2025 23:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699072; cv=none; b=iCmxThSC5SAiuO7e7vZlKuF0Eaw25rorKjhpKMxSAGn5Gs5AqucKqCroj31du6Hn9gYq3vYtZOrO3Ou5bfJMUIRUFNNDiWo2HamuzLUj5j6J23qzzzVtSdyZfGLe7/OqtRrMjUDZlrgwjnvpXUIVhCux06BhzUDbhmqLxnqifNw=
+	t=1740699074; cv=none; b=iSG4evlV3tVxHyEJgwj0alHJoA4tGdtzcVGYnTtCN3dSR0ftriBrqkelIGCnr1fQiJwLmnyJyhwSjk4p4/tX3ek+8zs7n5nurdM5jfK1pyxaz86Q/a36G6VUxbtXGH5PyEKXnxreKD8sbD8uq8DqVzCxDMgXC8xVl0IBRiVzVzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699072; c=relaxed/simple;
-	bh=IaHRDLSMhNHQ5jw1EyNdC2cl6TQcuWJ21bMzGALrB1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=trheBEsJ94ukdO0mim/G++RvtnpgOJerXAbESCvxyW2cMPy0prtLUoMUWV/+LjvVXo2pskvMRau8VD4YmD/6VJchngnX+X2opTcaGYz+9V4tr+saMlcHBgsoqAn+HjLqmWd0743rd1MNkoexn8yOIaZSpBBAiQZArxQ4Z7UGyqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sR5ay0+J; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54843052bcdso1312448e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:31:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740699069; x=1741303869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaHRDLSMhNHQ5jw1EyNdC2cl6TQcuWJ21bMzGALrB1A=;
-        b=sR5ay0+JNhvbBswcLqMse/f7aDgpyDtkeBkz9Gr99AMVIdjsI+3PliB01LPn3KaaWf
-         kdnQYZhZnkKcK1yv1DyyRjTS19xkSfYrhx13AxT/8eLlt+jcx7n7A2U/5F14CyJWCXOV
-         MLXpiHcSYBuuPGqJ4Zcb8XyDnaxuvgmGRZLTPfnydR1Eo7DQLa/gozaIXOfJPloPLlMq
-         3mpI66s6i/i/IMr59C1ilJHWfdLVE1fju46LPjTLEihpPVnKtkczXPvyknj41dgNIJ3n
-         C2V/QXCEqVMwLmYfCcYBCq5cdVwYLRdWAodVKaCDsQIXeLm69zINTkBOat8Ijlp63LKg
-         9V7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740699069; x=1741303869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IaHRDLSMhNHQ5jw1EyNdC2cl6TQcuWJ21bMzGALrB1A=;
-        b=piooaUZ3eVt1NHXOk/2cwPjtDQqQ7EslLMRx9jQmvG+jmaYIL91yShXAV0Yw4RdnVZ
-         Mf2iMn3Ax43a/AXozKGjeESVK1jzWVrojAcffgcL+7D6JymiY5jI0qi0O7nH26Y9pTk8
-         Puj0ODHWuAfsYBYV2XnOfAHcfvROA5NIP+xkO6LLmWOkdOKHgy5jPGof8nU/6cXQQXtR
-         Ga25nkVy52yTqJBOrZxrjj1bPFWeIfd2r6tef9WMK29hwUZ5fSAIdxJF0j1jT7tXt85/
-         dF81a6vFM4F6xoCXv4AVnjapXrLDYaSx2z3NaM/ToeRbzUf/LuJW/W3OG1VfLNdAFdyO
-         xQKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJHLk+QRCcnxmx+xvem5BgO+eQ8+exKkYusqNH5uMOWe5SZGLtK0mgnCJ90Mi8lpNSEYjfEiSSgj/yMRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkYrXoLWLQSCIRwFTOUC7ixqth17wppIXtXAqNwWvn2+s3CYnJ
-	ncrmxByxZ+bFOiP77x9Mgp9ipVc8PdQumcdvSTULd7KG2/08nXCZJIJzgo6eUWAIrkEAEDisOZ4
-	g1WKUEDQoWm/00NUxsBfpPeSrX5PcIBNfHmYDuw==
-X-Gm-Gg: ASbGnctU/4aCE4zQMbrpcVhjHFb3wY7gH6pwqpZQFJG3JHSbdkX7eIoIzD9Y/hM4xPg
-	T9vkjFNxehaq7QzF9qff362lu0p4W+Nr+np8IKZfgqrb2WorUFzLBIP4+ZKRPaHVaFcl7v5t2Du
-	1o+N9DOiU=
-X-Google-Smtp-Source: AGHT+IGGbs1UVyEgAcakRDFXIeGYBdUxdhWfag9rAL0rT+OgOPNIr+4bssP7UEerjkTRNMc7dyVEUpBQezVs8eLvUok=
-X-Received: by 2002:a05:6512:398e:b0:548:91f6:4328 with SMTP id
- 2adb3069b0e04-5494c11b516mr580710e87.15.1740699069023; Thu, 27 Feb 2025
- 15:31:09 -0800 (PST)
+	s=arc-20240116; t=1740699074; c=relaxed/simple;
+	bh=Ox2k/er+A/bOimdXt/szjkoTmJr8XmSSxQ89pyfQ3dQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dd5s+5S7TpZB0sBE5yO4tjsb0S3CYjIfCGNV6mxkQPP2qLLvZdKAvDHD4bf2fp7vwjH5PLupXAnT3oVFo5CgkW4odLNQMwbq80gii+HUkR27RBHE2MdqXXTQ78T+osU+oXWu8mrN3jIjMYiX+jaWKv7sROT1fX+q7w2p7yIY6+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RMvSoDI4; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 71E8D210D0F2;
+	Thu, 27 Feb 2025 15:31:12 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71E8D210D0F2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740699072;
+	bh=p09IWZVM4LGvEIF0LtvyW3RczsHretpcUKg5KuZbxiE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RMvSoDI4FyOJVx+8H0CuR6b3QrW4i98WNg4iFvs81loWo+H3kc3rlk6TCRAL9elRH
+	 wSY5cB7twYCPYSS/m4p35rtBeth09DfwUQ8PScFykoJsBlZTQ00TxOglcaH5JnIbjz
+	 CWtxOyfqV32mzU2qJZFrIfxR22fh8sA6Q6V724JY=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	linux-hyperv@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	sunilmut@microsoft.com
+Subject: [PATCH hyperv-next] scsi: storvsc: Don't call the packet status the hypercall status
+Date: Thu, 27 Feb 2025 15:31:10 -0800
+Message-ID: <20250227233110.36596-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220155036.2734838-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250220155036.2734838-1-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 00:30:58 +0100
-X-Gm-Features: AQ5f1JpjkmaOs8rnxPzvRgfLNG60MoCpF2hC66NOqkW8z94ycu4HgaelFf-UG3c
-Message-ID: <CACRpkdY1tgHQyU+s8HxfW=rK8bFfFsbz=Pa4EukOrNvC++4=0w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] pinctrl: wpcm450: Switch to use
- for_each_gpiochip_node() helper
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: =?UTF-8?B?Si4gTmV1c2Now6RmZXI=?= <j.ne@posteo.net>, 
-	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 4:50=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+The log statement reports the packet status code as the hypercall
+status code which causes confusion when debugging.
 
-> Switch the code to use for_each_gpiochip_node() helper.
->
-> While at it, correct header inclusion as device property APIs
-> are provided in property.h.
->
-> Reviewed-by: J. Neusch=C3=A4fer <j.ne@posteo.net>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fix the name of the datum being logged.
 
-Patch applied!
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+---
+ drivers/scsi/storvsc_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index a8614e54544e..d7ec79536d9a 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1183,7 +1183,7 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
+ 			STORVSC_LOGGING_WARN : STORVSC_LOGGING_ERROR;
+ 
+ 		storvsc_log_ratelimited(device, loglevel,
+-			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x hv 0x%x\n",
++			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x sts 0x%x\n",
+ 			scsi_cmd_to_rq(request->cmd)->tag,
+ 			stor_pkt->vm_srb.cdb[0],
+ 			vstor_packet->vm_srb.scsi_status,
+-- 
+2.43.0
+
 
