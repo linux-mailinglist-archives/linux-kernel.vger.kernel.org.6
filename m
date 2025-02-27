@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-536318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75C2A47E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:45:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A18A47E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E133A625B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9983A75C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC033010C;
-	Thu, 27 Feb 2025 12:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7CB2EB11;
+	Thu, 27 Feb 2025 12:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="askmonWv"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXANO1mz"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF02F27004F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEFF27004F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740660320; cv=none; b=ji3g8AvXsWw2ZqMIPCYnbIWICiQf9n+6v3R0+UQRFDTVAVKBiiIT1B1jsQRcryMjsL4Zjoe0NVgfi7NssIYNX+HhSw0PB67VSExO+1btPyDK0Dy6t8SU87Z6yfrh3WD6xvcCdMrnW01yxAe5Ql1bR51L5NAW8pwIFTC1K8C0TNg=
+	t=1740660328; cv=none; b=JUNusxoEU1Szkh7Gsrv6TjJ7lnBf5pqUU+HrIz15qUv79nBqtJBG73LlC8ONctGwaGkTeb5HvpG7RkPyn9OtlOCrQJjKOLeH8v0F4fRvQQZARjkCbj0ZSDuJKbBhC6Pmj6p9CQvx4mhjXSFtCuT928bOEIxQ/N+CfMN4POsrs/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740660320; c=relaxed/simple;
-	bh=4qjFpj/O8EuqzwrkbdkZ7vhHoDiHRRuS/phjk+EMKXo=;
+	s=arc-20240116; t=1740660328; c=relaxed/simple;
+	bh=qrRgq02fnXJXvcD8RgGr2ryYofMwnWE8L+HiIMkzpCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hES4kZ5oTdbp4M+ZFOxMZr1D4/W41b+P+rVgOSybpt6CLWas8oK+jtJAZyAii1/I7V0IVJG8zujVCFxWFF+AAjdIGpBc/nVlHOcNEzTydO5d9gn8fNukoyzsx3h/+dKQHZ9q1AePBAAph+gYOH3fPcCbcyatn4zO4rfJVlxZHyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=askmonWv; arc=none smtp.client-ip=209.85.216.53
+	 MIME-Version; b=rq11g5uZsRiqefTMVM3Om+WGkM/dySib3ExwPvqc1SMCrPxOCA1JGkGcH60l6zvy7ZG5vIdANOVZbi3goi9Iyl3jFEvuDHpsRa3JycBjYTTE50ZmGFlUgl4sklYKArWuuOihFhome/FkMpK70qvKE5vUtyOS/5kk7V1QhHWK7fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXANO1mz; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2feb47373d9so227913a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:45:18 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2232aead377so17124765ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:45:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740660318; x=1741265118; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740660326; x=1741265126; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CoDMNsdCwpD9bQQAMMSaST4NFpnfhrfHKJqEonZ3Wrw=;
-        b=askmonWvzdohtf/a9Bz5hSNH1rmBjvy1+SH9RB6jxmTucDS2UwpLWVb3GAimLBPaWU
-         CfDzyxyXScUpZOHuJxkUk45OiK0Bahaix9mI4cB8CdhfXNvMMsW+L0OxjJgmwZ+wGwTe
-         xSmS7FntTern7B1u7d4j4tHlpfYOB0QdCPNZSzFmj/NudGFrdvty/Wy8rL1hhRJfaopW
-         luAKzIGsZzU5Iu8Yt65Z17U37ejL+F9jZKR6mMNlZYqaeARqebz5LiQAoNkDwRKh8bj9
-         Z4LsbtXPrW6/QPtQxvMgw/li53p/YjzvHtSOWpUqZDCzv8uZA4jTQJQze3DGtQMvrAvX
-         Rv4Q==
+        bh=XkaXG7TVgMagzcxv29XE8MWWCnLAdnJPJnUCWab6kj8=;
+        b=ZXANO1mzMcwTD5rS0FK+ZV2NkJ3jS4kv6No7CW+3+DUaV1pLc5ouPX2SiEam5LhSgU
+         3T1nA+hnLBKcsgd+vAJonriRyfgJXW9tXuAF7P6xeEYnJuh5f8JCxO6J7Digx1ngFnV1
+         IvO3tAvVeA/UlAJIzOJWdl8OLYttR6t2KNh54Y9/sfAZcgUdEso6VotNo5mQHnqW+qUs
+         AFAwLL8KRa/UUUw4tVMWqvT+VuTSoIKKHNnspGG4gsj1rEgKg+/FLTJM1hBvRqGd2sEm
+         OZOGkKCcjj54IaPeBDA4fbR6BWWXrsyvuZZgp54YIgFp+f+DJrGh20p9xTtRNF4GAu7p
+         wkmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740660318; x=1741265118;
+        d=1e100.net; s=20230601; t=1740660326; x=1741265126;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CoDMNsdCwpD9bQQAMMSaST4NFpnfhrfHKJqEonZ3Wrw=;
-        b=rIMXY6eUSM6jd1KlWbpRuDHzwnkTHSF5MHYHtspzU0VusLwWElQY0HhMHMJ1YGULyf
-         ksM/aGC46cCr0/MxC5ikyb+M+lj7mW46zqXDJtAS9jwtBdhaO9mjnk9bTLIXl5ZzcSuo
-         E9k/UvUw84R1iAgCKqZKfjTo4lgZ9IDHx8A6qXA+Mmsuvc5y+5hKbwHAe6NEL8FpAxbS
-         EL5VlpcuMk7DwWH8+qBxpRA7jQ1HKbDknOZV/vx2jGwpu/0lK5XaCWoF2C2RbJTvB6H/
-         TrYzF+WLggkuWU/eylhYdSE4g0j/6MBZYgflDnjtCeqwvN4MWvxjJgatrQ5LmBrGEs/O
-         yvqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGllppFdUY/521zndkKGUTT6ce2tlcXwhoQ4jxMeKK51QGPGBIUVCTWQsNrpEZ4fhCVIeiZjqRV6uRteo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1d0eUHYrcz/7E20BD8P3U3Nb6oIHF2iExiiZXUqZDeI9jfS+p
-	UESNlGcRUM3kJGVO+NedTUDHb24GAVg/AomVKXhOdYp5JEj/xzDX
-X-Gm-Gg: ASbGncshVPkD85qO25fZdf/uXFz0U4z6goktYgfy1JqMgzQ1bphvrr+6Uwzo0BoV3g9
-	8S6ydrHfQo4e8PIZFv50MEjus2+yqJR/99JueuVGZE/AOR75rlcbf3whboVjsYjHAjTjCpHr6b4
-	vfLUi7aeiKij1ydaMy+U5LRfC27emJUVeEZetPtnxtMOk+nR1Bav+JWCsTpKEphhwxJqww2W7BW
-	3ld38g/tu15dGOqFpjxSTi45MSPS7X5V2qEF+JzoG/0shH7qOogDUz1A/XD1OSOLyrKRofFe1WM
-	ihcWODVNDJXawKrR/Vv836uoxyiPPgbN0tEdTdCTJm3ua8/wscbx
-X-Google-Smtp-Source: AGHT+IEzrBJRbVzaSyVYDGURbJtLzkxr1lRt0lFTgMwEWfOfbcUgHPk+Qm8SuV0cOFvnVlh2GlTs6A==
-X-Received: by 2002:a17:90b:5201:b0:2fa:1e3e:9be7 with SMTP id 98e67ed59e1d1-2fce76a1eb6mr37308207a91.5.1740660317927;
-        Thu, 27 Feb 2025 04:45:17 -0800 (PST)
+        bh=XkaXG7TVgMagzcxv29XE8MWWCnLAdnJPJnUCWab6kj8=;
+        b=PH3+2EoUYfuDwTVkwLHXCZjrX2c3XFcvhgW/IYhl/i/f2CHSFnTYktgOwsYmPpsw7K
+         bef+pPqxTxp8q6inBOQr5rxAogBcPNjohOnM01jmh1Rc8X53ybgWsTaYkKwZknZm70fJ
+         gvgtPKjTm0Ex/ASIWlo0J5PzI9KrJEUJLVrjnUtO0Mhs0rPiK5Sd5Z/Z6rg6Y6pY0UgK
+         gKbPeDjOk9A0pqY4B3LM8U46dnDOGEe4WPWP71ygTaTIdcisdud84jE97PUBu+r/G6Mj
+         d5zdG+hCPsTyd6iEiWZ5TEhLN6xfcRPvphKB13JtImSSZuuAQIPFIn7+1wIhZegr6hIv
+         N7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu5qpWO3gWn3n/bdI0cV+3Cunrg6OdSBhi5j4mWZE5ZEV4m3bFgQuh04wmM9oDoRtHoI5Bjhx8tmYkGZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJj8qqYib4dSiVWWSBAOFxBVaA7ASCC73xfcI/oi/sWaHfFROL
+	qtNhPjN01ZpTsDX7g65fGZ9KloAto/q9/Y7OzSg4FOxVkRgu7lWR9iM3xpLD
+X-Gm-Gg: ASbGncsiEiVb72B00DdpvjfEwVbtO3kTjMsxqynPduAweWQ5rPyNQ+wstzFfKqxLaON
+	QrfrMNjsL1A1zcnjNGprcToC17lF9Nya7A7d1pOFB7yrsQNZ8lCWHmoQi6hzqhRPEavHa4I9rft
+	7qIo4IWhj53QKrq4GCx+Dmy32+2WrKwWi6Rj3emKSWIwH14zogJ9Iq2VNawBwBnfckqilKq2bQG
+	WqHs+Sp/tbtL3Np2iVlo4C+btNvUYrUHzdW1zwH9XIxP7LUCyuuZojjfkp+f/eEdMEtKXkN5A2B
+	UVUOP3RaedWCjzSgax8ne+Foq/9XqZflQ6DmOkQEgIc/olBOMWR0
+X-Google-Smtp-Source: AGHT+IGj5ckcDwv0Rhqi3CzBoUdpq0KkkItLdDvFawBlVT2ypQCGoaSp3BeXBCYyKxb4FzUS4b+Gyg==
+X-Received: by 2002:a17:902:db03:b0:21f:6bda:e492 with SMTP id d9443c01a7336-223201f7e34mr127537995ad.35.1740660326180;
+        Thu, 27 Feb 2025 04:45:26 -0800 (PST)
 Received: from ideapad.tail50fddd.ts.net ([139.5.199.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501f9dd8sm13406065ad.57.2025.02.27.04.45.15
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501f9dd8sm13406065ad.57.2025.02.27.04.45.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 04:45:17 -0800 (PST)
+        Thu, 27 Feb 2025 04:45:25 -0800 (PST)
 From: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: ayaanmirza85@gmail.com,
 	dakr@kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
-Subject: [PATCH 1/2] drivers/base: fix checkpatch.pl warnings in attribute_container.c (v2)
-Date: Thu, 27 Feb 2025 18:11:28 +0530
-Message-ID: <20250227124417.132020-3-ayaanmirzabaig85@gmail.com>
+Subject: [PATCH 2/2] drivers/base: fix iterator cleanup in attribute_container_find_class_device (v2)
+Date: Thu, 27 Feb 2025 18:11:29 +0530
+Message-ID: <20250227124417.132020-4-ayaanmirzabaig85@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <2025022606-carrousel-unstable-f2f3@gregkh>
 References: <2025022606-carrousel-unstable-f2f3@gregkh>
@@ -91,47 +91,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch applies only cosmetic changes such as
-whitespace fixes, formatting and typos. These
-changes are flagged by checkpatch.pl
+This patch fixes a long-standing FIXME by refactoring
+the function to ensure klist_iter_exit() is always
+invoked once via a unified cleanup path
 
+The patch has been tested thoroughly with a minimal
+Debain System and scsi devices and GDB.
+
+Tested-by: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
 Signed-off-by: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
 ---
- drivers/base/attribute_container.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/base/attribute_container.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/base/attribute_container.c b/drivers/base/attribute_container.c
-index b6f941a6ab69..69637b2ec3bc 100644
+index 69637b2ec3bc..fbf7fd45651e 100644
 --- a/drivers/base/attribute_container.c
 +++ b/drivers/base/attribute_container.c
-@@ -5,7 +5,7 @@
-  * Copyright (c) 2005 - James Bottomley <James.Bottomley@steeleye.com>
-  *
-  * The basic idea here is to enable a device to be attached to an
-- * aritrary numer of classes without having to allocate storage for them.
-+ * aritrary number of classes without having to allocate storage for them.
-  * Instead, the contained classes select the devices they need to attach
-  * to via a matching function.
-  */
-@@ -21,7 +21,8 @@
- #include "base.h"
- 
- /* This is a private structure used to tie the classdev and the
-- * container .. it should never be visible outside this file */
-+ * container .. it should never be visible outside this file
-+ */
- struct internal_container {
- 	struct klist_node node;
- 	struct attribute_container *cont;
-@@ -449,7 +450,7 @@ attribute_container_remove_attrs(struct device *classdev)
- 
- 	if (cont->grp) {
- 		sysfs_remove_group(&classdev->kobj, cont->grp);
--		return ;
-+		return;
+@@ -492,12 +492,11 @@ attribute_container_find_class_device(struct attribute_container *cont,
+ 	klist_for_each_entry(ic, &cont->containers, node, &iter) {
+ 		if (ic->classdev.parent == dev) {
+ 			cdev = &ic->classdev;
+-			/* FIXME: must exit iterator then break */
+-			klist_iter_exit(&iter);
+-			break;
++			goto out;
+ 		}
  	}
- 
- 	for (i = 0; attrs[i]; i++)
+-
++out:
++	klist_iter_exit(&iter);
+ 	return cdev;
+ }
+ EXPORT_SYMBOL_GPL(attribute_container_find_class_device);
 -- 
 2.47.1
 
