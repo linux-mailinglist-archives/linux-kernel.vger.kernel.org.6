@@ -1,190 +1,248 @@
-Return-Path: <linux-kernel+bounces-536489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57CEA4808C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77994A4806E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:04:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0C70164179
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DF01898BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BD822A4CE;
-	Thu, 27 Feb 2025 14:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B57F22FE15;
+	Thu, 27 Feb 2025 14:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+1zi50G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cElZXzl2"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A729D29CE8;
-	Thu, 27 Feb 2025 14:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A2214222
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664855; cv=none; b=i+GDAhy1ka41Mn+ZAeQ+Hc4AgtcNTeqcK0gmqpnmJUm1H6pLburXVxwCJy+EL+w++odVpvqqWncz2aHOxwF/kosfN8vpQvmQk65fpUr7nrFBRdQsSVu7XpUVGWwtxmxGXT2xGtMgeBeMlaRHiD53vcWnjAR7TSvuSlm90dZVn00=
+	t=1740664866; cv=none; b=baZX2/eBkF0VtslRcGhKvoeMKg4J5X+Is3v5UNBd69uAd/yTJJV8tlooPZ9sLEFXjOpO0yDbt/i7iAdvKcAH2H1cR6f+ugsUNtWgAEQw+EQBs7xzXmTMzq90FEgVr/fSia5dRfoVUsfQeqdV/AzaUImCC+MntnGeNe/2klJ7Nok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664855; c=relaxed/simple;
-	bh=aTJLLJdm6UwJ27+p+vuuj6DyutWD3bMFwLF2OQRevjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKIyKvSuCwXOE3wsdrQmPSICCcBqs6vXScF4vkJE+V0fXlb91Faj0B2zr1vXT2XzY0bSB/ELX7rLKbYFNKY1tENt1cEBmtNAqixjI2YdLR4Bg8TfieTAkJ479Ssp/BuJvmBYd5r6DX3sRzTR4RxE/bIG0gBmpmvS51awLlyEzUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+1zi50G; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740664854; x=1772200854;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aTJLLJdm6UwJ27+p+vuuj6DyutWD3bMFwLF2OQRevjA=;
-  b=F+1zi50Gq9wb4ZOyzTkRdhpFPA2pSDV4WnZ5w0Ou7PiZTBvMVm6tFtGl
-   ZRissCBa31a5m4omYbkeFFNVjxwDEnKPITJkrtQ+YEYhPwBsZoMX9IcEn
-   IrldNs8OrkKSafv2dDgyzUBLoLZM4PIxBWqztJ42oBGxkS0sPTXNuhHDw
-   BMy93zVXvRpa3WKilR3B8kZ4NrtKSiRtJnLFVBgGuJUU9A9YCfrOA3a26
-   fKZAl456mwyEFQnbiU70sb9xs4om+NCcwmillGX3lfra+hvkIokWRdEpM
-   5GBxEXYEnhz7ft8NWqdmBZntDsZNgA4kk9cp6U63McbpFk09KZZvlH2an
-   Q==;
-X-CSE-ConnectionGUID: P3iKjWbSSO+VhPXkdwHg+A==
-X-CSE-MsgGUID: 8BpnNu1fSlSZGZOpOkHPng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40793044"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="40793044"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:00:53 -0800
-X-CSE-ConnectionGUID: dbRhm6LDRJO53/6aGMVrSQ==
-X-CSE-MsgGUID: STO1TeoJRq+arBfoq4pWOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="121976535"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 27 Feb 2025 06:00:51 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tneRU-000DRu-2p;
-	Thu, 27 Feb 2025 14:00:48 +0000
-Date: Thu, 27 Feb 2025 22:00:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rengarajan S <rengarajan.s@microchip.com>, unglinuxdriver@microchip.com,
-	broonie@kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, rengarajan.s@microchip.com
-Subject: Re: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy
- implementation for x64 and bcm2711 processors
-Message-ID: <202502272153.zJWKuv3R-lkp@intel.com>
-References: <20250224125153.13728-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1740664866; c=relaxed/simple;
+	bh=SRFDgDNdWZ5zf1bg96IKeBhSU3dvgKDPRtiXI4vFnac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=FKGm4uEbSjiMV1LnoIxouOkz5y1KY4z5Hwi/R5GpYWl0SDtB/A5Vns9ceomTPS0t3GCqm/7FuM8vu6sUhxMHlqS81LF3MylQIq+vkSov7Rg20S58/kve5NyWlfKUyi6VndL1tgDqQ7M8jc77KpJpbDiw09uejUybnYfAJQ5+n88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cElZXzl2; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250227140054euoutp02d24321bb7b3f090e740b590369631848~oFXaRvoFA2692326923euoutp02H
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250227140054euoutp02d24321bb7b3f090e740b590369631848~oFXaRvoFA2692326923euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740664855;
+	bh=XFri3rmlbUoKmwQLzTUXC+1AppVaa7YSM5vKQGK1m3Y=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=cElZXzl2KwIg7sfpVd0XQwtQav9WKBuoeGWPCyMZgB2NrE2uIhoTR4VSJzrbo2ztM
+	 KtP1sypFNIELlxlBZNI9vpgA3NHO83ygLtNwHvRPWp7K2TKTYE3vVdxKor/ln1nzxX
+	 kVMNR133k9uHoM6jxK1675Aj1LUhGbEVaAuxEQF8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250227140054eucas1p1754395c6b5e264d4ca1ff0bc2962ff38~oFXZ4v-sU3188831888eucas1p1r;
+	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 3B.9E.20821.61070C76; Thu, 27
+	Feb 2025 14:00:54 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf~oFXZi0fGN1024710247eucas1p2N;
+	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250227140054eusmtrp2292600fafa893e3fd7a23cc81fbe9e81~oFXZiJiU_0637906379eusmtrp2R;
+	Thu, 27 Feb 2025 14:00:54 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-da-67c07016c72d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C1.2C.19920.61070C76; Thu, 27
+	Feb 2025 14:00:54 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250227140053eusmtip203ef929152989046c51f8a0e822f6667~oFXYmY1Bc2598525985eusmtip2B;
+	Thu, 27 Feb 2025 14:00:53 +0000 (GMT)
+Message-ID: <ab3e42c0-70fa-48e0-ac93-ecbffef63507@samsung.com>
+Date: Thu, 27 Feb 2025 15:00:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224125153.13728-1-rengarajan.s@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/15] gpiolib: introduce gpio_chip setters that
+ return values
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	<linus.walleij@linaro.org>, Michael Walle <mwalle@kernel.org>, Bamvor Jian
+	Zhang <bamv2005@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Keerthy <j-keerthy@ti.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<ukleinek@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250220-gpio-set-retval-v2-5-bc4cfd38dae3@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djP87piBQfSDTbekrbo/jCd2WLFtzVM
+	FrsebGOzmDt7EqPFqe1NTBZT/ixnstg8/w+jxeVdc9gs7t5dxWjx++dcZouf8y+yOnB7LL52
+	m9Vj4lldj52z7rJ7bFrVyeZx59oeNo/jN7YzeXzeJBfAHsVlk5Kak1mWWqRvl8CV0bDtCHvB
+	DYWKnQ2XmRoYV0p2MXJySAiYSDR0T2PrYuTiEBJYwSix7+VPKOcLo0Try1lQzmdGif937zPB
+	tGz8vZEJIrGcUWLPjgPMEM5HRonvi/YDORwcvAJ2EptXxYE0sAioSuxs/ssKYvMKCEqcnPmE
+	BcQWFZCXuH9rBjuILSwQLrFiziMwW0RgOZNE/05VkJnMAhOBFizcygaSYBYQl7j1ZD7YFWwC
+	hhJdb7vA4pwCLhI7Zk1mhqiRl9j+dg7YQRIC3ZwS579+ZIY420Xi8rP7bBC2sMSr41vYIWwZ
+	if875zNBNLQzSiz4fR/KmcAo0fD8FiNElbXEnXO/2EBeYxbQlFi/Sx8i7Chx6+EKsI8lBPgk
+	brwVhDiCT2LStulQYV6JjjYhiGo1iVnH18GtPXjhEvMERqVZSOEyC8mbs5C8Mwth7wJGllWM
+	4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBCez0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd5Z
+	sQfShXhTEiurUovy44tKc1KLDzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl4uCUamBqeXyN
+	zeKReVf7z2qPvroS0fuRfflbPzsEGgZeZbS1Kj93fpnxPJe1e1477OFifafz/NqO7+eDZDbM
+	KzL6doF737dX53e9ODGjYcnaAA4XeZWFqz4FlLJFy1ydaZl12uq0xS61lnqDPZyrxCebC3lr
+	65r1N/O882i0OXK0bOrcFw2zW07UsbicWXepqrBqhpHRsdnKV2Yyf3U4ojKlUOPwqV1C9YIi
+	W885yWpYFc7btl+JYfaNA8/dT3Q0rP3s5lVQtlvPV7bXQNNadGnMmvOqHy7XfTwjxef24M1c
+	TmH3yTolP49/77Ph1BN9ct238GSE05Vik0dv03+eFCo6v0v0opnn5QJZt5uvEgXzhESVWIoz
+	Eg21mIuKEwG2JnH8zwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7piBQfSDTa/ZLHo/jCd2WLFtzVM
+	FrsebGOzmDt7EqPFqe1NTBZT/ixnstg8/w+jxeVdc9gs7t5dxWjx++dcZouf8y+yOnB7LL52
+	m9Vj4lldj52z7rJ7bFrVyeZx59oeNo/jN7YzeXzeJBfAHqVnU5RfWpKqkJFfXGKrFG1oYaRn
+	aGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX0bDtCHvBDYWKnQ2XmRoYV0p2MXJySAiY
+	SGz8vZGpi5GLQ0hgKaPEzNXX2CASMhInpzWwQtjCEn+udYHFhQTeM0q0/vTtYuTg4BWwk9i8
+	Kg4kzCKgKrGz+S9YOa+AoMTJmU9YQGxRAXmJ+7dmsIPYwgLhEksm9zCC7BIRWM4k0dnxkREk
+	wSwwkVFi2c0ciPm1Ei8+d7NBxMUlbj2ZzwRiswkYSnS9hbiBU8BFYsesycwQNWYSXVu7oObI
+	S2x/O4d5AqPQLCR3zEIyahaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjNZt
+	x35u3sE479VHvUOMTByMhxglOJiVRHhnxR5IF+JNSaysSi3Kjy8qzUktPsRoCgyMicxSosn5
+	wHSRVxJvaGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMHp1QD056ktR8Zk25n
+	HOg9OJuv3+eZeMI57l72wwnxLZoO71i1khn2dKnNOdudeHpBx10v7lmhjVPrDtyMlzxTrHrj
+	g7T7bJ3+uW/OfD1wWcvXYu/2j5enpUR13syvWn9ly4mnBrnmlw8uCH/xi+W7auxzKZ7pn0xe
+	F+8z7oras8vw6ZV4s1/nVHrMTnV4vrsSnJzz2sB4iWSeyobjiu98H/NOuOF9IePqjdu9y91P
+	6SfMitr2ujV0VntLq+R59S93ou29XhxP4vf323/3G9cC7x3yyZzSU++85nvcFXhaenp8Ie/V
+	n/c4tQObDvrnN1UWpwa47xK1Xz8vufja4Q7PjpmeG3M3rnzfYht/6dSUtS4VAkosxRmJhlrM
+	RcWJAME63CZfAwAA
+X-CMS-MailID: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf
+References: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
+	<20250220-gpio-set-retval-v2-5-bc4cfd38dae3@linaro.org>
+	<CGME20250227140054eucas1p2bf6e3f2416e11e3c62a704682bf052bf@eucas1p2.samsung.com>
 
-Hi Rengarajan,
+On 20.02.2025 10:57, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Add new variants of the set() and set_multiple() callbacks that have
+> integer return values allowing to indicate failures to users of the GPIO
+> consumer API. Until we convert all GPIO providers treewide to using
+> them, they will live in parallel to the existing ones.
+>
+> Make sure that providers cannot define both. Prefer the new ones and
+> only use the old ones as fallback.
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/gpio/gpiolib.c      | 27 +++++++++++++++++++++++++--
+>   include/linux/gpio/driver.h | 10 ++++++++++
+>   2 files changed, 35 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index b1e7d368bc7d..19f78ffcc3c1 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -926,6 +926,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>   	int base = 0;
+>   	int ret = 0;
+>   
+> +	/* Only allow one set() and one set_multiple(). */
+> +	if ((gc->set && gc->set_rv) ||
+> +	    (gc->set_multiple && gc->set_multiple_rv))
+> +		return -EINVAL;
+> +
+>   	/*
+>   	 * First: allocate and populate the internal stat container, and
+>   	 * set up the struct device.
+> @@ -2757,11 +2762,21 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
+>   
+>   static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
+>   {
+> +	int ret;
+> +
+>   	lockdep_assert_held(&gc->gpiodev->srcu);
+>   
+> -	if (WARN_ON(unlikely(!gc->set)))
+> +	if (WARN_ON(unlikely(!gc->set && !gc->set_rv)))
+>   		return -EOPNOTSUPP;
+>   
+> +	if (gc->set_rv) {
+> +		ret = gc->set_rv(gc, offset, value);
+> +		if (ret > 0)
+> +			ret = -EBADE;
+> +
+> +		return ret;
+> +	}
+> +
+>   	gc->set(gc, offset, value);
+>   	return 0;
+>   }
+> @@ -3501,9 +3516,17 @@ static int gpiochip_set_multiple(struct gpio_chip *gc,
+>   
+>   	lockdep_assert_held(&gc->gpiodev->srcu);
+>   
+> -	if (WARN_ON(unlikely(!gc->set_multiple && !gc->set)))
+> +	if (WARN_ON(unlikely(!gc->set_multiple && !gc->set_multiple_rv)))
+>   		return -EOPNOTSUPP;
 
-kernel test robot noticed the following build errors:
+The above change issues a warning on gpio controllers that doesn't 
+support set_multiple() callbacks at all. I think that this wasn't intended.
 
-[auto build test ERROR on broonie-spi/for-next]
-[also build test ERROR on linus/master v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Rengarajan-S/spi-mchp-pci1xxxx-Updated-memcpy-implementation-for-x64-and-bcm2711-processors/20250224-205745
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20250224125153.13728-1-rengarajan.s%40microchip.com
-patch subject: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy implementation for x64 and bcm2711 processors
-config: sparc-randconfig-001-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272153.zJWKuv3R-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272153.zJWKuv3R-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502272153.zJWKuv3R-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/spi/spi-pci1xxxx.c: In function 'pci1xxxx_spi_write_to_io':
->> drivers/spi/spi-pci1xxxx.c:417:25: error: implicit declaration of function '__raw_writeq'; did you mean '__raw_writel'? [-Wimplicit-function-declaration]
-     417 |                         __raw_writeq(*(u64 *)from, to);
-         |                         ^~~~~~~~~~~~
-         |                         __raw_writel
-   drivers/spi/spi-pci1xxxx.c: In function 'pci1xxxx_spi_read_from_io':
->> drivers/spi/spi-pci1xxxx.c:448:38: error: implicit declaration of function '__raw_readq'; did you mean '__raw_readl'? [-Wimplicit-function-declaration]
-     448 |                         *(u64 *)to = __raw_readq(from);
-         |                                      ^~~~~~~~~~~
-         |                                      __raw_readl
-
-
-vim +417 drivers/spi/spi-pci1xxxx.c
-
-   410	
-   411	static void pci1xxxx_spi_write_to_io(void __iomem *to, const void *from,
-   412					     size_t count, size_t size)
-   413	{
-   414		while (count) {
-   415			if (size == 8 && (IS_ALIGNED((unsigned long)to, 8)) &&
-   416			    count >= 8) {
- > 417				__raw_writeq(*(u64 *)from, to);
-   418				from += 8;
-   419				to += 8;
-   420				count -= 8;
-   421			} else if (size >= 4 && (IS_ALIGNED((unsigned long)to, 4)) &&
-   422				   count >= 4) {
-   423				__raw_writel(*(u32 *)from, to);
-   424				from += 4;
-   425				to += 4;
-   426				count -= 4;
-   427			} else if (size >= 2 && (IS_ALIGNED((unsigned long)to, 2)) &&
-   428				   count >= 2) {
-   429				__raw_writew(*(u16 *)from, to);
-   430				from += 2;
-   431				to += 2;
-   432				count -= 2;
-   433			} else {
-   434				__raw_writeb(*(u8 *)from, to);
-   435				from += 1;
-   436				to += 1;
-   437				count -= 1;
-   438			}
-   439		}
-   440	}
-   441	
-   442	static void pci1xxxx_spi_read_from_io(void *to, const void __iomem *from,
-   443					      size_t count, size_t size)
-   444	{
-   445		while (count) {
-   446			if (size == 8 && (IS_ALIGNED((unsigned long)from, 8)) &&
-   447			    count >= 8) {
- > 448				*(u64 *)to = __raw_readq(from);
-   449				from += 8;
-   450				to += 8;
-   451				count -= 8;
-   452			} else if (size >= 4 && (IS_ALIGNED((unsigned long)from, 4)) &&
-   453				   count >= 4) {
-   454				*(u32 *)to = __raw_readl(from);
-   455				from += 4;
-   456				to += 4;
-   457				count -= 4;
-   458			} else if (size >= 2 && (IS_ALIGNED((unsigned long)from, 2)) &&
-   459				   count >= 2) {
-   460				*(u16 *)to = __raw_readw(from);
-   461				from += 2;
-   462				to += 2;
-   463				count -= 2;
-   464			} else {
-   465				*(u8 *)to = __raw_readb(from);
-   466				from += 1;
-   467				to += 1;
-   468				count -= 1;
-   469			}
-   470		}
-   471	}
-   472	
-
+>   
+> +	if (gc->set_multiple_rv) {
+> +		ret = gc->set_multiple_rv(gc, mask, bits);
+> +		if (ret > 0)
+> +			ret = -EBADE;
+> +
+> +		return ret;
+> +	}
+> +
+>   	if (gc->set_multiple) {
+>   		gc->set_multiple(gc, mask, bits);
+>   		return 0;
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 10544f4a03e5..b2627c8ed513 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -347,6 +347,10 @@ struct gpio_irq_chip {
+>    *	stores them in "bits", returns 0 on success or negative error
+>    * @set: assigns output value for signal "offset"
+>    * @set_multiple: assigns output values for multiple signals defined by "mask"
+> + * @set_rv: assigns output value for signal "offset", returns 0 on success or
+> + *          negative error value
+> + * @set_multiple_rv: assigns output values for multiple signals defined by
+> + *                   "mask", returns 0 on success or negative error value
+>    * @set_config: optional hook for all kinds of settings. Uses the same
+>    *	packed config format as generic pinconf.
+>    * @to_irq: optional hook supporting non-static gpiod_to_irq() mappings;
+> @@ -442,6 +446,12 @@ struct gpio_chip {
+>   	void			(*set_multiple)(struct gpio_chip *gc,
+>   						unsigned long *mask,
+>   						unsigned long *bits);
+> +	int			(*set_rv)(struct gpio_chip *gc,
+> +					  unsigned int offset,
+> +					  int value);
+> +	int			(*set_multiple_rv)(struct gpio_chip *gc,
+> +						   unsigned long *mask,
+> +						   unsigned long *bits);
+>   	int			(*set_config)(struct gpio_chip *gc,
+>   					      unsigned int offset,
+>   					      unsigned long config);
+>
+Best regards
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
