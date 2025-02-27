@@ -1,145 +1,118 @@
-Return-Path: <linux-kernel+bounces-537000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E046A486E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:44:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4EEA486E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7179E3A43B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DF1188B2AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD3D1DF270;
-	Thu, 27 Feb 2025 17:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550B91E51EC;
+	Thu, 27 Feb 2025 17:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWaGp2LU"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Itq4eoKt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4E1DEFEB;
-	Thu, 27 Feb 2025 17:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DBB270054;
+	Thu, 27 Feb 2025 17:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678261; cv=none; b=EggTWUKiWIVviMHV7EKQpSmFyxxqAeydvc1pOWpOGTtk57FzifnPnhG0IYd3/w5QvoYhuMjGEUhJMvZaKO90Tzup+/5UIw44H453OvcUH6nEJWH2nLry8MLLMipGvs8wDYu0ixw+QHmHsFynjxCdF5Y6ghKpOOzAsyLh5GG7bmQ=
+	t=1740678342; cv=none; b=L/77+54B3xzcP42R9xFNLZNGJHWq4VgEoVSKrRr5ygP6RPsJ5w8ALPMO+h1g5IE4kWceQiDX5k5cEHerZoH9o2bKAT0n5LeAJge2a+PB5y+JBgNG6rua1Ty1+EI5OqmfXLqurHOGwU8OgOAJlORqiwQEYmBI5RuEOEs7iqfgqpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678261; c=relaxed/simple;
-	bh=jIDEnSIPQbFfExmTC460MWObe17Tb9qy5aFuBghQhYo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bisGVKNrikxzhklzxoxURLtVJ4dkud8X6wAdFXtvbCTz+1xKhASP6ALvv21qeHeE9u1Z+KpVwe2aVSmdU/ec7xGGMWqH2twEnpIsdBdp3NF0BEsZRFp5uhficLC96ndO+9FZ+VJyccJDbgQCwIYl2bv1/vQRZtJQARJaWI6/evk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWaGp2LU; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5494bc4d796so196273e87.3;
-        Thu, 27 Feb 2025 09:44:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740678258; x=1741283058; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+kPjfRpGRka+XnOdnG4bcjCQPFB/UOhax6LyvKzL3iU=;
-        b=XWaGp2LUescMOwdtdAhqCEc0OyEyJFLYIwOSgOcvuTtJlZoEHKwWVv6J6n4rttXdy+
-         d1eYONJ49C+vAfuJorqhAKlCs9aAnx/9+hCJ/6cEDvLwfYdKNnTrPRDNarNW+7+gX9tR
-         +LN+spQwxCL3gO9AazgAElvVjIWzW46+ZUMVOG4EOQA0E/KSyxo9JxEHZpa7jtqmA6Ot
-         6KFUpcRAxZo3ygjvXPJWmtVz2slHN5FsiROMUmZgttUDXiCq6siGkCrLs6rQbDDGgL+o
-         4poRkuHMTg2zhHl5GWiomr2r7GPGBmVQyvGoRZ4si7yzuSTEoy1p3TgB8hUGygkRpvu8
-         WPqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740678258; x=1741283058;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+kPjfRpGRka+XnOdnG4bcjCQPFB/UOhax6LyvKzL3iU=;
-        b=l4v2Vky/iuslHE2Ym4maEnmuboNpQOJeBqYxWIuVv8HioOpNXZlT9g4DCuDmjzY+4v
-         0229vMQDGZMiv46f6oJ8b+9TX42DWrMBHzJVekl4Hs4i31LmTJAgcu9aSCb2M8Fl8H3v
-         CMl4kyzof5fnVLJTFmyVAf3j0rlX1WOwif1Y8glueTKjtpNvk2kBtFJXuCKAxBqMjWHS
-         jM5Q2paKcB44MuvuGpmMdPc1cSJkmrj3bVvY4CpZw5c7RLNTgLVKXYo9YKYdISIp1yqA
-         YZNFtTmzHQIq9FwO8PpIrkLBv8WCZHsvlmlHHuxq9wr8FeNPhnsCWpRmUuOjYT/CaXVv
-         zHKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGEO3USXTgG+pREu67UfeMOKSuaMEsdru1DJfoDwtA/QT232rmRhSKkEAnE+zdcJz0Cni1@vger.kernel.org, AJvYcCXrdZ4J/3TVlO1NGt6NxMXYSBaoYkKh0dHC7kSmRpsg3WtLgBvLDqIZNdu47aKS8y4GFYXLDwHxZnaPWLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7b9+DBWvn8Aui6uppBL3Oogu3jyuWnVxnty2/4s8nqFjfenZk
-	7O3uxui1zYsGI2gV241fEZh9CUfIonqg9s1vzQ3TDIKEiqzgeSkU
-X-Gm-Gg: ASbGncvz9yIzzG9clmwfGxatg/zFDvftK2JZD7yTT6F8doa660qotG5XmaWBAvZekHK
-	DWr9+SIBo5+SyWR/WAQJd9wuXsW3tLGMLzChBoz2/LtRjKJHxDBntFDNFScJ2FD2VS0B7VWy1cI
-	keyYIfPxs2BSsT3Gs1BaWUxAcvuov/aM+r6xRdSBNS9eIlFPkgsNjgGPQMnp7SD/23dKW8/DNLa
-	XaEmJ2Uw9ebt2/oXP6p311u3i6ETtkma/ZlRj4tiG56acjh8kHxE9jj8tFkP658z77DyU8hKLsY
-	bTbVCWx05Nt95zCwxnfJQkeSvp17c2b5X6S00liNRuc0QA91
-X-Google-Smtp-Source: AGHT+IHYKO2+7ab78Gcv+LzYpCAqHPLlvJNLrKf9EGC/h3+5JmkdHcq4c07Vdys5iwDgmutQTGKXzw==
-X-Received: by 2002:a05:6512:104a:b0:549:4444:605e with SMTP id 2adb3069b0e04-5494c38d615mr149485e87.50.1740678257907;
-        Thu, 27 Feb 2025 09:44:17 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417424asm216311e87.6.2025.02.27.09.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 09:44:17 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 27 Feb 2025 18:44:15 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z8Ckb6spK35-Ez4U@pc636>
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
+	s=arc-20240116; t=1740678342; c=relaxed/simple;
+	bh=axlj6OwJVLYwr+IYJL39G4o+MqL7DKsYZuPxTQMr9eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtiZiMZPktkL08rpqGeAb8kT5MKg9R3fYcK34+8GS27sDx908r3NZubgcLT9UGzEMOJxR7tCdSqpt27UReeX56uWUutW5QV4xDgn2kJd65yFrH+Hp80c/de3/j8zaN049rGA+lpI9gAqnnvCpClGALSs4H0WBe+1bVGmuEXodXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Itq4eoKt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9685C4CEDD;
+	Thu, 27 Feb 2025 17:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740678342;
+	bh=axlj6OwJVLYwr+IYJL39G4o+MqL7DKsYZuPxTQMr9eE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Itq4eoKtNVNpeFYQ7F357k3WR+YxDtrfU/WrLbn773ZYNI9GB1aPTUGoFWFTPxK1s
+	 ZPRPgYSCBXlEQQYxeeA184qAcY+WqsJUXllKK+DG5A1S+iTbcnxf08pqIG80X9whzu
+	 8Keuii1YTeNMBU54jhF7Leb0TuETm/Nr5ngiNPyjMN9kiRfW3+xakpRGAE6IT5vIvk
+	 du7MXtbCYIbfuCLkdgF9p1TwiFue1ekqKjL7YM/wWeZEpTMrDhnZzySqX7Fqv7+K4+
+	 2y71/+2T8whsUxscXC74/WzJzU2a2XC8kFsnYkP2itqPEPn1f6T+0GeqBTUi9PPnP1
+	 u/cy38V0JG4qw==
+Date: Thu, 27 Feb 2025 17:45:35 +0000
+From: Lee Jones <lee@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Val Packett <val@packett.cool>, Fabien Parent <parent.f@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Eddie Huang <eddie.huang@mediatek.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: Re: (subset) [PATCH 4/9] mfd: mt6397: Add support for MT6392 pmic
+Message-ID: <20250227174535.GI824852@google.com>
+References: <20241226050205.30241-1-val@packett.cool>
+ <20241226050205.30241-5-val@packett.cool>
+ <173920541986.1887800.1972669785800121190.b4-ty@kernel.org>
+ <CAL_Jsq+PPYeFxr=utwZLemUVCzk5iabtMckOJmNy1-LO39cqeQ@mail.gmail.com>
+ <20250227154833.GF824852@google.com>
+ <20250227172457.GA3415187-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250227172457.GA3415187-robh@kernel.org>
 
-On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > Hi Ulad,
-> > 
-> > I put these three patches into next (and misc.2025.02.27a) for some
-> > testing, hopefully it all goes well and they can make it v6.15.
-> > 
-> > A few tag changed below:
-> > 
-> > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > Switch for using of get_state_synchronize_rcu_full() and
-> > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > synchronize_rcu() call.
-> > > 
-> > > Just using "not" full APIs to identify if a grace period is
-> > > passed or not might lead to a false-positive kernel splat.
-> > > 
-> > > It can happen, because get_state_synchronize_rcu() compresses
-> > > both normal and expedited states into one single unsigned long
-> > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > run.
-> > > 
-> > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > for expedited and normal states.
-> > > 
-> > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > 
-> > I switch this into "Closes:" per checkpatch.
-> > 
-> > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > 
-> > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > Would you or Paul double-check the Reviewed-by should be here?
-> 
-> I am good with keeping my Reviewed-by tags.
-> 
-Thanks Paul!
+On Thu, 27 Feb 2025, Rob Herring wrote:
 
---
-Uladzislau Rezki
+> On Thu, Feb 27, 2025 at 03:48:33PM +0000, Lee Jones wrote:
+> > On Tue, 25 Feb 2025, Rob Herring wrote:
+> > 
+> > > On Mon, Feb 10, 2025 at 10:37 AM Lee Jones <lee@kernel.org> wrote:
+> > > >
+> > > > On Thu, 26 Dec 2024 01:58:04 -0300, Val Packett wrote:
+> > > > > Update the MT6397 MFD driver to support the MT6392 PMIC.
+> > > > >
+> > > > >
+> > > >
+> > > > Applied, thanks!
+> > > >
+> > > > [4/9] mfd: mt6397: Add support for MT6392 pmic
+> > > >       commit: 896b1eb4ca771b37ea50feb4d90a78dd4e9cb388
+> > > 
+> > > This should be dropped. Missing the sender's S-o-b and the rest of the
+> > > series has issues still.
+> > 
+> > Are you sure you're commenting on the correct patch?
+> 
+> Yes.
+> 
+> > > Signed-off-by: Fabien Parent <parent.f@gmail.com>
+> 
+> It was sent by Val and is missing their S-o-b. If you send another 
+> author's patch, it needs your S-o-b.
+
+Ah, gotcha.  Yes, that's fair.
+
+I'll pull the patch.
+
+-- 
+Lee Jones [李琼斯]
 
