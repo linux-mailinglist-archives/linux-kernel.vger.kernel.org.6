@@ -1,159 +1,193 @@
-Return-Path: <linux-kernel+bounces-535900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204F4A478BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1D9A478BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C268A16E19A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A5316F3D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE964227BA6;
-	Thu, 27 Feb 2025 09:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E6227B95;
+	Thu, 27 Feb 2025 09:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K7/WSRID"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3TufFS1F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DbW7Shrx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C368E227599;
-	Thu, 27 Feb 2025 09:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD034226551;
+	Thu, 27 Feb 2025 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647397; cv=none; b=R3vvH9JcLwq++d66J/DpRMtm3aq5V/uyetqxBMKzHZ5V/wYRS5OymVoQhZc/23KOA5Jhh34eSLfhWNiwJDnWwu7T5ecQdLOwQ6Uf4KdPhWbIabV6E1a+14wbmo/81QWdk+QXwVe5m4JO/WcU1abggX10J24gCZs2PKTPO7+1nAA=
+	t=1740647472; cv=none; b=HY3sHvARxGDcE364a5cna1faqmJx8Hg6rNpDK6d6QNm9/t1qcebJgMyMxu/UMh4r+hQ9ZLsnLcKr6yPfKpbbF1r4XvwUG8tAY+A0RKKMnJh62sVsc0LybSVPQLCjCoRALOybrAirGn8InJttPLOkD4iTYt3S2fPbR7N6tZHlt04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647397; c=relaxed/simple;
-	bh=q4fTeH/nbZrefwpHXFO12Wt1mXAveSSHfKduO66DD4o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HZCcFj+MHCpGk3at7ZeTuZlenstzpmAsALsA3ArpaEXgMS2PBi+Tctm6CrDBUm0YYvZURJNn9Wy1Q5n3q2ZtJE4k0RluIOSeWryT/00R54OZ9ZP8aSY3DpDhV42N75PQT9t0xMZ5FssRxOoueZZELbcuVcJPPtvumiRMbOj6cao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K7/WSRID; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R8xjtH015835;
-	Thu, 27 Feb 2025 09:09:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uNP+sYpdWfNUyQbmq6LgNiGEAnkG36MM90R8M1Njlpo=; b=K7/WSRIDkP7tJK6l
-	LnHHjhqNHKhsauweDELC0vWU/alNCdvNNptoMUPk/U/I1+FhhQZODYJ7k+oO3qmv
-	MLwX9BRcDAjQZA5btHr1GVPxBzxeYd87OlEg0Qe4mn+fuLi2K0/JzmvE8PFgoRrH
-	bItnB2I5n3Ngc3VWwP1iaD1r4SdeeTb6dlVGIrPJRY2N+44Tf5+kinAfOl192uk3
-	y6EYCP0fZxwclGSJXRnw1QDpO/c6hkEWYHFBC4aljck+6p/uAgr1OFNoNs+uOMK8
-	aMM+zoflq87gJLThc0/wvalYpUD2myyVzhB2ps9JA5APUbCbOfv+uiphE3DEvL3l
-	L0h8iw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prnn1y1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 09:09:49 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R99mWU012790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 09:09:48 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Feb 2025 01:09:45 -0800
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <johannes@sipsolutions.net>, <miriam.rachel.korenblit@intel.com>,
-        <syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_zhonhan@quicinc.com>, <syzkaller-bugs@googlegroups.com>
-Subject: [RFC PATCH] wifi: mac80211: Prevent disconnect reports when no AP is associated
-Date: Thu, 27 Feb 2025 17:09:32 +0800
-Message-ID: <20250227090932.1871272-1-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <67bf36d3.050a0220.38b081.01ff.GAE@google.com>
-References: <67bf36d3.050a0220.38b081.01ff.GAE@google.com>
+	s=arc-20240116; t=1740647472; c=relaxed/simple;
+	bh=JOqY+CoNqMYtrEO1gJswp59niLfGfYa+1G5OdpGaJ64=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FRRE/ZvUytUM0QQxfBpzDg4Ex4uFk1r5LTcpcDQmUvZzgRKaqdojcMVhE0stOVl2dVqjFSkb6A41fWLNIf5U2/JS5QF88rpEJG/CZXZnKcff37LiKmXXnc8CvkOYgGUbPtqygV0umOeLrvqQI7QGVMfPB/cdJ648+s5aSsP9oik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3TufFS1F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DbW7Shrx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740647469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VjempoGvlVjLQ6oq69ccc+cgz6csDzLpGNNetDWHHeo=;
+	b=3TufFS1FpX0siM3OwozmM3yrAlVRb+AMcpGj4jpQ+mw9xu+9l3dTfGwahghmzLY6xsWF1L
+	SfEItRn+t4ldrI6bjKesQUKTrLq/fUXbIIY8o/NChJbc3ojOd8Qz8WmtVPBd1jRKNT0s0Q
+	kBVOuCmBHVR3m7GUZFtVSTNXhjNcld+zMprzlKMaWREh1sFrMITt1Q23BBeNENfLVserE1
+	Owd9LWEmiLYboE84cpp/Cr5yU9LnmUlK5FIF5lFZGP6ZLG/kb+nCArt7yajgmhQ8PzCw2F
+	tLAMcEhklbIU1efDTFAC4vr3vlvvNxtbnliwRIkw444GA0mqRetJjSK8V2eItQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740647469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VjempoGvlVjLQ6oq69ccc+cgz6csDzLpGNNetDWHHeo=;
+	b=DbW7Shrxvu4mXb5ArN/VR53PJip78EUQordzqJvdYAwHJUuXNsPAT1zJLiwcpcRfPIz02W
+	bf//dXOFI3+TR0Aw==
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo
+ Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas
+ Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v9 12/13] rust: hrtimer: add clocksource selection
+ through `ClockSource`
+In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-12-5bd3bf0ce6cc@kernel.org>
+References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
+ <20250224-hrtimer-v3-v6-12-rc2-v9-12-5bd3bf0ce6cc@kernel.org>
+Date: Thu, 27 Feb 2025 10:11:08 +0100
+Message-ID: <87jz9beor7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZnuO2-MDAEpci2UNhs0ZfTQBhNSFOfi5
-X-Proofpoint-ORIG-GUID: ZnuO2-MDAEpci2UNhs0ZfTQBhNSFOfi5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270069
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-syzbot reports that cfg80211_tx_mlme_mgmt is using uninit-value:
+On Mon, Feb 24 2025 at 13:03, Andreas Hindborg wrote:
+>=20=20
+> +/// The clock source to use for a [`HrTimer`].
+> +pub enum ClockSource {
 
-=====================================================
-BUG: KMSAN: uninit-value in cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
-cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
-ieee80211_report_disconnect net/mac80211/mlme.c:4238 [inline]
-ieee80211_sta_connection_lost+0xfa/0x150 net/mac80211/mlme.c:7811
-ieee80211_sta_work+0x1dea/0x4ef0
-ieee80211_iface_work+0x1900/0x1970 net/mac80211/iface.c:1684
-cfg80211_wiphy_work+0x396/0x860 net/wireless/core.c:435
-process_one_work kernel/workqueue.c:3236 [inline]
-process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
-worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
-kthread+0x6b9/0xef0 kernel/kthread.c:464
-ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
-ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ClockSource is a confusing name as 'clocksource' is used in the kernel
+already for devices providing counters, which can be used for
+timekeeping.
 
-Local variable frame_buf created at:
-ieee80211_sta_connection_lost+0x43/0x150 net/mac80211/mlme.c:7806
-ieee80211_sta_work+0x1dea/0x4ef0
-=====================================================
+Also these clocks are not really hrtimer specific. These CLOCK ids are
+system wide valid and are used for other purposes obviously internally
+in timekeeping. hrtimers are built on top of timekeeping, which provides
+the underlying time.
 
-The reason is that the local variable frame_buf on the stack cannot be
-initialized by default. However one more question is that avoiding the
-uninit-value bug by explicitly initializing it is not enough. Since commit
-687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit"), if there
-is no AP station, frame_buf has no chance to be assigned a valid value.
-The function ieee80211_report_disconnect should not continue executing
-with the frame_buf parameter that is merely initialized to zero.
+> +    /// A settable system-wide clock that measures real (i.e., wall-cloc=
+k) time.
+> +    ///
+> +    /// Setting this clock requires appropriate privileges. This clock is
+> +    /// affected by discontinuous jumps in the system time (e.g., if the=
+ system
+> +    /// administrator manually changes the clock), and by frequency adju=
+stments
+> +    /// performed by NTP and similar applications via adjtime(3), adjtim=
+ex(2),
+> +    /// clock_adjtime(2), and ntp_adjtime(3). This clock normally counts=
+ the
+> +    /// number of seconds since 1970-01-01 00:00:00 Coordinated Universa=
+l Time
+> +    /// (UTC) except that it ignores leap seconds; near a leap second it=
+ is
+> +    /// typically adjusted by NTP to stay roughly in sync with UTC.
 
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Fixes: 687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit")
-Reported-by: syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67bf36d3.050a0220.38b081.01ff.GAE@google.com/
----
-Please kindy help thoroughly review this patch as I am not a wireless network expert.
+That's not correct. It depends on the implementation/configuration of
+NTP. The default is that the leap second is actually applied at the
+requested time, by setting the clock one second forth or back.
 
- net/mac80211/mlme.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Though there are NTP configurations/implementations out there which use
+leap second "smearing" to avoid the jump. They adjust the conversion
+factors around the leap second event by slowing down or speeding up for
+a while. That avoids a few common issues, e.g. in data bases.
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index 4e8f0a5f6251..4f3b535b1174 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -4414,6 +4414,10 @@ static void ieee80211_report_disconnect(struct ieee80211_sub_if_data *sdata,
- 		.u.mlme.data = tx ? DEAUTH_TX_EVENT : DEAUTH_RX_EVENT,
- 		.u.mlme.reason = reason,
- 	};
-+	struct sta_info *ap_sta = sta_info_get(sdata, sdata->vif.cfg.ap_addr);
-+
-+	if (WARN_ON(!ap_sta))
-+		return;
- 
- 	if (tx)
- 		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len, reconnect);
-@@ -8070,7 +8074,7 @@ static void ieee80211_sta_timer(struct timer_list *t)
- void ieee80211_sta_connection_lost(struct ieee80211_sub_if_data *sdata,
- 				   u8 reason, bool tx)
- {
--	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
-+	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN] = {0};
- 
- 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH, reason,
- 			       tx, frame_buf);
--- 
-2.25.1
+But it brings all clocks out of sync with the actual progress of time, which
+is patently bad for systems which require strict synchronization.
 
+The problem is that the kernel uses the NTP/PTP frequency adjustment to
+steer the conversion of all clocks, except CLOCK_MONOTONIC_RAW. The
+kernel internal base clock is CLOCK_MONOTONIC. The other clocks are
+derived from that:
+
+        CLOCK_[X] =3D CLOCK_MONOTONIC + offset[X]
+
+> +    RealTime,
+> +    /// A monotonically increasing clock.
+> +    ///
+> +    /// A nonsettable system-wide clock that represents monotonic time s=
+ince=E2=80=94as
+> +    /// described by POSIX=E2=80=94"some unspecified point in the past".=
+ On Linux, that
+> +    /// point corresponds to the number of seconds that the system has b=
+een
+> +    /// running since it was booted.
+> +    ///
+> +    /// The CLOCK_MONOTONIC clock is not affected by discontinuous jumps=
+ in the
+> +    /// system time (e.g., if the system administrator manually changes =
+the
+
+s/system time/CLOCK_REALTIME/
+
+> +    /// clock), but is affected by frequency adjustments. This clock doe=
+s not
+> +    /// count time that the system is suspended.
+> +    Monotonic,
+> +    /// A monotonic that ticks while system is suspended.
+> +    ///
+> +    /// A nonsettable system-wide clock that is identical to CLOCK_MONOT=
+ONIC,
+> +    /// except that it also includes any time that the system is suspend=
+ed. This
+> +    /// allows applications to get a suspend-aware monotonic clock witho=
+ut
+> +    /// having to deal with the complications of CLOCK_REALTIME, which m=
+ay have
+> +    /// discontinuities if the time is changed using settimeofday(2) or =
+similar.
+> +    BootTime,
+> +    /// International Atomic Time.
+> +    ///
+> +    /// A nonsettable system-wide clock derived from wall-clock time but
+> +    /// counting leap seconds. This clock does not experience discontinu=
+ities or
+> +    /// frequency adjustments caused by inserting leap seconds as CLOCK_=
+REALTIME
+> +    /// does.
+
+Only partially correct.
+
+CLOCK_TAI can be set as CLOCK_TAI is obviously coupled to CLOCK_REALTIME
+and vice versa.
+
+Also if the NTP implementation does leap seconds smearing then the
+adjustment affects CLOCK_TAI as well. See above. That's compensated for
+by adjusting the TAI offset to be in sync with reality, but during the
+smear phase the readout is not precise.
+
+Thanks,
+
+        tglx
 
