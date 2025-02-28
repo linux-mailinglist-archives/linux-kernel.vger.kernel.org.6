@@ -1,180 +1,95 @@
-Return-Path: <linux-kernel+bounces-538726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E46A49C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:50:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FC5A49C6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13AE3A9943
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA091891305
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D011270EA1;
-	Fri, 28 Feb 2025 14:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BB22702C2;
+	Fri, 28 Feb 2025 14:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPw65C+N"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gc0Zx0+K"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FDF26E94D;
-	Fri, 28 Feb 2025 14:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1392686A0;
+	Fri, 28 Feb 2025 14:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754198; cv=none; b=O2qIqLt82YxvYBaWK8CcPdu9Vn3TyD69E2jhTJB+mGuJOX6c4qvL9BVfTD9MN1tAtX2Gr1mPWIrub6aw+Ni/ZhvFqgTtufZpPBG7IGXPU8aF2CXuJs6SGtx/sQWSJjXO+tTzp7KZaS4tSJETxPdQAvWjHgNMPkxnMb5eLexlqpI=
+	t=1740754400; cv=none; b=SUoGPaO+g3rnGrib0FMixgiGJvaT3SEzBLFvEktSOqfEgZN818BVkYPxBN2XCu39+E+fO/ZWlOS+AtURUymZUaEzgTFbxn86BbWzoexK+xl2QlKqt/T/i0LUWHADXKDM0hw2RNHr4hoVWaaV3mX0TFm9MXD5vj5tq8eBkayCdns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754198; c=relaxed/simple;
-	bh=3T7vsRWKLTCraBlCKVdrwE+VFUJiIKlGyZVgIMWmYQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=chs4L3p4XYuG4wA908UxcNZ4FvWLEDHwgyBhzdLJkZdn/Kk+JaPFcxXklftig9/nOz0orTS7m/Bgk7IKuoxgFq5Zz4Tsm1txQtHiBAqbdYDJkQ4AyIPRG5K7jt2d1c0HLhh2vMkqo4VGcNGUjxg1HZzW6Nv8sR1Q+ODyqzOT3yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPw65C+N; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5fe87fd0a47so544064eaf.2;
-        Fri, 28 Feb 2025 06:49:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740754195; x=1741358995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W+mNGsx9k8BYOvf5M//YOrV9w6h6DAZxVOm7B77umBY=;
-        b=CPw65C+NpB21IfZCS65/psgAhkdbrJk2ouwfGDYz/YpVf3eOacO9pyIWEN0ynG84+f
-         kq6/KBB3VYgzk9u1Ol3JL/UpWGGFlnDUHlsk6SvM8aTF7zVqrKH3u/aAaunQCTnbgb5r
-         38Hlgwmd1S32xVQRBPkT15rgHQLx4Dgx8/jKUw92UtxvMBKHd1z8ARuz++foGNCfGVBH
-         MXfrC/u03qjyYH7vDHkO+2ihP7KkMgx/7AIn+KfNnH2OI5y1Gy7qYcS4hpAtNLUYjEW4
-         viUO7rEPuDgmAC1u4YI+h71i8f8lsasHmroigDS9yvvhws8oyCVhdiMAsAzADDtq67QT
-         jEQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740754195; x=1741358995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W+mNGsx9k8BYOvf5M//YOrV9w6h6DAZxVOm7B77umBY=;
-        b=UUGskEHSh2WzZZuvf8ELQmO8k9fUtQgcZupO+VYC7+dAVtixYzPGmagZjc1VCzEFSq
-         HKVmVoi3KOo3uaUGUCrMRceAL8oy+ZN1NIylkCwNUYtxhHBalI9SKYmm0vme4BOjafBO
-         jlpG7O2FwUS+oIZVlvs6TE5qSl0OKvWO0iP6a4cj4k6WR10osxM6Zg9qi9gSc0g35Obd
-         hIVq2LVaF2hng+Jd+bWa3W4Ip8WONKyiVnAp6i4zfoD3rupIqyb7/KXTNNYwr9P7qECb
-         stXnXH7TYq5n59THaTpkn8Ug3QpJPb7W9iCbs/VUqOGsL6FTGaGzdMMbTZHz99bihBn4
-         IKKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX9MFrKCVfri9SZl/dOrC6hrs42oakaDozR2l4GAqMmsaK2Jf2d8dER5k4vLH9p1iOFPn5XMmmF0QNPyEH@vger.kernel.org, AJvYcCXHGn89MH3J2jrMebf/BCVW9i8JAICkyw7pWFNvhAoAIoq0MEiZOO31hmEImp0ilazjxReHSQ4RsJhA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0nNemzSBEV46QgWj26lVq3C8sqfpRvqBSPH/rlzQz5092Pyai
-	Gn/3hnD6m/qRXPUllf3VJ/z8Eu4Pexxr9HkYGJXNl9kCvnhtGJmy/dap21uBd+DlNznOkINQaWC
-	MovhpXS9Gx2cS4jL7BPJ6LSrqDL0aIjt3
-X-Gm-Gg: ASbGncvmP1xqcPhqc8q9OO89xqRk8SsLtj/Gq5/leiE5ptQgNf5FIJxX+swsjX1uVW9
-	k6u5pYZpyw8uS59QO5CVKgzgr1veVhyRcXu3GTdyuXvpU7TF7KTcnBXor453aRpthWtJpPEOECG
-	1c4FF23VE2ag==
-X-Google-Smtp-Source: AGHT+IGEnn60FcFR2pIf9E54P2sohtprC377BVbB7Z7tsIFGGCYKkuRziZyDPnIqAPk50ASdDx5e1aUTt4oe+31fYYM=
-X-Received: by 2002:a05:6808:178a:b0:3f5:50d4:1a96 with SMTP id
- 5614622812f47-3f5584f7017mr2196729b6e.8.1740754195412; Fri, 28 Feb 2025
- 06:49:55 -0800 (PST)
+	s=arc-20240116; t=1740754400; c=relaxed/simple;
+	bh=wdIQ7vUQ7x92S2Va/xZB5CNU6OC3vUqW5+VjhTMkLJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OdJ5ltbhinRxGGvcTmlyGrtkbXhO5Fe6A2tDIgY5BKzFMHPAZPtN89Ujb/wSb+h3aGek91qcn2lfvLUI4QaIMmSBPzRusWZ1XULXOK16k+QQBb2byA5VvVW0ibYiZDvmlTYh0RsOiUBQxs6ueCzbnVZ6luiNyXZs3naXIHOfsLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gc0Zx0+K; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740754395;
+	bh=wdIQ7vUQ7x92S2Va/xZB5CNU6OC3vUqW5+VjhTMkLJo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gc0Zx0+K0yAfUIVS1KGT1nscNtSaU2c0+JgPWBomF97LobjS18ILBHWe60X0Uh8uN
+	 V2SJ73ZbvNibCJIgQzskhV6MWkhk9h26hs6IA1QRP8JTTUxrh9ZQBJzzLz1d0vOJOy
+	 XTkqgXAGV4QyVvdkWuzBMcOuC4YXR/SyKi3Ae4lhXgxoRtma0MSE5HIkYU1prp2dL9
+	 Ij2W39nTBMLAjecKpCUTyhGcaqyTo6M5EALLeBUC7NgBOYey9pIHp+naurRdBYiNi9
+	 OrsDINbS/Fdyfe7sm8pHXEIYNzjuR20H/WBesWS/eJwuZm0lPLwBTZn6U5PrJ1Y9VV
+	 uqSoVWPofNmJA==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4388117E0AFB;
+	Fri, 28 Feb 2025 15:53:13 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Stephen Chen <stephen@radxa.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Liang Chen <cl@rock-chips.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH 0/2] Add SPI support for Radxa ROCK 4D
+Date: Fri, 28 Feb 2025 09:50:46 -0500
+Message-ID: <20250228145304.581349-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHhAz+gUOK4Bn5ijO0H1b5=EtvD5W4GpOTtjP0--yVToNpkEDA@mail.gmail.com>
- <20250227160448.GA597390@bhelgaas>
-In-Reply-To: <20250227160448.GA597390@bhelgaas>
-From: Muni Sekhar <munisekharrms@gmail.com>
-Date: Fri, 28 Feb 2025 20:19:44 +0530
-X-Gm-Features: AQ5f1Jp462UoXhMky_kstQZ6GOcRVkNoC8pJcv6-U-HmRm3ooIzaLNMXGvx1wRM
-Message-ID: <CAHhAz+j46nus_rGJ72rZ86UyzL+AM_HBCivjpZEx3T0thOxqAQ@mail.gmail.com>
-Subject: Re: pci: acpi: Query on ACPI Device Tree Representation and
- Enumeration for Xilinx FPGA PCIe Endpoint functions
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 9:34=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Thu, Feb 27, 2025 at 07:25:32PM +0530, Muni Sekhar wrote:
-> > Hi all,
-> >
-> > I am currently working on a project involving a Xilinx FPGA connected
-> > to an x86 CPU via a PCIe root port. The Xilinx FPGA functions as a
-> > PCIe endpoint with single function capability and is programmed to
-> > emulate the Soundwire Master controller. It can be dynamically
-> > reprogrammed to emulate other interfaces as needed. Essentially, the
-> > FPGA emulates an interface and connects to the CPU via the PCIe bus.
-> >
-> > Given this setup, the BIOS does not have prior knowledge of the
-> > function implemented in the Xilinx FPGA PCIe endpoint. I have a couple
-> > of questions regarding this configuration:
-> >
-> > Is it possible to define an ACPI Device Tree representation for this
-> > type of hardware setup?
-> > Can we achieve ACPI-based device enumeration with this configuration?
->
-> If the FPGA is programmed before BIOS enumerates PCI devices, the FPGA
-> would look just like any other PCI device, and BIOS would be able to
-> read the Vendor ID and Device ID and would be able to size and program
-> the BARs.
-Yes, the FPGA is programmed with this Soundwire IP before the BIOS
-enumerates PCI devices.
-We need to port the Soundwire driver
-(https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/drivers/soundwire/qcom.c)
- to the x86 platform.
+The board comes with a SPI NOR chip connected on the FSPI0 interface.
 
-Since x86 platforms typically do not use device trees, and the
-Soundwire IP is implemented in the FPGA, how can we emulate device
-tree functionality or use a different mechanism to pass hardware
-configuration to the driver? Specifically, how can we handle the
-following API calls on an x86 platform?
+Add the SFC nodes for the rk3576 SoC and enable sfc0 for the Radxa ROCK
+4D.
 
-   ret =3D of_property_read_u32(np, "qcom,din-ports", &val);
-   ret =3D of_property_read_u32(np, "qcom,dout-ports", &val);
-   ret =3D of_property_read_u8_array(np, "qcom,ports-offset1", off1, nports=
-);
+Detlev Casanova (2):
+  arm64: dts: rockchip: Add SFC nodes for rk3576
+  arm64: dts: rockchip: Add SPI NOR device on the ROCK 4D
 
-static const struct of_device_id qcom_swrm_of_match[] =3D {
-{ .compatible =3D "qcom,soundwire-v1.3.0", .data =3D &swrm_v1_3_data },
-{ .compatible =3D "qcom,soundwire-v1.5.1", .data =3D &swrm_v1_5_data },
-{ .compatible =3D "qcom,soundwire-v1.6.0", .data =3D &swrm_v1_6_data },
-{ .compatible =3D "qcom,soundwire-v1.7.0", .data =3D &swrm_v1_5_data },
-{ .compatible =3D "qcom,soundwire-v2.0.0", .data =3D &swrm_v2_0_data },
-{/* sentinel */},
-};
+ .../boot/dts/rockchip/rk3576-rock-4d.dts      | 16 ++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 22 +++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Basically, how can we define ACPI tables for functions implemented in
-an FPGA that connects to the system via PCI?
+-- 
+2.48.1
 
-
->
-> So I assume the FPGA is not programmed before BIOS enumeration, the
-> FPGA doesn't respond at all when BIOS or Linux reads the Vendor ID,
-> and you want to program the FPGA later and make Linux enumerate to
-> find it.
->
-> From Linux's point of view, this is basically a hot-add of a PCI
-> device.  If the Root Port supports hotplug and you have pciehp enabled
-> (CONFIG_HOTPLUG_PCI_PCIE=3Dy) and if the FPGA comes out of reset and
-> brings up the PCIe link after being programmed, it all might "just
-> work."  You can also force a complete re-enumeration by writing a
-> non-zero value to /sys/bus/pci/rescan.
->
-> I'm not sure why you would need ACPI or a device tree to be involved.
-> ACPI and device tree are ways to tell the OS about devices that do not
-> have a native enumeration protocol.  PCI devices (like the programmed
-> FPGA) do support native enumeration, so generally we don't need ACPI
-> or device tree descriptions of them.  PCI host bridges have a
-> CPU-specific bus on the upstream side and a PCI bus on the downstream
-> side, so they are not themselves PCI devices, and we do need ACPI or
-> device tree descriptions for them.
->
-> If you have something that doesn't work like you expect, can you post
-> a complete dmesg log and any user commands you're using to program the
-> FPGA?
->
-> Bjorn
-
-
-
---
-Thanks,
-Sekhar
 
