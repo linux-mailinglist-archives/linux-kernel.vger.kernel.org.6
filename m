@@ -1,187 +1,128 @@
-Return-Path: <linux-kernel+bounces-539133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB4AA4A15C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:23:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E276DA4A166
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB97188FF0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:24:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF43172557
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00A7272904;
-	Fri, 28 Feb 2025 18:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F442702B6;
+	Fri, 28 Feb 2025 18:25:10 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0C526B971
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5F1A2554
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767028; cv=none; b=TIjQgS3xIqU0tHIE8DvooBlR8DPta2jNhD4aAIla4Bo97BafqW33qoauywla8NMCH+TlP3eK9wPiD4uO3gQKd08nrp6ebhfa19arCkYgpPO9kK8VoiBK6K658DyycxcT7jbin9pMa0ZYcyQu92STztgOyGSkEEA0pSZ6UE02dBw=
+	t=1740767110; cv=none; b=a+5e03CtYEH3eV8p7g9KGpZiviFQ0GFkbmOUqjrKgo6RCrBillnPDHsJdsjmFTOzOFse45Tg7NfqK2vP3O7Y6boKa0eNUdNGtD+0ZnlClZOd2qA11I7UxZOpEaQ+ewWGSymeAjJKetuD2IebQqFXKESJTX5AqCAcN5b8KSbqx+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767028; c=relaxed/simple;
-	bh=5hTCzU0XQYrdtaXk1PzyG8ZQ3XtopVwMJs0ytpHJKLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekMcTj8OJs8vzuxgTpWg87/50KFs0WPfNU7MTY+tRpmO/TXV+icBGc4ZS+1Uicc+Mqfz9DiPKA71DakVCxNCMk0C5HNlarfCUQSlj2GYUDWtRuvNcvuD7Vd1Ns7H2w64FJ65LkGJFP9bf53Cg6SH+JYBqrMCbR4IiG0QEj/bgPw=
+	s=arc-20240116; t=1740767110; c=relaxed/simple;
+	bh=++IkG/xXIGhDbp8KRvadIkvYiaOMvEk/i8GTf4NrEgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ipTrBei940GKP2bo50fd63JiCvqc1oPS1+aGJUFtdcs2DMAUBQ73T48KJjBE91qZ3XrshgchmdLfqNei8Le7uI3xCuz5UfCXSK+fqbFBnUawrDzGu1zDwIBHQ71skbe4Dzfd2ZZeLV9tgjyfgzsuXA1m/54QVwlMUneRNvGYFLI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A7C6150C;
-	Fri, 28 Feb 2025 10:23:59 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC9453F6A8;
-	Fri, 28 Feb 2025 10:23:42 -0800 (PST)
-Message-ID: <4f057e37-7f6c-4daa-b99a-122aa417f0e3@arm.com>
-Date: Fri, 28 Feb 2025 18:23:41 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 192F5150C;
+	Fri, 28 Feb 2025 10:25:23 -0800 (PST)
+Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADCA33F6A8;
+	Fri, 28 Feb 2025 10:25:04 -0800 (PST)
+From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+To: ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	joro@8bytes.org,
+	jean-philippe@linaro.org,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	broonie@kernel.org,
+	maz@kernel.org,
+	david@redhat.com,
+	akpm@linux-foundation.org,
+	jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	mshavit@google.com,
+	jsnitsel@redhat.com,
+	smostafa@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+Subject: [PATCH v2 0/4] Initial BBML2 support for contpte_convert()
+Date: Fri, 28 Feb 2025 18:24:00 +0000
+Message-ID: <20250228182403.6269-2-miko.lenczewski@arm.com>
+X-Mailer: git-send-email 2.45.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dma: Introduce generic dma_addr_*crypted helpers
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, linux-kernel@vger.kernel.org
-Cc: will@kernel.org, catalin.marinas@arm.com, maz@kernel.org,
- steven.price@arm.com, aneesh.kumar@kernel.org, gshan@redhat.com,
- linux-arm-kernel@lists.infradead.org,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
- <20250227144150.1667735-3-suzuki.poulose@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250227144150.1667735-3-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 27/02/2025 2:41 pm, Suzuki K Poulose wrote:
-> AMD SME added __sme_set/__sme_clr primitives to modify the DMA address for
-> encrypted/decrypted traffic. However this doesn't fit in with other models,
-> e.g., Arm CCA where the meanings are the opposite. i.e., "decrypted" traffic
-> has a bit set and "encrypted" traffic has the top bit cleared.
-> 
-> In preparation for adding the support for Arm CCA DMA conversions, convert the
-> existing primitives to more generic ones that can be provided by the backends.
-> i.e., add helpers to
->   1. dma_addr_encrypted - Convert a DMA address to "encrypted" [ == __sme_set() ]
->   2. dma_addr_unencrypted - Convert a DMA address to "decrypted" [ None exists today ]
->   3. dma_addr_canonical - Clear any "encryption"/"decryption" bits from DMA
->      address [ SME uses __sme_clr() ] and convert to a canonical DMA address.
-> 
-> Since the original __sme_xxx helpers come from linux/mem_encrypt.h, use that
-> as the home for the new definitions and provide dummy ones when none is provided
-> by the architectures.
-> 
-> With the above, phys_to_dma_unencrypted() uses the newly added dma_addr_unencrypted()
-> helper and to make it a bit more easier to read and avoid double conversion,
-> provide __phys_to_dma().
+Hi All,
 
-Yeah, I'm happy with "canonical" being the least-worst option for now; I 
-certainly can't think of anything snappier yet still sufficiently clear.
+This patch series adds adding initial support for eliding
+break-before-make requirements on systems that support BBML2 and
+additionally guarantee to never raise a conflict abort.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+This support reorders and optionally elides a TLB invalidation in
+contpte_convert(). The elision of said invalidation leads to a 12%
+improvement when executing a microbenchmark designed to force the
+pathological path where contpte_convert() gets called. This
+represents an 80% reduction in the cost of calling contpte_convert().
 
-> Suggested-by: Robin Murphy <robin.murphy@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Steven Price <steven.price@arm.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v2:
->   - Rename helpers- s/dma_*crypted/dma_addr_*crypted (Robin)
-> ---
->   include/linux/dma-direct.h  | 12 ++++++++----
->   include/linux/mem_encrypt.h | 23 +++++++++++++++++++++++
->   2 files changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index d20ecc24cb0f..f3bc0bcd7098 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -78,14 +78,18 @@ static inline dma_addr_t dma_range_map_max(const struct bus_dma_region *map)
->   #define phys_to_dma_unencrypted		phys_to_dma
->   #endif
->   #else
-> -static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
-> -		phys_addr_t paddr)
-> +static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
->   {
->   	if (dev->dma_range_map)
->   		return translate_phys_to_dma(dev, paddr);
->   	return paddr;
->   }
->   
-> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
-> +						phys_addr_t paddr)
-> +{
-> +	return dma_addr_unencrypted(__phys_to_dma(dev, paddr));
-> +}
->   /*
->    * If memory encryption is supported, phys_to_dma will set the memory encryption
->    * bit in the DMA address, and dma_to_phys will clear it.
-> @@ -94,14 +98,14 @@ static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->    */
->   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->   {
-> -	return __sme_set(phys_to_dma_unencrypted(dev, paddr));
-> +	return dma_addr_encrypted(__phys_to_dma(dev, paddr));
->   }
->   
->   static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
->   {
->   	phys_addr_t paddr;
->   
-> -	dma_addr = __sme_clr(dma_addr);
-> +	dma_addr = dma_addr_canonical(dma_addr);
->   	if (dev->dma_range_map)
->   		paddr = translate_dma_to_phys(dev, dma_addr);
->   	else
-> diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
-> index ae4526389261..07584c5e36fb 100644
-> --- a/include/linux/mem_encrypt.h
-> +++ b/include/linux/mem_encrypt.h
-> @@ -26,11 +26,34 @@
->    */
->   #define __sme_set(x)		((x) | sme_me_mask)
->   #define __sme_clr(x)		((x) & ~sme_me_mask)
-> +
-> +#define dma_addr_encrypted(x)	__sme_set(x)
-> +#define dma_addr_canonical(x)	__sme_clr(x)
-> +
->   #else
->   #define __sme_set(x)		(x)
->   #define __sme_clr(x)		(x)
->   #endif
->   
-> +/*
-> + * dma_addr_encrypted() and dma_addr_unencrypted() are for converting a given DMA
-> + * address to the respective type of addressing.
-> + *
-> + * dma_addr_canonical() is used to reverse any conversions for encrypted/decrypted
-> + * back to the canonical address.
-> + */
-> +#ifndef dma_addr_encrypted
-> +#define dma_addr_encrypted(x)		(x)
-> +#endif
-> +
-> +#ifndef dma_addr_unencrypted
-> +#define dma_addr_unencrypted(x)		(x)
-> +#endif
-> +
-> +#ifndef dma_addr_canonical
-> +#define dma_addr_canonical(x)		(x)
-> +#endif
-> +
->   #endif	/* __ASSEMBLY__ */
->   
->   #endif	/* __MEM_ENCRYPT_H__ */
+However, even without the elision, the reodering represents a
+performance improvement due to reducing thread contention, as there is
+a smaller time window for racing threads to see an invalid pagetable
+entry (especially if they already have a cached entry in their TLB
+that they are working off of).
+
+This series is based on v6.14-rc3 (0ad2507d5d93).
+
+Patch 1 implements an allow-list of cpus that support BBML2, but with
+the additional constraint of never causing TLB conflict aborts. We
+settled on this constraint because we will use the feature for kernel
+mappings in the future, for which we cannot handle conflict aborts
+safely.
+
+Yang Shi has a series at [1] that aims to use BBML2 to enable splitting
+the linear map at runtime. This series partially overlaps with it to add
+the cpu feature. We beleive this series is fully compatible with Yang's
+requirements and could go first, given there is still a lot of discussion
+around the best way to manage the mechanics of splitting/collapsing the
+linear map.
+
+[1]:
+  https://lore.kernel.org/linux-arm-kernel/20250103011822.1257189-1-yang@os.amperecomputing.com/
+
+Mikołaj Lenczewski (4):
+  arm64: Add BBM Level 2 cpu feature
+  arm64/mm: Delay tlbi in contpte_convert() under BBML2
+  arm64/mm: Elide tlbi in contpte_convert() under BBML2
+  iommu/arm: Add BBM Level 2 smmu feature
+
+ arch/arm64/Kconfig                            | 11 +++
+ arch/arm64/include/asm/cpucaps.h              |  2 +
+ arch/arm64/include/asm/cpufeature.h           |  5 ++
+ arch/arm64/kernel/cpufeature.c                | 68 +++++++++++++++++++
+ arch/arm64/mm/contpte.c                       |  3 +-
+ arch/arm64/tools/cpucaps                      |  1 +
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  4 ++
+ 9 files changed, 99 insertions(+), 1 deletion(-)
+
+-- 
+2.45.3
+
 
