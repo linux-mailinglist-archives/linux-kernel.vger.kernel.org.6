@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-538104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9A6A4949C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:18:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84304A4949F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793D0165F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4861894E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8E22566E4;
-	Fri, 28 Feb 2025 09:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CSQE5MaW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1056824C67B;
+	Fri, 28 Feb 2025 09:18:23 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A033C1C2324;
-	Fri, 28 Feb 2025 09:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94511276D3B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734277; cv=none; b=rTdsRV5V8tToNQiu/NU4/uKdUvfCgYLtW6V7OYBBzt/qB3li+WbhmwAXrVCuM5ysVGN67+D6ishS0RJRTls1fBQ/21ggvYwKuyhiKUPbbShOVniGaol/mygjcWtCsFl0Z0prdq3eHPmHzXQZvI2AONkbsI+qCsSuR1jeBkJbfio=
+	t=1740734302; cv=none; b=lttU08gJa/XaEsOqLOe81EUK3et9qJscahmRMzNZwbytK2wHQPVSdKiFaTyBiDb00E79p/3dCbbWcgA22A/SNHLwEEeBsZeT4qpZolNRHvte6/KaN4HKeodwjs+h5Qpkddx+iLgT9o/rSJqLZTprjjP9G8yz3Ujso6PZdGMII08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734277; c=relaxed/simple;
-	bh=Z8agXOvfl+b8eIlKBVhxUrvRWqQjZd5gHAju5GqfGp4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rg1xzyiBiIjlvoSNafMHoolOLTR8xSi6B/1XgmkUlsp3EQXwRMllB+tjUtJH2m0rIuZpvMNNv9HxfLvB1AcN+WcX1DXuUc5Tm5aXgGY3jV/F+vlmx+bkpHgxPwwG2or+DFl3wLgUdsIJFhejDs1YNg4hm5OvmEouIZOG4l3XbjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CSQE5MaW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from neptunite.hamster-moth.ts.net (unknown [IPv6:2404:7a81:160:2100:7597:2d2d:d3f:6ef1])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5C91606;
-	Fri, 28 Feb 2025 10:16:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740734177;
-	bh=Z8agXOvfl+b8eIlKBVhxUrvRWqQjZd5gHAju5GqfGp4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CSQE5MaWFATU6H2Hx9yBqIob8CgnfL+SIeMD1JZaRYkV5HOMnY4ZwxxVdwxwj1d/S
-	 6FtQJwJ2Pay3a5S/Z8VuQeKWYSUrSYGy4nTdXd8UKokTArwPey501MN8/ZYZBS6lVn
-	 kxhZnrT4l/JZYZDxvNLBUgdfJgRSr2FhZmKpuBUw=
-From: Paul Elder <paul.elder@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] media: imx335: Set vblank immediately
-Date: Fri, 28 Feb 2025 18:17:31 +0900
-Message-Id: <20250228091731.236162-1-paul.elder@ideasonboard.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740734302; c=relaxed/simple;
+	bh=hO+eh0t2F7LyPMEjfa1FCx2sOdvZPD16ZPi2EVsUb0g=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rNjBHnWVZQo/GMfWPoymwAqXnrJGxEg3so5zv8sdy89f5psHUFIRFRgX9EOAAJjxO34MBnqfYcF0xnO75kN8osGYVbj+BLJ0PF1VjbvKjYO6AnEs+T7ZJYhqByTUlJrC/FBMfhEyqSLp/VIeiSpn11BgYgU6AOmrF91hko4sdQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z42b81klbz6L597;
+	Fri, 28 Feb 2025 17:14:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B3A0E140E01;
+	Fri, 28 Feb 2025 17:18:18 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 28 Feb
+ 2025 10:18:16 +0100
+Date: Fri, 28 Feb 2025 17:18:11 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
+	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>, Ani Sinha <anisinha@redhat.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 03/19] tests/acpi: virt: update HEST file with its
+ current data
+Message-ID: <20250228171811.000017d4@huawei.com>
+In-Reply-To: <342f2cbf20eee9cafbee834adc66ae81aa4df37b.1740671863.git.mchehab+huawei@kernel.org>
+References: <cover.1740671863.git.mchehab+huawei@kernel.org>
+	<342f2cbf20eee9cafbee834adc66ae81aa4df37b.1740671863.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-When the vblank v4l2 control is set, it does not get written to the
-hardware unless exposure is also changed. Change the behavior such that
-the vblank is written immediately when the control is set, as setting
-the vblank without changing the exposure is a valid use case (such as
-for changing the frame rate).
+On Thu, 27 Feb 2025 17:00:41 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> Now that HEST table is checked for aarch64, add the current
+> firmware file.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Acked-by: Igor Mammedov <imammedo@redhat.com>
 
----
-Changes in v2:
-- error check the modify range
-- improve commit message
----
- drivers/media/i2c/imx335.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Mostly for completeness rather than because there is any actual
+review we can do on 'this is what the file is'.
 
-diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-index fcfd1d851bd4..0beb80b8c458 100644
---- a/drivers/media/i2c/imx335.c
-+++ b/drivers/media/i2c/imx335.c
-@@ -559,12 +559,14 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
- 			imx335->vblank,
- 			imx335->vblank + imx335->cur_mode->height);
- 
--		return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
--						IMX335_EXPOSURE_MIN,
--						imx335->vblank +
--						imx335->cur_mode->height -
--						IMX335_EXPOSURE_OFFSET,
--						1, IMX335_EXPOSURE_DEFAULT);
-+		ret = __v4l2_ctrl_modify_range(imx335->exp_ctrl,
-+					       IMX335_EXPOSURE_MIN,
-+					       imx335->vblank +
-+					       imx335->cur_mode->height -
-+					       IMX335_EXPOSURE_OFFSET,
-+					       1, IMX335_EXPOSURE_DEFAULT);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	/*
-@@ -575,6 +577,13 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
- 		return 0;
- 
- 	switch (ctrl->id) {
-+	case V4L2_CID_VBLANK:
-+		exposure = imx335->exp_ctrl->val;
-+		analog_gain = imx335->again_ctrl->val;
-+
-+		ret = imx335_update_exp_gain(imx335, exposure, analog_gain);
-+
-+		break;
- 	case V4L2_CID_EXPOSURE:
- 		exposure = ctrl->val;
- 		analog_gain = imx335->again_ctrl->val;
--- 
-2.39.2
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  tests/data/acpi/aarch64/virt/HEST           | Bin 0 -> 132 bytes
+>  tests/qtest/bios-tables-test-allowed-diff.h |   1 -
+>  2 files changed, 1 deletion(-)
+> 
+> diff --git a/tests/data/acpi/aarch64/virt/HEST b/tests/data/acpi/aarch64/virt/HEST
+> index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..4c5d8c5b5da5b3241f93cd0839e94272bf6b1486 100644
+> GIT binary patch
+> literal 132
+> zcmeZp4Gw8xU|?W;<mB({5v<@85#X$#prF9Wz`y`vgJ=-uVqjqS|DS;o#%Ew*U|?_n
+> dk++-~7#J8hWI!Yi09DHYRr~Kh1c1x}0RY>66afGL
+> 
+> literal 0
+> HcmV?d00001
+> 
+> diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
+> index 39901c58d647..dfb8523c8bf4 100644
+> --- a/tests/qtest/bios-tables-test-allowed-diff.h
+> +++ b/tests/qtest/bios-tables-test-allowed-diff.h
+> @@ -1,2 +1 @@
+>  /* List of comma-separated changed AML files to ignore */
+> -"tests/data/acpi/aarch64/virt/HEST",
 
 
