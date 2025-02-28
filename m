@@ -1,184 +1,158 @@
-Return-Path: <linux-kernel+bounces-538450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBACA498E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:14:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43359A498E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4DA3BC6CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC681732B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5455C26B086;
-	Fri, 28 Feb 2025 12:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E149626B96F;
+	Fri, 28 Feb 2025 12:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="eAW5u2N7"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="KKkjnHB+"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89BB26A1CD
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D81626B2D4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740744781; cv=none; b=J2L0IuISZOf3/O6Ug3N++Ayt5ttM0+IMTmLahrpyYNVmpFJ7mBtZbiVuSmZqD04Ybkmkr+bOZexaIJEB82SlkE9LNaI46LTMPEZZdUiZF2u4AMuTTrVG0uIiaM4K0KKEiHleWYAZJIZ1+d0Ez/phLeYrQDe9dJ/TemzJPIhn1G4=
+	t=1740744789; cv=none; b=PZg8D4kC5FBctHIQ4Vbb/kdvlGT/S54Z2U+zzzCfB3DLKDi4xTa9KftL2Og4blKtdpi3juh501eePhTb0vCm7it7YejpOe3PzR1NGhd8UQGdnH6B9bzfxHYWakoIRHVxVrbFBt0+EYao/jK2cAVNsn4LzVJtSw5KYpfq1WBi+/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740744781; c=relaxed/simple;
-	bh=p5FTCxkDarvA4bFqx29jb7fzd25JkroGfFErjHdL8lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UH2/ygsqNc+FHmKpwGXHsSC+0M+OGRufoUwP5hUP+PBwi7HJQRxLMQLHPPb4q9Pa1HMlQkvh0qRoFpijGl6jUdQgCg/Zvn7wc/85iHKY7wNFJEjx0wwcJ/xvmjCg7e1dEb0IR7iO1K2Nzv+GTqj4zgTJUUQmPAU7i/UF7cQX7yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=eAW5u2N7; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=G9cZKFxW4oLU983sOFab31be+2wQdCOOeWwGe3gB4bQ=; b=eAW5u2N7Z2g0hcGe
-	gJgITOVoeZ7woxeI0C/ECMrFQ2iWbEKDJmBcuRQy/0adXTR9qguodqsLi7naIHx7Og3qbWP8JlpTn
-	4NPc0B5bz6Dz7/tE7zPMi44p/zVQEFj2riutUcUIgkhofPvDCE/pq65TOJ1d+R+rgtigPkNYsrYXw
-	FmDCadJYV7jnwaUNIe/jLXV/TpIPECSP81rFY2V9yqRtAvjsKNrQIK0E8T1yrKptY5GVCYJJSkHcU
-	vxin1GiLq/0arByDHxVbF14LqlVA354MX30lTTh3KYTyh+N96mYXwoj46tIvKrogdCXPVHYs4f69A
-	TE7HO+t2rhNZ4Ee/Lg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tnzEP-001cNB-0w;
-	Fri, 28 Feb 2025 12:12:41 +0000
-Date: Fri, 28 Feb 2025 12:12:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: airlied@gmail.com, simona@ffwll.ch, hdegoede@redhat.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/vboxvideo: Remove unused hgsmi_cursor_position
-Message-ID: <Z8GoOUjgtq-1WCiw@gallifrey>
-References: <20241215220014.452537-1-linux@treblig.org>
- <Z8DaVW_U-QtBVSMf@gallifrey>
- <f853d48f-f0aa-45af-89f3-4081a620f234@suse.de>
+	s=arc-20240116; t=1740744789; c=relaxed/simple;
+	bh=ZI+Kx0GoBBdGnl/DZVJvV+fahAqx7XY0gMzC1aKOS5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pGyHlywUu8PSRZZgRtanQIVqACcKiyCa89B77QpOpFGlRIXkDhaKULMyXSU0bLCsn6vXH06tYZuXMVU1YRnxTcvZ45KAHbHUc5Mn9lJkkivVtpKUou73CLa6oHpoZ39x3QxhEyljmrRm39EEwHOfik8B6+4orrLtZyt7dSUfrrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=KKkjnHB+; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2c12b7af278so1102182fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.com; s=cloud; t=1740744786; x=1741349586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZTnS4AT3Ykm/+LOlGj0/AefzuBNeKl7EmWjFY3jT+bg=;
+        b=KKkjnHB+GiHVskm81i0sfCImOzC23itKxXjAh9EWLkrBl7TWk7ghockbCXO7KLBcLH
+         LpWrU+yvulOV1Yv7rRjPc7Cnh67kVR6ne8kHbcaIGnH6cnKen8mUtyvRf1MgSwd+xQLA
+         +w84T72FjB+BjXvrI8SKt/hy6jgs7Jd81tkS4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740744786; x=1741349586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZTnS4AT3Ykm/+LOlGj0/AefzuBNeKl7EmWjFY3jT+bg=;
+        b=PPgLCvNe+DUHifKtQ/1DAz3vfmq5R5XaRYuvpZTnpCc7zTfNCmv3jOv6b/2eVvMBFg
+         H05uE8CpuvTm4NI/BlzwxqPV8lt1Ah8YW+gJ7cn4tYjtBtCoiOvhQEiEl26HQmFlQWcC
+         6ET8HDW+R39nCj6hPeacOfNqwD4kAHz1npmdx7P4BRVN9iXMGg2vmV4LqTWdHaouuWPE
+         6vZlCIhItLjv26seLsOs/E78d68TgvS1SsoszNVrOywKjAKEwyfOGATw1104vScB6Qzy
+         XyIXeZ4JhKrtSFUjrTTeTc5UgsVjyi0xUlzot1EHbNeNQlz527fIca4NaOED5KoAbT+p
+         4bZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFrye0grm3uk4Ju/Hn407WWtUfArsfPwUsxxwErLctpIujB+fVrLzXsQtiKqWjbmWWYhP6yp9YUVVG1eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuJsLTGTD2MCmwqGgQB4Nul11lR7X8eCFPT+3fTuLClE8bsVlW
+	J93hIU9NsrHNMjpZTG7VNrTYo6w2g9MKpbBInyideSBwwXomQ/6XWcAyg+ikIMAEEEueGUBY5RR
+	fj9ik6U9UC8rFd65DsjWdXlrEsHd87c9GpE8c6g==
+X-Gm-Gg: ASbGncu1wh31kZqD+ANgf9iv6bHHgW5l4g+D5opZFDwCVvsm9Bds+t16uVrmEwluI+y
+	VBQjRl54VYE4YWh5AsydMiNWw1dnVeha04bB+SFx7OZmZpSM+4m79ZrCoyMYnNeYu7QZFT33yhn
+	zX3gT/
+X-Google-Smtp-Source: AGHT+IFoC5JZOWc1WhrzvGf/ZhvbLVUcjNnF8kIi0EhQzpdVsfrG6OS+XFRLxFDVnE+JcStJoQAtJmvVxTsuwQG/A6A=
+X-Received: by 2002:a05:6870:d08:b0:2b8:5a6a:6f5f with SMTP id
+ 586e51a60fabf-2c1558aac6fmr3403069fac.19.1740744786443; Fri, 28 Feb 2025
+ 04:13:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <f853d48f-f0aa-45af-89f3-4081a620f234@suse.de>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 12:12:03 up 295 days, 23:26,  1 user,  load average: 0.01, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20250225140400.23992-1-frediano.ziglio@cloud.com>
+ <20250227145016.25350-1-frediano.ziglio@cloud.com> <a14c6897-075c-4b2c-8906-75eb96d5c430@citrix.com>
+In-Reply-To: <a14c6897-075c-4b2c-8906-75eb96d5c430@citrix.com>
+From: Frediano Ziglio <frediano.ziglio@cloud.com>
+Date: Fri, 28 Feb 2025 12:12:55 +0000
+X-Gm-Features: AQ5f1JryDg2N2hATeuCkNPfGX9h6MK4TS1xPsoZVRgxsUphCag4t-Oo4DcEbAQQ
+Message-ID: <CACHz=Zj-PKj_svJaLe0DMW9U0FTvea3Es8n1ku_Fp4qzxi4zxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] xen: Add support for XenServer 6.1 platform device
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Thomas Zimmermann (tzimmermann@suse.de) wrote:
-> Hi
-> 
-> Am 27.02.25 um 22:34 schrieb Dr. David Alan Gilbert:
-> > * linux@treblig.org (linux@treblig.org) wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > hgsmi_cursor_position() has been unused since 2018's
-> > > commit 35f3288c453e ("staging: vboxvideo: Atomic phase 1: convert cursor to
-> > > universal plane")
-> > > 
-> > > Remove it.
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > Hi David, Simona,
-> >    Will this one be picked up by drm-next?  It got Hans's
-> > review back on 16 Dec.
-> > ( in 2513e942-6391-4a96-b487-1e4ba19b7aeb@redhat.com )
-> 
-> Merged into drm-misc-next now. Apologies for the delay.
+On Thu, Feb 27, 2025 at 3:41=E2=80=AFPM Andrew Cooper <andrew.cooper3@citri=
+x.com> wrote:
+>
+> On 27/02/2025 2:50 pm, Frediano Ziglio wrote:
+> > On XenServer on Windows machine a platform device with ID 2 instead of
+> > 1 is used.
+> >
+> > This device is mainly identical to device 1 but due to some Windows
+> > update behaviour it was decided to use a device with a different ID.
+> >
+> > This causes compatibility issues with Linux which expects, if Xen
+> > is detected, to find a Xen platform device (5853:0001) otherwise code
+> > will crash due to some missing initialization (specifically grant
+> > tables). Specifically from dmesg
+> >
+> >     RIP: 0010:gnttab_expand+0x29/0x210
+> >     Code: 90 0f 1f 44 00 00 55 31 d2 48 89 e5 41 57 41 56 41 55 41 89 f=
+d
+> >           41 54 53 48 83 ec 10 48 8b 05 7e 9a 49 02 44 8b 35 a7 9a 49 0=
+2
+> >           <8b> 48 04 8d 44 39 ff f7 f1 45 8d 24 06 89 c3 e8 43 fe ff ff
+> >           44 39
+> >     RSP: 0000:ffffba34c01fbc88 EFLAGS: 00010086
+> >     ...
+> >
+> > The device 2 is presented by Xapi adding device specification to
+> > Qemu command line.
+> >
+> > Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
+>
+> I'm split about this.  It's just papering over the bugs that exist
+> elsewhere in the Xen initialisation code.
+>
+> But, if we're going to take this approach, then 0xc000 needs adding too,
+> which is the other device ID you might find when trying to boot Linux in
+> a VM configured using a Windows template.
+>
+> Bjorn: to answer a prior question of yours, all 3 of these devices are
+> identical, and exist in production for political reasons (bindings in
+> Windows Updates) rather than technical reasons.
+>
 
-Thanks; I've got a bunch of other old ones with reviews I'll also ping
-soon.
+Hi,
+   we got some internal conversation here at XenServer trying to
+understand a bit the history and situation of these devices. I'll try
+to sum up.
 
-Dave
+Devices 0001 and 0002 are both "Xen Platform" devices
+(https://gitlab.com/qemu-project/qemu/-/blob/master/hw/i386/xen/xen_platfor=
+m.c?ref_type=3Dheads).
+Devices 0001 and 0002 are mutually exclusive. Usually on XenServer
+templates for Windows present device 0002. In other words the xen
+platform device is either presented as 0001 or 0002.
+Device C000 is a "Xen PV Device"
+(https://gitlab.com/qemu-project/qemu/-/blob/master/hw/i386/xen/xen_pvdevic=
+e.c?ref_type=3Dheads)
+which is mainly empty being a placeholder for Windows updates.
 
-> Best regards
-> Thomas
-> 
-> > 
-> >    Thanks,
-> > 
-> > Dave
-> > 
-> > > ---
-> > >   drivers/gpu/drm/vboxvideo/hgsmi_base.c      | 37 ---------------------
-> > >   drivers/gpu/drm/vboxvideo/vboxvideo_guest.h |  2 --
-> > >   2 files changed, 39 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/vboxvideo/hgsmi_base.c b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> > > index 87dccaecc3e5..db994aeaa0f9 100644
-> > > --- a/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> > > +++ b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> > > @@ -181,40 +181,3 @@ int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
-> > >   	return rc;
-> > >   }
-> > > -
-> > > -/**
-> > > - * hgsmi_cursor_position - Report the guest cursor position.  The host may
-> > > - *                         wish to use this information to re-position its
-> > > - *                         own cursor (though this is currently unlikely).
-> > > - *                         The current host cursor position is returned.
-> > > - * Return: 0 or negative errno value.
-> > > - * @ctx:              The context containing the heap used.
-> > > - * @report_position:  Are we reporting a position?
-> > > - * @x:                Guest cursor X position.
-> > > - * @y:                Guest cursor Y position.
-> > > - * @x_host:           Host cursor X position is stored here.  Optional.
-> > > - * @y_host:           Host cursor Y position is stored here.  Optional.
-> > > - */
-> > > -int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
-> > > -			  u32 x, u32 y, u32 *x_host, u32 *y_host)
-> > > -{
-> > > -	struct vbva_cursor_position *p;
-> > > -
-> > > -	p = hgsmi_buffer_alloc(ctx, sizeof(*p), HGSMI_CH_VBVA,
-> > > -			       VBVA_CURSOR_POSITION);
-> > > -	if (!p)
-> > > -		return -ENOMEM;
-> > > -
-> > > -	p->report_position = report_position;
-> > > -	p->x = x;
-> > > -	p->y = y;
-> > > -
-> > > -	hgsmi_buffer_submit(ctx, p);
-> > > -
-> > > -	*x_host = p->x;
-> > > -	*y_host = p->y;
-> > > -
-> > > -	hgsmi_buffer_free(ctx, p);
-> > > -
-> > > -	return 0;
-> > > -}
-> > > diff --git a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> > > index 55fcee3a6470..643c4448bdcb 100644
-> > > --- a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> > > +++ b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> > > @@ -34,8 +34,6 @@ int hgsmi_query_conf(struct gen_pool *ctx, u32 index, u32 *value_ret);
-> > >   int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
-> > >   			       u32 hot_x, u32 hot_y, u32 width, u32 height,
-> > >   			       u8 *pixels, u32 len);
-> > > -int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
-> > > -			  u32 x, u32 y, u32 *x_host, u32 *y_host);
-> > >   bool vbva_enable(struct vbva_buf_ctx *vbva_ctx, struct gen_pool *ctx,
-> > >   		 struct vbva_buffer *vbva, s32 screen);
-> > > -- 
-> > > 2.47.1
-> > > 
-> 
-> -- 
-> --
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Frankenstrasse 146, 90461 Nuernberg, Germany
-> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-> HRB 36809 (AG Nuernberg)
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Back to this patch, as C000 is just for Windows update purpose, I
+don't see the reason why Linux may care about it (I may be wrong). On
+the other hand, if device 0001 is missing Linux will crash so it
+should consider also device 0002 as an alternative.
+
+I'll try to post an update for device reservations
+(https://xenbits.xen.org/docs/unstable/man/xen-pci-device-reservations.7.ht=
+ml)
+to xen-devel.
+
+Frediano
 
