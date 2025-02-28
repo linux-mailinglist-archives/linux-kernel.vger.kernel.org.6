@@ -1,83 +1,131 @@
-Return-Path: <linux-kernel+bounces-537564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45DFA48D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F10A48D8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133C31890A46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC111890C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AB6849C;
-	Fri, 28 Feb 2025 00:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7441DC2F2;
+	Fri, 28 Feb 2025 00:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAm/ZNwx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13DC748F;
-	Fri, 28 Feb 2025 00:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Dp4k76aS"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB654C91;
+	Fri, 28 Feb 2025 00:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740703761; cv=none; b=bcJRa6V1JTMmlLS+Gneoxe21O505hwx7k0ljHb+N5RZCxRPdch4l9ELZXTipcW+udBtEy25JOblEn8xnEtNXsVorZcsUjQ6pWDL/hziQo9fMBmbVMCFvQ0sGJ03HbcAq+4sLqx/FlxFm1N9mUPQOMNoyVhM+VfOF47sFv5Xmguo=
+	t=1740703792; cv=none; b=q6Ac4utC8MuPVRXws6LWfJ8wdX9tX5BlhRhZQYpC9A+2epVgQHwrjQBsCnDV/TcFwgJ+cY3egzwu2j0nmmL43jjWZq3DZAz9kRqcYNbN1o8xEXHUFopolyu1cwZc3KuQhictXqcyu77h4mSpq7Nu0fc8H9hGNwRZeJ8RddWLU4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740703761; c=relaxed/simple;
-	bh=izlwuzlpwkPfJtmpLdNckvzl/Yrix0fHSqdWSI0vuc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ac4vgHKt6UAHF75Fc2tXTK8h/PAV603jd+fkBbbnCUTfIIg12e/+9l10FXXnYLEMDCv7oz/6J8eLOIbcltSTbrKUGqIo7/dDmCFJNCyosDZCYdyJJznSFx4N+O2IPOpppcD8QrPMJzKPL13sgVyYq4t2QNkxkgDUj2qHlaWCe2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAm/ZNwx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2528C4CEDD;
-	Fri, 28 Feb 2025 00:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740703760;
-	bh=izlwuzlpwkPfJtmpLdNckvzl/Yrix0fHSqdWSI0vuc8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mAm/ZNwxFpX0pQTSn41oSDn4PCELjeNyVZ48PxPkBuI8ZHAcGpVOWcj+nWBQa7U8W
-	 dxtJElC7p7kKzRvqIjq8EPE21cEhxeoWlDeJTuwD9o2F0RosPYkyxYrzk0ZQi7lkGr
-	 RZRvuY5oBRzTiy8z0q3MzTSwKRgf0eJ/hOQ8F5bRVYpUgqDtDQURGqwWvmFNr0EQcU
-	 IY95PZ2vcqJ8x5gae4JPNrDgHXM8wObCRIUK+YN8LJQUm7XfQRulfbRmvxD2UlFwOj
-	 hN4+vb8ETecPn3veSKI8VdaMk0vq+TGkrUtn01rzzQJ9vZnHSq4hh3EPWQLg/xt62+
-	 b74r0bN3ObsbA==
-Date: Thu, 27 Feb 2025 16:49:18 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
- marc.dionne@auristor.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, brauner@kernel.org, linux-afs@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 00/15] afs, rxrpc: Clean up refcounting on
- afs_cell and afs_server records
-Message-ID: <20250227164918.3b05d94e@kernel.org>
-In-Reply-To: <174068405775.1535916.5681071064674695791.git-patchwork-notify@kernel.org>
-References: <20250224234154.2014840-1-dhowells@redhat.com>
-	<174068405775.1535916.5681071064674695791.git-patchwork-notify@kernel.org>
+	s=arc-20240116; t=1740703792; c=relaxed/simple;
+	bh=RZOZhKZG97cc3kiuh/tSMwsvbhs2LaEXa504/fIDzag=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qK9nSIG/RypaA7myZ19Xdui3lAUSx1JFJFMM+uuISr6ZpJqYsUjEhhIaFcQPja6v82S65Y8kJ2vSVtHcAFispvujFDYjkM2G/boaHeMEmhd7hf3p2Il7ojQ0Mk0rZaW0VYsS+2jUs07/KyoAk+iYtiIXTFvsD7oywcxaMxKwGKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Dp4k76aS; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E62E0210EAC0;
+	Thu, 27 Feb 2025 16:49:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E62E0210EAC0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740703791;
+	bh=IeG+L7E6vDHSVo89AbkHHb4yGQsBoZrk+/JOHuRUWmk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Dp4k76aSEZqb6H3+dvFgTwwZRo4thgbYprD3kCbGuLWdX84AVVpbmoIW9R9cc/MJC
+	 c2h2/nX/mor1D1qXiM3EHVMVfGzckNut8HcRMHBaoEseJ9v8JXPURG4QlrYM5RB7mO
+	 CHOCamiMpBDkgF62+jVdA8A0oVR4RMcZD64bdz8k=
+Message-ID: <57426824-5302-4200-8560-8eb67be6b378@linux.microsoft.com>
+Date: Thu, 27 Feb 2025 16:49:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-acpi@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
+ catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH v5 04/10] hyperv: Introduce hv_recommend_using_aeoi()
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-5-git-send-email-nunodasneves@linux.microsoft.com>
+ <7749367d-d87d-43f0-8c24-cd08bb4ce1a8@linux.microsoft.com>
+ <b243fabe-cc96-46ea-9efc-68b0d5b379ef@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <b243fabe-cc96-46ea-9efc-68b0d5b379ef@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 19:20:57 +0000 patchwork-bot+netdevbpf@kernel.org
-wrote:
-> Here is the summary with links:
->   - [net-next,01/15] rxrpc: rxperf: Fix missing decoding of terminal magic cookie
->     https://git.kernel.org/netdev/net-next/c/c34d999ca314
->   - [net-next,02/15] rxrpc: peer->mtu_lock is redundant
->     https://git.kernel.org/netdev/net-next/c/833fefa07444
->   - [net-next,03/15] rxrpc: Fix locking issues with the peer record hash
->     https://git.kernel.org/netdev/net-next/c/71f5409176f4
->   - [net-next,04/15] afs: Fix the server_list to unuse a displaced server rather than putting it
->     https://git.kernel.org/netdev/net-next/c/add117e48df4
->   - [net-next,05/15] afs: Give an afs_server object a ref on the afs_cell object it points to
->     https://git.kernel.org/netdev/net-next/c/1f0fc3374f33
+On 2/27/2025 4:33 PM, Nuno Das Neves wrote:
+> On 2/27/2025 3:03 PM, Easwar Hariharan wrote:
+>> On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
+>>> Factor out the check for enabling auto eoi, to be reused in root
+>>> partition code.
+>>>
+>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>> ---
+>>>  drivers/hv/hv.c                | 12 +-----------
+>>>  include/asm-generic/mshyperv.h | 13 +++++++++++++
+>>>  2 files changed, 14 insertions(+), 11 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>>> index 258034dfd829..1f46d19a16aa 100644
+>>> --- a/include/asm-generic/mshyperv.h
+>>> +++ b/include/asm-generic/mshyperv.h
+>>> @@ -77,6 +77,19 @@ extern u64 hv_do_fast_hypercall16(u16 control, u64 input1, u64 input2);
+>>>  bool hv_isolation_type_snp(void);
+>>>  bool hv_isolation_type_tdx(void);
+>>>  
+>>> +/*
+>>> + * On architectures where Hyper-V doesn't support AEOI (e.g., ARM64),
+>>> + * it doesn't provide a recommendation flag and AEOI must be disabled.
+>>> + */
+>>> +static inline bool hv_recommend_using_aeoi(void)
+>>> +{
+>>> +#ifdef HV_DEPRECATING_AEOI_RECOMMENDED
+>>> +	return !(ms_hyperv.hints & HV_DEPRECATING_AEOI_RECOMMENDED);
+>>> +#else
+>>> +	return false;
+>>> +#endif
+>>> +}
+>>> +
+>>
+>> I must be missing something very basic here, and if so, I apologize, and please enlighten me.
+>>
+>> HV_DEPRECATING_AEOI_RECOMMENDED is defined as BIT(9) in include/hyperv/hvgdk_mini.h, and
+>> asm-generic/mshyperv.h includes that via include/hyperv/hvhdk.h.
+>>
+>> If this is the case, when would HV_DEPRECATING_AEOI_RECOMMENDED ever be not defined?
+>> If it's always defined, do we need the #ifdef?
+>>
+> HV_DEPRECATING_AEOI_RECOMMENDED is only defined on x86 (it used to live in x86 hyperv-tlfs.h).
+> It lives inside a #if defined(CONFIG_X86) block in hvgdk_mini.h. It is a bit confusing since
+> it is surrounded by other x86-only definitions which are prefixed with HV_X64_.
+> 
 
-Nice job pw-bot! Turns out the first 5 patches were already in the net
-tree with fixes, and now they made their way to Linus. So let's discard
-those from v2. And even less of a reason for this to go via networking
-:(
+Ah, thank you. I knew it must be something glaringly obvious in hindsight. With that resolved,
+
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
