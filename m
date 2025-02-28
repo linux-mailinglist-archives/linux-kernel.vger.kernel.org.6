@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-539186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9186BA4A1CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:39:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128A9A4A1D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02CB175779
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6725B3B2D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFE127CCDC;
-	Fri, 28 Feb 2025 18:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3127CCF3;
+	Fri, 28 Feb 2025 18:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvpNiSRO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="o5KXG+se"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7127CCD1;
-	Fri, 28 Feb 2025 18:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F8B27CCE2;
+	Fri, 28 Feb 2025 18:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767971; cv=none; b=ol0qIG2TbYR3vilXigMRsbJmme0ORotEZVh02rdL8pvOwTiDD2ewXwKfBabo7PpPsbrc40Px9EfzdVs3tld3ItgBkCZPDn/aKm6eAABZKp5/vCgBr0JHjeP96Pb1+bE7J+lPJt0FWmPydYpj1IyP+B5IjnzoCF9i8VKHDE+WQ+s=
+	t=1740768023; cv=none; b=kHrU1ioI4vj6pHAL6ThKr0jdTzQrW6HX4/eeKLPwjKUivwlQF90K1AiOhr5Ouhf8rG6re+DxtE/axC5CTIeex+A9/l71mlN583rMh09fM50sh4Y42iy68rok3OzMcEwjsRYgkxnOuDagvGoQP8sduh9EYXLIfyoGx0LDaahVIdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767971; c=relaxed/simple;
-	bh=zZI9rjd7uFt389AwkuF5r2/izRTAFMFoplFVfmfKAC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcj8b11d2AjEV3nDM4GqZEAIDZ81I2OGZxlpWp/vF8Ki8F7aKRzO9gc2Pbcw4Wa9XldGn/1JluAGQ+suYV7jaigx73Z5+KzCYKi2t0Osa/JhKngbChEAdX7cceR73yfylFNEaLYXqG1skSDweKP/68MVLuTz2W76UOQme3DfsZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvpNiSRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00130C4CED6;
-	Fri, 28 Feb 2025 18:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740767971;
-	bh=zZI9rjd7uFt389AwkuF5r2/izRTAFMFoplFVfmfKAC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QvpNiSROll1L4yzr7VWtKDBpdU7IF01alBfp/v31DyoYWBZ69PbUkgIbvF9XuuHAi
-	 R+ubejEHutBJILnjI+PewG8FaNFZybdFXMQCcGH3QFHkBkAtLtcFsNL2ko9CZWSYTY
-	 o64HDFIiyBUHWNPC5sS358ZNYGvHkUr6PL5+conUt2fUXAHE9tuUc/Lv7c77axstu/
-	 loVQJ5wxspxtfX8Ije4MpYaA9HfajEynEMeebg+6j6qXHkSCKM70g6W9NXePWgiv2i
-	 5Lpvloh1c7r6M+dI0JxiUEeG0UOKLYKrI9vDqoXAy7wSKuojG5GRKkft5mAYmmgqDX
-	 hYnGBERcDu2JA==
-Date: Fri, 28 Feb 2025 18:39:26 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] dt-bindings: pinctrl: Add pinctrl support for RK3528
-Message-ID: <20250228-emote-phonics-4337256dcd01@spud>
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
- <20250228064024.3200000-3-jonas@kwiboo.se>
+	s=arc-20240116; t=1740768023; c=relaxed/simple;
+	bh=dgwriYuHai0NswtoP8mHODftMD1l0GOWzgSCZTYh98A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ato86R4ZIIZBsGMjkmEDxrcwWVtp0dkSd3pnmwCT798rgcbWw9A1SE0bVSwOalp5Pqer/MKrjW7Fof6f3Iq6jUppSt4uuVxyPJZUJfQC9XFjySD+oZrWGXZ+c8MhGZ8HC/ZuBLXFHIHDXEKB0vlalL76zctMDgyBfaoSjtVHejo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=o5KXG+se; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740768021; x=1772304021;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dgwriYuHai0NswtoP8mHODftMD1l0GOWzgSCZTYh98A=;
+  b=o5KXG+seUOFXTDHCGPQShy/rAhdwy5zcFQGZxAW3iz1cwzYMKWLJATCb
+   pChbHDTnm4i83DHf3YCRdYikpV+57dSEbouysPcqSWuhjvRP70Jx/xGGb
+   MMxkifNFrmA6ocTk4om1GZZ+5x/WGL0uO3lt6WmOXCCNL3RJ1UNx/v6Em
+   7MRdMrdnoKCktZqga28BeY4ItpxjySUEQ+WaaY/UUE/rIs8FYWwKWl43D
+   lVRUujKKlI4C+QGxSxHslFiq9uaUm6BvANaKR3orkilhxTapQNnOgX8QA
+   0+Ms/B4eDIB6awXDGYzh+oMAlR47wOI8P901CzElE8WsDKpW00DE4z5ti
+   A==;
+X-CSE-ConnectionGUID: 0708Gxq6RM22afyZLBfpag==
+X-CSE-MsgGUID: LguonwZOQEWh8tU6Da1OdA==
+X-IronPort-AV: E=Sophos;i="6.13,323,1732604400"; 
+   d="scan'208";a="42424459"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2025 11:40:15 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 28 Feb 2025 11:39:54 -0700
+Received: from [10.171.248.16] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 28 Feb 2025 11:39:52 -0700
+Message-ID: <d1a9fc41-35df-4b30-83cc-5589a649c7ff@microchip.com>
+Date: Fri, 28 Feb 2025 19:39:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+XM8zBTCiCN/RDO6"
-Content-Disposition: inline
-In-Reply-To: <20250228064024.3200000-3-jonas@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] mmc: atmel-mci: Add missing clk_disable_unprepare()
+To: Gu Bowen <gubowen5@huawei.com>, <ulf.hansson@linaro.org>
+CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <ludovic.desroches@microchip.com>,
+	<linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>
+References: <20250225022856.3452240-1-gubowen5@huawei.com>
+Content-Language: en-US, fr
+From: Aubin Constans <aubin.constans@microchip.com>
+In-Reply-To: <20250225022856.3452240-1-gubowen5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 25/02/2025 03:28, Gu Bowen wrote:
+> The error path when atmci_configure_dma() set dma fails in atmci driver
+> does not correctly disable the clock.
+> Add the missing clk_disable_unprepare() to the error path for pair with
+> clk_prepare_enable().
+> 
+> Fixes: 467e081d23e6 ("mmc: atmel-mci: use probe deferring if dma controller is not ready yet")
+> Signed-off-by: Gu Bowen <gubowen5@huawei.com>
 
---+XM8zBTCiCN/RDO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Aubin Constans <aubin.constans@microchip.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>   drivers/mmc/host/atmel-mci.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+> index fc360902729d..24fffc702a94 100644
+> --- a/drivers/mmc/host/atmel-mci.c
+> +++ b/drivers/mmc/host/atmel-mci.c
+> @@ -2499,8 +2499,10 @@ static int atmci_probe(struct platform_device *pdev)
+>          /* Get MCI capabilities and set operations according to it */
+>          atmci_get_cap(host);
+>          ret = atmci_configure_dma(host);
+> -       if (ret == -EPROBE_DEFER)
+> +       if (ret == -EPROBE_DEFER) {
+> +               clk_disable_unprepare(host->mck);
+>                  goto err_dma_probe_defer;
+> +       }
+>          if (ret == 0) {
+>                  host->prepare_data = &atmci_prepare_data_dma;
+>                  host->submit_data = &atmci_submit_data_dma;
+> --
+> 2.25.1
+> 
 
---+XM8zBTCiCN/RDO6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8IC3gAKCRB4tDGHoIJi
-0oF6AQD04gkxbT5D/tutvF48f6Ph5soAOs7BZjA42GTVsU5hEwD+PXfXiY8H6ff1
-M+6/WjcD4+qAvoHAVXSblGC4qoCm5AM=
-=Id+X
------END PGP SIGNATURE-----
-
---+XM8zBTCiCN/RDO6--
+Thank you for having identified and fixed this.
 
