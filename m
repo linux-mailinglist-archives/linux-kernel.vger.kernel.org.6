@@ -1,113 +1,208 @@
-Return-Path: <linux-kernel+bounces-538063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F62A4942B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:58:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3B9A4942F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA9313AA056
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:58:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFCB67A1706
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B442A254B1A;
-	Fri, 28 Feb 2025 08:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58601254B1B;
+	Fri, 28 Feb 2025 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXk9K5pG"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cur+y9a2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACF1254863;
-	Fri, 28 Feb 2025 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0196230991
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733065; cv=none; b=mTGVQLqBe5bNzNk786N5717aL3epfs/K/VxaSrRxdVEEQpMJ0Tv5D8Pp1jN5ZGevxRUgLHr79LPjfP+nt0EimWJmOGL7l4pFxvRFfEvRg3sD6bsLaFmMh1khDipyUkfpUTnSq/DewYfJzFamBUvLh4vEI8iqBj1Le/lwC6CpyOQ=
+	t=1740733135; cv=none; b=oWFSMZTj6uP69gcfsXhQijvG4/MFo64qfDAxNz3lN7qOmYl7yn2eqvbm4gIyzuEcWbDI5uvtoCkGzsYbWGdvGS5v52z0VWgWS/AF/JC1H0eeqNLUKmgrABSxjYtT7WpvcX//QQfa3R2H13KFBG+juMUDfNp2i2HcJHKX1+1oSNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733065; c=relaxed/simple;
-	bh=8ApnVxOAIku1y1NGlqRF2zzBzpu0NT4/22VcCwtbvmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TOw/A2ERpOL7oUMIHmx7bQvWBjHJSIlD2iVcESE9GBSo9LF3QvIRx0H2/cPOF0/+TgZqvn71MV5GQ8cXQHnGYT32KhQ9okjpI+hFfiDSSFiCx4x7hFelUAeUn5O01UpXq3JCFoPNHxyNeSrqt/BniYkXqw0Clb/twGilqqvWokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXk9K5pG; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390e3b3d432so1252064f8f.2;
-        Fri, 28 Feb 2025 00:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740733061; x=1741337861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOOGOHp/kT32Ubbsvrda4rp5OvOxGdyciA4qun4jkHI=;
-        b=UXk9K5pGGB66PuEhqMqJR/XYNNAuJTdG106fsDbr673ZPvj3hxiw42pjL8QcqGoPxu
-         2udnywUZjprLJfNQ4r/WXJSAjGpQsgICwTXWlxfuA/jMQvHHQSDdiLgUTrReq6sB2938
-         70b9sfNstUp554pxgkrPICDJv09+JWzrTUmAYEj8VuhKum/H0e8ZYAm41OoRmFgZa7pM
-         TqJzuwRDfh74SzgZkcrkVCh965YcSUpXAilna8PjcUS2YuW760IjqN1BjNL6089wMKHI
-         V8rzWx8sbIeI2E2D2LYcmq2F02bb65Rcf0Xf1+0m9IWvr/0K1QBQOb/e3Ta/OYNcZu/C
-         z6Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740733061; x=1741337861;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YOOGOHp/kT32Ubbsvrda4rp5OvOxGdyciA4qun4jkHI=;
-        b=nLz+nYnHrxGYzurTQ/X9aNKNF01//u6F4VsNbWarl0Ubk7vBnHF77K9PIUtUndHZf+
-         Ii3oOhfBdWg0NtIL91MzNMtW1ue1Ykl5dcLPa0gCX8TOf3LbELIGf0ZLrw7Sa/3uHaQi
-         567ekdJfexXrgW9niNUk/5hasGf+Q73cIJkIZmcT6iQCgIa509sj7/VNnDlJ8u2LbQt8
-         ROjMIiOvzseIDfu2aafEOQa47nEqJcYqJH/xs4oE/YOnsOyHyj9Rj926i/VfvAQxfGdg
-         5CEoi0jEGhd66sUFVCg0f6XkaibokJgfuGq+wuF5r2RZ6m5qoqevKiDBItfzeqrVJdYH
-         lh9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjEVuKMH16mzCK7sT4iXPSSoE/kvMZG7Eby4KY8YuBwdQnvue7lzahtZ7cMWhQnc2bhfavlX2BQEqRVfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKCgNfggeLDijU4RalbOhFFzRmZAwXgZP9gBbYERxs7nvIw8SI
-	qEQlCw7kRxwGP1JctsLsXl0KM5/ZBSnImiXLZ2AJWAqGUSb01Z2/
-X-Gm-Gg: ASbGncsqSbs51MKrJNBi3yx06pfHjyOCEsZ2J2epLaMomBlpfCCmFiY727qi7ciWc6h
-	Al54w3TfbLTVWedMU9WTmVdIIniHJhAiIVV85nfDQcqoh4Q6li2K8BrLNvFGqYcu9VFlgKGXrmE
-	53xXYlySpjr663mkAnPzyhBIark7QomYCZ/iooEINxbOEnC1RrB6N/phtJG34TRsFGWBkK9j6y8
-	vVhe7JUJENq3Z/ywYu8bYGAknpj4aS+aPC2MTOIlG6L6sR744+VsU7KTNcJe9rlJYKEcSHG+g2+
-	PVsq2WFZZkuVeuQUpRitm8elYrw=
-X-Google-Smtp-Source: AGHT+IHh1cn5sBB+ae6U8u5TgIgCJ1b8UOf6j64PpB4BLf31Gp1M6o46xk83F0wVo1aSC8clSYk29A==
-X-Received: by 2002:a5d:5f84:0:b0:390:eb06:d6bd with SMTP id ffacd0b85a97d-390eca41380mr2114817f8f.34.1740733060559;
-        Fri, 28 Feb 2025 00:57:40 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e479608fsm4611706f8f.14.2025.02.28.00.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:57:39 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	ntfs3@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs/ntfs3: Fix spelling mistake "recommened" -> "recommended"
-Date: Fri, 28 Feb 2025 08:57:03 +0000
-Message-ID: <20250228085703.678824-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740733135; c=relaxed/simple;
+	bh=x0EkCU92Bz5vmrQHTWr3vyy9G6YHsz+fRat5JGXvLz4=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=snfi0Dr4S+ZzmYHyaUYn0XQC6BKcwvwLcelubSpSVujtNOhyPXYXAIGNs7WHgqfKgIBIUzDk9sMWbkdo6Bjz50WRtZ2Q3NiMu578QXUrolHqEu6Uwwirpc6BNdyTRg7pBAndnEZ0h3V836Zhr9CtvnQW96TjfTTLemoj8wxoAQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cur+y9a2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740733132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hE/sVX5Vtj7I8hYQusRqxR4bCYSDWhvjZ0GyV0zAlME=;
+	b=cur+y9a2asCYOLmVh/8PLRIKcpunu+EQNvpU4ssD1oJw6Sp/91yPHsnpQorh1ZH+Fs4VJz
+	f4B9EPDGC3lBqCynUVoJ+wjMJchnPigEwGBMHjFiugBUta5rNR2kWkYrIBj/MmBomXfgya
+	bZf25CJPyxFv8lNIFcRzVcXOWinA9e0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-r9pyO6UMO5qwEvIKogFU9A-1; Fri,
+ 28 Feb 2025 03:58:46 -0500
+X-MC-Unique: r9pyO6UMO5qwEvIKogFU9A-1
+X-Mimecast-MFC-AGG-ID: r9pyO6UMO5qwEvIKogFU9A_1740733125
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23EBC1800877;
+	Fri, 28 Feb 2025 08:58:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5C9071955BCB;
+	Fri, 28 Feb 2025 08:58:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: David Howells <dhowells@redhat.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@lists.infradead.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3190715.1740733119.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 28 Feb 2025 08:58:39 +0000
+Message-ID: <3190716.1740733119@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-There is a spelling mistake in an ntfs_info message. Fix it.
+Hi Christian,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Could you pull this into the VFS tree onto a stable branch?  The patches
+were previously posted here as part of a longer series:
+
+  https://lore.kernel.org/r/20250224234154.2014840-1-dhowells@redhat.com/
+
+The first five patches are fixes that have gone through the net tree to
+Linus and hence this patchset is based on the latest merge by Linus and
+I've dropped those from my branch.
+
+This fixes an occasional hang that's only really encountered when rmmod'in=
+g
+the kafs module, one of the reasons why I'm proposing it for the next merg=
+e
+window rather than immediate upstreaming.  The changes include:
+
+ (1) Remove the "-o autocell" mount option.  This is obsolete with the
+     dynamic root and removing it makes the next patch slightly easier.
+
+ (2) Change how the dynamic root mount is constructed.  Currently, the roo=
+t
+     directory is (de)populated when it is (un)mounted if there are cells
+     already configured and, further, pairs of automount points have to be
+     created/removed each time a cell is added/deleted.
+
+     This is changed so that readdir on the root dir lists all the known
+     cell automount pairs plus the @cell symlinks and the inodes and
+     dentries are constructed by lookup on demand.  This simplifies the
+     cell management code.
+
+ (3) A few improvements to the afs_volume tracepoint.
+
+ (4) A few improvements to the afs_server tracepoint.
+
+ (5) Pass trace info into the afs_lookup_cell() function to allow the trac=
+e
+     log to indicate the purpose of the lookup.
+
+ (6) Remove the 'net' parameter from afs_unuse_cell() as it's superfluous.
+
+ (7) In rxrpc, allow a kernel app (such as kafs) to store a word of
+     information on rxrpc_peer records.
+
+ (8) Use the information stored on the rxrpc_peer record to point to the
+     afs_server record.  This allows the server address lookup to be done
+     away with.
+
+ (9) Simplify the afs_server ref/activity accounting to make each one
+     self-contained and not garbage collected from the cell management wor=
+k
+     item.
+
+(10) Simplify the afs_cell ref/activity accounting to make each one of
+     these also self-contained and not driven by a central management work
+     item.
+
+     The current code was intended to make it such that a single timer for
+     the namespace and one work item per cell could do all the work
+     required to maintain these records.  This, however, made for some
+     sequencing problems when cleaning up these records.  Further, the
+     attempt to pass refs along with timers and work items made getting it
+     right rather tricky when the timer or work item already had a ref
+     attached and now a ref had to be got rid of.
+
+Thanks,
+David
 ---
- fs/ntfs3/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 1e15510b71c99c6e49134d756df91069f7d1814=
+1:
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 920a1ab47b63..d0d3214d3688 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1293,7 +1293,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbi->volume.ni = ni;
- 	if (info->flags & VOLUME_FLAG_DIRTY) {
- 		sbi->volume.real_dirty = true;
--		ntfs_info(sb, "It is recommened to use chkdsk.");
-+		ntfs_info(sb, "It is recommended to use chkdsk.");
- 	}
- 
- 	/* Load $MFTMirr to estimate recs_mirr. */
--- 
-2.47.2
+  Merge tag 'net-6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/gi=
+t/netdev/net (2025-02-27 09:32:42 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/afs-next-20250228
+
+for you to fetch changes up to 96269ca2db2dffe40253877f3f615e5ce6d3cbcd:
+
+  afs: Simplify cell record handling (2025-02-28 08:41:25 +0000)
+
+----------------------------------------------------------------
+afs: Fix ref leak in rmmod
+
+----------------------------------------------------------------
+David Howells (10):
+      afs: Remove the "autocell" mount option
+      afs: Change dynroot to create contents on demand
+      afs: Improve afs_volume tracing to display a debug ID
+      afs: Improve server refcount/active count tracing
+      afs: Make afs_lookup_cell() take a trace note
+      afs: Drop the net parameter from afs_unuse_cell()
+      rxrpc: Allow the app to store private data on peer structs
+      afs: Use the per-peer app data provided by rxrpc
+      afs: Fix afs_server ref accounting
+      afs: Simplify cell record handling
+
+ fs/afs/addr_list.c         |  50 ++++
+ fs/afs/cell.c              | 436 ++++++++++++++------------------
+ fs/afs/cmservice.c         |  82 +------
+ fs/afs/dir.c               |   5 +-
+ fs/afs/dynroot.c           | 484 +++++++++++++++---------------------
+ fs/afs/fs_probe.c          |  32 ++-
+ fs/afs/fsclient.c          |   4 +-
+ fs/afs/internal.h          |  98 ++++----
+ fs/afs/main.c              |  16 +-
+ fs/afs/mntpt.c             |   5 +-
+ fs/afs/proc.c              |  15 +-
+ fs/afs/rxrpc.c             |   8 +-
+ fs/afs/server.c            | 601 +++++++++++++++++++---------------------=
+-----
+ fs/afs/server_list.c       |   6 +-
+ fs/afs/super.c             |  25 +-
+ fs/afs/vl_alias.c          |   7 +-
+ fs/afs/vl_rotate.c         |   2 +-
+ fs/afs/volume.c            |  15 +-
+ include/net/af_rxrpc.h     |   2 +
+ include/trace/events/afs.h |  83 ++++---
+ net/rxrpc/ar-internal.h    |   1 +
+ net/rxrpc/peer_object.c    |  30 ++-
+ 22 files changed, 903 insertions(+), 1104 deletions(-)
 
 
