@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-538154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BFEA49523
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:35:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A222AA4950E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE3C3B16D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A5D16186F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E852571A9;
-	Fri, 28 Feb 2025 09:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427CE25CC77;
+	Fri, 28 Feb 2025 09:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="mGUKvLO1"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V3SAatq9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F09F255E3C;
-	Fri, 28 Feb 2025 09:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D07F257434;
+	Fri, 28 Feb 2025 09:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735111; cv=none; b=i3UwoAf98fWOQ8jj74ohNQTSHwuGp4kc438Msv5ygOqX7iWDv9ICeM2CfE5sWdNbX1G1NvfhS4zDGzw09wT+C3HNvYZ+7FzlwzKM9Cq73HrxPz1gPeqYfR+0SRJIaSzYgYLQj46zdzx60s90DTv4L8g7c5/dMLfgR85JfNAjwOY=
+	t=1740735022; cv=none; b=jDD99HwcxxCZI7AABMCdrHaDxVzxdXRQdOOI00dk9yGdBdvYZTOkMhTEq375zy9w1WsLgOmStr/IXbC/p5Ib993SqhxlVKmGYaD/VX3VJmsEctxE495l/OjFlYCpYjUnLPHrOCvk4MORX8aV3wHVgO71iDk6wJSN75T+F+O3JdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735111; c=relaxed/simple;
-	bh=UbVjHik/5DNU77Br18BeoUx4vjSEEApwEdjBWsKa7oo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jabPQh3JFB4vjyI24EYawOG4zZnXnVd9F1QfNzFKHGSt7wPezXmFNGcoTxNS0v3dI3qTWzvdGErntah2qYXu6L062ccvvNsTr/5XM+Ovd/Imbr/GGfxgHgZTxquK3bM1my4BnFSCoLZ9Lf6ABMvoo4mQwRFFcL+fTED4RVISEo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=mGUKvLO1; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id D20B41E0003;
-	Fri, 28 Feb 2025 12:31:35 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru D20B41E0003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1740735095; bh=6am0DVWgQ/p6WF/F84JYY8+aR4hpn8GfUGtoqNrvHHE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=mGUKvLO1wWglDHyOXokXy5KC8UcXzA4xXBfgjzwi7J0VlzE9szmVVzCf74cYK5P3a
-	 VdKLtqQ3lXenO95UIMGYE9xcsi/xxfO72XbqoImoPypWRjI1HZj4zOCCKUXQ8WSe/L
-	 mbNz30viCSnitlpJ+QVf9xIHYuyLS+S1g3fPWxy/mB6cXUeArbltls6lQENVQaKsom
-	 tR0YOryYb+s+pv7eq+T++yU+RUbxoLWmn8E9fq2aCg74tzdVWQbHQlnyJvTpA/jnj1
-	 ed0OuuaKqVz53o3Tzz5LwH9vf5vZUOYv3G7yAj4hS2YEErnJCERikYmT6A6BnI64zb
-	 eM5JMLP1riEfw==
-Received: from ksmg02.maxima.ru (autodiscover.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Fri, 28 Feb 2025 12:31:35 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.247.99) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Fri, 28 Feb
- 2025 12:31:32 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: James Smart <james.smart@broadcom.com>
-CC: Ram Vegesna <ram.vegesna@broadcom.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Murad Masimov <m.masimov@mt-integration.ru>,
-	<linux-scsi@vger.kernel.org>, <target-devel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] scsi: elx: efct: fix integer overflow in efct_get_stats
-Date: Fri, 28 Feb 2025 12:30:55 +0300
-Message-ID: <20250228093055.22-1-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1740735022; c=relaxed/simple;
+	bh=vueB8glrxQlRjIMAss1r71kAHRNbnxrNli+SINmYOp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BA8oySEp73XwDOfAh9zaKKz33RdJUv0j5tZ3WKittKLw0ph4mXl6ZSLUDHakalFeJskaC4GveyV5fCy23DsBpYDNzFCDIcgx8FxWRCdBWefORDQopE5h8IxIPRidGfkljzOgkj6SRCbT/zyQ62UNy53C2DRah55muDjFuM6Ulfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V3SAatq9; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740735021; x=1772271021;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vueB8glrxQlRjIMAss1r71kAHRNbnxrNli+SINmYOp4=;
+  b=V3SAatq9sX9FRNKYU0bJMvcASKVdC9DCqqhE4+2DD3MzKyK2+IT0lLDY
+   CZfhrQ0gIA58TaBaa0utRIe1goat3FRj/4U5Ovll48PrRt/zOBoIYvwNf
+   ThTTem4qAuVD4fgsveuAyaIZkKJkmZ43RIq7Flv71wQwIaEWWi/THoyw/
+   AvNk2A2Eui7j1i1gKjYbeDiE7MFOJTyGazYbLU4i6Y7wFXwnR4dYxYKyZ
+   Htk5kDipPQQJ14vG7aLBDTGrYwPFqof6hkvg3bNNK019GWmvwhwVrqw8D
+   JkEEBSgFHW/VVjuKB0yNJeqxR4o7fhtnb7TtSrgAhfFULpbORZ1DCwyMG
+   A==;
+X-CSE-ConnectionGUID: 8Mdr2y6LRNiWYHY8Saejzg==
+X-CSE-MsgGUID: 0VqJnVbaTtKxb/h+roQNAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45438694"
+X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
+   d="scan'208";a="45438694"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 01:30:21 -0800
+X-CSE-ConnectionGUID: Ql+YnlPFR8mAYyWI4sxNoQ==
+X-CSE-MsgGUID: wfjEbwY/SauCZb3PqK/3UA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="148214038"
+Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Feb 2025 01:30:19 -0800
+Message-ID: <31b489db-9028-4eea-b84d-9497d49fdddc@linux.intel.com>
+Date: Fri, 28 Feb 2025 11:31:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.62:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;127.0.0.199:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191369 [Feb 28 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/02/28 06:44:00 #27492638
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xhci: Restrict USB4 tunnel detection for USB3 devices to
+ Intel hosts
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Marc Zyngier <maz@kernel.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Oliver Upton <oliver.upton@linux.dev>,
+ stable@vger.kernel.org
+References: <20250227194529.2288718-1-maz@kernel.org>
+ <2025022709-unread-mystified-ddf1@gregkh>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <2025022709-unread-mystified-ddf1@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Efct link statistics contain receive_kbyte_count and transmit_kbyte_count
-values, which are converted into 4-byte words in efct_get_stats(). Result
-is assigned to a variable of type u64, but the calculations are done in
-u32, which can lead to integer overflow.
+On 27.2.2025 22.20, Greg Kroah-Hartman wrote:
+> On Thu, Feb 27, 2025 at 07:45:29PM +0000, Marc Zyngier wrote:
+>> When adding support for USB3-over-USB4 tunnelling detection, a check
+>> for an Intel-specific capability was added. This capability, which
+>> goes by ID 206, is used without any check that we are actually
+>> dealing with an Intel host.
+>>
+>> As it turns out, the Cadence XHCI controller *also* exposes an
+>> extended capability numbered 206 (for unknown purposes), but of
+>> course doesn't have the Intel-specific registers that the tunnelling
+>> code is trying to access. Fun follows.
+>>
+>> The core of the problems is that the tunnelling code blindly uses
+>> vendor-specific capabilities without any check (the Intel-provided
+>> documentation I have at hand indicates that 192-255 are indeed
+>> vendor-specific).
+>>
+>> Restrict the detection code to Intel HW for real, preventing any
+>> further explosion on my (non-Intel) HW.
+>>
+>> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 948ce83fbb7df ("xhci: Add USB4 tunnel detection for USB3 devices on Intel hosts")
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> ---
+>>   drivers/usb/host/xhci-hub.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+>> index 9693464c05204..69c278b64084b 100644
+>> --- a/drivers/usb/host/xhci-hub.c
+>> +++ b/drivers/usb/host/xhci-hub.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/unaligned.h>
+>>   #include <linux/bitfield.h>
+>> +#include <linux/pci.h>
+>>   
+>>   #include "xhci.h"
+>>   #include "xhci-trace.h"
+>> @@ -770,9 +771,16 @@ static int xhci_exit_test_mode(struct xhci_hcd *xhci)
+>>   enum usb_link_tunnel_mode xhci_port_is_tunneled(struct xhci_hcd *xhci,
+>>   						struct xhci_port *port)
+>>   {
+>> +	struct usb_hcd *hcd;
+>>   	void __iomem *base;
+>>   	u32 offset;
+>>   
+>> +	/* Don't try and probe this capability for non-Intel hosts */
+>> +	hcd = xhci_to_hcd(xhci);
+>> +	if (!dev_is_pci(hcd->self.controller) ||
+>> +	    to_pci_dev(hcd->self.controller)->vendor != PCI_VENDOR_ID_INTEL)
+>> +		return USB_LINK_UNKNOWN;
+> 
+> Ugh, nice catch.
+> 
+> Mathias, want me to just take this directly for now and not wait for you
+> to resend it?
 
-Integer overflow is possible because device registers are not necessarily
-reset regularly, while the issue occurs when the value is over 16 GB,
-which is realistically achievable.
+Yes, please, take it directly
 
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
- drivers/scsi/elx/efct/efct_xport.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-diff --git a/drivers/scsi/elx/efct/efct_xport.c b/drivers/scsi/elx/efct/efct_xport.c
-index cf4dced20b8b..048f89bc9553 100644
---- a/drivers/scsi/elx/efct/efct_xport.c
-+++ b/drivers/scsi/elx/efct/efct_xport.c
-@@ -830,10 +830,10 @@ efct_get_stats(struct Scsi_Host *shost)
- 		stats.stats.link_stats.crc_error_count;
- 	/* mbox returns kbyte count so we need to convert to words */
- 	vport->fc_host_stats.tx_words =
--		stats.stats.host_stats.transmit_kbyte_count * 256;
-+		(u64)stats.stats.host_stats.transmit_kbyte_count * 256;
- 	/* mbox returns kbyte count so we need to convert to words */
- 	vport->fc_host_stats.rx_words =
--		stats.stats.host_stats.receive_kbyte_count * 256;
-+		(u64)stats.stats.host_stats.receive_kbyte_count * 256;
- 	vport->fc_host_stats.tx_frames =
- 		stats.stats.host_stats.transmit_frame_count;
- 	vport->fc_host_stats.rx_frames =
---
-2.39.2
-
+Thanks
+Mathias
 
