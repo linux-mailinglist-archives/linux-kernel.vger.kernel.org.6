@@ -1,176 +1,289 @@
-Return-Path: <linux-kernel+bounces-538741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AAFA49C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:58:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5938A49C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4FC3B7CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A8C174FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA007280A42;
-	Fri, 28 Feb 2025 14:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C79270EA7;
+	Fri, 28 Feb 2025 14:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZJ088P5l"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="XFpL/p47"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010030.outbound.protection.outlook.com [52.101.229.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD5B2777F9;
-	Fri, 28 Feb 2025 14:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754556; cv=none; b=Q6X96bcZDJgazXqbzMhFgQgdVaXdLUOxyeiXsC6uxmb3NoN6Xm6+9ule/5GeJpuM3VmVFKfqukg+pNYNGZFZ8u6VOSY8t0WVNMuEzcm6s1BzH9GACtu7U8kvAOuVxobt1htZq7N44v1cZM0gFNus25AebvZ96u4Kvt/oFOKJUwc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754556; c=relaxed/simple;
-	bh=sZy3WMFYBq33cPPYQMSmYT/a38bojCmITyEF88LwxbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O+X+EoSzQh5m+PZL+DOjgsBeO9t4mo8eCTWW3bxRuD04lxogIfrKQZKFN1WicJK9m1KARqWGzNJ60Ybx1tKNrF314kRRLqNqYhGsnvalAbPBjpWSV5hkSp+oO1Dcm+oJvYZ1jW3Txpdi1trj29ZTW5Dj6gJ6MoGMm75Y76fuFBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZJ088P5l; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EB5BD443F6;
-	Fri, 28 Feb 2025 14:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740754552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZD8bv8Dm/Av5dv0ZXre732wO1DkpnP3iL/L2sGgmvWc=;
-	b=ZJ088P5lXZIDxhR60RIVhlMR/VIOyzl/x8acyA5jfewrmBFKph1wtGVVHpbBOabSKPEZ6C
-	AccI5Wt61uAJ7AtpMUBl80Hy0WC2E0QiQAZcKKFiZLpyQ1zeMch/kN1tC3IqsBhNLvC2ok
-	mnT2KVa1200s8g8XcbzZFGUNsgAWu9TpTrzDmwB5WDoV2UCPfJu4GE9AstIeQDMgri71IZ
-	+BUmAcoIlRDWSfdu1LMp5BWfk8KTQGWjXoWce2yNh8buGZLgoAn8kjmSEMLTCf7JcmZLXI
-	MZE/HHKNW1QTDzZPH80xPVKxIUe/Pkevz0yfrfp3mJloNopaTd2xXPFU5zPlWw==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v3 09/13] net: phylink: Use phy_caps_lookup for fixed-link configuration
-Date: Fri, 28 Feb 2025 15:55:34 +0100
-Message-ID: <20250228145540.2209551-10-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
-References: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08150183CC3;
+	Fri, 28 Feb 2025 14:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740754540; cv=fail; b=LNCgnRiC+0E9Cww4B/75glkHUwM5NqsjKuO/mL4cV64MnPb/Nst9FW1+jsELx7Uxd/uhGLUKgtL1DyOUKdh2ODxHLMB5VvS8jbzaIdXS608RqCFUgFZ4BJ6/ERkRQHZeYub6sjNI5cxTFzI2LGMIcg9tRoICUqhU/JboNmJyKFI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740754540; c=relaxed/simple;
+	bh=raq+N8sPLSF7X5sUw/im55xYhn/4U+/uwEE+y4uCDkE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uSFJOyAz/rnYRe0LsAiZpHMLtIq3oyITbYTYgrzOY9S/mD7USWAb61ra6aVfxEQqmOoG6ANPiYj7DJzpPhOwc3j5QviVQtAHFHtdf00ooe0W/Wr4cXeMPWa+1bFWi33X8Tszre6EAOeh65F2/Vk244ZY+pESPp3hwBeadeb+NA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=XFpL/p47; arc=fail smtp.client-ip=52.101.229.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g0EaeTSVdWHZb7K20kogzfOJ0RMwPPTLOuWDiBgmQH2JPkBa3VrRUpbLuuWQq/UB4QOZ4UZp916WPZFGIXTKgWp3oM38hZUusmFG7HBOckXFAhAhO/hW4PP6h53xCXqgr7G20/sCOapruU61pQnRbhclUMjp9d1p/VHCC3UbcJFvPyj7dVU6+g+vpvN8N7/T8MYoInZ3eymHLTrC8sUxtdD3yHTsSX38Z2o4K1kwDmdTvYKVy/GKyK7acxAII8t/VU5h0dICoyg3ZS5X1MCY10lDr4QGLSTzJEwl93RJMNdy/1JIYHsMiFWya0S8L+wWmrxExuFep5B2R8H06WHQZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l0UQbkyIYfXz+lX8d/NV2K1Ro8W58X5VPfSjzeF0r1w=;
+ b=YrfaxlBg9ZAwUof+DhVDbhYN+VdPe1rLl+hr7l+2Qnhdg/+Yjh5OIOElVpTXE9hglpzXidxwQgi4jsKqRNJy+egeWabQcO1dTgdHmOMNrHert0QMOUalD+BTCe++gp8RTn45i8aQxvSZQPwncUdjKntYAYvTDdlj1cFvoQ32Z/E1ZGjNuGYuJ/SFeuVoD9WgE9sLy+eWW40iOfvqcRbe/Pwqo8B4eVtZtBL7x7JPqaQTXQIdP6NxusHjuT/xbLCT59+uyTe+FUns7jVDg5Z1c1EC8P/L3jkwdaUwHulJZc+zQRaRMkJEUzYWrLLePO9HuYoZA70puhDADLqQXSv1Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l0UQbkyIYfXz+lX8d/NV2K1Ro8W58X5VPfSjzeF0r1w=;
+ b=XFpL/p47vaJJf1HUQ5TLobiYOUfPP06Hqk9gmbPAfERclByV8m2nO+vhyQFpePFRxiFpCa/fhCWT5sG1GAkuSFuGvmasLEowAFZNYCnnf54Vh4djPNSL74cR1qzmT2822GpYigMIqyTykphbdQqzIRL0huRLdFUwRp9347ssBGw=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by OSCPR01MB13240.jpnprd01.prod.outlook.com (2603:1096:604:34f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
+ 2025 14:55:34 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430%7]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 14:55:34 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
+ Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+Thread-Topic: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+Thread-Index: AQHbg6hTr6k5RmdmC0qfs3vIpDif/7NWbDgAgAUL6qCAARRzAIAAS6Iw
+Date: Fri, 28 Feb 2025 14:55:34 +0000
+Message-ID:
+ <TYCPR01MB12093D1484AD0E755B76FAE35C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
+ <20250220150110.738619-4-fabrizio.castro.jz@renesas.com>
+ <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
+ <TYCPR01MB12093A1002C4F7D7B989D10C4C2CD2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+ <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|OSCPR01MB13240:EE_
+x-ms-office365-filtering-correlation-id: e7d3d658-d992-43bd-a56a-08dd5807f48b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?VwdF6RpVVRNGStkMD3wm790CcU2EERXQrF5Brj8MbEOyNBoikwJ6SPIF5wNQ?=
+ =?us-ascii?Q?I1sRwNGozfB7zBMEmVykQKFzh+/ZSsmqQkoJevktqtNO4AgDTO0ilq04tvyi?=
+ =?us-ascii?Q?oPvCUnEA7SS0OS07kJuYfwxYrYt94ic95lod3B4RaZDFxQqu/9quvyS63Pho?=
+ =?us-ascii?Q?entIwxO3vCvfJcwKLG0wbJ7xcLLENGpfv7WAzF0kC52pKuRkSbTrzifvPBmf?=
+ =?us-ascii?Q?5OqoebbkEYneD5TpfHF89pb6x1UX/DFOgwwKfFg4caRdldPG2UmXRgjiDaY2?=
+ =?us-ascii?Q?qr2SxdiGw3fYkNedaKT0PZy17Lg0CaDucvrDDoGrDS1hBub0vDw+AhrgF6oa?=
+ =?us-ascii?Q?3D+yAGDU5wHgIc74MFMPH+PZUJQ4+rIQnDGXcfS6xhokQ4F/P53FMzf2Zc5w?=
+ =?us-ascii?Q?QxalScnrFGFdO3D82DbmtpXnrKvaZ81y96ckDQ7AVcI65ahTeIpU1AEitEea?=
+ =?us-ascii?Q?nMRKNZWjPbAlPBRDavUVjjDP1RoBQ7ckAs1E6rfJ5YrSWiEU6kvQ0sofnx/m?=
+ =?us-ascii?Q?ffdgXjYvUHx5ICKVVd5d6DAliJREb+r3z9YC57BdjQHlLhbVASW25lVgFQOo?=
+ =?us-ascii?Q?HRoBKQrJGkvs9tXapN158y9WavsUzBVr09x6Go+0wCFw2Gl/djPQHhISmN26?=
+ =?us-ascii?Q?yvXoKQBaUMOWx0ZgRN1jVapPk1azxqMdLyUY3/CjVCZvSyk7mk0y/N1hnkKY?=
+ =?us-ascii?Q?Y3NExP6jaRqJUgjXp4aBK0MqOz7awP6pQJwb0OCI3mg/S7yAIJ5SfZANdnhl?=
+ =?us-ascii?Q?CrGr/IFiUppeibj/7v5g9afP7TktpV2THoVyp9AG9nrb9cGGccFsqtH+jVJm?=
+ =?us-ascii?Q?EcBuK9INFgIc73glEP4gEj8EAq6Yo1ofCoMEvSC+ZQtA41DptDnNHM0/P9Rz?=
+ =?us-ascii?Q?4K1hJ5O35dQLYXVHJDx+WOZmCuYBV2KqtnKHPx6gAhYbWFmpQik61xtU6szQ?=
+ =?us-ascii?Q?RFPt7ryJ08F1LvPDMtzZH6Je0Ka1qGGa+SIjJt/1hPvXx5EX6gUDHyF4GjbD?=
+ =?us-ascii?Q?vtkh0IcRS2G+IoAHEVw/vkS5jaCcWcwPuiONE8LGHW9gDo8zSDm8SLneg+zG?=
+ =?us-ascii?Q?uGQ9d2vyFZWV8prBbZlrtR1i6NWP+CR02hpcVEJvhfGHYHx4IJjkEPO1wi+H?=
+ =?us-ascii?Q?3bYJGgEsF166e91lE4v8And3yU+Bf3A85uQsBcWojr5txjKJyC5tYNSx/+T2?=
+ =?us-ascii?Q?I81T78UQRIHXM0DzxsofsFUKwfGJeqVdRcghiahNS8Ur0CDphCxSWwYc1X9g?=
+ =?us-ascii?Q?ukSmCuU7cCrZ6OnwUVXUF9FdwaL+Z3StaBIslw95ix2bDzAd0golMu4slyG7?=
+ =?us-ascii?Q?b5qifApt7cmRoF8Rv5BJw+NM4ApSxYlaxGFEHG2w/Z9JsSVO7OvOoY6xj7cS?=
+ =?us-ascii?Q?5E0fjnlA8ssj8XCXp4aV139pU27F9UC5I2/SSh7oRMFC3Lmp9JDBcJqEbHMW?=
+ =?us-ascii?Q?UrpwghMXC7gKYVXOkh9bLpfJXLpWu81q?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?W19YJz0OSZhzvNVQdtORZAqm73D527Mb+YiPzGQLGCGQk1IXcqMx33XLeiwE?=
+ =?us-ascii?Q?umaGPQbM4jqpnfSjLjkCWx21C/7kQ5fzpvgMMbEfIUcW0fZR4aVTpkmMxpqN?=
+ =?us-ascii?Q?mBcIuDVLq/yP+41Cu9zqcCrgphjt1OMNfao+oOLP4oZWNZvPougJ2j9DGVGX?=
+ =?us-ascii?Q?FKJFlPrnZZYOez81IaPwaScAHTyy1h9fdrfFUrUc8QSHeZz1K3CWPjH2HNDy?=
+ =?us-ascii?Q?efkvnonin+ruQDW/OWwWxsJ4LwAnJSKRlz0UyCoK3DsI/4cn1OUyqSav4dAm?=
+ =?us-ascii?Q?E+IsuOFPhncRD+fmDaPT6k7E5p7skOpIn6iZaJGaQOSo22QRhZnmtHQ5OmdC?=
+ =?us-ascii?Q?I1hPeOvHtg5kRCzVtekAWuXvgUvaVi/HQDawz+qxMLnZp9Qnihee66HSIcae?=
+ =?us-ascii?Q?0fEf17UlhCZh4IERjsqOja3RlaLj+HlBIj0XeVfBsevzj1LbW5DZNOto2PNU?=
+ =?us-ascii?Q?OZ/D36xh490pqoQFcD6AeUjIVtQ4QMRPXkDXM6YpiLuzHqaArIHjwRGcgZhb?=
+ =?us-ascii?Q?f34gfNhkQ0zUgI0G8Ts1pU6gxKSrk9YZ3y5vvxsiKJaVQoN6Txe79TrGq9IW?=
+ =?us-ascii?Q?rJ9XM8iv62aR6G24pQ2EhPErDTZxHqusb3iEAbPzQ6+emqcSdvFU8zqMmmVc?=
+ =?us-ascii?Q?BaHIzDnBGNS0bwMib4zaKaY03Q6q3P1a1of6lKWsm5yoh2tbKTwat1ODzqRl?=
+ =?us-ascii?Q?pxolHLW7SZTHI1NlLPfJT/0YewD56JfaT0v3XC5S3dZJ/rG2bW7B45kqWavo?=
+ =?us-ascii?Q?VjPGicVvuFiWSXJNbPOjuy3Ej6RjLJK+du25s2avhUaiaS2Z4H26CeM2HD0/?=
+ =?us-ascii?Q?FFGrRePBSTqYKvKlXZIeF61xOfzT01UWdi2H61q2c9BunLc7VXv4ilMHBuw9?=
+ =?us-ascii?Q?Lyssm+Ps0Rucbkp7ylCJMxDtGsIAdrWAOttXHXbOAj/yGDiERv+6J0Kw+lTj?=
+ =?us-ascii?Q?HrtvyhvAkKqD5lQv3N1slDAwtXpeqxnIgy4TGb1FsPNwU9xbrP4DI0H2lZOl?=
+ =?us-ascii?Q?hNXzWAfmH4gGV+owTRAawaITtnUJSWgYJYNog3eld+mZHyOovtt7hU96LYOO?=
+ =?us-ascii?Q?1iNts3dJpO6sBkmLzMpktJh/7a5hsPKaJLo9YjtJge8hnIo/k2tnhaamztgd?=
+ =?us-ascii?Q?LEuAwCgETekAJLzI1+r3NlpsWqtVL6llTP5s2BNT2HAN4WuquKDrp3/1U+lP?=
+ =?us-ascii?Q?zKd0NMt1jd0nn63foIbHSJnR0L1+GtY+Kd+BrUcVyngCvtP1Dt5BDoGodD6e?=
+ =?us-ascii?Q?r9iIbb69v59FdVbTP0qNWBb0MqCC0kOPNujFJlN1LbHGXxqkGdftUiDFgmZ9?=
+ =?us-ascii?Q?D9R3RMNv02fcGPfqGQK2Ou26hrMMokFJn9GxaTeYu7As2c7+k4miQJDyxroi?=
+ =?us-ascii?Q?iw7tU2Y5pnGiagRkm95q20WVW7FPtIyIVme6n/3gBVL8SGWysKluulVUtKhD?=
+ =?us-ascii?Q?0aqhAALmn687zhvsGrDBe1QZUMqIoQQqZeUVpWfR0LWfcv1I9GUaLGRVs/ix?=
+ =?us-ascii?Q?/xfq/Hq5JHNuaHPwNeaNflK08zxjAeqYcoxorxOlYeIjKFmXmgp1Ngt0Bx87?=
+ =?us-ascii?Q?2vHDjt2cxOUr6Ki5eIOCZZ0jWT4ZMQ6cnTyBplyo2DKyuIin0QWt48z3Vf3X?=
+ =?us-ascii?Q?FA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeilecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpeejnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgri
- igvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7d3d658-d992-43bd-a56a-08dd5807f48b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 14:55:34.6710
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8d9vUTBzyCvm2qPfuoxgpbqwGbZyPAwvEjD7qieYqUZCk4/Me3eII9EykDM40iLjvZ/gW3SX5kz8XlvuFhs6HccI/F6XRK/BmiW/h5iAK00=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13240
 
-When phylink creates a fixed-link configuration, it finds a matching
-linkmode to set as the advertised, lp_advertising and supported modes
-based on the speed and duplex of the fixed link.
+Hi Geert,
 
-Use the newly introduced phy_caps_lookup to get these modes instead of
-phy_lookup_settings(). This has the side effect that the matched
-settings and configured linkmodes may now contain several linkmodes (the
-intersection of supported linkmodes from the phylink settings and the
-linkmodes that match speed/duplex) instead of the one from
-phy_lookup_settings().
+Thanks for your feedback!
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/phy/phylink.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Sent: 28 February 2025 10:17
+> Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)=
+ family of SoCs
+>=20
+> Hi Fabrizio,
+>=20
+> On Thu, 27 Feb 2025 at 19:16, Fabrizio Castro
+> <fabrizio.castro.jz@renesas.com> wrote:
+> > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > Sent: 24 February 2025 12:44
+> > > Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2=
+H(P) family of SoCs
+> > >
+> > > On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
+> > > <fabrizio.castro.jz@renesas.com> wrote:
+> > > > Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> > > > The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> > > > Renesas RZ/G2L family of SoCs, but there are some differences:
+> > > > * It only uses one register area
+> > > > * It only uses one clock
+> > > > * It only uses one reset
+> > > > * Instead of using MID/IRD it uses REQ NO/ACK NO
+> > > > * It is connected to the Interrupt Control Unit (ICU)
+> > > >
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > >
+> > > > v1->v2:
+> > > > * Removed RZ/V2H DMAC example.
+> > > > * Improved the readability of the `if` statement.
+> > >
+> > > Thanks for the update!
+> > >
+> > > > --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > > > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > > > @@ -61,14 +66,22 @@ properties:
+> > > >    '#dma-cells':
+> > > >      const: 1
+> > > >      description:
+> > > > -      The cell specifies the encoded MID/RID values of the DMAC po=
+rt
+> > > > -      connected to the DMA client and the slave channel configurat=
+ion
+> > > > -      parameters.
+> > > > +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S =
+SoCs, the cell
+> > > > +      specifies the encoded MID/RID values of the DMAC port connec=
+ted to the
+> > > > +      DMA client and the slave channel configuration parameters.
+> > > >        bits[0:9] - Specifies MID/RID value
+> > > >        bit[10] - Specifies DMA request high enable (HIEN)
+> > > >        bit[11] - Specifies DMA request detection type (LVL)
+> > > >        bits[12:14] - Specifies DMAACK output mode (AM)
+> > > >        bit[15] - Specifies Transfer Mode (TM)
+> > > > +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK=
+ NO, and the
+> > > > +      slave channel configuration parameters.
+> > > > +      bits[0:9] - Specifies the REQ NO
+> > >
+> > > So REQ_NO is the new name for MID/RID.
+>=20
+> These are documented in Table 4.7-22 ("DMA Transfer Request Detection
+> Operation Setting Table").
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 6c67d5c9b787..63fbf3d8708a 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -805,9 +805,10 @@ static int phylink_validate(struct phylink *pl, unsigned long *supported,
- static int phylink_parse_fixedlink(struct phylink *pl,
- 				   const struct fwnode_handle *fwnode)
- {
-+	__ETHTOOL_DECLARE_LINK_MODE_MASK(match) = { 0, };
- 	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
-+	const struct link_capabilities *c;
- 	struct fwnode_handle *fixed_node;
--	const struct phy_setting *s;
- 	struct gpio_desc *desc;
- 	u32 speed;
- 	int ret;
-@@ -879,8 +880,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
- 	linkmode_copy(pl->link_config.advertising, pl->supported);
- 	phylink_validate(pl, pl->supported, &pl->link_config);
- 
--	s = phy_lookup_setting(pl->link_config.speed, pl->link_config.duplex,
--			       pl->supported, true);
-+	c = phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
-+			    pl->supported, true);
-+	if (c)
-+		linkmode_and(match, pl->supported, c->linkmodes);
- 
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
-@@ -889,9 +892,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
- 
- 	phylink_set(pl->supported, MII);
- 
--	if (s) {
--		__set_bit(s->bit, pl->supported);
--		__set_bit(s->bit, pl->link_config.lp_advertising);
-+	if (c) {
-+		linkmode_or(pl->supported, pl->supported, match);
-+		linkmode_or(pl->link_config.lp_advertising,
-+			    pl->link_config.lp_advertising, match);
- 	} else {
- 		phylink_warn(pl, "fixed link %s duplex %dMbps not recognised\n",
- 			     pl->link_config.duplex == DUPLEX_FULL ? "full" : "half",
-@@ -1879,21 +1883,21 @@ static int phylink_register_sfp(struct phylink *pl,
- int phylink_set_fixed_link(struct phylink *pl,
- 			   const struct phylink_link_state *state)
- {
--	const struct phy_setting *s;
-+	const struct link_capabilities *c;
- 	unsigned long *adv;
- 
- 	if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
- 	    !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
- 		return -EINVAL;
- 
--	s = phy_lookup_setting(state->speed, state->duplex,
--			       pl->supported, true);
--	if (!s)
-+	c = phy_caps_lookup(state->speed, state->duplex,
-+			    pl->supported, true);
-+	if (!c)
- 		return -EINVAL;
- 
- 	adv = pl->link_config.advertising;
- 	linkmode_zero(adv);
--	linkmode_set_bit(s->bit, adv);
-+	linkmode_and(adv, pl->supported, c->linkmodes);
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, adv);
- 
- 	pl->link_config.speed = state->speed;
--- 
-2.48.1
+REQ_NO is documented in both Table 4.7-22 and in Table 4.6-23 (column `DMAC=
+ No.`).
 
+>=20
+> > It's certainly similar. I would say that REQ_NO + ACK_NO is the new MID=
+_RID.
+> >
+> > > > +      bits[10:16] - Specifies the ACK NO
+> > >
+> > > This is a new field.
+> > > However, it is not clear to me which value to specify here, and if th=
+is
+> > > is a hardware property at all, and thus needs to be specified in DT?
+> >
+> > It is a HW property. The value to set can be found in Table 4.6-27 from
+> > the HW User Manual, column "Ack No".
+>=20
+> Thanks, but that table only shows values for SPDIF, SCU, SSIU and PFC
+> (for external DMA requests).  The most familiar DMA clients listed
+> in Table 4.7-22 are missing.  E.g. RSPI0 uses REQ_NO 0x8C/0x8D, but
+> which values does it need for ACK_NO?
+
+Only a handful of devices need it. For every other device (and use case) on=
+ly the
+default value is needed.
+
+But I'll take this out for now, until we get to support a device that actua=
+lly
+needs ACK NO.
+
+Thanks!
+
+Fab
+
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
