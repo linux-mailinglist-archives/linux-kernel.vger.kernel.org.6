@@ -1,88 +1,99 @@
-Return-Path: <linux-kernel+bounces-538114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3388BA494B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:21:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3325BA494BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B130F170FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01EB1894FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4DF256C78;
-	Fri, 28 Feb 2025 09:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E791625742C;
+	Fri, 28 Feb 2025 09:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zJ2Cqbpz"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+F0/kZ5"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7CF2566EB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73667276D3B;
+	Fri, 28 Feb 2025 09:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734432; cv=none; b=cx7jtuXZopkHJPfjAeOE6I5ayrSvusyAE0aGYDfjPQ3Ga2E8d3fRfsTJwSxmuDLGjstUfkSCCmzsGn6OC3VDZeqvNHFk6Y8h4AnY+deh+kRR4IoPZQjKM2LxEAR2h2SVB+KDOhADNSAb21SyVQb32inATiVKibXP/gzy9ZAQVWU=
+	t=1740734454; cv=none; b=eglgmljqUx9n+rSaqoaTZ2YQdpOKIdg6BAwhxvHA3jlNqTAr399fJ/t3g+hSDD2Zirk1n1r/PuUhSGFagNmJHtZa1Yf4z7B9QTPDOjpkNcLn0IG1iWZq1tK8s+6uXCww1weYErPvPY8yo3RzL7R4lZ61pzHGFltDqK9+6DqTZ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734432; c=relaxed/simple;
-	bh=TDWSGkN3NubGDFSP14LaIE2KzfLm+1ADC/+MvNbcWbM=;
+	s=arc-20240116; t=1740734454; c=relaxed/simple;
+	bh=pT8SYiw0Jf3GK6+hkue2igSEx8l2G2tJjL2ie6IuEjQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lIsv8Ne9/JCoIQi6ywkqqSndAdzE7iEehCBbM8s9UH63fbwWnHfVkGWGpLFeUrHTt/q0mmXorp8YsDtch7wFxQuntBexd3RLw3K/9CIh5A7hNAtzdehzGsL15XwdIlXUdDzuE5OeWqgLiL+oTFO3Wxymod/RdlK8d1mvFzXu4Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zJ2Cqbpz; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso42245e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:20:30 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=POBdjDQ/hvBHTaKeRiR2PpnrVvK+sWA8E214Z5ebjxnS8WfO9C5b/R/eLV8omObV1AxmC4tpdNF+8wQbOpRf01GJ8m6UwDSH4WpCxKjVnRXE0BDXsILVNTUaR2MGDrRJkNA/OAFj98kbGcsNRbWqw1Nk8CuMzWPFLfaoDzKqVc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+F0/kZ5; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7be8f281714so245441085a.1;
+        Fri, 28 Feb 2025 01:20:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740734429; x=1741339229; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740734451; x=1741339251; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sc/rFdhCs8ryT6ky50ep7UWZ/tEv7+DxhHl4CwzDRvQ=;
-        b=zJ2Cqbpz751uyg66VIfBY0O2PT3C0el4YvbqAUBOPUA2n2plyeLvsnf9KVDHmUB7Us
-         4Xw/zvncJ/DE5DtRlJImi2TelyVwsS+V3Q3dkrcvC1+XAzKCtn6n+mkUfpALRlz440Hf
-         VaPYhWLueMYbEVZDFyL/c/tQsHI16vT/x/p/X/tBPqrMkgEjQltovpDKpwtSZA4R/2KW
-         cG4hFISIv4S9VLO09MRwa1ZTRaNDDZMosMoiYyrGfFRj7nl4gX3AOGIdF2AUfN4RHvcZ
-         BuCw/KcwXBVpUUNZDLvnkbJtdGUkbyZn5h6UeDc7hrf+ETV/54MqWY1dkih/TvG/Ur7/
-         xyqQ==
+        bh=dSPWzRvDH6bTdwnRoGnWYj88h3YoRDAMeqRglP+0iQ8=;
+        b=O+F0/kZ5s7XOhs2iSn3mSNH+dN5NgQYaEmJ92W25uzhC1E0kPxTxNd5nmoXcSVahHW
+         1v+Ga4QnAvsV1y48nawveYhfSFhd+GlZPP+bWsmilTSEUL+2edXCO24dvANp+SHkWIsD
+         43W4EfJipKn8A2U69Kc/QDZWGu9nzNlrjT6ODGzzv30F4+sgpRTKhg0mapsglNsBnB2m
+         1t+ZkqIssWHktyZH1w+LNk1BfrC18j/xY+lbgTU6BRvIARWfNw3Hy6RjDIQ2SxxP1lOL
+         shmew8cW6Ya9buH6dJOMNm6fIhqQRtbaJ7XfreAkzFu45BfUAe0tiN8y9gr4RjkKfkTU
+         Vr0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740734429; x=1741339229;
+        d=1e100.net; s=20230601; t=1740734451; x=1741339251;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sc/rFdhCs8ryT6ky50ep7UWZ/tEv7+DxhHl4CwzDRvQ=;
-        b=fPblH55lUZ0gdKqbVmVfBB5fiSDdM5DZtHI7RL8mPVSuijzRQI4CSueinIIMlbNkgD
-         0kszL2cKCtO5uCP/iTVnrbb7MD6aJBF4jUfcm3JY/BsbZX71X69yb6XBUrKCGmfRyBqa
-         zSSjvjRRTwrSuZs5jZF8qfn73Q11c33qOT5d2boCI13Pv3z4CxxtXEJc3VOy7Qs3Uk6u
-         DjlzT/Ol4O0uywc18KQRJ3/4alErXAYpV2G/eAM/FiS3fJJn/SdtCZoguZjk3OBudWrJ
-         ps0OQhAfVFxm9fE5jr8knms+8HQlpQkTGN5QfFj0bx1TvW1Nfh2JGnTjBNmGMVC0uGi5
-         doJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrXeBXZkn5Y4GNOkUBG/KMrJmm+U16zYFmwsBsP4/QqDNYuXjGDIkybugUvEm8XYbA4ISqpyDABEfsWOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxJyBtEEdC9JZpIqieykEyzOmlxW61e1ojTWxZhCtKir/9S1U5
-	5j5KpSaQlQG++34DwJnXW7piKvM1MHEVMhRXVJx4bvUNnZFnO6jfhfFmL6ydKw==
-X-Gm-Gg: ASbGnctbwAkpP7/l2iPjsY/ZKWgbGStFSlhHzyl12q0aNriSgybdPdG45I+u4T+MXn6
-	l6t0EzpA7GpX+bqcOF5vvqHR4LCVqKAXPOueVxmeR5Yedi8Vn9ZxqI0XkITdMbWIxd8KXarj2NB
-	0HhSMprWG/5k3330qevjik7+SZwsawA0BlfTIGuSIv/867eY/KVmK668FkvMWf9LT0/uJ5ZsZwl
-	WhJlbEKYNlka/7WJnyR5id4blyGjbDbrUFZWjK81wqKfFSv3/dn9uAsrpr3/C2SBfLc4kNgDx35
-	SYzeE79q5AD5t9mJZwbMArYrw02rkd/8DsUTuqE2Zxl1zSVFLf3xz/30nmsZvg==
-X-Google-Smtp-Source: AGHT+IFm+iilWyjxC1XPFcJ/1TDrVhPbDpKHPwRPFsYeQGLAJ1FnOgobaGgyAW4Mc9lQ5kLRwLuvXQ==
-X-Received: by 2002:a05:600c:5618:b0:439:8739:b82b with SMTP id 5b1f17b1804b1-43ba6edd7bbmr852505e9.4.1740734428932;
-        Fri, 28 Feb 2025 01:20:28 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73718de4sm51645805e9.23.2025.02.28.01.20.27
+        bh=dSPWzRvDH6bTdwnRoGnWYj88h3YoRDAMeqRglP+0iQ8=;
+        b=X/frvj0sTyQ83MZZPFtY5e5pWC+G8uoWWAzvycufvks4BY7hr+A0se7ySGH/O857Rb
+         gF48uoM3x7elDwnOgA4SkooI5mTLaCBFBtkyEOdfVG64kEekwIIAS+NrmcO3/2KSV7VK
+         m9pWLDqlxSnTIUBa7xhJZYl3VMUarnLEzhgDYJ0/kwNB1/I3+0XBXTpi5174BMBDzh1s
+         r5iZcJISwdwLMmY1r0En6aCRtwkgCOAFzWe2JAy14t3npAJG8UVXKxzqHPgtMy3bvLuT
+         AebAQ6VIl3SYnEuDKcLGM5PtsoOan1xSM3KsgsMYhg3Kjf9U04cEyYqGgbBBOpjag2mI
+         Y4Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCV300F2X/S/ML9MAR7IlvT4KxYuDU5pe5zJBKu63eiuyBUKHAHyW/fFO9UFunDwP1y7J1ycRR93+Gd7@vger.kernel.org, AJvYcCVBGwnMMKMRvy10HXT635A28f0piWQqcfCzMyzxMGDEmjVKMYQ3/CVQjfN1/Tpgr4doH9cI6bhTFVR1@vger.kernel.org, AJvYcCX+EMF9L/iMkUJxYg2uYjN1Ak0u1LRy86v+Ea4pKDOsp6RlBJDmh9ygu+AMQLDZbSOKYrNA2fbANkmeeJme@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxoYuLZiricQGHD2jHr4O6UW2fjTuVe7SChSJs73hB8xX6apkW
+	tNMksKlGckPctpeEsP6jEx4z4d+groE2vuRoS4YmbWg7ojJQXzjm
+X-Gm-Gg: ASbGncuVE5cOPwPU2zOlRkuaqNoS/TJ2sw2DehcuDb9wDWFvEucvH1h0n0jB94688Xn
+	4F5Vwn6E8hDYXWmMp55r2J/A7jEkB/VSceCTcZ6x6/QmvjfZcpAZSTA+b/yEpeW8xwdh31d3vMU
+	rDr2aAIX/e7iVH0srT+T0ou9UXLdNKiMd4i1cmWX4OaMJBuwceiLlsmbTuiJDUNY7tVWCmPbZEk
+	9AbxLHDDlUQtkzsC/6BNsA3rsNYBv+QnAnqD226ANlwToOPG2kJWUWhqJ6hg4rEZJkrReRRN+VR
+	Iw==
+X-Google-Smtp-Source: AGHT+IGaqnCcJ7W3QzbD5/MOWmJeyOSJ3VUovHm5pxJ14O5OpxxE+BEJWbEG0JBMkkwTfQFOvIVyFQ==
+X-Received: by 2002:a05:620a:44cd:b0:7c0:b714:7ec6 with SMTP id af79cd13be357-7c39c4cd13fmr388005285a.24.1740734451206;
+        Fri, 28 Feb 2025 01:20:51 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c378d9fec4sm222609485a.67.2025.02.28.01.20.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 01:20:28 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:20:23 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type
- change
-Message-ID: <Z8F_16DEb1j-aAcB@google.com>
-References: <20250227-pageblock-lockdep-v1-1-3701efb331bb@google.com>
- <20250227143302.2338b1cf15919c64a6c1eb27@linux-foundation.org>
+        Fri, 28 Feb 2025 01:20:50 -0800 (PST)
+Date: Fri, 28 Feb 2025 17:20:28 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>, 
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
+Message-ID: <je4falvfemkemlvdfzdmgc7jx2gz6grpbmo6hwtpedjm7xi2gk@jr4frv3tn3l5>
+References: <20250221013758.370936-1-inochiama@gmail.com>
+ <20250221013758.370936-2-inochiama@gmail.com>
+ <20250221-cavalier-cramp-6235d4348013@spud>
+ <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
+ <20250224-enable-progress-e3a47fdb625c@spud>
+ <7ht3djv7zgrbkcvmdg6tp62nmxytlxzhaprsuvyeshyojhochn@ignvymxb3vfa>
+ <20250225-lapel-unhappy-9e7978e270e4@spud>
+ <ynefy5x672dlhctjzyhkitxoihuucxxki3xqvpimwpcedpfl2u@lmklah5egof4>
+ <pbj22qvat76t74nppabekvyncc4ptt6wede4q6wfygbrzcj3ag@ruvt26eqiybu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,43 +102,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227143302.2338b1cf15919c64a6c1eb27@linux-foundation.org>
+In-Reply-To: <pbj22qvat76t74nppabekvyncc4ptt6wede4q6wfygbrzcj3ag@ruvt26eqiybu>
 
-On Thu, Feb 27, 2025 at 02:33:02PM -0800, Andrew Morton wrote:
-> On Thu, 27 Feb 2025 16:15:47 +0000 Brendan Jackman <jackmanb@google.com> wrote:
-> 
-> > Since the migratetype hygiene patches [0], the locking here is
-> > a bit more formalised, so write it down with an assert.
+On Fri, Feb 28, 2025 at 04:46:22PM +0800, Inochi Amaoto wrote:
+> On Fri, Feb 28, 2025 at 02:34:00PM +0800, Inochi Amaoto wrote:
+> > On Tue, Feb 25, 2025 at 11:35:23PM +0000, Conor Dooley wrote:
+> > > On Tue, Feb 25, 2025 at 07:48:59AM +0800, Inochi Amaoto wrote:
+> > > > On Mon, Feb 24, 2025 at 06:54:51PM +0000, Conor Dooley wrote:
+> > > > > On Sat, Feb 22, 2025 at 08:34:10AM +0800, Inochi Amaoto wrote:
+> > > > > > On Fri, Feb 21, 2025 at 05:01:41PM +0000, Conor Dooley wrote:
+> > > > > > > On Fri, Feb 21, 2025 at 09:37:55AM +0800, Inochi Amaoto wrote:
+> > > > > > > > The pcie controller on the SG2044 is designware based with
+> > > > > > > > custom app registers.
+> > > > > > > > 
+> > > > > > > > Add binding document for SG2044 PCIe host controller.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > > > > > ---
+> > > > > > > >  .../bindings/pci/sophgo,sg2044-pcie.yaml      | 125 ++++++++++++++++++
+> > > > > > > >  1 file changed, 125 insertions(+)
+> > > > > > > >  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > > 
+> > > > > > > > diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..040dabe905e0
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > > @@ -0,0 +1,125 @@
+> > > > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > > > > +%YAML 1.2
+> > > > > > > > +---
+> > > > > > > > +$id: http://devicetree.org/schemas/pci/sophgo,sg2044-pcie.yaml#
+> > > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > > > +
+> > > > > > > > +title: DesignWare based PCIe Root Complex controller on Sophgo SoCs
+> > > > > > > > +
+> > > > > > > > +maintainers:
+> > > > > > > > +  - Inochi Amaoto <inochiama@gmail.com>
+> > > > > > > > +
+> > > > > > > > +description: |+
+> > > > > > > > +  SG2044 SoC PCIe Root Complex controller is based on the Synopsys DesignWare
+> > > > > > > > +  PCIe IP and thus inherits all the common properties defined in
+> > > > > > > > +  snps,dw-pcie.yaml.
+> > > > > > > > +
+> > > > > > > > +allOf:
+> > > > > > > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > > > > > > > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> > > > > > > > +
+> > > > > > > > +properties:
+> > > > > > > > +  compatible:
+> > > > > > > > +    const: sophgo,sg2044-pcie
+> > > > > > > > +
+> > > > > > > > +  reg:
+> > > > > > > > +    items:
+> > > > > > > > +      - description: Data Bus Interface (DBI) registers
+> > > > > > > > +      - description: iATU registers
+> > > > > > > > +      - description: Config registers
+> > > > > > > > +      - description: Sophgo designed configuration registers
+> > > > > > > > +
+> > > > > > > > +  reg-names:
+> > > > > > > > +    items:
+> > > > > > > > +      - const: dbi
+> > > > > > > > +      - const: atu
+> > > > > > > > +      - const: config
+> > > > > > > > +      - const: app
+> > > > > > > > +
+> > > > > > > > +  clocks:
+> > > > > > > > +    items:
+> > > > > > > > +      - description: core clk
+> > > > > > > > +
+> > > > > > > > +  clock-names:
+> > > > > > > > +    items:
+> > > > > > > > +      - const: core
+> > > > > > > > +
+> > > > > > > > +  dma-coherent: true
+> > > > > > > 
+> > > > > > > Why's this here? RISC-V is dma-coherent by default, with dma-noncoherent
+> > > > > > > used to indicate systems/devices that are not.
+> > > > > > 
+> > > > > > The PCIe is dma coherent, but the SoC itself is marked as
+> > > > > > dma-noncoherent.
+> > > > > 
+> > > > > By "the SoC itself", do you mean that the bus that this device is on is
+> > > > > marked as dma-noncoherent? 
+> > > > 
+> > > > Yeah, I was told only PCIe device on SG2044 is dma coherent.
+> > > > The others are not.
+> > > > 
+> > > > > IMO, that should not be done if there are devices on it that are coherent.
+> > > > > 
+> > > > 
+> > > > It is OK for me. But I wonder how to handle the non coherent device
+> > > > in DT? Just Mark the bus coherent and mark all devices except the
+> > > > PCIe device non coherent?
+> > > 
+> > > Don't mark the bus anything (default is coherent) and mark the devices.
 > > 
-> > ...
-> >
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -417,6 +417,10 @@ void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
-> >  
-> >  void set_pageblock_migratetype(struct page *page, int migratetype)
-> >  {
-> > +	lockdep_assert_once(system_state == SYSTEM_BOOTING ||
-> > +		in_mem_hotplug() ||
-> > +		lockdep_is_held(&page_zone(page)->lock));
-> > +
-> >  	if (unlikely(page_group_by_mobility_disabled &&
-> >  		     migratetype < MIGRATE_PCPTYPES))
-> >  		migratetype = MIGRATE_UNMOVABLE;
+> > I think this is OK for me.
 > > 
 > 
-> We could add such assertions all over the place.  Why this place in
-> particular?
+> In technical, I wonder a better way to "handle dma-noncoherent".
+> In the binding check, all devices with this property complains 
+> 
+> "Unevaluated properties are not allowed ('dma-noncoherent' was unexpected)"
+> 
 
-For the other stuff, it's pretty obvious that it would be protected by
-the zone lock (or, I don't know about it!). But it didn't seem totally
-self-evident to me that it should protect the pageblock type. So it
-seems particularly helpful to have it written in the code.
+> It is a pain as at least 10 devices' binding need to be modified.
+> So I wonder whether there is a way to simplify this.
+> 
 
-I may be heavily biased about this though, because of the code I'm
-working on for [0]. I use the pageblock type to remember whether it's
-mapped in the ASI restricted address space.
+Ignore this, I misunderstood the dma device. it seems like 
+only dmac and eth needs it.
 
-[0] https://lore.kernel.org/linux-mm/CA+i-1C1gOBLxRxE5YFGzeayYWBYyE_X6oH4D=9eVePt4=ehTig@mail.gmail.com/T/
-
+Regards,
+Inochi
 
