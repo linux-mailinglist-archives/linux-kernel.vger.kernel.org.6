@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-539475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68568A4A4DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:18:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6089EA4A4E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08713B3051
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D0D3B5088
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBD31DB92E;
-	Fri, 28 Feb 2025 21:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1731D61BC;
+	Fri, 28 Feb 2025 21:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhiOd0la"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWhDUuqo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B39C1D90D9;
-	Fri, 28 Feb 2025 21:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF9A23F370;
+	Fri, 28 Feb 2025 21:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777466; cv=none; b=ryidEj+wrq6Q62HI44YtShMsP+GYZ6wBZHcBzJBgGFPjrn+mqFKOYfgeoo3Dt14APfKYMjkmPKfMZz/ZP4PGfZmtYauCX2OJPSPbla4Cl33PuqVedxAqNy9zD1sLat6hm9nz97dXqCJi2P55mMxNGmwMsF4v/vHRybK4fHfr8P8=
+	t=1740777635; cv=none; b=R3PfLcg51KH6aUnRBeqZqv/u6fvRX+FR4eHmao9UARvK83hH/lX5fVeZM8pbhuaqxUiR8vpz9vhwqquWozbMSTp09KaUGhhIxjy/otYZx/0tD4/rXAxOcX+nvuYdVNljkXPYgBWfFbzI41iHkGjM8/oHjhJEngkL6cde46MN+tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777466; c=relaxed/simple;
-	bh=IkOzcwzD6g/Xe/Qr+wg9oscXEq2A/Wh3cy8CHPJBqN0=;
+	s=arc-20240116; t=1740777635; c=relaxed/simple;
+	bh=P0ru37JNMe6dN4+s2qJbaK6K1dwKm7xiOyUPTBerSKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPIUAslg6tUlBL6W71LyGQ/oIzz3cbSyM+K++1+0B8wJjfuhQRB2NRlxVC0bRcZEhz7QEUYKNt5yo1gnJxJjlwM3krvwJP4XjYRGnRQsTAGpRHqiLMbxi3Zl2nUTXNKQMfTBPDmrePhFabsAleVqUtn2WMlivs80+VNmuZn5dNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhiOd0la; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4396EC4CEE2;
-	Fri, 28 Feb 2025 21:17:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gu4+pmqXSnZXXZkh88a/Kio7+5kpn8OAbaR4LQuI7dgHXPMV1+5h//9roqpXB3Hl+cmguwA3E3e0Oc5jafaKyjAzfI0r5FbLMeD3pyyf+wYHk/xf+y9914Oj2YsskdV6mW8tWIrjVqHHlIIetDCB2R1mI0rLHxztoxKZfQkn+XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWhDUuqo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED0BC4CED6;
+	Fri, 28 Feb 2025 21:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777466;
-	bh=IkOzcwzD6g/Xe/Qr+wg9oscXEq2A/Wh3cy8CHPJBqN0=;
+	s=k20201202; t=1740777635;
+	bh=P0ru37JNMe6dN4+s2qJbaK6K1dwKm7xiOyUPTBerSKE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UhiOd0lax+NjVz/abbtzMM1eU2nq1Oma4KGTGpNIQT6pq6zCLYH27hKVoJV3YgvMn
-	 Zp/A8qRN74k5g6Ycebg//15KT6UaMnaQUrMjXq7SZg4gK5/5flt5Syfp7XPdGEb023
-	 85F0CSvVnaiSGoEnnN5OO6K50WZQ5ViKICYsoVG1U8gcsPg5CPnLUFFKU+3bf93CL3
-	 8GMlxFjvBX2UiZwmZgDJ6NmZFZWoTix849Wt1rhZR8gTbbPdY/0HloYHZQ7r2ZXlv7
-	 LkIXxJlTIYyyNhv8qCSkKiXryR1OXiRbY5gBA6S0xjqwZWztavQhj057n1FyVCRxD7
-	 Ic9yHC2CusVVw==
-Date: Fri, 28 Feb 2025 15:17:44 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christophe Parant <c.parant@phytec.fr>
-Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	upstream@lists.phytec.de
-Subject: Re: [PATCH 03/11] dt-bindings: arm: stm32: Rename STM32MP15x Phytec
- board and SoM
-Message-ID: <20250228211744.GA3730587-robh@kernel.org>
-References: <20250227154012.259566-1-c.parant@phytec.fr>
- <20250227154012.259566-4-c.parant@phytec.fr>
+	b=gWhDUuqoGfnoDBJKwRdfuGnHpGrRfINZSxzpD9oaeNwhpl0SJrSNMx/rakIEcC0K4
+	 jr0jaMyOTcsaM6xGODYKWvT1iogMkZNhdFFcvKq2k64f0Dld7l8C4reHK5blgiXl50
+	 iEsEqmipCD8VDVGEQKpDLTx7+wnu5+sBIEuuM3mN8r5ifE2IDR2AuxOeSxq3Ogxi9y
+	 wmIzuNpMiYbpEToJjWRZ20ePwrN919FwcEkF5VeczVu6rK0GU7Dlncz3DpM8DAy3El
+	 fNrtXwqAm62eFyji2cp8Y2tprWrqe0dxaM+rrHGXl+65WOwpI0PicoYRet5UKBEvSP
+	 tc6zWh3KJw2PQ==
+Date: Fri, 28 Feb 2025 11:20:33 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+	memxor@gmail.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.15 v3 3/5] sched_ext: Add
+ scx_kfunc_ids_ops_context_sensitive for unified filtering of
+ context-sensitive SCX kfuncs
+Message-ID: <Z8Ioof577rvSJxrD@slm.duckdns.org>
+References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080648369E8A4508220133E99C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Z8DKSgzZB5HZgYN8@slm.duckdns.org>
+ <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
+ <AM6PR03MB50809C9EB32C9705DF6EA14299CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,43 +68,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227154012.259566-4-c.parant@phytec.fr>
+In-Reply-To: <AM6PR03MB50809C9EB32C9705DF6EA14299CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On Thu, Feb 27, 2025 at 04:40:04PM +0100, Christophe Parant wrote:
-> Modifications following new PHYTEC stm32mp15x SoM and board device tree
-> naming.
+Hello,
 
-Why?
-
-It's an ABI, so you are stuck with the names. It's just a unique 
-identifier, so it's really not important what the string is.
-
+On Fri, Feb 28, 2025 at 06:42:11PM +0000, Juntong Deng wrote:
+> > > Return 0 means allowed. So kfuncs in scx_kfunc_ids_unlocked can be
+> > > called by other struct_ops programs.
+> > 
+> > Hmm... would that mean a non-sched_ext bpf prog would be able to call e.g.
+> > scx_bpf_dsq_insert()?
 > 
-> Signed-off-by: Christophe Parant <c.parant@phytec.fr>
-> ---
->  Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> For other struct_ops programs, yes, in the current logic,
+> when prog->aux->st_ops != &bpf_sched_ext_ops, all calls are allowed.
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> index b6c56d4ce6b9..11b3f59ac550 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> @@ -169,10 +169,11 @@ properties:
->            - const: seeed,stm32mp157c-odyssey-som
->            - const: st,stm32mp157
->  
-> -      - description: Phytec STM32MP1 SoM based Boards
-> +      - description: Phytec STM32MP15x SoM based Boards
->          items:
-> -          - const: phytec,phycore-stm32mp1-3
-> -          - const: phytec,phycore-stm32mp157c-som
-> +          - enum:
-> +              - phytec,stm32mp157c-phyboard-sargas-rdk
-> +          - const: phytec,stm32mp157c-phycore-som
->            - const: st,stm32mp157
->  
->        - description: ST STM32MP257 based Boards
-> -- 
-> 2.34.1
+> This may seem a bit weird, but the reason I did it is that in other
+> struct_ops programs, the meaning of member_off changes, so the logic
+> that follows makes no sense at all.
 > 
+> Of course, we can change this, and ideally there would be some groupings
+> (kfunc id set) that declare which kfunc can be called by other
+> struct_ops programs and which cannot.
+
+Other than any and unlocked, I don't think other bpf struct ops should be
+able to call SCX kfuncs. They all assume rq lock to be held which wouldn't
+be true for other struct_ops after all.
+
+...
+> > I see, scx_dsq_move_*() are in both groups, so it should be fine. I'm not
+> > fully sure the groupings are the actually implemented filtering are in sync.
+> > They are intended to be but the grouping didn't really matter in the
+> > previous implementation. So, they need to be carefully audited.
+> 
+> After you audit the current groupings of scx kfuncs, please tell me how
+> you would like to change the current groupings.
+
+Yeah, I'll go over them but after all, we need to ensure that the behavior
+currently implemented by scx_kf_allowed*() matches what the new code does,
+so I'd appreciate if you can go over with that in mind too. This is kinda
+confusing so we can definitely use more eyes.
+
+> > Right, the coverage there isn't perfect. Testing all conditions would be too
+> > much but it'd be nice to have a test case which at least confirms that all
+> > allowed cases verify successfully.
+> 
+> Yes, we can add a simple test case for each operation that is not
+> SCX_OPS_KF_ANY.
+
+That'd be great. Thanks.
+
+-- 
+tejun
 
