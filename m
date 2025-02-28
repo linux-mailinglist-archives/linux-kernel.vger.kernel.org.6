@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-538369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8F2A497B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DBDA497B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0053AB0B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388493AF990
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AE225E441;
-	Fri, 28 Feb 2025 10:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC041260379;
+	Fri, 28 Feb 2025 10:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="x4jwfCXU"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s2xIj3YQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oxTFayP7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8920D17BA3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF54817BA3;
+	Fri, 28 Feb 2025 10:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740739648; cv=none; b=BisBvWiPCppldHrlqf0oF7kJTCrioCxP3hE+X/JFOnK5h7TLEjmUPidHYIEoiFBWsXEmIYLu91bZ4fYeTGbN1II/+t+dUivkAqt2KBdk2NpF8vp9YFe3ch9CeNqNriATenuleagv5UvgPU0zqMH/uRQHCqjkrESY9yXPVhWZ6lk=
+	t=1740739653; cv=none; b=Mo+JugOSEh6boxyA7w0N/Ebsxr3/cuCyB3W5LWMhmhCM+08L/zjt++t65tBacLWDAw+AGKmW4F/aXxZJf7vWNzQx3Zh7DjMzRQL03fVr2BcAn0Wq6zMQlEd+9BjedH7OZOeJBPKAmGTKykSFfS8rT1CvBZvB23wcG+68FydcwcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740739648; c=relaxed/simple;
-	bh=adFr6LIh6Hc/Whhmuu/2vxEDLTlbpeP4eiUSQCRWTnM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r9rYuJN1VioMa5GU+WqB+R5v66FMdtSG7RyzLReplLxbQy15YiMkwU8xEwrRxbkwGBC4BjomF2HRUBCP5zS9ZYFyVnKkwXOs9QveVfO0x1bkCG1qFC0EGKaM8FEhWMB4ulQMZnLV07XUVMU4nKJpeBIlPB7ejJxiSbSCTz/9adI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=x4jwfCXU; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30a2dfcfd83so18701251fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740739644; x=1741344444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NU92PAxMuIwAbEifcOhSO2wdvjiG74/DYY2SKby5M8Q=;
-        b=x4jwfCXU8qnhA/E7dxnO/3mzA5MbPlXrr06j8ZTEaYGIPYBgfqopACztAjJC+mSP+s
-         jtPBoemAv+azun13ILcYnrCEH3f4+HJ+jMolgxUzURRFBAsRQhw1Sl54oi+9DokgkZ3E
-         DjDW/rL8pIC388hzOPkhIUd7ix7MwHvuZjmFGgbzdQnqCnydfQ1GwEtldawdBJ7kNl6t
-         HM9jSB1VfG61MGkAxWWvHGCFUCi/azQiN7F+70EYHCWiKS3nknL1KkpmO3whoo5D9YK0
-         OvH9wklaiFPykyEslaqG2rJTylJ4mVRg1rHWfg2xc3BXfQXmA4XVUvcXOVl+6sUcrjTL
-         TS2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740739644; x=1741344444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NU92PAxMuIwAbEifcOhSO2wdvjiG74/DYY2SKby5M8Q=;
-        b=F2u+TbtPvHIHsxnZiwDDsMIfdLeqJd0WqJyWNJhnG2Q8M8Y4GD820s4WeKiPH5JvHz
-         hjnTLd8BfywvKDILZfguZmNzT9XwrHH/YqUYDK0ziCA2hGSrxIAPwAe11z+ShH5KOzYy
-         uYZqAgV92AxeVyoPuBKM6m1InqNK+NBeoob2PCyVf1tbj5OgFqZjZRqKL5IJXtTUf+NO
-         nDti0kiNMdLz0upHECUq2uK5qtD18mcvcuiAi+vHltJysCpCDf92DIo0wHv3wkqN6Rqj
-         XXmUto+MtDwGZdjk9MmnoRqqyU8YH1GIl6sQpr3HiCIX7TIAH7EnN2BdhFO+f+sr4gBS
-         tXgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiFcWzLLqXbkRyc2BHvjolt60U4fcn7w63WCl0CBFkvn/aWfiD0qtyWmYnwoUz1DcPQc94/wI3UCQ3nuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOlcVc1x3MS0xvovU8LWqbkZkmqTnedlde/YZpi6Zi20xFxrSj
-	BxhN/EYcMbdP6FeQaL3BCEzUGY8rq+Di0f10iw++Xkn+fz3z83Ak6dygMiXlhoN1FygMNbOu7qn
-	axt0YPCxYy23v/VEb2807SE92qUKGKH94NH1Wyw==
-X-Gm-Gg: ASbGncsxSnEejCO+xi43XOu/aZU3GdlhUtkc6fABxXf/v4EvYNK1SVshP+ys68BzFq3
-	KhLjkEMj/A1Se79DylBdZwOxX5ZMVNmOQLdbQsNu0Pl+7bhm2wr1D3iGzhV7jTXBtQgIdRJBQIJ
-	exLhhkIbebnrxki4SOLXrvmlxiamGcKoP+G7c6+LU=
-X-Google-Smtp-Source: AGHT+IEffbnoGh/ZB0Av+vhJaJSeIcPXpBvqptVNxXGkyb3XMvwRwNUY07bvRzkN6KART5xjUd6SjTwMbagTMx4dBss=
-X-Received: by 2002:a05:651c:1545:b0:308:e803:1175 with SMTP id
- 38308e7fff4ca-30b930c7c11mr9231511fa.0.1740739644452; Fri, 28 Feb 2025
- 02:47:24 -0800 (PST)
+	s=arc-20240116; t=1740739653; c=relaxed/simple;
+	bh=C6RkGAjW/jpeRwmN69ll2HAv/bzLwd2LE9e5Gg5iwrk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hdxZlAoFU6GPjfomm/AdBaXctDv4ZaNoYMUsmnZm3SzWDqYy+fkK0I09ABfi7PogjFbky0qte9u/Z0kHiMXidc/CrPkUkFd9ktWUyMua2AHvff0JdI3901vZ9E53p/OyJvbsmy99Wv+hWX0eIa7m4Vuro3JP29LhS7uV0FOgI5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s2xIj3YQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oxTFayP7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 28 Feb 2025 10:47:28 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740739649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9bAwxDS5Aj5RR+hNYnuonJEp5G6o7xcJiIunZtbbv0=;
+	b=s2xIj3YQGSIgqmaX4HcDmfkmTN69QOzNNsfy92A++hdEhN51cFmfoOVRSJWCkIvmgZiCRQ
+	bYkJEy3d6N82YzyR0y/O5jqO91QLUNbJcqUxn8NSyFmi4ssCXBYWnJpBmxZj49How361ZH
+	wvcbyay2wUupxnwd9zfm/9hmpNR+nFIbINrP1YCFVgMrSZMUvRzFUd8QEPV8f25S38+R9O
+	BMBY3Si8qkFOT6XHmLd2R9y75izcavS7ioW21FYUHmT1F0l4TQt8Ju0a3F7PdrzyVmmrhO
+	Pbdkp9J85qF5O64GON7QF3WHeMPGsww3qw4VdlQRp80jMeHgncEutWt2bh6tkg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740739649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9bAwxDS5Aj5RR+hNYnuonJEp5G6o7xcJiIunZtbbv0=;
+	b=oxTFayP7VdHzj7lVuWHryRt7t3SYdrdsZVtcvQC6jwB8jsFgE9LKtPuVMUvDucYdg3hSvS
+	FOrAOyZCQgNbXIDg==
+From: "tip-bot2 for Youling Tang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] objtool: Add
+ bch2_trans_unlocked_or_in_restart_error() to bcachefs noreturns
+Cc: k2ci <kernel-bot@kylinos.cn>, Youling Tang <tangyouling@kylinos.cn>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250218064230.219997-1-youling.tang@linux.dev>
+References: <20250218064230.219997-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219102750.38519-1-brgl@bgdev.pl> <Z7XqSVfhPGI5J63B@finisterre.sirena.org.uk>
- <CAMRc=MdEcjFUp2OEutcnDqSHbbait3f25NEWbdp7mARyKZLvBw@mail.gmail.com> <CACRpkdbkcX5pEeikkDZAxSGp+M3kJH5SWimxQA6P35iiDAUNdA@mail.gmail.com>
-In-Reply-To: <CACRpkdbkcX5pEeikkDZAxSGp+M3kJH5SWimxQA6P35iiDAUNdA@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 28 Feb 2025 11:47:13 +0100
-X-Gm-Features: AQ5f1Jq-ljcT0uOKj_SffP5eijOqNrKUyeoMU_8l6yP7Bn_KmF7NH0MYmjepHtY
-Message-ID: <CAMRc=MfcyAxF6Q4XyCiJs-7jCDX5dyT5=1HPmcDGQGiJoXf5Sw@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH] pinctrl: bcm2835: don't -EINVAL on alternate
- funcs from get_direction()
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	Liao Chen <liaochen4@huawei.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-gpio@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <174073964873.10177.18098594447023695000.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 11:53=E2=80=AFPM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->
-> On Wed, Feb 19, 2025 at 3:30=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> > On Wed, Feb 19, 2025 at 3:27=E2=80=AFPM Mark Brown <broonie@kernel.org>=
- wrote:
-> > >
-> > > On Wed, Feb 19, 2025 at 11:27:50AM +0100, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > Since commit 9d846b1aebbe ("gpiolib: check the return value of
-> > > > gpio_chip::get_direction()") we check the return value of the
-> > > > get_direction() callback as per its API contract. This driver retur=
-ns
-> > > > -EINVAL if the pin in question is set to one of the alternative
-> > > > (non-GPIO) functions. This isn't really an error that should be
-> > > > communicated to GPIOLIB so default to returning the "safe" value of
-> > > > INPUT in this case. The GPIO subsystem does not have the notion of
-> > > > "unknown" direction.
-> > >
-> > > I see this was already tested for these specific boards.  I've also
-> > > found that Avenger96 is failing with bisect pointing to the same comm=
-it
-> > > this is fixing:
-> > >
-> > >     https://lava.sirena.org.uk/scheduler/job/1126314
-> > >
-> > > as is the Libretech Potato:
-> > >
-> > >     https://lava.sirena.org.uk/scheduler/job/1126285
-> > >
-> > > neither of which produce any output before dying, they'll not be fixe=
-d
-> > > by this change.  Seems like an audit of the drivers might be in order=
-?
-> >
-> > Right. I don't know if they return EINVAL or some other error so let
-> > me prepare a change that will not bail-out but simply warn on
-> > get_direction() errors in gpiochip_add_data() instead.
-> >
-> > This patch can still go upstream IMO.
->
-> I'm fine to apply it, maybe as non-urgent fix at this point? (for -next)
->
+The following commit has been merged into the objtool/urgent branch of tip:
 
-Yes, the offending changes in gpiolib.c were dropped so this can go in
-the non-urgent way.
+Commit-ID:     b4ae43b053537ec28f430c0ddb9b916ab296dbe5
+Gitweb:        https://git.kernel.org/tip/b4ae43b053537ec28f430c0ddb9b916ab296dbe5
+Author:        Youling Tang <tangyouling@kylinos.cn>
+AuthorDate:    Tue, 18 Feb 2025 14:42:30 +08:00
+Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
+CommitterDate: Tue, 25 Feb 2025 10:16:31 -08:00
 
-> Do you want to send a non-RFC/RFT version or should I just apply it?
->
+objtool: Add bch2_trans_unlocked_or_in_restart_error() to bcachefs noreturns
 
-You can take it as is. It got tested and reviewed, so the tags served
-their purpose. :)
+Fix the following objtool warning during build time:
 
-Bart
+  fs/bcachefs/btree_cache.o: warning: objtool: btree_node_lock.constprop.0() falls through to next function bch2_recalc_btree_reserve()
+  fs/bcachefs/btree_update.o: warning: objtool: bch2_trans_update_get_key_cache() falls through to next function need_whiteout_for_snapshot()
+
+bch2_trans_unlocked_or_in_restart_error() is an Obviously Correct (tm)
+panic() wrapper, add it to the list of known noreturns.
+
+Fixes: b318882022a8 ("bcachefs: bch2_trans_verify_not_unlocked_or_in_restart()")
+Reported-by: k2ci <kernel-bot@kylinos.cn>
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+Link: https://lore.kernel.org/r/20250218064230.219997-1-youling.tang@linux.dev
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ tools/objtool/noreturns.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
+index b217489..6bb7edd 100644
+--- a/tools/objtool/noreturns.h
++++ b/tools/objtool/noreturns.h
+@@ -19,7 +19,7 @@ NORETURN(__x64_sys_exit_group)
+ NORETURN(arch_cpu_idle_dead)
+ NORETURN(bch2_trans_in_restart_error)
+ NORETURN(bch2_trans_restart_error)
+-NORETURN(bch2_trans_unlocked_error)
++NORETURN(bch2_trans_unlocked_or_in_restart_error)
+ NORETURN(cpu_bringup_and_idle)
+ NORETURN(cpu_startup_entry)
+ NORETURN(do_exit)
 
