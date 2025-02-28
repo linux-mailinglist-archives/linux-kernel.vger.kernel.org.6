@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-538748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD4BA49C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:01:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B07AA49CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF6947A350C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29CE37A9172
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BD3274242;
-	Fri, 28 Feb 2025 14:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5B275605;
+	Fri, 28 Feb 2025 14:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gy5kYtgD"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="NUxlybCl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DuTvYExH"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5456127180E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4EE270EA9;
+	Fri, 28 Feb 2025 14:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754746; cv=none; b=etfXOvPPd1gikFMtTIsiOmM2XgtOpTierWdrDTW27W+2CJIl5nS6M4DZc0ecKiI4Hthdsqc5fumnmk0iAPbJ+cSL8Zq/Pa7HADp9OZS69zS09g0s4cYlF3KLCjQxY/P5aBBHEOdgZgkARMl8G6Ultbi0YaOUBk5x72+fRwSdABw=
+	t=1740754770; cv=none; b=ZJJJGb+rxHZAL2ZWYeW5CBeyQ5+OkthblGAbjC1K6V4tTqbC32v1EPXFid0hjuFYFOzwVgvIpxx345MQEX6VYgQJXfeoWyl9Qa78TkH0rg1Svsg5w54YPvQe+9tsz1aOF9gVASasYP1PDt0JgJJhOC1jXwBbevIbO3Ly7UZloJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754746; c=relaxed/simple;
-	bh=HM2hHWGoPsxiRQOLmE/7B/InCIBuDhe0QVyv+3PxAMI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KIxpQtuRAtZjGuuz4fyNnRVExu+45cBHfVJCaU6iWBAYsEaewi2GEAbYo217W5WiCTe3hfL8XNQEoWfPwvdL+380hoOLnYyDTuBdDF41k9u7Ai5KhJRjCqtff7SKaGjQxjgQbITSaS9h8c/A3tTQG5J1dLsnL3ZRX3r6I9IWZEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gy5kYtgD; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so4849204a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:59:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740754744; x=1741359544; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9dyGsvh9T/ZSon/b0EZ7+hNIbWTXl5YSkkCNWhacUA=;
-        b=gy5kYtgDyz702+44uk+3Ek2fFiKUH3J7RcB6PCNKjgNfgSHm48+aMgQh6rA2CMBzfZ
-         RirtB3FskpnJmV2N6K00zu13q+ln/EbCY/5vA6sL2peoCWVqfiL6GaDPFkcd8CafYDh/
-         1N0Bc7SmXMBCqicUFzEVeSuuBcsh5AYqscaKXIDP8it1Sz9AeAbozlxbcN6j43AeVBFj
-         J7P6CzBYRz6xzU8kxd2LUwJARyjuXinZrWW2BhlJ+EbFiJiTtIL1v6cSZo/jTfBPGKKV
-         IcBdBG3j9FiXQlSy5wqOUGgLIgK87UqIzBWT92OpNQg5/tLg4/BrpJrK0YXMlR/MVGca
-         mw6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740754744; x=1741359544;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9dyGsvh9T/ZSon/b0EZ7+hNIbWTXl5YSkkCNWhacUA=;
-        b=ofFYquKrXC1VWbOr9eF6m5VMb7GC6h/9UgzHK5CjJ07DlOjXp9i1psIaEoxUzU5aKd
-         GIBQOvrBokH69vFY1RiBDqKAY1KFdKsN0X6ecwnH5x1EQPvVbit21b4SQ5uho4nFrDsH
-         yeGysDSIYPk1DP/D4Ygv0Lhntoth0i7OwB8yWUwmB0kRiHvLdtEO647QkoftNt3fl51c
-         sFIMgVx1MM8iGU/D0mvoZG3RaxpmEFFSG0Y1Errbh7IXDuuN9v0HW0Z9kdoB3k0Ah9s0
-         4tSOu/0ORptrkDKqrP1A0MJ4Q/nz2dFS0hxUyHOC0YK+K+lMIjfejm2Z3gHk6ELG2/0O
-         OM2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKH0ypWRrL2xLwCjcrOp8D0hVsykomkFdJKCtkoJkKTTlghO+XRFC2v5ZG0Ik+8aa6pWfgvb0lmrWs8zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOGB0xBauuyCxuqE4Vaa235uQ0byyXBEPm7Qwd22nXKQnzkFLt
-	c+j+6ozL1e5X8UzsYpy8+Jh5yZ4U2LrHagNcRu0YDk+XFudqpu1hoFiJE0pWoV46JWaBep6G165
-	VFw==
-X-Google-Smtp-Source: AGHT+IF2C9SjHgY5w3jl+VecgX3ASvzixsucJeI44sz6MgxAbRGH5Zck3g3VWWsuFnNL5P8Hm5Vb9Y9DaLY=
-X-Received: from pfaz5.prod.google.com ([2002:aa7:91c5:0:b0:730:94db:d304])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1590:b0:1ee:ba5d:3d55
- with SMTP id adf61e73a8af0-1f2f4e01cf8mr6714343637.38.1740754744565; Fri, 28
- Feb 2025 06:59:04 -0800 (PST)
-Date: Fri, 28 Feb 2025 06:59:03 -0800
-In-Reply-To: <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
+	s=arc-20240116; t=1740754770; c=relaxed/simple;
+	bh=MR+6e54mvrr55U2P4InC/IkkhvtYltb38oGdqZ14wLA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=m9XzIdI3fTYusz6C22b1qLAjiZWu1//eXXmckF9un65oJamhE3dQEXUgUfR55R8Dh5VItfswcPbIb/GlWhuEgn+updrj/776OGCioE99h0xv9jm7vpQlH4Z911k98pvrdUhIBRDn4KpaOTxf5nnIr2VfcSlIKW88qRHwetzAuLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=NUxlybCl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DuTvYExH; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7CC3911401A1;
+	Fri, 28 Feb 2025 09:59:26 -0500 (EST)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-06.internal (MEProxy); Fri, 28 Feb 2025 09:59:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740754766;
+	 x=1740841166; bh=SkKwIhvnfqN2r+QHSzxVSlp38AINO68uiTWQnDmFEaM=; b=
+	NUxlybClqhUUMJKEhwaSw9gahKPK/yi6cKqYkNcj/Z+SSv9EMtvrT81Z4JL7ujhl
+	4AtjvgXLqUMFGCYCTNWhsz6/pJSQp2GeaI41UMV18cW2LEXgqZfEBZn8LSbsHvgC
+	FjUv9D5DQtBnLxcpHyvtCzY+XIGVuSINivBhq4O1w6k50IpUFLNUGuEvnqZQ7wIT
+	QPgQ6BzSG3/qvr5a/N6Vz3sY0sDVfHjHjVR4O5vYElyIGwI96Q+CFFYxOXDm4VgN
+	mLGc089/E6fH5gqtzg3SZeCp/JCD0VV2Hbjt0tbvCEVeOdAXS4C8myyHFkoSvPFP
+	erFxVBVBfdEG8fqxySdCyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740754766; x=
+	1740841166; bh=SkKwIhvnfqN2r+QHSzxVSlp38AINO68uiTWQnDmFEaM=; b=D
+	uTvYExHaNIlUxU7caUsluXfPuLmeoLKJSy/k2F4mwCS/aeRiFiwUcQAnfO/YRN7Q
+	yAFVHY6hofkLpcP60hihjYTFciaZ1TEXUaBdPH5sVTUxdP/QPpuJGHiTxmaxw64J
+	vd2IYBrSEKzeUr5sSVe3fnBi6eMnw4AT04r6qXZ/QDKUbwaMoLwqZsuqHvhApWbL
+	CYHRLLqh58fllgFGiUHHfvMFQsVjbhr3hc7JhX9z1bcTyu8VUWyA5ubSM0cUgDVx
+	6AxsZ0nWxooV813ipSlyU0Ai/8N2yP+XB/ftSCVZDlWJbxObPMOl+KjDKrcjvCCV
+	tL792Fv0D/su1FvXqEjxw==
+X-ME-Sender: <xms:Tc_BZyRfJVovarecw5r84IZmVCOkEtAzwaudCPx7n957vpFzvXqivA>
+    <xme:Tc_BZ3z2iSoFyu7rOZ5oiwqIRzK74GsQRpfJ8kFBFJL93O9ZDDe5zaHHtk2k8iWku
+    cwmzQQ9RR9vAY4BwUw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeilecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
+    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthht
+    ohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhhthhhonh
+    ihrdhlrdhnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihs
+    lhgrfidrkhhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehkuhgsrgeskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhi
+    shhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvh
+    eslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphht
+    thhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:Tc_BZ_2y4ckCx23_IJtJSJpM74WixsElSA9JsqF9gxnoE7Nz6sq2XA>
+    <xmx:Tc_BZ-DvB2iQbtIdAdbNTYviTfRMepNlnuC5QywMZSEBire0mHM5yA>
+    <xmx:Tc_BZ7gmqAu6cVv3Ovw99YRgaLlNVQW2Q4rT_1FFMzfr_NxdV__vpA>
+    <xmx:Tc_BZ6po6MsSJ-Hj_N1N9AtyH3dnMYZWBa70Dpir5wb33eJHrHSOMA>
+    <xmx:Ts_BZwbXxWGU-98a7GoEX06bG8wLsWjZi7oeM-MOl_g2BOX1Tf9Ju4vd>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 85C9D3C0066; Fri, 28 Feb 2025 09:59:25 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
- <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com> <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
- <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
-Message-ID: <Z8HPN5sAgInM4dN2@google.com>
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, 
-	Olivier Dion <odion@efficios.com>, linux-mm@kvack.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Date: Fri, 28 Feb 2025 09:59:05 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
+In-Reply-To: <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+References: <mpearson-lenovo@squebb.ca>
+ <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+ <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
+ <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025, David Hildenbrand wrote:
-> On 28.02.25 06:17, Linus Torvalds wrote:
-> > On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> > > 
-> > > I'd be fine with SKSM replacing KSM entirely. However, I don't
-> > > think we should try to re-implement the existing KSM userspace ABIs
-> > > over SKSM.
-> > 
-> > No, absolutely. The only point (for me) for your new synchronous one
-> > would be if it replaced the kernel thread async scanning, which would
-> > make the old user space interface basically pointless.
-> > 
-> > But I don't actually know who uses KSM right now. My reaction really
-> > comes from a "it's not nice code in the kernel", not from any actual
-> > knowledge of the users.
-> > 
-> > Maybe it works really well in some cloud VM environment, and we're
-> > stuck with it forever.
-> 
-> Exactly that; and besides the VM use-case, lately people stated using it in
-> the context of interpreters (IIRC inside Meta) quite successfully as well.
+Hi Andrew
 
-Does Red Hat (or any other KVM supporters) actually recommend using KSM for VMs
-in cloud environments?
+On Thu, Feb 27, 2025, at 11:07 AM, Andrew Lunn wrote:
+>> >> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
+>> >
+>> > Please add some #define for these magic numbers, so we have some idea
+>> > what PHY register you are actually reading. That in itself might help
+>> > explain how the workaround actually works.
+>> >
+>> 
+>> I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
+>
+> What PHY is it? Often it is just a COTS PHY, and the datasheet might
+> be available.
+>
+> Given your setup description, pause seems like the obvious thing to
+> check. When trying to debug this, did you look at pause settings?
+> Knowing what this register is might also point towards pause, or
+> something totally different.
+>
+> 	Andrew
 
-The security implications of scanning guest memory and having co-tenant VMs share
-mappings (should) make it a complete non-starter for any scenario where VMs and/or
-their workloads are owned by third parties.
+For the PHY - do you know a way of determining this easily? I can reach out to the platform team but that will take some time. I'm not seeing anything in the kernel logs, but if there's a recommended way of confirming that would be appreciated.
 
-I can imagine there might be first-party use cases, but I would expect many/most
-of those to be able to explicitly share mappings, which would provide far, far
-better power and performance characteristics.
+We did look at at the pause pieces - which I agree seems like an obvious candidate given the speed mismatch on the network.
+Experts on the Intel networking team did reproduce the issue in their lab and looked at this for many weeks without determining root cause. I wish it was as obvious as pause control configuration :)
+
+Thanks
+Mark
 
