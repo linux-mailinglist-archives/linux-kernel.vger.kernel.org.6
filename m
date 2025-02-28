@@ -1,213 +1,229 @@
-Return-Path: <linux-kernel+bounces-539101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2BBA4A0D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:51:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B07A4A0DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE84189A288
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265453BBC13
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EAC1F09B3;
-	Fri, 28 Feb 2025 17:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a1sNo9Wi"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED251BD9CB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789C51BEF9D;
+	Fri, 28 Feb 2025 17:51:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5877A1AA1FE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740765065; cv=none; b=Swb15WLCj2bAfhJHRvcUh1nVp2XDXpZTEPaTnnYSC36TUQY75RAT2Vx12Cxo+PsEpCHmblTTxwrbJRBUhRseVr28z6fEsNKYmQueZ7h3txxmwSFSH+vBJqJOu51Gw6jPEk1RnH93+wKQ84HTGmAa0ymd9MocAQGGXoJ5UuEd2II=
+	t=1740765091; cv=none; b=rG5YOp8x+VZ9CKNRsnHGNIp6p52Tx6b2LVN7CoHs3Wmsfp7TtKES4tmU1ZpUi7nPScrokD7kHTA5fIC2jOEPRolTCHyXmgWh3y1aZ914/rry2xvexkcYeUad5lKT+Bak0gSBZ+8BLFlaMt28ooq6Agi4MQOFvuSDhz1Ziae1Duw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740765065; c=relaxed/simple;
-	bh=Rd7/uBItQJX+8uapYTk/rpUyTGiqOA264qrStMAcZuw=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=GIQMWQpw3XAjPU/GKEMiUvIyHr4Q+VupprxLeEolK41ikASZcZ8CF8ILxyuNyKDjRCOWwBU9cZMz5nfrehoVt8Ke9GRJPMRG1eUpleD/w2aTtPcvifLz1VRvzGl7v9pHCP+KT1aRdnzFfAvfmUiVYKbL8Sz9ONSbS4S/5o/lLPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a1sNo9Wi; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe916ba298so4992542a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:51:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740765062; x=1741369862; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6NyvctiqOUa3n9gcjc6FONh/SC/E+DJ6Q+NnNJwCpW4=;
-        b=a1sNo9WiWO+bqlyVxiCRpS3rccz4kWWfd/j+SZI8YqvSgY/8VLU4vAZ86j0IOodZ55
-         BXYyGYjAfj2MOIH6QhofNpJ/0DrM9FRTit09dAwW1L5HoYSPtCjUG/EP9dILn57gurXX
-         mLYAwrucb24vxGX8LnPLXDMO/b4pAXYrmbLBJJQq9PKc/x3ewtwH+34p0cu4zsVltO40
-         K81ChmwAMWjw4K5zobCA25BkWpGzmfIHMQu/+EuRNnbGgA2vbOXEEY5BBM3H8G7WxPkP
-         +lUfH7ck4+uh00H0c1wZTY/RMb4HIOs1lV84hbC/XCtG7lyAicFgZCPrcGxI5HZ4+Zzq
-         KszQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740765062; x=1741369862;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6NyvctiqOUa3n9gcjc6FONh/SC/E+DJ6Q+NnNJwCpW4=;
-        b=bUGPPrGqhFrQr8J3j8jjvAIvnNUq44QH1OJeo74G3j/qqYEsizoafb9bsommYAtXQq
-         3vGe/yesxGqq+AiivgtUQ9oCFegIyq2lLOKQIGhfSN9l4k2LsQxhuJ5MPQGCfA3xEt8Y
-         W/UsTll5t43ufvCLXMfwSvUrQeZfzwT4SotnpX5Io6FChR4a/6v2YwBjRKSJsGQcicjb
-         7g4ZqsiAME9RHs/i5W9CfEQzmMmGzxm2K7n4tauFqxN74gYVBNMBZhRkUIYIVc5k60A/
-         do4g9yAS5VzNQ5W+mGNt2f+R7u6f0rdMIpnzVT9gIxHwkhlPG6V0DLGVicOUkXl6qif9
-         4fSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa6t5Yuy+zsn8gFut7sP0NuTjfNKkfXVhAtUWcxJWuUaY3wK4I6EY6To3CWKnDwCxLRszSLyIlJwqI8zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGTn/pfGhCP7L68ARKZnMVGqMVxJXm+4l7Qf5QXVwVKeJ91Jqg
-	G4kQ44HJJ+i01Cs5QGhdz3gtnru7ay3E6XtbkswOtgvL2NJ7VUUjFaPu7OZbvOXUcm2kWRVeEJl
-	+uBkQjAjAYFROMllJyGSZbw==
-X-Google-Smtp-Source: AGHT+IFcKOkFii9o7crCwA/34cEMAOGG0lMrGvepv/XtLz3NB8cMI+uVglV3v5h1Vekl5o+ofsDoALDBoCUPhMpdGg==
-X-Received: from pjbrr3.prod.google.com ([2002:a17:90b:2b43:b0:2fc:1eb0:5743])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4990:b0:2ee:f80c:687c with SMTP id 98e67ed59e1d1-2febac07e18mr6481041a91.31.1740765061874;
- Fri, 28 Feb 2025 09:51:01 -0800 (PST)
-Date: Fri, 28 Feb 2025 17:51:00 +0000
-In-Reply-To: <503c4ba7-c667-444a-b396-e85c46469f0a@suse.cz> (message from
- Vlastimil Babka on Fri, 28 Feb 2025 15:17:11 +0100)
+	s=arc-20240116; t=1740765091; c=relaxed/simple;
+	bh=pVZk5TEHmseGYj68SVSIKMVowfOc9Fa1xNKGFwzHgdQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TUtGigRjbgv3jD9QPHlEE6473QR7zkJuJGPVBqSlHnIfa9Jl6f4Y78fFGIRVyAydkqF9LkPohI1FlAxkDw75DhEx2aamSgtv2j9J8sgt4In2Z6Zdx9HzFwPH80enEj/EJlQevKbPVeQ5rVjkRmdvaFWUC0/eXYoEaffefuCFWFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB7121515;
+	Fri, 28 Feb 2025 09:51:43 -0800 (PST)
+Received: from [10.57.38.197] (unknown [10.57.38.197])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DCEC3F6A8;
+	Fri, 28 Feb 2025 09:51:22 -0800 (PST)
+Message-ID: <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
+Date: Fri, 28 Feb 2025 18:51:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqz8qpqlzzv.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH v6 1/5] mm/filemap: add mempolicy support to the filemap layer
-From: Ackerley Tng <ackerleytng@google.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: shivankg@amd.com, akpm@linux-foundation.org, willy@infradead.org, 
-	pbonzini@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	chao.gao@intel.com, seanjc@google.com, david@redhat.com, bharata@amd.com, 
-	nikunj@amd.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, tabba@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+To: Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+ peterz@infradead.org, mpe@ellerman.id.au,
+ linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
+ linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ morten.rasmussen@arm.com, msuchanek@suse.de, gregkh@linuxfoundation.org,
+ rafael@kernel.org, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+ linuxarm@huawei.com, yangyicong@hisilicon.com, xuwei5@huawei.com,
+ guohanjun@huawei.com, sshegde@linux.ibm.com
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-4-yangyicong@huawei.com> <Z8HAkZiHYRjj97M7@bogus>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <Z8HAkZiHYRjj97M7@bogus>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Vlastimil Babka <vbabka@suse.cz> writes:
 
-> On 2/26/25 09:25, Shivank Garg wrote:
->> From: Shivansh Dhiman <shivansh.dhiman@amd.com>
->> 
->> Add NUMA mempolicy support to the filemap allocation path by introducing
->> new APIs that take a mempolicy argument:
->> - filemap_grab_folio_mpol()
->> - filemap_alloc_folio_mpol()
->> - __filemap_get_folio_mpol()
->> 
->> These APIs allow callers to specify a NUMA policy during page cache
->> allocations, enabling fine-grained control over memory placement. This is
->> particularly needed by KVM when using guest-memfd memory backends, where
->> the guest memory needs to be allocated according to the NUMA policy
->> specified by VMM.
->> 
->> The existing non-mempolicy APIs remain unchanged and continue to use the
->> default allocation behavior.
->> 
->> Signed-off-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->
-> <snip>
->
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -1001,11 +1001,17 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->>  EXPORT_SYMBOL_GPL(filemap_add_folio);
->>  
->>  #ifdef CONFIG_NUMA
->> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->> +struct folio *filemap_alloc_folio_mpol_noprof(gfp_t gfp, unsigned int order,
->> +		struct mempolicy *mpol)
->>  {
->>  	int n;
->>  	struct folio *folio;
->>  
->> +	if (mpol)
->> +		return folio_alloc_mpol_noprof(gfp, order, mpol,
->> +					       NO_INTERLEAVE_INDEX,
 
-Could we pass in the interleave index instead of hard-coding it?
-
->> +					       numa_node_id());
+On 2/28/25 14:56, Sudeep Holla wrote:
+> On Tue, Feb 18, 2025 at 10:10:17PM +0800, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> For ACPI we'll build the topology from PPTT and we cannot directly
+>> get the SMT number of each core. Instead using a temporary xarray
+>> to record the heterogeneous information (from ACPI_PPTT_ACPI_IDENTICAL)
+>> and SMT information of the first core in its heterogeneous CPU cluster
+>> when building the topology. Then we can know the largest SMT number
+>> in the system. If a homogeneous system's using ACPI 6.2 or later,
+>> all the CPUs should be under the root node of PPTT. There'll be
+>> only one entry in the xarray and all the CPUs in the system will
+>> be assumed identical.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
+>>
+>> If a system have more than one SMT thread number the 2) may
+>> not handle it well, since there're multiple thread numbers in the
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>   arch/arm64/kernel/topology.c | 66 ++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 66 insertions(+)
+>>
+>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+>> index 1a2c72f3e7f8..6eba1ac091ee 100644
+>> --- a/arch/arm64/kernel/topology.c
+>> +++ b/arch/arm64/kernel/topology.c
+>> @@ -15,8 +15,10 @@
+>>   #include <linux/arch_topology.h>
+>>   #include <linux/cacheinfo.h>
+>>   #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>   #include <linux/init.h>
+>>   #include <linux/percpu.h>
+>> +#include <linux/xarray.h>
+>>   
+>>   #include <asm/cpu.h>
+>>   #include <asm/cputype.h>
+>> @@ -37,17 +39,28 @@ static bool __init acpi_cpu_is_threaded(int cpu)
+>>   	return !!is_threaded;
+>>   }
+>>   
+>> +struct cpu_smt_info {
+>> +	unsigned int thread_num;
+>> +	int core_id;
+>> +};
 >> +
->>  	if (cpuset_do_page_mem_spread()) {
->>  		unsigned int cpuset_mems_cookie;
->>  		do {
->> @@ -1018,6 +1024,12 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>  	}
->>  	return folio_alloc_noprof(gfp, order);
->>  }
->> +EXPORT_SYMBOL(filemap_alloc_folio_mpol_noprof);
+>>   /*
+>>    * Propagate the topology information of the processor_topology_node tree to the
+>>    * cpu_topology array.
+>>    */
+>>   int __init parse_acpi_topology(void)
+>>   {
+>> +	unsigned int max_smt_thread_num = 0;
+>> +	struct cpu_smt_info *entry;
+>> +	struct xarray hetero_cpu;
+>> +	unsigned long hetero_id;
+>>   	int cpu, topology_id;
+>>   
+>>   	if (acpi_disabled)
+>>   		return 0;
+>>   
+>> +	xa_init(&hetero_cpu);
 >> +
->> +struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->> +{
->> +	return filemap_alloc_folio_mpol_noprof(gfp, order, NULL);
->> +}
->>  EXPORT_SYMBOL(filemap_alloc_folio_noprof);
->>  #endif
->
-> Here it seems to me:
->
-> - filemap_alloc_folio_noprof() could stay unchanged
-> - filemap_alloc_folio_mpol_noprof() would
->   - call folio_alloc_mpol_noprof() if (mpol)
->   - call filemap_alloc_folio_noprof() otherwise
->
-> The code would be a bit more clearly structured that way?
->
-
-I feel that the original proposal makes it clearer that for all filemap
-folio allocations, if mpol is defined, anything to do with cpuset's page
-spread is overridden. Just a slight preference though. I do also agree
-that having filemap_alloc_folio_mpol_noprof() call
-filemap_alloc_folio_noprof() would result in fewer changes.
-
->> @@ -1881,11 +1893,12 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
->>  }
->>  
->>  /**
->> - * __filemap_get_folio - Find and get a reference to a folio.
->> + * __filemap_get_folio_mpol - Find and get a reference to a folio.
->>   * @mapping: The address_space to search.
->>   * @index: The page index.
->>   * @fgp_flags: %FGP flags modify how the folio is returned.
->>   * @gfp: Memory allocation flags to use if %FGP_CREAT is specified.
->> + * @mpol: The mempolicy to apply when allocating a new folio.
->>   *
->>   * Looks up the page cache entry at @mapping & @index.
->>   *
->> @@ -1896,8 +1909,8 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
->>   *
->>   * Return: The found folio or an ERR_PTR() otherwise.
->>   */
->> -struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->> -		fgf_t fgp_flags, gfp_t gfp)
->> +struct folio *__filemap_get_folio_mpol(struct address_space *mapping, pgoff_t index,
->> +		fgf_t fgp_flags, gfp_t gfp, struct mempolicy *mpol)
->>  {
->>  	struct folio *folio;
->>  
->> @@ -1967,7 +1980,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->>  			err = -ENOMEM;
->>  			if (order > min_order)
->>  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
->> -			folio = filemap_alloc_folio(alloc_gfp, order);
->> +			folio = filemap_alloc_folio_mpol(alloc_gfp, order, mpol);
->>  			if (!folio)
->>  				continue;
->>  
->> @@ -2003,6 +2016,13 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->>  		folio_clear_dropbehind(folio);
->>  	return folio;
->>  }
->> +EXPORT_SYMBOL(__filemap_get_folio_mpol);
+>>   	for_each_possible_cpu(cpu) {
+>>   		topology_id = find_acpi_cpu_topology(cpu, 0);
+>>   		if (topology_id < 0)
+>> @@ -57,6 +70,34 @@ int __init parse_acpi_topology(void)
+>>   			cpu_topology[cpu].thread_id = topology_id;
+>>   			topology_id = find_acpi_cpu_topology(cpu, 1);
+>>   			cpu_topology[cpu].core_id   = topology_id;
 >> +
->> +struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->> +		fgf_t fgp_flags, gfp_t gfp)
->> +{
->> +	return __filemap_get_folio_mpol(mapping, index, fgp_flags, gfp, NULL);
->> +}
->>  EXPORT_SYMBOL(__filemap_get_folio);
->>  
->>  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
+>> +			/*
+>> +			 * In the PPTT, CPUs below a node with the 'identical
+>> +			 * implementation' flag have the same number of threads.
+>> +			 * Count the number of threads for only one CPU (i.e.
+>> +			 * one core_id) among those with the same hetero_id.
+>> +			 * See the comment of find_acpi_cpu_topology_hetero_id()
+>> +			 * for more details.
+>> +			 *
+>> +			 * One entry is created for each node having:
+>> +			 * - the 'identical implementation' flag
+>> +			 * - its parent not having the flag
+>> +			 */
+>> +			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
+>> +			entry = xa_load(&hetero_cpu, hetero_id);
+>> +			if (!entry) {
+>> +				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+>> +				WARN_ON_ONCE(!entry);
+>> +
+>> +				if (entry) {
+>> +					entry->core_id = topology_id;
+>> +					entry->thread_num = 1;
+>> +					xa_store(&hetero_cpu, hetero_id,
+>> +						 entry, GFP_KERNEL);
+>> +				}
+>> +			} else if (entry->core_id == topology_id) {
+>> +				entry->thread_num++;
+>> +			}
+>>   		} else {
+>>   			cpu_topology[cpu].thread_id  = -1;
+>>   			cpu_topology[cpu].core_id    = topology_id;
+>> @@ -67,6 +108,31 @@ int __init parse_acpi_topology(void)
+>>   		cpu_topology[cpu].package_id = topology_id;
+>>   	}
+>>   
+>> +	/*
+>> +	 * This should be a short loop depending on the number of heterogeneous
+>> +	 * CPU clusters. Typically on a homogeneous system there's only one
+>> +	 * entry in the XArray.
+>> +	 */
+>> +	xa_for_each(&hetero_cpu, hetero_id, entry) {
+>> +		if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
+>> +			pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+> 
+> Ditto as previous patch about handling no threaded cores with threaded cores
+> in the system. I am not sure if that is required but just raising it here.
+> 
+>> +
+>> +		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
+>> +		xa_erase(&hetero_cpu, hetero_id);
+>> +		kfree(entry);
+>> +	}
+>> +
+>> +	/*
+>> +	 * Notify the CPU framework of the SMT support. Initialize the
+>> +	 * max_smt_thread_num to 1 if no SMT support detected. A thread
+>> +	 * number of 1 can be handled by the framework so we don't need
+>> +	 * to check max_smt_thread_num to see we support SMT or not.
+>> +	 */
+>> +	if (!max_smt_thread_num)
+>> +		max_smt_thread_num = 1;
+>> +
+> 
+> Ditto as previous patch, can get rid if it is default 1.
+> 
+
+On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
+cpu_smt_num_threads uninitialized to UINT_MAX:
+
+smt/active:0
+smt/control:-1
+
+If cpu_smt_set_num_threads() is called:
+active:0
+control:notsupported
+
+So it might be slightly better to still initialize max_smt_thread_num.
+
+Otherwise I tested the patches on arm64 ACPI smt platforms and it worked
+well, so for all the patches (if there are no other major modifications):
+Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
+
+Regards,
+Pierre
 
