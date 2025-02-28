@@ -1,125 +1,75 @@
-Return-Path: <linux-kernel+bounces-539182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F90AA4A1BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:36:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845AEA4A1BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:36:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1181E188D382
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:36:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0816D7ABC30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F76E1F8754;
-	Fri, 28 Feb 2025 18:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA41F8744;
+	Fri, 28 Feb 2025 18:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRaidpjF"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PB+7Tdez"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4971F873B;
-	Fri, 28 Feb 2025 18:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C951F09AF;
+	Fri, 28 Feb 2025 18:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767678; cv=none; b=pxjw0BDIVQaIaNwx8/l+0e7oGDc8U18Fnxketxug198rM1lAkr/N47UUTeonv0KS497HhbOuBis3FkeGCExG8bSnw2TozqHKd+p/EqBKMGrsVMGF4MgD6B+2zov5pzhNRr8aDbdHmb53J5CMo2deuyNj9t9saEotVUr8ksrpFzE=
+	t=1740767677; cv=none; b=BUaeSomdK2a9BMMiD/97spH8CwHEwyHciRQJMKjG98E2ZkYS8LG2uJkGaqyVAvsihKH0QoaDgWdhstBYd5iQFOAvTZw3LG5gdha/fL8jnyleK6uWMXbZBxnYRtjDfUd1qUBECTFVNkaV5WmCXtUlH0IpZ/lDIcD5yEIcjl1tKDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767678; c=relaxed/simple;
-	bh=wZP5dwHjFXIR2Zc7eVavD2zM6CWmbdreeu6wNJalJsQ=;
+	s=arc-20240116; t=1740767677; c=relaxed/simple;
+	bh=YvlNVVZWhItDH8VpooX0xWem+IyaI415jHJZcKprnzQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtsxtJvds3UoVBaaVQWRtyjrMOJHf323lktgtNALsm6bIJ+gBSCO5iZzh0k2pQnxnSqU6hQ9hkPPtU3d8GdPM9mCPi/le4UGgf7s6g+C4+6aFGZcOdgok9cUUWb2WDEeqfQ614IX3HWW1sKISGvp6/zLz3UWNJjsP5Sf9vU1ifk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRaidpjF; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47210ab1283so35516571cf.1;
-        Fri, 28 Feb 2025 10:34:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740767676; x=1741372476; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rCFqw9auaprjfKRzf7+Y1mLRgmmsiKR+TkaoqiWHMBc=;
-        b=cRaidpjFNVKQsM1WYKWxs8d8wTWaEKFCZkBCGcivJByGF49K5JzysCL5lu7IZosy4c
-         F1op875/DDAvDzkIylVlgqsdBGRjkp8mdU7SlIFBerQBOCejJOOPeNZ+Uo5YQLz51BSm
-         Gy8D8P8cq49wgrKyY13W2uDbx4SeddsFdH0cDnN//vYoeK1is9ogEK0OHLeVPVW+1KjB
-         +cKS7K2H5bZKtsSQUL8oCZjdMCYgynlEUfg1YxY5rZTkA5PvRu76QeEgKYcMy8JpeELN
-         B1JwohJK7hQJMKTUDG6YwCfLD1rHRi0KJc0vIHx7abPEC2vChi/KSbCStIRobuj4Z/XY
-         3H7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767676; x=1741372476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rCFqw9auaprjfKRzf7+Y1mLRgmmsiKR+TkaoqiWHMBc=;
-        b=PyOPuy60FvVVlFeuSFh49yunHGD1tabsmT4COI+bNz2hE3F85fVhnS+XRra5/kLMWB
-         SoEst/aj0i2YUzNYoeXBbiS8bGUOsVzMiL+shF3CKhDScLQtnkK0t88JdBUGUAdfFMn8
-         w27r8VyFW1gKlTdjWZTUGt447LdLQYOBiVUcIJFGDDyvZ/k6BJOLyDt/JSqXn8hNIJ90
-         vfbShpD5cxlG1uM9iHjLoyFgZ92wHiouYoPLeTEge4QmlZCNF4GWNvqIU63kaXxKiB05
-         Pnm3l39Y7nheYumFpVkGhbNi9thkMfG73fc42E4tLOIHk2j18/EOqWSSZfZ9DgLjShZR
-         SIxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEu6WfzEF1gC1XtLIB4Vo30AxBsnEOdH9bHe2IMSq32Vwi0IGx3uhq6C0lFysH6ZPRNOOZV3BNRt8szkE=@vger.kernel.org, AJvYcCUy1HTzRdS/RYneVPrZlnJLwfcFIPMMNTS7QsAK3qmRbsJKfFj2rAVwJ7KTbWnSmemkSzx9MOv2SagLwXgVZFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNpRZisg2ciL0Sl4Tt/34ceEA/hbfZu3NE80lGrqnbxMe0qBpu
-	ryYbZosFYP8CzlKBLQT7QwtuP/uCuGH7HVFSaIy+8yILjAprrHS5
-X-Gm-Gg: ASbGncv20qPmVB2VSEYjKDtUT8GvF3jpDFCQXQtu+LadsstES1erZThT/5O0n8ArdGC
-	C/8yQ77UNN0mni8LVkff2JrSn96RIPqK4kMLffIiYnwsjITeHs2hNg8h6fSbjEB0rmiHLa66eps
-	XIkFNaDMwef6MZ57cBZjcs0oJ7kb0w9tW1wB7s6gbQhCxaEi83pY5a1LlSwX3JQgneuT/eDZZ38
-	kZzLvqTPUk1G64cp8dMPli79v3aA5iipGpzHBFKicKWcoulnPEEzhq6+UMO3z7CcdJc3MWkG4Fx
-	+/oFq7iqMC14Qwxjc5SWlUEYlF5vpy+MsTwAJZABfAETrVnt+TAjF6U1uHGMHsaciUSJHtvTRRB
-	hw6jvl5nPQDDvMkIH
-X-Google-Smtp-Source: AGHT+IGj0YxFiFBDDT0v4MfFSXaWM+4kzchKYmFHxIBIpXJ1G+JPxmQ1BGzcIDkMywjicWdbGuaEqQ==
-X-Received: by 2002:a05:620a:4727:b0:7c0:b08d:2432 with SMTP id af79cd13be357-7c39c4a555fmr761792185a.8.1740767675719;
-        Fri, 28 Feb 2025 10:34:35 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c36fef5a83sm276178985a.31.2025.02.28.10.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 10:34:35 -0800 (PST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DABE11200068;
-	Fri, 28 Feb 2025 13:34:34 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 28 Feb 2025 13:34:34 -0500
-X-ME-Sender: <xms:ugHCZ_-x1-LtgnS0sbhG4lGdfpTrqZrkPRAI00q3NOlfEjWE1ejn8g>
-    <xme:ugHCZ7v_y-DQjb9EcFx-Fdnru_uUHDStIJoCUvWMooBYtg9x6AAEGs7OfoRpyr2mw
-    HwIE1KPhJMqtxORRw>
-X-ME-Received: <xmr:ugHCZ9A8YuDo5Y6ZqkBStDvdoAkOzRSFlA3TVuHnJ7f5fcI4_ev5EPXd2_8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeludduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
-    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopeholhhivhgvrhdrmhgrnhhgohhlugesphhmrdhmvgdprhgtphhtthhopegrrdhhihhn
-    uggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorh
-    hnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhl
-    ohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrlhhitggvrhihhhhlsehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
-X-ME-Proxy: <xmx:ugHCZ7cwGoFYk6sozroVZAkzHwD7uBMl0cKDwKVp33xIQ16Oazux1A>
-    <xmx:ugHCZ0Ps4laHNB5taA36w9lYkpbH85favwxLMaCX4VhO7Tb2DEBsiw>
-    <xmx:ugHCZ9lmjUdJze5aUk4cpisvKUkISijl6SCxsPLdP9FarwPNWwO8IA>
-    <xmx:ugHCZ-tRRfL0znolIusuKpJVKG0e94312LHyVR7uZGzR5kAZLcykxQ>
-    <xmx:ugHCZ-vPccaJfhgd0T9pZfjt-NF2lml5TM19fyHeeceN0RLIpJWjv0qo>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Feb 2025 13:34:34 -0500 (EST)
-Date: Fri, 28 Feb 2025 10:33:44 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8IBiBi6CSRxfxiE@boqun-archlinux>
-References: <I2EuahEO9YG75qdfIlsanLJ9iOfr0OlKJr6nw_cqOG0rVrZUEZGhdfENkLawNCpSqP8uSGMODCeEmsYv6clgYg==@protonmail.internalid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxMwM1ULTARVg4LQLOe1kTMaosyRD2TzwRtni3mV9ubvkg4rgtirwCPf+5NvtAmJEhcvJqDx/EnICd+5K7mGTBreYHt+GNk2DzS2GLj1f0lXvUo9ITtaa7ektYVvCsLSLh7qTFmOFKQJbb04p57/fxJARPleOtPlDzABbosoj64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PB+7Tdez; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740767676; x=1772303676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YvlNVVZWhItDH8VpooX0xWem+IyaI415jHJZcKprnzQ=;
+  b=PB+7TdezTpuNlKGRryFBzgQdpwkwAvisCm1bFZrEagR2gYJYaA01qbiJ
+   yfDXj1x3aQUuQvvkEKOQh949FLpFcslp0WNMgUe3hlT5tfAZjyRwunjm6
+   zRUdQLFrBYb3AYHoc6fc+UNjATNtOh61X8oRpcJj+G70QIotM/6ZC8n26
+   RSnT8ujIx2FrdQ5LVQuyE40b2LRIIQFL6Q3r8ympTXOTWpQQMKjA+GYSy
+   JTQQublBmfCDZUdHcvkOvg5W9B594Z3PnPaImqlvH7tFNPs5RUkCH7Jtd
+   minqoFMj2hzEbLKoRQpmpgIIilN2Hz8qNeQN9xVC9Q8MGqc5gNyuXTUNH
+   g==;
+X-CSE-ConnectionGUID: ixxlZaicRBaAKuii80bgvw==
+X-CSE-MsgGUID: 4VzMeY9CR3OoHVsTsoMbhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53117241"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="53117241"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:34:35 -0800
+X-CSE-ConnectionGUID: k6Y+Rt/HQfGaeCHmncXfUQ==
+X-CSE-MsgGUID: 5ByvKEnwTC6JqCHLGDpeDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="122546843"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.168])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:34:34 -0800
+Date: Fri, 28 Feb 2025 10:34:32 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: Li Ming <ming.li@zohomail.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
+ parsing
+Message-ID: <Z8IBuE714QNscgfJ@aschofie-mobl2.lan>
+References: <20250227103251.390147-1-ming.li@zohomail.com>
+ <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
+ <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -128,56 +78,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <I2EuahEO9YG75qdfIlsanLJ9iOfr0OlKJr6nw_cqOG0rVrZUEZGhdfENkLawNCpSqP8uSGMODCeEmsYv6clgYg==@protonmail.internalid>
+In-Reply-To: <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
 
-On Fri, Feb 28, 2025 at 06:22:58PM +0000, Oliver Mangold wrote:
-> On 250228 1009, Boqun Feng wrote:
-> > 
-> > Please add the "# Examples" section as I requested:
-> > 
-> > 	https://lore.kernel.org/rust-for-linux/Z8HcHVtPiG-X6ujP@Mac.home/
-> > 
-> > I also would like to know why do you think it's OK to ignore my previous
-> > comment, thanks!
-> > 
+On Fri, Feb 28, 2025 at 10:47:12AM +0800, Li Ming wrote:
+> On 2/28/2025 5:47 AM, Alison Schofield wrote:
+> > On Thu, Feb 27, 2025 at 06:32:51PM +0800, Li Ming wrote:
+> >> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
+> >> decoder capability, But according to the implementation of
+> >> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
+> > How does a check against the spec maximums benefit this driver? Is there
+> > a bad path we avoid by checking and quitting at this point.
 > 
-> I intend to. Don't worry. I totally have it in mind that, this is missing.
-> As said, I will do it in a couple of days. Sorry if the update
-> caused confusion.
 > 
-
-I should appologize as well, after re-reading the email exchange between
-us, I realized I wasn't clear about whether my request was including the
-tests with the patch or not. So it's reasonable you thought a separate
-patch would work.
-
-Now as we cleared things, I want to make sure that it's clear that I
-would like to see the patch with examples in it. 
-
-> I am aware this won't be the final version, but I thought
-> I still post this one correctly formatted, as Miguel requested.
+> My understanding is that no a bad path on driver side if the decoder_count is greater than the maximum number spec defines.
 > 
+> Driver just allocates cxl decoders on the port based on the value of decoder_count. But I am not sure if hardware will have other potential problems when it didn't follow the spec.
 
-Yes, I figured that's what you planned to do, although it's better if
-you could provide some information between versions, one example would
-be:
+I had the general thought that the driver is not responsible for
+compliance checking the device, unless it affects function. Excessive
+decoder_count's sound like they cause needless allocations, so let's
+stop doing that - as best we can. 
 
-	https://lore.kernel.org/rust-for-linux/20250227193522.198344-1-lyude@redhat.com/
+Is it sufficient to clamp at the spec defined max values and continue
+with only a dev_warn_once or even a dev_info?
+ie. for a device: decoder_count = min(decoder_count, EP_DECODER_MAX);
 
-i.e. you can add some description after the "---" line, and that won't
-affect git to apply the patches. Usually people put changes between
-versions, and in this case since you just want to update a version that
-is not the final version, you can add some description about that there
-as well.
+That'll avoid failing a device that previously snuck by with an
+excessive decoder_count and protect against excessive allocations
+in the driver.
 
-> I assure you, I'm not ignoring your comment and request at all.
 > 
+> 
+> >
+> > Might this catch silly decoder counts that the driver previously
+> > ignored?
+> >
+> >> Per CXL specification, the values ranges of decoder_count and
+> >> target_count are limited. Adding a checking for the values of them
+> >> in case hardware initialized them with wrong values.
+> > Similar question - is this catching something sooner, rather than
+> > later?
+> 
+> 
+> Yes, the check is at the beginning of HDM setup during port probing, if value is wrong, will break HDM setup.
+> 
+> I'm not sure if I fully understand your question, please correct me if I misunderstand it. thanks.
 
-Thanks! Again, sorry for not being clear in previous emails.
+I understand now. This one is different that decoder_count because 
+it was heading to failure anyway and seems good to fail sooner.
 
-Regards,
-Boqun
-
-> Oliver
+> 
+> 
+> >
+> >> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> >> ---
+> >> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
+> >> ---
+> >>  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
+> >>  1 file changed, 30 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> >> index 70cae4ebf8a4..a98191867c22 100644
+> >> --- a/drivers/cxl/core/hdm.c
+> >> +++ b/drivers/cxl/core/hdm.c
+> >> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
+> >>  	return true;
+> >>  }
+> >>  
+> >> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
+> >> +{
+> >> +	/*
+> >> +	 * CXL r3.2 section 8.2.4.20.1
+> >> +	 * CXL devices shall not advertise more than 10 decoders,
+> >> +	 * CXL switches and HBs may advertise up to 32 decoders.
+> >> +	 */
+> >> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
+> >> +		return -EINVAL;
+> >> +	else if (cxlhdm->decoder_count > 32)
+> >> +		return -EINVAL;
+> >> +
+> >> +	/*
+> >> +	 * CXL r3.2 section 8.2.4.20.1
+> >> +	 * target count is applicable only to CXL upstream port and HB.
+> >> +	 * The number of target ports each decoder supports should be
+> >> +	 * one of the numbers 1, 2, 4 or 8.
+> >> +	 */
+> >> +	if (!is_cxl_endpoint(cxlhdm->port) &&
+> >> +	    cxlhdm->target_count != 1 &&
+> >> +	    cxlhdm->target_count != 2 &&
+> >> +	    cxlhdm->target_count != 4 &&
+> >> +	    cxlhdm->target_count != 8)
+> >> +		return -EINVAL;
+> > Maybe instead of manual bitwise checks try
+> > 	(!is_power_of_2(cxlhdm->target_count) || cxlhdm->target_count > 8))
+> 
+> 
+> Yes, It is clearer, thanks for that.
+> 
+> 
+> >
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  /**
+> >>   * devm_cxl_setup_hdm - map HDM decoder component registers
+> >>   * @port: cxl_port to map
+> >> @@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+> >>  	}
+> >>  
+> >>  	parse_hdm_decoder_caps(cxlhdm);
+> >> -	if (cxlhdm->decoder_count == 0) {
+> >> +	rc = cxlhdm_decoder_caps_verify(cxlhdm);
+> >> +	if (rc) {
+> >>  		dev_err(dev, "Spec violation. Caps invalid\n");
+> > Can you move the dev_err to the verify function and include the
+> > specific invalid capability.
+> >
+> >
+> > --Alison
+> 
+> Sure, will do that, thanks.
+> 
+> 
+> Ming
+> 
 > 
 
