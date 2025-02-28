@@ -1,184 +1,121 @@
-Return-Path: <linux-kernel+bounces-538500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE271A4996D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7D3A49975
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0F21735ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0569618992B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF926B2B2;
-	Fri, 28 Feb 2025 12:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662B926D5D2;
+	Fri, 28 Feb 2025 12:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VY37AO1Q"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pgtwn2pA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123EC25E471;
-	Fri, 28 Feb 2025 12:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CAE26B2C7;
+	Fri, 28 Feb 2025 12:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746158; cv=none; b=TGkbHO545G99GvLFRI5fLhguOE9g5gA4mquni/qKqgcwrmi75ctOfwfX5F/zqZ6mQW2vwor1sqeXb9o1CcZHOefvCbtda9vVeX/JLDOy4E1DOvCCu6fhbombG0U36z5Q41w/GuiL5fS4tj5IT1O8a/H/iLQLkga/jETzFkna3W8=
+	t=1740746184; cv=none; b=euKnYNNUN9Ddz87hygiCIYau4GIkxKUw9DuSXBVG8FxkMnh0kf4+QEoBqw9y8DLkanYJg4s2/xrc5Zs1nS0abLquyHcLocKEuDD2LJeyvsozYW8vBzimirs31W2XYoihuVtXSJArB1M7ChuIKsdCcQlpejTY/OFIuW8tWfcUqZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746158; c=relaxed/simple;
-	bh=895BS+4b6ZONcSoX3CU1uCXlX4Dl0BbuLESUXofkzzo=;
+	s=arc-20240116; t=1740746184; c=relaxed/simple;
+	bh=vqeog+EN2bX2aiWpmGWUlXtzaHOGY/1W8MBz3Y+xE9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scYjcZ9G8Q5GfgQTmzAnXtwTEEubx4JM9J4rzmoUTcevHpG8l1al/lQPhHI8h6EW8gyhtOeVcM4NyEG5hcT4BAzI+mLKQcXUtooExLqSJXwDx/qi1a0mTEwXpwS/VkYO02RRBmAQsWKTOEUzZ8bdeGESVqUv78rZUNHmNdq8ddM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VY37AO1Q; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-547bcef2f96so2144775e87.1;
-        Fri, 28 Feb 2025 04:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740746155; x=1741350955; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RqMmtPFDDrQVgCpwXp60P+80B3nL7OF4m1P19IZvz+8=;
-        b=VY37AO1Q6CJaNITc4oNTkOq7WtNter9erxYI+deZdR/VNzsoTqQAEmYV0/zKatsa/n
-         5sAhogw6hnizbU64pGix8lwvw3xDMD8A9ap4Kn79hyiHt2beqKTPHKOPJ18nlX3rQHWB
-         WMwAydXmAwR95bYAEDorLvZdy2HOIgB/r6X33+HGYVmfvKc0PMjYyLZmTRcVeclVBNr9
-         i7iYG6YnlPcucIardYQGGtPTuWG3UQUcuWsb1yKE4gGjJuiBu+YiNJvvS6L9E30rD9hc
-         /jNHS4o5yLUX5jW8Bc1ngr+v+IBTSI3ELKuVB9ZUxvPNjhNyNKGsBrd1w+2KwlKbxea9
-         G6sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746155; x=1741350955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RqMmtPFDDrQVgCpwXp60P+80B3nL7OF4m1P19IZvz+8=;
-        b=eITdT7hRvoMnXlF/LswcxfggyqCj2XyOKPGNCi0+3tbjKXkakVr8Mo2Fz+YjJuPz2w
-         tDex2441WU4ZMicbOqmoHuHQLqOe2kXGVK8hDz7DltaX+8hwrC6+skT7haVLwRd2lfns
-         EnFAb2E+697pjaAiF8ICWqvIDPmUTYNmgqAZXs6kJWluBMCq+Xc7yAzfrc6UmXaL3s/3
-         zs1+7GCkawuuCdDpRFgKClJzb0ecpNPqro7TIJsdX6n6yOiUG03oMCM0NDKwQ1uMZvkP
-         SgwrV1+YNB0B3xA/o7R6BveYQwLOavCrQmIiOTuHdu7Z2XICxKbwFD8aNqQoLkUwAGSJ
-         PEeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa+LboJTzHdEVi6F0ITJilVKznWE7HbF7ZuSTd9wKgNGNjQ1DieSsImfySnTyb++FD1RIHiqZGdnc0@vger.kernel.org, AJvYcCXGEs13gcaMRUSS9zq5CnMA1cii817LhxYPyLQW9R2tyQF7dGfmdMmzGgrotglAKSPf5Cjl8z0oRfVWPkid@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk5asNveST2QP+d/HvslpbaFZteUHwrRqxRStUOW/cCY1LcCU7
-	UpkqhcR/AVDsdLm8Za8VtU5EujPwNpQo/pRG/dSe4cDXEkHnHFc3
-X-Gm-Gg: ASbGnctYGoBCJqrrhPVboI5xb9Bcm0dbP3Y6FKNwQWO+mY72tklix6du8xWcCDDD4a3
-	aufVH6RkP0zmuIwR908wCmNT99BOsppu6+tDaiAI42G0/AnhOt+A6WLd1UKd752x+roB2894BYe
-	vdWCo7RMmPPjhqmHmB/l8mcsR+4hQCQhtGm43Alfhr1zsJvhi1lR0u4Fnr5yloZXXH+Qu/uWsDv
-	NZniJDcZDj9xVXc+/mxte8mTiCDjckswDSijHd9y1z7lOtAt/SakLoOKduQuohbG9NwNdjMai/+
-	AoVK2jf5V6TFbN8Eq/UoBReBtDTKKzqh
-X-Google-Smtp-Source: AGHT+IFgMBj7fY02qCQ25l9Rhnznqe3ywOhaOTHfy9yesk9dv6hwcnvTwRXz4kqJBFmxGo8xBtMDwA==
-X-Received: by 2002:ac2:4f01:0:b0:545:a1a:556f with SMTP id 2adb3069b0e04-5494c36ef31mr1529808e87.50.1740746154720;
-        Fri, 28 Feb 2025 04:35:54 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494e8399c4sm234882e87.213.2025.02.28.04.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 04:35:53 -0800 (PST)
-Date: Fri, 28 Feb 2025 14:35:48 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 2/4] gpio: Add a valid_mask getter
-Message-ID: <50003ead72a41672ad25e90b7a273ce48f04c8c4.1740745270.git.mazziesaccount@gmail.com>
-References: <cover.1740745270.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+dzytBGNalIP90g2pBd8Z3zqSGYvQLSAewaUzg7xmNzsQLtCJs+cP8C571vCozR6MykbT5Y7nySGCwKuUjS89QY8ga56aYcTm7jBuIlJXuGB7EFY5b6/OgEMmgPrQhv3J2MAsZXG0CNV/6hLATEX0hYpsQjwlvkp73vzK+jfjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pgtwn2pA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6BF5240E019C;
+	Fri, 28 Feb 2025 12:36:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uOzTg9OTRRke; Fri, 28 Feb 2025 12:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740746172; bh=d+7iCbD0MH0JfF7vpzIrnQ9Kowm4mXHLEaQ+b3Y1JW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pgtwn2pATXop2a1wTMZOHoaew/0IWEdw+UF3Gi3IU1DIikK1PEEwf5hVO4oeipGg7
+	 XmNGGY+i2vFCZv9If6kr95/s7kla8sK1iUuq4EsirI0ILx0M2PLf9t8Qg73NRAthVX
+	 uLSK3im8fc+b0n/opXcTomYpm4Fb0FYZpaSXsYqYg2sybySSDlh+cgpUfACH1c8Qnd
+	 JFOW4bFkNgHFHtWDbBlT1Vq2NmW8G6fYco+XDegjUGgW7pxXHooV3SPEy5y7X+wJmb
+	 GHOesh+t3ouh0hbXb45PmwfGPQH/qSQZIQ0S9LRv5u2gYgx2mNzbhFGGvCCIC+ac8e
+	 R9NbR+KxQSHZAbcpVBbwZXKadgzE2NYn4iR02ii7gd1c0EArqUSn6S07dLEeX23cF0
+	 eehBexVXcfiqiPiXdJoRoDVluaKPTlReGO8HYLh9ZrWSLqCM4z2WJrMPQa07qIcBC7
+	 8d6lrC65MoFZGTSCocHXQfHA3PxhpzKCfA8dm3TaeaplRRHXOQEOgMByvgeUWqjQlQ
+	 EueZDnaqpF9feZR50wMCZ6Vrhib7nVVvN9UXSlqCFrcx/bWz9uFz11BAZY0j7WDxdd
+	 kmEQBj7WGnXyL+ecGs1gqKi+brXm/U/XEm/49yfaZeqP6bUCCc3iwBBVYCkUsb8sxm
+	 WZBTA8XXkjWauC1sLzFvRvlQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B73F440E0173;
+	Fri, 28 Feb 2025 12:35:54 +0000 (UTC)
+Date: Fri, 28 Feb 2025 13:35:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+Message-ID: <20250228123553.GCZ8GtqbSq9kaYOaCi@fat_crate.local>
+References: <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <SJ1PR11MB60836781C4CE26C4B43AFF0BFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250219081037.GAZ7WR_YmRtRvN_LKA@fat_crate.local>
+ <SJ1PR11MB6083F7AC9C5AED072141B8CAFCC52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250220111903.GDZ7cPp1qVq3t9Jgs6@fat_crate.local>
+ <SJ1PR11MB608335ACA7AEC51F7F6A75D2FCC42@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <4e13bef2-7402-4f75-8f0c-4a3cc210c5a6@linux.alibaba.com>
+ <20250224220146.GBZ7zsSnXLftyqWzW_@fat_crate.local>
+ <6f34c17c-4113-46d9-aa66-53ff5a1feed5@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Sv5ixRUglUVj6IOD"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1740745270.git.mazziesaccount@gmail.com>
+In-Reply-To: <6f34c17c-4113-46d9-aa66-53ff5a1feed5@linux.alibaba.com>
 
+On Tue, Feb 25, 2025 at 09:51:25AM +0800, Shuai Xue wrote:
+> It depends on the forked process which trying to read the poison.
 
---Sv5ixRUglUVj6IOD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And? Can you try creating more processes and see what happens then?
 
-The valid_mask member of the struct gpio_chip is unconditionally written
-by the GPIO core at driver registration. It shouldn't be directly
-populated by drivers. This can be prevented by moving it from the struct
-gpio_chip to struct gpio_device, which is internal to the GPIO core.
+> IMHO, we should send a SIGBUS signal to the processes running on the CPUs that
+> detect a memory error for dirty page, which is the current behavior in the
+> memory_failure.
 
-As a preparatory step, provide a getter function which can be used by
-those drivers which need the valid_mask information.
+And for all those other processes which do get to see the already
+poisoned/clean page, they should continue on their merry way instead of
+getting killed by a SIGBUS?
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-v1 =3D> v2:
-  - New patch
-  (spin-off from discussion to v1:
-   https://lore.kernel.org/all/Z71qphikHPGB0Yuv@mva-rohm/)
----
- drivers/gpio/gpiolib.c      | 16 ++++++++++++++++
- include/linux/gpio/driver.h |  1 +
- 2 files changed, 17 insertions(+)
+-- 
+Regards/Gruss,
+    Boris.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 98543d79f69c..7e36894bab11 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -703,6 +703,22 @@ static int gpiochip_add_pin_ranges(struct gpio_chip *g=
-c)
- 	return 0;
- }
-=20
-+/**
-+ * gpiochip_query_valid_mask - return the GPIO validity information
-+ * @gc:	gpio chip which validity information is queried
-+ *
-+ * Returns: bitmap representing valid GPIOs or NULL if all GPIOs are valid
-+ *
-+ * Some GPIO chips may support configurations where some of the pins aren't
-+ * available. These chips can have valid_mask set to represent the valid
-+ * GPIOs. This function can be used to retrieve this information.
-+ */
-+const unsigned long *gpiochip_query_valid_mask(const struct gpio_chip *gc)
-+{
-+	return gc->valid_mask;
-+}
-+EXPORT_SYMBOL_GPL(gpiochip_query_valid_mask);
-+
- bool gpiochip_line_is_valid(const struct gpio_chip *gc,
- 				unsigned int offset)
- {
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 2dd7cb9cc270..7dfb8341b0e2 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -678,6 +678,7 @@ bool gpiochip_line_is_open_source(struct gpio_chip *gc,=
- unsigned int offset);
- /* Sleep persistence inquiry for drivers */
- bool gpiochip_line_is_persistent(struct gpio_chip *gc, unsigned int offset=
-);
- bool gpiochip_line_is_valid(const struct gpio_chip *gc, unsigned int offse=
-t);
-+const unsigned long *gpiochip_query_valid_mask(const struct gpio_chip *gc);
-=20
- /* get driver data */
- void *gpiochip_get_data(struct gpio_chip *gc);
---=20
-2.48.1
-
-
---Sv5ixRUglUVj6IOD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfBraQACgkQeFA3/03a
-ocXyagf/XKv7IOZGmHu6xCtTLESzbdhtzNCXjsiq4FdA4nYJN9JRR6NtB5vtITuW
-kxvTTKQiJa39rk7uyoKQn9xcc1Q/3ExV1Zl0CenqkpboMZpc4nQJGmTs7vHX2jYW
-ESzAj9L5JWxQNz8K7NRENMxP/F7121NjyDnJy1ljtW2BPWymZWunTBnkv+OA8qlN
-DRGUqKU/UoKmU2c4ggsx7aQsRURKWWmY3I3nqM7kBSttvk0r29Le4qjIdJlHHfh7
-PqXPtPnrQEA01wpIO4sIYALKNa8pAiurrIytgXQfelBTGOCeZ51nA8raJfyn48FF
-pCtW6gJKe/VCltxu39X8sG20qtUqdw==
-=CF52
------END PGP SIGNATURE-----
-
---Sv5ixRUglUVj6IOD--
+https://people.kernel.org/tglx/notes-about-netiquette
 
