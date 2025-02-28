@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-539234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C07EA4A24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:59:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57578A4A224
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126BE3B6FE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1541418990ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2612C1F872F;
-	Fri, 28 Feb 2025 18:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DCE1F4CBA;
+	Fri, 28 Feb 2025 18:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fh564Eqx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVRfau7c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F241C548C;
-	Fri, 28 Feb 2025 18:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE5277010;
+	Fri, 28 Feb 2025 18:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740769127; cv=none; b=a9y88Zk2bJuZF5v6XPpbsFCdRcZ+l2y961kPQRffcblKRn1l1YAdncpuTGlNNXpWsgS60GgoBnNJyT/B230i6lbRLSoj/5Alzmw91ckvKdwqcX/OETaJNisdqie5DzPxToehp8WTQ3EaNqUuwVzwq5FczUr0KEyf4bMF1QKCtSI=
+	t=1740768700; cv=none; b=BiT+jY6iqleS9SklVtZRZ0aMCxuN3axJ/mj0eExwXPbY9HE8c83IHKWMxP5QPoAHGyXZCACxSVdYZ99FWPRj5YorsOAYTWGmgNjEs53nxX+18nTOsKQ8isFwToGZj3ljr/gcuSXLUYxB4eIl/7rY6j9paqLWb+QvD91eeRYECOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740769127; c=relaxed/simple;
-	bh=CIA17vKj86QZVvcuBdGngR2g3nwrDmSjGoJQOl2IIs4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MGhZWCEhTGEwvfkd77sMIZymsJbwvG+F5aSQ2iYllsR44GTN/AdnW279FXuJh0BwzwqZUXLx5lGCzBDVWx1bArP74KVHNEoBsj25Izh2DtG6FaVpK8ZVKJ0bNDwxRw/MSuXbmwY5DGiRKeNpqZGFiDfSEtKU28fwCIzu12cFftU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fh564Eqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82186C4CED6;
-	Fri, 28 Feb 2025 18:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740769127;
-	bh=CIA17vKj86QZVvcuBdGngR2g3nwrDmSjGoJQOl2IIs4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Fh564EqxRGkM4ET1BYBiFfp6RT69LGTwBPr/GQ/PAMqX3Y0D2RN+/ad6M4RZL1gGi
-	 5/DSOCyVblBbt7bHCOG0S5g6FYcuHeDOvCdkWdKnx1ZnXvE2vMAaSL9zReGjcS5u8F
-	 s4zl61WKhzRfdn0Y+v5pRIZaP4SbfRL0/NaA/noarNaUCP4GN6uRjB9ZND9LEaRzhQ
-	 /BmP1DcWGYEua/HEb3alrccBqVw+oW4yyr/xDF8BuLXdJ2moQy8aHED3KzfzE7rRPG
-	 4DIkfeMY+SJJh2uBaLG9HhKIjrmxhBbUPHGe8tFIOP7FLqcd6fwuJ5Ygpi53x9OCD+
-	 J79qRh6kVuGMQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Petr Mladek" <pmladek@suse.com>,  "Steven Rostedt"
- <rostedt@goodmis.org>,  "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>,  "Rasmus Villemoes"
- <linux@rasmusvillemoes.dk>,  "Sergey Senozhatsky"
- <senozhatsky@chromium.org>,  "Andrew Morton" <akpm@linux-foundation.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,  "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
- <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "David
- Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 2/5] rust: macros: support additional tokens in quote!
-In-Reply-To: <20250228-export-macro-v2-2-569cc7e8926c@google.com> (Alice
-	Ryhl's message of "Fri, 28 Feb 2025 12:39:31 +0000")
-References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
-	<2uURW8_Sq6S8VV2UoJJ6bmoH71NWq1X6b1niImKX2mpjudmVM5tNapWA4OLWXoZ8nmcM--z2XtAdgKiNPx8qQg==@protonmail.internalid>
-	<20250228-export-macro-v2-2-569cc7e8926c@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 28 Feb 2025 19:51:21 +0100
-Message-ID: <874j0dnbrq.fsf@kernel.org>
+	s=arc-20240116; t=1740768700; c=relaxed/simple;
+	bh=pkwgeMwCKf80SIaXk8KhThxONMPc4p/Xo+BvX6bjIBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feISJWPoyCbBIPUhU8D6NaD6Xfr7OE4veQQBljvmyrx/3j0KrUi/J+glwQF4EIuAgZ7JUzIDGtPPAToTnTNhA3GhxLQ5RR6SsmlUIO+Z1M63+FAlzxC2TYN0gZeQnA5AZN6zt0NyEq8XFHr2YenyVRayNdvrjEoDq45sPxlwFEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVRfau7c; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740768699; x=1772304699;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pkwgeMwCKf80SIaXk8KhThxONMPc4p/Xo+BvX6bjIBg=;
+  b=MVRfau7coZVJR5o8DyvDzVGPHXN/N+xfDl3t2BBaV8KzOF9F9yjqMffB
+   JYfFasHXdS3W6ttYubPug5S/RJ+DcvoMwUtI4BuK8j/nXmTMgFUa9HwLr
+   5RrZnGacsZhsuyxb6+ajbehED78dxEQ3eEFLzQcYhfVXezN4KKjvWcuge
+   ctnTbjBcsaiJt8qWxqIUwP6FL905GsmvrgGK4RqoEEgyqJ0cuiRzJXnue
+   YaYDvK/o/jqTlAslV+wI3pH1qnyITskGnuSl2dV0rs8gEfKWBEi9ioABn
+   89i0phpgMQt8hP6iu4KOKtnoXywCjP149W6hjKH9dcgCqCQY28G5eIBid
+   w==;
+X-CSE-ConnectionGUID: UuNc/GEjQyWLkGsdDTt+hA==
+X-CSE-MsgGUID: 0/Koq0/CRuiTaLlquxFtkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="67083622"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="67083622"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:51:38 -0800
+X-CSE-ConnectionGUID: aSyNmCmeRwqkQi0uhisfRA==
+X-CSE-MsgGUID: IBifUjH4SWmgzTlo7TfT5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="117206022"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:51:31 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1to5SJ-0000000G3mv-0yeh;
+	Fri, 28 Feb 2025 20:51:27 +0200
+Date: Fri, 28 Feb 2025 20:51:27 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v4 02/10] property: Add
+ device_get_child_node_count_named()
+Message-ID: <Z8IFr6LxK8m0kaDF@smile.fi.intel.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+ <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
+ <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+On Fri, Feb 28, 2025 at 11:07:24AM -0600, Rob Herring wrote:
+> On Mon, Feb 24, 2025 at 12:33 PM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
 
-> This gives the quote! macro support for the following additional tokens:
->
-> * The = token.
-> * The _ token.
-> * Using #my_var with variables of type Ident.
->
-> Additionally, some type annotations are added to allow cases where
-> groups are empty. For example, quote! does support () in the input, but
-> only when it is *not* empty. When it is empty, the compiler cannot infer
-> the item type of `tokens`.
->
-> These additional quote! features are used by a new proc macro that
-> generates code looking like this:
->
-> 	const _: () = {
-> 	    if true {
-> 	        ::kernel::bindings::#name
-> 	    } else {
-> 	        #name
-> 	    };
-> 	};
->
-> where #name has type Ident.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+...
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> > +unsigned int device_get_child_node_count_named(const struct device *dev,
+> > +                                              const char *name)
+> 
+> I think this should be implemented as
+> fwnode_get_child_node_count_named() with the device variant being just
+> a wrapper.
 
+Good catch! That's also added to our misunderstanding with Matti who didn't get
+the role of dev_of_node() vs. dev_fwnode() in the first place.
 
-Best regards,
-Andreas Hindborg
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
