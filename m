@@ -1,226 +1,341 @@
-Return-Path: <linux-kernel+bounces-537932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906DFA49294
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7B1A4928E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A05016FF94
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:59:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DED16FEE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F071D6DA3;
-	Fri, 28 Feb 2025 07:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573AF1D5CFA;
+	Fri, 28 Feb 2025 07:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KVQzTsVV"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J3HpjlTU"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102C31D61B9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464472CCC0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729521; cv=none; b=rAiNxCjSa5/7a5hHnuniSSdSI4OCk0CS7AXz39pGogCIU5KnrtXKrlDjKTlp7ubAbc4vXDHKy/J3sBLY0XkLLsCTYXseVc6brECpYvCbhriUek80PzCve4GGnq4zQDTNWgK5FUfe/24LAFwabWn3/uZhDTSm+iAulcTSqWwnlNM=
+	t=1740729498; cv=none; b=Z0LrzKFWL/CN3suCrtfBQiODcDv4a7JjucrOACbCwIf0ncPFWIWP9Kv4703LXUYFir4ZBhzxz3MLTw6wrndg5jx5+p4KtRzZ+INPNBc6NwJg3cccIImH+WSaPsK0UgffTM8Podx+SzpdEmwAh9CkWWqyKNog2iimSSlW4C9ZpLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729521; c=relaxed/simple;
-	bh=zA6PXsDktXbXxM6E2AG0NGTa/L70w9OXygFrIpQLjFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O93z9pAbI7aetI040TX9vun8BhniRJQ3yMGq8aYVI/WDZhdI7UNyLnn96wtS68kJd6STOxJbi9WSeGLQouG9/zUA7G8RUwWZwLCD5R3gF64bK0exk8F+mrdEQnY/4g1FpUjWyOQrQQQR5/syvIGPhIsMemAJX5jPwEatQvpgKRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KVQzTsVV; arc=none smtp.client-ip=95.215.58.187
+	s=arc-20240116; t=1740729498; c=relaxed/simple;
+	bh=NT6VluaEJiIQJFgqWHwcRU+IaNYs6C7ttyol+KyS2Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gAnPV5OwxoQ5iixK8lpJohq5wFxzjXj8wBNbDbI5VwriR0TAYgLxV9JjSAJ4QX6eU/cAs6E2UVhcFcybmDnVcKfAJSqk3IbM7B1eSEWa5361McW97oUUl+uKQqWSZD0B/aRgGrXFJJLWO3MM/CKQQrI4NwmkYW1uXs2MK+boWtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J3HpjlTU; arc=none smtp.client-ip=91.218.175.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+Date: Fri, 28 Feb 2025 13:28:08 +0530
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740729517;
+	t=1740729494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jgR5BcL3MvfMipx+x4bMFzdCySvKkv9t6LJsU3AWxSI=;
-	b=KVQzTsVVF++szQiHnUrzJKSOalzgMh4NejwrixnLYUQE8tb2MjSfqWnQ+d2+qFkNoVDAT3
-	I84I69ippat79QUZDAFdLwExq1udUPcG/9iMdGZ65f8pjfBnsMXVjxE4uNRuUpXvaxUt94
-	59CEZ1R0Z9C1uw+1ODGG9YuchIaZMT8=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH 2/3] page_counter: track failcnt only for legacy cgroups
-Date: Thu, 27 Feb 2025 23:58:07 -0800
-Message-ID: <20250228075808.207484-3-shakeel.butt@linux.dev>
-In-Reply-To: <20250228075808.207484-1-shakeel.butt@linux.dev>
-References: <20250228075808.207484-1-shakeel.butt@linux.dev>
+	bh=e3qtsbSY2qbVhXUHHet1nLnHazcFTu6U/AIbEu/TP9k=;
+	b=J3HpjlTUxQ5DTHgerXk7/Oz2qPcE7YaIdVOG057Yyi0jRWcvHKuk1y5YvgvMgZcqlP8pTw
+	Yw+0z08NFPHq9muRhnZA8qVGIb+xsRBhCpC7eJhyQvxAvTrvXFLTVyGy1AxmqJCosu1Llj
+	dj9SlAaR7P9WYYBp31eOg4W89Ux4Dzs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, 
+	r-donadkar@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH v4 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq
+ interrupt and add support for VIDIOC_LOG_STATUS
+Message-ID: <dxgnjy3cah3q45gb3zv2zxyfgsvkilxhwjerqogsp2xoxkzhmu@cyr7z6xr54sq>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250227082920.744908-1-y-abhilashchandra@ti.com>
+ <20250227082920.744908-3-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sj275sijlhe6pcb4"
+Content-Disposition: inline
+In-Reply-To: <20250227082920.744908-3-y-abhilashchandra@ti.com>
 X-Migadu-Flow: FLOW_OUT
 
-Currently page_counter tracks failcnt for counters used by v1 and v2
-controllers. However failcnt is only exported for v1 deployment and thus
-there is no need to maintain it in v2. The oom report does expose
-failcnt for memory and swap in v2 but v2 already maintains MEMCG_MAX and
-MEMCG_SWAP_MAX event counters which can be used.
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- include/linux/page_counter.h |  4 +++-
- mm/hugetlb_cgroup.c          | 31 ++++++++++++++-----------------
- mm/memcontrol.c              | 12 ++++++++++--
- mm/page_counter.c            |  4 +++-
- 4 files changed, 30 insertions(+), 21 deletions(-)
+--sj275sijlhe6pcb4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq
+ interrupt and add support for VIDIOC_LOG_STATUS
+MIME-Version: 1.0
 
-diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
-index 46406f3fe34d..e4bd8fd427be 100644
---- a/include/linux/page_counter.h
-+++ b/include/linux/page_counter.h
-@@ -28,12 +28,13 @@ struct page_counter {
- 	unsigned long watermark;
- 	/* Latest cg2 reset watermark */
- 	unsigned long local_watermark;
--	unsigned long failcnt;
-+	unsigned long failcnt; /* v1-only field */
- 
- 	/* Keep all the read most fields in a separete cacheline. */
- 	CACHELINE_PADDING(_pad2_);
- 
- 	bool protection_support;
-+	bool track_failcnt;
- 	unsigned long min;
- 	unsigned long low;
- 	unsigned long high;
-@@ -58,6 +59,7 @@ static inline void page_counter_init(struct page_counter *counter,
- 	counter->max = PAGE_COUNTER_MAX;
- 	counter->parent = parent;
- 	counter->protection_support = protection_support;
-+	counter->track_failcnt = false;
- }
- 
- static inline unsigned long page_counter_read(struct page_counter *counter)
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index bb9578bd99f9..58e895f3899a 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -101,10 +101,9 @@ static void hugetlb_cgroup_init(struct hugetlb_cgroup *h_cgroup,
- 	int idx;
- 
- 	for (idx = 0; idx < HUGE_MAX_HSTATE; idx++) {
--		struct page_counter *fault_parent = NULL;
--		struct page_counter *rsvd_parent = NULL;
-+		struct page_counter *fault, *fault_parent = NULL;
-+		struct page_counter *rsvd, *rsvd_parent = NULL;
- 		unsigned long limit;
--		int ret;
- 
- 		if (parent_h_cgroup) {
- 			fault_parent = hugetlb_cgroup_counter_from_cgroup(
-@@ -112,24 +111,22 @@ static void hugetlb_cgroup_init(struct hugetlb_cgroup *h_cgroup,
- 			rsvd_parent = hugetlb_cgroup_counter_from_cgroup_rsvd(
- 				parent_h_cgroup, idx);
- 		}
--		page_counter_init(hugetlb_cgroup_counter_from_cgroup(h_cgroup,
--								     idx),
--				  fault_parent, false);
--		page_counter_init(
--			hugetlb_cgroup_counter_from_cgroup_rsvd(h_cgroup, idx),
--			rsvd_parent, false);
-+		fault = hugetlb_cgroup_counter_from_cgroup(h_cgroup, idx);
-+		rsvd = hugetlb_cgroup_counter_from_cgroup_rsvd(h_cgroup, idx);
-+
-+		page_counter_init(fault, fault_parent, false);
-+		page_counter_init(rsvd, rsvd_parent, false);
-+
-+		if (!cgroup_subsys_on_dfl(hugetlb_cgrp_subsys)) {
-+			fault->track_failcnt = true;
-+			rsvd->track_failcnt = true;
-+		}
- 
- 		limit = round_down(PAGE_COUNTER_MAX,
- 				   pages_per_huge_page(&hstates[idx]));
- 
--		ret = page_counter_set_max(
--			hugetlb_cgroup_counter_from_cgroup(h_cgroup, idx),
--			limit);
--		VM_BUG_ON(ret);
--		ret = page_counter_set_max(
--			hugetlb_cgroup_counter_from_cgroup_rsvd(h_cgroup, idx),
--			limit);
--		VM_BUG_ON(ret);
-+		VM_BUG_ON(page_counter_set_max(fault, limit));
-+		VM_BUG_ON(page_counter_set_max(rsvd, limit));
- 	}
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 36b2dfbc86c0..030fadbd5bf2 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1572,16 +1572,23 @@ void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
- 	/* Use static buffer, for the caller is holding oom_lock. */
- 	static char buf[SEQ_BUF_SIZE];
- 	struct seq_buf s;
-+	unsigned long memory_failcnt;
- 
- 	lockdep_assert_held(&oom_lock);
- 
-+	if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
-+		memory_failcnt = atomic_long_read(&memcg->memory_events[MEMCG_MAX]);
-+	else
-+		memory_failcnt = memcg->memory.failcnt;
-+
- 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
- 		K((u64)page_counter_read(&memcg->memory)),
--		K((u64)READ_ONCE(memcg->memory.max)), memcg->memory.failcnt);
-+		K((u64)READ_ONCE(memcg->memory.max)), memory_failcnt);
- 	if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		pr_info("swap: usage %llukB, limit %llukB, failcnt %lu\n",
- 			K((u64)page_counter_read(&memcg->swap)),
--			K((u64)READ_ONCE(memcg->swap.max)), memcg->swap.failcnt);
-+			K((u64)READ_ONCE(memcg->swap.max)),
-+			atomic_long_read(&memcg->memory_events[MEMCG_SWAP_MAX]));
- #ifdef CONFIG_MEMCG_V1
- 	else {
- 		pr_info("memory+swap: usage %llukB, limit %llukB, failcnt %lu\n",
-@@ -3622,6 +3629,7 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
- 		page_counter_init(&memcg->memory, &parent->memory, memcg_on_dfl);
- 		page_counter_init(&memcg->swap, &parent->swap, false);
- #ifdef CONFIG_MEMCG_V1
-+		memcg->memory.track_failcnt = !memcg_on_dfl;
- 		WRITE_ONCE(memcg->oom_kill_disable, READ_ONCE(parent->oom_kill_disable));
- 		page_counter_init(&memcg->kmem, &parent->kmem, false);
- 		page_counter_init(&memcg->tcpmem, &parent->tcpmem, false);
-diff --git a/mm/page_counter.c b/mm/page_counter.c
-index af23f927611b..661e0f2a5127 100644
---- a/mm/page_counter.c
-+++ b/mm/page_counter.c
-@@ -121,6 +121,7 @@ bool page_counter_try_charge(struct page_counter *counter,
- {
- 	struct page_counter *c;
- 	bool protection = track_protection(counter);
-+	bool track_failcnt = counter->track_failcnt;
- 
- 	for (c = counter; c; c = c->parent) {
- 		long new;
-@@ -146,7 +147,8 @@ bool page_counter_try_charge(struct page_counter *counter,
- 			 * inaccuracy in the failcnt which is only used
- 			 * to report stats.
- 			 */
--			data_race(c->failcnt++);
-+			if (track_failcnt)
-+				data_race(c->failcnt++);
- 			*fail = c;
- 			goto failed;
- 		}
--- 
-2.43.5
+Hi Abhilash,
 
+Thanks for the patch.
+
+On Thu, Feb 27, 2025 at 01:59:20PM +0530, Yemike Abhilash Chandra wrote:
+> Enable the csi2rx_err_irq interrupt to record any errors during streaming
+> and also add support for VIDIOC_LOG_STATUS ioctl. This allows users to
+> retrieve detailed error information during streaming, including FIFO
+> overflow, packet errors, and ECC errors.
+>=20
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> Tested-by: Jai Luthra <jai.luthra@linux.dev>
+> ---
+>=20
+> Changes in v4:
+> - Use dev_name(&pdev->dev) while requesting the IRQ handler
+> - Fix minor issues such as avoiding magic numbers, splitting long lines
+>   of code and removing extra spaces
+> - Make some minor changes in the commit messages.
+>=20
+
+Reviewed-by: Jai Luthra <jai.luthra@linux.dev>
+
+>  drivers/media/platform/cadence/cdns-csi2rx.c | 129 +++++++++++++++++++
+>  1 file changed, 129 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media=
+/platform/cadence/cdns-csi2rx.c
+> index cebcae196eec..30cf2da36023 100644
+> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+> @@ -57,6 +57,25 @@
+>  #define CSI2RX_LANES_MAX	4
+>  #define CSI2RX_STREAMS_MAX	4
+> =20
+> +#define CSI2RX_ERROR_IRQS_REG			0x28
+> +#define CSI2RX_ERROR_IRQS_MASK_REG		0x2C
+> +
+> +#define CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ	BIT(19)
+> +#define CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ	BIT(18)
+> +#define CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ	BIT(17)
+> +#define CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ	BIT(16)
+> +#define CSI2RX_FRONT_TRUNC_HDR_IRQ		BIT(12)
+> +#define CSI2RX_PROT_TRUNCATED_PACKET_IRQ	BIT(11)
+> +#define CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ		BIT(10)
+> +#define CSI2RX_SP_INVALID_RCVD_IRQ		BIT(9)
+> +#define CSI2RX_DATA_ID_IRQ			BIT(7)
+> +#define CSI2RX_HEADER_CORRECTED_ECC_IRQ	BIT(6)
+> +#define CSI2RX_HEADER_ECC_IRQ			BIT(5)
+> +#define CSI2RX_PAYLOAD_CRC_IRQ			BIT(4)
+> +
+> +#define CSI2RX_ECC_ERRORS		GENMASK(7, 4)
+> +#define CSI2RX_PACKET_ERRORS		GENMASK(12, 9)
+> +
+>  enum csi2rx_pads {
+>  	CSI2RX_PAD_SINK,
+>  	CSI2RX_PAD_SOURCE_STREAM0,
+> @@ -71,9 +90,32 @@ struct csi2rx_fmt {
+>  	u8				bpp;
+>  };
+> =20
+> +struct csi2rx_event {
+> +	u32 mask;
+> +	const char *name;
+> +};
+> +
+> +static const struct csi2rx_event csi2rx_events[] =3D {
+> +	{ CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 3 FIFO dete=
+cted" },
+> +	{ CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 2 FIFO dete=
+cted" },
+> +	{ CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 1 FIFO dete=
+cted" },
+> +	{ CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 0 FIFO dete=
+cted" },
+> +	{ CSI2RX_FRONT_TRUNC_HDR_IRQ, "A truncated header [short or long] has b=
+een received" },
+> +	{ CSI2RX_PROT_TRUNCATED_PACKET_IRQ, "A truncated long packet has been r=
+eceived" },
+> +	{ CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ, "A truncated long packet has been rec=
+eived. No payload" },
+> +	{ CSI2RX_SP_INVALID_RCVD_IRQ, "A reserved or invalid short packet has b=
+een received" },
+> +	{ CSI2RX_DATA_ID_IRQ, "Data ID error in the header packet" },
+> +	{ CSI2RX_HEADER_CORRECTED_ECC_IRQ, "ECC error detected and corrected" },
+> +	{ CSI2RX_HEADER_ECC_IRQ, "Unrecoverable ECC error" },
+> +	{ CSI2RX_PAYLOAD_CRC_IRQ, "CRC error" },
+> +};
+> +
+> +#define CSI2RX_NUM_EVENTS		ARRAY_SIZE(csi2rx_events)
+> +
+>  struct csi2rx_priv {
+>  	struct device			*dev;
+>  	unsigned int			count;
+> +	int				error_irq;
+> =20
+>  	/*
+>  	 * Used to prevent race conditions between multiple,
+> @@ -95,6 +137,7 @@ struct csi2rx_priv {
+>  	u8				max_lanes;
+>  	u8				max_streams;
+>  	bool				has_internal_dphy;
+> +	u32				events[CSI2RX_NUM_EVENTS];
+> =20
+>  	struct v4l2_subdev		subdev;
+>  	struct v4l2_async_notifier	notifier;
+> @@ -124,6 +167,52 @@ static const struct csi2rx_fmt formats[] =3D {
+>  	{ .code	=3D MEDIA_BUS_FMT_BGR888_1X24,  .bpp =3D 24, },
+>  };
+> =20
+> +static void csi2rx_configure_error_irq_mask(void __iomem *base,
+> +					    struct csi2rx_priv *csi2rx)
+> +{
+> +	u32 error_irq_mask =3D 0;
+> +
+> +	error_irq_mask |=3D CSI2RX_ECC_ERRORS;
+> +	error_irq_mask |=3D CSI2RX_PACKET_ERRORS;
+> +
+> +	/*
+> +	 * Iterate through all source pads and check if they are linked
+> +	 * to an active remote pad. If an active remote pad is found,
+> +	 * calculate the corresponding bit position and set it in
+> +	 * mask, enabling the stream overflow error in the mask.
+> +	 */
+> +	for (int i =3D CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++) {
+> +		struct media_pad *remote_pad;
+> +
+> +		remote_pad =3D media_pad_remote_pad_first(&csi2rx->pads[i]);
+> +		if (remote_pad) {
+> +			int pad =3D i - CSI2RX_PAD_SOURCE_STREAM0;
+> +			u32 bit_mask =3D CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ << pad;
+> +
+> +			error_irq_mask |=3D bit_mask;
+> +		}
+> +	}
+> +
+> +	writel(error_irq_mask, base + CSI2RX_ERROR_IRQS_MASK_REG);
+> +}
+> +
+> +static irqreturn_t csi2rx_irq_handler(int irq, void *dev_id)
+> +{
+> +	struct csi2rx_priv *csi2rx =3D dev_id;
+> +	int i;
+> +	u32 error_status;
+> +
+> +	error_status =3D readl(csi2rx->base + CSI2RX_ERROR_IRQS_REG);
+> +
+> +	for (i =3D 0; i < CSI2RX_NUM_EVENTS; i++)
+> +		if (error_status & csi2rx_events[i].mask)
+> +			csi2rx->events[i]++;
+> +
+> +	writel(error_status, csi2rx->base + CSI2RX_ERROR_IRQS_REG);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static const struct csi2rx_fmt *csi2rx_get_fmt_by_code(u32 code)
+>  {
+>  	unsigned int i;
+> @@ -220,6 +309,9 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
+>  	reset_control_deassert(csi2rx->p_rst);
+>  	csi2rx_reset(csi2rx);
+> =20
+> +	if (csi2rx->error_irq >=3D 0)
+> +		csi2rx_configure_error_irq_mask(csi2rx->base, csi2rx);
+> +
+>  	reg =3D csi2rx->num_lanes << 8;
+>  	for (i =3D 0; i < csi2rx->num_lanes; i++) {
+>  		reg |=3D CSI2RX_STATIC_CFG_DLANE_MAP(i, csi2rx->lanes[i]);
+> @@ -332,6 +424,8 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>  	reset_control_assert(csi2rx->sys_rst);
+>  	clk_disable_unprepare(csi2rx->sys_clk);
+> =20
+> +	writel(0, csi2rx->base + CSI2RX_ERROR_IRQS_MASK_REG);
+> +
+>  	for (i =3D 0; i < csi2rx->max_streams; i++) {
+>  		writel(CSI2RX_STREAM_CTRL_STOP,
+>  		       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
+> @@ -363,6 +457,21 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
+>  	}
+>  }
+> =20
+> +static int csi2rx_log_status(struct v4l2_subdev *sd)
+> +{
+> +	struct csi2rx_priv *csi2rx =3D v4l2_subdev_to_csi2rx(sd);
+> +	unsigned int i;
+> +
+> +	for (i =3D 0; i < CSI2RX_NUM_EVENTS; i++) {
+> +		if (csi2rx->events[i])
+> +			dev_info(csi2rx->dev, "%s events: %d\n",
+> +				 csi2rx_events[i].name,
+> +				 csi2rx->events[i]);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
+>  {
+>  	struct csi2rx_priv *csi2rx =3D v4l2_subdev_to_csi2rx(subdev);
+> @@ -468,7 +577,12 @@ static const struct v4l2_subdev_video_ops csi2rx_vid=
+eo_ops =3D {
+>  	.s_stream	=3D csi2rx_s_stream,
+>  };
+> =20
+> +static const struct v4l2_subdev_core_ops csi2rx_core_ops =3D {
+> +	.log_status	=3D csi2rx_log_status,
+> +};
+> +
+>  static const struct v4l2_subdev_ops csi2rx_subdev_ops =3D {
+> +	.core		=3D &csi2rx_core_ops,
+>  	.video		=3D &csi2rx_video_ops,
+>  	.pad		=3D &csi2rx_pad_ops,
+>  };
+> @@ -705,6 +819,21 @@ static int csi2rx_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_cleanup;
+> =20
+> +	csi2rx->error_irq =3D platform_get_irq_byname_optional(pdev, "error_irq=
+");
+> +
+> +	if (csi2rx->error_irq < 0) {
+> +		dev_dbg(csi2rx->dev, "Optional interrupt not defined, proceeding witho=
+ut it\n");
+> +	} else {
+> +		ret =3D devm_request_irq(csi2rx->dev, csi2rx->error_irq,
+> +				       csi2rx_irq_handler, 0,
+> +				       dev_name(&pdev->dev), csi2rx);
+> +		if (ret) {
+> +			dev_err(csi2rx->dev,
+> +				"Unable to request interrupt: %d\n", ret);
+> +			goto err_cleanup;
+> +		}
+> +	}
+> +
+>  	ret =3D v4l2_subdev_init_finalize(&csi2rx->subdev);
+>  	if (ret)
+>  		goto err_cleanup;
+> --=20
+> 2.34.1
+>=20
+
+--sj275sijlhe6pcb4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmfBbJAACgkQQ96R+SSa
+cUU0DA//ZrlsUHPdTOPam9cfjAHM0g7Vuc/MAs8hjFpf9TJVLaNPcxKaSADiY4xP
+8l0nT8lJ+HBJbJen1OV0NmV9JQqM6NO3RAY87nhYzpKMvoMo3/2ilIF3ifnKjohZ
+d2iWXcoXFXgFlCmW5XaJkci58i2KOJjdRaO14vn23bRrYbpw2Q6iDt2FxelagsD2
+soUtNYb/TgAJehLTsqPUCqUhNuSiqf496SXXec2nGQZEtf3q9Ykb4DAXqAT2ltiF
+YMMNfB3Chx8Y+xh8fCoMydRQrPWwCw+zxe51ZR2pZe1gn4Ok9eZqnrMGSN3MgNYE
+uaTSn603NRBU/4YqJK6enpOoe5TNaSrPYxejp6SoZRRfUfP+BXUM3e9uY33pX0he
+OYZI1x7Upb4zqGGd7EbFvtcsYZtW2cDnUkot0RSxU8Bkwc8l+vze2Dvn/h8U5X3x
+HQ8O2iHcEJThtcVxi4clpafmEBT5em61D6oT+MJRPwUbafnFx4OsJ+SdBTXof9TO
+By1Lduy2x2zeF1jpADp0jvSgouIeaCS0qBBu1sS10yWflmAOlP62i7f5uRwyINJN
+bOYYmN170o0W6OvwU54G0rUZPWGC6Au8ZBopzKKW2oQndW6j/iY1gEpbpUCwb2vJ
+ElocKsLuPndltEmh82N1Z/VOPyU6ZdCVaE1qgItfQkXx4Ubqadc=
+=pbHG
+-----END PGP SIGNATURE-----
+
+--sj275sijlhe6pcb4--
 
