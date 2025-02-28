@@ -1,75 +1,204 @@
-Return-Path: <linux-kernel+bounces-538940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6364A49F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:39:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B15AA49F10
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD6A3B9C5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE6416810D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B2274267;
-	Fri, 28 Feb 2025 16:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B9GH67kh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC80928E7;
+	Fri, 28 Feb 2025 16:38:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF2F2702B7;
-	Fri, 28 Feb 2025 16:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E56254861
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760659; cv=none; b=fWIe62gl189P8a/w/K2t4udKXIz+mX5bKZEXRiutNmKyaXlXsAuqUYako4cckjIhmTw02a14VqsLnQtdfQREou+mR3Gg3pMTyO/mUs4LaPriGgFyYGxL425psHQ/mJ8lm0S5Dh4BZzYakdXDqkdaxNMVSGvWnn61e16ntjfCn8M=
+	t=1740760709; cv=none; b=RYjAzbJd9q2P79eZT4VK+cuizexBsDQeUoFe/Vl13ICaO5cDsD0LW1HeDD/8hcI2UpOVyZhiE60KAHa1aOWk6mN6SuCihcV5YELglRApsoxUNwwcrIg6k9Mf49GxxnBFcnn5XWqVpIavNm3o+BcVpEotPHMVJH97Ns/zwclVDOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760659; c=relaxed/simple;
-	bh=epNnDncNDPb3P9Gfrg3v/n733ph9wy4EFsXFRHFRvKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrJKTISgP49HvjnI7vuEUnOMKgGonQjPzG4AZOUfVKvMqoU4UPIHgRYNVA7kA9vcj0puOH1VtSJrgRxfR7nTpGW4AsPTPA5y9bKQxY0sSEFZFz2ebPWabLJVBWQAtH81JIdaDbnx+5mrjfKqYUN1K+CEvOxVxjaObpTQatqDgIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B9GH67kh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1VRZoqoHCK+crSI0o1Efw52ErTi5ppZiw43v7ZMPgsI=; b=B9GH67kh5Jx8WzgqtpIIffYyq3
-	PWDB2DLd/vOU1AwfV204wkdgFxp78886X72/Ob+ubLCt+jeR4DCJpFk4VoO2BUpK2M2oQI87XSI0D
-	3+dNH2QThUO2gaotwredUNBP3UQhuCf2nSiZ18yMiWTn0r2HRCWEOhldpdhbV3oGjP+I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1to3MX-0010OP-I6; Fri, 28 Feb 2025 17:37:21 +0100
-Date: Fri, 28 Feb 2025 17:37:21 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
-Message-ID: <51f829a0-43e2-4cb5-ac0f-a0098d53ce7b@lunn.ch>
-References: <mpearson-lenovo@squebb.ca>
- <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
- <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
- <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
- <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
- <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
+	s=arc-20240116; t=1740760709; c=relaxed/simple;
+	bh=QErM3wHjLyAkdDm7rcn/oamG2MYpwbwyh/uwrbQVH+Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AKiHqPQo1+RgKoihGhfltrnOweExC26luygHvaq5/AEr6WxppZN3uUnLc8F2PttA2e5QsS4lf2Z8bYpqBTvJYaoUXxYwVt2+z998TyppVh3hHS0NXvlJWz7skzqZerccHP4jS0xJ/KLvmHpt9WDg5cS49fQsf9IL3V95mvFjDj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1to3NI-0004MW-V4; Fri, 28 Feb 2025 17:38:08 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1to3NH-003KIL-36;
+	Fri, 28 Feb 2025 17:38:07 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1to3NH-000D1T-2r;
+	Fri, 28 Feb 2025 17:38:07 +0100
+Message-ID: <1fcf08fe37a8e14c4acae445d65bd1503b13b6d2.camel@pengutronix.de>
+Subject: Re: [PATCH 3/4] media: platform: qcom/iris: add support for vpu33
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vikash Garodia
+ <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 28 Feb 2025 17:38:07 +0100
+In-Reply-To: <20250225-topic-sm8x50-iris-v10-v1-3-128ef05d9665@linaro.org>
+References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
+	 <20250225-topic-sm8x50-iris-v10-v1-3-128ef05d9665@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> For the PHY - do you know a way of determining this easily?
+On Di, 2025-02-25 at 10:05 +0100, Neil Armstrong wrote:
+> The IRIS acceleration found in the SM8650 platforms uses the vpu33
+> hardware version, and requires a slighly different reset and power off
+> sequences in order to properly get out of runtime suspend.
+>=20
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/media/platform/qcom/iris/Makefile          |   1 +
+>  drivers/media/platform/qcom/iris/iris_vpu33.c      | 315 +++++++++++++++=
+++++++
+>  drivers/media/platform/qcom/iris/iris_vpu_common.h |   1 +
+>  3 files changed, 317 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/pl=
+atform/qcom/iris/Makefile
+> index 35390534534e93f4617c1036a05ca0921567ba1d..6b64c9988505afd9707c70444=
+9d60bb53209229f 100644
+> --- a/drivers/media/platform/qcom/iris/Makefile
+> +++ b/drivers/media/platform/qcom/iris/Makefile
+> @@ -21,6 +21,7 @@ qcom-iris-objs +=3D \
+>               iris_vdec.o \
+>               iris_vpu2.o \
+>               iris_vpu3.o \
+> +             iris_vpu33.o \
+>               iris_vpu_buffer.o \
+>               iris_vpu_common.o \
+> =20
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu33.c b/drivers/medi=
+a/platform/qcom/iris/iris_vpu33.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..128a050f206f99ec0d43b97ff=
+995fa50d5684150
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu33.c
+> @@ -0,0 +1,315 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights r=
+eserved.
+> + */
+> +
+> +#include <linux/iopoll.h>
+> +#include <linux/reset.h>
+> +
+> +#include "iris_instance.h"
+> +#include "iris_vpu_common.h"
+> +#include "iris_vpu_register_defines.h"
+> +
+> +#define WRAPPER_TZ_BASE_OFFS			0x000C0000
+> +#define AON_BASE_OFFS				0x000E0000
+> +#define AON_MVP_NOC_RESET			0x0001F000
+> +
+> +#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
+> +#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
+> +#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+> +#define REQ_POWER_DOWN_PREP			BIT(0)
+> +#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+> +#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+> +#define CORE_CLK_RUN				0x0
+> +
+> +#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
+> +#define CTL_AXI_CLK_HALT			BIT(0)
+> +#define CTL_CLK_HALT				BIT(1)
+> +
+> +#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
+> +#define RESET_HIGH				BIT(0)
+> +
+> +#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
+> +#define CORE_BRIDGE_SW_RESET			BIT(0)
+> +#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
+> +
+> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
+> +#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
+> +#define MSK_CORE_POWER_ON			BIT(1)
+> +
+> +#define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
+> +#define VIDEO_NOC_RESET_REQ			(BIT(0) | BIT(1))
+> +
+> +#define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
+> +
+> +#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
+> +
+> +#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
+> +#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
+> +
+> +#define AON_WRAPPER_MVP_NOC_CORE_SW_RESET	(AON_BASE_OFFS + 0x18)
+> +#define SW_RESET				BIT(0)
+> +#define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
+> +#define NOC_HALT				BIT(0)
+> +#define AON_WRAPPER_SPARE			(AON_BASE_OFFS + 0x28)
+> +
+> +#define VCODEC_DMA_SPARE_3 0x87B8
+> +
+> +static int reset_control_bulk_assert_id(int num_rstcs,
+> +					struct reset_control_bulk_data *rstcs,
+> +					char *id)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < num_rstcs; ++i) {
+> +		if (!strcmp(rstcs[i].id, id))
+> +			return reset_control_assert(rstcs[i].rstc);
+> +	}
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +static int reset_control_bulk_deassert_id(int num_rstcs,
+> +					  struct reset_control_bulk_data *rstcs,
+> +					  char *id)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < num_rstcs; ++i) {
+> +		if (!strcmp(rstcs[i].id, id))
+> +			return reset_control_deassert(rstcs[i].rstc);
+> +	}
+> +
+> +	return -ENODEV;
+> +}
 
-Add printk()s to e1000e_get_phy_type_from_id().
+Please adapt the abstractions instead of working around them. If the
+driver isn't suited for a single reset_control_bulk_data in iris_core,
+split it into multiple groups, or store the resets individually.
 
-	Andrew
+At the very least, this could use constant indices instead of linear
+search with string compares.
+
+regards
+Philipp
 
