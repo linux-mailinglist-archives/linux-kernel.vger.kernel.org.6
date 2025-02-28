@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-537874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC56DA491FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:14:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B55A49202
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD94C189270B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133FE16FC39
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29371C700E;
-	Fri, 28 Feb 2025 07:14:16 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D841C5F23;
+	Fri, 28 Feb 2025 07:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKIUnSu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCDA1C5496;
-	Fri, 28 Feb 2025 07:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682C4276D12;
+	Fri, 28 Feb 2025 07:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740726856; cv=none; b=NlwlTWKSKa22Iq6n3UvB0Z7/E/hxMLX8i0OHvDLjCdypFfbbDBI/PNzwVLZRt3rVkSwFQGEp2y6s5BmkJoO42Tx0gM5/6R7jeJ5hA3nWvZ5TjuLAYp4phQcXRt1+kaQ+uPEvZiR436yqeJDLhM4yMjK4llfaFD1ya/OyQZXIsug=
+	t=1740726981; cv=none; b=O46Z0ANDJXnNE9YD9U9pkMVwcbAC3N/yoBaOTW9Z5MNnSKRNB+q+cV5xe4zwOmU4F5MY0DH7Ry7HP2oyg3uVIw/uGbkRHFigM6ff5cbEnWIb9dO7N9LyAwYiPf2tRjQhfgTiOSsYuSKadP1zyYqGcbEY8+d6++m/cP0DZ1sHJQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740726856; c=relaxed/simple;
-	bh=StuzEqVA/KF2H1BBO4p86yNKqTmdpTRhdbvVEeXDUNs=;
+	s=arc-20240116; t=1740726981; c=relaxed/simple;
+	bh=yTAonuXu9g+7b403MqlF70eqbtyFbgQ9pVocq4PQpQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQ/wdvvh0Lh5+BA/TuXKEs+gRyXXX+DOZgO7ee/oIVBCJC3x0OzCAb+k2s2ZQ1iHNPE9W7YdTQ1A3Ir9gHWBnrJ261QnTiVLzTaJX5Jk1CqvXg01GDY3tSUUKPQcoZlnIrTVyn6D7wW/EmGkU6pPgR79OdP4aWrq1CNR7xen4p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 975BD280237A3;
-	Fri, 28 Feb 2025 08:14:04 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 7EFEE6501C4; Fri, 28 Feb 2025 08:14:04 +0100 (CET)
-Date: Fri, 28 Feb 2025 08:14:04 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: rafael@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
-	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-Message-ID: <Z8FiPOgKFTt8T0ym@wunner.de>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
- <20250224034500.23024-3-feng.tang@linux.alibaba.com>
- <Z7y2e-EJLijQsp8D@wunner.de>
- <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
- <Z71Ap7kpV4rfhFDU@wunner.de>
- <Z71KHDbgrPFaoPO7@U-2FWC9VHC-2323.local>
- <Z8FXyVyMyAe4_bI3@U-2FWC9VHC-2323.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJ8TbwZliZF5Ozx88WUykIHc8ZAHyQ3vEL/3ZNhpATYhmikVWdt05bnREqyiW7H3wyMcsqOdFDe7rVV6CbYZoZDuaIFTk8TY8rVvnLppfgRPzG21MVu4uTzLWctPqCT5fMt3df8zPuGkb0OMFdUzSEg5SZF3qNcC9mo76RJXOYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKIUnSu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF080C4CED6;
+	Fri, 28 Feb 2025 07:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740726980;
+	bh=yTAonuXu9g+7b403MqlF70eqbtyFbgQ9pVocq4PQpQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dKIUnSu8RkmgEFcxIbrDi1ImE6coM4nmXEmlshwXl48ohFX4lvxDySibsdIBx/9oS
+	 6r/ncceId1/ytctKFr2W/xnLgijpF1aJ6n06etKCjsTNnZty/elmZodbyNIqhoO47T
+	 X23+3V+pvJvuFiibc01fXeZpgc0XZAiqWYhURcjqi9JjEj1SSXCnDm1lZCdMg7Jbbp
+	 MZVPO3y2paINJUQt+6YyZYDqLuFBf+Xp3BMNAzYS39dSCz6YZxCa9H6ZMeAccrnsVg
+	 BcL00bHf3qFwXKIbs0oEJatJSZ4n18N55MOuCIzI9qFFc273m8Hwz0wRdhY3bLaLnm
+	 gvReSNISlgd2g==
+Date: Fri, 28 Feb 2025 08:16:17 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Cathy Xu =?utf-8?B?KOiuuOWNjuWptyk=?= <ot_cathy.xu@mediatek.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lei Xue =?utf-8?B?KOiWm+ejiik=?= <Lei.Xue@mediatek.com>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	Wenbin Mei =?utf-8?B?KOaiheaWh+W9rCk=?= <Wenbin.Mei@mediatek.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, 
+	Guodong Liu =?utf-8?B?KOWImOWbveagiyk=?= <Guodong.Liu@mediatek.com>, Yong Mao =?utf-8?B?KOavm+WLhyk=?= <yong.mao@mediatek.com>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"sean.wang@kernel.org" <sean.wang@kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, Axe Yang =?utf-8?B?KOadqOejiik=?= <Axe.Yang@mediatek.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: mediatek: Add support for
+ mt8196
+Message-ID: <20250228-encouraging-trout-of-action-cfcd5a@krzk-bin>
+References: <20250228011702.16493-1-ot_cathy.xu@mediatek.com>
+ <20250228011702.16493-2-ot_cathy.xu@mediatek.com>
+ <174070957527.867625.13463640154036333781.robh@kernel.org>
+ <d5bf6e1b6c277e6431cffeef66a4766f59f94fe5.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8FXyVyMyAe4_bI3@U-2FWC9VHC-2323.local>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d5bf6e1b6c277e6431cffeef66a4766f59f94fe5.camel@mediatek.com>
 
-On Fri, Feb 28, 2025 at 02:29:29PM +0800, Feng Tang wrote:
-> On Tue, Feb 25, 2025 at 12:42:04PM +0800, Feng Tang wrote:
-> > > > There might be some misunderstaning here :), I responded in
-> > > > https://lore.kernel.org/lkml/Z6LRAozZm1UfgjqT@U-2FWC9VHC-2323.local/
-> > > > that your suggestion could solve our issue.
-> > > 
-> > > Well, could you test it please?
-> > 
-> We just tried the patch on the hardware and initial 5.10 kernel, and
-> the problem cannot be reproduced, as the first PCIe hotplug command
-> of disabling CCIE and HPIE was not issued.
+On Fri, Feb 28, 2025 at 03:11:41AM +0000, Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=
+=A9=B7) wrote:
+> On Thu, 2025-02-27 at 20:26 -0600, Rob Herring (Arm) wrote:
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >=20
+> >=20
+> > On Fri, 28 Feb 2025 09:16:25 +0800, Cathy Xu wrote:
+> > > Add the new binding document for pinctrl on MediaTek mt8196.
+> > >=20
+> > > Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
+> > > Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
+> > > ---
+> > >  .../pinctrl/mediatek,mt8196-pinctrl.yaml      | 241
+> > > ++++++++++++++++++
+> > >  1 file changed, 241 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/pinctrl/mediatek,mt8196-
+> > > pinctrl.yaml
+> > >=20
+> >=20
+> > My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+>   Sorry, this patch depond on another patch:
+>  =20
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20250228011702.=
+16493-3-ot_cathy.xu@mediatek.com/
+>   In this case, does the dt-binding still need go first? If so, I=20
 
-Good!
+This means your series are non-bisectable but even re-ordering will nto
+fix it. You understand you target different trees?
 
-> Should I post a new version patch with your suggestion?
+> will include the dependency information in the commit message of=20
+> the next version. Thank you~
 
-Yes, please.
+No, decouple from dependencies.
 
-> Also I would like to separate this patch from the patch dealing the
-> nomsi irq storm issue. How do you think?
+Best regards,
+Krzysztof
 
-Makes sense to me.
-
-The problem with the nomsi irq storm is really that if the platform
-(i.e. BIOS) doesn't grant OSPM control of hotplug, OSPM (i.e. the kernel)
-cannot modify hotplug registers because the assumption is that the
-platform controls them.  If the platform doesn't actually handle
-hotplug, but keeps the interrupts enabled, that's basically a bug
-of the specific platform.
-
-I think the kernel community's stance in such situations is that the
-BIOS vendor should provide an update with a fix.  In some cases
-that's not posible because the product is no longer supported,
-or the vendor doesn't care about Linux issues because it only
-supports Windows or macOS.  In those cases, we deal with these
-problems with a quirk.  E.g. on x86 we often use a DMI quirk to
-recognize affected hardware and the quirk would then disable the
-hotplug interrupts.
-
-Thanks,
-
-Lukas
 
