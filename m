@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-538020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2061DA493A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:34:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE159A493AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCEC1684FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D018867A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F232512C1;
-	Fri, 28 Feb 2025 08:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="B9c8tdfm"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DED5253337;
+	Fri, 28 Feb 2025 08:35:05 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812712512D0;
-	Fri, 28 Feb 2025 08:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CB32512C1
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731666; cv=none; b=EuZQvJnI7uPZzqv/DQ/ftsQPhJ9ZrRyG9vIAbglpQXS3pSGUnxirvkFEhUpUWYv5toK14647grSDRAbVSc2HQLFV7GSYhabVpIBobQzbqJqrFMcBunN2BKicoj/5S6FNkvvb5vCUzdHX4gDKOY7pL7QpgPZ9SOdtkx6XVLrZbps=
+	t=1740731704; cv=none; b=Z/0MQlxv+LDDAktz+mpdBHvvKgv923YO7rCTghFy1si8aAshjMKv/7r4xU/4vDecfPPBhHztd5kTBPpcbaZnib5dlJEOnF/tDhCx5xG7dyHgNzr0SZ5foeYvlWhdbTRkhliEW4l1oCcsX1bCMa/x+fkVsKqJAEjLM/5jHiXHMDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731666; c=relaxed/simple;
-	bh=Rcyr2oHQcfN4gj03aDrV7vFgTIAtr937OuX3/93EK1c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HFSfKhs8EU47Dp/MCsYfJcGKrqapRXIVhGZUSgWbSp0UQIZTs3RwrH/kEWbf++I1gwQufuSg3vrl7szk70jBDSORi0E3pyaevq4fCLHwzdLjHS+41db4f6rnL6DzkYNlb3qGtpwVvrJ4qda1VmShXJupAS32SZmh4vUEy4Hoomk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=B9c8tdfm; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VJyUwe70EWcDuNOw9uULIYM0SlbmVaOIAguM/j19xNs=; t=1740731663; x=1741336463; 
-	b=B9c8tdfm9PJhDh5snQl7X1dmLeCPdRtxYSAWYoQw9mXegKy7nS49Eg0Ftoz8eJWd6H1L80oU/fL
-	3EWn/i9zZdXsCPz0fvWgLPYXzFBGU9afNa2C/ciTEMvHvfsc6ca46gqo7fYQNhxZHYSyeidr+0mhi
-	SC+CHWzirDw/oyNB92msfZnXui65f1hpc/OtLi6q9AoWthrQVoeitEVf59PGHaV78FwCXJJ5K5awo
-	6l1NoerGcXqd4WJvnVHg2J/f067VPayQcOOf1xpyqS6+FxB1hVfC4Lu4oIMsn6rB6LeqaePIMS57e
-	H282zJ31ZiYbqJoZi4Mus0PAvigo/dwAWo5Q==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1tnvox-00000000Rho-1QjQ; Fri, 28 Feb 2025 09:34:11 +0100
-Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1tnvox-00000002Dij-0Rf6; Fri, 28 Feb 2025 09:34:11 +0100
-Message-ID: <48881e2d8efa9d7df8156f5f81cd662c2286e597.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Rob Landley <rob@landley.net>, Artur Rojek <contact@artur-rojek.eu>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- Daniel Lezcano	 <daniel.lezcano@linaro.org>, Thomas Gleixner
- <tglx@linutronix.de>, Uros Bizjak	 <ubizjak@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"
-	 <jeff@coresemi.io>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 09:34:10 +0100
-In-Reply-To: <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
-References: <20250216175545.35079-1-contact@artur-rojek.eu>
-	 <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
-	 <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740731704; c=relaxed/simple;
+	bh=VgltBu1F5zEb6t5exCgm9lZAdDJU1K6nT4UfPrfzLt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qx2NeCC6gNv3/Cl8uENJuiK8/4ozySPSFPP9AKVEtVjx6PyiVv/zeCHTnj6MksGPVSC4p6IjKChX81Q6yHLcSm4vruf4rp0MDOOXzFklbpADaeUjthMAJDp1Be6tf73v78Dp60TLBwIeHOZyES2ZcgVnc7EP9PpUAiKktBpby5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EBBF941C7D;
+	Fri, 28 Feb 2025 08:34:50 +0000 (UTC)
+Message-ID: <45d7bf9c-58fe-4808-9454-ff1167ead9ab@ghiti.fr>
+Date: Fri, 28 Feb 2025 09:34:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix the __riscv_copy_vec_words_unaligned implementation
+To: Tingbo Liao <tingbo.liao@starfivetech.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250227072721.5889-1-tingbo.liao@starfivetech.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250227072721.5889-1-tingbo.liao@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekleelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuddtheegjeeviedvtdfgffekiedvgeefieffhfeiieetudelveduteegtdeiuddtnecuffhomhgrihhnpehvvggtqdgtohhphidquhhnrghlihhgnhgvugdrshgsnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemgegrvggsmeguieefugemvdgskeehmegvtgdtugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemgegrvggsmeguieefugemvdgskeehmegvtgdtugdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemgegrvggsmeguieefugemvdgskeehmegvtgdtuggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehtihhnghgsohdrlhhirghosehsthgrrhhfihhvvghtvggthhdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihs
+ ehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Rob,
+Hi Tingbo,
 
-On Thu, 2025-02-27 at 21:03 -0600, Rob Landley wrote:
-> On 2/27/25 01:52, John Paul Adrian Glaubitz wrote:
-> > Hi Artur,
-> >=20
-> > On Sun, 2025-02-16 at 18:55 +0100, Artur Rojek wrote:
-> > > this series fixes boot issues and allows J2 Turtle Board to boot
-> > > upstream Linux again.
-> > >=20
-> > > Patch [1/2] enforces 8-byte alignment for the dtb offset.
-> > >=20
-> > > Patch [2/2] resolves a problem with PIT interrupts failing to registe=
-r.
-> >=20
-> > I can confirm that this series makes my J2 Turtle Board boot again!
-> >=20
-> > > Even with the above fixes, Turtle Board is prone to occasional freeze=
-s
-> > > related to clock source transition from periodic to hrtimers. I howev=
-er
-> > > decided to send those two patches ahead and debug the third issue at =
-a
-> > > later time.
-> >=20
-> > Yep, it just got stuck for me right after these messages at my first bo=
-ot attempt:
-> >=20
-> > clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle=
-_ns: 7645041785100000 ns
-> > futex hash table entries: 512 (order: 1, 8192 bytes, linear)
-> > NET: Registered PF_NETLINK/PF_ROUTE protocol family
-> > clocksource: Switched to clocksource jcore_pit_cs
-> >=20
-> > It boots past these messages on second attempt, although it's now stuck=
- trying to start
-> > /init. However, it's still echoing <RETURN> strokes, so it might be an =
-issue with Toybox.
->=20
-> Which was fixed a year ago, which is why I told you to use the new=20
-> toolchain with a current musl-libc:
->=20
-> http://lists.landley.net/pipermail/toybox-landley.net/2024-February/03004=
-0.html
->=20
-> Unless you're hitting the OTHER issue I fixed last year...
->=20
-> https://github.com/landley/toybox/commit/0b2d5c2bb3f1
+On 27/02/2025 08:27, Tingbo Liao wrote:
+> Correct the VEC_S macro definition to fix the implementation
+> of vector words copy in the case of unalignment in RISC-V.
+>
+> Signed-off-by: Tingbo Liao <tingbo.liao@starfivetech.com>
+> ---
+>   arch/riscv/kernel/vec-copy-unaligned.S | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/vec-copy-unaligned.S b/arch/riscv/kernel/vec-copy-unaligned.S
+> index d16f19f1b3b6..7ce4de6f6e69 100644
+> --- a/arch/riscv/kernel/vec-copy-unaligned.S
+> +++ b/arch/riscv/kernel/vec-copy-unaligned.S
+> @@ -11,7 +11,7 @@
+>   
+>   #define WORD_SEW CONCATENATE(e, WORD_EEW)
+>   #define VEC_L CONCATENATE(vle, WORD_EEW).v
+> -#define VEC_S CONCATENATE(vle, WORD_EEW).v
+> +#define VEC_S CONCATENATE(vse, WORD_EEW).v
+>   
+>   /* void __riscv_copy_vec_words_unaligned(void *, const void *, size_t) */
+>   /* Performs a memcpy without aligning buffers, using word loads and stores. */
 
-I just downloaded the latest toolchain from:
 
-https://landley.net/bin/toolchains/latest/sh2eb-linux-muslfdpic-cross.tar.x=
-z
+That's a good catch, thanks.
 
-and the issue still persists.
+However, your patch title should be prefixed with "riscv:" :
 
-Am I missing anything?
+"[PATCH] riscv: Fix the __riscv_copy_vec_words_unaligned implementation"
+
+And you miss the following Fixes tag:
+
+Fixes: e7c9d66e313b ("RISC-V: Report vector unaligned access speed hwprobe")
+
+And then you can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Can you respin a v2 with all those modifications please?
 
 Thanks,
-Adrian
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Alex
+
+
+
 
