@@ -1,85 +1,122 @@
-Return-Path: <linux-kernel+bounces-537887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63884A4921E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48406A49220
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911643B70F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5A63B5FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008CC1C7B62;
-	Fri, 28 Feb 2025 07:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67EC1C7B62;
+	Fri, 28 Feb 2025 07:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM42Wz0T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/cfAPrl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8041C68A6;
-	Fri, 28 Feb 2025 07:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E80E276D12;
+	Fri, 28 Feb 2025 07:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740727448; cv=none; b=hJOl52QeWA5U1UY+9/0ZjIFnWq8YuT6dHxxqUqtcuBsZXsFHV8gWz0ry4tFSt89zxY7MOJ1SyJR8a9dFWaniCwX5cAbfm/grGXEMvN3nouUYoCWMeZi/+48c40Uxfgaz+bh9gfjxt1JQp6+B4dygHg+bjHIOWACrWAMb8hby/cM=
+	t=1740727531; cv=none; b=MGDCHS03v5b3TkwB3OoNwo83Uv4ZKweiWwTGpZX31/ObNsT5rKbM9na3h3QnnFDj4hIVITX01T9cnvuZkhsb25aPmmCAPV190Df1RoZcv9C9Vmmrv7jSHXNdyVEaDUl9K5d+W+ZG+1uSOYnU1j+OObzAzzlIhBpbbhKO4KUfxmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740727448; c=relaxed/simple;
-	bh=hiaw9mQvo3JNGczetxHm5CU3JKRJwSl1WWGYscMRTzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZZOt9EFvczLCXrfv9GNKbI0/Q0ThdXCsWVRtyIkHfp/9ShX7nEu+GXz5IP601p0ejMscph+bV6L9oWAsGRrek68tOOO8A9wW7Z5x67kBHMIKrI6gUTVV2DxhDLQnBUeebp4VPLtCXqMeOnoPMjzVuwGpjdbfjAI52Y41IHR+vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cM42Wz0T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D68C4CED6;
-	Fri, 28 Feb 2025 07:24:07 +0000 (UTC)
+	s=arc-20240116; t=1740727531; c=relaxed/simple;
+	bh=snhYUk+Kxo7i9VQi8iAmkbxpyJy8hFemTLIein9zKe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3/SXwYM3Amy3JXVI5MesdbbKPHnzSFU1HhdKYHAHlyO2f1UM1DJW77wPfCAux55abShd1PunIUn7PzIYdLC0fpSup922xPw4YP5q44KA3502Dzwi3ECcI1jMx3H/NsCYR0Dxn7L+Gt1nuIj2VQRznZaHH6Fdzk04aJg4XPsDpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/cfAPrl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65C56C4CEE4;
+	Fri, 28 Feb 2025 07:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740727447;
-	bh=hiaw9mQvo3JNGczetxHm5CU3JKRJwSl1WWGYscMRTzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cM42Wz0Tyx+szs3B5xpHrdNi6e8mNeh2nqCIey8mMx580YQnqexgntoucF2Hftb7g
-	 3Ebcd8kAblSXeQB3WC5qT/OCWfVXorBcDUizNNnRGE+mA4vTzYsNLDhqb6ggE3Y4aS
-	 jk5AP/o30b57ud3c3yWppFxW7GkUIu0o6N81OVgHuZUBrpTTmRwqjmsG69JA3ZtNUw
-	 8RkBuyzRFXZx6NRCqdQ5gslLcFCO8rnXqB+Bw1OK/rI/YA2TF4KmqaaRHZ6HEzvJvK
-	 NIju6ddXrEUkxSWuV6mJr7zvq2KYNfPZVaUXtGxK2GinTR0k5HwDv3ZJ0EBC1Q1mkq
-	 CVF/xxPxH2ijg==
-Date: Fri, 28 Feb 2025 08:24:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, Fugang Duan <fugang.duan@cixtech.com>
-Subject: Re: [PATCH v3 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
- support
-Message-ID: <20250228-rebel-honored-donkey-f30e1f@krzk-bin>
-References: <20250227120619.1741431-1-peter.chen@cixtech.com>
- <20250227120619.1741431-7-peter.chen@cixtech.com>
+	s=k20201202; t=1740727530;
+	bh=snhYUk+Kxo7i9VQi8iAmkbxpyJy8hFemTLIein9zKe8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y/cfAPrlN2X5miuwZgQ27QtISFS9tBcBwtR8rpBl1XMQEeGX12oUhy1GGwe1Lt/0R
+	 pyW6WeVVYzg8RWTLKamziBktrkEqskqmlT86dBLqg/UmHi0OSyQlb58EnuO9ZxdieR
+	 lQwo9IciSdVO7S8dCeXUkItbmoec83RCcAACnq6msFOaG45SROmaF/sCph0/KRNexs
+	 E/EFRGtEM1aSKIN0xQ4PadnrQBeECgwfy81PdXwJSAx2v37E8hDiHzHaQ39o6kiMop
+	 4//8Ej77X6l8YoGeebkziIxbloLzzA4s3ODZ0r4phiI2EgDmnMzA3UIlFj2bZ3ItQ+
+	 qAHPKlgx1Udqw==
+Message-ID: <d29c48e6-82c1-40e0-ad1b-a2fcf2137211@kernel.org>
+Date: Fri, 28 Feb 2025 08:25:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227120619.1741431-7-peter.chen@cixtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] MAINTAINERS: Add CIX SoC maintainer entry
+To: Peter Chen <peter.chen@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+ marcin@juszkiewicz.com.pl, Fugang Duan <fugang.duan@cixtech.com>
+References: <20250227120619.1741431-1-peter.chen@cixtech.com>
+ <20250227120619.1741431-4-peter.chen@cixtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250227120619.1741431-4-peter.chen@cixtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 08:06:19PM +0800, Peter Chen wrote:
-> CIX SKY1 SoC is high performance Armv9 SoC designed by Cixtech,
-> and Orion O6 is open source motherboard launched by Radxa.
-> See below for detail:
-> https://docs.radxa.com/en/orion/o6/getting-started/introduction
-> 
-> In this commit, it only adds limited components for running initramfs
-> at Orion O6.
-> 
-> Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
-> ---
-> Changes for v3:
-> - Fix two dts coding sytle issues 
+On 27/02/2025 13:06, Peter Chen wrote:
+> +ARM/CIX SKY ARM ARCHITECTURE
+> +M:	Peter Chen <peter.chen@cixtech.com>
+> +M:	Fugang Duan <fugang.duan@cixtech.com>
+> +R:	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/arm/cix.yaml
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Move the patch to the end of patchset and add here dts.
 
 Best regards,
 Krzysztof
-
 
