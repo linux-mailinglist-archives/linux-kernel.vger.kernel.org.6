@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-539093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104B4A4A0BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:45:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D44A4A0C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82658176236
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:45:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BF71894EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E19D1AA1FE;
-	Fri, 28 Feb 2025 17:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6AE15ECDF;
+	Fri, 28 Feb 2025 17:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccuDFX6u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pdiHPkkE"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3471BCA1C;
-	Fri, 28 Feb 2025 17:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6891F4CAE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764711; cv=none; b=pQaiYZmyWJewYEixkJzCJLCOgWT8nmAMbvnCNpKRFnazYXVgPRYsOiTXxB30bH1Df1KXFxyHDJebUAvIJsqnIhyhzy7aSqvkgwOeOpB366EAehyIugGltulIyXT4MkDtn9Z1RuqK8Xok0PHBSG6qwGEMppjSvNqtDz2XK8I7BnY=
+	t=1740764748; cv=none; b=EOCTZrqwZ2rUrldH01ApBvUf7Ancbn0/sj0qTmiFhmB5ZHVdbS8tM5bvGP4eQfkRDUdZV1Qwm+cQ1NyeTBIbPcf4HUXaGkdmKzT4Z4SIXBJ7rpD5yXEm3/5DU7g9bJH4TL3bQRcKaX4l8X09TySvqStV1AW0tXjSlYObvrAXSao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764711; c=relaxed/simple;
-	bh=Be8JiKViprG/35y62i+pD4AsM5Tw5jHNYjVl9cJ8hQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Es/bKITqQ/SGDPRg3A7UZ5YUE5/Ymawx/b+Q+IgeVaHhwwm9tgtYkIgUJJuCceeh07pWzHRVH0Xp+nQdUJf/yIZ6JYEq5O5QBaRqeuKokK8na89+gYGQPFkOuWrJ33lrM0HLhZ0+nItseRNk47yJPR9+SVrl6i4M/oV9EQkveBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccuDFX6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4FA7C4CED6;
-	Fri, 28 Feb 2025 17:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740764710;
-	bh=Be8JiKViprG/35y62i+pD4AsM5Tw5jHNYjVl9cJ8hQw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ccuDFX6uhWkU3S1yoYepRdColv2hjj9HHXWE+B2YBjayx48qKdPtW3q8ADzXPwmkr
-	 G4mGeaE82Wner95FHb6YpDJy84gcbmKhZ8UrqHYR2RduGSwxElFnCjzPpD7tWPyDRd
-	 UojHVsJhDFH7Nm2sqwR5aeboQuOf8I3wEslOFk8N388I1R56sHe6QUsImMApiqHSIJ
-	 oZZdiW2e2OQvOrDqjfcVH4DqB/4HBguvtkMiYPdW21yG8Ge/mhxlEMHyZJkLhhtNo6
-	 V8GOmYmBk3y6/1Ha1YhLb2xGyoqxZ4v8zrBf/jTcE9eatm/ytMj6HvFFfUVzK0620K
-	 z4HO3yx3sn9Xw==
-Date: Fri, 28 Feb 2025 11:45:09 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Hsin-Yi Wang <hsinyi@chromium.org>,
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-	lukas@wunner.de,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <20250228174509.GA58365@bhelgaas>
+	s=arc-20240116; t=1740764748; c=relaxed/simple;
+	bh=Oexzj45eDDLb7CM0yQXdUWz7owDZR6EzgT2UtAZrmGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Auewbx0jZd6QTY4lPFJ25ZAxRmArgDrV4wZimrdgffYlfYhkbZvWNSSJH9Be/dLUFf1LYMWUSL3C/toj4I+ik+2sueeE/0dAyb7gp7mmrajGi0DcUgrzBFXAstjnw03xmMDpDZzlVBCZlLD91tRrj4qTu7/5ly5dfKrSAc7wOUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pdiHPkkE; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2sRrVQmgK0R2z5wr+aIoaoWSaXv+nBUPnIdA1TCMyRA=; b=pdiHPkkEaE+yoXVffSrekcrk2V
+	UceJy7SUF5Xqf9FVYJVBFcEljZXjL6AzMHraNIeHXyC57VQJr2RbKWuxDhqzlcAWUZM/Hi8/8jClL
+	p8hMC5A3Wi0Hny1px+xu7OJlmwfsnmVM7Hr4TUTKeZJP5MEinS2qX5h1v1tRLoR9W+nO4nXTBen0M
+	CBq3GRbWZNcikLjc39IpKeN3aB7grOAwCjD+AVg7sylF3V9csGTviacBu6KhOsQ79S0FHpkAl/vvy
+	thDh212CzjTRYjY/DLxfNz+itc5hwTtOtqE6+T3cIppLTZCAfGXFWWgezZqs3S3jgg466v8JLXXcB
+	UPvwwgSA==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1to4QV-0002Po-0K; Fri, 28 Feb 2025 18:45:31 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject:
+ Re: [PATCH 2/2] drm/rockchip: lvds: Hide scary error messages on probe
+ deferral
+Date: Fri, 28 Feb 2025 18:45:30 +0100
+Message-ID: <3032732.6M6d0yLqnL@diego>
+In-Reply-To: <b09e5470-2392-4557-9f13-62b6586e5c7b@cherry.de>
+References:
+ <20250228165755.405138-1-heiko@sntech.de>
+ <20250228165755.405138-3-heiko@sntech.de>
+ <b09e5470-2392-4557-9f13-62b6586e5c7b@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Nov 26, 2024 at 03:17:11PM -0800, Brian Norris wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Am Freitag, 28. Februar 2025, 18:42:32 MEZ schrieb Quentin Schulz:
+> Hi Heiko,
 > 
-> Unlike ACPI based platforms, there are no known issues with D3Hot for
-> the PCI bridges in Device Tree based platforms. 
+> On 2/28/25 5:57 PM, Heiko Stuebner wrote:
+> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> > 
+> > Commit 52d11c863ac9 ("drm/rockchip: lvds: do not print scary message when
+> > probing defer") already started hiding scary messages that are not relevant
+> > if the requested supply just returned EPROBE_DEFER, but there are more
+> > possible sources - like the phy.
+> > 
+> > So modernize the whole logging in the probe path by replacing the
+> > remaining deprecated DRM_DEV_ERROR with appropriate dev_err(_probe)
+> > and drm_err calls.
+> > 
+> > The distinction here is that all messages talking about mishaps of the
+> > lvds element use dev_err(_probe) while messages caused by interaction
+> > with the main Rockchip drm-device use drm_err.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Can we elaborate on this a little bit?  Referring to "known issues
-with ACPI-based platforms" depends on a lot of domain-specific history
-that most readers (including me) don't know.
+> > @@ -604,8 +602,8 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+> >   
+> >   	ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_LVDS);
+> >   	if (ret < 0) {
+> > -		DRM_DEV_ERROR(drm_dev->dev,
+> > -			      "failed to initialize encoder: %d\n", ret);
+> > +		drm_err(drm_dev,
+> > +			"failed to initialize encoder: %d\n", ret);
+> 
+> All the above are using dev_err, but starting here, it's drm_err, is 
+> that on purpose?
 
-I don't think "ACPI-based" or "devicetree-based" are good
-justifications for changing the behavior because they don't identify
-any specific reasons.  It's like saying "we can enable this feature
-because the platform spec is written in French."
+The last paragraph of the commit message was supposed to explain that
+(which it seemingly did poorly :-) ) :
 
-> Past discussions (Link [1]) determined the restrictions around D3
-> should be relaxed for all Device Tree systems. 
+> > The distinction here is that all messages talking about mishaps of the
+> > lvds element use dev_err(_probe) while messages caused by interaction
+> > with the main Rockchip drm-device use drm_err.
 
-This is far too generic a statement for me to sign up to, especially
-since "all Device Tree systems" doesn't say anything at all about how
-any particular hardware works or what behavior we're relying on.
 
-We need to say something about what D3hot means (i.e., only message
-and type 0 config requests accepted) and that we know anything below
-the bridge is inaccessible in D3hot and why that's OK.  E.g., maybe we
-only care about wakeup requests and we know those still work with the
-bridge in D3hot because XYZ.
 
-> So let's allow the PCI bridges to go to D3Hot during runtime.
-> 
-> To match devm_pci_alloc_host_bridge() -> devm_of_pci_bridge_init(), we
-> look at the host bridge's parent when determining whether this is a
-> Device Tree based platform. Not all bridges have their own node, but the
-> parent (controller) should.
-> 
-> Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
-> Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> [Brian: look at host bridge's parent, not bridge node; rewrite
-> description]
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> Based on prior work by Manivannan Sadhasivam that was part of a bigger
-> series that stalled:
-> 
-> [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
-> https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
-> 
-> I'm resubmitting this single patch, since it's useful and seemingly had
-> agreement. I massaged it a bit to relax some restrictions on how the
-> Device Tree should look.
-> 
-> Changes in v5:
-> - Pulled out of the larger series, as there were more controversial
->   changes in there, while this one had agreement (Link [2]).
-> - Rewritten with a relaxed set of rules, because the above patch
->   required us to modify many device trees to add bridge nodes.
-> 
->  drivers/pci/pci.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e278861684bc..5d898f5ea155 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3018,6 +3018,8 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
->   */
->  bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  {
-> +	struct pci_host_bridge *host_bridge;
-> +
->  	if (!pci_is_pcie(bridge))
->  		return false;
->  
-> @@ -3038,6 +3040,15 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  		if (pci_bridge_d3_force)
->  			return true;
->  
-> +		/*
-> +		 * Allow D3 for all Device Tree based systems. We assume a host
-> +		 * bridge's parent will have a device node, even if this bridge
-> +		 * may not have its own.
-> +		 */
-> +		host_bridge = pci_find_host_bridge(bridge->bus);
-> +		if (dev_of_node(host_bridge->dev.parent))
-> +			return true;
-> +
->  		/* Even the oldest 2010 Thunderbolt controller supports D3. */
->  		if (bridge->is_thunderbolt)
->  			return true;
-> -- 
-> 2.47.0.338
-> 
 
