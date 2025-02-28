@@ -1,154 +1,142 @@
-Return-Path: <linux-kernel+bounces-537997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C07FA4935B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:23:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7294DA49361
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92FA91889920
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:23:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA503ADB30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8335B245017;
-	Fri, 28 Feb 2025 08:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C1024A046;
+	Fri, 28 Feb 2025 08:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="it1AR6gi"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="pXU1ZTv6"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9401F583E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC702459FD;
+	Fri, 28 Feb 2025 08:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731014; cv=none; b=oLXigaJZEBfDTV6u8E0p+6uougO3sKgUS75Jjk5CiHRKJdjs3eJZXvR4k3/Q1RsBXUPFj3pcXD+twGmKQnQNeE3Z4N5Na/UL7mS873Q4i+/c7Gw/OanXIW+fTnEjE0WigDa/KGzaQ7GoaiwlE++zEOAT97ReO44tq5nDi4IbO9g=
+	t=1740731070; cv=none; b=jdAkdRzzcaHZYAWPqVmehBw3Qr/OyTVwmWXH9Jobt/cugCx9I9flWHS6YJ6hMD61Kc5STIHSq2K0vMZXey4quT5T95wHWqzmRwjmVjDL6kBGO+ZFnOUNa1cFmUVbkPGti63YyWimPw3DXU77J/R5NLKt9gERBwahEx6Bz63GrCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731014; c=relaxed/simple;
-	bh=R2MRTRMr+W9eU/udrGmceJQKzw74JG9DRcT8CxcYlD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X32MLjQcyqdu86oD7wFHH62D3KF7zOqhnfS42Lurt9hJQCK2xJQpY6bt6JnywbxUetTXriAjwrpCShPWZoHimYbtyMnvMQcSMoopZ8PSGr9sSAOBvN3kkW221shqSBVq6msScHhcq8j4QqGfbu0hjvwNrPGZVvEH7mK0LdTlIIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=it1AR6gi; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a303a656aso19398981fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:23:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740731010; x=1741335810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y6CmQnr9nJmjwVIpC9L7TXMlfKzgO8vBaB5ebrTKh4k=;
-        b=it1AR6giXuMT7UtAuCHfdr7Hp59a7tatYQXOAdc1a+NFxw0ZwwasC1mn3f9XN9qGNX
-         AnZ/HHKSTe69tD7E0GUIxoBsPcAw21lpfZbLQzovdXrTm0DhSleY5eGnyapDYDcocksc
-         8xqujCNmMY5wKyp3PLRr7opt3mqh7GCg9Nv74lTBXBlSe0gYyv3uZbOwfb6cpAHTVUCB
-         ksL3oArmiHmCtX1I11Q7m0oUE9lAvvtr46vIyuhfyKvz6p4enDg8kUtZyW8V/F10/Dih
-         m1dqFjNCHG0STE0iKEzHsEzIMksvI9N0v5CGBueekluEPfEnazCb0W+dS1PxUrbbRvCO
-         FC4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731010; x=1741335810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y6CmQnr9nJmjwVIpC9L7TXMlfKzgO8vBaB5ebrTKh4k=;
-        b=ngQJC6Kwb95L+eGLOLFLm7gwSokFIwObZQtaF9fS4knBmkdMkMIij86zfrxkTSXcNb
-         R62BVi4FpuzpAQQtc3LLC+MH2YAuxBFpa8OTVOaeBNLKH4oF0OuJfeZODffai1MUA/uF
-         4a09iyhYBK48JJGsmziQ2f0NOibvxIDgZfZ58ErC3cXMElVe6Jtk33ZJbDFHD3crBrs4
-         bJ09GnAbOGFCcs9yCV9I+bkbdnq5q6xWek7jU5V/sw0MSTN8h0sVS/h973VHeK+PpaUl
-         Vrvgn5lHg7VxNjCL5nKxRz+x3F3M5kxdlbBneCnD/QR5l4tfGDC44cZI7k5SUYOcbul/
-         6BAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnN1krpbYKMxFFLzZhuS9XVqzWn+4+oLLFf5r3SW2wYhjLMqkIeUVpvkwrjrxlu8sa/pyiBzth//A0zFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7cF+gV8uxjJhuqVYnjQdvYxSPJRlMoA4qeXrQmSlWTyfZCKSK
-	swCT25xFm0fM7Y+6tjEBBovFNBY1T2Vt2ovPMfpAb3QxCg9+2D/bHRJhJy2V7gAPQtKBbPa7JlP
-	B/L14yGQ0pWBGgHdeU2mw6lZh++3CgnMtbV/oVQ==
-X-Gm-Gg: ASbGnct1NOX34yXXGwO2hO6xkWoJcAt7IWp6ObRN/8i7QfTzYEhivJzQjj15A4gc1oD
-	GcDm/6KS+tmb2/+Dq+JiMbILg7Nqusxb4Hu5y0Sd8pWsPm0eZwNlBnZ46K3u4l/0nUX+8OX2Tit
-	F3/Mn9iNM=
-X-Google-Smtp-Source: AGHT+IH1bE/hdaIBMayw+gGpM9k5nGDh5XFnSS7BihMAS5lMqvifednGcS3mKS9CRv9UyLY40VYo/FzdFubU5gvJfnI=
-X-Received: by 2002:a05:6512:3a90:b0:546:27f0:21a7 with SMTP id
- 2adb3069b0e04-5494c38c10emr1014114e87.49.1740731010148; Fri, 28 Feb 2025
- 00:23:30 -0800 (PST)
+	s=arc-20240116; t=1740731070; c=relaxed/simple;
+	bh=HXD5N5EUSKiVZel/nNTVsehaZTF0tGP8+UG+FaEScRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tp6CmC49WnS6sxbWnY+6/0O9cjrIeMzOlBaWDMLNsmUJklFUCzSW1mYd8RrHtpaJIETHazD2/YTb9fMjmfirRUlMm1rfqxbMsqihpaVjhOYh4EidcCG+2+ILISTjttmbv4lpQ0PTAN0QO84Bfp+JwXELKW4tVUKPfdjJw56/j3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=pXU1ZTv6; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S8NdZV073880
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Fri, 28 Feb 2025 00:23:44 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S8NdZV073880
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740731025;
+	bh=wJH2YVKtRVpRZeg1F2uDv6eR5my1DkG7+jj9x2YNq7g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pXU1ZTv6uV/hcbwru91MHZBY1kks2thOa1n08j0kpmCA2l51euKCBmM1VdMKkke2J
+	 J0dI1rcoRmkmEzXzrdyU5bSMNVO/K+Dqg68D28b6I9YQX3maxRc5aNJNjdN6RJSOMA
+	 rL8zRThJsVUdkIKdkTa/YHE/hjNk3oThXd3DbL2FzpeEQeQd8xfQBT3VLpwqSu10Du
+	 XyRKqfre5Dpz5v4QqZtczCdJ3jW4aUrhMfXfanQnc96rU46B3OKsgXSrFQ15YSA5zB
+	 Dm4NNxTKi1xQIPzFIZ5IMmPrNFEoD0Dh5jt0DYzEz88XsprKWVcp3De/Miah/kDW8p
+	 QyPTK+6Rns/uQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
+        akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
+        brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
+Subject: [PATCH v6 0/5] x86/cpufeatures: Automatically generate required and disabled feature masks
+Date: Fri, 28 Feb 2025 00:23:33 -0800
+Message-ID: <20250228082338.73859-1-xin@zytor.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z71qphikHPGB0Yuv@mva-rohm> <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
- <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com> <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
- <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com> <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
-In-Reply-To: <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:23:19 +0100
-X-Gm-Features: AQ5f1Jo20gvTk170DYVLWFd3aItRoAfaOdggSzyNA14E_0d2W-2xhzX4PDw9OD4
-Message-ID: <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 9:24=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
+The x86 build process first generates required and disabled feature
+masks based on current build config, and then uses these generated
+masks to compile the source code.  When a CPU feature is not enabled
+in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
+flag, i.e., DISABLE_FRED, needs to be properly defined and added to
+a specific disabled CPU features mask in <asm/disabled-features.h>,
+as the following patch does:
+https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
+As a result, the FRED feature bit is surely cleared in the generated
+kernel binary when CONFIG_X86_FRED=n.
 
-> I did some quick testing. I used:
-(...)
-> which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7
-> unmasked.
->
-> Then I added:
-> gpiotst {
->         compatible =3D "rohm,foo-bd72720-gpio";
->         rohm,dvs-vsel-gpios =3D <&adc 5 0>, <&adc 6 0>;
-> };
->
-> and a dummy driver which does:
-> gpio_array =3D devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
->                                   GPIOD_OUT_LOW);
->
-> ...
->
-> ret =3D gpiod_set_array_value_cansleep(gpio_array->ndescs,
->                 gpio_array->desc, gpio_array->info, values);
->
-> As a result the bd79124 gpio driver got it's set_multiple called with
-> masked pins. (Oh, and I had accidentally prepared to handle this as I
-> had added a sanity check for pinmux register in the set_multiple()).
+Recently there is another case to repeat the same exercise for the
+AMD SEV-SNP CPU feature:
+https://lore.kernel.org/all/20240126041126.1927228-2-michael.roth@amd.com/.
+https://lore.kernel.org/all/20240126041126.1927228-23-michael.roth@amd.com/.
 
-But... how did you mask of the pins 0..5 in valid_mask in this
-example?
+It was one thing when there were four of CPU feature masks, but with
+over 20 it is going to cause mistakes, e.g.,
+https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1-b33c8d6db618@suse.com/.
 
-If this is device tree, I would expect that at least you set up
-gpio-reserved-ranges =3D <0 5>; which will initialize the valid_mask.
+We want to eliminate the stupidly repeated exercise to manually assign
+features to CPU feature words through introducing an AWK script to
+automatically generate a header with required and disabled CPU feature
+masks based on current build config, and this patch set does that.
 
-You still need to tell the gpiolib that they are taken for other
-purposes somehow.
+Link to v5:
+https://lore.kernel.org/lkml/20250106070727.3211006-1-xin@zytor.com/
 
-I think devm_gpiod_get_array() should have failed in that case.
 
-The call graph should look like this:
+H. Peter Anvin (Intel) (3):
+  x86/cpufeatures: Rename X86_CMPXCHG64 to X86_CX8
+  x86/cpufeatures: Add {required,disabled} feature configs
+  x86/cpufeatures: Generate a feature mask header based on build config
 
-devm_gpiod_get_array()
-    gpiod_get_array()
-        gpiod_get_index(0...n)
-            gpiod_find_and_request()
-                gpiod_request()
-                    gpiod_request_commit()
-                        gpiochip_line_is_valid()
+Xin Li (Intel) (2):
+  x86/cpufeatures: Remove {disabled,required}-features.h
+  x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
 
-And gpiochip_line_is_valid() looks like this:
+ arch/x86/Kconfig                              |   4 +-
+ arch/x86/Kconfig.cpu                          |   4 +-
+ arch/x86/Kconfig.cpufeatures                  | 197 ++++++++++++++++++
+ arch/x86/Makefile                             |  17 +-
+ arch/x86/boot/cpucheck.c                      |   3 +-
+ arch/x86/boot/cpuflags.c                      |   1 -
+ arch/x86/boot/mkcpustr.c                      |   3 +-
+ arch/x86/include/asm/Kbuild                   |   1 +
+ arch/x86/include/asm/asm-prototypes.h         |   2 +-
+ arch/x86/include/asm/atomic64_32.h            |   2 +-
+ arch/x86/include/asm/cmpxchg_32.h             |   2 +-
+ arch/x86/include/asm/cpufeature.h             |  70 +------
+ arch/x86/include/asm/cpufeatures.h            |   8 -
+ arch/x86/include/asm/disabled-features.h      | 161 --------------
+ arch/x86/include/asm/required-features.h      | 105 ----------
+ arch/x86/kernel/verify_cpu.S                  |   4 +
+ arch/x86/lib/Makefile                         |   2 +-
+ arch/x86/lib/cmpxchg8b_emu.S                  |   2 +-
+ arch/x86/tools/featuremasks.awk               |  88 ++++++++
+ lib/atomic64_test.c                           |   2 +-
+ tools/arch/x86/include/asm/cpufeatures.h      |   8 -
+ .../arch/x86/include/asm/disabled-features.h  | 161 --------------
+ .../arch/x86/include/asm/required-features.h  | 105 ----------
+ tools/perf/check-headers.sh                   |   2 -
+ 24 files changed, 320 insertions(+), 634 deletions(-)
+ create mode 100644 arch/x86/Kconfig.cpufeatures
+ delete mode 100644 arch/x86/include/asm/disabled-features.h
+ delete mode 100644 arch/x86/include/asm/required-features.h
+ create mode 100755 arch/x86/tools/featuremasks.awk
+ delete mode 100644 tools/arch/x86/include/asm/disabled-features.h
+ delete mode 100644 tools/arch/x86/include/asm/required-features.h
 
-bool gpiochip_line_is_valid(const struct gpio_chip *gc,
-                unsigned int offset)
-{
-    /* No mask means all valid */
-    if (likely(!gc->valid_mask))
-        return true;
-    return test_bit(offset, gc->valid_mask);
-}
 
-So why is this not working?
+base-commit: 0b8c04b9207d5ee92ab3b341f0211aaf2c0b6976
+-- 
+2.48.1
 
-Yours,
-Linus Walleij
 
