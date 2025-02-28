@@ -1,180 +1,261 @@
-Return-Path: <linux-kernel+bounces-538430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FEAA4989B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:56:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B002AA498A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE84D3B9F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:56:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0CB18958CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897382620D0;
-	Fri, 28 Feb 2025 11:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8519523E32A;
+	Fri, 28 Feb 2025 11:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1yCl0V6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="nKefsDd7"
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D409F25F790;
-	Fri, 28 Feb 2025 11:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3167625F790
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740743778; cv=none; b=c/XvYt2+lrnwVBZ2jG7BKlMc6ArjZgGEtnhfa36iR/fqfYg57C42JRzYB4pvP2/GPzaa0Id3fY+EXjHnDCrw8zAJGDUpdFqvDRK7EchirNDnAiOvsbN4mV/9R4gZj6tolPmMCNRTVbUnHAI5iPHj9H3AUaZmToKJtlcbjcCKmNU=
+	t=1740743854; cv=none; b=YrIe+ENBHdGxOIxVpC5tbf3JSTfkfTb6w1WtJSyKLg+sH+fBFfqb7ZkQKts1wxY1GRZFAn6C3hpqG3A7abu0MUJEo9cKC8ugAykxBF0M9T3piKwjd+0qsVPJqtQGIYV8WEACHpaUzjTWwCVXxu1MF7t7l8eQzxGa46w84tY9io4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740743778; c=relaxed/simple;
-	bh=DU2MIOCInzlt7F0yK4hZYi3mDmHRqglMly/XxHRLOHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nkc8lA92wUs6iQGkHNMsI04MaUD4zuZeiaSWv7XxUr/xZkSbgOCWVPYMJEnNbjXBIkok2RYCsJtUhSmm4UYR7SZ7mJ1LpBzW8+SI5IP6oPzsCFIN7YlYqTF4wsinhOjhryiUmTi3G4dL9E07V9Pj0Q1E6SSMCyS9+1LwlZTIcCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1yCl0V6; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740743777; x=1772279777;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DU2MIOCInzlt7F0yK4hZYi3mDmHRqglMly/XxHRLOHM=;
-  b=b1yCl0V6EVsnsqLW7n5QBdOUeQcR9EBXomgpmxf0Jh2gafyWOr9zHbbe
-   2Nz6CgDpYuSmHXEp8wnd7QLanqYWHTZSoE2HMpHJPIHJuEmIZa8N1OXGe
-   JicDG2JvSrH/g68YW/Z1TSA9r5iA78J47iapKj/jEugcmSRaNwu2D83mz
-   kr/wHcNx4Wd7YiOhBK8jfwkUQDMH+gEf+KumQas2myudXYi8PRju1NVl7
-   Op6TRsqxqQFuAYqUzsBPwDjrgTG6ofF/dOPA1oz6OuntohWs1UuekuYg/
-   1VLjZpvioMNy9/DMxaS0L8h8SYeL32Qly4fzYaIDk8goHqnogBYjWMYWa
-   Q==;
-X-CSE-ConnectionGUID: diPBXjtDRMu6skFlVpoC6Q==
-X-CSE-MsgGUID: YQziP3ZdTu6ETBImqYGkeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="59082602"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="59082602"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 03:56:17 -0800
-X-CSE-ConnectionGUID: jgKVaaQqQzWugKKqsbzRCQ==
-X-CSE-MsgGUID: bNPavz8jSr6zb9KSBDo6yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="117106196"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 28 Feb 2025 03:56:13 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnyyR-000EpM-1p;
-	Fri, 28 Feb 2025 11:56:11 +0000
-Date: Fri, 28 Feb 2025 19:55:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Longfang Liu <liulongfang@huawei.com>, alex.williamson@redhat.com,
-	jgg@nvidia.com, shameerali.kolothum.thodi@huawei.com,
-	jonathan.cameron@huawei.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxarm@openeuler.org, liulongfang@huawei.com
-Subject: Re: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
-Message-ID: <202502281952.Z9JQ8jcK-lkp@intel.com>
-References: <20250225062757.19692-2-liulongfang@huawei.com>
+	s=arc-20240116; t=1740743854; c=relaxed/simple;
+	bh=RvFAS78f+99HBNR6SzbLni87srDvuljh18ChZseS+KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UupCjvCvHhX4A339sSBtBQzWJtf6fi9id7NF/ufTHJyoPyqHv6tJcWAOXOHMRUrwuNtGZZeKG+8hJkwQesWkGG2ks/5KqIVRTFkOSlHwgf5DBJ56h2xvW3S4hQWZfUvehPoVDrszyLvr9zuUzctTC5yRqVEf5n9TKENpcNMqn8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=nKefsDd7; arc=none smtp.client-ip=94.124.121.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=vRFSBkesq/C2LJZo8naM/Q1cNr1mZmsYkaQzEjX9zhk=;
+	b=nKefsDd72p1gTkAq1a7G+hEFjAE5L6lgg8cegGBpZQQzWMszwhaWsbIajEMPMzlnWkeWbY9NztDg9
+	 O+Js9zCsksKfw3Jnfdq4tpLC0VPA7dkeYSco4yWWhISm0kav1YSNJJIygduSKWjmKZHQhk9t2ax9IN
+	 OToCnnLTchBVZnQ0ZkRqaAWze2pWs4aVEYK4pZ5hrPzUQaRoHocx5w/hFB+5SoDf8caOUN6RkzT/+J
+	 06/v612F7A3E9BKf0U4Eo5HnR0KWHNl8hSDeya5zZNzjuNs7ncmY7rkFC8UIk95t8wBnJQ0Jk27SN9
+	 XeeIcsCmpFEcDwhwcTvgNzcPyzq6oMg==
+X-MSG-ID: 2e5f1d48-f5cb-11ef-b5ca-0050568164d1
+Date: Fri, 28 Feb 2025 12:57:27 +0100
+From: David Jander <david@protonic.nl>
+To: Pavel Pisa <ppisa@pikron.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 0/7] Add Linux Motion Control subsystem
+Message-ID: <20250228125727.7f892552@erd003.prtnl>
+In-Reply-To: <202502281035.57489.ppisa@pikron.com>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<202502281035.57489.ppisa@pikron.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225062757.19692-2-liulongfang@huawei.com>
-
-Hi Longfang,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on awilliam-vfio/next]
-[also build test ERROR on awilliam-vfio/for-linus linus/master v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Longfang-Liu/hisi_acc_vfio_pci-fix-XQE-dma-address-error/20250225-143347
-base:   https://github.com/awilliam/linux-vfio.git next
-patch link:    https://lore.kernel.org/r/20250225062757.19692-2-liulongfang%40huawei.com
-patch subject: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502281952.Z9JQ8jcK-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502281952.Z9JQ8jcK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502281952.Z9JQ8jcK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:9:
-   In file included from include/linux/hisi_acc_qm.h:10:
-   In file included from include/linux/pci.h:1644:
-   In file included from include/linux/dmapool.h:14:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:448:23: error: use of undeclared identifier 'ACC_DRV_MAR'
-     448 |         vf_data->major_ver = ACC_DRV_MAR;
-         |                              ^
->> drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:449:23: error: use of undeclared identifier 'ACC_DRV_MIN'
-     449 |         vf_data->minor_ver = ACC_DRV_MIN;
-         |                              ^
-   3 warnings and 2 errors generated.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-vim +/ACC_DRV_MAR +448 drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+Dear Pavel,
 
-   438	
-   439	static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
-   440					struct acc_vf_data *vf_data)
-   441	{
-   442		struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
-   443		struct device *dev = &pf_qm->pdev->dev;
-   444		int vf_id = hisi_acc_vdev->vf_id;
-   445		int ret;
-   446	
-   447		vf_data->acc_magic = ACC_DEV_MAGIC_V2;
- > 448		vf_data->major_ver = ACC_DRV_MAR;
- > 449		vf_data->minor_ver = ACC_DRV_MIN;
-   450		/* Save device id */
-   451		vf_data->dev_id = hisi_acc_vdev->vf_dev->device;
-   452	
-   453		/* VF qp num save from PF */
-   454		ret = pf_qm_get_qp_num(pf_qm, vf_id, &vf_data->qp_base);
-   455		if (ret <= 0) {
-   456			dev_err(dev, "failed to get vft qp nums!\n");
-   457			return -EINVAL;
-   458		}
-   459	
-   460		vf_data->qp_num = ret;
-   461	
-   462		/* VF isolation state save from PF */
-   463		ret = qm_read_regs(pf_qm, QM_QUE_ISO_CFG_V, &vf_data->que_iso_cfg, 1);
-   464		if (ret) {
-   465			dev_err(dev, "failed to read QM_QUE_ISO_CFG_V!\n");
-   466			return ret;
-   467		}
-   468	
-   469		return 0;
-   470	}
-   471	
+Thanks a lot for starting the discussion...
+
+On Fri, 28 Feb 2025 10:35:57 +0100
+Pavel Pisa <ppisa@pikron.com> wrote:
+
+> Hello David and others
+> 
+> On Thursday 27 of February 2025 17:28:16 David Jander wrote:
+> > Request for comments on: adding the Linux Motion Control subsystem to the
+> > kernel.  
+> 
+> I have noticed on Phoronix, that the new system is emerging.
+
+Being featured on Phoronix on day one wasn't on my bingo card for this year, to
+be honest... :-)
+
+> This is area where I have lot (more than 30 years) of experience
+> at my company and I have done even lot with my studnets at university.
+> I have big interest that this interface fits our use neeeds
+> and offers for future integration of our already open-source
+> systems/components.
+
+This is very impressive and I am honored to have gotten your attention. I am
+looking forward to discussing this, although I am not sure whether all of this
+should happen here on LKML?
+
+> This is preliminary reply, I want to find time for more discussion
+> and analysis (which is quite hard during summer term where I have
+> lot of teaching and even ongoing project now).
+> 
+> I would like to discuse even future subsystem evolution
+> which would allow coordinates axes groups creation, smooth
+> segments based on N-th order splines incremental attachment,
+> the path planning and re-planning if the target changes
+> as reaction to camera or other sensor needs etc.
+
+Right now LMC should be able to support hardware that has multiple channels
+(axes) per device. Its UAPI can describe position-based movements and
+time-based movements along any arbitrary combination of those channels using a
+pre-defined speed/acceleration profile.
+
+The profiles can be specified as an arbitrary number of speed and acceleration
+values. The idea is to describe a segmented profile with different
+acceleration values for segments between two different speed values. Simple
+examples are trapezoidal (accelerate from (near-)zero to Vmax with A1, and
+decelerate from Vmax back to zero with D1), dual-slope or S-curve, but the
+UAPI in theory permits an arbitrary number of segments if the underlying
+hardware supports it.
+
+I have some ideas for future extensions to the API that make coordinated
+multi-channel movements a bit easier, but that will not be in the initial push
+of LMC: For example torque-limit profiles for controlled torque movements,
+usable for example in sliding door controllers with AC machines or BLDC
+motors; or an ioctl to send a distance vector to a selected number of channels
+at once and apply a motion profile to the whole coordinated movement. In the
+current version you have to set up the distances and profiles for the
+individual channels and then trigger the start of the motion, which is more
+cumbersome. You can already use the finish event of a preceding motion to
+trigger the next one though.
+
+Another idea that has been floating in my head is to make a "virtual" motion
+device driver that combines individual "real" single-channel hardware drivers
+into one multi-channel device, but I am unsure whether it is really needed. It
+all depends on the latency limit differences between kernel-space and
+user-space whether there is something to gain.
+
+I think it is best to keep this initial version more limited in scope though,
+as long as the needed extensions are possible in the future without breaking
+existing UAPI.
+
+So I propose: Let's craft a draft UAPI (in a different place, not on LKML) that
+can do everything we can come up with and then reduce it to the basics for the
+first version. Otherwise it will get too complex to review, I'm afraid.
+
+> At this moment I have interrest if there is site which
+> would start to collect these ideas and where can be
+> some references added.
+
+I may put this on github and create a wiki there if you think that's a good
+enough place to discuss?
+
+> I think that I have quite some stuff to offer.
+
+That would be great! Looking forward to it :-)
+
+> To have idea about my direction of thinking and needs
+> of interface I would provide some references even
+> to our often commercially sold but mostly conceived
+> as hobby projects.
+
+I'll have to take some time to look into those more closely. My own experience
+as far as FOSS or OSHW concerns includes the reprap Kamaq project:
+
+https://reprap.org/wiki/Kamaq
+
+TL;DR: It is a 3D printer running only Linux and the whole controller software
+is entirely written in python (except for very little Cython/C code).
+This is still my 3D printer on which I satisfy all of my 3D print needs. I
+will need to port it to LMC one day.
+
+> Coordinated axes groups movement with incremental spline
+> segment addition into command queue (our COORDMV componet
+> of PXMC library) is demonstrated on old BOSCH SR 450 SCARA
+> system. The robot has never fully worked at Skoda Auto
+> with original BOSH control unit. But when it has been donated
+> to Czech Technical University, we have build control
+> unit at my copany based on Motorola 68376 MCU in around
+> 2000 year. I have later paid one student to prepare
+> demo in Python to demonstrate the system.
+> 
+> You can click on video
+> 
+>   MARS 8 BigBot and Robot Bosch SR 450 Drawing Roses 
+>   http://pikron.com/pages/products/motion_control.html
+
+Very impressive! Can you explain how the spline-segment information could be
+conveyed to the controller? Does the controller really do an infinitesimal
+spline interpolation, or does it create many small linear vectors?
+
+LMC will try to limit math operations in kernel space as much as possible, so
+hopefully all the calculations can be done in user-space (or on the controller
+if that is the case).
+
+Right now, my way of thinking was that of regular 3D printers which usually
+only implement G0/G1 G-codes (linear interpolation). G2/G3 (circular
+interpolation) doesn't sound practically very useful since it is special but
+not very flexible. Something like generalized spline interpolation sounds more
+valuable, but I hadn't seen any hardware that can do it.
+
+> The related python application is there
+> 
+>   https://github.com/cvut/pyrocon
+> 
+> In the far future, I can imagine that it can connect
+> to proposed LMC API and achieve the same results.
+
+Let's make it so!
+
+>[...]
+> which uses our PXMC motion control library
+> 
+>   https://gitlab.com/pikron/sw-base/pxmc
+> 
+> There is basic documentation for it on its site
+> 
+>   https://pxmc.org/
+>   https://pxmc.org/files/pxmc.pdf
+
+At first glance, this looks like a piece of hardware that would fit as a LMC
+device. What needs to be determined is where the boundaries lie between
+controller firmware, kernel-space and user-space code.
+
+Generally speaking, as a rough guideline, microsecond work is better done in
+the controller firmware if possible. millisecond work can be done in the kernel
+and 10's or more millisecond work can be done in user-space, notwithstanding
+latency limit requirements of course.
+
+>[...]
+> So in general, I think that we have large portfolio
+> of building blocks which would allow to build motion,
+> robotic controllers, communications etc. and I would be happy
+> if they are reused and even some project conceived
+> together with others to join the forces.
+
+This sounds very interesting. Ideally one would end up with LMC capable of
+interfacing all of those devices.
+
+> It would be ideal if the all motion control related
+> resources and links could be somehow collected
+> that wheel is not reinvented unnecessarily.
+
+I completely agree.
+
+> The most of my code is Mozilla, GPL etc... I have
+> right to relicence my company stuff if the license does
+> not fit. On the other hand, I do not intend to follow
+> such offers as of one well funded chip related association,
+> which offered us to relicense all to them with no retain
+> of any control and additional right and they would not
+> take care about the valuable project at all no looking
+> for funding etc... no promise for developmet etc...
+> So there are some limits.
+
+Understandable.
+
+Best regards,
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+David Jander
 
