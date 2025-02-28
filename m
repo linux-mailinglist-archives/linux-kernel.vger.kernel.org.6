@@ -1,83 +1,105 @@
-Return-Path: <linux-kernel+bounces-538758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319A2A49CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:05:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45500A49CC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5365B189A64C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:03:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29548188C993
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AC31EF369;
-	Fri, 28 Feb 2025 15:02:37 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C861EF378;
+	Fri, 28 Feb 2025 15:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="czff4ECK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046211EF360;
-	Fri, 28 Feb 2025 15:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E741126AF5;
+	Fri, 28 Feb 2025 15:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754957; cv=none; b=VK6fbv1fo6sPtZJQv7lCzLATnf4v/AsIU6cDq9irXfQqdfLUcPMCIfm5rOcry+mUkNSRwUalz4R8Jp8evGWxaYAVSyetCZQvTiFjswSOUPzEkcSv6thPDY9qEViAoYWsiVyL9Vak9eK/Hmr0K9hRxM0hfguvEmsAcFvujhZQVuc=
+	t=1740755139; cv=none; b=U+jHSX2vuNeBGJcULHJMDX61oESBUpLUQqzzACheWQWZEYIUeM/hIHy2QTS5521NFXUAEOpX6+iVhVRJTQcztjNuFCCcmudb3pdAwId7hMxZs+U0mB8dRo4BfzWKvIwM9GXglh1rt7jN9TLRLLefk5oidHIn5UAjMQacmzaLPf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754957; c=relaxed/simple;
-	bh=6nrJ9zZe3Dfp9Hs287X+B1HADF4QbPQlhsZlZF/7tM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dSFksvyNv5wZZSH/o9Ld4RCM5sXTjesULasau/cQ/PpSw0ATscVfjmeTITaBWc9lYzAh4Z8ZI6sVqfIo0yOF8F5XS6nCLvz8OwFCZK23pVjDqErK92UNQkUa/SEnFa+VbeJECxMZS+W/rnOxUwhoYn/Hw80rD6TdWA27z1zcLWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CDFC4CED6;
-	Fri, 28 Feb 2025 15:02:34 +0000 (UTC)
-Date: Fri, 28 Feb 2025 10:03:19 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "pmladek@suse.com" <pmladek@suse.com>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, "senozhatsky@chromium.org"
- <senozhatsky@chromium.org>, "corbet@lwn.net" <corbet@lwn.net>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "apw@canonical.com" <apw@canonical.com>, "joe@perches.com"
- <joe@perches.com>, "dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
- "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hector
- Martin <marcan@marcan.st>, "sven@svenpeter.dev" <sven@svenpeter.dev>, Janne
- Grunau <j@jannau.net>, "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
- "asahi@lists.linux.dev" <asahi@lists.linux.dev>
-Subject: Re: [PATCH v4] lib/vsprintf: Add support for generic FOURCCs by
- extending %p4cc
-Message-ID: <20250228100319.10f6bb9e@gandalf.local.home>
-In-Reply-To: <PN3PR01MB95972518DA57C43F01769B83B8CC2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <DB7F502D-1477-49C9-A36D-1DEE408ED23C@live.com>
-	<PN3PR01MB95972518DA57C43F01769B83B8CC2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740755139; c=relaxed/simple;
+	bh=dDhLaUTQsnexKqrrFNWj5eiaDBUeDIExxD57vdbnIUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4wKaqmTSUOgAQ8qx4jo8F4k09YlXxVJGEZjw3WmDDWIAF6nH3eppBlJkA0r+564ePMOsuFR8f/m1cwBZomXIe3mI0GVPWnc4crlwIeDZyTaxH/09npMWUj0xSmYjFsckCyWWUwfV7H1z3y44pLNN9vlHh1satrLrS+fH/WWGL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=czff4ECK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6ACDC40E01AE;
+	Fri, 28 Feb 2025 15:05:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Viqbh_DcTgBT; Fri, 28 Feb 2025 15:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740755130; bh=nOayeHghCAqB2DpYbyw8dn1Tm6/+M1qiE1LsH7EuhEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=czff4ECK0f+EZogWoEgxklwtPfGC5XbzuIbsSv/pMnx6yex1nPJGKr8X6kfa9c2T9
+	 EZElz3yfcjMsksc+nG4ni8RiurToUaXJzq5DgrHxHXBxoLagQGiE2+C3tG8j34XqgO
+	 eOP5VEnI5WFpXNOcBibuULRfG27UpyHS4YsTXDXDnw9lPGEFQWPFZ3dPJdvN/vWoz+
+	 y8vVi37zbyG8BJRH2z8IMjMoKLbx6+cV/NQr+6R3D1zEOdZg6QfhIaWttVPdPgt+jA
+	 V2bdd9aUIETLbdxDn6L/9twH1z1wD9pXbmlzF4lTNvZz5xGLmnuODg0I3zFGDVgzv2
+	 zRXqPRdfwQ9uylxY7YO4TC3c98rgwmG4SqrBY90txC8sy3w+MWuKxSgW2Qp01iarTn
+	 Hp5UQMxWMnuGuLstPJDCZQIsN5tH5C5lMwQcZxBjxypkVJ9H/08nOazlfGJGXdfoTF
+	 OX7ibwfxb9yiTUdjwdmBCwwWawNAE0nIs1vjA/UzOTr1Q/wquBt1vjp7PNF5QdEAIf
+	 uOhIGU4WtdfeR1GWj5DYuySVYdHLAMg7cbxqKrYlco/FRv0a/BXBG8rHWeOmM72VIw
+	 xfIZ9bHirxrO1YHaBtDBSvYajCc6g9/NjPwhBq9uB5coWP2KSrNbDOx/GDCZQv86Bn
+	 UBEpIaSZ6xLY9p0zG20tLaKk=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CCD1240E015E;
+	Fri, 28 Feb 2025 15:05:21 +0000 (UTC)
+Date: Fri, 28 Feb 2025 16:05:15 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Shiju Jose <shiju.jose@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the edac tree
+Message-ID: <20250228150515.GEZ8HQq330pnGPZEP3@fat_crate.local>
+References: <20250228185102.15842f8b@canb.auug.org.au>
+ <af3e1e183b034ea89ed6582a5382e5c3@huawei.com>
+ <20250228103559.GAZ8GRj0xj6AKGVLj3@fat_crate.local>
+ <87jz9ann75.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87jz9ann75.fsf@trenco.lwn.net>
 
-On Fri, 28 Feb 2025 14:09:48 +0000
-Aditya Garg <gargaditya08@live.com> wrote:
+On Fri, Feb 28, 2025 at 07:44:30AM -0700, Jonathan Corbet wrote:
+> That will solve the problem for now, though that file is kind of a
+> dumping ground.  I'll clearly have to get back to my project of better
+> organizing the device docs...
 
-> > -    *p++ = ' ';
-> > -    strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
-> > -    p += strlen(p);
-> > +    if (pixel_fmt) {
-> > +        *p++ = ' ';
-> > +        strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");  
-> 
-> Do we need strscpy here?
+If you have an idea for a final resting ground for this one, let us know and
+we'll put it there and thus start the conversion.
 
-Why? The size of what p points to has already been calculated to hold this:
+:-)
 
-	char output[sizeof("0123 little-endian (0x01234567)")];
-	char *p = output;
+Thx.
 
-Unless you changed something, it will not overflow.
+-- 
+Regards/Gruss,
+    Boris.
 
--- Steve
+https://people.kernel.org/tglx/notes-about-netiquette
 
