@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-539032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D22A4A000
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2D4A4A002
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB3E177356
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A77F176C86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011F81EF366;
-	Fri, 28 Feb 2025 17:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EB51F4CAC;
+	Fri, 28 Feb 2025 17:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GDMtPDjC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B0K6pYIv"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBucXGUl"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6174326FDB1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DAF1F4C96;
+	Fri, 28 Feb 2025 17:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762701; cv=none; b=n5A92RhxW+ezcM7so/coCifc/E1rXWIbzJzSxpxhsijcGkUA31w/vWehYaQTfRtlIMY4NaQI+licALdmHMK7+r0ZrJopM5xYa88U0i4FaIYzbSv76KRkZq0rkvscyMKDZ4WNNa+TqwDq7ulqJbk83fk+tQFhHHGV4qnj/gJlB9E=
+	t=1740762717; cv=none; b=FD5tlL4Ts93St/e+PG3e44nY5XlCABBljJUR6+B0wxoBEpTSLcmPoNwQmGJgu9SEMCRlpEZ3LaKk/F728hqmWQyKklssFGzSRcEmRNomtH6gufwDhzSFKRM7kIDTCWAGFVk3sGDw4vhjhWc63k8d70SgMKoyIsjglQQbY5RnsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762701; c=relaxed/simple;
-	bh=eUVZaIqW+CB0jfOg2BINXDWYRbjVaHZId6dV5GpMm0A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=j6NTtzXsaW51NK/5wBZ6o9EuZfDS78x0c8Ljy/euQ9oav9/HznYlYKACdI/kDBvy7vKKLk5tSAi1x7LB68lOpI+Yr8V4cVPQL+HTWNZxh4BYKhsJllTj5qGYNYSy5PEcCkw76FuAjhavkdl5C9sGMyrzeKtAQwQaXKWyXtbjyjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GDMtPDjC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B0K6pYIv; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 50EE1114012A;
-	Fri, 28 Feb 2025 12:11:38 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-09.internal (MEProxy); Fri, 28 Feb 2025 12:11:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740762698;
-	 x=1740849098; bh=78ibwbV3I0RHR/tOF/oW/vYuywEd9IRmwNLiuOP1bIQ=; b=
-	GDMtPDjCFpXDWe84i7W2sXZpQNls5nI1+iXNALO2a+Z9Hf662yxy633xetcphzNN
-	Fd0q8PsfBIp0zRWAU2WgrrCqBvmivSvWFXmJUfZaHJU2gYmbGHiCdBAgmkBlZw7y
-	7H0kNGSavFNjFkDsf70s7HbNSsEYiKmFcIXMvLfV99LSKBG1R5Vc9zIgTHLoT9BF
-	8K5Loczn4u1g1PFCJb8RXjI+HGHrfdjMZQEYYHnXSM7TNeix4uFc00TU0bzzh5mI
-	6RQ4XaOdGVuw/JsKYhRR+bjQc/RgPmRIFhpQSpgyGcMvt+iGUnDpd97TLZgD7O+B
-	VMFiHvYQc/ydwQTMM7egCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740762698; x=
-	1740849098; bh=78ibwbV3I0RHR/tOF/oW/vYuywEd9IRmwNLiuOP1bIQ=; b=B
-	0K6pYIvewUolHHsJHKe3T7gq59YV8JfRa3L4EL9L+E9cjz9Hxkk4hOD9k/OoLoJL
-	KrgiHLWeCTP+idRgJCtOJiUjx3Sz8ovvkZvJmQdaHjOfYQ5ez/v1Tq7L5ZuG1VEk
-	uPnOCIxqdfxh6c2MUy+8xuacRc4pRYmiMA8AURrgR169JIbYOmyfkv9A0klqZkM+
-	VIRzYpcIHt3IVCbSA5qFFN7A9aS6ERpHQlQzNh5YNdTk5BH2yk6/yrPpBEHwZ8xf
-	0n3IZl9ipgPZZKo9D8HB6j3UrNk4PzBoVTS3Mp/YI6jQMllHdzPmqRIxO7V94PIo
-	ZbcxW759myKtPFgNoR0sg==
-X-ME-Sender: <xms:Se7BZ4yyIAddAWwmJp2jOffIC3TFhIMVrk-b3vyByKxiT6bINR4k_g>
-    <xme:Se7BZ8TpW7K0GwEdp-OY1O_qfCwErEXk-2Akkr4gwxZKp1eN_Hf3SuACw95VCrvPQ
-    ZWANKYy5-bgbvWPm4w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeliecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
-    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlhhivggu
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhgrrghgrdhjrggurghvsehinhhtvghlrd
-    gtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidr
-    ihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurg
-    htihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgv
-    vgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Se7BZ6X4OPXH0JNnaPip6fg73h4G4bqxlMAGvCKQ2lAJM9X9hx_Qzg>
-    <xmx:Se7BZ2iIpStp9Tjmaqm2BHHyfFfCaOuOCRvqfPDKjZiSOc5kMbyOGg>
-    <xmx:Se7BZ6BILHqJcBlVKouWhlnRcM18lk6ovErKxBB_zOjBc5ais1UV8g>
-    <xmx:Se7BZ3JIgQJzgtEzC5kQmSAZUDFxE6yrP7nDU1C6B3NVdlh4iR5NdQ>
-    <xmx:Su7BZ83SjyOAF5MnA5CQxnvd3ERbLaYugye9OZcPJxOyDNVojTHKViJu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5142D2220073; Fri, 28 Feb 2025 12:11:37 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740762717; c=relaxed/simple;
+	bh=34GoB2luaawFWdu1l7ZA4a8soc8d3PcRfzxudMjW4xQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FpWWZRyyT3Z2u/AqyvHKnE8D8r177LElsvi5kVG9lEbIhloL7oEFi7Y832XSpqGANRH8Qn+S6AF+m+TgBflvCn4DJ6K8R36CE3jRx+NmxVc/kJIniHcYaD1BVfaK2MfxFDv4431e/FfJN1J6un0EWJY/wzEIi8kUcmFFq4yKnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBucXGUl; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abf45d8db04so61642766b.1;
+        Fri, 28 Feb 2025 09:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740762713; x=1741367513; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6ets5aVNLOO0bxti3imRnUSklZXl6EEfSVuw5+1snM=;
+        b=GBucXGUleTdGN8VnrJNl1gJtDe1+82sUO6iZOZG/D+YF3BHN0+M79XDytR6bcbWJfl
+         2Ecf8yMon7her8cDQd94HoHlIU6oeVN0VkiJk7OkJJ052rf5EfOMLsblPNfLs3JSkqNx
+         ivpOr02hptTd9bWvb9MwIss+WDPG99dA961AVXkGARctMpc2GrJiCfoPPVsdZ6mg+gRI
+         ch4s0oRNGMZ0h0XTt1GE+0YuGmQHzaORPMpI5BA196/dWKiAnIs2MWwxmJZtWm/vIDn5
+         Uiel7MVhebq1uShXnKbbZL4NXVGXp3wHKw8AlmJn1/ohJaEWNRwXOv/gQ/C8HiqKNMHg
+         btKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740762713; x=1741367513;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6ets5aVNLOO0bxti3imRnUSklZXl6EEfSVuw5+1snM=;
+        b=F7YVO8sH+JUJqVIQtBl3teLhhMw3rA853FEjVN5TDNW95VrLgK2SPHHUOsSq7Z+MCI
+         V/Lv9agWjn1fu3/6KIy1WdsiqGWriYeLL7bSPM7jVuDqZ0ZSf0zDQWcE3KVWNWrsTsLx
+         e3xeqjRyTD5oR99T2FMsZCFLCwwKJOvH1gWov6+nqSZ27SFfRBWoL5QMTKObWwl3J7/E
+         Ar9Z/AjfDdjr7ptYJSR7dWyheyJTccZYY087YaEc6Wv303jiaLw1wTZ4ag1Mw+9gYsTT
+         4ijpq1qzbWe2X4YfqDPOQP6+P9OIFFaRNePdUSvPAVhAfA0xJUTXhrTDXXoJNGNWjH9m
+         Y7jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Mg0vTEkzNfDYS+bosFkRbS1IHjEtcSlimN0r9WNO27wppIMOgFbI5pUKUIS8hHhprDqvABP9vEyy@vger.kernel.org, AJvYcCUrGJQmDieXYt3IJDXVy0blsLZlVjn43xnZXBhw0x/tbt/j/4WxxKObUadB2B5wOPfXV51j/OaJ+4cHcgc=@vger.kernel.org, AJvYcCVI9FvMhT7VTcIihBEhWOQQ6n1p4k3zmB1tfK++IqaXoNVwZRgLlYX/o145SKT5s7pF1quFGnm6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWjLhKi7kjCq1Q1dNf4gh34rWg/5Fe74oTq/d8i5hmdBp7McdS
+	Zh2VGSd21caxMhN7L1GBno4WUE2YjQfaCLp8gGA6DLHNLGJTga38tq4HSw==
+X-Gm-Gg: ASbGncvhYhNpE95rpgAILIdUD5285nZzsXxcAglR+fFKE5w+7REwCCiP12HwGKx0m6F
+	sbWBUmarbL7dfAkoGCk6KTVedyjtf8CWecmwEe+8Za9E/cez84Dnk6K6YsePJ1yUVkMbmBW5NNd
+	0Vq1NkhSJsb/BsSJFWkLajVL4K9tljIBlm222GG7bS5CdlHrUuwFvtt9+G23pprNYqvtXk15W+T
+	xjZHLJsagU21ve8BS/tbrbZKVY3Na+Ra0MJv5JoeqkNGyN1bV1oPt+r5v86WyhRjC2lRFUTzHlE
+	tjVq/RyMZH1UtH+w7MfWX6yPDHFy8B2dsL0E0e4N
+X-Google-Smtp-Source: AGHT+IHZ3OgXJcoyK5UfrZxguUKxf5uKY3BVB81jJHZQfRIoF319w4NjdEB5itkEizbZibkQjuK/Mg==
+X-Received: by 2002:a17:907:60d0:b0:ab7:f245:fbc1 with SMTP id a640c23a62f3a-abf261f9dffmr409006366b.3.1740762713099;
+        Fri, 28 Feb 2025 09:11:53 -0800 (PST)
+Received: from foxbook (adqi59.neoplus.adsl.tpnet.pl. [79.185.142.59])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c74c766sm315767266b.127.2025.02.28.09.11.50
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 28 Feb 2025 09:11:52 -0800 (PST)
+Date: Fri, 28 Feb 2025 18:11:46 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Kuangyi Chiang <ki.chiang65@gmail.com>, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ mathias.nyman@intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: Handle quirky SuperSpeed isoc error
+ reporting by Etron HCs
+Message-ID: <20250228181146.5188fcdb@foxbook>
+In-Reply-To: <41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
+References: <20250205234205.73ca4ff8@foxbook>
+	<b19218ab-5248-47ba-8111-157818415247@linux.intel.com>
+	<20250210095736.6607f098@foxbook>
+	<20250211133614.5d64301f@foxbook>
+	<CAHN5xi05h+4Fz2SwD=4xjU=Yq7=QuQfnnS01C=Ur3SqwTGxy9A@mail.gmail.com>
+	<20250212091254.50653eee@foxbook>
+	<41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 28 Feb 2025 18:11:16 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Raag Jadav" <raag.jadav@intel.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-Id: <0011035a-5816-48c4-9fe4-c0b9db3c8e72@app.fastmail.com>
-In-Reply-To: <Z8CD33_OWK2LB6IZ@smile.fi.intel.com>
-References: <20250227070747.3105451-1-raag.jadav@intel.com>
- <Z8CD33_OWK2LB6IZ@smile.fi.intel.com>
-Subject: Re: [PATCH v3 0/2] Cleanup io.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025, at 16:25, Andy Shevchenko wrote:
-> On Thu, Feb 27, 2025 at 12:37:45PM +0530, Raag Jadav wrote:
->> This series attempts to cleanup io.h with "include what you use" approach.
->> This depends on changes available on immutable tag[1].
->> 
->> Although this series is too trivial in the grand scheme of things, it is
->> still a tiny step towards untangling core headers. I have success results
->> from LKP for this series but there can still be corner cases. So perhaps
->> we can queue this on a temporary branch which we can use to submit fixes
->> in case of fallout.
->> 
->> Future plan is to use the excellent analysis[2][3] by Arnd to cleanup other
->> headers.
->> 
->> [1] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
->> [2] https://lore.kernel.org/r/2342b516-2c6e-42e5-b4f4-579b280823ba@app.fastmail.com
->> [3] https://lore.kernel.org/r/f6eb011b-40fb-409a-b2b2-a09d0e770bbd@app.fastmail.com
->
-> I believe Arnd can take it through his tree for headers as DRM part is 
-> Acked already.
+On Fri, 28 Feb 2025 18:13:50 +0200, Mathias Nyman wrote:
+> On 12.2.2025 10.12, Micha=C5=82 Pecio wrote:
+> > Maybe I will seriously look into decoupling giveback and dequeue ptr
+> > tracking, not only for those spurious Etron events but everywhere.
+> >=20
+> > Mathias is right that HW has no sensible reason to touch DMA buffers
+> > after an error, I will look if the spec is very explicit about it.
+> > If so, we could give back TDs after the first event and merely keep
+> > enough information to recognize and silently ignore further events.
+> > =20
+>=20
+> This issue was left hanging, I'll clean up my proposal and send it as
+> a proper RFT PATCH.
 
-I've applied it yesterday and not seen any regression reports so far.
+I think it would be more pragmatic to have 'next_comp_code' instead of
+'last_comp_code', because then you don't need this new helper function
+which basically duplicates the switch statement from process_isoc_td().
 
-    Arnd
+And as long as Success is the only 'next_comp_code' supported, it can
+be a simple boolean flag. So, basically, rename 'last_td_was_short' to
+'expect_success_event', set it in process_isoc_td() and that's all.
+
+
+What are your thoughts about killing error_mid_td completely and using
+a similar mechanism to deal with those final events?
+
+1. The events would be taken care of.
+
+2. It should be OK wrt DMA, because the HC has no reason to touch data
+buffers after an error. Short Packet is done this way and it works.
+
+3. A remaining problem is that dequeue is advanced to end_trb too soon
+and "tail" of the TD could be overwritten. Already a problem with Short
+Packet and I think it can be solved by replacing most xhci_dequeue_td()
+calls with xhci_td_cleanup() and adding to handle_tx_event():
+
+    ep_ring->dequeue =3D ep_trb;
+    ep_ring->deq_seg =3D ep_seg;
+
+
+Regards,
+Michal
 
