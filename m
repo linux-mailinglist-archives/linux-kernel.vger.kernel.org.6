@@ -1,140 +1,209 @@
-Return-Path: <linux-kernel+bounces-539107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D5DA4A0F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF24A4A0FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CE83BC68F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688913AE52E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12361C175A;
-	Fri, 28 Feb 2025 17:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93261C1F00;
+	Fri, 28 Feb 2025 17:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9IvHPyT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Sy4RvZhn"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2045.outbound.protection.outlook.com [40.107.102.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8331607AC;
-	Fri, 28 Feb 2025 17:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740765222; cv=none; b=VmP8f0lHJhx0vfI2A7LDX+Oy/El/coJEjizZdPk86Oy4qZZtAcUSDd7DJRRHqXw+E8ToihUkeAB4YjKiGs288FRcz9nHiwOODlW+DKKD3zBCwgJCKpDs1m6QEJ/6IMPohwi9NeqKXEYNozYc8HxMqmZyHBhM1BxxqurSNNsuTpg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740765222; c=relaxed/simple;
-	bh=lNGI9OmFIX3ROmd0YpW0aM2qLJRXMahB6voPpXPOFSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DW+UmI4vUCIyQIgHqHTSKZk2+OfANsy7v7D3Faz/jxXBA7l23ZhrtNqmeLTLSJqj6UeRK148MGedgvdtKhElDaID3O0gHC50vWOKpvJXJh1OcBnrylBSm4LcCYkVQPZ4IwheB5f9Iuio1+ioIuZAq0FsF2fWdW98NfH8D+xa0KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9IvHPyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F633C4CED6;
-	Fri, 28 Feb 2025 17:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740765220;
-	bh=lNGI9OmFIX3ROmd0YpW0aM2qLJRXMahB6voPpXPOFSE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=q9IvHPyT1M2YCPvq1IDmlhw8ouy0R0gup7Y6Yd1WpWttU581st2d2ZscKzGNsdfAw
-	 5jjcxvs8Yuru7fhgpcruJYCfNmpeMCPSiA1mFTumnobza5W4GFKdw0pZ9l5uvXz2Ng
-	 j2G3uSgLYk+IuYvc51AXOvgfbZE6cV3drkyleOXp5cRLLpTPyKrWp2YCBwufjSppn5
-	 m0QqX9+g9wZqwPMDDzbbslCUD8rUfQuMZ5PjpypZtppA/FZMTPBmBH1bMBJALSQNZw
-	 y4z5mLYfAvvzOyV2leDHFdsMA+QoYiKJ70/8wzeMGZSTNzVtymVAOqHgsQZkEFNRtI
-	 P5Vcc/rOlmgPA==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/damon: respect core layer filters' allowance decision on ops layer
-Date: Fri, 28 Feb 2025 09:53:36 -0800
-Message-Id: <20250228175336.42781-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D81C07C4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740765293; cv=fail; b=sTBnZmPDlUkMTrejY0bkibrZvzxBfM/6MNIax9xZZXcQol/szsBiPSEXh1pfp4fkif3ZlCzEgn751A+f0dYnHwHYoZsVJXMHKgW3Onhyt4vBsbpahClYmwbC3/4twZJOxVf8LApJqVLgMZDrOWJSLasowCUbZqpP98ncuXURbO8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740765293; c=relaxed/simple;
+	bh=TRkdLeBdm8zTB/qKB93I+o7GacDPN5pyorvNtUkc90U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9YBg39vRRi5a6m+XYeqh/SD1F2lynSjgjC3CbpxRt9ufZ05M9c3GgGp2wCbzxotpbcTwQ9CqD6qBai2ZxyjLzVvMLnuzwtFrXNUC9aabsBOI722sNoxJvjsnXXAa6mxIk30mTtL4vKVypR9IZdGgS46US4cM4zf/aTkGAGBYZw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Sy4RvZhn; arc=fail smtp.client-ip=40.107.102.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jE6ImRXW0GvPncmgswBReZ24i5vRsUopBl9eaS1xRL17tqt7yMNz2XVSQsYwLZ/mdSiErGjfNFpygpqWpVm7K31lz17K7T6/72h1tpVBXjC88X5XW8ZRBVoBqruZoN3zl5+pl3G4O1rF9O17WmECaOi+rqX29NBp/wFbRpOxS4WjOrI5uHlIscR0I7PF7wiWvso8CdDDHKLt8bcgX2nguMVGmqYyKS06RWMWMmhQRCG9CpssFtawsDEgDvaSL2SIWzxSfzHR4zqoDwtDKwpPd+KGakiJ679dDpm2+HJ6Kb47O98O5KbFQtKyAX0x7k3wKNU4SStTjCmN3JKeaNbXWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hLpxfYTNX+NHAlD3GRdPQiBt63mAnPm24/9AEhjOO70=;
+ b=savJCGMI4RCXRaNvAIdAGK9sNsXEp8I7mQ5pwikg+6qitLev0wIrqXrIolCSF+bJcmwTHkpJNOArK295zRXuO7mkxgB0NJMCWXFY4XbPZuc2hq5QWuoXpPiK5TPGZ+4pSld9RcOqF4zlVi3rW4YRPqxLWxsEoiV3xqoAx9zbzfu8lkknpbQASS6gxrXyfDuaQOFxE7e5iZAVUEcgJbP+53zoq7wh+0yDmkMzzAQOr6BqlfkkVNt5nIbiSKeYU90PghSAC3ps5OxEo2xG00oNrB+tROwgPwQmvifBE1p0vRIk3seEuGvXrmI7MVAPVfdxPIFv+HRs620LJ3PQajs9zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hLpxfYTNX+NHAlD3GRdPQiBt63mAnPm24/9AEhjOO70=;
+ b=Sy4RvZhn/aghyDuARvY/Pebdz1N0jkbD2gTMV0IT6/9WL/hu8fjXJHg76k0u7ViksW6MDpTYzQfXtPosXkk8EIezcH6Bb2SPimLYJLRq/ou0KjD00PDlBHuxLiJiLqYQk+nAXj2mM2BVXjLPHxuleyDPiOU0FrDqwXsSo/n1BtXIlabezZjbP5x0rGZfee1u1dkaU8eapQqsCOys7PWBMj82FB6pmemzKLy2XIvC7+xsPCe/6xRxUJ32cnyPR9PUmK0U+uzkxnnw3kBt2BvoGXeycQPhgxEfWoSE1blBM2lEmFsyZC+4THGJwus3peg3xFegG/HqgYOybfbEZj/wyg==
+Received: from SA1P222CA0172.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c3::28)
+ by SA3PR12MB8046.namprd12.prod.outlook.com (2603:10b6:806:304::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Fri, 28 Feb
+ 2025 17:54:49 +0000
+Received: from SN1PEPF0002BA4B.namprd03.prod.outlook.com
+ (2603:10b6:806:3c3:cafe::b3) by SA1P222CA0172.outlook.office365.com
+ (2603:10b6:806:3c3::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.23 via Frontend Transport; Fri,
+ 28 Feb 2025 17:54:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF0002BA4B.mail.protection.outlook.com (10.167.242.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Fri, 28 Feb 2025 17:54:48 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Feb
+ 2025 09:54:30 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 28 Feb
+ 2025 09:54:30 -0800
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 28 Feb 2025 09:54:29 -0800
+Date: Fri, 28 Feb 2025 09:54:28 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<will@kernel.org>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] iommufd: Move iommufd_sw_msi and related
+ functions to driver.c
+Message-ID: <Z8H4VL+OUfi2+5eA@Asurada-Nvidia>
+References: <cover.1740705776.git.nicolinc@nvidia.com>
+ <ece6ab9a0144eaabc285eb21a09da683d6d9951c.1740705776.git.nicolinc@nvidia.com>
+ <20250228173212.GC39591@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250228173212.GC39591@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4B:EE_|SA3PR12MB8046:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46f466b0-be95-4bdd-7700-08dd5820feab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ff+DJDevWvAumKqM3HfC9cWEpCXKndkNnrg2cSLM6Pk1iZGnaN3zhCE8vFNU?=
+ =?us-ascii?Q?nUSoECAlXBv2WJAX8d2nJmzxMCj6mKWRbPkBBEKezvZ8J97KmOEeDlEa8fKS?=
+ =?us-ascii?Q?+6GK7jipAQGpJT/cBaLL+EQHG0KD/quw5X74zmR6OCKaJIo6q7BBl+JaBrEu?=
+ =?us-ascii?Q?S2hb1R8cZGTfM6TbktMSsxml3qRQbu6Ork1Kk3cHaQe8dyMz5r2OKm4spIVx?=
+ =?us-ascii?Q?KxC6g0guJ+V3bGc7XFnBOCcnrfhXuJk+NXSDr/L68frULzB+lqtMuBtt1Gc7?=
+ =?us-ascii?Q?OU4/OQiM/zIGgOT8VDR4uvNJzoO7hqOROj+o3R3zVn5C55CWKgptZsG7DEFG?=
+ =?us-ascii?Q?3Klo3aJFxJ8ZJzDRbtyGjHdGS7NMGsV9AwQpq9o9ffWOHoouXh2T/3DdgGci?=
+ =?us-ascii?Q?DOYdV5rqX0h0JZ4H7S9ag7DMVHjOXvwjL8NUGdJHoouqGWK0OcCQ19nmjNeG?=
+ =?us-ascii?Q?ebiNPDnDHd8PNS3xYYv9ishDhEvFtHoQBIafDciJrF1diAkigaEidhc1Zenc?=
+ =?us-ascii?Q?MTRHZ1ZZ0scP8IxIo6aykOuJlTfUUlGS9/y+0HGZyK93+eoz+UCtIfGkazPp?=
+ =?us-ascii?Q?6xVYSb1V2Q6G25OQ83usTbWTWdbk5VEbIPetol0iHGXqTmZ8Ak/ygih6t1LI?=
+ =?us-ascii?Q?Pd+whHf107x/15AtR/k0yFwDOTcy/koLfAbN4MZyRu9xWBEKg3fesdenw+Zv?=
+ =?us-ascii?Q?xTWwW8HWfrib/thLBaWDla8DujHdXW26CWYxdZAtOvb8AIDrQkdXBiYB+A+r?=
+ =?us-ascii?Q?LsZNLGxif+4k1x16wJW2iM8qAdTp3hAIspnx3UIUUNAAvU3rkbO2xw2Url/x?=
+ =?us-ascii?Q?M4ZS5IWvfaF312oy+yX+wzjanvjfyJO9HtcHV8StKrTWEdsUzGMF0lc/xEI3?=
+ =?us-ascii?Q?Z2BgKpxxWha++0ay9o1fNm+4i0HcjWTAQrgiWIeKN7sdsWnWC+PVP0oQikf7?=
+ =?us-ascii?Q?wuaoc8Y7IigvVJoCxnfWLSoul1O5gDl62c4xnipfiJ2f7IuRdRKo0jCiqEzE?=
+ =?us-ascii?Q?aou90JsnK1xtpM43rmj+nr6PPTeTSHm31SlV/qJ2Eo5SB/wFKTp7efzqFX2s?=
+ =?us-ascii?Q?c6fHefma8OlIO2byi2l9/C2bz5a45V3dRVkLDWcsg/qp3YgoRUHoCmtZmlRH?=
+ =?us-ascii?Q?yB3OxdZOpl6DWAfhDikD4vjUXq/SjI61wDgX4O1blcvulMEhquKzS9XofQMY?=
+ =?us-ascii?Q?xPbMB/5LcmJOG6qOFh/TPOEHBQ3b4uOY1RPtnVhhparwTjt8djh1SMtAo8eJ?=
+ =?us-ascii?Q?BMy36Ilk7GPyYi8Z3Rfb1NfHHZmJc0UBdWUyrZsLE0mxI6uQCiM/XS5GVWRM?=
+ =?us-ascii?Q?wInUZuJ4pJ3ggA/zExyRKZKPghqboAvWR2Z7JdkvD+SuT171MeHuCwpvpWhJ?=
+ =?us-ascii?Q?6b6CJPCN0Z53ZBdMj0EW3HvtGL64/B8RewHW9DFrsAAF2cN+fiLQovpfwlLv?=
+ =?us-ascii?Q?ZB/ipmNC6aA6KE9IW9dsspaQnrf4IeTFRFkGryubjnsR17PE6tKli9b3uhKy?=
+ =?us-ascii?Q?j9HyNFqRPtDZc1o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 17:54:48.9763
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46f466b0-be95-4bdd-7700-08dd5820feab
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA4B.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8046
 
-Filtering decisions are made in filters evaluation order.  Once a
-decision is made by a filter, filters that scheduled to be evaluated
-after the decision-made filter should just respect it.  This is the
-intended and documented behavior.  Since core layer-handled filters are
-evaluated before operations layer-handled filters, decisions made on
-core layer should respected by ops layer.
+On Fri, Feb 28, 2025 at 01:32:12PM -0400, Jason Gunthorpe wrote:
+> On Thu, Feb 27, 2025 at 05:31:16PM -0800, Nicolin Chen wrote:
+> > @@ -187,6 +188,8 @@ struct iommufd_object *_iommufd_object_alloc(struct iommufd_ctx *ictx,
+> >  					     enum iommufd_object_type type);
+> >  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+> >  				       unsigned long vdev_id);
+> > +int iommufd_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
+> > +		   phys_addr_t msi_addr);
+> 
+> This should probably go into drivers/iommu/iommu-priv.h ?
 
-In case of reject filters, the decision is respected, since core
-layer-rejected regions are not passed to ops layer.  But in case of
-allow filters, ops layer filters don't know if the region has passed to
-them because it was allowed by core filters or just because it didn't
-match to any core layer.  The current wrong implementation assumes it
-was due to not matched by any core filters.  As a reuslt, the decision
-is not respected.  Pass the missing information to ops layer using a new
-filed in 'struct damos', and make the ops layer filters respect it.
+Oh right, I forgot we had that.
 
-Fixes: 491fee286e56 ("mm/damon/core: support damos_filter->allow")
-Cc: <stable@vger.kernel.org> # 6.14.x
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- include/linux/damon.h | 5 +++++
- mm/damon/core.c       | 6 +++++-
- mm/damon/paddr.c      | 3 +++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+> > +int iommufd_sw_msi_install(struct iommufd_ctx *ictx,
+> > +			   struct iommufd_hwpt_paging *hwpt_paging,
+> > +			   struct iommufd_sw_msi_map *msi_map)
+> > +{
+> > +	unsigned long iova;
+> > +
+> > +	lockdep_assert_held(&ictx->sw_msi_lock);
+> > +
+> > +	iova = msi_map->sw_msi_start + msi_map->pgoff * PAGE_SIZE;
+> > +	if (!test_bit(msi_map->id, hwpt_paging->present_sw_msi.bitmap)) {
+> > +		int rc;
+> > +
+> > +		rc = iommu_map(hwpt_paging->common.domain, iova,
+> > +			       msi_map->msi_addr, PAGE_SIZE,
+> > +			       IOMMU_WRITE | IOMMU_READ | IOMMU_MMIO,
+> > +			       GFP_KERNEL_ACCOUNT);
+> > +		if (rc)
+> > +			return rc;
+> > +		__set_bit(msi_map->id, hwpt_paging->present_sw_msi.bitmap);
+> > +	}
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iommufd_sw_msi_install, "IOMMUFD");
+> 
+> Stubbed out too if CONFIG_IRQ_MSI_IOMMU ?
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 795ca09b1107..242910b190c9 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -496,6 +496,11 @@ struct damos {
- 	unsigned long next_apply_sis;
- 	/* informs if ongoing DAMOS walk for this scheme is finished */
- 	bool walk_completed;
-+	/*
-+	 * If the current region in the filtering stage is allowed by core
-+	 * layer-handled filters.  If true, operations layer allows it, too.
-+	 */
-+	bool core_filters_allowed;
- /* public: */
- 	struct damos_quota quota;
- 	struct damos_watermarks wmarks;
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index cfa105ee9610..b1ce072b56f2 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -1433,9 +1433,13 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
- {
- 	struct damos_filter *filter;
- 
-+	s->core_filters_allowed = false;
- 	damos_for_each_filter(filter, s) {
--		if (damos_filter_match(ctx, t, r, filter))
-+		if (damos_filter_match(ctx, t, r, filter)) {
-+			if (filter->allow)
-+				s->core_filters_allowed = true;
- 			return !filter->allow;
-+		}
- 	}
- 	return false;
- }
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 25090230da17..d5db313ca717 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -253,6 +253,9 @@ static bool damos_pa_filter_out(struct damos *scheme, struct folio *folio)
- {
- 	struct damos_filter *filter;
- 
-+	if (scheme->core_filters_allowed)
-+		return false;
-+
- 	damos_for_each_filter(filter, scheme) {
- 		if (damos_pa_filter_match(filter, folio))
- 			return !filter->allow;
+In that case, the other caller iommufd_group_setup_msi() could be
+{
+#if IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
+	....
+	iommufd_sw_msi_install();
+	...
+#endif
+	return 0;
+}
+?
 
-base-commit: c8f5534db6574708eee17fcd416f0a3fb3b45dbd
--- 
-2.39.5
+> I'm still wondering if we should use a function pointer, how big was
+> this compiled anyhow?
+
+Hmm, you mean the size of driver.o? It's 192K (before) vs 212K
+(after).
+
+Thanks
+Nicolin
 
