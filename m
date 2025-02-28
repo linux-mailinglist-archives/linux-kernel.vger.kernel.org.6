@@ -1,93 +1,144 @@
-Return-Path: <linux-kernel+bounces-537990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D4EA4934E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF3BA49326
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D4318907D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D687E188E4FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABBA2459FF;
-	Fri, 28 Feb 2025 08:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25122DFBE;
+	Fri, 28 Feb 2025 08:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVphZviI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P4+3jflR"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865A1242904;
-	Fri, 28 Feb 2025 08:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17D22CBCB;
+	Fri, 28 Feb 2025 08:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730830; cv=none; b=bQdvvksLugzYSDzvAQ33upuIB4jxQGdfLZc4TsMMywJfaYmthvUYc6eWxmIwpIfkExm/QQqSUL8RV58R6klsEpybmP7c0M+plqI8PXHoKyBQVZTzhaih52RBO5ziSxPt5s/tB12FTAWROnzUAYrGk1YRaq9x08ktets6YOJhUDo=
+	t=1740730544; cv=none; b=U+65TI5vdI4PfMzxbL6LgGqGgqkWm4bFRrlhEt8QjzYjYUaDi0XXCpWj5uhJuSgi+cN+tc5EMXvdWkBsklroSmm+2xXm4EVJGy1d/7QuizI6AIar8BDuFxZpnMmVeJGJnACYy/48c0A37ZON6LAP1eQT2geV0ZwJrjE9dQTaCoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730830; c=relaxed/simple;
-	bh=8yTO/llICtnbsknrcvGs4/GhXN3R2fhImtsrIebDg+g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AeE+FUBcWFXOilxFAQDhSupccVJjPwYJ031SNM56gwKyYyi6UqwDlI8+KR0XzlIDvjY9FXm5tqyGxVvqnps7Po9HFlFcJ28uhtz4ZwsZAuhnwJ/yNyjz+ix0nQFhbSKaxNGEm1gn3blD8U8iTOduamWDKvFFdCUqZUeeqmX9CLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVphZviI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CB0C4CED6;
-	Fri, 28 Feb 2025 08:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740730830;
-	bh=8yTO/llICtnbsknrcvGs4/GhXN3R2fhImtsrIebDg+g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JVphZviI2BP21J+rsLbShFP+I+sXr+H4DNDYOwwFPt7phwM3tNOPrSOAMNwnvIOgN
-	 +jaW6MGSpZZLvuj4Ddk4M96WMF24TmYHMHLZpAjKHDf3DiQw5eMcPxQ7MWnG+lPQbk
-	 dWGgjVEjN4xvakGoYyGY/nG8ZIX6HIHVgg1Hojzsi4IT5xt+x0vDYkLjgoxAQrpUUH
-	 tUlcbEgLiJT++KN50RvHszDn7yaIBigkx+1/Pz3E1HApbUqMKdzzINYpP/YetbiG0m
-	 iVNGxufsOUf6aPNJw/v3W/nr76Sh7+qmYo/IIGggTH5dqvTgc/ey+mSd901kx0xkfz
-	 /SSF3jb9/PdQQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Petr Mladek" <pmladek@suse.com>,  "Steven Rostedt"
- <rostedt@goodmis.org>,  "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>,  "Rasmus Villemoes"
- <linux@rasmusvillemoes.dk>,  "Sergey Senozhatsky"
- <senozhatsky@chromium.org>,  "Andrew Morton" <akpm@linux-foundation.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,  "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
- <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "David
- Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 3/4] print: use new #[export] macro for rust_fmt_argument
-In-Reply-To: <20250227-export-macro-v1-3-948775fc37aa@google.com> (Alice
-	Ryhl's message of "Thu, 27 Feb 2025 17:02:01 +0000")
-References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
-	<HPpa1v7Unxin25S5VB3PgIDTgvQzpNQV4MyFqkGDP7w5sHWVmjRpH3OgnbagOSqHHCY9mnBIc3mlkAvEmEP5Kg==@protonmail.internalid>
-	<20250227-export-macro-v1-3-948775fc37aa@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 28 Feb 2025 09:15:09 +0100
-Message-ID: <87plj2o582.fsf@kernel.org>
+	s=arc-20240116; t=1740730544; c=relaxed/simple;
+	bh=WvAzpXYuDStbIgKgevXS4PEedZ9dOlJ+/Y44X6oyEF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MXLSj76pEr+HXmP9XiNmnQWdrF29x25nob/Ew5eSTSB1GQ6zaPrehLoVS2Lnx+CR+Je4Pw9rm4NJw+oNtdK9BGpBmAsmZh+PIoeEkxBlt+B2IdL6ybxrNNle928ukZPODlIQ1nkD+igLRJfeN3U0ROX21Btcfka7s/m5dLgoqwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P4+3jflR; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C61E944432;
+	Fri, 28 Feb 2025 08:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740730533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1iuifuyC6NwdJO1A+Y1ARBqJ7aQn+uQXOyq27YtuDWY=;
+	b=P4+3jflRxGg/jV135L0ycaPLhy0wFGWV7b4xHnid2vIQ4EWylqaSqoDPc/Mv0xqhG0RF/4
+	bXgBQ9zXbuKck7zg+NcVqYBYSvXMmP+z+mRwEG7KgGNbkTJ4yD7A5FRDMZ+LWcskgcZ0ur
+	U85N9738IWlHE/ypWDJe7IA20sZP+H7/C2AsWAwEGY/GvUr7G7t5okLPnupvntT/QXks/f
+	e2oWQU037PNB84V3g0e028iWOgUa2pdP7XxGHgrncwwXYY6J/QGRVcL9tmh3Uvy+JhiPnM
+	4lU7K0Z25QchE2OoSH06FC/B4VNbhVR0/5Kv/qCW7cIRMR4s/N3JSXsgF8Olhw==
+Message-ID: <d95c15b7-3641-4334-a42b-b56067e5e0f0@bootlin.com>
+Date: Fri, 28 Feb 2025 09:15:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 04/10] selftests/bpf: test_tunnel: Move ip6gre
+ tunnel test to test_progs
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
+ <20250227-tunnels-v1-4-33df5c30aa04@bootlin.com> <Z8DkxXy9ZAbASXCk@mini-arch>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <Z8DkxXy9ZAbASXCk@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekleekkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeurghsthhivghnucevuhhruhhttghhvghtuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfehgefgteffkeehveeuvdekvddvueefgeejvefgleevveevteffveefgfehieejnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsthhfohhmihgthhgvvhesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrt
+ ghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvh
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Hi Stanislav
 
-> This moves the rust_fmt_argument function over to use the new #[export]
-> macro, which will verify at compile-time that the function signature
-> matches what is in the header file.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On 2/27/25 11:18 PM, Stanislav Fomichev wrote:
+> On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
+>> ip6gre tunnels are tested in the test_tunnel.sh but not in the test_progs
+>> framework.
+>>
+>> Add a new test in test_progs to test ip6gre tunnels. It uses the same
+>> network topology and the same BPF programs than the script. Disable the
+>> IPv6 DAD feature because it can take lot of time and cause some tests to
+>> fail depending on the environment they're run on.
+>> Remove test_ip6gre() and test_ip6gretap() from the script.
+>>
+>> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+>> ---
+>>   .../testing/selftests/bpf/prog_tests/test_tunnel.c | 110 +++++++++++++++++++++
+>>   tools/testing/selftests/bpf/test_tunnel.sh         |  95 ------------------
+>>   2 files changed, 110 insertions(+), 95 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> index bd1410b90b94773ba9bc1fa378bb7139f8d4670a..f00727aedee0c283002c55a45a04a96013d39a5d 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> @@ -71,6 +71,8 @@
+>>   #define IP4_ADDR2_VETH1 "172.16.1.20"
+>>   #define IP4_ADDR_TUNL_DEV0 "10.1.1.100"
+>>   #define IP4_ADDR_TUNL_DEV1 "10.1.1.200"
+>> +#define IP6_ADDR_TUNL_DEV0 "fc80::100"
+>> +#define IP6_ADDR_TUNL_DEV1 "fc80::200"
+>>   
+>>   #define IP6_ADDR_VETH0 "::11"
+>>   #define IP6_ADDR1_VETH1 "::22"
+>> @@ -101,11 +103,21 @@
+>>   #define GRE_TUNL_DEV0 "gre00"
+>>   #define GRE_TUNL_DEV1 "gre11"
+>>   
+>> +#define IP6GRE_TUNL_DEV0 "ip6gre00"
+>> +#define IP6GRE_TUNL_DEV1 "ip6gre11"
+>> +
+>>   #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
+>>   
+>>   static int config_device(void)
+>>   {
+>>   	SYS(fail, "ip netns add at_ns0");
+> 
+> [..]
+> 
+>> +	/* disable IPv6 DAD because it might take too long and fail tests */
+>> +	SYS(fail, "ip netns exec at_ns0 sysctl -wq net.ipv6.conf.default.accept_dad=0");
+>> +	SYS(fail, "ip netns exec at_ns0 sysctl -wq net.ipv6.conf.all.accept_dad=0");
+>> +	SYS(fail, "sysctl -wq net.ipv6.conf.default.accept_dad=0");
+>> +	SYS(fail, "sysctl -wq net.ipv6.conf.all.accept_dad=0");
+> 
+> `ip addr add ... nodad` should be a less invasive alternative?
 
-
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+I didn't know I could do it through `ip addr`, I'll try this !
 
 
 Best regards,
-Andreas Hindborg
-
-
+Bastien
 
