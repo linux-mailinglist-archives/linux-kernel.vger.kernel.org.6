@@ -1,220 +1,126 @@
-Return-Path: <linux-kernel+bounces-538899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0B4A49E9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:21:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8780A49EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39893BA6E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE9D3BA879
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E586027002E;
-	Fri, 28 Feb 2025 16:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC289274264;
+	Fri, 28 Feb 2025 16:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGVWLE05"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ipE7YCAF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A3226A1A9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDBC274253
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759659; cv=none; b=SP0o/UeEqfDK0MrwQd3Zl63s3ddpgr3yFU0GrmMJvfJm9+rJwgu3Ol2bCSPrJT5tzHuIYJqp/mbi//FoThg7E86LyTX/Jgs0xoCsiHUjTamY2G2TUgO9yolkcXQTsL6nOmt46P+a9O3SDgHO4J4sK1fTh5ytGVtlTyTxYkFujxI=
+	t=1740759706; cv=none; b=hJVOJIZQ4mdfzQA29tRtb/2eqYkpk6p+zXarnwvWGunVH2vMEctRLc9/w+oVqb5oelfa1FUQneCrBw6sNpY9ymQgPaf00vSc00IeI4gzL+MCmfudyysnndvjq2G583xl7IpyEcksuK/ozXTYJcoEhpd8M4jd0Coj+IWtLm4kjEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759659; c=relaxed/simple;
-	bh=DisHIpd3riEUJtQ+q6DzRucAB6idSydPKUi1F9k0wCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F9sgOMGzQViXRiy5SVmsP3CJudwukZOgl/D5kCdqRCRy+oyDqkrWIVGMJMhZ1Aq6NUtiiy9IqooIhbysKM0FylQt92hgmLZ6BcZN6/tsQM5Iq8lWskk8GuqutI14p0ttu9O9UBCCPMosbRwjatJpK6jSBF+tuQ6lU5bA43Ce2Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGVWLE05; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abec8c122e4so337993566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:20:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740759655; x=1741364455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F7M+V9Yl376O4gnMwc9q31099MVdI1Xt7kytD7LSxeY=;
-        b=lGVWLE05FKlhiDFNdKq23jx2Kl70oCSTjC5GnorzRunrUAW+zIq7ngcVciCrePX9dW
-         ARHhOSY+vJpl6KzPUQmx44FvR7Qq4L/0mINzh/wlJ6elkF6laux+Nq544EEONBCEAJCu
-         kVWUCGyIFntGSJFFuAybHIVgFfKzf6qX6olCzB+dgHkLR5krAsPnE4QXP8z6LeuFa6sg
-         7zJNTh0vYNnX3Z2LN6MZxjNH9EdgbbYKnR1xp58xQoISpCuk5bPqIT4ycXaQCYfsE5pt
-         GoAiDKm8PvhkAQoN9XgJFpybL+5fM6YZq5sizhIWRDvpB34RKNkJvnZjv4RppsyByIYf
-         +aLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740759655; x=1741364455;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F7M+V9Yl376O4gnMwc9q31099MVdI1Xt7kytD7LSxeY=;
-        b=vWHhddZ1bWruWMSICg2WqSTyRDKJleHb9vhOwlM+koP4Hw+miisPccCfWStgujW7jm
-         pS+iMsb4fv8KTLMchbYn1Mg/tHNAwHaTqfaVIAuQmiU1zD8CVOj2MFz3670KuoKYcSS2
-         ZdhVftH6dNK1ENPUjRSHu1agzz9Gt0ou/cm1vi3PKvi1NNMddMSh71Dy48SXKjRS75pr
-         f5cIZLoeOw/VfZ5TlMdA0ERn4XcKpKaGeOgDiBw857hoZckHyTuwEDkLwq3wRAdh/un2
-         lyaO+jHx07RP+S74uruCr+RoUWj1q0V1YynPc+YoHj6C0ZnNP5gXm/t/Ac3ApjVXBu4Y
-         jLjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUz/ZrU7hcg4G3nSfVkz9aiQYvnjAmAvat+bBJHIIL1m6dotkKCSrltFfM9pSpS2B2NkZuL3p94aD6te34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd4OI4BmU+7yjWHNofjNwvgKF/b4rjNNbrFH1VyVdX+PmRQN89
-	zyTrOLmI7BqJxkj5vqp3EbSiC4Gy9Ha5SAvA0T0iG4PUU9eogCFk
-X-Gm-Gg: ASbGncvFApqCPGYxfm0EzynSSxEYxe7QlzWX7vNdUQCrkdGhz6L7aRN/AnkkreS0LLw
-	kBfub6ZgcPZAZj/LcdSfYN4u7gpBoNyqDtpFBV1gMv2JMMQz94JJ92Tg5m0Vq7tIKnmzRQxi+WQ
-	8/QNPJHcgCcvWwQXIbKPOOib/Jqoy5z4I9zK9sYlkjVEPQ8tWv52pEB7nYqyB5qVk4TiS1Tu5rB
-	GUL4eIgot5ez7OoLJgqgpLPVp/zmmitvaY785X8o/lcuiAywhBkI7zVggDg7YNKS74WCOcr5NQp
-	MqLK7QJ+QoI/IQUA3axCeAK/bK0jqdHUXsB67Aj//CT6JHuphLZFJBVvd/ZQxAruMCc4gbO0u5D
-	B+LA1rh3tZBiP0dQhkxcdXQ89UcnsrHnm6MCyMpS/qlzSjCc=
-X-Google-Smtp-Source: AGHT+IE7vjvgr6V/Y5vbrY0YJkiKPt7c7FvPgqVZACyEKsNHd80OZCHihtZaKOCuHVBq0KYagJIXqg==
-X-Received: by 2002:a17:906:f597:b0:abe:bfdd:e68c with SMTP id a640c23a62f3a-abf25d94352mr435164066b.4.1740759654346;
-        Fri, 28 Feb 2025 08:20:54 -0800 (PST)
-Received: from ?IPV6:2a02:a466:68ed:1:901d:839a:eedb:7409? (2a02-a466-68ed-1-901d-839a-eedb-7409.fixed6.kpn.net. [2a02:a466:68ed:1:901d:839a:eedb:7409])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75c333sm315373966b.145.2025.02.28.08.20.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 08:20:54 -0800 (PST)
-Message-ID: <8c8a5aa5-f434-4006-b36c-02311b94041f@gmail.com>
-Date: Fri, 28 Feb 2025 17:20:54 +0100
+	s=arc-20240116; t=1740759706; c=relaxed/simple;
+	bh=1FAQORxONHUgFlOsVNXR/6UEXfqzylDArK5bH8U//aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ufQB4YCNjVGTmilvhhMcrXz/qwYnKPZthJwZimx+es+tv04LuYDVVXmiN9LTK+GPOV0JGd75BezgLwls1BJooQKNqUTRd4LDgvoPGVodc/YkBxwHMZYBJeM6KtCeqbsm6QtX5qqknvz/HFqNToocKIImDv5gtrJPl4iAFnzpobw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ipE7YCAF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 777E540E01AE;
+	Fri, 28 Feb 2025 16:21:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZYzTotK-1T7L; Fri, 28 Feb 2025 16:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740759697; bh=4hiEodTIpOmuJ8vfIFQijFMswHXDQSYENIDtnab/Kdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipE7YCAFjk5cfaw6WeoHw2lVk7Fn97RoqLBxrkPgO0Ijh2q89I0LqCTNuVXUoXRX5
+	 JypU7ab8057PMwrz0T/yds2nsmTezlEvPdrwvp2RrDfFy7t3kZA6UrTVp3lxm/JYCl
+	 Icii/svJuKMZoeKFsV+DC5wafEMe4baMqGqedw0EyaEdEQpeejO0/y3E27IJOvUznS
+	 g3+CLD+1CXg2pjv6xyE2VviykBw/dip8AXX6eeV5DH1N6M18Q7WxgF7wZJcw5fv33I
+	 zJaoIx2vZGEjSeX1iFgmw7/2mC72Ja/BbGFCKRZSDRsy4HlTBVaxNja1moFN876SEl
+	 KSduva/5Mr9vvXKVcy2uM1pAR+nM3l+cK4yan55zJuGgoQQqKohuuzWr8s1yVD29fS
+	 HcQ1IxHFNmMV7m0l41r324ZWrKG5znLu0CKT1XUTqnmOuT1sJW0TUn+GPDv4Mcul/z
+	 901ny9/+YY8CxOevlKEYeuzBe5nnatLAfjYiwdZsAmqXtfJWBiQUj7/myxhG/PoHx4
+	 DTp5Dpv4yLfMwXq0XCHguxZpeplQYAEMr1flPLlykdymc7TedN4lqJj4c/u3SxaxR/
+	 SDfJ8KCrwiaaF3Pl6YsroueEDNlCbvWFqrbioLHDUwTKTZQHP3K8RBZs9UuUudoisw
+	 cPdlArekptvQbS8tvYvfmCWs=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ED27040E0173;
+	Fri, 28 Feb 2025 16:21:18 +0000 (UTC)
+Date: Fri, 28 Feb 2025 17:21:12 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v14 02/13] x86/mm: get INVLPGB count max from CPUID
+Message-ID: <20250228162112.GDZ8HieAio1EVer94Q@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-3-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] x86: document X86_INTEL_MID as 64-bit-only
-To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>
-References: <20250226213714.4040853-1-arnd@kernel.org>
- <20250226213714.4040853-9-arnd@kernel.org>
-Content-Language: en-US
-From: Ferry Toth <fntoth@gmail.com>
-In-Reply-To: <20250226213714.4040853-9-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-3-riel@surriel.com>
 
-Hi,
-
-On 26-02-2025 22:37, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The X86_INTEL_MID code was originally introduced for the 32-bit
-> Moorestown/Medfield/Clovertrail platform, later the 64-bit
-> Merrifield/Moorefield variants were added, but the final Morganfield
-> 14nm platform was canceled before it hit the market.
->
-> To help users understand what the option actually refers to, update the
-> help text, and add a dependency on 64-bit kernels.
->
-> Ferry confirmed that all the hardware can run 64-bit kernels these days,
-> but is still testing 32-bit kernels on the Intel Edison board, so this
-> remains possible, but is guarded by a CONFIG_EXPERT dependency now,
-> to gently push remaining users towards using CONFIG_64BIT.
-
-That is a bit more than I said :-) I only know of Merrifield, as Andy 
-removed the SFI bits and got ACPI working. For the other platforms I 
-don't know the status. Additionally there are pieces of code where 32b 
-runs substantially faster than 64b (I know of at least crc32c).
-
-Maybe Andy can confirm the other platforms?
-
-> Cc: Ferry Toth <fntoth@gmail.com>
-> Link: https://lore.kernel.org/lkml/d890eecc-97de-4abf-8e0e-b881d5db5c1d@gmail.com/
-> Acked-by: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   arch/x86/Kconfig | 50 ++++++++++++++++++++++++++++--------------------
->   1 file changed, 29 insertions(+), 21 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index aba32f88870d..42dd3c58abfb 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -548,12 +548,12 @@ config X86_EXTENDED_PLATFORM
->   		RDC R-321x SoC
->   		SGI 320/540 (Visual Workstation)
->   		STA2X11-based (e.g. Northville)
-> -		Moorestown MID devices
->   
->   	  64-bit platforms (CONFIG_64BIT=y):
->   		Numascale NumaChip
->   		ScaleMP vSMP
->   		SGI Ultraviolet
-> +		Merrifield/Moorefield MID devices
->   
->   	  If you have one of these systems, or if you want to build a
->   	  generic distribution kernel, say Y here - otherwise say N.
-> @@ -598,8 +598,31 @@ config X86_UV
->   	  This option is needed in order to support SGI Ultraviolet systems.
->   	  If you don't have one of these, you should say N here.
->   
-> -# Following is an alphabetically sorted list of 32 bit extended platforms
-> -# Please maintain the alphabetic order if and when there are additions
-> +config X86_INTEL_MID
-> +	bool "Intel Z34xx/Z35xx MID platform support"
-> +	depends on X86_EXTENDED_PLATFORM
-> +	depends on X86_PLATFORM_DEVICES
-> +	depends on PCI
-> +	depends on X86_64 || (EXPERT && PCI_GOANY)
-> +	depends on X86_IO_APIC
-> +	select I2C
-> +	select DW_APB_TIMER
-> +	select INTEL_SCU_PCI
-> +	help
-> +	  Select to build a kernel capable of supporting 64-bit Intel MID
-> +	  (Mobile Internet Device) platform systems which do not have
-> +	  the PCI legacy interfaces.
+On Tue, Feb 25, 2025 at 10:00:37PM -0500, Rik van Riel wrote:
+> @@ -1139,6 +1141,10 @@ static void cpu_detect_tlb_amd(struct cpuinfo_x86 *c)
+>  		tlb_lli_2m[ENTRIES] = eax & mask;
+>  
+>  	tlb_lli_4m[ENTRIES] = tlb_lli_2m[ENTRIES] >> 1;
 > +
-> +	  The only supported devices are the 22nm Merrified (Z34xx)
-> +	  and Moorefield (Z35xx) SoC used in the Intel Edison board and
-> +	  a small number of Android devices such as the Asus Zenfone 2,
-> +	  Asus FonePad 8 and Dell Venue 7.
-> +
-> +	  If you are building for a PC class system or non-MID tablet
-> +	  SoCs like Bay Trail (Z36xx/Z37xx), say N here.
-> +
-> +	  Intel MID platforms are based on an Intel processor and chipset which
-> +	  consume less power than most of the x86 derivatives.
->   
->   config X86_GOLDFISH
->   	bool "Goldfish (Virtual Platform)"
-> @@ -609,6 +632,9 @@ config X86_GOLDFISH
->   	  for Android development. Unless you are building for the Android
->   	  Goldfish emulator say N here.
->   
-> +# Following is an alphabetically sorted list of 32 bit extended platforms
-> +# Please maintain the alphabetic order if and when there are additions
-> +
->   config X86_INTEL_CE
->   	bool "CE4100 TV platform"
->   	depends on PCI
-> @@ -624,24 +650,6 @@ config X86_INTEL_CE
->   	  This option compiles in support for the CE4100 SOC for settop
->   	  boxes and media devices.
->   
-> -config X86_INTEL_MID
-> -	bool "Intel MID platform support"
-> -	depends on X86_EXTENDED_PLATFORM
-> -	depends on X86_PLATFORM_DEVICES
-> -	depends on PCI
-> -	depends on X86_64 || (PCI_GOANY && X86_32)
-> -	depends on X86_IO_APIC
-> -	select I2C
-> -	select DW_APB_TIMER
-> -	select INTEL_SCU_PCI
-> -	help
-> -	  Select to build a kernel capable of supporting Intel MID (Mobile
-> -	  Internet Device) platform systems which do not have the PCI legacy
-> -	  interfaces. If you are building for a PC class system say N here.
-> -
-> -	  Intel MID platforms are based on an Intel processor and chipset which
-> -	  consume less power than most of the x86 derivatives.
-> -
->   config X86_INTEL_QUARK
->   	bool "Intel Quark platform support"
->   	depends on X86_32
+> +	/* Max number of pages INVLPGB can invalidate in one shot */
+> +	if (boot_cpu_has(X86_FEATURE_INVLPGB))
+	    ^^^^^^^^^^^^^
+
+I even sent you an *actual* hunk which you could've merged ontop of yours!
+
+https://lore.kernel.org/r/20250224120029.GDZ7xfXV3jMjnbdbGl@fat_crate.local
+
+What is the best way to convey to you what needs to be done?
+
+Next diff ontop:
+
+---
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 9f48596da4f0..0e2e9af18cef 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1143,7 +1143,7 @@ static void cpu_detect_tlb_amd(struct cpuinfo_x86 *c)
+ 	tlb_lli_4m[ENTRIES] = tlb_lli_2m[ENTRIES] >> 1;
+ 
+ 	/* Max number of pages INVLPGB can invalidate in one shot */
+-	if (boot_cpu_has(X86_FEATURE_INVLPGB))
++	if (cpu_has(c, X86_FEATURE_INVLPGB))
+ 		invlpgb_count_max = (cpuid_edx(0x80000008) & 0xffff) + 1;
+ }
+ 
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
