@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-539488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED33A4A4F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:23:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 747EEA4A4FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3750170147
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84540170539
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796811DDC10;
-	Fri, 28 Feb 2025 21:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8631DE2BE;
+	Fri, 28 Feb 2025 21:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZfGsz4a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLP4jZnC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADEE1D63FD;
-	Fri, 28 Feb 2025 21:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1151D7E5F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 21:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777767; cv=none; b=ROalhsp0za0donSNri+N0FTiIv9OgfTe9XpwH36cWFK45SuN+3Q9enzME0U8WSbnGpd7J61QwyqaIQJ/uv7gnKeHtaQXBn3nBUggX87RWgbkqXkMizUwyEMiiw0w5tDx2NLKOGqTcuHvizRo/a6QzxALU/W/afqJphZQthOgnVQ=
+	t=1740777769; cv=none; b=nwg1hUfM/b9dNEImZpgxN8GbYd/Ewrr09koiqqJFutXetghsxQ7eA7WBpYR7goL+bcp/1B2SCSxWFidu4Bp6njYvgd1h7e743CUDwsOgVrMVLU9H4B3vEhOBCdNb709xmTHJ4GXUfJ3TlDctOxkHPx7plH0NKr01BCXgSBQAHjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777767; c=relaxed/simple;
-	bh=JBzeKdwhC3moTlOZODJUQj1pAUwMAaCEBCLwB//XK6k=;
+	s=arc-20240116; t=1740777769; c=relaxed/simple;
+	bh=BdUt223lMdWOnXc6cIlvD1jJVADcQvHW7HwahCmqe1U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UiWvG9xSXlw3R5sADk8ic7VKgmBHDGgVpXX5uxCUcJiJu7Al/vVBqE6PLqsGJ542FsYSZrENvUr0h1WTKdY9IY3Msf6IaQ9MzXTeY9MYEqCZKxmJeFblwpCO8UMLlwu2Z+ESqJErECvhAbAKBxnNQXltE0yvUwvhZQTvsQiuc6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZfGsz4a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BE6C4CEE2;
-	Fri, 28 Feb 2025 21:22:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sgUHLWAH43THgGphZBKMcw4cyWPp/hLKAANV0e5RiZMDsQY5rgFZMEy4yn0r+ms7Bm/TpguPYiTBnUiQ4/48VX2LY8oaBcstbCHP57Pt6prLyQZMMrtD1ay0ZxPzNGtpn/275VGYZN5w+M/cQYJ0jUSQcNbNjL0bE20LxzVMAoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLP4jZnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE87FC4CEE5;
+	Fri, 28 Feb 2025 21:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777767;
-	bh=JBzeKdwhC3moTlOZODJUQj1pAUwMAaCEBCLwB//XK6k=;
+	s=k20201202; t=1740777769;
+	bh=BdUt223lMdWOnXc6cIlvD1jJVADcQvHW7HwahCmqe1U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HZfGsz4a/Wb5K190mpN0hUEjxtlng3IksnID5Wqmy//b3riT8NlHGzftLdTW4732C
-	 A3p/X+JU6g2AfKE+5gkGxi9bch0utFZvBMR3iURHDPgc/gSjeKW/9+7Eh8cHh8jtcs
-	 zCl96QPfdnZKij5aMeAZSyjVYMDu/mcIy0JsRE8/tjDiuo85z4Voyr6Lp/vEFt/g6b
-	 xxagA/4BYOfJrJ0RwB1bzwQRXjrOESSMtjivw9MltIyDdFYGzb/ndaU0IkRR1oWA/e
-	 sCe3zg6XH/ElnzZkSNbxGJiodB6gvt4DwmBWPW0Pk0oHfs0vn1M/T3FDCwcD4p+9UD
-	 Dp8OXQLTITh5A==
+	b=lLP4jZnC8S7vyY7doJ9eOcblsw7RYWyaHJpo0DQO0ZLMF0SxAWFFJlKJP3NmYqUby
+	 QNPbNFn972I8BBQZAQR1SMFaUXUEMurHpc1Y3CD7yl88Q1GDPHyH4EWAHSHlnYk9nq
+	 UIbOJwnPmnrtmzBxYkBZhRONB7pr9PpTsqD6lrgaxItZAePS1bQI9QNJWGGZ3FCxe1
+	 a/trBQC2GjOvYiODDnEQVOTrumjyzgDw0rdt6/yha15lwUuOln2jCaEys7dM4gOWec
+	 wLm2gCwloXOszTwRpqNsPzNdWY9YCoFboS+PZ1QzCB362J/oWQuFr5EKBNl2K97qpI
+	 HViFXwjKSpSbw==
 From: Mark Brown <broonie@kernel.org>
-To: perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com, deller@gmx.de, 
- andriy.shevchenko@linux.intel.com, sre@kernel.org, 
- sakari.ailus@linux.intel.com, mchehab@kernel.org, jdmason@kudzu.us, 
- fancer.lancer@gmail.com, Hans Verkuil <hverkuil@xs4all.nl>, 
- Raag Jadav <raag.jadav@intel.com>
-Cc: linux-sound@vger.kernel.org, linux-fbdev@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-media@vger.kernel.org, ntb@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250221165333.2780888-1-raag.jadav@intel.com>
-References: <20250221165333.2780888-1-raag.jadav@intel.com>
-Subject: Re: (subset) [PATCH v1 00/13] Convert to use devm_kmemdup_array()
-Message-Id: <174077776364.602863.4317015681907674937.b4-ty@kernel.org>
-Date: Fri, 28 Feb 2025 21:22:43 +0000
+To: lgirdwood@gmail.com, bleung@chromium.org, groeck@chromium.org, 
+ andriy.shevchenko@linux.intel.com, Raag Jadav <raag.jadav@intel.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250228072057.151436-1-raag.jadav@intel.com>
+References: <20250228072057.151436-1-raag.jadav@intel.com>
+Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
+ devm_kmemdup_array()
+Message-Id: <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
+Date: Fri, 28 Feb 2025 21:22:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,15 +60,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Fri, 21 Feb 2025 22:23:20 +0530, Raag Jadav wrote:
-> This series is the second wave of patches to add users of newly introduced
-> devm_kmemdup_array() helper. Original series on [1].
-> 
-> This depends on changes available on immutable tag[2]. Feel free to pick
-> your subsystem patches with it, or share your preferred way to route them.
+On Fri, 28 Feb 2025 12:50:55 +0530, Raag Jadav wrote:
+> This series converts regulator drivers to use the newly introduced[1]
+> devm_kmemdup_array() helper. This depends on changes available on
+> immutable tag[2].
 > 
 > [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
-> [2] https://lore.kernel.org/r/Z7cqCaME4LxTTBn6@black.fi.intel.com
+> [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
 > 
 > [...]
 
@@ -82,10 +76,10 @@ Applied to
 
 Thanks!
 
-[09/13] regulator: devres: use devm_kmemdup_array()
-        commit: 6ddd1159825c516b8f64fda83177c161434141f5
-[10/13] regulator: cros-ec: use devm_kmemdup_array()
-        commit: c5c4ce6612bb25ce6d6936d8ade96fcba635da54
+[1/2] regulator: devres: use devm_kmemdup_array()
+      commit: 6ddd1159825c516b8f64fda83177c161434141f5
+[2/2] regulator: cros-ec: use devm_kmemdup_array()
+      commit: c5c4ce6612bb25ce6d6936d8ade96fcba635da54
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
