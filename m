@@ -1,79 +1,127 @@
-Return-Path: <linux-kernel+bounces-537572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B863A48D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:05:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1764DA48DA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6530116E25A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE07B1890F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DBD1805B;
-	Fri, 28 Feb 2025 01:05:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6151C2BD;
+	Fri, 28 Feb 2025 01:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ftf9AWD4"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F0138B;
-	Fri, 28 Feb 2025 01:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9CE224D6;
+	Fri, 28 Feb 2025 01:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740704749; cv=none; b=ZVCF8bMGtZai26aPXnhm8C1kDC9WL6NGWmO8wlKIw3ZUeLDnTk56X7TWb5MBZiJMC/d4qH9J123EoYp+tVFJtz9B0Fd0xCfoMbBZX9Xwl0W6n3xUY/MIuH2yOhUzNCXzVqrg06da2kiXAkTxt2ULTPuzEClDPgrNczxejmk7rAA=
+	t=1740704809; cv=none; b=lOEwYOGI9p+OGiIlNNlM2Jwn55vCloWVBhG5esDm5wOQKPdD4hejG0LhxFZhhbmOiGi80vtmbAFKWQnzMyFMr2FMk4rqsEkBYknR3aQSv4CUzR6pUqgJtp6n6jEn3UvQO6CvNdIZLJG0NJuQZQYue6Aky49umZY3oqq9iPYq8wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740704749; c=relaxed/simple;
-	bh=polPD8VaEKf+veiscNjndlyOpxGIQ7eRxcTUeyf9umU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LlxcR7rsnzs6lXCk3O9OATH5zN0/40fp/+pMoR74x1jexavfkoUA9W64gcq8Vsbz16mn9WQA/T293pfXRZzcsTxvS/KFt0HmD/3zoDxeEOorjrHFLId5+d7YBa4x/181Pv0+JCd99HSjgSFS7baaFHbd+uGneZGgI7qtV+dJe+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C815DC4CEDD;
-	Fri, 28 Feb 2025 01:05:47 +0000 (UTC)
-Date: Thu, 27 Feb 2025 20:06:31 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>, "Luis
- Claudio R. Goncalves" <lgoncalv@redhat.com>, Eder Zulian
- <ezulian@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] rtla: Save trace when option `--trace` is specified
-Message-ID: <20250227200623.60f20571@gandalf.local.home>
-In-Reply-To: <20250127170251.744751-1-costa.shul@redhat.com>
-References: <20250127170251.744751-1-costa.shul@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740704809; c=relaxed/simple;
+	bh=CWxCWNQVtyMpHnHOhHMe+nNImxOeMjY7WzUZotGHo28=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EeP+NblOhSRQbHzriyRU5xXJClvPQVudZxZwG083ga1b5yyoRMEJSsEY9mkq6brQxDpnIB5Jx1mkh+rdq084BITNSVfKwfVXN9eOn/PcC79T3Nd9H303GpQK+gSoTh/WYpW0FTxmpHe8atrLynQtz+Bf2n+NyXC6mmiev/tY2G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ftf9AWD4; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22359001f1aso29985635ad.3;
+        Thu, 27 Feb 2025 17:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740704807; x=1741309607; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Uq2rZxEkjFUo4QgyaS7BsaFsWHlPYAlTrAuuGWuK4to=;
+        b=Ftf9AWD40JEczR24pAUI1VntOjH+nmI9PK+XaedB/DrwGzqRzc5amejKnw/RZid7ua
+         rwG0EGd5C3flV2FjeEqHuzydFNMcl47pQLFqnVmKq3CESkAd7/ZZMv9bcXelMta1YSB2
+         wjkuoyZrqpwY/nNdCkh4Rvu3qGmaEVccl4igYMuNRkzFdkrPLXMiVfC3vouKV0uI2IM2
+         b0TUvz38foP8YQsTy1aeQIi3HQ0bhz4Ev7Y4SabUEnd3/drFpv0igOMjlsZU3ezXbO+5
+         W+7immoih7CosKhnXbUVF7rJVldbIPJLa+6p/bYc/PBW0g2hrY7lKjcvGpn0CXTGRkqx
+         cCLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740704807; x=1741309607;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uq2rZxEkjFUo4QgyaS7BsaFsWHlPYAlTrAuuGWuK4to=;
+        b=nOYEf/ZxTXDUB4PZimlnJDXT8apVMdAPxQm1HRVElg2xc73K6QmbW/UjQEt1PUi2Jc
+         lQylJtz2XZ15FtkD58PxF3aVjWaytUlBBSOIZFj1KLN5BW+7w4YvE+c/6maKl/QQG4nT
+         OXm7kn9NpMbjnOuSHAKPtruaf2QacGDU4S6de87OLSoW9At2Pu8MaJAx4OmYuGj+L6zI
+         v6PNwMlpe7zQapikNkRrInJEBoCm9CSX8FDyKfNecL0Tb87ZYp0gF1BHttNzSW4YdFLn
+         PHq0r0YzgIKOAkGFSf42ojigR0+MTkyNqUXQr9AloyLbj1EPJguJxjSPhfkcK9sGDFHQ
+         9oDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp+RxxWHhUpL4clXrmq1VZipawsJ2Z2AtpKOv/aIlqmLGNJ0GhfmQPLxLmAmC4sOsz/xI4Q3WVbNAK@vger.kernel.org, AJvYcCVuo3JQfez8yrNgq24/TaNMFMM7mK/AvU53fzBQM/QXR3jyacDPPlD6brNAynhgKcQ61+M3Wlcruds52czx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/3vP2XUfMC7tJN0gPTbVjk2DFAxd2xONkvm5W6eLyChTPNs8y
+	PRBJOTrblblfLiAmB6a/s7hCptnM+P6669y9xhT4udaV1XpsWMdq
+X-Gm-Gg: ASbGncttStUlinCP83LVZdXDJkskd8KGprCA/iU41C/4YcfncdPLVUb+gapkPppswVT
+	yE5Tz/Wl9y27hlLme/WD+9tLuM3rXA/guk8sUusLoxmYrst/0hL5xnoRQScGKOPUWQSYv5cQ8Pp
+	hzev51Z++8cTqviK2oIK9YkevDyRd/6N/QLZ0zqXH/f1urzp8xzlZT4w/9pxDnNF3themamFYVX
+	uYZ4Q+hxAVI6NNAedQaiKVZfkBT+A5RU3qM35GoT7pN21ja2go75///G42jo4D8K38hUeTzeEmE
+	ls+l/O0MPOYditaIies6fv/ip2I=
+X-Google-Smtp-Source: AGHT+IEY05DqcD7d/d/hx9lZw2rM1pWqCfuxgEXYDyFsBY8iXGRTCJJhKypPN8GGyJgBtsPN3whXjg==
+X-Received: by 2002:a05:6a20:3d87:b0:1f0:ee68:aab4 with SMTP id adf61e73a8af0-1f2f4d224cemr2207366637.23.1740704806777;
+        Thu, 27 Feb 2025 17:06:46 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:c0e7:f2be:7020:c4a6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf23b6sm2198967a12.15.2025.02.27.17.06.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 17:06:46 -0800 (PST)
+Date: Thu, 27 Feb 2025 17:06:43 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-input@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Markus Burri <markus.burri@mt.com>,
+	Manuel Traut <manuel.traut@mt.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: input: matrix_keypad - add wakeup-source
+ property
+Message-ID: <Z8EMI9ALqYY72VBV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 27 Jan 2025 19:02:40 +0200
-Costa Shulyupin <costa.shul@redhat.com> wrote:
+The driver recognizes standard "wakeup-source" property and there are
+DTS files using it. Add the property to the binding.
 
-> +++ b/tools/tracing/rtla/src/osnoise_hist.c
-> @@ -981,12 +981,11 @@ int osnoise_hist_main(int argc, char *argv[])
->  
->  	return_value = 0;
->  
-> -	if (osnoise_trace_is_off(tool, record)) {
-> +	if (osnoise_trace_is_off(tool, record))
->  		printf("rtla osnoise hit stop tracing\n");
-> -		if (params->trace_output) {
-> -			printf("  Saving trace to %s\n", params->trace_output);
-> -			save_trace_to_file(record->trace.inst, params->trace_output);
-> -		}
-> +	if (params->trace_output) {
-> +		printf("  Saving trace to %s\n", params->trace_output);
-> +		save_trace_to_file(record->trace.inst, params->trace_output);
->  	}
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202502280105.REZ29MVg-lkp@intel.com/
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ .../devicetree/bindings/input/gpio-matrix-keypad.yaml         | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Without tracing being off, this can run forever if the events come in
-faster than it can be recorded. And save trace uses the "trace" file, which
-is slow to read.
+diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+index 73bb153ed241..ebfff9e42a36 100644
+--- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
++++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+@@ -68,6 +68,8 @@ properties:
+       Drive inactive columns during scan,
+       default is to turn inactive columns into inputs.
+ 
++  wakeup-source: true
++
+ required:
+   - compatible
+   - row-gpios
+@@ -96,4 +98,6 @@ examples:
+                         0x0001006A
+                         0x0101001C
+                         0x0201006C>;
++
++        wakeup-source;
+     };
+-- 
+2.48.1.711.g2feabab25a-goog
 
-Are you sure you want that?
 
--- Steve
+-- 
+Dmitry
 
