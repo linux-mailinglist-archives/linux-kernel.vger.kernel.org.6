@@ -1,150 +1,99 @@
-Return-Path: <linux-kernel+bounces-537977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB85A4932C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:18:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED19BA4932F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A526C160FA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4191D3B4D94
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B7E24292A;
-	Fri, 28 Feb 2025 08:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JcYTfhE6"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F27624290C;
+	Fri, 28 Feb 2025 08:18:18 +0000 (UTC)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89168241C8C;
-	Fri, 28 Feb 2025 08:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D291D61B7;
+	Fri, 28 Feb 2025 08:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730680; cv=none; b=MCM8YH9gEdC97LPBBrkYQRW5oUkrJbpnQPlwhIPsY72Pc5JiOXbNwbdCx7qy9HWsB4/gjnI254Hz/T6jHRo0CDo5efRT3QeTzvsOgmm3mGeubb1J9sRykA1jdKWEMRKgpAYCh0BRybiRRtwalxmdysjIr7YYSze/h3hpBtUFU6U=
+	t=1740730697; cv=none; b=gT6hmojwBucWZTn6wlRU4lRLeHpIWdZQQxLDatGMzzt+s2iwcMmgTf/bKvfdn1j+eGrds7Q8LBi/nt260QVLISzpXMHsrTQNLG/5cUtm+fR1N1VxkfI8e6K/Gn7dwsUz6nrWjNBoh7x1fU+BprF0XftfRJlqI+qZBP8CUA4UtYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730680; c=relaxed/simple;
-	bh=d1+/Gr624dcwgvhxrb15dfxs168a9hSODpY6CPieY3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aDSVHCqTr/584mOP7aopTEu95JpCwQaq76zYUhEmb8z5IHoILnypccvfLUa8t3wl7bH8XT/0GEDJ8nfqYOgGWEsGBQHuYHHdasZ8DRBU1zUmX8Phm2gC+NJ0BAmwyMW6Fqt93Ec5h7KG9adoPEjnMAlpKOPqSF0BlWSl+qXRN1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JcYTfhE6; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51S8HdtC2600433
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Feb 2025 02:17:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740730659;
-	bh=WdZHP572Rh9pNFP6JZgEg9+TLw9B8b1SKcBPxjkgHgE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=JcYTfhE6kMM887ZQWGlfXBrFTnLkcSNoDcH6XoxJuS00kQFnuQqEj03QamM8cnYNy
-	 PzFHtQAsxw75tap8t8GwRpHK+lkHwTVftAo2BgO2iS/Rcnlc5LIHZJ89nMHWHxbC8r
-	 8Ett4PUhJTjrT/f23ji5/cVQT7wy9drONJV8LZ+E=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51S8HdNc002235
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 28 Feb 2025 02:17:39 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
- Feb 2025 02:17:38 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 28 Feb 2025 02:17:38 -0600
-Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51S8HYV9126373;
-	Fri, 28 Feb 2025 02:17:34 -0600
-Message-ID: <a79884b1-660a-4e17-9a10-f22652e4683b@ti.com>
-Date: Fri, 28 Feb 2025 13:47:33 +0530
+	s=arc-20240116; t=1740730697; c=relaxed/simple;
+	bh=NbrOI5a1zFvjdM3c/6cGZjAhdPgX7Csw/c93i9R3O7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XIPNFI9XCTm/agQBnWB09y9p4/D9ta/JWb4DXRiYeNF23Rh1AFgBsieg8MsYH0w8M56/e62MzM2A1dUJDrISmxv+CLMI48GXG60Ah30ahLScDKiwJLeiEBy3aXfnDLfWTvCuJ4C3aJpLrSuPc1OhDRJEmOXBcocg20wOEdeL1Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so1130932f8f.2;
+        Fri, 28 Feb 2025 00:18:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740730693; x=1741335493;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z0CfN1BG5I4XDVH6ThKnPCM1yx0oVk1S+DOYxNrVovw=;
+        b=JiIS6vtbQckpRsPWgKti4XsnLzLGpbRkewyZFsuvEkPakI10rZ1wzUXQ1jWxtPjgrO
+         0IFK+7xfeka6a3owYTZnXzS4rXkC5FbOI5Kzm3gkwlHMjHWONhmLtVStCpKw5FB3qjwQ
+         ON+dAVJZakHdpTVg15EcO+MQOoGMjimJQU26Nhwm8JZnNuPtnFkX3mLupyAR0fR9UUD3
+         A0dkQCs3bRGKgeD0DyC2U4N16WdmnozCc5XT7EUqfcYhwwokX1t5Zo+ukCKflzz4lgF/
+         TPB6Dl5Erl18imyx/LMrCaNS6AZ6IgLt3awcmaApDv6iaa0xB2nNy36Y4EW0MDOPait3
+         aPYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgyPg0ct5Agr9mU1M+6T2+TugTkO5ekQ9D/B9fJMTMPtJ+iQ6GxhEFZWs4px2JlKvoVF/3EXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMZyZtC123fYcVIfq9DiXGFp9cdZ9sBp9HndxQjxzlY+vsM9yO
+	W6p+tr9xHiHfrV0z6qAGpbqx4QPHKzV+eHARs3r6PbGGLfOGiS/G
+X-Gm-Gg: ASbGncsjVH2pUDxCv3IFtZrRuV5uy0TcdY4vD5Exm8Oma7P/K4Og7GEgzpCkUR81sAE
+	o34JULO9amW1+x0wS8LvS4tAY6r6xiW+zNGZKyVuNT+jk8n2xhEPgg6CCviSlPnbxBgxKxXosCy
+	LhWKgaZKAB/q/DHXkmnao4K4Muhxozq247dvX6hlq0S1UhefGSzb09DhrE5GnUBXPKZyc/vnehJ
+	wQ+DoL7QOwEauRlIvHiMPbPPq0nCGv/q/zgmMxHB08GFlR8EjYZllE//S67qh8s9+rwIaAFFnNX
+	N692xu+tBL2oZmELN1WDEaV37MaVoDmHu0IdO2zNEvVC1gCGeqd/Gu2YB2+fSmRNYS2dkFlkUVr
+	mUtlDnOtx
+X-Google-Smtp-Source: AGHT+IE9P4yRKwS5hkUFbtTuDWOSJoiTH3flRo32Wp8fhJSQhPUyTExIHdPaVmoUrf+zgey+/UtTtQ==
+X-Received: by 2002:a5d:6d04:0:b0:390:de80:ce92 with SMTP id ffacd0b85a97d-390ec7cdd46mr1760103f8f.17.1740730693158;
+        Fri, 28 Feb 2025 00:18:13 -0800 (PST)
+Received: from nuc.fritz.box (p200300f6f73eea00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f73e:ea00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba53943asm79108775e9.19.2025.02.28.00.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:18:12 -0800 (PST)
+From: Johannes Thumshirn <jth@kernel.org>
+To: jth@kernel.org,
+	gregkh@linuxfoundation.org,
+	Haoxiang Li <haoxiang_li2024@163.com>
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mcb: fix a double free bug in chameleon_parse_gdd()
+Date: Fri, 28 Feb 2025 09:17:47 +0100
+Message-ID: <174073054898.13073.3196394951281177875.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250228032720.3745459-1-haoxiang_li2024@163.com>
+References: <20250228032720.3745459-1-haoxiang_li2024@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHY0IDEvMl0gZHQtYmluZGluZ3M6IG1l?=
- =?UTF-8?Q?dia=3A_cdns=2Ccsi2rx=2Eyaml=3A_Add_optional_interrupts_for_cdns-c?=
- =?UTF-8?Q?si2rx?=
-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
-        Jai Luthra
-	<jai.luthra@linux.dev>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "mchehab@kernel.org"
-	<mchehab@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "devarsht@ti.com" <devarsht@ti.com>,
-        "vaishnav.a@ti.com" <vaishnav.a@ti.com>,
-        "r-donadkar@ti.com"
-	<r-donadkar@ti.com>,
-        "u-kumar1@ti.com" <u-kumar1@ti.com>
-References: <20250227082920.744908-1-y-abhilashchandra@ti.com>
- <20250227082920.744908-2-y-abhilashchandra@ti.com>
- <20250228-sandy-nightingale-of-improvement-6eef5a@krzk-bin>
- <24y6ggufmhmjkfxymhhxslthpbrsthfp67hkvq36dmnewpnv5c@dbs3hhhpme4w>
- <ZQ0PR01MB1302A225A08A120789EC318DF2CCA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <ZQ0PR01MB1302A225A08A120789EC318DF2CCA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello Krzysztof, Jai and Changhuang
 
-Thank you for the quick confirmation.
-
-On 28/02/25 13:43, Changhuang Liang wrote:
-> Hi, Jai
+On Fri, 28 Feb 2025 11:27:20 +0800, Haoxiang Li wrote:
+> In chameleon_parse_gdd(), if mcb_device_register() fails, 'mdev'
+> would be released in mcb_device_register() via put_device().
+> Thus, goto 'err' label and free 'mdev' again causes a double free.
+> Just return if mcb_device_register() fails.
 > 
->> Hi Krzysztof,
->>
->> On Fri, Feb 28, 2025 at 08:34:22AM +0100, Krzysztof Kozlowski wrote:
->>> On Thu, Feb 27, 2025 at 01:59:19PM +0530, Yemike Abhilash Chandra
->> wrote:
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
->>>> b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
->>>> index 2008a47c0580..054ed4b94312 100644
->>>> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
->>>> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
->>>> @@ -24,6 +24,16 @@ properties:
->>>>     reg:
->>>>       maxItems: 1
->>>>
->>>> +  interrupts:
->>>> +    minItems: 1
->>>> +    maxItems: 2
->>>> +
->>>> +  interrupt-names:
->>>> +    minItems: 1
->>>> +    items:
->>>> +      - const: error_irq
->>>> +      - const: irq
->>>
->>> And how is this second interrupt in existing integrations?
->>>
->>
->> TI SoCs integrate both of these if I understood the TRM correctly.
 > 
-> StarFive JH7110 SoC also integrates both of these too.
 
-If that is the case, I will send the next version with both the
-interrupts set as non-optional.
+Applied, thanks!
 
-Thanks and Regards
-Yemike Abhilash Chandra
+[1/1] mcb: fix a double free bug in chameleon_parse_gdd()
+      commit: 6201d09e2975ae5789879f79a6de4c38de9edd4a
 
-> 
-> Best Regards,
-> Changhuang
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
 
