@@ -1,74 +1,108 @@
-Return-Path: <linux-kernel+bounces-539567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85B0A4A5DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:26:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE47A4A5E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87BB17711B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A923B1C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B851DF258;
-	Fri, 28 Feb 2025 22:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5A41DFD9F;
+	Fri, 28 Feb 2025 22:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5BpPA7I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAB91DE88A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="e+S8EPIK"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5BA1DE88B;
+	Fri, 28 Feb 2025 22:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781501; cv=none; b=j1FGPSQAgqPcRFWTl3/OhWcvPMYuMYF/wrXNlweBJ+XvVHoZGCuw8P/CEU44s+QTb0scww7I5MHrEKjR/TFHX1bQR2Wclvdhd+T2o/+pZxC/If/q8u0ddpgiFE7e+6TeshfKiRbKrnTDp+axx+nKCjMsoCf2QKOZs/3yKCpr+vM=
+	t=1740781523; cv=none; b=dmwSeRoC9beCiD+FqUTKmSUgdfF04diph2oGPFPV//zG5JWBNntRH/b+pCz6Q1DbFD5rx37U/LGQidrmDmsdxz4va3lT7LlZ6/gkMm3Tf0WjJ4TlY3ueH17CGlKbvTO3yXQg+t70+IGszmKrkFIJo4pu6dY1cX+7VYSwuutWpO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781501; c=relaxed/simple;
-	bh=9ySR4eG/lvsdSBqp/hOgh9krsK9BmeOEtOjROvl8VcM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lk5OKOYsvuE70joY3hAe442aAUcbFosfc+997x5uN67HQ+/G5wD4h9R/63QeBybzuxJv372rGRN/UZc7ieH5wg2bMsn+ESOgEKgVXdqWmhOZVVDxNG7dBWaooHPvqBcCCBTvRuqRvRM0NwnMNRCNj121XW//eoW9HiJBG2EJ80Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5BpPA7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE12C4CEE7;
-	Fri, 28 Feb 2025 22:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740781501;
-	bh=9ySR4eG/lvsdSBqp/hOgh9krsK9BmeOEtOjROvl8VcM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=V5BpPA7IDmrTS0R4gU2QoB2fNKd14qwq8nRK8r/3OXaSFzgOhYGOT1DByqZukTqGf
-	 lYPp8kikxnXE7tq9z9ApHVBQT2+pktEstjVCssM5xZRel+bN+016fI/Ku41gTYZsZk
-	 PxaIHW9sLa9raOEFx+bdamVpaIHLARAzdIi8rifPdqcG4lbfGkjgR++RI9qH0xqCuK
-	 dz9tyqaP9u6AjWlcQ4f/phpgFGGEfLP4TXqz647fybe+IDWF+e8zUi/gnGR6n0Eqgb
-	 Xh0VERisAwr25Cu3nlvy/mFzczasBTocKNXto07O4MkF0iBV93DDOsA7h7QX44wvjU
-	 2jslTCgD6wA3g==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@kernel.org>, 
- Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250225193600.90037-1-irogers@google.com>
-References: <20250225193600.90037-1-irogers@google.com>
-Subject: Re: [PATCH v1] x86/insn: Fix linux/unaligned.h include path
-Message-Id: <174078150114.322575.5515178277155013730.b4-ty@kernel.org>
-Date: Fri, 28 Feb 2025 14:25:01 -0800
+	s=arc-20240116; t=1740781523; c=relaxed/simple;
+	bh=1obOMr1Rmb8R+h1EQDNEXYfeQUcnlviZ5c7bzgYHXOM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=t5Ug91PDwhbPemoPsng4tayxzqjAl787kBTMYBfGxtZ+l5/K1bnuefBJudDRymxyUmNk9XDniPvyr5mJNN2DWQFnZN3KOzqol3FFKwYKcTb88up3qXj0a0twAwDNUrLdCjEhL9wSODjbx7EyVKR1x98ZPMBNSgmPXSU6dWBEHnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=e+S8EPIK; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id C7544210D0EB; Fri, 28 Feb 2025 14:25:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C7544210D0EB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+	s=default; t=1740781521;
+	bh=gckZXDWAjiG2ABDpx5tWE9GOBieJFQc592HWfvAcwyE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e+S8EPIKSTxcKfVTfs45fE8DXvCE5wLn8L7ydpmmJVRfahBF40Q4FNvCqeUFbYFGI
+	 sGLAC2/bgQh1hTP31vyloJ8N4IRyKLWqnfmlQ77KT4s/E+2HtqBwPWDD6vo0o+8tGS
+	 NZYDdk066vEo8fewWUpSuXaCjGj4fP/pb2Zwn3ng=
+From: longli@linuxonhyperv.com
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH] hv_netvsc: set device master/slave flags on bonding
+Date: Fri, 28 Feb 2025 14:25:13 -0800
+Message-Id: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
 
-On Tue, 25 Feb 2025 11:36:00 -0800, Ian Rogers wrote:
-> tools/arch/x86/include/linux doesn't exist but building is working by
-> virtue of a -I. Building using bazel this fails. Use angle brackets to
-> include unaligned.h so there isn't an invalid relative include.
-> 
-> 
-Applied to perf-tools-next, thanks!
+From: Long Li <longli@microsoft.com>
 
-Best regards,
-Namhyung
+Currently netvsc only sets the SLAVE flag on VF netdev when it's bonded. It
+should also set the MASTER flag on itself and clear all those flags when
+the VF is unbonded.
 
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ drivers/net/hyperv/netvsc_drv.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index d6c4abfc3a28..7ac18fede2f3 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2204,6 +2204,7 @@ static int netvsc_vf_join(struct net_device *vf_netdev,
+ 		goto rx_handler_failed;
+ 	}
+ 
++	ndev->flags |= IFF_MASTER;
+ 	ret = netdev_master_upper_dev_link(vf_netdev, ndev,
+ 					   NULL, NULL, NULL);
+ 	if (ret != 0) {
+@@ -2484,7 +2485,12 @@ static int netvsc_unregister_vf(struct net_device *vf_netdev)
+ 
+ 	reinit_completion(&net_device_ctx->vf_add);
+ 	netdev_rx_handler_unregister(vf_netdev);
++
++	/* Unlink the slave device and clear flag */
++	vf_netdev->flags &= ~IFF_SLAVE;
++	ndev->flags &= ~IFF_MASTER;
+ 	netdev_upper_dev_unlink(vf_netdev, ndev);
++
+ 	RCU_INIT_POINTER(net_device_ctx->vf_netdev, NULL);
+ 	dev_put(vf_netdev);
+ 
+-- 
+2.34.1
 
 
