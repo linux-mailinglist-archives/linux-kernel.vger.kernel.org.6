@@ -1,48 +1,61 @@
-Return-Path: <linux-kernel+bounces-539590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DE4A4A629
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:50:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1A0A4A62E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84820189C597
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4942189C587
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137671DE3C5;
-	Fri, 28 Feb 2025 22:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130AA1DED66;
+	Fri, 28 Feb 2025 22:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJ3Xc38e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96FD1CAA64;
-	Fri, 28 Feb 2025 22:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687B323F372;
+	Fri, 28 Feb 2025 22:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783014; cv=none; b=Ftudo8kRZirb8kU4jZ/fBNNQ27aT87ieXKMhLGDlBv0tPO0508iSIJ7CTGG52YeHS/VM4FbMmUNoJQmKUtWCszi6RFwRYbJ0E6el0zTaZ+aESNE3zBnvV/UX7Se8MSLpB0mEXVP8xPvfktVn9gzMDGi9vdTGwpjlGcHqG+52zMs=
+	t=1740783097; cv=none; b=gEYocPMleyZOoirHHrkvWF+I7+VNccXZ1w2vye98qQ/HuRy1pdkuxslT4CvmFB5Op857LK1tUHS60hS5/Pt3kKcjyeBK7HYdiQQI/QuWo+qnv4SBRWQrdlEHtU5VFf0V1SykhQSj0Lo7I8yYEZn3bTtIQBr606hMlUcSoRdQcSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783014; c=relaxed/simple;
-	bh=ePm1yQe3FdyuPAaqOsFRkNIMYJsY8PXaisJILwjs2pU=;
+	s=arc-20240116; t=1740783097; c=relaxed/simple;
+	bh=b3khscYAvq89JD3v8j8cIFkjxDHXws6PJuQma8+Stgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KjP81VrHkPWnuID30inmdZ5BGTTKaGuR0eg2xnglVo9GTg1jGlX9Qe9IYi6V+OtvRxqe0/i7ErrfKZdYLJdEwtRkNVOuq1Z5F8c7sFaIyFJO2rZINZQ5UHxL0OqCGYvsLtaiRT1EbOqIdJE7iN7PE7oRjRj//aJv/818BT4j3Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1873AC4CED6;
-	Fri, 28 Feb 2025 22:50:13 +0000 (UTC)
-Date: Fri, 28 Feb 2025 17:50:58 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Michael Petlan <mpetlan@redhat.com>, Veronika
-  Molnarova <vmolnaro@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RESEND][PATCH] tracing: gfp: Remove duplication of recording
- GFP flags
-Message-ID: <20250228175058.28db2b08@gandalf.local.home>
-In-Reply-To: <20250225135611.1942b65c@gandalf.local.home>
-References: <20250225135611.1942b65c@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=VYaVx6TUf1wTJJh3vGeAAJztZ9Y/3fbnHnVs8AZfAy86pRZLVVKumjZtUchTWpY8Gzki/bTKTbevZWnQeCfpZGrXpFqZRxNJ8nAMRIWyUJstxCVs/AjWAuStmgBzYEYnxN90FzTG2+sAQalU2p3RnB6qlVeJE5WxzkoRSITLI+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJ3Xc38e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766F7C4CED6;
+	Fri, 28 Feb 2025 22:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740783096;
+	bh=b3khscYAvq89JD3v8j8cIFkjxDHXws6PJuQma8+Stgk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KJ3Xc38ePlenpi81a6XgL3BuXLR42texMnOjZgddxpJ3SWhjusKI+qWlwFyKG2D+W
+	 qC9yC98ur25UTWfXLSXBHN9AerHfhBl1EjE//o/DSDoKSd+glfN4eieWilixS6OA1G
+	 B7jFfbotwjrT+UtpLUOrWulI1Vkdq5S4I8rwwxLZuonD60UJD/823lzNoexWa7tGB+
+	 eu3e1REsS5cZ0h2bKYI5nx0JTaaajhQLI/vq9ItrQkiv30FDfMZ9vX+Pg7ESwWSvBi
+	 YBkxBks5xktlkD+Lah0x9FyoJkVJd7tOsdBSg5XjJM37xZSBIkRdAHJ5VvI7TO2nWT
+	 CfhAy+3EOFfWg==
+Date: Fri, 28 Feb 2025 14:51:35 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Paolo Abeni
+ <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew Lunn"
+ <andrew+netdev@lunn.ch>, Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman
+ <gal@nvidia.com>, "Leon Romanovsky" <leonro@nvidia.com>, Leon Romanovsky
+ <leon@kernel.org>, <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Shahar Shitrit <shshitrit@nvidia.com>,
+ Carolina Jubran <cjubran@nvidia.com>
+Subject: Re: [PATCH net-next 3/6] net/mlx5e: Enable lanes configuration when
+ auto-negotiation is off
+Message-ID: <20250228145135.57cf1a73@kernel.org>
+In-Reply-To: <20250226114752.104838-4-tariqt@nvidia.com>
+References: <20250226114752.104838-1-tariqt@nvidia.com>
+	<20250226114752.104838-4-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,43 +65,12 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 26 Feb 2025 13:47:49 +0200 Tariq Toukan wrote:
+> +		if (table[i].speed == info->speed) {
+> +			if (!info->lanes || table[i].lanes == info->lanes)
 
-Since I hear only crickets on this. I'm going to apply it and push it to
-linux-next and see if anyone notices. It only affects the output of the
-memory trace events.
+Hm, on a quick look it seems like lane count was added in all tables,
+so not sure why the !info->lanes
 
--- Steve
-
-
-On Tue, 25 Feb 2025 13:56:11 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The gfp_flags when recorded in the trace require being converted from
-> their numbers to values. Various macros are used to help facilitate this,
-> but there's two sets of macros that need to keep track of the same GFP
-> flags to stay in sync.
-> 
-> Commit 60295b944ff68 ("tracing: gfp: Fix the GFP enum values shown for
-> user space tracing tools") added a TRACE_GFP_FLAGS macro that holds the
-> enum ___GFP_*_BIT defined bits, and creates the TRACE_DEFINE_ENUM()
-> wrapper around them.
-> 
-> The __def_gfpflag_names() macro creates the mapping of various flags or
-> multiple flags to give them human readable names via the __print_flags()
-> tracing helper macro.
-> 
-> As the TRACE_GFP_FLAGS is a subset of the __def_gfpflags_names(), it can
-> be used to cover the individual bit names, by redefining the internal
-> macro TRACE_GFP_EM():
-> 
->   #undef TRACE_GFP_EM
->   #define TRACE_GFP_EM(a) gfpflag_string(__GFP_##a),
-> 
-> This will remove the bits that are duplicate between the two macros. If a
-> new bit is created, only the TRACE_GFP_FLAGS needs to be updated and that
-> will also update the __def_gfpflags_names() macro.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> +				link_modes |= MLX5E_PROT_MASK(i);
 
