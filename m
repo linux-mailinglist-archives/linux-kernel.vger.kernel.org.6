@@ -1,165 +1,145 @@
-Return-Path: <linux-kernel+bounces-538943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32ECA49F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:40:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1C8A49F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08153AEDC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C8E177873
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A7272904;
-	Fri, 28 Feb 2025 16:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B4271815;
+	Fri, 28 Feb 2025 16:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cXz8Duyz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tU/xh/FV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cXz8Duyz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tU/xh/FV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYcYgNIL"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F240254861
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F0327002E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760766; cv=none; b=PPC5kZdmHzZA9EP2anSbdVDW9dtZMQh7YiD6NcWxS4t45u6nSnw/TBXPX92vXVTiq26woLxqCEVsAFBFoTkeB04aPhrSodmuRPji5Tt0wiG9Cv4U7QE+GpVRHf3d5W4GwgH8ZGPTQf1+k3pVqoNnEE4Iit1Vg0pRjjj+S6/cmzM=
+	t=1740760781; cv=none; b=EuskjgeV0iuOBYozIHMVMCjQ5CLXgsv0//dZpGXWOAWJc6KZH/ytRGclugiFFvwEZv4NjSWQnJmP1495rCQ8KWGrOl3bdTJd7CPo4t6olAw7R9a6exqRqmsyHhZSMlR8JG2T34Mp6ZGt8qztToqIL+AnqK6HrfmdRSyFsOWLGZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760766; c=relaxed/simple;
-	bh=7354nGz+O7okdgVTTOtBmbEd8o/kIgEvUlJFgR8YfM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UnNJPElaK79p7ckgN5lA0zE3YMzhtNBs15vOC3iVFl7mtrohf0Q4B/Oho3HNw+hd8ouAXqZO/uoWnXUbpMk/vl9w2g9iHT2RpmhfwcR+yOIHPN907ME4QT0emRA8RISwXxyiOrjVU1A43Vs17YhqDp6juc6TSVC2VFOUzTv90lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cXz8Duyz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tU/xh/FV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cXz8Duyz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tU/xh/FV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A61F72119E;
-	Fri, 28 Feb 2025 16:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740760762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o2Z/+S0bCpIiR/CVWr/u3iutpDVKtDE6whnqXRO+9u8=;
-	b=cXz8DuyzO3RX8yrluy8Jk489nDWdrLlrqszF2Up5KEEVGmL1saU9abNYyN53qFHlPkewuP
-	RgYVHta9FQ6W2Zba8oMS2yrwFp5yhYn+vDCA/E8v5oUPKDWb4XJQMbBIDWvPJG3VVOVDVJ
-	Ym9AVjIGTE6hm8gBa5EwRA3adj2DjCs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740760762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o2Z/+S0bCpIiR/CVWr/u3iutpDVKtDE6whnqXRO+9u8=;
-	b=tU/xh/FVayA97vO9aBwbHWWtvr39v4qJc89EceUl7pyBmTxdGLlnPCVGdoeAAf1wE6J0nm
-	U9wU2uzkOv07XtBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740760762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o2Z/+S0bCpIiR/CVWr/u3iutpDVKtDE6whnqXRO+9u8=;
-	b=cXz8DuyzO3RX8yrluy8Jk489nDWdrLlrqszF2Up5KEEVGmL1saU9abNYyN53qFHlPkewuP
-	RgYVHta9FQ6W2Zba8oMS2yrwFp5yhYn+vDCA/E8v5oUPKDWb4XJQMbBIDWvPJG3VVOVDVJ
-	Ym9AVjIGTE6hm8gBa5EwRA3adj2DjCs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740760762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o2Z/+S0bCpIiR/CVWr/u3iutpDVKtDE6whnqXRO+9u8=;
-	b=tU/xh/FVayA97vO9aBwbHWWtvr39v4qJc89EceUl7pyBmTxdGLlnPCVGdoeAAf1wE6J0nm
-	U9wU2uzkOv07XtBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 943C4137AC;
-	Fri, 28 Feb 2025 16:39:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mIN5IrrmwWcKYwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 28 Feb 2025 16:39:22 +0000
-Message-ID: <5d8ccfd7-2487-49a7-afbf-1706c0fb43f5@suse.cz>
-Date: Fri, 28 Feb 2025 17:39:22 +0100
+	s=arc-20240116; t=1740760781; c=relaxed/simple;
+	bh=rB/kMFq3R9s5RDXmFK3u0alDwSgo63ojRRW9ITcZBW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kBxaV1a0Mf80KpDJu7aJfmv5fKkcmCyiN0OslvUTfON1uWwAT9mUBEVdfvqrqQHbwJj/GfvskW8ZZTf3GDvNBMPsK7tK6f+VLEi7gw+QGY82En3HlygnzP/fkT+em1EeUHI3/kDEXZFumQjnJ+/JaReCboUt/24c0RvjtbSr0JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jYcYgNIL; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf42913e95so75576466b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:39:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740760777; x=1741365577; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6UR2OZwD7+XxsVba8bPXtaKE9m07ilfrFPUuzl5ixk=;
+        b=jYcYgNILYSLj0accorOy9J/spkak1z+Xi1Sxi20dAxpkaU/GrkrZbOwwFnfLvjrd4j
+         SEJRQQwAe1j29zLtT+jDhsSxjPqGW8y0D2Krck5zxmxoWr+wiqmRZo2tY5tBWflHeoT0
+         iV+QdBd4waB2E3i1RKZNWV2vWc7egtp1Y4HyodO8T3UQSSbfUvhGiwv6ANX81x3Vw22x
+         et1hSl8aFxP/HJAqyNNEsJbWMzQ1IbEFgPEH+0Mx3iNSq4zAvuQI3hnWwA2gEDv26XLq
+         9Z/47Vb71+3b8mf/G1tjdikOgYaBE1zg5ROWhX25+jscsyNu61Xt1AGqADeuDKJXbfBV
+         Vyog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740760777; x=1741365577;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x6UR2OZwD7+XxsVba8bPXtaKE9m07ilfrFPUuzl5ixk=;
+        b=o3f5ogziG32WYyAprvJPORoBph+WJOHMu2gk3/ddMiwsDl2vuk2DmRuehq1tLPSOHr
+         NkBwf9pDzpHKBbZtm0HawVy+m4reQfJJadOvLbTfZZzbhTqhN4yxsjHtHh3YIB80l177
+         ZUw4PELMcqSMI9j1vl8WrlYnRFRwEZ1TEGKEb7Xos5HWQ+74MyNiautfzh7xg1zArzMC
+         tbUytBxwxT8/jorJPcSgAJjUOP1IypC1xvf5tx0MI0NfXyKt4On5ZeZ51ig/CQUpwfCI
+         9d5YHv1gbtSrGatEHS4zoqnhpnEa/8beQPyl8Jaez/xThqcrC+PUb9Eq1umu2yrhRY9N
+         Ys+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPeLMCWDD6GYA2GfxSt5UIRmpUwSE5IvESB6OfILiiH77QFUYOQquhAMjDSh0eHJ8ApyHDzJ6maCGKJWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMt1HJhIhv47bMA8jHs/LQaunSyavYjhpVail/AwrOv7pJERaO
+	GiMh1thgFVnog+IuCeXsSw2jEaZnF0EKEJQpUM+y8DpZE7bNtnfgTmSjXQUyXM6cQ1/8t7Q/fe6
+	X213MntFcJWO/y28R7y1QZGOdZVB0NO5sepcZMw==
+X-Gm-Gg: ASbGnctwKA0dtEzB3pPJywxdWvbeSmciPJfjEKIdsLvp14YsOlurifN8Cy28sYcuWqO
+	0bGGbRntVe4K7DLZ8Ls9jhUxptUMlKf9RuBfPI4mRtRpPhLb92+j5O1M3uhrmc1Vx2xmJ+5ME15
+	gMq9uH1cRBDiW1kGZ5I8Ivwud5rBrqqW+7XFrU
+X-Google-Smtp-Source: AGHT+IH2B0Wl7/2mhc/dmy61nzYfb9Nb6G3qSwyQkkadVrgaNh2yV/DQQ5NpMTbgCfBM/+NSQqU6gORWSjOu8r8m7hA=
+X-Received: by 2002:a17:907:7fa2:b0:aa6:af66:7c89 with SMTP id
+ a640c23a62f3a-abf261fba16mr431180566b.5.1740760777391; Fri, 28 Feb 2025
+ 08:39:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/list_lru: Remove redundant NULL check before kfree()
-Content-Language: en-US
-To: Yu-Chun Lin <eleanor15x@gmail.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
- visitorckw@gmail.com, kernel test robot <lkp@intel.com>
-References: <20250228141856.730825-1-eleanor15x@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250228141856.730825-1-eleanor15x@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kvack.org,vger.kernel.org,ccns.ncku.edu.tw,gmail.com,intel.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250226024741.2274-1-xuewen.yan@unisoc.com>
+In-Reply-To: <20250226024741.2274-1-xuewen.yan@unisoc.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 28 Feb 2025 17:39:26 +0100
+X-Gm-Features: AQ5f1JoWAaJb-NDIzruSdz-cxOA435FUf7qB7nREUr_0Mxkf00HfWS0WEIj-CfM
+Message-ID: <CAKfTPtBB6FH+5G5eRxC-0UA3H_M6Qt=CvKfCNvHy2=Dg0EEMxw@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched/fair: Fixup wake_up_sync vs DELAYED_DEQUEUE
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, ke.wang@unisoc.com, di.shen@unisoc.com, 
+	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/28/25 15:18, Yu-Chun Lin wrote:
-> The kernel's kfree() documentation states: "If @object is NULL, no
-> operation is performed." Remove checking for NULL before calling kfree().
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502250720.9ueIb7Xh-lkp@intel.com/
-> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+On Wed, 26 Feb 2025 at 03:51, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
+>
+> Delayed dequeued feature keeps a sleeping task enqueued until its
+> lag has elapsed. As a result, it stays also visible in rq->nr_running.
+> So when in ake_affine_idle(), we should use the real running-tasks
 
-This is already in mm-unstable:
-https://lore.kernel.org/all/20250227082223.1173847-1-jingxiangzeng.cas@gmail.com/
+typo: wake_affine_idle
 
+> in rq to check whether we should place the wake-up task to
+> current cpu.
+
+fair enough
+
+>
+> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 > ---
->  mm/list_lru.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/mm/list_lru.c b/mm/list_lru.c
-> index 7d69434c70e0..7c8fb17d9027 100644
-> --- a/mm/list_lru.c
-> +++ b/mm/list_lru.c
-> @@ -548,8 +548,7 @@ int memcg_list_lru_alloc(struct mem_cgroup *memcg, struct list_lru *lru,
->  			}
->  			xas_unlock_irqrestore(&xas, flags);
->  		} while (xas_nomem(&xas, gfp));
-> -		if (mlru)
-> -			kfree(mlru);
-> +		kfree(mlru);
->  	} while (pos != memcg && !css_is_dying(&pos->css));
->  
->  	return xas_error(&xas);
+>  kernel/sched/fair.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1c0ef435a7aa..2d6d5582c3e9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7342,8 +7342,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+>         if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+>                 return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+>
+> -       if (sync && cpu_rq(this_cpu)->nr_running == 1)
+> -               return this_cpu;
+> +       if (sync) {
+> +               struct rq *rq = cpu_rq(this_cpu);
+> +               int nr_delayed;
+> +
+> +               nr_delayed = rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable;
 
+Could you encapsulate this in a helper function ? something like below
+
+static inline unsigned int cfs_h_nr_delayed(struct rq *rq)
+{
+        struct rq *rq = cpu_rq(this_cpu);
+
+        return (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
+}
+
+> +
+> +               if ((rq->nr_running - nr_delayed) == 1)
+> +                       return this_cpu;
+> +       }
+>
+>         if (available_idle_cpu(prev_cpu))
+>                 return prev_cpu;
+> --
+> 2.25.1
+>
+>
 
