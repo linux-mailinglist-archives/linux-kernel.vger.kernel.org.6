@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-538118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3961A494C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:22:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D74A494C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65EE57A985C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91534170799
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F183424A046;
-	Fri, 28 Feb 2025 09:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="BB53on2S"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F27255E3E;
+	Fri, 28 Feb 2025 09:24:00 +0000 (UTC)
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9EE1C2324
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5861C2324
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734527; cv=none; b=sMVNPv2qjbrVrN1UrFsAJFZBsmAcpdyBUN52eKuaae0oDxZgaVECO9/3GSAQbIDm7XvvQnTwevOwNWMZ3xJqIkGZG1Ri/t8kbhVKc3kUJMCIyIT8FsubSclzcCogezsDKIUgsztiuNdVXgeV9G3weXNen+ELlLSC1RuAjc4Mdgg=
+	t=1740734640; cv=none; b=bTygICoK3L5V16lr5IK0XhxjHEXvHDJHmOlG8zZ6A/Mh0HdIM0VegFtEO01SpB/L5rhLusxOkUVKC7HG9R2ay8LQZFp028Itv9+arz3yDzz0OglgYDco+vQjvyrdFqfrljw5XFplTyEhe1KEzSgesSGvcTodO8zn8IYGN417nTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734527; c=relaxed/simple;
-	bh=9h4g6Xq7+qt9vrg/isJrzGdIn31jXKxf7V2H9WCRPMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ASyj5QFzwcbM4WqZ9hmHUFcrdHGa+/Qi3uVSbBg4omS91SK7uZHWEWQcMbo+8TyMF5LLKajqOtr8fARYhYvhYaxbaSn9ErqCGwfaLIkx7/afaRoolWCUBwU6ZfVmV+MYNKCT/VAy1zO5uyAAHUUtKIUbcjwV9No5yyeNV4FeXZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=BB53on2S; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=WBBTkblEXBxFsJYPymXDFJAe/vnTFzbtnD/Nx9Tb6DY=;
-	b=BB53on2SKjQ6lG8RncsKGcVUMiRWDwUMORrFQSRaB6f4E7+Yr5nvFrgn4QFlwANrO/R8gmTzPDu4Q
-	 r7jbsdhNvocmYu6nET+d3a7xgifWVXpT4rq44nm5gYXuipymgo1ttyVUlwH418ywCcVed0rFxACq2D
-	 VWPsW2myVCJLismtgz83aTo+MXgod3YTEE4hpDtgNr2DDhyu2Enf6A2DWQdB+caXIaYnJ+r0zhsscX
-	 9gQKxjSCJXC+4qUKgl2bQ4wiZniQKIWQdpDg9xZTuC81vxVh70oSp3aN2i5+ibUkyFWzXfeXvoY4ag
-	 9ZcVM/tQyFo6xHo5PH6KHDld1Y04KuA==
-X-MSG-ID: 77ece18d-f5b5-11ef-a39b-00505681446f
-Date: Fri, 28 Feb 2025 10:22:01 +0100
-From: David Jander <david@protonic.nl>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
- bindings
-Message-ID: <20250228102201.590b4be6@erd003.prtnl>
-In-Reply-To: <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-8-david@protonic.nl>
-	<20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740734640; c=relaxed/simple;
+	bh=lWLCb46R8hij78SjcvmroxuHOuUYtOSrNx+gY4cGZB0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=XjaIWYFQnNy2uHWGzWGL8sYCaHqliBKjt6zl9Aq8sNu14WeMDO1aGh3TyuSoQwDrlSTw6iORrvR7008kVaB2oLe/Kez44Jc7j98wMI/eSzqWBXalq8wQ8+ISOXq0EnhJJT71evSWTZ+Jmm7n3fPnQ4WgAaUEYIoSVQqygBs4PKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from [127.0.0.1] (161-51-78-170.static.ef-service.nl [161.51.78.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 6CDB03F26F;
+	Fri, 28 Feb 2025 10:23:55 +0100 (CET)
+Date: Fri, 28 Feb 2025 10:23:54 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+CC: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] drm/msm/dpu: program master INTF value
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250228-dpu-active-ctl-v2-2-9a9df2ee5193@linaro.org>
+References: <20250228-dpu-active-ctl-v2-0-9a9df2ee5193@linaro.org> <20250228-dpu-active-ctl-v2-2-9a9df2ee5193@linaro.org>
+Message-ID: <CAACA6C8-441A-4B6E-AC07-A46094A02126@somainline.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 28 February 2025 05:14:06 CET, Dmitry Baryshkov <dmitry=2Ebaryshkov@lina=
+ro=2Eorg> wrote:
+>If several interfaces are being handled through a single CTL, a main
+>('master') INTF needs to be programmed into a separate register=2E Write
+>corresponding value into that register=2E
+>
+>Co-developed-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
+>Signed-off-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
+>Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
+>---
+> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec | 12 ++++++++++++
+> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh |  2 ++
+> 2 files changed, 14 insertions(+)
+>
+>diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec b/drivers/gpu/d=
+rm/msm/disp/dpu1/dpu_hw_ctl=2Ec
+>index 32ab33b314fc44e12ccb935c1695d2eea5c7d9b2=2E=2Effff60c4206c6f2833293=
+fdcc56b653f7d3124a5 100644
+>--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec
+>+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec
+>@@ -583,6 +583,9 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl =
+*ctx,
+> 	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
+> 	DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
+>=20
+>+	if (cfg->intf_master)
+>+		DPU_REG_WRITE(c, CTL_INTF_MASTER, BIT(cfg->intf_master - INTF_0));
+>+
+> 	if (cfg->cdm)
+> 		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
+> }
+>@@ -625,6 +628,7 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_h=
+w_ctl *ctx,
+> {
+> 	struct dpu_hw_blk_reg_map *c =3D &ctx->hw;
+> 	u32 intf_active =3D 0;
+>+	u32 intf_master =3D 0;
+> 	u32 wb_active =3D 0;
+> 	u32 merge3d_active =3D 0;
+> 	u32 dsc_active;
+>@@ -651,6 +655,14 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_=
+hw_ctl *ctx,
+> 		intf_active =3D DPU_REG_READ(c, CTL_INTF_ACTIVE);
+> 		intf_active &=3D ~BIT(cfg->intf - INTF_0);
+> 		DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
+>+
+>+		intf_master =3D DPU_REG_READ(c, CTL_INTF_MASTER);
+>+
+>+		/* Unset this intf as master, if it is the current master */
+>+		if (intf_master =3D=3D BIT(cfg->intf - INTF_0)) {
+>+			DPU_DEBUG_DRIVER("Unsetting INTF_%d master\n", cfg->intf - INTF_0);
 
-Dear Krzysztof,
+Don't think you want to include my testing ramblings here: we didn't print=
+ a message either when the master was _set_, and don't print messages for o=
+ther register writes either=2E
 
-Thanks for reviewing...
+After that:
 
-On Fri, 28 Feb 2025 08:12:45 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Reviewed-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
 
-> On Thu, Feb 27, 2025 at 05:28:23PM +0100, David Jander wrote:
-> [...]
-> > +description: |  
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-> > +   Simple motor control device based on 1 or 2 PWM outputs  
-> 
-> Your schema does not allow 1. Test it.
+>+			DPU_REG_WRITE(c, CTL_INTF_MASTER, 0);
+>+		}
+> 	}
+>=20
+> 	if (cfg->wb) {
+>diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh b/drivers/gpu/d=
+rm/msm/disp/dpu1/dpu_hw_ctl=2Eh
+>index 85c6c835cc8780e6cb66f3a262d9897c91962935=2E=2Ee95989a2fdda6344d0cb9=
+d3036e6ed22a0458675 100644
+>--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh
+>+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh
+>@@ -36,6 +36,7 @@ struct dpu_hw_stage_cfg {
+> /**
+>  * struct dpu_hw_intf_cfg :Describes how the DPU writes data to output i=
+nterface
+>  * @intf :                 Interface id
+>+ * @intf_master:           Master interface id in the dual pipe topology
 
-Ok, that came as a surprise to me. Thanks!
+Not sure if you've seen my comment in v1 about the dual word; maybe the qu=
+adpipe series can update it since they might need a master (or two?) as wel=
+l?
 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - motion-simple-pwm
-> > +
-> > +  pwms:
-> > +    maxItems: 2  
-> 
-> List and describe items instead.
-> 
-> > +
-> > +  pwm-names:
-> > +    maxItems: 2  
-> 
-> List items instead.
+- Marijn
 
-Will do in next iteration. Thanks.
+>  * @mode_3d:               3d mux configuration
+>  * @merge_3d:              3d merge block used
+>  * @intf_mode_sel:         Interface mode, cmd / vid
+>@@ -45,6 +46,7 @@ struct dpu_hw_stage_cfg {
+>  */
+> struct dpu_hw_intf_cfg {
+> 	enum dpu_intf intf;
+>+	enum dpu_intf intf_master;
+> 	enum dpu_wb wb;
+> 	enum dpu_3d_blend_mode mode_3d;
+> 	enum dpu_merge_3d merge_3d;
+>
 
-> > +
-> > +  motion,pwm-inverted:
-> > +    $ref: /schemas/types.yaml#/definitions/flag  
-> 
-> And PWM flag does not work?
-
-I have seen PWM controllers that don't seem to support the
-PWM_POLARITY_INVERTED flag and those where it just doesn't work. Should all
-PWM controller drivers always support the PWM_POLARITY_INVERTED flag, even if
-it needs to be inverted in software? If so, there are some drivers that need
-fixing.
-
-> Anyway, there is no "motion" company.
-
-Got it. Dropped all the "motion," prefixes.
-
-> > +    description:
-> > +      If present, this flag indicates that the PWM signal should be inverted.
-> > +      The duty-cycle will be scaled from 100% down to 0% instead 0% to 100%.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - pwms
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/motion/common.yaml#
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    // This example shows how to use the TI DRV8873 or similar motor controllers
-> > +    // with this driver
-> > +    motion-simple-pwm0 {  
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> e.g. motor {
-
-Will change. Thanks.
-
-Best regards,
-
--- 
-David Jander
 
