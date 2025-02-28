@@ -1,338 +1,345 @@
-Return-Path: <linux-kernel+bounces-538690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C3CA49BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84281A49BFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88EE3B7B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67663B7F7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B8127183D;
-	Fri, 28 Feb 2025 14:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40E527004F;
+	Fri, 28 Feb 2025 14:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xe+Q9GyR"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GBk4SZ1m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1FE26FDAF
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0779F26E97C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752727; cv=none; b=hi1wAYA7yecVxmP1fdCYddwsOhcio9+InWIyRaIu+I+q1fawXsXNPH9JOTp9pf1QALTu1WEWfQYyVo5C1jzQagij+dIun0vODQlJL4TMs6bp0omjFOj8v+3CR34VrejObN9xapj9GCE4wD3O0K3FCAJqUWDaUuhYy3j2EMDz8Ik=
+	t=1740752775; cv=none; b=F7SYlLZZnBb+RIbT1qk7NwV/prM5o/KH0+dWW8QI/7S6ZdyL64q92Poq+T+exn/8AAoEtFbDPjA0tFpDGFWdnUcx1P1lKwOxAJHNABO/mNEZspmQPfjhWcDOm9D3U1dP1+jruzqWyQX8euS7dXNM0e9j1lEf8bV3D2NTkRPPuXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752727; c=relaxed/simple;
-	bh=Fv860Al3txKzzpQ0W1HeoGu6xme4o+Rh2jZ3Zrcd7g4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P88nF1rsPfSlOGPHX/6Hs25BOyvr3MLN9JAR+NoG39Xd9zVfNVfZbzijGch3+TOeyZSdklfXY1tiD2SrwshUT3ixnIg9qwXElmzd7ExVmBsQi8KEynbIwWY7Qcvz0N3FPOWAMIB8ho3EZ580DbmJFNDgsVec+slI+MXI8cZJP+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xe+Q9GyR; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abba1b74586so319549166b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:25:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740752723; x=1741357523; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8LIzYk799OwiRGJ+U43eGq7mGeHnDZAFhWnQAaeMfaA=;
-        b=xe+Q9GyRP38cKsmhFa6jvRmi40WhOsMohSEzcueX7WdWALczV7Lnygx8GQkp62GYA8
-         x7Ry3PT99aFrgkW+btA01dDk1iPEmnbEpqTJKb7LSLPl18kWo942CKHes4gcVx9qpsKW
-         JNVz4/uPPehzjzNXuvQTD4rzW3JoKPKG/Vc93AXaqx8MFYalTL3m3gTDYFPcdHv7qNF1
-         Vl5mxGxhUHiFSskHG/rConLoEXNtbcDiEzMWJ41b5oQKrtot6UEIs+4wH1SLa9slZo+H
-         LrbGQ61BL7/1pL0If4ignv41g7DMpNiOOkVEtrOJfR4bvkqlCP3wvqeiReKH6d8XzPKI
-         BEoQ==
+	s=arc-20240116; t=1740752775; c=relaxed/simple;
+	bh=ZrrKLGsH5gMFEQNvKUqdIRd0RgUyxmGgBynh9J5KInw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dC2a2Z3dgTtac/DaPhRlkpfoWnx14Ofw8QdyNyxCWkBTUbFwsO2g+QYZ0fNdOrEZrFPG77zTDNI+ipbeHKs2Dxgfm2jrb87sDtSRQh8UVsg74D4ZlBA1FHOL+4DOMI1m14JdY+BPP/FgqPDt7JAQ2x/gkBjqIyxidu+GmkHgIxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GBk4SZ1m; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740752772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=41YK/Fa93yH7WRyOoYN61ZIrQtcUxBsRdCYHbyJzOHk=;
+	b=GBk4SZ1mm9+g5zenKCPqyxeJDJyd2EhMzkhaBXqdMHk6EjK2OYlxFIVqPVgYF6clv+N8kA
+	f12gg7fNvZHhnNl95ByVbfyzdHQ4pW/2wI+CHd640oVW2GJrrOYLqDmzKvjkBVYsB3B7Bd
+	SZCtYrghwfxBlEY58PJiYrwKS0g3xk8=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-fCJjN2ZGP7CTquNWrfmkmA-1; Fri, 28 Feb 2025 09:26:10 -0500
+X-MC-Unique: fCJjN2ZGP7CTquNWrfmkmA-1
+X-Mimecast-MFC-AGG-ID: fCJjN2ZGP7CTquNWrfmkmA_1740752769
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab39f65dc10so227151566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:26:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740752723; x=1741357523;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740752769; x=1741357569;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8LIzYk799OwiRGJ+U43eGq7mGeHnDZAFhWnQAaeMfaA=;
-        b=bMk2efAhReichP1BSIWJpzmUf2EJxcVWJkEv67oMFtmHWvYMEGXlBTXwLwbxU6onuO
-         YxwjqNi5m1D+y+oXKMbYQKhmIhuIrJQ5NggW+sk0SEyONoJMVpH7cJ3rwIYU/vGSwtaW
-         Pxoz1D6ZYPoaaMLEeztP5N70tdd96sH8pJXbgPonrLjI8VlmJaZHCevwliH86YnpBlXy
-         ITrC7yDQEEAt/bTNLMC/VxuUK/Xl+bBhyFW0o6V9wUOG4UJPZgs4+XK9eUZCd9Zsj2Zi
-         JuTc1rGU6/l7mWf5rYFm6qLi6ChEL1KPZWUFN8XpVLPVyLkIBmK2ZnfPhLLA+sO0t1qf
-         DDGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoGHuZfDzQmEc5CQf7HMfNCATYCRz+whVBxFXQ1jULIIbUMuZczONFrOAV/co5dTiVKMp0xe64kisGhZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxac36IrR0LM2I0hPGm3PrYs1pZw/ltT5Ks9Ox9qLxrrWefNpy5
-	nAc36TDTn6VjlKfn9APg3nBxrrO8z0zzoe+JDePO9dHRR7ix6IDkIAJDK93TSnY=
-X-Gm-Gg: ASbGncsN1M1rTWwZ1AF8vavbOurfj8D35OZ3iFpjDMAddGlrqqX1xiM5hyv8Qecx1SY
-	KifW/XznzkkfbcE36I16u14p3+F2FGafz2BI/fKLwTnr5FYtx4mF5G+4XiCJxRa4/+CrR/R8wnI
-	dL/kc727Y++xm3nznJARv/zIVK3H3HDFSl81H9Lgz9mkQr3gUWpeUbw4dkytAzs1L2ykDpv0EX7
-	0vP8qGnkqFpS3qYn20xFiNrwAfkEOTVYDWbk1J057JbmCZYIIXp/0dNm5iiqu0itxhU5Vpd2yrL
-	Ow2pV/64UC6S8Jy1rx1c4zGwOn8kjhMczG8qRW3uddAaxsO/7TwOQSv/lnr7bVWoElynNkQJnTK
-	YUE21dEQdlg==
-X-Google-Smtp-Source: AGHT+IEpoA52+trT4ge4qUp4b2kA9Vtxbi9NdPY8mvecWdEGjATUZNAbcSVG8gkYPO68c7Dv+KQCHQ==
-X-Received: by 2002:a17:907:2d91:b0:ab6:d575:9540 with SMTP id a640c23a62f3a-abf26822d6cmr376294966b.50.1740752722682;
-        Fri, 28 Feb 2025 06:25:22 -0800 (PST)
-Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75bffcsm298754466b.143.2025.02.28.06.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 06:25:22 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 28 Feb 2025 14:25:20 +0000
-Subject: [PATCH v3 6/6] nvmem: max77759: add Maxim MAX77759 NVMEM driver
+        bh=41YK/Fa93yH7WRyOoYN61ZIrQtcUxBsRdCYHbyJzOHk=;
+        b=M6KMkhyjJIdN8mK+hsBd7bwaaIy5Dje2T1vxblow7HumrDcEsBUD9KN0yHOBfRVfte
+         Nlh8Jjp6RCo+f4RlC20PSTPJIiNPHP6VHrogQWR+H1rgTnXY0JijR/ntwiQ7/xdWZxbA
+         U48vO0PQ30meNEOsB6Yof70pDByjAVwi2M6HSyeHCTevfxVfV3Gm8cRBHexnZuWWHKTS
+         bqrHBOvNZMDA2xqr7aLvUDsTbjSW1CeWfb3m+mHq9cRcoGgS6KUANFKFUSXUe5XieRy7
+         kyvQ3ezg5P/70DqFqwfeJDMj4uFoDql6UNLKCtBoAkJrN+MjHs1BhTvw/gxq8aNlrQ7S
+         AOZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeY2JNOzzujwN2uWN7FIlg8VEIC7OaVzj2YkBMQq0aR+/jAGh15qxtz99Ok0KSCBl4Sl8HjTmX8iqsVBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+CFxUR/QfgDRFFr9jciR0kCcRuqwoTS6Oom1MU80RA+p1VJlN
+	hTKn2fVUxg4vL2flK2CFS0HVB9dBUozHK45dEhbRgRjZXXKT6LSuQyjPU+RlmwliYMwksosLpEW
+	SerGJ4gqrxSA9PQpYHo8vwIWyny8Do0jufKtM/D+4H3ZvjY6Qt8jdx7+MN3brflwX0EBNtj1tJB
+	TBS/5tsDDzYuIpUxnZ9w8TTwVQfAz2zAkDOSwQaL7b1jPJ/B3c1w==
+X-Gm-Gg: ASbGncuxw/fOwes2Dn7sih2DeR+hMB03Koiri2h2p9uEfGJFlocX0037m0QdZeIeREi
+	YIsOu3Rl6FqztN0Ns03IVKv/sxzpaSULhMviN3W1rf4p2jRsVv7g3U2PTjLkK4eoF4Db7kgloTA
+	==
+X-Received: by 2002:a17:907:98b:b0:ab7:e47c:b54a with SMTP id a640c23a62f3a-abf268228a5mr413408366b.37.1740752768844;
+        Fri, 28 Feb 2025 06:26:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFFpT+ykpXihddLwZKH4O92h96tSGJga9CaU/UUNcYwAnblX7Ug+Sy1iNG8RRYaXgdCkAh2VWhiCNg1deaC5wk=
+X-Received: by 2002:a17:907:98b:b0:ab7:e47c:b54a with SMTP id
+ a640c23a62f3a-abf268228a5mr413404166b.37.1740752768319; Fri, 28 Feb 2025
+ 06:26:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250228-max77759-mfd-v3-6-0c3627d42526@linaro.org>
-References: <20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org>
-In-Reply-To: <20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20250227041209.2031104-1-almasrymina@google.com>
+In-Reply-To: <20250227041209.2031104-1-almasrymina@google.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Fri, 28 Feb 2025 22:25:30 +0800
+X-Gm-Features: AQ5f1JqVhDb-cZIWt74rFAUUwiHQfWAkkWi2rweLejB6ipoz1DdzdbSrPZJ_seg
+Message-ID: <CAPpAL=wzN2L_OOLG6b_D+pVvVnTu4N9X4knfgePtrtLMX7vQww@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 0/8] Device memory TCP TX
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-Port Controller (TCPC), NVMEM, and a GPIO expander.
+I re-tested this series of patches v6 with virtio-net regression
+tests, everything works fine.
 
-This driver exposes the non volatile memory using the platform device
-registered by the core MFD driver.
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
----
-v2:
-* align sentinel in max77759_nvmem_of_id[] with other max77759 drivers
- (Christophe)
----
- MAINTAINERS                    |   1 +
- drivers/nvmem/Kconfig          |  12 ++++
- drivers/nvmem/Makefile         |   2 +
- drivers/nvmem/max77759-nvmem.c | 156 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 171 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ef3aadcf86ce35d8807733c94f790cde0f7255af..88c53e3fabe1760abf7914290c8729330739b0b9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14354,6 +14354,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
- F:	drivers/gpio/gpio-max77759.c
- F:	drivers/mfd/max77759.c
-+F:	drivers/nvmem/max77759-nvmem.c
- F:	include/linux/mfd/max77759.h
- 
- MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 8671b7c974b933e147154bb40b5d41b5730518d2..3de07ef524906ad24a89e58abdfe93529a83c80f 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -154,6 +154,18 @@ config NVMEM_LPC18XX_OTP
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called nvmem_lpc18xx_otp.
- 
-+config NVMEM_MAX77759
-+	tristate "Maxim Integrated MAX77759 NVMEM Support"
-+	depends on MFD_MAX77759
-+	default MFD_MAX77759
-+	help
-+	  Say Y here to include support for the user-accessible storage found
-+	  in Maxim Integrated MAX77759 PMICs. This IC provides space for 30
-+	  bytes of storage.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called nvmem-max77759.
-+
- config NVMEM_MESON_EFUSE
- 	tristate "Amlogic Meson GX eFuse Support"
- 	depends on (ARCH_MESON || COMPILE_TEST) && MESON_SM
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5b77bbb6488bf89bfb305750a1cbf4a6731a0a58..a9d03cfbbd27e68d40f8c330e72e20378b12a481 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -34,6 +34,8 @@ obj-$(CONFIG_NVMEM_LPC18XX_EEPROM)	+= nvmem_lpc18xx_eeprom.o
- nvmem_lpc18xx_eeprom-y			:= lpc18xx_eeprom.o
- obj-$(CONFIG_NVMEM_LPC18XX_OTP)		+= nvmem_lpc18xx_otp.o
- nvmem_lpc18xx_otp-y			:= lpc18xx_otp.o
-+obj-$(CONFIG_NVMEM_MAX77759)		+= nvmem-max77759.o
-+nvmem-max77759-y			:= max77759-nvmem.o
- obj-$(CONFIG_NVMEM_MESON_EFUSE)		+= nvmem_meson_efuse.o
- nvmem_meson_efuse-y			:= meson-efuse.o
- obj-$(CONFIG_NVMEM_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
-diff --git a/drivers/nvmem/max77759-nvmem.c b/drivers/nvmem/max77759-nvmem.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..bc535a73daaaf2caeb772cd17da61f8a030b6a6f
---- /dev/null
-+++ b/drivers/nvmem/max77759-nvmem.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright 2020 Google Inc
-+// Copyright 2025 Linaro Ltd.
-+//
-+// NVMEM driver for Maxim MAX77759
-+
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/device/driver.h>
-+#include <linux/err.h>
-+#include <linux/mfd/max77759.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/overflow.h>
-+#include <linux/platform_device.h>
-+#include <linux/string.h>
-+
-+#define MAX77759_NVMEM_OPCODE_HEADER_LEN 3
-+/*
-+ * NVMEM commands have a three byte header (which becomes part of the command),
-+ * so we need to subtract that.
-+ */
-+#define MAX77759_NVMEM_SIZE (MAX77759_MAXQ_OPCODE_MAXLENGTH \
-+			     - MAX77759_NVMEM_OPCODE_HEADER_LEN)
-+
-+struct max77759_nvmem {
-+	struct device *dev;
-+	struct max77759_mfd *max77759_mfd;
-+};
-+
-+static bool max77759_nvmem_is_valid(unsigned int offset, size_t bytes)
-+{
-+	return (offset + bytes - 1 <= MAX77759_NVMEM_SIZE);
-+}
-+
-+static int max77759_nvmem_reg_read(void *priv, unsigned int offset,
-+				   void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_NVMEM_OPCODE_HEADER_LEN);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	if (!max77759_nvmem_is_valid(offset, bytes)) {
-+		dev_err(nvmem->dev, "outside NVMEM area: %u / %zu\n",
-+			offset, bytes);
-+		return -EINVAL;
-+	}
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_READ;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	rsp->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+
-+	ret = max77759_maxq_command(nvmem->max77759_mfd, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, MAX77759_NVMEM_OPCODE_HEADER_LEN)) {
-+		dev_warn(nvmem->dev, "protocol error (read)\n");
-+		return -EIO;
-+	}
-+
-+	memcpy(val, &rsp->rsp[MAX77759_NVMEM_OPCODE_HEADER_LEN], bytes);
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_reg_write(void *priv, unsigned int offset,
-+				    void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	if (!max77759_nvmem_is_valid(offset, bytes)) {
-+		dev_err(nvmem->dev, "outside NVMEM area: %u / %zu\n",
-+			offset, bytes);
-+		return -EINVAL;
-+	}
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_WRITE;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	memcpy(&cmd->cmd[MAX77759_NVMEM_OPCODE_HEADER_LEN], val, bytes);
-+	cmd->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+	rsp->length = cmd->length;
-+
-+	ret = max77759_maxq_command(nvmem->max77759_mfd, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, cmd->length)) {
-+		dev_warn(nvmem->dev, "protocol error (write)\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_probe(struct platform_device *pdev)
-+{
-+	struct nvmem_config config = {
-+		.dev = &pdev->dev,
-+		.name = dev_name(&pdev->dev),
-+		.id = NVMEM_DEVID_NONE,
-+		.type = NVMEM_TYPE_EEPROM,
-+		.ignore_wp = true,
-+		.size = MAX77759_NVMEM_SIZE,
-+		.word_size = sizeof(u8),
-+		.stride = sizeof(u8),
-+		.reg_read = max77759_nvmem_reg_read,
-+		.reg_write = max77759_nvmem_reg_write,
-+	};
-+	struct max77759_nvmem *nvmem;
-+
-+	nvmem = devm_kzalloc(&pdev->dev, sizeof(*nvmem), GFP_KERNEL);
-+	if (!nvmem)
-+		return -ENOMEM;
-+
-+	nvmem->dev = &pdev->dev;
-+	nvmem->max77759_mfd = dev_get_drvdata(pdev->dev.parent);
-+
-+	config.priv = nvmem;
-+
-+	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
-+}
-+
-+static const struct of_device_id max77759_nvmem_of_id[] = {
-+	{ .compatible = "maxim,max77759-nvmem", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max77759_nvmem_of_id);
-+
-+static struct platform_driver max77759_nvmem_driver = {
-+	.driver = {
-+		.name = "max77759-nvmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = max77759_nvmem_of_id,
-+	},
-+	.probe = max77759_nvmem_probe,
-+};
-+
-+module_platform_driver(max77759_nvmem_driver);
-+
-+MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
-+MODULE_DESCRIPTION("NVMEM driver for Maxim MAX77759");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:max77759-nvmem");
-
--- 
-2.48.1.711.g2feabab25a-goog
+On Thu, Feb 27, 2025 at 12:13=E2=80=AFPM Mina Almasry <almasrymina@google.c=
+om> wrote:
+>
+> v6: https://lore.kernel.org/netdev/20250222191517.743530-1-almasrymina@go=
+ogle.com/
+> =3D=3D=3D
+>
+> v6 has no major changes. Addressed a few issues from Paolo and David,
+> and collected Acks from Stan. Thank you everyone for the review!
+>
+> Changes:
+> - retain behavior to process MSG_FASTOPEN even if the provided cmsg is
+>   invalid (Paolo).
+> - Rework the freeing of tx_vec slightly (it now has its own err label).
+>   (Paolo).
+> - Squash the commit that makes dmabuf unbinding scheduled work into the
+>   same one which implements the TX path so we don't run into future
+>   errors on bisecting (Paolo).
+> - Fix/add comments to explain how dmabuf binding refcounting works
+>   (David).
+>
+> v5: https://lore.kernel.org/netdev/20250220020914.895431-1-almasrymina@go=
+ogle.com/
+> =3D=3D=3D
+>
+> v5 has no major changes; it clears up the relatively minor issues
+> pointed out to in v4, and rebases the series on top of net-next to
+> resolve the conflict with a patch that raced to the tree. It also
+> collects the review tags from v4.
+>
+> Changes:
+> - Rebase to net-next
+> - Fix issues in selftest (Stan).
+> - Address comments in the devmem and netmem driver docs (Stan and Bagas)
+> - Fix zerocopy_fill_skb_from_devmem return error code (Stan).
+>
+> v4: https://lore.kernel.org/netdev/20250203223916.1064540-1-almasrymina@g=
+oogle.com/
+> =3D=3D=3D
+>
+> v4 mainly addresses the critical driver support issue surfaced in v3 by
+> Paolo and Stan. Drivers aiming to support netmem_tx should make sure not
+> to pass the netmem dma-addrs to the dma-mapping APIs, as these dma-addrs
+> may come from dma-bufs.
+>
+> Additionally other feedback from v3 is addressed.
+>
+> Major changes:
+> - Add helpers to handle netmem dma-addrs. Add GVE support for
+>   netmem_tx.
+> - Fix binding->tx_vec not being freed on error paths during the
+>   tx binding.
+> - Add a minimal devmem_tx test to devmem.py.
+> - Clean up everything obsolete from the cover letter (Paolo).
+>
+> v3: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D929401&=
+state=3D*
+> =3D=3D=3D
+>
+> Address minor comments from RFCv2 and fix a few build warnings and
+> ynl-regen issues. No major changes.
+>
+> RFC v2: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D920=
+056&state=3D*
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> RFC v2 addresses much of the feedback from RFC v1. I plan on sending
+> something close to this as net-next  reopens, sending it slightly early
+> to get feedback if any.
+>
+> Major changes:
+> --------------
+>
+> - much improved UAPI as suggested by Stan. We now interpret the iov_base
+>   of the passed in iov from userspace as the offset into the dmabuf to
+>   send from. This removes the need to set iov.iov_base =3D NULL which may
+>   be confusing to users, and enables us to send multiple iovs in the
+>   same sendmsg() call. ncdevmem and the docs show a sample use of that.
+>
+> - Removed the duplicate dmabuf iov_iter in binding->iov_iter. I think
+>   this is good improvment as it was confusing to keep track of
+>   2 iterators for the same sendmsg, and mistracking both iterators
+>   caused a couple of bugs reported in the last iteration that are now
+>   resolved with this streamlining.
+>
+> - Improved test coverage in ncdevmem. Now multiple sendmsg() are tested,
+>   and sending multiple iovs in the same sendmsg() is tested.
+>
+> - Fixed issue where dmabuf unmapping was happening in invalid context
+>   (Stan).
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The TX path had been dropped from the Device Memory TCP patch series
+> post RFCv1 [1], to make that series slightly easier to review. This
+> series rebases the implementation of the TX path on top of the
+> net_iov/netmem framework agreed upon and merged. The motivation for
+> the feature is thoroughly described in the docs & cover letter of the
+> original proposal, so I don't repeat the lengthy descriptions here, but
+> they are available in [1].
+>
+> Full outline on usage of the TX path is detailed in the documentation
+> included with this series.
+>
+> Test example is available via the kselftest included in the series as wel=
+l.
+>
+> The series is relatively small, as the TX path for this feature largely
+> piggybacks on the existing MSG_ZEROCOPY implementation.
+>
+> Patch Overview:
+> ---------------
+>
+> 1. Documentation & tests to give high level overview of the feature
+>    being added.
+>
+> 1. Add netmem refcounting needed for the TX path.
+>
+> 2. Devmem TX netlink API.
+>
+> 3. Devmem TX net stack implementation.
+>
+> 4. Make dma-buf unbinding scheduled work to handle TX cases where it gets
+>    freed from contexts where we can't sleep.
+>
+> 5. Add devmem TX documentation.
+>
+> 6. Add scaffolding enabling driver support for netmem_tx. Add helpers, dr=
+iver
+> feature flag, and docs to enable drivers to declare netmem_tx support.
+>
+> 7. Guard netmem_tx against being enabled against drivers that don't
+>    support it.
+>
+> 8. Add devmem_tx selftests. Add TX path to ncdevmem and add a test to
+>    devmem.py.
+>
+> Testing:
+> --------
+>
+> Testing is very similar to devmem TCP RX path. The ncdevmem test used
+> for the RX path is now augemented with client functionality to test TX
+> path.
+>
+> * Test Setup:
+>
+> Kernel: net-next with this RFC and memory provider API cherry-picked
+> locally.
+>
+> Hardware: Google Cloud A3 VMs.
+>
+> NIC: GVE with header split & RSS & flow steering support.
+>
+> Performance results are not included with this version, unfortunately.
+> I'm having issues running the dma-buf exporter driver against the
+> upstream kernel on my test setup. The issues are specific to that
+> dma-buf exporter and do not affect this patch series. I plan to follow
+> up this series with perf fixes if the tests point to issues once they're
+> up and running.
+>
+> Special thanks to Stan who took a stab at rebasing the TX implementation
+> on top of the netmem/net_iov framework merged. Parts of his proposal [2]
+> that are reused as-is are forked off into their own patches to give full
+> credit.
+>
+> [1] https://lore.kernel.org/netdev/20240909054318.1809580-1-almasrymina@g=
+oogle.com/
+> [2] https://lore.kernel.org/netdev/20240913150913.1280238-2-sdf@fomichev.=
+me/T/#m066dd407fbed108828e2c40ae50e3f4376ef57fd
+>
+> Cc: sdf@fomichev.me
+> Cc: asml.silence@gmail.com
+> Cc: dw@davidwei.uk
+> Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+> Cc: Victor Nogueira <victor@mojatatu.com>
+> Cc: Pedro Tammela <pctammela@mojatatu.com>
+> Cc: Samiullah Khawaja <skhawaja@google.com>
+>
+>
+> Mina Almasry (7):
+>   net: add get_netmem/put_netmem support
+>   net: devmem: Implement TX path
+>   net: add devmem TCP TX documentation
+>   net: enable driver support for netmem TX
+>   gve: add netmem TX support to GVE DQO-RDA mode
+>   net: check for driver support in netmem TX
+>   selftests: ncdevmem: Implement devmem TCP TX
+>
+> Stanislav Fomichev (1):
+>   net: devmem: TCP tx netlink api
+>
+>  Documentation/netlink/specs/netdev.yaml       |  12 +
+>  Documentation/networking/devmem.rst           | 150 ++++++++-
+>  .../networking/net_cachelines/net_device.rst  |   1 +
+>  Documentation/networking/netdev-features.rst  |   5 +
+>  Documentation/networking/netmem.rst           |  23 +-
+>  drivers/net/ethernet/google/gve/gve_main.c    |   4 +
+>  drivers/net/ethernet/google/gve/gve_tx_dqo.c  |   8 +-
+>  include/linux/netdevice.h                     |   2 +
+>  include/linux/skbuff.h                        |  17 +-
+>  include/linux/skbuff_ref.h                    |   4 +-
+>  include/net/netmem.h                          |  23 ++
+>  include/net/sock.h                            |   1 +
+>  include/uapi/linux/netdev.h                   |   1 +
+>  net/core/datagram.c                           |  48 ++-
+>  net/core/dev.c                                |   3 +
+>  net/core/devmem.c                             | 115 ++++++-
+>  net/core/devmem.h                             |  77 ++++-
+>  net/core/netdev-genl-gen.c                    |  13 +
+>  net/core/netdev-genl-gen.h                    |   1 +
+>  net/core/netdev-genl.c                        |  73 ++++-
+>  net/core/skbuff.c                             |  48 ++-
+>  net/core/sock.c                               |   6 +
+>  net/ipv4/ip_output.c                          |   3 +-
+>  net/ipv4/tcp.c                                |  50 ++-
+>  net/ipv6/ip6_output.c                         |   3 +-
+>  net/vmw_vsock/virtio_transport_common.c       |   5 +-
+>  tools/include/uapi/linux/netdev.h             |   1 +
+>  .../selftests/drivers/net/hw/devmem.py        |  26 +-
+>  .../selftests/drivers/net/hw/ncdevmem.c       | 300 +++++++++++++++++-
+>  29 files changed, 950 insertions(+), 73 deletions(-)
+>
+>
+> base-commit: 80c4a0015ce249cf0917a04dbb3cc652a6811079
+> --
+> 2.48.1.658.g4767266eb4-goog
+>
+>
 
 
