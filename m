@@ -1,141 +1,148 @@
-Return-Path: <linux-kernel+bounces-538579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A42A49A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:24:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25740A49A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80F8B7A684C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAA087A246D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF8526D5B1;
-	Fri, 28 Feb 2025 13:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5671C26BDBA;
+	Fri, 28 Feb 2025 13:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHmBQBEE"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dCaAeNoZ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FDD1D555;
-	Fri, 28 Feb 2025 13:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC641D555
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740749060; cv=none; b=IP+8vZEw5lEiHKgJN2+BHKbYvQtv7l+Y7KJFOdqIXw+Yf2+/VewZGxHu2qfTqUhzarBf24WiNVT3VZOejCu9VSM59Ue+RimNsuEZJg0/mX5hpFZPRn6T06NTsn7duIEoiEUuwrJYWnjFaLKcHBmiXS1VpRv6yvlftYZdDeOv4dg=
+	t=1740749201; cv=none; b=ETcI715+5EoBF93tZX0ww/NUIAcmsC2aHPT3ugcDL500PJsyBjohN2BDOCSBKkjj0HlB5/U+HHXT0xGp4X6/yfPNRZ2toaMx5H6GPi8lROexUGpvyFF39lKDZOxEsn8peO6cEr5PLLAne2vqsyY3QaE3EoZD3uAqIgpxqqdUi3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740749060; c=relaxed/simple;
-	bh=HG9HTlvNGdnmHBqM51K38WxH2I4QiN6sibvcf6Rzxz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YNbrf1BOnGYbop6VWKGhHleG0RSd30wlZ7loS40F6xrUlzRJ/vYnYFxIWgVlzqfdYdP6FCr38+qlv692Wm8XOLO2AuNKylelqlgsuFd6hjSdgXON7WPHf4suCwrRV8xvCtRlx77QxptTLu2M0Hj1/GybLY8ZiCP/fMWTBZ1DGBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHmBQBEE; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so13819175e9.3;
-        Fri, 28 Feb 2025 05:24:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740749057; x=1741353857; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Rh8KIR0lZBR/NWLa9Q2ihKE6Abv28L63gVdOYLJNiB4=;
-        b=RHmBQBEE21OPJuWY5Q7mZj85f/vgYnbXDF/kXfGzgPS9ksDuuAnLAVhp4nW6d7C+60
-         y+UoirWY6HJHRzCOhd7KBv600/xYFw+cy7WF/Vr3TJfXO5brcTUCjzdCG/FIQU5GgYrI
-         AiKsZLA2iimXOso/7QOYAuyh/qiv6p90V57GgpUSCOqEU7BCBQUTusm9ClHWJj6htEKT
-         IFD31EsCH269r5WGFSigHYCUC131VbnodvcV37Cu3F5GyjeWo6GcFdcNaD1mwLfCZ/um
-         5ny824hu4pjww71wsGpz2ZW9S5QobbQCIh5N9rOXIfRXsr6Vl1PYGR0ynYkpPXYDUtKn
-         RSvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740749057; x=1741353857;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rh8KIR0lZBR/NWLa9Q2ihKE6Abv28L63gVdOYLJNiB4=;
-        b=MzGkLWwA++MdMy1VwwhFhVxBTDNv68vLHxmJ1imtBBj2bNb78sJagVaKxrXWIIvUT/
-         M/x+itVUF/1GQAgGuVzCV6k9js4JWKvXl8u05+TSWd2mADITfd0wIkdphoGlajF2UnNf
-         /L/tXf8m/vFjAxrAS0tRtG/oWmK7vHUZhpR5kcv6VUoiH4+S8oncHUZI8ZsUksyUxpII
-         eiWK05bAw/DC9XzAwsIPoEIC9RW2/yJ4J32+ewxxp5qeOJsd6whOTENHpfNwL/A3B77x
-         De0BemelNWdgO9MAtJdFNITYek/TB9FZeoHQdlaJiIQCu51rOXBUtwApLsR/1hEL5SDj
-         OIgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9W5sdJpisc9r3GQ3BF8NBaLtzSIdcruyaKRu79krbSMxie+66HAtOHHwiNme+AIfY72R4IC/vyUTLTduTlKw=@vger.kernel.org, AJvYcCV7EWh8D7Jt+c1R3eGplEyvEuq7Db7AXBeG0JW5o4yMmm7A9r+6Z4AgiqQtoY2K8ZdoKyxGSbiZwkF7eOCS@vger.kernel.org, AJvYcCWvcLvJ1IfQO4RJu0LjJtPVtohstZLZPAq6lnvACPKXwYfmos/2GsqYE/h6tx4AAW0XAmh/Azli8BKu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJpPaefoD4+YMlRHbjshU4PIGEI5FOU96vpTdJxe4ex+eU+MFg
-	kc0H0kQN+2LzU9xsopTUph5aclomf+Q+UbZK0Ozn6LTy+jtKsX9OY6YCvY0Lqdo=
-X-Gm-Gg: ASbGnct+2bNL4fUCBTudXkjSyc+mGMfnBG3ZKsIfZQPYTjZKZcL9zCM+1UWdGuQ620L
-	rNkkE7oOH3s+1ekUXB9FqcnZTrRl2UPJkvVdyo1rdby2ooH6KpaNLhn2FXWwwdodAUAjVdzzXLo
-	JjL9EqUYpMe3BxeB+9by8fX9Na3OQ1TbOmjkAHdHKqiYxuM2TLwHvQUJKIzWjVNpxO8y4BNBu+o
-	rrDGqlb0Q1nXntNHMkkDaqso1kruu5LrmXy7erf+YqEJXWG4ltTzw7HBKHPrjpJbMPCh7Z5zCl6
-	xQ6ltOkAFo8RV/0yq6nSi7Bpi5t+WTfxXuSlVsyIrdfjc92uGK2Pw9MxQipe68Go/eUBNUfdXg=
-	=
-X-Google-Smtp-Source: AGHT+IEGfJ5sKNQtVz6Z/8Ld/0MZOUkjiLJZQs6Vz+xwpBmJkJ27m7qiHcjdTNbX4nHkCuWmUFSidQ==
-X-Received: by 2002:a05:600c:35c3:b0:439:9377:fa17 with SMTP id 5b1f17b1804b1-43ba67085e7mr28001065e9.18.1740749056725;
-        Fri, 28 Feb 2025 05:24:16 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5711dfsm88512065e9.27.2025.02.28.05.24.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:24:16 -0800 (PST)
-Message-ID: <5fa78e957fc85fa134cea5fa68b21b56c6173a44.camel@gmail.com>
-Subject: Re: [PATCH next] iio: adc: ad4851: Fix signedness bug in
- ad4851_calibrate()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Antoniu Miclaus
-	 <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Fri, 28 Feb 2025 13:24:20 +0000
-In-Reply-To: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
-References: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740749201; c=relaxed/simple;
+	bh=kGFidxujuu/5E6/w43jD7cIkQM+gr//1Z9nzVC3249w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FAwRPVd2zz0s6iB4h16Gsf8hjdQL+eHX8nKDBxLrQJLkA++EtCecjppvf6Tc9q3z/AD+SIuHEbafH6aR2AZsB/DD4xAo2FQtPKUCsMa2IQuDP6WhbW9fMvD1LzgN2Mc0lrURAvbetDzwDI6HA2iWeAlV4eTkwgtOflwxOsOcOpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dCaAeNoZ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740749191;
+	bh=kGFidxujuu/5E6/w43jD7cIkQM+gr//1Z9nzVC3249w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dCaAeNoZeU54zDefZlcSRbx/qgWHWaR8ZjNOK4VSPFUWCMKacfX5AWbpoYe4ZPzgQ
+	 yJZl7kTFzok4PNFV6fxZut36Vc3ALn/tZFqao1ln37ZyJ+QhFekZQBKFEiS7ElzkuI
+	 c1dWqWlQ8eVKTZH+sV1hb4TbLR74ujLJLupczbqnKUH7NebkONedaqPBluTFvTsczj
+	 Fhl2yk9sGxTA0vIU506ZTQpc0O8cswh0FghgtXpqc2jNCGFR3fLteVEYbByhAE2EkR
+	 1dQSoWrxJdAb+SRsz4l2gbQVV9u6DmmO6blVgCDvZZzox62XcWeu6z+QJikLRBShWH
+	 Qk9CJq9JwY3Zg==
+Received: from localhost.localdomain (unknown [171.76.85.20])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 445A517E07F8;
+	Fri, 28 Feb 2025 14:26:29 +0100 (CET)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.fornazier@gmail.com,
+	airlied@gmail.com,
+	simona.vetter@ffwll.ch,
+	robdclark@gmail.com,
+	dmitry.baryshkov@linaro.org,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	valentine.burley@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] drm/ci: fix merge request rules
+Date: Fri, 28 Feb 2025 18:56:18 +0530
+Message-ID: <20250228132620.556079-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-02-28 at 12:36 +0300, Dan Carpenter wrote:
-> The "c" variable is used to store error codes from ad4851_find_opt()
-> so it has to be signed for the error handling to work.=C2=A0 Change it
-> to type int.
->=20
-> Fixes: 6250803fe2ec ("iio: adc: ad4851: add ad485x driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+Merge request pipelines were only created when changes
+were made to drivers/gpu/drm/ci/, causing MRs that
+didn't touch this path to break. Fix MR pipeline rules
+to trigger jobs for all changes.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Run jobs automatically for marge-bot and scheduled
+pipelines, but in all other cases run manually. Also
+remove CI_PROJECT_NAMESPACE checks specific to mesa.
 
-> Btw, in ad4851_write_raw() there are some checks for negative but
-> the multiplication could still wrap and turn negative so we might want to
-> add an upper bounds as well:
->=20
-> =C2=A0=C2=A0=C2=A0 drivers/iio/adc/ad4851.c:826 ad4851_write_raw()
-> =C2=A0=C2=A0=C2=A0 warn: potential integer overflow from user 'val * st->=
-osr'
->=20
-> =C2=A0drivers/iio/adc/ad4851.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
-> index 1ad37084355e..98ebc853db79 100644
-> --- a/drivers/iio/adc/ad4851.c
-> +++ b/drivers/iio/adc/ad4851.c
-> @@ -492,11 +492,11 @@ static int ad4851_find_opt(const unsigned long *fie=
-ld,
-> unsigned int start,
-> =C2=A0static int ad4851_calibrate(struct iio_dev *indio_dev)
-> =C2=A0{
-> =C2=A0	struct ad4851_state *st =3D iio_priv(indio_dev);
-> -	unsigned int opt_delay, num_lanes, delay, i, s, c;
-> +	unsigned int opt_delay, num_lanes, delay, i, s;
-> =C2=A0	enum iio_backend_interface_type interface_type;
-> =C2=A0	DECLARE_BITMAP(pn_status, AD4851_MAX_LANES * AD4851_MAX_IODELAY);
-> =C2=A0	bool status;
-> -	int ret;
-> +	int c, ret;
-> =C2=A0
-> =C2=A0	ret =3D iio_backend_interface_type_get(st->back, &interface_type);
-> =C2=A0	if (ret)
+Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+---
+
+v2:
+  - Run jobs automatically for marge-bot and scheduled
+    pipelines, but in all other cases run manually. Also
+    remove CI_PROJECT_NAMESPACE checks specific to mesa.
+
+v3:
+  - Fix yaml syntax
+
+---
+ drivers/gpu/drm/ci/gitlab-ci.yml | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index f04aabe8327c..b06b9e7d3d09 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -143,11 +143,11 @@ stages:
+     # Pre-merge pipeline
+     - if: &is-pre-merge $CI_PIPELINE_SOURCE == "merge_request_event"
+     # Push to a branch on a fork
+-    - if: &is-fork-push $CI_PROJECT_NAMESPACE != "mesa" && $CI_PIPELINE_SOURCE == "push"
++    - if: &is-fork-push $CI_PIPELINE_SOURCE == "push"
+     # nightly pipeline
+     - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE == "schedule"
+     # pipeline for direct pushes that bypassed the CI
+-    - if: &is-direct-push $CI_PROJECT_NAMESPACE == "mesa" && $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
++    - if: &is-direct-push $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
+ 
+ 
+ # Rules applied to every job in the pipeline
+@@ -170,26 +170,15 @@ stages:
+     - !reference [.disable-farm-mr-rules, rules]
+     # Never run immediately after merging, as we just ran everything
+     - !reference [.never-post-merge-rules, rules]
+-    # Build everything in merge pipelines, if any files affecting the pipeline
+-    # were changed
++    # Build everything in merge pipelines
+     - if: *is-merge-attempt
+-      changes: &all_paths
+-      - drivers/gpu/drm/ci/**/*
+       when: on_success
+     # Same as above, but for pre-merge pipelines
+     - if: *is-pre-merge
+-      changes:
+-        *all_paths
+       when: manual
+-    # Skip everything for pre-merge and merge pipelines which don't change
+-    # anything in the build
+-    - if: *is-merge-attempt
+-      when: never
+-    - if: *is-pre-merge
+-      when: never
+     # Build everything after someone bypassed the CI
+     - if: *is-direct-push
+-      when: on_success
++      when: manual
+     # Build everything in scheduled pipelines
+     - if: *is-scheduled-pipeline
+       when: on_success
+-- 
+2.47.2
 
 
