@@ -1,257 +1,518 @@
-Return-Path: <linux-kernel+bounces-538503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FA0A49973
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:37:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDD3A4997D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A42F517249B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DA23AE87F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313B826B2CD;
-	Fri, 28 Feb 2025 12:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCE826B977;
+	Fri, 28 Feb 2025 12:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvKbxYYg"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lWSlAYD7"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910D426A1B8;
-	Fri, 28 Feb 2025 12:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDF326738F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746182; cv=none; b=mK/7rmojO9RByjWrf5oyRznVEBkporJmuGw08qRHxvWqwHW/owk2B5l525SDGqJrRJyyn1WottZy1TH0yRGSwq4fkehedXs35SN8ZQeUjy3DQcYIHrwpnWf+q2IuwuGt5d4L8ZQ4I5HI+8Xe5+7XV1D1J42jP6siFZNeb6PAgzo=
+	t=1740746212; cv=none; b=fwQ2YNjD7aKCkdMwWLIuXSkEORqj+1P8Rtz2pPjh7DSrq0ZaH02yiwdhIHr9VjD/epkciTSfRr6ArAsCsKNat04kAv6BOmjUS/mQrX1TK/qOswUxzQ/PK2Aw6cBXSpQ1oY9gOwKjeqxnJAAEdcduxlGQPRbMoyOZqgMNq3go5i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746182; c=relaxed/simple;
-	bh=hgAoXiSsc+i7JQLjoeynzodXDo0HVOSNd05Y1e+nnHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVoTrjnfjpBUPp6LCG4x4B02CbRKwoAJwP1NWsd4U4fPt0xb/n7BN4BZBbt1ggxbJ/lOdE+MITaBaHTSql7DddFeY1xvSzgB11TSdpfLQLsbAt+oxfDtLJeFxepTstAVdhlx/8z9BXthT4PdqKo8wbYpdaQSj3UF0X10A/VdIec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvKbxYYg; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30a28bf1baaso20162701fa.3;
-        Fri, 28 Feb 2025 04:36:20 -0800 (PST)
+	s=arc-20240116; t=1740746212; c=relaxed/simple;
+	bh=t1VnN8328NlYzq1iq6gLc/Hy3NUPG5L9W8w/hEkCFzM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rIAVZw7SHtF5YwBDKerdm81dxvudM1GpPo8MiAWkncEMDv9sw47eKu+iZaMiw/xa0U3oM4O3xIAWSQWnkoWI/GWLr9yHOZOlRY3mZQuQ2va2D+ReWiPO5nkAqikDLTotL5447K28q8euUXJSqTz+PlilA7otEx7NacLPw6B2yP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lWSlAYD7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-439a4fc2d65so21350965e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740746179; x=1741350979; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sp1xO9Mn5bqjcagii+SKLYOzVF9oGiH93/ipjJeXRUI=;
-        b=kvKbxYYgn4k8SljWDgSyMtzqx9jVdam06GB1NJGCQd5pW7k8GLYg7gveUez8svSsen
-         hh/yVKcPeASfUY5HFK9nYxmQqk34GFNPim3AaVbg/qlTY3W+qDI8YVqPByDmKq0u/JX8
-         fSBrUN3mjAfE0ZVtjlSHfhSo5fksmVphWK1PSRDO0qcbmfwSCxoKc5Iu5aYcdmTGKsot
-         JhWiGE5b+jgymViZQYiy4sk0sKClLalLN1p8E16TtCYMzZGQ2N3awHQe3LmAsPv61oyR
-         skhfbp5KV1nEX5Fd7RXHXaPjrSLlwimjhSXVesMcz37EyaLsgD+f9YUpqSfJGBox/s/E
-         vDew==
+        d=linaro.org; s=google; t=1740746209; x=1741351009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GTX2OoBoCZWWUzLe/NFcn/6wSduWkagg9IGE3kQbiCA=;
+        b=lWSlAYD7XqrqbXEY8fRPs7vo41tSYzZjrDYH/L3ER21pCqdodfdO1UAM8WAyzp6ohd
+         cWRKDyHeWTpCqOY3yNUQ87PRZtERAU5Ur8j+wOD1P2M91E3B/zwa+WnuI//cPrCDcv2i
+         DISjFxuzqQ59IacI3Im1ub8XjgGMkcqEUXgmQD0T1dwpLUeVpdOjjD9uEX0sJkOPL/nP
+         1zbHHw5rRZKG6brTnOzGy/xByeIrYplRiaBMpbGnNeidsa5q0AMpvOgI54UlZ45tc8E3
+         s4PrGRNk40qL9ewNNXFHAXourfIzvAoBVsTlVSRj3YXGkNZByokJ0scQuMp2PDWlXw+4
+         Dv3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746179; x=1741350979;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sp1xO9Mn5bqjcagii+SKLYOzVF9oGiH93/ipjJeXRUI=;
-        b=MNHRAyq6Pz7i4wHurnxCwwm4QrZTAIFNq9CsFq2Or+xO/zB5jeO/FiGG5BxXuWVzWr
-         MPCjgfqocKuu17h42ju3RrI/RCfZjCgow1cwvmOcDOdFi4PM73viJjTmqKNxPH4xGAgD
-         LBF/VAz1LqzZDOGxNGerkixoOARxl3J0QUICRtZwZl3F3qw1e5mSN513kbsFF7wavhI2
-         z608speSGmEPBMA2vvH9HEKa5RKBstD/a0UNOar/bAsvlejepiifJyoik3WnebPQBT2N
-         EwbqWH7SJH8mxkmregYjP3oOHRvzq9R7nEfdzqTgvt2m/b9OF9UR+dXUOVT4NaekDNsQ
-         H78Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW4NGM8RPJUut5eGN9zvPldefKB4BUM0tlamu0RKQEbYOW1GaBTD/PuBqcEct6LcNsd+Tw9Y/YS5kIqtOdk@vger.kernel.org, AJvYcCW8I0p8ZeeZDbDTC6OusWKhaw5wIm1XCdesUq8vnKBOVeJ5qD7EiPKu2JMYSqRoo0EWQu9sLzGLgPxL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmewbZR+ZAV8Wz+nEhEh7DoB7OM6IDXhR6oGkY+vbBkzViULmY
-	Xlkwss4YbmT8SgG5Fe7/UrIsshHTsS3DaQlYUxqbqd0r8h4bBbGz
-X-Gm-Gg: ASbGnct6mx+USBovMvraO6uFMqNtHnmMEfB26L2Uh8kby9hF8U0twbUg1O64NAhyTUq
-	JLTiCjBX+i9Q9wYwGvIagshHlz/kTAYJV4MXITYRcbIC9rpDhjc3kv97+uz281sQabagWJRK8o6
-	p4Rl0+lDuZlM4cnxU09STz/D4QQjGIZrk5hIjKMQRPS/IKZt+ITEWu/n9pUmNtNuTFzf2d5MlhI
-	Iw5Y65ZH/ll86JPRpzBsxT3eEl5sfZtakdy7xIrywDpGINjwLdZiypzwwZZd0JIh6S1/DJT0WV4
-	MTnGYitnN0JcbP42kIufYv6AuZUQm3I2
-X-Google-Smtp-Source: AGHT+IGBcgWI/bexpJdf4f8HpHcrS1lKA3Kg40w7t5fluuwaYQ2HlFpr9aed0iQibuZhuL7JdKO4SA==
-X-Received: by 2002:a2e:be21:0:b0:300:317c:9b75 with SMTP id 38308e7fff4ca-30b93215452mr10899461fa.12.1740746178530;
-        Fri, 28 Feb 2025 04:36:18 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867c8be8sm4981141fa.47.2025.02.28.04.36.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 04:36:17 -0800 (PST)
-Date: Fri, 28 Feb 2025 14:36:13 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 4/4] gpio: Hide valid_mask from direct assignments
-Message-ID: <fe08d70938b63206421dd39ab71cdedd5dc458a1.1740745270.git.mazziesaccount@gmail.com>
-References: <cover.1740745270.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1740746209; x=1741351009;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GTX2OoBoCZWWUzLe/NFcn/6wSduWkagg9IGE3kQbiCA=;
+        b=W47wIIAjpwoxO4GxdpFYvG/xPLaI/rT4ajj8ZrD/hqcL1toK8W2ttWsL9xwK8JrEcy
+         OIWbRrJyMuhmonwYI4QtvDgnAZ0TKOuZ1pp3k8480d9GN2VJhiGZYtZmUgRxJwWlrUV6
+         jPqG+a4Go9JjuFKCeAOE/wbKanMLSURgBNWtkfqSRgqrq8E8Uthmu5CETTG2GnGg6g4I
+         aor7hGqXfQrtY8FiCDY4P6OPVfPvWySbgSqoKXtFql2FYMOrStX6YlSGlx8LqWpSCb2o
+         YkSrdqkdbZpN9S9TINa66hwB1ONXHtC1isl3fw1b2FdyySsOFFxofA+otAx1YcE9S+D3
+         q9PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSFQHICsKw6ZmxVrDd7/wrXz7Ujy8olKxWVqqz9TvoFOOb5JgQflsRT4ArGPXMeRqzm0O0yjU6zf+I19M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPg0FrQh8EpJrO1pWvLCTJeEimFSkEDPItyQXdHO0Ksqesf0nN
+	57UL5kcEligEWLicrO97eXUUkFEX0jbybqQNf7Y5zh+ISKO0kFr1FBgFcbEhG3s=
+X-Gm-Gg: ASbGncsUWJ/r4+xfj1ANlIfzm+LhlLKUGRp7eNOcxwpwnMhj37XAYzoyRZEK6VnEcdY
+	O+7UvOTDnt2hBGopjWBSNdL1VcevFIlVu9VfzuORt/zTOf+59lxkXEPv4iwgLUtWArZiOAXGszt
+	8jJVxTlJqNscCf5tQ9GsRHqzG2wtZfEu/6BBSe34zWiTEZh2xeYnjfV5Dy86HRrNrUaDeIFxcMD
+	FiIuTj0bIr+V8pzZ82Vc9TdG/Xc1sdpGioOq6Zrrhu9NY7tgOYL3MX8Ytf9zXc6AgovJwXTbjZH
+	bLE8DbqrvXjifCxl6pn/tKomY/nAYEdqwr0c9Up4ONkNKiAZ0Alk5+TPoatCG7s6euyoTLcqqdM
+	/rt8=
+X-Google-Smtp-Source: AGHT+IGJeaWh2AFLoCns6uInmEiFYCAdJD5yRpUAb31Sry+7WJ2O27eo1SiUw0kTuj3PZ0t7MAq8HA==
+X-Received: by 2002:a05:600c:1d8e:b0:439:b565:f457 with SMTP id 5b1f17b1804b1-43ba675c3afmr27956905e9.27.1740746208991;
+        Fri, 28 Feb 2025 04:36:48 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c728:ed22:3bb8:f351? ([2a01:e0a:982:cbb0:c728:ed22:3bb8:f351])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f839asm55473615e9.2.2025.02.28.04.36.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 04:36:48 -0800 (PST)
+Message-ID: <4286e8a9-9162-4af2-8b23-c6f0390b8235@linaro.org>
+Date: Fri, 28 Feb 2025 13:36:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Q3M9IPmBWmVzg7mP"
-Content-Disposition: inline
-In-Reply-To: <cover.1740745270.git.mazziesaccount@gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/4] media: platform: qcom/iris: add support for vpu33
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
+ <20250225-topic-sm8x50-iris-v10-v1-3-128ef05d9665@linaro.org>
+ <81ddeed3-0fa3-076a-8f73-f41aa9f24b88@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <81ddeed3-0fa3-076a-8f73-f41aa9f24b88@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 28/02/2025 13:09, Vikash Garodia wrote:
+> Hello Neil,
+> 
+> On 2/25/2025 2:35 PM, Neil Armstrong wrote:
+>> The IRIS acceleration found in the SM8650 platforms uses the vpu33
+>> hardware version, and requires a slighly different reset and power off
+>> sequences in order to properly get out of runtime suspend.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/iris/Makefile          |   1 +
+>>   drivers/media/platform/qcom/iris/iris_vpu33.c      | 315 +++++++++++++++++++++
+>>   drivers/media/platform/qcom/iris/iris_vpu_common.h |   1 +
+>>   3 files changed, 317 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
+>> index 35390534534e93f4617c1036a05ca0921567ba1d..6b64c9988505afd9707c704449d60bb53209229f 100644
+>> --- a/drivers/media/platform/qcom/iris/Makefile
+>> +++ b/drivers/media/platform/qcom/iris/Makefile
+>> @@ -21,6 +21,7 @@ qcom-iris-objs += \
+>>                iris_vdec.o \
+>>                iris_vpu2.o \
+>>                iris_vpu3.o \
+>> +             iris_vpu33.o \
+>>                iris_vpu_buffer.o \
+>>                iris_vpu_common.o \
+>>   
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu33.c b/drivers/media/platform/qcom/iris/iris_vpu33.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..128a050f206f99ec0d43b97ff995fa50d5684150
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_vpu33.c
+>> @@ -0,0 +1,315 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/iopoll.h>
+>> +#include <linux/reset.h>
+>> +
+>> +#include "iris_instance.h"
+>> +#include "iris_vpu_common.h"
+>> +#include "iris_vpu_register_defines.h"
+>> +
+>> +#define WRAPPER_TZ_BASE_OFFS			0x000C0000
+>> +#define AON_BASE_OFFS				0x000E0000
+>> +#define AON_MVP_NOC_RESET			0x0001F000
+>> +
+>> +#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
+>> +#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
+>> +#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+>> +#define REQ_POWER_DOWN_PREP			BIT(0)
+>> +#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+>> +#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+>> +#define CORE_CLK_RUN				0x0
+>> +
+>> +#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
+>> +#define CTL_AXI_CLK_HALT			BIT(0)
+>> +#define CTL_CLK_HALT				BIT(1)
+>> +
+>> +#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
+>> +#define RESET_HIGH				BIT(0)
+>> +
+>> +#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
+>> +#define CORE_BRIDGE_SW_RESET			BIT(0)
+>> +#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
+>> +
+>> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
+>> +#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
+>> +#define MSK_CORE_POWER_ON			BIT(1)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
+>> +#define VIDEO_NOC_RESET_REQ			(BIT(0) | BIT(1))
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
+>> +
+>> +#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
+>> +#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_CORE_SW_RESET	(AON_BASE_OFFS + 0x18)
+>> +#define SW_RESET				BIT(0)
+>> +#define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
+>> +#define NOC_HALT				BIT(0)
+>> +#define AON_WRAPPER_SPARE			(AON_BASE_OFFS + 0x28)
+>> +
+>> +#define VCODEC_DMA_SPARE_3 0x87B8
+>> +
+>> +static int reset_control_bulk_assert_id(int num_rstcs,
+>> +					struct reset_control_bulk_data *rstcs,
+>> +					char *id)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < num_rstcs; ++i) {
+>> +		if (!strcmp(rstcs[i].id, id))
+>> +			return reset_control_assert(rstcs[i].rstc);
+>> +	}
+>> +
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static int reset_control_bulk_deassert_id(int num_rstcs,
+>> +					  struct reset_control_bulk_data *rstcs,
+>> +					  char *id)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < num_rstcs; ++i) {
+>> +		if (!strcmp(rstcs[i].id, id))
+>> +			return reset_control_deassert(rstcs[i].rstc);
+>> +	}
+>> +
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static bool iris_vpu33_hw_power_collapsed(struct iris_core *core)
+>> +{
+>> +	u32 value, pwr_status;
+>> +
+>> +	value = readl(core->reg_base + WRAPPER_CORE_POWER_STATUS);
+>> +	pwr_status = value & BIT(1);
+>> +
+>> +	return pwr_status ? false : true;
+>> +}
+>> +
+>> +static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>> +{
+>> +	u32 reg_val = 0, value, i;
+>> +	int ret;
+>> +	int count = 0;
+>> +
+>> +	if (iris_vpu33_hw_power_collapsed(core))
+>> +		goto disable_power;
+>> +
+>> +	value = readl(core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>> +	if (value)
+>> +		writel(CORE_CLK_RUN, core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>> +
+>> +	value = readl(core->reg_base + VCODEC_DMA_SPARE_3);
+>> +	value |= BIT(0);
+>> +	writel(value, core->reg_base + VCODEC_DMA_SPARE_3);
+> DMA_SPARE_3 register programming here can be skipped. This register is about
+> halting the DMA trasaction during power off, but did not yield desired result
+> during our internal trials.
 
---Q3M9IPmBWmVzg7mP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, thanks for reporting that!
 
-The valid_mask member of the struct gpio_chip is unconditionally written
-by the GPIO core at driver registration. Current documentation does not
-mention this but just says the valid_mask is used if it's not NULL. This
-lured me to try populating it directly in the GPIO driver probe instead
-of using the init_valid_mask() callback. It took some retries with
-different bitmaps and eventually a bit of code-reading to understand why
-the valid_mask was not obeyed. I could've avoided this trial and error if
-the valid_mask was hidden in the struct gpio_device instead of being a
-visible member of the struct gpio_chip.
+>> +
+>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
+>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
+>> +					 reg_val, reg_val & 0x400000, 2000, 20000);
+>> +		if (ret)
+>> +			goto disable_power;
+>> +	}
+>> +
+>> +	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+>> +	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +	value |= BIT(0);
+>> +	writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+>> +
+>> +	while ((!(value & BIT(0))) && (value & BIT(1) || value & BIT(2))) {
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value &= ~BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +		usleep_range(10, 20);
+>> +
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value |= BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +		usleep_range(10, 20);
+>> +
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+>> +
+>> +		++count;
+>> +		if (count >= 1000)
+>> +			break;
+>> +	}
+>> +
+>> +	if (count < 1000) {
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value &= ~BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +	}
+> Again, above programming of LPI registers can be limited to below
+> 
+> readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS, reg_val,
+> reg_val & 0x1, 200, 2000);
+> 
+> writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
 
-Help the next developer who decides to directly populate the valid_mask
-in struct gpio_chip by hiding the valid_mask in struct gpio_device and
-keep it internal to the GPIO core.
+Ack, will use that
 
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-v1 =3D> v2:
- - Hide the valid_mask instead of documenting it as internal to GPIO
-   core as suggested by Linus W.
-https://lore.kernel.org/all/Z71qphikHPGB0Yuv@mva-rohm/
----
- drivers/gpio/gpiolib.c      | 16 ++++++++--------
- drivers/gpio/gpiolib.h      |  3 +++
- include/linux/gpio/driver.h |  8 --------
- 3 files changed, 11 insertions(+), 16 deletions(-)
+> 	
+>> +
+>> +	writel(VIDEO_NOC_RESET_REQ, core->reg_base + AON_WRAPPER_MVP_NOC_RESET_REQ);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_RESET_ACK,
+>> +				 reg_val, reg_val & 0x3, 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	writel(0x0, core->reg_base + AON_WRAPPER_MVP_NOC_RESET_REQ);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_RESET_ACK,
+>> +				 reg_val, !(reg_val & 0x3), 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+> Above NOC_RESET handling does not look applicable to SM8650, could you recheck ?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7e36894bab11..37e1f277b0a8 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -652,7 +652,7 @@ static int gpiochip_apply_reserved_ranges(struct gpio_c=
-hip *gc)
- 		if (start >=3D gc->ngpio || start + count > gc->ngpio)
- 			continue;
-=20
--		bitmap_clear(gc->valid_mask, start, count);
-+		bitmap_clear(gc->gpiodev->valid_mask, start, count);
- 	}
-=20
- 	kfree(ranges);
-@@ -666,8 +666,8 @@ static int gpiochip_init_valid_mask(struct gpio_chip *g=
-c)
- 	if (!(gpiochip_count_reserved_ranges(gc) || gc->init_valid_mask))
- 		return 0;
-=20
--	gc->valid_mask =3D gpiochip_allocate_mask(gc);
--	if (!gc->valid_mask)
-+	gc->gpiodev->valid_mask =3D gpiochip_allocate_mask(gc);
-+	if (!gc->gpiodev->valid_mask)
- 		return -ENOMEM;
-=20
- 	ret =3D gpiochip_apply_reserved_ranges(gc);
-@@ -676,7 +676,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *g=
-c)
-=20
- 	if (gc->init_valid_mask)
- 		return gc->init_valid_mask(gc,
--					   gc->valid_mask,
-+					   gc->gpiodev->valid_mask,
- 					   gc->ngpio);
-=20
- 	return 0;
-@@ -684,7 +684,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *g=
-c)
-=20
- static void gpiochip_free_valid_mask(struct gpio_chip *gc)
- {
--	gpiochip_free_mask(&gc->valid_mask);
-+	gpiochip_free_mask(&gc->gpiodev->valid_mask);
- }
-=20
- static int gpiochip_add_pin_ranges(struct gpio_chip *gc)
-@@ -715,7 +715,7 @@ static int gpiochip_add_pin_ranges(struct gpio_chip *gc)
-  */
- const unsigned long *gpiochip_query_valid_mask(const struct gpio_chip *gc)
- {
--	return gc->valid_mask;
-+	return gc->gpiodev->valid_mask;
- }
- EXPORT_SYMBOL_GPL(gpiochip_query_valid_mask);
-=20
-@@ -723,9 +723,9 @@ bool gpiochip_line_is_valid(const struct gpio_chip *gc,
- 				unsigned int offset)
- {
- 	/* No mask means all valid */
--	if (likely(!gc->valid_mask))
-+	if (likely(!gc->gpiodev->valid_mask))
- 		return true;
--	return test_bit(offset, gc->valid_mask);
-+	return test_bit(offset, gc->gpiodev->valid_mask);
- }
- EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
-=20
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 147156ec502b..b9a4f161db53 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -32,6 +32,8 @@
-  * @chip: pointer to the corresponding gpiochip, holding static
-  * data for this device
-  * @descs: array of ngpio descriptors.
-+ * @valid_mask: If not %NULL, holds bitmask of GPIOs which are valid to be
-+ * used from the chip.
-  * @desc_srcu: ensures consistent state of GPIO descriptors exposed to use=
-rs
-  * @ngpio: the number of GPIO lines on this GPIO device, equal to the size
-  * of the @descs array.
-@@ -65,6 +67,7 @@ struct gpio_device {
- 	struct module		*owner;
- 	struct gpio_chip __rcu	*chip;
- 	struct gpio_desc	*descs;
-+	unsigned long		*valid_mask;
- 	struct srcu_struct	desc_srcu;
- 	unsigned int		base;
- 	u16			ngpio;
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 7dfb8341b0e2..0e8621be7272 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -499,14 +499,6 @@ struct gpio_chip {
- 	struct gpio_irq_chip irq;
- #endif /* CONFIG_GPIOLIB_IRQCHIP */
-=20
--	/**
--	 * @valid_mask:
--	 *
--	 * If not %NULL, holds bitmask of GPIOs which are valid to be used
--	 * from the chip.
--	 */
--	unsigned long *valid_mask;
--
- #if defined(CONFIG_OF_GPIO)
- 	/*
- 	 * If CONFIG_OF_GPIO is enabled, then all GPIO controllers described in
---=20
-2.48.1
+Indeed it's not, I'll remove it,
 
+Thanks,
+Neil
 
---Q3M9IPmBWmVzg7mP
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Regards,
+> Vikash
+>> +
+>> +	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
+>> +	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +	writel(CORE_BRIDGE_HW_RESET_DISABLE, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +
+>> +disable_power:
+>> +	iris_vpu_power_off_hw(core);
+>> +}
+>> +
+>> +static int iris_vpu33_power_off_controller(struct iris_core *core)
+>> +{
+>> +	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+>> +	u32 val = 0;
+>> +	int ret;
+>> +
+>> +	writel(MSK_SIGNAL_FROM_TENSILICA | MSK_CORE_POWER_ON, core->reg_base + CPU_CS_X2RPMH);
+>> +
+>> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_STATUS,
+>> +				 val, val & BIT(0), 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	writel(0x0, core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_CONTROL);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_STATUS,
+>> +				 val, val == 0, 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	writel(CTL_AXI_CLK_HALT | CTL_CLK_HALT,
+>> +	       core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
+>> +	writel(RESET_HIGH, core->reg_base + WRAPPER_TZ_QNS4PDXFIFO_RESET);
+>> +	writel(0x0, core->reg_base + WRAPPER_TZ_QNS4PDXFIFO_RESET);
+>> +	writel(0x0, core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
+>> +
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "core");
+>> +	usleep_range(1000, 1100);
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	/* Disable MVP NoC clock */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +	val |= NOC_HALT;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +
+>> +	/* enable MVP NoC reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +	val |= SW_RESET;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +
+>> +	/* poll AON spare register bit0 to become zero with 50ms timeout */
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_SPARE,
+>> +				 val, (val & BIT(0)) == 0, 1000, 50000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	/* enable bit(1) to avoid cvp noc xo reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_SPARE);
+>> +	val |= BIT(1);
+>> +	writel(val, core->reg_base + AON_WRAPPER_SPARE);
+>> +
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "xo");
+>> +
+>> +	/* De-assert MVP NoC reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +	val &= ~SW_RESET;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +
+>> +	usleep_range(80, 100);
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "xo");
+>> +
+>> +	/* reset AON spare register */
+>> +	writel(0, core->reg_base + AON_WRAPPER_SPARE);
+>> +
+>> +	/* Enable MVP NoC clock */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +	val &= ~NOC_HALT;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +
+>> +	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
+>> +
+>> +disable_power:
+>> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+>> +	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static u64 iris_vpu33_calculate_frequency(struct iris_inst *inst, size_t data_size)
+>> +{
+>> +	struct platform_inst_caps *caps = inst->core->iris_platform_data->inst_caps;
+>> +	struct v4l2_format *inp_f = inst->fmt_src;
+>> +	u32 height, width, mbs_per_second, mbpf;
+>> +	u64 fw_cycles, fw_vpp_cycles;
+>> +	u64 vsp_cycles, vpp_cycles;
+>> +	u32 fps = DEFAULT_FPS;
+>> +
+>> +	width = max(inp_f->fmt.pix_mp.width, inst->crop.width);
+>> +	height = max(inp_f->fmt.pix_mp.height, inst->crop.height);
+>> +
+>> +	mbpf = NUM_MBS_PER_FRAME(height, width);
+>> +	mbs_per_second = mbpf * fps;
+>> +
+>> +	fw_cycles = fps * caps->mb_cycles_fw;
+>> +	fw_vpp_cycles = fps * caps->mb_cycles_fw_vpp;
+>> +
+>> +	vpp_cycles = mult_frac(mbs_per_second, caps->mb_cycles_vpp, (u32)inst->fw_caps[PIPE].value);
+>> +	/* 21 / 20 is minimum overhead factor */
+>> +	vpp_cycles += max(div_u64(vpp_cycles, 20), fw_vpp_cycles);
+>> +
+>> +	/* 1.059 is multi-pipe overhead */
+>> +	if (inst->fw_caps[PIPE].value > 1)
+>> +		vpp_cycles += div_u64(vpp_cycles * 59, 1000);
+>> +
+>> +	vsp_cycles = fps * data_size * 8;
+>> +	vsp_cycles = div_u64(vsp_cycles, 2);
+>> +	/* VSP FW overhead 1.05 */
+>> +	vsp_cycles = div_u64(vsp_cycles * 21, 20);
+>> +
+>> +	if (inst->fw_caps[STAGE].value == STAGE_1)
+>> +		vsp_cycles = vsp_cycles * 3;
+>> +
+>> +	return max3(vpp_cycles, vsp_cycles, fw_cycles);
+>> +}
+>> +
+>> +static int iris_vpu33_reset_controller(struct iris_core *core)
+>> +{
+>> +	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+>> +
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	usleep_range(1000, 1100);
+>> +
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +const struct vpu_ops iris_vpu33_ops = {
+>> +	.reset_controller = iris_vpu33_reset_controller,
+>> +	.power_off_hw = iris_vpu33_power_off_hardware,
+>> +	.power_off_controller = iris_vpu33_power_off_controller,
+>> +	.calc_freq = iris_vpu33_calculate_frequency,
+>> +};
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> index c948d8b5aee87ccf1fd53c5518a27294232d8fb8..c4d02a3b884881eb033dc0342f948848adae2819 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> @@ -10,6 +10,7 @@ struct iris_core;
+>>   
+>>   extern const struct vpu_ops iris_vpu2_ops;
+>>   extern const struct vpu_ops iris_vpu3_ops;
+>> +extern const struct vpu_ops iris_vpu33_ops;
+>>   
+>>   struct vpu_ops {
+>>   	int (*reset_controller)(struct iris_core *core);
+>>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfBrbwACgkQeFA3/03a
-ocUEHwgAyiqWUdo6ce0xEBrarfJnZoJ60RNYjvSqK2iWH9uW4VCqdSy2mh/vEIlq
-eczDYPs6G1H6KE0WxZ3FBWfuGiM7GLQ8Bj4mBAnduMz5G/1IDvoi2606Yxp8BwJR
-phmVlpbJhB08zUIgZJDfmXBfoRNzCDY3f3jnokRa9hgL2b1vIxLKI8slcVHHcGN2
-g9MQAu9tbVscUehxbN5FBVy8aknxqeNV8Sbr2DMU3SIXggXsrvpLQQn94HPvAn1i
-3BHEG0O6SuY/Vbnme8MLUrHrR1ZHIVS2IMMD1Iphdo4TxDvIVlQtQGQ246FnkJvQ
-PZFFhxV3XjlnYfrlzycJ/X12H3sA5g==
-=l5tR
------END PGP SIGNATURE-----
-
---Q3M9IPmBWmVzg7mP--
 
