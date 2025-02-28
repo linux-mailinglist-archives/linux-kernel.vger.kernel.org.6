@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-539602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E04AA4A653
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:01:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AF7A4A66B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:03:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CAD16BE3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75A437A8599
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A951DF271;
-	Fri, 28 Feb 2025 23:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4DB1DE89B;
+	Fri, 28 Feb 2025 23:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hB9MvK7b"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="BWPn5+DA"
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5244E1D9346;
-	Fri, 28 Feb 2025 23:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBAF157A55
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783653; cv=none; b=DqK32KgBN6q6iA9euoFW88d3f5Ge7yOLAE3Z4b/Seqph5EAvVssiuPN/P5k8mDTQVp03dlP5Iyumk70/Q2niAQ0n82mHa6t3PuhWjugTVJT/C67zTvKCHObATJnVNj/epS0AqIrlztC6LoiAvNXVt4cY7qQwkYW3Dj3meBnfHwA=
+	t=1740783819; cv=none; b=mYhaz1CdWx5UMXkOJvfTu3ocAyOikhJzrKIEx3JjRyalZDp0iE8GsOFd0DAbIxWHhr9JOR1yqgtL66SV2pJkNpRhH8hPbkkQ0SDQQ785KZRBum/z0PObNyLkMz+NT/SwVYlgQs8/WcMn8iEt/V/EJa0enPc9UxxKAyBCJznTZHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783653; c=relaxed/simple;
-	bh=8RG2zJ8ZSWvpFH5aWI1BbUFsc54DW/KQffx2NzNXFrU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMWb42xRNZkDRT8RfNnQlk4xuqzmtmjnZE8jt/aFYmjhbFXaKwFV8NV/QUIVpfLMCWPulIVftUK1wBYf4NpCmBkrxnuFh3Yrovyi3LUoCJ4bZJ7rAUwjyefGWB2DA6pjR2JBtuQy1+OpERY7on7fAZnGegbav7dnJHWYODYFxT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hB9MvK7b; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so17144495e9.1;
-        Fri, 28 Feb 2025 15:00:51 -0800 (PST)
+	s=arc-20240116; t=1740783819; c=relaxed/simple;
+	bh=7j3qjGvPFFSYTj58FVcu/QNHzMyIyli39yBCI3WM1kI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jp6TYuJQibJamKqPrh1a2wlPqT793dXS5cDbuMBQUjGNtsYCpx6JRlN4kc/hKfXqoIVObBqeMEiEaj8FkDKz4jH05UXOMFBnC8pYO7d3egdeBerPrN5xsWBuXA8eaAk3PMJdetnMlml3xMLbDi/ufpAinZsWwhL170uRXh81CSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=BWPn5+DA; arc=none smtp.client-ip=209.85.214.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-2234338f2bbso6881355ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:03:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740783649; x=1741388449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mPdgDUvvU1Eb/kClux6e7e+YhMrhzs3u+muZdJdG7Q=;
-        b=hB9MvK7b/Ghs3VXaFZelBdcLAAxrxZY4/rFDhTc5FbcORIxbTFuwWDNhaka+FCV8U9
-         eGgPwkTSV0bXpw7gzlfY6a4WSTLIDnmsXTP3slD1NsVHUWXLbOXUwZfT1P6uQUlvdCkX
-         tpTwr02gR2cpJ+IMgxcaA/uj7nGYopMohwud4hfnCyC8cWNLrDL7U5p/sJOC+F2b1wnQ
-         mNrwX32vMSnEnDh5aTYxZYOyoBkl/3/e6cDffXBQ1JQYDnifoDYdXB1IyLiTrf2FuZPX
-         4GA3nDAHE5Gkp6SzP36DpqJ1YJOoQFf19+885h3n9S4gFXrmb9cooB45JhELdS67VKBZ
-         s2Pw==
+        d=purestorage.com; s=google2022; t=1740783817; x=1741388617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yf/QBUV7NVEQKN07Cfxd8tCBRl6ymxJlYuA3WLlAYys=;
+        b=BWPn5+DAPWkRpGJUpq/O7z2kT/4xWYRVva11InSZbTBvuA2+P7hCma0YlUxTlE68qH
+         cyvTMBFtUIFL/Nlf7XPLt1JaeCDnCumLF+WeFcapco3g/aikJKyWNqCLMgPa3fsiAV6E
+         wfj5jXG2qPAZaX9UCCeeYDv0UAzmcoMPkoyyyJCP6EWueh9cIk2gulnhe8w8FSjkapA0
+         Od7IEgz0Un+WY0F0AwBnM70tOUZJyCacgx0+NLbiMWF5o76VPTmZCiBapGdMnUAR5RUO
+         e4yx8vOf/RrWStsxLzGxx4YrmaqVyIZBoW0Y5DEd50cxeSs19rJazwE7m3oSjei7WFZQ
+         T5tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740783649; x=1741388449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9mPdgDUvvU1Eb/kClux6e7e+YhMrhzs3u+muZdJdG7Q=;
-        b=Rm8iZdhxxDZJRt93IF2K4oxB36sOkaG/kkdYte+hCqgxKXAoQYtGNQNbXhYid54a3G
-         jvOp+BZ1ulsuLei5rBOJoBSuRZEGTti0wBHOZ2CIT9uWno9uMRmsng5ZbsqVH8Xe6+yj
-         L1nV5Bl99LeKMctZ9P8XIFfGIyvMHixaQoHS9Q0BVluMcNP4FkWRi7kjD44qZAWCgUaC
-         3OKE529IviTp1MljELdbmjVlxl8E58f7IrZyi/yMYIq7obCNTlFQuI4Lz8z60kvZUIyJ
-         VUrM0B+05IfgbX6gsX/8gN6X/5WWy2dQsEyOrz7SwU2OWhczRtyLCs6dHxXibTpISyVR
-         W4qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7W8wMYbKKXiSo1UICqv8hHSdn3P/AtdgTaLknAQpVO8qn9/h6Q4V9PCjhI5DiSt3vBkAILiEY4uiK6Wr6bjSA9Rxq@vger.kernel.org, AJvYcCXJuXxgFbnXrSEkc8aieorVjeEud2cz/olU78aYJ6D3LrVDvho/OyHsR6ZSV/JNoXVxDr+N5EHkYVTb5X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1BCjavBXWOqyivz4EWF8OAvaBId9IPlFRqhHUKgdmhUDOT+Pm
-	ca/cysjhuxzAbIJST9GBPoWECrTFpfu7tSodZ0OouuatKeYt/rTY
-X-Gm-Gg: ASbGnctrZkw/7i2JvMMp7B+ABa8r8HtViCjJ10tSxyiQKyFDzbVWvrmOSCfdkS2jC8X
-	7uoCw4S08UGb363sd3lWJD08LD3t5OPLPxbhawHRYRLKb9HCCVyDPUUB3BLwF+5rdVSfMOvgW3n
-	wZmom90oAYw8cKm2e56crziOz7s9BviiSJ9WMj3u111BmKzJt7QqVx9jQ54QAjDebvAcXwUdM5V
-	EeK8F/o96wV/wZCJozRr8DS5UVu0qGDDpvUm2UVsErslQltbcXgcnKWk/HJxbufKrvddlQA7uSZ
-	uSXZz3Z7ln4MY/rEbX+lQIxJG0Kowi13
-X-Google-Smtp-Source: AGHT+IEVo5FUkeVcDQoQ+qCzYLuUrxT4Sg2n8KhR+YouwK4EuUE5NKj95diSlMmvhGTkHqQp9CTfFg==
-X-Received: by 2002:a05:600c:198f:b0:439:9434:4f3b with SMTP id 5b1f17b1804b1-43ba625f4e9mr44233465e9.8.1740783649546;
-        Fri, 28 Feb 2025 15:00:49 -0800 (PST)
-Received: from krava (85-193-35-41.rib.o2.cz. [85.193.35.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bad347823sm17046455e9.0.2025.02.28.15.00.46
+        d=1e100.net; s=20230601; t=1740783817; x=1741388617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yf/QBUV7NVEQKN07Cfxd8tCBRl6ymxJlYuA3WLlAYys=;
+        b=UPio8WpubctEa9UkYSIp7vfoH5S1S7ojAW3ltlKqBvKDKWfFKyY5DQxfNf5WX0rQ4y
+         S4HUkXZIqnk3jvPNRkf3+M0zt84bz0L6/tFGxCHWbXTrTkjwhp7rW77TxcbZMeT+shmD
+         T2w+2J7BlnarhpoHZA9ken1whqUXlyXaRVrC5zLasRRObmuRWLa2UTg14dyElHbdqb6m
+         TPYIxgHLOZ5PSSWAnkqevuR6V+xzqyRhRy1ZqxLVtbbOwhu/RMLQg085wJxldbJ5B/EL
+         EUXgf7lCewLG0HFhoDHC7eCMti0ZWh7kYhhIYdPNlUodZ/rz90HoAJ8Y1YGRq17PjZul
+         9enA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlXbCnK7Xh6+NSsPIesRKlVIJ+rTVPyzYTdY8BA05Bk2R43zbReyGDo4PmzFjRJRHCYFyMtZe8w7z42x8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXCHqem+VcYjNDnjjWutdEyEiQ/zCIqjxXmijOZVA8GFGyaTbp
+	ziKiO6gR9eKymV4zAU1I/T0JbHAvcgGY/qT40GGAk+ufc8NOrzt0TzJbVs+lLxZ4ksxhy8kjuRC
+	kfz/Z0DTZasa3pobaaDkw43QAiv4DCLL1
+X-Gm-Gg: ASbGncuDezNHWKmUHCGVPFzVhgPxThDD1AeMbgm0si6mwzoiOMC+TBU+1B25c3ORraR
+	AyILM1WTEn7GlFqK8CjtFf6kMgxaielS7xFeyVJZDLsuYJYuMlbCqWbzyjN4yX9LJsfjeLqd0BO
+	cpVRYLJ54luU1YkbjMQckMYdbpw0WAT/aY1Xy3QXPgl6I+Y4VATg1+7o6cyuxzDsJvYy0Bh8KqO
+	rZZ7OIkmQfiO0Vig3LborvxuQZjn9ueTkBwL+Z8UulaJN6fhRQma0QftTpUDfqwZ9OmbmhVMHgK
+	wDxJ8t9PuuBX1LrZt5HPz6Yfv2+qCAnSgbHXhJi7PDd+xeq2
+X-Google-Smtp-Source: AGHT+IHUdSS4qvxNQbUG1GSSETx1tYeYbCJTASaP2vuO663APRzoix+sZ3ezmTaHknBze/LbhOwuljxwBf8y
+X-Received: by 2002:a05:6a00:2348:b0:736:355b:5df6 with SMTP id d2e1a72fcca58-736355b8b91mr227420b3a.6.1740783817284;
+        Fri, 28 Feb 2025 15:03:37 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7349fdc7aacsm290722b3a.1.2025.02.28.15.03.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 15:00:47 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 1 Mar 2025 00:00:44 +0100
-To: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH RFCv2 12/18] uprobes/x86: Add support to optimize uprobes
-Message-ID: <Z8JAHHM4xqEQA2f3@krava>
-References: <20250224140151.667679-1-jolsa@kernel.org>
- <20250224140151.667679-13-jolsa@kernel.org>
+        Fri, 28 Feb 2025 15:03:37 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id CB61434028F;
+	Fri, 28 Feb 2025 16:03:36 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id B891CE419D4; Fri, 28 Feb 2025 16:03:06 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: convert cmd_to_io_kiocb() macro to function
+Date: Fri, 28 Feb 2025 16:03:04 -0700
+Message-ID: <20250228230305.630885-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224140151.667679-13-jolsa@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 03:01:44PM +0100, Jiri Olsa wrote:
+The cmd_to_io_kiocb() macro applies a pointer cast to its input without
+parenthesizing it. Currently all inputs are variable names, so this has
+the intended effect. But since casts have relatively high precedence,
+the macro would apply the cast to the wrong value if the input was a
+pointer addition, for example.
 
-SNIP
+Turn the macro into a static inline function to ensure the pointer cast
+is applied to the full input value.
 
-> @@ -1523,15 +1698,23 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
->  {
->  	int rasize = sizeof_long(regs), nleft;
->  	unsigned long orig_ret_vaddr = 0; /* clear high bits for 32-bit apps */
-> +	unsigned long off = 0;
-> +
-> +	/*
-> +	 * Optimized uprobe goes through uprobe trampoline which adds 4 8-byte
-> +	 * values on stack, check uprobe_trampoline_entry for details.
-> +	 */
-> +	if (!swbp)
-> +		off = 4*8;
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/linux/io_uring_types.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-ok, now when I started to add the missing register modifications in uprobe syscall,
-I realized we will modify the regs->sp appropriately already in the uprobe syscall
-(before the code above is hit)
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 432c98ff52ee..72aac84dca93 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -605,11 +605,15 @@ static inline void io_kiocb_cmd_sz_check(size_t cmd_sz)
+ }
+ #define io_kiocb_to_cmd(req, cmd_type) ( \
+ 	io_kiocb_cmd_sz_check(sizeof(cmd_type)) , \
+ 	((cmd_type *)&(req)->cmd) \
+ )
+-#define cmd_to_io_kiocb(ptr)	((struct io_kiocb *) ptr)
++
++static inline struct io_kiocb *cmd_to_io_kiocb(void *ptr)
++{
++	return ptr;
++}
+ 
+ struct io_kiocb {
+ 	union {
+ 		/*
+ 		 * NOTE! Each of the io_kiocb union members has the file pointer
+-- 
+2.45.2
 
-so we don't need this code and we can get rid of the swbp flag and patch#7 completely
-
-jirka
-
->  
-> -	if (copy_from_user(&orig_ret_vaddr, (void __user *)regs->sp, rasize))
-> +	if (copy_from_user(&orig_ret_vaddr, (void __user *)regs->sp + off, rasize))
->  		return -1;
->  
->  	/* check whether address has been already hijacked */
->  	if (orig_ret_vaddr == trampoline_vaddr)
->  		return orig_ret_vaddr;
->  
-> -	nleft = copy_to_user((void __user *)regs->sp, &trampoline_vaddr, rasize);
-> +	nleft = copy_to_user((void __user *)regs->sp + off, &trampoline_vaddr, rasize);
->  	if (likely(!nleft)) {
->  		if (shstk_update_last_frame(trampoline_vaddr)) {
->  			force_sig(SIGSEGV);
-
-SNIP
 
