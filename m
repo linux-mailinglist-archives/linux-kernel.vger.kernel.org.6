@@ -1,201 +1,205 @@
-Return-Path: <linux-kernel+bounces-538577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDDEA49A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:22:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95341A49A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E4A173FCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031843A41AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5454C2580D7;
-	Fri, 28 Feb 2025 13:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C708D26B95B;
+	Fri, 28 Feb 2025 13:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJGgvPX1"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g2hu81R7"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981126BDA3;
-	Fri, 28 Feb 2025 13:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8F1D555
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740748935; cv=none; b=FpB5DfDARfkG8svp+ESyGzeQkrUgbyLWxM4sx99uZwaSZ/+B0n9tDoyXcRFTByJ/YIoE/SGGu7Thcshfm0aAPwMUjAOkvgYfEpJ6hcfwwJDkbxE/+4rZn1uFOIq8hmUeHW0w2cAHB4Bo2MNoGpOpr/KbnLo1seC8RSbuOKC28RU=
+	t=1740748931; cv=none; b=lFcAZ81LmbGGZm69HXCcw5ZZy8RlX0x7dbEMFM9q7MN+pjd+nkhibd7Q/ICCswCyM113Dp1h20TXB4fdtL0PE8yb9rExFBmLrF7CbqYsdPqEYdXmlesw5TKlbcsi1lfWaMjomuH7RbMEjjBlnMwOZBiICsNcXirTVgmcP9Wglw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740748935; c=relaxed/simple;
-	bh=Kz7tQ7V+0+WAQoonVHNEEJH3MiDZITaZpOzO7CDVJMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKj1gkpAUSUb0H+o1Or+dXGALR71oB6OUTSsDAtkpxtGUElQNfbZW9vX1nJv2C2qiYUo8kAwP3w388EUTkwimZ2b070WOSTcA8SishzD0dHy9AekZUrAE2YYzwmmPpOfvQ125tufJwiI/ZeK02UWey4OxjI4sYU5YuvsE03/2vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJGgvPX1; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so743795f8f.1;
-        Fri, 28 Feb 2025 05:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740748932; x=1741353732; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aLCskdkyDjKVzUbxWO5nRc2aTnNTpaWoydhtK7t4lAA=;
-        b=dJGgvPX1hkaccIYPc/qRD6g2Rdg8d/IUhokspQrQKp6ZRzs6wEd8fTk+GEgz14zWu1
-         Mt4YXejbw4rETgkKuj7c32F3+wlAwW+emaKo7po9Zydo7WJGI97hwEUEC3SAKgJ1vE2f
-         HmsuCTUQa/twYZw/Dzj0D9FJkHBCUAEcGeHwhDLcZDaLMJ/XkotIcww8AQ2u+USiaCE/
-         DR0bAjE9b0acRAofFAsdKJwAdjQMKwVoyXkAX9iyywAWcGFEq4fHwWqG2KZ/yO8cAzjO
-         t0CqIygYQ5/x/q9GPkd3BwrDahgewJJ+2VTFO1Xb6x/g02fONbiqcAXC0wtwuZAx7WDb
-         ijug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740748932; x=1741353732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aLCskdkyDjKVzUbxWO5nRc2aTnNTpaWoydhtK7t4lAA=;
-        b=FXufwooiPBwNjQWBwrW9SQQl5Ham/gRiMDxB6TwXVUQ6ZA5yO21mksVNUz4MGY24b6
-         oHwpJa02EfJQB2RBembQE0BtYceobm2aNaF7a7oF6CC4Li2vfPMfmb27jZi61DsEgGuh
-         QBBCudJ2piUl4GYm6st/tvx3uSYx0RNM6o5JGwrI2zAiHGbnvVoLHacLDKFse4WP+mFp
-         bEloUmM/PPun1cihz4Vt5lXK2w7iNQkOh9MtIrZfaorZgNYK6kTxJMAFOy/3WgRSqVqZ
-         9StzhajFKR2yrpK4szsE++uGpnkAEdFYVqtERIAZCj43zuhcj1Th9nUy46Kp4g0QAgLB
-         u5/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW39YshyP/9q0ijekT5BcMS0UZWWiONEG2x3FfNMKdAYIRoMp9Ezqehvlj+/r+Ao/YJXUakP6fK6Mxx@vger.kernel.org, AJvYcCXQgwSOLvsEa0lsJjQjKSwCvBkHz8pZpjl9z2aJ0/c597I1eE5nVRTOlsS1zKcCS7ZPK3QuGnc886a96dKy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4y1jSdGjM8CfdCnnQvoBMRrByT4O1gwrJEn4VHm1iES+zxG4C
-	ljCHrkzAWXgI3V6cHbBAHz+24rOklxa860HmMQmMnYQO2uumEj3yNJJFKIGKUPxNsm9G323hTri
-	Akwmte5XMpXjaQbNF3ry2yLAZ9Tw=
-X-Gm-Gg: ASbGncusqYr8nIKVfgbp3eqncq5R94oQawdi2Os7OpMZwJFuMvhVz8dSFM4pDICm9XD
-	tbLc/QHB0AD9BG4mUGRxYaMva7P7pYbzqLf+pJqqXKC3+LQd9Ju+YWw3ohain0u7uOEeGPRxsLH
-	lzPGVLXDRA
-X-Google-Smtp-Source: AGHT+IEWGseohuDp7KhNAY0LdcYgEQH/Rbd9LdHbvgH4CFd0eo6h8IeKxvf7p55tqbikbGe86i4k9z8m3nzpWQsmL8w=
-X-Received: by 2002:a05:6000:401f:b0:38d:d664:67d8 with SMTP id
- ffacd0b85a97d-390ec7c6738mr3084072f8f.11.1740748931828; Fri, 28 Feb 2025
- 05:22:11 -0800 (PST)
+	s=arc-20240116; t=1740748931; c=relaxed/simple;
+	bh=4mr0hexFtp0KEt1s94IiDSIvYFhtZ1lr1JnXh5ewSzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=JNCtwAaOJHcOpZqCVCCND+lVHjE+3mQODl6kLVpGPEMikpWTv/oSAMh86K1nGz16S97GQ8vy0NX8F9nsSj+xmwbZtPJ9rDSUiFXOGfJbQnU4hZXi6hHHIxwuGOgsPJ2SDFA66HzzORGAN1C5jgnm8BuJzMXnCs8gvHRTQ1hIJMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g2hu81R7; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250228132207euoutp02464ad0d1e97846201aaa568e946ad325~oYe0jQeNN0547305473euoutp02A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:22:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250228132207euoutp02464ad0d1e97846201aaa568e946ad325~oYe0jQeNN0547305473euoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740748927;
+	bh=mkTqnPxM6lVvuaP5UJLxWvWCBLiAF7VVUCUjv2SOOiE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=g2hu81R7E15Phr0yu+WEAjFcYzDRyx7K+TDVQNBEDp/kN0KbPD49/U9KyBDgli6BR
+	 EIIli2mvM1FVBl4l950FZRoTlOgVEUD1asnlz6QhJdssF0NseGAP+d7YaYkckCrSIY
+	 6xYYUHVNiviARcZOM8IuHPEJL42fCBVrPPOyrtmc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250228132206eucas1p1f0133fc8f2d394bac8e5ad7c1765e097~oYe0Y4Mg90039400394eucas1p1h;
+	Fri, 28 Feb 2025 13:22:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 18.BE.20409.E78B1C76; Fri, 28
+	Feb 2025 13:22:06 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250228132206eucas1p1c1563d36e726c3d766da1ac164b83eb0~oYe0BVS0O0968109681eucas1p1r;
+	Fri, 28 Feb 2025 13:22:06 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250228132206eusmtrp260711fa9bfa86331683ed5bd76963d45~oYe0Au6Fk1004010040eusmtrp2F;
+	Fri, 28 Feb 2025 13:22:06 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-90-67c1b87e3e86
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 70.4A.19654.E78B1C76; Fri, 28
+	Feb 2025 13:22:06 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250228132205eusmtip1d75e9e9d686a42ee0777c6e46d792723~oYezJAjGN1320713207eusmtip1k;
+	Fri, 28 Feb 2025 13:22:05 +0000 (GMT)
+Message-ID: <8045065f-723a-4b1f-bd89-23a1ab98ec7a@samsung.com>
+Date: Fri, 28 Feb 2025 14:22:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219082817.56339-1-clamor95@gmail.com> <20250219082817.56339-3-clamor95@gmail.com>
- <99ee61dc-abd5-45d9-8d26-a8f0ae94c8eb@arm.com>
-In-Reply-To: <99ee61dc-abd5-45d9-8d26-a8f0ae94c8eb@arm.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 28 Feb 2025 15:22:00 +0200
-X-Gm-Features: AQ5f1JqiEG1tJRPj2HmNZIqvEspltfMFIDE6rFA4YikSqMAQilmFeeVoGxd-Kho
-Message-ID: <CAPVz0n0uWEY+-evrfpci9-1c3icGyHfTHMbXi=P9Sv=Uh3AUaA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: missing clear bdr in check_ram_in_range_map()?
+To: Baochen Qiang <quic_bqiang@quicinc.com>, Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, linux-kernel
+	<linux-kernel@vger.kernel.org>, iommu@lists.linux.dev
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <b84c1485-de8f-4888-bed6-3690ed108a46@quicinc.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87p1Ow6mG2z+ZWKxcvVRJotfXyws
+	Lu+aw2bx8OcPJouDH56wOrB6rJm3htHjxeaZjB67bzaweUzcU+fxeZNcAGsUl01Kak5mWWqR
+	vl0CV8auOd8ZCz4LV2y/soK9gXEPfxcjJ4eEgInEodcX2bsYuTiEBFYwShw+fh3K+cIo0Tv1
+	HyOE85lR4vbCd4wwLes27YVKLGeUWD9/PlhCSOAjo0TP7SgQm1fATmJjy10WEJtFQFXizvvH
+	7BBxQYmTM5+AxUUF5CXu35oBFhcWsJbY93ExE4gtIuAtsevtLDCbWSBX4sHSW1C2uMStJ/PB
+	bDYBQ4mut11sIDangL3E8+szGCFq5CW2v53DDHKchMAJDonbvS1QV7tIvGppZIWwhSVeHd/C
+	DmHLSPzfCTIUpKGdUWLB7/tQzgRGiYbnt6C6rSXunPsFtI4DaIWmxPpd+hBhR4lzZ56BhSUE
+	+CRuvBWEOIJPYtK26cwQYV6JjjYhiGo1iVnH18GtPXjhEvMERqVZSMEyC8mbs5C8Mwth7wJG
+	llWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiByeb0v+NfdjAuf/VR7xAjEwfjIUYJDmYl
+	Ed5ZsQfShXhTEiurUovy44tKc1KLDzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl4uCUamDi
+	L9n7SvVm8HeZnC2/G1XztT59nPlg2ZGWVJG9Ft/YoxdVbOlSK0v++Te0/8/9D2L3XBLEhfyt
+	2xbcZPnIFVDgsPr+u8XPIrmZbxWcN322YlEy8y3bL1dObF7340FTzu+KrQdkt6gGrK0RU4v+
+	Zqm7bYVHJ+9bw4WxycWKXSfjbjNZ/swqCKr4bTUlZ+v844c5F060mSNb/MMwUPndm3srWjoy
+	I2+VR23nSjHdEKG6cb7V2a/9wZM4bkU+lKy4lvb835P/u+Zcu2Ai9WXDRGZJvcNyrv5PDXcL
+	bE81y8xx6Sr4UNJSZ3KfY8qnIrcLX3r/PnLVTNPVTC1+sbIvYtEf/akCMwOkBbUM86WWR4Qo
+	sRRnJBpqMRcVJwIAF+LfbqUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xu7p1Ow6mGxzulbRYufook8WvLxYW
+	l3fNYbN4+PMHk8XBD09YHVg91sxbw+jxYvNMRo/dNxvYPCbuqfP4vEkugDVKz6Yov7QkVSEj
+	v7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PXnO+MBZ+FK7ZfWcHe
+	wLiHv4uRk0NCwERi3aa9jF2MXBxCAksZJY6fW8wKkZCRODmtAcoWlvhzrYsNxBYSeM8oce9B
+	AYjNK2AnsbHlLguIzSKgKnHn/WN2iLigxMmZT8DiogLyEvdvzQCLCwtYS+z7uJgJxBYR8JbY
+	9XYWmM0skCsxac1FNogjXjBKfLt5mxEiIS5x68l8sCI2AUOJrrcQR3AK2Es8vz4DqsZMomtr
+	F5QtL7H97RzmCYxCs5DcMQvJqFlIWmYhaVnAyLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMj
+	MLq2Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuGdFXsgXYg3JbGyKrUoP76oNCe1+BCjKTAwJjJL
+	iSbnA+M7ryTe0MzA1NDEzNLA1NLMWEmcl+3K+TQhgfTEktTs1NSC1CKYPiYOTqkGJmFbe95N
+	269ar7z4acKPcvYHHz5Kdk15+O1UF7tLYMgJlXXWeU9a3rmJf94n2b0h7+3/o80JpiciP9yf
+	/yTzHgdLLsu+O9flbk3ksuy+/iT8Q0rQrZu8V5Y6Hrk8/8zE/kCWlspEsUCZb1cOL/kgcWLb
+	x/dXYqpja3JSsrZMWWHzh0Hb8X/3yR/zmjby3fBJkymZ4GV5qlRtt4x9RubJQtYtHIc/MTnz
+	Tth11obFZPVcbSH7J3KXI7J2Z/Wkh+zsONGrv6tK7MzDYxI2oQvyjrxKVQlXveyg9+lord/3
+	FJO4wO/xt6yrrui4Tv1sdqb/8/YDAe4CS88/7v2munPefqekV0Y8pjpOXJyvm+vn3lBiKc5I
+	NNRiLipOBAD2SYC4NwMAAA==
+X-CMS-MailID: 20250228132206eucas1p1c1563d36e726c3d766da1ac164b83eb0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241220032532eucas1p2fafa0cbfde87d8dae47caa42c45d7ae4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241220032532eucas1p2fafa0cbfde87d8dae47caa42c45d7ae4
+References: <64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com>
+	<20241212071418.GA6638@lst.de>
+	<CGME20241220032532eucas1p2fafa0cbfde87d8dae47caa42c45d7ae4@eucas1p2.samsung.com>
+	<b84c1485-de8f-4888-bed6-3690ed108a46@quicinc.com>
 
-=D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 15:11 Luka=
-sz Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi Svyatoslav,
->
-> On 2/19/25 08:28, Svyatoslav Ryhel wrote:
-> > Add IIO sensor channel along with existing thermal sensor cell. This
-> > would benefit devices that use adc sensors to detect temperature and
-> > need a custom conversion table.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >   drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++=
--
-> >   1 file changed, 53 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/th=
-ermal-generic-adc.c
-> > index ee3d0aa31406..a8f3b965b39b 100644
-> > --- a/drivers/thermal/thermal-generic-adc.c
-> > +++ b/drivers/thermal/thermal-generic-adc.c
-> > @@ -7,6 +7,7 @@
-> >    * Author: Laxman Dewangan <ldewangan@nvidia.com>
-> >    */
-> >   #include <linux/iio/consumer.h>
-> > +#include <linux/iio/iio.h>
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/platform_device.h>
-> > @@ -73,6 +74,57 @@ static const struct thermal_zone_device_ops gadc_the=
-rmal_ops =3D {
-> >       .get_temp =3D gadc_thermal_get_temp,
-> >   };
-> >
-> > +static const struct iio_chan_spec gadc_thermal_iio_channel[] =3D {
-> > +     {
-> > +             .type =3D IIO_TEMP,
-> > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
-> > +     }
-> > +};
-> > +
-> > +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
-> > +                              struct iio_chan_spec const *chan,
-> > +                              int *temp, int *val2, long mask)
-> > +{
-> > +     struct gadc_thermal_info *gtinfo =3D iio_priv(indio_dev);
-> > +     int ret;
-> > +
-> > +     if (mask !=3D IIO_CHAN_INFO_PROCESSED)
-> > +             return -EINVAL;
-> > +
-> > +     ret =3D gadc_thermal_get_temp(gtinfo->tz_dev, temp);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     *temp /=3D 1000;
-> > +
-> > +     return IIO_VAL_INT;
-> > +}
-> > +
-> > +static const struct iio_info gadc_thermal_iio_info =3D {
-> > +     .read_raw =3D gadc_thermal_read_raw,
-> > +};
-> > +
-> > +static int gadc_iio_register(struct device *dev, struct gadc_thermal_i=
-nfo *gti)
-> > +{
-> > +     struct gadc_thermal_info *gtinfo;
-> > +     struct iio_dev *indio_dev;
-> > +
-> > +     indio_dev =3D devm_iio_device_alloc(dev, sizeof(struct gadc_therm=
-al_info));
-> > +     if (!indio_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     gtinfo =3D iio_priv(indio_dev);
-> > +     memcpy(gtinfo, gti, sizeof(struct gadc_thermal_info));
-> > +
-> > +     indio_dev->name =3D dev_name(dev);
-> > +     indio_dev->info =3D &gadc_thermal_iio_info;
-> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > +     indio_dev->channels =3D gadc_thermal_iio_channel;
-> > +     indio_dev->num_channels =3D ARRAY_SIZE(gadc_thermal_iio_channel);
-> > +
-> > +     return devm_iio_device_register(dev, indio_dev);
->
-> I don't get the idea why we need iio device, while we already have the
-> hwmon.
->
+Hi,
 
-Idea behind this is to be able to convert adc iio channel into temp
-iio channel without introducing a new sensor which will duplicate
-behavior of existing one (by this I mean conversion table use). Not
-all devices can or have to use hwmon and some may require iio channel
-hooked up.
+On 20.12.2024 04:25, Baochen Qiang wrote:
+> On 12/12/2024 3:14 PM, Christoph Hellwig wrote:
+>> On Mon, Dec 09, 2024 at 06:50:06PM +0800, Baochen Qiang wrote:
+>>> Hi,
+>>>
+>>> while checking check_ram_in_range_map() I am confused by the condition set/check on bdr.
+>>> If I am reading the code correctly, if bdr is set once, it would never get cleared, hence
+>>> that function will always returns 0.
+>>>
+>>> should we clear bdr before each new iteration?
+>> I think so.  Even better refactor the code so that the non-NULL bdr
+>> doesn't leak out:
+>>
+>> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+>> index 5b4e6d3bf7bc..181e244f410a 100644
+>> --- a/kernel/dma/direct.c
+>> +++ b/kernel/dma/direct.c
+>> @@ -584,6 +584,22 @@ int dma_direct_supported(struct device *dev, u64 mask)
+>>   	return mask >= phys_to_dma_unencrypted(dev, min_mask);
+>>   }
+>>   
+>> +static const struct bus_dma_region *dma_find_range(struct device *dev,
+>> +		unsigned long start_pfn)
+>> +{
+>> +	const struct bus_dma_region *m;
+>> +
+>> +	for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
+>> +		unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
+>> +
+>> +		if (start_pfn >= cpu_start_pfn &&
+>> +		    start_pfn - cpu_start_pfn < PFN_DOWN(m->size))
+>> +			return m;
+>> +	}
+>> +
+>> +	return NULL;
+>> +}
+>> +
+>>   /*
+>>    * To check whether all ram resource ranges are covered by dma range map
+>>    * Returns 0 when further check is needed
+>> @@ -593,23 +609,14 @@ static int check_ram_in_range_map(unsigned long start_pfn,
+>>   				  unsigned long nr_pages, void *data)
+>>   {
+>>   	unsigned long end_pfn = start_pfn + nr_pages;
+>> -	const struct bus_dma_region *bdr = NULL;
+>> -	const struct bus_dma_region *m;
+>>   	struct device *dev = data;
+>>   
+>>   	while (start_pfn < end_pfn) {
+>> -		for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
+>> -			unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
+>> +		const struct bus_dma_region *bdr;
+>>   
+>> -			if (start_pfn >= cpu_start_pfn &&
+>> -			    start_pfn - cpu_start_pfn < PFN_DOWN(m->size)) {
+>> -				bdr = m;
+>> -				break;
+>> -			}
+>> -		}
+>> +		bdr = dma_find_range(dev, start_pfn);
+>>   		if (!bdr)
+>>   			return 1;
+>> -
+>>   		start_pfn = PFN_DOWN(bdr->cpu_start) + PFN_DOWN(bdr->size);
+>>   	}
+>>   
+> looks better. thanks for reply.
 
-Real life example. I own a device (LG P985) which has a fuel gauge
-that does not support battery thermal readings. Vendor provided a
-dedicated adc sensor and one of its channels is used as thermal sensor
-with device specific conversion table. Fuel gauge on the other hand
-supports linking in a dedicated temp iio channel to get thermal
-readings.
+Could you send a formal patch with this fix, description and 
+'Suggested-by: Christoph Hellwig' tag?
 
-> Could you explain this a bit more, the cover letter also misses
-> such justification and details.
->
-> Regards,
-> Lukasz
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
