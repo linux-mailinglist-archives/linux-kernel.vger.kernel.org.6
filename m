@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-539313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E50BA4A32C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:55:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE807A4A32F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4123189BD38
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33087ABA69
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C148827FE69;
-	Fri, 28 Feb 2025 19:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F3327603A;
+	Fri, 28 Feb 2025 19:54:33 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF2A27CCE4;
-	Fri, 28 Feb 2025 19:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB727426D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772460; cv=none; b=bTh0z0Us2A43lhUHFqOb8gmOd/umFsk/1qK8giDQkAE41HecBz7jt290zVaw2LVHO6BhWFxsFOfdIDb9eL0KYfumIuNwPC/9MEKmTqPM1zqR1C7wsSjgFolg+Zi4XqJZUpl9IdFZczfdDvz4eCidVOSMIVokV99Z4xB8sAo67o8=
+	t=1740772473; cv=none; b=fdfI8UmYXPuoscA7+Nce4VT4m6foR5tV2TCgXCtnx38lv3EN+zjV29OMXvnUr4akKfmemAjuVRAjTCf1EJ9fUiqzSQgkcP8GNsMFxFvJeVAn/pw77SxsKOQ2+TfmFMQFPMQcgrp7yxRK9mW++ZON6oxRYxrLClv1QwaB+zOR6xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772460; c=relaxed/simple;
-	bh=4GkfnwNsKbq/mr/Mi22ZRxvnkRGN0lE29AmS6GLzr1M=;
+	s=arc-20240116; t=1740772473; c=relaxed/simple;
+	bh=rKktbPZ85PBxwxGNPehvt3caCnGaGLjjLHeFQVdOj+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYkmiscU+rREnarNSDMsqQ/T2WS9+lBP/0A5XHgNuMyv4UZrorpRqTRpsHyZa3kABXgKOEpomrHXyhhU0RoiwmUFfA7lI8Zl/DDcOIcvfyaFnunZFlVlWz+h+UXoCNExg4brBPpnaJn/qpxE5GGR2Z4/1YEe/VDhKHHE9b8smP8=
+	 In-Reply-To:Content-Type; b=sMfL/dsC7kCPUxJ9EISzUAGzsluhiSCyzqoJGISkFwHR+JvkMJudGWpZAL1Efmdy5NZccRwX4XTD24hA9scDfwOWnM1POhsbQtQZkMeohEVMceeVIozLFKuMI/F7KuxPmkJHsMMmfQHBTHelFhD3jC0r340Mu7Mh6COIWM0rtbo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DD0F150C;
-	Fri, 28 Feb 2025 11:54:32 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53B2F3F7D8;
-	Fri, 28 Feb 2025 11:54:13 -0800 (PST)
-Message-ID: <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
-Date: Fri, 28 Feb 2025 19:54:11 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53B8D1515;
+	Fri, 28 Feb 2025 11:54:46 -0800 (PST)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22BAB3F5A1;
+	Fri, 28 Feb 2025 11:54:22 -0800 (PST)
+Message-ID: <b3317010-b8bf-46f8-a176-28f810fd9920@arm.com>
+Date: Fri, 28 Feb 2025 19:54:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,126 +41,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
-To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
- Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
- iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
- Randy Dunlap <rdunlap@infradead.org>
-References: <cover.1738765879.git.leonro@nvidia.com>
- <20250220124827.GR53094@unreal>
-From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v6 33/42] x86/resctrl: resctrl_exit() teardown resctrl but
+ leave the mount point
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-34-james.morse@arm.com>
+ <91026839-2f2e-4562-aa77-6901148c89ad@intel.com>
 Content-Language: en-GB
-In-Reply-To: <20250220124827.GR53094@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <91026839-2f2e-4562-aa77-6901148c89ad@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
-> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
->> From: Leon Romanovsky <leonro@nvidia.com>
+Hi Reinette,
+
+On 20/02/2025 04:42, Reinette Chatre wrote:
+> On 2/7/25 10:18 AM, James Morse wrote:
+>> resctrl_exit() was intended for use when the 'resctrl' module was unloaded.
+>> resctrl can't be built as a module, and the kernfs helpers are not exported
+>> so this is unlikely to change. MPAM has an error interrupt which indicates
+>> the MPAM driver has gone haywire. Should this occur tasks could run with
+>> the wrong control values, leading to bad performance for important tasks.
+>> The MPAM driver needs a way to tell resctrl that no further configuration
+>> should be attempted.
 >>
->> Changelog:
->> v7:
->>   * Rebased to v6.14-rc1
-> 
-> <...>
-> 
->> Christoph Hellwig (6):
->>    PCI/P2PDMA: Refactor the p2pdma mapping helpers
->>    dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
->>    iommu: generalize the batched sync after map interface
->>    iommu/dma: Factor out a iommu_dma_map_swiotlb helper
->>    dma-mapping: add a dma_need_unmap helper
->>    docs: core-api: document the IOVA-based API
+>> Using resctrl_exit() for this leaves the system in a funny state as
+>> resctrl is still mounted, but cannot be un-mounted because the sysfs
+>> directory that is typically used has been removed. Dave Martin suggests
+>> this may cause systemd trouble in the future as not all filesystems
+>> can be unmounted.
 >>
->> Leon Romanovsky (11):
->>    iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
->>    dma-mapping: Provide an interface to allow allocate IOVA
->>    dma-mapping: Implement link/unlink ranges API
->>    mm/hmm: let users to tag specific PFN with DMA mapped bit
->>    mm/hmm: provide generic DMA managing logic
->>    RDMA/umem: Store ODP access mask information in PFN
->>    RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
->>      linkage
->>    RDMA/umem: Separate implicit ODP initialization from explicit ODP
->>    vfio/mlx5: Explicitly use number of pages instead of allocated length
->>    vfio/mlx5: Rewrite create mkey flow to allow better code reuse
->>    vfio/mlx5: Enable the DMA link API
->>
->>   Documentation/core-api/dma-api.rst   |  70 ++++
->   drivers/infiniband/core/umem_odp.c   | 250 +++++---------
->>   drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
->>   drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
->>   drivers/infiniband/hw/mlx5/umr.c     |  12 +-
->>   drivers/iommu/dma-iommu.c            | 468 +++++++++++++++++++++++----
->>   drivers/iommu/iommu.c                |  84 ++---
->>   drivers/pci/p2pdma.c                 |  38 +--
->>   drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
->>   drivers/vfio/pci/mlx5/cmd.h          |  35 +-
->>   drivers/vfio/pci/mlx5/main.c         |  87 +++--
->>   include/linux/dma-map-ops.h          |  54 ----
->>   include/linux/dma-mapping.h          |  85 +++++
->>   include/linux/hmm-dma.h              |  33 ++
->>   include/linux/hmm.h                  |  21 ++
->>   include/linux/iommu.h                |   4 +
->>   include/linux/pci-p2pdma.h           |  84 +++++
->>   include/rdma/ib_umem_odp.h           |  25 +-
->>   kernel/dma/direct.c                  |  44 +--
->>   kernel/dma/mapping.c                 |  18 ++
->>   mm/hmm.c                             | 264 +++++++++++++--
->>   21 files changed, 1435 insertions(+), 693 deletions(-)
->>   create mode 100644 include/linux/hmm-dma.h
+>> Add calls to remove all the files and directories in resctrl, and
+>> remove the sysfs_remove_mount_point() call that leaves the system
+>> in a funny state. When triggered, this causes all the resctrl files
+>> to disappear. resctrl can be unmounted, but not mounted again.
+
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index 6e30283358d4..424622d2f959 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -4371,9 +4375,12 @@ int __init resctrl_init(void)
+>>  
 > 
-> Kind reminder.
+> Could you please add the kerneldoc you proposed in
+> https://lore.kernel.org/lkml/f2ecb501-bc65-49a9-903d-80ba1737845f@arm.com/ ?
 
-...that you've simply reposted the same thing again? Without doing 
-anything to address the bugs, inconsistencies, fundamental design flaws 
-in claiming to be something it cannot possibly be, the egregious abuse 
-of DMA_ATTR_SKIP_CPU_SYNC proudly highlighting how unfit-for-purpose the 
-most basic part of the whole idea is, nor *still* the complete lack of 
-any demonstrable justification of how callers who supposedly can't use 
-the IOMMU API actually benefit from adding all the complexity of using 
-the IOMMU API in a hat but also still the streaming DMA API as well?
-
-Yeah, consider me reminded.
+Huh. The way that is indented means I copied it out the file - I'm not sure went wrong
+there. Thanks for fishing out the link!
 
 
+>>  void __exit resctrl_exit(void)
+>>  {
+>> +	mutex_lock(&rdtgroup_mutex);
+>> +	rdtgroup_destroy_root();
+>> +	mutex_unlock(&rdtgroup_mutex);
+>> +
+>>  	debugfs_remove_recursive(debugfs_resctrl);
+>>  	unregister_filesystem(&rdt_fs_type);
+>> -	sysfs_remove_mount_point(fs_kobj, "resctrl");
+>>  
+>>  	resctrl_mon_resource_exit();
+>>  }
+> 
+> It is difficult for me to follow the kernfs reference counting required
+> to make this work. Specifically, the root kn is "destroyed" here but it
+> is required to stick around until unmount when the rest of the files
+> are removed.
 
-In case I need to make it any more explicit, NAK to this not-generic 
-not-DMA-mapping API, until you can come up with either something which 
-*can* actually work in any kind of vaguely generic manner as claimed, or 
-instead settle on a reasonable special-case solution for justifiable 
-special cases. Bikeshedding and rebasing through half a dozen versions, 
-while ignoring fundamental issues I've been pointing out from the very 
-beginning, has not somehow magically made this series mature and 
-acceptable to merge.
+This drops resctrl's reference to all of the files, which would make the files disappear.
+unmount is what calls kernfs_kill_sb(), which gets rid of the root of the filesystem.
 
-Honestly, given certain other scenarios we may also end up having to 
-deal with, if by the time everything broken is taken away, it were to 
-end up stripped all the way back to something well-reasoned like:
 
-"Some drivers want more control of their DMA buffer layout than the 
-general-purpose IOVA allocator is able to provide though the DMA mapping 
-APIs, but also would rather not have to deal with managing an entire 
-IOMMU domain and address space, making MSIs work, etc. Expose 
-iommu_dma_alloc_iova() and some trivial IOMMU API wrappers to allow 
-drivers of coherent devices to claim regions of the default domain 
-wherein they can manage their own mappings directly."
+> Have you been able to test this flow? I think you mentioned
+> something like this before but I cannot find the details now.
 
-...I wouldn't necessarily disagree.
+Yes:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git/commit/?h=mpam/snapshot%2bextras/v6.14-rc1&id=8c96f858b25aa42694c5db56a2afe255ed8262dd
+
+This is a debugfs file that schedules the threaded bit of the MPAM error interrupt
+handler. I figure its MPAM specific because there is no way into this code on x86.
+(the aim is to get the CI to tickle this)
+
 
 Thanks,
-Robin.
+
+James
 
