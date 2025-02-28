@@ -1,258 +1,267 @@
-Return-Path: <linux-kernel+bounces-538908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2349EA49EB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:24:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83B5A49EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90511175901
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE16189A5AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24DA272920;
-	Fri, 28 Feb 2025 16:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B84627424E;
+	Fri, 28 Feb 2025 16:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="edC3LwA3"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DE69j4AC"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CF526A0DB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A272702C1;
+	Fri, 28 Feb 2025 16:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759865; cv=none; b=DpCjTtHBXfyXJcp4X/SCToKjsobDEqfS3/RCjibN6L8uzefkcjE1irlBe4eStiGv2RFnq9JtLlIP5zOz1A+H3T5nxEFFc8r02GbcchT2eN6Qh0pkwmF4ZWp2LnrVhpkQwisJKu4gLGXveTpOlvhCb00DMMrWlwnL4ACbJL6XNnY=
+	t=1740759893; cv=none; b=bOmLgQNmmfwHc61BhsgoixACs3yvWjS1EetwXfPRzwM/Udmcmoo7eMXM4BqEUZcS/sm80Fy2RJ9ewz/oBxoZjUi7+jAuqkGTc/QoKTbrkOmcDmUZ7VOqiWlMzeBaKy/PkPbHczOg1iIJ5vgNs+nq2ch5QvLMX68TAFmJPpwAtrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759865; c=relaxed/simple;
-	bh=+yeBV+cJHwRPA2DiPeiJDcYB3jrSqrGG/JHdcc57Fjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rNpvgjfFaQZLwF8ZjqfyzCsn+geQTBUKwNj4AcaJEFk51v7IQ0jZkrbMIKBHPJmslENXNlRO2WPUlDQb+kSEBk9v8lk+Z+Kg9RJoMM8arOKhkWMup+vZfQqui3kY25CKPn9vq2XsaawnJFik2a05SIBh7vU7FPa3/1m3FwulMXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=edC3LwA3; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B54A43209;
-	Fri, 28 Feb 2025 16:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740759861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Z1IKkm6+PnFpEAaGDs3hByJh2w/s4OJvKkdhV8BI7pE=;
-	b=edC3LwA3ZOzxlMbNW5jOkj/xKOgxgvLzgon2Z/ebWjzgQUi58Dkjm/75rkhuUGW7SpC0tk
-	AHwhVudHAxwtfIIwdBRbKUYUr3evh2KHEQGqlBhZHvVKDTcQP31xiSRZ7lY0wJrEXFxfCv
-	lJt0YEvz3TtNcLkjPIdQbbfiBPBo5WWqoj+msms2+B1B2ptPR0zLFhDPAXhWeB96HSNtGF
-	LTlEob23gTpAc+ul+1YioTJA4xPVxWSq94OfJ1AjOX2OSoOW0uMbOqqdADilVSfoCI+MrK
-	Yk9Erg0FLMROh/6gTe0YXmDEwLNQCctTGAA2eX2VW3FNkLxysdHQhi1Z26eOlA==
-Message-ID: <caba927a-b71b-40bf-96b6-d15418ed705a@bootlin.com>
-Date: Fri, 28 Feb 2025 17:24:17 +0100
+	s=arc-20240116; t=1740759893; c=relaxed/simple;
+	bh=XnpZcUYfTLbgC6takHMxyC3KsGytUw76O4Bb/3klw4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t+YCqfcQobxyOer0AR6UjReczs5FJR4cex0FJFVERuBY1gGuSdkoBXY3hOEWWn49t4FzIO/rUMkBBwihb7Zy4cff6upMJeDLvvE1De6OTwWT6p5BdKrBj2Em0SxGmjkeZhz+8coapJAbxMyckwIdjQ2HqqSSX4cCc6LCRix+tVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DE69j4AC; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f768e9be1aso33320567b3.0;
+        Fri, 28 Feb 2025 08:24:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740759891; x=1741364691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q3ewd6MOD055VnfUmlVAPlmkIaMimMwbkJLyr3SEzLo=;
+        b=DE69j4ACDJOluNm/FbZsnx7aTGaEYoGDYBlmEe8xJECxVjSa+Oc1hEvXC6X+kpZ7zB
+         J6d8zwMsGmPuBGxin34jHmVnpPBLECU6Zt4rpmr82QwJahQ6CJsXDXL26LJP02xdE+xW
+         egEbn6hR1roQPTlPmKsSlp3JWBn3YHUw/V16j/0uZkvIqsK1GbGcGA0xGJAoM4+rjtlc
+         HJsK2mFOB8ajBnjGrIwMBl9DyWutsuNXQfmGvkengiL5HKIXDVBrZumSIPTgGSiG1Gc8
+         gJ1BGxyq3VOlDizlW8UgfzavCn6E4wHrNkj98LxdCl5NAakbAfSYPtzl3rLimXW02+pA
+         vbuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740759891; x=1741364691;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q3ewd6MOD055VnfUmlVAPlmkIaMimMwbkJLyr3SEzLo=;
+        b=UhgcdHuWFjhiuQVPkfnzyq7qkzW4tk3O5+/cex86XkS3Ym+yuoL4GqYbct6qOPyHxA
+         GLyMtx92BuftkXzAV87mLF62f40KSvB44jGdc32ZXSJmA3hia7smVlbHdSglPbYA5232
+         WJqOynX8wiJ/t4uqtWCGQVCCNg91qNGJccywerfBRv1W710xT48+o1uDCwm1P7jw+r3E
+         oIGdOQi00pfHOcryQ/lByUsNvwfrx+JYuf94KAexRmuU6qC9mfE3eNO/KmrHC7+1Y74m
+         OITV01ZZVrgPIfyw7mlSZrV/wiTsRikw3GAIdVun9KLSLFsTisamQzgKakEKX7WfC9Cl
+         +L1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV70E8oON5G70kR2vuwfw85QXM3Ht4A+lz3DFgqZOemJvaLDl1ZWH+2hGRvMemVXy/4C4jAwK4R8T5V@vger.kernel.org, AJvYcCVc2CIb2R9V9ylsGbNUWJvrqs2pcuhKbKSi16lXZGkTu+dyChkW7hYs6cpR6GnCDq0wxF6Vqbb3ts0cCh46@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmsdKXam801bWlrQeKUUH0paJRgyQWChccCHcIgxTKvuQv0/8Y
+	gs7wHhZBDOfHLlReZiFb6x26jkmSVoSjiWYo1JdK69CDP1XzzX0D
+X-Gm-Gg: ASbGnctRMFm+sTlRJik69jiWsAvCngjehBAbKMNrok+OH/K5i1qAtqlfGeGA6uF0UCk
+	7+GkuVlxafHTZ7iZgCrX25SilGPGBW1n4fESPx1cEw/+FvXPydpzARI8ZwT5HUQidV/r1YbZc9X
+	beyvRjfQjNqg/Bp127vCqQLXZh/3nGmSzDpxavI69da9i+BWvWD6xD1baunWsx7ydv506196ozw
+	aW3bVFDEGmCdABS/Lsh5cgfO+6WCC91tuE4kwBx1D1qTHS44Nq1bJRTEaO35QkrQCfMMzkyW5kw
+	0w18dRx8uLOCwWSqG6mdcbRr
+X-Google-Smtp-Source: AGHT+IEAM2QLaq1/TAY7na+Pdysw6rSoHZH4Mr0frspMuY5OQC0gIjx7djT9cTfNwuR3W8ueknFuuw==
+X-Received: by 2002:a05:690c:4b86:b0:6fb:b38e:207e with SMTP id 00721157ae682-6fd4a23912dmr45573817b3.14.1740759890583;
+        Fri, 28 Feb 2025 08:24:50 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:5::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3ca100b3sm7900267b3.13.2025.02.28.08.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 08:24:50 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Yunjeong Mun <yunjeong.mun@sk.com>
+Cc: honggyu.kim@sk.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	kernel_team@skhynix.com
+Subject: Re: [PATCH 1/2 v6] mm/mempolicy: Weighted Interleave Auto-tuning
+Date: Fri, 28 Feb 2025 08:24:45 -0800
+Message-ID: <20250228162447.3850305-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250228064016.1325-1-yunjeong.mun@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/63] Fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
-To: Greg KH <gregkh@linuxfoundation.org>, Jim Cromie <jim.cromie@gmail.com>,
- linux-kernel@vger.kernel.org, jbaron@akamai.com, ukaszb@chromium.org,
- intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com
-References: <20250125064619.8305-1-jim.cromie@gmail.com>
- <2025022012-viscous-cringing-bf88@gregkh>
- <Z7b50rGRA4RuybgC@phenom.ffwll.local>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
- 5K81kIWbtQX91pD/wH5UapRF4kwMXTAqof8+m3XfYcEDVG31Kf8QkJTG/gLBi1UfJgGBahbY
- hjP40kuUR/mr7M7bKoBP9Uh0uaEM+DuKl6bSXMSrJ6fOtEPOtnfBY0xVPmqIKfLFEkjh800v
- jD1fdwWKtAIXf+cQtC9QWvcdzAmQIwmyFBmbg+ccqao1OIXTgu+qMAHfgKDjYctESvo+Szmb
- DFBZudPbyTAlf2mVKpoHKMGy3ndPZ19RboKUP0wjrF+Snif6zRFisHK7D/mqpgUftoV4HjEH
- bQO9bTJZXIoPJMSb+Lyds0m83/LYfjcWP8w889bNyD4Lzzzu+hWIu/OObJeGEQqY01etOLMh
- deuSuCG9tFr0DY6l37d4VK4dqq4Snmm87IRCb3AHAEMJ5SsO8WmRYF8ReLIk0tJJPrALv8DD
- lnLnwadBJ9H8djZMj24+GC6MJjN8dDNWctpBXgGZKuCM7Ggaex+RLHP/+14Vl+lSLdFiUb3U
- ljBXuc9v5/9+D8fWlH03q+NCa1dVgUtsP2lpolOV3EE85q1HdMyt5K91oB0hLNFdTFYwn1bW
- WJ2FaRhiC1yV4kn/z8g7fAp57VyIb6lQfS1Wwuj5/53XYjdipQARAQABzSlMb3VpcyBDaGF1
- dmV0IDxsb3Vpcy5jaGF1dmV0QGJvb3RsaW4uY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
- CwIEFgIDAQIeAQIXgBYhBItxBK6aJy1mk/Un8uwYg/VeC0ClBQJmlnw+BQkH8MsdAAoJEOwY
- g/VeC0ClyhwP/Ra6H+5F2NEW6/IMVHeXmhuly8CcZ3kyoKeGNowghIcTBo59dFh0atGCvr+y
- K9YD5Pyg9aX4Ropw1R1RVIMrWoUNZUKebRTu6iNHkE6tmURJaKLzR+9la+789jznQvbV+9gM
- YTBppX4/0cWY58jiDiDV4aJ77JDo7aWNK4hz8mZsB+Y7ezMuS4jy2r4b7dZ+YL/T9/k3/emO
- PkAuFkVhkNhytMEyOBsT7SjL4IUBeYWvOw9MIaXEl4qW/5HLGtMuNhS94NsviDXZquoOHOby
- 2uuRAI0bLz1qcsnY90yyPlDJ0pMuJHbi0DBzPTIYkyuwoyplfWxnUPp1wfsjiy/B6mRKTbdE
- a/K6jNzdVC1LLjTD4EjwnCE8IZBRWH1NVC1suOkw3Sr1FYcHFSYqNDrrzO+RKtR1JMrIe8/3
- Xhe2/UNUhppsK3SaFaIsu98mVQY3bA/Xn9wYcuAAzRzhEHgrbp8LPzYdi6Qtlqpt4HcPV3Ya
- H9BkCacgyLHcdeQbBXaup9JbF5oqbdtwev3waAmNfhWhrQeqQ0tkrpJ46l9slEGEdao5Dcct
- QDRjmJz7Gx/rKJngQrbboOQz+rhiHPoJc/n75lgOqtHRePNEf9xmtteHYpiAXh/YNooXJvdA
- tgR1jAsCsxuXZnW2DpVClm1WSHNfLSWona8cTkcoSTeYCrnXzsFNBGCG6KUBEADZhvm9TZ25
- JZa7wbKMOpvSH36K8wl74FhuVuv7ykeFPKH2oC7zmP1oqs1IF1UXQQzNkCHsBpIZq+TSE74a
- mG4sEhZP0irrG/w3JQ9Vbxds7PzlQzDarJ1WJvS2KZ4AVnwc/ucirNuxinAuAmmNBUNF8w6o
- Y97sdgFuIZUP6h972Tby5bu7wmy1hWL3+2QV+LEKmRpr0D9jDtJrKfm25sLwoHIojdQtGv2g
- JbQ9Oh9+k3QG9Kh6tiQoOrzgJ9pNjamYsnti9M2XHhlX489eXq/E6bWOBRa0UmD0tuQKNgK1
- n8EDmFPW3L0vEnytAl4QyZEzPhO30GEcgtNkaJVQwiXtn4FMw4R5ncqXVvzR7rnEuXwyO9RF
- tjqhwxsfRlORo6vMKqvDxFfgIkVnlc2KBa563qDNARB6caG6kRaLVcy0pGVlCiHLjl6ygP+G
- GCNfoh/PADQz7gaobN2WZzXbsVS5LDb9w/TqskSRhkgXpxt6k2rqNgdfeyomlkQnruvkIIjs
- Sk2X68nwHJlCjze3IgSngS2Gc0NC/DDoUBMblP6a2LJwuF/nvaW+QzPquy5KjKUO2UqIO9y+
- movZqE777uayqmMeIy4cd/gg/yTBBcGvWVm0Dh7dE6G6WXJUhWIUtXCzxKMmkvSmZy+gt1rN
- OyCd65HgUXPBf+hioCzGVFSoqQARAQABwsOyBBgBCAAmAhsuFiEEi3EErponLWaT9Sfy7BiD
- 9V4LQKUFAmaWfGYFCQfwx0ECQAkQ7BiD9V4LQKXBdCAEGQEIAB0WIQRPj7g/vng8MQxQWQQg
- rS7GWxAs4gUCYIbopQAKCRAgrS7GWxAs4gfGEACcA0XVNesbVIyvs5SJpJy+6csrH4yy233o
- GclX2P7pcCls55wiV6ywCtRaXWFjztYmklQieaZ/zq+pUuUDtBZo95rUP20E56gYV2XFB18W
- YeekTwH5d2d/j++60iHExWTB+sgMEv3CEGikUBj7iaMX2KtaB1k9K+3K6dx/s1KWxOClFkbJ
- EV/tmeq7Ta8LiytQM9b4yY550tzC0pEEeFcLFXo1m5KcJauYnAqrlOVY48NFpFUd9oAZf/Pz
- p3oEs+zn/8zK2PBrZZCD6AhrbotRy7irE5eimhxcsFm1+MG5ufnaQUWHrRYXVuFhvkSoqZ8j
- GPgPEpFor4NjRyX/PMLglQ7S5snkvKcr3Lun44aybXEHq/1FTzW2kOh6kFHFFOPbMv1voJKM
- IzrmDoDS+xANt/La7OwpCylCgF6t9oHHTTGfAfwtfYZbiepC66FDe/Jt/QLwkIXeIoeSS1O4
- 6rJdGWG2kHthUM+uIbUbaRJW8AkJpzP1Mz7TieR/9jO4YPeUm9tGL5kP2yyNtzFilcoOeox1
- NSFNAPz+zPcovVmxAaSDGcSzhQVJVlk8xPib8g4fnI8qJ3Gj7xyw8D9dzxhCR2DIFmZL84En
- N7Rj+k4VIGY7M/cVvxL81jlbMGMERMmb96Cua9z1ROviGA1He2gbHOcp6qmLNu3nprleG8PL
- ZRNdEAC0iZapoyiXlVCKLFIwUPnxUz5iarqIfQU8sa1VXYYd/AAAFI6Wv3zfNtGicjgHP8rN
- CIegqm2Av1939XXGZJVI9f3hEoUn04rvxCgcDcUvn7I0WTZ4JB9G5qAGvQLXeXK6Byu77qTx
- eC7PUIIEKN3X47e8xTSj2reVTlanDr8yeqZhxpKHaS0laF8RbD85geZtAK67qEByX2KC9DUo
- eHBFuXpYMzGQnf2SG105ePI2f4h5iAfbTW9VWH989fx4f2hVlDwTe08/NhPdwq/Houov9f/+
- uPpYEMlHCNwE8GRV7aEjd/dvu87PQPm4zFtC3jgQaUKCbYYlHmYYRlrLQenX3QSorrQNPbfz
- uQkNLDVcjgD2fxBpemT7EhHYBz+ugsfbtdsH+4jVCo5WLb/HxE6o5zvSIkXknWh1DhFj/qe9
- Zb9PGmfp8T8Ty+c/hjE5x6SrkRCX8qPXIvfSWLlb8M0lpcpFK+tB+kZlu5I3ycQDNLTk3qmf
- PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
- ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
- qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <Z7b50rGRA4RuybgC@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetueetjedtudegtdeftdevtedtgeehhefftdejheduvdfhlefhveekheethfffueenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepghhrvghgkhhhsehlihhnu
- higfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopehukhgrshiisgestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhg
-X-GND-Sasl: louis.chauvet@bootlin.com
 
+On Fri, 28 Feb 2025 15:39:55 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
 
+Hi Yunjeong, thank you for taking time to review my work!
 
-Le 20/02/2025 à 10:45, Simona Vetter a écrit :
-> On Thu, Feb 20, 2025 at 09:31:41AM +0100, Greg KH wrote:
->> On Fri, Jan 24, 2025 at 11:45:14PM -0700, Jim Cromie wrote:
->>> This series fixes dynamic-debug's support for DRM debug-categories.
->>> Classmaps-v1 evaded full review, and got committed in 2 chunks:
->>>
->>>    b7b4eebdba7b..6ea3bf466ac6	# core dyndbg changes
->>>    0406faf25fb1..ee7d633f2dfb	# drm adoption
->>>
->>> DRM-CI found a regression during init with drm.debug=<initval>; the
->>> static-keys under the drm-dbgs in drm.ko got enabled, but those in
->>> drivers & helpers did not.
->>>
->>> Root Problem:
->>>
->>> DECLARE_DYNDBG_CLASSMAP violated a K&R rule "define once, refer
->>> afterwards".  Replace it with DYNDBG_CLASSMAP_DEFINE (invoked once in
->>> drm-core) and DYNDBG_CLASSMAP_USE (invoked repeatedly, in drivers &
->>> helpers).
->>>
->>> _DEFINE exports the classmap it creates (in drm.ko), other modules
->>> _USE the classmap.  The _USE adds a record ref'g the _DEFINEd (&
->>> exported) classmap, in a 2nd __dyndbg_class_users section.
->>>
->>> So now at modprobe, dyndbg scans the new section after the 1st
->>> __dyndbg_class_maps section, follows the linkage to the _DEFINEr
->>> module, finds the (optional) kernel-param controlling the classmap,
->>> examines its drm.debug=<initval>, and applies it to the module being
->>> initialized.
->>>
->>> To recapitulate the multi-module problem wo DRM involvement, Add:
->>>
->>> A. tools/testing/selftests/dynamic_debug/*
->>>
->>> This alters pr_debugs in the test-modules, counts the results and
->>> checks them against expectations.  It uses this formula to test most
->>> of the control grammar, including the new class keyword.
->>>
->>> B. test_dynamic_debug_submod.ko
->>>
->>> This alters the test-module to build both parent & _submod ko's, with
->>> _DEFINE and _USE inside #if/#else blocks.  This recap's DRM's 2 module
->>> failure scenario, allowing A to exersize several cases.
->>>
->>> The #if/#else puts the 2 macro uses together for clarity, and gives
->>> the 2 modules identical sets of debugs.
->>>
->>> Recent DRM-CI tests are here:
->>>    https://patchwork.freedesktop.org/series/139147/
->>>
->>> Previous rev:
->>>    https://lore.kernel.org/lkml/20240716185806.1572048-1-jim.cromie@gmail.com/
->>>
->>> Noteworthy Additions:
->>>
->>> 1- drop class "protection" special case, per JBaron's preference.
->>>     only current use is marked BROKEN so nobody to affect.
->>>     now framed as policy-choice:
->>>     #define ddebug_client_module_protects_classes() false
->>>     subsystems wanting protection can change this.
->>>
->>> 2- compile-time arg-tests in DYNDBG_CLASSMAP_DEFINE
->>>     implement several required constraints, and fail obviously.
->>>
->>> 3- modprobe time check of conflicting class-id reservations
->>>     only affects 2+classmaps users.
->>>     compile-time solution not apparent.
->>>
->>> 4- dyndbg can now cause modprobe to fail.
->>>     needed to catch 3.
->>>     maybe some loose ends here on failure.
->>>
->>> 5- refactor & rename ddebug_attach_*module_classes
->>>     reduce repetetive boilerplate on 2 types: maps, users.
->>>     rework mostly brought forward in patchset to reduce churn
->>>     TBD: maybe squash more.
->>>
->>> Several recent trybot submissions (against drm-tip) have been passing
->>> CI.BAT, and failing one or few CI.IGT tests randomly; re-tests do not
->>> reliably repeat the failures.
->>>
->>> its also at github.com:jimc/linux.git
->>>    dd-fix-9[st]-ontip  &  dd-fix-9-13
->>>
->>> Ive been running it on my desktop w/o issues.
->>>
->>> The drivers/gpu/drm patches are RFC, I think there might be a single
->>> place to call DRM_CLASSMAP_USE(drm_dedbug_classes) to replace the
->>> sprinkling of _USEs in drivers and helpers.  IIRC, I tried adding a
->>> _DEFINE into drm_drv.c, that didn't do it, so I punted for now.
->>>
->>> I think the dyndbg core additions are ready for review and merging
->>> into a (next-next) test/integration tree.
->>
->> So whose tree should this go through?
+> Hi, Joshua. 
 > 
-> I'm trying to get some drm folks to review/test this, but thus far not
-> much success :-/ I think it's good stuff, but I'm somewhat hesitant if no
+> First of all I accidentally sent the wrong email a few hours ago.
+> Please disregard it. Sorry for the confusion.
 
-I tested the VKMS driver with this, and it works!
+No worries at all!
 
-Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-> one else agrees that it's useful for CI or in-field crash-recording or
-> whatever ...
+> On Wed, 26 Feb 2025 13:35:17 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 > 
-> I guess worst case we can land it and hope it attracts more folks?
+> [...snip...]
+> >  
+> > +/*
+> > + * Convert bandwidth values into weighted interleave weights.
+> > + * Call with iw_table_lock.
+> > + */
+> > +static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
+> > +{
+> > +	u64 sum_bw = 0;
+> > +	unsigned int cast_sum_bw, sum_iw = 0;
+> > +	unsigned int scaling_factor = 1, iw_gcd = 1;
+> > +	int nid;
+> > +
+> > +	/* Recalculate the bandwidth distribution given the new info */
+> > +	for_each_node_state(nid, N_MEMORY)
+> > +		sum_bw += bw[nid];
+> > +
+> > +	for (nid = 0; nid < nr_node_ids; nid++) {
+> > +		/* Set memoryless nodes' weights to 1 to prevent div/0 later */
+> > +		if (!node_state(nid, N_MEMORY)) {
+> > +			new_iw[nid] = 1;
+> > +			continue;
+> > +		}
+> > +
+> > +		scaling_factor = 100 * bw[nid];
+> > +
+> > +		/*
+> > +		 * Try not to perform 64-bit division.
+> > +		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
+> > +		 * If sum_bw > scaling_factor, then bw[nid] is less than
+> > +		 * 1% of the total bandwidth. Round up to 1%.
+> > +		 */
+> > +		if (bw[nid] && sum_bw < scaling_factor) {
+> > +			cast_sum_bw = (unsigned int)sum_bw;
+> > +			new_iw[nid] = scaling_factor / cast_sum_bw;
+> > +		} else {
+> > +			new_iw[nid] = 1;
+> > +		}
+> > +		sum_iw += new_iw[nid];
+> > +	}
+> > +
+> > +	/*
+> > +	 * Scale each node's share of the total bandwidth from percentages
+> > +	 * to whole numbers in the range [1, weightiness]
+> > +	 */
+> > +	for_each_node_state(nid, N_MEMORY) {
+> > +		scaling_factor = weightiness * new_iw[nid];
+> > +		new_iw[nid] = max(scaling_factor / sum_iw, 1);
+> > +		if (nid == 0)
+> > +			iw_gcd = new_iw[0];
+> > +		iw_gcd = gcd(iw_gcd, new_iw[nid]);
+> > +	}
+> > +
+> > +	/* 1:2 is strictly better than 16:32. Reduce by the weights' GCD. */
+> > +	for_each_node_state(nid, N_MEMORY)
+> > +		new_iw[nid] /= iw_gcd;
+> > +}
 > 
-> Wrt tree I don't care, but I guess we should then also land the drm side
-> too.
-> -Sima
-> 
->> And I think the last patch in this series isn't correct, it looks like a
->> 000 email somehow.
->>
->> thanks,
->>
->> greg k-h
-> 
+> In my understanding, new_iw[nid] values are scaled twice, first to 100 and then to a 
+> weightines value of 32. I think this scaling can be done just once, directly 
+> to weightness value as follows:
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes,  you are correct. I want to provide a bit of context on how this
+patch has changed over time: In the first few iterations of this patch, 
+"weightiness" was actually exposed as a sysfs interface that users could
+change to change how much they scaled for high numbers (better weight
+accuracy, but worse page allocation distributon fairness) and small numbers
+(bigger errors, but better local fairness).
 
+The reason why this matters is that we use a heuristic of "round all
+weights whose weights are less than 1% of the total weight sum to 1%".
+So if we have bandwidth ratios of 100 : 1000 : 3000 : 4000 : 6000,
+we have a sum total of 14100. Then 100/14100 is only ~0.7%, and we would
+want to round it up to 1% before moving on (since weights that are too
+small don't end up helping). This problem only gets worse for machines
+with more nodes, and it becomes possible for a node to have something like
+0.1% of the total bandwidth.
+
+When users could set weightiness to be up to 255, this was problematic,
+becuase scenarios where weights become 1:255:255:255:255... become possible,
+where we allocate a single page from one node, then allocate 255 pages from
+the remaining nr_node_ids - 1 nodes (which is of course, not ideal).
+However, with weightiness fixed to 32, maybe this heuristic makes less sense,
+since the worst-case-scenario looks like 1:32:32:32:32...
+
+I think this proposed change makes a lot of sense. It does seem silly to
+have to round twice, and without giving the users the ability to set thier
+own weightiness value, rounding just once seems to be enough to prevent
+the worst case scenario. I will incorporate this into a v7.
+
+I'm also going to wait a bit for more feedback to come in for this version,
+so it may be a little bit before I send v7 out : -)
+
+Thanks again for your review and the proposed change. Have a great day!
+Joshua
+
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 50cbb7c047fa..65a7e2baf161 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -176,47 +176,22 @@ static u8 get_il_weight(int node)
+>  static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
+>  {
+> 	u64 sum_bw = 0;
+> -	unsigned int cast_sum_bw, sum_iw = 0;
+> -	unsigned int scaling_factor = 1, iw_gcd = 1;
+> +	unsigned int scaling_factor = 1, iw_gcd = 0;
+> 	int nid;
+> 
+> 	/* Recalculate the bandwidth distribution given the new info */
+> 	for_each_node_state(nid, N_MEMORY)
+> 		sum_bw += bw[nid];
+> 
+> -       for (nid = 0; nid < nr_node_ids; nid++) {
+>  			[...snip...]
+> -		/*
+> -		 * Try not to perform 64-bit division.
+> -		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
+> -		 * If sum_bw > scaling_factor, then bw[nid] is less than
+> -		 * 1% of the total bandwidth. Round up to 1%.
+> -		 */
+>  			[...snip...]
+> -		sum_iw += new_iw[nid];
+> -	}
+> -
+>      
+> 	/*
+> 	 * Scale each node's share of the total bandwidth from percentages
+> 	 * to whole numbers in the range [1, weightiness]
+> 	 */
+> 	for_each_node_state(nid, N_MEMORY) {
+> -		scaling_factor = weightiness * new_iw[nid];
+> -		new_iw[nid] = max(scaling_factor / sum_iw, 1);
+> -		if (nid == 0)
+> -			iw_gcd = new_iw[0];
+> +		scaling_factor = weightiness * bw[nid];
+> +		new_iw[nid] = max(scaling_factor / sum_bw, 1);
+> +		if (!iw_gcd)
+> +			iw_gcd = new_iw[nid];
+> 		iw_gcd = gcd(iw_gcd, new_iw[nid]);
+> 	}
+> 
+> Please let me know how you think about this.
+> 
+> Best regards,
+> Yunjeong
+
+Sent using hkml (https://github.com/sjp38/hackermail)
 
