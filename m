@@ -1,141 +1,154 @@
-Return-Path: <linux-kernel+bounces-537996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF803A49357
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:23:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C07FA4935B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456E13AF00C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92FA91889920
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F3C24395C;
-	Fri, 28 Feb 2025 08:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8335B245017;
+	Fri, 28 Feb 2025 08:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N+nGMUUR"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="it1AR6gi"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD31E243362
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9401F583E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730963; cv=none; b=c3J8TuIs0O18Nmur7mTJd9uDEKhDJaQobdjvFywZn4PNRaLyrr7qiaokxMdBtKV6BNTHitP15RTmvtswEoUvw4IlghYxJCsRif6jvU4+3prdS72ssOcgn4iz0VTp1fvs7YZvdtZQO2ZLi8o8z1d7OW4JcwE5ENW5+yQOXKxlQNI=
+	t=1740731014; cv=none; b=oLXigaJZEBfDTV6u8E0p+6uougO3sKgUS75Jjk5CiHRKJdjs3eJZXvR4k3/Q1RsBXUPFj3pcXD+twGmKQnQNeE3Z4N5Na/UL7mS873Q4i+/c7Gw/OanXIW+fTnEjE0WigDa/KGzaQ7GoaiwlE++zEOAT97ReO44tq5nDi4IbO9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730963; c=relaxed/simple;
-	bh=Ei4jUH4UZc7x66tOrHfpI6mKDxIn8M6FEuQlF3nwXp8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LXI/rJjNXnQIsvWeAS6IZpMTjn0v1rZSXm8A/iJHTin+EXztCeg/L/Tn6T6MUaEn7KQg/sgVxbHt6Ux58N2B7SEoeHe3yP477zuk2mtNtHHJdaIRgTDFnj2TeCpcZDxpJK9FZPP7k0okVOw51RZDF2fRxE1ksrM48Z+puu7gPO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N+nGMUUR; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1740731014; c=relaxed/simple;
+	bh=R2MRTRMr+W9eU/udrGmceJQKzw74JG9DRcT8CxcYlD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X32MLjQcyqdu86oD7wFHH62D3KF7zOqhnfS42Lurt9hJQCK2xJQpY6bt6JnywbxUetTXriAjwrpCShPWZoHimYbtyMnvMQcSMoopZ8PSGr9sSAOBvN3kkW221shqSBVq6msScHhcq8j4QqGfbu0hjvwNrPGZVvEH7mK0LdTlIIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=it1AR6gi; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43984e9cc90so18164415e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:22:41 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a303a656aso19398981fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:23:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740730960; x=1741335760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1740731010; x=1741335810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5mjk45jguiUNe+AcHQUbiNYsEpUBPM+3F/r+trzFvSE=;
-        b=N+nGMUURT31NAiN4ymY6MzmgHoyQKaIw2xMWPJzpwtZQ0PKWUcbQSgzau20l7MY4oe
-         +kyAtFeMEv8PohOxTLDkzgixaHyo4RMxoBvQP7w7XyjeFxHPD2A+ubCKoPMwZET6qV52
-         eIuDO2eef38WeHzu1RXzdOyLh9PzqLLjlJ9yygxjbnuLZr3tJhfe0k6piDLMKKR7RNqy
-         2nSxV8rT/ULgX7Cf1rM3DHFtlaaxU+3CWq3l0jQH+gVnBLx+e65ZGTK54OZCaNq7VLVM
-         sEP/+yJQ3ruAxnF85aE5TPvcOl0D2VoTuMt2XvHBzjgJDUcPt12wwBYP9ZFH//jM14Fu
-         fUFw==
+        bh=Y6CmQnr9nJmjwVIpC9L7TXMlfKzgO8vBaB5ebrTKh4k=;
+        b=it1AR6giXuMT7UtAuCHfdr7Hp59a7tatYQXOAdc1a+NFxw0ZwwasC1mn3f9XN9qGNX
+         AnZ/HHKSTe69tD7E0GUIxoBsPcAw21lpfZbLQzovdXrTm0DhSleY5eGnyapDYDcocksc
+         8xqujCNmMY5wKyp3PLRr7opt3mqh7GCg9Nv74lTBXBlSe0gYyv3uZbOwfb6cpAHTVUCB
+         ksL3oArmiHmCtX1I11Q7m0oUE9lAvvtr46vIyuhfyKvz6p4enDg8kUtZyW8V/F10/Dih
+         m1dqFjNCHG0STE0iKEzHsEzIMksvI9N0v5CGBueekluEPfEnazCb0W+dS1PxUrbbRvCO
+         FC4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740730960; x=1741335760;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740731010; x=1741335810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5mjk45jguiUNe+AcHQUbiNYsEpUBPM+3F/r+trzFvSE=;
-        b=Lm093epp4vcx2zdrMjBY7l2EjlwJL56jk1eqPDxyiZsFoe9pxgH3TIBlO7l1wHWs9T
-         p+POupdUnMg326C7jx12THZYvGUjSpQGAWu76DHtsE+TstA20JS+HxMsLTwqXBxtREdT
-         gGVsmu31/TAZVJXczZWgqDNkjUksrCmLTxE6lxiRv7qCb0thTeYG3E74nLaTnANLeI9f
-         GkmzwzTJennDg29El9gAX+wBdUVtLyVS/KBL8xOd2VTICF9TeXWnByFvPkqCZdcEomgX
-         fRCGYgLdMomlztyuftcrrQRrWW6ysk275yuv03i/0pNA6syEHHHhyWRDKTzRrH5jtXzn
-         reuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgB80UOsfsWwLE3q/wkb80NKMSBeijDsEeLafAIpeBZvBRtLFHy8d0G3XccqMw7j3ex9y9Qe1g9vdt4R8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn2Y4Y6HNYK1nlaMqhB5BMKTALX0jGzdNn1+WwvBuQFLkafzzd
-	qyhBlgcvUc8SsdtbcgSKFHaSRvFZ8DMKCdHsrF8IG52KZPwlDRs2uhCXCv3Y8/k=
-X-Gm-Gg: ASbGncs8S+NBOtvefOJhMsKup0obg9dNCE0+p4BT8/S9AIChoGQhN8gmZoWY6jcQcTc
-	CDK9ZtANmbI5MCUACy6s7TwlBna2lhBBxKvRoHy0wW/ZMwjpt/QVzSE9SWBlODNflotVxBtoHDn
-	kAOseJJTTaffp6tUllI1nQXMYeHDPOqDQHKsb0u2eei7LTFljvF+IhWjZHIGGPqaLxoSHZAUQ6E
-	LM7w8hfzUvKjAUhBpWik3hAJQkDw07kAndlYmpm2Ndyfx12ouxVEkx3yOjk64I9ALGlz9Xt2fUw
-	uMLFmmvBLqz+pstBCQKMQ/bKnPK+WetmZmw4EvMPwsGlSvk=
-X-Google-Smtp-Source: AGHT+IH038oCeROvQ6tVC86akUZzZeoenUNBH2cva8eK5sDSrImvPU+Z4DWRdw7Bok77rrj1L+R8WQ==
-X-Received: by 2002:a05:600c:4f51:b0:43b:4829:8067 with SMTP id 5b1f17b1804b1-43b4829817amr44075105e9.6.1740730960086;
-        Fri, 28 Feb 2025 00:22:40 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b737074d8sm48750365e9.16.2025.02.28.00.22.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:22:39 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org
-In-Reply-To: <20250212-amlogic-pinctrl-v5-0-282bc2516804@amlogic.com>
-References: <20250212-amlogic-pinctrl-v5-0-282bc2516804@amlogic.com>
-Subject: Re: (subset) [PATCH v5 0/5] Pinctrl: Add Amlogic pinctrl driver
-Message-Id: <174073095934.1139542.13898190567088651391.b4-ty@linaro.org>
-Date: Fri, 28 Feb 2025 09:22:39 +0100
+        bh=Y6CmQnr9nJmjwVIpC9L7TXMlfKzgO8vBaB5ebrTKh4k=;
+        b=ngQJC6Kwb95L+eGLOLFLm7gwSokFIwObZQtaF9fS4knBmkdMkMIij86zfrxkTSXcNb
+         R62BVi4FpuzpAQQtc3LLC+MH2YAuxBFpa8OTVOaeBNLKH4oF0OuJfeZODffai1MUA/uF
+         4a09iyhYBK48JJGsmziQ2f0NOibvxIDgZfZ58ErC3cXMElVe6Jtk33ZJbDFHD3crBrs4
+         bJ09GnAbOGFCcs9yCV9I+bkbdnq5q6xWek7jU5V/sw0MSTN8h0sVS/h973VHeK+PpaUl
+         Vrvgn5lHg7VxNjCL5nKxRz+x3F3M5kxdlbBneCnD/QR5l4tfGDC44cZI7k5SUYOcbul/
+         6BAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnN1krpbYKMxFFLzZhuS9XVqzWn+4+oLLFf5r3SW2wYhjLMqkIeUVpvkwrjrxlu8sa/pyiBzth//A0zFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7cF+gV8uxjJhuqVYnjQdvYxSPJRlMoA4qeXrQmSlWTyfZCKSK
+	swCT25xFm0fM7Y+6tjEBBovFNBY1T2Vt2ovPMfpAb3QxCg9+2D/bHRJhJy2V7gAPQtKBbPa7JlP
+	B/L14yGQ0pWBGgHdeU2mw6lZh++3CgnMtbV/oVQ==
+X-Gm-Gg: ASbGnct1NOX34yXXGwO2hO6xkWoJcAt7IWp6ObRN/8i7QfTzYEhivJzQjj15A4gc1oD
+	GcDm/6KS+tmb2/+Dq+JiMbILg7Nqusxb4Hu5y0Sd8pWsPm0eZwNlBnZ46K3u4l/0nUX+8OX2Tit
+	F3/Mn9iNM=
+X-Google-Smtp-Source: AGHT+IH1bE/hdaIBMayw+gGpM9k5nGDh5XFnSS7BihMAS5lMqvifednGcS3mKS9CRv9UyLY40VYo/FzdFubU5gvJfnI=
+X-Received: by 2002:a05:6512:3a90:b0:546:27f0:21a7 with SMTP id
+ 2adb3069b0e04-5494c38c10emr1014114e87.49.1740731010148; Fri, 28 Feb 2025
+ 00:23:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <Z71qphikHPGB0Yuv@mva-rohm> <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com> <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+ <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com> <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
+In-Reply-To: <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 09:23:19 +0100
+X-Gm-Features: AQ5f1Jo20gvTk170DYVLWFd3aItRoAfaOdggSzyNA14E_0d2W-2xhzX4PDw9OD4
+Message-ID: <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Feb 27, 2025 at 9:24=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-On Wed, 12 Feb 2025 13:20:49 +0800, Xianwei Zhao wrote:
-> Add pinctrl driver support for Amloigc SoCs
-> 
-> Base on the previous discussion,
-> https://lore.kernel.org/r/20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com
-> The existed meson driver failed to meet the requirement of the current dt-binding.
-> So we start this new pinctrl driver to solve problem.
-> 
-> [...]
+> I did some quick testing. I used:
+(...)
+> which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7
+> unmasked.
+>
+> Then I added:
+> gpiotst {
+>         compatible =3D "rohm,foo-bd72720-gpio";
+>         rohm,dvs-vsel-gpios =3D <&adc 5 0>, <&adc 6 0>;
+> };
+>
+> and a dummy driver which does:
+> gpio_array =3D devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
+>                                   GPIOD_OUT_LOW);
+>
+> ...
+>
+> ret =3D gpiod_set_array_value_cansleep(gpio_array->ndescs,
+>                 gpio_array->desc, gpio_array->info, values);
+>
+> As a result the bd79124 gpio driver got it's set_multiple called with
+> masked pins. (Oh, and I had accidentally prepared to handle this as I
+> had added a sanity check for pinmux register in the set_multiple()).
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.15/arm64-dt)
+But... how did you mask of the pins 0..5 in valid_mask in this
+example?
 
-[4/5] arm64: dts: amlogic: a4: add pinctrl node
-      https://git.kernel.org/amlogic/c/ce78f679e08cc4f90db1ad8e61ba9f85530c701e
+If this is device tree, I would expect that at least you set up
+gpio-reserved-ranges =3D <0 5>; which will initialize the valid_mask.
 
-These changes has been applied on the intermediate git tree [1].
+You still need to tell the gpiolib that they are taken for other
+purposes somehow.
 
-The v6.15/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
+I think devm_gpiod_get_array() should have failed in that case.
 
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
+The call graph should look like this:
 
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
+devm_gpiod_get_array()
+    gpiod_get_array()
+        gpiod_get_index(0...n)
+            gpiod_find_and_request()
+                gpiod_request()
+                    gpiod_request_commit()
+                        gpiochip_line_is_valid()
 
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
+And gpiochip_line_is_valid() looks like this:
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+bool gpiochip_line_is_valid(const struct gpio_chip *gc,
+                unsigned int offset)
+{
+    /* No mask means all valid */
+    if (likely(!gc->valid_mask))
+        return true;
+    return test_bit(offset, gc->valid_mask);
+}
 
--- 
-Neil
+So why is this not working?
 
+Yours,
+Linus Walleij
 
