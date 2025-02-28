@@ -1,134 +1,349 @@
-Return-Path: <linux-kernel+bounces-538077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9380A49459
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:03:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1D2A4945C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00D487A6A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:02:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4440A7A88B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EC3254B13;
-	Fri, 28 Feb 2025 09:03:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7DB1DDA20;
+	Fri, 28 Feb 2025 09:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W1VpoDIZ"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EDF1A3158;
-	Fri, 28 Feb 2025 09:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BB3276D3B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733406; cv=none; b=h4dKM/I8dmjSjX2mVVA0AMSqHj11TsSKL1xc/Sh11M7LhVYyR+Cm1c7beLK32kAxZQGn98ab2S/D8txwdjRWujuWX/hJI5wnWL4D8n1ywDbf1czEfOnyRkSxvQITC0d8HDjsaBxx1Me3d7UGddvXgWwlhq1gQWS94L8G9a6GFX8=
+	t=1740733467; cv=none; b=WOMWtpMR5TT5MsFzQUBSgdawcQWCvfoNc16NdgcFAEtiZbkmaxaQzFcB94R6gIp/lvIulaSnIg8bf1AJRCbCizmp/j26MMObH/WnX4JfHutQIaV0X0F1P1zAZ4TwOg40X8s/tpcfaPB3+SdKT7zErzdxHtAQ76S8Z3dqmZvRBQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733406; c=relaxed/simple;
-	bh=O4X2xrxRUOG/SXW62YK7CFbWwOBWjS1pbfdDLOj7ICE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/83oxBZaLbGNPxpJEdaRbhm+tqFtSGoST2VdL0k4WrSMGP/5FKXwm0EBNmtWac8xi/pHwtQ32xB021I0mSdUBckCVSiZTljTGFNBt2sVCplX/rBNSEvc7tC/yXh4RUufETeyhFOWG1Pnm3ujQY6BR6oVgXOTTwdG6eGk4MWppA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48ACBC4CED6;
-	Fri, 28 Feb 2025 09:03:25 +0000 (UTC)
-Message-ID: <bc026cfe-1f67-47dd-9ef5-6025509bf194@xs4all.nl>
-Date: Fri, 28 Feb 2025 10:03:23 +0100
+	s=arc-20240116; t=1740733467; c=relaxed/simple;
+	bh=8MvqQQAW1T4lrgjuumqbegZ6QGi41mZBKsWq+n5fS5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cp+qQTpvLONLS05Y/5wDmIlfI3nsjXzN4IDHSKgmCP9KVNSXzPnD+LalC+RLSB2Q+J9SxFqMScJ2dudEs+uyxXk+NP+WSaNDtbt2tpbq2HAt9pYWCsPMGhLlCGqI6JzD7Sj2AKONA3JhGxMXLMgEeQ7kzM/qqJOnUgQRxsJoovQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W1VpoDIZ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390df942558so1421446f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:04:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740733464; x=1741338264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3OHkCovGrXR3vNs/yhb/RhCLokYtfuYeJvX5KaS2+hM=;
+        b=W1VpoDIZWPMzCaEJRj79ifOUSPwiUQLmZaK+PToQkXirV8D8vini1ne6TUStBsCUEE
+         uE0Ag/8hcnVnjJ8DoPiI5ttR3f1YB6VslNZpnTKvdtOYSiaq5Ti7rJ1sgCF+OVgBiqnt
+         pmaxeiEbaC2tUGLcukQAi+XdC6PN0e+4CnzOc3LTjW3jfzd3QILeMlKhwKSfshpR4loU
+         e6USyBV091mlM5JoO9TeHK4jt30ht3zTj7KC+qmeoequ9qUgWj7LnErm/TIc+k3hycvR
+         Rrz8kyydFNyp2e9RWcA0DvKs3RF1rQpG9y5ImUbCydzbluypUjUvAn1/D710cU3mlSmM
+         2KhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740733464; x=1741338264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3OHkCovGrXR3vNs/yhb/RhCLokYtfuYeJvX5KaS2+hM=;
+        b=EZxbM+tQa9hAWmDdff1vgyFUSAvD43yPWbiaRrT/Nreh3LYvcFLjXmezn+lEziJuvP
+         62z1zxOA4D7Acne76OORsSUjSLm4FvlnPP2mBfQ71hglKiQETEhpKxf8B+8mhaKhD4Ui
+         TKwBOtNBgw/aUNJM55YdJsbZTV2D8ZrI43pprxh17GTOqCW9j9EJYUNjZSOheM8nks6F
+         hCZXQNM5i0+MLenHQS4ic/7EJWi1sUmHevJnf1P727GQHklDmqRY0yKJjg+/XqlT/zyq
+         R6iCJNqDRIrmzI8jHcdG4JlJYmxzuNmw0k//LzPhHjGidTay7t44YZwiRc3bVcq0iVZq
+         ey2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHq7p0jOqudy/gPsTFCW9k/vTJ6SucK7sscbkN6nzGqIPstCOH6vdkEFM2fMwLFERq9Yrq344gCQu+hCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySaHnj6f9OeQNBq1FJhgwQtom7zuSW65rQ8/4UUatVz67csExi
+	/aVbOzpnTUFnqf11TQ81Dslv/lddJK3M5bSk9gCufkxk0/4UveJ4+qQUfMFyt1ImqimprH7qFuE
+	phaySNTaicjDhyKRScS3/S3L1lpv2izNp3NIN
+X-Gm-Gg: ASbGnctzaTZNi6wTmr0IsMa1a3n2U6EpbWKVDIXP6GR+xuq84nZuLvO1fI/LU6WqXfv
+	2xdDmGHWkYWkbCVyfBbfVRBfh/DKzulf1Dg0X95ugtx/IejUiQEZPVWpuAIuFEBQ9fS3Etw2ZLv
+	Cg9qYN2+vKYwhQ8sNZcWPCrfzDmEUeHu8xoA9P
+X-Google-Smtp-Source: AGHT+IHcheD4qjv4BV/CfpHVEIEjQTXsfvTUtOfeoZIL8CBuhYu/S1nosBYnS5BciMEwb5jNY7POkL8qlUxyXbG2sPs=
+X-Received: by 2002:a05:6000:144b:b0:385:f7d9:99f5 with SMTP id
+ ffacd0b85a97d-390eca63b71mr1942575f8f.51.1740733463613; Fri, 28 Feb 2025
+ 01:04:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Avermedia DVD EZMaker 7 video distortion on capture
-To: Randy K <linuxish@outlook.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- mchehab@kernel.org
-References: <99cc3844-54bd-44f5-88c5-9570fae709a7@xs4all.nl>
- <PH8PR12MB7112FFF11030DA5FB31A4DF7E6CC2@PH8PR12MB7112.namprd12.prod.outlook.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <PH8PR12MB7112FFF11030DA5FB31A4DF7E6CC2@PH8PR12MB7112.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
+ <CKneQ3Au7Fx5Uc7AM_RTi5BXRNnOUcrfnqI0fuWO5M7QIosWye4LhdM7bf9zqqzC5dCISrLHE9OgvVeVSla54Q==@protonmail.internalid>
+ <20250227-export-macro-v1-2-948775fc37aa@google.com> <871pvipjxe.fsf@kernel.org>
+In-Reply-To: <871pvipjxe.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 28 Feb 2025 10:04:11 +0100
+X-Gm-Features: AQ5f1JoJhUzxkrKlJTdjR0yIGZyICCE2ZXFseogh0kdUyKEZhUpa7ALlmGCwpTw
+Message-ID: <CAH5fLggu+-Fw-4Z02xS3qSdhJAcSyNXaMn+CQ0XkBvqvgeAbGQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] rust: add #[export] macro
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/02/2025 01:59, Randy K wrote:
-> I mailed the INF file to you Hans.
-> 
-> Please take a look to see if you find anything there that may be 
-> helpful, and of course, your help is very much appreciated.
-> 
-> 
-> Thanks again Hans,
-> 
->    Randy
-> 
-> 
+On Fri, Feb 28, 2025 at 9:20=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> "Alice Ryhl" <aliceryhl@google.com> writes:
+>
+> > This macro behaves like #[no_mangle], but also performs an assertion
+> > that the Rust function has the same signature as what is declared in th=
+e
+> > C header.
+> >
+> > If the signatures don't match, you will get errors that look like this:
+> >
+> > error[E0308]: `if` and `else` have incompatible types
+> >   --> <linux>/rust/kernel/print.rs:22:22
+> >    |
+> > 21 | #[export]
+> >    | --------- expected because of this
+> > 22 | unsafe extern "C" fn rust_fmt_argument(
+> >    |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
+> >    |
+> >    =3D note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *=
+mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
+> >               found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *co=
+nst c_void) -> *mut i8 {print::rust_fmt_argument}`
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/prelude.rs |  2 +-
+> >  rust/macros/export.rs  | 25 +++++++++++++++++++++++++
+> >  rust/macros/helpers.rs | 19 ++++++++++++++++++-
+> >  rust/macros/lib.rs     | 18 ++++++++++++++++++
+> >  rust/macros/quote.rs   | 21 +++++++++++++++++++--
+> >  5 files changed, 81 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> > index dde2e0649790..889102f5a81e 100644
+> > --- a/rust/kernel/prelude.rs
+> > +++ b/rust/kernel/prelude.rs
+> > @@ -17,7 +17,7 @@
+> >  pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, =
+VVec, Vec};
+> >
+> >  #[doc(no_inline)]
+> > -pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
+> > +pub use macros::{export, module, pin_data, pinned_drop, vtable, Zeroab=
+le};
+> >
+> >  pub use super::{build_assert, build_error};
+> >
+> > diff --git a/rust/macros/export.rs b/rust/macros/export.rs
+> > new file mode 100644
+> > index 000000000000..3398e1655124
+> > --- /dev/null
+> > +++ b/rust/macros/export.rs
+> > @@ -0,0 +1,25 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +use crate::helpers::function_name;
+> > +use proc_macro::TokenStream;
+> > +
+> > +pub(crate) fn export(_attr: TokenStream, ts: TokenStream) -> TokenStre=
+am {
+>
+> This function is documented in macros/lib.rs. Could you insert a
+> docstring with a link to the function that carries the docs?
 
-Can you try to load the driver with the 'card=9' module option? Based on the
-.inf file the correct GPIO to enable the AGC is GPIO 0x0c, while the currently
-selected card uses GPIO 0x1c. Card 9 (Hauppauge USB Live 2) is identical to
-card 5, except for using GPIO 0x0c. So I am hopeful that switching to card 9
-will fix this issue.
+These functions are not visible in the docs, and no other macro does that.
 
-Instead of using the card=9 option you can also try this patch:
+> Please describe how the function operates and what mechanics it uses to
+> achieve its goal in a implementation detail comment.
+>
+> > +    let Some(name) =3D function_name(ts.clone()) else {
+> > +        return "::core::compile_error!(\"The #[export] attribute must =
+be used on a function.\");"
+> > +            .parse::<TokenStream>()
+> > +            .unwrap();
+> > +    };
+> > +
+> > +    let signature_check =3D quote!(
+> > +        const _: () =3D {
+> > +            if true {
+> > +                ::kernel::bindings::#name
+> > +            } else {
+> > +                #name
+> > +            };
+> > +        };
+> > +    );
+> > +
+> > +    let no_mangle =3D "#[no_mangle]".parse::<TokenStream>().unwrap();
+> > +    TokenStream::from_iter([signature_check, no_mangle, ts])
+> > +}
+> > diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
+> > index 563dcd2b7ace..3e04f8ecfc74 100644
+> > --- a/rust/macros/helpers.rs
+> > +++ b/rust/macros/helpers.rs
+> > @@ -1,6 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >
+> > -use proc_macro::{token_stream, Group, TokenStream, TokenTree};
+> > +use proc_macro::{token_stream, Group, Ident, TokenStream, TokenTree};
+> >
+> >  pub(crate) fn try_ident(it: &mut token_stream::IntoIter) -> Option<Str=
+ing> {
+> >      if let Some(TokenTree::Ident(ident)) =3D it.next() {
+> > @@ -215,3 +215,20 @@ pub(crate) fn parse_generics(input: TokenStream) -=
+> (Generics, Vec<TokenTree>) {
+> >          rest,
+> >      )
+> >  }
+> > +
+> > +/// Given a function declaration, finds the name of the function.
+> > +pub(crate) fn function_name(input: TokenStream) -> Option<Ident> {
+>
+> It would be great with a few tests for this function.
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index 691f073892b3..c01384cce2ca 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1014,7 +1014,7 @@ struct usb_device_id cx231xx_id_table[] = {
- 	 .driver_info = CX231XX_BOARD_CNXT_RDU_250},
- 	/* AverMedia DVD EZMaker 7 */
- 	{USB_DEVICE(0x07ca, 0xc039),
--	 .driver_info = CX231XX_BOARD_CNXT_VIDEO_GRABBER},
-+	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USBLIVE2},
- 	{USB_DEVICE(0x2040, 0xb110),
- 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL},
- 	{USB_DEVICE(0x2040, 0xb111),
+I don't think we have a mechanism for tests in the macro crate?
 
+> > +    let mut input =3D input.into_iter();
+> > +    while let Some(token) =3D input.next() {
+> > +        match token {
+> > +            TokenTree::Ident(i) if i.to_string() =3D=3D "fn" =3D> {
+> > +                if let Some(TokenTree::Ident(i)) =3D input.next() {
+> > +                    return Some(i);
+> > +                }
+> > +                return None;
+> > +            }
+> > +            _ =3D> continue,
+> > +        }
+> > +    }
+> > +    None
+> > +}
+> > diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+> > index d61bc6a56425..3cbf7705c4c1 100644
+> > --- a/rust/macros/lib.rs
+> > +++ b/rust/macros/lib.rs
+> > @@ -9,6 +9,7 @@
+> >  #[macro_use]
+> >  mod quote;
+> >  mod concat_idents;
+> > +mod export;
+> >  mod helpers;
+> >  mod module;
+> >  mod paste;
+> > @@ -174,6 +175,23 @@ pub fn vtable(attr: TokenStream, ts: TokenStream) =
+-> TokenStream {
+> >      vtable::vtable(attr, ts)
+> >  }
+> >
+> > +/// Export a function so that C code can call it.
+> > +///
+> > +/// This macro has the following effect:
+> > +///
+> > +/// * Disables name mangling for this function.
+> > +/// * Verifies at compile-time that the function signature matches wha=
+t's in the header file.
+> > +///
+> > +/// This macro requires that the function is mentioned in a C header f=
+ile, and that the header file
+> > +/// is included in `rust/bindings/bindings_helper.h`.
+> > +///
+> > +/// This macro is *not* the same as the C macro `EXPORT_SYMBOL*`, sinc=
+e all Rust symbols are
+> > +/// currently automatically exported with `EXPORT_SYMBOL_GPL`.
+>
+> Perhaps add the following:
+>
+> This macro is useful when rust code is providing a function symbol whose
+> signature is dictated by a C header file.
 
-Regards,
+I do think this could use more info about when to use it. E.g., you
+don't use it if C calls it via a vtable, but only if C calls it via a
+declaration in a header file. I'll add more info.
 
-	Hans
+> > +#[proc_macro_attribute]
+> > +pub fn export(attr: TokenStream, ts: TokenStream) -> TokenStream {
+> > +    export::export(attr, ts)
+> > +}
+> > +
+> >  /// Concatenate two identifiers.
+> >  ///
+> >  /// This is useful in macros that need to declare or reference items w=
+ith names
+> > diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
+> > index 33a199e4f176..c18960a91082 100644
+> > --- a/rust/macros/quote.rs
+> > +++ b/rust/macros/quote.rs
+> > @@ -20,6 +20,12 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
+> >      }
+> >  }
+> >
+> > +impl ToTokens for proc_macro::Ident {
+> > +    fn to_tokens(&self, tokens: &mut TokenStream) {
+> > +        tokens.extend([TokenTree::from(self.clone())]);
+> > +    }
+> > +}
+> > +
+> >  impl ToTokens for TokenTree {
+> >      fn to_tokens(&self, tokens: &mut TokenStream) {
+> >          tokens.extend([self.clone()]);
+> > @@ -40,7 +46,7 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
+> >  /// `quote` crate but provides only just enough functionality needed b=
+y the current `macros` crate.
+> >  macro_rules! quote_spanned {
+> >      ($span:expr =3D> $($tt:tt)*) =3D> {{
+> > -        let mut tokens;
+> > +        let mut tokens: ::std::vec::Vec<::proc_macro::TokenTree>;
+> >          #[allow(clippy::vec_init_then_push)]
+> >          {
+> >              tokens =3D ::std::vec::Vec::new();
+> > @@ -65,7 +71,8 @@ macro_rules! quote_spanned {
+> >          quote_spanned!(@proc $v $span $($tt)*);
+> >      };
+> >      (@proc $v:ident $span:ident ( $($inner:tt)* ) $($tt:tt)*) =3D> {
+> > -        let mut tokens =3D ::std::vec::Vec::new();
+> > +        #[allow(unused_mut)]
+> > +        let mut tokens =3D ::std::vec::Vec::<::proc_macro::TokenTree>:=
+:new();
+> >          quote_spanned!(@proc tokens $span $($inner)*);
+> >          $v.push(::proc_macro::TokenTree::Group(::proc_macro::Group::ne=
+w(
+> >              ::proc_macro::Delimiter::Parenthesis,
+> > @@ -136,6 +143,16 @@ macro_rules! quote_spanned {
+> >          ));
+> >          quote_spanned!(@proc $v $span $($tt)*);
+> >      };
+> > +    (@proc $v:ident $span:ident =3D $($tt:tt)*) =3D> {
+> > +        $v.push(::proc_macro::TokenTree::Punct(
+> > +                ::proc_macro::Punct::new('=3D', ::proc_macro::Spacing:=
+:Alone)
+> > +        ));
+> > +        quote_spanned!(@proc $v $span $($tt)*);
+> > +    };
+> > +    (@proc $v:ident $span:ident _ $($tt:tt)*) =3D> {
+> > +        $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::ne=
+w("_", $span)));
+> > +        quote_spanned!(@proc $v $span $($tt)*);
+> > +    };
+> >      (@proc $v:ident $span:ident $id:ident $($tt:tt)*) =3D> {
+> >          $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::ne=
+w(stringify!($id), $span)));
+> >          quote_spanned!(@proc $v $span $($tt)*);
+>
+> The update to `impl ToTokens for TokenTree` should be split out in a
+> separate patch and should carry some explanation of the change.
+
+I think this case is borderline for whether it's necessary to split
+up, but okay.
+
+Alice
 
