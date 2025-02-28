@@ -1,180 +1,97 @@
-Return-Path: <linux-kernel+bounces-538629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E56A49B26
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F7BA49B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8705A173E3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4DE3189771C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9832E26E15C;
-	Fri, 28 Feb 2025 13:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169626D5AD;
+	Fri, 28 Feb 2025 14:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T34VSArC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J1MqU4Ty"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D40A25F984
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923D0276D02
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751184; cv=none; b=C8FT/l34pKyLnYmv2PtuJunUBZxhUoG16WhBQhJN1/8OVvu7is/fj7IH4whBQlnuVEB+mqurdLie/QpOplQnjhisPf9OwroNW/xd1aqIFZCUQnFCWLhfqs9oozpSicjtmtFbbIWi77RYkEpbuUlGkhVQK4P1+en+QKglLnjHThI=
+	t=1740751248; cv=none; b=mQgSs8z2TePFy2TupwSDtksMNEjJeqyXF86P17dnbcr7KIPP3RddFRv6P6P3Py/yMpVTdSFkxNk4RF3W8zX7o7/WtDKpJMSEipiXE1AYBsh1MDGAwEeAgzHJaF1hIAKGKNmZh8VHJY1Z86C8HhJfJbh7sFomhGHwLzro7vCLyi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751184; c=relaxed/simple;
-	bh=gQi7azzpb6sFlWFqFmgSyYccWwpY4yPV+UxGZi831Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ifJGwahgYCxeg7MNnG0DzK/PxsYnwRjYKtsfH/xkAj2e44Eik//3ASNPa5Qe5rnfAn99rGnBo5kYxfzn/yyl5KD3EzW0jDrMh/MXR4z4UW9F8WhcqbtWY1cDMYa55l2AXSMRNq+QuznfnbKHcDbsxlWl6sFNlpYaewLCX9ozaJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T34VSArC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740751182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/Q1ZAU4kQ55IqfSp/ud29AXWlJivmiID4vM66P5NubM=;
-	b=T34VSArCD3cfjGjZUFMHc1RYEpoioMnHFPb16OJ6/Lxs/08VITNeH7dQfw7E4y2LRgqY7k
-	w47xAWBlGhq56OVFprI+0wVMMPxAymcH1wRD/1lHVZ3icskaZMNcjIj/1v3P4aTHLEGp9v
-	wHesYgZx5eo3rOQfHwFYM+b6hmJB89w=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-312-EgVcf8fIO_24yhlHSes0oQ-1; Fri, 28 Feb 2025 08:59:41 -0500
-X-MC-Unique: EgVcf8fIO_24yhlHSes0oQ-1
-X-Mimecast-MFC-AGG-ID: EgVcf8fIO_24yhlHSes0oQ_1740751180
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-390ddb917abso1051656f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:59:41 -0800 (PST)
+	s=arc-20240116; t=1740751248; c=relaxed/simple;
+	bh=nLsYFA+9Uq+V/E+xYSh9uoNX7fENRkgSpLxOK3Ox7Hg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mb/8TIbakCVLXtM7JjdnF6GRT66La9OS2xPB6StZEbkafBPqhx68pQX8fQGJzllC3rgiJrpslQerCwarHVjtbRmSPl9XneM9uaKGm3sjzq342ZyCrj5oN+98rl49bEkDD+OKF7PJegxP+YE5Yfi72kslCmHoUB5LZ0imRnuJDZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J1MqU4Ty; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fea8e4a655so6270747a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740751247; x=1741356047; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DyKtF19JR26GWiT169e8Z3znTSlUX9yl7SG7SduZ39o=;
+        b=J1MqU4TyxbDhntM51vCssY8ewuGrhEL7hdKW55QihLbZwOkkDbZDhg1KPRbsqvbrcl
+         RJRsKU+/hD8uvmc5bslED4fDRY2Yl2NtaulFNVvmbDxOZSOV213yD4uGl5+Ar6M/Kdo1
+         UR6pS01xzwTpvWumnzfBBFLXfYVPX2gu+cjcm9tiKhvbHQLE5y+b8Qm5glNUqzp8YGzR
+         ZLOudi9lkCP0FXGZr309KfRsn20fWyN0Rs7/ZKGfhOsRneniOqc6Fm+hVuKT7q4T4BxL
+         xahw+8ErKjtFwVgSSxM17j8Ks3Hq6qBSYkzd9+KZ/doDNGJqkEYTJaggW+PDpZ9IRTDl
+         opyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740751180; x=1741355980;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/Q1ZAU4kQ55IqfSp/ud29AXWlJivmiID4vM66P5NubM=;
-        b=Xls5Xwfo6QaOSKmv46GINz7lTWH7oY0f66XW+KB0MYpWEVk6/maCTqh88rzFm/YioC
-         qFkBmkHEqpKG84HXe16Iht2SAqIfqdkrme+EZjPm4mBMp4WAVSdT+nkUGOhd1sCPuzFW
-         PPcKGSvRQX/Liuot4ODztqwNICKI5a6bm7Z2KEYyqJA0ma4ATRfVOq+4mxoguIg8J8Im
-         dcV5+TZbqa6pWuHjT9cA1PkuItsvu3Bk/huD4IBvTVnck6hGcaoqP0Qs6GSm2QPHmNly
-         oBlszaS5UX+pUaUbOFl79egwal05IQPo0lpLerhS3zQdLdpXMS6iK9LY7gP3yxCgiXAl
-         Udfw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4sU0eFGR8ottsonmQtmylRVP0XIKCs0RdsfGinwHr788DUvtFUIESEcfeIkfpxLEygDNDAnISMz+brzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYteF1BcFV7ohmK0Y3RtTjACSsEp4b7GOIobSdvhH5BwvvXEXM
-	VS3XAzy72x5AHpxmoiXcqaoo+yhK7LhO/8iczLYgpHp77C7yJW9d/FxhhYRea4tSmhAc18Mo8Hd
-	rczx1N6Ri9DOTsOJvVmN5BPlGy/Q7Med5TA1+IGzJdSM2lz7ZzAucimlzObbG13ylEpDFLZhZ
-X-Gm-Gg: ASbGncvXEeIZg9DpNAq7BBHj6D1FuWCm+8/jmaiizqSu9K/c//iFArO/xAVFdNMTY1O
-	pzXekvWJFqEtwMwzDdpPeSg4JyRKqKAtDcxG7f9sWZRcnwydiJEDO6h+OI50bIyX/Wo5BCe707i
-	eG6JeW19TsOMQqeN6P6O5U8xkDu56OtG5qX3RnC1Mf1ufurg4z8g9/0Jy1SbGlfP8wSWL52SBnJ
-	v50HiBorJmfqVLFr2uPP5tSfqx5ns27frUOyC/tapVrzkTageto+TGdJ7vyqN1HIZclgL3e6vzU
-	2vRx1E5qckYBKL7tja67CNnt
-X-Received: by 2002:a05:6000:1865:b0:390:e9e2:828e with SMTP id ffacd0b85a97d-390ec9becd8mr3046524f8f.32.1740751179862;
-        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHzr563yqm9Jjxqlka9w+fh/MBmSAL3tJTg/27ST+C8zc6EwxHyBNYOi2xZXA/ZSHV6lJy5uQ==
-X-Received: by 2002:a05:6000:1865:b0:390:e9e2:828e with SMTP id ffacd0b85a97d-390ec9becd8mr3046498f8f.32.1740751179414;
-        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
-Received: from ?IPV6:2a02:8070:4688:86a0::a40b? ([2a02:8070:4688:86a0::a40b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm5436729f8f.60.2025.02.28.05.59.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
-Message-ID: <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
-Date: Fri, 28 Feb 2025 14:59:37 +0100
+        d=1e100.net; s=20230601; t=1740751247; x=1741356047;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DyKtF19JR26GWiT169e8Z3znTSlUX9yl7SG7SduZ39o=;
+        b=Nkzg0UQCY3DYdMSgC9PpAA2t0a37qjp7cVe0eqCGKpnsKhNoo/16k0H/IT/ieAGR0C
+         1UXRpxHdvXRO8mEQVDh7lC5grWTjErxSv6OBEOSEyu1PxkivPxaOf223t0mCiD+1fn7m
+         RvF2Ne5S4qvjgkpYiHOuP2MpuTgcQZESfw10yH7E6fT1aSzt0EAoi2Fcz3bUqp48TorB
+         5bZSAEncpjHAlrfTX81v2XsFMSFUIXxvf5RzganTBffuD01Y1svtwVfHjHdCEkzr/A9b
+         ovuuf/hu+97cyGgKwq/oQYkHk7QAUB1+jneohOAioOqprMjnmNdZ7XKGxjvv1E8vxY/J
+         lhoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+snHkvm0Xu5XNBKcvFVM2OAFDcnV8kH+7R+sOPO4XXks50IPTnK44VQOTRoq0G0O5YGlcGS3CJLyDKgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjiW4ZRtm3IkDVbJAPChGZmdsEW7vbwP7vmh/XOReiToiEgCPB
+	xlaPMxWSPrgvOWENEJ3HooTCh1zdj8WM8SNyQw68xlPFquQwWN2rfMZCsNDDzAa5LDNnHOlIZn/
+	+aw==
+X-Google-Smtp-Source: AGHT+IEwF64TMkso0dQJEFb+wyg3aT7hGwiirxJOIpxtqZPpJrizTUlV9LHpZapcLsVpoJixPPP1NIe6hRk=
+X-Received: from pfoi25.prod.google.com ([2002:aa7:87d9:0:b0:730:7648:7a74])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3287:b0:1ee:8520:f979
+ with SMTP id adf61e73a8af0-1f2f4e4c806mr7311947637.36.1740751246899; Fri, 28
+ Feb 2025 06:00:46 -0800 (PST)
+Date: Fri, 28 Feb 2025 06:00:39 -0800
+In-Reply-To: <Z8GWHkpSt+zPf+SQ@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>,
- linux-mm@kvack.org
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
- <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
- <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250208105318.16861-1-yan.y.zhao@intel.com> <Z75y90KM_fE6H1cJ@google.com>
+ <Z76FxYfZlhDG/J3s@yzhao56-desk.sh.intel.com> <Z79rx0H1aByewj5X@google.com>
+ <Z7/8EOKH5Z1iShQB@yzhao56-desk.sh.intel.com> <Z8Dkmu_57EmWUdk5@google.com> <Z8GWHkpSt+zPf+SQ@yzhao56-desk.sh.intel.com>
+Message-ID: <Z8HBh1WR3CqcJkJQ@google.com>
+Subject: Re: [PATCH] KVM: selftests: Wait mprotect_ro_done before write to RO
+ in mmu_stress_test
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 28.02.25 06:17, Linus Torvalds wrote:
-> On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> I'd be fine with SKSM replacing KSM entirely. However, I don't
->> think we should try to re-implement the existing KSM userspace ABIs
->> over SKSM.
-> 
-> No, absolutely. The only point (for me) for your new synchronous one
-> would be if it replaced the kernel thread async scanning, which would
-> make the old user space interface basically pointless.
-> 
-> But I don't actually know who uses KSM right now. My reaction really
-> comes from a "it's not nice code in the kernel", not from any actual
-> knowledge of the users.
-> 
-> Maybe it works really well in some cloud VM environment, and we're
-> stuck with it forever.
+On Fri, Feb 28, 2025, Yan Zhao wrote:
+> On Thu, Feb 27, 2025 at 02:18:02PM -0800, Sean Christopherson wrote:
+> > On Thu, Feb 27, 2025, Yan Zhao wrote:
+> So, I think the right one is:
+> -	} while (!READ_ONCE(mprotect_ro_done));
+> +	} while (!READ_ONCE(mprotect_ro_done) || !READ_ONCE(all_vcpus_hit_ro_fault));
 
-Exactly that; and besides the VM use-case, lately people stated using it 
-in the context of interpreters (IIRC inside Meta) quite successfully as 
-well.
+/double facepalm
 
--- 
-Cheers,
-
-David / dhildenb
-
+You're 100% correct.  I did most of my testing with just the all_vcpus_hit_ro_fault
+check, and then botched things when adding back mprotect_ro_done.
 
