@@ -1,73 +1,58 @@
-Return-Path: <linux-kernel+bounces-538959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3F1A49F43
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22F9A49F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:49:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB9016A615
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CCD3B353C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27921275616;
-	Fri, 28 Feb 2025 16:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FBD27002E;
+	Fri, 28 Feb 2025 16:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JEwStXD6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+bqpXVd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1812755EF
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02CE13DDB9;
+	Fri, 28 Feb 2025 16:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761327; cv=none; b=qk7FHlB7s1xczGT4nyIDb+Z4+ow+QxQ7MBOqqDv+HD1GvJvXInApV6wMx8wzZGqnNtqitYYm0rRVCGGPJ1/vB2annspOkggsmwUnA3s6BTytwCXVVaNOTMNfEkJo/LOgZJCgp4vYZ1tXXbGh7HSGGSdSBS6Tp5q/alGi+TNzeIc=
+	t=1740761376; cv=none; b=FHIa8YsUR6LIo6WCCmwXs5NmCw1cYqc/RNITcKDOrA4O17uqTKmLmbHuC1Mcgv4nQcImNKMIwAkQAxdpGq5lE7tMqe1cT2YWr58nvzBp3YeTY/mjGKmirzKxICxqXv6kAzrb+gMFxn08Zgbi8IEPgFkcieHux1IbhNPTBA7PK2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761327; c=relaxed/simple;
-	bh=Xtzw6yHydLCJxybQmwK2jajJsVc2iw4v5yoRV44avWU=;
+	s=arc-20240116; t=1740761376; c=relaxed/simple;
+	bh=uXDHKUMafhl4hrnqLZc8P2H7ZD5Hipj2GCWZgjO0g6E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNG0xohga+HWAzM8JmU/yg2tBH96JxbwRWNO9SAuv3sg7D5gFuxr1oWgsTO8tmlItnf3tYr21bbkqAzO80HIFFCE6J4Ns9CYgIIx5gxg7mu85qAhZPIlWkyu53umfuWmUD3AjapXCOgECI7vPzkbin/+rFtMX0HJyhor39g5vLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JEwStXD6; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740761326; x=1772297326;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Xtzw6yHydLCJxybQmwK2jajJsVc2iw4v5yoRV44avWU=;
-  b=JEwStXD6PnLuc95GQzMpC8l8BJWKC3G/t4DIJDcDKWyoUWYn4+bFK//C
-   Yi3eZ1IPpHwaVLerYsqhq451QW9MInrcjaX21XR6zb4cy/F2VkFnYZTG/
-   wPIyifhB8ngyVYmUj32iGSlm2f4k82mXbnsEdTqTw59xfeq1kdtOxuPH3
-   7zDWw0b7aP1zlVVjA6UhaBsxRI+U0P5siX/s+dD9PDM/Klk2nTwlO2SLS
-   VUwwsjVko263PaZzd8yHp+BH9cCVmJcomsjXdsH/fnEthRlU12gdkVm1O
-   kilrEzBgZlHJRSzsNCnrCJVAzkPSwn2LmhL8Be5N2wvSTcqEhGILQH3Mf
-   A==;
-X-CSE-ConnectionGUID: qlE8gZW4SMmdGekYBQu82Q==
-X-CSE-MsgGUID: JCLfRFt9QYy/dzVUm6Zfkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41397822"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="41397822"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 08:48:46 -0800
-X-CSE-ConnectionGUID: Gt36qaJgRPGN5QDZkF6xIg==
-X-CSE-MsgGUID: rB+anWikT6i0jwzCENXPHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117248602"
-Received: from mderakhs-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.171])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 08:48:46 -0800
-Date: Fri, 28 Feb 2025 08:48:39 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/speculation: Simplify and make CALL_NOSPEC
- consistent
-Message-ID: <20250228164839.ftlvp7iywjenqhlw@desk>
-References: <20250227-call-nospec-v2-1-895a30dceaac@linux.intel.com>
- <Z8GDqxTNN0rLBbrX@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LH/5fxwNAOInTzg5Q6cDCX9eR7fX0uIfgFtP6rScH1L98dknV4VC59wphC8TxBaBk2GiuiIknZu44JFiVAKhNGzl4xqBeUyl+I8HVlsLXGzAWGkgkShkkoKgm8WNF4LEF2HUU9rfJc8w7GbN6B1Y/5jMJW88pn1mSfSzJFl/bbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+bqpXVd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579B4C4CEE5;
+	Fri, 28 Feb 2025 16:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740761375;
+	bh=uXDHKUMafhl4hrnqLZc8P2H7ZD5Hipj2GCWZgjO0g6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N+bqpXVdo7EdTEMTpx9nRfaqhDO7Yir6KS2FXXKnm4kp7aC0C78rruHzpU9xyPXTO
+	 PE/zsyLCGKInOk0UIguGYxG8gvAXXKbLcAsKbF699h70Zh28DTl9hgkDqMuOJvJO9X
+	 c28hqeWyixrRkTqctkV23WyfLt/n2MJNzjX61k/CD3hmN3vVur01oI0WFddU8fHNRJ
+	 5zR0Qa6zdofUQ1zWcHEo5SU98fKcjOL5bMVZ64xLIshydedy9O0w2ayBzfVbPADG6u
+	 Qx/9f4PLnZiYkut+zJoMBMzeKjLrpd8bkuKTm5FxuJYku4vnIOA8s8QnnTyd637ger
+	 N8NpwIZt5zKUA==
+Date: Fri, 28 Feb 2025 10:49:32 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Anjelique Melendez <quic_amelende@quicinc.com>, Kamal Wadhwa <quic_kamalw@quicinc.com>, 
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: rgb: leds-qcom-lpg: Fix pwm resolution max
+ for Hi-Res PWMs
+Message-ID: <knuma4xplv6ipwnqgfvzu3bw5tgbq3qzfasaybjwd7kzpf5ipu@74gqmk5xcr6a>
+References: <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-0-7af5ef5d220b@linaro.org>
+ <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-1-7af5ef5d220b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,28 +61,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8GDqxTNN0rLBbrX@gmail.com>
+In-Reply-To: <20250226-leds-qcom-lpg-fix-max-pwm-on-hi-res-v2-1-7af5ef5d220b@linaro.org>
 
-On Fri, Feb 28, 2025 at 10:36:43AM +0100, Ingo Molnar wrote:
+On Wed, Feb 26, 2025 at 03:58:54PM +0200, Abel Vesa wrote:
+> Ideally, the requested duty cycle should never translate to a PWM
+> value higher than the selected resolution (PWM size), but currently the
+> best matched period is never reported back to the PWM consumer, so the
+> consumer will still be using the requested period which is higher than
+> the best matched one. This will result in PWM consumer requesting
+> duty cycle values higher than the allowed PWM value.
 > 
-> * Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+> Currently, the consumer driver known to fail this way is the PWM backlight
+> (pwm_bl) and should be reworked in such a way that the best matched period
+> is used instead.
 > 
-> > CALL_NOSPEC macro is used to generate Spectre-v2 mitigation friendly
-> > indirect branches. At compile time the macro defaults to indirect branch,
-> > and at runtime those can be patched to thunk based mitigations.
-> >
-> > This approach is opposite of what is done for the rest of the kernel, where
-> > the compile time default is to replace indirect calls with retpoline thunk
-> > calls.
-> > 
-> > Make CALL_NOSPEC consistent with the rest of the kernel, default to
-> > retpoline thunk at compile time when CONFIG_MITIGATION_RETPOLINE is
-> > enabled.
-> > 
-> > Also add the missing __CS_PREFIX to the CALL_NOSPEC macro to make it
-> > compatible with -mindirect-branch-cs-prefix.
-> 
-> The __CS_PREFIX change should probably be a separate patch.
 
-Yes, I will split it into a separate patch.
+As you're rebasing the patch (per Anjelique's addition of 6-bit pwm) I
+think you should omit this paragraph. Whether we like it or not, this
+seems to be the way the PWM api is designed, and there's no need to
+promise a redesign of the API in this bug fix.
+
+> As for the current implementation of the duty cycle calculation, it is
+> capping the max value, fix that by using the resolution to figure out the
+> maximum allowed PWM value.
+> 
+> Cc: stable@vger.kernel.org    # 6.4
+> Fixes: b00d2ed37617 ("leds: rgb: leds-qcom-lpg: Add support for high resolution PWM")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/leds/rgb/leds-qcom-lpg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+> index f3c9ef2bfa572f9ee86c8b8aa37deb8231965490..146cd9b447787bf170310321e939022dfb176e9f 100644
+> --- a/drivers/leds/rgb/leds-qcom-lpg.c
+> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+> @@ -529,7 +529,7 @@ static void lpg_calc_duty(struct lpg_channel *chan, uint64_t duty)
+>  	unsigned int clk_rate;
+>  
+>  	if (chan->subtype == LPG_SUBTYPE_HI_RES_PWM) {
+> -		max = LPG_RESOLUTION_15BIT - 1;
+> +		max = BIT(lpg_pwm_resolution_hi_res[chan->pwm_resolution_sel]) - 1;
+>  		clk_rate = lpg_clk_rates_hi_res[chan->clk_sel];
+>  	} else {
+>  		max = LPG_RESOLUTION_9BIT - 1;
+> 
+> -- 
+> 2.34.1
+> 
 
