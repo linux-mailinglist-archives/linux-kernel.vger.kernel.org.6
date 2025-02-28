@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-538519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57006A4999C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:41:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0E4A4999B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416F03B2A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 852617AB0FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A6826B966;
-	Fri, 28 Feb 2025 12:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4D326E643;
+	Fri, 28 Feb 2025 12:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4AleCqwK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bzm1HW/W"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD48D26D5D3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0353D26E16C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746415; cv=none; b=cX7IgYzCQLnY08qUPLFRn3Our1te58l0WBXvNKrHlb88VnHbD0ljSnOaE3uFe6X8HSv3Lzx+HhOUtzjLpdzA8me+vJMj1SR1F8vFS/RJGXj9mjn3yV5hbOx2cs1ivcKN90UiIl2ULMAHpsOhqBI4LS2M9nnkeP9+cyR8NPJohjc=
+	t=1740746417; cv=none; b=WrBgkNwP/1rHp3kXFtqpoJK0G+Zg7hdpl034G+cKyiR+JwZGt+3DRywuTPePk+bTBwZDvMhGqZrB4C4c+/c8rCtmuyb1Ur6jK3ByXIgacXnKftpYn2Jl45UDJ0j5k15yY3RrJzqW/2uI1fyhA79EkMZTxUNaGMX1X2fvtNKKv5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746415; c=relaxed/simple;
-	bh=5WVJDDoOMWVTToGZqS6EzXIOd2Gz+/3HoUezV/SekI8=;
+	s=arc-20240116; t=1740746417; c=relaxed/simple;
+	bh=r7jgVsiiJzFKABmvsoHtJDihUf1aN5aOfGCQnlUXLR8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rM2HKx91Ge3Oaidt8+XpMNN39KGfGOgMfvPR2/NILPrG0l0jFxfKSy92tUYND589s01TdKbYBv4KLEv1SwI1FvispT/o5lwzro7bOi5xeI1izgnLI0AqRbmyV9YRNdGn0Ll5tb7G+uN3Ae4ogegqfaDFsw7BTqnCnEhAxCS5q7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4AleCqwK; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=h2DMh5V/VLtLh9Ld7WVA+09pwgrbwNWpaq2On+QrZOYq5B4w7AjEpjEmiNtW097piX6FcaODpv4wP7RuVRmNFks/9k+xii/O0urfDgOU0Hi1h9qfqOOiH+5ZoySw6DcmwF6nAmWlo/a9tZlieKyEcMvcvQMSbEOWydul1ICOOg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bzm1HW/W; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394040fea1so10904065e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:40:13 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4399a5afcb3so20122185e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:40:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740746412; x=1741351212; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740746414; x=1741351214; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3jVWPGGKqLCvuenpCukdw2BdIHWqKd1uEI4muVogSg=;
-        b=4AleCqwKB7Y7bB84UAMNwT1q9frjP5D35i4DJlBuE7R3gSrljybVEGj5smGpCeIwCq
-         dvnK90oWZTOZe35XcuYogmZoC8qTo2lZw4N5jgixb2E6rGTdpll65u9Z1Id1gznxzCbd
-         Io160W4IdZxqH+TH4J/rDptSJjTY18QDEJ3rbCV/O4iucLpP/FpyE5epyKH/vD51DYEF
-         x4P17MnjGwfztUcTCnEW+/ahE5AeT0ZhftkcM/ux4eF/2P4nT6rx10QcsCyCTzsyvd5K
-         TzgxyXr51h6SgykiR4sdcipw+dK57Nucko4izif2AtPShla/GijKJsgy3Qa8/W/1wpJb
-         Yxhw==
+        bh=G+5gHFsUk/zR3QwRdy/hSALMqHlURbjWQTJYZwElRBw=;
+        b=Bzm1HW/WaiU8mt0VN/aGZLpWWHwT6ZzHUwCAZzA9IhOjKIzWMUhjGl7aLfBJ0U9OtT
+         0fFlTIFaV/AR1aruvNuzKRwgQ1yMI/ah/WpbRMya5Q1ZooHG+SXz0FTteIQ3/JJOlHMM
+         wTDDYBRM1y5wqTnOMUZXuzVXAglFCDDIhksj+3VwBwSHwy/wnjIqyV9FLfxjkwMm4Dpz
+         Cld4/hNOi2hhVqkCy9Dq4sAH/N8+S6nRtcVzHMOcvOOzCeyjd8skKzRyHpExGuvI3Vto
+         pZELgW8lR8qPtNyyutNoC3YQaHQmR5keP1HexIbiGUKZWZ4RgM83Gsajt0NOPk3NnOPU
+         5bmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746412; x=1741351212;
+        d=1e100.net; s=20230601; t=1740746414; x=1741351214;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3jVWPGGKqLCvuenpCukdw2BdIHWqKd1uEI4muVogSg=;
-        b=VRYUKLsHrKKnv6Zyar7V2l7kK/bUpkOWoMiV3YRV7F41KEfP9m0d4OrQ0K15nK1NND
-         Ec/2lph2H7VCQl+K8yXXAdSiJCm8Uf40Lyo45H+fk20pJrNnmxYAngG5JIeDjPQ0BBs2
-         vIKl2qWKkucUijxQ542sQXsJdpDuCM9LiOdbNell/O8/GOIphr+OyG/xQ2O4pzmTr4iC
-         ccwKHC43gJK0wOcq1VNEEseXslSEyIPOB1Xop5nKRZxg7hSsAOzh+XSZtGY9Du/kv/jD
-         S5hlCNZr3BJjHdxSG1gQnW/UFFNOu5lsWUj5F3Ak01PeqWQnepNGPVeB1KJjuYDdd62i
-         6HHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVKlrjmmXQS5fGtC7mV+wedQMwJP+RHvk0maLSH81eB2buqQIZn0diEi5D/A+b+LbtGmMAl82NuSQEf+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoGDePeTRAcGackndZy2NWbxUSChXXqapzlSUwP5XPsYxEObvf
-	JXX3kzIw0dwqjTRCJd7sGbWEbL3ScLcAMYeqxHcT0tIjPqSRIvcDErYF7XY+LIthf4b1PZsMrdc
-	Sle/p99OQQXbICA==
-X-Google-Smtp-Source: AGHT+IGiO67Lsqlqu2zH4k6evB04PeH28TLpEEsqPRIVHE93/W85JAQLdE41QCH630255Ni8glO+u11+ewCTl8g=
-X-Received: from wmsd10.prod.google.com ([2002:a05:600c:3aca:b0:439:9541:1cf5])
+        bh=G+5gHFsUk/zR3QwRdy/hSALMqHlURbjWQTJYZwElRBw=;
+        b=dcHBGYzq1Qzw3nRGi+pBW2iVdZWbw/DJ6lUXCMzyRBSHm5nIPVPesqa35uYzG3xvRu
+         PNSdf012jRmLJKE8P8Nuv1LR9xxJHeYHKq9SOyl234HX13VE+sWAEQAoLNqPDNUnOCNh
+         SKjdXjukf4dGO7br+HCwVdX/zczS3FPSn+u6h0pmrQBCpjRtmxoKRj/B5xAkUTcuzIvH
+         AEyYF7l7zvZvEcdcn+51HUhtY9AvlAcvufPh6xtgCKeGJaOSJ6PeVAPMnxcC8CbiNFJo
+         K47jZGGAaw/Y7+SSmus12CQ0SFdjF2/bi1jjojRdhlPflAw8GWNotLgVk/jbxWqAc26K
+         +k5A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Wmulri4fuODb7NOsJMTggL9oy5gFwb3/SsVLFqTuMdm8ryYzdr+qOZfKjMhboxonZFjfXNYKjJLu/Ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydPuAE9s8dcDgHkv83UzROJVnaJwLIP8ggBHA0gM1SfJ77Os0H
+	mtYXDyS1ahqKdcXqEjmWh8y2NH0k6rWSUP1FX4qjnsLVfmr4XG3JQ474NQZGY1V7e30OcTPMfx1
+	bX/mLPb6iF3OK5A==
+X-Google-Smtp-Source: AGHT+IHbIphIQcEXilOr7Ntw6WaNAr5phX1XmvUcyGqxwt+X3Cd6rOdQsMiRHilLofVXJl6ZHWfjzIcpQ0HSDVU=
+X-Received: from wmcn18-n1.prod.google.com ([2002:a05:600c:c0d2:10b0:436:fdb2:fa5])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c9f:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-43ba6188e94mr26636865e9.0.1740746412195;
- Fri, 28 Feb 2025 04:40:12 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:39:32 +0000
+ 2002:a05:600c:3507:b0:439:3d5c:8c19 with SMTP id 5b1f17b1804b1-43ba674c911mr25914985e9.24.1740746414470;
+ Fri, 28 Feb 2025 04:40:14 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:39:33 +0000
 In-Reply-To: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6541; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=5WVJDDoOMWVTToGZqS6EzXIOd2Gz+/3HoUezV/SekI8=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwa6hUITYWJl/dPCaT3DkAHUJoqZpyVu6b2hRy
- /7EqajnYoyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8GuoQAKCRAEWL7uWMY5
- Rn6GD/9qthSYpENpEq926mPspcUYP5BVOc1VoMWtdTSk2Gbc6ytG9cgiVWr1qh6h0pis4Rlv6GE
- iCys28XgoAwtyPwUJyouL5vLN69zhjQ9A1bG5/7KdlWu+PQKpeQijeufFnt7VTAOceVE0soo3bm
- 3UDNjaK/RMuBntw1pkOn7e2gXLdrlsGQEiMGQZTDaoWzKOYjtC7aUCzyJ53a2K0L64Zluk2+5in
- akMOnB5ywQbnvsWaf9ax7ZC7JA2k2jJxUq32ECwTd7qu4uoHqFaY7Shxryvxp8GCCioblbZPgo9
- NNOqSrDW4++cffxUog3Zfq0j81QgGUkio4nl6k5kJwsjdW38+79IkwkM3HgS+Rz8SeMvDvquLFQ
- XvD6OLEgRXVbnBfURzwDufAhpHElGq10OMT1txFrxc7RgQgpES+HqNZ33JsoMir2ROLhMgn0SAA
- 2cAHKLJwlunm84rd7ZcPt9o+Glm/Ar0oUksZpbEOI5z+HNsgYF2jE/gg9fLzq+VkzWxKLnEzLGx
- ahs9Rlp4WfyhfriizEC0Dp1oHst/0VsBpOEJL7olDIl+WCAZ8hnlG6ABHeJ4B0sY12z31QFzICL
- 73Mg4qh8RVEd0TlTS+ZKthzzkWyJx+bKVkddrJeRGkruXRN6cXuYeZO+Wpo4FXMpQxXzItHZuFa Mav3YeJON9IyQuQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2057; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=r7jgVsiiJzFKABmvsoHtJDihUf1aN5aOfGCQnlUXLR8=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwa6iZBH4LXAf1My/2Bb4bMU2tOy+URmQaqy+I
+ 0YgolPCIOyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8GuogAKCRAEWL7uWMY5
+ RntsEAC4uGdMp+3gOxWauz1JDyiZzR/Atujxvqo0jIjAoxK2HzkZY9QWUrC7RzFUKejI9Kba7dK
+ 6I3yW8hwYThfVdITfDRhoegt/cJ4p/rBCktrQ/bDhIz0Gtg8Je8371Rg+tfgNJW15cdXD4eWKBf
+ UUPBZLV/CtFQyCyhALtXPzhVfZrWxTqko8eE5bZP7rDrNZcPCUqqdGmYDLf2uyuSUkeW/L139bb
+ DZqLXQ8oIjoGwuT6lvqTCQtZiBc9csEB0JKTywoJAO96QK8BmySRWsEBoBsBeoL5wUWrfk3Vd9b
+ SSMMVT8XIJqKL/DxtvnppRQWiXZbdRaTaNVmh4hFbeOKPp9W2mbYaLlkXBqX/rRrYoOBE1jYoD7
+ n6MAIRSn4PoKhXOjfHr2ZqZFlEqrVpbZ33bzuIFnXnA0kzjTyO5QCwUIXghkuHdS6FjHa+yaAtV
+ M2OIf2DAn0roOnGvIAu8HKCa/RY2fc7oItuhyF727kP4bWhnRUpm+0vi4O5Sdveq0W77yQgQS2B
+ hqWpZba4ARnFFAT0uSS+CpMVdFPYwqhpREFLcw7qXmfVWTUYcjEMYxnrHoHf7qqtOhKE4Vc3QSS
+ aCIyd8EwbEPwOybRVuVFiJMrTqtMEI+50Fm7LZ5wFZLOOevDJSvKQbuJlzgVE+zHoTuJxhz0ijN QgT9cliZsSNsMag==
 X-Mailer: b4 0.14.1
-Message-ID: <20250228-export-macro-v2-3-569cc7e8926c@google.com>
-Subject: [PATCH v2 3/5] rust: add #[export] macro
+Message-ID: <20250228-export-macro-v2-4-569cc7e8926c@google.com>
+Subject: [PATCH v2 4/5] print: use new #[export] macro for rust_fmt_argument
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>
 Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -104,172 +104,66 @@ Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
 	dri-devel@lists.freedesktop.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Rust has two different tools for generating function declarations to
-call across the FFI boundary:
+This moves the rust_fmt_argument function over to use the new #[export]
+macro, which will verify at compile-time that the function signature
+matches what is in the header file.
 
-* bindgen. Generates Rust declarations from a C header.
-* cbindgen. Generates C headers from Rust declarations.
-
-In the kernel, we only use bindgen. This is because cbindgen assumes a
-cargo-based buildsystem, so it is not compatible with the kernel's build
-system. This means that when C code calls a Rust function by name, its
-signature must be duplicated in both Rust code and a C header, and the
-signature needs to be kept in sync manually.
-
-To eliminate this manual checking, introduce a new macro that verifies
-at compile time that the two function declarations use the same
-signature. The idea is to run the C declaration through bindgen, and
-then have rustc verify that the function pointers have the same type.
-
-The signature must still be written twice, but at least you can no
-longer get it wrong. If the signatures don't match, you will get errors
-that look like this:
-
-error[E0308]: `if` and `else` have incompatible types
-  --> <linux>/rust/kernel/print.rs:22:22
-   |
-21 | #[export]
-   | --------- expected because of this
-22 | unsafe extern "C" fn rust_fmt_argument(
-   |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
-   |
-   = note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
-              found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *const c_void) -> *mut i8 {print::rust_fmt_argument}`
-
-It is unfortunate that the error message starts out by saying "`if` and
-`else` have incompatible types", but I believe the rest of the error
-message is reasonably clear and not too confusing.
-
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/prelude.rs |  2 +-
- rust/macros/export.rs  | 28 ++++++++++++++++++++++++++++
- rust/macros/helpers.rs | 19 ++++++++++++++++++-
- rust/macros/lib.rs     | 24 ++++++++++++++++++++++++
- 4 files changed, 71 insertions(+), 2 deletions(-)
+I'm not sure which header file to put this in. Any advice?
+---
+ include/linux/sprintf.h | 3 +++
+ lib/vsprintf.c          | 3 ---
+ rust/kernel/print.rs    | 3 ++-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index dde2e0649790..889102f5a81e 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -17,7 +17,7 @@
- pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, VVec, Vec};
+diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
+index 33dcbec71925..029ad83efd74 100644
+--- a/include/linux/sprintf.h
++++ b/include/linux/sprintf.h
+@@ -24,4 +24,7 @@ __scanf(2, 0) int vsscanf(const char *, const char *, va_list);
+ extern bool no_hash_pointers;
+ int no_hash_pointers_enable(char *str);
  
- #[doc(no_inline)]
--pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
-+pub use macros::{export, module, pin_data, pinned_drop, vtable, Zeroable};
- 
- pub use super::{build_assert, build_error};
- 
-diff --git a/rust/macros/export.rs b/rust/macros/export.rs
-new file mode 100644
-index 000000000000..c5ec75f2b07f
---- /dev/null
-+++ b/rust/macros/export.rs
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
++/* Used for Rust formatting ('%pA'). */
++char *rust_fmt_argument(char *buf, char *end, const void *ptr);
 +
-+use crate::helpers::function_name;
-+use proc_macro::TokenStream;
-+
-+/// Please see [`crate::export`] for documentation.
-+pub(crate) fn export(_attr: TokenStream, ts: TokenStream) -> TokenStream {
-+    let Some(name) = function_name(ts.clone()) else {
-+        return "::core::compile_error!(\"The #[export] attribute must be used on a function.\");"
-+            .parse::<TokenStream>()
-+            .unwrap();
-+    };
-+
-+    // This verifies that the function has the same signature as the declaration generated by
-+    // bindgen. It makes use of the fact that all branches of an if/else must have the same type.
-+    let signature_check = quote!(
-+        const _: () = {
-+            if true {
-+                ::kernel::bindings::#name
-+            } else {
-+                #name
-+            };
-+        };
-+    );
-+
-+    let no_mangle = "#[no_mangle]".parse::<TokenStream>().unwrap();
-+    TokenStream::from_iter([signature_check, no_mangle, ts])
-+}
-diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
-index 563dcd2b7ace..3e04f8ecfc74 100644
---- a/rust/macros/helpers.rs
-+++ b/rust/macros/helpers.rs
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--use proc_macro::{token_stream, Group, TokenStream, TokenTree};
-+use proc_macro::{token_stream, Group, Ident, TokenStream, TokenTree};
- 
- pub(crate) fn try_ident(it: &mut token_stream::IntoIter) -> Option<String> {
-     if let Some(TokenTree::Ident(ident)) = it.next() {
-@@ -215,3 +215,20 @@ pub(crate) fn parse_generics(input: TokenStream) -> (Generics, Vec<TokenTree>) {
-         rest,
-     )
+ #endif	/* _LINUX_KERNEL_SPRINTF_H */
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index a8ac4c4fffcf..1da61c3e011f 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -2284,9 +2284,6 @@ int __init no_hash_pointers_enable(char *str)
  }
-+
-+/// Given a function declaration, finds the name of the function.
-+pub(crate) fn function_name(input: TokenStream) -> Option<Ident> {
-+    let mut input = input.into_iter();
-+    while let Some(token) = input.next() {
-+        match token {
-+            TokenTree::Ident(i) if i.to_string() == "fn" => {
-+                if let Some(TokenTree::Ident(i)) = input.next() {
-+                    return Some(i);
-+                }
-+                return None;
-+            }
-+            _ => continue,
-+        }
-+    }
-+    None
-+}
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index d61bc6a56425..fbb2860e991f 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -9,6 +9,7 @@
- #[macro_use]
- mod quote;
- mod concat_idents;
-+mod export;
- mod helpers;
- mod module;
- mod paste;
-@@ -174,6 +175,29 @@ pub fn vtable(attr: TokenStream, ts: TokenStream) -> TokenStream {
-     vtable::vtable(attr, ts)
- }
+ early_param("no_hash_pointers", no_hash_pointers_enable);
  
-+/// Export a function so that C code can call it via a header file.
-+///
-+/// Functions exported using this macro can be called from C code using the declaration in the
-+/// appropriate header file. It should only be used in cases where C calls the function through a
-+/// header file; cases where C calls into Rust via a function pointer in a vtable (such as
-+/// `file_operations`) should not use this macro.
-+///
-+/// This macro has the following effect:
-+///
-+/// * Disables name mangling for this function.
-+/// * Verifies at compile-time that the function signature matches the declaration in the header
-+///   file.
-+///
-+/// You must declare the signature of the Rust function in a header file that is included by
-+/// `rust/bindings/bindings_helper.h`.
-+///
-+/// This macro is *not* the same as the C macros `EXPORT_SYMBOL_*`, since all Rust symbols are
-+/// currently automatically exported with `EXPORT_SYMBOL_GPL`.
-+#[proc_macro_attribute]
-+pub fn export(attr: TokenStream, ts: TokenStream) -> TokenStream {
-+    export::export(attr, ts)
-+}
-+
- /// Concatenate two identifiers.
- ///
- /// This is useful in macros that need to declare or reference items with names
+-/* Used for Rust formatting ('%pA'). */
+-char *rust_fmt_argument(char *buf, char *end, const void *ptr);
+-
+ /*
+  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
+  * by an extra set of alphanumeric characters that are extended format
+diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
+index 61ee36c5e5f5..cf4714242e14 100644
+--- a/rust/kernel/print.rs
++++ b/rust/kernel/print.rs
+@@ -8,13 +8,14 @@
+ 
+ use crate::{
+     ffi::{c_char, c_void},
++    prelude::*,
+     str::RawFormatter,
+ };
+ use core::fmt;
+ 
+ // Called from `vsprintf` with format specifier `%pA`.
+ #[expect(clippy::missing_safety_doc)]
+-#[no_mangle]
++#[export]
+ unsafe extern "C" fn rust_fmt_argument(
+     buf: *mut c_char,
+     end: *mut c_char,
 
 -- 
 2.48.1.711.g2feabab25a-goog
