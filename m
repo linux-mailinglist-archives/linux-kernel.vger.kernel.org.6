@@ -1,160 +1,201 @@
-Return-Path: <linux-kernel+bounces-538575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148C0A49A64
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDDEA49A69
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13108173959
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E4A173FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8E926B971;
-	Fri, 28 Feb 2025 13:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5454C2580D7;
+	Fri, 28 Feb 2025 13:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="taPak6TA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bwen6s49";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="taPak6TA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bwen6s49"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJGgvPX1"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546001D555
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981126BDA3;
+	Fri, 28 Feb 2025 13:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740748878; cv=none; b=EUo8QropgM9vd2awwAh/+eopnnSxuBmKVasEpzsqcxeXn7WTxCx3q4NZETSuErtLqW09iaCk6YTZuah8rGniqyagyw2V48pTif/AO7zeukdG2SUGjGyOkoAP8ZKR3qmAVHo5d3Tqa5tjem+B3NTtRFfiByZ4wuuMesMgkGGwiII=
+	t=1740748935; cv=none; b=FpB5DfDARfkG8svp+ESyGzeQkrUgbyLWxM4sx99uZwaSZ/+B0n9tDoyXcRFTByJ/YIoE/SGGu7Thcshfm0aAPwMUjAOkvgYfEpJ6hcfwwJDkbxE/+4rZn1uFOIq8hmUeHW0w2cAHB4Bo2MNoGpOpr/KbnLo1seC8RSbuOKC28RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740748878; c=relaxed/simple;
-	bh=O/ALDNWIKnkbqJSvabrN0JBWkia3q7ZZdMnuoIu1yRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9KAVDvECRxI9egfQsYX1L4ImhmzTWFyxHNbY8Ayh7lZVIUdzLe/bRh/vM/3EUtkI2GKDH01R1C6cI/Zkg1sg3Ju47oVaRyFNb05XLcgi3snMtIykB8EmTrSx2JAQBVCUK8vqy/Vx28q5tvzBM4qqzUCBqBEbAz3VLUlZXv6WDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=taPak6TA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bwen6s49; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=taPak6TA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bwen6s49; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6B25D21166;
-	Fri, 28 Feb 2025 13:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740748873;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yO8Vwa49DPqVDuGglnqVAaTVZKpO++hm+tq543hr6RQ=;
-	b=taPak6TAa6a6ZF8bNLI3yNLZOIE1XVKoWTdXPJrwSPe96MEDqZ4zYXlqZhD0Q33MBq0GeY
-	BttgSDQ7NVYVr0kXfFuSNsxkI1GoxArErKtZRQOGLLkzxBfzeDo1R9JTPC/hMrlfRY6jjW
-	7nO42QudkY+/T5+8H9mkpiZfApN/0xM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740748873;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yO8Vwa49DPqVDuGglnqVAaTVZKpO++hm+tq543hr6RQ=;
-	b=bwen6s49ykC7piav+2UEs5LBYx+ZYVJ69tSdKS3a4P3FgYCdArql9E+jxh+vGNvU931trE
-	UB1vPLc6UjHhBNCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740748873;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yO8Vwa49DPqVDuGglnqVAaTVZKpO++hm+tq543hr6RQ=;
-	b=taPak6TAa6a6ZF8bNLI3yNLZOIE1XVKoWTdXPJrwSPe96MEDqZ4zYXlqZhD0Q33MBq0GeY
-	BttgSDQ7NVYVr0kXfFuSNsxkI1GoxArErKtZRQOGLLkzxBfzeDo1R9JTPC/hMrlfRY6jjW
-	7nO42QudkY+/T5+8H9mkpiZfApN/0xM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740748873;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yO8Vwa49DPqVDuGglnqVAaTVZKpO++hm+tq543hr6RQ=;
-	b=bwen6s49ykC7piav+2UEs5LBYx+ZYVJ69tSdKS3a4P3FgYCdArql9E+jxh+vGNvU931trE
-	UB1vPLc6UjHhBNCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A61C1344A;
-	Fri, 28 Feb 2025 13:21:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id slCgCUm4wWeUHgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 28 Feb 2025 13:21:13 +0000
-Date: Fri, 28 Feb 2025 14:21:11 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Nitin Gupta <nitingupta910@gmail.com>,
-	Richard Purdie <rpurdie@openedhand.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
-	Dave Rodgman <dave.rodgman@arm.com>
-Subject: Re: [v3 PATCH] crypto: lzo - Fix compression buffer overrun
-Message-ID: <20250228132111.GG5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
- <20250226130037.GS5777@twin.jikos.cz>
- <Z7_D4i5yifwdXjwZ@gondor.apana.org.au>
- <Z7_JOAgi-Ej3CCic@gondor.apana.org.au>
- <Z8Aqrrm2o_0SXciH@gondor.apana.org.au>
+	s=arc-20240116; t=1740748935; c=relaxed/simple;
+	bh=Kz7tQ7V+0+WAQoonVHNEEJH3MiDZITaZpOzO7CDVJMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VKj1gkpAUSUb0H+o1Or+dXGALR71oB6OUTSsDAtkpxtGUElQNfbZW9vX1nJv2C2qiYUo8kAwP3w388EUTkwimZ2b070WOSTcA8SishzD0dHy9AekZUrAE2YYzwmmPpOfvQ125tufJwiI/ZeK02UWey4OxjI4sYU5YuvsE03/2vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJGgvPX1; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so743795f8f.1;
+        Fri, 28 Feb 2025 05:22:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740748932; x=1741353732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aLCskdkyDjKVzUbxWO5nRc2aTnNTpaWoydhtK7t4lAA=;
+        b=dJGgvPX1hkaccIYPc/qRD6g2Rdg8d/IUhokspQrQKp6ZRzs6wEd8fTk+GEgz14zWu1
+         Mt4YXejbw4rETgkKuj7c32F3+wlAwW+emaKo7po9Zydo7WJGI97hwEUEC3SAKgJ1vE2f
+         HmsuCTUQa/twYZw/Dzj0D9FJkHBCUAEcGeHwhDLcZDaLMJ/XkotIcww8AQ2u+USiaCE/
+         DR0bAjE9b0acRAofFAsdKJwAdjQMKwVoyXkAX9iyywAWcGFEq4fHwWqG2KZ/yO8cAzjO
+         t0CqIygYQ5/x/q9GPkd3BwrDahgewJJ+2VTFO1Xb6x/g02fONbiqcAXC0wtwuZAx7WDb
+         ijug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740748932; x=1741353732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aLCskdkyDjKVzUbxWO5nRc2aTnNTpaWoydhtK7t4lAA=;
+        b=FXufwooiPBwNjQWBwrW9SQQl5Ham/gRiMDxB6TwXVUQ6ZA5yO21mksVNUz4MGY24b6
+         oHwpJa02EfJQB2RBembQE0BtYceobm2aNaF7a7oF6CC4Li2vfPMfmb27jZi61DsEgGuh
+         QBBCudJ2piUl4GYm6st/tvx3uSYx0RNM6o5JGwrI2zAiHGbnvVoLHacLDKFse4WP+mFp
+         bEloUmM/PPun1cihz4Vt5lXK2w7iNQkOh9MtIrZfaorZgNYK6kTxJMAFOy/3WgRSqVqZ
+         9StzhajFKR2yrpK4szsE++uGpnkAEdFYVqtERIAZCj43zuhcj1Th9nUy46Kp4g0QAgLB
+         u5/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW39YshyP/9q0ijekT5BcMS0UZWWiONEG2x3FfNMKdAYIRoMp9Ezqehvlj+/r+Ao/YJXUakP6fK6Mxx@vger.kernel.org, AJvYcCXQgwSOLvsEa0lsJjQjKSwCvBkHz8pZpjl9z2aJ0/c597I1eE5nVRTOlsS1zKcCS7ZPK3QuGnc886a96dKy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4y1jSdGjM8CfdCnnQvoBMRrByT4O1gwrJEn4VHm1iES+zxG4C
+	ljCHrkzAWXgI3V6cHbBAHz+24rOklxa860HmMQmMnYQO2uumEj3yNJJFKIGKUPxNsm9G323hTri
+	Akwmte5XMpXjaQbNF3ry2yLAZ9Tw=
+X-Gm-Gg: ASbGncusqYr8nIKVfgbp3eqncq5R94oQawdi2Os7OpMZwJFuMvhVz8dSFM4pDICm9XD
+	tbLc/QHB0AD9BG4mUGRxYaMva7P7pYbzqLf+pJqqXKC3+LQd9Ju+YWw3ohain0u7uOEeGPRxsLH
+	lzPGVLXDRA
+X-Google-Smtp-Source: AGHT+IEWGseohuDp7KhNAY0LdcYgEQH/Rbd9LdHbvgH4CFd0eo6h8IeKxvf7p55tqbikbGe86i4k9z8m3nzpWQsmL8w=
+X-Received: by 2002:a05:6000:401f:b0:38d:d664:67d8 with SMTP id
+ ffacd0b85a97d-390ec7c6738mr3084072f8f.11.1740748931828; Fri, 28 Feb 2025
+ 05:22:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8Aqrrm2o_0SXciH@gondor.apana.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,openedhand.com,linux-foundation.org,chromium.org,oberhumer.com,arm.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
+References: <20250219082817.56339-1-clamor95@gmail.com> <20250219082817.56339-3-clamor95@gmail.com>
+ <99ee61dc-abd5-45d9-8d26-a8f0ae94c8eb@arm.com>
+In-Reply-To: <99ee61dc-abd5-45d9-8d26-a8f0ae94c8eb@arm.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 28 Feb 2025 15:22:00 +0200
+X-Gm-Features: AQ5f1JqiEG1tJRPj2HmNZIqvEspltfMFIDE6rFA4YikSqMAQilmFeeVoGxd-Kho
+Message-ID: <CAPVz0n0uWEY+-evrfpci9-1c3icGyHfTHMbXi=P9Sv=Uh3AUaA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] thermal: thermal-generic-adc: add temperature
+ sensor channel
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 05:04:46PM +0800, Herbert Xu wrote:
-> Unlike the decompression code, the compression code in LZO never
-> checked for output overruns.  It instead assumes that the caller
-> always provides enough buffer space, disregarding the buffer length
-> provided by the caller.
-> 
-> Add a safe compression interface that checks for the end of buffer
-> before each write.  Use the safe interface in crypto/lzo.
-> 
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+=D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 15:11 Luka=
+sz Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hi Svyatoslav,
+>
+> On 2/19/25 08:28, Svyatoslav Ryhel wrote:
+> > Add IIO sensor channel along with existing thermal sensor cell. This
+> > would benefit devices that use adc sensors to detect temperature and
+> > need a custom conversion table.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >   drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++=
+-
+> >   1 file changed, 53 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/th=
+ermal-generic-adc.c
+> > index ee3d0aa31406..a8f3b965b39b 100644
+> > --- a/drivers/thermal/thermal-generic-adc.c
+> > +++ b/drivers/thermal/thermal-generic-adc.c
+> > @@ -7,6 +7,7 @@
+> >    * Author: Laxman Dewangan <ldewangan@nvidia.com>
+> >    */
+> >   #include <linux/iio/consumer.h>
+> > +#include <linux/iio/iio.h>
+> >   #include <linux/kernel.h>
+> >   #include <linux/module.h>
+> >   #include <linux/platform_device.h>
+> > @@ -73,6 +74,57 @@ static const struct thermal_zone_device_ops gadc_the=
+rmal_ops =3D {
+> >       .get_temp =3D gadc_thermal_get_temp,
+> >   };
+> >
+> > +static const struct iio_chan_spec gadc_thermal_iio_channel[] =3D {
+> > +     {
+> > +             .type =3D IIO_TEMP,
+> > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
+> > +     }
+> > +};
+> > +
+> > +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
+> > +                              struct iio_chan_spec const *chan,
+> > +                              int *temp, int *val2, long mask)
+> > +{
+> > +     struct gadc_thermal_info *gtinfo =3D iio_priv(indio_dev);
+> > +     int ret;
+> > +
+> > +     if (mask !=3D IIO_CHAN_INFO_PROCESSED)
+> > +             return -EINVAL;
+> > +
+> > +     ret =3D gadc_thermal_get_temp(gtinfo->tz_dev, temp);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     *temp /=3D 1000;
+> > +
+> > +     return IIO_VAL_INT;
+> > +}
+> > +
+> > +static const struct iio_info gadc_thermal_iio_info =3D {
+> > +     .read_raw =3D gadc_thermal_read_raw,
+> > +};
+> > +
+> > +static int gadc_iio_register(struct device *dev, struct gadc_thermal_i=
+nfo *gti)
+> > +{
+> > +     struct gadc_thermal_info *gtinfo;
+> > +     struct iio_dev *indio_dev;
+> > +
+> > +     indio_dev =3D devm_iio_device_alloc(dev, sizeof(struct gadc_therm=
+al_info));
+> > +     if (!indio_dev)
+> > +             return -ENOMEM;
+> > +
+> > +     gtinfo =3D iio_priv(indio_dev);
+> > +     memcpy(gtinfo, gti, sizeof(struct gadc_thermal_info));
+> > +
+> > +     indio_dev->name =3D dev_name(dev);
+> > +     indio_dev->info =3D &gadc_thermal_iio_info;
+> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
+> > +     indio_dev->channels =3D gadc_thermal_iio_channel;
+> > +     indio_dev->num_channels =3D ARRAY_SIZE(gadc_thermal_iio_channel);
+> > +
+> > +     return devm_iio_device_register(dev, indio_dev);
+>
+> I don't get the idea why we need iio device, while we already have the
+> hwmon.
+>
 
-Thanks.
+Idea behind this is to be able to convert adc iio channel into temp
+iio channel without introducing a new sensor which will duplicate
+behavior of existing one (by this I mean conversion table use). Not
+all devices can or have to use hwmon and some may require iio channel
+hooked up.
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Real life example. I own a device (LG P985) which has a fuel gauge
+that does not support battery thermal readings. Vendor provided a
+dedicated adc sensor and one of its channels is used as thermal sensor
+with device specific conversion table. Fuel gauge on the other hand
+supports linking in a dedicated temp iio channel to get thermal
+readings.
+
+> Could you explain this a bit more, the cover letter also misses
+> such justification and details.
+>
+> Regards,
+> Lukasz
 
