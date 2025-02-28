@@ -1,360 +1,126 @@
-Return-Path: <linux-kernel+bounces-539206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1A6A4A200
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23238A4A1DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52CC41769CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:46:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3164817669D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFD8280A2A;
-	Fri, 28 Feb 2025 18:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737FA27CCF2;
+	Fri, 28 Feb 2025 18:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ho1RWSZJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A/9ZS4mn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4B827CCDD;
-	Fri, 28 Feb 2025 18:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6E227CCC3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768252; cv=none; b=qYk/PnKxGuI5LqxNVTg++WNc/MPqf921nIIb12QS7g5QiuYP/OBc7b4fGMswGo41Y7w0FJaF9ewtDH8z6MFh1nWSDkZQYQPTXjFfpOlIaPNQ6jWXAIFJnhQSL9rWnJy7zjHp/5qpeDAntYsS7awIHdHtM7fJwuebnMy1wySbgIg=
+	t=1740768137; cv=none; b=JGMAjtwQTAzSo/p6NBcsUdYXWgZF5mrPtgbc1xlAkD+4DpM7WclzlCnIZN0bGmsQzEX8TUaD7dZ8GsNgy6V4uJ8lXzEyWzvyibdcpkRR9hcKLBUjeq9m5sOvyHTAfv2k8aCNL0uDY+QqDqsIdsHG+Tv71YrxsfwQ50Dv5kI0+W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768252; c=relaxed/simple;
-	bh=6woCmIKt6sosS6lLJYoC6BFMuDbGAagCG2GXYqr8gbY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m5J7CiIier1hWtvUe6+pzODNV0UW7kd8y0qV1oMSNR2ueji3Ioz0pZQrUrtKaC6q6AEJ51YwXbWnsTwB5hFS89slQAySl689r7d376Jgta4i4dsjQrv/Mp86wpM8iWZNvl4aZ57rRnxFPEFX6igCbf4Sbovc/0n7hfU6nnKzQF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ho1RWSZJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXHxq030921;
-	Fri, 28 Feb 2025 18:44:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gielG9eyp+tONymkeAzA2ygN+DjJb4+Sou4R+DPdEcI=; b=Ho1RWSZJNMvIYlmf
-	fPk9D5zkAwmaJlNTwY5p3evuLwrM5O6exzXEnoFdRso4L86dn1NuTSK08P8jn/pW
-	+jyi/fyYQwb8YPN0LNGDMBe5rir8hIQd3ULzBQ0ktsudZU9ZNLqgYR88/AdfCey2
-	RSQz+hAojdqCq9+m/CRyeM4qR0Nq47Y70sz0Wh8SZdt+Z8Oo9fgenE4hPM1MDDSf
-	WPJTRrd3Qdhx/R9PCqYuLIfqzpA/0xEtVVIHwb/i5yKJvttQXeCEJShcsh9KVQ5P
-	MvAmI8QqeYiZTsIqyk9P8PTZc5MsZR2TRqb8lwKDWB2EUI0uT52hIkVjjqTns3Mr
-	jckS2Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmt9f2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 18:44:01 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SIi0dK011233
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 18:44:00 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Feb 2025 10:43:57 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sowmiya Sree
- Elavalagan" <quic_ssreeela@quicinc.com>,
-        Raj Kumar Bhagat
-	<quic_rajkbhag@quicinc.com>
-Subject: [PATCH v8 09/13] wifi: ath12k: Power up root PD
-Date: Sat, 1 Mar 2025 00:12:10 +0530
-Message-ID: <20250228184214.337119-10-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
-References: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1740768137; c=relaxed/simple;
+	bh=FFhMlv9xcgDCpW0iUrfDsNOA+dAnIUA8kxg7pEuGjyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MydIyycRI1OsS/JGDL5mG67N6YRL8Amj5icCiCjhKgRFLCofowMsCGatvH3zkIdwbtX6aey5u8Qgq67tm5KRodwYo/MOz7GdCwpkTlJU8q4/2SvhyP+a7UjRBHkuy8qjkL4hCSRShubY7QdvTimbAiVFsnqlsQ+kUiVZ4RsAAVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A/9ZS4mn; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740768136; x=1772304136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FFhMlv9xcgDCpW0iUrfDsNOA+dAnIUA8kxg7pEuGjyU=;
+  b=A/9ZS4mnOho5Bocg6Ta7T0aLPLx+3LOiyWKbeO/rNEc7pgZBg2t3ZNwr
+   48njzf3Y7NiIN1f/7jjiOM6QjaUB3x/nB8CB9FS2kkeiGLKDBAHbbEy92
+   wFt5m8HsXs4Bgn5gjsIvpOO4WBrGFE/3/xHT6R6PfNY/txJLkO+CPsrzF
+   jH/pz30qC8Kmj8E8RPA4VVudp53zfoVvilQRKLT7E0tJqAumT4xPpRBts
+   15PjEc6QT0Jb0dWWV5e70jXxZYNmBHgbcwvTKAo3CR6bZeLaf/2mdoKJA
+   6wNkPltPzxH+X9VPUbxzAbL8VrIub6uFf2VYoi8lN/FVpAeHFAbI52XbL
+   g==;
+X-CSE-ConnectionGUID: RWLK7c5ZQ76ePXvgfncWDQ==
+X-CSE-MsgGUID: PZlVRStNQUqtEFmwRaFD1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53117875"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="53117875"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:42:15 -0800
+X-CSE-ConnectionGUID: Cum14mOhQmWX2ZaCL5RFFw==
+X-CSE-MsgGUID: N4LF4d+aTeKvq4XD20VfLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="122547909"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:42:13 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1to5JL-0000000G3bz-0EhE;
+	Fri, 28 Feb 2025 20:42:11 +0200
+Date: Fri, 28 Feb 2025 20:42:10 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Cleanup io.h
+Message-ID: <Z8IDgmrLx5DQADxJ@smile.fi.intel.com>
+References: <20250227070747.3105451-1-raag.jadav@intel.com>
+ <Z8CD33_OWK2LB6IZ@smile.fi.intel.com>
+ <0011035a-5816-48c4-9fe4-c0b9db3c8e72@app.fastmail.com>
+ <Z8H1Y2_RlFnXeNEa@black.fi.intel.com>
+ <Z8IDXD2bkO1t71yB@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DzFtVEU95axX_CpweDLNGuyNOgt0Fp5l
-X-Proofpoint-ORIG-GUID: DzFtVEU95axX_CpweDLNGuyNOgt0Fp5l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_05,2025-02-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502280137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8IDXD2bkO1t71yB@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+On Fri, Feb 28, 2025 at 08:41:33PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 28, 2025 at 07:41:55PM +0200, Raag Jadav wrote:
+> > On Fri, Feb 28, 2025 at 06:11:16PM +0100, Arnd Bergmann wrote:
+> > > On Thu, Feb 27, 2025, at 16:25, Andy Shevchenko wrote:
+> > > > On Thu, Feb 27, 2025 at 12:37:45PM +0530, Raag Jadav wrote:
+> > > >> This series attempts to cleanup io.h with "include what you use" approach.
+> > > >> This depends on changes available on immutable tag[1].
+> > > >> 
+> > > >> Although this series is too trivial in the grand scheme of things, it is
+> > > >> still a tiny step towards untangling core headers. I have success results
+> > > >> from LKP for this series but there can still be corner cases. So perhaps
+> > > >> we can queue this on a temporary branch which we can use to submit fixes
+> > > >> in case of fallout.
+> > > >> 
+> > > >> Future plan is to use the excellent analysis[2][3] by Arnd to cleanup other
+> > > >> headers.
+> > > >> 
+> > > >> [1] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
+> > > >> [2] https://lore.kernel.org/r/2342b516-2c6e-42e5-b4f4-579b280823ba@app.fastmail.com
+> > > >> [3] https://lore.kernel.org/r/f6eb011b-40fb-409a-b2b2-a09d0e770bbd@app.fastmail.com
+> > > >
+> > > > I believe Arnd can take it through his tree for headers as DRM part is 
+> > > > Acked already.
+> > > 
+> > > I've applied it yesterday and not seen any regression reports so far.
+> > 
+> > Probably because the immutable tag is already in -next?
+> 
+> Is there any?
 
-Q6 processor acts as rootPD, other hardware like IPQ5332 which are
-attached to Q6 act as userPDs. WCSS driver handles loading and booting
-of rootPD, while the ath12k driver boots the userPD.
-Get the rproc handle from the DTS entry and boot the rootPD if it
-is not already powered on. Register to the rproc notifier to monitor
-the rproc state, this allows ath12k driver to know power up/down
-sequence of the rootPD. Power up the rootPD and wait for a power-up
-notification from the notifier callback before powering up the userPDs.
+Ah, you mean devres related?
 
-Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
-Co-developed-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/ahb.c | 146 +++++++++++++++++++++++++-
- drivers/net/wireless/ath/ath12k/ahb.h |   7 ++
- 2 files changed, 151 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.c b/drivers/net/wireless/ath/ath12k/ahb.c
-index 6ba366a7e9fb..a6edf288c22c 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.c
-+++ b/drivers/net/wireless/ath/ath12k/ahb.c
-@@ -8,6 +8,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
- #include "ahb.h"
- #include "debug.h"
- #include "hif.h"
-@@ -546,6 +547,136 @@ static const struct ath12k_hif_ops ath12k_ahb_hif_ops_ipq5332 = {
- 	.map_service_to_pipe = ath12k_ahb_map_service_to_pipe,
- };
- 
-+static int ath12k_ahb_root_pd_state_notifier(struct notifier_block *nb,
-+					     const unsigned long event, void *data)
-+{
-+	struct ath12k_ahb *ab_ahb = container_of(nb, struct ath12k_ahb, root_pd_nb);
-+	struct ath12k_base *ab = ab_ahb->ab;
-+
-+	if (event == ATH12K_RPROC_AFTER_POWERUP) {
-+		ath12k_dbg(ab, ATH12K_DBG_AHB, "Root PD is UP\n");
-+		complete(&ab_ahb->rootpd_ready);
-+	}
-+
-+	return 0;
-+}
-+
-+static int ath12k_ahb_register_rproc_notifier(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+
-+	ab_ahb->root_pd_nb.notifier_call = ath12k_ahb_root_pd_state_notifier;
-+	init_completion(&ab_ahb->rootpd_ready);
-+
-+	ab_ahb->root_pd_notifier = qcom_register_ssr_notifier(ab_ahb->tgt_rproc->name,
-+							      &ab_ahb->root_pd_nb);
-+	if (IS_ERR(ab_ahb->root_pd_notifier))
-+		return PTR_ERR(ab_ahb->root_pd_notifier);
-+
-+	return 0;
-+}
-+
-+static void ath12k_ahb_unregister_rproc_notifier(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+
-+	if (!ab_ahb->root_pd_notifier) {
-+		ath12k_err(ab, "Rproc notifier not registered\n");
-+		return;
-+	}
-+
-+	qcom_unregister_ssr_notifier(ab_ahb->root_pd_notifier,
-+				     &ab_ahb->root_pd_nb);
-+	ab_ahb->root_pd_notifier = NULL;
-+}
-+
-+static int ath12k_ahb_get_rproc(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+	struct device *dev = ab->dev;
-+	struct device_node *np;
-+	struct rproc *prproc;
-+
-+	np = of_parse_phandle(dev->of_node, "qcom,rproc", 0);
-+	if (!np) {
-+		ath12k_err(ab, "failed to get q6_rproc handle\n");
-+		return -ENOENT;
-+	}
-+
-+	prproc = rproc_get_by_phandle(np->phandle);
-+	of_node_put(np);
-+	if (!prproc)
-+		return dev_err_probe(&ab->pdev->dev, -EPROBE_DEFER,
-+				     "failed to get rproc\n");
-+
-+	ab_ahb->tgt_rproc = prproc;
-+
-+	return 0;
-+}
-+
-+static int ath12k_ahb_boot_root_pd(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+	unsigned long time_left;
-+	int ret;
-+
-+	ret = rproc_boot(ab_ahb->tgt_rproc);
-+	if (ret < 0) {
-+		ath12k_err(ab, "RootPD boot failed\n");
-+		return ret;
-+	}
-+
-+	time_left = wait_for_completion_timeout(&ab_ahb->rootpd_ready,
-+						ATH12K_ROOTPD_READY_TIMEOUT);
-+	if (!time_left) {
-+		ath12k_err(ab, "RootPD ready wait timed out\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ath12k_ahb_configure_rproc(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+	int ret;
-+
-+	ret = ath12k_ahb_get_rproc(ab);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ath12k_ahb_register_rproc_notifier(ab);
-+	if (ret < 0) {
-+		ret = dev_err_probe(&ab->pdev->dev, ret,
-+				    "failed to register rproc notifier\n");
-+		goto err_put_rproc;
-+	}
-+
-+	if (ab_ahb->tgt_rproc->state != RPROC_RUNNING) {
-+		ret = ath12k_ahb_boot_root_pd(ab);
-+		if (ret < 0) {
-+			ath12k_err(ab, "failed to boot the remote processor Q6\n");
-+			goto err_unreg_notifier;
-+		}
-+	}
-+	return 0;
-+
-+err_unreg_notifier:
-+	ath12k_ahb_unregister_rproc_notifier(ab);
-+
-+err_put_rproc:
-+	rproc_put(ab_ahb->tgt_rproc);
-+	return ret;
-+}
-+
-+static void ath12k_ahb_deconfigure_rproc(struct ath12k_base *ab)
-+{
-+	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-+
-+	ath12k_ahb_unregister_rproc_notifier(ab);
-+	rproc_put(ab_ahb->tgt_rproc);
-+}
-+
- static int ath12k_ahb_resource_init(struct ath12k_base *ab)
- {
- 	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
-@@ -631,6 +762,7 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
- {
- 	struct ath12k_base *ab;
- 	const struct ath12k_hif_ops *hif_ops;
-+	struct ath12k_ahb *ab_ahb;
- 	enum ath12k_hw_rev hw_rev;
- 	u32 addr;
- 	int ret;
-@@ -659,6 +791,8 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
- 	ab->pdev = pdev;
- 	ab->hw_rev = hw_rev;
- 	platform_set_drvdata(pdev, ab);
-+	ab_ahb = ath12k_ab_to_ahb(ab);
-+	ab_ahb->ab = ab;
- 
- 	/* Set fixed_mem_region to true for platforms that support fixed memory
- 	 * reservation from DT. If memory is reserved from DT for FW, ath12k driver
-@@ -687,20 +821,27 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
- 
- 	ath12k_ahb_init_qmi_ce_config(ab);
- 
-+	ret = ath12k_ahb_configure_rproc(ab);
-+	if (ret)
-+		goto err_ce_free;
-+
- 	ret = ath12k_ahb_config_irq(ab);
- 	if (ret) {
- 		ath12k_err(ab, "failed to configure irq: %d\n", ret);
--		goto err_ce_free;
-+		goto err_rproc_deconfigure;
- 	}
- 
- 	ret = ath12k_core_init(ab);
- 	if (ret) {
- 		ath12k_err(ab, "failed to init core: %d\n", ret);
--		goto err_ce_free;
-+		goto err_rproc_deconfigure;
- 	}
- 
- 	return 0;
- 
-+err_rproc_deconfigure:
-+	ath12k_ahb_deconfigure_rproc(ab);
-+
- err_ce_free:
- 	ath12k_ce_free_pipes(ab);
- 
-@@ -740,6 +881,7 @@ static void ath12k_ahb_free_resources(struct ath12k_base *ab)
- 	ath12k_hal_srng_deinit(ab);
- 	ath12k_ce_free_pipes(ab);
- 	ath12k_ahb_resource_deinit(ab);
-+	ath12k_ahb_deconfigure_rproc(ab);
- 	ath12k_core_free(ab);
- 	platform_set_drvdata(pdev, NULL);
- }
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
-index 64f0696588c0..1105473917ce 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.h
-+++ b/drivers/net/wireless/ath/ath12k/ahb.h
-@@ -7,6 +7,7 @@
- #define ATH12K_AHB_H
- 
- #include <linux/clk.h>
-+#include <linux/remoteproc/qcom_rproc.h>
- #include "core.h"
- 
- #define ATH12K_AHB_RECOVERY_TIMEOUT (3 * HZ)
-@@ -16,6 +17,8 @@
- #define ATH12K_AHB_SMP2P_SMEM_VALUE_MASK	0xFFFFFFFF
- #define ATH12K_PCI_CE_WAKE_IRQ			2
- #define ATH12K_PCI_IRQ_CE0_OFFSET		3
-+#define ATH12K_ROOTPD_READY_TIMEOUT		(5 * HZ)
-+#define ATH12K_RPROC_AFTER_POWERUP		QCOM_SSR_AFTER_POWERUP
- 
- enum ath12k_ahb_smp2p_msg_id {
- 	ATH12K_AHB_POWER_SAVE_ENTER = 1,
-@@ -25,8 +28,12 @@ enum ath12k_ahb_smp2p_msg_id {
- struct ath12k_base;
- 
- struct ath12k_ahb {
-+	struct ath12k_base *ab;
- 	struct rproc *tgt_rproc;
- 	struct clk *xo_clk;
-+	struct completion rootpd_ready;
-+	struct notifier_block root_pd_nb;
-+	void *root_pd_notifier;
- };
- 
- static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
