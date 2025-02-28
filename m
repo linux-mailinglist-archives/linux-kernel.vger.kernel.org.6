@@ -1,212 +1,140 @@
-Return-Path: <linux-kernel+bounces-538627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46481A49B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:56:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE36DA49B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1447E3B0CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8BE172A0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2990C26B961;
-	Fri, 28 Feb 2025 13:56:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0855926D5D1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8171326D5D3;
+	Fri, 28 Feb 2025 13:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grI+STAK"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B53F26D5D1
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751002; cv=none; b=X0PeG4vcck6isNOBEe2foO7Rc+LZDam790nvYMCTTwcLTlZFOR3pr93OXRX/1WELqMTA2nOiOyNta0dRWSHk2+eQBwsA+/sSSlTsXoIMWKGIIdl3s8y+w3WGMFdw0eQEgl0e9HgrUzEP5FoiY/q7DwriJRotH9TE7eEGss9XzU0=
+	t=1740751171; cv=none; b=LGf/OfCQFaqhdWBPCr3qjwr/5dXhygEd1FR94rgUi00Ja/jjcRPzLVpAn+lqXuK3SoBUyaf6eoeCAB8smWOQ/jO6I2JMP/ancUtuS8CaLoYWXySxontg6yNJROQ5T2zkUnY71s5EB7+yxXZ1F9UMiKyWp8ZIJk0nusyrSr4hWLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751002; c=relaxed/simple;
-	bh=PAFoTEkrr8GmNmiFdBL3PgCkLKsF919x9Xs8oCWCWLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJcFcKW1z8RbCr4ER+nA5piYg9cFKV0z4DYmz7KoIbY4U/cLjI2Tt7IB40AH62bln3Y3gMaDYhqbnTAQtU2T7PNH7ZAs18x25NV+iRw7csDpUmPJudxECHhY4ijGGoPd5rhAo14hbY7D/RfMnOZ2FPOGxgoNLbJk6uqozd91/5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D7221515;
-	Fri, 28 Feb 2025 05:56:55 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A3B73F6A8;
-	Fri, 28 Feb 2025 05:56:35 -0800 (PST)
-Date: Fri, 28 Feb 2025 13:56:33 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: <catalin.marinas@arm.com>, <will@kernel.org>, <tglx@linutronix.de>,
-	<peterz@infradead.org>, <mpe@ellerman.id.au>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<pierre.gondois@arm.com>, <dietmar.eggemann@arm.com>,
-	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
-	<guohanjun@huawei.com>, <sshegde@linux.ibm.com>
-Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
- based system
-Message-ID: <Z8HAkZiHYRjj97M7@bogus>
-References: <20250218141018.18082-1-yangyicong@huawei.com>
- <20250218141018.18082-4-yangyicong@huawei.com>
+	s=arc-20240116; t=1740751171; c=relaxed/simple;
+	bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kcWXqQ/A8m3Ux3W2H+Q9u3uFksl55k2HcJ/67tZYrcvgd9Cym09H+QF4I5UzS5yqJZkMYuUI+KSSMmJehTBRbVAb1NwaOubKQCTY2C64bWU0VKG5TlUMGIsQuDY4noNLDvusmtgSgHEzUmHM+wbdaTpMQK7Ae6HIoaPsmT5/CuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grI+STAK; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390dd3654aeso1241813f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:59:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740751168; x=1741355968; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
+        b=grI+STAKOAnH08bihdrVdSxnngP7J2jW3cKPR/2Y5MaVL0evvPR0W3GzgzXLLYwR02
+         u5AvChKCZpyDKfHvyh6wqJNJ3iR3PeAdDruTVVJLAsMt3fk8zc8rQQ183v+hwwhk7HLz
+         /Pmr+qtoqG8NlpXVL9dbiPdgqVu2iVcmT39SkEJd8TraGr5jgVoj0+3fXwT/jXVnCU+3
+         ly9xKRuwG397WPW8o5uX63mYDvTpS/1gVgWd7Km2ciUy2hZi8pvmTKOlz11IHDhehorp
+         gdfLMBHpQw1JttRu1/RG0yCHKsf52m5VoUPXXWa+OtM1GgDDu/ArHT2ioYrFvwyK/QJl
+         iWJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740751168; x=1741355968;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
+        b=oUOvorQesC+eo06g6XujxxDXlhWUloX+td+CvmcZlJ+SMfoD+pBTDtohizEAOGIR72
+         P6m9wGClcvOUcQYRMiCZJDAoCoxWaUNqye0M/eK4Sn1+SLXLsajf7FHnBNEuZEARUp9R
+         G1vOcJ5kLQds1t6cq1ummpAKndPyYIziwkeM2O/pwINv4r09lvHXA/xMBYC8H0DmAPq1
+         XQ5FjusLd4ync0Np87nTBp4GiLVGLI8K819wg/5xfYrk0I0H8nokxlq9vnJcWQpu46Tx
+         xZYsv9GeA82PkBB6e5T7icicBPZiHCI/PTOHkFEXDRlZM9zI1zkW9dtre8tIB6RSQGwF
+         PUzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHaodBkOb5bd/fr85zEpSDlhwPndyigy+BvLkifRj01LT0+qOeTupSqd37MsQ3YFOfffseWUb2n8gDm14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbFUzmxm84tAk2+aI0MKf2pS6TKJcHtDxlMjeT0EtvPSiOINfJ
+	UimZYcxHTeNoCbB0ObURRBCKCFv6yiBfe+nY+h8ejZpNwrYaJZeEBdtZwgqnX3c=
+X-Gm-Gg: ASbGncuM6z4mBEZAUItJumziLqR26iWeg5HJALbz6SvbT0Yt5bvqJjHRtntR47gdT+c
+	V8QgGtuJs9M89lLpkOGhcI0SPnj9eW6LofvG6Cx90fnEzV+e1JKDbyklNpPhQvkDKqi5jULMEEZ
+	1y6+8IYH2fDdgo0qP9/9aU3LOPkl8ZBp1yhU+lDSh7kSksHXqkIK/XTTeEQZN6d1oRycRY+nWXR
+	ltWqdcNC/Mc3nO1eX+tQd09qC0rWkap5n1js6bqBRORyoHzZdgAaTtvSNZ/lJ7tePNBkLn8dF1e
+	QGIfzb02xoXuDb18Z+U+bo3ieL6Lgw==
+X-Google-Smtp-Source: AGHT+IECpo32ALWrFa1cNaiDX3uH6CqXkFCNWGuhJmwvZ0p1RSpM7dQPjKfV2CnvU0hTwmPQDg65lg==
+X-Received: by 2002:a05:6000:2a4:b0:38f:2990:c074 with SMTP id ffacd0b85a97d-390ec7cfe62mr4082089f8f.16.1740751168393;
+        Fri, 28 Feb 2025 05:59:28 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485df22sm5389786f8f.97.2025.02.28.05.59.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 05:59:28 -0800 (PST)
+Message-ID: <e355ce38815760e69f40ec6d9d27fb6cab8f9894.camel@linaro.org>
+Subject: Re: [PATCH v2 3/6] dt-bindings: mfd: add max77759 binding
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
+ Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Fri, 28 Feb 2025 13:59:26 +0000
+In-Reply-To: <CAL_JsqK-_rPZqt_vRv75dSWDLUAyZ-LB=qz5J=Kse=7bO4q8sA@mail.gmail.com>
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
+	 <20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.org>
+	 <20250227130451.GA1783593-robh@kernel.org>
+	 <503e105b71fa4271f40a2d3ca18ba13ed7d45a65.camel@linaro.org>
+	 <CAL_JsqK-_rPZqt_vRv75dSWDLUAyZ-LB=qz5J=Kse=7bO4q8sA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218141018.18082-4-yangyicong@huawei.com>
 
-On Tue, Feb 18, 2025 at 10:10:17PM +0800, Yicong Yang wrote:
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> 
-> For ACPI we'll build the topology from PPTT and we cannot directly
-> get the SMT number of each core. Instead using a temporary xarray
-> to record the heterogeneous information (from ACPI_PPTT_ACPI_IDENTICAL)
-> and SMT information of the first core in its heterogeneous CPU cluster
-> when building the topology. Then we can know the largest SMT number
-> in the system. If a homogeneous system's using ACPI 6.2 or later,
-> all the CPUs should be under the root node of PPTT. There'll be
-> only one entry in the xarray and all the CPUs in the system will
-> be assumed identical.
-> 
-> The core's SMT control provides two interface to the users [1]:
-> 1) enable/disable SMT by writing on/off
-> 2) enable/disable SMT by writing thread number 1/max_thread_number
-> 
-> If a system have more than one SMT thread number the 2) may
-> not handle it well, since there're multiple thread numbers in the
-> system and 2) only accept 1/max_thread_number. So issue a warning
-> to notify the users if such system detected.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
-> 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->  arch/arm64/kernel/topology.c | 66 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 1a2c72f3e7f8..6eba1ac091ee 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -15,8 +15,10 @@
->  #include <linux/arch_topology.h>
->  #include <linux/cacheinfo.h>
->  #include <linux/cpufreq.h>
-> +#include <linux/cpu_smt.h>
->  #include <linux/init.h>
->  #include <linux/percpu.h>
-> +#include <linux/xarray.h>
->  
->  #include <asm/cpu.h>
->  #include <asm/cputype.h>
-> @@ -37,17 +39,28 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->  	return !!is_threaded;
->  }
->  
-> +struct cpu_smt_info {
-> +	unsigned int thread_num;
-> +	int core_id;
-> +};
-> +
->  /*
->   * Propagate the topology information of the processor_topology_node tree to the
->   * cpu_topology array.
->   */
->  int __init parse_acpi_topology(void)
->  {
-> +	unsigned int max_smt_thread_num = 0;
-> +	struct cpu_smt_info *entry;
-> +	struct xarray hetero_cpu;
-> +	unsigned long hetero_id;
->  	int cpu, topology_id;
->  
->  	if (acpi_disabled)
->  		return 0;
->  
-> +	xa_init(&hetero_cpu);
-> +
->  	for_each_possible_cpu(cpu) {
->  		topology_id = find_acpi_cpu_topology(cpu, 0);
->  		if (topology_id < 0)
-> @@ -57,6 +70,34 @@ int __init parse_acpi_topology(void)
->  			cpu_topology[cpu].thread_id = topology_id;
->  			topology_id = find_acpi_cpu_topology(cpu, 1);
->  			cpu_topology[cpu].core_id   = topology_id;
-> +
-> +			/*
-> +			 * In the PPTT, CPUs below a node with the 'identical
-> +			 * implementation' flag have the same number of threads.
-> +			 * Count the number of threads for only one CPU (i.e.
-> +			 * one core_id) among those with the same hetero_id.
-> +			 * See the comment of find_acpi_cpu_topology_hetero_id()
-> +			 * for more details.
-> +			 *
-> +			 * One entry is created for each node having:
-> +			 * - the 'identical implementation' flag
-> +			 * - its parent not having the flag
-> +			 */
-> +			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
-> +			entry = xa_load(&hetero_cpu, hetero_id);
-> +			if (!entry) {
-> +				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +				WARN_ON_ONCE(!entry);
-> +
-> +				if (entry) {
-> +					entry->core_id = topology_id;
-> +					entry->thread_num = 1;
-> +					xa_store(&hetero_cpu, hetero_id,
-> +						 entry, GFP_KERNEL);
-> +				}
-> +			} else if (entry->core_id == topology_id) {
-> +				entry->thread_num++;
-> +			}
->  		} else {
->  			cpu_topology[cpu].thread_id  = -1;
->  			cpu_topology[cpu].core_id    = topology_id;
-> @@ -67,6 +108,31 @@ int __init parse_acpi_topology(void)
->  		cpu_topology[cpu].package_id = topology_id;
->  	}
->  
-> +	/*
-> +	 * This should be a short loop depending on the number of heterogeneous
-> +	 * CPU clusters. Typically on a homogeneous system there's only one
-> +	 * entry in the XArray.
-> +	 */
-> +	xa_for_each(&hetero_cpu, hetero_id, entry) {
-> +		if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
-> +			pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+On Fri, 2025-02-28 at 07:01 -0600, Rob Herring wrote:
+> On Thu, Feb 27, 2025 at 7:14=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik=
+@linaro.org> wrote:
+> >=20
+> > On Thu, 2025-02-27 at 07:04 -0600, Rob Herring wrote:
+> > >
+> > >=20
+> > > Why do you have GPIO properties here and in the child node? Either wo=
+uld
+> > > be valid, but both probably not. Putting them here is actually
+> > > preferred.
+> >=20
+> > That's an oversight, I meant to put them into the child only, not here,
+> > since the child is the one providing the gpio functionality.
+> >=20
+> > What's the reason to have it preferred inside this parent node?
+>=20
+> It really depends whether the GPIO block is a separate sub-block which
+> is going to get reused or has its own resources or not. It's the same
+> thing in system controllers which are often just a collection of
+> leftover control bits.
+>=20
+> We just don't want child nodes created just for the ease of
+> instantiating drivers in Linux. While it's nice if drivers and nodes
+> are 1 to 1, but that's specific to an OS.
+>=20
+> You already need other child nodes here, so I don't care too much in this=
+ case.
 
-Ditto as previous patch about handling no threaded cores with threaded cores
-in the system. I am not sure if that is required but just raising it here.
+Thanks Rob for taking the time and for the explanation! I'll keep
+that in mind for the future.
 
-> +
-> +		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
-> +		xa_erase(&hetero_cpu, hetero_id);
-> +		kfree(entry);
-> +	}
-> +
-> +	/*
-> +	 * Notify the CPU framework of the SMT support. Initialize the
-> +	 * max_smt_thread_num to 1 if no SMT support detected. A thread
-> +	 * number of 1 can be handled by the framework so we don't need
-> +	 * to check max_smt_thread_num to see we support SMT or not.
-> +	 */
-> +	if (!max_smt_thread_num)
-> +		max_smt_thread_num = 1;
-> +
+Cheers,
+Andre'
 
-Ditto as previous patch, can get rid if it is default 1.
 
--- 
-Regards,
-Sudeep
 
