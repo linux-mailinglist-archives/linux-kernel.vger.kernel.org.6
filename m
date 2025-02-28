@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-538924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194D6A49EE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:34:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32368A49ED9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1731A3BB7EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49D81893834
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB627FE6D;
-	Fri, 28 Feb 2025 16:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD3127293D;
+	Fri, 28 Feb 2025 16:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgygkE0c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5/ReRPm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F5277812;
-	Fri, 28 Feb 2025 16:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513AF26AAA3;
+	Fri, 28 Feb 2025 16:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760339; cv=none; b=hBCx9sCohdrtJ8+Fad/SWWmsuGWTcBmJNkHzZmIhpsSbXPrvv4bBnIj1mZHDkfji9zB5TvuBY+V5W1xmbQteqiHyNk3cmFWdOthvJYoQ9I/F4QbqZ2R85ufSQs+2TTTnD0TaFLC3unHl8cOioJNhvM20CSsMAHe4hVs2DmGF+kg=
+	t=1740760329; cv=none; b=Nwo2hyPn9RTMar81BxCH5I5lMhY+krDZA6Y/q/0ojyKNWYy7mC/zF2RjhiukjocwbXjqnvIt46Ph7wnpt7sTP1lMNXLXO0nLADBaBaAUvcbs8pZMc6v0HRPIxSGMNi2fScp6FlPs5wA1+wEzbcNivETpes5sS/I9vnccc/OJDzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760339; c=relaxed/simple;
-	bh=P/RcA4P+v+ljSl+5AN9FN5lP81wuZbneRs9Oo7I8WlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uH9+56X35l5alpwl+eayAc+FlpEGXIZM8r0snYxcYmYSpVL/a6nl4p9M65H8chpEdjXiWYtWrncDno7z4FwicilhA5Tswd2DgxMS5Lb7pzPoNOtf/svr5rUfpkxGNJ8RpLPjGoKhtPij2ZZHfb4PB8+F1Ai/+6g3Bvu7n7dUGng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgygkE0c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE9DEC4CED6;
-	Fri, 28 Feb 2025 16:32:16 +0000 (UTC)
+	s=arc-20240116; t=1740760329; c=relaxed/simple;
+	bh=QxKE/vnJMWgW3Fp9S6RUPUhxvfrYA/OhRaJWoXg5OT0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZsEIvhfejwR2Ote/YPRPj0WG/4IaXKjxxlQuuVEajVEvWX3Pvy00u0bI9dDw5BCr/B4sTMuOoEQnROoBX70sInCZMsUOgx2Cq31+OCIRxKu9MsUXsPiLV7cIPE7u9UOob8OFv427isY3kGOlE5rZ93uwqPiee4H/a97DPA2wX9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5/ReRPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BB783C4CED6;
+	Fri, 28 Feb 2025 16:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740760337;
-	bh=P/RcA4P+v+ljSl+5AN9FN5lP81wuZbneRs9Oo7I8WlQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mgygkE0cniB6CNWpyJm5orUa820AWr6Al74fOmB5Adv0DHZj4hMkEUM08Y2QU5wq+
-	 xRm3tYzGsVSuA21y9YNLLypFfcoItSGIc2yrxbLlVXKIwapeE9yNJ7iiA0tfjLsraP
-	 /ze+vCzXmSmdt1aHE6D+fYt/1Ctd0AABzJrhtkETmZ2HHxmi/d34ssJ7ZlrgeuN/ht
-	 BhXp23mzTO+zCODQfqtbFVPXeQVdSGyAE2r5XJtfsYUI5Y3bDEaN1vFYpIGda6xn96
-	 /9aJZGr3sbMi4et8+k0WkD0UTNpR/hkVmeb9YsphvaXMY1eHRmJl1tvQDnNbkU7iZO
-	 VKhRjsWJubk5Q==
-From: Mario Limonciello <superm1@kernel.org>
-To: Basavaraj Natikar <basavaraj.natikar@amd.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org (open list),
-	linux-input@vger.kernel.org (open list:AMD SENSOR FUSION HUB DRIVER),
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>,
-	Anson Tsao <anson.tsao@amd.com>
-Subject: [PATCH 3/3] HID: amd_sfh: Don't show wrong status for amd_sfh_hpd_info()
-Date: Fri, 28 Feb 2025 10:31:53 -0600
-Message-ID: <20250228163153.2554935-4-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250228163153.2554935-1-superm1@kernel.org>
-References: <20250228163153.2554935-1-superm1@kernel.org>
+	s=k20201202; t=1740760328;
+	bh=QxKE/vnJMWgW3Fp9S6RUPUhxvfrYA/OhRaJWoXg5OT0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=E5/ReRPm3Hx56j0Y7VqvCQBpbaRGUJITQD3WoknMWBf0wvJkoloKeklZwhdIDfo2p
+	 LtWbj134LSWzcyvZpjbeMNKg1uEpkzpp45OzzNgmSoMpaPftc2iC4AVraoBiV6J3Vd
+	 VoWEyfKcPSrZR/l/Jg9VOAfWzjNd1htHqXQMKjcD0zF+ehx4fiof/Orou/vj2E6D5n
+	 yr1tZELClvsO7uj3gpY3oWTmCICE0XKeqG2+gOywuZYfdmdNwGtQzs0r+QB20s/5c0
+	 +V09pCNaGYb0nITGTPH2lizR4o622/1T4TVnlmAsQx8eRooKfUoWSCh8JneNxx9w+b
+	 IiGoQezo2Dt1g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBF1C282C1;
+	Fri, 28 Feb 2025 16:32:08 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] iommu: apple-dart: Support the ISP DART
+Date: Fri, 28 Feb 2025 17:32:06 +0100
+Message-Id: <20250228-isp-dart-v2-0-0ead81a90e2d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAblwWcC/23MQQ6CMBCF4auQWVvTqViFlfcwLEqZwiRCSUsaD
+ endraxd/i8v3w6RAlOEttohUOLIfimhThXYySwjCR5Kg5LqKpW6CY6rGEzYhLtfdNMbQ7ZHKPc
+ 1kOP3QT270hPHzYfPISf8rX+QhEIK1EgNkqtdrR/jbPh1tn6GLuf8BTf5WjagAAAA
+X-Change-ID: 20250227-isp-dart-f8369baaecb1
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740760327; l=820;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=QxKE/vnJMWgW3Fp9S6RUPUhxvfrYA/OhRaJWoXg5OT0=;
+ b=NkWNCpfcMNwzWsbnSKE+X1A1U4WmVG9Nd2rgKOi5zpr713ES47sa+Vb6FYzPoD6/JrAn/oHg5
+ H7rwQkMQBQiB4NsAeu4cBz9ysy5g2QqS+7KaiGZ/StIiAE3RJ4QPQ1R
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+The ISP block has 3 linked DARTs with mismatched bypass support.
+This series adds support for this setup.
 
-When HPD is present but has been disabled, avoid reporting HPD status
-to PMF.
+(The ISP driver itself is sent as a separate series
+https://lore.kernel.org/asahi/20250219-isp-v1-0-6d3e89b67c31@gmail.com/T/ )
 
-Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>
-Tested-by: Anson Tsao <anson.tsao@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 ---
- drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Made comments and code a closer match for each other
+- Link to v1: https://lore.kernel.org/r/20250227-isp-dart-v1-0-161e91ef4f46@gmail.com
 
-diff --git a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c
-index ffb98b4c36cbd..837d59e7a6610 100644
---- a/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c
-+++ b/drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_interface.c
-@@ -129,7 +129,7 @@ static int amd_sfh_hpd_info(u8 *user_present)
- 	if (!user_present)
- 		return -EINVAL;
- 
--	if (!emp2 || !emp2->dev_en.is_hpd_present)
-+	if (!emp2 || !emp2->dev_en.is_hpd_present || !emp2->dev_en.is_hpd_enabled)
- 		return -ENODEV;
- 
- 	hpdstatus.val = readl(emp2->mmio + amd_get_c2p_val(emp2, 4));
--- 
-2.43.0
+---
+Hector Martin (2):
+      iommu: apple-dart: Increase MAX_DARTS_PER_DEVICE to 3
+      iommu: apple-dart: Allow mismatched bypass support
+
+ drivers/iommu/apple-dart.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+---
+base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
+change-id: 20250227-isp-dart-f8369baaecb1
+
 
 
