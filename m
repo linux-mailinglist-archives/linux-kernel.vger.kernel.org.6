@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-539308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555BAA4A31C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:54:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F71BA4A31D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A48189B740
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:54:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE58A7AA33E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2566F230BE5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A60D276046;
+	Fri, 28 Feb 2025 19:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ywy/lHFD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7520276027;
 	Fri, 28 Feb 2025 19:53:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B42D230BE3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772435; cv=none; b=LZdQ6sVwZxzKV6xlbQln2bz67+2Gp5G1scCFSZcTitTenTcYRIjQUUn2BaJMwi9S6DgErpgfZcpfCIAiKG32LrQGtG8WemeGuj65lCKvk9AfDNwJwqXoVkTjbEyVwNzVoN661Mh3f0cnoHfB9XwFy5a+SO91hiM1r3dFG2r9WQM=
+	t=1740772438; cv=none; b=Rvqbd8xCvnjCLTtmCM51AHKDkdvI7XATt437tztTRMi2iv8w5LIGqcN8evSy76S+vEIuHpFXHOC5ZQeHss4gMvcBwvphExu/11Qj1txw2pbqB961g9/GY7oR2KuKt6U09F8l0Uy3Dy4wCJQrwZTDq0sl+YExjQJnp5DfV9XV2z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772435; c=relaxed/simple;
-	bh=PT0CmNxTbwbN9/3CMG9XiWj5rQf9P9Dxk7rLquoAwLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TbP63re8Cd4JGlMtOAMw4dwa3Ehip0Ooq3WKmTTYgy4X1P48FsawZ8VdCSM1QhWfJZ0OgKW32HPXQDb8fM9Nvw4+mkMyZrCXGywC7/Q7PFkCOcyDduG9ZotceL1OXo3/+GztXmGpZe5EAGfbqe5TIl1oX2mTKrPcDNnPylRf0Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD58E1515;
-	Fri, 28 Feb 2025 11:54:08 -0800 (PST)
-Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 964313F5A1;
-	Fri, 28 Feb 2025 11:53:47 -0800 (PST)
-Message-ID: <17f0c99a-3e9b-487a-8f32-b3ce0ecbbfff@arm.com>
-Date: Fri, 28 Feb 2025 19:53:43 +0000
+	s=arc-20240116; t=1740772438; c=relaxed/simple;
+	bh=/XH79EmqZl8K0OrxFZw/WEPOCqQyhyfy8x5Gy0s2Ggk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=niIOOcLtSquwbcAWuMaj62i8FWBLPIZ8yqHklxtD9wRsSit2vgg0mimAEW3uGlwAm0wpJRWe38atqQVbGZtd2d1rRWGwpT8ZU2J3al+8EdfhV8hTpc+2+wJBoSkXAqkcMGc7m8zqv4xuG2HnxB8Sd7Cg2yPI+p72/ctr5CNi5sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ywy/lHFD; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740772437; x=1772308437;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/XH79EmqZl8K0OrxFZw/WEPOCqQyhyfy8x5Gy0s2Ggk=;
+  b=Ywy/lHFD6+27KBChViFakYLBoSjMGPpOJ/czhtp3gVsvPLWKPycjfFfN
+   7pW78st+ZWJw8sOO4TxMXX4pOw32QsxHA/BJhdV7i1EGPCxMbQnbULbKs
+   7KEM4L+i41bvfjY6E2t5UtEePHtcg/Hk9/ulXBbmwgdi5Yt59kWepU9BV
+   92WSYoucokCaiiR02BRhT2LhMAxDHzbqGxMvtYGz8fWGIcycVMEdM5VYi
+   419MISbavjBqYPCyDG5uN8Jpskdc2wa5qgIl7Q4x3VY3uc5kxCTvw734A
+   jTLsy1eJ6Og6KxrvM2CiCYCjwaCPzsWLEOzNjZSW863BY8uVBqJL/FXgi
+   Q==;
+X-CSE-ConnectionGUID: zffUTvGCRuK3dG6wrC2EQg==
+X-CSE-MsgGUID: jiH0pbQOSGm5Tum2EocQvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41633140"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="41633140"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 11:53:56 -0800
+X-CSE-ConnectionGUID: L7IzgDXOTIiV0GiWviUL/g==
+X-CSE-MsgGUID: ghGfT8WBTBShlKN3tlKBeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121553798"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.intel.com) ([10.124.221.30])
+  by fmviesa003.fm.intel.com with ESMTP; 28 Feb 2025 11:53:54 -0800
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: linux-perf-users@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: [PATCH] perf stat: Fix uniquify for hybrid systems
+Date: Fri, 28 Feb 2025 13:53:51 -0600
+Message-ID: <20250228195351.1160071-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/42] x86/resctrl: Add a helper to avoid reaching into
- the arch code resource list
-To: babu.moger@amd.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
-References: <20250207181823.6378-1-james.morse@arm.com>
- <20250207181823.6378-3-james.morse@arm.com>
- <ecec8891-1228-4f03-841c-60fb4484c4d6@amd.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <ecec8891-1228-4f03-841c-60fb4484c4d6@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Babu,
+Currently, perf stat is omitting the pmu name for legacy events
+on hybrid systems. git bisect indicated commit 357b965deba9 as the cause:
 
-(please don't top post!)
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[357b965deba9fb71467413e473764ec4e1694d8d] perf stat: Changes to event
+name uniquification
 
-On 27/02/2025 20:24, Moger, Babu wrote:
-> On 2/7/25 12:17, James Morse wrote:
->> Resctrl occasionally wants to know something about a specific resource,
->> in these cases it reaches into the arch code's rdt_resources_all[]
->> array.
->>
->> Once the filesystem parts of resctrl are moved to /fs/, this means it
->> will need visibility of the architecture specific struct
->> rdt_hw_resource definition, and the array of all resources.  All
->> architectures would also need a r_resctrl member in this struct.
->>
->> Instead, abstract this via a helper to allow architectures to do
->> different things here. Move the level enum to the resctrl header and
->> add a helper to retrieve the struct rdt_resource by 'rid'.
->>
->> resctrl_arch_get_resource() should not return NULL for any value in
->> the enum, it may instead return a dummy resource that is
->> !alloc_enabled && !mon_enabled.
+Include an additional check for hybrid architectures when determining
+whether to uniquify legacy events.
 
+Before:
 
->  You probably missed few cases here.
->
-> static int logical_rmid_to_physical_rmid(int cpu, int lrmid)
-> {
->   struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
-> --
->
-> }
->
-> Any reason not use the new call resctrl_arch_get_resource() here?
+$ sudo ./perf stat -e cycles -a sleep 1
 
-Simply there is no need to! That code doesn't get moved to /fs/, so it doesn't need to use
-a helper. Taken to its extreme - after the code is moved to /fs/, there are no callers of
-resctrl_arch_get_resource() in the arch code, because whatever they do today is sufficent.
+ Performance counter stats for 'system wide':
 
+       173,903,751      cycles
+       666,423,950      cycles
 
-Thanks,
+       1.006615048 seconds time elapsed
 
-James
+After:
+
+$ sudo ./perf stat -e cycles -a sleep 1
+
+ Performance counter stats for 'system wide':
+
+       841,496,603      cpu_atom/cycles/
+     3,308,929,412      cpu_core/cycles/
+
+       1.002483283 seconds time elapsed
+
+Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
+Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+---
+ tools/perf/util/stat-display.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index e65c7e9f15d1..df9f68080ec9 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -1676,6 +1676,7 @@ static bool evlist__disable_uniquify(const struct evlist *evlist)
+ 
+ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config)
+ {
++	bool hybrid = (!config->hybrid_merge && evsel__is_hybrid(counter));
+ 	struct evsel *evsel;
+ 
+ 	if (counter->merged_stat) {
+@@ -1688,7 +1689,8 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
+ 		return;
+ 	}
+ 
+-	if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
++	if (!hybrid && counter->core.attr.type < PERF_TYPE_MAX &&
++		counter->core.attr.type != PERF_TYPE_RAW) {
+ 		/* Legacy event, don't uniquify. */
+ 		return;
+ 	}
+@@ -1705,7 +1707,7 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
+ 		return;
+ 	}
+ 
+-	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
++	if (hybrid) {
+ 		/* Unique hybrid counters necessary. */
+ 		counter->needs_uniquify = true;
+ 		return;
+-- 
+2.48.1
+
 
