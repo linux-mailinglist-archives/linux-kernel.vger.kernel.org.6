@@ -1,233 +1,162 @@
-Return-Path: <linux-kernel+bounces-539498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13431A4A527
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:39:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C428EA4A52F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E40C1899F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EF83B4BCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252C51D9A5D;
-	Fri, 28 Feb 2025 21:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820AB1D8E12;
+	Fri, 28 Feb 2025 21:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CDn4W0JQ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OJLwt0qI"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A51C23F38A;
-	Fri, 28 Feb 2025 21:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BF1CCEDB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 21:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740778753; cv=none; b=JDCKM46sz79GnuM+O4mT5skE5q3KB3IsVLqFtFMPucOuj38BfrbE3A7pDFvA2ChGKXtN/bo2CaBqjd1Fk6mmW87dBOOjKAC/7w4R+oq4RKfQUNM/lAEeuZM5bYdVYI9+dX8nYjU84DFL0rASZO2VY3/zIheVOwGT1LI6DkMbUQA=
+	t=1740779043; cv=none; b=bap49NC/CwESBuKcQFrMBzGlsDXiUsqWK7vRnchraj7R4nbt2kTTl4gVCHVDhT4yC7g2ie+3cWwB+3Gqvk22vPkipK8YDDEEz04rLXupuwoQa11GHc0A4FjaMmzUvvd7PJTGeY5Cz2qDf9j2P+3Jfn314gd8wJEAl5NPu4djcW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740778753; c=relaxed/simple;
-	bh=v3sXt3CY02cedb5GqscLy9sHiG8Fcv9G1z+Ha1JSBbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O1CB9dZJz4sKkZSn8BS7KXI7Nydlyht17Jy/JpCLjdNJxHqymgVFEqQ0aR0K38mG0U/S+s4rvKSZIuH4RfCARhM1jzUNRCdlm0JtSnXRuLzcSt4cxvuhrb4SGbv4AKgrY5N1d4Kxp081KEJp7NQorvTdorw3l/wuLEao440uRg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CDn4W0JQ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51SLckrU2748647
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Feb 2025 15:38:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740778726;
-	bh=dO4Q0rKs3aOccKblhFLjnf6xWDqgH+XFsez+Lbm3iTA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=CDn4W0JQyBCbwVL9uwkni4xkmL7EFK02NdreZeCtdMalj0IbxO1nTwEHReIUToyp5
-	 kGyRzTSlPZUmi3U9D99ASprxHIougk6jZBDszA2hDXmK05b1GK4l9T2zfMU1K/l45q
-	 3w/dBWLlw8bvc7owKhjqfLMdMma+TIU4iPopZvIA=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51SLckFb121659
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 28 Feb 2025 15:38:46 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
- Feb 2025 15:38:45 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 28 Feb 2025 15:38:45 -0600
-Received: from [10.249.135.49] ([10.249.135.49])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51SLcerL085241;
-	Fri, 28 Feb 2025 15:38:41 -0600
-Message-ID: <acde31c5-fe23-4c7b-a823-61ea0958504b@ti.com>
-Date: Sat, 1 Mar 2025 03:08:40 +0530
+	s=arc-20240116; t=1740779043; c=relaxed/simple;
+	bh=GkQ7MhUHfw6q4SHBOfDDFk+xQCZP9hTnlu76RQ/cczY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b73pTUscmiay84bcAE3wTfQ9uX8242OzmJ1PFaLwMhhQKZBOa/Dwf7JkRdhdvGrzWokUl9RytWdDT9H29CN5mqoY9KkGwBBhcq9xph8Yh18G8uzhLNlau3NVVDlD3sCnbU8jkE5avB1P1ZJZPKpZHYBCxX6lVbsx0IiodBTv/IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OJLwt0qI; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DEDB540E01AE;
+	Fri, 28 Feb 2025 21:43:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PIOsHn8YW_Vu; Fri, 28 Feb 2025 21:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740779032; bh=9UV1IcJ900touH3JTaTltIhj++lVmzYmB/lL+8OAMUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJLwt0qIS4tB6CaY/OYGn6tBWhWzFkvn2lu4L9zDlanRYogIDVGS2XQfYMdNaGezE
+	 8iUB+dNpMTlttLT6sjnLqMsivArWwiv8LUj9vaJvIYoOMWcIPPQjAkV0Cxg+5rgTyF
+	 quv4bxUP/RCWuUm+AF4Q/33tBTkjDdpakHjCGMK7scrFGt56zxVCJ0DNqdiZgvhmRx
+	 900Rhrcb1o+/w44treZ4Nb982ZTu+DlLZQ4kzKyAwq00myJYukBcCMA8kBZr/uaqXY
+	 z3ojT2KDB9KD33XzTE8aVLpcuUYrzi007E61ILHMVdWMhWnkfb1jEJjLrrpizeOG60
+	 D297S1AjssmhC65Oo6VJk6ShpD0Vo/WebS0ZdseGe6Y2Fe3gBPdOX/+8Fyf71NNzvc
+	 5SEjEvn+bW7PijkuhLZ88ZqyLdtU5VcpRtc/9LHn8Y0vs83+I/7iCGfnFONtaBnvKt
+	 tv7UTu6U5nw6dy+onKmHt2qrTNEnc6K13uDGYdbAprauG2OvMLZcRybmaVxN/xApLb
+	 fV3VS6+oJq61Pow/ecCx1p93hi5RdoXd3bvzffcRAddTz9SHC0qPksuSTOO9gJWIci
+	 NH/ugoCtvAOCj/OkAd2Oekx2XPxyB8w168k94KNOpu9bSXQB+MB2Ae0lWNg7nplmYY
+	 Mqza9MqJr0+z+6Yl/iHqWKUM=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C559740E015E;
+	Fri, 28 Feb 2025 21:43:34 +0000 (UTC)
+Date: Fri, 28 Feb 2025 22:43:28 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 04/13] x86/mm: use INVLPGB for kernel TLB flushes
+Message-ID: <20250228214328.GGZ8IuAMKL4FeSTBER@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-5-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] devicetree: bindings: mux: reg-mux: Update
- bindings for reg-mux for new property
-To: Conor Dooley <conor@kernel.org>, Andrew Davis <afd@ti.com>
-CC: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Peter Rosin
-	<peda@axentia.se>,
-        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>, <vigneshr@ti.com>,
-        <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250227202206.2551305-1-c-vankar@ti.com>
- <20250227202206.2551305-2-c-vankar@ti.com>
- <f3e69904-92f0-4de8-bfef-a315a6554a1c@ti.com>
- <20250228-recipient-unlinked-271fe63d7335@spud>
-Content-Language: en-US
-From: "Vankar, Chintan" <c-vankar@ti.com>
-In-Reply-To: <20250228-recipient-unlinked-271fe63d7335@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-5-riel@surriel.com>
 
-Hello Conor, Andrew,
-
-On 3/1/2025 12:22 AM, Conor Dooley wrote:
-> On Thu, Feb 27, 2025 at 03:26:31PM -0600, Andrew Davis wrote:
->> On 2/27/25 2:22 PM, Chintan Vankar wrote:
->>> DT-binding of reg-mux is defined in such a way that one need to provide
->>> register offset and mask in a "mux-reg-masks" property and corresponding
->>> register value in "idle-states" property. This constraint forces to define
->>> these values in such a way that "mux-reg-masks" and "idle-states" must be
->>> in sync with each other. This implementation would be more complex if
->>> specific register or set of registers need to be configured which has
->>> large memory space. Introduce a new property "mux-reg-masks-state" which
->>> allow to specify offset, mask and value as a tuple in a single property.
->>>
->>> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
->>> ---
->>>    .../devicetree/bindings/mux/reg-mux.yaml      | 29 +++++++++++++++++--
->>>    1 file changed, 27 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/mux/reg-mux.yaml b/Documentation/devicetree/bindings/mux/reg-mux.yaml
->>> index dc4be092fc2f..a73c5efcf860 100644
->>> --- a/Documentation/devicetree/bindings/mux/reg-mux.yaml
->>> +++ b/Documentation/devicetree/bindings/mux/reg-mux.yaml
->>> @@ -32,11 +32,36 @@ properties:
->>>            - description: pre-shifted bitfield mask
->>>        description: Each entry pair describes a single mux control.
->>> -  idle-states: true
->>> +  idle-states:
->>> +    description: Each entry describes mux register state.
->>> +
->>> +  mux-reg-masks-state:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
->>> +    items:
->>> +      items:
->>> +        - description: register offset
->>> +        - description: pre-shifted bitfield mask
->>> +        - description: register value to be set
->>> +    description: This property is an extension of mux-reg-masks which
->>> +                 allows specifying register offset, mask and register
->>> +                 value to be set in a single property.
->>> +
->>> +allOf:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - reg-mux
->>> +              - mmio-mux
->>
->> These are the only two possible compatibles, is this "if" check needed?
+On Tue, Feb 25, 2025 at 10:00:39PM -0500, Rik van Riel wrote:
+> Use broadcast TLB invalidation for kernel addresses when available.
 > 
-> Aye.
+> Remove the need to send IPIs for kernel TLB flushes.
 > 
->>> +    then:
->>> +      properties:
->>> +        mux-reg-masks: true
->>> +        mux-reg-masks-state: true
->>
->> You need one, but cannot have both, right? There should be some
->> way to describe that.
->>
->> Also an example added below would be good.
-> 
->  From the example schema:
-> # if/then schema can be used to handle conditions on a property affecting
-> # another property. A typical case is a specific 'compatible' value changes the
-> # constraints on other properties.
-> #
-> # For multiple 'if' schema, group them under an 'allOf'.
-> #
-> # If the conditionals become too unweldy, then it may be better to just split
-> # the binding into separate schema documents.
-> allOf:
->    - if:
->        properties:
->          compatible:
->            contains:
->              const: vendor,soc2-ip
->      then:
->        required:
->          - foo-supply
->      else:
->        # If otherwise the property is not allowed:
->        properties:
->          foo-supply: false
-> 
-> What's missing from here is making one of the properties required,
-> so
-> oneOf:
->    - required:
->        - masks
->    - required:
->        - masks-state
-> 
->>
->> Andrew
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+> Tested-by: Brendan Jackman <jackmanb@google.com>
+> Tested-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  arch/x86/mm/tlb.c | 32 ++++++++++++++++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
 
-Thanks for reviewing this patch.
+Changes ontop:
 
-For the use-case we have following three rules to be followed:
-1. "mux-reg-masks" and "mux-reg-masks-state" should be mutually
-    exclusive.
-2. "mux-reg-masks-state" and "idle-states" should also be mutually
-    exclusive.
-3. If "mux-reg-masks" is present then "idle-states" might or might not
-    be there.
+--- /tmp/current.patch	2025-02-28 22:39:33.236465716 +0100
++++ /tmp/0001-x86-mm-Use-INVLPGB-for-kernel-TLB-flushes.patch	2025-02-28 22:39:59.432310072 +0100
+@@ -1,36 +1,43 @@
++From b97ae5e31069cd536b563df185de52d33a565077 Mon Sep 17 00:00:00 2001
+ From: Rik van Riel <riel@surriel.com>
+ Date: Tue, 25 Feb 2025 22:00:39 -0500
+-Subject: x86/mm: Use INVLPGB for kernel TLB flushes
++Subject: [PATCH] x86/mm: Use INVLPGB for kernel TLB flushes
+ 
+ Use broadcast TLB invalidation for kernel addresses when available.
+-
+ Remove the need to send IPIs for kernel TLB flushes.
+ 
++   [ bp: Integrate dhansen's comments additions. ]
++
+ Signed-off-by: Rik van Riel <riel@surriel.com>
+ Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+-Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+-Tested-by: Brendan Jackman <jackmanb@google.com>
+-Tested-by: Michael Kelley <mhklinux@outlook.com>
++Acked-by: Dave Hansen <dave.hansen@intel.com>
+ Link: https://lore.kernel.org/r/20250226030129.530345-5-riel@surriel.com
+ ---
+- arch/x86/mm/tlb.c | 32 ++++++++++++++++++++++++++++++--
+- 1 file changed, 30 insertions(+), 2 deletions(-)
++ arch/x86/mm/tlb.c | 39 +++++++++++++++++++++++++++++++++++++--
++ 1 file changed, 37 insertions(+), 2 deletions(-)
+ 
+ diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+-index dbcb5c968ff9..f44a03bca41c 100644
++index dbcb5c968ff9..5c44b94ad5af 100644
+ --- a/arch/x86/mm/tlb.c
+ +++ b/arch/x86/mm/tlb.c
+-@@ -1077,6 +1077,18 @@ void flush_tlb_all(void)
++@@ -1077,6 +1077,25 @@ void flush_tlb_all(void)
+  	on_each_cpu(do_flush_tlb_all, NULL, 1);
+  }
+  
+++/* Flush an arbitrarily large range of memory with INVLPGB. */
+ +static void invlpgb_kernel_range_flush(struct flush_tlb_info *info)
+ +{
+ +	unsigned long addr, nr;
+ +
+ +	for (addr = info->start; addr < info->end; addr += nr << PAGE_SHIFT) {
+ +		nr = (info->end - addr) >> PAGE_SHIFT;
+++
+++		/*
+++		 * INVLPGB has a limit on the size of ranges it can
+++		 * flush. Break up large flushes.
+++		 */
+ +		nr = clamp_val(nr, 1, invlpgb_count_max);
+++
+ +		invlpgb_flush_addr_nosync(addr, nr);
+ +	}
+ +	__tlbsync();
+ 
 
-For the above conditions I have tried to write a binding as:
+-- 
+Regards/Gruss,
+    Boris.
 
-allOf:
-   - not:
-       required: [mux-reg-masks, mux-reg-masks-state]
-
-   - if:
-       required: [mux-reg-masks-state]
-     then:
-       not:
-         required: [idle-states]
-
-   - if:
-       required: [mux-reg-masks]
-     then:
-       properties:
-         idle-states:
-           description: It can be present with mux-reg-masks, but not 
-required
-
-It is passing dt_binding_check and dtbs_check against correct and
-incorrect properties provided in device tree node.
-
-Let me know if you find this correct.
-
-Regards,
-Chintan.
-
->>
->>> +      maxItems: 1
->>>    required:
->>>      - compatible
->>> -  - mux-reg-masks
->>>      - '#mux-control-cells'
->>>    additionalProperties: false
+https://people.kernel.org/tglx/notes-about-netiquette
 
