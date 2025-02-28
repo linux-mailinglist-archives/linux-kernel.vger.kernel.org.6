@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-537640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438A9A48E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9FEA48E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:26:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD7188F01D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD4A3B5E08
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F217A2FE;
-	Fri, 28 Feb 2025 02:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48887145A18;
+	Fri, 28 Feb 2025 02:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVZlB3+b"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="cXHPewBE"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CE276D33;
-	Fri, 28 Feb 2025 02:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188DB3596A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740709505; cv=none; b=kVPxjvAw1a2hUcUD/ZukuW+lyI/S9YWlVQj7QdoIzmIpI7h+s+OKbxHqDCg4OSa6/26QXfvG3gmIn2ZiB+XMM7rI4GHDSx4Q3MPlZ+fXzi7+ZeebO9azoIabhIe2Yvc6WJ7RG1+K/0hUzsuwIWNnrxrULaPUSlv2wKzTs1o/1/Q=
+	t=1740709573; cv=none; b=NbJThCYadb3D2l0Bq+EmgPoz6fOEY7Ocu1PeH3qooPYWexoMmkD64PgdlpAw5DqxfwRKRen+aSGuF0Fpw7qY6cibu6jqnOUk0Xj9uELkRK1/P0tuK3S8wcqpDFjUVThdZOp8E0nFxkpHfgLwPt9tVPkS1ka4lqpCJsK1ADrFFxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740709505; c=relaxed/simple;
-	bh=TH8GhiewyAoHOD6iRuesAFPW40a34FfeI1owzcTXXm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rk6dR2wHRqUlJ+cAKZmfKM/iWFAE/T42jqERUyNhxN5bEN6Fazdu5TYLyLv7P/iIfzDa5iKiJHTChux1BJ7m6BU5u/MV3SvyCz3L7x8xfnfk8nFH/vLcI+UxAy8/1kuele5n/vDmPYZrxlvGz43YIBDKHXtwieRVw9MaKOZguJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVZlB3+b; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so1820618a12.3;
-        Thu, 27 Feb 2025 18:25:03 -0800 (PST)
+	s=arc-20240116; t=1740709573; c=relaxed/simple;
+	bh=2RjuojcGz7OIb+BqenvzLYjiwmJCtWUXykp9gpRxjoo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eY+sWNFjVTmr93CBNjCbaFQIBJcSJ98VP/WvUwC+Q7FiECXf+cqhuPQrSW3JjizhwKUx7EamEYan5TRT9t7hisptp9JwAkUCKOVhSPc2IiDSsXmTMVi6xtopT+Xj8wfDCtn7DccgfLPDePXZU5HonxrXbdZGobPhzG90Km8HGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=cXHPewBE; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e89b6b5342so10966696d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:26:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740709502; x=1741314302; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOiFb2uaZTM/Hc5eDFna0HdsQUy4+S1apmiGNsTq08Y=;
-        b=RVZlB3+bgByvH7jV91p//4N7lsiEjjV24s5qCO6gK0LWbapy7rtCCdWdxpkHhebeqJ
-         ap4Bio/wdO1hkDfN5f9mRsTKeDKe4cBAdIR5Gnh/dmAn/to+md4SxdZY0EgOv+NNu6pO
-         l7Qp3RtpjQevsseskpnVYq79lJHnWno+99BhmdazU0eegiXWyC4XZFrzLDWge9YuVaq9
-         F5NoCgdnkhNCGaxyON5PWeNsbqvxd7ADLC+oef0oVV7Qe1qkUs5J/bEcZIdhQv005Dfh
-         8srTKkVix+xGMdii16NdcOv8uX0Uw2Wm13uocqPPtTeccXcbsZzwA9QFzMspWexchJdd
-         Njlg==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1740709571; x=1741314371; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VJcCBxZrPcF1HtINZMO6IVGAMykP+k9zuguph0IARao=;
+        b=cXHPewBEc/mOcfV2g5jYx/OOQYP0tq6uH+W+Cab579WN5mN0DzP8LtK5EgxYiyQhO7
+         5dfWbfE/tGeMcWjb8opWC+E/0DOkcsVs4lDHA9FsjsM/6OLpLqkQQwnl4DVYZqcL9o2e
+         2vSYdAKwhYaW/QyGrYRhub98CTbzWeAD5URlX7OuTjLm68UA50L35+2w3Y/FxJxGXePA
+         oTcliTqe8v34ffBr/savgCih/cJJ8kbdXUf7V9HV3/jXI0UhFoUY3Cfc6Dcsa2Wd/pru
+         tcrNGrjfdiJvi0Plqq/nex5SlDGBQExsZ8KXjJgWdGLIejALqguTweeNoQCPIcaV597m
+         gMhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740709502; x=1741314302;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HOiFb2uaZTM/Hc5eDFna0HdsQUy4+S1apmiGNsTq08Y=;
-        b=pdU0sYomY1126zqMecxF5AbHhr19j4GZ0kC1QLL7osFZFH2nDvIv5sMNkM71MtusrO
-         uuyW29zXKf08m9wY1fid+evJAoV5SLh5DjnNhupTp+NDEZ1pgdOEr9d7YBgYp8iWmdEw
-         uO2O8INm0jwjRb79vgPSNhKSVLls+t5idmT08URWrRPvQnU73CCAlhWUa4xWL8/ico/8
-         KYgyN47RNHm1KVgb8H0H6gp2dirS+F5usuPX8ju26MWLudLQB6CNGZDYwNJHbq3xzJwn
-         MhzCBTZXr9mmevkxNcXQ6Z7I47pzt5e0wv5i9TGhvTHa7YCnN+H5o0CJZmt7yGsz8Apw
-         oeGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWGpQNX+8PQDIG2YOtkPF6haoyZ8Wb8TJtHJkPpAxzDcWOACA9B1eYtxHHpVFmwlUT6uGVSc3PcFYiZBY8eNM=@vger.kernel.org, AJvYcCX+Ddu8KS6JEWgz2lJr0QsdDfC85PeBGTqZe1+5jFov8l3HnHjq/F/O5Zf3JWhvWFpbhcrS2fngFC+baCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfDKe28+eecxPxp4d/7zvwf3J+DKZMMzrVHBmUQEj5fMg2ng3s
-	f3A4V1J2siCl2FEZpqceCSYIK7Qn7NVtW3C+9Kj1ijhURwTUftzuAuRtPD76hetq7aIj5VGN+p3
-	u4u4kgc5HZTcCgiT4i1YT/51OTRE=
-X-Gm-Gg: ASbGncueNPjoZCfy7F4aVnTVohaRPi0SaJVKTG3+ptZdLYSQMiDPHcvNCWh56scTunF
-	ubwr6jb3ZmVwlp71gIddRafFXxh9m7PSEhWQD6V7uUS/TJG3yZPmj17uuG0JOaW3VVXYvwQLkgO
-	tdzDRrHA==
-X-Google-Smtp-Source: AGHT+IG8P/Rf7Nhp6ubr6y0mJxpSoaHQ23pNLudbTvjrOGOm94lBjX0PH2uiYGY5ebcGSTw2itPEiP8WYWZIYVpcOo8=
-X-Received: by 2002:a05:6402:1ecf:b0:5e4:ce6e:388b with SMTP id
- 4fb4d7f45d1cf-5e4d6ac54a7mr3056695a12.6.1740709502364; Thu, 27 Feb 2025
- 18:25:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740709571; x=1741314371;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VJcCBxZrPcF1HtINZMO6IVGAMykP+k9zuguph0IARao=;
+        b=VnzEwPGOUDVA3dtWlBQR3lH6FMCdBlbvc5gh4D0JciuH7UwU9esuo880Y43DcSU33W
+         W+nTlOZd7jze+sg/PjA+t+T3C4is0U3XtTQRZCRfNc+GccIDeYVDY7dCe1ubf/FvlRyE
+         y15iYXy93kTEYJpiVdE01cyCp5Izk+IGktTIcAvggynBViYY9nVVukyI5IomCGc92w9A
+         fvFpZzmD+Np7sHfEBSlRIOWdz+29MgnHp8Xk50P1Is8KeSwJPGATbAuHX5UH+xy4AXA6
+         TtQQm0gk/0TNGyELzp4xxeHzS3PMCN33jphAf0GM1BlSNGieqM1tHuDulxGW/a4WL0h3
+         HqHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgOcUCgfUJtuSYaNFAkafw2moJqXzJsoQAgXZt6lIE4GF22R4RaqMx85JQaCyie5+HOGlKbX1PfFHTC0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg+Sv5nsgtx12f8XW+NObJSwRsfFdM9PDGmouN43jbS1kjDGSa
+	kTw9RkV+KsxZvFAz72oK6D/oWXRuNvwHTI4hrS3ZPAkAezdgXEhmgm4wRx0IJvY=
+X-Gm-Gg: ASbGncskiaCRS4cs2iyQD2meErwARKl4/RXU+lSg3x9NXXxIZ25TlRUYfPExZn+KThP
+	9pQgCnGYKAMrXaEAkKQjO9QByafsqHyt+YLVsWWj7WIiDg1xJgBwrKBqL+aM7ax6vgmPXEEOr8S
+	ad6HuwoJEzTV16jzkjPg7Ucb1g5Ih6OTy2XfhnalsTf23+xlXopT4Hn/oeyaLcHs/IFsMhDyOZp
+	75mtMKlnwteqGvUm1pE7Cuja/EDIBKjoHmFZTuoWFbcX9not9oWoWjYcOgfKOOup5FFCckg74Gg
+	Fu2usfoeoq1XfFLOc61qjrQPXpgGVUU=
+X-Google-Smtp-Source: AGHT+IGUs//lkbvx/dTZ6S1dXtcIeqOusIiHyVcn8w8wYwcYyF0soDMXcDq4Vyroqi8kUxCmEF+Ucw==
+X-Received: by 2002:a05:6214:2b0b:b0:6e6:6225:a910 with SMTP id 6a1803df08f44-6e8a0c9f160mr30820726d6.14.1740709570881;
+        Thu, 27 Feb 2025 18:26:10 -0800 (PST)
+Received: from ?IPv6:2606:6d00:11:e976::c41? ([2606:6d00:11:e976::c41])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976da38csm16657186d6.108.2025.02.27.18.26.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 18:26:09 -0800 (PST)
+Message-ID: <fb0e0c207cd6c2cad39c2a38398080d93db4000b.camel@ndufresne.ca>
+Subject: Re: [Patch v2] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Aakarsh Jain <aakarsh.jain@samsung.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org, 
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com, 
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+Date: Thu, 27 Feb 2025 21:26:07 -0500
+In-Reply-To: <20250226102251.9040-1-aakarsh.jain@samsung.com>
+References: 
+	<CGME20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef@epcas5p3.samsung.com>
+	 <20250226102251.9040-1-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7OrKX3zzjrzZdyz@pollux> <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
- <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com> <Z7xg8uArPlr2gQBU@pollux>
- <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com> <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
- <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
-In-Reply-To: <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 28 Feb 2025 12:24:50 +1000
-X-Gm-Features: AQ5f1Jo9MDruhrTr2qymJBq8i--oaJMjPPjA2VFHO726289NAQO1EfWzdBHtnOI
-Message-ID: <CAPM=9txa5Uo0qC-5OqNOcrWaGNjJEr8+J+ug0C3e6fMk9t18Zg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice implementation
-To: Timur Tabi <ttabi@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, 
-	"nouveau-bounces@lists.freedesktop.org" <nouveau-bounces@lists.freedesktop.org>, John Hubbard <jhubbard@nvidia.com>, 
-	"gary@garyguo.net" <gary@garyguo.net>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"boqun.feng@gmail.com" <boqun.feng@gmail.com>, "dakr@kernel.org" <dakr@kernel.org>, 
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, 
-	"joel@joelfernandes.org" <joel@joelfernandes.org>, Ben Skeggs <bskeggs@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 28 Feb 2025 at 11:49, Timur Tabi <ttabi@nvidia.com> wrote:
->
-> On Fri, 2025-02-28 at 07:37 +1000, Dave Airlie wrote:
-> > I've tried to retrofit checking 0xffffffff to drivers a lot, I'd
-> > prefer not to. Drivers getting stuck in wait for clear bits for ever.
->
-> That's what read_poll_timeout() is for.  I'm surprised Nouveau doesn't use it.
+Hi,
 
-That doesn't handle the PCIE returns 0xffffffff case at all, which is
-the thing we most want to handle, it also uses the CPU timer whereas
-nouveau's wait infrastructure uses the GPU timer usually (though that
-could be changed).
+Le mercredi 26 f=C3=A9vrier 2025 =C3=A0 15:52 +0530, Aakarsh Jain a =C3=A9c=
+rit=C2=A0:
+> There is a possibility of getting page fault if the overall
+> buffer size is not aligned to 256bytes. Since MFC does read
+> operation only and it won't corrupt the data values even if
+> it reads the extra bytes.
+> Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+> and V4L2_PIX_FMT_NV21M pixel format.
+>=20
+> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> ---
+> changelog:
+> v1->v2
+> Patch link: https://patchwork.kernel.org/project/linux-media/patch/202408=
+06115714.29828-1-aakarsh.jain@samsung.com/
+> Removed duplicate code and aligned luma and chroma size
+> to multiple of 256bytes as suggested by Hans.
+> =C2=A0drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 5 +++--
+> =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/dr=
+ivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> index 73f7af674c01..0c636090d723 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -549,8 +549,9 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_m=
+fc_ctx *ctx)
+> =C2=A0		case V4L2_PIX_FMT_NV21M:
+> =C2=A0			ctx->stride[0] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V=
+6);
+> =C2=A0			ctx->stride[1] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V=
+6);
+> -			ctx->luma_size =3D ctx->stride[0] * ALIGN(ctx->img_height, 16);
+> -			ctx->chroma_size =3D=C2=A0 ctx->stride[0] * ALIGN(ctx->img_height / 2=
+, 16);
+> +			ctx->luma_size =3D ALIGN(ctx->stride[0] * ALIGN(ctx->img_height, 16),=
+ 256);
+> +			ctx->chroma_size =3D ALIGN(ctx->stride[0] * ALIGN(ctx->img_height / 2=
+, 16),
+> +					256);
 
-Dave.
+An eventual port to v4l2-common helpers instead of open coding this
+would be nice, though I see nothing wrong to report with this code, so:
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+regards,
+Nicolas
+
+> =C2=A0			break;
+> =C2=A0		case V4L2_PIX_FMT_YUV420M:
+> =C2=A0		case V4L2_PIX_FMT_YVU420M:
+
 
