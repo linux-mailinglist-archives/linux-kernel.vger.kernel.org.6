@@ -1,102 +1,75 @@
-Return-Path: <linux-kernel+bounces-538961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E9CA49F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 080ADA49F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE2D1892D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2FD1892B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A787E2755EF;
-	Fri, 28 Feb 2025 16:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VsMpQDTm"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B258E18E743;
-	Fri, 28 Feb 2025 16:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35BC274248;
+	Fri, 28 Feb 2025 16:50:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D46189B84;
+	Fri, 28 Feb 2025 16:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761398; cv=none; b=nC6hwk6UHrMLABiZIm9IAif2Or7WVO5/CSVvhbssDq9ed0XevZ1d+yEGBh4QTqG05YrnjMHucqyPhIpBHZAYdyVVbvkhEhC762p+96O81hFvSjibglpN7kef2986eTmPIjwEyrw2VokmOdUSKfBKrsJu6kxXc0Q5LeWn78e3XCI=
+	t=1740761458; cv=none; b=lYeFIRhnLvZAfAgP4yE8/sUVQL5XdiwCwn5C4VdPpRDXecBHVVKQA3thQEF0dd91WXPu8tZ+UfRHrOx9nqUrjzx3DUZNzlRvEE5BP2gqXLIFhrl8pV+yKk7ixegUw2qRqWan/qCcbL7WFCrVHG6gMqmo972LCbqoW+SNHfpIMT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761398; c=relaxed/simple;
-	bh=4ayIV09zA1aU9cNC0Dxn9dvfibquc77ZN+Q0+zzNyhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dd5ZQkXEit6y9/o5aJdOh6z1R7Gc5vrKQs2m6tiqv0m6sxf3I99Oeu01b9dWV7T8VUYqF4JpkqF+41Nhrw38ki5qBe2xTgs6X1iA9hnI3KnS4tRnsgdMAd1avnSX2zTi3HBMSbnB23h0yIbwYRCZBCitNo8S7fKAL/CzLt8k448=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VsMpQDTm; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7A486432B3;
-	Fri, 28 Feb 2025 16:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740761388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x9fDfZJB/WezRePteXdcKn6DL3l6XX4XrV4HxKoRPK4=;
-	b=VsMpQDTmTRTfwdsJcEnPhDuR8dcLtn9+OYZ/jXEJDLTMH8x9BsC0R3jFrLYXDZbztvRrl+
-	TA6jKDzEDfxSRYzKGtuOUu9v1EQ+52cJ/eTBhHw3zo/yuktwCVcGwFL8+GBEYCwoEiNWMa
-	VJUGe6QuYYTHBWxogzuSTTNl22ql57r+FvLAYK2TiScaf9wuz0lQkVEl/Z3euDhKGKxR0X
-	gKsBnpKnWWaMfJidzwlgSM23rVtcgX42WCt7FumF+1+mgfoDCriyq/93bzl11cxP+gTLwI
-	a60cxKSPxNWKb3FR5jYBTklVEB1aVcmsCTnP5AemuDJJhpqzAyQ+AeRCleuljg==
-Date: Fri, 28 Feb 2025 17:49:45 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v3 09/13] net: phylink: Use phy_caps_lookup for
- fixed-link configuration
-Message-ID: <20250228174945.791c3f74@fedora.home>
-In-Reply-To: <Z8HiZpxPLy9YKTsf@shell.armlinux.org.uk>
-References: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
-	<20250228145540.2209551-10-maxime.chevallier@bootlin.com>
-	<Z8HiZpxPLy9YKTsf@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740761458; c=relaxed/simple;
+	bh=RjvmYgFj26Tl1M9VV8mPvQ7wgYX8kNV0gdkARYL9DLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=tpVlwL2pUptixv/nR9u1ihE9Y89vtmBFMpLFlXJNwjE1vTquT5HdP6weBlKl4jTaou4vK3iJR8HpCs1CtnMpKW+hsvDWtldcYMLoOO06ASCQM6OYwEhzCTOLuJO7gcZFfXPy2XV5NgFScgiKcpAA9oKcCQy1eAdo8aVPLO554Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BA44150C;
+	Fri, 28 Feb 2025 08:51:10 -0800 (PST)
+Received: from [10.57.79.187] (unknown [10.57.79.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 349603F6A8;
+	Fri, 28 Feb 2025 08:50:53 -0800 (PST)
+Message-ID: <4b83669e-db37-4a38-ac43-5d210d7ce544@arm.com>
+Date: Fri, 28 Feb 2025 16:50:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] drivers/thermal/exymos: Remove redundant IS_ERR()
+ checks for clk_sec clock
+To: Anand Moon <linux.amoon@gmail.com>
+References: <20250216195850.5352-1-linux.amoon@gmail.com>
+ <20250216195850.5352-3-linux.amoon@gmail.com>
+Content-Language: en-US
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ open list <linux-kernel@vger.kernel.org>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250216195850.5352-3-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtt
- hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, 28 Feb 2025 16:20:54 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-> On Fri, Feb 28, 2025 at 03:55:34PM +0100, Maxime Chevallier wrote:
-> >  	adv = pl->link_config.advertising;
-> >  	linkmode_zero(adv);
-> > -	linkmode_set_bit(s->bit, adv);
-> > +	linkmode_and(adv, pl->supported, c->linkmodes);  
-> 
-> There is no need for linkmode_zero() with linkmode_and() immediately
-> after. linkmode_and() writes to its entire destination.
-> 
 
-Ah true indeed, I'll address that.
+On 2/16/25 19:58, Anand Moon wrote:
+> Remove unnecessary IS_ERR() checks for the clk_sec clock,
+> the clk_enable() and clk_disable() functions can handle NULL clock
+> pointers, so the additional checks are redundant and have been removed
+> to simplify the code.
 
-Thanks Russell,
-
-Maxime
+This patch looks sane, just rework the 'goto' stuff in the
+exynos_tmu_probe() maybe in the patch 1/4 so won't be needed here.
 
