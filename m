@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-539333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD96A4A34A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:00:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEC2A4A34C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01073BE194
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:59:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8A2F7AA09D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF589281379;
-	Fri, 28 Feb 2025 19:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="elTX4Fxc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754DA280A25;
-	Fri, 28 Feb 2025 19:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A078274275;
+	Fri, 28 Feb 2025 19:57:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA21726E140
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772674; cv=none; b=lc3bjLs3a3Qe1Ky1C8e/Ru0T0+sh6xQaDy+7b0WPUjh+eKlMYy/caypik0HLtP+dFEnc05FrNU9eiCqcgaO/YEwRRcO7oIk4vRohE4AEl8lR2jbDepVlZtDU1d6zbjemFSvhkaWws8hkiWgt8xarz456BIAhUIUBhFHcyaIgdy0=
+	t=1740772665; cv=none; b=qd1KNNY+QGxx9Midi9JVOyf7RlOYtHQ9k4+RT8lSbOsU3rwGIV1xsXL79F51WIl7C1BfmoSGViIGzDbLDSOfGNX++Uhd+DqIcJcF/S6a79zn1Ahbpc5xqcWgiiCyMIiK9TYGba97Tk2w3q6W3PRlVGltoa4+4dIimZS/GVGK/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772674; c=relaxed/simple;
-	bh=fW9kkI7u67nrHJc3lzSRVjomgU+mDe9ldQVXaTVjb8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3e4+F58WKqM2vpKep4Ghej8+wPd/QZc28XNiFF33STXtKFebOgx+J6fBIXhFy7V8MZl/4OxjksDqQ1SFzFQz90tyEyzoQ1qVK342ciZbRlCIaqJor7Jo7uCS50CuaerxjkfgUYXM0Pbm96FMZceuEYEkh+C2RD2zWTCVKIDtzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=elTX4Fxc; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740772672; x=1772308672;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fW9kkI7u67nrHJc3lzSRVjomgU+mDe9ldQVXaTVjb8Y=;
-  b=elTX4Fxc9gC6cRRg/gp6kAPzFoNAfCn0uIdBC34x9/iUdlG+thTwJzP5
-   bVzHST6piwiKH4zf1lPCP8V0mH68hTrnPU4It6MmqcTqNQKF9+d0RLgoS
-   xAbyAjegiRZniSEr0BDEby5DwystKuIwnuDbg+ZTUSwF6GGs9lut/f/j7
-   NzbmqML2jgaibsqoN9fWppLiyec5QNZVc3Mku/mPBb7nMqKyu15cQRmpi
-   ypdrv3RXgWKjb4FfGz5uzMVVgwfkYw5np4soOFU39zLv3rcL8h/kG4qHA
-   LuCkWSdBQxYW9kWnXjhd9WzkwHKt23bgvWk6+8E0gJNm9c1dXADnEfGUS
-   g==;
-X-CSE-ConnectionGUID: FP3s8V1hRjmgvv/74DOk/A==
-X-CSE-MsgGUID: /mqnuT7WQNOKKiiG9KAAPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45364528"
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="45364528"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 11:57:51 -0800
-X-CSE-ConnectionGUID: u2Gd4QlOQZyvTPciEgycwg==
-X-CSE-MsgGUID: RzQuk0WZQsWN6bI0CwDa7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="117418930"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Feb 2025 11:57:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1to6UU-000FRe-2i;
-	Fri, 28 Feb 2025 19:57:46 +0000
-Date: Sat, 1 Mar 2025 03:57:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>, michal.pecio@gmail.com,
-	ki.chiang65@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [RFT PATCH] xhci: Handle spurious events on Etron host isoc
- enpoints
-Message-ID: <202503010346.46nbVSmT-lkp@intel.com>
-References: <20250228161824.3164826-1-mathias.nyman@linux.intel.com>
+	s=arc-20240116; t=1740772665; c=relaxed/simple;
+	bh=M3Geb5rqxlv3C2sUQe/HlxCDuxcdfeIoByMychjQPJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EpCn4TUdcdfQmuN0WMgrkqqgqLEBuhwXz+Dpf02sfKUfuNtcUs8hU4uyywHBG6rbTEwYpos7nXKr7UaHri2kadHKST7zx9qgZR2Se78Bf0lnZYyamgQdZf1M6y9RtL3ZGpD92SDe3gVDO7k3iqtaWpulO8Pg5llBU3b9AHh3oCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AE3B1515;
+	Fri, 28 Feb 2025 11:57:58 -0800 (PST)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB0CF3F5A1;
+	Fri, 28 Feb 2025 11:57:35 -0800 (PST)
+Message-ID: <9d4bc823-28d2-4ab4-a573-894109b51845@arm.com>
+Date: Fri, 28 Feb 2025 19:57:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228161824.3164826-1-mathias.nyman@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 42/42] x86/resctrl: Add python script to move resctrl
+ code to /fs/resctrl
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-43-james.morse@arm.com>
+ <baa225e6-65bd-49ec-baf9-166ae4f2926c@intel.com>
+ <545e4e79-e309-4bda-9a70-204d83749308@intel.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <545e4e79-e309-4bda-9a70-204d83749308@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mathias,
+Hi Reinette,
 
-kernel test robot noticed the following build errors:
+On 25/02/2025 16:16, Reinette Chatre wrote:
+> On 2/19/25 10:10 PM, Reinette Chatre wrote:
+>> On 2/7/25 10:18 AM, James Morse wrote:
+>>> To support more than one architecture resctrl needs to move from arch/x86
+>>> to live under fs. Moving all the code breaks any series on the mailing
+>>> list, so needs scheduling carefully.
+>>>
+>>> Maintaining the patch that moves all this code has proved labour intensive.
+>>> It's also near-impossible to review that no inadvertent changes have
+>>> crept in.
+>>>
+>>> To solve these problems, temporarily add a hacky python program that
+>>> lists all the functions that should move, and those that should stay.
+>>>
+>>> No attempt to parse C code is made, this thing tries to name 'blocks'
+>>> based on hueristics about the kernel coding style. It's fragile, but
+>>
+>> (heuristics)
+>>
+>>> good enough for its single use here.
+>>>
+>>> This only exists to show I have nothing up my sleeve.
+>>> I don't suggested this gets merged.
+>>>
+>>> The patch this script generaets has the following corner cases:
+>> (generates)
+>>
+>>> * The original files are regenerated, which will add newlines that are
+>>>   not present in the original file.
+>>> * An trace-point header file the only contains boiler-plate is created
+>>>   in the arch and filesystem code. The parser doesn't know how to remove
+>>>   the includes for these - but its easy to 'keep' the file contents on
+>>>   the correct side. A follow-up patch will remove these files and their
+>>>   includes.
+>>
+>> Related to the tracepoints I also noticed that there are some leftover
+>> tracing defines in files that no longer make use of tracing.
+>> For example, arch/x86/kernel/cpu/resctrl/monitor.c contains:
+>> #define CREATE_TRACE_POINTS
+>> #include monitor_trace.h
+>>
+>> and fs/resctrl/pseudo_lock.c contains:
+>> #define CREATE_TRACE_POINTS
+>> #include "pseudo_lock_trace.h"
+>>
+>> I assumed this will also be removed in this follow-up patch?
 
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Yup:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git/commit/?h=mpam/snapshot/v6.14-rc1&id=3d0430324a0c7e7ad765140f9e78a9a312a13573
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathias-Nyman/xhci-Handle-spurious-events-on-Etron-host-isoc-enpoints/20250301-001842
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20250228161824.3164826-1-mathias.nyman%40linux.intel.com
-patch subject: [RFT PATCH] xhci: Handle spurious events on Etron host isoc enpoints
-config: sh-randconfig-002-20250301 (https://download.01.org/0day-ci/archive/20250301/202503010346.46nbVSmT-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503010346.46nbVSmT-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503010346.46nbVSmT-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/usb/host/xhci-ring.c: In function 'xhci_spurious_success_tx_event':
->> drivers/usb/host/xhci-ring.c:2650:21: error: 'struct xhci_ring' has no member named 'old_trb_comp_code'
-    2650 |         switch (ring->old_trb_comp_code) {
-         |                     ^~
-   In file included from include/linux/device.h:15,
-                    from include/linux/dma-mapping.h:5,
-                    from drivers/usb/host/xhci-ring.c:59:
-   drivers/usb/host/xhci-ring.c: In function 'handle_tx_event':
-   drivers/usb/host/xhci-ring.c:2717:60: error: 'struct xhci_ring' has no member named 'old_trb_comp_code'
-    2717 |                                  slot_id, ep_index, ep_ring->old_trb_comp_code);
-         |                                                            ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/usb/host/xhci.h:1733:9: note: in expansion of macro 'dev_dbg'
-    1733 |         dev_dbg(xhci_to_hcd(xhci)->self.controller , fmt , ## args)
-         |         ^~~~~~~
-   drivers/usb/host/xhci-ring.c:2716:25: note: in expansion of macro 'xhci_dbg'
-    2716 |                         xhci_dbg(xhci, "Successful completion on short TX for slot %u ep %u with last td comp code %d\n",
-         |                         ^~~~~~~~
-   drivers/usb/host/xhci-ring.c:2913:77: error: 'struct xhci_ring' has no member named 'old_trb_comp_code'
-    2913 |                                          &ep_trb_dma, trb_comp_code, ep_ring->old_trb_comp_code);
-         |                                                                             ^~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/usb/host/xhci.h:1733:9: note: in expansion of macro 'dev_dbg'
-    1733 |         dev_dbg(xhci_to_hcd(xhci)->self.controller , fmt , ## args)
-         |         ^~~~~~~
-   drivers/usb/host/xhci-ring.c:2912:33: note: in expansion of macro 'xhci_dbg'
-    2912 |                                 xhci_dbg(xhci, "Spurious event dma %pad, comp_code %u after %u\n",
-         |                                 ^~~~~~~~
-   drivers/usb/host/xhci-ring.c:2914:40: error: 'struct xhci_ring' has no member named 'old_trb_comp_code'
-    2914 |                                 ep_ring->old_trb_comp_code = trb_comp_code;
-         |                                        ^~
-   drivers/usb/host/xhci-ring.c:2942:16: error: 'struct xhci_ring' has no member named 'old_trb_comp_code'
-    2942 |         ep_ring->old_trb_comp_code = trb_comp_code;
-         |                ^~
-   drivers/usb/host/xhci-ring.c: In function 'xhci_spurious_success_tx_event':
->> drivers/usb/host/xhci-ring.c:2661:1: warning: control reaches end of non-void function [-Wreturn-type]
-    2661 | }
-         | ^
+I'll include this patch in v7, you found a case where its not as harmless as I thought.
 
 
-vim +2650 drivers/usb/host/xhci-ring.c
+>>> * asm/cpu_device_id.h and a relative path for 'X86_CONFIG()' are kept
+>>>   in the filesystem code to ensure x86 builds. A follow-up patch will
+>>>   remove these.
+>>> * This script doesn't know how to move the documentation, and update the
+>>>   links in comments. A follow-up patch does this.
+>>
+>> One unexpected thing I noticed is that fs/resctr/internal.h contains:
+>> #ifndef _ASM_X86_RESCTRL_INTERNAL_H
+>> #define _ASM_X86_RESCTRL_INTERNAL_H
+>> ...
+>> #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
 
-  2646	
-  2647	static bool xhci_spurious_success_tx_event(struct xhci_hcd *xhci,
-  2648						   struct xhci_ring *ring)
-  2649	{
-> 2650		switch (ring->old_trb_comp_code) {
-  2651		case COMP_SHORT_PACKET:
-  2652			return xhci->quirks & XHCI_SPURIOUS_SUCCESS;
-  2653		case COMP_USB_TRANSACTION_ERROR:
-  2654		case COMP_BABBLE_DETECTED_ERROR:
-  2655		case COMP_ISOCH_BUFFER_OVERRUN:
-  2656			return xhci->quirks & XHCI_ETRON_HOST &&
-  2657				ring->type == TYPE_ISOC;
-  2658		default:
-  2659			return false;
-  2660		}
-> 2661	}
-  2662	
+That's a new one - I'll add a follow-up patch to change those.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+> It looks like another item for this list of "corner cases" is that the
+> #include of all files need to be reviewed after the code move. There are
+> functions depending on a particular #include that are moved out of the .c
+> file but the (no longer needed) #include remains.
+
+Indeed, that is one of the followups that I'll include in v7.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git/commit/?h=mpam/snapshot/v6.14-rc1&id=9e2bd53f5e2b33fef69db1aae2dd7aeeaf1dd24c
+
+I suggest all these get merged into the patch that moves the code - but I'll post them
+separately in case anyone is interested in regenerating the patch using this script.
+
+
+Thanks,
+
+James
 
