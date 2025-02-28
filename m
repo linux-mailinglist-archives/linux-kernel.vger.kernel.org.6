@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-537988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E51AA4934C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:20:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081AFA49315
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611183B584D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4461894855
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AD62441A1;
-	Fri, 28 Feb 2025 08:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7721A209F5B;
+	Fri, 28 Feb 2025 08:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfhi+k5P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG8VGKBh"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59B7241CB5;
-	Fri, 28 Feb 2025 08:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF251FFC48;
+	Fri, 28 Feb 2025 08:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730821; cv=none; b=VhpMNNPbuqn0U908GKgyUL6lBjXnfzp3/4qPCSxX3RKfayQPSiz4ZCeeYQi2cPPqeJIm7W1XNDQp4QsKuWw8fZTYuMAmAQ32PvPfE38s9jWq9NFmoJCKuNHd7uBREmPS+rNATGyNq4UMEdeJbCu0Z10ZoAjdqJiwh58cKi3gpJo=
+	t=1740730431; cv=none; b=JN3K44TLsmvMWTl0bDfTXWyxH7HuN0NFoFW3dbkPCGS/17nvWEQPE/P4c9hWA7qlRXLRlUTiq4/YXnDzicCAXYvv0zRvbPMpeYaLodm9D1fMrzt/YH0fLwoaMSeDM6I/g03ToDtodscOJKmMYJwqVPwYb7gYOU+9DAR8jcPLNcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730821; c=relaxed/simple;
-	bh=OEgpyMB4mVz6xatqE7RFgUZeG48lXrAMDdUyOzv9uoM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dzt5vySpp42MzKBX+fyQY2vTMdVYX5/Byqn0mSQD/9gtP7u9CGEg7E/iy8ByDIZYOytgx+tRuYRER4hvn6gZUdplwZO1fFoHi3jri0Qg840EV4PxpV0dOnkeUYQTUEAZTEqGEAwq1nH30UcG1j59B80FsQtvdI2NFdXLpR40m9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bfhi+k5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BCFC4CED6;
-	Fri, 28 Feb 2025 08:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740730819;
-	bh=OEgpyMB4mVz6xatqE7RFgUZeG48lXrAMDdUyOzv9uoM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=bfhi+k5PGKHOytnaDgogFOZMKWU/7OkKnKF5XpK9xc3sMCy8q6/MocZmU5zn3yeHd
-	 P5Kq6xcPKMQGEtjUzq/XWfSPzrJbCRLdZkziAosodf+AKzgR1Xcz5MYsIj0HoTL7Hz
-	 gFT8JUGfzxz4EI4CTjNVoISrmdH2UeovZSpVoy2P8dKR698GA8HrBdmsCnX3Bc2RTt
-	 HuXY6Y7LYKOarTLmv/YK2M9bbaJpJRXMWkyAn05Fr7psuZ+edeIMcDMx3Lw8H0U8e8
-	 3nZVIeuQo95PgyQgn7VCgm0xb+UvpA5+a1+qVkA9D1oYT/tmZ3buhInqUzUSNphHkt
-	 xIIf0/3TL36Vg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Petr Mladek" <pmladek@suse.com>,  "Steven Rostedt"
- <rostedt@goodmis.org>,  "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>,  "Rasmus Villemoes"
- <linux@rasmusvillemoes.dk>,  "Sergey Senozhatsky"
- <senozhatsky@chromium.org>,  "Andrew Morton" <akpm@linux-foundation.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,  "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
- <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "David
- Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 1/4] rust: fix signature of rust_fmt_argument
-In-Reply-To: <20250227-export-macro-v1-1-948775fc37aa@google.com> (Alice
-	Ryhl's message of "Thu, 27 Feb 2025 17:01:59 +0000")
-References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
-	<qxbD5y-rJZMJDMN1wtODJBCAdNtNdQFsYIDhZUex7KcbPiUvABElh5V8c9EFoAPZ7xQe_L8JS6MzAIqciAb12w==@protonmail.internalid>
-	<20250227-export-macro-v1-1-948775fc37aa@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 28 Feb 2025 09:13:25 +0100
-Message-ID: <87v7suo5ay.fsf@kernel.org>
+	s=arc-20240116; t=1740730431; c=relaxed/simple;
+	bh=6s+XK8sAu7D21czy6f9zshJ0Pz1KXiHahNyi5hBbkuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9s3QGz0q+RgOTBpRHZckDVjsfgdzGD3h4osSaCicgaWDcc0xz2eMTSup7VheP80RiyzJKUAbTVY8piva9zQ0l+NZkSZs9JLJ+e1inh7vANplW0XykNOiBbrxrH/KhErxKvpy9CSvG4l5dAdAyGIP6y4GmJYfhHZGbImHU9ZUsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FG8VGKBh; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22185cddbffso51529885ad.1;
+        Fri, 28 Feb 2025 00:13:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740730430; x=1741335230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Na5VN2FPxgLTURi/r4p4P+00hEexnO950UJTB8eSOso=;
+        b=FG8VGKBhcswfWn528suDB2vI11dq2LdaSfBH+69NwadjpTzdeDF9dB4CiP6ciwhz8C
+         sQxhX9uffwlTwCMmK0v+dQo0FpOG4o7fdGc9ChX8ZCEeEZK51OTPeBvl3N1qLRb3ID/0
+         wUxw8eyOtXJMvv0Ee1V+g+RWwhv8eKGJnPDK0vWodFnMkHhBUVJekhhJJ4/RKyFj9xpB
+         Xf/pUOlC8Jzy1/XTyoV4NT2f5N7GWg0kpCwXDjmPGQ3+GFVzj1FiXCAA0jK0lQdQUxLq
+         hE+c8OfY+pyKpbu8Z5wbti/fZoWvMdV+mTEkDPf3INtcidkAZc3+iBrS+67CXrJNOcis
+         ycxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740730430; x=1741335230;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Na5VN2FPxgLTURi/r4p4P+00hEexnO950UJTB8eSOso=;
+        b=TRU0+/7YHm12N7YFEUF1gumCOGohGX/EnKOO9dxGy8jtus0gwvONynlYgEU+JoFKBH
+         Bs/0phmmYzryOIm5dS2nT88c2rvaXG/iu0NQm7MiuxF+OhEdR2xd6+I9tCwWwvWdude7
+         JxztoWopu69VykbbdX45pVwbqPyoFcN66XwgKJzelUGBAnKsndNzmJ1R/blk9R9qGqH3
+         lqYdlkzs4Ru20g9El3B0lyqPxtuzf5u5OawWyTnt+Gl8EKITgWekSNL4kzXRubrdC42v
+         9/s2LwLADeETwKyBstjdp2t16wERwU9c21AbhzwVnpywOd39zMAomdghWLXRK0irmbfZ
+         8jVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgT7x8k+fETaXLRq47YxzwfMdYf8oH26FwN3RWvVLeu64WwZYZHWfzidXCzgpCkiCam3gAE24uM9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmJOGlZdsbUZ2EvJJN9hl8EhwXV5WsHZuJ4rtmobx3z9wcKVlf
+	EN5gSzBukv0a3V13UzQaW06O6kBSgqs38ZUmLpEtGN5l2WUNvp750fEpAJmvV/LVfg==
+X-Gm-Gg: ASbGncsRqlqjSYBg44XAhilA39v0ok5XAiXr0uddUkxUb9k7dxdoiJ0+ToNtbDqNWXX
+	GyksDK4an3ltIjChkyC2TWpLYLfjJVboCRY3MCDYw18I18hdBTBAmx4dMr7zQc4wWZX1R+5b8iX
+	WdY+5+LOCjXnD86JP7tx+9tUMtm61yiqP7979/zp03G//mYp76VB8CPPHGj8vcmN/8RX+MvLEcy
+	/8eHkpM7Zq/rUpb8JEUzaGqw3WLpmgVUeqi6ClWHLBH+2c+jJOGCa4CvYMHF2D1DLBAIMXlz2f5
+	XoiWWwzCiFvA7ynjx6o5RZj0IAeYRswMxdSEPEfRsGN2smyf
+X-Google-Smtp-Source: AGHT+IHoMty9feq7PV3rqXBAgLDk345+dZ9XZSZ/bst47bwK7XsE+dtjNWN3IGNheEb3nyVP81+AVg==
+X-Received: by 2002:a17:903:3ba5:b0:21f:1348:10e6 with SMTP id d9443c01a7336-22367455c16mr46890875ad.13.1740730429604;
+        Fri, 28 Feb 2025 00:13:49 -0800 (PST)
+Received: from fedora.am.students.amrita.edu ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235052c83bsm27857095ad.236.2025.02.28.00.13.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:13:49 -0800 (PST)
+From: Siddharth Menon <simeddon@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH] lib/Kconfig.debug: fix broken reference to fault-injection docs
+Date: Fri, 28 Feb 2025 13:43:38 +0530
+Message-ID: <20250228081342.42968-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Update the reference to point to the correct location.
+---
+ lib/Kconfig.debug | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Without this change, the rest of this series will emit the following
-> error message:
->
-> error[E0308]: `if` and `else` have incompatible types
->   --> <linux>/rust/kernel/print.rs:22:22
->    |
-> 21 | #[export]
->    | --------- expected because of this
-> 22 | unsafe extern "C" fn rust_fmt_argument(
->    |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
->    |
->    = note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
->               found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *const c_void) -> *mut i8 {print::rust_fmt_argument}`
->
-> The error may be different depending on the architecture.
->
-> Fixes: 787983da7718 ("vsprintf: add new `%pA` format specifier")
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  lib/vsprintf.c       | 2 +-
->  rust/kernel/print.rs | 8 ++++----
->  2 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 56fe96319292..a8ac4c4fffcf 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -2285,7 +2285,7 @@ int __init no_hash_pointers_enable(char *str)
->  early_param("no_hash_pointers", no_hash_pointers_enable);
->
->  /* Used for Rust formatting ('%pA'). */
-> -char *rust_fmt_argument(char *buf, char *end, void *ptr);
-> +char *rust_fmt_argument(char *buf, char *end, const void *ptr);
->
->  /*
->   * Show a '%p' thing.  A kernel extension is that the '%p' is followed
-> diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
-> index b19ee490be58..8551631dedf1 100644
-> --- a/rust/kernel/print.rs
-> +++ b/rust/kernel/print.rs
-> @@ -6,13 +6,13 @@
->  //!
->  //! Reference: <https://docs.kernel.org/core-api/printk-basics.html>
->
-> -use core::{
-> +use core::fmt;
-> +
-> +use crate::{
->      ffi::{c_char, c_void},
-> -    fmt,
-> +    str::RawFormatter,
->  };
->
-> -use crate::str::RawFormatter;
-> -
->  // Called from `vsprintf` with format specifier `%pA`.
->  #[expect(clippy::missing_safety_doc)]
->  #[no_mangle]
-
-The changes in this last hunk is not mentioned in the commit message.
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 1af972a92d06..35796c290ca3 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2103,7 +2103,7 @@ config FAIL_SKB_REALLOC
+ 	  reallocated, catching possible invalid pointers to the skb.
+ 
+ 	  For more information, check
+-	  Documentation/dev-tools/fault-injection/fault-injection.rst
++	  Documentation/fault-injection/fault-injection.rst
+ 
+ config FAULT_INJECTION_CONFIGFS
+ 	bool "Configfs interface for fault-injection capabilities"
+-- 
+2.48.1
 
 
