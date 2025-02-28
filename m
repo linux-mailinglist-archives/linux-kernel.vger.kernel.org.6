@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-539641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E534EA4A6C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:00:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40F9A4A6CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC587AAF10
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4C8189CE2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7531DFDBC;
-	Fri, 28 Feb 2025 23:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704031DFE3D;
+	Fri, 28 Feb 2025 23:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="J3W2W/RC"
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bbYcnhvh"
+Received: from mail-vk1-f225.google.com (mail-vk1-f225.google.com [209.85.221.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9601DF74F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD301DFE29
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740787195; cv=none; b=N802pnccUb8nnigXvFqn2+trkpPWmZgACm3zzhMVcbtbKXWbun5QLAJgXtU7YCKE0iwUk+MIoZvG48se8WbM1einKKtuuwVQ6AqyHOhw/lGQJGAhZoNlyiit8xdXRkvSNIFiE1GgBe+NIuFpK1M/Dmb3FvO6X4d0rt3l1m0Wm90=
+	t=1740787198; cv=none; b=Gaf0t88nGS3a9taviAsmVth6ZgETVSBPjCsrBxl9DRX4tE2BzEdcg7c1HLTCKv85Zbt2mIJf5zFUXl7+0Cds79Pd4SnALNb6iez+Q5IWLkoNmGgRhEedo719kytIVku7MT0yH7Wevrx0bBCU2XVEOHtLxJNoiby/BsBeGP5oEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740787195; c=relaxed/simple;
-	bh=AZLZzMJ0MTVnkoUKBeMQDCZ4HtU6js9qp5I5DPRcObM=;
+	s=arc-20240116; t=1740787198; c=relaxed/simple;
+	bh=GqEhJOiyYXdr8rGQugNrCU6kawK92vTYNv4q8/6+xKU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7+/b5TOi8vBA11luAkQRMl8Tu6WozxYcoypU57MiDYuACQ/Wrhwvm2QmR9/VwIPKo/Sg/ZxMvsB7YGJ0IfJ5FEjFp9EmqYo+QXAB1xqmEAi9ga3EGv2T7WBi9kw1b9Px9Pn/+8bi7/bjZ5gasiCBdMjPKXUSiXqXaU8LaoPKPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=J3W2W/RC; arc=none smtp.client-ip=209.85.214.225
+	 MIME-Version; b=GqN3b3UxbwIjTu9fYFn1sN+N/pSYSIZd6sJXPMo4HXsvrGDWjpVGwGqdGUO8CWgRy5CduMTgFqlzaiJeX0R/9pCJqM4U/XxEm22+M2gMB55YqRNe0A1/dY0HrxOATUMW56D0UG+1LPS1hOAndLCKWovDRf+uxHDSjYDb5PSRdOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bbYcnhvh; arc=none smtp.client-ip=209.85.221.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-216513f8104so5963845ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:59:53 -0800 (PST)
+Received: by mail-vk1-f225.google.com with SMTP id 71dfb90a1353d-520c0b81315so39217e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:59:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740787193; x=1741391993; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1740787196; x=1741391996; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9sAFpF9FEO4L/QlXHSxh/NHTnXAGTF5O5LuvRrb5CMs=;
-        b=J3W2W/RCsKnCTerIHfTQUZMH0DW4rltDuBnLy/YR4nPXLUje8GCqwID7QUMo50w86p
-         kMXFRHT84eIoCHRfgyp9FcFoToATXAyt9pUu/GrncZCSPhSLwwwXtIYFMqQZzE5z4fm2
-         JEfnMM7jQBhU3MVIdwHJW5CtepXVtlfu+ePI1y+K1iKSMW6kYPcwMohMnoqw4IAKD4Cf
-         h4LQMnhmul7qzOF7U9ON2KgVJSo7KvRe7WF3KH/iAWgF9zKtWPZjCLwReumIHw4YuPuh
-         3KwtMMUMkU5/Ydx58oy/wfWe81r+eY0m5QHQ+3nGKlET4cAJHo/SoSX8+7mhEMjUkOKm
-         +2vQ==
+        bh=IqbUgsOP74rQAaYypSD/gLbYz0cVUXhGZfBogbxaru4=;
+        b=bbYcnhvhpzE+esEVp0I7U0EDjNqvwDySuY0XTWgXlYJxrCawT3hYpHiWdN95RxL2U9
+         e6bKZnoOIZ4QzUeJeOmo0nu2YxcFQjAkmNNnmlcrxsVhiRV1NzmvjW8NgD2AIefJR85g
+         JJn+ZG6Om1SHOKuFlHgkd0syQBxv29Av2V8hfBVUTHgMOY0zP3CU1L9DpxHAtPOp3JfL
+         I+CdouGPDKU/kuQkm6c0zxgF3MGtt0gwQQL9IZ0NRV/rGno/hyECfFl/fewzhDCgCMx+
+         jzxpgMItWzgOLV4LHY/DjJuhTp31b14C7G1A1yNDD4CYA9FaD5rQVuUnNFqI1815YRS2
+         jULA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740787193; x=1741391993;
+        d=1e100.net; s=20230601; t=1740787196; x=1741391996;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9sAFpF9FEO4L/QlXHSxh/NHTnXAGTF5O5LuvRrb5CMs=;
-        b=LS46mMon4zc+xp9NF4PKUAQ2k6W/tIO3CrpRHes7KywK0+Se7mgWyLHvuQwe+s0k69
-         zkB55sZnV1/lOUKo8GibeeXFN+RgbG50jNkQKUb5vL63YvgeMfsNK2+kkE0lFP50kPDt
-         mP1RYievT9RUIWwuF1Yxp5j3QQUcSO8GcBPpE4wNTh5Q+lo8XYBV9eNBXFuf4F2Ub04x
-         yiq4sRuiA79PjlHlJsmS2QJXfRz4KyVyEJ///edUQO+AYBphXBjqUVRTluulywx00M3B
-         Tj6vFLmcvNsfw8HXg/+BxyIBmhH2M/UkpFWHppzodmCnXzJrv4504cqnCpRls638nmys
-         wmgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdRz4MtHK8vQ63ju4Zn2xKAZt9DEwHFe4G+HNdXaNmcOddUit+guQAtS18xCB4LsoO6sav2Xyp9tIBv9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmDUO6xWiAdk6FEjY+ttiDDKjgQXSCOWyZ1EazoI7KIEtong+N
-	uNZL8+JXbilC1IDUjFqlDdd4k9GRCyvnVC19L4IVMAPEvyu/DjrmDeHEg8fOyXmGkscIwTxEtyx
-	fuoTaTt5J/tfkdoi66PPG8TmlVZLbGbal
-X-Gm-Gg: ASbGncuO3EsfHNjxMQUt027iN7VLWH5xQc6r4xDNOHbqJykOEyi63O395QEb5Gz/Rls
-	9Fsbhc3x60L0aDtp13LtjFlKJhP0wBCibH/I5PJKDRAI7Sk/gKMtYXQt6FrDPqXuVvStJzIsgkS
-	gqtpUi5Jx/zvY32c2hpT94D2Ut+Dam3XRjha2xYYd1RTmYH3xsMm3giCb+tStXXwyhLKo2z8+49
-	QdER//tmeQIASK4rMYWh9qeCJgFc2rR3SyvlXPItJ5mPJkxGDW0bxJGVTG951YDOGuSpTGROTYW
-	zlsBLsD32tw8CmKE1xrC2b/btKfgrhSHoMtIuuB4DhSigro7
-X-Google-Smtp-Source: AGHT+IEW1Xd6SYijTL09braAm7HsEL2GN7+54qihyn7XQtQRzFpzh2VrVsxovv2bmR4SodKogme58OERoUcL
-X-Received: by 2002:a17:903:19e6:b0:220:e1e6:446e with SMTP id d9443c01a7336-22368fb8e9fmr30785535ad.1.1740787193090;
-        Fri, 28 Feb 2025 15:59:53 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-223501d35casm2145365ad.17.2025.02.28.15.59.52
+        bh=IqbUgsOP74rQAaYypSD/gLbYz0cVUXhGZfBogbxaru4=;
+        b=V6u4O51O5W77Z0RVAS8jvrIYITbiqgj7PNcP31x8rygDJ75hqsWocKH3xrmsp1mI5g
+         45nwtGZ9D5gKNfd05lOqjprgelDKAe2lmSHd2/M4Tw331sEO4LMKdwMQ766x+wz7Oqpv
+         lgCKsEew22v3u5mol/7FKdEXgjoybT5ycC91ItxuYUrdOu4poHneEbrUlg7opEDAaG8H
+         53PmCZNvPeEFlxqbCOHIxYHCuPnXfUe895vle9XnRUGebYDthhS2S9r8W3z6j4fxDCA5
+         O9cEpXUYNJenY6Ek14eqOLbzVa0Xc08TyPVcn8y2+HTq0S8qXjTLHpsh8Z9DFFiDmgCh
+         9oIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWal3bbPQhkuNUmqmentE9Oqbgrj6PBsnekbNBPIdM6Zh8R5xmfJ82Nsha8nXkG2mL7xHnB2p65//Uw3g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuCWw2stfLMuP/sj/R+9IuROqGcimdxqaGoIjIMRoCtNC9wWN5
+	J5H0NdZFZ+W/RvKXno++uZrMV+QyKLQKHKn0pTPfy7x3ljV6MXXrJmFVulwx90N4Zw/vPH5pucb
+	3e4HFxgQidRIVFmaMmVlIxnYpq+j3fxGvn/yH31xUTxYxV4DA
+X-Gm-Gg: ASbGncvVVZjuHPRgUxzZynLxCLn6ucqQxYbwP/xt/5G+hYpV1Btas/8tUWhp6v8+qz/
+	FoTlTLIzLOhSgShV1WruBYsXUGgUAQ4mZL5R+ieCXo35dM/R9oCfctHj2ydtSgqI4Kccem99TgD
+	5dnCxALOWZ/1YrYxzrOuehLxWo2jK7myd6s9mXJV65nr1W1qhkdOSi48+/bvk698kmZfNVB7C70
+	u9v7k7Ww5EQiEmEJyvC1RrnCyKN5ahi4fWGHIcXOqh/QbLWJ8dmKxxMlS5I9DmamUUgb0dI8tfd
+	voWq7+O0fvS0QwgG9DXlCGZflmEEEbcuUQ==
+X-Google-Smtp-Source: AGHT+IGRBEGoIDXj6ALCnhETDFnXCj12VARjJtS72JzhHgZ8tigxOcRZZIHSTkQ218vW8h9TJLZxg4EO/5ga
+X-Received: by 2002:a05:6122:1b8d:b0:520:579d:893c with SMTP id 71dfb90a1353d-5235b64757dmr1239548e0c.1.1740787195935;
+        Fri, 28 Feb 2025 15:59:55 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-5234bec414fsm230393e0c.2.2025.02.28.15.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 15:59:53 -0800 (PST)
+        Fri, 28 Feb 2025 15:59:55 -0800 (PST)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 8536734028F;
-	Fri, 28 Feb 2025 16:59:52 -0700 (MST)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 6B12334028F;
+	Fri, 28 Feb 2025 16:59:54 -0700 (MST)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 78DA8E41A00; Fri, 28 Feb 2025 16:59:22 -0700 (MST)
+	id 5C474E41A01; Fri, 28 Feb 2025 16:59:24 -0700 (MST)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
 Cc: Caleb Sander Mateos <csander@purestorage.com>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] io_uring/rsrc: free io_rsrc_node using kfree()
-Date: Fri, 28 Feb 2025 16:59:11 -0700
-Message-ID: <20250228235916.670437-2-csander@purestorage.com>
+Subject: [PATCH 3/5] io_uring/rsrc: call io_free_node() on io_sqe_buffer_register() failure
+Date: Fri, 28 Feb 2025 16:59:12 -0700
+Message-ID: <20250228235916.670437-3-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250228235916.670437-1-csander@purestorage.com>
 References: <20250228235916.670437-1-csander@purestorage.com>
@@ -98,31 +98,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_rsrc_node_alloc() calls io_cache_alloc(), which uses kmalloc() to
-allocate the node. So it can be freed with kfree() instead of kvfree().
+io_sqe_buffer_register() currently calls io_put_rsrc_node() if it fails
+to fully set up the io_rsrc_node. io_put_rsrc_node() is more involved
+than necessary, since we already know the reference count will reach 0
+and no io_mapped_ubuf has been attached to the node yet.
+
+So just call io_free_node() to release the node's memory. This also
+avoids the need to temporarily set the node's buf pointer to NULL.
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- io_uring/rsrc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/rsrc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index d941256f0d8c..748a09cfaeaa 100644
+index 748a09cfaeaa..398c6f427bcc 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -488,11 +488,11 @@ int io_files_update(struct io_kiocb *req, unsigned int issue_flags)
- }
+@@ -780,11 +780,10 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 		return NULL;
  
- static void io_free_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
- {
- 	if (!io_alloc_cache_put(&ctx->node_cache, node))
--		kvfree(node);
-+		kfree(node);
- }
+ 	node = io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
+ 	if (!node)
+ 		return ERR_PTR(-ENOMEM);
+-	node->buf = NULL;
  
- void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
- {
- 	if (node->tag)
+ 	ret = -ENOMEM;
+ 	pages = io_pin_pages((unsigned long) iov->iov_base, iov->iov_len,
+ 				&nr_pages);
+ 	if (IS_ERR(pages)) {
+@@ -837,11 +836,11 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ done:
+ 	if (ret) {
+ 		if (imu)
+ 			io_free_imu(ctx, imu);
+ 		if (node)
+-			io_put_rsrc_node(ctx, node);
++			io_free_node(ctx, node);
+ 		node = ERR_PTR(ret);
+ 	}
+ 	kvfree(pages);
+ 	return node;
+ }
 -- 
 2.45.2
 
