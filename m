@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-538291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC0FA496B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:15:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358DBA496BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C706C188EB15
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0743B6544
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A955267F56;
-	Fri, 28 Feb 2025 10:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22E25D213;
+	Fri, 28 Feb 2025 10:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGZ6jfWf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="YeCNdxiR"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68CC267B95;
-	Fri, 28 Feb 2025 10:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403AC267B8E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740737362; cv=none; b=UjALymiJ/SSZygXKiFSLvfQXjvZ3kIP4za1pQdVDhn6ILLcQhTttOrY0rMtp/W3txgvix5jVEvuaHClJM53MESL8/Q+3umrYI2YDcpWE5sk26uDp6Q00GX2M89fVQW+BPd4KGk3+2pdg6PRsB8b9TDQ5URmlKTCaXiMuyXCW1OY=
+	t=1740737376; cv=none; b=J6vFq7460zpwnH1LVrQL6v89WV0ap30ajbHxbNrlvy3EWSr3OQ/4odhSZfrZ1EvfEd0L9tPBgseNjTnDib8fD7z5wzfh45t4Hqb3/zoxmA7seU6QVMLCVpMHOb8l+AUr7Qu9kQFMxKFPF8fjrqgew5XEt8/Js9bU70b5XwN1MI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740737362; c=relaxed/simple;
-	bh=Facr8VMl5LemScuPD1UT8Mysu0cASXw1D4/knrpfQ/E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWj4Pod1Nw3iSdb14JYle3A5LgmnTvL0nBJWN6xij2TytNf9YTzl7xtjHugNDfpSc4Uygadfa5ooHHXpDl4PcxJQGfG4HSwXwlxgiBSRdvMU3a4Cd1tNxacqh7f2ubs2ytapzfdEPxdqGy+9lKN7wxaOpG5N6PLZvpYcWUPUunc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGZ6jfWf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4566AC4CED6;
-	Fri, 28 Feb 2025 10:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740737362;
-	bh=Facr8VMl5LemScuPD1UT8Mysu0cASXw1D4/knrpfQ/E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pGZ6jfWfjp5VEMwxsFenQbjnxdbKFtsnJASYWGB+Cg4RrwPQumnMynOlMyDiRLiVX
-	 cj2M5YAMaV8wLcebFF/iONmrfzJ7dhjUHoUCU0enaDhb3wwO6mtdJCOah0eu/lvjtc
-	 bTP5laVTDIT6W8qFZB8fnaDMkHRec62BgF0LZdAO/nvp5ilxXYalgbXuEQMAePOR7T
-	 7Fx7GlnGrRtP8M8FJ9+VXTeB4i2ADGQgFidKyPTjr+VF5AkWNH20hOUtmVtKp5SJgQ
-	 yqeg+Xbyx2WNPsX0IHMskWjh0Qmv12n3nveJXRlccL+WTfQSgUDF15Hii8ftNzA9Lx
-	 jlP76S20/DSZQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tnxJ1-00904q-Ru;
-	Fri, 28 Feb 2025 10:09:19 +0000
-Date: Fri, 28 Feb 2025 10:09:19 +0000
-Message-ID: <86wmdapei8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	catalin.marinas@arm.com,
-	joey.gouly@arm.com,
-	oliver.upton@linux.dev,
-	snehalreddy@google.com,
-	suzuki.poulose@arm.com,
-	vdonnefort@google.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2 2/4] KVM: arm64: Move the ffa_to_linux definition to the ffa header
-In-Reply-To: <Z8DxZY-09R6lwEW3@google.com>
-References: <20250227181750.3606372-1-sebastianene@google.com>
-	<20250227181750.3606372-3-sebastianene@google.com>
-	<20250227202557.d3fd6ylzbaho4pvx@bogus>
-	<Z8DxZY-09R6lwEW3@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1740737376; c=relaxed/simple;
+	bh=2Vh6s5d9G9Yevb9V+NyS1g0ALh2v4cCTWYZX6WaWto4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k+fosxqurHToAcci+47fmgLqTiUP8SfPMdgtCQ8f4Qz/WOKkzi/PG7o//TxxRGy7iMlMWrxlMWqQAQFtxj8F0/viGtNp0psB5D0s+GCa63tgHrVyOiLqynohWqyFTpg489wEjpmjt8V+bZ9vWySdDCGY0rhlHm7rKerMPI/BJ58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=YeCNdxiR; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=2UCCLlAhi2XVYL+PR3aixzJ9O8fv6heHVP14A0uBTPA=;
+	b=YeCNdxiRy5kf91+7ZAevXRHsmE0G1s7W/8WQIXQ0tXmv9gQPDM0KdqXt708s323lS7IHoyvGmlPFN
+	 btMeXt/xpgy/enPD1Zc/hj9XGH7tzMeQqPeGQpvn7YcUEG8EaS5p1ST0GGnyHUCR+WLHncO0Q3ksuP
+	 C5GVJ5etu082SCbKmYVBdIDH0FrQU2GFwT09o5wsu3cX1ynGbGJ42i8bEV4opHZdn0hZmqU10JWRZd
+	 U0l1TchgqICKjuvNaZekVtWN7Jx1iyA6tL4KGVdN1FHSIJ47a+PNaQro5d2XKzDtAhkcQErCmRf0H6
+	 9FrjyNyzGqk1XvOrgFpP/ynUvR3o6Rg==
+X-MSG-ID: 1a633c63-f5bc-11ef-a39b-00505681446f
+Date: Fri, 28 Feb 2025 11:09:31 +0100
+From: David Jander <david@protonic.nl>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <ukleinek@kernel.org>, linux-pwm@vger.kernel.org
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+Message-ID: <20250228110931.7bdae7fd@erd003.prtnl>
+In-Reply-To: <9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-8-david@protonic.nl>
+	<20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+	<20250228102201.590b4be6@erd003.prtnl>
+	<9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, sudeep.holla@arm.com, catalin.marinas@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, snehalreddy@google.com, suzuki.poulose@arm.com, vdonnefort@google.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 23:12:37 +0000,
-Sebastian Ene <sebastianene@google.com> wrote:
-> 
-> On Thu, Feb 27, 2025 at 08:25:57PM +0000, Sudeep Holla wrote:
-> > On Thu, Feb 27, 2025 at 06:17:47PM +0000, Sebastian Ene wrote:
-> > > Keep the ffa_to_linux error map in the header and move it away
-> > > from the arm ffa driver to make it accessible for other components.
+On Fri, 28 Feb 2025 10:37:48 +0100
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+> On 28/02/2025 10:22, David Jander wrote:
+> >   
+> >>> +
+> >>> +  motion,pwm-inverted:
+> >>> +    $ref: /schemas/types.yaml#/definitions/flag    
+> >>
+> >> And PWM flag does not work?  
 > > 
-> > Do you plan to push/target these changes for v6.15 ? If not, I can take
-> > this patch with other FF-A changes in my tree for v6.15. Otherwise, it
-> > is must go along with other changes.
-> > 
+> > I have seen PWM controllers that don't seem to support the
+> > PWM_POLARITY_INVERTED flag and those where it just doesn't work. Should all  
 > 
-> Yes, feel free to pick them with your changes and we can push them
-> later.
+> 
+> Shouldn't the controllers be fixed? Or let's rephrase the question: why
+> only this PWM consumer needs this property and none of others need it?
 
-So this series is not a 6.15 candidate?
+CCing Uwe Kleine-Koenig and linux-pwm mailing list.
 
-	M.
+I know that at least in kernel 6.11 the pwm-stm32.c PWM driver doesn't
+properly invert the PWM signal when specifying PWM_POLARITY_INVERTED. I agree
+this is a probably bug that needs fixing if still present in 6.14-rc. Besides
+that, if linux-pwm agrees that every single PWM driver _must_ properly support
+this flag, I will drop this consumer flag an start fixing broken PWM drivers
+that I encounter. I agree that it makes more sense this way, but I wanted to
+be sure.
+
+Best regards,
 
 -- 
-Without deviation from the norm, progress is not possible.
+David Jander
 
