@@ -1,243 +1,173 @@
-Return-Path: <linux-kernel+bounces-539136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B21A4A164
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:25:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56255A4A165
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CBF3BCA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B10173D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399727002E;
-	Fri, 28 Feb 2025 18:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AFE2755E9;
+	Fri, 28 Feb 2025 18:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7eV4+FK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEl2/9vy"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D2B276046;
-	Fri, 28 Feb 2025 18:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0598D1A2554;
+	Fri, 28 Feb 2025 18:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767075; cv=none; b=GeZ9a67Y6t4VYrzEUSEljgD22rCwCTRTVk+OLcqX294Q2FH42opBR/YtGBNz6v2J2nMyrHnrW5e6rkAKaSuoHa1JimCra+dQsnuRre8F6Nf8IBp/NYc0ZB2jFUhlPU0fo1qT7vRh6SLE+rQbiZLWElc4xek+X29vGAywnHpDt5E=
+	t=1740767089; cv=none; b=iOHoHSV1Yq81HPYpA58enEXAJzv16td37ThrXhXVo9tr/jAesrGh38ii0Bk4P3z13s8cDyy2kjwQvv+YdhG6z9SlVEjQzBviZjSBiifnl5zAltM4a488KOgo0HFogoWnkG++AUfbFjtwb/PMmS08evd/uxdxAOSolRx4u6Crr4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767075; c=relaxed/simple;
-	bh=hFss+V64FKtbHUiLgnvmpNjzRUCCQs/2WuN6Q/rdJEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI6WVQtoleeJOk5CZo/xlznRjPplz/b3gZYWKuDQB1bZwlm2HLkR/mMx/97K4Y/Q/NfFSkYoJNNmdT+7dyyX95H0I7Hytzu6JH3xjexqdAGK5x7dF67gc/1MYO/2eFUnfIGTwS84s1YhkzgPPwRKIOAuL7PDJhJomvoU2r9Hi78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7eV4+FK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D1EC4CEE2;
-	Fri, 28 Feb 2025 18:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740767074;
-	bh=hFss+V64FKtbHUiLgnvmpNjzRUCCQs/2WuN6Q/rdJEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R7eV4+FKgbQlKK3BuaqhU2mEmGNYyMQfgn476SJd1/pZLHAF9wNpCgWSYypBotMrq
-	 SFTb6EJdvs3Vg1Zxl8ipIPnSuwh8sa0UF5pbasXl9L1OKV2aVtR6mBMk5y0RqnuYAF
-	 WzWiJ39gnvXww2DVbcxgBM32kVx5/5LmKo3+QbIZwEEmc2athx3AFX9QAlufp4WRRp
-	 OYBNRhqAu7vGxUb2+JkjP4JcieD8heVBeHizePdaFKgvm892ctkSq+Xsgz/46oc2Fz
-	 zMOSDcPktTbvZCZvkKbqYKyndZJhCxfUL2CgF+DkeDVW03bPDn0DrGVAuJ5xFLQik+
-	 EDs6/6PlJH77g==
-Date: Fri, 28 Feb 2025 18:24:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
- flash LED driver
-Message-ID: <20250228-zipfile-net-69e4bbebd8d6@spud>
-References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
- <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
+	s=arc-20240116; t=1740767089; c=relaxed/simple;
+	bh=6m6/xJEhRoLovQPwDvbSbrewcFTAezagTP2uTBBpNRg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMuwmJnSDvisJ8r60EEyVQ0EZYgXK7FIw8L7E+RIsKLMMbtL2Sw5Cw0IZttHU5IvmigUfJ7xX04Nx2IIuKGwlLWDJGKkSBB9C6qvWbBSWyUJ2twonau7pDyc4famGEXmYFGeU3pGphqJnwrHuEpMb4RQMcKqH3EjDPIj9dQ5yII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEl2/9vy; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-548878c6a5aso2603265e87.3;
+        Fri, 28 Feb 2025 10:24:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740767086; x=1741371886; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLGSYkqf02Kp56/0eTJRyl794gQdQOZXD6lBotLGUYA=;
+        b=MEl2/9vyJ/Hf32CFpzrE5PuDxNgXP/WGOeGmM9p6qSoEzO1rOAEuUkQPLfqZ5lkq1N
+         Ys9xU2YTSW4wBdJWaBN6ru9k2F95CMQTbn1k664O3BxNJmNZ2qjLzgG8MMWDwe2G8sCm
+         C5QldAgm508hdoSzUq4c1jLxW8j612yVkGpeCl58Ow665u00nbfq6/YvC2kKq9/XtBHR
+         pwn4dfhUoukSv1uF+UmL3dROyZVaylJDOIqjc1+ysHNQF/ymNUYj6/wwczHeAyFmD4AS
+         RhbPxFaux8ob6ZVnvdc5ElS+6G2BGvI1QGh8PE7VIgorR+iBC3DPi/+Jhq8kafNLfuPW
+         O/zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740767086; x=1741371886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TLGSYkqf02Kp56/0eTJRyl794gQdQOZXD6lBotLGUYA=;
+        b=JQh0dGCIMObzyCLFdW0FJIl591eXUqWJXJYUu7Z64fwjBMrVUGzTMHJE5f+C7bD33G
+         WWDiM1iu1t253oheSnkcr9FwWzGB5Hgc6EsbtPK2LongLZOB6Sok2A5LLvFWXzASAhBF
+         GeM/+NYdYvJmBZ0dviW4u0XOLx3JaPLpPRQYk0ubSRhPd6DxijIe54Oii2al0zMBPrKd
+         r35G2Z9eVJCAX+yUABia1B/GZzsxE8Gs+lJRNV7UInyQeDMF5tyhHEi9qjhBMvOMARjp
+         NMKRug28QVg43A+d7fe48dRJ1PPLUedB+e6/vCtte05XhkNN/GVgBG+FYdnkOQUkQ35f
+         ptJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyRsz8fZGD2/9lZM5raXkZVDVifBDdvygJzO4VighI7miGUOKUovqooHsSYz3fPtatUrAU@vger.kernel.org, AJvYcCWcqTGfl3RhuewMkyH6Hpc0KKEs7jzHlVgPJRAR8FC1ty6Cg0OzVglLPAl+cEEyZ/BbiaCx2WOmjZvq8P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyISTACUhajkO1GG0KJl3WjYieSiQ/EQMf5tbRtMriloi7iBdJM
+	TiSUw8sDR8q7ON0K+2NkJblAEVouBTZweDWexVbJIhJZ1zGSOsHg
+X-Gm-Gg: ASbGncuItQgORBP0CLqkDNeDysaJS14dh6c+Bqdq7rfG93dR+FB355w968H5PzUVnRJ
+	zlzXRcIf2Apzt5Ctrh9Ze9IsfK/o2uE2USWjurb6GJzkayMAyrSIBpt43xwyZvUNyJ0kZDy5jQg
+	7mS0iTijjym+Y50MbULMx8ebcvnD2TwdMSBGf8i94LMQEc814d7Tn5au3PXRbW3N/1/kPDZ+7MP
+	5UDM+Cp5fh3N7K5c8B3tQiEseziRScddjc3ett9uT7QqFOvvwKd5Xz52srqhKj01bUe4Ft7U5Xi
+	84odgStfo7KW1Rw5LgrIMnxDRdCD+rwF1T394xiVAaw0IK5f
+X-Google-Smtp-Source: AGHT+IGonUIznciT1tx2HtoX+A2wSVL3IeeSpg0JpD/wMJWHHxPq99PEJzgHa9AcdioUU+SEbAOQqw==
+X-Received: by 2002:a05:6512:3e16:b0:545:a2a:58c with SMTP id 2adb3069b0e04-5494c39e553mr1251624e87.53.1740767085612;
+        Fri, 28 Feb 2025 10:24:45 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b8685b83fsm5930241fa.80.2025.02.28.10.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 10:24:44 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 28 Feb 2025 19:24:41 +0100
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z8H_aYBUHD2sS2Ir@pc636>
+References: <20250227131613.52683-1-urezki@gmail.com>
+ <20250227131613.52683-3-urezki@gmail.com>
+ <Z8CdB0Hzvdu5ZVSI@Mac.home>
+ <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
+ <Z8Ckb6spK35-Ez4U@pc636>
+ <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
+ <Z8HmH85bYNU8enJ2@pc636>
+ <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LTXo1e2XtcxG1y4X"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
+In-Reply-To: <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
 
+On Fri, Feb 28, 2025 at 10:21:57AM -0800, Paul E. McKenney wrote:
+> On Fri, Feb 28, 2025 at 05:36:47PM +0100, Uladzislau Rezki wrote:
+> > On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
+> > > On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
+> > > > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
+> > > > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
+> > > > > > Hi Ulad,
+> > > > > > 
+> > > > > > I put these three patches into next (and misc.2025.02.27a) for some
+> > > > > > testing, hopefully it all goes well and they can make it v6.15.
+> > > > > > 
+> > > > > > A few tag changed below:
+> > > > > > 
+> > > > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
+> > > > > > > Switch for using of get_state_synchronize_rcu_full() and
+> > > > > > > poll_state_synchronize_rcu_full() pair to debug a normal
+> > > > > > > synchronize_rcu() call.
+> > > > > > > 
+> > > > > > > Just using "not" full APIs to identify if a grace period is
+> > > > > > > passed or not might lead to a false-positive kernel splat.
+> > > > > > > 
+> > > > > > > It can happen, because get_state_synchronize_rcu() compresses
+> > > > > > > both normal and expedited states into one single unsigned long
+> > > > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
+> > > > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
+> > > > > > > run.
+> > > > > > > 
+> > > > > > > To address this, switch to poll_state_synchronize_rcu_full() and
+> > > > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
+> > > > > > > for expedited and normal states.
+> > > > > > > 
+> > > > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
+> > > > > > 
+> > > > > > I switch this into "Closes:" per checkpatch.
+> > > > > > 
+> > > > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
+> > > > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+> > > > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > > > 
+> > > > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
+> > > > > > Would you or Paul double-check the Reviewed-by should be here?
+> > > > > 
+> > > > > I am good with keeping my Reviewed-by tags.
+> > > > > 
+> > > > Thanks Paul!
+> > > 
+> > > Except that I got this from overnight testing of rcu/dev on the shared
+> > > RCU tree:
+> > > 
+> > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
+> > > 
+> > > I see this only on TREE05.  Which should not be too surprising, given
+> > > that this is the scenario that tests it.  It happened within five minutes
+> > > on all 14 of the TREE05 runs.
+> > > 
+> > Hm.. This is not fun. I tested this on my system and i did not manage to
+> > trigger this whereas you do. Something is wrong.
+> 
+> If you have a debug patch, I would be happy to give it a go.
+> 
+I can trigger it. But.
 
---LTXo1e2XtcxG1y4X
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some background. I tested those patches during many hours on the stable
+kernel which is 6.13. On that kernel i was not able to trigger it. Running
+the rcutorture on the our shared "dev" tree, which i did now, triggers this
+right away.
 
-On Fri, Feb 28, 2025 at 11:31:23AM +0100, Matthias Fend wrote:
-> Document Texas Instruments TPS61310/TPS61311 flash LED driver devicetree
-> bindings.
->=20
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
->  .../devicetree/bindings/leds/ti,tps6131x.yaml      | 123 +++++++++++++++=
-++++++
->  1 file changed, 123 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml b/Do=
-cumentation/devicetree/bindings/leds/ti,tps6131x.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c08b3cef7abcec07237d32714=
-56ff1f888b2b809
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
-
-With a filename matching one of the compatibles in the file,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/ti,tps6131x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments TPS6131X flash LED driver
-> +
-> +maintainers:
-> +  - Matthias Fend <matthias.fend@emfend.at>
-> +
-> +description: |
-> +  The TPS61310/TPS61311 is a flash LED driver with I2C interface.
-> +  Its power stage is capable of supplying a maximum total current of rou=
-ghly 1500mA.
-> +  The TPS6131x provides three constant-current sinks, capable of sinking
-> +  up to 2 =D7 400mA (LED1 and LED3) and 800mA (LED2) in flash mode.
-> +  In torch mode, each sink (LED1, LED2, LED3) supports currents up to 17=
-5mA.
-> +
-> +  The data sheet can be found at:
-> +    https://www.ti.com/lit/ds/symlink/tps61310.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,tps61310
-> +      - ti,tps61311
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: GPIO connected to NRESET pin
-> +
-> +  ti,valley-current-limit:
-> +    type: boolean
-> +    description:
-> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS613=
-10) or
-> +      from 2480mA to 1800mA (TPS61311).
-> +
-> +  led:
-> +    type: object
-> +    $ref: common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      led-sources:
-> +        allOf:
-> +          - minItems: 1
-> +            maxItems: 3
-> +            items:
-> +              enum: [1, 2, 3]
-> +
-> +      led-max-microamp:
-> +        anyOf:
-> +          - minimum: 25000
-> +            maximum: 350000
-> +            multipleOf: 50000
-> +          - minimum: 25000
-> +            maximum: 525000
-> +            multipleOf: 25000
-> +
-> +      flash-max-microamp:
-> +        anyOf:
-> +          - minimum: 25000
-> +            maximum: 800000
-> +            multipleOf: 50000
-> +          - minimum: 25000
-> +            maximum: 1500000
-> +            multipleOf: 25000
-> +
-> +      flash-max-timeout-us:
-> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 7=
-1500,
-> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
-> +
-> +    required:
-> +      - led-sources
-> +      - led-max-microamp
-> +      - flash-max-microamp
-> +      - flash-max-timeout-us
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +  - led
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/leds/common.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      led-controller@33 {
-> +        compatible =3D "ti,tps61310";
-> +        reg =3D <0x33>;
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        reset-gpios =3D <&gpio1 0 GPIO_ACTIVE_LOW>;
-> +
-> +        tps61310_flash: led {
-> +          function =3D LED_FUNCTION_FLASH;
-> +          color =3D <LED_COLOR_ID_WHITE>;
-> +          led-sources =3D <1>, <2>, <3>;
-> +          led-max-microamp =3D <525000>;
-> +          flash-max-microamp =3D <1500000>;
-> +          flash-max-timeout-us =3D <852000>;
-> +        };
-> +      };
-> +    };
->=20
-> --=20
-> 2.34.1
->=20
-
---LTXo1e2XtcxG1y4X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8H/XgAKCRB4tDGHoIJi
-0jUeAP0a+qzuVsXmjlgmLl6z3Gyxonrx4RKhuAi9VtBd5aNZawD/Zgjrck1Y1OLR
-DjlVas5c3ZcarodzgxNWgZ/3Djf+sgg=
-=bVW4
------END PGP SIGNATURE-----
-
---LTXo1e2XtcxG1y4X--
+--
+Uladzislau Rezki
 
