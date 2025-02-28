@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-539492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5385A4A50A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0972A4A50C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2503617298F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03381728D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEFD1D14FF;
-	Fri, 28 Feb 2025 21:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBE71D9A5D;
+	Fri, 28 Feb 2025 21:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LW8T6qVr"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCqTnMgV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4723F36E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 21:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F05D1D14FF;
+	Fri, 28 Feb 2025 21:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740778166; cv=none; b=WqiCZtVQPyz1btFSs+XHNFXtzW+v+VVnxSr7LrWc7AMegIIV/cPsyJQZDtGYERKxu01Dc9h/m8UNaR5aZRo3nYngdokEhqpy3kYeeKCkEhoWOZ3371kjZFvPHns9h4etzKjy5tfgqaaiEAydGzwSqQz/bNp40gQZT+TXYZtcVTA=
+	t=1740778182; cv=none; b=e6aBsN4W5DVeyID3j73oJoNopeLIN+vXMnjSSGHL7Ls8+wQPEc6TzipZ8wfsuTlyHUtaDAEWO7D+WRRBzh3JE285kTkPBXSuUdP2Q1litbZ5fOANPCIbnQ2W9ggqMZs4XsQzMCEyLKCLx1zgHAacr3+FoBqn59S3FBvCqtxrCLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740778166; c=relaxed/simple;
-	bh=kJMrEkhqRpc6VjDVs3fPZ28tdnuiN4UBff7uK9dxTl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FgYqfNZDFIJL3efavNAle74Lo1xRiVMqB+9SpY273wx5a15hgJfXzoVJSUHQo9XGjT2h6pLWzpYTeP3wSacVbWxIfekhIevw7KK2z2WiARkHMGd1fnzBSwvlG25ynAtzQsSTHfBwQRSmcsbTh9NrULT/oeYmijDZg2SVdUBk9TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LW8T6qVr; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbec6a0bfeso400081766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:29:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740778163; x=1741382963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqzqyLpyoLT4MnMSiO5M/cbMqW2N1A2UktCSpw8Wecc=;
-        b=LW8T6qVrn32s0lCon3/6zxOgPzHezH2SgpgRmnf9jKP1LhQ/QX6m9CaO1tPGYogrqq
-         4sFkyEzqzC4jDo53TOIYHYdviHz4uNRrSbNaqa0EDyWDX3bq8Ggy8uI3MXz3H/9TAmjP
-         qEVuykQed4WTuu+i1jJYO3DSKsZKVaq4zMZqZXSAswD7czkREyfWrTerYCdtFM9KHgV3
-         sbkcMU6bzhI4xq1wV3fjv7TMby9Ie/hPVmiXyK/ZzMX72T6jsMQTWg5ZL9HiLUXdGPs8
-         0QrqGPUJxZbx6w0UopmAdyWNszUkw/FgzuwKZkC55ZKYgn4uQUnPgQxcv/24msAbYAqS
-         JmpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740778163; x=1741382963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqzqyLpyoLT4MnMSiO5M/cbMqW2N1A2UktCSpw8Wecc=;
-        b=WPpDKL6mEZVm5+KXZ8KpVlvbtDiA0fqgc50TlELVJgIW1OcggyOIraLJKq1zeMrd1R
-         wtzHtV6S42rtu8oUiG4z3ljUUAPwcn1aiJ/nLvSrI3xLGKwXlEwy65NSDqSZJeqSQ81J
-         yesMFmHd0Q6Pb/g466ZuigPESJgd99YW4gTR9l0DCwlUVR0MydErnBUbENY1GRpAG1rB
-         CMtRVaZfAry8V86ZPSLi2yqDOoM/Kk2CGEebW9nudK66n+41+famh0zRaFcNfgITnRcp
-         6EeKwLytp4GiMAF6EmVNnwr1U4vL85OoxfaUjNsVh1FDCLWohpmg04VJ6H23HTEDtgYk
-         JrXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX38eLvcfXOemCG1W75SAd13Xj58vpwyc5XFzv62ttz3DiNOTJ40qm1CI/jGVCKtH160+B4L39wAdkbi10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJmViYU8BUa22LfF1F68FT0n32IheTrBdVqN7e6QwUUdtuNTZ
-	CGI5+AkO+QMlySKEIoiifE7mW/rovGj6jQoZVIzGnn0GTGZnlvU1Bw16QaLJ1F51J7yWLKaPmOG
-	5UvMOqcWFKT+lwPjelmLb+YPFXBhoDesg4Bo=
-X-Gm-Gg: ASbGncsAJJAOE2lAbqmnXhVUtXBoiJ7gIe9v14cA3Bsc5GPJk1eLzJy5kM+kFcdLtlJ
-	2SjJ83mMXgJEbHO3QvsUTSAkrRlU8Sv1AKkcQn+iAPO3smfnrMqFVqgCCDLCZT3LvPFZ6xoesY3
-	cZkAm+
-X-Google-Smtp-Source: AGHT+IHelEGE+Ufz9+A2TmH66Wlq+3MH2jgktN1tokY0omf7FSH344duWOuLActep5LEcffLSDmvVh9lPxUEywsplNI=
-X-Received: by 2002:a17:906:3097:b0:abf:489b:5c77 with SMTP id
- a640c23a62f3a-abf489b5ea3mr139416866b.31.1740778162964; Fri, 28 Feb 2025
- 13:29:22 -0800 (PST)
+	s=arc-20240116; t=1740778182; c=relaxed/simple;
+	bh=WpiVu7G/gcbEeYsk0cZWhzU9IoiNFSi9tQN7+E70E/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACMo9s1DpG3LsTMaIJI+pnDMHiyi10TFNtLItNEzw07ds1oryChW+EnHKHtvVlRW8VjunL/0MooJBK5KVPOBCPriklQzo8V9dF7bcudI+7f4NGBd5SUYfiBHMn8L+uD2CSiwf2+0SpjmJakKxo+tVNktm1mfDhDsC5/mkXf54lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCqTnMgV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44D1C4CED6;
+	Fri, 28 Feb 2025 21:29:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740778181;
+	bh=WpiVu7G/gcbEeYsk0cZWhzU9IoiNFSi9tQN7+E70E/U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=KCqTnMgVZuiubKIq3Pe73kKLpBSoxSEgapK1uRgJAzodbAGBKhbwMI8D4DxZCWcVq
+	 Ia3/J6lTtOoBlZLrObo6+sVsrT/wKVRvx0vuMYoTk9tDVO6MdaPZZgqdQ++ZgLuWxV
+	 ownqmVOkfsk8PMk3VSzOe9Mjc4uy853/C1YSoNlD3Nx52WCPNUQu/W9GY6h17JgBAl
+	 OktAqIBVcGcgLCqFOM+mJQPeV2r8pZLN19uK2vqVxyZyiLWUHK58gJ2z+3/4nV1Hl+
+	 sRqCW15aNNpk05wpqCgW+HhaJY9n7K/wvYRni+/KwfUxrbIwjezsw0DYjCJeG+iy6X
+	 IvMqLoudr5DmA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7BE1DCE0DEB; Fri, 28 Feb 2025 13:29:41 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:29:41 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin Uecker <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Ventura Jack <venturajack85@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com,
+	boqun.feng@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+	rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <30fb630e-2bba-43d3-8d80-4ad553d503ca@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+ <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+ <20250226162655.65ba4b51@gandalf.local.home>
+ <CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+ <20250226165619.64998576@gandalf.local.home>
+ <20250226171321.714f3b75@gandalf.local.home>
+ <CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+ <20250226173534.44b42190@gandalf.local.home>
+ <20250227204722.653ce86b@pumpkin>
+ <20250227163319.5b19a68a@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
- <CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com> <20250228212048.GA2812743@google.com>
-In-Reply-To: <20250228212048.GA2812743@google.com>
-From: Bill Wendling <morbo@google.com>
-Date: Fri, 28 Feb 2025 13:29:06 -0800
-X-Gm-Features: AQ5f1JrI9-xg8yMWBknx8JPMjZcjjoD-wwtXnx_7ejGcNBpiyVaHSJIt4DfOzmM
-Message-ID: <CAGG=3QXR8WNZhYTRT_cF76P+NkRNiK7Wd+8rpVc=2JVNrhXZEw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/crc32: use builtins to improve code generation
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Justin Stitt <justinstitt@google.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-crypto@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227163319.5b19a68a@gandalf.local.home>
 
-On Fri, Feb 28, 2025 at 1:20=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> On Thu, Feb 27, 2025 at 03:47:03PM -0800, Bill Wendling wrote:
-> > For both gcc and clang, crc32 builtins generate better code than the
-> > inline asm. GCC improves, removing unneeded "mov" instructions. Clang
-> > does the same and unrolls the loops. GCC has no changes on i386, but
-> > Clang's code generation is vastly improved, due to Clang's "rm"
-> > constraint issue.
-> >
-> > The number of cycles improved by ~0.1% for GCC and ~1% for Clang, which
-> > is expected because of the "rm" issue. However, Clang's performance is
-> > better than GCC's by ~1.5%, most likely due to loop unrolling.
->
-> Also note that the patch
-> https://lore.kernel.org/r/20250210210741.471725-1-ebiggers@kernel.org/ (w=
-hich is
-> already enqueued in the crc tree for 6.15) changes "rm" to "r" when the c=
-ompiler
-> is clang, to improve clang's code generation.  The numbers you quote are =
-against
-> the original version, right?
->
-Yeah, they were against top-of-tree.
+On Thu, Feb 27, 2025 at 04:33:19PM -0500, Steven Rostedt wrote:
+> On Thu, 27 Feb 2025 20:47:22 +0000
+> David Laight <david.laight.linux@gmail.com> wrote:
+> 
+> > Except that (IIRC) it is actually valid for the compiler to write something
+> > entirely unrelated to a memory location before writing the expected value.
+> > (eg use it instead of stack for a register spill+reload.)
+> > Not gcc doesn't do that - but the standard lets it do it.
+> 
+> I call that a bug in the specification ;-)
 
--bw
+Please feel free to write a working paper to get it changed.  ;-)
+
+							Thanx, Paul
 
