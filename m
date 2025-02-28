@@ -1,349 +1,355 @@
-Return-Path: <linux-kernel+bounces-538078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1D2A4945C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:04:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C478A49460
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4440A7A88B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA4A1887885
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7DB1DDA20;
-	Fri, 28 Feb 2025 09:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2468C254AF1;
+	Fri, 28 Feb 2025 09:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W1VpoDIZ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BB3276D3B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ikfT6RAO"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1B11A3158;
+	Fri, 28 Feb 2025 09:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733467; cv=none; b=WOMWtpMR5TT5MsFzQUBSgdawcQWCvfoNc16NdgcFAEtiZbkmaxaQzFcB94R6gIp/lvIulaSnIg8bf1AJRCbCizmp/j26MMObH/WnX4JfHutQIaV0X0F1P1zAZ4TwOg40X8s/tpcfaPB3+SdKT7zErzdxHtAQ76S8Z3dqmZvRBQc=
+	t=1740733525; cv=none; b=ukvKgahgyMpCCrtovBoN0/vedY4RyUpJunjtYaRYsK3ozVAUlU5p/w/ka+S0qknpEUeEH2+s0WLBZYpvLVFX6Y+NCEpoRKLhP3u5/TWryPfcIQlubOgM5m70O3RsPIynSJ1xizEMiRCtu2zyns3L/PcHmS8ZPnC+Ndju1I8m6gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733467; c=relaxed/simple;
-	bh=8MvqQQAW1T4lrgjuumqbegZ6QGi41mZBKsWq+n5fS5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cp+qQTpvLONLS05Y/5wDmIlfI3nsjXzN4IDHSKgmCP9KVNSXzPnD+LalC+RLSB2Q+J9SxFqMScJ2dudEs+uyxXk+NP+WSaNDtbt2tpbq2HAt9pYWCsPMGhLlCGqI6JzD7Sj2AKONA3JhGxMXLMgEeQ7kzM/qqJOnUgQRxsJoovQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W1VpoDIZ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390df942558so1421446f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740733464; x=1741338264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OHkCovGrXR3vNs/yhb/RhCLokYtfuYeJvX5KaS2+hM=;
-        b=W1VpoDIZWPMzCaEJRj79ifOUSPwiUQLmZaK+PToQkXirV8D8vini1ne6TUStBsCUEE
-         uE0Ag/8hcnVnjJ8DoPiI5ttR3f1YB6VslNZpnTKvdtOYSiaq5Ti7rJ1sgCF+OVgBiqnt
-         pmaxeiEbaC2tUGLcukQAi+XdC6PN0e+4CnzOc3LTjW3jfzd3QILeMlKhwKSfshpR4loU
-         e6USyBV091mlM5JoO9TeHK4jt30ht3zTj7KC+qmeoequ9qUgWj7LnErm/TIc+k3hycvR
-         Rrz8kyydFNyp2e9RWcA0DvKs3RF1rQpG9y5ImUbCydzbluypUjUvAn1/D710cU3mlSmM
-         2KhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740733464; x=1741338264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3OHkCovGrXR3vNs/yhb/RhCLokYtfuYeJvX5KaS2+hM=;
-        b=EZxbM+tQa9hAWmDdff1vgyFUSAvD43yPWbiaRrT/Nreh3LYvcFLjXmezn+lEziJuvP
-         62z1zxOA4D7Acne76OORsSUjSLm4FvlnPP2mBfQ71hglKiQETEhpKxf8B+8mhaKhD4Ui
-         TKwBOtNBgw/aUNJM55YdJsbZTV2D8ZrI43pprxh17GTOqCW9j9EJYUNjZSOheM8nks6F
-         hCZXQNM5i0+MLenHQS4ic/7EJWi1sUmHevJnf1P727GQHklDmqRY0yKJjg+/XqlT/zyq
-         R6iCJNqDRIrmzI8jHcdG4JlJYmxzuNmw0k//LzPhHjGidTay7t44YZwiRc3bVcq0iVZq
-         ey2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHq7p0jOqudy/gPsTFCW9k/vTJ6SucK7sscbkN6nzGqIPstCOH6vdkEFM2fMwLFERq9Yrq344gCQu+hCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySaHnj6f9OeQNBq1FJhgwQtom7zuSW65rQ8/4UUatVz67csExi
-	/aVbOzpnTUFnqf11TQ81Dslv/lddJK3M5bSk9gCufkxk0/4UveJ4+qQUfMFyt1ImqimprH7qFuE
-	phaySNTaicjDhyKRScS3/S3L1lpv2izNp3NIN
-X-Gm-Gg: ASbGnctzaTZNi6wTmr0IsMa1a3n2U6EpbWKVDIXP6GR+xuq84nZuLvO1fI/LU6WqXfv
-	2xdDmGHWkYWkbCVyfBbfVRBfh/DKzulf1Dg0X95ugtx/IejUiQEZPVWpuAIuFEBQ9fS3Etw2ZLv
-	Cg9qYN2+vKYwhQ8sNZcWPCrfzDmEUeHu8xoA9P
-X-Google-Smtp-Source: AGHT+IHcheD4qjv4BV/CfpHVEIEjQTXsfvTUtOfeoZIL8CBuhYu/S1nosBYnS5BciMEwb5jNY7POkL8qlUxyXbG2sPs=
-X-Received: by 2002:a05:6000:144b:b0:385:f7d9:99f5 with SMTP id
- ffacd0b85a97d-390eca63b71mr1942575f8f.51.1740733463613; Fri, 28 Feb 2025
- 01:04:23 -0800 (PST)
+	s=arc-20240116; t=1740733525; c=relaxed/simple;
+	bh=ZvuoGKETIKuqrexGW8SWwG8bQ1czS38AO8zWebfhBU0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXGW4XOU8CZ6BefPOwwmMyp4UgjGw2w+Tbzr7UkjEVi9Ccyu3Jt7GaWdMiW5Ov5PHEc6Hq8I4TJnGBQJgGjjViGIrSnsDoeY6P4AFzOidFjOLiUnCfwJeomC5LmVLnLOXV0craNhghLqmWHr0s2wRCIYBQyFvz7MW7Qoub+DW2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ikfT6RAO; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=nNdk8J4H0DGZo/AJqzuSIUDj2qvadjIR23mnD0+nTyw=;
+	b=ikfT6RAOEWarYrABl77wrDMFDpkaDJiqeOmRk5vjn8ujOspOjpkgiJzEywroGb
+	/bVKQMoAbo3OEBsaQbNXUUhOaJRMzPhy+LZtLpWTD2jiW7cvbHZoQlS44gppdc8Z
+	bfw4JKwsrOIbxCTSz6j6XQDuPcoMDTNEMHMBhulKkMrNY=
+Received: from [192.168.34.52] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgDnMPYpfMFnEqAaJQ--.1908S2;
+	Fri, 28 Feb 2025 17:04:43 +0800 (CST)
+Message-ID: <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com>
+Date: Fri, 28 Feb 2025 17:04:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
- <CKneQ3Au7Fx5Uc7AM_RTi5BXRNnOUcrfnqI0fuWO5M7QIosWye4LhdM7bf9zqqzC5dCISrLHE9OgvVeVSla54Q==@protonmail.internalid>
- <20250227-export-macro-v1-2-948775fc37aa@google.com> <871pvipjxe.fsf@kernel.org>
-In-Reply-To: <871pvipjxe.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Feb 2025 10:04:11 +0100
-X-Gm-Features: AQ5f1JoJhUzxkrKlJTdjR0yIGZyICCE2ZXFseogh0kdUyKEZhUpa7ALlmGCwpTw
-Message-ID: <CAH5fLggu+-Fw-4Z02xS3qSdhJAcSyNXaMn+CQ0XkBvqvgeAbGQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] rust: add #[export] macro
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
+ cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227162821.253020-1-18255117159@163.com>
+ <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <877c5be0no.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PSgvCgDnMPYpfMFnEqAaJQ--.1908S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GryfAFyUAr18Jr4UKF43trb_yoWxCF18pF
+	yUKF47Cr48JFyYywsrGa17ur9rXFWqvF4qy39Fy3yIy3yaqw1vgFyfZas7GFy5trsrZ3s5
+	t3WUXa40qrs3AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Um2NNUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDx4Co2fBdUDKGQAAsw
 
-On Fri, Feb 28, 2025 at 9:20=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> "Alice Ryhl" <aliceryhl@google.com> writes:
->
-> > This macro behaves like #[no_mangle], but also performs an assertion
-> > that the Rust function has the same signature as what is declared in th=
-e
-> > C header.
-> >
-> > If the signatures don't match, you will get errors that look like this:
-> >
-> > error[E0308]: `if` and `else` have incompatible types
-> >   --> <linux>/rust/kernel/print.rs:22:22
-> >    |
-> > 21 | #[export]
-> >    | --------- expected because of this
-> > 22 | unsafe extern "C" fn rust_fmt_argument(
-> >    |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
-> >    |
-> >    =3D note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *=
-mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
-> >               found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *co=
-nst c_void) -> *mut i8 {print::rust_fmt_argument}`
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/prelude.rs |  2 +-
-> >  rust/macros/export.rs  | 25 +++++++++++++++++++++++++
-> >  rust/macros/helpers.rs | 19 ++++++++++++++++++-
-> >  rust/macros/lib.rs     | 18 ++++++++++++++++++
-> >  rust/macros/quote.rs   | 21 +++++++++++++++++++--
-> >  5 files changed, 81 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> > index dde2e0649790..889102f5a81e 100644
-> > --- a/rust/kernel/prelude.rs
-> > +++ b/rust/kernel/prelude.rs
-> > @@ -17,7 +17,7 @@
-> >  pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, =
-VVec, Vec};
-> >
-> >  #[doc(no_inline)]
-> > -pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
-> > +pub use macros::{export, module, pin_data, pinned_drop, vtable, Zeroab=
-le};
-> >
-> >  pub use super::{build_assert, build_error};
-> >
-> > diff --git a/rust/macros/export.rs b/rust/macros/export.rs
-> > new file mode 100644
-> > index 000000000000..3398e1655124
-> > --- /dev/null
-> > +++ b/rust/macros/export.rs
-> > @@ -0,0 +1,25 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +use crate::helpers::function_name;
-> > +use proc_macro::TokenStream;
-> > +
-> > +pub(crate) fn export(_attr: TokenStream, ts: TokenStream) -> TokenStre=
-am {
->
-> This function is documented in macros/lib.rs. Could you insert a
-> docstring with a link to the function that carries the docs?
 
-These functions are not visible in the docs, and no other macro does that.
 
-> Please describe how the function operates and what mechanics it uses to
-> achieve its goal in a implementation detail comment.
->
-> > +    let Some(name) =3D function_name(ts.clone()) else {
-> > +        return "::core::compile_error!(\"The #[export] attribute must =
-be used on a function.\");"
-> > +            .parse::<TokenStream>()
-> > +            .unwrap();
-> > +    };
-> > +
-> > +    let signature_check =3D quote!(
-> > +        const _: () =3D {
-> > +            if true {
-> > +                ::kernel::bindings::#name
-> > +            } else {
-> > +                #name
-> > +            };
-> > +        };
-> > +    );
-> > +
-> > +    let no_mangle =3D "#[no_mangle]".parse::<TokenStream>().unwrap();
-> > +    TokenStream::from_iter([signature_check, no_mangle, ts])
-> > +}
-> > diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
-> > index 563dcd2b7ace..3e04f8ecfc74 100644
-> > --- a/rust/macros/helpers.rs
-> > +++ b/rust/macros/helpers.rs
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >
-> > -use proc_macro::{token_stream, Group, TokenStream, TokenTree};
-> > +use proc_macro::{token_stream, Group, Ident, TokenStream, TokenTree};
-> >
-> >  pub(crate) fn try_ident(it: &mut token_stream::IntoIter) -> Option<Str=
-ing> {
-> >      if let Some(TokenTree::Ident(ident)) =3D it.next() {
-> > @@ -215,3 +215,20 @@ pub(crate) fn parse_generics(input: TokenStream) -=
-> (Generics, Vec<TokenTree>) {
-> >          rest,
-> >      )
-> >  }
-> > +
-> > +/// Given a function declaration, finds the name of the function.
-> > +pub(crate) fn function_name(input: TokenStream) -> Option<Ident> {
->
-> It would be great with a few tests for this function.
+On 2025/2/28 01:51, Thomas Gleixner wrote:
+> On Thu, Feb 27 2025 at 22:09, Manivannan Sadhasivam wrote:
+>> On Fri, Feb 28, 2025 at 12:28:21AM +0800, Hans Zhang wrote:
+>>> +	return sysfs_emit(
+>>> +		buf,
+>>> +		"%s\n address_hi: 0x%08x\n address_lo: 0x%08x\n msg_data: 0x%08x\n",
+>>> +		is_msix ? "msix" : "msi", desc->msg.address_hi,
+>>> +		desc->msg.address_lo, desc->msg.data);
+>>
+>> Sysfs is an ABI. You cannot change the semantics of an attribute.
+> 
+> Correct. Aside of that this is debug information and has no business in
+> sysfs.
+> 
+> The obvious place to expose this is via the existing debugfs irq/*
+> mechanism. All it requires is to implement a debug_show() callback in
+> the MSI core code and assign it to domain ops::debug_show() on domain
+> creation, if it does not provide its own callback.
 
-I don't think we have a mechanism for tests in the macro crate?
+Hi Thomas(tglx),
 
-> > +    let mut input =3D input.into_iter();
-> > +    while let Some(token) =3D input.next() {
-> > +        match token {
-> > +            TokenTree::Ident(i) if i.to_string() =3D=3D "fn" =3D> {
-> > +                if let Some(TokenTree::Ident(i)) =3D input.next() {
-> > +                    return Some(i);
-> > +                }
-> > +                return None;
-> > +            }
-> > +            _ =3D> continue,
-> > +        }
-> > +    }
-> > +    None
-> > +}
-> > diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-> > index d61bc6a56425..3cbf7705c4c1 100644
-> > --- a/rust/macros/lib.rs
-> > +++ b/rust/macros/lib.rs
-> > @@ -9,6 +9,7 @@
-> >  #[macro_use]
-> >  mod quote;
-> >  mod concat_idents;
-> > +mod export;
-> >  mod helpers;
-> >  mod module;
-> >  mod paste;
-> > @@ -174,6 +175,23 @@ pub fn vtable(attr: TokenStream, ts: TokenStream) =
--> TokenStream {
-> >      vtable::vtable(attr, ts)
-> >  }
-> >
-> > +/// Export a function so that C code can call it.
-> > +///
-> > +/// This macro has the following effect:
-> > +///
-> > +/// * Disables name mangling for this function.
-> > +/// * Verifies at compile-time that the function signature matches wha=
-t's in the header file.
-> > +///
-> > +/// This macro requires that the function is mentioned in a C header f=
-ile, and that the header file
-> > +/// is included in `rust/bindings/bindings_helper.h`.
-> > +///
-> > +/// This macro is *not* the same as the C macro `EXPORT_SYMBOL*`, sinc=
-e all Rust symbols are
-> > +/// currently automatically exported with `EXPORT_SYMBOL_GPL`.
->
-> Perhaps add the following:
->
-> This macro is useful when rust code is providing a function symbol whose
-> signature is dictated by a C header file.
+Is the following patch OK? Please give me some advice. Thank you very much.
 
-I do think this could use more info about when to use it. E.g., you
-don't use it if C calls it via a vtable, but only if C calls it via a
-declaration in a header file. I'll add more info.
+Best regards
+Hans
 
-> > +#[proc_macro_attribute]
-> > +pub fn export(attr: TokenStream, ts: TokenStream) -> TokenStream {
-> > +    export::export(attr, ts)
-> > +}
-> > +
-> >  /// Concatenate two identifiers.
-> >  ///
-> >  /// This is useful in macros that need to declare or reference items w=
-ith names
-> > diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
-> > index 33a199e4f176..c18960a91082 100644
-> > --- a/rust/macros/quote.rs
-> > +++ b/rust/macros/quote.rs
-> > @@ -20,6 +20,12 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
-> >      }
-> >  }
-> >
-> > +impl ToTokens for proc_macro::Ident {
-> > +    fn to_tokens(&self, tokens: &mut TokenStream) {
-> > +        tokens.extend([TokenTree::from(self.clone())]);
-> > +    }
-> > +}
-> > +
-> >  impl ToTokens for TokenTree {
-> >      fn to_tokens(&self, tokens: &mut TokenStream) {
-> >          tokens.extend([self.clone()]);
-> > @@ -40,7 +46,7 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
-> >  /// `quote` crate but provides only just enough functionality needed b=
-y the current `macros` crate.
-> >  macro_rules! quote_spanned {
-> >      ($span:expr =3D> $($tt:tt)*) =3D> {{
-> > -        let mut tokens;
-> > +        let mut tokens: ::std::vec::Vec<::proc_macro::TokenTree>;
-> >          #[allow(clippy::vec_init_then_push)]
-> >          {
-> >              tokens =3D ::std::vec::Vec::new();
-> > @@ -65,7 +71,8 @@ macro_rules! quote_spanned {
-> >          quote_spanned!(@proc $v $span $($tt)*);
-> >      };
-> >      (@proc $v:ident $span:ident ( $($inner:tt)* ) $($tt:tt)*) =3D> {
-> > -        let mut tokens =3D ::std::vec::Vec::new();
-> > +        #[allow(unused_mut)]
-> > +        let mut tokens =3D ::std::vec::Vec::<::proc_macro::TokenTree>:=
-:new();
-> >          quote_spanned!(@proc tokens $span $($inner)*);
-> >          $v.push(::proc_macro::TokenTree::Group(::proc_macro::Group::ne=
-w(
-> >              ::proc_macro::Delimiter::Parenthesis,
-> > @@ -136,6 +143,16 @@ macro_rules! quote_spanned {
-> >          ));
-> >          quote_spanned!(@proc $v $span $($tt)*);
-> >      };
-> > +    (@proc $v:ident $span:ident =3D $($tt:tt)*) =3D> {
-> > +        $v.push(::proc_macro::TokenTree::Punct(
-> > +                ::proc_macro::Punct::new('=3D', ::proc_macro::Spacing:=
-:Alone)
-> > +        ));
-> > +        quote_spanned!(@proc $v $span $($tt)*);
-> > +    };
-> > +    (@proc $v:ident $span:ident _ $($tt:tt)*) =3D> {
-> > +        $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::ne=
-w("_", $span)));
-> > +        quote_spanned!(@proc $v $span $($tt)*);
-> > +    };
-> >      (@proc $v:ident $span:ident $id:ident $($tt:tt)*) =3D> {
-> >          $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::ne=
-w(stringify!($id), $span)));
-> >          quote_spanned!(@proc $v $span $($tt)*);
->
-> The update to `impl ToTokens for TokenTree` should be split out in a
-> separate patch and should carry some explanation of the change.
 
-I think this case is borderline for whether it's necessary to split
-up, but okay.
+patch:
 
-Alice
+diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
+index ca142b9a4db3..447fa24520f4 100644
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -3,6 +3,7 @@
+
+  #include <linux/irqdomain.h>
+  #include <linux/irq.h>
++#include <linux/msi.h>
+  #include <linux/uaccess.h>
+
+  #include "internals.h"
+@@ -56,6 +57,26 @@ static const struct irq_bit_descr irqchip_flags[] = {
+         BIT_MASK_DESCR(IRQCHIP_MOVE_DEFERRED),
+  };
+
++static void irq_debug_show_msi_msix(struct seq_file *m, struct irq_data 
+*data,
++                                   int ind)
++{
++       struct msi_desc *desc;
++       bool is_msix;
++
++       desc = irq_get_msi_desc(data->irq);
++       if (!desc)
++               return;
++
++       is_msix = desc->pci.msi_attrib.is_msix;
++       seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
++       seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "",
++               desc->msg.address_hi);
++       seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "",
++               desc->msg.address_lo);
++       seq_printf(m, "\n%*smsg_data: 0x%08x\n", ind + 1, "",
++               desc->msg.data);
++}
++
+  static void
+  irq_debug_show_chip(struct seq_file *m, struct irq_data *data, int ind)
+  {
+@@ -178,6 +199,7 @@ static int irq_debug_show(struct seq_file *m, void *p)
+         seq_printf(m, "node:     %d\n", irq_data_get_node(data));
+         irq_debug_show_masks(m, desc);
+         irq_debug_show_data(m, data, 0);
++       irq_debug_show_msi_msix(m, data, 0);
+         raw_spin_unlock_irq(&desc->lock);
+         return 0;
+  }
+
+
+
+
+e.g.
+root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
+  85:          0          0          0          0          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 75497472 Edge      PCIe PME, aerdrv
+  86:          0         30          0          0          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021760 Edge      nvme0q0
+  87:        682          0          0          0          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021761 Edge      nvme0q1
+  88:          0        400          0          0          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021762 Edge      nvme0q2
+  89:          0          0        246          0          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021763 Edge      nvme0q3
+  90:          0          0          0        141          0          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021764 Edge      nvme0q4
+  91:          0          0          0          0        177          0 
+         0          0          0          0          0          0 
+ITS-MSI 76021765 Edge      nvme0q5
+  92:          0          0          0          0          0        173 
+         0          0          0          0          0          0 
+ITS-MSI 76021766 Edge      nvme0q6
+  93:          0          0          0          0          0          0 
+       374          0          0          0          0          0 
+ITS-MSI 76021767 Edge      nvme0q7
+  94:          0          0          0          0          0          0 
+         0         62          0          0          0          0 
+ITS-MSI 76021768 Edge      nvme0q8
+  95:          0          0          0          0          0          0 
+         0          0        137          0          0          0 
+ITS-MSI 76021769 Edge      nvme0q9
+  96:          0          0          0          0          0          0 
+         0          0          0        177          0          0 
+ITS-MSI 76021770 Edge      nvme0q10
+  97:          0          0          0          0          0          0 
+         0          0          0          0        403          0 
+ITS-MSI 76021771 Edge      nvme0q11
+  98:          0          0          0          0          0          0 
+         0          0          0          0          0        246 
+ITS-MSI 76021772 Edge      nvme0q12
+root@root:/sys/kernel/debug/irq/irqs# cat 86
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31401200
+             IRQD_ACTIVATED
+             IRQD_IRQ_STARTED
+             IRQD_SINGLE_TARGET
+             IRQD_AFFINITY_SET
+             IRQD_AFFINITY_ON_ACTIVATE
+             IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 6
+effectiv: 6
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+  hwirq:   0x4880000
+  chip:    ITS-MSI
+   flags:   0x20
+              IRQCHIP_ONESHOT_SAFE
+  parent:
+     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+      hwirq:   0x2001
+      chip:    ITS
+       flags:   0x0
+      parent:
+         domain:  :soc@0:interrupt-controller@0e001000-1
+          hwirq:   0x2001
+          chip:    GICv3
+           flags:   0x15
+                      IRQCHIP_SET_TYPE_MASKED
+                      IRQCHIP_MASK_ON_SUSPEND
+                      IRQCHIP_SKIP_SET_WAKE
+msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data: 0x00000000
+root@root:/sys/kernel/debug/irq/irqs# cat 87
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31600200
+             IRQD_ACTIVATED
+             IRQD_IRQ_STARTED
+             IRQD_SINGLE_TARGET
+             IRQD_AFFINITY_MANAGED
+             IRQD_AFFINITY_ON_ACTIVATE
+             IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 0
+effectiv: 0
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+  hwirq:   0x4880001
+  chip:    ITS-MSI
+   flags:   0x20
+              IRQCHIP_ONESHOT_SAFE
+  parent:
+     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+      hwirq:   0x2002
+      chip:    ITS
+       flags:   0x0
+      parent:
+         domain:  :soc@0:interrupt-controller@0e001000-1
+          hwirq:   0x2002
+          chip:    GICv3
+           flags:   0x15
+                      IRQCHIP_SET_TYPE_MASKED
+                      IRQCHIP_MASK_ON_SUSPEND
+                      IRQCHIP_SKIP_SET_WAKE
+msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data: 0x00000001
+root@root:/sys/kernel/debug/irq/irqs#
+root@root:/sys/kernel/debug/irq/irqs# cat 88
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31600200
+             IRQD_ACTIVATED
+             IRQD_IRQ_STARTED
+             IRQD_SINGLE_TARGET
+             IRQD_AFFINITY_MANAGED
+             IRQD_AFFINITY_ON_ACTIVATE
+             IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 1
+effectiv: 1
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+  hwirq:   0x4880002
+  chip:    ITS-MSI
+   flags:   0x20
+              IRQCHIP_ONESHOT_SAFE
+  parent:
+     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+      hwirq:   0x2003
+      chip:    ITS
+       flags:   0x0
+      parent:
+         domain:  :soc@0:interrupt-controller@0e001000-1
+          hwirq:   0x2003
+          chip:    GICv3
+           flags:   0x15
+                      IRQCHIP_SET_TYPE_MASKED
+                      IRQCHIP_MASK_ON_SUSPEND
+                      IRQCHIP_SKIP_SET_WAKE
+msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data: 0x00000002
+root@root:/sys/kernel/debug/irq/irqs# cat 89
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31600200
+             IRQD_ACTIVATED
+             IRQD_IRQ_STARTED
+             IRQD_SINGLE_TARGET
+             IRQD_AFFINITY_MANAGED
+             IRQD_AFFINITY_ON_ACTIVATE
+             IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 2
+effectiv: 2
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+  hwirq:   0x4880003
+  chip:    ITS-MSI
+   flags:   0x20
+              IRQCHIP_ONESHOT_SAFE
+  parent:
+     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+      hwirq:   0x2004
+      chip:    ITS
+       flags:   0x0
+      parent:
+         domain:  :soc@0:interrupt-controller@0e001000-1
+          hwirq:   0x2004
+          chip:    GICv3
+           flags:   0x15
+                      IRQCHIP_SET_TYPE_MASKED
+                      IRQCHIP_MASK_ON_SUSPEND
+                      IRQCHIP_SKIP_SET_WAKE
+msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data: 0x00000003
+
+
+
 
