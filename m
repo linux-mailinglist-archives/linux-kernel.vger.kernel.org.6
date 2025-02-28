@@ -1,84 +1,127 @@
-Return-Path: <linux-kernel+bounces-538185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B88A49593
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:43:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00073A495F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160BF3B2938
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6615916AAEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE36B2580DE;
-	Fri, 28 Feb 2025 09:40:30 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855B625B693;
+	Fri, 28 Feb 2025 09:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M8SC6hRH"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B715256C9A;
-	Fri, 28 Feb 2025 09:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4934425A2DE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735630; cv=none; b=EOx24x1UFozVzkx0LvDW/F6A3/y5rjdYZVQ4idwCDCiPH3a+1CVpJy3y9mR45oWQTFeR4rwR/rfZwsBM5TOqrdsp2PL/dS2P/343jUAhQRBVyxY4Anba1Kq95eRhVsF6hMdQcADlpVHawG2AJhzNA4TDDFP2HHVipMDykfzy9ms=
+	t=1740736344; cv=none; b=gbDl/pFQNn8GmLmD03Dwbweak138AJtGb7f5TXTHcg4MBMbSsQDQ/j7LTXqabg+5Zr9GVw2e0n18Syf9K7AwUlAe1MIgCnvkG7bLV+Xjv+Nkf5tHGF7dN5arVgJDVT9zyfdHQBG53ojwngJJq1pIqU1eAxsqFsiZO0lsDVwVTXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735630; c=relaxed/simple;
-	bh=TXS83j3sidAU5F7wfqIv04eKJOdCNNgLmo42LlF5t5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XYbMu/k8qXustv5xvPKwcg/tDzMf2Zs7tHAmsjRiLvigwEZdcGPugPpOBxhgnopxTE4Pc1r2uak8r6cskSQASoscenj3xqn8QM9CG/SRGNzMwJG0x4K5JyN14KfAzq2IZ/J6dHQGLkDM6AdYR5DAs6wml7JTA8OFd7nyffnfkjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z437D65t8z1R5ss;
-	Fri, 28 Feb 2025 17:38:48 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id AAA061A016C;
-	Fri, 28 Feb 2025 17:40:24 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 28 Feb
- 2025 17:40:24 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <matttbe@kernel.org>, <martineau@kernel.org>, <geliang@kernel.org>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <mptcp@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH net-next] mptcp: Remove unused declaration mptcp_set_owner_r()
-Date: Fri, 28 Feb 2025 17:51:48 +0800
-Message-ID: <20250228095148.4003065-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740736344; c=relaxed/simple;
+	bh=3Kn36LbYuhm9RIR9p9Dr/OQ4uSVbxLc+woq9AQFIKUU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CODJIq+FMcpcSQ0qbwBF4dne5sG26AZD1LaNxpsSlVDuMDpZ8tx2kXK8sLg1Hc19Im2CeQ7CRGz3BBzigefw+1f+YYbnr5QWbCC2tBdp/JBXfeJej3JEcQCea4NlE8w95BlWVwncMDs5AJVhOJUfr6mK2lGmRDsRCpZkxtHHf1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M8SC6hRH; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-390ddb917abso941374f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:52:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740736340; x=1741341140; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d5mt9J8i4m5w2763+5K6yjHQ01GU+xDy5TZM3dXejFg=;
+        b=M8SC6hRH0qOUzIC1ijuuyBcVR6tab9ESiNT9JXmg9QRfo7Lwrwyqcm/jjcgQYyj2E1
+         XXw2wwlLdzR+WVN+ixEpaKreduZtjVZryxTx9MpE0grgXu8lU5Oah32gpGDpkrz3Bklp
+         +1ELuzedxmkgE9Ggy/VNHl7yVgzZDJQcvW405M9HI5yo+qWooSQ5ceKR32F6BDR++ASx
+         PI85TSu1zUawtbHcC1V9XxlFVHpgbxrChm5G+KF/EGJrs77FhBNDFOH02ku2OUcCknIu
+         MfPpRQB6nmMncFqiad5HN/6wXUt5yiIWAsmw1yKye/qN6bcxCRzAuJyrf1YV5jy4VAu7
+         RjsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740736340; x=1741341140;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d5mt9J8i4m5w2763+5K6yjHQ01GU+xDy5TZM3dXejFg=;
+        b=tskk0BYoeNxLv1rB1XS6kxq/2gFyNU+EuEffImo9iugFI/Mx70xoNAMa/1VDAnLTLG
+         SvCa2hqFvu7ikwupdhY2TthZOf+7+sVupFDo/pMHDBBYYUjzVxrJn6QpR26n3KgtMv7d
+         OXs5siZe4W8g7KlvrgwpBpZRU+xaDBsVrocqSaYaEYN68hzGcnL2PGWCoocya9ls6DN+
+         dThTxJW83lZIthdBhNbtdw5KCjqD7ZW5Sfnth8gJ7x5JjLvBff7cGAnWLMEcdL8zRyvS
+         P++QUJfa9ZXHShychSRBaKkHeMEoip//Miq7Ow+vQagAeM7tVUGhNQC/xczK33LmEqYJ
+         vh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhYGbXqd6DV6fACnmpBxPjGZwNKj62ggAn/9tEFI4UIJAFzU+mI5ihuUKx7Q1XVQb08B2hRR0baG1RgTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUqP3wDmnQvy3kKbz/ptS/guK9/sLvO0xU2zKaFL4/x8mgkkhX
+	u88/odLwTYg7DYGWEI099QLyUfm+D+SR038DtwnUnTz8tMBxy2lI92Ek3zh686evk8CTK32Idui
+	9ZN/MrdHkJw==
+X-Google-Smtp-Source: AGHT+IFhvyhBMDqiCFk0cQyiG9hDs00X+P9w8OzFkmfuBdj2kS5HdpmNO0Wf1SLwxTzA3xHz763DJVjmvMCnwQ==
+X-Received: from wrfu11.prod.google.com ([2002:a05:6000:38b:b0:390:e2a5:14b1])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1447:b0:38f:6697:af9c with SMTP id ffacd0b85a97d-390ec7cac67mr2126793f8f.6.1740736340671;
+ Fri, 28 Feb 2025 01:52:20 -0800 (PST)
+Date: Fri, 28 Feb 2025 09:52:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFGHwWcC/3XNTQ6DIBCG4as0rEsDI/jTVe/RdIEwKImVBoypM
+ d696MrWdPlN8rwzk4jBYSTX00wCji4636chzieiW9U3SJ1JmwADyYALqjsVnJ1oHFB11IIQZcm
+ E4JqTZF4BrXtvvfsj7dbFwYdpy498vf4rjZxyWlRGS2Usr4vq1njfdHjR/knW1Ag7DgcOlNEaQ RiVy7zIxYFney5/eZa4BSkZKsN49v19WZYPIe5XAykBAAA=
+X-Change-Id: 20250214-clarify-steal-f244880441c1
+X-Mailer: b4 0.15-dev
+Message-ID: <20250228-clarify-steal-v4-0-cb2ef1a4e610@google.com>
+Subject: [PATCH v4 0/2] mm/page_alloc: Some clarifications for migratetype fallback
+From: Brendan Jackman <jackmanb@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>, 
+	Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="utf-8"
 
-Commit 6639498ed85f ("mptcp: cleanup mem accounting")
-removed the implementation but leave declaration.
+A couple of patches to try and make the code easier to follow.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+This is based on an old mm-unstable as v3 is already merged there. Base
+commit info is attached below.
+
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- net/mptcp/protocol.h | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v4:
+- Some more precision about "try to claim" vs "claim"
+- More improvements to the commentary text.
+- Link to v3: https://lore.kernel.org/r/20250225-clarify-steal-v3-0-f2550ead0139@google.com
 
-diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
-index 256677c43ca6..bd2992776d8a 100644
---- a/net/mptcp/protocol.h
-+++ b/net/mptcp/protocol.h
-@@ -720,7 +720,6 @@ struct sock *__mptcp_nmpc_sk(struct mptcp_sock *msk);
- bool __mptcp_close(struct sock *sk, long timeout);
- void mptcp_cancel_work(struct sock *sk);
- void __mptcp_unaccepted_force_close(struct sock *sk);
--void mptcp_set_owner_r(struct sk_buff *skb, struct sock *sk);
- void mptcp_set_state(struct sock *sk, int state);
- 
- bool mptcp_addresses_equal(const struct mptcp_addr_info *a,
+Changes in v3:
+- Rebased onto mm-unstable to get on top of Johannes' cleanups:
+  https://lore.kernel.org/linux-mm/20250225001023.1494422-1-hannes@cmpxchg.org/
+- Fixed missing renames
+- Link to v2: https://lore.kernel.org/r/20250224-clarify-steal-v2-0-be24da656764@google.com
+
+Changes in v2:
+- Tweaked some naming
+- Added clarifications of should_claim_block()
+- Link to v1: https://lore.kernel.org/r/20250214-clarify-steal-v1-1-79dc5adf1b79@google.com
+
+---
+Brendan Jackman (2):
+      mm/page_alloc: Clarify terminology in migratetype fallback code
+      mm/page_alloc: Clarify should_claim_block() commentary
+
+ mm/compaction.c |   4 +--
+ mm/internal.h   |   2 +-
+ mm/page_alloc.c | 100 ++++++++++++++++++++++++++++++--------------------------
+ 3 files changed, 56 insertions(+), 50 deletions(-)
+---
+base-commit: 801d47bd96ce22acd43809bc09e004679f707c39
+change-id: 20250214-clarify-steal-f244880441c1
+
+Best regards,
 -- 
-2.34.1
+Brendan Jackman <jackmanb@google.com>
 
 
