@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-538567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EBCA49A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:14:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A265DA49A52
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B4F1739AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89AD03AA038
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1E526B976;
-	Fri, 28 Feb 2025 13:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ED226B976;
+	Fri, 28 Feb 2025 13:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eNabF+ok"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BdLG6bm/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0AB25E471;
-	Fri, 28 Feb 2025 13:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3DD26B944
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740748454; cv=none; b=i3E0J56CbME7Ji/8eEgs7GdR0957ntTpMQX7kXnX4NQ0ds8u9xWi4BytCrCwH11wVgNAQkYLDKq8/aGTgI0eQprVo5bN2nuvOlUCfrwuM/VZd2ekvHimues1oCMiVc09BTCYJXq1zEepCikGNx7xigjpkx34trKR+MnqCj5hB1k=
+	t=1740748508; cv=none; b=GL7SpP4l5gPyxGbQjC+OnM8DHQc6fHLXSNjXK+uzKbSBrq+oXUPPi96vx0YbBtuLU/qL/lTa+WNHSqZsWmZssMrmHCKlqlBKk1P+cswlBgWYDW8CGEFO69wqQWvodfqC+Pvws6gfh7ZNZT4s1OkRJJK4mecuUIM9JnAtb1ukDE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740748454; c=relaxed/simple;
-	bh=21m3In4wCH+q/UoEDYx7ymPFrvABWf4Rd32gUSleQA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvWNjoDfF5WDPSD3P+eiS+4+D5tKzo1YGYjNnVFWozXRfDpF2pqReaj9DM0WeyXItvrk6hl/ItNPYOfbx0+QEIGOvfVHjN+jxSuhK0HzKhe0HN0tqJf/Vt7qOtauPZP88I51G/mjnIMDG3FZpUukwoUQM19nWyqfHqAdD8geHYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eNabF+ok; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740748450;
-	bh=21m3In4wCH+q/UoEDYx7ymPFrvABWf4Rd32gUSleQA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eNabF+okts2wj5dvZqEBsxkC50bHNM+f5w4lqa7moXIz4uTrl2Dwht6hOqGiod1MK
-	 yrrwclkFsnIodC7SDWabOXUO3KABtHYviBa3il6GwIrYgwLH1s/hT7ISUti/D3SMy2
-	 I+fy4+hm4Sg/qB4K5PCskuRuHDn2TNybZUYToHnYwKxd/1QU0ldBXskBiTgmqL0Ipg
-	 mKxcYEzHxnzBDfv+RguYfrrK7hCZU09YDF3GPxBBGxVMOJcXbQGd2bHXiFKEGKMWKH
-	 bAhOirJHBRJ8C00gWbsqCRO83L4G0d4KGf2d7+IJgDWSEEMdUhkN/fV2iypTRhWoaJ
-	 azj0xU0CSrUkw==
-Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1003])
+	s=arc-20240116; t=1740748508; c=relaxed/simple;
+	bh=qN0S2brDM0m6IRUH6qeUxGxgB/Z9oc1GttwZ/dlWadQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fYbUo8OVJG1KnQIbrdpc0SqGo/0lR/WXQF4/rWGECc2fuLLt+x7JMwN5GBbOGyCRT+7E6dWFlVbf/+BrsVc77bj1Ju9/oqdjE+8OTAKCjdFv767BnSJ6QzmBiz+w4J0SwzY5p9JLHOnkTCiXschyeukEFi6qQbgMDeOzR3iNdOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BdLG6bm/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740748505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tQqt3r025DJCbsc59QzlMQIjxIUe40/8e/dqEZGAfJA=;
+	b=BdLG6bm/lkD6LPaQmRDipdFEdAShpWjs/DLxH7t/RMs03FSyxaR0lt4Q91Ve0b3mWDlKr9
+	xFWLifTgyL6hOtBsQ99Lv83w9mPxnKhhLSG23MOJzwF92r7JcvgTEzQdL60g7aVvAuxjU6
+	hrzJbo14rgVvA+didcB2pGImpsxFHSQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-442-k9FfwJOHOByQiLqbKSXXWQ-1; Fri,
+ 28 Feb 2025 08:15:02 -0500
+X-MC-Unique: k9FfwJOHOByQiLqbKSXXWQ-1
+X-Mimecast-MFC-AGG-ID: k9FfwJOHOByQiLqbKSXXWQ_1740748501
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 733C217E087E;
-	Fri, 28 Feb 2025 14:14:07 +0100 (CET)
-Date: Fri, 28 Feb 2025 10:14:05 -0300
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, kernel@collabora.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] ASoC: mediatek: mt6359: Fix DT parse error due to wrong
- child node name
-Message-ID: <59f79e0a-c99f-4b30-b0dd-81c4889c7807@notapiano>
-References: <20250228-mt6359-fix-probe-failed-v1-1-64941d387b2c@collabora.com>
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D69B61800360;
+	Fri, 28 Feb 2025 13:15:00 +0000 (UTC)
+Received: from [10.22.88.31] (unknown [10.22.88.31])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B9D5E19560AE;
+	Fri, 28 Feb 2025 13:14:58 +0000 (UTC)
+Message-ID: <72880abf-55c9-4dd6-872d-3c5b3faa4198@redhat.com>
+Date: Fri, 28 Feb 2025 08:14:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228-mt6359-fix-probe-failed-v1-1-64941d387b2c@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] nvme: update the multipath warning in
+ nvme_init_ns_head
+To: Nilay Shroff <nilay@linux.ibm.com>, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me
+Cc: loberman@redhat.com, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, emilne@redhat.com, bgurney@redhat.com
+References: <20250228032541.369804-1-jmeneghi@redhat.com>
+ <20250228032541.369804-4-jmeneghi@redhat.com>
+ <abd856da-7ca6-419f-943b-80dcc885f68b@linux.ibm.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <abd856da-7ca6-419f-943b-80dcc885f68b@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Fri, Feb 28, 2025 at 11:32:19AM +0100, Louis-Alexis Eyraud wrote:
-> A recent dtbs_check error fix in mt6359.dtsi file changed a node name
-> (from "mt6359codec" to "audio-codec") without modifying the mt6539
-> codec code that uses it.
-> It leads to a probe failure after devicetree parsing returns in error:
-> ```
-> [    1.354025] mt6359-sound mt6359-sound: mt6359_platform_driver_probe() failed to parse dts
-> [    1.355066] mt6359-sound mt6359-sound: probe with driver mt6359-sound failed with error -22
-> ```
+On 2/28/25 1:28 AM, Nilay Shroff wrote:
+> On 2/28/25 8:55 AM, John Meneghini wrote:
+>> The new NVME_MULTIPATH_PARAM config option requires updates
+>> to the warning message in nvme_init_ns_head(). Remove
+>> the old warning message and add new ones.
+>>
+>> Signed-off-by: John Meneghini <jmeneghi@redhat.com>
+>> ---
+>>   drivers/nvme/host/core.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>> index 818d4e49aab5..c2b7e6834535 100644
+>> --- a/drivers/nvme/host/core.c
+>> +++ b/drivers/nvme/host/core.c
+>> @@ -3823,8 +3823,16 @@ static int nvme_init_ns_head(struct nvme_ns *ns, struct nvme_ns_info *info)
+>>   			dev_warn(ctrl->device,
+>>   				"Found shared namespace %d, but multipathing not supported.\n",
+>>   				info->nsid);
+>> +#ifdef CONFIG_NVME_MULTIPATH
+>> +#ifdef CONFIG_NVME_MULTIPATH_PARAM
+>> +			dev_warn_once(ctrl->device,
+>> +				"Shared namespace support requires core.nvme_multipath=Y.\n");
+>> +
+>> +#endif
+>> +#else
+>>   			dev_warn_once(ctrl->device,
+>> -				"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+>> +				"Shared namespace support requires CONFIG_NVME_MULTIPATH.\n");
+>> +#endif
+>>   		}
+>>   	}
+>>   
 > 
-> So, add the child node retrieval with the new name and if not found,
-> try with the older one for backward compatibility.
+> As NVME_MULTIPATH_PARAM depends on NVME_MULTIPATH, it implicitly implies
+> that if NVME_MULTIPATH_PARAM is enabled then NVME_MULTIPATH has to be on.
+> So above logic could be simplified.
 > 
-> Fixes: 76b35f59bbe6 ("arm64: dts: mediatek: mt6359: fix dtbs_check error for audio-codec")
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> However on another note, I really don't understand why do we need to add
+> new warning here as there's already a warning present just above your
+> changes.
 
-Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Agreed.  How about if we just remove the
 
-Thanks,
-Nícolas
+    	dev_warn_once(ctrl->device,
+		"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+  
+This is real problem.  This is a confusing message since there is no now plan to remove any of these config options from the kernel.
+
+/John
+
+> Thanks,
+> --Nilay
+> 
+> 
+
 
