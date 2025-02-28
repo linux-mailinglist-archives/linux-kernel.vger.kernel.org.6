@@ -1,267 +1,196 @@
-Return-Path: <linux-kernel+bounces-538909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83B5A49EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:25:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFD4A49EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE16189A5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256C81898CB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B84627424E;
-	Fri, 28 Feb 2025 16:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36181272920;
+	Fri, 28 Feb 2025 16:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DE69j4AC"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOtbig1y"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A272702C1;
-	Fri, 28 Feb 2025 16:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2C526FD9F;
+	Fri, 28 Feb 2025 16:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759893; cv=none; b=bOmLgQNmmfwHc61BhsgoixACs3yvWjS1EetwXfPRzwM/Udmcmoo7eMXM4BqEUZcS/sm80Fy2RJ9ewz/oBxoZjUi7+jAuqkGTc/QoKTbrkOmcDmUZ7VOqiWlMzeBaKy/PkPbHczOg1iIJ5vgNs+nq2ch5QvLMX68TAFmJPpwAtrs=
+	t=1740759944; cv=none; b=VHxZvxW3NHB09Hx27T0nDV+N8Cp6yFZ1OokXHtX7R3YxjmIfyiDlw/o/X4l0q9k+PgDZAapTXsiFRsewdFL7N+8m1NW4uQ2Mr17ut4If9c4BV/diOQNTrtkESjRvCDKpAK6kLriaBLbUvN7Xf3gBurrTZYipYkW3grz17LfekBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759893; c=relaxed/simple;
-	bh=XnpZcUYfTLbgC6takHMxyC3KsGytUw76O4Bb/3klw4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t+YCqfcQobxyOer0AR6UjReczs5FJR4cex0FJFVERuBY1gGuSdkoBXY3hOEWWn49t4FzIO/rUMkBBwihb7Zy4cff6upMJeDLvvE1De6OTwWT6p5BdKrBj2Em0SxGmjkeZhz+8coapJAbxMyckwIdjQ2HqqSSX4cCc6LCRix+tVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DE69j4AC; arc=none smtp.client-ip=209.85.128.177
+	s=arc-20240116; t=1740759944; c=relaxed/simple;
+	bh=LTLvtGeYL4XvHXpRRiCpmpMx6e+FAaai3tPRX+PUS3Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECYT2Ayh9OlizzQAiUfTRGTA/Q+IfklIgiz/jriVCn2VruZYvRzZSVhC13mUeT9TrVWRVUgxlp5meHZnMEgVDdsxbPDhO6eUPK0z60Rk6gtSkXO7zfcQm7O5mVaN5oGrvI5OE8ZfExcJ4fwmfPYupRQ/kf9ZaqeXz+wbiHLTWI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOtbig1y; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f768e9be1aso33320567b3.0;
-        Fri, 28 Feb 2025 08:24:51 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-548409cd2a8so2378863e87.3;
+        Fri, 28 Feb 2025 08:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740759891; x=1741364691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q3ewd6MOD055VnfUmlVAPlmkIaMimMwbkJLyr3SEzLo=;
-        b=DE69j4ACDJOluNm/FbZsnx7aTGaEYoGDYBlmEe8xJECxVjSa+Oc1hEvXC6X+kpZ7zB
-         J6d8zwMsGmPuBGxin34jHmVnpPBLECU6Zt4rpmr82QwJahQ6CJsXDXL26LJP02xdE+xW
-         egEbn6hR1roQPTlPmKsSlp3JWBn3YHUw/V16j/0uZkvIqsK1GbGcGA0xGJAoM4+rjtlc
-         HJsK2mFOB8ajBnjGrIwMBl9DyWutsuNXQfmGvkengiL5HKIXDVBrZumSIPTgGSiG1Gc8
-         gJ1BGxyq3VOlDizlW8UgfzavCn6E4wHrNkj98LxdCl5NAakbAfSYPtzl3rLimXW02+pA
-         vbuQ==
+        d=gmail.com; s=20230601; t=1740759939; x=1741364739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VhXr4TnCA5jbl50+NUvjqkpZysAKnfjV2gvofW855yQ=;
+        b=cOtbig1y6NUyiYSWtESSAEK4bzsiVMUcm85Lg2GRKzPpCuoEgr4z5FYD77FlP5mo2h
+         jRrPmpoD6kp1rKnz81InX4l2dwX2DCHSemuCHEN4RrYcnbdVDgsBtAbuVLE1KF441oO2
+         WnLy98jr6ng3TbSG4CY/H1tornpLgdObL8gtA4CU+pYz/F+/DJGifadvGuSqfm9w33HG
+         1Uu/0DnZJUcIWuFf+S4X5mROhoaGxdYCJADJvJHg8bhkdWto6XVVGrsb22YhdHkGx6Y7
+         GPamnBHlaXnShNu2OncsSMi+GX4pF0z8LyY7nArAUOgXgdbfKJQaFEPJxPLGuFrLVtZH
+         mvhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740759891; x=1741364691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q3ewd6MOD055VnfUmlVAPlmkIaMimMwbkJLyr3SEzLo=;
-        b=UhgcdHuWFjhiuQVPkfnzyq7qkzW4tk3O5+/cex86XkS3Ym+yuoL4GqYbct6qOPyHxA
-         GLyMtx92BuftkXzAV87mLF62f40KSvB44jGdc32ZXSJmA3hia7smVlbHdSglPbYA5232
-         WJqOynX8wiJ/t4uqtWCGQVCCNg91qNGJccywerfBRv1W710xT48+o1uDCwm1P7jw+r3E
-         oIGdOQi00pfHOcryQ/lByUsNvwfrx+JYuf94KAexRmuU6qC9mfE3eNO/KmrHC7+1Y74m
-         OITV01ZZVrgPIfyw7mlSZrV/wiTsRikw3GAIdVun9KLSLFsTisamQzgKakEKX7WfC9Cl
-         +L1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV70E8oON5G70kR2vuwfw85QXM3Ht4A+lz3DFgqZOemJvaLDl1ZWH+2hGRvMemVXy/4C4jAwK4R8T5V@vger.kernel.org, AJvYcCVc2CIb2R9V9ylsGbNUWJvrqs2pcuhKbKSi16lXZGkTu+dyChkW7hYs6cpR6GnCDq0wxF6Vqbb3ts0cCh46@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmsdKXam801bWlrQeKUUH0paJRgyQWChccCHcIgxTKvuQv0/8Y
-	gs7wHhZBDOfHLlReZiFb6x26jkmSVoSjiWYo1JdK69CDP1XzzX0D
-X-Gm-Gg: ASbGnctRMFm+sTlRJik69jiWsAvCngjehBAbKMNrok+OH/K5i1qAtqlfGeGA6uF0UCk
-	7+GkuVlxafHTZ7iZgCrX25SilGPGBW1n4fESPx1cEw/+FvXPydpzARI8ZwT5HUQidV/r1YbZc9X
-	beyvRjfQjNqg/Bp127vCqQLXZh/3nGmSzDpxavI69da9i+BWvWD6xD1baunWsx7ydv506196ozw
-	aW3bVFDEGmCdABS/Lsh5cgfO+6WCC91tuE4kwBx1D1qTHS44Nq1bJRTEaO35QkrQCfMMzkyW5kw
-	0w18dRx8uLOCwWSqG6mdcbRr
-X-Google-Smtp-Source: AGHT+IEAM2QLaq1/TAY7na+Pdysw6rSoHZH4Mr0frspMuY5OQC0gIjx7djT9cTfNwuR3W8ueknFuuw==
-X-Received: by 2002:a05:690c:4b86:b0:6fb:b38e:207e with SMTP id 00721157ae682-6fd4a23912dmr45573817b3.14.1740759890583;
-        Fri, 28 Feb 2025 08:24:50 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:5::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3ca100b3sm7900267b3.13.2025.02.28.08.24.50
+        d=1e100.net; s=20230601; t=1740759939; x=1741364739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VhXr4TnCA5jbl50+NUvjqkpZysAKnfjV2gvofW855yQ=;
+        b=rWgzi1JYJ5lzVTx7s0DyizBYv/tVJbItyCE5ibZ2UMvKFHgbxOgSnzHP2JU197mvoJ
+         /nJm7sFOZroNt1ch7kbzEVEsURD+IjYXL5yl/8hcPrHkd/2EIaF+fEsJu0kEWzaIo4+J
+         V54SLzIWzSUokBnlX6cLgmIDkxcSv5DkEhf8VkhVr6V6lxD5XktmCsPHwivHfgMXXfXq
+         aKRRoVDieggbwk478wq5O+TA/EHyUUA13/TRWOGmn031r5sZ8v/lvgjxNCLQpdwkz+Bq
+         XEa/cB4CTTj6SKdbAyTTQ+TTlVnvl30OKyrcaGibNRfbLSmb4V+SXIX8Eh3i/7D21gOY
+         QsmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUh8tHMYaC/Wu1nUnoNW+xthIPr2l+WxP4gkmNj7BwFlKCDxbA07tIoHWr/W2NFH0NtbzjhjzvnFCCIzs=@vger.kernel.org, AJvYcCVo59ZRWQJi6CuJOPP/eYOIsf25Oj9Cl5R5iw8GhTLSd9Lp+2oFDpRWaLJ9nuOdTW2aCkoFmotu@vger.kernel.org, AJvYcCW6/WWRVqcK9/OSqIytN+wjnjsVly6515ZVYcdLWvZTEzRRESunwKXuMXSA97EBPOD+ND1U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8eyYELC8fuIJ6WMC4fBhwgFdjwawFF0AllGhcqn/skxWIvOpS
+	9mugs1M5X63cb74Ob8VVamPfSfOXbPWpeFre2i2gsisuIaPe2mpJB4sYu5nW
+X-Gm-Gg: ASbGncvH1nK4YlgpXW9iL65WLQpJZ1vZ+ZOqc+Doo7IxUGLiUbaTCjGe3TtKs8r5sC3
+	lbyY39kCGAgrSWlSEZu0qbRdbdDw7q55Ddiej/0ExBAljNhOSwbFP0d6apjMk2nl9QSnhU0RXCj
+	Hz+z653TA/U9WtXCsJ/5V0fzmjeQKc2vNg4IKfthkMHZJOdejU+4QxEBU+ugriL07Vjt2zfzVXm
+	hRRuR/Nr3RD27kssMTU+wKUxTQJ75b2zp6GxQfAz86jJ61oRGHadDXRgH4xz/xkwY9re4YgBp2x
+	++IZEVhn8hGedPnyPhSx2E3+AVEuAXslQ/hHF2XIXeHq4uMw
+X-Google-Smtp-Source: AGHT+IFna21yxorFsIsk3fBISDfBJed+oeKfLzGr7m+Mk2HE5gJwcZopqbFpuVreIN6DkPqWVUKzKg==
+X-Received: by 2002:a05:6512:398e:b0:548:91f6:4328 with SMTP id 2adb3069b0e04-5494c11b516mr1850636e87.15.1740759938890;
+        Fri, 28 Feb 2025 08:25:38 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443cb6ccsm546497e87.212.2025.02.28.08.25.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:24:50 -0800 (PST)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Yunjeong Mun <yunjeong.mun@sk.com>
-Cc: honggyu.kim@sk.com,
-	gregkh@linuxfoundation.org,
-	rakie.kim@sk.com,
-	akpm@linux-foundation.org,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com,
-	horen.chuang@linux.dev,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	kernel_team@skhynix.com
-Subject: Re: [PATCH 1/2 v6] mm/mempolicy: Weighted Interleave Auto-tuning
-Date: Fri, 28 Feb 2025 08:24:45 -0800
-Message-ID: <20250228162447.3850305-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250228064016.1325-1-yunjeong.mun@sk.com>
-References: 
+        Fri, 28 Feb 2025 08:25:38 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 28 Feb 2025 17:25:35 +0100
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v1 2/2] mm/slab/kvfree_rcu: Switch to WQ_MEM_RECLAIM wq
+Message-ID: <Z8Hjf8avoBDMjD9q@pc636>
+References: <20250228121356.336871-1-urezki@gmail.com>
+ <20250228121356.336871-2-urezki@gmail.com>
+ <c4d0005d-ae34-40d4-80a0-67ca904cdae1@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4d0005d-ae34-40d4-80a0-67ca904cdae1@suse.cz>
 
-On Fri, 28 Feb 2025 15:39:55 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
-
-Hi Yunjeong, thank you for taking time to review my work!
-
-> Hi, Joshua. 
+On Fri, Feb 28, 2025 at 03:42:02PM +0100, Vlastimil Babka wrote:
+> On 2/28/25 13:13, Uladzislau Rezki (Sony) wrote:
+> > Currently kvfree_rcu() APIs use a system workqueue which is
+> > "system_unbound_wq" to driver RCU machinery to reclaim a memory.
+> > 
+> > Recently, it has been noted that the following kernel warning can
+> > be observed:
+> > 
+> > <snip>
+> > workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
+> >   WARNING: CPU: 21 PID: 330 at kernel/workqueue.c:3719 check_flush_dependency+0x112/0x120
+> >   Modules linked in: intel_uncore_frequency(E) intel_uncore_frequency_common(E) skx_edac(E) ...
+> >   CPU: 21 UID: 0 PID: 330 Comm: kworker/u144:6 Tainted: G            E      6.13.2-0_g925d379822da #1
+> >   Hardware name: Wiwynn Twin Lakes MP/Twin Lakes Passive MP, BIOS YMM20 02/01/2023
+> >   Workqueue: nvme-wq nvme_scan_work
+> >   RIP: 0010:check_flush_dependency+0x112/0x120
+> >   Code: 05 9a 40 14 02 01 48 81 c6 c0 00 00 00 48 8b 50 18 48 81 c7 c0 00 00 00 48 89 f9 48 ...
+> >   RSP: 0018:ffffc90000df7bd8 EFLAGS: 00010082
+> >   RAX: 000000000000006a RBX: ffffffff81622390 RCX: 0000000000000027
+> >   RDX: 00000000fffeffff RSI: 000000000057ffa8 RDI: ffff88907f960c88
+> >   RBP: 0000000000000000 R08: ffffffff83068e50 R09: 000000000002fffd
+> >   R10: 0000000000000004 R11: 0000000000000000 R12: ffff8881001a4400
+> >   R13: 0000000000000000 R14: ffff88907f420fb8 R15: 0000000000000000
+> >   FS:  0000000000000000(0000) GS:ffff88907f940000(0000) knlGS:0000000000000000
+> >   CR2: 00007f60c3001000 CR3: 000000107d010005 CR4: 00000000007726f0
+> >   PKRU: 55555554
+> >   Call Trace:
+> >    <TASK>
+> >    ? __warn+0xa4/0x140
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? report_bug+0xe1/0x140
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? handle_bug+0x5e/0x90
+> >    ? exc_invalid_op+0x16/0x40
+> >    ? asm_exc_invalid_op+0x16/0x20
+> >    ? timer_recalc_next_expiry+0x190/0x190
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? check_flush_dependency+0x112/0x120
+> >    __flush_work.llvm.1643880146586177030+0x174/0x2c0
+> >    flush_rcu_work+0x28/0x30
+> >    kvfree_rcu_barrier+0x12f/0x160
+> >    kmem_cache_destroy+0x18/0x120
+> >    bioset_exit+0x10c/0x150
+> >    disk_release.llvm.6740012984264378178+0x61/0xd0
+> >    device_release+0x4f/0x90
+> >    kobject_put+0x95/0x180
+> >    nvme_put_ns+0x23/0xc0
+> >    nvme_remove_invalid_namespaces+0xb3/0xd0
+> >    nvme_scan_work+0x342/0x490
+> >    process_scheduled_works+0x1a2/0x370
+> >    worker_thread+0x2ff/0x390
+> >    ? pwq_release_workfn+0x1e0/0x1e0
+> >    kthread+0xb1/0xe0
+> >    ? __kthread_parkme+0x70/0x70
+> >    ret_from_fork+0x30/0x40
+> >    ? __kthread_parkme+0x70/0x70
+> >    ret_from_fork_asm+0x11/0x20
+> >    </TASK>
+> >   ---[ end trace 0000000000000000 ]---
+> > <snip>
+> > 
+> > To address this switch to use of independent WQ_MEM_RECLAIM
+> > workqueue, so the rules are not violated from workqueue framework
+> > point of view.
+> > 
+> > Apart of that, since kvfree_rcu() does reclaim memory it is worth
+> > to go with WQ_MEM_RECLAIM type of wq because it is designed for
+> > this purpose.
+> > 
+> > Cc: <stable@vger.kernel.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
-> First of all I accidentally sent the wrong email a few hours ago.
-> Please disregard it. Sorry for the confusion.
-
-No worries at all!
-
-> On Wed, 26 Feb 2025 13:35:17 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+> stable is sufficient, no need for greg himself too
 > 
-> [...snip...]
-> >  
-> > +/*
-> > + * Convert bandwidth values into weighted interleave weights.
-> > + * Call with iw_table_lock.
-> > + */
-> > +static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
-> > +{
-> > +	u64 sum_bw = 0;
-> > +	unsigned int cast_sum_bw, sum_iw = 0;
-> > +	unsigned int scaling_factor = 1, iw_gcd = 1;
-> > +	int nid;
-> > +
-> > +	/* Recalculate the bandwidth distribution given the new info */
-> > +	for_each_node_state(nid, N_MEMORY)
-> > +		sum_bw += bw[nid];
-> > +
-> > +	for (nid = 0; nid < nr_node_ids; nid++) {
-> > +		/* Set memoryless nodes' weights to 1 to prevent div/0 later */
-> > +		if (!node_state(nid, N_MEMORY)) {
-> > +			new_iw[nid] = 1;
-> > +			continue;
-> > +		}
-> > +
-> > +		scaling_factor = 100 * bw[nid];
-> > +
-> > +		/*
-> > +		 * Try not to perform 64-bit division.
-> > +		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
-> > +		 * If sum_bw > scaling_factor, then bw[nid] is less than
-> > +		 * 1% of the total bandwidth. Round up to 1%.
-> > +		 */
-> > +		if (bw[nid] && sum_bw < scaling_factor) {
-> > +			cast_sum_bw = (unsigned int)sum_bw;
-> > +			new_iw[nid] = scaling_factor / cast_sum_bw;
-> > +		} else {
-> > +			new_iw[nid] = 1;
-> > +		}
-> > +		sum_iw += new_iw[nid];
-> > +	}
-> > +
-> > +	/*
-> > +	 * Scale each node's share of the total bandwidth from percentages
-> > +	 * to whole numbers in the range [1, weightiness]
-> > +	 */
-> > +	for_each_node_state(nid, N_MEMORY) {
-> > +		scaling_factor = weightiness * new_iw[nid];
-> > +		new_iw[nid] = max(scaling_factor / sum_iw, 1);
-> > +		if (nid == 0)
-> > +			iw_gcd = new_iw[0];
-> > +		iw_gcd = gcd(iw_gcd, new_iw[nid]);
-> > +	}
-> > +
-> > +	/* 1:2 is strictly better than 16:32. Reduce by the weights' GCD. */
-> > +	for_each_node_state(nid, N_MEMORY)
-> > +		new_iw[nid] /= iw_gcd;
-> > +}
+> > Cc: Keith Busch <kbusch@kernel.org>
+> > Closes: https://www.spinics.net/lists/kernel/msg5563270.html
 > 
-> In my understanding, new_iw[nid] values are scaled twice, first to 100 and then to a 
-> weightines value of 32. I think this scaling can be done just once, directly 
-> to weightness value as follows:
-
-Yes,  you are correct. I want to provide a bit of context on how this
-patch has changed over time: In the first few iterations of this patch, 
-"weightiness" was actually exposed as a sysfs interface that users could
-change to change how much they scaled for high numbers (better weight
-accuracy, but worse page allocation distributon fairness) and small numbers
-(bigger errors, but better local fairness).
-
-The reason why this matters is that we use a heuristic of "round all
-weights whose weights are less than 1% of the total weight sum to 1%".
-So if we have bandwidth ratios of 100 : 1000 : 3000 : 4000 : 6000,
-we have a sum total of 14100. Then 100/14100 is only ~0.7%, and we would
-want to round it up to 1% before moving on (since weights that are too
-small don't end up helping). This problem only gets worse for machines
-with more nodes, and it becomes possible for a node to have something like
-0.1% of the total bandwidth.
-
-When users could set weightiness to be up to 255, this was problematic,
-becuase scenarios where weights become 1:255:255:255:255... become possible,
-where we allocate a single page from one node, then allocate 255 pages from
-the remaining nr_node_ids - 1 nodes (which is of course, not ideal).
-However, with weightiness fixed to 32, maybe this heuristic makes less sense,
-since the worst-case-scenario looks like 1:32:32:32:32...
-
-I think this proposed change makes a lot of sense. It does seem silly to
-have to round twice, and without giving the users the ability to set thier
-own weightiness value, rounding just once seems to be enough to prevent
-the worst case scenario. I will incorporate this into a v7.
-
-I'm also going to wait a bit for more feedback to come in for this version,
-so it may be a little bit before I send v7 out : -)
-
-Thanks again for your review and the proposed change. Have a great day!
-Joshua
-
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 50cbb7c047fa..65a7e2baf161 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -176,47 +176,22 @@ static u8 get_il_weight(int node)
->  static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
->  {
-> 	u64 sum_bw = 0;
-> -	unsigned int cast_sum_bw, sum_iw = 0;
-> -	unsigned int scaling_factor = 1, iw_gcd = 1;
-> +	unsigned int scaling_factor = 1, iw_gcd = 0;
-> 	int nid;
+> lore pls :)
 > 
-> 	/* Recalculate the bandwidth distribution given the new info */
-> 	for_each_node_state(nid, N_MEMORY)
-> 		sum_bw += bw[nid];
-> 
-> -       for (nid = 0; nid < nr_node_ids; nid++) {
->  			[...snip...]
-> -		/*
-> -		 * Try not to perform 64-bit division.
-> -		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
-> -		 * If sum_bw > scaling_factor, then bw[nid] is less than
-> -		 * 1% of the total bandwidth. Round up to 1%.
-> -		 */
->  			[...snip...]
-> -		sum_iw += new_iw[nid];
-> -	}
-> -
->      
-> 	/*
-> 	 * Scale each node's share of the total bandwidth from percentages
-> 	 * to whole numbers in the range [1, weightiness]
-> 	 */
-> 	for_each_node_state(nid, N_MEMORY) {
-> -		scaling_factor = weightiness * new_iw[nid];
-> -		new_iw[nid] = max(scaling_factor / sum_iw, 1);
-> -		if (nid == 0)
-> -			iw_gcd = new_iw[0];
-> +		scaling_factor = weightiness * bw[nid];
-> +		new_iw[nid] = max(scaling_factor / sum_bw, 1);
-> +		if (!iw_gcd)
-> +			iw_gcd = new_iw[nid];
-> 		iw_gcd = gcd(iw_gcd, new_iw[nid]);
-> 	}
-> 
-> Please let me know how you think about this.
-> 
-> Best regards,
-> Yunjeong
+Thanks, got it. I tried but did not find the link :)
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+> > Fixes: 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> > Reported-by: Keith Busch <kbusch@kernel.org>
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> fixed locally and pushed to slab/for-next-fixes
+> thanks!
+>
+Thanks!
+
+--
+Uladzislau Rezki
 
