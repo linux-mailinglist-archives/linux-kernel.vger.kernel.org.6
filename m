@@ -1,93 +1,147 @@
-Return-Path: <linux-kernel+bounces-538563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99501A49A45
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:12:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD29A49A48
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394EB169079
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D2218900BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F1326B2B5;
-	Fri, 28 Feb 2025 13:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFpiAiDB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433A1C726D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490C026D5BD;
+	Fri, 28 Feb 2025 13:12:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD9E26BDBB;
+	Fri, 28 Feb 2025 13:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740748315; cv=none; b=Plod7cVMg3u7xoGItq6A9ISSi2IVyNOJfBLS5h9rLFArpMOdx7Fzjs39ZKp/ZyIaB1Atq8lu/rMfqe7en2DsnD3Wj1t+TjDgGw51lTzjrefhs8hu5QHTT7w5FR+oYXNt2sfOYbvqpNjTTe4jRZkGlpbYle2fQ7DBCYfnZtNCgbw=
+	t=1740748319; cv=none; b=AuSJ1NY6WmyZgrhsEkyuLhigR+WJ7UHyg4o3tk3yiGVDkvGvKJGXYQi20xhB7zS5OylqD7A/fZzgpsA9NlTQEOGLWgvrFoDCOaPtAmF2O63dloaA4filCOZH5CuBX+p9r1atItPGsGDFZ5HVlhiazmCH80JBhUqls/rlA2qps9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740748315; c=relaxed/simple;
-	bh=ge/ab62pYsGDLvPGgps1hKvOP8NBv8kv6NxDVGP8b2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ve16j/HVtjKJ6BSBz+cveNyBdWM5R3eLC4VWA6HUHgc57eFhhzHWnGx9Sqve7vasxo0vXfGN7mobYU8q5w9TJFZZBz6nyLjxk86psQ7ckD2fnZinNk61zfZCz+xYXC8igazbNybkXVSFYFU0FySvvst7+vG5Gq0ZRwIhKJd7DVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFpiAiDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6177C4CED6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740748314;
-	bh=ge/ab62pYsGDLvPGgps1hKvOP8NBv8kv6NxDVGP8b2g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gFpiAiDB2Ym4OjoyJpI/Tq77xMHJyziAGBVlEkWG14A5XcgLz87oNcicSk+I81C6r
-	 vgGEDYt3YRPOlfG7N2FNnVTH+xxvqMTdJkKpRdz1Gauw5+fBoHudY+JStsEM5CEjoc
-	 So7+A7VjhBLpTPdvqu3aRD/u1pi3b+yE8SmR9tpmo99/pSowfQgkLySGk1rmaKgnGG
-	 thkb6u4BcBbh3Dud2M5nztBBVgbTIT1foNCQEJ+CWRWnF3sy5ZYB4Ei8v3yyBtFZBu
-	 ZYSthpDGDnsfA2uOhvEgV8Pf1XSRGLThPYxR6RXdBaV8fcoCDbN0LxdUY4z7MqV4bj
-	 IxTfj+NTyyO8A==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so2267154e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:11:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVxsIFnCs8mG1Yxjv6cOrK3ZD4n2589Voaf6NyU48tuGVzRB1na5lpNC5c9A8F3RjW8fXfgxezgdkfIv3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPM2cq3UCrP6pzlCNJeDXOlbevlvtG5hdmwO4O6Vx2RjvepMQN
-	2kyhQjp+Cat/SObBqcLROw/kNaAoZUTGuSY9eBe0Lb+wRdySEFFJ51ZfEGN0N5sJcdWojgdsuYq
-	TabI3L7+AOECycS2XWMv8xPQwcWI=
-X-Google-Smtp-Source: AGHT+IEdP/huYmVd7fCqMgbE+DZUs3JfHQr17sTH27XVC4AIB4+C6ohl8aTsAIH4uv1KQS+Dzr0Lv2Drtl4FyJ41zVY=
-X-Received: by 2002:a05:6512:3405:b0:548:526c:fb99 with SMTP id
- 2adb3069b0e04-5494c323592mr1338653e87.18.1740748313140; Fri, 28 Feb 2025
- 05:11:53 -0800 (PST)
+	s=arc-20240116; t=1740748319; c=relaxed/simple;
+	bh=5NIEALQQnGOdsbsJJspo0aA9XnKgPp6WO3Iul21ZOj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VmnNqTbbCS+trLEAxGFG/YuTTcVibrmUaLyWEruUvCUuc99HiMGZ+ntZk9GRL0ohF3AKeY5NWzFwV0ndlI15Zn86d/FL2I3o1x/i5Ov8KvPulM4loGhMUW8rYpTlq3/CrfC6z6BbkhxK+9yIFwOqCQz+La/mlbOT2pX6mYWEFrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A4B81688;
+	Fri, 28 Feb 2025 05:12:12 -0800 (PST)
+Received: from [10.57.79.187] (unknown [10.57.79.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4470B3F673;
+	Fri, 28 Feb 2025 05:11:55 -0800 (PST)
+Message-ID: <99ee61dc-abd5-45d9-8d26-a8f0ae94c8eb@arm.com>
+Date: Fri, 28 Feb 2025 13:11:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224062111.66528-1-kpark3469@gmail.com> <CA+KhAHYujgeC2kAd-vs0N0zwprpeqtD8G-8DpJ0w2RSxzZ5SQw@mail.gmail.com>
- <CAMj1kXH-QmuXGi-5MSEzz7zSpPYWvM2eBPN-NbWF+R=49P2_2g@mail.gmail.com> <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
-In-Reply-To: <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 28 Feb 2025 14:11:41 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHyZ5_+ZrcRtdx4X8LA+mzCNcXUZM_3QcEudYGbuGBq0w@mail.gmail.com>
-X-Gm-Features: AQ5f1JohuAj06yXvicF9Z_FVzZ_LrO0KkK0BS-faeO6tsEXacAnqjZ-WwcujNKc
-Message-ID: <CAMj1kXHyZ5_+ZrcRtdx4X8LA+mzCNcXUZM_3QcEudYGbuGBq0w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
-To: Keun-O Park <kpark3469@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, Keuno Park <keun-o.park@katim.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] thermal: thermal-generic-adc: add temperature
+ sensor channel
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
+References: <20250219082817.56339-1-clamor95@gmail.com>
+ <20250219082817.56339-3-clamor95@gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250219082817.56339-3-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Feb 2025 at 06:55, Keun-O Park <kpark3469@gmail.com> wrote:
->
-> How about adding a warning message in case of linear region
-> randomization failure?
-> And, there might be two options in my mind by now to consider hotplug memory.
-> Either giving an option for users to override "parange" as kernel
-> param or providing the legacy way((memblock_end_of_DRAM() -
-> memblock_start_of_DRAM()) when CONFIG_MEMORY_HOTPLUG is off.
-> Users believe KASLR will work fine by enabling CONFIG_RANDOMIZE_BASE.
-> In case of linear region randomization failure, I think at least users
-> need to know about this failure.
-> Can you share your thoughts on this please?
->
+Hi Svyatoslav,
 
-Randomization of the linear map has always been a best effort thing,
-so I don't think this is a big deal.
+On 2/19/25 08:28, Svyatoslav Ryhel wrote:
+> Add IIO sensor channel along with existing thermal sensor cell. This
+> would benefit devices that use adc sensors to detect temperature and
+> need a custom conversion table.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>   drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
+>   1 file changed, 53 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+> index ee3d0aa31406..a8f3b965b39b 100644
+> --- a/drivers/thermal/thermal-generic-adc.c
+> +++ b/drivers/thermal/thermal-generic-adc.c
+> @@ -7,6 +7,7 @@
+>    * Author: Laxman Dewangan <ldewangan@nvidia.com>
+>    */
+>   #include <linux/iio/consumer.h>
+> +#include <linux/iio/iio.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_device.h>
+> @@ -73,6 +74,57 @@ static const struct thermal_zone_device_ops gadc_thermal_ops = {
+>   	.get_temp = gadc_thermal_get_temp,
+>   };
+>   
+> +static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
+> +	{
+> +		.type = IIO_TEMP,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> +	}
+> +};
+> +
+> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan,
+> +				 int *temp, int *val2, long mask)
+> +{
+> +	struct gadc_thermal_info *gtinfo = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (mask != IIO_CHAN_INFO_PROCESSED)
+> +		return -EINVAL;
+> +
+> +	ret = gadc_thermal_get_temp(gtinfo->tz_dev, temp);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*temp /= 1000;
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static const struct iio_info gadc_thermal_iio_info = {
+> +	.read_raw = gadc_thermal_read_raw,
+> +};
+> +
+> +static int gadc_iio_register(struct device *dev, struct gadc_thermal_info *gti)
+> +{
+> +	struct gadc_thermal_info *gtinfo;
+> +	struct iio_dev *indio_dev;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct gadc_thermal_info));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	gtinfo = iio_priv(indio_dev);
+> +	memcpy(gtinfo, gti, sizeof(struct gadc_thermal_info));
+> +
+> +	indio_dev->name = dev_name(dev);
+> +	indio_dev->info = &gadc_thermal_iio_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = gadc_thermal_iio_channel;
+> +	indio_dev->num_channels = ARRAY_SIZE(gadc_thermal_iio_channel);
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
 
-I wouldn't object to the new behavior being conditional on
-CONFIG_MEMORY_HOTPLUG, and fallback to the old behavior otherwise. But
-ultimately, it will be up to the maintainers.
+I don't get the idea why we need iio device, while we already have the
+hwmon.
+
+Could you explain this a bit more, the cover letter also misses
+such justification and details.
+
+Regards,
+Lukasz
 
