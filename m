@@ -1,127 +1,208 @@
-Return-Path: <linux-kernel+bounces-539218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DD3A4A221
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4F9A4A222
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C6B3B6217
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C703A9CDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B855277017;
-	Fri, 28 Feb 2025 18:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247D227701A;
+	Fri, 28 Feb 2025 18:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiOlHKeh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g1tDRIDJ"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001D2277002;
-	Fri, 28 Feb 2025 18:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768574; cv=none; b=qxddl+szCpXsGr2J5iiaHrQ+nyhEhDvNx3iunuLWmU737RIrp7LZM7dNtKCyeH+bAMRiNSfgXal2+QlKK23ySs3UVi9EU0RzitpWCXWdcInGz12D/KzSyUbptCE3/JImrDoOkjq/Q2UqS5nhplaV0loEAlBy64sde3mMOLSM9aI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768574; c=relaxed/simple;
-	bh=slRqAGP1stq5cwMr2TYEn2bRgdXt+WbSoArhBnp+B58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G42A+iOwhVc/f4BIlSg/xim9c11640lmVVeuJv+cl+ZvUAkTpmMllBFsBHijKgeaemr7SkyPM//fdtPi3cb/7e54cEeoo1SBW7WH7725zMIOQA0DnOk0oXRgZWtf28r/pP6cZRVQc3hkMvGBpKLYXD3WOedWmG/Rnra/0KP3sUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiOlHKeh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2933C4CED6;
-	Fri, 28 Feb 2025 18:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740768573;
-	bh=slRqAGP1stq5cwMr2TYEn2bRgdXt+WbSoArhBnp+B58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hiOlHKehccho/nhioyMk9PqEexMGOUf9yKGC67lnOpA6c7EhFROoAM0EGuK7BMBMC
-	 q8zYr7Phoxn9Tu/ACZIueJT8jkVvia136RA2FfbwVGQYfPCUr38UsyZ1gfE32zY1gc
-	 4ebdJbvKDoL2TN2g7qG0vl3nP6ZSRe7orcL49jSEd68dW+aJpYeQq/dbI+kWBiwv9u
-	 lKrLr13DuIDJwm/TP2KoO5iiWbFD/sVXXmhI14uPun1hG6HfvmKjbofaUB6TmY0ay3
-	 cDXxLNBMUL2oMWlshns1CD84Gk6zTbVhJ07N/ji+H7Gz0eHc9kZImv1sJCSArNJ8/p
-	 uwBY1Dz+HupBg==
-Date: Fri, 28 Feb 2025 18:49:29 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-input@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Markus Burri <markus.burri@mt.com>,
-	Manuel Traut <manuel.traut@mt.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: matrix_keypad - add wakeup-source
- property
-Message-ID: <20250228-lard-immodest-85ef8e18b52b@spud>
-References: <Z8EMI9ALqYY72VBV@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58E3277005;
+	Fri, 28 Feb 2025 18:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740768614; cv=fail; b=TdkT7EjGGQ7A9DQq74eBhv9GdF7skbXRSjJ4yJ/swYL+nGcHP3KssKihd2bpzLv8sM9kKk8Ck/lCoCVQVYJ2nh55s9R+T8cGT3DzLuwzpMFS9qexdbJctARx50Y92+NOlBN/e7Mq8iCDyEDpwYehpWFkbQ1PHrHnOa8Rhn3mtkA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740768614; c=relaxed/simple;
+	bh=0tHC/A5v6ygS5x/GNyDnUAoOVuC5sykmKFwDBwTLQJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Q7APeHwFSW4hAhzy5O/8DwuesWKC943DL+E8fNz7yoGdtVBy7tCvKDIUqE+iOg/N/qQL9OxHPSFoZzUzNDxEO3Y0D+mdQicQ+af+Y7gi1Ft5cilRZKqeFYJMLnhHEkZr8FYDrp13mu5xI5nnGFKLq+bLG3JJMxBXXNhK/cjCFec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g1tDRIDJ; arc=fail smtp.client-ip=40.107.244.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CGKgVr9NQZViwRHgIRDzOLoAa0+Dn6YqBy86BwzZzS75h9i4jS4Qg2jgly7P1kilT1kPyIiB0SFXAbHTUm+pxq/4yitqm9zq/NEYC1ULGcGw52/nDi9JJ0qfBJzHEkPoaEaANsya7mkmuPd+y/dcpPxE5E5sV6I1CN00KOuunf8WHoZcN19pHDxY+mgfXRv7t6drEf9rUMe/IVafMEZCA2LYT3iDjRm2G9lWcB8cUWD+3v4FS0vNyY+KkrDkA+/zqqtILChLgaP6d3EhCOLIJE/kYhq5bIzIHf1BYcoRieXirOUVWLhSVXqMRqdP2JOjVcb4MZV5FLVUSRE176rvDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rE3FlXGE2DpKIZ0xYRSdWbvOCCLEsyMlhrCelHOu40Q=;
+ b=KH5QZ51q0iNewszK10jU+73S11zhweH/AtIBfIa24d/IH5JtCrLkOHIMdh9+VtzbhJQiS7Far/lguT4mOk6FQEB5H7rwmUyXPyqp1XDpH2/rMP1XsCUitT/W4JmsWpgocmjd/g1GxEUW0bJ0sbf5ajl3BZhxhxs7tecPNk75rTdR+7+ta6QSsbLkRbhbv8712t8J8Y5eALI5lwohtpDorAGG3SF0lrxEKpDfFbIugsM31nMNAl5ViYQx/Dc9CnEUCDDXeAH1TAIAL7Dv3cpN2vMjgzlT5obTFcvgM4iDKZ1O3ddKFQB6x/xWmE41v0zv6hLDLH79yPR1QboQXbF4PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rE3FlXGE2DpKIZ0xYRSdWbvOCCLEsyMlhrCelHOu40Q=;
+ b=g1tDRIDJ8i+drp+UWErxObKfbPhwAKmEqbnuewQ6hos4hn3X8RSbyAiCW2LMZzBA6S+KxHilYZshG1HzrrNjCWzn3ZdJctpzd2QNyqBJ8C2HG8gJtI14H6hvCJoIKDyYZrNsR2iWMkid4pysuYvPiMuspch3PY5fWt21fowsS/3wzUuZ1VeIj5QotTqVAGHxr5Ks6b5RQVXAZJ5IZrZSSMzmbMjskiu52kifdGjkZHazs11ZL5S84Rh/xhGTp41Y9RFs91pJgOilTdD+2Si0pYIQnFdXxlj3oclsiq3os9MElAKqjxKLQpfWh+YPMBQ9Y5OJnPvEVo1jpuhyKV8Gfw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MW3PR12MB4475.namprd12.prod.outlook.com (2603:10b6:303:55::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
+ 2025 18:50:10 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 18:50:10 +0000
+Date: Fri, 28 Feb 2025 14:50:08 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Dave Airlie <airlied@gmail.com>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250228185008.GG39591@nvidia.com>
+References: <20250226004916.GB4959@nvidia.com>
+ <Z75riltJo0WvOsS5@cassiopeiae>
+ <20250226172120.GD28425@nvidia.com>
+ <Z7-IHgcVVS8XBurW@cassiopeiae>
+ <20250226234730.GC39591@nvidia.com>
+ <2025022644-fleshed-petite-a944@gregkh>
+ <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
+ <CAPM=9txrRFOb6Uzm=e0S6Tfxmskm4zwAZgsWnkvCzxN=XCZ6Vw@mail.gmail.com>
+ <D83LT2GGLT92.FJ3H552P6H7@nvidia.com>
+ <CAPM=9txOK4_uVvmb4bWirBVPNsPoPTiF0NMK_FJTd1NuY0Y5xg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPM=9txOK4_uVvmb4bWirBVPNsPoPTiF0NMK_FJTd1NuY0Y5xg@mail.gmail.com>
+X-ClientProxiedBy: BN8PR04CA0038.namprd04.prod.outlook.com
+ (2603:10b6:408:d4::12) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CG18mM55ivi0d+O1"
-Content-Disposition: inline
-In-Reply-To: <Z8EMI9ALqYY72VBV@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW3PR12MB4475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95881e8a-0b81-4d6c-333a-08dd5828b9e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?E71p1TzczpRqCPM1scA7FJEUIbCuUQqoVDqSndlUvTUQw/GvdUiNDQIp+XX3?=
+ =?us-ascii?Q?9KLUg9w5LYcdFsqI1ssAn/8iabNBt0ieI1NOYlfRkhBmZf8AiG6avSaDrr0X?=
+ =?us-ascii?Q?nu9mxyUHGCWOp8dhf+gaI1IocxuCPnk6VZ/zwys93kTPVKUq4nKIQVqtlFrK?=
+ =?us-ascii?Q?W+UdLVgYR/vfJUXbyeFfpFC21uDIWUVuz2Gq23z8OItN0uRb5uDp/78fkVCz?=
+ =?us-ascii?Q?0l9NRPVBXCaLSWL/1MuY5j0EBlkCjzO2LThiHHrLdtnc9aT5SlI6vVmmkoRY?=
+ =?us-ascii?Q?FOLnffqbkYjSyrc2PoSAQCHP2VjNKraL/QDN6ryO6s0j4SDNo6yaR1o3xVv9?=
+ =?us-ascii?Q?zqyTnuff2pDBhmA3EpVf3KPSc/k/zRfUm4jYN7cEFbzmxXUYzYKB8wh6AlXn?=
+ =?us-ascii?Q?oqpR/6wo1QGSfUYHUSbjKORuBFhts1zT/mavQ3/wCn4lfY4D32lPXP1haV06?=
+ =?us-ascii?Q?PJpjQdQ0nchEg4OCAXg6df89W1DS1ydBPWEHFOxhEcXtFLYUYBdNE0QuFeR5?=
+ =?us-ascii?Q?1xS9rBxPqhkkno4jgVlWG2lZ8GWQsVy1kNw2wsjpyj+KG+4r73op7mFjS3c4?=
+ =?us-ascii?Q?NCxkbfWvuLKkiXW9T2DzVWfeO6pVOXZNHl6Pk2VgsyqPj7NQ7HLn5oUOOML7?=
+ =?us-ascii?Q?geEk9DW2OT3XbcVyYDT66xerbrZjfAZq58sFDTvtDe8dUHrHNgdZhYF1VN52?=
+ =?us-ascii?Q?XxcbZKT4gEVE3S1YLTlmyS31mP9cwtIDQBHaJbb2+NOs02bqUSOjsGGTDoQ2?=
+ =?us-ascii?Q?jVkgGFyKIJh+xNdZJrCW/6JXMRnRLr2/bprqXco9/hy73/BAmw4dXS25UX2P?=
+ =?us-ascii?Q?NwiRJyTKsP91CGAkj3Zz0blrHklFHMdtz3FqpG2eggIpNY9UJAnFe/HHkhjC?=
+ =?us-ascii?Q?fY4afPZOOawPvCjKQuLIgoJaesh54DranSI3cQ+16Tz3LMvk5fvQ+L0Jp3jQ?=
+ =?us-ascii?Q?lTV+Ro11g2/wbNUpij7f7q59fKdI+wr4nefkPVEyKnm8MjdEKdqeHmYdNqbz?=
+ =?us-ascii?Q?joZTVdAvA6ig7FpNDue9vZgKSRA0NMskXs/eZ5gONDcj72OKLOozUtDrUYkP?=
+ =?us-ascii?Q?KbudwBkM3qVZSnv0NgYY6e0drJzGPvTjchUhexbt97iryAFEESarPljCYgfp?=
+ =?us-ascii?Q?ff4c97tCMxHiyY+ulF5dxI+0UQo9RKBXnk6/AUZrso/nDJGm+mfYcEzPO2RA?=
+ =?us-ascii?Q?64WQl/cPFXnixaRkTP2ntCLt7+dViltF00caWXVv0DaMT9G5wplIKugDbhU+?=
+ =?us-ascii?Q?AmLR2OiaTR/F4Cgl1pExiHmXtyjVYzxJURwzxqwXlgpvPVVwvIUwfj2Ds1/j?=
+ =?us-ascii?Q?mAwDOVvwWix+sF3DTal1uFdUKc2+i/YFmxAT1ggei38IMKEtpb128+DXWHJb?=
+ =?us-ascii?Q?PS9Dr4SmaCuZAOnyW7TdgfIcTRkh?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Vl36+i15uzYWIYs8baCAKBxA74mky+35HGBokW+ILtiy+kt55+K/ni8zSPnP?=
+ =?us-ascii?Q?wKqbBmUc0BNp10CyAPJE2JefEsGaXBYw0jvvppKNJwy2AWj+IKj7zbHKKQLJ?=
+ =?us-ascii?Q?c3z4TVbDVEf6HetYZTsQJAzBAXCNsQwswUkSfbcpN1viQ+reU1hBG+QMV9O1?=
+ =?us-ascii?Q?v+L4D9NHvHZDRAqn+0HmVBWwzT19yjYK+3wBfUxYqUu8F1YKAe8Xqeoo0Hhm?=
+ =?us-ascii?Q?dmQt+5BcT5YwrkzoEP0CgUeUneSWzDl32cmwhPHA2ByhlbqGfxcFyvyhC5kJ?=
+ =?us-ascii?Q?DHdxSaY6QFE2dwpNG0MJG6KSobLGw0J+dRmi9nyVMw4g1C4VAO7mlQSRMszH?=
+ =?us-ascii?Q?m+D9KyikO6zO2VZfzxQPk9iHshaxOj9vK23qzOkyceyiqHuOGbG4zwJ9pAqF?=
+ =?us-ascii?Q?AjjMxVQvBvgR2mAEXJh2SpSOoqbvOCRq/pfrE4X24nFcssfDHnbbeNi3dufB?=
+ =?us-ascii?Q?WOvQTosMGeld28U4ngcpkSt27zLvU4iZzuOSe7zKuzE7Nx66fa/6a1b49SMg?=
+ =?us-ascii?Q?Fr8Vn7FXnUoTVbXkhCqz6Cpgo7sMfx4MpHjcEvT62SjfB5i2AadVN0Nka5k/?=
+ =?us-ascii?Q?WxcqV9lzwA2FDX/8GOm6KutBObM13S1+i2sJzArRzhUlVh1mzknFnzMT/8bg?=
+ =?us-ascii?Q?XqIHK1XaCx8nIK7yUHnxIccXdSqacjuA/U2ILSbLRmFAIe6nRGNTJrBNcYBw?=
+ =?us-ascii?Q?DSNclZIvHww2gn+/oNJ8to6Og09XJR8A1b8wJPT6ftPMH8eGw84K4hVANuq1?=
+ =?us-ascii?Q?CGYXWK08rO4UWcN3N3j9NizvBFlIAaTWv94Gsm1/j1uTmvsNFINJ+qfF5dCM?=
+ =?us-ascii?Q?DRr7OpGGzZ1un4mYVb8NqSnaTintK0x50EkjoI61UjQCV0O9B+sRwbfwOHKa?=
+ =?us-ascii?Q?loWbMPYJGDYEyeL5cGH8XznsBS4kKIf5OY9S6hRxxloYhVZRG7Z+dpUMxQxp?=
+ =?us-ascii?Q?5m2tH/0dB8x0Xsi03q0SsTINaY8nlROaOEd/+RfUZg27cWQUqlsdP29FXo6w?=
+ =?us-ascii?Q?A/jBYLxd358OHetmxFx6n/oc9s9htPyDX7PBnPQoK8ESU8liVy8E2KmK9XS+?=
+ =?us-ascii?Q?FLJxcrF8XyFOOk0p/5keIUdohF+eMktKFWJgN/jIJIj4AJQLiu5pUEYwRMuB?=
+ =?us-ascii?Q?Q5bPpGY7kB70J4mslC3AGi8PZjL3KFR3wB1ZqPhhwKRQq2ny9Aa/d9VThIFj?=
+ =?us-ascii?Q?Z1FVcmj57COXDYeo0TD4HPsFTQRWEQWUsXyN107bwntmHb7qNrz5KOUXqhjD?=
+ =?us-ascii?Q?nXKEogpwQ/YUCoz6056HaezrCxtzGEN0Hybk/IskLkT2KZTrjof8agwre0k8?=
+ =?us-ascii?Q?WC8DeL9bFJcxxb7LL9UdvLcLcpFVrPkr4wwu1zkMYWEvhSvo6mMeXc//NVYD?=
+ =?us-ascii?Q?pzKmitZpyeROXS0750hM25ypeXEIHdM/H+AOmWH20QTawhabmEf7sMy/GBQk?=
+ =?us-ascii?Q?6UUiQYuwKztQpqBpLBeFklgVdu/ChzPWpb5uu3pPsWEva4HVCHAFEqWBJoD3?=
+ =?us-ascii?Q?V1Fg++tUPhAnmmBohg7U345jYK4WezR1b2qR6ssBx7U5SP6c4miClqeIRmCn?=
+ =?us-ascii?Q?qkgmkn6bA6fOUQkAEcm7XRxGOfGau08/eNb6j7qk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95881e8a-0b81-4d6c-333a-08dd5828b9e6
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 18:50:09.9499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: os9oQS/lf7Ze8LbCMNH6VQVfwDzQUBUOGwg+B2vd45PRqxnQvcOSbM5LRE7SZdlk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4475
 
+On Fri, Feb 28, 2025 at 02:10:39PM +1000, Dave Airlie wrote:
+> On Fri, 28 Feb 2025 at 09:07, John Hubbard <jhubbard@nvidia.com> wrote:
+> >
+> > On Thu Feb 27, 2025 at 1:42 PM PST, Dave Airlie wrote:
+> > > On Thu, 27 Feb 2025 at 11:34, John Hubbard <jhubbard@nvidia.com> wrote:
+> > >> On Wed Feb 26, 2025 at 5:02 PM PST, Greg KH wrote:
+> > >> > On Wed, Feb 26, 2025 at 07:47:30PM -0400, Jason Gunthorpe wrote:
+> > ...
+> > > nova is just a drm driver, it's not a rewrite of the drm subsystem,
+> > > that sort of effort would entail a much larger commitment.
+> >
+> > Maybe at this point in the discussion it would help to discern between
+> > nova-core and nova-drm:
+> >
+> >     drivers/gpu/nova-core/ (under discussion here)
+> 
+> nova-core won't be suffering any of the issues Jason is raising,
+> nova-core isn't going to have userspace facing interfaces or be part
+> of any subsystem with major lifetime expectations. It has to deal with
+> the hardware going away due to hot unplugs, and that is what this
+> devres is for.
 
---CG18mM55ivi0d+O1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It will suffer the general problem because it provides interfaces to
+the nova DRM module and DRM will hold a reference on it's 'nova core
+object' till the DRM file_operations release.
 
-On Thu, Feb 27, 2025 at 05:06:43PM -0800, Dmitry Torokhov wrote:
-> The driver recognizes standard "wakeup-source" property and there are
-> DTS files using it. Add the property to the binding.
->=20
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502280105.REZ29MVg-lkp@i=
-ntel.com/
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+So you end up with nova core remove running and being unable to clean
+things because of that DRM reference, even though the nova DRM driver
+has completed remove.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+You could wrap the nova core reference in a devres, but I think that
+would be objectionable. :)
 
-> ---
->  .../devicetree/bindings/input/gpio-matrix-keypad.yaml         | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.y=
-aml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> index 73bb153ed241..ebfff9e42a36 100644
-> --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> @@ -68,6 +68,8 @@ properties:
->        Drive inactive columns during scan,
->        default is to turn inactive columns into inputs.
-> =20
-> +  wakeup-source: true
-> +
->  required:
->    - compatible
->    - row-gpios
-> @@ -96,4 +98,6 @@ examples:
->                          0x0001006A
->                          0x0101001C
->                          0x0201006C>;
-> +
-> +        wakeup-source;
->      };
-> --=20
-> 2.48.1.711.g2feabab25a-goog
->=20
->=20
-> --=20
-> Dmitry
+Though I expect no module EAF because you'd be direct linking..
 
---CG18mM55ivi0d+O1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8IFOQAKCRB4tDGHoIJi
-0uW6AP4sjiFIDI7Ec7ygR4PeEI5UGvqe+UwfRUGw4dMKHK94zgEAhfhxvyE2d4Xy
-+1qRfqkmZUl/UA8O3Izbj/BT0zb2iQ0=
-=/7xV
------END PGP SIGNATURE-----
-
---CG18mM55ivi0d+O1--
+Jason
 
