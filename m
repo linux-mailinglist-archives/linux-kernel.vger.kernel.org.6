@@ -1,201 +1,310 @@
-Return-Path: <linux-kernel+bounces-537616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77065A48E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE297A48E2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C463B7A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5B33B7AB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784EA1386DA;
-	Fri, 28 Feb 2025 01:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE0876410;
+	Fri, 28 Feb 2025 01:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AEgTbo6a"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2067.outbound.protection.outlook.com [40.107.236.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdg0zqbn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4E68BE7;
-	Fri, 28 Feb 2025 01:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740707377; cv=fail; b=svewvAsbSMazWBvl1IgZ6FTQEOwkx4kOBr5n6kjci5BhlOm3OGDFTsTp4Km09JlExp+OCRON6VAuNtTLvfaR835i6tp7UskZ1/WqZ3rFHyUuojEtzBdydyTaI+R77PygN7I6nZ5zq8gCoqkZz7i9/cLSxjOUSZboFMXv8F/nAlc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740707377; c=relaxed/simple;
-	bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jd2lmThl/JXUw9QIHvEa4piTanBlfYB/76+Or8SNNOJhHCuO4UtXX03EW/9mzwG3r+7SWL3cZZsaEuaGMAnVM5Rt6ix+Of8vLyjnpFZ+5CIFBfvhTARtpopPDDksLnSrxXZe8EFEdrz7DlKoLmEwYkEIvnThGiOHEZTikjXWNLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AEgTbo6a; arc=fail smtp.client-ip=40.107.236.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zBAsWJ0RFcMlM/w4YDBFI0VsDqFSvtZrR532qHfaNdArmg8x8AcSnICKsuE8DeDPTfBKFZ3x6/i6T3TcYoaaDnHsTuUE2Vd4GVIVwYNR9JTW5uF5kyMaTd4zo5aUxWjEeeDHL5ryVwgLv/gd7Nu5dYpkIHa0fcD/j81CJlMIhE/nJVftLE2yMx9TqMzgp+otZ2L6CQ6r2eQyQlpbsZoObFND11fGfVrWRH+tGH9QfNbJakgpzT6/77JGT5NXi7MUG2njjfsRx+ZY2s9HAjIBEnA6+GAumiCG4oncNuKnl0V74fu3p/xvMOLxvD6exvcWWN+FBZEVB+fL0OYu/P81cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
- b=oj3k+jN8+4eOyBO4awocWpHHOFKoXw7NL/ej95qz9pYMyoPs5ofjDTel042LvknCcdKMSb3IhwMqfhsd6Qy/OAVhM0M0gGRLt0q6DN48A7RL8KtIOVpXTxeChm8xd9DJffasAJo0yHWmcJ3Gd3sN1tif+7vU8YEWOm45b1qQButb9e1vyaunU9LU0YfIaR3kAwgrdavaOBKaEaDUuVdDnWn85RS8Fd3A8WhRChkslYjfNMB23HIzmNBtqmPZWmHqZkJDwbrWV1H1DcFWlGfFJY7w1MgeohZHvBjBROyUynf4OQjdVjWFUSmt09avW0C63uPwdNfHN3LXoU2l74NA8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
- b=AEgTbo6a/U/K53daRtRgnbHUt3/AXJFPOvMllsVCQv1xB4AOi12k1Trbxm3eOwmU01gbqjpoDheMBNAEwaxa7ImCdO+2JiBL8sQNDf1oIxiZ9rV+b36JBQ1V9ZH60jdKLFGAovSHm2NIf+SGO+fmnGOnn4lnFWZGBx37Mu7ms2EBE2fi3hHjGe6WqgJBk0bYowjFIIvJ6vnbuQu+EMKfjVnePOOC30mMUpSBA7s0pC54Geg0S2tjvEiV+ke5ZjIDC8mjCV+k8lNEKZzxLq3AWU9tYb+o0lMy6ycWFKEuMbwnEeeAhrXUTuVsrs2tnmknX8ZEuXG5l+ycJ7XS5dwkjQ==
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
- by IA1PR12MB6435.namprd12.prod.outlook.com (2603:10b6:208:3ad::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
- 2025 01:49:31 +0000
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::e420:4e37:166:9c56]) by CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::e420:4e37:166:9c56%4]) with mapi id 15.20.8466.016; Fri, 28 Feb 2025
- 01:49:31 +0000
-From: Timur Tabi <ttabi@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>, "airlied@gmail.com"
-	<airlied@gmail.com>
-CC: "nouveau-bounces@lists.freedesktop.org"
-	<nouveau-bounces@lists.freedesktop.org>, John Hubbard <jhubbard@nvidia.com>,
-	"gary@garyguo.net" <gary@garyguo.net>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "boqun.feng@gmail.com"
-	<boqun.feng@gmail.com>, "dakr@kernel.org" <dakr@kernel.org>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>, Ben Skeggs
-	<bskeggs@nvidia.com>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Thread-Topic: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Thread-Index:
- AQHbgUTvmeYidffAF0KVP6y8BIp7/7NMBKGAgABGrACACWwxAIAArz8AgAG08oCAA6E/gIAARoqA
-Date: Fri, 28 Feb 2025 01:49:30 +0000
-Message-ID: <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
-	 <Z7OrKX3zzjrzZdyz@pollux>
-	 <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
-	 <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com> <Z7xg8uArPlr2gQBU@pollux>
-	 <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
-	 <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
-In-Reply-To:
- <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|IA1PR12MB6435:EE_
-x-ms-office365-filtering-correlation-id: d52e2d71-227a-4750-272c-08dd579a24d0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NVArS29wemJxRnNqWTN3SmNpRVRITDhjOHRXOXJVbmg5SnZZNWhrY3NXZW5G?=
- =?utf-8?B?ZmJBS2MxS3E4L2pLZW8wTVRhOWY5Q3I2OUxZcjhvNjNhUkIrZDM3ZW9Pajd5?=
- =?utf-8?B?VUFWdGxtZTZFZ1BCT25yYkFIUFJoZDNiMHN5NnB0RkRBWU1BOTNIMnhVenhm?=
- =?utf-8?B?Ly9DZHlmZ1l0dUlleUZzYkVNOW13anZnaGVGdXR2YVZPZDJIUXpzNVpnQ2Vp?=
- =?utf-8?B?UVdrVktZSHIvM0RNaEx6bE0ra0pMaDFuTGhRQnBFTXdQbzFmY3lyM0EvZkRz?=
- =?utf-8?B?QzZBdGNtSUZzZjFrRUxvbWxXR0k5R2NlclAxZ0ZCSjNvejJOTlhLYUxIZmhi?=
- =?utf-8?B?aHNwYlB6SEx3Q3M0N0xBNFcyTEhYa0NieVR3QTFjMngrcU5IeC9OQVJFLzNJ?=
- =?utf-8?B?MnVILzBzOXpZaFg4cEhKZndIaVJqTEVwSmdyMTJTdGdaTGNaV3l2bG8xQzY2?=
- =?utf-8?B?ZFk5UHZLNytQOWh6alBDL0VWY0RVcUt2MlJWbng3V0VLOWJPUUhDTnhHRlVK?=
- =?utf-8?B?d2JMd1VaejVNTmdPZ1lmOE1CamVWTXplS003emM5d255amIydGFiMXptSndD?=
- =?utf-8?B?aGZGVDZFLzZwNWVaczRGL1VzK3dIeHZVMXgxR0Q1QkxZeG1lMFdtY0pveWRw?=
- =?utf-8?B?aUdFekRWZWRkZFZxWWd3NHcwa1VkMVFKTVlxd0Y1Y2p6TVJETDE1UEhMOEdD?=
- =?utf-8?B?N0p3UitGTjdrc09lQTZGN2RHV1ZOM29UUFpKbGF6a1RWVmdQVThBcmdiYmNv?=
- =?utf-8?B?dXdjd0pIMDIrVmNjdGpteDNVUG9KZ3Y2VVl6QmRkQmNIWENoL1lsNUNRQnhM?=
- =?utf-8?B?Q1I0cGZXTnJBd2NtRjVHb1RCcHZpZzNhNDBsakpxdGZYZm5MK1hpUUZ1T3Nq?=
- =?utf-8?B?SlZ6U0FSVW4rRi90bHZSUVFXU1RiOHBvbEhFV1lkR280REg3VnFzWng2Yll2?=
- =?utf-8?B?azNyb1RWZDdjL1V5VHpMVDhUTkVyMFJCQzJRdUU0MzQ2bHRvcEw1VytmTDBN?=
- =?utf-8?B?NCtMQ3czKzhwWkZQMDU1RHBUTUR1Tlpabjhuc1c2R2FJMExrQ0xCYklhOU1H?=
- =?utf-8?B?MkNOMGl1bERuS0ZiVW45R21kQkJSajFKdndzWTBQVWNTYitvVktIQXRRcWJ0?=
- =?utf-8?B?TUVXMGJmazJEc2R2dWdZSVVkOE8wcVgwTTdUM2FpajI0YmRjYXJsbjc3aTFI?=
- =?utf-8?B?QXVvRy9FZmdnWDN4RndVTm56VnE2NWI3TW1rK3pYc1ZwYkNLSlFNb2dMR2Uz?=
- =?utf-8?B?WDZDTzBGdTVxTXE0ZXpGVWZTa0o1M29ZbnNkUWlFK3BLRFFhNXVoTDdsOVlr?=
- =?utf-8?B?WXhqNEx0RVREMG1NSFR5bXh4VmtZYUJ0QW5PeS9zeGFkYmRtWUpiUlI1d0Nn?=
- =?utf-8?B?TGdmY2RIbHQxMUkrK3UzTTRQMVFFK1d0TmZmUkJhY0tBblQvNEROZVF0cnU3?=
- =?utf-8?B?aUowZjYyRm1zdlpyOStQRVo3anlIdkJXNitmeUs0bytpUXJpV2VoeVFFVGVK?=
- =?utf-8?B?Q1FxUytsbDZMWTJuc2ZQYzZxMmNCbVFsS2c1aGc5UWZieFlIeStidXNkcTJC?=
- =?utf-8?B?cVZrdnNza2N3R3NPdEJ5bER2dXh2aGF6UEY3TDlTZGU4eHorcDROcXV2T2NV?=
- =?utf-8?B?dHhsTmRzekE4QzJzMWx0MjBsWksrWGtDRVAweDdPeXM5Vk8xVHhsb1RmU09D?=
- =?utf-8?B?TnFFUGhaKzJOZUVTSzVWOStPcXlYS3JMS0V2aURKV2RQNkRaM2VKQlUyR2l0?=
- =?utf-8?B?OFdFTGdKL01oMFh6R3JwYTRvdkVHNk43N2NXbjdoUmg5ck1oN3dNRnFCL1VV?=
- =?utf-8?B?YjlPZUZSd0lpajVUUzNTbkJzb3hEaFd0SGo2QzdLb0FKUTRsdXdPSW9BL2JC?=
- =?utf-8?B?WUkzU3E4ci94UnVuSWJ2SGR2dHFjOG1HMnZnUkZNMlFjTGFGL0lSd29pOThO?=
- =?utf-8?Q?H8kNh+9lfb3KUgQy2ZUJ34ysfWtTwS4K?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Z0txR1lCb09LOWZIcWltZUE0MGtGekx3L1Qzd3BkRmxvRVdwUTZ1bHVacnBT?=
- =?utf-8?B?ZUhxS3FCT2x0KzBMcjhJZjJLVC9mcHY1cGg3VWIzYldJT2FyMkhGb3BOc2l5?=
- =?utf-8?B?cDd5eFJXZmlIQVh3YmlzMXhuclNxdGpmcDRCbjZNV2VYcGJFZmxOU3FVY3ZC?=
- =?utf-8?B?ZnhyUVo0bnN0WkFqRk8zeTdhS2ZYUEwwZGFNTG9uMG9NOHVjSHJrUmM3cncr?=
- =?utf-8?B?SWE2RzJyY3c0Z1Y4YklweTMwMWdwN2k5MlRRalpDWHNYbWV4TG0zWHVSWnoz?=
- =?utf-8?B?QjhDRTF3bXBHN0hLNlpFdE1rUGt0SURnOGdiMXhsQnJqL3BHMTA2M0ZkejNO?=
- =?utf-8?B?Ymo3Zk1RRmNXK1FiK01LSWRpejdVVlEwTUhlVE4yL1J0aGs1STlkd3VDcFFi?=
- =?utf-8?B?SjR6blJhN0pVSkRJZXhXSmhWZ0RvS1ZGZ3NBcDh3dGp3enVFZEF6QTZVODBH?=
- =?utf-8?B?cmNDY3JNYmg1clRkaFRzTUFmWGpGeUtka3krbmVlQjBuTWk4L3hzT3Z5eUZn?=
- =?utf-8?B?NlRmZmtvSDVRM0FUSGFWTFk4TnMxVFJCMUNBVG5rUHJLM0RzbWVnaEdsVWJS?=
- =?utf-8?B?OGY5SDd0UVZQemR3Wm9FQ1B3QWxSRVNzNkZHL1hMVGpiVUhZbXdWYzhkMnY3?=
- =?utf-8?B?aVN4bVRmVkN4RUg2bFhDMDlTemF3M01od1lBWEJIUEVKWm42VEwzSjNVNnFh?=
- =?utf-8?B?MEgrcGlGV2VMc2paU2dvczFSdTNjRlMzYnovc0FUVmlBc3IwWHZ1TE0xNEpU?=
- =?utf-8?B?dm1XVm1CMVBXZEdFOE5peThZaGtKZXFHSlFleUJhaEo2QmlhaWg4MC9aNytq?=
- =?utf-8?B?b3ozR21VQW5lRk43T200MGo3NlhGTkliQzhZZGRHN2RNbERwUkN2d05YZEZB?=
- =?utf-8?B?cUYzRFdJbVRmRG0rZ05RUmttbEdMY0YrZEVBYVZEbHJXbjVsaUJPOW5XNTQ5?=
- =?utf-8?B?d1M1U21HT3NWZFFtYXpqRktzRmc4aTJaT3lwclJjaTBzQWVFdERoMmxPd1pI?=
- =?utf-8?B?Z051Q2xlVWJETWlKM0h4UGI0czZseGZ0TURUOXM1MTlXYUhwaHV6OUpKSGNa?=
- =?utf-8?B?Umg2UjlpbklmQ0NOcDdQSkNFcDN2a0Rzdzl6a2dKTW4yYzZ4RzN6OGk3cHha?=
- =?utf-8?B?UGsvWVRrbG42Q2tSR0FrUTJ5TTlXOXFxSUlUS1dZTUNuNEZxQy85YjR5OVpn?=
- =?utf-8?B?cWI0NjBGdm1pL0NnVkhuL3o1eldvek1PODJGZFFuM25na0tjNHJpbTNoVElE?=
- =?utf-8?B?NGM1Tmd1UHVUNkl1bDVDQldRZ0dnR1gyS0N0Z2FnUWxIeDk3dlJ0Vzllc0Zl?=
- =?utf-8?B?bzJadVUzcU1BcWk3d2d3Q2M3NjBtc25CNzBQSnkyWnFGd0Y1eGxxZEpkQWZi?=
- =?utf-8?B?SENlT0w5VFlRdXN3a3NGQTFiU0tOQ25kU0o5YjZEWG94S05GczhUSXdGK2E5?=
- =?utf-8?B?M2ZjcXdaZDR0QXZUempodzBka1BWMkZXRTF5TTZzdk96eUZTd0dma250aGxz?=
- =?utf-8?B?RFVMZnY5MVVPaTNTQ2R6a1A2aEF2NFdpYkpERmMwYm5lWkVwZkhxVG1wU2Nh?=
- =?utf-8?B?UDNTcTAyUSt4SVlwQ1pEK2V0Q21wOG1HZU1iblpwbnh6RGhnTllmak5DMTZL?=
- =?utf-8?B?Y3FINzd0YzB2OWFRcEtudWE0VXBGNkl4RGw5b3o3dUlkcmdjcXFXOXNzbE41?=
- =?utf-8?B?bjBFNmFGWUlTa1RMTUNiWkVnV1lsQytINXlIVmwvS3RrRTM5amxYWll5VWN2?=
- =?utf-8?B?cmhDMkxkd3dFUG5IcFJDMkxHUDc1QXNqWTJsUXdEMGFUYWpOM1V2L1prd1c3?=
- =?utf-8?B?Q3VNanMwUlpxaExHZSttTHZsNGhMS3RXRnFnZUNQek1GN1kwQ3Vyc01wWUYv?=
- =?utf-8?B?dUNjcnBZQXRaTTdxWmZCWUx3a21Cc0EyeFhORU5WcHo0QmRmaVl4MTVLc2ZH?=
- =?utf-8?B?UXMvTFA2NmpzUnA3ajF3ejVIblJlaThWa2RqSDhUTi8wcmJDRzJFNjlqb3hl?=
- =?utf-8?B?MWRoRklDc0E2UmJaSS80blkxSGc0K0RNaGo5Q2tzdXpYUGFxZVR4akR2Rm1Z?=
- =?utf-8?B?Z2RKajVDSmVKb1phN3M4NzVqMDlRTHFjbk9nMXhOTHNGZytoMEFtUTBlRUlX?=
- =?utf-8?B?V25DTlhWRk11bmFiWFdSMk1SdU94ZEwwb3JoVEFpckZxZmNRcm94UTArTWRD?=
- =?utf-8?Q?DKp4gRBQPXuRoIfXlFlVl/WakOyUTim2TzCof6wKMJwH?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <892CC9B9194DCB45AAAA1B85B2739AA2@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1B654782
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740707393; cv=none; b=ARprwfQDEmv4UoqpYGPUumcNvLOiKdAIyYgri2sn+tK353x/b7L/PAbLAwZKd9RpVm2mAvVi1tGi7T2uPsNGCkMr8H8fcNy7yRATVjXtD9YV2xDan2LRTAEqJeE2vjGW4gQ0vQo+kS2i8HMmUZIWqFnf0kmVPm6qWOMx+AvG+XI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740707393; c=relaxed/simple;
+	bh=0VY1TID949UImeVHNR6LSjUTfsDAex3p0YM5P5Y5bYU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XhH+EIJ10y3O0OPgHw2DZ4qKM1s8W5WzNoi3IvOi1FFbgSnha1O3ut6HtHOw6YZk5WrpSyaQIRzn2U0+aiZcbR/o8ejYr4gEr/ADHmb9sb/jSUlESPx37xbpTUJmmeZU7pkHzf5TzPk0otZx3OQm27q40aRa9mHbj5mxkC/mkg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdg0zqbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D70C4CEE6;
+	Fri, 28 Feb 2025 01:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740707393;
+	bh=0VY1TID949UImeVHNR6LSjUTfsDAex3p0YM5P5Y5bYU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=sdg0zqbnp+8QN6rbw/ZOaoY9jHb3UOkxbj7pkTBhX7DEmpVM7tjmrkPBA+MOcP7AP
+	 72OIjtUbA2R3GchYZJS16e5RwVCCDBe6+u9Lq05APQxgBMURPF/cxMDwwoEKX38Slg
+	 AJDo/1rSBXFkwXIFN9RAcnn+Fii+csWvtiX+kw9hFl+mHb1ZkhdqPtUysngA8E4rbE
+	 K92AcJ7F5jsn5dpCigtBkmV08lcmikzqGLm7V4XMsHAE/0Rc0eyQzQ/lEgC+MQUl6N
+	 8gVDejdYqeM44LGf25cTgdxe4vDfqwoxwn2cKh6ieoO89WcIuROxUyvhgbQ3TNLsUr
+	 og3WbEhgdtnBw==
+Message-ID: <fced113e-885d-4be7-87c2-1e14b9d64357@kernel.org>
+Date: Fri, 28 Feb 2025 09:49:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d52e2d71-227a-4750-272c-08dd579a24d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 01:49:31.0211
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aUO95rs/m8iTaj9SVz6jsYDBu7qBb9BTlHIYimpjFq9UbKYxsnXFAlLNZBzL+JBKan6+itLFrPZdPPPzH/rO3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6435
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Leo Stone <leocstone@gmail.com>,
+ syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+Subject: Re: [PATCH v4] f2fs: add check for deleted inode
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250212072742.977248-1-chao@kernel.org>
+ <Z6zQoyNp5td-Wgd1@google.com>
+ <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
+ <Z64uA2ys4nhV54lI@google.com>
+ <666e62d1-3446-485e-bac9-0cc8089b04de@kernel.org>
+ <5f390129-1b93-42d2-8db7-276c370db90f@kernel.org>
+ <Z76KaW6iAsafDDbB@google.com>
+ <7fb3ffcb-4513-45da-8f83-eebe8f5e008b@kernel.org>
+ <Z79MQD3Qr3HkfUDX@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Z79MQD3Qr3HkfUDX@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gRnJpLCAyMDI1LTAyLTI4IGF0IDA3OjM3ICsxMDAwLCBEYXZlIEFpcmxpZSB3cm90ZToNCj4g
-SSd2ZSB0cmllZCB0byByZXRyb2ZpdCBjaGVja2luZyAweGZmZmZmZmZmIHRvIGRyaXZlcnMgYSBs
-b3QsIEknZA0KPiBwcmVmZXIgbm90IHRvLiBEcml2ZXJzIGdldHRpbmcgc3R1Y2sgaW4gd2FpdCBm
-b3IgY2xlYXIgYml0cyBmb3IgZXZlci4NCg0KVGhhdCdzIHdoYXQgcmVhZF9wb2xsX3RpbWVvdXQo
-KSBpcyBmb3IuICBJJ20gc3VycHJpc2VkIE5vdXZlYXUgZG9lc24ndCB1c2UgaXQuDQo=
+On 2025/2/27 1:15, Jaegeuk Kim wrote:
+> On 02/26, Chao Yu wrote:
+>> On 2/26/25 11:28, Jaegeuk Kim wrote:
+>>> On 02/24, Chao Yu wrote:
+>>>> On 2/14/25 09:44, Chao Yu wrote:
+>>>>> On 2/14/25 01:38, Jaegeuk Kim wrote:
+>>>>>> On 02/13, Chao Yu wrote:
+>>>>>>> On 2/13/25 00:47, Jaegeuk Kim wrote:
+>>>>>>>> On 02/12, Chao Yu wrote:
+>>>>>>>>> From: Leo Stone <leocstone@gmail.com>
+>>>>>>>>>
+>>>>>>>>> The syzbot reproducer mounts a f2fs image, then tries to unlink an
+>>>>>>>>> existing file. However, the unlinked file already has a link count of 0
+>>>>>>>>> when it is read for the first time in do_read_inode().
+>>>>>>>>>
+>>>>>>>>> Add a check to sanity_check_inode() for i_nlink == 0.
+>>>>>>>>>
+>>>>>>>>> [Chao Yu: rebase the code and fix orphan inode recovery issue]
+>>>>>>>>> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+>>>>>>>>> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
+>>>>>>>>> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
+>>>>>>>>> Signed-off-by: Leo Stone <leocstone@gmail.com>
+>>>>>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>>>>>>> ---
+>>>>>>>>>   fs/f2fs/checkpoint.c | 4 ++++
+>>>>>>>>>   fs/f2fs/f2fs.h       | 1 +
+>>>>>>>>>   fs/f2fs/inode.c      | 6 ++++++
+>>>>>>>>>   3 files changed, 11 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>>>>>>> index bd890738b94d..ada2c548645c 100644
+>>>>>>>>> --- a/fs/f2fs/checkpoint.c
+>>>>>>>>> +++ b/fs/f2fs/checkpoint.c
+>>>>>>>>> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>>>>>>>>>   	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
+>>>>>>>>>   		f2fs_info(sbi, "orphan cleanup on readonly fs");
+>>>>>>>>>   
+>>>>>>>>> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+>>>>>>>>
+>>>>>>>> What about using SBI_POR_DOING?
+>>>>>>>
+>>>>>>> SBI_POR_DOING will cover most flow of f2fs_fill_super(), I think we can add a
+>>>>>>> separated flag just covering f2fs_recover_orphan_inodes(), so that we can allow
+>>>>>>> iget() of root_inode and all inodes during roll-forward recovery to do sanity
+>>>>>>> check nlink w/ zero. What do you think?
+>>>>>>
+>>>>>> Can we do this sanity check after f2fs_iget in the f2fs_unlink() only?
+>>>>>
+>>>>> Sure, we need to cover f2fs_rename() as well, please check this:
+>>>>>
+>>>>> https://lore.kernel.org/all/67450f9a.050a0220.21d33d.0003.GAE@google.com
+>>>>
+>>>> Hi Jaegeuk,
+>>>>
+>>>> I'm testing this, seems there is a problem, once we opened an inode that
+>>>> has zeroed nlink, in f2fs_evict_inode(), the inode and all its data will be
+>>>> deleted, then leaving its stale dir entry in parent directory.
+>>>>
+>>>> What do you think using v4? so that we may has chance to repair it w/ fsck
+>>>> rather than just deleting it?
+>>>
+>>> Do you mean v4 as the below change?
+>>
+>> I mean this v4 patch:
+> 
+> What about checking i_nlink right after f2fs_iget in f2fs_lookup?
+
+Fine to me, I've updated in v5.
+
+Thanks,
+
+> 
+>>
+>> ---
+>>   fs/f2fs/checkpoint.c | 4 ++++
+>>   fs/f2fs/f2fs.h       | 1 +
+>>   fs/f2fs/inode.c      | 6 ++++++
+>>   3 files changed, 11 insertions(+)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index bd890738b94d..ada2c548645c 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>>   	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
+>>   		f2fs_info(sbi, "orphan cleanup on readonly fs");
+>>
+>> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+>> +
+>>   	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+>>   	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+>>
+>> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>>   		}
+>>   		f2fs_put_page(page, 1);
+>>   	}
+>> +
+>>   	/* clear Orphan Flag */
+>>   	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
+>>   out:
+>> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+>>   	set_sbi_flag(sbi, SBI_IS_RECOVERED);
+>>
+>>   	return err;
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 05879c6dc4d6..1c75081c0c14 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1322,6 +1322,7 @@ enum {
+>>   	SBI_IS_CLOSE,				/* specify unmounting */
+>>   	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
+>>   	SBI_POR_DOING,				/* recovery is doing or not */
+>> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
+>>   	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+>>   	SBI_NEED_CP,				/* need to checkpoint */
+>>   	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index d6ad7810df69..02f1b69d03d8 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>>   		}
+>>   	}
+>>
+>> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
+>> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
+>> +			  __func__, inode->i_ino);
+>> +		return false;
+>> +	}
+>> +
+>>   	return true;
+>>   }
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> ---
+>>>>   fs/f2fs/namei.c | 19 +++++++++++++++++++
+>>>>   1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>>> index a278c7da8177..949621bc0d07 100644
+>>>> --- a/fs/f2fs/namei.c
+>>>> +++ b/fs/f2fs/namei.c
+>>>> @@ -547,6 +547,16 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>>>>   		goto fail;
+>>>>   	}
+>>>>
+>>>> +	if (unlikely(S_ISDIR(inode->i_mode) ?
+>>>> +			inode->i_nlink <= 1 : inode->i_nlink == 0)) {
+>>>> +		f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
+>>>> +				__func__, inode->i_ino, inode->i_nlink,
+>>>> +				S_ISDIR(inode->i_mode));
+>>>> +		err = -EFSCORRUPTED;
+>>>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>> +		goto fail;
+>>>> +	}
+>>>> +
+>>>>   	err = f2fs_dquot_initialize(dir);
+>>>>   	if (err)
+>>>>   		goto fail;
+>>>> @@ -968,6 +978,15 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+>>>>   	}
+>>>>
+>>>>   	if (new_inode) {
+>>>> +		if (unlikely(old_is_dir ?
+>>>> +			new_inode->i_nlink <= 1 : new_inode->i_nlink == 0)) {
+>>>> +			f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
+>>>> +				__func__, new_inode->i_ino, new_inode->i_nlink,
+>>>> +				S_ISDIR(new_inode->i_mode));
+>>>> +			err = -EFSCORRUPTED;
+>>>> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>> +			goto out_dir;
+>>>> +		}
+>>>>
+>>>>   		err = -ENOTEMPTY;
+>>>>   		if (old_is_dir && !f2fs_empty_dir(new_inode))
+>>>> -- 
+>>>> 2.48.1.601.g30ceb7b040-goog
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>>>
+>>>>>>>>> +
+>>>>>>>>>   	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+>>>>>>>>>   	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+>>>>>>>>>   
+>>>>>>>>> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>>>>>>>>>   		}
+>>>>>>>>>   		f2fs_put_page(page, 1);
+>>>>>>>>>   	}
+>>>>>>>>> +
+>>>>>>>>>   	/* clear Orphan Flag */
+>>>>>>>>>   	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
+>>>>>>>>>   out:
+>>>>>>>>> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
+>>>>>>>>>   	set_sbi_flag(sbi, SBI_IS_RECOVERED);
+>>>>>>>>>   
+>>>>>>>>>   	return err;
+>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>>>>> index 05879c6dc4d6..1c75081c0c14 100644
+>>>>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>>>>> @@ -1322,6 +1322,7 @@ enum {
+>>>>>>>>>   	SBI_IS_CLOSE,				/* specify unmounting */
+>>>>>>>>>   	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
+>>>>>>>>>   	SBI_POR_DOING,				/* recovery is doing or not */
+>>>>>>>>> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
+>>>>>>>>>   	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+>>>>>>>>>   	SBI_NEED_CP,				/* need to checkpoint */
+>>>>>>>>>   	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+>>>>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>>>>>>>> index d6ad7810df69..02f1b69d03d8 100644
+>>>>>>>>> --- a/fs/f2fs/inode.c
+>>>>>>>>> +++ b/fs/f2fs/inode.c
+>>>>>>>>> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>>>>>>>>>   		}
+>>>>>>>>>   	}
+>>>>>>>>>   
+>>>>>>>>> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
+>>>>>>>>> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
+>>>>>>>>> +			  __func__, inode->i_ino);
+>>>>>>>>> +		return false;
+>>>>>>>>> +	}
+>>>>>>>>> +
+>>>>>>>>>   	return true;
+>>>>>>>>>   }
+>>>>>>>>>   
+>>>>>>>>> -- 
+>>>>>>>>> 2.48.1.502.g6dc24dfdaf-goog
+>>>>>
+
 
