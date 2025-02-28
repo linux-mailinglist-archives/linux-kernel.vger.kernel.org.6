@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-538139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44C7A494ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:28:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F2CA494F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4691895835
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E803A7376
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632B825C71F;
-	Fri, 28 Feb 2025 09:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaKK/NBw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834CB25BAB5;
+	Fri, 28 Feb 2025 09:26:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54025C6F1;
-	Fri, 28 Feb 2025 09:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2541D25B698
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734810; cv=none; b=iLt2ek2G0p2Tn81u5sLOIljnM9cjR/aJKwJQ9aJPI7xsDOgCu5ZCN3lP0E2V0D0qHdhBQonbh1XSAZvT/uKEjIheb/IP4GqHQE5PF9wLlgBxVej2+jdCt52eaPziWaKG0P/vhA4m3W/5s4o0EV+hfStdR8x2Ho+WsWRCmqPHiF0=
+	t=1740734808; cv=none; b=h7G57nKG9LnWaqTsDsKnJ0ykvMrlvNVk37OSAtydR6jkrdUnfytbuZc/lTZhZ/kIhksVk6iu+q7U6z7lfF3YPTuUY9NXC9uEdX3IJ/9eyPsYNxZ7vl4bLvLQ71HsWWAUznqmJfMftNFSGZF8YvKsWiu2DYSkupc7tVqyElte6wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734810; c=relaxed/simple;
-	bh=kmNRUDi63hoq1y/R979Fz7vtxyOlpOhEMURK3Cge2yY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TE8t6A0q8EF+1bAiySEVzrZPvWjfoS3fuFy6uGgTumKonHb6Fln1QF43YdULGHA1EAb5LoCDKvZ3hAFsOlp3fvnUC4Wh3Oi+FLyT1o6eEFZofdHscy4UTuBKCu0FWMgc1vuC8M8mYi2I6ASlJrj530+flcGi5CrRrpxfxJvB7iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaKK/NBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031A7C4CED6;
-	Fri, 28 Feb 2025 09:26:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740734810;
-	bh=kmNRUDi63hoq1y/R979Fz7vtxyOlpOhEMURK3Cge2yY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BaKK/NBwdo88Afyx9Hd5lt5ZhktyVBK5rK3FiEDNihfSDT+E1exaPmE3kv3vEKSob
-	 R5hRdWaIoq9DqeXWdGe7Qn51baP+M4E2DuN0n5VHSmOvRbguoOii7GDmY8Pzf/AWfj
-	 XNrHjGMMx8+a+7r6m53ikg3z/WuwaNoq6xkXI1nZnoJfMXjdScIBaYcPZ3EMIqtDKH
-	 KbiTochLI+h3TkWYwXxtH2b77ww8NuAbXeE1yDpi+FUsh5x5LjT6sBY/6s8EdhZ5iN
-	 YVobQev5BF5Bcr4SsqVmvQV7CDAJ+zLxKtukW4R6UVtEVjijiz2ywUuvkkOQUMA2nt
-	 Ez5RFXH2btGVA==
-Date: Fri, 28 Feb 2025 10:26:35 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
-	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
-	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: Re: [PATCH v6 0/5] x86/cpufeatures: Automatically generate required
- and disabled feature masks
-Message-ID: <Z8GBS81JWP7dl5s2@gmail.com>
-References: <20250228082338.73859-1-xin@zytor.com>
+	s=arc-20240116; t=1740734808; c=relaxed/simple;
+	bh=LItF/BusLrrc26OL+BucHV4iN652H8zo9JOygXcgBaY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lvzt1Ru0RA8WqSPIaJgAIXcorWv+/YVIrtAkx/nACM7V6jUMYyiAgBW1id6TGON9V1lKvLJqv2At3u03Ktsa5fa8SKA3TP+y7ofNBmKGHNIYWpH2JrNW882Q/7zaypyypDqRxOGB5Gq/TsApNsKIshnffbQKL/LVbS/bk5UA4QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z42p23K4sz6M4dp;
+	Fri, 28 Feb 2025 17:23:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D26EF140A34;
+	Fri, 28 Feb 2025 17:26:43 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 28 Feb
+ 2025 10:26:40 +0100
+Date: Fri, 28 Feb 2025 17:26:35 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
+	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>, Ani Sinha <anisinha@redhat.com>, Dongjiu Geng
+	<gengdongjiu1@gmail.com>, Peter Maydell <peter.maydell@linaro.org>, "Shannon
+ Zhao" <shannon.zhaosl@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/19] acpi/ghes: prepare to change the way HEST
+ offsets are calculated
+Message-ID: <20250228172635.000027c4@huawei.com>
+In-Reply-To: <ac3cc2002267e1ad848aea367ff0b08f2c4b5c69.1740671863.git.mchehab+huawei@kernel.org>
+References: <cover.1740671863.git.mchehab+huawei@kernel.org>
+	<ac3cc2002267e1ad848aea367ff0b08f2c4b5c69.1740671863.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228082338.73859-1-xin@zytor.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu, 27 Feb 2025 17:00:43 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-* Xin Li (Intel) <xin@zytor.com> wrote:
-
-> The x86 build process first generates required and disabled feature
-> masks based on current build config, and then uses these generated
-> masks to compile the source code.  When a CPU feature is not enabled
-> in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
-> flag, i.e., DISABLE_FRED, needs to be properly defined and added to
-> a specific disabled CPU features mask in <asm/disabled-features.h>,
-> as the following patch does:
-> https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
-> As a result, the FRED feature bit is surely cleared in the generated
-> kernel binary when CONFIG_X86_FRED=n.
+> Add a new ags flag to change the way HEST offsets are calculated.
+> Currently, offsets needed to store ACPI HEST offsets and read ack
+> are calculated based on a previous knowledge from the logic
+> which creates the HEST table.
 > 
-> Recently there is another case to repeat the same exercise for the
-> AMD SEV-SNP CPU feature:
-> https://lore.kernel.org/all/20240126041126.1927228-2-michael.roth@amd.com/.
-> https://lore.kernel.org/all/20240126041126.1927228-23-michael.roth@amd.com/.
+> Such logic is not generic, not allowing to easily add more HEST
+> entries nor replicates what OSPM does.
 > 
-> It was one thing when there were four of CPU feature masks, but with
-> over 20 it is going to cause mistakes, e.g.,
-> https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1-b33c8d6db618@suse.com/.
+> As the next patches will be adding a more generic logic, add a
+> new use_hest_addr, set to false, in preparation for such changes.
 > 
-> We want to eliminate the stupidly repeated exercise to manually assign
-> features to CPU feature words through introducing an AWK script to
-> automatically generate a header with required and disabled CPU feature
-> masks based on current build config, and this patch set does that.
-> 
-> Link to v5:
-> https://lore.kernel.org/lkml/20250106070727.3211006-1-xin@zytor.com/
-> 
-> 
-> H. Peter Anvin (Intel) (3):
->   x86/cpufeatures: Rename X86_CMPXCHG64 to X86_CX8
->   x86/cpufeatures: Add {required,disabled} feature configs
->   x86/cpufeatures: Generate a feature mask header based on build config
-> 
-> Xin Li (Intel) (2):
->   x86/cpufeatures: Remove {disabled,required}-features.h
->   x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
-
->  24 files changed, 320 insertions(+), 634 deletions(-)
-
-Very nice!
-
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
