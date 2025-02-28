@@ -1,99 +1,67 @@
-Return-Path: <linux-kernel+bounces-537925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB607A49289
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:57:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F7EA4928D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F240188908E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1813A7667
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9A31CAA81;
-	Fri, 28 Feb 2025 07:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5A61CBA02;
+	Fri, 28 Feb 2025 07:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UAZFwBtz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XtbLek28";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UAZFwBtz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XtbLek28"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bqL8MAA5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89B51C701E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AD92CCC0;
+	Fri, 28 Feb 2025 07:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729422; cv=none; b=bT2+qhAbHiaT2mU69XkiCMra8sWPKl/s4VROMGKi4v/N1GZ54TZuPQW+FAP53yXb2WxC3XHWbg0ZzMvdUymDBxZAolhUDwkcWullbdfjEUo8B0yKJmak37YqqsCa+yUy5EwH8azKqyGN4HiL3xLOpK/SW4dQgq+Lf5cuEfdQBy8=
+	t=1740729490; cv=none; b=H2BMx8EmQLq3+UsJiFOAGCSz1Ejt44NariKSgz0sBsv6OgCjA9zhv8CYqIhzAac/CdBOy0CfPqwe74K9gtBZJglF1CnkOn1EBpJOBTrCVnunLT7H1vHKzikzY7ZdIln+ICfLagiQ+3vTSYT3uCUDrZqeXe/I1/nFyKdGbTHtm9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729422; c=relaxed/simple;
-	bh=sXeSRtt8KMLM94AGLcgdrPYyAwLovRHZDFXkfhdwGzc=;
+	s=arc-20240116; t=1740729490; c=relaxed/simple;
+	bh=A5UlJk1Lwgcjk63CUpIIkNaWpKKDpjlZEsd5GNdhYNw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3YnuBPYc8qNFmYtfpydZsSzaPP1LThPks0eerPHKWD+va0I3fHXJpnsvEZqY+kKmD7AOnLXxF0M63f1lQz5EcuBJJRVfMVPpNiibo9wvQu7awefPPUv0p9TFFhnJAvI+W/iOsj+akqbq3Wa1mPrhV30mGEgT9qB+YAPnoiJtWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UAZFwBtz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XtbLek28; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UAZFwBtz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XtbLek28; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0B75C2116F;
-	Fri, 28 Feb 2025 07:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740729419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMhfRxvqIxKZMaQZi3hmHrhrCs+pyqYO7m7E4eS+VBs=;
-	b=UAZFwBtzHSBKCPtNx7WHhO16JG5xF871Dgorzgjj0w8p4FRTsaATlE/P2h3j6giFJLHg0B
-	rhahqIkCoSAEq+9dXSBKtYMsAx4m2eiBBMV/Ho9xCLV+vF/gHwzfBsK4MXaGML0/T9L8zj
-	DkgwsAGJFyY5hexDsD2sgml5KjqwFPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740729419;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMhfRxvqIxKZMaQZi3hmHrhrCs+pyqYO7m7E4eS+VBs=;
-	b=XtbLek288T5w9IO4MIJcSfmiX2k8M8x9cjE2u8pWYPlML4RxBCb63mpouktiobGF+hQJi+
-	X6pX5jXg5sfOMUCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740729419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMhfRxvqIxKZMaQZi3hmHrhrCs+pyqYO7m7E4eS+VBs=;
-	b=UAZFwBtzHSBKCPtNx7WHhO16JG5xF871Dgorzgjj0w8p4FRTsaATlE/P2h3j6giFJLHg0B
-	rhahqIkCoSAEq+9dXSBKtYMsAx4m2eiBBMV/Ho9xCLV+vF/gHwzfBsK4MXaGML0/T9L8zj
-	DkgwsAGJFyY5hexDsD2sgml5KjqwFPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740729419;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hMhfRxvqIxKZMaQZi3hmHrhrCs+pyqYO7m7E4eS+VBs=;
-	b=XtbLek288T5w9IO4MIJcSfmiX2k8M8x9cjE2u8pWYPlML4RxBCb63mpouktiobGF+hQJi+
-	X6pX5jXg5sfOMUCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E58BE13888;
-	Fri, 28 Feb 2025 07:56:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vjwUN0pswWfGLgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Fri, 28 Feb 2025 07:56:58 +0000
-Date: Fri, 28 Feb 2025 08:56:58 +0100
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] nvmet-fcloop: refactor fcloop_nport_alloc
-Message-ID: <0e41c69f-32f0-4c19-8d52-04d767acbaed@flourine.local>
-References: <20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org>
- <20250226-nvmet-fcloop-v1-3-c0bd83d43e6a@kernel.org>
- <fd877a93-8630-4180-a591-5916e18cda72@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cIg6osQAWgK9420gByaDZP/IpbQzIw5B/mlDJMIrgnRdpGrhcnZW84sZ0oKz0X0E6N7CFVjBe4W9ItIRuSKa6Zo2mkvwtoUaUcVHTGO57s/9zALFnSdAWeruUlqUuffvp1ZtXKkcHFAurla2BZpRfkuwNbdkhCQciKFngbIacsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bqL8MAA5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=H4uV16DUgChkRShZd7CyTzN+P//AtMu7+LwcdpiOvIQ=; b=bqL8MAA5LcUEJ2THFuxDcc7ILy
+	KKUuHqucSIzt7nMETkv1JviFBO4XODR3BlWCfe1iVNKHVuoXN4MiAFv0v5sGRPizEk7m/8G2n1JtA
+	YuKUL0i3JEuXP6gZagHIxpyG94/r54ziumor8Er72q/L37mLw0AOj/3+FEBt7phiXwoMJL6cGmEs/
+	2ooZ2lNxfGzwJqRx3FDbRiemcLuwhYMnPpCR4AtJsYzMVPIxpwY2zda/JGw6/VIy3lLFSKMaU7skK
+	p81F9Kv6b/a06pElh2TVUHkV1uQQvsGrwaP/OHgY6y7ft7bsgGxEYSFNRNRXJujx6/Nridyt7PqgQ
+	apkx6zrg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnvFs-00000003vXl-1BzF;
+	Fri, 28 Feb 2025 07:57:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4BDB7300756; Fri, 28 Feb 2025 08:57:55 +0100 (CET)
+Date: Fri, 28 Feb 2025 08:57:55 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 1/9] preempt: Introduce HARDIRQ_DISABLE_BITS
+Message-ID: <20250228075755.GC5880@noisy.programming.kicks-ass.net>
+References: <20250227221924.265259-1-lyude@redhat.com>
+ <20250227221924.265259-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,62 +70,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fd877a93-8630-4180-a591-5916e18cda72@suse.de>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250227221924.265259-2-lyude@redhat.com>
 
-On Fri, Feb 28, 2025 at 08:11:11AM +0100, Hannes Reinecke wrote:
-> > +	nport = fcloop_nport_lookup(opts->wwnn, opts->wwpn);
-> > +	if (nport && ((remoteport && nport->rport) ||
-> > +		      (!remoteport && nport->tport))) {
-> > +		/* invalid configuration */
-> > +		goto out_put_nport;
-> > +	}
-> > -	spin_lock_irqsave(&fcloop_lock, flags);
-> > +	if (!nport) {
-> > +		nport = kzalloc(sizeof(*nport), GFP_KERNEL);
-> > +		if (!nport)
-> > +			goto out_free_opts;
-> > -	list_for_each_entry(tmplport, &fcloop_lports, lport_list) {
-> > -		if (tmplport->localport->node_name == opts->wwnn &&
-> > -		    tmplport->localport->port_name == opts->wwpn)
-> > -			goto out_invalid_opts;
-> > +		INIT_LIST_HEAD(&nport->nport_list);
-> > +		nport->node_name = opts->wwnn;
-> > +		nport->port_name = opts->wwpn;
-> > +		kref_init(&nport->ref);
-> > -		if (tmplport->localport->node_name == opts->lpwwnn &&
-> > -		    tmplport->localport->port_name == opts->lpwwpn)
-> > -			lport = tmplport;
-> > +		spin_lock_irqsave(&fcloop_lock, flags);
-> > +		list_add_tail(&nport->nport_list, &fcloop_nports);
-> > +		spin_unlock_irqrestore(&fcloop_lock, flags);
-> 
-> Don't you need to check here if an 'nport' with the same node_name and
-> port_name is already present?
+On Thu, Feb 27, 2025 at 05:10:12PM -0500, Lyude Paul wrote:
 
-There is the existing check which filters out some of the duplicates
-(the check is there to allow setting up the target or the remote port
-first, so the order doesn't matter), though I am not sure if it would
-catch all duplicates. I don't mind adding this, but I'd say it would be
-better in a separate patch. I tried to refactor this code without
-changing anything else.
+> @@ -26,29 +27,34 @@
+>   *
+>   *         PREEMPT_MASK:	0x000000ff
+>   *         SOFTIRQ_MASK:	0x0000ff00
+> - *         HARDIRQ_MASK:	0x000f0000
+> - *             NMI_MASK:	0x00f00000
+> + * HARDIRQ_DISABLE_MASK:	0x00ff0000
+> + *         HARDIRQ_MASK:	0x07000000
+> + *             NMI_MASK:	0x38000000
+>   * PREEMPT_NEED_RESCHED:	0x80000000
+>   */
+>  #define PREEMPT_BITS	8
+>  #define SOFTIRQ_BITS	8
+> -#define HARDIRQ_BITS	4
+> -#define NMI_BITS	4
+> +#define HARDIRQ_DISABLE_BITS	8
+> +#define HARDIRQ_BITS	3
+> +#define NMI_BITS	3
+
+I'm a bit scared here. This reduces the number of NMI levels from 16 to
+8, and we have 5 IST gates that can nest in wonderful ways. This might
+just be achievable.
+
+Also, you should probably double check the HARDIRQ bits against all
+architectures that have interrupt priority support -- Linux doesn't
+really do that, local_irq_disable() is typically disable-all, but things
+like PowerPC play funny games -- ideally those games are all played
+before entering the common code that has the accounting on.
+
+And I don't think we have overflow detection on the NMI/IRQ bits.
+
+The comment with __nmi_enter() is now wrong.
+
+
+Anyway, like I said before, I like the general idea, but I hate we're
+growing a 3rd form.
+
+
 
