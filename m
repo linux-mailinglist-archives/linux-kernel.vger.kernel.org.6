@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-538070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBD8A49449
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:01:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127D8A4943E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEE61894CF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D3F3AB918
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD117255E39;
-	Fri, 28 Feb 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB207255E46;
+	Fri, 28 Feb 2025 09:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Rm3YVtzh"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7535255E3B;
-	Fri, 28 Feb 2025 09:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbKeZtES"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1833F254867;
+	Fri, 28 Feb 2025 08:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733268; cv=none; b=sSUZ1c5WUmjubU6ErvI9PLXEI1WJEzpuJC425TTgJbrns9/AkMVhL+nDb7sBZqQySzwLxQxOAJFjs4HjpO1ggX/ZS3IyVpEkPgUxYQLbMQleHfTimr8souz9Pg2kQ9VgaGuwyNC5eUUrLGGV770+Zr6QYZeQD7LLpdFYb6f39+w=
+	t=1740733200; cv=none; b=FH/pRY+QqfVVAuFfv9wDOtfAKV+08GHXhdj5bZeMmFzoPXMb0ScD2ffzrgFZvPn8im+0rnSv+UWlrLduH7Wruu/MsvD83X287cY+kkYBn3alS0kDpckXmwwPNbnbMF5F52ZjVa0+z2Zkk4SUkX4Wm5DQT9YwRxvlnKN8nWhsbBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733268; c=relaxed/simple;
-	bh=zKrcIFrclyOGfQUXyUn6MaoJojyv/MvCl+HCcUqvmOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qP1ES611qfMys9TMmLlyGiqXJ11sbfjGzIXW4ob5O3LY1/qy3km5m1KlAoVW2WEBSYb58rKt9F8AAsJ4CfEX99ORQvbje3FJIk+DIu5ISzkcJLw3LWe0izIKIrTikV2VLvT8ragqA3vOVxeprjYHB/b8HBvx72BYLeFNp0f7Iqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Rm3YVtzh; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=22YFTJcKm8NjTIDk8c5vro1lpPOD/KWOFdJohyC6a9k=;
-	b=Rm3YVtzht+DE7sclvNWjM+I8N6j9ytKj4I3S1NZ7iSlrND5y+z8t/ovM+oyYqC
-	3eMl5BS2qOw9hGgck05VOsfdg+jfRTW6woXfJu9QrQ3+VXWyg/AwCcTcXhlPMR/S
-	qqXc6CYs4UWP/tTNWGyzc9bKDDdyxOSnuiYKqtqaL8JR0=
-Received: from [192.168.34.52] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH+C0me8Fnbdn5PA--.9176S2;
-	Fri, 28 Feb 2025 17:00:24 +0800 (CST)
-Message-ID: <d3bfa9c9-bf72-4ddc-bed3-1fe9ef88d518@163.com>
-Date: Fri, 28 Feb 2025 17:00:22 +0800
+	s=arc-20240116; t=1740733200; c=relaxed/simple;
+	bh=kI3Z3wp8Ji5DPJmFPz7FRuOxsxH6WGI9IT1Imk0ZHkE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=oMY2+LUX1DVqaSBoNw5e5HtSUfr0Ij+98UhofvwG7el+dddkYEN7GfAlgIP0mooZ9Bfb8abbMTvUC/hm7cWI+lqKX82PRTS6L9GzM0rAYpnahTNzCIKxsKNGab888/48eH5S1J2MRjuWEfpFtC7ZAGUbIlme7npz1rrY7HAOu9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbKeZtES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90DA2C4CED6;
+	Fri, 28 Feb 2025 08:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740733199;
+	bh=kI3Z3wp8Ji5DPJmFPz7FRuOxsxH6WGI9IT1Imk0ZHkE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AbKeZtES77cwD1+ZtJ6ITeKjQyc3wMTZfRm/ECSYpmaqPIRPNmy2yBXTd1qCV9KZ7
+	 wyoT5cSWrZvIGRnnYlomM2SBSZKFYKHO9LAkm0O5+RiqqYcxXzHVvQaIPqI5PQl4zV
+	 mxmjqStGvr0f5JMMkiIzGv229+dX1y9Q6AMeFcnARIOSg02JAoc54ORwPxYxhkPwQt
+	 tbn6VziBVnN8mUqhfYRf72yT5GVACc7i5LRvEZ51h/jdJ/SRpohK9/JaPtmj0gd+fT
+	 zDNhMumqbrXSOiCx0lPQd/i+NgwxgsnM1MuyjqA4RV0bvioTSgjV8JG24Z8bKvaQAg
+	 8TYXiGZ4fmtUg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF92380CFF1;
+	Fri, 28 Feb 2025 09:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- tglx@linutronix.de, kw@linux.com, kwilczynski@kernel.org,
- bhelgaas@google.com, cassel@kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad>
- <f6e44f34-8800-421c-ba2c-755c10a6840e@163.com>
- <Z8Co4ZnqObpnEbg7@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <Z8Co4ZnqObpnEbg7@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wAH+C0me8Fnbdn5PA--.9176S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4UZF4xur43JrW8urW3Wrg_yoWfKFXE9r
-	ykKF1xWr4jkrySqw4aywsIgFZ8W3sFvr18Z3y3Xr9Fqr98tanrAwnakr97Ka4rGrW2yFn0
-	kr4Sg34DJr9F9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjJKs5UUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwMCo2fBdUClLAAAs3
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/4] mlx5: Trust lockdown health syndrome
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174073323150.2067282.15443577671242720643.git-patchwork-notify@kernel.org>
+Date: Fri, 28 Feb 2025 09:00:31 +0000
+References: <20250226122543.147594-1-tariqt@nvidia.com>
+In-Reply-To: <20250226122543.147594-1-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, saeedm@nvidia.com,
+ gal@nvidia.com, leonro@nvidia.com, leon@kernel.org, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-On 2025/2/28 02:03, Frank Li wrote:
-> On Fri, Feb 28, 2025 at 12:49:38AM +0800, Hans Zhang wrote:
->> Thanks Mani for the tip.
->>
->> If I want to implement similar functionality, where should I add it? Since
->> this sysfs node is the only one that displays the MSI/MSIX interrupt number,
->> I don't know where to implement similar debug functionality at this time. Do
->> you have any suggestions? Or it shouldn't have a similar function.
+On Wed, 26 Feb 2025 14:25:39 +0200 you wrote:
+> Hi,
 > 
-> I think it is useful feature to help debug. Generally only one property
-> for one sys file.
+> This series introduces a new error type in the health syndrome,
+> specifically for trust lock-down.  Additionally, it exposes the CRR bit
+> in the health buffer, which, when set, indicates that the error cannot
+> be recovered without a process involving a cold reset. We add The CRR
+> bit value to the health buffer info log and update it to be logged on
+> any syndrome.
 > 
-> A possible create 3 files under
-> 
-> /sys/kernel/irq/26/
-> 	address_hi, address_lo, msg_data.
-> 
-> cat address_hi, only show 0x00000000. ... ABI doc need update also.
-> 
-> Thomas(tglx) may provide better suggestions.
+> [...]
 
-Thank you very much for Frank's opinion and agreeing with my idea. I 
-also think this is a good debug method.
+Here is the summary with links:
+  - [net-next,1/4] net/mlx5: Avoid report two health errors on same syndrome
+    https://git.kernel.org/netdev/net-next/c/b5d7b2f04ebc
+  - [net-next,2/4] net/mlx5: Log health buffer data on any syndrome
+    https://git.kernel.org/netdev/net-next/c/6bdce277a326
+  - [net-next,3/4] net/mlx5: Expose crr in health buffer
+    https://git.kernel.org/netdev/net-next/c/63f26199721f
+  - [net-next,4/4] net/mlx5: Add trust lockdown error to health syndrome print function
+    https://git.kernel.org/netdev/net-next/c/680173b6bb6b
 
-I will reply to Thomas(tglx) later, and then please review whether the 
-patch I provided is OK?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Best regards
-Hans
 
 
