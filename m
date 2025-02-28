@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-538294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60395A496C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:16:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F58DA496C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3581896DC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:16:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A271884B6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45A925D90C;
-	Fri, 28 Feb 2025 10:11:04 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E0A25DB15;
+	Fri, 28 Feb 2025 10:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6pLw8qU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4EE25BAC9;
-	Fri, 28 Feb 2025 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0725BAD0;
+	Fri, 28 Feb 2025 10:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740737464; cv=none; b=WlmXRO1MOML3xKeJiNGEVDvGJDsuYyRyGrUQozTa9yzPWF1dxkpq5V6INvn7ksvKA/nkdeH3PBVZ6V8R/xl87jIiHZ5j0Fx29Wdgi7r01GJXrmr7cKj9yqIE5s3kbp62C6tB9uHJVM1kgxry0i3GxYwZHESRA0bsvSVtkPJiaZg=
+	t=1740737539; cv=none; b=kIGCS80sChxFsNBegY9VBiNh8fWRzG/onippuruyEJDyQSc7W4zpRyeodNjOMzOC3Ims3EUpqW7Pn+whPh4fQ0ov0YZveqYiNlCU7juaIDzxydJg4Cb+3w7ma4r3I+6emShikP84W4t05Huc0P7Rnj+pVbe0WhE6QR1ya9xw634=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740737464; c=relaxed/simple;
-	bh=bZincy8IQtpp48xIeSYrIpThQT8WWHr6JB5Sd1KtJbw=;
+	s=arc-20240116; t=1740737539; c=relaxed/simple;
+	bh=5nmhdVmkJjvM0GzyzeQCzlweufADquCQbW0TIn6T4pQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ae+aVowtA+tIZaPZ4tqnrvrncPFJK8MF5UmfI2kncNIglYIjLOWm2qxu0S9JcWbwtZdxpE+cyivwsvVv6a1UdzQV1r9wOGFJgKTQNYg0lh9g4sNG0M8BEnvWv9qeVJXuTrf/1oXEDl7npfy62fBO5OwvHNE/iFRmT/23Qxd0oHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id EEAAD343132;
-	Fri, 28 Feb 2025 10:10:54 +0000 (UTC)
-Date: Fri, 28 Feb 2025 10:10:50 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH 2/2] gpiolib: support parsing gpio three-cell interrupts
- scheme
-Message-ID: <20250228101050-GYA52883@gentoo>
-References: <20250227-04-gpio-irq-threecell-v1-0-4ae4d91baadc@gentoo.org>
- <20250227-04-gpio-irq-threecell-v1-2-4ae4d91baadc@gentoo.org>
- <CACRpkdZ1X5kF-AyRBg9BYMiJscv0v-SGzcdetS0XDK3oPSu9QQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNMt7iXjUVlDft/X+Xcn3x+M1wBvX3KGCtjhfYzkClt0CUnxCUm3qR2KzgHLvPVeaJpS6msrvBJ1Y3Yra8JquPXxatjnxmjkg/DBlcffnvTxI+5BECWnBE3cbgbC0EleVu/q8TfCBE+Z5C/lYBlyIMajyoVZ5d8rWu/D99iR6O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6pLw8qU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AC6C4CEE5;
+	Fri, 28 Feb 2025 10:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740737539;
+	bh=5nmhdVmkJjvM0GzyzeQCzlweufADquCQbW0TIn6T4pQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h6pLw8qUfvQNslHWoxqE871PS+g//RhNm0OCSFXfJLGLoZlg2fh++rA7JwM6nK0BO
+	 aK95rQ3IJwmaC+JaL1HeeYCMPozOfSUxUPD+Eb7JseclvznzxhUflHDWuq5QpDPxbI
+	 zrf1UFjGnYDygGK1SXrOaqlsYJUssPK91ox5aNq7DmaLRHIbjlvtNS1rEbsus9QIg1
+	 CBjDr7t9c3/Ii4uwlm/gqOqZ+oTPMLKU+QGbmwhtCRlhdvwSqNP1+6aXaY69AiWaN6
+	 X7G2cuoaUSES++DWBy/V2bO2CWE4Zml3gF1aXh2aQfsyltt28Y6l0K8SYjwM1X5Qch
+	 oWoVmCsICHKpw==
+Date: Fri, 28 Feb 2025 11:12:10 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, paulmck@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	rcu@vger.kernel.org
+Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
+Message-ID: <Z8GL-plbtphS62hl@pollux>
+References: <20241219170425.12036-1-dakr@kernel.org>
+ <20241219170425.12036-8-dakr@kernel.org>
+ <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
+ <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
+ <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
+ <Z72jw3TYJHm7N242@pollux>
+ <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
+ <Z8A4E_AyDlSUT5Bq@pollux>
+ <w2udn7qfzcvncghilcwaz4qc6rv2si3dqpjcs2wrbvits3b44k@parw3mnusbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZ1X5kF-AyRBg9BYMiJscv0v-SGzcdetS0XDK3oPSu9QQ@mail.gmail.com>
+In-Reply-To: <w2udn7qfzcvncghilcwaz4qc6rv2si3dqpjcs2wrbvits3b44k@parw3mnusbuf>
 
-Hi Linus Walleij:
+On Fri, Feb 28, 2025 at 04:29:04PM +1100, Alistair Popple wrote:
+> On Thu, Feb 27, 2025 at 11:01:55AM +0100, Danilo Krummrich wrote:
+> > On Thu, Feb 27, 2025 at 11:25:55AM +1100, Alistair Popple wrote:
+> 
+> > > To be honest I don't really understand the utility here because the compile-time
+> > > check can't be a definitive check. You're always going to have to fallback to
+> > > a run-time check because at least for PCI (and likely others) you can't know
+> > > for at compile time if the IO region is big enough or matches the compile-time
+> > > constraint.
+> > 
+> > That's not true, let me explain.
+> > 
+> > When you write a driver, you absolutely have to know the register layout. This
+> > means that you also know what the minimum PCI bar size has to be for your driver
+> > to work. If it would be smaller than what your driver expects, it can't function
+> > anyways. In Rust we make use of this fact.
+> > 
+> > When you map  a PCI bar through `pdev.iomap_region_sized` you pass in a const
+> > generic (`SIZE`) representing the *expected* PCI bar size. This can indeed fail
+> > on run-time, but that's fine, as mentioned, if the bar is smaller than what your
+> > driver expect, it's useless anyways.
+> > 
+> > If the call succeeds, it means that the actual PCI bar size is greater or equal
+> > to `SIZE`. Since `SIZE` is known at compile time all subsequent I/O operations
+> > can be boundary checked against `SIZE` at compile time, which additionally makes
+> > the call infallible. This works for most I/O operations drivers do.
+> 
+> Argh! That's the piece I was missing - that this makes the IO call infallible
+> and thus removes the need to write run-time error handling code. Sadly of course
+> that's not actually true, because I/O operations can always fail for reasons
+> other than what can be checked at compile time (eg. in particular PCI devices
+> can fall off the bus and return all 0xF's). But I guess existing drivers don't
+> really handle those cases either.
 
-On 10:11 Fri 28 Feb     , Linus Walleij wrote:
-> Hi Yixun,
-> 
-> thanks for working so hard on this!
-> 
-> I'm really happy to see the threecell support integrated into gpiolib.
-> 
-> On Thu, Feb 27, 2025 at 12:25 PM Yixun Lan <dlan@gentoo.org> wrote:
-> 
-> > gpio irq which using three-cell scheme should always call
-> > instance_match() function to find the correct irqdomain.
-> >
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> > The select() function will be called with !DOMAIN_BUS_ANY,
-> > kernel/irq/irqdomain.c:556: if (h->ops->select && bus_token != DOMAIN_BUS_ANY)
-> >
-> > so vendor gpio driver need to explicitly set bus_token, something like:
-> >
-> > drivers/gpio/gpio-spacemit-k1.c
-> >   irq_domain_update_bus_token(girq->domain, DOMAIN_BUS_WIRED);
-> >
-> > I hope this is a feasible way..
-> 
-> Yes this looks fair, I think you can put the description into the
-> commit message.
-> 
-ok, will do
-> >         /* We support standard DT translation */
-> > -       if (is_of_node(fwspec->fwnode) && fwspec->param_count == 2) {
-> > +       if (is_of_node(fwspec->fwnode) && fwspec->param_count <= 3)
-> >                 return irq_domain_translate_twocell(d, fwspec, hwirq, type);
-> > -       }
-> 
-> This looks good.
-> 
-> > +static int gpiochip_irq_select(struct irq_domain *d, struct irq_fwspec *fwspec,
-> > +                       enum irq_domain_bus_token bus_token)
-> > +{
-> > +       struct fwnode_handle *fwnode = fwspec->fwnode;
-> > +       struct gpio_chip *gc = d->host_data;
-> > +       unsigned int index = fwspec->param[0];
-> > +
-> > +       if ((gc->of_gpio_n_cells == 3) && gc->of_node_instance_match)
-> > +               return gc->of_node_instance_match(gc, index);
-> 
-> We need to hide the OF-specific things into gpiolib-of.c|h so systems
-> not using OF does not need to see it.
-> 
-> Something like:
-> 
-> if (fwspec->param_count == 3) {
->      if (is_of_node(fwnode))
->          return of_gpiochip_instance_match(gc, index);
->     /* Add other threeparam handlers here */
-not sure if non OF-specific driver will also support threecells mode?
-we probably can adjust when it really does, so now I would simply make it
-
-if (fwspec->param_count == 3 && is_of_node(fwnode))
-	return of_gpiochip_instance_match(gc, index);
-
-> }
-> 
-> Then add of_gpiochip_instance_match() into gpiolib-of.h as a
-> static inline (no need to an entire extern function...)
-> 
-> static inline bool of_gpiochip_instance_match(struct gpio_chip *gc, int index)
-> {
->     if ((gc->of_gpio_n_cells == 3) && gc->of_node_instance_match)
->               return gc->of_node_instance_match(gc, index);
-> }
-> 
-> And also an empty stub for !CONFIG_OF_GPIO so we get this compiled
-> out if OF is not configured in.
-> 
-ok, I got your idea, thanks
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+We handle this case too by giving out a Devres<pci::Bar> rather than just a
+pci::Bar. The former gets revoked when the device falls off the bus.
 
