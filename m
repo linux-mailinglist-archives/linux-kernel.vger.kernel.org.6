@@ -1,132 +1,169 @@
-Return-Path: <linux-kernel+bounces-538178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAD6A49575
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:40:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955BEA4957C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98099163025
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25769167450
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF90258CE4;
-	Fri, 28 Feb 2025 09:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A7F25BAB6;
+	Fri, 28 Feb 2025 09:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI0sv0pX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSkqxvqY"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644C3257435;
-	Fri, 28 Feb 2025 09:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3012561D6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735473; cv=none; b=kBOFgKiYMX8vsI5sktZ/9PLhoHeOq3xHPnahX7MP8CuGToltroHu9D3DGcC5VizVXQ5N2b7qR/HPxu7TLTKpF/Wcljcif60zX6BATjIgqHbAhpxsZsL87xJdN0iOPIekzNxYHa+9hIB4/ZHQUU+wuvKV23GyfjoTS0d73E5kFDs=
+	t=1740735505; cv=none; b=M9yG5vgCMaumwkw9vmJqh1MzBBnKqgdOS77XoXrsLp2Qt1pl8quWNzg4Pe5gS/TYlGpNWojnW6FKxyuDaxz23Gnh9FGBBSSfYjVoN9R961KyJNeCnpkNe0oBlnrNg0xIfkOYIJSnmpNav+vFSzH6XAq4NfL+ol0nlEKDN5SIayk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735473; c=relaxed/simple;
-	bh=MesbCbhKEj9BqEr6KvxmuGCoLPsEFMe1GTNccjHPAOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WRH0p8/Ai0YB91zcL1Ynn26M8MUdLaGbo6OfOl8eFUN+rp9eYO1EnqkolArRHk6chEIpRL/2vGHKfrLdZOcmmc8ZJu1cYmWJCaO9SMVEAtqsD6uR3p/StXatGbKBu6mhFs95AlFkabzZdJ+hNXARCVtcq3nMDDO8vzEh3dOsouk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI0sv0pX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE9FC4CED6;
-	Fri, 28 Feb 2025 09:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740735473;
-	bh=MesbCbhKEj9BqEr6KvxmuGCoLPsEFMe1GTNccjHPAOo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZI0sv0pXCAcIbcSCyzdvICk+0GsANMCV/gWIXq3dyw5TX5Uh1c7E7SV9NqCxGU1W+
-	 YExHLRX5tamw43b2v1j09eqYxZtti6thE27XP/ugqmNTpf9eB+5prx+F+S6i9kPJ4A
-	 aV3D2+WxgKiZQsAL8y/0zW5RpoFqmtCR1Y4u0YCv7RJMGCnJDZoyXB9k7GwchdEsDX
-	 daYHts+dCkEW2xWcEmX40Dr4hYwZz0UMpCXvcAmKhnnbFm14pJ39RRZnEv//kQLYjX
-	 3ZUz1auUl6OGekoMmz7PcrtSoCC74PC3Zg4zIeghApRiikkRgSF+eC5BuxQAXfIirC
-	 RlqlrkcEIfaoQ==
-Message-ID: <9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
-Date: Fri, 28 Feb 2025 10:37:48 +0100
+	s=arc-20240116; t=1740735505; c=relaxed/simple;
+	bh=cXXYLWxWcETYA3JP92xi9LGJX/+09zhX17UC5Rt7H30=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VyFSNHWc30ZWZ6of1hXRx81bpd7eo2z5Oh7elrUgyOvRPwgNJNHZRY/rVqUOUWSjRpXDbPXCs3oTUdfNo8ts3fmJGeOeGMzooPZEvhzovmyYfPPTC1t3E+C3oKqLVHRw1bOpUeRhuAJgig/F/AYq4m5OPamWHL2wGHC2N4EuJzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSkqxvqY; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abee50621ecso260212166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:38:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740735501; x=1741340301; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kAbBHBzTpenwYQ3xIDx+RFfsaRXN6FerVlZhMl5YALM=;
+        b=fSkqxvqYgyT28bH4q5/3FMvvvx4m53sFPcRW4zaQ0pV1TpSDLjpmAbrf9nYcHa0a3y
+         Y86bm0cBb0jKIP+JJqyQSK8eyvJSHpRgNY+S7G6SbB1Cn+/ZkFDA0B7SGpWg0lu0uYEy
+         RuT8h9LXu43yKRfYbL1Akh6EbSIGpctzE20ETHwUDKtqbnXtI5ySDeRsxvJvP16mqVd1
+         BZbWU8Cmk/lQ+BU6eWbVkim6vBBXijo2UiSR2mtcO790h1XQmjxHT3zs+kozPGfc7oRo
+         dRSyz/ZBoZovtnxmYtG8GvZQbi/3Fo70+I0YWW6nnqRLXWFdx965uQDivlTpTIh5m8iU
+         q05A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740735501; x=1741340301;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kAbBHBzTpenwYQ3xIDx+RFfsaRXN6FerVlZhMl5YALM=;
+        b=Vz5bnXsjnNdkNtCGcMvDCfef/YFoiaOnTwjSqXiO1bUUHS+doVFon2N2r88VOicUTJ
+         QeLQhcqFC7vcHH5QFefXrL0e0YzMk+ytDErySEyQXwrp+HlJ2veisWzzw7NePmpNGln8
+         VBSuWmU1HZNaP39Fu5GgQ+h9BZ+amUOKroyJDFbS6GoMLnu8ChgLBxrku3OgAjrUPh15
+         04D4LReoth4aAuRhBRUfzkylLm9J8SmyRu6baaScJM7U0rrAYsy27MJsk5KaaTNkm496
+         DE6f64KOTiWy+ZQw/BlfnujM5cqTIHt2lGcClxMihLUWOCvI5stZtTRceI7hkziI6bl1
+         mImg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNO/A329Z+HxjhMXT7YkOmGJhtzKKn5B5Wsz15qOCaDps8e9m9mlDJCDicw+il34UV84ESRIivsOm5uYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7wq+ODuUohqH3sX2S/tRb4LG8SBYNgr5ssf8xTX2C94HDVosU
+	yDNSbCsIsourHWD03rNtvAowDIoJwZraxZJvTixQZ0oT0Ihihs94VVg3MSPq1II=
+X-Gm-Gg: ASbGncvgmEje0LYmcqiyTSEY2dEEio7Fpy6hHAShOUQpcpreNkXtq1+sWakAjd0kvDs
+	o7rYiJxJ0oPmYypOUCppon6D3ZU1kMziKnUecDDI+Zj3TErhpAvHPudehTAQtfb3M0UBGecznCb
+	xwls+kseAZTLMJibetnbbXzLr1RgCkaTgmMrOdH7xoLpCulPbI6BEylh9KCS7O+vYO2Og2BUSzi
+	OEkEa7gxhl+P+mlzcvA+CaTdphRIpFX848O1/FV41WPtQFZN1k+GotLl+Wnvvzt5iPdDND2W5LF
+	QUXyFVZtZZhAM3hd8+wb9T1Zb0rDygI=
+X-Google-Smtp-Source: AGHT+IFG/wAFc+7a3BTiB3lyA+ckJ1OhlFHzEfmEQnuDRhG6Sr2tZqzqalibYqvITqld8TmExotXDg==
+X-Received: by 2002:a17:907:2d8a:b0:aab:9430:40e9 with SMTP id a640c23a62f3a-abf2659d531mr240459266b.32.1740735501401;
+        Fri, 28 Feb 2025 01:38:21 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c0dc5ebsm263013666b.73.2025.02.28.01.38.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 01:38:20 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:38:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
+Message-ID: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
- bindings
-To: David Jander <david@protonic.nl>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-8-david@protonic.nl>
- <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
- <20250228102201.590b4be6@erd003.prtnl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250228102201.590b4be6@erd003.prtnl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 28/02/2025 10:22, David Jander wrote:
-> 
->>> +
->>> +  motion,pwm-inverted:
->>> +    $ref: /schemas/types.yaml#/definitions/flag  
->>
->> And PWM flag does not work?
-> 
-> I have seen PWM controllers that don't seem to support the
-> PWM_POLARITY_INVERTED flag and those where it just doesn't work. Should all
+The devm_platform_ioremap_resource_byname() function doesn't return NULL,
+it returns error pointers.  Update the checking to match.
 
+Fixes: b93f07cf090a ("drm/vc4: move to devm_platform_ioremap_resource() usage")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-Shouldn't the controllers be fixed? Or let's rephrase the question: why
-only this PWM consumer needs this property and none of others need it?
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index d20e5c53ba75..37238a12baa5 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -2928,8 +2928,8 @@ static int vc5_hdmi_init_resources(struct drm_device *drm,
+ 
+ 	vc4_hdmi->hdmicore_regs = devm_platform_ioremap_resource_byname(pdev,
+ 									"hdmi");
+-	if (!vc4_hdmi->hdmicore_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->hdmicore_regs))
++		return PTR_ERR(vc4_hdmi->hdmicore_regs);
+ 
+ 	/* This is shared between both HDMI controllers. Cannot
+ 	 * claim for both instances. Lets not convert to using
+@@ -2946,33 +2946,33 @@ static int vc5_hdmi_init_resources(struct drm_device *drm,
+ 
+ 	vc4_hdmi->cec_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "cec");
+-	if (!vc4_hdmi->cec_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->cec_regs))
++		return PTR_ERR(vc4_hdmi->cec_regs);
+ 
+ 	vc4_hdmi->csc_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "csc");
+-	if (!vc4_hdmi->csc_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->csc_regs))
++		return PTR_ERR(vc4_hdmi->csc_regs);
+ 
+ 	vc4_hdmi->dvp_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "dvp");
+-	if (!vc4_hdmi->dvp_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->dvp_regs))
++		return PTR_ERR(vc4_hdmi->dvp_regs);
+ 
+ 	vc4_hdmi->phy_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "phy");
+ 
+-	if (!vc4_hdmi->phy_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->phy_regs))
++		return PTR_ERR(vc4_hdmi->phy_regs);
+ 
+ 	vc4_hdmi->ram_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "packet");
+-	if (!vc4_hdmi->ram_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->ram_regs))
++		return PTR_ERR(vc4_hdmi->ram_regs);
+ 
+ 	vc4_hdmi->rm_regs = devm_platform_ioremap_resource_byname(pdev, "rm");
+-	if (!vc4_hdmi->rm_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->rm_regs))
++		return PTR_ERR(vc4_hdmi->rm_regs);
+ 
+ 	vc4_hdmi->hsm_clock = devm_clk_get(dev, "hdmi");
+ 	if (IS_ERR(vc4_hdmi->hsm_clock)) {
+-- 
+2.47.2
 
-
-Best regards,
-Krzysztof
 
