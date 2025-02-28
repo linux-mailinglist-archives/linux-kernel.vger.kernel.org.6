@@ -1,356 +1,116 @@
-Return-Path: <linux-kernel+bounces-538144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491A3A49509
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:32:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44C7A494ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A973BB92C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4691895835
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88AD25E441;
-	Fri, 28 Feb 2025 09:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632B825C71F;
+	Fri, 28 Feb 2025 09:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQZU/eNu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaKK/NBw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D2525DCF9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54025C6F1;
+	Fri, 28 Feb 2025 09:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734823; cv=none; b=EVTvopaHqBmy/Jo5PwAGLFhLQhrWdJdmGqq2U29u0sGuFpUikCeh1vubDq9zpBsT1gX6k7p6gz4rbMp6bhO/6o5qfgQEehqyVXRk2IqEvqoYBE0GKgSsqFso9poeXJJvILnzlXNuqA/D6K7D7OaRMqrpjlUWR44UKWqMyogd48k=
+	t=1740734810; cv=none; b=iLt2ek2G0p2Tn81u5sLOIljnM9cjR/aJKwJQ9aJPI7xsDOgCu5ZCN3lP0E2V0D0qHdhBQonbh1XSAZvT/uKEjIheb/IP4GqHQE5PF9wLlgBxVej2+jdCt52eaPziWaKG0P/vhA4m3W/5s4o0EV+hfStdR8x2Ho+WsWRCmqPHiF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734823; c=relaxed/simple;
-	bh=bbTbD5ly23S5lFfg7DnqQ8Y2OpbibReUCRpapf7kFSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T814021J+pA+CScSynZM/5DIp1h+6ks9rCEJm1GiGti1KRvwUbVP4HOFKLB9Ui/PxRuWp0NaEa18ocpcScABk+ZMBupIHPlVcCxgNGJ6rlM0SjWGLHzftUfMuFjDjRDTz7VeUZj6u/RTPCa85xlpNZnos2CQgxa53eAP3iBbLaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQZU/eNu; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740734821; x=1772270821;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bbTbD5ly23S5lFfg7DnqQ8Y2OpbibReUCRpapf7kFSA=;
-  b=CQZU/eNuIErwurA7YMyr6ZpSMYDAMfGegPN29B6iHDF0uE/ek6fozxX0
-   qr4XBrcvmwCQfrwo4dqJx3YMMFC+P6/qZuV8dBV8pK5D7AKVuboamW3/C
-   lruHFfAaUqcjPgRhXKdSDz2gtyIyG0fibodq+U33bOHK0T+5qwj7ALGBO
-   posTIqC6QStsit2J9cPqpS6De9ELOaIWrpb63JxI0FhhypjFitvwffOdW
-   MZTTIseEQcNNj4NwqJBT5Raxag5A7/rrOZoF4bcv9CUW6iV7bTdonVPpk
-   tnYRg+1qWkzOyDTnv57KClqhdp3iRbwb+QArDJR3sVjAPPdG0vdpNMl/h
-   A==;
-X-CSE-ConnectionGUID: vL/F7IGvTsqIlzTibu5qhA==
-X-CSE-MsgGUID: 3jCkEkmcS8eV1QuYvrilyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45438427"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="45438427"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 01:27:01 -0800
-X-CSE-ConnectionGUID: PsmO+JbrQk+ITcbJhuAvpw==
-X-CSE-MsgGUID: fgrQ+JAUSiKv3gbb2PELgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148213089"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa001.fm.intel.com with ESMTP; 28 Feb 2025 01:26:58 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Fenghua Yu <fenghuay@nvidia.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v3 12/12] iommu: Remove iommu_dev_enable/disable_feature()
-Date: Fri, 28 Feb 2025 17:26:31 +0800
-Message-ID: <20250228092631.3425464-13-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250228092631.3425464-1-baolu.lu@linux.intel.com>
-References: <20250228092631.3425464-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1740734810; c=relaxed/simple;
+	bh=kmNRUDi63hoq1y/R979Fz7vtxyOlpOhEMURK3Cge2yY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TE8t6A0q8EF+1bAiySEVzrZPvWjfoS3fuFy6uGgTumKonHb6Fln1QF43YdULGHA1EAb5LoCDKvZ3hAFsOlp3fvnUC4Wh3Oi+FLyT1o6eEFZofdHscy4UTuBKCu0FWMgc1vuC8M8mYi2I6ASlJrj530+flcGi5CrRrpxfxJvB7iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaKK/NBw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031A7C4CED6;
+	Fri, 28 Feb 2025 09:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740734810;
+	bh=kmNRUDi63hoq1y/R979Fz7vtxyOlpOhEMURK3Cge2yY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BaKK/NBwdo88Afyx9Hd5lt5ZhktyVBK5rK3FiEDNihfSDT+E1exaPmE3kv3vEKSob
+	 R5hRdWaIoq9DqeXWdGe7Qn51baP+M4E2DuN0n5VHSmOvRbguoOii7GDmY8Pzf/AWfj
+	 XNrHjGMMx8+a+7r6m53ikg3z/WuwaNoq6xkXI1nZnoJfMXjdScIBaYcPZ3EMIqtDKH
+	 KbiTochLI+h3TkWYwXxtH2b77ww8NuAbXeE1yDpi+FUsh5x5LjT6sBY/6s8EdhZ5iN
+	 YVobQev5BF5Bcr4SsqVmvQV7CDAJ+zLxKtukW4R6UVtEVjijiz2ywUuvkkOQUMA2nt
+	 Ez5RFXH2btGVA==
+Date: Fri, 28 Feb 2025 10:26:35 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
+	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
+	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
+Subject: Re: [PATCH v6 0/5] x86/cpufeatures: Automatically generate required
+ and disabled feature masks
+Message-ID: <Z8GBS81JWP7dl5s2@gmail.com>
+References: <20250228082338.73859-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228082338.73859-1-xin@zytor.com>
 
-No external drivers use these interfaces anymore. Furthermore, no existing
-iommu drivers implement anything in the callbacks. Remove them to avoid
-dead code.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
----
- drivers/iommu/amd/iommu.c                   | 32 -------------------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 34 ---------------------
- drivers/iommu/intel/iommu.c                 | 25 ---------------
- drivers/iommu/iommu.c                       | 32 -------------------
- include/linux/iommu.h                       | 28 -----------------
- 5 files changed, 151 deletions(-)
+* Xin Li (Intel) <xin@zytor.com> wrote:
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index e3653bdfcd7d..8d74afa552fb 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2983,36 +2983,6 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
- 	.read_and_clear_dirty = amd_iommu_read_and_clear_dirty,
- };
- 
--static int amd_iommu_dev_enable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
--static int amd_iommu_dev_disable_feature(struct device *dev,
--					 enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
- 	.blocked_domain = &blocked_domain,
-@@ -3026,8 +2996,6 @@ const struct iommu_ops amd_iommu_ops = {
- 	.get_resv_regions = amd_iommu_get_resv_regions,
- 	.is_attach_deferred = amd_iommu_is_attach_deferred,
- 	.def_domain_type = amd_iommu_def_domain_type,
--	.dev_enable_feat = amd_iommu_dev_enable_feature,
--	.dev_disable_feat = amd_iommu_dev_disable_feature,
- 	.page_response = amd_iommu_page_response,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= amd_iommu_attach_device,
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 3a2faf4fdd09..31500e25c4a5 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3620,38 +3620,6 @@ static void arm_smmu_get_resv_regions(struct device *dev,
- 	iommu_dma_get_resv_regions(dev, head);
- }
- 
--static int arm_smmu_dev_enable_feature(struct device *dev,
--				       enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -ENODEV;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
--static int arm_smmu_dev_disable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -EINVAL;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
- /*
-  * HiSilicon PCIe tune and trace device can be used to trace TLP headers on the
-  * PCIe link and save the data to memory by DMA. The hardware is restricted to
-@@ -3684,8 +3652,6 @@ static struct iommu_ops arm_smmu_ops = {
- 	.device_group		= arm_smmu_device_group,
- 	.of_xlate		= arm_smmu_of_xlate,
- 	.get_resv_regions	= arm_smmu_get_resv_regions,
--	.dev_enable_feat	= arm_smmu_dev_enable_feature,
--	.dev_disable_feat	= arm_smmu_dev_disable_feature,
- 	.page_response		= arm_smmu_page_response,
- 	.def_domain_type	= arm_smmu_def_domain_type,
- 	.viommu_alloc		= arm_vsmmu_alloc,
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 872391896430..2b43dcc29663 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3941,29 +3941,6 @@ void intel_iommu_disable_iopf(struct device *dev)
- 	iopf_queue_remove_device(iommu->iopf_queue, dev);
- }
- 
--static int
--intel_iommu_dev_enable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -ENODEV;
--	}
--}
--
--static int
--intel_iommu_dev_disable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--
--	default:
--		return -ENODEV;
--	}
--}
--
- static bool intel_iommu_is_attach_deferred(struct device *dev)
- {
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
-@@ -4408,8 +4385,6 @@ const struct iommu_ops intel_iommu_ops = {
- 	.release_device		= intel_iommu_release_device,
- 	.get_resv_regions	= intel_iommu_get_resv_regions,
- 	.device_group		= intel_iommu_device_group,
--	.dev_enable_feat	= intel_iommu_dev_enable_feat,
--	.dev_disable_feat	= intel_iommu_dev_disable_feat,
- 	.is_attach_deferred	= intel_iommu_is_attach_deferred,
- 	.def_domain_type	= device_def_domain_type,
- 	.pgsize_bitmap		= SZ_4K,
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 60aed01e54f2..e19c04304b03 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2877,38 +2877,6 @@ int iommu_fwspec_add_ids(struct device *dev, const u32 *ids, int num_ids)
- }
- EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
- 
--/*
-- * Per device IOMMU features.
-- */
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_enable_feat)
--			return ops->dev_enable_feat(dev, feat);
--	}
--
--	return -ENODEV;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_enable_feature);
--
--/*
-- * The device drivers should do the necessary cleanups before calling this.
-- */
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_disable_feat)
--			return ops->dev_disable_feat(dev, feat);
--	}
--
--	return -EBUSY;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
--
- /**
-  * iommu_setup_default_domain - Set the default_domain for the group
-  * @group: Group to change
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 1d0dde49168d..127f99acab5f 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -301,16 +301,6 @@ struct iommu_iort_rmr_data {
- 	u32 num_sids;
- };
- 
--/**
-- * enum iommu_dev_features - Per device IOMMU features
-- * @IOMMU_DEV_FEAT_IOPF: I/O Page Faults such as PRI or Stall.
-- *
-- * Device drivers enable a feature using iommu_dev_enable_feature().
-- */
--enum iommu_dev_features {
--	IOMMU_DEV_FEAT_IOPF,
--};
--
- #define IOMMU_NO_PASID	(0U) /* Reserved for DMA w/o PASID */
- #define IOMMU_FIRST_GLOBAL_PASID	(1U) /*starting range for allocation */
- #define IOMMU_PASID_INVALID	(-1U)
-@@ -630,9 +620,6 @@ struct iommu_ops {
- 	bool (*is_attach_deferred)(struct device *dev);
- 
- 	/* Per device IOMMU features */
--	int (*dev_enable_feat)(struct device *dev, enum iommu_dev_features f);
--	int (*dev_disable_feat)(struct device *dev, enum iommu_dev_features f);
--
- 	void (*page_response)(struct device *dev, struct iopf_fault *evt,
- 			      struct iommu_page_response *msg);
- 
-@@ -1102,9 +1089,6 @@ void dev_iommu_priv_set(struct device *dev, void *priv);
- extern struct mutex iommu_probe_device_lock;
- int iommu_probe_device(struct device *dev);
- 
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
--
- int iommu_device_use_default_domain(struct device *dev);
- void iommu_device_unuse_default_domain(struct device *dev);
- 
-@@ -1393,18 +1377,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
- 	return -ENODEV;
- }
- 
--static inline int
--iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
--static inline int
--iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
- static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
- {
- 	return NULL;
--- 
-2.43.0
+> The x86 build process first generates required and disabled feature
+> masks based on current build config, and then uses these generated
+> masks to compile the source code.  When a CPU feature is not enabled
+> in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
+> flag, i.e., DISABLE_FRED, needs to be properly defined and added to
+> a specific disabled CPU features mask in <asm/disabled-features.h>,
+> as the following patch does:
+> https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
+> As a result, the FRED feature bit is surely cleared in the generated
+> kernel binary when CONFIG_X86_FRED=n.
+> 
+> Recently there is another case to repeat the same exercise for the
+> AMD SEV-SNP CPU feature:
+> https://lore.kernel.org/all/20240126041126.1927228-2-michael.roth@amd.com/.
+> https://lore.kernel.org/all/20240126041126.1927228-23-michael.roth@amd.com/.
+> 
+> It was one thing when there were four of CPU feature masks, but with
+> over 20 it is going to cause mistakes, e.g.,
+> https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1-b33c8d6db618@suse.com/.
+> 
+> We want to eliminate the stupidly repeated exercise to manually assign
+> features to CPU feature words through introducing an AWK script to
+> automatically generate a header with required and disabled CPU feature
+> masks based on current build config, and this patch set does that.
+> 
+> Link to v5:
+> https://lore.kernel.org/lkml/20250106070727.3211006-1-xin@zytor.com/
+> 
+> 
+> H. Peter Anvin (Intel) (3):
+>   x86/cpufeatures: Rename X86_CMPXCHG64 to X86_CX8
+>   x86/cpufeatures: Add {required,disabled} feature configs
+>   x86/cpufeatures: Generate a feature mask header based on build config
+> 
+> Xin Li (Intel) (2):
+>   x86/cpufeatures: Remove {disabled,required}-features.h
+>   x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
 
+>  24 files changed, 320 insertions(+), 634 deletions(-)
+
+Very nice!
+
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+
+Thanks,
+
+	Ingo
 
