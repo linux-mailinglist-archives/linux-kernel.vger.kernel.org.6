@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-538813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2BBA49D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:25:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3594A49D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E9E189935F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFB933AB99E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD742702BF;
-	Fri, 28 Feb 2025 15:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492191EF39F;
+	Fri, 28 Feb 2025 15:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="drmekr33"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BHu5xBdm"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667C1EF389;
-	Fri, 28 Feb 2025 15:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F291EF38F;
+	Fri, 28 Feb 2025 15:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740756277; cv=none; b=rwp+9Naf77fuTxLNcn3zR+shgtZOU2KtAfAbgV8v98KtdzIPm6U2tmr/dt8WCkHr6dqGb+HRODXMSJwcSQqFdfn9ZlZVkctHCKR6veXuEa5zrfcqoICMG4hBV3yONrUw5jr1EAjTPycp4ZY0P25mQTz9Jb5B2v2UYD2tGWT2mgM=
+	t=1740756320; cv=none; b=K2aFtMbjnJRWKjukkxcSeN2IuCpTbOJ2I2wtxP780YDgqubq/ZO0wHI9t2ol3+bLr16B4efujmdm8ZgCcbZXwqt417CIDN56bQyYXSW2SYZhuUpuOTe+Vw7ZtD9aFTRRUPpSHb1uFKeKaJilHr8Z/j+hDe5xqECAIKWTVuAWK+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740756277; c=relaxed/simple;
-	bh=fdHTrCQaf2WzOLBugDNFz6q3/+1PV3s2MWhFiZNu8XM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=uoISdNXrho/S1q6mRyXXd+OtFGcfrJJ8yzJIbu80GRn0uoYTp+tQugpcERECtDoK1YvEb+InKBmSxnFqoHq3tG3yMV2dTeR6ZfVz5DLiDzkHtIoPwzW0XN/nieiyyRa/yjg0O2WyTmMLQglHHbJ7PyJnS65YlPpJBA2uZ+6EUeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=drmekr33; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXHQx011045;
-	Fri, 28 Feb 2025 15:24:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YmeFxvI2yR6UVdzo02dmsTmlBlfgTFLRHjuSM9wlVnU=; b=drmekr33e4XmpAmW
-	cv3Q/ofRggDSZweRvqclJzhHIcH056c0rJv+ajgKQ0ebJ9YoDi31lBYp3YcmI2Y7
-	QIlewOMcA/AL9etvEB4ku2/JlNlcziC+hLJhSOOxhxVUhuwjkFVMuxHV8bLa5hTN
-	Nz4Cs3rvZhp5bFwWDtWv8Mm3Ybh2xCTPENbhuXHq/gpShoeOTJ2jg7WLRMxhNryt
-	vOKUHu3qeqAg6FbwTdurAh3C3rw1IZHg9Ko5PYl9cMKb5kuGreeUamlBIysDCv3U
-	eBgRhusfKsvOc+VGHzQ/7JHeqrkK0g+dLugGshNgjvU5mQC497ULLMa9gQwZbKON
-	Od/ssg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prk9tse-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 15:24:18 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SFOHfh025285
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 15:24:17 GMT
-Received: from [10.253.33.252] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Feb
- 2025 07:24:10 -0800
-Message-ID: <36fbefff-a985-4aba-8085-4a6e139b88ba@quicinc.com>
-Date: Fri, 28 Feb 2025 23:24:07 +0800
+	s=arc-20240116; t=1740756320; c=relaxed/simple;
+	bh=mUhcBeFz2G0AqMEg/aSARHZz8N8xLvWlhvTeO9kMMBk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EwsX0EdLBZkhsyjj9V4U9vsxf8yrH4XvlIGaylIgkx45CHkvVpeY80s+9ujq9ZdEHgNH7yRYciyjRX4BHd64gkclDGkf++Xl/mVZVdsOYbMs36itqD14dc9NiZYB71YcA6z6E3yEFuEWFGq5xutwYIhA1AthJF+IpDM4ORTdgls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BHu5xBdm; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740756319; x=1772292319;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mUhcBeFz2G0AqMEg/aSARHZz8N8xLvWlhvTeO9kMMBk=;
+  b=BHu5xBdmVAR4/9FJWH5i7F1dhgFSxPt6aA+8IU5RZNZxVbCmmfuMecr8
+   Q1HoWIO9WtnT5CkRuzmaJIPZr3VIaLf9Qw702+QHRXdqf+kLw1K6jymlk
+   zCtRvUU6vh48Td6KOZ1oRj5ng2uWo/1Xpobd9C18G4W2QMfg03L4s+g9j
+   ZhkMtG8nAgXvaKn5HnJnotJqw9iiLsqQgMB0sIcbv2zOdYRl3EWTNXjcf
+   3UjUvyny6J2A2wPVdPGKM4Acrdi0CmQ25mThRKa1m3zVASUCjX0BRBHI+
+   xO3s1bhs6byNekdGCMHfrCwuM4hkjLFcvTKEaw+41L24yaxSYDoNVB1dt
+   A==;
+X-CSE-ConnectionGUID: YRQSNli+QiSyLIXFC1GTlQ==
+X-CSE-MsgGUID: 7UExDHXCTZuMclqioX3IKw==
+X-IronPort-AV: E=Sophos;i="6.13,322,1732604400"; 
+   d="scan'208";a="42415299"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2025 08:24:15 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 28 Feb 2025 08:23:54 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 28 Feb 2025 08:23:54 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <wim@linux-watchdog.org>, <linux@roeck-us.net>
+CC: <vkoul@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>, <linux-watchdog@vger.kernel.org>, Ryan Wanner
+	<Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 0/2] Add System Components for Microchip SAMA7D65 SoC
+Date: Fri, 28 Feb 2025 08:24:09 -0700
+Message-ID: <cover.1740675317.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jie Luo <quic_luoj@quicinc.com>
-Subject: Re: [PATCH net-next v3 06/14] net: ethernet: qualcomm: Initialize the
- PPE scheduler settings
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
-        Suruchi Agarwal
-	<quic_suruchia@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook
-	<kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
-        <john@phrozen.org>
-References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
- <20250209-qcom_ipq_ppe-v3-6-453ea18d3271@quicinc.com>
- <f8d30195-1ee9-42f2-be82-819c7f7bd219@lunn.ch>
- <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
- <d0cf941b-db9b-451c-904f-468ffb11e2f7@lunn.ch>
-Content-Language: en-US
-In-Reply-To: <d0cf941b-db9b-451c-904f-468ffb11e2f7@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: alDS7pMMps2ZgDfqbsolwbFnKzYXLJQj
-X-Proofpoint-ORIG-GUID: alDS7pMMps2ZgDfqbsolwbFnKzYXLJQj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_04,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=701 malwarescore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502280112
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
+This patch set adds support for the following systems in the SAMA7D65
+SoC:
+- DMAs
+- Chip ID
+- Dual watchdog timer.
 
-On 2/20/2025 11:12 PM, Andrew Lunn wrote:
->> As a general rule, we have tried to keep the data structure definition
->> accurately mirror the hardware table design, for easier understanding
->> and debug ability of the code.
-> 
-> Could you point me at the datasheet which describes the table?
-> 
-> 	Andrew
+Changes v1 -> v2:
+- Removed pathes that have been accepted and applied from v1 [1].
+- Corrected missing newline in dt-binding.
+- Corrected mismatch in watchdog dt node.
 
-Hi Andrew,
-We are under process of requesting our Ops team to release the datasheet
-of IPQ9574. This may take a few days.
+1) https://lore.kernel.org/linux-arm-kernel/09eafe54-c262-4db4-b11d-0644a1f90a14@tuxon.dev/
 
-In the mean time, let me provide the description of this register table
-to clarify.
+Ryan Wanner (2):
+  dt-bindings: watchdog: sama5d4-wdt: Add sama7d65-wdt
+  ARM: dts: microchip: sama7d65: Add watchdog for sama7d65
 
-Bits	Field Name	Access	Description
-31:12	Reserve		RW	Reserved field
-11:8	SEC_PORT_NUM	RW	Second port ID
-7	Reserve		RW	Reserved field
-6	SEC_PORT_VALID	RW	Second port valid or not
-5	VALID		RW	Valid or not
-4	DIR		RW	Egress or Ingress
-3:0	PORT_NUM	RW	Port ID
+ .../devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml    | 4 ++++
+ arch/arm/boot/dts/microchip/sama7d65.dtsi                  | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-Thanks.
+-- 
+2.43.0
+
 
