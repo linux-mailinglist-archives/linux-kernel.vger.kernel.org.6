@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel+bounces-537719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926DAA48FC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:42:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFC8A48FCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DE916EB74
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4231887499
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21AE187553;
-	Fri, 28 Feb 2025 03:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="crF3S1sj"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A2114B07A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B86191F72;
+	Fri, 28 Feb 2025 03:42:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BE319048A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713970; cv=none; b=OdXOs2d0eajJuhpqOccPkweyi1eovzhPZSSlOsWTwxM9HIYHusmZElg1ilcV9WLEHqu9/EfioVFw66Av9OeXQximrlVLeWGaOGlopubsAMHkrvmm41Zu1HBMNhIxyPJI2RcNgbVs5XgfQfDp5LZ45FXT8IHeaPKEHXWPYdaXYcw=
+	t=1740714174; cv=none; b=nhgLHw/Xz2AKe8xeS2cfOYCJrQvs8vf3QU0sCavQRemjk1YNQob4iMrHyJ4k+qJkzxRyB9EV/qCbZYJI47JZHYpDGKpieACyWIk5fx3yp1pt12ZxFvMEnybINWnaRuhvw6zttupDVUntkmcd99HB9ko2gcM1ppDrh8eA7t+F7hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713970; c=relaxed/simple;
-	bh=Odggy2B8m+JPewILF2GfggI0o70pWnGrVS9G9ry6AHE=;
+	s=arc-20240116; t=1740714174; c=relaxed/simple;
+	bh=TCBAffphN5Vd25xw6/XwG6SOhGD9Ey9T0bjna/8WfEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1QnFc98stEi0rIlcbXcWux5IyWqs24sb68+bieFEEOLU/uqVXBwYaxNMgZbqrjPhEwJ5zZ7VKWtXddotRcgS9AkOncnnmTO0r2BNIlPlxcfzecGIZJezeK9Z/NzkJepfnNLNii1IYpuqNkSsgb6hSFztefffn1GR7ka7T3rd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=crF3S1sj; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740713964; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=QVfILHvRitpyM5pVXiaXZIFJCp09+H8y0qF8KXX/yFs=;
-	b=crF3S1sjIAHblXIY8kmXM9WN6nc0KI4iQNWn794rN/e90HNcl2g8FeZ+9SlWDIlWsgEdLGSz8VV9k2qUQDFCeW0Mc93ndGhFKQuOr9bVLuyfxCeCD/+1vNtfA/fDre4vz3yLky/ion/buFfcaGHPo9OjUAh7ro6e5fh0ocNvxrM=
-Received: from 30.221.80.187(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQO30ym_1740713961 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Feb 2025 11:39:22 +0800
-Message-ID: <7367bb73-3358-4925-ac9d-e2b90904d15a@linux.alibaba.com>
-Date: Fri, 28 Feb 2025 11:39:21 +0800
+	 In-Reply-To:Content-Type; b=oz73Pk6VBCL8DkkyjYCua+Y1NNlrABczGHZp62I3pJp4mWFNPMxPm8ci5618t+g/ww/ZqlFGZEhrvQgjwVdOjzvzPkbn5S1tpxv0MdJHFzmDm4/ly7T/M3tlx0rurrQiE26SzJpKKuU3Z8jmwy86Bu13kAiOj00JScbOjKWo53Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8747A12FC;
+	Thu, 27 Feb 2025 19:43:06 -0800 (PST)
+Received: from [10.163.40.184] (unknown [10.163.40.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6F033F6A8;
+	Thu, 27 Feb 2025 19:42:45 -0800 (PST)
+Message-ID: <ccbe751d-9022-4c66-b894-73b3788f7050@arm.com>
+Date: Fri, 28 Feb 2025 09:12:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,162 +41,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Softlockup when test shmem swapout-swapin and compaction
-To: Zi Yan <ziy@nvidia.com>, Liu Shixin <liushixin2@huawei.com>
-Cc: linux-mm@kvack.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Lance Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
- <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
- <acbfc1da-f743-b11b-191c-ce6e476f1709@huawei.com>
- <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V2 0/8] arm64/mm: Drop PXD_TABLE_BIT
+To: arm-kernel@lists.infradead.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250221044227.1145393-1-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250221044227.1145393-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/2/28 07:43, Zi Yan wrote:
-> On 27 Feb 2025, at 2:04, Liu Shixin wrote:
+On 2/21/25 10:12, Anshuman Khandual wrote:
+> Remove the PXX_TABLE_BIT definitions and instead rely on PXX_TYPE_MASK,
+> PXX_TYPE_SECT and PXX_TYPE_TABLE. The latter versions are more abstract
+> and also include the PTE_VALID bit.
 > 
->> On 2025/2/26 15:22, Baolin Wang wrote:
->>> Add Zi.
->>>
->>> On 2025/2/26 15:03, Liu Shixin wrote:
->>>> Hi all,
->>>>
->>>> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
->>>>
->>>>    watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
->>>>    Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
->>>>    CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
->>>>    Tainted: [L]=SOFTLOCKUP
->>>>    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->>>>    RIP: 0010:xas_load+0x5d/0xc0
->>>>    Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
->>>>    RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
->>>>    RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
->>>>    RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
->>>>    RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
->>>>    R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
->>>>    R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
->>>>    FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
->>>>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>    CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
->>>>    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>    PKRU: 55555554
->>>>    Call Trace:
->>>>     <IRQ>
->>>>     ? watchdog_timer_fn+0x1c9/0x250
->>>>     ? __pfx_watchdog_timer_fn+0x10/0x10
->>>>     ? __hrtimer_run_queues+0x10e/0x250
->>>>     ? hrtimer_interrupt+0xfb/0x240
->>>>     ? __sysvec_apic_timer_interrupt+0x4e/0xe0
->>>>     ? sysvec_apic_timer_interrupt+0x68/0x90
->>>>     </IRQ>
->>>>     <TASK>
->>>>     ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>     ? xas_load+0x5d/0xc0
->>>>     xas_find+0x153/0x1a0
->>>>     find_get_entries+0x73/0x280
->>>>     shmem_undo_range+0x1fc/0x640
->>>>     shmem_evict_inode+0x109/0x270
->>>>     evict+0x107/0x240
->>>>     ? fsnotify_destroy_marks+0x25/0x180
->>>>     ? _atomic_dec_and_lock+0x35/0x50
->>>>     __dentry_kill+0x71/0x190
->>>>     dput+0xd1/0x190
->>>>     __fput+0x128/0x2a0
->>>>     task_work_run+0x57/0x90
->>>>     syscall_exit_to_user_mode+0x1cb/0x1e0
->>>>     do_syscall_64+0x67/0x170
->>>>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>    RIP: 0033:0x7fd95776eb8b
->>>>
->>>> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
->>>> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
->>>> compaction which is necessary for reproduction,  although without a clear why.
->>>>
->>>> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
->>>> reproduction program. The reproduction program consists of three parts:
->>>>    1. A process constantly changes the status of shmem large folio by these interfaces:
->>>>           /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
->>>>    2. A process constantly echo 1 > /proc/sys/vm/compact_memory
->>>>    3. A process constantly alloc/free/swapout/swapin shmem large folios.
->>>>
->>>> I'm not sure whether the first process is necessary but the second and third are. In addition,
->>>> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
->>>> so I guess the problem is in migration.
->>>>
->>>> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
->>>> since I have confirmed this porblem still existed after merge the fixed patch.
->>>
->>> Could you check if your version includes Zi's fix[1]? Not sure if it's related to the shmem large folio split.
->>>
->>> [1] https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
->>> .
->>>
->> Already include this patch when test.
+> This abstraction is valuable for the impending D128 page table support,
+> which doesn't have a single page table bit to determine table vs block.
+> Instead it has the skip level (SKL) field, where it will consider 0 to
+> mean table and any other value to mean a block entry. So PXX_TABLE_BIT
+> therefore doesn't fit into the D128 model well, but the type fields do.
 > 
-> Hi Shixin,
+> This series applies on v6.14-rc3.
 > 
-> Can you try the diff below? It fixed my local repro.
+> Changes in V2:
 > 
-> The issue is that after Baolin’s patch, shmem folios now use high-order
-> entry, so the migration code should not update multiple xarray slots.
-
-It is not after my patches. After converting shmem to use folio, shmem 
-mapping will store large order, but during swap, the shmem large folio 
-will be split (whereas my patches allow shmem large folio swap without 
-splitting).
-
-> Hi Baolin,
+> - Changed pmd_mkhuge() and pud_mkhuge() implementation
+> - Changed pud_bad() implementation with an additional patch
 > 
-> Is your patch affecting anonymous swapping out? If yes, we can remove
-
-No.
-
-> the for loop of updating xarray in __folio_migrate_mapping().
-
-I think the issue is introduced by commit fc346d0a70a1 ("mm: migrate 
-high-order folios in swap cache correctly"), which did not handle shmem 
-folio correctly.
-
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 365c6daa8d1b..be77932596b3 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -44,6 +44,7 @@
->   #include <linux/sched/sysctl.h>
->   #include <linux/memory-tiers.h>
->   #include <linux/pagewalk.h>
-> +#include <linux/shmem_fs.h>
+> Changes in V1:
 > 
->   #include <asm/tlbflush.h>
+> https://lore.kernel.org/all/20241005123824.1366397-1-anshuman.khandual@arm.com/
 > 
-> @@ -524,7 +525,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
->   			folio_set_swapcache(newfolio);
->   			newfolio->private = folio_get_private(folio);
->   		}
-> -		entries = nr;
-> +		/* shmem now uses high-order entry */
-> +		if (folio->mapping && shmem_mapping(folio->mapping))
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Anshuman Khandual (6):
+>   KVM: arm64: ptdump: Test PMD_TYPE_MASK for block mapping
+>   arm64/ptdump: Test PMD_TYPE_MASK for block mapping
+>   arm64/mm: Clear PXX_TYPE_MASK in mk_[pmd|pud]_sect_prot()
+>   arm64/mm: Clear PXX_TYPE_MASK and set PXD_TYPE_SECT in [pmd|pud]_mkhuge()
+>   arm64/mm: Check PXD_TYPE_TABLE in [p4d|pgd]_bad()
+>   arm64/mm: Drop PXD_TABLE_BIT
+> 
+> Ryan Roberts (2):
+>   arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
+>   arm64/mm: Check pmd_table() in pmd_trans_huge()
+> 
+>  arch/arm64/include/asm/pgtable-hwdef.h |  5 --
+>  arch/arm64/include/asm/pgtable.h       | 65 ++++++++++++++++++--------
+>  arch/arm64/kvm/ptdump.c                |  4 +-
+>  arch/arm64/mm/ptdump.c                 |  4 +-
+>  4 files changed, 50 insertions(+), 28 deletions(-)
+> 
 
-Nit: we've already checked the 'mapping', and we can simplify it to 
-'shmem_mapping(mapping)'.
-
-> +			entries = 1;
-> +		else
-> +			entries = nr;
->   	} else {
->   		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
->   		entries = 1;
-
-Good catch. The fix look good to me. Thanks.
+Gentle ping, just wondering any updates on the series.
 
