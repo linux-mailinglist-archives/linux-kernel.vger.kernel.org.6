@@ -1,125 +1,230 @@
-Return-Path: <linux-kernel+bounces-538034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3CFA493CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:43:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A8AA493D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1920C3ACB6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C20E188FAB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4412528FA;
-	Fri, 28 Feb 2025 08:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28ED25333D;
+	Fri, 28 Feb 2025 08:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oSdMfQuN"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fEn/lsau"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B0D250C0F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773FB8F6B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732185; cv=none; b=N65SiO5x0LwAp2IHebL7qwbWcrMBxzizwgaD6SGe3hVqY9AudEPA1xEhnPlmAsbKJGuCKd3KO3GagASw24t76rVlE+bhInxoHXjGCHenrCibt50JOO4H86uqcMYRTPrG67R6kzDH6J/79DjA7NfG1+IUUzBd0CDv3X6qlOMAuqA=
+	t=1740732240; cv=none; b=uu4iVh4ktNAXnSzij64eWm6obCWx9UKP0Ek+pXarG+zPIlokMATVtVpoBYWA2SEfjO8F0bP44EQ4LR4xOxMMrE64m+8BP07xZnQXfEfiiki73VtQLJbM04RSaaj5rpUUXm0R4A04ftKW7ZsPA1p8EPC5ZXvZYPTaHR1A9JHUk/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732185; c=relaxed/simple;
-	bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0RwDVXkz+GFQAiCYuDKZUptZUv3W4wGyoHzv5U4mlqv88PqHqIVYllPuedp5QnXdL9HWhyls5pUOmOdXVRaEuwWB9gw70wZTh0pwe1bqv3Ok9763/WbIz+X1tuisNEpXeT2EzizcUptRlJvatAcqi8sQ6qotlDPZeQR9rSNzcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oSdMfQuN; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a28bf1baaso18223541fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:43:02 -0800 (PST)
+	s=arc-20240116; t=1740732240; c=relaxed/simple;
+	bh=feDBNntw9yX3Vh3kglgn6q5F5/6MdMcMdpEBHjC7Lfw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kwcPh4dXS75HvUNbUxG/8Nh6M05XFssAJVNJ6s4ugLc1gTlf5wR5jfyohy37M1zPcxgqRm0jAFGDZNmhYVjNfA8H4og8NAt9Q1oii9Wm+WP8lIClSclO8AgkygIhotFR3uto8u9OVrQCrcquwafUgjJ3YKzPu8EK8ZMz4BFpprU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fEn/lsau; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so11924095e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740732181; x=1741336981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
-        b=oSdMfQuNDVth3wWTaRks3YxgepFFHPDjNkiaa3KJatMYwcWQAR4kShm7/1kihKx3Uc
-         IYddF7UJXGd8MQ6IK6ZquCshGaxMQfF8t9WC/txbXPp8hLkt4L77st87XQKUjLuuQRkZ
-         i5s0aQV9uXLhEyWMhTe7r48iwEEmMD/It67fscjfMFqTQm0kvzwoBOZk9xrBF55MFdAP
-         s5nEJpWgXdSRNY+aNt2ssFeDFavjWsU5G637ujmJkjT9li1hqqQB22nL8cUYTmvpGLeu
-         p3wiNScWHxT92sredgOHkX2alyUwJ5Hm4YdMxExD2CCqbABPAo6qnq5vUByuVovDB+Ev
-         AVEQ==
+        d=google.com; s=20230601; t=1740732237; x=1741337037; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCQhmEkI20WCXSrDNmwHS83kJOrfCigX2ZIIywReQD0=;
+        b=fEn/lsau+ZAFBqaSNEZ7wDpeYUZG7tfzEnuOffhaOZaRxb/000T2LedOouTSl2SRaT
+         vcSVn899WYdPG/1gjA76ETy2bzlDfnaFHfWD9JFeje4zBvPAlEAdLUQftmyT2erNZpqN
+         qU+hElQrJFvvD/G461l/VN+EmCDb9U/zqFdga+1cGeEwLOjKH/wAC9XT3xz2fDqnnGS8
+         bV5Soq3nACzcVd6Zb3Y2fptLE0q7x9czgltEhKfovziqp4xPFWQUN6qwWXjhXe8D2ouq
+         +JGnRygloQyVfaYtCjCzuZRaKEeI6/fhLm7YHDr+8+xxpTLyfbXAX/EAOiIhXx4cnlKH
+         BO5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740732181; x=1741336981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
-        b=Toy4TB7WfBHZ9sGFf8wwZQcki0+ZzVX1QK7maciruHIGPGXhl9VGETx28qlyQ9Tp4c
-         2kYkHE3CMIA/iHzp3MlfUHepu8zmYsh5ZdESFKD5+flv5U9rn4qDYI98U337zY7mYKMX
-         dzy+LU7ME5F8cG5NQRWc3MBlds2La4V/9b33Rp3vQtafep0qJ/GnI5cVmqBUUlPMvlgZ
-         x0XQoeU1qv0ot07aNB3okc/3UjWt2bEHP+fUONKcHmnuwGA3HCRzN/pf6ZO7mYQmEELf
-         uP58HOStjyRVIrR6P+yPn0l0djBamkLCGgtmtjPpX4CZxZ/O9PW3Ke5WAKEyFr776KDT
-         i1Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj0lTISTNKE/jAdckyJtW3DHQ3r4DydQ2ugZLwuMbcgDQ9wl+rcVQv+ZsYv+21cofEp+mCm3aYvF8SlJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3yIlP/9Ay8ccst+TF7Lt/Udo4CDXBXNf+WnuhinXYsr4NmjIz
-	mpMgLWZEUO6iWJdzOjqGZjOkzITz5FRbUAXZUwqThmkvb2pHcPwz1xm4/B/0HgMNhQ6HO4fv7UV
-	Vf+0RM7ObSxQUgzpwNLe0mhy4SdeC/zU2tKN6ujVdLfzVR41x
-X-Gm-Gg: ASbGnct4R+urb2suCPiSR5UqNdeVXdRJPqd6enSTsqnM12GhVKduxka2/LOpLh2RVlW
-	SjF5IGoNYyjynPqu60xQOwAtgCLXiGIToEJS/YTAktbL/vAKDmw6g/uCMEzjbA793KdDyfusltb
-	dfUcw6mzY=
-X-Google-Smtp-Source: AGHT+IFnojnEU0ZTQwdhFM8EZ+VzCTRW5WfJ+IRPsOQXruxW3ArvgVeYghHEs1cbMHob7yzBli3HbDb90ZQPHvgxO/A=
-X-Received: by 2002:a05:6512:4021:b0:545:f9c:a825 with SMTP id
- 2adb3069b0e04-5494c312576mr703967e87.2.1740732181275; Fri, 28 Feb 2025
- 00:43:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740732237; x=1741337037;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCQhmEkI20WCXSrDNmwHS83kJOrfCigX2ZIIywReQD0=;
+        b=bFPadXUHxB9XNpA3yERtg8l2ThreiDM33gv8nNek5P7xFb02u1v+DCt01ilce/fBP2
+         Q3CHL1PsK32SvO+1+34XZ2ksgnsuT6R7aiGs3IwTFe5ItDc7rtNe78QGxdCl2wqF1MP8
+         /nQFQyefqs50hdFp/7DJ0RZDSvzT75xnIzi2h6LkprMpG5W9Ty4OPSJURCvTsUwHsrAu
+         UNsuJIHhyTdPzLDo2Usk1RUGlqAHCm+7cEC5/4Mj8/SM1SMr3m2TUgn8CBTtFtM2z9xf
+         1zjMTz1xGQw9KEw4XsR3z6UdlKg2ETpCYnP+Ivcu6iKf6XRcfOSfyp2Zk14TWiUzPgXY
+         2gGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLMpebN5JkYHGpSUkH8ykNkdTWihAQU5PlDRdwNHbdIqdUwADDgxp+gqI/tseVEc/ZfRATIPgM3RRLw+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ5qU6npgPYIyuen9Aew6UF+8SGdavJ3DODMHMbkzodJDb+Bpd
+	+xVED4o1i93YOc9plinVgS8relnZJqW4uuVCyHMD0U2b33ziSc8iEfdU/jLt8tQPYwCqt2DRH1C
+	AxAxYGfQjYw==
+X-Google-Smtp-Source: AGHT+IEJq+5yWOZHmvu9HxjEv9KlFOODJE3Hve16zw/QnOkwbeaxyl/H0lwa63WLmmVB/J+lwRxrJvVq5cm/Ag==
+X-Received: from wmsd7.prod.google.com ([2002:a05:600c:3ac7:b0:439:850b:8080])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4693:b0:439:a1f2:50a3 with SMTP id 5b1f17b1804b1-43ba66dfd93mr17960705e9.4.1740732236929;
+ Fri, 28 Feb 2025 00:43:56 -0800 (PST)
+Date: Fri, 28 Feb 2025 08:43:55 +0000
+In-Reply-To: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250227-tlmm-test-v1-1-d18877b4a5db@oss.qualcomm.com>
-In-Reply-To: <20250227-tlmm-test-v1-1-d18877b4a5db@oss.qualcomm.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:42:50 +0100
-X-Gm-Features: AQ5f1Jq7kGENpEdbNLcHzj870r4DoaeXZChk9tcwrlm_rnPAZaKo-WGL4SgZr-A
-Message-ID: <CACRpkdZP4u+LwhfRYnjhD6bkoBAG7AHX3SnF=5R8fc72BDradg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Add test case for TLMM interrupt handling
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Mime-Version: 1.0
+References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250228084355.2061899-1-jackmanb@google.com>
+Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
+From: Brendan Jackman <jackmanb@google.com>
+To: bp@alien8.de
+Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com, 
+	jackmanb@google.com, yosryahmed@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterz@infradead.org, 
+	seanjc@google.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 9:33=E2=80=AFPM Bjorn Andersson
-<bjorn.andersson@oss.qualcomm.com> wrote:
+> > OK, sounds like I need to rewrite this explanation! It's only been
 
-> While looking at the X1E PDC GPIO interrupts it became clear that we're
-> lacking a convenient and accessible way to validate if the TLMM
-> interrupt code performing as expected.
->
-> This introduces a kunit-based "hack" that relies on pin bias/pull
-> configuration to tickle the interrupt logic in non-connected pins to
-> allow us to evaluate that an expected number of interrupts are
-> delivered.
->
-> The bias/pull configuration is done with mmio accesses directly from the
-> test code, to avoid having to programmatically acquire and drive the
-> pinconf interface for the test pin. This limits the scalability of the
-> code to targets with a particular register layout, but serves our needs
-> for now.
->
-> The pin to be used for testing is specified by the tester using the
-> "tlmm-test.gpio" module parameter.
->
-> Worth mentioning is that some of the test cases currently fails for
-> GPIOs that is not backed by PDC (i.e. "non-wakeup" GPIOs), as lingering
-> latched interrupt state is being delivered at IRQ request time.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > read before by people who already knew how this thing worked so this
+> > might take a few attempts to make it clear.
+> > 
+> > Maybe the best way to make it clear is to explain this with reference
+> > to KVM. At a super high level, That looks like:
+> > 
+> > ioctl(KVM_RUN) {
+> >     enter_from_user_mode()
+> >     while !need_userspace_handling() {
+> >         asi_enter();  // part 1
+> >         vmenter();  // part 2
+> >         asi_relax(); // part 3
+> >     }
+> >     asi _exit(); // part 4b
+> >     exit_to_user_mode()
+> > }
+> > 
+> > So part 4a is just referring to continuation of the loop.
+> > 
+> > This explanation was written when that was the only user of this API
+> > so it was probably clearer, now we have userspace it seems a bit odd.
+> > 
+> > With my pseudocode above, does it make more sense? If so I'll try to
+> > think of a better way to explain it.
+> 
+> Well, it is still confusing. I would expect to see:
+> 
+> ioctl(KVM_RUN) {
+>     enter_from_user_mode()
+>     while !need_userspace_handling() {
+>         asi_enter();  // part 1
+>         vmenter();  // part 2
+>         asi_exit(); // part 3
+>     }
+>     asi_switch(); // part 4b
+>     exit_to_user_mode()
+> }
+> 
+> Because then it is ballanced: you enter the restricted address space, do stuff
+> and then you exit it without switching address space. But then you need to
+> switch address space so you have to do asi_exit or asi_switch or wnatnot. And
+> that's still unbalanced.
+> 
+> So from *only* looking at the usage, it'd be a lot more balanced if all calls
+> were paired:
+> 
+> ioctl(KVM_RUN) {
+>     enter_from_user_mode()
+>     asi_switch_to();			<-------+
+>     while !need_userspace_handling() {		|
+>         asi_enter();  // part 1		<---+	|
+>         vmenter();  // part 2		    |	|
+>         asi_exit(); // part 3		<---+	|
+>     }						|
+>     asi_switch_back(); // part 4b	<-------+
+>     exit_to_user_mode()
+> }
+> 
+> (look at me doing ascii paintint :-P)
+> 
+> Naming is awful but it should illustrate what I mean:
+> 
+> 	asi_switch_to
+> 	  asi_enter
+> 	  asi_exit
+> 	asi_switch_back
+> 
+> Does that make more sense?
 
-That looks like a super dangerous footgun to shoot oneself in the
-foot with.
+Yeah I see what you mean. I think the issues are:
 
-But the usecase is 100% valid and I see why you need this.
+1. We're mixing up two different aspects in the API:
 
-Patch applied!
+   a. Starting and finishing "critical sections" (i.e. the region
+      between asi_enter() and asi_relax())
 
-Yours,
-Linus Walleij
+   b. Actually triggering address space transitions.
+
+2. There is a fundamental asymmetry at play here: asi_enter() and
+   asi_exit() can both be NOPs (when we're already in the relevant
+   address space), and asi_enter() being a NOP is really the _whole
+   point of ASI_.
+
+   The ideal world is where asi_exit() is very very rare, so
+   asi_enter() is almost always a NOP.
+
+So we could disentangle part 1 by just rejigging things as you suggest,
+and I think the naming would be like:
+
+asi_enter
+  asi_start_critical
+  asi_end_critical
+asi_exit
+
+But the issue with that is that asi_start_critical() _must_ imply
+asi_enter() (otherwise if we get an NMI between asi_enter() and
+asi_start_critical(), and that causes a #PF, we will start the
+critical section in the wrong address space and ASI won't do its job).
+So, we are somewhat forced to mix up a. and b. from above.
+
+BTW, there is another thing complicating this picture a little: ASI
+"clients" (really just meaning KVM code at this point) are not not
+really supposed to care at all about the actual address space, the fact
+that they currently have to call asi_exit() in part 4b is just a
+temporary thing to simplify the initial implementation. It has a
+performance cost (not enormous, serious KVM platforms try pretty hard
+to avoid returning to user space, but it does still matter) so
+Google's internal version has already got rid of it and that's where I
+expect this thing to evolve too. But for now it just lets us keep
+things simple since e.g. we never have to think about context
+switching in the restricted address space.
+
+With that in mind, what if it looked like this:
+
+ioctl(KVM_RUN) {
+    enter_from_user_mode()
+    while !need_userspace_handling()
+	// This implies asi_enter(), but this code "doesn't care"
+	// about that.
+        asi_start_critical();
+        vmenter();
+        asi_end_critical();
+    }
+    // TODO: This is temporary, it should not be needed.
+    asi_exit();
+    exit_to_user_mode()
+}
+
+Once the asi_exit() call disappears, it will be symmetrical from the
+"client API"'s point of view. And while we still mix up address space
+switching with critical section boundaries, the address space
+switching is "just an implementation detail" and not really visible as
+part of the API.
+
+> Documentation/process/email-clients.rst
+
+I have now setup Mutt. But, for now I am replying with plan vim +
+git-send-email, because I also sent this RFC to a ridiculous CC list
+(I just blindly used the get_maintainers.pl output, I don't know why I
+thought that was a reasonable approach) and it turns out this is the
+easiest way to trim it in a reply! Hopefully I can get the headers
+right...
 
