@@ -1,57 +1,65 @@
-Return-Path: <linux-kernel+bounces-539636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B18BA4A6BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:56:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161FDA4A6C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5913BC013
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B40189021D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285081DF96C;
-	Fri, 28 Feb 2025 23:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9901DF96F;
+	Fri, 28 Feb 2025 23:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iZpP9uaQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDCS2Rhg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55261DED57;
-	Fri, 28 Feb 2025 23:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189D23F37E;
+	Fri, 28 Feb 2025 23:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740786963; cv=none; b=RAE9Tqe9gDSR0IjFqlvTlCfsab8x0qYAm+m37qJtEsScCg/z6kSy1gpmWVepDbyJw05umSZ2v0M+OW0/FgTpYUVl8o0o5kkWx3+SVryo3QjL5uS4QwFL0LgER07ZXL9h0lLhve6LkO5dTpKkrUM6b9E18GKMnUsyDr7p2sCsBeo=
+	t=1740787148; cv=none; b=M6xoUsEIwU+JLug5UOTdZWg5XEJUuHypMUFlsk9AGIWIJpFQLpDNv4Lh5F8vMCkMOIpffKXtJB+vlH/QXW4D1yMBcY8C5Ic1bVMRMx7I7yRbXJ4fSjhguG5WpKOJVYtY9+0IWCvST8fWth90VSBPi6QRa4/kgEjUuJPf3kdRLyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740786963; c=relaxed/simple;
-	bh=jTCdtpRYTRHsMVAmFB/azfiEkPNOYIqmEoX6aj1pEFA=;
+	s=arc-20240116; t=1740787148; c=relaxed/simple;
+	bh=/WRkCTtYXh1ybFkJl4MN82rEMEE7Dqv4CfKN/PIu86I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Avxg7vQ5pdAv8O6SkqnEbKzq0zbY+evpvdYL8kuI92RQlzIXnB8NskHsLx7XmTqtFcEx3zBywFioaKes8GhPS8hkJ86TTIXs2fhJgq8lFd5MLhA+EL3S3b/RFodCoOPYKQAainIQWYhSAGu5TDWpkz5O3AXg1g6d2qpRuNeRCso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iZpP9uaQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E5DB18BE;
-	Sat,  1 Mar 2025 00:54:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740786870;
-	bh=jTCdtpRYTRHsMVAmFB/azfiEkPNOYIqmEoX6aj1pEFA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdbdnkaZgbE3K35n5I49dYB7+UArWddNPL+fnIlprpQLIUns1cPAdDGWx9jSjrt35r5rU7FaxVxjn5qbrysu6fGYExSzQvyAWTF7YQITY27ORE3bjxohY7abZWgqDJQ7r4PW8fGERPIiS8OxD6qSL2G9/Rnu4xiDGQp7EXIGMMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDCS2Rhg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19EFC4CED6;
+	Fri, 28 Feb 2025 23:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740787147;
+	bh=/WRkCTtYXh1ybFkJl4MN82rEMEE7Dqv4CfKN/PIu86I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iZpP9uaQpR66kiiaPF92LMEb35IpeO2GD9C2KMxOyqjXlhvDV0zzctzBqODBjYvgs
-	 j0bK89QAMzr4sdPXTBsODKp1N6FM8h658nyRZ+f2f4OtK31bvcBspPHWdB3jBvIBQO
-	 3Nb82ZUj91bm+/UZTXXvHX14ztrSeIZZ7w1jeDk4=
-Date: Sat, 1 Mar 2025 01:55:39 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: rkisp1: Remove unnecessary defines
-Message-ID: <20250228235539.GG7342@pendragon.ideasonboard.com>
-References: <20250227114558.3097101-1-stefan.klug@ideasonboard.com>
- <20250227114558.3097101-4-stefan.klug@ideasonboard.com>
+	b=eDCS2RhgJ3XeJ8PwYBssIw14ioLDPLOzgCLtMmdCB/92m8kx9w8Xp7CE3M4Eupfuj
+	 VKOWY/Ow6UH5d1+LhjbIfYE9i34Czsxav+qaG1ZQoE2pFApwgI0qx9jn0kuYEgh65f
+	 82zvZkbSPPv6OEc1rMc6XuHQMkSrw3QQeIJLekaaAOwXHQmDWl25oJyuCFcUqi7qKQ
+	 D9nCvcLpu0i9lKiHSzg6+f1yo+FL8vhiKtJuVsELx1ZayO4iHc5fCGuoc23KvEuwLp
+	 lerDaBOk4jTCbct9GOtKbzOppoGw+K6wdIOCeFWJC4FSHxLwQOKdnvwu9vFrklrHLs
+	 4xnA4cN4clrFw==
+Date: Fri, 28 Feb 2025 15:59:05 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf build: fix in-tree build
+Message-ID: <Z8JNybh8i7OKMyhb@google.com>
+References: <20250124-perf-fix-intree-build-v1-1-485dd7a855e4@bootlin.com>
+ <Z8Iz2JPpqer00aZ_@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,52 +68,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250227114558.3097101-4-stefan.klug@ideasonboard.com>
+In-Reply-To: <Z8Iz2JPpqer00aZ_@ghost>
 
-Hi Stefan,
+Hello,
 
-Thank you for the patch.
+On Fri, Feb 28, 2025 at 02:08:24PM -0800, Charlie Jenkins wrote:
+> On Fri, Jan 24, 2025 at 02:06:08PM +0100, Luca Ceresoli wrote:
+> > Building perf in-tree is broken after commit 890a1961c812 ("perf tools:
+> > Create source symlink in perf object dir") which added a 'source' symlink
+> > in the output dir pointing to the source dir.
+> > 
+> > With in-tree builds, the added 'SOURCE = ...' line is executed multiple
+> > times (I observed 2 during the build plus 2 during installation). This is a
+> > minor inefficiency, in theory not harmful because symlink creation is
+> > assumed to be idempotent. But it is not.
+> > 
+> > Considering with in-tree builds:
+> > 
+> >   srctree=/absolute/path/to/linux
+> >    OUTPUT=/absolute/path/to/linux/tools/perf
+> > 
+> > here's what happens:
+> > 
+> >  1. ln -sf $(srctree)/tools/perf $(OUTPUT)/source
+> >     -> creates /absolute/path/to/linux/tools/perf/source
+> >        link to /absolute/path/to/linux/tools/perf
+> >     => OK, that's what was intended
+> >  2. ln -sf $(srctree)/tools/perf $(OUTPUT)/source   # same command as 1
+> >     -> creates /absolute/path/to/linux/tools/perf/perf
+> >        link to /absolute/path/to/linux/tools/perf
+> >     => Not what was intended, not idempotent
+> >  3. Now the build _should_ create the 'perf' executable, but it fails
+> > 
+> > The reason is the tricky 'ln' command line. At the first invocation 'ln'
+> > uses the 1st form:
+> > 
+> >        ln [OPTION]... [-T] TARGET LINK_NAME
+> > 
+> > and creates a link to TARGET *called LINK_NAME*.
+> > 
+> > At the second invocation $(OUTPUT)/source exists, so 'ln' uses the 3rd
+> > form:
+> > 
+> >        ln [OPTION]... TARGET... DIRECTORY
+> > 
+> > and creates a link to TARGET *called TARGET* inside DIRECTORY.
+> > 
+> > Fix by adding --no-dereference to "treat LINK_NAME as a normal file if it
+> > is a symbolic link to a directory", as the manpage says.
+> > 
+> > Link: https://lore.kernel.org/all/20241125182506.38af9907@booty/
+> > Fixes: 890a1961c812 ("perf tools: Create source symlink in perf object dir")
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > ---
+> >  tools/perf/Makefile.perf | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> > index d74241a151313bd09101aabb5d765a5a0a6efc84..bbd799a0fd544db220f29d1e250a819a765d04f3 100644
+> > --- a/tools/perf/Makefile.perf
+> > +++ b/tools/perf/Makefile.perf
+> > @@ -164,7 +164,7 @@ ifneq ($(OUTPUT),)
+> >  VPATH += $(OUTPUT)
+> >  export VPATH
+> >  # create symlink to the original source
+> > -SOURCE := $(shell ln -sf $(srctree)/tools/perf $(OUTPUT)/source)
+> > +SOURCE := $(shell ln -sf --no-dereference $(srctree)/tools/perf $(OUTPUT)/source)
+> 
+> The kernel Makefile has:
+> 	$(Q)ln -fsn $(srcroot) source
+> 
+> So for parity the --no-dereference could become `n`, but it doesn't
+> really matter.
 
-On Thu, Feb 27, 2025 at 12:45:01PM +0100, Stefan Klug wrote:
-> The effect modes are not shifts but numbers which are already defined a
-> few lines above. Remove the misleading defines.
-
-s/misleading/misleading and unused/ (I didn't expect you to
-intentionally break the build, and I'm sure it would be caught by my
-build tests, but making it clear for reviewers is always nice)
+I can make the change.
 
 > 
-> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-No need to resubmit for this, I can update the commit message.
-
-> ---
->  drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h | 7 -------
->  1 file changed, 7 deletions(-)
+> >  endif
+> >  
+> >  ifeq ($(V),1)
+> > 
+> > ---
+> > base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> > change-id: 20250124-perf-fix-intree-build-fbd97f560254
+> > 
+> > Best regards,
+> > -- 
+> > Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > 
 > 
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
-> index bf0260600a19..139177db9c6d 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
-> @@ -327,13 +327,6 @@
->  #define RKISP1_CIF_IMG_EFF_CTRL_CFG_UPD			BIT(4)
->  #define RKISP1_CIF_IMG_EFF_CTRL_YCBCR_FULL		BIT(5)
->  
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_BLACKWHITE_SHIFT	0
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_NEGATIVE_SHIFT	1
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SEPIA_SHIFT	2
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_COLOR_SEL_SHIFT	3
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_EMBOSS_SHIFT	4
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SKETCH_SHIFT	5
-> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SHARPEN_SHIFT	6
->  #define RKISP1_CIF_IMG_EFF_CTRL_MODE_MASK		0xe
->  
->  /* IMG_EFF_COLOR_SEL */
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+ 
+Thanks for your review!
+Namhyung
 
--- 
-Regards,
-
-Laurent Pinchart
 
