@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-538557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC500A49A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:06:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3B6A49AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57572188A1B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBC63AD168
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0CB26B96C;
-	Fri, 28 Feb 2025 13:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2691C268686;
+	Fri, 28 Feb 2025 13:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WNURMclR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QZ6EtNDu"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27302F41
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D644C77
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747990; cv=none; b=m3OLeora4/THTheoQgj80k1H/nUozzJDJHyUPCVgbjGOa/7SlpoKyOHEPyx9B4YCFM9j0jqOIdgYlvFH8zjgYO5MTaG/CYklHjTCJjIrbEH8vnQfvj2ejQ+bbiQF+MzE7mGJovfLAXImT/RTrDyL9hXS3aRBUUQ65viL0hFflFY=
+	t=1740750596; cv=none; b=VCctdf+iT+cgR7YIz3uiE+7uveZ4oHcw3ZfEuiZfTH6yZcunbmp1JKCnMdrMor64Zu143vHQzERJLB7nyIUlbusc1j3dFDqtm4xh333yofpWepu8TnLh47S6r3gIxqAPtxnx13ZdZ4e576PHHGz4YkJegOmi+2hmKCnzI4pd7C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747990; c=relaxed/simple;
-	bh=+GsZ2x5HDjoLoOW+IXY8Q0+AMdGD72Srex7vp56yPeY=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UvUOMaJhm/xEIhEkRDFtw8cVkbalbR2+H3xfMk3A+A1F9IZBuTwJGwnX7icsPLVY9YuFADDkDExMMTJ7vV4+e6NujbY/ugNwb6b96/X8Y0y7QfCPLr1EeFb8jh76U+p+ajvz6hoGn02ogKp8nusSGcRy8CR4ymjpOca2oMhoFIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WNURMclR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740747987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXONDGo6ihZ0iPAG84+CFGzh14N9ncmYlb6e6RA5ajA=;
-	b=WNURMclRK/elCk10UKIXY71Bnt7gwcf6uyTgVTy6LK4XZcCcRIdb5NYSMMk2+cvA6y1/gE
-	JFF6UiSLT6wfuYEttzu1DE+1brgapqZF5GugSMOTH4Opww2e2ihQoVvOEGYQP0oxI1e03j
-	UR1K/SBp+toD84iDhXxZN6QRDtmVJJM=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-zDEgWlCGO2m6qXc1xIjODQ-1; Fri, 28 Feb 2025 08:06:26 -0500
-X-MC-Unique: zDEgWlCGO2m6qXc1xIjODQ-1
-X-Mimecast-MFC-AGG-ID: zDEgWlCGO2m6qXc1xIjODQ_1740747985
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-54958006b81so13673e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:06:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740747985; x=1741352785;
-        h=mime-version:message-id:date:references:in-reply-to:subject:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXONDGo6ihZ0iPAG84+CFGzh14N9ncmYlb6e6RA5ajA=;
-        b=hh9LJNBUA+SF5WhlmBKS+aDYh1SJUPzWsG+cNidKxEnSlg09YWOmvDoDewPNuI/oM2
-         +9hyqlJxbuTi7Pf0xDO5knNQDG73c85CSLr9+txWcyX+vnBp1IrPKunI2rXIfv9EXk2o
-         9tvO2mtzf/Hq5EJv6oW3OQNT5nEFP3cMi1Cfa0cNOt++qQA7Bq4hNLGg3RaoqO8RGu/g
-         qfMTwZ/tXRXh4SXthz52NGjYXAz6uo7xKQS7UL2AaiblhtUNTGqDK/fVtORLv90ozJ4A
-         2xAJAI+sMr1D/2qs5LhLHnaS+RYAcmqNvwEDt+V+JuSl41EUrarkZMPvCberjRo9EzIU
-         +/7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVotB20SmNtP+QmQUeqJ326PotruQXWQNUcT4bLiKiHdFDbXzEiapk2b7HW2p9PMBbCQqKSZ0nYfhD/4Vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGVc3pKTLfZIgF4kWyxHQZyc5uyBsQru+YyvQwX4hl3PNSwpGz
-	yP2L759I6KB7T2IQT7Wr4zkKt7Ii7Q9n6uSetshi0Xrt2ZTBVO4wi5VM/V9zpZNE8RNtJu7HSfv
-	NyGOLGi3/wUZZE1BK8PoGqnIwzmB6C46MbY5idkIJpBVySs7g5QTwjDJ996t6CQ==
-X-Gm-Gg: ASbGncvHpmoGm2bhJ7gDs6f3TS4t9OW4PWWapYovb6LEa+P/E8VcPSRFWa/jXguwtYN
-	ACCky/azzC4LycXvRVt5lckon1gh7ShZipJTn690EyAYdF3yhchaA6zl3IsXMermi+L5E0BPB55
-	vqSF1TT0xfPXV5Fic/0fUFLiieaO+ZeaKPJ9CPppWOvU6F95ExYxVY13TFAQtRJ3Jt4oISSSnT1
-	NjYMYm8IXST96BhFJugiX+9VSWPPh592pSyrhFjxpMI+1lbKFFEUWP/yVyGznwGq2lYzdRGMS/y
-	HbR8gGYCSAMG
-X-Received: by 2002:a05:6512:693:b0:545:d35:6be2 with SMTP id 2adb3069b0e04-5494c37b691mr1519554e87.34.1740747984675;
-        Fri, 28 Feb 2025 05:06:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHXotuHxxDRGbkDTRI047dsn/XMby3ovfUFDsR8yccG6wwU82nc0E5sR/kWuqacEJVRyen1nA==
-X-Received: by 2002:a05:6512:693:b0:545:d35:6be2 with SMTP id 2adb3069b0e04-5494c37b691mr1519511e87.34.1740747984188;
-        Fri, 28 Feb 2025 05:06:24 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494cb3352dsm274562e87.184.2025.02.28.05.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:06:23 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 970B818B69EB; Fri, 28 Feb 2025 14:06:22 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Qingfang Deng <dqfext@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Michal Ostrowski <mostrows@earthlink.net>, James
- Chapman <jchapman@katalix.com>, Simon Horman <horms@kernel.org>,
- linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next v3] ppp: use IFF_NO_QUEUE in virtual
- interfaces
-In-Reply-To: <20250228100730.670587-1-dqfext@gmail.com>
-References: <20250228100730.670587-1-dqfext@gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 28 Feb 2025 14:06:22 +0100
-Message-ID: <87bjum1anl.fsf@toke.dk>
+	s=arc-20240116; t=1740750596; c=relaxed/simple;
+	bh=xaiJfSSXzempBoG76V3ZZy7lTjCZJFyH0OT5znOLuxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=bG0uM95a2DIqf8xHMwVUuRGP792l2lL1uh+Eq6Wc5vnzMFf+ro/fWV6U7hLmGqfuP+L/GKhjRO6lIDwKMBJf8CTK7P8utN1P3M+kxhTg5HjN+MWUje8mTgC9gp5A00fF8pLB1y3TMwMqZ8Ozurkzi+WbsFLpVAkrkhYs9Ajbg4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QZ6EtNDu; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250228134951epoutp04a6f8f606383af71fe0ea0044950836ce~oY3C7ze990691806918epoutp04W
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:49:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250228134951epoutp04a6f8f606383af71fe0ea0044950836ce~oY3C7ze990691806918epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740750591;
+	bh=KWrW6K5KY4VwtGtgMBYnlUCfIdhY3BPVikVb7QzkEPg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=QZ6EtNDu8eo+B+yqVIeiRE+4aErRtpbKIuwzbB7py1y/kFCU8iWMXNr9A+IBHJh0H
+	 z+MPzrN1WBnv8Sj69zIpPXHSBI2dy6B41IZrXu/xZFFCsqpJ7wWSuD1z6Jq93k3aFq
+	 rEXEhTIA5lOYhUjxarQ8+xArE7A/0mt0XYU21+BY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20250228134951epcas5p1eb9181e2986d4f7a690b83532146b4ce~oY3CfvdVr0292402924epcas5p1d;
+	Fri, 28 Feb 2025 13:49:51 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z48hs1Ps7z4x9Pp; Fri, 28 Feb
+	2025 13:49:49 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B2.26.20052.DFEB1C76; Fri, 28 Feb 2025 22:49:49 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250228134948epcas5p136027a8eb0e984f9188016011411c13f~oY2-y4Frp2260422604epcas5p1j;
+	Fri, 28 Feb 2025 13:49:48 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250228134948epsmtrp255413db93fbe68d59d56721ad2058f41~oY2-yQ6jf2720827208epsmtrp2h;
+	Fri, 28 Feb 2025 13:49:48 +0000 (GMT)
+X-AuditID: b6c32a49-3d20270000004e54-44-67c1befd7b2b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CB.D4.23488.CFEB1C76; Fri, 28 Feb 2025 22:49:48 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.6]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250228134947epsmtip28d31f8cbcbdd85693b6b0742a5f7495d~oY2-E6cLU2327223272epsmtip20;
+	Fri, 28 Feb 2025 13:49:47 +0000 (GMT)
+From: Anindya Sundar Gayen <anindya.sg@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net
+Cc: anindya.sg@samsung.com
+Subject: [PATCH] watchdog: hpwdt: fixed a spelling error
+Date: Fri, 28 Feb 2025 18:37:13 +0530
+Message-Id: <20250228130713.6911-1-anindya.sg@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7bCmpu7ffQfTDf7t5rTY0biR3eLyrjls
+	FjfW7WO3eLLwDJMDi8fO7w3sHn1bVjF6fN4kF8AclW2TkZqYklqkkJqXnJ+SmZduq+QdHO8c
+	b2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA7RNSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKr
+	lFqQklNgUqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdsefweeaCDewVC5beYW5gnMfWxcjJISFg
+	IvHz6DPWLkYuDiGB3YwSizpXMkE4nxgl3l9+xQLhfGOUOLl9GwtMy4s/j6ASexkl/q3YC+U0
+	M0ks/ncTaDAHB5uAsUTbg0qQBhGBMInZZw4xg9jMAlIST/f+ZgexhQUsJO42ngKzWQRUJTb8
+	fgVm8wpYSXxqaWWHWCYvsXrDAWaQ+RIC7ewS6z5dY4JIuEg8XNbNDGELS7w6vgWqQUri87u9
+	YDdICORLLDmbDRHOkTiw/AFUq73EgStzWEBKmAU0Jdbv0oc4jU+i9/cTJohOXomONiEIU0Vi
+	YgcLzOzZP3ZA7fSQ2HtjC1hcSCBW4s25DewTGGVmIcxcwMi4ilEytaA4Nz212LTAMC+1HB4z
+	yfm5mxjBqUbLcwfj3Qcf9A4xMnEwHmKU4GBWEuGdFXsgXYg3JbGyKrUoP76oNCe1+BCjKTCQ
+	JjJLiSbnA5NdXkm8oYmlgYmZmZmJpbGZoZI4b/POlnQhgfTEktTs1NSC1CKYPiYOTqkGpoWH
+	lcPsfr97cf84u7ziny9WE/fNnz/r48Rb5u6ht7vdVwofiH4gEvS+uTkhWS5n5uWLD2RXzWLr
+	0dtgmOtj7Bm4wvfr8W8spYH87ZoL+IXuXM2YfNXrchKv6w62TMlPxttzFrNluaQv0v4s7lt5
+	OWj2/Q/zMx9t6t72/0rTu2j23UUT7s3bdCuow3Y5px5XzpvclA0yvZEefh1HenSz7k9b85SZ
+	nXud1/W0sLkfzZzFGu6oxJ04f/FDSk4s03b7vIXPJAoezWU4kb72K1uhrEKwx1omns9Zzd6+
+	n24yeOYdE0nYUdSuu59dqMoizi80vj193d2KnJvNblePKfFoqSYY25b6znLVYp/mabZWiaU4
+	I9FQi7moOBEALc7pEr4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCJMWRmVeSWpSXmKPExsWy7bCSvO6ffQfTDea0i1nsaNzIbnF51xw2
+	ixvr9rFbPFl4hsmBxWPn9wZ2j74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4MrYc/g8c8EG9ooF
+	S+8wNzDOY+ti5OSQEDCRePHnEQuILSSwm1Fi3RR/iLiUxO3/nYwQtrDEyn/P2bsYuYBqGpkk
+	fi/8ztzFyMHBJmAs0fagEqRGRCBC4mXHdWYQmxmo9+ne3+wgtrCAhcTdxlNgNouAqsSG36/A
+	bF4BK4lPLa3sEPPlJVZvOMA8gZFnASPDKkbJ1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT83E2M
+	4IDQ0tjB+O5bk/4hRiYOxkOMEhzMSiK8s2IPpAvxpiRWVqUW5ccXleakFh9ilOZgURLnXWkY
+	kS4kkJ5YkpqdmlqQWgSTZeLglGpg0jdgnH9ee59OTt+VM7u0p9UmBmYobH0Qf3nSs5BLfQEy
+	N1+U9wiHT4mUm3Vtsl5e+8ZLqtvNzuyd8vXb88xvnTwFF7yNvgc8DNxy5+WDmryYkmuOvi3/
+	C9gXKx6cs8Xz9YXb0Xn3tJ5MVz2jkJTfxa2/xNEx63Pg9j+MKzOYbEVtHdsY3tTPfCdzvOHI
+	pUsb2x82HLZStny6dt0xxdjoPxssV+2z8Ga0Tt1/yMvPYOv7G1Vnr/9dy5jcID9Dy3BDRmuO
+	6IZrgb6WQvfdlu0VledOjfvgsHDytLcpwnftnfsfh61MkD8ovSripP9CV9YiwYyML1aP21eH
+	ftC1d1Nft5xfq5bzjeO9jVw1Na51SizFGYmGWsxFxYkAzSmJdHcCAAA=
+X-CMS-MailID: 20250228134948epcas5p136027a8eb0e984f9188016011411c13f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250228134948epcas5p136027a8eb0e984f9188016011411c13f
+References: <CGME20250228134948epcas5p136027a8eb0e984f9188016011411c13f@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Qingfang Deng <dqfext@gmail.com> writes:
+Corrected a spelling mistake in the hpwdt driver to improve code
+readability. No functional changes were made.
 
-> For PPPoE, PPTP, and PPPoL2TP, the start_xmit() function directly
-> forwards packets to the underlying network stack and never returns
-> anything other than 1. So these interfaces do not require a qdisc,
-> and the IFF_NO_QUEUE flag should be set.
->
-> Introduces a direct_xmit flag in struct ppp_channel to indicate when
-> IFF_NO_QUEUE should be applied. The flag is set in ppp_connect_channel()
-> for relevant protocols.
->
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> ---
-> v3:
->   Move direct_xmit above the unused "latency" member to avoid
->   confusion. Should I remove it instead?
+Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
+---
+ drivers/watchdog/hpwdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If it really is unused, I think removing it is better to remove it,
-yeah :)
-
--Toke
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index ae30e394d176..5909da9a7eae 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -52,7 +52,7 @@ static const struct pci_device_id hpwdt_devices[] = {
+ MODULE_DEVICE_TABLE(pci, hpwdt_devices);
+ 
+ static const struct pci_device_id hpwdt_blacklist[] = {
+-	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_HP, 0x3306, PCI_VENDOR_ID_HP, 0x1979) }, /* auxilary iLO */
++	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_HP, 0x3306, PCI_VENDOR_ID_HP, 0x1979) }, /* auxiliary iLO */
+ 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_HP, 0x3306, PCI_VENDOR_ID_HP_3PAR, 0x0289) },  /* CL */
+ 	{0},			/* terminate list */
+ };
+-- 
+2.17.1
 
 
