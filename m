@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-537644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5528A48EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:30:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A37FA48EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3CE3B5FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABDAF188C318
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669F317A2FA;
-	Fri, 28 Feb 2025 02:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED9A7081F;
+	Fri, 28 Feb 2025 02:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qrOcqSsl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dExi75r6"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55F615746F;
-	Fri, 28 Feb 2025 02:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07D4276D38
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740709807; cv=none; b=uPlDJH316tCojAS+XSS38qv+HOTanabodRZjcMdOe6HkoUVoyfhOpsRjebDLczZzdvTGoVrWE8zIxKOTBrRvjY/mD7MRxPhpRWs4Z7lYpX2LmFjG968JR3OCrjpHvivYTzZF54A5389WWbxjlIx0qroN4iotqbm/awD/XFRoc4E=
+	t=1740709867; cv=none; b=Z7+u6AM3ywY2Vf5EDjlFHzL4FAeRwGM2cLRGUjgOxMefyp/LZPONcHZhhaJxNFynCLGQhvhy9i+/HrwWBxNzhOtEJiC1tjv4VBOouSP7rQybipeLpl72ues8qnAzVKH2YjOsGxgmbQnitSNhcrcXqHN9yIXKGkTOD/g7AoWFa0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740709807; c=relaxed/simple;
-	bh=R1nVNqPAm2ZQTpo0udxcMXFYQ3FxPBlyYe7zlDbN1CM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=S8YJMdEKZGEg1eWflUWT3UzG9Ew4WF4zFRvaRcur3oQjlrslf+qlUdSykgCT7IVn543XrpuzTp//tXtpA/zoFDQvhQ0GcxVX4UQpFHJ9et9Oy5tP/HdFpebXa4cZfyCVwCOTKlcN6rzlQhzqJ+ubLKq/k12SoRtgVLNmFEMzdGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qrOcqSsl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740709796;
-	bh=7Y1Eyx2SKE0LWaPQrAdnGMrDRPwivGsytrjHgeNsiuU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qrOcqSslPq9eDeBqOuIRzSXCdOm0WeWOQDSgYE+u8ThcSfFToMhAu2B899mfEc7CW
-	 uTtBLI9JQBRfU/eLrmleYaHm1H63yC62z6HCx2zQuqawcTgQIcsk5fVH/atqwNIWcy
-	 7KcqRwYeQvFRFioambpoPh5f/T7vWRCmO2NGjeijwLzZUDmEiDCD5RHhFQzeOghc9E
-	 o1UhH9TyNiqJOqPvBdZdVTUpkHwGOSuHfACEzXF41AeB8fpeZN9WoSWigRlyfkDkaa
-	 W0j0Sy7WF2rA/VTX/mu8qMAhEJUqNO4wByotdCO4GLXq0mNgGglCCbAQ7LDRETD4mO
-	 sMcFJPIXz8c2w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3scN0LlGz4wbx;
-	Fri, 28 Feb 2025 13:29:55 +1100 (AEDT)
-Date: Fri, 28 Feb 2025 13:29:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Christian Brauner <brauner@kernel.org>
-Cc: Networking <netdev@vger.kernel.org>, Lin Feng <linf@wangsu.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Stefano Jordhani <sjordhani@gmail.com>
-Subject: linux-next: manual merge of the net-next tree with the vfs-brauner
- tree
-Message-ID: <20250228132953.78a2b788@canb.auug.org.au>
+	s=arc-20240116; t=1740709867; c=relaxed/simple;
+	bh=CajDnPXnEEJRA735qE5+L7uuscbI+D22NlEy0SQnEig=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AP0kWzMQtPOJVsrUCc9v5hYELsDjzVCOW32Hp/+zKdqqVZt0JGtLT4Zx13y2Qugm5+EBifaOaGbYmenVoWRTeVXSjXgrD3YuKQkNruylWokri9AoexITAgqz9zILxdFh1JwOfAaBQkrrPTwwxq3LzZYx0nA9nZOqgPRjhzxf45s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=dExi75r6; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1740709859;
+	bh=CajDnPXnEEJRA735qE5+L7uuscbI+D22NlEy0SQnEig=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dExi75r6e3SIJcmQwT6cH1M7/LM5Rk/+nekjzXVqAF+0oZp86Ss6M5JEslTFYUjDg
+	 PPsoOl7XezYERI0QBlEH6y0ZU/TP3930DIafs3IV0IgnasZR++1IHm0XTRNazLjWiT
+	 iTHdmI+nB+Lvd+//atNAzwhIzGeVK0thUQshni5uAd6oUa+Gh8CRgA5rEo3qyVS+VW
+	 NgOBImEMgtlIOZofw0Gq9fTmPtyeNf68oZlbVZGmeuwYDFyDxpBob9DnqH3TSkHlnJ
+	 7FYh04ofXk4RjIHwNpB9WHCmOfRoP5/AuDhxFwWTL/GQdPaLZFLORLpmw3hXQ/SH5O
+	 2f3V4cT5/9epw==
+Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Z3sdb426hz10GY;
+	Thu, 27 Feb 2025 21:30:59 -0500 (EST)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Olivier Dion <odion@efficios.com>,
+	linux-mm@kvack.org
+Subject: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
+Date: Thu, 27 Feb 2025 21:30:41 -0500
+Message-Id: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z5uY4b5hMjhQlEAu.MxNqqn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/z5uY4b5hMjhQlEAu.MxNqqn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series introduces SKSM, a new page deduplication ABI,
+aiming to fix the limitations inherent to the KSM ABI.
 
-Hi all,
+The implementation is simple enough: SKSM is implemented in about 100
+LOC compared to 2.5k LOC for KSM (on top of the common KSM helpers).
 
-Today's linux-next merge of the net-next tree got a conflict in:
+This is sent as a proof of concept. It applies on top of v6.13.
 
-  fs/eventpoll.c
+Feedback is welcome!
 
-between commit:
+Mathieu
 
-  d3a194d95fc8 ("epoll: simplify ep_busy_loop by removing always 0 argument=
-")
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Olivier Dion <odion@efficios.com>
+Cc: linux-mm@kvack.org
 
-from the vfs-brauner tree and commit:
+Mathieu Desnoyers (2):
+  mm: Introduce SKSM: Synchronous Kernel Samepage Merging
+  selftests/kskm: Introduce SKSM basic test
 
-  b9d752105e5f ("net: use napi_id_valid helper")
+ include/linux/ksm.h                       |   4 +
+ include/linux/mm_types.h                  |   7 +
+ include/linux/page-flags.h                |  42 ++++
+ include/linux/sksm.h                      |  27 +++
+ include/uapi/asm-generic/mman-common.h    |   2 +
+ mm/Kconfig                                |   5 +
+ mm/Makefile                               |   1 +
+ mm/ksm-common.h                           | 228 ++++++++++++++++++++++
+ mm/ksm.c                                  | 219 +--------------------
+ mm/madvise.c                              |   6 +
+ mm/memory.c                               |   2 +
+ mm/page_alloc.c                           |   3 +
+ mm/sksm.c                                 | 190 ++++++++++++++++++
+ tools/testing/selftests/sksm/.gitignore   |   2 +
+ tools/testing/selftests/sksm/Makefile     |  14 ++
+ tools/testing/selftests/sksm/basic_test.c | 217 ++++++++++++++++++++
+ 16 files changed, 751 insertions(+), 218 deletions(-)
+ create mode 100644 include/linux/sksm.h
+ create mode 100644 mm/ksm-common.h
+ create mode 100644 mm/sksm.c
+ create mode 100644 tools/testing/selftests/sksm/.gitignore
+ create mode 100644 tools/testing/selftests/sksm/Makefile
+ create mode 100644 tools/testing/selftests/sksm/basic_test.c
 
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/eventpoll.c
-index 9b06a0ab9c32,2fecf66661e9..000000000000
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@@ -447,8 -447,8 +447,8 @@@ static bool ep_busy_loop(struct eventpo
-  	if (!budget)
-  		budget =3D BUSY_POLL_BUDGET;
- =20
-- 	if (napi_id >=3D MIN_NAPI_ID && ep_busy_loop_on(ep)) {
-+ 	if (napi_id_valid(napi_id) && ep_busy_loop_on(ep)) {
- -		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
- +		napi_busy_loop(napi_id, ep_busy_loop_end,
-  			       ep, prefer_busy_poll, budget);
-  		if (ep_events_available(ep))
-  			return true;
-
---Sig_/z5uY4b5hMjhQlEAu.MxNqqn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfBH6EACgkQAVBC80lX
-0Gy+Swf+KR6UyPmPrOnBSQ2BPjkwcU/awAAp/4iFzUq3qoW9mb4Zd4F6Zdc0xC9s
-/yNERQ8VVYZ8QSSKL7XXqF3+IzcDE8/da8LYXI/C60kghX7Z7MCllSbaFE/HWo6g
-XOIbprF3FhulDD5veanRvHPsRZSrwSCn4OhoKl4yPVXd9THg7XmhVuuQD+3tsTJt
-kQmlhZdcrP1Bcx0J1Nt2ZlC7QlDBsW1FGAWKMXB5lR26Z+8Sn/PeuoEwvczdIPwk
-rz0AN3UE80R53ACqSDMXVYR2IUs0jttQ0kaCVSWMkEVztDzisoomC5vD2QOjOliu
-clwMusRaJ4vUclKPLeah/jN6pzsz0A==
-=a4Yz
------END PGP SIGNATURE-----
-
---Sig_/z5uY4b5hMjhQlEAu.MxNqqn--
+-- 
+2.39.5
 
