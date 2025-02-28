@@ -1,135 +1,88 @@
-Return-Path: <linux-kernel+bounces-537649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E555A48EAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:34:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC79A48EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AAC16E82F
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AD7B7A863B
 	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC5512CD8B;
-	Fri, 28 Feb 2025 02:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579D145A18;
+	Fri, 28 Feb 2025 02:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpuBWD59"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmMjitD8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2152B276D38;
-	Fri, 28 Feb 2025 02:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381A5276D38;
+	Fri, 28 Feb 2025 02:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710091; cv=none; b=eI+QrG0rZU6zQ8SfrLe5dohPoRO//t+midxP6f5vvOpzwCauwkCZtmkWR57zkAxR//p+EkMOlOiIj3TfvbDz4an0D4NvdLw1+/cHML1JTtioCS2LvBNLmnKaZMBy3E69UxZBDDrJEvXX9f9DR7Ne4Ob4EbXAYWnl97nWboiGI7U=
+	t=1740710148; cv=none; b=pHphiUm79qf18wOLIf5Ju5WY7+X8SVQJrvZUloplLQRfTv8Qe6YdoMGRNdgRuLfv7terjOEJrWUUtmd5iyWdQnrinEvtadv0YRpJtph7C7IHuoCTnZLqCJbckLOb1bgg8ay1cb8p9tTp9E3ia1fjBZNuLBta48HgnX7jsh4Os+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710091; c=relaxed/simple;
-	bh=Nwbk18fFundri4srjQgDAjVz5XdQUmMBVH2JLot1S14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgvboaelOByzTCFt1xytHynfVkXKx0PLoHN/UjFLXKyWTLidk9PbS7KX03OeVpeDIVC1jq5Dol7QIIgTgeGdsHu+7UoY61IvRHCg01zQH1W0Vxt2pDwCFDj4VXCnDZgHwujx0eaI5NILvjDbbvVuSYbN//1UBK5ydzKx38qIZ3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpuBWD59; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so10382505e9.1;
-        Thu, 27 Feb 2025 18:34:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740710088; x=1741314888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jz5+zIl8AagGesbEPzIBdJPgWyVXVv9NAUNPVVIqzBg=;
-        b=EpuBWD59BVZSNPUeuAeJTZRQI+h+ceKYlYvisRjU/Ormp+OyHHrZB/FotL1+GIiL+7
-         w5FFBUps0NdIp7/JTsNjUiujGLkqZ74IqR+wlWxhItFVEY1+em4xwkQtHXa2kNeCOkpC
-         dKp9hg88IyXzz2x5q2WywN7mtLXHvcG36M5/lHfLWYVOHb8AgwoL3/EV9Wb5tnwd11rt
-         j4sm1RuMn4/0kZQ+xvIJdUxHH03hLqYCl9HJvw4K2oMgbeFAmeSUs2L0UsqCpoAFNWmX
-         kC7GsQrlQb79IlzfrXKW5m89ETvXZPxyvtrGbbODrctmYEPrNyZlqJItPBIQVtGYnXz0
-         SnHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740710088; x=1741314888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jz5+zIl8AagGesbEPzIBdJPgWyVXVv9NAUNPVVIqzBg=;
-        b=vtBsJyskMt9u9WSuD3t3sI17LU2yTbOMapnaHwaH0gtqZLjsLp7dcSCY4H7u5pHr/P
-         62vcAGyiOJMuOW/T1E3hatr+hIwy8TY/AOmW7PTZ0tDUue5VWcgxppWU8I644lks86cp
-         bHfoyu5xn9DkmadmrU2R0dmeBdSGvR/tj5Y6FuGBX1c0NfcYkYkEtFoCt8TqnGPEMvFr
-         m6o6dZriVn5wWjMDq08qGcWCVoFJPqJxxQLTp7Y2dc7WKWp/LFB7yA3uj8LNYCoedYtE
-         j2ugdrutk2R100eV83Qvlo3dKbQnns7XWUlBS9xxiOeT4Di4V9wFhGgRFvVAkzCOXAbb
-         ATHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFjiAQiTa5vdpMLXTWIla1xNnlAmyzW8En3LULRgeUes0HrWn/omI0mzZpnX6Qb4CHYuKTxtNY/rNaX7vt@vger.kernel.org, AJvYcCWN98L40imjLmWcA/ZG1FVGDNdjxtYV0C6pg4u7E2fABPbBQJUkDKJFqAu4o0d/84EuKz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxwA48Lr7fX6Cm+IBZFdBeL59sSwt0nI0+A5h/xgFw+07ObF92
-	2Q5QYDKN5rOJXJ7qTk2DQ4H5wCKcLquD30cbQR7Owpb+ktLo7cYMws3lf5EeGkxgPV9pzrZiv8a
-	ptrqFwhR998ZPrqz5r6veFBIcS54=
-X-Gm-Gg: ASbGncvgSVHAXnJn2C+ZBejWGWSpHmIO2Y44oXJ69zOQ5fs/Y31Horp7/OJ16Lzn9P4
-	WrY9i465Sm2mopU1gcpiuIboT2SPxCvHGich+s9zlNCLwQCj7LlPa4yKcOOigCpMN7DMt14a6yW
-	x90KYjT6gznfRb6T/HBGuzJbuTb5e3soYGZyRx8IM=
-X-Google-Smtp-Source: AGHT+IH6Baum4hAFK40x7IO0UNos6RLQrjWmh/OkapqL0YPg8EroF3zxdfOukYitnN2XdNDOHCEWGhrYwXOHEv5Yj3Q=
-X-Received: by 2002:a05:6000:1883:b0:38d:c55e:ebcf with SMTP id
- ffacd0b85a97d-390eca3871fmr1043619f8f.52.1740710088129; Thu, 27 Feb 2025
- 18:34:48 -0800 (PST)
+	s=arc-20240116; t=1740710148; c=relaxed/simple;
+	bh=mPYw4QtWI6b6bDDohPnfGl05s5iuP5VCTsCxQaqOyug=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ay+k2MWQN5ApsvCrx5CE/RAY/CJdoWKRbMyHeh0RNyM7kAQbVK+QD0pfRCFimQYL2RJ6rRmgT6HcK/mdJLF/9Fs4IvbptYsXS67/g+TJVjm4vndjPC/OPnUOlB/CF4Hr4Ejylt6vkYAIfXZz9gyfyYjmDfdvylWb8T4MRO8DHb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmMjitD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E87C4CEDD;
+	Fri, 28 Feb 2025 02:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740710147;
+	bh=mPYw4QtWI6b6bDDohPnfGl05s5iuP5VCTsCxQaqOyug=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jmMjitD8MqAkQdJCrpH+yb2ZxSj8PoHtWyuVi+skqgrhC6ZsN3oeGtzNuCPWU8qav
+	 zEl4D/HDfuzf+Sa98HT0ZvZzBapAJt2XI0Kqxep7tI59wF4hCrT7LlJjTDr5AaN4aw
+	 E5ayk3NKMZfmjmREG+tHx+wqGFazG79fThpFTs4N1wdakDR+MUr/1G+A6GWdVDUbQV
+	 AdRBoZxSdGnIA9/FMnmbWDQEQkfBy8Wj5zOKDrTIp1kngbmor7OnZkbVsCi9n21JCU
+	 b5p8lEHBQ/yGgVTBkh08Zp9YGlNbDhOfVihj2w2yoNQaQ1b6Fleu1hj4yu5MEMAVJT
+	 EyQEwxqBVUQmw==
+Date: Thu, 27 Feb 2025 18:35:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu <guyinggang@loongson.cn>,
+ Feiyang Chen <chenfeiyang@loongson.cn>, Philipp Stanner
+ <pstanner@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Qing Zhang
+ <zhangqing@loongson.cn>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Henry Chen
+ <chenx97@aosc.io>
+Subject: Re: [PATCH net-next v4 1/4] stmmac: loongson: Pass correct arg to
+ PCI function
+Message-ID: <20250227183545.0848dd61@kernel.org>
+In-Reply-To: <20250226085208.97891-2-phasta@kernel.org>
+References: <20250226085208.97891-1-phasta@kernel.org>
+	<20250226085208.97891-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080648369E8A4508220133E99C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DKSgzZB5HZgYN8@slm.duckdns.org> <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
-In-Reply-To: <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 27 Feb 2025 18:34:37 -0800
-X-Gm-Features: AQ5f1JqDFWw1KvrEYoFisqNKaf9pVjsuYONBiDdIai_fqNNvX654iPKhRztOKnw
-Message-ID: <CAADnVQ+bXk3qTekjVZ7NU0TpCh4zNg1GNFL-zdW++f2=t_BT8Q@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.15 v3 3/5] sched_ext: Add
- scx_kfunc_ids_ops_context_sensitive for unified filtering of
- context-sensitive SCX kfuncs
-To: Tejun Heo <tj@kernel.org>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, 
-	Changwoo Min <changwoo@igalia.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 1:32=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Thu, Feb 27, 2025 at 09:23:20PM +0000, Juntong Deng wrote:
-> > > > + if (prog->type =3D=3D BPF_PROG_TYPE_STRUCT_OPS &&
-> > > > +     prog->aux->st_ops !=3D &bpf_sched_ext_ops)
-> > > > +         return 0;
-> > >
-> > > Why can't other struct_ops progs call scx_kfunc_ids_unlocked kfuncs?
-> > >
-> >
-> > Return 0 means allowed. So kfuncs in scx_kfunc_ids_unlocked can be
-> > called by other struct_ops programs.
->
-> Hmm... would that mean a non-sched_ext bpf prog would be able to call e.g=
-.
-> scx_bpf_dsq_insert()?
+On Wed, 26 Feb 2025 09:52:05 +0100 Philipp Stanner wrote:
+> pcim_iomap_regions() should receive the driver's name as its third
+> parameter, not the PCI device's name.
+> 
+> Define the driver name with a macro and use it at the appropriate
+> places, including pcim_iomap_regions().
+> 
+> Cc: stable@vger.kernel.org # v5.14+
+> Fixes: 30bba69d7db4 ("stmmac: pci: Add dwmac support for Loongson")
 
-Not as far as I can tell.
-scx_kfunc_ids_unlocked[] doesn't include scx_bpf_dsq_insert.
-It's part of scx_kfunc_ids_enqueue_dispatch[].
-
-So this bit in patch 3 enables it:
-+       if ((flags & SCX_OPS_KF_ENQUEUE) &&
-+           btf_id_set8_contains(&scx_kfunc_ids_enqueue_dispatch, kfunc_id)=
-)
-
-and in patch 2:
-+       [SCX_OP_IDX(enqueue)]                   =3D SCX_OPS_KF_ENQUEUE,
-
-So scx_bpf_dsq_insert() kfunc can only be called out
-of enqueue() sched-ext hook.
-
-So the restriction is still the same. afaict.
+Since you sent this as a fix (which.. yea.. I guess.. why not..)
+I'll apply it to the fixes tree. But then the other patches have 
+to wait and be reposted next Thu. The fixes are merged with net-next
+every Thu, but since this series was tagged as net-next I missed
+it in today's cross merge :(
 
