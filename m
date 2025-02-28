@@ -1,268 +1,169 @@
-Return-Path: <linux-kernel+bounces-538666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732ABA49B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:14:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BC9A49B49
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B986517520B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE45418979DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F67826FDBD;
-	Fri, 28 Feb 2025 14:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977B26E64C;
+	Fri, 28 Feb 2025 14:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmNIxWAS"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Krie4Osc"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B954D26FD9F;
-	Fri, 28 Feb 2025 14:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD80276D02
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752039; cv=none; b=d7+wbW/rogmSon4E3dvOciooBovD5htiryVC8nuZf+Qf8oDJOzp/WEDeCnbmOra/xiL0UM+ax7LIFm7bDqAT3BwYztqA5yuzgUAouFxaWvfP59oEGL+EO1q8ZkJ5EaZGxeCFdiWge7ANXXALKYiyqX76OsrbyRdTIrARc0qZsiQ=
+	t=1740751646; cv=none; b=EjQsLBnXrpA4OqMc+eiXq47m1jRC7ZR8sTYQx+2aZ+aaHAFTYjWtNfEfCm2SfmcUkdd9pzPypuDSxbcFITQS2K47YrNmHEhEQcVMc5BysalNT0XRLvS2ky2fbGI4Vt7Twcf4cstFpx4vGlnlHBdgZNWxnTZTtxg2AgzXjYBc9/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752039; c=relaxed/simple;
-	bh=+kMhd2o3Td9CwUSXlj1HJCe+jb1gtnNx4+5+2K79dys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DwTmIXPbCDCC186IkW4HbT971Y+SGrY4DMxhbn9DQEgljRLThBT9Y6bjP5CopjnlEUXApEKob2MZ7NLJezCQ+2M7wSgKrl6ikJSi7kphsUFo7ogcWzBPMyP5H62NXZWUVz8GavKEgLhGzODGbPXtNJkmBi0+e2h6srUtYFl6Tes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmNIxWAS; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so15418315e9.0;
-        Fri, 28 Feb 2025 06:13:57 -0800 (PST)
+	s=arc-20240116; t=1740751646; c=relaxed/simple;
+	bh=D6dkdQq4iA5tj9KDLaYBN/k9ZLQ40l8wYqCnUHgdGG0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RtFU2wPVQeWGj+GwqEyAJstDX7jx+LY3H1lrRhTCCzFd5zu2SiYPGFFGpWsvXvMU2KlKw4h812NYNcQFyVadcMWCro29ZBpo4GGX+pso04bXCYbKZU4W51zHeaGORaW3Rhu7Gvx3rA2M1nIUreGBkppai3SB2oBoMGFKEjoTYVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Krie4Osc; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so3366976a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:07:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740752036; x=1741356836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LQn3Jl5aIqEmUh59R7uxT0+LWMvUZhWqaT8DyQNXmoA=;
-        b=YmNIxWASHlg7ZfToYrmOArVy012zg2RcUzu/dd2TRNj5zJI5A6CmdEnJQTytuSbFq8
-         LAP5+XVsJLal+CzvgshnSRF096dAUtS2M8qnDlBx5CwnNaGr6sFN9RquWmYp8xmexXQk
-         3o5myvIMR3XkCloxNaYKA1cywExPqiTxVEzH27sBtR27diCeFL3inFGEwuWnc3L1W+gW
-         cTrBvPMyo2H1QHuweQwYmBNUC1Oyq0tpstxNYgnP6Qdw0NNfbzLakzvN7JOWR3aE0B7x
-         oTvCo6y4coFkKBWdTAUyNSFtCsHApjTq5bze40U+N0MWPWcRv2wIU2mjlD0emmXttpou
-         4oSw==
+        d=linaro.org; s=google; t=1740751642; x=1741356442; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhLZqgcaujiFhw9G1dCH5p0FiLmGyvslkaMt4uwl9Do=;
+        b=Krie4Osc0DNEinlUAyFTqNzopM5rxbSDXSx+7/YIPnjHeGkHfJbBSUjo5mkF1GKs4q
+         mIrLqoS2F1GPTgXE54L9i6ipSA6qu45Gv9Gj/Jd5dt9ragEQW6UOGl4Cxge2DF6kbgnO
+         GEd/s4zk+TUhPxnvMcjBFvEuok4LJx77ZKCXFieXx3nkrw1uiu3AnSEIUmzN37Sd4E2K
+         3L9qQIZY4xgnsISUYWuiKGDEyBTxjJEvgyRlJ+0CpB99LzLqq4iCOaMyUjaqL+OyjQE/
+         IFHVKBpQaQce3fOlqgVaoZI4DddaF1r6ZwiFzNyrWLy4L+0ZYllhH3UXHyok3o4tJpNF
+         TQEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740752036; x=1741356836;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LQn3Jl5aIqEmUh59R7uxT0+LWMvUZhWqaT8DyQNXmoA=;
-        b=u1Be59arxSJ+pm/Ej/QalXOvlWbyJZ3VYiwnrB4CEw/Iosbn0dwPL6fbVfHa2qGEB7
-         2OhvHIvXAnL3q6H/rL6QlbGad2BfECnEfw90ZwCwlW2+dCOnDd4Yfc+vstlgSnjU4S2f
-         oI1OL7LB3mBqUcBdaqYSnupJbxfkuz69Mosg0+XzNS+AYY5SSgQyMoMTp+w1ZI1NmfFQ
-         +Xg5Sb2SX/X3N5oY8YtHjixUXyxs1iannikfcewdbVPaDXtp7n2sTSGjnaAMqbvuC3h0
-         SUl+FRBp5iUxLXbpyo4VAEmNvIL8fmQW/98qt9m+gLt10xzDJ4XA0rBm+PMyVhXMlP0t
-         piVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFt4dCS/G/V+QM+7lA4a97iHTdhMtR7noFD1txYa2W4pMTyRJM4HDYozc1V+frxngxN+NRZfzGS/lq@vger.kernel.org, AJvYcCWjUdHK1NvElbL2A+MZ6D7zPFkY2rfKSTsk8ISURurDkJNGeVJjQKGBJDyesCYVwyXeffEd8MbdQNDJ@vger.kernel.org, AJvYcCX0Lxfqak/3n9IjDAQHqGI5MnJKxAek7AwPNU56HnTgV9hbrnVf/ypBP9WlwLBoibRsyoSop5T8lJLh@vger.kernel.org, AJvYcCXnUxfi2R76oj4f+zvhTqUqFHQRzlsk/t1S+WocJ4F5kY8vajbSTUdrzaUIrtpmjkxP1rU8aEdXTixVAx7z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAyXke4QTdlFDd74scBwn8Q3+U2+2zchyOe/Q0/VtUoo/qahAM
-	BAMtcvdm/uCLkfh39tGtOxXNZhuZo9gs3+bT7i727KIWaex2ild8
-X-Gm-Gg: ASbGncu0spVkIeBuyTngCntuzT26F6QPl/z49x17rg6UYgcW21glN8ShBVv5+A/Ba5l
-	lM2uR63qpfNQr6nRrMwhffhecHqoQky5bYkn2BTqmgCaUwDFgPvqqrkkmmrsObZEPbE5HhI5h4p
-	LqWTrF6F8SaVDe3qFJfvAV2YQz+9KGeIxfclqRzXP4n3Y33sSLTPNqvYAZO3nNIW0LI5v9wY3LO
-	0bxZ8Cqcb7pdpLZTmufHssYcr7Tptoj6d8Cnn/xnhBtFuTf3QuX2tk7lj29RuxY7mo1QFZk6H0b
-	9f5rMPztRWGU/lmNfkaLkA==
-X-Google-Smtp-Source: AGHT+IH6auimIyZBLMP16QM5jf72aIFJrYIzux01LERo0tlUCqJVVoHCKyq6NkhMvXsL3mkYczf2yw==
-X-Received: by 2002:a05:600c:4ecf:b0:439:9a40:aa03 with SMTP id 5b1f17b1804b1-43ba66da2b9mr28808475e9.2.1740752035757;
-        Fri, 28 Feb 2025 06:13:55 -0800 (PST)
-Received: from spiri.. ([82.77.155.83])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f75c6sm58221645e9.1.2025.02.28.06.13.53
+        d=1e100.net; s=20230601; t=1740751642; x=1741356442;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xhLZqgcaujiFhw9G1dCH5p0FiLmGyvslkaMt4uwl9Do=;
+        b=lqguEetC+r3Lc5pxVHdXLicIGBXPbIwP+Ds8ZglqL3L8XVlz7/xwIZyr8rtkMzDmeO
+         NwdOONnpdUmAzXrMRmRAkOwzi3MNsGUka8Q3+49mUW++ud7EAG6wjcEacz4Vubj5yMew
+         0y3RpFkg2hmewNBp1jvkO43LaxTJi0F1hT/p/1asnoQviojO1f67ogOQR+iOvTRtgMv/
+         GBnd/Oys7t/pVuTMoMN+VKc8q77i5+1pRr+rJ+K8uIJNOQwW2t3p/D5bO2Wq72yeOwwJ
+         YG98nALdi3yaGi2ajMt1vu9RolKHVPkVRVElvd10+iYlEp3QiG3Ol+9JHC5x3nIdzkMk
+         cd4g==
+X-Gm-Message-State: AOJu0YzI9t4PARZcoA23rgqBuBcW7CZacrowrQKQsuguqbZ4uCarbydC
+	asZ6afiRe3qwc9I+Gi7Q839Idj83LdCA54BPXGo8btAKsamhpyP9PawOJtVk1nY=
+X-Gm-Gg: ASbGncu4sUv9HbbbdL9A3OmBeyImPmeCYDC80n3iMWy2+o2N3QPZQe55jKST9LuJ7W3
+	ohNIg0GVwEsndfepOP8rdJVviKYzWqbtcC4ttMVfZmMltajCNEgsoCKMHxCebA1YQOk74NeSfl8
+	0mHmcT7PfzgpHk/NejkUnWvKXPJOkJ7qPyLuzalXYBn8JzmTd62qZZMxY0BNwE42mZMKmQAC3Ae
+	q4SocclQCH4Cio2YATsTr0ihpGx07qB99G5wDDkV43ZHbEidS2JlA8gwopRgS/njAdCsmhbDb0R
+	5wqIGT54fecwZx/oHKkYSX3vwPYB24UBrT2RHsmNDY+HRJliY1Z7mzAmi7LaGiO3pbTq5cAK9f1
+	yx6nC27GkfQ==
+X-Google-Smtp-Source: AGHT+IHP7pUAJMVQB1Guj47dyI47K7YXQj82SFh5z5QQxgHATc6r4NQ1/TjLpJM/Ncf+/B2eBWDZ7w==
+X-Received: by 2002:a05:6402:5242:b0:5e4:cfb0:f667 with SMTP id 4fb4d7f45d1cf-5e4d6b691d6mr2481074a12.21.1740751641613;
+        Fri, 28 Feb 2025 06:07:21 -0800 (PST)
+Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb51f9sm2550839a12.55.2025.02.28.06.07.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 06:13:55 -0800 (PST)
-From: Alisa-Dariana Roman <alisadariana@gmail.com>
-X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
-To: Alisa-Dariana Roman <alisa.roman@analog.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	David Lechner <dlechner@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v6 3/3] docs: iio: add AD7191
-Date: Fri, 28 Feb 2025 16:06:02 +0200
-Message-ID: <20250228141327.262488-4-alisa.roman@analog.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250228141327.262488-1-alisa.roman@analog.com>
-References: <20250228141327.262488-1-alisa.roman@analog.com>
+        Fri, 28 Feb 2025 06:07:21 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 00/18] a few rtc driver cleanups
+Date: Fri, 28 Feb 2025 14:07:13 +0000
+Message-Id: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABHDwWcC/x3MQQqAIBBA0avIrBN0SoiuEi3MphoIE60IxLsnL
+ d/i/wyJIlOCQWSI9HDi01foRoDbrd9I8lINqNAoxF7Gy0l3kPV3SFKjU7PR2JLtoCYh0srvvxu
+ nUj6cRcJTXgAAAA==
+X-Change-ID: 20250228-rtc-cleanups-12c0b5123ea4
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>, 
+ Dianlong Li <long17.cool@163.com>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-Add documentation for AD7191 driver.
+Hi,
 
-Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+While looking at RTC, I noticed that various drivers are keeping
+pointers to data that they're not using themselves throughout their
+lifetime.
+
+So I took the liberty to drop these pointers and this series is the
+result.
+
+The last two patches also convert two drivers to using dev_err_probe(),
+as I looked slightly closer into those two. They don't exactly fit the
+general subject of removal of unneeded pointers, but I wanted to share
+them anyway, since they're ready.
+
+All of this was compile-tested only.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- Documentation/iio/ad7191.rst | 119 +++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |   1 +
- MAINTAINERS                  |   1 +
- 3 files changed, 121 insertions(+)
- create mode 100644 Documentation/iio/ad7191.rst
+André Draszik (18):
+      rtc: max77686: drop needless struct max77686_rtc_info::rtc member
+      rtc: s5m: drop needless struct s5m_rtc_info::i2c member
+      rtc: aspeed: drop needless struct aspeed_rtc::rtc_dev member
+      rtc: ds2404: drop needless struct ds2404::rtc member
+      rtc: ep93xx: drop needless struct ep93xx_rtc::rtc member
+      rtc: ftrtc010: drop needless struct ftrtc010_rtc::rtc_dev member
+      rtc: m48t86: drop needless struct m48t86_rtc_info::rtc member
+      rtc: meson: drop needless struct meson_rtc::rtc member
+      rtc: meson-vrtc: drop needless struct meson_vrtc_data::rtc member
+      rtc: pl030: drop needless struct pl030_rtc::rtc member
+      rtc: rx8581: drop needless struct rx8581::rtc member
+      rtc: s35390a: drop needless struct s35390a::rtc member
+      rtc: sd2405al: drop needless struct sd2405al::rtc member
+      rtc: sd3078: drop needless struct sd3078::rtc member
+      rtc: rx8581: drop needless struct rx8581
+      rtc: sd3078: drop needless struct sd3078
+      rtc: max77686: use dev_err_probe() where appropriate
+      rtc: s5m: convert to dev_err_probe() where appropriate
 
-diff --git a/Documentation/iio/ad7191.rst b/Documentation/iio/ad7191.rst
-new file mode 100644
-index 000000000000..977d4fea14b0
---- /dev/null
-+++ b/Documentation/iio/ad7191.rst
-@@ -0,0 +1,119 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD7191 driver
-+=============
-+
-+Device driver for Analog Devices AD7191 ADC.
-+
-+Supported devices
-+=================
-+
-+* `AD7191 <https://www.analog.com/AD7191>`_
-+
-+The AD7191 is a high precision, low noise, 24-bit Σ-Δ ADC with integrated PGA.
-+It features two differential input channels, an internal temperature sensor, and
-+configurable sampling rates.
-+
-+Devicetree
-+==========
-+
-+Pin Configuration
-+-----------------
-+
-+The driver supports both pin-strapped and GPIO-controlled configurations for ODR
-+(Output Data Rate) and PGA (Programmable Gain Amplifier) settings. These
-+configurations are mutually exclusive - you must use either pin-strapped or GPIO
-+control for each setting, not both.
-+
-+ODR Configuration
-+^^^^^^^^^^^^^^^^^
-+
-+The ODR can be configured either through GPIO control or pin-strapping:
-+
-+- When using GPIO control, specify the "odr-gpios" property in the device tree
-+- For pin-strapped configuration, specify the "adi,odr-value" property in the
-+  device tree
-+
-+Available ODR settings:
-+
-+  - 120 Hz (ODR1=0, ODR2=0)
-+  - 60 Hz (ODR1=0, ODR2=1)
-+  - 50 Hz (ODR1=1, ODR2=0)
-+  - 10 Hz (ODR1=1, ODR2=1)
-+
-+PGA Configuration
-+^^^^^^^^^^^^^^^^^
-+
-+The PGA can be configured either through GPIO control or pin-strapping:
-+
-+- When using GPIO control, specify the "pga-gpios" property in the device tree
-+- For pin-strapped configuration, specify the "adi,pga-value" property in the
-+  device tree
-+
-+Available PGA gain settings:
-+
-+  - 1x (PGA1=0, PGA2=0)
-+  - 8x (PGA1=0, PGA2=1)
-+  - 64x (PGA1=1, PGA2=0)
-+  - 128x (PGA1=1, PGA2=1)
-+
-+Clock Configuration
-+-------------------
-+
-+The AD7191 supports both internal and external clock sources:
-+
-+- When CLKSEL pin is tied LOW: Uses internal 4.92MHz clock (no clock property
-+  needed)
-+- When CLKSEL pin is tied HIGH: Requires external clock source
-+  - Can be a crystal between MCLK1 and MCLK2 pins
-+  - Or a CMOS-compatible clock driving MCLK2 pin
-+  - Must specify the "clocks" property in device tree when using external clock
-+
-+SPI Interface Requirements
-+--------------------------
-+
-+The AD7191 has specific SPI interface requirements:
-+
-+- The DOUT/RDY output is dual-purpose and requires SPI bus locking
-+- DOUT/RDY must be connected to an interrupt-capable GPIO
-+- The SPI controller's chip select must be connected to the PDOWN pin of the ADC
-+- When CS (PDOWN) is high, the device powers down and resets internal circuitry
-+- SPI mode 3 operation (CPOL=1, CPHA=1) is required
-+
-+Power Supply Requirements
-+-------------------------
-+
-+The device requires the following power supplies:
-+
-+- AVdd: Analog power supply
-+- DVdd: Digital power supply
-+- Vref: Reference voltage supply (external)
-+
-+All power supplies must be specified in the device tree.
-+
-+Channel Configuration
-+=====================
-+
-+The device provides three channels:
-+
-+1. Temperature Sensor
-+   - 24-bit unsigned
-+   - Internal temperature measurement
-+   - Temperature in millidegrees Celsius
-+
-+2. Differential Input (AIN1-AIN2)
-+   - 24-bit unsigned
-+   - Differential voltage measurement
-+   - Configurable gain via PGA
-+
-+3. Differential Input (AIN3-AIN4)
-+   - 24-bit unsigned
-+   - Differential voltage measurement
-+   - Configurable gain via PGA
-+
-+Buffer Support
-+==============
-+
-+This driver supports IIO triggered buffers. See Documentation/iio/iio_devbuf.rst
-+for more information about IIO triggered buffers.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 2d334be2b7f2..edc984a38b3b 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -21,6 +21,7 @@ Industrial I/O Kernel Drivers
-    ad4000
-    ad4030
-    ad4695
-+   ad7191
-    ad7380
-    ad7606
-    ad7625
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87c491975ced..0547a3bb528c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1352,6 +1352,7 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad7191.yaml
-+F:	Documentation/iio/ad7191.rst
- F:	drivers/iio/adc/ad7191.c
- 
- ANALOG DEVICES INC AD7192 DRIVER
+ drivers/rtc/rtc-aspeed.c     | 16 ++++-----
+ drivers/rtc/rtc-ds2404.c     | 14 ++++----
+ drivers/rtc/rtc-ep93xx.c     | 16 ++++-----
+ drivers/rtc/rtc-ftrtc010.c   | 17 +++++----
+ drivers/rtc/rtc-m48t86.c     | 14 ++++----
+ drivers/rtc/rtc-max77686.c   | 37 +++++++++----------
+ drivers/rtc/rtc-meson-vrtc.c | 12 +++----
+ drivers/rtc/rtc-meson.c      | 16 ++++-----
+ drivers/rtc/rtc-pl030.c      | 14 ++++----
+ drivers/rtc/rtc-rx8581.c     | 85 +++++++++++++++++++-------------------------
+ drivers/rtc/rtc-s35390a.c    | 22 ++++++------
+ drivers/rtc/rtc-s5m.c        | 58 +++++++++++++-----------------
+ drivers/rtc/rtc-sd2405al.c   | 16 ++++-----
+ drivers/rtc/rtc-sd3078.c     | 71 +++++++++++++++---------------------
+ 14 files changed, 183 insertions(+), 225 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20250228-rtc-cleanups-12c0b5123ea4
+
+Best regards,
 -- 
-2.43.0
+André Draszik <andre.draszik@linaro.org>
 
 
