@@ -1,140 +1,180 @@
-Return-Path: <linux-kernel+bounces-538628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE36DA49B25
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E56A49B26
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8BE172A0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8705A173E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8171326D5D3;
-	Fri, 28 Feb 2025 13:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9832E26E15C;
+	Fri, 28 Feb 2025 13:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grI+STAK"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T34VSArC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B53F26D5D1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D40A25F984
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751171; cv=none; b=LGf/OfCQFaqhdWBPCr3qjwr/5dXhygEd1FR94rgUi00Ja/jjcRPzLVpAn+lqXuK3SoBUyaf6eoeCAB8smWOQ/jO6I2JMP/ancUtuS8CaLoYWXySxontg6yNJROQ5T2zkUnY71s5EB7+yxXZ1F9UMiKyWp8ZIJk0nusyrSr4hWLU=
+	t=1740751184; cv=none; b=C8FT/l34pKyLnYmv2PtuJunUBZxhUoG16WhBQhJN1/8OVvu7is/fj7IH4whBQlnuVEB+mqurdLie/QpOplQnjhisPf9OwroNW/xd1aqIFZCUQnFCWLhfqs9oozpSicjtmtFbbIWi77RYkEpbuUlGkhVQK4P1+en+QKglLnjHThI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751171; c=relaxed/simple;
-	bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kcWXqQ/A8m3Ux3W2H+Q9u3uFksl55k2HcJ/67tZYrcvgd9Cym09H+QF4I5UzS5yqJZkMYuUI+KSSMmJehTBRbVAb1NwaOubKQCTY2C64bWU0VKG5TlUMGIsQuDY4noNLDvusmtgSgHEzUmHM+wbdaTpMQK7Ae6HIoaPsmT5/CuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grI+STAK; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390dd3654aeso1241813f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:59:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740751168; x=1741355968; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
-        b=grI+STAKOAnH08bihdrVdSxnngP7J2jW3cKPR/2Y5MaVL0evvPR0W3GzgzXLLYwR02
-         u5AvChKCZpyDKfHvyh6wqJNJ3iR3PeAdDruTVVJLAsMt3fk8zc8rQQ183v+hwwhk7HLz
-         /Pmr+qtoqG8NlpXVL9dbiPdgqVu2iVcmT39SkEJd8TraGr5jgVoj0+3fXwT/jXVnCU+3
-         ly9xKRuwG397WPW8o5uX63mYDvTpS/1gVgWd7Km2ciUy2hZi8pvmTKOlz11IHDhehorp
-         gdfLMBHpQw1JttRu1/RG0yCHKsf52m5VoUPXXWa+OtM1GgDDu/ArHT2ioYrFvwyK/QJl
-         iWJA==
+	s=arc-20240116; t=1740751184; c=relaxed/simple;
+	bh=gQi7azzpb6sFlWFqFmgSyYccWwpY4yPV+UxGZi831Uk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifJGwahgYCxeg7MNnG0DzK/PxsYnwRjYKtsfH/xkAj2e44Eik//3ASNPa5Qe5rnfAn99rGnBo5kYxfzn/yyl5KD3EzW0jDrMh/MXR4z4UW9F8WhcqbtWY1cDMYa55l2AXSMRNq+QuznfnbKHcDbsxlWl6sFNlpYaewLCX9ozaJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T34VSArC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740751182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/Q1ZAU4kQ55IqfSp/ud29AXWlJivmiID4vM66P5NubM=;
+	b=T34VSArCD3cfjGjZUFMHc1RYEpoioMnHFPb16OJ6/Lxs/08VITNeH7dQfw7E4y2LRgqY7k
+	w47xAWBlGhq56OVFprI+0wVMMPxAymcH1wRD/1lHVZ3icskaZMNcjIj/1v3P4aTHLEGp9v
+	wHesYgZx5eo3rOQfHwFYM+b6hmJB89w=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312-EgVcf8fIO_24yhlHSes0oQ-1; Fri, 28 Feb 2025 08:59:41 -0500
+X-MC-Unique: EgVcf8fIO_24yhlHSes0oQ-1
+X-Mimecast-MFC-AGG-ID: EgVcf8fIO_24yhlHSes0oQ_1740751180
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-390ddb917abso1051656f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:59:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740751168; x=1741355968;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=px+x86aKSLPgbV52+S2WFBDfxcJqop/aXnFFgDBY9tU=;
-        b=oUOvorQesC+eo06g6XujxxDXlhWUloX+td+CvmcZlJ+SMfoD+pBTDtohizEAOGIR72
-         P6m9wGClcvOUcQYRMiCZJDAoCoxWaUNqye0M/eK4Sn1+SLXLsajf7FHnBNEuZEARUp9R
-         G1vOcJ5kLQds1t6cq1ummpAKndPyYIziwkeM2O/pwINv4r09lvHXA/xMBYC8H0DmAPq1
-         XQ5FjusLd4ync0Np87nTBp4GiLVGLI8K819wg/5xfYrk0I0H8nokxlq9vnJcWQpu46Tx
-         xZYsv9GeA82PkBB6e5T7icicBPZiHCI/PTOHkFEXDRlZM9zI1zkW9dtre8tIB6RSQGwF
-         PUzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHaodBkOb5bd/fr85zEpSDlhwPndyigy+BvLkifRj01LT0+qOeTupSqd37MsQ3YFOfffseWUb2n8gDm14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbFUzmxm84tAk2+aI0MKf2pS6TKJcHtDxlMjeT0EtvPSiOINfJ
-	UimZYcxHTeNoCbB0ObURRBCKCFv6yiBfe+nY+h8ejZpNwrYaJZeEBdtZwgqnX3c=
-X-Gm-Gg: ASbGncuM6z4mBEZAUItJumziLqR26iWeg5HJALbz6SvbT0Yt5bvqJjHRtntR47gdT+c
-	V8QgGtuJs9M89lLpkOGhcI0SPnj9eW6LofvG6Cx90fnEzV+e1JKDbyklNpPhQvkDKqi5jULMEEZ
-	1y6+8IYH2fDdgo0qP9/9aU3LOPkl8ZBp1yhU+lDSh7kSksHXqkIK/XTTeEQZN6d1oRycRY+nWXR
-	ltWqdcNC/Mc3nO1eX+tQd09qC0rWkap5n1js6bqBRORyoHzZdgAaTtvSNZ/lJ7tePNBkLn8dF1e
-	QGIfzb02xoXuDb18Z+U+bo3ieL6Lgw==
-X-Google-Smtp-Source: AGHT+IECpo32ALWrFa1cNaiDX3uH6CqXkFCNWGuhJmwvZ0p1RSpM7dQPjKfV2CnvU0hTwmPQDg65lg==
-X-Received: by 2002:a05:6000:2a4:b0:38f:2990:c074 with SMTP id ffacd0b85a97d-390ec7cfe62mr4082089f8f.16.1740751168393;
-        Fri, 28 Feb 2025 05:59:28 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485df22sm5389786f8f.97.2025.02.28.05.59.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:59:28 -0800 (PST)
-Message-ID: <e355ce38815760e69f40ec6d9d27fb6cab8f9894.camel@linaro.org>
-Subject: Re: [PATCH v2 3/6] dt-bindings: mfd: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
-Date: Fri, 28 Feb 2025 13:59:26 +0000
-In-Reply-To: <CAL_JsqK-_rPZqt_vRv75dSWDLUAyZ-LB=qz5J=Kse=7bO4q8sA@mail.gmail.com>
-References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
-	 <20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.org>
-	 <20250227130451.GA1783593-robh@kernel.org>
-	 <503e105b71fa4271f40a2d3ca18ba13ed7d45a65.camel@linaro.org>
-	 <CAL_JsqK-_rPZqt_vRv75dSWDLUAyZ-LB=qz5J=Kse=7bO4q8sA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        d=1e100.net; s=20230601; t=1740751180; x=1741355980;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/Q1ZAU4kQ55IqfSp/ud29AXWlJivmiID4vM66P5NubM=;
+        b=Xls5Xwfo6QaOSKmv46GINz7lTWH7oY0f66XW+KB0MYpWEVk6/maCTqh88rzFm/YioC
+         qFkBmkHEqpKG84HXe16Iht2SAqIfqdkrme+EZjPm4mBMp4WAVSdT+nkUGOhd1sCPuzFW
+         PPcKGSvRQX/Liuot4ODztqwNICKI5a6bm7Z2KEYyqJA0ma4ATRfVOq+4mxoguIg8J8Im
+         dcV5+TZbqa6pWuHjT9cA1PkuItsvu3Bk/huD4IBvTVnck6hGcaoqP0Qs6GSm2QPHmNly
+         oBlszaS5UX+pUaUbOFl79egwal05IQPo0lpLerhS3zQdLdpXMS6iK9LY7gP3yxCgiXAl
+         Udfw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4sU0eFGR8ottsonmQtmylRVP0XIKCs0RdsfGinwHr788DUvtFUIESEcfeIkfpxLEygDNDAnISMz+brzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYteF1BcFV7ohmK0Y3RtTjACSsEp4b7GOIobSdvhH5BwvvXEXM
+	VS3XAzy72x5AHpxmoiXcqaoo+yhK7LhO/8iczLYgpHp77C7yJW9d/FxhhYRea4tSmhAc18Mo8Hd
+	rczx1N6Ri9DOTsOJvVmN5BPlGy/Q7Med5TA1+IGzJdSM2lz7ZzAucimlzObbG13ylEpDFLZhZ
+X-Gm-Gg: ASbGncvXEeIZg9DpNAq7BBHj6D1FuWCm+8/jmaiizqSu9K/c//iFArO/xAVFdNMTY1O
+	pzXekvWJFqEtwMwzDdpPeSg4JyRKqKAtDcxG7f9sWZRcnwydiJEDO6h+OI50bIyX/Wo5BCe707i
+	eG6JeW19TsOMQqeN6P6O5U8xkDu56OtG5qX3RnC1Mf1ufurg4z8g9/0Jy1SbGlfP8wSWL52SBnJ
+	v50HiBorJmfqVLFr2uPP5tSfqx5ns27frUOyC/tapVrzkTageto+TGdJ7vyqN1HIZclgL3e6vzU
+	2vRx1E5qckYBKL7tja67CNnt
+X-Received: by 2002:a05:6000:1865:b0:390:e9e2:828e with SMTP id ffacd0b85a97d-390ec9becd8mr3046524f8f.32.1740751179862;
+        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHzr563yqm9Jjxqlka9w+fh/MBmSAL3tJTg/27ST+C8zc6EwxHyBNYOi2xZXA/ZSHV6lJy5uQ==
+X-Received: by 2002:a05:6000:1865:b0:390:e9e2:828e with SMTP id ffacd0b85a97d-390ec9becd8mr3046498f8f.32.1740751179414;
+        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
+Received: from ?IPV6:2a02:8070:4688:86a0::a40b? ([2a02:8070:4688:86a0::a40b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm5436729f8f.60.2025.02.28.05.59.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 05:59:39 -0800 (PST)
+Message-ID: <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
+Date: Fri, 28 Feb 2025 14:59:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>,
+ linux-mm@kvack.org
+References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
+ <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
+ <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
+ <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2025-02-28 at 07:01 -0600, Rob Herring wrote:
-> On Thu, Feb 27, 2025 at 7:14=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik=
-@linaro.org> wrote:
-> >=20
-> > On Thu, 2025-02-27 at 07:04 -0600, Rob Herring wrote:
-> > >
-> > >=20
-> > > Why do you have GPIO properties here and in the child node? Either wo=
-uld
-> > > be valid, but both probably not. Putting them here is actually
-> > > preferred.
-> >=20
-> > That's an oversight, I meant to put them into the child only, not here,
-> > since the child is the one providing the gpio functionality.
-> >=20
-> > What's the reason to have it preferred inside this parent node?
->=20
-> It really depends whether the GPIO block is a separate sub-block which
-> is going to get reused or has its own resources or not. It's the same
-> thing in system controllers which are often just a collection of
-> leftover control bits.
->=20
-> We just don't want child nodes created just for the ease of
-> instantiating drivers in Linux. While it's nice if drivers and nodes
-> are 1 to 1, but that's specific to an OS.
->=20
-> You already need other child nodes here, so I don't care too much in this=
- case.
+On 28.02.25 06:17, Linus Torvalds wrote:
+> On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> I'd be fine with SKSM replacing KSM entirely. However, I don't
+>> think we should try to re-implement the existing KSM userspace ABIs
+>> over SKSM.
+> 
+> No, absolutely. The only point (for me) for your new synchronous one
+> would be if it replaced the kernel thread async scanning, which would
+> make the old user space interface basically pointless.
+> 
+> But I don't actually know who uses KSM right now. My reaction really
+> comes from a "it's not nice code in the kernel", not from any actual
+> knowledge of the users.
+> 
+> Maybe it works really well in some cloud VM environment, and we're
+> stuck with it forever.
 
-Thanks Rob for taking the time and for the explanation! I'll keep
-that in mind for the future.
+Exactly that; and besides the VM use-case, lately people stated using it 
+in the context of interpreters (IIRC inside Meta) quite successfully as 
+well.
 
+-- 
 Cheers,
-Andre'
 
+David / dhildenb
 
 
