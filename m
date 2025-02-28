@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-537827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8F2A4918F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:29:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D67A49190
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801C216E41C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51AE3B7AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3801C5496;
-	Fri, 28 Feb 2025 06:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88E31C5D44;
+	Fri, 28 Feb 2025 06:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2snQm+p"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OV4NH9uG"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1011C5485;
-	Fri, 28 Feb 2025 06:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899211C4A3D;
+	Fri, 28 Feb 2025 06:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740724121; cv=none; b=rxAlBZwo8uOHn4XW7huJ6VPEmTP/iXEni+j+wt6byb85woSnzlBW8zxnOUeDbSWNxgfxlmDbh8fYudAMjHyOkTAA+e+faW89giF1KXfPV7uJFAqzQhphFwdelspwkZvH4m52CB4s7BM/AQKyLyF1ko8QQzMVOjwGkmHrkgNgz+I=
+	t=1740724127; cv=none; b=AB1EndzQi0LMSUAc2xaSkopjtIq2O08jZJMgaYefpJCZYOC3vSvysXu5+kzfx4zS27ogIrgBKPCdbWupZM02E/uGLE4ZvKS66QSVaNJv/B1fhRQ0aRC0MKx74SfIW1RbgwJaS3g681vfa2DOD15B01wb0SkkcOtFGg6e/WCPJSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740724121; c=relaxed/simple;
-	bh=NSXN9VYfQFUizYJYR++h6usWkL8OeRS3X1QV/7FBf64=;
+	s=arc-20240116; t=1740724127; c=relaxed/simple;
+	bh=e7a2cCCwX7XNrpGn1XdJxR3IeQTxmfvf2zp8jE434LA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ch9S3SajrKq7UBqVk57/CklwPvDML4ofeG6BcywT/yjZLxlrH4CCRnQqA8N7YgUQoDTZekHjSXaBBreznibZrTUcvAdiUCNtCn7QcvbcmqCJjSBbtljMX5c5v1LYPo6Na15MDLiBMEgbDMXqnIodgAhYEjbdGEYPRdrJw0jaMSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2snQm+p; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=ee8z8hCWTMddmHMUjO0Zvda10XhjX0JYqwnWWU1P+qAYCjD/cL3cgUP8Nw0jmlugCN0U9EVBjs1NFsD/gJCvcumBpl1THonI6W1GUeFRPe28sYCVr0nbuIn8EI2GCIM9tfEyVONQ9opBQyAGn4gLwR526m5oa6viKQisv12p/AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OV4NH9uG; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740724120; x=1772260120;
+  t=1740724125; x=1772260125;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=NSXN9VYfQFUizYJYR++h6usWkL8OeRS3X1QV/7FBf64=;
-  b=d2snQm+pMM+IHTToIwxlPqQxsHSxo7ZeWxmQHPTyHlvc4Jm46RgXWQJw
-   b0uCcTxIFuaLyOcUh2CZ5PWMZ/l/XS+MVAezueNG02SUG/F/BF4EZvthr
-   ABWLzGfTxUc352E/tmqOzEFOBeXubezrndO/olyxjBnDnmot/+MZR4e0i
-   liGT3gyJlVahAjQwfgBjCUpktn6TrGTCJjU7lRhqdKSUn02y/rBgxL9u4
-   wauPKj/CQSr4o3YfD/f0D6SwSkBL72E8d/M69oo4TV3LILrfg7ko/I0Y3
-   2zQ5nlDZLxyfpiNE/dBm9ehb1k/tKQh/QRLcowVP4muEdaYOYCOFiVxUp
-   Q==;
-X-CSE-ConnectionGUID: cqk+OFlETIqJ+xbQSVMjCw==
-X-CSE-MsgGUID: kT9+ZUdJQBWFY5Us1D83Qg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41560594"
+  bh=e7a2cCCwX7XNrpGn1XdJxR3IeQTxmfvf2zp8jE434LA=;
+  b=OV4NH9uG68wzi17Bum+Ee2Ye47mnre5SR20lOZmkWtt4M88OOQG+kVfJ
+   dOCgYmUtAgomkpJvYOWlhNDng8lErdu4jTcEbJU6xVNYO6LQvgoNiLRd8
+   +PJXQBIEwzcW/V7Fe/FEX5ImHNMVUnsL10RGZDwXWanhPX5EuTJDFWElV
+   y2hKECkKg7DdJnzrdwxraxmcUkDtcxVdDlUrpQNRhJAcfyZYzqP6HwcGs
+   TtWnsJK9S4J9AB9lyEmVYhg5cyxw3+KWZWVJppsdlT4YgjKxiPiafQEOI
+   ieanC6bTwS7+cI07CFloxBCjcWHAZ8EkSrKfvln/EAaM39kgjcsry32RE
+   w==;
+X-CSE-ConnectionGUID: 0MhFZWJZSpu9liSaKyFAiA==
+X-CSE-MsgGUID: cbvhgDK5TWSyaZdTpgs3rQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41560606"
 X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="41560594"
+   d="scan'208";a="41560606"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 22:28:39 -0800
-X-CSE-ConnectionGUID: lAVzdclkRwC1xcaXxpdT9g==
-X-CSE-MsgGUID: zlE0fJP9R+2JlmFwC4PWQg==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 22:28:45 -0800
+X-CSE-ConnectionGUID: 96XjMWfTQb6L9luGeC+NBg==
+X-CSE-MsgGUID: Rln090DUSDuuM/IToxvhYw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="122265277"
+   d="scan'208";a="122265287"
 Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa004.jf.intel.com with ESMTP; 27 Feb 2025 22:28:34 -0800
+  by orviesa004.jf.intel.com with ESMTP; 27 Feb 2025 22:28:39 -0800
 From: Raag Jadav <raag.jadav@intel.com>
 To: perex@perex.cz,
 	tiwai@suse.com,
@@ -76,9 +76,9 @@ To: perex@perex.cz,
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2 3/6] ASoC: tlv320dac33: use devm_kmemdup_array()
-Date: Fri, 28 Feb 2025 11:58:09 +0530
-Message-Id: <20250228062812.150004-4-raag.jadav@intel.com>
+Subject: [PATCH v2 4/6] ASoC: uda1380: use devm_kmemdup_array()
+Date: Fri, 28 Feb 2025 11:58:10 +0530
+Message-Id: <20250228062812.150004-5-raag.jadav@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250228062812.150004-1-raag.jadav@intel.com>
 References: <20250228062812.150004-1-raag.jadav@intel.com>
@@ -95,24 +95,24 @@ against type changes.
 
 Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 ---
- sound/soc/codecs/tlv320dac33.c | 6 ++----
+ sound/soc/codecs/uda1380.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
-index fa46f51d4341..423b9264a205 100644
---- a/sound/soc/codecs/tlv320dac33.c
-+++ b/sound/soc/codecs/tlv320dac33.c
-@@ -1477,10 +1477,8 @@ static int dac33_i2c_probe(struct i2c_client *client)
- 	if (dac33 == NULL)
- 		return -ENOMEM;
+diff --git a/sound/soc/codecs/uda1380.c b/sound/soc/codecs/uda1380.c
+index 4f8fdd574585..c179d865b938 100644
+--- a/sound/soc/codecs/uda1380.c
++++ b/sound/soc/codecs/uda1380.c
+@@ -766,10 +766,8 @@ static int uda1380_i2c_probe(struct i2c_client *i2c)
+ 			return ret;
+ 	}
  
--	dac33->reg_cache = devm_kmemdup(&client->dev,
--					dac33_reg,
--					ARRAY_SIZE(dac33_reg) * sizeof(u8),
+-	uda1380->reg_cache = devm_kmemdup(&i2c->dev,
+-					uda1380_reg,
+-					ARRAY_SIZE(uda1380_reg) * sizeof(u16),
 -					GFP_KERNEL);
-+	dac33->reg_cache = devm_kmemdup_array(&client->dev, dac33_reg, ARRAY_SIZE(dac33_reg),
-+					      sizeof(dac33_reg[0]), GFP_KERNEL);
- 	if (!dac33->reg_cache)
++	uda1380->reg_cache = devm_kmemdup_array(&i2c->dev, uda1380_reg, ARRAY_SIZE(uda1380_reg),
++						sizeof(uda1380_reg[0]), GFP_KERNEL);
+ 	if (!uda1380->reg_cache)
  		return -ENOMEM;
  
 -- 
