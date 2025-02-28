@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-538772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43341A49CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:13:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E22A49CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EC1895861
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6023BBB87
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9DA27603F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB83C276045;
 	Fri, 28 Feb 2025 15:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtM7GyPw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCF8J9u1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8951EF385;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B681EF38B;
 	Fri, 28 Feb 2025 15:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740755495; cv=none; b=uvYRDaEwsXblaA+S5z18vg5kOVjYo7lsocs92K/LxIl5dplbhGNAkD1InG7zCOJ7lX951BfTS72ox4Yjvo3O7iLHXteP5Ss31SFmZCn87C/Z3GxNbuKDK2zZZfORsbaeabIUPbXy2I6q6x9CEC7JcQUFhC4g7iuPIJLbYvQuf20=
+	t=1740755495; cv=none; b=D4/55hxDpXXciPQoJmJnPi0/0trHCxE7Lx1vUqjpoF0QOtoli4lQdlPgtyQqkM60YBngZEimkzbiB4a9TtVyA3gizQEkBeXp1axw9IFF/rr/0Xku5cSTKZ/hEoGKtKjJ5ySUAN7E5u1hq6ucxGO2sUXIu+Rp8Q+Sim6NAZM1Azg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740755495; c=relaxed/simple;
-	bh=Gq4AWL6AY/PqYXGSEP4IhXEpS+l4bIw3E4nTSJGtDgE=;
+	bh=9ZJqhfxxUVKNn9pQ4sEtXI4UMBqewViPBr/PTvTjPN4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tQHE4K4bNJ0nhPGHuhv9T/bN9gZd8srL3Y0OV8+F7BnlxR64xZlF52lRd4zjePgSCF6ZnucbJvboDsMIhNB0ZaIC1zCTVnNOafN7wBMM/aJVpNp4qeRxJAzGvkCkBgqN3/5WG4LQr22VhgBO5ufhZmavNQKo6OE6Nl6ydB8Z8CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AtM7GyPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16931C4CEEB;
+	 In-Reply-To:To:Cc; b=OBS/ksDGdZiZTyWeAPyf2iRDWZkLmXDLXYGm93bNKas6iDzOIPJxrzmYb2NZYmFIR1DfbTSwa4zRjLq42O0PmD+tBZKVhDt5dTfitrVRYpp9SD6V8T5bXtud8eKuHRxTU13ho5Tyemc3Sl9nw/7XDqY0ES3Ykn8eKy6KXabO/D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCF8J9u1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26C7AC4CEED;
 	Fri, 28 Feb 2025 15:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740755495;
-	bh=Gq4AWL6AY/PqYXGSEP4IhXEpS+l4bIw3E4nTSJGtDgE=;
+	bh=9ZJqhfxxUVKNn9pQ4sEtXI4UMBqewViPBr/PTvTjPN4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AtM7GyPw3HxmjuDvsKVmkYBvTJO3VGul0/t+ZmqwAjovV6kr+vbpSh/xQfUaB78hN
-	 K1yh9xsA5RYMu72YmVXGz73AjP1HodEDL9B+xgqu/N2Z4Eq+FY1sgp/jfX7kZxHyhZ
-	 2huNwJQnglDgrizsZotiwRastFNjIXUb0Vwc7LsbOYwistl0coOlR9wv9k0h1Ia5wo
-	 xsOuPFD2jlLLDTc+uvh0Ucfzvt5wS/B3k2Hx0Ms393GQFatvhi9CtEA+KB11Wc67R3
-	 nkf5dqUE0dsMVouvJPzMsI/LwjRmJ9Q0XKW5+Nd4d8coO70hDEiqUryIz6yr96kvbk
-	 NEYpEIYe99WZQ==
+	b=cCF8J9u1MMhIxliRHBG9j3Ogm5sTJcKO6u/9GgChK0cvg5l7FLen9lBwWGPssBj53
+	 y2fS0CB842jWuJmQoq0LRT7bOIAXom6LJ6hdrKCnEEiGMS1o6NljHl9jpd+Hg9xTt0
+	 Exb4NnnXvzBjFidHpNmc5lJroDc2LYBi8wgUfsiWBvd2h/eKjcHFYJiiS7NeG2I1DN
+	 T4TNqGxA03Klhfr6YOIkJoRs58YmYtZa9ot4hI0Ou3DfCXcQ6QJA6svXPavyjL7tEw
+	 dqdb6qKP03fW9C+8gIuezxzYcyFHH+0U5WoqP9U5TSQkowUwnYX41e2aRW5vQ+nnRw
+	 oHPK0+Btj/AuA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC97C282C1;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB20C282D0;
 	Fri, 28 Feb 2025 15:11:35 +0000 (UTC)
 From: =?utf-8?q?Jonathan_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Fri, 28 Feb 2025 16:11:22 +0100
-Subject: [PATCH v3 7/9] usb: storage: sddr09: Use const for constant arrays
+Date: Fri, 28 Feb 2025 16:11:23 +0100
+Subject: [PATCH v3 8/9] usb: storage: sddr55: Use const for constant arrays
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250228-misc-const-v3-7-09b417ded9c4@posteo.net>
+Message-Id: <20250228-misc-const-v3-8-09b417ded9c4@posteo.net>
 References: <20250228-misc-const-v3-0-09b417ded9c4@posteo.net>
 In-Reply-To: <20250228-misc-const-v3-0-09b417ded9c4@posteo.net>
 To: Alan Stern <stern@rowland.harvard.edu>, 
@@ -63,11 +63,11 @@ Cc: linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
  linux-kernel@vger.kernel.org, 
  =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740755487; l=2527;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740755487; l=1301;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=l+RAY2RPsx/JPY4RJUMnd+IPm3/INCAlkSXItxmAg4Q=;
- b=6WBB8ETU477ruMo1xN/6W31d5OrSbxNiYQANwHrc/DsmaKLwdBrF+DRVOFoMu9N0t3v79sAzw
- fcvHCUvcTgzCwytQJQ6Jy3SAAwJsxM9BFHnDSv5ViAJOp4K8plvf6Z9
+ bh=dyKVA5pPyRY7TuBL1KemWvR3umAVS5JkAQpDbS4Ydg8=;
+ b=BA2AmNdIfge2Df+JYGIJv5vw589dHvWjgpw9g3g4XAmSw0hlylN9Cwos695Ecbek4xyDO25CK
+ YPc4LO4ulNyCW2RrB7XQ6aT4rULx/eUV2vZE8BRKGz3BpojbZOU/8sn
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -77,8 +77,7 @@ Reply-To: j.ne@posteo.net
 
 From: Jonathan Neuschäfer <j.ne@posteo.net>
 
-The nand_flash_ids, inquiry_response, and mode_page_01 arrays are only
-read, not modified.
+These arrays are only read, not modified.
 
 Declaring data as const makes it easier to see what's going on, and can
 prevent unintended writes through placement in a read-only section.
@@ -92,67 +91,27 @@ V3:
 V2:
 - new patch
 ---
- drivers/usb/storage/sddr09.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/usb/storage/sddr55.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/storage/sddr09.c b/drivers/usb/storage/sddr09.c
-index d21ce3466e25842757b3e278d522c55b7c1f19de..e66b920e99e25c90b581ff1f3eae16ed0cfd903c 100644
---- a/drivers/usb/storage/sddr09.c
-+++ b/drivers/usb/storage/sddr09.c
-@@ -144,7 +144,7 @@ static inline char *nand_flash_manufacturer(int manuf_id) {
-  * 256 MB NAND flash has a 5-byte ID with 2nd byte 0xaa, 0xba, 0xca or 0xda.
-  */
- 
--static struct nand_flash_dev nand_flash_ids[] = {
-+static const struct nand_flash_dev nand_flash_ids[] = {
- 	/* NAND flash */
- 	{ 0x6e, 20, 8, 4, 8, 2},	/* 1 MB */
- 	{ 0xe8, 20, 8, 4, 8, 2},	/* 1 MB */
-@@ -169,7 +169,7 @@ static struct nand_flash_dev nand_flash_ids[] = {
- 	{ 0,}
- };
- 
--static struct nand_flash_dev *
-+static const struct nand_flash_dev *
- nand_find_id(unsigned char id) {
- 	int i;
- 
-@@ -1133,9 +1133,9 @@ sddr09_reset(struct us_data *us) {
- }
- #endif
- 
--static struct nand_flash_dev *
-+static const struct nand_flash_dev *
- sddr09_get_cardinfo(struct us_data *us, unsigned char flags) {
--	struct nand_flash_dev *cardinfo;
-+	const struct nand_flash_dev *cardinfo;
- 	unsigned char deviceID[4];
- 	char blurbtxt[256];
+diff --git a/drivers/usb/storage/sddr55.c b/drivers/usb/storage/sddr55.c
+index d5cdff30f6f31f98d3d58ffcdd2426d7cd385cbb..b323f0a3626031905b946ce64ddf04539a6e3232 100644
+--- a/drivers/usb/storage/sddr55.c
++++ b/drivers/usb/storage/sddr55.c
+@@ -775,11 +775,11 @@ static void sddr55_card_info_destructor(void *extra) {
+ static int sddr55_transport(struct scsi_cmnd *srb, struct us_data *us)
+ {
  	int result;
-@@ -1545,12 +1545,12 @@ static int sddr09_transport(struct scsi_cmnd *srb, struct us_data *us)
- 
- 	struct sddr09_card_info *info;
- 
 -	static unsigned char inquiry_response[8] = {
 +	static const unsigned char inquiry_response[8] = {
  		0x00, 0x80, 0x00, 0x02, 0x1F, 0x00, 0x00, 0x00
  	};
- 
- 	/* note: no block descriptor support */
--	static unsigned char mode_page_01[19] = {
-+	static const unsigned char mode_page_01[19] = {
- 		0x00, 0x0F, 0x00, 0x0, 0x0, 0x0, 0x00,
+  	// write-protected for now, no block descriptor support
+-	static unsigned char mode_page_01[20] = {
++	static const unsigned char mode_page_01[20] = {
+ 		0x0, 0x12, 0x00, 0x80, 0x0, 0x0, 0x0, 0x0,
  		0x01, 0x0A,
  		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-@@ -1584,7 +1584,7 @@ static int sddr09_transport(struct scsi_cmnd *srb, struct us_data *us)
- 	}
- 
- 	if (srb->cmnd[0] == READ_CAPACITY) {
--		struct nand_flash_dev *cardinfo;
-+		const struct nand_flash_dev *cardinfo;
- 
- 		sddr09_get_wp(us, info);	/* read WP bit */
- 
 
 -- 
 2.48.0.rc1.219.gb6b6757d772
