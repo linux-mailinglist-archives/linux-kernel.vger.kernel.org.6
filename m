@@ -1,340 +1,89 @@
-Return-Path: <linux-kernel+bounces-539086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E28A4A0AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:42:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE3AA4A0B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45323BA86E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4A9176152
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE06E274276;
-	Fri, 28 Feb 2025 17:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="KlUXyLNv"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2065.outbound.protection.outlook.com [40.107.104.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D101F09B8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764559; cv=fail; b=awBh+7tYbZSVDN7hy2ww5ZuJ+ydKxiDOLNT9EwY+CjnRvcaX6X3t7gCvMorUWp+Xat5g3NX3LFG5/sZvt9L1adLGeDSr1p5IDG+RYZkEHyUvydfUcrVBo0TPLqbAK0wLJ2aZ3/wJ2hzH2CveeC0/PCyrmlAV2BWZry+aClMnfn0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764559; c=relaxed/simple;
-	bh=4lZnrx74ZxSeTxVmxgRyfpcqewTs8eiLrI3IXggJGX4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mv0wIMYjYABE52nRiGidrudvjnqU/YyIwZ16VignkGweph213wL/5usU1SDSWWOOXS6d3hkVzFpCuHgfIuMI8KytwL4Hej1pswg9v9ZorWFNb0wQeIz/HD5UU7EZ5awwLQBv1OdJs8u331NiiMr7Oli8ZhlUJiCdWfSiMrD+dFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=KlUXyLNv; arc=fail smtp.client-ip=40.107.104.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dGBrk8Jym0CEcouUcsDHPnk3xRnz4VE+UXJXq+AxDI1oBfSMqia5uEA/zy4BeVLaVcee7PY51nmWzXZNLOYPUm+NBjmOklozf1Ep9CIjlbefOshlyNuQe30uCW4q0psVXJwl0giwRv6I7gV2qjkXZZS51ZuVjQOxQ/puP07zCX8auMoycv0J7o93wX0Njoy4IydVQV4QSZHXXRHrO4OlRf8K7YRf2xjdBuRx2pgCtVyBF/kJaKeQ+mLlVLMKKPoftACFq2KlkwHiZr8MSJMeE+P68Q7liw+GqPJFnXNbvn7mznQqrcHQZupmXD2pztgzLBBkAo1WHcrmsEUfIQOF6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DwFIJqZhw7Zjp4CUxUEC8Os5pZD550qehwXib2dXzLc=;
- b=qyGmmWzOWPTE3GJo0cZJjUBcqRR6akfqZxsJvdxrskergMuFXdqxH71I5m+Go97hHOITj2NNSmCuxuKZkDXeRZgpc6AK0NJMipuoxrrOqArUD0yjgbxPZMyNbNx0A6QmFJPf4OQKYrtysv49vWD877mAdqiFyObNWqEV/8nxh21GRuPM0fZOejMzpJKn/cGec9YVZ+C7HfLZCzKKiY4Oy0+y5RaTboHZoXVr7LuneN0bj3ssGWqw+Ld2pCPgTzdI5GGWkJLBjllof3ixlX334fw2dcuFB/VlG3mLw3N3kHrWC2ipquiAO1jUASbjrTsW0drzzJfFb2YADVHZIqqvJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DwFIJqZhw7Zjp4CUxUEC8Os5pZD550qehwXib2dXzLc=;
- b=KlUXyLNvjX5VfFpaBbJ6SahyTo/Xaf1+a046LkMgati5bPASNk3Pnn0UVrj60yoc5OBUcIHNuxvL8TN76A2gXi+ITc+5iBsbQnf0JnTIMjgcLKUDKjAuk0OEZGnvel/OdiPZVY8XH4gMrwEhxSKx7YmeaBFCW4XA/Or5N8BKLOY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PAXPR04MB9302.eurprd04.prod.outlook.com (2603:10a6:102:2b8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
- 2025 17:42:33 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
- 17:42:33 +0000
-Message-ID: <b09e5470-2392-4557-9f13-62b6586e5c7b@cherry.de>
-Date: Fri, 28 Feb 2025 18:42:32 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/rockchip: lvds: Hide scary error messages on
- probe deferral
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20250228165755.405138-1-heiko@sntech.de>
- <20250228165755.405138-3-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250228165755.405138-3-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1P191CA0006.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:800:1ba::16) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EB526B2C8;
+	Fri, 28 Feb 2025 17:43:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C906B170A11
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740764627; cv=none; b=ldwNDS7IdIKf0Ikj/HOUmjpakjOVgcRCwi1ifF5hzkfCXs+gq0AjP19at831N6skDyeWvySQkLG1aWWibSKwGTfhIIJJ4qzDMJOs5eTANxsJIulybdxegVJcFedNvoF9Yy4eihyyGUOj/KVbFpNL2Qt528vykqlEIm9Xqx3Brjw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740764627; c=relaxed/simple;
+	bh=XndCvziIH+5t3X647mBAznTH3Tt9axCF2JGxfpTje8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZZWfr08iOjQBWLcVlQzRB2gj687o1AeTF1lUyBOmJuetLFPiP4gZENhknKenFtDjskiFhOEgsuAd/cfrZnSww+JuHwYuCiWls0iEF2JkH9TmX8baLBm+t6lGo5U9VredXrQBCkCIea70RpRf/JFAE+vRGCufU2bX00Bzn4HA7Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49D45150C;
+	Fri, 28 Feb 2025 09:43:59 -0800 (PST)
+Received: from [10.57.65.205] (unknown [10.57.65.205])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0583F6A8;
+	Fri, 28 Feb 2025 09:43:41 -0800 (PST)
+Message-ID: <21450528-06b7-4964-b975-5f4ab113373a@arm.com>
+Date: Fri, 28 Feb 2025 18:43:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PAXPR04MB9302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76e139fa-0bfd-4363-eb3c-08dd581f4805
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MzlvY1k2SW0xNWtEaGgyMUM5R1JTMVBsVDVDR2JHK3lFaHd2V2VvVWFOaEpH?=
- =?utf-8?B?Y1BRSGpMcGtwSGxWaGMvUEdSNXRKV3hTVlF4WCt6WUVQdFgzQlZpNkVXM0g3?=
- =?utf-8?B?UktPSlpHb2taRElsRFExaW9sQUpwUU11TC96b0xzdmdkY1phRFV0cnd6NHJn?=
- =?utf-8?B?YVF2V2ZTRGFsR1RSTjlSK01xTDVONGxKTDFLbmpWY2d6T2ltUUZUWUhkeCt5?=
- =?utf-8?B?cDRiNVlpUFBwdDBQODhNOHZoMmZIclMycU5WOXZnM0ljTXVaaGV0czJYZFpm?=
- =?utf-8?B?VWRJMnlwRnZGOGZYTmNQU29NUCtXWG1tRTRVdC9ucDh0bHduQ2NjN0F6WmMz?=
- =?utf-8?B?UGFhRGluNU9pNEFmVHZicFNoelhVRzJScGRjWTNBaTBteFVsRHVLOVVkZ3lL?=
- =?utf-8?B?OHJiVnFjZUNBU3hoOHBFS2FCZkZscFpKZmMzVHV0NllDQVNGUUJSV2JhMXRG?=
- =?utf-8?B?QU5Jb3NRTWtWT05rRTZTT3ZUQTQ5ZXE4a2dXaFlHd2VCTjl3Q0tmbGRaMlky?=
- =?utf-8?B?cUVBWUhKQmw1Ly81OG5KR05DTHhYTHhYLzg0RUUwMDJqT2hsb2xPRldqZDg1?=
- =?utf-8?B?M04yY3pZVTFNSFVOY3EvOCtOQThtMVVsdlZhY2FQdWJHQ3hvamNKOUpSNmVn?=
- =?utf-8?B?eVBOWExxR1UvQlJRNlpNRklvcHVTWENoYXU0VExhUTVNdzQrc1BBZDJqMzFS?=
- =?utf-8?B?ajVPVERQWmRMWXFhaWdQUjQ5R1A3bnlwdStTWXlBcWJ3L2YrSGdjSWcwRnZm?=
- =?utf-8?B?R0VvUFArMXcyY0F2MzNFaTB4N2Rqbk9lQ01JaGNLZ0FvQmR1dytNTEVZNGpW?=
- =?utf-8?B?ODMwOFFqT05hbkw2OG9tMkZyNFZIODJodWhzZGM0cDdiNVpPdlBPemFWU3dB?=
- =?utf-8?B?ck9aVVNqU0ZvL3hHVWFHOVBnOXdxcEFPRTJqQkMxM25tSTR4bVJzd3ZhZy9V?=
- =?utf-8?B?YWkzY21idzBEZm5WaE9nSEwyLzVBWXF6aHpPbFBoZUxLb2h2T0ZXSnRnV0tr?=
- =?utf-8?B?bytMU0RMeVNYdHppaHJpL3F1N3pGS1RkZzZLWElnTDJ0bUt5NkJoSjBEakZ4?=
- =?utf-8?B?QVFvc2diajQrVmJYOFh0dW5YOFFicVJsNkFjb05wYjN2QlFNaE1FdDJod1Nz?=
- =?utf-8?B?VnNXL0lmc2tLb050cGtFY0U3YTI2TUZlVHkvY29UOTdNalhJWmJ2dWRVcDBH?=
- =?utf-8?B?V04xaExhbTNJY09jeTAxQnVjK2MyOExCbGxNMEluRmIyWnBITUI1QzlvaUlw?=
- =?utf-8?B?ODNLZnlSaFpUNkIyN0s2eXdWZ05KNGdaRHpUcS9PaVN3NXBMVGVSQUZFM3p2?=
- =?utf-8?B?dDM3L2lueHEzU2FuVDdiS1FHQTZNMmhxMlVQWVBRS1JRcFUwc2hjN0xyRDdw?=
- =?utf-8?B?clFKK1U4YzIvclRNT3JxQmx4RnMyQXlpOE1UeUpvR2tSSms0ZW8yZVkxOFpY?=
- =?utf-8?B?MWtWYXpXcnlITi9BL1dMZTBEdnRaNUFrT3hEdEovR05IZzlYdVVsRlZXMmlB?=
- =?utf-8?B?SzA2M0xTbWNHV2t0SVh4NVBod2RHZjNIWE5qelN3d3VhY1FwWVUxYk96OEJV?=
- =?utf-8?B?NU9nTURZdFlmRWc1NVV6Y0pOZXBCbWtGMnRaQ0YyS0FhVjl4YVVMQk5SOERj?=
- =?utf-8?B?YlRQdmxheEx3Wk5OLzk0TXl6OTB2Sy9kcWVNTi9iUkJTWEp3U3JmbFlBbnFV?=
- =?utf-8?B?Q2FyZmJMYWc5NnlkV1NRUi9pVUx5K3ZyYnI2c25NM2NFUHVpQnc3aVpwaWo4?=
- =?utf-8?B?SUx2ZExtRzkyUmlPOVhWSkMvZ3ZRdHEzYWx2RmVGbjFQaXNncExiSGoyeEFk?=
- =?utf-8?B?aTBQTktrWlQzelRFMzJNRU01QlVwM0FLZldJSWlYUFVmc0hCd3dBaTd6MXpN?=
- =?utf-8?Q?WL4zmVMQgIR23?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RXZwcHFqc0dTd2FiUGExRFFpZmxjVTFTc00xWjlBaDA3WnRoSEQvb05SU3Zs?=
- =?utf-8?B?VjNjdlhnTmFvQ3oyRWJiY2RvT2JGRFpPRGhRM1AyRjRSOUlQaWtPTzVreFIv?=
- =?utf-8?B?SWVwMnlrVG5aMnMrSHMyczd6dkFHYVIzWXdwb0t5NGxCS3BHb3lwSzBXNVdh?=
- =?utf-8?B?MHFwcVVQdGkxVEN0MVprS0ZGeGlWbm9aRlFTUm1CTURBTTc5aFMvbUJIclV5?=
- =?utf-8?B?a0xyZXNnTkRpWWJqVmJTRW56NFYyL1BYd2VxMXllZlA4eWlrVldOZnlWYjU1?=
- =?utf-8?B?dnVpckpDTUE1QUc1MUpmQjQ2c0VHRWg1dE5QOE1xZEp2Z1RHeXAwUldpNzlY?=
- =?utf-8?B?b2htNDhNS1hXcXJRNDQxWCtjcGlucnJNc0FOSEMyMksrQ1BEbUVHNFFiTVJC?=
- =?utf-8?B?OVMxeUcwMkJ0cTdZZTRjYmh3dU03TitQRVB4dFJCa0NhU0NYWUJURWR6VmF5?=
- =?utf-8?B?RDk2ZWdrOTlqdU5Gd3FLUzBWWDFqOXl5TXU0eHBKTFo2WmVPeFVEK2pneDUr?=
- =?utf-8?B?MjdETnArOVVZY05RYnRqcHpyeHgySG40bXhSbUExa1czWEpPV1RTa1h6aFBu?=
- =?utf-8?B?ZmFRNW8rSFoxOTg1WUd5RHlkS0FpU1VyZktRTzF0YUFSbzlJY0hQUkJGR3N4?=
- =?utf-8?B?TFB3ZFROR2VrMEZHZ3VwMm51SmpCMWhwcHVBdlhPQi9aTXdQSVlzdi84RDh0?=
- =?utf-8?B?cW9uQS9mWlhqTW1IejRXVUo5N0NHa2hDQU1JWHBJa3lMMjNvZzVUbVFqNFox?=
- =?utf-8?B?Rzk0U21IY0c2K1dyelFQcG5ITFh3VGVuZ2QzRFVlZU9FL1NWdTh6ejlYY3JV?=
- =?utf-8?B?WWtTYXRiaGVuODFWRmpLQ0c5ZFIzK3hUU0E5Q3kyaEUxVkwyTmhZUWNZZXo1?=
- =?utf-8?B?NDNjQWZCdm9OUno4QVlPTXg3VFdJN29uYUtMaTYzUmQ4bTRyb3F1RGlvemo0?=
- =?utf-8?B?V1ZlUUJtOVlEVDlQMTkxUUR1enpabWJXTmU4TUF0dlNoeVQzNTFxcHNORjdv?=
- =?utf-8?B?WEc1Rms5eWQwakxpWkpyOUhEc1hxU0JKOVc5WkpRa0kwUWFPazBnMWJtVzkx?=
- =?utf-8?B?UE1haldXYjhkVG0wZEx5MTc5WnJCbk1lenBtOVFmVlhjMTMrZmF5TkVWeUt6?=
- =?utf-8?B?a0lwRUcrdnB1bk5xVFRwa0ZoWWpRckVGekU3VGx1MFFxU044aVVLQUxkcDBC?=
- =?utf-8?B?d2ZaTHBVVlk3SENkVlFXaGNJaWpkNDNsMXRBYjNLa25uMm5WdVZaOThpRGhl?=
- =?utf-8?B?SDhZcGNUUHJhemxWQlhrNHhRaE8vcFIyekFIL01iOVpNNGFUU1ZwY0tWU0RR?=
- =?utf-8?B?RlRLaHdSRzhPa1U3ZTRSRWxZc1gzOWpQQ1Z5NlhtR1ZUdFJYelNySnZZaDN1?=
- =?utf-8?B?amg2cEY3TmZ6ZG5hSDk5RlBRNC9WaFk2cHVSOXlJSjREcXVBQTJyQ3Z6am9w?=
- =?utf-8?B?Y3hTVXhGS1VJM1lDYlk4SjNYUFltaUpBOWNpYnFIYllUR29EK2d1cHhkZW40?=
- =?utf-8?B?eG4yOG1tNkViZ1o0eFM3YmEwRUVRTytQb1NRZTJJWjlLemhjQld0VU9RbUNO?=
- =?utf-8?B?bUFaaVJvYlF3UFQzUVNMSWlHWW94eXhkTEw1d05nVDBiTHp1eVl5WlZyY08w?=
- =?utf-8?B?eHlXeVRjMnlVQXNoaU5LUHBwS0Vaayt1RW5xcXlyMFNzQjg3VVFWSTgzMDV3?=
- =?utf-8?B?MjUrZmlVNkJJTzFOcVdNMDlUblpqcGhHREJHZmw2ZVV3S1BiZE5JcTU5VnF3?=
- =?utf-8?B?MExLVnlGdGVEOXA3QmROQnhWMzdYaHU1bjQzV21sTW1Bdk5DeWZXam40TG5X?=
- =?utf-8?B?d1YzZ2IwQm1OZXlCNm9JVmdhN3cya2hJNlZ0eCtDUTcrSS9RYkNBZURsMk0v?=
- =?utf-8?B?UW1aQzU3VHlRTWdCT3ZFaTF4VUpJRlZ0WVJCTXBlYitvMmQ2OHJnNllhSXoz?=
- =?utf-8?B?emhWS3lBb3FDSjlnajE4Yks2WWxqdVdId0Q2L2grSzdRM3c0Nm5xMTNBZDVT?=
- =?utf-8?B?Y1VacEZ6aVZ5bUdQL1BnTkNzL3dZeDVtSTA4WW9sem9VU2U5SkVMVk0vU2dZ?=
- =?utf-8?B?cXNpU29oNjlpRnlLYXJDK0Z2T2tiOW5JR2xYc29HMUVCWWVrTmxlczQvbGEr?=
- =?utf-8?B?Z21EKzZ6UGkzY1hLWTdKZXhEZGpsc216d0lscTgvNGp3N2hnaU5GcWc0ZGxv?=
- =?utf-8?B?Mmc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76e139fa-0bfd-4363-eb3c-08dd581f4805
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 17:42:33.3348
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ViR+maUByObRvQ95XzzLG3KFDairDPhGbepfQySGwxyzmISie/8Z8bHk8oB1jcX0LgWWMjmuE2477UfqhMmtYaSxWw43l2DjJ+5O5a6FbVA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9302
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+ dan.j.williams@intel.com, dave.hansen@linux.intel.com, david@redhat.com,
+ jane.chu@oracle.com, osalvador@suse.de, tglx@linutronix.de
+References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
+ <20241212080904.2089632-3-kevin.brodsky@arm.com> <Z8BiUnkPnvrx06vp@gmail.com>
+ <Z8BirVtqibWY6zaT@gmail.com> <ce29384e-b3fe-4196-a986-bb57a5d693d6@arm.com>
+ <Z8Hu8oDHRnLx_gxm@gmail.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <Z8Hu8oDHRnLx_gxm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
+On 28/02/2025 18:14, Ingo Molnar wrote:
+> * Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+>
+>> On 27/02/2025 14:03, Ingo Molnar wrote:
+>>> * Ingo Molnar <mingo@kernel.org> wrote:
+>>>
+>>>> So I tried to pick up this patch belatedly, but there's more places 
+>>>> that mistakenly learned to rely on the stray <linux/mm.h> inclusion, 
+>>>> for example on x86 defconfig-ish kernels:
+>>>>
+>>>>
+>>>>   In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
+>>>>   ./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name ‘pgprot_t’
+>>>>   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
+>>>>   |                                                         ^~~~~~~~
+>> This patch relies on patch 1 in this series, which removes 
+>> __set_memory_prot(). I seem to be able to build x86_64_defconfig 
+>> without issue with both patches applies on the latest mainline.
+> Oh, the 1/2 patch was missing from my mailbox (my mbox's fault, not yours),
+> and apparently the 'PATCH 2/2' tag wasn't a big enough of a clue for me
+> that there's a dependent patch. ;-)
 
-On 2/28/25 5:57 PM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> Commit 52d11c863ac9 ("drm/rockchip: lvds: do not print scary message when
-> probing defer") already started hiding scary messages that are not relevant
-> if the requested supply just returned EPROBE_DEFER, but there are more
-> possible sources - like the phy.
-> 
-> So modernize the whole logging in the probe path by replacing the
-> remaining deprecated DRM_DEV_ERROR with appropriate dev_err(_probe)
-> and drm_err calls.
-> 
-> The distinction here is that all messages talking about mishaps of the
-> lvds element use dev_err(_probe) while messages caused by interaction
-> with the main Rockchip drm-device use drm_err.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->   drivers/gpu/drm/rockchip/rockchip_lvds.c | 59 +++++++++++-------------
->   1 file changed, 26 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> index c19b7b1f6cb5..2b5101a764c8 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> @@ -453,10 +453,9 @@ static int rk3288_lvds_probe(struct platform_device *pdev,
->   		return PTR_ERR(lvds->regs);
->   
->   	lvds->pclk = devm_clk_get_prepared(lvds->dev, "pclk_lvds");
-> -	if (IS_ERR(lvds->pclk)) {
-> -		DRM_DEV_ERROR(lvds->dev, "could not get pclk_lvds\n");
-> -		return PTR_ERR(lvds->pclk);
-> -	}
-> +	if (IS_ERR(lvds->pclk))
-> +		return dev_err_probe(lvds->dev, PTR_ERR(lvds->pclk),
-> +				     "could not get pclk_lvds\n");
->   
->   	lvds->pins = devm_kzalloc(lvds->dev, sizeof(*lvds->pins),
->   				  GFP_KERNEL);
-> @@ -465,14 +464,14 @@ static int rk3288_lvds_probe(struct platform_device *pdev,
->   
->   	lvds->pins->p = devm_pinctrl_get(lvds->dev);
->   	if (IS_ERR(lvds->pins->p)) {
-> -		DRM_DEV_ERROR(lvds->dev, "no pinctrl handle\n");
-> +		dev_err(lvds->dev, "no pinctrl handle\n");
->   		devm_kfree(lvds->dev, lvds->pins);
->   		lvds->pins = NULL;
->   	} else {
->   		lvds->pins->default_state =
->   			pinctrl_lookup_state(lvds->pins->p, "lcdc");
->   		if (IS_ERR(lvds->pins->default_state)) {
-> -			DRM_DEV_ERROR(lvds->dev, "no default pinctrl state\n");
-> +			dev_err(lvds->dev, "no default pinctrl state\n");
->   			devm_kfree(lvds->dev, lvds->pins);
->   			lvds->pins = NULL;
->   		}
-> @@ -547,11 +546,10 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   
->   	lvds->drm_dev = drm_dev;
->   	port = of_graph_get_port_by_id(dev->of_node, 1);
-> -	if (!port) {
-> -		DRM_DEV_ERROR(dev,
-> -			      "can't found port point, please init lvds panel port!\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!port)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "can't found port point, please init lvds panel port!\n");
-> +
->   	for_each_child_of_node(port, endpoint) {
->   		child_count++;
->   		of_property_read_u32(endpoint, "reg", &endpoint_id);
-> @@ -563,7 +561,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   		}
->   	}
->   	if (!child_count) {
-> -		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
-> +		dev_err(dev, "lvds port does not have any children\n");
->   		ret = -EINVAL;
+Ah that would explain it! Naughty mailbox eating patches :)
 
-What about
+> Anyway, I re-tested it with both patches applied and it's all looking 
+> good now, and I have applied them to tip:x86/headers.
 
-ret = dev_err_probe(dev, -EINVAL, "lvds port does not have any children\n")
+Great, thank you!
 
-?
-
->   		goto err_put_port;
->   	} else if (ret) {
-> @@ -581,7 +579,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   		lvds->output = rockchip_lvds_name_to_output(name);
->   
->   	if (lvds->output < 0) {
-> -		DRM_DEV_ERROR(dev, "invalid output type [%s]\n", name);
-> +		dev_err(dev, "invalid output type [%s]\n", name);
->   		ret = lvds->output;
-
-ret = dev_err_probe(dev, lvds->output, "invalid output type [%s]\n", name);
-
-maybe?
-
->   		goto err_put_remote;
->   	}
-> @@ -593,7 +591,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   		lvds->format = rockchip_lvds_name_to_format(name);
->   
->   	if (lvds->format < 0) {
-> -		DRM_DEV_ERROR(dev, "invalid data-mapping format [%s]\n", name);
-> +		dev_err(dev, "invalid data-mapping format [%s]\n", name);
->   		ret = lvds->format;
-
-ret = dev_err_probe(dev, lvds->format, "invalid data-mapping format 
-[%s]\n", name);
-
-maybe?
-
->   		goto err_put_remote;
->   	}
-> @@ -604,8 +602,8 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   
->   	ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_LVDS);
->   	if (ret < 0) {
-> -		DRM_DEV_ERROR(drm_dev->dev,
-> -			      "failed to initialize encoder: %d\n", ret);
-> +		drm_err(drm_dev,
-> +			"failed to initialize encoder: %d\n", ret);
-
-All the above are using dev_err, but starting here, it's drm_err, is 
-that on purpose?
-
->   		goto err_put_remote;
->   	}
->   
-> @@ -618,8 +616,8 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   					 &rockchip_lvds_connector_funcs,
->   					 DRM_MODE_CONNECTOR_LVDS);
->   		if (ret < 0) {
-> -			DRM_DEV_ERROR(drm_dev->dev,
-> -				      "failed to initialize connector: %d\n", ret);
-> +			drm_err(drm_dev,
-> +				"failed to initialize connector: %d\n", ret);
->   			goto err_free_encoder;
->   		}
->   
-> @@ -633,9 +631,9 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->   
->   		connector = drm_bridge_connector_init(lvds->drm_dev, encoder);
->   		if (IS_ERR(connector)) {
-> -			DRM_DEV_ERROR(drm_dev->dev,
-> -				      "failed to initialize bridge connector: %pe\n",
-> -				      connector);
-> +			drm_err(drm_dev,
-> +				"failed to initialize bridge connector: %pe\n",
-> +				connector);
->   			ret = PTR_ERR(connector);
-
-What about using dev_err_probe() here as well?
-
-Looks ok to me otherwise!
-
-Cheers,
-Quentin
+- Kevin
 
