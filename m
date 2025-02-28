@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-537655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD34A48EC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:41:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DD7A48EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DF23B6D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:40:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93F027A7F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418D717AE11;
-	Fri, 28 Feb 2025 02:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617C418C011;
+	Fri, 28 Feb 2025 02:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ky1v8DAY"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kk5uozrD"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F8013CA8A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E8E16ABC6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710450; cv=none; b=mjG1cCD6Qz5S3blaWfEwNyXKAoENL6OVXV5Xjg2bZNYd6+UrrV2CZPWlYLfTj6dtiBDnwZQIRElUvP25vXaNWO7AbTSS+4t8aO6tjniYvId12UW7tfmAGwZaPLSM6+1Lj9BuqRCVMkv8Dk0qeaqXJYfdDldHepe5AprQDO04jLc=
+	t=1740710451; cv=none; b=I0+4RQ2QydTbELy1Plca7oFRYzFgFGtkD/GJdoaO03ps4VV4shADC1gG/mkF9e5GYHmRvTVNg/qk3XyNpCj9lIgE1X+nouh52xXND9gia78Y2KTjkFMWffYXE2CRXHSdeR12r6rv++cXuMa6ZhaaOl0zPOjzU/nN30KMlXGVRdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710450; c=relaxed/simple;
-	bh=7BzZsMBnZu1h07UISleUgszbH3T6+OpRP/jWCT7kc0s=;
+	s=arc-20240116; t=1740710451; c=relaxed/simple;
+	bh=AHlIDMaamS4Q911Ji55qeGiDjSSjpx7O5PqZx+FIb8k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rtA3+37zNcnUHqd1LjlXw1h9+sKBHSv40RSicpBRoJl+SXVysFHGIfTuQxWAKMCKZbCd1ottkCBsRX+6i4m3200LOw/FtS0hkcl3rOiD7otKDMleRvItiXJMQrYEIHi2EJTuIoCIeKaXapsBiD9o60ysCzGmUY5DQPAyo7JKf+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ky1v8DAY; arc=none smtp.client-ip=209.85.208.169
+	 In-Reply-To:To:Cc; b=ukmqsiPGzvhJab1wrackKINpJYIAfQbnA1c12pTpIXZAByNuw0PVlE6OLRWpGkCcbYd1evh1RbI4gQ6HHrPBVe4e49nJSzpAqt91DkJbKOJJ7LkxIVV1CzgoQtPJcGx43SbV4+OnyADmsLRLP5dplLBVqsiS8cddyriOlGJ9xOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kk5uozrD; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30a28bf1baaso15906881fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:40:47 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30a29f4bd43so16390601fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740710445; x=1741315245; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740710448; x=1741315248; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=21TVA0G0gojITtd03fcIP3wwFgnkOgv1z7AmIqkOOEg=;
-        b=Ky1v8DAYh/0ExZga0A9yqHc8DKIbSgZpuudnnNuJIDzDJ4d1NkP51g0UBoPaeaAojX
-         JLdibqAIUg99akohjEU/FnADJnP3icywxfjRshVMpju1y1TCLEPlzB/C070fqvkVGcpg
-         v4ZDVG0Kv9PX4EM9sKcyu3c2PjPjXG2sG7gjiyJvP196Rbh2QGke0uk5z0nIWdJSkEXH
-         rExSjPn5zkeXYFOqhqSmCoLTf92oIL/21yKV4m3ay+6o437R3J7tyhNXXXggaUnxYy1u
-         wqqqdBCfoAqCIDYNu42mWlLvQl4lGuQQFXIE4bwl1lMpu2Tsozr+BdYMk/YQCQriowog
-         8mbQ==
+        bh=vOGs6Fa6zuHrhwyPIl+nFTAKnbOoAu0XxgAk7bsGnFo=;
+        b=Kk5uozrDnNCrzJh8Jiw16Lp3b9vl6rWv2PQ+0ZYkg9jU8SMRElVWyfrYzJgVMsxXnP
+         UbfQ4g50ixzCZctCnsD0xOLsNL6Mu6zIXHoHgzYvlGvzuDclacsKx424EikaQUQ8stH0
+         5ctRpSXhfrC3JgOA5oVt0kX7PsaF2cvs4kNQhMt2pecHfcuPPKfMSBC4zflZ7UH9odp3
+         1BHf/Qqy16PTq98ioX/ahHENQVmLtUS6C1JVenksY4NjJBErJRy7CdBc9HNkIBz8qyWG
+         /l3Rb+2hPgiLSz2b4Db+8gXT4guY4+uJ0qju/7v12/lyw5nVRlSzNcHrWfOyg6wWuxWf
+         vr2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740710445; x=1741315245;
+        d=1e100.net; s=20230601; t=1740710448; x=1741315248;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=21TVA0G0gojITtd03fcIP3wwFgnkOgv1z7AmIqkOOEg=;
-        b=ed158OXlXiVlYA+2R1XkQZc4b+ssRcMFeocSSxkowvRVF8E2Q/r10yRX6/IvhzJj9f
-         +W3XCZYBYGtQ3p+1lF+9DJtWXib0bNlTNXByHME8c2VTVU1xTmiMCh0rmn44dWsWtDCj
-         U8YQYmoW3fNMB6nPTk3LwRDY+OUP74G/GmaA0q5IeAkiDpHKRRrZ3xw9kY56/bJboTkW
-         zTuiHfFB4CEj9b9DZVO9GXinBywqe4yiNV3qV8g0K2IFClJkVoiHh5fnCoNhy3ypch9v
-         RcNqaHHxEFoxw81Rly7zLE03FtErjoHvzau8giW2+VFCQBPIusrq9nU4+o78p8JsXCMj
-         iaKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBRgwXehhvsigfxq144KOD1m2iHC+aqxRsH1hhiCWZe4jFtAqdE00sXkzLbNkNHZ+OlM3g0FIvNFz4KWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgikU+Puy8yrET10jkYHvJr2je79kQIRtKmzPUTSolDWO/H/Pa
-	yuZFwZRYLZ4p7ZuUILAmQxVQLWvdkCxgFv1/R+4nsm9LuKJD4LvlprHw00+EFCc=
-X-Gm-Gg: ASbGnctN1mrtR8SVtHLZw+h9XVnuSsMxykAQtfS3RNtJ2GS7KIdac1wog0M104WzEv5
-	UY4Q9WzMU+Dvj3uTSYlr0LcqH2Y28t7iP9icE1RlLoDmcMNOgdd622+KXi6rklxnqUtbI1DDDLV
-	MsRwVVInc22uhjsT9FOpaVGxm5POBu60pDc35nE7lh80WRFzPG8lifgNN0P0qYQahp8aC4EUiFe
-	NknrAlUZyZGZqIbGznvLytFGm5tFsLk8ielAxEMQmUSIlW7iA/JEvhjQRF79u2O/CY6dBq8d5By
-	BQKkUo2LySjpIuM2klxMrcFXHaQT4gYV4w==
-X-Google-Smtp-Source: AGHT+IE7Mky/M2fDSKSULiY34EQmUiMxEjS62GBJfX2zcyCayPQhXRzgX2IA/oB8JS7VImdstOeq7Q==
-X-Received: by 2002:a2e:be9e:0:b0:2ff:d3c6:9cf4 with SMTP id 38308e7fff4ca-30b93200529mr4213001fa.1.1740710445348;
-        Thu, 27 Feb 2025 18:40:45 -0800 (PST)
+        bh=vOGs6Fa6zuHrhwyPIl+nFTAKnbOoAu0XxgAk7bsGnFo=;
+        b=a7G5BL3Wa1QkgEtqRsHf3DLJQDqlFvGlkvloU+oJ7YJolPBrfQC2Pps6d9tgi3ZTtw
+         TlA7jfX57V7RO0f5SZjw/JlVHjCRcsQ4J04NBWBoMqCNamgra92gfJ7RP4fJx+EvEDza
+         NU3AsWoFBvOw0cpekp8XVBvLR6cJ5xhrtU/9EbmqbV7ZxkWznqFiHBnvGzSWpjbDnj4r
+         E+KMQF4NLSgDoxkaANE24ZdeG2Y9x+XKbt2wfzifKq3bUt9+4dTnlD77wbgC1PtIgewW
+         DObJgMgUbl0BRDCIFK6x+Xwo50Rc/y8WJyABfIuBhYyzkCVZiO0qu8Vj972+R8VfU/YO
+         AsOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8xP6/B6p/ic4XUCwTAcTtzONRl4u7UQsSN6koe8K64+S8MVRQOrhUyQrDA0AQlNeVUy0QOvyQFkJqXgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpYTR3g4rjqUZaYoyij54L3JjzrdvBL7d9GKj/wy6CVSJuRVMr
+	eAbS8dsvy4DFskrkkefb4POVLPjGqi3NOCN+mVHzBgOwC5Hjb6f9xYvz9B/6DVhFu8bb3KTQXJZ
+	IIkI=
+X-Gm-Gg: ASbGncuBSRBIOIb4an1+700bQfUoUfQQXT68QGu5Eui5FrI2otKG4W5yWoEy/Qge1Yh
+	HZyrxg92jwEPmrezq1QSbnkyazS2zksuLZHtUV1b38bSY/7aCaS79ThJHzCqyqPTdxXFKpcH6Wj
+	YDhP5UMpmvwAtfGzK2h8MpP27rYRo72RjIfSpfq/GWiohILzZZI+AoeHnHTloP9lAzBtNpxqKuv
+	yzUaImj65K0QulnhU3/0xEbnztLL4hCFpoFSuaTGtl1d1gJ+2z0P0jhY3fQBE3ElDGXG9MndC4/
+	6q4j2sgj3MqFbaOm2VuUIFWe3wKdcN+lsA==
+X-Google-Smtp-Source: AGHT+IEB4jROCc8fnBy3MSZrW9RzrxCaLFObuJxsi615v2WW4DWyQ2y9erjQd2zzlfZt4HWqNT73Xw==
+X-Received: by 2002:a05:651c:e07:b0:30b:9813:afe1 with SMTP id 38308e7fff4ca-30b9813b4eemr801181fa.25.1740710447809;
+        Thu, 27 Feb 2025 18:40:47 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a7403sm3493881fa.17.2025.02.27.18.40.43
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a7403sm3493881fa.17.2025.02.27.18.40.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 18:40:44 -0800 (PST)
+        Thu, 27 Feb 2025 18:40:46 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 28 Feb 2025 04:40:38 +0200
-Subject: [PATCH 1/4] drm/msm/dpu: remove DSC feature bit for PINGPONG on
- MSM8937
+Date: Fri, 28 Feb 2025 04:40:39 +0200
+Subject: [PATCH 2/4] drm/msm/dpu: remove DSC feature bit for PINGPONG on
+ MSM8917
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-dpu-fix-catalog-v1-1-b05d22fbc2b4@linaro.org>
+Message-Id: <20250228-dpu-fix-catalog-v1-2-b05d22fbc2b4@linaro.org>
 References: <20250228-dpu-fix-catalog-v1-0-b05d22fbc2b4@linaro.org>
 In-Reply-To: <20250228-dpu-fix-catalog-v1-0-b05d22fbc2b4@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -95,16 +96,16 @@ To: Rob Clark <robdclark@gmail.com>,
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1513;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1244;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=7BzZsMBnZu1h07UISleUgszbH3T6+OpRP/jWCT7kc0s=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnwSIouiJGhGOZyYTg9iPINN+LzRYzfnPSJR5m8
- KuNAd1pze+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8EiKAAKCRCLPIo+Aiko
- 1cATB/9IAWUW3l3iAA5pqb5DkZfeWKaw/TMntlcwc4Bb6aqNPNgO66bOsVK00C5ogk6vFwOFct4
- PnmRtKjTfFCYwEzwXiNDfOq+Ua7F1PmHEuAlCwH5nZGx0H7/N9tuCYrPSA9hmqEbEroie1zHG0s
- kTnOeXsw9p9puyTdXaGzHOrU/nizHJsXuCuBX3aSAGQmXCeAYXPy7k7HCb3aRqQrSeAsSfg6rYy
- Td0GRICCFRhTJJ6mQWHO+0IXlXfE5B3fu141VPJ5vs5doAJMkBIq67op4EGTsg7ehQCQB4iTZ9i
- MIiT1DyLeWTiMoh8f27DcnrTEMaQpbsqCxCxiiVZcih9G4fa
+ bh=AHlIDMaamS4Q911Ji55qeGiDjSSjpx7O5PqZx+FIb8k=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnwSIo7NuSbAFeNFO1NY+RizSOKgHJrrMgQz/BM
+ XWFEbzrn0CJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8EiKAAKCRCLPIo+Aiko
+ 1Q9yB/9Isl5/jVjtfyVK1130CUffh72E0EfipCMgeU8T2V/cUd/oht19i47Bklr9nLRGpZgr0QF
+ nhI5oaX2BJowBZ7XVBBL46P6bSfq7TwhGC0DrGEvNK3B9LHLnQOAdgv7wYlUqjVhqK29uQEwE5/
+ JJi/sefWmvVpPkWxytK+0EhNUbmF5UyfG0ADicerAHsoIy1s5QIBWruB3KdrnqsC5r/qU2j6R4m
+ OdJs/X0VWXZRxsHn7psLQ9Q+H4INkAUvLxYhtHMHRQt0uwlxtkDVFzs2iBcWmIv6w9LROVF+Jq8
+ C/JtiYINhX+7199v3tqxSZaCU1G2USuXFqjGQffzH+WkMPGY
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
@@ -113,18 +114,18 @@ registers in the PINGPONG block. Drop the DPU_PINGPONG_DSC feature bit
 from the PINGPONG's feature mask and, as it is the only remaining bit,
 drop the .features assignment completely.
 
-Fixes: c079680bb0fa ("drm/msm/dpu: Add support for MSM8937")
+Fixes: 62af6e1cb596 ("drm/msm/dpu: Add support for MSM8917")
 Reported-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h
-index ab3dfb0b374ead36c7f07b0a77c703fb2c09ff8a..a848f825c5948c5819758e131af60b83b543b15a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h
-@@ -100,14 +100,12 @@ static const struct dpu_pingpong_cfg msm8937_pp[] = {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h
+index 6bdaecca676144f9162ab1839d99f3e2e3386dc7..6f2c40b303e2b017fc3f913563a1a251779a9124 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h
+@@ -93,7 +93,6 @@ static const struct dpu_pingpong_cfg msm8917_pp[] = {
  	{
  		.name = "pingpong_0", .id = PINGPONG_0,
  		.base = 0x70000, .len = 0xd4,
@@ -132,13 +133,6 @@ index ab3dfb0b374ead36c7f07b0a77c703fb2c09ff8a..a848f825c5948c5819758e131af60b83
  		.sblk = &msm8996_pp_sblk,
  		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 8),
  		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
- 	}, {
- 		.name = "pingpong_1", .id = PINGPONG_1,
- 		.base = 0x70800, .len = 0xd4,
--		.features = PINGPONG_MSM8996_MASK,
- 		.sblk = &msm8996_pp_sblk,
- 		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 9),
- 		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 13),
 
 -- 
 2.39.5
