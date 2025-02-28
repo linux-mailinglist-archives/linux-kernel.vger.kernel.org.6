@@ -1,122 +1,219 @@
-Return-Path: <linux-kernel+bounces-538729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD24A49C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:53:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E189A49C74
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60903B7B5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950F97A58D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A0927182A;
-	Fri, 28 Feb 2025 14:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E29270EC3;
+	Fri, 28 Feb 2025 14:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UPxUa2Ff"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/CLJKeo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2648D270EC1;
-	Fri, 28 Feb 2025 14:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A68270EA4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754403; cv=none; b=QH1VvC0ZYXJEAiyi/i6CmwNm12r0OmPRBl05DYUm5ExiW5d24QxzrTjw6nPQsMMeUhRIj3yEh2VYNhi8MGtmSXInO/ebX03KDnoHrX59320O/cwEPLY2bhR93gjCSGk3RN8fvCIfJAMViwa++yBFyat0XGfx1/iK0UrLDZkB/bk=
+	t=1740754413; cv=none; b=NtB8oFgTJVIqcE3sTV1tqGMbIE1iaBtXyXF6Spoc6Hr91+A/eSk6JwJT0lIYaqVqmyu/dMkOATbkWzk6vFNsSb9RIonJzVUAa48hcfH18pqKLopxjYH3QOOMofNGLkN1V3vUhGVv1wq93vCuKuak6ClCCw6rbGspSFNFQxElFpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754403; c=relaxed/simple;
-	bh=oRoY54GYwkZqq9qz+2JJWuc/yHiIM4DNvPGXJPJIl98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bXocwiMTFqLB33wqsWor/kkLyqBTCvuoAO3tg8rNZ3pjqskN3z1y6hWVk/hjIYzoroSM0VnDjEtzF/l8yArxfHrdV4cEtP9XtgS2MxCCgSDkx0DGsfm2Wk9ejVenbj3/eLVkMuj836q/dCePOZR+sELL1t8NYlYmOztH98CrSuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UPxUa2Ff; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740754400;
-	bh=oRoY54GYwkZqq9qz+2JJWuc/yHiIM4DNvPGXJPJIl98=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UPxUa2FfP22b2Q5Tc0r9oojcibLXvIhkoJ69hI6gNj1TgUqDnNsmgur2QydWvjkjw
-	 iijx9pKiKRtvPsPpGenohoWIfmtyy8tRRQr4rc4HP4C6S55AnjJCYRo4ytdmyg0nGA
-	 +3Bbh/Om/G7w9Sb/oKKqHwoed7Nsjvvib6C3LdN+nqTkz+4V3Dcy+Z7w7vSFFENazi
-	 0zZYWH7E6pklX8tuViuCxrWhgMbL4GAGRETmhtFy1+zRpOO4q3kMkMOdVzfaw4djU6
-	 Jv3ivI8GVejufqyjpRo22GkVdou9bys+ax1tkrG39jrqUkUu4MHk6qP+VSJ9FPo/d4
-	 02Wa0V6ZZm7uQ==
-Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	s=arc-20240116; t=1740754413; c=relaxed/simple;
+	bh=t1PAr2eEdMcCw9orI2VM67VmUdODOIx2DAcDEs7pVbw=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=DnfsYqBUbmWQWEJF0s09rhuCAaG8uXX1mWMV68dRXe51reiuecsvZQ3vFWYigps5GnIlXJp2jbKiYORkcU5XCid/T+u5yLH+AmDjlghd5x0UTDHXbUK7tc+KU8HD/9bIHK+pXr067LjT1pxPHa+cijMq7gRn2czEz+yPh7a9PIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/CLJKeo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740754410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Y4Owtb6Y2XSyqYIbk6xQVrSNu7uVw1Cw1WOzP8Kp2SY=;
+	b=i/CLJKeoVnW5yEt44x1EnlT7iZ4rETlSw5XgajSalCc3DUMTuoHgNSKyxB2Qd8tkgrYuvx
+	Su7sZdzHQKiXhTjBS1S3fsIwgjbCUWA8bJP3zAHEyZWRT9CpeqWNVeMZoDJJKz8ykvsGTQ
+	7ZZw/ZjpobjdDr/NMxriu1kOuBE3DBc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-H5y_UyCeOcO65OrsRAm9Jg-1; Fri,
+ 28 Feb 2025 09:53:25 -0500
+X-MC-Unique: H5y_UyCeOcO65OrsRAm9Jg-1
+X-Mimecast-MFC-AGG-ID: H5y_UyCeOcO65OrsRAm9Jg_1740754404
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3675217E0B64;
-	Fri, 28 Feb 2025 15:53:18 +0100 (CET)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Stephen Chen <stephen@radxa.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Liang Chen <cl@rock-chips.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH 2/2] arm64: dts: rockchip: Add SPI NOR device on the ROCK 4D
-Date: Fri, 28 Feb 2025 09:50:48 -0500
-Message-ID: <20250228145304.581349-3-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228145304.581349-1-detlev.casanova@collabora.com>
-References: <20250228145304.581349-1-detlev.casanova@collabora.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 078F61944EB8;
+	Fri, 28 Feb 2025 14:53:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6EF2B1800358;
+	Fri, 28 Feb 2025 14:53:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: David Howells <dhowells@redhat.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S.
+ Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@lists.infradead.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL v2] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3399676.1740754398.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 28 Feb 2025 14:53:18 +0000
+Message-ID: <3399677.1740754398@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The SPI NOR chip is connected on the FSPI0 core, so enable the sfc0 node
-and add the flash device to it.
+Hi Christian,
 
-The SPI NOR won't work at higher speed than 50 MHz, specify the limit.
+Could you pull this into the VFS tree onto a stable branch, replacing the
+earlier pull?  The patches were previously posted here as part of a longer
+series:
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+  https://lore.kernel.org/r/20250224234154.2014840-1-dhowells@redhat.com/
+
+The first five patches are fixes that have gone through the net tree to
+Linus and hence this patchset is based on the latest merge by Linus and
+I've dropped those from my branch.
+
+This fixes an occasional hang that's only really encountered when rmmod'in=
+g
+the kafs module, one of the reasons why I'm proposing it for the next merg=
+e
+window rather than immediate upstreaming.  The changes include:
+
+ (1) Remove the "-o autocell" mount option.  This is obsolete with the
+     dynamic root and removing it makes the next patch slightly easier.
+
+ (2) Change how the dynamic root mount is constructed.  Currently, the roo=
+t
+     directory is (de)populated when it is (un)mounted if there are cells
+     already configured and, further, pairs of automount points have to be
+     created/removed each time a cell is added/deleted.
+
+     This is changed so that readdir on the root dir lists all the known
+     cell automount pairs plus the @cell symlinks and the inodes and
+     dentries are constructed by lookup on demand.  This simplifies the
+     cell management code.
+
+ (3) A few improvements to the afs_volume tracepoint.
+
+ (4) A few improvements to the afs_server tracepoint.
+
+ (5) Pass trace info into the afs_lookup_cell() function to allow the trac=
+e
+     log to indicate the purpose of the lookup.
+
+ (6) Remove the 'net' parameter from afs_unuse_cell() as it's superfluous.
+
+ (7) In rxrpc, allow a kernel app (such as kafs) to store a word of
+     information on rxrpc_peer records.
+
+ (8) Use the information stored on the rxrpc_peer record to point to the
+     afs_server record.  This allows the server address lookup to be done
+     away with.
+
+ (9) Simplify the afs_server ref/activity accounting to make each one
+     self-contained and not garbage collected from the cell management wor=
+k
+     item.
+
+(10) Simplify the afs_cell ref/activity accounting to make each one of
+     these also self-contained and not driven by a central management work
+     item.
+
+     The current code was intended to make it such that a single timer for
+     the namespace and one work item per cell could do all the work
+     required to maintain these records.  This, however, made for some
+     sequencing problems when cleaning up these records.  Further, the
+     attempt to pass refs along with timers and work items made getting it
+     right rather tricky when the timer or work item already had a ref
+     attached and now a ref had to be got rid of.
+
+Thanks,
+David
+
+Changes
+=3D=3D=3D=3D=3D=3D=3D
+ver #2)
+ - Fix an error check of the form "unsigned value < 0".
+
+Link: https://lore.kernel.org/r//3190716.1740733119@warthog.procyon.org.uk=
+/ # v1
+
 ---
- arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+The following changes since commit 1e15510b71c99c6e49134d756df91069f7d1814=
+1:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-index 5dc1c18a3b211..09977dc191fe1 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-@@ -670,6 +670,22 @@ &sdmmc {
- 	status = "okay";
- };
- 
-+
-+&sfc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&fspi0_pins &fspi0_csn0>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <1>;
-+		vcc-supply = <&vcc_1v8_s3>;
-+	};
-+};
-+
- &u2phy0 {
- 	status = "okay";
- };
--- 
-2.48.1
+  Merge tag 'net-6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/gi=
+t/netdev/net (2025-02-27 09:32:42 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/afs-next-20250228-2
+
+for you to fetch changes up to 1832e155fa7aafa7a983bb3db2e5a7dbe0f1b074:
+
+  afs: Simplify cell record handling (2025-02-28 14:42:00 +0000)
+
+----------------------------------------------------------------
+afs: Fix ref leak in rmmod
+
+----------------------------------------------------------------
+David Howells (10):
+      afs: Remove the "autocell" mount option
+      afs: Change dynroot to create contents on demand
+      afs: Improve afs_volume tracing to display a debug ID
+      afs: Improve server refcount/active count tracing
+      afs: Make afs_lookup_cell() take a trace note
+      afs: Drop the net parameter from afs_unuse_cell()
+      rxrpc: Allow the app to store private data on peer structs
+      afs: Use the per-peer app data provided by rxrpc
+      afs: Fix afs_server ref accounting
+      afs: Simplify cell record handling
+
+ fs/afs/addr_list.c         |  50 ++++
+ fs/afs/cell.c              | 436 ++++++++++++++------------------
+ fs/afs/cmservice.c         |  82 +------
+ fs/afs/dir.c               |   5 +-
+ fs/afs/dynroot.c           | 484 +++++++++++++++---------------------
+ fs/afs/fs_probe.c          |  32 ++-
+ fs/afs/fsclient.c          |   4 +-
+ fs/afs/internal.h          |  98 ++++----
+ fs/afs/main.c              |  16 +-
+ fs/afs/mntpt.c             |   5 +-
+ fs/afs/proc.c              |  15 +-
+ fs/afs/rxrpc.c             |   8 +-
+ fs/afs/server.c            | 601 +++++++++++++++++++---------------------=
+-----
+ fs/afs/server_list.c       |   6 +-
+ fs/afs/super.c             |  25 +-
+ fs/afs/vl_alias.c          |   7 +-
+ fs/afs/vl_rotate.c         |   2 +-
+ fs/afs/volume.c            |  15 +-
+ include/net/af_rxrpc.h     |   2 +
+ include/trace/events/afs.h |  83 ++++---
+ net/rxrpc/ar-internal.h    |   1 +
+ net/rxrpc/peer_object.c    |  30 ++-
+ 22 files changed, 903 insertions(+), 1104 deletions(-)
 
 
