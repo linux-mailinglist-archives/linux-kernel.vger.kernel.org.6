@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-538938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F87A49EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6364A49F06
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2429E1898802
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD6A3B9C5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953DB27560A;
-	Fri, 28 Feb 2025 16:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B2274267;
+	Fri, 28 Feb 2025 16:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHZSPwtb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B9GH67kh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7693271294;
-	Fri, 28 Feb 2025 16:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF2F2702B7;
+	Fri, 28 Feb 2025 16:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760644; cv=none; b=pvocbeRrMSC8kQ864yXkSnI5CzXOgfG2hcBwwnMiS4FBY6QcT9gkb3FuR8oi/pzjL6xrhy+3a210G9Nd+IG9Rf9rwN+SMapQtUAyr3gjo7KMpOX3BlJMamyJFIan3r3wakLIOkiOcpcPqiXSRHlaHyVLBM2Paca500jzagKvc9s=
+	t=1740760659; cv=none; b=fWIe62gl189P8a/w/K2t4udKXIz+mX5bKZEXRiutNmKyaXlXsAuqUYako4cckjIhmTw02a14VqsLnQtdfQREou+mR3Gg3pMTyO/mUs4LaPriGgFyYGxL425psHQ/mJ8lm0S5Dh4BZzYakdXDqkdaxNMVSGvWnn61e16ntjfCn8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760644; c=relaxed/simple;
-	bh=A69CLjlOQbAO3pZl4fF041K+6a5JT2FGix0HP+Td0wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=J6Yw9gcTGHYgC7OTnBxqImiQL6V8iTLjUTnMAD81vRvogsw9w9Azh+Vr7bmvtV10HnECiUcKuL6AkWm9IUwdUdbwo3wPdgYGDEUvzpqCErShKsFigM8A+M0ztbGU+tGg0KQiCQxPchK0UJ6nMB/akBXFmuEdogcldH8Tv4D1Bd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHZSPwtb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 229D0C4CED6;
-	Fri, 28 Feb 2025 16:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740760643;
-	bh=A69CLjlOQbAO3pZl4fF041K+6a5JT2FGix0HP+Td0wc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=DHZSPwtb6DP3g/SDWt0N+aNOxTed6arPNw8IEvxLckTXrvGSzylNBPtv3VZu8I/pb
-	 CQVcVLDQYAgZEMXCHFYFxQZeoWfwJ/busg2F87CpKQELQIL6IKvDmwuSMYLzBNaoqk
-	 NHxPdteOmu86zIK8RtPolapyWcKWeBNw/Wr/l5I+XcGabfwhWoTvB0yEpIZqy5axRb
-	 ByEWINBILtw17M8JttsdIx2IXTI3gkA5DZhvuNjoXphL8Bjy5IrRPt3fZ5uhG0JY5W
-	 k2Ho98eF/PrTqkIUofPE9GcBKgpak60RfMi6oPOx60+7rgzufU7WUXxmk/j+99yoTW
-	 63dCZs1go/I9A==
-Date: Fri, 28 Feb 2025 10:37:21 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
-	jingoohan1@gmail.com
-Subject: Re: [PATCH v15 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-Message-ID: <20250228163721.GA56317@bhelgaas>
+	s=arc-20240116; t=1740760659; c=relaxed/simple;
+	bh=epNnDncNDPb3P9Gfrg3v/n733ph9wy4EFsXFRHFRvKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DrJKTISgP49HvjnI7vuEUnOMKgGonQjPzG4AZOUfVKvMqoU4UPIHgRYNVA7kA9vcj0puOH1VtSJrgRxfR7nTpGW4AsPTPA5y9bKQxY0sSEFZFz2ebPWabLJVBWQAtH81JIdaDbnx+5mrjfKqYUN1K+CEvOxVxjaObpTQatqDgIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B9GH67kh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1VRZoqoHCK+crSI0o1Efw52ErTi5ppZiw43v7ZMPgsI=; b=B9GH67kh5Jx8WzgqtpIIffYyq3
+	PWDB2DLd/vOU1AwfV204wkdgFxp78886X72/Ob+ubLCt+jeR4DCJpFk4VoO2BUpK2M2oQI87XSI0D
+	3+dNH2QThUO2gaotwredUNBP3UQhuCf2nSiZ18yMiWTn0r2HRCWEOhldpdhbV3oGjP+I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1to3MX-0010OP-I6; Fri, 28 Feb 2025 17:37:21 +0100
+Date: Fri, 28 Feb 2025 17:37:21 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
+Message-ID: <51f829a0-43e2-4cb5-ac0f-a0098d53ce7b@lunn.ch>
+References: <mpearson-lenovo@squebb.ca>
+ <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+ <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
+ <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+ <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,31 +65,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228093351.923615-4-thippeswamy.havalige@amd.com>
+In-Reply-To: <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
 
-On Fri, Feb 28, 2025 at 03:03:51PM +0530, Thippeswamy Havalige wrote:
-> Add support for AMD MDB (Multimedia DMA Bridge) IP core as Root Port.
-> 
-> The Versal2 devices include MDB Module. The integrated block for MDB along
-> with the integrated bridge can function as PCIe Root Port controller at
-> Gen5 32-GT/s operation per lane.
-> 
-> Bridge supports error and INTx interrupts and are handled using platform
-> specific interrupt line in Versal2.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes:
-> | https://lore.kernel.org/oe-kbuild-all/202502191741.xrVmEAG4-lkp@intel.
-> | com/
+> For the PHY - do you know a way of determining this easily?
 
-Drop these reported-by: and closes: tags.
+Add printk()s to e1000e_get_phy_type_from_id().
 
-Krzysztof K. already said this:
-https://lore.kernel.org/r/144202cc-057c-4a7d-852a-27e979284dd2@kernel.org
-
-Don't repost the series just for this.  If there are no other
-comments, we can remove this when merging it.
-
-Bjorn
+	Andrew
 
