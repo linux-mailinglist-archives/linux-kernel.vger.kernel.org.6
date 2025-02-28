@@ -1,174 +1,215 @@
-Return-Path: <linux-kernel+bounces-538797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BEDA49D31
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:20:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F25A49D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58F93B17AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E324E3B439F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A786526FDB6;
-	Fri, 28 Feb 2025 15:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F30272934;
+	Fri, 28 Feb 2025 15:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVcCufY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpGnAg0J"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06ED26BDA4;
-	Fri, 28 Feb 2025 15:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7A27181C;
+	Fri, 28 Feb 2025 15:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740755891; cv=none; b=pAZKxGdtIf184O2ACE2DVDPGEF5XGjs1bUcssIVejnouYkiP9+vkDTgRluS0RFvlhiXPA778amKdmj+JggbPJb7MzADpEQF+7zx2s2uLf9Zkb30SUa3LdLYAr8uP3W6lgXTWojnPDYoIqY1yVa72a6gbkN0glNZ6xcibCs1eHXk=
+	t=1740755966; cv=none; b=Dti4t/fCEHS+o6+qIXCHXfpE5NZcNzyB+788RV1AXAjQJAyMkt7s4kxh6b287BrhA9NxMFf3HTP2juX3HZjKBnbhwvt88jEaU8Q70Eup3USWUIhWdnkVj0muHSgbWzn39A4REtl6+wzT1+vhDQGZuYYGkKGiJ5UgFNLEjnPnBKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740755891; c=relaxed/simple;
-	bh=jkPRvgo3NpRaDEp4k1hzJV3HaS+fwgbJw+P6jRyMFGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujsnWj2SCT0uOCnjMNDPVDISut5hYjrD3IYITpyiRttm8BFzOF3HZDw4vfsV8FLzi+MmgrWtqN/i7cK+sq3m4HuyPr5OPAiVZus8J/1SAFRVQMulxrcabtZ+ihnspjukjXCsAOGCNOyEP81voPeNOgzECiclbFcM2kT4zR6G7Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVcCufY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB84C4CED6;
-	Fri, 28 Feb 2025 15:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740755889;
-	bh=jkPRvgo3NpRaDEp4k1hzJV3HaS+fwgbJw+P6jRyMFGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YVcCufY4G1TsQxgU92YFTwrHcLywjpyb41J0DfYNxaBJvrYArIte5gY7HV6saTZ8r
-	 xHXPcmui7GLTuGkjmyxX6xAf/4pBTVbk4Uk7cLC/NBZYXho1I5tlYJmBVATfDGSwT4
-	 pEp1GrtGxb/KhnT6XcsQirXIBsrLDlMU+vztD7x5L5/0EZfuye5yBpmUUq+AxWIl6X
-	 H95hdzTfzsvnWd6yYFXRV9z+HADw8FuUES9TjCeBz/YptSgodpY4g+g3JEU2CcF6dZ
-	 NqA+yJL0n9Z+aeBFZW4Uxhd6l78d7TEFJmlBx1V5LI75eLay/f+J2EdoAGrnHIUKeT
-	 tVsdxI8QExtew==
-Date: Fri, 28 Feb 2025 16:18:05 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: David Jander <david@protonic.nl>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org
-Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
- bindings
-Message-ID: <tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-8-david@protonic.nl>
- <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
- <20250228102201.590b4be6@erd003.prtnl>
- <9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
- <20250228110931.7bdae7fd@erd003.prtnl>
+	s=arc-20240116; t=1740755966; c=relaxed/simple;
+	bh=F8YT766/SjESb7HVqHUcjI5vFvf6sDNhEKkzd0Xmkzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pK36BgB6o2vXyX4vM1Y2KMpPD2lYIaBy8RX+vYSn72W6LxkrPmiZkXvEYPamjlaUCKv7ZKAaCrc/iyG3CmovBDGO/YvnygGHu85ERFdE1O18r9WoAK4TFN5SokZWq360hVV8QhcQjL+ttg+ZXdMsTpEenfuWy9RkpupiSMw/0vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpGnAg0J; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abf48293ad0so21733166b.0;
+        Fri, 28 Feb 2025 07:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740755963; x=1741360763; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7oY7BYAEv4W8+02LYZ2YxpBYCsfW/J7/vInnek1u5o=;
+        b=WpGnAg0JdqFR9O4GyPPcGAUaQIpUYXnp9mdbfZdp5eU/RegYPEQC+035w44/U3e9bG
+         daB2x9HCWZT1NlUIZdV6KsqWYAoOJcX2z1LQCb2KcHieOTYK9gvGSvn7D0d1XDEVx9Z2
+         nKuvh0Yu0Tbu5YGzNQQ/sBe1eoao1ok6ppQYcX52/sV7S+unTLizRxRxA6GGgB/mB+53
+         cc+mmkLpXHiWR7krHLq3kb2jIp1gCZzQa4WyiDFvFfPb4AwOeo7aZUa/Ucha3RVlopDc
+         pjrMohu+nM88DmsWYPFW+EC27wwsrrktZGx3tCurSOPS5qrnPy8GX65lDx98Vu0jdM+e
+         /zFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740755963; x=1741360763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P7oY7BYAEv4W8+02LYZ2YxpBYCsfW/J7/vInnek1u5o=;
+        b=pLuYK3q8w79gnBzd8VsWpkkPID+hrNwU37GlG/c/pAyQkaNSH32bx4nGNeff5YAPid
+         rp2N+GS51d9JMgEcTUIpQVDQJ1tcpOdz1wZG0mp+xP1x3dHjAOXdsPUDhPoxUY6e3cyi
+         QX3r6RF/80mggb74c8tvwgpZhKnNBJHsT8cad1W9LFOmQdnBqFkQI3UzyMakrnYOgN1k
+         lgWzOxmYaUAPNYDKzoettzOKwAUKX+nl0QSDlzPlJ63h59X5neUW1UUo8+1xKWn7cLVP
+         x95z4v+UADjS/k+jOuapclLJYdgb7/6MMu+unGNV+WEKkSzrIeXW7pdf0S4Wl6qc1qMG
+         +w+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVIkaOYVFN2R5+8IrYOijI65zBDR4OeUstLC5LhOjWAA4sNqFs6sT42x3wY/BLwTjAfWootr+tRpW8=@vger.kernel.org, AJvYcCW4dynuutYS26z4wBQ6c5X5tApebtfXvbzcG7+aM+ER5zBektrXNUJPZ1qz5iEM8ItFm2zrqGA4VblUW6c=@vger.kernel.org, AJvYcCWqoWaLpGkL7nrTpt8AokN6Rlpn8XRzaZMOTsQaWZGooe6YSxgqrtE+JZvRRa6EBV0HKQah69HvPBfBi68ot0gl1To=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkiYDY/aXEkwWAz0YKFbRx7+Q4g+GecU4a7kRO42OSEb8/WzA5
+	pY52ZKfkM5JCZfkhBda5Db8c9eme5/jw+BgAPnISletb7KRPHr+rZYBKNhnpDK0ku3Er5KbZEHH
+	7e7jON/Cf84iJzGAWphx8kJtkZ/mrMw==
+X-Gm-Gg: ASbGncuTtGTM9WxAeCC3vVcUPOi3ilNDzhgDIecCxNpVk0JD9/LQR0rHkyzxmtXPyZQ
+	QYMUwDyL+VdoM3xbrq0LNSJGBdvQFC3FDmBfCBxwqgFN6Ibjk6AkB6XYyOo0c6xs1pM0CqkZfRv
+	EBjUZxnPs=
+X-Google-Smtp-Source: AGHT+IFtBraPIaQpBiymetsznsOvIzlEwuqrLSWFnfSvCpGcicRJBeGr4DA/338qPZgAwfUuoxlTMZWNYQWkG+jYe1A=
+X-Received: by 2002:a17:906:f592:b0:ab7:d06d:b4bf with SMTP id
+ a640c23a62f3a-abf265a3614mr422762466b.39.1740755962545; Fri, 28 Feb 2025
+ 07:19:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rfp3v5bmp743c3to"
-Content-Disposition: inline
-In-Reply-To: <20250228110931.7bdae7fd@erd003.prtnl>
+References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-2-linux.amoon@gmail.com>
+ <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
+In-Reply-To: <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 28 Feb 2025 20:49:04 +0530
+X-Gm-Features: AQ5f1Jq85EQ9ba5HWSGuaxxOFszs6piXmm_ai8qdDjz-7jgZDC6Fo3Zgq3faa6E
+Message-ID: <CANAwSgRq+EjR70kVnh8AYZ6ZTSzV0uVwuF9E+_mpdG-6je-a8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Lukasz,
 
---rfp3v5bmp743c3to
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
- bindings
-MIME-Version: 1.0
+Thanks for your review comments
 
-Hey David,
+On Fri, 28 Feb 2025 at 20:07, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+> Hi Anand,
+>
+> On 2/16/25 19:58, Anand Moon wrote:
+> > Refactor the initialization of the clk_sec clock to be inside the
+> > SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> > is only initialized for the specified SOC and not for other SOCs,
+> > thereby simplifying the code.
+>
+> So IIUC there was no need to init that clock for other types of SoCs...
+> Do we know that for sure (e.g. from other TRMs)?
+This clock (clk) is utilized for the Thermal Management Unit (TMU) and
+the GPU in the Exynos 542x,
+as specified in the user manual.
+>
+> If that was the case, then simplification here can go further, but after
+> some fixes.
+>
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v3: improve the commit message
+> > ---
+> >   drivers/thermal/samsung/exynos_tmu.c | 26 +++++++++++++-------------
+> >   1 file changed, 13 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 47a99b3c5395..9c138772d380 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -1040,19 +1040,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+> >       if (IS_ERR(data->clk))
+> >               return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+> >
+> > -     data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> > -     if (IS_ERR(data->clk_sec)) {
+> > -             if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
+> > -                     return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> > -                                          "Failed to get triminfo clock\n");
+> > -     } else {
+> > -             ret = clk_prepare(data->clk_sec);
+> > -             if (ret) {
+> > -                     dev_err(dev, "Failed to get clock\n");
+> > -                     return ret;
+> > -             }
+> > -     }
+> > -
+> >       ret = clk_prepare(data->clk);
+>
+> Here the data->clk is now used in different order.
+Ok.
+>
+> >       if (ret) {
+> >               dev_err(dev, "Failed to get clock\n");
+> > @@ -1060,6 +1047,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+> >       }
+> >
+> >       switch (data->soc) {
+> > +     case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> > +             data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> > +             if (IS_ERR(data->clk_sec)) {
+> > +                     return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> > +                                          "Failed to get triminfo clock\n");
+>
+> Then here you shouldn't simply copy the old code. Now the data->clk
+> is first, so should be 'clk_unprepare()' before return of the function.
+>
+> > +             } else {
+>
+> You can get rid of this 'else' above and still be safe in your
+> refactoring.
+>
+> > +                     ret = clk_prepare(data->clk_sec);
+> > +                     if (ret) {
+> > +                             dev_err(dev, "Failed to get clock\n");
+> > +                             return ret;
+> > +                     }
+>
+> Here you can further simplify this to something like:
+> -----------------------8<-------------------------------------
+>
+> +       case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +               data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> +               if (IS_ERR(data->clk_sec)) {
+> +                       clk_unprepare(data->clk); ///// <----
+> +                       return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> +                                            "Failed to get triminfo clock\n");
+> +               }
+> +               ret = clk_prepare(data->clk_sec);
+> +               if (ret) {
+> +                       dev_err(dev, "Failed to get clock\n");
+> +                       clk_unprepare(data->clk); ///// <----
+> +                       return ret;
+> +               }
+> +
+> +       break;
+Ok
+>
+> --------------------------->8---------------------------------
+>
+> Or with better 'goto' flow.
+>
+> > +             }
+> > +     break;
+> >       case SOC_ARCH_EXYNOS5433:
+> >       case SOC_ARCH_EXYNOS7:
+> >               data->sclk = devm_clk_get(dev, "tmu_sclk");
+>
+>
+> Also, you should revisit the 'goto' cleanup section at the bottom.
+Thanks. I will recheck and update the code for the next version.
+>
+> Regards,
+> Lukasz
 
-On Fri, Feb 28, 2025 at 11:09:31AM +0100, David Jander wrote:
-> On Fri, 28 Feb 2025 10:37:48 +0100
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
->=20
-> > On 28/02/2025 10:22, David Jander wrote:
-> > >  =20
-> > >>> +
-> > >>> +  motion,pwm-inverted:
-> > >>> +    $ref: /schemas/types.yaml#/definitions/flag   =20
-> > >>
-> > >> And PWM flag does not work? =20
-> > >=20
-> > > I have seen PWM controllers that don't seem to support the
-> > > PWM_POLARITY_INVERTED flag and those where it just doesn't work. Shou=
-ld all =20
-> >=20
-> >=20
-> > Shouldn't the controllers be fixed? Or let's rephrase the question: why
-> > only this PWM consumer needs this property and none of others need it?
->=20
-> CCing Uwe Kleine-Koenig and linux-pwm mailing list.
->=20
-> I know that at least in kernel 6.11 the pwm-stm32.c PWM driver doesn't
-> properly invert the PWM signal when specifying PWM_POLARITY_INVERTED. I a=
-gree
-> this is a probably bug that needs fixing if still present in 6.14-rc. Bes=
-ides
-> that, if linux-pwm agrees that every single PWM driver _must_ properly su=
-pport
-> this flag, I will drop this consumer flag an start fixing broken PWM driv=
-ers
-> that I encounter. I agree that it makes more sense this way, but I wanted=
- to
-> be sure.
-
-Some hardwares cannot support PWM_POLARITY_INVERTED. Affected drivers
-include:
-
-	pwm-adp5585
-	pwm-ntxec
-	pwm-raspberrypi-poe
-	pwm-rz-mtu3 (software limitation only)
-	pwm-sunplus
-	pwm-twl-led (not completely sure, that one is strange)
-
-=2E ISTR that there is a driver that does only support inverted polarity,
-but I don't find it. For an overview I recommend reading through the
-output of:
-
-	for f in drivers/pwm/pwm-*; do
-		echo $f;
-		sed -rn '/Limitations:/,/\*\/?$/p' $f;
-		echo;
-	done | less
-
-=2E (Note not all drivers have commentary in the right format to unveil
-their limitations.)
-
-For most use-cases you can just do
-
-	.duty_cycle =3D .period - .duty_cycle
-
-instead of inverting polarity, but there is no abstraction in the PWM
-bindings for that and also no helpers in the PWM framework. The problem
-is more or less ignored, so if you have a device with
-
-	pwms =3D <&pwm0 0 PWM_POLARITY_INVERTED>;
-
-and the PWM chip in question doesn't support that, the pwm API functions
-will fail. So the system designer better makes sure that the PWM
-hardware can cope with the needed polarity.
-
-Best regards
-Uwe
-
---rfp3v5bmp743c3to
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfB06AACgkQj4D7WH0S
-/k4NKQgAgDC2JJ02fk1A7PHXuaUhWRukm6F8XGZLDrQDFRYtxz8yV4pdryg+dQ/+
-4eexB6lXvkYCA7d2N13Ij/iRe6ou5gf6lXWC0Pf7sCkrcPTZgNOy3DGCaubOrkT6
-c+/cCzVSrr3xhp1dDEC4sO20USUbjCurHkuhwVO6eUuDKc6rpm43GTs8lWiAbBPh
-2MiCcOP3FyEotRl6mvegvaeKuj4qzjAZkpk+aNBU6sxfuCbkHbO50GXqUQIR/LSS
-GPs3+oAGm30doTOYJJKXlotrv9Dg3nDIqcXugpiEDlPPOHR2l2URUQ6zQFAi6FIY
-AFNoAAbpnoQQV2PW3ew4qf8UIZRXVg==
-=ELQV
------END PGP SIGNATURE-----
-
---rfp3v5bmp743c3to--
+Thanks
+-Anand
 
