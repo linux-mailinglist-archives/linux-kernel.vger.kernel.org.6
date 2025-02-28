@@ -1,262 +1,269 @@
-Return-Path: <linux-kernel+bounces-539598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF6FA4A63E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:55:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FF5A4A642
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5723A7357
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0205F16D1F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6301DED6B;
-	Fri, 28 Feb 2025 22:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2061DEFC6;
+	Fri, 28 Feb 2025 22:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IW0piCGD"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxeUqstM"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF07123F372;
-	Fri, 28 Feb 2025 22:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7BE1A3140;
+	Fri, 28 Feb 2025 22:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783330; cv=none; b=Zp9daG/1zqJaOpP38CodaF9YvDVSZczAH5mlWcDknTHGWuWEdd4iicB5OHlcNGeHEw5+PxmVUuUu8AvEsbQujIWQNT5pSzB+XjBxpaHTuuHF24s10z9j2rHSqA68MR7JmQ2k0YJZvUKPVnyulUwJN4+HWnsJzherZYZ1TTflV/s=
+	t=1740783449; cv=none; b=OjhHs71JsbXxfLXNtoMw8WWpsIqWFSkFS9hYYTwvxkFKlEwr04GwGlWQ8va5NyIpChVjmAs7zT0L0u8XWh5GadysmC0b2nHFG0OGWhlfmIGx4H5R878NDBdiU/cgKrTSLLcXInrF+N/1veMWeLzoAsxf/aIMokEmFceS01q0oCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783330; c=relaxed/simple;
-	bh=N8g8272bWuEa7yqt92SE1Z0Y2MiDeHz46bITah8vC9c=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loKpvWMx6h7KmKblZcZ4SbRCvR0igQ7aDuQOhtj/7d6f4g12U3kndBMCusrJHMIyjTfI1mev+v4qkkicJb4LtvDoZ9gGxzUwBtyGxyhnU2ux+PPGugxqpQ57xJMY4NtO2siXtlBLHvmw0vHQ7D7vwxqEIU1PBKVl3wiR9Q4geuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IW0piCGD; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1740783449; c=relaxed/simple;
+	bh=WMLnSI9SQ0/XViJPHmv5+aeuy3kPdCNlElCF9NJj5Do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDYTvz4t/cCfTkOdUBR8GlQAvwsBlU3hIxezGKUMxSGD7daPyCM0Ss6oY4xwnhfycZipsiytqKeV8wbDroTyS+Ch7nVnoS624cT8iwF+bim/iPZMIAFSKP+JXfNr2mGqi0p1OujnkVohKbsjN5PQlrBNRxJV1nNjKpLhVHTeaLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxeUqstM; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so1638579f8f.0;
-        Fri, 28 Feb 2025 14:55:28 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb892fe379so364270766b.0;
+        Fri, 28 Feb 2025 14:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740783327; x=1741388127; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=45vqsVCs1qRXf6UNJ6iHFChVVOr1CMsx6P6pJ969JqI=;
-        b=IW0piCGDgB0Bv/HD8zN+kaHqdXTh8sMYf+VDIuR05LVH7FyFAH8YshknGWc6NEgr7E
-         WD013CHSG8yFzv6jqyQpWxlRsAZtFwb2s77a3T3clYPWj2g41rfgeIdCq4MQ3HwS2tpQ
-         YOSk5p8D1Ny85UqPOFllz0nB8fGl1SCXdjF9dMDemysk1boC2DDKcf0UC/sFIeLfav3R
-         vAt2opu0kgQIB/l2KQzNdCxtY5O4OW2Ggk+BL/xxQz31sDchZzxui7Osh2ROkK87T4dp
-         7/LfWb3Rqm2DI/kBLV8HU6KRHD2hbPoUUYluaol2r+wAQruXo92bDKdeuAjlM15qpwPL
-         pOog==
+        d=gmail.com; s=20230601; t=1740783446; x=1741388246; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZQ9vrPuZKHglRvDTCb+9WUSOgDE6HzKOx9it/BTeGAs=;
+        b=lxeUqstMYwSHbljsyIdjyhUe6GyiXi+qPkMnUxn10wFGlFdD1jfVENrH86wkx1SK8o
+         HVGMeUtkeY4qbH5Ux0ZpjXWol5Dm5NG8o3L4FibOERXiPJkFliYOWZOY4lMTSKYui1xP
+         M3YjYE5Qj0L9pJKM5zs1Wu6DuJaJhut2DyUskT/fYpqN23B9CJw2pYB97m/+PmkMar/H
+         Mwv7lSTLcpCsgtXHJjV3lSifLf8/S/B4sYtgLS0k6nXczbaWfXXQNa3fx/hDnoc3ADkF
+         Ao1ylmFXSbY6muXNfZLno4GSJCRk4QIGtkNoDheKwuO1LqgVTFNnriotzCPAp1F5stQD
+         LQIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740783327; x=1741388127;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=45vqsVCs1qRXf6UNJ6iHFChVVOr1CMsx6P6pJ969JqI=;
-        b=wag4mgjspkX/7MR6J5pUVHz8GcrBtDVlD1C2Kzgb0xV685jucvCiTOS+83wWeQ49MV
-         GIUXRB2eFg+4QfFn3Q/bNkA2hbcysg0dmcOY4m1piB+FY39wksNnFZRQjgTz5sIZY1/L
-         BKYh2C6N1fdyK5uYJffGBz8qTWEBbcy7WKuIyyKEITBGKWPIvZHx0sP4Xru3pI5St7g6
-         I9puxKwqsaRaRHrUOnplqNVNegpj/DRgVwn0Tqc11Gv45qj1QF1WAgeIgOYLwwj4scOg
-         GdyrrmofD5qInPwkPSJ2szeg5cPMJCgJnYqZBBkai5y4p1tcxr2edJcuP3WLa4E9GOk7
-         R1cA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaX0EYKELqzBpvCfBttN9Rp/umDujZiIANgzi+DGjObv0j2r0jo7j5sQhBDUQi6ZPvPSo=@vger.kernel.org, AJvYcCXA15B1bqtZ9OUQTWEo7oIzah0lz7JAu6XAd86KrnUNUGwVZxHzLUohKCeRDm+phF5l1sN3edCVm5R13oIFOOEZzA6U@vger.kernel.org, AJvYcCXIlBHYWIgCKqvcxS4jVt3tL/U3QXrzh0dT2NXWBlEQL8gRJ0tNarshw1idgaQrw2hH9m+jX/Z2eiGx3JY7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4A4x2T/Gg5+o0zCLGQnkkbs4+RUIfK9s7yDsUtH8BNs4q+cHk
-	olRxSRs5W3Zl0rugxBqqA6JH0B3iFAeBxS9DDAbLYFU/Ua8aA/Wb
-X-Gm-Gg: ASbGncsGdzU8tYtXG2+dztyreJ3KcExTuW7KfCyhL8mYPsAFduBx88PHYc2RrGFklCB
-	IPmOZgiaUOadzxcgfkTv91JauudGvgzJ3Npiswmm9E9ARKEfWuL2SiNGUOFXoehj7WjWjKLnNa2
-	tmjJwH/pl1TgmAo7v1IJrlBR8tz+1hdeGCEgCyt3ZRkKrtkZrZRl/9oZmaE17bK0LQaQj76bLwt
-	hkQ/95eq1O0XzMwqk/3BrnK9FA4q48bhDQp92invWPbp6big1ReHdBY0WT17S2n8FOyU3D14sOY
-	Md4w9t3CNbvW3Oas+VMMg34gu080mcdnk4qZ+nYW5iJimMg4qC8=
-X-Google-Smtp-Source: AGHT+IFGg7pzEbjhJs1wS6cbIwFccqK9bJ5GUIPR+C8H5R6dMQIX9v5RXm7QCZc8OMaGCMLhZj24HQ==
-X-Received: by 2002:a05:6000:1883:b0:38d:c55e:ebcf with SMTP id ffacd0b85a97d-390eca3871fmr4398376f8f.52.1740783326541;
-        Fri, 28 Feb 2025 14:55:26 -0800 (PST)
-Received: from krava (85-193-35-41.rib.o2.cz. [85.193.35.41])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a87sm6573972f8f.32.2025.02.28.14.55.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 14:55:25 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 28 Feb 2025 23:55:23 +0100
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH RFCv2 12/18] uprobes/x86: Add support to optimize uprobes
-Message-ID: <Z8I-24x1FHoBOQ6N@krava>
-References: <20250224140151.667679-1-jolsa@kernel.org>
- <20250224140151.667679-13-jolsa@kernel.org>
- <CAEf4BzbE1dhqZWpLYhZFo7cuuK04t9iM+1ykHA5_PbM_xdb1PQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1740783446; x=1741388246;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQ9vrPuZKHglRvDTCb+9WUSOgDE6HzKOx9it/BTeGAs=;
+        b=Z9LvKfYLtm9DaWJC6wUdTWEtHoXYL6xR1Ewij2P+TCqc8cfI81CkvFX4Do44zkQ+MU
+         MLJUlONZHlLEPNuJ2i/WRcAuO1ZZKgWh9Uzak/7dr1DhRIGgM50FqTgQQZcNkhCv5LOo
+         6lcoFM+jhAL9sqcO3x1aHjFXQ9ntYDXXED+iQ6edALqRW46Q5rX9LizmMxEFJWvd4ZlL
+         xCbzkAwwrvU6jZN7MU1e+6snj7mvokiYQntWWSA59uYhVcTvdvmAG3Mo502NH3Ziy9+p
+         Vd52kQRyroEup0qqXIiNXtRUehZKwFhHhqOQ83hwiujZb49v8XEwm2XiihOBSkPBYj6C
+         6sHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXiZZNQr6wSvPiHbgFABl81uYTnwnYUm5vZdKm+QSCiXZ5J4Glprs/lv1UVpNVBDOdl9DsD1Ti@vger.kernel.org, AJvYcCUe1P5vIsnoHcmb9gN5E9nqxxQYlK/9XYK+msNN4TzQQoL+4jhlGlrG9Ka5hnoFkGs9QOJa8bQWv8Fqhmk=@vger.kernel.org, AJvYcCVnZ+IjTAnxZIdKHQOb0ds46KeLoJVxLdr4X+HExueV/2seRX3J1/GcEGmIvPyEpPi+eSUccJ+kNiyB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWl9Vi72GdLVX/MNWNjU8T97fiC25kfJrn2v36TjUkSpNwB0Qn
+	EpjdfKtbLzHutlVaaNcff9l5UXFgKLi9/haqByWvdcrQGDbDXlrq
+X-Gm-Gg: ASbGnctlS9r0jWPx7V+cFeBwINprCtL1d5ujNJsdKTuXErTmnWIJSsQD7XcLUA6oOGG
+	h4Hcmrmxm4YDsHOppmduLbx8vkowoOudZSIQvND1iSn3V+NKHGeAfy/ajghWEY8fyfEDrR8U40h
+	VwZ0f3rz8SULA3CQoZu71pwO9fGERqLf5MhewpWOhvloN8GGPoFqwnzT7Etfm+W2ZIWys6IK5p0
+	EG4QgMEmfyEcbz7B3IZjH0pwkzydzaeglwsMjbdm4xukEfiYPRFxFyIKWvVl0nOnVgph+iyASUf
+	aDRSz5eNRPfVlWR1gns8AW6X54IKr3mX9p7mgI3A6c91IGxu06cmAkA5zIanqmITjfuDF8m1pKh
+	s2o6vP9up+y5Tdk8oTbsWvJ4q8Vn/1ZgcxrILKfeOiHPAIlvawvzHQCZ0fColl9xTMU7Sjt19W/
+	4wBdVqSMcpTPpHXYJg41vUrnucImGzSofCEqWR
+X-Google-Smtp-Source: AGHT+IEenxmA41PtiSn649HIT8duMpsmivaQAC7fNzHqYti8c54i0LqPEuAvwpDVFS0ZX0ilQat+zA==
+X-Received: by 2002:a05:6402:358f:b0:5dc:74fd:abf1 with SMTP id 4fb4d7f45d1cf-5e4d6af1677mr10406661a12.15.1740783445393;
+        Fri, 28 Feb 2025 14:57:25 -0800 (PST)
+Received: from ?IPV6:2a02:3100:af43:5200:e57d:90a4:e6b5:1175? (dynamic-2a02-3100-af43-5200-e57d-90a4-e6b5-1175.310.pool.telefonica.de. [2a02:3100:af43:5200:e57d:90a4:e6b5:1175])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-abf0c0b99bcsm360391766b.24.2025.02.28.14.57.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 14:57:24 -0800 (PST)
+Message-ID: <7b32aa88-d3bc-4414-a124-59befc3dc098@gmail.com>
+Date: Fri, 28 Feb 2025 23:58:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbE1dhqZWpLYhZFo7cuuK04t9iM+1ykHA5_PbM_xdb1PQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/3] r8169: enable
+ RTL8168H/RTL8168EP/RTL8168FP/RTL8125/RTL8126 LTR support
+To: Bjorn Helgaas <helgaas@kernel.org>, Hau <hau@realtek.com>
+Cc: nic_swsd <nic_swsd@realtek.com>,
+ "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+References: <20250224190013.GA469168@bhelgaas>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20250224190013.GA469168@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 10:55:24AM -0800, Andrii Nakryiko wrote:
-> On Mon, Feb 24, 2025 at 6:04 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > Putting together all the previously added pieces to support optimized
-> > uprobes on top of 5-byte nop instruction.
-> >
-> > The current uprobe execution goes through following:
-> >   - installs breakpoint instruction over original instruction
-> >   - exception handler hit and calls related uprobe consumers
-> >   - and either simulates original instruction or does out of line single step
-> >     execution of it
-> >   - returns to user space
-> >
-> > The optimized uprobe path
-> >
-> >   - checks the original instruction is 5-byte nop (plus other checks)
-> >   - adds (or uses existing) user space trampoline and overwrites original
-> >     instruction (5-byte nop) with call to user space trampoline
-> >   - the user space trampoline executes uprobe syscall that calls related uprobe
-> >     consumers
-> >   - trampoline returns back to next instruction
-> >
-> > This approach won't speed up all uprobes as it's limited to using nop5 as
-> > original instruction, but we could use nop5 as USDT probe instruction (which
-> > uses single byte nop ATM) and speed up the USDT probes.
-> >
-> > This patch overloads related arch functions in uprobe_write_opcode and
-> > set_orig_insn so they can install call instruction if needed.
-> >
-> > The arch_uprobe_optimize triggers the uprobe optimization and is called after
-> > first uprobe hit. I originally had it called on uprobe installation but then
-> > it clashed with elf loader, because the user space trampoline was added in a
-> > place where loader might need to put elf segments, so I decided to do it after
-> > first uprobe hit when loading is done.
-> >
-> > We do not unmap and release uprobe trampoline when it's no longer needed,
-> > because there's no easy way to make sure none of the threads is still
-> > inside the trampoline. But we do not waste memory, because there's just
-> > single page for all the uprobe trampoline mappings.
-> >
-> > We do waste frmae on page mapping for every 4GB by keeping the uprobe
-> > trampoline page mapped, but that seems ok.
-> >
-> > Attaching the speed up from benchs/run_bench_uprobes.sh script:
-> >
-> > current:
-> >         usermode-count :  818.836 ± 2.842M/s
-> >         syscall-count  :    8.917 ± 0.003M/s
-> >         uprobe-nop     :    3.056 ± 0.013M/s
-> >         uprobe-push    :    2.903 ± 0.002M/s
-> >         uprobe-ret     :    1.533 ± 0.001M/s
-> > -->     uprobe-nop5    :    1.492 ± 0.000M/s
-> >         uretprobe-nop  :    1.783 ± 0.000M/s
-> >         uretprobe-push :    1.672 ± 0.001M/s
-> >         uretprobe-ret  :    1.067 ± 0.002M/s
-> > -->     uretprobe-nop5 :    1.052 ± 0.000M/s
-> >
-> > after the change:
-> >
-> >         usermode-count :  818.386 ± 1.886M/s
-> >         syscall-count  :    8.923 ± 0.003M/s
-> >         uprobe-nop     :    3.086 ± 0.005M/s
-> >         uprobe-push    :    2.751 ± 0.001M/s
-> >         uprobe-ret     :    1.481 ± 0.000M/s
-> > -->     uprobe-nop5    :    4.016 ± 0.002M/s
-> >         uretprobe-nop  :    1.712 ± 0.008M/s
-> >         uretprobe-push :    1.616 ± 0.001M/s
-> >         uretprobe-ret  :    1.052 ± 0.000M/s
-> > -->     uretprobe-nop5 :    2.015 ± 0.000M/s
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  arch/x86/include/asm/uprobes.h |   6 ++
-> >  arch/x86/kernel/uprobes.c      | 191 ++++++++++++++++++++++++++++++++-
-> >  include/linux/uprobes.h        |   6 +-
-> >  kernel/events/uprobes.c        |  16 ++-
-> >  4 files changed, 209 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/uprobes.h b/arch/x86/include/asm/uprobes.h
-> > index 678fb546f0a7..7d4df920bb59 100644
-> > --- a/arch/x86/include/asm/uprobes.h
-> > +++ b/arch/x86/include/asm/uprobes.h
-> > @@ -20,6 +20,10 @@ typedef u8 uprobe_opcode_t;
-> >  #define UPROBE_SWBP_INSN               0xcc
-> >  #define UPROBE_SWBP_INSN_SIZE             1
-> >
-> > +enum {
-> > +       ARCH_UPROBE_FLAG_CAN_OPTIMIZE   = 0,
-> > +};
-> > +
-> >  struct uprobe_xol_ops;
-> >
-> >  struct arch_uprobe {
-> > @@ -45,6 +49,8 @@ struct arch_uprobe {
-> >                         u8      ilen;
-> >                 }                       push;
-> >         };
-> > +
-> > +       unsigned long flags;
-> >  };
-> >
-> >  struct arch_uprobe_task {
-> > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-> > index e8aebbda83bc..73ddff823904 100644
-> > --- a/arch/x86/kernel/uprobes.c
-> > +++ b/arch/x86/kernel/uprobes.c
-> > @@ -18,6 +18,7 @@
-> >  #include <asm/processor.h>
-> >  #include <asm/insn.h>
-> >  #include <asm/mmu_context.h>
-> > +#include <asm/nops.h>
-> >
-> >  /* Post-execution fixups. */
-> >
-> > @@ -768,7 +769,7 @@ static struct uprobe_trampoline *create_uprobe_trampoline(unsigned long vaddr)
-> >         return NULL;
-> >  }
-> >
-> > -static __maybe_unused struct uprobe_trampoline *uprobe_trampoline_get(unsigned long vaddr)
-> > +static struct uprobe_trampoline *uprobe_trampoline_get(unsigned long vaddr)
-> >  {
-> >         struct uprobes_state *state = &current->mm->uprobes_state;
-> >         struct uprobe_trampoline *tramp = NULL;
-> > @@ -794,7 +795,7 @@ static void destroy_uprobe_trampoline(struct uprobe_trampoline *tramp)
-> >         kfree(tramp);
-> >  }
-> >
-> > -static __maybe_unused void uprobe_trampoline_put(struct uprobe_trampoline *tramp)
-> > +static void uprobe_trampoline_put(struct uprobe_trampoline *tramp)
-> >  {
-> >         if (tramp == NULL)
-> >                 return;
-> > @@ -807,6 +808,7 @@ struct mm_uprobe {
-> >         struct rb_node rb_node;
-> >         unsigned long auprobe;
-> >         unsigned long vaddr;
-> > +       bool optimized;
-> >  };
-> >
+On 24.02.2025 20:00, Bjorn Helgaas wrote:
+> On Mon, Feb 24, 2025 at 04:33:50PM +0000, Hau wrote:
+>>> On 21.02.2025 08:18, ChunHao Lin wrote:
+>>>> This patch will enable RTL8168H/RTL8168EP/RTL8168FP/RTL8125/RTL8126
+>>>> LTR support on the platforms that have tested with LTR enabled.
+>>>
+>>> Where in the code is the check whether platform has been tested with LTR?
+>>>
+>> LTR is for L1,2. But L1 will be disabled when rtl_aspm_is_safe()
+>> return false. So LTR needs rtl_aspm_is_safe() to return true.
+>>
+>>>> Signed-off-by: ChunHao Lin <hau@realtek.com>
+>>>> ---
+>>>>  drivers/net/ethernet/realtek/r8169_main.c | 108
+>>>> ++++++++++++++++++++++
+>>>>  1 file changed, 108 insertions(+)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c
+>>>> b/drivers/net/ethernet/realtek/r8169_main.c
+>>>> index 731302361989..9953eaa01c9d 100644
+>>>> --- a/drivers/net/ethernet/realtek/r8169_main.c
+>>>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+>>>> @@ -2955,6 +2955,111 @@ static void rtl_disable_exit_l1(struct
+>>> rtl8169_private *tp)
+>>>>       }
+>>>>  }
+>>>>
+>>>> +static void rtl_set_ltr_latency(struct rtl8169_private *tp) {
+>>>> +     switch (tp->mac_version) {
+>>>> +     case RTL_GIGA_MAC_VER_70:
+>>>> +     case RTL_GIGA_MAC_VER_71:
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd0, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x8c09);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcde8, 0x887a);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdea, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdec, 0x8c09);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdee, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf0, 0x8a62);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf2, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf4, 0x883e);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf6, 0x9003);
+>>>> +             break;
+>>>> +     case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd0, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x889c);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x8c30);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcde8, 0x883e);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdea, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdec, 0x889c);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdee, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf0, 0x8C09);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdf2, 0x9003);
+>>>> +             break;
+>>>> +     case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_53:
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x883c);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x8c12);
+>>>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
+>>>> +             break;
+>>>> +     default:
+>>>> +             break;
+>>>> +     }
+>>>> +}
+>>>> +
+>>>> +static void rtl_reset_pci_ltr(struct rtl8169_private *tp) {
+>>>> +     struct pci_dev *pdev = tp->pci_dev;
+>>>> +     u16 cap;
+>>>> +
+>>>> +     pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap);
+>>>> +     if (cap & PCI_EXP_DEVCTL2_LTR_EN) {
+>>>> +             pcie_capability_clear_word(pdev, PCI_EXP_DEVCTL2,
+>>>> +                                        PCI_EXP_DEVCTL2_LTR_EN);
+>>>> +             pcie_capability_set_word(pdev, PCI_EXP_DEVCTL2,
+>>>> +                                      PCI_EXP_DEVCTL2_LTR_EN);
+>>>
+>>> I'd prefer that only PCI core deals with these registers
+>>> (functions like pci_configure_ltr()). Any specific reason for this
+>>> reset? Is it something which could be applicable for other devices
+>>> too, so that the PCI core should be extended?
+>>>
+>> It is for specific platform. On that platform driver needs to do
+>> this to let LTR works.
 > 
-> I'm trying to understand if this RB-tree based mm_uprobe is strictly
-> necessary. Is it? Sure we keep optimized flag, but that's more for
-> defensive checks, no? Is there any other reason we need this separate
-> look up data structure?
+I interpret this in a way that the chip triggers some internal LTR
+configuration activity if it detects bit PCI_EXP_DEVCTL2_LTR_EN
+changing from 0 to 1. And this needed activity isn't triggered
+if PCI_EXP_DEVCTL2_LTR_EN is set already and doesn't change.
+Hau, is this correct?
 
-so the call instruction update is done in 2 locked steps:
- - first we write breakpoint as part of normal uprobe registration
- - then uprobe is hit, we overwrite breakpoint with call instruction
+So the PCI_EXP_DEVCTL2_LTR_EN reset is some kind of needed quirk.
+However PCI quirks are applied too early, before we even detected
+the chip version in probe(). Therefore I also think a helper for
+this reset in PCI core would be best.
 
-in between we could race with another thread that could either unregister the
-uprobe or try to optimize the uprobe as well
+And what hasn't been mentioned yet: We have to skip the chip-specific
+LTR configuration if pci_dev->ltr_path isn't set.
 
-I think we either need to keep the state of the uprobe per process (mm_struct),
-or we would need to read the probed instruction each time when we need to make
-decision based on what state are we at (nop5,breakpoint,call)
+> This definitely looks like code that should not be in a driver.
+> Drivers shouldn't need to touch ASPM or LTR configuration unless
+> there's a device defect to work around, and that should use a PCI core
+> interface.  Depending on what the defect is, we may need to add a new
+> interface.
+> 
+> This clear/set of PCI_EXP_DEVCTL2_LTR_EN when it was already set could
+> work around some kind of device defect, or it could be a hint that
+> something in the PCI core is broken.  Maybe the core is configuring
+> ASPM/LTR incorrectly.
+> 
+> Bjorn
 
-jirka
 
