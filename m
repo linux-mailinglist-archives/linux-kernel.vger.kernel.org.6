@@ -1,82 +1,111 @@
-Return-Path: <linux-kernel+bounces-539527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212D1A4A589
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:02:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66D2A4A58C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD053B59CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32AA189BE17
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC5A1DE3AC;
-	Fri, 28 Feb 2025 22:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAD41DE3A8;
+	Fri, 28 Feb 2025 22:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFOD6HxX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C7B1D9663;
-	Fri, 28 Feb 2025 22:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="THzzadIz"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42451A3158;
+	Fri, 28 Feb 2025 22:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740780124; cv=none; b=eqiaE8QYq5FeJNxtUqd2xHax5vKVx5F9L9MDwMVtf1JnbmBD+htLNuYhdp3+gA7vAneu2dRpDQ16kGeaiJQdHd1ZWZ1ebwgQEsi9IPuqO143G1uZzNjqx6PMV8B7WWwHvi6rkWJIR9lXg/y2bdZldKPztA9kEY9OmIOAnyvlO/Q=
+	t=1740780161; cv=none; b=CzVOrJyZgC9iq77zxLCXSB3Cl1MKA2dBHffAjW0b540pAgAE7mbVEc6ksMppol1JKqVBxVbEd5aoPhJQ5EHph24+OZg3tao7pxd+MoXgNyOIQIQvVHbAw2RycYXKeLcZc0sWNXVIZqFBPaa25Vlhx1suwIrfHwzUmdxjpprBuiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740780124; c=relaxed/simple;
-	bh=Nw/MKOIkxVmmkDc/avI1b9nUxkB/g/7R9GAVpsyzNOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CM+v2J2b/+gO5qB4vqp3ppIK4zz/N75qXimErQUGNcEK68PIJMFoGUONsNOz7jvK6CoVCoHAFJo+cq8gGg1nNJXHAIPayp5xawtP0IN3mLhIV2VBzgfwF5LEhQJURIomw+SQ7bUVfma+vt2NMc5uPoqQirCsRGLviPe49vcCi4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFOD6HxX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DCC9C4CED6;
-	Fri, 28 Feb 2025 22:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740780124;
-	bh=Nw/MKOIkxVmmkDc/avI1b9nUxkB/g/7R9GAVpsyzNOM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JFOD6HxX/SimWYikwyJ6TJKw8IM3P3stZZ984ZVQomWcpRhdlivUrQl7KfqlfwHK7
-	 TH41f/Mzj/VCIZNWTYWH+v3CO7br6pFCDw6Er/VFGZ5zGvmsgh05UBPj4wkuWqUW0y
-	 mvHSa0rM21sftK8ZSi6tb8+nnsxS1sCHUrG2i2IHJmYrvPQZZLUIo1Hze5bXpgodoX
-	 SMWpJ7oL5ZQu6LRcxpVnQ3dvpNBM1elrITOyJ1ifWi6R1Gpj1zxU61JBqgEyRbWaoS
-	 TNL4zV+mfUFNQ1OFFm9Xx/eTQPNhwK4+W6CcHQO7bzRJUc7UgsV7F3v9o0om57cQYf
-	 EZrliZf0W/tRA==
-Date: Fri, 28 Feb 2025 14:02:02 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: horms@kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, ricardo@marliere.net, viro@zeniv.linux.org.uk,
- dmantipov@yandex.ru, aleksander.lobakin@intel.com,
- linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org, mrpre@163.com,
- syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
-Subject: Re: [PATCH net-next v4 1/1] ppp: Fix KMSAN warning by initializing
- 2-byte header
-Message-ID: <20250228140202.7f39a30c@kernel.org>
-In-Reply-To: <wm7gi3hafgaruhnjaz5bqdv7yrduf6cum3gljylypzqkvw2ctw@b2zb75i2hpid>
-References: <20250226013658.891214-1-jiayuan.chen@linux.dev>
-	<20250226013658.891214-2-jiayuan.chen@linux.dev>
-	<20250227174812.50d2eabe@kernel.org>
-	<wm7gi3hafgaruhnjaz5bqdv7yrduf6cum3gljylypzqkvw2ctw@b2zb75i2hpid>
+	s=arc-20240116; t=1740780161; c=relaxed/simple;
+	bh=VirSJrxm4LAX4bsOCbuBsjJagnBAB6adwvR7ofMu05w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MswVGKrWVumUvy6PiI9IzZBdfK2+n+jf1HefiaDcvfQxt5i/+Chzv03VTv8EeHKej3+8T6bwH7X25cnUTCFSDXDC68qPj+usMgcXEHchZITj+ozwoKOWj0wXZkWjV8TFo88F9VpIVXLP+64HLBuEaFI66RtNBlJSDbtM3lDsqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=THzzadIz; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2EFBD210D0EA;
+	Fri, 28 Feb 2025 14:02:39 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2EFBD210D0EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740780159;
+	bh=L4wtjzQ+VCyMpsZoFNfDhp8k4YQtImF+RaC9Ro8r2Pc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=THzzadIzAYIMf/59ZwCLjEx0zpFtizAoiuwJAfsYPDt94Bzp739fwahmnAMKo+gw5
+	 cmoqAISH4ldER8ZnvmvwMsc0RT0KlsK6+/HibJBi9iw2nOdaXkRx+IM3gLNobr0mBV
+	 LJsPcC43pRcAhzPy+yQfccr5cnf2+E+rFlfhdoRM=
+Message-ID: <ca615c23-fa9a-4cb3-b2bf-150fca2047ef@linux.microsoft.com>
+Date: Fri, 28 Feb 2025 14:02:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next] scsi: storvsc: Don't call the packet status
+ the hypercall status
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, linux-hyperv@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, sunilmut@microsoft.com
+References: <20250227233110.36596-1-romank@linux.microsoft.com>
+ <40d016eb-e701-4872-b0bc-f5ba34093a53@linux.microsoft.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <40d016eb-e701-4872-b0bc-f5ba34093a53@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Feb 2025 12:55:41 +0800 Jiayuan Chen wrote:
-> > The exact same problem seems to be present in ppp_receive_nonmp_frame()
-> > please fix them both.
-> > -- 
-> > pw-bot: cr  
-> Thanks, Jakub! I'll do that.
-> 
-> I was previously worried that the commit message would be too long,
-> so I put the detailed information in the cover letter instead. I'll make
-> the commit message more concise.
 
-FWIW we commit the cover letter as well, as a merge commit.
-So both would end up in the tree.
+
+On 2/28/2025 12:21 PM, Easwar Hariharan wrote:
+> On 2/27/2025 3:31 PM, Roman Kisel wrote:
+>> The log statement reports the packet status code as the hypercall
+>> status code which causes confusion when debugging.
+>>
+>> Fix the name of the datum being logged.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/scsi/storvsc_drv.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+>> index a8614e54544e..d7ec79536d9a 100644
+>> --- a/drivers/scsi/storvsc_drv.c
+>> +++ b/drivers/scsi/storvsc_drv.c
+>> @@ -1183,7 +1183,7 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
+>>   			STORVSC_LOGGING_WARN : STORVSC_LOGGING_ERROR;
+>>   
+>>   		storvsc_log_ratelimited(device, loglevel,
+>> -			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x hv 0x%x\n",
+>> +			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x sts 0x%x\n",
+> 
+> I'd suggest using "host" than the opaque "sts", since this is already part of the different
+> levels of status (scsi, srb...) being printed out. With "host", for e.g. the print would be seen
+> as the following and clearly point out the offending part of the stack.
+> 
+> hv_storvsc fd1d2cbd-ce7c-535c-966b-eb5f811c95f0: tag#599 cmd 0x28 status: scsi 0x2 srb 0x4 host 0xc0000001
+
+I went with the flow calling this "sts": the rest of the file does that.
+Your suggestion is better than that, will implement in the next version.
+
+Appreciate your help very much!
+
+> 
+> Thanks,
+> Easwar (he/him)
+
+-- 
+Thank you,
+Roman
+
 
