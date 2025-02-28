@@ -1,355 +1,220 @@
-Return-Path: <linux-kernel+bounces-538080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C478A49460
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:05:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8EEA495D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA4A1887885
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6C33BB658
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2468C254AF1;
-	Fri, 28 Feb 2025 09:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0D25B672;
+	Fri, 28 Feb 2025 09:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ikfT6RAO"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1B11A3158;
-	Fri, 28 Feb 2025 09:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b/wBmhrA"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924682580F8
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733525; cv=none; b=ukvKgahgyMpCCrtovBoN0/vedY4RyUpJunjtYaRYsK3ozVAUlU5p/w/ka+S0qknpEUeEH2+s0WLBZYpvLVFX6Y+NCEpoRKLhP3u5/TWryPfcIQlubOgM5m70O3RsPIynSJ1xizEMiRCtu2zyns3L/PcHmS8ZPnC+Ndju1I8m6gE=
+	t=1740736100; cv=none; b=CEXLG5iVeGEkEm/jlhZDZgM3Ny4G9m5uvL69kHIFfvt210CjSRsLO6kMImFNkmcwc/jOMcRUJxKACDHf6ugQrTiLgsL4w+/db2SGxgpARRlQ+06nkr3J4Ctyig2vDMv4bG35v7xqENJMeBFzca7Fyp8JJ8uKkWzZdL7t0HsrshM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733525; c=relaxed/simple;
-	bh=ZvuoGKETIKuqrexGW8SWwG8bQ1czS38AO8zWebfhBU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XXGW4XOU8CZ6BefPOwwmMyp4UgjGw2w+Tbzr7UkjEVi9Ccyu3Jt7GaWdMiW5Ov5PHEc6Hq8I4TJnGBQJgGjjViGIrSnsDoeY6P4AFzOidFjOLiUnCfwJeomC5LmVLnLOXV0craNhghLqmWHr0s2wRCIYBQyFvz7MW7Qoub+DW2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ikfT6RAO; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=nNdk8J4H0DGZo/AJqzuSIUDj2qvadjIR23mnD0+nTyw=;
-	b=ikfT6RAOEWarYrABl77wrDMFDpkaDJiqeOmRk5vjn8ujOspOjpkgiJzEywroGb
-	/bVKQMoAbo3OEBsaQbNXUUhOaJRMzPhy+LZtLpWTD2jiW7cvbHZoQlS44gppdc8Z
-	bfw4JKwsrOIbxCTSz6j6XQDuPcoMDTNEMHMBhulKkMrNY=
-Received: from [192.168.34.52] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgDnMPYpfMFnEqAaJQ--.1908S2;
-	Fri, 28 Feb 2025 17:04:43 +0800 (CST)
-Message-ID: <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com>
-Date: Fri, 28 Feb 2025 17:04:41 +0800
+	s=arc-20240116; t=1740736100; c=relaxed/simple;
+	bh=8czOAp1XIVXzJzW/nGeiln/rxS6cj6xKkuUCCr0X8ZA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=pNW7XWOmaPFOKL3Ez1SEoboL7DSFox/P8bKkYnmLM9lijzMIvqxk20xqB1s7Fhsth995IWd9PEfu/J6pTdj2bMWwOlWD/xiAYmT57kfA1QpaCmlwwU1fXamizLQnxTqO1Ml/jCWD6JFQSewdvSKytj+sUpHO76XuxtUFgGzM9vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b/wBmhrA; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250228094810epoutp01d0b37687ab2deec6b8c432d11079449f~oVkBT5ssb1418214182epoutp01a
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250228094810epoutp01d0b37687ab2deec6b8c432d11079449f~oVkBT5ssb1418214182epoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740736090;
+	bh=d/xrksObyuUS+LfR0wsAM0jpJ6JI4C0qssS+Biux8N8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=b/wBmhrAsfgpVJAMqJYU0R5MjmfQjV+Tzuva/an1oEo2ZZKMTIDgphUuImNnED8gF
+	 PIsG1Dtq+6Ci93Wg7eeBNPS+qq9MSk/naRg1WMvEYzwGYjml8jcQnIQYbCo1U/64TD
+	 M/4navUYX+kJbQ2zzElVnkzBVNoYMZQJiS1Lj/fI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250228094809epcas5p43b4423daa009f9e6d37523f7cd7d890a~oVkA0hqiK1544615446epcas5p4W;
+	Fri, 28 Feb 2025 09:48:09 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z43L006Lmz4x9Pp; Fri, 28 Feb
+	2025 09:48:08 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.9D.19956.75681C76; Fri, 28 Feb 2025 18:48:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1~oTVm3L9Hm1856518565epcas5p3E;
+	Fri, 28 Feb 2025 07:05:03 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250228070503epsmtrp2cec91f437594f495f6c7d4d7d07cfec2~oTVm2ZPRN1928319283epsmtrp2d;
+	Fri, 28 Feb 2025 07:05:03 +0000 (GMT)
+X-AuditID: b6c32a4b-fe9f470000004df4-33-67c18657ffcd
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	00.CA.18729.F1061C76; Fri, 28 Feb 2025 16:05:03 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250228070501epsmtip2b98fd1fe64992511d761785b68a5e7a4~oTVlEB6Zi0820508205epsmtip2L;
+	Fri, 28 Feb 2025 07:05:01 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [PATCH] media: s5p-mfc: Support for handling RET_ENC_BUFFER_FULL
+ interrupt
+Date: Fri, 28 Feb 2025 12:29:52 +0530
+Message-Id: <20250228065952.14375-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmhm5428F0g5PTrSye7pjJanF/8WcW
+	i0Obt7Jb3Dywk8ni4sy7LBZ9Lx4yW2x6fI3V4vKuOWwWPRu2slrMOL+PyWLtkbvsFss2/WGy
+	WLT1C7sDr8fiPS+ZPDat6mTzuHNtD5vH5iX1Hn1bVjF6fN4k53Hq62f2APaobJuM1MSU1CKF
+	1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoGuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZL/+sZS+4KVOx
+	8/Qa1gbGdxJdjJwcEgImEv13ljB2MXJxCAnsZpS4d2wDlPOJUeLfxmtsEM43RonZExYxdzFy
+	gLU8742CiO9llJjStYcdwvnCKLF+6zFWkCI2AV2Js9tzQFaICKRKvFq3lhWkhllgCZPEoiPP
+	mEASwgKhEo+aPrOD2CwCqhLT/uxkBbF5BWwleg9cYoG4T15i9YYDzCDNEgJv2SVu7/wGdYWL
+	xIXdHhA1whKvjm9hh7ClJD6/28sGYSdLPF70khnCzpFYv2cK1Ex7iQNX5rCAjGEW0JRYv0sf
+	IiwrMfXUOrDTmAX4JHp/P2GCiPNK7JgHY6tJzLnzgxXClpE4vHopI4TtIfHpyBuwGiGBWIk5
+	N56wTWCUnYWwYQEj4ypGydSC4tz01GLTAuO81HJ4PCXn525iBKdBLe8djI8efNA7xMjEwXiI
+	UYKDWUmEd1bsgXQh3pTEyqrUovz4otKc1OJDjKbAIJvILCWanA9MxHkl8YYmlgYmZmZmJpbG
+	ZoZK4rzNO1vShQTSE0tSs1NTC1KLYPqYODilGpjmPY1e8t+Fz27j+UsWdaah1yOmTM79dzn4
+	1bd7jRvfro+ze+/knKJ7NaAj7P9xbQ9xaf1unVUfgw4la16aKfN5fnPq1XzXXaZpK35r7vdM
+	rp50hINb65/qrq6pF1bcWtAiceuUwt8DfvNKhes3fbzb/bBFQ1GHvej7x7m35/REKddq/5+1
+	oejBIRHTc9wvJ8xW/FXF8cjgmRT7tJAi5hVngr2CNl7YUmW9f9WDtKaHuy4uurraKPvqN+X7
+	/U4F27SP9C7ZPelG9br7E4v0fSLk3vrwsJ778OyX732Jg9UlG1Yy8nv/PvUhWf/BqeaWvzHf
+	3V59qMuZtSdync0j1qcfqh+rbCtLOKZxx1NjxfXie0osxRmJhlrMRcWJAM60yisMBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKLMWRmVeSWpSXmKPExsWy7bCSvK58wsF0g/bDyhZPd8xktbi/+DOL
+	xaHNW9ktbh7YyWRxceZdFou+Fw+ZLTY9vsZqcXnXHDaLng1bWS1mnN/HZLH2yF12i2Wb/jBZ
+	LNr6hd2B12PxnpdMHptWdbJ53Lm2h81j85J6j74tqxg9Pm+S8zj19TN7AHsUl01Kak5mWWqR
+	vl0CV8bLP2vZC27KVOw8vYa1gfGdRBcjB4eEgInE896oLkYuDiGB3YwSExdPZeli5ASKy0j8
+	bzvGDmELS6z895wdougTo8SmV2uYQZrZBHQlzm7PAakREUiXmHTnKwtIDbPAOiaJnSsnsoIk
+	hAWCJTasms4MYrMIqEpM+7MTLM4rYCvRe+AS1DJ5idUbDjBPYORZwMiwilEytaA4Nz232LDA
+	MC+1XK84Mbe4NC9dLzk/dxMjOCS1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHeWbEH0oV4UxIrq1KL
+	8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwRV2N/ffr54Nr58REL7Gm
+	LTr3+MUsr4R8g8DQTxP6LNYvsJmyVVk8yP+YZkG/0sJ0z9T/O+Imzg7SeSU3ibe9S3v9Xul3
+	pX2N8Vb3ahNeHxVnPPM7/OMLeyb/dPaUpsjcfSu5X8VdOPqsxz6rQDZxy/snvb48dequ6f9M
+	chkmO/IcSWvXn1ow9/j023MmfXhStUSoZvq/UzUsfod+FwSes9NU02Xl5Mw4+oCnUW5Zudyz
+	hicx37Stl6xRc54mf+Vj0NWZpduWaO46/SnqgoaFVE7DO7YE013bOz4tWS286er1r3WsZpHr
+	u0/ElR3stHVLU401cVvmtYP7f8Kb/fkOPv/uc8ofXs73n2N5yztpJZbijERDLeai4kQA2gjU
+	HbgCAAA=
+X-CMS-MailID: 20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1
+References: <CGME20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-To: Thomas Gleixner <tglx@linutronix.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
- cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <877c5be0no.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PSgvCgDnMPYpfMFnEqAaJQ--.1908S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GryfAFyUAr18Jr4UKF43trb_yoWxCF18pF
-	yUKF47Cr48JFyYywsrGa17ur9rXFWqvF4qy39Fy3yIy3yaqw1vgFyfZas7GFy5trsrZ3s5
-	t3WUXa40qrs3AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Um2NNUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDx4Co2fBdUDKGQAAsw
 
+When output encoded buffer size provided by userspace
+is insufficient with current encoding parameters, it
+leads to RET_ENC_BUFFER_FULL interrupt which was not
+handled in IRQ handler.
 
+On handling of RET_ENC_BUFFER_FULL interrupt leads to
+NAL_ABORT command from host to risc which in turn leads
+to RET_NAL_ABORT interrupt. On receiving RET_NAL_ABORT
+driver clears workbit and VB2 queues for cleaner closing
+of MFC instance.
 
-On 2025/2/28 01:51, Thomas Gleixner wrote:
-> On Thu, Feb 27 2025 at 22:09, Manivannan Sadhasivam wrote:
->> On Fri, Feb 28, 2025 at 12:28:21AM +0800, Hans Zhang wrote:
->>> +	return sysfs_emit(
->>> +		buf,
->>> +		"%s\n address_hi: 0x%08x\n address_lo: 0x%08x\n msg_data: 0x%08x\n",
->>> +		is_msix ? "msix" : "msi", desc->msg.address_hi,
->>> +		desc->msg.address_lo, desc->msg.data);
->>
->> Sysfs is an ABI. You cannot change the semantics of an attribute.
-> 
-> Correct. Aside of that this is debug information and has no business in
-> sysfs.
-> 
-> The obvious place to expose this is via the existing debugfs irq/*
-> mechanism. All it requires is to implement a debug_show() callback in
-> the MSI core code and assign it to domain ops::debug_show() on domain
-> creation, if it does not provide its own callback.
+When user encounters "Call on DQBUF after unrecoverable
+error", userspace should close fd and restart with larger
+output encoder buffer size.
 
-Hi Thomas(tglx),
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+ .../media/platform/samsung/s5p-mfc/regs-mfc-v6.h   |  1 +
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   | 14 ++++++++++++++
+ .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  1 +
+ .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c      |  5 +++++
+ 4 files changed, 21 insertions(+)
 
-Is the following patch OK? Please give me some advice. Thank you very much.
-
-Best regards
-Hans
-
-
-patch:
-
-diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
-index ca142b9a4db3..447fa24520f4 100644
---- a/kernel/irq/debugfs.c
-+++ b/kernel/irq/debugfs.c
-@@ -3,6 +3,7 @@
-
-  #include <linux/irqdomain.h>
-  #include <linux/irq.h>
-+#include <linux/msi.h>
-  #include <linux/uaccess.h>
-
-  #include "internals.h"
-@@ -56,6 +57,26 @@ static const struct irq_bit_descr irqchip_flags[] = {
-         BIT_MASK_DESCR(IRQCHIP_MOVE_DEFERRED),
-  };
-
-+static void irq_debug_show_msi_msix(struct seq_file *m, struct irq_data 
-*data,
-+                                   int ind)
-+{
-+       struct msi_desc *desc;
-+       bool is_msix;
+diff --git a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
+index fa49fe580e1a..075a58b50b8c 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
++++ b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
+@@ -45,6 +45,7 @@
+ #define S5P_FIMV_H2R_CMD_WAKEUP_V6		8
+ #define S5P_FIMV_CH_LAST_FRAME_V6		9
+ #define S5P_FIMV_H2R_CMD_FLUSH_V6		10
++#define S5P_FIMV_H2R_CMD_NAL_ABORT_V6		11
+ /* RMVME: REALLOC used? */
+ #define S5P_FIMV_CH_FRAME_START_REALLOC_V6	5
+ 
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+index 5f80931f056d..fa211c2d68a4 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+@@ -739,6 +739,20 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 		ctx->state = MFCINST_RUNNING;
+ 		goto irq_cleanup_hw;
+ 
++	case S5P_MFC_R2H_CMD_ENC_BUFFER_FULL_RET:
++		ctx->state = MFCINST_NAL_ABORT;
++		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
++		set_work_bit(ctx);
++		WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
++		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
++		break;
 +
-+       desc = irq_get_msi_desc(data->irq);
-+       if (!desc)
-+               return;
++	case S5P_MFC_R2H_CMD_NAL_ABORT_RET:
++		ctx->state = MFCINST_ERROR;
++		s5p_mfc_cleanup_queue(&ctx->dst_queue, &ctx->vq_dst);
++		s5p_mfc_cleanup_queue(&ctx->src_queue, &ctx->vq_src);
++		goto irq_cleanup_hw;
 +
-+       is_msix = desc->pci.msi_attrib.is_msix;
-+       seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-+       seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "",
-+               desc->msg.address_hi);
-+       seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "",
-+               desc->msg.address_lo);
-+       seq_printf(m, "\n%*smsg_data: 0x%08x\n", ind + 1, "",
-+               desc->msg.data);
-+}
-+
-  static void
-  irq_debug_show_chip(struct seq_file *m, struct irq_data *data, int ind)
-  {
-@@ -178,6 +199,7 @@ static int irq_debug_show(struct seq_file *m, void *p)
-         seq_printf(m, "node:     %d\n", irq_data_get_node(data));
-         irq_debug_show_masks(m, desc);
-         irq_debug_show_data(m, data, 0);
-+       irq_debug_show_msi_msix(m, data, 0);
-         raw_spin_unlock_irq(&desc->lock);
-         return 0;
-  }
-
-
-
-
-e.g.
-root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
-  85:          0          0          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 75497472 Edge      PCIe PME, aerdrv
-  86:          0         30          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021760 Edge      nvme0q0
-  87:        682          0          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021761 Edge      nvme0q1
-  88:          0        400          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021762 Edge      nvme0q2
-  89:          0          0        246          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021763 Edge      nvme0q3
-  90:          0          0          0        141          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021764 Edge      nvme0q4
-  91:          0          0          0          0        177          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021765 Edge      nvme0q5
-  92:          0          0          0          0          0        173 
-         0          0          0          0          0          0 
-ITS-MSI 76021766 Edge      nvme0q6
-  93:          0          0          0          0          0          0 
-       374          0          0          0          0          0 
-ITS-MSI 76021767 Edge      nvme0q7
-  94:          0          0          0          0          0          0 
-         0         62          0          0          0          0 
-ITS-MSI 76021768 Edge      nvme0q8
-  95:          0          0          0          0          0          0 
-         0          0        137          0          0          0 
-ITS-MSI 76021769 Edge      nvme0q9
-  96:          0          0          0          0          0          0 
-         0          0          0        177          0          0 
-ITS-MSI 76021770 Edge      nvme0q10
-  97:          0          0          0          0          0          0 
-         0          0          0          0        403          0 
-ITS-MSI 76021771 Edge      nvme0q11
-  98:          0          0          0          0          0          0 
-         0          0          0          0          0        246 
-ITS-MSI 76021772 Edge      nvme0q12
-root@root:/sys/kernel/debug/irq/irqs# cat 86
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31401200
-             IRQD_ACTIVATED
-             IRQD_IRQ_STARTED
-             IRQD_SINGLE_TARGET
-             IRQD_AFFINITY_SET
-             IRQD_AFFINITY_ON_ACTIVATE
-             IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 6
-effectiv: 6
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
-  hwirq:   0x4880000
-  chip:    ITS-MSI
-   flags:   0x20
-              IRQCHIP_ONESHOT_SAFE
-  parent:
-     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-      hwirq:   0x2001
-      chip:    ITS
-       flags:   0x0
-      parent:
-         domain:  :soc@0:interrupt-controller@0e001000-1
-          hwirq:   0x2001
-          chip:    GICv3
-           flags:   0x15
-                      IRQCHIP_SET_TYPE_MASKED
-                      IRQCHIP_MASK_ON_SUSPEND
-                      IRQCHIP_SKIP_SET_WAKE
-msix:
-  address_hi: 0x00000000
-  address_lo: 0x0e060040
-  msg_data: 0x00000000
-root@root:/sys/kernel/debug/irq/irqs# cat 87
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31600200
-             IRQD_ACTIVATED
-             IRQD_IRQ_STARTED
-             IRQD_SINGLE_TARGET
-             IRQD_AFFINITY_MANAGED
-             IRQD_AFFINITY_ON_ACTIVATE
-             IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 0
-effectiv: 0
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
-  hwirq:   0x4880001
-  chip:    ITS-MSI
-   flags:   0x20
-              IRQCHIP_ONESHOT_SAFE
-  parent:
-     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-      hwirq:   0x2002
-      chip:    ITS
-       flags:   0x0
-      parent:
-         domain:  :soc@0:interrupt-controller@0e001000-1
-          hwirq:   0x2002
-          chip:    GICv3
-           flags:   0x15
-                      IRQCHIP_SET_TYPE_MASKED
-                      IRQCHIP_MASK_ON_SUSPEND
-                      IRQCHIP_SKIP_SET_WAKE
-msix:
-  address_hi: 0x00000000
-  address_lo: 0x0e060040
-  msg_data: 0x00000001
-root@root:/sys/kernel/debug/irq/irqs#
-root@root:/sys/kernel/debug/irq/irqs# cat 88
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31600200
-             IRQD_ACTIVATED
-             IRQD_IRQ_STARTED
-             IRQD_SINGLE_TARGET
-             IRQD_AFFINITY_MANAGED
-             IRQD_AFFINITY_ON_ACTIVATE
-             IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 1
-effectiv: 1
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
-  hwirq:   0x4880002
-  chip:    ITS-MSI
-   flags:   0x20
-              IRQCHIP_ONESHOT_SAFE
-  parent:
-     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-      hwirq:   0x2003
-      chip:    ITS
-       flags:   0x0
-      parent:
-         domain:  :soc@0:interrupt-controller@0e001000-1
-          hwirq:   0x2003
-          chip:    GICv3
-           flags:   0x15
-                      IRQCHIP_SET_TYPE_MASKED
-                      IRQCHIP_MASK_ON_SUSPEND
-                      IRQCHIP_SKIP_SET_WAKE
-msix:
-  address_hi: 0x00000000
-  address_lo: 0x0e060040
-  msg_data: 0x00000002
-root@root:/sys/kernel/debug/irq/irqs# cat 89
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31600200
-             IRQD_ACTIVATED
-             IRQD_IRQ_STARTED
-             IRQD_SINGLE_TARGET
-             IRQD_AFFINITY_MANAGED
-             IRQD_AFFINITY_ON_ACTIVATE
-             IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 2
-effectiv: 2
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
-  hwirq:   0x4880003
-  chip:    ITS-MSI
-   flags:   0x20
-              IRQCHIP_ONESHOT_SAFE
-  parent:
-     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-      hwirq:   0x2004
-      chip:    ITS
-       flags:   0x0
-      parent:
-         domain:  :soc@0:interrupt-controller@0e001000-1
-          hwirq:   0x2004
-          chip:    GICv3
-           flags:   0x15
-                      IRQCHIP_SET_TYPE_MASKED
-                      IRQCHIP_MASK_ON_SUSPEND
-                      IRQCHIP_SKIP_SET_WAKE
-msix:
-  address_hi: 0x00000000
-  address_lo: 0x0e060040
-  msg_data: 0x00000003
-
-
+ 	default:
+ 		mfc_debug(2, "Unknown int reason\n");
+ 		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
+index 3cc2a4f5c40a..86c316c1ff8f 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
+@@ -141,6 +141,7 @@ enum s5p_mfc_inst_state {
+ 	MFCINST_RES_CHANGE_INIT,
+ 	MFCINST_RES_CHANGE_FLUSH,
+ 	MFCINST_RES_CHANGE_END,
++	MFCINST_NAL_ABORT,
+ };
+ 
+ /*
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 4cf12f33d706..356adfddcfcf 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -2229,6 +2229,11 @@ static void s5p_mfc_try_run_v6(struct s5p_mfc_dev *dev)
+ 		case MFCINST_HEAD_PRODUCED:
+ 			ret = s5p_mfc_run_init_enc_buffers(ctx);
+ 			break;
++		case MFCINST_NAL_ABORT:
++			mfc_write(dev, ctx->inst_no, S5P_FIMV_INSTANCE_ID_V6);
++			s5p_mfc_hw_call(dev->mfc_cmds, cmd_host2risc,
++					dev, S5P_FIMV_H2R_CMD_NAL_ABORT_V6, NULL);
++			break;
+ 		default:
+ 			ret = -EAGAIN;
+ 		}
+-- 
+2.17.1
 
 
