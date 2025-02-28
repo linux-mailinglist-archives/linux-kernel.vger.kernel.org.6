@@ -1,301 +1,132 @@
-Return-Path: <linux-kernel+bounces-538669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD15A49BB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:17:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66830A49BBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AF23A7EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3F331684A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C9C26E17C;
-	Fri, 28 Feb 2025 14:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0763C26B971;
+	Fri, 28 Feb 2025 14:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYAKBT+g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4GvZ/zPh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYAKBT+g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4GvZ/zPh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QkLfy/jB"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EBB26B971
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A48353363
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752235; cv=none; b=Wuvc9Defrv1H0ORjZgR9qwRixjXtJ0Hbs5MOM+uf3T2oIwyisoJrJi1pGyRLzGxtTVwKdl26aYp6FNzjcwfnZm+dTi54gSL78GpnM9YuMUsWRS3X1qHnCYz09riaZhCZ8lR15MkRlhJ3bfiBSpNNyVP3Ze9C36pTio3H5WW+9FU=
+	t=1740752292; cv=none; b=BIQmzntj+SCB5ylQHXhJvf66Keyz9XCc/mT+voyg37HWgkI6xG87DT/j+4ehWgZNZYiV7AIsjlulrfO9F7CH0+cbLr/rX6eMfVaNvRPQ0pUX3oqiiu7DEqNFdlOcLoIvI8WPKusrDtnlHJWzdBAUWdl6z/3eBG1n7MZ4Uafj6Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752235; c=relaxed/simple;
-	bh=F8zm6YQaiTa2XSTUkduNae4RXOCv5ivV4wzwzDD4rUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GTmDHtY7txChE5grUcf2XKJsnPg2H5mjn9i4rXpNZJNfWpRNMjbdy7XOsISma+IswEHqwekPLdOe7ZOtzIDa9VieqrepGbSjN1zNH8OtDnKfEbg5BlHkgiezWHE4enVneM4MXvdw6xoSXPGxawbGKvRWBczefFXrW2pPc8bsDKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYAKBT+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4GvZ/zPh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYAKBT+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4GvZ/zPh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BD1A21F37E;
-	Fri, 28 Feb 2025 14:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740752231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
-	b=LYAKBT+gywT+qOSiQz8ecqjdOm74+q98gaYP+YDKnR/F87TfZ49MUFJCNNaCOcWKbmgQLS
-	WT4Is2KV6rpun1S5H7p1LknkSJMhoBqEGr1nrDGqP/ECkfZ7DWHQ1sXauPaq50BhqIO5Us
-	BRaoMBbN8QL0GNoficVjRfl/n42qetI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740752231;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
-	b=4GvZ/zPhVrNKc8AKw7Z3I51uT11w12XQImbuBKgAD8dbx0C4zOwPocieku2c1mKwRj+N2H
-	3nfHK40ttQG74GAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LYAKBT+g;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="4GvZ/zPh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740752231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
-	b=LYAKBT+gywT+qOSiQz8ecqjdOm74+q98gaYP+YDKnR/F87TfZ49MUFJCNNaCOcWKbmgQLS
-	WT4Is2KV6rpun1S5H7p1LknkSJMhoBqEGr1nrDGqP/ECkfZ7DWHQ1sXauPaq50BhqIO5Us
-	BRaoMBbN8QL0GNoficVjRfl/n42qetI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740752231;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
-	b=4GvZ/zPhVrNKc8AKw7Z3I51uT11w12XQImbuBKgAD8dbx0C4zOwPocieku2c1mKwRj+N2H
-	3nfHK40ttQG74GAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E45C137AC;
-	Fri, 28 Feb 2025 14:17:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AtGOIGfFwWerMQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 28 Feb 2025 14:17:11 +0000
-Message-ID: <503c4ba7-c667-444a-b396-e85c46469f0a@suse.cz>
-Date: Fri, 28 Feb 2025 15:17:11 +0100
+	s=arc-20240116; t=1740752292; c=relaxed/simple;
+	bh=8h9qea/edu/RnpMNDZUgc8v/NytoINvq8fYODyML7E4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G1wHbRgcf+GVfHUbja/ZgOvjuAazrx1AiUroD0rSL4yh0NSbVnNj/Egu1QVO5seVTnlX/gQizdNXdnxvMnQJeeAMvwy1TrTyddbVfXUmagE07dE4Sc+y8FcghoUxliGtHaFh851eqjqkeX0Di8dnp8Qq+ZleeMv//Q6UeIMiJpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QkLfy/jB; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51SEHex32070698
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 08:17:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740752261;
+	bh=bgW5g300tmRMFjEsqTbas4ZzfRhvbkRab1mKzDMSykU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=QkLfy/jBDukeSUCA17i0+sePLLz+l7falK5ners/Flz6qW8kaYsgKsZc8JcN2rQlw
+	 N9YxmgjU29wdPr3DMD3Bu0k2psvdPWpqJgX7aZXHbzEr0DYIQdXCJ4NzXnWzGzDeGw
+	 aLK19hPiw0q1uX4fd3sqFkTuHgitjfU0MFcp26xc=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51SEHe9p002644
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Feb 2025 08:17:40 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Feb 2025 08:17:40 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Feb 2025 08:17:40 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51SEHe4M008459;
+	Fri, 28 Feb 2025 08:17:40 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Meghana Malladi <m-malladi@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <ebiggers@google.com>,
+        <javier.carrasco@wolfvision.net>,
+        <elinor.montmasson@savoirfairelinux.com>, <biju.das.jz@bp.renesas.com>,
+        <quic_tdas@quicinc.com>, <nfraprado@collabora.com>, <arnd@arndb.de>,
+        <dmitry.baryshkov@linaro.org>, <krzysztof.kozlowski@linaro.org>,
+        <geert+renesas@glider.be>, <quic_bjorande@quicinc.com>,
+        <will@kernel.org>, <catalin.marinas@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        "Ravi
+ Gunasekaran" <r-gunasekaran@ti.com>
+Subject: Re: [PATCH v3] arm64: defconfig: Enable HSR driver
+Date: Fri, 28 Feb 2025 08:17:39 -0600
+Message-ID: <174075218769.3252220.16260362657554687998.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250227111828.1963918-1-m-malladi@ti.com>
+References: <20250227111828.1963918-1-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] mm/filemap: add mempolicy support to the filemap
- layer
-Content-Language: en-US
-To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
- willy@infradead.org, pbonzini@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
- ackerleytng@google.com, david@redhat.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, tabba@google.com
-References: <20250226082549.6034-1-shivankg@amd.com>
- <20250226082549.6034-2-shivankg@amd.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250226082549.6034-2-shivankg@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: BD1A21F37E
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2/26/25 09:25, Shivank Garg wrote:
-> From: Shivansh Dhiman <shivansh.dhiman@amd.com>
+Hi Meghana Malladi,
+
+On Thu, 27 Feb 2025 16:48:28 +0530, Meghana Malladi wrote:
+> HSR is a redundancy protocol that can be realized with any
+> two port ethernet controller.
 > 
-> Add NUMA mempolicy support to the filemap allocation path by introducing
-> new APIs that take a mempolicy argument:
-> - filemap_grab_folio_mpol()
-> - filemap_alloc_folio_mpol()
-> - __filemap_get_folio_mpol()
+> Many of TI's K3 SoCs such as AM64x and AM65x support multi port ethernet
+> controller. So enable HSR driver inorder to support this protocol for
+> these SoCs.
 > 
-> These APIs allow callers to specify a NUMA policy during page cache
-> allocations, enabling fine-grained control over memory placement. This is
-> particularly needed by KVM when using guest-memfd memory backends, where
-> the guest memory needs to be allocated according to the NUMA policy
-> specified by VMM.
-> 
-> The existing non-mempolicy APIs remain unchanged and continue to use the
-> default allocation behavior.
-> 
-> Signed-off-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> [...]
 
-<snip>
+I have applied the following to branch ti-k3-config-next on [1].
+I have had to slightly improve the commit message (answering the
+question: "what is HSR"), let me know if you dont agree with it and I
+can drop the patch from the queue in favor of an update.
 
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1001,11 +1001,17 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->  EXPORT_SYMBOL_GPL(filemap_add_folio);
->  
->  #ifdef CONFIG_NUMA
-> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
-> +struct folio *filemap_alloc_folio_mpol_noprof(gfp_t gfp, unsigned int order,
-> +		struct mempolicy *mpol)
->  {
->  	int n;
->  	struct folio *folio;
->  
-> +	if (mpol)
-> +		return folio_alloc_mpol_noprof(gfp, order, mpol,
-> +					       NO_INTERLEAVE_INDEX,
-> +					       numa_node_id());
-> +
->  	if (cpuset_do_page_mem_spread()) {
->  		unsigned int cpuset_mems_cookie;
->  		do {
-> @@ -1018,6 +1024,12 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->  	}
->  	return folio_alloc_noprof(gfp, order);
->  }
-> +EXPORT_SYMBOL(filemap_alloc_folio_mpol_noprof);
-> +
-> +struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
-> +{
-> +	return filemap_alloc_folio_mpol_noprof(gfp, order, NULL);
-> +}
->  EXPORT_SYMBOL(filemap_alloc_folio_noprof);
->  #endif
+Thank you!
 
-Here it seems to me:
+[1/1] arm64: defconfig: Enable HSR driver
+      commit: 44807ecfa6394d8a4764775998f5dde18ec4377c
 
-- filemap_alloc_folio_noprof() could stay unchanged
-- filemap_alloc_folio_mpol_noprof() would
-  - call folio_alloc_mpol_noprof() if (mpol)
-  - call filemap_alloc_folio_noprof() otherwise
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-The code would be a bit more clearly structured that way?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> @@ -1881,11 +1893,12 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
->  }
->  
->  /**
-> - * __filemap_get_folio - Find and get a reference to a folio.
-> + * __filemap_get_folio_mpol - Find and get a reference to a folio.
->   * @mapping: The address_space to search.
->   * @index: The page index.
->   * @fgp_flags: %FGP flags modify how the folio is returned.
->   * @gfp: Memory allocation flags to use if %FGP_CREAT is specified.
-> + * @mpol: The mempolicy to apply when allocating a new folio.
->   *
->   * Looks up the page cache entry at @mapping & @index.
->   *
-> @@ -1896,8 +1909,8 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
->   *
->   * Return: The found folio or an ERR_PTR() otherwise.
->   */
-> -struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> -		fgf_t fgp_flags, gfp_t gfp)
-> +struct folio *__filemap_get_folio_mpol(struct address_space *mapping, pgoff_t index,
-> +		fgf_t fgp_flags, gfp_t gfp, struct mempolicy *mpol)
->  {
->  	struct folio *folio;
->  
-> @@ -1967,7 +1980,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  			err = -ENOMEM;
->  			if (order > min_order)
->  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> -			folio = filemap_alloc_folio(alloc_gfp, order);
-> +			folio = filemap_alloc_folio_mpol(alloc_gfp, order, mpol);
->  			if (!folio)
->  				continue;
->  
-> @@ -2003,6 +2016,13 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  		folio_clear_dropbehind(folio);
->  	return folio;
->  }
-> +EXPORT_SYMBOL(__filemap_get_folio_mpol);
-> +
-> +struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> +		fgf_t fgp_flags, gfp_t gfp)
-> +{
-> +	return __filemap_get_folio_mpol(mapping, index, fgp_flags, gfp, NULL);
-> +}
->  EXPORT_SYMBOL(__filemap_get_folio);
->  
->  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
 
