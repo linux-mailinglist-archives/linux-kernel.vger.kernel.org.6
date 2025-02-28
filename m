@@ -1,169 +1,144 @@
-Return-Path: <linux-kernel+bounces-537626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2683FA48E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:07:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E51A48E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B951891929
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F7C1882FA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6308482F2;
-	Fri, 28 Feb 2025 02:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D248783CC7;
+	Fri, 28 Feb 2025 02:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="exAF7g0x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IMId/STe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F19125B2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B523125B2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740708456; cv=none; b=QKHHxW4tyQ62UnwVVUrRc/u3YGSte3nphP9QMylyRhfVcUi/0Icb6vpv31ca/0+cXEFBEQ5LHIGfd1wJSdaf36Gw02ngqf84QoDt+9KRrNolMfJm9q6Q4oMlHkJJG5P8QfX/QMsvGcGA+RjsEjpaQ24zz2EbPKoTATVrrpkX9a0=
+	t=1740708515; cv=none; b=bn4PtmcdVZOojepjLlTcv7ApHvt1KbMMV9/+3zt62gjDEufc7lVYC2HUqPj/lpf2YZvZLfwO5JVOAX1/4iHUP1kYUP1JgAkeF3kyvpls0PvREejqpvEd56Y9Tk8MBSHfnOSC8ll8NvI4/pXNBf6+9rAHpnM4BQeAX4j7YFiCiNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740708456; c=relaxed/simple;
-	bh=FDgvtZB2M1mr4d9hMNDvxDNWzzZYeZLVpt/cbsyvj8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WuznveYdAQBBV3UeFhal/L4KarHkqyK8yI+dmxijWApgeiA3CT7NHYjFT20FHM9dE8pV3I6d7qRGmClSY9GBkDXZ/JPVCjv6NXT2qcb7kU7seh3YhmOULxcUhvGjoNwTpQUlE76ax71kb6SKVNEMFETXHJ9i8LlPmc2rmeDuh9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=exAF7g0x; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740708455; x=1772244455;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=FDgvtZB2M1mr4d9hMNDvxDNWzzZYeZLVpt/cbsyvj8M=;
-  b=exAF7g0xJjmEwkUomcRwzcQQFihYQqQccG+qsO5CvWSXCqPWHWKLrh5t
-   1U40QQGogZZvIhLT3QSkz39V8KtNEMvR5+jXbd1qmIAPp2ACWVxRp9EEt
-   /Zrth5df546KlVJe3vEelwykKJVcgq4Z4FPqlYjMtUWH8UvHbPXfL0y0w
-   JG/F+36eArP7DAYtMxjKFtCoPZWvXVJbXUffvwQ3gxfI59T8ALipF36kc
-   Hw891mzMprYXDrCRSVj5vNJvcAUAzMvj/npLF/CaXbejzNj4lqHVuAWUq
-   Y6Se56f5tVH3rm6UE8kuP1zXRFgf3VH5SuJIREg9MuD8cC3kry0LRkKKx
-   A==;
-X-CSE-ConnectionGUID: j4hXvAMzS9Cyc1KbdwFALw==
-X-CSE-MsgGUID: mkDnH7rXSuCnUHl6OKyJIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41755930"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="41755930"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 18:07:35 -0800
-X-CSE-ConnectionGUID: f4ueGVtySYaboTEPQk8TxQ==
-X-CSE-MsgGUID: pRTHOEu7RmK8WxNxcRc51g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="122431943"
-Received: from jgarnacx-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.170])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 18:07:34 -0800
-Date: Thu, 27 Feb 2025 18:07:33 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] x86/speculation: Simplify and make CALL_NOSPEC consistent
-Message-ID: <20250227-call-nospec-v2-1-895a30dceaac@linux.intel.com>
-X-B4-Tracking: v=1; b=H4sIAIIUwWcC/23MQQ7CIBCF4as0s5aGErDVlfcwXSBM7SQIDVRS0
- 3B3sWuX/0vet0PCSJjg2uwQMVOi4GuIUwNm1v6JjGxtEFwoLsSZGe0c8yEtaNjjIgc+TNyaXkF
- 9LBEn2g7tPtaeKa0hfg48d7/1v5M71jFpLXKplel1f3Pk31tLfkXXmvCCsZTyBVaIxYKsAAAA
-X-Mailer: b4 0.14.1
+	s=arc-20240116; t=1740708515; c=relaxed/simple;
+	bh=ntMRFDWO+IFXNxwNxjfm8PreVjt8JX+kXRYeGVuWOBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a737akE3nR4ByeNaBSjE5liZU9TDxoyiOYsAcuh84TI5qQK+VOo3FJf0FflpDx2J/o67am+I89MuLnrhD6PPwb0KB+CEdAxHaudGEdOXRI8A+fVssDKE4VuD9Xg3Ece8gatuZmaacuhtyliHBtX/UeMLP6bcP3OWG/NnBrmQd2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IMId/STe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740708509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vQ/Fl0HwXzRHNyxsWxoDbaxOZuT2N+fcGDEHmXA1hb0=;
+	b=IMId/STe+3oQLfDC8ekxjcNJo2zPo+RR1Di1+ncSZ7Gmw98eycPNK/BXVIkyE0ncp/jNmw
+	fDOSbGDcIyMv9c8Jk9/QVT/hHeog4LOZ25E6LZzqImk4EbGEHjwHY4vqc3qbcXc0I1NEYC
+	JdDT8jRXz/zgoVhyoKc0Wf3wlpEyIvA=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-9ZY6KbgNMO61NAuIsXyA0w-1; Thu, 27 Feb 2025 21:08:27 -0500
+X-MC-Unique: 9ZY6KbgNMO61NAuIsXyA0w-1
+X-Mimecast-MFC-AGG-ID: 9ZY6KbgNMO61NAuIsXyA0w_1740708506
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2234dddbd6fso37184895ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:08:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740708506; x=1741313306;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQ/Fl0HwXzRHNyxsWxoDbaxOZuT2N+fcGDEHmXA1hb0=;
+        b=N3pUCqxFdphmXr0639RDNcFwjnNOBzh5CjgNue3gvJltidVLn1iaSW/QfJWgeshuTB
+         UKsyie1c02zYgCz15M/oUkhu8YvtPaaEGodlflF5avP4Iur0ZpTurq2pDy8AM2v47u4t
+         erPeFOCT+rTfURE4KZWF1bes8gG533PMTT4+R53Ulwz9gzNbayANYttTDiuHcHZQUYLN
+         rh/rPJTxV4liHbt9wKx0cG70MTJgkLBMHRqaalPkp7d6EFOBVdl+pW7XJ5zVbu1QFULT
+         tQyk6Asxdq44UXmnT3bV7NOz4YB8SjmL4YBnaMTzzw8u/ZylshyACxfKpHuKhswooJqg
+         ldFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzseqsDWUAZpOnt18hjZd3tIg7WuPVW+VmLq4B8iqV65Bw323CrtgDyNLLplaP6O2Nzs5ie7/Flxur+DE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwg1RCayUJXOrNwblWy2uvizbnZI00T19QfwOc06IBOC8I/O3B
+	kx/eEDFglAk5IovUnhym66dpr4U3RltxKxv4kgbwMHMWeHVVBFcLzsfCtX4P+Dz03HPi7pKteuq
+	p6hMxXcVaSv9geMcU8m9v+0+c+qNwUh+X98z3SnRwRzWbH3JsezNpM7SN5wjMtw==
+X-Gm-Gg: ASbGnctnA4uhxmBHPnPmKUMCHIqVrTf/CPmxjeNr4wikC/CK0zwtFiqY1WDte7AecZj
+	opLXfwiSTKuERnZYgW+oizz8JbOoRkQZrOsYvhTbBHLxDy8xQ6akaVPdlJuXXE7uDUztLfSLgwE
+	zMNztlN90kF5/23CjCkZM0r8QE/dMnQUj2iHEwroY/5x9wnn8hxnKOztOxzMhsB1XcE56h42b68
+	aLrG2+edoCSpcVPIFLRUYnhjZE5t6XJ7I7TdY/E2dJyokUqFub5yPd3ZkXn5fdW3KdYcl+3ngZ7
+	ZikyyUrIa1iY0zFPIw==
+X-Received: by 2002:a17:902:e88f:b0:221:89e6:ccb6 with SMTP id d9443c01a7336-2236750c421mr28814185ad.25.1740708506485;
+        Thu, 27 Feb 2025 18:08:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFqsxG1w4CFgPe7zp+BHrGfr4zyqy2gKPJF3ydIcoqOzD/vMt4rTiKChpT0/GXLXVDP/aNN0g==
+X-Received: by 2002:a17:902:e88f:b0:221:89e6:ccb6 with SMTP id d9443c01a7336-2236750c421mr28813865ad.25.1740708506147;
+        Thu, 27 Feb 2025 18:08:26 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fae0esm22661535ad.93.2025.02.27.18.08.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 18:08:25 -0800 (PST)
+Message-ID: <5c59d489-f9f9-4383-a90d-93badfb65291@redhat.com>
+Date: Fri, 28 Feb 2025 12:08:19 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: realm: Use aliased addresses for device DMA
+ to shared buffers
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, linux-kernel@vger.kernel.org
+Cc: will@kernel.org, catalin.marinas@arm.com, maz@kernel.org,
+ steven.price@arm.com, aneesh.kumar@kernel.org, robin.murphy@arm.com,
+ linux-arm-kernel@lists.infradead.org,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
+ <20250227144150.1667735-4-suzuki.poulose@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250227144150.1667735-4-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-CALL_NOSPEC macro is used to generate Spectre-v2 mitigation friendly
-indirect branches. At compile time the macro defaults to indirect branch,
-and at runtime those can be patched to thunk based mitigations.
 
-This approach is opposite of what is done for the rest of the kernel, where
-the compile time default is to replace indirect calls with retpoline thunk
-calls.
 
-Make CALL_NOSPEC consistent with the rest of the kernel, default to
-retpoline thunk at compile time when CONFIG_MITIGATION_RETPOLINE is
-enabled.
+On 2/28/25 12:41 AM, Suzuki K Poulose wrote:
+> When a device performs DMA to a shared buffer using physical addresses,
+> (without Stage1 translation), the device must use the "{I}PA address" with the
+> top bit set in Realm. This is to make sure that a trusted device will be able
+> to write to shared buffers as well as the protected buffers. Thus, a Realm must
+> always program the full address including the "protection" bit, like AMD SME
+> encryption bits.
+> 
+> Enable this by providing arm64 specific dma_addr_{encrypted, canonical}
+> helpers for Realms. Please note that the VMM needs to similarly make sure that
+> the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
+> unprotected alias.
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v2:
+>   - Drop dma_addr_encrypted() helper, which is a NOP for CCA ( Aneesh )
+>   - Only mask the "top" IPA bit and not all the bits beyond top bit. ( Robin )
+>   - Use PROT_NS_SHARED, now that we only set/clear top bit. (Gavin)
+> ---
+>   arch/arm64/include/asm/mem_encrypt.h | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
 
-Also add the missing __CS_PREFIX to the CALL_NOSPEC macro to make it
-compatible with -mindirect-branch-cs-prefix.
-
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
-v2:
-- Fixed the inconsistency in the use of "\" in __CS_PREFIX. (Andrew)
-- Fixed the comment to reflect that __CS_PREFIX only emits the prefix and
-  not the JMP/CALL. (Andrew)
-
-v1: https://lore.kernel.org/r/20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com
----
- arch/x86/include/asm/nospec-branch.h | 32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 7e8bf78c03d5..aee26bb8230f 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -198,9 +198,8 @@
- .endm
- 
- /*
-- * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
-- * to the retpoline thunk with a CS prefix when the register requires
-- * a RAX prefix byte to encode. Also see apply_retpolines().
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-  */
- .macro __CS_PREFIX reg:req
- 	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15
-@@ -420,20 +419,27 @@ static inline void call_depth_return_thunk(void) {}
- 
- #ifdef CONFIG_X86_64
- 
-+/*
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-+ */
-+#define __CS_PREFIX(reg)				\
-+	".irp rs,r8,r9,r10,r11,r12,r13,r14,r15\n"	\
-+	".ifc \\rs," reg "\n"				\
-+	".byte 0x2e\n"					\
-+	".endif\n"					\
-+	".endr\n"
-+
- /*
-  * Inline asm uses the %V modifier which is only in newer GCC
-  * which is ensured when CONFIG_MITIGATION_RETPOLINE is defined.
-  */
--# define CALL_NOSPEC						\
--	ALTERNATIVE_2(						\
--	ANNOTATE_RETPOLINE_SAFE					\
--	"call *%[thunk_target]\n",				\
--	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
--	X86_FEATURE_RETPOLINE,					\
--	"lfence;\n"						\
--	ANNOTATE_RETPOLINE_SAFE					\
--	"call *%[thunk_target]\n",				\
--	X86_FEATURE_RETPOLINE_LFENCE)
-+#ifdef CONFIG_MITIGATION_RETPOLINE
-+#define CALL_NOSPEC	__CS_PREFIX("%V[thunk_target]")	\
-+			"call __x86_indirect_thunk_%V[thunk_target]\n"
-+#else
-+#define CALL_NOSPEC	"call *%[thunk_target]\n"
-+#endif
- 
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
- 
-
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250226-call-nospec-b94808f0dc75
-
-Best regards,
--- 
-Pawan
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
 
