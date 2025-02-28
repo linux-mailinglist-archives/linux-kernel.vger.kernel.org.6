@@ -1,154 +1,96 @@
-Return-Path: <linux-kernel+bounces-537613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E578A48E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:46:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172C7A48E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608B61891542
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0330F3B6ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D507653363;
-	Fri, 28 Feb 2025 01:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E781076410;
+	Fri, 28 Feb 2025 01:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aUM/v2Vv"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bh8eo2yH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495EAC2F2;
-	Fri, 28 Feb 2025 01:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4046035953;
+	Fri, 28 Feb 2025 01:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740707207; cv=none; b=kUl8SvhP+TTdChbCWW1XxY4HodZ2mdZwKENRvKK11l4skVKrlyA2H/WwuYCxJOrA8gZRl8arL8jy53uhh6VPPDbNOyH2Yi0d4BQLfhUJLDdb11UT+FG8B2R1kJm4TOxtZa/dK5JJh3xGgQzjiBt7cT5G3h5tgM+k04K9eC0QBko=
+	t=1740707295; cv=none; b=auVzY16zwCKcQOQY7YFKPDoTdmGzTLYB5yRwEPD6KEmphMj2ex0aJ5yV1sxyPLGwF3wMHKJ9TgepMJ8ZlGsFx2CTPvHqaRx9N2/hwy7aA3RKZHjdzZ7O40mApbuDr0Y/6mIZD4XCRLj18WV328QZlGQb5j3/HFJ3bjDEyLEu0No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740707207; c=relaxed/simple;
-	bh=ZZHNCgut0dGMFXCWAAMpaymxZyfRxzSLiAKJxYuUhR8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SeR70Lxu0lgBczZ42Ocy5LfNJWaEBtQfarN0D+uKqxq/gUocJnZBI74GUkvYa/C6wA4vxDBRyAWYAmdYBRq+XyBCwXf7olGZ36EGqS8qu95mW6gQ9clMGB0qyjCiLKcipChTOqwq99fajVUOztjte8E9Pf1uHWrJAyIuPBSyT08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aUM/v2Vv; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740707196; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
-	bh=5r+5WkyUwaatx2CtpLzuZtA6tB6jLB9WVQM6cMSk/Qs=;
-	b=aUM/v2VvKf8dzM596SA5GV2hIgimrJrqAebseOLiKXRUhq5Ry+3e0I+d1ESoUaAaF1fwSV4Icafx7DQQRqrR1U8X3WDMeaaIIVNoRvL4eN5XreKk//R3RXgP01B0kaWxI9G/L0v/Xc8WePRD/0dw2ir64G/wTbz5fBss1NDwZsM=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQNqCdH_1740707191 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Feb 2025 09:46:33 +0800
-Message-ID: <0c93542f-4521-41bc-a030-5b2d8621aa6a@linux.alibaba.com>
-Date: Fri, 28 Feb 2025 09:46:30 +0800
+	s=arc-20240116; t=1740707295; c=relaxed/simple;
+	bh=BjmmzH/Au8DAGNDCASojsQ3C9P33uMc+Z3Tpdc2Lo1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ataVwjmzLGyebp8SvGmptC2XQ6smQsuIUP8Hn+Z7H7Fsi4Mcf9CFZKNWMuMh59Yw1OkAiqhaYYLiAdGqzjsoA5+tZuCtAssXnwqTplC2XktZw0CnljO7vc3RcaLwQJP/wz09NaDzxX6ZQ37CdkhgUmwD84Ra5q2govB1GjmvdO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bh8eo2yH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF41C4CEDD;
+	Fri, 28 Feb 2025 01:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740707294;
+	bh=BjmmzH/Au8DAGNDCASojsQ3C9P33uMc+Z3Tpdc2Lo1g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bh8eo2yHRBbRfMkXeOCkbJxDaQvEtf60/RyoWsFj7ssICKGqywm2umN6ufAdL2qT3
+	 Aq5p2mJ4Fk348BbIinCEykfNLyJz0MWM0ZBt3P1PSWdZAE1TApWSvLVCiuikqKJtCz
+	 UI6ntr0+ZqzVck+buqbBfboMG6w4h/SMgmBCGOTdMc5m66nIjGmbCuWxjcKl2VrNop
+	 TK7Z5pFLCuXeiXYXChkQfmyeNfX6EcQ5bgsAySpK35Q9y8+cCUJZgn3lrLpKVI3RYj
+	 kL3R8ocDkcfJZ7Sacp2cVWG6jEJl4mIRdsORSO1i7khc21fdJ89Mo4+dUXPWB9zixU
+	 gIzqcb6QQoWWQ==
+Date: Thu, 27 Feb 2025 17:48:12 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: horms@kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, ricardo@marliere.net, viro@zeniv.linux.org.uk,
+ dmantipov@yandex.ru, aleksander.lobakin@intel.com,
+ linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org, mrpre@163.com,
+ syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+Subject: Re: [PATCH net-next v4 1/1] ppp: Fix KMSAN warning by initializing
+ 2-byte header
+Message-ID: <20250227174812.50d2eabe@kernel.org>
+In-Reply-To: <20250226013658.891214-2-jiayuan.chen@linux.dev>
+References: <20250226013658.891214-1-jiayuan.chen@linux.dev>
+	<20250226013658.891214-2-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-Subject: Re: [PATCH v18 2/3] mm: memory-failure: move return value
- documentation to function declaration
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: yazen.ghannam@amd.com, mark.rutland@arm.com, mingo@redhat.com,
- robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
- rafael@kernel.org, linux-arm-kernel@lists.infradead.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org, jarkko@kernel.org, linux-acpi@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@linux.alibaba.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20250107081735.16159-1-xueshuai@linux.alibaba.com>
- <20250107081735.16159-3-xueshuai@linux.alibaba.com>
- <Z8BbFRupgknBTvH8@arm.com>
-In-Reply-To: <Z8BbFRupgknBTvH8@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/2/27 20:31, Catalin Marinas 写道:
-> (going through patches in my inbox)
+On Wed, 26 Feb 2025 09:36:58 +0800 Jiayuan Chen wrote:
+> The PPP driver adds an extra 2-byte header to enable socket filters to run
+> correctly. However, the driver only initializes the first byte, which
+> indicates the direction. For normal BPF programs, this is not a problem
+> since they only read the first byte.
 > 
-> On Tue, Jan 07, 2025 at 04:17:34PM +0800, Shuai Xue wrote:
->> Part of return value comments for memory_failure() were originally
->> documented at the call site. Move those comments to the function
->> declaration to improve code readability and to provide developers with
+> Nevertheless, for carefully crafted BPF programs, if they read the second
+> byte, this will trigger a KMSAN warning for reading uninitialized data.
 > 
-> s/declaration/definition/
+> Reported-by: syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/bpf/000000000000dea025060d6bc3bc@google.com/
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-Thanks, will fix.
+Could you add:
 
-> 
->> immediate access to function usage and return information.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
->> Reviewed-by: Jane Chu <jane.chu@oracle.com>
->> ---
->>   arch/x86/kernel/cpu/mce/core.c |  7 -------
->>   mm/memory-failure.c            | 10 +++++++---
->>   2 files changed, 7 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
->> index 7fb5556a0b53..d1dd7f892514 100644
->> --- a/arch/x86/kernel/cpu/mce/core.c
->> +++ b/arch/x86/kernel/cpu/mce/core.c
->> @@ -1398,13 +1398,6 @@ static void kill_me_maybe(struct callback_head *cb)
->>   		return;
->>   	}
->>   
->> -	/*
->> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
->> -	 * to the current process with the proper error info,
->> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
->> -	 *
->> -	 * In both cases, no further processing is required.
->> -	 */
->>   	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
->>   		return;
->>   
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index a7b8ccd29b6f..14c316d7d38d 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -2211,9 +2211,13 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->>    * Must run in process context (e.g. a work queue) with interrupts
->>    * enabled and no spinlocks held.
->>    *
->> - * Return: 0 for successfully handled the memory error,
->> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
->> - *         < 0(except -EOPNOTSUPP) on failure.
->> + * Return:
->> + *   0             - success,
->> + *   -ENXIO        - memory not managed by the kernel
->> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
->> + *   -EHWPOISON    - the page was already poisoned, potentially
->> + *                   kill process,
->> + *   other negative values - failure.
->>    */
->>   int memory_failure(unsigned long pfn, int flags)
->>   {
-> 
-> Why not keep the comment in both places? One is about the x86 decisions,
-> the other is about what memory_failure() can return.
-> 
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 
-Ok, will keep x86 path.
+And combine the cover letter with the commit message?
+For a single-patch postings cover letter is not necessary.
 
-By the way, could arm maintainers help to ack patch 1 and 3 if there
-is no objection?
+> +		*(__be16 *)skb_push(skb, 2) = htons(PPP_FILTER_OUTBOUND_TAG);
+>  		if (ppp->pass_filter &&
+>  		    bpf_prog_run(ppp->pass_filter, skb) == 0) {
+>  			if (ppp->debug & 1)
 
-Thanks.
-Shuai
-
+The exact same problem seems to be present in ppp_receive_nonmp_frame()
+please fix them both.
+-- 
+pw-bot: cr
 
