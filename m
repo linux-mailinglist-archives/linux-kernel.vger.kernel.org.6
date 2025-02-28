@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-537792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564B6A490E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:31:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC38A490E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7301893483
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:31:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16EC67A48D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33F11BEF63;
-	Fri, 28 Feb 2025 05:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7F41BEF63;
+	Fri, 28 Feb 2025 05:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MuHkf1SU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LsKAWzhi"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8D31EEE0;
-	Fri, 28 Feb 2025 05:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889871EEE0;
+	Fri, 28 Feb 2025 05:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740720690; cv=none; b=q/FH/RFlV4BQBtbGtyuU4FpCdDbI3n1EEpt9UrR0HzrQvdxHMYLd2LN/rlVIKCSN/1VDs3ERBf8AmNKqeNssOsWshedDqt+U2KLr7Ju604M0hMI5GGD7YbxRqItnqiTcix/fKLFP5jn+MFIuFftEg9yNNYscOj0SQgtE1BqvjMo=
+	t=1740720815; cv=none; b=dNuFqZagbykUiOJtio+oQJkyvSeWRX3Gn/cuBRgYKax9ZpmZUUDcNghbGAwlr1QPZQydRmhW9/VRwCGv5V1lr9b+WQhxjYOQJhx/jq6BSdKgF2CiockRztN+wBoUM1TFUY+6hby4S7HuyZQQ7t0DRGlWf6OWu1LQVjPPOYMlYIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740720690; c=relaxed/simple;
-	bh=+STl88bAkBd9DGKmS+aEF8q/3e0HRxiB4N848LL6Hlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hB09rSI16hb8Ih5MTyvokfvkcamOyPwHJgVCOReI40Oy9enNAguD17yn+LHbhKi1G2X+nS+kkgV8ZRFh9lPyfv5AI8vbAO+JkHC7rdMIrdLbuIYTM+um+7nhaCdzui8B7Ho4LRaCW0k5kUAFQtAm9evPY9oOiWZWC+K0NzjYWjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MuHkf1SU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RH801Y013260;
-	Fri, 28 Feb 2025 05:31:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5D/hr1fuv0S6ELFcDcwZRM3GXbBTxa07KUOxBpN5gfM=; b=MuHkf1SUua/iY6Gh
-	v/1GP4x7N5iJ3hgJO2ipGYw8TsrHSJecZM8Lr1kSQ3lZSsvaud/EhKLZ7TbLUpnA
-	HZtMg/KDfGr13/JoXCCfxXYs6dMqutof6DpX61uUPR/H9Ik51Cl3tvryaC0HVclG
-	xTEt2fzbE3sLj6QPMfIr3j7ipkcp0rO05cfx9N1u6k7BN3f4AVgBMvEjDRmo9L6E
-	gh7xnvwdCnD/AWvGYA4hDYsvzfQgh895iGqeWpkQLVvRl0uEix9eSUPa76cg8EoB
-	b5CnJGlxPXZHLz9hp5p7hw3Z5uYHh0hJ3zmMHQ4gorXxL354kR2leqxLj0xGRa6i
-	VWhGYw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prk847d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 05:31:24 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51S5VNwq009229
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 05:31:23 GMT
-Received: from [10.216.6.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Feb
- 2025 21:31:20 -0800
-Message-ID: <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
-Date: Fri, 28 Feb 2025 11:01:16 +0530
+	s=arc-20240116; t=1740720815; c=relaxed/simple;
+	bh=hlrgWTDZE96RrdznOc4Y4p/u3TvfGfQxDspHqGzMwH4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/AR5uDNOydFj/aARvPwm1ORXgvsxnndJfAp+YxGwJxXqpNZpH8bDaxGocjiLJDEe5+DU/4OfAQmkju8oI2Ds3w1JQMtnPR2gwBJe+K02zxatc/iSJu3NWV4Gfy9+n5I7mrwT28gpCwDJyBDKKFyT/jDtUNcabqo3U/4TeY88VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LsKAWzhi; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51S5XOIT1964122
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 23:33:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740720804;
+	bh=v+xos08V2sWXcFWLKiVVATbXyOouS4eSGAsrdc2THPY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LsKAWzhi6SZ11jwjd7NbfKpZiC6vNJeI3ggFOkbfytK+pEF3a5JVlAMjuLU1rWMVk
+	 JMom3ntAt+eOjcpOnOl/K666GJUTeRsS6TXln0bMM4gNEOoBBzo8XwESCQIEkfTAI4
+	 5zFCFbxtC4G2MgKeX+c9d4GRKRm8ulyU3fAivmus=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51S5XOGt019559
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Feb 2025 23:33:24 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Feb 2025 23:33:23 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Feb 2025 23:33:23 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51S5XMrJ064044;
+	Thu, 27 Feb 2025 23:33:23 -0600
+Date: Fri, 28 Feb 2025 11:03:21 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <j-choudhary@ti.com>,
+        <rogerq@kernel.org>
+CC: <stable@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix
+ serdes_ln_ctrl reg-masks
+Message-ID: <20250228053321.pekdadgl4ebscsc2@uda0492258>
+References: <20250227061643.144026-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
- <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
-Content-Language: en-US
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-In-Reply-To: <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: d6bZm8qI_NFqlmmEc332MTdpWVPEsIBl
-X-Proofpoint-ORIG-GUID: d6bZm8qI_NFqlmmEc332MTdpWVPEsIBl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_08,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502280037
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250227061643.144026-1-s-vadapalli@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
-> On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
->> The initial QCE node change is reverted by the following patch 
+On Thu, Feb 27, 2025 at 11:46:43AM +0530, Siddharth Vadapalli wrote:
+
+Kindly ignore this patch. The register offsets should start from 0x40
+since SERDES3 is not present in J784S4. I will post the v2 patch fixing
+this.
+
+Regards,
+Siddharth.
+
+> Commit under Fixes added the 'idle-states' property for SERDES4 lane muxing
+> without defining the corresponding register offsets and masks for it in the
+> 'mux-reg-masks' property within the 'serdes_ln_ctrl' node.
 > 
-> s/is/was/
+> Fix this.
 > 
->> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
->> because of the build warning,
->>
->>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->>     ...
->>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
->>
->> Add the QCE node back that fix the warnings.
->>
+> Fixes: 7287d423f138 ("arm64: dts: ti: k3-j784s4-main: Add system controller and SERDES lane mux")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
 > 
-> Are you saying that adding this node back will fix the warning?
+> Hello,
 > 
-> I'd expect that you would say something like "The changes to the
-> Devicetree binding has accepted, so add the node back".
+> This patch is based on commit
+> dd83757f6e68 Merge tag 'bcachefs-2025-02-26' of git://evilpiepirate.org/bcachefs
+> of the master branch of Mainline Linux.
 > 
 > Regards,
-> Bjorn
+> Siddharth.
 > 
->> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> index 23049cc58896..b0d77b109305 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
->>  				 <&apps_smmu 0x481 0x00>;
->>  		};
->>  
->> +		crypto: crypto@1dfa000 {
->> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
->> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
->> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
->> +			dma-names = "rx", "tx";
->> +			iommus = <&apps_smmu 0x480 0x00>,
->> +				 <&apps_smmu 0x481 0x00>;
->> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
->> +					 &mc_virt SLAVE_EBI1 0>;
->> +			interconnect-names = "memory";
->> +		};
->> +
->>  		stm: stm@4002000 {
->>  			compatible = "arm,coresight-stm", "arm,primecell";
->>  			reg = <0x0 0x4002000 0x0 0x1000>,
->> -- 
->> 2.34.1
->>
-
-DeviceTree bindings were accepted but the comptabile string does not
-properly bind to it. Hence, adding the correct binding string in the
-compatible has resolved the issue.
-
-Thanks,
-Yuvaraj.
+>  arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> index 83bbf94b58d1..a5fefafcba74 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> @@ -84,7 +84,9 @@ serdes_ln_ctrl: mux-controller@4080 {
+>  					<0x10 0x3>, <0x14 0x3>, /* SERDES1 lane0/1 select */
+>  					<0x18 0x3>, <0x1c 0x3>, /* SERDES1 lane2/3 select */
+>  					<0x20 0x3>, <0x24 0x3>, /* SERDES2 lane0/1 select */
+> -					<0x28 0x3>, <0x2c 0x3>; /* SERDES2 lane2/3 select */
+> +					<0x28 0x3>, <0x2c 0x3>, /* SERDES2 lane2/3 select */
+> +					<0x30 0x3>, <0x34 0x3>, /* SERDES4 lane0/1 select */
+> +					<0x38 0x3>, <0x3c 0x3>; /* SERDES4 lane2/3 select */
+>  			idle-states = <J784S4_SERDES0_LANE0_PCIE1_LANE0>,
+>  				      <J784S4_SERDES0_LANE1_PCIE1_LANE1>,
+>  				      <J784S4_SERDES0_LANE2_IP3_UNUSED>,
+> -- 
+> 2.34.1
+> 
 
