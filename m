@@ -1,252 +1,155 @@
-Return-Path: <linux-kernel+bounces-538795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBA4A49D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:20:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79905A49D0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CF5174A96
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3593B2642
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE974280A2C;
-	Fri, 28 Feb 2025 15:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DF1EF396;
+	Fri, 28 Feb 2025 15:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="B2N2dgOK"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D79276053;
-	Fri, 28 Feb 2025 15:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F93+1UmQ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FAE1EF361;
+	Fri, 28 Feb 2025 15:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740755874; cv=none; b=hpuJ6YpYZJlxzpBa5PDSkXBlsAGv3cpDZZ2f0BX0x5XWYOXFkbEOALvCK31Qbn46a+AtVZGSAhiXKgS31LcL2PSHL+cdVAgqb2hU9FXEcHaoKauUEOdRyxpnlZmtBmOBiIwDcgeqnxtN/M1iSdgd9uyMWm3R+gX+/tFaM/eMNnc=
+	t=1740755859; cv=none; b=LG0rcxSoDHD06sKRZveIjCLvkNRdRy/HsHihtr8rvstwltu6n6aSKJPKOkICVpKEt6f+x0ZqyPDmcPI7qxNnvPjRxz5NxwWpX9NlpXcDBag+2d9q8XR1ZjpyqjqiA63ChZ+RbIz+6mP4fgX4Zi/YCPclMGYB2Vyn3q/vDzwNV0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740755874; c=relaxed/simple;
-	bh=WPiUtcc+3Sz9TyjKgkcNcHzdNvarF61z9AUAee6Io3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Al7aL4Vjik5CL9d8/KNr4F7EpObQAWdO+V273C5IgyoimgLsXA9f8Xv2d9d39wG3d1iMAvxsmwuE0Ye4GkfeLjQ+q44QHSmwLpIi4SqVaStOxQPRHFnDt6zl2+6G1CHmDTfuVUy8HXA1I3f3gYrfIGARg11oSiNDBjtC9+BTGFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=B2N2dgOK; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=ke9plzHJpbxXmh429WRCDIs7VEMNLqn0BCmKB+edWVg=;
-	b=B2N2dgOK9ZeuzBXD/SpImrA9OBFty97QaswiJMkqJy4I6B3zdqD3q+WqwP3lXJ
-	yavAleJEbZswyBX2qWuckXQPlpzCeOtzrW8B7o+65X6VYPp2J/uqJjgPDi2QIflg
-	ter997rcE9B//v1n9WvFThUA8c3gy5y/TAf4vQux6Ba74=
-Received: from [192.168.71.45] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDXfzRt08FncMCRPQ--.4226S2;
-	Fri, 28 Feb 2025 23:17:02 +0800 (CST)
-Message-ID: <86d23e69-e6e5-476b-9582-28352852ea94@163.com>
-Date: Fri, 28 Feb 2025 23:17:01 +0800
+	s=arc-20240116; t=1740755859; c=relaxed/simple;
+	bh=01dl+3lQwuY6uBALC/4WP815xJ6lQ4bNJlMaLAN01Vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMNOG2qFkRcsvK5L0+OECI+uprezFzNJALvnSvcfbLxhGZXN5D10rP4fCyi76IPWP7OYPrNt8/qe86RCGnUKHd7a7nWYmTswO+m1E1DKb7s2NKn6sQCweLcHZP7nVFJ7hZhQWJaQMdnNrpSe+4Pvg8PBEX1pdhYtEI+r2qOuLZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F93+1UmQ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43998deed24so21654915e9.2;
+        Fri, 28 Feb 2025 07:17:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740755856; x=1741360656; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TXvAThfxQoqwd3K3FErjy0bz1DBDFY/uLOknqPH/EhM=;
+        b=F93+1UmQ/Z++VtJW+ImZx2KYiWjSDDGK40LQ8FFR70YDo2FRsVVnZYXkQDa993z9Ld
+         THhWHh6pOUcb5ELcF6chAW1Q43oaLFJGxGN8E5Ni1P490kH7m0bMGb8Sr5I+1ZyzXQ9v
+         vjramRxWO+Ps03Z6jDJyfv2987ouiaepMMqDrJkh+8lOoStoQPwLgLWxqgl9IkpWeFlu
+         lleIzwdAwtvXvbHWAhOdpz4HL+8xUwliNAwwH+rfUKxDrO0AZ2Use/DO7b15XZfc4OUn
+         mg3LD2bYdoROWHMKn6ABnDsZxdFbpN5ZxK8HLuAjK3dUIilCMXZIt8lETg3LPyUS5qfb
+         a2mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740755856; x=1741360656;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TXvAThfxQoqwd3K3FErjy0bz1DBDFY/uLOknqPH/EhM=;
+        b=qq/mL0U1KKkr7y3tVZx7Ejo2ul/k1dot9DNChYHtzv87YrtreT9zd78lCP9kkKk72C
+         rAA7xLdOcoPQLrOWQe3TDlP4S+ZPIp1Jsb8ef6//UNT35CvDehIlidDeqd3eYmGYGxaR
+         xrLrFmAmPqbkonrcq/CFV65jWLYxlYZBt5DO3lXQCCRZzsXzxy6dqxawj2qI6V4TESZa
+         MTxhYDw6AJl415rGoSVRFlk4sphzj73S+NMXjqsOVFkLh4noaDhYWVL/KnrEVZZOI77/
+         ikcXMLJ69Z7tzwAVcarbNUM844HwrMzpvJVUZatEPDh39+Ne6UC+82y2ngH4XYPmY4/6
+         orYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+WpIN1l6DYUeYVcHitb2dowNwYNw65fBwUnZSnoZLTIp3ysHcIoxwQ1+m9ogq/ilWZg4tbwNkmDdFMT4=@vger.kernel.org, AJvYcCVuzMXP+R1nhVrExBc/7Y1Zb4jnfAUen9y+9iW2tciSUIHKkM4HGKdBJpSBb9ke/vvs8k09YWKBIRE=@vger.kernel.org, AJvYcCWo5BZm68dvTPWDuYER2po37hKOJdmY9o3yxtkGaYEXAwiue4S1XyyEbyIqc6qLpGcRCb/J0xS6SFeAqcwn@vger.kernel.org
+X-Gm-Message-State: AOJu0YymO41vU5b2Bt+gP5M3/8G+/6kqMuFvOU2FHuvzcNWqxxw2ANSn
+	i6duYooiaTZ9v6kwa+yfc2AmMoBG4Yef4dqxzohfch+2A7S86gcx
+X-Gm-Gg: ASbGnctCPNpN8Fea8OsjCFahWkNxSybMfSH+4jP+dShw+HC4hKeiF3/m/PPfYdyBILf
+	kzMp60wD6vkGQzaNjRAsIaNtTT/898b+4ps9uJQ00st0gXpfsDi7Qm69dKDiqpbcKIGCMtbMX4H
+	l/oH0F9SCsOf0zhlPQ5ipQKeYZqVjzpN2TOIdP7MeDmRnFDedTY3smD1l99DkAIHxl9O0WM3byD
+	Agr9xseTYxpyRcR9xPir0L7tFbDELqOs7p/NEtuy124gojUZiDzlX2Qf2gza6rv4nNklToxQAlM
+	9a9xzZgY1GcFuvQKx3bAEmYUm7g8ui9/JFJwzb4=
+X-Google-Smtp-Source: AGHT+IHg8mV3aCh2nKzteGCYnyparRuPDkWiQHP8LX+Hl1SOAz8/rnKHZW/0SkDkhzj8dQzXZRCQCA==
+X-Received: by 2002:a05:600c:35ce:b0:439:9537:e96b with SMTP id 5b1f17b1804b1-43ba6709bc3mr34782535e9.14.1740755855612;
+        Fri, 28 Feb 2025 07:17:35 -0800 (PST)
+Received: from demon-pc.localdomain ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b694524c6sm63096825e9.0.2025.02.28.07.17.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 07:17:35 -0800 (PST)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [PATCH v3 0/9] i2c: atr: allow usage of nested ATRs
+Date: Fri, 28 Feb 2025 17:17:17 +0200
+Message-ID: <20250228151730.1874916-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-To: Thomas Gleixner <tglx@linutronix.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
- cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
- <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com> <874j0ee2ds.ffs@tglx>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <874j0ee2ds.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDXfzRt08FncMCRPQ--.4226S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXry5uF1UurykZF4DGF4DJwb_yoWrCFy3pF
-	y5KF47Gr4xJF1jqw4xWa1DX34Yva4qy3WUt3srtr1fArWkX34kKFyIgFW29FyYyr10qr1j
-	y3WUXasYqrW5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9eOJUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxECo2fBxZJ8AQABsy
+Content-Transfer-Encoding: 8bit
 
+For upcoming GMSL drivers, we need to be able to use nested ATRs.
+The deserializer changes the address of the serializers, and can only
+do that for the serializers, while the serializers have proper address
+translation hardware, and can translate the address of its children.
 
+To achieve this, add a static flag and a passthrough flag.
+The static flag prevents usage of dynamic remapping by disallowing
+creation of new mappings outside of the attach_addr() function.
+The passthrough flag prevents messages coming from non-direct children
+(which don't have a local mapping) to be treated as erroneous.
 
-On 2025/2/28 19:26, Thomas Gleixner wrote:
-> On Fri, Feb 28 2025 at 17:04, Hans Zhang wrote:
->> Is the following patch OK?
-> 
-> No.
-> 
->>    static void
->>    irq_debug_show_chip(struct seq_file *m, struct irq_data *data, int ind)
->>    {
->> @@ -178,6 +199,7 @@ static int irq_debug_show(struct seq_file *m, void *p)
->>           seq_printf(m, "node:     %d\n", irq_data_get_node(data));
->>           irq_debug_show_masks(m, desc);
->>           irq_debug_show_data(m, data, 0);
->> +       irq_debug_show_msi_msix(m, data, 0);
->>           raw_spin_unlock_irq(&desc->lock);
->>           return 0;
->>    }
-> 
-> This is just violating the layering and I told you what to do:
-> 
->      "implement a debug_show() callback in the MSI core code and assign
->       it to domain ops::debug_show() on domain creation, if it does not
->       provide its own callback."
-> 
-> If you don't understand what I tell you, then please ask instead of
-> going off and hacking up something completely different.
-> 
-> Here is another hint:
-> 
->       Look at msi_domain_ops_default and at msi_domain_update_dom_ops()
-> 
-> If you still have questions, feel free to ask.
-> 
+This series also contains various fixes to the logic observed during
+development.
 
+This series depends on:
+https://lore.kernel.org/lkml/20250227-fpc202-v8-0-b7994117fbe2@bootlin.com
 
-Hi Thomas(tglx),
+The previous version is at:
+https://lore.kernel.org/lkml/20250225113939.49811-1-demonsingur@gmail.com
 
-I'm very sorry that I didn't understand what you meant at the beginning. 
-Thank you very much for your patient guidance.
+V3:
+ * remove i2c_atr_new_flags(), add flags parameter to i2c_atr_new() in
+   a new patch
+ * remove "i2c: atr: unlock mutex after c2a access" patch as it will
+   be moved into the base series
+ * remove alias_pairs variable used only once
+ * remove err_del_c2a label used only once
+ * add lockdep_assert_held to i2c_atr_create_mapping_by_addr()
+ * I2C_ATR_STATIC -> I2C_ATR_F_STATIC
+ * I2C_ATR_PASSTHROUGH -> I2C_ATR_F_PASSTHROUGH
+ * add passthrough check to i2c_atr_smbus_xfer()
 
-Now, how about this patch? If you agree, I will resubmit the next version.
+V2:
+ * rename and split up i2c_atr_find_mapping_by_addr() to allow for
+   usage of parts of its logic where applicable
 
-Best regards
-Hans
+Cosmin Tanislav (8):
+  i2c: atr: find_mapping() -> get_mapping()
+  i2c: atr: split up i2c_atr_get_mapping_by_addr()
+  i2c: atr: do not create mapping in detach_addr()
+  i2c: atr: deduplicate logic in attach_addr()
+  i2c: atr: allow replacing mappings in attach_addr()
+  i2c: atr: add flags parameter to i2c_atr_new()
+  i2c: atr: add static flag
+  i2c: atr: add passthrough flag
 
+Tomi Valkeinen (1):
+  i2c: atr: Fix lockdep for nested ATRs
 
-patch:
+ drivers/i2c/i2c-atr.c         | 179 ++++++++++++++++++++++------------
+ drivers/media/i2c/ds90ub960.c |   2 +-
+ drivers/misc/ti_fpc202.c      |   2 +-
+ include/linux/i2c-atr.h       |  15 ++-
+ 4 files changed, 133 insertions(+), 65 deletions(-)
 
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067a8a56..98771a0b7d70 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -756,12 +756,33 @@ static int msi_domain_translate(struct irq_domain 
-*domain, struct irq_fwspec *fw
-         return info->ops->msi_translate(domain, fwspec, hwirq, type);
-  }
-
-+static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-+                                 struct irq_data *irqd, int ind)
-+{
-+       struct msi_desc *desc;
-+       bool is_msix;
-+
-+       desc = irq_get_msi_desc(irqd->irq);
-+       if (!desc)
-+               return;
-+
-+       is_msix = desc->pci.msi_attrib.is_msix;
-+       seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-+       seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "",
-+                  desc->msg.address_hi);
-+       seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "",
-+                  desc->msg.address_lo);
-+       seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "",
-+                  desc->msg.data);
-+}
-+
-  static const struct irq_domain_ops msi_domain_ops = {
-         .alloc          = msi_domain_alloc,
-         .free           = msi_domain_free,
-         .activate       = msi_domain_activate,
-         .deactivate     = msi_domain_deactivate,
-         .translate      = msi_domain_translate,
-+       .debug_show     = msi_domain_debug_show,
-  };
-
-  static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info 
-*info,
-
-
-
-e.g.
-
-root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
-  85:          0          0          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 75497472 Edge      PCIe PME, aerdrv
-  86:          0         30          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021760 Edge      nvme0q0
-  87:        287          0          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021761 Edge      nvme0q1
-  88:          0        265          0          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021762 Edge      nvme0q2
-  89:          0          0        177          0          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021763 Edge      nvme0q3
-  90:          0          0          0         76          0          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021764 Edge      nvme0q4
-  91:          0          0          0          0        161          0 
-         0          0          0          0          0          0 
-ITS-MSI 76021765 Edge      nvme0q5
-  92:          0          0          0          0          0        991 
-         0          0          0          0          0          0 
-ITS-MSI 76021766 Edge      nvme0q6
-  93:          0          0          0          0          0          0 
-       194          0          0          0          0          0 
-ITS-MSI 76021767 Edge      nvme0q7
-  94:          0          0          0          0          0          0 
-         0         94          0          0          0          0 
-ITS-MSI 76021768 Edge      nvme0q8
-  95:          0          0          0          0          0          0 
-         0          0        148          0          0          0 
-ITS-MSI 76021769 Edge      nvme0q9
-  96:          0          0          0          0          0          0 
-         0          0          0        261          0          0 
-ITS-MSI 76021770 Edge      nvme0q10
-  97:          0          0          0          0          0          0 
-         0          0          0          0        127          0 
-ITS-MSI 76021771 Edge      nvme0q11
-  98:          0          0          0          0          0          0 
-         0          0          0          0          0        317 
-ITS-MSI 76021772 Edge      nvme0q12
-root@root:/sys/kernel/debug/irq/irqs#
-root@root:/sys/kernel/debug/irq/irqs# cat 87
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31600200
-             IRQD_ACTIVATED
-             IRQD_IRQ_STARTED
-             IRQD_SINGLE_TARGET
-             IRQD_AFFINITY_MANAGED
-             IRQD_AFFINITY_ON_ACTIVATE
-             IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 0
-effectiv: 0
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
-  hwirq:   0x4880001
-  chip:    ITS-MSI
-   flags:   0x20
-              IRQCHIP_ONESHOT_SAFE
-  msix:
-   address_hi: 0x00000000
-   address_lo: 0x0e060040
-   msg_data:   0x00000001
-  parent:
-     domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-      hwirq:   0x2002
-      chip:    ITS
-       flags:   0x0
-      parent:
-         domain:  :soc@0:interrupt-controller@0e001000-1
-          hwirq:   0x2002
-          chip:    GICv3
-           flags:   0x15
-                      IRQCHIP_SET_TYPE_MASKED
-                      IRQCHIP_MASK_ON_SUSPEND
-                      IRQCHIP_SKIP_SET_WAKE
-
-
-
-
+-- 
+2.48.1
 
 
