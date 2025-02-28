@@ -1,148 +1,290 @@
-Return-Path: <linux-kernel+bounces-538580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25740A49A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:26:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F62A49A86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAA087A246D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694AE18972DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5671C26BDBA;
-	Fri, 28 Feb 2025 13:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dCaAeNoZ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC641D555
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB27826D5B8;
+	Fri, 28 Feb 2025 13:29:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA691D555;
+	Fri, 28 Feb 2025 13:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740749201; cv=none; b=ETcI715+5EoBF93tZX0ww/NUIAcmsC2aHPT3ugcDL500PJsyBjohN2BDOCSBKkjj0HlB5/U+HHXT0xGp4X6/yfPNRZ2toaMx5H6GPi8lROexUGpvyFF39lKDZOxEsn8peO6cEr5PLLAne2vqsyY3QaE3EoZD3uAqIgpxqqdUi3k=
+	t=1740749368; cv=none; b=EPDwY2wBuD1NmiNhvwQjo1QMzskC3Yp774ZwsPNZJBZZKGKYMY3Yj+Ay6PS9fhZv9rQwIcWADfnpGWzR2vldEByDlXECjAmGUThKeQqcec5C5KnYrujGok9UQSmatS3rw6CkP2IEqzrVFYBshGXJRYP/V+PPxjqBW5+F6HNzB+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740749201; c=relaxed/simple;
-	bh=kGFidxujuu/5E6/w43jD7cIkQM+gr//1Z9nzVC3249w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FAwRPVd2zz0s6iB4h16Gsf8hjdQL+eHX8nKDBxLrQJLkA++EtCecjppvf6Tc9q3z/AD+SIuHEbafH6aR2AZsB/DD4xAo2FQtPKUCsMa2IQuDP6WhbW9fMvD1LzgN2Mc0lrURAvbetDzwDI6HA2iWeAlV4eTkwgtOflwxOsOcOpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dCaAeNoZ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740749191;
-	bh=kGFidxujuu/5E6/w43jD7cIkQM+gr//1Z9nzVC3249w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dCaAeNoZeU54zDefZlcSRbx/qgWHWaR8ZjNOK4VSPFUWCMKacfX5AWbpoYe4ZPzgQ
-	 yJZl7kTFzok4PNFV6fxZut36Vc3ALn/tZFqao1ln37ZyJ+QhFekZQBKFEiS7ElzkuI
-	 c1dWqWlQ8eVKTZH+sV1hb4TbLR74ujLJLupczbqnKUH7NebkONedaqPBluTFvTsczj
-	 Fhl2yk9sGxTA0vIU506ZTQpc0O8cswh0FghgtXpqc2jNCGFR3fLteVEYbByhAE2EkR
-	 1dQSoWrxJdAb+SRsz4l2gbQVV9u6DmmO6blVgCDvZZzox62XcWeu6z+QJikLRBShWH
-	 Qk9CJq9JwY3Zg==
-Received: from localhost.localdomain (unknown [171.76.85.20])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 445A517E07F8;
-	Fri, 28 Feb 2025 14:26:29 +0100 (CET)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.fornazier@gmail.com,
-	airlied@gmail.com,
-	simona.vetter@ffwll.ch,
-	robdclark@gmail.com,
-	dmitry.baryshkov@linaro.org,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	valentine.burley@collabora.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] drm/ci: fix merge request rules
-Date: Fri, 28 Feb 2025 18:56:18 +0530
-Message-ID: <20250228132620.556079-1-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740749368; c=relaxed/simple;
+	bh=9nEznCs8TmXppNEP6Ri/KXbhxb9P855Eu4NIWIxpH2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bzhO+EoBU6UcOimA7met6ipEe0e85jjew7EaWDN+dmrkh3sQFUEXmePOyalkcyxh0oiUQJW3Fef8LY9kTvWf76Jove7yCRr8haeXS6jmLFHNjrg6HnPt2CFsrhaNFKM1sNJshzE/BJ5+2Cs+PjawMMeEEBMV7ajunAN+8sSWlEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C7541688;
+	Fri, 28 Feb 2025 05:29:39 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 679E23F673;
+	Fri, 28 Feb 2025 05:29:22 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:29:08 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] clk: sunxi-ng: Add support for the A523/T527
+ CCU PLLs
+Message-ID: <20250228132908.632b82dd@donnerap.manchester.arm.com>
+In-Reply-To: <3341127.44csPzL39Z@jernej-laptop>
+References: <20250214125359.5204-1-andre.przywara@arm.com>
+	<20250214125359.5204-6-andre.przywara@arm.com>
+	<3341127.44csPzL39Z@jernej-laptop>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Merge request pipelines were only created when changes
-were made to drivers/gpu/drm/ci/, causing MRs that
-didn't touch this path to break. Fix MR pipeline rules
-to trigger jobs for all changes.
+On Tue, 18 Feb 2025 20:03:38 +0100
+Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
 
-Run jobs automatically for marge-bot and scheduled
-pipelines, but in all other cases run manually. Also
-remove CI_PROJECT_NAMESPACE checks specific to mesa.
+Hi Jernej,
 
-Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
----
+many thanks for having a look!
 
-v2:
-  - Run jobs automatically for marge-bot and scheduled
-    pipelines, but in all other cases run manually. Also
-    remove CI_PROJECT_NAMESPACE checks specific to mesa.
+> Dne petek, 14. februar 2025 ob 13:53:49 Srednjeevropski standardni =C4=8D=
+as je Andre Przywara napisal(a):
+> > Add the PLL clocks of the main CCU of the Allwinner A523 and T527 SoCs.
+> > The clocks were modelled after the A523 and T527 manual, and double
+> > checked by writing all 1's into the respective register, to spot all
+> > implemented bits.
+> >=20
+> > The PLL and mod clocks for the two CPU clusters and the DSU are part of
+> > a separate CCU, also most audio clocks are collected in a DSP CCU, so
+> > both of these clock groups are missing from this driver.
+> >=20
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/clk/sunxi-ng/Kconfig           |   5 +
+> >  drivers/clk/sunxi-ng/Makefile          |   2 +
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 481 +++++++++++++++++++++++++
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.h |  14 +
+> >  drivers/clk/sunxi-ng/ccu_mp.h          |  14 +-
+> >  5 files changed, 510 insertions(+), 6 deletions(-)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> >=20
+> > diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> > index b547198a2c654..04efbda847cf9 100644
+> > --- a/drivers/clk/sunxi-ng/Kconfig
+> > +++ b/drivers/clk/sunxi-ng/Kconfig
+> > @@ -52,6 +52,11 @@ config SUN50I_H6_R_CCU
+> >  	default y
+> >  	depends on ARM64 || COMPILE_TEST
+> > =20
+> > +config SUN55I_A523_CCU
+> > +	tristate "Support for the Allwinner A523/T527 CCU"
+> > +	default y
+> > +	depends on ARM64 || COMPILE_TEST
+> > +
+> >  config SUN4I_A10_CCU
+> >  	tristate "Support for the Allwinner A10/A20 CCU"
+> >  	default y
+> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
+ile
+> > index 6b3ae2b620db6..01a887f7824bb 100644
+> > --- a/drivers/clk/sunxi-ng/Makefile
+> > +++ b/drivers/clk/sunxi-ng/Makefile
+> > @@ -33,6 +33,7 @@ obj-$(CONFIG_SUN50I_A100_R_CCU)	+=3D sun50i-a100-r-cc=
+u.o
+> >  obj-$(CONFIG_SUN50I_H6_CCU)	+=3D sun50i-h6-ccu.o
+> >  obj-$(CONFIG_SUN50I_H6_R_CCU)	+=3D sun50i-h6-r-ccu.o
+> >  obj-$(CONFIG_SUN50I_H616_CCU)	+=3D sun50i-h616-ccu.o
+> > +obj-$(CONFIG_SUN55I_A523_CCU)	+=3D sun55i-a523-ccu.o
+> >  obj-$(CONFIG_SUN4I_A10_CCU)	+=3D sun4i-a10-ccu.o
+> >  obj-$(CONFIG_SUN5I_CCU)		+=3D sun5i-ccu.o
+> >  obj-$(CONFIG_SUN6I_A31_CCU)	+=3D sun6i-a31-ccu.o
+> > @@ -58,6 +59,7 @@ sun50i-a100-r-ccu-y		+=3D ccu-sun50i-a100-r.o
+> >  sun50i-h6-ccu-y			+=3D ccu-sun50i-h6.o
+> >  sun50i-h6-r-ccu-y		+=3D ccu-sun50i-h6-r.o
+> >  sun50i-h616-ccu-y		+=3D ccu-sun50i-h616.o
+> > +sun55i-a523-ccu-y		+=3D ccu-sun55i-a523.o
+> >  sun4i-a10-ccu-y			+=3D ccu-sun4i-a10.o
+> >  sun5i-ccu-y			+=3D ccu-sun5i.o
+> >  sun6i-a31-ccu-y			+=3D ccu-sun6i-a31.o
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi=
+-ng/ccu-sun55i-a523.c
+> > new file mode 100644
+> > index 0000000000000..8374e841e9d82
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > @@ -0,0 +1,481 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2023-2024 Arm Ltd.
+> > + * Based on the D1 CCU driver:
+> > + *   Copyright (c) 2020 huangzhenwei@allwinnertech.com
+> > + *   Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "../clk.h"
+> > +
+> > +#include "ccu_common.h"
+> > +#include "ccu_reset.h"
+> > +
+> > +#include "ccu_div.h"
+> > +#include "ccu_gate.h"
+> > +#include "ccu_mp.h"
+> > +#include "ccu_mult.h"
+> > +#include "ccu_nk.h"
+> > +#include "ccu_nkm.h"
+> > +#include "ccu_nkmp.h"
+> > +#include "ccu_nm.h"
+> > +
+> > +#include "ccu-sun55i-a523.h"
+> > +
+> > +/*
+> > + * The 24 MHz oscillator, the root of most of the clock tree.
+> > + * .fw_name is the string used in the DT "clock-names" property, used =
+to
+> > + * identify the corresponding clock in the "clocks" property.
+> > + */
+> > +static const struct clk_parent_data osc24M[] =3D {
+> > +	{ .fw_name =3D "hosc" }
+> > +};
+> > +
+> > +/*********************************************************************=
+*****
+> > + *                              PLLs                                  =
+    *
+> > + *********************************************************************=
+*****/
+> > +
+> > +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+> > +#define SUN55I_A523_PLL_DDR0_REG		0x010
+> > +static struct ccu_nkmp pll_ddr0_clk =3D {
+> > +	.enable		=3D BIT(27),
+> > +	.lock		=3D BIT(28),
+> > +	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 11),
+> > +	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */ =20
+>=20
+> Newer manuals, for example A523 manual v1.4, don't mention input dividers=
+ anymore.
+> Newer BSP driver doesn't have them either. Should we drop them (for all P=
+LLs)?
 
-v3:
-  - Fix yaml syntax
+I don't know, as you figured, I found them in my copy of the manual. For
+the PLLs we need today (PLL_PERIPH0) it shouldn't matter anyway: it's
+programmed already, and AFAICS Linux actually never reprograms it(?).
 
----
- drivers/gpu/drm/ci/gitlab-ci.yml | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+In any case, I just left it in for now: the bit is definitely there, I
+verified that in U-Boot by only seeing half of the MMC performance with
+bit 1 set. We can remove them anytime later, without issue, can't we?
 
-diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-index f04aabe8327c..b06b9e7d3d09 100644
---- a/drivers/gpu/drm/ci/gitlab-ci.yml
-+++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-@@ -143,11 +143,11 @@ stages:
-     # Pre-merge pipeline
-     - if: &is-pre-merge $CI_PIPELINE_SOURCE == "merge_request_event"
-     # Push to a branch on a fork
--    - if: &is-fork-push $CI_PROJECT_NAMESPACE != "mesa" && $CI_PIPELINE_SOURCE == "push"
-+    - if: &is-fork-push $CI_PIPELINE_SOURCE == "push"
-     # nightly pipeline
-     - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE == "schedule"
-     # pipeline for direct pushes that bypassed the CI
--    - if: &is-direct-push $CI_PROJECT_NAMESPACE == "mesa" && $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
-+    - if: &is-direct-push $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
- 
- 
- # Rules applied to every job in the pipeline
-@@ -170,26 +170,15 @@ stages:
-     - !reference [.disable-farm-mr-rules, rules]
-     # Never run immediately after merging, as we just ran everything
-     - !reference [.never-post-merge-rules, rules]
--    # Build everything in merge pipelines, if any files affecting the pipeline
--    # were changed
-+    # Build everything in merge pipelines
-     - if: *is-merge-attempt
--      changes: &all_paths
--      - drivers/gpu/drm/ci/**/*
-       when: on_success
-     # Same as above, but for pre-merge pipelines
-     - if: *is-pre-merge
--      changes:
--        *all_paths
-       when: manual
--    # Skip everything for pre-merge and merge pipelines which don't change
--    # anything in the build
--    - if: *is-merge-attempt
--      when: never
--    - if: *is-pre-merge
--      when: never
-     # Build everything after someone bypassed the CI
-     - if: *is-direct-push
--      when: on_success
-+      when: manual
-     # Build everything in scheduled pipelines
-     - if: *is-scheduled-pipeline
-       when: on_success
--- 
-2.47.2
+Actually, thinking about that: the manual pretty clearly says that for
+instance PLL_PERIPH0 should be set to 1.2GHz and never changed or even
+touched. I wonder if we should honour this somehow in the code? It seems
+like the CCF doesn't do this anyway at the moment, but it could, I guess?
+
+>=20
+> > +	.p		=3D _SUNXI_CCU_DIV(0, 1), /* output divider */
+> > +	.common		=3D {
+> > +		.reg		=3D 0x010,
+> > +		.hw.init	=3D CLK_HW_INIT_PARENTS_DATA("pll-ddr0", osc24M,
+> > +							   &ccu_nkmp_ops,
+> > +							   CLK_SET_RATE_GATE |
+> > +							   CLK_IS_CRITICAL),
+> > +	},
+> > +};
+> > +
+
+....
+
+> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_m=
+p.h
+> > index 687bd2ec798e2..5311835a4db60 100644
+> > --- a/drivers/clk/sunxi-ng/ccu_mp.h
+> > +++ b/drivers/clk/sunxi-ng/ccu_mp.h
+> > @@ -100,20 +100,22 @@ struct ccu_mp { =20
+>=20
+> These changes doesn't belong in this commit.
+
+Ah, indeed, I missed that. Moved that out into another patch now.
+
+Cheers,
+Andre
+
+> Other than that, this looks like a good start. Thanks!
+>=20
+> Best regards,
+> Jernej
+>=20
+> >  				   _muxshift, _muxwidth,		\
+> >  				   0, _flags)
+> > =20
+> > -#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(_struct, _name, _parents,=
+ _reg, \
+> > +#define SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents, _=
+reg, \
+> >  					_mshift, _mwidth,		\
+> >  					_pshift, _pwidth,		\
+> >  					_muxshift, _muxwidth,		\
+> > -					_gate, _flags,			\
+> > -					_features)			\
+> > +					_gate, _postdiv,		\
+> > +					_flags, _features)		\
+> >  	struct ccu_mp _struct =3D {					\
+> >  		.enable	=3D _gate,					\
+> >  		.m	=3D _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+> >  		.p	=3D _SUNXI_CCU_DIV(_pshift, _pwidth),		\
+> >  		.mux	=3D _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
+> > +		.fixed_post_div =3D _postdiv,				\
+> >  		.common	=3D {						\
+> >  			.reg		=3D _reg,				\
+> > -			.features	=3D _features,			\
+> > +			.features	=3D CCU_FEATURE_FIXED_POSTDIV |	\
+> > +						_features,		\
+> >  			.hw.init	=3D CLK_HW_INIT_PARENTS_DATA(_name, \
+> >  								   _parents, \
+> >  								   &ccu_mp_ops,\
+> > @@ -126,11 +128,11 @@ struct ccu_mp {
+> >  					_pshift, _pwidth,		\
+> >  					_muxshift, _muxwidth,		\
+> >  					_gate, _flags)			\
+> > -	SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(_struct, _name, _parents,	\
+> > +	SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents,	\
+> >  					     _reg, _mshift, _mwidth,	\
+> >  					     _pshift, _pwidth,		\
+> >  					     _muxshift, _muxwidth,	\
+> > -					     _gate, _flags, 0)
+> > +					     _gate, 1, _flags, 0)
+> > =20
+> >  #define SUNXI_CCU_MP_DATA_WITH_MUX(_struct, _name, _parents, _reg,	\
+> >  				   _mshift, _mwidth,			\
+> >  =20
+>=20
+>=20
+>=20
+>=20
 
 
