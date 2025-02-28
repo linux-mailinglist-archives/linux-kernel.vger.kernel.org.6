@@ -1,229 +1,163 @@
-Return-Path: <linux-kernel+bounces-538145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F99EA49500
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:31:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0524FA49510
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB5C77A9D59
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56A23BCBA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4164F258CE6;
-	Fri, 28 Feb 2025 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6864F256C86;
+	Fri, 28 Feb 2025 09:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWWvpTC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sgh3jPEX"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A12B257428;
-	Fri, 28 Feb 2025 09:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115DD25335E;
+	Fri, 28 Feb 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734840; cv=none; b=kXa6u4OHnbQ/pm30O/RXw35fDmJFjFvvZLifNn9PYx9/XSmvDKwXDnVDjDPJWP6DpLZc3Roq5xozOOAko9HXY9j5xPcisaLgu9HSqGZK29fCHudW/69eLNLEee3lM/32VIDzeTYM91Bcx+m+LWHeK9fc8da1LPY+1IuOVUcMOlU=
+	t=1740734912; cv=none; b=WDHHaZ2f9npcxz/6/glFy+4dmakUTALFM02kguoi3uq+VTuzUGgpGUXHEYkilJZklVOPO+CHlaOpb6Ggmm62w391vL0L15FXlbf323CH+zkJjSdlpEXSJxlvkJmU8bUrzShhbxqUPdmQsYD126dUAQ8IAS97uGOcuFE5liONUWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734840; c=relaxed/simple;
-	bh=lz8ax6F0htmAbSQ5MPFNimyF74qU75QJLASs1fvZ70s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcBEz471f388H5UNZ/ekAuV+XYfnAsyOz/fjzDuoQeUMXypR3uIzkDZ39b7iQLhvufKB+WkhoeZUb3RooAIe8Wr6qzMjrqugyNF2Y0ghnjDW0dzSGTu8DTv9ffYzj7PGeSfciHSPxjrrAliTl/lLN1+/MQDzL8h+KXoVia9JT7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWWvpTC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27921C4CED6;
-	Fri, 28 Feb 2025 09:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740734839;
-	bh=lz8ax6F0htmAbSQ5MPFNimyF74qU75QJLASs1fvZ70s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GWWvpTC6vMdZyaSwQiykIe3gqqQZidfdmEHVIYMReiu37txvRLr0LXPkZc+XwA+Wt
-	 lJla9ubjKAskk+ri3L9Y03xe3ZESzU/b9+PeUd1McaNPE1VKevdKv8xC4OumgqtJTt
-	 oR93Pt1qR4uYXrgnZn3JblY5r2KKTJrM4lVVyWEDOrJ2ngEBV6kCe1C2hEW5aFqhCD
-	 uBYekxvi7/ffFBmxHEDal9pvvnXaiaqnt23/Htd0BPks/JFtYN5KioFvHOUWJEFhnL
-	 u8nVdXsy12IhiqYmY6alEB7ZqEGDFSOfHyuCgqlGjAmt4FqdqpstyRmRFpW02XaZ9I
-	 AgaP0ex3AGuDw==
-Date: Fri, 28 Feb 2025 10:27:17 +0100
-From: Daniel Gomez <da.gomez@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	linux-modules@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, iovisor-dev <iovisor-dev@lists.iovisor.org>, 
-	gost.dev@samsung.com
-Subject: Re: [PATCH 2/2] moderr: add module error injection tool
-Message-ID: <3ehu3r4hlsf7cpptofz2y5aq2bazidq4buxbddqj6gzvzd3eh3@wzlnbvdsc6ty>
-References: <CGME20250122131159eucas1p17693e311a9b7674288eb3c34014b6f2c@eucas1p1.samsung.com>
- <20250122-modules-error-injection-v1-0-910590a04fd5@samsung.com>
- <20250122-modules-error-injection-v1-2-910590a04fd5@samsung.com>
- <CAADnVQJ8tYSx-ujszq54m2XyecoJUgQZ6HQheTrohhfQS6Y9sQ@mail.gmail.com>
- <Z5lEoUxV4fBzKf4i@bombadil.infradead.org>
- <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
- <Z7je7Kryipdq6AV4@bombadil.infradead.org>
- <4xh2oviqumypm4r7jch25af5jtesof7wnejqybncuopayq6yiq@skayuieidaq7>
- <ccofyygi4rerybdmecqswldykihtabx6yco7ztylqnbmw4a5qw@ye7zoq7mcol2>
+	s=arc-20240116; t=1740734912; c=relaxed/simple;
+	bh=qaFvCl6yDojSmybg8Is/y5DTJls7wzVhPc38o+NeUow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQFSpYbDpJ4pcCWuNh0+DBhu6cM5OGyuUxQHdnkvNz2Oi3uOwsTDEVA9HHmzOcb3eiQRAhYURkJ6XMoYDgg5ee3D0sX1nLY/Zn/Pl4jrt8uOUe1DSwkZN0naxP4JFIt+kN0uSeKvbM4MUwV9gTck5zifmJDZnbJNGhjIxCm13RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sgh3jPEX; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5454f00fc8dso1736351e87.0;
+        Fri, 28 Feb 2025 01:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740734909; x=1741339709; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AjcnfgTgBW1hxxffgK8by4v9n4p/BPOPHc9L4TWEfzU=;
+        b=Sgh3jPEXwskifikcgeS2ZxnNZhJBkIaoIRWCG+9t06hPS4ktH01Ty81Z3hzzRtBcs5
+         i49af0kwMj9F9rpXWEezITAFDKBUJIev4ltvEMMequo9JTRTyFeCKJUvNq+cqdBawSXN
+         NqACBQPzbGSPYxwBC0knJ6SyihsMxSzz15mphErSkqqCuf3UhnJ7GZLM+cFj3sVY1EZu
+         hMRAuowQs44FgqK3aCmDaZsyu+WuF5GWGudUkqeQfEDc1hawWAHGpwp2AfR/YDNNy9/5
+         l1onJM94r5E73s4bx6sAxXcWbqWgxOAvxxn77TMIVOfYxh43/jB0D/Jd8PdVod/23kcX
+         LmJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740734909; x=1741339709;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AjcnfgTgBW1hxxffgK8by4v9n4p/BPOPHc9L4TWEfzU=;
+        b=DuUeF2GSxvF88AIxWVx6bjnvP2/cCWxBGeHPblRLpiE3YVeb7DpnsAnAcc5bll3ExM
+         qFlElJZjCWYVdxeMaNZqaHAc4ls7nhx6CtiNa+LpxaEvbcd4Wu27Fyq3Skkk5An5odqL
+         w9zztgEV/p2WaohtneL/PznXGN1pyUuLV8S0adJYSfdEFUwsznvsHbHFm3un9oyxeP7B
+         BeXv9njPr0/0MKDxYhtmgIKmsnNMbD0ccIztiyrbKbYoaMwwj3f9H8PF63lvS63296RH
+         4sYqWQD8HoCxzf6ynUeHWr1sXpX12vBW9Eax3jkjHLpLGmK/ZvfhHVsPbC9CWWVxFDBR
+         h5qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP7Orna1eacfOUodafx/7Qd4LkfDaF+vvNEHvo+QBbT4HJQaBmoXrIcNOMXE6wacOiUq+FiXBzhvheicqV@vger.kernel.org, AJvYcCWL0glDJqWvQts2py1QQjJ03+pg0c5FclrYCTNWCkCDWOPTVeyfEomBn99DGvl76aU9MgMRVAd+2hyY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3gDPp/UjGKThUB+xpc+zUr5tzI4/lpmiQ3vSrCteSyDfrO/+R
+	9se2cE5g8z6vCU/ggE0wH6+g6SHrnNT31Ufeq7tbLdG0wHPKL0Lg
+X-Gm-Gg: ASbGnctKwKTZBy//RrYADYc0hXr8N+fi5HfnWpN8swhwQ4RtltJ0/hi9uUiHSXwtBT2
+	LzMM01ZrcZV0qskRsp7bmYDGIuqzuIKhddJZLtA7vD2s7OZ7Vs8erSTRB9KFS+exadOS39beh6l
+	lKTgcguj9KbeB9+XyXi/WIQty+qBhbwz/aODVHAYNtQXO2ysBg6my1JS8MaG1z41DAsHLylyrux
+	dbYKAGQ6fA0ec/XP7WPUbFKQrBbgQMSun8zFpvU6wznkMa1zH/6UqD++6ixxKFWi12NZi9u0aax
+	esL1X30y+K2J/TltrEbeEx3h1mTBp80tqHX+VQTD8ASxUB0Mdz1T6XHkcCIxYrYE7KaBF9dgd+x
+	mVuz5O2w=
+X-Google-Smtp-Source: AGHT+IHHpdwqplK2tXf3aLmS7Bm9wMRQEewUAaqTx7XCJqu7dsLSgLFMieBUM5Aq2birwUWKUCy6WQ==
+X-Received: by 2002:a05:6512:e8b:b0:545:1d96:d6dd with SMTP id 2adb3069b0e04-5494c330ae4mr845287e87.26.1740734908665;
+        Fri, 28 Feb 2025 01:28:28 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54944174117sm432574e87.22.2025.02.28.01.28.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 01:28:26 -0800 (PST)
+Message-ID: <f3984cfc-3e3f-47d9-a734-3af7f072c22b@gmail.com>
+Date: Fri, 28 Feb 2025 11:28:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+ <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+ <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+ <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+ <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
+ <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccofyygi4rerybdmecqswldykihtabx6yco7ztylqnbmw4a5qw@ye7zoq7mcol2>
 
-On Mon, Feb 24, 2025 at 08:43:45AM +0100, Lucas De Marchi wrote:
-> On Sat, Feb 22, 2025 at 10:35:07PM +0100, Daniel Gomez wrote:
-> > On Fri, Feb 21, 2025 at 12:15:40PM +0100, Luis Chamberlain wrote:
-> > > On Wed, Feb 19, 2025 at 02:17:48PM -0600, Lucas De Marchi wrote:
-> > > > On Tue, Jan 28, 2025 at 12:57:05PM -0800, Luis Chamberlain wrote:
-> > > > > On Wed, Jan 22, 2025 at 09:02:19AM -0800, Alexei Starovoitov wrote:
-> > > > > > On Wed, Jan 22, 2025 at 5:12 AM Daniel Gomez <da.gomez@samsung.com> wrote:
-> > > > > > >
-> > > > > > > Add support for a module error injection tool. The tool
-> > > > > > > can inject errors in the annotated module kernel functions
-> > > > > > > such as complete_formation(), do_init_module() and
-> > > > > > > module_enable_rodata_after_init(). Module name and module function are
-> > > > > > > required parameters to have control over the error injection.
-> > > > > > >
-> > > > > > > Example: Inject error -22 to module_enable_rodata_ro_after_init for
-> > > > > > > brd module:
-> > > > > > >
-> > > > > > > sudo moderr --modname=brd --modfunc=module_enable_rodata_ro_after_init \
-> > > > > > > --error=-22 --trace
-> > > > > > > Monitoring module error injection... Hit Ctrl-C to end.
-> > > > > > > MODULE     ERROR FUNCTION
-> > > > > > > brd        -22   module_enable_rodata_after_init()
-> > > > > > >
-> > > > > > > Kernel messages:
-> > > > > > > [   89.463690] brd: module loaded
-> > > > > > > [   89.463855] brd: module_enable_rodata_ro_after_init() returned -22,
-> > > > > > > ro_after_init data might still be writable
-> > > > > > >
-> > > > > > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > > > > > > ---
-> > > > > > >  tools/bpf/Makefile            |  13 ++-
-> > > > > > >  tools/bpf/moderr/.gitignore   |   2 +
-> > > > > > >  tools/bpf/moderr/Makefile     |  95 +++++++++++++++++
-> > > > > > >  tools/bpf/moderr/moderr.bpf.c | 127 +++++++++++++++++++++++
-> > > > > > >  tools/bpf/moderr/moderr.c     | 236 ++++++++++++++++++++++++++++++++++++++++++
-> > > > > > >  tools/bpf/moderr/moderr.h     |  40 +++++++
-> > > > > > >  6 files changed, 510 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > The tool looks useful, but we don't add tools to the kernel repo.
-> > > > > > It has to stay out of tree.
-> > > > >
-> > > > > For selftests we do add random tools.
-> > > > >
-> > > > > > The value of error injection is not clear to me.
-> > > > >
-> > > > > It is of great value, since it deals with corner cases which are
-> > > > > otherwise hard to reproduce in places which a real error can be
-> > > > > catostrophic.
-> > > > >
-> > > > > > Other places in the kernel use it to test paths in the kernel
-> > > > > > that are difficult to do otherwise.
-> > > > >
-> > > > > Right.
-> > > > >
-> > > > > > These 3 functions don't seem to be in this category.
-> > > > >
-> > > > > That's the key here we should focus on. The problem is when a maintainer
-> > > > > *does* agree that adding an error injection entry is useful for testing,
-> > > > > and we have a developer willing to do the work to help test / validate
-> > > > > it. In this case, this error case is rare but we do want to strive to
-> > > > > test this as we ramp up and extend our modules selftests.
-> > > > >
-> > > > > Then there is the aspect of how to mitigate how instrusive code changes
-> > > > > to allow error injection are. In 2021 we evaluated the prospect of error
-> > > > > injection in-kernel long ago for other areas like the block layer for
-> > > > > add_disk() failures [0] but the minimal interface to enable this from
-> > > > > userspace with debugfs was considered just too intrusive.
-> > > > >
-> > > > > This effort tried to evaluate what this could look like with eBPF to
-> > > > > mitigate the required in-kernel code, and I believe the light weight
-> > > > > nature of it by just requiring a sprinkle with ALLOW_ERROR_INJECTION()
-> > > > > suffices to my taste.
-> > > > >
-> > > > > So, perhaps the tools aspect can just go in:
-> > > > >
-> > > > > tools/testing/selftests/module/
-> > > >
-> > > > but why would it be module-specific?
-> > > 
-> > > Gotta start somewhere.
-> > > 
-> > > > Based on its current implementation
-> > > > and discussion about inject.py it seems to be generic enough to be
-> > > > useful to test any function annotated with ALLOW_ERROR_INJECTION().
-> > > >
-> > > > As xe driver maintainer, it may be interesting to use such a tool:
-> > > >
-> > > > 	$ git grep ALLOW_ERROR_INJECT -- drivers/gpu/drm/xe | wc -l  	23
-> > > >
-> > > > How does this approach compare to writing the function name on debugfs
-> > > > (the current approach in xe's testsuite)?
-> > > >
-> > > > 	fail_function @ https://docs.kernel.org/fault-injection/fault-injection.html#fault-injection-capabilities-infrastructure
-> > > > 	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/intel/xe_fault_injection.c?ref_type=heads#L108
-> > > >
-> > > > If you decide to have the tool to live somewhere else, then kmod repo
-> > > > could be a candidate.
-> > > 
-> > > Would we install this upon install target?
-> > > 
-> > > Danny can decide on this :)
-> > > 
-> > > > Although I think having it in kernel tree is
-> > > > simpler maintenance-wise.
-> > > 
-> > > I think we have at least two users upstream who can make use of it. If
-> > > we end up going through tools/testing/selftests/module/ first, can't
-> > > you make use of it later?
-> > 
-> > What are the features in debugfs required to be useful for xe that we can
-> > port to an eBPF version? I see from the link provided the use of probability,
-> > interval, times and space but these are configured to allways trigger the error.
-> > Is that right?
+
+CC: Geert (because, I think he was asked about the Rcar GPIO check before).
+
+On 28/02/2025 10:23, Linus Walleij wrote:
+> On Thu, Feb 27, 2025 at 9:24 AM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+ > >> I did some quick testing. I used:
+> (...)
+>> which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7
+>> unmasked.
+>>
+>> Then I added:
+>> gpiotst {
+>>          compatible = "rohm,foo-bd72720-gpio";
+>>          rohm,dvs-vsel-gpios = <&adc 5 0>, <&adc 6 0>;
+>> };
+>>
+>> and a dummy driver which does:
+>> gpio_array = devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
+>>                                    GPIOD_OUT_LOW);
+>>
+>> ...
+>>
+>> ret = gpiod_set_array_value_cansleep(gpio_array->ndescs,
+>>                  gpio_array->desc, gpio_array->info, values);
+>>
+>> As a result the bd79124 gpio driver got it's set_multiple called with
+>> masked pins. (Oh, and I had accidentally prepared to handle this as I
+>> had added a sanity check for pinmux register in the set_multiple()).
 > 
-> I don't think we use them... we just set them to "always trigger" and
-> then create the conditions for that to happen.  But my question still
-> remains:  what is the benefit of using the bpf approach over writing
-> these files?
-
-The code to trigger the error injection still needs to exist with both
-approaches. My understanding from debugfs and the comment from Luis earlier in
-the thread is that with eBPF you can mitigate how intrusive in-kernel code
-changes are to allow error injection. Luis added the example here [1] for
-debugfs.
-
-[1] https://lore.kernel.org/all/20210512064629.13899-9-mcgrof@kernel.org/
-
-To compare patch 8 in [1] with eBPF approach: the patch describes
-all the necessary changes required to allow error injection on the
-add_disk() path. With eBPF one would simply annotate the function(s) with
-ALLOW_ERROR_INJECTION(), e.g. device_add() and replace the return value
-in eBPF code with bpf_override_return() as implemented in moderr tool for
-module_enable_rdata_after_init() for example.
-
-New error injection users such modules or block/disk would benefit of the eBPF
-approach with having a more simpler in-kernel code for the same purpose. Current
-users of debugfs/errorinj would have to remove all the upstream intrusive error
-injection related code if they want to adopt the eBPF approach.
-
-Daniel
-
+> But... how did you mask of the pins 0..5 in valid_mask in this
+> example?
 > 
-> Lucas De Marchi
+> If this is device tree, I would expect that at least you set up
+> gpio-reserved-ranges = <0 5>; which will initialize the valid_mask.
 > 
-> > 
-> > > 
-> > >   Luis
+> You still need to tell the gpiolib that they are taken for other
+> purposes somehow.
+> 
+> I think devm_gpiod_get_array() should have failed in that case.
+> 
+> The call graph should look like this:
+> 
+> devm_gpiod_get_array()
+>      gpiod_get_array()
+>          gpiod_get_index(0...n)
+>              gpiod_find_and_request()
+>                  gpiod_request()
+>                      gpiod_request_commit()
+
+Here in my setup the guard.gc->request == NULL. Thus the code never goes 
+to the branch with the validation. And just before you ask me why the 
+guard.gc->request is NULL - what do you call a blind bambi? :)
+  - No idea.
+
+>                          gpiochip_line_is_valid()
+
+Eg, This is never called.
+
+Yours,
+	-- Matti
 
