@@ -1,103 +1,82 @@
-Return-Path: <linux-kernel+bounces-539489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747EEA4A4FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:23:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E2A4A4FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:23:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84540170539
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77543189A7B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8631DE2BE;
-	Fri, 28 Feb 2025 21:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18FC1CD205;
+	Fri, 28 Feb 2025 21:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLP4jZnC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCerUwiq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1151D7E5F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 21:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8781CAA74;
+	Fri, 28 Feb 2025 21:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777769; cv=none; b=nwg1hUfM/b9dNEImZpgxN8GbYd/Ewrr09koiqqJFutXetghsxQ7eA7WBpYR7goL+bcp/1B2SCSxWFidu4Bp6njYvgd1h7e743CUDwsOgVrMVLU9H4B3vEhOBCdNb709xmTHJ4GXUfJ3TlDctOxkHPx7plH0NKr01BCXgSBQAHjs=
+	t=1740777787; cv=none; b=O8Gapm3pvAsh/95PtB0I32Do7C35C4OjGmT8W4S6xl709tydU6B2FZaGi5hc4QpCz7DIzrn+sLu2VKbz62ZhJ93vf6+Xv2ZXk2UrWzNTBcOsH60gpTL+zd7R3EClSE3Bd+FzaCzh8XhW9ySjeYU77yiJ7UJJkW70AAC8qSYQRbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777769; c=relaxed/simple;
-	bh=BdUt223lMdWOnXc6cIlvD1jJVADcQvHW7HwahCmqe1U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sgUHLWAH43THgGphZBKMcw4cyWPp/hLKAANV0e5RiZMDsQY5rgFZMEy4yn0r+ms7Bm/TpguPYiTBnUiQ4/48VX2LY8oaBcstbCHP57Pt6prLyQZMMrtD1ay0ZxPzNGtpn/275VGYZN5w+M/cQYJ0jUSQcNbNjL0bE20LxzVMAoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLP4jZnC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE87FC4CEE5;
-	Fri, 28 Feb 2025 21:22:47 +0000 (UTC)
+	s=arc-20240116; t=1740777787; c=relaxed/simple;
+	bh=pPhg3oNE6NxT4rC2ot9DW+HPkCoU/NwpAONXXchEa5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdMWXiMOnw0g29UJeQAB/SvILiby9DkF7eijX4ccckQ94feU6JlF6/4RfR5ozlkT5LpzuROOorJZv4nmNpJeyxohL2VpwtqqN0fu2Xr+X4qtFWnnC+YyZ4uI1Mow/CXxkvoFufvlb+WAKcbAFxA8EIVTfD7KrwVB/PwyH2a3Rdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCerUwiq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C923C4CED6;
+	Fri, 28 Feb 2025 21:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777769;
-	bh=BdUt223lMdWOnXc6cIlvD1jJVADcQvHW7HwahCmqe1U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lLP4jZnC8S7vyY7doJ9eOcblsw7RYWyaHJpo0DQO0ZLMF0SxAWFFJlKJP3NmYqUby
-	 QNPbNFn972I8BBQZAQR1SMFaUXUEMurHpc1Y3CD7yl88Q1GDPHyH4EWAHSHlnYk9nq
-	 UIbOJwnPmnrtmzBxYkBZhRONB7pr9PpTsqD6lrgaxItZAePS1bQI9QNJWGGZ3FCxe1
-	 a/trBQC2GjOvYiODDnEQVOTrumjyzgDw0rdt6/yha15lwUuOln2jCaEys7dM4gOWec
-	 wLm2gCwloXOszTwRpqNsPzNdWY9YCoFboS+PZ1QzCB362J/oWQuFr5EKBNl2K97qpI
-	 HViFXwjKSpSbw==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, bleung@chromium.org, groeck@chromium.org, 
- andriy.shevchenko@linux.intel.com, Raag Jadav <raag.jadav@intel.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250228072057.151436-1-raag.jadav@intel.com>
-References: <20250228072057.151436-1-raag.jadav@intel.com>
-Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
- devm_kmemdup_array()
-Message-Id: <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
-Date: Fri, 28 Feb 2025 21:22:47 +0000
+	s=k20201202; t=1740777786;
+	bh=pPhg3oNE6NxT4rC2ot9DW+HPkCoU/NwpAONXXchEa5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DCerUwiqo50WYbj+/EYFOBQtg3Hw8hKteAoVF2mEuBYCNynj8Zjsu6/2Tc7niJ/Bv
+	 a5wm53RvhGQf3yyteNZcQZ718t9Wc7wQXPyrXEzMG76MZBD2m/fBd5bE6Ofkr6/IBv
+	 Xp2nu9jrU8uJlGrehp8hrQz2XAlo6LiJRWpisXsMgyHXQixP2IRaixz3PbCAmkEu1Z
+	 40jDLCj4QJS0OkvjZ+XDilgbEfzuu+zt7+f2JRbzLg9qqRN5Y7Hv3q3I9evHGhxmDx
+	 Nb4Yc8iMwu9CdEI2Jzsx4FZU45TTzJ1fdem/zKlHCi+UpEwipToaTDi8GJQDEYlBDm
+	 lZyRhI5G+4+8Q==
+Date: Fri, 28 Feb 2025 15:23:04 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ryan.Wanner@microchip.com
+Cc: lee@kernel.org, krzk+dt@kernel.org, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sre@kernel.org, devicetree@vger.kernel.org,
+	nicolas.ferre@microchip.com, linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev, conor+dt@kernel.org,
+	linux@armlinux.org.uk, p.zabel@pengutronix.de,
+	alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v3 07/21] dt-bindings: at91rm9260-rtt: add
+ microchip,sama7d65-rtt
+Message-ID: <174077778429.3739910.8784445067469354265.robh@kernel.org>
+References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
+ <5b365a63d2124ebf27aebb0ec8395b1946e6c070.1740671156.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b365a63d2124ebf27aebb0ec8395b1946e6c070.1740671156.git.Ryan.Wanner@microchip.com>
 
-On Fri, 28 Feb 2025 12:50:55 +0530, Raag Jadav wrote:
-> This series converts regulator drivers to use the newly introduced[1]
-> devm_kmemdup_array() helper. This depends on changes available on
-> immutable tag[2].
+
+On Thu, 27 Feb 2025 08:51:54 -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
-> [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
+> Add SAMA7D65 RTT compatible to DT bindings documentation.
 > 
-> [...]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/rtc/atmel,at91sam9260-rtt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/2] regulator: devres: use devm_kmemdup_array()
-      commit: 6ddd1159825c516b8f64fda83177c161434141f5
-[2/2] regulator: cros-ec: use devm_kmemdup_array()
-      commit: c5c4ce6612bb25ce6d6936d8ade96fcba635da54
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
