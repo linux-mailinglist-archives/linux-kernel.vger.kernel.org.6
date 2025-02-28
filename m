@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-537717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFBCA48FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:40:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4F2A48FC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857361893406
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A143B51D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91A01BBBDD;
-	Fri, 28 Feb 2025 03:34:42 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5970D1A8409;
-	Fri, 28 Feb 2025 03:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8094D1A8409;
+	Fri, 28 Feb 2025 03:37:04 +0000 (UTC)
+Received: from wangsu.com (mail.wangsu.com [180.101.34.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB97187553;
+	Fri, 28 Feb 2025 03:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.34.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713682; cv=none; b=YkBJYdymByyT6T3QnZy2GQ5EiNF+QRWaEGauEiaqohwUUk+8X0ikVz7HNi5sSRtzuNjDln5dAp/b3jVr2oxKuLWaShXtWMf8QhvZueND2IBL9gOc9uvnDkBHVHNqBSKzFgAHFW9pKhBSM53nAR5Bn7a/QyyEkEn+uPK3aPBUa8U=
+	t=1740713824; cv=none; b=LKm+NoXlcckDsjqVPYdk5BPMHR4h/jx/VbBLXO5aZpI9/A9em1Us/7F96wpYn+EnePvL1lOT92SCc3dG5e+6zHQm2P7/mD28D9mrT5Y7npkm1h5S7hmttbKnwGEMmMZEm97WDOBe4UyuVFBNhyfMp6qQmepMDQgKpA8vb6V9bCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713682; c=relaxed/simple;
-	bh=sZuew6/qnh9yp1NKKxOuD9FyuFysq44fEgAQWmRiQjQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ks2gZnpRxyXvHkx80jtPa5mfedDY6N8AM0KlxFryMWfkzbgTibAAlZxmptCtMoy2UgcDmESCS/MidMybVD4Np78PBcfmjSSnrksN+hNwIc2dZr0vYLXibAxkAq7ptvXa6FbR5mMd57VavzzZeDqtgdnc6oQm4f9gFL10nfDqqNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202502281134312562;
-        Fri, 28 Feb 2025 11:34:31 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 28 Feb 2025 11:34:30 +0800
-Received: from locahost.localdomain (10.94.9.231) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 28 Feb 2025 11:34:30 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <perex@perex.cz>, <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH v2] ALSA: seq: seq_oss_event: fix inconsistent indenting warning in note_on_event()
-Date: Fri, 28 Feb 2025 11:34:27 +0800
-Message-ID: <20250228033427.7056-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227092441.19044-1-hanchunchao@inspur.com>
-References: <20250227092441.19044-1-hanchunchao@inspur.com>
+	s=arc-20240116; t=1740713824; c=relaxed/simple;
+	bh=TQzvWiOdvU5caeaRBqElrxoX75nvhd1b0LPDOE8juNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rrI659jCqKrqDFJxTcy35vv8XJfl+8ZJ+1m20CDEL5nNr9riCqgIDV+H0Gx35D3d2JiKVzu9oKYLQAh/POV7CB6Xlsisgvw6XYWlenvsgnCc59WAdmdASA0gWUrwlUvol3vbO8f1XOpp7cue9q29rOUfhJBTuwFfGgOzk2jbtXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com; spf=pass smtp.mailfrom=wangsu.com; arc=none smtp.client-ip=180.101.34.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wangsu.com
+Received: from [10.8.162.84] (unknown [59.61.78.234])
+	by app2 (Coremail) with SMTP id SyJltABX2Qw6L8FnOmQLAA--.668S2;
+	Fri, 28 Feb 2025 11:36:36 +0800 (CST)
+Message-ID: <a8af57eb-97dd-406a-8f5f-c4375ca4fce2@wangsu.com>
+Date: Fri, 28 Feb 2025 11:36:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201614.home.langchao.com (10.100.2.14) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 20252281134315347d902aec45dbc892b8b30f4291622
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ vfs-brauner tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Christian Brauner <brauner@kernel.org>
+Cc: Networking <netdev@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Stefano Jordhani <sjordhani@gmail.com>
+References: <20250228132953.78a2b788@canb.auug.org.au>
+Content-Language: en-US
+From: Lin Feng <linf@wangsu.com>
+In-Reply-To: <20250228132953.78a2b788@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:SyJltABX2Qw6L8FnOmQLAA--.668S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFWrJF4UWryUJFWxAr4fZrb_yoW3trc_Wr
+	15t3Z7Jr1DZw47J3yIyF4fZFy7Gr48tr15Zr1kKr17Zas8Zay5CF4Sv34DX34rWr9IkF98
+	uF9IgFy8Kr129jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48YjsxI4VWkKwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
+	vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_
+	Gr0_Cr1lYx0E74AGY7Cv6cx26r48McIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l
+	42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU59iSJUUUU
+	U==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-sound/core/seq/oss/seq_oss_event.c:297 note_on_event() warn: inconsistent indenting
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- sound/core/seq/oss/seq_oss_event.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
-index 7b7c925dd3aa..76fb81077eef 100644
---- a/sound/core/seq/oss/seq_oss_event.c
-+++ b/sound/core/seq/oss/seq_oss_event.c
-@@ -290,16 +290,14 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
- 		if (note == 255 && info->ch[ch].note >= 0) {
- 			/* volume control */
- 			int type;
--			//if (! vel)
--				/* set volume to zero -- note off */
--			//	type = SNDRV_SEQ_EVENT_NOTEOFF;
--			//else
--				if (info->ch[ch].vel)
-+
-+			if (info->ch[ch].vel)
- 				/* sample already started -- volume change */
- 				type = SNDRV_SEQ_EVENT_KEYPRESS;
- 			else
- 				/* sample not started -- start now */
- 				type = SNDRV_SEQ_EVENT_NOTEON;
-+
- 			info->ch[ch].vel = vel;
- 			return set_note_event(dp, dev, type, ch, info->ch[ch].note, vel, ev);
- 		} else if (note >= 128)
--- 
-2.43.0
+On 2/28/25 10:29, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   fs/eventpoll.c
+> 
+> between commit:
+> 
+>   d3a194d95fc8 ("epoll: simplify ep_busy_loop by removing always 0 argument")
+> 
+> from the vfs-brauner tree and commit:
+> 
+>   b9d752105e5f ("net: use napi_id_valid helper")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+
+Hi Stephen,
+
+The conflict fix looks good to me, thanks for handling this!
+
+linfeng
 
 
