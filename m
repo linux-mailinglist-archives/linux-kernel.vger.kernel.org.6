@@ -1,145 +1,153 @@
-Return-Path: <linux-kernel+bounces-538944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1C8A49F16
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:40:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB45A49F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C8E177873
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FC918852D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B4271815;
-	Fri, 28 Feb 2025 16:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899985626;
+	Fri, 28 Feb 2025 16:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYcYgNIL"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F0327002E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qvq7hX3v"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8172500CD;
+	Fri, 28 Feb 2025 16:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760781; cv=none; b=EuskjgeV0iuOBYozIHMVMCjQ5CLXgsv0//dZpGXWOAWJc6KZH/ytRGclugiFFvwEZv4NjSWQnJmP1495rCQ8KWGrOl3bdTJd7CPo4t6olAw7R9a6exqRqmsyHhZSMlR8JG2T34Mp6ZGt8qztToqIL+AnqK6HrfmdRSyFsOWLGZI=
+	t=1740760812; cv=none; b=eo9Nsb4uXIUTbA4HAk6S2aoRldV61ZBK3Yn2DJ8CHowsFgWb87VQkWQic9mOqGfdCWz+fWn/2zH+II0hXlOeXuI64e/NE9IxiDf89/LOHX3MVtmkPuKk6P5NiorO3qkvwoCJaNAAhOs338QKOCbZAym6VIzd4ZmWvP47IAXHCxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760781; c=relaxed/simple;
-	bh=rB/kMFq3R9s5RDXmFK3u0alDwSgo63ojRRW9ITcZBW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kBxaV1a0Mf80KpDJu7aJfmv5fKkcmCyiN0OslvUTfON1uWwAT9mUBEVdfvqrqQHbwJj/GfvskW8ZZTf3GDvNBMPsK7tK6f+VLEi7gw+QGY82En3HlygnzP/fkT+em1EeUHI3/kDEXZFumQjnJ+/JaReCboUt/24c0RvjtbSr0JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jYcYgNIL; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf42913e95so75576466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:39:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740760777; x=1741365577; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x6UR2OZwD7+XxsVba8bPXtaKE9m07ilfrFPUuzl5ixk=;
-        b=jYcYgNILYSLj0accorOy9J/spkak1z+Xi1Sxi20dAxpkaU/GrkrZbOwwFnfLvjrd4j
-         SEJRQQwAe1j29zLtT+jDhsSxjPqGW8y0D2Krck5zxmxoWr+wiqmRZo2tY5tBWflHeoT0
-         iV+QdBd4waB2E3i1RKZNWV2vWc7egtp1Y4HyodO8T3UQSSbfUvhGiwv6ANX81x3Vw22x
-         et1hSl8aFxP/HJAqyNNEsJbWMzQ1IbEFgPEH+0Mx3iNSq4zAvuQI3hnWwA2gEDv26XLq
-         9Z/47Vb71+3b8mf/G1tjdikOgYaBE1zg5ROWhX25+jscsyNu61Xt1AGqADeuDKJXbfBV
-         Vyog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740760777; x=1741365577;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x6UR2OZwD7+XxsVba8bPXtaKE9m07ilfrFPUuzl5ixk=;
-        b=o3f5ogziG32WYyAprvJPORoBph+WJOHMu2gk3/ddMiwsDl2vuk2DmRuehq1tLPSOHr
-         NkBwf9pDzpHKBbZtm0HawVy+m4reQfJJadOvLbTfZZzbhTqhN4yxsjHtHh3YIB80l177
-         ZUw4PELMcqSMI9j1vl8WrlYnRFRwEZ1TEGKEb7Xos5HWQ+74MyNiautfzh7xg1zArzMC
-         tbUytBxwxT8/jorJPcSgAJjUOP1IypC1xvf5tx0MI0NfXyKt4On5ZeZ51ig/CQUpwfCI
-         9d5YHv1gbtSrGatEHS4zoqnhpnEa/8beQPyl8Jaez/xThqcrC+PUb9Eq1umu2yrhRY9N
-         Ys+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUPeLMCWDD6GYA2GfxSt5UIRmpUwSE5IvESB6OfILiiH77QFUYOQquhAMjDSh0eHJ8ApyHDzJ6maCGKJWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMt1HJhIhv47bMA8jHs/LQaunSyavYjhpVail/AwrOv7pJERaO
-	GiMh1thgFVnog+IuCeXsSw2jEaZnF0EKEJQpUM+y8DpZE7bNtnfgTmSjXQUyXM6cQ1/8t7Q/fe6
-	X213MntFcJWO/y28R7y1QZGOdZVB0NO5sepcZMw==
-X-Gm-Gg: ASbGnctwKA0dtEzB3pPJywxdWvbeSmciPJfjEKIdsLvp14YsOlurifN8Cy28sYcuWqO
-	0bGGbRntVe4K7DLZ8Ls9jhUxptUMlKf9RuBfPI4mRtRpPhLb92+j5O1M3uhrmc1Vx2xmJ+5ME15
-	gMq9uH1cRBDiW1kGZ5I8Ivwud5rBrqqW+7XFrU
-X-Google-Smtp-Source: AGHT+IH2B0Wl7/2mhc/dmy61nzYfb9Nb6G3qSwyQkkadVrgaNh2yV/DQQ5NpMTbgCfBM/+NSQqU6gORWSjOu8r8m7hA=
-X-Received: by 2002:a17:907:7fa2:b0:aa6:af66:7c89 with SMTP id
- a640c23a62f3a-abf261fba16mr431180566b.5.1740760777391; Fri, 28 Feb 2025
- 08:39:37 -0800 (PST)
+	s=arc-20240116; t=1740760812; c=relaxed/simple;
+	bh=2Pm0dsopJGfUVusd2Go+NzpJtGsYWBd+yH4fEzbLNOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bq71U46/Gu+RsacEs3Uk7creZXO8TC9iiiBun8JCy9LoNW3ydxhuHCx4iTgsNCgxKyYQhm51MmkkmFCkmNVBKsCCrzieW0UNqZfldO6sCAfzVktIZ/ZaDbyVbOeBAIrvsngp+LSo/HE/1B6IcpKc/IF8JW16klSBMdqFc7/3MXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qvq7hX3v; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 75B44210D0D5;
+	Fri, 28 Feb 2025 08:40:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 75B44210D0D5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740760810;
+	bh=t6vW4NSGnOxnDi0VQotxMy3KX/u7aGrTt7sLX+40uF4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qvq7hX3vmgvcAlM2s3ZD+rHzoKNsk7bPCxEHqpcjf3cIsKuDm49RePAi0xKglijjY
+	 4yPi1ZUTnJAYR5Bclt2Frb7Vy2NW8C/oUhQQHc3TJZWwo+QqvmmLDE6vq7lKzVaO6J
+	 MqXsFeBLG2Fs7Wz+dXsOtvPLCGOPdZvt9kJeTHC4=
+Message-ID: <69c868f9-8bac-4bbe-ba56-832ab6a21660@linux.microsoft.com>
+Date: Fri, 28 Feb 2025 08:40:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226024741.2274-1-xuewen.yan@unisoc.com>
-In-Reply-To: <20250226024741.2274-1-xuewen.yan@unisoc.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 28 Feb 2025 17:39:26 +0100
-X-Gm-Features: AQ5f1JoWAaJb-NDIzruSdz-cxOA435FUf7qB7nREUr_0Mxkf00HfWS0WEIj-CfM
-Message-ID: <CAKfTPtBB6FH+5G5eRxC-0UA3H_M6Qt=CvKfCNvHy2=Dg0EEMxw@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched/fair: Fixup wake_up_sync vs DELAYED_DEQUEUE
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, ke.wang@unisoc.com, di.shen@unisoc.com, 
-	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
+ joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
+ <74af19c4-639f-4bcc-b667-b5f102bbb312@linux.microsoft.com>
+ <7ea741fb-9935-42f2-a4f0-99df8df563eb@linux.microsoft.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <7ea741fb-9935-42f2-a4f0-99df8df563eb@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 at 03:51, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
->
-> Delayed dequeued feature keeps a sleeping task enqueued until its
-> lag has elapsed. As a result, it stays also visible in rq->nr_running.
-> So when in ake_affine_idle(), we should use the real running-tasks
 
-typo: wake_affine_idle
 
-> in rq to check whether we should place the wake-up task to
-> current cpu.
+On 2/27/2025 4:15 PM, Nuno Das Neves wrote:
+> On 2/27/2025 9:02 AM, Roman Kisel wrote:
 
-fair enough
+[...]
 
->
-> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->  kernel/sched/fair.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 1c0ef435a7aa..2d6d5582c3e9 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7342,8 +7342,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
->         if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
->                 return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
->
-> -       if (sync && cpu_rq(this_cpu)->nr_running == 1)
-> -               return this_cpu;
-> +       if (sync) {
-> +               struct rq *rq = cpu_rq(this_cpu);
-> +               int nr_delayed;
-> +
-> +               nr_delayed = rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable;
+> I guess you're implying it's not worth adding such a function for only a
+> few places in the code? That is a good point, and a bit of an oversight
+> on my part while editing this series. Originally all the hypercall helper
+> functions in the driver code (10+ places) used this function as well, but
+> I removed those printks_()s as a temporary solution to limit the use of
+> printk in the driver code (as opposed to dev_printk() which is preferred).
+> 
+> I didn't think to remove *this* patch as a result of that change!
+> I do want to figure out a good way to add that logging back to the hypercall
+> helpers, so I do want to try and get some form of this patch in to aid
+> debugging hypercalls - it has been very very useful over time.
+> 
 
-Could you encapsulate this in a helper function ? something like below
+Right, I thought that the function looked more as a bring-up aid rather
+than a full fledged solution to some problem.
 
-static inline unsigned int cfs_h_nr_delayed(struct rq *rq)
-{
-        struct rq *rq = cpu_rq(this_cpu);
+>> The "Unknown" part would make debugging harder actually when something
+>> fails. I presume that the mainstream scenarios all work, and it is the
+>> edge cases that might fail, and these are likelier to produce "Unknown".
+>>
+> That is a very good point. Ideally, we could log "Unknown" along with
+> the hex code instead of replacing it.
+> 
+> What do you think about keeping this function, but instead of using it
+> directly, introduce a "standard" way for logging hypercall errors which
+> can hopefully be used everywhere in the kernel?
+> e.g. a simple macro:
+> #define hv_hvcall_err(control, status)
+> do {
+> 	u64 ___status = (status);
+> 	pr_err("Hypercall: %#x err: %#x : %s", (control) & 0xFFFF, hv_result(___status), hv_result_to_string(___status));
+> } while (0)
+> 
+> I feel like this is the best of both worlds, and actually makes it even
+> easier to do this logging everywhere it is wanted (for me, that includes
+> all the /dev/mshv-related hypercalls).
+> We could add strings for the HVCALL_ values too, and/or include __func__
+> in the macro to aid in finding the context it was used in.
+> 
 
-        return (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
-}
+That doesn’t seem to be common in the kernel from what I’ve seen in 
+dmesg, although there is certainly a lot of appeal in that approach. 
+However, we will have to remember to update the function each time when 
+another status code is added not to leave things half-cooked.
 
-> +
-> +               if ((rq->nr_running - nr_delayed) == 1)
-> +                       return this_cpu;
-> +       }
->
->         if (available_idle_cpu(prev_cpu))
->                 return prev_cpu;
-> --
-> 2.25.1
->
->
+Also it is a bit surprising the *kernel* should report that rather than 
+the VMM from the user mode. E.g. the kernel does not report all errors 
+on file open, file seek, etc. As I understand, the hv status codes are
+later mapped to errno in a lossy manner, and errno is what the user mode
+receives?
+
+As long as the hex code is logged, I am fine with the change.
+
+>> Folks who actually debug failed hypercalls rarely have issues with
+>> looking up the error code, and printing "Unknown" to the log is worse
+>> than a hexadecimal. Like even the people who wrote the code got nothing
+>> to say about what is going on.
+>>
+> Yep, totally agree having the hex code available can be valuable in
+> unexpected situations.
+> 
+
+Appreciate giving my concerns a thorough consideration!
+
+-- 
+Thank you,
+Roman
+
 
