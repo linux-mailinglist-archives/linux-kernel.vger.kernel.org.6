@@ -1,53 +1,51 @@
-Return-Path: <linux-kernel+bounces-538906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB21A49EAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:24:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2349EA49EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714D93A29C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90511175901
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC155274255;
-	Fri, 28 Feb 2025 16:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24DA272920;
+	Fri, 28 Feb 2025 16:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fJo3LuEK"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="edC3LwA3"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E527424E;
-	Fri, 28 Feb 2025 16:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CF526A0DB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759845; cv=none; b=YrIt8P1V5+mjKojhM1pb3T/vMFLs2ScIHvBtnRABImPbJvVjLlirqbEx3ZIzfW/++2aoWF8GiNHMia8CpekBWfibIR5nlojxjxRfPOSNRpZjTxudExlHgrJMUNdFrbDIPPnwp45OaEWT21X/jwCobvXeAfVjANA9z2rxdTIyA7w=
+	t=1740759865; cv=none; b=DpCjTtHBXfyXJcp4X/SCToKjsobDEqfS3/RCjibN6L8uzefkcjE1irlBe4eStiGv2RFnq9JtLlIP5zOz1A+H3T5nxEFFc8r02GbcchT2eN6Qh0pkwmF4ZWp2LnrVhpkQwisJKu4gLGXveTpOlvhCb00DMMrWlwnL4ACbJL6XNnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759845; c=relaxed/simple;
-	bh=B3WjmkvjpILdVi2j1q5otuhwVoDcjg9HxmWCQJcB5kc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lSmI2aLpK2Hf3hbvKOUxE58C6SZrJK2ua/na5TlcJiAcS9EPwHtnX7A+Ijyz3qqyTjzwfgdwDgkwKuTnH1MGe6NfrbcXVLO1WO0LRTRaKF5B8o5UE7aWBRXoH9KFJV7iUyLm1ZZG15kTSkxRI/WXpK9fasG9PPiwefBqXvvt7Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fJo3LuEK; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740759839; x=1741364639; i=markus.elfring@web.de;
-	bh=wc+tFxfogX72xbNQ0v+6GhtULwhFug+e+zNf2YFFKo4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fJo3LuEKKv4cLVspEqgirzgxy6OV5JKEWseS7Tq0fsMgFIp0mZ3tjMzobZTGV5O4
-	 vUDAGs4KdCgyHtsewTD18QXYzIN1uoIkK6IKtNgN1iD36/rN1dwxGhGajtpjbDub8
-	 +dFpJyyJpU5Iaa3alOIZsBD9exvXPMMEvuGkdFD1csqDCfARVCrYKeYqSSvw9tWCj
-	 NMiuJP3Pa/ShezrpYEJEn5fR6zORVmWwfPX4Vq/kNlmTlwLZ3J4Lu/ltujULlPaeC
-	 M89VE0ob3sxFm7ol8aIpJvB6EJobdWfbG2oZA53dIe/hUpJmRoyr4wQDgn9IMCDhn
-	 nUVX+zOpGusYtBqNhQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjIE-1u07yl3FCW-00BBlj; Fri, 28
- Feb 2025 17:23:59 +0100
-Message-ID: <ecc5cb7f-b28f-4055-ab60-26e76f65685f@web.de>
-Date: Fri, 28 Feb 2025 17:23:58 +0100
+	s=arc-20240116; t=1740759865; c=relaxed/simple;
+	bh=+yeBV+cJHwRPA2DiPeiJDcYB3jrSqrGG/JHdcc57Fjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rNpvgjfFaQZLwF8ZjqfyzCsn+geQTBUKwNj4AcaJEFk51v7IQ0jZkrbMIKBHPJmslENXNlRO2WPUlDQb+kSEBk9v8lk+Z+Kg9RJoMM8arOKhkWMup+vZfQqui3kY25CKPn9vq2XsaawnJFik2a05SIBh7vU7FPa3/1m3FwulMXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=edC3LwA3; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B54A43209;
+	Fri, 28 Feb 2025 16:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740759861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Z1IKkm6+PnFpEAaGDs3hByJh2w/s4OJvKkdhV8BI7pE=;
+	b=edC3LwA3ZOzxlMbNW5jOkj/xKOgxgvLzgon2Z/ebWjzgQUi58Dkjm/75rkhuUGW7SpC0tk
+	AHwhVudHAxwtfIIwdBRbKUYUr3evh2KHEQGqlBhZHvVKDTcQP31xiSRZ7lY0wJrEXFxfCv
+	lJt0YEvz3TtNcLkjPIdQbbfiBPBo5WWqoj+msms2+B1B2ptPR0zLFhDPAXhWeB96HSNtGF
+	LTlEob23gTpAc+ul+1YioTJA4xPVxWSq94OfJ1AjOX2OSoOW0uMbOqqdADilVSfoCI+MrK
+	Yk9Erg0FLMROh/6gTe0YXmDEwLNQCctTGAA2eX2VW3FNkLxysdHQhi1Z26eOlA==
+Message-ID: <caba927a-b71b-40bf-96b6-d15418ed705a@bootlin.com>
+Date: Fri, 28 Feb 2025 17:24:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,73 +53,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Qasim Ijaz <qasdev00@gmail.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm: Simplify maximum determination in drm_ioctl()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mtxLx4Ax1FUZU0kM7TZ4SiveHNkV/rUL0KOhNRHh8RY9UxBqp1I
- thNtRttuKCR7wGyEGJatzlGi9eqsLWJGSJnHFNGnZc/S+x8fmzZdBTbtJsKOF8sEfmg2kRe
- beiDUviEFQc9UOmXPAhjmATdSB+jgKYs1/9xJlyaFRsi2T/s8UU/NkabH8mZLKoO50w9m94
- is2dnoNeZBMBIu8CUU1Fg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Er3HrmsjsRo=;ZQ96CCkkQWB0stB8LJGyzZH1TBf
- Kux5qvPEP+biUfF0IpuJ/zEHME6gGpk5ii3bWNcUuFxeq021CvRYr/QYVrqo7luCakHmPpqkG
- pvrRw3rkg0e+Bocmuhd/S5rLJfY8+q311mDUL92MG+afyPSoDgTeHPrVu6WvvMSVSh1L7wYpR
- DBP2W18jx8navSPIdH9GBOGVK4hvzmycwYcTaHFCApoytxa7DKasZmHdsyAgWAHb+6YhyYSiU
- hpcm2iaifRfVSRGF0bbIGG7I1B9DSxUJZ8407UfOTIU8O/sPVzRZB3MHn6jVRjGLJ54hl+djw
- fWsuKaxyKKFtFUUich99KOhGWowpPFTXyQR3wIJUalacM/vuAFR8X/GVUTO7IbNibMHWfZSYE
- FgP2XXrg3R80vo0NfUF7t037ZNC//M3n1YnFILAc3tWkGVDiCp2VH3dtdxEHn/esHfF+GPddT
- xn43Gtt5sgzuvaDMk013c+OHbdC+tUPCRJqs5ThiSAlZGcZTMHNF2Wdbx21RY52DzFIL8exrk
- PgE9ylAjiyxaR8s0PMZ4eBctGGYQgokMTBgDvvv0i39fqTCksxi+PxZdNiEJnuIBSC/vzjIaI
- 7rBDoX07l7PIU7CVjoDCjGKgrEZwSq9DyDsQ1Az9kCEioRYqIrGuDmNiz0z86ogEjbXxmHXYO
- w0jDy5zdsO7P8b+UbHX6AlmVDRonihcpIV35+hxXQxByr3MMorhJlIbdO1Xla6RovAuTEM5Xz
- m+yrVTiP7nQXj9oPtCQ1+x79I1Jz8PTXRlVOs2r+sSxF/IcKX6ct5KbCaEmDLqZ+JXS2lEKWd
- 9uIKSoH+OYS2xqGAs4sXDH2LTFno/5C3iHH94z2s70qKElqeSraN4RYTnsNrZR922wjxjY+DS
- eGXbyimCf8GAqDnGHcwYPtyBUquLfWq906iCkTA+/6QSz2icpp8d9qqVPRc0swJfiMY6iRQr8
- fpsGFW7dmEmdcBzZMxLvX5HivoOEmCJYu82esII1JqNicbDJecqh78dR7OQwuoLgoqMhrvlof
- Bh+GRwEoj+rhqarphPn8n5azn6ncVPcRfGL8oSXI/WmPs+KoiGGLDPlNzoDZZYJaoQgtOMrij
- ze20HWyXdd0I86pSzQNrH+jXFaoI0L8SIC6k9Lfo0gRey5y7zcUlY/ealfq7Fe6vSeSlnpU6M
- cEyamN87lvTuKZoEPvs6b6sy1MJm56NIdkHQo38jpaOUVEMjIMYCzj58PyeK7/5l8xqJrvpQv
- 8xjEAtGLFi1708Z8qPLUyaEmtDjFMsZygsGPfFNwZCrbgNwkn2m3mbVQ6amUWbUUH2JxOe7qq
- E24hlwcclIg2BwfCdSmWyiotkfVwJy1l+N7Gj1NCBq7J3bVEu86Ib9l6cvbjeXrGAEFrmxOt6
- tXG3KuhVen6PhTwmM+V6oDWAD54cz1nUllDlgBeNtmotjN8H2tJWM7d378jRB7tFNS/NedR/4
- kmCi/Vw==
+Subject: Re: [PATCH 00/63] Fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
+To: Greg KH <gregkh@linuxfoundation.org>, Jim Cromie <jim.cromie@gmail.com>,
+ linux-kernel@vger.kernel.org, jbaron@akamai.com, ukaszb@chromium.org,
+ intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <2025022012-viscous-cringing-bf88@gregkh>
+ <Z7b50rGRA4RuybgC@phenom.ffwll.local>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <Z7b50rGRA4RuybgC@phenom.ffwll.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetueetjedtudegtdeftdevtedtgeehhefftdejheduvdfhlefhveekheethfffueenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepghhrvghgkhhhsehlihhnu
+ higfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopehukhgrshiisgestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhg
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Feb 2025 17:18:07 +0100
 
-Replace nested max() calls by single max3() call in this
-function implementation.
 
-This issue was transformed by using the Coccinelle software.
+Le 20/02/2025 à 10:45, Simona Vetter a écrit :
+> On Thu, Feb 20, 2025 at 09:31:41AM +0100, Greg KH wrote:
+>> On Fri, Jan 24, 2025 at 11:45:14PM -0700, Jim Cromie wrote:
+>>> This series fixes dynamic-debug's support for DRM debug-categories.
+>>> Classmaps-v1 evaded full review, and got committed in 2 chunks:
+>>>
+>>>    b7b4eebdba7b..6ea3bf466ac6	# core dyndbg changes
+>>>    0406faf25fb1..ee7d633f2dfb	# drm adoption
+>>>
+>>> DRM-CI found a regression during init with drm.debug=<initval>; the
+>>> static-keys under the drm-dbgs in drm.ko got enabled, but those in
+>>> drivers & helpers did not.
+>>>
+>>> Root Problem:
+>>>
+>>> DECLARE_DYNDBG_CLASSMAP violated a K&R rule "define once, refer
+>>> afterwards".  Replace it with DYNDBG_CLASSMAP_DEFINE (invoked once in
+>>> drm-core) and DYNDBG_CLASSMAP_USE (invoked repeatedly, in drivers &
+>>> helpers).
+>>>
+>>> _DEFINE exports the classmap it creates (in drm.ko), other modules
+>>> _USE the classmap.  The _USE adds a record ref'g the _DEFINEd (&
+>>> exported) classmap, in a 2nd __dyndbg_class_users section.
+>>>
+>>> So now at modprobe, dyndbg scans the new section after the 1st
+>>> __dyndbg_class_maps section, follows the linkage to the _DEFINEr
+>>> module, finds the (optional) kernel-param controlling the classmap,
+>>> examines its drm.debug=<initval>, and applies it to the module being
+>>> initialized.
+>>>
+>>> To recapitulate the multi-module problem wo DRM involvement, Add:
+>>>
+>>> A. tools/testing/selftests/dynamic_debug/*
+>>>
+>>> This alters pr_debugs in the test-modules, counts the results and
+>>> checks them against expectations.  It uses this formula to test most
+>>> of the control grammar, including the new class keyword.
+>>>
+>>> B. test_dynamic_debug_submod.ko
+>>>
+>>> This alters the test-module to build both parent & _submod ko's, with
+>>> _DEFINE and _USE inside #if/#else blocks.  This recap's DRM's 2 module
+>>> failure scenario, allowing A to exersize several cases.
+>>>
+>>> The #if/#else puts the 2 macro uses together for clarity, and gives
+>>> the 2 modules identical sets of debugs.
+>>>
+>>> Recent DRM-CI tests are here:
+>>>    https://patchwork.freedesktop.org/series/139147/
+>>>
+>>> Previous rev:
+>>>    https://lore.kernel.org/lkml/20240716185806.1572048-1-jim.cromie@gmail.com/
+>>>
+>>> Noteworthy Additions:
+>>>
+>>> 1- drop class "protection" special case, per JBaron's preference.
+>>>     only current use is marked BROKEN so nobody to affect.
+>>>     now framed as policy-choice:
+>>>     #define ddebug_client_module_protects_classes() false
+>>>     subsystems wanting protection can change this.
+>>>
+>>> 2- compile-time arg-tests in DYNDBG_CLASSMAP_DEFINE
+>>>     implement several required constraints, and fail obviously.
+>>>
+>>> 3- modprobe time check of conflicting class-id reservations
+>>>     only affects 2+classmaps users.
+>>>     compile-time solution not apparent.
+>>>
+>>> 4- dyndbg can now cause modprobe to fail.
+>>>     needed to catch 3.
+>>>     maybe some loose ends here on failure.
+>>>
+>>> 5- refactor & rename ddebug_attach_*module_classes
+>>>     reduce repetetive boilerplate on 2 types: maps, users.
+>>>     rework mostly brought forward in patchset to reduce churn
+>>>     TBD: maybe squash more.
+>>>
+>>> Several recent trybot submissions (against drm-tip) have been passing
+>>> CI.BAT, and failing one or few CI.IGT tests randomly; re-tests do not
+>>> reliably repeat the failures.
+>>>
+>>> its also at github.com:jimc/linux.git
+>>>    dd-fix-9[st]-ontip  &  dd-fix-9-13
+>>>
+>>> Ive been running it on my desktop w/o issues.
+>>>
+>>> The drivers/gpu/drm patches are RFC, I think there might be a single
+>>> place to call DRM_CLASSMAP_USE(drm_dedbug_classes) to replace the
+>>> sprinkling of _USEs in drivers and helpers.  IIRC, I tried adding a
+>>> _DEFINE into drm_drv.c, that didn't do it, so I punted for now.
+>>>
+>>> I think the dyndbg core additions are ready for review and merging
+>>> into a (next-next) test/integration tree.
+>>
+>> So whose tree should this go through?
+> 
+> I'm trying to get some drm folks to review/test this, but thus far not
+> much success :-/ I think it's good stuff, but I'm somewhat hesitant if no
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/drm_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I tested the VKMS driver with this, and it works!
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index f593dc569d31..115a8eb0d8a5 100644
-=2D-- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -856,7 +856,7 @@ long drm_ioctl(struct file *filp,
- 		in_size =3D 0;
- 	if ((cmd & ioctl->cmd & IOC_OUT) =3D=3D 0)
- 		out_size =3D 0;
--	ksize =3D max(max(in_size, out_size), drv_size);
-+	ksize =3D max3(in_size, out_size, drv_size);
+Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
- 	drm_dbg_core(dev, "comm=3D\"%s\" pid=3D%d, dev=3D0x%lx, auth=3D%d, %s\n"=
-,
- 		     current->comm, task_pid_nr(current),
-=2D-
-2.48.1
+> one else agrees that it's useful for CI or in-field crash-recording or
+> whatever ...
+> 
+> I guess worst case we can land it and hope it attracts more folks?
+> 
+> Wrt tree I don't care, but I guess we should then also land the drm side
+> too.
+> -Sima
+> 
+>> And I think the last patch in this series isn't correct, it looks like a
+>> 000 email somehow.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
