@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-538671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DFAA49BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:17:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED84AA49BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248FC17465F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B850B1885DB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4370926B97F;
-	Fri, 28 Feb 2025 14:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B957526FD8F;
+	Fri, 28 Feb 2025 14:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0ReA9YM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW2yj7OL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F5426E63B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F98E26F479;
+	Fri, 28 Feb 2025 14:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752244; cv=none; b=hlpvzzBUn5N1RGPNbHtVdF9yJlnrg35kw2UOJjBB4JDw8flRTXtc61yJTlvmCSyUjweE1DOSONNLjIViFJfWggoaqc5lvZykQ/ufXe0U45tggvjFEL4LjdkDblMnQ4a/lXZkI+sh9XejooCoZS8ZcmYYCll+/HlH3WBECjLcBak=
+	t=1740752239; cv=none; b=ZLTA8njryTWH42w4KL5mCfSo0FiolNDzDx6DpTC4DMYdE4OuDMiqMV/Ysv35Qqbpws/FsW69LgqbMdsEtep6VyL+HT8i9WZtvkRLE2NwVFAbwUQYoIILdDWxteAxY39/YubnXCYAxVVifBVj1hXW7neJZOS9wBaH8vCED+0Y0HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752244; c=relaxed/simple;
-	bh=16brUvkqRfrzkx6Yi38s5UMJmUx0qgk+Q51rGTFtZbs=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ulzcN8DL4JqG3nt/ip5CkEKb5j1khYS/UB/e5ugAdUqXb+WB3PRrBWHL2DCrPH3yOVReunIv1fmXJqHV4XrRFao7cJ3kYX8PLiDNzeHzoPdT/UvA28fA0rktEDiNIzmpCZT60f+CycR4LtWCs2b3K+bM2o9v+OijLwFrSbqXWq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0ReA9YM; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740752243; x=1772288243;
-  h=date:from:to:cc:subject:message-id;
-  bh=16brUvkqRfrzkx6Yi38s5UMJmUx0qgk+Q51rGTFtZbs=;
-  b=e0ReA9YMWF807MwvY19mYFKDMBv12Y4H1dMrMGtpMyCniES3oGIPmkhc
-   FLXphd902EqUoFT5oneAuK9haNgIM6i2dxHywBE+NNvSFAQL0yqBYK4zY
-   Kfu7sW/YT/jlUn3qhB0pK1wrpD+9LgIJBrTkz/1hrUVstsFkEIEpq8dfl
-   bSLh5wh7SIaydgGolZ1fETMYLTGFb/Y+qQin42uS23OD/NI4e6eXyiLqC
-   T6XOJKeM3hGULvcCAgOnhxnhkrtc+1vEip2EqutCXnqyYZQIVBWhQrd3U
-   JaPgctRze0mseYJ6MLylXpDbDowVtpJgknC6DL+ktozXsUzBooY/aXiEP
-   g==;
-X-CSE-ConnectionGUID: gZuSg63RTqKd3SnpMk/tLg==
-X-CSE-MsgGUID: s7oLkZC9RXO9R9TS1CMU9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="53069452"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="53069452"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 06:17:22 -0800
-X-CSE-ConnectionGUID: YyALxu6yRiirmT2Axp0bWw==
-X-CSE-MsgGUID: glJhJJIoQvOwbG3ZTVQMtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="140570524"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 28 Feb 2025 06:17:21 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1to1B1-000F0N-28;
-	Fri, 28 Feb 2025 14:17:19 +0000
-Date: Fri, 28 Feb 2025 22:15:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/boot] BUILD SUCCESS
- 9c94c14ca39577b6324c667d8450ffa19fc1e5c4
-Message-ID: <202502282231.Ky7O8sDo-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740752239; c=relaxed/simple;
+	bh=+mews4wqirLVd+SJ74CQGKx7psfw9QW6POpNvpoLYPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGckX+885oPUy1E9Zk6XWyvQj0oMb8TbZ25ggI50mYP7EOPIrQIeqASoflD+eKVVU7/mvZNZObl/LR98mvbPXXblNSl77aIs2luqmvLE5VictKqRbL58skLAww3oOOzzFU59T70LL8bi2Up1n8/NGvMSuPPTfJrthXLLV95yHBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UW2yj7OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDA7C4CEEB;
+	Fri, 28 Feb 2025 14:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740752237;
+	bh=+mews4wqirLVd+SJ74CQGKx7psfw9QW6POpNvpoLYPU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UW2yj7OLDI5zuEJjYp9kTPkjpNgQ5I+5MZ0ngBbIdzWUT7pqtBF/VMUzWoOBRRxEV
+	 l+ZuND44lv/fYfOZSZRdQWPfWdCcatWzjFS1YP17PrO3em6I3ASyQw0V7noEb/HxlW
+	 InWuj0scBFOSBOpfIDLEEGEaAYDpBNiUEKjBtcVAplnG1SBZPFrsu3ogya5jJXEYBq
+	 Tdhe757RdCnSrQBEfNFSymmt722b0CN0nyXuHQqFJfu+4pLQUHnwZTrJhWpw7+7WV4
+	 k45eB0y985+vt5zBOzh1TwBi4Bj7PXS488BKzyxpZzQoJW1exvzdiJmyvqnda4R1rl
+	 hw9hLPGt6KJTQ==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e4dc3d22b8so1553482a12.0;
+        Fri, 28 Feb 2025 06:17:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDsf7qboDPEGN4rmx0wWZXcK/y9yf71lLaYh4Tsfyn0v2QN2KAiI6YX1zx/wMY61RuDXE5+REGhQchVaBT@vger.kernel.org, AJvYcCVjyx4e9GtG2qwEMOAzsV5RUWHNx2SQexX7FPILqivdPnUAX6xwJx/iJcGDSnxPE9QE28rM+K3WrQ==@vger.kernel.org, AJvYcCXosqAZWbhUyHKL4dWn5tOw7Xk21FhsvJA1gHmz9eQNlI0xhzdJhDONHL/wEF3rZK3Pv2JpMzOoDO5ntw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIv48UhpqGmL/u6OOeuj6nEHQWQPcT30s66sxo5/tjPou8dEs+
+	jNrh3ub/GdITyA5PwPaV8G7ShaAKq+nuMbGUSstdekN8ioNatU9ViBkEHASl/h2xFW9zKDbx+1Y
+	e/lMp350Clrhr/QI2xvqx+XmUug==
+X-Google-Smtp-Source: AGHT+IHjthQkObX46y0x27qvzkeyln9C3sLlHRHU7eP7TpYLalIfwcDLQqE0mQgUy4ECwFqBSo9/JmpROBFMKVh/A3s=
+X-Received: by 2002:a17:907:6e92:b0:ab7:b7b5:2a0c with SMTP id
+ a640c23a62f3a-abf2620774dmr419749466b.6.1740752236146; Fri, 28 Feb 2025
+ 06:17:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250226094456.2351571-1-peng.fan@oss.nxp.com>
+ <20250226160945.GA2505223-robh@kernel.org> <20250227030924.GB11411@nxa18884-linux>
+ <CAL_JsqJOqKeDRuASWxCT=EA5LJbONpCX=Re8=XxKUbPToWy2Dg@mail.gmail.com> <Z8HCZQQLofaiGtpG@bogus>
+In-Reply-To: <Z8HCZQQLofaiGtpG@bogus>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 28 Feb 2025 08:17:03 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLePri5m_dE989poUV4auasAxFvgAiYuXVuZHqLcOBGMg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqWAly9mibB4Wnu0iSmsxkTmC_yUXZnPBFIrDHBvIgsef3vgrKT7bmbhac
+Message-ID: <CAL_JsqLePri5m_dE989poUV4auasAxFvgAiYuXVuZHqLcOBGMg@mail.gmail.com>
+Subject: Re: [RFC] dt-bindings: firmware: scmi: Introduce compatible string
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Peng Fan <peng.fan@oss.nxp.com>, saravanak@google.com, cristian.marussi@arm.com, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
-branch HEAD: 9c94c14ca39577b6324c667d8450ffa19fc1e5c4  x86/bootflag: Replace open-coded parity calculation with parity8()
+On Fri, Feb 28, 2025 at 8:04=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.com>=
+ wrote:
+>
+> On Fri, Feb 28, 2025 at 07:34:09AM -0600, Rob Herring wrote:
+> >
+> > - The parent driver creates child devices. The child devices can
+> > either reuse the parent DT node (i.e. set dev.of_node) or just get it
+> > from the parent device if needed.
+> >
+>
+> This is exactly what I was thinking to deal with the issue since this
+> discussion started. I will give this a go. I believe this must solve
+> the issue, but I didn't want to spit it out loud until I tried to hack
+> and check.
 
-elapsed time: 1462m
+The issue with fw_devlink is that it only checks the dependency of the
+parent which won't be enough. When the parent's probe creates the
+child device, that doesn't mean the child has probed. The child driver
+might not be loaded and/or probe is async. I don't think there's
+anyway for the parent probe to wait for child drivers to be probed and
+ready. I think there's similar issues with the DWC3 wrapper and core
+driver split.
 
-configs tested: 12
-configs skipped: 127
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386    buildonly-randconfig-001-20250227    gcc-12
-i386    buildonly-randconfig-002-20250227    gcc-11
-i386    buildonly-randconfig-003-20250227    clang-19
-i386    buildonly-randconfig-004-20250227    gcc-12
-i386    buildonly-randconfig-005-20250227    gcc-11
-i386    buildonly-randconfig-006-20250227    clang-19
-x86_64  buildonly-randconfig-001-20250228    clang-19
-x86_64  buildonly-randconfig-002-20250228    clang-19
-x86_64  buildonly-randconfig-003-20250228    gcc-12
-x86_64  buildonly-randconfig-004-20250228    clang-19
-x86_64  buildonly-randconfig-005-20250228    gcc-12
-x86_64  buildonly-randconfig-006-20250228    gcc-12
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
