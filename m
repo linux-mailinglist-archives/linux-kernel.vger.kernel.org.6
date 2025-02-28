@@ -1,176 +1,190 @@
-Return-Path: <linux-kernel+bounces-539434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7123A4A437
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:26:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E71A4A42D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:25:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83603A862B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3C11683E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAF7279347;
-	Fri, 28 Feb 2025 20:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E809202982;
+	Fri, 28 Feb 2025 20:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfFIn91K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s80Sud3D"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC404202981;
-	Fri, 28 Feb 2025 20:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740774045; cv=none; b=aSLVzjtqLbbBlVY92gA7V1Em10FTkJab+8b/dJQMbCxJWzqWs7hTspGlwGW6/eV52ECwEscIcEiNBdkqTmDXu1R5HQahEbhvSH5Qrwx3gUlpg08L2I09gWdUtj9Yh5QMyZfxmJM/14bdv1yLSbXDkkQooYemoIpv6oLKMU+9IAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740774045; c=relaxed/simple;
-	bh=bbzE7bwrYKBUNI91akgimXhe+iLOXIRvjnh9wKEiBG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLE6wZqFMjSWG+2pp5iL0WexeayMOC1rEdwEhkG0cMAzc0Mhob6fNqJKR/LSkavyByQSBErm48ChG4qtWCVipZWt93UHVT9Hf8Xp97K/Ys0ic8HbMDJmhwwI72/YlJOSKPDQ1qWRTP/+YdMFvLSIIVSdLzCbEvVO1sAjIysHQsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfFIn91K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5A39C4CED6;
-	Fri, 28 Feb 2025 20:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740774045;
-	bh=bbzE7bwrYKBUNI91akgimXhe+iLOXIRvjnh9wKEiBG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfFIn91KSNHhn07yKT9l2oOU8euWhSQeLxxD1+CP5Lmkt8N8i6O/Zn9pEs4NGiCJj
-	 qJEjrvhzqZMOIYECg3O0McklsQMWurW5bICaO6Eqlily54ppx+yXiPrIfcDSkbmmEy
-	 mgA+RTO662SeKhJ/BeytWpw2yGPCMjmkdX2P8FuJVAKh+rj8Ay73HcAZ8F0mxABP/0
-	 t/Etv53LQUPDT8LDrOxXxcp5ZTSXxggaTWVIPD4REQMGOIcj+m3X88aLIXEmmDQWmj
-	 830FksBD61RtpQPNDjonn0bpZ2XqD0baA3+sDkYSi8hDY+Sf6kIPnRC3EZcEYLP+NU
-	 hO0vT2n2HTtbg==
-Date: Fri, 28 Feb 2025 22:20:23 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-Message-ID: <Z8Iah6FgrhSzApwf@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <mafs0cyf4ii4k.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DA81C5485
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740774075; cv=fail; b=kpFgMEpIWScP/RGPUqo210xZt5opCPVNmt0yTgejzV4K5a55Z+UpGGUZl6V6OPqZnJ8mTjraoQG2yPsjU0hxWI+uhTovJed6Ub/I1hCllXQbhTB0hFkLT8sCAEGFdW2+r9OsX28V0IdggxYcGFnAOvaJW/X5419INxk9pBc/qCU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740774075; c=relaxed/simple;
+	bh=8AoJNUP2nu1PCfxvmVwriV2rf6GIgBKnDXjkLQXQ3Hs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8+azQxHcWaOWzEovBG54mQnPHM2VTVlROUOdzax+pXCM+qA8wCYIPDnAYr2CNHUCFCAzPh4SNrDJk2P1iEyAhxQ85nxgs1sL8LgOancFwnm0gmcGEn+qQq5xEiPtNN+yeFKJmxgrhybotp+vodEbBzakWqi5s+Q1k84Esfi8WI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s80Sud3D; arc=fail smtp.client-ip=40.107.92.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d6e2QdlHnHLi/SeBBpzCm9ntw8Fiy/8I3hlwkWrbIybqEZe2CxyP6hbxkJn1uIbQoWG0Y4zrL9gfsiWoA4DxKKLm1uJW50VTeajKGFcDMcNzl4ZV2qxn4aFh8xaHU/m+69TKON/k+XcIDK8HNfeWlVuMxDTpeGUnuVcUrZ0WGHyWg6Nn/afL7QZHliI0JjPWKQxSjKchBBiosLoTqHEDxjNMCgH6AYGy3sMX0+eDS97eIlS2a1R6srJ3E2tCrK0cfSRVKXZjTP9z5KU6P9n4I2Zjgn+s2ux8GTYP62AgP+bbXZeWq9OrodaTrPQLwGyJps4R5Q2lxceuAZIET5as8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rh23gVXQLZh2i5Qiyihvw6DC2PaQQiImJ3sCFR4Q+yg=;
+ b=HJIV5Oi6YqYhiMQaNqyki3W29/Pr8O4Hottd3lVU9uFPax0GngxXJ+XERphM/0yppj1JTlO+O1X+ilkc2fH0WtG0yU/zF1w/ST7N4sd0yAlsAW4QMEV+yLjQvE1/NVTOKZ9HFB8kPHYVo7cBN4GAOyFbcSvETgWZcStC+cDdvOK9BJlQoNcb0tnDhpPBaZ4uBhphMCnkqeq1DQWH7cAj9kbgE/WMfHhKOc0agVnAHO/oDicIC5uGSZoGac/rVURI6DmC3XtQ0qllig9UtpMvbnsFQs02vYqf2iIiEuffyp8LnK496L8JwTb/9K4oYkXpE7PagnPLAKmO9KOcUX79+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rh23gVXQLZh2i5Qiyihvw6DC2PaQQiImJ3sCFR4Q+yg=;
+ b=s80Sud3DV5NR6URjxSwx1liVk4mSLlCm7sz/73WaOmdrh8ddM5DOs4o/GjJUv0cjlMtV6tW9mTaSyBi/zz8TE+rjWUdbHyJZvPEUbzVdiD5N0g7oCM2vaQ6ANC4YyansKMk+ikokbvQhFtLR7C1B7mjUPGO35DyTLxijPuNGcBQdKSvBTtc7gy7knwg+RNI6qry0eFEC92b0cf6SA1stQkvmhPVOGVuH9IL/jLbc4bUCaH7lr+1Yo48ZddAZqUB0fvuelXzIjzfugytmJp2vQ9MT81Vdbe3Rijm3/+Z2qRqq3c3jEp0ygNfex5V/Qt/D60XEYDaTH8LA9flwPkcIrg==
+Received: from SJ0PR13CA0195.namprd13.prod.outlook.com (2603:10b6:a03:2c3::20)
+ by CH3PR12MB8995.namprd12.prod.outlook.com (2603:10b6:610:17e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Fri, 28 Feb
+ 2025 20:21:10 +0000
+Received: from SN1PEPF0002BA51.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c3:cafe::20) by SJ0PR13CA0195.outlook.office365.com
+ (2603:10b6:a03:2c3::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.10 via Frontend Transport; Fri,
+ 28 Feb 2025 20:21:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SN1PEPF0002BA51.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 20:21:08 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Feb
+ 2025 12:20:55 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 28 Feb 2025 12:20:54 -0800
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 28 Feb 2025 12:20:54 -0800
+Date: Fri, 28 Feb 2025 12:20:53 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Robin Murphy <robin.murphy@arm.com>
+CC: <will@kernel.org>, <joro@8bytes.org>, <iommu@lists.linux.dev>,
+	<jgg@nvidia.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommu: Sort out domain user data
+Message-ID: <Z8IapaN1ZD0wImak@Asurada-Nvidia>
+References: <4e68d5820be06adc1b34fc0d1c9399481151daee.1740742271.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <mafs0cyf4ii4k.fsf@kernel.org>
+In-Reply-To: <4e68d5820be06adc1b34fc0d1c9399481151daee.1740742271.git.robin.murphy@arm.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA51:EE_|CH3PR12MB8995:EE_
+X-MS-Office365-Filtering-Correlation-Id: abba1fb1-98d2-4d50-3f2e-08dd58356fe2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kIIiWq2Km6KjQPuu1V7E5iS1dpaV6YGhkQ2HI9Km2+BVFebvPPDKkH+nC4aX?=
+ =?us-ascii?Q?vDg3vtLLKQfL4BMMoJGOYkfeimdlqOSMCeGV2Xv5z0jtjWEXZnKucTRUZqMT?=
+ =?us-ascii?Q?8HdZGAxjP0IewIgGds20h/tfBjDHz/Y3KO7Y0aJo03qCLhwzWSAH9cGFD8h1?=
+ =?us-ascii?Q?P+72fi+PjJfy0vty/1AP0J4BOWeNFoNqiMY8hpvGsW2M7OHic7c3fkHy5/DQ?=
+ =?us-ascii?Q?KDs/dtmjvoaxh2yyhtlcyTpkiVCXigN+VX6W2rUX+7/gcgE+m5deYli1jrzm?=
+ =?us-ascii?Q?4OSA0cJ/GWGhIMb6GFgUtAQ9O2iZH0biUu346+4eBAFAJABAFnqaFYTXscf9?=
+ =?us-ascii?Q?8nwtx/xJI2iF5gpVTn9H5dtMt/Aa/jz6VEY+VjNMF7dxcXN+91Y2sZlFEPWb?=
+ =?us-ascii?Q?l3FWS20lX4VI0EYUMibP+YIqo4GahHtu1enQSlsf3GocvFpTcS/JG9nI51t4?=
+ =?us-ascii?Q?VGbS5d5gGk54LJwctzgYvg0CUZmeCABH6v82o5SqWxWLvy79234tO54fwjsJ?=
+ =?us-ascii?Q?vyg6eENKgjgXk73CYSDREQ5VcaNl0m1u3gUJqG7HJjKhXiDCya7uGl3TqIFo?=
+ =?us-ascii?Q?tZN4LGPFDF5pupucS5Zpu90HtqDzk3weRQLFPcS2M8VhKP1CU8n2JV7RIHHQ?=
+ =?us-ascii?Q?AiaBpFNx5aWmfleCMbXcvUnUqUYB69d7KoEFstXKDCVj23lig3bVysPfJNFu?=
+ =?us-ascii?Q?fHnJZCFIBbVlgyMeL6plYVFDGfKU4ObiJ6qZh5SktYWPPgXYnBONZpbgPY2e?=
+ =?us-ascii?Q?9/31Dr36WLkG2uSoXoHbCYhpFcBC9xeWHiGOK69REELFZ1xdPeCWLvS7vhPp?=
+ =?us-ascii?Q?jvlsVXXJQpAJohhO2iWC5BKW7DVa+07eNQYDAl1gu96RUoFRUtTOctVSe7Fk?=
+ =?us-ascii?Q?zGZ+Id4qauxHJTXUCajJCGseqi07fdOJ0f5Gz8quYyxWOFrlA/xi7TpWWpjM?=
+ =?us-ascii?Q?4aKUqJSij8y7jv+DumYXTFeEa+06J71k0tukg56en8asi/lcyFeSGieHN0s+?=
+ =?us-ascii?Q?yyhzt4J1ST9Kb39Jf61cd1nkxfA7kgw7Zp+Q9t4zvnFmil2Z/N/SKp5TzStw?=
+ =?us-ascii?Q?/gKhyjDvh05fQ/zxXtO5Sf/0NsxHSP54TU/zZR4j9JKoQvmC5C/Kop++VOjM?=
+ =?us-ascii?Q?fa/glMzaadNO0VcXjYruihIoUL3Z6N82htfMXGHejniUBCAWV15EBm05tvOu?=
+ =?us-ascii?Q?Q03bNiO2qSczw8IYyLboWR7rzCrwjUBXkGR+6Zx5bfHmzx+spHuXoeMyoKe/?=
+ =?us-ascii?Q?ba8gCt+QrULMngQIJz+Us+HOQ7sw24a5wiAXR9MstQYUEmKHNuE8Dv8NDJ3k?=
+ =?us-ascii?Q?El6p6X5DuHZkZeW50eX1lVeQ8IC/WQSRXvuXVNiGzXyzEHSEi7o1m1Xz27oj?=
+ =?us-ascii?Q?8vSrMUtxiWD0nRqZBJ2WDF/NjRirc1vz2eYu4JVGBGnMCmEWP4zRQNS6/n2P?=
+ =?us-ascii?Q?TEum3yMzeNwHxMiHy2itrBQCD8w18MMFCOtkSWA0N/mU1KAvgctGA2f1Lvrg?=
+ =?us-ascii?Q?OdA7YkmkGZcHIRQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 20:21:08.8837
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: abba1fb1-98d2-4d50-3f2e-08dd58356fe2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA51.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8995
 
-Hi Pratyush,
+On Fri, Feb 28, 2025 at 11:31:11AM +0000, Robin Murphy wrote:
+> +enum iommu_domain_cookie_type {
+> +	IOMMU_NO_COOKIE,
+> +	IOMMU_DMA_IOVA_COOKIE,
+> +	IOMMU_DMA_MSI_COOKIE,
+> +	IOMMU_FAULT_HANDLER_COOKIE,
+> +	IOMMU_SVA_COOKIE,
 
-On Wed, Feb 26, 2025 at 08:08:27PM +0000, Pratyush Yadav wrote:
-> Hi Mike,
-> 
-> On Thu, Feb 06 2025, Mike Rapoport wrote:
-> 
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> >
-> > Hi,
-> >
-> > This a next version of Alex's "kexec: Allow preservation of ftrace buffers"
-> > series (https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com),
-> > just to make things simpler instead of ftrace we decided to preserve
-> > "reserve_mem" regions.
-> [...]
-> 
-> I applied the patches on top of v6.14-rc1 and tried them out on an x86
-> qemu machine . When I do a plain KHO activate and kexec, I get the below
-> errors on boot. This causes networking to fail on the VM. The errors are
-> consistent and happen every kexec-reboot, though fairly late in boot
-> after systemd tries to bring up network. The same setup has worked fine
-> with Alex's v3 of KHO patches.
-> 
-> Do you see anything obvious that might cause this? I can try to debug
-> this tomorrow, but if it rings any loud bells it would be nice to know.
+I would like to change them to IOMMU_COOKIE_* so the iommufd one
+wouldn't feel redundant like "IOMMU_IOMMUFD_COOKIE".
 
-Thanks for the report!
-It didn't ring any bells, but after I've found the issue and a
-fast-and-dirty fix.
+If you don't mind, I will make the following list:
+-	IOMMU_NO_COOKIE,
+-	IOMMU_DMA_IOVA_COOKIE,
+-	IOMMU_DMA_MSI_COOKIE,
+-	IOMMU_FAULT_HANDLER_COOKIE,
+-	IOMMU_SVA_COOKIE,
++	IOMMU_COOKIE_NONE,
++	IOMMU_COOKIE_DMA_IOVA,
++	IOMMU_COOKIE_DMA_MSI,
++	IOMMU_COOKIE_FAULT_HANDLER,
++	IOMMU_COOKIE_SVA,
++	IOMMU_COOKIE_IOMMUFD,
 
-The scratch areas are allocated from high addresses and there is no scratch
-memory to satisfy memblock_alloc_low() in swiotb, so second kernel produces
-a couple of 
+then:
+diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
+index 7de6e914232e..227514030655 100644
+--- a/drivers/iommu/iommufd/hw_pagetable.c
++++ b/drivers/iommu/iommufd/hw_pagetable.c
+@@ -413,6 +413,7 @@ int iommufd_hwpt_alloc(struct iommufd_ucmd *ucmd)
+                iommufd_put_object(ucmd->ictx, &fault->obj);
+        }
+        hwpt->domain->iommufd_hwpt = hwpt;
++       hwpt->domain->cookie_type = IOMMU_COOKIE_IOMMUFD;
 
-software IO TLB: swiotlb_memblock_alloc: Failed to allocate 67108864 bytes for tlb structure
+        cmd->out_hwpt_id = hwpt->obj.id;
+        rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
 
-and without those buffers e1000 can't dma :(
+And I can put this in my cleanup series v3, as Jason is asking.
 
-A quick fix would be to add another scratch area in the lower memory
-(below). I'll work on a better fix.
-
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index c26753d613cb..37bb54cdb130 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -623,13 +623,13 @@ static phys_addr_t __init scratch_size(int nid)
- static void kho_reserve_scratch(void)
- {
- 	phys_addr_t addr, size;
--	int nid, i = 1;
-+	int nid, i = 2;
- 
- 	if (!kho_enable)
- 		return;
- 
- 	/* FIXME: deal with node hot-plug/remove */
--	kho_scratch_cnt = num_online_nodes() + 1;
-+	kho_scratch_cnt = num_online_nodes() + 2;
- 	size = kho_scratch_cnt * sizeof(*kho_scratch);
- 	kho_scratch = memblock_alloc(size, PAGE_SIZE);
- 	if (!kho_scratch)
-@@ -644,6 +644,15 @@ static void kho_reserve_scratch(void)
- 	kho_scratch[0].addr = addr;
- 	kho_scratch[0].size = size;
- 
-+	addr = 	memblock_phys_alloc_range(size, CMA_MIN_ALIGNMENT_BYTES,
-+					  MEMBLOCK_LOW_LIMIT,
-+					  ARCH_LOW_ADDRESS_LIMIT);
-+	if (!addr)
-+		goto err_free_scratch_areas;
-+
-+	kho_scratch[1].addr = addr;
-+	kho_scratch[1].size = size;
-+
- 	for_each_online_node(nid) {
- 		size = scratch_size(nid);
- 		addr = memblock_alloc_range_nid(size, CMA_MIN_ALIGNMENT_BYTES,
-
-> -- 
-> Regards,
-> Pratyush Yadav
-> 
-
--- 
-Sincerely yours,
-Mike.
+Thanks
+Nicolin
 
