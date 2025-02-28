@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-539151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA19A4A193
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:30:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1147AA4A196
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248C67AB241
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC3A1899C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82281276034;
-	Fri, 28 Feb 2025 18:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F75227560B;
+	Fri, 28 Feb 2025 18:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P6RYC5Be"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qCwuWWaf"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD772755F6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097D427602D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767392; cv=none; b=g15z/Iys1HfqBebOND5LMM3FkpoI6SJqsz0WC49893DvNRTwWIdIc8jfy30acky+PPO/0jehg1GA3aTg5Ho7SIyROl34bhDyguZ1ilwBByyCGHMODE8wjkODfSLE29ykGfm1ndeH6EwInafzYvnN9j+DfZd7bPC59pX6nfCY5lA=
+	t=1740767395; cv=none; b=EtMU8EGuPnu8pn+kifjHjfwXJ689XyW/oc6tdgyB+y5Jhl3hbeu+1Yro339+2PbPk+HKC8XHjLVosjfm40uBAbTYGAGp5Wwsk+oBChm8H0Vee9eqxZmrRttLE/B0z96DE6LTuKAM5WexkFyK9jE2BIb+J/eIMiDBXzGvH9YCYxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767392; c=relaxed/simple;
-	bh=vHaXUAlNn8PozCDKoY9kUl2s51Y98UGyKOdNrWvNRpU=;
+	s=arc-20240116; t=1740767395; c=relaxed/simple;
+	bh=zOC6ZFYwwXeKjDbmfDS+J9wpcZD5Ybi7JyfuhbyK9HM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OdDKgH2T5W2mnFXA8DiafFh3tUEogflFclDcXrg3AqYfk0YcFyt3fQN6q5ymHeK69h9s0sP0R7naRL91XDSZDxkxkz4Su5rvC15KJe/Bjm8G50XuTGVx/4NPJoAt1TtrGsIx5CnoYEbQAn0u+WezzoqqeasWNzL8VQMZqyhayjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P6RYC5Be; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=qQcUfFULlojrdluMDZSS4gkSWDwLdTiLgwARHKCsaMIApK4xBABctCKvLbw31A9lEA/lWbBCkJNSGgoel3hpdu0c4eCM6IG+2ev1HeVs8F4eveqvrPCn9DGYtjWmCOqMredF68lGEgT3t+fnTPC1X1N5IQkrmly1XIBBu3sRoes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qCwuWWaf; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so5260838a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:29:50 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22356964533so32384935ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740767390; x=1741372190; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740767392; x=1741372192; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKtMLmlpe+m6qN9ca3/progHrAqe0123z61YwAW9d3s=;
-        b=P6RYC5BeX37Yoyf8kX1eUMYMvp+VTHvM0Do8l06m0GuBzK0rE1HgtoQeZDpiXoqcYy
-         8JlFByDOaLuw7Z2gV+EVC1uuGt010klvdTLCQ6Qa02U3x+AtVOxCdvhm5VK0AaS+fBZ7
-         JQj8rX2y6IeFZRTBnMPVKtPHQ56BS9+/o/KHdQ+1f9q4FsF37K1fDHI8r9xq2LMtz8tI
-         oJ2SDonS6lj3tleJ8U6+Q5DyZIg30+DL8/Ml3BvHErUvjZWbTYnan6x/+o0XSmcCyGVi
-         pnt5nYgNxo8MOhSti38fIBakC5sVHnbz5dD4ouOt9GHjLKVHip5wzgs9D8klo1htT1Kx
-         Q71g==
+        bh=dzEENFYZl7nQllfpXO7dpxeX1+3boBuKmXbQdqjtFEg=;
+        b=qCwuWWafsZEqIXExw096jKhB9KubYEGq5MHO9EGuzBmwF8q151rvwKnUKehWFk06F/
+         ouW21B8m38l1oLIOsJIFuwubKS7PposbtUZrJKMku97qc5i4ozAi0LWYxvrj1G1x7T/k
+         lg+Naf1m0idcasC0haRaUJIjrcNhr/ltBk6HiHAonVV9quxO6v5kYFRoveXYZAOSSr+0
+         JSUw920vP0KCVdV8RxCXYJkqFtMjnkkg4hvXEW6hSDi3ruuRwh2gpFwMaVrE8m300jg0
+         JGQbwQo8RtXZpVO/S5S7ggxS+yisYwf8KD9XbQhkgLjMVFKzQjvJNcJhHCK61oH4S+A0
+         e+oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767390; x=1741372190;
+        d=1e100.net; s=20230601; t=1740767392; x=1741372192;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKtMLmlpe+m6qN9ca3/progHrAqe0123z61YwAW9d3s=;
-        b=Wpq1+0aaaCAan/p1VZQ9luI2jsfHYy7NlToWylxNlvAo7kPo4I5w8ewOmQCc4R46OV
-         DXUlbFnjTsHex4hRAAeZahwTz0+PaHIpm00C2o3gyK+qUtQZy9x0Q14DCZfEsRYQv4yp
-         XPK+Of/zMKWeu4h57G7zrwZmoFEc+twoyeUjPMdRMwX2DSIptAychuS72GDMY4XH4h4R
-         EHFz8ogb/TqXlPd3QG5e+oLgdcs2nc4lvNRAHjrqNkaj1GT53RZu0+H3MEeYNWlw8M1S
-         7oxCoE0cl7tyvE1m9Vh46SVc+9oyUSdkD3ZnIYJUZWovFHnIkKeOnRIliiuCai6wVrOK
-         XQVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeDJmWw7kbFSVRzkvMEH4S77vFJdtXSKRho3OdEPdnyFamvfx0+zUBJsxXC/+IA8oqE+JIEXAVdUVazG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwACuuUbIWm6TA3jd0v3/xK6x1C4iqEYGhY8jBidNj5wCRde7TP
-	qh8Nxx56fAlg4AGr4fvMuV0pxVIynRo98Gf+qkAgAG33EHsa8FtOe7TtxD4h5vdg6FsbAA==
-X-Google-Smtp-Source: AGHT+IHqJuYtYkzOhZDMCMvoR+05mDEEDRM0zr7QytAhww8Je1Y3UD1lMlTzOEV4CRBkoQI5L703TwyQ
-X-Received: from pjbsr11.prod.google.com ([2002:a17:90b:4e8b:b0:2ef:82a8:7171])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a89:b0:2ef:e0bb:1ef2
- with SMTP id 98e67ed59e1d1-2febab71ec6mr6563503a91.19.1740767390505; Fri, 28
- Feb 2025 10:29:50 -0800 (PST)
-Date: Fri, 28 Feb 2025 18:29:02 +0000
+        bh=dzEENFYZl7nQllfpXO7dpxeX1+3boBuKmXbQdqjtFEg=;
+        b=qgW+S4Sira+myBeNAIr4XUNIl/SzFzDslcFh5EZvtlESZnEu4qrOiYv4kxwU7tvd7K
+         LT86jdyVPggvpFoAwmTVTLZEF8bVzMrFxss0FuZtOYno65mYXq9Q+8iVB+BS8UWr64Qu
+         Xkb5wLhEc6yvhUDCcK3WtwmwIs9ZZKXgqIKOXshHQRLwkKmvYghqV26LkmxruPioYnoc
+         35sQipfcpkGKSCXiB284oGFRQ1DnYjW1R6miBvmnpOrJBt4MN9VHH2YWkLgMLmRFSnI5
+         uNu5qF8IIXeKnmp1Ye/pwvrKhFsb/oIRFPGPNNq7YwyEzTNuPXTAqABbigJlIUGFBAqz
+         E47w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1R7DdQZr/HpoJJD2MRnHIbttCrrs/C3MOOuWFCa1y5C39KPB6pv0g6ACq1AZG9nlaSkN8bY10YOOS/Ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuwQbbOwYvMjB0XRx2nTlI4BadBD24X1LmjMAJw/cJZn5PoFyp
+	2MzOlIUjEht1iLx2xRDTzVWh+2T1cxQrARRc3VENAWlFwvGKC0WGZhB4/wMTvihD3G7K4g==
+X-Google-Smtp-Source: AGHT+IEozZRcCCzIxcAfCp0hqih2IMauOaJb9F3VaZQMgVwa3HP5TGN8xienmC6z56OPijrfHzg1G3ms
+X-Received: from pgar6.prod.google.com ([2002:a05:6a02:2e86:b0:adf:4e78:be67])
+ (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:cd91:b0:1ee:c6bf:7c49
+ with SMTP id adf61e73a8af0-1f2f4c9737emr8391249637.6.1740767391798; Fri, 28
+ Feb 2025 10:29:51 -0800 (PST)
+Date: Fri, 28 Feb 2025 18:29:03 +0000
 In-Reply-To: <20250228182928.2645936-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,209 +72,1091 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228182928.2645936-1-fvdl@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228182928.2645936-2-fvdl@google.com>
-Subject: [PATCH v5 01/27] mm/cma: export total and free number of pages for
- CMA areas
+Message-ID: <20250228182928.2645936-3-fvdl@google.com>
+Subject: [PATCH v5 02/27] mm, cma: support multiple contiguous ranges, if requested
 From: Frank van der Linden <fvdl@google.com>
 To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
 Cc: yuzhao@google.com, usamaarif642@gmail.com, joao.m.martins@oracle.com, 
 	roman.gushchin@linux.dev, ziy@nvidia.com, david@redhat.com, 
-	Frank van der Linden <fvdl@google.com>, Oscar Salvador <osalvador@suse.de>
+	Frank van der Linden <fvdl@google.com>, Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 
-In addition to the number of allocations and releases, system
-management software may like to be aware of the size of CMA
-areas, and how many pages are available in it. This information
-is currently not available, so export it in total_page and
-available_pages, respectively.
+Currently, CMA manages one range of physically contiguous memory.
+Creation of larger CMA areas with hugetlb_cma may run in to gaps
+in physical memory, so that they are not able to allocate that
+contiguous physical range from memblock when creating the CMA
+area.
 
-The name 'available_pages' was picked over 'free_pages' because
-'free' implies that the pages are unused. But they might not
-be, they just haven't been used by cma_alloc
+This can happen, for example, on an AMD system with > 1TB of memory,
+where there will be a gap just below the 1TB (40bit DMA) line. If
+you have set aside most of memory for potential hugetlb CMA allocation,
+cma_declare_contiguous_nid will fail.
 
-The number of available pages is tracked regardless of
-CONFIG_CMA_SYSFS, allowing for a few minor shortcuts in
-the code, avoiding bitmap operations.
+hugetlb_cma doesn't need the entire area to be one physically
+contiguous range. It just cares about being able to get physically
+contiguous chunks of a certain size (e.g. 1G), and it is fine
+to have the CMA area backed by multiple physical ranges, as
+long as it gets 1G contiguous allocations.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Multi-range support is implemented by introducing an array of
+ranges, instead of just one big one. Each range has its own bitmap.
+Effectively, the allocate and release operations work as before,
+just per-range. So, instead of going through one large bitmap, they
+now go through a number of smaller ones.
+
+The maximum number of supported ranges is 8, as defined in
+CMA_MAX_RANGES.
+
+Since some current users of CMA expect a CMA area to just use one
+physically contiguous range, only allow for multiple ranges if a
+new interface, cma_declare_contiguous_nid_multi, is used. The other
+interfaces will work like before, creating only CMA areas with
+1 range.
+
+cma_declare_contiguous_nid_multi works as follows, mimicking the
+default "bottom-up, above 4G" reservation approach:
+
+0) Try cma_declare_contiguous_nid, which will use only one
+   region. If this succeeds, return. This makes sure that for
+   all the cases that currently work, the behavior remains
+   unchanged even if the caller switches from
+   cma_declare_contiguous_nid to cma_declare_contiguous_nid_multi.
+1) Select the largest free memblock ranges above 4G, with
+   a maximum number of CMA_MAX_RANGES.
+2) If we did not find at most CMA_MAX_RANGES that add
+   up to the total size requested, return -ENOMEM.
+3) Sort the selected ranges by base address.
+4) Reserve them bottom-up until we get what we wanted.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Frank van der Linden <fvdl@google.com>
 ---
- Documentation/ABI/testing/sysfs-kernel-mm-cma | 13 +++++++++++
- mm/cma.c                                      | 22 ++++++++++++++-----
- mm/cma.h                                      |  1 +
- mm/cma_debug.c                                |  5 +----
- mm/cma_sysfs.c                                | 20 +++++++++++++++++
- 5 files changed, 51 insertions(+), 10 deletions(-)
+ Documentation/admin-guide/mm/cma_debugfs.rst |  10 +-
+ include/linux/cma.h                          |   3 +
+ mm/cma.c                                     | 594 +++++++++++++++----
+ mm/cma.h                                     |  27 +-
+ mm/cma_debug.c                               |  56 +-
+ 5 files changed, 550 insertions(+), 140 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-cma b/Documentation/ABI/testing/sysfs-kernel-mm-cma
-index dfd755201142..aaf2a5d8b13b 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-cma
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-cma
-@@ -29,3 +29,16 @@ Date:		Feb 2024
- Contact:	Anshuman Khandual <anshuman.khandual@arm.com>
- Description:
- 		the number of pages CMA API succeeded to release
-+
-+What:		/sys/kernel/mm/cma/<cma-heap-name>/total_pages
-+Date:		Jun 2024
-+Contact:	Frank van der Linden <fvdl@google.com>
-+Description:
-+		The size of the CMA area in pages.
-+
-+What:		/sys/kernel/mm/cma/<cma-heap-name>/available_pages
-+Date:		Jun 2024
-+Contact:	Frank van der Linden <fvdl@google.com>
-+Description:
-+		The number of pages in the CMA area that are still
-+		available for CMA allocation.
+diff --git a/Documentation/admin-guide/mm/cma_debugfs.rst b/Documentation/admin-guide/mm/cma_debugfs.rst
+index 7367e6294ef6..4120e9cb0cd5 100644
+--- a/Documentation/admin-guide/mm/cma_debugfs.rst
++++ b/Documentation/admin-guide/mm/cma_debugfs.rst
+@@ -12,10 +12,16 @@ its CMA name like below:
+ 
+ The structure of the files created under that directory is as follows:
+ 
+- - [RO] base_pfn: The base PFN (Page Frame Number) of the zone.
++ - [RO] base_pfn: The base PFN (Page Frame Number) of the CMA area.
++        This is the same as ranges/0/base_pfn.
+  - [RO] count: Amount of memory in the CMA area.
+  - [RO] order_per_bit: Order of pages represented by one bit.
+- - [RO] bitmap: The bitmap of page states in the zone.
++ - [RO] bitmap: The bitmap of allocated pages in the area.
++        This is the same as ranges/0/base_pfn.
++ - [RO] ranges/N/base_pfn: The base PFN of contiguous range N
++        in the CMA area.
++ - [RO] ranges/N/bitmap: The bit map of allocated pages in
++        range N in the CMA area.
+  - [WO] alloc: Allocate N pages from that CMA area. For example::
+ 
+ 	echo 5 > <debugfs>/cma/<cma_name>/alloc
+diff --git a/include/linux/cma.h b/include/linux/cma.h
+index d15b64f51336..863427c27dc2 100644
+--- a/include/linux/cma.h
++++ b/include/linux/cma.h
+@@ -40,6 +40,9 @@ static inline int __init cma_declare_contiguous(phys_addr_t base,
+ 	return cma_declare_contiguous_nid(base, size, limit, alignment,
+ 			order_per_bit, fixed, name, res_cma, NUMA_NO_NODE);
+ }
++extern int __init cma_declare_contiguous_multi(phys_addr_t size,
++			phys_addr_t align, unsigned int order_per_bit,
++			const char *name, struct cma **res_cma, int nid);
+ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+ 					unsigned int order_per_bit,
+ 					const char *name,
 diff --git a/mm/cma.c b/mm/cma.c
-index de5bc0c81fc2..95a8788e54d3 100644
+index 95a8788e54d3..34caa6b29c99 100644
 --- a/mm/cma.c
 +++ b/mm/cma.c
-@@ -86,6 +86,7 @@ static void cma_clear_bitmap(struct cma *cma, unsigned long pfn,
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/memblock.h>
+ #include <linux/err.h>
++#include <linux/list.h>
+ #include <linux/mm.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+@@ -35,9 +36,16 @@ struct cma cma_areas[MAX_CMA_AREAS];
+ unsigned int cma_area_count;
+ static DEFINE_MUTEX(cma_mutex);
+ 
++static int __init __cma_declare_contiguous_nid(phys_addr_t base,
++			phys_addr_t size, phys_addr_t limit,
++			phys_addr_t alignment, unsigned int order_per_bit,
++			bool fixed, const char *name, struct cma **res_cma,
++			int nid);
++
+ phys_addr_t cma_get_base(const struct cma *cma)
+ {
+-	return PFN_PHYS(cma->base_pfn);
++	WARN_ON_ONCE(cma->nranges != 1);
++	return PFN_PHYS(cma->ranges[0].base_pfn);
+ }
+ 
+ unsigned long cma_get_size(const struct cma *cma)
+@@ -63,9 +71,10 @@ static unsigned long cma_bitmap_aligned_mask(const struct cma *cma,
+  * The value returned is represented in order_per_bits.
+  */
+ static unsigned long cma_bitmap_aligned_offset(const struct cma *cma,
++					       const struct cma_memrange *cmr,
+ 					       unsigned int align_order)
+ {
+-	return (cma->base_pfn & ((1UL << align_order) - 1))
++	return (cmr->base_pfn & ((1UL << align_order) - 1))
+ 		>> cma->order_per_bit;
+ }
+ 
+@@ -75,46 +84,57 @@ static unsigned long cma_bitmap_pages_to_bits(const struct cma *cma,
+ 	return ALIGN(pages, 1UL << cma->order_per_bit) >> cma->order_per_bit;
+ }
+ 
+-static void cma_clear_bitmap(struct cma *cma, unsigned long pfn,
+-			     unsigned long count)
++static void cma_clear_bitmap(struct cma *cma, const struct cma_memrange *cmr,
++			     unsigned long pfn, unsigned long count)
+ {
+ 	unsigned long bitmap_no, bitmap_count;
+ 	unsigned long flags;
+ 
+-	bitmap_no = (pfn - cma->base_pfn) >> cma->order_per_bit;
++	bitmap_no = (pfn - cmr->base_pfn) >> cma->order_per_bit;
+ 	bitmap_count = cma_bitmap_pages_to_bits(cma, count);
  
  	spin_lock_irqsave(&cma->lock, flags);
- 	bitmap_clear(cma->bitmap, bitmap_no, bitmap_count);
-+	cma->available_count += count;
+-	bitmap_clear(cma->bitmap, bitmap_no, bitmap_count);
++	bitmap_clear(cmr->bitmap, bitmap_no, bitmap_count);
+ 	cma->available_count += count;
  	spin_unlock_irqrestore(&cma->lock, flags);
  }
  
-@@ -133,7 +134,7 @@ static void __init cma_activate_area(struct cma *cma)
- 			free_reserved_page(pfn_to_page(pfn));
+ static void __init cma_activate_area(struct cma *cma)
+ {
+-	unsigned long base_pfn = cma->base_pfn, pfn;
++	unsigned long pfn, base_pfn;
++	int allocrange, r;
+ 	struct zone *zone;
++	struct cma_memrange *cmr;
++
++	for (allocrange = 0; allocrange < cma->nranges; allocrange++) {
++		cmr = &cma->ranges[allocrange];
++		cmr->bitmap = bitmap_zalloc(cma_bitmap_maxno(cma, cmr),
++					    GFP_KERNEL);
++		if (!cmr->bitmap)
++			goto cleanup;
++	}
+ 
+-	cma->bitmap = bitmap_zalloc(cma_bitmap_maxno(cma), GFP_KERNEL);
+-	if (!cma->bitmap)
+-		goto out_error;
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++		base_pfn = cmr->base_pfn;
+ 
+-	/*
+-	 * alloc_contig_range() requires the pfn range specified to be in the
+-	 * same zone. Simplify by forcing the entire CMA resv range to be in the
+-	 * same zone.
+-	 */
+-	WARN_ON_ONCE(!pfn_valid(base_pfn));
+-	zone = page_zone(pfn_to_page(base_pfn));
+-	for (pfn = base_pfn + 1; pfn < base_pfn + cma->count; pfn++) {
+-		WARN_ON_ONCE(!pfn_valid(pfn));
+-		if (page_zone(pfn_to_page(pfn)) != zone)
+-			goto not_in_zone;
+-	}
++		/*
++		 * alloc_contig_range() requires the pfn range specified
++		 * to be in the same zone. Simplify by forcing the entire
++		 * CMA resv range to be in the same zone.
++		 */
++		WARN_ON_ONCE(!pfn_valid(base_pfn));
++		zone = page_zone(pfn_to_page(base_pfn));
++		for (pfn = base_pfn + 1; pfn < base_pfn + cmr->count; pfn++) {
++			WARN_ON_ONCE(!pfn_valid(pfn));
++			if (page_zone(pfn_to_page(pfn)) != zone)
++				goto cleanup;
++		}
+ 
+-	for (pfn = base_pfn; pfn < base_pfn + cma->count;
+-	     pfn += pageblock_nr_pages)
+-		init_cma_reserved_pageblock(pfn_to_page(pfn));
++		for (pfn = base_pfn; pfn < base_pfn + cmr->count;
++		     pfn += pageblock_nr_pages)
++			init_cma_reserved_pageblock(pfn_to_page(pfn));
++	}
+ 
+ 	spin_lock_init(&cma->lock);
+ 
+@@ -125,13 +145,19 @@ static void __init cma_activate_area(struct cma *cma)
+ 
+ 	return;
+ 
+-not_in_zone:
+-	bitmap_free(cma->bitmap);
+-out_error:
++cleanup:
++	for (r = 0; r < allocrange; r++)
++		bitmap_free(cma->ranges[r].bitmap);
++
+ 	/* Expose all pages to the buddy, they are useless for CMA. */
+ 	if (!cma->reserve_pages_on_error) {
+-		for (pfn = base_pfn; pfn < base_pfn + cma->count; pfn++)
+-			free_reserved_page(pfn_to_page(pfn));
++		for (r = 0; r < allocrange; r++) {
++			cmr = &cma->ranges[r];
++			for (pfn = cmr->base_pfn;
++			     pfn < cmr->base_pfn + cmr->count;
++			     pfn++)
++				free_reserved_page(pfn_to_page(pfn));
++		}
  	}
  	totalcma_pages -= cma->count;
--	cma->count = 0;
-+	cma->available_count = cma->count = 0;
- 	pr_err("CMA area %s could not be activated\n", cma->name);
+ 	cma->available_count = cma->count = 0;
+@@ -154,6 +180,43 @@ void __init cma_reserve_pages_on_error(struct cma *cma)
+ 	cma->reserve_pages_on_error = true;
  }
  
-@@ -206,7 +207,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
- 
- 	cma->base_pfn = PFN_DOWN(base);
--	cma->count = size >> PAGE_SHIFT;
++static int __init cma_new_area(const char *name, phys_addr_t size,
++			       unsigned int order_per_bit,
++			       struct cma **res_cma)
++{
++	struct cma *cma;
++
++	if (cma_area_count == ARRAY_SIZE(cma_areas)) {
++		pr_err("Not enough slots for CMA reserved regions!\n");
++		return -ENOSPC;
++	}
++
++	/*
++	 * Each reserved area must be initialised later, when more kernel
++	 * subsystems (like slab allocator) are available.
++	 */
++	cma = &cma_areas[cma_area_count];
++	cma_area_count++;
++
++	if (name)
++		snprintf(cma->name, CMA_MAX_NAME, "%s", name);
++	else
++		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
++
 +	cma->available_count = cma->count = size >> PAGE_SHIFT;
- 	cma->order_per_bit = order_per_bit;
++	cma->order_per_bit = order_per_bit;
++	*res_cma = cma;
++	totalcma_pages += cma->count;
++
++	return 0;
++}
++
++static void __init cma_drop_area(struct cma *cma)
++{
++	totalcma_pages -= cma->count;
++	cma_area_count--;
++}
++
+ /**
+  * cma_init_reserved_mem() - create custom contiguous area from reserved memory
+  * @base: Base address of the reserved area
+@@ -172,13 +235,9 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+ 				 struct cma **res_cma)
+ {
+ 	struct cma *cma;
++	int ret;
+ 
+ 	/* Sanity checks */
+-	if (cma_area_count == ARRAY_SIZE(cma_areas)) {
+-		pr_err("Not enough slots for CMA reserved regions!\n");
+-		return -ENOSPC;
+-	}
+-
+ 	if (!size || !memblock_is_region_reserved(base, size))
+ 		return -EINVAL;
+ 
+@@ -195,25 +254,261 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+ 	if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
+ 		return -EINVAL;
+ 
++	ret = cma_new_area(name, size, order_per_bit, &cma);
++	if (ret != 0)
++		return ret;
++
++	cma->ranges[0].base_pfn = PFN_DOWN(base);
++	cma->ranges[0].count = cma->count;
++	cma->nranges = 1;
++
++	*res_cma = cma;
++
++	return 0;
++}
++
++/*
++ * Structure used while walking physical memory ranges and finding out
++ * which one(s) to use for a CMA area.
++ */
++struct cma_init_memrange {
++	phys_addr_t base;
++	phys_addr_t size;
++	struct list_head list;
++};
++
++/*
++ * Work array used during CMA initialization.
++ */
++static struct cma_init_memrange memranges[CMA_MAX_RANGES] __initdata;
++
++static bool __init revsizecmp(struct cma_init_memrange *mlp,
++			      struct cma_init_memrange *mrp)
++{
++	return mlp->size > mrp->size;
++}
++
++static bool __init basecmp(struct cma_init_memrange *mlp,
++			   struct cma_init_memrange *mrp)
++{
++	return mlp->base < mrp->base;
++}
++
++/*
++ * Helper function to create sorted lists.
++ */
++static void __init list_insert_sorted(
++	struct list_head *ranges,
++	struct cma_init_memrange *mrp,
++	bool (*cmp)(struct cma_init_memrange *lh, struct cma_init_memrange *rh))
++{
++	struct list_head *mp;
++	struct cma_init_memrange *mlp;
++
++	if (list_empty(ranges))
++		list_add(&mrp->list, ranges);
++	else {
++		list_for_each(mp, ranges) {
++			mlp = list_entry(mp, struct cma_init_memrange, list);
++			if (cmp(mlp, mrp))
++				break;
++		}
++		__list_add(&mrp->list, mlp->list.prev, &mlp->list);
++	}
++}
++
++/*
++ * Create CMA areas with a total size of @total_size. A normal allocation
++ * for one area is tried first. If that fails, the biggest memblock
++ * ranges above 4G are selected, and allocated bottom up.
++ *
++ * The complexity here is not great, but this function will only be
++ * called during boot, and the lists operated on have fewer than
++ * CMA_MAX_RANGES elements (default value: 8).
++ */
++int __init cma_declare_contiguous_multi(phys_addr_t total_size,
++			phys_addr_t align, unsigned int order_per_bit,
++			const char *name, struct cma **res_cma, int nid)
++{
++	phys_addr_t start, end;
++	phys_addr_t size, sizesum, sizeleft;
++	struct cma_init_memrange *mrp, *mlp, *failed;
++	struct cma_memrange *cmrp;
++	LIST_HEAD(ranges);
++	LIST_HEAD(final_ranges);
++	struct list_head *mp, *next;
++	int ret, nr = 1;
++	u64 i;
++	struct cma *cma;
++
+ 	/*
+-	 * Each reserved area must be initialised later, when more kernel
+-	 * subsystems (like slab allocator) are available.
++	 * First, try it the normal way, producing just one range.
+ 	 */
+-	cma = &cma_areas[cma_area_count];
++	ret = __cma_declare_contiguous_nid(0, total_size, 0, align,
++			order_per_bit, false, name, res_cma, nid);
++	if (ret != -ENOMEM)
++		goto out;
+ 
+-	if (name)
+-		snprintf(cma->name, CMA_MAX_NAME, name);
+-	else
+-		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
++	/*
++	 * Couldn't find one range that fits our needs, so try multiple
++	 * ranges.
++	 *
++	 * No need to do the alignment checks here, the call to
++	 * cma_declare_contiguous_nid above would have caught
++	 * any issues. With the checks, we know that:
++	 *
++	 * - @align is a power of 2
++	 * - @align is >= pageblock alignment
++	 * - @size is aligned to @align and to @order_per_bit
++	 *
++	 * So, as long as we create ranges that have a base
++	 * aligned to @align, and a size that is aligned to
++	 * both @align and @order_to_bit, things will work out.
++	 */
++	nr = 0;
++	sizesum = 0;
++	failed = NULL;
+ 
+-	cma->base_pfn = PFN_DOWN(base);
+-	cma->available_count = cma->count = size >> PAGE_SHIFT;
+-	cma->order_per_bit = order_per_bit;
++	ret = cma_new_area(name, total_size, order_per_bit, &cma);
++	if (ret != 0)
++		goto out;
++
++	align = max_t(phys_addr_t, align, CMA_MIN_ALIGNMENT_BYTES);
++	/*
++	 * Create a list of ranges above 4G, largest range first.
++	 */
++	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &start, &end, NULL) {
++		if (upper_32_bits(start) == 0)
++			continue;
++
++		start = ALIGN(start, align);
++		if (start >= end)
++			continue;
++
++		end = ALIGN_DOWN(end, align);
++		if (end <= start)
++			continue;
++
++		size = end - start;
++		size = ALIGN_DOWN(size, (PAGE_SIZE << order_per_bit));
++		if (!size)
++			continue;
++		sizesum += size;
++
++		pr_debug("consider %016llx - %016llx\n", (u64)start, (u64)end);
++
++		/*
++		 * If we don't yet have used the maximum number of
++		 * areas, grab a new one.
++		 *
++		 * If we can't use anymore, see if this range is not
++		 * smaller than the smallest one already recorded. If
++		 * not, re-use the smallest element.
++		 */
++		if (nr < CMA_MAX_RANGES)
++			mrp = &memranges[nr++];
++		else {
++			mrp = list_last_entry(&ranges,
++					      struct cma_init_memrange, list);
++			if (size < mrp->size)
++				continue;
++			list_del(&mrp->list);
++			sizesum -= mrp->size;
++			pr_debug("deleted %016llx - %016llx from the list\n",
++				(u64)mrp->base, (u64)mrp->base + size);
++		}
++		mrp->base = start;
++		mrp->size = size;
++
++		/*
++		 * Now do a sorted insert.
++		 */
++		list_insert_sorted(&ranges, mrp, revsizecmp);
++		pr_debug("added %016llx - %016llx to the list\n",
++		    (u64)mrp->base, (u64)mrp->base + size);
++		pr_debug("total size now %llu\n", (u64)sizesum);
++	}
++
++	/*
++	 * There is not enough room in the CMA_MAX_RANGES largest
++	 * ranges, so bail out.
++	 */
++	if (sizesum < total_size) {
++		cma_drop_area(cma);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/*
++	 * Found ranges that provide enough combined space.
++	 * Now, sorted them by address, smallest first, because we
++	 * want to mimic a bottom-up memblock allocation.
++	 */
++	sizesum = 0;
++	list_for_each_safe(mp, next, &ranges) {
++		mlp = list_entry(mp, struct cma_init_memrange, list);
++		list_del(mp);
++		list_insert_sorted(&final_ranges, mlp, basecmp);
++		sizesum += mlp->size;
++		if (sizesum >= total_size)
++			break;
++	}
++
++	/*
++	 * Walk the final list, and add a CMA range for
++	 * each range, possibly not using the last one fully.
++	 */
++	nr = 0;
++	sizeleft = total_size;
++	list_for_each(mp, &final_ranges) {
++		mlp = list_entry(mp, struct cma_init_memrange, list);
++		size = min(sizeleft, mlp->size);
++		if (memblock_reserve(mlp->base, size)) {
++			/*
++			 * Unexpected error. Could go on to
++			 * the next one, but just abort to
++			 * be safe.
++			 */
++			failed = mlp;
++			break;
++		}
++
++		pr_debug("created region %d: %016llx - %016llx\n",
++		    nr, (u64)mlp->base, (u64)mlp->base + size);
++		cmrp = &cma->ranges[nr++];
++		cmrp->base_pfn = PHYS_PFN(mlp->base);
++		cmrp->count = size >> PAGE_SHIFT;
++
++		sizeleft -= size;
++		if (sizeleft == 0)
++			break;
++	}
++
++	if (failed) {
++		list_for_each(mp, &final_ranges) {
++			mlp = list_entry(mp, struct cma_init_memrange, list);
++			if (mlp == failed)
++				break;
++			memblock_phys_free(mlp->base, mlp->size);
++		}
++		cma_drop_area(cma);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	cma->nranges = nr;
  	*res_cma = cma;
- 	cma_area_count++;
-@@ -390,7 +391,7 @@ static void cma_debug_show_areas(struct cma *cma)
+-	cma_area_count++;
+-	totalcma_pages += cma->count;
+ 
+-	return 0;
++out:
++	if (ret != 0)
++		pr_err("Failed to reserve %lu MiB\n",
++			(unsigned long)total_size / SZ_1M);
++	else
++		pr_info("Reserved %lu MiB in %d range%s\n",
++			(unsigned long)total_size / SZ_1M, nr,
++			nr > 1 ? "s" : "");
++
++	return ret;
+ }
+ 
+ /**
+@@ -241,6 +536,26 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 			phys_addr_t alignment, unsigned int order_per_bit,
+ 			bool fixed, const char *name, struct cma **res_cma,
+ 			int nid)
++{
++	int ret;
++
++	ret = __cma_declare_contiguous_nid(base, size, limit, alignment,
++			order_per_bit, fixed, name, res_cma, nid);
++	if (ret != 0)
++		pr_err("Failed to reserve %ld MiB\n",
++				(unsigned long)size / SZ_1M);
++	else
++		pr_info("Reserved %ld MiB at %pa\n",
++				(unsigned long)size / SZ_1M, &base);
++
++	return ret;
++}
++
++static int __init __cma_declare_contiguous_nid(phys_addr_t base,
++			phys_addr_t size, phys_addr_t limit,
++			phys_addr_t alignment, unsigned int order_per_bit,
++			bool fixed, const char *name, struct cma **res_cma,
++			int nid)
+ {
+ 	phys_addr_t memblock_end = memblock_end_of_DRAM();
+ 	phys_addr_t highmem_start;
+@@ -273,10 +588,9 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 	/* Sanitise input arguments. */
+ 	alignment = max_t(phys_addr_t, alignment, CMA_MIN_ALIGNMENT_BYTES);
+ 	if (fixed && base & (alignment - 1)) {
+-		ret = -EINVAL;
+ 		pr_err("Region at %pa must be aligned to %pa bytes\n",
+ 			&base, &alignment);
+-		goto err;
++		return -EINVAL;
+ 	}
+ 	base = ALIGN(base, alignment);
+ 	size = ALIGN(size, alignment);
+@@ -294,10 +608,9 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 	 * low/high memory boundary.
+ 	 */
+ 	if (fixed && base < highmem_start && base + size > highmem_start) {
+-		ret = -EINVAL;
+ 		pr_err("Region at %pa defined on low/high memory boundary (%pa)\n",
+ 			&base, &highmem_start);
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	/*
+@@ -309,18 +622,16 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 		limit = memblock_end;
+ 
+ 	if (base + size > limit) {
+-		ret = -EINVAL;
+ 		pr_err("Size (%pa) of region at %pa exceeds limit (%pa)\n",
+ 			&size, &base, &limit);
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	/* Reserve memory */
+ 	if (fixed) {
+ 		if (memblock_is_region_reserved(base, size) ||
+ 		    memblock_reserve(base, size) < 0) {
+-			ret = -EBUSY;
+-			goto err;
++			return -EBUSY;
+ 		}
+ 	} else {
+ 		phys_addr_t addr = 0;
+@@ -357,10 +668,8 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 		if (!addr) {
+ 			addr = memblock_alloc_range_nid(size, alignment, base,
+ 					limit, nid, true);
+-			if (!addr) {
+-				ret = -ENOMEM;
+-				goto err;
+-			}
++			if (!addr)
++				return -ENOMEM;
+ 		}
+ 
+ 		/*
+@@ -373,75 +682,67 @@ int __init cma_declare_contiguous_nid(phys_addr_t base,
+ 
+ 	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma);
+ 	if (ret)
+-		goto free_mem;
+-
+-	pr_info("Reserved %ld MiB at %pa on node %d\n", (unsigned long)size / SZ_1M,
+-		&base, nid);
+-	return 0;
++		memblock_phys_free(base, size);
+ 
+-free_mem:
+-	memblock_phys_free(base, size);
+-err:
+-	pr_err("Failed to reserve %ld MiB on node %d\n", (unsigned long)size / SZ_1M,
+-	       nid);
+ 	return ret;
+ }
+ 
+ static void cma_debug_show_areas(struct cma *cma)
  {
  	unsigned long next_zero_bit, next_set_bit, nr_zero;
- 	unsigned long start = 0;
--	unsigned long nr_part, nr_total = 0;
-+	unsigned long nr_part;
- 	unsigned long nbits = cma_bitmap_maxno(cma);
+-	unsigned long start = 0;
++	unsigned long start;
+ 	unsigned long nr_part;
+-	unsigned long nbits = cma_bitmap_maxno(cma);
++	unsigned long nbits;
++	int r;
++	struct cma_memrange *cmr;
  
  	spin_lock_irq(&cma->lock);
-@@ -402,12 +403,12 @@ static void cma_debug_show_areas(struct cma *cma)
- 		next_set_bit = find_next_bit(cma->bitmap, nbits, next_zero_bit);
- 		nr_zero = next_set_bit - next_zero_bit;
- 		nr_part = nr_zero << cma->order_per_bit;
--		pr_cont("%s%lu@%lu", nr_total ? "+" : "", nr_part,
-+		pr_cont("%s%lu@%lu", start ? "+" : "", nr_part,
- 			next_zero_bit);
--		nr_total += nr_part;
- 		start = next_zero_bit + nr_zero;
+ 	pr_info("number of available pages: ");
+-	for (;;) {
+-		next_zero_bit = find_next_zero_bit(cma->bitmap, nbits, start);
+-		if (next_zero_bit >= nbits)
+-			break;
+-		next_set_bit = find_next_bit(cma->bitmap, nbits, next_zero_bit);
+-		nr_zero = next_set_bit - next_zero_bit;
+-		nr_part = nr_zero << cma->order_per_bit;
+-		pr_cont("%s%lu@%lu", start ? "+" : "", nr_part,
+-			next_zero_bit);
+-		start = next_zero_bit + nr_zero;
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++
++		start = 0;
++		nbits = cma_bitmap_maxno(cma, cmr);
++
++		pr_info("range %d: ", r);
++		for (;;) {
++			next_zero_bit = find_next_zero_bit(cmr->bitmap,
++							   nbits, start);
++			if (next_zero_bit >= nbits)
++				break;
++			next_set_bit = find_next_bit(cmr->bitmap, nbits,
++						     next_zero_bit);
++			nr_zero = next_set_bit - next_zero_bit;
++			nr_part = nr_zero << cma->order_per_bit;
++			pr_cont("%s%lu@%lu", start ? "+" : "", nr_part,
++				next_zero_bit);
++			start = next_zero_bit + nr_zero;
++		}
++		pr_info("\n");
  	}
--	pr_cont("=> %lu free of %lu total pages\n", nr_total, cma->count);
-+	pr_cont("=> %lu free of %lu total pages\n", cma->available_count,
-+			cma->count);
+ 	pr_cont("=> %lu free of %lu total pages\n", cma->available_count,
+ 			cma->count);
  	spin_unlock_irq(&cma->lock);
  }
  
-@@ -444,6 +445,14 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+-static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+-				unsigned int align, gfp_t gfp)
++static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
++				unsigned long count, unsigned int align,
++				struct page **pagep, gfp_t gfp)
+ {
+ 	unsigned long mask, offset;
+ 	unsigned long pfn = -1;
+ 	unsigned long start = 0;
+ 	unsigned long bitmap_maxno, bitmap_no, bitmap_count;
+-	unsigned long i;
++	int ret = -EBUSY;
+ 	struct page *page = NULL;
+-	int ret = -ENOMEM;
+-	const char *name = cma ? cma->name : NULL;
+-
+-	trace_cma_alloc_start(name, count, align);
+-
+-	if (!cma || !cma->count || !cma->bitmap)
+-		return page;
+-
+-	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+-		(void *)cma, cma->name, count, align);
+-
+-	if (!count)
+-		return page;
+ 
+ 	mask = cma_bitmap_aligned_mask(cma, align);
+-	offset = cma_bitmap_aligned_offset(cma, align);
+-	bitmap_maxno = cma_bitmap_maxno(cma);
++	offset = cma_bitmap_aligned_offset(cma, cmr, align);
++	bitmap_maxno = cma_bitmap_maxno(cma, cmr);
+ 	bitmap_count = cma_bitmap_pages_to_bits(cma, count);
+ 
+ 	if (bitmap_count > bitmap_maxno)
+-		return page;
++		goto out;
  
  	for (;;) {
  		spin_lock_irq(&cma->lock);
-+		/*
-+		 * If the request is larger than the available number
-+		 * of pages, stop right away.
-+		 */
-+		if (count > cma->available_count) {
-+			spin_unlock_irq(&cma->lock);
-+			break;
-+		}
- 		bitmap_no = bitmap_find_next_zero_area_off(cma->bitmap,
- 				bitmap_maxno, start, bitmap_count, mask,
- 				offset);
-@@ -452,6 +461,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+@@ -453,14 +754,14 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 			spin_unlock_irq(&cma->lock);
  			break;
  		}
- 		bitmap_set(cma->bitmap, bitmap_no, bitmap_count);
-+		cma->available_count -= count;
+-		bitmap_no = bitmap_find_next_zero_area_off(cma->bitmap,
++		bitmap_no = bitmap_find_next_zero_area_off(cmr->bitmap,
+ 				bitmap_maxno, start, bitmap_count, mask,
+ 				offset);
+ 		if (bitmap_no >= bitmap_maxno) {
+ 			spin_unlock_irq(&cma->lock);
+ 			break;
+ 		}
+-		bitmap_set(cma->bitmap, bitmap_no, bitmap_count);
++		bitmap_set(cmr->bitmap, bitmap_no, bitmap_count);
+ 		cma->available_count -= count;
  		/*
  		 * It's safe to drop the lock here. We've marked this region for
- 		 * our exclusive use. If the migration fails we will take the
+@@ -469,7 +770,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 		 */
+ 		spin_unlock_irq(&cma->lock);
+ 
+-		pfn = cma->base_pfn + (bitmap_no << cma->order_per_bit);
++		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
+ 		mutex_lock(&cma_mutex);
+ 		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
+ 		mutex_unlock(&cma_mutex);
+@@ -478,7 +779,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 			break;
+ 		}
+ 
+-		cma_clear_bitmap(cma, pfn, count);
++		cma_clear_bitmap(cma, cmr, pfn, count);
+ 		if (ret != -EBUSY)
+ 			break;
+ 
+@@ -490,6 +791,38 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 		/* try again with a bit different memory target */
+ 		start = bitmap_no + mask + 1;
+ 	}
++out:
++	*pagep = page;
++	return ret;
++}
++
++static struct page *__cma_alloc(struct cma *cma, unsigned long count,
++		       unsigned int align, gfp_t gfp)
++{
++	struct page *page = NULL;
++	int ret = -ENOMEM, r;
++	unsigned long i;
++	const char *name = cma ? cma->name : NULL;
++
++	trace_cma_alloc_start(name, count, align);
++
++	if (!cma || !cma->count)
++		return page;
++
++	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
++		(void *)cma, cma->name, count, align);
++
++	if (!count)
++		return page;
++
++	for (r = 0; r < cma->nranges; r++) {
++		page = NULL;
++
++		ret = cma_range_alloc(cma, &cma->ranges[r], count, align,
++				       &page, gfp);
++		if (ret != -EBUSY || page)
++			break;
++	}
+ 
+ 	/*
+ 	 * CMA can allocate multiple page blocks, which results in different
+@@ -508,7 +841,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 	}
+ 
+ 	pr_debug("%s(): returned %p\n", __func__, page);
+-	trace_cma_alloc_finish(name, pfn, page, count, align, ret);
++	trace_cma_alloc_finish(name, page ? page_to_pfn(page) : 0,
++			       page, count, align, ret);
+ 	if (page) {
+ 		count_vm_event(CMA_ALLOC_SUCCESS);
+ 		cma_sysfs_account_success_pages(cma, count);
+@@ -551,20 +885,31 @@ struct folio *cma_alloc_folio(struct cma *cma, int order, gfp_t gfp)
+ bool cma_pages_valid(struct cma *cma, const struct page *pages,
+ 		     unsigned long count)
+ {
+-	unsigned long pfn;
++	unsigned long pfn, end;
++	int r;
++	struct cma_memrange *cmr;
++	bool ret;
+ 
+-	if (!cma || !pages)
++	if (!cma || !pages || count > cma->count)
+ 		return false;
+ 
+ 	pfn = page_to_pfn(pages);
++	ret = false;
+ 
+-	if (pfn < cma->base_pfn || pfn >= cma->base_pfn + cma->count) {
+-		pr_debug("%s(page %p, count %lu)\n", __func__,
+-						(void *)pages, count);
+-		return false;
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++		end = cmr->base_pfn + cmr->count;
++		if (pfn >= cmr->base_pfn && pfn < end) {
++			ret = pfn + count <= end;
++			break;
++		}
+ 	}
+ 
+-	return true;
++	if (!ret)
++		pr_debug("%s(page %p, count %lu)\n",
++				__func__, (void *)pages, count);
++
++	return ret;
+ }
+ 
+ /**
+@@ -580,19 +925,32 @@ bool cma_pages_valid(struct cma *cma, const struct page *pages,
+ bool cma_release(struct cma *cma, const struct page *pages,
+ 		 unsigned long count)
+ {
+-	unsigned long pfn;
++	struct cma_memrange *cmr;
++	unsigned long pfn, end_pfn;
++	int r;
++
++	pr_debug("%s(page %p, count %lu)\n", __func__, (void *)pages, count);
+ 
+ 	if (!cma_pages_valid(cma, pages, count))
+ 		return false;
+ 
+-	pr_debug("%s(page %p, count %lu)\n", __func__, (void *)pages, count);
+-
+ 	pfn = page_to_pfn(pages);
++	end_pfn = pfn + count;
++
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++		if (pfn >= cmr->base_pfn &&
++		    pfn < (cmr->base_pfn + cmr->count)) {
++			VM_BUG_ON(end_pfn > cmr->base_pfn + cmr->count);
++			break;
++		}
++	}
+ 
+-	VM_BUG_ON(pfn + count > cma->base_pfn + cma->count);
++	if (r == cma->nranges)
++		return false;
+ 
+ 	free_contig_range(pfn, count);
+-	cma_clear_bitmap(cma, pfn, count);
++	cma_clear_bitmap(cma, cmr, pfn, count);
+ 	cma_sysfs_account_release_pages(cma, count);
+ 	trace_cma_release(cma->name, pfn, pages, count);
+ 
 diff --git a/mm/cma.h b/mm/cma.h
-index 8485ef893e99..3dd3376ae980 100644
+index 3dd3376ae980..5f39dd1aac91 100644
 --- a/mm/cma.h
 +++ b/mm/cma.h
-@@ -13,6 +13,7 @@ struct cma_kobject {
+@@ -10,19 +10,35 @@ struct cma_kobject {
+ 	struct cma *cma;
+ };
+ 
++/*
++ * Multi-range support. This can be useful if the size of the allocation
++ * is not expected to be larger than the alignment (like with hugetlb_cma),
++ * and the total amount of memory requested, while smaller than the total
++ * amount of memory available, is large enough that it doesn't fit in a
++ * single physical memory range because of memory holes.
++ */
++struct cma_memrange {
++	unsigned long base_pfn;
++	unsigned long count;
++	unsigned long *bitmap;
++#ifdef CONFIG_CMA_DEBUGFS
++	struct debugfs_u32_array dfs_bitmap;
++#endif
++};
++#define CMA_MAX_RANGES 8
++
  struct cma {
- 	unsigned long   base_pfn;
+-	unsigned long   base_pfn;
  	unsigned long   count;
-+	unsigned long	available_count;
- 	unsigned long   *bitmap;
+ 	unsigned long	available_count;
+-	unsigned long   *bitmap;
  	unsigned int order_per_bit; /* Order of pages represented by one bit */
  	spinlock_t	lock;
+ #ifdef CONFIG_CMA_DEBUGFS
+ 	struct hlist_head mem_head;
+ 	spinlock_t mem_head_lock;
+-	struct debugfs_u32_array dfs_bitmap;
+ #endif
+ 	char name[CMA_MAX_NAME];
++	int nranges;
++	struct cma_memrange ranges[CMA_MAX_RANGES];
+ #ifdef CONFIG_CMA_SYSFS
+ 	/* the number of CMA page successful allocations */
+ 	atomic64_t nr_pages_succeeded;
+@@ -39,9 +55,10 @@ struct cma {
+ extern struct cma cma_areas[MAX_CMA_AREAS];
+ extern unsigned int cma_area_count;
+ 
+-static inline unsigned long cma_bitmap_maxno(struct cma *cma)
++static inline unsigned long cma_bitmap_maxno(struct cma *cma,
++		struct cma_memrange *cmr)
+ {
+-	return cma->count >> cma->order_per_bit;
++	return cmr->count >> cma->order_per_bit;
+ }
+ 
+ #ifdef CONFIG_CMA_SYSFS
 diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index 602fff89b15f..89236f22230a 100644
+index 89236f22230a..fdf899532ca0 100644
 --- a/mm/cma_debug.c
 +++ b/mm/cma_debug.c
-@@ -34,13 +34,10 @@ DEFINE_DEBUGFS_ATTRIBUTE(cma_debugfs_fops, cma_debugfs_get, NULL, "%llu\n");
- static int cma_used_get(void *data, u64 *val)
+@@ -46,17 +46,26 @@ DEFINE_DEBUGFS_ATTRIBUTE(cma_used_fops, cma_used_get, NULL, "%llu\n");
+ static int cma_maxchunk_get(void *data, u64 *val)
  {
  	struct cma *cma = data;
--	unsigned long used;
++	struct cma_memrange *cmr;
+ 	unsigned long maxchunk = 0;
+-	unsigned long start, end = 0;
+-	unsigned long bitmap_maxno = cma_bitmap_maxno(cma);
++	unsigned long start, end;
++	unsigned long bitmap_maxno;
++	int r;
  
  	spin_lock_irq(&cma->lock);
--	/* pages counter is smaller than sizeof(int) */
--	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
-+	*val = cma->count - cma->available_count;
+-	for (;;) {
+-		start = find_next_zero_bit(cma->bitmap, bitmap_maxno, end);
+-		if (start >= bitmap_maxno)
+-			break;
+-		end = find_next_bit(cma->bitmap, bitmap_maxno, start);
+-		maxchunk = max(end - start, maxchunk);
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++		bitmap_maxno = cma_bitmap_maxno(cma, cmr);
++		end = 0;
++		for (;;) {
++			start = find_next_zero_bit(cmr->bitmap,
++						   bitmap_maxno, end);
++			if (start >= bitmap_maxno)
++				break;
++			end = find_next_bit(cmr->bitmap, bitmap_maxno,
++					    start);
++			maxchunk = max(end - start, maxchunk);
++		}
+ 	}
  	spin_unlock_irq(&cma->lock);
--	*val = (u64)used << cma->order_per_bit;
+ 	*val = (u64)maxchunk << cma->order_per_bit;
+@@ -159,24 +168,41 @@ DEFINE_DEBUGFS_ATTRIBUTE(cma_alloc_fops, NULL, cma_alloc_write, "%llu\n");
  
- 	return 0;
- }
-diff --git a/mm/cma_sysfs.c b/mm/cma_sysfs.c
-index f50db3973171..97acd3e5a6a5 100644
---- a/mm/cma_sysfs.c
-+++ b/mm/cma_sysfs.c
-@@ -62,6 +62,24 @@ static ssize_t release_pages_success_show(struct kobject *kobj,
- }
- CMA_ATTR_RO(release_pages_success);
- 
-+static ssize_t total_pages_show(struct kobject *kobj,
-+					  struct kobj_attribute *attr, char *buf)
-+{
-+	struct cma *cma = cma_from_kobj(kobj);
-+
-+	return sysfs_emit(buf, "%lu\n", cma->count);
-+}
-+CMA_ATTR_RO(total_pages);
-+
-+static ssize_t available_pages_show(struct kobject *kobj,
-+					  struct kobj_attribute *attr, char *buf)
-+{
-+	struct cma *cma = cma_from_kobj(kobj);
-+
-+	return sysfs_emit(buf, "%lu\n", cma->available_count);
-+}
-+CMA_ATTR_RO(available_pages);
-+
- static void cma_kobj_release(struct kobject *kobj)
+ static void cma_debugfs_add_one(struct cma *cma, struct dentry *root_dentry)
  {
- 	struct cma *cma = cma_from_kobj(kobj);
-@@ -75,6 +93,8 @@ static struct attribute *cma_attrs[] = {
- 	&alloc_pages_success_attr.attr,
- 	&alloc_pages_fail_attr.attr,
- 	&release_pages_success_attr.attr,
-+	&total_pages_attr.attr,
-+	&available_pages_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(cma);
+-	struct dentry *tmp;
++	struct dentry *tmp, *dir, *rangedir;
++	int r;
++	char rdirname[12];
++	struct cma_memrange *cmr;
+ 
+ 	tmp = debugfs_create_dir(cma->name, root_dentry);
+ 
+ 	debugfs_create_file("alloc", 0200, tmp, cma, &cma_alloc_fops);
+ 	debugfs_create_file("free", 0200, tmp, cma, &cma_free_fops);
+-	debugfs_create_file("base_pfn", 0444, tmp,
+-			    &cma->base_pfn, &cma_debugfs_fops);
+ 	debugfs_create_file("count", 0444, tmp, &cma->count, &cma_debugfs_fops);
+ 	debugfs_create_file("order_per_bit", 0444, tmp,
+ 			    &cma->order_per_bit, &cma_debugfs_fops);
+ 	debugfs_create_file("used", 0444, tmp, cma, &cma_used_fops);
+ 	debugfs_create_file("maxchunk", 0444, tmp, cma, &cma_maxchunk_fops);
+ 
+-	cma->dfs_bitmap.array = (u32 *)cma->bitmap;
+-	cma->dfs_bitmap.n_elements = DIV_ROUND_UP(cma_bitmap_maxno(cma),
+-						  BITS_PER_BYTE * sizeof(u32));
+-	debugfs_create_u32_array("bitmap", 0444, tmp, &cma->dfs_bitmap);
++	rangedir = debugfs_create_dir("ranges", tmp);
++	for (r = 0; r < cma->nranges; r++) {
++		cmr = &cma->ranges[r];
++		snprintf(rdirname, sizeof(rdirname), "%d", r);
++		dir = debugfs_create_dir(rdirname, rangedir);
++		debugfs_create_file("base_pfn", 0444, dir,
++			    &cmr->base_pfn, &cma_debugfs_fops);
++		cmr->dfs_bitmap.array = (u32 *)cmr->bitmap;
++		cmr->dfs_bitmap.n_elements =
++			DIV_ROUND_UP(cma_bitmap_maxno(cma, cmr),
++					BITS_PER_BYTE * sizeof(u32));
++		debugfs_create_u32_array("bitmap", 0444, dir,
++				&cmr->dfs_bitmap);
++	}
++
++	/*
++	 * Backward compatible symlinks to range 0 for base_pfn and bitmap.
++	 */
++	debugfs_create_symlink("base_pfn", tmp, "ranges/0/base_pfn");
++	debugfs_create_symlink("bitmap", tmp, "ranges/0/bitmap");
+ }
+ 
+ static int __init cma_debugfs_init(void)
 -- 
 2.48.1.711.g2feabab25a-goog
 
