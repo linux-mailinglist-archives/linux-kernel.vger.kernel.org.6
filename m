@@ -1,62 +1,98 @@
-Return-Path: <linux-kernel+bounces-538038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789D9A493DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:45:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5FDA493E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2D2188F179
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D319918943CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67F4253B67;
-	Fri, 28 Feb 2025 08:45:16 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F771254863;
+	Fri, 28 Feb 2025 08:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3LLmEsU"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D984B1C6FFD
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8621FE451;
+	Fri, 28 Feb 2025 08:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732316; cv=none; b=QaRx7VhxpR8E1xcEXTN8qUlBpUkEvwioPNZfFLrHYIqH49vgZo+GDlVR/Pr91sv74mw0U7jUWzXbEzNa/eRca3iIlY8Dx5JDBZ2VSUW3N7G581Li0w+Y2zwCQrJGwH9LA1ujUenSWFk6IdzvDFIiwo5gWVJepB3We6446VbFadM=
+	t=1740732408; cv=none; b=ePXDNLp2orPFc3n9801Er8jsJ+vHd/60HYH/yGt0rvIT518+/mzMJuEzCORJ4yzTw/i6B+wUxYatZouWLwqTrV2OtiXo05l/vnmVzcWlYWM0+C1tNEw9xY20ThucTp+lG9vmFZBywAQorU/8yaiK5noqnWNwJeci+tzLRdIC8PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732316; c=relaxed/simple;
-	bh=RBIBB1TOcqVm8RyyOIRxJiXCiRWd50D1WKWqmJ05Jrg=;
+	s=arc-20240116; t=1740732408; c=relaxed/simple;
+	bh=e5m3SMRr5O4UR7zd4yFRdhL57g1VhnwFolUSg7qB4e4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgXE8DIIhsqcmxTZ4nbreu5Rtpq6qhkm58rIvwD+ueVVOfZm/7nvYKb+MjWB/Heqd6G9+WCJEb5tcQS3Tt1V+hTlGSqkK35wG23r8LRChXzgja4wN161Da3haDy2gL4IDlKQlHNlf70kk5RRLIP4s7LOhD9qA1aGCbKl8hS9pdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0D9021F38F;
-	Fri, 28 Feb 2025 08:45:13 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F26A813888;
-	Fri, 28 Feb 2025 08:45:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id swBhOph3wWe7PwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Fri, 28 Feb 2025 08:45:12 +0000
-Date: Fri, 28 Feb 2025 09:45:12 +0100
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] nvmet-fc: take tgtport reference only once
-Message-ID: <7ab71df0-e9e8-4035-a215-f5259c69fe88@flourine.local>
-References: <20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org>
- <20250226-nvmet-fcloop-v1-8-c0bd83d43e6a@kernel.org>
- <f944fdb3-081f-474a-9193-f482fe87f72b@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CuslbWbNZ09h2e823c9udEL/P70TCLVwF9xtRaBOY5mtRM9CnrwiEHPALpTC9Y/xVxz2iGTGdp7Ep8eEfe8tyL+SKApm0W6fnI9NRQEWkzA6CtV+D6tqwrNiQXxT7kskdFnYwdmMomopEI5zaFR44gljdPGvZmYbQo5qIrdaWCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3LLmEsU; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46c8474d8daso16324731cf.3;
+        Fri, 28 Feb 2025 00:46:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740732406; x=1741337206; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LLmHR/SpSqY6N3h+Iw3NISXuCevyPVad+x0gw7x/vBw=;
+        b=S3LLmEsUnutjiNUvMewtaLnK1MtZuF8dSEByxCO+F4zme+9HlOMkBXYR2xXchkOTWk
+         bxlIhZaucD/+M+H9Yy4lEDY3VD+M2ed52mMIFT29uXDc4PNuuDFf+H6HTtUAathCCev0
+         w4+DrpyFSpdRmbDFf1uRZhJQMRHZCon8NlEFTw0ZJveRkZvHppxPfREiSA0ekSETgnDw
+         x29kSapeEWessUfCp1f0QGrAplHtAuTuIMCAU18AxXefl/UkLaCpbatHXKy73TQ+w8bg
+         KV2TcIqk+6adwdD2cch99D+6Ak1NLi3K+ZZboHaEEtG0Iv+3Pbq/qP0u4Yi4KhL1XamP
+         W2gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740732406; x=1741337206;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LLmHR/SpSqY6N3h+Iw3NISXuCevyPVad+x0gw7x/vBw=;
+        b=BN4xWBs/FTOluAiAxnO6hhCDWIIPK8jZMMelMfEgI9komKUpwlOZD304pxfh+50gJh
+         9sRcnELyf7jd55ILXZ3R+FheJdYTwKWWWhAQrdPZYicsp6/MC/2jAZx37q/4Seqphj0x
+         pREofL9/Kq6Rbz6G8eIojoHgsuVHT9kKqVJzEn73ax16+qoUjbxSExSDTfa5+jec6Dp2
+         Gc5lsZILRkVzKbNbLIUNlBXu7qgsnBPAQJwur+wIpBJSkd/tzl/adMsBCza+zfFzmlsQ
+         Ez0kAZlNurH6Wfrvokc3ZEEHFiUVFqcvciEkqW+5fqYn7u1V0Orzf/Wcc/Fay8XD31uB
+         QOqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuMegaGOFbN4kSKVmJR/5ymB0vY2QveUPnSHsZhp2xrczd4luO2y5S9p/k7PiuHhOISuH1gRzKuH0JHNrv@vger.kernel.org, AJvYcCVM/dPdyKCj04o2H+45F6h6p/kLV+6tzRi6C/3gllpn71T+pyiiqGVa6/+3tI11ikobbWS96mEQle3h@vger.kernel.org, AJvYcCXznzzx/irtucf3uoql+0BU9EdcCLNxAWNsiFVsZ9lBhGgsQvYkkNSMbKeeOxLH6FHy101eTC8OOoPr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNYPDU6cfFtRm1IBsG2w4vpaX8V0Bl9MDB+7joTKuuwhNoS6cn
+	YizVcKYMiYV7ciRqzBMod8uQiv1qJrTPotGHQwajXWIcIHK+K5QI
+X-Gm-Gg: ASbGnctwV6ryFPQTsVDs82mR07lPKWeK2YSgZmbRi01uBr6OZ6PuaUlfw8WBD65wBQE
+	84US/Wivj5b8KEXERX9hyGoRa8pF2/o1gu1XIHkEsbanqwveymNtV3hRRoBhzviq3ieq7kd2zcC
+	4giCOZDf3CER7bJwqM1UR+JJ0+ezJikStelDic6yhiPNW0W4LPgEjMT2CuPYUGJcEzk4Us4X1iK
+	PuFN91Yy6Wov/wO30D23wSWFvUdj0QInWGx2Xn+fVWa9mqfby/HEWDMbMhG6J7D+1clkFSjDLco
+	FQ==
+X-Google-Smtp-Source: AGHT+IGlyCXuariPZPwL7PuD8T0egLT46qA1ZdYfUWGVbxZHrud8Fu7VDXUjdtaUdRLOr7L0vfkfvA==
+X-Received: by 2002:a05:622a:198a:b0:472:1812:23d3 with SMTP id d75a77b69052e-474bc04ec55mr26784781cf.10.1740732405593;
+        Fri, 28 Feb 2025 00:46:45 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47472409ab5sm22150091cf.63.2025.02.28.00.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:46:45 -0800 (PST)
+Date: Fri, 28 Feb 2025 16:46:22 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>, 
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
+Message-ID: <pbj22qvat76t74nppabekvyncc4ptt6wede4q6wfygbrzcj3ag@ruvt26eqiybu>
+References: <20250221013758.370936-1-inochiama@gmail.com>
+ <20250221013758.370936-2-inochiama@gmail.com>
+ <20250221-cavalier-cramp-6235d4348013@spud>
+ <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
+ <20250224-enable-progress-e3a47fdb625c@spud>
+ <7ht3djv7zgrbkcvmdg6tp62nmxytlxzhaprsuvyeshyojhochn@ignvymxb3vfa>
+ <20250225-lapel-unhappy-9e7978e270e4@spud>
+ <ynefy5x672dlhctjzyhkitxoihuucxxki3xqvpimwpcedpfl2u@lmklah5egof4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,49 +101,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f944fdb3-081f-474a-9193-f482fe87f72b@suse.de>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 0D9021F38F
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+In-Reply-To: <ynefy5x672dlhctjzyhkitxoihuucxxki3xqvpimwpcedpfl2u@lmklah5egof4>
 
-On Fri, Feb 28, 2025 at 08:34:51AM +0100, Hannes Reinecke wrote:
-> On 2/26/25 19:46, Daniel Wagner wrote:
-> > The reference counting code can be simplified. Instead taking a tgtport
-> > refrerence at the beginning of nvmet_fc_alloc_hostport and put it back
-> > if not a new hostport object is allocated, only take it when a new
-> > hostport object is allocated.
+On Fri, Feb 28, 2025 at 02:34:00PM +0800, Inochi Amaoto wrote:
+> On Tue, Feb 25, 2025 at 11:35:23PM +0000, Conor Dooley wrote:
+> > On Tue, Feb 25, 2025 at 07:48:59AM +0800, Inochi Amaoto wrote:
+> > > On Mon, Feb 24, 2025 at 06:54:51PM +0000, Conor Dooley wrote:
+> > > > On Sat, Feb 22, 2025 at 08:34:10AM +0800, Inochi Amaoto wrote:
+> > > > > On Fri, Feb 21, 2025 at 05:01:41PM +0000, Conor Dooley wrote:
+> > > > > > On Fri, Feb 21, 2025 at 09:37:55AM +0800, Inochi Amaoto wrote:
+> > > > > > > The pcie controller on the SG2044 is designware based with
+> > > > > > > custom app registers.
+> > > > > > > 
+> > > > > > > Add binding document for SG2044 PCIe host controller.
+> > > > > > > 
+> > > > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > > > > ---
+> > > > > > >  .../bindings/pci/sophgo,sg2044-pcie.yaml      | 125 ++++++++++++++++++
+> > > > > > >  1 file changed, 125 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > 
+> > > > > > > diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..040dabe905e0
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > > > > > @@ -0,0 +1,125 @@
+> > > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > > > +%YAML 1.2
+> > > > > > > +---
+> > > > > > > +$id: http://devicetree.org/schemas/pci/sophgo,sg2044-pcie.yaml#
+> > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > > +
+> > > > > > > +title: DesignWare based PCIe Root Complex controller on Sophgo SoCs
+> > > > > > > +
+> > > > > > > +maintainers:
+> > > > > > > +  - Inochi Amaoto <inochiama@gmail.com>
+> > > > > > > +
+> > > > > > > +description: |+
+> > > > > > > +  SG2044 SoC PCIe Root Complex controller is based on the Synopsys DesignWare
+> > > > > > > +  PCIe IP and thus inherits all the common properties defined in
+> > > > > > > +  snps,dw-pcie.yaml.
+> > > > > > > +
+> > > > > > > +allOf:
+> > > > > > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > > > > > > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> > > > > > > +
+> > > > > > > +properties:
+> > > > > > > +  compatible:
+> > > > > > > +    const: sophgo,sg2044-pcie
+> > > > > > > +
+> > > > > > > +  reg:
+> > > > > > > +    items:
+> > > > > > > +      - description: Data Bus Interface (DBI) registers
+> > > > > > > +      - description: iATU registers
+> > > > > > > +      - description: Config registers
+> > > > > > > +      - description: Sophgo designed configuration registers
+> > > > > > > +
+> > > > > > > +  reg-names:
+> > > > > > > +    items:
+> > > > > > > +      - const: dbi
+> > > > > > > +      - const: atu
+> > > > > > > +      - const: config
+> > > > > > > +      - const: app
+> > > > > > > +
+> > > > > > > +  clocks:
+> > > > > > > +    items:
+> > > > > > > +      - description: core clk
+> > > > > > > +
+> > > > > > > +  clock-names:
+> > > > > > > +    items:
+> > > > > > > +      - const: core
+> > > > > > > +
+> > > > > > > +  dma-coherent: true
+> > > > > > 
+> > > > > > Why's this here? RISC-V is dma-coherent by default, with dma-noncoherent
+> > > > > > used to indicate systems/devices that are not.
+> > > > > 
+> > > > > The PCIe is dma coherent, but the SoC itself is marked as
+> > > > > dma-noncoherent.
+> > > > 
+> > > > By "the SoC itself", do you mean that the bus that this device is on is
+> > > > marked as dma-noncoherent? 
+> > > 
+> > > Yeah, I was told only PCIe device on SG2044 is dma coherent.
+> > > The others are not.
+> > > 
+> > > > IMO, that should not be done if there are devices on it that are coherent.
+> > > > 
+> > > 
+> > > It is OK for me. But I wonder how to handle the non coherent device
+> > > in DT? Just Mark the bus coherent and mark all devices except the
+> > > PCIe device non coherent?
 > > 
-> Can it really?
-> Main point of this operation is that 'tgtport' isn't going away during while
-> we're figuring out whether we need it.
+> > Don't mark the bus anything (default is coherent) and mark the devices.
 > 
-> With this patch it means that
+> I think this is OK for me.
+> 
 
-The tgtport is not going away. nvmet_fc_alloc_hostport can only be
-called with reference on tgtport being hold:
+In technical, I wonder a better way to "handle dma-noncoherent".
+In the binding check, all devices with this property complains 
 
-nvmet_fc_rcv_ls_req
-  nvmet_fc_tgtport_get(tgtport)
-  nvmet_fc_handle_ls_rqst_work
-    nvmet_fc_handle_ls_rqst
-      nvmet_fc_ls_create_association
-        nvmet_fc_alloc_target_assoc
-          nvmet_fc_alloc_hostport
+"Unevaluated properties are not allowed ('dma-noncoherent' was unexpected)"
 
-The goal with this patch here is to make it simpler to read where we
-take a ref. IMO, there is not really anything gained by the existing
-logic, though I agree it's not obvious that the tgtport is not going
-away. Would it be okay to add a comment?
+It is a pain as at least 10 devices' binding need to be modified.
+So I wonder whether there is a way to simplify this.
+
+Regars,
+Inochi
 
