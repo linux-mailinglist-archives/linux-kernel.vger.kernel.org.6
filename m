@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-538807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEC0A49D48
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:24:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A7A49D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F64A7AA344
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07321888059
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470691EF365;
-	Fri, 28 Feb 2025 15:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652DB2702B9;
+	Fri, 28 Feb 2025 15:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="OaR8JR4B"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZcWiBkF"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF60126E63C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD1C1EF370;
+	Fri, 28 Feb 2025 15:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740756085; cv=none; b=fpIzgizSnFP7u7maGIgjdFOy9+cw6U4E95hDr4mVUjf1bPT+RdL+vux75GFVKVZ3eJKYTyyUSuS7vLUNhUGSREo1RrRsOmYejzBGLpkxeAR4qMu2Mp/9TIVB1BVjjg0dgDJ3Z4BWNy1FoUL1rLEpoiNw0jOUgYiEyQa9x2cDOpg=
+	t=1740756117; cv=none; b=o12hUvRgFzmD5I43crYPBAt1Rgl+N0gsN4mpvRJSoWWiDmEt9V7ysrXDJ9NoY0Dg8oIV/I8Kq/u5qk3RAMBO8Fr+31IocTuZ/9H+ukOEytdDrtHvLvXZh+bgBq2ssenK/Dc0bW4bW6Zbbv5rJQGc3tAjWE6uK9+XhBJFCuEZAJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740756085; c=relaxed/simple;
-	bh=KECKa7HXMO2S6P3OFCfRxoEsFc6wINxBWgMsRAegBDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSn1F12OS3ejiE/y1WSGHq7dhw93nxWNbcUnlEW0P6b+/kI6tHwcyGCTqDvte/4n7eFM0nrViVAaD7Eo5lkJ5ENWIR92gAkHBZM7pWW7+pX4q/af8FM+eKnyn8GVpXZxu8txW/nLWC5d5TbhfKmZOmIDT6OYe0z01GkpAntTVso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=OaR8JR4B; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-471f4909650so19403441cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:21:23 -0800 (PST)
+	s=arc-20240116; t=1740756117; c=relaxed/simple;
+	bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WVthPlbOPz0wW9+K7hDBTxh3J21zZuCCwATAS//2ovS7Y+D7R9K3owJMDI9vgne1FHaNDuFO2qtteBDD7ft2x8qLGCQH8wdw9o107m2Sli6gp4oyEzFFs0kh381mq+EeiOB76cHylf09C64iQ+2S+73NDc0LDoAAtH9MPVz1fic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZcWiBkF; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22348051cf7so5412925ad.1;
+        Fri, 28 Feb 2025 07:21:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1740756083; x=1741360883; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3zKHm2FbIZbRCZMx6XqxFdXnpMw66b0caIDo/gjHQJs=;
-        b=OaR8JR4B2rsmX9MNxtyds+hdEtwp4u2R89Gve3RBe6+8WVE7oyQ9dq9/u+XZgsFt3G
-         ojBWIgo0YQkzjsZhQIaY9iFrTXdzihv8ZnML9ta+89SgGgm5ojUG3ZGb3rU15V0xDt5u
-         78U16ZVXeJjH36Lff8NFJsQhIwSTP2OJ9VsEkEpzbfmNuAF7xPrpNi0YXr/n/JEdQQJ+
-         6akWM4Z2O4cMZFymi1Udxi/RCWQj9EavJmn28RsMoqGFzNoKWPHfLsd0t1i5ev61725t
-         6yeh0hCWG305Ufnok5cZAwsncyI+MgEgg45Vwqafv8gO4/5EzZLvFPSgDfoyCPT47DTV
-         fkfA==
+        d=gmail.com; s=20230601; t=1740756116; x=1741360916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
+        b=bZcWiBkFlyLIjebJriG0TJ6YMw9yzAllMXa67/skBT4tBmIcC9qpAOyu28xkN84EKP
+         u/Uuti2iT4Q4sJrfCSX0IHo/XdYJ6zEVUQN22Le+hlxT4BRCNgbCGjbns0HRd67Ks5NS
+         ibj6NKqC9cOWIJXDd61IHF3W8BNoPLXTYlfpffTgK8ORhYchG7U0j9MbU+/uwuSkErbK
+         nfZ7agCZ/WWstk8ZD9+mS9UCwBVG3V7TOy/mCGvlJEgXFDNCIA6f8RmCY8iCasyUJfFg
+         frsyFVeGzf+pIBDgKOUM/o7tgAA1m6n+dwatz6SAGHAmz5n4uSRxG4PhUcGRtR+2Tkkb
+         MwCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740756083; x=1741360883;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zKHm2FbIZbRCZMx6XqxFdXnpMw66b0caIDo/gjHQJs=;
-        b=vaVS9+8M2WZhvDqad7BWxn2X53rzOh5BLLhPFIWnjgs2w+QonjDwtAr5hBeYkBVcAM
-         7YiLOQNjxAl6CIV6KqJx4gUnCz6q0qX+VJFbMuyUCs5mo0ccs6KSmeWL1Nbe2WNsaJm+
-         ck5K14NAUjwdsBrSWi4zwqGMy/WYcJkwWx0CBgZmkgdstVzKfXJA4kQAyA5zCbJfRNUK
-         r/ldWagfqV75eA5kc1q7MjcyvBmw4nyKFAkz5DPtzQsMHO35UUKcrWaUwIw9g5CMZG0R
-         7x3taYjIcycPL3C1HkLT2wUwSnQsZVlp8Ft9xTr+j9qQkOSJOXauLLotOqq7MN4f5GZm
-         QKVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/b0vkwkcux5Ci2kEQzyQYtfXiCH0qzr2hPP7s0HHudu5Wg7fyy743p4xHZRKwtoOrlIxrHu0w9d2athU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP9VzfRffbxXBFujYPpqdJktM/dN8slC403FzIaWTo1sb560zj
-	NG8dZhLFdyH5LGMtx7gsE9xGq95t+khL23QnIMnRnhjSKVR7Zg6JUfBzJyRipcPel+7xiyVr2e0
-	=
-X-Gm-Gg: ASbGncu25hW4qpW5eC5oE/g8hHJAX30bU+1l1yWbUo994RpD6/i9LDY+nDXOhCjI/mK
-	iwkh7am9sOxcwTY1EbDnN/RUUhJ379OnZ0am8iuxqgvRNKJCGfqPqExrjV46MBBArjtmnt3ZlDO
-	ZuBvdX4dmqhAPcy0CPJXT+4OStPk2pcXU3yZoxyazboiadw2K2YFI/06OzcGKvV1pBdNXxVz9Et
-	O0O3Q3HzkpTcF1DMRYfQGCeOiNTFnqZ6Y/3dbh3eXeEV16LSKIp82JPLcM7xslfzCI8G0bqVkoV
-	QatCww4eEp7sqU5UVI2+f3TNk/C7PLZ5rOcrUd4FgM2/nVwhp/aqsCQdlQ8SJzQv392L7ODTuay
-	vMBuukcszx5TNsPaBlMw=
-X-Google-Smtp-Source: AGHT+IGz9doxOFauOLj2SOAKNV3haWXF9zvTC5dsMiNswX+IYjm/SEucg/ksBBE7PfIwgTSgi/7JYg==
-X-Received: by 2002:a05:622a:11d5:b0:472:12f1:ba4a with SMTP id d75a77b69052e-474bc051974mr52432911cf.4.1740756082757;
-        Fri, 28 Feb 2025 07:21:22 -0800 (PST)
-Received: from rowland.harvard.edu (nat-65-112-8-24.harvard-secure.wrls.harvard.edu. [65.112.8.24])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4746b4f9507sm26119881cf.27.2025.02.28.07.21.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 07:21:22 -0800 (PST)
-Date: Fri, 28 Feb 2025 10:21:19 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: j.ne@posteo.net
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [usb-storage] [PATCH v3 0/9] usb: storage: Mark various arrays
- as const
-Message-ID: <17654d89-a9f3-478b-90d5-0bc9ab838739@rowland.harvard.edu>
-References: <20250228-misc-const-v3-0-09b417ded9c4@posteo.net>
+        d=1e100.net; s=20230601; t=1740756116; x=1741360916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
+        b=uj2mhQaiS1Ovp5z7jE/TBj9t3ghWkvxSjhB+kzZNWPk8YDODDij6GgTlnVmNfKIYdo
+         kNipYncWPPKzXiL3ButGpfL8H8WjYSswA1OGwU8jTntmYIByQ+mksvWE2Mk16V8H2DvO
+         F03oUE60U8x3T1TpNsK56ZZu1D65R877Q82OYgEkqFc4emRUJqYH0mQNNu21Hz5UbKla
+         c33990sAwYhN2P/mvfUnYpw2dR/6aiTX016wBj9pFnJure1IQKehNCZMNH5LhVQ2WTwl
+         BShNprnqQ9bXDKzXhbHFlUUTcGtlQJ3a+sjKnIbwYoLWXe3n6JO9k9hQRX/JUBWd8gO1
+         QgeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRF+Uv0RlqoWXNrPHSYDJeutS5WrisDXUDBAZtsEFeCh9WcfuX0vNio03Ca7YUQs1VppbCpEN8zIV/7y8=@vger.kernel.org, AJvYcCXRO2WQJvn43TgeVQitEdRgNBIjEgHBphPTYR+f02H4DRTuYN+5Gy5niVFFXtbvLJPFHYGUeN9JSO1IZmcpmWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCA3ZrJqVZ9GghuOrUdMZOutWbUAsdjf7/vSnemW5Oqf5QTaKo
+	QcSMPVevSlnFrym0+keiBc5zC6pNfCw1Oa9giebZ2iYpI8CiYK+n+GrSPAU3NLEUCp8uA4TO0jC
+	X5ekoWc5Br1ibCksflx9ImRXAa+4=
+X-Gm-Gg: ASbGnctfN6iN+6gMLxkQ5X3BoVbz/RkkEDMHcsydyeDLdjCxbSz2h0I1C2wpp8n4kJN
+	uFzUMdiqAGu91wWkupIIqRuu5ZdMFBWTHvOv1YKfm0cBuIxW1uiVzBIOs/vh3jemm79WzwL60ni
+	XIGiiU6X4=
+X-Google-Smtp-Source: AGHT+IE0xocSm5hllgwGR1/fNKAARoouiHtcKZ6V7E50P+V7phTQQVYrrlf4TPAFnN/ZEGTqXUIgXw8bZTtXdyxvZjo=
+X-Received: by 2002:a17:903:183:b0:223:364f:7a5 with SMTP id
+ d9443c01a7336-22369213d54mr21406765ad.11.1740756115602; Fri, 28 Feb 2025
+ 07:21:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228-misc-const-v3-0-09b417ded9c4@posteo.net>
+References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
+In-Reply-To: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 28 Feb 2025 16:21:42 +0100
+X-Gm-Features: AQ5f1JpUZd9TEX2wazFqdL3Wa8n4UksTu_xV86C587GpeNV0TZCu_fE9i5NuHeY
+Message-ID: <CANiq72=q5subtcx=kEmX+Jh_ryB0=P0RtraQM65CcvPWGvnD7g@mail.gmail.com>
+Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
+To: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 04:11:15PM +0100, 'Jonathan Neuschäfer via B4 Relay' via USB Mass Storage on Linux wrote:
-> While reading code, I noticed that some arrays in USB mass storage
-> drivers are declared static but not const, even though they are not
-> modified. This patchset marks them const.
-> 
-> All patches were compile-tested.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.ne@posteo.net>
-> ---
-> Changes in v3:
-> - Elaborate *why* const is a good idea
-> - Link to v2: https://lore.kernel.org/r/20250226-misc-const-v2-0-ab655a4a29cc@posteo.net
-> 
-> Changes in v2:
-> - Add new patches 2-9
-> - Use consistent authorship information
-> - Link to v1: https://lore.kernel.org/r/20250225-misc-const-v1-1-121ff3b86437@posteo.net
-> 
-> ---
-> Jonathan Neuschäfer (9):
->       usb: storage: jumpshot: Use const for constant arrays
->       usb: storage: transport: Use const for constant array
->       usb: storage: alauda: Use const for card ID array
->       usb: storage: datafab: Use const for constant arrays
->       usb: storage: initializers: Use const for constant array
->       usb: storage: realtek_cr: Use const for constant arrays
->       usb: storage: sddr09: Use const for constant arrays
->       usb: storage: sddr55: Use const for constant arrays
->       usb: storage: shuttle_usbat: Use const for constant array
-> 
->  drivers/usb/storage/alauda.c        |  8 ++++----
->  drivers/usb/storage/datafab.c       | 14 +++++++-------
->  drivers/usb/storage/initializers.c  |  2 +-
->  drivers/usb/storage/jumpshot.c      | 10 +++++-----
->  drivers/usb/storage/realtek_cr.c    |  6 +++---
->  drivers/usb/storage/sddr09.c        | 14 +++++++-------
->  drivers/usb/storage/sddr55.c        |  4 ++--
->  drivers/usb/storage/shuttle_usbat.c |  2 +-
->  drivers/usb/storage/transport.c     |  2 +-
->  9 files changed, 31 insertions(+), 31 deletions(-)
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20240401-misc-const-e7b4cf20d5f9
-> 
-> Best regards,
-> -- 
-> Jonathan Neuschäfer <j.ne@posteo.net>
+On Fri, Feb 28, 2025 at 3:43=E2=80=AFPM Oliver Mangold <oliver.mangold@pm.m=
+e> wrote:
+>
+> This v2 of the patch, addressing the issues raised by Andreas Hindborg.
 
-For all 9 patches:
+Hmm... Something went wrong here -- this patch looks broken, e.g. the
+SoB is at the end, the title does not say v2, these replies seem to be
+part of the patch, etc.
 
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+(Also, by the way, in case it helps, the message got marked as spam in
+my side for some reason).
 
+> Got it. This version should be okay for rustfmt, clippy and checkpatch :)
+
+Thanks for doing that!
+
+Cheers,
+Miguel
 
