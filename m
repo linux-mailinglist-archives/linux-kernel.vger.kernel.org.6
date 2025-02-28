@@ -1,136 +1,95 @@
-Return-Path: <linux-kernel+bounces-537724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C82A48FD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:49:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D745A48FDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA31F3A9421
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC618912A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07620184524;
-	Fri, 28 Feb 2025 03:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FeEH2h8I"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E604B198E9B;
+	Fri, 28 Feb 2025 03:55:50 +0000 (UTC)
+Received: from out198-8.us.a.mail.aliyun.com (out198-8.us.a.mail.aliyun.com [47.90.198.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE18819;
-	Fri, 28 Feb 2025 03:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DEE180A80;
+	Fri, 28 Feb 2025 03:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740714565; cv=none; b=DyC909YYprDstM1R6Rmd+SYLlAGaYEux8DG3ITEt5ISJpV9QouqqRoXbuR5YTc0s0B0ct7/LoCGyvIInm6dWWi8dhOVctwqISRqARBf7xich9XaJsmHcZPc35K4rt8jkhsT0HMgXtWBG5O8iPLQkNhXvrkVciQdkrCq9a41ckT4=
+	t=1740714950; cv=none; b=AS0YPpHcKZ3sGouR43Pyj5gxQ+yTAQWw23YFilIa4FSnmuRXLib+dVpQ+AtKsJMkoc4r6I4W67ZyZhKTIYafgkpl+oS+oqxj/6co+FAQdrqNP22CB0EaDNtHxxHP2aXIu9y20FqDp0+hvQU6psB5AJ2oEvzuQZUNGv0hYGEloyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740714565; c=relaxed/simple;
-	bh=2JJRsSl9s1ShM7CmwpkQX5IijJd0EPLQAbxDyAdVct4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=r0rnlHffNcsyFm/euUZWSIAD9qWneIv+dfc9kP7ngmQ4KpXiTiAzWWnMRqWNvttQJOhGCxa6WGgXO5/6nJo/TW8Flh0uiIIxLBnSS76wxCk8ZpH6GZselQd97Xd5EwFqB47z6AfFraTvC6NVnuhBBUJAW0B7xdAFJAvV6dn0frw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FeEH2h8I; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740714560;
-	bh=6E/Ll8VCwKDAYpHkrqT04AlysqffxMkMCwKN9pLzA5g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FeEH2h8IV3dCReCMxRFwMByCOCMc6evZ7cSXTQko/8Fyq/8YkH6kAeyWWWY3x973X
-	 jRo6BXgCHwN95NvrOCPvkl4fvhcF+f/W1e4yM4jKSY9Uc8euiREMzXicwPFhX44ICz
-	 Pth2x01tkfAVD/Gy9rmCDuY3E5+pekS9PQiJB4XLF5hq2bpMCReeUNXhK+uqLeIey+
-	 7V/kjr8sM8fJ4M1AjeQFJEZc9LG2h0J4rCItcfZIdKXVPTTPqj0rfn5j07AweALIUY
-	 FRPe2y2AkA+sXZ++JjWjDZAYy/cRW2JnLhP075DQuAU+gY1UOyBf+haepkqtxodWVY
-	 Y+iocU/RCBk8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3vMz08wsz4wbx;
-	Fri, 28 Feb 2025 14:49:17 +1100 (AEDT)
-Date: Fri, 28 Feb 2025 14:49:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, David Wei <dw@davidwei.uk>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the block tree with the net-next tree
-Message-ID: <20250228144916.3f5905cf@canb.auug.org.au>
+	s=arc-20240116; t=1740714950; c=relaxed/simple;
+	bh=i6bW/rHcvgT89EAEJIDB0utm9PBMM3NgXDcWd3OeJ18=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fBog+wefkDHEytIGvAe+GHSmgHiB3/oGd9QQy4lI6sLCYgHOA2MqkgEENVjwJpCUGvBAFZT8vigB6s5W0O6o0xP9QnhFobQkMqBtGd5UUl1As9BsZP/oBavm43dGa4SvWWPD+vywVn6ikjscVgCjG+bkAmeyYpuJCpia8p1rb2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.bfYTayM_1740714599 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 11:50:05 +0800
+From: wangweidong.a@awinic.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	ivprusov@salutedevices.com,
+	jack.yu@realtek.com,
+	wangweidong.a@awinic.com,
+	zhoubinbin@loongson.cn,
+	luca.ceresoli@bootlin.com,
+	quic_pkumpatl@quicinc.com,
+	paulha@opensource.cirrus.com,
+	rf@opensource.cirrus.com,
+	nuno.sa@analog.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yijiangtao@awinic.com
+Subject: [PATCH V2 0/2] ASoC: codecs: Add aw88166 amplifier driver
+Date: Fri, 28 Feb 2025 11:49:56 +0800
+Message-ID: <20250228034958.181934-1-wangweidong.a@awinic.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IqqFrWOlEanhzm3JG70FbSu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/IqqFrWOlEanhzm3JG70FbSu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Weidong Wang <wangweidong.a@awinic.com>
 
-Hi all,
+Add the awinic,aw88166 property to support the aw88166 chip.
 
-Today's linux-next merge of the block tree got a conflict in:
+The driver is for amplifiers aw88166 of Awinic Technology
+Corporation. The AW88166 is a high efficiency digital
+Smart K audio amplifier
 
-  tools/testing/selftests/drivers/net/hw/Makefile
+v1 -> v2: Modify the problem that the reset function
+           does not match the definition in the yaml file
 
-between commit:
+Weidong Wang (2):
+  ASoC: dt-bindings: Add schema for "awinic,aw88166"
+  ASoC: codecs: Add aw88166 amplifier driver
 
-  185646a8a0a8 ("selftests: drv-net: add tests for napi IRQ affinity notifi=
-ers")
+ .../bindings/sound/awinic,aw88395.yaml        |    1 +
+ sound/soc/codecs/Kconfig                      |   13 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/aw88166.c                    | 1935 +++++++++++++++++
+ sound/soc/codecs/aw88166.h                    |  534 +++++
+ 5 files changed, 2485 insertions(+)
+ create mode 100644 sound/soc/codecs/aw88166.c
+ create mode 100644 sound/soc/codecs/aw88166.h
 
-from the net-next tree and commit:
 
-  71082faa2c64 ("io_uring/zcrx: add selftest")
+base-commit: 1e15510b71c99c6e49134d756df91069f7d18141
+-- 
+2.47.0
 
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/drivers/net/hw/Makefile
-index cde5814ff9a7,7efc47c89463..000000000000
---- a/tools/testing/selftests/drivers/net/hw/Makefile
-+++ b/tools/testing/selftests/drivers/net/hw/Makefile
-@@@ -10,7 -12,7 +12,8 @@@ TEST_PROGS =3D=20
-  	ethtool_rmon.sh \
-  	hw_stats_l3.sh \
-  	hw_stats_l3_gre.sh \
-+ 	iou-zcrx.py \
- +	irq.py \
-  	loopback.sh \
-  	nic_link_layer.py \
-  	nic_performance.py \
-@@@ -43,4 -42,4 +46,6 @@@ include ../../../lib.m
-  YNL_GENS :=3D ethtool netdev
-  include ../../../net/ynl.mk
- =20
-+ $(OUTPUT)/iou-zcrx: LDLIBS +=3D -luring
-++
- +include ../../../net/bpf.mk
-
---Sig_/IqqFrWOlEanhzm3JG70FbSu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfBMjwACgkQAVBC80lX
-0GzgUwf/T+4bByxUtEmJQ/tSOYTLf+IKtgczZtQ1OgybowN4jSLUDPvIJvFEbPi5
-l1nQ4BMJtoyL7TJFG7yStomvFNAZHXdFHBNDudzhlCAn9tKfOXYp3JquagO7dweT
-p14NOW/TmDOACGBz+hrqB/hkGqLdwJZFDd3MZGhoGbBOz3Zt7iqEdTCU39pJCWA+
-XcAdk3TgApsf9ta3Cw1EQSpnWWqhH3/0bQssJGzfg+MhtLJTt8Kf2o/SYrD1LQT6
-26koynuAP+/v6Mm9+FqBH6VldKZxxMuGa0y8wALCtukXt86mZe+It45TkB8GzAQE
-7JzDbPL1MYIYsufMF7eyRXfwZr1r/Q==
-=B+NT
------END PGP SIGNATURE-----
-
---Sig_/IqqFrWOlEanhzm3JG70FbSu--
 
