@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-539012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F34A49FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:08:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F56A49FDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3573B6033
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29D1176578
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574DB27002E;
-	Fri, 28 Feb 2025 17:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73168280A52;
+	Fri, 28 Feb 2025 17:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqvGWLM6"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gXUAJKWi"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3781F09B3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7067D280A3E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762454; cv=none; b=B85Re9AMtFoq6kNe53uNaGAYIpTSf8Jypdh6lKMbx+KWkbAemZbqACq97+j2M7+dnOzdXoEtNnbeRwYPpEz1Ztjjuem5PZEkLIjUwdFodDBkuKDIoaTcprreGvqgY2yuuwZi1z0SsqVKaKDcNMXlHk0C5hXPWexO7fF2xhjkkco=
+	t=1740762469; cv=none; b=sgU52DYA5AoQ4c2t0OmcGCW01vpHmWNCqLaHwgMGJmqGiAf7AuC3DSkO2fsQrwHUEt8pwPEc4oQRQXQCg4mQBDOKIVzYEGM9plrlytWhBQVRhNsXWyhoiRIscQrAbNUZe/jMkOgauoVCvSkWrWkFka2udJmc3ZopXmX03Dr0QoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762454; c=relaxed/simple;
-	bh=w7y2s0B3QwmL541+KhqH3zAEMb4igdVlTd1+RqXIW8g=;
+	s=arc-20240116; t=1740762469; c=relaxed/simple;
+	bh=0NfHbYhPhFL4xmc58hlP/iPcW1AfrhEYdXl85tc/9AQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F/aQCFClA7Jjz+vizCajyFuKC4t/NDfLl4TeErcFAYFPI0TQmV3RcvnqPD6mnA7N6JtJ5HLkKhaDxjD07acLNH80h/Lv8RC0mR8e8eWtEs6FqdJ1bAMRjB5iL9Slnoce9ZI4llwYGhZ0toADh7ERoxWAM9ephQkSDV58Y0ZZXQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqvGWLM6; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=KlN6eNxFCbH+YK+UKHYPsyu/KQVafYCU2PJBV+Rl1crNV+MTYBqV+SDDpmjtshNULTqFClwTHJOCxRoeelZL8PHk225FDIn0V2XZlvyENsN6RYVd4Vg8hHzBuLcOKiXGAaDRsN/WPBqBpYikI01ESq3aqW6F6br9eOS59cGbKHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gXUAJKWi; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8de1297eso4935803a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:33 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc404aaed5so8138628a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740762453; x=1741367253; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740762468; x=1741367268; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=11RyS1qAmuD2mxkuzJ3XfGIHqJM7lrBNPnN7KbZ8xI8=;
-        b=VqvGWLM6jTzCujYKkmlc/QoaKfG74CcKbaPrtTje9kDdUTmUJf+dTL4pUhHDJKoLPr
-         S3wOtfseqbloipEXxf2XIHrJZ5qyqm+5xW2Qu1GOsPbuiYPJ3tssTNfkNaSu1ZCOw55W
-         f4+AMOyGVoYt6FZAlc0cZUk2AiHothhLRCORB2TuY2MShXf0mFyNnpO3rvOUMkytKcvh
-         +UK5lp6rybfxC6YZ4ldT9Lux8Jfhr6pSq908g1xHyGF1ao2mZNd2yCxpWSGTWZFCZv/A
-         ncGRv5QmN5eDHYRqVRXDLZR11I3A2VvNK2yXAGEv9D6LYY6JqvMSRhzlmKXO5OOK2sT6
-         owJw==
+        bh=Wn9Wd0e1ZZG+jNEhSiMJWTR2pHzJGatUZGEsCpUKJdE=;
+        b=gXUAJKWiDUUOyknuLFQi/mUOp1yDUksas1mWHZ6527yXBg8Pt3El2lSuyYVVp2QSkd
+         G7jeB1E3vKGFOCpbMFfEq8R5cvs1Re1OozmGCRXO7qKv/o0TnI2YNrF1bWo4/+V7Kkeh
+         TT/2nGiMPW7tSSYAGw3fBR3+EoovOSNkeYxuqrLAKMFFGrinXO9LKIeTNqZ4vh8lKmiU
+         5y8jN4M9l6b96nNmBfl2Ovps9dv/46f/UFiXZufV2s7f2V4Khp4JtzWO3Q82Q8LVEChj
+         +FcjD7Wwucz0wxGbPj/ylgk0CpQk6ZM9OT2MdAoFO0leoRhOmhRcW82tLjHI+HMFEvMI
+         /bzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740762453; x=1741367253;
+        d=1e100.net; s=20230601; t=1740762468; x=1741367268;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=11RyS1qAmuD2mxkuzJ3XfGIHqJM7lrBNPnN7KbZ8xI8=;
-        b=uBPoAnoBkM6xMeheIewijqCGFEy5fIR9GtwivEpyV2kzfGJwv/gvoyn0VGIyuzJ6pi
-         nOaywTU5nrXeQ0fmU/ffECLP+zXEqZoVcot+XsEygb4rmt3F29kEe6HZrV0Q4GRRfCd0
-         FnESCziuuMZFR9yE5+AM7FXTyw7epG3QuMt5zrlESWGGhyf/b23FasgzbnFy8++xg7oU
-         tRz3PO8V0bVcoy+0wZEph5u3NKlLfj5ZZrO6a4Q2DEEf4ElZnIPqF3lJPhPTHeqvYTFS
-         TXhraA+iDW/o4C/zOmCg7xVXzXj7dZpbmlvM/HbhPOYzpioD8PEsP6ZP/DpEozcxhlQR
-         UB9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVslxN3qyv7Xh/4aPLEwjQ4QkCdJ8xIj/QaoP6phJM7eMCsPI24xgzC1HKW26O/ZHTg/qugWo6C9jLsxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4yWfCoIpOv27Fd1QVznhjmHH1Ct97omWu373eXDBtSFMA7sJQ
-	VmsVWhQkUCWLLYMpwC+Q9SjueiXydUnpx0F5MNpIJ9ckOIpXzKqCFE3DPMm2/uOe2fIBXpTNmV2
-	jVw==
-X-Google-Smtp-Source: AGHT+IGtepwM5F/LuyNwPFp9mL56IyVr+JkjAT/Y8+92RjrJh08i369mOA2z0npcbf4ntgKlYhLbbXLng2o=
-X-Received: from pjbsy5.prod.google.com ([2002:a17:90b:2d05:b0:2fc:b544:749e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:498b:b0:2ee:8253:9a9f
- with SMTP id 98e67ed59e1d1-2fea1346613mr13467504a91.11.1740762452710; Fri, 28
- Feb 2025 09:07:32 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:06:30 -0800
-In-Reply-To: <20250225213937.2471419-1-huibo.wang@amd.com>
+        bh=Wn9Wd0e1ZZG+jNEhSiMJWTR2pHzJGatUZGEsCpUKJdE=;
+        b=YeEC+HE6oNRvze4YD6yHZI2JJy6KXcAPbkoUJRd7ySnOhTXQtBtpaLuMGVZzPmsX+6
+         Z//ejkFAfl3SepuyFmT2cBrlhLk3MVKwND9EmYVt9sFif39YCqS4bgUUUr5UQp+VriTt
+         Eppb0rPHA+8zweaZSiu2PcIiescn01vp8JF+XKPoo8c6yUUnLpE+zDF+4zip/2oI6+Z8
+         gT3tvhU3tfNhAuh3IMBduZ63WjjRDgibI0X9lEtQX1hjQUNNXaNJRZX+bmeVLqYBW7jN
+         7GAvHH+yamJLMj4yAbxZHg1ww/l08d1qoTaImkhOV/U5BHnjAixOsDiTr4YzXHe2qU/U
+         TPbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaFvEl4kqKsFq7JkoS966Cx12xCp8VuU6rj5lG1JCDRWlkKVOgQAtcppHCZtMMSUrZFAWJM8ULOuZ0scM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlMBQulacRmiz6/4S3HM9wDm54k4PhZwQlXnc2zR9FIBA8RKWH
+	Qb3ds9if0g8M8Do1R1nMByw0vgoXrwWnIFCjW4a+cpRXdNgGvy0U4trebfSmYh3/lcJh5w27/U+
+	7jw==
+X-Google-Smtp-Source: AGHT+IHCzzNosE8PrfJpy25JhjQdhCx8jziKT/hMLk27lARvaQgMu3AliD8Y8mk7rBFMgRqebNAAm68vYfQ=
+X-Received: from pjbeu14.prod.google.com ([2002:a17:90a:f94e:b0:2fc:2b96:2d4b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d47:b0:2f4:432d:250d
+ with SMTP id 98e67ed59e1d1-2febab75deemr6114083a91.21.1740762467886; Fri, 28
+ Feb 2025 09:07:47 -0800 (PST)
+Date: Fri, 28 Feb 2025 09:06:34 -0800
+In-Reply-To: <20250124150539.69975-1-fgriffo@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250225213937.2471419-1-huibo.wang@amd.com>
+References: <20250124150539.69975-1-fgriffo@amazon.co.uk>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174076236724.3733269.4004616538941976314.b4-ty@google.com>
-Subject: Re: [PATCH v5 0/2] KVM: SVM: Make VMGEXIT GHCB exit codes more readable
+Message-ID: <174049620083.2628640.12510480368568809515.b4-ty@google.com>
+Subject: Re: [PATCH v2] KVM: x86: Update Xen TSC leaves during CPUID emulation
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Melody Wang <huibo.wang@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Paluri PavanKumar <pavankumar.paluri@amd.com>
+To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	Fred Griffoul <fgriffo@amazon.co.uk>
+Cc: griffoul@gmail.com, vkuznets@redhat.com, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 25 Feb 2025 21:39:35 +0000, Melody Wang wrote:
-> This patchset includes two patches to make VMGEXIT GHCB exit codes returned by the
-> hypervisor more readable. One patch coverts plain error code numbers to defines, the
-> other one adds helpers to set the error code.
+On Fri, 24 Jan 2025 15:05:39 +0000, Fred Griffoul wrote:
+> The Xen emulation in KVM modifies certain CPUID leaves to expose
+> TSC information to the guest.
 > 
-> No functionality changed.
-> 
-> Thanks,
-> Melody
+> Previously, these CPUID leaves were updated whenever guest time changed,
+> but this conflicts with KVM_SET_CPUID/KVM_SET_CPUID2 ioctls which reject
+> changes to CPUID entries on running vCPUs.
 > 
 > [...]
 
-Applied to kvm-x86 svm, with some massaging.  Thanks!
+Applied to kvm-x86 xen, thanks!
 
-[1/2] KVM: SVM: Convert plain error code numbers to defines
-      https://github.com/kvm-x86/linux/commit/ea4c2f2f5ed3
-[2/2] KVM: SVM: Provide helpers to set the error code
-      https://github.com/kvm-x86/linux/commit/c3392d0ab714
+[1/1] KVM: x86: Update Xen TSC leaves during CPUID emulation
+      https://github.com/kvm-x86/linux/commit/a2b00f85d783
 
 --
 https://github.com/kvm-x86/linux/tree/next
