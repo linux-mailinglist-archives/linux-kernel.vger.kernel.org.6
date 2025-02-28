@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-537663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543F9A48EDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:48:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E1A48EDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC5518915CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:49:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518317A8AD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE55155393;
-	Fri, 28 Feb 2025 02:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEE014B08C;
+	Fri, 28 Feb 2025 02:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="B/8etYy3"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEp2IXiT"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F02823CB;
-	Fri, 28 Feb 2025 02:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710929; cv=pass; b=eXkKv7yx0rLlLbFowrEJPgs0vbgNDeiURo5i5o1E588PWC5AwWtiFww3TBsGRBJpB+x3kNPaju77YM7GP27FiQnqzUiVFHeWhzIb2lVrNNuGpuiunuy04noLXGdxo+YpJOlDO5KmRQL+JY1DWuw349vp6qVyPE+sHPIDdwPAfVo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710929; c=relaxed/simple;
-	bh=90J/r+zezVNLO+dnk2SSsm3jg7ubTc8Hq04I3hqxlhk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtC8DJDmSEYyxmnIAahUvloaYZRhqpM6s3TZ5d27w6/FrFRlpD+6dyHjuHmEDlt7WZUg5MwOw3r1Sf49XweB7HmZ8efg3iat1Yvkq6K/oa/PJBVtAGLWUgqYkOOjZ+y20NgDkdm8FzOb6vUElFPI0nQuPOkC7RMzwTYFUYbDzg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=B/8etYy3; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740710916; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ya3YwJblnhHlK6QpBzOfU/NmuVeEh3vR5XuXKw8pZ/iEpenckDZ0KHRORlzMZcH7SmZFYbb1gYLdJJqNMfuq0VEn5NAtOPGQyf+Qqo2r9lp5SsOJyS3r+i+XWdRx/XtksT/2yI+yzclRvEH1qcypIcwZ8f85iVxf7Xeg2gQ8nJ0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740710916; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TjgmGrj2pKiN2+9kEx/SXBHo3APqNpx6FIWgYaHFhCY=; 
-	b=jBpfHahwp/Vs72SC1qydszIU82KsXa6/Vaqjl/nYDJhedQQdU0aWIqh3wB8M/pEE+9QFaAJLUndIhBl+eAPH0A5wwty0Dxldu1uVE+DBxxawmdWOGY7oZ71Ncu/WCMQVj9q6fwg46Rb0j8vh+On37t7oKcAbDJSuDLvwuauWNSI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740710916;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=TjgmGrj2pKiN2+9kEx/SXBHo3APqNpx6FIWgYaHFhCY=;
-	b=B/8etYy3q42PtXNnPpUKx093UxwlvBO+PITkilOcmQazMTC10G6withBNUABz5M2
-	cLFKFt9Djze38Y3GH/FppeETKV8z1ou3N9ITh1b8to6G4K7pXmAkVkJe3JceukHcL/o
-	awz30OY+NFHJI3xmWgK626YE6dBoMlIxinwyyNRw=
-Received: by mx.zohomail.com with SMTPS id 1740710913081161.54984296268083;
-	Thu, 27 Feb 2025 18:48:33 -0800 (PST)
-Message-ID: <8ecd1237-4719-4f08-8826-2735eb6f472f@zohomail.com>
-Date: Fri, 28 Feb 2025 10:48:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B5224D6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740710943; cv=none; b=hE6hd6XuoXAmBAbWqsZRmXE9bIAG/qMHL4bGlDj9ixFrSTYAHMHK8eBcxCvyqHEoobqdoX+OghePMd4FkmKFjbthIazrI633b3u/C8RbD3oyBzjnwZHh2CAOJtWFoEEzUY+Dz06TKnjaUpytai5eOvJLIE+SPPXcCzOV2mi8uhA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740710943; c=relaxed/simple;
+	bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s2CeuJxnn8jrxwY50rnzuOOl/69GMKG8OLf+412ZRIkkHATj55sp3Tj2PNMFTIKedla+ZeL1ueajwqcZ60sDTz+bHywPmO0hmdiQ3vXdz4XYgYob3XxtoqME8mvI5CgYqcwqT9ci2XUNFey0+PJ4i+UxKDOKsTH0vhItbTQzTDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEp2IXiT; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-abb7520028bso215220366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:49:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740710940; x=1741315740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
+        b=bEp2IXiTA4HutZNozLDuFTRst86F3t0BJKnRdwNUXJkKaLWsj3fKMTV9tPrwgLqdUS
+         QzEOtvAhy3LpWa/hm42rUr1F76rZOSB3yTHZiASC6NdOnMLaRju2SXUySzD1svwgifXs
+         Uqcsbfg/m33BfqFBdb/Hsewa4SolqFqs5pD5C5zqjoaQQQOzou+QqP5BkzU6x3uYYHmt
+         DrZEC3v/6Y8ag8cL4D6pEvno1epfMgle/Qy8puWx51Uc2YUil/I8BYlfhGQ/k6NfNxLP
+         NIHRj7jQymsJ52bI7qbB+4+ipm0C0Cx2UUANP7fE2VlyhoM6SKxX3JxEm+XJhrMTHTNz
+         hh1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740710940; x=1741315740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
+        b=vIEGWm+vxh9B4KHpUAlOf4SZBfFQhlppffHdvRTci4kxGsW7Sma4nYgcqsw4At/hNI
+         VieIM9M5CElg0X9eqnjiIvpOKDGszcqS+5CEHGfCTK8++YQf3HlrSIOmVxtMpihuzmup
+         DW4klaIC+TpuAQ9WdOoo1fSwDbniCsKsk0mJoVYTwvb7aDPl3zUzOLr3Xmqlkda4DR+p
+         1qximt/RzCVQTKSKZxetQca2MgsLCaS7hi32xMrpgdesTipKHOqk1qeNFtURw2vH35c4
+         zmM5eGgwc8PjVx0erHXO8i/DVV5M9jVDlQIMOApwWjy+bQk2bmYddtepR1VcAdd2ggx5
+         2z+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVA1QW9BrmI3vDqx36A32hMxxZARVY4kt3YYscw9Ca7WCNnfj0FV5cWperQmdzV8GS9FSN9Olr44McE21Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzkdovkkQ3O4C57dQZ8TgxP7k+f4Ye3YWiF1LJLCwFdO8FkCbI
+	o4Bb/dhchfOck6gT7dnv/n0i4ck9sjrfra8oTYAAK4xhff5IbpjlDrZ89B2ViaJkR42MAMPHeLf
+	PlifIv18sy0tQG+qwFs+3QJSuSvM=
+X-Gm-Gg: ASbGncs8rTKzL16iGwHHequ+uuPkJPVktdZzCbJbpwViXxu6pXpxP/8I/JkgA8oDZQn
+	usuFUDk+IZfVWW6IQ4GRcGPLvTmAECLtXdf/YqVGUMFBSCwH9uUCu7p0R0QbpuY12Qo2kAQzhDz
+	HgiQtnYYZI
+X-Google-Smtp-Source: AGHT+IEQtd4jRFDLZfWAi8gpZFqbekkGzWnw9++HXK9B7rSwuM1yAQVX+TTBiviDmb4N5kcz4Jjj4OlYL6K9eMS44v8=
+X-Received: by 2002:a17:907:7ba7:b0:abb:ac56:fcf8 with SMTP id
+ a640c23a62f3a-abf26802eabmr160328566b.57.1740710940090; Thu, 27 Feb 2025
+ 18:49:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
- parsing
-To: Dave Jiang <dave.jiang@intel.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-References: <20250227103251.390147-1-ming.li@zohomail.com>
- <34a30d8d-f4e2-4c3b-8386-d07f7b8cfaa1@intel.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <34a30d8d-f4e2-4c3b-8386-d07f7b8cfaa1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227200a881e4ee661824213df4b0000c647cfbf695ddc0077799efb6bfa5810c0051e5363be40452d:zu08011227435949eb9bcec677da86e55f0000b5d3cfc267491b85ae1e0808df420a2ba1322a67ac1c19d5b4:rf0801122d9fad29f79a13b52a866d6fcf0000d8bcd6111b1d3637b503a353c09b201926738c2b3d6a187b72b39eb84e8629:ZohoMail
-X-ZohoMailClient: External
+References: <CAN2Y7hxDdATNfb=R5J1as3pqA1RsP8c8LubC4QxojK5cJS9Q9w@mail.gmail.com>
+ <5u6rwht2mdwi3t4x3r5gtelruihtvfak24ci32moh2v7z52a3g@qkr2jcjgh4dw>
+In-Reply-To: <5u6rwht2mdwi3t4x3r5gtelruihtvfak24ci32moh2v7z52a3g@qkr2jcjgh4dw>
+From: ying chen <yc1082463@gmail.com>
+Date: Fri, 28 Feb 2025 10:48:48 +0800
+X-Gm-Features: AQ5f1Joz7X1GUZUrUbzavyLaxhtwylWXOoaVnnCTs7m_euWrs-9vmGyp_-GQnys
+Message-ID: <CAN2Y7hxehoKP0UxPzuuVGv=Zjy2FtrAwgEuc7i07NJUc0ypZ5A@mail.gmail.com>
+Subject: Re: [PATCH] mm/vmscan: when the swappiness is set to 0, memory
+ swapping should be prohibited during the global reclaim process
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/27/2025 11:21 PM, Dave Jiang wrote:
+Yes, I'm still using memcg-v1. But it's too expensive for us to
+migrate the production environment to memcg-v2.
+
+On Fri, Feb 28, 2025 at 3:12=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
 >
-> On 2/27/25 3:32 AM, Li Ming wrote:
->> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
->> decoder capability, But according to the implementation of
->> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
->>
->> Per CXL specification, the values ranges of decoder_count and
->> target_count are limited. Adding a checking for the values of them
->> in case hardware initialized them with wrong values.
->>
->> Signed-off-by: Li Ming <ming.li@zohomail.com>
->> ---
->> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
->> ---
->>  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
->>  1 file changed, 30 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
->> index 70cae4ebf8a4..a98191867c22 100644
->> --- a/drivers/cxl/core/hdm.c
->> +++ b/drivers/cxl/core/hdm.c
->> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
->>  	return true;
->>  }
->>  
->> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
->> +{
->> +	/*
->> +	 * CXL r3.2 section 8.2.4.20.1
->> +	 * CXL devices shall not advertise more than 10 decoders,
->> +	 * CXL switches and HBs may advertise up to 32 decoders.
->> +	 */
->> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
-> #define the limit please
-
-Will do, thanks.
-
+> On Thu, Feb 27, 2025 at 10:34:51PM +0800, ying chen wrote:
+> > When we use zram as swap disks, global reclaim may cause the memory in =
+some
+> > cgroups with memory.swappiness set to 0 to be swapped into zram. This m=
+emory
+> > won't be swapped back immediately after the free memory increases. Inst=
+ead,
+> > it will continue to occupy the zram space, which may result in no avail=
+able
+> > zram space for the cgroups with swapping enabled. Therefore, I think th=
+at
+> > when the vm.swappiness is set to 0, global reclaim should also refrain
+> > from memory swapping, just like these cgroups.
+> >
+> > Signed-off-by: yc1082463 <yc1082463@gmail.com>
 >
->> +		return -EINVAL;
->> +	else if (cxlhdm->decoder_count > 32)
-> same here
+> It seems like you are still on memcg-v1. What is stopping you to move to
+> memcg-v2 and use memory.swap.max =3D 0?
 >
-> DJ
-
-Will do, thanks for review.
-
-
-Ming
-
-[snip]
-
-
 
