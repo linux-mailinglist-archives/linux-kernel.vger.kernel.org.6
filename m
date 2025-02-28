@@ -1,166 +1,210 @@
-Return-Path: <linux-kernel+bounces-538968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83374A49F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:53:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917AAA49F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614E81899CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E45189A92D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B735270041;
-	Fri, 28 Feb 2025 16:53:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35200189B84
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8BE27603F;
+	Fri, 28 Feb 2025 16:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n7p5Z6sn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QORr/RpY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F38927002E;
+	Fri, 28 Feb 2025 16:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761603; cv=none; b=XeeoG7I+ytkt6whAKqV5mRKmIt79t/TPH3jhD8yofIJb9DCT29qUuyHjh4C0mUsJUIYYa4B0J4z9fL2un2cFxmcycPEsjqSGsGZDOXkGaCzYs/JvVbbEwyNH3eqV/ywKSvkFTW3nv5cIiviewZz03ejES3uffSDhqb4/h9cowHw=
+	t=1740761618; cv=none; b=iEgDZmNcR+0680by4Hn8kI1Wft93Kk1dDZTmmdktA8jUNKsO8g/B82SMDSGH3n21JSYwrTRTqWan9FZ+AMpliMpaurNjgWxs8Zl31BS8ywenxXmMywNe/LQImI+8B4BfMq7gDNtRI+PhAXzVv5mimtjb7n2UUW2ewpUs5qVOf6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761603; c=relaxed/simple;
-	bh=tgmOZUaV5HcyzBER0+xh4TbnFQgsCQx+ORmnNsm9C2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rprbj7krWusEAzOf4tfJwYG68Nfs/Vuw3l0uQ9UztHvY8mLdzKPQ9YfS0NUDByKqbcWamzoFxtw+eAEl+AgZs37hLJzlgVHe3bAuXAzM+nCBiGgS0lldN34ipOICY6f7uEd29nFfBVLTFBukJXNZ1Arl8lDdHXFdGQEYs5qeCPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A83EF1515;
-	Fri, 28 Feb 2025 08:53:36 -0800 (PST)
-Received: from [10.1.36.17] (e122027.cambridge.arm.com [10.1.36.17])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 535E43F6A8;
-	Fri, 28 Feb 2025 08:53:19 -0800 (PST)
-Message-ID: <6218ded2-dd8b-4761-b4f3-975107a1f7c4@arm.com>
-Date: Fri, 28 Feb 2025 16:53:17 +0000
+	s=arc-20240116; t=1740761618; c=relaxed/simple;
+	bh=vsEBkGALBf/IsNufbzG2jWbwAnKimlws8mFp9td72/k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dn0zJEtATxZvfJtr6Pc4lsHkOmoVY+aJ1u6PPiByFcyPl65e/LZMvkL6JlWzFLyTZcQGeBqcss3tYZ9cRa+WIviYzQu5bTdZWaCMM7glaA2jgDv3qXaKiaDEJcM0IfZg43ZM+vuGvLDXaBE1GkEGgM6S4y1pI5QwI678XMbYdBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n7p5Z6sn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QORr/RpY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 28 Feb 2025 16:53:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740761614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIMRcFBon87TW4cNndNcCblEfVtSIYWFTvtI9ruFkwg=;
+	b=n7p5Z6sns/hY8eqi4ci/fdF/qMuYiiymhuTSiQIJ34LfmwwynzDTshvaiix+4AntGspxuE
+	lwN/A88PyhvcqhgVCaeRURwgB/Bj2h5l9iQmPv5jvDSWaXAIWplJ3AvcY+/DyzfFavujAk
+	KDEJgzULB6V6YVvF5qyfJWO05H+4vyPZw6LgkBfoIf43Nbzkt8MVRWVFHoiYFDY25UW9ga
+	x2jcKtoFIe84TWRn3Sihd55LrarQWBsYpnW6j3W20azsD7u7OSVZ+lvSzGXxuOwQ++U2Hy
+	zz74uMIVBbFWJoiIB9PLz5fT7667+eJZ8XGB7P9yLR0nnIS2iVyETw7gRphhqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740761614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIMRcFBon87TW4cNndNcCblEfVtSIYWFTvtI9ruFkwg=;
+	b=QORr/RpY06U3mEnba05mrEzKnpxuxifK1chdrmW6CH+dFRlNLgkzaU7XNlIBBCm8tTQTo0
+	u15f2JTAiPx2VEDA==
+From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpufeatures: Use AWK to generate
+ {REQUIRED|DISABLED}_MASK_BIT_SET
+Cc: Brian Gerst <brgerst@gmail.com>, "Xin Li (Intel)" <xin@zytor.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Nikolay Borisov <nik.borisov@suse.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250228082338.73859-6-xin@zytor.com>
+References: <20250228082338.73859-6-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/panthor: Replace sleep locks with spinlocks in
- fdinfo path
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250227231628.4048738-1-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250227231628.4048738-1-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174076161027.10177.17409172210863814548.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 27/02/2025 23:16, Adrián Larumbe wrote:
-> Commit 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo
-> group samples") introduced an xarray lock to deal with potential
-> use-after-free errors when accessing groups fdinfo figures. However, this
-> toggles the kernel's atomic context status, so the next nested mutex lock
-> will raise a warning when the kernel is compiled with mutex debug options:
-> 
-> CONFIG_DEBUG_RT_MUTEXES=y
-> CONFIG_DEBUG_MUTEXES=y
-> 
-> Replace Panthor's group fdinfo data mutex with a guarded spinlock.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo group samples")
+The following commit has been merged into the x86/cpu branch of tip:
 
-Missing "Fixes:" prefix
+Commit-ID:     e85ef9aaa1cc2129e98cc935179f75ac8f250960
+Gitweb:        https://git.kernel.org/tip/e85ef9aaa1cc2129e98cc935179f75ac8f250960
+Author:        Xin Li (Intel) <xin@zytor.com>
+AuthorDate:    Fri, 28 Feb 2025 00:23:38 -08:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 28 Feb 2025 12:15:25 +01:00
 
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Otherwise
+x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
+script that generates the required and disabled feature mask header.
 
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 26 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 1a276db095ff..4d31d1967716 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -9,6 +9,7 @@
->  #include <drm/panthor_drm.h>
->  
->  #include <linux/build_bug.h>
-> +#include <linux/cleanup.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
-> @@ -631,10 +632,10 @@ struct panthor_group {
->  		struct panthor_gpu_usage data;
->  
->  		/**
-> -		 * @lock: Mutex to govern concurrent access from drm file's fdinfo callback
-> -		 * and job post-completion processing function
-> +		 * @fdinfo.lock: Spinlock to govern concurrent access from drm file's fdinfo
-> +		 * callback and job post-completion processing function
->  		 */
-> -		struct mutex lock;
-> +		spinlock_t lock;
->  
->  		/** @fdinfo.kbo_sizes: Aggregate size of private kernel BO's held by the group. */
->  		size_t kbo_sizes;
-> @@ -910,8 +911,6 @@ static void group_release_work(struct work_struct *work)
->  						   release_work);
->  	u32 i;
->  
-> -	mutex_destroy(&group->fdinfo.lock);
-> -
->  	for (i = 0; i < group->queue_count; i++)
->  		group_free_queue(group, group->queues[i]);
->  
-> @@ -2861,12 +2860,12 @@ static void update_fdinfo_stats(struct panthor_job *job)
->  	struct panthor_job_profiling_data *slots = queue->profiling.slots->kmap;
->  	struct panthor_job_profiling_data *data = &slots[job->profiling.slot];
->  
-> -	mutex_lock(&group->fdinfo.lock);
-> -	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
-> -		fdinfo->cycles += data->cycles.after - data->cycles.before;
-> -	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
-> -		fdinfo->time += data->time.after - data->time.before;
-> -	mutex_unlock(&group->fdinfo.lock);
-> +	scoped_guard(spinlock, &group->fdinfo.lock) {
-> +		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
-> +			fdinfo->cycles += data->cycles.after - data->cycles.before;
-> +		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
-> +			fdinfo->time += data->time.after - data->time.before;
-> +	}
->  }
->  
->  void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
-> @@ -2880,12 +2879,11 @@ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
->  
->  	xa_lock(&gpool->xa);
->  	xa_for_each(&gpool->xa, i, group) {
-> -		mutex_lock(&group->fdinfo.lock);
-> +		guard(spinlock)(&group->fdinfo.lock);
->  		pfile->stats.cycles += group->fdinfo.data.cycles;
->  		pfile->stats.time += group->fdinfo.data.time;
->  		group->fdinfo.data.cycles = 0;
->  		group->fdinfo.data.time = 0;
-> -		mutex_unlock(&group->fdinfo.lock);
->  	}
->  	xa_unlock(&gpool->xa);
->  }
-> @@ -3537,7 +3535,7 @@ int panthor_group_create(struct panthor_file *pfile,
->  	mutex_unlock(&sched->reset.lock);
->  
->  	add_group_kbo_sizes(group->ptdev, group);
-> -	mutex_init(&group->fdinfo.lock);
-> +	spin_lock_init(&group->fdinfo.lock);
->  
->  	return gid;
->  
+Suggested-by: Brian Gerst <brgerst@gmail.com>
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Brian Gerst <brgerst@gmail.com>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250228082338.73859-6-xin@zytor.com
+---
+ arch/x86/include/asm/cpufeature.h | 69 +------------------------------
+ arch/x86/tools/featuremasks.awk   |  9 +++-
+ 2 files changed, 8 insertions(+), 70 deletions(-)
 
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index c5e68da..de88f9b 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -56,75 +56,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ #define test_cpu_cap(c, bit)						\
+ 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
+ 
+-/*
+- * There are 32 bits/features in each mask word.  The high bits
+- * (selected with (bit>>5) give us the word number and the low 5
+- * bits give us the bit/feature number inside the word.
+- * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
+- * see if it is set in the mask word.
+- */
+-#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)	\
+-	(((bit)>>5)==(word) && (1UL<<((bit)&31) & maskname##word ))
+-
+-/*
+- * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
+- * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, all
+- * header macros which use NCAPINTS need to be changed. The duplicated macro
+- * use causes the compiler to issue errors for all headers so that all usage
+- * sites can be corrected.
+- */
+-#define REQUIRED_MASK_BIT_SET(feature_bit)		\
+-	 ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||	\
+-	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
+-
+-#define DISABLED_MASK_BIT_SET(feature_bit)				\
+-	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||	\
+-	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
+-
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+ 	 test_cpu_cap(c, bit))
+diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
+index fd3e721..2d9201c 100755
+--- a/arch/x86/tools/featuremasks.awk
++++ b/arch/x86/tools/featuremasks.awk
+@@ -74,7 +74,14 @@ END {
+ 		for (i = 0; i < ncapints; i++)
+ 			printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
+ 
+-		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
++		printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
++		printf "\t((\t\t\t\t\t";
++		for (i = 0; i < ncapints; i++) {
++			if (masks[i])
++				printf "\t\\\n\t\t((x) >> 5) == %2d ? %s_MASK%d :", i, s, i;
++		}
++		printf " 0\t\\\n";
++		printf "\t) & (1U << ((x) & 31)))\n\n";
+ 	}
+ 
+ 	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
 
