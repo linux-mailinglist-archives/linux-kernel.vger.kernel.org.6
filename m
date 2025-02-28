@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-539118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B1FA4A118
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CA8A4A11A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B55B3AD336
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8123B11F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB1D276052;
-	Fri, 28 Feb 2025 18:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A4B26F44B;
+	Fri, 28 Feb 2025 18:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1lSUyrC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="eDwVDg0P"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F54C26B0A1;
-	Fri, 28 Feb 2025 18:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098D81F0994;
+	Fri, 28 Feb 2025 18:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740765902; cv=none; b=i5CfGDRrRztHCkIhFQzqUxTeXeygWbqvWXIGoJy/cvZrrL8tQULELhQXbpPSnQRFZceXSvba0o6isxmbLgKhu6gTTRTEsgOwlQGoFtS5aHNH7vv9oBBfTfFaiLCVmHhMewRUVxeT3jcsbvlu0uwzgR8FVLdVlKNEjZNRR6v+TXY=
+	t=1740765922; cv=none; b=ns+MBfx9LQcnR1ae9uWBakBfRA80jOdJXyt+nLCotIacdXmh8cslU1OmzVCLXDhTC7G/2YE7dDHpAKYgy+r+6QrkFzjaiLyQIn+VeDNTC+Y1M/zkNqD7CvnAA7wV4HamizvmJSz4YjRiCTmIJTCGeF39qvRLubnGc0KjRELi7v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740765902; c=relaxed/simple;
-	bh=ucBMCvlh2p5U+bYBr7YBt6icBbitc8jZM304oKBG//k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lyrwQ60xFJrT56Olc7LaJiN+w6fLjxP2y8w0Q5PDzk6CMw2a2NW6PJkL0DE1OOgT44+tq2ASQvGwm6WBbpUWzvN8fj6SpwQUyp4P79nWqmvY7XqVO5k6uVHUaHYroN8ew7q/fp9f0j2VmOJm4nnu9eJxKKmB3wYNSTrzlXA8Kg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1lSUyrC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 723BEC4CED6;
-	Fri, 28 Feb 2025 18:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740765901;
-	bh=ucBMCvlh2p5U+bYBr7YBt6icBbitc8jZM304oKBG//k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z1lSUyrCtRsDQBmpUweu9a8AyirOHuvXb+GJvN3kaWdPO+D/8idHtDHP/k/aF2sjn
-	 2LRc9zm/fPFpM7MCiPsbft5ez4L9lt5P12hHvy0RWS14mPJSsNMYEAc/xpBiGi3Okk
-	 2TQmETG2j7URruxb3XyiI20xSaG/+9GmUW2TKOt8FssYTa5L/9rV60Ourfjta46GIT
-	 etOWKs4QrplvzBXyoN52mmi0VZYmZZ8aK1ebGqHBXGalPseirPjtxuMFW2xrACRnJ3
-	 2kXQlyex178NWHCjSXtihdZj9R4ez4FQJcAIV2NBPI/fIPLtCG4OaLegg5wKVYclK+
-	 XVLoEKb/LpAGA==
-Date: Fri, 28 Feb 2025 10:05:00 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Danny Lin <danny@orbstack.dev>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: fully namespace net.core.{r,w}mem_{default,max}
- sysctls
-Message-ID: <20250228100500.4ed52499@kernel.org>
-In-Reply-To: <20250228083025.10322-1-danny@orbstack.dev>
-References: <20250228083025.10322-1-danny@orbstack.dev>
+	s=arc-20240116; t=1740765922; c=relaxed/simple;
+	bh=yMTMjx/KoDlP1RVq0AuEN0lZ1UnoF9941tNr72ZHNAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jZ8SLfsIQrh8kNR/ivs2/Bg0+DQrCeZV0856rFyXc1D6Jnx8K/87OiTAXxEujxML7rBC2JRKpre3qRWw3kY/h9NfLAm8BxJtTYg5raHvxkhiNuyLSJox/rW9mY/i4mtiNF6nhonwhYccn/vRrwjxWTI1CkkKOmHST20HjlfUnEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=eDwVDg0P; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hKcLFlYKbjpxYMs8Fklx2IH1FNht5aVxvzEZPs0pdpU=; b=eDwVDg0PXmNAFwj5aQqKLJfeBh
+	LNSxwiOXLviLdeOJVmeb8g+yT0h3Ho5IJDnx7a6/EI2zYRVlLrQGscJZtu8NF9YikoESnU6y+Gcza
+	G+O6yTGIbF4XG7n6y6//uQwe/cENsIZvSniq2lbFvrOikWTKE3fYjb7e+iAxTcoJi5wOgrlqw3+Dz
+	1/XBLjtNb+ZfPnf7xpZSdcLPJ/971tvo6IskOgeSiaPRfJSOqCF3+8FBwMcd6hZr47oHgwhwvqKvm
+	N2M35to+WgdsAdSE1BGrnKismvuHsXZ6LdpMeoJFNU2cffB/I6s+z9LS+tToeHzPpo4XAz0HKhDjp
+	ac0jwPOA==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1to4jP-0002Tv-IM; Fri, 28 Feb 2025 19:05:03 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Diederik de Haas <didi.debian@cknow.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+ Wenhao Cui <lasstp5011@gmail.com>, Yuteng Zhong <zonyitoo@gmail.com>,
+ Yao Zi <ziyao@disroot.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: rockchip: Remove undocumented sdmmc property from
+ lubancat-1
+Date: Fri, 28 Feb 2025 19:05:02 +0100
+Message-ID: <5186166.e8TTKsaY2g@diego>
+In-Reply-To: <Z8H5jjE24cZb4IBQ@pie.lan>
+References:
+ <20250228163117.47318-2-ziyao@disroot.org>
+ <D848JET5TDL6.2L4ZQR0YHYQU6@cknow.org> <Z8H5jjE24cZb4IBQ@pie.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 28 Feb 2025 00:19:41 -0800 Danny Lin wrote:
-> This builds on commit 19249c0724f2 ("net: make net.core.{r,w}mem_{default,max} namespaced")
-> by adding support for writing the sysctls from within net namespaces,
-> rather than only reading the values that were set in init_net. These are
-> relatively commonly-used sysctls, so programs may try to set them without
-> knowing that they're in a container. It can be surprising for such attempts
-> to fail with EACCES.
+Hi,
+
+Am Freitag, 28. Februar 2025, 18:59:42 MEZ schrieb Yao Zi:
+> On Fri, Feb 28, 2025 at 05:55:47PM +0100, Diederik de Haas wrote:
+> > On Fri Feb 28, 2025 at 5:31 PM CET, Yao Zi wrote:
+> > > Property "supports-cd" isn't documented anywhere and is unnecessary for
+> > 
+> > s/supports-cd/supports-sd/ ?
 > 
-> Unlike other net sysctls that were converted to namespaced ones, many
-> systems have a sysctl.conf (or other configs) that globally write to
-> net.core.rmem_default on boot and expect the value to propagate to
-> containers, and programs running in containers may depend on the increased
-> buffer sizes in order to work properly. This means that namespacing the
-> sysctls and using the kernel default values in each new netns would break
-> existing workloads.
+> Oops, yes, it's a typo.
 > 
-> As a compromise, inherit the initial net.core.*mem_* values from the
-> current process' netns when creating a new netns. This is not standard
-> behavior for most netns sysctls, but it avoids breaking existing workloads.
+> As it's a trival patch, could it be fixed on merging? Or should I send
+> another version?
 
-You need to update:
+I can change that when applying.
 
- tools/testing/selftests/net/netns-sysctl.sh
 
-and please CC Matteo on the next revision.
--- 
-pw-bot: cr
+Heiko
+
+
 
