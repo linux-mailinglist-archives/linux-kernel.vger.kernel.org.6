@@ -1,268 +1,265 @@
-Return-Path: <linux-kernel+bounces-538845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693D1A49DBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:42:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87361A49DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BEC3BCA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C02397AB001
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360EF271832;
-	Fri, 28 Feb 2025 15:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9C626FA7D;
+	Fri, 28 Feb 2025 15:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VA/TLi9K"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wh8fVZpJ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A68E188721;
-	Fri, 28 Feb 2025 15:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18454187859;
+	Fri, 28 Feb 2025 15:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740757303; cv=none; b=sFHrM5xj/EisxgiqGzjsNuw5LBtNiJMLCGfQ0IRcD1Y5HemD9CpGBErG8wp0KQ/uCZMjF0YTJWUnoo8N+nzpqdbQDf+bjGCVBez8fn8U6E09pBLkO5Ka1ZsLrmwiRfdaOejKM3ZDy2E2hLsE0rPzJzVREn6v/D9GxYUiro8sPtQ=
+	t=1740757302; cv=none; b=siIk8JOU67xT/4bWeeHnM7m0dSOHpOFWDF5owdDzmQRWZl3SxpHtS0W51EpZl6fHmd3HGQA3r9YuOLbyP2fxYuzmEXKgtuTSe1JOYAewDdE2TiRkPT6duyG2Hk+PmEGwYfQgrfHmQtxIS35bHSSyRsGs2VjX/qrjX1SLVouUuH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740757303; c=relaxed/simple;
-	bh=DJLPQ5JGZhcfs2Kw16P7wl3ZJUNBN3zQxdlstBLUJb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iTnXcek4BvWnp4TAwmw1vckF7NbvP3jRsumsTn9BtQTird75jIRedh3CdWB8bwUaHcluL7KbgjYlqVE8ivfgd6yTCUCQ/r4bToowfiykl9e9XJoyWNZrc7S9OYkL52VBtGog9HSuKO9c7galPUHi1ior9eaTbTPIa5SvJteXSQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VA/TLi9K; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30797730cbdso21615861fa.3;
-        Fri, 28 Feb 2025 07:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740757299; x=1741362099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPDtPTzn/laJuqWNLbr3aC2gYWBY//cGMLqVAaYzzjo=;
-        b=VA/TLi9K+7JVNq79n8rNv/JnUt+1R0xbwOqTwTaNGeV535UeqOKSpzKe0GkAAZ2NbW
-         Ds9B4Zqu3c7dg+pz2Ji6aJX4CXRLl8a8SN6eDO4m/5jKBCO6uZ32O+PGoloR8RYovT2l
-         ddv2DBZv6eR313cXBF6eRF9Wu+hXhIVBHBvHR8oEThpN9a3T1S4FdyKeu0+hbqldftQ8
-         ODfFkwt7bSiwnVnRVL4Sb9FHhSjNaMFOK7W9AXx3UsyC88jtBqUSRQYxI52R0acL3li7
-         83b2SQKZ5slffZYxOnuiU+dN1lkVzAF7duohqtjuBj177WbRsdZXIRI1MPz+/loVBXZa
-         go9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740757299; x=1741362099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mPDtPTzn/laJuqWNLbr3aC2gYWBY//cGMLqVAaYzzjo=;
-        b=Q1MbbQ4I2v1AdpDK7/3dPti34oR3ENqfe4H6Rt+2LhqEaZUanmvMdj9zVpcKaBdS2d
-         Fxt7enf5rS6xgebtNGNjl1J+XwvpIPBWacOWpHo/O2HBH5YH9HQzrjDo4WsiLJgN4dGj
-         kRGv6qjeJdpIzOj5a/u+SIydV4QyNnFYWpfX7jmQaYY4jCNzrHtAtxXJLYru3BRTAhl4
-         p1zYWvcURn+yY7HfEpFyGggJ64euwsM+wEszCaufLXHb9DYxEpl5unkc6/+HuGdBri++
-         8IkUzr1sK++el1iM5rKmsiYfkibp/KZvcmQtf5NqkXXEvWeXv1NoXy60OL0Ro+356H9T
-         j54w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtw6rdyr8k96jVzfqKUD/UVpIgaqYZI/RJ9grlv/3JFd3wJDcT4hGPMIGWYJCUmq8JgZmWTmAzAugR@vger.kernel.org, AJvYcCVbpasxcB3WczU70JZG11CUdQdz1RJvyv34a8CLL0Sj+4ZSLnFmBX++0oaGuqfeNRQYdz+XrRH64bDKH5r7crxw@vger.kernel.org, AJvYcCW9aWrzjoHpimChCTJkdeYFi9JQaH+VQVZwF7ORcgvhQn6OjlHzNikLUSpaw6MV6GAy41EhZF3rzy1UGTQa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykotgu4yNHXE2D5Evsr7vBhPzf28gHacjS0ESXUleLu/n2yf1W
-	acV24lGNOp7eI1DyRfe55oUV9MA6LS2zCf7SeyX2XrXuX3LLhRgXS3kwPyPQ4GVHR5sz/BANLqq
-	wdVJ1fW++srSr/RFEckTaEi7nYfU=
-X-Gm-Gg: ASbGncu3vHfMeJicMfroX2NjmZvVSmlAmouiywxog+9Y8t+2i+GSNxYE2cwGKMGhxF8
-	josGA+aXooKxaJIFReVPJ4A/zUtjCCXiJZTPhsZQ1eSrKALPlTSa1UAHIQCmNnkpi629YE5IFPI
-	a18//J1A==
-X-Google-Smtp-Source: AGHT+IHhRKNnwVG84x9Gp7sYpTFMGa9cQBb1SVUjJLGLT2xxrqFMI/AI4OWU+Mtnq4chRzQAY16BsKcub+6KRQlKTH8=
-X-Received: by 2002:a2e:be15:0:b0:300:26bc:4311 with SMTP id
- 38308e7fff4ca-30b9326afc7mr18302251fa.18.1740757298276; Fri, 28 Feb 2025
- 07:41:38 -0800 (PST)
+	s=arc-20240116; t=1740757302; c=relaxed/simple;
+	bh=aY2kO9WANmtJtKhEUiqOw09UEMtnTKNz+8dyRnvMzzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alYK3edT9jCfViBYwwFw26VvQaD8zgIPcb+3xAYeCNpN5XCNqUmC7qDJS5p+gXsgFnR2xzsLzqYu87nGFsUB+rE4rwEdJz2Da8XP1NDtQJNBrC9ox38p1EvGzrnXMc7EhQbr21EjU0Z6hbK3MmY3IT9vX5Q84oUg1BgE9uasM8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wh8fVZpJ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OPyxcz+qZruqJAbTurcqgZiEIfW6EaIvOQmjH5Rvfb8=; b=wh8fVZpJ8GicT8IR9RR6P6QQUY
+	pV8hFf0nIYTO8jUHitVhT5EGH2nKkcq9n3H+v9SmJmfQ62okX6NOC0cUj5J6BfcPfEv5MhD4u6pt6
+	8x1wArrm1y8uNoazZOCihetjkrcaXtmJUAau7FEmXtNFz1A5jQKw1CWbgFY097OAaps8dt/KcVzXR
+	jDwuVzHSdT5TfJywPZGveTQbawu4rQNNfVu2HCIYMbpAx/1IsJ/ogAqX7P5JZIk7EYA1AzyKbdotn
+	oiCfbS1e8wSatw88zTsMjLkOhH9aq3+k+EtTvwMQf3LvLqTAVd0Wu3IEjZzU94kmiA869UwCfhJXq
+	2zo0xSKg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57018)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1to2UV-0002H9-2g;
+	Fri, 28 Feb 2025 15:41:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1to2UR-0000rP-01;
+	Fri, 28 Feb 2025 15:41:27 +0000
+Date: Fri, 28 Feb 2025 15:41:26 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v3 02/13] net: phy: Use an internal, searchable
+ storage for the linkmodes
+Message-ID: <Z8HZJo9GE23uq5ew@shell.armlinux.org.uk>
+References: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
+ <20250228145540.2209551-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228152917.5432-1-neeraj.sanjaykale@nxp.com> <20250228152917.5432-2-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20250228152917.5432-2-neeraj.sanjaykale@nxp.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 28 Feb 2025 20:41:25 +0500
-X-Gm-Features: AQ5f1Jrbl8x9_1Zdis8fXWqZa_Zr_A5lHppkYmsuWomgk0zq4BbeLnkyT7ZMLRk
-Message-ID: <CABBYNZLMFYaEjgRhO7J+sDRdp=JPVhgLdLrUNWkum5YTc5dv_w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] Bluetooth: btnxpuart: Add support to set BD address
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	amitkumar.karwar@nxp.com, sherry.sun@nxp.com, ziniu.wang_1@nxp.com, 
-	johan.korsnes@remarkable.no, kristian.krohn@remarkable.no, 
-	manjeet.gupta@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228145540.2209551-3-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Neeraj,
-
-On Fri, Feb 28, 2025 at 10:27=E2=80=AFAM Neeraj Sanjay Kale
-<neeraj.sanjaykale@nxp.com> wrote:
->
-> This adds support for setting BD address during hci registration. NXP
-> FW does not allow vendor commands unless it receives a reset command
-> after FW download and initialization done.
->
-> As a workaround, the .set_bdaddr callback function will first send the
-> HCI reset command, followed by the actual vendor command to set BD
-> address.
->
-> The driver checks for the local-bd-address property in device tree, and
-> if preset, it sets the HCI_QUIRK_USE_BDADDR_PROPERTY quirk.
->
-> With this quirk set, the driver's set_bdaddr callback function is called
-> after FW download is complete and before HCI initialization, which sends
-> the hci reset and 3f 22 commands. During initialization, kernel reads
-> the newly set BD address from the controller.
->
-> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> Signed-off-by: Johan Korsnes <johan.korsnes@remarkable.no>
-> Signed-off-by: Kristian Krohn <kristian.krohn@remarkable.no>
-> Tested-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+On Fri, Feb 28, 2025 at 03:55:27PM +0100, Maxime Chevallier wrote:
+> The canonical definition for all the link modes is in linux/ethtool.h,
+> which is complemented by the link_mode_params array stored in
+> net/ethtool/common.h . That array contains all the metadata about each
+> of these modes, including the Speed and Duplex information.
+> 
+> Phylib and phylink needs that information as well for internal
+> management of the link, which was done by duplicating that information
+> in locally-stored arrays and lookup functions. This makes it easy for
+> developpers adding new modes to forget modifying phylib and phylink
+> accordingly.
+> 
+> However, the link_mode_params array in net/ethtool/common.c is fairly
+> inefficient to search through, as it isn't sorted in any manner. Phylib
+> and phylink perform a lot of lookup operations, mostly to filter modes
+> by speed and/or duplex.
+> 
+> We therefore introduce the link_caps private array in phy_caps.c, that
+> indexes linkmodes in a more efficient manner. Each element associated a
+> tuple <speed, duplex> to a bitfield of all the linkmodes runs at these
+> speed/duplex.
+> 
+> We end-up with an array that's fairly short, easily addressable and that
+> it optimised for the typical use-cases of phylib/phylink.
+> 
+> That array is initialized at the same time as phylib. As the
+> link_mode_params array is part of the net stack, which phylink depends
+> on, it should always be accessible from phylib.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 > ---
-> v4: hci0 interface shows RAW mode if 'local-bd-address' not defined and
->     HCI_QUIRK_USE_BDADDR_PROPERTY is set. Add Quirk only if device tree
->     property 'local-bd-address' found. (Neeraj)
-> v5: Initialize local variable ba, update Copywrite year. (Kristian)
-> v6: Elaborate commit message, add User Manual reference. (Paul Menzel)
-> ---
->  drivers/bluetooth/btnxpuart.c | 63 ++++++++++++++++++++++++++++++++---
->  1 file changed, 58 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.=
-c
-> index 1230045d78a5..2eb14b9beb70 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-or-later
->  /*
->   *  NXP Bluetooth driver
-> - *  Copyright 2023 NXP
-> + *  Copyright 2023-2025 NXP
->   */
->
->  #include <linux/module.h>
-> @@ -98,13 +98,16 @@
->  #define PS_STATE_AWAKE          0
->  #define PS_STATE_SLEEP          1
->
-> -/* Bluetooth vendor command : Sleep mode */
-> +/* NXP Vendor Commands. Refer user manual UM11628 on nxp.com */
-> +/* Set custom BD Address */
-> +#define HCI_NXP_SET_BD_ADDR    0xfc22
-> +/* Set Auto-Sleep mode */
->  #define HCI_NXP_AUTO_SLEEP_MODE        0xfc23
-> -/* Bluetooth vendor command : Wakeup method */
-> +/* Set Wakeup method */
->  #define HCI_NXP_WAKEUP_METHOD  0xfc53
-> -/* Bluetooth vendor command : Set operational baudrate */
-> +/* Set operational baudrate */
->  #define HCI_NXP_SET_OPER_SPEED 0xfc09
-> -/* Bluetooth vendor command: Independent Reset */
-> +/* Independent Reset (Soft Reset) */
->  #define HCI_NXP_IND_RESET      0xfcfc
->
->  /* Bluetooth Power State : Vendor cmd params */
-> @@ -310,6 +313,15 @@ union nxp_v3_rx_timeout_nak_u {
->         u8 buf[6];
->  };
->
-> +union nxp_set_bd_addr_payload {
-> +       struct {
-> +               u8 param_id;
-> +               u8 param_len;
-> +               u8 param[6];
-> +       } __packed data;
-> +       u8 buf[8];
+>  drivers/net/phy/Makefile     |  2 +-
+>  drivers/net/phy/phy-caps.h   | 44 ++++++++++++++++++++
+>  drivers/net/phy/phy_caps.c   | 78 ++++++++++++++++++++++++++++++++++++
+>  drivers/net/phy/phy_device.c |  2 +
+>  4 files changed, 125 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/net/phy/phy-caps.h
+>  create mode 100644 drivers/net/phy/phy_caps.c
+> 
+> diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+> index c8dac6e92278..7e800619162b 100644
+> --- a/drivers/net/phy/Makefile
+> +++ b/drivers/net/phy/Makefile
+> @@ -2,7 +2,7 @@
+>  # Makefile for Linux PHY drivers
+>  
+>  libphy-y			:= phy.o phy-c45.o phy-core.o phy_device.o \
+> -				   linkmode.o phy_link_topology.o
+> +				   linkmode.o phy_link_topology.o phy_caps.o
+>  mdio-bus-y			+= mdio_bus.o mdio_device.o
+>  
+>  ifdef CONFIG_MDIO_DEVICE
+> diff --git a/drivers/net/phy/phy-caps.h b/drivers/net/phy/phy-caps.h
+> new file mode 100644
+> index 000000000000..846d483269f6
+> --- /dev/null
+> +++ b/drivers/net/phy/phy-caps.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * link caps internal header, for link modes <-> capabilities <-> interfaces
+> + * conversions.
+> + */
+> +
+> +#ifndef __PHY_CAPS_H
+> +#define __PHY_CAPS_H
+> +
+> +#include <linux/ethtool.h>
+> +
+> +enum {
+> +	LINK_CAPA_10HD = 0,
+> +	LINK_CAPA_10FD,
+> +	LINK_CAPA_100HD,
+> +	LINK_CAPA_100FD,
+> +	LINK_CAPA_1000HD,
+> +	LINK_CAPA_1000FD,
+> +	LINK_CAPA_2500FD,
+> +	LINK_CAPA_5000FD,
+> +	LINK_CAPA_10000FD,
+> +	LINK_CAPA_20000FD,
+> +	LINK_CAPA_25000FD,
+> +	LINK_CAPA_40000FD,
+> +	LINK_CAPA_50000FD,
+> +	LINK_CAPA_56000FD,
+> +	LINK_CAPA_100000FD,
+> +	LINK_CAPA_200000FD,
+> +	LINK_CAPA_400000FD,
+> +	LINK_CAPA_800000FD,
+> +
+> +	__LINK_CAPA_LAST = LINK_CAPA_800000FD,
+> +	__LINK_CAPA_MAX,
 > +};
 > +
->  static u8 crc8_table[CRC8_TABLE_SIZE];
->
->  /* Default configurations */
-> @@ -1197,6 +1209,38 @@ static int nxp_set_ind_reset(struct hci_dev *hdev,=
- void *data)
->         return hci_recv_frame(hdev, skb);
->  }
->
-> +static int nxp_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+> +struct link_capabilities {
+> +	int speed;
+> +	unsigned int duplex;
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(linkmodes);
+> +};
+> +
+> +void phy_caps_init(void);
+> +
+> +#endif /* __PHY_CAPS_H */
+> diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
+> new file mode 100644
+> index 000000000000..367ca7110ddc
+> --- /dev/null
+> +++ b/drivers/net/phy/phy_caps.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +#include <linux/ethtool.h>
+> +#include <linux/linkmode.h>
+> +#include <linux/phy.h>
+> +
+> +#include "phy-caps.h"
+> +
+> +static struct link_capabilities link_caps[__LINK_CAPA_MAX] __ro_after_init = {
+> +	{ SPEED_10, DUPLEX_HALF, {0} }, /* LINK_CAPA_10HD */
+> +	{ SPEED_10, DUPLEX_FULL, {0} }, /* LINK_CAPA_10FD */
+> +	{ SPEED_100, DUPLEX_HALF, {0} }, /* LINK_CAPA_100HD */
+> +	{ SPEED_100, DUPLEX_FULL, {0} }, /* LINK_CAPA_100FD */
+> +	{ SPEED_1000, DUPLEX_HALF, {0} }, /* LINK_CAPA_1000HD */
+> +	{ SPEED_1000, DUPLEX_FULL, {0} }, /* LINK_CAPA_1000FD */
+> +	{ SPEED_2500, DUPLEX_FULL, {0} }, /* LINK_CAPA_2500FD */
+> +	{ SPEED_5000, DUPLEX_FULL, {0} }, /* LINK_CAPA_5000FD */
+> +	{ SPEED_10000, DUPLEX_FULL, {0} }, /* LINK_CAPA_10000FD */
+> +	{ SPEED_20000, DUPLEX_FULL, {0} }, /* LINK_CAPA_20000FD */
+> +	{ SPEED_25000, DUPLEX_FULL, {0} }, /* LINK_CAPA_25000FD */
+> +	{ SPEED_40000, DUPLEX_FULL, {0} }, /* LINK_CAPA_40000FD */
+> +	{ SPEED_50000, DUPLEX_FULL, {0} }, /* LINK_CAPA_50000FD */
+> +	{ SPEED_56000, DUPLEX_FULL, {0} }, /* LINK_CAPA_56000FD */
+> +	{ SPEED_100000, DUPLEX_FULL, {0} }, /* LINK_CAPA_100000FD */
+> +	{ SPEED_200000, DUPLEX_FULL, {0} }, /* LINK_CAPA_200000FD */
+> +	{ SPEED_400000, DUPLEX_FULL, {0} }, /* LINK_CAPA_400000FD */
+> +	{ SPEED_800000, DUPLEX_FULL, {0} }, /* LINK_CAPA_800000FD */
+> +};
+> +
+> +static int speed_duplex_to_capa(int speed, unsigned int duplex)
 > +{
-> +       union nxp_set_bd_addr_payload pcmd;
-> +       struct sk_buff *skb;
-> +       int err;
+> +	if (duplex == DUPLEX_UNKNOWN ||
+> +	    (speed > SPEED_1000 && duplex != DUPLEX_FULL))
+> +		return -EINVAL;
 > +
-> +       pcmd.data.param_id =3D 0xfe;
-> +       pcmd.data.param_len =3D 6;
-> +       memcpy(pcmd.data.param, bdaddr, 6);
-> +
-> +       /* BD address can be assigned only after first reset command. */
-> +       skb =3D __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIME=
-OUT);
-> +       if (IS_ERR(skb)) {
-> +               err =3D PTR_ERR(skb);
-> +               bt_dev_err(hdev, "Reset before setting local-bd-addr fail=
-ed (%ld)",
-> +                          PTR_ERR(skb));
-> +               return err;
-> +       }
-> +       kfree_skb(skb);
+> +	switch (speed) {
+> +	case SPEED_10: return duplex == DUPLEX_FULL ?
+> +			      LINK_CAPA_10FD : LINK_CAPA_10HD;
+> +	case SPEED_100: return duplex == DUPLEX_FULL ?
+> +			       LINK_CAPA_100FD : LINK_CAPA_100HD;
+> +	case SPEED_1000: return duplex == DUPLEX_FULL ?
+> +				LINK_CAPA_1000FD : LINK_CAPA_1000HD;
+> +	case SPEED_2500: return LINK_CAPA_2500FD;
+> +	case SPEED_5000: return LINK_CAPA_5000FD;
+> +	case SPEED_10000: return LINK_CAPA_10000FD;
+> +	case SPEED_20000: return LINK_CAPA_20000FD;
+> +	case SPEED_25000: return LINK_CAPA_25000FD;
+> +	case SPEED_40000: return LINK_CAPA_40000FD;
+> +	case SPEED_50000: return LINK_CAPA_50000FD;
+> +	case SPEED_56000: return LINK_CAPA_56000FD;
+> +	case SPEED_100000: return LINK_CAPA_100000FD;
+> +	case SPEED_200000: return LINK_CAPA_200000FD;
+> +	case SPEED_400000: return LINK_CAPA_400000FD;
+> +	case SPEED_800000: return LINK_CAPA_800000FD;
 
-If you don't care about the response, just the status, it is probably
-better to use __hci_cmd_sync_status, also since the hdev->set_bdaddr
-comes after hdev->setup doesn't the later do perform a reset anyway?
-If you end up with 2 resets in a row it problems means you don't need
-to reset again.
+I think one of the issues you mentioned is about the need to update
+several places as new linkmodes are added.
 
-> +
-> +       skb =3D __hci_cmd_sync(hdev, HCI_NXP_SET_BD_ADDR, sizeof(pcmd),
-> +                            pcmd.buf, HCI_CMD_TIMEOUT);
+One of the side effects of adding new linkmodes is that they generally
+come with faster speeds, so this is a place that needs to be updated
+along with the table above.
 
-Ditto.
+I'm not sure whether this makes that problem better or worse - if a
+new linkmode is added with a SPEED_*, the author of such a change has
+to be on the ball to update these, and I'm not sure that'll happen.
 
-> +       if (IS_ERR(skb)) {
-> +               err =3D PTR_ERR(skb);
-> +               bt_dev_err(hdev, "Changing device address failed (%d)", e=
-rr);
-> +               return err;
-> +       }
-> +       kfree_skb(skb);
-> +
-> +       return 0;
-> +}
-> +
->  /* NXP protocol */
->  static int nxp_setup(struct hci_dev *hdev)
->  {
-> @@ -1500,6 +1544,7 @@ static int nxp_serdev_probe(struct serdev_device *s=
-erdev)
->  {
->         struct hci_dev *hdev;
->         struct btnxpuart_dev *nxpdev;
-> +       bdaddr_t ba =3D {0};
->
->         nxpdev =3D devm_kzalloc(&serdev->dev, sizeof(*nxpdev), GFP_KERNEL=
-);
->         if (!nxpdev)
-> @@ -1547,8 +1592,16 @@ static int nxp_serdev_probe(struct serdev_device *=
-serdev)
->         hdev->send  =3D nxp_enqueue;
->         hdev->hw_error =3D nxp_hw_err;
->         hdev->shutdown =3D nxp_shutdown;
-> +       hdev->set_bdaddr =3D nxp_set_bdaddr;
-> +
->         SET_HCIDEV_DEV(hdev, &serdev->dev);
->
-> +       device_property_read_u8_array(&nxpdev->serdev->dev,
-> +                                     "local-bd-address",
-> +                                     (u8 *)&ba, sizeof(ba));
-> +       if (bacmp(&ba, BDADDR_ANY))
-> +               set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
-> +
->         if (hci_register_dev(hdev) < 0) {
->                 dev_err(&serdev->dev, "Can't register HCI device\n");
->                 goto probe_fail;
-> --
-> 2.25.1
->
-
-
---=20
-Luiz Augusto von Dentz
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
