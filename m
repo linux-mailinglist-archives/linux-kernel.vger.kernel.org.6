@@ -1,132 +1,165 @@
-Return-Path: <linux-kernel+bounces-538549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F09A49A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D360A49A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759553B3CE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96BD3AEC8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD5126B2DD;
-	Fri, 28 Feb 2025 12:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2023C26B96F;
+	Fri, 28 Feb 2025 13:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+T58mQr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrYijwQc"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFE926B2C8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98FB26A1D0;
+	Fri, 28 Feb 2025 13:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747594; cv=none; b=nN4ye91xajd31iHaHAOr0z9g2W4PHVqkfFA3D3zUiPQolQS5LXAqdlvNKsC9ecdlbCFHijM+P52XDqM4p+g6KYagvRD7JGQB3TZwtx/1SI405Cd8ihLHl5pbjyRyWVScnZyCul5qyqwF2ZHR7pLQygdKx7IJFAkB9DfmDMB1KD0=
+	t=1740747770; cv=none; b=EALJaNr0MSiUp9hGC0gn6TklUlt+migLWpSpv8Bj8+pFbGKtibgIehN5SFKbSE5cSxypyhz5a+DZ07Xn7jmib7xnI3RFziomFzT78xRr7/OULRfw5j+oDs+q/Ywo7FtMMcYL3CdCLSEuZo/FRJ57UaAXanh29HMOrL/ZOkOtGUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747594; c=relaxed/simple;
-	bh=3DKT7J+swXfr3LZY9NRwOLeY8J+OdBEFnuOEu3W8oWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OiuDGVxwgcfbxKnAn+LkHVGN/G80YOCx45RHSW9XcpJSlr1suYVSAQ8LHZJRV7n8iEVnIp0rCHLLe15+NJ2szQh33/iOmZUvb3UA5kHhyroKikbm344Pbq49jd3LTveKnMh944mYckroE+5Zg7VDguGwvsWM1pQ0LYjXyBrgsZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+T58mQr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740747591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c83XVy6ozclMfOWx6ksvJRIp+J3X+fmuC/ka4FyOnOE=;
-	b=J+T58mQrISVMClWI3vv6AVTayFUYLEBJw0lNDups01s0gKdNI+sEu0rs57FAziioPU2KCA
-	mcTf7TEYSVj3vcwcE6JuUobmhQ/BOEj4EcwZN7NWzBXNvBMhCyuI/WiLQ6/bA2fVvdW8HC
-	jsqF2mjg+2qP/dzNT3tKk5R1u41sCX4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-536-z26nYuikNSCUuFbJSxSxpA-1; Fri, 28 Feb 2025 07:59:50 -0500
-X-MC-Unique: z26nYuikNSCUuFbJSxSxpA-1
-X-Mimecast-MFC-AGG-ID: z26nYuikNSCUuFbJSxSxpA_1740747589
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390f000e962so308990f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:59:49 -0800 (PST)
+	s=arc-20240116; t=1740747770; c=relaxed/simple;
+	bh=tRzOYM8tBmtCqwhYHEqwBdl63/LNhTeezyrXlRd4oys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=au6Fn+z2nNS/X1Wa5/N+y6xzviZlDyqetfluMywjRVage6AN5bqhNDCddAtjpITOekSQffLf49GnaqPM6/I5AYqWitXoDY1LWzju0FbVIqQag8gMY5nDmOGoqrAryuHCsc6UMKT4t+7E1HvmndRCFjfERU6cj5pFPuQE9v6ZjRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrYijwQc; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-6f4b266d333so16169867b3.2;
+        Fri, 28 Feb 2025 05:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740747768; x=1741352568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lxf1+JQlod0vaF1LjBgi2IcVLIhGNFVeduj0UU5pVvc=;
+        b=ZrYijwQcs4Gk3nOdH1zu/PI6xCQr8L74MsexV7dQhvzEhZeNmf2hltQOtlXCKbvNHG
+         UWuW2t+Sen9bNC8NSkFqi6a5Yi0gbWKgsDrwYqO9tSBh9LaLDK+vOeIthnARiQKaS6NJ
+         xhGjAxzdqI31jOthA2Jub3DhRVWeuP2gx7bOgJScONfBXE1EzWK8MyL69al+mCcWmzcb
+         0coZ0y3J/u34v8SLdjsRy47yCst+sexStwz98MCsXLd+H1HN+LVmCNRET9nZ9hFda7YD
+         1pPgC2twqB3OgCqU6xU2AdH69hyO5qj35FgdauYtDetatmGpbQYyPrvM7A1E1gzqjzPV
+         qlIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740747589; x=1741352389;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740747768; x=1741352568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c83XVy6ozclMfOWx6ksvJRIp+J3X+fmuC/ka4FyOnOE=;
-        b=kd14o3z4ZyrnKZDkGGvF5zPY/OwxbiH7pOXw+26X8Pbpy1+9tnjXazSDjYKo8I1VVj
-         W5CZxkmkTlHQZ6xYIa9+EfIuYdUA328BNxGxvSHC0mv65an9/WKBjh9mbLDq3X0E4GJZ
-         LFibfT/U9kr2v/1Fd1ExaNsNperccietPvf9hK7MKqoPT1NBKiA1c9GVpxVO0/zfhv9C
-         mg0tcAtKZrGAeJA7fOJF3yPCUoTu4WuOklaeckoDCBDR+MkO/zU+ll7oM82JvYVGNufX
-         IyKEWrcapHrw+7eNg6U8IFPFcE5mN11oV3JvZCRSyzVnxy6+Jz2w8bVYAsVMnDbVFDXs
-         RLIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUKpnSP8u1o+rgS8iT1LJ7Y6+X3tghQhwsCHFgRqaE5H2ZCuzaucppJOmcqVDGzad2XbDdIvyWIx6UTTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD/X296WpIlqi652jS8NWT0XRAzaxbEnS0ta8Ix2amlG8bQfVn
-	/pEuVwZAVfsmTBSOEzD5qnlN7WGg5ucPutIrIZUqs+S//C5cy22BjiTs2PMqSOpGA3xibNqB3np
-	WrPBmWmO2IX6dHPWUrqhUbX1fMh3DfK62Z8hIxfbA3wiUVCrrrS6xi2yq5wAHGg==
-X-Gm-Gg: ASbGncsrHWprtJgQN5Ou9P2LR+miDMIxu4T/PqQTNjMu0jkQVcrJJmUQKLd41V/b8g1
-	aXp9BAvTUgtwwGcVAwJM+Ab5PWSgPNcsStCPS1aoIoAczI7gLEtQG9YRSHIIf2I1j9/DOWSHhEP
-	kxk1AkYfixkUFKPPmZ3mJA6MWXvNEVongOa17EPpJvwHi3HlbtPPYfvAVcMam6nhqJeBtQxKVDq
-	0vF3sw3icN5SzSXvyXK/viB4SMZyWoEgRVRvh7L+kW0kmjQe0GpEkxltMWhG52FnXgnaI2PL5Kw
-	SGVCHGl8GMqhoXXIkkzBOJLcd17kgKcDA1T9K5MRmMmESDyRLRBJoaZWItqupKY=
-X-Received: by 2002:a05:6000:1f8b:b0:38d:e092:3ced with SMTP id ffacd0b85a97d-390ec7c6c4amr2643359f8f.7.1740747588684;
-        Fri, 28 Feb 2025 04:59:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF39024ECeki2qeJ7m1bCe/xYOH62Iyh1CEl4EZF/iAAejb6b6Z9XQvhcS5PKHFcbRdN7SHDw==
-X-Received: by 2002:a05:6000:1f8b:b0:38d:e092:3ced with SMTP id ffacd0b85a97d-390ec7c6c4amr2643343f8f.7.1740747588359;
-        Fri, 28 Feb 2025 04:59:48 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6739sm5110782f8f.22.2025.02.28.04.59.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 04:59:47 -0800 (PST)
-Date: Fri, 28 Feb 2025 13:59:47 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 16/19] acpi/generic_event_device.c: enable
- use_hest_addr for QEMU 10.x
-Message-ID: <20250228135947.15504734@imammedo.users.ipa.redhat.com>
-In-Reply-To: <797c0199ef713241db145baf3860d32e0eb1d03a.1740671863.git.mchehab+huawei@kernel.org>
-References: <cover.1740671863.git.mchehab+huawei@kernel.org>
-	<797c0199ef713241db145baf3860d32e0eb1d03a.1740671863.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=Lxf1+JQlod0vaF1LjBgi2IcVLIhGNFVeduj0UU5pVvc=;
+        b=PBY3oSzZO1+ewrz+CjKD/qKq+X84uuNsDxwQcRV1nU6/DDgCLI68EnHAOjCYLUIbLr
+         7VBrwoQQZ/oMuvoYnfUMuMtygrZvDRvPHaBrKCn2/ZUqDmuCjSZ3Z6SjSrXXTFKMIHxf
+         pOo8Y01fZoDd4gcfPGWrg3aBGNcmc0dftldBm9ziH8kTaexC9BZcFP0W2LQUPU47VD8i
+         khcvSKcq4A6jdJ8R8c9I/UoQUe1ewRKOAFkLaMqaTcnv9fPvaVMwbRVXn0cJkfxga/GV
+         niS+HT9BSSOaLZbQDwzFol+fWVoUtAWQGyF1SHodCUVLoL6xjsLdr+5TdczBPp8z7COY
+         3Y0A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3X/lxfHzydGshb3bGLEfgvsxOECo4uaSv6MQ+r1DRKLlwZjg07XofurwyJKDGjYfQ/Ao=@vger.kernel.org, AJvYcCVD2dB1TvO2J0KNu2ecudycHkNx1esG4hYy00IVtTXlZEKrXcKIOX+OsMDr5z/pd4o0KWrbgQThSoNT9Mhu@vger.kernel.org, AJvYcCW9uES/LLiLzzwwKX6WvRPgqSEuIXLw5FiFcqGGfRvNY9LQnrpoeKbRHS8bW8CKlYO/BO9IYHfyENeF1X0JwjVeomZy@vger.kernel.org
+X-Gm-Message-State: AOJu0YylZrgr93+dBn0SginNAObQk9sq47NwGxKkEOmv5jyQscJKt3Be
+	N8gsUxD996HGqD1s5o0BrxcjSbEIFav53O846JMxI8kUpx2cjCjWJ4uDHlaRe1deub8I0iaTKij
+	mdUOR+zags0gz1cKvucrUzWVLHU0=
+X-Gm-Gg: ASbGncsFrNV+slJgpQ+mPrhzx79goPkZ9r6hxCigezjAKYYaGOQmfaCWIZU5z8nMYxf
+	xIn5tiCMMYLUqmka2E2wQ36QonqWGqZBFkcKbK9hdDUWKa+KIU75BHkCrb2u9aGMdgInjs6FqOU
+	fZrecBYGg=
+X-Google-Smtp-Source: AGHT+IFxjntFYCrdKTcPea67JPxe+v5Sa9XZL4MVsSSpjMRa9cd1V2CipkdZZHMWHZoL7poCdPxCL7wYZBcjkNKu7qc=
+X-Received: by 2002:a05:690c:7246:b0:6fb:b36b:300f with SMTP id
+ 00721157ae682-6fd4a12e751mr42505867b3.27.1740747767697; Fri, 28 Feb 2025
+ 05:02:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250226121537.752241-1-dongml2@chinatelecom.cn>
+ <20250227165302.GB5880@noisy.programming.kicks-ass.net> <CADxym3YCZ5dqXMFesNaAF_Z2EWWCj0bJyKQ+BnNw2c=g39CRFA@mail.gmail.com>
+ <20250228102646.GW11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250228102646.GW11590@noisy.programming.kicks-ass.net>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 28 Feb 2025 21:01:16 +0800
+X-Gm-Features: AQ5f1JqrzWh6FiWmWs0NqkISwK6qGrIUKQAmD08_dgHluKZH96ief-KRhQb5Uq8
+Message-ID: <CADxym3aECb5xOm0+YMycsx8kD6ijuEfMx6xrR9UKrH-FFn=KBw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2] add function metadata support
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	mathieu.desnoyers@efficios.com, nathan@kernel.org, ndesaulniers@google.com, 
+	morbo@google.com, justinstitt@google.com, dongml2@chinatelecom.cn, 
+	akpm@linux-foundation.org, rppt@kernel.org, graf@amazon.com, 
+	dan.j.williams@intel.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Feb 2025 17:00:54 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Fri, Feb 28, 2025 at 6:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, Feb 28, 2025 at 05:53:07PM +0800, Menglong Dong wrote:
+>
+> > I tested it a little by enabling CFI_CLANG and the extra 5-bytes
+> > padding. It works fine, as mostly CFI_CLANG use
+> > CONFIG_FUNCTION_PADDING_BYTES to find the tags. I'll
+> > do more testing on CFI_CLANG to make sure everything goes
+> > well.
+>
+> I don't think you understand; please read:
+>
+> arch/x86/kernel/alternative.c:__apply_fineibt()
+>
+> and all the code involved with patching FineIBT. I think you'll find it
+> very broken if you change anything here.
+>
+> Can you post an actual function preamble from a kernel with
+> CONFIG_FINEIBT=3Dy with your changes on?
+>
+> Ex.
+>
+> $ objdump -wdr build/kernel/futex/core.o
+>
+> Disassembly of section .text:
+>
+> 0000000000000000 <__cfi_futex_hash>:
+>        0:       b9 93 0c f9 ad          mov    $0xadf90c93,%ecx
+>
+> 0000000000000005 <.Ltmp0>:
+>        5:       90                      nop
+>        6:       90                      nop
+>        7:       90                      nop
+>        8:       90                      nop
+>        9:       90                      nop
+>        a:       90                      nop
+>        b:       90                      nop
+>        c:       90                      nop
+>        d:       90                      nop
+>        e:       90                      nop
+>        f:       90                      nop
+>
+> 0000000000000010 <futex_hash>:
+>       10:       f3 0f 1e fa             endbr64
+>       14:       e8 00 00 00 00          call   19 <futex_hash+0x9>      1=
+5: R_X86_64_PLT32      __fentry__-0x4
+>       19:       8b 47 10                mov    0x10(%rdi),%eax
+>
+>
+> Any change to the layout here *WILL* break the FineIBT code.
+>
+>
+> If you want to test, make sure your build has FINEIBT=3Dy and boot on an
+> Intel CPU that has CET-IBT (alderlake and later).
 
-> Now that we have everything in place, enable using HEST GPA
-> instead of etc/hardware_errors GPA.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Yeah, I understand now. As I see the definition of CFI_PRE_PADDING, I
+know that things is not as simple as I thought, as the layout can be differ=
+ent
+with different config. I'll dig it deeper on this part.
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+Thanks a lot for clearing that up for me. I'll test the CFI_CLANG and
+FINEIBT together with this function later.
 
-> ---
->  hw/acpi/generic_event_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> index f029753ab709..9fe70b74bd42 100644
-> --- a/hw/acpi/generic_event_device.c
-> +++ b/hw/acpi/generic_event_device.c
-> @@ -332,7 +332,7 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
->  static const Property acpi_ged_properties[] = {
->      DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
->      DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState,
-> -                     ghes_state.use_hest_addr, false),
-> +                     ghes_state.use_hest_addr, true),
->  };
->  
->  static const VMStateDescription vmstate_memhp_state = {
-
+Thanks!
+Menglong Dong
 
