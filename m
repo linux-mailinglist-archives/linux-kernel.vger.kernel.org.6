@@ -1,148 +1,95 @@
-Return-Path: <linux-kernel+bounces-539184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6593A4A1C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:38:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CB0A4A1C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4431742E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA1C1890CCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A5D27CCD3;
-	Fri, 28 Feb 2025 18:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8E727CCDA;
+	Fri, 28 Feb 2025 18:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uofk3v08"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1gKP1tG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFCC27CCC3;
-	Fri, 28 Feb 2025 18:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B26A27CCC3;
+	Fri, 28 Feb 2025 18:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767893; cv=none; b=YHz1crLiTEe46jNURQx9aQv3FTEM6ttdO/gm7v7BnUCWXuJ6vzfUV0A9gYba7FUQ/gCt7F314AySM66uHXlzusYi4DQdkfpoosQKBgz5D8LGf2E+DiYeq+82zKRvCi0xkibRpHfxoVSejKQHuAOU2tG+XO5pYcIbJiipK91kIpE=
+	t=1740767960; cv=none; b=SVlehilOMzkQsBYfSaqYlZc+nd0JX2S83PiU5hQKvw79clUu764Dvb6BOpHGiBfQj5c8or5+HgyOJ1UPhkGW2lPV0sLTxi3uyFGIF/m4ENdU/6ky9FhyQjybWwJqNitxrVFBNVe3tq2x+/Oj8GMSfgCBka0INsxuMwc5eppljq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767893; c=relaxed/simple;
-	bh=+ExAjuCub//33EjRWm6zsYb1gINoL1tsET0MyxuihxA=;
+	s=arc-20240116; t=1740767960; c=relaxed/simple;
+	bh=AuBv0dI0/7mGcCyImiY+YF7W4pXWyjFanOGgVtp4H/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftHqwsVVZnNtd7SnrM99rOQ5x3ILB7ySTgkkAsImDq+ThHjHYHw+StEfLZD+eV8mFJ5ridqjA6ulTjYK3WiM65dK150ppivNmBCkXJqMQAmOrSjH4SOb5O+L8d/fbhrMiZ2XbxZKWwvlkT0KdvupuVOrQxOo6FCTXxk1MRwKN3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uofk3v08; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21266C4CED6;
-	Fri, 28 Feb 2025 18:38:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmAVJcrHWo8KI1eAesoG9rDl/OP/84/9q0U5q82Gc+mdFnhZdYYknzm3mrt68xJtb8rohkPyp32HCKZjS8YzqL2y8wTiMxjQlL0eiUyFwsC7thUluEkPYxCPe7rakwwUR+0DjsxWExsdjbuKOx+Itm51x0vOfpDpQx69uv9Qey8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1gKP1tG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50378C4CED6;
+	Fri, 28 Feb 2025 18:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740767893;
-	bh=+ExAjuCub//33EjRWm6zsYb1gINoL1tsET0MyxuihxA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Uofk3v08aVuGrhM0C1utDEN8xgDwTdNm4NsHgWyrpjg6HXeyFAtvaNp132OyNOjWU
-	 WJh6ZeJJx84dItycbBc6dhJzsfZ01XKgv7xrjUdfr4ih2x07HumDBfhRQREVESIwxZ
-	 IFpwjpUN5xYnohKqMFNvnP5sDOP5O1Kvf6Ov7foRUtRAy8x2eshyOzLDVmSdIIQnIT
-	 xGjQ9hgOuHPBnfonhPtErFQEBeb3O5UxJ+Y0SnIjbmr9tM5EJIdi9sC4BTlXRNp3oU
-	 hhUnQ+ZmWxaPyzzSxbALCvB6K8rpE5682u0kBsrgvhcSJ8HlKrBNEHvaBnu8gsxXc4
-	 BhrgyTq4JFC+Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id ABE7ACE0DEB; Fri, 28 Feb 2025 10:38:12 -0800 (PST)
-Date: Fri, 28 Feb 2025 10:38:12 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
- <Z8Ckb6spK35-Ez4U@pc636>
- <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
- <Z8H_aYBUHD2sS2Ir@pc636>
+	s=k20201202; t=1740767959;
+	bh=AuBv0dI0/7mGcCyImiY+YF7W4pXWyjFanOGgVtp4H/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1gKP1tGmO9TCsk0ojlDHgr7t6xSqubmNlFaFN0Zcjf1EuVDzyjAk3oTvXU6e9Jw1
+	 W7jVhZXcLOmbIq5P50+yAmazxWvz/R7piauRNjADNHxPKVmhbVTs8TgtE+LzJdYFYe
+	 xxK0pPSnpmJSrMNTZ1x21jqdLlZTCAVcil98FmAb+HeMPSwDXxePWr1HBx6F3mqP+j
+	 VEqaObXKSs7/Tkly1YB5VUejsSHz22GCU0PNONVdY7T6EKqgfVRFAv5aijBPSuNb6Y
+	 6o2mT5pe0I7Se913Szspc84oA3zbmsMwfqkPdGrlMWHrpcePLCVsVXYEH4BFe2PilP
+	 z/MKA2lEywZwg==
+Date: Fri, 28 Feb 2025 18:39:15 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yao Zi <ziyao@disroot.org>, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: soc: rockchip: Add RK3528 ioc grf syscon
+Message-ID: <20250228-gloomy-revolving-f56eea5ab8ca@spud>
+References: <20250228064024.3200000-1-jonas@kwiboo.se>
+ <20250228064024.3200000-2-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/leG0Q2y3eS4Gkis"
+Content-Disposition: inline
+In-Reply-To: <20250228064024.3200000-2-jonas@kwiboo.se>
+
+
+--/leG0Q2y3eS4Gkis
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8H_aYBUHD2sS2Ir@pc636>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 07:24:41PM +0100, Uladzislau Rezki wrote:
-> On Fri, Feb 28, 2025 at 10:21:57AM -0800, Paul E. McKenney wrote:
-> > On Fri, Feb 28, 2025 at 05:36:47PM +0100, Uladzislau Rezki wrote:
-> > > On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
-> > > > On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
-> > > > > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> > > > > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > > > > > > Hi Ulad,
-> > > > > > > 
-> > > > > > > I put these three patches into next (and misc.2025.02.27a) for some
-> > > > > > > testing, hopefully it all goes well and they can make it v6.15.
-> > > > > > > 
-> > > > > > > A few tag changed below:
-> > > > > > > 
-> > > > > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > > > > > Switch for using of get_state_synchronize_rcu_full() and
-> > > > > > > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > > > > > > synchronize_rcu() call.
-> > > > > > > > 
-> > > > > > > > Just using "not" full APIs to identify if a grace period is
-> > > > > > > > passed or not might lead to a false-positive kernel splat.
-> > > > > > > > 
-> > > > > > > > It can happen, because get_state_synchronize_rcu() compresses
-> > > > > > > > both normal and expedited states into one single unsigned long
-> > > > > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > > > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > > > > > > run.
-> > > > > > > > 
-> > > > > > > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > > > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > > > > > > for expedited and normal states.
-> > > > > > > > 
-> > > > > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > > > > > > 
-> > > > > > > I switch this into "Closes:" per checkpatch.
-> > > > > > > 
-> > > > > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > > > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > > > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > > > 
-> > > > > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > > > > > > Would you or Paul double-check the Reviewed-by should be here?
-> > > > > > 
-> > > > > > I am good with keeping my Reviewed-by tags.
-> > > > > > 
-> > > > > Thanks Paul!
-> > > > 
-> > > > Except that I got this from overnight testing of rcu/dev on the shared
-> > > > RCU tree:
-> > > > 
-> > > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> > > > 
-> > > > I see this only on TREE05.  Which should not be too surprising, given
-> > > > that this is the scenario that tests it.  It happened within five minutes
-> > > > on all 14 of the TREE05 runs.
-> > > > 
-> > > Hm.. This is not fun. I tested this on my system and i did not manage to
-> > > trigger this whereas you do. Something is wrong.
-> > 
-> > If you have a debug patch, I would be happy to give it a go.
-> > 
-> I can trigger it. But.
-> 
-> Some background. I tested those patches during many hours on the stable
-> kernel which is 6.13. On that kernel i was not able to trigger it. Running
-> the rcutorture on the our shared "dev" tree, which i did now, triggers this
-> right away.
+On Fri, Feb 28, 2025 at 06:40:07AM +0000, Jonas Karlman wrote:
+> The GPIO is accessible via ioc grf syscon registers on RK3528.
+>=20
+> Add compatible string for RK3528 ioc grf syscon.
+>=20
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-Bisection?  (Hey, you knew that was coming!)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-							Thanx, Paul
+--/leG0Q2y3eS4Gkis
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8IC0wAKCRB4tDGHoIJi
+0jdtAQDGvTMV164jPUzRBKHwNEW+vXfylxVnqteojSFn8YFqRgEA92nhRCxirp16
+sRP2GIrG/z+LYbF1tzPyGfKyIy4hpAM=
+=njOY
+-----END PGP SIGNATURE-----
+
+--/leG0Q2y3eS4Gkis--
 
