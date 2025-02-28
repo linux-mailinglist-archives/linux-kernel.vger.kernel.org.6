@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-538001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD468A49364
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70308A49371
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F57188987F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:25:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5387A4928
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD43424CED7;
-	Fri, 28 Feb 2025 08:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834332505A4;
+	Fri, 28 Feb 2025 08:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hl8oK6dU"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gtlpWU7d"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAE02475F7;
-	Fri, 28 Feb 2025 08:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC10244E8C;
+	Fri, 28 Feb 2025 08:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731071; cv=none; b=LsAmshfQQcZAMEnfVx9jn87P4tpL7sRWjBsWVqc//nHQbjYQKMfzOLa30A08QGPXABEbpKiaYImScSAT8+NfTsZEqEjxdqWqg/hFV7YjJ8mjkMEb2y6DJCRZZ3cnauMc2/bR77wbutkCcF2KThYgTRCijf3hAychSOu1lR4ql38=
+	t=1740731072; cv=none; b=NdJm5BZRAwRb9hF5DqP10HtxRm/mvuk+HrdSM1CUWJA5d91RVFzJxszsKYdGUijBjVMJ3/rI0qLdHroHmFEL1ag7ZC6TBmj2mtF+KTeuH3PBRteg2FU7f81HBvMb4HqTRHa0GeLy7cWxdwjfruCW/XbnaP3lKRWNMfv16hF+AM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731071; c=relaxed/simple;
-	bh=4zIHaCMZS0hDa4OtHqr9qgMpS7AF52W84a6XPqM1u7Y=;
+	s=arc-20240116; t=1740731072; c=relaxed/simple;
+	bh=B/MGBjYVxsYWfcFssMVaGH1yN2esGtujMxDHR6gzepc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I6AnKzEF27E95Ak0yTFXxZILTSRDO+cWzWDGB3LuLKjioz8QCGHU7zb037IHIdHWd5UfIbgdiTNA2UI4MpLn8sK9UvgX+Az9vT+aKc6MlEovio8RhpZHa6F3I1YjtR3Hc2XNyM1W7lGgKCRfJUzet87oubD+GmezVcT4zOIDSd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hl8oK6dU; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=dvzkyWk7xeYd+EqYbpqHu4eHkGGRNuXmp/WlUuYW2QF8dyxaegblUQy4qhTwW9NAZRnKsNO5BQrGZAUHbX4kCo6FDGxKKJoHdpcgLGZKivM7UJOME3Sug5Tcagl11w6J5ui23iYG2FbOE9/+5U3x5Ybm1mgF0enwOtJ8DwXn2OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gtlpWU7d; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S8NdZW073880
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S8NdZX073880
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 28 Feb 2025 00:23:45 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S8NdZW073880
+	Fri, 28 Feb 2025 00:23:46 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S8NdZX073880
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740731026;
-	bh=ycQixJeuBOEDa8QWxTSMTADnqo3HaIk9wTod1ikqI0k=;
+	s=2025021701; t=1740731027;
+	bh=b/q9gkRcLIQyybvtkaT3cly8AxNAR6qRae3JS7hihNk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hl8oK6dUoF5ZhTOEckvsPfLSRfBwM2ScuFFySPAEXNTyBXVWX32T1wGOcqce0m3ou
-	 Zym7QcXHviIcfjgSkauVF49bml99mMSSP57aLhxEVM8RJSX7loJVclQQIruRp0ggHe
-	 1n5S5wxZg4f4pjFxpgJ80q84+fhs/5vzFyQBa68XLGc/xuYCuR3cfJwAyVZpS1c9hp
-	 iP43pEHVRC2j/r8n70z9T+2nGCjZds7RYn11hKBfYrhy4MbB5dMguyzh5yfHoHnMXJ
-	 2estFv6z3KyTJHtEsIKbfCqSGoqbpqX/0dhmGC0+5NDfN558qdGSA9H4UwEaSHBQma
-	 hTHq8wTYzCsDQ==
+	b=gtlpWU7dYcSI4nBjdHoucqDOe+ox9lTh/Nq0iiZOSq8zxdO8l9paZBz8iKYgAWUfz
+	 osDgthQDRMDkUmqLjyvRdkrvQcXB+3+8+6X/Rfchf25Ih+A7RoYnORydbm1Ur97DaA
+	 7+Tk6EcdJUyLPs2Wik0jCoa+rXzTWQjbGutwrLqXE4a3id1pLrzPpljauE6FsBjk5k
+	 dwWdGaOdTWzKoxDA6Z2DTkMPPjqk+0Zg36knO8aNjTA2u3GUkeFD9hd1hTEi1QlGrH
+	 xlfm2uder6NIEZfKOi7rCUpLqyZWKpXQr4hRTYk05pmTOzbEFx4RumNI2aSK5VzT6H
+	 +Msa8wXOI8nsA==
 From: "Xin Li (Intel)" <xin@zytor.com>
 To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
@@ -53,9 +53,9 @@ Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
         will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
         akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
         brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: [PATCH v6 1/5] x86/cpufeatures: Rename X86_CMPXCHG64 to X86_CX8
-Date: Fri, 28 Feb 2025 00:23:34 -0800
-Message-ID: <20250228082338.73859-2-xin@zytor.com>
+Subject: [PATCH v6 2/5] x86/cpufeatures: Add {required,disabled} feature configs
+Date: Fri, 28 Feb 2025 00:23:35 -0800
+Message-ID: <20250228082338.73859-3-xin@zytor.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250228082338.73859-1-xin@zytor.com>
 References: <20250228082338.73859-1-xin@zytor.com>
@@ -69,170 +69,249 @@ Content-Transfer-Encoding: 8bit
 
 From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
 
-Replace X86_CMPXCHG64 with X86_CX8, as CX8 is the name of the CPUID
-flag, thus to make it consistent with X86_FEATURE_CX8 defined in
-<asm/cpufeatures.h>.
-
-No functional change intended.
+Required and disabled feature masks completely rely on build configs,
+i.e., once a build config is fixed, so are the feature masks.  To
+prepare for auto-generating a header with required and disabled feature
+masks based on a build config, add feature Kconfig items:
+  - X86_REQUIRED_FEATURE_x
+  - X86_DISABLED_FEATURE_x
+each of which may be set to "y" if and only if its preconditions from
+current build config are met.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 ---
 
-Change in v6:
-* Rename X86_CMPXCHG64 in a separate patch (Borislav Petkov).
+Changes in v6:
+* Move changes to X86_CMPXCHG64 to a separate patch (Borislav Petkov).
+* Keep X86_{CX8,CMOV} and define X86_REQUIRED_FEATURE_{CX8,CMOV} on top
+  (Borislav Petkov).
+
+Changes in v2:
+* Keep the X86_{REQUIRED,DISABLED}_FEATURE_ prefixes solely in
+  arch/x86/Kconfig.cpufeatures (Borislav Petkov).
+* Explain how config option names X86_{REQUIRED,DISABLED}_FEATURE_<name>
+  are formed (Borislav Petkov).
 ---
- arch/x86/Kconfig                               | 2 +-
- arch/x86/Kconfig.cpu                           | 4 ++--
- arch/x86/include/asm/asm-prototypes.h          | 2 +-
- arch/x86/include/asm/atomic64_32.h             | 2 +-
- arch/x86/include/asm/cmpxchg_32.h              | 2 +-
- arch/x86/include/asm/required-features.h       | 2 +-
- arch/x86/lib/Makefile                          | 2 +-
- arch/x86/lib/cmpxchg8b_emu.S                   | 2 +-
- lib/atomic64_test.c                            | 2 +-
- tools/arch/x86/include/asm/required-features.h | 2 +-
- 10 files changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/Kconfig             |   2 +
+ arch/x86/Kconfig.cpufeatures | 197 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 199 insertions(+)
+ create mode 100644 arch/x86/Kconfig.cpufeatures
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 60c2a16c7801..1e50da06ffc4 100644
+index 1e50da06ffc4..1b12725cac8c 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -133,7 +133,7 @@ config X86
- 	select ARCH_SUPPORTS_AUTOFDO_CLANG
- 	select ARCH_SUPPORTS_PROPELLER_CLANG    if X86_64
- 	select ARCH_USE_BUILTIN_BSWAP
--	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
-+	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CX8
- 	select ARCH_USE_MEMTEST
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 8fcb8ccee44b..f8b3296fe2e1 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -299,7 +299,7 @@ config X86_HAVE_PAE
- 	def_bool y
- 	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC7 || MATOM || X86_64
+@@ -3130,4 +3130,6 @@ config HAVE_ATOMIC_IOMAP
  
--config X86_CMPXCHG64
-+config X86_CX8
- 	def_bool y
- 	depends on X86_HAVE_PAE || M586TSC || M586MMX || MK6 || MK7 || MGEODEGX1 || MGEODE_LX
+ source "arch/x86/kvm/Kconfig"
  
-@@ -313,7 +313,7 @@ config X86_MINIMUM_CPU_FAMILY
- 	int
- 	default "64" if X86_64
- 	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
--	default "5" if X86_32 && X86_CMPXCHG64
-+	default "5" if X86_32 && X86_CX8
- 	default "4"
- 
- config X86_DEBUGCTLMSR
-diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
-index 3674006e3974..8d9e62725202 100644
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -16,7 +16,7 @@
- #include <asm/gsseg.h>
- #include <asm/nospec-branch.h>
- 
--#ifndef CONFIG_X86_CMPXCHG64
-+#ifndef CONFIG_X86_CX8
- extern void cmpxchg8b_emu(void);
- #endif
- 
-diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
-index 6c6e9b9f98a4..797085ecaaa4 100644
---- a/arch/x86/include/asm/atomic64_32.h
-+++ b/arch/x86/include/asm/atomic64_32.h
-@@ -48,7 +48,7 @@ static __always_inline s64 arch_atomic64_read_nonatomic(const atomic64_t *v)
- 	ATOMIC64_EXPORT(atomic64_##sym)
- #endif
- 
--#ifdef CONFIG_X86_CMPXCHG64
-+#ifdef CONFIG_X86_CX8
- #define __alternative_atomic64(f, g, out, in...) \
- 	asm volatile("call %c[func]" \
- 		     : ALT_OUTPUT_SP(out) \
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 95b5f990ca88..ee89fbc4dd4b 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -69,7 +69,7 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp,
- 	return __arch_try_cmpxchg64(ptr, oldp, new,);
- }
- 
--#ifdef CONFIG_X86_CMPXCHG64
-+#ifdef CONFIG_X86_CX8
- 
- #define arch_cmpxchg64 __cmpxchg64
- 
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index e9187ddd3d1f..0068133cb622 100644
---- a/arch/x86/include/asm/required-features.h
-+++ b/arch/x86/include/asm/required-features.h
-@@ -23,7 +23,7 @@
- # define NEED_PAE	0
- #endif
- 
--#ifdef CONFIG_X86_CMPXCHG64
-+#ifdef CONFIG_X86_CX8
- # define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
- #else
- # define NEED_CX8	0
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index f453507649d4..64ccecedc9f8 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -56,7 +56,7 @@ ifeq ($(CONFIG_X86_32),y)
-         lib-y += string_32.o
-         lib-y += memmove_32.o
-         lib-y += cmpxchg8b_emu.o
--ifneq ($(CONFIG_X86_CMPXCHG64),y)
-+ifneq ($(CONFIG_X86_CX8),y)
-         lib-y += atomic64_386_32.o
- endif
- else
-diff --git a/arch/x86/lib/cmpxchg8b_emu.S b/arch/x86/lib/cmpxchg8b_emu.S
-index 1c96be769adc..d4bb24347ff8 100644
---- a/arch/x86/lib/cmpxchg8b_emu.S
-+++ b/arch/x86/lib/cmpxchg8b_emu.S
-@@ -7,7 +7,7 @@
- 
- .text
- 
--#ifndef CONFIG_X86_CMPXCHG64
-+#ifndef CONFIG_X86_CX8
- 
- /*
-  * Emulate 'cmpxchg8b (%esi)' on UP
-diff --git a/lib/atomic64_test.c b/lib/atomic64_test.c
-index 759ea1783cc5..d726068358c7 100644
---- a/lib/atomic64_test.c
-+++ b/lib/atomic64_test.c
-@@ -254,7 +254,7 @@ static __init int test_atomics_init(void)
- 	pr_info("passed for %s platform %s CX8 and %s SSE\n",
- #ifdef CONFIG_X86_64
- 		"x86-64",
--#elif defined(CONFIG_X86_CMPXCHG64)
-+#elif defined(CONFIG_X86_CX8)
- 		"i586+",
- #else
- 		"i386+",
-diff --git a/tools/arch/x86/include/asm/required-features.h b/tools/arch/x86/include/asm/required-features.h
-index e9187ddd3d1f..0068133cb622 100644
---- a/tools/arch/x86/include/asm/required-features.h
-+++ b/tools/arch/x86/include/asm/required-features.h
-@@ -23,7 +23,7 @@
- # define NEED_PAE	0
- #endif
- 
--#ifdef CONFIG_X86_CMPXCHG64
-+#ifdef CONFIG_X86_CX8
- # define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
- #else
- # define NEED_CX8	0
++source "arch/x86/Kconfig.cpufeatures"
++
+ source "arch/x86/Kconfig.assembler"
+diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
+new file mode 100644
+index 000000000000..5dcc49d928c5
+--- /dev/null
++++ b/arch/x86/Kconfig.cpufeatures
+@@ -0,0 +1,197 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
++# either REQUIRED to be enabled, or DISABLED (always ignored) for this
++# particular compile-time configuration.  The tests for these features
++# are turned into compile-time constants via the generated
++# <asm/featuremasks.h>.
++#
++# The naming of these variables *must* match asm/cpufeatures.h, e.g.,
++#     X86_FEATURE_ALWAYS <==> X86_REQUIRED_FEATURE_ALWAYS
++#     X86_FEATURE_FRED   <==> X86_DISABLED_FEATURE_FRED
++#
++# And these REQUIRED and DISABLED config options are manipulated in an
++# AWK script as the following example:
++#
++#                          +----------------------+
++#                          |    X86_FRED = y ?    |
++#                          +----------------------+
++#                              /             \
++#                           Y /               \ N
++#  +-------------------------------------+   +-------------------------------+
++#  | X86_DISABLED_FEATURE_FRED undefined |   | X86_DISABLED_FEATURE_FRED = y |
++#  +-------------------------------------+   +-------------------------------+
++#                                                        |
++#                                                        |
++#     +-------------------------------------------+      |
++#     | X86_FEATURE_FRED: feature word 12, bit 17 | ---->|
++#     +-------------------------------------------+      |
++#                                                        |
++#                                                        |
++#                                     +-------------------------------+
++#                                     | set bit 17 of DISABLED_MASK12 |
++#                                     +-------------------------------+
++#
++
++config X86_REQUIRED_FEATURE_ALWAYS
++	def_bool y
++
++config X86_REQUIRED_FEATURE_NOPL
++	def_bool y
++	depends on X86_64 || X86_P6_NOP
++
++config X86_REQUIRED_FEATURE_CX8
++	def_bool y
++	depends on X86_CX8
++
++# this should be set for all -march=.. options where the compiler
++# generates cmov.
++config X86_REQUIRED_FEATURE_CMOV
++	def_bool y
++	depends on X86_CMOV
++
++# this should be set for all -march= options where the compiler
++# generates movbe.
++config X86_REQUIRED_FEATURE_MOVBE
++	def_bool y
++	depends on MATOM
++
++config X86_REQUIRED_FEATURE_CPUID
++	def_bool y
++	depends on X86_64
++
++config X86_REQUIRED_FEATURE_UP
++	def_bool y
++	depends on !SMP
++
++config X86_REQUIRED_FEATURE_FPU
++	def_bool y
++	depends on !MATH_EMULATION
++
++config X86_REQUIRED_FEATURE_PAE
++	def_bool y
++	depends on X86_64 || X86_PAE
++
++config X86_REQUIRED_FEATURE_PSE
++	def_bool y
++	depends on X86_64 && !PARAVIRT_XXL
++
++config X86_REQUIRED_FEATURE_PGE
++	def_bool y
++	depends on X86_64 && !PARAVIRT_XXL
++
++config X86_REQUIRED_FEATURE_MSR
++	def_bool y
++	depends on X86_64
++
++config X86_REQUIRED_FEATURE_FXSR
++	def_bool y
++	depends on X86_64
++
++config X86_REQUIRED_FEATURE_XMM
++	def_bool y
++	depends on X86_64
++
++config X86_REQUIRED_FEATURE_XMM2
++	def_bool y
++	depends on X86_64
++
++config X86_REQUIRED_FEATURE_LM
++	def_bool y
++	depends on X86_64
++
++config X86_DISABLED_FEATURE_UMIP
++	def_bool y
++	depends on !X86_UMIP
++
++config X86_DISABLED_FEATURE_VME
++	def_bool y
++	depends on X86_64
++
++config X86_DISABLED_FEATURE_K6_MTRR
++	def_bool y
++	depends on X86_64
++
++config X86_DISABLED_FEATURE_CYRIX_ARR
++	def_bool y
++	depends on X86_64
++
++config X86_DISABLED_FEATURE_CENTAUR_MCR
++	def_bool y
++	depends on X86_64
++
++config X86_DISABLED_FEATURE_PCID
++	def_bool y
++	depends on !X86_64
++
++config X86_DISABLED_FEATURE_PKU
++	def_bool y
++	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
++
++config X86_DISABLED_FEATURE_OSPKE
++	def_bool y
++	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
++
++config X86_DISABLED_FEATURE_LA57
++	def_bool y
++	depends on !X86_5LEVEL
++
++config X86_DISABLED_FEATURE_PTI
++	def_bool y
++	depends on !MITIGATION_PAGE_TABLE_ISOLATION
++
++config X86_DISABLED_FEATURE_RETPOLINE
++	def_bool y
++	depends on !MITIGATION_RETPOLINE
++
++config X86_DISABLED_FEATURE_RETPOLINE_LFENCE
++	def_bool y
++	depends on !MITIGATION_RETPOLINE
++
++config X86_DISABLED_FEATURE_RETHUNK
++	def_bool y
++	depends on !MITIGATION_RETHUNK
++
++config X86_DISABLED_FEATURE_UNRET
++	def_bool y
++	depends on !MITIGATION_UNRET_ENTRY
++
++config X86_DISABLED_FEATURE_CALL_DEPTH
++	def_bool y
++	depends on !MITIGATION_CALL_DEPTH_TRACKING
++
++config X86_DISABLED_FEATURE_LAM
++	def_bool y
++	depends on !ADDRESS_MASKING
++
++config X86_DISABLED_FEATURE_ENQCMD
++	def_bool y
++	depends on !INTEL_IOMMU_SVM
++
++config X86_DISABLED_FEATURE_SGX
++	def_bool y
++	depends on !X86_SGX
++
++config X86_DISABLED_FEATURE_XENPV
++	def_bool y
++	depends on !XEN_PV
++
++config X86_DISABLED_FEATURE_TDX_GUEST
++	def_bool y
++	depends on !INTEL_TDX_GUEST
++
++config X86_DISABLED_FEATURE_USER_SHSTK
++	def_bool y
++	depends on !X86_USER_SHADOW_STACK
++
++config X86_DISABLED_FEATURE_IBT
++	def_bool y
++	depends on !X86_KERNEL_IBT
++
++config X86_DISABLED_FEATURE_FRED
++	def_bool y
++	depends on !X86_FRED
++
++config X86_DISABLED_FEATURE_SEV_SNP
++	def_bool y
++	depends on !KVM_AMD_SEV
 -- 
 2.48.1
 
