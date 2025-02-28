@@ -1,91 +1,54 @@
-Return-Path: <linux-kernel+bounces-539070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28051A4A086
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:34:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114EBA4A092
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5B47AA462
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603063ADF77
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8090627424E;
-	Fri, 28 Feb 2025 17:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556C81F09B8;
+	Fri, 28 Feb 2025 17:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4fL8kYw"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iQhUQE0n"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEE01F4C83;
-	Fri, 28 Feb 2025 17:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA861F4C83;
+	Fri, 28 Feb 2025 17:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764044; cv=none; b=Gxc7S/BomB1gInby4dlYU0kdDbhmUJq0y9/suZUt83BU4XkjB8kkrQ9pKF/liw6o/gOgricQX3aKS/non96fpYqsg0JUdzbUJzON7ptT4Bf+JyeYIef8jMAivuognEeagg4E806e+vGngEXAE1vnxvtwO5pF1QsHnGI5uPSg0fI=
+	t=1740764181; cv=none; b=WNgp5ZkOeuMGQIrUTZWqkuMAgFhdRGLxaAO2TA5cMetn+D/kr6lpVXTS3lsU26ZNuOTO77aKRKVL69erLLYEuxTRFOouopKtkwIjypkoK7D3MBQRP+nVwnwepJvZW7U3o/V/WeYo4mrBuElf+fwxntAiHZ1Jar5T6npIXRcds9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764044; c=relaxed/simple;
-	bh=ga7vifj5ctJiMEimouIoEeSZP+WD4Qt8UQwAuS8nLSE=;
+	s=arc-20240116; t=1740764181; c=relaxed/simple;
+	bh=EL1y7SYxASvs1N0JRfan8zB6ZxxXcTJdbkIqOXtAZDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUHOO54jOmE9i38LOridJtGi0up29VW4k7mKJCDeFByN5BUBo9yfGsdytBOPSgyzMzqjuZYmJQnQJ+Xsi6fQ5BHyDO0VpA0TCmfOLLm9L3DYhML98ZUU7xftMS+dSB7Jv3V0/ruAR4OxWUNqaVTvVUANfkuR76TeaEVOb8AzuvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4fL8kYw; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so990479f8f.1;
-        Fri, 28 Feb 2025 09:34:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740764040; x=1741368840; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=23YyeJYoDnTiEoCT9jrABPEwXgQJdKRqvAUOqdnjfw0=;
-        b=C4fL8kYwUz7pNiyIwWFJdTTPVk0j2154JL7EvvVepUTUiGcGdpk+U5un37rDp3OFU/
-         HAd63MwhcPgl4V0EzxRWG9R7hupLptOVz+6hoBDWCCjxwQti18WUAU8MemcRDqnD0cKk
-         t2KrViUSWpt6ndm9ORwpmuNHVcxBZP4FKhVCT0nUTurlIiiJlPfBPQzgYQb0sV0bt43p
-         E3iRWDfz1x3HGt+KO6JJdd3kTaJIrb8aazM7z9DKPZ9ttmZVoWX3F/bDyq2y7Rji3Bpn
-         +dt/Zq+JBSc23Fk0NH3/sLfJ/UlXUsntjku3D2XHZuhl86T850FgOMxBqraMOVvVuC3S
-         Ccgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740764040; x=1741368840;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=23YyeJYoDnTiEoCT9jrABPEwXgQJdKRqvAUOqdnjfw0=;
-        b=Yy1T/lIsJFni/Vp6Orxg7Ss3A5/QD+vaOn+SnhlNicIfphLH23Muj025ynu42v3ogn
-         /TQm3UIMxZdCMVjii61wSWcuyQW4VD/T5SSqiF/KCYYIaTCpKpN3hDoQR6GjSyGmYMe0
-         nOabYizoRwP5rgVxC0WOQeVGie3HhsFjFAqklHH/lmpXRqg+tRA7lIOE71YlRU9+JHaE
-         5/MN+MPngsFIj087kkRblWV2TPPEkEVtZDAAkVAO5UiH7Xy9W/ZcozuKMZb72B115MJy
-         31HGLxQDwBL0sCwisZR3sg8gQeuNgPwXgRZ9tCsFcBlPWYHLW/XWZ4VKe1FP2h2HY4U+
-         MLKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnak1dWZq3M7TG98ngdVvCufYuqGiJ8LyDpn9u6iA2M7gh3eT8EtMx4uFZOZFhSMtDEN0qvvE5V1MhXd8=@vger.kernel.org, AJvYcCXsHMkkHnJ2NE44I7jyaY5fq46Np5+4tGcXG1VnqGp172sw4F7sYg6Mdg8QFzKnI3okuuB2TzqZlZHhEbj+FelvQMVexGSV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYrY1/Kub2LB8kmenquqnU20q9NMUUq8LKn6YWI5E/ce2/w2B5
-	e04MAY95xb8lvVo0JWN4zRQqnuZL4KrYwB1aK+Qu18V8zq9TsKks
-X-Gm-Gg: ASbGncv8Jj3MmiMbWv5jNmGs+67djV6MmBZIrqrhowwh7Tv4fUSTLIYbWEyzDQOfxm8
-	qWeiRwL2rjGCWO64sjLcesfRL8vOP9V9n962f8ahNqZDuPUTtv9WYV72tCoAqRp/JCL9rOxs23n
-	sonVfMSh1teSocmj8WY2jK2Fd19AVbOQVrzLwWr/fHMb2HpjacX8PneXsyjFt6cdTvRa5bbxTjt
-	guOHj9kUqM9jszyeHg7hWkQQvLgJ0xMaGJ47WiWXstgOfjcXHiYlcvgcdcqyizZce4LAbkMAVSW
-	M3WunbDjNJHLfHuhVkS9WU7Yw2w=
-X-Google-Smtp-Source: AGHT+IHTK8/RcRphtxwyeFz/0jFdhUlC7OzjWAWrhnu193+Bz1EaBcdxtyKUxLwDSrD1z7RRl2IMkg==
-X-Received: by 2002:a05:6000:1868:b0:390:de58:d7fe with SMTP id ffacd0b85a97d-390eca40e2bmr4017603f8f.51.1740764039886;
-        Fri, 28 Feb 2025 09:33:59 -0800 (PST)
-Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47b7c4fsm5839637f8f.52.2025.02.28.09.33.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 09:33:59 -0800 (PST)
-Date: Fri, 28 Feb 2025 18:33:55 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	Peter Newman <peternewman@google.com>,
-	David Howells <dhowells@redhat.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for
- landlock_restrict_self()
-Message-ID: <20250228.b3794e33d5c0@gnoack.org>
-References: <20250221184417.27954-2-gnoack3000@gmail.com>
- <20250221184417.27954-3-gnoack3000@gmail.com>
- <20250227.Aequah6Avieg@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOT4Jnwr6FqarwI9yUPFgObSAVNrHYHaoFoY98ibPKJWeFmKfbhRQMaUh20HNteAsxcym1kOPsrHQSfgQSk6jLiorP10Uh9U3r/tH9L9Jh461wHMgPtC9nP/80xSDwc3i/OgerwcSc0NZwHq8VoE1P7d/MTKmBE1C7xnSv2QMwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iQhUQE0n; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F064E166A;
+	Fri, 28 Feb 2025 18:34:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740764086;
+	bh=EL1y7SYxASvs1N0JRfan8zB6ZxxXcTJdbkIqOXtAZDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iQhUQE0nhPZVA5QRU2ukjr0iEcHH9lKD2GF5Y07HqTl6HS80PZ0CfNO1DR+4O8ZUO
+	 MVaWeJUqJnQGsKYyorpMq/l6086jxeMb+K9vyCP+Gk0mq7scj7vaEV4F/AjcherreG
+	 fCp15q9Y2qL/mxZP4O7AundPqlChuxyVebzNSiO4=
+Date: Fri, 28 Feb 2025 19:35:56 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com
+Subject: Re: [PATCH] media: i2c: Add OV05C camera sensor driver
+Message-ID: <20250228173556.GB14076@pendragon.ideasonboard.com>
+References: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,445 +57,1205 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250227.Aequah6Avieg@digikod.net>
+In-Reply-To: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
 
-Hello!
+Hi Pratap,
 
-Thanks for the review!
+Thank you for the patch.
 
-I'm adding David Howells to this thread as well.  David, maybe you can
-help us and suggest a appropriate way to update the struct cred across
-multiple threads?
+A few assorted comments to start with, I'll try to do a more in-depth
+review later.
 
-On Thu, Feb 27, 2025 at 09:53:11PM +0100, Mickaël Salaün wrote:
-> On Fri, Feb 21, 2025 at 07:44:17PM +0100, Günther Noack wrote:
-> > Introduce the LANDLOCK_RESTRICT_SELF_TSYNC flag.  With this flag, a
-> > given Landlock ruleset is applied to all threads of the calling
-> > process, instead of only the current one.
+On Fri, Feb 28, 2025 at 11:53:12AM -0500, Pratap Nirujogi wrote:
+> Add driver for OmniVision 5.2M OV05C10 sensor. This driver
+> supports only the full size normal 2888x1808@30fps 2-lane
+> sensor profile.
+
+What have you tested this driver with ? I see no OF device ID or ACPI
+device ID.
+
+Please provide a v4l2-compliance report.
+
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+>  drivers/media/i2c/Kconfig  |   10 +
+>  drivers/media/i2c/Makefile |    1 +
+>  drivers/media/i2c/ov05c.c  | 1031 ++++++++++++++++++++++++++++++++++++
+
+Please add an entry in the MAINTAINERS file.
+
+>  3 files changed, 1042 insertions(+)
+>  create mode 100644 drivers/media/i2c/ov05c.c
 > 
-> I initially though that we may pick another flag name but I now think
-> reusing the same name as for seccomp would be less confusing for users.
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index 8ba096b8ebca..fd160feabc41 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -337,6 +337,16 @@ config VIDEO_OG01A1B
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called og01a1b.
+>  
+> +config VIDEO_OV05C
 
-+1, under the assumption that we implement a "syncing" behaviour here,
-I also think that the name is good.
+Please sort entries alphabetically.
 
+> +	tristate "OmniVision OV05 sensor support"
+> +	select V4L2_CCI_I2C
+> +	help
+> +	  This is a Video4Linux2 sensor driver for the OmniVision
+> +	  OV05C camera.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called OV05C.
+> +
+>  config VIDEO_OV01A10
+>  	tristate "OmniVision OV01A10 sensor support"
+>  	help
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index fbb988bd067a..08bfc2d59be2 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -80,6 +80,7 @@ obj-$(CONFIG_VIDEO_MT9V011) += mt9v011.o
+>  obj-$(CONFIG_VIDEO_MT9V032) += mt9v032.o
+>  obj-$(CONFIG_VIDEO_MT9V111) += mt9v111.o
+>  obj-$(CONFIG_VIDEO_OG01A1B) += og01a1b.o
+> +obj-$(CONFIG_VIDEO_OV05C) += ov05c.o
 
-> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> > index a9760d252fc2d..63792a6cde5ca 100644
-> > --- a/security/landlock/syscalls.c
-> > +++ b/security/landlock/syscalls.c
+Here too.
 
-> > +static struct cred *
-> > +landlock_prepare_creds(const struct landlock_ruleset *old_dom,
-> > +		       struct landlock_ruleset *new_dom)
-> > +{
-> > +	struct cred *new_cred;
-> > +	struct landlock_cred_security *new_llcred;
-> > +
-> > +	/*
-> > +	 * Similar checks as for seccomp(2), except that an -EPERM may be
-> > +	 * returned.
-> > +	 */
-> > +	if (!task_no_new_privs(current) &&
-> > +	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-> > +		return ERR_PTR(-EPERM);
-> 
-> This should only be done for the calling thread, so just reusing the
-> existing code from landlock_restrict_self().
-> 
-> If the no_new_privs property is set for the current thread, it would
-> make sense to just set it for all other threads once we are sure we can
-> sandbox all of them (see seccomp_sync_threads).
+>  obj-$(CONFIG_VIDEO_OV01A10) += ov01a10.o
+>  obj-$(CONFIG_VIDEO_OV02A10) += ov02a10.o
+>  obj-$(CONFIG_VIDEO_OV08D10) += ov08d10.o
+> diff --git a/drivers/media/i2c/ov05c.c b/drivers/media/i2c/ov05c.c
+> new file mode 100644
+> index 000000000000..96c4f74af4a9
+> --- /dev/null
+> +++ b/drivers/media/i2c/ov05c.c
+> @@ -0,0 +1,1031 @@
+> +/* SPDX-License-Identifier: MIT */
 
-(See discussion below regarding NO_NEW_PRIVS)
+Why not GPL-2.0 ?
 
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
+> + * All Rights Reserved.
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the
+> + * "Software"), to deal in the Software without restriction, including
+> + * without limitation the rights to use, copy, modify, merge, publish,
+> + * distribute, sub license, and/or sell copies of the Software, and to
+> + * permit persons to whom the Software is furnished to do so, subject to
+> + * the following conditions:
+> + *
+> + * The above copyright notice and this permission notice (including the
+> + * next paragraph) shall be included in all copies or substantial portions
+> + * of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
+> + * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+> + * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+> + * USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-> For this we need to have two for_each_thread loops: one to check that
-> the current thread is legitimate to sandbox all the other threads and
-> make sure no error could arise (e.g. memory allocation), and another
-> loop to safely enforce the restrictions if the first one was OK.
-> 
-> The handling of the following prepare_cred()'s failure is the main
-> issue, but see my proposal below.
-> 
-> > +
-> > +	/* Prepares new credentials. */
-> > +	new_cred = prepare_creds();
-> > +	if (!new_cred)
-> > +		return ERR_PTR(-ENOMEM);
-> 
-> Instead of creating one new credential per thread, we should use the
-> newly created one (from landlock_restrict_self) and increment its
-> references.  In most cases that would avoid duplicating information and
-> wasting memory by creating one struct cred per thread.
+Drop all this (except the copyright line), it's conveyed by the SPDX
+tag.
 
-struct cred contains all kinds of other credentials as well, besides
-Landlock and NO_NEW_PRIVS. *In normal scenarios* I believe that the
-struct cred is the same for all threads, but this is not guaranteed.
+> + *
+> + */
+> +
+> +#include <linux/acpi.h>
 
-We can make it safe by requiring that all threads must point to the
-same struct cred, as you are suggesting below.  But how are users
-supposed to reason about whether all threads share the same struct
-cred?  To my knowledge, it is an implementation detail of the kernel.
-We can't expect callers to understand what properties belong to struct
-cred, and that list of properties can potentially change in the future
-as well.
+This doesn't seem to be used.
 
-This is why in the proposal I sent, the only thing that matters about
-the preexisting struct cred is the Landlock domain which is stored in
-it.  This is a lower bar to meet and seems more appropriate for this
-Landlock-specific syscall.
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/delay.h>
 
+Alphabetical order please.
 
-> > +	new_llcred = landlock_cred(new_cred);
-> > +	if (new_llcred->domain != old_dom) {
-> > +		abort_creds(new_cred);
-> > +		return ERR_PTR(-ESRCH);
-> 
-> To avoid dealing with prepare_creds()'s error, I think we could just
-> check that all threads have (initially) the same credentials, and either
-> swap this same old credential with the new one (created by the caller),
-> or swap the Landlock domain (and set no_new_privs) if the credentials
-> changed between the initial check and now.
+> +#include <linux/units.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/gpio.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-cci.h>
 
-This would be working around the API documented in
-Documentation/security/credentials.rst, where the affected task should
-do its own prepare_creds()/abort_creds()/commit_creds() dance.
+Thanks for using the CCI helpers :-)
 
-After seeing how it had turned out in the keyctl case with an
-additional LSM hook, I was hoping to use the suggested API and do
-things as intended here.  prepare_creds() and commit_creds() do more
-than just switching pointers and refcounts, it is not clear to me that
-prepare_creds() on one task and commit_creds() on another would work
-with the same struct cred.
+> +
+> +#define DRV_NAME			"ov05c"
+> +
+> +/* Chip ID */
+> +#define OV05C_REG_CHIP_ID		CCI_REG24(0x00)
+> +#define OV05C_CHIP_ID			0x430556
+> +
+> +/* Control registers */
+> +#define OV05C_REG_PAGE_CTL		CCI_REG8(0xFD)
 
+V4L2 spells hex constants in lower case.
 
-> Actually it might be up to
-> three loops:
-> 
-> (lock cred_guard_mutex)
+> +#define OV05C_REG_TRIGGER		CCI_REG8(0x01)
+> +
+> +/* V_TIMING internal */
+> +#define OV05C_REG_VTS			CCI_REG16(0x05)
+> +#define OV05C_VTS_30FPS			1860
+> +#define OV05C_VTS_MAX			0x7fff
+> +
+> +/* H TIMING internal */
+> +#define OV05C_REG_HTS			CCI_REG16(0x37)
+> +#define OV05C_HTS_30FPS			0x0280
+> +
+> +/* Exposure control */
+> +#define OV05C_REG_EXPOSURE		CCI_REG24(0x02)
+> +#define OV05C_EXPOSURE_MAX_MARGIN	33
+> +#define OV05C_EXPOSURE_MIN		4
+> +#define OV05C_EXPOSURE_STEP		1
+> +#define OV05C_EXPOSURE_DEFAULT		0x40
+> +
+> +/* Analog gain control */
+> +#define OV05C_REG_ANALOG_GAIN		CCI_REG8(0x24)
+> +#define OV05C_ANA_GAIN_MIN		0x80
+> +#define OV05C_ANA_GAIN_MAX		0x07c0
+> +#define OV05C_ANA_GAIN_STEP		1
+> +#define OV05C_ANA_GAIN_DEFAULT		0x80
+> +
+> +/* Digital gain control */
+> +#define OV05C_REG_DGTL_GAIN_H		CCI_REG8(0x21)
+> +#define OV05C_REG_DGTL_GAIN_L		CCI_REG8(0x22)
+> +
+> +#define OV05C_DGTL_GAIN_MIN		64		/* Min = 1 X */
+> +#define OV05C_DGTL_GAIN_MAX		(256 - 1)	/* Max = 4 X */
+> +#define OV05C_DGTL_GAIN_DEFAULT		0x80		/* Default gain = 2x */
+> +#define OV05C_DGTL_GAIN_STEP		1		/* Each step = 1/64 */
+> +
+> +#define OV05C_DGTL_GAIN_L_MASK		0xFF
+> +#define OV05C_DGTL_GAIN_H_SHIFT		8
+> +#define OV05C_DGTL_GAIN_H_MASK		0xFF00
+> +
+> +/* Test Pattern Control */
+> +#define OV05C_REG_TEST_PATTERN_CTL	CCI_REG8(0xF3)
+> +#define OV05C_REG_TEST_PATTERN		CCI_REG8(0x12)
+> +#define OV05C_TEST_PATTERN_ENABLE	BIT(0)
 
-FWIW, Peter Newman (CC'd) also pointed me at the tasklist lock, which
-is also used in Seccomp.  I believe we would also have to grab this
-one *before* starting to iterate over the list of tasks and *after*
-committing the last credentials, so that we don't spawn new tasks in
-the middle of the operation, which might still inherit old
-credentials.  (The drawback is that it is a global lock.)
+Could you please sort registers by their numerical address ?
 
+> +
+> +#define NUM_OF_PADS			3
 
-> 1. Check that all threads use the same credential, or abort the whole
->    operation otherwise.
-> 
-> 2. If the caller has no_new_privs (and passed the Landlock checks), set
->    no_new_privs to all threads.
+Why three pads ? The driver doesn't seem to make a distinction between
+them.
 
-I am still conflicted about this.  This seems like a too implicit way
-to set NO_NEW_PRIVS and might surprise callers.  After all, we are not
-setting it in the single-threaded landlock_restrict_self() case
-either.
+> +
+> +enum {
+> +	OV05C_LINK_FREQ_900MHZ_INDEX,
+> +};
+> +
+> +struct ov05c_reg_list {
+> +	u32 num_of_regs;
+> +	const struct cci_reg_sequence *regs;
+> +};
+> +
+> +/* Link frequency config */
+> +struct ov05c_link_freq_config {
+> +	/* registers for this link frequency */
+> +	struct ov05c_reg_list reg_list;
+> +};
+> +
+> +/* Mode : resolution and related config&values */
+> +struct ov05c_mode {
+> +	/* Frame width */
+> +	u32 width;
+> +	/* Frame height */
+> +	u32 height;
+> +	/* number of lanes */
+> +	u32 lanes;
+> +
+> +	/* V-timing */
+> +	u32 vts_def;
+> +	u32 vts_min;
+> +
+> +	/* HTS */
+> +	u32 hts;
+> +
+> +	/* Index of Link frequency config to be used */
+> +	u32 link_freq_index;
+> +
+> +	/* Default register values */
+> +	struct ov05c_reg_list reg_list;
+> +};
+> +
+> +static const struct cci_reg_sequence
+> +	mode_2888_1808_30fps_1800mbps_2lane_24mhz_regs[] = {
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0x20),  0x00 },
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0x20),  0x0b },
+> +	{ CCI_REG8(0xc1),  0x09 },
+> +	{ CCI_REG8(0x21),  0x06 },
+> +	{ CCI_REG8(0x14),  0x78 },
+> +	{ CCI_REG8(0xe7),  0x03 },
+> +	{ CCI_REG8(0xe7),  0x00 },
+> +	{ CCI_REG8(0x21),  0x00 },
+> +	{ CCI_REG8(0xfd),  0x01 },
+> +	{ CCI_REG8(0x03),  0x00 },
+> +	{ CCI_REG8(0x04),  0x06 },
+> +	{ CCI_REG8(0x05),  0x07 },
+> +	{ CCI_REG8(0x06),  0x44 },
+> +	{ CCI_REG8(0x07),  0x08 },
+> +	{ CCI_REG8(0x1b),  0x01 },
+> +	{ CCI_REG8(0x24),  0xff },
+> +	{ CCI_REG8(0x32),  0x03 },
+> +	{ CCI_REG8(0x42),  0x5d },
+> +	{ CCI_REG8(0x43),  0x08 },
+> +	{ CCI_REG8(0x44),  0x81 },
+> +	{ CCI_REG8(0x46),  0x5f },
+> +	{ CCI_REG8(0x48),  0x18 },
+> +	{ CCI_REG8(0x49),  0x04 },
+> +	{ CCI_REG8(0x5c),  0x18 },
+> +	{ CCI_REG8(0x5e),  0x13 },
+> +	{ CCI_REG8(0x70),  0x15 },
+> +	{ CCI_REG8(0x77),  0x35 },
+> +	{ CCI_REG8(0x79),  0x00 },
+> +	{ CCI_REG8(0x7b),  0x08 },
+> +	{ CCI_REG8(0x7d),  0x08 },
+> +	{ CCI_REG8(0x7e),  0x08 },
+> +	{ CCI_REG8(0x7f),  0x08 },
+> +	{ CCI_REG8(0x90),  0x37 },
+> +	{ CCI_REG8(0x91),  0x05 },
+> +	{ CCI_REG8(0x92),  0x18 },
+> +	{ CCI_REG8(0x93),  0x27 },
+> +	{ CCI_REG8(0x94),  0x05 },
+> +	{ CCI_REG8(0x95),  0x38 },
+> +	{ CCI_REG8(0x9b),  0x00 },
+> +	{ CCI_REG8(0x9c),  0x06 },
+> +	{ CCI_REG8(0x9d),  0x28 },
+> +	{ CCI_REG8(0x9e),  0x06 },
+> +	{ CCI_REG8(0xb2),  0x0f },
+> +	{ CCI_REG8(0xb3),  0x29 },
+> +	{ CCI_REG8(0xbf),  0x3c },
+> +	{ CCI_REG8(0xc2),  0x04 },
+> +	{ CCI_REG8(0xc4),  0x00 },
+> +	{ CCI_REG8(0xca),  0x20 },
+> +	{ CCI_REG8(0xcb),  0x20 },
+> +	{ CCI_REG8(0xcc),  0x28 },
+> +	{ CCI_REG8(0xcd),  0x28 },
+> +	{ CCI_REG8(0xce),  0x20 },
+> +	{ CCI_REG8(0xcf),  0x20 },
+> +	{ CCI_REG8(0xd0),  0x2a },
+> +	{ CCI_REG8(0xd1),  0x2a },
+> +	{ CCI_REG8(0xfd),  0x0f },
+> +	{ CCI_REG8(0x00),  0x00 },
+> +	{ CCI_REG8(0x01),  0xa0 },
+> +	{ CCI_REG8(0x02),  0x48 },
+> +	{ CCI_REG8(0x07),  0x8f },
+> +	{ CCI_REG8(0x08),  0x70 },
+> +	{ CCI_REG8(0x09),  0x01 },
+> +	{ CCI_REG8(0x0b),  0x40 },
+> +	{ CCI_REG8(0x0d),  0x07 },
+> +	{ CCI_REG8(0x11),  0x33 },
+> +	{ CCI_REG8(0x12),  0x77 },
+> +	{ CCI_REG8(0x13),  0x66 },
+> +	{ CCI_REG8(0x14),  0x65 },
+> +	{ CCI_REG8(0x15),  0x37 },
+> +	{ CCI_REG8(0x16),  0xbf },
+> +	{ CCI_REG8(0x17),  0xff },
+> +	{ CCI_REG8(0x18),  0xff },
+> +	{ CCI_REG8(0x19),  0x12 },
+> +	{ CCI_REG8(0x1a),  0x10 },
+> +	{ CCI_REG8(0x1c),  0x77 },
+> +	{ CCI_REG8(0x1d),  0x77 },
+> +	{ CCI_REG8(0x20),  0x0f },
+> +	{ CCI_REG8(0x21),  0x0f },
+> +	{ CCI_REG8(0x22),  0x0f },
+> +	{ CCI_REG8(0x23),  0x0f },
+> +	{ CCI_REG8(0x2b),  0x20 },
+> +	{ CCI_REG8(0x2c),  0x20 },
+> +	{ CCI_REG8(0x2d),  0x04 },
+> +	{ CCI_REG8(0xfd),  0x03 },
+> +	{ CCI_REG8(0x9d),  0x0f },
+> +	{ CCI_REG8(0x9f),  0x40 },
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0x20),  0x1b },
+> +	{ CCI_REG8(0xfd),  0x04 },
+> +	{ CCI_REG8(0x19),  0x60 },
+> +	{ CCI_REG8(0xfd),  0x02 },
+> +	{ CCI_REG8(0x75),  0x05 },
+> +	{ CCI_REG8(0x7f),  0x06 },
+> +	{ CCI_REG8(0x9a),  0x03 },
+> +	{ CCI_REG8(0xa2),  0x07 },
+> +	{ CCI_REG8(0xa3),  0x10 },
+> +	{ CCI_REG8(0xa5),  0x02 },
+> +	{ CCI_REG8(0xa6),  0x0b },
+> +	{ CCI_REG8(0xa7),  0x48 },
+> +	{ CCI_REG8(0xfd),  0x07 },
+> +	{ CCI_REG8(0x42),  0x00 },
+> +	{ CCI_REG8(0x43),  0x80 },
+> +	{ CCI_REG8(0x44),  0x00 },
+> +	{ CCI_REG8(0x45),  0x80 },
+> +	{ CCI_REG8(0x46),  0x00 },
+> +	{ CCI_REG8(0x47),  0x80 },
+> +	{ CCI_REG8(0x48),  0x00 },
+> +	{ CCI_REG8(0x49),  0x80 },
+> +	{ CCI_REG8(0x00),  0xf7 },
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0xe7),  0x03 },
+> +	{ CCI_REG8(0xe7),  0x00 },
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0x93),  0x18 },
+> +	{ CCI_REG8(0x94),  0xff },
+> +	{ CCI_REG8(0x95),  0xbd },
+> +	{ CCI_REG8(0x96),  0x1a },
+> +	{ CCI_REG8(0x98),  0x04 },
+> +	{ CCI_REG8(0x99),  0x08 },
+> +	{ CCI_REG8(0x9b),  0x10 },
+> +	{ CCI_REG8(0x9c),  0x3f },
+> +	{ CCI_REG8(0xa1),  0x05 },
+> +	{ CCI_REG8(0xa4),  0x2f },
+> +	{ CCI_REG8(0xc0),  0x0c },
+> +	{ CCI_REG8(0xc1),  0x08 },
+> +	{ CCI_REG8(0xc2),  0x00 },
+> +	{ CCI_REG8(0xb6),  0x20 },
+> +	{ CCI_REG8(0xbb),  0x80 },
+> +	{ CCI_REG8(0xfd),  0x00 },
+> +	{ CCI_REG8(0xa0),  0x01 },
+> +	{ CCI_REG8(0xfd),  0x01 },
+> +};
+> +
+> +static const struct cci_reg_sequence mode_OV05C_stream_on_regs[] = {
+> +	{ CCI_REG8(0xfd), 0x01 },
+> +	{ CCI_REG8(0x33), 0x03 },
+> +	{ CCI_REG8(0x01), 0x02 },
+> +	{ CCI_REG8(0xfd), 0x00 },
+> +	{ CCI_REG8(0x20), 0x1f },
+> +	{ CCI_REG8(0xfd), 0x01 },
+> +};
+> +
+> +static const struct cci_reg_sequence mode_OV05C_stream_off_regs[] = {
+> +	{ CCI_REG8(0xfd), 0x00 },
+> +	{ CCI_REG8(0x20), 0x5b },
+> +	{ CCI_REG8(0xfd), 0x01 },
+> +	{ CCI_REG8(0x33), 0x02 },
+> +	{ CCI_REG8(0x01), 0x02 },
+> +};
+> +
+> +static const char * const ov05c_test_pattern_menu[] = {
+> +	"Disabled",
+> +	"Vertical Color Bar Type 1",
+> +	"Vertical Color Bar Type 2",
+> +	"Vertical Color Bar Type 3",
+> +	"Vertical Color Bar Type 4"
+> +};
+> +
+> +/* Configurations for supported link frequencies */
+> +#define OV05C_LINK_FREQ_900MHZ		(900 * HZ_PER_MHZ)
+> +
+> +/* Number of lanes supported */
+> +#define OV05C_DATA_LANES		2
+> +
+> +/* Bits per sample of sensor output */
+> +#define OV05C_BITS_PER_SAMPLE		10
+> +
+> +/*
+> + * pixel_rate = link_freq * data-rate * nr_of_lanes / bits_per_sample
+> + * data rate => double data rate; number of lanes => 2; bits per pixel => 10
+> + */
+> +static u64 link_freq_to_pixel_rate(u64 f)
+> +{
+> +	f *= 2 * OV05C_DATA_LANES;
+> +	do_div(f, OV05C_BITS_PER_SAMPLE);
+> +
+> +	return f;
+> +}
+> +
+> +/* Menu items for LINK_FREQ V4L2 control */
+> +static const s64 ov05c_link_freq_menu_items[] = {
+> +	OV05C_LINK_FREQ_900MHZ,
+> +};
 
+The link frequencies should be parsed from device properties (DT or
+ACPI), not be hardcoded in the driver. PLL parameters should be computed
+dynamically accordingly.
 
-> 3. Run a work_task on each thread that will either:
->    - if old thread's credential is still the same as the caller's
->      credentials, swap it with the new one with get_cred()/put_cred();
->    - otherwise, this means that the thread changed its credential after
->      the first loop but because we set no_new_privs, this alternative
->      credential should not give more privileges and we should be safe to
->      only swap the Landlock domain with the new one (if different).
->      Indeed, this alternative credential might be used by other threads
->      from the same process, but AFAIK not by threads from other
->      processes thanks to cred_guard_mutex.  This would require to bypass
->      the const pointer though.  Holding cred_guard_mutex will also make
->      sure that domains were not updated under our feet by another call
->      to landlock_restrict_self().
+> +
+> +/* Mode configs */
+> +static const struct ov05c_mode supported_modes[] = {
+> +	{
+> +		.width = 2888,
+> +		.height = 1808,
 
-Hmm, in the second case we'd still have to use the
-prepare_creds()/abort_creds()/commit_creds() API with all of its
-potential failure modes.  Or, we would have to swizzle out contents of
-struct cred directly, but that would be side-stepping that API again.
+Can the sensor registers related to the image size be set based on the
+format set by userspace, instead of hardcoding modes ?
 
-I would prefer not to side-step that cred-updating API, given how it
-turned out in the keyctl case.  If it is absolutely necessary to
-change struct cred differently, I would rather introduce a new
-"official" way to change struct cred than to work around it from the
-outside without David Howells' knowledge.  But I'd prefer to do it
-with the existing update API, if we can.
+> +		.vts_def = OV05C_VTS_30FPS,
+> +		.vts_min = OV05C_VTS_30FPS,
+> +		.hts = 640,
+> +		.lanes = 2,
+> +		.reg_list = {
+> +			.num_of_regs = ARRAY_SIZE(mode_2888_1808_30fps_1800mbps_2lane_24mhz_regs),
+> +			.regs = mode_2888_1808_30fps_1800mbps_2lane_24mhz_regs,
+> +		},
+> +		.link_freq_index = OV05C_LINK_FREQ_900MHZ_INDEX,
+> +	},
+> +};
+> +
+> +struct ov05c {
+> +	struct v4l2_subdev sd;
+> +	struct media_pad pads[NUM_OF_PADS];
+> +
+> +	/* V4L2 control handler */
+> +	struct v4l2_ctrl_handler ctrl_handler;
+> +
+> +	/* V4L2 Controls */
+> +	struct v4l2_ctrl *link_freq;
+> +	struct v4l2_ctrl *pixel_rate;
+> +	struct v4l2_ctrl *vblank;
+> +	struct v4l2_ctrl *hblank;
+> +	struct v4l2_ctrl *exposure;
+> +
+> +	/* Current mode */
+> +	const struct ov05c_mode *cur_mode;
+> +
+> +	struct regmap *regmap;
+> +
+> +	/* Mutex for serialized access */
 
+You need to document which fields the mutex protects.
 
-> (unlock cred_guard_mutex)
-> 
-> Another approach would be to leverage an LSM hook to deny credential
-> changes for a thread while we are changing them for the whole process,
-> but I'm not sure it would be better.
-> 
-> Kees, Paul, Jann, any better idea?
-> 
-> > +	}
-> > +
-> > +	/* Replaces the old (prepared) domain. */
-> > +	landlock_put_ruleset(new_llcred->domain);
-> > +	landlock_get_ruleset(new_dom);
-> > +	new_llcred->domain = new_dom;
-> > +
-> > +	return new_cred;
-> > +}
-> > +
-> > +/*
-> > + * restrict_one_thread - update a thread's Landlock domain in lockstep with the
-> > + * other threads in the same process.
-> > + *
-> > + * When this is run, the same function gets run in all other threads in the same
-> > + * process.  The concurrently running function invocations coordinate to wait
-> > + * until they are all done with the preparation step and have reported back
-> > + * errors from the preparation step, if necessary.
-> > + *
-> > + * Afterwards, depending on the presence of an error, all threads either commit
-> > + * or abort the prepared credentials.  The commit operation can not fail any more.
-> > + */
-> > +static void restrict_one_thread(struct landlock_tsync_shared_context *ctx)
-> > +{
-> > +	int res;
-> > +	struct cred *cred = landlock_prepare_creds(ctx->old_dom, ctx->new_dom);
-> > +
-> > +	/* On error, set the error and continue. (Do not return early.) */
-> > +	if (IS_ERR(cred))
-> > +		atomic_set(&ctx->preparation_error, PTR_ERR(cred));
-> > +
-> > +	/*
-> > +	 * Barrier: Wait until all threads are done preparing.
-> > +	 * After this point, we can have no more failures.
-> > +	 */
-> > +	if (atomic_dec_return(&ctx->num_preparing) == 0)
-> > +		complete_all(&ctx->all_prepared);
-> > +	wait_for_completion(&ctx->all_prepared);
-> 
-> The logic is OK but the side effect would be to block all threads, which
-> is an issue.  That's why we need at least two loops run by the calling
-> thread, and the other threads should not have to wait.
+> +	struct mutex mutex;
+> +
+> +	/* gpio descriptor */
+> +	struct gpio_desc *enable_gpio;
+> +};
+> +
+> +#define to_ov05c(_sd)	container_of(_sd, struct ov05c, sd)
+> +
+> +static int ov05c_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
 
-If we do "prepare" and "commit" in two different loops, we'd still
-need to start a "task_work" for the threads in the "commit" loop so
-that they update their struct cred.  And if the struct cred changed in
-the meantime between the two loops, what do we do?  If we want
-all-or-nothing semantics, we'd still have to check for modification in
-the task_work and synchronize with a barrier between all tasks, right?
-Doesn't that have the same problems?  (I would also expect that
-wait-time-wise, the "landlock_prepare_creds" part would be quicker
-than waiting for the "all_prepared" barrier, so this doesn't seem to
-make a big difference?)
+.open() is normally not used for sensor drivers. You should use
+.init_state() instead.
 
-> 
-> > +
-> > +	/*
-> > +	 * Abort the commit if any of the threads had an error.
-> > +	 * (It might also be this thread.)  Otherwise, commit.
-> > +	 */
-> > +	res = atomic_read(&ctx->preparation_error);
-> > +	if (res) {
-> > +		if (!IS_ERR(cred))
-> > +			abort_creds(cred);
-> > +	} else {
-> > +		commit_creds(cred);
-> > +	}
-> > +
-> > +	/* Notify the calling thread once all threads are done */
-> > +	if (atomic_dec_return(&ctx->num_unfinished) == 0)
-> > +		complete_all(&ctx->all_finished);
-> > +}
-> > +
-> > +/*
-> > + * restrict_one_thread_callback - task_work callback for restricting a thread
-> > + *
-> > + * Calls restrict_one_thread with the struct landlock_shared_tsync_context
-> > + * and frees up the per-work_task landlock_tsync_context afterwards.
-> > + */
-> > +static void restrict_one_thread_callback(struct callback_head *work)
-> > +{
-> > +	struct landlock_tsync_context *ctx =
-> > +		container_of(work, struct landlock_tsync_context, work);
-> > +	struct landlock_tsync_shared_context *sctx = ctx->ctx;
-> > +
-> > +	restrict_one_thread(sctx);
-> > +	kfree(ctx);
-> > +}
-> > +
-> > +/*
-> > + * restrict_all_threads - enables a Landlock policy for all threads
-> > + */
-> > +static int restrict_all_threads(const int ruleset_fd)
-> > +{
-> > +	int res;
-> > +	struct task_struct *thread, *caller;
-> > +	struct landlock_tsync_shared_context sctx;
-> > +	struct landlock_ruleset *ruleset;
-> > +
-> > +	/*
-> > +	 * XXX: Need to double check race conditions and deadlocks before
-> > +	 * merging this upstream. We probably need additional locking.
-> > +	 */
-> > +
-> > +	/* Starting with 1, as we're already counting current. */
-> > +	atomic_set(&sctx.num_preparing, 1);
-> > +	atomic_set(&sctx.num_unfinished, 1);
-> > +	init_completion(&sctx.all_prepared);
-> > +	init_completion(&sctx.all_finished);
-> > +	atomic_set(&sctx.preparation_error, 0);
-> > +	sctx.old_dom = landlock_get_current_domain();
-> > +
-> > +	/* Gets and checks the ruleset. */
-> > +	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
-> > +	if (IS_ERR(ruleset))
-> > +		return PTR_ERR(ruleset);
-> > +
-> > +	/*
-> > +	 * We pre-merge the domain for all threads,
-> > +	 * so that all threads end up with exactly the same domain.
-> > +	 */
-> > +	sctx.new_dom = landlock_merge_ruleset(sctx.old_dom, ruleset);
-> > +	landlock_put_ruleset(ruleset);
-> > +	if (IS_ERR(sctx.new_dom))
-> > +		return PTR_ERR(sctx.new_dom);
-> 
-> What is specific to this function should only start here.  The flag
-> checks (new ones are coming with the audit patch series), the ruleset
-> FD, the preapre_creds(), and the landlock_merge_ruleset() should be the
-> same.  We can initialize shared states from here.
+> +{
+> +	const struct ov05c_mode *default_mode = &supported_modes[0];
+> +	struct ov05c *ov05c = to_ov05c(sd);
+> +	struct v4l2_mbus_framefmt *try_fmt =
+> +		v4l2_subdev_state_get_format(fh->state, 0);
+> +
+> +	mutex_lock(&ov05c->mutex);
+> +
+> +	/* Initialize try_fmt */
+> +	try_fmt->width = default_mode->width;
+> +	try_fmt->height = default_mode->height;
+> +	try_fmt->code = MEDIA_BUS_FMT_SGRBG10_1X10;
+> +	try_fmt->field = V4L2_FIELD_NONE;
+> +
+> +	/* No crop or compose */
+> +	mutex_unlock(&ov05c->mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov05c_update_cid_vblank(struct ov05c *ov05c, u32 vblank)
+> +{
+> +	int ret = 0;
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_PAGE_CTL,
 
-I'm not sure I understand fully; is the suggestion that I reorder the
-work at the top of restrict_all_threads() so that the parts that are
-also done in the single threaded-case can be factored out and done in
-the calling function?
+Controlling the page manually is error-prone. Could you encode the page
+number in the register address, and implement read/write wrapper
+functions that will set the page and call cci_read() and cci_write() ?
+You can then cache the active page, and avoid writing OV05C_REG_PAGE_CTL
+unnecessarily?
 
-> 
-> > +
-> > +	landlock_get_ruleset(sctx.old_dom);
-> > +
-> > +	caller = current;
-> > +	for_each_thread(caller, thread) {
-> > +		/* Skip current, since it is initiating the sync. */
-> > +		if (thread == caller)
-> > +			continue;
-> > +
-> > +		/* Skip exited threads. */
-> > +		if (thread->flags & PF_EXITING)
-> > +			continue;
-> > +
-> > +		/* Deallocation is done by the task_work itself. */
-> > +		struct landlock_tsync_context *ctx =
-> > +			kzalloc(sizeof(*ctx), GFP_KERNEL_ACCOUNT);
-> > +		if (!ctx) {
-> > +			/*
-> > +			 * On error, keep already started threads from
-> > +			 * accidentally committing.  Do not start additional
-> > +			 * threads.
-> > +			 */
-> > +			atomic_set(&sctx.preparation_error, -ENOMEM);
-> > +			break;
-> > +		}
-> > +
-> > +		ctx->ctx = &sctx;
-> > +		atomic_inc(&sctx.num_preparing);
-> > +		atomic_inc(&sctx.num_unfinished);
-> > +		init_task_work(&ctx->work, restrict_one_thread_callback);
-> > +		res = task_work_add(thread, &ctx->work, TWA_SIGNAL);
-> > +		if (res) {
-> > +			atomic_set(&sctx.preparation_error, res);
-> > +			atomic_dec(&sctx.num_preparing);
-> > +			atomic_dec(&sctx.num_unfinished);
-> > +		}
-> > +	}
-> > +
-> > +	/* and do the same on the current thread */
-> > +	restrict_one_thread(&sctx);
-> > +
-> > +	res = atomic_read(&sctx.preparation_error);
-> > +	wait_for_completion(&sctx.all_finished);
-> > +	landlock_put_ruleset(sctx.new_dom);
-> > +	landlock_put_ruleset(sctx.old_dom);
-> > +	return res;
-> > +}
-> > +
-> >  /**
-> >   * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
-> >   *
-> >   * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
-> > - * @flags: Must be 0.
-> > + * @flags: Flags to modify the behavior.
-> >   *
-> > - * This system call enables to enforce a Landlock ruleset on the current
-> > - * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
-> > + * This system call enforces a Landlock ruleset on the current thread.
-> > + * Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
-> >   * namespace or is running with no_new_privs.  This avoids scenarios where
-> >   * unprivileged tasks can affect the behavior of privileged children.
-> >   *
-> > + * If %LANDLOCK_RESTRICT_SELF_TSYNC is specified in @flags, the ruleset will be
-> > + * applied to all threads of the current process.  For this, all threads must be
-> > + * in the same Landlock domain and fulfill the normal requirements for enforcing
-> > + * a Landlock ruleset.
-> > + *
-> >   * Possible returned errors are:
-> >   *
-> >   * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-> > @@ -447,6 +664,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
-> >   *   %CAP_SYS_ADMIN in its namespace.
-> >   * - %E2BIG: The maximum number of stacked rulesets is reached for the current
-> >   *   thread.
-> > + * - %ESRCH: When called with %LANDLOCK_RESTRICT_SELF_TSYNC, the processes'
-> > + *   threads were in different Landlock domains.
-> >   */
-> >  SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
-> >  		flags)
-> > @@ -467,10 +686,13 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
-> >  	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-> >  		return -EPERM;
-> >  
-> > -	/* No flag for now. */
-> > -	if (flags)
-> > +	/* TSYNC is the only supported flag. */
-> > +	if (flags & ~LANDLOCK_RESTRICT_SELF_TSYNC)
-> >  		return -EINVAL;
-> >  
-> > +	if (flags & LANDLOCK_RESTRICT_SELF_TSYNC)
-> > +		return restrict_all_threads(ruleset_fd);
-> > +
-> 
-> As explained above, restrict_all_threads()'s logic should be called
-> later.
-> 
-> Starting here, as seccomp does, we can lock siglock (whatever flags are
-> used) to be sure there is not concurrent call to
-> landlock_restrict_self() on other threads of the same process.
-> 
-> If LANDLOCK_RESTRICT_SELF_TSYNC is set, we also need to lock
-> cred_guard_mutex to avoid race conditions with concurrent execve calls.
+> +		  BIT(0), &ret);
+> +	if (ret)
+> +		return ret;
 
-I was confused about this lock, but found the remark in the seccomp
-logic again as well, which says:
+Drop this, and ...
 
-  /*
-   * Make sure we cannot change seccomp or nnp state via TSYNC
-   * while another thread is in the middle of calling exec.
-   */
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_VTS,
+> +		  ov05c->cur_mode->height
+> +		  + vblank, &ret);
+> +	if (ret)
+> +		return ret;
 
-In my understanding, cred_guard_mutex gets locked in early stages of a
-execve() that prepares the "bprm".  If I understand this correctly,
-this is the scenario where the other thread is starting to run
-execve() (about to replace the entire process), but at the same time
-it still looks like a normal thread that belongs to the process.  Is
-that right?
+drop this too ...
 
-> >  	/* Gets and checks the ruleset. */
-> >  	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
-> >  	if (IS_ERR(ruleset))
-> > -- 
-> > 2.48.1
-> > 
-> > 
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_TRIGGER,
+> +		  BIT(0), &ret);
 
-Thanks for the review and for keeping the discussion at the more
-conceptual level for now!
+Please create macros for register bits.
 
-–Günther
+> +
+> +	return ret;
+
+and the function will behave as you expect. If ret is not zero,
+cci_write() returns immediately, so you can have multiple cci_write()
+calls without intermediate error handling. The same applies everywhere
+in the driver.
+
+> +}
+> +
+> +static int ov05c_update_cid_exposure(struct ov05c *ov05c, u32 exposure)
+> +{
+> +	int ret = 0;
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_PAGE_CTL,
+> +		  BIT(0), &ret);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_EXPOSURE,
+> +		  exposure, &ret);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cci_write(ov05c->regmap, OV05C_REG_TRIGGER,
+> +		  BIT(0), &ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ov05c_update_analog_gain(struct ov05c *ov05c, u32 a_gain)
+> +{
+> +	int ret;
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_PAGE_CTL, BIT(0), NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_ANALOG_GAIN, a_gain, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return cci_write(ov05c->regmap, OV05C_REG_TRIGGER, BIT(0), NULL);
+> +}
+> +
+> +static int ov05_update_digital_gain(struct ov05c *ov05c, u32 d_gain)
+> +{
+> +	int ret;
+> +	u64 val;
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_PAGE_CTL, BIT(0), NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = d_gain & OV05C_DGTL_GAIN_L_MASK;
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_DGTL_GAIN_L, val, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = (d_gain & OV05C_DGTL_GAIN_H_MASK) >> OV05C_DGTL_GAIN_H_SHIFT;
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_DGTL_GAIN_H, val, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return cci_write(ov05c->regmap, OV05C_REG_TRIGGER, BIT(0), NULL);
+> +}
+> +
+> +static int ov05c_enable_test_pattern(struct ov05c *ov05c, u32 pattern)
+> +{
+> +	int ret;
+> +	u64 val;
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_PAGE_CTL, BIT(2), NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (pattern) {
+> +		ret = cci_read(ov05c->regmap, OV05C_REG_TEST_PATTERN_CTL, &val, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = cci_write(ov05c->regmap, OV05C_REG_TEST_PATTERN_CTL, val | BIT(1), NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = cci_read(ov05c->regmap, OV05C_REG_TEST_PATTERN, &val, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		val &= OV05C_TEST_PATTERN_ENABLE;
+> +	} else {
+> +		ret = cci_read(ov05c->regmap, OV05C_REG_TEST_PATTERN, &val, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		val &= ~OV05C_TEST_PATTERN_ENABLE;
+> +	}
+> +
+> +	ret = cci_write(ov05c->regmap, OV05C_REG_TEST_PATTERN, val, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return cci_write(ov05c->regmap, OV05C_REG_TRIGGER, BIT(0), NULL);
+> +}
+> +
+> +static int ov05c_set_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	struct ov05c *ov05c = container_of(ctrl->handler,
+> +					  struct ov05c, ctrl_handler);
+> +	struct i2c_client *client = v4l2_get_subdevdata(&ov05c->sd);
+> +	s64 max;
+> +	int ret = 0;
+> +
+> +	/* Propagate change of current control to all related controls */
+> +	switch (ctrl->id) {
+> +	case V4L2_CID_VBLANK:
+> +		/* Update max exposure while meeting expected vblanking */
+> +		max = ov05c->cur_mode->height + ctrl->val - OV05C_EXPOSURE_MAX_MARGIN;
+> +		__v4l2_ctrl_modify_range(ov05c->exposure,
+> +					 ov05c->exposure->minimum,
+> +					 max, ov05c->exposure->step, max);
+> +		break;
+> +	}
+> +
+> +	/*
+> +	 * Applying V4L2 control value only happens
+> +	 * when power is up for streaming
+> +	 */
+> +	if (!pm_runtime_get_if_in_use(&client->dev))
+> +		return 0;
+> +
+> +	switch (ctrl->id) {
+> +	case V4L2_CID_ANALOGUE_GAIN:
+> +		ret = ov05c_update_analog_gain(ov05c, ctrl->val);
+> +		break;
+> +	case V4L2_CID_DIGITAL_GAIN:
+> +		ret = ov05_update_digital_gain(ov05c, ctrl->val);
+> +		break;
+> +	case V4L2_CID_EXPOSURE:
+> +		ret = ov05c_update_cid_exposure(ov05c, ctrl->val);
+> +		break;
+> +	case V4L2_CID_VBLANK:
+> +		ret = ov05c_update_cid_vblank(ov05c, ctrl->val);
+> +		break;
+> +	case V4L2_CID_TEST_PATTERN:
+> +		ret = ov05c_enable_test_pattern(ov05c, ctrl->val);
+> +		break;
+> +	default:
+> +		dev_info(&client->dev,
+> +			 "ctrl(id:0x%x,val:0x%x) is not handled\n",
+> +			 ctrl->id, ctrl->val);
+> +		break;
+> +	}
+> +
+> +	pm_runtime_put(&client->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_ctrl_ops ov05c_ctrl_ops = {
+> +	.s_ctrl = ov05c_set_ctrl,
+> +};
+> +
+> +static int ov05c_enum_mbus_code(struct v4l2_subdev *sd,
+> +				struct v4l2_subdev_state *sd_state,
+> +				struct v4l2_subdev_mbus_code_enum *code)
+> +{
+> +	/* Only one bayer order(GRBG) is supported */
+> +	if (code->index > 0)
+> +		return -EINVAL;
+> +
+> +	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov05c_enum_frame_size(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_state *sd_state,
+> +				 struct v4l2_subdev_frame_size_enum *fse)
+> +{
+> +	if (fse->index >= ARRAY_SIZE(supported_modes))
+> +		return -EINVAL;
+> +
+> +	if (fse->code != MEDIA_BUS_FMT_SGRBG10_1X10)
+> +		return -EINVAL;
+> +
+> +	fse->min_width = supported_modes[fse->index].width;
+> +	fse->max_width = fse->min_width;
+> +	fse->min_height = supported_modes[fse->index].height;
+> +	fse->max_height = fse->min_height;
+> +
+> +	return 0;
+> +}
+> +
+> +static void ov05c_update_pad_format(const struct ov05c_mode *mode,
+> +				    struct v4l2_subdev_format *fmt)
+> +{
+> +	fmt->format.width = mode->width;
+> +	fmt->format.height = mode->height;
+> +	fmt->format.code = MEDIA_BUS_FMT_SGRBG10_1X10;
+> +	fmt->format.field = V4L2_FIELD_NONE;
+> +}
+> +
+> +static int ov05c_do_get_pad_format(struct ov05c *ov05c,
+> +				   struct v4l2_subdev_state *sd_state,
+> +				   struct v4l2_subdev_format *fmt)
+> +{
+> +	struct v4l2_mbus_framefmt *framefmt;
+> +
+> +	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
+> +		framefmt = v4l2_subdev_state_get_format(sd_state, fmt->pad);
+> +		fmt->format = *framefmt;
+> +	} else {
+> +		ov05c_update_pad_format(ov05c->cur_mode, fmt);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov05c_get_pad_format(struct v4l2_subdev *sd,
+> +				struct v4l2_subdev_state *sd_state,
+> +				struct v4l2_subdev_format *fmt)
+> +{
+> +	struct ov05c *ov05c = to_ov05c(sd);
+> +	int ret;
+> +
+> +	mutex_lock(&ov05c->mutex);
+> +	ret = ov05c_do_get_pad_format(ov05c, sd_state, fmt);
+> +	mutex_unlock(&ov05c->mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ov05c_set_pad_format(struct v4l2_subdev *sd,
+> +				struct v4l2_subdev_state *sd_state,
+> +				struct v4l2_subdev_format *fmt)
+> +{
+> +	struct ov05c *ov05c = to_ov05c(sd);
+> +	const struct ov05c_mode *mode;
+> +	struct v4l2_mbus_framefmt *framefmt;
+> +	s32 vblank_def;
+> +	s32 vblank_min;
+> +	s64 h_blank;
+> +	s64 pixel_rate;
+> +	s64 link_freq;
+> +
+> +	mutex_lock(&ov05c->mutex);
+> +
+> +	/* Only one raw bayer(GRBG) order is supported */
+> +	if (fmt->format.code != MEDIA_BUS_FMT_SGRBG10_1X10)
+> +		fmt->format.code = MEDIA_BUS_FMT_SGRBG10_1X10;
+> +
+> +	mode = v4l2_find_nearest_size(supported_modes,
+> +				      ARRAY_SIZE(supported_modes),
+> +				      width, height,
+> +				      fmt->format.width, fmt->format.height);
+> +	ov05c_update_pad_format(mode, fmt);
+> +	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
+> +		framefmt = v4l2_subdev_state_get_format(sd_state, fmt->pad);
+> +		*framefmt = fmt->format;
+> +	} else {
+> +		ov05c->cur_mode = mode;
+> +		__v4l2_ctrl_s_ctrl(ov05c->link_freq, mode->link_freq_index);
+> +		link_freq = ov05c_link_freq_menu_items[mode->link_freq_index];
+> +		pixel_rate = link_freq_to_pixel_rate(link_freq);
+> +		__v4l2_ctrl_s_ctrl_int64(ov05c->pixel_rate, pixel_rate);
+> +
+> +		/* Update limits and set FPS to default */
+> +		vblank_def = ov05c->cur_mode->vts_def -
+> +			     ov05c->cur_mode->height;
+> +		vblank_min = ov05c->cur_mode->vts_min -
+> +			     ov05c->cur_mode->height;
+> +		__v4l2_ctrl_modify_range(ov05c->vblank, vblank_min,
+> +					 OV05C_VTS_MAX
+> +					 - ov05c->cur_mode->height,
+> +					 1,
+> +					 vblank_def);
+> +		__v4l2_ctrl_s_ctrl(ov05c->vblank, vblank_def);
+> +		h_blank = ov05c->cur_mode->hts;
+> +		__v4l2_ctrl_modify_range(ov05c->hblank, h_blank,
+> +					 h_blank, 1, h_blank);
+> +	}
+> +
+> +	mutex_unlock(&ov05c->mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ov05c_start_streaming(struct ov05c *ov05c)
+> +{
+> +	struct i2c_client *client = v4l2_get_subdevdata(&ov05c->sd);
+> +	const struct ov05c_reg_list *reg_list;
+> +	int ret = 0;
+> +
+> +	/* Apply default values of current mode */
+> +	reg_list = &ov05c->cur_mode->reg_list;
+> +	cci_multi_reg_write(ov05c->regmap, reg_list->regs, reg_list->num_of_regs,
+> +			    &ret);
+> +	if (ret) {
+> +		dev_err(&client->dev, "%s failed to set mode, ret: %d\n", __func__, ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Apply customized values from user */
+> +	ret =  __v4l2_ctrl_handler_setup(ov05c->sd.ctrl_handler);
+> +	if (ret) {
+> +		dev_err(&client->dev, "__v4l2_ctrl_handler_setup err:%d", ret);
+> +		return ret;
+> +	}
+> +
+> +	cci_multi_reg_write(ov05c->regmap, mode_OV05C_stream_on_regs,
+> +			    ARRAY_SIZE(mode_OV05C_stream_on_regs), &ret);
+> +	if (ret)
+> +		dev_err(&client->dev, "%s failed to start the streaming\n", __func__);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ov05c_stop_streaming(struct ov05c *ov05c)
+> +{
+> +	int ret = 0;
+> +	struct i2c_client *client = v4l2_get_subdevdata(&ov05c->sd);
+> +
+> +	cci_multi_reg_write(ov05c->regmap, mode_OV05C_stream_off_regs,
+> +			    ARRAY_SIZE(mode_OV05C_stream_off_regs), &ret);
+> +	if (ret)
+> +		dev_err(&client->dev, "%s failed to stop the streaming\n", __func__);
+> +
+> +	return ret;
+> +}
+> +
+> +static void ov05c_sensor_enable(struct ov05c *ov05c, bool enable)
+> +{
+> +	if (enable) {
+> +		gpiod_set_value(ov05c->enable_gpio, 0);
+> +		usleep_range(10, 20);
+> +
+> +		gpiod_set_value(ov05c->enable_gpio, 1);
+> +		/*  The delay is to make sure the sensor is completely turned on */
+> +		usleep_range(1000, 2000);
+> +	} else {
+> +		gpiod_set_value(ov05c->enable_gpio, 0);
+> +		usleep_range(10, 20);
+> +	}
+> +}
+> +
+> +static int ov05c_set_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +	struct ov05c *ov05c = to_ov05c(sd);
+> +	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&ov05c->mutex);
+> +
+> +	if (enable) {
+> +		ov05c_sensor_enable(ov05c, true);
+> +
+> +		ret = pm_runtime_resume_and_get(&client->dev);
+> +		if (ret < 0)
+> +			goto err_unlock;
+> +
+> +		/*
+> +		 * Apply default & customized values
+> +		 * and then start streaming.
+> +		 */
+> +		ret = ov05c_start_streaming(ov05c);
+> +		if (ret)
+> +			goto err_rpm_put;
+> +	} else {
+> +		ov05c_stop_streaming(ov05c);
+> +		pm_runtime_put(&client->dev);
+> +
+> +		ov05c_sensor_enable(ov05c, false);
+> +	}
+> +
+> +	mutex_unlock(&ov05c->mutex);
+> +
+> +	return ret;
+> +
+> +err_rpm_put:
+> +	pm_runtime_put(&client->dev);
+> +err_unlock:
+> +	mutex_unlock(&ov05c->mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_subdev_video_ops ov05c_video_ops = {
+> +	.s_stream = ov05c_set_stream,
+
+Please implement the .enable_streams() and .disable_streams() operations
+instead.
+
+> +};
+> +
+> +static const struct v4l2_subdev_pad_ops ov05c_pad_ops = {
+> +	.enum_mbus_code = ov05c_enum_mbus_code,
+> +	.get_fmt = ov05c_get_pad_format,
+
+Use v4l2_subdev_get_fmt() here and drop the manual implementation of
+ov05c_get_pad_format(). You will need to call
+v4l2_subdev_init_finalize() at probe time. You should then be able to
+drop the mutex in the ov05c structure, as the active state lock will be
+used to serialize everything. The imx219 driver is a possible example of
+how to do so.
+
+> +	.set_fmt = ov05c_set_pad_format,
+> +	.enum_frame_size = ov05c_enum_frame_size,
+> +};
+> +
+> +static const struct v4l2_subdev_ops ov05c_subdev_ops = {
+> +	.video = &ov05c_video_ops,
+> +	.pad = &ov05c_pad_ops,
+> +};
+> +
+> +static const struct media_entity_operations ov05c_subdev_entity_ops = {
+> +	.link_validate = v4l2_subdev_link_validate,
+> +};
+> +
+> +static const struct v4l2_subdev_internal_ops ov05c_internal_ops = {
+> +	.open = ov05c_open,
+> +};
+> +
+> +static int ov05c_init_controls(struct ov05c *ov05c)
+> +{
+> +	struct i2c_client *client = v4l2_get_subdevdata(&ov05c->sd);
+> +	struct v4l2_fwnode_device_properties props;
+> +	struct v4l2_ctrl_handler *ctrl_hdlr;
+> +	const struct ov05c_mode *mode;
+> +	s64 exposure_max;
+> +	s64 vblank_def;
+> +	s64 vblank_min;
+> +	s64 hblank;
+> +	s64 pixel_rate_max;
+> +	u32 max_items;
+> +	int ret;
+> +
+> +	/* Initialize V4L2 control handler with 10 items */
+> +	ret = v4l2_ctrl_handler_init(&ov05c->ctrl_handler, 10);
+> +	if (ret)
+> +		return ret;
+> +	ctrl_hdlr = &ov05c->ctrl_handler;
+> +
+> +	/* Initialize mutex for serialization */
+> +	mutex_init(&ov05c->mutex);
+> +	ctrl_hdlr->lock = &ov05c->mutex;
+> +
+> +	/* Initialize Link frequency control item */
+> +	max_items = ARRAY_SIZE(ov05c_link_freq_menu_items) - 1;
+> +	ov05c->link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr,
+> +						  NULL,
+> +						  V4L2_CID_LINK_FREQ,
+> +						  max_items,
+> +						  0,
+> +						  ov05c_link_freq_menu_items);
+> +	if (ov05c->link_freq)
+> +		ov05c->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +	/* Initialize Pixel rate control item */
+> +	pixel_rate_max = link_freq_to_pixel_rate(ov05c_link_freq_menu_items[0]);
+> +	ov05c->pixel_rate = v4l2_ctrl_new_std(ctrl_hdlr, NULL,
+> +					      V4L2_CID_PIXEL_RATE,
+> +					      0, pixel_rate_max,
+> +					      1, pixel_rate_max);
+> +
+> +	/* Initialize VBLANK control item */
+> +	mode = ov05c->cur_mode;
+> +	vblank_def = mode->vts_def - mode->height;
+> +	vblank_min = mode->vts_min - mode->height;
+> +	ov05c->vblank = v4l2_ctrl_new_std(ctrl_hdlr, &ov05c_ctrl_ops,
+> +					  V4L2_CID_VBLANK,
+> +					  vblank_min, OV05C_VTS_MAX - mode->height,
+> +					  1, vblank_def);
+> +
+> +	/* Initialize HBLANK control item */
+> +	hblank = max(0, ov05c->cur_mode->hts - ov05c->cur_mode->width);
+> +	ov05c->hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL,
+> +					  V4L2_CID_HBLANK,
+> +					  hblank, hblank, 1, hblank);
+> +	if (ov05c->hblank)
+> +		ov05c->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +	/* Initialize EXPOSURE control item */
+> +	exposure_max = mode->vts_def - OV05C_EXPOSURE_MAX_MARGIN;
+> +	ov05c->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &ov05c_ctrl_ops,
+> +					    V4L2_CID_EXPOSURE,
+> +					    OV05C_EXPOSURE_MIN, exposure_max,
+> +					    OV05C_EXPOSURE_STEP, exposure_max);
+> +
+> +	/* Initialize Analog gain control item */
+> +	v4l2_ctrl_new_std(ctrl_hdlr, &ov05c_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
+> +			  OV05C_ANA_GAIN_MIN, OV05C_ANA_GAIN_MAX,
+> +			  OV05C_ANA_GAIN_STEP, OV05C_ANA_GAIN_DEFAULT);
+> +
+> +	/* Initialize Digital gain control item */
+> +	v4l2_ctrl_new_std(ctrl_hdlr, &ov05c_ctrl_ops, V4L2_CID_DIGITAL_GAIN,
+> +			  OV05C_DGTL_GAIN_MIN, OV05C_DGTL_GAIN_MAX,
+> +			  OV05C_DGTL_GAIN_STEP, OV05C_DGTL_GAIN_DEFAULT);
+> +
+> +
+> +	/* Initialize Test pattern control item */
+> +	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &ov05c_ctrl_ops,
+> +				     V4L2_CID_TEST_PATTERN,
+> +				     ARRAY_SIZE(ov05c_test_pattern_menu) - 1, 0,
+> +				     0, ov05c_test_pattern_menu);
+> +
+> +	if (ctrl_hdlr->error) {
+> +		ret = ctrl_hdlr->error;
+> +		dev_err(&client->dev, "%s V4L2 control init failed (%d)", __func__, ret);
+> +		goto error;
+> +	}
+> +
+> +	ret = v4l2_fwnode_device_parse(&client->dev, &props);
+> +	if (ret)
+> +		goto error;
+> +
+> +	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &ov05c_ctrl_ops, &props);
+> +	if (ret)
+> +		goto error;
+> +
+> +	ov05c->sd.ctrl_handler = ctrl_hdlr;
+> +
+> +	return 0;
+> +
+> +error:
+> +	v4l2_ctrl_handler_free(ctrl_hdlr);
+> +	mutex_destroy(&ov05c->mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static void ov05c_free_controls(struct ov05c *ov05c)
+> +{
+> +	v4l2_ctrl_handler_free(ov05c->sd.ctrl_handler);
+> +	mutex_destroy(&ov05c->mutex);
+> +}
+> +
+> +static int ov05c_probe(struct i2c_client *client)
+> +{
+> +	struct ov05c *ov05c;
+> +	int i, ret;
+> +
+> +	ov05c = devm_kzalloc(&client->dev, sizeof(*ov05c), GFP_KERNEL);
+> +	if (!ov05c)
+> +		return -ENOMEM;
+> +
+> +	client->dev.init_name = DRV_NAME;
+
+That's unusual, why is it needed ?
+
+> +
+> +	/* create sensor enable gpio control */
+> +	ov05c->enable_gpio = devm_gpiod_get(&client->dev, "sensor0_enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR_OR_NULL(ov05c->enable_gpio))
+> +		return PTR_ERR(ov05c->enable_gpio);
+> +
+> +	/* Initialize subdev */
+> +	v4l2_i2c_subdev_init(&ov05c->sd, client, &ov05c_subdev_ops);
+> +
+> +	/* Initialize CCI */
+> +	ov05c->regmap = devm_cci_regmap_init_i2c(client, 8);
+> +	if (IS_ERR(ov05c->regmap)) {
+> +		dev_err(&client->dev, "Failed to initialize CCI\n");
+> +		return PTR_ERR(ov05c->regmap);
+> +	}
+> +
+> +	/* Set default mode to max resolution */
+> +	ov05c->cur_mode = &supported_modes[0];
+> +
+> +	/* Initialize V4L2 controls */
+> +	ret = ov05c_init_controls(ov05c);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Initialize V4L2 subdev */
+> +	ov05c->sd.internal_ops = &ov05c_internal_ops;
+> +	ov05c->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	ov05c->sd.entity.ops = &ov05c_subdev_entity_ops;
+> +	ov05c->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> +	ov05c->sd.entity.name = "OV05C";
+> +
+> +	/* Initialize source pad */
+> +	for (i = 0; i < NUM_OF_PADS; i++)
+> +		ov05c->pads[i].flags = MEDIA_PAD_FL_SOURCE;
+> +
+> +	ret = media_entity_pads_init(&ov05c->sd.entity, NUM_OF_PADS, ov05c->pads);
+> +	if (ret)
+> +		goto error_handler_free;
+> +
+> +	ret = v4l2_async_register_subdev_sensor(&ov05c->sd);
+> +	if (ret)
+> +		goto error_media_entity;
+> +
+> +	/*
+> +	 * Device is already turned on by i2c-core with ACPI domain PM.
+> +	 * Enable runtime PM and turn off the device.
+> +	 */
+> +	pm_runtime_set_active(&client->dev);
+> +	pm_runtime_enable(&client->dev);
+> +	pm_runtime_idle(&client->dev);
+
+Please enable auto-suspend.
+
+> +
+> +	dev_info(&client->dev, "%s success", __func__);
+
+This can be dropped.
+
+> +
+> +	return 0;
+> +
+> +error_media_entity:
+> +	media_entity_cleanup(&ov05c->sd.entity);
+> +
+> +error_handler_free:
+> +	ov05c_free_controls(ov05c);
+> +
+> +	return ret;
+> +}
+> +
+> +static void ov05c_remove(struct i2c_client *client)
+> +{
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct ov05c *ov05c = to_ov05c(sd);
+> +
+> +	v4l2_async_unregister_subdev(sd);
+> +	media_entity_cleanup(&sd->entity);
+> +	ov05c_free_controls(ov05c);
+> +
+> +	pm_runtime_disable(&client->dev);
+> +	pm_runtime_set_suspended(&client->dev);
+> +}
+> +
+> +static const struct i2c_device_id ov05c_id[] = {
+> +	{"ov05c", 0 },
+> +	{ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(i2c, ov05c_id);
+> +
+> +static struct i2c_driver ov05c_i2c_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
+> +	},
+> +	.id_table = ov05c_id,
+> +	.probe = ov05c_probe,
+> +	.remove = ov05c_remove,
+> +};
+> +
+> +module_i2c_driver(ov05c_i2c_driver);
+> +
+> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
+> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
+
+Should the patch have a SoB line for Venkata too ?
+
+> +MODULE_DESCRIPTION("OmniVision OV05C sensor driver");
+> +MODULE_ALIAS("ov05c");
+> +MODULE_LICENSE("GPL and additional rights");
+
+Mismatch with the SPDX tag.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
