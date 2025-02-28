@@ -1,124 +1,84 @@
-Return-Path: <linux-kernel+bounces-538215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0812A495E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:52:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B88A49593
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D471888B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160BF3B2938
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9A2586EE;
-	Fri, 28 Feb 2025 09:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="KyOmbAUS"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE36B2580DE;
+	Fri, 28 Feb 2025 09:40:30 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2722580CE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B715256C9A;
+	Fri, 28 Feb 2025 09:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736314; cv=none; b=pRyADEUKKzZlzbHvh0O9hv3FiEuHzBrN21kSCr7SyCqLTBiMFNVmnZjoJx9WBahWNHWvqV5nyFY5cvgKShg6Ks/Oh9MklkPkTuDcSgUupRJH9A6NcS5pU4TbZyKcHTZdhEiC7H+7g4oIMI/GoDGxQD6EDSMg8FekWpLHP8w3tlY=
+	t=1740735630; cv=none; b=EOx24x1UFozVzkx0LvDW/F6A3/y5rjdYZVQ4idwCDCiPH3a+1CVpJy3y9mR45oWQTFeR4rwR/rfZwsBM5TOqrdsp2PL/dS2P/343jUAhQRBVyxY4Anba1Kq95eRhVsF6hMdQcADlpVHawG2AJhzNA4TDDFP2HHVipMDykfzy9ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736314; c=relaxed/simple;
-	bh=1POxM+YNos0rQ18B+S0WoanQBby0ss5pdHhSNwVN8og=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nY44vOghFJhG4cQiu3wFlKnAx07pJqXjUEyBH2DpDQWEX12EwumlQ4NUFcwurYIsro0qkKnecrCYBWULJ6NFslz69wLH9T8v7cZn9rMv9616Ua/wrD8zqwM7LwxWVcf1UOm6wZZTKzydDkjjAaAR6rOTYzjGFwixllUC+O6mVHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=KyOmbAUS; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=VJRidcZcWpHj1I/U4Mrb0EwgP+6UlUZKRuBucRBAGyA=;
-	b=KyOmbAUSef64n+MHafejkId+g2ivBrnLBzaDlWzX/1XHWmZMLt/AgGpEYmypxrOkO3fDqkm1SlBgT
-	 bYz0tqly2CpzylTLtZriargHceUM5gzNsSTaUhj+as1KXpgd4HGOOWK8yQLBdanQ6bNYvpg9IAdl4j
-	 CmodIXDsC4FLkC0kPOujqm8IfBDIz8/bEx89MSG3hMBcO12M8G8FJ7fzjvYdj2+6C5ok/qZU96hdt8
-	 xNitj8nZVrfWURyqShPb1V2NtkGB/6DnfrlokR4eWDROaThVH0hvxbCy5l85pyEm3LeZ5xAp5nSKmt
-	 AzqjphEbqYGgmqfJlcy2uAPaAEOPN0A==
-X-MSG-ID: a11260a2-f5b9-11ef-a39b-00505681446f
-Date: Fri, 28 Feb 2025 10:51:48 +0100
-From: David Jander <david@protonic.nl>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, david@protonic.nl
-Subject: Re: [RFC PATCH 6/7] dt-bindings: motion: Add adi,tmc5240 bindings
-Message-ID: <20250228105148.5f465aa3@erd003.prtnl>
-In-Reply-To: <99c437db-6341-4d56-b99e-3ed3f2b8219d@kernel.org>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-7-david@protonic.nl>
-	<20250228-groovy-lyrical-skunk-751ee3@krzk-bin>
-	<20250228094818.0aad5491@erd003.prtnl>
-	<99c437db-6341-4d56-b99e-3ed3f2b8219d@kernel.org>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740735630; c=relaxed/simple;
+	bh=TXS83j3sidAU5F7wfqIv04eKJOdCNNgLmo42LlF5t5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XYbMu/k8qXustv5xvPKwcg/tDzMf2Zs7tHAmsjRiLvigwEZdcGPugPpOBxhgnopxTE4Pc1r2uak8r6cskSQASoscenj3xqn8QM9CG/SRGNzMwJG0x4K5JyN14KfAzq2IZ/J6dHQGLkDM6AdYR5DAs6wml7JTA8OFd7nyffnfkjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z437D65t8z1R5ss;
+	Fri, 28 Feb 2025 17:38:48 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id AAA061A016C;
+	Fri, 28 Feb 2025 17:40:24 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 28 Feb
+ 2025 17:40:24 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <matttbe@kernel.org>, <martineau@kernel.org>, <geliang@kernel.org>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <mptcp@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: [PATCH net-next] mptcp: Remove unused declaration mptcp_set_owner_r()
+Date: Fri, 28 Feb 2025 17:51:48 +0800
+Message-ID: <20250228095148.4003065-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, 28 Feb 2025 10:35:38 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Commit 6639498ed85f ("mptcp: cleanup mem accounting")
+removed the implementation but leave declaration.
 
-> On 28/02/2025 09:48, David Jander wrote:
-> > 
-> > Dear Krzysztof,
-> > 
-> > Thanks for reviewing...
-> > 
-> > On Fri, 28 Feb 2025 08:11:04 +0100
-> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >   
-> >> On Thu, Feb 27, 2025 at 05:28:22PM +0100, David Jander wrote:
-> >> [...]  
-> >>> +
-> >>> +  enable-supply:
-> >>> +    description: Optional external enable supply to control SLEEPn pin. Can    
-> >>
-> >> That's odd. regular pins are not supplies. This must be named after
-> >> physical supplies. There is vdd18, vcc, vcp but nothing about enable
-> >> supply in datasheet.
-> >>  
-> >>> +      be shared between several controllers.    
-> >>
-> >> Second sentence is both redundant and really not relevant to this
-> >> binding. It's not this binding which decides about sharing.  
-> > 
-> > Good point. I think I should drop the whole property, since it is indeed
-> > irrelevant. If extra supplies need to be specified, they always can be, right?  
-> 
-> You should specify all supplies now, because hardware should be fully
-> described by binding and DTS.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/mptcp/protocol.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-In the case of the hardware I use for testing all of this, there are several
-tmc5240 chips which have their "SLEEPN" pin tied together controlled by a
-single GPIO pin that needs to be pulled high before any of these chips can be
-talked to. The usual way I know of solving this is by specifying a common
-"virtual" supply of type "regulator-fixed" with an enable gpio.
-But this isn't strictly a supply that has to do with this chip or driver, so I
-don't think it should be specified in the schema. I do need to use it in my
-particular case though. Is there a better way of doing this?
-
-> What's more, the necessary supplies (according to datasheet) should be
-> required, not optional.
-
-Do you mean that they should be in the binding definition as well? I.e. add
-all of Vs, Vdd1v8 and Vcc_io here?
-
-Best regards,
-
+diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
+index 256677c43ca6..bd2992776d8a 100644
+--- a/net/mptcp/protocol.h
++++ b/net/mptcp/protocol.h
+@@ -720,7 +720,6 @@ struct sock *__mptcp_nmpc_sk(struct mptcp_sock *msk);
+ bool __mptcp_close(struct sock *sk, long timeout);
+ void mptcp_cancel_work(struct sock *sk);
+ void __mptcp_unaccepted_force_close(struct sock *sk);
+-void mptcp_set_owner_r(struct sk_buff *skb, struct sock *sk);
+ void mptcp_set_state(struct sock *sk, int state);
+ 
+ bool mptcp_addresses_equal(const struct mptcp_addr_info *a,
 -- 
-David Jander
+2.34.1
+
 
