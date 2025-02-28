@@ -1,96 +1,127 @@
-Return-Path: <linux-kernel+bounces-539127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B925A4A143
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:17:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27664A4A161
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2911899D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:17:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23BD7A74B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB5726FDB1;
-	Fri, 28 Feb 2025 18:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3741F4C97;
+	Fri, 28 Feb 2025 18:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4WzT/G2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b="L3dReFgQ"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816F51F4C97;
-	Fri, 28 Feb 2025 18:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A63E2755E3;
+	Fri, 28 Feb 2025 18:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740766660; cv=none; b=Lc9ba+4J0uuwMfgfrA/sB9sPUK2HpEfDMpYvN1kjCDUfraXvcZkQqsH9LWNSzHaAfNE+MQr82t5uLDqkn+B5fdpA5Mtfz9V56FWhJEE7cz/F+DSFj0/NdnCSUATy49QAwfgEQJ76oPwRNH8ohXECsJs4jrz/pMazgAp2co7kvK0=
+	t=1740767072; cv=none; b=gwtTOTeO1TUQWLf9uLsJVjyMrhDuGItGvWTlcU9vIAN/qt7j/QliITHuqegU2d+lwzE28nv5zQHHau8Vlf0FF7s1af2jOIqLl81S5tMQr9Y6Y3PCHv0/45pUQgOC4UToTc121LAnzI1jB0zWm7HeCa30FmvoV0hXZz6kZoxzybQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740766660; c=relaxed/simple;
-	bh=a/UMFY3PmG/1uLNOqdYStwAd4uZGvoG8DB49sRcvT7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cbCviRo5ANKGBA7P863P08Jpbf88m/UreoCbhWWHArGSyguKaxI3FH8+nj5u1NcLmMvrs2IZIdmq+ahfod6dmO5Gz0j+i7OIvewetONdTY7QOjXfGcae+zkXo926stoo1qv1IVu/iBiaig5+UjKaG9SD+1PMEm8mhvrmG0hb63Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4WzT/G2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2017CC4CED6;
-	Fri, 28 Feb 2025 18:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740766659;
-	bh=a/UMFY3PmG/1uLNOqdYStwAd4uZGvoG8DB49sRcvT7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h4WzT/G2oAFp+dNhWfYKlm79abS+NcpyQZ6eqyRwjYZ4EPAb0WBkJoTAYhTfQXByR
-	 y6rm7XHSuoIOh9RpAt4GyGZQ7SxOXAko6BPndWwD4CieeqLaSwomU4O9NsoQl8360l
-	 0mdhllvDDzddzU881slMEqFz7HdCuxBV9y+NyuoSkW6fGKQeZd9sEK4zvtbRwTsW/t
-	 d/wJK//J+vfSHdknARu+bnfB9jrrTh/0ZJejmCmWWXixeXO1pizGB+VDSEnnfz7I5x
-	 6HCMJuBpkd6gnm4BrtWF1NilRbb3MuEHHPkBya05AV0BdMIdrmUHtWD+eS1eha53t2
-	 1qtZwd/tajQUw==
-Date: Fri, 28 Feb 2025 18:17:34 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, wim@linux-watchdog.org,
-	linux@roeck-us.net, vkoul@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: sama5d4-wdt: Add
- sama7d65-wdt
-Message-ID: <20250228-quaking-yoga-3ca96e2bd3c6@spud>
-References: <cover.1740675317.git.Ryan.Wanner@microchip.com>
- <15d6f901e64dd36d25a62e27601252c59708275a.1740675317.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1740767072; c=relaxed/simple;
+	bh=ulEoNTWX2ai/i1e+m4dRcAUEVFZP1m1dYHYLPjm/u9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VQd2zzwVt/EJlGHd22M6/MLQyu5SU0ch6uVY4Ta25XZBl0FIjocjY589UtQ0Hkbgvhhk6pktNLMW3MV8PNf/L9jwSLaVnjxYDPhEbIW6bs3bpEmvBK+CJcrzoRQtXjxq59G3+4K/w1bdjTnCCVpH6qMxbyhFXq1Y1vpIn9qMCrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b=L3dReFgQ; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740767064; x=1741371864; i=michaelestner@web.de;
+	bh=Hm2gsSINyxASyXm+O82PUycRhtyQCwm+OL7u80TaOZI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=L3dReFgQIiuBskn8vKITtOJKhi9FsY/9XfNr0xxfgYdPEmFYWVZAKirXxWgB4YyE
+	 BF42hFcgNe1Qxxq4XRJOjkhipvE2uN0P76OXAbn2+gOZ1JKykQw1E20eobYYGUIdn
+	 9WqcaYBYg8mnIKSQqGnNPv2sYWMGMTbcom/9U4w3tggCp0uTMgcSh4gX9y/Q96HjV
+	 eMyHi3blIKJ5Mo8ppyfAWo8D3cyRdPozx1b0CC/C+EaG1m6BUHT5xX2DgfLI8entm
+	 XIvTYH9rpWlCKVYWjGwRn/fF+Dk2lSF/3Fc/NOiYzBxNDY7mXKUZjUVShy3zVioNO
+	 V8ZhfnNxHGY+VTRO+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from del01453.ebgroup.elektrobit.com ([87.150.19.59]) by smtp.web.de
+ (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1Mty5w-1t0Mbh3nCu-00zaaT; Fri, 28 Feb 2025 19:18:45 +0100
+From: Michael Estner <michaelestner@web.de>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Michael Estner <michaelestner@web.de>
+Subject: [PATCH] bpftool: Replace strncpy with strscpy
+Date: Fri, 28 Feb 2025 19:18:27 +0100
+Message-Id: <20250228181827.90436-1-michaelestner@web.de>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OwNJr0RVbE/sS7Fv"
-Content-Disposition: inline
-In-Reply-To: <15d6f901e64dd36d25a62e27601252c59708275a.1740675317.git.Ryan.Wanner@microchip.com>
-
-
---OwNJr0RVbE/sS7Fv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dTJ1bEHopl8bQxzT6+oHnNYmgNuyVP6QWCwbZ70KhlIHpIGhism
+ t6XRtAPQPR9OgLHxesMCbqnjAu2gXKzbHQa2ud4f2HYxW5zp/e7SMQXG/u39h8upXtE781K
+ Xz6RVrVFl4GT88mKMQ5V6Dn/i8U8+erchfHaUmPXzIyzlmvkfRYMkoPE3eX5by/SU/9+bBV
+ T+8tj66PSMBszC+4NsXnw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ErGF/CS68pI=;ttSUjnhCdosvNWlTyoPbi2gETk/
+ acYvPgpENAlDADA5d7IhgBma9c+wc8LY0ZX+dng/Cvox9rYurQPGolUtLviVU2fJLfOBX1WdB
+ Sa21/o3v7EeDK5vuoWDiRRtcwTzvYw2Jw4JDJZEBz07MXnG2ymNDm4IF4pNyxguS8U57G1AAZ
+ O4x1ZmMveqQe8zKBIqGhZjIFZqgqqwH7cVxsXg8Ll+nv+QMp+yfZLEXj5XI6DO0fJgAuwSPN5
+ 7ZRdvGGgUV4FRPLajP6oXYj+2GKWA8gfffUd3gLkoSG9Bueg7I2WgTNxc3VAqpa6wg4/Hy/cj
+ +j8YVX3QDRriBOGgeNXEFKI/RHKKoAbZutMwfXUwkDMoV4LPQ1lg4Ibagt7gmZgHiAZnvtoAn
+ PGzNeSz8rjjQuWnTAJRsc+R0FidoDRXL32sS1Ls3yQ5dSihHvmgQhtRgKeZNJWRHlTc3oUMzr
+ 8COA3fjrwoOv+s7NkrL8dG7ifDpaT2NmIH8dO/EMN4EvGFuUiCLPvZlrhhtzgTnpnQS2lM66U
+ ad5Ju/ZHdjCmdGca3w9Bgx9GDPaTA0QSc4YEnEF8nnRsQdNEsXhR7b50ZffoTjqok+lv0oRvo
+ 4s5Sv69kyKMDEnCcGs4/SMM4m9rLGxKzIck2S3HmWDQ+NvFfTz/NkRXEKVrESrP+8jDb9bdoP
+ pp2XadOtw1hCLzUbhxCjDvg2Vhw85NSlCqYkv3Q+t2kcVWcXaa8FCK0RHYLnzF6KgQSgQra46
+ 39nVwzKEhOz0CH49wHih9yGo0fBXydWtKmajY3Z5znSd3P7nKgyZ8oi4EiNe96L9gWYiPD7sI
+ w0/BehX8roluPcVtH2g5EBNLUpI/bO6DdwycdDbdmNAo+T4M59IowTHRDjE/r2+UBZYtOydJS
+ 4yqHdUjPpNNZZE34LLwxGUMXjbwCXT3KFdp0E1ehNt/nhVdTNgjx8Yv2GJJzKfWLV+fv8+4nM
+ KkmulHCATdut8lr/LBq9vSn5Gx+9XspIm7ruRYHpn0cAdoa7wCwn/gB9xQXON0GZbdu2UN3Qt
+ N40UB+rRK6IpRJ9/STTM5spJcj6UmOkiJZSjKa76NQWCnPkiapvsToqSeFJaDT97hoCi0oZJh
+ ynvk7/wQB5yOWJRNks23LGNSL/bi49SJ5MMI41cL4wFAYlvgL5smcBnhrXKhpoirGNADIQ4/Z
+ PVbMpwpNBM/q+u77zKwNgczFoFfblI1RuDHfx4QTMoo5BokIeomf827f/7VWu3n7HuG0P7sFl
+ 5vgNyoRfynJGXMA8Ci56E9DI1hDkbgTmV89ud3wfXKWWP4ppIZWDa9ktAaLKrmXWJOVrvgHH+
+ rRLI2Oi/RISc4+bnJe8X9q7fC+mnKjdWAKHMR5zBfkW59QWpraRPXoZbcC3gezqROHvtfr/rM
+ 3ew7DY7ggjsfwD/lYiMDVmzUHdLgTamk/rztfaBg98e4IJDlGYT9qg9UgolZqzGqDGw/bjnrx
+ tiN3aloIS/vKIPCla5wD8Am40GHg=
 
-On Fri, Feb 28, 2025 at 08:24:10AM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->=20
-> Add microchip,sama7d65-wdt compatible string to the dt-binding documentat=
-ion.
->=20
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+strncpy() is deprecated for NUL-terminated destination buffers. Use
+strscpy() instead and remove the manual NUL-termination.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Compile-tested only.
 
---OwNJr0RVbE/sS7Fv
-Content-Type: application/pgp-signature; name="signature.asc"
+Link: https://github.com/KSPP/linux/issues/90
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Michael Estner <michaelestner@web.de>
+=2D--
+ tools/bpf/bpftool/xlated_dumper.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8H9vgAKCRB4tDGHoIJi
-0lJcAP9u9Uvx/4C75KIMdUEVO/h+wPDo8Rq2c+a08bA/fz8CEAEAl7uhrUKbEPRt
-rrGARi737735dX3i+yX85Af/e9nLrQI=
-=P3hd
------END PGP SIGNATURE-----
+diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_=
+dumper.c
+index d0094345fb2b..60dbe48a91a3 100644
+=2D-- a/tools/bpf/bpftool/xlated_dumper.c
++++ b/tools/bpf/bpftool/xlated_dumper.c
+@@ -135,8 +135,7 @@ print_insn_json(void *private_data, const char *fmt, .=
+..)
 
---OwNJr0RVbE/sS7Fv--
+ 	va_start(args, fmt);
+ 	if (l > 0) {
+-		strncpy(chomped_fmt, fmt, l - 1);
+-		chomped_fmt[l - 1] =3D '\0';
++		strscpy(chomped_fmt, fmt);
+ 	}
+ 	jsonw_vprintf_enquote(json_wtr, chomped_fmt, args);
+ 	va_end(args);
+=2D-
+2.25.1
+
 
