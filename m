@@ -1,127 +1,67 @@
-Return-Path: <linux-kernel+bounces-538901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BB3A49EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:21:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7B9A49EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F8A189AB46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749847A95F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10B626FD90;
-	Fri, 28 Feb 2025 16:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F3627293D;
+	Fri, 28 Feb 2025 16:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhOxPDwR"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SAmqQvx7"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF826E637;
-	Fri, 28 Feb 2025 16:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75D017A2E8
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759701; cv=none; b=ryLPI+DrlCIyNsjSkmlK/+xSaSFeK1gJRKJRGIwdJnth3Rkw+zRA0sPhbgF51AWMCQUoh354x4janDErqnkQ424/9ElukDAdNGkOBu4IN6WZS4si/oRhh3uCxUolElg0JEC6j6EAepksCbYRSUhKuwla904ZllJ8C3i7Ao8JT3Y=
+	t=1740759730; cv=none; b=p3v1xEF9jkRMECWUCbWvpanG2CU91OWyPn2qJYxpB+gSA2uHXst9HQWPEdH6eSEzBnCjHnbf4LsTI40N/tWBsTBpSeGnrEuHknY1dpov9RqdXMmyZiYFsjHSBuQ2R+l0vjRXKmaHqUmlfLRZrzaw5y1gpvSgdQ+MftWWSsLmkGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759701; c=relaxed/simple;
-	bh=whEU6+qCSUcv67swUXPHIYHZo4U4OTSuWGIrr5XP1Ks=;
+	s=arc-20240116; t=1740759730; c=relaxed/simple;
+	bh=mOh36F/FeSkCgHWlr2jtMP4f+QGrB7mDuoTaTfqRy9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXehlduFTVM8BFxC6M7+1B+IlevFLtwtK592KUo5w4e9kqMyaLjl8FxFBa0AiQc/2F8MYWaADihOaYg2gjCCLLbyZ1AgAwZcTvpb7aQwgZ6q9r48AqBn9O/fKpI4ZhEKbBFbJ6Ro4GF9kO1UmhXMLO0aBOwkLrpkMj2zRX8gbV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhOxPDwR; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0bb7328fbso263448585a.2;
-        Fri, 28 Feb 2025 08:21:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740759698; x=1741364498; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dQl32CI0pAq/WBlG7lV6J6gN/Hz0VRJrHHZws5/ugF0=;
-        b=XhOxPDwR14HKmR/49ercbEg9rdQQlOenuN0vKLomdS94rjobEc4WXLlaEqICrPEp4m
-         NLO0JhUWVr40V9peludDSLmSuFGE6RzoXNxtG7C/C7uh1zm/GAd72FlY38Rm+qGMiJMX
-         HTODu4VInYwyFG3FNsa/F++qNvtb8bmb0pz6nsPakgc7qECkXuO0sm7h/g3zFvDoCTqm
-         8GlKykf4OXsnOJ3jG8fM+o5DXCK0gU9eWZNWpwW2h9FGcy2Jd1NjHGdVq2HB7ywiCNFs
-         rf9etXSRa50bSFotqVy9GfKkH7ZfbF6fbbPPKzxpwm0l0Ai6rVE0zSd8Ry3XyLjEIfdg
-         goxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740759698; x=1741364498;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dQl32CI0pAq/WBlG7lV6J6gN/Hz0VRJrHHZws5/ugF0=;
-        b=FW+75zSW9NwNlzqcWA/aBdiZ2jm1SGNMnbxNWWad/tD6WTZwa5+nhq3EInA3VJw0QZ
-         ksmtcUIyI/tCawvK+LdvmplLxmFuSY40bAlva2oqlE1wxIDdwya4OVc3nlOTl6RxYTfz
-         f39dnSXZEV4gN1gzjG5oQX9XmLOPeDUrPBnzEccNrS7X8zLL316eYMqReZsNC5m2TyQU
-         97Yd5Z0JLThIByXBREzLSVbIvzhadNiQn2khf6ADaauB0MVUN1Bcrrauy1aNbaFW7g6d
-         Fe44ukUJvIo80SbLr8W/52+diZ8HmhvpP5jPrQ8iXkaOHTMqi4Slpv6yC5rCwqKt1759
-         L+bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJz0A55hMpmOPtOWDcBY9ZTL+AO30I4sAoKCKwx+CI/mxMBitXajViAJsHX93+93dQ2suXXnYWzipQMew=@vger.kernel.org, AJvYcCXR77Q9R3zdsTAyxnYo0vkdXFuPYKX7bT+Q1hVMQOBu7Zebbq7722vHfBCyuRwzQOQjOpsw9DH4PHIG/tWBb4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVXsq55ADzenfV8Zpi8J2AOa8G02pUccsbq2oUbAKSkW3SOWoI
-	C4FyxuuT2eGto71lfoWVPtkjD090ao+Vg4TPhCXeEuTH9AXTuZTZ
-X-Gm-Gg: ASbGncs+vcDz0Zq6RoLmleaSc7LoF5EdLTjHvJygvfji3rHP86JAHlbX5R19vzqeRaY
-	T0rOSS/P5LTcle3h29HX5hJNWKAMbNjd9YQy23x8oy4t9Lu4//MxWcgO8a+slbslb+H5WrRUMNw
-	vAmASH7qT2HOYajlaPNXtvDjrX2l/ePD8a5YSDlwZ82zYKqyiZjyUI99VXtxxWIEJCDs12iaNNM
-	7USyvDsRFsZd+VUtnLVILQXcZpmIiYrqDQ30iO9IN10LIy/82c1rP8Cd7EHIabfrWdhlpD4U4XU
-	w6PkNdjy5G/xd/LzPLhUV4SEoK1NZ1geB4jyjL8FA6CrZNjF/d9D7gfq0f8wn897bMVj82fxwH6
-	eO485tpqH+zhAN2KA
-X-Google-Smtp-Source: AGHT+IG8ylAyvJ563yD2ApVoFFKkI38hsRNw0uPv0/auZJxRF/Br2XdjCl2RKp5RbA71Fc546JHKuw==
-X-Received: by 2002:a05:620a:3712:b0:7c0:aea3:9b48 with SMTP id af79cd13be357-7c39c4bea54mr587837185a.21.1740759698366;
-        Fri, 28 Feb 2025 08:21:38 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c36fef6b25sm265332385a.44.2025.02.28.08.21.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:21:37 -0800 (PST)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 87C581200043;
-	Fri, 28 Feb 2025 11:21:37 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 28 Feb 2025 11:21:37 -0500
-X-ME-Sender: <xms:keLBZ8kZqd0ueQxtjJayuiqMD1XZene_mX_T-kXu_w_6Do5WFkUN7Q>
-    <xme:keLBZ72sbKnzxLDE2_6azybIWt3RBhnS01kLZ82D2gvkJ8KlLTn1mYoFZI9nd-4cE
-    cRcf96UH3V3mn4ndw>
-X-ME-Received: <xmr:keLBZ6qyE-KV5CoR9sWmr7--8Pv0JIHfK63mSfgsKtYhQinmXAaqHgzwIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdekiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepieehuddvueeutddtteeiudekhffgtdejkefh
-    jefgveefgffhgfevleejteehgfeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdprg
-    hrtgdrrhhspdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonh
-    grlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghnghep
-    pehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudefpd
-    hmohguvgepshhmthhpohhuthdprhgtphhtthhopeholhhivhgvrhdrmhgrnhhgohhluges
-    phhmrdhmvgdprhgtphhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhsse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    grlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehg
-    rghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmh
-    grihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdr
-    mhgvpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:keLBZ4k6g1oNteuIVnMk3CzjnSnDEJjH9t1ZgJJ4TD9hVmCZulE6fQ>
-    <xmx:keLBZ63GBnEqwMBA3IgN87zE7zbVwSzmPw_ZMMuaOFOzAVRKckfESg>
-    <xmx:keLBZ_uhxOQs5Lf7dI__Q4IKRveGwavC-yBaEuZ9mrzKZq492hkOtg>
-    <xmx:keLBZ2ULQoFPjEtz7y3lswP45BhtUucr5gwyUNVk2cu4ss2VTG5l-Q>
-    <xmx:keLBZ91kKH9AtEAXzl__M3E7fGLDkqtAOlnn396ibYrokVGu7ZzYnGoS>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Feb 2025 11:21:36 -0500 (EST)
-Date: Fri, 28 Feb 2025 08:21:36 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8HikJloVjoZXBbc@Mac.home>
-References: <kQ8hbiYXcV2MseWnElEexwgQswt23842ggoLF2xsd1hDd-4K106zO_gGho5K6KI147luazt2rZNOY3NOJP4JOw==@protonmail.internalid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi6R/ltDVh6tblo1Eebs9OMP3KU6ukq+9O1G7V0p5DO0nAvm2s9zp2E4jksmHWXzfaw1BP1EpX4JewI6GaHBGrHwPuHNsjE93ouDOkKm+FZSF0zn6besbDUtBI1LgRoVa4qT/64JxqSOIasIzoJNn1gF+TLtIVtKaBsT4Poc3l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SAmqQvx7; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 28 Feb 2025 11:21:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740759716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzKc3rBUKoHHye8u6hnRwGozyJjYumTyHV57CCW+rTs=;
+	b=SAmqQvx7xn1SLBOUbdz0Ny3Hp3tZf5lg+rBdIHk06M54E0RMHrg9JThfULp1L0pzA04PUW
+	W+uDMW9P6aQ2vsFLiWpdi3WUBrfr+XpNTe3dn0aysJ3gGEa6X3mzv9+ZiSb27hP2vf+ItP
+	4BPlJNl/NWKFo3SQoeJ7p/eH4RCeYIg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Ralf Jung <post@ralfj.de>, David Laight <david.laight.linux@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Martin Uecker <uecker@tugraz.at>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <p4bawegz52nu3v2l25gnj5gh34patcxeggcdbom327wh3dhxyq@cp735olb55ps>
+References: <20250226165619.64998576@gandalf.local.home>
+ <20250226171321.714f3b75@gandalf.local.home>
+ <CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+ <20250226173534.44b42190@gandalf.local.home>
+ <20250227204722.653ce86b@pumpkin>
+ <07acc636-75d9-4e4b-9e99-9a784d88e188@ralfj.de>
+ <fbwwitktndx6vpkyhp5znkxmdfpforylvcmimyewel6mett2cw@i5yxaracpso2>
+ <Z8HaT4X4ikQzAghu@Mac.home>
+ <vvtxa4jjk2wy7q6wnnxxgidopfd3pzxgntuehsu4skex24x5ml@yejfkrtg5dqc>
+ <Z8HglTh3EKO63lmu@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -130,57 +70,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <kQ8hbiYXcV2MseWnElEexwgQswt23842ggoLF2xsd1hDd-4K106zO_gGho5K6KI147luazt2rZNOY3NOJP4JOw==@protonmail.internalid>
+In-Reply-To: <Z8HglTh3EKO63lmu@Mac.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 28, 2025 at 04:06:01PM +0000, Oliver Mangold wrote:
+On Fri, Feb 28, 2025 at 08:13:09AM -0800, Boqun Feng wrote:
+> On Fri, Feb 28, 2025 at 11:04:28AM -0500, Kent Overstreet wrote:
+> > On Fri, Feb 28, 2025 at 07:46:23AM -0800, Boqun Feng wrote:
+> > > On Fri, Feb 28, 2025 at 10:41:12AM -0500, Kent Overstreet wrote:
+> > > > On Fri, Feb 28, 2025 at 08:44:58AM +0100, Ralf Jung wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > > > I guess you can sum this up to:
+> > > > > > > 
+> > > > > > >    The compiler should never assume it's safe to read a global more than the
+> > > > > > >    code specifies, but if the code reads a global more than once, it's fine
+> > > > > > >    to cache the multiple reads.
+> > > > > > > 
+> > > > > > > Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
+> > > > > > > And when I do use it, it is more to prevent write tearing as you mentioned.
+> > > > > > 
+> > > > > > Except that (IIRC) it is actually valid for the compiler to write something
+> > > > > > entirely unrelated to a memory location before writing the expected value.
+> > > > > > (eg use it instead of stack for a register spill+reload.)
+> > > > > > Not gcc doesn't do that - but the standard lets it do it.
+> > > > > 
+> > > > > Whether the compiler is permitted to do that depends heavily on what exactly
+> > > > > the code looks like, so it's hard to discuss this in the abstract.
+> > > > > If inside some function, *all* writes to a given location are atomic (I
+> > > > > think that's what you call WRITE_ONCE?), then the compiler is *not* allowed
+> > > > > to invent any new writes to that memory. The compiler has to assume that
+> > > > > there might be concurrent reads from other threads, whose behavior could
+> > > > > change from the extra compiler-introduced writes. The spec (in C, C++, and
+> > > > > Rust) already works like that.
+> > > > > 
+> > > > > OTOH, the moment you do a single non-atomic write (i.e., a regular "*ptr =
+> > > > > val;" or memcpy or so), that is a signal to the compiler that there cannot
+> > > > > be any concurrent accesses happening at the moment, and therefore it can
+> > > > > (and likely will) introduce extra writes to that memory.
+> > > > 
+> > > > Is that how it really works?
+> > > > 
+> > > > I'd expect the atomic writes to have what we call "compiler barriers"
+> > > > before and after; IOW, the compiler can do whatever it wants with non
+> > > 
+> > > If the atomic writes are relaxed, they shouldn't have "compiler
+> > > barriers" before or after, e.g. our kernel atomics don't have such
+> > > compiler barriers. And WRITE_ONCE() is basically relaxed atomic writes.
 > > 
-> > Hmm... Something went wrong here -- this patch looks broken, e.g. the
-> > SoB is at the end, the title does not say v2, these replies seem to be
-> > part of the patch, etc.
-> >
-> Hi,
-> 
-> should I post it again with a fix, then?
-> 
-> > (Also, by the way, in case it helps, the message got marked as spam in
-> > my side for some reason).
+> > Then perhaps we need a better definition of ATOMIC_RELAXED?
 > > 
+> > I've always taken ATOMIC_RELAXED to mean "may be reordered with accesses
+> > to other memory locations". What you're describing seems likely to cause
 > 
-> Cannot comment on that. The mysteries of a spam filter :)
-> 
-> On 250228 0754, Boqun Feng wrote:
-> > 
-> > One meta comment: could you add examples for the usage of UniqueRef?
-> > Ideally, we should have example code for all the new APIs, so that we at
-> > least have some test payload on them (doctest will be generated as kunit
-> > test).
-> 
-> For now I can point you to the implementation for block::mq::Request which
-> Andreas did on top of this. So there will shortly at least one actual user
-> of the API (which uses all the features, as I believe).
-> 
+> You lost me on this one. if RELAXED means "reordering are allowed", then
+> why the compiler barriers implied from it?
 
-I meant the "# Examples" section in the function documentation, you can
-see UniqueArc for example:
+yes, compiler barrier is the wrong language here
 
-	https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/sync/arc.rs#n592
-
-(in case I wasn't clear)
-
-> https://github.com/metaspace/linux/commit/797b90ae0f83b45495364d4c31651bca06471ef0
+> > e.g. if you allocate a struct, memset() it to zero it out, then publish
+> > it, then do a WRITE_ONCE()...
 > 
-> But if you still need a separate test, I can do one during the next couple
-
-Yes, we do because we are trying to maintain an API here, and we need at
-least some unit tests to verify the correctness of an API. Thanks!
-
-Regards,
-Boqun
-
-> of days.
+> How do you publish it? If you mean:
 > 
-> Best,
+> 	// assume gp == NULL initially.
 > 
-> Oliver
+> 	*x = 0;
+> 	smp_store_release(gp, x);
 > 
+> 	WRITE_ONCE(*x, 1);
+> 
+> and the other thread does
+> 
+> 	x = smp_load_acquire(gp);
+> 	if (p) {
+> 		r1 = READ_ONCE(*x);
+> 	}
+> 
+> r1 can be either 0 or 1.
+
+So if the compiler does obey the store_release barrier, then we're ok.
+
+IOW, that has to override the "compiler sees the non-atomic store as a
+hint..." - but the thing is, since we're moving more to type system
+described concurrency than helpers, I wonder if that will actually be
+the case.
+
+Also, what's the situation with reads? Can we end up in a situation
+where a non-atomic read causes the compiler do erronious things with an
+atomic_load(..., relaxed)?
 
