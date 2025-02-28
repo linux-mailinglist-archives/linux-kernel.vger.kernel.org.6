@@ -1,597 +1,490 @@
-Return-Path: <linux-kernel+bounces-538954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96C7A49F34
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395A8A49F3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783D03A660D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDB83A4E64
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DBC2702B7;
-	Fri, 28 Feb 2025 16:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8980C1A9B3B;
+	Fri, 28 Feb 2025 16:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="asT9qXR7"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m60XhQZ1"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A4C25BAA0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761073; cv=none; b=QEHc93eGqWMcn+JnBphjNFjodeQjb3SjWeXT6Fy1/4AMjasuscXzc4IZRq3cTSVXPLod7j3Y6o8Zcz/W9VJlPNpi99eGxzx4LZ7nJdAXkOgIsiuoWkzxevSp3vn7L9dsdVk8nGnrYJKrGAFNCqYQB6UYto8F3jLSg9DV8YQA6sw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761073; c=relaxed/simple;
-	bh=qXA0c1IR/us4lTUTlJHNdr8KlfNpmil6daBUR0/wFb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hipF+k6i/0fFLGBB0TVe1wmdGmvXyvCxdVe6paxQxzzjH/3CIE4n4NQvfqYoU6clBH2z+4beOSji21dUANCfQc/ztK9ckiHgFpZdzb9bB6MnC4+4MQ9X/31K7m5Rcb6mIAIjX3czFDB7xfG0VtESbtZIJSrtGlHy0HG5198TS5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=asT9qXR7; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab78e6edb99so314784066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740761070; x=1741365870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/pohaoVOYa7MLiqI6t3X8roTJn1qw8ViB7ehkN63Og=;
-        b=asT9qXR7U3JZzYhRdsraoh14R6etU1THQJOuMlvLFxdXCJZm8yPoHxceEW+bFcZMSs
-         CpOjK4UXGq3nz8u0kwuTxSMXsexLDIiss7ClwkVC1E5PfArkDqyEcvVv+GjC9N9ezMR6
-         wm8Btsu/XDo4l+av7VuXrt7WvfuoHCdkZgT+v/cEmufbte6BxtMP3+nE0n+LegLEkoXy
-         e3N8Vh3kHl/coMy1CNrzlqL5OqJNquLKvds0O2UmTIihKYRsWj4S6pKMDpwp3luIpcFq
-         u1p+3eu0UN9A4SlzJ32tkCPda16Do0UNC3wqG6G0luZh0Om9GP3i1dD1WnMLDiDPY1Ut
-         HGGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740761070; x=1741365870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o/pohaoVOYa7MLiqI6t3X8roTJn1qw8ViB7ehkN63Og=;
-        b=G0k2lccawV7hiL2pmDfTf9KqbrEgl1mNYBpj5Kd2U49m2ffUFU3rBQ8dNON04VvNFZ
-         Obr9IFEEwiVlHU8uOJtv6h6xa37m9z6n6N3EYPI6OJhchbHBob2w0aaHD0Oa7iw8xyUc
-         j6MU7JYKP9GTlgzleBu14SqWKq7EBKUfuXIzFQzPp4w9sabPojSP33OUboHGDsrbgLhO
-         FJQ1ZHpemZyY0hRUf0FI/SxIvHPkrrNpvthLp3+HEIW8xNuXguD5/hrsPxqLnbHZYT9T
-         hcJJYICDEtvAK2l+WIZD2kOLeWbxm2PMEn0Y+0E9jt2Cy+UZCPscWQy4YsvmHrd5vWaM
-         /BPA==
-X-Gm-Message-State: AOJu0YxlpasVMj/OVV4KW/NV/6kOTlVAmHKxHbVAttmR0ViDcM9y4JdU
-	QYflj4lj5RToI0A0ny/I/m8y++xoFliwvd7n+M5NdkjyapKDHYj1sCfI0OqE9Ic=
-X-Gm-Gg: ASbGncsrlmsc4N2c3i5MN626ZIjvapRFZ79m4CqLpF74WEATzyFR2GEzYPHGxdIBQZ9
-	9Xiu/1K0kUmvt1ull6AmG2Opi/HIMjGm2UY14/kjR+m5/cF0zsG30Xh6CSX/3yRjTslqqpqowq0
-	qdRmHNtaFsvacFNQigqJZWljG4N+nudiZ8w0MAbHamne50E/G2wxDSOnYTQ6dl4dkMmOfK1p/bF
-	KastfIM8Dc7WQPSAfb4hxm4Zv6vrFQzwrOuOp3f6gyZOztzvhmPo/7sQEKI0MdZemhWXQd19pn+
-	W6b6Na+GXfmNIgTab9BqS/zT0FCgvWUsRV8jIEU1F+nXunEysbbXGeJAydmE+OEn
-X-Google-Smtp-Source: AGHT+IG+DO6MXCnzc/DlUfglyLe/ZcGADst0PEmKnrvnBgpbBQ4AnIFQT1EaCSqAAz8kPgNagFnWhg==
-X-Received: by 2002:a17:906:7310:b0:abf:13cb:c411 with SMTP id a640c23a62f3a-abf25fabbaemr476729066b.18.1740761069411;
-        Fri, 28 Feb 2025 08:44:29 -0800 (PST)
-Received: from localhost (p200300f65f2c000400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f2c:4::1b9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b92d3sm319704866b.12.2025.02.28.08.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:44:28 -0800 (PST)
-Date: Fri, 28 Feb 2025 17:44:27 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Jander <david@protonic.nl>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-2-david@protonic.nl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619AF1EF381;
+	Fri, 28 Feb 2025 16:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740761140; cv=fail; b=G0TrF0eyrQh15+mrntsYqraSSh9Oh8iXfmcdv8hkw2zKZBCXkcxXnYPVM0vJ0+A2bZyrtiOYoqnjK8pEr+q6ecyO0y9T91iknbcjp0CDyMK8Y4gq/TXgdW3ZNjP41yaHoy+F63MCO5I1pegdx14pT0OMlX/FscomlkgNgsDJhSc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740761140; c=relaxed/simple;
+	bh=cizX5daMg7j7BDPaIN6Wnp5cHYcm+sFaJbbjJzJr0Sg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mM1Yl69E821x5pKeCceuNuJwDv4tZ27IbhIEFu/kjvdAzwDKGjxq9vYH0TZWdQAad4TS80QoqaRImyFVlrPSZWAgJOvh20ZpEkFNdhB6Z0GwB6hluD0Sc9qmJL0UvDk+y6xRm77o5PUKnBExJIeRxPECDISac030LOPvY2q5XIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m60XhQZ1; arc=fail smtp.client-ip=40.107.237.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RAWyyBAFGuXhZd+XwS2IaAn/WJSgyoQVO+vdRT+xXRMevC2+pF6l7pkaU32UkvIEwDGR1o2Qc91mf4xA3ZZHavw6ynd4aISKc56e0hJVW+A3vh3qHh0QzFB1/y+E3rM3s/CHq1dV1P9Oc7zn08Ks6FEAmPYAE8vJThKEEVnDestLnq9+hGZKrWORM0aH2PByEQXYADZDhOrZKc3dNe/q3gvKsetRc/4oN+yItwnu9OTeT/hUqe2yLIvm06Vc21DECL0o24eu1f9EihuotZbKfb+7FpHyRLZaFwuPNdOGySto9xDQyN1grVQ2JFJKJl74KgJf/M/Lxf4o/teHCeIjXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W2nTPIZySFC4E/AeM7Fvp+w0AJEZ8Z1QNGIDbqw3PBo=;
+ b=sj653O1DXjFdbQ+ruyZVpcCGVISkyS/PZhJ4fbG5vKeVOK2UzOAFsjRvJNBIJb+SCMtoAdP7Y4SWBA94odA+s6lQVsdi75RnEbFZCWqxt5RkMAu68IVhCv4k55KAiaJgVXJVXuuzVOCykr5MyVzAChQqbBu4tWyzpwlRcfazMQurUQQXuY7P7maDdChNUw+VnWwp1DSQDNRfKLEKbr5BaJPNnyi6HM7SXhHnOu+MPy+/6aldjL0lPws6ICEq7GGHiC1MqSz+iLe4kNpABWoxNL2b+1muhfaBr6b8nk/okkhbfzkSWIzXosaRcEQVw8W/dlkTZ89KsnXAqboxYbLUig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W2nTPIZySFC4E/AeM7Fvp+w0AJEZ8Z1QNGIDbqw3PBo=;
+ b=m60XhQZ1lmiotTkmWergZdMGD/uduppdHZmVDXGSFTjJTuY047A9ZSk4UfVCyCf/t8CqmLwDMky/iE/Y45bw5+mKMSx5NNp+0IVTyZG93tMnJ7PPK6U+YCukqwsEHzcujXJb0FxLnWqE9xqvP4twqc5bQaZlIT/AN5Lre5s5S0I=
+Received: from BN9PR03CA0723.namprd03.prod.outlook.com (2603:10b6:408:110::8)
+ by SN7PR12MB8028.namprd12.prod.outlook.com (2603:10b6:806:341::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Fri, 28 Feb
+ 2025 16:45:31 +0000
+Received: from BN2PEPF000044A5.namprd04.prod.outlook.com
+ (2603:10b6:408:110:cafe::1) by BN9PR03CA0723.outlook.office365.com
+ (2603:10b6:408:110::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Fri,
+ 28 Feb 2025 16:45:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF000044A5.mail.protection.outlook.com (10.167.243.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 16:45:31 +0000
+Received: from maple-stxh-09.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Feb
+ 2025 10:45:30 -0600
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <andi.shyti@kernel.org>
+CC: <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<benjamin.chan@amd.com>, Pratap Nirujogi <pratap.nirujogi@amd.com>
+Subject: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
+Date: Fri, 28 Feb 2025 11:45:14 -0500
+Message-ID: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3afczumwzxjy3taw"
-Content-Disposition: inline
-In-Reply-To: <20250227162823.3585810-2-david@protonic.nl>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A5:EE_|SN7PR12MB8028:EE_
+X-MS-Office365-Filtering-Correlation-Id: 706fb861-abad-4d35-800b-08dd581750a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?csV3DXlwvgH5mfbPzzKX9IyzSSVL5dIbqLgiHK7gNs6ai6CUUdWAmy3ltIEp?=
+ =?us-ascii?Q?5C3jh+tnPKD6vcVFP07bjHWOFO7xjaLllHWldZFSPg2D65Hnt/uWFLTAw0dO?=
+ =?us-ascii?Q?nt/gZh/1xwe8CPQoA2KSDy2KZlh9IF87lTyGc669HzCVqzwm4ElyrnRFR0AM?=
+ =?us-ascii?Q?kgsqPhZFMefp4GGKrc5au6sLUDgMzhw27UHXh0vXdUdO80un8rllyZCezOJh?=
+ =?us-ascii?Q?M7QlzjdYFKhk/XM/yIC5wUNOP3z7z+pFXclt9+Gjj1VFAnjQLFBawJi3NgV8?=
+ =?us-ascii?Q?nrTWUggi0g3hHWdrAePsBNHp3fguVjxwMRtYLVBD8VNlRrD05mppyyM9JvyB?=
+ =?us-ascii?Q?TSuC05OLjfr6jUqL5YASbfRHwPGaMlycBmY8r3vXDxEIJchDHIOs8kffOhYi?=
+ =?us-ascii?Q?I9hKCnzxmwLb1XmgQfu30BtwuFZBE99/ZtFHUGU9rvvR9/wYoD7JtjSwasBs?=
+ =?us-ascii?Q?KAkijYLZrcbTpjPXTivj/d19663g9mJ2wHKuQFBXM24p3kPKc32tNRPNVltz?=
+ =?us-ascii?Q?smrof2NbaVBuAFy/p+RFLj3bOm9IKg8wCFGqLKnjOxyEldnq0HAH08UgpH+i?=
+ =?us-ascii?Q?EhxY0X8f9p34/kFtuRx4MojhuL/m/2UDUDTBObla3Ij/EZDa9Je3VSievC8T?=
+ =?us-ascii?Q?nMu2+CvnA92AEdbzRxG96lsZUmDNq/EIsLfZSQZRZ0TYssuIRRId222lmBFI?=
+ =?us-ascii?Q?VcoqERQ8w8yp2rCjx2McMbhsyH5X0Z8HRKyJ7GqKn+DQLIrsYrvrtSw3/x/4?=
+ =?us-ascii?Q?+Z4GsV7ta4GgoW2sZVmKpSxJn8p0NgWcw8Pyvl1Yf0c5PehOOsqkXe02MVET?=
+ =?us-ascii?Q?ygPLBODBQ9TBosihSwP5IR9ilBxw0H066+xrxWPRB/Wjbv+WbfGm9BpLPVOQ?=
+ =?us-ascii?Q?e24B0woFuCt0Org7jKbhH/CrSH2RmdHh4VEKoXzF+BPjIvDCFDPeqI8IEMI2?=
+ =?us-ascii?Q?XHxBtL2hSN1L2DGA/ns0xhBqiGaW2N1UcmqHjm+PBGId7yRC4vsjh+fHQ6Eh?=
+ =?us-ascii?Q?7QIoc7AQaYcOIjBxK6qZaIsR/po4vmf+5Eti9UF1np47WYih20WEcLfnetLL?=
+ =?us-ascii?Q?SR22YRgaZ1GmU/pjown2YjWX5iEJY4JZ5/NFFRECf1uJiMq14SwDwSqOJ5QT?=
+ =?us-ascii?Q?2H9WZdjf5Q4/6DmLMnl3oS2CgaezmHh0jBEd2ZQZQ4h6nvO12hye7mskxYKz?=
+ =?us-ascii?Q?fa5vFs3n4I+E3K3MSjfJJNU/czfVjlsMgLLrVIdBWtCvIRR8AbqMTLuv7L3Z?=
+ =?us-ascii?Q?sBZdV3zlkt0Ttt4gPrfigEw2WxvQKhuEa2W4hgiOaMqiWjdh1DM5wZMt3CWx?=
+ =?us-ascii?Q?hSWyCfYi8Llg0W1BCM0HH30nV2zCyNZGQB7l7mFwV76RZBlirRI/K5dNEOjh?=
+ =?us-ascii?Q?7JjOaRUKgH9Ej8KD31wOHTQgt46/sNpD+yXftO4H15cWTj54y3EZ4ERze5MZ?=
+ =?us-ascii?Q?DUWYry/+jdNvJgb2gR25wMuxOAct2xGGyHb0doK5DbwkNURezE9wKx/I9lB+?=
+ =?us-ascii?Q?J6BTxZ74IvhB7uk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 16:45:31.6263
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 706fb861-abad-4d35-800b-08dd581750a1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8028
 
+The camera sensor is connected via ISP I2C bus in AMD SOC
+architectures. Add new I2C designware driver to support
+new camera sensors on AMD HW.
 
---3afczumwzxjy3taw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-MIME-Version: 1.0
+Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+---
+ drivers/i2c/busses/Kconfig                 |  10 +
+ drivers/i2c/busses/Makefile                |   1 +
+ drivers/i2c/busses/i2c-designware-amdisp.c | 266 +++++++++++++++++++++
+ drivers/i2c/busses/i2c-designware-amdisp.h |  24 ++
+ 4 files changed, 301 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
+ create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.h
 
-Hello David,
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index fc438f445771..79448211baae 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-designware-platform.
+ 
++config I2C_DESIGNWARE_AMDISP
++	tristate "Synopsys DesignWare Platform for AMDISP"
++	depends on I2C_DESIGNWARE_CORE
++	help
++	  If you say yes to this option, support will be included for the
++	  AMDISP Synopsys DesignWare I2C adapter.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called amd_isp_i2c_designware.
++
+ config I2C_DESIGNWARE_AMDPSP
+ 	bool "AMD PSP I2C semaphore support"
+ 	depends on ACPI
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 1c2a4510abe4..cfe53038df69 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
+ i2c-designware-platform-y 				:= i2c-designware-platdrv.o
+ i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
+ i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
++obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
+ obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
+ i2c-designware-pci-y					:= i2c-designware-pcidrv.o
+ obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
+diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+new file mode 100644
+index 000000000000..dc90510a440b
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+@@ -0,0 +1,266 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Copyright 2024-2025 Advanced Micro Devices, Inc.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/dmi.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/pm_runtime.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
++#include <linux/sched.h>
++#include <linux/slab.h>
++#include <linux/suspend.h>
++#include <linux/units.h>
++
++#include "i2c-designware-core.h"
++#include "i2c-designware-amdisp.h"
++
++#define AMD_ISP_I2C_INPUT_CLK			100 //100 Mhz
++
++#define to_amd_isp_i2c_dev(dev) \
++	((struct amd_isp_i2c_dev *)container_of(dev, struct amd_isp_i2c_dev, dw_dev))
++
++struct amd_isp_i2c_dev {
++	struct dw_i2c_dev	dw_dev;
++};
++
++static void amd_isp_dw_i2c_plat_pm_cleanup(struct dw_i2c_dev *dev)
++{
++	pm_runtime_disable(dev->dev);
++
++	if (dev->shared_with_punit)
++		pm_runtime_put_noidle(dev->dev);
++}
++
++static u32 amd_isp_dw_i2c_get_clk_rate(struct dw_i2c_dev *dev)
++{
++	return AMD_ISP_I2C_INPUT_CLK * 1000;
++}
++
++static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
++{
++	struct i2c_adapter *adap;
++	struct amd_isp_i2c_dev *isp_i2c_dev;
++	struct dw_i2c_dev *dev;
++	int ret;
++
++	isp_i2c_dev = devm_kzalloc(&pdev->dev, sizeof(struct amd_isp_i2c_dev),
++				   GFP_KERNEL);
++	if (!isp_i2c_dev)
++		return -ENOMEM;
++
++	dev = &isp_i2c_dev->dw_dev;
++	dev->dev = &pdev->dev;
++
++	/**
++	 * Use the polling mode to send/receive the data, because
++	 * no IRQ connection from ISP I2C
++	 */
++	dev->flags |= ACCESS_POLLING;
++	platform_set_drvdata(pdev, dev);
++
++	dev->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(dev->base))
++		return PTR_ERR(dev->base);
++
++	ret = isp_power_set(true);
++	if (ret) {
++		dev_err(dev->dev, "unable to turn on the amdisp i2c power:%d\n", ret);
++		return ret;
++	}
++
++	dev->get_clk_rate_khz = amd_isp_dw_i2c_get_clk_rate;
++	ret = i2c_dw_fw_parse_and_configure(dev);
++	if (ret)
++		goto exit;
++
++	i2c_dw_configure(dev);
++
++	adap = &dev->adapter;
++	adap->owner = THIS_MODULE;
++	ACPI_COMPANION_SET(&adap->dev, ACPI_COMPANION(&pdev->dev));
++	adap->dev.of_node = pdev->dev.of_node;
++	/* arbitrary large number to avoid any conflicts */
++	adap->nr = 99;
++
++	if (dev->flags & ACCESS_NO_IRQ_SUSPEND) {
++		dev_pm_set_driver_flags(&pdev->dev,
++					DPM_FLAG_SMART_PREPARE);
++	} else {
++		dev_pm_set_driver_flags(&pdev->dev,
++					DPM_FLAG_SMART_PREPARE |
++					DPM_FLAG_SMART_SUSPEND);
++	}
++
++	device_enable_async_suspend(&pdev->dev);
++
++	/* The code below assumes runtime PM to be disabled. */
++	WARN_ON(pm_runtime_enabled(&pdev->dev));
++
++	pm_runtime_dont_use_autosuspend(&pdev->dev);
++	pm_runtime_set_active(&pdev->dev);
++
++	if (dev->shared_with_punit)
++		pm_runtime_get_noresume(&pdev->dev);
++
++	pm_runtime_enable(&pdev->dev);
++
++	ret = i2c_dw_probe(dev);
++	if (ret) {
++		dev_err(dev->dev, "i2c_dw_probe failed %d\n", ret);
++		goto exit_probe;
++	}
++
++	isp_power_set(false);
++	return ret;
++
++exit_probe:
++	amd_isp_dw_i2c_plat_pm_cleanup(dev);
++	isp_power_set(false);
++exit:
++	isp_power_set(false);
++	return ret;
++}
++
++static void amd_isp_dw_i2c_plat_remove(struct platform_device *pdev)
++{
++	struct dw_i2c_dev *dev = platform_get_drvdata(pdev);
++
++	pm_runtime_get_sync(&pdev->dev);
++
++	i2c_del_adapter(&dev->adapter);
++
++	i2c_dw_disable(dev);
++
++	pm_runtime_dont_use_autosuspend(&pdev->dev);
++	pm_runtime_put_sync(&pdev->dev);
++	amd_isp_dw_i2c_plat_pm_cleanup(dev);
++
++	reset_control_assert(dev->rst);
++}
++
++static int amd_isp_dw_i2c_plat_prepare(struct device *dev)
++{
++	/*
++	 * If the ACPI companion device object is present for this device, it
++	 * may be accessed during suspend and resume of other devices via I2C
++	 * operation regions, so tell the PM core and middle layers to avoid
++	 * skipping system suspend/resume callbacks for it in that case.
++	 */
++	return !has_acpi_companion(dev);
++}
++
++static int amd_isp_dw_i2c_plat_runtime_suspend(struct device *dev)
++{
++	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
++
++	if (i_dev->shared_with_punit)
++		return 0;
++
++	i2c_dw_disable(i_dev);
++	i2c_dw_prepare_clk(i_dev, false);
++
++	return 0;
++}
++
++static int amd_isp_dw_i2c_plat_suspend(struct device *dev)
++{
++	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
++
++	i2c_mark_adapter_suspended(&i_dev->adapter);
++
++	return amd_isp_dw_i2c_plat_runtime_suspend(dev);
++}
++
++static int amd_isp_dw_i2c_plat_runtime_resume(struct device *dev)
++{
++	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
++
++	if (!i_dev->shared_with_punit)
++		i2c_dw_prepare_clk(i_dev, true);
++
++	i_dev->init(i_dev);
++
++	return 0;
++}
++
++static int amd_isp_dw_i2c_plat_resume(struct device *dev)
++{
++	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
++
++	amd_isp_dw_i2c_plat_runtime_resume(dev);
++	i2c_mark_adapter_resumed(&i_dev->adapter);
++
++	return 0;
++}
++
++static const struct dev_pm_ops amd_isp_dw_i2c_dev_pm_ops = {
++	.prepare = pm_sleep_ptr(amd_isp_dw_i2c_plat_prepare),
++	LATE_SYSTEM_SLEEP_PM_OPS(amd_isp_dw_i2c_plat_suspend, amd_isp_dw_i2c_plat_resume)
++	RUNTIME_PM_OPS(amd_isp_dw_i2c_plat_runtime_suspend, amd_isp_dw_i2c_plat_runtime_resume, NULL)
++};
++
++/* Work with hotplug and coldplug */
++MODULE_ALIAS("platform:amd_isp_i2c_designware");
++
++static struct platform_driver amd_isp_dw_i2c_driver = {
++	.probe = amd_isp_dw_i2c_plat_probe,
++	.remove = amd_isp_dw_i2c_plat_remove,
++	.driver		= {
++		.name	= "amd_isp_i2c_designware",
++		.pm	= pm_ptr(&amd_isp_dw_i2c_dev_pm_ops),
++	},
++};
++
++static int __init amd_isp_dw_i2c_init_driver(void)
++{
++	return platform_driver_register(&amd_isp_dw_i2c_driver);
++}
++subsys_initcall(amd_isp_dw_i2c_init_driver);
++
++static void __exit amd_isp_dw_i2c_exit_driver(void)
++{
++	platform_driver_unregister(&amd_isp_dw_i2c_driver);
++}
++module_exit(amd_isp_dw_i2c_exit_driver);
++
++MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
++MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
++MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter in AMD ISP");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("I2C_DW");
++MODULE_IMPORT_NS("I2C_DW_COMMON");
++MODULE_LICENSE("GPL and additional rights");
+diff --git a/drivers/i2c/busses/i2c-designware-amdisp.h b/drivers/i2c/busses/i2c-designware-amdisp.h
+new file mode 100644
+index 000000000000..f98661fdaedf
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-designware-amdisp.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Copyright 2024-2025 Advanced Micro Devices, Inc.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++int isp_power_set(int on);
+-- 
+2.43.0
 
-just a few highlevel review comments inline.
-
-On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> diff --git a/drivers/motion/motion-core.c b/drivers/motion/motion-core.c
-> new file mode 100644
-> index 000000000000..2963f1859e8b
-> --- /dev/null
-> +++ b/drivers/motion/motion-core.c
-> @@ -0,0 +1,823 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Motion Control Subsystem - Core
-> + *
-> + * Copyright (C) 2024 Protonic Holland
-> + *                    David Jander <david@protonic.nl>
-> + */
-> +
-> +#include <asm-generic/bitops/builtin-fls.h>
-> +#include <asm-generic/errno-base.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irqreturn.h>
-> +#include <linux/container_of.h>
-> +#include <linux/hrtimer_types.h>
-> +#include <linux/gfp_types.h>
-> +#include <linux/module.h>
-> +
-> +#include <linux/fs.h>
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/major.h>
-> +#include <linux/init.h>
-> +#include <linux/device.h>
-> +#include <linux/kmod.h>
-> +#include <linux/motion.h>
-> +#include <linux/poll.h>
-> +#include <linux/ptrace.h>
-> +#include <linux/ktime.h>
-> +#include <linux/iio/trigger.h>
-> +#include <linux/gpio/consumer.h>
-> +
-> +#include "motion-core.h"
-> +#include "motion-helpers.h"
-> +#include <linux/time.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/string.h>
-> +#include <linux/math64.h>
-> +#include <linux/mutex.h>
-> +#include <linux/math.h>
-> +#include <linux/math64.h>
-
-Order all <...> includes over the "..." ones.
-
-> +#define MOTION_PROFILE_VALID BIT(31)
-> +
-> +static LIST_HEAD(motion_list);
-> +static DEFINE_MUTEX(motion_mtx);
-> +static int motion_major;
-> +static DEFINE_IDA(motion_minors_ida);
-> +
-> +struct iio_motion_trigger_info {
-> +	unsigned int minor;
-> +};
-> +
-> +static int motion_minor_alloc(void)
-> +{
-> +	int ret;
-> +
-> +	ret = ida_alloc_range(&motion_minors_ida, 0, MINORMASK, GFP_KERNEL);
-> +	return ret;
-
-This could be a one-liner.
-
-> +}
-> +
-> +static void motion_minor_free(int minor)
-> +{
-> +	ida_free(&motion_minors_ida, minor);
-> +}
-> +
-> +static int motion_open(struct inode *inode, struct file *file)
-> +{
-> +	int minor = iminor(inode);
-> +	struct motion_device *mdev = NULL, *iter;
-> +	int err;
-> +
-> +	mutex_lock(&motion_mtx);
-
-If you use guard(), error handling gets a bit easier.
-
-> +	list_for_each_entry(iter, &motion_list, list) {
-> +		if (iter->minor != minor)
-> +			continue;
-> +		mdev = iter;
-> +		break;
-> +	}
-
-This should be easier. If you use a cdev you can just do
-container_of(inode->i_cdev, ...);
-
-> +	if (!mdev) {
-> +		err = -ENODEV;
-> +		goto fail;
-> +	}
-> +
-> +	dev_info(mdev->dev, "MOTION: open %d\n", mdev->minor);
-
-degrade to dev_dbg.
-
-> +	file->private_data = mdev;
-> +
-> +	if (mdev->ops.device_open)
-> +		err = mdev->ops.device_open(mdev);
-> +	else
-> +		err = 0;
-> +fail:
-> +	mutex_unlock(&motion_mtx);
-> +	return err;
-> +}
-> +
-> +static int motion_release(struct inode *inode, struct file *file)
-> +{
-> +	struct motion_device *mdev = file->private_data;
-> +	int i;
-> +
-> +	if (mdev->ops.device_release)
-> +		mdev->ops.device_release(mdev);
-> +
-> +	for (i = 0; i < mdev->num_gpios; i++) {
-> +		int irq;
-> +		struct motion_gpio_input *gpio = &mdev->gpios[i];
-> +
-> +		if (gpio->function == MOT_INP_FUNC_NONE)
-> +			continue;
-> +		irq = gpiod_to_irq(gpio->gpio);
-> +		devm_free_irq(mdev->dev, irq, gpio);
-
-It seems devm is just overhead here if you release by hand anyhow.
-
-> +		gpio->function = MOT_INP_FUNC_NONE;
-> +	}
-> +
-> +	if (!kfifo_is_empty(&mdev->events))
-> +		kfifo_reset(&mdev->events);
-> +
-> +	/* FIXME: Stop running motions? Probably not... */
-> +
-> +	return 0;
-> +}
-> +
-> +static ssize_t motion_read(struct file *file, char __user *buffer,
-> +			  size_t count, loff_t *ppos)
-> +{
-> +	struct motion_device *mdev = file->private_data;
-> +	unsigned int copied = 0L;
-> +	int ret;
-> +
-> +	if (!mdev->dev)
-> +		return -ENODEV;
-> +
-> +	if (count < sizeof(struct mot_event))
-> +		return -EINVAL;
-> +
-> +	do {
-> +		if (kfifo_is_empty(&mdev->events)) {
-> +			if (file->f_flags & O_NONBLOCK)
-> +				return -EAGAIN;
-> +
-> +			ret = wait_event_interruptible(mdev->wait,
-> +					!kfifo_is_empty(&mdev->events) ||
-> +					mdev->dev == NULL);
-> +			if (ret)
-> +				return ret;
-> +			if (mdev->dev == NULL)
-> +				return -ENODEV;
-> +		}
-> +
-> +		if (mutex_lock_interruptible(&mdev->read_mutex))
-> +			return -ERESTARTSYS;
-> +		ret = kfifo_to_user(&mdev->events, buffer, count, &copied);
-> +		mutex_unlock(&mdev->read_mutex);
-> +
-> +		if (ret)
-> +			return ret;
-> +	} while (!copied);
-> +
-> +	return copied;
-> +}
-> +
-> +static __poll_t motion_poll(struct file *file, poll_table *wait)
-> +{
-> +	struct motion_device *mdev = file->private_data;
-> +	__poll_t mask = 0;
-> +
-> +	poll_wait(file, &mdev->wait, wait);
-> +	if (!kfifo_is_empty(&mdev->events))
-> +		mask = EPOLLIN | EPOLLRDNORM;
-> +	dev_info(mdev->dev, "Obtained POLL events: 0x%08x\n", mask);
-
-dev_dbg
-
-> +
-> +	return mask;
-> +}
-> +
-> [...]
-> +
-> +static long motion_start_locked(struct motion_device *mdev, struct mot_start *s)
-> +{
-> +	long ret = 0L;
-> +	mot_time_t conv_duration;
-> +
-> +	lockdep_assert_held(&mdev->mutex);
-> +
-> +	if (s->reserved1 || s->reserved2)
-> +		return -EINVAL;
-> +	if (s->channel >= mdev->capabilities.num_channels)
-> +		return -EINVAL;
-> +	if ((s->index >= MOT_MAX_PROFILES) || (s->direction > MOT_DIRECTION_RIGHT))
-> +		return -EINVAL;
-> +	if (!(mdev->profiles[s->index].index & MOTION_PROFILE_VALID))
-> +		return -EINVAL;
-> +	if (s->when >= MOT_WHEN_NUM_WHENS)
-> +		return -EINVAL;
-> +	if (s->duration && s->distance)
-> +		return -EINVAL;
-> +	if (!mdev->ops.motion_distance && !mdev->ops.motion_timed)
-> +		return -EOPNOTSUPP;
-
-I would add empty lines between these ifs to improve readability. Maybe
-thats subjective though.
-
-> +	if (s->duration) {
-> +		if (!mdev->ops.motion_timed)
-> +			return -EOPNOTSUPP;
-> +		/* FIXME: Implement time to distance conversion? */
-> +		return mdev->ops.motion_timed(mdev, s->channel, s->index,
-> +				s->direction, s->duration, s->when);
-> +	}
-> +	if (!mdev->ops.motion_distance) {
-> +		ret = motion_distance_to_time(mdev, s->index, s->distance,
-> +				&conv_duration);
-> +		if (ret)
-> +			return ret;
-> +		return mdev->ops.motion_timed(mdev, s->channel, s->index,
-> +				s->direction, conv_duration, s->when);
-> +	}
-> +	ret = mdev->ops.motion_distance(mdev, s->channel, s->index,
-> +			s->distance, s->when);
-> +
-> +	return ret;
-> +}
-> [...]
-> +
-> +static long motion_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct motion_device *mdev = file->private_data;
-> +	void __user *argp = (void __user *)arg;
-> +	long ret;
-> +
-> +	switch (cmd) {
-> +	case MOT_IOCTL_APIVER:
-> +		force_successful_syscall_return();
-> +		return MOT_UAPI_VERSION;
-
-force_successful_syscall_return() is only needed if the return value is
-negative but no error.
-
-> +	case MOT_IOCTL_BASIC_RUN: {
-> +		struct mot_speed_duration spd;
-> +
-> +		if (copy_from_user(&spd, argp, sizeof(spd)))
-> +			return -EFAULT;
-> +		if (!mdev->ops.basic_run)
-> +			return -EINVAL;
-> [...]
-> +
-> +static const struct class motion_class = {
-> +	.name		= "motion",
-> +	.devnode	= motion_devnode,
-
-IIRC it's recommended to not create new classes, but a bus.
-
-> +};
-> +
-> +static const struct file_operations motion_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.read		= motion_read,
-> +	.poll		= motion_poll,
-> +	.unlocked_ioctl = motion_ioctl,
-> +	.open		= motion_open,
-> +	.llseek		= noop_llseek,
-> +	.release	= motion_release,
-> +};
-> +
-> +static int motion_of_parse_gpios(struct motion_device *mdev)
-> +{
-> +	int ngpio, i;
-> +
-> +	ngpio = gpiod_count(mdev->parent, "motion,input");
-> +	if (ngpio < 0) {
-> +		if (ngpio == -ENOENT)
-> +			return 0;
-> +		return ngpio;
-> +	}
-> +
-> +	if (ngpio >= MOT_MAX_INPUTS)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < ngpio; i++) {
-> +		mdev->gpios[i].gpio = devm_gpiod_get_index(mdev->parent,
-> +				"motion,input", i, GPIOD_IN);
-> +		if (IS_ERR(mdev->gpios[i].gpio))
-> +			return PTR_ERR(mdev->gpios[i].gpio);
-> +		mdev->gpios[i].function = MOT_INP_FUNC_NONE;
-> +		mdev->gpios[i].chmask = 0;
-> +		mdev->gpios[i].index = i;
-> +	}
-> +
-> +	mdev->num_gpios = ngpio;
-> +	mdev->capabilities.num_ext_triggers += ngpio;
-> +
-> +	return 0;
-> +}
-> +
-> +static void motion_trigger_work(struct irq_work *work)
-> +{
-> +	struct motion_device *mdev = container_of(work, struct motion_device,
-> +							iiowork);
-> +	iio_trigger_poll(mdev->iiotrig);
-> +}
-> +
-> +/**
-> + * motion_register_device - Register a new Motion Device
-> + * @mdev: description and handle of the motion device
-> + *
-> + * Register a new motion device with the motion subsystem core.
-> + * It also handles OF parsing of external trigger GPIOs and registers an IIO
-> + * trigger device if IIO support is configured.
-> + *
-> + * Return: 0 on success, negative errno on failure.
-> + */
-> +int motion_register_device(struct motion_device *mdev)
-> +{
-> +	dev_t devt;
-> +	int err = 0;
-> +	struct iio_motion_trigger_info *trig_info;
-> +
-> +	if (!mdev->capabilities.num_channels)
-> +		mdev->capabilities.num_channels = 1;
-> +	if (mdev->capabilities.features | MOT_FEATURE_PROFILE)
-> +		mdev->capabilities.max_profiles = MOT_MAX_PROFILES;
-> +	if (!mdev->capabilities.speed_conv_mul)
-> +		mdev->capabilities.speed_conv_mul = 1;
-> +	if (!mdev->capabilities.speed_conv_div)
-> +		mdev->capabilities.speed_conv_div = 1;
-> +	if (!mdev->capabilities.accel_conv_mul)
-> +		mdev->capabilities.accel_conv_mul = 1;
-> +	if (!mdev->capabilities.accel_conv_div)
-> +		mdev->capabilities.accel_conv_div = 1;
-> +
-> +	mutex_init(&mdev->mutex);
-> +	mutex_init(&mdev->read_mutex);
-> +	INIT_KFIFO(mdev->events);
-> +	init_waitqueue_head(&mdev->wait);
-> +
-> +	err = motion_of_parse_gpios(mdev);
-> +	if (err)
-> +		return err;
-> +
-> +	mdev->minor = motion_minor_alloc();
-> +
-> +	mdev->iiotrig = iio_trigger_alloc(NULL, "mottrig%d", mdev->minor);
-> +	if (!mdev->iiotrig) {
-> +		err = -ENOMEM;
-> +		goto error_free_minor;
-> +	}
-> +
-> +	trig_info = kzalloc(sizeof(*trig_info), GFP_KERNEL);
-> +	if (!trig_info) {
-> +		err = -ENOMEM;
-> +		goto error_free_trigger;
-> +	}
-> +
-> +	iio_trigger_set_drvdata(mdev->iiotrig, trig_info);
-> +
-> +	trig_info->minor = mdev->minor;
-> +	err = iio_trigger_register(mdev->iiotrig);
-> +	if (err)
-> +		goto error_free_trig_info;
-> +
-> +	mdev->iiowork = IRQ_WORK_INIT_HARD(motion_trigger_work);
-> +
-> +	INIT_LIST_HEAD(&mdev->list);
-> +
-> +	mutex_lock(&motion_mtx);
-> +
-> +	devt = MKDEV(motion_major, mdev->minor);
-> +	mdev->dev = device_create_with_groups(&motion_class, mdev->parent,
-> +				devt, mdev, mdev->groups, "motion%d", mdev->minor);
-
-What makes sure that mdev doesn't go away while one of the attributes is
-accessed?
-
-> +	if (IS_ERR(mdev->dev)) {
-> +		dev_err(mdev->parent, "Error creating motion device %d\n",
-> +				mdev->minor);
-> +		mutex_unlock(&motion_mtx);
-> +		goto error_free_trig_info;
-> +	}
-> +	list_add_tail(&mdev->list, &motion_list);
-> +	mutex_unlock(&motion_mtx);
-> +
-> +	return 0;
-> +
-> +error_free_trig_info:
-> +	kfree(trig_info);
-> +error_free_trigger:
-> +	iio_trigger_free(mdev->iiotrig);
-> +error_free_minor:
-> +	motion_minor_free(mdev->minor);
-> +	dev_info(mdev->parent, "Registering motion device err=%d\n", err);
-> +	return err;
-> +}
-> +EXPORT_SYMBOL(motion_register_device);
-> [...]
-> +struct mot_capabilities {
-> +	__u32 features;
-> +	__u8 type;
-> +	__u8 num_channels;
-> +	__u8 num_int_triggers;
-> +	__u8 num_ext_triggers;
-> +	__u8 max_profiles;
-> +	__u8 max_vpoints;
-> +	__u8 max_apoints;
-> +	__u8 reserved1;
-> +	__u32 subdiv; /* Position unit sub-divisions, microsteps, etc... */
-> +	/*
-> +	 * Coefficients for converting to/from controller time <--> seconds.
-> +	 * Speed[1/s] = Speed[controller_units] * conv_mul / conv_div
-> +	 * Accel[1/s^2] = Accel[controller_units] * conv_mul / conv_div
-> +	 */
-> +	__u32 speed_conv_mul;
-> +	__u32 speed_conv_div;
-> +	__u32 accel_conv_mul;
-> +	__u32 accel_conv_div;
-> +	__u32 reserved2;
-> +};
-
-https://docs.kernel.org/gpu/imagination/uapi.html (which has some
-generic bits that apply here, too) has: "The overall struct must be
-padded to 64-bit alignment." If you drop reserved2 the struct is
-properly sized (or I counted wrongly).
-
-> +struct mot_speed_duration {
-> +	__u32 channel;
-> +	speed_raw_t speed;
-
-What is the unit here?
-
-> +	mot_time_t duration;
-
-duration_ns? That makes usage much more ideomatic and there should be no
-doubts what the unit is.
-
-> +	pos_raw_t distance;
-
-What is the unit here?
-
-> +	__u32 reserved[3];
-
-Again the padding is wrong here.
-
-> +};
-
-Best regards
-Uwe
-
---3afczumwzxjy3taw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfB5+gACgkQj4D7WH0S
-/k5C1wf+IR16wHxTa97rqqBTKhKSRqGGyRlmIbst2s3km2q+yRD9ko9pEaBdJX/4
-zsJnADhNXYnrU+ZIi08XShlMK88pz9J3Vbm53B1fLjCNSxUTOdNtIz6ARic4+XtY
-PzaOtt7Zp56yD4mOdiogAO1ZMll5E1Ol/Qsx/0b8zHBznzL1AuNpHb0vGazQlpYC
-55a4XT3ZBdMeFmEHtrazlwEGrYNb2d9YXe5TkA5sYBZAouwdUX8JVTWrbbnzAHAm
-DE0FdbBhSQmgPalQXOoxwaWDwH0IDJd6JiDblZlawwb02vKUajAdpyl1lndEoUcs
-fkBSnJnFK/COPjbcavaZ5PEke+raTg==
-=z/7b
------END PGP SIGNATURE-----
-
---3afczumwzxjy3taw--
 
