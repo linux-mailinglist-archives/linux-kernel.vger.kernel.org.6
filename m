@@ -1,520 +1,200 @@
-Return-Path: <linux-kernel+bounces-538258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97079A49658
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:05:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A875DA4966E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765841884497
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F621896DB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAFC25F99A;
-	Fri, 28 Feb 2025 10:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B87D265CA3;
+	Fri, 28 Feb 2025 10:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lfMuV8Nk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h0YKAcRk"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9C525E444;
-	Fri, 28 Feb 2025 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9423C25CC9A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736843; cv=none; b=fQSOS9sN2/booqZTc1RfnWSK9T+SRA62olz8IT7LC/Y4RG+aSOJokI9QZ6FYGVDmGaGcHPy6Kt0LDKF3MLejyS2VWGXO0gSJJJORxvhBmyRlP4MMRd65SEH5nSgJpiEslfrPVFQUIzZiNZSKsO5AWuXjmBbjVbWeSMS11kBjhiQ=
+	t=1740736881; cv=none; b=MvWPbPQAnXYgQ7d7+H3u9DwTbiaIZ5wHa6Cn/oAPttBeglrB5+WmpXXct/Aiyj6aX06RaoiYckxeq2GsRxVqYvn+s6niqwYoQjAdi091eOitT+f3r3vS+zFobfU9ELygygAmVfeIMPlkdX7xd8ye2aIl26J8iqBrM37Rf6L5HTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736843; c=relaxed/simple;
-	bh=jvGXi0w+0TEz8Qyri1YoZHBnZuLioAdX+aCO0qi+82U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QsKFSYPjM+emDYni0k5AXtp38sUWKiEbrQa6TLmE3jUMlDI0YdSWha0ARhdy2TLg98By98Z6U7AbDmGvin/AXqqNI9Rfn4L0YGva3Qgxu4CpvkZaAEnRVpdA6vJMLLDPjOt93h5L5c6HZl81yZZgKSkmruSWNyjREGkXtjfHPh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lfMuV8Nk; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740736841; x=1772272841;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jvGXi0w+0TEz8Qyri1YoZHBnZuLioAdX+aCO0qi+82U=;
-  b=lfMuV8NkHvnGDuQ2T7GoqTheD8oak5tJjlTKBrTjxt1lUZGVO6wwv1WK
-   DFPqJkCSZ4/++MRFhN+nElj+/4whx44vVxJUPUu0JcwQz3VJUwVRP5jXM
-   NpfNmNKjs5HRGSYFqjBXtxm4Fxv43axk4MKDyuZ4c4Kxb4vj0CiD7xV0+
-   oLsGZSVpIDhDjUhWKWqwuqrQXSgk0wqUx+SM818MFlF0F1U7iFuLh3uOM
-   F2S7Pco04Og2t6d3LvNcfTa9fB6ibN3XKypIg9Z8ArhWSuDSwiFadBTOt
-   iyLK9dgKy7G6jBBY28OAT7o/9vbA/omwpVwj34+NczB1MhoelffVAifaI
-   Q==;
-X-CSE-ConnectionGUID: oK7i7NahQOeM7GcHZ5fVcA==
-X-CSE-MsgGUID: ADPy/qW0TuerYoNtMDx2GA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40902752"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="40902752"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 02:00:30 -0800
-X-CSE-ConnectionGUID: gf9n65U1T1W3py/NR3L3jA==
-X-CSE-MsgGUID: FFypTQGRSBufECFT1f0iYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="117325761"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.115])
-  by orviesa006.jf.intel.com with ESMTP; 28 Feb 2025 02:00:30 -0800
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	ryan.roberts@arm.com,
-	21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com,
-	akpm@linux-foundation.org,
-	linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	clabbe@baylibre.com,
-	ardb@kernel.org,
-	ebiggers@google.com,
-	surenb@google.com,
-	kristen.c.accardi@intel.com
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v7 15/15] mm: zswap: Compress batching with request chaining in zswap_store() of large folios.
-Date: Fri, 28 Feb 2025 02:00:24 -0800
-Message-Id: <20250228100024.332528-16-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
-References: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1740736881; c=relaxed/simple;
+	bh=2rXI3ClDmBMPb/nTHq47U3JbT34v5Vk5CODpFCMD7go=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FS054uhBRqswgV/7cWzoaxrP28snDf4G6Ra45qmCGMxMLljXg5oVf0WBkuzXJNE4kDYBVKICq0SbZH3+aTItE/vpW5NqtZMIFTMZCQgzvsQijGzCb8/aOmmp0G28Ra77sMyEU9698zPGPdqnPioqDxF+KNjUfcnak/JyENKzV64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h0YKAcRk; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so2852213a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:01:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740736877; x=1741341677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2rXI3ClDmBMPb/nTHq47U3JbT34v5Vk5CODpFCMD7go=;
+        b=h0YKAcRkwDRU0QkLcB3rfKAsZ8b+Z8++KE2dkuP3IOB1T8okZMlmGWKFR+sPPv/Qdq
+         N+GwIvFPa0NXSm53a5Io/5XH52c0mMIzvgjav+gFPm/x+KKs8NZWY/F6yWfBzqM6Mosz
+         ggJ7KyAydSan+LmPyWI6CnyIjRa8mKBGwStMA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740736877; x=1741341677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2rXI3ClDmBMPb/nTHq47U3JbT34v5Vk5CODpFCMD7go=;
+        b=FxIpMJ4bbCn6B9Xh8TqA95BQhZu5JXNGsyTJKhWU0oakU0nE0yUaC838V3Kx1iBoXi
+         WumaVKWx4dvVAxukASXkUXObFQ8zu5bUGCa/MM7b8FC8E+sQGz9jdoi6S3isqRhCgWyn
+         kN8fw5UfwCRL94REh0VQmbqi3/XI6MLXRkw4LzhDoiOpBAKT0juYvl/NrPElV4rULKT2
+         QqUnh/QtEqWMuXNfvvbWgwLdlC4JOeAozgGyn2auEoIMmwsBOVFi09xL68THr6WouTzw
+         p92xHnQTSHSTBGaVVbB/3uYxbQ2BuTQsm/68cFbFfgPGTQI3/Vx3JRnL5EbV6RJ3Pvxs
+         eZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwPWsUoK0G/GOya602LKzbPbm8nWTHV11fN0ac3m8JmCHIPGSNpi18nUdk3O0Rgcvq1VA+CQmDzldUfpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYbFB6sm8B6VZwpyyE+b26jATTKJ7fF8VYQAtL15sZd/K58rSy
+	4n0xToSmask/2krd4/LNBWCCNdbJwedrsJooXTxgvaaFwwedFIU6glUKO8sMEX6nu3jbsbuyY6E
+	=
+X-Gm-Gg: ASbGncuQWLKtCPdAfvw9VzKG3pJ2XxnTlE7aY63idMFiIrHbYVo3Y9y7I0rzPrH4Ix8
+	45vGb0XWuEEWMTjXLaMIOPqsAb9/0Y4QEmqvaxyBd2l30tAOr84YEzQ88TRyqSmxggPrZRrjF6t
+	jCzlmEflZYYJrVKAjty5uyHaCZmagruWWGsE1Nq6pXFSt9w9yMKrUGWlElOFE1f6VrGywU3P6xV
+	rO7lqwwaqfwQtM5wsGMV9YXW2SM3f+eFZ+COqJ93JVn25aHbwn+QPT7/iy6IHREDVu45Hb0+rzB
+	ou7bqq3sR979e/PHhZtLz1lWxevWArb5dWCn3PKwzv5SchATqDtSP7hhwXy/nA==
+X-Google-Smtp-Source: AGHT+IEbYRrbirRp09ZvXEXnr8M0yB962oL4EF1znlSwjeo1uJvDDJZFb5Zy9yO1UpKJUK3ayb2NHg==
+X-Received: by 2002:a05:6402:5188:b0:5dc:c531:e5c0 with SMTP id 4fb4d7f45d1cf-5e4d6b83d0emr1847963a12.27.1740736877350;
+        Fri, 28 Feb 2025 02:01:17 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb66fbsm2266991a12.37.2025.02.28.02.01.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 02:01:16 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e05ac70b61so4482a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:01:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWYPp0bxs0Nok5Kyao95ujaq2KiSOb82/8t8R1Lso8LYM0sHUlxWnHPgGWehJYrrgZW82038KXqu7u0klc=@vger.kernel.org
+X-Received: by 2002:a50:ee06:0:b0:5e5:7c1:43bd with SMTP id
+ 4fb4d7f45d1cf-5e507c1454bmr6895a12.1.1740736875259; Fri, 28 Feb 2025 02:01:15
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250102-b4-rkisp-noncoherent-v1-1-bba164f7132c@gmail.com>
+ <20250103152326.GP554@pendragon.ideasonboard.com> <87bjw9s4s3.fsf@gmail.com> <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
+In-Reply-To: <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 28 Feb 2025 19:00:57 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DS2x3sX59EdkTEMuO=eXc=Q0jD44EUwMisP6ocWz11qg@mail.gmail.com>
+X-Gm-Features: AQ5f1JocdLsXSFHYJ8IXhWDm1nRVG8G1TcpnZe42kpdJDZJxd7C4Oq_p5gzB7_w
+Message-ID: <CAAFQd5DS2x3sX59EdkTEMuO=eXc=Q0jD44EUwMisP6ocWz11qg@mail.gmail.com>
+Subject: Re: [PATCH] media: rkisp1: allow non-coherent video capture buffers
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mikhail Rudenko <mike.rudenko@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces zswap_batch_compress() that takes an index within a
-folio, and sets up a request chain for compressing multiple pages of that
-folio, as a batch.
+Hi Jacopo,
 
-The call to the crypto layer is exactly the same as in zswap_compress(),
-when batch compressing a request chain in zswap_batch_compress().
+On Fri, Feb 28, 2025 at 2:11=E2=80=AFAM Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
+>
+> Hi Mikhail
+>
+> On Tue, Jan 14, 2025 at 07:00:39PM +0300, Mikhail Rudenko wrote:
+> >
+> > Hi Laurent,
+> >
+> > On 2025-01-03 at 17:23 +02, Laurent Pinchart <laurent.pinchart@ideasonb=
+oard.com> wrote:
+> >
+> > > On Thu, Jan 02, 2025 at 06:35:00PM +0300, Mikhail Rudenko wrote:
+> > >> Currently, the rkisp1 driver always uses coherent DMA allocations fo=
+r
+> > >> video capture buffers. However, on some platforms, using non-coheren=
+t
+> > >> buffers can improve performance, especially when CPU processing of
+> > >> MMAP'ed video buffers is required.
+> > >>
+> > >> For example, on the Rockchip RK3399 running at maximum CPU frequency=
+,
+> > >> the time to memcpy a frame from a 1280x720 XRGB32 MMAP'ed buffer to =
+a
+> > >> malloc'ed userspace buffer decreases from 7.7 ms to 1.1 ms when usin=
+g
+> > >> non-coherent DMA allocation. CPU usage also decreases accordingly.
+> > >
+> > > What's the time taken by the cache management operations ?
+> >
+> > Sorry for the late reply, your question turned out a little more
+> > interesting than I expected initially. :)
+> >
+> > When capturing using Yavta with MMAP buffers under the conditions menti=
+oned
+> > in the commit message, ftrace gives 437.6 +- 1.1 us for
+> > dma_sync_sgtable_for_cpu and 409 +- 14 us for
+> > dma_sync_sgtable_for_device. Thus, it looks like using non-coherent
+> > buffers in this case is more CPU-efficient even when considering cache
+> > management overhead.
+> >
+> > When trying to do the same measurements with libcamera, I failed. In a
+> > typical libcamera use case when MMAP buffers are allocated from a
+> > device, exported as dmabufs and then used for capture on the same devic=
+e
+> > with DMABUF memory type, cache management in kernel is skipped [1]
+> > [2]. Also, vb2_dc_dmabuf_ops_{begin,end}_cpu_access are no-ops [3], so
+> > DMA_BUF_IOCTL_SYNC from userspace does not work either.
+> >
+> > So it looks like to make this change really useful, the above issue of
+> > cache management for libcamera/DMABUF/videobuf2-dma-contig has to be
+> > solved. I'm not an expert in this area, so any advice is kindly welcome=
+. :)
+>
+> It would be shame if we let this discussion drop dead.. cache
+> management policies are relevant for performances, specifically for
+> cpu access, and your above 7.7ms vs 1.1 ms test clearly shows that.
+>
+> >
+> > [1] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobu=
+f2/videobuf2-core.c?id=3D94794b5ce4d90ab134b0b101a02fddf6e74c437d#n411
+>
+> I would like to know from Hans if the decision to disallow cache-hints
+> for dmabuf importers is a design choice or is deeply rooted in other
+> reasons I might be missing.
 
-zswap_store_folio() is modified to detect if the pool's acomp_ctx has
-more than one "nr_reqs", which will be the case if the CPU onlining code
-has allocated multiple batching resources in the acomp_ctx. If so, it means
-compress batching can be used with a batch-size of "acomp_ctx->nr_reqs".
+When DMA-buf is used, the responsibility for cache management is
+solely on the CPU users' side, so cache-hints don't really apply. It's
+the exporter (=3Dallocator) who determines the mapping policy of the
+buffer and provides necessary DMA_BUF_SYNC operations (can be no-op if
+the buffer is coherent).
 
-If compress batching can be used, zswap_store_folio() will invoke
-zswap_batch_compress() to compress and store the folio in batches of
-"acomp_ctx->nr_reqs" pages.
+Best regards,
+Tomasz
 
-With Intel IAA, the iaa_crypto driver will compress each batch of pages in
-parallel in hardware.
-
-Hence, zswap_batch_compress() does the same computes for a batch, as
-zswap_compress() does for a page; and returns true if the batch was
-successfully compressed/stored, and false otherwise.
-
-If the pool does not support compress batching, or the folio has only one
-page, zswap_store_folio() calls zswap_compress() for each individual
-page in the folio, as before.
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
----
- mm/zswap.c | 296 ++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 224 insertions(+), 72 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index ab9167220cb6..626574bd84f6 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1051,9 +1051,9 @@ static void acomp_ctx_put_unlock(struct crypto_acomp_ctx *acomp_ctx)
- }
- 
- static bool zswap_compress(struct page *page, struct zswap_entry *entry,
--			   struct zswap_pool *pool)
-+			   struct zswap_pool *pool,
-+			   struct crypto_acomp_ctx *acomp_ctx)
- {
--	struct crypto_acomp_ctx *acomp_ctx;
- 	struct scatterlist input, output;
- 	int comp_ret = 0, alloc_ret = 0;
- 	unsigned int dlen = PAGE_SIZE;
-@@ -1063,7 +1063,8 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	gfp_t gfp;
- 	u8 *dst;
- 
--	acomp_ctx = acomp_ctx_get_cpu_lock(pool);
-+	lockdep_assert_held(&acomp_ctx->mutex);
-+
- 	dst = acomp_ctx->buffers[0];
- 	sg_init_table(&input, 1);
- 	sg_set_page(&input, page, PAGE_SIZE, 0);
-@@ -1091,7 +1092,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->reqs[0]), &acomp_ctx->wait);
- 	dlen = acomp_ctx->reqs[0]->dlen;
- 	if (comp_ret)
--		goto unlock;
-+		goto check_errors;
- 
- 	zpool = pool->zpool;
- 	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
-@@ -1099,7 +1100,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
- 	alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle);
- 	if (alloc_ret)
--		goto unlock;
-+		goto check_errors;
- 
- 	buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
- 	memcpy(buf, dst, dlen);
-@@ -1108,7 +1109,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	entry->handle = handle;
- 	entry->length = dlen;
- 
--unlock:
-+check_errors:
- 	if (comp_ret == -ENOSPC || alloc_ret == -ENOSPC)
- 		zswap_reject_compress_poor++;
- 	else if (comp_ret)
-@@ -1116,7 +1117,6 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	else if (alloc_ret)
- 		zswap_reject_alloc_fail++;
- 
--	acomp_ctx_put_unlock(acomp_ctx);
- 	return comp_ret == 0 && alloc_ret == 0;
- }
- 
-@@ -1580,6 +1580,106 @@ static void shrink_worker(struct work_struct *w)
- * main API
- **********************************/
- 
-+/*
-+ * Batch compress multiple @nr_pages in @folio, starting from @index.
-+ */
-+static bool zswap_batch_compress(struct folio *folio,
-+				 long index,
-+				 unsigned int nr_pages,
-+				 struct zswap_entry *entries[],
-+				 struct zswap_pool *pool,
-+				 struct crypto_acomp_ctx *acomp_ctx)
-+{
-+	struct scatterlist inputs[ZSWAP_MAX_BATCH_SIZE];
-+	struct scatterlist outputs[ZSWAP_MAX_BATCH_SIZE];
-+	unsigned int i;
-+	int err = 0;
-+
-+	lockdep_assert_held(&acomp_ctx->mutex);
-+
-+	for (i = 0; i < nr_pages; ++i) {
-+		struct page *page = folio_page(folio, index + i);
-+
-+		sg_init_table(&inputs[i], 1);
-+		sg_set_page(&inputs[i], page, PAGE_SIZE, 0);
-+
-+		/*
-+		 * Each dst buffer should be of size (PAGE_SIZE * 2).
-+		 * Reflect same in sg_list.
-+		 */
-+		sg_init_one(&outputs[i], acomp_ctx->buffers[i], PAGE_SIZE * 2);
-+		acomp_request_set_params(acomp_ctx->reqs[i], &inputs[i],
-+					 &outputs[i], PAGE_SIZE, PAGE_SIZE);
-+
-+		/* Use acomp request chaining. */
-+		if (i)
-+			acomp_request_chain(acomp_ctx->reqs[i], acomp_ctx->reqs[0]);
-+		else
-+			acomp_reqchain_init(acomp_ctx->reqs[0], 0, crypto_req_done,
-+					    &acomp_ctx->wait);
-+	}
-+
-+	err = crypto_wait_req(crypto_acomp_compress(acomp_ctx->reqs[0]), &acomp_ctx->wait);
-+
-+	/*
-+	 * Get the individual compress errors from request chaining.
-+	 */
-+	for (i = 0; i < nr_pages; ++i) {
-+		if (unlikely(acomp_request_err(acomp_ctx->reqs[i]))) {
-+			err = -EINVAL;
-+			if (acomp_request_err(acomp_ctx->reqs[i]) == -ENOSPC)
-+				zswap_reject_compress_poor++;
-+			else
-+				zswap_reject_compress_fail++;
-+		}
-+	}
-+
-+	if (likely(!err)) {
-+		/*
-+		 * All batch pages were successfully compressed.
-+		 * Store the pages in zpool.
-+		 */
-+		struct zpool *zpool = pool->zpool;
-+		gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
-+
-+		if (zpool_malloc_support_movable(zpool))
-+			gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-+
-+		for (i = 0; i < nr_pages; ++i) {
-+			unsigned long handle;
-+			char *buf;
-+
-+			err = zpool_malloc(zpool, acomp_ctx->reqs[i]->dlen, gfp, &handle);
-+
-+			if (err) {
-+				if (err == -ENOSPC)
-+					zswap_reject_compress_poor++;
-+				else
-+					zswap_reject_alloc_fail++;
-+
-+				break;
-+			}
-+
-+			buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
-+			memcpy(buf, acomp_ctx->buffers[i], acomp_ctx->reqs[i]->dlen);
-+			zpool_unmap_handle(zpool, handle);
-+
-+			entries[i]->handle = handle;
-+			entries[i]->length = acomp_ctx->reqs[i]->dlen;
-+		}
-+	}
-+
-+	/*
-+	 * Request chaining cleanup:
-+	 *
-+	 * - Clear the CRYPTO_TFM_REQ_CHAIN bit on acomp_ctx->reqs[0].
-+	 * - Reset the acomp_ctx->wait to notify acomp_ctx->reqs[0].
-+	 */
-+	acomp_reqchain_clear(acomp_ctx->reqs[0], &acomp_ctx->wait);
-+
-+	return !err;
-+}
-+
- /*
-  * Store all pages in a folio.
-  *
-@@ -1588,95 +1688,146 @@ static void shrink_worker(struct work_struct *w)
-  * handles to ERR_PTR(-EINVAL) at allocation time, and the fact that the
-  * entry's handle is subsequently modified only upon a successful zpool_malloc()
-  * after the page is compressed.
-+ *
-+ * For compressors that don't support batching, the following structure
-+ * showed a performance regression with zstd using 64K as well as 2M folios:
-+ *
-+ * Batched stores:
-+ * ---------------
-+ *  - Allocate all entries,
-+ *  - Compress all entries,
-+ *  - Store all entries in xarray/LRU.
-+ *
-+ * Hence, the above structure is maintained only for batched stores, and the
-+ * following structure is implemented for sequential stores of large folio pages,
-+ * that fixes the regression, while preserving common code paths for batched
-+ * and sequential stores of a folio:
-+ *
-+ * Sequential stores:
-+ * ------------------
-+ * For each page in folio:
-+ *  - allocate an entry,
-+ *  - compress the page,
-+ *  - store the entry in xarray/LRU.
-  */
- static bool zswap_store_folio(struct folio *folio,
- 			      struct obj_cgroup *objcg,
- 			      struct zswap_pool *pool)
- {
--	long index, from_index = 0, nr_pages = folio_nr_pages(folio);
-+	long index = 0, from_index = 0, nr_pages, nr_folio_pages = folio_nr_pages(folio);
- 	struct zswap_entry **entries = NULL;
-+	struct crypto_acomp_ctx *acomp_ctx;
- 	int node_id = folio_nid(folio);
-+	unsigned int batch_size;
-+	bool batching;
- 
--	entries = kmalloc(nr_pages * sizeof(*entries), GFP_KERNEL);
-+	entries = kmalloc(nr_folio_pages * sizeof(*entries), GFP_KERNEL);
- 	if (!entries)
- 		return false;
- 
--	for (index = from_index; index < nr_pages; ++index) {
--		entries[index] = zswap_entry_cache_alloc(GFP_KERNEL, node_id);
-+	acomp_ctx = acomp_ctx_get_cpu_lock(pool);
- 
--		if (!entries[index]) {
--			zswap_reject_kmemcache_fail++;
--			nr_pages = index;
--			goto store_folio_failed;
--		}
-+	batch_size = acomp_ctx->nr_reqs;
- 
--		entries[index]->handle = (unsigned long)ERR_PTR(-EINVAL);
--	}
-+	nr_pages = (batch_size > 1) ? nr_folio_pages : 1;
-+	batching = (nr_pages > 1) ? true : false;
- 
--	for (index = from_index; index < nr_pages; ++index) {
--		struct page *page = folio_page(folio, index);
--		swp_entry_t page_swpentry = page_swap_entry(page);
--		struct zswap_entry *old, *entry = entries[index];
-+	while (1) {
-+		for (index = from_index; index < nr_pages; ++index) {
-+			entries[index] = zswap_entry_cache_alloc(GFP_KERNEL, node_id);
- 
--		if (!zswap_compress(page, entry, pool)) {
--			from_index = index;
--			goto store_folio_failed;
--		}
-+			if (!entries[index]) {
-+				zswap_reject_kmemcache_fail++;
-+				nr_pages = index;
-+				goto store_folio_failed;
-+			}
- 
--		old = xa_store(swap_zswap_tree(page_swpentry),
--			       swp_offset(page_swpentry),
--			       entry, GFP_KERNEL);
--		if (xa_is_err(old)) {
--			int err = xa_err(old);
-+			entries[index]->handle = (unsigned long)ERR_PTR(-EINVAL);
-+		}
- 
--			WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
--			zswap_reject_alloc_fail++;
--			from_index = index;
--			goto store_folio_failed;
-+		if (batching) {
-+			/* Batch compress the pages in the folio. */
-+			for (index = from_index; index < nr_pages; index += batch_size) {
-+
-+				if (!zswap_batch_compress(folio, index,
-+							  min((unsigned int)(nr_pages - index),
-+							      batch_size),
-+							  &entries[index], pool, acomp_ctx))
-+					goto store_folio_failed;
-+			}
-+		} else {
-+			/* Sequential compress the next page in the folio. */
-+			struct page *page = folio_page(folio, from_index);
-+
-+			if (!zswap_compress(page, entries[from_index], pool, acomp_ctx))
-+				goto store_folio_failed;
- 		}
- 
--		/*
--		 * We may have had an existing entry that became stale when
--		 * the folio was redirtied and now the new version is being
--		 * swapped out. Get rid of the old.
--		 */
--		if (old)
--			zswap_entry_free(old);
-+		for (index = from_index; index < nr_pages; ++index) {
-+			swp_entry_t page_swpentry = page_swap_entry(folio_page(folio, index));
-+			struct zswap_entry *old, *entry = entries[index];
- 
--		/*
--		 * The entry is successfully compressed and stored in the tree, there is
--		 * no further possibility of failure. Grab refs to the pool and objcg,
--		 * charge zswap memory, and increment zswap_stored_pages.
--		 * The opposite actions will be performed by zswap_entry_free()
--		 * when the entry is removed from the tree.
--		 */
--		zswap_pool_get(pool);
--		if (objcg) {
--			obj_cgroup_get(objcg);
--			obj_cgroup_charge_zswap(objcg, entry->length);
--		}
--		atomic_long_inc(&zswap_stored_pages);
-+			old = xa_store(swap_zswap_tree(page_swpentry),
-+				swp_offset(page_swpentry),
-+				entry, GFP_KERNEL);
-+			if (xa_is_err(old)) {
-+				int err = xa_err(old);
- 
--		/*
--		 * We finish initializing the entry while it's already in xarray.
--		 * This is safe because:
--		 *
--		 * 1. Concurrent stores and invalidations are excluded by folio lock.
--		 *
--		 * 2. Writeback is excluded by the entry not being on the LRU yet.
--		 *    The publishing order matters to prevent writeback from seeing
--		 *    an incoherent entry.
--		 */
--		entry->pool = pool;
--		entry->swpentry = page_swpentry;
--		entry->objcg = objcg;
--		entry->referenced = true;
--		if (entry->length) {
--			INIT_LIST_HEAD(&entry->lru);
--			zswap_lru_add(&zswap_list_lru, entry);
-+				WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
-+				zswap_reject_alloc_fail++;
-+				from_index = index;
-+				goto store_folio_failed;
-+			}
-+
-+			/*
-+			 * We may have had an existing entry that became stale when
-+			 * the folio was redirtied and now the new version is being
-+			 * swapped out. Get rid of the old.
-+			 */
-+			if (old)
-+				zswap_entry_free(old);
-+
-+			/*
-+			 * The entry is successfully compressed and stored in the tree, there is
-+			 * no further possibility of failure. Grab refs to the pool and objcg,
-+			 * charge zswap memory, and increment zswap_stored_pages.
-+			 * The opposite actions will be performed by zswap_entry_free()
-+			 * when the entry is removed from the tree.
-+			 */
-+			zswap_pool_get(pool);
-+			if (objcg) {
-+				obj_cgroup_get(objcg);
-+				obj_cgroup_charge_zswap(objcg, entry->length);
-+			}
-+			atomic_long_inc(&zswap_stored_pages);
-+
-+			/*
-+			 * We finish initializing the entry while it's already in xarray.
-+			 * This is safe because:
-+			 *
-+			 * 1. Concurrent stores and invalidations are excluded by folio lock.
-+			 *
-+			 * 2. Writeback is excluded by the entry not being on the LRU yet.
-+			 *    The publishing order matters to prevent writeback from seeing
-+			 *    an incoherent entry.
-+			 */
-+			entry->pool = pool;
-+			entry->swpentry = page_swpentry;
-+			entry->objcg = objcg;
-+			entry->referenced = true;
-+			if (entry->length) {
-+				INIT_LIST_HEAD(&entry->lru);
-+				zswap_lru_add(&zswap_list_lru, entry);
-+			}
- 		}
-+
-+		from_index = nr_pages++;
-+
-+		if (nr_pages > nr_folio_pages)
-+			break;
- 	}
- 
-+	acomp_ctx_put_unlock(acomp_ctx);
- 	kfree(entries);
- 	return true;
- 
-@@ -1688,6 +1839,7 @@ static bool zswap_store_folio(struct folio *folio,
- 		zswap_entry_cache_free(entries[index]);
- 	}
- 
-+	acomp_ctx_put_unlock(acomp_ctx);
- 	kfree(entries);
- 	return false;
- }
--- 
-2.27.0
-
+>
+> I'm asking because the idea is for libcamera to act solely as dma-buf
+> importer, the current alloc-export-then-import trick is an helper for
+> applications to work around the absence of a system allocator.
+>
+> If the requirement to disable cache-hints for importers cannot be
+> lifted, for libcamera it means we would not be able to use it.
+>
+>
+> > [2] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobu=
+f2/videobuf2-core.c?id=3D94794b5ce4d90ab134b0b101a02fddf6e74c437d#n829
+> > [3] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobu=
+f2/videobuf2-dma-contig.c?id=3D94794b5ce4d90ab134b0b101a02fddf6e74c437d#n42=
+6
+> >
+> > --
+> > Best regards,
+> > Mikhail Rudenko
+> >
+>
 
