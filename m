@@ -1,410 +1,185 @@
-Return-Path: <linux-kernel+bounces-539543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C670A4A5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:08:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A6FA4A5AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25763B7A50
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58FFA7A7096
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252CC1DE3A8;
-	Fri, 28 Feb 2025 22:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00091DE4F1;
+	Fri, 28 Feb 2025 22:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LF9KjJwT"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="wBClVgkx"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE81DE2BE;
-	Fri, 28 Feb 2025 22:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEB81DE3BC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740780508; cv=none; b=u0Lges5cDSnHuyGfU1Vt/FczmjLtp6FOxHiTRyINBGV52jaUj+KE890J9AUki6/JKZJP8W57P5NO38CsOp94J5H5/dlOVwUxmajVd7IvhJHP3o383Uk8gtlmJ+jp33eu1Sr/PVeqQ+rhcRrJPqYXbyTvbfkJot2IsAL7uL/qGZE=
+	t=1740780511; cv=none; b=EajRq5FcOEfg5Ep0Hy2DKQXos+Jl4fsZFH8g/L5X4RQkzc3V7SgbsYctWUTk94PsA4d2zbB9LxUspM6XrUrOckdf1RVvpu5z/Wjc6j31AisS9KbkI2PHeD0Wrd92oaMP2sQHRf2HmJii5eVzboKH/ZEu/+2u2n67jwg3I2ZrulY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740780508; c=relaxed/simple;
-	bh=f4Bc/MWmC/dqVCeSDp0Ud/04jI6q7V+IzLEi+AZUEUE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=H5PWRPOJs9TuSHmKXJjmolczq0dYICp6/5ZXPd5mc5TpDKv0o6qcbPP7yyq8jjKBcvA/pH9BugseGX0fYVoLHV9Zk2nh6ETbA2ECRJUZs2Vh4nrsZvflLO77wV10qGrQee6Ah+s9m0sNcKZONUOdOutFmxLLFTuw4AcMa0VAB+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LF9KjJwT; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb181331bso1245962e0c.0;
-        Fri, 28 Feb 2025 14:08:26 -0800 (PST)
+	s=arc-20240116; t=1740780511; c=relaxed/simple;
+	bh=UHyXyHGxaFKOCU+wBk/h3HQB02PoKJ+t3n/8GjE07vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0VVkDaOAE4in1AzXFHnT4sBDb6bIJT80tQx+qzVDE+I2bE5msNxMBiAYUQB3pXgVsM08ir1NcUvvTdMlicCUXpghS3xLPhvoc/KJ8/cx+V2wpyjaA5LbL91T3NGtXjPsbQarqqmgO81f6JpnhsqqZV3xOoEsiXUSCKg8G19ve4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=wBClVgkx; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2235c5818a3so4600325ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:08:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740780505; x=1741385305; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oUZVfpfsHtJY4UqsRu1LYnMdDReHY1TY44Rd5wY2z6U=;
-        b=LF9KjJwTrye24bzkAx+HCVyH/aUrVqrkbauwxtG3fIWerTBrq0Jde2H/Wbzj3ajkpo
-         BdEdRJHZ2Uis1RuMkr5FRYAVwJNgVsEq6eFhrkOVi5owO6WX6nPuEXtHJrX0BUY+JV7B
-         IldrBPb76MHg0H4hPyAUa1ANVojSriWXTr9zBb8t3zvvFKyHo3+daugPpDDEmcjMA9cN
-         kiQzlT4C1lVqKAa2Geait25o3JtsR4UgSqSIHIW+UKC3MYZnWE5Dn4DOu0ye7moiiQAa
-         EnKyOeosrsoF03Ru2o/bSg+9FGJIcv+hlZ5gSBCYdfP30qxYgstPzD9KfciBXepVzuL4
-         opqA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740780509; x=1741385309; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BD+w6VMpAnn3IS97d9vhggATREKLnYXv4vSMZfUVh4=;
+        b=wBClVgkxjF5xbFaFj27kgwYE72GgUHcEyzgN4FdjRk5iCc3YaXQEil2uR4J4CX3f5z
+         zTzBjnSfsPQOsKW2y9IfU4oR7EZb4hBBg8U/p57xwmyBazxGP8d86nUdf6fMY3pPccmu
+         kUJyDu1m1OOiaClD58XXiXG5iMD0shpzNmm6wQEtSYEj3lUo9hHAVfa96SSHn2wkWK+B
+         Bxhr2TLtaMKTwgAUqmP8qjVpgutkKSMsF9tigxgjUbA+sZRIxm0nJ3jn0P3qhEELCTpE
+         Y/FF8755s6MRmBKr+VmiqWu63dquX2ek7Vgn6nmeX6hPRl+2wVk/wdBB8u7zSL5CHUm8
+         VoAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740780505; x=1741385305;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oUZVfpfsHtJY4UqsRu1LYnMdDReHY1TY44Rd5wY2z6U=;
-        b=GVPdAB6o8dqt/FFgmZBbloqSNMSBIAydI4pyHVVVnjN6RYBAno63nZXVHrvXRcbxU6
-         Culp2dwiWbrqCFbJUkWwd++eZiqZr03p2kTL8Sd1iV4Mjy/HxkZeQ8kH33WQWkvWOOXH
-         FIgpqN0dJXyXqs22Thfk73tTzufCJ4ns6ZQ4Eh2N19aj3a5Wf3w3mb6rq/marTX8ncus
-         Drdg9GCCtZhFHUIkqny29if+KBwj73zH3uCB/lZrsSl5zwO2+wQ2iZRM46dA4p42jJ+t
-         OE8ae24G1eohUDIKM+nW0bmKBEIh6CejmErr3FcPs+yR+3FpuuOH3ZpS4WlznQhRl16K
-         3OJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+czFZYJtMaxlZJ2OSH2073DRGXMhkdLfBd3lyj9kUE7hAEA+s/FdUrNWxKFfS1U5L6FRUs5hlSkeb@vger.kernel.org, AJvYcCXeDpecicHtw4/FejBbrSS+Vlo8sJdHaNh0Ql5Dbb33lSQcuNuh3rmB4jlku8YFNS54KvBxMBs0tcO24gwk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKfjPUIHIVbhvhO8o1AnxFAnbx6p+HX9+C5L9uwCRkev/dZp07
-	7ibADNSTOSdA02wG90ZnRAV28M6I4yiFPTkHmu5tjMLzAhZjdyG5
-X-Gm-Gg: ASbGncv9X+NVxpZhsre/Y0WW36o02UCmWcdSvC8UHPk9fAsPuapjNECwW4Wkr28sc35
-	0iJOUfaeknxlaoNR3oMMy4Ee0Cod+bcMTQHxMnZXrfCKqGri/b4ddlJC0H8t0yfBR/f0c6DyZA1
-	EuNKa1cmxTrW+SqQ9IzVWoJAwkak9N3Ucx/365Gg7IutBp3yn49ogw7TWhB/44C70HmqZhgYFmg
-	qiLDbG1CGs3DNenfiUmkWFZGigCfoMgIUdFv4v+Hf3n5EOWWHY3Fr3n0+38Co5Yo0sufbxgWmTl
-	kFanGwl6SCFILilFvCc=
-X-Google-Smtp-Source: AGHT+IGgvpQI0Ia8A0gypaBOny1zZAYK1HAXzodX1Ma1DazN+jgpEVvHK7Oev7mqDbTvh7F9oW+XFg==
-X-Received: by 2002:a05:6122:3382:b0:51f:3e67:75df with SMTP id 71dfb90a1353d-5235b8cc4d0mr3785391e0c.10.1740780505028;
-        Fri, 28 Feb 2025 14:08:25 -0800 (PST)
-Received: from localhost ([2800:bf0:61:1288:2be8:bc29:ad13:842f])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5234c08d934sm721074e0c.31.2025.02.28.14.08.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 14:08:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740780509; x=1741385309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/BD+w6VMpAnn3IS97d9vhggATREKLnYXv4vSMZfUVh4=;
+        b=qpHV1fuqPfjBDAtgsVliS1GN4sh4PCTwmF7e77gJCu+dSJOMUJZPlyX87lcgNzQ8Yg
+         N3ZSIXZe4UgNVcHng7fmKN7/1A5jLxMiLGiERrqgWVJYeQnyays/25HnVELkYkhPz1zC
+         UAmdxYlpJsj5sP5t3lu5DVTOHsXGksS8SpCQY/qFeIDvIGpRwoXd2pSMKoF9dG+DsDlB
+         VXsX2ezsA/w/9kpeIf0mlm2byAtpxYBfBH60xkN4mBT21LUazeG5/zYpoxYLdnUe/vur
+         /D2z5IfFSvpSvojM3q0B49n0ReR0OOUaA/o3nntdZHO81txa3D1jvU19gKyndw79yIux
+         /O3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnRL3/FoBPPfQEtSgYNCJvnMnl7mbfFiX3ZhKeVngDoJcjeh0MZ+RD6xeuGwgF6rRupUwX4u5sq7cDdv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9lI95/jKHA/KbMH9vvOEJl8tZWY1OhjlvSAh6E97+pqyFS6qq
+	P4JwuQ02R6lzY6NmbJI+ijCmzxvbSzRRyKhNd1Y3eSLLNKHHDYamGMpas6bhpmw=
+X-Gm-Gg: ASbGncvqTieTazsknkEKhP52PKGIELCeX3O3xcbsQ0Y8WcVUh/z590MmY/ITU7sXqAr
+	Hmkchr+bKv+k32wskddSymDfAUT3ZKdix4dxZcbHC/F5nxz69TCfJsXmpFdtVMHKBPdTvj03Uqx
+	HQjZD/YuCW+PUX4Rhh0MUD0kQUmCmwTlM6Rfx+Gsp28ZDZc4Yn22auJ/u2Ipdrj8pmrMnpEQsnj
+	aZWWhKh3XEMOYzNaLg2qB5+M1wdUD1PJE548WVpYWV5ML3gWCjQv+duCkW4FASmK77NuYSfe80U
+	RRiJpGoNJDqya9kOHrPwSYA5bDEkXMnYHTju1oyg
+X-Google-Smtp-Source: AGHT+IERVixQDZRmXy6YmTgIKl4r0DNokCo4tKImYTz6bKxMaR3nQyLm/o/mOg01P8iD7ItgEE71jQ==
+X-Received: by 2002:a05:6a20:734a:b0:1f0:e808:42ee with SMTP id adf61e73a8af0-1f2f4e01892mr7482416637.42.1740780508698;
+        Fri, 28 Feb 2025 14:08:28 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:6935:f301:4e47:2b68])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a005fd15sm4277261b3a.168.2025.02.28.14.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 14:08:27 -0800 (PST)
+Date: Fri, 28 Feb 2025 14:08:24 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf build: fix in-tree build
+Message-ID: <Z8Iz2JPpqer00aZ_@ghost>
+References: <20250124-perf-fix-intree-build-v1-1-485dd7a855e4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 28 Feb 2025 17:08:21 -0500
-Message-Id: <D84F6QF8EU3D.3RUI1PKXP2DZ3@gmail.com>
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Mario Limonciello" <superm1@kernel.org>, "Shyam Sundar S K"
- <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, "Hans
- de Goede" <hdegoede@redhat.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>, "Mark
- Pearson" <mpearson-lenovo@squebb.ca>
-Cc: "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>, "Derek J . Clark"
- <derekjohn.clark@gmail.com>, "Antheas Kapenekakis" <lkml@antheas.dev>,
- <me@kylegospodneti.ch>, "Denis Benato" <benato.denis96@gmail.com>, "Mario
- Limonciello" <mario.limonciello@amd.com>, "Armin Wolf" <W_Armin@gmx.de>
-Subject: Re: [PATCH 1/3] ACPI: platform_profile: Add support for hidden
- choices
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250228170155.2623386-1-superm1@kernel.org>
- <20250228170155.2623386-2-superm1@kernel.org>
-In-Reply-To: <20250228170155.2623386-2-superm1@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250124-perf-fix-intree-build-v1-1-485dd7a855e4@bootlin.com>
 
-Hi Mario,
-
-On Fri Feb 28, 2025 at 12:01 PM -05, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> When two drivers don't support all the same profiles the legacy interface
-> only exports the common profiles.
->
-> This causes problems for cases where one driver uses low-power but anothe=
-r
-> uses quiet because the result is that neither is exported to sysfs.
->
-> To allow two drivers to disagree, add support for "hidden choices".
-> Hidden choices are platform profiles that a driver supports to be
-> compatible with the platform profile of another driver.
->
-> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers")
-> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-92=
-57-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Fri, Jan 24, 2025 at 02:06:08PM +0100, Luca Ceresoli wrote:
+> Building perf in-tree is broken after commit 890a1961c812 ("perf tools:
+> Create source symlink in perf object dir") which added a 'source' symlink
+> in the output dir pointing to the source dir.
+> 
+> With in-tree builds, the added 'SOURCE = ...' line is executed multiple
+> times (I observed 2 during the build plus 2 during installation). This is a
+> minor inefficiency, in theory not harmful because symlink creation is
+> assumed to be idempotent. But it is not.
+> 
+> Considering with in-tree builds:
+> 
+>   srctree=/absolute/path/to/linux
+>    OUTPUT=/absolute/path/to/linux/tools/perf
+> 
+> here's what happens:
+> 
+>  1. ln -sf $(srctree)/tools/perf $(OUTPUT)/source
+>     -> creates /absolute/path/to/linux/tools/perf/source
+>        link to /absolute/path/to/linux/tools/perf
+>     => OK, that's what was intended
+>  2. ln -sf $(srctree)/tools/perf $(OUTPUT)/source   # same command as 1
+>     -> creates /absolute/path/to/linux/tools/perf/perf
+>        link to /absolute/path/to/linux/tools/perf
+>     => Not what was intended, not idempotent
+>  3. Now the build _should_ create the 'perf' executable, but it fails
+> 
+> The reason is the tricky 'ln' command line. At the first invocation 'ln'
+> uses the 1st form:
+> 
+>        ln [OPTION]... [-T] TARGET LINK_NAME
+> 
+> and creates a link to TARGET *called LINK_NAME*.
+> 
+> At the second invocation $(OUTPUT)/source exists, so 'ln' uses the 3rd
+> form:
+> 
+>        ln [OPTION]... TARGET... DIRECTORY
+> 
+> and creates a link to TARGET *called TARGET* inside DIRECTORY.
+> 
+> Fix by adding --no-dereference to "treat LINK_NAME as a normal file if it
+> is a symbolic link to a directory", as the manpage says.
+> 
+> Link: https://lore.kernel.org/all/20241125182506.38af9907@booty/
+> Fixes: 890a1961c812 ("perf tools: Create source symlink in perf object dir")
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > ---
-> Cc: "Luke D. Jones" <luke@ljones.dev>
->  drivers/acpi/platform_profile.c  | 94 +++++++++++++++++++++++++-------
->  include/linux/platform_profile.h |  3 +
->  2 files changed, 76 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index 2ad53cc6aae53..ef9444482db19 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -21,9 +21,15 @@ struct platform_profile_handler {
->  	struct device dev;
->  	int minor;
->  	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> +	unsigned long hidden_choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
->  	const struct platform_profile_ops *ops;
->  };
-> =20
-> +struct aggregate_choices_data {
-> +	unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> +	int count;
-> +};
-> +
->  static const char * const profile_names[] =3D {
->  	[PLATFORM_PROFILE_LOW_POWER] =3D "low-power",
->  	[PLATFORM_PROFILE_COOL] =3D "cool",
-> @@ -73,7 +79,7 @@ static int _store_class_profile(struct device *dev, voi=
-d *data)
-> =20
->  	lockdep_assert_held(&profile_lock);
->  	handler =3D to_pprof_handler(dev);
-> -	if (!test_bit(*bit, handler->choices))
-> +	if (!test_bit(*bit, handler->choices) && !test_bit(*bit, handler->hidde=
-n_choices))
->  		return -EOPNOTSUPP;
-> =20
->  	return handler->ops->profile_set(dev, *bit);
-> @@ -239,21 +245,44 @@ static const struct class platform_profile_class =
-=3D {
->  /**
->   * _aggregate_choices - Aggregate the available profile choices
->   * @dev: The device
-> - * @data: The available profile choices
-> + * @arg: struct aggregate_choices_data
->   *
->   * Return: 0 on success, -errno on failure
->   */
-> -static int _aggregate_choices(struct device *dev, void *data)
-> +static int _aggregate_choices(struct device *dev, void *arg)
->  {
-> +	unsigned long tmp[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> +	struct aggregate_choices_data *data =3D arg;
->  	struct platform_profile_handler *handler;
-> -	unsigned long *aggregate =3D data;
-> =20
->  	lockdep_assert_held(&profile_lock);
->  	handler =3D to_pprof_handler(dev);
-> -	if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-> -		bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
-> +	bitmap_or(tmp, handler->choices, handler->hidden_choices, PLATFORM_PROF=
-ILE_LAST);
-> +	if (test_bit(PLATFORM_PROFILE_LAST, data->aggregate))
-> +		bitmap_copy(data->aggregate, tmp, PLATFORM_PROFILE_LAST);
->  	else
-> -		bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LA=
-ST);
-> +		bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LAS=
-T);
-> +	data->count++;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * _remove_hidden_choices - Remove hidden choices from aggregate data
-> + * @dev: The device
-> + * @arg: struct aggregate_choices_data
-> + *
-> + * Return: 0 on success, -errno on failure
-> + */
-> +static int _remove_hidden_choices(struct device *dev, void *arg)
-> +{
-> +	struct aggregate_choices_data *data =3D arg;
-> +	struct platform_profile_handler *handler;
-> +
-> +	lockdep_assert_held(&profile_lock);
-> +	handler =3D to_pprof_handler(dev);
-> +	bitmap_andnot(data->aggregate, handler->choices,
-> +		      handler->hidden_choices, PLATFORM_PROFILE_LAST);
-> =20
->  	return 0;
->  }
-> @@ -270,22 +299,31 @@ static ssize_t platform_profile_choices_show(struct=
- device *dev,
->  					     struct device_attribute *attr,
->  					     char *buf)
->  {
-> -	unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> +	struct aggregate_choices_data data =3D {
-> +		.aggregate =3D { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] =3D =
-~0UL },
-> +		.count =3D 0,
-> +	};
->  	int err;
-> =20
-> -	set_bit(PLATFORM_PROFILE_LAST, aggregate);
-> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
->  	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->  		err =3D class_for_each_device(&platform_profile_class, NULL,
-> -					    aggregate, _aggregate_choices);
-> +					    &data, _aggregate_choices);
->  		if (err)
->  			return err;
-> +		if (data.count =3D=3D 1) {
-> +			err =3D class_for_each_device(&platform_profile_class, NULL,
-> +						    &data, _remove_hidden_choices);
-> +			if (err)
-> +				return err;
-> +		}
->  	}
-> =20
->  	/* no profile handler registered any more */
-> -	if (bitmap_empty(aggregate, PLATFORM_PROFILE_LAST))
-> +	if (bitmap_empty(data.aggregate, PLATFORM_PROFILE_LAST))
->  		return -EINVAL;
-> =20
-> -	return _commmon_choices_show(aggregate, buf);
-> +	return _commmon_choices_show(data.aggregate, buf);
->  }
-> =20
->  /**
-> @@ -373,7 +411,10 @@ static ssize_t platform_profile_store(struct device =
-*dev,
->  				      struct device_attribute *attr,
->  				      const char *buf, size_t count)
->  {
-> -	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> +	struct aggregate_choices_data data =3D {
-> +		.aggregate =3D { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] =3D =
-~0UL },
-> +		.count =3D 0,
-> +	};
->  	int ret;
->  	int i;
-> =20
-> @@ -381,13 +422,13 @@ static ssize_t platform_profile_store(struct device=
- *dev,
->  	i =3D sysfs_match_string(profile_names, buf);
->  	if (i < 0 || i =3D=3D PLATFORM_PROFILE_CUSTOM)
->  		return -EINVAL;
-> -	set_bit(PLATFORM_PROFILE_LAST, choices);
-> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
->  	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->  		ret =3D class_for_each_device(&platform_profile_class, NULL,
-> -					    choices, _aggregate_choices);
-> +					    &data, _aggregate_choices);
->  		if (ret)
->  			return ret;
-> -		if (!test_bit(i, choices))
-> +		if (!test_bit(i, data.aggregate))
->  			return -EOPNOTSUPP;
-> =20
->  		ret =3D class_for_each_device(&platform_profile_class, NULL, &i,
-> @@ -453,12 +494,15 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
->   */
->  int platform_profile_cycle(void)
->  {
-> +	struct aggregate_choices_data data =3D {
-> +		.aggregate =3D { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] =3D =
-~0UL },
-> +		.count =3D 0,
-> +	};
->  	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
->  	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
-> -	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
->  	int err;
-> =20
-> -	set_bit(PLATFORM_PROFILE_LAST, choices);
-> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
->  	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->  		err =3D class_for_each_device(&platform_profile_class, NULL,
->  					    &profile, _aggregate_profiles);
-> @@ -470,14 +514,14 @@ int platform_profile_cycle(void)
->  			return -EINVAL;
-> =20
->  		err =3D class_for_each_device(&platform_profile_class, NULL,
-> -					    choices, _aggregate_choices);
-> +					    &data, _aggregate_choices);
->  		if (err)
->  			return err;
-> =20
->  		/* never iterate into a custom if all drivers supported it */
-> -		clear_bit(PLATFORM_PROFILE_CUSTOM, choices);
-> +		clear_bit(PLATFORM_PROFILE_CUSTOM, data.aggregate);
-> =20
-> -		next =3D find_next_bit_wrap(choices,
-> +		next =3D find_next_bit_wrap(data.aggregate,
->  					  PLATFORM_PROFILE_LAST,
->  					  profile + 1);
-> =20
-> @@ -532,6 +576,14 @@ struct device *platform_profile_register(struct devi=
-ce *dev, const char *name,
->  		return ERR_PTR(-EINVAL);
->  	}
-> =20
-> +	if (ops->hidden_choices) {
-> +		err =3D ops->hidden_choices(drvdata, pprof->hidden_choices);
-> +		if (err) {
-> +			dev_err(dev, "platform_profile hidden_choices failed\n");
-> +			return ERR_PTR(err);
-> +		}
-> +	}
-> +
->  	guard(mutex)(&profile_lock);
-> =20
->  	/* create class interface for individual handler */
-> diff --git a/include/linux/platform_profile.h b/include/linux/platform_pr=
-ofile.h
-> index 8ab5b0e8eb2c1..8c9df7dadd5d3 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -33,6 +33,8 @@ enum platform_profile_option {
->   * @probe: Callback to setup choices available to the new class device. =
-These
->   *	   choices will only be enforced when setting a new profile, not when
->   *	   getting the current one.
-> + * @hidden_choices: Callback to setup choices that are not visible to th=
-e user
-> + *		    but can be set by the driver.
->   * @profile_get: Callback that will be called when showing the current p=
-latform
->   *		 profile in sysfs.
->   * @profile_set: Callback that will be called when storing a new platfor=
-m
-> @@ -40,6 +42,7 @@ enum platform_profile_option {
->   */
->  struct platform_profile_ops {
->  	int (*probe)(void *drvdata, unsigned long *choices);
-> +	int (*hidden_choices)(void *drvdata, unsigned long *choices);
->  	int (*profile_get)(struct device *dev, enum platform_profile_option *pr=
-ofile);
->  	int (*profile_set)(struct device *dev, enum platform_profile_option pro=
-file);
->  };
+>  tools/perf/Makefile.perf | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index d74241a151313bd09101aabb5d765a5a0a6efc84..bbd799a0fd544db220f29d1e250a819a765d04f3 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -164,7 +164,7 @@ ifneq ($(OUTPUT),)
+>  VPATH += $(OUTPUT)
+>  export VPATH
+>  # create symlink to the original source
+> -SOURCE := $(shell ln -sf $(srctree)/tools/perf $(OUTPUT)/source)
+> +SOURCE := $(shell ln -sf --no-dereference $(srctree)/tools/perf $(OUTPUT)/source)
 
-This approach works really well for the PMF driver because the
-profile_get callback retrieves the raw profile that the profile_set
-callback cached. However this is not the case for quite a few drivers,
-which usually just retrieve the current profile from WMI for example.
+The kernel Makefile has:
+	$(Q)ln -fsn $(srcroot) source
 
-This means that writing a profile to the legacy platform_profile
-attribute, which a driver has selected as a "hidden choice" may result
-in the operation succeeding, but if the user were to immediately read
-from platform_profile it would display "custom", because the profiles
-for different handlers may be unsynchronized.
+So for parity the --no-dereference could become `n`, but it doesn't
+really matter.
 
-This makes me wonder if the added complexity this patch brings, is
-really worth it.
+>  endif
+>  
+>  ifeq ($(V),1)
+> 
+> ---
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> change-id: 20250124-perf-fix-intree-build-fbd97f560254
+> 
+> Best regards,
+> -- 
+> Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
 
-IMHO we should do what Armin suggested in the patch proposed by Antheas.
-In fact, I would suggest an even simpler version:
-
-  1. The legacy platform_profile_choices should aggregate `choices`
-     with bitmap_or instead of bitmap_and. i.e. It should display all
-     available choices
-  2. When writing a profile to the legacy platform_profile, if a handler
-     doesn't support it, we simply ignore it without failing and
-     continue to the next
-
-I believe this works well with power-profiles-daemon, but I'm not
-entirely sure. Maybe you know more about it.
-
-This of course has the problem that profiles would be unsync and
-platform_profile might display "custom" immediately after setting a
-profile, but this patch has the same "issue".
-
-For me this "custom" issue, is not really an issue. The legacy interface
-should be deprecated in favor of the class interface, and new/old
-user-space tools should use/migrate to that instead.
-
-Let me know what you think!
-
---=20
- ~ Kurt
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
 
 
