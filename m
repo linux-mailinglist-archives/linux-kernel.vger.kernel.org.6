@@ -1,115 +1,162 @@
-Return-Path: <linux-kernel+bounces-538051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B858A49407
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:52:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0DCA4940D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A08D16DCD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF9C07A5018
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD64A2512C3;
-	Fri, 28 Feb 2025 08:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqv88IH0"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B5624FC08;
+	Fri, 28 Feb 2025 08:53:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE56250BF5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858F25484A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732750; cv=none; b=pOCbN5g0rBpfaufumBLhXGq5KQfrOLsfiZdpZ3VhTQNfISa29n+PYiVVOK7ZCMjxXcAgQfZ2gPSrWcQBWhbiYnMoIW85ey2K/UFVpGyevXwllm73OpUYOysLaf+X8ypJwYFa8IaI/3PSVfovOVpDVSHXGmmSiw7N1BkieRTtcHU=
+	t=1740732791; cv=none; b=MxrSan2Cu6/1Yo77XFWmRG2dCTQsBH8WRwRvLK0B8rITOLwi0pQ3DZUw8+A4cRLhDa7fymUZ2rlY1UpSi5mNjvJngwF7SD6xKk/x8MUCr8h+AhfjWNgtQTcbDUxCbZmxsdFtWubr5BAUc1lAvUPbIVVyMiXfjokk6Cq0G4LjrzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732750; c=relaxed/simple;
-	bh=QAZ1XbH09v7b1zWZ0hsXWTy0W7e9HTzyQ7n3BOJSdIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tVw0mmkwr19WCGdwciPjT3M10yu6CluzLkynQn4ZU9sQc+1sebPFhiDMamp7irMSAC1jrV2FE07K6zEqryoHv6gnyMAgL2Hc6vpBeklPVlTWNW8t5P5bws051wSd2iW1wnVqN0+CB2LF75JbflZCVHCI9oI9tcS4Hk0RpqAUqgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oqv88IH0; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-543d8badc30so2076226e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:52:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740732746; x=1741337546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QAZ1XbH09v7b1zWZ0hsXWTy0W7e9HTzyQ7n3BOJSdIM=;
-        b=oqv88IH0Fu58PpsE4em94prhjTzhdw48VwmrFHg7CdbdAwbavnegV9HfWzT0PJ3Bt2
-         +l1qTW6k/q7VXv2w7wSW5Ru5PK6aM8LUSQUEBFtQ8qPnaynrKg+d08WypuBImcDgrOC8
-         de+itt/MuoHgovngNLlaU1nKVOrLOXwC7O6OmR1JLEWL/5K/NQQvMw+BmxeYwZmT3yyS
-         arWmpvCXyXb4FmZIdutQYQCRWa5Xluz9xB5BsnuApoq004rt3T/bnidEHGyoKA45EUOA
-         wgXXRg7AHVt+vTLk38T90zT4x7LLETREkmz33fs1qHoMnyEEGNA5I05ubjFbYTWJoPaZ
-         qyWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740732746; x=1741337546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QAZ1XbH09v7b1zWZ0hsXWTy0W7e9HTzyQ7n3BOJSdIM=;
-        b=lxNuxbosg6eXFugOc3NI1tiiPPpE4i/vWzirZpRSEM2RI6cBkKHbEIBBZJ+J4f/0pH
-         zuAa/GAU5mAr8D3ufv3i+INMWlJd/G3cx/tozxUk0SZIbay/nRx5dXPIwzAnbJHUjdJL
-         RtOzTacSODFxLsTSNFoePSqic3BaPHum6jizHeHLojgfqNniloI3glKHQ9w9dKiqpl6m
-         For7XhdtKmkP88U5KTAS5u1asoRdGNrCRiBQSufspl6G6pUaNm9h7eTiSZhoxUY6m3Ds
-         DD1GprY7vYx50ld3P/mhOIcp2UInWsx10HJosjrMYeLE5fauytjGtq+/5qdY1xQIZgpK
-         eEUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqKXqADcmT6WbR4+ySer2grkCrB2Vg6cy+YU15CsLW6pRhi/XkvLKszmSBO42XcocdcxOEaB/gkA2iX8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1rgEH+e+lHCpGD+d2+ezSgrUWU3QsVD4gt/6UJ5hNySqvVjeQ
-	QrMOOzf4OgdtxqIkH0gRAeyRe/HxQ27QdThbn1eq2HxIJMju1rME6ORniBKK4Qz2AGI8F8DJbF4
-	nLdYwxjIB9i+ZywDhGRgVRddfmoxUO4VJrFIftw==
-X-Gm-Gg: ASbGnctI/OfJpGfFBMXmxYAsfnSG+oRNxwPqsgc4rpgZvJ6p4aw8+6N+qWC0XeDJ54A
-	KtdQFMuPZ2UTkrIedP2JL3PGlQCEn/RZcbvcJsGku9q+rttV7QCqUTDJJpYPrKpnHDvpkG1edf1
-	1wghzzU3k=
-X-Google-Smtp-Source: AGHT+IFLrniw5jq4oWKYdbCJ1jDPnBqcD2jK1p8/hj2hMot5ls33gsWydkV0WZlBpXGLTrBYBZ2pqZLZjbYdrfBpayU=
-X-Received: by 2002:ac2:4c4f:0:b0:546:2f6f:83d7 with SMTP id
- 2adb3069b0e04-5494c352318mr1042433e87.46.1740732746436; Fri, 28 Feb 2025
- 00:52:26 -0800 (PST)
+	s=arc-20240116; t=1740732791; c=relaxed/simple;
+	bh=qNe0LEGqpQQi8GIgH/wydL5K/ZSIvkZpuYesUP7jE8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oaL8KcceqrNLUIyQaRkMeNz4aSEBXZ1Q9+OAh+RXgNpstL4XLj0zoPxdXMch3K3O2AOZI076R1QVjuh46mgpa3O1IdRi9tt+AHm9kZWxpxw4ALSlCzSzzQWOYoM2ezNptqT6mWO1N3+nZz9aS/PSl5gBWcVGNqV8EGMGGSeAI2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnw6m-0005fo-VB; Fri, 28 Feb 2025 09:52:36 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnw6j-003GS3-27;
+	Fri, 28 Feb 2025 09:52:33 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 28E693CDF52;
+	Fri, 28 Feb 2025 08:52:33 +0000 (UTC)
+Date: Fri, 28 Feb 2025 09:52:31 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
+Message-ID: <20250228-married-bullfrog-of-reading-89042b-mkl@pengutronix.de>
+References: <20250225081644.3524915-1-a0282524688@gmail.com>
+ <20250225081644.3524915-2-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
- <62cb9786b02adde118db9349617cb796585ceb02.1739368121.git.Jonathan.Santos@analog.com>
- <CACRpkdaSY7WH191makzPcZqLd-vBsC_f6yagWzBa65MrC+pjKA@mail.gmail.com> <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
-In-Reply-To: <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:52:15 +0100
-X-Gm-Features: AQ5f1Jrkm-kow3OXmnSJltTmG8QrhANbAwgPagCFyAFP-qUYHz9z9ilWano5H4U
-Message-ID: <CACRpkdbw3BkpzPQp2PdV8M61V2XXaLcmuOpGTsxSoiQTH7wZXw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3 12/17] iio: adc: ad7768-1: Add GPIO controller support
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, jonath4nns@gmail.com, 
-	marcelo.schmitt1@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="thau7tfhkoq4fek3"
+Content-Disposition: inline
+In-Reply-To: <20250225081644.3524915-2-a0282524688@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--thau7tfhkoq4fek3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
+MIME-Version: 1.0
 
-On Thu, Feb 20, 2025 at 11:27=E2=80=AFPM David Lechner <dlechner@baylibre.c=
-om> wrote:
-> On 2/19/25 2:34 PM, Linus Walleij wrote:
+On 25.02.2025 16:16:38, Ming Yu wrote:
 
-> > Is it not possible to use the gpio regmap library in this driver
-> > like we do in drivers/iio/addac/stx104.c?
-> >
-> > It cuts down the code size of simple GPIO chips on random
-> > chips quite a lot.
->
-> I think the answer is "no" since we need to hold a conditional lock
-> while accessing registers. Namely: iio_device_claim_direct_mode()/
-> iio_device_release_direct_mode().
+[...]
 
-Sorry for potentially dumb question, but if this is required to access
-the registers, why is it not done in the regmap abstraction itself?
-It's kind of that stuff regmap is supposed to hide.
+> +static int nct6694_usb_probe(struct usb_interface *iface,
+> +			     const struct usb_device_id *id)
+> +{
+> +	struct usb_device *udev =3D interface_to_usbdev(iface);
+> +	struct usb_endpoint_descriptor *int_endpoint;
+> +	struct usb_host_interface *interface;
+> +	struct device *dev =3D &iface->dev;
+> +	struct nct6694 *nct6694;
+> +	int pipe, maxp;
+> +	int ret;
+> +
+> +	nct6694 =3D devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
+> +	if (!nct6694)
+> +		return -ENOMEM;
+> +
+> +	pipe =3D usb_rcvintpipe(udev, NCT6694_INT_IN_EP);
+> +	maxp =3D usb_maxpacket(udev, pipe);
+> +
+> +	nct6694->usb_msg =3D devm_kzalloc(dev, sizeof(union nct6694_usb_msg), G=
+FP_KERNEL);
+> +	if (!nct6694->usb_msg)
+> +		return -ENOMEM;
+> +
+> +	nct6694->int_buffer =3D devm_kzalloc(dev, maxp, GFP_KERNEL);
+> +	if (!nct6694->int_buffer)
+> +		return -ENOMEM;
+> +
+> +	nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
+> +	if (!nct6694->int_in_urb)
+> +		return -ENOMEM;
+> +
+> +	nct6694->domain =3D irq_domain_add_simple(NULL, NCT6694_NR_IRQS, 0,
+> +						&nct6694_irq_domain_ops,
+> +						nct6694);
+> +	if (!nct6694->domain) {
+> +		ret =3D -ENODEV;
+> +		goto err_urb;
+> +	}
+> +
+> +	nct6694->dev =3D dev;
+> +	nct6694->udev =3D udev;
+> +	nct6694->timeout =3D NCT6694_URB_TIMEOUT;	/* Wait until URB completes */
 
-Yours,
-Linus Walleij
+Why do you need this variable? You can directly use NCT6694_URB_TIMEOUT
+in the usb_bulk_msg() and friends calls.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--thau7tfhkoq4fek3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfBeUwACgkQDHRl3/mQ
+kZwj8Qf/ZqqBAFXxAYb+Ol2EYuIUSztYKNYnXALK+Hmv/b3tCAl+WuYuPRuK3nal
+tYrpJPUVfYcm7WGux3J3oGKiRAZDaOMCPHitSwdEscltvot8zwcA0hHcKqL7Itij
+Qu5x/rzaoPfQAc7vMQ1EFTQZRJEtrQUP2xe4c4tH+bSDbG0rWNy7I824ATNnl8mi
+UlFsGcRv6QZB0DtF7LX4qme7Ufm2+Io91ImVCkN19DH2Q3yW6rjTyQwEs9ZNBsgj
+X9rbbaIqxYYtkYD+4oJ0wC6OqIBhyuzTJvOWp8WOUb3rjgCuELkVrST4Jz86u/oy
+/+qVxFkZP/3CWH8ORdrd3TAfXxZSUQ==
+=5Ywe
+-----END PGP SIGNATURE-----
+
+--thau7tfhkoq4fek3--
 
