@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-539364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19703A4A36E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:06:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75728A4A371
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8478812F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55521189FBBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BFC279352;
-	Fri, 28 Feb 2025 20:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A977227934C;
+	Fri, 28 Feb 2025 20:01:49 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB8C27934B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1027934E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772905; cv=none; b=RUTsNQSDepSTyPO0hz8U50EJYkbeUXmp6AlJjI4wtN5AptcF/+VSf4fnSeDil35xcOqaxFnoysRE/o/RmtG628EXHo3pDtFWlxDZHxcGlSRLYijV8wbDwS6o73ihRP3pR1xR0euE8EtI562HTFzIMvrLfFbe753wCO6POclObGk=
+	t=1740772909; cv=none; b=YVr8ZnRVhsnYEH9BoTAsBur+GWKZtXQWttlTnA8loW0ekiGBpW2zOD7+NtjlC4Y3Avqy00CfnHxhmNGtoKSsPRdS6hQQkOCp0z+U3KQS8WCjvdbjhIUNsC0f9QjaCB/n6X6ydbkz1IYcJ11/DfJm5SwPhapx5lbH50UkMBYPE2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772905; c=relaxed/simple;
-	bh=PRehl5XCoRRajbKTiNAZUAGyJrFg8weLDiWO77PfJzw=;
+	s=arc-20240116; t=1740772909; c=relaxed/simple;
+	bh=gb40rHn2GLeAIn8WIjEgtAJIQ9zBtz3bKAIrxQIhs9g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Deiwtt9wAh/hb/jNwOrWa40qNZ1yfNlQETgjtlDup3uJOwHEF7pe/yKOOLSQ+wihkklbI7h6WtPMI9Dmwea69XOGWPjSpKaT0U4v6pTh5kNgYF7VxRPH5F/HiTK72EjCaqmeVUMf3SVmxC0lG0EUfYlwrFm/nBDgN0VIvJ/KUT4=
+	 MIME-Version; b=da4oAxMgwkToUCc4UIfDaWoEemO52nosmjRuDetppkK3DTdBeB/ikUBxwAxjlhJRTCZkH8ox1SJG3K/EG91sfhYD5XKLTQ02UTVstXurycn/y93KSYyqN0SW8Dh+Spk0XL1JiYYGguXTPyODddtrpppAl/WqSokR1LhYCfcsi6Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DA7019F0;
-	Fri, 28 Feb 2025 12:01:59 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F578150C;
+	Fri, 28 Feb 2025 12:02:02 -0800 (PST)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 782153F5A1;
-	Fri, 28 Feb 2025 12:01:40 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35A143F5A1;
+	Fri, 28 Feb 2025 12:01:44 -0800 (PST)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,13 +59,10 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	Dave Martin <Dave.Martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 29/49] x86/resctrl: Move get_config_index() to a header
-Date: Fri, 28 Feb 2025 19:58:53 +0000
-Message-Id: <20250228195913.24895-30-james.morse@arm.com>
+	fenghuay@nvidia.com
+Subject: [PATCH v7 30/49] x86/resctrl: Move get_{mon,ctrl}_domain_from_cpu() to live with their callers
+Date: Fri, 28 Feb 2025 19:58:54 +0000
+Message-Id: <20250228195913.24895-31-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250228195913.24895-1-james.morse@arm.com>
 References: <20250228195913.24895-1-james.morse@arm.com>
@@ -77,110 +74,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-get_config_index() is used by the architecture specific code to map a
-CLOSID+type pair to an index in the configuration arrays.
+Each of get_{mon,ctrl}_domain_from_cpu() only has one caller.
 
-MPAM needs to do this too to preserve the ABI to user-space, there is
-no reason to do it differently.
+Once the filesystem code is moved to /fs/, there is no equivalent to
+core.c.
 
-Move the helper to a header file to allow all architectures that either
-use or emulate CDP to use the same pattern of CLOSID values. Moving
-this to a header file means it must be marked inline, which matches
-the existing compiler choice for this static function.
+Move these functions to each live next to their caller. This allows
+them to be made static and teh header file entries to be removed.
 
-Co-developed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
 Changes since v6:
- * Expanded the last paragraph of the commit message.
-
-Changes since v1:
- * Reindent resctrl_get_config_index() as per coding-style.rst rules.
+ * This patch replaces one that moved these to a header, any arch code
+   will need its own way of finding the domain to online/offline from
+   a cpu number.
 ---
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 19 +++----------------
- include/linux/resctrl.h                   | 15 +++++++++++++++
- 2 files changed, 18 insertions(+), 16 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c     | 30 --------------------------
+ arch/x86/kernel/cpu/resctrl/internal.h |  2 --
+ arch/x86/kernel/cpu/resctrl/monitor.c  | 16 ++++++++++++++
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 16 ++++++++++++++
+ 4 files changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 1ecc93282b7d..0a0ac5f6112e 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -287,25 +287,12 @@ static int parse_line(char *line, struct resctrl_schema *s,
- 	return -EINVAL;
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 70421d52eceb..b7ce578bffa5 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -349,36 +349,6 @@ static void cat_wrmsr(struct msr_param *m)
+ 		wrmsrl(hw_res->msr_base + i, hw_dom->ctrl_val[i]);
  }
  
--static u32 get_config_index(u32 closid, enum resctrl_conf_type type)
+-struct rdt_ctrl_domain *get_ctrl_domain_from_cpu(int cpu, struct rdt_resource *r)
 -{
--	switch (type) {
--	default:
--	case CDP_NONE:
--		return closid;
--	case CDP_CODE:
--		return closid * 2 + 1;
--	case CDP_DATA:
--		return closid * 2;
+-	struct rdt_ctrl_domain *d;
+-
+-	lockdep_assert_cpus_held();
+-
+-	list_for_each_entry(d, &r->ctrl_domains, hdr.list) {
+-		/* Find the domain that contains this CPU */
+-		if (cpumask_test_cpu(cpu, &d->hdr.cpu_mask))
+-			return d;
 -	}
+-
+-	return NULL;
 -}
 -
- int resctrl_arch_update_one(struct rdt_resource *r, struct rdt_ctrl_domain *d,
- 			    u32 closid, enum resctrl_conf_type t, u32 cfg_val)
+-struct rdt_mon_domain *get_mon_domain_from_cpu(int cpu, struct rdt_resource *r)
+-{
+-	struct rdt_mon_domain *d;
+-
+-	lockdep_assert_cpus_held();
+-
+-	list_for_each_entry(d, &r->mon_domains, hdr.list) {
+-		/* Find the domain that contains this CPU */
+-		if (cpumask_test_cpu(cpu, &d->hdr.cpu_mask))
+-			return d;
+-	}
+-
+-	return NULL;
+-}
+-
+ u32 resctrl_arch_get_num_closid(struct rdt_resource *r)
  {
- 	struct rdt_hw_ctrl_domain *hw_dom = resctrl_to_arch_ctrl_dom(d);
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
--	u32 idx = get_config_index(closid, t);
-+	u32 idx = resctrl_get_config_index(closid, t);
- 	struct msr_param msr_param;
- 
- 	if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
-@@ -342,7 +329,7 @@ int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid)
- 			if (!cfg->have_new_ctrl)
- 				continue;
- 
--			idx = get_config_index(closid, t);
-+			idx = resctrl_get_config_index(closid, t);
- 			if (cfg->new_ctrl == hw_dom->ctrl_val[idx])
- 				continue;
- 			hw_dom->ctrl_val[idx] = cfg->new_ctrl;
-@@ -462,7 +449,7 @@ u32 resctrl_arch_get_config(struct rdt_resource *r, struct rdt_ctrl_domain *d,
- 			    u32 closid, enum resctrl_conf_type type)
- {
- 	struct rdt_hw_ctrl_domain *hw_dom = resctrl_to_arch_ctrl_dom(d);
--	u32 idx = get_config_index(closid, type);
-+	u32 idx = resctrl_get_config_index(closid, type);
- 
- 	return hw_dom->ctrl_val[idx];
+ 	return resctrl_to_arch_res(r)->num_closid;
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 0d13006e920b..c44c5b496355 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -475,8 +475,6 @@ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_ctrl_domain
+ 				  unsigned long cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
+-struct rdt_ctrl_domain *get_ctrl_domain_from_cpu(int cpu, struct rdt_resource *r);
+-struct rdt_mon_domain *get_mon_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int closids_supported(void);
+ void closid_free(int closid);
+ int alloc_rmid(u32 closid);
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index 83f90128d768..a93ed7d2a160 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -718,6 +718,22 @@ void mon_event_count(void *info)
+ 		rr->err = 0;
  }
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 226cc5c0d765..880351ca3dfc 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -384,6 +384,21 @@ void resctrl_arch_mon_event_config_write(void *config_info);
-  */
- void resctrl_arch_mon_event_config_read(void *config_info);
  
-+/* For use by arch code to remap resctrl's smaller CDP CLOSID range */
-+static inline u32 resctrl_get_config_index(u32 closid,
-+					   enum resctrl_conf_type type)
++static struct rdt_ctrl_domain *get_ctrl_domain_from_cpu(int cpu,
++							struct rdt_resource *r)
 +{
-+	switch (type) {
-+	default:
-+	case CDP_NONE:
-+		return closid;
-+	case CDP_CODE:
-+		return closid * 2 + 1;
-+	case CDP_DATA:
-+		return closid * 2;
++	struct rdt_ctrl_domain *d;
++
++	lockdep_assert_cpus_held();
++
++	list_for_each_entry(d, &r->ctrl_domains, hdr.list) {
++		/* Find the domain that contains this CPU */
++		if (cpumask_test_cpu(cpu, &d->hdr.cpu_mask))
++			return d;
 +	}
++
++	return NULL;
 +}
 +
  /*
-  * Update the ctrl_val and apply this config right now.
-  * Must be called on one of the domain's CPUs.
+  * Feedback loop for MBA software controller (mba_sc)
+  *
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 5fc60c9ce28f..c6274d40b217 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -4257,6 +4257,22 @@ static void clear_childcpus(struct rdtgroup *r, unsigned int cpu)
+ 	}
+ }
+ 
++static struct rdt_mon_domain *get_mon_domain_from_cpu(int cpu,
++						      struct rdt_resource *r)
++{
++	struct rdt_mon_domain *d;
++
++	lockdep_assert_cpus_held();
++
++	list_for_each_entry(d, &r->mon_domains, hdr.list) {
++		/* Find the domain that contains this CPU */
++		if (cpumask_test_cpu(cpu, &d->hdr.cpu_mask))
++			return d;
++	}
++
++	return NULL;
++}
++
+ void resctrl_offline_cpu(unsigned int cpu)
+ {
+ 	struct rdt_resource *l3 = resctrl_arch_get_resource(RDT_RESOURCE_L3);
 -- 
 2.39.5
 
