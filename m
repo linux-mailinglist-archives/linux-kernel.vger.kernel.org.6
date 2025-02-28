@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-538097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5729A49490
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:15:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8FFA49494
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23211709EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B867A69F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218141F30A2;
-	Fri, 28 Feb 2025 09:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IqZpkCik"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ACE24A046;
+	Fri, 28 Feb 2025 09:16:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6061CD214;
-	Fri, 28 Feb 2025 09:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7CA1C2324
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734146; cv=none; b=JZRiPUjSHXN6yFxN9WyQH+kxeydceit1vNMehPH1ijPnPJ+FUL91HZXwio+VErmYuxx8s8a616rthlHj9elynmqzsCnSsPrDlTnK2l7CyEtjB9wEhxk9CHxXVFGqwb4DBgbu+wMh4G1wFbMFYQGRyCAJoWAIS4WDOtJ4KcLDYEg=
+	t=1740734173; cv=none; b=akLkAf2uq/YTrCZiQisvRWSwp4XGq9JAiUL1tzUGfx+4yzGnIBw0mRQZuMSIskw6Bllz3ke/zeWkH1oNVA9XxtUGgfS6RcsEZikL1m79vZVml5sOwOY3SQh/QzJeAc7nCXMIHzOaUWiGALvkkozDbOv/Fpq1BKfWUIXS2TjGxwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734146; c=relaxed/simple;
-	bh=7ynQIG89tk72mF8+K4muFYlbFTzMdlvZIa+I7Ot8dSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3JsNNSG5O2u/gZj+6ShD2hRxgp0xd24trPycRt4X9fMsssEzFMQmcJxqL7J0aGSwUuOcemxc6rAgCFI9nbXVrLEFZgaoR97eu9hgKBJMNrdHRQ3nbd2mT/vCZuN9k1sJBv6hdXojiRTbHAJ3W2u+v5hKteWsozDyfzb8j2Ibwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IqZpkCik; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cB35Okk/LZLTRaud+8VfNe7sW2ClAebE6k/ZVM5yI70=; b=IqZpkCikYWsV4Pyi2iwhO6Wwtd
-	Rw38VXGTQyNVFDi2Fa6FiHfLmQL52AYP1sWq2aWLXfGpdVK35RrhDcq27WSHw/tXErbqazY9aZrHq
-	T4AGkGwKvDV/3j2QT3D/3YnLmnoAb/yx8zQjQWVgzIwXpzVA2ZxxW9tVUosy/UWEPnja6sNNDSZ6j
-	OhVuKbWzrIp0BWgDd+wtYE76WAxfa417vvoGwJ+OAPJ1P/Gr0KjBapbC7K8ZCtkgbEwrrsXtSA183
-	JCchIHkIwK1ApzzGRcWNu2WKH3Iy4fw62jothpLhIoSeEzcl0wlv/24dGVfS3ULAaV/i5eoqgqpW6
-	5Cjnn6eg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tnwSz-00000001aBc-43fU;
-	Fri, 28 Feb 2025 09:15:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 891EC300780; Fri, 28 Feb 2025 10:15:32 +0100 (CET)
-Date: Fri, 28 Feb 2025 10:15:32 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH] x86/locking: Remove semicolon from "lock" prefix
-Message-ID: <20250228091532.GD5880@noisy.programming.kicks-ass.net>
-References: <20250228085149.2478245-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1740734173; c=relaxed/simple;
+	bh=WO+i6VyjRmz2zkns4WnjNQ7uU9UYZ492QMjESSX5P0A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LnjWEHodBsvO/ssnZgLtYVTWdabs3V8v99FvojJ7D1rRGC96tf9Y29gK/XZYYJmSZJmg4tOQLYWfV9SVmatQSEPQtsuNAE4I9/Lg9af11E7mwEK7oc2iHldavsmEJ0oFJx1rbiawq1X0oHsVPCAkicYclgaudjS91Yni+4aVaPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z42Xd4FDNz6L5Lh;
+	Fri, 28 Feb 2025 17:12:17 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 14B3B1400DC;
+	Fri, 28 Feb 2025 17:16:08 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 28 Feb
+ 2025 10:16:05 +0100
+Date: Fri, 28 Feb 2025 17:16:00 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
+	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>, Ani Sinha <anisinha@redhat.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 01/19] tests/acpi: virt: add an empty HEST file
+Message-ID: <20250228171600.00002a63@huawei.com>
+In-Reply-To: <4d281b9312cac07460ecf7822512031e778ef6b8.1740671863.git.mchehab+huawei@kernel.org>
+References: <cover.1740671863.git.mchehab+huawei@kernel.org>
+	<4d281b9312cac07460ecf7822512031e778ef6b8.1740671863.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228085149.2478245-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Feb 28, 2025 at 09:51:15AM +0100, Uros Bizjak wrote:
-> Minimum version of binutils required to compile the kernel is 2.25.
-> This version correctly handles the "lock" prefix, so it is possible
-> to remove the semicolon, which was used to support ancient versions
-> of GNU as.
-> 
-> Due to the semicolon, the compiler considers "lock; insn" as two
-> separate instructions. Removing the semicolon makes asm length
-> calculations more accurate, consequently making scheduling and
-> inlining decisions of the compiler more accurate.
-> 
-> Removing the semicolon also enables assembler checks involving lock
-> prefix. Trying to assemble e.g. "lock andl %eax, %ebx" results in:
-> 
->   Error: expecting lockable instruction after `lock'
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+On Thu, 27 Feb 2025 17:00:39 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Ah, I always wondered why that ; was there.
-
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Such file will be used to track HEST table changes.
+> 
+> For now, disallow HEST table check until we update it to the
+> current data.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Acked-by: Igor Mammedov <imammedo@redhat.com>
+Hard to argue with an empty file ;)
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
