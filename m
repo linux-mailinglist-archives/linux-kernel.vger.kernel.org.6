@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-537793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC38A490E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:33:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF683A490EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16EC67A48D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0BD3B217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7F41BEF63;
-	Fri, 28 Feb 2025 05:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C038B1BEF78;
+	Fri, 28 Feb 2025 05:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LsKAWzhi"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AOf9GvU4"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889871EEE0;
-	Fri, 28 Feb 2025 05:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740720815; cv=none; b=dNuFqZagbykUiOJtio+oQJkyvSeWRX3Gn/cuBRgYKax9ZpmZUUDcNghbGAwlr1QPZQydRmhW9/VRwCGv5V1lr9b+WQhxjYOQJhx/jq6BSdKgF2CiockRztN+wBoUM1TFUY+6hby4S7HuyZQQ7t0DRGlWf6OWu1LQVjPPOYMlYIo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740720815; c=relaxed/simple;
-	bh=hlrgWTDZE96RrdznOc4Y4p/u3TvfGfQxDspHqGzMwH4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/AR5uDNOydFj/aARvPwm1ORXgvsxnndJfAp+YxGwJxXqpNZpH8bDaxGocjiLJDEe5+DU/4OfAQmkju8oI2Ds3w1JQMtnPR2gwBJe+K02zxatc/iSJu3NWV4Gfy9+n5I7mrwT28gpCwDJyBDKKFyT/jDtUNcabqo3U/4TeY88VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LsKAWzhi; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51S5XOIT1964122
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 23:33:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740720804;
-	bh=v+xos08V2sWXcFWLKiVVATbXyOouS4eSGAsrdc2THPY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=LsKAWzhi6SZ11jwjd7NbfKpZiC6vNJeI3ggFOkbfytK+pEF3a5JVlAMjuLU1rWMVk
-	 JMom3ntAt+eOjcpOnOl/K666GJUTeRsS6TXln0bMM4gNEOoBBzo8XwESCQIEkfTAI4
-	 5zFCFbxtC4G2MgKeX+c9d4GRKRm8ulyU3fAivmus=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51S5XOGt019559
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Feb 2025 23:33:24 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 23:33:23 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 23:33:23 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51S5XMrJ064044;
-	Thu, 27 Feb 2025 23:33:23 -0600
-Date: Fri, 28 Feb 2025 11:03:21 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <j-choudhary@ti.com>,
-        <rogerq@kernel.org>
-CC: <stable@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix
- serdes_ln_ctrl reg-masks
-Message-ID: <20250228053321.pekdadgl4ebscsc2@uda0492258>
-References: <20250227061643.144026-1-s-vadapalli@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD91AF0C0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740721045; cv=fail; b=TKBr/TQ7TUEaMLYxIz2V7LFWqdc0d1KWQpzwzcHrXCBzMhbW3Ufornm6OaCBqc9sKjiGNt3w8g5euSCCW+mnhC7j6qI3PSJzh9tXAftYueN2d71k9+rEW6nm+6JtP5uv29uYPd3tdHASbagnNDkxXzBFnnlTMwr7e+H6v9tVky0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740721045; c=relaxed/simple;
+	bh=wtPpxY95gOyHdxwSvGbCy6esJSSAl1S/XdQTH44793Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GrXfMgFRZumTDZlvyPdqI9rpKzak8GM0hRxeju9ODcqBe7s98ixACHuX5D9tS6r55Aq2YdQwllqbB0AjEFhFylN9wBccK2UG2mYTWKQHTHQ9StR+ogLt/WCnO0HyPO7yncdcx9UCtVPrWK7fV0dOHRqOLLcr7elT4Cu/b1g8uKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AOf9GvU4; arc=fail smtp.client-ip=40.107.92.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UCFwa+Os7usxJgnGFBW1TYtTS8dNTi4u1JE6TvxX5HD9azH0U9is76DkrbeCmyIp9Qz3q5NXZutNH0YyG4X8nWoS1ELoc54HH1Mbt0x9KYRZzhBxPf2sKH6lRhokKQwc/ab3OmSeRMDSZMXskppHQUtRNliXIdwNCKKxgpB+kpknC8qD8gDWGZOGAR02zyzc+c+kIyitGhkPcHl7uM8sUxDMPpk/+OrdRuRZGOYSVkzl0/C8514n5Y3bDgeVL47Awer6v5FDhlPuiugMnLTKoV41ZNuKZ8Vegxzqgb+RzitDGpwUxaBIrGhnELqr4ikeKLAcmSbuI+qmFgdcmgTeJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nmQMzHaPT+AFChfqh2hnU/4wHB+4l2KksWgLwDTZ9lA=;
+ b=y2H9szEvn3mnUnvw5kF79siFSnC0K4TuK2q9TG7gcO2oo4IIsfeSfNK29jFSUv6YjftcEzlzksue2SFEgZzJSz7wn4r93Ximu4g5oxyPRHaIu+zsARiT0nIoJlnPD6fYnX2mCLT4WwDJiRJnx4VeNOHApdpjMQDak+901pgVBWYtfrnwFfMP1HKq7TmUiRjfEIxSW3X7LZCz3c0t4GgJJuk0q78J/nLf/kHANOl7NFPJZEI0ktoojts0hy/Wz9lMIdrB+AW60un6B9ooYrtOqKmPM/t2f1tmqzhfa48ifjnxpt2jFKXH7Wo/nMYtr7KOxdXIKV0dJHEnVmJhyM0Sug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nmQMzHaPT+AFChfqh2hnU/4wHB+4l2KksWgLwDTZ9lA=;
+ b=AOf9GvU4a6lAF41PLeb20tPm4bQhfU4h604WmAdwJhvbKobr0pjm6NqfJCG2kQtPegKNftueZXJgoO3W4e+C/iVACwVJee/WMf2gaZ81IB4QuhTxiln1yypL1Ob8z5mKkhd7889H9cCJ5x54gS4PzJpt2Yr4drQKr5PazRv/dFM=
+Received: from BLAPR03CA0116.namprd03.prod.outlook.com (2603:10b6:208:32a::31)
+ by PH7PR12MB9067.namprd12.prod.outlook.com (2603:10b6:510:1f5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 05:37:18 +0000
+Received: from BN3PEPF0000B074.namprd04.prod.outlook.com
+ (2603:10b6:208:32a:cafe::2) by BLAPR03CA0116.outlook.office365.com
+ (2603:10b6:208:32a::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.21 via Frontend Transport; Fri,
+ 28 Feb 2025 05:37:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B074.mail.protection.outlook.com (10.167.243.119) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 05:37:17 +0000
+Received: from jenkins-honglei.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Feb
+ 2025 23:37:13 -0600
+From: Honglei Huang <honglei1.huang@amd.com>
+To: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter
+	<simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, Huang Rui
+	<ray.huang@amd.com>
+CC: <dri-devel@lists.freedesktop.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Demi Marie Obenour <demiobenour@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Honglei Huang
+	<Honglei1.Huang@amd.com>
+Subject: [PATCH v1 0/7] Add virtio gpu userptr support
+Date: Fri, 28 Feb 2025 13:36:43 +0800
+Message-ID: <20250228053650.393646-1-honglei1.huang@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250227061643.144026-1-s-vadapalli@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B074:EE_|PH7PR12MB9067:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d2b5522-d074-4bd3-ebc9-08dd57b9f6df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PlTOfL5wtzlEG3SbJOhWZPI0P7ISiB87WVuYWF/BEjJcKJtgVNp5SqXL4EtT?=
+ =?us-ascii?Q?AIG6bElffIu+2ywoLPQWKvzLclUp8PeZDvumpNmbys3vr7t3IeEiww9uhWqE?=
+ =?us-ascii?Q?0co7S6URI+zO2uFSeYQLN74LpM/5/Co0ag0Ipf8G0tBGqJ/sxFygXazoAAcr?=
+ =?us-ascii?Q?7tfVoQTNnKy3iT8F9vO8bVGXY4DUP1vAViAVKL1aKq+r3mp+lm0/EVIXZ0m0?=
+ =?us-ascii?Q?OHJsunnbXS60K5J2IKlEyAKeGYAWo4cBg7eN0KRV8rFRc0+majkIzfryapsA?=
+ =?us-ascii?Q?weZV9TntHqRXb0qUX8tJvpnUoQLojVpao+eO7WVeU+Niagna8+YSzVhZDZdC?=
+ =?us-ascii?Q?kjOyYGOSd5O2ceAA9XWbESL+2WMz2UIWzsC91LJQAImcHg8UAPmKcMRYOInV?=
+ =?us-ascii?Q?ynFKwlgveRIaf3yHtgLctPo7qHKpftSi7Dc+teTEzRqPtmsvL+XPUk7YLasM?=
+ =?us-ascii?Q?p2EEzt8tJ6P8dtrividgoRU497Nrnm9UavpU2gwQyGqOJwpPMPQjZMJiZvGg?=
+ =?us-ascii?Q?5tXn5cdIjZAUtOYx/L6324pgsPBVrOVP6cy3V2fv1JhsHVkQmS9xK+MBEzpP?=
+ =?us-ascii?Q?ye9MWyU4q0WWsaaq7WEjpJmU2pm7DLO7waF5MqOh2Kd9BvXJnpLYZeZ2Z5CK?=
+ =?us-ascii?Q?fI0Tr3vlXyg1IthduTQWVJszmj0DHLypY8MFALMAt1elRXTf8lA9cycbwh3b?=
+ =?us-ascii?Q?rhcE/DIv+NVKrtn8YOdDTr5XGYHjvWjw4xasGg0QtJ938+g6YFADs6Go2016?=
+ =?us-ascii?Q?Qq70OFPCZ/S/z5AVk6rrG+0lJZJmZLh03u0O/e4x+Erw3JXBAZgo8d7b3uGb?=
+ =?us-ascii?Q?RXCcHzJgxAgML+1qwERB8IrXUfY9GMCVltDpGDrDBhz0B6OMg4A7On/SdZ0H?=
+ =?us-ascii?Q?nfgR12VkmPlEqJLiv7t67ylRb2MyUYef2ZCD0TKilkeIUYYRIMQgZoB27f3y?=
+ =?us-ascii?Q?7ISGUgvNB0yJiFaT8DNRUmeqM010zCPs+kADsD8Da8M7jIOlHnV02JPlTj5V?=
+ =?us-ascii?Q?1Elme8SW1OCwdNwNjEmAJxyPn/XxvDmR9DaKJ/ThvXL8p+hq/6U3NEA+L0HG?=
+ =?us-ascii?Q?8m8jPzCfN18W7cK8kNfhgugxjk8XCqxPLxdOusNyEl2SlH/qVvFDkxHo+jJO?=
+ =?us-ascii?Q?Pw0oS4aQRi0UItWQYD6qDiJvSuNclKS0ct+hIOukhoPrGH4xkhbfq+bU2L4V?=
+ =?us-ascii?Q?0oqkqtElZ5CkXCIZYEkjQfOgsz6wiEIq9hGFZll18MoS3CZuG2+VlUYZNyDG?=
+ =?us-ascii?Q?6mHef2SRlVVcYDclNe7GbzUMNjLmeu3abHnYQKZOGr5xqGthivP53H5tZ80C?=
+ =?us-ascii?Q?o/IXtXbSuKfl+tyVXzzKdvtkinxvP7OQTbKvgLlsJ6K4kGt63tKEm45eEJNk?=
+ =?us-ascii?Q?PIRmV/6cRBQ1T/v5TF0sQsWoBoBu02rHdpY/NgcmeYl5YCjNi7G7ggOnaYIr?=
+ =?us-ascii?Q?SNkehYxsBFQDs1o/qmMLAhPoLTlqrwt6ZXCpwpxeAq/OBNmNnvcKTLq3uOKk?=
+ =?us-ascii?Q?qu/Tu6LQmvEAbvLTgk40Zs2Mzsqp7xC25hre?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 05:37:17.8446
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d2b5522-d074-4bd3-ebc9-08dd57b9f6df
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B074.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9067
 
-On Thu, Feb 27, 2025 at 11:46:43AM +0530, Siddharth Vadapalli wrote:
+From: Honglei Huang <Honglei1.Huang@amd.com>
 
-Kindly ignore this patch. The register offsets should start from 0x40
-since SERDES3 is not present in J784S4. I will post the v2 patch fixing
-this.
+Hello,
 
-Regards,
-Siddharth.
+This series add virtio gpu userptr support and add libhsakmt capset.
+The userptr feature is used for let host access guest user space memory,
+this feature is used for GPU compute use case, to enable ROCm/OpenCL native
+context. It should be pointed out that we are not to implement SVM here, 
+this is just a buffer based userptr implementation.
+The libhsakmt capset is used for ROCm context, libhsakmt is like the role 
+of libdrm in Mesa.
 
-> Commit under Fixes added the 'idle-states' property for SERDES4 lane muxing
-> without defining the corresponding register offsets and masks for it in the
-> 'mux-reg-masks' property within the 'serdes_ln_ctrl' node.
-> 
-> Fix this.
-> 
-> Fixes: 7287d423f138 ("arm64: dts: ti: k3-j784s4-main: Add system controller and SERDES lane mux")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> 
-> Hello,
-> 
-> This patch is based on commit
-> dd83757f6e68 Merge tag 'bcachefs-2025-02-26' of git://evilpiepirate.org/bcachefs
-> of the master branch of Mainline Linux.
-> 
-> Regards,
-> Siddharth.
-> 
->  arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> index 83bbf94b58d1..a5fefafcba74 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> @@ -84,7 +84,9 @@ serdes_ln_ctrl: mux-controller@4080 {
->  					<0x10 0x3>, <0x14 0x3>, /* SERDES1 lane0/1 select */
->  					<0x18 0x3>, <0x1c 0x3>, /* SERDES1 lane2/3 select */
->  					<0x20 0x3>, <0x24 0x3>, /* SERDES2 lane0/1 select */
-> -					<0x28 0x3>, <0x2c 0x3>; /* SERDES2 lane2/3 select */
-> +					<0x28 0x3>, <0x2c 0x3>, /* SERDES2 lane2/3 select */
-> +					<0x30 0x3>, <0x34 0x3>, /* SERDES4 lane0/1 select */
-> +					<0x38 0x3>, <0x3c 0x3>; /* SERDES4 lane2/3 select */
->  			idle-states = <J784S4_SERDES0_LANE0_PCIE1_LANE0>,
->  				      <J784S4_SERDES0_LANE1_PCIE1_LANE1>,
->  				      <J784S4_SERDES0_LANE2_IP3_UNUSED>,
-> -- 
-> 2.34.1
-> 
+Patches 1-2 add libhsakmt capset and userptr blob resource flag.
+Patches 3-5 implement basic userptr feature, in some popular bench marks,
+it has an efficiency of about 70% compared to bare metal in OpenCL API.
+Patche 6 adds interval tree.
+Patche 7 adds MMU notifier, let UMD do not need to manage userptr and
+increase efficiency by 20% to 30%. With this patch, OpenCL in ROCm can
+achieve 95%+ efficiency compared to bare metal in some popular bench marks.
+
+Honglei Huang (7):
+  virtio-gpu api: add blob userptr resource
+  drm/virtgpu api: add blob userptr resource
+  drm/virtio: implement userptr: probe for the feature
+  drm/virtio: implement userptr: add userptr obj
+  drm/virtio: advertise base userptr feature to userspace
+  drm/virtio: implement userptr: add interval tree
+  drm/virtio: implement userptr: add mmu notifier
+
+ drivers/gpu/drm/virtio/Makefile          |   3 +-
+ drivers/gpu/drm/virtio/virtgpu_debugfs.c |   1 +
+ drivers/gpu/drm/virtio/virtgpu_drv.c     |   1 +
+ drivers/gpu/drm/virtio/virtgpu_drv.h     |  91 +++
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c   |  22 +-
+ drivers/gpu/drm/virtio/virtgpu_kms.c     |  10 +-
+ drivers/gpu/drm/virtio/virtgpu_object.c  |   5 +
+ drivers/gpu/drm/virtio/virtgpu_userptr.c | 766 +++++++++++++++++++++++
+ include/uapi/drm/virtgpu_drm.h           |   5 +-
+ include/uapi/linux/virtio_gpu.h          |   7 +
+ 10 files changed, 905 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/gpu/drm/virtio/virtgpu_userptr.c
+
+-- 
+2.34.1
+
 
