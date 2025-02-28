@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-539024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2D2A49FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B99A49FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B26189B43A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E36F3BDA6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAABA1F4CB9;
-	Fri, 28 Feb 2025 17:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9E027604D;
+	Fri, 28 Feb 2025 17:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PzOeph8c"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1Bc1gJj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50E71F4CB1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996512755FE;
+	Fri, 28 Feb 2025 17:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762499; cv=none; b=f/KnE7zg5zNWdWLkd+PPCo6wEEaFFBxNAtCMu/As0f7VPaZbFnzDnRZs/PXRFXAQ9LAv/1jggqK6+WOr50gIWg9l0cWRVQ3IPFLhynO4p0jDCfSyXfMOW5xZOaI5EQvnrPJbNJw2d5sdsrb4VhPvMclwntvckU1kOs7yHu080bY=
+	t=1740762458; cv=none; b=DnkBdbPQOONF8aOD4UGu09/30hMsjc/6WzADSZJpMo03mtNwfeOmCKyXLX5UPNSOdfNzb5vVtXfqVxJX+8r0A9ocBFCBnc3lAb34b9HDVqDw1iwjGbFB9FUG2i154C6tbKQf24PID6a5LXewz2G8A9o9QbLffDenFgqqSXFhZQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762499; c=relaxed/simple;
-	bh=qJd0Z4j/r1sbdRqfPYytxXq2rpI9PhS6oCSmMOfbFOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y8tKjUZZM0A5IYEZ5ApcdZ0H7I2qlLgjr5ySGNBhDxWMXd1bG3hwksdcLs3DtIgFsuaBcZv6NnIZFjVwD6JhQirEMJkEJMVMvbOuFpbw231m/SGgSLrwMjF0SGnWs0wSbSDdCHI8MFn1dgN6sNwIvpNxB0CRqik5slBKgxUhRJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PzOeph8c; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740762496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dnSy+8VlJ8fotBQ+d996WFV/2A3QtkEvLLAc1C6w9D0=;
-	b=PzOeph8cxuZG+OqWjsU9Kp7ozJ4LTa2qAQ/mtkP65huM5iAnhIo54EqsAExKaLubs6KdI4
-	qXyMR35gmT5wuC8WfDg557EKrWgJ7iYdaM96QAm5mGjDk4+LsxQGtdG3b+vwqQcZxNKL4d
-	aY910g7QVGa8Hu0NvRB65T+D3IXE+9Q=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-UzQ8ElUAOxWIzhxz3UsdUQ-1; Fri, 28 Feb 2025 12:08:13 -0500
-X-MC-Unique: UzQ8ElUAOxWIzhxz3UsdUQ-1
-X-Mimecast-MFC-AGG-ID: UzQ8ElUAOxWIzhxz3UsdUQ_1740762492
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390df5962e1so1369073f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:08:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740762492; x=1741367292;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dnSy+8VlJ8fotBQ+d996WFV/2A3QtkEvLLAc1C6w9D0=;
-        b=b5+koTPDmMfH1kh7R8ocjR8YoHl5U7/yWmSzBKuX/PnmbKi7AWZUZD2A+fiMVRyq1j
-         Y7KTWnPjCm3Ce5TvCas7SnSq8f90LvfwX7OFq52msMfjgDBf1b79VmyMXq4+BN1CPBBk
-         Pj7VrMz0l6lzcpuJZ8v4y03E9E4Ci+whnPjXPnDUUFTrJV4aIX9BHzLZSrd7HU72UHw8
-         8s9ja/zRkmEdPevREaF9gQ2zFFYtjpbeZ/+v/8e/1niur6FMhln6jnKeSiq/JkB/MQDM
-         d5/c9lcIvj0r5G+MxPtMQ2qBYNMCdTDdcyw0arOrUT/ZkEAcgh6hG2O643NKcL83w+Z/
-         cAuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWr1J/CO7IeBidrbfDA8Idif77FmC49RXl2fA3M98Jj+xMtpCNfUygLIFSjrlLng7TPbGwpKGg1H8097xs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP4sYdVb8ds1g1/GKZlTOctsv4bpg3ilWyPMHsac2hxjvAU9Cv
-	zjsBRQ5zvSLFm4MQeOG7SXXnoteAW3SPV+TeVqDZJISO3pIfLHyhqW29Zm0Jgtdpmz8tyQrCQVv
-	sBB6Zc8+APRVqElbIygTBHSNsEoqlYee6bia4KuCzQw4ZMBRiLv8ftak4hhuXJg==
-X-Gm-Gg: ASbGnctqe++Q3RZNc9tee3fGoPvNysdV/RiLcIj1L9iyBNmSs2Odu3bWf9n96ZSq4aD
-	f9TusYUsbDwmrgy/HsTbE2eUFLaw+Opksb2YM47c+d17+oGuEwImG9Ofu5KEt4xbv1KlOQgSJjd
-	FOxt/vZtedYiD1981LAZ6Dr6ecOKKosnD5HCibhpqnPD42WjFvSPEOVdC/GtZ8CxJk9gbl+5Q2u
-	WX5PgvhnXvTBVUJZ0p+5P91hL43wSDOyoMYQnNmOLUQxdRklGMXmapkGNRMyBxUV0e5tl+D5rfI
-	ahNtJFDjbEFWV1cbt2qk
-X-Received: by 2002:a5d:5847:0:b0:38d:e3da:8b4f with SMTP id ffacd0b85a97d-390ebf7f818mr3864167f8f.0.1740762492229;
-        Fri, 28 Feb 2025 09:08:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEzR5hk357PFuAqN46Kj8Gt6yD0kfZMjS/ZQgfr804lPGex0gArLFn/VwUHjTCi7DihJcYMUQ==
-X-Received: by 2002:a5d:5847:0:b0:38d:e3da:8b4f with SMTP id ffacd0b85a97d-390ebf7f818mr3864097f8f.0.1740762491681;
-        Fri, 28 Feb 2025 09:08:11 -0800 (PST)
-Received: from stex1.redhat.com ([5.179.147.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm5912302f8f.60.2025.02.28.09.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 09:08:07 -0800 (PST)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [RFC PATCH v2 6/6] x86/sev: register tpm-svsm platform device
-Date: Fri, 28 Feb 2025 18:07:20 +0100
-Message-ID: <20250228170720.144739-7-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228170720.144739-1-sgarzare@redhat.com>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
+	s=arc-20240116; t=1740762458; c=relaxed/simple;
+	bh=uz7YWAd8O0uBi8Im2yha/KDIrRaCObz+LjL/VNUp47k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KGNzEvZ0XriCLUh7s+igj7Eq0eEtcToYdsHeViI21PZG0qR6xNvf2G+lqXPuMJ0705iBIGmbl9EusYBhybbSyixUw3oR3DXSeq54YUKD4xVRMA+jTYpC4ZeKskqaTDFXRnevI6Z8qAY9lYPC6HOLt4BQRLMbzRKMUWYvTeGjKCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1Bc1gJj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EDEC4CEE2;
+	Fri, 28 Feb 2025 17:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740762458;
+	bh=uz7YWAd8O0uBi8Im2yha/KDIrRaCObz+LjL/VNUp47k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V1Bc1gJjVvY8uePckrHl2AFcrmUlPiqmSt+OKYDZaaYAJRwiCi7f0yG9+fWABXU+G
+	 5mDN83OtUY092ZtJNVZ7g5fiq40tlGcK6KT5FUYAlbUikn9TLl7XAZy7tpFucqLjpR
+	 xHQJr6rEUrjVcvVH2MeWvnY9qymeF6QoGzQkMVrWWw0LQho2OfjP5wydZF69WBOXIY
+	 Y1P79tmbbAWlev1lftPgkAbmrCpT5K4GQoq7zcrnMQO6Vt/mKR5+kBSVH1Qu2n7CDU
+	 2n70Q8nmFGdOThFtacF8TESbv4hy5Lm0kP8rRqr3sCrUxZ1XVp3BORJEyhg9ZHC/9B
+	 Ew3pJIqBi0btQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso3673353a12.3;
+        Fri, 28 Feb 2025 09:07:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU4z+oQOwoz7KcyFzKXDMPCUKkClptUU4OuZBlHGkV4zkAwNe/zhrXzwTyS9zXMir+wtRm9JH5byYcZ@vger.kernel.org, AJvYcCU8L6MpuP7+vYtwGIk2chjas5zAWjodIw7LEVawutWmaz6ZLwt4TcfCMQXye2E8rxCRSkb5uitnnwR5KUktGvdViyg=@vger.kernel.org, AJvYcCWW7e+ix+tPXZ+r9jdH+JlzoQZAbIYLpF43ZfAV9Z5uKG9OQvfySnE4nXjuykCtgINQoghfbDMa2mKqxw==@vger.kernel.org, AJvYcCX+iOIcy3t5WgbqElNC2DOfTu0CIDI1brJ/wWdwZXBuysQpNJvHMC0K34LYpF8SQfvWwxJDHHaqmVuW@vger.kernel.org, AJvYcCXAuFNx6SEryydDx9BpN6o1p/wPJf6ldWtiDJsVID3lMyNJpAE+O7upnKFJb4QXlfsSbjqje+dzqyBcxFw3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqohbsEWkh02xd4yj6yk+wGhITAhdVki5cpSdI7PMBZ9SI2vqr
+	4h6x70re5WzOWFQece+b2749ZKYmISgLRYHnENgC9DaKtLMTpb7z8FdfFn6pZGUSpA9M7lPLRee
+	rDoCn7eQldU+4IQmNY36rgujiJw==
+X-Google-Smtp-Source: AGHT+IEHPy1qvm3dSI803ZGj26xFQwAtPW1n1+HYVcZOF+85YFAZAlcsJm1lq/IdmNqWRFeTlLzx0+mxXPel52yDr9A=
+X-Received: by 2002:a05:6402:40c7:b0:5e4:c532:d69d with SMTP id
+ 4fb4d7f45d1cf-5e4d6926964mr3829294a12.0.1740762456471; Fri, 28 Feb 2025
+ 09:07:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1740421248.git.mazziesaccount@gmail.com> <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
+In-Reply-To: <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 28 Feb 2025 11:07:24 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq19gEh952WMm9N8aBYMg7AK4rciiMO8rsTCtZsR8RobHuwRIGj0QbQL8Y
+Message-ID: <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 02/10] property: Add device_get_child_node_count_named()
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols <gstols@baylibre.com>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Matteo Martelli <matteomartelli3@gmail.com>, 
+	Alisa-Dariana Roman <alisadariana@gmail.com>, 
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SNP platform can provide a vTPM device emulated by SVSM.
+On Mon, Feb 24, 2025 at 12:33=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> There are some use-cases where child nodes with a specific name need to
+> be parsed. In a few cases the data from the found nodes is added to an
+> array which is allocated based on the number of found nodes. One example
+> of such use is the IIO subsystem's ADC channel nodes, where the relevant
+> nodes are named as channel[@N].
+>
+> Add a helper for counting device's sub-nodes with certain name instead
+> of open-coding this in every user.
+>
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Revision history:
+> v3 =3D> v4:
+>  - New patch as suggested by Jonathan, see discussion in:
+> https://lore.kernel.org/lkml/20250223161338.5c896280@jic23-huawei/
+> ---
+>  drivers/base/property.c  | 28 ++++++++++++++++++++++++++++
+>  include/linux/property.h |  2 ++
+>  2 files changed, 30 insertions(+)
+>
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index c1392743df9c..3f85818183cd 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -945,6 +945,34 @@ unsigned int device_get_child_node_count(const struc=
+t device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(device_get_child_node_count);
+>
+> +/**
+> + * device_get_child_node_count_named - number of child nodes with given =
+name
+> + *
+> + * Scan device's child nodes and find all the nodes with a specific name=
+ and
+> + * return the number of found nodes. Potential '@number' -ending for sca=
+nned
+> + * names is ignored. Eg,
+> + * device_get_child_node_count(dev, "channel");
+> + * would match all the nodes:
+> + * channel { }, channel@0 {}, channel@0xabba {}...
+> + *
+> + * @dev: Device to count the child nodes for
+> + *
+> + * Return: the number of child nodes with a matching name for a given de=
+vice.
+> + */
+> +unsigned int device_get_child_node_count_named(const struct device *dev,
+> +                                              const char *name)
 
-The "tpm-svsm" device can be handled by the platform driver added
-by the previous commit in drivers/char/tpm/tpm_svsm.c
+I think this should be implemented as
+fwnode_get_child_node_count_named() with the device variant being just
+a wrapper.
 
-The driver will call snp_svsm_vtpm_probe() to check if SVSM is
-present and if it's support the vTPM protocol.
-
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- arch/x86/coco/sev/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 4158e447d645..7e91fae7d43a 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -2680,6 +2680,11 @@ static struct platform_device sev_guest_device = {
- 	.id		= -1,
- };
- 
-+static struct platform_device tpm_svsm_device = {
-+	.name		= "tpm-svsm",
-+	.id		= -1,
-+};
-+
- static int __init snp_init_platform_device(void)
- {
- 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-@@ -2688,6 +2693,9 @@ static int __init snp_init_platform_device(void)
- 	if (platform_device_register(&sev_guest_device))
- 		return -ENODEV;
- 
-+	if (platform_device_register(&tpm_svsm_device))
-+		return -ENODEV;
-+
- 	pr_info("SNP guest platform device initialized.\n");
- 	return 0;
- }
--- 
-2.48.1
-
+Rob
 
