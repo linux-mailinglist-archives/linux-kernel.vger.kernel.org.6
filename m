@@ -1,113 +1,102 @@
-Return-Path: <linux-kernel+bounces-537919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B51A4927B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:53:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDF4A4927E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFA87A4179
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BB41888D80
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD72CCC0;
-	Fri, 28 Feb 2025 07:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE54D1CAA93;
+	Fri, 28 Feb 2025 07:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="TmzHf/je"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="M36+h/1W"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC09276D12;
-	Fri, 28 Feb 2025 07:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B5276D12;
+	Fri, 28 Feb 2025 07:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729195; cv=none; b=W1PPEyGC+/cagUrWeJgfQoJdcwiGT1oWDn1HH/wVtMGYdKn+w81Nc/l+r6Y3kRSM8IKd4245MVvPGYcKkDWI0hqnVVdiW58uVKHG4+PJ33chwdB7dQ7sMfYhNClmXdYr5fAruUnj434rNOAhTxgswpzxWTZPnvl/n2nA1+u+G9M=
+	t=1740729217; cv=none; b=VfYMswSpdZRxInkrQGJ/MoGxhrd+LEVKHE8SwIMes9dptx7OkWIMwXPES/HJKLXtdQgZISJBHcJ11lzWh2as0bV/d3msjH1bt/Z+IADEhorTfI4KgX5ykiV1xv40iiIhcnc7c9TNCcew5W6SQ9RTbjV5+Gq3qWuN5rKgbIlJfiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729195; c=relaxed/simple;
-	bh=PUtZpIADiI6Ujj2mPs39lwBthjJFOnSo983vSigK3gw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q2FLzUTTpcuY/b8hyTgTBL15F82kpM2u+au/MlIyqgehHcIkebmSckWYkPpU76sCqAaIRTPROOrKEaKcPmUf8YXBF7AJdmbiqC6NzD+KCDk5cGgr/64EjqZpypKPGBpUaD4vRDOsjwXwzhxzgqtNrhS8TPXmytzqW8prz1pJMOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=TmzHf/je; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740729192; bh=PUtZpIADiI6Ujj2mPs39lwBthjJFOnSo983vSigK3gw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TmzHf/jeSbNeL86dRLzSU79EbpCJtZwt7IMkXWI0zRBF0NyjDo++w0SppZyOE35J9
-	 zaV7Gxe/vLTRc0oillVnzeoyov0DwEpi4x4A1y6aHstGVRFrwcar9frkLfAFCvlp9N
-	 25/5TrRB1bPA56OzzQ0mXUpHfaIRxnw5czd/cc4k=
-Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 0C2712052A86;
-	Fri, 28 Feb 2025 08:53:12 +0100 (CET)
-Message-ID: <2949f6dc-51fe-4a28-b44d-5a38796303e8@ralfj.de>
-Date: Fri, 28 Feb 2025 08:53:11 +0100
+	s=arc-20240116; t=1740729217; c=relaxed/simple;
+	bh=zzS8CQISV+5yhlCP3batqFzbj2l/A2CILvpJfZUPa1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h3c1Y1GpQPnLwzzN0PHE8oFNEZ5sERJci0FE963ll1kQR5FFswgcMVkdOBM1QSueGDD0g2LNMjKTomfD3pzsaDH2y4x7YNALvT+M/46sKGDCL3QDphHOw62OKuu7QiD/dbWJ+tTS+QaOixbrXlOnehA06CdJet+xgpuXpXgr378=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=M36+h/1W; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=F+JzjQxRNFL6yDNf9+7cJLcCGEom5mmTMhziYT1IXJM=; b=M36+h/1W2S0DYGTc6rbsLXw8jq
+	EcXI1tKGOGxAGW/eebzYTorjwGwTrVzsOwSQQNsB+MJAnd7xsE0MDjzel/cbK3ppft++P2TZJnk6O
+	xy56vOwsKsAWvTL4+fc9nNidH2IZw7Lmy7dv/U1Akb6mSfd9yS4O7i/p+GvXe6CaiPB9wPYMtd8h3
+	et4xXv5E88NOCku21rX1X8T1HBxLFcwud4y26eqbvpRFYCOqSEN6nAtd5H7hEgM5X47IcsyuLcXp8
+	28S3ByUVbsOWLtZPjqiitBwZifc1sOrQn2AYTn4X5HXphmjgpBLnjOclGxts8TACa8FIsYnHTX5d1
+	8DPgpYLw==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tnvBV-0007Zk-Qn; Fri, 28 Feb 2025 08:53:25 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>
+Cc: Yao Zi <ziyao@disroot.org>, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jonas Karlman <jonas@kwiboo.se>
+Subject: Re: [PATCH 2/7] dt-bindings: pinctrl: Add pinctrl support for RK3528
+Date: Fri, 28 Feb 2025 08:53:24 +0100
+Message-ID: <13293325.ZYm5mLc6kN@diego>
+In-Reply-To: <20250228064024.3200000-3-jonas@kwiboo.se>
+References:
+ <20250228064024.3200000-1-jonas@kwiboo.se>
+ <20250228064024.3200000-3-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Martin Uecker <uecker@tugraz.at>, "Paul E. McKenney" <paulmck@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>,
- Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
- david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
- hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- rust-for-linux@vger.kernel.org
-References: <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
- <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
- <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
- <m4cbniqfsr5xpb2m7k53e7plc6he5ioyl2efiiftdmzod56usd@htwdppje6re5>
- <CAHk-=whEkEsGHWBMZ17v5=sq1uRe6g-BRHy5xNZK-2JBKRs=_A@mail.gmail.com>
- <0f3bc0e8-5111-4e2f-83b5-36b3aec0cbbd@ralfj.de>
- <CAHk-=wj37zT4Fy+mBFVRKPy=NMKcB6xBzqOuFrW0jOTv8LKozg@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAHk-=wj37zT4Fy+mBFVRKPy=NMKcB6xBzqOuFrW0jOTv8LKozg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi,
+Am Freitag, 28. Februar 2025, 07:40:08 MEZ schrieb Jonas Karlman:
+> Add compatible string for RK3528 pin controller.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-On 27.02.25 20:15, Linus Torvalds wrote:
-> On Thu, 27 Feb 2025 at 10:33, Ralf Jung <post@ralfj.de> wrote:
->>
->> The way you do global flags in Rust is like this:
-> 
-> Note that I was really talking mainly about the unsafe cases, an din
-> particular when interfacing with C code.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-When Rust code and C code share memory that is concurrently accessed, all 
-accesses to that from the Rust side must be explicitly marked as atomic. A 
-pointer to such a memory should look like `&AtomicBool` in Rust, not `*mut 
-bool`. To my knowledge, the kernel already has appropriate APIs for that. That 
-will then ensure things behave like the AtomicBool example.
+> ---
+>  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> index 80a2b1934849..960758dc417f 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> @@ -44,6 +44,7 @@ properties:
+>        - rockchip,rk3328-pinctrl
+>        - rockchip,rk3368-pinctrl
+>        - rockchip,rk3399-pinctrl
+> +      - rockchip,rk3528-pinctrl
+>        - rockchip,rk3562-pinctrl
+>        - rockchip,rk3568-pinctrl
+>        - rockchip,rk3576-pinctrl
+> 
 
-Kind regards,
-Ralf
 
-> 
-> Also, honestly:
-> 
->> FLAG.store(true, Ordering::SeqCst); // or release/acquire/relaxed
-> 
-> I suspect in reality it would be hidden as accessor functions, or
-> people just continue to write things in C.
-> 
-> Yes, I know all about the C++ memory ordering. It's not only a
-> standards mess, it's all very illegible code too.
-> 
->               Linus
+
 
 
