@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-538520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0E4A4999B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:41:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46DCA4999F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 852617AB0FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74193BDF4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4D326E643;
-	Fri, 28 Feb 2025 12:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CA826F44B;
+	Fri, 28 Feb 2025 12:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bzm1HW/W"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W7numUTg"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0353D26E16C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E4326B972
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746417; cv=none; b=WrBgkNwP/1rHp3kXFtqpoJK0G+Zg7hdpl034G+cKyiR+JwZGt+3DRywuTPePk+bTBwZDvMhGqZrB4C4c+/c8rCtmuyb1Ur6jK3ByXIgacXnKftpYn2Jl45UDJ0j5k15yY3RrJzqW/2uI1fyhA79EkMZTxUNaGMX1X2fvtNKKv5M=
+	t=1740746420; cv=none; b=UAwiPEFWVjDqkg+SsUXoTQHpbUsUGOAM6SnGTY2ynC0ZTQYhvkd8mLNAqqkA/pgo0AGZV2spoU/lJoc+2t3MZfsjJEzPTqIE3g4tBuYW9CGJZaObtP56nT60wpZ5mk8VJMqGpR6ufIcpZNUgppX7qs2XOSDkNq2awvOor+enyOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746417; c=relaxed/simple;
-	bh=r7jgVsiiJzFKABmvsoHtJDihUf1aN5aOfGCQnlUXLR8=;
+	s=arc-20240116; t=1740746420; c=relaxed/simple;
+	bh=lzB/op9EvTIfS1pnVWB0B3izr6Rw961OsgJ28NlS2cw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h2DMh5V/VLtLh9Ld7WVA+09pwgrbwNWpaq2On+QrZOYq5B4w7AjEpjEmiNtW097piX6FcaODpv4wP7RuVRmNFks/9k+xii/O0urfDgOU0Hi1h9qfqOOiH+5ZoySw6DcmwF6nAmWlo/a9tZlieKyEcMvcvQMSbEOWydul1ICOOg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bzm1HW/W; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=CJ2SK3aY5GxEm9KhfUpgXtcxQE2edv/Gk0V4MWbtROqB45Vk3aEfkj3LcnAYAZyaS7UOL2j4LcDCHs/igvHL5nrk2rruqJYwoRgkU6FkwWY/UqIEMKq9uFOY9QC2vkqz7TqZwyAFPnH2tpEHL5r0qaJ8SSVzUHRzGxpNkgxrG2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W7numUTg; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4399a5afcb3so20122185e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:40:15 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-390f365274dso147515f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:40:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740746414; x=1741351214; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740746416; x=1741351216; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+5gHFsUk/zR3QwRdy/hSALMqHlURbjWQTJYZwElRBw=;
-        b=Bzm1HW/WaiU8mt0VN/aGZLpWWHwT6ZzHUwCAZzA9IhOjKIzWMUhjGl7aLfBJ0U9OtT
-         0fFlTIFaV/AR1aruvNuzKRwgQ1yMI/ah/WpbRMya5Q1ZooHG+SXz0FTteIQ3/JJOlHMM
-         wTDDYBRM1y5wqTnOMUZXuzVXAglFCDDIhksj+3VwBwSHwy/wnjIqyV9FLfxjkwMm4Dpz
-         Cld4/hNOi2hhVqkCy9Dq4sAH/N8+S6nRtcVzHMOcvOOzCeyjd8skKzRyHpExGuvI3Vto
-         pZELgW8lR8qPtNyyutNoC3YQaHQmR5keP1HexIbiGUKZWZ4RgM83Gsajt0NOPk3NnOPU
-         5bmg==
+        bh=bKdCOruHgStYFRjw1OWEfRvPiQaLPkJaqZbPvH06xZY=;
+        b=W7numUTg4VHj23F4uHUaN7xc5Y7v4PBACfAG56Fl8qjhYZQOGqi14kjONu7IF6WxcW
+         EVswn5T4+89a8qzpiCQv6I5FjBVu5HKjvO9K5sMFe+0EmNnbpJ2XQxLH/e9dY7nEG/Ae
+         4QPcA8isiTThzhG0FANOI6TF6RkTkyWZYh3riVF0PA2ubKBkbnWY3GY/jMYttyX0UTjQ
+         i1TUbCckxsRQh4qjxBMDE/ZEvVHiFlFOsoiYCCjsUDy/zYsKqsiFaELwHkRutdVvNNNa
+         N66+qI8sBNJ9hgm1UJ6bn6lWhI7LyxlX3ykNTpueYpmX8qfBRLeNt+yHI+aOzzQvxQAG
+         ncEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746414; x=1741351214;
+        d=1e100.net; s=20230601; t=1740746416; x=1741351216;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+5gHFsUk/zR3QwRdy/hSALMqHlURbjWQTJYZwElRBw=;
-        b=dcHBGYzq1Qzw3nRGi+pBW2iVdZWbw/DJ6lUXCMzyRBSHm5nIPVPesqa35uYzG3xvRu
-         PNSdf012jRmLJKE8P8Nuv1LR9xxJHeYHKq9SOyl234HX13VE+sWAEQAoLNqPDNUnOCNh
-         SKjdXjukf4dGO7br+HCwVdX/zczS3FPSn+u6h0pmrQBCpjRtmxoKRj/B5xAkUTcuzIvH
-         AEyYF7l7zvZvEcdcn+51HUhtY9AvlAcvufPh6xtgCKeGJaOSJ6PeVAPMnxcC8CbiNFJo
-         K47jZGGAaw/Y7+SSmus12CQ0SFdjF2/bi1jjojRdhlPflAw8GWNotLgVk/jbxWqAc26K
-         +k5A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Wmulri4fuODb7NOsJMTggL9oy5gFwb3/SsVLFqTuMdm8ryYzdr+qOZfKjMhboxonZFjfXNYKjJLu/Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydPuAE9s8dcDgHkv83UzROJVnaJwLIP8ggBHA0gM1SfJ77Os0H
-	mtYXDyS1ahqKdcXqEjmWh8y2NH0k6rWSUP1FX4qjnsLVfmr4XG3JQ474NQZGY1V7e30OcTPMfx1
-	bX/mLPb6iF3OK5A==
-X-Google-Smtp-Source: AGHT+IHbIphIQcEXilOr7Ntw6WaNAr5phX1XmvUcyGqxwt+X3Cd6rOdQsMiRHilLofVXJl6ZHWfjzIcpQ0HSDVU=
-X-Received: from wmcn18-n1.prod.google.com ([2002:a05:600c:c0d2:10b0:436:fdb2:fa5])
+        bh=bKdCOruHgStYFRjw1OWEfRvPiQaLPkJaqZbPvH06xZY=;
+        b=gtpm6hfVCwlBUD7m4h92ORphcQdQ1cUF69p+u+m5jdj4XudYfFxnmVg0CJbGjl4v/8
+         C1XVySPMFUeQl/LibRh75gPZLT4srb8vrMheTzdGoxpFF90PIZlNH27KQfCAoS1GU26P
+         9x7K01x/9m70kd2gDTshaHav77fTQqUAbEHGg1d/jHAVuFTrPk24q2turHvx1hFiGj8x
+         uSjzCQRPPYiJhV8IVqJcu/f9Xgg2qjII9a2WOHneZAt1TDWfbfoLHk2UkTcTFsXAWNqa
+         bt6FTQGFK4xDnOfa9dlQpBckOHO8HLi0/WDyrWjcjD9v8w5u4X1IY0cQ5HdipznL3Ch0
+         +8/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW50CJuwZe+d1Nj0LjI/NOFqUPcYK2jMPh/qHy+3nMzupUQLNYdNSMne1UZlrzUxx2YskLugJN8yvzcJV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsrf4A238A8YeJ9t1PDaM8TttTt26g+hozej7A80GG8qq2aXup
+	3md1ZLAygXIfD4OGWPzxbocI0XsTUnjKD4/XJAOFZGQO3SbeQWbjZ3VGh7/V1Bi6GPC7YmtDa6u
+	sw1RGb8k2W3D6jw==
+X-Google-Smtp-Source: AGHT+IGAooNngUR6F5E/Jf8s4LC0YsqlsbQHIiPJaRDR2Z8JjTKZ1EiRXmYu1cG1inA9uIBqBtJ1Q5wUohwQEBs=
+X-Received: from wmqa13.prod.google.com ([2002:a05:600c:348d:b0:439:64f9:d801])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3507:b0:439:3d5c:8c19 with SMTP id 5b1f17b1804b1-43ba674c911mr25914985e9.24.1740746414470;
- Fri, 28 Feb 2025 04:40:14 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:39:33 +0000
+ 2002:a05:6000:400a:b0:38f:23c4:208c with SMTP id ffacd0b85a97d-390e18c8b0amr5646269f8f.18.1740746416493;
+ Fri, 28 Feb 2025 04:40:16 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:39:34 +0000
 In-Reply-To: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2057; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=r7jgVsiiJzFKABmvsoHtJDihUf1aN5aOfGCQnlUXLR8=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwa6iZBH4LXAf1My/2Bb4bMU2tOy+URmQaqy+I
- 0YgolPCIOyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8GuogAKCRAEWL7uWMY5
- RntsEAC4uGdMp+3gOxWauz1JDyiZzR/Atujxvqo0jIjAoxK2HzkZY9QWUrC7RzFUKejI9Kba7dK
- 6I3yW8hwYThfVdITfDRhoegt/cJ4p/rBCktrQ/bDhIz0Gtg8Je8371Rg+tfgNJW15cdXD4eWKBf
- UUPBZLV/CtFQyCyhALtXPzhVfZrWxTqko8eE5bZP7rDrNZcPCUqqdGmYDLf2uyuSUkeW/L139bb
- DZqLXQ8oIjoGwuT6lvqTCQtZiBc9csEB0JKTywoJAO96QK8BmySRWsEBoBsBeoL5wUWrfk3Vd9b
- SSMMVT8XIJqKL/DxtvnppRQWiXZbdRaTaNVmh4hFbeOKPp9W2mbYaLlkXBqX/rRrYoOBE1jYoD7
- n6MAIRSn4PoKhXOjfHr2ZqZFlEqrVpbZ33bzuIFnXnA0kzjTyO5QCwUIXghkuHdS6FjHa+yaAtV
- M2OIf2DAn0roOnGvIAu8HKCa/RY2fc7oItuhyF727kP4bWhnRUpm+0vi4O5Sdveq0W77yQgQS2B
- hqWpZba4ARnFFAT0uSS+CpMVdFPYwqhpREFLcw7qXmfVWTUYcjEMYxnrHoHf7qqtOhKE4Vc3QSS
- aCIyd8EwbEPwOybRVuVFiJMrTqtMEI+50Fm7LZ5wFZLOOevDJSvKQbuJlzgVE+zHoTuJxhz0ijN QgT9cliZsSNsMag==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4391; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=lzB/op9EvTIfS1pnVWB0B3izr6Rw961OsgJ28NlS2cw=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwa6i0KzBrUws4mz1R1VW1D9TxSn72HLiqHpJR
+ ZCRZT3AF3mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8GuogAKCRAEWL7uWMY5
+ Rn+wD/0RyHzL949Lt17UGWI6WZmlRtRFdhXsWk8dwmUL3pTAjhMNHcSkL+/UnC0ieyheuZIskCq
+ Zj9whzeOEdqIAvKuTybm4nrO3wlr9Ub2HqLOXnjVhG0pLJEgzOgI2+b849oWrWVTwA3oUXTvIaI
+ LdWL4ZpXcv8ExvLxawdGYmKPshMkVytyRdqa8U77ea3ermzIeryGAJAIfOH7Lepic7ytK5s091O
+ LgMpB/ONmXPnUtZ5hTfBt7670ADKL9u6TY8st/doIQDRtzQhlOl+rp6JRUrbQ83YhNnqhYV0rKq
+ cPE3iYpkevaMaz178BE9yJBSyyGDmZGi3zGNUkcNvQuteKV5LvDdt5LkHeP6vq8chtkIRLI4v2u
+ jbPpfgQ9TevWf6P7qjX+zLT2OPcujpJeQYL8i87KzswA2CLporYAycPNjeXGnAO0swAzTnkIupR
+ pUIZx0cHok7eIB+aQMKbmTJ+ll4sQj5svV60Fh7+t0bsn27VvbBYh6gkGj4pSwrYUMPos4/4wmx
+ 5qg8JPiN08hqo8Mwmvc56mROWbHnfhQ8+M8cgZLe0qg0p8HKJSahax6nqP+stenJuVsT0LxqDDy
+ nH2pF0Q1rTPc2kSGHG/HXCeY2yrEhabXztuHQLggzlkGHSNZxp3L+8dk8d1eNSs/A7XhAjVsc1j FplYmT7vKagKAaw==
 X-Mailer: b4 0.14.1
-Message-ID: <20250228-export-macro-v2-4-569cc7e8926c@google.com>
-Subject: [PATCH v2 4/5] print: use new #[export] macro for rust_fmt_argument
+Message-ID: <20250228-export-macro-v2-5-569cc7e8926c@google.com>
+Subject: [PATCH v2 5/5] panic_qr: use new #[export] macro
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>
 Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -104,66 +104,119 @@ Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
 	dri-devel@lists.freedesktop.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This moves the rust_fmt_argument function over to use the new #[export]
-macro, which will verify at compile-time that the function signature
-matches what is in the header file.
+This validates at compile time that the signatures match what is in the
+header file. It highlights one annoyance with the compile-time check,
+which is that it can only be used with functions marked unsafe.
+
+If the function is not unsafe, then this error is emitted:
+
+error[E0308]: `if` and `else` have incompatible types
+   --> <linux>/drivers/gpu/drm/drm_panic_qr.rs:987:19
+    |
+986 | #[export]
+    | --------- expected because of this
+987 | pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected unsafe fn, found safe fn
+    |
+    = note: expected fn item `unsafe extern "C" fn(_, _) -> _ {kernel::bindings::drm_panic_qr_max_data_size}`
+               found fn item `extern "C" fn(_, _) -> _ {drm_panic_qr_max_data_size}`
 
 Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-I'm not sure which header file to put this in. Any advice?
----
- include/linux/sprintf.h | 3 +++
- lib/vsprintf.c          | 3 ---
- rust/kernel/print.rs    | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_panic.c     |  5 -----
+ drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
+ include/drm/drm_panic.h         |  7 +++++++
+ rust/bindings/bindings_helper.h |  4 ++++
+ 4 files changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
-index 33dcbec71925..029ad83efd74 100644
---- a/include/linux/sprintf.h
-+++ b/include/linux/sprintf.h
-@@ -24,4 +24,7 @@ __scanf(2, 0) int vsscanf(const char *, const char *, va_list);
- extern bool no_hash_pointers;
- int no_hash_pointers_enable(char *str);
- 
-+/* Used for Rust formatting ('%pA'). */
-+char *rust_fmt_argument(char *buf, char *end, const void *ptr);
-+
- #endif	/* _LINUX_KERNEL_SPRINTF_H */
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index a8ac4c4fffcf..1da61c3e011f 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -2284,9 +2284,6 @@ int __init no_hash_pointers_enable(char *str)
+diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+index f128d345b16d..dee5301dd729 100644
+--- a/drivers/gpu/drm/drm_panic.c
++++ b/drivers/gpu/drm/drm_panic.c
+@@ -486,11 +486,6 @@ static void drm_panic_qr_exit(void)
+ 	stream.workspace = NULL;
  }
- early_param("no_hash_pointers", no_hash_pointers_enable);
  
--/* Used for Rust formatting ('%pA'). */
--char *rust_fmt_argument(char *buf, char *end, const void *ptr);
+-extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
 -
- /*
-  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
-  * by an extra set of alphanumeric characters that are extended format
-diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
-index 61ee36c5e5f5..cf4714242e14 100644
---- a/rust/kernel/print.rs
-+++ b/rust/kernel/print.rs
-@@ -8,13 +8,14 @@
+-extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_len, size_t data_size,
+-				u8 *tmp, size_t tmp_size);
+-
+ static int drm_panic_get_qr_code_url(u8 **qr_image)
+ {
+ 	struct kmsg_dump_iter iter;
+diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+index bcf248f69252..d055655aa0cd 100644
+--- a/drivers/gpu/drm/drm_panic_qr.rs
++++ b/drivers/gpu/drm/drm_panic_qr.rs
+@@ -27,7 +27,10 @@
+ //! * <https://github.com/bjguillot/qr>
  
- use crate::{
-     ffi::{c_char, c_void},
+ use core::cmp;
+-use kernel::str::CStr;
++use kernel::{
 +    prelude::*,
-     str::RawFormatter,
- };
- use core::fmt;
++    str::CStr,
++};
  
- // Called from `vsprintf` with format specifier `%pA`.
- #[expect(clippy::missing_safety_doc)]
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
+ struct Version(usize);
+@@ -929,7 +932,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
+ /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+ ///
+ /// They must remain valid for the duration of the function call.
 -#[no_mangle]
 +#[export]
- unsafe extern "C" fn rust_fmt_argument(
-     buf: *mut c_char,
-     end: *mut c_char,
+ pub unsafe extern "C" fn drm_panic_qr_generate(
+     url: *const kernel::ffi::c_char,
+     data: *mut u8,
+@@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
+ /// * If `url_len` > 0, remove the 2 segments header/length and also count the
+ ///   conversion to numeric segments.
+ /// * If `url_len` = 0, only removes 3 bytes for 1 binary segment.
+-#[no_mangle]
+-pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
++///
++/// # Safety
++///
++/// Always safe to call.
++#[export]
++pub unsafe extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
+     #[expect(clippy::manual_range_contains)]
+     if version < 1 || version > 40 {
+         return 0;
+diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
+index f4e1fa9ae607..2a1536e0229a 100644
+--- a/include/drm/drm_panic.h
++++ b/include/drm/drm_panic.h
+@@ -163,4 +163,11 @@ static inline void drm_panic_unlock(struct drm_device *dev, unsigned long flags)
+ 
+ #endif
+ 
++#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
++extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
++
++extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_len, size_t data_size,
++				u8 *tmp, size_t tmp_size);
++#endif
++
+ #endif /* __DRM_PANIC_H__ */
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 55354e4dec14..5345aa93fb8a 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -36,6 +36,10 @@
+ #include <linux/workqueue.h>
+ #include <trace/events/rust_sample.h>
+ 
++#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
++#include <drm/drm_panic.h>
++#endif
++
+ /* `bindgen` gets confused at certain things. */
+ const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
+ const size_t RUST_CONST_HELPER_PAGE_SIZE = PAGE_SIZE;
 
 -- 
 2.48.1.711.g2feabab25a-goog
