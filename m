@@ -1,81 +1,115 @@
-Return-Path: <linux-kernel+bounces-539465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C9BA4A4B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:14:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25247A4A4B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E7E1702DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBA03BAE84
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D501C54B2;
-	Fri, 28 Feb 2025 21:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D2D1CD210;
+	Fri, 28 Feb 2025 21:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsnA6pBw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDooDC2G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B051CAA9E;
-	Fri, 28 Feb 2025 21:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC051CB51F;
+	Fri, 28 Feb 2025 21:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777256; cv=none; b=Qt1aVpcmIzJdoGZmW+dWzkdTbuz5sCzsWVU+WSFa/7Gj6ZXdpGCo5teYOltoVDNKGkyURnMpbY05hzyJp494F5Ym5IG1OboMdYe2mjt0LHvs9/4CJbN6z6lWx2hczdNZ/FU4COmEiy/Ip3l+xsZEX7iWjKIwba9HhXdXKnB8O7w=
+	t=1740777265; cv=none; b=hyfLa9DL15cwwt7KQ7HJmfh1xNrLgP/+c6hLzc/+ghGpKLgfP9kZ/CZBS1nQidVBmb9IMvlfb0DqobOeop1Nu4dDo92nB5YeU8wx0IWlvX36cupH9FKD3JyK304FYXkuPQR+wP35sPmthxeQ6pEc2LRYZslSNV4OCq5VzrN+WnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777256; c=relaxed/simple;
-	bh=04/AthWwfqna/0RJKFcLfViS1068GCgIgD9S6ZV4wpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHKShtm0TDEfHSKBlBJKBTVKC/p+HdhHOUqlZ7+O5DkL8SbpxvYZwO1HwXVr3rzK1XklaRGniWIes2JjpkHFLDUoyckibP1sSyXdQqcTRibU2EzfNhJk8ecnE+aznxP5Hurp1zvXFWf1OZtRecefu80C1H7O3c2LJRtipZnigV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsnA6pBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D89C4CED6;
-	Fri, 28 Feb 2025 21:14:15 +0000 (UTC)
+	s=arc-20240116; t=1740777265; c=relaxed/simple;
+	bh=0/d4OULk9b8bh2/XYAQGNaFdkygRUUKBHCtphcPEouU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=MkCBLZL3iu9n7+7FTklP+wkf2xnWcYTMxVJDu6ZN6hzEmogukssyh2yhFPj0/Pd0zD8OSMJd1lc9m2xNGB+OJe+8VBWxxcdFJ67KuZb1XAF2sef5BC1RPA5geT5Q/MwFrPXlkoqLPiKgD8q8ULcHHyvoFecD5hWkURqZMk6G5Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDooDC2G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F231AC4CED6;
+	Fri, 28 Feb 2025 21:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777256;
-	bh=04/AthWwfqna/0RJKFcLfViS1068GCgIgD9S6ZV4wpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsnA6pBwWnZ26wyHbiO4L8vKDXfyTUMTKMYiGaZYVHo+c4iSIxyjBhTfSItkvOwYb
-	 wIyPfBPa67jXHzdpxr27+rWSo1Kv6RPFDF6ynWNMkioA1qDL1D1E/P00tlaX3NABZQ
-	 8/zcBvwwdrNXRv22a3kT7lOO48jvZJZgdx5weC3xbU7y0YsNHKXsRKnWacZVyRCYGv
-	 HiOcOMq/RL6nhmEOxk1AW4+BiB7smaDl7sXY6QfRd/ant/tbwnMMN88PklNnadTE6/
-	 Qt7SlilIVFZJetyOH8xWIi8VM/YFRZZVmI2Jnh6NH1Ts92olOx9/vNPwkzgd1N4B+t
-	 dy0IaEq3A2HNQ==
-Date: Fri, 28 Feb 2025 15:14:14 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 18/23] dt-bindings: PCI: qcom: Allow IPQ6018 to use 8 MSI
- and one 'global' interrupt
-Message-ID: <174077725397.3729849.15696291364201005825.robh@kernel.org>
-References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
- <20250227-pcie-global-irq-v1-18-2b70a7819d1e@linaro.org>
+	s=k20201202; t=1740777264;
+	bh=0/d4OULk9b8bh2/XYAQGNaFdkygRUUKBHCtphcPEouU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=IDooDC2GnM+FW4Sd9a2yMSXvf3X3VfdVim4Id0vVn0lZzhyHJwyVwydMvzPLmCJXt
+	 UvbpBAi7gHsuxgoh/rxiC7ubIW/dfAygFkk59espEY08Jmlwhzj4LU5pQLboX++SQo
+	 WJKNTMQOwwSMmmRb6lRP0NPcidy/JpxMB5f5508fFcZQamzILX5vz5zdnEZd0nozNW
+	 Bkm4M1jVbhBYDrcOhnDUiTVIhBneqVzPPte3sNu6U+zUI2yDgBc5zfrgoWKMx9Tz0v
+	 1Z5kzfPnrhSbMg0nDbDMObkWQVEgIaXcCKXnjM4UbCI56CF/egLKhDLrV6Trg7BgrN
+	 GBvatut05mWxQ==
+Date: Fri, 28 Feb 2025 15:14:21 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227-pcie-global-irq-v1-18-2b70a7819d1e@linaro.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+In-Reply-To: <20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org>
+References: <20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org>
+ <20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org>
+Message-Id: <174077726185.3730179.16075411217823279787.robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: add clock definitions and
+ documentation for exynos7870 CMU
 
 
-On Thu, 27 Feb 2025 19:11:00 +0530, Manivannan Sadhasivam wrote:
-> IPQ6018 has 8 MSI SPI and one 'global' interrupt.
+On Sat, 01 Mar 2025 01:08:15 +0530, Kaustabh Chakraborty wrote:
+> Add unique identifiers for exynos7870 clocks for every bank. It adds all
+> clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
+> CMU_PERI. Document the devicetree bindings as well.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  Documentation/devicetree/bindings/pci/qcom,pcie.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/clock/samsung,exynos7870-cmu.yaml     | 227 +++++++++++++++
+>  include/dt-bindings/clock/samsung,exynos7870-cmu.h | 324 +++++++++++++++++++++
+>  2 files changed, 551 insertions(+)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/clock/samsung,exynos7870-clock.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml
+Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.example.dts:18:18: fatal error: dt-bindings/clock/exynos7870.h: No such file or directory
+   18 |         #include <dt-bindings/clock/exynos7870.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
