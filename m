@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-537591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C95AA48DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:21:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4109FA48DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C4A3AC4AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:20:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6AA3B6BD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E15B170A2C;
-	Fri, 28 Feb 2025 01:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1163D3B3;
+	Fri, 28 Feb 2025 01:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hfxz/fhl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwC/DW5S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8672012CD8B;
-	Fri, 28 Feb 2025 01:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0180FDF42;
+	Fri, 28 Feb 2025 01:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740705594; cv=none; b=ez1ahH5PUyGaJ2q/ENYQYAqnHKnYywsAMwUy6N5ED8Qav8csN9onkURyYl4Bj/Ma3Sr4G+337LDuRn5zUMsFPj8nOTswKubG7HFLnsLgkmddTX/HQWHT0obGUmWoI5eM2rqFQzwUvExFndQWBNfIaI81cZX8aKHS/+fvg7UKHFE=
+	t=1740705952; cv=none; b=nfvWD4igcOA/CVIaAeleDJNcxY3L4plt9CLCBSe1Y0qVvBrMjXJgxp+nX7VSCrCmKjFqPHvfTfS0LcNh4nA+8N8vrH3r6AU0limvJCPjv27Mb2fMszEc1OPK+G7CopyrWVKTeRqe6aD/iYwELEO4K3jyDdeQLDUQFbHrO2IsjlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740705594; c=relaxed/simple;
-	bh=L7rzvAK4ZsO18KdhwI2mq+fLPlS79rz99ySKhQL2HMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fKFWuqg2SgORBXxDk0sah98YOwhRtOEv4LrsjkNkwYXiy+ot+gRM2f6a5wCUxrD/pqlvZM+z5g8j9Zt18h26WGMEktGyJcRPinj7eY+WaGSULmWaRgEH6xbOu4c57T3ccY2ziHxDpkU2zNvv0jvypnt8ORBhvGefOrXfSG3rQ28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hfxz/fhl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051BAC4CEDD;
-	Fri, 28 Feb 2025 01:19:54 +0000 (UTC)
+	s=arc-20240116; t=1740705952; c=relaxed/simple;
+	bh=xcDqeZCf41T+MlGm7yohZGZ8ilerz9IIxzHO/8x/mDI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=BXFjCFOd/NzDi4IxSTV11aFkxTPaOrOe2rhkaTiGSvoPwCwIg9eEiDUDyXYkHe5ZTQKUqfpilxxYDTLdOWUH3AGwQM+xLza4JA1ePtBVMv9bWn8Bh58daXgqoP7n+kZF5mleiCwMVMocAr7xTSWkthobRFm5GoZBhIpXwNzi1Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwC/DW5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F6DC4CEDD;
+	Fri, 28 Feb 2025 01:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740705594;
-	bh=L7rzvAK4ZsO18KdhwI2mq+fLPlS79rz99ySKhQL2HMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hfxz/fhlwbt7WB4j8TljNoWbGBjmlyprBUtVkIAGqRhG6WMwyoGXSW2ED3D+zWW/D
-	 kzWls41CPOxtM9bcm1qYt/h8Ems5oM1Cwc6CavTvCDUlCxumv6D220UVFiM0XHn9fK
-	 LUltJrhBDeU0F5WSCi6OKQPLzv3ISfyrW3UFsbVRFhOoBuh/7oZV/OexpjChD4DMN+
-	 drLtZSQtJrXGmo7t5e0SqPYRmOwJIDViMSOSMbYWkxHqa00cFyHpW5Zs76vZvyzmkv
-	 /p6slceBln/kquY0DotMkHgUMA+A89Ao/Z/wtsKLlizUtPr/09IZd9UiwkRjBRMH9K
-	 4/vAvDlgHsbuA==
-Date: Thu, 27 Feb 2025 17:19:53 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 01/12] xfs: Pass flags to xfs_reflink_allocate_cow()
-Message-ID: <20250228011953.GF1124788@frogsfrogsfrogs>
-References: <20250227180813.1553404-1-john.g.garry@oracle.com>
- <20250227180813.1553404-2-john.g.garry@oracle.com>
+	s=k20201202; t=1740705951;
+	bh=xcDqeZCf41T+MlGm7yohZGZ8ilerz9IIxzHO/8x/mDI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=hwC/DW5S2U4nB9Ci3hMWNwmDmdWFt6kvcPzg/81seza7Vl4FInyV/FbcCQjs3jOcI
+	 skSABr7VkSk2D6liCtmf6QhoRIk81JFm+OH/MVh3N7km0J80QxOMI8l/HMT1hQVVi0
+	 qoY9IAM8TPeVqdJHh33cm07c5WGygBXDzt9UhK0a/YD2/G3LWztOJDSJUgN6Vh4R1Y
+	 PFmFoNbN5WDh0eb8ksfSQq+jx1sw8bAjD3NkVMfKCjk+4DxMMKi5U8jOY4BuRSgzlm
+	 Kh7KJxq9QahUq+Y9/QAcQDdyBWheB+w1letSRjooa47OFKenKVXpAtVnt4LrMooGNm
+	 4ewYSs3nEGkJA==
+Date: Thu, 27 Feb 2025 19:25:49 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227180813.1553404-2-john.g.garry@oracle.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ jonas.gorski@gmail.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ netdev@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ linux-kernel@vger.kernel.org, noltari@gmail.com, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ devicetree@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
+ Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>
+To: Kyle Hendry <kylehendrydev@gmail.com>
+In-Reply-To: <20250228002722.5619-4-kylehendrydev@gmail.com>
+References: <20250228002722.5619-1-kylehendrydev@gmail.com>
+ <20250228002722.5619-4-kylehendrydev@gmail.com>
+Message-Id: <174070594941.726878.5388041268672454945.robh@kernel.org>
+Subject: Re: [PATCH v3 3/3] dt-bindings: net: phy: add BCM63268 GPHY
 
-On Thu, Feb 27, 2025 at 06:08:02PM +0000, John Garry wrote:
-> In future we will want more boolean options for xfs_reflink_allocate_cow(),
-> so just prepare for this by passing a flags arg for @convert_now.
+
+On Thu, 27 Feb 2025 16:27:17 -0800, Kyle Hendry wrote:
+> Add YAML bindings for BCM63268 internal GPHY
 > 
-> Suggested-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-
-Looks decent,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
+> Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
 > ---
->  fs/xfs/xfs_iomap.c   |  7 +++++--
->  fs/xfs/xfs_reflink.c | 10 ++++++----
->  fs/xfs/xfs_reflink.h |  7 ++++++-
->  3 files changed, 17 insertions(+), 7 deletions(-)
+>  .../bindings/net/brcm,bcm63268-gphy.yaml      | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.yaml
 > 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index d61460309a78..edfc038bf728 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -810,6 +810,7 @@ xfs_direct_write_iomap_begin(
->  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
->  	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
->  	int			nimaps = 1, error = 0;
-> +	unsigned int		reflink_flags = 0;
->  	bool			shared = false;
->  	u16			iomap_flags = 0;
->  	unsigned int		lockmode;
-> @@ -820,6 +821,9 @@ xfs_direct_write_iomap_begin(
->  	if (xfs_is_shutdown(mp))
->  		return -EIO;
->  
-> +	if (flags & IOMAP_DIRECT || IS_DAX(inode))
-> +		reflink_flags |= XFS_REFLINK_CONVERT;
-> +
->  	/*
->  	 * Writes that span EOF might trigger an IO size update on completion,
->  	 * so consider them to be dirty for the purposes of O_DSYNC even if
-> @@ -864,8 +868,7 @@ xfs_direct_write_iomap_begin(
->  
->  		/* may drop and re-acquire the ilock */
->  		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-> -				&lockmode,
-> -				(flags & IOMAP_DIRECT) || IS_DAX(inode));
-> +				&lockmode, reflink_flags);
->  		if (error)
->  			goto out_unlock;
->  		if (shared)
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index 59f7fc16eb80..0eb2670fc6fb 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -435,7 +435,7 @@ xfs_reflink_fill_cow_hole(
->  	struct xfs_bmbt_irec	*cmap,
->  	bool			*shared,
->  	uint			*lockmode,
-> -	bool			convert_now)
-> +	unsigned int		flags)
->  {
->  	struct xfs_mount	*mp = ip->i_mount;
->  	struct xfs_trans	*tp;
-> @@ -488,7 +488,8 @@ xfs_reflink_fill_cow_hole(
->  		return error;
->  
->  convert:
-> -	return xfs_reflink_convert_unwritten(ip, imap, cmap, convert_now);
-> +	return xfs_reflink_convert_unwritten(ip, imap, cmap,
-> +			flags & XFS_REFLINK_CONVERT);
->  
->  out_trans_cancel:
->  	xfs_trans_cancel(tp);
-> @@ -566,10 +567,11 @@ xfs_reflink_allocate_cow(
->  	struct xfs_bmbt_irec	*cmap,
->  	bool			*shared,
->  	uint			*lockmode,
-> -	bool			convert_now)
-> +	unsigned int		flags)
->  {
->  	int			error;
->  	bool			found;
-> +	bool			convert_now = flags & XFS_REFLINK_CONVERT;
->  
->  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
->  	if (!ip->i_cowfp) {
-> @@ -592,7 +594,7 @@ xfs_reflink_allocate_cow(
->  	 */
->  	if (cmap->br_startoff > imap->br_startoff)
->  		return xfs_reflink_fill_cow_hole(ip, imap, cmap, shared,
-> -				lockmode, convert_now);
-> +				lockmode, flags);
->  
->  	/*
->  	 * CoW fork has a delalloc reservation. Replace it with a real extent.
-> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-> index cc4e92278279..cdbd73d58822 100644
-> --- a/fs/xfs/xfs_reflink.h
-> +++ b/fs/xfs/xfs_reflink.h
-> @@ -6,6 +6,11 @@
->  #ifndef __XFS_REFLINK_H
->  #define __XFS_REFLINK_H 1
->  
-> +/*
-> + * Flags for xfs_reflink_allocate_cow()
-> + */
-> +#define XFS_REFLINK_CONVERT	(1u << 0) /* convert unwritten extents now */
-> +
->  /*
->   * Check whether it is safe to free COW fork blocks from an inode. It is unsafe
->   * to do so when an inode has dirty cache or I/O in-flight, even if no shared
-> @@ -32,7 +37,7 @@ int xfs_bmap_trim_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
->  
->  int xfs_reflink_allocate_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
->  		struct xfs_bmbt_irec *cmap, bool *shared, uint *lockmode,
-> -		bool convert_now);
-> +		unsigned int flags);
->  extern int xfs_reflink_convert_cow(struct xfs_inode *ip, xfs_off_t offset,
->  		xfs_off_t count);
->  
-> -- 
-> 2.31.1
-> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.yaml: maintainers:0: 'TBD' does not match '@'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+Error: Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.example.dts:26.39-40 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250228002722.5619-4-kylehendrydev@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
