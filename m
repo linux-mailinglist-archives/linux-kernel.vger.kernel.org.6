@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-539212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE854A4A20F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:47:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E54A4A212
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D87177D08
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE382166D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5F81F8723;
-	Fri, 28 Feb 2025 18:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C17917A308;
+	Fri, 28 Feb 2025 18:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DNfHxAvr"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AIM4SHUF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83B01F4C9F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA6277005;
+	Fri, 28 Feb 2025 18:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768436; cv=none; b=VCiSjM2JlXMJn4wXa8NDC7MzCg9wTZ3BzHDNECpKdukLnWvQrAf+9bqNL29grAxNwyxdY/SvCHDi2/iln0SSANfGLfEL0z8mp+UngOO805YwXFmEFQ9L+qwqevslL0eJ6heORD42vHwTPYHA/FnCbJZ1+YHryLbmKKLfSQz+PoY=
+	t=1740768481; cv=none; b=WA18uRwKqXLQmU6uVSbJ6Jea6Dw3UO1rbWuCWMWJqdXnPkGFV/cnuvNY0QJgqu/ViY0AOYsyWa3K73bR/Nx85RqHYe0EcVT8abgoFIf/UuO/FChbw/HZYk1eBnsuK0gM0Cmh3E2QJ5/YbZ20cX9SZvS2Nt0ueWNoJ6khD9rctkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768436; c=relaxed/simple;
-	bh=tVm2j/jfiLcb+mdlQwrmiGkinV/JZdzzn2d04yuTpxI=;
+	s=arc-20240116; t=1740768481; c=relaxed/simple;
+	bh=sjccjNRDhW5cSMFd28Q8pm//au0XHsNKas9BxsXZWSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3cyASKacbiRJLizH+erPIPknNrYjZekp5e+4JxthhEOmCqjFlUd0RRAvpiIndAWbkdR+vraJ3iOyv06HgEsVqqIv+qPdExNMu7sozmb0b9g6LEjLuAM6P/GScnXCoeu6O67cUAq7ey5zWtZdmelWTW4TeJfvaCrx1l0lOA+tj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DNfHxAvr; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F0A4E40E01AE;
-	Fri, 28 Feb 2025 18:47:09 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bToSY47InZRh; Fri, 28 Feb 2025 18:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740768425; bh=1KiKu6KpywPSyZTKP4+7kFo3bBQmsCg/DkCOyPCqlcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNfHxAvrlVsW+K4gF137B+Ffa4GP9EXu9UbkpFiXRVppvIV35iIWGQ79RLNPrT/PG
-	 ma1dhphFB9eAczcfn3ryQmL3Gtbb77yKjS8Np0WXbUDlfzygi6Bo+KelEUFQLs/RSe
-	 Rz75yHlIISOCFO/UjRXRuRzy2H5srszsJROqNO39kppH4iMqHHwQ/GZ7SpOolFTGyo
-	 E0uJKkd518aNcO4e796FVJy/Ev0Dz9AJf7ElHsKIcO+XplXnh77jNrNenrlF9i6gOF
-	 BQE4vVrxBFVt5ny1hcOoXARJv/KDvOt9l9GJVADdEuRG8LNfIwIMUZ+zeuTQ5+RDpK
-	 P/ox3qx8ELpI5svPxejXOqIZdnSQFFxCtyMO2I+kW0geZjp9cha3f8+INMawjtIta6
-	 LxnEo2cE/0bhBc+3Gw642nC8HBCntsbeqnofmxDDxxlcA4IHsrqpvTCrqi+BOhnOCp
-	 P6ndAQP9teJa/+UmLI0tmhbI2yIwUDSNZ6mRqQ0y24MnjQPW5vr/qa5K5zs38IN7Pn
-	 q9TvQwknjJXWnuLWLCEiCepZFF1ArgKkqo8RKrJXY9xpVJfKKTaSJ0t4kHhmN6/TRb
-	 45pytiSLQvqK2YFfP/Ya0qtQLc/0xVg6kCRfAFgZMaHeFnRpDtmpWtk9K2GLVaIfRt
-	 e0PIP0il59k3HzhQx//2pk6o=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 06B5340E0173;
-	Fri, 28 Feb 2025 18:46:46 +0000 (UTC)
-Date: Fri, 28 Feb 2025 19:46:40 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
-Message-ID: <20250228184640.GEZ8IEkBFDZhOpyK4e@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-4-riel@surriel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ffYCyVeBNH1NLyjUwOptGaiCpLtLvu0R3SLcZTjhG4L1QNLDzWNj+6OeeKP9HOeT14W5+j5Zsi0vDbswgVPbbaYSpFXZXBNIOIY1IIPYw1tTW39TiTldZB7kbNQOIqEqCiDoa3gzYGbviTOGVOBcAi+1f8DHDczV6bXLRiA0s2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AIM4SHUF; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740768480; x=1772304480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sjccjNRDhW5cSMFd28Q8pm//au0XHsNKas9BxsXZWSk=;
+  b=AIM4SHUFh3kZciOi4zgsZOu/6B0GkxrtMXiBQRVPM2+lKvFPmzV34Kes
+   LzLJmL/6jIxcOEjV0qIawUyrIqgQ3ag+zFnCIHy4tuVDcTY64J8A+AIKS
+   iRCggY7TLTJPTuYOMmcGyHrlMMbIy0GlMJHpx/sTXtv1ZFJwCdRR80no5
+   VJw0XjB4ouDA5yO07TlNYbhi/6rTjbuknb078SedWmHckulrRoGenTYZm
+   kMk/azmeMiQUhxUBIftJsX9QNNW6I+peBgSkdYAzwYrmNH9fEIo5HRaGv
+   aWFrnXXIfA7JeN4PeGE7kkAJidClLOR7tE4tOFMogGW+kN+NcqGCwEq6M
+   Q==;
+X-CSE-ConnectionGUID: fIKk2cM1QmmP00gpnmB4cw==
+X-CSE-MsgGUID: cPvOTjwNS7ufPLi85bjXuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="52349871"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="52349871"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:47:59 -0800
+X-CSE-ConnectionGUID: jbTsohC5QoqbJW5f0yiN5Q==
+X-CSE-MsgGUID: Qg72W58CSCq/VdtSuV77hA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117934373"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:47:54 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1to5Oo-0000000G3kA-3NNX;
+	Fri, 28 Feb 2025 20:47:50 +0200
+Date: Fri, 28 Feb 2025 20:47:50 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>
+Subject: Re: [PATCH v5] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Message-ID: <Z8IE1jIni50OeKaE@smile.fi.intel.com>
+References: <2C9622E6-A2DB-4681-A971-604C79F9955E@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226030129.530345-4-riel@surriel.com>
+In-Reply-To: <2C9622E6-A2DB-4681-A971-604C79F9955E@live.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 25, 2025 at 10:00:38PM -0500, Rik van Riel wrote:
-> Add helper functions and definitions needed to use broadcast TLB
-> invalidation on AMD EPYC 3 and newer CPUs.
+On Fri, Feb 28, 2025 at 04:29:12PM +0000, Aditya Garg wrote:
+> From: Hector Martin <marcan@marcan.st>
 > 
-> All the functions defined in invlpgb.h are used later in the series.
+> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+> it's useful to be able to print generic 4-character codes formatted as
+> an integer. Extend it to add format specifiers for printing generic
+> 32-bit FourCCs with various endian semantics:
 
-Uff, that's tlb.h now. As already said. :-\
+> %p4ch	Host-endian
+> %p4cn	Reverse-endian
 
-Btw, this is why there's no point to write *what* the patch does - that is
-visible from the diff itself. This sentence is simply not needed.
+Call them Host order, Network order as they are very established endianesses.
 
-> Compile time disabling X86_FEATURE_INVLPGB when the config
-> option is not set allows the compiler to omit unnecessary code.
+
+> %p4cl   Little-endian
+
+You have extra spaces here
+
+> %p4cb	Big-endian
 > 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-> Tested-by: Brendan Jackman <jackmanb@google.com>
-> Tested-by: Michael Kelley <mhklinux@outlook.com>
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-
-And I asked you already but still crickets:
-
-What do those Tested-by tags mean if you keep changing the patches?!
-
-https://lore.kernel.org/r/20250224123142.GFZ7xmruuyrc2Wy0r7@fat_crate.local
+> The endianness determines how bytes are interpreted as a u32, and the
+> FourCC is then always printed MSByte-first (this is the opposite of
+> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+> allow printing LSByte-first FourCCs stored in host endian order
+> (other than the hex form being in character order, not the integer
+> value).
 
 ...
 
-IOW, you need to drop those tags.
-
-> +/* Flush all mappings for all PCIDs except globals. */
-
-This comment should state that addr=0 means both rax[1] (valid PCID) and
-rax[2] (valid ASID) are clear and this means: flush *any* PCID and ASID. So
-that it is clear.
-
-> +static inline void invlpgb_flush_all_nonglobals(void)
-> +{
-> +	__invlpgb(0, 0, 0, 1, 0, 0);
-> +	__tlbsync();
-> +}
+> +Generic FourCC code
+> +-------------------
 > +
->  #endif /* _ASM_X86_TLB_H */
-> -- 
+> +::
+> +	%p4c[hnlb]	gP00 (0x67503030)
+> +
+> +Print a generic FourCC code, as both ASCII characters and its numerical
+> +value as hexadecimal.
+> +
+> +The generic FourCC code is always printed in the big-endian format,
+> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
+> +
+> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
+> +endianness is used to load the stored bytes. The data might be interpreted
+> +using the host-endian, reverse-host-endian, little-endian, or big-endian.
+
+host order, network order
+
+> +Passed by reference.
+> +
+> +Examples for a little-endian machine, given &(u32)0x67503030::
+> +
+> +	%p4ch	gP00 (0x67503030)
+> +	%p4cn	00Pg (0x30305067)
+> +	%p4cl	gP00 (0x67503030)
+> +	%p4cb	00Pg (0x30305067)
+> +
+> +Examples for a big-endian machine, given &(u32)0x67503030::
+> +
+> +	%p4ch	gP00 (0x67503030)
+> +	%p4cn	00Pg (0x30305067)
+> +	%p4cl	00Pg (0x30305067)
+> +	%p4cb	gP00 (0x67503030)
+
+
+For the reference on the terms:
+https://www.ibm.com/docs/ja/zvm/7.2?topic=domains-network-byte-order-host-byte-order
+
+Otherwise LGTM. With the above addressed, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
-Regards/Gruss,
-    Boris.
+With Best Regards,
+Andy Shevchenko
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
