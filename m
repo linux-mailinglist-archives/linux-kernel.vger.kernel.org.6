@@ -1,160 +1,232 @@
-Return-Path: <linux-kernel+bounces-538156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C91BA49517
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:33:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB09EA495D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3231895CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 933283ABFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188442580D7;
-	Fri, 28 Feb 2025 09:32:40 +0000 (UTC)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C7925A2B7;
+	Fri, 28 Feb 2025 09:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LHuSGsB/"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF82528FA;
-	Fri, 28 Feb 2025 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFFA25B68C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735159; cv=none; b=l1TC86QEYjDQcVTZ9hyOI89Lmk7xBp0EL2nZoTixKHf78Hl42G1TQd4E6E/MZ5gfRBnXvD5syPVkN9Vjni0XdbqF5sRFAkPEyRAlHwvEx1Or/Lgu3t2yrOnj5z9Qlp73v1KQ775PUnWSAllybULLEjtVcpFEwvJ8CtAhhYW84Ww=
+	t=1740736106; cv=none; b=m218Z/vmYcg/bE4ErnN/dyYh96JM0qbxmzLHi3gYuwo4jHu9pkdq6/sNAhoe/5Jkhs9BuLqDOlmiibgcESFFqHoV5Z9TZatBp2a5VP8QclbC+FuMbL/s0cH9cDB8nLlc1mvRX1bLE8x8rhy2K0G0w+oz6J6Gjm87oq0LKPY46h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735159; c=relaxed/simple;
-	bh=vt2XSudQWazRZelBCv5/dhTzXXn2sFbrZNnIFZIz1jY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uZ7UWtxL9neXrZjX8IzcOV04C0m3Z7CirT4XTr3WYZWdqj3qodEeuV8MVbqfOUU7tEynMaVMp+tGmroDjap9PBxbWhO+Xrn4TNmKL7q4gU+COwin6E5nwFxJpEtcW+25yhKHugaFtKhlLaXmexhwDW/jTwoqlbQkXAvIQS3dIpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86112ab1ad4so775388241.1;
-        Fri, 28 Feb 2025 01:32:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740735155; x=1741339955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v3LCsDM4uwm7ZYtqjDKiOAcEMe6kqxFNjxjj6rdEjNM=;
-        b=dS0KTvePrmwRQVUPAXj39o/w0ntg6Avbf08AV9+Z/g/BWawiuaneYctilaJvQm7h8V
-         e+2hbkHMmxJ1MlgiLsS+88VL89FI+FeHIaNn31dtldt29yGUilJugqlM7I1XGFfjtc4s
-         FB+vqtl8QK3E2xr/p5N4DpfvO4n7eMET7jI5AM68ywOzKBKJfTVaGXzO5pLKaJ4PIXcT
-         HoqVNwGATXXjQPes5jkrK6OeFXy+Ek1nf6GG0Z40If60jHkf/69nzSLthRQlq5QhIO1e
-         6xiuGqct035d2DyBblBBx9V71n65aEjYjKyDIf+BDAd07juJkcfvBPJO/331r97iJPs9
-         gMwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoNTue25imcVRUVo/QK4hfI0c8GGbp73iwNvKXc9RGPTVeoLEh6CZxra7fMkCLMw9GHCUIJIb8Ea+q@vger.kernel.org, AJvYcCVXGmsM2W96tww/exgxoMRS/MbadqzBEcmSZt1YvOL6V4/DXEhpVugdYNriitIvVmQhY0nDB0yRUAm6cO/b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqvw9aU2Wre+ZV3aEYplVNjW3XYyKAN7zudGZbhvmJWK4SlCI3
-	hy7WNaUwDKSAwJtHqrwhjo48ZmTTAVjb/fwcY30h7jXTECF1rCzJf3yQ+zXk
-X-Gm-Gg: ASbGncveO5QhP/QmgetKY1cdc1z+W72FH74xBpbHr2+VDreUO9VOC5rW5vt4wuklUsJ
-	x723ZSqTZr4iNYSMWFLnxoqH9WVX/esEeOPB6LcA0zbz2ME5/tFxm1o0aXcQqPdskO/W7t6FWYo
-	RBOJOR4wtRJ0FmpPCAodwq6eQhs6UJF31ijSYZYwIEsJGTiU5PH+fZn1shhMUxpsCyV6Ww5O7Nr
-	GehEPZ/pTgfcdMyAZypbmWopfQLDxY8mpZMIgiRCN5pIQhDspB6ndRIZm6PISC6982Fvm63YQdI
-	vKWymmvPAQ6No0m/+KGKQd1LrCUudFpbTPiXZrkYlZx9YzWBWJDbczCohsOXzt71
-X-Google-Smtp-Source: AGHT+IFGyARKyxCuDkgHYcKpOxwgKIp3vxAFlBFW0YeBgk0U4foaMLZB6KoFtnNJ8KyDCvU79A/sWQ==
-X-Received: by 2002:a05:6102:1614:b0:4bb:f0aa:b317 with SMTP id ada2fe7eead31-4c04490e8f6mr1853101137.9.1740735155399;
-        Fri, 28 Feb 2025 01:32:35 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86b3da71bd4sm558106241.0.2025.02.28.01.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 01:32:34 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-868ddc4c6b6so796859241.2;
-        Fri, 28 Feb 2025 01:32:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWbPbHkfubQfSQb3M/MgF8FsWlkv6mok8gKCMOOtyhoo5WxebBgezCkwE6VY47GtfSw6dpqR8E3lOtH962U@vger.kernel.org, AJvYcCXMhm51qzrmd76qWDMUP6s3b5v/5unhHl+B3M8nstkZNRQvsellOGKIxwi/izHJjsTJfVwo53CIE3AH@vger.kernel.org
-X-Received: by 2002:a05:6102:6f09:b0:4c1:1348:550 with SMTP id
- ada2fe7eead31-4c113480a22mr213020137.23.1740735154004; Fri, 28 Feb 2025
- 01:32:34 -0800 (PST)
+	s=arc-20240116; t=1740736106; c=relaxed/simple;
+	bh=XYLUnTNaQuIXtH7OIV1lfwAh6b5aC2kp3AK1Hzj5ows=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=F8LVmHmAUROQtZr1vCFVolAMS7uARRLZZ5B0+u+7ihJbZ4sjPkY6oIDvdFAk94XYfKkv6AnC2iBewDdW/M9206BFyJ9+mbWNLVchApjjVPEALp/teZzYRbuVXcSCkBu7eU5eI7t6dH3TaKUoNbU4bb/wueKqG/Glc4v0dUrpbtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LHuSGsB/; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250228094821epoutp013c656f2f7acd331f3dc648c742f62d96~oVkLjTQjx1282312823epoutp01F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250228094821epoutp013c656f2f7acd331f3dc648c742f62d96~oVkLjTQjx1282312823epoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740736101;
+	bh=18iY0XXTL9npz3MKKWokwxOCWnjgB6CSduF8tMUm4D0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=LHuSGsB/rUi328g13YXk+u3ZJOcNkembfbeAzApQD93vSs+xVNICeTDCmPbZy3nQD
+	 6v4dN8Fq6nb+Vw/axM2Izj2rzJV7VF7XihrLaYOz46QswtqE3AFWqhkJVg2dSIUtjE
+	 IJmkj1CFH3QRDDo5FyZFtAhah7TxxTg35fX+L02Q=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250228094820epcas5p36bb70d2da5c76c8a64f7680975938b10~oVkK4BMF72824028240epcas5p3z;
+	Fri, 28 Feb 2025 09:48:20 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z43LC21S0z4x9Pv; Fri, 28 Feb
+	2025 09:48:19 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CC.9D.19956.36681C76; Fri, 28 Feb 2025 18:48:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250228093256epcas5p1584a4e85ed027dd253a5d8617366eeae~oVWuK-JrX1275612756epcas5p1x;
+	Fri, 28 Feb 2025 09:32:56 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250228093256epsmtrp17c571e0bcfc27d794238cdb648d7b327~oVWuGLwdF2192121921epsmtrp1t;
+	Fri, 28 Feb 2025 09:32:56 +0000 (GMT)
+X-AuditID: b6c32a4b-fe9f470000004df4-4d-67c186634c18
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	15.5E.33707.8C281C76; Fri, 28 Feb 2025 18:32:56 +0900 (KST)
+Received: from FDSFTE245 (unknown [107.122.81.20]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250228093255epsmtip2deda8297f5f97a1b168b219bbac633d2~oVWtRHRt00156501565epsmtip2K;
+	Fri, 28 Feb 2025 09:32:55 +0000 (GMT)
+From: "Aatif Mushtaq/Aatif Mushtaq" <aatif4.m@samsung.com>
+To: "'Vinod Koul'" <vkoul@kernel.org>
+Cc: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>
+In-Reply-To: <Z8Ab3VcAXf5z7UqE@vaman>
+Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
+Date: Fri, 28 Feb 2025 15:02:38 +0530
+Message-ID: <000501db89c3$bf6de540$3e49afc0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z71qphikHPGB0Yuv@mva-rohm> <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
- <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com> <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
- <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com> <CACRpkdasQZ26cEv7CCSu75MJH=Pn8a45XQvZmNt4MB=hzTSa6A@mail.gmail.com>
-In-Reply-To: <CACRpkdasQZ26cEv7CCSu75MJH=Pn8a45XQvZmNt4MB=hzTSa6A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Feb 2025 10:32:22 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVLqS0=OXBMPAct9bkNWcRHTEN49v0uUiZdK8M-hmRKxw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq1cMSEwRj7TbyQXi_z2oPSTaSph0VaiBd9W1bSm0T1r2-CYrOcJ0Yd9P8
-Message-ID: <CAMuHMdVLqS0=OXBMPAct9bkNWcRHTEN49v0uUiZdK8M-hmRKxw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFsIHTrWqAe9Pu9L3iNOvGTrR8WTgG4P+QRAcvczKUCj5EGvbQKqHTg
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTXTe57WC6wZsrPBaHNm9lt1g99S+r
+	xeVdc9gsFm39wm6x884JZgdWj02rOtk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91W
+	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+	I7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj9sUHzAXtshWzW54wNjD2iXcx
+	cnJICJhIdNz8xdTFyMUhJLCbUaJx1hR2COcTo8SDXw2sIFVgzsoFhjAdcyZuY4Mo2sko8fXH
+	WqiO54wSHyZfYwGpYhOwkjj/ax8biC0ioCqx5ckDIJuDg1mgUmLLK02QMCdQeM7clewgtrCA
+	i8TJc3/AylmA4odfrAKL8wpYStzcupMZwhaUODnzCdh4ZgF5ie1v5zBDHKQg8fPpMlaIVW4S
+	O68uZIOoEZc4+rOHGeQ2CYGP7BInb+1ngWhwkehZNZ0NwhaWeHV8CzuELSXxsr8Nyk6WuPl+
+	H5SdIzFh4Woo217iwJU5LBC/aEqs36UPEZaVmHpqHRPEXj6J3t9PmCDivBI75sHYShJr3vdB
+	rZWQ+HfwJOMERqVZSF6bheS1WUhemIWwbQEjyypGydSC4tz01GLTAuO81HJ4fCfn525iBCdI
+	Le8djI8efNA7xMjEwXiIUYKDWUmEd1bsgXQh3pTEyqrUovz4otKc1OJDjKbA8J7ILCWanA9M
+	0Xkl8YYmlgYmZmZmJpbGZoZK4rzNO1vShQTSE0tSs1NTC1KLYPqYODilGphsdix92vH4kmNq
+	UB2LUo9f3Lpj16W3X7ty4eYqrjLms8Vyf36eamiu3RAwUX6j5xz2zTPU5ni+bas5/yz4huQV
+	48vV379sPiC7faFCq7y9T2mWjcnBTM+gZS51/okv1gXMXhy5j8V/x46+PUz+3JayhrXHnW/Z
+	Rxfteb1jguTjFTlLA8q23LSydL72RDG73F2482Lw/9NtXz4ark+72P3v+RefOT976zdc3yAm
+	r1/zYLH4u2lWi2ILlXRZl01d1s8oqbWiJ+i+7hT5i/1vF1dGOmwP1DPROMpgu0BMyOdqp1FY
+	Rhm7amsU84zf8wv/xgnZ8G/95vf5adq5hLtXduq6XGH5EvdxkqRwZczVO1eUWIozEg21mIuK
+	EwGuFQ08GQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSvO6JpoPpBt0r+CwObd7KbrF66l9W
+	i8u75rBZLNr6hd1i550TzA6sHptWdbJ59G1ZxejxeZNcAHMUl01Kak5mWWqRvl0CV8bsiw+Y
+	C9plK2a3PGFsYOwT72Lk5JAQMJGYM3EbWxcjF4eQwHZGid72Q4wQCQmJ5s5GJghbWGLlv+fs
+	ILaQwFNGiRV7M0BsNgErifO/9rGB2CICqhJbnjwAs5kFaiUeLLrGBDH0EqPE7Qe3WUESnEBF
+	c+auBBskLOAicfLcH7AGFqD44RerwOK8ApYSN7fuZIawBSVOznzC0sXIATRUT6JtIyPEfHmJ
+	7W/nMEPcpiDx8+kyVogb3CR2Xl0IdYO4xNGfPcwTGIVnIZk0C2HSLCSTZiHpWMDIsopRNLWg
+	ODc9N7nAUK84Mbe4NC9dLzk/dxMjODa0gnYwLlv/V+8QIxMH4yFGCQ5mJRHeWbEH0oV4UxIr
+	q1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeWpGanphakFsFkmTg4pRqY3I5fiuIXWyIiK34l
+	bUOve5sM27p/V6PfbJFJzBDNXXZceR5z7mwO/7aduy6UCCc08l2rNdYyTzWOzpnofVFDNNXq
+	yDxpmzXvHwrybPi+KdTy2HPxiRcTHGUZIi0UYqtTFof9OJu5paBoosG9wH8NHQm2jNZ/d/9L
+	XXNTpj/qla/Npa6AX1NfXIm3jBG7+m9du+mCL+r7NZcaFqzfb9jIWnnv655Pe3Sd7i+wPCJ9
+	pD/yckL0nd0LvYpdneJce00fcL44y8haLFLt0VvMfGVZ0lkdq6Pxc5nmfmGu9y2845+xRPX0
+	7JZ+W7ZFe56IN7z8HB1VziDXMVNciaVa1LV+n2uOa8Mu7shHnHwPliixFGckGmoxFxUnAgCG
+	a0C4/AIAAA==
+X-CMS-MailID: 20250228093256epcas5p1584a4e85ed027dd253a5d8617366eeae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc
+References: <20250210061915.26218-1-aatif4.m@samsung.com>
+	<CGME20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc@epcas5p4.samsung.com>
+	<20250210061915.26218-2-aatif4.m@samsung.com> <Z8Ab3VcAXf5z7UqE@vaman>
 
-Hi Linus,
 
-CC Biju
 
-On Fri, 28 Feb 2025 at 09:07, Linus Walleij <linus.walleij@linaro.org> wrot=
-e:
-> On Wed, Feb 26, 2025 at 12:42=E2=80=AFPM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> > On 26/02/2025 12:18, Linus Walleij wrote:
-> > > That's easy to check with some git grep valid_mask
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: 27 February 2025 13:32
+> To: Aatif Mushtaq <aatif4.m@samsung.com>
+> Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org;
+> pankaj.dubey@samsung.com; aswani.reddy@samsung.com
+> Subject: Re: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
+> 
+> On 10-02-25, 11:49, Aatif Mushtaq wrote:
+> > Add a new dma engine API to support 2D DMA operations.
+> > The API will be used to get the descriptor for 2D transfer based on
+> > the 16-bit immediate to define the stride length between consecuitive
+> > source address or destination address after every DMA load and store
+> > instruction is processed.
+> 
+> Why should we define a new API for this...? Why not use the sg or
+> interleaved api for this?
+> 
+
+Thanks for pointing out, interleaved API can be used for this.
+I will make the change
+
 > >
-> > True. I just tried. It seems mostly Ok, but...
-> > For example the drivers/gpio/gpio-rcar.c uses the contents of the
-> > 'valid_mask' in it's set_multiple callback to disallow setting the valu=
-e
-> > of masked GPIOs.
+> > Signed-off-by: Aatif Mushtaq <aatif4.m@samsung.com>
+> > ---
+> >  include/linux/dmaengine.h | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
 > >
-> > For uneducated person like me, it feels this check should be done and
-> > enforced by the gpiolib and not left for untrustworthy driver writers
-> > like me! (I am working on BD79124 driver and it didn't occur to me I
-> > should check for the valid_mask in driver :) If gpiolib may call the
-> > driver's set_multiple() with masked lines - then the bd79124 driver jus=
-t
-> > had one unknown bug less :rolleyes:) )
->
-> Yeah that should be done in gpiolib.
->
-> And I think it is, gpiolib will not allow you to request a line
-> that is not valid AFAIK.
+> > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> > index b137fdb56093..8a73b2147983 100644
+> > --- a/include/linux/dmaengine.h
+> > +++ b/include/linux/dmaengine.h
+> > @@ -833,6 +833,7 @@ struct dma_filter {
+> >   *	be called after period_len bytes have been transferred.
+> >   * @device_prep_interleaved_dma: Transfer expression in a generic way.
+> >   * @device_prep_dma_imm_data: DMA's 8 byte immediate data to the
+> dst
+> > address
+> > + * @device_prep_2d_dma_memcpy: prepares a 2D memcpy operation
+> >   * @device_caps: May be used to override the generic DMA slave
+> capabilities
+> >   *	with per-channel specific ones
+> >   * @device_config: Pushes a new configuration to a channel, return 0
+> > or an error @@ -938,6 +939,9 @@ struct dma_device {
+> >  	struct dma_async_tx_descriptor *(*device_prep_dma_imm_data)(
+> >  		struct dma_chan *chan, dma_addr_t dst, u64 data,
+> >  		unsigned long flags);
+> > +	struct dma_async_tx_descriptor
+> *(*device_prep_2d_dma_memcpy)(
+> > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+> > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long flags);
+> >
+> >  	void (*device_caps)(struct dma_chan *chan, struct dma_slave_caps
+> *caps);
+> >  	int (*device_config)(struct dma_chan *chan, struct
+> dma_slave_config
+> > *config); @@ -1087,6 +1091,27 @@ static inline struct
+> dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
+> >  						    len, flags);
+> >  }
+> >
+> > +/**
+> > + * device_prep_2d_dma_memcpy() - Prepare a DMA 2D memcpy
+> descriptor.
+> > + * @chan: The channel to be used for this descriptor
+> > + * @dest: Address of the destination data for a DMA channel
+> > + * @src: Address of the source data for a DMA channel
+> > + * @len: The total size of data
+> > + * @src_imm: The immediate value to be added to the src address
+> > +register
+> > + * @dest_imm: The immediate value to be added to the dst address
+> > +register
+> > + * @flags: DMA engine flags
+> > + */
+> > +static inline struct dma_async_tx_descriptor
+> *device_prep_2d_dma_memcpy(
+> > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+> > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long flags)
+{
+> > +	if (!chan || !chan->device || !chan->device-
+> >device_prep_2d_dma_memcpy)
+> > +		return NULL;
+> > +
+> > +	return chan->device->device_prep_2d_dma_memcpy(chan, dest,
+> src, len,
+> > +						       src_imm, dest_imm,
+> flags); }
+> > +
+> >  static inline bool dmaengine_is_metadata_mode_supported(struct
+> dma_chan *chan,
+> >  		enum dma_desc_metadata_mode mode)
+> >  {
+> > --
+> > 2.17.1
+> 
+> --
+> ~Vinod
 
-Correct, since commit 3789f5acb9bbe088 ("gpiolib: Avoid calling
-chip->request() for unused gpios") by Biju.
-
-> This check in rcar is just overzealous and can probably be
-> removed. Geert what do you say?
-
-I looked at the history, and the related discussion.  It was actually
-Biju who added the valid_mask check to gpio_rcar_set_multiple()
-(triggering the creation of commit 3789f5acb9bbe088), and I just copied
-that when adding gpio_rcar_get_multiple().
-His v2[1] had checks in both the .request() and .set_multiple()
-callbacks, but it's possible he added the latter first, and didn't
-realize that became unneeded after adding the former.  The final version
-v3[2] retained only the check in .set_multiple(), as by that time the
-common gpiod_request_commit() had gained a check.
-
-While .set_multiple() takes hardware offsets, not gpio_desc pointers,
-these do originate from an array of gpio_desc pointers, so all of them
-must have been requested properly.
-We never exposed set_multiple() with raw GPIO numbers to users, right?
-So I agree the check is probably not needed.
-
-[1] https://lore.kernel.org/linux-renesas-soc/1533219087-33695-2-git-send-e=
-mail-biju.das@bp.renesas.com
-[2] https://lore.kernel.org/linux-renesas-soc/1533628626-26503-2-git-send-e=
-mail-biju.das@bp.renesas.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
