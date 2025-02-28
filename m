@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-537943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD5FA492C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:03:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F34BA492E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FB616BA3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491EC1713A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1391D61BC;
-	Fri, 28 Feb 2025 08:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D42B1DF973;
+	Fri, 28 Feb 2025 08:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E54REf0d"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggHJbmaV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8383A1CEAC2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F01DEFC5;
+	Fri, 28 Feb 2025 08:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729775; cv=none; b=O8WfX73hfcoHRXJkIHH7tj5HspWfcrRnNJVdrCeALYV/b+eY1A7V68MP47TtS3LWQyigm5ueGAjK4GPjB5KSImQEJZVcNxNnXcruPyFBiB/PmB49EBgoklU1rB2FWxBuyD1QlRoQaVGdtgblc1N1cOFhI46ET8kg/83bXhlSS7Y=
+	t=1740729875; cv=none; b=gYmT0QMiH9Z9GHZiZRnqQlgbFsZbtQgiHZluYzeeOnnueMSJdPjcKkyGcszihc+mfVfPVaaBYIp2R02BjruMYhDcfZqOLF7vDIYZ9nzn+cCMOvSiD7yrXX2oKamhe+zKYwD1SM4uk3I9o8ae/ucg39f7xmN6s17V0fp+wvDngZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729775; c=relaxed/simple;
-	bh=dzID++3XktGDEzV2iNVFJihvJ3tFvaCLWgWAWJvqJCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ufu8FwKVCNyhkYTKOmTu5YTGjJqXIPejl7EfmNQBfSyA2KiFj/a/xuonsuowfXkrUxF5pP5CSyC3pBTBoT0OjEHSUtFHrVAvHKdc16if4hzEYiFys+IZOdVU1MdRKodKMIDjxo4+qDOIKJXjbwmfl/ciUyY1LpJDioYLIBq/AE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E54REf0d; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30615661f98so18306651fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:02:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740729771; x=1741334571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qbr0JlJIE4FS91eTAO4EKTfkc1unVkIhWKA7fZvGtG4=;
-        b=E54REf0dpvCieS5sjf7Z1vEZFzoxRDS9S6wEzUuPC3V+MimzfR0VcpOYppz5FOz70D
-         tO9VElGDi2qnyerfZazPIOLLvVq/d7hgLjPVTHOa68u0nn6YKSqNJGIZ4xhhi2bPNWya
-         sLVHQCqU0rQa8puDMwGpMWin6T/QEeFRJhzS9dUkSEcc6OkbrYwwmgzfQxElnpE1SE1V
-         Mo8t5hKSCZIO+DErwvs2JUp+gJeUnLl0MhkpM0p8REJHaOLXQO511emp+qDjCVckApOt
-         YqLh4dF0nXiqchvAuE5AQDMaiVgHufBoORhTlyyBpX06KH3q+alDQIFo6SFEkr8BnGhJ
-         HSzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740729771; x=1741334571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qbr0JlJIE4FS91eTAO4EKTfkc1unVkIhWKA7fZvGtG4=;
-        b=lkQ2nvtLxiXk32P65YarCJWmgxIgyMWaBPdGD6w5WcwUQH7WLah51NW9sgJKc3aYx5
-         WozILRCIIx7QvM2oGpcDfz/kI/C1dh6B6/LcZznE/ELV/d/I2jhGZvEW+usVn/fghTYu
-         +cg4Li4Me41OTYVV40sMKnopuBnE/ZwA5+UJy2N3ZyW1wiPAgbGk9/FH161T0AIF6obq
-         GbblVLRtR6kX9r2/VDK/MES4FHAGbQcqlMfmb56HgHeOaefpW/s+c98UezGtcbBnfQ5I
-         t1YjVGzOXm2Z4fGOYM9+YXi7WHPAL+xkUQ+ElImzftMKjOmn26JDp6fk92Dqw7RqLQlU
-         uYSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLFtiP6Q7Y3piI8jVnjSMIxh9JnVqm1QkSKhWSnvH8j0j4g8BWAPoBiQiwXNRnqhA1bF5PEmmJOUwETMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw90LiEgw9Ec297I9/rtG6qm9wiXhXN/+IHWfvvt9MYsRjt7wVw
-	fR2ZxUkZ+5MR0rwQn74n0SQ+K9g8OMbiZ1/SfaSSNTvfDNoa/ArY+IhOvdxv2mlxTMs9/Rw7yuD
-	vvDf3Cmo2rBB4ljCoWSuDN/A1A/9O593WbYTA66snfmq6/YVpEr4=
-X-Gm-Gg: ASbGnctwKoE/tmeIYJrgkSSIZi0dIZopZAcuXK7GlcRUO12rYFTQPiJ+8ICFy5VLen9
-	r6Q1Ju/956/+H9hWTvz+7wYGzjE99L1F3bg23x3D3js6J+UM8kQ43xaywK1wQ5PZCoiLcxVYIZZ
-	SY4zELQbM=
-X-Google-Smtp-Source: AGHT+IFWOcXiVWcdOW41WFhd6agTYR3FpZBByYOSPhq67IJiAnEdPrPDXHVSJmb/dCVk0/uCVFRJDHBQkVe5M5ZJHDM=
-X-Received: by 2002:a05:6512:a8b:b0:545:49d:547a with SMTP id
- 2adb3069b0e04-5494c122e84mr972716e87.18.1740729771493; Fri, 28 Feb 2025
- 00:02:51 -0800 (PST)
+	s=arc-20240116; t=1740729875; c=relaxed/simple;
+	bh=x2141hNFezK6mYwqWQI9537WXt7YCIJnzh0zwLxszv8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=arn4imeAw9BC6e8q5YGLf2Y4m5Ljbs7PzcrXS2qzt2bilVVopN/SzDaULefqWTUpBnVaogIYoXB5FxvkEP9PBAoLw0wlmcRZSXz24NMcAM5b5c/Sm+MEOq1SMG+dhGN8okCK1/My8C1vPV++j95c6h3WXvIoSecj6q9lQUcgiGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggHJbmaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D17D6C4CED6;
+	Fri, 28 Feb 2025 08:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740729874;
+	bh=x2141hNFezK6mYwqWQI9537WXt7YCIJnzh0zwLxszv8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ggHJbmaVVOISS/Zmur3noPoa9ob4zXIkPHN/yvlkzVW30sINZG185Q7hEHhYiN+eR
+	 yen0N5/zOSKn8GEgJHuBTwcSFevgaUGaTUK/F4awi5n/IELEwzVhtQ+8D6inTliy62
+	 wAJeMGLJ3qZAmGSqNqnhzCwlg6khEWpO6JAu3DFbEuKe+xTetT+TUW/4LT9UU127ew
+	 WQM1C8vNbbAElSCdlxqhkoDHn/Re8zYCFGaI6Z06zI5+Eb4EBOuVecqulbYYt/ZQ+0
+	 zyLB/BBEFBx+QdgbxotiPFjxLEYt6PNVUS3gs1+EBph/xJWce+wNqG5N0I1UICA4Q2
+	 Eb5P29/iNrRsQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF6DC282C5;
+	Fri, 28 Feb 2025 08:04:34 +0000 (UTC)
+From: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Subject: [PATCH v3 0/6] Add support for S4 audio
+Date: Fri, 28 Feb 2025 16:04:08 +0800
+Message-Id: <20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224045918.3321394-1-guan.wang.jy@renesas.com> <20250224045918.3321394-2-guan.wang.jy@renesas.com>
-In-Reply-To: <20250224045918.3321394-2-guan.wang.jy@renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:02:39 +0100
-X-Gm-Features: AQ5f1Jqy5qQny_DDgRtOCONi0twJXO_7cwKyXPro4kcz-2ed8U00XvOfzktKY60
-Message-ID: <CACRpkdbbXxpOx_uVX6WTWfbqBbXwt2ssvpQDMrmvYSydNaiY8w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: block: add reset workaround for partition switch failures
-To: Guan Wang <guan.wang.jy@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Avri Altman <avri.altman@wdc.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Jens Axboe <axboe@kernel.dk>, guan.wang.jy@renesas.com, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPhtwWcC/13M0QrCIBiG4VsZHmf4q0PXUfcREebc9kOboSXF8
+ N5zg4h1+H3wPjOJLqCL5FDNJLiEEf1UhthVxA5m6h3FtmzCGa8ZAKPm2aK/tCGhC5QpUwsNVjb
+ ySkpyD67D18qdzmUPGB8+vFc9wfJ+IbGFElBGtQWpFOuENuxoxpvv0e6tH8lCJf7LOci/nJdcK
+ K2hM0LZxm3znPMH59QOeOkAAAA=
+X-Change-ID: 20250110-audio_drvier-07a5381c494b
+To: Jerome Brunet <jbrunet@baylibre.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com, 
+ jiebing chen <jiebing.chen@amlogic.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740729872; l=1652;
+ i=jiebing.chen@amlogic.com; s=20250110; h=from:subject:message-id;
+ bh=x2141hNFezK6mYwqWQI9537WXt7YCIJnzh0zwLxszv8=;
+ b=D0A/1LXJsQqSGXP7YG/LoMPSb5KDruBemjmW99wLhc4KV+CLVtukH8eStEK+HV3PGNIo4yL/o
+ 9+irLhQOedMDqh4SfvL/ccR5s7Ie9UnlESjSA7Etj+eVhwTWTgYbH3T
+X-Developer-Key: i=jiebing.chen@amlogic.com; a=ed25519;
+ pk=6rFvvF45A84pLNRy03hfUHeROxHCnZ+1KAGw/DoqKic=
+X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
+ auth_id=316
+X-Original-From: jiebing chen <jiebing.chen@amlogic.com>
+Reply-To: jiebing.chen@amlogic.com
 
-On Mon, Feb 24, 2025 at 6:00=E2=80=AFAM Guan Wang <guan.wang.jy@gmail.com> =
-wrote:
+Add s4 audio base driver. 
 
-> Some eMMC devices (e.g., BGSD4R and AIM20F) may enter an unresponsive sta=
-te
-> after encountering CRC errors during RPMB writes (CMD25). This prevents t=
-he
-> device from switching back to the main partition via CMD6, blocking furth=
-er
-> I/O operations.
->
-> The root cause is suspected to be a firmware/hardware issue in specific
-> eMMC models. A workaround is to perform a hardware reset via mmc_hw_reset=
-()
-> when the partition switch fails, followed by a retry.
->
-> Add a workaround that:
-> 1. If initial partition switch fails after rpmb access
-> 2. Performs mmc card reset using mmc_hw_reset()
-> 3. Retries switching to main partition
-> This helps resolve cases where the device becomes unresponsive after
-> RPMB operations.
->
-> Signed-off-by: Guan Wang <guan.wang.jy@renesas.com>
+Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+---
+Changes in v3:
+- remove g12a tocodec switch event
+- Modify the incorrect title for dt-bindings
+- Link to v2: https://lore.kernel.org/r/20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com
 
-This looks like a reasonable recovery to me.
+Changes in v2:
+- remove tdm pad control and change tocodec base on g12a
+- change hifipll rate to support 24bit
+- add s4 audio clock
+- Link to v1: https://lore.kernel.org/r/20250113-audio_drvier-v1-0-8c14770f38a0@amlogic.com
 
-However not all hosts support HW reset. You currently have to do
-something this:
+---
+jiebing chen (6):
+      dt-bindings: clock: meson: Add audio power domain for s4 soc
+      dt-bindings: clock: axg-audio: Add mclk and sclk pad clock ids
+      dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
+      clk: meson: axg-audio: Add the mclk pad div for s4
+      ASoC: meson: s4: Add s4 tocodec driver
+      arm64: dts: amlogic: Add Amlogic S4 Audio
 
-if ((host->caps & MMC_CAP_HW_RESET) &&
-  host->ops->card_hw_reset)
-   mmc_hw_reset(card);
+ .../bindings/clock/amlogic,axg-audio-clkc.yaml     |  18 +
+ .../bindings/sound/amlogic,g12a-toacodec.yaml      |   1 +
+ .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 219 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 371 ++++++++++++++++++-
+ drivers/clk/meson/axg-audio.c                      | 410 ++++++++++++++++++++-
+ drivers/clk/meson/axg-audio.h                      |   4 +
+ include/dt-bindings/clock/axg-audio-clkc.h         |  11 +
+ sound/soc/meson/g12a-toacodec.c                    |  51 +++
+ 8 files changed, 1081 insertions(+), 4 deletions(-)
+---
+base-commit: 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
+change-id: 20250110-audio_drvier-07a5381c494b
 
-Perhaps we should first just move this check into
-mmc_hw_reset() so that function can be called unconditionally?
+Best regards,
+-- 
+jiebing chen <jiebing.chen@amlogic.com>
 
-Yours,
-Linus Walleij
+
 
