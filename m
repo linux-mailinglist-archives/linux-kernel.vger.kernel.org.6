@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-538705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870BCA49C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:37:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE03A49C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 573EA3A7E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD6A1897974
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD55E26FDBE;
-	Fri, 28 Feb 2025 14:37:13 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129E426FD88
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF32826FDBD;
+	Fri, 28 Feb 2025 14:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA8E26FD84;
+	Fri, 28 Feb 2025 14:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753433; cv=none; b=cruhxdISB1/TW0lF6EZE31ZA9ZG3zUmHPyyKWxfJtjtS2Hg8yA1M/QibUaB/64/0WySTzGe6LEY4cIIWsxoPS6kRhfcyAo7EKrVT8Cahw78eIzkJIA+fg48Yt3KU56wY6hGVE0HOZCz1AvFjkWMEnTEVPVHstw2duxDhPFRdAbc=
+	t=1740753451; cv=none; b=Gx/GtLg61jpUqgA1sZbsxA2dfkeQ3kv6Ua5gCzFw8XBIVL5KsvbAEkx0XXuBSkURZOqbkOp+hGVYygrzqqxEw9RbvLw7MSjRc9ZyhkkPbqefK5rmUNRSx6cg6WPUkLJTanhY9upzCEKRCEmFUAXCnkJuKT/ixCxKlB+Y2ZgfuB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753433; c=relaxed/simple;
-	bh=UvnTs/1/XnhiDr9pfMYDThu3k8FYy9I1ewxX6+CXfpk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HCdiNLICMvzaOMR6gT3Edbx5Oppw9s11A1hAyoic0of/RgP2LUfM7xGRS+1gjMs79/rp0mlM89YBKV18dZ0X+QAkMDkUjLN16Dye2LdgVk5QZKH2Tj6iFrZamJUtf7cxzL/1hqdQrvHdXxQMWcsoaxCHU+uI7AghAhzn41JOJfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=fail smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=alpha.franken.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1D06C1F38F;
-	Fri, 28 Feb 2025 14:37:07 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 152B513888;
-	Fri, 28 Feb 2025 14:37:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zLzABBPKwWc4OQAAD6G6ig
-	(envelope-from <tsbogend@alpha.franken.de>); Fri, 28 Feb 2025 14:37:07 +0000
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: cm: Fix warning if MIPS_CM is disabled
-Date: Fri, 28 Feb 2025 15:37:02 +0100
-Message-Id: <20250228143703.33381-1-tsbogend@alpha.franken.de>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1740753451; c=relaxed/simple;
+	bh=yMgIGlMHYKOZUSzIfEj56HpFq1oS5jJiBWijR4VLAog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=k4gHhrUzQguQtYwp/ua87YORF1odJ9gYbLgp7NvB3KQSmy7gvLtJ9kQGCn2fQHn1Ni7YpZ8n8GRFOTW2cBXRFK8ghdegsDwyreWB74158S539Fx+Yc/9eWe96yLtTBdUT8nHEEIpJt+n6z6F/fcMdBoMOoJ8ITez0NmocfkLmWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 567C91515;
+	Fri, 28 Feb 2025 06:37:44 -0800 (PST)
+Received: from [10.57.79.187] (unknown [10.57.79.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E15E3F6A8;
+	Fri, 28 Feb 2025 06:37:26 -0800 (PST)
+Message-ID: <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
+Date: Fri, 28 Feb 2025 14:37:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
+To: Anand Moon <linux.amoon@gmail.com>
+References: <20250216195850.5352-1-linux.amoon@gmail.com>
+ <20250216195850.5352-2-linux.amoon@gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250216195850.5352-2-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit e27fbe16af5c ("MIPS: cm: Detect CM quirks from device tree")
-introduced
+Hi Anand,
 
-arch/mips/include/asm/mips-cm.h:119:13: error: ‘mips_cm_update_property’
-	defined but not used [-Werror=unused-function]
+On 2/16/25 19:58, Anand Moon wrote:
+> Refactor the initialization of the clk_sec clock to be inside the
+> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> is only initialized for the specified SOC and not for other SOCs,
+> thereby simplifying the code.
 
-Fix this by making empty function implementation inline
+So IIUC there was no need to init that clock for other types of SoCs...
+Do we know that for sure (e.g. from other TRMs)?
 
-Fixes: e27fbe16af5c ("MIPS: cm: Detect CM quirks from device tree")
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
----
- arch/mips/include/asm/mips-cm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If that was the case, then simplification here can go further, but after
+some fixes.
 
-diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/mips-cm.h
-index 3bfe0633b576..407f253bb4a1 100644
---- a/arch/mips/include/asm/mips-cm.h
-+++ b/arch/mips/include/asm/mips-cm.h
-@@ -116,7 +116,7 @@ static inline bool mips_cm_present(void)
- #ifdef CONFIG_MIPS_CM
- extern void mips_cm_update_property(void);
- #else
--static void mips_cm_update_property(void) {}
-+static inline void mips_cm_update_property(void) {}
- #endif
- 
- /**
--- 
-2.35.3
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v3: improve the commit message
+> ---
+>   drivers/thermal/samsung/exynos_tmu.c | 26 +++++++++++++-------------
+>   1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 47a99b3c5395..9c138772d380 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1040,19 +1040,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   	if (IS_ERR(data->clk))
+>   		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+>   
+> -	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> -	if (IS_ERR(data->clk_sec)) {
+> -		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
+> -			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> -					     "Failed to get triminfo clock\n");
+> -	} else {
+> -		ret = clk_prepare(data->clk_sec);
+> -		if (ret) {
+> -			dev_err(dev, "Failed to get clock\n");
+> -			return ret;
+> -		}
+> -	}
+> -
+>   	ret = clk_prepare(data->clk);
 
+Here the data->clk is now used in different order.
+
+>   	if (ret) {
+>   		dev_err(dev, "Failed to get clock\n");
+> @@ -1060,6 +1047,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	switch (data->soc) {
+> +	case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+> +		if (IS_ERR(data->clk_sec)) {
+> +			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
+> +					     "Failed to get triminfo clock\n");
+
+Then here you shouldn't simply copy the old code. Now the data->clk
+is first, so should be 'clk_unprepare()' before return of the function.
+
+> +		} else {
+
+You can get rid of this 'else' above and still be safe in your
+refactoring.
+
+> +			ret = clk_prepare(data->clk_sec);
+> +			if (ret) {
+> +				dev_err(dev, "Failed to get clock\n");
+> +				return ret;
+> +			}
+
+Here you can further simplify this to something like:
+-----------------------8<-------------------------------------
+
++	case SOC_ARCH_EXYNOS5420_TRIMINFO:
++		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
++		if (IS_ERR(data->clk_sec)) {
++			clk_unprepare(data->clk); ///// <----
++			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
++					     "Failed to get triminfo clock\n");
++		}
++		ret = clk_prepare(data->clk_sec);
++		if (ret) {
++			dev_err(dev, "Failed to get clock\n");
++			clk_unprepare(data->clk); ///// <----
++			return ret;
++		}
++
++	break;
+
+--------------------------->8---------------------------------
+
+Or with better 'goto' flow.
+
+> +		}
+> +	break;
+>   	case SOC_ARCH_EXYNOS5433:
+>   	case SOC_ARCH_EXYNOS7:
+>   		data->sclk = devm_clk_get(dev, "tmu_sclk");
+
+
+Also, you should revisit the 'goto' cleanup section at the bottom.
+
+Regards,
+Lukasz
 
