@@ -1,91 +1,59 @@
-Return-Path: <linux-kernel+bounces-537559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CD0A48D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:39:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFD0A48D7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34033B110F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 643A4188A3F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B663C748F;
-	Fri, 28 Feb 2025 00:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3062FDDD3;
+	Fri, 28 Feb 2025 00:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/anx5jJ"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzT3biDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0FE276D27;
-	Fri, 28 Feb 2025 00:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62240182D0;
+	Fri, 28 Feb 2025 00:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740703189; cv=none; b=nFcL1fIL5Q5SXeavmg2HIjNY/7ETOtaRRN4Bv05UJ+8MbNnDoVoEZGwr+jdwC0MxzzYwg10X00+slI/w8pevKFhuOGNlN214GcCPFfZjms/ji+J+12KWr3wqJSM3i59YPz7N9+QSsvTb7mDH6J2Vpg9p0OL+Bwl7mpFPTy3umR4=
+	t=1740703199; cv=none; b=TU5QNjkQujXPbsXJopUcwurAzOVr6H49YcM7ZncUo+k2gS8cr37Y2Al1zIZKplZ7svakReQ9sYZ+dkD2Qj1wpw4sFBELFPNbddgiGJeNf5Km5cQbVTeaMWyBX43MBO/Zluntss31CvCqK2czHUek/j/N0kMD/06Df2oS+R5GI6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740703189; c=relaxed/simple;
-	bh=v2ruyhUklWLE/O5IYzG1DXaxpknq5sYzG4l/avzLBGM=;
+	s=arc-20240116; t=1740703199; c=relaxed/simple;
+	bh=ZOo+t3tjZlWVGbfk1wn2SMiVrhVzuQM3wZ7uUv4EW4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpfAdSp+1/c6zSCUxQ+SvQZe1XhGH5y4+Clkr0uSOEaJh+wMS9lcqekqahbNaex02gyOX2N/vROw/PeJ9O5NicXgI5pTip5s8tALFoIxu3qSepY6hi9VHr3ANdRtqJAFQCZDSp4+abmP00ih+MisYLWvEqAsaoJK4mYrbglIKRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/anx5jJ; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6dd049b5428so14350506d6.2;
-        Thu, 27 Feb 2025 16:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740703186; x=1741307986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NS+/iUnzQt3rNEJ1NDY4uxNPpsgUI17G/QJLjXrYJFg=;
-        b=I/anx5jJGm/JqIZcggpY2hpACAzIILxKYGf1YE/Uq5ave+X+ASKkXFQeYS2kk6jbA3
-         VAwENjvHfj3k5ZXgisgEZR2WQcww3R70Q93U+8xr6crDlvc2dPos/MyDZ5OafBJFq0P9
-         ilBi14glnQxZ22jYIRv4uN2qsfKg5WDB+3z+o5nsLlYak1XjtpN1usqKk7iR1XS2EH5/
-         5cwMRir+sjVsRUDIlKicImFVX+WpAoBZpIOYWGDwioHnxiKNPyFRhfh1nmy9WEt0pCso
-         v1+kwzJgGqFfBpC7YD6+E96cKMISMhYqhgTYG9GMiTvAkLpo15FMOuXLIOjP3rqsAe6O
-         j/yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740703186; x=1741307986;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NS+/iUnzQt3rNEJ1NDY4uxNPpsgUI17G/QJLjXrYJFg=;
-        b=DpoU/PMNx1YuvjcS0FJurN8n920hptCDWaV1RBJDlHu6SG80VGOjRy6A9Dd5FR0oT2
-         buQZV94X8pw19u6tKDmkGbOou3RAnFJIdy9rvHzOKhfGaCZ7HmW++n8SPfk9vfujUZjc
-         OmJV3VeSUzxx0Qg6oCFlK+Hf3Xyr1CjSebYRCH88yBd8yY1VkWarrly2md9K11Adq2yb
-         P2/xRjmOiqmqSL8aaWRgu7F4zVMf/U6Vq28/YLkZGO9qs9QdgP2P0Uqsb6c72rjanZSK
-         Vv2vPT5x5REyGaM8vKcx3SP4LkJRaOK8BArdSa1m1dhPOc3/zOXmaQ0ixGoRQqmg2xdm
-         kddA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1TbDh10xZfuv2r9F1sAgthhyc/q/assKuKEAj7+UHvzw2KXveH1rlz2d0OJpTjtMCndlY5vpFNSq@vger.kernel.org, AJvYcCWMm7lcjQLEzzMy5/bxsSnILLROuqEI2NYZ/fDzdM8yBmdr37z3wIdLGaIUeX01DaYP/oj6IuYeKXdKENgE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+MYfq2r3pxrlI9tlLmLbGSToT/4AorffYOMkceZKgTFnp0GUW
-	vQ+VvhIuZ++1mOzT2XcHO42hR+Bex/aCfJeLFKa+ZyEfk1uBT9C8
-X-Gm-Gg: ASbGncsbCRlg2du6Ksi5mzFg353prItS0O9NCMDuIz2VQPL//S3ktqP2+lMidAmM/XM
-	rOSsiG4FMC+kZl7qHqCbp3C08KnGSKERDLLDytSVDDtBJYjoPVl7WjF26HTVbo+/KjUaFLTGrTT
-	zuJvQYgDeZxa3kvHcZ3exr2nY31FlILkpwbA5gIgLnBWYNWgX57TYZT5U9tpJAwgScYcyOanIHP
-	qIjt2h3SyhYYVKUaHG+XsMnBenDh/UuB+O1c74HZFY6AHB2WWL0NutGVanaX66DR5xxgU3GBf98
-	BA==
-X-Google-Smtp-Source: AGHT+IGW6OtjFhte78/y7mXicDWR0r1px1BSDbRwNbpZXXNdzJwgIrFoEnObj2orAz8Dtj3dyg6Yrw==
-X-Received: by 2002:a05:6214:21e7:b0:6e8:86d3:be78 with SMTP id 6a1803df08f44-6e8a0d94b6cmr23116156d6.37.1740703186527;
-        Thu, 27 Feb 2025 16:39:46 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e89766166esm15959336d6.61.2025.02.27.16.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 16:39:46 -0800 (PST)
-Date: Fri, 28 Feb 2025 08:39:24 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Rob Herring <robh@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrBXzOSsQDrirY5GzSp6SyOBPzmSqw6trhfYQqMnepqMpxSuP+1fF+UCRVnopEkA4Scwtwj7LB34xaikyTvvmEqbcv4aqkxBUncsUEiL5gXW01HxoBYnH0YUfkf7d5+gzmDFFpHexL/IbQ90aqVO2RRbNfb5GH5tAOgW5iUaFDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzT3biDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CEC2C4CEE4;
+	Fri, 28 Feb 2025 00:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740703198;
+	bh=ZOo+t3tjZlWVGbfk1wn2SMiVrhVzuQM3wZ7uUv4EW4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jzT3biDkfelFWlaJR1wsrIqHikIsHyerNJBDSD0Ot8Um23ZFNQUwJkoOaQzxEx0aw
+	 1lFCFZ5XpO5elEvddPtf1wVVQh866F48VLsngWfAqyCl6sCCMuqlOnp3F7TJwdGkdx
+	 QdyLtWSis8X2jU/aj1QuVYWayiY+W0HOzNNLHLQxbkvSkinWd/ZvXPyIXW/Hs1KpkI
+	 Ca0Hzmj6JelmMbpSe7YpjUQV/vj3oKA9LjOaUKkQcyQBriOk2WGKUnEGRnKTZN+WJ7
+	 aoDTDFVCVgBWGJ6WUkE1XOidEU7jZELu+vlIJxilVZ5CIiIiJB2AM+RwOUsI3wPmgD
+	 o4i2uELWSIyyg==
+Date: Thu, 27 Feb 2025 18:39:55 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Guo Ren <guoren@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: reset: add generic bit reset
- controller
-Message-ID: <57tveujqmthjxdaad67i3qv732zwmjcyymnsluyf65xdpmfvkd@cqrwhuylthmd>
-References: <20250226234234.125305-1-inochiama@gmail.com>
- <20250226234234.125305-2-inochiama@gmail.com>
- <20250227133509.GA2021892-robh@kernel.org>
+	Konrad Dybcio <konradybcio@kernel.org>, Odelu Kukatla <quic_okukatla@quicinc.com>, 
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Mike Tipton <mdtipton@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 3/7] interconnect: qcom: Add multidev EPSS L3 support
+Message-ID: <a2hpdflba4wmho3wzphr2w5htgolksq43nuewcwqr7goy6rc5q@6fot5l6q6ods>
+References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
+ <20250227155213.404-4-quic_rlaggysh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,39 +62,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227133509.GA2021892-robh@kernel.org>
+In-Reply-To: <20250227155213.404-4-quic_rlaggysh@quicinc.com>
 
-On Thu, Feb 27, 2025 at 07:35:09AM -0600, Rob Herring wrote:
-> On Thu, Feb 27, 2025 at 07:42:29AM +0800, Inochi Amaoto wrote:
-> > Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
-> > a simple reset controller by toggling bit. It is a hard time
-> > for each device to add its own compatible to the driver.
+On Thu, Feb 27, 2025 at 03:52:09PM +0000, Raviteja Laggyshetty wrote:
+> EPSS on SA8775P has two instances, necessitating the creation of two
+> device nodes with different compatibles due to the unique ICC node ID
+> and name limitations in the interconnect framework. Add multidevice
+> support for the OSM-L3 provider to dynamically obtain unique node IDs
+> and register with the framework.
+> EPSS topology includes a single master-slave pair within the same
+> provider, the node linking logic is simplified by directly connecting
+> the master node to the slave node.
 > 
-> It's a 1 line change. That isn't hard.
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+>  drivers/interconnect/qcom/osm-l3.c | 37 ++++++++++--------------------
+>  1 file changed, 12 insertions(+), 25 deletions(-)
 > 
+> diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
+> index 6a656ed44d49..a9dacc4b7f2e 100644
+> --- a/drivers/interconnect/qcom/osm-l3.c
+> +++ b/drivers/interconnect/qcom/osm-l3.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #include <linux/args.h>
+> @@ -48,16 +49,10 @@ struct qcom_osm_l3_icc_provider {
+>  /**
+>   * struct qcom_osm_l3_node - Qualcomm specific interconnect nodes
+>   * @name: the node name used in debugfs
+> - * @links: an array of nodes where we can go next while traversing
+> - * @id: a unique node identifier
+> - * @num_links: the total number of @links
+>   * @buswidth: width of the interconnect between a node and the bus
+>   */
+>  struct qcom_osm_l3_node {
+>  	const char *name;
+> -	u16 links[OSM_L3_MAX_LINKS];
+> -	u16 id;
+> -	u16 num_links;
+>  	u16 buswidth;
+>  };
+>  
+> @@ -69,30 +64,22 @@ struct qcom_osm_l3_desc {
+>  	unsigned int reg_perf_state;
+>  };
+>  
+> -enum {
+> -	OSM_L3_MASTER_NODE = 10000,
+> -	OSM_L3_SLAVE_NODE,
+> -};
+> -
+> -#define DEFINE_QNODE(_name, _id, _buswidth, ...)			\
+> +#define DEFINE_QNODE(_name, _buswidth)					\
+>  	static const struct qcom_osm_l3_node _name = {			\
+>  		.name = #_name,						\
+> -		.id = _id,						\
+>  		.buswidth = _buswidth,					\
+> -		.num_links = COUNT_ARGS(__VA_ARGS__),			\
+> -		.links = { __VA_ARGS__ },				\
+>  	}
+>  
+> -DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
+> -DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
+> +DEFINE_QNODE(osm_l3_master, 16);
+> +DEFINE_QNODE(osm_l3_slave, 16);
+>  
+>  static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
+>  	[MASTER_OSM_L3_APPS] = &osm_l3_master,
+>  	[SLAVE_OSM_L3] = &osm_l3_slave,
+>  };
+>  
+> -DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
+> -DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
+> +DEFINE_QNODE(epss_l3_master, 32);
+> +DEFINE_QNODE(epss_l3_slave, 32);
+>  
+>  static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
+>  	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
+> @@ -242,10 +229,9 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+>  
+>  	icc_provider_init(provider);
+>  
+> +	/* Create nodes */
+>  	for (i = 0; i < num_nodes; i++) {
+> -		size_t j;
+> -
+> -		node = icc_node_create(qnodes[i]->id);
+> +		node = icc_node_create(ALLOC_DYN_ID);
 
-Yeah, it is not hard. But it is annoying and sometimes
-I felt it is a waste of time to add a device id to the
-reset-simple driver.
+Rather than passing a "magic value" as argument to alter how node
+creation happens, and in particular if we can avoid sprinkling
+ALLOC_DYN_ID across the provider.
 
-> > Since these devices share a common design, it is possible to
-> > add a common device to reduce these unnecessary change for
-> > the driver.
-> > 
-> > Add common binding for these kind generic reset controller.
-> > Check the binding description for its requirement and
-> > suitable scenarios.
-> 
-> We generally don't want 1 register per node type bindings. That level of 
-> detail in DT has proven impossible to get right.
-> 
-> Rob
+How about creating a new function icc_node_create_dyn() and hide the
+ALLOC_DYN_ID within the interconnect framework?
 
-It is not 1 register per node, but a contiguous range.
-In most SoC satisfy the requirement, only one reset
-device is added. This is what the reset-simple handle.
-1 register per node is too crazy for everyone....
+
+Other than that I really like how this is turning out.
 
 Regards,
-Inochi
+Bjorn
+
+>  		if (IS_ERR(node)) {
+>  			ret = PTR_ERR(node);
+>  			goto err;
+> @@ -256,12 +242,12 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+>  		node->data = (void *)qnodes[i];
+>  		icc_node_add(node, provider);
+>  
+> -		for (j = 0; j < qnodes[i]->num_links; j++)
+> -			icc_link_create(node, qnodes[i]->links[j]);
+> -
+>  		data->nodes[i] = node;
+>  	}
+>  
+> +	/* Create link */
+> +	icc_link_create(data->nodes[MASTER_OSM_L3_APPS], data->nodes[SLAVE_OSM_L3]->id);
+> +
+>  	ret = icc_provider_register(provider);
+>  	if (ret)
+>  		goto err;
+> @@ -278,6 +264,7 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+>  static const struct of_device_id osm_l3_of_match[] = {
+>  	{ .compatible = "qcom,epss-l3", .data = &epss_l3_l3_vote },
+>  	{ .compatible = "qcom,osm-l3", .data = &osm_l3 },
+> +	{ .compatible = "qcom,sa8775p-epss-l3", .data = &epss_l3_perf_state },
+>  	{ .compatible = "qcom,sc7180-osm-l3", .data = &osm_l3 },
+>  	{ .compatible = "qcom,sc7280-epss-l3", .data = &epss_l3_perf_state },
+>  	{ .compatible = "qcom,sdm845-osm-l3", .data = &osm_l3 },
+> -- 
+> 2.43.0
+> 
 
