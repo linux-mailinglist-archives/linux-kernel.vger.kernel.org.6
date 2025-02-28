@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-538675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23786A49BC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DF4A49AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C082C189433A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B273BAB84
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C267526E16D;
-	Fri, 28 Feb 2025 14:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B05F26D5A6;
+	Fri, 28 Feb 2025 13:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pfyYheMX"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeVdeGL9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE2053363
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7220F1E4A9;
+	Fri, 28 Feb 2025 13:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752426; cv=none; b=oh5axmPNz66q5dAEwETSCaghmwGQfuhacM9oqDylppQyU55U99533YVd499ETgv4ufWKTLw46utPmu6SGoN7dfBslG0n+zCPg5yrQJM3oNc7c/Y56GG6q/05BRlCayO2q2bh8P6QOOjFMCKbmEvCnFC4uuexA4aUW7ZHYzN0blw=
+	t=1740749898; cv=none; b=Nl0BbQKabbbELlv7TKnMCwKgBpkwzOl7dr8OBwQNl0hMFVcZotBlfcl8G/yViSAAvZgKni78PCX1SousEfxOxhnjbl19PCgWR4IeH5bFOtOCTsJa9CBMZvbDpMgcwh//wlMJKKpNmRffowr2tZHJwxesKyf9WZS1YETtJBVitXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752426; c=relaxed/simple;
-	bh=anGoJKP4e3oq3xRrI9guDLd77101unUczH+xlNTk/Fk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=BSiiwkLThSWKQNkz+2H1Ui+AAgiTyzIDSMbxdnyk92hbDnuPD+yvkxQwUqZr2M4gtvMqZknxYrf/D44N+GSqBGwLcFs28lWHWDz+MkO3PrUBs1VutYVZIp+eqPkJbNQ9pxdAFK7PC0zKS/pTuwIYwlVmXj1t+qEaccQgafNw5JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pfyYheMX; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250228142020epoutp03179609529e9348490bf1eab9c821538b~oZRqWsG5w2247122471epoutp03O
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:20:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250228142020epoutp03179609529e9348490bf1eab9c821538b~oZRqWsG5w2247122471epoutp03O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740752420;
-	bh=YjHS5lQzbKkPowwCR1zNX2dluJmZJNm1nz6Pvscy/Wk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=pfyYheMX2MGv4nPsfQ5l4KhHlcZns+spCEHimD5LxxxIcowymaOoSsNuihj7LFJko
-	 PQtgJxbvXOQGciB1Cov4BMAYFWtYzdbloeRLb7KdFC1MJzmESjTjKoHIYXYN4hLy3z
-	 12aSBcsOnuBsaRIFYvR7WX2VLZxA9QjI7eQ494Fc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250228142020epcas5p43cfa7d7a465fcbd946ce16f223d778a6~oZRpzpxdD1432114321epcas5p4Q;
-	Fri, 28 Feb 2025 14:20:20 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z49N24H3Lz4x9Pr; Fri, 28 Feb
-	2025 14:20:18 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1F.68.19710.226C1C76; Fri, 28 Feb 2025 23:20:18 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250228142018epcas5p463b70b48a1dd36016c26dcf66f8b489d~oZRn67SxP1917919179epcas5p42;
-	Fri, 28 Feb 2025 14:20:18 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250228142018epsmtrp14b0f4592a064862cfc20cb5a6cd98583~oZRn6QXjY2679026790epsmtrp13;
-	Fri, 28 Feb 2025 14:20:18 +0000 (GMT)
-X-AuditID: b6c32a44-36bdd70000004cfe-7d-67c1c622c82d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	67.0D.18949.226C1C76; Fri, 28 Feb 2025 23:20:18 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.6]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228142017epsmtip224f154fc4fc4fc8f93c4e6c9ef83a290~oZRnMwY9K0770007700epsmtip2C;
-	Fri, 28 Feb 2025 14:20:17 +0000 (GMT)
-From: Anindya Sundar Gayen <anindya.sg@samsung.com>
-To: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com
-Subject: [PATCH] i2c: i2c-exynos5: fixed a spelling error
-Date: Fri, 28 Feb 2025 19:07:45 +0530
-Message-Id: <20250228133745.35053-1-anindya.sg@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7bCmlq7SsYPpBltmKVkc2ryV3aLj7xdG
-	i8u75rBZ9J1zd2Dx6NuyitHj2cL1LB6fN8kFMEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8eb
-	mhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYALVNSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2Cql
-	FqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGdMONHBWrCdreLutA3sDYxzWbsYOTgkBEwk
-	bh+T7mLk5BAS2M0osXBdTBcjF5D9iVHi3PVjzBDON0aJd7umsME0bH2jBxHfyyjx+vJMJgin
-	mUniw5/rzCBFbALGEm0PKkGmigjES2xuW8ECYjMLyEisuLSVEcQWFrCUuPHvGzuIzSKgKvF/
-	eitYnFfAWuLFzSdg9RIC8hKrNxwAO0JCoJtdYsqdbUwQCReJBQdusULYwhKvjm9hh7ClJF72
-	t7FDHJovseRsNkQ4R+LA8gdQrfYSB67MYQEpYRbQlFi/Sx/iND6J3t9PmCA6eSU62oQgTBWJ
-	iR0sMLNn/9jBDGF7SNy6O5cdEmyxEsev/2eawCgzC2HmAkbGVYySqQXFuempyaYFhnmp5fBo
-	Sc7P3cQITjFaLjsYb8z/p3eIkYmD8RCjBAezkgjvrNgD6UK8KYmVValF+fFFpTmpxYcYTYGB
-	NJFZSjQ5H5jk8kriDU0sDUzMzMxMLI3NDJXEeZt3tqQLCaQnlqRmp6YWpBbB9DFxcEo1MJ2a
-	sS5jamByW3TPKRO2H067T909+06zdX7Dz6JLQWLS0/P0FHpOerMeFjzA1zDt5szZBQVbxJwN
-	O7bGHa4Wf/6luTzbq+/Tz1PJfxhNX5z/dWqjyZSrR9tPJK+71fRP9oKWyQdZjfiWZ78fTxKK
-	eBB5bPdPj2THpsDQZGeLwoy6j8z8vP9j710UlfG7yMaZKaH97rRA/WJtbbkva7Llys+cTFjX
-	0aKi1Rh5QjWV91za67UxO0Iklpjy+VyYfPxZW/BV/ymb5ntJ9V1n2WW4ZC/jy6cM6//KedQu
-	Tb30damhw8TmQK2FrXVzX8k+tTbINDzmGe9xbIqv/SJexbPrtzcETt+nUNGctVTjTEEXoxJL
-	cUaioRZzUXEiADiRQPi6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEJMWRmVeSWpSXmKPExsWy7bCSvK7SsYPpBkd6OC0Obd7KbtHx9wuj
-	xeVdc9gs+s65O7B49G1ZxejxbOF6Fo/Pm+QCmKO4bFJSczLLUov07RK4Miac6GAt2M5WcXfa
-	BvYGxrmsXYwcHBICJhJb3+h1MXJxCAnsZpT48/4GcxcjJ1BcSuL2/05GCFtYYuW/5+wgtpBA
-	I5NE1z0PkF42AWOJtgeVIGERgUSJTxNfsYHYzAIyEisubQVrFRawlLjx7xtYK4uAqsT/6a1g
-	cV4Ba4kXN5+wQIyXl1i94QDzBEaeBYwMqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcx
-	goNBS2sH455VH/QOMTJxMB5ilOBgVhLhnRV7IF2INyWxsiq1KD++qDQntfgQozQHi5I477fX
-	vSlCAumJJanZqakFqUUwWSYOTqkGpn7to7N8Fh2zfZv/dr2GTVnVT7XvP6IuqvK82nUrQKj9
-	VYjsolUZ57p8t3GqHrh+stTNRuUKm+jp0uVfGzzzo3eHLz1861FG1jyOeYfDft+2sHO8y+N0
-	ZtqlZ0XcrmY/anQLuB8dnrPzFN8fsyX2hpNPsa17cjGdyav+f+S7CQ3cv2ZWXWQ61Nt2qbZL
-	+ZvUy3MHM5JPfnQTTdXkfT43L93litISG81jRonP133a+W9hy8OVr5h+zFijs8Flz+LNkn+5
-	Jvf82n9hlTuv5t5bm59ye/nwzZ59aGrpzIfLnStcPO6ZbHBUN9O+kaB/dHphZsStE/l/9vE9
-	f8Dxa9vUtYdLSkR4u/XkVE8qH7yeyy6hxFKckWioxVxUnAgAYiu9SHUCAAA=
-X-CMS-MailID: 20250228142018epcas5p463b70b48a1dd36016c26dcf66f8b489d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250228142018epcas5p463b70b48a1dd36016c26dcf66f8b489d
-References: <CGME20250228142018epcas5p463b70b48a1dd36016c26dcf66f8b489d@epcas5p4.samsung.com>
+	s=arc-20240116; t=1740749898; c=relaxed/simple;
+	bh=0mnDp5t6ahjG2frprA1XDZG1zKgNmFNkH0FBio58rNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CU3h+PKhqBbtd+7yz8Yl+cQ7dDHdDz1hZSJ9I+RBu1WluXAntLwPHmRw4n61G3qz0MsKlqW5/Nxfs7ujP4ULTR9MKOR8O0yB4Tm/9ZcQu5Mp7jyBhWJ9Tnvm6QY3nkCwWRX+G0tMs25R78cToVEX+g2EafigWQIcDFONUCy1CEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeVdeGL9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B04C4CED6;
+	Fri, 28 Feb 2025 13:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740749893;
+	bh=0mnDp5t6ahjG2frprA1XDZG1zKgNmFNkH0FBio58rNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YeVdeGL9eIF+ruseMnB3dZ3p8hntl0E85vK3P744e71EWCVFjxAAoNHZRxQt9yAgq
+	 dEpbHkfhWv+uridWc8fWBmcHTNGHY+w14upM2GEiSRYfh4ojS3/bqW3r5xCqkw/EVl
+	 hyY+f2E7UlwBU5H25VZgZhhpN0zXzX3z0xXVbB/Kobvr6Z93utNjPfBrgI9rODenKL
+	 49LkbNs5S2sucpDAug3X6qkMCFDS58/B7jTFBRCG9loo7A/WlRfTWI3UGG8zBXMiv8
+	 GKMUSrYQsPhuST+D+KDXkUUKG9cdS90ORWdMGXBnRecnSkREBr2RYDysj2PDzAGQZU
+	 edoBS3xEzlJhw==
+Date: Fri, 28 Feb 2025 07:38:11 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: net: Convert fsl,gianfar-{mdio,tbi} to
+ YAML
+Message-ID: <20250228133811.GA2579246-robh@kernel.org>
+References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
+ <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
+ <20250221163651.GA4130188-robh@kernel.org>
+ <Z7zdawaVsQbBML95@probook>
+ <Z72lqrhs50NtoK8m@probook>
+ <20250226133114.GA1771231-robh@kernel.org>
+ <Z78sOtFfNC8i2amq@probook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z78sOtFfNC8i2amq@probook>
 
-Corrected a spelling mistake in the i2c-exynos5 driver to improve code
-readability. No functional changes were made.
+On Wed, Feb 26, 2025 at 02:59:06PM +0000, J. Neuschäfer wrote:
+> On Wed, Feb 26, 2025 at 07:31:14AM -0600, Rob Herring wrote:
+> > On Tue, Feb 25, 2025 at 11:12:42AM +0000, J. Neuschäfer wrote:
+> > > On Mon, Feb 24, 2025 at 08:58:19PM +0000, J. Neuschäfer wrote:
+> > > > On Fri, Feb 21, 2025 at 10:36:51AM -0600, Rob Herring wrote:
+> > > > > On Thu, Feb 20, 2025 at 06:29:21PM +0100, J. Neuschäfer wrote:
+> > > > > > Move the information related to the Freescale Gianfar (TSEC) MDIO bus
+> > > > > > and the Ten-Bit Interface (TBI) from fsl-tsec-phy.txt to a new binding
+> > > > > > file in YAML format, fsl,gianfar-mdio.yaml.
+> > > > > > 
+> > > > > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> > > > > > ---
+> > > > [...]
+> > > > > > +properties:
+> > > > > > +  compatible:
+> > > > > > +    enum:
+> > > > > > +      - fsl,gianfar-tbi
+> > > > > > +      - fsl,gianfar-mdio
+> > > > > > +      - fsl,etsec2-tbi
+> > > > > > +      - fsl,etsec2-mdio
+> > > > > > +      - fsl,ucc-mdio
+> > > > > > +      - gianfar
+> > > > > 
+> > > > > Can you just comment out this to avoid the duplicate issue.
+> > > > > 
+> > > > > Though I think if you write a custom 'select' which looks for 
+> > > > > 'device_type = "mdio"' with gianfar compatible and similar in the other 
+> > > > > binding, then the warning will go away. 
+> > > > 
+> > > > I'm not sure how the 'select' syntax works, is there a reference
+> > > > document I could read?
+> > > 
+> > > Ok, I think I figured it out, this seems to work as intended:
+> > > 
+> > 
+> > Looks pretty good.
+> > 
+> > > 
+> > > select:
+> > >   oneOf:
+> > >     - properties:
+> > >         compatible:
+> > 
+> > Add "contains" here. That way if someone puts another string in with 
+> > these we still match and then throw a warning.
+> 
+> Good idea.
+> 
+> > 
+> > >           enum:
+> > >             - fsl,gianfar-tbi
+> > >             - fsl,gianfar-mdio
+> > >             - fsl,etsec2-tbi
+> > >             - fsl,etsec2-mdio
+> > >             - fsl,ucc-mdio
+> > > 
+> > >       required:
+> > >         - compatible
+> > > 
+> > >     - properties:
+> > >         compatible:
+> > >           enum:
+> > >             - gianfar
+> > >             - ucc_geth_phy
+> > 
+> > You could move ucc_geth_phy because there's not a collision with it.
+> 
+> ucc_geth_phy also requires device_type = "mdio". It is more compact
+> to write it like this, but perhaps clarity wins out here, and this
+> requirement should be expressed with an "if:"?
 
-Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
----
- drivers/i2c/busses/i2c-exynos5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, an if/then schema outside of the select would be fine.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 6cdd957ea7e4..02f24479aa07 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -814,7 +814,7 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
- 		ret = i2c->state;
- 
- 	/*
--	 * If this is the last message to be transfered (stop == 1)
-+	 * If this is the last message to be transferred (stop == 1)
- 	 * Then check if the bus can be brought back to idle.
- 	 */
- 	if (ret == 0 && stop)
--- 
-2.17.1
-
+Rob
 
