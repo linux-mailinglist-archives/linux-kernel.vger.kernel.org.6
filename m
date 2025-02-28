@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-538619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D676A49AFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:53:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D709BA49B01
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5553B2C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85A543AE96A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E7326E176;
-	Fri, 28 Feb 2025 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5603726D5CE;
+	Fri, 28 Feb 2025 13:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE7bCFAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dI3nKdmt"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6E1B960;
-	Fri, 28 Feb 2025 13:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794A21B960;
+	Fri, 28 Feb 2025 13:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740750757; cv=none; b=KDhMfCDT5iXvsUnOGx2IqHWfJuTQMIag22S3C/53bvoG0O+lH/eTy81fIik/EG0pY/GoMjl5GOaTVchHux4JBkt46RpCUju515whwIBqq/QFnPOuPFN1+hzisDfJ2RCiZNNIi9oBknx35G5xG+ZwRfbpIdDXZ0BQNMC1tpJhRhY=
+	t=1740750825; cv=none; b=TwURfDKd0T3yJ1c4Ln+rOP9ZqscJUxaOQxqKdO5QgCQ01M/hjK2MmG3ZIpUdrGCXNqn6kTN6xFYu6JuNUU2byT2epqK+uSTfYzrrIce7wU7KIkW7ZyoSzktvLwudV4pzfT91IP43E+1ln8h+IhpsTOtw/3slKG8HG8Q5PvTDVr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740750757; c=relaxed/simple;
-	bh=V6oY9tzTMb/i0MQ73doFoT6+xPZ1RD1feBCIh6cAyjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BonbszuOZs+9+WP7FJcRj1VyVFiLrMfBUEvHn8x586r1hR19cqoKsH+bfam6zeGLG6Jjib3c7sk4adO+dp1pL6rwFYEeaGlSTu97dDPPr1pluus9ihdWuChn117KNy7zSD+1g9kY6Whas2i9IcH6G8bp9GXYfbm9Hk+hkM20VRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE7bCFAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43728C4CED6;
-	Fri, 28 Feb 2025 13:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740750756;
-	bh=V6oY9tzTMb/i0MQ73doFoT6+xPZ1RD1feBCIh6cAyjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VE7bCFAs/H4IvLRMMCe8mg9gL0g+1V6jQghKw2N81DISx4rISP2NHb6mvbcJtWIkq
-	 83D77HdF9Pu37U6nUNiz4YVQqJG9s6vDJtmx6EFgUYROVXGU17hJzbab4xJ8fj+Osy
-	 z5j0sO3QkD6uITImX5pq5wdw/WdEp6cHKNRRhxWelMeAQ4oy3iFF/p3OKRQSbjbadG
-	 MsByQFXztHARHPZBHXg9aKkw5d3c+Az72mcGGt9idvytlz3TsIvk/lSZ8wyHYxcgPC
-	 jXJQ2mgjcEm+0u44K1cvTHLQdL7G36Xn3mu3YdSii5qQ6xITitI5CHpQCzxlYw9zSj
-	 O/Hh+Vbp2S5XA==
-Date: Fri, 28 Feb 2025 07:52:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: net: Convert fsl,gianfar to YAML
-Message-ID: <20250228135234.GB2579246-robh@kernel.org>
-References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
- <20250220-gianfar-yaml-v1-3-0ba97fd1ef92@posteo.net>
- <20250221233523.GA372501-robh@kernel.org>
- <Z72fJSqng8od-5Z7@probook>
+	s=arc-20240116; t=1740750825; c=relaxed/simple;
+	bh=LbJAvDX1wJVlI8bkMn6KwzTkcXK+mgmgPtIetF/Xvmk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTwBpH9K11WbOY4g8OH60ajevdOXox0Yod4lY66/SX2AfG2vhLzP3ORfpNTlqFQNigF5O1tPErg2wdNnYe/hSCHusSwo3f0DK9nS6FJxaNcMZ2+EOFqnHA25WwQndkJlHe8pCHEeBBYzu5m4y8OIwVfI/rg6zwqOSS2aZmI35kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dI3nKdmt; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51SDrPWX2066472
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 07:53:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740750805;
+	bh=WazccXwMSXcNHgQGS2K75mUfu12ocGCld1cYtSPawdo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=dI3nKdmtlYhflNq2aSAika4XzI51SZpqAznSBVM4M4ryK+8PrgEN8pYPoiielo0mM
+	 NUFBCOGHkp/HzHO4xfDbsXBq2gS1v4A1UDfSyyyRcoyeIw9FJxxpgFdecqFr4nVMnv
+	 D8jEzkjUshjgHcMxFUMb0wSVmB4fZUyddF8U01XA=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51SDrPVL008551
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Feb 2025 07:53:25 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Feb 2025 07:53:24 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Feb 2025 07:53:24 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51SDrOXK072506;
+	Fri, 28 Feb 2025 07:53:24 -0600
+Date: Fri, 28 Feb 2025 07:53:24 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Jayesh Choudhary <j-choudhary@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Francesco Dolcini <francesco.dolcini@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62p: Enable AUDIO_REFCLKx
+Message-ID: <20250228135324.jy3qumbg4rg2kdih@factsheet>
+References: <20250206153911.414702-1-francesco@dolcini.it>
+ <20250207014239.xzm6rfnusckql2uo@litigator>
+ <Z6XFPYaj069fvW1h@gaggiata.pivistrello.it>
+ <20250228124347.GA20656@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z72fJSqng8od-5Z7@probook>
+In-Reply-To: <20250228124347.GA20656@francesco-nb>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Feb 25, 2025 at 10:44:53AM +0000, J. Neuschäfer wrote:
-> On Fri, Feb 21, 2025 at 05:35:23PM -0600, Rob Herring wrote:
-> > On Thu, Feb 20, 2025 at 06:29:23PM +0100, J. Neuschäfer wrote:
-> > > Add a binding for the "Gianfar" ethernet controller, also known as
-> > > TSEC/eTSEC.
+On 13:43-20250228, Francesco Dolcini wrote:
+> On Fri, Feb 07, 2025 at 09:33:01AM +0100, Francesco Dolcini wrote:
+> > On Thu, Feb 06, 2025 at 07:42:39PM -0600, Nishanth Menon wrote:
+> > > On 16:39-20250206, Francesco Dolcini wrote:
+> > > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > > 
+> > > > On AM62P-based SoCs the AUDIO_REFCLKx clocks can be used as an input to
+> > > > external peripherals when configured through CTRL_MMR, so add the
+> > > > clock nodes.
+> > > > 
+> > > > Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/am62px/clocks.html
+> > > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/ti/k3-am62p-main.dtsi | 20 ++++++++++++++++++++
+> > > >  1 file changed, 20 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> > > > index 420c77c8e9e5..4b47b0774330 100644
+> > > > --- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> > > > +++ b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> > > > @@ -42,6 +42,26 @@ &inta_main_dmss {
+> > > >  	ti,interrupt-ranges = <5 69 35>;
+> > > >  };
+> > > >  
+> > > > +&main_conf {
 > > > 
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > ---
-> > >  .../devicetree/bindings/net/fsl,gianfar.yaml       | 242 +++++++++++++++++++++
-> > >  .../devicetree/bindings/net/fsl-tsec-phy.txt       |  39 +---
-> > >  2 files changed, 243 insertions(+), 38 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/net/fsl,gianfar.yaml b/Documentation/devicetree/bindings/net/fsl,gianfar.yaml
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..dc75ceb5dc6fdee8765bb17273f394d01cce0710
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/net/fsl,gianfar.yaml
-> > > @@ -0,0 +1,242 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Freescale Three-Speed Ethernet Controller (TSEC), "Gianfar"
-> [...]
-> > > +  "#address-cells": true
+> > > 	Why not add it to main_conf section it self in the file?
 > > 
-> > enum: [ 1, 2 ]
+> > The reason is that main_conf is defined in k3-am62p-j722s-common-main.dtsi,
+> > that is shared between am62p and j722s.
 > > 
-> > because 3 is not valid here.
+> > On j722s the audio refclk is added in k3-j722s-main.dtsi the same way as I did
+> > here, so I cannot move this to k3-am62p-j722s-common-main.dtsi without updating
+> > also k3-j722s-main.dtsi.
 > > 
-> > > +
-> > > +  "#size-cells": true
+> > I looked into the differences of j722s and am62p, and from my understanding,
+> > from the audio refclk point of view, they are identical (same IP, same reg, same
+> > clocks and same IDs), so this should naturally be moved to
+> > k3-am62p-j722s-common-main.dtsi as you are suggesting.
 > > 
-> > enum: [ 1, 2 ]
+> > ... however, for some reason I am not aware of, on k3-j722s-main.dtsi a different
+> > parent clock is used, and I cannot understand the reason. The actual parent clocks
+> > in this patch are just the same we already have everywhere apart on j722s. I tried
+> > to look at the history of this and it seems that on the TI downstream kernel branch
+> > this is defined in the board dts file (!) and this confused me even more.
 > > 
-> > because 0 is not valid here.
-> 
-> Good point.
-> 
+> > So, not wanting to break stuff I was not able to understand I came up with this
+> > proposal.
 > > 
+> > An alternative could be to override the "unexpected" clocks from
+> > k3-j722s-main.dtsi to the board dts file, and have the "standard" clocks, as
+> > proposed in this patch and already used on all the other AM62 variants, in
+> > k3-am62p-j722s-common-main.dtsi.
 > > 
-> > > +
-> > > +  cell-index:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 3
-> > 
-> > Based on the if/then schema, you need 'minItems' here if the min is not 3.
-> > 
-> > Really, move the descriptions here and make them work for the combined 
-> > interrupt case (just a guess).
+> > +Jayesh that is the author of this specific change in k3-j722s-main.dtsi.
 > 
-> The difference here (as previously documented in prose) is by device
-> variant:
+> Jayesh, Nishanth, any comment on this?
 > 
->  for FEC:
+> Should I proceed with this last option ?
 > 
->    - one combined interrupt
+>    An alternative could be to override the "unexpected" clocks from
+>    k3-j722s-main.dtsi to the board dts file, and have the "standard" clocks, as
+>    proposed in this patch and already used on all the other AM62 variants, in
+>    k3-am62p-j722s-common-main.dtsi.
 > 
->  for TSEC, eTSEC:
-> 
->    - transmit interrupt
->    - receive interrupt
->    - error interrupt
-> 
-> Combining these cases might look like this, not sure if it's good:
-> 
->   interrupts:
->     minItems: 1
->     description:
->       items:
->         - Transmit interrupt or combined interrupt
->         - Receive interrupt
->         - Error interrupt
 
-Yep, that's good. I would say 'single combined' to make it abundantly 
-clear.
+no, with your explanation it is clear that your patch matches with the
+strategy we are using currently.
 
-Rob
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
