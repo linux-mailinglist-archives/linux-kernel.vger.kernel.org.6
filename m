@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-539555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11136A4A5CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:24:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEDAA4A5CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:24:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EB33BB46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:24:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2063189C2A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3101DEFDC;
-	Fri, 28 Feb 2025 22:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FB21DF268;
+	Fri, 28 Feb 2025 22:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qPSipR7P"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z1wq6nRt"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3861DED53
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8261DEFE6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781435; cv=none; b=SEmqasZVjgkpcTEIRpkqt8pyjxOODDRO8zerdXQuQdQedsKashWjU57oiM5oYEOQ74cSHv5Qbx8i2IIZUZ+SkYa/AA/pM+mY7ph0KvGDZiE9uulVEnp49oTvLpv6qWOKrmK0t6gYNJoaWLMMj1tb9thH/LM0Q+olHoBaSoshZIA=
+	t=1740781438; cv=none; b=OneygU8MapOJnRn2B9MdTXa4R/sVfAwkEITrCTH/VqiLN8mEKCsXvDMl6g+soN64o5QxKvGPVyvgKtME8x87s9gmgIE2WLXQMcI0usUv6UkbwLgVo6rEUScWd7EUO5pSQi8/c2dpVCJmZwtTDqoW7HQ1C5sG0fWOtzjqToVFMu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781435; c=relaxed/simple;
-	bh=txn0P05cQCFrXxSXwvz56otvn2hrpJG2Johc1iskpbc=;
+	s=arc-20240116; t=1740781438; c=relaxed/simple;
+	bh=jw2JvCMwh40S1sqr4HtAsdcBJhtA5W1IjdOGgQVIXGU=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=VqIH+WohADTmRQa4QJWnfVSqIHwEYtUzBGPMuFEMekDor0DIeEPU9DicoJIHw0VWwzptTBX/+lJNF3jfPHrC3SdB1fMYEEBK0Ax/8mBoYbOfcjcY3m1o+IK9fjzJuFeMqzgQh2HnqLoX0vNxu0hPsWVGITTqxbNO7Ss7T5tVrZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qPSipR7P; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=LhFuaxxxrCvivttA2cUDWh69c7bOm05zgqZ8PdmfBuHQ7Gsuo0R86tYISQ8G9w4Q3xFWepiwVmF632GqqBYE0Z95gGUB8sphy8ZXY206KaoWpQ5isiF67g5yRoWsNS/DE8gxWVOqLGl8hBzrSGZlLRX1bfxtaEsKRMa+KxCPqno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z1wq6nRt; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6fd4e4c7e02so16470767b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:23:54 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6f2bdb560ecso37496087b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:23:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740781433; x=1741386233; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740781435; x=1741386235; darn=vger.kernel.org;
         h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HT+nPv2tYgupeaKy7eqEuPRMTJ57BlbBsuhS7nbNqeE=;
-        b=qPSipR7P2rgdkG/kWz8lod+lLspE/S7IGk14hKCkvsVvAe5ibXNIPErRHX7GkOGb5i
-         4+521Vrrt9YYIMgJVCV7Oq7ujgz9mk6unRvIs+fcDAgCQfWfXWmrC5Pkjqb66eZCW+TS
-         lv40dFw87VKaSmuGZgbGoQaZ2VjubNCicn7xYq+wQWwLT+Muv/VEwV8NypRwm6tNDgxq
-         qo6Cq6o8GkmtnmQm4xL2RiiNxGiMWs9W9lG8oVEBzS0GINenKctMvVq8BEU1e8QsLrD8
-         85Mn2/zNUtbZbqIXglL9QUKA04UsOvV+jOraPd17aUGzxtZ/QnWMKB2gsx7hYrk2qbfy
-         Atfw==
+        bh=deGH2VjmLT83Kk+l97C6+20x9ip/iQR0QehEJSDELbI=;
+        b=z1wq6nRtNA9tyaDFtU95Xm6NvOZ/3VfqHXJVgl/GIcv4N6UNZPeFJNfWlfkO6uiyuI
+         aEiIWtCHHO38azHEwAa8JMjPU6TqcOzi138EsoVWikJR94uaynb08ZT2nF38eX0QptZx
+         hBEVl0OiIKvOsFJQx/sI3NaBSxPkxKAFiTiEvuyEXt3awMSAmrd8BviudIiE/4cfYjV9
+         IUGM+g3UDh8fFRtlLxF65WZK6LhJsh+PIxJ8Y3BJ6stoD9//FPrBgy/3eUl5sydqXt+R
+         XctqMJVdn22Rj2ptqtDWxuECEjp6ayYv7J6yURYUlz1WnQAY4jXezzuV8aAgG88s5vd3
+         Iybg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740781433; x=1741386233;
+        d=1e100.net; s=20230601; t=1740781435; x=1741386235;
         h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HT+nPv2tYgupeaKy7eqEuPRMTJ57BlbBsuhS7nbNqeE=;
-        b=m3uIa/xdPMnAosFvav4Q0mr/oFA+9ZDDSHuD6s/B3oaGJhMG3SYzwWgNaI0Q1BQ4LD
-         AAIhRuCf6FpIGbSLvDNqhnE1GjuhlQRVYdG/bur/JosHwK3ctxhIX+en4A17swCVygT5
-         T7nuaFXAbIgENxrtWBH+PdoUwLCBoNXQlX22/nqi852t/jCkOO7LH/oCf6bCWXpissVO
-         YEF9D15y1IixJvq97erexeGjOMVIZ2++VwMZwIHh98Y6m9s4h/IR660oPBC2UpxWdUqG
-         W2gfQOARcN4IHs9LymzCxaVYW27AAJ8F3tpUkZszInNHV/LJgiqCpSwStS3f8p3panjo
-         I29A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCVf6btGIWJhxJPkQejXwtXPeJqSkYM0vgKJWBxsvSQay9puknsR+h3POJkehGTWjG2L1mcEb8ZtSk4JA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxABwpJvtsjWDoe0nQekCRXBaHP5i0prNJy+0hgndMs0boJcaVS
-	JgiCFpnc+ImNzM+LVsLFJ+GY84iuVlzBy5EHklJr72lmgFnmJBXF76uSGNbY5vifR4P+/c3wAPi
-	NzdVJKg==
-X-Google-Smtp-Source: AGHT+IGMXYRBfiYKFmm/2HsXNIce5dF6aVnsil7+fnx7h+OYMmaozsXrjJsnVHcWdb0mTBHmTv3e3OdlQMjP
+        bh=deGH2VjmLT83Kk+l97C6+20x9ip/iQR0QehEJSDELbI=;
+        b=uTFRHoLEAvEBnKXpflWF7TsyK9ggQyf51w8aUCyGfjOX7pGoCOM8KI97q6+iko/cYg
+         TlW9I00bhtfTzoy+gdsQOQ3CZCaqo8CVIFQOXFEGMINFrdpcX1g04RawcE/0nm0Q7t/Z
+         VSZ+Uo17GxlN+n88zHd/5WFWrF9lDopEWT4LZtOXmqrGBVcXEH8/pF4VYcldJuxDy/1N
+         396bThKtw07p+Y66ANaHWY7+QYV5E7s2Hy0QOqqJ0ofaEfwMP60sUkrRPYv4kmzO1jd+
+         czkS3ho6BOfkll5JAxoSX2KC/9Exs58v8P1OJj3hlJVrIJJvgTOuqOKvWGWGY8z/v9ZP
+         Q+Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZHl5hOFIAcTc7ztz05x4w9oCdh8sY7krNaFnmVmSbwxxl2kXLlw8tcHdw7027jANUtQuItI/ZvyzBFZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfGslv8H/qwobBnToVZqLy55l2J+yHRe90AT7nVfdnZmCFcePc
+	T/TBOBiHkqyE8TwklUuKngJglx/URMp1ROpG7dyQu37HWXlRTBgNxJ5+ZX82Xb36InsDz0MkuJg
+	g7N2eJg==
+X-Google-Smtp-Source: AGHT+IFE7d3v320fruJZDyKQRPxtYcFs1S4WGsj03GrTm6oN1eMjN5dQCeQksAPTYLlZWWAXkO95dI7pXbC2
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:23a3:4d43:890f:dfd7])
- (user=irogers job=sendgmr) by 2002:a25:aa90:0:b0:e60:a52a:377a with SMTP id
- 3f1490d57ef6-e60b2e817edmr57514276.2.1740781433136; Fri, 28 Feb 2025 14:23:53
- -0800 (PST)
-Date: Fri, 28 Feb 2025 14:22:58 -0800
+ (user=irogers job=sendgmr) by 2002:a05:690c:528a:b0:6fb:78b2:8b70 with SMTP
+ id 00721157ae682-6fd4a10fda2mr5924667b3.7.1740781435497; Fri, 28 Feb 2025
+ 14:23:55 -0800 (PST)
+Date: Fri, 28 Feb 2025 14:22:59 -0800
 In-Reply-To: <20250228222308.626803-1-irogers@google.com>
-Message-Id: <20250228222308.626803-2-irogers@google.com>
+Message-Id: <20250228222308.626803-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228222308.626803-1-irogers@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Subject: [PATCH v2 01/11] perf debug: Avoid stack overflow in recursive error message
+Subject: [PATCH v2 02/11] perf evlist: Add success path to evlist__create_syswide_maps
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,30 +89,46 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 Cc: Ian Rogers <irogers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-In debug_file, pr_warning_once is called on error. As that function
-calls debug_file the function will yield a stack overflow. Switch the
-location of the call so the recursion is avoided.
+Over various refactorings evlist__create_syswide_maps has been made to
+only ever return with -ENOMEM. Fix this so that when
+perf_evlist__set_maps is successfully called, 0 is returned.
 
 Reviewed-by: Howard Chu <howardchu95@gmail.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/evlist.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index 995f6bb05b5f..f9ef7d045c92 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -46,8 +46,8 @@ int debug_type_profile;
- FILE *debug_file(void)
- {
- 	if (!_debug_file) {
--		pr_warning_once("debug_file not set");
- 		debug_set_file(stderr);
-+		pr_warning_once("debug_file not set");
- 	}
- 	return _debug_file;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index f0dd174e2deb..633df7d9204c 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1373,19 +1373,18 @@ static int evlist__create_syswide_maps(struct evlist *evlist)
+ 	 */
+ 	cpus = perf_cpu_map__new_online_cpus();
+ 	if (!cpus)
+-		goto out;
++		return -ENOMEM;
+ 
+ 	threads = perf_thread_map__new_dummy();
+-	if (!threads)
+-		goto out_put;
++	if (!threads) {
++		perf_cpu_map__put(cpus);
++		return -ENOMEM;
++	}
+ 
+ 	perf_evlist__set_maps(&evlist->core, cpus, threads);
+-
+ 	perf_thread_map__put(threads);
+-out_put:
+ 	perf_cpu_map__put(cpus);
+-out:
+-	return -ENOMEM;
++	return 0;
  }
+ 
+ int evlist__open(struct evlist *evlist)
 -- 
 2.48.1.711.g2feabab25a-goog
 
