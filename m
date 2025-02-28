@@ -1,97 +1,200 @@
-Return-Path: <linux-kernel+bounces-538885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFEB1A49E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:06:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D66A49E4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C8E3A9488
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B643D173186
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB428192D7E;
-	Fri, 28 Feb 2025 16:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B23270041;
+	Fri, 28 Feb 2025 16:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Wrl36nR7"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AzI0zl6Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3FC1EF36E;
-	Fri, 28 Feb 2025 16:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB778188CCA;
+	Fri, 28 Feb 2025 16:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758776; cv=none; b=iZklwLomNYdvt/lWLDlXY983n8zfrIgr0Pb7mN5GoQt+CwzOV/YcyG7eCwsWeWXFXzpFVycBQr8OD7bMidNZD2ESDdnSbZfcAdsE7bYdL276SPlPxsb2sOwhFWMD93rt2Wkin5le20SedAXiEJ79lpLBaiFdSd1f7scmILw55XE=
+	t=1740758796; cv=none; b=l560K95ISfYtrVvC+udOoe2m0vGObjMI8A7Ql+Uex+uGQbwALTP0rT8hltxIij13Ffcv6Lbuf0VzGYNvzhRr+snguVkolYZYFpowW/M6V9LitKF3ACw23BrAgU5nKiJoEvsYO05PXT8RB8hRVXoj0ZRhR3F/0tj0nkEvc4Wn88o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758776; c=relaxed/simple;
-	bh=cCAI4rWuDYKnaxg2mTxzS8Vaq+Ng6/IvAK31njQRb5o=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JDOcbtU8t0U1MPjfpI87oAKSZWodvFTLnzeMRFd3Xai9eSbqZ2j0bkYW7tWY6/oPghYIQZsqPthcDJw+Ld6wR2dlGJs8i/z9EpPP5K6kw2lLEcv4lKWZT46/IkUX5dtDGd+bIZ1g4Y1mWc18MCk+tKkrZipFSiPwQXGuTgtAmTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Wrl36nR7; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1740758766; x=1741017966;
-	bh=cCAI4rWuDYKnaxg2mTxzS8Vaq+Ng6/IvAK31njQRb5o=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=Wrl36nR7LUTOAThUn9KGPZ8MnvhKSg+epEuSZDJt8/nsWjm/Pm42VAc//yThb8eQq
-	 7h5RQG2r0DkQ4BUu5TfkqKE9LumRgRL1ov99prgit08pwRnfTorEvWVfbff1+MOAli
-	 MIXcfOgPkQNya/dWjOERy449ztQK22ANq09uuVN0dMx64HscDML50fPslJ8RUc8qLa
-	 coepNn20jEZHiPztbaqbj3ZrQidR+kG9Kqh0lm2lL9THe+E8gtbWRcMdAOOpBgXSXa
-	 fIbL2C2rRU3usuXG9XSXd69PbhmLSLM8WR4mc5nc02eZOlAA8+X49Ehy0RLfkoYiau
-	 Z649e6WxWNjXA==
-Date: Fri, 28 Feb 2025 16:06:01 +0000
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <kQ8hbiYXcV2MseWnElEexwgQswt23842ggoLF2xsd1hDd-4K106zO_gGho5K6KI147luazt2rZNOY3NOJP4JOw==@protonmail.internalid>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 8e4ea72dbc34624db418fc3d0543cb5df1a24145
+	s=arc-20240116; t=1740758796; c=relaxed/simple;
+	bh=dXAorRSjssnR7ekcMMO6QNLlWu/MVv+vqvNfNfvlUrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hwn6PtXXTFE1KUiIPxRUaA/u8EvEsmHSKvBG1ztpR4xE1rL7hgT3XGw1l/9WPMPnS0qmjlsx+tbHtnjSPJlY81mlSSEqq/X5ymbqQgdXZmxxOKtK+1f9+K/s6CD0LQAe7OlmrNYrLz4v9Fy4Ss5obJPzP7uzCi9w9biBLD8gJ/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AzI0zl6Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXFD3020127;
+	Fri, 28 Feb 2025 16:06:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	toaKbtWzPqfCKonl++yXx0474yo6RKTVtoUSN/vQrF8=; b=AzI0zl6QB8CN6n1Z
+	YULzHYME47bzzjuyL0Hk25qD+1AzCNPMhdjcAxBom/bxDEXO6NQvbdz8Y0GMgNjw
+	Zu470QjN56RcFX+MM66chsJV4kF39pg6lHyi/pGT+yYGO4Bn/qxx9SyaUgnxXksZ
+	ui9R6W7ygL8i0IvM3X9WDKANf0lD2+zpLms/TApDAc2eYSpz5jSHRKHUjraYHGHL
+	mEf44YT7+o5Qtd9xIGAkxApdGCzSwd/7hhDsLxbQtef+4Wln5Bkb7Bkqb9obLNBR
+	WDOkSziN43njgHtqJdNaNdCSTyxAFw60tUuBJWBVqwWxv1iXYiQPJ20sZtjTHzNU
+	5DEbpw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4539uphaap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 16:06:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SG6PhO011248
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 16:06:25 GMT
+Received: from [10.216.20.93] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Feb
+ 2025 08:06:21 -0800
+Message-ID: <8f35ef14-49e8-4484-9a66-58b91a537681@quicinc.com>
+Date: Fri, 28 Feb 2025 21:36:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/13] wifi: ath12k: add support for fixed QMI firmware
+ memory
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath12k@lists.infradead.org>
+CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250227191034.1949954-1-quic_rajkbhag@quicinc.com>
+ <20250227191034.1949954-8-quic_rajkbhag@quicinc.com>
+ <e702e39a-e199-4ea4-a066-0b2e26253f98@oss.qualcomm.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <e702e39a-e199-4ea4-a066-0b2e26253f98@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FsXWok401kwqd_11_vK3FRmt0B_GHnf4
+X-Proofpoint-GUID: FsXWok401kwqd_11_vK3FRmt0B_GHnf4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_04,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280117
 
->=20
-> Hmm... Something went wrong here -- this patch looks broken, e.g. the
-> SoB is at the end, the title does not say v2, these replies seem to be
-> part of the patch, etc.
->
-Hi,
+On 2/28/2025 9:08 PM, Jeff Johnson wrote:
+> On 2/27/2025 11:10 AM, Raj Kumar Bhagat wrote:
+> ...
+>> +static int ath12k_qmi_assign_target_mem_chunk(struct ath12k_base *ab)
+>> +{
+>> +	struct reserved_mem *rmem;
+>> +	phys_addr_t bdf_size;
+>> +	int i, idx, ret;
+>> +
+>> +	for (i = 0, idx = 0; i < ab->qmi.mem_seg_count; i++) {
+>> +		switch (ab->qmi.target_mem[i].type) {
+>> +		case HOST_DDR_REGION_TYPE:
+>> +			rmem = ath12k_core_get_reserved_mem(ab, 0);
+>> +			if (!rmem) {
+>> +				ret = -ENODEV;
+>> +				goto out;
+>> +			}
+>> +
+>> +			if (rmem->size < ab->qmi.target_mem[i].size) {
+>> +				ath12k_dbg(ab, ATH12K_DBG_QMI,
+>> +					   "failed to assign mem type %d req size %d avail size %lld\n",
+>> +					   ab->qmi.target_mem[i].type,
+>> +					   ab->qmi.target_mem[i].size,
+>> +					   rmem->size);
+> 
+> The v6 version had a kernel test robot build warning here when building for
+> MIPS and it looks like nothing has changed.
+> 
 
-should I post it again with a fix, then?
+The kernel test robot warning came just after I posted the v7. Thus, the v7
+version also have the same warning. I will send v8 in sometime to address this.
 
-> (Also, by the way, in case it helps, the message got marked as spam in
-> my side for some reason).
->=20
+> I don't know the history of why struct reserved_mem::size is of type
+> phys_addr_t, but that type has a different size depending upon architecture,
+> therefore you can't use %lld.
+> 
+> To print it correctly you either need to use the %paa format that is meant for
+> that type, or probably better would be to assign it to a variable of type
+> size_t and then use %zu (and use that variable in the size test as well)
+> 
 
-Cannot comment on that. The mysteries of a spam filter :)
+Sure will use variable to type size_t to address this.
 
-On 250228 0754, Boqun Feng wrote:
->=20
-> One meta comment: could you add examples for the usage of UniqueRef?
-> Ideally, we should have example code for all the new APIs, so that we at
-> least have some test payload on them (doctest will be generated as kunit
-> test).
+> (also consider if the other %d formats should be %u instead)
+> 
 
-For now I can point you to the implementation for block::mq::Request which
-Andreas did on top of this. So there will shortly at least one actual user
-of the API (which uses all the features, as I believe).
+will update to %u.
 
-https://github.com/metaspace/linux/commit/797b90ae0f83b45495364d4c31651bca0=
-6471ef0
+>> +				ret = -EINVAL;
+>> +				goto out;
+>> +			}
+>> +
+>> +			ab->qmi.target_mem[idx].paddr = rmem->base;
+>> +			ab->qmi.target_mem[idx].v.ioaddr =
+>> +				ioremap(ab->qmi.target_mem[idx].paddr,
+>> +					ab->qmi.target_mem[i].size);
+>> +			if (!ab->qmi.target_mem[idx].v.ioaddr) {
+>> +				ret = -EIO;
+>> +				goto out;
+>> +			}
+>> +			ab->qmi.target_mem[idx].size = ab->qmi.target_mem[i].size;
+>> +			ab->qmi.target_mem[idx].type = ab->qmi.target_mem[i].type;
+>> +			idx++;
+>> +			break;
+>> +		case BDF_MEM_REGION_TYPE:
+>> +			rmem = ath12k_core_get_reserved_mem(ab, 0);
+>> +			if (!rmem) {
+>> +				ret = -ENODEV;
+>> +				goto out;
+>> +			}
+>> +
+>> +			bdf_size = rmem->size - ab->hw_params->bdf_addr_offset;
+>> +			if (bdf_size < ab->qmi.target_mem[i].size) {
+>> +				ath12k_dbg(ab, ATH12K_DBG_QMI,
+>> +					   "failed to assign mem type %d req size %d avail size %lld\n",
+>> +					   ab->qmi.target_mem[i].type,
+>> +					   ab->qmi.target_mem[i].size,
+>> +					   bdf_size);
+> 
+> the same issue exists here.
+> again this would be fixed by making bdf_size type size_t and using %zu
+> 
 
-But if you still need a separate test, I can do one during the next couple
-of days.
+Will use a common variable (size_t avail_size) to address this and the above.
 
-Best,
-
-Oliver
+>> +				ret = -EINVAL;
+>> +				goto out;
+>> +			}
+>> +			ab->qmi.target_mem[idx].paddr =
+>> +				rmem->base + ab->hw_params->bdf_addr_offset;
+>> +			ab->qmi.target_mem[idx].v.ioaddr =
+>> +				ioremap(ab->qmi.target_mem[idx].paddr,
+>> +					ab->qmi.target_mem[i].size);
+>> +			if (!ab->qmi.target_mem[idx].v.ioaddr) {
+>> +				ret = -EIO;
+>> +				goto out;
+>> +			}
+>> +			ab->qmi.target_mem[idx].size = ab->qmi.target_mem[i].size;
+>> +			ab->qmi.target_mem[idx].type = ab->qmi.target_mem[i].type;
+>> +			idx++;
+>> +			break;
 
 
