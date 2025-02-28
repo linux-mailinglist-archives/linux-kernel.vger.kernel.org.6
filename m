@@ -1,163 +1,137 @@
-Return-Path: <linux-kernel+bounces-539144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1197A4A179
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:27:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA92A4A185
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274E3189B287
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:27:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFC5A7A4F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CA27560B;
-	Fri, 28 Feb 2025 18:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714F42755E3;
+	Fri, 28 Feb 2025 18:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="HIZLTQKa"
-Received: from aposti.net (aposti.net [89.234.176.197])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="qN41fWc7"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14229274253;
-	Fri, 28 Feb 2025 18:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3CC1C07D5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767244; cv=none; b=feaML1Fa6QouG9VLQpWmpumD/pmshwWY18JnSUk2/RrrvmL/RzDZFsryh2sWAUucmT6MC4TqSmlvJeiaY8EsJf2K1730B4c2Id1Me5EbqymQKaqiFFRz3c3TXSRzr06dp+88+LdQJQWU2Ny6nOjAgQakPBcAhvTRudj54jIry3s=
+	t=1740767291; cv=none; b=WpEAEtSsteYKE7xfTZMF/cMIrbyGECO7/f5oSQPhLoMYp0QHpJVDvMn+0JJDlQvqOtOyvxnAMm6f6n5ARR4d7BvbUpRquNUZtxf/EHacGvjRsEk7wx9OeWrO0oSerOUX8ehnnVeQuOC6bI+9inkBNA+oo6sSqNFmxsRy00ZxCMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767244; c=relaxed/simple;
-	bh=67MIZhOGaz6uNuzThDvVgUejH2NJv/lVLfIlQwxWAaY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GgGQnvXLHbvlYj+m0GBYcX/g5u654XjSYRqpPj42IPTYiDvoRmGnjcSSxrpXpH1CBYv6DTsFeaWc291HKBa41w8sttOi8WJhnlZ9uM3w5LWYO8cMwcBJaIxKx7QQXHPeE5C6ZZSfxZoXeo8TolNsXGSgm+beDB8eabSlBjkm6X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=HIZLTQKa; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1740767234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hunC8aIjFL8iJizsnuivXHSj1ZxS4AePrCKLeqSA1Do=;
-	b=HIZLTQKaoDNgNrovU4MAqTxJVO4u5918To8gUH3iKzSPqqpvSO5wNcaqMxUeUgYVDcROxV
-	63pQc/UhJTi4wXY+QNXMuYup0rcA60Mm+b70j9yCpYYvdPjOKyPqcbGQxUXafevum9S24w
-	j7XIXsGattyqB6INNm6tK348Xunxw5s=
-Message-ID: <f1ffee11ef563d8c7486503eef3d21b8b7e2ccd9.camel@crapouillou.net>
-Subject: Re: [PATCH v2 4/4] pinctrl: ingenic: jz4730: add pinmux for I2S
- interface
-From: Paul Cercueil <paul@crapouillou.net>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>, Linus Walleij	
- <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>, Paul Boddie
- <paul@boddie.org.uk>,  Tim Bysun <tim.bysun@ingenic.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Date: Fri, 28 Feb 2025 19:26:11 +0100
-In-Reply-To: <1d50f0c980155dd22ccd164a6d281e3ac68e7446.1740749637.git.hns@goldelico.com>
-References: <cover.1740749637.git.hns@goldelico.com>
-	 <1d50f0c980155dd22ccd164a6d281e3ac68e7446.1740749637.git.hns@goldelico.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740767291; c=relaxed/simple;
+	bh=RfYd5Dgh4U3T5nzqDGGI2aUFj1w3UMgwy0swiuP8Yy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIqED7lIJ0IqOawm+azX+a9uaHdsDojpjO+ebddtZU4VG3kWVpHyz0RMEm9rXyCO74/Rw92PGTYZSSLZivX1PO82Q9WOp2yL1YKr+bzR1U5EGgCNSjPlQDihYxVBTOpFLEe3uEMm0ZPy9GsNGa4JerKY0t8kQlSsVWxw87Y9cbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=qN41fWc7; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e88f3159e3so19938646d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:28:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740767286; x=1741372086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D1HeI5Hj5FdgZC1kQ9hnOVpQk/bjqVhL1cfDe9mBVxU=;
+        b=qN41fWc7fO8hiVgpkx7PhmvA1dfrdBIqVpQFo69ulXf2zp1hNun/fda4j7jC9k9xy3
+         ZuWuzJ98kNkpQs2+8Ey8HhTAr1N1/H0HQ7E44pfjddF8QeKy4lLLw4fCrERyw7kisyMy
+         +vIHO0StbHubA2jC2e8mHOJNJr3p7OmDhMzqvyjTgj9RCu3a/lNqOuQrRm8N0y2ljtJE
+         Bvvj5rsQQqXUaN9m9eIZlDz7KlG3jXu4TDJAHRjevNU4TvPid9JHXKPZdk3KY9DSQcyN
+         KRBWZrBbGC1Zs91WE8UHGUgDPS7x0HXXcikdREu+fdsifKsdLmb1kw6NKPp02Au8lJGu
+         q+EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740767286; x=1741372086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1HeI5Hj5FdgZC1kQ9hnOVpQk/bjqVhL1cfDe9mBVxU=;
+        b=qFrHlmRKIGpmYhIAk5iw5JImgupf8SvbQaJeXjquNu3OWvXRzxmzkmsjraxFdOqOdt
+         /EoW3AW2vQunJf0IyAC/68kCjrfE+h75aPIf4KGkThQcDBfHj9m6tMmRdamyjSuxqHlk
+         ketEAJNmiYAMfXCGqvhxCakd86K0MheMwB0JvyxrXReCuuUK4b/jRcyDBZksLIKuodIZ
+         ep0Ei/n3JFt9kF1HfElbiGF68CPH6A1BYzuCX79qCXGbOn5TwOsqcRZHPaCYIRBL1LTd
+         6K1HrGyLoNoiir9Lyq60EiXFGt1lC395f+LPkF8Sz7P/dXllanYMGR3ED5SFyhR1kMNR
+         JQcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO6svLgB+egBi0zcKmn9MFzZ4wbknwfhXzL7UYTau9zJ2Ontreuh4NQCwIy7htK0FiDnfMsQI+vTO32jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzYj1MUOI/+h5B6dngM+vDWCmlzo+hK2lnXPExW6tOHl7BLimc
+	/jbKVhLkrmWZ8Kwbh2TiX78GLyrnPPJVOrcncBFLAGmvlvmlojEj0BBeQwkcVSk=
+X-Gm-Gg: ASbGncsXWmMswHJ8k6FbR3EiKhr1b/I3oflb/tt6f6NXLstZaZxdYirfGrrrW19k0jM
+	cPj+jT45Wq02tt040EoD96B8STKk+qAjbp9PvoEprKAg/kwhkRhhYNH9ZjvdTL+6/N/bd3fEhqw
+	Eckj9SNRAONgacLBVY/xWevUewBsI7Qnm5aRM04ZuKhRK8qf/+mDDhKLpeWfxxUsZc9W7CUCMHZ
+	wF26p/cHLlCkmAHxjCBQJBogl0WQH3l3T+VL6wb38tHZYx6793Wl48pJ0Hr709ulhBqpRkxpuc/
+	dXsDR6MNqihUY0q5zRMosEam
+X-Google-Smtp-Source: AGHT+IGs6srUxnr6AWXxdYbrfmwZOp03iNYHFv1+6TtdPkGxEDbRLb7+2Svam+kAW+1eMjMaYvZVrA==
+X-Received: by 2002:ad4:5ba3:0:b0:6e6:684f:7f6f with SMTP id 6a1803df08f44-6e8a0cd3ed4mr73143116d6.7.1740767286445;
+        Fri, 28 Feb 2025 10:28:06 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976ccbacsm24682146d6.93.2025.02.28.10.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 10:28:05 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:28:04 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Brendan Jackman <jackmanb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type
+ change
+Message-ID: <20250228182804.GB120597@cmpxchg.org>
+References: <20250227-pageblock-lockdep-v1-1-3701efb331bb@google.com>
+ <202503010129.rJvGqZN1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503010129.rJvGqZN1-lkp@intel.com>
 
-Hi Nikolaus,
+On Sat, Mar 01, 2025 at 01:31:30AM +0800, kernel test robot wrote:
+> Hi Brendan,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on d58172d128acbafa2295aa17cc96e28260da9a86]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Brendan-Jackman/mm-page_alloc-Add-lockdep-assertion-for-pageblock-type-change/20250228-002107
+> base:   d58172d128acbafa2295aa17cc96e28260da9a86
+> patch link:    https://lore.kernel.org/r/20250227-pageblock-lockdep-v1-1-3701efb331bb%40google.com
+> patch subject: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type change
+> config: x86_64-buildonly-randconfig-002-20250228 (https://download.01.org/0day-ci/archive/20250301/202503010129.rJvGqZN1-lkp@intel.com/config)
+> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503010129.rJvGqZN1-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503010129.rJvGqZN1-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from mm/page_alloc.c:19:
+>    In file included from include/linux/mm.h:2302:
+>    include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>      518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+>          |                               ~~~~~~~~~~~ ^ ~~~
+>    In file included from mm/page_alloc.c:44:
+>    include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>       47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+>          |                                    ~~~~~~~~~~~ ^ ~~~
+>    include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>       49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+>          |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+> >> mm/page_alloc.c:421:3: error: call to undeclared function 'in_mem_hotplug'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>      421 |                 in_mem_hotplug() ||
 
-Le vendredi 28 f=C3=A9vrier 2025 =C3=A0 14:33 +0100, H. Nikolaus Schaller a
-=C3=A9crit=C2=A0:
-> I2S is used for the sound codec of the Alpha400.
->=20
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 13 ++++++++++++-
-> =C2=A01 file changed, 12 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index 08e082e84f5c6..6d7dc077c373e 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -209,10 +209,14 @@ static int jz4730_nand_cs4_pins[] =3D { 0x56, };
-> =C2=A0static int jz4730_nand_cs5_pins[] =3D { 0x57, };
-> =C2=A0static int jz4730_pwm_pwm0_pins[] =3D { 0x5e, };
-> =C2=A0static int jz4730_pwm_pwm1_pins[] =3D { 0x5f, };
-> -
-
-Just a nit - but you remove a blank line in patch 4/4 that was added in
-3/4, better not add it in the first place :)
-
-That's the only comment I have on the whole patchset, so either fix it
-in a v3 while adding my review tag, or maybe Linus can do it when
-applying the patchset.
-
-Cheers,
--Paul
-
-> =C2=A0static int jz4730_mii_pins[] =3D { 0x70, 0x71, 0x72, 0x73, 0x74, 0x=
-75,
-> 0x76,
-> =C2=A0				 0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c,
-> };
-> =C2=A0
-> +static int jz4730_i2s_mclk_pins[] =3D { 0x44, };
-> +static int jz4730_i2s_acreset_pins[] =3D { 0x45, };
-> +static int jz4730_i2s_data_pins[] =3D { 0x46, 0x47, };
-> +static int jz4730_i2s_clock_pins[] =3D { 0x4d, 0x4e, };
-> +
-> =C2=A0static u8 jz4730_lcd_8bit_funcs[] =3D { 1, 1, 1, 1, 1, 1, 1, 1, 2, =
-2,
-> 2, };
-> =C2=A0
-> =C2=A0static const struct group_desc jz4730_groups[] =3D {
-> @@ -235,6 +239,11 @@ static const struct group_desc jz4730_groups[] =3D
-> {
-> =C2=A0	INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
-> =C2=A0	INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
-> =C2=A0	INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
-> +	INGENIC_PIN_GROUP("i2s-mclk-out", jz4730_i2s_mclk, 1),
-> +	INGENIC_PIN_GROUP("i2s-acreset", jz4730_i2s_acreset, 1),
-> +	INGENIC_PIN_GROUP("i2s-data", jz4730_i2s_data, 1),
-> +	INGENIC_PIN_GROUP("i2s-master", jz4730_i2s_clock, 1),
-> +	INGENIC_PIN_GROUP("i2s-slave", jz4730_i2s_clock, 2),
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const char *jz4730_mmc_groups[] =3D { "mmc-1bit", "mmc-4bit"=
-,
-> };
-> @@ -251,6 +260,7 @@ static const char *jz4730_nand_groups[] =3D {
-> =C2=A0static const char *jz4730_pwm0_groups[] =3D { "pwm0", };
-> =C2=A0static const char *jz4730_pwm1_groups[] =3D { "pwm1", };
-> =C2=A0static const char *jz4730_mii_groups[] =3D { "mii", };
-> +static const char *jz4730_i2s_groups[] =3D { "i2s-data", "i2s-master",
-> "i2s-slave", };
-> =C2=A0
-> =C2=A0static const struct function_desc jz4730_functions[] =3D {
-> =C2=A0	INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
-> @@ -263,6 +273,7 @@ static const struct function_desc
-> jz4730_functions[] =3D {
-> =C2=A0	INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
-> =C2=A0	INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
-> =C2=A0	INGENIC_PIN_FUNCTION("mii", jz4730_mii),
-> +	INGENIC_PIN_FUNCTION("i2s", jz4730_i2s),
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct ingenic_chip_info jz4730_chip_info =3D {
-
+The patch is missing a dummy in_mem_hotplug() in the
+!CONFIG_MEMORY_HOTPLUG section of <linux/memory_hotplug.h>.
 
