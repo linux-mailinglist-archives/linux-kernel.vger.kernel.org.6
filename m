@@ -1,143 +1,151 @@
-Return-Path: <linux-kernel+bounces-537868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDBFA491EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:10:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB6CA491EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8F33B8550
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3998A1892427
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CEE1C5F28;
-	Fri, 28 Feb 2025 07:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33638748F;
+	Fri, 28 Feb 2025 07:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9ZjY+9K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgLa4Ayp"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8F0748F;
-	Fri, 28 Feb 2025 07:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85E21C3F04
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740726621; cv=none; b=fFxaKYdYoamyQAkVNh8FxA3V6b/9trAAywwcrfBP7ozHsHo7VmwV6ceGVL/NAyWrTmYtIp+Y969lxGINw0Q+okAyt92GSW2gbG5m7db0UM/tlTfP9zYD+hmpuMoG57Bh97qkIUwJNhGQoZpqojblGuu84ZX1UkspSPKzjYTNqlk=
+	t=1740726655; cv=none; b=Fbr2ha8Gz9ovm7JqsbY08a+6zyPb5dINIFra606xZCMJstyT3+Nm4iMV2NQC3vbqkzIP5qgpJTZOh0xeUHR3j8ElV6/N0W2TgzSEVhwSfkEhEx21WSoibEhc5rkUxwBVrDK384q/EW7p2qbGEindN/j/cbE0lng5QokLGmqfWeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740726621; c=relaxed/simple;
-	bh=DCd0I/cVPewufc8cgvPCOtcy/0V6+cNp1IwfSlZ1nyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g/kUI8lDkDVPJAgpz4Xx2eup94epg7ztGdVkCNbX2/GsCwXXcERZp87fbGVqkVh2yxqGv+2yceV69tPLOkus9RTsojh0PSLuGNm/rk/ia6Pn0CUyFZLxpbb7UpRJ+kwvT1tOCfXzBvdmmL3GNgNCQU+8GSYYJvVGge6/YpfamXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9ZjY+9K; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740726620; x=1772262620;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DCd0I/cVPewufc8cgvPCOtcy/0V6+cNp1IwfSlZ1nyU=;
-  b=U9ZjY+9KB6hG6XCCqb+gaxBKslepulWfWvW4egHLA9KQ4MVV9bDegi4k
-   lbxBa2Hs+4WTSh504nOIWQ93Jsr+1LSVLAvpzY1Oy0wVh1vySa0fNKnQF
-   ekEG5ZPh1rFiSklhQogPJgiiCud29ZZ3C9n66D1Ky/cwtjkTpb3WRkLt+
-   yacTAfliFanlP+vkqczd3GD+zYChhwZuXLB0+hoW06p1aoAhfJRJzcclb
-   7Yt8AhGjoKqJOrfmdjP35vO4Qjuoh9NEV88wEWhB2xmZ/J2huXF34cchY
-   FtQBmVvrDPSli4Hh7R1MnkyvQslnMCtFSEoTFLaQ1QzZj7ukkhNfCBwn2
-   A==;
-X-CSE-ConnectionGUID: kXBVsSAfQ1mk9CDGUrXVkQ==
-X-CSE-MsgGUID: NcbAfDmtSYudxpdGlkYsTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41675328"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="41675328"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 23:10:19 -0800
-X-CSE-ConnectionGUID: Qpy+oCb3SKqgmF9RCcACRQ==
-X-CSE-MsgGUID: 6ou7cYgKT46WlAsCotsgRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117780392"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa007.jf.intel.com with ESMTP; 27 Feb 2025 23:10:16 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: deller@gmx.de,
-	tzimmermann@suse.de,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2] fbdev: pxafb: use devm_kmemdup*()
-Date: Fri, 28 Feb 2025 12:40:09 +0530
-Message-Id: <20250228071009.150971-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740726655; c=relaxed/simple;
+	bh=e5rDJP51pJSQA9OjMXcqMI2dne8pHRlzXVWljVTaMqU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FRGaRkMoyF8rb1ov0Zw/ndZobvgMxyKJS1TsoMR8Fvmrf+eff1MR+yOqc7L4MYrsKb9vWf10h58Izh5LzmtJMSrsf6a/etiokxd617QSDM1WcZPoMq3/P7HbvbxieZn3saNNJmR/GuuV0eBJBj+0F4/TOIilHalD/4uH3lRYe8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FgLa4Ayp; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-548878c6a5aso1859938e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740726652; x=1741331452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6t8UyiXR6dJzEwnQ10IpflUTVUpmG0RA8RwVK5o31Pc=;
+        b=FgLa4AypjRg2k4PGgpJh47iyy/rk+LZMqTTQOFizacfm7rUpLBqAavE78clgPuhZGU
+         xu10q/QSArFRNXK5qcHKZYQk+UV3i9jg5T8Lmc+g3g57vo/WN55uttJhSqdWwRlrY69C
+         3XbN4252ku/368UI3CHlsLueGumYrC1MGc+ENg352GgepcSHiCi5qI3isbAovPgnd0hV
+         JxAGRfmkAUKNzyWRMSgL0iby5h7qXOKvFYRczufhVMAh2H3EusjULuQk+aZIGd+I9R1y
+         AkRPgHy4Qyqq+8KeCSWecbreycIwznp+m1ABeJI5DhLZ+H9Zxm1rJ8MCrYRkaSROpuyJ
+         NxEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740726652; x=1741331452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6t8UyiXR6dJzEwnQ10IpflUTVUpmG0RA8RwVK5o31Pc=;
+        b=ZO988BbnCOjKs1NTxmbsxe7HX845bKo64s36/xW/JwRRDRTCJmhniSqcqy4Y6NSOZn
+         bqY4QgyfAa660coBsCdh/kDYXndXVsBVANDZl3bIyNO8hbM4rQmZPWJIKX4t3LCC4SFB
+         c6cqIFGGZrKvvjYC/tGq2GxHL9/DkRujlS+9K9ixkdTVi7mxzzcltgJHLi9X1HpvguB/
+         YQcYy99KOKx2cFMgUeOJ48BNsxNF+CQTTN2cYb6gOQjrv7yBnHK9STfhXq2TRRsgzxIE
+         VkP9fGWn3CooBzVTZAoZ8mDJhPJjrMujnnb6CpYGQgL/Qv9dgUJq6wtJ1Zrq0/0wonRG
+         fN5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/jmHyH15GpP1bWGDLgYlfTGB3wWJymQ3yJpQVqFyemA/wTs7Q9iuBwtzd2H++sfPJJzTyEnrpf2PcUc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYFtx+gzlBpOOz9Ra1lMnEBVCl/+gui113TU2oVXFWfY/GD346
+	6bm5scGukqhKSfAzdJWp4vq3nXBNy+/GnRp2eD0tJ+fHSsXK585RVappAQNzGyVE3XhVxDjYLJS
+	EuehN04ti6ZPs1LC1URp1HSdJSGeO7cpFHGjypA==
+X-Gm-Gg: ASbGncv6EStsJh73VAy+UgFE+VzMdGAcWKZMPhN0CfR2ioJCBlYU9wSayUkLOV0tyzY
+	bRNyHqvY8LtYmUxWabFBsvuqftsAt7HFvvOKiS+zNigUn8ugWPCy799k1wWNssfls+BDB1EYyOo
+	vPuyypPxI=
+X-Google-Smtp-Source: AGHT+IEC8EFfAnGhrHuegVK0MjbEHUyO9MnPQrdToy4hgdsyyArn7uO/+zOsNOpafVCwixOTgScGZBK94+hpQYf/RDo=
+X-Received: by 2002:ac2:4e14:0:b0:545:93b:30bf with SMTP id
+ 2adb3069b0e04-5494c37d894mr945955e87.41.1740726651750; Thu, 27 Feb 2025
+ 23:10:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org> <20250226-max77759-mfd-v2-5-a65ebe2bc0a9@linaro.org>
+In-Reply-To: <20250226-max77759-mfd-v2-5-a65ebe2bc0a9@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 08:10:39 +0100
+X-Gm-Features: AQ5f1JoHHtaG81ilR6V1iA1OlWE3XjM-gnPRidsiCBk8KODwITMM0tJzyfBKqBU
+Message-ID: <CACRpkdYoWuJzjqiKrSNzdXV+5N9Gp0n+pdCwSZgocwy0JHo7Vw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert to use devm_kmemdup() and devm_kmemdup_array() which are
-more robust.
+Hi Andr=C3=A9,
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
+thanks for your patch!
 
-This depends on changes available on immutable tag[1].
-[1] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
+mostly looks fine, given the MFD design is accepted.
+Nitpicks below:
 
-v2: Split patch series per subsystem
+On Wed, Feb 26, 2025 at 6:51=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 
- drivers/video/fbdev/pxafb.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+> +static irqreturn_t max77759_gpio_irqhandler(int irq, void *data)
+> +{
+> +       int handled =3D 0;
 
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index 4aa84853e31a..ee6da5084242 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2233,32 +2233,27 @@ static int pxafb_probe(struct platform_device *dev)
- {
- 	struct pxafb_info *fbi;
- 	struct pxafb_mach_info *inf, *pdata;
--	int i, irq, ret;
-+	int irq, ret;
- 
- 	dev_dbg(&dev->dev, "pxafb_probe\n");
- 
- 	ret = -ENOMEM;
- 	pdata = dev_get_platdata(&dev->dev);
--	inf = devm_kmalloc(&dev->dev, sizeof(*inf), GFP_KERNEL);
--	if (!inf)
--		goto failed;
--
- 	if (pdata) {
--		*inf = *pdata;
--		inf->modes =
--			devm_kmalloc_array(&dev->dev, pdata->num_modes,
--					   sizeof(inf->modes[0]), GFP_KERNEL);
-+		inf = devm_kmemdup(&dev->dev, pdata, sizeof(*pdata), GFP_KERNEL);
-+		if (!inf)
-+			goto failed;
-+
-+		inf->modes = devm_kmemdup_array(&dev->dev, pdata->modes, pdata->num_modes,
-+						sizeof(*pdata->modes), GFP_KERNEL);
- 		if (!inf->modes)
- 			goto failed;
--		for (i = 0; i < inf->num_modes; i++)
--			inf->modes[i] = pdata->modes[i];
- 	} else {
- 		inf = of_pxafb_of_mach_info(&dev->dev);
-+		if (IS_ERR_OR_NULL(inf))
-+			goto failed;
- 	}
- 
--	if (IS_ERR_OR_NULL(inf))
--		goto failed;
--
- 	ret = pxafb_parse_options(&dev->dev, g_options, inf);
- 	if (ret < 0)
- 		goto failed;
+bool handled =3D false;
 
-base-commit: b8c38ccb2ca52b9a38cfeb9f89abab5d6e713221
--- 
-2.34.1
+(...)
+> +               for_each_set_bit(offset, &pending, MAX77759_N_GPIOS) {
+> +                       unsigned int virq;
 
+I usually just call this "irq", as it's not any more virtual than any other
+Linux magic number, and it can confuse people working with
+actual virtualization when we call things virtual like this.
+
+> +
+> +                       /*
+> +                        * ACK interrupt by writing 1 to bit 'offset', al=
+l
+> +                        * others need to be written as 0. This needs to =
+be
+> +                        * done unconditionally hence regmap_set_bits() i=
+s
+> +                        * inappropriate here.
+> +                        */
+> +                       regmap_write(chip->map, MAX77759_MAXQ_REG_UIC_INT=
+1,
+> +                                    BIT(offset));
+> +
+> +                       virq =3D irq_find_mapping(gc->irq.domain, offset)=
+;
+> +                       handle_nested_irq(virq);
+> +
+> +                       handled =3D 1;
+
+handled =3D true;
+
+> +       chip->gc.base =3D -1;
+> +       chip->gc.label =3D dev_name(&pdev->dev);
+> +       chip->gc.parent =3D &pdev->dev;
+> +       chip->gc.owner =3D THIS_MODULE;
+
+The core already assigns THIS_MODULE so you can leave it
+unassigned.
+
+Yours,
+Linus Walleij
 
