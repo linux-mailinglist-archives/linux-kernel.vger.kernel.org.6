@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-537906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0ED6A49250
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:37:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F423FA49251
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1CAF7A1E83
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BABE16E19D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B11F1D61B7;
-	Fri, 28 Feb 2025 07:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2491CAA99;
+	Fri, 28 Feb 2025 07:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jk5iztb0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XrpMOq+g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J8CccUAe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XrpMOq+g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J8CccUAe"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3E01D5CFA;
-	Fri, 28 Feb 2025 07:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E95E1C5D69
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740728225; cv=none; b=AYlC0qstNz7e/mL0DZH/jodyNTJTlsTrn2d95igjdRe3WkoQdxcZU/K7VbawKbJI5IApcXwPbsx5mMHE9442PHygrUFnQtd9YrOCf5iAcCnPmx8SQBdtnQhEh//gG6LbtKvKw8N1SHfLAyloRlZIKiNsb4qcNBW6IZlwRapEqFw=
+	t=1740728246; cv=none; b=GSY6K99eM5C6R/Sb3vjOLZ1w1gI2mT8GgXVpMMPWUm/dilmzwgZWhBiY7VF8ogGK9C0U6GR93+AYni732hcfg+lJBmFUZKUk2cIK3a7iptUJej6BnoPRO8qHU3uRe0WzB0wgb7XPVN++WvdZohVbm4qqlS9wyVtU6aQE5r201oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740728225; c=relaxed/simple;
-	bh=B3xrc/pLQJ5ss49IeFjXDa74Yu0HGjjmnZRSh6JToXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FVk+7/5ezFKTRajcQObz37GNIdGUYX20eH36TgWZ1e08v7lkNRVQM8TW6MNgjHvI27H1bHKSxjTscdYJa4iWhs94rHnC+5ar4t36bUmww3wNt8aeQmGG32+agsDUhEEjEvdt4ii5DLUwWlb05s3c5h9nVZa5x8volqL+2VIDyGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jk5iztb0; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740728224; x=1772264224;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B3xrc/pLQJ5ss49IeFjXDa74Yu0HGjjmnZRSh6JToXk=;
-  b=Jk5iztb0sNQs/zv9VPliHLXaeoR1oMvg28K9JUyY+/ewxWhMnXwp6a4o
-   l6E2lPkRHZSYJGlc7u6sSbWpSX+cU47MIXhsjoCLksg9yiq907NLUgm+A
-   tAh3+lEinrIG7n9+7zToZ4Mq8BcEDJm+InJawyTvsgMoF+Q4w6qC0FfZM
-   csOOsslApbz23qR38XBddTtiZTPkWWPXHXfuX01pF7LbmKnr7wmLgJ3ZM
-   nlzqyjlRHdETyD7SSn2EhO6ZtJb+u4TDAlso8ZfnkSlcxRR9Kb3GkptOS
-   CQX4szJlHNDnc6Ayl0D22KEZanhTDWNnOc4ox8JYtQFe7ihlpSE7NLv81
-   w==;
-X-CSE-ConnectionGUID: 58XF2kRXTq+3R6BY9APTPg==
-X-CSE-MsgGUID: xYfbpercTfmpoOBqyFdhSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45298241"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="45298241"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 23:37:03 -0800
-X-CSE-ConnectionGUID: 0+0b0zieSpmduUXST7b5Yw==
-X-CSE-MsgGUID: hocvvxIlRA2r1MsmobOkrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121388014"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa003.fm.intel.com with ESMTP; 27 Feb 2025 23:36:59 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: eugen.hristev@linaro.org,
-	mchehab@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	hugues.fruchet@foss.st.com,
-	alain.volmat@foss.st.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	andriy.shevchenko@linux.intel.com,
-	sakari.ailus@linux.intel.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2 2/2] media: stm32-dcmi: use devm_kmemdup_array()
-Date: Fri, 28 Feb 2025 13:06:49 +0530
-Message-Id: <20250228073649.152157-3-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228073649.152157-1-raag.jadav@intel.com>
-References: <20250228073649.152157-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1740728246; c=relaxed/simple;
+	bh=Tw1a7bkGe+H2OKv7L4i9hNdXfSruu1vCDWHZsJXkgBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HudI5SkYskZmGbn2IKwFg03u0MHjXzrpJAUtdCOWuDV1T+tp8QAqdad2plgrTR6zc+y3xX1zeKudyvUXUYMBHm33t5mmocLSDInT9ei76rit8aYod8mj/wEp6AjKZIkHiUlFvtxiD2Qd8CZW43hlB7Y2QPZhVUmiszSKvoHqeOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XrpMOq+g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J8CccUAe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XrpMOq+g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J8CccUAe; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9DEDA2116F;
+	Fri, 28 Feb 2025 07:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740728241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/VkvJiMBqRwXIFM4Za5TQdUxmuJ426aRJUYRegaej+w=;
+	b=XrpMOq+g7vAwTK4X4OfcEjmI6ehDGN7j64nutqIefZxL7W1pNXEsCMmiHuYin/SrI9bGXy
+	17Te76YjNMq0NgtFAfrJK/P7ERrkNXT4JMHrm3Hqw1+NDMedXHDKtU7TROAk4S+LBr+3Od
+	75uGNyRYcKY/vgz5cSS6nebvLVruCgI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740728241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/VkvJiMBqRwXIFM4Za5TQdUxmuJ426aRJUYRegaej+w=;
+	b=J8CccUAePnNMVDmcS1aQV1LESfSgwBVgQGo/J04SrONKMd3aw/cJFLXDdvm6dM0VfqcMRn
+	TyDzKTbkp9/gT5DA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740728241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/VkvJiMBqRwXIFM4Za5TQdUxmuJ426aRJUYRegaej+w=;
+	b=XrpMOq+g7vAwTK4X4OfcEjmI6ehDGN7j64nutqIefZxL7W1pNXEsCMmiHuYin/SrI9bGXy
+	17Te76YjNMq0NgtFAfrJK/P7ERrkNXT4JMHrm3Hqw1+NDMedXHDKtU7TROAk4S+LBr+3Od
+	75uGNyRYcKY/vgz5cSS6nebvLVruCgI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740728241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/VkvJiMBqRwXIFM4Za5TQdUxmuJ426aRJUYRegaej+w=;
+	b=J8CccUAePnNMVDmcS1aQV1LESfSgwBVgQGo/J04SrONKMd3aw/cJFLXDdvm6dM0VfqcMRn
+	TyDzKTbkp9/gT5DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3F246137AC;
+	Fri, 28 Feb 2025 07:37:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8g/wDbFnwWdRKAAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 28 Feb 2025 07:37:21 +0000
+Message-ID: <94bbeb52-8bc3-4ee0-a163-f3e61fb7e1cb@suse.de>
+Date: Fri, 28 Feb 2025 08:37:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/11] nvmet-fc: inline nvmet_fc_free_hostport
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org>
+ <20250226-nvmet-fcloop-v1-11-c0bd83d43e6a@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250226-nvmet-fcloop-v1-11-c0bd83d43e6a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Convert to use devm_kmemdup_array() and while at it, make the size robust
-against type changes.
+On 2/26/25 19:46, Daniel Wagner wrote:
+> No need for this tiny helper with only user, let's inline it.
+> And since the hostport ref counter needs to stay in sync, it's not
+> optional anymore to give back the reference.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/target/fc.c | 12 +-----------
+>   1 file changed, 1 insertion(+), 11 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/media/platform/st/stm32/stm32-dcmi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Cheers,
 
-diff --git a/drivers/media/platform/st/stm32/stm32-dcmi.c b/drivers/media/platform/st/stm32/stm32-dcmi.c
-index 9b699ee2b1e0..eedc15b30edc 100644
---- a/drivers/media/platform/st/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/st/stm32/stm32-dcmi.c
-@@ -1682,18 +1682,14 @@ static int dcmi_formats_init(struct stm32_dcmi *dcmi)
- 		return -ENXIO;
- 
- 	dcmi->num_of_sd_formats = num_fmts;
--	dcmi->sd_formats = devm_kcalloc(dcmi->dev,
--					num_fmts, sizeof(struct dcmi_format *),
--					GFP_KERNEL);
-+	dcmi->sd_formats = devm_kmemdup_array(dcmi->dev, sd_fmts, num_fmts,
-+					      sizeof(sd_fmts[0]), GFP_KERNEL);
- 	if (!dcmi->sd_formats) {
- 		dev_err(dcmi->dev, "Could not allocate memory\n");
- 		return -ENOMEM;
- 	}
- 
--	memcpy(dcmi->sd_formats, sd_fmts,
--	       num_fmts * sizeof(struct dcmi_format *));
- 	dcmi->sd_format = dcmi->sd_formats[0];
--
- 	return 0;
- }
- 
+Hannes
 -- 
-2.34.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
