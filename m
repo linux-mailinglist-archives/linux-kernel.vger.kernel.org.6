@@ -1,159 +1,173 @@
-Return-Path: <linux-kernel+bounces-539444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B2EA4A450
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:37:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FA7A4A454
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 819777A4DB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:36:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7555189386D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6202E1CAA9E;
-	Fri, 28 Feb 2025 20:37:27 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C371AF0C0;
+	Fri, 28 Feb 2025 20:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYxLngYQ"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6111423F386
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3CF23F388;
+	Fri, 28 Feb 2025 20:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740775047; cv=none; b=NoOZfo4KYRBzfUrWd13auAMhYf6u6gN5qL8/7YOeVTF0xPmeAhH7fytvGgzPPGqwlISZP0wG/nRaKsp8i01wgTd4CIDUG51Wb+UC0FR6eDuL4izJ54eVRL2JZsTAW/E588nWNL/tZP+QF00CJwwK7jHreudgB/bkxEY07vLsEdk=
+	t=1740775110; cv=none; b=e/6tjKDwXRv0QDLaTxPjP+oOUsHFwBJZL2b6QmSWEwudf9UUAM7LkdDNQUDvu2oNmtFsT8RFupkdb3DIL143lGGemAFNmK1lZPrxOgAWCmh3dlSS7F00jFBJ1McznLZhCXNyfji6PiHMF8oMa1cw9ypY+T3P99V2BtvS4VhERsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740775047; c=relaxed/simple;
-	bh=Ljzb965b+3OQC91DRvdpu9r5brh3YKoyoV8uSEqBBo8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XcSTtGIUyn1JBDwAV1ynzRwPkgOdY4HqxKyrcIUXcblMK6AMdzJlfiZsLrSqUeKE9KSpOzQZnjdb1P+k9v6L87w7Yt/+3IxXFaqcUYn5sblvT623f3sV7jYzsKCwqOfKRAzxCOx/RN2yBY2gRa/pBs1KqlReXCNC6/pc0pq7IiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d3e4129028so16534295ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:37:25 -0800 (PST)
+	s=arc-20240116; t=1740775110; c=relaxed/simple;
+	bh=EwFVnCQd6HinaOBLRVd+9/xUTRIjhFRsaMXEDl9fxDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciRhYu8HKtDv6fvwBXlzFvQh8Biw/1034kBQhdzZNPMoTdTty8CszvmDlD6JIuQXhAp35Kieawnb/obD3SbQQjKs5TtO12kRV+8Oa+GaWhPP31vmg8XoTmm+iRrJPC+qP+rtYWUqL4Xt5iDGz1DQxY+dA2ZuB9qLT+BPjsFhnHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYxLngYQ; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-46fcbb96ba9so31443321cf.0;
+        Fri, 28 Feb 2025 12:38:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740775107; x=1741379907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zQtnGxj9EqjKJY0q4XFl30n9aa5bS88PcFq7XjOAFU4=;
+        b=mYxLngYQmmqSfjoJzw59o77LfnbueE+xFKG5H0JResxTQF/PFKWWRqMpkORa2E3ylf
+         sSLKcxso4sWXSiBq966BFJaISTop5oGc3MuMMC1xwlIUVg9PwpBPkNFMkW5Zm2S1TvEW
+         IILaXE41BC7/mWkl4G3QzlnRZmtz+dgq1F8B22FSSPSwtL4FJQtNb7jdjuxS1jvbwpz0
+         driqw+0gCenClA13PwkQTPnMU/ghUzVYWthdkuJuETWsDDIGHhPKBML+0KUXoJnJaaWh
+         DAB2leDhznacNlvHceaveYXA4i9QMdZEU2ZU8/KTGvbV8zujBVl7pEdoMRhNqsXe9kVE
+         Jr1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740775044; x=1741379844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=do92xcNC0WFQw/Ce4Jou7iOdOxAiPDFL0QRYd03MRmc=;
-        b=os34keSJdDg3czVAJGm7G52KwMHJmDxC1qBV1ndXHxPK2K10AYKa6GMBR1uF3ti2IX
-         +lv2qW60FyAhs10mq20N8K+K562Pu15GrjiPl9ME3OWw77U4jvgG+9BtMlUNnuyI5+UY
-         DDBwnf5/x38KUTHpgnlldXp4M8j0VRFHQP/eB3oKI9F54NagpJS3pZfrLiCHbcIEcH49
-         DZMWh8ipRSS/bGKgXY4j2ndacm/7yCWWexKUODfpiWSARprXRY/DbHm/DeazDhZEjGBx
-         AZwD4vCetTlq8ZIn8jgAWxIJPahgjHNFeyAwVC/WMLIqGJeVOX7qUiLfMloCDnGJ8cXg
-         kubA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdeUXzKUSRZvnefIFKO/UssOjwzNnaP9Ey9uG4LdCSkiOoisyWueq1Cn2l+Ojj7nHkpiOgtX8Huoz4U4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+2Fs34sNs/wkNOcLfU73ZoN9uXc2CCSbQaAh5n0cBFhtzlKTc
-	O3swSxOiYUmJjH8Dc5sH8WlRczJgstyKL6ZmboRA3sN72JJMVFHbGzQu3ZxhBVHVNBYGk01ddP6
-	+OJFH84n+KmIohxsf169cYMH034NmDnYMI+HYn5ajl2OSzljFAC5trqc=
-X-Google-Smtp-Source: AGHT+IHqBkfoR8i6w/+tls7TWCjrAcTvjAR2poqDZFJnZwHhvPVKnHVB5XKg+dX40lgp78juIZg0UgbAjVmei839Qm5EwcMJPMir
+        d=1e100.net; s=20230601; t=1740775107; x=1741379907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zQtnGxj9EqjKJY0q4XFl30n9aa5bS88PcFq7XjOAFU4=;
+        b=qz7FlhGsNH9e+LVLOCL/GmIHUuECD7/g1qmgINhG12IYpPC18z2AX+ZZwQE8tqcUQA
+         Tw8Pei+mVrDpIKdTAJP5luPgL8lwHrx91WYEEQuXvOgkkS+56ryDgtBTBAg/EbMUe47P
+         cidE6MTUj8QZAlmu2g3COdDJ2h7PC1YigLcgPK5ex732I2UX3QkybgUAdTj85zTsuEeW
+         mv3tjE4rc5Jt3MLx5lLJcc5v4opi0C9zn7iWaTXN3hOieDRk2E5C2xot9f+nl+4N0y2f
+         U/bdXdYKv2Timqm1BkiY8QbyeqrV5HXN6y5Ucqj5Z7hwwjpFWDod4pDQMyNb9L3HzQdV
+         Gllw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLq4PlslyNZSnKDyuM10L6Y8dnmxOb/1UlcCInklWn0FaJ1GiTSmZEwn5PkytUu5qS4Zxx6nh8srRAaN4z@vger.kernel.org, AJvYcCVknYRNOhUtKTqC8pFRPhnt48lGU5J34DwRrX/S7o3uSiUmVnSQs1qsYZ3PMDE54qdlA8UJrLImEc9W@vger.kernel.org, AJvYcCVucZ35/azJLAGf+E3YFldQ8hUTR68raqTL6cDb+JmUpFjgAEq2wdOduSzX7J4PgwnAk//3PWlWSRm8zrg2F6QejjyVSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/xXvNcONYCMw2bugKTCZxUDA+j/PEmTrw1RKwNIdDwr6GuE/a
+	8PluZDBD61gxo+B0XCA3iqdqQ8nRXO0ArBLW3OoRgEmPX52Te/RrFOvGB2vYRM4pUExdPh3///R
+	U//a7RfMrSu+1trlJr3hoUVUW62U=
+X-Gm-Gg: ASbGncs8OoE9yaY99EkT6zzW6WWE7DXll6FdxPvg2n6owcpfYM1zq6/axRAsiWGlFMP
+	MJoKB9xvEeazJpw5gCts8sLVbI1ue6+g6IgHJOhabQ5BnP3XTyJO4ONZOxKwfo2m5aO8OqX+xYP
+	DPz0kKpbA2qi4jxqpGzE56YPcHLpM=
+X-Google-Smtp-Source: AGHT+IEwxnMnsI1dGRYfaUNIGoNCheiqoTjMdjaY9C+voUgNVf4dIq2zzfq/+sshxFmZa32Dj0+elYtwkLDTEeak4cg=
+X-Received: by 2002:ad4:5f0a:0:b0:6e4:4331:aadf with SMTP id
+ 6a1803df08f44-6e8a0d05614mr78554026d6.23.1740775107310; Fri, 28 Feb 2025
+ 12:38:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216c:b0:3cf:bc71:94f5 with SMTP id
- e9e14a558f8ab-3d3e6f4aaecmr46976555ab.22.1740775044496; Fri, 28 Feb 2025
- 12:37:24 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:37:24 -0800
-In-Reply-To: <000000000000e39b37061e898704@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c21e84.050a0220.dc10f.0151.GAE@google.com>
-Subject: Re: [syzbot] [fbdev?] KASAN: global-out-of-bounds Read in bit_putcs (3)
-From: syzbot <syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com>
-To: daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
-	syzkaller-bugs@googlegroups.com
+References: <20250228170155.2623386-1-superm1@kernel.org>
+In-Reply-To: <20250228170155.2623386-1-superm1@kernel.org>
+From: Derek John Clark <derekjohn.clark@gmail.com>
+Date: Fri, 28 Feb 2025 12:38:16 -0800
+X-Gm-Features: AQ5f1JrcbmmOjX6pqOEaG08stYfdXyf_n3rLygue2VU1W-R76oeG0lTCtBN3peg
+Message-ID: <CAFqHKTkCnSxUMoR76vibC394wkgdU1hQLrt0TAAyya95QOxJWQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add support for hidden choices to platform_profile
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:ACPI" <linux-acpi@vger.kernel.org>, Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch, 
+	Denis Benato <benato.denis96@gmail.com>, Mario Limonciello <mario.limonciello@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Feb 28, 2025 at 9:02=E2=80=AFAM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>
+> When two drivers provide platform profile handlers but use different
+> strings to mean (essentially) the same thing the legacy interface won't
+> export them because it only shows profiles common to multiple drivers.
+>
+> This causes an unexpected behavior to people who have upgraded from an
+> earlier kernel because if multiple drivers have bound platform profile
+> handlers they might not be able to access profiles they were expecting.
+>
+> Introduce a concept of a "hidden choice" that drivers can register and
+> the platform profile handler code will utilize when using the legacy
+> interface.
+>
+> There have been some other attempts at solving this issue in other ways.
+> This serves as an alternative to those attempts.
+>
+> Link: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257=
+-5b8fc6c24ac9@gmx.de/T/#t
+> Link: https://lore.kernel.org/platform-driver-x86/CAGwozwF-WVEgiAbWbRCiUa=
+Xf=3DBVa3KqmMJfs06trdMQHpTGmjQ@mail.gmail.com/T/#m2f3929e2d4f73cc0eedd14738=
+170dad45232fd18
+> Cc: Antheas Kapenekakis <lkml@antheas.dev>
+> Cc: "Luke D. Jones" <luke@ljones.dev>
+>
+> Mario Limonciello (3):
+>   ACPI: platform_profile: Add support for hidden choices
+>   platform/x86/amd: pmf: Add 'quiet' to hidden choices
+>   platform/x86/amd: pmf: Add balanced-performance to hidden choices
+>
+>  drivers/acpi/platform_profile.c    | 94 +++++++++++++++++++++++-------
+>  drivers/platform/x86/amd/pmf/sps.c | 11 ++++
+>  include/linux/platform_profile.h   |  3 +
+>  3 files changed, 87 insertions(+), 21 deletions(-)
+>
+> --
+> 2.43.0
+>
 
-HEAD commit:    017f704fbfb1 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12128864580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
-dashboard link: https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1643dba0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16128864580000
+Everything seems to be working as intended. I applied these patches on
+top of my lenovo-wmi series modified to always show
+balanced-performance and with quiet as the lowest profile. Testing was
+done on the Legion Go.
+Results:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d34fb306468f/disk-017f704f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6f1126558a26/vmlinux-017f704f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6d9d912bee27/Image-017f704f.gz.xz
+$ cat /sys/firmware/acpi/platform_profile_choices
+quiet balanced balanced-performance performance
+$ for f in *; do cat $f/name; cat $f/choices; done;
+lenovo-wmi-gamezone
+quiet balanced balanced-performance performance custom
+amd-pmf
+low-power balanced performance
+$ echo quiet | sudo tee /sys/firmware/acpi/platform_profile
+quiet
+$ for f in *; do cat $f/name; cat $f/profile; done;
+lenovo-wmi-gamezone
+quiet
+amd-pmf
+quiet
+$ echo balanced-performance | sudo tee /sys/firmware/acpi/platform_profile
+balanced-performance
+$ for f in *; do cat $f/name; cat $f/profile; done;
+lenovo-wmi-gamezone
+balanced-performance
+amd-pmf
+balanced-performance
+$ echo low-power | sudo tee /sys/firmware/acpi/platform_profile
+low-power
+tee: /sys/firmware/acpi/platform_profile: Operation not supported
+$ for f in *; do cat $f/name; cat $f/profile; done;
+lenovo-wmi-gamezone
+balanced-performance
+amd-pmf
+balanced-performance
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com
-
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-==================================================================
-BUG: KASAN: global-out-of-bounds in __fb_pad_aligned_buffer include/linux/fb.h:644 [inline]
-BUG: KASAN: global-out-of-bounds in bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
-BUG: KASAN: global-out-of-bounds in bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
-Read of size 1 at addr ffff80008be20810 by task syz-executor101/6448
-
-CPU: 1 UID: 0 PID: 6448 Comm: syz-executor101 Not tainted 6.14.0-rc4-syzkaller-g017f704fbfb1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x198/0x550 mm/kasan/report.c:521
- kasan_report+0xd8/0x138 mm/kasan/report.c:634
- __asan_report_load1_noabort+0x20/0x2c mm/kasan/report_generic.c:378
- __fb_pad_aligned_buffer include/linux/fb.h:644 [inline]
- bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
- bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
- fbcon_putcs+0x390/0x5a0 drivers/video/fbdev/core/fbcon.c:1308
- do_update_region+0x1e8/0x3d0 drivers/tty/vt/vt.c:609
- update_region+0x1e0/0x478 drivers/tty/vt/vt.c:633
- vcs_write+0x9e8/0x1180 drivers/tty/vt/vc_screen.c:698
- do_loop_readv_writev fs/read_write.c:843 [inline]
- vfs_writev+0x494/0x92c fs/read_write.c:1052
- do_writev+0x178/0x304 fs/read_write.c:1096
- __do_sys_writev fs/read_write.c:1164 [inline]
- __se_sys_writev fs/read_write.c:1161 [inline]
- __arm64_sys_writev+0x80/0x94 fs/read_write.c:1161
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-The buggy address belongs to the variable:
- fontdata_8x16+0x1010/0x1480
-
-The buggy address belongs to the virtual mapping at
- [ffff80008b810000, ffff80008f6b0000) created by:
- declare_kernel_vmas+0x58/0xb8 arch/arm64/mm/mmu.c:771
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1a1820
-flags: 0x5ffc00000002000(reserved|node=0|zone=2|lastcpupid=0x7ff)
-raw: 05ffc00000002000 fffffdffc5860808 fffffdffc5860808 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff80008be20700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff80008be20780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff80008be20800: 00 00 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
-                         ^
- ffff80008be20880: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
- ffff80008be20900: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
 
