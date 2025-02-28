@@ -1,118 +1,98 @@
-Return-Path: <linux-kernel+bounces-539125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D6DA4A13A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:14:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A3CA4A13D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4039617177F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAAF171B42
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA0E2702BF;
-	Fri, 28 Feb 2025 18:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AFD22097;
+	Fri, 28 Feb 2025 18:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AWCN2H5B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uE72Ymnp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jeewhwQR"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299BE1F09B8;
-	Fri, 28 Feb 2025 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED74C3597A;
+	Fri, 28 Feb 2025 18:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740766449; cv=none; b=pbCbn55Rod8pzULP1EeUZbEXWBPwwzQYf/f2dGNGHeTunk2j4YBh2Q46UPJzwWEcG19W7eua+v1c4CTN4xzJfMBvWptpXIUsNx2sGRqSQ5jKqrKsIqjqVd4hrDvIHt3lvOCEFYv1l3FNnPowNaQ4Z1LyAI/C9AKqfvuLYj8Vx0g=
+	t=1740766520; cv=none; b=H46eIbuo+XJf6TEDujuhl351v8rPMSCCFHJuSgU7Jv28WwsZPTAPl87cYrpijJRMe7wKpDvndmM7cmeHQu6IfSe0M3rR3flf55clQ4PYS/aF1V/H8vVoeslxckRvypAlhiAj/+aL9NAzSWotdNE/0vqIzc6hdWHZ4lpB6C2COVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740766449; c=relaxed/simple;
-	bh=ApjbMI3UMXaK0HDqUbTtI+NmigJsdTp/AtQknzdwLpE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eX35TURXFgGHRmUMZA71SX+JwVYE9pNimGx8M9GMOPTfL4xJ2R1g1aa0FlHrK43VeJNW2mOtmQkf86S4bkucMaS7DPYC574KjiHdS3widniemsJvsHKDuMgQEOnWOm4KA8iZ6NhwPgGsqRBL23icfaQQ/pmiWTi+P3i1YKmTdNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AWCN2H5B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uE72Ymnp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740766444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJuRTH6j6N6i1eKbv8dqltSVcO11PyKBNmf/v8AxwZk=;
-	b=AWCN2H5BcIxD93kLNrlnyFcDZn9ctGkxwZrEbM+7Jnkeo8NrOyyqGzrPh5Gs8MuqS2c8Ug
-	poUW1QutUTbP+XC9FNNDzswpAgt0oOWOHg6BjXp0aa3Ez71FORsAWEx83cqvpk3Bz0LRXC
-	Zmj1vml9Of8drnDq904St7X0v5Whi5pOGcXZyYB7bMfwwOX/tK0BfyPCvryI01K9Xtu4Ps
-	I/bd372YHYXSFjq1x1G1sSSPddQqIOsPW7I1KOCFjcgbVX8/oQXmlkyYW7ZRhl3md98zjH
-	0H2TJmIMmlLFAZQoe8GXGdW3wrgxtZ+k2k1yl0NlAHC5h0/yh9nh+wcpTy+rnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740766444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJuRTH6j6N6i1eKbv8dqltSVcO11PyKBNmf/v8AxwZk=;
-	b=uE72YmnpiQ9JhYDH1VmzL5/RPkXR1Ld39wjJtdAzvA6HhtaBTpwDHVKXYJjOfRuvd3/6sf
-	IJtFJUFSeZzwlKCA==
-To: Hans Zhang <18255117159@163.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>
-Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
- cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-In-Reply-To: <86d23e69-e6e5-476b-9582-28352852ea94@163.com>
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
- <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com> <874j0ee2ds.ffs@tglx>
- <86d23e69-e6e5-476b-9582-28352852ea94@163.com>
-Date: Fri, 28 Feb 2025 19:14:04 +0100
-Message-ID: <87v7suc4yb.ffs@tglx>
+	s=arc-20240116; t=1740766520; c=relaxed/simple;
+	bh=l6WxGstKOaHkSCjCL7FVTNPClaGsas7YSIZ9Pcq1dCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozxnNl5KUFiDZ7xcJqFim+A0Xc7mpuhglV8EiAPE4ntZzVzX50p6ArlDIZt9Oehh/ngZyWQRzSY7a+9M9uBMByqTN31PMOlcx0VZGLlm3rmiJLb/ESVHRGBwrpk08XrUZx/fJNJXHoJqHMWP36DhTb78NM8tbfiCZJ0Mg5OElag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jeewhwQR; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=blulkBB0PcOmhGQ1VzOHFSAX2JRkc55UE2z0mfUu07I=; b=jeewhwQRdJjQWBDd
+	y+6E7x9Nt5ALcKaXuaF6yOQTUUYY9uhLPl4ZtA1aNO0aJIH6VolHVJxO8tadyW/RSfD5Aeg/NuEtQ
+	Gizd/xeUrNgD++6lqT1oH5pCVZpb2Alj3MWxA0AYN8A+lYM6dwZh6hDdJoyqV3zDaqI/WS+uAHtBb
+	qQfRT9ECF1cX+mGSjPuFnqJNhJMM7mZCuE0q/EN39LrX1U+CIeDdkwgy6GM0vJieAFvqYTPvg2ja1
+	Fs43xYk3UU3J5NOupUQqHHoULGEY5flgQtWO1B6qBz0Gkd9Xi3HAan/sfJMSIwGc1I9CJ72mmBkIY
+	E1P9NwGgqLVg7fLZdw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1to4tF-001iUc-2Z;
+	Fri, 28 Feb 2025 18:15:13 +0000
+Date: Fri, 28 Feb 2025 18:15:13 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mperttunen@nvidia.com, linux-tegra@vger.kernel.org, airlied@gmail.com,
+	simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
+Message-ID: <Z8H9MaLZf0dnsXSu@gallifrey>
+References: <20241215214750.448209-1-linux@treblig.org>
+ <vukpbuvuyfljqtexnimsrfozt64pfrjc33a4ojb7lht7fke45a@g4afdjrz6u52>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <vukpbuvuyfljqtexnimsrfozt64pfrjc33a4ojb7lht7fke45a@g4afdjrz6u52>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 18:15:02 up 296 days,  5:29,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Fri, Feb 28 2025 at 23:17, Hans Zhang wrote:
-> I'm very sorry that I didn't understand what you meant at the
-> beginning.
+* Thierry Reding (thierry.reding@gmail.com) wrote:
+> On Sun, Dec 15, 2024 at 09:47:50PM +0000, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > host1x_debug_dump_syncpts() has been unused since
+> > commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
+> > fences")
+> > 
+> > Remove it.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  drivers/gpu/host1x/debug.c | 9 ---------
+> >  drivers/gpu/host1x/debug.h | 1 -
+> >  2 files changed, 10 deletions(-)
+> 
+> Applied to drm-misc-next, thanks.
 
-No problem.
+Thanks
 
->
-> +static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-> +                                 struct irq_data *irqd, int ind)
-> +{
-> +       struct msi_desc *desc;
-> +       bool is_msix;
-> +
-> +       desc = irq_get_msi_desc(irqd->irq);
-> +       if (!desc)
-> +               return;
-> +
-> +       is_msix = desc->pci.msi_attrib.is_msix;
-> +       seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-> +       seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "",
-> +                  desc->msg.address_hi);
+> Thierry
 
-No need for these line breaks. You have 100 characters available.
 
-> +       seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "",
-> +                  desc->msg.address_lo);
-> +       seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "",
-> +                  desc->msg.data);
-> +}
-> +
->   static const struct irq_domain_ops msi_domain_ops = {
->          .alloc          = msi_domain_alloc,
->          .free           = msi_domain_free,
->          .activate       = msi_domain_activate,
->          .deactivate     = msi_domain_deactivate,
->          .translate      = msi_domain_translate,
-> +       .debug_show     = msi_domain_debug_show,
->   };
-
-Looks about right.
-
-Thanks,
-
-        tglx
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
