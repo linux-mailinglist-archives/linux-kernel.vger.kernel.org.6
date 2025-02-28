@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-538594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F46BA49AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA783A49AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2FC1898500
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD881898606
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B4B26D5D0;
-	Fri, 28 Feb 2025 13:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D13726E16F;
+	Fri, 28 Feb 2025 13:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1vKNXhm"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A8NX+VS4"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CB32686A0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F7B26D5A2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740750008; cv=none; b=J+BOAlWuXQYALB1EMNZDFg6/hPq017FVqmArdViIyWIIsQhqm5VRPmi3vJ/6I4bvP7zpull9KNLG3G/yy+XPMLFJ2s9TKGhgkhSpzgnqQdL8+b/JSVgg0nw2MSDciSz2wEDcMW/u5q2PihdQy9Rth3xBwzx2TuIr/wRkbFkx8Ek=
+	t=1740750009; cv=none; b=lmenhuOifAFAJExzd0O3IS0p/WXdNdfkdUILrkSyPt0GtDZdMsrH+lOJcUgi/9d6YM5P+zBA3swva8fqwOFqO9/b5GyKcDUCExH9kM/ui3U3P/fdaq1PLsgRzg5nBv4eclVA1YxaMWzvxjuKeXqfw75lLeClMcLXrv2VlF/Fyb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740750008; c=relaxed/simple;
-	bh=l6s2K8nye6CHRRRLfb5EYZPGV2XdU8BZngWM9TLpnUk=;
+	s=arc-20240116; t=1740750009; c=relaxed/simple;
+	bh=BIANFdS2G59gFgyF18cu7TQxo7ed8WKfM/z9xd5aqyE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EqIPwst3JIj195iTI/PtV+GBrBXFQs2DCeNUCxUB72V8C5DnvoqIQp4ODCrMoFebc72l0m+7KVsixAjtu/NMGHxtgej0oeW5jyEN8Pl+6pA7+qzkQy3ImIirQwM03MX879C7CfFSkHzXR7UQUn0M3Wx5APz8EVSEQVJqn7j+fdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J1vKNXhm; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=A2oJj+AKB+lHeOjvYKi7WqxTMUArrEmhUS0jTS59vtHNF1ufbry1ogzjjZnEZICnTe7C7vaPXm6xJwpg0+sSwgIvQHoBqfFMF+aCHdWMMOkj4zqwD2saG+aMw2O/b6y5whLkb3LUMrB0gAdtYhNR1S7rYPhL7chhe0ki1TJgiAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A8NX+VS4; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4399d14334aso19911225e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:40:06 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so20330185e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:40:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740750005; x=1741354805; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740750006; x=1741354806; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R7Qe15dxMfjDnNi0r7cCotARJKXbVAoEJ27P5CWqzBU=;
-        b=J1vKNXhm9MmvNCcQRS3f1GKNlFr1kx7Wv8fyFqo0ESfcvvLw5+EIxt71l8LHgEFv7L
-         M+ZLHspA9fdHpW1elsSwVm+RZjIcgmS6NBakkXZmP2SwxBWX4ierPXCifeQqh3MwEjvE
-         2gxD3znU4OHyKfh4UrrxYyiUPxP9+cT1IGDgbtEdaEmWoJj+p20vu66wQzVZTV4urln6
-         /qHX7f+ZWjCsv7OlbjCjLhH4H/oUs8RznUd1IoSP+m6QHVUBZ3JTWmRmz5c2b4zCYdbH
-         UlmEVBSHULm09E1qFaCywEXsN0BraC8mk2CHhka+oT7XAEt0o3fAGgh+lYMq+UVmuhk3
-         33RQ==
+        bh=E0f9s7NROJ8fq5WoWUVEhIJcFKUOaWVTVNLDozZ75KA=;
+        b=A8NX+VS4JyZb+BjzJLYURfNfTDLMnFAG1GvBBDqggdDI1oHMlOJLPnkL2v8DANDElv
+         MoErqzx9WhZ/T3bkJaEHKLZqJQbvVbleoLNQvTqWFeMoVBfRoEkLLS0I/fO801rwPpAD
+         rSjP6EN3eeF5WtoH01d3NVQzciySjSX8SgYWzpCIMAH1pY/whH95QR58iKORn38qFtGa
+         j/AWUw4p+U34cIPCnXuR9IKJBVrsK8bKOSysJzRDKVrAjhxGuNu6DMU/jMpjDkf8HvHV
+         2TVphlNbSEhjbmcBUYd3T/RjUstcBr2xLQtUF8MEtB4s56DDOEqJuU37l+vu0EP13yCN
+         Qz+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740750005; x=1741354805;
+        d=1e100.net; s=20230601; t=1740750006; x=1741354806;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R7Qe15dxMfjDnNi0r7cCotARJKXbVAoEJ27P5CWqzBU=;
-        b=uVyIqJ8Gv3WugvUTCfGx6RkjZViw3p22T80h/F1RDY1PlllFYwCE1jPFKHsWckZTRk
-         RVHOipY4x4R9q8Nd1dO78Xcc1evrv7oXL/fQMaKm10CwGgBFQ18trIekf+3zj8J91hhU
-         7u5dS3gQpuCW8akyvaStVu1bFLv65caB4pzB3kH/gbWmYfj6wTPQkliHyPe4nfYOQYgH
-         hqftSVbgDv5Q1HrKeC+ZWVN1//MrOI5E6PXIYK659uz267LlDv805fG2g7KFAy7zyJfI
-         2/LdWCSvpzigJ5GWzM1xp0zgnYQK1TnV2Eym5HyciYsJzvIAonajFd3KCWZumh1ltoVs
-         21Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe4E8SbrwAponp6/+f1qVkbZqwTk9td7roIfR3F2IrSThz18xJ1Oiv01t90F5SUUfChv1BSX+im9oGgFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIWjPtZZb3oZAlFFSwOTICdSbItayCv2a7rBmjmH2hAPOsQQ/R
-	uxTODATLPpH54CL3LGkVX+mX4z8IgDpcL8PF0Z1Z08vOUdztR4E2WOa/jIVBIC0=
-X-Gm-Gg: ASbGncsoOdEHJEbbYTxpta/1nZRqKaOeU3riMc4tfnfSlBJqVp6r41pdF8ZgcSR5W25
-	gxEBXLntyOdWXtA5cJZeyTO1s7Erm+WZKzhgqVaigDFmPKotSGR+akESBqvgKUhCfQ6eBlVBzh4
-	HbKQgHMSO107vdkL42UdOfwXMjgWfkYYkhhlhhHZa342pYBy+Gw2jioWi9jismqPqDrVHGA/GLd
-	LOaAuE6+FCrTuBV2Rb93VBAxBwI90tAqWu/uxDxFy2VXNXswprdywExiO36ivWjVHFRncCrHYX8
-	SY3CphyO2Ocm8VVAwAJmZf2OGjb+44PI7A==
-X-Google-Smtp-Source: AGHT+IH5FG8AQ6D+64sFGHfe3tHwWw2ntFHIUnyirsKoQY14AoDqBIkyyts2MWqQVEWC51mEK7nJmg==
-X-Received: by 2002:a05:600c:3ba8:b0:43a:9ef6:77ec with SMTP id 5b1f17b1804b1-43ba697ef79mr25704955e9.23.1740750004759;
-        Fri, 28 Feb 2025 05:40:04 -0800 (PST)
+        bh=E0f9s7NROJ8fq5WoWUVEhIJcFKUOaWVTVNLDozZ75KA=;
+        b=BrdecRdKyLJCaIUhIRcCwsK15TR9Jq6xQx+UNEQqWyLt0t+7U5KJklEryWVMg8P6PP
+         N7YSSXIede4ey800jclg86tFTxkt8zJQvsvJiS5VSLH2FZPnELtYwzlh27SqZX60NUf+
+         fDHA8WbFX7XF41fAr8o0GNdhoGVjZdoJn7Xj1GmYhsaIUcjy0WXnFf2AyjaTDZtM7y8U
+         8Ax//5hDTYdwYcLkR6KIqNdtNpcaNrZNcAN5Y+S4BP8gG0euEbpHxkp3+nY7oDUOyhD6
+         NPsGdWWzACP5vTpOzvk9xEQITYIQpVgQuOEf0k81S5fmJvxxR9ogOjPIXfg3D+sdLLG0
+         IzCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPwxYmdjWhfzw4+b7zRE3MAez5LQth8pH2RwVX9NVq+Lag3Is48cVhulL1ix5CADN6CNLWQWHX0SToyi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbRjWwTHrkxEcbc0xXZq06L5g+QmbPWDoZ2FtwEFKItbO6Oq8a
+	VT5n/wYiT4FaFiyu8nf8XAkHE9KLRPEqjcqIpT0CnGHzloDe5+YjyKQKNhszTaU=
+X-Gm-Gg: ASbGncs9dq2NSE9LhRLKEGnMGWkEl3NnlMtkaooI6sa0aec9sNc7PAXEvMPdTJOlVBu
+	zS7NE9Txbq7RcrTZR0UY+vp3IDqHCpW8lyNFof1A0fMaA2jbw2kjhGI+B693hiQNkHqw5nPL7sU
+	VTUdTAjhy09cryf7N8UC7xNpukc/fzu5oa6CWuhj64wLDG/bMuSLtsCenXYQRcNfJ6zLO7xa5qg
+	VCOyHefl7iL5UU6r2HZ5DceMwwtnG0eaUDwgLgUQ5qSxGsyuxNagcBHv5vDTbWd+nIPkNH39i2P
+	/+yD0AfD9DYCsnmBA/kzt2Ua0rxdOZlD6g==
+X-Google-Smtp-Source: AGHT+IFhgqPKyxi/6XA1Evr5XU3hym4zZCuFuOCuZ2Y8cdmfrSJZbM8SIUokKRqMnUfbdWNpgZ/v+g==
+X-Received: by 2002:a05:600c:5594:b0:439:8605:6d7c with SMTP id 5b1f17b1804b1-43af790fa9emr60491555e9.0.1740750006276;
+        Fri, 28 Feb 2025 05:40:06 -0800 (PST)
 Received: from vingu-cube.. ([2a01:e0a:f:6020:d4b:473f:a962:e9e2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73717171sm55984405e9.18.2025.02.28.05.40.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73717171sm55984405e9.18.2025.02.28.05.40.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:40:03 -0800 (PST)
+        Fri, 28 Feb 2025 05:40:05 -0800 (PST)
 From: Vincent Guittot <vincent.guittot@linaro.org>
 To: mingo@redhat.com,
 	peterz@infradead.org,
@@ -90,9 +90,9 @@ Cc: qyousef@layalina.io,
 	luis.machado@arm.com,
 	qperret@google.com,
 	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 1/7 v3] sched/fair: Filter false overloaded_group case for EAS
-Date: Fri, 28 Feb 2025 14:39:54 +0100
-Message-ID: <20250228134000.1226665-2-vincent.guittot@linaro.org>
+Subject: [PATCH 2/7 v3] energy model: Add a get previous state function
+Date: Fri, 28 Feb 2025 14:39:55 +0100
+Message-ID: <20250228134000.1226665-3-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250228134000.1226665-1-vincent.guittot@linaro.org>
 References: <20250228134000.1226665-1-vincent.guittot@linaro.org>
@@ -104,60 +104,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With EAS, a group should be set overloaded if at least 1 CPU in the group
-is overutilized but it can happen that a CPU is fully utilized by tasks
-because of clamping the compute capacity of the CPU. In such case, the CPU
-is not overutilized and as a result should not be set overloaded as well.
+Instead of parsing the entire EM table everytime, add a function to get the
+previous state.
 
-group_overloaded being a higher priority than group_misfit, such group can
-be selected as the busiest group instead of a group with a mistfit task
-and prevents load_balance to select the CPU with the misfit task to pull
-the latter on a fitting CPU.
+Will be used in the scheduler feec() function.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Tested-by: Pierre Gondois <pierre.gondois@arm.com>
 ---
- kernel/sched/fair.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ include/linux/energy_model.h | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 857808da23d8..d3d1a2ba6b1a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9931,6 +9931,7 @@ struct sg_lb_stats {
- 	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
- 	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
- 	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
-+	unsigned int group_overutilized;	/* At least one CPU is overutilized in the group */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
- 	unsigned int nr_preferred_running;
-@@ -10163,6 +10164,13 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
- static inline bool
- group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
- {
-+	/*
-+	 * With EAS and uclamp, 1 CPU in the group must be overutilized to
-+	 * consider the group overloaded.
-+	 */
-+	if (sched_energy_enabled() && !sgs->group_overutilized)
-+		return false;
+diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+index 78318d49276d..967650726619 100644
+--- a/include/linux/energy_model.h
++++ b/include/linux/energy_model.h
+@@ -216,6 +216,26 @@ em_pd_get_efficient_state(struct em_perf_state *table,
+ 	return max_ps;
+ }
+ 
++static inline int
++em_pd_get_previous_state(struct em_perf_state *table,
++			 struct em_perf_domain *pd, int idx)
++{
++	unsigned long pd_flags = pd->flags;
++	int min_ps = pd->min_perf_state;
++	struct em_perf_state *ps;
++	int i;
 +
- 	if (sgs->sum_nr_running <= sgs->group_weight)
- 		return false;
- 
-@@ -10374,8 +10382,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		nr_running = rq->nr_running;
- 		sgs->sum_nr_running += nr_running;
- 
--		if (cpu_overutilized(i))
-+		if (cpu_overutilized(i)) {
- 			*sg_overutilized = 1;
-+			sgs->group_overutilized = 1;
-+		}
- 
- 		/*
- 		 * No need to call idle_cpu() if nr_running is not 0
++	for (i = idx - 1; i >= min_ps; i--) {
++		ps = &table[i];
++		if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES &&
++		    ps->flags & EM_PERF_STATE_INEFFICIENT)
++			continue;
++		return i;
++	}
++
++	return -1;
++}
++
+ /**
+  * em_cpu_energy() - Estimates the energy consumed by the CPUs of a
+  *		performance domain
+@@ -362,6 +382,19 @@ static inline struct em_perf_domain *em_pd_get(struct device *dev)
+ {
+ 	return NULL;
+ }
++static inline int
++em_pd_get_efficient_state(struct em_perf_state *table,
++			  struct em_perf_domain *pd, unsigned long max_util)
++{
++	return 0;
++}
++
++static inline int
++em_pd_get_previous_state(struct em_perf_state *table, int nr_perf_states,
++			  int idx, unsigned long pd_flags)
++{
++	return -1;
++}
+ static inline unsigned long em_cpu_energy(struct em_perf_domain *pd,
+ 			unsigned long max_util, unsigned long sum_util,
+ 			unsigned long allowed_cpu_cap)
 -- 
 2.43.0
 
