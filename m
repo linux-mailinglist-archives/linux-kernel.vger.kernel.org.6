@@ -1,351 +1,102 @@
-Return-Path: <linux-kernel+bounces-538124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FAAA494D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:25:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AED8A494DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E83117112F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD32D3B6EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69351276D3B;
-	Fri, 28 Feb 2025 09:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7E32566F1;
+	Fri, 28 Feb 2025 09:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUgg2vpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E7A1CAA64;
-	Fri, 28 Feb 2025 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CgXmWRrZ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0351F30A2;
+	Fri, 28 Feb 2025 09:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734711; cv=none; b=ifobhCtZwWRdKUnSb0q7QieePiMtAp7fX6cADg5n8/QYCwiRJLAwPH0KDV62iKD6EAQQpzXR/8WEcq850nrpL5DM/GCsxet+bRZ0ZPoGvX2vsDAzatCOdUj+JWtCk5PQDl3vgEvupJAvAcyj3XbBPNPq9B/5rBaAVztW4Dd/5yk=
+	t=1740734728; cv=none; b=Aw7vwUYk1y1g/TMCp+7I3aBpVy181bPgERKvOAHPBj6Eg9k++Q2Scy9riT1Gg6vZXblzMbxfrrdOkVH3a+XRtlqnFsIJK7inWeDg4PYdmwHB+cxWe9Eq5aj/54qOi6ZVf92SCvMckW4wIK3k4o2OtG0hZOvJtw9R1cqrmvhNvN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734711; c=relaxed/simple;
-	bh=UWsfIKGRckRFyb0P8JHyv3MDBXglaE5uP8q0o2dx604=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kpApYnYh5O50n97pOshkFNcHNvOyCfF+1UnBpoALz21qUi83jjeWqtIGBfyG2+BXVvLlsKPDyN1iB+1OHkUzxMJLWwvPReQqdesWOlcNc/WBfCQoA/Up/N7U5ckhmQU+FHWdoThXmec22mIDhPbukawq+wDL3nF3bc6vUH1y9TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUgg2vpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF43AC4CED6;
-	Fri, 28 Feb 2025 09:25:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740734710;
-	bh=UWsfIKGRckRFyb0P8JHyv3MDBXglaE5uP8q0o2dx604=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XUgg2vpgWyB2yeY6UgpHlQvsV2DJj1GzsFCqUCSEnm6MQR0VzEq7E4uySUhcgMbGN
-	 tP7Z2NLyFl/WQ8rTUKCQmIkB9w2mrQj91rVycbRlI9J+zgmWxMdn+TWzcc2kLWVq6Y
-	 A82um9fRBV+h/aLBMH4uORt5PSNsxyeRGTbKklXSuM7yVp0hH/i0H/Pankx8b9jvc+
-	 BkebSHr+yEcaZ++Nnl8idQNjR+/7ga55SFuRTBqiCQUy8jxGoRR4MHBiwmyQ/tzMcv
-	 D3Qh6eQd765DpEO8zgKpapEcSj7tVFBWJaBLW/lcIa1aCIiPqIy28byxINiQjWnkyX
-	 xKHxrn9CYveHw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Petr Mladek" <pmladek@suse.com>,  "Steven Rostedt"
- <rostedt@goodmis.org>,  "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>,  "Rasmus Villemoes"
- <linux@rasmusvillemoes.dk>,  "Sergey Senozhatsky"
- <senozhatsky@chromium.org>,  "Andrew Morton" <akpm@linux-foundation.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,  "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
- <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "David
- Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 2/4] rust: add #[export] macro
-In-Reply-To: <CAH5fLggu+-Fw-4Z02xS3qSdhJAcSyNXaMn+CQ0XkBvqvgeAbGQ@mail.gmail.com>
- (Alice
-	Ryhl's message of "Fri, 28 Feb 2025 10:04:11 +0100")
-References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
-	<CKneQ3Au7Fx5Uc7AM_RTi5BXRNnOUcrfnqI0fuWO5M7QIosWye4LhdM7bf9zqqzC5dCISrLHE9OgvVeVSla54Q==@protonmail.internalid>
-	<20250227-export-macro-v1-2-948775fc37aa@google.com>
-	<871pvipjxe.fsf@kernel.org>
-	<09wV2B1K7GvpVYdB-P4QG9vnkK4dmVu_Qwnc6_K2wLZUrjatv3o9FDJW0V94dJOfOhNIDVEuXkqKY-VXnZcTUA==@protonmail.internalid>
-	<CAH5fLggu+-Fw-4Z02xS3qSdhJAcSyNXaMn+CQ0XkBvqvgeAbGQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 28 Feb 2025 10:24:42 +0100
-Message-ID: <8734fyo205.fsf@kernel.org>
+	s=arc-20240116; t=1740734728; c=relaxed/simple;
+	bh=oAPbqbblLWp21an+z84tAVzI3aljqmgqN18ng4MMmEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ml1jdJAE6Z7MdGW5dCTUgd4kNpiYizJqwycA256DOueBMKDDGZqGuZQIpzz1JeSDV7wWrT20+UomFCw12Y6jUvQ0DnzaU6QOTrl4anYst758phbclwFARioxkVekfLA49ZshE1iQs6JO+TSJ0ewZwH9eiJqEEpFXypVPLav0lY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CgXmWRrZ; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=t+QWg
+	uMxoLDRH5vcXi4r28RqexjrSgeJPwqF3tPYLt8=; b=CgXmWRrZM2xX2nJAyw40J
+	Tk1nm51ZOnW4v/HxyQzhfxewHVx+ZluJqUH53ETnT3WSUvZRjeA2XGHcwmWX+fWO
+	MpyP+yaHfF1U3L7oAyLtAXZ257HUv2Zky5hmG8qK7lV4tBPuJOOHjjdRO2li59di
+	EaB/0cXsRaJaDcI5Ry0C9M=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCnnh3kgMFn9GRbPQ--.63080S4;
+	Fri, 28 Feb 2025 17:24:53 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: shshaikh@marvell.com,
+	manishc@marvell.com,
+	GR-Linux-NIC-Dev@marvell.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	rajesh.borundia@qlogic.com,
+	sucheta.chakraborty@qlogic.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] qlcnic: fix a memory leak in qlcnic_sriov_set_guest_vlan_mode()
+Date: Fri, 28 Feb 2025 17:24:49 +0800
+Message-Id: <20250228092449.3759573-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnnh3kgMFn9GRbPQ--.63080S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw4kAFWrtFy5ur4ktr15twb_yoWktFcEkF
+	17Zr1rX3yUCr9xK3y3twsru342gwnrX3WfZa4FgayrtwnrCF4jyw17Jas5JFyDX3yrZr9r
+	G3Wayry5C34IyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRNvtCUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0hkCbmfBfo4+eQAAs2
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Add qlcnic_sriov_free_vlans() to free the memory allocated by
+qlcnic_sriov_alloc_vlans() if "sriov->allowed_vlans" fails to
+be allocated.
 
-> On Fri, Feb 28, 2025 at 9:20=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> "Alice Ryhl" <aliceryhl@google.com> writes:
->>
->> > This macro behaves like #[no_mangle], but also performs an assertion
->> > that the Rust function has the same signature as what is declared in t=
-he
->> > C header.
->> >
->> > If the signatures don't match, you will get errors that look like this:
->> >
->> > error[E0308]: `if` and `else` have incompatible types
->> >   --> <linux>/rust/kernel/print.rs:22:22
->> >    |
->> > 21 | #[export]
->> >    | --------- expected because of this
->> > 22 | unsafe extern "C" fn rust_fmt_argument(
->> >    |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
->> >    |
->> >    =3D note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, =
-*mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
->> >               found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *c=
-onst c_void) -> *mut i8 {print::rust_fmt_argument}`
->> >
->> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> > ---
->> >  rust/kernel/prelude.rs |  2 +-
->> >  rust/macros/export.rs  | 25 +++++++++++++++++++++++++
->> >  rust/macros/helpers.rs | 19 ++++++++++++++++++-
->> >  rust/macros/lib.rs     | 18 ++++++++++++++++++
->> >  rust/macros/quote.rs   | 21 +++++++++++++++++++--
->> >  5 files changed, 81 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
->> > index dde2e0649790..889102f5a81e 100644
->> > --- a/rust/kernel/prelude.rs
->> > +++ b/rust/kernel/prelude.rs
->> > @@ -17,7 +17,7 @@
->> >  pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox,=
- VVec, Vec};
->> >
->> >  #[doc(no_inline)]
->> > -pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
->> > +pub use macros::{export, module, pin_data, pinned_drop, vtable, Zeroa=
-ble};
->> >
->> >  pub use super::{build_assert, build_error};
->> >
->> > diff --git a/rust/macros/export.rs b/rust/macros/export.rs
->> > new file mode 100644
->> > index 000000000000..3398e1655124
->> > --- /dev/null
->> > +++ b/rust/macros/export.rs
->> > @@ -0,0 +1,25 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +
->> > +use crate::helpers::function_name;
->> > +use proc_macro::TokenStream;
->> > +
->> > +pub(crate) fn export(_attr: TokenStream, ts: TokenStream) -> TokenStr=
-eam {
->>
->> This function is documented in macros/lib.rs. Could you insert a
->> docstring with a link to the function that carries the docs?
->
-> These functions are not visible in the docs, and no other macro does that.
+Fixes: 91b7282b613d ("qlcnic: Support VLAN id config.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I do realize that. I don't think it is ever too late to start improving.
-Don't you think it would be overall net positive to have
-
-/// Please see [`crate::export`] for documentation.
-
-attached to this function?
-
->
->> Please describe how the function operates and what mechanics it uses to
->> achieve its goal in a implementation detail comment.
->>
->> > +    let Some(name) =3D function_name(ts.clone()) else {
->> > +        return "::core::compile_error!(\"The #[export] attribute must=
- be used on a function.\");"
->> > +            .parse::<TokenStream>()
->> > +            .unwrap();
->> > +    };
->> > +
->> > +    let signature_check =3D quote!(
->> > +        const _: () =3D {
->> > +            if true {
->> > +                ::kernel::bindings::#name
->> > +            } else {
->> > +                #name
->> > +            };
->> > +        };
->> > +    );
->> > +
->> > +    let no_mangle =3D "#[no_mangle]".parse::<TokenStream>().unwrap();
->> > +    TokenStream::from_iter([signature_check, no_mangle, ts])
->> > +}
->> > diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
->> > index 563dcd2b7ace..3e04f8ecfc74 100644
->> > --- a/rust/macros/helpers.rs
->> > +++ b/rust/macros/helpers.rs
->> > @@ -1,6 +1,6 @@
->> >  // SPDX-License-Identifier: GPL-2.0
->> >
->> > -use proc_macro::{token_stream, Group, TokenStream, TokenTree};
->> > +use proc_macro::{token_stream, Group, Ident, TokenStream, TokenTree};
->> >
->> >  pub(crate) fn try_ident(it: &mut token_stream::IntoIter) -> Option<St=
-ring> {
->> >      if let Some(TokenTree::Ident(ident)) =3D it.next() {
->> > @@ -215,3 +215,20 @@ pub(crate) fn parse_generics(input: TokenStream) =
--> (Generics, Vec<TokenTree>) {
->> >          rest,
->> >      )
->> >  }
->> > +
->> > +/// Given a function declaration, finds the name of the function.
->> > +pub(crate) fn function_name(input: TokenStream) -> Option<Ident> {
->>
->> It would be great with a few tests for this function.
->
-> I don't think we have a mechanism for tests in the macro crate?
-
-Ah, I didn't realize. I'll create an issue for that if it is so.
-
->
->> > +    let mut input =3D input.into_iter();
->> > +    while let Some(token) =3D input.next() {
->> > +        match token {
->> > +            TokenTree::Ident(i) if i.to_string() =3D=3D "fn" =3D> {
->> > +                if let Some(TokenTree::Ident(i)) =3D input.next() {
->> > +                    return Some(i);
->> > +                }
->> > +                return None;
->> > +            }
->> > +            _ =3D> continue,
->> > +        }
->> > +    }
->> > +    None
->> > +}
->> > diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
->> > index d61bc6a56425..3cbf7705c4c1 100644
->> > --- a/rust/macros/lib.rs
->> > +++ b/rust/macros/lib.rs
->> > @@ -9,6 +9,7 @@
->> >  #[macro_use]
->> >  mod quote;
->> >  mod concat_idents;
->> > +mod export;
->> >  mod helpers;
->> >  mod module;
->> >  mod paste;
->> > @@ -174,6 +175,23 @@ pub fn vtable(attr: TokenStream, ts: TokenStream)=
- -> TokenStream {
->> >      vtable::vtable(attr, ts)
->> >  }
->> >
->> > +/// Export a function so that C code can call it.
->> > +///
->> > +/// This macro has the following effect:
->> > +///
->> > +/// * Disables name mangling for this function.
->> > +/// * Verifies at compile-time that the function signature matches wh=
-at's in the header file.
->> > +///
->> > +/// This macro requires that the function is mentioned in a C header =
-file, and that the header file
->> > +/// is included in `rust/bindings/bindings_helper.h`.
->> > +///
->> > +/// This macro is *not* the same as the C macro `EXPORT_SYMBOL*`, sin=
-ce all Rust symbols are
->> > +/// currently automatically exported with `EXPORT_SYMBOL_GPL`.
->>
->> Perhaps add the following:
->>
->> This macro is useful when rust code is providing a function symbol whose
->> signature is dictated by a C header file.
->
-> I do think this could use more info about when to use it. E.g., you
-> don't use it if C calls it via a vtable, but only if C calls it via a
-> declaration in a header file. I'll add more info.
->
->> > +#[proc_macro_attribute]
->> > +pub fn export(attr: TokenStream, ts: TokenStream) -> TokenStream {
->> > +    export::export(attr, ts)
->> > +}
->> > +
->> >  /// Concatenate two identifiers.
->> >  ///
->> >  /// This is useful in macros that need to declare or reference items =
-with names
->> > diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
->> > index 33a199e4f176..c18960a91082 100644
->> > --- a/rust/macros/quote.rs
->> > +++ b/rust/macros/quote.rs
->> > @@ -20,6 +20,12 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
->> >      }
->> >  }
->> >
->> > +impl ToTokens for proc_macro::Ident {
->> > +    fn to_tokens(&self, tokens: &mut TokenStream) {
->> > +        tokens.extend([TokenTree::from(self.clone())]);
->> > +    }
->> > +}
->> > +
->> >  impl ToTokens for TokenTree {
->> >      fn to_tokens(&self, tokens: &mut TokenStream) {
->> >          tokens.extend([self.clone()]);
->> > @@ -40,7 +46,7 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
->> >  /// `quote` crate but provides only just enough functionality needed =
-by the current `macros` crate.
->> >  macro_rules! quote_spanned {
->> >      ($span:expr =3D> $($tt:tt)*) =3D> {{
->> > -        let mut tokens;
->> > +        let mut tokens: ::std::vec::Vec<::proc_macro::TokenTree>;
->> >          #[allow(clippy::vec_init_then_push)]
->> >          {
->> >              tokens =3D ::std::vec::Vec::new();
->> > @@ -65,7 +71,8 @@ macro_rules! quote_spanned {
->> >          quote_spanned!(@proc $v $span $($tt)*);
->> >      };
->> >      (@proc $v:ident $span:ident ( $($inner:tt)* ) $($tt:tt)*) =3D> {
->> > -        let mut tokens =3D ::std::vec::Vec::new();
->> > +        #[allow(unused_mut)]
->> > +        let mut tokens =3D ::std::vec::Vec::<::proc_macro::TokenTree>=
-::new();
->> >          quote_spanned!(@proc tokens $span $($inner)*);
->> >          $v.push(::proc_macro::TokenTree::Group(::proc_macro::Group::n=
-ew(
->> >              ::proc_macro::Delimiter::Parenthesis,
->> > @@ -136,6 +143,16 @@ macro_rules! quote_spanned {
->> >          ));
->> >          quote_spanned!(@proc $v $span $($tt)*);
->> >      };
->> > +    (@proc $v:ident $span:ident =3D $($tt:tt)*) =3D> {
->> > +        $v.push(::proc_macro::TokenTree::Punct(
->> > +                ::proc_macro::Punct::new('=3D', ::proc_macro::Spacing=
-::Alone)
->> > +        ));
->> > +        quote_spanned!(@proc $v $span $($tt)*);
->> > +    };
->> > +    (@proc $v:ident $span:ident _ $($tt:tt)*) =3D> {
->> > +        $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::n=
-ew("_", $span)));
->> > +        quote_spanned!(@proc $v $span $($tt)*);
->> > +    };
->> >      (@proc $v:ident $span:ident $id:ident $($tt:tt)*) =3D> {
->> >          $v.push(::proc_macro::TokenTree::Ident(::proc_macro::Ident::n=
-ew(stringify!($id), $span)));
->> >          quote_spanned!(@proc $v $span $($tt)*);
->>
->> The update to `impl ToTokens for TokenTree` should be split out in a
->> separate patch and should carry some explanation of the change.
->
-> I think this case is borderline for whether it's necessary to split
-> up, but okay.
-
-Thanks!
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+index f9dd50152b1e..2c01a9ad444f 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -454,8 +454,10 @@ static int qlcnic_sriov_set_guest_vlan_mode(struct qlcnic_adapter *adapter,
+ 
+ 	num_vlans = sriov->num_allowed_vlans;
+ 	sriov->allowed_vlans = kcalloc(num_vlans, sizeof(u16), GFP_KERNEL);
+-	if (!sriov->allowed_vlans)
++	if (!sriov->allowed_vlans) {
++		qlcnic_sriov_free_vlans(adapter);
+ 		return -ENOMEM;
++	}
+ 
+ 	vlans = (u16 *)&cmd->rsp.arg[3];
+ 	for (i = 0; i < num_vlans; i++)
+-- 
+2.25.1
 
 
