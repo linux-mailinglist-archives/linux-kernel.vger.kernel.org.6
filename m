@@ -1,294 +1,266 @@
-Return-Path: <linux-kernel+bounces-538544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAFFA49A0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:56:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408C5A49A0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5497A5DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C344E3B283F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F329F26B0BF;
-	Fri, 28 Feb 2025 12:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860726B2C8;
+	Fri, 28 Feb 2025 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oklBksJg"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWi8uFY3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE1D26B2A9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6E726A1CB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747385; cv=none; b=FCBm0+VI2t175BSAI/h4FJZdYQfJvpFSKdf9SamEkHj6NxLlcr2/JYIjyvdGN6xXrWd5wVXjC2QhQJ0A0x2uiymQN7hQlHbtBgtk046Tpg1nqEt5WnBdcOT1HA/EMGxvs4kX5cRpWT8h99Rzw5WzrO0SD9mmQ16okNnqDi9bPE8=
+	t=1740747465; cv=none; b=PN0qk1G+l8g0nb4T51CF93eOQy86R03WDh3stFfopqMZ+o4Ed75YIsiqHrfd37dRjRzp3TALLdipJEtX8Ac6tM7xUBRYFZ7UrgBXqIgQfMaTPRBy1dc/407R6vIJmi1NNC/TwmVDvCSTkir9xULd0PfORTEH8PVXi4hvQ5CAgXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747385; c=relaxed/simple;
-	bh=QcUuATZDqaDCzqXNwCHDnbt5KpfVTBt3fQo8n4omq/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAb2oFVLKcncKWEBqs3RWFjR8CjZyvhR21yfZPYoCSygXUOhiVt3XoTB4E/yg95CzgHM45ZmauIlxDgbRqFpMCfYxhOBz+NFPo7vu8lnWgP6sOX1hnJjYEKoNb782LqnMVqNjVhuh/Vy7sR98/j5VelMYnmniRm+XfJPq4M5ees=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oklBksJg; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2396520276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:56:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740747382; x=1741352182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DTGCywFA/lKJ54Foy65iVuZAtehZv+71I6e9CYX3m94=;
-        b=oklBksJgi/CG2HzA97Dv7IM8uvDXc66qa/iJ2Ftv7R7RfG0DYtIbMdgXuzgRGAfnAo
-         v59Tu13cW3LCZ+cDLUsYLwd8mRjLYHdSCUCjkIvEDUmW3hN10okMrbxkSszD8n9iOzqZ
-         WV3wHUmOsiE5AP33cw0KI4gSufp+14HibCmlnygx+W7buI+dQVftQHWcGEy2yKOZWZhd
-         W97tBRCDRVkECpkIWTlFaDv9/kzMgEY2qbxKXJoPMuIyKLgDXUtoma2YChCMB8kpZtFe
-         0K29jtjX+MdfrxfUttmgPP/8qm+bFSMUWsbww7Ve+JefhfF4msEJ9BIANbl8Zh14oX72
-         Gh4g==
+	s=arc-20240116; t=1740747465; c=relaxed/simple;
+	bh=udHQp7xmQO4RdshNE3H57EULNRvh/CXR5HOa/p5rSHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qV+VltgUcai9pXJqhUQzUgbvsL5L3ckdIMQBu3OqRqhTbKqlMrZConJC8F+QPT06pI7IVnzxEKVoU3ZEsvS2jva2T8EbL5yL6z25NJL/D1KDx6utXhsfGLf3pO7m6x7iuf9mm6g2JyGPsomVoCW117PHdBj0dR6NsEqwyJsNyU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWi8uFY3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740747461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EO0dvLIRsOSJYII3MZSMXo/uV/4vt5Geh4Q79B7fQU0=;
+	b=QWi8uFY3/eogAJ9vvB32OSSudEIN2S3LhmlAbfNDdzkYNzu5LrL8GDBQH5FBAIP1fYHWFX
+	RpNbEX8hyVhNWzA31z6Af1/d7KvxoOwpduB9hE04BfhA3ezpZzm8PIIkq8mDfUf7idQlXQ
+	TQEIW+Y7I0iCy2hALopqTSScMXx9jFA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-346-u0BzDtydN9qenL6dh35fzA-1; Fri, 28 Feb 2025 07:57:39 -0500
+X-MC-Unique: u0BzDtydN9qenL6dh35fzA-1
+X-Mimecast-MFC-AGG-ID: u0BzDtydN9qenL6dh35fzA_1740747458
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43ab5baf62cso15364375e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:57:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740747382; x=1741352182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740747458; x=1741352258;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DTGCywFA/lKJ54Foy65iVuZAtehZv+71I6e9CYX3m94=;
-        b=CZJcBafWgCKPt30zijCn/LoiVPQ964rw9KKej1eU1Vx2UGOUkJbMI41ry+VFBPgCvB
-         U74jmK2eHdabI5DwBTLTyC6CD0NW9rpb6a3uPo+7X2VsE16zaQ5ZdDKTfFM9w3EJ5Ozm
-         +BFBiMJ+7ehAh4Iw8d4YegXOsvd5NJkI+O92Aa4J6egfBFzxcTzWbEpQ+YLwePo7iFzu
-         WKjdhmyEwvN1Istd97s0GEGB22g18oWSMrLO1X4ZdNnqh/Vv92Tb879z2PuwlJElH4Zv
-         sC+GuoWpJoe9aFbDqwubjiexsQPVdCo70tPesEvppRuj0IuDc5LnV36Q5usSJI1+4jPm
-         B5Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9m94w7vS9PhUIlEOI5411yY/o7UJiFS4n4G5Jdk54h1cxgkQPvhEpiDBWGS4a5JaPA0ZAifprqpXZsmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWo2NwpMfBZmRWtOoSE8YHM3nUrAKGRs8LWXRdHykljdydkRd
-	EHh4yAiYnb3lpfNI1CcyhU24JAcxPfuDEzjMp38jio1VeSIBB02p9KlUQ1+ym49myIWTbwPwW62
-	JBqH2RQg1dMZGQZbkZLt468/d7GJbQbbsSjNGBQ==
-X-Gm-Gg: ASbGncuxdlu1iaiN9EP9E5c0vnwG49p7nR+/Ganit6tpiRUtQ53Fj6/Acflq9o3TxDf
-	UGhRH9qQsggr6DRtKI9GRh55vmhy9otbCxEu6XWVe87zmpWIQPxTyVJrNpLMpsBVUsh9eXUy8Ki
-	kU5q69S8c=
-X-Google-Smtp-Source: AGHT+IEgx8PWrXk4YwKsz1DBhe40DKB5Jr6qJyXMx6+X/MoJZz0+V/5dbn2iAtmsHRF32R5oGfjBLaMrRbF4zGOeWbI=
-X-Received: by 2002:a05:6902:26c9:b0:e60:983e:f3d6 with SMTP id
- 3f1490d57ef6-e60b2eb2a54mr3178855276.22.1740747382106; Fri, 28 Feb 2025
- 04:56:22 -0800 (PST)
+        bh=EO0dvLIRsOSJYII3MZSMXo/uV/4vt5Geh4Q79B7fQU0=;
+        b=Mwf9HDlVah4JkS5gxza7KvxN6OLMjZT0rLmVUg3tWhzvv9VvptFUzRHQsYH85v4Bn+
+         3kOccCCG95HSujyeIxNVU1E2l/ZO5fubI1JmzwguL7fu4iJDu+y3Y+NGPYwgVWyAOKRM
+         +A0odSuWQ4qIHLzmuaA+FJRpq2x1fP96aBCbUU2AfqBQGSlc875w5hw/EP/8VMbqfNj3
+         C0TlzfnIPTT2LD/fQlWBUgC+SeKrtiVvOt3qJa84WJO3qS5a99/PV9U/1qNau4pAuCuu
+         yLi90eUhhCVpletSiitywDzNlbQ0Yk+EVrRyqDh2Vf2X2jN0/dzIp7b0fraQ9r6r9jqK
+         ymow==
+X-Forwarded-Encrypted: i=1; AJvYcCXSfLHcmeq0JAZsQats14llUperOrSDQXGqnuh/45tjMoFa5R2Y7qriUgjV7IFjNqCUsQj6So5v+nVaUmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcShDaroYgVMaO11aN+a5EK4u/wZ8IyPQ3EMMIoD4aAh8bxpJq
+	B0dq+uO31KWCy3DFCMGGxQaIa0N+8IrdlzgLCtQ59TYOEWWJ+TgB3vb/XvOhIEcCQ30HKdwyz9M
+	UqAuF0JkpEGHREp9XXQTSbeSdxJ4LpX5HOeH+bxvdUIWacgSZQ9o/psVQQl0oeQ==
+X-Gm-Gg: ASbGncvOU8Y6MwA26qJTeVjFnQAgcR33S4PYTdxAI6y2YX9c6Ei6oJq8Z8oSuvUGeLN
+	3gh4oKJpc7NW7G7syhWWVffoQSNcYD6doDacCkGETxQd7wi2ndad/ZRDELw4VTZMUCpgPqer5eR
+	+hAAaKNRIHP5RRPwnRBLP66WcikXzdyi5OcwOvso2W8FG3natjLs7HSuNIJnTRfnZF76Ct5Ceox
+	MSpIXquTVrEClnESLHt9EpDVoeEcq/SYMit2F9FaEqNDdG6174UYT8stOYEyk6nFUCobu/a3DFH
+	ZcpDjaMzbKWZs4e4A/ycIrIONe6bUkTTudqgLBxGFyE9Az3q59hGq2ovBzstFSc=
+X-Received: by 2002:a5d:6da2:0:b0:38f:4acd:975c with SMTP id ffacd0b85a97d-390ec9bcf2cmr2037403f8f.27.1740747458245;
+        Fri, 28 Feb 2025 04:57:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG5pZkRnTSZmpHVs+jeM3IRrIXDHQTuhiGcbapnJ6k3yjf+h2Zt1ij5RmmtgvDB3MGiIGYEYA==
+X-Received: by 2002:a5d:6da2:0:b0:38f:4acd:975c with SMTP id ffacd0b85a97d-390ec9bcf2cmr2037382f8f.27.1740747457848;
+        Fri, 28 Feb 2025 04:57:37 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844c0dsm5029592f8f.80.2025.02.28.04.57.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 04:57:37 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:57:35 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 05/19] acpi/ghes: prepare to change the way HEST
+ offsets are calculated
+Message-ID: <20250228135735.43c3ad9c@imammedo.users.ipa.redhat.com>
+In-Reply-To: <ac3cc2002267e1ad848aea367ff0b08f2c4b5c69.1740671863.git.mchehab+huawei@kernel.org>
+References: <cover.1740671863.git.mchehab+huawei@kernel.org>
+	<ac3cc2002267e1ad848aea367ff0b08f2c4b5c69.1740671863.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
- <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-13-8d5f5f426eb2@linaro.org>
- <ca2xiobwbga3bet6u4ktsyo62p2l7vvzetkyzkr7ovu6soo4fb@uprexbwa7z6w>
-In-Reply-To: <ca2xiobwbga3bet6u4ktsyo62p2l7vvzetkyzkr7ovu6soo4fb@uprexbwa7z6w>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 28 Feb 2025 20:56:11 +0800
-X-Gm-Features: AQ5f1JqP-1M6CXkD__nuPqEW9QDJY_QB45QigdFKQ_yi2VAR4ssCX691WtTs-2E
-Message-ID: <CABymUCMuEY5XGyVuZ4OXLKenawRSTWn6Mk6VgBtz0-0oCMPC_A@mail.gmail.com>
-Subject: Re: [PATCH v7 13/15] drm/msm/dpu: support SSPP assignment for
- quad-pipe case
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2025=E5=B9=B42=E6=
-=9C=8828=E6=97=A5=E5=91=A8=E4=BA=94 12:39=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Feb 26, 2025 at 08:31:02PM +0800, Jun Nie wrote:
-> > Currently, SSPPs are assigned to a maximum of two pipes. However,
-> > quad-pipe usage scenarios require four pipes and involve configuring
-> > two stages. In quad-pipe case, the first two pipes share a set of
-> > mixer configurations and enable multi-rect mode when certain
-> > conditions are met. The same applies to the subsequent two pipes.
-> >
-> > Assign SSPPs to the pipes in each stage using a unified method and
-> > to loop the stages accordingly.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 11 +++++
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  |  2 +
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 71 ++++++++++++++++++++---=
---------
-> >  3 files changed, 58 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_crtc.c
-> > index 0a053c5888262d863a1e549e14e3aa40a80c3f06..9405453cbf5d852e72a5f95=
-4cd8c6aed3a222723 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > @@ -1366,6 +1366,17 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool =
-en)
-> >       return 0;
-> >  }
-> >
-> > +/**
-> > + * dpu_crtc_get_num_lm - Get mixer number in this CRTC pipeline
-> > + * @state: Pointer to drm crtc state object
-> > + */
-> > +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state)
-> > +{
-> > +     struct dpu_crtc_state *cstate =3D to_dpu_crtc_state(state);
-> > +
-> > +     return cstate->num_mixers;
-> > +}
-> > +
-> >  #ifdef CONFIG_DEBUG_FS
-> >  static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
-> >  {
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_crtc.h
-> > index 0b148f3ce0d7af80ec4ffcd31d8632a5815b16f1..b14bab2754635953da402d0=
-9e11a43b9b4cf4153 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> > @@ -264,4 +264,6 @@ static inline enum dpu_crtc_client_type dpu_crtc_ge=
-t_client_type(
-> >
-> >  void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
-> >
-> > +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state);
-> > +
-> >  #endif /* _DPU_CRTC_H_ */
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
-m/msm/disp/dpu1/dpu_plane.c
-> > index d67f2ad20b4754ca4bcb759a65a39628b7236b0f..d1d6c91ed0f8e1c62b757ca=
-42546fbc421609f72 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > @@ -1112,11 +1112,10 @@ static int dpu_plane_virtual_assign_resources(s=
-truct drm_crtc *crtc,
-> >       struct dpu_rm_sspp_requirements reqs;
-> >       struct dpu_plane_state *pstate;
-> >       struct dpu_sw_pipe *pipe;
-> > -     struct dpu_sw_pipe *r_pipe;
-> >       struct dpu_sw_pipe_cfg *pipe_cfg;
-> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> > +     struct dpu_plane *pdpu =3D to_dpu_plane(plane);
-> >       const struct msm_format *fmt;
-> > -     int i;
-> > +     int i, num_lm, stage_id, num_stages;
-> >
-> >       if (plane_state->crtc)
-> >               crtc_state =3D drm_atomic_get_new_crtc_state(state,
-> > @@ -1124,11 +1123,6 @@ static int dpu_plane_virtual_assign_resources(st=
-ruct drm_crtc *crtc,
-> >
-> >       pstate =3D to_dpu_plane_state(plane_state);
-> >
-> > -     pipe =3D &pstate->pipe[0];
-> > -     r_pipe =3D &pstate->pipe[1];
-> > -     pipe_cfg =3D &pstate->pipe_cfg[0];
-> > -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
-> > -
-> >       for (i =3D 0; i < PIPES_PER_PLANE; i++)
-> >               pstate->pipe[i].sspp =3D NULL;
-> >
-> > @@ -1142,24 +1136,49 @@ static int dpu_plane_virtual_assign_resources(s=
-truct drm_crtc *crtc,
-> >
-> >       reqs.rot90 =3D drm_rotation_90_or_270(plane_state->rotation);
-> >
-> > -     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, cr=
-tc, &reqs);
-> > -     if (!pipe->sspp)
-> > -             return -ENODEV;
-> > -
-> > -     if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_p=
-ipe_cfg,
-> > -                                           pipe->sspp,
-> > -                                           msm_framebuffer_format(plan=
-e_state->fb),
-> > -                                           dpu_kms->catalog->caps->max=
-_linewidth)) {
-> > -             /* multirect is not possible, use two SSPP blocks */
-> > -             r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global=
-_state, crtc, &reqs);
-> > -             if (!r_pipe->sspp)
-> > -                     return -ENODEV;
-> > -
-> > -             pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> > -             pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> > -
-> > -             r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> > -             r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> > +     num_lm =3D dpu_crtc_get_num_lm(crtc_state);
-> > +     num_stages =3D (num_lm + 1) / 2;
-> > +     for (stage_id =3D 0; stage_id < num_stages; stage_id++) {
-> > +             for (i =3D stage_id * PIPES_PER_STAGE; i < (stage_id + 1)=
- * PIPES_PER_STAGE; i++) {
-> > +                     struct dpu_sw_pipe *r_pipe;
-> > +                     struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> > +
-> > +                     pipe =3D &pstate->pipe[i];
-> > +                     pipe_cfg =3D &pstate->pipe_cfg[i];
-> > +
-> > +                     if (drm_rect_width(&pipe_cfg->src_rect) =3D=3D 0)
-> > +                             break;
-> > +
-> > +                     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, =
-global_state, crtc, &reqs);
-> > +                     if (!pipe->sspp)
-> > +                             return -ENODEV;
-> > +
-> > +                     /* use solo SSPP for the 2nd pipe in pipe pair */
-> > +                     if (i % PIPES_PER_STAGE !=3D 0)
-> > +                             goto use_solo_sspp;
->
-> With this in place, do we need the nested loops? Wouldn't it be enough
-> to loop through the all pipes in a single run, as this condition will
-> force solo SSPP for the second pipes?
+On Thu, 27 Feb 2025 17:00:43 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Yeah, the internal loop for the 2 pipe in the stage can be expanded
-and assign SSPP
-directly if fail to use multi-rect mode. Will work on that.
+> Add a new ags flag to change the way HEST offsets are calculated.
+> Currently, offsets needed to store ACPI HEST offsets and read ack
+> are calculated based on a previous knowledge from the logic
+> which creates the HEST table.
+> 
+> Such logic is not generic, not allowing to easily add more HEST
+> entries nor replicates what OSPM does.
+> 
+> As the next patches will be adding a more generic logic, add a
+> new use_hest_addr, set to false, in preparation for such changes.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 
-Jun
+> ---
+>  hw/acpi/ghes.c           | 39 ++++++++++++++++++++++++---------------
+>  hw/arm/virt-acpi-build.c | 13 ++++++++++---
+>  include/hw/acpi/ghes.h   | 12 +++++++++++-
+>  3 files changed, 45 insertions(+), 19 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 84b891fd3dcf..9243b5ad4acb 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -206,7 +206,8 @@ ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
+>   * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
+>   * See docs/specs/acpi_hest_ghes.rst for blobs format.
+>   */
+> -static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+> +static void build_ghes_error_table(AcpiGhesState *ags, GArray *hardware_errors,
+> +                                   BIOSLinker *linker)
+>  {
+>      int i, error_status_block_offset;
+>  
+> @@ -251,13 +252,15 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+>                                         i * ACPI_GHES_MAX_RAW_DATA_LENGTH);
+>      }
+>  
+> -    /*
+> -     * tell firmware to write hardware_errors GPA into
+> -     * hardware_errors_addr fw_cfg, once the former has been initialized.
+> -     */
+> -    bios_linker_loader_write_pointer(linker, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, 0,
+> -                                     sizeof(uint64_t),
+> -                                     ACPI_HW_ERROR_FW_CFG_FILE, 0);
+> +    if (!ags->use_hest_addr) {
+> +        /*
+> +         * Tell firmware to write hardware_errors GPA into
+> +         * hardware_errors_addr fw_cfg, once the former has been initialized.
+> +         */
+> +        bios_linker_loader_write_pointer(linker, ACPI_HW_ERROR_ADDR_FW_CFG_FILE,
+> +                                         0, sizeof(uint64_t),
+> +                                         ACPI_HW_ERROR_FW_CFG_FILE, 0);
+> +    }
+>  }
+>  
+>  /* Build Generic Hardware Error Source version 2 (GHESv2) */
+> @@ -331,14 +334,15 @@ static void build_ghes_v2(GArray *table_data,
+>  }
+>  
+>  /* Build Hardware Error Source Table */
+> -void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+> +void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+> +                     GArray *hardware_errors,
+>                       BIOSLinker *linker,
+>                       const char *oem_id, const char *oem_table_id)
+>  {
+>      AcpiTable table = { .sig = "HEST", .rev = 1,
+>                          .oem_id = oem_id, .oem_table_id = oem_table_id };
+>  
+> -    build_ghes_error_table(hardware_errors, linker);
+> +    build_ghes_error_table(ags, hardware_errors, linker);
+>  
+>      acpi_table_begin(&table, table_data);
+>  
+> @@ -357,9 +361,11 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>      fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
+>                      hardware_error->len);
+>  
+> -    /* Create a read-write fw_cfg file for Address */
+> -    fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+> -        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
+> +    if (!ags->use_hest_addr) {
+> +        /* Create a read-write fw_cfg file for Address */
+> +        fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+> +            NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
+> +    }
+>  }
+>  
+>  static void get_hw_error_offsets(uint64_t ghes_addr,
+> @@ -395,8 +401,11 @@ void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+>      }
+>  
+>      assert(ACPI_GHES_ERROR_SOURCE_COUNT == 1);
+> -    get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+> -                         &cper_addr, &read_ack_register_addr);
+> +
+> +    if (!ags->use_hest_addr) {
+> +        get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+> +                             &cper_addr, &read_ack_register_addr);
+> +    }
+>  
+>      cpu_physical_memory_read(read_ack_register_addr,
+>                               &read_ack_register, sizeof(read_ack_register));
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index 3ac8f8e17861..040d875d4e83 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -946,9 +946,16 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+>      build_dbg2(tables_blob, tables->linker, vms);
+>  
+>      if (vms->ras) {
+> -        acpi_add_table(table_offsets, tables_blob);
+> -        acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
+> -                        vms->oem_id, vms->oem_table_id);
+> +        AcpiGedState *acpi_ged_state;
+> +        AcpiGhesState *ags;
+> +
+> +        acpi_ged_state = ACPI_GED(vms->acpi_dev);
+> +        ags = &acpi_ged_state->ghes_state;
+> +        if (ags) {
+> +            acpi_add_table(table_offsets, tables_blob);
+> +            acpi_build_hest(ags, tables_blob, tables->hardware_errors,
+> +                            tables->linker, vms->oem_id, vms->oem_table_id);
+> +        }
+>      }
+>  
+>      if (ms->numa_state->num_nodes > 0) {
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index f96ac3e85ca2..411f592662af 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -64,11 +64,21 @@ enum {
+>      ACPI_GHES_ERROR_SOURCE_COUNT
+>  };
+>  
+> +/*
+> + * AcpiGhesState stores GPA values that will be used to fill HEST entries.
+> + *
+> + * When use_hest_addr is false, the GPA of the etc/hardware_errors firmware
+> + * is stored at hw_error_le. This is the default on QEMU 9.x.
+> + *
+> + * An GPA value equal to zero means that GHES is not present.
+> + */
+>  typedef struct AcpiGhesState {
+>      uint64_t hw_error_le;
+> +    bool use_hest_addr;         /* Currently, always false */
+>  } AcpiGhesState;
+>  
+> -void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+> +void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+> +                     GArray *hardware_errors,
+>                       BIOSLinker *linker,
+>                       const char *oem_id, const char *oem_table_id);
+>  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
 
->
-> > +
-> > +                     /*
-> > +                      * Check multi-rect opportunity for the 2nd pipe =
-in the
-> > +                      * pair. SSPP multi-rect mode cross mixer pairs i=
-s not
-> > +                      * supported.
-> > +                      */
-> > +                     r_pipe =3D &pstate->pipe[i + 1];
-> > +                     r_pipe_cfg =3D &pstate->pipe_cfg[i + 1];
-> > +
-> > +                     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0 =
-&&
-> > +                         dpu_plane_try_multirect_parallel(pipe, pipe_c=
-fg, r_pipe, r_pipe_cfg,
-> > +                                                           pipe->sspp,
-> > +                                                           msm_framebu=
-ffer_format(plane_state->fb),
-> > +                                                           dpu_kms->ca=
-talog->caps->max_linewidth)) {
-> > +                             i++;
-> > +                             continue;
-> > +                     }
-> > +use_solo_sspp:
-> > +                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> > +                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> > +                     DPU_DEBUG_PLANE(pdpu, "allocating sspp_%d for pip=
-e %d.\n",
-> > +                                     pipe->sspp->idx - SSPP_NONE, i);
-> > +             }
-> >       }
-> >
-> >       return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
 
