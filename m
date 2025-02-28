@@ -1,159 +1,233 @@
-Return-Path: <linux-kernel+bounces-537769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ABFA49066
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:34:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F80A49068
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383083B3C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955973B39B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9255F1BEF95;
-	Fri, 28 Feb 2025 04:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60411A8F98;
+	Fri, 28 Feb 2025 04:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UL9wv/K7"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bi1KVM6A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA5F1BD9C1;
-	Fri, 28 Feb 2025 04:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE308BE8
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740717171; cv=none; b=F/4of/dbHcleD6Rx0Scr80L62G5P02nrsve+a6RHEtlgiL/wduizGjXZA5dfjKsr2CMtuNolv2T5Loy5tXiwkKC34+1UQn4TeJ1Zhbwkw3pRHL3PnUg1VdV6viWp/bjCLyt0bCIgE1bggTdNTacL4lXG+10Ht4j8rmdbkRIAzlU=
+	t=1740717279; cv=none; b=W5x/SJpqmdsChQXMmnRmQ59zhHWOWPofduVUHOQLP+xqbbDYHD1DRQFck5QOky3yX8KZjA09Jxc4fr9o8vcO5TNLGhs9LKkb3s6uAyse04WyfnXJNiB6tulnbQDVJwzpuBgGCYJ9i/XVc1m9xRQ35qS9u1kf9a56BJtNbH/eUCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740717171; c=relaxed/simple;
-	bh=qZhdXikI6UVY1zdlQzyoBJcvZeFaA39QMPy5jc+lJ4E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X3Z+FlEr4JSaOQRfKPyJqERL8KYo99ShyDsvFSwJYfYaCPBQUG4xWH5iFgfgjXsM/K87M6o+pOfbF7rkk2NYWvOO43xCYYbfTqrvLYWSiU33s3kBVg+shPgrGvrt+WOdB+eKD+ER7z1hOQisXxp16BNN9BS2NiA93pXN+BhB3jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UL9wv/K7; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22339936bbfso26758635ad.1;
-        Thu, 27 Feb 2025 20:32:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740717170; x=1741321970; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mY1ZEHmtwa1GitLrlmJuselIoFJmZMHZa/Euu9FfPU0=;
-        b=UL9wv/K7SSQQwZHgEQQRJvIgNO++fdoaGW/qQgkgRfq8sbp6CwtESx2qct3gdUYTYG
-         fkANkK9WJzxBzy5K00kb0EpibSQPAMx/Ey3g43jNLLKkY7aSh39pToevS+EBgKVITNEX
-         J8FbWRJnmhhCBbGhUsNUOY47xk0698I34BNVL3i8YuET5u7cFp+KKRrrQdQXkcqVaKkX
-         6VZPZdV2nJqfdq121GCI9gHd6y1osBNwlFw2a3LJMz+hm5t395+s8uhyzr/EYLGi0TXa
-         PlIAPyGXK1hZoznRP/njVKsH15wl0OQfnnkps5Icmma5O2Xi0KmGxR9vTNhf5QhE9Vb/
-         QqYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740717170; x=1741321970;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mY1ZEHmtwa1GitLrlmJuselIoFJmZMHZa/Euu9FfPU0=;
-        b=lLl/n6/AesnGC67th8Q5DNqiGYoIMo004hJdl0PiEcbjv4vkcBqubz58V0N63hh7R1
-         97B5Q1bSrbVs2IB91w3EE3E+6ONp39GB515RFOaAFAKJRfHtTbZJGEenp4+jW5qQX/+x
-         HaWQvp8kX5UVUjs4BEKT+/AwjLU08L5VcpKdopkmYPSOs327zcUliDWNhFDPJ+6jjGqZ
-         q9O+JChvMgjdk+Muo4uGYB9LalhGcCMNbkMSwvi+HRoHOLxbsEplKRGtPON8YMQt8dK0
-         jNMq2hz2E9LNSqbYGqLWcDmr45LrFjM9hTc2fsL1bl1YVhlc5e++J3F4tf86YMGl7iEC
-         f2Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEHi4gH7wSCDQY8i65fp0DZ8P1GxspS8xYKB3AEqGkfGGrCYBP6qXdO/jcdCcOVgIClFuaqDblzBEL@vger.kernel.org, AJvYcCVsf0VeUn5uvFOrlLUBgDfrn1Rywr8Q4hYFTJymoOjsC1hCJuM71toX08L0qmMyINjsA2OURNDp0qQabX8H@vger.kernel.org
-X-Gm-Message-State: AOJu0YzORpSv3fh+w7+vC8xCpKeJswbZmXCpZzCgb42wW08yGQgtofQ4
-	U9rv4TWKs4Bs0OJ2Ymv+DDO82/Vd9PMRXT/QldXUx4BVpa/Lw8MA1cJliQ==
-X-Gm-Gg: ASbGncu0z8eAGFlKtCLlDvtj6oiKhXX3bgycG60UatZtkRwmThCyntcF8BNb2Uqfzax
-	Csoonwy7rfnXBDOdg7vQK7riovb+/zBJAccla6B01aqDgyVyLoekFVC2UWpqUGtusaE5mpIQUwO
-	1EEbiMu+BwAsq9ogT/7oQDoDDM9DKUpgWooi+n+cTDvtslVlTnGkuQYmotj1+bpMXZHYs0YqzVt
-	zDBn452sfsdVTFO2L5c+SJ/2Ns2zBq65t5PoEYxyeKWWQIuw7HSSPuVbVua9vJb5T+KVgDHv3yt
-	Ewen6vfFITF9KzmS0Rn5erMn33Ec
-X-Google-Smtp-Source: AGHT+IEd45BbRxuJcc/ODzZoJKKfv+EegnhVjoVMaQy8U6rbvnXBM+bXYqV4j3BtClJXhPFYagq+JA==
-X-Received: by 2002:a05:6a20:7283:b0:1ee:e16a:cfa8 with SMTP id adf61e73a8af0-1f2f4e01863mr2897050637.34.1740717169879;
-        Thu, 27 Feb 2025 20:32:49 -0800 (PST)
-Received: from [127.0.1.1] ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-734a003dcafsm2738204b3a.132.2025.02.27.20.32.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 20:32:49 -0800 (PST)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Fri, 28 Feb 2025 12:32:16 +0800
-Subject: [PATCH RESEND v2 5/5] arm64: dts: apple: t8015: Add backlight
- nodes
+	s=arc-20240116; t=1740717279; c=relaxed/simple;
+	bh=aGYUH5HbbuTdEGmtcRd8nMDx1s4Tj/x00u0hxj3dDb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=siTbNdsyl+WuoHbDm8GwDEC+Q9VJAslYBzpWTJscSGk+ivzsFnhIoZ5FGJLYE/ZkXGOerX/5QldnrCH+nmnZpYYDqyBsDixLKbKmZtIAlFgR/jW7LsJvCNhFSTMt93tFTRlGSicjOCpRlcSP335HdQ0YtMttIXQ33rsZH8kfUU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bi1KVM6A; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740717277; x=1772253277;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aGYUH5HbbuTdEGmtcRd8nMDx1s4Tj/x00u0hxj3dDb8=;
+  b=Bi1KVM6AaOlRDvIjZXh64KuSUOmJZaVmQkqFMBSlc908ZB4z6kxmKtoG
+   +QqjNWS+zqTQDapPR62Et8++XmG1bTvJHU2OW9/tUBLUQ3HkrEjsXt77v
+   V+ILhdGOvQrXpfIeaImDz2dIaLAcyJqjaZurRlVlXouvl+zdnkmO7Kzrc
+   X1crsodmLat6GzazuYGvlKXy8BXSEMSP2MZgjEloqf2fNUd2dICJtB71R
+   mlxfF7Yuy1Q6Y/818ZaIRE/CxK77UDcVjEFcMfCwIQvbflB/OVpaANy+7
+   Fnr5La3qS7QAxxb+UKeN5Y544j63uge99ybcFaPX5yW5KF0bO8mwHhWO0
+   A==;
+X-CSE-ConnectionGUID: 2LpNemoDTYyuzThTWovZQg==
+X-CSE-MsgGUID: YBmvAx9sTKSXteWlZtfXMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="67007656"
+X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
+   d="scan'208";a="67007656"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 20:34:35 -0800
+X-CSE-ConnectionGUID: b59wTbJXQFGLHnLXO8GfBw==
+X-CSE-MsgGUID: ciJ46Be9Q6KSnrS2NRqu6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117756825"
+Received: from unknown (HELO [10.238.129.58]) ([10.238.129.58])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 20:34:33 -0800
+Message-ID: <c31b072a-7ec6-49f5-9ac7-a19cb6fbd5be@linux.intel.com>
+Date: Fri, 28 Feb 2025 12:34:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-dwi-dt-v2-5-69e450bc4bfb@gmail.com>
-References: <20250228-dwi-dt-v2-0-69e450bc4bfb@gmail.com>
-In-Reply-To: <20250228-dwi-dt-v2-0-69e450bc4bfb@gmail.com>
-To: Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1410; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=qZhdXikI6UVY1zdlQzyoBJcvZeFaA39QMPy5jc+lJ4E=;
- b=owEBbQKS/ZANAwAIAQHKCLemxQgkAcsmYgBnwTxhj6M3NanBr5AvddymnbZR2d8cHPaGW4NzK
- 2jryU6pj5GJAjMEAAEIAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCZ8E8YQAKCRABygi3psUI
- JKWhD/9Kye4j0aRu2dTcTj19vBKZO44Ncolu40yJZDoGyjZ61paCAKdGVjuTcWY9c7tit399/J/
- A2uRCQNQFddsl6uIBMMMHvkZd1ldws1boplm2P90ltqOkQ9IsQVcUqia/WlcR3Tx2GG2IOI6ee+
- ypekvAXxcSeKhAvjl4Ds410iPec+ueF9PWWP3eFDHojA7ge+DH4ummzhnrtVscaECWM3zpd5/AD
- 2lb4/jDhCWWZuWfdeUhTdl46zakdZIiFImP5OOHHbvpFUf+RPhcrV91g3BI7CVhL12TEZtmBNzW
- 5T+0buNt166NeM90BHShWxPKH7fofypOIQFjrXydSF9XKchP27u8TClv3gBRS7cyUcmd18CbFm0
- SM2Y+pbIv3aNU5uf+B1ctiARPi4Gv0oAXhj8Agg+D3hMEb7fG5gfFHNoHJSqChlbEXqsr3GgKhm
- JLlA41rfnGvnZYt/SbXF5Qo57Jul7m7ikBXE7d6LYuzQuM4a5BJ3ZZDBiHOfDrprrQPKsTO914A
- hLEWFZ4wzSvzFatsslxPy999apbmmWTjmHtBNyqDphTDeL2eK9Vl7AN3zPuNpbmZrjbzisQzKze
- uUywQTswPe+5TkBYL0T+gWSnNDbFnGiyCp5iSnhoXlohNdDvl0KhN6RlxrjaZgX7MyyaR1pxQ9O
- 5QOv4NskCVgf18Q==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH v2] iommu/vt-d: fix system hang on reboot
+ -f
+To: yunhui cui <cuiyunhui@bytedance.com>, Ethan Zhao <etzhao1900@gmail.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Baolu Lu <baolu.lu@linux.intel.com>,
+ dwmw2@infradead.org, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+ <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+ <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
+ <20250225142610.GB545008@ziepe.ca>
+ <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
+ <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
+ <83039906-77f7-4318-94bf-4c98bb3f0e32@linux.intel.com>
+ <20250226130423.GF5011@ziepe.ca>
+ <f29818dc-a0a7-46c4-b541-1b469a6b3304@gmail.com>
+ <20250227203855.GI5011@ziepe.ca>
+ <7bafd132-6a82-4313-b25f-92fc16faf917@gmail.com>
+ <CAEEQ3w=1H7o7G56hYmwEGErfuFX-2nG=wesJYL7p0dDqLv_rpw@mail.gmail.com>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
+ 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
+ 8TCx1OJHpvWFmL4Deq8=
+In-Reply-To: <CAEEQ3w=1H7o7G56hYmwEGErfuFX-2nG=wesJYL7p0dDqLv_rpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add DWI backlight controller nodes for Apple A11 SoC, and enable it for:
 
-- iPhone 8
-- iPhone 8 Plus
+在 2025/2/28 10:18, yunhui cui 写道:
+> Hi All,
+>
+> On Fri, Feb 28, 2025 at 8:51 AM Ethan Zhao <etzhao1900@gmail.com> wrote:
+>>
+>> On 2/28/2025 4:38 AM, Jason Gunthorpe wrote:
+>>> On Thu, Feb 27, 2025 at 08:40:31AM +0800, Ethan Zhao wrote:
+>>>> On 2/26/2025 9:04 PM, Jason Gunthorpe wrote:
+>>>>> On Wed, Feb 26, 2025 at 01:55:28PM +0800, Ethan Zhao wrote:
+>>>>>>> Provided the system does not respond to those events when this function
+>>>>>>> is called, it's fine to remove the lock.
+>>>>>> I agree.
+>>>>> I think it is running the destruction of the iommu far too late in the
+>>>>> process. IMHO it should be done after all the drivers have been
+>>>>> shutdown, before the CPUs go single threaded.
+>>>> Hmm... so far it is fine, the iommu_shutdown only has a little work to
+>>>> do, disable the translation, the PMR disabling is just backward compatible,
+>>>> was deprecated already. if we move it to one position where all CPUs are
+>>>> cycling, we don't know what kind of user-land tasks left there (i.e. reboot -f
+>>>> case), it would be hard to full-fill the requirement of Intel VT-d, no ongoing
+>>>> transaction there on hardware when issue the translation disabling command.
+>>> There is no guarentee device dma is halted anyhow at this point either.
+>> The -f option to reboot command, suggests data corruption possibility.although
+>>
+>> the IOMMU strives not to cross the transaction boundaries of its address
+>> translation.
+>>
+>> over all, we should make the reboot -f function works. not to hang
+>> there. meanwhile
+>>
+>> it doesn't break anything else so far.
+> patch v1:
+> if (!down_write_trylock(&dmar_global_lock))
+> return;
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/boot/dts/apple/t8015-8.dtsi | 4 ++++
- arch/arm64/boot/dts/apple/t8015.dtsi   | 7 +++++++
- 2 files changed, 11 insertions(+)
+We should also think about the corner case of reboot without -f option, there might be something
 
-diff --git a/arch/arm64/boot/dts/apple/t8015-8.dtsi b/arch/arm64/boot/dts/apple/t8015-8.dtsi
-index b6505b5185bdd728a7416efaa3dd53d1c6a5fab9..0300ee1a2ffb7d2bd0558f6cb6f86514f4b433a4 100644
---- a/arch/arm64/boot/dts/apple/t8015-8.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015-8.dtsi
-@@ -11,3 +11,7 @@
- / {
- 	chassis-type = "handset";
- };
-+
-+&dwi_bl {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index b68647bebd20782ba7a125e670b3264c184b62cd..4d54afcecd50b50ed1fd386ccfc46c373e190e6b 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -262,6 +262,13 @@ pmgr: power-management@232000000 {
- 			reg = <0x2 0x32000000 0 0x8c000>;
- 		};
- 
-+		dwi_bl: backlight@232200080 {
-+			compatible = "apple,t8015-dwi-bl", "apple,dwi-bl";
-+			reg = <0x2 0x32200080 0x0 0x8>;
-+			power-domains = <&ps_dwi>;
-+			status = "disabled";
-+		};
-+
- 		pinctrl_ap: pinctrl@233100000 {
- 			compatible = "apple,t8015-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x33100000 0x0 0x1000>;
+wrong with one of the devices there on other CPUs they don't release the lock and were shutdown
+
+by NMI, the dmar_global_lock is held by one of them, so we just bail out here at at once ?
+
+leaving the IOMMU translation etc in enabling status. Is it better to loop with 10 seconds timeout
+
+to try the lock then make sure no better choice, then continue the disabling of IOMMU translation & PMR ?.
+
+Even the reboot -f case, leaving the IOMMU translation in enabling status is worse choice.
+
+So seems we shouldn't bail out immediately after one time trylock whatever.
+
+>
+>   patch v3:
+> /* All other CPUs were brought down, hotplug interrupts were disabled,
+> no lock and RCU checking needed anymore*/
+> list_for_each_entry(drhd, &dmar_drhd_units, list) {
+> iommu = drhd->iommu;
+> /* Disable PMRs explicitly here. */
+> iommu_disable_protect_mem_regions(iommu);
+> iommu_disable_translation(iommu);
+> }
+>
+> Since we can remove down_write/up_write, it indicates that during the
+> IOMMU shutdown process, we are not particularly concerned about
+> whether others are accessing the critical section. Therefore, it can
+> be understood that Patch v1 can successfully acquire the lock and
+> proceed with subsequent operations. From this perspective, Patch v1 is
+> reasonable and can prevent situations where there is an actual owner
+> of dmar_global_lock, even though it does not perform a real IOMMU
+> shutdown.
+>
+> However, if the IOMMU shutdown truly fails, IOMMU_WAIT_OP will trigger
+> a panic(). Removing down_write/up_write offers better maintainability
+> than Patch v1 (as we can retrieve the cause from the vmcore). But this
+> might not be significant, since the reboot could have been completed
+> successfully, and the occurrence of panic() might instead cause
+> confusion.
+>
+> In summary, it is essential to complete the reboot action here rather
+> than causing the system to hang. So, which do you prefer, v1 or v3?
+
+Would v3 miss something ? please comment.
+
+normal reboot/shutdown without -f case, function works right without any data corrupt or
+
+leaving device in confusion status, good or bad situation.
+
+reboot -f case, functions works, strives to not corrupt data or leave device in confusion status.
+
+...
+
+Thanks,
+
+Ethan
+
+>
+>
+>> Thanks,
+>>
+>> Ethan
+>>
+>>> Jason
+> Thanks,
+> Yunhui
 
 -- 
-2.48.1
+"firm, enduring, strong, and long-lived"
 
 
