@@ -1,39 +1,81 @@
-Return-Path: <linux-kernel+bounces-538494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04840A4995B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D00A4995F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CD247A9BA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC2C7A93D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E43426AAAB;
-	Fri, 28 Feb 2025 12:31:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1990C1C3BE3;
-	Fri, 28 Feb 2025 12:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D314226B2B1;
+	Fri, 28 Feb 2025 12:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ye9Bw6Il"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DEC1C3BE3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740745885; cv=none; b=bKfjb/o57RwaDdtoHVgGWpFT6yG2oiQS1zvZYMYqeOL8Zzcok/9t5yxgweZl959yJ2maIUu1nzXMzMYnz3YuRk1gRCkiGbbk6RYJ+E6E3z5gNTPQzI+sYyEE+B4fkIWcuiQW318Q8VE1JBJ4DTUsOOMNE8Csm+LAy/yj47irTfw=
+	t=1740746017; cv=none; b=cMSQ2iTOKQ/ieoo7rCBSYqlxlvMMCJHvkXPsHXrWLdOXLikewTvncLXFQJss+t83/NpRkqdmmMz1+MbCgnTysBHHoFnq1szkRD0NQG7tNmCu9ZXNs/OOk60ovUJcEcMLSbe00M8ybU+WfCSX+rN6quy7TrfsbBE/h17h7sTKhBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740745885; c=relaxed/simple;
-	bh=XMrFG06SF03GzZzh452twEP2WnLlvQfwLHAAPtu2OyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2wNSScI40PuiV0kj7km1CZThc3ZS8fePF+c5e4XLrsr4D8QV+Mj+J8evPsH8ybce9yYrI1T/RNmTX2slPpIrPsvxI4KhX6h2CPAsMIy2W0sngzwkoP9BnEJRIS+TYkHTd5Y4DYD7tKq0nI8d5YyObeBxn1ZUi+TnmIOGBta8/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F14D61688;
-	Fri, 28 Feb 2025 04:31:38 -0800 (PST)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55F913F6A8;
-	Fri, 28 Feb 2025 04:31:21 -0800 (PST)
-Message-ID: <1dbfc2fa-2b40-497f-8588-d04d0d88c5f2@arm.com>
-Date: Fri, 28 Feb 2025 12:31:19 +0000
+	s=arc-20240116; t=1740746017; c=relaxed/simple;
+	bh=kih+IGcNbVyuCyjXFI0ZD+tKmyqExem57NcIh1Tz9E0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dYh2gU7u7R/w6UARz4q0ruonZ57zeeegRs7HAux+2kTd2jsmDWWYrqM8bEpxynuChCKwv5wM4+XTp5IfGubgZZVIViMDN0Iictpuzx6sxbAa5lvWLDBOdzVc4a1SgcqqCKdStsWEDS6eKXG7YOQQ7w3wOOvhrBWhqcyeIQcOJkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ye9Bw6Il; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so14572875e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:33:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740746012; x=1741350812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vKMbXBxLNCj6hIeZVbgFF5PbQ+OX4jdI8OmZFpwXOcU=;
+        b=ye9Bw6IlAsGZNMPQiv8pnRWlfg9+lRlaPwS4E50f8ulkguu9SUp8If+h+QK/L+u+SD
+         4Y89S/Scxbr3gfDAaUhQ9A5IkW6TcgGFMWLN88c82ivJCgkVIbB/S6VQibx4DrlchrxL
+         0GTeXn2s7xwfhZyKxysV3Av2xtyB619XyX7Ay4ifnryljETdwI8tYxFYgjZ/PPvX6vDI
+         U8grxv3Ny8/9OWSZTUrYtNoYEKzF5oOau14vMQ+BpSzsfgJg2DFoRY8cIkCsL6ujL1hZ
+         ANNkRFZWI7atZmXAlPUXQr6xxqml1ng2j46WyMwoVe7lbfNK/ceYJiLigo2PtUM446DB
+         wQaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740746012; x=1741350812;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vKMbXBxLNCj6hIeZVbgFF5PbQ+OX4jdI8OmZFpwXOcU=;
+        b=wJzSH+lv9UyxnBoTUSCeos1SqwQ+pXnyjHsQUFWk/T8C5SucgmGImvh+Etc9lhwJiB
+         zQ0K4W02sRc58vm1zCaOVR3OthYXQxlt3eidMrd7GyG0q5XtBf+7UlhtVuSgcX7Ergp+
+         m8vKqW1EyU1uU/kwyHH+BB0NT45yUGuayp1b3jyd/vhtzXdV65wgdlVvbqll3ucTWOw9
+         MhYJ23luf1rJhauk9VzEoOumOjtln3mishk4alR5YR/tM2nW6m5IrvBTVMkO21/AKSSj
+         nzIrl9PFhmwbvuGwbIJuc09s7kXi8c1zx/gWfG826mVR7x7/n2wB/IBxjA+ruLrkExG5
+         cMig==
+X-Forwarded-Encrypted: i=1; AJvYcCUjYPC7biggv4iozqBSb4+9Ps77mLHJpgZib5qKA2+y4CIV7tq9tNI3uPtufZjb6rOeK5PFMm+6jDTIbkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkyE3z/TiBpKyeqeyj1+PCzOk3X1oAuCHkxB7l2qdHa0yjfGGo
+	nfCI3LRK641k6KDnYjm/eVvgCFoPv9SOxSnpgyktOIPv5IhV6SyDthVmRx8XGBU=
+X-Gm-Gg: ASbGncuUjbnJsmbFK+fKCybntiPDpXtd3ytn7Mfo9JvXviWoxkNu0AgRCrqLYiQlD8z
+	hmuUNMlvl3MI/BNaIvKYXOEWhj2OEka4TtevT6KFuKD905ywGPk1sEQIZEaanlOs01JtadLJON9
+	aovSdOOCc1bxLImqJzwZvkOwfr30wSpVFqp6EhtZ9p82EL2oMe1Si4sJsboFATsuXQvqZLrGZga
+	4jxPLcUg+A9x/KgdbfmZCw7jdzA5u4PCUzeDq+wGuSGIlWCkBHkMJtU+JE05q+q4Hx/P4gy14mc
+	rLGdAnuCYtcrerVqgXOjGShDBdHmw58d0RHbyqgojMmgJtrZ7VlfGARacB61yuguN6E+w3fxvzJ
+	glI4=
+X-Google-Smtp-Source: AGHT+IFeeyg3J6LhnEE1Rc9Q+oVZynNUwW4KiSnvHjmZow2LxAhqzOxPbQ+Uj9rVNCSBXfT5l2zggw==
+X-Received: by 2002:a05:600c:4f89:b0:439:8653:20bb with SMTP id 5b1f17b1804b1-43ba6704347mr27781175e9.14.1740746012273;
+        Fri, 28 Feb 2025 04:33:32 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c728:ed22:3bb8:f351? ([2a01:e0a:982:cbb0:c728:ed22:3bb8:f351])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532b2fsm86529615e9.10.2025.02.28.04.33.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 04:33:31 -0800 (PST)
+Message-ID: <54cd4dcf-330b-4ec7-8cb2-1291f9e8d07a@linaro.org>
+Date: Fri, 28 Feb 2025 13:33:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,255 +83,431 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/16] selftests: vDSO: vdso_standalone_test_x86:
- Switch to nolibc
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
- <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/4] media: platform: qcom/iris: add support for vpu33
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
+ <20250225-topic-sm8x50-iris-v10-v1-3-128ef05d9665@linaro.org>
+ <97a85e55-93b1-764c-9566-2cff7420918c@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <97a85e55-93b1-764c-9566-2cff7420918c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 26/02/2025 11:44, Thomas Weißschuh wrote:
-> vdso_standalone_test_x86 provides its own ASM syscall wrappers and
-> _start() implementation. The in-tree nolibc library already provides
-> this functionality for multiple architectures. By making use of nolibc,
-> the standalone testcase can be built from the exact same codebase as the
-> non-standalone version.
+On 28/02/2025 12:39, Dikshita Agarwal wrote:
 > 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-
-> ---
->  tools/testing/selftests/vDSO/Makefile              |   8 +-
->  .../selftests/vDSO/vdso_standalone_test_x86.c      | 168 +--------------------
->  2 files changed, 7 insertions(+), 169 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-> index bc8ca186fb877dc11740c37f1e07e45e84c2ae92..12a0614b9fd4983deffe5d6a7cfa06ba8d92a516 100644
-> --- a/tools/testing/selftests/vDSO/Makefile
-> +++ b/tools/testing/selftests/vDSO/Makefile
-> @@ -22,13 +22,17 @@ include ../lib.mk
->  
->  CFLAGS += $(TOOLS_INCLUDES)
->  
-> +CFLAGS_NOLIBC := -nostdlib -nostdinc -ffreestanding -fno-asynchronous-unwind-tables \
-> +		 -fno-stack-protector -include $(top_srcdir)/tools/include/nolibc/nolibc.h \
-> +		 -I$(top_srcdir)/tools/include/nolibc/ $(KHDR_INCLUDES)
-> +
->  $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
->  $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
->  $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
->  $(OUTPUT)/vdso_test_clock_getres: vdso_test_clock_getres.c
->  
-> -$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
-> -$(OUTPUT)/vdso_standalone_test_x86: CFLAGS +=-nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
-> +$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c | headers
-> +$(OUTPUT)/vdso_standalone_test_x86: CFLAGS:=$(CFLAGS_NOLIBC) $(CFLAGS)
->  
->  $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
->  $(OUTPUT)/vdso_test_correctness: LDFLAGS += -ldl
-> diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-> deleted file mode 100644
-> index 500608f89c66b5747e3d845ebc54e4c3a35b6ccd..0000000000000000000000000000000000000000
-> --- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-> +++ /dev/null
-> @@ -1,167 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * vdso_test.c: Sample code to test parse_vdso.c on x86
-> - * Copyright (c) 2011-2014 Andy Lutomirski
-> - *
-> - * You can amuse yourself by compiling with:
-> - * gcc -std=gnu99 -nostdlib
-> - *     -Os -fno-asynchronous-unwind-tables -flto -lgcc_s
-> - *      vdso_standalone_test_x86.c parse_vdso.c
-> - * to generate a small binary.  On x86_64, you can omit -lgcc_s
-> - * if you want the binary to be completely standalone.
-> - */
-> -
-> -#include <sys/syscall.h>
-> -#include <sys/time.h>
-> -#include <unistd.h>
-> -#include <stdint.h>
-> -#include <linux/auxvec.h>
-> -
-> -#include "parse_vdso.h"
-> -
-> -/* We need some libc functions... */
-> -int strcmp(const char *a, const char *b)
-> -{
-> -	/* This implementation is buggy: it never returns -1. */
-> -	while (*a || *b) {
-> -		if (*a != *b)
-> -			return 1;
-> -		if (*a == 0 || *b == 0)
-> -			return 1;
-> -		a++;
-> -		b++;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -/*
-> - * The clang build needs this, although gcc does not.
-> - * Stolen from lib/string.c.
-> - */
-> -void *memcpy(void *dest, const void *src, size_t count)
-> -{
-> -	char *tmp = dest;
-> -	const char *s = src;
-> -
-> -	while (count--)
-> -		*tmp++ = *s++;
-> -	return dest;
-> -}
-> -
-> -/* ...and two syscalls.  This is x86-specific. */
-> -static inline long x86_syscall3(long nr, long a0, long a1, long a2)
-> -{
-> -	long ret;
-> -#ifdef __x86_64__
-> -	asm volatile ("syscall" : "=a" (ret) : "a" (nr),
-> -		      "D" (a0), "S" (a1), "d" (a2) :
-> -		      "cc", "memory", "rcx",
-> -		      "r8", "r9", "r10", "r11" );
-> -#else
-> -	asm volatile ("int $0x80" : "=a" (ret) : "a" (nr),
-> -		      "b" (a0), "c" (a1), "d" (a2) :
-> -		      "cc", "memory" );
-> -#endif
-> -	return ret;
-> -}
-> -
-> -static inline long linux_write(int fd, const void *data, size_t len)
-> -{
-> -	return x86_syscall3(__NR_write, fd, (long)data, (long)len);
-> -}
-> -
-> -static inline void linux_exit(int code)
-> -{
-> -	x86_syscall3(__NR_exit, code, 0, 0);
-> -}
-> -
-> -void to_base10(char *lastdig, time_t n)
-> -{
-> -	while (n) {
-> -		*lastdig = (n % 10) + '0';
-> -		n /= 10;
-> -		lastdig--;
-> -	}
-> -}
-> -
-> -unsigned long getauxval(const unsigned long *auxv, unsigned long type)
-> -{
-> -	unsigned long ret;
-> -
-> -	if (!auxv)
-> -		return 0;
-> -
-> -	while (1) {
-> -		if (!auxv[0] && !auxv[1]) {
-> -			ret = 0;
-> -			break;
-> -		}
-> -
-> -		if (auxv[0] == type) {
-> -			ret = auxv[1];
-> -			break;
-> -		}
-> -
-> -		auxv += 2;
-> -	}
-> -
-> -	return ret;
-> -}
-> -
-> -void c_main(void **stack)
-> -{
-> -	/* Parse the stack */
-> -	long argc = (long)*stack;
-> -	stack += argc + 2;
-> -
-> -	/* Now we're pointing at the environment.  Skip it. */
-> -	while(*stack)
-> -		stack++;
-> -	stack++;
-> -
-> -	/* Now we're pointing at auxv.  Initialize the vDSO parser. */
-> -	vdso_init_from_sysinfo_ehdr(getauxval((unsigned long *)stack, AT_SYSINFO_EHDR));
-> -
-> -	/* Find gettimeofday. */
-> -	typedef long (*gtod_t)(struct timeval *tv, struct timezone *tz);
-> -	gtod_t gtod = (gtod_t)vdso_sym("LINUX_2.6", "__vdso_gettimeofday");
-> -
-> -	if (!gtod)
-> -		linux_exit(1);
-> -
-> -	struct timeval tv;
-> -	long ret = gtod(&tv, 0);
-> -
-> -	if (ret == 0) {
-> -		char buf[] = "The time is                     .000000\n";
-> -		to_base10(buf + 31, tv.tv_sec);
-> -		to_base10(buf + 38, tv.tv_usec);
-> -		linux_write(1, buf, sizeof(buf) - 1);
-> -	} else {
-> -		linux_exit(ret);
-> -	}
-> -
-> -	linux_exit(0);
-> -}
-> -
-> -/*
-> - * This is the real entry point.  It passes the initial stack into
-> - * the C entry point.
-> - */
-> -asm (
-> -	".text\n"
-> -	".global _start\n"
-> -	".type _start,@function\n"
-> -	"_start:\n\t"
-> -#ifdef __x86_64__
-> -	"mov %rsp,%rdi\n\t"
-> -	"and $-16,%rsp\n\t"
-> -	"sub $8,%rsp\n\t"
-> -	"jmp c_main"
-> -#else
-> -	"push %esp\n\t"
-> -	"call c_main\n\t"
-> -	"int $3"
-> -#endif
-> -	);
-> diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-> new file mode 120000
-> index 0000000000000000000000000000000000000000..4d3d96f1e440c965474681a6f35375a60b3921be
-> --- /dev/null
-> +++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-> @@ -0,0 +1 @@
-> +vdso_test_gettimeofday.c
-> \ No newline at end of file
-> 
+> On 2/25/2025 2:35 PM, Neil Armstrong wrote:
+>> The IRIS acceleration found in the SM8650 platforms uses the vpu33
+>> hardware version, and requires a slighly different reset and power off
+>> sequences in order to properly get out of runtime suspend.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/iris/Makefile          |   1 +
+>>   drivers/media/platform/qcom/iris/iris_vpu33.c      | 315 +++++++++++++++++++++
+>>   drivers/media/platform/qcom/iris/iris_vpu_common.h |   1 +
+>>   3 files changed, 317 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
+>> index 35390534534e93f4617c1036a05ca0921567ba1d..6b64c9988505afd9707c704449d60bb53209229f 100644
+>> --- a/drivers/media/platform/qcom/iris/Makefile
+>> +++ b/drivers/media/platform/qcom/iris/Makefile
+>> @@ -21,6 +21,7 @@ qcom-iris-objs += \
+>>                iris_vdec.o \
+>>                iris_vpu2.o \
+>>                iris_vpu3.o \
+>> +             iris_vpu33.o \
+>>                iris_vpu_buffer.o \
+>>                iris_vpu_common.o \
+>>   
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu33.c b/drivers/media/platform/qcom/iris/iris_vpu33.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..128a050f206f99ec0d43b97ff995fa50d5684150
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_vpu33.c
+>> @@ -0,0 +1,315 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/iopoll.h>
+>> +#include <linux/reset.h>
+>> +
+>> +#include "iris_instance.h"
+>> +#include "iris_vpu_common.h"
+>> +#include "iris_vpu_register_defines.h"
+>> +
+>> +#define WRAPPER_TZ_BASE_OFFS			0x000C0000
+>> +#define AON_BASE_OFFS				0x000E0000
+>> +#define AON_MVP_NOC_RESET			0x0001F000
+>> +
+>> +#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
+>> +#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
+>> +#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+>> +#define REQ_POWER_DOWN_PREP			BIT(0)
+>> +#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+>> +#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+>> +#define CORE_CLK_RUN				0x0
+>> +
+>> +#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
+>> +#define CTL_AXI_CLK_HALT			BIT(0)
+>> +#define CTL_CLK_HALT				BIT(1)
+>> +
+>> +#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
+>> +#define RESET_HIGH				BIT(0)
+>> +
+>> +#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
+>> +#define CORE_BRIDGE_SW_RESET			BIT(0)
+>> +#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
+>> +
+>> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
+>> +#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
+>> +#define MSK_CORE_POWER_ON			BIT(1)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
+>> +#define VIDEO_NOC_RESET_REQ			(BIT(0) | BIT(1))
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
+>> +
+>> +#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
+>> +#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
+>> +
+>> +#define AON_WRAPPER_MVP_NOC_CORE_SW_RESET	(AON_BASE_OFFS + 0x18)
+>> +#define SW_RESET				BIT(0)
+>> +#define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
+>> +#define NOC_HALT				BIT(0)
+>> +#define AON_WRAPPER_SPARE			(AON_BASE_OFFS + 0x28)
+>> +
+>> +#define VCODEC_DMA_SPARE_3 0x87B8
+>> +
+>> +static int reset_control_bulk_assert_id(int num_rstcs,
+>> +					struct reset_control_bulk_data *rstcs,
+>> +					char *id)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < num_rstcs; ++i) {
+>> +		if (!strcmp(rstcs[i].id, id))
+>> +			return reset_control_assert(rstcs[i].rstc);
+>> +	}
+>> +
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static int reset_control_bulk_deassert_id(int num_rstcs,
+>> +					  struct reset_control_bulk_data *rstcs,
+>> +					  char *id)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < num_rstcs; ++i) {
+>> +		if (!strcmp(rstcs[i].id, id))
+>> +			return reset_control_deassert(rstcs[i].rstc);
+>> +	}
+>> +
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static bool iris_vpu33_hw_power_collapsed(struct iris_core *core)
+>> +{
+>> +	u32 value, pwr_status;
+>> +
+>> +	value = readl(core->reg_base + WRAPPER_CORE_POWER_STATUS);
+>> +	pwr_status = value & BIT(1);
+>> +
+>> +	return pwr_status ? false : true;
+>> +}
+>> +
+>> +static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>> +{
+>> +	u32 reg_val = 0, value, i;
+>> +	int ret;
+>> +	int count = 0;
+>> +
+>> +	if (iris_vpu33_hw_power_collapsed(core))
+>> +		goto disable_power;
+>> +
+>> +	value = readl(core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>> +	if (value)
+>> +		writel(CORE_CLK_RUN, core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>> +
+>> +	value = readl(core->reg_base + VCODEC_DMA_SPARE_3);
+>> +	value |= BIT(0);
+>> +	writel(value, core->reg_base + VCODEC_DMA_SPARE_3)> +
+>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
+>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
+>> +					 reg_val, reg_val & 0x400000, 2000, 20000);
+>> +		if (ret)
+>> +			goto disable_power;
+>> +	}
+>> +
+>> +	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+>> +	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +	value |= BIT(0);
+>> +	writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+>> +
+>> +	while ((!(value & BIT(0))) && (value & BIT(1) || value & BIT(2))) {
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value &= ~BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +		usleep_range(10, 20);
+>> +
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value |= BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +
+>> +		usleep_range(10, 20);
+>> +
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+>> +
+>> +		++count;
+>> +		if (count >= 1000)
+>> +			break;
+>> +	}
+>> +
+>> +	if (count < 1000) {
+>> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +		value &= ~BIT(0);
+>> +		writel(value, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>> +	}
+>> +
+>> +	writel(VIDEO_NOC_RESET_REQ, core->reg_base + AON_WRAPPER_MVP_NOC_RESET_REQ);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_RESET_ACK,
+>> +				 reg_val, reg_val & 0x3, 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +> +	writel(0x0, core->reg_base + AON_WRAPPER_MVP_NOC_RESET_REQ);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_RESET_ACK,
+>> +				 reg_val, !(reg_val & 0x3), 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +> +	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
+>> +	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +	writel(CORE_BRIDGE_HW_RESET_DISABLE, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>> +
+>> +disable_power:
+>> +	iris_vpu_power_off_hw(core);
+>> +}
+>> +
+>> +static int iris_vpu33_power_off_controller(struct iris_core *core)
+>> +{
+>> +	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+>> +	u32 val = 0;
+>> +	int ret;
+>> +
+>> +	writel(MSK_SIGNAL_FROM_TENSILICA | MSK_CORE_POWER_ON, core->reg_base + CPU_CS_X2RPMH);
+>> +
+>> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_STATUS,
+>> +				 val, val & BIT(0), 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	writel(0x0, core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_CONTROL);
+>> +
+>> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_STATUS,
+>> +				 val, val == 0, 200, 2000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	writel(CTL_AXI_CLK_HALT | CTL_CLK_HALT,
+>> +	       core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
+>> +	writel(RESET_HIGH, core->reg_base + WRAPPER_TZ_QNS4PDXFIFO_RESET);
+>> +	writel(0x0, core->reg_base + WRAPPER_TZ_QNS4PDXFIFO_RESET);
+>> +	writel(0x0, core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
+>> +
+> The code till here in this API is common with
+> iris_vpu_power_off_controller(), please check the possibility of reusing it.
 
--- 
-Regards,
-Vincenzo
+Ack
+
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "core");
+>> +	usleep_range(1000, 1100);
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	/* Disable MVP NoC clock */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +	val |= NOC_HALT;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +
+>> +	/* enable MVP NoC reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +	val |= SW_RESET;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +
+>> +	/* poll AON spare register bit0 to become zero with 50ms timeout */
+>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_SPARE,
+>> +				 val, (val & BIT(0)) == 0, 1000, 50000);
+>> +	if (ret)
+>> +		goto disable_power;
+>> +
+>> +	/* enable bit(1) to avoid cvp noc xo reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_SPARE);
+>> +	val |= BIT(1);
+>> +	writel(val, core->reg_base + AON_WRAPPER_SPARE);
+>> +
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "xo");
+>> +
+>> +	/* De-assert MVP NoC reset */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +	val &= ~SW_RESET;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_SW_RESET);
+>> +
+>> +	usleep_range(80, 100);
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "xo");
+>> +
+>> +	/* reset AON spare register */
+>> +	writel(0, core->reg_base + AON_WRAPPER_SPARE);
+>> +
+>> +	/* Enable MVP NoC clock */
+>> +	val = readl(core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +	val &= ~NOC_HALT;
+>> +	writel(val, core->reg_base + AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL);
+>> +
+>> +	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
+>> +
+>> +disable_power:
+>> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+>> +	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static u64 iris_vpu33_calculate_frequency(struct iris_inst *inst, size_t data_size)
+>> +{
+>> +	struct platform_inst_caps *caps = inst->core->iris_platform_data->inst_caps;
+>> +	struct v4l2_format *inp_f = inst->fmt_src;
+>> +	u32 height, width, mbs_per_second, mbpf;
+>> +	u64 fw_cycles, fw_vpp_cycles;
+>> +	u64 vsp_cycles, vpp_cycles;
+>> +	u32 fps = DEFAULT_FPS;
+>> +
+>> +	width = max(inp_f->fmt.pix_mp.width, inst->crop.width);
+>> +	height = max(inp_f->fmt.pix_mp.height, inst->crop.height);
+>> +
+>> +	mbpf = NUM_MBS_PER_FRAME(height, width);
+>> +	mbs_per_second = mbpf * fps;
+>> +
+>> +	fw_cycles = fps * caps->mb_cycles_fw;
+>> +	fw_vpp_cycles = fps * caps->mb_cycles_fw_vpp;
+>> +
+>> +	vpp_cycles = mult_frac(mbs_per_second, caps->mb_cycles_vpp, (u32)inst->fw_caps[PIPE].value);
+>> +	/* 21 / 20 is minimum overhead factor */
+>> +	vpp_cycles += max(div_u64(vpp_cycles, 20), fw_vpp_cycles);
+>> +
+>> +	/* 1.059 is multi-pipe overhead */
+>> +	if (inst->fw_caps[PIPE].value > 1)
+>> +		vpp_cycles += div_u64(vpp_cycles * 59, 1000);
+>> +
+>> +	vsp_cycles = fps * data_size * 8;
+>> +	vsp_cycles = div_u64(vsp_cycles, 2);
+>> +	/* VSP FW overhead 1.05 */
+>> +	vsp_cycles = div_u64(vsp_cycles * 21, 20);
+>> +
+>> +	if (inst->fw_caps[STAGE].value == STAGE_1)
+>> +		vsp_cycles = vsp_cycles * 3;
+>> +
+>> +	return max3(vpp_cycles, vsp_cycles, fw_cycles);
+>> +}
+>> +
+> This is exactly same as vpu3 calculation, pls reuse.
+
+Ack
+
+>> +static int iris_vpu33_reset_controller(struct iris_core *core)
+>> +{
+>> +	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+>> +
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_assert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	usleep_range(1000, 1100);
+>> +
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "bus");
+>> +	reset_control_bulk_deassert_id(rst_tbl_size, core->resets, "core");
+>> +
+>> +	return 0;
+>> +}
+>> +
+> should be replacable with reset_control_bulk_reset. pls revisit.
+
+It only resets bus & core, and keeps xo alone, so reset_control_bulk_reset() cannot be used.
+
+>> +const struct vpu_ops iris_vpu33_ops = {
+>> +	.reset_controller = iris_vpu33_reset_controller,
+>> +	.power_off_hw = iris_vpu33_power_off_hardware,
+>> +	.power_off_controller = iris_vpu33_power_off_controller,
+>> +	.calc_freq = iris_vpu33_calculate_frequency,
+>> +};
+> you can rename vpu3.c to vpu3x.c and move these ops to same file, this way
+> common API can be reused and no need of redinfing the macros as well.
+
+I'll try that,
+
+Thanks,
+Neil
+
+> 
+> Thanks,
+> Dikshita
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> index c948d8b5aee87ccf1fd53c5518a27294232d8fb8..c4d02a3b884881eb033dc0342f948848adae2819 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+>> @@ -10,6 +10,7 @@ struct iris_core;
+>>   
+>>   extern const struct vpu_ops iris_vpu2_ops;
+>>   extern const struct vpu_ops iris_vpu3_ops;
+>> +extern const struct vpu_ops iris_vpu33_ops;
+>>   
+>>   struct vpu_ops {
+>>   	int (*reset_controller)(struct iris_core *core);
+>>
 
 
