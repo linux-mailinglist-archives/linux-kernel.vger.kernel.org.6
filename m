@@ -1,156 +1,99 @@
-Return-Path: <linux-kernel+bounces-538694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DB2A49C02
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:29:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5899CA49C06
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3FB3A7774
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1503A8846
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD8026E636;
-	Fri, 28 Feb 2025 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C426E946;
+	Fri, 28 Feb 2025 14:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="It+B7sGI"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY5O/cwx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678D126BD92
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64BC224CC;
+	Fri, 28 Feb 2025 14:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752982; cv=none; b=cSV4BKxphPISBZ0azOdBQtKuDS9/18jRQYtRRVzFO79qkLTK8zJ0d8JS9dpFb9h6Edq4qG+5jpIVfSDAfh/2WSsu+ASra1OhqXPeqIAON63PDaqPzGhIvpPgoeyPzSJ6nYI6H959Tb7Vrs9f8x4g0F6sUEhxU/YWqrzM1390tX8=
+	t=1740752989; cv=none; b=AD1vAKwuKQ5dD9Yk76YhhCYBcw7r6L2xd0E0NB8Qpb+OIsKryggwyLP9RrWW2WAFFvwXT1vYWDtAP2eE8m+pOs6Wlq7zZnjkAbOW39b6ZwIGBUwZOS7f5jQ5eBvw2F+/o1u5Z1EaXiXvaAd1XgNgMDx4XmjbH3QpIAWrSniHLPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752982; c=relaxed/simple;
-	bh=wrkHfrMWdUhwqMsqXPfBrKrQMuZpa1RsPdz3Xjvtgk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=WF8kVLbWqu46WXmdMvhbEt62pLF9uwHS0DuOiZ1EaM2h454sIowQz75ElIZeHJR0S+v2f+ESAVQFgty2i/L/IFBlkj6C5YzyVLSRVBMnXYGhMmrj62s/0E5xjQLIYPG5wt3sJ2v2spk5YNEtQ/Uw6EhH4PH5/rQuu42QP8dNHcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=It+B7sGI; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250228142931euoutp0210b64b522b66c6f507da0ae41c77084c~oZZqxxUEJ1595715957euoutp02T
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:29:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250228142931euoutp0210b64b522b66c6f507da0ae41c77084c~oZZqxxUEJ1595715957euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740752971;
-	bh=R9b6wNXLWS57OwUrSxSHHny8gYscUGRZCgoWnEP/DKE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=It+B7sGIh3Z++sNXOqHZKPpAsnljTK3qXCtQ5uLbuHgRFrepAMN0YuejiVSkowIIj
-	 QMuhoSepqlX8BLMskby2dfWMzjAr18ixQh5n+Ikc3b3KlvXv7KIXMkO1hmYpvzUTup
-	 rfd/PAkKkPLU7nglc1i1sCtnhWKq/8/8WKf+WzXs=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250228142930eucas1p18c32d0d89ed9c362f83d8b0c426366a0~oZZqqfhO-1259812598eucas1p1c;
-	Fri, 28 Feb 2025 14:29:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id FC.6D.20821.A48C1C76; Fri, 28
-	Feb 2025 14:29:30 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250228142930eucas1p118f56e14432e6d6d4da5f27175262064~oZZqXNh5m1245412454eucas1p1m;
-	Fri, 28 Feb 2025 14:29:30 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250228142930eusmtrp19f1d8b1bd1734200b6f9bb31dc7c55ce~oZZqWp5-n0218302183eusmtrp1b;
-	Fri, 28 Feb 2025 14:29:30 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-a0-67c1c84a3a97
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id FE.1C.19920.A48C1C76; Fri, 28
-	Feb 2025 14:29:30 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228142929eusmtip2b9887adb567d3b0e6d0bb374fd046551~oZZpcJE3O1500215002eusmtip2M;
-	Fri, 28 Feb 2025 14:29:29 +0000 (GMT)
-Message-ID: <963cee91-477d-453a-8b3d-194cfd5a211b@samsung.com>
-Date: Fri, 28 Feb 2025 15:29:28 +0100
+	s=arc-20240116; t=1740752989; c=relaxed/simple;
+	bh=AY6KTggfG+2NZyh4MNhPng9mblge+5h8fWPaN9vRs4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=raBUJCK0Fs5oguwjNAmtMr2OilU/4lVJ7YY7eiZUlno0ryqA2VmLgvSmXucvl2Z6YJ+u8UHIQWm9mGPZOm8vJilQlvS9QjMFTgK3RyBfqZsgOMrIcBHwf8yo2zO1/hbiJiLMYOnRu+oeRNbgruXOuSuu/q0enuC37bmnYPx8nT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PY5O/cwx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6891EC4CED6;
+	Fri, 28 Feb 2025 14:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740752989;
+	bh=AY6KTggfG+2NZyh4MNhPng9mblge+5h8fWPaN9vRs4g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PY5O/cwxqxGLSaoACpfVg8SBBsGU7X8sCCbwt2WaNaSJM188KFrQ1NJlA1llaK1h5
+	 W8+lMdcP7Ed0rrxJ9K8q68rCEeFhpCBYO+rCwVYvY2pXkef3HQSjICnUnoh0I6VLlp
+	 YNERk5kXkPB0RyuYIQedzL61nc49kcQq897Ga/IiFWrWPnwwcZeU45v1m9wFelEktG
+	 PCfg1foDNZykiybW+k42CR878DQ85frAgVgDbj41geD2PWGYKSMmbYCLxSxP0L1M3p
+	 m07ouhO/PQ/yMy7+FB5N5jlDEoHo8SzaoBh3AV5576HyXpb2G2Ponp5l53ssIqcTXk
+	 93Cj4wOH1T+PA==
+Date: Fri, 28 Feb 2025 06:29:47 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko
+ <andrew@daynix.com>, Stephen Hemminger <stephen@networkplumber.org>,
+ gur.stavi@huawei.com, Lei Yang <leiyang@redhat.com>
+Subject: Re: [PATCH net-next v7 5/6] selftest: tun: Add tests for virtio-net
+ hashing
+Message-ID: <20250228062947.7864a59c@kernel.org>
+In-Reply-To: <20250228-rss-v7-5-844205cbbdd6@daynix.com>
+References: <20250228-rss-v7-0-844205cbbdd6@daynix.com>
+	<20250228-rss-v7-5-844205cbbdd6@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-mapping: update MAINTAINERS
-To: Christoph Hellwig <hch@lst.de>, torvalds@linux-foundation.org
-Cc: robin.murphy@arm.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250224162724.349679-1-hch@lst.de>
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMKsWRmVeSWpSXmKPExsWy7djPc7peJw6mG8z8ZGSxcvVRJotfXyws
-	Lu+aw2Zx8MMTVotHfW/ZHVg91sxbw+hxYsZvFo8Xm2cyeuy+2cDm8XmTXABrFJdNSmpOZllq
-	kb5dAlfGgXs3mAumsldMPnyBrYHxPmsXIyeHhICJxKEVx5i6GLk4hARWMErs2vOAGcL5wijR
-	8qafHaRKSOAzo8TjHh6Yjpm9G9kgipYzSkzd+o8RwvnIKNF1cyEbSBWvgJ3Egc1tLCA2i4Cq
-	RN/a7VBxQYmTM5+AxUUF5CXu35oBtkEYaGp30wewGhEBR4lT66+D2cwC/hL/1nawQ9jiEree
-	zGcCsdkEDCW63naB1XAC2euv9LNC1MhLbH87B+wFCYEDHBL7dy6DetRFYveGhewQtrDEq+Nb
-	oGwZidOTe1ggGtoZJRb8vs8E4UxglGh4fosRospa4s65X0DrOIBWaEqs36UPEXaU2H+riREk
-	LCHAJ3HjrSDEEXwSk7ZNZ4YI80p0tAlBVKtJzDq+Dm7twQuXmCcwKs1CCpZZSN6cheSdWQh7
-	FzCyrGIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMN6f/Hf+0g3Huq496hxiZOBgPMUpw
-	MCuJ8M6KPZAuxJuSWFmVWpQfX1Sak1p8iFGag0VJnHfR/tZ0IYH0xJLU7NTUgtQimCwTB6dU
-	A1NO+jmp/ce3CEXE601XtigP1H17UXti9y22qby9a8Ovelid2sex5EXKaa0OiTvuj77O8Fhr
-	83nXTVObj+kfg1odDO9+vjq9WqTH6+jvw09XOx94smSl4qPrx32/z5lyeSPHyTSWlqu/9HdX
-	W8y2n7jeVbtuWcalvYunbt+qtjjgRv3KtWUfmBclvro7SeOQaYP7jvoDH3zOSkjsqzh7deZF
-	jSbTQ15lYl8efphS4zb5ovqna3fmb43kMTfs2bYtzCDUKWFB8CX96v+eBvoNZUflPi2fO41B
-	4bPF8QN6rwLu2vlL2LHwHPn/64zpP1em2BTlcmP1hzO/XTi9rLHxrZN2lTvbjx/SBd9ObvrK
-	UBdnqMRSnJFoqMVcVJwIAGXqAy6mAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsVy+t/xe7peJw6mGzTclrNYufook8WvLxYW
-	l3fNYbM4+OEJq8WjvrfsDqwea+atYfQ4MeM3i8eLzTMZPXbfbGDz+LxJLoA1Ss+mKL+0JFUh
-	I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/jwL0bzAVT2SsmH77A
-	1sB4n7WLkZNDQsBEYmbvRrYuRi4OIYGljBKX9v2FSshInJzWAGULS/y51gVV9J5RYs7Vq2AJ
-	XgE7iQOb21hAbBYBVYm+tdvZIOKCEidnPgGLiwrIS9y/NYMdxBYG2tbd9AGsRkTAUeLU+utg
-	NrOAr8TjQ2+YIRa0MEr0P21kgkiIS9x6Mh/MZhMwlOh62wXWwAlkr7/SzwpRYybRtbWLEcKW
-	l9j+dg7zBEahWUjumIVk1CwkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGGHb
-	jv3cvINx3quPeocYmTgYDzFKcDArifDOij2QLsSbklhZlVqUH19UmpNafIjRFBgYE5mlRJPz
-	gTGeVxJvaGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMHp1QDk8zGM2xvZ68W
-	mSA5i/es5dq5+s7T1Ga7FXZ3G0e92WcrMX379MrvHjNz95nM73H/sv70zY0Pa2bpnnNufnqK
-	uWRLTcAL7n+2Ozlff/nyp+f95GCxnFkHebj652pfakye84gx8NybOV5F38o5b+Wf1KqZNKNq
-	s+zO1W823mnN+lKlMT8w8MNa3Qssu9ZLH+CKNPyxdbburUV/GC+tcNvT2dz506G55k5ffZv1
-	zUO/ryYFG37bHJApzBg4uZPLaxYLk+J6LQvWd9N3xlu5luc03O8rKZX35ZJfuUP0lbMQD7Mf
-	k6/MF5ajNbkeC49dfv27cXsK38oEm8vSZ1hsmc02KjBdCEr7ZzdthSGb1txbtUosxRmJhlrM
-	RcWJAAR9L/g5AwAA
-X-CMS-MailID: 20250228142930eucas1p118f56e14432e6d6d4da5f27175262064
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250224162737eucas1p20c108ccb973fb9815364f009cc061e7b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250224162737eucas1p20c108ccb973fb9815364f009cc061e7b
-References: <CGME20250224162737eucas1p20c108ccb973fb9815364f009cc061e7b@eucas1p2.samsung.com>
-	<20250224162724.349679-1-hch@lst.de>
 
-On 24.02.2025 17:27, Christoph Hellwig wrote:
-> Marek has graciously offered to maintain the dma-mapping tree.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   MAINTAINERS | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4ff26fa94895..5434da7a4889 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6879,7 +6879,6 @@ F:	kernel/dma/map_benchmark.c
->   F:	tools/testing/selftests/dma/
->   
->   DMA MAPPING HELPERS
-> -M:	Christoph Hellwig <hch@lst.de>
->   M:	Marek Szyprowski <m.szyprowski@samsung.com>
->   R:	Robin Murphy <robin.murphy@arm.com>
->   L:	iommu@lists.linux.dev
+On Fri, 28 Feb 2025 16:58:51 +0900 Akihiko Odaki wrote:
+> The added tests confirm tun can perform RSS and hash reporting, and
+> reject invalid configurations for them.
 
+The tests may benefit from using FIXTURE_VARIANT(), up to you.
 
-Thank You Christoph for all the work done so far! I will do my best to 
-keep dma-mapping subsystem uptodate. I will prepare a new dma-mapping 
-git tree asap and start collecting patches.
+The IPv4 tests fail reliably on a VM with a debug kernel
+(kernel/configs/debug.config included in the config):
 
-Best regards
+# 5.90 [+0.00] ok 14 tun_vnet_hash.unclassified
+# 5.90 [+0.00] #  RUN           tun_vnet_hash.ipv4 ...
+# 6.18 [+0.28] # tun.c:669:ipv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), 0, VIRTIO_NET_HASH_REPORT_IPv4, 0x6e45d952) (0)
+# 15.09 [+8.92] # ipv4: Test failed
+# 15.10 [+0.00] #          FAIL  tun_vnet_hash.ipv4
+# 15.10 [+0.00] not ok 15 tun_vnet_hash.ipv4
+# 15.10 [+0.00] #  RUN           tun_vnet_hash.tcpv4 ...
+# 15.36 [+0.26] # tun.c:689:tcpv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), VIRTIO_NET_HDR_F_DATA_VALID, VIRTIO_NET_HASH_REPORT_TCPv4, 0xfb63539a) (0)
+# 24.76 [+9.40] # tcpv4: Test failed
+# 24.76 [+0.00] #          FAIL  tun_vnet_hash.tcpv4
+# 24.76 [+0.00] not ok 16 tun_vnet_hash.tcpv4
+# 24.77 [+0.00] #  RUN           tun_vnet_hash.udpv4 ...
+# 25.05 [+0.28] # tun.c:710:udpv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), VIRTIO_NET_HDR_F_DATA_VALID, VIRTIO_NET_HASH_REPORT_UDPv4, 0xfb63539a) (0)
+# 32.11 [+7.06] # udpv4: Test failed
+# 32.11 [+0.00] #          FAIL  tun_vnet_hash.udpv4
+# 32.11 [+0.00] not ok 17 tun_vnet_hash.udpv4
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+pw-bot: cr
 
