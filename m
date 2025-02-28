@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-538956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31C1A49F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:46:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA94A49F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFC51898A72
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9A316A28B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3A71AA1C0;
-	Fri, 28 Feb 2025 16:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4C227002E;
+	Fri, 28 Feb 2025 16:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkJ5DZhP"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlYHCYVT"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFDA1EF381;
-	Fri, 28 Feb 2025 16:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CBD18E743;
+	Fri, 28 Feb 2025 16:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761204; cv=none; b=QIkApe7c5E8bwB6YkPv6OjDoiHHE01quspijq4lHBfKcxLY5sfSBlOffI2TaqKo3P1qk03vbykjeuyU5eCaraFE7hdSLt3TzXQ+kMyydtZ/q+xib8BwCPMWq69H3YZIV/uZsyGSsD96piEtSLZR8hTMTl/pb3vG8zcjDxf3CJCo=
+	t=1740761324; cv=none; b=c+EZ9G0IwTVdc1LS1i9jEwJtWS5Eoxf6nEmsVCAIr4aCBb+ivGDGK/IudbO4rsGGyc8T5FUl7Kml8uvfqukVKHWArt3y65bzYMy+XPMMt1nuZDY6S7JgdBGPKgIvGd4141CkiIyiBW1foJfq96/fJgTjzLHmjQHs5/fTjFePKrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761204; c=relaxed/simple;
-	bh=nvUfiWsd8nbrMykoM7e9GFXW4WS769a83atMPxoEsy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgPUfYwgX58WfolsSu6KnI2HipVk752FTHPrqC0T8KWqx/T3PTlEyM9w3eTztKqpksR/4NWQEq4+XBmFdi0/VTbEzjQ5ZD9oKq8AtQn0XiAyqacKSWYL6EjJy90In9RIQNyu5kEc/+I390o7Q0Exc5tAnVkzjk+cG1tgfCyEnnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkJ5DZhP; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1740761324; c=relaxed/simple;
+	bh=8Wx8PCi3y3Ei9lmVusA+ydkpm74p2Rf/ZTYW8VCXuwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f42zgwjsZiol4Ar6IzrTeCmUNQq1j4mh+zWPlm1IMaN/mqwMSUc+QueT1zY0ROJSTHL7Rj5xvLzuf7ejf0jiwUC6zS1pYSjZW6m3MTsN6zU9CWsE8CSItljhDWEKHfKSvEA/QAvoJ4S1NHlmQZvefPhZBoFWI76y/DAMEIS5ii0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlYHCYVT; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390df0138beso1342579f8f.0;
-        Fri, 28 Feb 2025 08:46:42 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2234f57b892so5815065ad.1;
+        Fri, 28 Feb 2025 08:48:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740761201; x=1741366001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bIuiU4XrhfkhWXOTfdn2ANWaE+TYEkq8GIKO0W429gE=;
-        b=PkJ5DZhPM0ZE3hb9JettQZ09nCGLlSJIwarcCorgv5EBjsxn3XRAMi4v/3HxZyx3ee
-         FkHWo0nOEr/4t7APrGcT1xT1VAsXMe8jIIIcHadrUGCbTedeBNpC/RKMtP1CwuSL4NGr
-         cabXLlaIdXRYLthhT+CjDwUe64MPDY8jG5yRGRh/XltfTpv38OVIcBjUQ2ELJJ8+eFeN
-         anaFtB9pXGbUb8fQE/TVsqPi9dwGjpCWQiGiMfYrVDAeVoaLAhr/eB4XO7Tqkf1gCcqq
-         cjBKiz4K/+05voWSU090HO8xZssLjkFdpblEHfl2e3TKeM/nuAW363z9Pqlyg/mydAPo
-         NI9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740761201; x=1741366001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740761321; x=1741366121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bIuiU4XrhfkhWXOTfdn2ANWaE+TYEkq8GIKO0W429gE=;
-        b=G/2MMtMkqnvdM8ungtZFd29wsg8wb4A9Y5eIKTCAoMeNMWB8LOKcLixt6cSU3SFABL
-         pCoH7CD7+oSc6lqkIb5WfN32O0sy7wwqCZZVKkqGYSOAJdjjkCDeF0taut6ITCjkEklW
-         rz5oZpfq3a+B8t0vbRLbQAn+YPnJi5jaIlzOhbiV9wrnHl+2ZeA2aZXmt1Edk7qlWqPE
-         p3GL1UIHSKGRkTBkUMw+LvD/KlLDpBZrwbCJtgMuvmTrbCnT2gTo6PfI8Lld7DzeQT0J
-         H9A2zD+AEllCp3zwU9ZeuPUY+kOydWNgg19yMtDjcpLbEHptYPEkXO9Jku4VbEOZvD0d
-         gPvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxD/4GonmrPVq/gi6RTv7jzJKrYy+QZeWP8FCThi8KcWl4kD3uP7PELHof+cvK6TNRR1kIVXGnuzexkUc=@vger.kernel.org, AJvYcCXIwVbRgbmKp2R9yGSHHLJKBu+EnA959zlcwe228w8V1NOKa3ocAQXxzhJY4gZ20YXs73MhV2t16vOyO34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8enlLr+U3yXEzhs5TcA6w+bg1zoy8qref87Sg24u6hKpEeKBl
-	G/I92o5HV1hDzNJX20q0Ud6swKP8AvSF6mRsIGr0U+fSLeV4Hfa+
-X-Gm-Gg: ASbGncuqmjisJR3K41bDL4uGHBHLtEKhH/Ebza5iiEvAyUllGeIkyztb0WN+O0PbDW+
-	HGZh+sjZ7drS6SVTF0CeIgb7cs1NEYEXNajoBkPRD+KJT7Yxu5GNuQHB6Vl8xPuoJxP5xNMoe/r
-	Glc0GvHXHNLyLLDPpvoWkZr9VvJ+Ew/intWNdHd34RgeaKce0D5LLXMRwsqQ6qju19fSISe0D1s
-	5rZzNrHA6N78/8mGXeGHhY3KBYvhuPkPQprXjJlzHMR35FaYE0D0dGVBFeXc1VojuXmUnNaCMn3
-	SBpCRPFovIEqvHlonjCNh84GenC6dWEJvYdj/OHoWvgqCjBdJ72PzINgzZi8EBCtKYpfE2FgxpY
-	asFtdoufpuBBq
-X-Google-Smtp-Source: AGHT+IER1+rSFFUu3fp8H0Ep8h3KR4BZHOPdnn2CHy633ABSD7noywrDfjqO6v6gIHCs9lWQwwrr3Q==
-X-Received: by 2002:a05:6000:42c9:b0:38f:43c8:f765 with SMTP id ffacd0b85a97d-390ec7d2e69mr2382920f8f.26.1740761201038;
-        Fri, 28 Feb 2025 08:46:41 -0800 (PST)
-Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d785sm5717708f8f.83.2025.02.28.08.46.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:46:39 -0800 (PST)
-Date: Fri, 28 Feb 2025 17:46:37 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: linux@treblig.org
-Cc: mperttunen@nvidia.com, linux-tegra@vger.kernel.org, airlied@gmail.com, 
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
-Message-ID: <vukpbuvuyfljqtexnimsrfozt64pfrjc33a4ojb7lht7fke45a@g4afdjrz6u52>
-References: <20241215214750.448209-1-linux@treblig.org>
+        bh=8Wx8PCi3y3Ei9lmVusA+ydkpm74p2Rf/ZTYW8VCXuwM=;
+        b=VlYHCYVTIgYsGrKb5ojN11054dabK7hBZhoGxceLEjHHZidWgbjD6sd4kUh5JvDzCU
+         It53FsqwKkLfCWlHbloRSW/Da3NeOgFFHj/T01+hTQxKPengtfdcV9qlbFmkZJMdkD+A
+         +LlI66GEtcWmVmq7DEcD4a64ow8wN/5N5QOtYF1X4L1Jjw7Oy3zFdisQXp1AFNwdqaWL
+         2qe8q9fquaINncTrpPKmkeP4L/pBk2G4YEqPXRA191wEGI3Eu7plH6P/0eFe5nzxViTt
+         y2jESHiHoVK7iGlkw6KAaoIHdB4YwoLVhri/M3KFK0vL0QjFBF56C9ANmuUMICoTQXcW
+         QmZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740761321; x=1741366121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Wx8PCi3y3Ei9lmVusA+ydkpm74p2Rf/ZTYW8VCXuwM=;
+        b=KAJ5BurafImVLxxIELZAzLgY/RNI2xGlD28zc12gs6zlcNxS6nsSEs2HNinyMlJqbT
+         gPaiAGIW1JNbrj15CjrPLdeabLkkir8jRSXT4hP5gugz5PGs51qXAg8lMmfxKbSGXySk
+         bFJkwlrnKGc2P/QjjF78KAHrIAgDPnTCbfGkulhRptWGCHidvjosazUTmmjz/czctTK7
+         kUEfcdU/f8zgKw+l70EOKZ4DxeHXnQdldciE2ikCcvpBF/8iCLzoAZ24AEZC6MWnOdHT
+         2/pGykutyitC38Nmk4kUaCMbqTzeVWW7PnK5fBkuZY87cki7s8YdtvxdzX2gBi11/qyU
+         GN5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWaR/szpG9en/NqceEOsymBgMliyl3U+0AqAnO+oatc1p3ApHV7gC5GqejkPOudKkE1N1ahDIco4s11J/M=@vger.kernel.org, AJvYcCXeNv5mOnM6rmwg/1nM1MapEFSJKQY1mvz34zR32vyPWORwO4j329cubxnuczVlx3SkQjG24/8Azu+uSLznQWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw73Dz+Oq+fQusUVtOHvM76N72VEn6iRwupPzThue/zrFDn3d1T
+	cg303+Cczyj+XGysZ5en7I5K9XERiBAlW3Mr+9BcD/8adRxiT9DFOoArHXO97tn4uvrtDJaRmkk
+	89sC46iozZFc6Al2c0jkhfcUi25HKYnhcaBA=
+X-Gm-Gg: ASbGncuUBZAi9h4pNdooozcf36y3FdeF7V0ugmKHrKG4b74NLqIoZR9mcL0Pee03pha
+	FSEt4NmEjYLgSVAOmC9jdHoLNU0pbm+mi4V03mfXya74kVL8TSyMT+lrDQnFUU90wqbao6GRaU0
+	IRjUeLiME=
+X-Google-Smtp-Source: AGHT+IGugj3El9yAK30SUX9EGurb6Fbt9h4MivgvtrroI5tAWe6eVR96rioDjdmiSTcrLO0Zb/Ydxoa5N8OCOS8jnvY=
+X-Received: by 2002:a17:903:3ba4:b0:223:5e57:44f0 with SMTP id
+ d9443c01a7336-2236925928cmr22766795ad.14.1740761321059; Fri, 28 Feb 2025
+ 08:48:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ff7apm55vn4rtl67"
-Content-Disposition: inline
-In-Reply-To: <20241215214750.448209-1-linux@treblig.org>
-
-
---ff7apm55vn4rtl67
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250228132928.880683-1-guillaume1.gomez@gmail.com>
+ <CANiq72mENfqG6iNjgXpq4LVEceZ4174yGhg-RB0MsMxLVed-1A@mail.gmail.com> <CAAOQCfSEUnp8U3+6amWCd6+yPrAmPy6gsjJnQdrqmpER5md3kA@mail.gmail.com>
+In-Reply-To: <CAAOQCfSEUnp8U3+6amWCd6+yPrAmPy6gsjJnQdrqmpER5md3kA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 28 Feb 2025 17:48:25 +0100
+X-Gm-Features: AQ5f1Jr0HnDZ2nmjCPs5NPNWsxEkHvLxey7W3y8DPQgqSpIaCotbbzniMxffLKc
+Message-ID: <CANiq72=UrE5fv1Ymt-2NRzzKo2xk=tXLwvLaC4fo+vhJC0edNw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Use new `--output-format=doctest` rustdoc command
+ line flag to improve doctest handling.
+To: Guillaume Gomez <guillaume1.gomez@gmail.com>
+Cc: ojeda@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
-MIME-Version: 1.0
 
-On Sun, Dec 15, 2024 at 09:47:50PM +0000, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->=20
-> host1x_debug_dump_syncpts() has been unused since
-> commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
-> fences")
->=20
-> Remove it.
->=20
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/gpu/host1x/debug.c | 9 ---------
->  drivers/gpu/host1x/debug.h | 1 -
->  2 files changed, 10 deletions(-)
+On Fri, Feb 28, 2025 at 5:32=E2=80=AFPM Guillaume Gomez
+<guillaume1.gomez@gmail.com> wrote:
+>
+> I'll definitely need some help here. I'm not sure current stable already
+> has this change so until then, we'll need a beta/nightly version to run
+> these tests.
 
-Applied to drm-misc-next, thanks.
+Yeah, we will need to wait until the "final" version of the flag is in
+a stable version (the flag would not need to be "stable" itself, nor
+the compiler released, but yeah, we need to know the version).
 
-Thierry
+> I opened https://github.com/rust-lang/rust/pull/137807 to resolve
+> this problem.
 
---ff7apm55vn4rtl67
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks!
 
------BEGIN PGP SIGNATURE-----
+That would still force us to have all the "hardcoded knowledge" about
+the `rustdoc` output (apart from the JSON schema), right?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfB6G0ACgkQ3SOs138+
-s6EUBBAAgLDSAD8aYvQjGaTHJQTUm8gK7TeixY0nqbT9LFALAgJU1wA3DvmRvfIt
-vzHyaekT29Okc3NKZSu7YOCkn/JjwDDJXEcOphZ4HZG4PLk+SPXYNdqOIFShLdNe
-ikZLlAytLGgoxw7yBNzm/8p1xdLCSREKuXgkYY0q7FyCyRwA3r8iNJZoHTEB4TmY
-nVrE51yJDvZZIOGGA/YUcAcnMEArYlmUm9uZnb2hK8UUOzCWYwllMHS7ZCb1IrQ+
-k8Td/dD/IWowQVu0MEExSj/5hepdf0wn5FB5ooy+FXaJFvn6Nag4E1JtsDuxRZcL
-UiVfP7+RYC2w4DuqRU7bv2K/+ac7twINlGEK/j4qTi3HJ2wFKvaCpCHCV2vGzfpj
-BNDhrEby/eUuJurYZ9ySmE+yhJFcA6Yp0spzaNwa0bzRN4ivyQvaKh7mnQkpxbhg
-WXvEPRnf/F/Y2u2aPstbCjAeQK/DVTNhmSl8j3KIn6LVWm1/dncZvNkUjL2orxdn
-fg1f4sa7pbsV07DunFwCQNNLe6PXSeMyIA2mSbKoSYt2BqCw9sQDFMUbH90qCYiB
-6qblTxCNFyUL4G5GM8pvaKJfTTr0Uik3+wXCFjYE2O4KYuUP3plBzgmpZqnSIdLb
-ysAGN03PV5Dc2y91Fd1xNlYB0VqxK1KN4N5CMKK3oITMSdjR8lQ=
-=cUVd
------END PGP SIGNATURE-----
+i.e. my idea was to try to see if we could avoid matching on "strings"
+as much as possible, and trying to have enough metadata (properly
+encoded in the JSON somehow), so that we need to avoid searching for
+e.g. `main()` etc.; and instead generate everything else needed on our
+side, customized for the kernel case.
 
---ff7apm55vn4rtl67--
+> I don't think `expect` would work in any of the cases in this file. What =
+I suggest
+> is to add methods on `JsonValue` in a future patch which would allow to r=
+educe
+> code in this file (and call `expect` too).
+
+Yeah, sorry, when I saw the `Some(...) ... else panic!` I replied too
+quickly -- in this case, I don't think it matters to have a custom
+error for the "wrong JSON type" case as we discussed offline since
+nobody should be seeing the error to begin with, so it is fine.
+
+Cheers,
+Miguel
 
