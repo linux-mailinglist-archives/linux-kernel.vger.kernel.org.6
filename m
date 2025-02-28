@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-539143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A07A4A16B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:26:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1197A4A179
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D4583BCEA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274E3189B287
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0E527425C;
-	Fri, 28 Feb 2025 18:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738CA27560B;
+	Fri, 28 Feb 2025 18:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRf83pOl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="HIZLTQKa"
+Received: from aposti.net (aposti.net [89.234.176.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EA326B971;
-	Fri, 28 Feb 2025 18:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14229274253;
+	Fri, 28 Feb 2025 18:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767159; cv=none; b=XeYR1afxWi0LRdNwjkKjkixyPP50Q2v6GFkXnzUOjKXTajDddBeF3O3p9top6Uf5Tduzi5Z3NpZzkwKjhblwa/pHJw6+rV2pxnDRSteC8pulg5x/5g73iWYXiFddJ5AaRez+MX5jMN9zDFkaHhExhtUlUc4uUQxnJZv4NxFKY+M=
+	t=1740767244; cv=none; b=feaML1Fa6QouG9VLQpWmpumD/pmshwWY18JnSUk2/RrrvmL/RzDZFsryh2sWAUucmT6MC4TqSmlvJeiaY8EsJf2K1730B4c2Id1Me5EbqymQKaqiFFRz3c3TXSRzr06dp+88+LdQJQWU2Ny6nOjAgQakPBcAhvTRudj54jIry3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767159; c=relaxed/simple;
-	bh=KWNfmpF8H7ef8BfvDKRANl/bBOIRz9uB8GRqpQxwgZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6pMiclM4rSTEEfToK7aSUbuL1tSc1o7mCKyn6i/DDJu2XL1Ce7qELu7wzDpk8uo9AQBwXeBhd7UYga2mF1cWsXih9xNHRFjwlIc5hyh21EBjV7GFUH85mzz/MqOAY3wJphhD/fukgxfhPzC94yiyzyj2jgg9sSQkWSmKVedpas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRf83pOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB03EC4CED6;
-	Fri, 28 Feb 2025 18:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740767159;
-	bh=KWNfmpF8H7ef8BfvDKRANl/bBOIRz9uB8GRqpQxwgZQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=mRf83pOlLO7uGDaTA1eEb5PonlPf2Y/HOTCNDx+63r5NM4kSc4U71dQnlfjSm9xNl
-	 +U8gZSFZ466rq9EKmSV1BQTrFMUrFWBRsTRHTZxb0YuDDWaWmuQlr65vXOEWnZI7/7
-	 kcrv9cyJNOQeQozt5Z+LbeOL4W+2GgyJ4Q8IetNsrGkXSwKKVlHXT/ZoSZPsg2hU5r
-	 EDlxE9g7oActngZ77pZa+6oe5WJhUvbTMNepB7uHq2XsGE6oyZWQA1moSsO5wtXSu3
-	 F6Wb6Wm1AERTkWMm1MdWh0Cz+g/gQIrJuiZUzKMERgm2kI5azq4GpcRkGSn8AU4FN5
-	 V0dqc/aj0J9Xw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 97089CE0DEB; Fri, 28 Feb 2025 10:25:58 -0800 (PST)
-Date: Fri, 28 Feb 2025 10:25:58 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <6e4688d1-afe7-4508-9ebc-eeece0692365@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
- <Z8Ckb6spK35-Ez4U@pc636>
- <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <Z8Htg565HnNumdxy@pc636>
+	s=arc-20240116; t=1740767244; c=relaxed/simple;
+	bh=67MIZhOGaz6uNuzThDvVgUejH2NJv/lVLfIlQwxWAaY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GgGQnvXLHbvlYj+m0GBYcX/g5u654XjSYRqpPj42IPTYiDvoRmGnjcSSxrpXpH1CBYv6DTsFeaWc291HKBa41w8sttOi8WJhnlZ9uM3w5LWYO8cMwcBJaIxKx7QQXHPeE5C6ZZSfxZoXeo8TolNsXGSgm+beDB8eabSlBjkm6X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=HIZLTQKa; arc=none smtp.client-ip=89.234.176.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+	s=mail; t=1740767234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hunC8aIjFL8iJizsnuivXHSj1ZxS4AePrCKLeqSA1Do=;
+	b=HIZLTQKaoDNgNrovU4MAqTxJVO4u5918To8gUH3iKzSPqqpvSO5wNcaqMxUeUgYVDcROxV
+	63pQc/UhJTi4wXY+QNXMuYup0rcA60Mm+b70j9yCpYYvdPjOKyPqcbGQxUXafevum9S24w
+	j7XIXsGattyqB6INNm6tK348Xunxw5s=
+Message-ID: <f1ffee11ef563d8c7486503eef3d21b8b7e2ccd9.camel@crapouillou.net>
+Subject: Re: [PATCH v2 4/4] pinctrl: ingenic: jz4730: add pinmux for I2S
+ interface
+From: Paul Cercueil <paul@crapouillou.net>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>, Linus Walleij	
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, Paul Boddie
+ <paul@boddie.org.uk>,  Tim Bysun <tim.bysun@ingenic.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Date: Fri, 28 Feb 2025 19:26:11 +0100
+In-Reply-To: <1d50f0c980155dd22ccd164a6d281e3ac68e7446.1740749637.git.hns@goldelico.com>
+References: <cover.1740749637.git.hns@goldelico.com>
+	 <1d50f0c980155dd22ccd164a6d281e3ac68e7446.1740749637.git.hns@goldelico.com>
+Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
+ keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
+ LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
+ FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
+ z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
+ +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
+ 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
+ 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
+ 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
+ dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
+ 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
+ rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
+ lBwgAhlGy6nqP7O3u7q23hRU=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8Htg565HnNumdxy@pc636>
 
-On Fri, Feb 28, 2025 at 06:08:19PM +0100, Uladzislau Rezki wrote:
-> On Fri, Feb 28, 2025 at 05:36:47PM +0100, Uladzislau Rezki wrote:
-> > On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
-> > > On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
-> > > > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> > > > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > > > > > Hi Ulad,
-> > > > > > 
-> > > > > > I put these three patches into next (and misc.2025.02.27a) for some
-> > > > > > testing, hopefully it all goes well and they can make it v6.15.
-> > > > > > 
-> > > > > > A few tag changed below:
-> > > > > > 
-> > > > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > > > > Switch for using of get_state_synchronize_rcu_full() and
-> > > > > > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > > > > > synchronize_rcu() call.
-> > > > > > > 
-> > > > > > > Just using "not" full APIs to identify if a grace period is
-> > > > > > > passed or not might lead to a false-positive kernel splat.
-> > > > > > > 
-> > > > > > > It can happen, because get_state_synchronize_rcu() compresses
-> > > > > > > both normal and expedited states into one single unsigned long
-> > > > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > > > > > run.
-> > > > > > > 
-> > > > > > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > > > > > for expedited and normal states.
-> > > > > > > 
-> > > > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > > > > > 
-> > > > > > I switch this into "Closes:" per checkpatch.
-> > > > > > 
-> > > > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > > 
-> > > > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > > > > > Would you or Paul double-check the Reviewed-by should be here?
-> > > > > 
-> > > > > I am good with keeping my Reviewed-by tags.
-> > > > > 
-> > > > Thanks Paul!
-> > > 
-> > > Except that I got this from overnight testing of rcu/dev on the shared
-> > > RCU tree:
-> > > 
-> > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> > > 
-> > > I see this only on TREE05.  Which should not be too surprising, given
-> > > that this is the scenario that tests it.  It happened within five minutes
-> > > on all 14 of the TREE05 runs.
-> > > 
-> > Hm.. This is not fun. I tested this on my system and i did not manage to
-> > trigger this whereas you do. Something is wrong.
-> >
-> We have below code to start a new GP, if we detect that processing is
-> starved:
-> 
-> <snip>
-> /*
->  * The "start_new_poll" is set to true, only when this GP is not able
->  * to handle anything and there are outstanding users. It happens when
->  * the rcu_sr_normal_gp_init() function was not able to insert a dummy
->  * separator to the llist, because there were no left any dummy-nodes.
->  *
->  * Number of dummy-nodes is fixed, it could be that we are run out of
->  * them, if so we start a new pool request to repeat a try. It is rare
->  * and it means that a system is doing a slow processing of callbacks.
->  */
->   if (start_new_poll)
->     (void) start_poll_synchronize_rcu();
-> <snip>
-> 
-> we do not use a _full() version, since we need to inform rcu-gp-kthread
-> to initiate a new GP.
-> 
-> Any thoughts?
+Hi Nikolaus,
 
-My kneejerk not-to-be-trusted take is that it does not matter which type
-of grace period gets started so long as a grace period does get started.
-Presumably you have done the get_state_synchronize_rcu_full() before
-this point?
+Le vendredi 28 f=C3=A9vrier 2025 =C3=A0 14:33 +0100, H. Nikolaus Schaller a
+=C3=A9crit=C2=A0:
+> I2S is used for the sound codec of the Alpha400.
+>=20
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 13 ++++++++++++-
+> =C2=A01 file changed, 12 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
+> b/drivers/pinctrl/pinctrl-ingenic.c
+> index 08e082e84f5c6..6d7dc077c373e 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -209,10 +209,14 @@ static int jz4730_nand_cs4_pins[] =3D { 0x56, };
+> =C2=A0static int jz4730_nand_cs5_pins[] =3D { 0x57, };
+> =C2=A0static int jz4730_pwm_pwm0_pins[] =3D { 0x5e, };
+> =C2=A0static int jz4730_pwm_pwm1_pins[] =3D { 0x5f, };
+> -
 
-							Thanx, Paul
+Just a nit - but you remove a blank line in patch 4/4 that was added in
+3/4, better not add it in the first place :)
+
+That's the only comment I have on the whole patchset, so either fix it
+in a v3 while adding my review tag, or maybe Linus can do it when
+applying the patchset.
+
+Cheers,
+-Paul
+
+> =C2=A0static int jz4730_mii_pins[] =3D { 0x70, 0x71, 0x72, 0x73, 0x74, 0x=
+75,
+> 0x76,
+> =C2=A0				 0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c,
+> };
+> =C2=A0
+> +static int jz4730_i2s_mclk_pins[] =3D { 0x44, };
+> +static int jz4730_i2s_acreset_pins[] =3D { 0x45, };
+> +static int jz4730_i2s_data_pins[] =3D { 0x46, 0x47, };
+> +static int jz4730_i2s_clock_pins[] =3D { 0x4d, 0x4e, };
+> +
+> =C2=A0static u8 jz4730_lcd_8bit_funcs[] =3D { 1, 1, 1, 1, 1, 1, 1, 1, 2, =
+2,
+> 2, };
+> =C2=A0
+> =C2=A0static const struct group_desc jz4730_groups[] =3D {
+> @@ -235,6 +239,11 @@ static const struct group_desc jz4730_groups[] =3D
+> {
+> =C2=A0	INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
+> =C2=A0	INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
+> =C2=A0	INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
+> +	INGENIC_PIN_GROUP("i2s-mclk-out", jz4730_i2s_mclk, 1),
+> +	INGENIC_PIN_GROUP("i2s-acreset", jz4730_i2s_acreset, 1),
+> +	INGENIC_PIN_GROUP("i2s-data", jz4730_i2s_data, 1),
+> +	INGENIC_PIN_GROUP("i2s-master", jz4730_i2s_clock, 1),
+> +	INGENIC_PIN_GROUP("i2s-slave", jz4730_i2s_clock, 2),
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const char *jz4730_mmc_groups[] =3D { "mmc-1bit", "mmc-4bit"=
+,
+> };
+> @@ -251,6 +260,7 @@ static const char *jz4730_nand_groups[] =3D {
+> =C2=A0static const char *jz4730_pwm0_groups[] =3D { "pwm0", };
+> =C2=A0static const char *jz4730_pwm1_groups[] =3D { "pwm1", };
+> =C2=A0static const char *jz4730_mii_groups[] =3D { "mii", };
+> +static const char *jz4730_i2s_groups[] =3D { "i2s-data", "i2s-master",
+> "i2s-slave", };
+> =C2=A0
+> =C2=A0static const struct function_desc jz4730_functions[] =3D {
+> =C2=A0	INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
+> @@ -263,6 +273,7 @@ static const struct function_desc
+> jz4730_functions[] =3D {
+> =C2=A0	INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
+> =C2=A0	INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
+> =C2=A0	INGENIC_PIN_FUNCTION("mii", jz4730_mii),
+> +	INGENIC_PIN_FUNCTION("i2s", jz4730_i2s),
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct ingenic_chip_info jz4730_chip_info =3D {
+
 
