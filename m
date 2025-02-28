@@ -1,393 +1,227 @@
-Return-Path: <linux-kernel+bounces-538337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D56A49741
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3579BA4972F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0300316AF77
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3104316A9D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8822A25DD12;
-	Fri, 28 Feb 2025 10:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDAC25F7BD;
+	Fri, 28 Feb 2025 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c5FqZ/t9"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EJGhoXB1"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD218266EEB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAFA25F7AC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738377; cv=none; b=BLRNIpAinzO2TgZAkQq1sgiID7Y1QBOBjezCx2t+KOGQ/D2Rl2FcuZptxsBvC3ScR6xHqdcRN66J4qk3tSZ2j1BezNs20GbZD7kSdUdHLXn4JZrt6d6MITsSx0aKp+S00ab2MCegOCN3XSk0DjzTjSuhtNpQJXlF+ChRH9Sa0Bw=
+	t=1740738358; cv=none; b=gIvImk5XgxkyYgLCmN0B84gHBsXdnapNoUEPHv5dtAPup35e+6uPL69DgLyy3azIeTxczytrsoPFmw52Uk98pDJl4HDHk+n7B67XvIZnj0vVbogLxrMax8cezu4wuIhdd3+LOROnWzeFn/oObiT9ToxpHoa72hAlhGfg8j+5P/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738377; c=relaxed/simple;
-	bh=MXYeISpx/aDlsUDzteiJDvn0e6kbJkkOswtFGqClK/w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=glmvtUtGVCe5oc11pmDwLMlaNc4px9hL9FjDh33uin9OzIaL1lS0T/XpKlfqZYVoHOwIEi6ETyStRLDOV3Ze3uSCNy57smO5LSwVG2bkach7lMYj7HVgIlpaqN8Q9HfUcVck6E9NmhrISTYesctNVNMcU5UUOGlLptRhLrn8VDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c5FqZ/t9; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4399a5afc95so8258595e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:26:15 -0800 (PST)
+	s=arc-20240116; t=1740738358; c=relaxed/simple;
+	bh=bnYGrNktnSSLWrDFtsq76cPCF2tBeDvXcfc8CAy88ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dho4WoZbyTqUR9yeKkZRhO1id4zfE9ij/fZnS3i9RqCgXHaNYlcD1WxjUMJGjA7Ccw4PxiNQ7pA+q9qkTPzufzYN57wAfHghCG0BFVRGiHXA3z6OruJJNABvHJX5xjmXKTTLa6n5oguOJFmzaQScIF7xFnxZa2OchDDzaEJ5e7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EJGhoXB1; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso3203703a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:25:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740738374; x=1741343174; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=okFrKrhPumydq8rLHSqC6+IdPsjGdyC8aVxeiqDQVLo=;
-        b=c5FqZ/t9MMenJXtx9Wsdg+ZJSTW4FQFl15vINoQ5hC18nyQzElvP2/WJqtKIkPhLKL
-         OkIpS1tE/1A71JnG4+KQ5+QRCpd+D4JKk01rPY35ll98wufgu7ZQP1d9VXAyxHctq3a4
-         1MS+LC/yqRLs5gKvFDS7Ym9jPahAqeYlTj9fhnk6zIFOI0k9on8Llz6CEHathFLA4Leg
-         3aqeDu4lJFu1FToKE7fNEq3szv+AfLsvYVhBLlNYxKvmwzmLOgB6cXUEwXoL/fRKGHuL
-         +QJ8REwBRmqCW5NdJAzKkJXXKZySNPYwJGUdg48yC3rMXVbwQNkhURvBvuw7r173RFsE
-         t8wg==
+        d=chromium.org; s=google; t=1740738353; x=1741343153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nb9NUQhb3bplKyawSYK7wGLTz8Fx3itEvvEthZZH/DE=;
+        b=EJGhoXB1Y9u79VfD5P5ssNMCo/r6iimUk+w5PyYkXg8sXtebkU2a9UIp35zi9l1fCm
+         V2SrKq5QI8g0DSs4BY0kz6UM3NDQbNlHgAZ/9D3lBzPsPpmAAUBzz31z/5DI+kWYdsXE
+         /Vnd9gZv81jxAb9vDOWWRUCKhL0ggjrm7EXY8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740738374; x=1741343174;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=okFrKrhPumydq8rLHSqC6+IdPsjGdyC8aVxeiqDQVLo=;
-        b=YXOJTdxnqLGrvrjrfAFD5kL+ZjSIBYLL059XZD35M0MgP9NdipDz0DervBIo/02h3D
-         YFv1gqDBvxsTQK1F1CkCgOS4snpBCSW+pxtWh5ieSbPOKKPyvy3OYggQy2kbaquI0mwk
-         9Pnk50P+qWz5RfdwsggL0zkJHaoU8H/II6QjuUtFeWN30VM6qB6K0l+O1LxoMnFlA1HW
-         P9wXg4XgLlcd9BGzYfG9DLa4BNtjD+nVILrS6IKadhFwGjqphTucZRBTJmRVBuY3eIDG
-         7EmJSpiF/FXYjiWHfSQ4PeWXdL2dfh5K124FU/387+prlb+v4pnv4fW2Dsc9gL8HAMqj
-         6F7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWNe2Q5pDTNbOgTWo2PgXw3mTWAPEdR1FcHgXXCPFkugQRKyGu6Fgk6QGcrRmE/8uWJvLtn7NeV3LpUCLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUmpEnxjKseo0uKmCgWjZmCmLZj+vkvk3lu9P7wTjDSc9pQOc1
-	LUj9LXdlegxJaz91CzqM12mLvZlaccg2cFdcxhH0Xdf7Y+IX9NbzAE5bqkKCMNDPHz+TeOf2hKY
-	QSSSvzYEBMXfMCGdzhA==
-X-Google-Smtp-Source: AGHT+IHw8E3se+rg2k3z4uSikRRjQKSYo2S3MZjJ8Y0FSN5936j7LMJM+12PR3REuojrFW4s9g1hMmiAVM7Iz4UL
-X-Received: from wmbfm6.prod.google.com ([2002:a05:600c:c06:b0:439:9601:298d])
- (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4f0d:b0:439:9828:c450 with SMTP id 5b1f17b1804b1-43ba67082e6mr22770435e9.15.1740738374284;
- Fri, 28 Feb 2025 02:26:14 -0800 (PST)
-Date: Fri, 28 Feb 2025 10:25:30 +0000
-In-Reply-To: <20250228102530.1229089-1-vdonnefort@google.com>
+        d=1e100.net; s=20230601; t=1740738353; x=1741343153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nb9NUQhb3bplKyawSYK7wGLTz8Fx3itEvvEthZZH/DE=;
+        b=Z7Bkb5ULi5lSMFr4xG4bpJ6KTGqV0CqrLQ9BFhkgc+LuldME3TPsaayKpPwbWtlBJA
+         9viWZnWS2P5BMJuUeymkGRxGMk7TQBj6YU/i0JlfJx4bF+V4fwEDxsfh3Ne8mHNsc6ec
+         uo+uDd6J3SJAdvM+HjOB5lgxd442KWpVRNNYUduCNUzBexSEfOPNnUh4W9AVQNooGuOt
+         Wk3YXCkPCb+WYPa7v/fELI2gghzfAK5JH2BPwC5hip54m8y/lVn64EMIxx0i15Vm4Wwr
+         kjqX1TM/bOmriMad2MJdIJIpWos5iMq1G21dHnNoYBLZfgG5se3QnnBs0xGmhdba8r8n
+         gygw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIttN1nilqfevDrqzjEiYK7myhcJhDHgfj11ZCOl8EzU08L4SCoTS7f27++lZ2T5NyQ8fxS/sX57FEwsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMM+Da4cG2x4x1lMt3g9Wrn615ScznLtUF1LsW3vtmkAUG6AIr
+	fSYjWyBKzGG3MS5NYMmsiNkAQwNDi5l1+EQq5feZPc/ErZ5xHYgIYhtfWEFQAZz2y06JJ0geTLg
+	k9g==
+X-Gm-Gg: ASbGncv+UIs+8FMrV0LC5XABZHEPfVbb1SzVRGN7sD1lp8EXZTc3QuRy8RXdJqdLryW
+	fe5mwrLRshrZEy73hAdnm+poVZCKNhSKXHTe4LVvECizp3XgnIacLrfvU9YRAzvCHKxDlaVzPoj
+	wvti+ClOhlTsyDNUOfNhcHLJ9FVhcwamjGCfSUhoiiKGTZM7h41gd1/cFrgTXBBxkdo/zj7covU
+	cvnrF5l5u/Gt0eIcHqaQFV6+0dhTh3Glmu9512ZtHpJAn+xbnszvOCuo4ax3QRFtiy0ILVj3uF3
+	JN9B8fkFX7VaTXS+m02Y7qgNdFmTJo9YVcIRXQ2pPrPsISI+0Fg4df+ApHThXA==
+X-Google-Smtp-Source: AGHT+IEhhFjnVusQggaFgpXWpkmHzSWQwVpsOPadkyJKyzZMwhbhVjQ0sGMyVD0zI7WldnIc3U7Tbg==
+X-Received: by 2002:a05:6402:13cd:b0:5e0:815d:4e08 with SMTP id 4fb4d7f45d1cf-5e4d6ac9ea1mr2493275a12.3.1740738353255;
+        Fri, 28 Feb 2025 02:25:53 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b4af4dsm2298897a12.11.2025.02.28.02.25.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 02:25:51 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e05ac70b61so4639a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:25:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX+fkzK2eGnHfDzlr2pDaLL/N8PBV3Z1bxFVeZcVphJmpHx4kn2W34HpMph4IHW2/GYoejA8NUlAprpIKs=@vger.kernel.org
+X-Received: by 2002:a50:d7dd:0:b0:5dc:ccb4:cb11 with SMTP id
+ 4fb4d7f45d1cf-5e4d74dea39mr77472a12.4.1740738351014; Fri, 28 Feb 2025
+ 02:25:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250228102530.1229089-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228102530.1229089-15-vdonnefort@google.com>
-Subject: [PATCH 9/9] KVM: arm64: np-guest CMOs with PMD_SIZE fixmap
-From: Vincent Donnefort <vdonnefort@google.com>
-To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
-	will@kernel.org
-Cc: qperret@google.com, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Vincent Donnefort <vdonnefort@google.com>
+MIME-Version: 1.0
+References: <20250128-b4-rkisp-noncoherent-v3-0-baf39c997d2a@gmail.com>
+ <20250128-b4-rkisp-noncoherent-v3-1-baf39c997d2a@gmail.com> <25beec7ea929b624d845f5ba4abce6267974ed82.camel@ndufresne.ca>
+In-Reply-To: <25beec7ea929b624d845f5ba4abce6267974ed82.camel@ndufresne.ca>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 28 Feb 2025 19:25:33 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A4YOaSCn=xe7OM-hPKcUhqkD5hTiMUo5F9pwhKNFJ2Lg@mail.gmail.com>
+X-Gm-Features: AQ5f1JoHaD84fv2X5fHk6A_BWpTZQNcf1bz4WEEDQ8FkApfINlkKzBEV-PkKHU4
+Message-ID: <CAAFQd5A4YOaSCn=xe7OM-hPKcUhqkD5hTiMUo5F9pwhKNFJ2Lg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] media: videobuf2: Fix dmabuf cache sync/flush in dma-contig
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Mikhail Rudenko <mike.rudenko@gmail.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With the introduction of stage-2 huge mappings in the pKVM hypervisor,
-guest pages CMO is needed for PMD_SIZE size. Fixmap only supports
-PAGE_SIZE and iterating over the huge-page is time consuming (mostly due
-to TLBI on hyp_fixmap_unmap) which is a problem for EL2 latency.
+On Fri, Feb 28, 2025 at 12:30=E2=80=AFPM Nicolas Dufresne <nicolas@ndufresn=
+e.ca> wrote:
+>
+> Le mardi 28 janvier 2025 =C3=A0 23:35 +0300, Mikhail Rudenko a =C3=A9crit=
+ :
+> > When support for V4L2_FLAG_MEMORY_NON_CONSISTENT was removed in
+> > commit 129134e5415d ("media: media/v4l2: remove
+> > V4L2_FLAG_MEMORY_NON_CONSISTENT flag"),
+> > vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions were made
+> > no-ops. Later, when support for V4L2_MEMORY_FLAG_NON_COHERENT was
+> > introduced in commit c0acf9cfeee0 ("media: videobuf2: handle
+> > V4L2_MEMORY_FLAG_NON_COHERENT flag"), the above functions remained
+> > no-ops, making cache maintenance for non-coherent dmabufs allocated
+> > by
+> > dma-contig impossible.
+> >
+> > Fix this by reintroducing dma_sync_sgtable_for_{cpu,device} and
+> > {flush,invalidate}_kernel_vmap_range calls to
+> > vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions for non-coherent
+> > buffers.
+> >
+> > Fixes: c0acf9cfeee0 ("media: videobuf2: handle
+> > V4L2_MEMORY_FLAG_NON_COHERENT flag")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
+> > ---
+> >  .../media/common/videobuf2/videobuf2-dma-contig.c  | 22
+> > ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >
+> > diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> > b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> > index
+> > bb0b7fa67b539aa73ad5ccf3c3bc318e26f8a4cb..146d7997a0da5989fb081a6f28c
+> > e0641fe726e63 100644
+> > --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> > +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> > @@ -427,6 +427,17 @@ static int
+> >  vb2_dc_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
+> >                                  enum dma_data_direction
+> > direction)
+> >  {
+> > +     struct vb2_dc_buf *buf =3D dbuf->priv;
+> > +     struct sg_table *sgt =3D buf->dma_sgt;
+> > +
+> > +     if (!buf->non_coherent_mem)
+> > +             return 0;
+> > +
+> > +     if (buf->vaddr)
+> > +             invalidate_kernel_vmap_range(buf->vaddr, buf->size);
+>
+> Am I correct that this is mostly to prevent the kernel from reading
+> back old data from the cache after an application or other driver did
+> CPU writes ? If so, can't we restrict that to DMA_TO_DEVICE and
+> DMA_BIDIRECTIONAL ?
 
-Introduce a shared PMD_SIZE fixmap (hyp_fixblock_map/hyp_fixblock_unmap)
-to improve guest page CMOs when stage-2 huge mappings are installed.
+Note that this function must also synchronize between the user-space
+and kernel mappings, where the DMA direction doesn't really matter.
+Also it's unlikely for it to be called when not needed - why would one
+begin a CPU access before the DMA, when the DMA is FROM_DEVICE?
 
-On a Pixel6, the iterative solution resulted in a latency of ~700us,
-while the PMD_SIZE fixmap reduces it to ~100us.
+>
+> As for pending kernel writes, they should have been flushed before the
+> buffer is made available for dequeue.
 
-Because of the horrendous private range allocation that would be
-necessary, this is disabled for 64KiB pages systems.
+There is no implicit flushing for imported DMA-bufs. All the flushing
+needs to be executed directly by the CPU accessors by surrounding the
+access with begin and end CPU access, be it in the kernel or
+userspace.
 
-Suggested-by: Quentin Perret <qperret@google.com>
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-Signed-off-by: Quentin Perret <qperret@google.com>
+> And any access while a buffer is
+> queued is concurrent access, which is expected to have undefined
+> behaviour.
+>
 
-diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-index 1b43bcd2a679..2888b5d03757 100644
---- a/arch/arm64/include/asm/kvm_pgtable.h
-+++ b/arch/arm64/include/asm/kvm_pgtable.h
-@@ -59,6 +59,11 @@ typedef u64 kvm_pte_t;
- 
- #define KVM_PHYS_INVALID		(-1ULL)
- 
-+#define KVM_PTE_TYPE			BIT(1)
-+#define KVM_PTE_TYPE_BLOCK		0
-+#define KVM_PTE_TYPE_PAGE		1
-+#define KVM_PTE_TYPE_TABLE		1
-+
- #define KVM_PTE_LEAF_ATTR_LO		GENMASK(11, 2)
- 
- #define KVM_PTE_LEAF_ATTR_LO_S1_ATTRIDX	GENMASK(4, 2)
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/mm.h b/arch/arm64/kvm/hyp/include/nvhe/mm.h
-index 230e4f2527de..b0c72bc2d5ba 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/mm.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/mm.h
-@@ -13,9 +13,11 @@
- extern struct kvm_pgtable pkvm_pgtable;
- extern hyp_spinlock_t pkvm_pgd_lock;
- 
--int hyp_create_pcpu_fixmap(void);
-+int hyp_create_fixmap(void);
- void *hyp_fixmap_map(phys_addr_t phys);
- void hyp_fixmap_unmap(void);
-+void *hyp_fixblock_map(phys_addr_t phys);
-+void hyp_fixblock_unmap(void);
- 
- int hyp_create_idmap(u32 hyp_va_bits);
- int hyp_map_vectors(void);
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-index 271893eff021..d27ce31370aa 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -220,25 +220,64 @@ static void guest_s2_put_page(void *addr)
- 	hyp_put_page(&current_vm->pool, addr);
- }
- 
-+static void *__fixmap_guest_page(void *va, size_t *size)
-+{
-+	if (IS_ALIGNED(*size, PMD_SIZE)) {
-+		void *addr = hyp_fixblock_map(__hyp_pa(va));
-+
-+		if (addr)
-+			return addr;
-+
-+		*size = PAGE_SIZE;
-+	}
-+
-+	if (IS_ALIGNED(*size, PAGE_SIZE))
-+		return hyp_fixmap_map(__hyp_pa(va));
-+
-+	WARN_ON(1);
-+
-+	return NULL;
-+}
-+
-+static void __fixunmap_guest_page(size_t size)
-+{
-+	switch (size) {
-+	case PAGE_SIZE:
-+		hyp_fixmap_unmap();
-+		break;
-+	case PMD_SIZE:
-+		hyp_fixblock_unmap();
-+		break;
-+	default:
-+		WARN_ON(1);
-+	}
-+}
-+
- static void clean_dcache_guest_page(void *va, size_t size)
- {
- 	while (size) {
--		__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
--					  PAGE_SIZE);
--		hyp_fixmap_unmap();
--		va += PAGE_SIZE;
--		size -= PAGE_SIZE;
-+		size_t fixmap_size = size == PMD_SIZE ? size : PAGE_SIZE;
-+		void *addr = __fixmap_guest_page(va, &fixmap_size);
-+
-+		__clean_dcache_guest_page(addr, fixmap_size);
-+		__fixunmap_guest_page(fixmap_size);
-+
-+		size -= fixmap_size;
-+		va += fixmap_size;
- 	}
- }
- 
- static void invalidate_icache_guest_page(void *va, size_t size)
- {
- 	while (size) {
--		__invalidate_icache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
--					       PAGE_SIZE);
--		hyp_fixmap_unmap();
--		va += PAGE_SIZE;
--		size -= PAGE_SIZE;
-+		size_t fixmap_size = size == PMD_SIZE ? size : PAGE_SIZE;
-+		void *addr = __fixmap_guest_page(va, &fixmap_size);
-+
-+		__invalidate_icache_guest_page(addr, fixmap_size);
-+		__fixunmap_guest_page(fixmap_size);
-+
-+		size -= fixmap_size;
-+		va += fixmap_size;
- 	}
- }
- 
-diff --git a/arch/arm64/kvm/hyp/nvhe/mm.c b/arch/arm64/kvm/hyp/nvhe/mm.c
-index f41c7440b34b..e3b1bece8504 100644
---- a/arch/arm64/kvm/hyp/nvhe/mm.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mm.c
-@@ -229,9 +229,8 @@ int hyp_map_vectors(void)
- 	return 0;
- }
- 
--void *hyp_fixmap_map(phys_addr_t phys)
-+static void *fixmap_map_slot(struct hyp_fixmap_slot *slot, phys_addr_t phys)
- {
--	struct hyp_fixmap_slot *slot = this_cpu_ptr(&fixmap_slots);
- 	kvm_pte_t pte, *ptep = slot->ptep;
- 
- 	pte = *ptep;
-@@ -243,10 +242,21 @@ void *hyp_fixmap_map(phys_addr_t phys)
- 	return (void *)slot->addr;
- }
- 
-+void *hyp_fixmap_map(phys_addr_t phys)
-+{
-+	return fixmap_map_slot(this_cpu_ptr(&fixmap_slots), phys);
-+}
-+
- static void fixmap_clear_slot(struct hyp_fixmap_slot *slot)
- {
- 	kvm_pte_t *ptep = slot->ptep;
- 	u64 addr = slot->addr;
-+	u32 level;
-+
-+	if (FIELD_GET(KVM_PTE_TYPE, *ptep) == KVM_PTE_TYPE_PAGE)
-+		level = KVM_PGTABLE_LAST_LEVEL;
-+	else
-+		level = KVM_PGTABLE_LAST_LEVEL - 1; /* create_fixblock() guarantees PMD level */
- 
- 	WRITE_ONCE(*ptep, *ptep & ~KVM_PTE_VALID);
- 
-@@ -260,7 +270,7 @@ static void fixmap_clear_slot(struct hyp_fixmap_slot *slot)
- 	 * https://lore.kernel.org/kvm/20221017115209.2099-1-will@kernel.org/T/#mf10dfbaf1eaef9274c581b81c53758918c1d0f03
- 	 */
- 	dsb(ishst);
--	__tlbi_level(vale2is, __TLBI_VADDR(addr, 0), KVM_PGTABLE_LAST_LEVEL);
-+	__tlbi_level(vale2is, __TLBI_VADDR(addr, 0), level);
- 	dsb(ish);
- 	isb();
- }
-@@ -273,9 +283,9 @@ void hyp_fixmap_unmap(void)
- static int __create_fixmap_slot_cb(const struct kvm_pgtable_visit_ctx *ctx,
- 				   enum kvm_pgtable_walk_flags visit)
- {
--	struct hyp_fixmap_slot *slot = per_cpu_ptr(&fixmap_slots, (u64)ctx->arg);
-+	struct hyp_fixmap_slot *slot = (struct hyp_fixmap_slot *)ctx->arg;
- 
--	if (!kvm_pte_valid(ctx->old) || ctx->level != KVM_PGTABLE_LAST_LEVEL)
-+	if (!kvm_pte_valid(ctx->old) || (ctx->end - ctx->start) != kvm_granule_size(ctx->level))
- 		return -EINVAL;
- 
- 	slot->addr = ctx->addr;
-@@ -296,13 +306,73 @@ static int create_fixmap_slot(u64 addr, u64 cpu)
- 	struct kvm_pgtable_walker walker = {
- 		.cb	= __create_fixmap_slot_cb,
- 		.flags	= KVM_PGTABLE_WALK_LEAF,
--		.arg = (void *)cpu,
-+		.arg = (void *)per_cpu_ptr(&fixmap_slots, cpu),
- 	};
- 
- 	return kvm_pgtable_walk(&pkvm_pgtable, addr, PAGE_SIZE, &walker);
- }
- 
--int hyp_create_pcpu_fixmap(void)
-+#ifndef CONFIG_ARM64_64K_PAGES
-+static struct hyp_fixmap_slot hyp_fixblock_slot;
-+static DEFINE_HYP_SPINLOCK(hyp_fixblock_lock);
-+
-+void *hyp_fixblock_map(phys_addr_t phys)
-+{
-+	hyp_spin_lock(&hyp_fixblock_lock);
-+	return fixmap_map_slot(&hyp_fixblock_slot, phys);
-+}
-+
-+void hyp_fixblock_unmap(void)
-+{
-+	fixmap_clear_slot(&hyp_fixblock_slot);
-+	hyp_spin_unlock(&hyp_fixblock_lock);
-+}
-+
-+static int create_fixblock(void)
-+{
-+	struct kvm_pgtable_walker walker = {
-+		.cb	= __create_fixmap_slot_cb,
-+		.flags	= KVM_PGTABLE_WALK_LEAF,
-+		.arg = (void *)&hyp_fixblock_slot,
-+	};
-+	unsigned long addr;
-+	phys_addr_t phys;
-+	int ret, i;
-+
-+	/* Find a RAM phys address, PMD aligned */
-+	for (i = 0; i < hyp_memblock_nr; i++) {
-+		phys = ALIGN(hyp_memory[i].base, PMD_SIZE);
-+		if (phys + PMD_SIZE < (hyp_memory[i].base + hyp_memory[i].size))
-+			break;
-+	}
-+
-+	if (i >= hyp_memblock_nr)
-+		return -EINVAL;
-+
-+	hyp_spin_lock(&pkvm_pgd_lock);
-+	addr = ALIGN(__io_map_base, PMD_SIZE);
-+	ret = __pkvm_alloc_private_va_range(addr, PMD_SIZE);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = kvm_pgtable_hyp_map(&pkvm_pgtable, addr, PMD_SIZE, phys, PAGE_HYP);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = kvm_pgtable_walk(&pkvm_pgtable, addr, PMD_SIZE, &walker);
-+
-+unlock:
-+	hyp_spin_unlock(&pkvm_pgd_lock);
-+
-+	return ret;
-+}
-+#else
-+void hyp_fixblock_unmap(void) { WARN_ON(1); }
-+void *hyp_fixblock_map(phys_addr_t phys) { return NULL; }
-+static int create_fixblock(void) { return 0; }
-+#endif
-+
-+int hyp_create_fixmap(void)
- {
- 	unsigned long addr, i;
- 	int ret;
-@@ -322,7 +392,7 @@ int hyp_create_pcpu_fixmap(void)
- 			return ret;
- 	}
- 
--	return 0;
-+	return create_fixblock();
- }
- 
- int hyp_create_idmap(u32 hyp_va_bits)
-diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-index d62bcb5634a2..fb69cf5e6ea8 100644
---- a/arch/arm64/kvm/hyp/nvhe/setup.c
-+++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-@@ -295,7 +295,7 @@ void __noreturn __pkvm_init_finalise(void)
- 	if (ret)
- 		goto out;
- 
--	ret = hyp_create_pcpu_fixmap();
-+	ret = hyp_create_fixmap();
- 	if (ret)
- 		goto out;
- 
-diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index df5cc74a7dd0..c351b4abd5db 100644
---- a/arch/arm64/kvm/hyp/pgtable.c
-+++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -11,12 +11,6 @@
- #include <asm/kvm_pgtable.h>
- #include <asm/stage2_pgtable.h>
- 
--
--#define KVM_PTE_TYPE			BIT(1)
--#define KVM_PTE_TYPE_BLOCK		0
--#define KVM_PTE_TYPE_PAGE		1
--#define KVM_PTE_TYPE_TABLE		1
--
- struct kvm_pgtable_walk_data {
- 	struct kvm_pgtable_walker	*walker;
- 
--- 
-2.48.1.711.g2feabab25a-goog
+Correct.
 
+> > +
+> > +     dma_sync_sgtable_for_cpu(buf->dev, sgt, buf->dma_dir);
+>
+> Isn't there a link to make between buf->dma_dir and direcction before
+> calling this ? Also, shouldn't we use direction insead of buf->dma_dir
+> to possibly limit the scope ?
+
+Oh, yes, that's a good catch. It should be |direction| passed here and
+not |buf->dma_dir|, since the former determines what CPU access will
+be done.
+
+>
+> > +
+> >       return 0;
+> >  }
+> >
+> > @@ -434,6 +445,17 @@ static int
+> >  vb2_dc_dmabuf_ops_end_cpu_access(struct dma_buf *dbuf,
+> >                                enum dma_data_direction direction)
+> >  {
+> > +     struct vb2_dc_buf *buf =3D dbuf->priv;
+> > +     struct sg_table *sgt =3D buf->dma_sgt;
+> > +
+> > +     if (!buf->non_coherent_mem)
+> > +             return 0;
+> > +
+> > +     if (buf->vaddr)
+> > +             flush_kernel_vmap_range(buf->vaddr, buf->size);
+> > +
+> > +     dma_sync_sgtable_for_device(buf->dev, sgt, buf->dma_dir);
+>
+> Similar questions for the end_cpu_access implementation.
+
+Yeah, same here.
+
+>
+> Nicolas
+>
+> > +
+> >       return 0;
+> >  }
+> >
+> >
+>
 
