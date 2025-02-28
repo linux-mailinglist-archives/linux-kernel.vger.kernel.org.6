@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-538367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE34A497AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:45:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B4A497AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D7C3BA63E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:45:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C463A7A7645
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25BC25BAA0;
-	Fri, 28 Feb 2025 10:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E0E1B4250;
+	Fri, 28 Feb 2025 10:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FNPS5DUb"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cmspyZjB"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687641B4250
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CEB17BA3;
+	Fri, 28 Feb 2025 10:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740739526; cv=none; b=mvQwJ7KT7euBL0HILzcu54VvRPADxdBS7YAQcwRwjYFuOt6xSD2MQDIqKzDHgxipTDe3FKYA6Jglfm7PPAJcdUGw7MD2Bak9wYvLpAi4tM6X+Xqm6zUIoqy+LDg8pWy9F1snKLLf8D5vGDZKXMRXYY3ThCUehQI5XNQq124Vr84=
+	t=1740739614; cv=none; b=tSSv7j6dY+obbjKV9HNdbj3mNpwacyeNGskEnLno1aukaM1hizIw72lmcOqIqShhxZgTVB+6ioNNgHwH5A9V+HW6gQ1GZEN0LZLKKCNAj/wWixLBVw+coPiaQgyWb8XKm4d9NGAiX+8rCkx0tAg1NCdtr7NDUIJIbfjLhpn6Rwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740739526; c=relaxed/simple;
-	bh=h9pmYLxfUT1aX4HqdFXVPQgImPo47G223O0cEy8gIuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b48p/kIVqpTamWV0S+u6In7pfq1lyyKailQ3wj9PLMsXT+MXinu/pUD87jS7EnvtDjWnQEFEIKVwJF8kU45ztaufa3EnCH+fu043chazQ4bpTGjUvOSLZVSx0W5EL22d82AJPszimmSpqPGYKnX2Tylzpis4E8Y1qqpVmIfhAjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FNPS5DUb; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso1558640f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:45:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740739522; x=1741344322; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OKxSQoBGw54Y+lQ4k5H4EjBxGSd128527Jyb0EoThZM=;
-        b=FNPS5DUbOMygNHRFj5N4FiGcP4IJz3iX0UK0JE4/wn+l0yF/xlQeoVkqSI/Pm0qCuc
-         UZp+MPCBcceFmVYTQMwxrFmda3eKHiXeTWUKEc8+JorMMg7DR0kdlpessVjoE06r/e3c
-         gFo+evYanZMv8eJehUMIZhtkKgf0bUWDqVVrP1QZy88FeJWuvQSpTL2pFNWWy54DnTAu
-         K5P40SNPwr6UHDyI5sFMOd1EdWt01KfsP+2oYBT4qYJCEsbsjPAITwIEKqjrawlyWudz
-         QztVMyVQbi+kL12XFrIz2VVnQ0auGL1njuS+GWt3Akb0N2zQT7InQkT34eB52jps9Tv4
-         8wrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740739522; x=1741344322;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKxSQoBGw54Y+lQ4k5H4EjBxGSd128527Jyb0EoThZM=;
-        b=HX8DFnIVh1vn/vCyCmoimCbBRzJVQr4h2oIbHUo2u0Y/iwrvZHG8dY2Vg+IEyY2Vbd
-         05bwGdCzNU22flbr8YprQSjvq43sKxOA6mx6BAlcQLHaf5pRpYKLuEYn7zTJSsWe0JDh
-         cqQFrLvFSsw543tfLlHwrsAjS5HjhNex1y4vVKNRErRyDtZjWNFiuP+PtH2kWpEjEEo3
-         ZK3r4g489bR+xBGD9Ee4x0waf91f5OqaX6Msnyu7hcJVLrvsFi+/TRa74kc00hfl07ib
-         BLw/b5BwgjSg6p9DVys6cCCHMlHuT8Yw9Cr9rgfPxtcb7bAgpfEBKu9/7UP8KwsPoZ3h
-         NgfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgRtR2HPOhwJb/nzZ9mDPo7ehxK4ZBCV7utWpG/04y76B9CrPZx6iPra/r5NL5mKOYAT6HEU5Vd3QgHwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCOw+4FBKEt3b4kikxzRXTa3a8kkCw1IxCpirDZrRcv8/fyPgk
-	D/lyMr2Kzwc1qrdGnZ5aWTqvBUYAdjPnQJQagzeufUYAGhtGILI+t3A0DV7leJg=
-X-Gm-Gg: ASbGncsCZ8Gsx87mJHOqQjl6K95VjF/aFhmcNUMMq89nrc9+qSrrrIWOJM93ekkHyOM
-	kEpI/fkyb1+Le30BC/lmWXtiNGRkZN7sQa3Opq+balRovD9YTvvMoSbLtUwTdiXvMBwC1f1Bi1+
-	H43B74YdTzX4FYWtO7GyT7mKWKKQuUTLdq1sD6U+VNqytvMJo7+n5fYDRKe/a5NJJrc3k4Eq3ki
-	GnjDDP3FY27b5zLIrWcb3scX/4vbe4EokleK4ZoZEcDpgPvIdMfuQOcMe0HuHvqfX/fLFulaZPV
-	pH/pxxspI1SfU9ElyBjeWKfYzU3/PTvnQKM=
-X-Google-Smtp-Source: AGHT+IGA8C/Oyk3lPD53/6NcqMxjrN9/qHSMa0fAU2vOWBAuXi/WKijGjjWcS14XZg9IhC+2eaUOzA==
-X-Received: by 2002:a5d:6da3:0:b0:390:eb32:3fee with SMTP id ffacd0b85a97d-390eca80548mr2338870f8f.49.1740739521706;
-        Fri, 28 Feb 2025 02:45:21 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532b2fsm83499395e9.10.2025.02.28.02.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 02:45:21 -0800 (PST)
-Message-ID: <f1a6e60a-1cfa-4f61-90ef-b71f4a92592f@tuxon.dev>
-Date: Fri, 28 Feb 2025 12:45:20 +0200
+	s=arc-20240116; t=1740739614; c=relaxed/simple;
+	bh=U4f39K22AT2uLhlBihafrDKiaAl4zq7R+BWNHeeQvIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=poEKBh4xK/gzQe1dqKUEN6aFvq//d7U7G1T9Zj8D5u7YCw8N+PT8HEJ5UZUMu6ymiF3PSG2SY6L0J9IWFyENF1KGfjWfAK2C18YfB9K1ZRzFLePKGbctj6z6Zh661wySVfFmYk6mojaP7Fh5BFr6C2tMomClmO/86/V2QMDOAEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cmspyZjB; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 1F27725B10;
+	Fri, 28 Feb 2025 11:46:49 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id bzMnRzDWYUA6; Fri, 28 Feb 2025 11:46:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740739608; bh=U4f39K22AT2uLhlBihafrDKiaAl4zq7R+BWNHeeQvIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cmspyZjBlr/nK/v9Lg8q2qjjEHQAXily7IiaveTLICIjaKnmm1F4qjVgw2KggkmKz
+	 WYEB/5j4AoNEtMr3KPKadNm9ZCjGIywSv5Tc+xDUJDMq3wkYB6qJjjApAZXuuLxqCz
+	 z3r79UNmdr3r9rsKt27LgDD5EqS5PB9TIbuUcW3Jr8xe4JvCOBks9Ll3BhpO4D4C22
+	 rhvCzjCOnX7eGbPgKsz0nJszJtkVXjJHqK2TvxbA4vZhXARy7W+Bz/oRz/KBu6jkY0
+	 qEkhOh9AlSpdIGCmqrQr3yTdfFd7TxpqpP9Z9vhGT7K5LbH/jbmkxVcykZxTvKpwV7
+	 sGAzXFRt5Mj5w==
+Date: Fri, 28 Feb 2025 10:46:29 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for
+ RK3528
+Message-ID: <Z8GT3rUEyXrTUgtJ@pie.lan>
+References: <20250228064024.3200000-1-jonas@kwiboo.se>
+ <20250228064024.3200000-5-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers: soc: atmel: fix the args passed to AT91_SOC
- for sam9x7 SoC
-To: Manikandan.M@microchip.com, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, Varshini.Rajendran@microchip.com,
- javier.carrasco.cruz@gmail.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Dharma.B@microchip.com
-References: <20250220055302.284558-1-manikandan.m@microchip.com>
- <109244f2-89af-4e08-9723-db6c6b0b26d1@tuxon.dev>
- <7c409d23-f607-44ae-8fca-70e10a7094db@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <7c409d23-f607-44ae-8fca-70e10a7094db@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228064024.3200000-5-jonas@kwiboo.se>
 
-
-
-On 28.02.2025 12:05, Manikandan.M@microchip.com wrote:
-> Hi Claudiu,
+On Fri, Feb 28, 2025 at 06:40:10AM +0000, Jonas Karlman wrote:
+> Add pinctrl and gpio nodes for RK3528 and import rk3528-pinctrl.dtsi
+> from vendor linux-6.1-stan-rkr5 kernel with the hdmi-pins-idle node
+> removed due to missing label reference to pcfg_output_low_pull_down.
 > 
-> Apologies,
-> We've just received confirmation that the sam9x7 SoC does include an 
-> version ID [3:0] in the DBGU Chip ID Register and this will be updated 
-> soon in the datasheet.
-> Therefore, we can continue using the AT91_CIDR_MATCH_MASK for SAM9X7. I 
-> will send an updated patch with the new Version Mask Macro.
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+> This was mostly imported from vendor kernel, however the main commit [1]
+> list 28 signed-off-by tags, unclear who I should use as author and what
+> signed-off-by tags to include.
+> 
+> [1] https://github.com/rockchip-linux/kernel/commit/c17d6325959f0ec1af901e8a17919163454190a2
+> ---
+>  .../boot/dts/rockchip/rk3528-pinctrl.dtsi     | 1397 +++++++++++++++++
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   82 +
+>  2 files changed, 1479 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-pinctrl.dtsi
+> 
 
-Thank you for letting me know!
-Claudiu
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> index 0fb90f5c291c..d3e2a64ff2d5 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -4,8 +4,10 @@
+>   * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+>   */
+>  
+> +#include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pinctrl/rockchip.h>
+>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+>  #include <dt-bindings/reset/rockchip,rk3528-cru.h>
+>  
+> @@ -17,6 +19,11 @@ / {
+>  	#size-cells = <2>;
+>  
+>  	aliases {
+> +		gpio0 = &gpio0;
+> +		gpio1 = &gpio1;
+> +		gpio2 = &gpio2;
+> +		gpio3 = &gpio3;
+> +		gpio4 = &gpio4;
+>  		serial0 = &uart0;
+>  		serial1 = &uart1;
+>  		serial2 = &uart2;
+> @@ -166,6 +173,11 @@ cru: clock-controller@ff4a0000 {
+>  			#reset-cells = <1>;
+>  		};
+>  
+> +		ioc_grf: syscon@ff540000 {
+> +			compatible = "rockchip,rk3528-ioc-grf", "syscon";
+> +			reg = <0x0 0xff540000 0x0 0x40000>;
+> +		};
+> +
+>  		uart0: serial@ff9f0000 {
+>  			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+>  			reg = <0x0 0xff9f0000 0x0 0x100>;
+> @@ -264,5 +276,75 @@ saradc: adc@ffae0000 {
+>  			#io-channel-cells = <1>;
+>  			status = "disabled";
+>  		};
+> +
+> +		pinctrl: pinctrl {
+> +			compatible = "rockchip,rk3528-pinctrl";
+> +			rockchip,grf = <&ioc_grf>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
 
+I doubt whether the pincontroller should be placed under simple-bus:
+without a reg property, it doesn't look like a MMIO device.
+
+Actually it is, although all the registers stay in the ioc grf. Maybe
+it should be considered as child of the grf.
+
+Best regards,
+Yao Zi
 
