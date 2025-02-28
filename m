@@ -1,81 +1,130 @@
-Return-Path: <linux-kernel+bounces-538110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E641A494AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:20:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B90A494B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F1A7A92D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:19:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A44A7A92A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB792566E4;
-	Fri, 28 Feb 2025 09:19:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3C125335E;
+	Fri, 28 Feb 2025 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WwY6xCrn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7581CAA99;
-	Fri, 28 Feb 2025 09:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD6C25291D;
+	Fri, 28 Feb 2025 09:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734375; cv=none; b=Eqaq1BAvdBQiUfF+uBhSh+uFh2m/DRLX32Ph6eV5jS14psGgPScbbi8W2t2lVlE6Vh5C7Qv6583pSFgO2s1gYp+ZGWlTMjXdku2U77NDYD0+f1psoPbwvpaofS4qSWVqDt9yuALa20NQCwFnYTrLEprzrjC8Dflk1bqe8hQM9ZM=
+	t=1740734412; cv=none; b=kVXDyem2jPPWPUxtCGGA1MoPBnARKeHHFePBVb6gHMjIGaKO+ZgXbyKedL5ysM9INVqITE7cu6fdt5nS5VbfMt/vpUV59JXACXlZp8ZzGknZDfiK7VbHkH8m0D24NZoW/BOtNkEZU0rmUOtauUzF4yTihfSYJESmphST6FRlKvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734375; c=relaxed/simple;
-	bh=Vd3UmTfRLm+F06cpBFFtBHu6pRElLdw3agBFpIi7T2w=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PBaZZR1BEin0XXEqNTNG9st6NN1hoUcREccUPTG/FawgTKea6L7kN5ZTc5s6JFDLZsLA5np6692O6FFYwYs2NHew8IEjnwxHSZf6zq5jUdWoXndHjbffgKgM0/RiTGP/qDWJJoY66Ker22TsIVW+fcupDbz8ifhewFlO5Q1KmDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z42ff3zTmz6K9Sq;
-	Fri, 28 Feb 2025 17:17:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6F3ED140CF4;
-	Fri, 28 Feb 2025 17:19:31 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 28 Feb
- 2025 10:19:17 +0100
-Date: Fri, 28 Feb 2025 17:19:13 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
-	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
-	<qemu-devel@nongnu.org>, Ani Sinha <anisinha@redhat.com>, Dongjiu Geng
-	<gengdongjiu1@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, "Peter
- Maydell" <peter.maydell@linaro.org>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 04/19] acpi/ghes: Cleanup the code which gets ghes
- ged state
-Message-ID: <20250228171913.00003442@huawei.com>
-In-Reply-To: <cd48953a4568b401c689078898a729c3d5cb10c2.1740671863.git.mchehab+huawei@kernel.org>
-References: <cover.1740671863.git.mchehab+huawei@kernel.org>
-	<cd48953a4568b401c689078898a729c3d5cb10c2.1740671863.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1740734412; c=relaxed/simple;
+	bh=+W/0OimqeFV+eBzmzI25ytsvWWfhHb8W3p9uRyegnQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3leSK/9BuYUQZsy91ASdIkPR/WzCeHQ21/PK83wllDUf8vfiBBYFNipD+wP5UXZueWAr5IAGLZHcL9MiFhsQd9GxXcEkqE2VBIVaP6k++46gtMdoP00BmoXl6LOBElFDSsLWNR66dQQcadojDj6eW0HIKjRy+TkCMLfZuBe/5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WwY6xCrn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pyrite.rasen.tech (unknown [IPv6:2404:7a81:160:2100:7597:2d2d:d3f:6ef1])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 21071606;
+	Fri, 28 Feb 2025 10:18:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740734320;
+	bh=+W/0OimqeFV+eBzmzI25ytsvWWfhHb8W3p9uRyegnQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WwY6xCrnUVzR0rZlwmYVnstPYZwRN8NyowA/4t+9++TN6nbpA23gH7FU3RAO65DVZ
+	 CiBFlGqKnZU8Yk0fAPL7aZLGOfO76uvy7z0yVMSH++uHbWgcz62mokdKIWNGXVsqIS
+	 nXFzYQM/1O9pPyMLdCN9alk8I3ZKddbdJzRMf2Gs=
+Date: Fri, 28 Feb 2025 18:20:01 +0900
+From: Paul Elder <paul.elder@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, kieran.bingham@ideasonboard.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: imx335: Set vblank immediately
+Message-ID: <Z8F_wardyYM7sCQx@pyrite.rasen.tech>
+References: <20250214133709.1290585-1-paul.elder@ideasonboard.com>
+ <Z7G3d_zEhqDuepNM@kekkonen.localdomain>
+ <Z77Vg7zcnj_5a-0s@pyrite.rasen.tech>
+ <Z77XJrRoqZWTLF4g@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z77XJrRoqZWTLF4g@kekkonen.localdomain>
 
-On Thu, 27 Feb 2025 17:00:42 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> Move the check logic into a common function and simplify the
-> code which checks if GHES is enabled and was properly setup.
+On Wed, Feb 26, 2025 at 08:56:06AM +0000, Sakari Ailus wrote:
+> Hi Paul,
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by:  Igor Mammedov <imammedo@redhat.com>
-This is the only place Igor's tag seems to have a bonus space..
-Probably worth tidying up if you are doing a v7
+> On Wed, Feb 26, 2025 at 05:49:07PM +0900, Paul Elder wrote:
+> > Hi Sakari,
+> > 
+> > Thanks for the review.
+> > 
+> > On Sun, Feb 16, 2025 at 10:01:27AM +0000, Sakari Ailus wrote:
+> > > Hi Paul,
+> > > 
+> > > On Fri, Feb 14, 2025 at 10:37:09PM +0900, Paul Elder wrote:
+> > > > When the vblank v4l2 control is set, it does not get written to the
+> > > > hardware immediately. It only gets updated when exposure is set. Change
+> > > > the behavior such that the vblank is written immediately when the
+> > > > control is set.
+> > > > 
+> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > > > ---
+> > > >  drivers/media/i2c/imx335.c | 19 +++++++++++++------
+> > > >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> > > > index fcfd1d851bd4..e73a23bbbc89 100644
+> > > > --- a/drivers/media/i2c/imx335.c
+> > > > +++ b/drivers/media/i2c/imx335.c
+> > > > @@ -559,12 +559,12 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > >  			imx335->vblank,
+> > > >  			imx335->vblank + imx335->cur_mode->height);
+> > > >  
+> > > > -		return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+> > > > -						IMX335_EXPOSURE_MIN,
+> > > > -						imx335->vblank +
+> > > > -						imx335->cur_mode->height -
+> > > > -						IMX335_EXPOSURE_OFFSET,
+> > > > -						1, IMX335_EXPOSURE_DEFAULT);
+> > > > +		 __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+> > > 
+> > > Indentation.
+> > > 
+> > > You're also missing an error check here.
+> > 
+> > I reasoned that it's fine to not have the error check.
+> > 
+> > afaiu, the only change this has to error is if try/s_ctrl on
+> > V4L2_CID_EXPOSURE fails when the change to the range of valid exposure
+> > values requires a new exposure value to be set. Setting the exposure
+> > control comes back to this function, and goes through the switch-case
+> > and imx335_update_exp_gain() below, which doesn't fail.
+> 
+> It will fail if cci_write() it calls does.
 
-Jonathan
+Hm good point. I suppose we don't actually want to continue on if it
+does fail... ok I'll fix it.
+
+> 
+> > 
+> > Also the imx219 has the exact same pattern in imx219_set_ctrl.
+> 
+> Feel free to fix it. :-)
+
+:)
+
+
+Paul
 
