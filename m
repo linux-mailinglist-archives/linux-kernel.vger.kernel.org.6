@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-538037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C34CA493D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:44:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789D9A493DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162493ABC46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2D2188F179
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FB12528EB;
-	Fri, 28 Feb 2025 08:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cJLjYhAP"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67F4253B67;
+	Fri, 28 Feb 2025 08:45:16 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8925290D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D984B1C6FFD
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732289; cv=none; b=oepr6n6V0bub3/BmwPJsjQgi8ZBkdlhZuEMjjqgnsgl1R5204RKZZQgFnBN40nIN1mXbDNwlgmoM+Sx0OjPSDflN+HbDBEJc87qpt5LrUfubzHxEbPK4v67zjdmhePDiaZ5MeQhpVG7IhBgEnuXBSh6RzqbbnpQc6Fc8Immh4m0=
+	t=1740732316; cv=none; b=QaRx7VhxpR8E1xcEXTN8qUlBpUkEvwioPNZfFLrHYIqH49vgZo+GDlVR/Pr91sv74mw0U7jUWzXbEzNa/eRca3iIlY8Dx5JDBZ2VSUW3N7G581Li0w+Y2zwCQrJGwH9LA1ujUenSWFk6IdzvDFIiwo5gWVJepB3We6446VbFadM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732289; c=relaxed/simple;
-	bh=Zkf8l0uryByZdz9QVPXFiiID4xittvMYr6H6I5rroZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hH48BwLT52WQtr/RhnsL63MSH23rLdSyVMVn5VdH9uso3zGXjqUlZ5AWP0tphKZRRg1Z3jKFIOEvYFsnJ33nKh2dPUjHQvwgXeNqm+5ZOgYRuYy3ofsZRY/tF5aq45Sp9zp8/mjkSGMjvnbge6HQCw0QB/Oar6Zo/w52V2x+W5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cJLjYhAP; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30b83290b7bso21016641fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:44:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740732285; x=1741337085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kY06bAcZIeFxZq+rVVGy8xdQWazfVF+gu1V9CdHTqzs=;
-        b=cJLjYhAPZ7R4jkUQq4r+JwFM5ITl4gMzBc5M9hgQJTlTDr7haM3fvcSLMEhDfMgy6F
-         KefWKRgCKtYJt7gVIztCr0zhOEZp07UaR+wIqZmB/0iQWwjnH7JY/Hq1kn4+atAn8CKo
-         HLdx351OaNXjyj0OFA1+K7F28xuI/brP871AaYi1hlhJCQYYkrKZgNQ7tBRvbOx5p4xo
-         mWrqPXN/Wc9MtPNAK8enzSMhGrXwieg21vXCUc6dTCjDwMaxgf6Yd+bUi87tEBXWI8LH
-         pXraJ+2I7rYIasrxEigj/mUPZkDCo5Y6tnR+D3GRD7zfuqqe4l5/eluLNtbD8q0Jzwwu
-         54Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740732285; x=1741337085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kY06bAcZIeFxZq+rVVGy8xdQWazfVF+gu1V9CdHTqzs=;
-        b=LbWX8qgRXJXuXa9uYUhoMN2szM2gyEazNaH2jEt6llQZy2wk9cBcrqd6CRbFWjw/7U
-         9IpMs5jI5m7RJN/MkJ1Qu8nhGIXODqqkPeGoHgGk91jTvKH4fRoG2jaNV9UuUJPMzH8L
-         PdLVYNgEhFAPvNU8a+sFe6ES2uqahEXbNVwue89WI6JOP7OXG7iK9mtx5HxZQm8bnWzj
-         IqM3nQOzcZjBvYVqyMtMg1OHpdhj7fk8yXQRTAT+786vK0MFlIrTP/sKgxphCg+GBAKh
-         wU1GVIoy6F2o9kpsuszVNooySVRRu0JnIvAtA1an1YbqlgSq6E6COZJwEXuJ8SZAW1GG
-         VJuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYRWR5FgOSKt1lG8nsYmihy/k/gh63pB4SFVaPyxy8Th3xjF+Z7mFE8q/ic7Z6UCBFU8OcAdEbIdxmdf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf7su7sWDuo02JKIeTffJu2YU1VLXtZ3rFYcril++6Vp4UPpHW
-	8weSz83GDNZM5ecnm2qW8R+edsgNfSoxWCKSaHReBfEuwpZIV9tFyMISsxQt4rmh4k8Fc/BOLtJ
-	en6PdXRKEqt1yKm6DGMVmGDgEj3pYtmeSTb7s9w==
-X-Gm-Gg: ASbGncultPS0U1KmxOc2vKWRbn9CezUQKTVxbiPUJ6QQtgrgvjsOyXHrhBMQJbdjwxq
-	eC8u46Wo/sL7EgkQJS3CqXQxKVuuFpJ8FjPC8QyDjIDul35cRpYdepCgDE4OhZGNszMbt6mzn2p
-	9X9pBPfdk=
-X-Google-Smtp-Source: AGHT+IE62towVdCnTrudnvaIoU1TJ6pTFTYV/chtSrCWTC1Ko1AEApipZL64MrBly6WJNXyhwZwLLXLgsny92LECsFE=
-X-Received: by 2002:a2e:9fc9:0:b0:308:ec50:e841 with SMTP id
- 38308e7fff4ca-30b9330f13fmr8612541fa.25.1740732285416; Fri, 28 Feb 2025
- 00:44:45 -0800 (PST)
+	s=arc-20240116; t=1740732316; c=relaxed/simple;
+	bh=RBIBB1TOcqVm8RyyOIRxJiXCiRWd50D1WKWqmJ05Jrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgXE8DIIhsqcmxTZ4nbreu5Rtpq6qhkm58rIvwD+ueVVOfZm/7nvYKb+MjWB/Heqd6G9+WCJEb5tcQS3Tt1V+hTlGSqkK35wG23r8LRChXzgja4wN161Da3haDy2gL4IDlKQlHNlf70kk5RRLIP4s7LOhD9qA1aGCbKl8hS9pdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0D9021F38F;
+	Fri, 28 Feb 2025 08:45:13 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F26A813888;
+	Fri, 28 Feb 2025 08:45:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id swBhOph3wWe7PwAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Fri, 28 Feb 2025 08:45:12 +0000
+Date: Fri, 28 Feb 2025 09:45:12 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
+	Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] nvmet-fc: take tgtport reference only once
+Message-ID: <7ab71df0-e9e8-4035-a215-f5259c69fe88@flourine.local>
+References: <20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org>
+ <20250226-nvmet-fcloop-v1-8-c0bd83d43e6a@kernel.org>
+ <f944fdb3-081f-474a-9193-f482fe87f72b@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-04-gpio-irq-threecell-v1-0-4ae4d91baadc@gentoo.org>
- <20250227-04-gpio-irq-threecell-v1-1-4ae4d91baadc@gentoo.org>
- <8fce8a9c-7946-4e3c-bbf3-25f8b4f4466f@riscstar.com> <20250227204155-GYA51171@gentoo>
-In-Reply-To: <20250227204155-GYA51171@gentoo>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:44:33 +0100
-X-Gm-Features: AQ5f1Jo79JYnCkWBYG5UqJJb1LGSJ1JmSW8NVl43VT942aaOGBkJP3E28SChE-c
-Message-ID: <CACRpkdas4TsMQx2Cvu_JR3kTStqWaOt1N+Cmq7nFesMzpGnZ+g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irqdomain: support three-cell scheme interrupts
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Alex Elder <elder@riscstar.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Thomas Gleixner <tglx@linutronix.de>, Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f944fdb3-081f-474a-9193-f482fe87f72b@suse.de>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 0D9021F38F
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
 
-On Thu, Feb 27, 2025 at 9:42=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
+On Fri, Feb 28, 2025 at 08:34:51AM +0100, Hannes Reinecke wrote:
+> On 2/26/25 19:46, Daniel Wagner wrote:
+> > The reference counting code can be simplified. Instead taking a tgtport
+> > refrerence at the beginning of nvmet_fc_alloc_hostport and put it back
+> > if not a new hostport object is allocated, only take it when a new
+> > hostport object is allocated.
+> > 
+> Can it really?
+> Main point of this operation is that 'tgtport' isn't going away during while
+> we're figuring out whether we need it.
+> 
+> With this patch it means that
 
-> > This function is meant for "twocell".  There is also another function
-> > irq_domain_translate_onecell().  Why don't you just create
-> > irq_domain_translate_threecell" instead?
-> >
-> good question!
->
-> it's too many changes for adding "threecell" which I thought not worth
-> the effort, or maybe we can rename the function to *twothreecell()?
->
-> I'm not sure which way to go is the best, ideas from maintainer are
-> welcome
+The tgtport is not going away. nvmet_fc_alloc_hostport can only be
+called with reference on tgtport being hold:
 
-Yeah just rename it twothreecell, that's fine, we will understand it :)
+nvmet_fc_rcv_ls_req
+  nvmet_fc_tgtport_get(tgtport)
+  nvmet_fc_handle_ls_rqst_work
+    nvmet_fc_handle_ls_rqst
+      nvmet_fc_ls_create_association
+        nvmet_fc_alloc_target_assoc
+          nvmet_fc_alloc_hostport
 
-Thanks for driving this change, much appreciated!
-
-Yours,
-Linus Walleij
+The goal with this patch here is to make it simpler to read where we
+take a ref. IMO, there is not really anything gained by the existing
+logic, though I agree it's not obvious that the tgtport is not going
+away. Would it be okay to add a comment?
 
