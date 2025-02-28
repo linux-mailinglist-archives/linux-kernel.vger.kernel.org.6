@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-539162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510B0A4A1A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A211A4A1A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3AF9176280
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7763E17630B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8C51F8735;
-	Fri, 28 Feb 2025 18:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2781F875A;
+	Fri, 28 Feb 2025 18:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EG1buTcf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HG2b8n+W"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4EE276046
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA91F872F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767409; cv=none; b=Pi8bnOROCn+ypXqN4cuty1QMtdX4f1Inrg4AmTyD5bMVPW9JqZMYtLuEmzv/daoJ/nk7nrrjyylX6boSbUezMK4/3Ny+YuPf09omw58ONIwj+sb3A5EHHoHFKpHHOBAfsJW+D0Jkcw4DJ6FAEPqugWxIinjrBUS5PPjh9DHPPe0=
+	t=1740767411; cv=none; b=no9rWLtw6idK5jsqzrdhNZ7iN0daj5O/6NjMUGGLoFJaHZDJN5LIf3dL9diETplP5R1szDoxYG/2KCO9lHNOPYWloyD3aqWazs/LSg0lyT2L3wzsR+z6Jn46NPNKVJ+4KxT4QD6Bnjolafa0v8WrvD/N6K3O7JtiDa9sLJwW8Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767409; c=relaxed/simple;
-	bh=rfDCDTCZR1vjOAMrrN+kyOgyhP5uaFXoA6YPneWMxAc=;
+	s=arc-20240116; t=1740767411; c=relaxed/simple;
+	bh=RyF3/gTbP5gy6tuXi9ooiaMUqPGl0EAWhimbDy1EXjU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lK6hoXydOjcHCiWMRtnfx5J7F6UPYxcgGmUrmHF+nz0aKZWw5gizwttQuv9Ii67mAnNACYiKh20+s/qDJRghx0rpxTAJn8a4IyiiQ7gwmaSZ1YgLaVbQLb9api8/D+K4/xkuZOjLzhw0nd8OefXB2edkvPyVYsK9XfjWeQJmVLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EG1buTcf; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=go0+XOt+Hly1ibe8eqOzV+sqA3JJaCy3u+uXw8Cry0Wau+IShw3BuESavIwhZ69qH89Il8PDiMwC5NOK86MeAHmMy9xC9b6ngFkRR2uZr5xqpT7i3TKyngs0S3x9iHfizUEGQ633pci3iKxEMk/27m3evwBr2YIA7e6+HxqgXMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HG2b8n+W; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feb019b13aso6136533a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:30:07 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22349ce68a9so77545315ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:30:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740767407; x=1741372207; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740767409; x=1741372209; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbowoUPJCyiQsizxpkD6Ny3B5kmia3e97FJeeBCM/C8=;
-        b=EG1buTcfCMMPbS+T/zSxeNYMHxXezbZSlnwd2W24ZG4q8eyd+h9TMoMlo8gsspTe2P
-         oHsuOGsVp4PE1eMtdz+PGMBSvhtnWj83AMiVWATj70PKHo30ID8ya3FfxrkREhFExnCG
-         zGjE0GIPGRMzlt/50cWAoC/p/bxYKbblBG2Sg3sg4H1jUvJ7g7lzSB72aYyZMq9dwD4t
-         awtV8baGG8t1pkCi8xYPKlFFRrxVjIv2/gu45X+IoQmO6ThjxMZOptTu623QzkkM92WR
-         UU5gShORSVal6KqmSuygESsw0/+zJG2iATgfIf4K98mHdVcKNA6+x1VPGCRm7cyGCJG6
-         hd2w==
+        bh=K94kLlqGeFQ+aFx16P/h3vYpIISWhF2cF1hUz7z5Syk=;
+        b=HG2b8n+WgPyWg9HS0peyJSkkGtJ6PhrA/iVIcGA1Iu5PPOuS/xsBm9Tvs7yktzEEjl
+         LxusfyeZ4eWwDToaK+cKSxA+ujgc8QZduE1euoKkqp4ZZwp0QwtrLGSJLyhq3iX5+PEQ
+         CaeOeh6hup0UvrzuwlgMyLaybKyMhvzCNCe3/8OpHtZw6omV23760b5gXaraF5AJroX0
+         U7ZsiP7yYxQu98j9XUuSYwasnTb1t3cS4M88L7jbHHs14wjCHLhe+/t+dXuQjrUi5PBZ
+         R1HvKHtZzvTmuFX5QR8CzAuFzJBm8mrQHOGdxUv5mBMTzwBbXmsOpeUbDDusKXPpqh73
+         nviw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767407; x=1741372207;
+        d=1e100.net; s=20230601; t=1740767409; x=1741372209;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbowoUPJCyiQsizxpkD6Ny3B5kmia3e97FJeeBCM/C8=;
-        b=uhQb8OrbFmcF6adPZPX7Ej+tiHpfe7EPVQjnn7OCAORuNFYHM6liu6PpztYzoDvKIZ
-         WOTLIJH5+lC12vm4X3qD1DJ4he3QlP18lDmI9VDjex5yFAEXxhsTPEhRICAdUS2dHPOc
-         VI+kQgDk6Ihl13iGC58eJEXXQDvbNEiLOEKFCfjP7m6QnGvb7/oL7wxMCN13RZRzJ4+P
-         fVTu2CpBQdQlkpkkXvZ2KhjlT/cboWrGvuCRVroflvtSe1t1o6VyDrEn1iZGq05aWwdH
-         qKYBEU7ZnND0pUonI11b7o5sFGD33KDaJzkyPZ02ywGMk/l762NcOXToHWhiTALxY+Gj
-         nUpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRbbHbpXYS46DeQbwMpgYe3h4sgUGTaOZ8cY24zH/Q5KpLVsBDgtFBFPz8ZgXwQSYXgx7f/aVwZU4MasI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi+B/6ehQVLKtZhthFAuOFbGHqcUbjgBDZsgRqpQxJp1V9q/ec
-	hbm1wrl90mEmViXzOAv+9ieXw+X/I7biIzPMlf8ORaQmJeJd3HuP7AXRl7gpydPAJ4eW0A==
-X-Google-Smtp-Source: AGHT+IGKuB3uJBVlbNU/F3YmwsBG4OICoUNsGFAqYF88KK7BiOQo3YRtYFp6xhdAPgZNqpSARz9qCLce
-X-Received: from pjbsn4.prod.google.com ([2002:a17:90b:2e84:b0:2fc:13d6:b4cb])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1804:b0:2fe:8c22:48b0
- with SMTP id 98e67ed59e1d1-2febab7876amr7870153a91.15.1740767407364; Fri, 28
- Feb 2025 10:30:07 -0800 (PST)
-Date: Fri, 28 Feb 2025 18:29:12 +0000
+        bh=K94kLlqGeFQ+aFx16P/h3vYpIISWhF2cF1hUz7z5Syk=;
+        b=VDhwITnc8JcyioL7RkoFKukE/NhlkofiUpZTtf1331STdf4WoriYJlA8Yi4CCTrhKT
+         sN29b34NprO2HRE/KuEVTaeC7WBqat+ce2y4dgrzWnuxpYql/OzyWrGpW6Ja9AwSg7ME
+         riaG0Dq4K6BCjNWfm78HMPyDyqCRVIYzpOLThVNnqpA73FkElO2iLIFcZc1ndvs2d6vC
+         C0041S+hfmsQkJ3oWcCgShojhyaJQxtgOdc5Aw4mmlH+ISo0PvgZussk6wgvAnYopCmz
+         6rHnHIhBQPQhdhNIC08JLRKzmQTclTTw1jU36+lUjPbRwsOjWoEQxZWazxrtk6+PsInV
+         hNcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE4nlF0bS0G1edWGbIe6TmUVi0hg+NrVPTWkTxWY6UfnJmE6TeYJgpEdmHycBRtz7Lv0s9u3P8sqa030Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq6/aM6Ybe/hZmo+gyf1oZBntTswMmKjlXKmC9laryEczxIJ5e
+	9PvU/Ar0v7KLa/Hxuf/QevvJTqbDXhFHFGZLp5QyZKCKT3i+JM3nOYPC0PhOMsp5FBzZQg==
+X-Google-Smtp-Source: AGHT+IFDWi4N9QdQQBBc9RlXjvM6dqwf/CPH36DP/o8uLrYBQ+/2fZBTUs+cvUB/toGJpVVERB85nZsx
+X-Received: from pjur16.prod.google.com ([2002:a17:90a:d410:b0:2fa:1fac:269c])
+ (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e750:b0:21f:ba96:5de9
+ with SMTP id d9443c01a7336-2236926f502mr89499265ad.49.1740767408967; Fri, 28
+ Feb 2025 10:30:08 -0800 (PST)
+Date: Fri, 28 Feb 2025 18:29:13 +0000
 In-Reply-To: <20250228182928.2645936-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228182928.2645936-1-fvdl@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228182928.2645936-12-fvdl@google.com>
-Subject: [PATCH v5 11/27] mm/hugetlb: set migratetype for bootmem folios
+Message-ID: <20250228182928.2645936-13-fvdl@google.com>
+Subject: [PATCH v5 12/27] mm: define __init_reserved_page_zone function
 From: Frank van der Linden <fvdl@google.com>
 To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
@@ -82,59 +82,90 @@ Cc: yuzhao@google.com, usamaarif642@gmail.com, joao.m.martins@oracle.com,
 	Frank van der Linden <fvdl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The pageblocks that back memblock allocated hugetlb folios might
-not have the migrate type set, in the CONFIG_DEFERRED_STRUCT_PAGE_INIT
-case.
+Sometimes page structs must be unconditionally initialized
+as reserved, regardless of DEFERRED_STRUCT_PAGE_INIT.
 
-memblock allocated hugetlb folios might be given to the buddy allocator
-eventually (if nr_hugepages is lowered), so make sure that the migrate
-type for the pageblocks contained in them is set when initializing them.
-Set it to the default that memmap init also uses (MIGRATE_MOVABLE).
+Define a function, __init_reserved_page_zone, containing
+code that already did all of the work in init_reserved_page,
+and make it available for use.
 
 Signed-off-by: Frank van der Linden <fvdl@google.com>
 ---
- mm/hugetlb.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ mm/internal.h |  1 +
+ mm/mm_init.c  | 38 +++++++++++++++++++++++---------------
+ 2 files changed, 24 insertions(+), 15 deletions(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 1a200f89e21a..19a7a795a388 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3254,6 +3254,26 @@ static void __init hugetlb_folio_init_vmemmap(struct folio *folio,
- 	prep_compound_head((struct page *)folio, huge_page_order(h));
- }
+diff --git a/mm/internal.h b/mm/internal.h
+index 109ef30fee11..57662141930e 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1448,6 +1448,7 @@ static inline bool pte_needs_soft_dirty_wp(struct vm_area_struct *vma, pte_t pte
+ 
+ void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 				unsigned long zone, int nid);
++void __meminit __init_reserved_page_zone(unsigned long pfn, int nid);
+ 
+ /* shrinker related functions */
+ unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 9f1e41c3dde6..925ed6564572 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -650,6 +650,28 @@ static inline void fixup_hashdist(void)
+ static inline void fixup_hashdist(void) {}
+ #endif /* CONFIG_NUMA */
  
 +/*
-+ * memblock-allocated pageblocks might not have the migrate type set
-+ * if marked with the 'noinit' flag. Set it to the default (MIGRATE_MOVABLE)
-+ * here.
-+ *
-+ * Note that this will not write the page struct, it is ok (and necessary)
-+ * to do this on vmemmap optimized folios.
++ * Initialize a reserved page unconditionally, finding its zone first.
 + */
-+static void __init hugetlb_bootmem_init_migratetype(struct folio *folio,
-+							  struct hstate *h)
++void __meminit __init_reserved_page_zone(unsigned long pfn, int nid)
 +{
-+	unsigned long nr_pages = pages_per_huge_page(h), i;
++	pg_data_t *pgdat;
++	int zid;
 +
-+	WARN_ON_ONCE(!pageblock_aligned(folio_pfn(folio)));
++	pgdat = NODE_DATA(nid);
 +
-+	for (i = 0; i < nr_pages; i += pageblock_nr_pages)
-+		set_pageblock_migratetype(folio_page(folio, i),
-+					  MIGRATE_MOVABLE);
++	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
++		struct zone *zone = &pgdat->node_zones[zid];
++
++		if (zone_spans_pfn(zone, pfn))
++			break;
++	}
++	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
++
++	if (pageblock_aligned(pfn))
++		set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVABLE);
 +}
 +
- static void __init prep_and_add_bootmem_folios(struct hstate *h,
- 					struct list_head *folio_list)
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ static inline void pgdat_set_deferred_range(pg_data_t *pgdat)
  {
-@@ -3275,6 +3295,7 @@ static void __init prep_and_add_bootmem_folios(struct hstate *h,
- 					HUGETLB_VMEMMAP_RESERVE_PAGES,
- 					pages_per_huge_page(h));
- 		}
-+		hugetlb_bootmem_init_migratetype(folio, h);
- 		/* Subdivide locks to achieve better parallel performance */
- 		spin_lock_irqsave(&hugetlb_lock, flags);
- 		__prep_account_new_huge_page(h, folio_nid(folio));
+@@ -708,24 +730,10 @@ defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+ 
+ static void __meminit init_reserved_page(unsigned long pfn, int nid)
+ {
+-	pg_data_t *pgdat;
+-	int zid;
+-
+ 	if (early_page_initialised(pfn, nid))
+ 		return;
+ 
+-	pgdat = NODE_DATA(nid);
+-
+-	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
+-		struct zone *zone = &pgdat->node_zones[zid];
+-
+-		if (zone_spans_pfn(zone, pfn))
+-			break;
+-	}
+-	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+-
+-	if (pageblock_aligned(pfn))
+-		set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVABLE);
++	__init_reserved_page_zone(pfn, nid);
+ }
+ #else
+ static inline void pgdat_set_deferred_range(pg_data_t *pgdat) {}
 -- 
 2.48.1.711.g2feabab25a-goog
 
