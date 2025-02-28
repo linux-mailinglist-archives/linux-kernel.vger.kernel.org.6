@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-537715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F53A48FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 591A6A48FBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F22E3B9E0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9969A3BA420
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA7B1A3159;
-	Fri, 28 Feb 2025 03:33:54 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 8BA9A1537C6;
-	Fri, 28 Feb 2025 03:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755271A5B80;
+	Fri, 28 Feb 2025 03:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgHU+xts"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9D62F2A;
+	Fri, 28 Feb 2025 03:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713634; cv=none; b=pL2hoRYywdBWi8QfKIIHkm2ejjlLwD6UYJr18IVMBlCFQP1vxErTGC8G7zNU7LxSXNH2nJkCspJC+PghCKtX8lCGTjkeT2A/w38fIjZGHV2nn7Bgd6DLc36xvk9kJYmiWs2DbAWhXH7zUg0jAMgLN1vgHwlvQi24iEAnzTfwX2s=
+	t=1740713669; cv=none; b=u3Cyr/bqfUxbDM4xVP6XHA+CdZ0g6shCTf3esSKa4fGde7uI4QmjZqAnkc0Qo2IfcHJAZGf+bhq9nZOXSmWxPdfla0tkX+Uo0qjvrDfW9cHW6IIw81tqjVuUj+CEsQx4gNWqnYiiwaLlc2k86p5TbndauP+QC153jXejam3CuUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713634; c=relaxed/simple;
-	bh=AHm/n/8RcSSdh+IDJcTVv4Ek0BXyFxh/FX29wdXfajo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=mVSvYvlh3BRX5NsHi0eg/VZaKDTFNTQbNAKzw9AAWs/nHwtt/6kUh31wVORIjDyqFBpqLT0P4tCHxFftx2wnbedAZPJ44XEruBwJhGI3FdwJtOZBK+6Z+T27Qmbd69oF/+yXQwyQ1kFYoBbLmcoQ9xh5caw+ZsnIcPPV2OkEtIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C9C7B60A7A1EB;
-	Fri, 28 Feb 2025 11:33:44 +0800 (CST)
-Message-ID: <558dba45-28e2-f8b0-f478-5b22c33c4fd6@nfschina.com>
-Date: Fri, 28 Feb 2025 11:33:44 +0800
+	s=arc-20240116; t=1740713669; c=relaxed/simple;
+	bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bjl1vlw8M6+eZC/uKGGPRhg54kIzqRM3HSMFtYRyqGB0pHE0e8GwV5d6tibfwCthXcy4Fu7gLwU5xX7u+641JIK26UIBnj8Ve/SM2ITSVBt+n22NKqRpQ7N1jii2K/hhjYSIjhm/5rXVig/eRhHwN+lLZ8Egiqel85mmIQtIWpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgHU+xts; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390ec449556so434449f8f.1;
+        Thu, 27 Feb 2025 19:34:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740713666; x=1741318466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
+        b=CgHU+xtsq1dSkmELJexFXy18f9zKi/G88e6hBhZqOiOfYAQWlkXteeL51Jusr6iHrK
+         1t17gHl/P1s+9sjRAOQ4tTv+qRZC418wKs/rXyk6arfG0CsJTGahMuIK8hXACepnbOPN
+         5CyGPCNk76Mfwh8W5Rq1c8q50x11SCXQ1+rIIAYu4bY/6cmNKnGDZQuwEI0EQ851tAtg
+         DQczuTzRkeGXoa217YgQjZYXl73kQzfEJFNscKYrre/+SWs9+tO7vHe4GEzckXVXe/r6
+         XUCJjh3l86zKnOUwMFTvPLuaQuieWugOGDpF0buJnxLGaOnmWeLLwIEjdeBdkjYKgcfh
+         YT2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740713666; x=1741318466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
+        b=SlMnVvf19wetiUKrj4MfZaVvKuzq9vgZ5a2/2lMoawMdnG9z8Z1yONAGqQnL2BcAYg
+         +lfZ+4qUX6tI10HzlFOYnpScSfH89A9y+v4Q7FXzGtIrJgJl3OlhFIsTrwZkaH69L2Sj
+         fxvXjpCIJXsszxTCTmKErkXfSCHh+gbNIWiTCvBy6Rnt6Mu/w9Hxn0gIJzQZoSUejNyI
+         Kt7j02qpXIHF7+bkSpBwZOUZK8R7WWY1aARkCdzWVG9ONNMY0neq80jXhXPmYspWtgs3
+         mBi4tbBoOpTBdWGT2CVQIF/Ck2J+4YVTqedgJquSB9j1du2wFO443eK5E1z30/Fi8u5H
+         IGAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQeq3r98PkweSp6yA89tU3T4BAxeGdBPlfk3fdRRqHbnAA6Fj5pqWxR+WjzMl9oJeLt2WhLaY3m2Ce++G+@vger.kernel.org, AJvYcCW+v+Nj5lIQryFDS3ixIaxaeNl7EfSDkfLd7fjmde+4ITjObYevkOBxHzK36kZ4kIS5Jn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi5AsWJOe3qSBGHNR6zPxfAsU8WYBZ3ZgYOcQRBHm4b8ldR8Tf
+	IouavH7VSF65gobL6Tf4WNsB2NJfliL2Dy5auOQUEIMISJNFdFRTFtVlwCyaI3myRt1E7XRimNr
+	i2dgubm3/mLbl7K+Oq6K6c0enIGo=
+X-Gm-Gg: ASbGncunZBImHJUG3TJP8WHxDz26lfwRUQgnhwSkAmEViZZDjoxR0Sc23J6J20k8pS9
+	NmkNNPCVWHoXe3C95+oGgQwVpbkHPq/t4qWgr/dC7T3T2+PGSlEFPoBPvLtXx6MnG8d9Y7IBS7v
+	tUYcnE748RDD42Zn8UIzL5zRwbbW8CJfcRkWv1rTY=
+X-Google-Smtp-Source: AGHT+IHgd3tfWodkiyjPtlDKV6Db1jKtjXRF6i0SrQp49u2uSFNU9lIXTNgQJDqewLoF2eJVuADCD84LJ+hhDB3mf2A=
+X-Received: by 2002:a5d:5846:0:b0:38f:2f0e:9813 with SMTP id
+ ffacd0b85a97d-390ec77587bmr1687147f8f.0.1740713666110; Thu, 27 Feb 2025
+ 19:34:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-Content-Language: en-US
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ilpo.jarvinen@linux.intel.com,
- andriy.shevchenko@linux.intel.com, michael.j.ruhl@intel.com,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <bwirms6gvkvu7guxlzmmlbxb3df6qctuqedarccqer4lsu3ehx@5n3jg2ujryxb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
+ <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQ+TzLc=Z_Rp-UC6s9gg5hB1byd_w7oT807z44NuKC_TxA@mail.gmail.com> <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 27 Feb 2025 19:34:14 -0800
+X-Gm-Features: AQ5f1Joe29kJVCiuEvWMvNS3gwtkrux_fKgRJ_LxJDT9H1VoMZ1tL0XlbIA07h0
+Message-ID: <CAADnVQ+cokog6j5RjO7qNwBWswXTbu-x2j4EoQEt405-2i5jXw@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
+ runtime acquire/release
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/2/28 00:03, Lucas De Marchi wrote:
-> On Thu, Feb 27, 2025 at 03:32:06PM +0800, Su Hui wrote:
->> When build randconfig, there is an error:
->> ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
->> xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
->>
->> When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
->> 'intel_vsec_register'. Select INTEL_VSEC to fix this error.
->>
->> Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->> drivers/gpu/drm/xe/Kconfig | 1 +
->> 1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
->> index b51a2bde73e2..7a60d96d2dd6 100644
->> --- a/drivers/gpu/drm/xe/Kconfig
->> +++ b/drivers/gpu/drm/xe/Kconfig
->> @@ -44,6 +44,7 @@ config DRM_XE
->>     select WANT_DEV_COREDUMP
->>     select AUXILIARY_BUS
->>     select HMM_MIRROR
->> +    select INTEL_VSEC
+On Thu, Feb 27, 2025 at 1:55=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
 >
-> intel_vsec is an x86 platform driver. I think we probably want to add a
-> config that depends on INTEL_VSEC rather than selecting it like this.
-> At the very least we need and `if x86` and also make sure the driver
-> works without that part.
+> I have an idea, though not sure if it is helpful.
 >
-There is a recursive dependency between INTEL_VSEC and DRM_XE:
+> (This idea is for the previous problem of holding references too long)
+>
+> My idea is to add a new KF_FLAG, like KF_ACQUIRE_EPHEMERAL, as a
+> special reference that can only be held for a short time.
+>
+> When a bpf program holds such a reference, the bpf program will not be
+> allowed to enter any new logic with uncertain runtime, such as bpf_loop
+> and the bpf open coded iterator.
+>
+> (If the bpf program is already in a loop, then no problem, as long as
+> the bpf program doesn't enter a new nested loop, since the bpf verifier
+> guarantees that references must be released in the loop body)
+>
+> In addition, such references can only be acquired and released between a
+> limited number of instructions, e.g., 300 instructions.
 
-         symbol DRM_XE depends on INTEL_VSEC
-         symbol INTEL_VSEC depends on X86_PLATFORM_DEVICES
-         symbol X86_PLATFORM_DEVICES is selected by DRM_XE
+Not much can be done with few instructions.
+Number of insns is a coarse indicator of time. If there are calls
+they can take a non-trivial amount of time.
+People didn't like CRIB as a concept. Holding a _regular_ file refcnt for
+the duration of the program is not a problem.
+Holding special files might be, since they're not supposed to be held.
+Like, is it safe to get_file() userfaultfd ? It needs in-depth
+analysis and your patch didn't provide any confidence that
+such analysis was done.
 
-So if using 'depends on INTEL_VSEC', we should remove 'select 
-X86_PLATFORM_DEVICES', like this one:
+Speaking of more in-depth analysis of the problem.
+In the cover letter you mentioned bpf_throw and exceptions as
+one of the way to terminate the program, but there was another
+proposal:
+https://lpc.events/event/17/contributions/1610/
 
-  config DRM_XE
-         tristate "Intel Xe Graphics"
-         depends on DRM && PCI && MMU && (m || (y && KUNIT=y))
-+       depends on !X86 || INTEL_VSEC || INTEL_VSEC=n
-+       depends on !X86 || !ACPI || ACPI_WMI
-         select INTERVAL_TREE
-         # we need shmfs for the swappable backing store, and in particular
-         # the shmem_readpage() which depends upon tmpfs
-@@ -27,8 +29,6 @@ config DRM_XE
-         select BACKLIGHT_CLASS_DEVICE if ACPI
-         select INPUT if ACPI
-         select ACPI_VIDEO if X86 && ACPI
--       select X86_PLATFORM_DEVICES if X86 && ACPI
--       select ACPI_WMI if X86 && ACPI
+aka accelerated execution or fast-execute.
+After the talk at LPC there were more discussions and follow ups.
 
-The 'select X86_PLATFORM_DEVICES' is introduced by 67a9e86dc130 
-("drm/xe: select
-X86_PLATFORM_DEVICES when ACPI_WMI is selected"), so both ACPI_WMI need 
-to be changed.
+Roughly the idea is the following,
+during verification determine all kfuncs, helpers that
+can be "speed up" and replace them with faster alternatives.
+Like bpf_map_lookup_elem() can return NULL in the fast-execution version.
+All KF_ACQUIRE | KF_RET_NULL can return NULL to.
+bpf_loop() can end sooner.
+bpf_*_iter_next() can return NULL,
+etc
 
-Another choice is using 'select INTEL_VSEC if X86' and no need to change 
-other things.
-Any suggestion for these two choices?
+Then at verification time create such a fast-execute
+version of the program with 1-1 mapping of IPs / instructions.
+When a prog needs to be cancelled replace return IP
+to IP in fast-execute version.
+Since all regs are the same, continuing in the fast-execute
+version will release all currently held resources
+and no need to have either run-time (like this patch set)
+or exception style (resource descriptor collection of resources)
+bookkeeping to release.
+The program itself is going to release whatever it acquired.
+bpf_throw does manual stack unwind right now.
+No need for that either. Fast-execute will return back
+all the way to the kernel hook via normal execution path.
 
+Instead of patching return IP in the stack,
+we can text_poke_bp() the code of the original bpf prog to
+jump to the fast-execute version at corresponding IP/insn.
 
+The key insight is that cancellation doesn't mean
+that the prog stops completely. It continues, but with
+an intent to finish as quickly as possible.
+In practice it might be faster to do that
+than walk your acquired hash table and call destructors.
+
+Another important bit is that control flow is unchanged.
+Introducing new edge in a graph is tricky and error prone.
+
+All details need to be figured out, but so far it looks
+to be the cleanest and least intrusive solution to program
+cancellation.
+Would you be interested in helping us design/implement it?
 
