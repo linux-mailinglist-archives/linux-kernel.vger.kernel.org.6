@@ -1,116 +1,99 @@
-Return-Path: <linux-kernel+bounces-537664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E1A48EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:49:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454B4A48EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518317A8AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1850416CFEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEE014B08C;
-	Fri, 28 Feb 2025 02:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C9316EB7C;
+	Fri, 28 Feb 2025 02:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEp2IXiT"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YymxivtC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B5224D6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8B8224D6;
+	Fri, 28 Feb 2025 02:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710943; cv=none; b=hE6hd6XuoXAmBAbWqsZRmXE9bIAG/qMHL4bGlDj9ixFrSTYAHMHK8eBcxCvyqHEoobqdoX+OghePMd4FkmKFjbthIazrI633b3u/C8RbD3oyBzjnwZHh2CAOJtWFoEEzUY+Dz06TKnjaUpytai5eOvJLIE+SPPXcCzOV2mi8uhA=
+	t=1740710999; cv=none; b=jFU2VAiLNGWyb516qRrU7DEwqztc46DMtzksBsAuYx62vQs3A+2fZiiJkz49PCHwHtJ20cPjIQ1pBCQrESGZJy4kvp4+R08JwXdQdYD/SeMsvlAnnzUykwbL52iT96I93kGVOtG06FZ3dec7+I8vFmsTq6nu3ejCSnzHE4fvz6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710943; c=relaxed/simple;
-	bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s2CeuJxnn8jrxwY50rnzuOOl/69GMKG8OLf+412ZRIkkHATj55sp3Tj2PNMFTIKedla+ZeL1ueajwqcZ60sDTz+bHywPmO0hmdiQ3vXdz4XYgYob3XxtoqME8mvI5CgYqcwqT9ci2XUNFey0+PJ4i+UxKDOKsTH0vhItbTQzTDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEp2IXiT; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-abb7520028bso215220366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:49:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740710940; x=1741315740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
-        b=bEp2IXiTA4HutZNozLDuFTRst86F3t0BJKnRdwNUXJkKaLWsj3fKMTV9tPrwgLqdUS
-         QzEOtvAhy3LpWa/hm42rUr1F76rZOSB3yTHZiASC6NdOnMLaRju2SXUySzD1svwgifXs
-         Uqcsbfg/m33BfqFBdb/Hsewa4SolqFqs5pD5C5zqjoaQQQOzou+QqP5BkzU6x3uYYHmt
-         DrZEC3v/6Y8ag8cL4D6pEvno1epfMgle/Qy8puWx51Uc2YUil/I8BYlfhGQ/k6NfNxLP
-         NIHRj7jQymsJ52bI7qbB+4+ipm0C0Cx2UUANP7fE2VlyhoM6SKxX3JxEm+XJhrMTHTNz
-         hh1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740710940; x=1741315740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzvCWFFePXk/WbMCmsLCnTyJLh/fiuBa/UJXa4Qgjd4=;
-        b=vIEGWm+vxh9B4KHpUAlOf4SZBfFQhlppffHdvRTci4kxGsW7Sma4nYgcqsw4At/hNI
-         VieIM9M5CElg0X9eqnjiIvpOKDGszcqS+5CEHGfCTK8++YQf3HlrSIOmVxtMpihuzmup
-         DW4klaIC+TpuAQ9WdOoo1fSwDbniCsKsk0mJoVYTwvb7aDPl3zUzOLr3Xmqlkda4DR+p
-         1qximt/RzCVQTKSKZxetQca2MgsLCaS7hi32xMrpgdesTipKHOqk1qeNFtURw2vH35c4
-         zmM5eGgwc8PjVx0erHXO8i/DVV5M9jVDlQIMOApwWjy+bQk2bmYddtepR1VcAdd2ggx5
-         2z+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1QW9BrmI3vDqx36A32hMxxZARVY4kt3YYscw9Ca7WCNnfj0FV5cWperQmdzV8GS9FSN9Olr44McE21Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzkdovkkQ3O4C57dQZ8TgxP7k+f4Ye3YWiF1LJLCwFdO8FkCbI
-	o4Bb/dhchfOck6gT7dnv/n0i4ck9sjrfra8oTYAAK4xhff5IbpjlDrZ89B2ViaJkR42MAMPHeLf
-	PlifIv18sy0tQG+qwFs+3QJSuSvM=
-X-Gm-Gg: ASbGncs8rTKzL16iGwHHequ+uuPkJPVktdZzCbJbpwViXxu6pXpxP/8I/JkgA8oDZQn
-	usuFUDk+IZfVWW6IQ4GRcGPLvTmAECLtXdf/YqVGUMFBSCwH9uUCu7p0R0QbpuY12Qo2kAQzhDz
-	HgiQtnYYZI
-X-Google-Smtp-Source: AGHT+IEQtd4jRFDLZfWAi8gpZFqbekkGzWnw9++HXK9B7rSwuM1yAQVX+TTBiviDmb4N5kcz4Jjj4OlYL6K9eMS44v8=
-X-Received: by 2002:a17:907:7ba7:b0:abb:ac56:fcf8 with SMTP id
- a640c23a62f3a-abf26802eabmr160328566b.57.1740710940090; Thu, 27 Feb 2025
- 18:49:00 -0800 (PST)
+	s=arc-20240116; t=1740710999; c=relaxed/simple;
+	bh=ydxu/skYurmAld4vb7S643yLAKc57hVF7vBSFY1pjPU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hWAW0ZAejwtX5h2lhu88zMUK0LYjrpm50k1IO5SGfofOp5rWXapMIDIUniXSraF4D2xM9KxzTHYRbxS2CpI3HIAJyEBYa5m1LSnHlh0i+pF8dHvJ04dI9yOVNGZD9Z4c39o0U0/QGUy8w3iOUI5TMtOyHfZ5kaRB4NoruymcaYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YymxivtC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCE3C4CEDD;
+	Fri, 28 Feb 2025 02:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740710998;
+	bh=ydxu/skYurmAld4vb7S643yLAKc57hVF7vBSFY1pjPU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YymxivtCeZTphclh1mW2FSkq66ehF5xMsP6BU2pTHt2fO2EiJkm3VDw7JxUrij8Pq
+	 H3Vlt8dkB+TyYkiUElZDSHs7U8RuBRjL2Aco1pOckVRgqO1l1Of/ZJrribb4JQ0T8E
+	 cn0yt2ZNdFv00+l8F25OYnRZ2P/dF4OKtYq+ADDBzQp2srVGblT4P0cSKNJHFmixVo
+	 bjVtknKh86DAaSLr7hu+ovpdWUab4YbQlkBLbZSVYGAi9FH+i/ZtjSHzlKLdoHAhdj
+	 Bx6Qrm0XwEaode9SZkY0FXzViR0k2BQ0zGbBPxEEUs3g44ioPCr3F8D49DZGIi/zMr
+	 Ktm7ed+8qgDeQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDA8380AACB;
+	Fri, 28 Feb 2025 02:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAN2Y7hxDdATNfb=R5J1as3pqA1RsP8c8LubC4QxojK5cJS9Q9w@mail.gmail.com>
- <5u6rwht2mdwi3t4x3r5gtelruihtvfak24ci32moh2v7z52a3g@qkr2jcjgh4dw>
-In-Reply-To: <5u6rwht2mdwi3t4x3r5gtelruihtvfak24ci32moh2v7z52a3g@qkr2jcjgh4dw>
-From: ying chen <yc1082463@gmail.com>
-Date: Fri, 28 Feb 2025 10:48:48 +0800
-X-Gm-Features: AQ5f1Joz7X1GUZUrUbzavyLaxhtwylWXOoaVnnCTs7m_euWrs-9vmGyp_-GQnys
-Message-ID: <CAN2Y7hxehoKP0UxPzuuVGv=Zjy2FtrAwgEuc7i07NJUc0ypZ5A@mail.gmail.com>
-Subject: Re: [PATCH] mm/vmscan: when the swappiness is set to 0, memory
- swapping should be prohibited during the global reclaim process
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/3] selftests/net: deflake GRO tests and fix return value
+ and output
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174071103050.1664035.10238417641881750067.git-patchwork-notify@kernel.org>
+Date: Fri, 28 Feb 2025 02:50:30 +0000
+References: <20250226192725.621969-1-krakauer@google.com>
+In-Reply-To: <20250226192725.621969-1-krakauer@google.com>
+To: Kevin Krakauer <krakauer@google.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org
 
-Yes, I'm still using memcg-v1. But it's too expensive for us to
-migrate the production environment to memcg-v2.
+Hello:
 
-On Fri, Feb 28, 2025 at 3:12=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Thu, Feb 27, 2025 at 10:34:51PM +0800, ying chen wrote:
-> > When we use zram as swap disks, global reclaim may cause the memory in =
-some
-> > cgroups with memory.swappiness set to 0 to be swapped into zram. This m=
-emory
-> > won't be swapped back immediately after the free memory increases. Inst=
-ead,
-> > it will continue to occupy the zram space, which may result in no avail=
-able
-> > zram space for the cgroups with swapping enabled. Therefore, I think th=
-at
-> > when the vm.swappiness is set to 0, global reclaim should also refrain
-> > from memory swapping, just like these cgroups.
-> >
-> > Signed-off-by: yc1082463 <yc1082463@gmail.com>
->
-> It seems like you are still on memcg-v1. What is stopping you to move to
-> memcg-v2 and use memory.swap.max =3D 0?
->
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 26 Feb 2025 11:27:22 -0800 you wrote:
+> The GRO selftests can flake and have some confusing behavior. These
+> changes make the output and return value of GRO behave as expected, then
+> deflake the tests.
+> 
+> v2:
+> - Split into multiple commits.
+> - Reduced napi_defer_hard_irqs to 1.
+> - Reduced gro_flush_timeout to 100us.
+> - Fixed comment that wasn't updated.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,1/3] selftests/net: have `gro.sh -t` return a correct exit code
+    https://git.kernel.org/netdev/net-next/c/784e6abd99f2
+  - [v2,2/3] selftests/net: only print passing message in GRO tests when tests pass
+    https://git.kernel.org/netdev/net-next/c/41cda5728470
+  - [v2,3/3] selftests/net: deflake GRO tests
+    https://git.kernel.org/netdev/net-next/c/51bef03e1a71
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
