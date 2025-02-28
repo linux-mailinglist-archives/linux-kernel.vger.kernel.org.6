@@ -1,140 +1,125 @@
-Return-Path: <linux-kernel+bounces-538429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76836A49899
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:54:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CBAA498AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3CFF3BA073
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3613E3B7878
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928BA262D1C;
-	Fri, 28 Feb 2025 11:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pmm1Wifu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Djx1kyEW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B2526A1C3;
+	Fri, 28 Feb 2025 12:01:48 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C0F25F790;
-	Fri, 28 Feb 2025 11:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE292512E4;
+	Fri, 28 Feb 2025 12:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740743629; cv=none; b=oCgoyGToGr7eFklcO11WL2zIYmaJFocILiaeBCDVTfOq8+7Hg0nCLjb/1ICmorP+DCZh+LqX9ED67dIx7QjHWETRfBTrVnfZEG1DoRGgSpsAi0RhMGlw9krj4i+8Nl8Yb2dK+REB2Mot+m0zYbGr6LAShobLEiLGn9UfzG/yU5Y=
+	t=1740744108; cv=none; b=c1F8/7n1cAlf2oX8/IjhtC3iu94aIFUYkH2/0HWPFQdR1lQMS+LCQ0mVwHocMBEVP9c5PqnyeshitTIdcJ1u7uuKYGd6Kg5F98JKqpW4Pz2IGn+lokTV4646jMi0ta380/69aAgsm0/NsAFOo4JdV8jk8x9vKvUBpn0gwzvucLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740743629; c=relaxed/simple;
-	bh=Xx+4DZJBedoY68hJkMV5msyJ11vfL3QGPNi6lrxFSOc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=l8vgkip+TV/ssMAoqDQ4ihrNvRPH4+RrLU8vL3YwUtfZnsWXZVJzClsGCqBDi/Sx7iU6lboXSAq5VCjlRkaeQWi3LVrThyr1jPjegmcC1O6JFaIpxAaa48ntkBLv0spXB32v9gJNO2K1XitezXBrrSeJlqBREEQ6zYG+sUElcgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pmm1Wifu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Djx1kyEW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Feb 2025 11:53:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740743625;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gAPqhRamjcVJxO68ILjzT32M+umBIEEXQgY+krUtrIA=;
-	b=pmm1Wifu4ex4ML80wjiL5vonEhZGuCVysNDcegibtqKxnAU42Gny02u4YVQGBeiqVcC0jZ
-	XUHK7pjwE9C9M4mc2l2WaQ1DWtgLaxS4W5KHurByIESXpbGHd68c4HczqriyG08LQFbB1u
-	2X+dquY/pqKb4WDa2TLLUHuEZARSVpsFscSbPlxDQ3P7HgUUM7hl5jITEuGco4SbxNg3Ul
-	j0Zbk/C9ohN06QMUkeDP2KKFmQEwEZ5VFvAUbKY4OAU1Hp2mA5oy7f7iXN5ocfKN9Ju/mD
-	afB+IO2Zmb0+yAjGmQ96HBoFUU5bXLTtBuAOO8OIWKK6qwzF3zvwdmVEmtfTOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740743625;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gAPqhRamjcVJxO68ILjzT32M+umBIEEXQgY+krUtrIA=;
-	b=Djx1kyEWNiaTe6L780mVquGUIK8rVBcfD1jxxohnXE8XtJq9uDw6P5otKoa5bIXi3IHPmB
-	mrWlOJeI7ZMQC1Dw==
-From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/bugs] x86/bugs: Add X86_BUG_SPECTRE_V2_USER
-Cc: David Kaplan <david.kaplan@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250108202515.385902-2-david.kaplan@amd.com>
-References: <20250108202515.385902-2-david.kaplan@amd.com>
+	s=arc-20240116; t=1740744108; c=relaxed/simple;
+	bh=AIHwwOm+8hG+4+GpvgViwSUl6G4FZjoJ+ZLYoKJYbBU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eqHV+KtKBDa32YBdjW5qBOhqfg0737ZEDFeG7hEFgO2mLEr0dXsrnHeqawbL0wqBAA36s8JAMPXiRsP6MIXVoKfqeYWzFQnXcQPB/g2sMmwN7t0mdpZgwmat4Tx68RRziDQVFZ6cARyPq135+8GHcqDmaH8NW6h7yyOjPBZo7+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z46BY6jJ9zwXD3;
+	Fri, 28 Feb 2025 19:56:53 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 008D31800CD;
+	Fri, 28 Feb 2025 20:01:42 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 20:01:41 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>,
+	<shaojijie@huawei.com>
+Subject: [PATCH v4 net-next 0/6] Support some enhances features for the HIBMCGE driver
+Date: Fri, 28 Feb 2025 19:54:05 +0800
+Message-ID: <20250228115411.1750803-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174074362446.10177.6431632226859188999.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-The following commit has been merged into the x86/bugs branch of tip:
+In this patch set, we mainly implement some enhanced features.
+It mainly includes the statistics, diagnosis, and ioctl to
+improve fault locating efficiency,
+abnormal irq and MAC link exception handling feature
+to enhance driver robustness,
+and rx checksum offload feature to improve performance 
+(tx checksum feature has been implemented).
 
-Commit-ID:     98c7a713db91c5a9a7ffc47cd85e7158e0963cb8
-Gitweb:        https://git.kernel.org/tip/98c7a713db91c5a9a7ffc47cd85e7158e0963cb8
-Author:        David Kaplan <david.kaplan@amd.com>
-AuthorDate:    Wed, 08 Jan 2025 14:24:41 -06:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 28 Feb 2025 12:34:30 +01:00
-
-x86/bugs: Add X86_BUG_SPECTRE_V2_USER
-
-All CPU vulnerabilities with command line options map to a single X86_BUG bit
-except for Spectre V2 where both the spectre_v2 and spectre_v2_user command
-line options are related to the same bug.
-
-The spectre_v2 command line options mostly relate to user->kernel and
-guest->host mitigations, while the spectre_v2_user command line options relate
-to user->user or guest->guest protections.
-
-Define a new X86_BUG bit for spectre_v2_user so each *_select_mitigation()
-function in bugs.c is related to a unique X86_BUG bit.
-
-No functional changes.
-
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250108202515.385902-2-david.kaplan@amd.com
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/kernel/cpu/common.c       | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ChangeLog:
+v3 -> v4:
+  - Don't drop packets on csum validation failure, suggested by Jakub Kicinski.
+  - Fix "__umoddi3" undefined error, reported by Jakub Kicinski.
+  v3: https://lore.kernel.org/all/20250221115526.1082660-2-shaojijie@huawei.com/
+v2 -> v3:
+  - Remove "in this module" from all patch titles,
+    suggested by Kalesh Anakkur Purayil, Simon Horman and Jakub Kicinski.
+  - Remove .ndo_fix_features() suggested by Jakub Kicinski.
+  v2: https://lore.kernel.org/all/20250218085829.3172126-1-shaojijie@huawei.com/ 
+v1 -> v2:
+  - Remove self_test patch from this series, suggested by Andrew.
+  - Use phy_do_ioctl() to simplify ioctl code, suggested by Andrew.
+  - Replace phy_reset() with phy_stop() and phy_start(), suggested by Andrew.
+  - Recalculate the interval for the scheduled task to update statistics,
+    suggested by Andrew.
+  - Use !! to convert integer to boolean, suggested by Simon Horman.
+  v1: https://lore.kernel.org/all/20250213035529.2402283-1-shaojijie@huawei.com/
+---
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index c8701ab..0bc4203 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -537,4 +537,5 @@
- #define X86_BUG_RFDS			X86_BUG(1*32 + 2) /* "rfds" CPU is vulnerable to Register File Data Sampling */
- #define X86_BUG_BHI			X86_BUG(1*32 + 3) /* "bhi" CPU is affected by Branch History Injection */
- #define X86_BUG_IBPB_NO_RET	   	X86_BUG(1*32 + 4) /* "ibpb_no_ret" IBPB omits return target predictions */
-+#define X86_BUG_SPECTRE_V2_USER		X86_BUG(1*32 + 5) /* "spectre_v2_user" CPU is affected by Spectre variant 2 attack between user processes */
- #endif /* _ASM_X86_CPUFEATURES_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 7cce91b..1e80d76 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1331,8 +1331,10 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 
- 	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
- 
--	if (!cpu_matches(cpu_vuln_whitelist, NO_SPECTRE_V2))
-+	if (!cpu_matches(cpu_vuln_whitelist, NO_SPECTRE_V2)) {
- 		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+		setup_force_cpu_bug(X86_BUG_SPECTRE_V2_USER);
-+	}
- 
- 	if (!cpu_matches(cpu_vuln_whitelist, NO_SSB) &&
- 	    !(x86_arch_cap_msr & ARCH_CAP_SSB_NO) &&
+Jijie Shao (6):
+  net: hibmcge: Add support for dump statistics
+  net: hibmcge: Add support for checksum offload
+  net: hibmcge: Add support for abnormal irq handling feature
+  net: hibmcge: Add support for mac link exception handling feature
+  net: hibmcge: Add support for BMC diagnose feature
+  net: hibmcge: Add support for ioctl
+
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |   2 +-
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 122 ++++++
+ .../ethernet/hisilicon/hibmcge/hbg_debugfs.c  |   7 +-
+ .../ethernet/hisilicon/hibmcge/hbg_diagnose.c | 348 ++++++++++++++++++
+ .../ethernet/hisilicon/hibmcge/hbg_diagnose.h |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_err.c  |  58 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_err.h  |   1 +
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  | 298 +++++++++++++++
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |   5 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   |  10 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  |  55 +--
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 103 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c |  22 ++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |   2 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 105 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 181 ++++++++-
+ 16 files changed, 1304 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.h
+
+-- 
+2.33.0
+
 
