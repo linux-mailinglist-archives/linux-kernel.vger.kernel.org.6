@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-539204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4C3A4A1FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:45:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEA2A4A214
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247367A4EBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC183AF4E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C920F2777F8;
-	Fri, 28 Feb 2025 18:44:03 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175751C548C;
+	Fri, 28 Feb 2025 18:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dep51ZPc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0FF276046;
-	Fri, 28 Feb 2025 18:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82F0277034
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768243; cv=none; b=MGc2CuKUmrh3m8UEF+rhwDQK7wSzIRoAY7CKlwUxK+lVJB7mA2cThfeQDRivlSqaH6ujp9vVeDQkqc9c/kSjw8e1Za624KSh6WzYnk7qjsk0LyYBpG+JCSPunkTrz/e3eQPnMDfp9q7yFo5D1RodGRbfKIvRIE2r/1GcTQXZcUE=
+	t=1740768334; cv=none; b=V7U91zC65BObdRS2W3zYqMqscniZd7qRyvOV7vF0wvxD16vGohWiZD6lCDr725cJa4eo2om0k0CSz8qYzRLbSBzE6eZs+ZHizfKhOa2Z+nNvcR50CSqvLBtuZ417LKVPywR11wuuf3EPGB+JaNKVPxv9hsvdOk1t1h3SIdFF9Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768243; c=relaxed/simple;
-	bh=3wND4cVdpzynv9NUjR9Ag60vwvN9JraHBuNG9aEEn7c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kOb4WNGZ0+f9KIbq4APKQOKFkmod3vEjk/qWvJme6F4Ns3IyMtefq0Sq4A6eAvJlDtEI9ERl2Jm2N0H5z/Et9tlMqjFtqkyV5rIaYP7XlkzmzaOwV4I8MYkBvJ4THO+VKoHEwbfkkCbHITHhApnI6bTOze9yPwi6qD3tZgL4Qbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so3782780a12.2;
-        Fri, 28 Feb 2025 10:44:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740768239; x=1741373039;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PaXX1D6OVNUi1phn8PndSxP+/0KWwbGmFiX5DxVdnyY=;
-        b=oGugQJ5LkZY94eH6sF4nn42zGEIw+T6Mn+3gSKTkzpQUdrHWasKmGIicP4iLjTJCSp
-         vqrtY0ZmeYbixzRKkxxAjV6tDH0SpQZnFnpdTpTkYW5jlucr3iEUtweJwJQOtB1gadlU
-         QFi2cxVA7wsaEy75yyMWqkJGdyjyr+fkZtleexF9LhyIu+YIh5EE23YLh2bOGYYVof4J
-         POJdXAFTLRDDNiiSsN3Ug04mLBRQzQfJvuXkkvNkrJxNFeoVuG+eQDyseVuUKlf0paKW
-         Y+FXLXlB1a+WH9lp0zGbQl1vvjAGqiU8bsMmIDwYsNbJlc8jNhtSpXIwjX3iiYtWcCob
-         OyuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2HOcI31d1I94HBQzamHugLpNi9q8shp7qnjzHkTcfUcfBZce9KSqbKGcGdgswrdCTy3FhH5r09fzxnuU=@vger.kernel.org, AJvYcCWne6oAFkoFUzkK10TgVvC2LZrfvRzY9hwg3nye9fspVbuelBoUEZBQVPchHYZqH05m5KPa7MU2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMPRw9JcSxwH360h1xOmXByfBlB84Arf3S3oqiZ5IJc2Mu8Hj8
-	Q2q7gV6CYfWAToe4x56KcDYRHC/advP3265mJ1Zcf+A6znFeQ/2VnXwvBg==
-X-Gm-Gg: ASbGncu+tgG9Yn5sRc5SDgjkJI3LDJYCT6BI1CK4N8ItYXhB5BLxYxCt0w0q1QvFpPp
-	w+9Y2Xc7yjsN2AEgBK+AjOZg4b1Cfvx19pBETysJT2wj5jQj4E3WsNDAFp7g7Wb9371uJIkWQzH
-	UQOrHvOrQzbTvKeMGqGLL/1vcHbFjPS05DxH2wIa1nhqaNN05bSdABrKcHO94lfnPtgWgo3+nxn
-	Zh4xkhy98SVUAZqhvggJpzCtxyr3JGTL4+Ac8M/rav/+GXiKtJixlRr8geOKx109mlT0W6Lxfeq
-	Q2Ky+gOV8d3XOubl
-X-Google-Smtp-Source: AGHT+IHVu1CCOVI+vWWq586GMvCLtNeDC1M15YxCX1WvU5KPjvVdy1PylXS0eLtGfElhMiQUBOwsWQ==
-X-Received: by 2002:a17:907:1c8b:b0:abe:f83e:9e09 with SMTP id a640c23a62f3a-abf2687dd44mr510313166b.42.1740768239171;
-        Fri, 28 Feb 2025 10:43:59 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dd9e4sm329014666b.43.2025.02.28.10.43.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 10:43:58 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 28 Feb 2025 10:43:34 -0800
-Subject: [PATCH net-next] net: filter: Avoid shadowing variable in
- bpf_convert_ctx_access()
+	s=arc-20240116; t=1740768334; c=relaxed/simple;
+	bh=I9i7WEDJeTbHTS4Sjg3NNb1JSrfW/lMc3q9CM/reqqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjpTq5NtlCsCKhh/0P1w2XK/rEwjp+y4GPWAsuxKQ7E4mMWN+OFcc0WxcubgbTPPyyp3RqKvD8yzXX3342+JkjeZetqPmG6Hr1vnw+tbq0yk885GPpawxLJEG6u5p7rGJVmO0SEKqtIDMYGJwbNBdaGGvsglIZ/+ZVh3P+9hkcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dep51ZPc; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740768333; x=1772304333;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I9i7WEDJeTbHTS4Sjg3NNb1JSrfW/lMc3q9CM/reqqY=;
+  b=Dep51ZPcWX42M7Tf7dL9yFDimJ82UW9h2cZZbUYr2+f+U5mVreK4JvAR
+   eG4A96TZbN4VGVTdgS+7thH4LDUlFb4mSJGnP3eRixEQKUvmmV0p5OUOo
+   Jz5ZLpMSPd/fmi+7j/vftxk5SONWuJ8k6DOa6keZOdjnR1Iw06iKTXD2N
+   aiX5F4oxQV2uE15bP1c07IA9VfT2BgQAqGPZF2xa2IFI3MOI0L3yBS+ya
+   5WYDjnRjqnIZvF2KLi3Po++dO7ua/K/jwBccPKhNiOUhrCiCSnUoNO5yQ
+   Lz1/Iu6bSrGszQPsTtT3NjboVxrXk6zK2qh+VB6PN0duC+hNVPCi/sCKT
+   w==;
+X-CSE-ConnectionGUID: /MzceviIRl6FymtdvQwRlQ==
+X-CSE-MsgGUID: P7wmp7qMTVi5aQhILHticQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="44523971"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="44523971"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:45:32 -0800
+X-CSE-ConnectionGUID: HLl2blIbR8yFHT9Uma1kFA==
+X-CSE-MsgGUID: mAYGcmtzQgKlv4s5ufWYCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="117437640"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:45:29 -0800
+Date: Fri, 28 Feb 2025 20:45:26 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Cleanup io.h
+Message-ID: <Z8IERmwHXUuJoD4S@black.fi.intel.com>
+References: <20250227070747.3105451-1-raag.jadav@intel.com>
+ <Z8CD33_OWK2LB6IZ@smile.fi.intel.com>
+ <0011035a-5816-48c4-9fe4-c0b9db3c8e72@app.fastmail.com>
+ <Z8H1Y2_RlFnXeNEa@black.fi.intel.com>
+ <Z8IDXD2bkO1t71yB@smile.fi.intel.com>
+ <Z8IDgmrLx5DQADxJ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-fix_filter-v1-1-ce13eae66fe9@debian.org>
-X-B4-Tracking: v=1; b=H4sIANUDwmcC/x3MUQqDMBAFwKss79uApqZIrlJKafWtXShpSYIEx
- LsXnAPMjsJsLIiyI3OzYt+EKEMnmN/PtNLZgijwvQ+995NTaw+1T2V24TIF1SuHML7QCX6Zau3
- MbkisLrFV3I/jD6qCTXxmAAAA
-X-Change-ID: 20250228-fix_filter-5385ff6e154b
-To: Martin KaFai Lau <martin.lau@linux.dev>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1594; i=leitao@debian.org;
- h=from:subject:message-id; bh=3wND4cVdpzynv9NUjR9Ag60vwvN9JraHBuNG9aEEn7c=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnwgPtS5YEEbFsV5gED8y7xYaQZuepIgvFwMEsk
- bcV4Vy649KJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8ID7QAKCRA1o5Of/Hh3
- bVorD/9vBdUpwnW6pMfH5ubFHew8ocRp4PxUqJHL6ws2kawvDg4ZmpqQg71PD41OG+cDX0za5RV
- LC0JPvJP5E+K58tpODAxs8m5QKqkpLJIu90T72e2uu/FtNRTL744NdXntRhQB/4FH9xlEA6IUn7
- chTIyOP3R9ZgNf13ReLIy7DCGcRNNlZXiEB5eBZykwiK4l4o+hqIHjwXTRRVuV+vavBCjmiEw/I
- q84NZyQZVbH92laPZK+bCKFkMeUR2drrortv0kRxHlEsXPYHkUIcTVozibAGfSiokQXd5gK61YH
- CopWnAJWKTvfVzGH9klvpKN3Qbxusq1Ad8PVAEcYPOWCDV3f0VIFgjkwR0HP4B3/FmGAscQ5C+4
- 9LJGfZCS3haUKhJEXN6wlfgS5j8CIFodlTbzArcK+yaqfwVI3pBpwCMba/BhL0LDcmdedpSBrE8
- 31viMe9sF0kRZoo5+z8Jag+I14J/dYEh5AgIW2N4smMvts005UZ9SjnWrgICSbHqR/jGqIOHzsI
- j6mhuOI6/kkILpxKTF7X8FbFIN+c7Y0ZN23tPvBfMPPYbG7NtmWqLGJTT+6lRhIBOdsJt51fbV3
- HtzwPGnge7xaDakSi6cv/O6XrF0jK8rYYG0oOvzjOlqZ69ww4AVdbK66TbRvdvzPlRIUp8mbIjo
- 6EA6C5TPBW3xT+Q==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8IDgmrLx5DQADxJ@smile.fi.intel.com>
 
-Rename the local variable 'off' to 'offset' to avoid shadowing the existing
-'off' variable that is declared as an `int` in the outer scope of
-bpf_convert_ctx_access().
+On Fri, Feb 28, 2025 at 08:42:10PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 28, 2025 at 08:41:33PM +0200, Andy Shevchenko wrote:
+> > On Fri, Feb 28, 2025 at 07:41:55PM +0200, Raag Jadav wrote:
+> > > On Fri, Feb 28, 2025 at 06:11:16PM +0100, Arnd Bergmann wrote:
+> > > > On Thu, Feb 27, 2025, at 16:25, Andy Shevchenko wrote:
+> > > > > On Thu, Feb 27, 2025 at 12:37:45PM +0530, Raag Jadav wrote:
+> > > > >> This series attempts to cleanup io.h with "include what you use" approach.
+> > > > >> This depends on changes available on immutable tag[1].
+> > > > >> 
+> > > > >> Although this series is too trivial in the grand scheme of things, it is
+> > > > >> still a tiny step towards untangling core headers. I have success results
+> > > > >> from LKP for this series but there can still be corner cases. So perhaps
+> > > > >> we can queue this on a temporary branch which we can use to submit fixes
+> > > > >> in case of fallout.
+> > > > >> 
+> > > > >> Future plan is to use the excellent analysis[2][3] by Arnd to cleanup other
+> > > > >> headers.
+> > > > >> 
+> > > > >> [1] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
+> > > > >> [2] https://lore.kernel.org/r/2342b516-2c6e-42e5-b4f4-579b280823ba@app.fastmail.com
+> > > > >> [3] https://lore.kernel.org/r/f6eb011b-40fb-409a-b2b2-a09d0e770bbd@app.fastmail.com
+> > > > >
+> > > > > I believe Arnd can take it through his tree for headers as DRM part is 
+> > > > > Acked already.
+> > > > 
+> > > > I've applied it yesterday and not seen any regression reports so far.
+> > > 
+> > > Probably because the immutable tag is already in -next?
+> > 
+> > Is there any?
+> 
+> Ah, you mean devres related?
 
-This fixes a compiler warning:
+Yeah, couldn't find it on Arnd's tree and I'm not sure if this series
+works without it.
 
- net/core/filter.c:9679:8: warning: declaration shadows a local variable [-Wshadow]
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/core/filter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 2ec162dd83c46..c23c969cf7d83 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -9635,7 +9635,7 @@ static u32 bpf_convert_ctx_access(enum bpf_access_type type,
- 
- 	case offsetof(struct __sk_buff, queue_mapping):
- 		if (type == BPF_WRITE) {
--			u32 off = bpf_target_off(struct sk_buff, queue_mapping, 2, target_size);
-+			u32 offset = bpf_target_off(struct sk_buff, queue_mapping, 2, target_size);
- 
- 			if (BPF_CLASS(si->code) == BPF_ST && si->imm >= NO_QUEUE_MAPPING) {
- 				*insn++ = BPF_JMP_A(0); /* noop */
-@@ -9644,7 +9644,7 @@ static u32 bpf_convert_ctx_access(enum bpf_access_type type,
- 
- 			if (BPF_CLASS(si->code) == BPF_STX)
- 				*insn++ = BPF_JMP_IMM(BPF_JGE, si->src_reg, NO_QUEUE_MAPPING, 1);
--			*insn++ = BPF_EMIT_STORE(BPF_H, si, off);
-+			*insn++ = BPF_EMIT_STORE(BPF_H, si, offset);
- 		} else {
- 			*insn++ = BPF_LDX_MEM(BPF_H, si->dst_reg, si->src_reg,
- 					      bpf_target_off(struct sk_buff,
-
----
-base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
-change-id: 20250228-fix_filter-5385ff6e154b
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+Raag
 
