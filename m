@@ -1,212 +1,174 @@
-Return-Path: <linux-kernel+bounces-538798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15FDA49D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BEDA49D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:20:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8043B160461
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58F93B17AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5BF2702D6;
-	Fri, 28 Feb 2025 15:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A786526FDB6;
+	Fri, 28 Feb 2025 15:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y8Bcfo4P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVcCufY4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746D625DAE6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06ED26BDA4;
+	Fri, 28 Feb 2025 15:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740755892; cv=none; b=P6SUzdJjNA1xF4/ByPyYmXk77xYPicVq7mFxXLnO/4ZxbPTYnfNYl+ZCw8cErvF//g9sUyFAMhbRV3Rb99w+RkwmMG51AB1FO35F4/s5y2sB0pv4usnTvh/IonfFA4Xn2IB6ZHv/nByQPL8kSnqynBaOIDVAiHzNW9MKSLTdkB8=
+	t=1740755891; cv=none; b=pAZKxGdtIf184O2ACE2DVDPGEF5XGjs1bUcssIVejnouYkiP9+vkDTgRluS0RFvlhiXPA778amKdmj+JggbPJb7MzADpEQF+7zx2s2uLf9Zkb30SUa3LdLYAr8uP3W6lgXTWojnPDYoIqY1yVa72a6gbkN0glNZ6xcibCs1eHXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740755892; c=relaxed/simple;
-	bh=XhIt/KoZqwDvvkIfHWRz0q4gswKfJ2Xd7V1fYHDEERM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QNmlEbMZNiEgZ7IgOmdyGGeORUNE0y83gI2VRn0zXCNIpV3i3j3fJbMnH2TuoT7O1P1dEp/+xj2DUtB+HTtbpBiwCv7ur494UOM2h0ZIEX9mgdWL9S1pAWzux7qCfF9n8btqaOMLI+RfOJAol/xCBaRF4R+Hk7zJokI3TUGIElo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y8Bcfo4P; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740755889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d3RzxgVOKGkYis1oh2Ggnk5D21zUMvhHIGAVWotSvO4=;
-	b=Y8Bcfo4PGp1r1/SZaaVi2SC/E2JX2PPnJwi7VGJRVgXE9AfQw2i6DpD5JbYnTKoA9eopz5
-	IeXp9fBRtzuuXEMRt5gSI7cJvTE2M8wwjQayF13Dxf1eY6411Fr4VcvgaPaNL0n7yDd8Zw
-	GpfhfbPARhqPNL1IyzSI66ujy4vwOZo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-eyLpiShzMfq3-xcfYiwRIw-1; Fri, 28 Feb 2025 10:18:07 -0500
-X-MC-Unique: eyLpiShzMfq3-xcfYiwRIw-1
-X-Mimecast-MFC-AGG-ID: eyLpiShzMfq3-xcfYiwRIw_1740755887
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f4e3e9c5bso977074f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:18:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740755886; x=1741360686;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d3RzxgVOKGkYis1oh2Ggnk5D21zUMvhHIGAVWotSvO4=;
-        b=PfimNP2zjnMSzNgDNv8rRsK57szhoKHfOBTTFI8c5g/iY6MUIxprx3MdiPU8dxIMPT
-         nY4nMKkR6VWMKgfAJj1ZVqtPGUWKuGCLmwI8maeWXd73Svwh74n0j6zLYcdWsOZLJXXj
-         jPsTEGOxat+rGbfujEFQ+BEGykFx/8sWwTFKf1JeOWB4V+3Xo/AzOPApMDqhJRAVy2n3
-         URraQ5oIZcj4nEEQKhS3heL0q/9KyQqhf5uLamlymGqnUkihzYZUBc2WmZWbY0kJfMda
-         9mcMS7YtXYEDBUNYfaFs/CGz9Xw7qv3KA9zIGcfr2sKZsPQNVRB6Rf3pQuqOGJfVPtW2
-         LNjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCEEt2EhxtydrLsJJq4MZZi4lgyYLLaW3i42CGKEM46/Lj5ilf5sTPSc3Nl1sg8jbX6QkvkLz8eLFEawY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy30T5NApKeWrhIHpxAdJPDFzKYq4uyuUHTJC/2XWAvrYipz1ya
-	4vJA6VgTAtiaBKsex/1oWLTO7qoeaSVBVbC+/lFaCKzmL+jiUaT+9VupMNp8S06q/ZZYcFQph4Q
-	J1l0mGrIuVwoksiI/oYhZC24fsqV+9szl7cviPaT8lhyEQXYKDkDZdXbsZOiUlw==
-X-Gm-Gg: ASbGncvLGT6gA0Z5lQqDWwIhanTfRhH+SbyF3tTLx5/t2m6bof2H3JJmoeMhqDpNuuD
-	kAJHajsYfG6z4kNX/G7X18n3ayYhkLg8+8Q8UENg3Fg+5lysQ8sRXhrjdliry3Z930vxCKcvsZf
-	7tXZl/IAGzAITAAgA37Mee3vmHpNhauPE0eiTXwQmXFFhkLeS464Uxq8u4O9OvyJDFihLkHa8ME
-	BPyS/kYb1dJvzEuXldG80oeEuvCPsfMiP6sI+w1QRGVKJSVzg1Xh9/0B8hdJAMOPfLU48N68UVw
-	a3r//nsyD4ZNIA99JUqeYYDF
-X-Received: by 2002:a05:6000:1f88:b0:38b:f44b:8663 with SMTP id ffacd0b85a97d-390eca38bfdmr3863877f8f.55.1740755885152;
-        Fri, 28 Feb 2025 07:18:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+h8QzgQEysGgPFIp2qJ/GwMRCcXRRRrDEODCU9GYT3OUmcARrVeMuokjbfP7Emvy7x9Abdw==
-X-Received: by 2002:a05:6000:1f88:b0:38b:f44b:8663 with SMTP id ffacd0b85a97d-390eca38bfdmr3863654f8f.55.1740755883253;
-        Fri, 28 Feb 2025 07:18:03 -0800 (PST)
-Received: from ?IPV6:2a02:8070:4688:86a0::a40b? ([2a02:8070:4688:86a0::a40b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5870e7sm95040575e9.35.2025.02.28.07.18.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 07:18:02 -0800 (PST)
-Message-ID: <7c5cc18e-71e0-4ebb-bb0d-5765a9467753@redhat.com>
-Date: Fri, 28 Feb 2025 16:18:01 +0100
+	s=arc-20240116; t=1740755891; c=relaxed/simple;
+	bh=jkPRvgo3NpRaDEp4k1hzJV3HaS+fwgbJw+P6jRyMFGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujsnWj2SCT0uOCnjMNDPVDISut5hYjrD3IYITpyiRttm8BFzOF3HZDw4vfsV8FLzi+MmgrWtqN/i7cK+sq3m4HuyPr5OPAiVZus8J/1SAFRVQMulxrcabtZ+ihnspjukjXCsAOGCNOyEP81voPeNOgzECiclbFcM2kT4zR6G7Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVcCufY4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB84C4CED6;
+	Fri, 28 Feb 2025 15:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740755889;
+	bh=jkPRvgo3NpRaDEp4k1hzJV3HaS+fwgbJw+P6jRyMFGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YVcCufY4G1TsQxgU92YFTwrHcLywjpyb41J0DfYNxaBJvrYArIte5gY7HV6saTZ8r
+	 xHXPcmui7GLTuGkjmyxX6xAf/4pBTVbk4Uk7cLC/NBZYXho1I5tlYJmBVATfDGSwT4
+	 pEp1GrtGxb/KhnT6XcsQirXIBsrLDlMU+vztD7x5L5/0EZfuye5yBpmUUq+AxWIl6X
+	 H95hdzTfzsvnWd6yYFXRV9z+HADw8FuUES9TjCeBz/YptSgodpY4g+g3JEU2CcF6dZ
+	 NqA+yJL0n9Z+aeBFZW4Uxhd6l78d7TEFJmlBx1V5LI75eLay/f+J2EdoAGrnHIUKeT
+	 tVsdxI8QExtew==
+Date: Fri, 28 Feb 2025 16:18:05 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: David Jander <david@protonic.nl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+Message-ID: <tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
+References: <20250227162823.3585810-1-david@protonic.nl>
+ <20250227162823.3585810-8-david@protonic.nl>
+ <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+ <20250228102201.590b4be6@erd003.prtnl>
+ <9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
+ <20250228110931.7bdae7fd@erd003.prtnl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>,
- linux-mm@kvack.org
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
- <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
- <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
- <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
- <78ebaad9-c7ba-423a-a824-c2b1a499aea6@efficios.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <78ebaad9-c7ba-423a-a824-c2b1a499aea6@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rfp3v5bmp743c3to"
+Content-Disposition: inline
+In-Reply-To: <20250228110931.7bdae7fd@erd003.prtnl>
 
-On 28.02.25 16:01, Mathieu Desnoyers wrote:
-> On 2025-02-28 08:59, David Hildenbrand wrote:
->> On 28.02.25 06:17, Linus Torvalds wrote:
->>> On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
->>> <mathieu.desnoyers@efficios.com> wrote:
->>>>
->>>> I'd be fine with SKSM replacing KSM entirely. However, I don't
->>>> think we should try to re-implement the existing KSM userspace ABIs
->>>> over SKSM.
->>>
->>> No, absolutely. The only point (for me) for your new synchronous one
->>> would be if it replaced the kernel thread async scanning, which would
->>> make the old user space interface basically pointless.
->>>
->>> But I don't actually know who uses KSM right now. My reaction really
->>> comes from a "it's not nice code in the kernel", not from any actual
->>> knowledge of the users.
->>>
->>> Maybe it works really well in some cloud VM environment, and we're
->>> stuck with it forever.
->>
->> Exactly that; and besides the VM use-case, lately people stated using it
->> in the context of interpreters (IIRC inside Meta) quite successfully as
->> well.
->>
-> 
-> I suspect that SKSM is a better fit for JIT and code patching than KSM,
-> because user-space knows better when a set of pages is going to become
-> invariant for a long time and thus benefit from merging. This removes
-> the background scanning from the picture.
- > > Does the interpreter use-case require background scanning, or does
-> it know when a set of pages are meant to become invariant for a long
-> time ?
 
-To make the JIT/interpreter use case happy, people wanted ways to 
-*force* KSM on for *the whole process*, not just individual VMAs like 
-the traditional VM use case would have done.
+--rfp3v5bmp743c3to
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+MIME-Version: 1.0
 
-I recall one of the reasons being that you don't really want to modify 
-your JIT/interpreter to just make KSM work.
+Hey David,
 
-See [1] "KSM at Meta" for some details, and in general, optimization 
-work to adapt KSM to new use cases.
+On Fri, Feb 28, 2025 at 11:09:31AM +0100, David Jander wrote:
+> On Fri, 28 Feb 2025 10:37:48 +0100
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>=20
+> > On 28/02/2025 10:22, David Jander wrote:
+> > >  =20
+> > >>> +
+> > >>> +  motion,pwm-inverted:
+> > >>> +    $ref: /schemas/types.yaml#/definitions/flag   =20
+> > >>
+> > >> And PWM flag does not work? =20
+> > >=20
+> > > I have seen PWM controllers that don't seem to support the
+> > > PWM_POLARITY_INVERTED flag and those where it just doesn't work. Shou=
+ld all =20
+> >=20
+> >=20
+> > Shouldn't the controllers be fixed? Or let's rephrase the question: why
+> > only this PWM consumer needs this property and none of others need it?
+>=20
+> CCing Uwe Kleine-Koenig and linux-pwm mailing list.
+>=20
+> I know that at least in kernel 6.11 the pwm-stm32.c PWM driver doesn't
+> properly invert the PWM signal when specifying PWM_POLARITY_INVERTED. I a=
+gree
+> this is a probably bug that needs fixing if still present in 6.14-rc. Bes=
+ides
+> that, if linux-pwm agrees that every single PWM driver _must_ properly su=
+pport
+> this flag, I will drop this consumer flag an start fixing broken PWM driv=
+ers
+> that I encounter. I agree that it makes more sense this way, but I wanted=
+ to
+> be sure.
 
-Regarding some concerns you raised, Stefan did a lot of optimization 
-work like "smart scanning" (slide "Optimization - Smart Scan (6.7)") to 
-reduce the scanning overhead and make it much more efficient.
+Some hardwares cannot support PWM_POLARITY_INVERTED. Affected drivers
+include:
 
-So people started optimizing for that already and got pretty good results.
+	pwm-adp5585
+	pwm-ntxec
+	pwm-raspberrypi-poe
+	pwm-rz-mtu3 (software limitation only)
+	pwm-sunplus
+	pwm-twl-led (not completely sure, that one is strange)
 
-[1] 
-https://lpc.events/event/17/contributions/1625/attachments/1320/2649/KSM.pdf
+=2E ISTR that there is a driver that does only support inverted polarity,
+but I don't find it. For an overview I recommend reading through the
+output of:
 
--- 
-Cheers,
+	for f in drivers/pwm/pwm-*; do
+		echo $f;
+		sed -rn '/Limitations:/,/\*\/?$/p' $f;
+		echo;
+	done | less
 
-David / dhildenb
+=2E (Note not all drivers have commentary in the right format to unveil
+their limitations.)
 
+For most use-cases you can just do
+
+	.duty_cycle =3D .period - .duty_cycle
+
+instead of inverting polarity, but there is no abstraction in the PWM
+bindings for that and also no helpers in the PWM framework. The problem
+is more or less ignored, so if you have a device with
+
+	pwms =3D <&pwm0 0 PWM_POLARITY_INVERTED>;
+
+and the PWM chip in question doesn't support that, the pwm API functions
+will fail. So the system designer better makes sure that the PWM
+hardware can cope with the needed polarity.
+
+Best regards
+Uwe
+
+--rfp3v5bmp743c3to
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfB06AACgkQj4D7WH0S
+/k4NKQgAgDC2JJ02fk1A7PHXuaUhWRukm6F8XGZLDrQDFRYtxz8yV4pdryg+dQ/+
+4eexB6lXvkYCA7d2N13Ij/iRe6ou5gf6lXWC0Pf7sCkrcPTZgNOy3DGCaubOrkT6
+c+/cCzVSrr3xhp1dDEC4sO20USUbjCurHkuhwVO6eUuDKc6rpm43GTs8lWiAbBPh
+2MiCcOP3FyEotRl6mvegvaeKuj4qzjAZkpk+aNBU6sxfuCbkHbO50GXqUQIR/LSS
+GPs3+oAGm30doTOYJJKXlotrv9Dg3nDIqcXugpiEDlPPOHR2l2URUQ6zQFAi6FIY
+AFNoAAbpnoQQV2PW3ew4qf8UIZRXVg==
+=ELQV
+-----END PGP SIGNATURE-----
+
+--rfp3v5bmp743c3to--
 
