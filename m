@@ -1,233 +1,181 @@
-Return-Path: <linux-kernel+bounces-537770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F80A49068
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:34:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1273AA4906E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955973B39B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059FB16F094
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60411A8F98;
-	Fri, 28 Feb 2025 04:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451FE1A9B5D;
+	Fri, 28 Feb 2025 04:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bi1KVM6A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYGnsNzI"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE308BE8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90B1819
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740717279; cv=none; b=W5x/SJpqmdsChQXMmnRmQ59zhHWOWPofduVUHOQLP+xqbbDYHD1DRQFck5QOky3yX8KZjA09Jxc4fr9o8vcO5TNLGhs9LKkb3s6uAyse04WyfnXJNiB6tulnbQDVJwzpuBgGCYJ9i/XVc1m9xRQ35qS9u1kf9a56BJtNbH/eUCc=
+	t=1740717393; cv=none; b=GneGvgT2hmkc76LVY8KAoBIxea/H0CbF74PhbztYGcEgI3m5leGVw/3AY6F3HFiYmbjSuvpl0PS+NeoynroMRTYRQMkhK+wVA3rcLo4nH33wMCHjOxKw4FP0es/yvSZbtkElHf2W5nlR+JGRBxMQGZ0N0jUbYIH8j1q9Kj4ck0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740717279; c=relaxed/simple;
-	bh=aGYUH5HbbuTdEGmtcRd8nMDx1s4Tj/x00u0hxj3dDb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=siTbNdsyl+WuoHbDm8GwDEC+Q9VJAslYBzpWTJscSGk+ivzsFnhIoZ5FGJLYE/ZkXGOerX/5QldnrCH+nmnZpYYDqyBsDixLKbKmZtIAlFgR/jW7LsJvCNhFSTMt93tFTRlGSicjOCpRlcSP335HdQ0YtMttIXQ33rsZH8kfUU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bi1KVM6A; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740717277; x=1772253277;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aGYUH5HbbuTdEGmtcRd8nMDx1s4Tj/x00u0hxj3dDb8=;
-  b=Bi1KVM6AaOlRDvIjZXh64KuSUOmJZaVmQkqFMBSlc908ZB4z6kxmKtoG
-   +QqjNWS+zqTQDapPR62Et8++XmG1bTvJHU2OW9/tUBLUQ3HkrEjsXt77v
-   V+ILhdGOvQrXpfIeaImDz2dIaLAcyJqjaZurRlVlXouvl+zdnkmO7Kzrc
-   X1crsodmLat6GzazuYGvlKXy8BXSEMSP2MZgjEloqf2fNUd2dICJtB71R
-   mlxfF7Yuy1Q6Y/818ZaIRE/CxK77UDcVjEFcMfCwIQvbflB/OVpaANy+7
-   Fnr5La3qS7QAxxb+UKeN5Y544j63uge99ybcFaPX5yW5KF0bO8mwHhWO0
-   A==;
-X-CSE-ConnectionGUID: 2LpNemoDTYyuzThTWovZQg==
-X-CSE-MsgGUID: YBmvAx9sTKSXteWlZtfXMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="67007656"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="67007656"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 20:34:35 -0800
-X-CSE-ConnectionGUID: b59wTbJXQFGLHnLXO8GfBw==
-X-CSE-MsgGUID: ciJ46Be9Q6KSnrS2NRqu6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117756825"
-Received: from unknown (HELO [10.238.129.58]) ([10.238.129.58])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 20:34:33 -0800
-Message-ID: <c31b072a-7ec6-49f5-9ac7-a19cb6fbd5be@linux.intel.com>
-Date: Fri, 28 Feb 2025 12:34:29 +0800
+	s=arc-20240116; t=1740717393; c=relaxed/simple;
+	bh=JNNNAXVJUB1dUrWe5/CzrO8g7HtIc9lV+IcdN6AiXIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3ecZYC/rqq6nx0+f97hia2pyCt0jy7rhTtMkl0M3L3dSdNpc/1QPJrX/JGg/BIrHW+IDSIUYnpH1MgjIsqa7VexSdcZTdw3mR1nLHyJfDugeuV4tmUQBVwgdVHj/dPV9kNl7vKCjsPGqhcvzimhsSZS8uncnDjWVJc9rotgmLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYGnsNzI; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-545316f80beso1636318e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740717390; x=1741322190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tIRTgNdswGDhbNbRHETd6FrKEXOOj6YkPcm/rw/JxR8=;
+        b=GYGnsNzI0x+RL+N/SS53OaMfHg7jTgV2UjHNGcVLcpGQb8xexAjMRxXe+3wqHwKKsh
+         uht+Puin7KkCFwyrmyIDlcbfm7O71eyuntT62AShW5AUdw+2cfczclCy7Dn9uI8j/iQg
+         M2/I8zX1DJ7XKl9f8tjN6WOy/HwHtLvjS6N83LbyefAxkXU3QCfRXC4Pmuouq/1bhbad
+         /DSMM/IzZ2I9R6yyPlqqSrPI8dPMsfVnvEy1i7UYDkhP0RQu91evgeIXArROwRbP9Zua
+         qCBQA9Zjpr4sNoafgqdUK30eb/FXW5HkhwDWYLDvTtfdpD5ymCxc7FJ8U7glEg+Vi1kp
+         c/vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740717390; x=1741322190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIRTgNdswGDhbNbRHETd6FrKEXOOj6YkPcm/rw/JxR8=;
+        b=mbeoBYB2RQVcOgz2XHYPPVWP4XPBtepbozikIAHKhpUh1BaLJr9tBMaVJwUcKmjo7T
+         HNB7Wn7n9bR/V/bIzhYSMULLNvHAIwHMSdB+Fc2DNvhh+0cbz86zhNtt0secb7mzf4Vk
+         0XgICnsz9tnz/2Zeib4CKodsjRUl55FvT3t586yAT2qCWypA1GQAquyOohp5cd1WzV+H
+         SK/sHa95oIG6kk5AJ3yS4LVnc/dARTQKCks9c2Eqzy+VeGu+FVMjfvD2PmwfA0tgarxx
+         MYnGDtV/CQ8BSV5TaDzF4bqiYs7s3R36YklVHjccbqSZLS4q5E0U5zprDOMLCcyG7nj1
+         vg7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUro80NeIB++Hd2ly7D2TFNEYDtHS7cNCU5KWSi4voKRghsSCnhdj+ehbcO4RacveXgVrVbCJsaT/9ZeiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF+YrB/lprpWjYCUx3YI4Zgf58T6v4BWA1Ao93TqfAKuEQo3j0
+	Ap3dMHySX19Mvy+4jJOft33vlO/VnE328O4Erb2t8iJKJ5Uo+40bhRc+lmrR0ig=
+X-Gm-Gg: ASbGnctLsIeVrW97VooI+/2IKi8Hg1qOBy8StGAHiVUL1+P/yD+qUxetUQaInBm+e7w
+	jqdB0LmQZ2YBNtYKszR4UGBoP5fyAnhh9Xo47wneRUfF5DYFSNtuh532BA0AZ2hOKJoTcilvQqi
+	SAukwAz2xeZJ/+wm6VSJsHTO6Kaaqqm87fUP4X4ZqHDRPMdeFOjCkomOkdVP3rmWm/BtDh2l2vk
+	yPy9/DNBA7J9EwX89xomXOcyjPMTFCKK7Rd1ztsMe2QG3B2hpcssCbVdXDrSwv9cZJxzh7JyGWd
+	FxqKlp41DVfamSu4w/f4uSkiJja8CX52TUtZGtOvZMtR8nF93xO3gLSrVx3ccUNN8Y/qQ/wdIPt
+	jX965bw==
+X-Google-Smtp-Source: AGHT+IGHdROVsAiv4I0ViQ1CiojRZcJgPBqIJ5QDNvWA3K8bpxYgEX8MrL0nwpc0aa81lDswmCSX0A==
+X-Received: by 2002:a05:6512:281d:b0:545:2950:5361 with SMTP id 2adb3069b0e04-5494c129f93mr754571e87.5.1740717389644;
+        Thu, 27 Feb 2025 20:36:29 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54951f50e37sm29273e87.38.2025.02.27.20.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 20:36:28 -0800 (PST)
+Date: Fri, 28 Feb 2025 06:36:25 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 12/15] drm/msm/dpu: blend pipes per mixer pairs config
+Message-ID: <56fcpdrg6lonf7trasxurwpoausfv4lahtlggab7vcsxmxrnwz@jseugb2oidwt>
+References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
+ <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-12-8d5f5f426eb2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH v2] iommu/vt-d: fix system hang on reboot
- -f
-To: yunhui cui <cuiyunhui@bytedance.com>, Ethan Zhao <etzhao1900@gmail.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Baolu Lu <baolu.lu@linux.intel.com>,
- dwmw2@infradead.org, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
- <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
- <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
- <20250225142610.GB545008@ziepe.ca>
- <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
- <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
- <83039906-77f7-4318-94bf-4c98bb3f0e32@linux.intel.com>
- <20250226130423.GF5011@ziepe.ca>
- <f29818dc-a0a7-46c4-b541-1b469a6b3304@gmail.com>
- <20250227203855.GI5011@ziepe.ca>
- <7bafd132-6a82-4313-b25f-92fc16faf917@gmail.com>
- <CAEEQ3w=1H7o7G56hYmwEGErfuFX-2nG=wesJYL7p0dDqLv_rpw@mail.gmail.com>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
- 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
- 8TCx1OJHpvWFmL4Deq8=
-In-Reply-To: <CAEEQ3w=1H7o7G56hYmwEGErfuFX-2nG=wesJYL7p0dDqLv_rpw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-12-8d5f5f426eb2@linaro.org>
 
+On Wed, Feb 26, 2025 at 08:31:01PM +0800, Jun Nie wrote:
+> Currently, only 2 pipes are used at most for a plane. A stage structure
+> describes the configuration for a mixer pair. So only one stage is needed
+> for current usage cases. The quad-pipe case will be added in future and 2
+> stages are used in the case. So extend the stage to an array with array
+> size STAGES_PER_PLANE and blend pipes per mixer pair with configuration
+> in the stage structure.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 45 +++++++++++++++++++----------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  3 +-
+>  2 files changed, 31 insertions(+), 17 deletions(-)
+> 
+> @@ -463,15 +463,24 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+>  		if (pstate->stage == DPU_STAGE_BASE && format->alpha_enable)
+>  			bg_alpha_enable = true;
+>  
+> -		for (i = 0; i < PIPES_PER_PLANE; i++) {
+> -			if (!pstate->pipe[i].sspp)
+> -				continue;
+> -			set_bit(pstate->pipe[i].sspp->idx, fetch_active);
+> -			_dpu_crtc_blend_setup_pipe(crtc, plane,
+> -						   mixer, cstate->num_mixers,
+> -						   pstate->stage,
+> -						   format, fb ? fb->modifier : 0,
+> -						   &pstate->pipe[i], i, stage_cfg);
+> +		/* loop pipe per mixer pair with config in stage structure */
+> +		for (stage = 0; stage < STAGES_PER_PLANE; stage++) {
+> +			head_pipe_in_stage = stage * PIPES_PER_STAGE;
+> +			for (i = 0; i < PIPES_PER_STAGE; i++) {
+> +				pipe_idx = i + head_pipe_in_stage;
+> +				if (!pstate->pipe[pipe_idx].sspp)
+> +					continue;
 
-在 2025/2/28 10:18, yunhui cui 写道:
-> Hi All,
->
-> On Fri, Feb 28, 2025 at 8:51 AM Ethan Zhao <etzhao1900@gmail.com> wrote:
->>
->> On 2/28/2025 4:38 AM, Jason Gunthorpe wrote:
->>> On Thu, Feb 27, 2025 at 08:40:31AM +0800, Ethan Zhao wrote:
->>>> On 2/26/2025 9:04 PM, Jason Gunthorpe wrote:
->>>>> On Wed, Feb 26, 2025 at 01:55:28PM +0800, Ethan Zhao wrote:
->>>>>>> Provided the system does not respond to those events when this function
->>>>>>> is called, it's fine to remove the lock.
->>>>>> I agree.
->>>>> I think it is running the destruction of the iommu far too late in the
->>>>> process. IMHO it should be done after all the drivers have been
->>>>> shutdown, before the CPUs go single threaded.
->>>> Hmm... so far it is fine, the iommu_shutdown only has a little work to
->>>> do, disable the translation, the PMR disabling is just backward compatible,
->>>> was deprecated already. if we move it to one position where all CPUs are
->>>> cycling, we don't know what kind of user-land tasks left there (i.e. reboot -f
->>>> case), it would be hard to full-fill the requirement of Intel VT-d, no ongoing
->>>> transaction there on hardware when issue the translation disabling command.
->>> There is no guarentee device dma is halted anyhow at this point either.
->> The -f option to reboot command, suggests data corruption possibility.although
->>
->> the IOMMU strives not to cross the transaction boundaries of its address
->> translation.
->>
->> over all, we should make the reboot -f function works. not to hang
->> there. meanwhile
->>
->> it doesn't break anything else so far.
-> patch v1:
-> if (!down_write_trylock(&dmar_global_lock))
-> return;
+empty line
 
-We should also think about the corner case of reboot without -f option, there might be something
+> +				lms_in_pair = min(cstate->num_mixers - (stage * PIPES_PER_STAGE),
+> +						  PIPES_PER_STAGE);
+> +				set_bit(pstate->pipe[pipe_idx].sspp->idx, fetch_active);
+> +				_dpu_crtc_blend_setup_pipe(crtc, plane,
+> +							   &mixer[head_pipe_in_stage],
+> +							   lms_in_pair,
+> +							   pstate->stage,
+> +							   format, fb ? fb->modifier : 0,
+> +							   &pstate->pipe[pipe_idx], i,
+> +							   &stage_cfg[stage]);
+> +			}
+>  		}
+>  
+>  		/* blend config update */
 
-wrong with one of the devices there on other CPUs they don't release the lock and were shutdown
+[...]
 
-by NMI, the dmar_global_lock is held by one of them, so we just bail out here at at once ?
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> index 5f010d36672cc6440c69779908b315aab285eaf0..74bf3ab9d6cfb8152b32d89a6c66e4d92d5cee1d 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> @@ -34,8 +34,9 @@
+>  #define DPU_MAX_PLANES			4
+>  #endif
+>  
+> -#define PIPES_PER_PLANE			2
+> +#define STAGES_PER_PLANE		1
+>  #define PIPES_PER_STAGE			2
+> +#define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
 
-leaving the IOMMU translation etc in enabling status. Is it better to loop with 10 seconds timeout
+PLease move this to the previous patch.
 
-to try the lock then make sure no better choice, then continue the disabling of IOMMU translation & PMR ?.
+With that fixed:
 
-Even the reboot -f case, leaving the IOMMU translation in enabling status is worse choice.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-So seems we shouldn't bail out immediately after one time trylock whatever.
-
->
->   patch v3:
-> /* All other CPUs were brought down, hotplug interrupts were disabled,
-> no lock and RCU checking needed anymore*/
-> list_for_each_entry(drhd, &dmar_drhd_units, list) {
-> iommu = drhd->iommu;
-> /* Disable PMRs explicitly here. */
-> iommu_disable_protect_mem_regions(iommu);
-> iommu_disable_translation(iommu);
-> }
->
-> Since we can remove down_write/up_write, it indicates that during the
-> IOMMU shutdown process, we are not particularly concerned about
-> whether others are accessing the critical section. Therefore, it can
-> be understood that Patch v1 can successfully acquire the lock and
-> proceed with subsequent operations. From this perspective, Patch v1 is
-> reasonable and can prevent situations where there is an actual owner
-> of dmar_global_lock, even though it does not perform a real IOMMU
-> shutdown.
->
-> However, if the IOMMU shutdown truly fails, IOMMU_WAIT_OP will trigger
-> a panic(). Removing down_write/up_write offers better maintainability
-> than Patch v1 (as we can retrieve the cause from the vmcore). But this
-> might not be significant, since the reboot could have been completed
-> successfully, and the occurrence of panic() might instead cause
-> confusion.
->
-> In summary, it is essential to complete the reboot action here rather
-> than causing the system to hang. So, which do you prefer, v1 or v3?
-
-Would v3 miss something ? please comment.
-
-normal reboot/shutdown without -f case, function works right without any data corrupt or
-
-leaving device in confusion status, good or bad situation.
-
-reboot -f case, functions works, strives to not corrupt data or leave device in confusion status.
-
-...
-
-Thanks,
-
-Ethan
-
->
->
->> Thanks,
->>
->> Ethan
->>
->>> Jason
-> Thanks,
-> Yunhui
+>  #ifndef DPU_MAX_DE_CURVES
+>  #define DPU_MAX_DE_CURVES		3
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-"firm, enduring, strong, and long-lived"
-
+With best wishes
+Dmitry
 
