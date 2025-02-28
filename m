@@ -1,285 +1,183 @@
-Return-Path: <linux-kernel+bounces-539112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AE6A4A10D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:02:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24143A4A10E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C4B189589C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29590168FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F9D26B2C8;
-	Fri, 28 Feb 2025 18:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA9525DD1D;
+	Fri, 28 Feb 2025 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="E7V44dQg"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jRrN4Pnh"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E941BD9CB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740765723; cv=none; b=WwJsAPIpCn1rhidfCAxxMkOrmdEDS19uXFZm9R//gWnmcZAXDcIgW3IHacvU0U0GoEy4EwJK5FhnZCd/DkhBrw7pcb7Tx4Lr8BLfb8wcbrX/msOLzKSVGMJhRLdf9QdQy1x9snj1EB/DamwBGjteQp8VL9i1hdNOMXanv+BQJK0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740765723; c=relaxed/simple;
-	bh=tGoVlJytR2bIn3Q801VixJcecBc+oi5+nUp+zhP98yY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oInEujVErgURuLQpMhumE6DL2tEIzawwaowqWou2jgnmEuNU5m4Kt2EOYLzKWApRdk3ZZ1NMmkXKJdqqOaaai6hiAHU2xlnsMoGZWwKm4VXaVknYRyRA8wu7I2P4mkbq8EMVNDJ1HCwFOeJPlYrbBUXk+LmGeeJAohkHkh/0FEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=E7V44dQg; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1740765719; x=1741024919;
-	bh=p8kz9RZUm+wJ1OhcTmelop5bUBDHgYrfkmvif7oWuIo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=E7V44dQghekfwOIyPnqHCrEVw9Vfy23wlaAoIwBST9uYS0h8rAAJdxNNPrMl7Okv6
-	 NHoK6Z74z+agNIlAmq3LvHcnUAGlIwe5QlYLqojvnKgCKkbJ0K1apIHDSskjfPX26O
-	 eZM6Tnf+m5/4z8HC7HZ8LWLkpkUweTGFMSpsfX0d9jvTM3il48oGPxKrRDlW6ipqxs
-	 Djk/mgnuJPqDv7aKvQyy9S9koZ0uTeMbNJKgX/RdKeXhXeZlApEiatDqd3f5GJlznP
-	 OVmLyRsfatYW784UpkxKHQQ9FSFwQ2v39yRU0GRRRf+49P8j5UNdxN8SPjkjWgIXFi
-	 yVCUuNFUgWdSw==
-Date: Fri, 28 Feb 2025 18:01:55 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: [PATCH v2] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8H6EUy1HqLrzytE@laptop>
-In-Reply-To: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
-References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 42ac763f99b7fabcdb593d9c879036024c36957e
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285151BD9CB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740765741; cv=fail; b=bc++5J7ZbtG4OotJmx+dqrfB86ooKHjUnIJ8/w0ni87YvxSpNqwJeUzCm3hlydLfjMq88tlqbEWmsoFYzPJLIYA7STMP9CBAaqczpJ1xhXFy1s52knVPenv0WXCBaiBoA+k1ko55daJh4oxqO30BjrWSVKF+lHvIfrXftTkQ314=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740765741; c=relaxed/simple;
+	bh=5ynAgSNZ6wgdG/49oesc9XoGOHyBBf6vlGgim2R+3vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=J6kQk/yLrZdOAExFInNiR0bfWxF1iLM3UeeGyu7h0jQl56fnVqCU9aU9ie8cnchQFWfpwFvpqk7HOAEjl0IUuFWUKKRd7WRmQHCp0lGbCx6Jc8f75D3eSzqetoy4XfSM065BPEXNj07CeJUJj74uDC47LTZT+pTESsSlwDyjTv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jRrN4Pnh; arc=fail smtp.client-ip=40.107.236.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jxzFqLUXouBKJn2KLG/vCXEDjondjsXJWZdlf9a6pRxOWRuf1gHAZPUIp9w4lLOBUifAvp6LjvXO/BrOE77PKG0QSohrQKguXibgKZHSDeUB+VsfoeeuhXMfYRYbBF7eW8aTaFe7GPwHvdUPgGBs0ojBwR3JQEZR0ihJXVfhhlW1ugF2t41MDPUHyj3fR7ovPESfRv1kj+TdTQAUAQaNXrqFHeN6H9zlAp36F9rGvleePucQDSkiHX15N5Dkll4OjKUddHZ0YYO4TMbyENarz9BHBAVNTWPt9a86odCJ15wTUQCe761OJXflO6rqjzqx18CAu7SPAsGJ8xyAhyu2CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yt1/PJTJXQp0bNwiEUtQkMqOcKPUVPgJGWBB3lE4K/g=;
+ b=WMfVecsx9KxWqZ2ogrlYRk+QJlNaWr+g4NgLuU2EDWVYxOSAacVfr4M4l9utWJDFf8sKH063sk6qwTrlKW0IlJZ63Ppxl5cn5QXULpI62WFppLTQkwiaXdypNN0qnkOuVyEcSm8A9zahcGrY1tRAdRDWJxF1hLzsiqFUJIHhIGvZADYlsIr4W8eTzxzzS6JnySm7MHKL77+hOE2SrDfA5MCc3hSXWvxfYjYXZjfPuFT/V5FMnngkqq037/qds3jhQ2k6KTsi4QqQIoUYgYaBDK4gLuKSrrAPp65PCa9mPBgf4CeB3J7d3XdCuyhDc8UtOagY/4RNwTxJBlkFzyBW6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yt1/PJTJXQp0bNwiEUtQkMqOcKPUVPgJGWBB3lE4K/g=;
+ b=jRrN4PnhiBgR1qnS6sgmUJ+2lqjnn+2iextIZL1RSgN+4tDoGJo4zhE658MD2SQgdZCt8QmzfTLl1TbpcLAKE1Z3WNieYiJdZJiWLDzodSreF0hihj3K/XinNbH9JeidbwMYDNS32ZIcgiTC7iNOwVOQVp6HxFAA7Mu22zIbBV4+BX3GGo0BCZSsGrocdk7x2crDEKKS51kz6R8ybw4/JrANUj+kvYZZvP0RZTcQvSO9+FlwwdduLcIFmwRF+Y4N3uOHW13Yd0liPwOnOjgLS5R17S0h/hMTAAYrQ3d7lYU6neMqQWx/lkXkYeEtuwvoItwMO7e8yrtSf+hYK4d4bg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN2PR12MB4063.namprd12.prod.outlook.com (2603:10b6:208:1dc::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 18:02:16 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 18:02:16 +0000
+Date: Fri, 28 Feb 2025 14:02:15 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, robin.murphy@arm.com, joro@8bytes.org,
+	will@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] iommufd: Move iommufd_sw_msi and related
+ functions to driver.c
+Message-ID: <20250228180215.GE39591@nvidia.com>
+References: <cover.1740705776.git.nicolinc@nvidia.com>
+ <ece6ab9a0144eaabc285eb21a09da683d6d9951c.1740705776.git.nicolinc@nvidia.com>
+ <20250228173212.GC39591@nvidia.com>
+ <Z8H4VL+OUfi2+5eA@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8H4VL+OUfi2+5eA@Asurada-Nvidia>
+X-ClientProxiedBy: BN9PR03CA0858.namprd03.prod.outlook.com
+ (2603:10b6:408:13d::23) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4063:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53ac6b52-788b-4ee4-37f8-08dd58220944
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?w31peT+/lbiyQz4ZQuMYEqS4hx3kYwnG3yMLaaGCY0St8IymPmZBWPDNIkuW?=
+ =?us-ascii?Q?RdgEQzCEeGjDiSsXrCTM90PaOp+esfuQcIm9epUBZl4yhkg+wjaxalzLfqu3?=
+ =?us-ascii?Q?xjUlkPZnpanTMpAP2da2I1dguI/IfAO4QfFhUGnWEIbsNebAtnlbwwW/DK3P?=
+ =?us-ascii?Q?ZRecQ1mXKExrJWuQICrNpXOmFw25aZVUdqZkhBdoNuTlitjTYbBpvvSy1LCa?=
+ =?us-ascii?Q?dzLub8Ge0Zc3eFnY8/TumVZceBarb2XEsbeZMsu2s2u8MkI3xR/94Wr6knP4?=
+ =?us-ascii?Q?bJcVMzUHLXfO0V9Ns60pSU2GQ9EgEg/dr7tDA3uhXatEEhibcUpMsVQua9Rb?=
+ =?us-ascii?Q?c5pwHNrOnV2LHPkR+z/GIJhiHxCAY9N7mupz5u/bQJ4aPLvE0xM2w5Dgk7cZ?=
+ =?us-ascii?Q?plNe2noksQMpnKE8+fEJ99RJ4dtqc6MS4vKpZJtZNAf7SH0POmJB1qHLN/2c?=
+ =?us-ascii?Q?bxtaU/k4yjcjqdjnT3Uq8TwoFPbyn6SzzQ4H4/VcWmwdZcwDrDM0cSm2EIsZ?=
+ =?us-ascii?Q?Whgl0OVT+VCcRP8JzwgX6RopXudSy8JiW78Y8ezEKQ9L3FlULxE8WLSaYAzo?=
+ =?us-ascii?Q?l8iGxDPhK2h+Sfp5+Zud3jIzBoQO4VwcpHG7IeHyyE+0LbJlkHvepG0/X6vM?=
+ =?us-ascii?Q?1O1C+sqfMaAK9rYY5zPtdgp81LSpEqz4wBQbSAWl/uQ6AqXgj9eSqvJdtfne?=
+ =?us-ascii?Q?B9kTJBn9XvGf0umzo+z93hD6B41G6katdMDP3pgrsrIcgSRwZ8H5aY/pLMzq?=
+ =?us-ascii?Q?OY0epkQjrc/vSdD/XWwdFxCgizgStUxjfbjxwvAOUmLXapH8YhFoyGcrCPH0?=
+ =?us-ascii?Q?sE5A/Ptu5acjcFnH82HZ1Sj+H/b7hx4h5CmASl7xz1wQPVka0u1meURDlQss?=
+ =?us-ascii?Q?poSh/cUaxr8vmm3uZncQREi42+qp5jVe3DV0WJUavSdEoCLd/lk46hZGRdA/?=
+ =?us-ascii?Q?CH1XMYWQEMbuGU4f7zjeiLF3eqtKzmmgSVfASt1nivGlsobzajX6KJRn6kPr?=
+ =?us-ascii?Q?poix0369BnXBYD7F3wZ8uW8pNeVS6JOL8PDYCS7ApAJ3vGLHJ/0P3PowdGE9?=
+ =?us-ascii?Q?D29cWJHJ+1Ku72ZKjrQo5GQVh5Fm8kCA4P0C17H9lJHUjgh4E+eyJPgpNeFG?=
+ =?us-ascii?Q?k1mXDStfdgt0Vj9D4HxG6eqv/2FTAqabE8viojCQcxO2CrfJqRZ8RLuXhBau?=
+ =?us-ascii?Q?4Wo1AyUgXm4I2CfhalEAqy5G/uv3XbOc+G4aZSMAFOkx11MCeY4U0bs6wOZr?=
+ =?us-ascii?Q?b/JAZykkuXrgx9iFY58M/G5hBtyzL/pobOpv1nnQJCXJya6KhCet22xGKFdH?=
+ =?us-ascii?Q?kSAne4ThqprNnBZqJnHu8JrmPOibWSkv3qZj4tA0FIPAIot7YpjM5n1OiKH0?=
+ =?us-ascii?Q?C3LqRTGmmzP0zvjN+MJqhzeGpieM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?654vM5SFLtaxboIJPdX3lJq3pJq1orm5rIWhCoTXsdUyHt0DG1MevcIUZJ+0?=
+ =?us-ascii?Q?mFeNVsE2RWYntO/aOcvCaSGgaJ/QXH8+/qriRocqno6/h5XqOOBgxlde6ypl?=
+ =?us-ascii?Q?n5dh5a4IB+HjejstlLCa7LTlR2vn+pUgPqpZoGEBC1Tf1jRkpavWUJbJKI+d?=
+ =?us-ascii?Q?rc+0NytgO8VjfCUjFn3QPNWqfL6TMbxbdx5CK/qnu94sF/UQI2YoK5GsULcn?=
+ =?us-ascii?Q?CAtzAra3NoxQgHNYcu/C7ZyEsLuXBXazNfGNRuj8zxhiOgILVZONi2a95wk7?=
+ =?us-ascii?Q?goP1eKRbm4fZpooz32zCaiByv34zw6XY11humzkNX9uLEke9GH2aeEEIibnd?=
+ =?us-ascii?Q?e9YVTxzIwe4QKVU+GjOCJ87uAA7EgzxZRcCzmCKN76jwTrEmaW1EFK44JKHO?=
+ =?us-ascii?Q?tuUWVZ9MycrFS+xtDDEU2810N+whO4mpcvGY1TbaSrnr0gpW0ufMBE36zF0U?=
+ =?us-ascii?Q?s3ELY788ZvQ0zgmttZdcbgnc8ri9NTCWcU/6GFoZkEttLP1y6O6GY68tvGaZ?=
+ =?us-ascii?Q?cnjdwN0EKONQ86q6418M+Uq5vFa/UsLsUzoIyU34ACIS9vj0M6tGSZ9RJjgQ?=
+ =?us-ascii?Q?Ia4ml3j2l2eC/1AKQLel/1U+jz5p4CkEPGulqGDbk92XC3hMRJAa8JK3hKXZ?=
+ =?us-ascii?Q?WpOrGDsNg35/vTopLiQHjzvOi3AUdUskdR0EYCa1m/DvEx0YQGGNsOf5gTwG?=
+ =?us-ascii?Q?Z7C5estakGUJ0x5IJ/d9FV6PGQHoVX3nEImEBsMhF7wjcmJNXW61+BXle3Z3?=
+ =?us-ascii?Q?F56Sv9Vy/2alJjxkKS1I1me6BznAkam8vZLxxCCDLcpou7S78FRzp0pBUk8E?=
+ =?us-ascii?Q?d949kR8HBJd31rJErFQ6vNhasDLl5r7cJat/cYtZJwUms5usrwXa7DbVhErf?=
+ =?us-ascii?Q?5QRNvI1bUmhoZMZq7HzOar9vI3xoEi0Nq0ObTymL2E5buwbiVReCH6ZGcc8B?=
+ =?us-ascii?Q?xA/MnjEJy8PlIKlgv7FYGjX+3ozG0UHObaQ0vo6vLhIM/rhAPSkVtxrS2PdY?=
+ =?us-ascii?Q?kMHKHrdcQPmpUMOpGK935rk7MgbktAqypmEOk1p5WV15n/63yHuSbS3zSThb?=
+ =?us-ascii?Q?S+fsSVV5xKWUX9N4yhDt6ZzfvkCI04FM8MsT6ULNHZRlWhfRyDc91IEJBqh6?=
+ =?us-ascii?Q?x6689XBxPCkqNLELb9X/fJYfkaak+IPQXXhhfMnSNZ2omurEYRloo2bhfTVX?=
+ =?us-ascii?Q?JFos9pewPD6Cv0KscLvMaVKLtxTTVVz14OyKHB9ztRe2j1aPS+zHS57+XcJi?=
+ =?us-ascii?Q?+iUNuQz/hw+CjZyD1KMH5GtxZmFc9+AO2yX5VwuTghyBhKdvIb/3ZqrXeFg/?=
+ =?us-ascii?Q?zp8g182mR7IIxj/HWDP5Koiz3EfoEN8ruKSvj+LAUZGQPLcN83ci+21yJkcz?=
+ =?us-ascii?Q?nHYXB/x6KTR0N79FftrUnfIVr8q374wQiIoN5oczgIkBjDHFi4omGBK+UCd6?=
+ =?us-ascii?Q?PT7d5rNR/NtmI3CtH1oXiLA3XUrabauHM2SzydBbJGSL5g8WZv8TW4VszarH?=
+ =?us-ascii?Q?UJ9p0gqT2spTndIqEzNvhQVLJpggXW30eoIB011T9Nhe4g4wl2BL3/wk829Y?=
+ =?us-ascii?Q?ggqwFQIgGeOwxSnCjH3uGVKj3NgrdvwZkxdEhKqk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53ac6b52-788b-4ee4-37f8-08dd58220944
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 18:02:16.5259
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qbyXBrmFlw6qVlt7Aph9Vs/8fiInYpf1tH+pe28xDAEIPUvTKcx3XrdY9cKC4Kgo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4063
 
-For usage with block-mq, a variant of ARef
-which is guaranteed to be unique would be useful.
-As chances are it is useful in general, This implements it
-as kernel::types::UniqueRef.
-The difference between ARef and UniqueRef
-is basically the same as between Arc and UniqueArc.
+On Fri, Feb 28, 2025 at 09:54:28AM -0800, Nicolin Chen wrote:
+> > Stubbed out too if CONFIG_IRQ_MSI_IOMMU ?
+> 
+> In that case, the other caller iommufd_group_setup_msi() could be
+> {
+> #if IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
+> 	....
+> 	iommufd_sw_msi_install();
+> 	...
+> #endif
+> 	return 0;
+> }
+> ?
 
-Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
----
- rust/kernel/types.rs | 153 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+Or a empty static inline
+ 
+> > I'm still wondering if we should use a function pointer, how big was
+> > this compiled anyhow?
+> 
+> Hmm, you mean the size of driver.o? It's 192K (before) vs 212K
+> (after).
 
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 55ddd50e8aaa..72a973d9e1c7 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -543,6 +543,12 @@ fn from(b: &T) -> Self {
-     }
- }
-=20
-+impl<T: UniqueRefCounted> From<UniqueRef<T>> for ARef<T> {
-+    fn from(b: UniqueRef<T>) -> Self {
-+        UniqueRefCounted::unique_to_shared(b)
-+    }
-+}
-+
- impl<T: AlwaysRefCounted> Drop for ARef<T> {
-     fn drop(&mut self) {
-         // SAFETY: The type invariants guarantee that the `ARef` owns the =
-reference we're about to
-@@ -551,6 +557,153 @@ fn drop(&mut self) {
-     }
- }
-=20
-+/// Types that are [`AlwaysRefCounted`] and can be safely converted to an =
-[`UniqueRef`]
-+///
-+/// # Safety
-+///
-+/// Implementers must ensure that the methods of the trait
-+/// change the reference count of the underlying object such that:
-+/// - the uniqueness invariant is upheld, i.e. it is not possible
-+///   to obtain another reference by any means (other than through the [`U=
-niqueRef`])
-+///   until the [`UniqueRef`] is dropped or converted to an [`ARef`].
-+/// - [`UniqueRefCounted::dec_ref`] correctly frees the underlying object.
-+/// - [`UniqueRefCounted::unique_to_shared`] set the reference count to th=
-e value
-+/// - that the returned [`ARef`] expects for an object with a single refer=
-ence
-+///   in existence.
-+pub unsafe trait UniqueRefCounted: AlwaysRefCounted + Sized {
-+    /// Checks if the [`ARef`] is unique and convert it
-+    /// to an [`UniqueRef`] it that is that case.
-+    /// Otherwise it returns again an [`ARef`] to the same
-+    /// underlying object.
-+    fn try_shared_to_unique(this: ARef<Self>) -> Result<UniqueRef<Self>, A=
-Ref<Self>>;
-+    /// Converts the [`UniqueRef`] into an [`ARef`].
-+    fn unique_to_shared(this: UniqueRef<Self>) -> ARef<Self>;
-+    /// Decrements the reference count on the object when the [`UniqueRef`=
-] is dropped.
-+    ///
-+    /// Frees the object when the count reaches zero.
-+    ///
-+    /// It defaults to [`AlwaysRefCounted::dec_ref`],
-+    /// but overriding it may be useful, e.g. in case of non-standard refc=
-ounting
-+    /// schemes.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The same safety constraints as for [`AlwaysRefCounted::dec_ref`] a=
-pply,
-+    /// but as the reference is unique, it can be assumed that the functio=
-n
-+    /// will not be called twice. In case the default implementation is no=
-t
-+    /// overridden, it has to be ensured that the call to [`AlwaysRefCount=
-ed::dec_ref`]
-+    /// can be used for an [`UniqueRef`], too.
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: correct by function safety requirements
-+        unsafe { AlwaysRefCounted::dec_ref(obj) };
-+    }
-+}
-+
-+/// An unique, owned reference to an [`AlwaysRefCounted`] object.
-+///
-+/// It works the same ways as [`ARef`] but ensures that the reference is u=
-nique
-+/// and thus can be dereferenced mutably.
-+///
-+/// # Invariants
-+///
-+/// - The pointer stored in `ptr` is non-null and valid for the lifetime o=
-f the [`UniqueRef`]
-+///   instance. In particular, the [`UniqueRef`] instance owns an incremen=
-t
-+///   on the underlying object's reference count.
-+/// - No other references to the underlying object exist while the [`Uniqu=
-eRef`] is live.
-+pub struct UniqueRef<T: UniqueRefCounted> {
-+    ptr: NonNull<T>,
-+    _p: PhantomData<T>,
-+}
-+
-+// SAFETY: It is safe to send `UniqueRef<T>` to another thread
-+// when the underlying `T` is `Sync` because
-+// it effectively means sharing `&T` (which is safe because `T` is `Sync`)=
-; additionally, it needs
-+// `T` to be `Send` because any thread that has an `UniqueRef<T>` may ulti=
-mately access `T` using a
-+// mutable reference, for example, when the reference count reaches zero a=
-nd `T` is dropped.
-+unsafe impl<T: UniqueRefCounted + Sync + Send> Send for UniqueRef<T> {}
-+
-+// SAFETY: It is safe to send `&UniqueRef<T>` to another thread when the u=
-nderlying `T` is `Sync`
-+// because it effectively means sharing `&T` (which is safe because `T` is=
- `Sync`); additionally,
-+// it needs `T` to be `Send` because any thread that has a `&UniqueRef<T>`=
- may clone it and get an
-+// `UniqueRef<T>` on that thread, so the thread may ultimately access `T`
-+// using a mutable reference, for example, when the reference count reache=
-s zero and `T` is dropped.
-+unsafe impl<T: UniqueRefCounted + Sync + Send> Sync for UniqueRef<T> {}
-+
-+impl<T: UniqueRefCounted> UniqueRef<T> {
-+    /// Creates a new instance of [`UniqueRef`].
-+    ///
-+    /// It takes over an increment of the reference count on the underlyin=
-g object.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that the reference count is set to such a valu=
-e
-+    /// that a call to [`UniqueRefCounted::dec_ref`] will release the unde=
-rlying object
-+    /// in the way which is expected when the last reference is dropped.
-+    /// Callers must not use the underlying object anymore --
-+    /// it is only safe to do so via the newly created [`UniqueRef`].
-+    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-+        // INVARIANT: The safety requirements guarantee that the new insta=
-nce now owns the
-+        // increment on the refcount.
-+        Self {
-+            ptr,
-+            _p: PhantomData,
-+        }
-+    }
-+
-+    /// Consumes the [`UniqueRef`], returning a raw pointer.
-+    ///
-+    /// This function does not change the refcount. After calling this fun=
-ction, the caller is
-+    /// responsible for the refcount previously managed by the [`UniqueRef=
-`].
-+    pub fn into_raw(me: Self) -> NonNull<T> {
-+        ManuallyDrop::new(me).ptr
-+    }
-+}
-+
-+impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
-+    type Target =3D T;
-+
-+    fn deref(&self) -> &Self::Target {
-+        // SAFETY: The type invariants guarantee that the object is valid.
-+        unsafe { self.ptr.as_ref() }
-+    }
-+}
-+
-+impl<T: UniqueRefCounted> DerefMut for UniqueRef<T> {
-+    fn deref_mut(&mut self) -> &mut Self::Target {
-+        // SAFETY: The type invariants guarantee that the object is valid.
-+        unsafe { self.ptr.as_mut() }
-+    }
-+}
-+
-+impl<T: UniqueRefCounted> From<&T> for UniqueRef<T> {
-+    /// Converts the [`UniqueRef`] into an [`ARef`]
-+    /// by calling [`UniqueRefCounted::unique_to_shared`] on it.
-+    fn from(b: &T) -> Self {
-+        b.inc_ref();
-+        // SAFETY: We just incremented the refcount above.
-+        unsafe { Self::from_raw(NonNull::from(b)) }
-+    }
-+}
-+
-+impl<T: UniqueRefCounted> TryFrom<ARef<T>> for UniqueRef<T> {
-+    type Error =3D ARef<T>;
-+    /// Tries to convert the [`ARef`] to an [`UniqueRef`]
-+    /// by calling [`UniqueRefCounted::try_shared_to_unique`].
-+    /// In case the [`ARef`] is not unique it returns again an [`ARef`] to=
- the same
-+    /// underlying object.
-+    fn try_from(b: ARef<T>) -> Result<UniqueRef<T>, Self::Error> {
-+        UniqueRefCounted::try_shared_to_unique(b)
-+    }
-+}
-+
-+impl<T: UniqueRefCounted> Drop for UniqueRef<T> {
-+    fn drop(&mut self) {
-+        // SAFETY: The type invariants guarantee that the [`UniqueRef`] ow=
-ns the reference
-+        // we're about to decrement.
-+        unsafe { UniqueRefCounted::dec_ref(self.ptr) };
-+    }
-+}
-+
- /// A sum type that always holds either a value of type `L` or `R`.
- ///
- /// # Examples
---=20
-2.48.1
+Yes, but use the 'size' command to measure before/after
 
-Best regards,
-
-Oliver
-
+Jason
 
