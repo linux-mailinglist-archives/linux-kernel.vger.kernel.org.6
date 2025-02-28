@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-538082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A910A49464
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C165FA49469
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11033A5491
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A503B4423
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4B924C689;
-	Fri, 28 Feb 2025 09:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B264D255E54;
+	Fri, 28 Feb 2025 09:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="y1pFzAlw"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2QEyuBrn"
 Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E49276D3B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E52276D3B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733584; cv=none; b=QRetXpNGpv0CCjG3Qmu1VE0RvzHldW4MgoXWXIDo6HFvl7cdLxjgE+rx93vF5RmOTzJKEmaiuU4PGCWMiYOmrnkrblYHKqDWrjOvNQvx8QnNDyzyyRf1OPYjltsi07vlZu9ATlmzNo7OtcnpoYb52iSo9Yf15VyF3qSi64BPDeY=
+	t=1740733689; cv=none; b=QSzP4EoWl2zY3q+eXweC+4zhxbFIx5dgZf0mqjd8CF9EDuv/7UiDTD48QzuWVwIm8mlvEEE4gadZS71qnslSWP315SG74getPZ2ogUo8/Y+WNXoXe8+5eojlQ/V5zAL3R/K1aySfdIYMppkGz5M5g6WbEr9dweBQkMpz26osELU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733584; c=relaxed/simple;
-	bh=kG618q+dGaz6KfSqiJfLKzo0LDr3h7Gt85xhdeTEshE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YqYG4Gx7Jb53vHFipAZaWY0TClGx3D5rnR1dygkRKAaK084rFBJIlfe6CllSBp9jt4rPSydN2WCcHZZLrqZv+4jp+sKhfLYdvNSI4aX6tgQQpp/1fqwgWTiFoZW7bGwFoC5N5JEnMPaCHz5dDOklo3IpDYXYGZEfNY/PftEFCoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=y1pFzAlw; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43984e9cc90so18411675e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:06:21 -0800 (PST)
+	s=arc-20240116; t=1740733689; c=relaxed/simple;
+	bh=B8Nw0Zg5POwoCggGay7I0k6JTFuZ0SJhXyxKpcrWTp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vCRd78rbgLXESSoB1K1q/UNZoH/quEU9Yb78eWTWtz1zQiyvZcOnqNsdzv9GPYt9H6p+ZKNYzwooZwG6EEvV1mlUH1zCk9yruIfuA4zmm4Lg3LzW+JUNexHU7AHqlSNJ5MLMjEXmFYTaYKZV7vOFsOyJDuSZNoi0g06LNvs+T80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2QEyuBrn; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so11934665e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:08:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740733580; x=1741338380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1iDXG4nsyxQE1e1A4QX9w6M1w8CTfF9s/nCaqEJCzgc=;
-        b=y1pFzAlwC4JS7YCFKl+7HI0ND4Zv/hoc8TFLiuap38/rOBMiKCFofn1QRJeyUgLVdK
-         ycWLYO80a0XAlVcsORMbapN7aGsfrBP7EF7zRdjW2z5r/o5odxpA8dWKODbds4BIvaJL
-         QDcPnq4bUrirZAO2zv+6m20EkK7G3qZnQuk9sSz/JIcfP8pQx3wiDEadHDOUtk3dqfUO
-         Z05eQvvGqIcyHvnqyaBGKqmpPfivvKApuVYtlV6Ew1U2K55hBdH/Hvl00I8AINpWDG3S
-         EnLaU+88gOpnJdcJHQIMsQFVLi+c+TyFkTmbB2LPiNhMZVEbnpAeSxJoeEwh9pJyBB3c
-         ep7g==
+        d=google.com; s=20230601; t=1740733686; x=1741338486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8Nw0Zg5POwoCggGay7I0k6JTFuZ0SJhXyxKpcrWTp4=;
+        b=2QEyuBrnSCQAu75DDn2+0WE4quBBci3oPWsUTTG/QtfYsumSE7EuBJeTGNopqoFFxV
+         a72JovdUrDVQfzWoMRn08th66tQcRLkQtss0QeJjMus6HGKhSDuNnUiIjNeYhX5pQNZo
+         7z1lt+acdkwa+KZaSqEotZpePf6O9uZh2RCuVOVdUB9TNX9ncX30JK01C3JYhG2fFxvt
+         eEm12NUbw5xohEocH8l9+DQ+qZyz3r8Xd57W/AX87MgiPUsP8qwoZW/tSh79BGhZmEnz
+         nSPurF7xDrpk5qu6ztD239Y0xWxV2ep/pHtyZzTaLrKkPxRY75pL/wF0m/IAVC7cF/Jl
+         Y94g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740733580; x=1741338380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1iDXG4nsyxQE1e1A4QX9w6M1w8CTfF9s/nCaqEJCzgc=;
-        b=Xhk22vbnoK6PXy13UpcFbdXHQZ8MrrXoIErwgo1YE3VoNbVGhBMyYlI602KHTr3M8j
-         HHKePUyOlJ6J4MA8Murp0qioHch0m3EWOmPkaIVL4mRXPra3DrvoEITMZD7eesJ7v6qH
-         Pphd+lh3Qq7iIGCv+Ga+6nm8y4kDf4Y2L9OHQmKE92EwCgVr3uD0A1v/6AI7i/Pw0tUh
-         6IwjSS0qVsHnbPbnWOZ4SAHASSXgjrkW2u4ET1JiaFm7ZlNxcBmX4uEgBD8z6Ahap/9X
-         N+T0uM4RTC3KZnanjYiVQBEAQq/wbqHgEMbz2Q94fZuxUfmZrAp4ZRuOgFGJSy4NaDQ6
-         HxNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJy3hIVec7BcUzEBxLIM/zEdXq1a9SIP5xGfmYvUFi1pSO9BE8Xo4JwmXTdofvdlsFEuTopN2OY/SjhWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHJokg5RL/376pOdtd/20id0EAiOMDsON2QsVKk8Z9DMYd+vFy
-	zsVThfadR5gSrqkD+TCjR65/avexoBjCgQpE/Uhiz+ovq5926zFGvWT/KLX/A/A=
-X-Gm-Gg: ASbGnctetWEB+bY+fycKJd/gMwQzENmrXJnuCPAhPs0+QuLoD3UvREsAbhY2/oquRuV
-	gtRq2tvITK38aveQDWtH4/7bokExUb13xZ/DTDceou3LSA1VdX+URsNPDI7wlA4Fg7AJG8csaqv
-	ib2LmoLqFGgKztceWaheb2UnAflcZSKb/BLPi8HUKXC/Oe/IhUFk/HlnHXc5653fRnEGHlRugVu
-	QnXgH9aWHFhYV2JZmlCLFIAYGT7OG+bQxIoy5B6J7Mi3Gmj20GhKAqcyx2jMhOPB9fx7t1MZIy/
-	RETMTj4iSKSHOAVeE/71KN9SYwVzG8f6N9zGwdGfOywHnw==
-X-Google-Smtp-Source: AGHT+IEMyVQFzZb3up6eSvKW7pURHbIkKoR0/iLhuxHiXvoVMxQ/kbxc0c0VX2sAkkKcTz4V2QSBEA==
-X-Received: by 2002:a5d:598d:0:b0:38d:fede:54f8 with SMTP id ffacd0b85a97d-390ec155371mr1736556f8f.16.1740733580191;
-        Fri, 28 Feb 2025 01:06:20 -0800 (PST)
-Received: from localhost.localdomain ([2001:861:3382:ef90:4aeb:d63d:2b85:ec0d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm4683786f8f.60.2025.02.28.01.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 01:06:19 -0800 (PST)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH] riscv: Fix missing __free_pages() in check_vector_unaligned_access()
-Date: Fri, 28 Feb 2025 10:06:13 +0100
-Message-Id: <20250228090613.345309-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1740733686; x=1741338486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B8Nw0Zg5POwoCggGay7I0k6JTFuZ0SJhXyxKpcrWTp4=;
+        b=dxDsPSUlZfKV52CVEKSA51IkYs4JbGX1/9p/4dV6jd2gtPKJU9edXTCIV7/j/PjcHK
+         qmpnBbgHSkPXXEhMysHIdRKXkIuNKQHHnhyEjw0wqo6OHe4pVKHWtL5/zhmNpifvln3B
+         LkT6TMOVqP4H+9pJHF8GVTp45PYyiWEN0B0kKjR3kaElxwB+WXzQdpAWZrcH5V1GkX/C
+         uiVtj5Cx/mSnN6p+KF0aY/0IMYYTCmSY05RJBevIoyo9J35j6sL8nO4tG1Cm5GZ7e1CA
+         67hTk9hXF7Px8Kr5wnARDaBJe4LG415eG7W7YC9F2pRG9QFXiVbL7lS9JJR39dDdNAaV
+         IkrA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5AFQbTcX/Q8Xf1gbi7Ri+ShUeO5Bxga8Pfqjqsd/BC9YDqbM4OdzvOIO/B3ru4Bjn66XfV6T5CXnrFh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKC+jYJ6YhMeGL8giqky/PxL4Vvu7CEoOmuXaggvEBmgMDppua
+	sAC+N6JCHGDcNYAn4p8aFiclta9ILEzbX+UEjwD1ahL/db/zCPaRmXt5Qt/qnX+Tz7lajA6EPMP
+	c0tXtklt6oKrJjvjCj6wNJxHPax3CFPY5YxmM
+X-Gm-Gg: ASbGncsa8IyYT1Ek8zoHh3NafXLvhOR7Auf97ZRrNiR9VSQ3ziRpRyw/C/mUc751oE3
+	FfUSN2Ot3mtFvCjZ1YSJ17bVJhgFoK4neAWs/OsC/7AmjYmZ1o9Nhjdcne+L9WrGLqRi7FKEpSU
+	B2sgVYc2oYBRYER676NeZROP+GbCgX1WzBs8D0
+X-Google-Smtp-Source: AGHT+IE80qC3ASXZ1RmhTrY39qoKGqVIZ7x7t8hAZgq1bGKdO/fbDuqOX/rULKVYWxaD9Nc/GWhFTtikbAUeJs9LE3w=
+X-Received: by 2002:a5d:64c7:0:b0:38d:e61a:bc7 with SMTP id
+ ffacd0b85a97d-390eca204fbmr2206828f8f.40.1740733685688; Fri, 28 Feb 2025
+ 01:08:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250227193522.198344-1-lyude@redhat.com>
+In-Reply-To: <20250227193522.198344-1-lyude@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 28 Feb 2025 10:07:54 +0100
+X-Gm-Features: AQ5f1JqnoJIDiLqVA7PEKKcyNm4ciCBp4S5KCEfAVq2GSvT2nGYfPum-JBNWBUE
+Message-ID: <CAH5fLghbJL=WVD0WFeRJMddfMQQUe2+xtLtenb-Ok7hSjCWq0A@mail.gmail.com>
+Subject: Re: [PATCH v2] rust/faux: Add missing parent argument to Registration::new()
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mairacanal@riseup.net>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The locally allocated pages are never freed up, so add the corresponding
-__free_pages().
+On Thu, Feb 27, 2025 at 8:35=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> A little late in the review of the faux device interface, we added the
+> ability to specify a parent device when creating new faux devices - but
+> this never got ported over to the rust bindings. So, let's add the missin=
+g
+> argument now so we don't have to convert other users later down the line.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: e7c9d66e313b ("RISC-V: Report vector unaligned access speed hwprobe")
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/kernel/unaligned_access_speed.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-index d9d4ca1fadc7..a42115fbdeb8 100644
---- a/arch/riscv/kernel/unaligned_access_speed.c
-+++ b/arch/riscv/kernel/unaligned_access_speed.c
-@@ -340,7 +340,7 @@ static void check_vector_unaligned_access(struct work_struct *work __always_unus
- 		pr_warn("cpu%d: rdtime lacks granularity needed to measure unaligned vector access speed\n",
- 			cpu);
- 
--		return;
-+		goto free;
- 	}
- 
- 	if (word_cycles < byte_cycles)
-@@ -354,6 +354,9 @@ static void check_vector_unaligned_access(struct work_struct *work __always_unus
- 		(speed ==  RISCV_HWPROBE_MISALIGNED_VECTOR_FAST) ? "fast" : "slow");
- 
- 	per_cpu(vector_misaligned_access, cpu) = speed;
-+
-+free:
-+	__free_pages(page, MISALIGNED_BUFFER_ORDER);
- }
- 
- /* Measure unaligned access speed on all CPUs present at boot in parallel. */
--- 
-2.39.2
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
