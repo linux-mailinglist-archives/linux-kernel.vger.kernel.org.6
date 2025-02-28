@@ -1,156 +1,83 @@
-Return-Path: <linux-kernel+bounces-538380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A8CA497F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:56:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9847EA497F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868933BBC79
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783B83BBBF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1891D260377;
-	Fri, 28 Feb 2025 10:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="ll921IZ6"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B4825D1F8;
-	Fri, 28 Feb 2025 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663FC260384;
+	Fri, 28 Feb 2025 10:56:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC68325F982
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740740159; cv=none; b=JQccluUUXtZIuzGfqU05L025lbX4hDc8cTGqEPCCtcMfC4nlD/sz1vCfQPc81MjzPp8f3OdgMRv/guJvN+rIuiuy86wRJN80DRhB7vzD3FEWC/ywCfvXsvGe2W9uO0WmU6gMNel2ZA3VPXxedr5Lmckh4iYZTMbFsNzMDpfVkkw=
+	t=1740740192; cv=none; b=tvRnsw5OR750OtXlYyV/ZP4zFYzVIvehmuMZ3Mi4+nVF4gIXYNZXbcQpjLOnQk5FztV/ezEdnjWnGH/0ZU/CqUChZY4MH2KbcdwYmcNPoNyUbw2NlyHnigoudqcivhhvFY38Qp+8rxRes98htcnLXZkAC38DhwX24D8um/S+tYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740740159; c=relaxed/simple;
-	bh=ybYNoa5DyDWxXzDm1f7ZLGFGQUGnbYx1zOwQ2g4yikw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Zt+RbrlfBCa2bhCm97m9rzwsbObx6bNmJ8+P/Ccu/jRgCzPFNgHQC09jfW65pas3oM+YVrchSHnRG0Q0v6ODD4MrBLT5+hQ8Sh4KMClo0AmiouhjU7kZggUbTQFPDUJqH6kU2/JOB2mIUOhMqN9aSgKu4NYo/D5Xb7Nnm6bFaQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=ll921IZ6; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=UUxYy44GRIO4cQdUKxtZBENf+y127GHIZ7y6niKwD+c=; b=ll921IZ6bNuWX05m2a5g//QzBa
-	2JCmTkTA3/84gqEYAA4nwTHgiqA/9K5CQBOS6D9FZZ60vQsZ81Ez+TDzPDQGwuDW8rK+VZNhImWhB
-	lhqApCidqEle+BYlnJG4f9MWK2E3891Cl6d4WRyF/hKDwrrtevIBR/R/exbUjlPquJccsdrAWc/Od
-	ebaySp0lHJ/LM7hHJsncEU34i2VJQC6YTlBrT1gjLnS/W5GXrekrWy75Efy8OTUJFenW/DNlvgbHS
-	KWgGwLXTpMjyGG4BphJWlFUNZrThRzqhTLB7hQvadtlHMjyXAQlT6amUmuDcXkXpAtpAwY24h9Fmi
-	dckhrPHQ==;
-Received: from [122.175.9.182] (port=22918 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1tny1x-000000003oR-49Ac;
-	Fri, 28 Feb 2025 16:25:46 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 6A87B17840AC;
-	Fri, 28 Feb 2025 16:25:38 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 4F77F1784068;
-	Fri, 28 Feb 2025 16:25:38 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iYYW2RZnI8rr; Fri, 28 Feb 2025 16:25:38 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 069531782035;
-	Fri, 28 Feb 2025 16:25:38 +0530 (IST)
-Date: Fri, 28 Feb 2025 16:25:37 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: danishanwar <danishanwar@ti.com>
-Cc: parvathi <parvathi@couthit.com>, kuba <kuba@kernel.org>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
-	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
-	nm <nm@ti.com>, ssantosh <ssantosh@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	basharath <basharath@couthit.com>, schnelle <schnelle@linux.ibm.com>, 
-	diogo ivo <diogo.ivo@siemens.com>, 
-	m-karicheri2 <m-karicheri2@ti.com>, horms <horms@kernel.org>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	m-malladi <m-malladi@ti.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	afd <afd@ti.com>, s-anna <s-anna@ti.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <1432177615.717619.1740740137819.JavaMail.zimbra@couthit.local>
-In-Reply-To: <af1d819a-4782-4b56-9e60-20263930bf19@ti.com>
-References: <20250214054702.1073139-1-parvathi@couthit.com> <20250214170219.22730c3b@kernel.org> <1348929889.600853.1739873180072.JavaMail.zimbra@couthit.local> <af1d819a-4782-4b56-9e60-20263930bf19@ti.com>
-Subject: Re: [PATCH net-next v3 00/10] PRU-ICSSM Ethernet Driver
+	s=arc-20240116; t=1740740192; c=relaxed/simple;
+	bh=u88/uSJlZTz8zOAcatnX20VLboCHUum5KSo1EbPe1fI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m29HyBDb6BuTbRVrO0Ff2JETR8m9+ZkfQlWRDdTfaFgRXHT8gIRbuNcs7yvDlLctbmiOgmDmg+222tSgcZUNEQjKMSUZHW/5nGxyEVlYPzg+vyAaL1i3luIXaW46kobZo9kMD9X5J2YRDVh0f1RTk7eVGo1TihSr3h2sLI3Qfmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9CFF1688;
+	Fri, 28 Feb 2025 02:56:43 -0800 (PST)
+Received: from [10.57.65.205] (unknown [10.57.65.205])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C87E93F673;
+	Fri, 28 Feb 2025 02:56:26 -0800 (PST)
+Message-ID: <ce29384e-b3fe-4196-a986-bb57a5d693d6@arm.com>
+Date: Fri, 28 Feb 2025 11:56:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: PRU-ICSSM Ethernet Driver
-Thread-Index: AjaAuJTDl7foxdNqzd93kIb2DnSneg==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+ dan.j.williams@intel.com, dave.hansen@linux.intel.com, david@redhat.com,
+ jane.chu@oracle.com, osalvador@suse.de, tglx@linutronix.de
+References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
+ <20241212080904.2089632-3-kevin.brodsky@arm.com> <Z8BiUnkPnvrx06vp@gmail.com>
+ <Z8BirVtqibWY6zaT@gmail.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <Z8BirVtqibWY6zaT@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
- 
-> On 18/02/25 3:36 pm, Parvathi Pudi wrote:
->> 
->> Hi,
->> 
->>> On Fri, 14 Feb 2025 11:16:52 +0530 parvathi wrote:
->>>> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
->>>> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
->>>> Megabit ICSS (ICSSM).
->>>
->>> Every individual patch must build cleanly with W=1.
->>> Otherwise doing git bisections is a miserable experience.
->>> --
->> 
->> As we mentioned in cover letter we have dependency with SOC patch.
->> 
->> "These patches have a dependency on an SOC patch, which we are including at the
->> end of this series for reference. The SOC patch has been submitted in a separate
->> thread [2] and we are awaiting for it to be merged."
->> 
->> SOC patch need to be applied prior applying the "net" patches. We have changed
->> the
->> order and appended the SOC patch at the end, because SOC changes need to go into
->> linux-next but not into net-next.
->> 
->> We have make sure every individual patch has compiled successfully with W=1 if
->> we
->> apply SOC patch prior to the "net" patches.
->> 
-> 
-> If there is any dependency in the series, the pre-requisite patch should
-> come before the dependent patch. In this series, SoC Patch should have
-> been the patch 1/10 and the warnings could have been avoided.
-> 
+On 27/02/2025 14:03, Ingo Molnar wrote:
+> * Ingo Molnar <mingo@kernel.org> wrote:
+>
+>> So I tried to pick up this patch belatedly, but there's more places 
+>> that mistakenly learned to rely on the stray <linux/mm.h> inclusion, 
+>> for example on x86 defconfig-ish kernels:
+>>
+>>
+>>   In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
+>>   ./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name ‘pgprot_t’
+>>   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
+>>   |                                                         ^~~~~~~~
 
-Sure, we will change the order and resubmit the patches in the next version.
+This patch relies on patch 1 in this series, which removes
+__set_memory_prot(). I seem to be able to build x86_64_defconfig without
+issue with both patches applies on the latest mainline.
 
-Thanks and Regards,
-Parvathi.
+> BTW., I did a few touchups to the changelog (see below) - mind picking 
+> that up once you submit -v2?
 
+Very happy with the touchups, thanks for having a look! Given my comment
+above, I don't believe there is a need to post a v3 - feel free to amend
+the commit message when applying the patches.
+
+- Kevin
 
