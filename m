@@ -1,158 +1,167 @@
-Return-Path: <linux-kernel+bounces-537528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57DBA48D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA1DA48D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2748E1890937
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731E418909EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BEE27293B;
-	Thu, 27 Feb 2025 23:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE59629;
+	Fri, 28 Feb 2025 00:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKFi+JY4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kvic/EVZ"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543E0272914
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8694C17E0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740700775; cv=none; b=hZCtUlqN6alQSrzZGzRvN3kC1paySGxI06L4TrZ4JA6Gdo2tspr1jD4Q113DAUWe1BKG8wrm/bIUOIL1Qxtp4AMSJPDjVsViauxHv6rVxVat+Hl4QJS/Invy1t+3TqtRvKkOdfMIebmrjfnCK6dMG4muq6YnHkvoFKzXjECU4BU=
+	t=1740701060; cv=none; b=cHIK1KBOj0xFwXiXLrRm5Y7Zu/avhBzM6U7uiwnfmb08wUvpSRvvAfTbcGf3C/3oeaGV+7qkYK9HKfChU45u+mRNKeJMC5SjDYhkS8nZoGQk0YgMQ3B3sXuF8OfW9HkJvKuPJxHay8ClelsREPLYcoPoy3wA517hqquJYSpYjxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740700775; c=relaxed/simple;
-	bh=/agnUZDgWlxSvKeQY3JUoMYzB/+byrjfvzVqkXRYtNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDK23wDeTlgapa6BYrQlQGO0soou8764h+bwOwFU07/WP+xHTCBC0pk9WjS+R5sEMfpsv3SoZS7/Tsau1puwFTosh+ny0qPjg62jHU8wptlA6acd1QQAbBRRWjMa44mpUwgA77u+gn8o5GNCmEordgBU/C95dcTvI5IfBi7+rww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKFi+JY4; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740700774; x=1772236774;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/agnUZDgWlxSvKeQY3JUoMYzB/+byrjfvzVqkXRYtNQ=;
-  b=UKFi+JY4TyRG1oQcXDmdWWfcQUP8LmvSs3mQ6eTn7Eli1EpCDQhMDFn+
-   WeCAS7qhhDp490epeqzP7Yx6VtLuL25BoASyEGysCcyXErxBKPJ0/Klya
-   HbyfDt9GK5QohdXgK19OvPY73vJObHkxaEn2Gyb55vTRMYm7Gkh3ngJ4O
-   bJk+QVwTWE4v0Ktoez3Sw6AivLTWFhq2QGbrNFUFhOj1nhnt0l/FH1Vm1
-   tRGb6QH/P3G4+peskiuVf0VDMXb0IF+6k1SiKcg7Zhk4qwe/VWhc5sWPq
-   UhJxD3VdcY0i/wbM1xxHyr2utPgOeGIY5CFG2A1Cn6ueIDwwSU+AelhGk
-   A==;
-X-CSE-ConnectionGUID: bKzqbkfvRrmThqKvMuy5/w==
-X-CSE-MsgGUID: phf5r7ycThyFwFkJXb5coQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45398272"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="45398272"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 15:59:33 -0800
-X-CSE-ConnectionGUID: ojAs1k/MS9SEC9VHc3zyCA==
-X-CSE-MsgGUID: Z4S+jU04ThCLAbI6XFSa+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="140399632"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Feb 2025 15:59:29 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnnmo-000ECu-3C;
-	Thu, 27 Feb 2025 23:59:26 +0000
-Date: Fri, 28 Feb 2025 07:59:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aditya Garg <gargaditya08@live.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Kerem Karabay <kekrby@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <202502280748.oNKTNuMK-lkp@intel.com>
-References: <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+	s=arc-20240116; t=1740701060; c=relaxed/simple;
+	bh=PEcWf1lC0yhjFwXmZ+djf4p4vdM62eIMsikl4LRYCy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JGnAjyTCkX4jL+WawwiKjjX4kt0sDSnxw0JQmGJT3KjKcC+YHEJkpm+AHcXN0yqo+Uddo4yIB4O9799gqwlZTzgoc0uzOUptjTxwNeamqaT4KJ8IGoFIb3ARHNDBLWxlp9MHwV3a0eBy0w1J1OtRGt8Lnf9omqSTEvexPSs7P34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kvic/EVZ; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5fc6f75aa8aso81190eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:04:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740701055; x=1741305855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TdAKRoI4MWNZS1p5ikuwofSWZ+m+ABE0cVc0cuX4/8s=;
+        b=kvic/EVZUyZ01lsS213y+Wl0oiYKgD0Vo8fZTu7yhfIAMYA5xRc73CCZ9KgNHmlum1
+         4XMttEnng3BT+pAKyh4jyoxQ5670+ma1MshtA55Zj86r1O++pRV8ZCe9VGxhyJyRMug3
+         oM3cR/g7oqnk4IuEPyEftiTC6GOKs4akHMpZs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740701055; x=1741305855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TdAKRoI4MWNZS1p5ikuwofSWZ+m+ABE0cVc0cuX4/8s=;
+        b=mP+F+sfcwRI5PvXCeK23bOMDHi4RUkxjbXueE7YLSezVAWz4b3N8MY2e/9BG7JYXxM
+         4JUkPIJM+LFyV+An5GM3pAC57jIAYMOYRKAISCq1sxS754f32JC8Uy8WC8DzKllw4+W+
+         72QlActhChljJODRSzuw2NZu7dv+gKQQwD+dxkCdVwOa3APWUZyHYpvAiKIZjggB+WfG
+         nWWFVI9ZU8URexPPq9RUTnLe3abjaq7JkHh6qZHE6nL5+z9kqyF0oF3edaEJrXEkz5xw
+         LKgyvziH9S98Xo4Atmn4HXgTkWJ1MERWzUJIz0Ol7QQQD/TYFcQ/sezFZ64iLN1fCug1
+         ZpqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7NArF+lH1fWsDODfuYYpKjMXE8OIR0yB+CqeeXiUstu08RwKYko4ATqhqZzs9eANkgh58Gy68YjDjGH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAm2ct92GyNmfKOMuV1w9CRsY0zAaGanUVftqolbmdZ9ykdmGR
+	VvM0lLaZAqwAbu9vljKLEC/ISeFDBRKL2H7sALTZRrMclTRO+sBmmklGy9w5KE9CdW6L+3ak1vr
+	oLUjuzNXe3yiYEskRO4rPLhag74xIXwuphhGu
+X-Gm-Gg: ASbGncvk+gwu0KFd6GxXsLGItwwn0R53+MJFDyIxcExuuC5YqOa/UkTIKTHVII38gA5
+	VyyhQBXxxNEco8YFAy8KUZL4lxg+dtKtUrIq4NcDDe6tUmWgRx1HqRuOSAvra73lgME0L6IFdOP
+	H/bdeKADnY8z5jWCRLZtE8K0GhmtqUVp1d8KX5igzO
+X-Google-Smtp-Source: AGHT+IGWuXQs0PIThChSzMMhBYpO8F+O5v1PgymX4okVh9IJ0FU07Sbjp0HW52pAlPT3tSirmglti/FDlIKqYQSJ9pg=
+X-Received: by 2002:a05:6830:6c0f:b0:727:2f27:2a5d with SMTP id
+ 46e09a7af769-728b82f0b63mr269890a34.3.1740701055553; Thu, 27 Feb 2025
+ 16:04:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-2-jeffxu@google.com>
+ <9abd68d9-3e6d-46a0-b92c-5aee0a90abf3@lucifer.local> <CABi2SkXT0z9YFsEkf3-HH0r_NuXXs_SJid9yzjuu0SwuxxWmZw@mail.gmail.com>
+ <b7a38abf-f102-47b4-b085-213298c51aae@lucifer.local>
+In-Reply-To: <b7a38abf-f102-47b4-b085-213298c51aae@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 27 Feb 2025 16:04:03 -0800
+X-Gm-Features: AQ5f1Jq9-ymrZNzxRItoW5EEM_7nmfT5SZHdmMKzLXHDq-gTSSV1Cci_cu2NaII
+Message-ID: <CABi2SkWeXJXmuE8OETJvbmxzGjk1e+5FUT9Gi2ZC35M-TcZWEA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/7] mseal, system mappings: kernel config and header change
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Aditya,
+On Tue, Feb 25, 2025 at 10:04=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 05:33:24PM -0800, Jeff Xu wrote:
+> > On Mon, Feb 24, 2025 at 10:05=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > > +config ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
+> > > > +     bool
+> > > > +     help
+> > > > +       Control MSEAL_SYSTEM_MAPPINGS access based on architecture.
+> > > > +
+> > > > +       A 64-bit kernel is required for the memory sealing feature.
+> > > > +       No specific hardware features from the CPU are needed.
+> > > > +
+> > > > +       To enable this feature, the architecture needs to update th=
+eir
+> > > > +       special mappings calls to include the sealing flag and conf=
+irm
+> > > > +       that it doesn't unmap/remap system mappings during the life
+> > > > +       time of the process. After the architecture enables this, a
+> > > > +       distribution can set CONFIG_MSEAL_SYSTEM_MAPPING to manage =
+access
+> > > > +       to the feature.
+> > >
+> > > Architectures also need to be confirmed not to require any form of VD=
+SO
+> > > relocation, which as discussed in previous series some arches appear =
+to
+> > > need to do. I'd mention that here.
+> > >
+> > This might need clarification, the system mapping includes vdso, right
+> > ? Why the focus on vdso ?
+>
+> My mistake, I thought scope was more limited than this when I first
+> looked. Please disregard the focus on VDSO here... :)
+>
+> >
+> > The sentence  "... it doesn't unmap/remap system mappings during the
+> > lifetime of the process."  already cover what you want here, I think.
+> >
+>
+> Right, I guess it just doesn't quite _emphasise_ it enough for me. Someth=
+ing
+> like the below would really help bring that out:
+>
+>         The existing of this flag for an architecture implies that it doe=
+s not
+>         require the remapping of these system mappings during process lif=
+etime,
+>         so sealing these mappings is safe from a kernel perspective.
+>
+I'm not sure I get the difference, but I can add it,  is below OK ?
 
-kernel test robot noticed the following build warnings:
+To enable this feature, the architecture needs to update their
+special mappings calls to include the sealing flag and confirm
+that it doesn't unmap/remap system mappings during the life
+time of the process. The existence of this flag for an architecture
+implies that it does not require the remapping of these system
+mappings during process lifetime, so sealing these mappings is
+safe from a kernel perspective. After the architecture enables this,
+a distribution can set CONFIG_MSEAL_SYSTEM_MAPPING to
+manage access to the feature.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Aditya-Garg/drm-format-helper-Add-conversion-from-XRGB8888-to-BGR888/20250224-214352
-base:   linus/master
-patch link:    https://lore.kernel.org/r/844C1D39-4891-4DC2-8458-F46FA1B59FA0%40live.com
-patch subject: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280748.oNKTNuMK-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280748.oNKTNuMK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502280748.oNKTNuMK-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/tiny/appletbdrm.c: In function 'appletbdrm_primary_plane_duplicate_state':
->> drivers/gpu/drm/tiny/appletbdrm.c:524:40: warning: variable 'old_appletbdrm_state' set but not used [-Wunused-but-set-variable]
-     524 |         struct appletbdrm_plane_state *old_appletbdrm_state;
-         |                                        ^~~~~~~~~~~~~~~~~~~~
-
-
-vim +/old_appletbdrm_state +524 drivers/gpu/drm/tiny/appletbdrm.c
-
-   520	
-   521	static struct drm_plane_state *appletbdrm_primary_plane_duplicate_state(struct drm_plane *plane)
-   522	{
-   523		struct drm_shadow_plane_state *new_shadow_plane_state;
- > 524		struct appletbdrm_plane_state *old_appletbdrm_state;
-   525		struct appletbdrm_plane_state *appletbdrm_state;
-   526	
-   527		if (WARN_ON(!plane->state))
-   528			return NULL;
-   529	
-   530		old_appletbdrm_state = to_appletbdrm_plane_state(plane->state);
-   531		appletbdrm_state = kzalloc(sizeof(*appletbdrm_state), GFP_KERNEL);
-   532		if (!appletbdrm_state)
-   533			return NULL;
-   534	
-   535		/* Request and response are not duplicated and are allocated in .atomic_check */
-   536		appletbdrm_state->request = NULL;
-   537		appletbdrm_state->response = NULL;
-   538	
-   539		appletbdrm_state->request_size = 0;
-   540		appletbdrm_state->frames_size = 0;
-   541	
-   542		new_shadow_plane_state = &appletbdrm_state->base;
-   543	
-   544		__drm_gem_duplicate_shadow_plane_state(plane, new_shadow_plane_state);
-   545	
-   546		return &new_shadow_plane_state->base;
-   547	}
-   548	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+-Jeff
 
