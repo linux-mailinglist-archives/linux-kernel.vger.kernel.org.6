@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-538259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348B6A49659
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A594A4962A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF67C7A8177
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD45E1881874
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5AE26037C;
-	Fri, 28 Feb 2025 10:00:48 +0000 (UTC)
-Received: from out198-12.us.a.mail.aliyun.com (out198-12.us.a.mail.aliyun.com [47.90.198.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4F525A32B;
+	Fri, 28 Feb 2025 10:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SK5AB13D"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2249D25F97C;
-	Fri, 28 Feb 2025 10:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7976D256C74;
+	Fri, 28 Feb 2025 10:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736848; cv=none; b=XUR8ElNw2eaEcWCmgSnJkFZwZKJ1zFS3gRk+yYBNiElS6YIMvaxRHf48Doo+qyC/rcPy2oKbREz5UqyYD9HIdu3e8cJxxNcGYc4TrPuvhvhXt0bJOOIcUOVpEUImLwhhXvDGPMNMrqYGvgYOhWX3YaL01j6dZMXsFLnCV2sXGlk=
+	t=1740736813; cv=none; b=Xb2SMl7wvJsfsG1OadhztD4Hvh1yFCbF1bGnLxyyo9s05AE3ZX/+lorNgKqZz3CvsDjemKGFYUl4tv6NTBxzOLHwvLloK9AFx+KfgVqb4sFzX/kQrcMbcHgiYOU2tuIRqX79pKQPSQ5F3xdcpRUHxST/moZDLjhgAai1Qo3gAR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736848; c=relaxed/simple;
-	bh=wCzcqb5ex/eO+H7R2RyhdEzh0ARjyXyxCI2VpaIU6go=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MgRJ8WqvNrc8hDHQhib5JJipiU4IX9idKBOmrrQUz1pX3pxVB2HjAUDJU0Of7Pb9AtQq/6NwqzTNA/UIc4VRH48YTZ9FigtYG3raoz8wcYjPRhTF7WEA0CQx+FCGzv/XNvohlU9HVnK0J2yTw4Prw8Ngyw8qSbjn/Hlzp0yBycA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=47.90.198.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
-Received: from sun-VirtualBox..(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.bfyn0sj_1740736820 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Feb 2025 18:00:31 +0800
-From: Frank Sae <Frank.Sae@motor-comm.com>
-To: Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frank <Frank.Sae@motor-comm.com>,
-	netdev@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Parthiban.Veerasooran@microchip.com,
-	linux-kernel@vger.kernel.org,
-	xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com,
-	hua.sun@motor-comm.com
-Subject: [PATCH net-next v3 00/14] net:yt6801: Add Motorcomm yt6801 PCIe driver
-Date: Fri, 28 Feb 2025 18:00:06 +0800
-Message-Id: <20250228100020.3944-1-Frank.Sae@motor-comm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740736813; c=relaxed/simple;
+	bh=2fezt6E/toOpvGQ/maIJKmQIerdFnEOW1E01JmM4A5A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sC0Al7k1+2hfxXYHhUr7VYoEtN50b3ObEIfNdmsS+PF64MSaEOd8Oj4bRoRuJ5H5EstyaTCCJD0ekGGvS/ey35nVdwinVbvKLrHcFAHG5FzEZLg5niD3aAixywwyaR4EZM0ZQuiMjSeadtvYWNMfp+Z2q/NDZks+9E1+cJvUVSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SK5AB13D; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30b909f0629so8236601fa.0;
+        Fri, 28 Feb 2025 02:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740736808; x=1741341608; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=e8/KW66e+2kSdtpDjiB9O/DXhYGHHMWWc9C6pdhsHHA=;
+        b=SK5AB13DtRTLct4rRBaFqMVQnGONI3hZmo66s4QIM1FHHPazpG21796REGr33o/vzB
+         TIfOY6LciCFaBBCiwPJXutqc7N82KhEpg0m2QgNXayqD8+HI9DyiOu0UL+hdKTpQrOL1
+         nOy3fLLrZV1HVPLvZGDFDBVhyHS4eHJVxNcnwJ1X01rAyaCXDrQ9No/GxJZW5KRK63xv
+         SUchW26GrtzkY3CY8FAqjMhItLWjPJfoBHVH1N/CayAbZhM2dgm5m7PBSIKjD2p1j/LO
+         YehpJJ7yDyDeA3XE/Le3LeTxK8GLHY1L7ROggxPQV5skftWMuEYleybwqIWISwXFxUGS
+         GSnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740736808; x=1741341608;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8/KW66e+2kSdtpDjiB9O/DXhYGHHMWWc9C6pdhsHHA=;
+        b=o6yYblrg2PQXFwHAHilgLfODFyzrNQkRsLdnA9zeEwazoOz00PXei49mKgCaNR8GCF
+         30kIjwmZxxpkUPV2z7e1Y3wTeTZ+cmNqDwfoMjAeuGw5oYA5iMx0Ik+ZRe8ahfdbUys7
+         5qgSBaNSP0L90/WaXdq39CErUP7yOxSXoUVXbAXteotofHMA1HkfzIGjNi2pQh9kdAgL
+         LUr6MFrxpW13m9hwGrxt3pePj5wj/W1n8klbKbja7f2Rznve+DCfXYdHxznSFUXStB5z
+         ZK4bIB+Bt0EqU3UyQshAITMAXBfCmMf3B4m3cueH7L+VRxPmgzH/CG4OY7c3M39IJUiu
+         udCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaw1jQ8q1mc8w8/Lc7u0siQAZI/39ITaa0rwkx4E8Z0bKAxoB+icxLzvxUAHqGKP6ZR8lyqsIGQKKMjoal@vger.kernel.org, AJvYcCWaBGdTTMfpPPPH/Xl7HlApToo7ITvs3cRfCtgChQE2YAuRUtcuNAPkyViEkCljeWODYRGHiIx7waFM@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZnXhXpbwzGwZgBRytgB9SkOshC+ao8ix0vCn9yJj942ZIlDp+
+	fN6iei56ruvwZqjOYD1jadhzXwYFVrmZ4wbresJImLV9/YDXnyA5
+X-Gm-Gg: ASbGncumS96vT6iIR21+5oXLYBBqcpHCFmO2TN7gGcy7fqMM5vh+V2L7HXm/NDdwH58
+	NUGPRhe7/+XUBDHbZD5Ru47QlCHboGykcfhvSpu9DtoZoMr3i3sMt11RhAKpcKeDv7+mHEQClSG
+	YuUeIPlp9M5fXuSkKPhDNfDdTpjRPzZ74GkViaG3ifHWfwo3et+zo2Q1VBavUa0fNQrOo83oLNG
+	XDYoPibZBMPOQGYP1oTimEhm/LEOyu3Mt4bia993vVTUQBxyFl+SWMgsLqCzmPG94xchSoA02To
+	aE4LF4dBOJOKCGPkMannQe+LGQc/SxwdKKjiS3Re51do3wAbARJzAfxGosqxE0UY5iwerjjUM0j
+	uzIR17tM=
+X-Google-Smtp-Source: AGHT+IGyRp8hI4t7T43ptRiHkMVh7sT8uEcSSYopBs+Zo+MF7XVTxA73/hYKbTZJJ7+AgQQ9QgdWPA==
+X-Received: by 2002:a2e:b8d1:0:b0:309:1f1a:276b with SMTP id 38308e7fff4ca-30b90a0d479mr8875191fa.10.1740736808128;
+        Fri, 28 Feb 2025 02:00:08 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a7c66sm4555331fa.7.2025.02.28.02.00.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 02:00:07 -0800 (PST)
+Message-ID: <46364d27-0316-4288-b559-209b4e41a533@gmail.com>
+Date: Fri, 28 Feb 2025 12:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+ <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+ <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+ <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+ <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
+ <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
+ <f3984cfc-3e3f-47d9-a734-3af7f072c22b@gmail.com>
+ <6cb71da0-18cd-4ecc-8b7d-822e85987216@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+In-Reply-To: <6cb71da0-18cd-4ecc-8b7d-822e85987216@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-This series includes adding Motorcomm YT6801 Gigabit ethernet driver
- and adding yt6801 ethernet driver entry in MAINTAINERS file.
-YT6801 integrates a YT8531S phy.
+On 28/02/2025 11:42, Matti Vaittinen wrote:
+> On 28/02/2025 11:28, Matti Vaittinen wrote:
+>>
+>> CC: Geert (because, I think he was asked about the Rcar GPIO check 
+>> before).
+>>
+>> On 28/02/2025 10:23, Linus Walleij wrote:
+>>> On Thu, Feb 27, 2025 at 9:24 AM Matti Vaittinen
+>>> <mazziesaccount@gmail.com> wrote:
+> 
+>>> The call graph should look like this:
+>>>
+>>> devm_gpiod_get_array()
+>>>      gpiod_get_array()
+>>>          gpiod_get_index(0...n)
+>>>              gpiod_find_and_request()
+>>>                  gpiod_request()
+>>>                      gpiod_request_commit()
+>>
+>> Here in my setup the guard.gc->request == NULL. Thus the code never 
+>> goes to the branch with the validation. And just before you ask me why 
+>> the guard.gc->request is NULL - what do you call a blind bambi? :)
+>>   - No idea.
+> 
+> Oh, I suppose the 'guard.gc' is just the chip structure. So, these 
+> validity checks are only applied if the gc provides the request 
+> callback? As far as I understand, the request callback is optional, and 
+> thus the validity check for GPIOs may be omitted.
+> 
+>>
+>>>                          gpiochip_line_is_valid()
 
-Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
----
+Would something like this be appropriate? It seems to work "on my 
+machine" :) Do you see any unwanted side-effects?
 
-v3:
- - Remove about 5000 lines of code
- - Remove statistics, ethtool, WoL, PHY handling ...
- - Reorganize this driver code and remove redundant code
- - Remove unnecessary yt_dbg information
- - Remove netif_carrier_on/netif_carrier_off
- - Remove hw_ops
- - Add PHY_INTERFACE_MODE_INTERNAL mode in phy driver to support yt6801
- - replease '#ifdef CONFIG_PCI_MSI' as 'if (IS_ENABLED(CONFIG_PCI_MSI) {}'
- - replease ‘fxgmac_pdata val’ as 'priv'
++++ b/drivers/gpio/gpiolib.c
+@@ -2315,6 +2315,10 @@ static int gpiod_request_commit(struct gpio_desc 
+*desc, const char *label)
+         if (!guard.gc)
+                 return -ENODEV;
 
-v2: https://patchwork.kernel.org/project/netdevbpf/cover/20241120105625.22508-1-Frank.Sae@motor-comm.com/
- - Split this driver into multiple patches.
- - Reorganize this driver code and remove redundant code
- - Remove PHY handling code and use phylib.
- - Remove writing ASPM config
- - Use generic power management instead of pci_driver.suspend()/resume()
- - Add Space before closing "*/"
++       offset = gpio_chip_hwgpio(desc);
++       if (!gpiochip_line_is_valid(guard.gc, offset))
++               return -EINVAL;
++
+         if (test_and_set_bit(FLAG_REQUESTED, &desc->flags))
+                 return -EBUSY;
 
-v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240913124113.9174-1-Frank.Sae@motor-comm.com/
+@@ -2323,11 +2327,7 @@ static int gpiod_request_commit(struct gpio_desc 
+*desc, const char *label)
+          */
 
+         if (guard.gc->request) {
+-               offset = gpio_chip_hwgpio(desc);
+-               if (gpiochip_line_is_valid(guard.gc, offset))
+-                       ret = guard.gc->request(guard.gc, offset);
+-               else
+-                       ret = -EINVAL;
++               ret = guard.gc->request(guard.gc, offset);
+                 if (ret)
+                         goto out_clear_bit;
+         }
 
-This patch is to add the ethernet device driver for the PCIe interface of
- Motorcomm YT6801 Gigabit Ethernet.
-We tested this driver on an Ubuntu x86 PC with YT6801 network card.
+I can craft a formal patch if this seems reasonable.
 
-Frank Sae (14):
-  motorcomm:yt6801: Implement mdio register
-  motorcomm:yt6801: Add support for a pci table in this module
-  motorcomm:yt6801: Implement pci_driver shutdown
-  motorcomm:yt6801: Implement the fxgmac_init function
-  motorcomm:yt6801: Implement the .ndo_open function
-  motorcomm:yt6801: Implement the fxgmac_start function
-  phy:motorcomm: Add PHY_INTERFACE_MODE_INTERNAL to support YT6801
-  motorcomm:yt6801: Implement the fxgmac_hw_init function
-  motorcomm:yt6801: Implement the poll functions
-  motorcomm:yt6801: Implement .ndo_start_xmit function
-  motorcomm:yt6801: Implement some net_device_ops function
-  motorcomm:yt6801: Implement pci_driver suspend and resume
-  motorcomm:yt6801: Add makefile and Kconfig
-  motorcomm:yt6801: update ethernet documentation and maintainer
-
- .../device_drivers/ethernet/index.rst         |    1 +
- .../ethernet/motorcomm/yt6801.rst             |   20 +
- MAINTAINERS                                   |    8 +
- drivers/net/ethernet/Kconfig                  |    1 +
- drivers/net/ethernet/Makefile                 |    1 +
- drivers/net/ethernet/motorcomm/Kconfig        |   27 +
- drivers/net/ethernet/motorcomm/Makefile       |    6 +
- .../net/ethernet/motorcomm/yt6801/Makefile    |    8 +
- .../net/ethernet/motorcomm/yt6801/yt6801.h    |  379 +++
- .../ethernet/motorcomm/yt6801/yt6801_desc.c   |  571 ++++
- .../ethernet/motorcomm/yt6801/yt6801_desc.h   |   35 +
- .../ethernet/motorcomm/yt6801/yt6801_net.c    | 2876 +++++++++++++++++
- .../ethernet/motorcomm/yt6801/yt6801_pci.c    |  186 ++
- .../ethernet/motorcomm/yt6801/yt6801_type.h   |  967 ++++++
- drivers/net/phy/motorcomm.c                   |    6 +
- 15 files changed, 5092 insertions(+)
- create mode 100644 Documentation/networking/device_drivers/ethernet/motorcomm/yt6801.rst
- create mode 100644 drivers/net/ethernet/motorcomm/Kconfig
- create mode 100644 drivers/net/ethernet/motorcomm/Makefile
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/Makefile
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801.h
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_pci.c
- create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
-
--- 
-2.34.1
-
+Yours,
+	-- Matti
 
