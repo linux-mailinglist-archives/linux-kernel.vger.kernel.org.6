@@ -1,152 +1,178 @@
-Return-Path: <linux-kernel+bounces-537854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3390A491D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:57:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30787A491D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AB03AB774
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E373B378E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BCF1C54BE;
-	Fri, 28 Feb 2025 06:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D01C4A13;
+	Fri, 28 Feb 2025 06:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL2LhM/v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oaqnh9/x"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F5E276D25;
-	Fri, 28 Feb 2025 06:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736121C3BE3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740725820; cv=none; b=NDcNUd5xkqP4g7L3hwGAhntAVeRoXsrYppj+dmotPOY8jxXi6d+YG+r/RZfdO7QUNdbm7LQfCcs796XJgDAFzqn8jzxktCVPU/HBIGN7pYxBpRosZTJmQPDxZ1fga8kta58JklnqqBBw2ZUfZcPJmdjuqIk5+UJ+FfIK3VDZX3Y=
+	t=1740725939; cv=none; b=mQKfokHL1FxSr8PNXz8v7sHHe6c4OHNtpPfXyOI9gY9AQ9+nx+UcqITDR8heaoiHhZ6xg7V6JcJ6UgtsGEiLN5gjr/PsxiUkWzDSQZMIsgZLVUQyyfisM4JI7vjhHGmUU2a+GnAv00d24Dxxq/OZYhXLf2Vvg1EFInhNPcxdFhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740725820; c=relaxed/simple;
-	bh=ydJLqEPPVKrxT1k6uVgunTYI/Nt4z8pdkUR12N3r/B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BH3ReWx64+qrzmsNLY52H5K8BhazxAEH+6wGczKt8q/9MYHvLhnlBEO2ux905Ey2tFZAOhfLi60UHxgLA9SAKko9+gr/qb3fltPCYRPgC7k75VKs4czH9ekIL2Viu/LaRYeCuyB1zqecc66Khly/HCTZb/07H14DdJynvMoT+zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL2LhM/v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F48C4CED6;
-	Fri, 28 Feb 2025 06:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740725819;
-	bh=ydJLqEPPVKrxT1k6uVgunTYI/Nt4z8pdkUR12N3r/B4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oL2LhM/vVSv3duEn/5B0cZruS/hUBKh3m6Oq24bMVcEV7kR+1Ih0WFxE+fQVJHUvX
-	 8KDf/BbN2Bst4SEAP65OXXQ0eE2De0iOH0iFq2CyXVUxCQMnFIM0F8wk9EbUV9tiNn
-	 wZ+3oE5wCa8pXSDsO+fVPEqMTccpjfjC782+3xRijpQfyWs4s/jPMM0QVZWXbmp8wh
-	 CnEFmifJSttan0oTBIKL8bX136XrUcI+xbOI/Ph7swX1K8aGfMgqEixy5YREZk1R+Q
-	 hckGN+UDBFFCXKMjEbBh4h1y0Fvw7nwU4xGJesL43l+cVT9LAQkWkNAED6Rs1EzTXO
-	 RciG7QVZ3Dl4g==
-Message-ID: <d085c34a-fdbf-4950-a2e3-b3d25a1c0145@kernel.org>
-Date: Fri, 28 Feb 2025 07:56:52 +0100
+	s=arc-20240116; t=1740725939; c=relaxed/simple;
+	bh=XS1SOw+xZskedWAzYcovczJoNViBPFG0jER6+blu4Po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4Y0+EufiwY7sQMBKEOPAuNLS0w6OOfTmiWQFuUJ8loAtg/m7ZMkHq2NErA5vOduSYaTWOtu1ZdFqqxANQxfUeH210xrMMT8Mjgls3mOz7qGTpC6aHUazW/Me3Eooqwtl3vHCJjZBlOpNREKIzidRApB2AnLmwBM5zlSZZQfoVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oaqnh9/x; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30a3092a9ebso19137221fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:58:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740725935; x=1741330735; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQkBn9pZaZLQM8Ql4ItONo7JwUM9lavMBRm7WilNhdQ=;
+        b=oaqnh9/xwq6pEMo0SDSGRaar718z/g3eqvbG/HmKuU2onAlX5rj1ModzPVCZntHTnP
+         KbuEXgCnbhMKkWf1CF6lYrwdbO+jBfbO7znvq7FIxL7aBJIEqSVdgYwj1AjfXCXCbvXO
+         TL4Wfb8o4kJLb/1sejf28SceUGDYAxJlOXoP6bmQaKj261jGJHlS9NL3BKUIR8ll5YCh
+         JblHc3c6PJ8mJDJ+hAyuOHs3F1UQc+nTLs2IRmO138WrEsVAuKBhmXYwR+EErPmPKxUN
+         xalBsy1CMCx6gyUsxr9X6sAGRDMq0ykULoa6dKqOC0QGWjM4i8wMw7iZxeBaTplSNsFZ
+         qg5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740725935; x=1741330735;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQkBn9pZaZLQM8Ql4ItONo7JwUM9lavMBRm7WilNhdQ=;
+        b=jRvTSqeqqN1ERer3oy16h8jVGDXgA0mGipgRpR2e8HTSM3sQL5I49vRmDzw/y4lzHG
+         W7qgwUT7dr5As1VQ2TE0QiZ00upNQMl9ZKMg1CPCuejWxvB0bb34LTbiQOUB04PINJV/
+         omG/A3nmywuFgLmBduqRa9ig06Sf40jvC/liVec6iL3egrXMSKdO9LQ9TE9vC7jY9Lb4
+         dvsy8JKFQP5M6EfS5xyChRQ98kpcrIrjKAVdJM4e7rKrrvt3S7uqLDrvoSmxh4834rbN
+         M3sRe0SlUBJtPkY1/mUqWDlUsTPsADwL15YvD/BuLLdfk9mnTJGmHZwQ6+AhP45WFDcp
+         SLig==
+X-Forwarded-Encrypted: i=1; AJvYcCWFNjPWQvsHIH01uXBGP9yUBjSzUHPpkImbzHxM0NHx/VXBoEeHZb/TdGvxUVWEu8eQh4SCyeeRXgGfJY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNfp8VK/q7fl7bp6H4Ts9ATUHSFxWc5MxG7tiLjVn0Ojv0z4Hn
+	cpT7KCc3pM/zKEXEwdtPA+Y4AnrDdkO+q8uy0lMxoKKVyN9XTXd4LohO2lFwmb4=
+X-Gm-Gg: ASbGncvIH9jF7UaH5q4lwuIjNgoJtvUAsf2puAq41h9/T8zjDO8Zs+M4xDNiCjqpzhf
+	FOwEpTN0w0LK75ccONzZk5wLVoex914dvFp/pUJPMti8fAvAd/DdsrIi0Oh5Aytf+PHNLthGiwX
+	JorcosJmsESJD8PJFf25392a2lWcH/KCI9VGZBDtH8kzOSbNfu+H5Wn4TETzuneq+sNWEPa1Z2s
+	l5Lp/bqIJqrK/vT4MJjyLf97w9d6mtxt0uy2Ux7zAupwLo6s2VqBNCt4nvFKin8c5U1GGcSAgvX
+	vCc5P4sEeZUwBnmVL5HpatpBgBApGS1mE2Hm697T2f726Uskcl2bnW1bIWE5tIMowwXPxgdRc9X
+	YmGjm/A==
+X-Google-Smtp-Source: AGHT+IFDMeoDRWEnz1lfwT4TgHJX3JoksLPN52Cp1f9xNEKdtsShVpbuBeVPqD0tmnmNbGvoSmxnyg==
+X-Received: by 2002:a2e:bc17:0:b0:308:f01f:183b with SMTP id 38308e7fff4ca-30b932004e7mr5943981fa.2.1740725935453;
+        Thu, 27 Feb 2025 22:58:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86875f3csm4094371fa.93.2025.02.27.22.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 22:58:53 -0800 (PST)
+Date: Fri, 28 Feb 2025 08:58:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, robdclark@gmail.com, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/ci: fix merge request rules
+Message-ID: <ondpwjsgujhk7wo3gaajoeamcf4gkp424cxmyslwsybrlkzo5f@xh3yx2r2mp6k>
+References: <20250227042058.409003-1-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add reset controller
- node
-To: Wilson Ding <dingwei@marvell.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
- sebastian.hesselbarth@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, salee@marvell.com,
- gakula@marvell.com
-References: <20250227192536.2426490-1-dingwei@marvell.com>
- <20250227192536.2426490-4-dingwei@marvell.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250227192536.2426490-4-dingwei@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227042058.409003-1-vignesh.raman@collabora.com>
 
-On 27/02/2025 20:25, Wilson Ding wrote:
-> Add the reset controller node as a sub-node to the system controller
-> node.
+On Thu, Feb 27, 2025 at 09:50:50AM +0530, Vignesh Raman wrote:
+> Merge request pipelines were only created when changes
+> were made to drivers/gpu/drm/ci/, causing MRs that
+> didn't touch this path to break. Fix MR pipeline rules
+> to trigger jobs for all changes.
 > 
-> Signed-off-by: Wilson Ding <dingwei@marvell.com>
+> Run jobs automatically for marge-bot and scheduled
+> pipelines, but in all other cases run manually. Also
+> remove CI_PROJECT_NAMESPACE checks specific to mesa.
+> 
+> Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 > ---
->  arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> index 161beec0b6b0..c27058d1534e 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> @@ -226,6 +226,8 @@ CP11X_LABEL(rtc): rtc@284000 {
->  		CP11X_LABEL(syscon0): system-controller@440000 {
->  			compatible = "syscon", "simple-mfd";
->  			reg = <0x440000 0x2000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
+> v2:
+>   - Run jobs automatically for marge-bot and scheduled
+>     pipelines, but in all other cases run manually. Also
+>     remove CI_PROJECT_NAMESPACE checks specific to mesa.
+> 
+> ---
+>  drivers/gpu/drm/ci/gitlab-ci.yml | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+> index f04aabe8327c..f4e324e156db 100644
+> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+> @@ -143,11 +143,11 @@ stages:
+>      # Pre-merge pipeline
+>      - if: &is-pre-merge $CI_PIPELINE_SOURCE == "merge_request_event"
+>      # Push to a branch on a fork
+> -    - if: &is-fork-push $CI_PROJECT_NAMESPACE != "mesa" && $CI_PIPELINE_SOURCE == "push"
+> +    - if: &is-fork-push $CI_PIPELINE_SOURCE == "push"
+>      # nightly pipeline
+>      - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE == "schedule"
+>      # pipeline for direct pushes that bypassed the CI
+> -    - if: &is-direct-push $CI_PROJECT_NAMESPACE == "mesa" && $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
+> +    - if: &is-direct-push $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
 >  
->  			CP11X_LABEL(clk): clock {
+>  
+>  # Rules applied to every job in the pipeline
+> @@ -170,26 +170,15 @@ stages:
+>      - !reference [.disable-farm-mr-rules, rules]
+>      # Never run immediately after merging, as we just ran everything
+>      - !reference [.never-post-merge-rules, rules]
+> -    # Build everything in merge pipelines, if any files affecting the pipeline
+> -    # were changed
+> +    # Build everything in merge pipelines
+>      - if: *is-merge-attempt
+> -      changes: &all_paths
+> -      - drivers/gpu/drm/ci/**/*
+>        when: on_success
+>      # Same as above, but for pre-merge pipelines
+>      - if: *is-pre-merge
+> -      changes:
+> -        *all_paths
+> -      when: manual
+> -    # Skip everything for pre-merge and merge pipelines which don't change
+> -    # anything in the build
+> -    - if: *is-merge-attempt
+> -      when: never
+> -    - if: *is-pre-merge
+> -      when: never
+> +    - when: manual
 
-Wait, no unit address here.
+I believe there should be no dash on this line
 
->  				compatible = "marvell,cp110-clock";
-> @@ -273,6 +275,12 @@ CP11X_LABEL(gpio2): gpio@140 {
->  					 <&CP11X_LABEL(clk) 1 17>;
->  				status = "disabled";
->  			};
-> +
-> +			CP11X_LABEL(swrst): reset-controller@268 {
+>      # Build everything after someone bypassed the CI
+>      - if: *is-direct-push
+> -      when: on_success
+> +    - when: manual
 
+And on this line too.
 
-So why here it appeared? This is wrong and not even necessary. Entire
-child should be folded into parent, so finally you will fix the
-incomplete parent compatible.
+>      # Build everything in scheduled pipelines
+>      - if: *is-scheduled-pipeline
+>        when: on_success
+> -- 
+> 2.47.2
+> 
 
-
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
