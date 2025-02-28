@@ -1,114 +1,285 @@
-Return-Path: <linux-kernel+bounces-537603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B18A48E0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:38:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA526A48E0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6830D168E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310F31881DD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C3757C93;
-	Fri, 28 Feb 2025 01:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548FC7DA9C;
+	Fri, 28 Feb 2025 01:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="y9SHZ+6H"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T7pRl/DJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843141EA6F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480FE276D11;
+	Fri, 28 Feb 2025 01:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740706706; cv=none; b=rskMRPkAR7d2H2RiSCsIcCRYerCIxwMl6LZ4DcsZ8v0FHQ2UrrG9aM7lM7hLRnMp4NEpKd1ddv6/OH01dIlY+dUFhXNgjOXZevCvam4ANxRNeU59TnWNwGKN89mf7oXmqjtM95/4p9EwOLJ8QVzILuYBIuKN8KoMYRdWgLmNWro=
+	t=1740706864; cv=none; b=PBcZiW8ydf1Dj/idS40O4aePRiQLjxyThbUEyMGWN9qXwgw/Q4d5LV5BG+1X1x5xqfK2oJyD6uOgIJlKy/kQJTohnIc977biy/07t4mC7ccLg4RVMVrUHuSWMfgBWIa8BBRvNsw5jah3oybXnzNVBa5wr3HqYiCzeqbTirSy2QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740706706; c=relaxed/simple;
-	bh=yYfSHuxvwl5xS7zsK1TXHUkqz6Q7RguDWTF2WQvCm5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXiHG/mp9biSLcu4JV8DYnAuDf6dvrrfQhfx0zpL6iL1ALaqP79XUTwO3QzWmP7rkm838RgA+tvfUWcYa3Y1ju2wZhL6hUpZV6REqqQOTRRIId8ysRzWIrdqZrhSdhHFn/4dX4XCZVwuvyTJjS7w6ffAkVINYGdG/VOQc4XDkJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=y9SHZ+6H; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id nQc7tn4EMMETlnpKTtHaoe; Fri, 28 Feb 2025 01:38:17 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id npKTt7Gi45f3RnpKTtm7uh; Fri, 28 Feb 2025 01:38:17 +0000
-X-Authority-Analysis: v=2.4 cv=MrBU6Xae c=1 sm=1 tr=0 ts=67c11389
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
- a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7T7KSl7uo7wA:10
- a=iit3rYpcdqjZrRsmSfkA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yYfSHuxvwl5xS7zsK1TXHUkqz6Q7RguDWTF2WQvCm5I=; b=y9SHZ+6H68pJ5tDrM+J2zCHCAO
-	ABBs7xNrX44ynaGgtCol5KkHqphPr+nmdTfYlFuetlSFpqHMWF5RYk81V2A33YpoGkYCkTHaINX47
-	VDqoV8EZbrDZlWm3nvXkJQTq1GKAFWllQmzOsfU36/mLnbmW1hrBL1m4OI85IcCrsxv3z4a6s54TI
-	mSq/rfLx0ckfnoq3joWRuNwNjSVQ0CztHekvKXn5ip7/l/hyYiVc3Jng+hp+WzxgC54xWLefJ0Tlc
-	2kf21EE80kslvG0Zfm3fyje964vMQA84Km5VzUrsZQVlLdsPNY5h1dk/wkx1Jf6pMJTf6mK7bvFzM
-	dSM8JIlA==;
-Received: from [45.124.203.140] (port=53803 helo=[192.168.0.158])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tnpKQ-000000036Gj-1EMq;
-	Thu, 27 Feb 2025 19:38:14 -0600
-Message-ID: <2cba8450-9f52-4131-8dd0-47210826b6b4@embeddedor.com>
-Date: Fri, 28 Feb 2025 12:07:58 +1030
+	s=arc-20240116; t=1740706864; c=relaxed/simple;
+	bh=7Ao72ZSN+JGWeghAFVfYDlkSLS7LdTHxr30TmAU4vkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Llm/sjm8Mfn86U2t+Ia2snHWt0UWzAPYdO+SvabRRTbRSoLJttnFwzi7LPmyYdJu5SkIckVwy+9KPc8Vpg7snIvLu/xD7x8A4nadFGctk0ON1DUMNXqNqwRl6fYH95K3IiXXgMhWeBtyuCieO8K20vUl5XsL5riXYksKbt1cTyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T7pRl/DJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F866C4CEDD;
+	Fri, 28 Feb 2025 01:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740706863;
+	bh=7Ao72ZSN+JGWeghAFVfYDlkSLS7LdTHxr30TmAU4vkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T7pRl/DJsxzZ+ib93e1hwB+ZcGmQj5mXqTI0GIxi5+XlzEApYSXVY23640qOhXeGY
+	 rq0Qj+AMH41PDhmGEVOpmEF45FppD7OSb6Xrcc7BIvb7G9A6sn+9onL4JbeZ7vfSF+
+	 y8L8HwlNFWbr48lq+OW8NbT/jKdWKvfa67N4RSXM=
+Date: Thu, 27 Feb 2025 17:39:53 -0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	bhelgaas@google.com, Jonathan.Cameron@huawei.com,
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	wilfred.mallawa@wdc.com, aliceryhl@google.com, ojeda@kernel.org,
+	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
+	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
+ authenticated
+Message-ID: <2025022748-flock-verbalize-b66a@gregkh>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me>
+ <2025022717-dictate-cortex-5c05@gregkh>
+ <Z8DqZlE5ccujbJ80@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-To: patchwork-bot+netdevbpf@kernel.org,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z76HzPW1dFTLOSSy@kspp>
- <174070615348.1621364.6459318760619423212.git-patchwork-notify@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <174070615348.1621364.6459318760619423212.git-patchwork-notify@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 45.124.203.140
-X-Source-L: No
-X-Exim-ID: 1tnpKQ-000000036Gj-1EMq
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.158]) [45.124.203.140]:53803
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNiP2g4Tt+c2f5thjT9bLkTg03MlsaReL0f3KAA/+q6DqoKImZnuJoiXWxWhvxoBnqxfX4WI2M3+Y8vZi+kO85SIoBKcNC0t4KRQE7eKdouOXP/Wvnmz
- w1LGvcXSD2kBKQKRxRpCbvmUQVptcyaJx3RTuZYEQ9Am38Lrp7j34gXR1qVI7+/OKnbQcwA6zo9WwoToLWgLhFRX/ZghMvsuqVn66VpKmVBNhoz0rZ214vp3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8DqZlE5ccujbJ80@wunner.de>
 
-> This patch was applied to netdev/net-next.git (main)
+On Thu, Feb 27, 2025 at 11:42:46PM +0100, Lukas Wunner wrote:
+> On Thu, Feb 27, 2025 at 03:16:40AM -0800, Greg KH wrote:
+> > On Thu, Feb 27, 2025 at 01:09:41PM +1000, Alistair Francis wrote:
+> > > The PCI core has just been amended to authenticate CMA-capable devices
+> > > on enumeration and store the result in an "authenticated" bit in struct
+> > > pci_dev->spdm_state.
+> > > 
+> > > Expose the bit to user space through an eponymous sysfs attribute.
+> > > 
+> > > Allow user space to trigger reauthentication (e.g. after it has updated
+> > > the CMA keyring) by writing to the sysfs attribute.
+> > > 
+> > > Implement the attribute in the SPDM library so that other bus types
+> > > besides PCI may take advantage of it.  They just need to add
+> > > spdm_attr_group to the attribute groups of their devices and amend the
+> > > dev_to_spdm_state() helper which retrieves the spdm_state for a given
+> > > device.
+> > > 
+> > > The helper may return an ERR_PTR if it couldn't be determined whether
+> > > SPDM is supported by the device.  The sysfs attribute is visible in that
+> > > case but returns an error on access.  This prevents downgrade attacks
+> > > where an attacker disturbs memory allocation or DOE communication
+> > > in order to create the appearance that SPDM is unsupported.
+> > 
+> > I don't like this "if it's present we still don't know if the device
+> > supports this", as that is not normally the "sysfs way" here.  Why must
+> > it be present in those situations?
+> 
+> That's explained above.
 
-Awesome. :)
+Not really, you just say "downgrade attacks", which is not something
+that we need to worry about, right?  If so, I think this bit is the
+least of our worries.
 
-Thank you, guys.
---
-Gustavo
+> Unfortunately there is no (signed) bit in Config Space which tells us
+> whether authentication is supported by a PCI device.  Rather, it is
+> necessary to exchange several messages with the device through a
+> DOE mailbox in config space to determine that.  I'm worried that an
+> attacker deliberately "glitches" those DOE exchanges and thus creates
+> the appearance that the device does not support authentication.
+
+That's a hardware glitch, and if that happens, then it will show a 0 and
+that's the same as not being present at all, right?  Otherwise you just
+pound on the file to try to see if the glitch was not real?  That's not
+going to go over well.
+
+> Let's say the user's policy is to trust legacy devices which do not
+> support authentication, but require authentication for newer NVMe drives
+> from a certain vendor.  An attacker may manipulate an authentication-capable
+> NVMe drive from that vendor, whereupon it will fail authentication.
+> But the attacker can trick the user into trusting the device by glitching
+> the DOE exchanges.
+
+Again, are we now claiming that Linux needs to support "hardware
+glitching"?  Is that required somewhere?  I think if the DOE exchanges
+fail, we just trust the device as we have to trust something, right?
+
+> Of course, this is an abnormal situation that users won't encounter
+> unless they're being attacked.  Normally the attribute is only present
+> if authentication is supported.
+> 
+> I disagree with your assessment that we have bigger problems.
+> For security protocols like this we have to be very careful
+> to prevent trivial circumvention.  We cannot just shrug this off
+> as unimportant.
+
+hardware glitching is not trivial.  Let's only worry about that if the
+hardware people somehow require it, and if so, we can push back and say
+"stop making us fix your broken designs" :)
+
+> The "authenticated" attribute tells user space whether the device
+> is authenticated.  User space needs to handle errors anyway when
+> reading the attribute.  Users will get an error if authentication
+> support could not be determined.  Simple.
+
+No, if it's not determined, it shouldn't be present.
+
+> > What is going to happen to suddenly
+> > allow it to come back to be "alive" and working while the device is
+> > still present in the system?
+> 
+> The device needs to be re-enumerated by the PCI core to retry
+> determining its authentication capability.  That's why the
+> sysfs documentation says the user may exercise the "remove"
+> and "rescan" attributes to retry authentication.
+
+But how does it know that?  remove and recan is a huge sledgehammer, and
+an amazing one if it even works on most hardware.  Don't make it part of
+any normal process please.
+
+> > I'd prefer it to be "if the file is there, this is supported by the
+> > device.  If the file is not there, it is not supported", as that makes
+> > things so much simpler for userspace (i.e. you don't want userspace to
+> > have to both test if the file is there AND read all entries just to see
+> > if the kernel knows what is going on or not.)
+> 
+> Huh?  Read all entries?  The attribute contains only 0 or 1!
+> 
+> Or you'll get an error reading it.
+
+It's the error, don't do that.  If an error is going to happen, then
+don't have the file there.  That's the way sysfs works, it's not a
+"let's add all possible files and then make userspace open them all and
+see if an error happens to determine what really is present for this
+device" model.  It's a "if a file is there, that attribute is there and
+we can read it".
+
+> > > Alternatively, authentication success might be signaled to user space
+> > > through a uevent, whereupon it may bind a (blacklisted) driver.
+> > 
+> > How will that happen?
+> 
+> The SPDM library can be amended to signal a uevent when authentication
+> succeeds or fails and user space can then act on it.  I imagine systemd
+> or some other daemon might listen to such events and do interesting things,
+> such as binding a driver once authentication succeeds.
+
+That's a new user/kernel api and should be designed ONLY if you actually
+need it and have a user.  Otherwise let's just wait for later for that.
+
+> Maybe you have better ideas.  Be constructive!  Make suggestions!
+
+Again, have the file there only if this is something that the hardware
+supports.  Don't fail a read just because the hardware does not seem to
+support it, but it might sometime in the future if you just happen to
+unplug/plug it back in.
+
+> > > +		This prevents downgrade attacks where an attacker consumes
+> > > +		memory or disturbs communication in order to create the
+> > > +		appearance that a device does not support authentication.
+> > 
+> > If an attacker can consume kernel memory to cause this to happen you
+> > have bigger problems.  That's not the kernel's issue here at all.
+> > 
+> > And "disable communication" means "we just don't support it as the
+> > device doesn't say it does", so again, why does that matter?
+> 
+> Reacting to potential attacks sure is the kernel's business.
+
+Reacting to real, software attacks is the kernel's business.  Reacting
+to possible hardware issues that are just theoretical is not.
+
+> > > +		The reason why authentication support could not be determined
+> > > +		is apparent from "dmesg".  To re-probe authentication support
+> > > +		of PCI devices, exercise the "remove" and "rescan" attributes.
+> > 
+> > Don't make userspace parse kernel logs for this type of thing.  And
+> > asking userspace to rely on remove and recan is a mess, either show it
+> > works or not.
+> 
+> I'd say looking in dmesg to determine whether the user is being attacked
+> is perfectly fine, as is requiring the user to explicitly act on a
+> potential attack.
+> 
+> 
+> > > --- a/drivers/pci/cma.c
+> > > +++ b/drivers/pci/cma.c
+> > > @@ -171,8 +171,10 @@ void pci_cma_init(struct pci_dev *pdev)
+> > >  {
+> > >  	struct pci_doe_mb *doe;
+> > >  
+> > > -	if (IS_ERR(pci_cma_keyring))
+> > > +	if (IS_ERR(pci_cma_keyring)) {
+> > > +		pdev->spdm_state = ERR_PTR(-ENOTTY);
+> > 
+> > Why ENOTTY?
+> 
+> We use -ENOTTY as return value for unsupported reset methods in the
+> PCI core, see e.g. pcie_reset_flr(), pcie_af_flr(), pci_pm_reset(),
+> pci_parent_bus_reset(), pci_reset_hotplug_slot(), ...
+> 
+> We also use -ENOTTY in pci_bridge_wait_for_secondary_bus() and
+> pci_dev_wait().
+> 
+> It was used here to be consistent with those existing occurrences
+> in the PCI core.
+> 
+> If you'd prefer something else, please make a suggestion.
+
+Ah, didn't realize that was a pci thing, ok, nevermind.
+
+> > > +static ssize_t authenticated_store(struct device *dev,
+> > > +				   struct device_attribute *attr,
+> > > +				   const char *buf, size_t count)
+> > > +{
+> > > +	void *spdm_state = dev_to_spdm_state(dev);
+> > > +	int rc;
+> > > +
+> > > +	if (IS_ERR_OR_NULL(spdm_state))
+> > > +		return PTR_ERR(spdm_state);
+> > > +
+> > > +	if (sysfs_streq(buf, "re")) {
+> > 
+> > I don't like sysfs files that when reading show a binary, but require a
+> > "magic string" to be written to them to have them do something else.
+> > that way lies madness.  What would you do if each sysfs file had a
+> > custom language that you had to look up for each one?  Be consistant
+> > here.  But again, I don't think you need a store function at all, either
+> > the device supports this, or it doesn't.
+> 
+> I'm not sure if you've even read the ABI documentation in full.
+> 
+> The store method is needed to reauthenticate the device,
+> e.g. after a new trusted root certificate was added to the
+> kernel's .cma keyring.
+
+Why not have a different file called "reauthentication" that only allows
+a write to it of a 1/Y/y to do the reauthentication.  sysfs is a "one
+file per thing" interface, not a "parse a command and do something but
+when read from return a different value" interface.
+
+Let's keep it dirt simple please.
+
+thanks,
+
+greg k-h
 
