@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-539035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D4DA4A00C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:15:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFDA4A009
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A433B25E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:14:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471D17A0613
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3574F1F4C9F;
-	Fri, 28 Feb 2025 17:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD6B1F4C92;
+	Fri, 28 Feb 2025 17:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pDfsfCZ7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BwLi/fZD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blOqq7ri"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770151F4C87;
-	Fri, 28 Feb 2025 17:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E71F4C87
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762848; cv=none; b=oHuPySO0vUTCn9/CONAVnr1SjuBURrckgWqTXY8jo/bxuGwSdQSUyn/EcbVbFceVe3ePjcp0el8bRABbPbGZ0wIAToxUpk0+Mk5TCOXgljj5P2KYTxoK24Fk4HBP5sN0BFnZdTkI4Tt2//geomT8cbjVnu59RSrfBLJFj7sAEzk=
+	t=1740762880; cv=none; b=PTmoVGoEdXcn07TctyjXF9KcyjOR10Pvxckg2q9uCm7YVO87BB0JCZluc1UzPfSNc2FpUK+Moqc5ANWOO/FOBFxLAf7NFDD2h17LmUW8Icu7TArxRU5FaGLtJDPsXKa35eas9GhD5fCGjlinj63JTiNUVQf+MdPblSeaywl18zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762848; c=relaxed/simple;
-	bh=xuLYWQOhgw08vQ5BKp/nueL1UkemSm7dHbP2izObk7I=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=fRhN5St85J+pFYQ5JT8j1N1i+eMnOgob4fZ885mOTC+wSuGX9MlmY5tr5S5NplGQ+pt/8KzdLt4KSUBYRKxemmh9spjzYy1jQ4C+NTi966ChefcIeNYTkTNYI5rIf2cqdmMjYvaI0ivmBnHnWAWT/8wy2mFhFQmssnDfIC2Ofc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pDfsfCZ7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BwLi/fZD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Feb 2025 17:14:02 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740762843;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DVq1fsVwKJQ065yNUvP8FvYbfitStPoHjuHRmULWWeA=;
-	b=pDfsfCZ7w2dNzAWyVAMlSRcwnf+3fc3TKwd3awctD94A9FNlnYcRX937hWZtnFJVi9kIU5
-	Le0ss4gWPn42p1LDN+veMtiQpf2IVoIQe8Mhbph0UR82hXMKEp4K2r8HFPZSW+SAABJUCA
-	LTY9Gj50Q3WQEdgR9+/6ADw9jHU1dVgAfV4AFFKhLV7fDNn7d8Z6j3wQxvS6Zyxxpdbu1a
-	fRReoPIHk+dwl6zC9/+Mfr2mjNKVwkYp4C+Eb3VE/TLRQufwGG9J6zk7cEn4aCOv1wkV+b
-	2ChO6HaiSdLkiw81MdX6ZwE4Ol0pTo9JZS9b7nwU8ugV20X/YYMQdxchyg07/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740762843;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DVq1fsVwKJQ065yNUvP8FvYbfitStPoHjuHRmULWWeA=;
-	b=BwLi/fZDeFiAN4dxJi6OTDQC3H8/T6oeRRIafuJElx9srOK6VQZGlFEJM+78ZvUBvX3V/E
-	qHFshinFFTbPMrCg==
-From: "tip-bot2 for Philip Redkin" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/mm] x86/mm: Check return value from memblock_phys_alloc_range()
-Cc: Philip Redkin <me@rarity.fan>, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Rik van Riel <riel@surriel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan>
-References: <94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan>
+	s=arc-20240116; t=1740762880; c=relaxed/simple;
+	bh=NUeO+pACom+KYAvSBkCxTGgdvDOR9Jpk1E6DXGXn5d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKakhsZnzRMuxkupJh/4sjJN8zIiGYYnm1SIy6Wet9gWlMe7wdza9/HQzMUKwkALRSPFKsX5g2h21ore4eYInnmiMd02jIKee2pcRDxp7dRIGuQ96xaBUboSUke55uHpLG9aKI50o2oyZ+4asFF1CT8gzCUqR3vnU49wP3aTqqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blOqq7ri; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26549C4CEE5;
+	Fri, 28 Feb 2025 17:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740762879;
+	bh=NUeO+pACom+KYAvSBkCxTGgdvDOR9Jpk1E6DXGXn5d8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=blOqq7riYw7R2bigdfXnOIr7FBqTYdzXTdZGHwRMGAX8zLhtdK1E+SlbmmjRxOjxW
+	 4pcfCBzvvrkg8moo3H6dW1nRmeS7jZ1U2IfwO02whAEsP89tOkl+g6JJ1UVw1Cmech
+	 +7g60/hSpSx1LcShpVYdqrZSElpf3w6pOIYp554pOJpnSOlmEe4O687MWQLigOyVfv
+	 4WKGu+AMVDlUJ1GZhFuM3DuBwd3eyIq1VH9ofgDfLqZKCV0oFqPnr+JvMPPpVexa7x
+	 oBMgNvy9wjZiETUS/+OyXEgvAcx/8xQ32rHdcJfeJMCQENI9N7pEKgIfUKCM8wu0LF
+	 QKWg1oZ7M4dwQ==
+Date: Fri, 28 Feb 2025 18:14:26 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
+	david@redhat.com, jane.chu@oracle.com, osalvador@suse.de,
+	tglx@linutronix.de
+Subject: Re: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
+Message-ID: <Z8Hu8oDHRnLx_gxm@gmail.com>
+References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
+ <20241212080904.2089632-3-kevin.brodsky@arm.com>
+ <Z8BiUnkPnvrx06vp@gmail.com>
+ <Z8BirVtqibWY6zaT@gmail.com>
+ <ce29384e-b3fe-4196-a986-bb57a5d693d6@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174076284296.10177.8589425371875617719.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ce29384e-b3fe-4196-a986-bb57a5d693d6@arm.com>
 
-The following commit has been merged into the x86/mm branch of tip:
+* Kevin Brodsky <kevin.brodsky@arm.com> wrote:
 
-Commit-ID:     fd5935f9c20431eeadd6993fd4d2672e3e17a6b8
-Gitweb:        https://git.kernel.org/tip/fd5935f9c20431eeadd6993fd4d2672e3e17a6b8
-Author:        Philip Redkin <me@rarity.fan>
-AuthorDate:    Fri, 15 Nov 2024 20:36:59 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 28 Feb 2025 18:02:10 +01:00
+> On 27/02/2025 14:03, Ingo Molnar wrote:
+> > * Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >> So I tried to pick up this patch belatedly, but there's more places 
+> >> that mistakenly learned to rely on the stray <linux/mm.h> inclusion, 
+> >> for example on x86 defconfig-ish kernels:
+> >>
+> >>
+> >>   In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
+> >>   ./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name ‘pgprot_t’
+> >>   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
+> >>   |                                                         ^~~~~~~~
+> 
+> This patch relies on patch 1 in this series, which removes 
+> __set_memory_prot(). I seem to be able to build x86_64_defconfig 
+> without issue with both patches applies on the latest mainline.
 
-x86/mm: Check return value from memblock_phys_alloc_range()
+Oh, the 1/2 patch was missing from my mailbox (my mbox's fault, not yours),
+and apparently the 'PATCH 2/2' tag wasn't a big enough of a clue for me
+that there's a dependent patch. ;-)
 
-At least with CONFIG_PHYSICAL_START=0x100000, if there is < 4 MiB of
-contiguous free memory available at this point, the kernel will crash
-and burn because memblock_phys_alloc_range() returns 0 on failure,
-which leads memblock_phys_free() to throw the first 4 MiB of physical
-memory to the wolves.
+Anyway, I re-tested it with both patches applied and it's all looking 
+good now, and I have applied them to tip:x86/headers.
 
-At a minimum it should fail gracefully with a meaningful diagnostic,
-but in fact everything seems to work fine without the weird reserve
-allocation.
+Thanks,
 
-Signed-off-by: Philip Redkin <me@rarity.fan>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lore.kernel.org/r/94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan
----
- arch/x86/mm/init.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 62aa4d6..bfa444a 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -645,8 +645,13 @@ static void __init memory_map_top_down(unsigned long map_start,
- 	 */
- 	addr = memblock_phys_alloc_range(PMD_SIZE, PMD_SIZE, map_start,
- 					 map_end);
--	memblock_phys_free(addr, PMD_SIZE);
--	real_end = addr + PMD_SIZE;
-+	if (!addr) {
-+		pr_warn("Failed to release memory for alloc_low_pages()");
-+		real_end = max(map_start, ALIGN_DOWN(map_end, PMD_SIZE));
-+	} else {
-+		memblock_phys_free(addr, PMD_SIZE);
-+		real_end = addr + PMD_SIZE;
-+	}
- 
- 	/* step_size need to be small so pgt_buf from BRK could cover it */
- 	step_size = PMD_SIZE;
+	Ingo
 
