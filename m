@@ -1,60 +1,90 @@
-Return-Path: <linux-kernel+bounces-538068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C021A4943F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1324A4944E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34D3E7A2EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:59:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A4F07A2AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C0B1BE23E;
-	Fri, 28 Feb 2025 09:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37841256C7C;
+	Fri, 28 Feb 2025 09:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UKq6HgbR"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQnEKnQ5"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D261E255E22
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60322580CA
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733217; cv=none; b=SysON0NzCaVTf/pPZUVRZ0CeHJgsbfYuMvKGjj4IHn7kZCLZiAMcf4DngOSiiSpYvAWcrOiB7Az8kC+F2a0Zlj4Hk6dQ6DPe9nkO5mVhJzilcqAYUCdVOHD86djWSgt0B3BNuM5XDtXXSFMPh1ZOKW9QpU3uYDhhH8xOLhAQIo0=
+	t=1740733290; cv=none; b=fC82yj+YNeHdnReZd1xODcV8pIm9vi85/0M9c1wDFHKMgUAV1e+ZgJXwPLAGJJ0wfmhTRudGbngo/fPJ2woOZTVFYVkyqTiNJ0j5Sv8LDhUQ27JCgU8ByqmMbo+EP1yUGndBSPqH+LJ/CL0KLbHl8FotPrRtyKwN53zbguTkR9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733217; c=relaxed/simple;
-	bh=mzc25wq3Csf/EZLN6ZLDiln49xQ+5s7zroBqJBuLEfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RlNcxCo7rjYAHXnCDEgAUb7/O6RpVkGyTtjJXJXxHKuWerzQ+cQh0eo7oOR9uwtdBJX9fucYz1BLBhPEfAh+oFEblBW4J2xHvaBjwdAJcd87Y9rQD0KN33+QGvvMOrvWklellNAniOkCBGIdj8n5woudo4Z86di4KyyadPQfFNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UKq6HgbR; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SOiQ8tn4AKnAdhAjLocySKLR0p2tLjQ2yrXrzUz5VHw=; b=UKq6HgbRovZZCQLRMyxtLC0X0r
-	hwA1Ak+BkM6OcbaSZkpmbbz+onRwtF1hu3t3qbW2TxZMiX9fCy6uI5ajYY3U5pPoThXJhVQyHkTIc
-	gX0S4hwoXWw0paRsRiJS43Qnnb4gDCPnolLAA9ODpCBNB70xidCJlezZDDEVxAn260iZENfu6eYFe
-	F+2zpDnA1eF2O74IvGYp+RqXsM0z7rPZbP01S4/EuUazqnkeE9tUuKzEujFSrAMcG0ahB06UYgvID
-	tmEkSX/UZtGjbLwbM90KC+V+hxPISUFrCzj2dRn8efX/nV4dI5xr0oDP89DD4iTxD+49X6DP5uOEy
-	yNCs9eUg==;
-Received: from [58.29.143.236] (helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tnwDn-001xDd-OY; Fri, 28 Feb 2025 09:59:58 +0100
-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com
-Cc: kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH v2] sched_ext: Add trace point to track sched_ext core events
-Date: Fri, 28 Feb 2025 17:59:44 +0900
-Message-ID: <20250228085944.19451-1-changwoo@igalia.com>
+	s=arc-20240116; t=1740733290; c=relaxed/simple;
+	bh=P7Irf1sb72m7M+wDMPQxtmBPtVt1VYdKd795BUkun2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e7hYRG2iO0E9s1sReED7qlasRFmMJXwesX1Vv95Voqs1jcdqX5N2EBmEZYnL4o+Jst6qOQTI7kFLM/MPVa4lgCr8duhuoJlxjDS4V4+QrtDJsIHKQv2prKl+HBKYsk2Ws3hjAa+Gz1K2kpiDhVgzenys4cjDw9gOeJL85+EeFm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQnEKnQ5; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abbac134a19so283605066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740733287; x=1741338087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LiR3Q3Hzx+LFjLqooUrXeDrXwUS05trGGD2104VPDY8=;
+        b=OQnEKnQ5Xe4BvyUNf/rKzb0/bQiqlugzXo03qCUFxrpvvWFXErXnDIOHCQQsriCVLU
+         t5Pngg/kdKeftig8e0JRSWk/q9LKswHA+BvYXEqeY4ZB+K0cA11cz4jm8DDQdhEKX5th
+         cHwd5sMATZibFf8PTNTwO8By8naVp21GxSV3SJ4rKk5HjFskXf1ME80JmR0BegQVpk81
+         7g1c1DualHRelGBQ8iAod/S13NCxQmcjw3Qvvq73l04FCGfx35/ePo5MtMq+lyknQkWS
+         f2eiUprgxnSEdieqfbe1HITMVfgztiLquEVMILC8YVdEhwrubn5HhaJl5hJH/PZrM8dK
+         FVMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740733287; x=1741338087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LiR3Q3Hzx+LFjLqooUrXeDrXwUS05trGGD2104VPDY8=;
+        b=hMo+x5qkVET0A4mrDYmNC0Rr3PQXQ4Hez5QtCQvNvGKd8B0PeCBbrJklZRLXMiY5d2
+         kp8STBIUDA+qffjbI6MsizlJUtyzau8L3YKR8Cnb6igwvP4ZbPCeble5urSfV8ZBm/V1
+         JilHxmbjL1xSZQq46LzRx+EVe86XQ2cdw+NwrlBdmumA9T1yQaJatLYOYO86D1lLjkyN
+         RVN/USloCsk0vd8tNf9t7MU0xxpC0lPRU5X9/RCzFEciBZSRrlZ5BIvQe4rqzIXfYZ6Q
+         ik6OOWaWvzbQOGF3zTXOTSKYW44DAC+1eeZQOaARL893WODQFMx0/f5MwwbzIluvbO9C
+         Se8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYoprl7qoX3FJKOtznQlTNnvsmrxadqYOuU1+4VkAcVqzXzTg9stsa1rwHd51mMlNpSyjxTBlsQ5oP/GE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy49D9JQZDPryQwRItrjC2JNtGIhkwFJZ9EDI5XTtB+EizVh5CM
+	ebhQXVp9kApWJZttxSW+EoxpSaIDUmF6DcvacFOl6XcyBvjlwieq
+X-Gm-Gg: ASbGnct1rH9JtmttupSQ3oHEIbC5eI0nmxOp/LjcyjGou1BNNVBh3Ikqje9Q8lq4uwC
+	kx5LRjKbJBjJKkML3Fp/f0HoMRGIgZsKQoTjULG8XA7EulrgfMaLItDDok17lt1cNmHBi2+MP3L
+	o+Zzs6me8nnkxtHaCLMZexVfW56XNG0N2KUYIPgwrj9rih70Bbla4FFVPe+b8OwVnyOGKObKP7K
+	SCQVHRQw7J7HjOBH53aCg2oXMjwOriq2PzLoiIbjtdumJUwg4Kbq1puVcqktGb2gnm2DPmbm5n0
+	+Gbb879GOyBNaJMf0Q==
+X-Google-Smtp-Source: AGHT+IH7wl9bSRrHP5kWST85mxMZuYKEPvcz8cnXAvDNj4PvbvFgz3YSLxbx/1/EH0xeGLaoKUTfsw==
+X-Received: by 2002:a17:907:2d90:b0:ab7:8930:5669 with SMTP id a640c23a62f3a-abf25fbb482mr252696366b.18.1740733285896;
+        Fri, 28 Feb 2025 01:01:25 -0800 (PST)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dd9f1sm261651366b.62.2025.02.28.01.01.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 01:01:25 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] um/locking: Remove semicolon from "lock" prefix
+Date: Fri, 28 Feb 2025 10:00:08 +0100
+Message-ID: <20250228090058.2499163-1-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,98 +94,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add tracing support to track sched_ext core events
-(/sched_ext/sched_ext_event). This may be useful for debugging sched_ext
-schedulers that trigger a particular event.
+Minimum version of binutils required to compile the kernel is 2.25.
+This version correctly handles the "lock" prefix, so it is possible
+to remove the semicolon, which was used to support ancient versions
+of GNU as.
 
-The trace point can be used as other trace points, so it can be used in,
-for example, `perf trace` and BPF programs, as follows:
+Due to the semicolon, the compiler considers "lock; insn" as two
+separate instructions. Removing the semicolon makes asm length
+calculations more accurate, consequently making scheduling and
+inlining decisions of the compiler more accurate.
 
-======
-$> sudo perf trace -e sched_ext:sched_ext_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
-======
+Removing the semicolon also enables assembler checks involving lock
+prefix. Trying to assemble e.g. "lock andl %eax, %ebx" results in:
 
-======
-struct tp_sched_ext_event {
-	struct trace_entry ent;
-	u32 __data_loc_name;
-	u64 delta;
-};
+  Error: expecting lockable instruction after `lock'
 
-SEC("tracepoint/sched_ext/sched_ext_event")
-int rtp_add_event(struct tp_sched_ext_event *ctx)
-{
-	char event_name[128];
-	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
-        bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
-
-	bpf_printk("name %s   delta %llu", event_name, ctx->delta);
-	return 0;
-}
-======
-
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 ---
+ arch/x86/um/asm/barrier.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-ChangeLog v1 -> v2:
- - Rename @added field to @delta for clarity.
- - Rename sched_ext_add_event to sched_ext_event.
- - Drop the @offset field to avoid the potential misuse of non-portable numbers.
-
- include/trace/events/sched_ext.h | 19 +++++++++++++++++++
- kernel/sched/ext.c               |  2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
-index fe19da7315a9..b73499981682 100644
---- a/include/trace/events/sched_ext.h
-+++ b/include/trace/events/sched_ext.h
-@@ -26,6 +26,25 @@ TRACE_EVENT(sched_ext_dump,
- 	)
- );
- 
-+TRACE_EVENT(sched_ext_event,
-+	    TP_PROTO(const char *name, __u64 delta),
-+	    TP_ARGS(name, delta),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(	__u64,		delta		)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->delta		= delta;
-+	),
-+
-+	TP_printk("name %s delta %llu",
-+		  __get_str(name), __entry->delta
-+	)
-+);
-+
- #endif /* _TRACE_SCHED_EXT_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 986b655911df..53729c584b63 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1554,6 +1554,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
+diff --git a/arch/x86/um/asm/barrier.h b/arch/x86/um/asm/barrier.h
+index 4da336965698..b51aefd6ec2b 100644
+--- a/arch/x86/um/asm/barrier.h
++++ b/arch/x86/um/asm/barrier.h
+@@ -12,9 +12,9 @@
   */
- #define scx_add_event(name, cnt) do {						\
- 	this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
+ #ifdef CONFIG_X86_32
  
- /**
-@@ -1565,6 +1566,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
-  */
- #define __scx_add_event(name, cnt) do {						\
- 	__this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
+-#define mb()	alternative("lock; addl $0,0(%%esp)", "mfence", X86_FEATURE_XMM2)
+-#define rmb()	alternative("lock; addl $0,0(%%esp)", "lfence", X86_FEATURE_XMM2)
+-#define wmb()	alternative("lock; addl $0,0(%%esp)", "sfence", X86_FEATURE_XMM)
++#define mb()	alternative("lock addl $0,0(%%esp)", "mfence", X86_FEATURE_XMM2)
++#define rmb()	alternative("lock addl $0,0(%%esp)", "lfence", X86_FEATURE_XMM2)
++#define wmb()	alternative("lock addl $0,0(%%esp)", "sfence", X86_FEATURE_XMM)
  
- /**
+ #else /* CONFIG_X86_32 */
+ 
 -- 
 2.48.1
 
