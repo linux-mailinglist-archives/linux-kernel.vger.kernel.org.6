@@ -1,171 +1,243 @@
-Return-Path: <linux-kernel+bounces-539142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40BCA4A169
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:26:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B21A4A164
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85333174C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CBF3BCA09
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77B027602C;
-	Fri, 28 Feb 2025 18:25:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3227FE7D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399727002E;
+	Fri, 28 Feb 2025 18:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7eV4+FK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D2B276046;
+	Fri, 28 Feb 2025 18:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767124; cv=none; b=HVenO7txbQqEXojDk3ofBnkS/OzbzlVz3HHq9ypsjOIBP/Rf/MAIEyl43ShzJgjwRNpNDJnOMsAZkAvPAzmF4EjXvN5i2A40fmsG7wH2izcvyKtZs3klw1bZn6q/mtQRuzXegao0+01FJDGmNM318MomLewqow4h6jekD29G5Og=
+	t=1740767075; cv=none; b=GeZ9a67Y6t4VYrzEUSEljgD22rCwCTRTVk+OLcqX294Q2FH42opBR/YtGBNz6v2J2nMyrHnrW5e6rkAKaSuoHa1JimCra+dQsnuRre8F6Nf8IBp/NYc0ZB2jFUhlPU0fo1qT7vRh6SLE+rQbiZLWElc4xek+X29vGAywnHpDt5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767124; c=relaxed/simple;
-	bh=isMZCeL05jqInw1dcZFOt7OjqqcZM5ZV9+VOww44NeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NjE8tBkT+KgPrTgj/RGuVQCwzpiBHC7M2c1tVvjQnDbkD7FFgB0XDpSNQWTHE3PAbxmmTDh7jpVUt97EJkYuYU11/lZhKYIs8igSJD7rUCdncNbKFgF5U+Vx+YdVQlmwhhUybQfPNaGyTto6YxckXAb1sXbj0fRk5KeDmcbdW0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4995D19F0;
-	Fri, 28 Feb 2025 10:25:37 -0800 (PST)
-Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF65D3F6A8;
-	Fri, 28 Feb 2025 10:25:18 -0800 (PST)
-From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-To: ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	joro@8bytes.org,
-	jean-philippe@linaro.org,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	oliver.upton@linux.dev,
-	james.morse@arm.com,
-	broonie@kernel.org,
-	maz@kernel.org,
-	david@redhat.com,
-	akpm@linux-foundation.org,
-	jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	mshavit@google.com,
-	jsnitsel@redhat.com,
-	smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-Subject: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Date: Fri, 28 Feb 2025 18:24:04 +0000
-Message-ID: <20250228182403.6269-6-miko.lenczewski@arm.com>
-X-Mailer: git-send-email 2.45.3
-In-Reply-To: <20250228182403.6269-2-miko.lenczewski@arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1740767075; c=relaxed/simple;
+	bh=hFss+V64FKtbHUiLgnvmpNjzRUCCQs/2WuN6Q/rdJEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GI6WVQtoleeJOk5CZo/xlznRjPplz/b3gZYWKuDQB1bZwlm2HLkR/mMx/97K4Y/Q/NfFSkYoJNNmdT+7dyyX95H0I7Hytzu6JH3xjexqdAGK5x7dF67gc/1MYO/2eFUnfIGTwS84s1YhkzgPPwRKIOAuL7PDJhJomvoU2r9Hi78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7eV4+FK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D1EC4CEE2;
+	Fri, 28 Feb 2025 18:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740767074;
+	bh=hFss+V64FKtbHUiLgnvmpNjzRUCCQs/2WuN6Q/rdJEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R7eV4+FKgbQlKK3BuaqhU2mEmGNYyMQfgn476SJd1/pZLHAF9wNpCgWSYypBotMrq
+	 SFTb6EJdvs3Vg1Zxl8ipIPnSuwh8sa0UF5pbasXl9L1OKV2aVtR6mBMk5y0RqnuYAF
+	 WzWiJ39gnvXww2DVbcxgBM32kVx5/5LmKo3+QbIZwEEmc2athx3AFX9QAlufp4WRRp
+	 OYBNRhqAu7vGxUb2+JkjP4JcieD8heVBeHizePdaFKgvm892ctkSq+Xsgz/46oc2Fz
+	 zMOSDcPktTbvZCZvkKbqYKyndZJhCxfUL2CgF+DkeDVW03bPDn0DrGVAuJ5xFLQik+
+	 EDs6/6PlJH77g==
+Date: Fri, 28 Feb 2025 18:24:30 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
+ flash LED driver
+Message-ID: <20250228-zipfile-net-69e4bbebd8d6@spud>
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LTXo1e2XtcxG1y4X"
+Content-Disposition: inline
+In-Reply-To: <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
 
-For supporting BBM Level 2 for userspace mappings, we want to ensure
-that the smmu also supports its own version of BBM Level 2. Luckily, the
-smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
-0487K.a D8.16.2), so already guarantees that no aborts are raised when
-BBM level 2 is claimed.
 
-Add the feature and testing for it under arm_smmu_sva_supported().
+--LTXo1e2XtcxG1y4X
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
----
- arch/arm64/kernel/cpufeature.c                  | 7 +++----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
- 4 files changed, 13 insertions(+), 4 deletions(-)
+On Fri, Feb 28, 2025 at 11:31:23AM +0100, Matthias Fend wrote:
+> Document Texas Instruments TPS61310/TPS61311 flash LED driver devicetree
+> bindings.
+>=20
+> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> ---
+>  .../devicetree/bindings/leds/ti,tps6131x.yaml      | 123 +++++++++++++++=
+++++++
+>  1 file changed, 123 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml b/Do=
+cumentation/devicetree/bindings/leds/ti,tps6131x.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c08b3cef7abcec07237d32714=
+56ff1f888b2b809
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 63f6d356dc77..1022c63f81b2 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int sco
- 			if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
- 				return false;
- 		}
--
--		return true;
- 	} else if (scope & SCOPE_LOCAL_CPU) {
- 		/* We are a hot-plugged CPU, so only need to check our MIDR.
- 		 * If we have the correct MIDR, but the kernel booted on an
-@@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int sco
- 		 * we have an incorrect MIDR, but the kernel booted on a
- 		 * sufficient CPU, we will not bring up this CPU.
- 		 */
--		return cpu_has_bbml2_noabort(read_cpuid_id());
-+		if (!cpu_has_bbml2_noabort(read_cpuid_id()))
-+			return false;
- 	}
- 
--	return false;
-+	return has_cpuid_feature(caps, scope);
- }
- 
- #ifdef CONFIG_ARM64_PAN
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-index 9ba596430e7c..6ba182572788 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-@@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
- 		feat_mask |= ARM_SMMU_FEAT_VAX;
- 	}
- 
-+	if (system_supports_bbml2_noabort())
-+		feat_mask |= ARM_SMMU_FEAT_BBML2;
-+
- 	if ((smmu->features & feat_mask) != feat_mask)
- 		return false;
- 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 358072b4e293..dcee0bdec924 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
- 	if (FIELD_GET(IDR3_RIL, reg))
- 		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
- 
-+	if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
-+		smmu->features |= ARM_SMMU_FEAT_BBML2;
-+
- 	/* IDR5 */
- 	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
- 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index bd9d7c85576a..85eaf3ab88c2 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -60,6 +60,9 @@ struct arm_smmu_device;
- #define ARM_SMMU_IDR3			0xc
- #define IDR3_FWB			(1 << 8)
- #define IDR3_RIL			(1 << 10)
-+#define IDR3_BBML			GENMASK(12, 11)
-+#define IDR3_BBML1			(1 << 11)
-+#define IDR3_BBML2			(2 << 11)
- 
- #define ARM_SMMU_IDR5			0x14
- #define IDR5_STALL_MAX			GENMASK(31, 16)
-@@ -754,6 +757,7 @@ struct arm_smmu_device {
- #define ARM_SMMU_FEAT_HA		(1 << 21)
- #define ARM_SMMU_FEAT_HD		(1 << 22)
- #define ARM_SMMU_FEAT_S2FWB		(1 << 23)
-+#define ARM_SMMU_FEAT_BBML2		(1 << 24)
- 	u32				features;
- 
- #define ARM_SMMU_OPT_SKIP_PREFETCH	(1 << 0)
--- 
-2.45.3
+With a filename matching one of the compatibles in the file,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
+Cheers,
+Conor.
+
+> @@ -0,0 +1,123 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/ti,tps6131x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments TPS6131X flash LED driver
+> +
+> +maintainers:
+> +  - Matthias Fend <matthias.fend@emfend.at>
+> +
+> +description: |
+> +  The TPS61310/TPS61311 is a flash LED driver with I2C interface.
+> +  Its power stage is capable of supplying a maximum total current of rou=
+ghly 1500mA.
+> +  The TPS6131x provides three constant-current sinks, capable of sinking
+> +  up to 2 =D7 400mA (LED1 and LED3) and 800mA (LED2) in flash mode.
+> +  In torch mode, each sink (LED1, LED2, LED3) supports currents up to 17=
+5mA.
+> +
+> +  The data sheet can be found at:
+> +    https://www.ti.com/lit/ds/symlink/tps61310.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,tps61310
+> +      - ti,tps61311
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO connected to NRESET pin
+> +
+> +  ti,valley-current-limit:
+> +    type: boolean
+> +    description:
+> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS613=
+10) or
+> +      from 2480mA to 1800mA (TPS61311).
+> +
+> +  led:
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      led-sources:
+> +        allOf:
+> +          - minItems: 1
+> +            maxItems: 3
+> +            items:
+> +              enum: [1, 2, 3]
+> +
+> +      led-max-microamp:
+> +        anyOf:
+> +          - minimum: 25000
+> +            maximum: 350000
+> +            multipleOf: 50000
+> +          - minimum: 25000
+> +            maximum: 525000
+> +            multipleOf: 25000
+> +
+> +      flash-max-microamp:
+> +        anyOf:
+> +          - minimum: 25000
+> +            maximum: 800000
+> +            multipleOf: 50000
+> +          - minimum: 25000
+> +            maximum: 1500000
+> +            multipleOf: 25000
+> +
+> +      flash-max-timeout-us:
+> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 7=
+1500,
+> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
+> +
+> +    required:
+> +      - led-sources
+> +      - led-max-microamp
+> +      - flash-max-microamp
+> +      - flash-max-timeout-us
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - led
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/common.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      led-controller@33 {
+> +        compatible =3D "ti,tps61310";
+> +        reg =3D <0x33>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        reset-gpios =3D <&gpio1 0 GPIO_ACTIVE_LOW>;
+> +
+> +        tps61310_flash: led {
+> +          function =3D LED_FUNCTION_FLASH;
+> +          color =3D <LED_COLOR_ID_WHITE>;
+> +          led-sources =3D <1>, <2>, <3>;
+> +          led-max-microamp =3D <525000>;
+> +          flash-max-microamp =3D <1500000>;
+> +          flash-max-timeout-us =3D <852000>;
+> +        };
+> +      };
+> +    };
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--LTXo1e2XtcxG1y4X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8H/XgAKCRB4tDGHoIJi
+0jUeAP0a+qzuVsXmjlgmLl6z3Gyxonrx4RKhuAi9VtBd5aNZawD/Zgjrck1Y1OLR
+DjlVas5c3ZcarodzgxNWgZ/3Djf+sgg=
+=bVW4
+-----END PGP SIGNATURE-----
+
+--LTXo1e2XtcxG1y4X--
 
