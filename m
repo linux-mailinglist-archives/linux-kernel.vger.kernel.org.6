@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-538823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EF1A49D74
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:29:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B56A49D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C1F18925E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB5174BDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8775226FDA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8902726FDB6;
 	Fri, 28 Feb 2025 15:29:33 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2507328EC;
-	Fri, 28 Feb 2025 15:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F40E1EF398
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740756573; cv=none; b=M9Z2FjV4X+UF9b6VzgAXrRbXqrFwq1uZJvtJGciw8KA6Y0KjWqj/94Jnufr6HE8hO8bYFqAOj5HkbBLms37V7g74slGBLQEyXa6dheWtDb1MEOrq6KKIkYb90+e0ZFOOPNPSOMo8Rnf8Y3Z3Z1RoVEGO1aF9JLSH0/XdTTlSnPI=
+	t=1740756573; cv=none; b=t5M5g0UmhdXcjpooJVcew8tZhKCdBEOQuihevHvbQ8aIhYJ5d8HEBon9E0w+B11BU0xiIJKXBvsBRUGFB6ifDt5J7OpjfCfYjOSHh1VHHtv//VgiWglFTJjRMq7JBrNAoHdoxZCFX6EAljkFpDC8kLt2G05n5evWCubPgiCH+64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740756573; c=relaxed/simple;
-	bh=LJ08NdP1c9CbJ9N7jSlTikmk0Dqt3ixorqQWsXu5+vQ=;
+	bh=tpc0/ziulvn5c4ZdC9qmfIr2qA1apP1byGL26sHuBiU=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=bdivdsgV1D0GbgDt0Tz7UuPT/rcdBCzitl/nNxAe2rsQVTpmxJkuT7ohY7F5c/iKarnO81go6B3BTH9z7HJPh483Fb11Xsw268S32nUAGC3C6i1na+diZEfSe/fzggexLphFLwFI1hNYO2MCQ50vacLEzcbN/BlJ8hvbqxaPR4o=
+	 Content-Type; b=nQMnXpsJmbWwoKt/pxT1GidSfJqA0ypFBR5FzAlEaWfn8uSSodgr27SNRfer8iBFZXUhWEO7EnyGRck+dgRNrZtVy+kgQlmQwBa3rBfaMuauqPcfUUVLoYGP3EyZnVHv4rby78W96o1f47LtOOAYz480fs5AIiMr2hQ5YMv+bNc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FB7C4CED6;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F42C4CEE8;
 	Fri, 28 Feb 2025 15:29:32 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1to2Je-0000000ABhB-1jQw;
+	id 1to2Je-0000000ABhh-2QwM;
 	Fri, 28 Feb 2025 10:30:18 -0500
-Message-ID: <20250228153018.265843538@goodmis.org>
+Message-ID: <20250228153018.433948918@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 28 Feb 2025 10:30:04 -0500
+Date: Fri, 28 Feb 2025 10:30:05 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- stable@vger.kernel.org,
- Tomas Glozar <tglozar@redhat.com>,
- Tom Zanussi <zanussi@kernel.org>
-Subject: [for-linus][PATCH 1/3] tracing: Fix bad hist from corrupting named_triggers list
+ Sven Schnelle <svens@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>
+Subject: [for-linus][PATCH 2/3] selftests/ftrace: Let fprobe test consider already enabled functions
 References: <20250228153003.725613767@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,137 +55,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Heiko Carstens <hca@linux.ibm.com>
 
-The following commands causes a crash:
+The fprobe test fails on Fedora 41 since the fprobe test assumption that
+the number of enabled_functions is zero before the test starts is not
+necessarily true. Some user space tools, like systemd, add BPF programs
+that attach to functions. Those will show up in the enabled_functions table
+and must be taken into account by the fprobe test.
 
- ~# cd /sys/kernel/tracing/events/rcu/rcu_callback
- ~# echo 'hist:name=bad:keys=common_pid:onmax(bogus).save(common_pid)' > trigger
- bash: echo: write error: Invalid argument
- ~# echo 'hist:name=bad:keys=common_pid' > trigger
+Therefore count the number of lines of enabled_functions before tests
+start, and use that as base when comparing expected results.
 
-Because the following occurs:
-
-event_trigger_write() {
-  trigger_process_regex() {
-    event_hist_trigger_parse() {
-
-      data = event_trigger_alloc(..);
-
-      event_trigger_register(.., data) {
-        cmd_ops->reg(.., data, ..) [hist_register_trigger()] {
-          data->ops->init() [event_hist_trigger_init()] {
-            save_named_trigger(name, data) {
-              list_add(&data->named_list, &named_triggers);
-            }
-          }
-        }
-      }
-
-      ret = create_actions(); (return -EINVAL)
-      if (ret)
-        goto out_unreg;
-[..]
-      ret = hist_trigger_enable(data, ...) {
-        list_add_tail_rcu(&data->list, &file->triggers); <<<---- SKIPPED!!! (this is important!)
-[..]
- out_unreg:
-      event_hist_unregister(.., data) {
-        cmd_ops->unreg(.., data, ..) [hist_unregister_trigger()] {
-          list_for_each_entry(iter, &file->triggers, list) {
-            if (!hist_trigger_match(data, iter, named_data, false))   <- never matches
-                continue;
-            [..]
-            test = iter;
-          }
-          if (test && test->ops->free) <<<-- test is NULL
-
-            test->ops->free(test) [event_hist_trigger_free()] {
-              [..]
-              if (data->name)
-                del_named_trigger(data) {
-                  list_del(&data->named_list);  <<<<-- NEVER gets removed!
-                }
-              }
-           }
-         }
-
-         [..]
-         kfree(data); <<<-- frees item but it is still on list
-
-The next time a hist with name is registered, it causes an u-a-f bug and
-the kernel can crash.
-
-Move the code around such that if event_trigger_register() succeeds, the
-next thing called is hist_trigger_enable() which adds it to the list.
-
-A bunch of actions is called if get_named_trigger_data() returns false.
-But that doesn't need to be called after event_trigger_register(), so it
-can be moved up, allowing event_trigger_register() to be called just
-before hist_trigger_enable() keeping them together and allowing the
-file->triggers to be properly populated.
-
-Cc: stable@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250227163944.1c37f85f@gandalf.local.home
-Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist triggers")
-Reported-by: Tomas Glozar <tglozar@redhat.com>
-Tested-by: Tomas Glozar <tglozar@redhat.com>
-Reviewed-by: Tom Zanussi <zanussi@kernel.org>
-Closes: https://lore.kernel.org/all/CAP4=nvTsxjckSBTz=Oe_UYh8keD9_sZC4i++4h72mJLic4_W4A@mail.gmail.com/
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Link: https://lore.kernel.org/20250226142703.910860-1-hca@linux.ibm.com
+Fixes: e85c5e9792b9 ("selftests/ftrace: Update fprobe test to check enabled_functions file")
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ .../test.d/dynevent/add_remove_fprobe.tc       | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 261163b00137..ad7419e24055 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -6724,27 +6724,27 @@ static int event_hist_trigger_parse(struct event_command *cmd_ops,
- 	if (existing_hist_update_only(glob, trigger_data, file))
- 		goto out_free;
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+index 449f9d8be746..73f6c6fcecab 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+@@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
+ PLACE2="kmem_cache_free"
+ PLACE3="schedule_timeout"
  
--	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
--	if (ret < 0)
--		goto out_free;
-+	if (!get_named_trigger_data(trigger_data)) {
- 
--	if (get_named_trigger_data(trigger_data))
--		goto enable;
-+		ret = create_actions(hist_data);
-+		if (ret)
-+			goto out_free;
- 
--	ret = create_actions(hist_data);
--	if (ret)
--		goto out_unreg;
-+		if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
-+			ret = save_hist_vars(hist_data);
-+			if (ret)
-+				goto out_free;
-+		}
- 
--	if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
--		ret = save_hist_vars(hist_data);
-+		ret = tracing_map_init(hist_data->map);
- 		if (ret)
--			goto out_unreg;
-+			goto out_free;
- 	}
- 
--	ret = tracing_map_init(hist_data->map);
--	if (ret)
--		goto out_unreg;
--enable:
-+	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
-+	if (ret < 0)
-+		goto out_free;
++# Some functions may have BPF programs attached, therefore
++# count already enabled_functions before tests start
++ocnt=`cat enabled_functions | wc -l`
 +
- 	ret = hist_trigger_enable(trigger_data, file);
- 	if (ret)
- 		goto out_unreg;
+ echo "f:myevent1 $PLACE" >> dynamic_events
+ 
+ # Make sure the event is attached and is the only one
+ grep -q $PLACE enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
+ 
+ # It should till be the only attached function
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
+ 
+ grep -q $PLACE2 enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
+ 
+ # should still have 2 left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -57,7 +61,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
+@@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
+ 
+ # Should only have one enabled
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -73,7 +77,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
 -- 
 2.47.2
 
