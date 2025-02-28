@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-538002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE26A49365
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:25:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5B1A49363
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A601672F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008B83AF718
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9F124E00D;
-	Fri, 28 Feb 2025 08:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABF224BBEC;
+	Fri, 28 Feb 2025 08:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Y2c2WV8X"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DS0D95ZH"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563882475F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3337C24633C;
 	Fri, 28 Feb 2025 08:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731071; cv=none; b=Z/aWhWQeCZE7q3r/xWPgo4sSJiaWpS2NMnnQZeUTl2bwTwU6J+HmuIUX4xKiviH9A8J3JeUJ+eDS1cIcPlILfPDT1x4WKmuYUwDsvnG+2tWwIuJ2CjaqvzbPa5fPZom7NWLmxs2bZpqnPWL7k0lAOuIlbOXFduPSPuycOapkz7k=
+	t=1740731070; cv=none; b=pj7dxtsYrTEMJnettxk/QeTNZnIg60vhJAJG3GQZXXg296RFv80NvDNDI85eWF8ZFDWJeOHGnCevdSJxwI9pM54/42hkIhwPkLJiK7qAiI/y6XBk3RIk6NJK7M1Uztel4r2D3dRxC6y3KLaocXghr1FRBhDYkLueAuG45UUF+74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731071; c=relaxed/simple;
-	bh=Cuox1vasf5Rg1ZXa6C8IqzQKF2im+iPtqJJwdeCbzs0=;
+	s=arc-20240116; t=1740731070; c=relaxed/simple;
+	bh=5HS4lAnm5SK8GCfK2JYrkdwQ5Hj+cKWYZUX2WZ7HlxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kiv0393ceLsI3XBY9QXzZ/c0VNbM5hleiFaawIB5p9fAMkqtyWsCPXG5PecaSZSyzGuo1m8SjsK2K/TrZFdligdnIVfhvHcvhZWg1gwOoA0FxyuplB3YW1jSReySLmMg9pK498pOtcYIjQ40h5y7PKoxxCvnVjLDEQWPbPI5AO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Y2c2WV8X; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=dAgR2abCcxySJBysotDNNzjTYYO40cYsw49UpeP4GB/fiMwNUN838rHl/bgBWahL9DtPOeSzZ96QJGENw+dXs1XqNxfxBGRw1fD5jRRKlljYwDzFjNSFp5ur5WqZscybzDXCR7tCjA9l7XoFvxw0cm4ry3QbIS5EOI2CyfebmvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DS0D95ZH; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S8NdZZ073880
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S8NdZa073880
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 28 Feb 2025 00:23:48 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S8NdZZ073880
+	Fri, 28 Feb 2025 00:23:49 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S8NdZa073880
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740731029;
-	bh=rgo6K939ygQrm/1QG6c/ZqiYk8YP6IKiiW0PnqOHsWs=;
+	s=2025021701; t=1740731030;
+	bh=7IplQBdjmAjp1LF7Bq3do3Pp/UVk/RNUvmTPzHJMuSQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y2c2WV8XXlgQMY0tSlp027CZfLGXfVQwmKxAOzBSWi9eT2ryx4mplxoTSksXCqt4A
-	 wq3LjB4OmGlqPCDI+TkKKWO8mVhiEeSyERBH5NEDkxbdmstsutoaQO44Bg+VGQLGt9
-	 Y7SLsqqK00PMamAD1iMj4xwcIN20akCrvtiVJ37Fk/ayaV8JKqtptufbNaa61y8otL
-	 ZeRYfLVjwrDjf1/g1S5snvkRptpLmf4ivUkVga2c49y8XrXrH2QKTHwLwoIpu5BiEz
-	 wiqHlZseD9S67zj9D7xUNJbELk1o/BHIb5JP07zCF+MbA6yacKh6hXftQGSjkdhlD9
-	 BBY9JjRFRHv9Q==
+	b=DS0D95ZHmopmDQ9KBj55YQeCMf7DudJaWv3deQjRMiTNZeS1B3u0wXn+hZPd8bPCX
+	 XY9c44Qbx+Olc9r3D3JiMBzXSgJ+PTMtWh5u+MQHoGKITtJ05SlFN6BmJtWLq6WIha
+	 U9HFp2I8P4rnlGtwpqSlrEGz5SIVr07LS+iPEAOCY/EeG/iefISn7pBgbafluGn9B7
+	 XSRZIHvbTinrA4PXlGyCYCJkpPlSoeiyCxf1EaRaQixRoVmY1TD8L9BkAlq8gEb8B5
+	 LjSQOJSl8E8iDtc8z4HT6iKVRe0O4YtN37cjGT6Zu9W+Q6HzV6OYqS1tRTIk8Ta6Vc
+	 oKjk1E3Al9uGQ==
 From: "Xin Li (Intel)" <xin@zytor.com>
 To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
@@ -53,9 +53,9 @@ Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
         will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
         akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
         brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: [PATCH v6 4/5] x86/cpufeatures: Remove {disabled,required}-features.h
-Date: Fri, 28 Feb 2025 00:23:37 -0800
-Message-ID: <20250228082338.73859-5-xin@zytor.com>
+Subject: [PATCH v6 5/5] x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
+Date: Fri, 28 Feb 2025 00:23:38 -0800
+Message-ID: <20250228082338.73859-6-xin@zytor.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250228082338.73859-1-xin@zytor.com>
 References: <20250228082338.73859-1-xin@zytor.com>
@@ -67,615 +67,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The functionalities of {disabled,required}-features.h are replaced
-with the auto-generated header cpufeature_masks.h. Thus they are no
-longer needed. So delete them.
+Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
+script that generates the required and disabled feature mask header.
 
-None of the macros defined in {disabled,required}-features.h is used
-in tools, delete them too.
-
+Suggested-by: Brian Gerst <brgerst@gmail.com>
 Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Reviewed-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/include/asm/disabled-features.h      | 161 ------------------
- arch/x86/include/asm/required-features.h      | 105 ------------
- tools/arch/x86/include/asm/cpufeatures.h      |   8 -
- .../arch/x86/include/asm/disabled-features.h  | 161 ------------------
- .../arch/x86/include/asm/required-features.h  | 105 ------------
- tools/perf/check-headers.sh                   |   2 -
- 6 files changed, 542 deletions(-)
- delete mode 100644 arch/x86/include/asm/disabled-features.h
- delete mode 100644 arch/x86/include/asm/required-features.h
- delete mode 100644 tools/arch/x86/include/asm/disabled-features.h
- delete mode 100644 tools/arch/x86/include/asm/required-features.h
 
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-deleted file mode 100644
-index c492bdc97b05..000000000000
---- a/arch/x86/include/asm/disabled-features.h
-+++ /dev/null
-@@ -1,161 +0,0 @@
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#define _ASM_X86_DISABLED_FEATURES_H
--
--/* These features, although they might be available in a CPU
-- * will not be used because the compile options to support
-- * them are not present.
-- *
-- * This code allows them to be checked and disabled at
-- * compile time without an explicit #ifdef.  Use
-- * cpu_feature_enabled().
-- */
--
--#ifdef CONFIG_X86_UMIP
--# define DISABLE_UMIP	0
--#else
--# define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
--#endif
--
--#ifdef CONFIG_X86_64
--# define DISABLE_VME		(1<<(X86_FEATURE_VME & 31))
--# define DISABLE_K6_MTRR	(1<<(X86_FEATURE_K6_MTRR & 31))
--# define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
--# define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
--# define DISABLE_PCID		0
--#else
--# define DISABLE_VME		0
--# define DISABLE_K6_MTRR	0
--# define DISABLE_CYRIX_ARR	0
--# define DISABLE_CENTAUR_MCR	0
--# define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
--#endif /* CONFIG_X86_64 */
--
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
--# define DISABLE_PKU		0
--# define DISABLE_OSPKE		0
--#else
--# define DISABLE_PKU		(1<<(X86_FEATURE_PKU & 31))
--# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
--#endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
--
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
--# define DISABLE_PTI		0
--#else
--# define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETPOLINE
--# define DISABLE_RETPOLINE	0
--#else
--# define DISABLE_RETPOLINE	((1 << (X86_FEATURE_RETPOLINE & 31)) | \
--				 (1 << (X86_FEATURE_RETPOLINE_LFENCE & 31)))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETHUNK
--# define DISABLE_RETHUNK	0
--#else
--# define DISABLE_RETHUNK	(1 << (X86_FEATURE_RETHUNK & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_UNRET_ENTRY
--# define DISABLE_UNRET		0
--#else
--# define DISABLE_UNRET		(1 << (X86_FEATURE_UNRET & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
--# define DISABLE_CALL_DEPTH_TRACKING	0
--#else
--# define DISABLE_CALL_DEPTH_TRACKING	(1 << (X86_FEATURE_CALL_DEPTH & 31))
--#endif
--
--#ifdef CONFIG_ADDRESS_MASKING
--# define DISABLE_LAM		0
--#else
--# define DISABLE_LAM		(1 << (X86_FEATURE_LAM & 31))
--#endif
--
--#ifdef CONFIG_INTEL_IOMMU_SVM
--# define DISABLE_ENQCMD		0
--#else
--# define DISABLE_ENQCMD		(1 << (X86_FEATURE_ENQCMD & 31))
--#endif
--
--#ifdef CONFIG_X86_SGX
--# define DISABLE_SGX	0
--#else
--# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
--#endif
--
--#ifdef CONFIG_XEN_PV
--# define DISABLE_XENPV		0
--#else
--# define DISABLE_XENPV		(1 << (X86_FEATURE_XENPV & 31))
--#endif
--
--#ifdef CONFIG_INTEL_TDX_GUEST
--# define DISABLE_TDX_GUEST	0
--#else
--# define DISABLE_TDX_GUEST	(1 << (X86_FEATURE_TDX_GUEST & 31))
--#endif
--
--#ifdef CONFIG_X86_USER_SHADOW_STACK
--#define DISABLE_USER_SHSTK	0
--#else
--#define DISABLE_USER_SHSTK	(1 << (X86_FEATURE_USER_SHSTK & 31))
--#endif
--
--#ifdef CONFIG_X86_KERNEL_IBT
--#define DISABLE_IBT	0
--#else
--#define DISABLE_IBT	(1 << (X86_FEATURE_IBT & 31))
--#endif
--
--#ifdef CONFIG_X86_FRED
--# define DISABLE_FRED	0
--#else
--# define DISABLE_FRED	(1 << (X86_FEATURE_FRED & 31))
--#endif
--
--#ifdef CONFIG_KVM_AMD_SEV
--#define DISABLE_SEV_SNP		0
--#else
--#define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
--#endif
--
--/*
-- * Make sure to add features to the correct mask
-- */
--#define DISABLED_MASK0	(DISABLE_VME)
--#define DISABLED_MASK1	0
--#define DISABLED_MASK2	0
--#define DISABLED_MASK3	(DISABLE_CYRIX_ARR|DISABLE_CENTAUR_MCR|DISABLE_K6_MTRR)
--#define DISABLED_MASK4	(DISABLE_PCID)
--#define DISABLED_MASK5	0
--#define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
--#define DISABLED_MASK8	(DISABLE_XENPV|DISABLE_TDX_GUEST)
--#define DISABLED_MASK9	(DISABLE_SGX)
--#define DISABLED_MASK10	0
--#define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
--			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
--#define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
--#define DISABLED_MASK13	0
--#define DISABLED_MASK14	0
--#define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
--#define DISABLED_MASK17	0
--#define DISABLED_MASK18	(DISABLE_IBT)
--#define DISABLED_MASK19	(DISABLE_SEV_SNP)
--#define DISABLED_MASK20	0
--#define DISABLED_MASK21	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-deleted file mode 100644
-index 0068133cb622..000000000000
---- a/arch/x86/include/asm/required-features.h
-+++ /dev/null
-@@ -1,105 +0,0 @@
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#define _ASM_X86_REQUIRED_FEATURES_H
--
--/* Define minimum CPUID feature set for kernel These bits are checked
--   really early to actually display a visible error message before the
--   kernel dies.  Make sure to assign features to the proper mask!
--
--   Some requirements that are not in CPUID yet are also in the
--   CONFIG_X86_MINIMUM_CPU_FAMILY which is checked too.
--
--   The real information is in arch/x86/Kconfig.cpu, this just converts
--   the CONFIGs into a bitmask */
--
--#ifndef CONFIG_MATH_EMULATION
--# define NEED_FPU	(1<<(X86_FEATURE_FPU & 31))
--#else
--# define NEED_FPU	0
--#endif
--
--#if defined(CONFIG_X86_PAE) || defined(CONFIG_X86_64)
--# define NEED_PAE	(1<<(X86_FEATURE_PAE & 31))
--#else
--# define NEED_PAE	0
--#endif
--
--#ifdef CONFIG_X86_CX8
--# define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
--#else
--# define NEED_CX8	0
--#endif
--
--#if defined(CONFIG_X86_CMOV) || defined(CONFIG_X86_64)
--# define NEED_CMOV	(1<<(X86_FEATURE_CMOV & 31))
--#else
--# define NEED_CMOV	0
--#endif
--
--# define NEED_3DNOW	0
--
--#if defined(CONFIG_X86_P6_NOP) || defined(CONFIG_X86_64)
--# define NEED_NOPL	(1<<(X86_FEATURE_NOPL & 31))
--#else
--# define NEED_NOPL	0
--#endif
--
--#ifdef CONFIG_MATOM
--# define NEED_MOVBE	(1<<(X86_FEATURE_MOVBE & 31))
--#else
--# define NEED_MOVBE	0
--#endif
--
--#ifdef CONFIG_X86_64
--#ifdef CONFIG_PARAVIRT_XXL
--/* Paravirtualized systems may not have PSE or PGE available */
--#define NEED_PSE	0
--#define NEED_PGE	0
--#else
--#define NEED_PSE	(1<<(X86_FEATURE_PSE) & 31)
--#define NEED_PGE	(1<<(X86_FEATURE_PGE) & 31)
--#endif
--#define NEED_MSR	(1<<(X86_FEATURE_MSR & 31))
--#define NEED_FXSR	(1<<(X86_FEATURE_FXSR & 31))
--#define NEED_XMM	(1<<(X86_FEATURE_XMM & 31))
--#define NEED_XMM2	(1<<(X86_FEATURE_XMM2 & 31))
--#define NEED_LM		(1<<(X86_FEATURE_LM & 31))
--#else
--#define NEED_PSE	0
--#define NEED_MSR	0
--#define NEED_PGE	0
--#define NEED_FXSR	0
--#define NEED_XMM	0
--#define NEED_XMM2	0
--#define NEED_LM		0
--#endif
--
--#define REQUIRED_MASK0	(NEED_FPU|NEED_PSE|NEED_MSR|NEED_PAE|\
--			 NEED_CX8|NEED_PGE|NEED_FXSR|NEED_CMOV|\
--			 NEED_XMM|NEED_XMM2)
--#define SSE_MASK	(NEED_XMM|NEED_XMM2)
--
--#define REQUIRED_MASK1	(NEED_LM|NEED_3DNOW)
--
--#define REQUIRED_MASK2	0
--#define REQUIRED_MASK3	(NEED_NOPL)
--#define REQUIRED_MASK4	(NEED_MOVBE)
--#define REQUIRED_MASK5	0
--#define REQUIRED_MASK6	0
--#define REQUIRED_MASK7	0
--#define REQUIRED_MASK8	0
--#define REQUIRED_MASK9	0
--#define REQUIRED_MASK10	0
--#define REQUIRED_MASK11	0
--#define REQUIRED_MASK12	0
--#define REQUIRED_MASK13	0
--#define REQUIRED_MASK14	0
--#define REQUIRED_MASK15	0
--#define REQUIRED_MASK16	0
--#define REQUIRED_MASK17	0
--#define REQUIRED_MASK18	0
--#define REQUIRED_MASK19	0
--#define REQUIRED_MASK20	0
--#define REQUIRED_MASK21	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index ec9911379c61..9e3fa7942e7d 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -2,14 +2,6 @@
- #ifndef _ASM_X86_CPUFEATURES_H
- #define _ASM_X86_CPUFEATURES_H
+Changes in v4:
+* Use '1U' instead of '1' in feature mask shifting (Andrew Cooper).
+* Checking NCAPINTS isn't necessary anymore.  It was needed when these
+  macros had to be manually updated, but now if cpufeatures.h changes
+  this header will be regenerated (Brian Gerst).
+---
+ arch/x86/include/asm/cpufeature.h | 69 -------------------------------
+ arch/x86/tools/featuremasks.awk   |  9 +++-
+ 2 files changed, 8 insertions(+), 70 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 077a5bbd1cc5..b829a12eda8a 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -55,75 +55,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ #define test_cpu_cap(c, bit)						\
+ 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
  
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#include <asm/required-features.h>
--#endif
--
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#include <asm/disabled-features.h>
--#endif
--
- /*
-  * Defines x86 CPU feature bits
-  */
-diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
-deleted file mode 100644
-index c492bdc97b05..000000000000
---- a/tools/arch/x86/include/asm/disabled-features.h
-+++ /dev/null
-@@ -1,161 +0,0 @@
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#define _ASM_X86_DISABLED_FEATURES_H
--
--/* These features, although they might be available in a CPU
-- * will not be used because the compile options to support
-- * them are not present.
-- *
-- * This code allows them to be checked and disabled at
-- * compile time without an explicit #ifdef.  Use
-- * cpu_feature_enabled().
+-/*
+- * There are 32 bits/features in each mask word.  The high bits
+- * (selected with (bit>>5) give us the word number and the low 5
+- * bits give us the bit/feature number inside the word.
+- * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
+- * see if it is set in the mask word.
 - */
--
--#ifdef CONFIG_X86_UMIP
--# define DISABLE_UMIP	0
--#else
--# define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
--#endif
--
--#ifdef CONFIG_X86_64
--# define DISABLE_VME		(1<<(X86_FEATURE_VME & 31))
--# define DISABLE_K6_MTRR	(1<<(X86_FEATURE_K6_MTRR & 31))
--# define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
--# define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
--# define DISABLE_PCID		0
--#else
--# define DISABLE_VME		0
--# define DISABLE_K6_MTRR	0
--# define DISABLE_CYRIX_ARR	0
--# define DISABLE_CENTAUR_MCR	0
--# define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
--#endif /* CONFIG_X86_64 */
--
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
--# define DISABLE_PKU		0
--# define DISABLE_OSPKE		0
--#else
--# define DISABLE_PKU		(1<<(X86_FEATURE_PKU & 31))
--# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
--#endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
--
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
--# define DISABLE_PTI		0
--#else
--# define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETPOLINE
--# define DISABLE_RETPOLINE	0
--#else
--# define DISABLE_RETPOLINE	((1 << (X86_FEATURE_RETPOLINE & 31)) | \
--				 (1 << (X86_FEATURE_RETPOLINE_LFENCE & 31)))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETHUNK
--# define DISABLE_RETHUNK	0
--#else
--# define DISABLE_RETHUNK	(1 << (X86_FEATURE_RETHUNK & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_UNRET_ENTRY
--# define DISABLE_UNRET		0
--#else
--# define DISABLE_UNRET		(1 << (X86_FEATURE_UNRET & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
--# define DISABLE_CALL_DEPTH_TRACKING	0
--#else
--# define DISABLE_CALL_DEPTH_TRACKING	(1 << (X86_FEATURE_CALL_DEPTH & 31))
--#endif
--
--#ifdef CONFIG_ADDRESS_MASKING
--# define DISABLE_LAM		0
--#else
--# define DISABLE_LAM		(1 << (X86_FEATURE_LAM & 31))
--#endif
--
--#ifdef CONFIG_INTEL_IOMMU_SVM
--# define DISABLE_ENQCMD		0
--#else
--# define DISABLE_ENQCMD		(1 << (X86_FEATURE_ENQCMD & 31))
--#endif
--
--#ifdef CONFIG_X86_SGX
--# define DISABLE_SGX	0
--#else
--# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
--#endif
--
--#ifdef CONFIG_XEN_PV
--# define DISABLE_XENPV		0
--#else
--# define DISABLE_XENPV		(1 << (X86_FEATURE_XENPV & 31))
--#endif
--
--#ifdef CONFIG_INTEL_TDX_GUEST
--# define DISABLE_TDX_GUEST	0
--#else
--# define DISABLE_TDX_GUEST	(1 << (X86_FEATURE_TDX_GUEST & 31))
--#endif
--
--#ifdef CONFIG_X86_USER_SHADOW_STACK
--#define DISABLE_USER_SHSTK	0
--#else
--#define DISABLE_USER_SHSTK	(1 << (X86_FEATURE_USER_SHSTK & 31))
--#endif
--
--#ifdef CONFIG_X86_KERNEL_IBT
--#define DISABLE_IBT	0
--#else
--#define DISABLE_IBT	(1 << (X86_FEATURE_IBT & 31))
--#endif
--
--#ifdef CONFIG_X86_FRED
--# define DISABLE_FRED	0
--#else
--# define DISABLE_FRED	(1 << (X86_FEATURE_FRED & 31))
--#endif
--
--#ifdef CONFIG_KVM_AMD_SEV
--#define DISABLE_SEV_SNP		0
--#else
--#define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
--#endif
+-#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)	\
+-	(((bit)>>5)==(word) && (1UL<<((bit)&31) & maskname##word ))
 -
 -/*
-- * Make sure to add features to the correct mask
+- * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
+- * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, all
+- * header macros which use NCAPINTS need to be changed. The duplicated macro
+- * use causes the compiler to issue errors for all headers so that all usage
+- * sites can be corrected.
 - */
--#define DISABLED_MASK0	(DISABLE_VME)
--#define DISABLED_MASK1	0
--#define DISABLED_MASK2	0
--#define DISABLED_MASK3	(DISABLE_CYRIX_ARR|DISABLE_CENTAUR_MCR|DISABLE_K6_MTRR)
--#define DISABLED_MASK4	(DISABLE_PCID)
--#define DISABLED_MASK5	0
--#define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
--#define DISABLED_MASK8	(DISABLE_XENPV|DISABLE_TDX_GUEST)
--#define DISABLED_MASK9	(DISABLE_SGX)
--#define DISABLED_MASK10	0
--#define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
--			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
--#define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
--#define DISABLED_MASK13	0
--#define DISABLED_MASK14	0
--#define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
--#define DISABLED_MASK17	0
--#define DISABLED_MASK18	(DISABLE_IBT)
--#define DISABLED_MASK19	(DISABLE_SEV_SNP)
--#define DISABLED_MASK20	0
--#define DISABLED_MASK21	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
+-#define REQUIRED_MASK_BIT_SET(feature_bit)		\
+-	 ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||	\
+-	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
 -
--#endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/tools/arch/x86/include/asm/required-features.h b/tools/arch/x86/include/asm/required-features.h
-deleted file mode 100644
-index 0068133cb622..000000000000
---- a/tools/arch/x86/include/asm/required-features.h
-+++ /dev/null
-@@ -1,105 +0,0 @@
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#define _ASM_X86_REQUIRED_FEATURES_H
+-#define DISABLED_MASK_BIT_SET(feature_bit)				\
+-	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||	\
+-	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
 -
--/* Define minimum CPUID feature set for kernel These bits are checked
--   really early to actually display a visible error message before the
--   kernel dies.  Make sure to assign features to the proper mask!
--
--   Some requirements that are not in CPUID yet are also in the
--   CONFIG_X86_MINIMUM_CPU_FAMILY which is checked too.
--
--   The real information is in arch/x86/Kconfig.cpu, this just converts
--   the CONFIGs into a bitmask */
--
--#ifndef CONFIG_MATH_EMULATION
--# define NEED_FPU	(1<<(X86_FEATURE_FPU & 31))
--#else
--# define NEED_FPU	0
--#endif
--
--#if defined(CONFIG_X86_PAE) || defined(CONFIG_X86_64)
--# define NEED_PAE	(1<<(X86_FEATURE_PAE & 31))
--#else
--# define NEED_PAE	0
--#endif
--
--#ifdef CONFIG_X86_CX8
--# define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
--#else
--# define NEED_CX8	0
--#endif
--
--#if defined(CONFIG_X86_CMOV) || defined(CONFIG_X86_64)
--# define NEED_CMOV	(1<<(X86_FEATURE_CMOV & 31))
--#else
--# define NEED_CMOV	0
--#endif
--
--# define NEED_3DNOW	0
--
--#if defined(CONFIG_X86_P6_NOP) || defined(CONFIG_X86_64)
--# define NEED_NOPL	(1<<(X86_FEATURE_NOPL & 31))
--#else
--# define NEED_NOPL	0
--#endif
--
--#ifdef CONFIG_MATOM
--# define NEED_MOVBE	(1<<(X86_FEATURE_MOVBE & 31))
--#else
--# define NEED_MOVBE	0
--#endif
--
--#ifdef CONFIG_X86_64
--#ifdef CONFIG_PARAVIRT_XXL
--/* Paravirtualized systems may not have PSE or PGE available */
--#define NEED_PSE	0
--#define NEED_PGE	0
--#else
--#define NEED_PSE	(1<<(X86_FEATURE_PSE) & 31)
--#define NEED_PGE	(1<<(X86_FEATURE_PGE) & 31)
--#endif
--#define NEED_MSR	(1<<(X86_FEATURE_MSR & 31))
--#define NEED_FXSR	(1<<(X86_FEATURE_FXSR & 31))
--#define NEED_XMM	(1<<(X86_FEATURE_XMM & 31))
--#define NEED_XMM2	(1<<(X86_FEATURE_XMM2 & 31))
--#define NEED_LM		(1<<(X86_FEATURE_LM & 31))
--#else
--#define NEED_PSE	0
--#define NEED_MSR	0
--#define NEED_PGE	0
--#define NEED_FXSR	0
--#define NEED_XMM	0
--#define NEED_XMM2	0
--#define NEED_LM		0
--#endif
--
--#define REQUIRED_MASK0	(NEED_FPU|NEED_PSE|NEED_MSR|NEED_PAE|\
--			 NEED_CX8|NEED_PGE|NEED_FXSR|NEED_CMOV|\
--			 NEED_XMM|NEED_XMM2)
--#define SSE_MASK	(NEED_XMM|NEED_XMM2)
--
--#define REQUIRED_MASK1	(NEED_LM|NEED_3DNOW)
--
--#define REQUIRED_MASK2	0
--#define REQUIRED_MASK3	(NEED_NOPL)
--#define REQUIRED_MASK4	(NEED_MOVBE)
--#define REQUIRED_MASK5	0
--#define REQUIRED_MASK6	0
--#define REQUIRED_MASK7	0
--#define REQUIRED_MASK8	0
--#define REQUIRED_MASK9	0
--#define REQUIRED_MASK10	0
--#define REQUIRED_MASK11	0
--#define REQUIRED_MASK12	0
--#define REQUIRED_MASK13	0
--#define REQUIRED_MASK14	0
--#define REQUIRED_MASK15	0
--#define REQUIRED_MASK16	0
--#define REQUIRED_MASK17	0
--#define REQUIRED_MASK18	0
--#define REQUIRED_MASK19	0
--#define REQUIRED_MASK20	0
--#define REQUIRED_MASK21	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index d3c6e10dce73..a4499e5a6f9c 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -26,8 +26,6 @@ FILES=(
-   "include/linux/hash.h"
-   "include/linux/list-sort.h"
-   "include/uapi/linux/hw_breakpoint.h"
--  "arch/x86/include/asm/disabled-features.h"
--  "arch/x86/include/asm/required-features.h"
-   "arch/x86/include/asm/cpufeatures.h"
-   "arch/x86/include/asm/inat_types.h"
-   "arch/x86/include/asm/emulate_prefix.h"
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+ 	 test_cpu_cap(c, bit))
+diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
+index fd3e72147157..2d9201c841cb 100755
+--- a/arch/x86/tools/featuremasks.awk
++++ b/arch/x86/tools/featuremasks.awk
+@@ -74,7 +74,14 @@ END {
+ 		for (i = 0; i < ncapints; i++)
+ 			printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
+ 
+-		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
++		printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
++		printf "\t((\t\t\t\t\t";
++		for (i = 0; i < ncapints; i++) {
++			if (masks[i])
++				printf "\t\\\n\t\t((x) >> 5) == %2d ? %s_MASK%d :", i, s, i;
++		}
++		printf " 0\t\\\n";
++		printf "\t) & (1U << ((x) & 31)))\n\n";
+ 	}
+ 
+ 	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
 -- 
 2.48.1
 
