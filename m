@@ -1,508 +1,175 @@
-Return-Path: <linux-kernel+bounces-537593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA02A48DEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:27:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DCBA48DFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B51168749
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF01E189136E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350BE3596A;
-	Fri, 28 Feb 2025 01:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EFD3C463;
+	Fri, 28 Feb 2025 01:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BIgrT5+S"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E602DF42;
-	Fri, 28 Feb 2025 01:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7jtZsQR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A3A276D12;
+	Fri, 28 Feb 2025 01:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740706036; cv=none; b=ToNsOz6x6xdpzhhHVCDuu9nirksavkGPAzQgGmYozMYW2Q1iGZGEN7quFn8eNbFPyuHZke1F14hbmnA43zEfxP89zl27tOA3AfLrmK3iX6AvGytn+Ug4gtnNpHgsK0cYorNcEK5gB5Zf+JBg+etlpSQoAZcQtSH5ku4kskIy0RI=
+	t=1740706183; cv=none; b=MTPy/wZpWRFAHH6VT6no+UhmpI6AaXqoKa+ugBCppJggG0XO9wJSYWybNvAZ3s7pW7YuI++8HRrw+7oL9iAoympMkgr30tWecQpATTNHK0aXPjwi7OG6eCF4x0mCpGvisrTVl7UNbow2x8pOUNlloHNEFUkoJPXf+MqylVjpes0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740706036; c=relaxed/simple;
-	bh=DRIZE59qfbLrhjyDe2fdcZWo/OrPyOhFIGVU0MOKC60=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EaNW2M9YfQQ7NnzsQtLxcMACXvxhUxu5Zmr1Tp95P2YhbkZbAb2iM9dyxxSnEz0mv5wFjC3b0jge/cVIRv7Yy/6EkOFRkqFUx1jdCMsq1KLp8jOyHaF+m74Y5oiv+XfaNHFLBoQ6GDR5HWdfMrafS53KvT/1ECb6DpUfwZOjR8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BIgrT5+S; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F02D4210EAC3;
-	Thu, 27 Feb 2025 17:27:12 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F02D4210EAC3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740706033;
-	bh=lr/v4YSSk6nndg6C8G4rlBUxgxXkwSzTgFFFPuEsycA=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=BIgrT5+SvSDsUhI4dSQuzSDtsU2JxYoa+o7oeZyCtJeApFB2GkyENAyE0j90AMgZg
-	 g9PwNRy7A8e7K2aBhaoZ1ULd6xdyB9Zqe6CTlTXCjFQG6lEKHN1TngAlTGuaJ88l5i
-	 UXhIXfRMrROnFNFKl8a91qazyZ/STWGm0DOwxt1Y=
-Message-ID: <4fc076cd-7ac0-4569-909c-9c1abc3ae80c@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 17:27:11 -0800
+	s=arc-20240116; t=1740706183; c=relaxed/simple;
+	bh=0Kaw4aySzXzJh8b//ALxlZ2RwWuBVvZuS4cYdwjBK+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DtD+tLE00Nwc+VsAjWromQZr+23Nqn2ddunWIEkPDUtLkgNgoVMlh7z+87fglxVgzHUSbLalTNs67x11ekaFyT8ATKVMqibNEGr7lSUrZIoGTC94hnhKEgBLJlZ3g9ShZfBvP0Ucx5VhyieerEv9HLg9isp8Mpb982Tgni2JZlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7jtZsQR; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740706182; x=1772242182;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0Kaw4aySzXzJh8b//ALxlZ2RwWuBVvZuS4cYdwjBK+4=;
+  b=H7jtZsQRDc99zPpjzw46j/obgI/Y6ruW0fF+IkqF9N4+v2rmFd+sNlY2
+   wy3SpOaQgNVpotQimsFenFlPKS3YNtliyXidma5ifn6dtI9HvzsmumArw
+   Ts5U9ANfZMiy//+pcRb588xRd/3Cq5lBOu5qL2pvufOGU3WHyGXNg80Sf
+   /uQ0oVifB9HkovvHU6ED0oUQuFdXenHTp7JARpKra+8lQoHaWtNuJlxI4
+   G5FRJ2cOsXNZpK1lraqTX08lqXpU6M49/LeuDIMLWTNW1iDiYgZ8FIept
+   gwKE2rcI7mjSG9dsslMLVWHXRJhKKvf4MU6ifg9n/V0OMQ1SeCasAVUBO
+   w==;
+X-CSE-ConnectionGUID: b9oBVvA8Q8WlHE56sbytfA==
+X-CSE-MsgGUID: J6VU82vITnSzNycvM0+0MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45275641"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="45275641"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 17:29:41 -0800
+X-CSE-ConnectionGUID: tQ2gpyfRQ9adco+P481y1g==
+X-CSE-MsgGUID: EFDf9J9jSi+DvFy8QwsOMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="148014413"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 27 Feb 2025 17:29:33 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnpBh-000EH4-0H;
+	Fri, 28 Feb 2025 01:29:25 +0000
+Date: Fri, 28 Feb 2025 09:28:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, benh@kernel.crashing.org,
+	joel@jms.id.au, andi.shyti@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+	andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org,
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <202502280902.U0gLDhve-lkp@intel.com>
+References: <20250224055936.1804279-3-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
- eahariha@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
- catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
- arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH v5 09/10] hyperv: Add definitions for root partition
- driver to hv headers
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224055936.1804279-3-ryan_chen@aspeedtech.com>
 
-On 2/26/2025 3:08 PM, Nuno Das Neves wrote:
-> A few additional definitions are required for the mshv driver code
-> (to follow). Introduce those here and clean up a little bit while
-> at it.
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->  include/hyperv/hvgdk_mini.h |  64 ++++++++++++++++-
->  include/hyperv/hvhdk.h      | 132 ++++++++++++++++++++++++++++++++++--
->  include/hyperv/hvhdk_mini.h |  91 +++++++++++++++++++++++++
->  3 files changed, 280 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-> index 58895883f636..e4a3cca0cbce 100644
-> --- a/include/hyperv/hvgdk_mini.h
-> +++ b/include/hyperv/hvgdk_mini.h
-> @@ -13,7 +13,7 @@ struct hv_u128 {
->  	u64 high_part;
->  } __packed;
->  
+Hi Ryan,
 
-<snip>
+kernel test robot noticed the following build warnings:
 
->  union hv_input_vtl {
->  	u8 as_uint8;
->  	struct {
-> @@ -1325,6 +1344,49 @@ struct hv_retarget_device_interrupt {	 /* HV_INPUT_RETARGET_DEVICE_INTERRUPT */
->  	struct hv_device_interrupt_target int_target;
->  } __packed __aligned(8);
->  
-> +enum hv_intercept_type {
-> +#if defined(CONFIG_X86_64)
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on linus/master v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-These chosen ifdef's come across kinda arbitrary. The hypervisor code has
-this enabled for both 32-bit and 64-bit x86, but you've chosen x86_64 only.
-I thought that may be because we only intend to support root partition for 64-bit
-platforms, but then, below...
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-i2c-aspeed-support-for-AST2600-i2cv2/20250224-140221
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250224055936.1804279-3-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register mode driver
+config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gLDhve-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gLDhve-lkp@intel.com/reproduce)
 
-> +	HV_INTERCEPT_TYPE_X64_IO_PORT			= 0x00000000,
-> +	HV_INTERCEPT_TYPE_X64_MSR			= 0x00000001,
-> +	HV_INTERCEPT_TYPE_X64_CPUID			= 0x00000002,
-> +#endif
-> +	HV_INTERCEPT_TYPE_EXCEPTION			= 0x00000003,
-> +	/* Used to be HV_INTERCEPT_TYPE_REGISTER */
-> +	HV_INTERCEPT_TYPE_RESERVED0			= 0x00000004,
-> +	HV_INTERCEPT_TYPE_MMIO				= 0x00000005,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_GLOBAL_CPUID		= 0x00000006,
-> +	HV_INTERCEPT_TYPE_X64_APIC_SMI			= 0x00000007,
-> +#endif
-> +	HV_INTERCEPT_TYPE_HYPERCALL			= 0x00000008,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_APIC_INIT_SIPI		= 0x00000009,
-> +	HV_INTERCEPT_MC_UPDATE_PATCH_LEVEL_MSR_READ	= 0x0000000A,
-> +	HV_INTERCEPT_TYPE_X64_APIC_WRITE		= 0x0000000B,
-> +	HV_INTERCEPT_TYPE_X64_MSR_INDEX			= 0x0000000C,
-> +#endif
-> +	HV_INTERCEPT_TYPE_MAX,
-> +	HV_INTERCEPT_TYPE_INVALID			= 0xFFFFFFFF,
-> +};
-> +
-> +union hv_intercept_parameters {
-> +	/*  HV_INTERCEPT_PARAMETERS is defined to be an 8-byte field. */
-> +	__u64 as_uint64;
-> +#if defined(CONFIG_X86_64)
-> +	/* HV_INTERCEPT_TYPE_X64_IO_PORT */
-> +	__u16 io_port;
-> +	/* HV_INTERCEPT_TYPE_X64_CPUID */
-> +	__u32 cpuid_index;
-> +	/* HV_INTERCEPT_TYPE_X64_APIC_WRITE */
-> +	__u32 apic_write_mask;
-> +	/* HV_INTERCEPT_TYPE_EXCEPTION */
-> +	__u16 exception_vector;
-> +	/* HV_INTERCEPT_TYPE_X64_MSR_INDEX */
-> +	__u32 msr_index;
-> +#endif
-> +	/* N.B. Other intercept types do not have any parameters. */
-> +};
-> +
->  /* Data structures for HVCALL_MMIO_READ and HVCALL_MMIO_WRITE */
->  #define HV_HYPERCALL_MMIO_MAX_DATA_LENGTH 64
->  
-> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
-> index 64407c2a3809..1b447155c338 100644
-> --- a/include/hyperv/hvhdk.h
-> +++ b/include/hyperv/hvhdk.h
-> @@ -19,11 +19,24 @@
->  
->  #define HV_VP_REGISTER_PAGE_VERSION_1	1u
->  
-> +#define HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT		7
-> +
-> +union hv_vp_register_page_interrupt_vectors {
-> +	u64 as_uint64;
-> +	struct {
-> +		u8 vector_count;
-> +		u8 vector[HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT];
-> +	} __packed;
-> +} __packed;
-> +
->  struct hv_vp_register_page {
->  	u16 version;
->  	u8 isvalid;
->  	u8 rsvdz;
->  	u32 dirty;
-> +
-> +#if IS_ENABLED(CONFIG_X86)
-> +
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280902.U0gLDhve-lkp@intel.com/
 
-...you've chosen to include 32bit here, where the hypervisor code supports both.
+All warnings (new ones prefixed by >>):
 
-Confused
+   drivers/i2c/busses/i2c-ast2600.c: In function 'ast2600_i2c_recover_bus':
+>> drivers/i2c/busses/i2c-ast2600.c:345:32: warning: unsigned conversion from 'int' to 'u8' {aka 'unsigned char'} changes value from '-145' to '111' [-Woverflow]
+     345 |                         return -ETIMEDOUT;
+         |                                ^
 
->  	union {
->  		struct {
->  			/* General purpose registers
-> @@ -95,6 +108,22 @@ struct hv_vp_register_page {
->  	union hv_x64_pending_interruption_register pending_interruption;
->  	union hv_x64_interrupt_state_register interrupt_state;
->  	u64 instruction_emulation_hints;
-> +	u64 xfem;
-> +
-> +	/*
-> +	 * Fields from this point are not included in the register page save chunk.
-> +	 * The reserved field is intended to maintain alignment for unsaved fields.
-> +	 */
-> +	u8 reserved1[0x100];
-> +
-> +	/*
-> +	 * Interrupts injected as part of HvCallDispatchVp.
-> +	 */
-> +	union hv_vp_register_page_interrupt_vectors interrupt_vectors;
-> +
-> +#elif IS_ENABLED(CONFIG_ARM64)
-> +	/* Not yet supported in ARM */
-> +#endif
->  } __packed;
->  
->  #define HV_PARTITION_PROCESSOR_FEATURES_BANKS 2
-> @@ -299,10 +328,11 @@ union hv_partition_isolation_properties {
->  #define HV_PARTITION_ISOLATION_HOST_TYPE_RESERVED   0x2
->  
->  /* Note: Exo partition is enabled by default */
-> -#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION                    BIT(8)
-> -#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED                    BIT(13)
-> -#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED   BIT(19)
-> -#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE                   BIT(22)
-> +#define HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED		BIT(4)
-> +#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION			BIT(8)
-> +#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED			BIT(13)
-> +#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED	BIT(19)
-> +#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE			BIT(22)
->  
->  struct hv_input_create_partition {
->  	u64 flags;
-> @@ -349,13 +379,23 @@ struct hv_input_set_partition_property {
->  enum hv_vp_state_page_type {
->  	HV_VP_STATE_PAGE_REGISTERS = 0,
->  	HV_VP_STATE_PAGE_INTERCEPT_MESSAGE = 1,
-> +	HV_VP_STATE_PAGE_GHCB,
->  	HV_VP_STATE_PAGE_COUNT
->  };
->  
->  struct hv_input_map_vp_state_page {
->  	u64 partition_id;
->  	u32 vp_index;
-> -	u32 type; /* enum hv_vp_state_page_type */
-> +	u16 type; /* enum hv_vp_state_page_type */
-> +	union hv_input_vtl input_vtl;
-> +	union {
-> +		u8 as_uint8;
-> +		struct {
-> +			u8 map_location_provided : 1;
-> +			u8 reserved : 7;
-> +		};
-> +	} flags;
-> +	u64 requested_map_location;
->  } __packed;
->  
->  struct hv_output_map_vp_state_page {
-> @@ -365,7 +405,14 @@ struct hv_output_map_vp_state_page {
->  struct hv_input_unmap_vp_state_page {
->  	u64 partition_id;
->  	u32 vp_index;
-> -	u32 type; /* enum hv_vp_state_page_type */
-> +	u16 type; /* enum hv_vp_state_page_type */
-> +	union hv_input_vtl input_vtl;
-> +	u8 reserved0;
-> +} __packed;
-> +
-> +struct hv_x64_apic_eoi_message {
-> +	__u32 vp_index;
-> +	__u32 interrupt_vector;
 
-Can these be plain u32? Similar below...
+vim +345 drivers/i2c/busses/i2c-ast2600.c
 
->  } __packed;
->  
->  struct hv_opaque_intercept_message {
-> @@ -515,6 +562,13 @@ struct hv_synthetic_timers_state {
->  	u64 reserved[5];
->  } __packed;
->  
-> +struct hv_async_completion_message_payload {
-> +	__u64 partition_id;
-> +	__u32 status;
-> +	__u32 completion_count;
-> +	__u64 sub_status;
-> +} __packed;
-> +
->  union hv_input_delete_vp {
->  	u64 as_uint64[2];
->  	struct {
-> @@ -649,6 +703,57 @@ struct hv_input_set_vp_state {
->  	union hv_input_set_vp_state_data data[];
->  } __packed;
->  
-> +union hv_x64_vp_execution_state {
-> +	__u16 as_uint16;
-> +	struct {
-> +		__u16 cpl:2;
-> +		__u16 cr0_pe:1;
-> +		__u16 cr0_am:1;
-> +		__u16 efer_lma:1;
-> +		__u16 debug_active:1;
-> +		__u16 interruption_pending:1;
-> +		__u16 vtl:4;
-> +		__u16 enclave_mode:1;
-> +		__u16 interrupt_shadow:1;
-> +		__u16 virtualization_fault_active:1;
-> +		__u16 reserved:2;
-> +	} __packed;
-> +};
-> +
-> +struct hv_x64_intercept_message_header {
-> +	__u32 vp_index;
-> +	__u8 instruction_length:4;
-> +	__u8 cr8:4; /* Only set for exo partitions */
-> +	__u8 intercept_access_type;
-> +	union hv_x64_vp_execution_state execution_state;
-> +	struct hv_x64_segment_register cs_segment;
-> +	__u64 rip;
-> +	__u64 rflags;
-> +} __packed;
-> +
-> +union hv_x64_memory_access_info {
-> +	__u8 as_uint8;
-> +	struct {
-> +		__u8 gva_valid:1;
-> +		__u8 gva_gpa_valid:1;
-> +		__u8 hypercall_output_pending:1;
-> +		__u8 tlb_locked_no_overlay:1;
-> +		__u8 reserved:4;
-> +	} __packed;
-> +};
-> +
-> +struct hv_x64_memory_intercept_message {
-> +	struct hv_x64_intercept_message_header header;
-> +	__u32 cache_type; /* enum hv_cache_type */
-> +	__u8 instruction_byte_count;
-> +	union hv_x64_memory_access_info memory_access_info;
-> +	__u8 tpr_priority;
-> +	__u8 reserved1;
-> +	__u64 guest_virtual_address;
-> +	__u64 guest_physical_address;
-> +	__u8 instruction_bytes[16];
-> +} __packed;
-> +
->  /*
->   * Dispatch state for the VP communicated by the hypervisor to the
->   * VP-dispatching thread in the root on return from HVCALL_DISPATCH_VP.
-> @@ -716,6 +821,7 @@ static_assert(sizeof(struct hv_vp_signal_pair_scheduler_message) ==
->  #define HV_DISPATCH_VP_FLAG_SKIP_VP_SPEC_FLUSH		0x8
->  #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_SPEC_FLUSH	0x10
->  #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_USER_SPEC_FLUSH	0x20
-> +#define HV_DISPATCH_VP_FLAG_SCAN_INTERRUPT_INJECTION	0x40
->  
->  struct hv_input_dispatch_vp {
->  	u64 partition_id;
-> @@ -730,4 +836,18 @@ struct hv_output_dispatch_vp {
->  	u32 dispatch_event; /* enum hv_vp_dispatch_event */
->  } __packed;
->  
-> +struct hv_input_modify_sparse_spa_page_host_access {
-> +	u32 host_access : 2;
-> +	u32 reserved : 30;
-> +	u32 flags;
-> +	u64 partition_id;
-> +	u64 spa_page_list[];
-> +} __packed;
-> +
-> +/* hv_input_modify_sparse_spa_page_host_access flags */
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_EXCLUSIVE  0x1
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_SHARED     0x2
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_LARGE_PAGE      0x4
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_HUGE_PAGE       0x8
-> +
->  #endif /* _HV_HVHDK_H */
-> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
-> index f8a39d3e9ce6..42e7876455b5 100644
-> --- a/include/hyperv/hvhdk_mini.h
-> +++ b/include/hyperv/hvhdk_mini.h
-> @@ -36,6 +36,52 @@ enum hv_scheduler_type {
->  	HV_SCHEDULER_TYPE_MAX
->  };
->  
-> +/* HV_STATS_AREA_TYPE */
-> +enum hv_stats_area_type {
-> +	HV_STATS_AREA_SELF = 0,
-> +	HV_STATS_AREA_PARENT = 1,
-> +	HV_STATS_AREA_INTERNAL = 2,
-> +	HV_STATS_AREA_COUNT
-> +};
-> +
-> +enum hv_stats_object_type {
-> +	HV_STATS_OBJECT_HYPERVISOR		= 0x00000001,
-> +	HV_STATS_OBJECT_LOGICAL_PROCESSOR	= 0x00000002,
-> +	HV_STATS_OBJECT_PARTITION		= 0x00010001,
-> +	HV_STATS_OBJECT_VP			= 0x00010002
-> +};
-> +
-> +union hv_stats_object_identity {
-> +	/* hv_stats_hypervisor */
-> +	struct {
-> +		u8 reserved[15];
-> +		u8 stats_area_type;
-> +	} __packed hv;
-> +
-> +	/* hv_stats_logical_processor */
-> +	struct {
-> +		u32 lp_index;
-> +		u8 reserved[11];
-> +		u8 stats_area_type;
-> +	} __packed lp;
-> +
-> +	/* hv_stats_partition */
-> +	struct {
-> +		u64 partition_id;
-> +		u8  reserved[7];
-> +		u8  stats_area_type;
-> +	} __packed partition;
-> +
-> +	/* hv_stats_vp */
-> +	struct {
-> +		u64 partition_id;
-> +		u32 vp_index;
-> +		u16 flags;
-> +		u8  reserved;
-> +		u8  stats_area_type;
-> +	} __packed vp;
-> +};
-> +
->  enum hv_partition_property_code {
->  	/* Privilege properties */
->  	HV_PARTITION_PROPERTY_PRIVILEGE_FLAGS			= 0x00010000,
-> @@ -47,19 +93,45 @@ enum hv_partition_property_code {
->  
->  	/* Compatibility properties */
->  	HV_PARTITION_PROPERTY_PROCESSOR_XSAVE_FEATURES		= 0x00060002,
-> +	HV_PARTITION_PROPERTY_XSAVE_STATES                      = 0x00060007,
->  	HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE		= 0x00060008,
->  	HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY		= 0x00060009,
->  };
->  
-> +enum hv_snp_status {
-> +	HV_SNP_STATUS_NONE = 0,
-> +	HV_SNP_STATUS_AVAILABLE = 1,
-> +	HV_SNP_STATUS_INCOMPATIBLE = 2,
-> +	HV_SNP_STATUS_PSP_UNAVAILABLE = 3,
-> +	HV_SNP_STATUS_PSP_INIT_FAILED = 4,
-> +	HV_SNP_STATUS_PSP_BAD_FW_VERSION = 5,
-> +	HV_SNP_STATUS_BAD_CONFIGURATION = 6,
-> +	HV_SNP_STATUS_PSP_FW_UPDATE_IN_PROGRESS = 7,
-> +	HV_SNP_STATUS_PSP_RB_INIT_FAILED = 8,
-> +	HV_SNP_STATUS_PSP_PLATFORM_STATUS_FAILED = 9,
-> +	HV_SNP_STATUS_PSP_INIT_LATE_FAILED = 10,
-> +};
-> +
->  enum hv_system_property {
->  	/* Add more values when needed */
->  	HV_SYSTEM_PROPERTY_SCHEDULER_TYPE = 15,
-> +	HV_DYNAMIC_PROCESSOR_FEATURE_PROPERTY = 21,
-> +};
-> +
-> +enum hv_dynamic_processor_feature_property {
-> +	/* Add more values when needed */
-> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_MAX_ENCRYPTED_PARTITIONS = 13,
-> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_SNP_STATUS = 16,
->  };
->  
->  struct hv_input_get_system_property {
->  	u32 property_id; /* enum hv_system_property */
->  	union {
->  		u32 as_uint32;
-> +#if IS_ENABLED(CONFIG_X86)
-> +		/* enum hv_dynamic_processor_feature_property */
-> +		u32 hv_processor_feature;
-> +#endif
->  		/* More fields to be filled in when needed */
->  	};
->  } __packed;
-> @@ -67,9 +139,28 @@ struct hv_input_get_system_property {
->  struct hv_output_get_system_property {
->  	union {
->  		u32 scheduler_type; /* enum hv_scheduler_type */
-> +#if IS_ENABLED(CONFIG_X86)
-> +		u64 hv_processor_feature_value;
-> +#endif
->  	};
->  } __packed;
->  
-> +struct hv_input_map_stats_page {
-> +	u32 type; /* enum hv_stats_object_type */
-> +	u32 padding;
-> +	union hv_stats_object_identity identity;
-> +} __packed;
-> +
-> +struct hv_output_map_stats_page {
-> +	u64 map_location;
-> +} __packed;
-> +
-> +struct hv_input_unmap_stats_page {
-> +	u32 type; /* enum hv_stats_object_type */
-> +	u32 padding;
-> +	union hv_stats_object_identity identity;
-> +} __packed;
-> +
->  struct hv_proximity_domain_flags {
->  	u32 proximity_preferred : 1;
->  	u32 reserved : 30;
+   315	
+   316	static u8 ast2600_i2c_recover_bus(struct ast2600_i2c_bus *i2c_bus)
+   317	{
+   318		u32 state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+   319		int ret = 0;
+   320		u32 ctrl;
+   321		int r;
+   322	
+   323		dev_dbg(i2c_bus->dev, "%d-bus recovery bus [%x]\n", i2c_bus->adap.nr, state);
+   324	
+   325		ctrl = readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+   326	
+   327		/* Disable controller */
+   328		writel(ctrl & ~(AST2600_I2CC_MASTER_EN | AST2600_I2CC_SLAVE_EN),
+   329		       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+   330	
+   331		writel(readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL) | AST2600_I2CC_MASTER_EN,
+   332		       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+   333	
+   334		reinit_completion(&i2c_bus->cmd_complete);
+   335		i2c_bus->cmd_err = 0;
+   336	
+   337		/* Check 0x14's SDA and SCL status */
+   338		state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+   339		if (!(state & AST2600_I2CC_SDA_LINE_STS) && (state & AST2600_I2CC_SCL_LINE_STS)) {
+   340			writel(AST2600_I2CM_RECOVER_CMD_EN, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+   341			r = wait_for_completion_timeout(&i2c_bus->cmd_complete, i2c_bus->adap.timeout);
+   342			if (r == 0) {
+   343				dev_dbg(i2c_bus->dev, "recovery timed out\n");
+   344				writel(ctrl, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+ > 345				return -ETIMEDOUT;
+   346			} else if (i2c_bus->cmd_err) {
+   347				dev_dbg(i2c_bus->dev, "recovery error\n");
+   348				ret = -EPROTO;
+   349			}
+   350		}
+   351	
+   352		/* Recovery done */
+   353		state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+   354		if (state & AST2600_I2CC_BUS_BUSY_STS) {
+   355			dev_dbg(i2c_bus->dev, "Can't recover bus [%x]\n", state);
+   356			ret = -EPROTO;
+   357		}
+   358	
+   359		/* restore original controller setting */
+   360		writel(ctrl, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+   361		return ret;
+   362	}
+   363	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
