@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-539346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D045A4A359
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:03:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB14A4A35A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3433B3090
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C203B46D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BC6281365;
-	Fri, 28 Feb 2025 20:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8016D286294;
+	Fri, 28 Feb 2025 20:00:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1E0275604
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C8B2862A3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772841; cv=none; b=cW15IC8ZSIgXC88Au0nCshQlU0Zcq+EF6/4CXa9GmU7R9OccqlNgKqcMPMRUeZRUFZdVYsueXy53jXVumed8xGRyk5ID2JlQTwmKNqxoehgFHDUZs7Hs91MbGU5sqLBv0+EW5TkgsLQ7wYr3ZqBPJD13bybUsSykC9NxOWaf9w0=
+	t=1740772845; cv=none; b=YdoYpAb/nUKDgcDrJ4Z578ajrm2NLkOUJW/orKCsyazz3qNFmJBPJb+BRAKk2C1EeBxKM4dkg+fVMgJBAsT+DVzG354dprSpAKf8d+UBsoqzX72ZBQU9vHosNMgFX8r03ghEKwGqbCz4udeb2YD1FLXv23AHVLenrPyliFb8bfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772841; c=relaxed/simple;
-	bh=hpi51EbDcKWdUJ9G/K+WKkX0M43kxtNNudRRhDh2nk4=;
+	s=arc-20240116; t=1740772845; c=relaxed/simple;
+	bh=sdSR6mdI/199U3gRQoy91kd8oNi7SCxIzrlU2MsFk7U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qKqAIbFQtJGtD8PDCafMpB/XXE+GrdVCQcxHGlQJmNCQiLxMssy84qOlmrf7/mj4Irq4vcdtigyNPHXuEVx3KB+75RzM1IrJdqJmBnrXTJXODpIp2fkqXp1GEkMU0hb9I1aCw+uY25lfPwDcWWH1/rleN7CyRe0pE6nUgk18l6s=
+	 MIME-Version; b=TfyrYaICQ4G8wi7K/gVvBcLMg4n4UVFiSLHeBDJbFkcWlA6wnlootQxNMKAeW6uPR9NobB2R+pBp0xPLaZJ2bp+iX1WDz4hYZds3G7O9vGVdvQKk7/2xsAOhXwabeItSBhoqqTeFePRQC763uzhtzNdCWaKkxpGyhTZfvFfzP6U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6104E176C;
-	Fri, 28 Feb 2025 12:00:54 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2554150C;
+	Fri, 28 Feb 2025 12:00:57 -0800 (PST)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5E483F5A1;
-	Fri, 28 Feb 2025 12:00:35 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87A4A3F5A1;
+	Fri, 28 Feb 2025 12:00:39 -0800 (PST)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,13 +59,10 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	Dave Martin <Dave.Martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 11/49] x86/resctrl: Expose resctrl fs's init function to the rest of the kernel
-Date: Fri, 28 Feb 2025 19:58:35 +0000
-Message-Id: <20250228195913.24895-12-james.morse@arm.com>
+	fenghuay@nvidia.com
+Subject: [PATCH v7 12/49] x86/resctrl: Move rdt_find_domain() to be visible to arch and fs code
+Date: Fri, 28 Feb 2025 19:58:36 +0000
+Message-Id: <20250228195913.24895-13-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250228195913.24895-1-james.morse@arm.com>
 References: <20250228195913.24895-1-james.morse@arm.com>
@@ -77,162 +74,191 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-rdtgroup_init() needs exposing to the rest of the kernel so that arch
-code can call it once it lives in core code. As this is one of the few
-functions exposed, rename it to have "resctrl" in the name. The same
-goes for the exit call.
+rdt_find_domain() finds a domain given a resource and a cache-id.
+This is used by both the architecture code and the filesystem code.
 
-Rename x86's arch code init functions for RDT to have an arch
-prefix to make it clear these are part of the architecture code.
+After the filesystem code moves to live in /fs/, this helper is either
+duplicated by all architectures, or needs exposing by the filesystem code.
 
-Co-developed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Add the definition to the global header file. As its now globally visible,
+and has only a handful of callers, swap the 'rdt' for 'resctrl'. Move
+the function to live with its caller in ctrlmondata.c as the filesystem
+code will not have anything corresponding to core.c.
+
 Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
 ---
+Changes since v6:
+ * Don't inline this helper.
+ * Moved some words from the discussion into the commit message.
+
 Changes since v5:
- * Tweaked the word 'export'
-
-Changes since v4:
- * Changed the voice of some of the commit message.
-
-Changes since v1:
- * Rename stale rdtgroup_init() to resctrl_init() in
-   arch/x86/kernel/cpu/resctrl/monitor.c comments.
-
-   No functional change.
-
- * [Commit message only] Minor rewording to avoid "impersonating code".
-
- * [Commit message only] Typo fix:
-   s/to have the resctrl/to have resctrl/ in commit message.
+ * This patch replaced one that split off the 'new entry to insert'
+   behaviour.
 ---
- arch/x86/kernel/cpu/resctrl/core.c     | 12 ++++++------
- arch/x86/kernel/cpu/resctrl/internal.h |  3 ---
- arch/x86/kernel/cpu/resctrl/monitor.c  |  2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  8 ++++----
- include/linux/resctrl.h                |  3 +++
- 5 files changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c        | 38 +++--------------------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 24 +++++++++++++-
+ arch/x86/kernel/cpu/resctrl/internal.h    |  2 --
+ include/linux/resctrl.h                   | 14 +++++++++
+ 4 files changed, 41 insertions(+), 37 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 5280a2819760..ce50a7d3230c 100644
+index ce50a7d3230c..26ae43659c6c 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -1063,7 +1063,7 @@ void resctrl_cpu_detect(struct cpuinfo_x86 *c)
- 	}
+@@ -396,36 +396,6 @@ void rdt_ctrl_update(void *arg)
+ 	hw_res->msr_update(m);
  }
  
--static int __init resctrl_late_init(void)
-+static int __init resctrl_arch_late_init(void)
- {
- 	struct rdt_resource *r;
- 	int state, ret;
-@@ -1086,7 +1086,7 @@ static int __init resctrl_late_init(void)
- 	if (state < 0)
- 		return state;
- 
--	ret = rdtgroup_init();
-+	ret = resctrl_init();
- 	if (ret) {
- 		cpuhp_remove_state(state);
- 		return ret;
-@@ -1102,18 +1102,18 @@ static int __init resctrl_late_init(void)
- 	return 0;
- }
- 
--late_initcall(resctrl_late_init);
-+late_initcall(resctrl_arch_late_init);
- 
--static void __exit resctrl_exit(void)
-+static void __exit resctrl_arch_exit(void)
- {
- 	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
- 
- 	cpuhp_remove_state(rdt_online);
- 
--	rdtgroup_exit();
-+	resctrl_exit();
- 
- 	if (r->mon_capable)
- 		rdt_put_mon_l3_config();
- }
- 
--__exitcall(resctrl_exit);
-+__exitcall(resctrl_arch_exit);
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index f975cd6cfe61..8291f1b59981 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -328,9 +328,6 @@ extern struct list_head rdt_all_groups;
- 
- extern int max_name_width;
- 
--int __init rdtgroup_init(void);
--void __exit rdtgroup_exit(void);
+-/*
+- * rdt_find_domain - Search for a domain id in a resource domain list.
+- *
+- * Search the domain list to find the domain id. If the domain id is
+- * found, return the domain. NULL otherwise.  If the domain id is not
+- * found (and NULL returned) then the first domain with id bigger than
+- * the input id can be returned to the caller via @pos.
+- */
+-struct rdt_domain_hdr *rdt_find_domain(struct list_head *h, int id,
+-				       struct list_head **pos)
+-{
+-	struct rdt_domain_hdr *d;
+-	struct list_head *l;
 -
- /**
-  * struct rftype - describe each file in the resctrl file system
-  * @name:	File name
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 58b5b21349a8..e8388d19a579 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1027,7 +1027,7 @@ static int dom_data_init(struct rdt_resource *r)
- 	/*
- 	 * RESCTRL_RESERVED_CLOSID and RESCTRL_RESERVED_RMID are special and
- 	 * are always allocated. These are used for the rdtgroup_default
--	 * control group, which will be setup later in rdtgroup_init().
-+	 * control group, which will be setup later in resctrl_init().
- 	 */
- 	idx = resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
- 					   RESCTRL_RESERVED_RMID);
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 62d9a50c7bba..b2dad689e780 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -4235,14 +4235,14 @@ void resctrl_offline_cpu(unsigned int cpu)
- }
- 
- /*
-- * rdtgroup_init - rdtgroup initialization
-+ * resctrl_init - resctrl filesystem initialization
-  *
-  * Setup resctrl file system including set up root, create mount point,
-- * register rdtgroup filesystem, and initialize files under root directory.
-+ * register resctrl filesystem, and initialize files under root directory.
-  *
-  * Return: 0 on success or -errno
-  */
--int __init rdtgroup_init(void)
-+int __init resctrl_init(void)
+-	list_for_each(l, h) {
+-		d = list_entry(l, struct rdt_domain_hdr, list);
+-		/* When id is found, return its domain. */
+-		if (id == d->id)
+-			return d;
+-		/* Stop searching when finding id's position in sorted list. */
+-		if (id < d->id)
+-			break;
+-	}
+-
+-	if (pos)
+-		*pos = l;
+-
+-	return NULL;
+-}
+-
+ static void setup_default_ctrlval(struct rdt_resource *r, u32 *dc)
  {
- 	int ret = 0;
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+@@ -536,7 +506,7 @@ static void domain_add_cpu_ctrl(int cpu, struct rdt_resource *r)
+ 		return;
+ 	}
  
-@@ -4290,7 +4290,7 @@ int __init rdtgroup_init(void)
+-	hdr = rdt_find_domain(&r->ctrl_domains, id, &add_pos);
++	hdr = resctrl_find_domain(&r->ctrl_domains, id, &add_pos);
+ 	if (hdr) {
+ 		if (WARN_ON_ONCE(hdr->type != RESCTRL_CTRL_DOMAIN))
+ 			return;
+@@ -591,7 +561,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+ 		return;
+ 	}
+ 
+-	hdr = rdt_find_domain(&r->mon_domains, id, &add_pos);
++	hdr = resctrl_find_domain(&r->mon_domains, id, &add_pos);
+ 	if (hdr) {
+ 		if (WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN))
+ 			return;
+@@ -656,7 +626,7 @@ static void domain_remove_cpu_ctrl(int cpu, struct rdt_resource *r)
+ 		return;
+ 	}
+ 
+-	hdr = rdt_find_domain(&r->ctrl_domains, id, NULL);
++	hdr = resctrl_find_domain(&r->ctrl_domains, id, NULL);
+ 	if (!hdr) {
+ 		pr_warn("Can't find control domain for id=%d for CPU %d for resource %s\n",
+ 			id, cpu, r->name);
+@@ -702,7 +672,7 @@ static void domain_remove_cpu_mon(int cpu, struct rdt_resource *r)
+ 		return;
+ 	}
+ 
+-	hdr = rdt_find_domain(&r->mon_domains, id, NULL);
++	hdr = resctrl_find_domain(&r->mon_domains, id, NULL);
+ 	if (!hdr) {
+ 		pr_warn("Can't find monitor domain for id=%d for CPU %d for resource %s\n",
+ 			id, cpu, r->name);
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 5d87f279085f..763317ea2256 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -610,6 +610,28 @@ int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
  	return ret;
  }
  
--void __exit rdtgroup_exit(void)
-+void __exit resctrl_exit(void)
- {
- 	debugfs_remove_recursive(debugfs_resctrl);
- 	unregister_filesystem(&rdt_fs_type);
++struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h, int id,
++					   struct list_head **pos)
++{
++	struct rdt_domain_hdr *d;
++	struct list_head *l;
++
++	list_for_each(l, h) {
++		d = list_entry(l, struct rdt_domain_hdr, list);
++		/* When id is found, return its domain. */
++		if (id == d->id)
++			return d;
++		/* Stop searching when finding id's position in sorted list. */
++		if (id < d->id)
++			break;
++	}
++
++	if (pos)
++		*pos = l;
++
++	return NULL;
++}
++
+ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+ 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+ 		    cpumask_t *cpumask, int evtid, int first)
+@@ -695,7 +717,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 		 * This file provides data from a single domain. Search
+ 		 * the resource to find the domain with "domid".
+ 		 */
+-		hdr = rdt_find_domain(&r->mon_domains, domid, NULL);
++		hdr = resctrl_find_domain(&r->mon_domains, domid, NULL);
+ 		if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN)) {
+ 			ret = -ENOENT;
+ 			goto out;
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 8291f1b59981..da73404183da 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -581,8 +581,6 @@ void rdtgroup_kn_unlock(struct kernfs_node *kn);
+ int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name);
+ int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name,
+ 			     umode_t mask);
+-struct rdt_domain_hdr *rdt_find_domain(struct list_head *h, int id,
+-				       struct list_head **pos);
+ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 				char *buf, size_t nbytes, loff_t off);
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 31808b3ddecb..f1979e375da9 100644
+index f1979e375da9..93d9a435f035 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -402,4 +402,7 @@ void resctrl_arch_reset_rmid_all(struct rdt_resource *r, struct rdt_mon_domain *
- extern unsigned int resctrl_rmid_realloc_threshold;
- extern unsigned int resctrl_rmid_realloc_limit;
+@@ -372,6 +372,20 @@ static inline void resctrl_arch_rmid_read_context_check(void)
+ 		might_sleep();
+ }
  
-+int __init resctrl_init(void);
-+void __exit resctrl_exit(void);
++/**
++ * resctrl_find_domain() - Search for a domain id in a resource domain list.
++ * @h:		The domain list to search.
++ * @id:		The domain id to search for.
++ * @pos:	A pointer to position in the list id should be inserted.
++ *
++ * Search the domain list to find the domain id. If the domain id is
++ * found, return the domain. NULL otherwise.  If the domain id is not
++ * found (and NULL returned) then the first domain with id bigger than
++ * the input id can be returned to the caller via @pos.
++ */
++struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h, int id,
++					   struct list_head **pos);
 +
- #endif /* _RESCTRL_H */
+ /**
+  * resctrl_arch_reset_rmid() - Reset any private state associated with rmid
+  *			       and eventid.
 -- 
 2.39.5
 
