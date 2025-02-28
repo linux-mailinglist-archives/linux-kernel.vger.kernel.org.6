@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-537971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081AFA49315
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:14:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44539A49317
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4461894855
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25CC16FB1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7721A209F5B;
-	Fri, 28 Feb 2025 08:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC321421F;
+	Fri, 28 Feb 2025 08:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG8VGKBh"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YG6m990c"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF251FFC48;
-	Fri, 28 Feb 2025 08:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143401FAC31;
+	Fri, 28 Feb 2025 08:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730431; cv=none; b=JN3K44TLsmvMWTl0bDfTXWyxH7HuN0NFoFW3dbkPCGS/17nvWEQPE/P4c9hWA7qlRXLRlUTiq4/YXnDzicCAXYvv0zRvbPMpeYaLodm9D1fMrzt/YH0fLwoaMSeDM6I/g03ToDtodscOJKmMYJwqVPwYb7gYOU+9DAR8jcPLNcM=
+	t=1740730438; cv=none; b=egqH4ZSUDzNLqq8uIbmyvvEGqNTql2rA2ruLCyuaeavnySIerA4oT5Tpx2si7kGO3mjAm6bz/WvW7TBfkMAUrivq2ebxB8oi9z4HoYeAI4epmvU32A+sd71iGTCYVtk5OzTwXfl2zcBRfiNGYttgNatxqbjKBBXP+S6Wn2pyp5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730431; c=relaxed/simple;
-	bh=6s+XK8sAu7D21czy6f9zshJ0Pz1KXiHahNyi5hBbkuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9s3QGz0q+RgOTBpRHZckDVjsfgdzGD3h4osSaCicgaWDcc0xz2eMTSup7VheP80RiyzJKUAbTVY8piva9zQ0l+NZkSZs9JLJ+e1inh7vANplW0XykNOiBbrxrH/KhErxKvpy9CSvG4l5dAdAyGIP6y4GmJYfhHZGbImHU9ZUsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FG8VGKBh; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22185cddbffso51529885ad.1;
-        Fri, 28 Feb 2025 00:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740730430; x=1741335230; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Na5VN2FPxgLTURi/r4p4P+00hEexnO950UJTB8eSOso=;
-        b=FG8VGKBhcswfWn528suDB2vI11dq2LdaSfBH+69NwadjpTzdeDF9dB4CiP6ciwhz8C
-         sQxhX9uffwlTwCMmK0v+dQo0FpOG4o7fdGc9ChX8ZCEeEZK51OTPeBvl3N1qLRb3ID/0
-         wUxw8eyOtXJMvv0Ee1V+g+RWwhv8eKGJnPDK0vWodFnMkHhBUVJekhhJJ4/RKyFj9xpB
-         Xf/pUOlC8Jzy1/XTyoV4NT2f5N7GWg0kpCwXDjmPGQ3+GFVzj1FiXCAA0jK0lQdQUxLq
-         hE+c8OfY+pyKpbu8Z5wbti/fZoWvMdV+mTEkDPf3INtcidkAZc3+iBrS+67CXrJNOcis
-         ycxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740730430; x=1741335230;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Na5VN2FPxgLTURi/r4p4P+00hEexnO950UJTB8eSOso=;
-        b=TRU0+/7YHm12N7YFEUF1gumCOGohGX/EnKOO9dxGy8jtus0gwvONynlYgEU+JoFKBH
-         Bs/0phmmYzryOIm5dS2nT88c2rvaXG/iu0NQm7MiuxF+OhEdR2xd6+I9tCwWwvWdude7
-         JxztoWopu69VykbbdX45pVwbqPyoFcN66XwgKJzelUGBAnKsndNzmJ1R/blk9R9qGqH3
-         lqYdlkzs4Ru20g9El3B0lyqPxtuzf5u5OawWyTnt+Gl8EKITgWekSNL4kzXRubrdC42v
-         9/s2LwLADeETwKyBstjdp2t16wERwU9c21AbhzwVnpywOd39zMAomdghWLXRK0irmbfZ
-         8jVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgT7x8k+fETaXLRq47YxzwfMdYf8oH26FwN3RWvVLeu64WwZYZHWfzidXCzgpCkiCam3gAE24uM9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmJOGlZdsbUZ2EvJJN9hl8EhwXV5WsHZuJ4rtmobx3z9wcKVlf
-	EN5gSzBukv0a3V13UzQaW06O6kBSgqs38ZUmLpEtGN5l2WUNvp750fEpAJmvV/LVfg==
-X-Gm-Gg: ASbGncsRqlqjSYBg44XAhilA39v0ok5XAiXr0uddUkxUb9k7dxdoiJ0+ToNtbDqNWXX
-	GyksDK4an3ltIjChkyC2TWpLYLfjJVboCRY3MCDYw18I18hdBTBAmx4dMr7zQc4wWZX1R+5b8iX
-	WdY+5+LOCjXnD86JP7tx+9tUMtm61yiqP7979/zp03G//mYp76VB8CPPHGj8vcmN/8RX+MvLEcy
-	/8eHkpM7Zq/rUpb8JEUzaGqw3WLpmgVUeqi6ClWHLBH+2c+jJOGCa4CvYMHF2D1DLBAIMXlz2f5
-	XoiWWwzCiFvA7ynjx6o5RZj0IAeYRswMxdSEPEfRsGN2smyf
-X-Google-Smtp-Source: AGHT+IHoMty9feq7PV3rqXBAgLDk345+dZ9XZSZ/bst47bwK7XsE+dtjNWN3IGNheEb3nyVP81+AVg==
-X-Received: by 2002:a17:903:3ba5:b0:21f:1348:10e6 with SMTP id d9443c01a7336-22367455c16mr46890875ad.13.1740730429604;
-        Fri, 28 Feb 2025 00:13:49 -0800 (PST)
-Received: from fedora.am.students.amrita.edu ([175.184.253.10])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235052c83bsm27857095ad.236.2025.02.28.00.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:13:49 -0800 (PST)
-From: Siddharth Menon <simeddon@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Siddharth Menon <simeddon@gmail.com>
-Subject: [PATCH] lib/Kconfig.debug: fix broken reference to fault-injection docs
-Date: Fri, 28 Feb 2025 13:43:38 +0530
-Message-ID: <20250228081342.42968-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740730438; c=relaxed/simple;
+	bh=gmnwQui9PGhphy1y6k6f2iaJFn2c2puVe6UIWtj8VYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KuRA/5ITP5kWCShwB1Jpt3Ev0HbVOew4pKQoXSWovZrEG2PGPbnQUgNowlqDeT0qt+7lu4X3Mz2pYGMB6TvdppGAOEdSO08rFfZp31i7BM+ICzobRQ0TjpYT9k3cCajgk4bBH1irDPTg0BK7db3oeQhj93tEpC3KDSICCgC0zSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YG6m990c; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C392A44353;
+	Fri, 28 Feb 2025 08:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740730434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEsscNcctrVv+Wd6MiI3V0IKsPpsSuvjyar8nUANyzI=;
+	b=YG6m990c3xRVuAPzyMnCvpX5uogvwB6Ai6PK1HCQ9b1E0XlgiiXbx/mFZ+40g9DDucT2vt
+	+ItDWwjcHppgEhY+jOIe5gylFUQgTNIF5dij2fC9WIr+qjIBblM0Li6JiYo5I6uCBugJzp
+	BbR8DPATJkLQ08N3rmMflaLksyRnyXVUa4BAbRK7aOTRB0qTqZwBKSDSU25NYvIB4ftxYD
+	waGv0FyZRJ+er++kvKY4Uy1pyz/0KWtxkZseXfmzZjysHm1ly9GnV7YOjPEaIWZP0nWPwk
+	kFuwzcSbT4bMZUiwdol32JKftDlG25Rb0B3zWbPwtLW0Mapeg9odRmlMgMr0+A==
+Message-ID: <436b87f7-b5b2-4b5e-8979-47d123783b35@bootlin.com>
+Date: Fri, 28 Feb 2025 09:13:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 01/10] selftests/bpf: test_tunnel: Add
+ generic_attach* helpers
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
+ <20250227-tunnels-v1-1-33df5c30aa04@bootlin.com> <Z8DiX8MmJWvO5Ws2@mini-arch>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <Z8DiX8MmJWvO5Ws2@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekleekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeurghsthhivghnucevuhhruhhttghhvghtuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfehgefgteffkeehveeuvdekvddvueefgeejvefgleevveevteffveefgfehieejnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsthhfohhmihgthhgvvhesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrt
+ ghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvh
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Update the reference to point to the correct location.
----
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Stanislav,
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 1af972a92d06..35796c290ca3 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2103,7 +2103,7 @@ config FAIL_SKB_REALLOC
- 	  reallocated, catching possible invalid pointers to the skb.
- 
- 	  For more information, check
--	  Documentation/dev-tools/fault-injection/fault-injection.rst
-+	  Documentation/fault-injection/fault-injection.rst
- 
- config FAULT_INJECTION_CONFIGFS
- 	bool "Configfs interface for fault-injection capabilities"
--- 
-2.48.1
+On 2/27/25 11:08 PM, Stanislav Fomichev wrote:
+> On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
+>> A fair amount of code duplication is present among tests to attach BPF
+>> programs.
+>>
+>> Create generic_attach* helpers that attach BPF programs to a given
+>> interface.
+>> Use ASSERT_OK_FD() instead of ASSERT_GE() to check fd's validity.
+>> Use these helpers in all the available tests.
+>>
+>> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+>> ---
+>>   .../testing/selftests/bpf/prog_tests/test_tunnel.c | 128 ++++++++++-----------
+>>   1 file changed, 62 insertions(+), 66 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> index cec746e77cd3abdf561cfc2422fa0a934fc481cd..27a8c8caa87e4c6b39b2b26c2aa9860b131a70a9 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+>> @@ -397,6 +397,56 @@ static int attach_tc_prog(struct bpf_tc_hook *hook, int igr_fd, int egr_fd)
+>>   	return 0;
+>>   }
+>>   
+>> +static int generic_attach(const char *dev, int igr_fd, int egr_fd)
+>> +{
+>> +	DECLARE_LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_INGRESS);
+> 
+> nit: .attach_point = BPF_TC_INGRESS is a bit confusing to me here
+> (because we later attach both ingress and egress progs); mostly
+> because the way attach_tc_prog is written I think. Can we move
+> tc_hook definition to attach_tc_prog and make it
+> .attach_point=BPF_TC_INGRESS|BPF_TC_EGRESS? And then we can make
+> attach_tc_prog accept ifindex instead of tc_hook.
+> 
+> int attach_tc_prog(int ifindex, igr_fd, egr_fd)
+> {
+> 	DECLARE_LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_INGRESS|BPF_TC_EGRESS);
+> 
+> 	bpf_tc_hook_create(&tc_hook);
+> 	if (igr_fd >= 0) {
+> 		tc_hook.attach_point = BPF_TC_INGRESS;
+> 		...
+> 	}
+> 	if (egr_fd >= 0) {
+> 		tc_hook.attach_point = BPF_TC_EGRESS;
+> 		...
+> 	}
+> }
+> 
+> Or is it just me?
 
+I agree with you, it will be better this way. I'll do it in V2.
+
+
+Best regards,
+Bastien
 
