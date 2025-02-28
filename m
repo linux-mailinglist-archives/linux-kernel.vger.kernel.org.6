@@ -1,104 +1,219 @@
-Return-Path: <linux-kernel+bounces-538390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914CDA49812
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:07:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1EEA49816
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654861896559
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E893AB874
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4772D26136B;
-	Fri, 28 Feb 2025 11:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3C7261576;
+	Fri, 28 Feb 2025 11:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t50t4MAq"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="iauPLKkA"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB24260A52
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512C0260A4E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740740855; cv=none; b=HWQ0puCt8GIBlxAeTXcnfnnf0MnFAgkHNlX+mhn9z+uAysHNdC09nCKLtf9XqmfUXqy3MepLlsnoQ0IjbZNN69Olfp9I8uCOesE3f1CVJLa0DQOCj/EsHzikCFa1mX5+NPUPBrSWsGJj7+cy/2kobv3/oeOo4dmn7oz8c5GsN7g=
+	t=1740741010; cv=none; b=SdQP2Lgsjfeay0Uc4P+DtKaV+GX2UF1aPICa01cYpnm/nf4Wk7LKspx16hxsmzO4+himl5JgFECz+Em2WPvdN6GW97fXIJOIfS+Q1eI4oSwRRXKvdh6g5pF5rN/17XdaPUf8RZqPOt/4mCDYRMx8uUU7y1if3kjF7dZeFJiwxys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740740855; c=relaxed/simple;
-	bh=7bO3noIAnLIpAAfMnWMpk9qr4QfTQwAh4WLgGAFGPng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6gPsNQU7qXpDaoHuUVFXJodraCVX7S3BaNJGDHhXvaBxb12oaj3PL7t2VXAXZwj1Zw1AHsbhmXEg7pcfOqSm0b8de2Fe243F1cgd23GdEPuMo0pgxRdAtDCCR48+Sndk34/ecAH8FfQZiBzyg7ET7o5A2GSAesYzx/SiFx81Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t50t4MAq; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbdf897503so546923466b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:07:33 -0800 (PST)
+	s=arc-20240116; t=1740741010; c=relaxed/simple;
+	bh=E037DhVCapPBoakU2dqv8HwLgqUFKwlWF11ok265wus=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NrmKefLZNDob0P1uNRfu0T7nlH6iw+YZnEC3dXnX0bXAYj9hafjMNnHs8TeoHnXcE6/BBgso++o7fO8ny21EWxK/f8X2Z7BnfC/SQqQsjO2OBbjhF73GCZB9rIVUJYjiSEOgVCcYwIRmIYw5a/VIjft4NECq6o8vndIZjBFmw1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=iauPLKkA; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390dd3654aeso1127487f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:10:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740740852; x=1741345652; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7bO3noIAnLIpAAfMnWMpk9qr4QfTQwAh4WLgGAFGPng=;
-        b=t50t4MAqF9fEEHa+NyihLSzn9a92v/R+h6rjQRYfUqabwO4s9+rX5hoKfuItEi8Rjk
-         p6IZvKjroqvAtdsBp+kFOxCAxxVzorGMPqAMez4udyvIJps90gRxmPFRFAu/RoouAJZd
-         8+O1WPrHHBjwVIu5R3p4yPbYatHhl47SiHeEJbnXtnwaZ4F3miCS0vF3f8eWe69lUYJl
-         3jlEt29ITFYvJ6jN7eJTYefCcmM/IKwkF+kYEXq3t/WHXyw8G/Qqd4x70T2NPMcCgghb
-         Tjlid18hKOBTtPd3e0pKnK6/XloPsjf8IBk9liX0MQo/6ZXaiJV5nVu/pwu6z1zcswvz
-         b8/g==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740741006; x=1741345806; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DD4bhF0kHfFymrlaMMfSMbLSI6fL031z/qgNsA1KNJY=;
+        b=iauPLKkA2wrDFoRP804vwr/qxhnqDO2S4b0az43hrKLEjceRklVojUeBrBdNVKOE5O
+         zx1s/YM/Ua8xCNTjW40WyhyXyhIk5jZU4wAB8/3WZBTc+m7z6JzYgMyZajSHV/FF7/Mk
+         OIlZRJExgGQHBngyi1TIo4XZvSdn/6bn/okO7/P3pQ0hlvyncHTbF7Ok7WdkqpW9zJqg
+         10oeGzGjOp2Mt8HuIAZHeGaIsVz7Nypvzzcs01YW6/FCjz0cw+QzytKLMkSk1Jx10fxq
+         qCNeQ1TPgEkawto/Rf/2/Sj7uG/zVM7PlfpbF8njy3lLDZk1PpZ5F03tPUuYVraBKh8W
+         AG4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740740852; x=1741345652;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7bO3noIAnLIpAAfMnWMpk9qr4QfTQwAh4WLgGAFGPng=;
-        b=veN0zADA2dE+hqJivb6w68DG+RwXgPd8AUjEFrzAk7gRmMifXkJ2BjuK0XYbOJAsNC
-         6nWPxXpjxdZvQh6ZmW0Z6MmVxX/3DiRLtv7pehUv0S6pRnjDJQL9p8f/aw42K3+nmEtz
-         77oaNZxbu0X6C8VyurDgHUBX5QXtBRs2AW/INZ+3HxXBs9xqILWqJlaUdNBFK5aXwnKk
-         Qol0/Mvh600nrJREc9TY2uhn1pyZz4gduttl3PwT7b9DpJ4G5rigVKJzzElukdBuVOR4
-         Nl1pK5BL/E3bEbsklIaiLGFYGruTDsjQnfGRGX3xopKUaQuXbjZ0cW8wGL8Kb1hiiQlr
-         m8Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaoWCulHwwb411OWPcBweFGgcD9PsMY6uqtSON7mzRrhRw4X9fxArFrd4I9/hQ3sZ/IuRiy9YnHLUuAmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfuYD9n15Pb6RocLVZrFPzOqd1J9u2/IHb4L9k3s2fsMoi2x2w
-	7S0yry7fZowpEXENJ7mQyWcj7VeEorKQR/3zqw6oLQv12mBbRF3eKV3eHBN17KTHMlg065kVZN5
-	w+i19ROIabh3tr1EmeyPSCuY6fZ8+fKjmOdCHVyQUh00bSzDC
-X-Gm-Gg: ASbGncsII6NY3ZdA+CxyTrI6xt9cFilQo+G0dzjx6wVnXbIsqF4ledrcQ57ISvcYXZg
-	CnXKRMzH5GN9NYEu+YFSASfhkRpOlNHLzrElo+rYhVpEddZXLZEI/UzUdi4AXFPwZQ9Fri1XYgd
-	F/QvQD0sM=
-X-Google-Smtp-Source: AGHT+IE6y2PosJlmoE9B8+t4z8hZJxD//ouD+A0OiMkPbIArGuvY/3GdQ7UTMlpkbH6gYdu01DmaN4T7Kr+6onvynrE=
-X-Received: by 2002:a17:907:7212:b0:ab2:f6e5:3f1 with SMTP id
- a640c23a62f3a-abf26430310mr261440866b.8.1740740852178; Fri, 28 Feb 2025
- 03:07:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740741006; x=1741345806;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DD4bhF0kHfFymrlaMMfSMbLSI6fL031z/qgNsA1KNJY=;
+        b=vaIRdxoGuLleAcZXxqeJC+WO2dh2rb5dBu4LK8uro6N/t1eypet502g2FQ49iy3pR4
+         yHkECU86Uptt+Xi74dQwUfPYQGPBs+w6d0H92qP5/tQY/OICMnquZewFM5moMwooEg54
+         i3DJDQMhS03NmivzZji4R8/oe7NAgK+xf8YFXQAyWwHxvVDlIZc3mESNhZIe+qWRT2qF
+         PDvYdLpjitG9tcs11NP7G4QAkyEe3qD9u/me5dq14AADSzsULSSQyG2N23z9m56Zp441
+         4e44BvrMP7WPeNF3h9RpNyIk1q3oC+2QhiBISDWJDUSWpK2LywgMHuQdpNOSkqsDcSMe
+         SVLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrD4zlHwjISl8f0He51DPG5ei31MswQj/XPZe5lq1lQhw7LTfSPO/Dsxj4ETrR2MlA6Y47bA1+oRUdocM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWo4yrTqdRDAmeL67Xs2ZNzLfD0wRffh9WGpG3mNvWpr1s2yGM
+	Eb5+3MFA+5TJUmVth+wKKkWphUxO0y44d70sw268pD3UGLbZY5dIlgouJ4tNG6g=
+X-Gm-Gg: ASbGncsPcgeC0/oT4jcF+JMQpCaxP07QHD9EzM+XLj8JcsDj4GT4pjShZWz1yhJe0Eo
+	LBjjXzWh8k2epYgiudvFk6GMvalptYkel7/Va+BQF+bDldWvi90lJKHH4u2AsAO0ycxaJCqRew6
+	5YbSHAknj8Inqtkl70XgZ1XtUbDS0wApP4H62QaSRbLESGWa4pjtFyELke/wMfvPOPahxdyHZWI
+	2uGUrb9AH9Xg8JZGoOTM93w8Pg2G95uSwM1YPFbXE1ufEPomCzJAzxRQIyWLvpLG//EQinBkcyG
+	gF4Qtuaz+lakUA2GL3x068qO9WEviIvgkD/QfXZIrKh1Vc9EqXZ3MaAZEQ==
+X-Google-Smtp-Source: AGHT+IHBwKxAFElOpdG+NI+BwrAkR/KxwPojeVWc8zD8i0wW4iQU4cQtM89ILFrbTkzbuYuexnWIFA==
+X-Received: by 2002:a05:6000:1865:b0:390:e9e2:828e with SMTP id ffacd0b85a97d-390ec9becd8mr2465154f8f.32.1740741006281;
+        Fri, 28 Feb 2025 03:10:06 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a22sm4906513f8f.74.2025.02.28.03.10.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 03:10:05 -0800 (PST)
+Message-ID: <7c70ca13-143c-4011-bd28-4ff9944dd0a0@blackwall.org>
+Date: Fri, 28 Feb 2025 13:10:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e3dd8042ac680bd74b6580c25df855d092079c18.1737107520.git.viresh.kumar@linaro.org>
- <Z4osWNCUfufciZNG@bogus> <20250228082745.rc2u5jiqnq7h737l@vireshk-i7> <Z8GAEDVIUiooPjf_@bogus>
-In-Reply-To: <Z8GAEDVIUiooPjf_@bogus>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 28 Feb 2025 16:37:24 +0530
-X-Gm-Features: AQ5f1JqpS5GfXKpRF9qd5JBXFvyQxz0hzQ3S-RWDwvb2fNYPEu0YQipblPVbjoY
-Message-ID: <CAKohpomoY8uhqDMeUAa594Eh8Oh53hTSsjkAcJU7Z70asvzcSA@mail.gmail.com>
-Subject: Re: [PATCH] firmware: arm_ffa: Set dma_mask for ffa devices
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Bill Mills <bill.mills@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 net 1/3] bonding: move IPsec deletion to
+ bond_ipsec_free_sa
+From: Nikolay Aleksandrov <razor@blackwall.org>
+To: Cosmin Ratiu <cratiu@nvidia.com>,
+ "liuhangbin@gmail.com" <liuhangbin@gmail.com>
+Cc: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "jarod@redhat.com" <jarod@redhat.com>,
+ "davem@davemloft.net" <davem@davemloft.net>, Tariq Toukan
+ <tariqt@nvidia.com>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "shuah@kernel.org" <shuah@kernel.org>,
+ "steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+ "jv@jvosburgh.net" <jv@jvosburgh.net>, "kuba@kernel.org" <kuba@kernel.org>,
+ "horms@kernel.org" <horms@kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Jianbo Liu <jianbol@nvidia.com>, "pabeni@redhat.com" <pabeni@redhat.com>
+References: <20250227083717.4307-1-liuhangbin@gmail.com>
+ <20250227083717.4307-2-liuhangbin@gmail.com>
+ <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
+ <13cb4b16-51b0-4042-8435-6dac72586e55@blackwall.org>
+ <Z8Bm9i9St0zzDhRZ@fedora>
+ <f88b234a-37ec-46a4-b920-35f598ab6c38@blackwall.org>
+ <Z8EdatcTr9weRfHr@fedora>
+ <76ed1d018596b81548d095aa2d4a9b31b360479c.camel@nvidia.com>
+ <ab9e32b2-2574-48d4-bc13-8e752a194c43@blackwall.org>
+Content-Language: en-US
+In-Reply-To: <ab9e32b2-2574-48d4-bc13-8e752a194c43@blackwall.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Feb 2025 at 14:51, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> Sorry I forgot to respond. I kept this out for now as we need to resolve
-> the DT bindings.
->
-> If you think it can be used/needed irrespective of how we resolve that
-> issue ? If so, I can queue this.
+On 2/28/25 13:07, Nikolay Aleksandrov wrote:
+> On 2/28/25 12:31, Cosmin Ratiu wrote:
+>> On Fri, 2025-02-28 at 02:20 +0000, Hangbin Liu wrote:
+>>> On Thu, Feb 27, 2025 at 03:31:01PM +0200, Nikolay Aleksandrov wrote:
+>>>>>> One more thing - note I'm not an xfrm expert by far but it
+>>>>>> seems to me here you have
+>>>>>> to also call  xdo_dev_state_free() with the old active slave
+>>>>>> dev otherwise that will
+>>>>>> never get called with the original real_dev after the switch to
+>>>>>> a new
+>>>>>> active slave (or more accurately it might if the GC runs
+>>>>>> between the switching
+>>>>>> but it is a race), care must be taken wrt sequence of events
+>>>>>> because the XFRM
+>>>>>
+>>>>> Can we just call xs->xso.real_dev->xfrmdev_ops-
+>>>>>> xdo_dev_state_free(xs)
+>>>>> no matter xs->xso.real_dev == real_dev or not? I'm afraid calling
+>>>>> xdo_dev_state_free() every where may make us lot more easily.
+>>>>>
+>>>>
+>>>> You'd have to check all drivers that implement the callback to
+>>>> answer that and even then
+>>>> I'd stick to the canonical way of how it's done in xfrm and make
+>>>> the bond just passthrough.
+>>>> Any other games become dangerous and new code will have to be
+>>>> carefully reviewed every
+>>>> time, calling another device's free_sa when it wasn't added before
+>>>> doesn't sound good.
+>>>>
+>>>>>> GC may be running in parallel which probably means that in
+>>>>>> bond_ipsec_free_sa()
+>>>>>> you'll have to take the mutex before calling
+>>>>>> xdo_dev_state_free() and check
+>>>>>> if the entry is still linked in the bond's ipsec list before
+>>>>>> calling the free_sa
+>>>>>> callback, if it isn't then del_sa_all got to it before the GC
+>>>>>> and there's nothing
+>>>>>> to do if it also called the dev's free_sa callback. The check
+>>>>>> for real_dev doesn't
+>>>>>> seem enough to protect against this race.
+>>>>>
+>>>>> I agree that we need to take the mutex before calling
+>>>>> xdo_dev_state_free()
+>>>>> in bond_ipsec_free_sa(). Do you think if this is enough? I'm a
+>>>>> bit lot here.
+>>>>>
+>>>>> Thanks
+>>>>> Hangbin
+>>>>
+>>>> Well, the race is between the xfrm GC and del_sa_all, in bond's
+>>>> free_sa if you
+>>>> walk the list under the mutex before calling real_dev's free
+>>>> callback and
+>>>> don't find the current element that's being freed in free_sa then
+>>>> it was
+>>>> cleaned up by del_sa_all, otherwise del_sa_all is waiting to walk
+>>>> that
+>>>> list and clean the entries. I think it should be fine as long as
+>>>> free_sa
+>>>> was called once with the proper device.
+>>>
+>>> OK, so the free will be called either in del_sa_all() or free_sa().
+>>> Something like this?
+>>>
+>> [...]
+>>
+>> Unfortunately, after applying these changes and reasoning about them
+>> for a bit, I don't think this will work. There are still races left.
+>> For example:
+>> 1. An xs is marked DEAD (in __xfrm_state_delete, with x->lock held) and
+>> before .xdo_dev_state_delete() is called on it, bond_ipsec_del_sa_all
+>> is called in parallel, doesn't call delete on xs (because it's dead),
+>> then calls free (incorrect without delete first), then removes the list
+>> entry. Later, xdo_dev_state_delete( == bond_ipsec_del_sa) is called,
+>> and calls delete (incorrect, out of order with free). Finally,
+>> bond_ipsec_free_sa is called, which fortunately doesn't do anything
+>> silly in the new proposed form because xs is no longer in the list.
+>>
+>> 2. A more sinister form of the above race can happen when 
+>> bond_ipsec_del_sa_all() calls delete on real_dev, then in parallel and
+>> immediately after __xfrm_state_delete marks xs as DEAD and calls
+>> bond_ipsec_del_sa() which happily calls delete on real_dev again.
+>>
+>> In order to fix these races (and others like it), I think
+>> bond_ipsec_del_sa_all and bond_ipsec_add_sa_all *need* to acquire x-
+>>> lock for each xs being processed. This would prevent xfrm from
+>> concurrently initiating add/delete operations on the managed states.
+>>
+>> Cosmin.
+> 
+> Duh, right you are. The state is protected by x->lock and cannot be trusted
+> outside of it. If you take x->lock inside the list walk with the mutex held
+> you can deadlock.
+> 
+> Cheers,
+>  Nik
+> 
 
-Yes, this has nothing to do with the DT bindings and reserved-mem thing.
+Correction - actually took a closer look at the xfrm code and it should be fine.
+The x->lock is taken only in the delete path and if the mutex is not acquired by
+bond's del_sa callback it should be ok. Though this must be very well documented.
 
-We can anyways map memory on need basis at runtime and this is required
-for that to work. The reserved-mem thing only allows us to map everything in
-advance.
 
---
-Viresh
 
