@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-539094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D44A4A0C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:45:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F4EA4A0C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BF71894EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2B61893841
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6AE15ECDF;
-	Fri, 28 Feb 2025 17:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A11607AC;
+	Fri, 28 Feb 2025 17:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pdiHPkkE"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlrBtcqS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6891F4CAE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30311F4CB2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764748; cv=none; b=EOCTZrqwZ2rUrldH01ApBvUf7Ancbn0/sj0qTmiFhmB5ZHVdbS8tM5bvGP4eQfkRDUdZV1Qwm+cQ1NyeTBIbPcf4HUXaGkdmKzT4Z4SIXBJ7rpD5yXEm3/5DU7g9bJH4TL3bQRcKaX4l8X09TySvqStV1AW0tXjSlYObvrAXSao=
+	t=1740764779; cv=none; b=okRhM1fQPtBVabwQr5cMZYKZFMzTN32APKUuSqyouR67LSpz5FPpFLoVMCmaGX1gJSt9LpHGJAZecAOyi4UaUTUStLsOTAgUBDwpkVbRGmNtphp0DrDc/xrxACSgsNQitOiewl3vibP2ndM9tnP/i2OIScENZzdcBE/MVPCLOnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764748; c=relaxed/simple;
-	bh=Oexzj45eDDLb7CM0yQXdUWz7owDZR6EzgT2UtAZrmGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Auewbx0jZd6QTY4lPFJ25ZAxRmArgDrV4wZimrdgffYlfYhkbZvWNSSJH9Be/dLUFf1LYMWUSL3C/toj4I+ik+2sueeE/0dAyb7gp7mmrajGi0DcUgrzBFXAstjnw03xmMDpDZzlVBCZlLD91tRrj4qTu7/5ly5dfKrSAc7wOUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pdiHPkkE; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2sRrVQmgK0R2z5wr+aIoaoWSaXv+nBUPnIdA1TCMyRA=; b=pdiHPkkEaE+yoXVffSrekcrk2V
-	UceJy7SUF5Xqf9FVYJVBFcEljZXjL6AzMHraNIeHXyC57VQJr2RbKWuxDhqzlcAWUZM/Hi8/8jClL
-	p8hMC5A3Wi0Hny1px+xu7OJlmwfsnmVM7Hr4TUTKeZJP5MEinS2qX5h1v1tRLoR9W+nO4nXTBen0M
-	CBq3GRbWZNcikLjc39IpKeN3aB7grOAwCjD+AVg7sylF3V9csGTviacBu6KhOsQ79S0FHpkAl/vvy
-	thDh212CzjTRYjY/DLxfNz+itc5hwTtOtqE6+T3cIppLTZCAfGXFWWgezZqs3S3jgg466v8JLXXcB
-	UPvwwgSA==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1to4QV-0002Po-0K; Fri, 28 Feb 2025 18:45:31 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject:
- Re: [PATCH 2/2] drm/rockchip: lvds: Hide scary error messages on probe
- deferral
-Date: Fri, 28 Feb 2025 18:45:30 +0100
-Message-ID: <3032732.6M6d0yLqnL@diego>
-In-Reply-To: <b09e5470-2392-4557-9f13-62b6586e5c7b@cherry.de>
-References:
- <20250228165755.405138-1-heiko@sntech.de>
- <20250228165755.405138-3-heiko@sntech.de>
- <b09e5470-2392-4557-9f13-62b6586e5c7b@cherry.de>
+	s=arc-20240116; t=1740764779; c=relaxed/simple;
+	bh=DLV7axteULbZaaTMbZ0+lYVh+GxofeyhMw8FK1VhIUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PmnsEgzm9nb+GPOeVaAvxqghiXzm12FZ/oyXKeF1qwECHsW7Jd6z2cLGDtw/E7cYhBA+nNQgPTRYkBRzEO4c+4qHd/IoE1oovfmbsm4w0QMdA9snGZGY5jVdHfvcEhBQOK04Kx1rk2Ad9ZDmpmpgKIgSPhD8j+rkTTOLognv8FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hlrBtcqS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7123AC4CED6;
+	Fri, 28 Feb 2025 17:46:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740764778;
+	bh=DLV7axteULbZaaTMbZ0+lYVh+GxofeyhMw8FK1VhIUg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hlrBtcqS2iHOxk7/P06xwufWZBPQ3yIyBjjLEqELpFvcrRdCiLzkqJpxP36wl+P56
+	 CX/KOCAIveJq0g7KipRj80JwwzAcys9bK+bDGc4Vpy6WHhJqx6+BTtX0u5jB9fQMhU
+	 AljTEsS+lTAwqGnUL3jZK2JPvRKQyPt0lzhxvBMqbeWyPsjJHC9Mo/ym2J5kliN4ee
+	 8MlGXK2pn/Y3eI4fuknyibez3fpdYOzI10DDZRfR9X44ESgr07wV/HO3Cg6V39SvPd
+	 esGje86iCiMXRgW0Eb2xu5elXeuwCdeUYLKQIWUQ7islEGHumwGmT85nwLzZ/nuP+C
+	 ih1KzaYWEWGbw==
+Date: Fri, 28 Feb 2025 09:46:15 -0800
+From: Kees Cook <kees@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Kelley <mhklinux@outlook.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [next-20250226]Build Failure
+Message-ID: <202502280943.6558CAE@keescook>
+References: <adbe8dd1-a725-4811-ae7e-76fe770cf096@linux.vnet.ibm.com>
+ <20250227123804.5dd71cef@canb.auug.org.au>
+ <14193c98-fb30-4ee8-a19a-fe85d1230d74@csgroup.eu>
+ <SN6PR02MB4157A0C1B4F85D8A289E5CE9D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <c68287f7-ad00-46fc-a92e-06e0c9074139@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c68287f7-ad00-46fc-a92e-06e0c9074139@csgroup.eu>
 
-Am Freitag, 28. Februar 2025, 18:42:32 MEZ schrieb Quentin Schulz:
-> Hi Heiko,
+On Thu, Feb 27, 2025 at 03:15:35PM +0100, Christophe Leroy wrote:
 > 
-> On 2/28/25 5:57 PM, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > 
-> > Commit 52d11c863ac9 ("drm/rockchip: lvds: do not print scary message when
-> > probing defer") already started hiding scary messages that are not relevant
-> > if the requested supply just returned EPROBE_DEFER, but there are more
-> > possible sources - like the phy.
-> > 
-> > So modernize the whole logging in the probe path by replacing the
-> > remaining deprecated DRM_DEV_ERROR with appropriate dev_err(_probe)
-> > and drm_err calls.
-> > 
-> > The distinction here is that all messages talking about mishaps of the
-> > lvds element use dev_err(_probe) while messages caused by interaction
-> > with the main Rockchip drm-device use drm_err.
-> > 
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-
-> > @@ -604,8 +602,8 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
-> >   
-> >   	ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_LVDS);
-> >   	if (ret < 0) {
-> > -		DRM_DEV_ERROR(drm_dev->dev,
-> > -			      "failed to initialize encoder: %d\n", ret);
-> > +		drm_err(drm_dev,
-> > +			"failed to initialize encoder: %d\n", ret);
 > 
-> All the above are using dev_err, but starting here, it's drm_err, is 
-> that on purpose?
+> Le 27/02/2025 à 15:05, Michael Kelley a écrit :
+> > From: Christophe Leroy <christophe.leroy@csgroup.eu> Sent: Thursday, February 27, 2025 2:43 AM
+> > > 
+> > > Le 27/02/2025 à 02:38, Stephen Rothwell a écrit :
+> > > > Hi Venkat,
+> > > > 
+> > > > CC Kees Cook for advice.  This is a result of the tests added in commit
+> > > > 
+> > > >     bbeb38b8487a ("string.h: Validate memtostr*()/strtomem*() arguments more carefully")
+> > > > 
+> > > > from the kspp tree.
+> > > > 
+> > > > I note that the comment about memtostr() says "Copy a possibly
+> > > > non-NUL-term string".
+> > > 
+> > > Can you tell more about your config and your environment ?
+> > > 
+> > > I just tested with ppc64_defconfig and ppc64le_defconfig, with gcc 12.4,
+> > > gcc 13.2 and gcc 14.2 and didn't get that build error.
+> > > 
+> > > Christophe
+> > 
+> > FWIW, I see the same build failures related to __must_be_noncstr()
+> > when building natively on x86 and on arm64. In both cases, it's an
+> > Ubuntu 20.04 installation with gcc 9.4.0 and binutils 2.34.
+> > 
+> 
+> Looks like I get that problem only with GCC 8.5 and GCC 9.5.
 
-The last paragraph of the commit message was supposed to explain that
-(which it seemingly did poorly :-) ) :
+Okay, I've figured this out, and sent an updated patch:
+https://lore.kernel.org/lkml/20250228174130.it.875-kees@kernel.org
 
-> > The distinction here is that all messages talking about mishaps of the
-> > lvds element use dev_err(_probe) while messages caused by interaction
-> > with the main Rockchip drm-device use drm_err.
+This matches what you found, namely:
 
+> I don't get it with gcc 10.3 nor 11.3 nor 12.4 nor 13.2 nor 14.2
 
+These have both nonstring and __builtin_has_attribute()
 
+> I don't get it either with gcc 5.5 or 7.5
+
+These have neither.
+
+The problem was in the span of time when nonstring got introduced, but
+__builtin_has_attribute() hadn't been yet (GCC 8 and 9). I had accounted
+for having neither, but not for missing one. :|
+
+Thank you all for helping debug this!
+
+-Kees
+
+-- 
+Kees Cook
 
