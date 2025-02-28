@@ -1,210 +1,198 @@
-Return-Path: <linux-kernel+bounces-537621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A155A48E3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:55:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF599A48E32
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 938FE16DA86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4A3189170D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C4F14B08E;
-	Fri, 28 Feb 2025 01:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hc1Wnley"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5108D53363;
+	Fri, 28 Feb 2025 01:52:26 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3C33596A;
-	Fri, 28 Feb 2025 01:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76171805A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740707694; cv=none; b=MVcY+OUHKRQoVYGJ4Iuw/Li+wYHu5Pn93ey6V1Dbw8PN20fwPSsL+yYcNATTdFxA53VDYGLV8nmKU0hKZI5+yFHeeueUewSqIdX3KFhyc6WzLnN7JzY/YiuIseQuJS/EyHv65p8TY4wFUWUJqQ1oPRlAf+VGHJiMhe7rfomnao0=
+	t=1740707545; cv=none; b=fTZCo/WZleAqAvBBldOZ8ZxOHrHbbk5vaxdA63D4y5+TPsPsbsBlTf7QZS+zsADgt/VkhcgsAyVO+kwUIeLH+xh8RvSHW7npPUWkDuB3ZufKN9fn0FQyYRCSAhJq0ycYt7ZzRMG5Mh+EmO8NFLnUIxUpcZ1aJ9zT4ACP354e8nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740707694; c=relaxed/simple;
-	bh=Lp1jbP3VtIoZJb7DDjRQCPnuT/WqIWZRzxbJAQE3YnA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=sUhwxFtUg5sQeFToy9qKPq/jAjjiANiSkNnECv0FVDxh0NPznBVx4EMQS1swHyYlkcYKmef1Mt+RTowM2DbKTpS6KCGYGbZbHyBy6o5vMpZHTpspSVQwTI58XBQsxIGnLVXdVPD9aSQN+UsTBCo1PdGkmnEYx65O7YoqTCNweeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hc1Wnley; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51S1ouig2394050
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 27 Feb 2025 17:50:57 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51S1ouig2394050
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740707463;
-	bh=zdxlCZN7qRmiM8/WMWaSChORmP5U1+mg9Dd2GNfsbGA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hc1WnleyPiNvmeMgkj0Fbb3sTWrGCmnnaxiRXiZvVvO6Is3ZJKu6mp+YJv2Dbs05X
-	 aVxT1zsm98Egcx7g7dDapGUM1ppk6QkyAa2wZSKXLVi8I4OeDG/xzxwpW4dEA2MBFx
-	 T1ntM64Z768sGTrScS8Wa6oiWHo2Bu8akRlkAIPTgcwVRV0sgRtvWguE9SobXFYNdw
-	 ClhsdUIvwPyfzfAd+XeT/JQ5MtCRtjegffTL4YeiMAwTwSfCb9k77v5gFOVLmhUpKy
-	 VYHzzZXLAdv9xzXZj/lrKYrLB5diO6XmkXYCixEjE5jI7GVtxQxUpXMNKybtxiJAEr
-	 DXDmmmDy5eD+w==
-Date: Thu, 27 Feb 2025 17:50:55 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Laight <david.laight.linux@gmail.com>,
-        Yury Norov <yury.norov@gmail.com>
-CC: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        jk@ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com,
-        andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-        dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
-        hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
-        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
-        johannes@sipsolutions.net, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, akpm@linux-foundation.org, alistair@popple.id.au,
-        linux@rasmusvillemoes.dk, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@gmail.com, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
-        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-        oss-drivers@corigine.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-        brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
-        Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250227215741.1c2e382f@pumpkin>
-References: <20250223164217.2139331-1-visitorckw@gmail.com> <20250223164217.2139331-3-visitorckw@gmail.com> <Z7zIBwH4aUA7G9MY@thinkpad> <20250226222911.22cb0c18@pumpkin> <Z8CpaaHv0ahHFVuK@thinkpad> <20250227215741.1c2e382f@pumpkin>
-Message-ID: <EF874FA4-2719-44EA-B0DB-93A0980142BE@zytor.com>
+	s=arc-20240116; t=1740707545; c=relaxed/simple;
+	bh=jMRX8lDy8SNSLQqZnkKvU/L994cG+F4sDrOdqFgsHqI=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eZSZi5Ad4deacyoySbl2iQkaDD6cr5uc/TNB1h+wOgEzFfWBcLbC1YPt7G1V2PY+q6v6SHyGOeHLNe9w1Ls8txStdNWYnl6BpghMgYkrO7S/W70dFRO1h2rON+CnuWZeC6cRdAa6tuR/1te1VLSEIhe4TzrQRJT0mOPFvloN3Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z3rhJ6fbczvWqh;
+	Fri, 28 Feb 2025 09:48:16 +0800 (CST)
+Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D395180087;
+	Fri, 28 Feb 2025 09:52:02 +0800 (CST)
+Received: from [10.174.179.24] (10.174.179.24) by
+ kwepemg200013.china.huawei.com (7.202.181.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 09:52:00 +0800
+Subject: Re: Softlockup when test shmem swapout-swapin and compaction
+To: Zi Yan <ziy@nvidia.com>
+References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
+ <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
+ <acbfc1da-f743-b11b-191c-ce6e476f1709@huawei.com>
+ <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
+CC: Baolin Wang <baolin.wang@linux.alibaba.com>, <linux-mm@kvack.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Barry Song
+	<baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins
+	<hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang
+	<ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>, Ryan Roberts
+	<ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>
+From: Liu Shixin <liushixin2@huawei.com>
+Message-ID: <ffea2791-817e-b1a5-ba41-10ed2a5d9636@huawei.com>
+Date: Fri, 28 Feb 2025 09:52:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200013.china.huawei.com (7.202.181.64)
 
-On February 27, 2025 1:57:41 PM PST, David Laight <david=2Elaight=2Elinux@g=
-mail=2Ecom> wrote:
->On Thu, 27 Feb 2025 13:05:29 -0500
->Yury Norov <yury=2Enorov@gmail=2Ecom> wrote:
+
+
+On 2025/2/28 7:43, Zi Yan wrote:
+> On 27 Feb 2025, at 2:04, Liu Shixin wrote:
 >
->> On Wed, Feb 26, 2025 at 10:29:11PM +0000, David Laight wrote:
->> > On Mon, 24 Feb 2025 14:27:03 -0500
->> > Yury Norov <yury=2Enorov@gmail=2Ecom> wrote:
->> > =2E=2E=2E=2E =20
->> > > +#define parity(val)					\
->> > > +({							\
->> > > +	u64 __v =3D (val);				\
->> > > +	int __ret;					\
->> > > +	switch (BITS_PER_TYPE(val)) {			\
->> > > +	case 64:					\
->> > > +		__v ^=3D __v >> 32;			\
->> > > +		fallthrough;				\
->> > > +	case 32:					\
->> > > +		__v ^=3D __v >> 16;			\
->> > > +		fallthrough;				\
->> > > +	case 16:					\
->> > > +		__v ^=3D __v >> 8;			\
->> > > +		fallthrough;				\
->> > > +	case 8:						\
->> > > +		__v ^=3D __v >> 4;			\
->> > > +		__ret =3D  (0x6996 >> (__v & 0xf)) & 1;	\
->> > > +		break;					\
->> > > +	default:					\
->> > > +		BUILD_BUG();				\
->> > > +	}						\
->> > > +	__ret;						\
->> > > +})
->> > > + =20
->> >=20
->> > You really don't want to do that!
->> > gcc makes a right hash of it for x86 (32bit)=2E
->> > See https://www=2Egodbolt=2Eorg/z/jG8dv3cvs =20
->>=20
->> GCC fails to even understand this=2E Of course, the __v should be an
->> __auto_type=2E But that way GCC fails to understand that case 64 is
->> a dead code for all smaller type and throws a false-positive=20
->> Wshift-count-overflow=2E This is a known issue, unfixed for 25 years!
+>> On 2025/2/26 15:22, Baolin Wang wrote:
+>>> Add Zi.
+>>>
+>>> On 2025/2/26 15:03, Liu Shixin wrote:
+>>>> Hi all,
+>>>>
+>>>> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
+>>>>
+>>>>   watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
+>>>>   Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
+>>>>   CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
+>>>>   Tainted: [L]=SOFTLOCKUP
+>>>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>>>>   RIP: 0010:xas_load+0x5d/0xc0
+>>>>   Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
+>>>>   RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
+>>>>   RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
+>>>>   RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
+>>>>   RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
+>>>>   R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
+>>>>   R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
+>>>>   FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
+>>>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>   CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
+>>>>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>   PKRU: 55555554
+>>>>   Call Trace:
+>>>>    <IRQ>
+>>>>    ? watchdog_timer_fn+0x1c9/0x250
+>>>>    ? __pfx_watchdog_timer_fn+0x10/0x10
+>>>>    ? __hrtimer_run_queues+0x10e/0x250
+>>>>    ? hrtimer_interrupt+0xfb/0x240
+>>>>    ? __sysvec_apic_timer_interrupt+0x4e/0xe0
+>>>>    ? sysvec_apic_timer_interrupt+0x68/0x90
+>>>>    </IRQ>
+>>>>    <TASK>
+>>>>    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+>>>>    ? xas_load+0x5d/0xc0
+>>>>    xas_find+0x153/0x1a0
+>>>>    find_get_entries+0x73/0x280
+>>>>    shmem_undo_range+0x1fc/0x640
+>>>>    shmem_evict_inode+0x109/0x270
+>>>>    evict+0x107/0x240
+>>>>    ? fsnotify_destroy_marks+0x25/0x180
+>>>>    ? _atomic_dec_and_lock+0x35/0x50
+>>>>    __dentry_kill+0x71/0x190
+>>>>    dput+0xd1/0x190
+>>>>    __fput+0x128/0x2a0
+>>>>    task_work_run+0x57/0x90
+>>>>    syscall_exit_to_user_mode+0x1cb/0x1e0
+>>>>    do_syscall_64+0x67/0x170
+>>>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>   RIP: 0033:0x7fd95776eb8b
+>>>>
+>>>> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
+>>>> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
+>>>> compaction which is necessary for reproduction,  although without a clear why.
+>>>>
+>>>> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
+>>>> reproduction program. The reproduction program consists of three parts:
+>>>>   1. A process constantly changes the status of shmem large folio by these interfaces:
+>>>>          /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
+>>>>   2. A process constantly echo 1 > /proc/sys/vm/compact_memory
+>>>>   3. A process constantly alloc/free/swapout/swapin shmem large folios.
+>>>>
+>>>> I'm not sure whether the first process is necessary but the second and third are. In addition,
+>>>> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
+>>>> so I guess the problem is in migration.
+>>>>
+>>>> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
+>>>> since I have confirmed this porblem still existed after merge the fixed patch.
+>>> Could you check if your version includes Zi's fix[1]? Not sure if it's related to the shmem large folio split.
+>>>
+>>> [1] https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
+>>> .
+>>>
+>> Already include this patch when test.
+> Hi Shixin,
 >
->Just do __v ^=3D __v >> 16 >> 16
+> Can you try the diff below? It fixed my local repro.
 >
->>=20
->> https://gcc=2Egnu=2Eorg/bugzilla/show_bug=2Ecgi?id=3D4210
->> =20
->> > You do better using a __v32 after the 64bit xor=2E =20
->>=20
->> It should be an __auto_type=2E I already mentioned=2E So because of tha=
-t,
->> we can either do something like this:
->>=20
->>   #define parity(val)					\
->>   ({							\
->>   #ifdef CLANG                                          \
->>   	__auto_type __v =3D (val);			\
->>   #else /* GCC; because of this and that */             \
->>   	u64 __v =3D (val);			        \
->>   #endif                                                \
->>   	int __ret;					\
->>=20
->> Or simply disable Wshift-count-overflow for GCC=2E
+> The issue is that after Baolin’s patch, shmem folios now use high-order
+> entry, so the migration code should not update multiple xarray slots.
+Looks reasonable. I'll try it, thanks.
 >
->For 64bit values on 32bit it is probably better to do:
->int p32(unsigned long long x)
->{
->    unsigned int lo =3D x;
->    lo ^=3D x >> 32;
->    lo ^=3D lo >> 16;
->    lo ^=3D lo >> 8;
->    lo ^=3D lo >> 4;
->    return (0x6996 >> (lo & 0xf)) & 1;
->}
->That stops the compiler doing 64bit shifts (ok on x86, but probably not e=
-lsewhere)=2E
->It is likely to be reasonably optimal for most 64bit cpu as well=2E
->(For x86-64 it probably removes a load of REX prefix=2E)
->(It adds an extra instruction to arm because if its barrel shifter=2E)
+> Hi Baolin,
+>
+> Is your patch affecting anonymous swapping out? If yes, we can remove
+> the for loop of updating xarray in __folio_migrate_mapping().
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 365c6daa8d1b..be77932596b3 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -44,6 +44,7 @@
+>  #include <linux/sched/sysctl.h>
+>  #include <linux/memory-tiers.h>
+>  #include <linux/pagewalk.h>
+> +#include <linux/shmem_fs.h>
+>
+>  #include <asm/tlbflush.h>
+>
+> @@ -524,7 +525,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+>  			folio_set_swapcache(newfolio);
+>  			newfolio->private = folio_get_private(folio);
+>  		}
+> -		entries = nr;
+> +		/* shmem now uses high-order entry */
+> +		if (folio->mapping && shmem_mapping(folio->mapping))
+> +			entries = 1;
+> +		else
+> +			entries = nr;
+>  	} else {
+>  		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
+>  		entries = 1;
 >
 >
->>=20
->> > Even the 64bit version is probably sub-optimal (both gcc and clang)=
-=2E
->> > The whole lot ends up being a bit single register dependency chain=2E
->> > You want to do: =20
->>=20
->> No, I don't=2E I want to have a sane compiler that does it for me=2E
->>=20
->> > 	mov %eax, %edx
->> > 	shrl $n, %eax
->> > 	xor %edx, %eax
->> > so that the 'mov' and 'shrl' can happen in the same clock
->> > (without relying on the register-register move being optimised out)=
-=2E
->> >=20
->> > I dropped in the arm64 for an example of where the magic shift of 699=
-6
->> > just adds an extra instruction=2E =20
->>=20
->> It's still unclear to me that this parity thing is used in hot paths=2E
->> If that holds, it's unclear that your hand-made version is better than
->> what's generated by GCC=2E
->
->I wasn't seriously considering doing that optimisation=2E
->Perhaps just hoping is might make a compiler person think :-)
->
->	David
->
->>=20
->> Do you have any perf test?
->>=20
->> Thanks,
->> Yury
+> Best Regards,
+> Yan, Zi
+> .
 >
 
-What the compiler people need to do is to not make __builtin_parity*() gen=
-erate crap=2E
 
