@@ -1,252 +1,208 @@
-Return-Path: <linux-kernel+bounces-537720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00692A48FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:41:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926DAA48FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A38188896C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DE916EB74
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E09192B8C;
-	Fri, 28 Feb 2025 03:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21AE187553;
+	Fri, 28 Feb 2025 03:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROLMc5DE"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="crF3S1sj"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D6713213E;
-	Fri, 28 Feb 2025 03:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A2114B07A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740714032; cv=none; b=ZSPiinVrS7hRYi9q0CJfONaq+XtFggjf9sGNZJXlPjheoBVO/u87bDUxHR7E8kd7tkv4izc44RXYt8V5uexyiHzAuBkXlBchcO4aMOajyxLwZrH0xWwLTMBYphIoQaEoBtJ7n+DeNNuUH6fKlVyL1MHe4FIqCgg9mKM57tZCsD0=
+	t=1740713970; cv=none; b=OdXOs2d0eajJuhpqOccPkweyi1eovzhPZSSlOsWTwxM9HIYHusmZElg1ilcV9WLEHqu9/EfioVFw66Av9OeXQximrlVLeWGaOGlopubsAMHkrvmm41Zu1HBMNhIxyPJI2RcNgbVs5XgfQfDp5LZ45FXT8IHeaPKEHXWPYdaXYcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740714032; c=relaxed/simple;
-	bh=nGH8rvuuV5YTeJBxNVwgLjv9Y8DsGwNpyNl4n8u/Lok=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D8e5Lag4WZH6ruwd7NnnfXj27KSi2MSr/BEB6AwQyj5hq7IQsc3dwKkMUgrY4oJXF9OwZodblAWRu7SifDCgqhR8BQbcqtYeZ9rNaEgwX2xFnJeiK4pd8jGvH568sFJwg0MOeze7l8LNHDC3O7DIiNYcQQne74E9/4qpVvgfMcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROLMc5DE; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22128b7d587so32781075ad.3;
-        Thu, 27 Feb 2025 19:40:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740714030; x=1741318830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OoJ4GCtBW9r4R7yZx4mj/bfDelbtr4R+xivfqBWQxIE=;
-        b=ROLMc5DExLFiBgkUS+McYIOw2MkkUfg8leIlDr15/jODcZJL8HoGFWmPyckzwt5ysu
-         e0Hd5WaUENg5+MK5oc77iY1/hC3pYi854zKmFXDrtK7dTA9tWFGUgkwqrszK1PEZayZu
-         7LFBSDVdrIf0h/WcvbTxSXvhOOtPf8h+2mLCJaKTdwXHgaiKkJMwR3A2KdQE8DXhQbcA
-         qZbxLzMGpdyD+J+rJ9dtdCJ/3JvNh0w02jgFw+Ha8LB0FwAwEgUXaMMVGdCbblIyYiV3
-         gTGPza8wew2zLkk7GJh27JUkHGvci6NQPWZOGZhu5iT+BFO9r35LeM/UuMkefMZcKTgz
-         RTog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740714030; x=1741318830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OoJ4GCtBW9r4R7yZx4mj/bfDelbtr4R+xivfqBWQxIE=;
-        b=a9aZ6c0oUrQqmq6Q1YVFTP3a8BtH1F+25K3m/XygNy3UCvmOrQlLe7U97tnTaJjLTr
-         5q6WlYss/jqbr0V1EWFTyKq+TlkGSmhAvdc8TxnUsYQ8HWPhp/xCVfXCbg679D0yJLaJ
-         7H4N0IJDNpjWzU8XobKQk50E1IpDf27EH0EAwhkoWent3rqipG4AcfIb3EGmdiFiRJ8K
-         mSW3E6HsQJKlMitShL24PUefxRG/aI4/pa3CmaoZO5/C3vw3It/aGDD98bkhbuB10Pdu
-         fifPWLgyjEMT+ydAKfWG/vhEIVrsq+G968pKwFKWb0T6TQEeH/X4aCqLaHESrmRkilTg
-         Ognw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJhouVwVKtSi273yIlxuvRPWEqx1xsg3PWGwUCUOWyyW6/7cLExkmOljUxcbQY+0OYVxFOmRzabYgL@vger.kernel.org, AJvYcCWYM/wWCbrTtW6yD2DD5SXfzGUJklsD//fWjJGJfIqYT3N4T3826o9n9sM6xGiizvbUxR6q7dxca3KFVHr4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6HoLI6BXIqwX3yxDOfH6xyAsbjF2UKO9xApotilhucAKjjigc
-	z7QLWCO5ANOOO/2WZmQAzuJcSirsy2nqBH508gytfsEC3fJ3M5/Un7MpBY7lYrM=
-X-Gm-Gg: ASbGncttSZhGRetDxLEKyyxWY71E6+VnGMmZqIqVher5QPD33yy0njDkREnO1TScecU
-	e54+MQi4POSnJaFJRMqrSdeTAt7+OTtBz8HCxuqneVLujpZJ5IgA9hKOVTkFsZ1CL6VAd1Q8WfU
-	imgG3Z6sEZrDKGNGZWq2uq51u4Ixus+npSMSovUP49wvhGGWyj0re3YnmAeFZk5gH+hLqqtl+MZ
-	qO+J1hFxHXef0jU3Yjw1WjcuHbFCzcnqWja8P21pt/LClFxBiKds3jwgbboVMGecTPmVCHyUJWU
-	uqb6oWPjl/bvHwXOFgnmOw==
-X-Google-Smtp-Source: AGHT+IH8IRF4VtWIAu215SqkW3dsnhcfHiZAYpXMpzyjCCocGLr1qeuz/Fh1SLUNWxkfkaZmflD9Vw==
-X-Received: by 2002:a17:902:ce12:b0:21f:93f8:ce16 with SMTP id d9443c01a7336-223690e6183mr30302895ad.31.1740714030246;
-        Thu, 27 Feb 2025 19:40:30 -0800 (PST)
-Received: from dev.. ([2804:14d:887:95a9:accf:4797:5e54:f1d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5c67sm23593755ad.135.2025.02.27.19.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 19:40:29 -0800 (PST)
-From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-To: tglx@linutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	vz@mleia.com
-Cc: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v3] dt-bindings: interrupt-controller: Convert nxp,lpc3220-mic.txt to yaml format
-Date: Fri, 28 Feb 2025 00:39:15 -0300
-Message-ID: <20250228034021.607135-1-leo.fthirata@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740713970; c=relaxed/simple;
+	bh=Odggy2B8m+JPewILF2GfggI0o70pWnGrVS9G9ry6AHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u1QnFc98stEi0rIlcbXcWux5IyWqs24sb68+bieFEEOLU/uqVXBwYaxNMgZbqrjPhEwJ5zZ7VKWtXddotRcgS9AkOncnnmTO0r2BNIlPlxcfzecGIZJezeK9Z/NzkJepfnNLNii1IYpuqNkSsgb6hSFztefffn1GR7ka7T3rd8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=crF3S1sj; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740713964; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=QVfILHvRitpyM5pVXiaXZIFJCp09+H8y0qF8KXX/yFs=;
+	b=crF3S1sjIAHblXIY8kmXM9WN6nc0KI4iQNWn794rN/e90HNcl2g8FeZ+9SlWDIlWsgEdLGSz8VV9k2qUQDFCeW0Mc93ndGhFKQuOr9bVLuyfxCeCD/+1vNtfA/fDre4vz3yLky/ion/buFfcaGHPo9OjUAh7ro6e5fh0ocNvxrM=
+Received: from 30.221.80.187(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQO30ym_1740713961 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 11:39:22 +0800
+Message-ID: <7367bb73-3358-4925-ac9d-e2b90904d15a@linux.alibaba.com>
+Date: Fri, 28 Feb 2025 11:39:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Softlockup when test shmem swapout-swapin and compaction
+To: Zi Yan <ziy@nvidia.com>, Liu Shixin <liushixin2@huawei.com>
+Cc: linux-mm@kvack.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Lance Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
+ <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
+ <acbfc1da-f743-b11b-191c-ce6e476f1709@huawei.com>
+ <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Convert NXP LPC3220-MIC to DT schema.
 
-Signed-off-by: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
----
-Changes in v3:
- - Add interrupts property description
- - Fix interrupts items descriptions
- - Remove else condition
----
- .../interrupt-controller/nxp,lpc3220-mic.txt  | 58 ----------------
- .../interrupt-controller/nxp,lpc3220-mic.yaml | 69 +++++++++++++++++++
- 2 files changed, 69 insertions(+), 58 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
-deleted file mode 100644
-index 0bfb3ba55f4c..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--* NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
--
--Required properties:
--- compatible: "nxp,lpc3220-mic" or "nxp,lpc3220-sic".
--- reg: should contain IC registers location and length.
--- interrupt-controller: identifies the node as an interrupt controller.
--- #interrupt-cells: the number of cells to define an interrupt, should be 2.
--  The first cell is the IRQ number, the second cell is used to specify
--  one of the supported IRQ types:
--      IRQ_TYPE_EDGE_RISING = low-to-high edge triggered,
--      IRQ_TYPE_EDGE_FALLING = high-to-low edge triggered,
--      IRQ_TYPE_LEVEL_HIGH = active high level-sensitive,
--      IRQ_TYPE_LEVEL_LOW = active low level-sensitive.
--  Reset value is IRQ_TYPE_LEVEL_LOW.
--
--Optional properties:
--- interrupts: empty for MIC interrupt controller, cascaded MIC
--  hardware interrupts for SIC1 and SIC2
--
--Examples:
--
--	/* LPC32xx MIC, SIC1 and SIC2 interrupt controllers */
--	mic: interrupt-controller@40008000 {
--		compatible = "nxp,lpc3220-mic";
--		reg = <0x40008000 0x4000>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--	};
--
--	sic1: interrupt-controller@4000c000 {
--		compatible = "nxp,lpc3220-sic";
--		reg = <0x4000c000 0x4000>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--
--		interrupt-parent = <&mic>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
--			     <30 IRQ_TYPE_LEVEL_LOW>;
--	};
--
--	sic2: interrupt-controller@40010000 {
--		compatible = "nxp,lpc3220-sic";
--		reg = <0x40010000 0x4000>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--
--		interrupt-parent = <&mic>;
--		interrupts = <1 IRQ_TYPE_LEVEL_LOW>,
--			     <31 IRQ_TYPE_LEVEL_LOW>;
--	};
--
--	/* ADC */
--	adc@40048000 {
--		compatible = "nxp,lpc3220-adc";
--		reg = <0x40048000 0x1000>;
--		interrupt-parent = <&sic1>;
--		interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
--	};
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
-new file mode 100644
-index 000000000000..59e8814a15b7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/nxp,lpc3220-mic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
-+
-+maintainers:
-+  - Vladimir Zapolskiy <vz@mleia.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nxp,lpc3220-mic
-+      - nxp,lpc3220-sic
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+
-+  interrupts:
-+    items:
-+      - description: Regular interrupt request
-+      - description: Fast interrupt request
-+    description: IRQ and FIQ outputs of SIC1/SIC2 to the MIC.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nxp,lpc3220-sic
-+    then:
-+      required:
-+        - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    mic: interrupt-controller@40008000 {
-+        compatible = "nxp,lpc3220-mic";
-+        reg = <0x40008000 0x4000>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+    };
-+
-+    sic1: interrupt-controller@4000c000 {
-+        compatible = "nxp,lpc3220-sic";
-+        reg = <0x4000c000 0x4000>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        interrupt-parent = <&mic>;
-+        interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
-+                    <30 IRQ_TYPE_LEVEL_LOW>;
-+    };
--- 
-2.43.0
+On 2025/2/28 07:43, Zi Yan wrote:
+> On 27 Feb 2025, at 2:04, Liu Shixin wrote:
+> 
+>> On 2025/2/26 15:22, Baolin Wang wrote:
+>>> Add Zi.
+>>>
+>>> On 2025/2/26 15:03, Liu Shixin wrote:
+>>>> Hi all,
+>>>>
+>>>> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
+>>>>
+>>>>    watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
+>>>>    Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
+>>>>    CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
+>>>>    Tainted: [L]=SOFTLOCKUP
+>>>>    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>>>>    RIP: 0010:xas_load+0x5d/0xc0
+>>>>    Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
+>>>>    RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
+>>>>    RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
+>>>>    RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
+>>>>    RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
+>>>>    R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
+>>>>    R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
+>>>>    FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
+>>>>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>    CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
+>>>>    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>    PKRU: 55555554
+>>>>    Call Trace:
+>>>>     <IRQ>
+>>>>     ? watchdog_timer_fn+0x1c9/0x250
+>>>>     ? __pfx_watchdog_timer_fn+0x10/0x10
+>>>>     ? __hrtimer_run_queues+0x10e/0x250
+>>>>     ? hrtimer_interrupt+0xfb/0x240
+>>>>     ? __sysvec_apic_timer_interrupt+0x4e/0xe0
+>>>>     ? sysvec_apic_timer_interrupt+0x68/0x90
+>>>>     </IRQ>
+>>>>     <TASK>
+>>>>     ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+>>>>     ? xas_load+0x5d/0xc0
+>>>>     xas_find+0x153/0x1a0
+>>>>     find_get_entries+0x73/0x280
+>>>>     shmem_undo_range+0x1fc/0x640
+>>>>     shmem_evict_inode+0x109/0x270
+>>>>     evict+0x107/0x240
+>>>>     ? fsnotify_destroy_marks+0x25/0x180
+>>>>     ? _atomic_dec_and_lock+0x35/0x50
+>>>>     __dentry_kill+0x71/0x190
+>>>>     dput+0xd1/0x190
+>>>>     __fput+0x128/0x2a0
+>>>>     task_work_run+0x57/0x90
+>>>>     syscall_exit_to_user_mode+0x1cb/0x1e0
+>>>>     do_syscall_64+0x67/0x170
+>>>>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>    RIP: 0033:0x7fd95776eb8b
+>>>>
+>>>> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
+>>>> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
+>>>> compaction which is necessary for reproduction,  although without a clear why.
+>>>>
+>>>> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
+>>>> reproduction program. The reproduction program consists of three parts:
+>>>>    1. A process constantly changes the status of shmem large folio by these interfaces:
+>>>>           /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
+>>>>    2. A process constantly echo 1 > /proc/sys/vm/compact_memory
+>>>>    3. A process constantly alloc/free/swapout/swapin shmem large folios.
+>>>>
+>>>> I'm not sure whether the first process is necessary but the second and third are. In addition,
+>>>> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
+>>>> so I guess the problem is in migration.
+>>>>
+>>>> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
+>>>> since I have confirmed this porblem still existed after merge the fixed patch.
+>>>
+>>> Could you check if your version includes Zi's fix[1]? Not sure if it's related to the shmem large folio split.
+>>>
+>>> [1] https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
+>>> .
+>>>
+>> Already include this patch when test.
+> 
+> Hi Shixin,
+> 
+> Can you try the diff below? It fixed my local repro.
+> 
+> The issue is that after Baolin’s patch, shmem folios now use high-order
+> entry, so the migration code should not update multiple xarray slots.
 
+It is not after my patches. After converting shmem to use folio, shmem 
+mapping will store large order, but during swap, the shmem large folio 
+will be split (whereas my patches allow shmem large folio swap without 
+splitting).
+
+> Hi Baolin,
+> 
+> Is your patch affecting anonymous swapping out? If yes, we can remove
+
+No.
+
+> the for loop of updating xarray in __folio_migrate_mapping().
+
+I think the issue is introduced by commit fc346d0a70a1 ("mm: migrate 
+high-order folios in swap cache correctly"), which did not handle shmem 
+folio correctly.
+
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 365c6daa8d1b..be77932596b3 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -44,6 +44,7 @@
+>   #include <linux/sched/sysctl.h>
+>   #include <linux/memory-tiers.h>
+>   #include <linux/pagewalk.h>
+> +#include <linux/shmem_fs.h>
+> 
+>   #include <asm/tlbflush.h>
+> 
+> @@ -524,7 +525,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+>   			folio_set_swapcache(newfolio);
+>   			newfolio->private = folio_get_private(folio);
+>   		}
+> -		entries = nr;
+> +		/* shmem now uses high-order entry */
+> +		if (folio->mapping && shmem_mapping(folio->mapping))
+
+Nit: we've already checked the 'mapping', and we can simplify it to 
+'shmem_mapping(mapping)'.
+
+> +			entries = 1;
+> +		else
+> +			entries = nr;
+>   	} else {
+>   		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
+>   		entries = 1;
+
+Good catch. The fix look good to me. Thanks.
 
