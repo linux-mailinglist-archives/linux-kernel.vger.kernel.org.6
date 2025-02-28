@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-539603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AF7A4A66B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:03:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD12A4A66E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75A437A8599
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:02:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC5B77AAAB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4DB1DE89B;
-	Fri, 28 Feb 2025 23:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD6D1DED66;
+	Fri, 28 Feb 2025 23:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="BWPn5+DA"
-Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZOxRYTI"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBAF157A55
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F723F372;
+	Fri, 28 Feb 2025 23:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783819; cv=none; b=mYhaz1CdWx5UMXkOJvfTu3ocAyOikhJzrKIEx3JjRyalZDp0iE8GsOFd0DAbIxWHhr9JOR1yqgtL66SV2pJkNpRhH8hPbkkQ0SDQQ785KZRBum/z0PObNyLkMz+NT/SwVYlgQs8/WcMn8iEt/V/EJa0enPc9UxxKAyBCJznTZHA=
+	t=1740783838; cv=none; b=oouLiBNwkTo5dU008PRaNE/4OvmTKU4y5vecP9Ej4IjaaEHDDBIEziatbjxpo7XafN3Vop6XwmYh4PYdmnSeyPojhlEnqsAsPAqQTJ9ybbjMO4YjQWcboTK+LhyZ5c/zZFtFXgKz2xOh9uEvL1UciIQ22f7xBs+krCljvkHy6W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783819; c=relaxed/simple;
-	bh=7j3qjGvPFFSYTj58FVcu/QNHzMyIyli39yBCI3WM1kI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jp6TYuJQibJamKqPrh1a2wlPqT793dXS5cDbuMBQUjGNtsYCpx6JRlN4kc/hKfXqoIVObBqeMEiEaj8FkDKz4jH05UXOMFBnC8pYO7d3egdeBerPrN5xsWBuXA8eaAk3PMJdetnMlml3xMLbDi/ufpAinZsWwhL170uRXh81CSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=BWPn5+DA; arc=none smtp.client-ip=209.85.214.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-2234338f2bbso6881355ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:03:37 -0800 (PST)
+	s=arc-20240116; t=1740783838; c=relaxed/simple;
+	bh=HuoDKu8oWhsbb02agi0QM3ODicADQvb3frWE7+N4Yi4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NKVvpY+oesVvqrY6cvbnZP0znTmW2v4dpSFTMcx5ePuV+UGoi9rsBTMLLRkOXQ3gKnQf4ih1LW78dcdvH8pR1/Tc1vz8SH1NZPI6Ro+ASjKpSRkxX4gxba0dInUYOF5NgjH9+foK61inlNt+rA1l49/gP8W/GGI21DJJ97qa40o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZOxRYTI; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22382657540so3551775ad.2;
+        Fri, 28 Feb 2025 15:03:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740783817; x=1741388617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yf/QBUV7NVEQKN07Cfxd8tCBRl6ymxJlYuA3WLlAYys=;
-        b=BWPn5+DAPWkRpGJUpq/O7z2kT/4xWYRVva11InSZbTBvuA2+P7hCma0YlUxTlE68qH
-         cyvTMBFtUIFL/Nlf7XPLt1JaeCDnCumLF+WeFcapco3g/aikJKyWNqCLMgPa3fsiAV6E
-         wfj5jXG2qPAZaX9UCCeeYDv0UAzmcoMPkoyyyJCP6EWueh9cIk2gulnhe8w8FSjkapA0
-         Od7IEgz0Un+WY0F0AwBnM70tOUZJyCacgx0+NLbiMWF5o76VPTmZCiBapGdMnUAR5RUO
-         e4yx8vOf/RrWStsxLzGxx4YrmaqVyIZBoW0Y5DEd50cxeSs19rJazwE7m3oSjei7WFZQ
-         T5tA==
+        d=gmail.com; s=20230601; t=1740783836; x=1741388636; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxRs7vpliND5ZFPz559p/qXP+L2Z4Elvy6BRWrTj7DY=;
+        b=QZOxRYTI0sysj0cHFBay20vKzpks0lymWYMFPNtL0qqOAxI2RwRTgZj1By76dNfcce
+         O+evI5I0Ek47Jxey5g+fwebVPXNazYIbbfo5EaHy+zNtrrin+uBaCfXBlfP7bPEhmy+q
+         eM6SbMx3ILzVnxGqXeQdv8n1+H7CSW04/1TDmO8IGRZygJ0CEvqotH77YWBu9TSy8SOR
+         YvBZlvQDqsTkTIdA0tcWdzqDQl16Oy3v7JlRn/t8f4R7O3z0yaNKRnnvNGTX4HvDmWta
+         A1sI8Nr2XJ/TVuDMn6EvGebSvEURG5APOwhfRLq8TcQBGSdIBPvu9VXxjGVTmshl/18S
+         ji8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740783817; x=1741388617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740783836; x=1741388636;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yf/QBUV7NVEQKN07Cfxd8tCBRl6ymxJlYuA3WLlAYys=;
-        b=UPio8WpubctEa9UkYSIp7vfoH5S1S7ojAW3ltlKqBvKDKWfFKyY5DQxfNf5WX0rQ4y
-         S4HUkXZIqnk3jvPNRkf3+M0zt84bz0L6/tFGxCHWbXTrTkjwhp7rW77TxcbZMeT+shmD
-         T2w+2J7BlnarhpoHZA9ken1whqUXlyXaRVrC5zLasRRObmuRWLa2UTg14dyElHbdqb6m
-         TPYIxgHLOZ5PSSWAnkqevuR6V+xzqyRhRy1ZqxLVtbbOwhu/RMLQg085wJxldbJ5B/EL
-         EUXgf7lCewLG0HFhoDHC7eCMti0ZWh7kYhhIYdPNlUodZ/rz90HoAJ8Y1YGRq17PjZul
-         9enA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlXbCnK7Xh6+NSsPIesRKlVIJ+rTVPyzYTdY8BA05Bk2R43zbReyGDo4PmzFjRJRHCYFyMtZe8w7z42x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXCHqem+VcYjNDnjjWutdEyEiQ/zCIqjxXmijOZVA8GFGyaTbp
-	ziKiO6gR9eKymV4zAU1I/T0JbHAvcgGY/qT40GGAk+ufc8NOrzt0TzJbVs+lLxZ4ksxhy8kjuRC
-	kfz/Z0DTZasa3pobaaDkw43QAiv4DCLL1
-X-Gm-Gg: ASbGncuDezNHWKmUHCGVPFzVhgPxThDD1AeMbgm0si6mwzoiOMC+TBU+1B25c3ORraR
-	AyILM1WTEn7GlFqK8CjtFf6kMgxaielS7xFeyVJZDLsuYJYuMlbCqWbzyjN4yX9LJsfjeLqd0BO
-	cpVRYLJ54luU1YkbjMQckMYdbpw0WAT/aY1Xy3QXPgl6I+Y4VATg1+7o6cyuxzDsJvYy0Bh8KqO
-	rZZ7OIkmQfiO0Vig3LborvxuQZjn9ueTkBwL+Z8UulaJN6fhRQma0QftTpUDfqwZ9OmbmhVMHgK
-	wDxJ8t9PuuBX1LrZt5HPz6Yfv2+qCAnSgbHXhJi7PDd+xeq2
-X-Google-Smtp-Source: AGHT+IHUdSS4qvxNQbUG1GSSETx1tYeYbCJTASaP2vuO663APRzoix+sZ3ezmTaHknBze/LbhOwuljxwBf8y
-X-Received: by 2002:a05:6a00:2348:b0:736:355b:5df6 with SMTP id d2e1a72fcca58-736355b8b91mr227420b3a.6.1740783817284;
-        Fri, 28 Feb 2025 15:03:37 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7349fdc7aacsm290722b3a.1.2025.02.28.15.03.37
+        bh=dxRs7vpliND5ZFPz559p/qXP+L2Z4Elvy6BRWrTj7DY=;
+        b=itrP9wXKCloTtpzX2P/cxbqzNCC6WT8z4mxJ557+58fKg17wHPbS2WMsxMOyRupLMZ
+         pjT/SKj608Bz4+P6tIk4LnMwzKRtSObMIOkOkCGvul25wpGa+AjL1Ob5WhVHsu/kRdmb
+         5YZqvJPbAfGMMt71MgfIr1Wzz3EzhfZpDS3/iTLkRK4WGmrniM4vAocf2CnGxK1pUufe
+         DGspGEUBzSn3n6G+q6F8iR783x2jx2f5kNyJrx2Bfu3X+NaDcHsZIKP8R6T7KlEZzvIq
+         vq5NLbtQJRVAbWia/VdaV8DwLpAfZZrs4xEuHHSvf4wIyuifM9f6DQ5X3szwcXUjwVMZ
+         S8gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUyhWEZJtnyPz9g5GkzTT7Ttei+hIuo5Gp8zeyz8iv0nm+yZJujeK3Z8LvDiLmUfFPiyZcl9xfwucU3CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeF3YyHrq2qGVWOa+iLK9eac6l9zmrEUdM3T2qye2roZSwxccC
+	3KCsqUXxJlwiluANcxTAzAz7N4+TFi0DsntuKDY3yI2bt8L9so5L
+X-Gm-Gg: ASbGncv+CbJHG9h0CCvvDjE9sqOPLT64IKK4XBVANU7Q38HgLfXk06VkyMpGiLl0s9f
+	lENvBnKzeRE0hEyboy4/u+moCKdlyJHhTH52cRjKvTYqo0OFNrT8GXtdlLSJaouptsb3VgxiJ4y
+	Ni9r/94z2TQmIiFV+Dn82HtfA1MBBj7Rz3+Lv3JW+bPpH8j/Du/0uYYO1r9EhJ51nsojzac4GHw
+	YuSVgBrzVevoJ9TdWJbmbCADzkJDTvzNZPKTtxuj6VyQaK+c7k/ltpD+tJ18KJTqv8A1KAUNYxR
+	GCrIwC36jais2pJEIxrD5VKa/8V/Z83f41N+cA==
+X-Google-Smtp-Source: AGHT+IELQB8FCur6rZ5C84nSUjHDY+0Dehzm+1KmH2KHYP0gUaQXaKSJMmM86XXytcV9TslFwUmpWA==
+X-Received: by 2002:a05:6a00:3d47:b0:730:8e97:bd76 with SMTP id d2e1a72fcca58-734ac35f72cmr8010670b3a.9.1740783835524;
+        Fri, 28 Feb 2025 15:03:55 -0800 (PST)
+Received: from [192.168.0.107] ([2804:14d:90a8:854f::10dc])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf230dsm3974875a12.8.2025.02.28.15.03.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 15:03:37 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id CB61434028F;
-	Fri, 28 Feb 2025 16:03:36 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id B891CE419D4; Fri, 28 Feb 2025 16:03:06 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: convert cmd_to_io_kiocb() macro to function
-Date: Fri, 28 Feb 2025 16:03:04 -0700
-Message-ID: <20250228230305.630885-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        Fri, 28 Feb 2025 15:03:55 -0800 (PST)
+From: Gustavo Silva <gustavograzs@gmail.com>
+Subject: [PATCH v2 0/3] BMI270 data ready interrupt support
+Date: Fri, 28 Feb 2025 20:03:47 -0300
+Message-Id: <20250228-bmi270-irq-v2-0-3f97a4e8f551@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANNAwmcC/23MQQ6CMBCF4auQWTumHSAGV97DsGjLAJNYkNY0G
+ tK7W1m7/F/yvh0iB+EI12qHwEmirEsJOlXgZrNMjDKUBlLUKtIdWi90UShhw86QdY0eDXMN5fA
+ MPMr7wO596Vniaw2fw076t/5lkkaFumkHRdY6U9vb5I08zm710Oecv9y1qTGkAAAA
+X-Change-ID: 20250219-bmi270-irq-9a2bc41faee3
+To: Alex Lanzano <lanzano.alex@gmail.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gustavo Silva <gustavograzs@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740783831; l=1149;
+ i=gustavograzs@gmail.com; s=20250111; h=from:subject:message-id;
+ bh=HuoDKu8oWhsbb02agi0QM3ODicADQvb3frWE7+N4Yi4=;
+ b=J34qorUM5/RM1gXGI7dE5favI4WtiFEMtUhuVOYIihni69UZ5FwlxGP2nCh+wic04Gad1o+I0
+ 8Va0d/8JNzDBWcGfkndEQPpDx2uUFhcmNwxDczAe0DA7xA0vFauR/rA
+X-Developer-Key: i=gustavograzs@gmail.com; a=ed25519;
+ pk=g2TFXpo1jMCOCN+rzVoM9NDFNfSMOgVyY0rlyvk4RTM=
 
-The cmd_to_io_kiocb() macro applies a pointer cast to its input without
-parenthesizing it. Currently all inputs are variable names, so this has
-the intended effect. But since casts have relatively high precedence,
-the macro would apply the cast to the wrong value if the input was a
-pointer addition, for example.
+This series adds support for data ready interrupt to the BMI270 driver
+using one of the available interrupt pins.
 
-Turn the macro into a static inline function to ensure the pointer cast
-is applied to the full input value.
+Additionally, this series includes some cleanups to simplify and improve
+consistency across the driver.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
 ---
- include/linux/io_uring_types.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Changes in v2:
+- Patch 2: Updated the commit message to clarify that the variable
+  'bmi270_data::data' has also been renamed.
+- Patch 2: Fixed some line wraps after renaming variables.
+- Link to v1: https://lore.kernel.org/r/20250219-bmi270-irq-v1-0-145d02bbca3b@gmail.com
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 432c98ff52ee..72aac84dca93 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -605,11 +605,15 @@ static inline void io_kiocb_cmd_sz_check(size_t cmd_sz)
- }
- #define io_kiocb_to_cmd(req, cmd_type) ( \
- 	io_kiocb_cmd_sz_check(sizeof(cmd_type)) , \
- 	((cmd_type *)&(req)->cmd) \
- )
--#define cmd_to_io_kiocb(ptr)	((struct io_kiocb *) ptr)
-+
-+static inline struct io_kiocb *cmd_to_io_kiocb(void *ptr)
-+{
-+	return ptr;
-+}
- 
- struct io_kiocb {
- 	union {
- 		/*
- 		 * NOTE! Each of the io_kiocb union members has the file pointer
+---
+Gustavo Silva (3):
+      iio: imu: bmi270: move private struct declaration to source file
+      iio: imu: bmi270: rename variable bmi270_device to data
+      iio: imu: bmi270: add support for data ready interrupt trigger
+
+ drivers/iio/imu/bmi270/bmi270.h      |  17 +-
+ drivers/iio/imu/bmi270/bmi270_core.c | 332 +++++++++++++++++++++++++++++------
+ 2 files changed, 283 insertions(+), 66 deletions(-)
+---
+base-commit: c0f115a8d97599623294c8e9ec28530e19c1e85b
+change-id: 20250219-bmi270-irq-9a2bc41faee3
+
+Best regards,
 -- 
-2.45.2
+Gustavo Silva <gustavograzs@gmail.com>
 
 
