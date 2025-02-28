@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-538410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BE6A4984A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:26:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02695A4984F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49463B77B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426887A9A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714EF2620C1;
-	Fri, 28 Feb 2025 11:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1D2620D4;
+	Fri, 28 Feb 2025 11:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QPjqQHbA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GOeXJ35V"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="D/gvxBky"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DDB849C;
-	Fri, 28 Feb 2025 11:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62195849C;
+	Fri, 28 Feb 2025 11:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740742003; cv=none; b=sHUD0A40/epXGTUcKCtjfjE1XYOsVwDqZms72JykDZ+gRhnCFfSkXfb1f4VXrYGkoZk/JHhGnWJpGXYKopSNTEoY474NOnM+Pt5ZHq6X5pxzgkymFYCbXNKoRdz8Q1TTl2nZZchV5WiXuqk3XqUY9P9CGJr5pCgyv+2jpHAEpYU=
+	t=1740742146; cv=none; b=ZRH3RL/bc3JEt6tmDgawOWzCrox3UPgpQjhdBxJQ0C0Abn2uKcyCxaSi0EqYtOHW96YjkcIDbNwThgKZTj3dlyHNQxc3U61iMk/wcnKPB8EGbLJ96Td7vELxkTYNDAoo8RS0K424Dr6QCZVkfO6FRC7hWKeEUYElQE0aR1D1aQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740742003; c=relaxed/simple;
-	bh=AXoSX+cZOIjr/cx5E/MJM5TCpZ5IGvKLD2m/ep6khUY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KVkmXkuoARSrF/bFVabVLDHYcmLLorQCRVpVajRG9e6gyS9CXiCUkLKEqT3pjVJrj8MfZj2ALqlKRsAVdmmoBfbVXS/Gx4KhIudYq8T4lDYFmgCTvODieGJc9NWeyHzwAnbbblO4uPUuetmr03dXeoTx20bkrItLWKvABeSskXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QPjqQHbA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GOeXJ35V; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740742000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Et+SlYz6ovSf5xQTsL5N3DaesRKtvn9yuY1LQaCqx3Y=;
-	b=QPjqQHbADUkR4H8ZPMbwor1YbyDdFdfRCMc6goNoI+4bwo/oGBxB94XrQYG/QKLopmA5or
-	6Vs5Q3dVXJ7aRHNWjf7Xf0Ck7KjGMo3kpvDwn9cxZkwWfRLW07ZE8rcFpX+5CvMQXmLsSb
-	dqkRJH15t2qOFSp162/uBQNkj7if6nZZZ7+k6fJcyCyoAZN00nv3q4YNfzliZE46ADsxk4
-	XQVDotY9fMe9yMnN+RupMljn/W6fcRTxZBQnWdsipTkjndzYir/UuEvuBxJQgp2fWZcwWY
-	10u940wn5hNcOIT6zrBFCMPh7gzaX6R9Nc9QBrgPnJb5QoAC2r96jXWi7gBIRg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740742000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Et+SlYz6ovSf5xQTsL5N3DaesRKtvn9yuY1LQaCqx3Y=;
-	b=GOeXJ35VIzmQq4zrS1xYViKTE/afu7dgZIRD/D2XD0t9J8NHxHMnimX75EstxB33HhuH2i
-	r6qzZIYT6PG5fPDA==
-To: Hans Zhang <18255117159@163.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>
-Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
- cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-In-Reply-To: <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com>
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
- <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com>
-Date: Fri, 28 Feb 2025 12:26:39 +0100
-Message-ID: <874j0ee2ds.ffs@tglx>
+	s=arc-20240116; t=1740742146; c=relaxed/simple;
+	bh=Esl8+tCtDY0CJiVw8EehvFLirtiKZE38eHn9WD+1GZU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=dOAXVD1b8vhazpo4C1xT3lmlKaXOtrAbOxaddWegvZ/j4QtxZUpQaHBgIVhUfeaWwiieNN14NASxBt+vW7Hhe3WJlU5thNp8wkPwpBy6Q5RaWfAdgbj6C6SYVI/Ihhfqj/s1kd9zgPaB28GLZDZzcORrrck+1hFqw9aWtynCWyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=D/gvxBky; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=zNHptpbLXQ8swyWY9wfkxP0OcEEdiU/o4VafTsgVKzY=; b=D/gvxBkyHgUgFjNP31TQpXtqHa
+	5fYBULwlTR36eWlzN7e7Ud8N67vuvze555S8fALOQCoPbKfl2T/jRXdsczwy1s1uMM+MYiqyBhHW4
+	ExbsaslAai+b9rctDi2y2x8m23I+LFUgALKvn4hnQhR4LPvk2i0462OB4U7R1jzrIwpRD/NoX5EvU
+	x3XjkLIw/g8vWy3OVTmlkhC3/ge7/c0BCkQGyRx97CKPdVycj5J/ExTDjCI7uk6fJftQruJQHDqIs
+	mCk0jXzwEGMmtJAubB3FwBnlgV/Ay1EiDGgr+VB11YOOYdObW2x3PBSxGu3/cvTm0TDoQvKcmmxsC
+	Sc61pbTg==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: aaro.koskinen@iki.fi,
+	andreas@kemnade.info,
+	khilman@baylibre.com,
+	rogerq@kernel.org,
+	tony@atomide.com,
+	linux@armlinux.org.uk,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: omap2plus_defconfig: enable I2C devices of GTA04
+Date: Fri, 28 Feb 2025 12:27:50 +0100
+Message-Id: <20250228112750.367251-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28 2025 at 17:04, Hans Zhang wrote:
-> Is the following patch OK?
+Enable I2C devices of GTA04 to get better test coverage when using
+the defconfig. Until the I2C host driver is fixed, BMG160 module should be
+blacklisted when booting on the GTA04A5.
 
-No.
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ arch/arm/configs/omap2plus_defconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
->   static void
->   irq_debug_show_chip(struct seq_file *m, struct irq_data *data, int ind)
->   {
-> @@ -178,6 +199,7 @@ static int irq_debug_show(struct seq_file *m, void *p)
->          seq_printf(m, "node:     %d\n", irq_data_get_node(data));
->          irq_debug_show_masks(m, desc);
->          irq_debug_show_data(m, data, 0);
-> +       irq_debug_show_msi_msix(m, data, 0);
->          raw_spin_unlock_irq(&desc->lock);
->          return 0;
->   }
-
-This is just violating the layering and I told you what to do:
-
-    "implement a debug_show() callback in the MSI core code and assign
-     it to domain ops::debug_show() on domain creation, if it does not
-     provide its own callback."
-
-If you don't understand what I tell you, then please ask instead of
-going off and hacking up something completely different.
-
-Here is another hint:
-
-     Look at msi_domain_ops_default and at msi_domain_update_dom_ops()
-
-If you still have questions, feel free to ask.
-
-Thanks,
-
-        tglx
-
+diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+index 6de45d7f6078..84f334e94d5f 100644
+--- a/arch/arm/configs/omap2plus_defconfig
++++ b/arch/arm/configs/omap2plus_defconfig
+@@ -609,6 +609,7 @@ CONFIG_LEDS_LP5523=m
+ CONFIG_LEDS_PCA963X=m
+ CONFIG_LEDS_PWM=m
+ CONFIG_LEDS_BD2606MVV=m
++CONFIG_LEDS_TCA6507=m
+ CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_TIMER=m
+ CONFIG_LEDS_TRIGGER_ONESHOT=m
+@@ -643,6 +644,8 @@ CONFIG_TI_EMIF_SRAM=m
+ CONFIG_IIO=m
+ CONFIG_IIO_SW_DEVICE=m
+ CONFIG_IIO_SW_TRIGGER=m
++CONFIG_BMA180=m
++CONFIG_BMC150_ACCEL=m
+ CONFIG_IIO_ST_ACCEL_3AXIS=m
+ CONFIG_KXCJK1013=m
+ CONFIG_CPCAP_ADC=m
+@@ -650,10 +653,15 @@ CONFIG_INA2XX_ADC=m
+ CONFIG_TI_AM335X_ADC=m
+ CONFIG_TWL4030_MADC=m
+ CONFIG_TWL6030_GPADC=m
++CONFIG_BMG160=m
+ CONFIG_MPU3050_I2C=m
++CONFIG_ITG3200=m
++CONFIG_BOSCH_BNO055_I2C=m
+ CONFIG_INV_MPU6050_I2C=m
+ CONFIG_SENSORS_ISL29028=m
+ CONFIG_AK8975=m
++CONFIG_BMC150_MAGN_I2C=m
++CONFIG_SENSORS_HMC5843_I2C=m
+ CONFIG_BMP280=m
+ CONFIG_PWM=y
+ CONFIG_PWM_OMAP_DMTIMER=m
+-- 
+2.39.5
 
 
