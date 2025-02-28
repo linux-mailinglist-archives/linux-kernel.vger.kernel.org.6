@@ -1,199 +1,165 @@
-Return-Path: <linux-kernel+bounces-537744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987ADA49007
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D13F0A49024
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF1216E5F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC91D16E87C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88A1C07CF;
-	Fri, 28 Feb 2025 04:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08A1AA1C9;
+	Fri, 28 Feb 2025 04:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7aPGZ5e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x94cnj2b"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A221BEF77;
-	Fri, 28 Feb 2025 04:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C8C1A2C29
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740715962; cv=none; b=XzvRjvKFpz5RXp/3y0TfLVhPCjSQ9XJ4p30tCSEHpl2aYtq/norv4TsXHsLzgE4L4er91FgOUC9zP1rqZba6gNwc8Xejx2qDPcNVzxINn0Qj2shFKbTwPuVPdMFn2m1uMxADr1iC5MeOJR2RWlfNqC3ObULwb8Ix+RU8fIzXeew=
+	t=1740716054; cv=none; b=SkQjybexBh8WIE3HF5wCuwF2ICQHF0Pep4HMOy6qobZywJSHTPGPJ0/HYo6Zgu+jjyvn0rL25BPQ5a2rq4CnBW48+lOcfC+BHZ301HJRh2VZur25Pt38h9mCThkOL2uqUdfTSsZDsGOxkL73KfJgNS9ryH6xo052ZpI2k9YsINo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740715962; c=relaxed/simple;
-	bh=FvZPNbx5Q2m1gAoxzfB4hFFsiiy5F8PtvQBiBlL4Pow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GRg1fe9u9E8kt5yjxGaV/bPA8jqU/yOpFu/TsrOJ344XWUGHLmB5hwPhfq0SdKo4sMF0vK0jWC1wl6bgHwpqQLkGgVmfIV3mp2FPF31XCgwzJfwVnYEFnt4OmXUy8iVaChA88M1awxWUannMS9PxNIaq2dcLoBknFylnzWAXDFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7aPGZ5e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98792C4CEF6;
-	Fri, 28 Feb 2025 04:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740715961;
-	bh=FvZPNbx5Q2m1gAoxzfB4hFFsiiy5F8PtvQBiBlL4Pow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p7aPGZ5eXgnWu9A0Ea+dKSS08y2a1/EKC3UE/Z2FEipoGmFug6U2/VPCpdALCrbev
-	 LWLYgY5slJIp6msFH5PifaBFnncPID5fOt0WPkN12UBhfDZNQvGCOtYxz98AFwQi9r
-	 WgAMNScUHgU/QCjIKBdM+8toLz0a69cR+y5wAfUL4XD0c2BeHTwNCj0rzEjg7t/9jk
-	 ztjGkYoqwsoe90w5wMaOO2qloHvLVN/nr5b6wbQvI6qWPhBrUhwPfLI8l+1c+B6Thq
-	 ulyHRyvkxI9G4GoAz23IVUQD3B6jXfZUXSLnQ7KRRzCbYXuYs+PWcPp/VNturJjJVp
-	 +DhyJ3PhSI9Og==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abbec6a0bfeso258047766b.2;
-        Thu, 27 Feb 2025 20:12:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUEB5g99z1wh0IHEjwCD3kwvUcn+fDyL7M636h6b5wVw2i/Jn2nnGQge0su5sENZJYTmO/CLJqvznRHBEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGwQ3NCJufw/Ow6+GDcYlLrhlsRaAR5JoUlNgEpdwjWTCi7C5s
-	K8M6utEyfI4tgRpZANLGwXZ2qGO9RbpBDXGAhtQ80u5qvYvot4K3KpufAoHWV2jUUOvsRDUezdg
-	Xpe4F+5nVq4ibL1HMjuvt8s41fjY=
-X-Google-Smtp-Source: AGHT+IG+IXmafpOkUuzzS8tQrRn3X2e+N/GjztXEBD4K6dhIwhLqaGLVg7e2U/2l0BG19YB0NjX5QGMi2+bDYhFmsMk=
-X-Received: by 2002:a17:907:3f25:b0:ab7:b5d9:525a with SMTP id
- a640c23a62f3a-abf265cee06mr203938466b.37.1740715960093; Thu, 27 Feb 2025
- 20:12:40 -0800 (PST)
+	s=arc-20240116; t=1740716054; c=relaxed/simple;
+	bh=rjQbFJKt8uwfUV9oU3NunytfIZ/1Q7onP6jZfvGFvm4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=N+rKbn4snE0nP0Va7f5wmaEyocY9IjYhkV/p4OMgPZMtNZm22Q7Rf0MYEdiRQBwgDEBb+Puxrn/7UmbvzbfURWXqykqjKp0vm74py/JJiTeDZ2WjiLUWW9nGyzLI/e9ckr/gW7WTNK/YoIDf2uTyZRyvZs5geQ1PpkdnLQqnis0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x94cnj2b; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5495177fcbcso94523e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740716050; x=1741320850; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RYRf/zLltnVtwc/PiKXKoC5m7NP7923iyGmqrNy9Xgk=;
+        b=x94cnj2bCffZaDK8uHTcK6dsBkMpVO5W8m8EckTNpKyvDUTVH1cxHn0iJZFyKVjBy7
+         +nkP91/8beQh9ij3wF6o7bFjWAjAzOi2p+R6fHYZ9sEXaYMhVSaV5F5gHrTm3zwP3Yox
+         oLFNQWkhB4ro/5YOggKAlN1uY5xw6/MMWu4mlt0FGeSyK8wAROAgFpM3nnA6u5BuN9nS
+         6RJXMEhgMBRsIa65gtVwW2fsyLszdKK0/P25AiNZejBdBqzQgQC0jXGX/M5RYu/lI22l
+         HKBu0/bUqko4oFqPbQZ1eX5pkKjFhTec9t4HT+EHQTITE3wJoqHypWZgP/m18dNgeIcz
+         le5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740716050; x=1741320850;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RYRf/zLltnVtwc/PiKXKoC5m7NP7923iyGmqrNy9Xgk=;
+        b=dijI4uVdVwNiTsTtflTTS8oCel7fuwZEXAOj1TT+9NInXu6TqDBNDGpChhd+arqUgV
+         TueDx2v4K1NfvHoGypWWaibwhF/Io1NhBxmozyGA+iE5dmolTCm/IHbhvkyVWXQxggJV
+         01bToAeTHpxuCg+0VcLvt7oOehiPDWb+S8hKr/Qks95t9EK6CCqUJVD2ZI0I/L3PnFIR
+         jJu1nWTQSCycJf67Rpv4NQRbY1ZD1P8lkirPQz7sePRwTR0cErg24vjYYmFgeF/eOPrY
+         /Gy0HcepTryXvRwoP4AQla/fG40FvmReFLxYIZrABf8hqgxdbdrAmQqDWTSXUZDJVyHj
+         WcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVp/+H4a0lHoIO1qmv/t5/VpXM3FOaNiZjmjdeDKlRgMyAeuDyW3Wgaw5cC3/f49719BUrU1Ufl4FxGquM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrM3AL1Rpe587G7e/m7boo6/pLXjC7t+yGOuCYQ6tBmdbcFHEN
+	xhiBs7LxvCaOOKyKRaFjSc5ACV1rjScIdPmsWbrI/grykoQ4AnHpry5ygoz4LiuvMYn3UsntLmo
+	MOEo=
+X-Gm-Gg: ASbGnct9y2e0PdPYPhacBmMWuIvHQTyx8gkBB2Q1qWAli8aWb7UTk/Zqgd5wrGAelNo
+	Hm/uVbkyx5daPogGvfxmd85xXlK2jqsiy2IOEZx0vWPdpeoim3jhY/c2u9S+MwBrh/eJRF4/Pl9
+	vjHIYjyKdlYW2IqcICH48bL8wudi0AgfH79RmO/oFjCvn3xHhturKzgVxEkT/yY4J0KktV7+KFe
+	nadhSl66U40k4bqfwGpdemACVAT354YZ+U7Qa7oUQPLGW7a7gTiy6yInyPhi24XnIu/FaJQLBCM
+	64wBEEfevxvkiPf+JzTEVmCMHnGA8Kvshw==
+X-Google-Smtp-Source: AGHT+IFYyLhYNpfXaS4jL/HpsUJ0xZQOZjeZq/epaIkKokVqfkpm7Y0S22x7xD4qJ7NVJT8Sc5wjfg==
+X-Received: by 2002:a05:6512:224d:b0:549:5138:cb20 with SMTP id 2adb3069b0e04-5495138ce15mr116067e87.6.1740716050232;
+        Thu, 27 Feb 2025 20:14:10 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549441262b9sm361101e87.0.2025.02.27.20.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 20:14:08 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/8] drm/msm/dpu: improve CTL handling on DPU >= 5.0
+ platforms
+Date: Fri, 28 Feb 2025 06:14:04 +0200
+Message-Id: <20250228-dpu-active-ctl-v2-0-9a9df2ee5193@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227134539.267169-1-marco.crivellari@suse.com> <20250227134539.267169-2-marco.crivellari@suse.com>
-In-Reply-To: <20250227134539.267169-2-marco.crivellari@suse.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 28 Feb 2025 12:12:29 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7U1CMrCqWwjYYhuZjD3-Fu7Wi__mUwvjvzLO5bZADr8w@mail.gmail.com>
-X-Gm-Features: AQ5f1JoUBrJ2oAhPHBMSw5VZwty-bCqwbvdZHp2bJ-aPgIkFg8cVthJRihCfcAU
-Message-ID: <CAAhV-H7U1CMrCqWwjYYhuZjD3-Fu7Wi__mUwvjvzLO5bZADr8w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] MIPS: Fix idle VS timer enqueue
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, "Maciej W . Rozycki" <macro@orcam.me.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAw4wWcC/13Myw6CMBCF4Vchs3bM0HCprnwPw2IsBSYhlLS10
+ RDe3UpcufxPcr4NgvViA1yLDbxNEsQtOdSpADPxMlqUPjcoUjUpumC/PpFNlGTRxBlJG8NVrx+
+ kGfJp9XaQ1wHeu9yThOj8+/BT+V1/lKJ/KpVI2JaGm5brphr0bZaFvTs7P0K37/sHX2ufra0AA
+ AA=
+X-Change-ID: 20250209-dpu-active-ctl-08cca4d8b08a
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2682;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=rjQbFJKt8uwfUV9oU3NunytfIZ/1Q7onP6jZfvGFvm4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnwTgOUHIA7y+7bzE4ENr8zsm3pvkEKIXhJM6cH
+ Z9EV2vc8AWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8E4DgAKCRCLPIo+Aiko
+ 1QRFCACybyvscFVesJkPTMRs/ZXr5pCs1yvnCMHJbYGI1NefVYeyf9MHMpblGNfrqVdi3f1NxY4
+ rZBYjlRRtYEGPhZiKR9XyK6LuITtfHuqgzUY/KbfjzDEIUWgXrBk1LRM0kuQTnez8OoPb17FCs2
+ CDiOJIPgVmkLkRKl9UFBcBB06DROCHkFCBraZAgTmOtz6Jn3xzBaBvGKwMTYG/gykdsV28EkTZS
+ BnoK5iMiSx1Kvqz11MrKaTxC/vjYvVuv+FuzGDlTEVHv1M91xGwqizCoXo9M7Mk8A0F4Vx490Mm
+ lTOQ37kKL/7RXB+I3tFzA9b47dwiK4ekDFoNq8zObWKbkt4H
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Feb 27, 2025 at 9:45=E2=80=AFPM Marco Crivellari
-<marco.crivellari@suse.com> wrote:
->
-> MIPS re-enables interrupts on its idle routine and performs
-> a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
->
-> The IRQs firing between the check and the 'wait' instruction may set the
-> TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
-> interrupting __r4k_wait() rollback their return address to the
-> beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
-> again before going back to sleep.
->
-> However idle IRQs can also queue timers that may require a tick
-> reprogramming through a new generic idle loop iteration but those timers
-> would go unnoticed here because __r4k_wait() only checks
-> TIF_NEED_RESCHED. It doesn't check for pending timers.
->
-> Fix this with fast-forwarding idle IRQs return address to the end of the
-> idle routine instead of the beginning, so that the generic idle loop
-> handles both TIF_NEED_RESCHED and pending timers.
->
-> CONFIG_CPU_MICROMIPS has been removed along with the nop instructions.
-> There, NOPs are 2 byte in size, so change the code with 3 _ssnop which ar=
-e
-> always 4 byte and remove the ifdef. Added ehb to make sure the hazard
-> is always cleared.
->
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  arch/mips/kernel/genex.S | 42 ++++++++++++++++++++++------------------
->  arch/mips/kernel/idle.c  |  1 -
->  2 files changed, 23 insertions(+), 20 deletions(-)
->
-> diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> index a572ce36a24f..5e333cd27fc7 100644
-> --- a/arch/mips/kernel/genex.S
-> +++ b/arch/mips/kernel/genex.S
-> @@ -104,27 +104,30 @@ handle_vcei:
->
->         __FINIT
->
-> -       .align  5       /* 32 byte rollback region */
-> +       .align  5
->  LEAF(__r4k_wait)
->         .set    push
->         .set    noreorder
-> -       /* start of rollback region */
-> -       LONG_L  t0, TI_FLAGS($28)
-> -       nop
-> -       andi    t0, _TIF_NEED_RESCHED
-> -       bnez    t0, 1f
-> -        nop
-> -       nop
-> -       nop
-> -#ifdef CONFIG_CPU_MICROMIPS
-> -       nop
-> -       nop
-> -       nop
-> -       nop
-> -#endif
-> +       /* start of idle interrupt region */
-> +       MFC0    t0, CP0_STATUS
-> +       /* Enable Interrput */
-> +       ori     t0, 0x1f
-> +       xori    t0, 0x1e
-> +       MTC0    t0, CP0_STATUS
-> +       _ssnop
-> +       _ssnop
-> +       _ssnop
-> +       _ehb
->         .set    MIPS_ISA_ARCH_LEVEL_RAW
-> +       /*
-> +        * If an interrupt lands here, between enabling interrupts above =
-and
-> +        * going idle on the next instruction, we must *NOT* go idle sinc=
-e the
-> +        * interrupt could have set TIF_NEED_RESCHED or caused a timer to=
- need
-> +        * resched. Fall through -- see rollback_handler below -- and hav=
-e
-> +        * the idle loop take care of things.
-> +        */
->         wait
-> -       /* end of rollback region (the region size must be power of two) =
-*/
-> +       /* end of rollback region */
-Oh, no, still something wrong.... "rollback region" here should be
-"idle interrupt region".
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+Since version 5.0 the DPU got an improved way of handling multi-output
+configurations. It is now possible to program all pending changes
+through a single CTL and flush everything at the same time.
 
-Huacai
+Implement corresponding changes in the DPU driver.
 
->  1:
->         jr      ra
->          nop
-> @@ -136,9 +139,10 @@ LEAF(__r4k_wait)
->         .set    push
->         .set    noat
->         MFC0    k0, CP0_EPC
-> -       PTR_LA  k1, __r4k_wait
-> -       ori     k0, 0x1f        /* 32 byte rollback region */
-> -       xori    k0, 0x1f
-> +       PTR_LA  k1, 1b
-> +       /* 36 byte idle interrupt region */
-> +       ori     k0, 0x1f
-> +       PTR_ADDIU       k0, 5
->         bne     k0, k1, \handler
->         MTC0    k0, CP0_EPC
->         .set pop
-> diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
-> index 5abc8b7340f8..1f74c0589f7e 100644
-> --- a/arch/mips/kernel/idle.c
-> +++ b/arch/mips/kernel/idle.c
-> @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
->
->  void __cpuidle r4k_wait(void)
->  {
-> -       raw_local_irq_enable();
->         __r4k_wait();
->         raw_local_irq_disable();
->  }
-> --
-> 2.48.1
->
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Made CTL_MERGE_3D_ACTIVE writes unconditional (Marijn)
+- Added CTL_INTF_MASTER clearing in dpu_hw_ctl_reset_intf_cfg_v1
+  (Marijn)
+- Added a patch to drop extra rm->has_legacy_ctls condition (and an
+  explanation why it can not be folded in an earlier patch).
+- Link to v1: https://lore.kernel.org/r/20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org
+
+---
+Dmitry Baryshkov (8):
+      drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE register
+      drm/msm/dpu: program master INTF value
+      drm/msm/dpu: pass master interface to CTL configuration
+      drm/msm/dpu: use single CTL if it is the only CTL returned by RM
+      drm/msm/dpu: don't select single flush for active CTL blocks
+      drm/msm/dpu: allocate single CTL for DPU >= 5.0
+      drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL blocks on DPU >= 5.0
+      drm/msm/dpu: drop now-unused condition for has_legacy_ctls
+
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  |  4 ++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   |  4 ++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c          |  6 +++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c |  5 ++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c           | 20 +++++++++++++++++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h           |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c               | 14 +++++++++++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h               |  2 ++
+ 18 files changed, 65 insertions(+), 39 deletions(-)
+---
+base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
+change-id: 20250209-dpu-active-ctl-08cca4d8b08a
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
