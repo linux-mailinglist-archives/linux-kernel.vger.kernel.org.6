@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-538344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00846A49753
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:30:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A686A497CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17898188A696
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0B83B5739
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F3025DD06;
-	Fri, 28 Feb 2025 10:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC95260361;
+	Fri, 28 Feb 2025 10:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A977MKLp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="pY4wToIH"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015C91FE451;
-	Fri, 28 Feb 2025 10:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1A25F981;
+	Fri, 28 Feb 2025 10:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738596; cv=none; b=mW3NBZA3s2OkuEHyRKpJ3Qqi16GUC/3PAP0dstML7jClOD2bio7ZkiS5zUrQMW7+Kc2PDugb4c738qC52Ezx4Ol8jSd736lnV3YrxAvm1IbqIsOVYPwlY3N41OkVnWj6Z+TQpqOAPDbW+MAiKyxc7Hqg9QAiW32/VSapDvfoSyQ=
+	t=1740739866; cv=none; b=NB3TykAY6yXzmDtSdwtRY5oaTr4Bxas7WjTGAf/0LoI7UDerimE47t902Fx9pZbeioHb+3x8l87hd/6KWQcmfc4hkjeagBgFeBgSq4aEM3jImb5v50OWlV3z5AROmtTSRLgH22Sl6Cxjpo4ZqFtv6vMQ60FGRpcSxCKhsjs2Olc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738596; c=relaxed/simple;
-	bh=Tziz2U7REJaUQT9szYJ+pjVyOgCIf3IwB5QcbGxgaWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0YoTW/a6P68zFZgFpgrYrIsJtEtpazT0dfhLczSHfE9wwziQlVaaenJDsBhpXec9NuI4oTgrAkWfVAg0S7fUQ4cqn9AX3neZ34yzoYyAgQ9CcpIn00xf15sX2Lf9bNDDTYkxWFWHBiQ1lxkJqfXc/H8vnp/G9wo0fPJjmWDpKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A977MKLp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ht7ZbMwfV+utVkqPlmDB+z3+2vIA7uWpPnlzueknb74=; b=A977MKLp8As/l9zJTJHg41iGfQ
-	125R3PcMRlqReyzxem0p2D/9Y5E1pOHy+vt77I5lHaozgtYpfhRDt/YrYOUxZPFhDLGv67eMAqoYp
-	kmeGtsKh54ngtP8lV1LWjzKre3i6vOWW2tumWhnDzBIz49ogvT7L34BoJW/QT0nSH6h1RDDcbsNX4
-	+mNsqnEMerPGw/8NErqU28i5XWJmgTERh+Vu4Oqvi/7IPPbbih388NtU5ZC/Tg/d4y/vbePN0zz4c
-	TEvDofTVvCFK5/WqOTJk5gbzVJyRrHWpYrmDpJvGiL8Ejp6VRLmL+Ie4Edc7+wjxFSa2aKYwqTqz9
-	rqzWw3bg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tnxce-00000003x53-2kvA;
-	Fri, 28 Feb 2025 10:29:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 84C9E300780; Fri, 28 Feb 2025 11:29:35 +0100 (CET)
-Date: Fri, 28 Feb 2025 11:29:35 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com,
-	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	mathieu.desnoyers@efficios.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	dongml2@chinatelecom.cn, akpm@linux-foundation.org, rppt@kernel.org,
-	graf@amazon.com, dan.j.williams@intel.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH bpf-next v2] add function metadata support
-Message-ID: <20250228102935.GM31462@noisy.programming.kicks-ass.net>
-References: <20250226121537.752241-1-dongml2@chinatelecom.cn>
- <20250227165302.GB5880@noisy.programming.kicks-ass.net>
- <CADxym3YCZ5dqXMFesNaAF_Z2EWWCj0bJyKQ+BnNw2c=g39CRFA@mail.gmail.com>
- <20250228102646.GW11590@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1740739866; c=relaxed/simple;
+	bh=7kvgcqUb0q72lHsnUnGXc/n4pp+NNYs5xUg8eB88u2U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ku2b+J54brt+CQK0F8ZMZYGHoj9g7+6p8oKJSrdYO0BJdsP20ZdwCBn1bXzrmV9OVEv/fPw5ZftmriLm2b5YCTwLwvHP3AeBEimrTZnaYByYSUY6HCDy+P5XVCS2wAE8EJ7rdJTkEQRNh6FB6tvwZYTiSX1+ky2p6W3hsmdBBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=pY4wToIH; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Gxa5oyKdwl4x0/GtyVPZyS0ssnw6tcIuSW7KhSQsAeI=; b=pY4wToIHOo9e57UcICzk5J/civ
+	jXgUR5KCPR/egZ78baEbt6mArrc4AMhomK4G+B/HHNPZFRRu8UM5YWG2C+CwllcAJd2krSIEwcn8A
+	I1d2OTZuAZIdxxfMBoc/IhQHgQFxZBzsBzlYIQsH088cV3ZjtkCZaTbVBQfG6cNaV8Yw=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:63536 helo=[127.0.1.1])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1tnxed-00Dtva-2A; Fri, 28 Feb 2025 11:31:39 +0100
+From: Matthias Fend <matthias.fend@emfend.at>
+Subject: [PATCH 0/2] Support for Texas Instruments TPS6131X flash LED
+ driver
+Date: Fri, 28 Feb 2025 11:31:22 +0100
+Message-Id: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228102646.GW11590@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHqQwWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyNz3ZzUlGLdkoJiM0NjwwrdRHMTY3MLC+NUEwMDJaCegqLUtMwKsHn
+ RsbW1AMaRfRBfAAAA
+X-Change-ID: 20250227-leds-tps6131x-a7437883e400
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Matthias Fend <matthias.fend@emfend.at>, 
+ bsp-development.geo@leica-geosystems.com
+X-Mailer: b4 0.14.2
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-On Fri, Feb 28, 2025 at 11:26:46AM +0100, Peter Zijlstra wrote:
-> On Fri, Feb 28, 2025 at 05:53:07PM +0800, Menglong Dong wrote:
-> 
-> > I tested it a little by enabling CFI_CLANG and the extra 5-bytes
-> > padding. It works fine, as mostly CFI_CLANG use
-> > CONFIG_FUNCTION_PADDING_BYTES to find the tags. I'll
-> > do more testing on CFI_CLANG to make sure everything goes
-> > well.
-> 
-> I don't think you understand; please read:
-> 
-> arch/x86/kernel/alternative.c:__apply_fineibt() 
-> 
-> and all the code involved with patching FineIBT. I think you'll find it
-> very broken if you change anything here.
-> 
-> Can you post an actual function preamble from a kernel with
-> CONFIG_FINEIBT=y with your changes on?
-> 
-> Ex.
-> 
-> $ objdump -wdr build/kernel/futex/core.o
-> 
-> Disassembly of section .text:
-> 
-> 0000000000000000 <__cfi_futex_hash>:
->        0:       b9 93 0c f9 ad          mov    $0xadf90c93,%ecx
-> 
-> 0000000000000005 <.Ltmp0>:
->        5:       90                      nop
->        6:       90                      nop
->        7:       90                      nop
->        8:       90                      nop
->        9:       90                      nop
->        a:       90                      nop
->        b:       90                      nop
->        c:       90                      nop
->        d:       90                      nop
->        e:       90                      nop
->        f:       90                      nop
-> 
-> 0000000000000010 <futex_hash>:
->       10:       f3 0f 1e fa             endbr64
->       14:       e8 00 00 00 00          call   19 <futex_hash+0x9>      15: R_X86_64_PLT32      __fentry__-0x4
->       19:       8b 47 10                mov    0x10(%rdi),%eax
-> 
-> 
-> Any change to the layout here *WILL* break the FineIBT code.
-> 
-> 
-> If you want to test, make sure your build has FINEIBT=y and boot on an
-> Intel CPU that has CET-IBT (alderlake and later).
+The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+stage is capable of supplying a maximum total current of roughly 1500mA.
+The TPS6131x provides three constant-current sinks, capable of sinking up
+to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+each sink (LED1, LED2, LED3) supports currents up to 175m
 
-Oh, wait, not true, tigerlake also has IBT.
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+---
+Matthias Fend (2):
+      dt-bindings: leds: add Texas Instruments TPS6131x flash LED driver
+      leds: tps6131x: add support for Texas Instruments TPS6131X flash LED driver
+
+ .../devicetree/bindings/leds/ti,tps6131x.yaml      | 123 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-tps6131x.c                 | 798 +++++++++++++++++++++
+ 5 files changed, 940 insertions(+)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250227-leds-tps6131x-a7437883e400
+
+Best regards,
+-- 
+Matthias Fend <matthias.fend@emfend.at>
+
 
