@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-539135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27664A4A161
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:24:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724FAA4A14A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23BD7A74B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6B53BCA40
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3741F4C97;
-	Fri, 28 Feb 2025 18:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1099B2702BF;
+	Fri, 28 Feb 2025 18:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b="L3dReFgQ"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6QGvTjJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A63E2755E3;
-	Fri, 28 Feb 2025 18:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECEB1F4CBF;
+	Fri, 28 Feb 2025 18:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767072; cv=none; b=gwtTOTeO1TUQWLf9uLsJVjyMrhDuGItGvWTlcU9vIAN/qt7j/QliITHuqegU2d+lwzE28nv5zQHHau8Vlf0FF7s1af2jOIqLl81S5tMQr9Y6Y3PCHv0/45pUQgOC4UToTc121LAnzI1jB0zWm7HeCa30FmvoV0hXZz6kZoxzybQ=
+	t=1740766756; cv=none; b=tqnLba5hr+8UC9n/RnSPxO6q8AuKtmqlCXZK9Oq8o181Y2scivXZIonnhaOIJq7gZygH9glNdYMP5t8vPWvr65tp0ZhFIWwrJm4oFUwY4Z1x+CbE9r0gEep70R16KlOLaAPmmS/W15NvhPih5BFHlLzcmwo2X9Ea6ChVRJN06NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767072; c=relaxed/simple;
-	bh=ulEoNTWX2ai/i1e+m4dRcAUEVFZP1m1dYHYLPjm/u9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VQd2zzwVt/EJlGHd22M6/MLQyu5SU0ch6uVY4Ta25XZBl0FIjocjY589UtQ0Hkbgvhhk6pktNLMW3MV8PNf/L9jwSLaVnjxYDPhEbIW6bs3bpEmvBK+CJcrzoRQtXjxq59G3+4K/w1bdjTnCCVpH6qMxbyhFXq1Y1vpIn9qMCrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=michaelestner@web.de header.b=L3dReFgQ; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740767064; x=1741371864; i=michaelestner@web.de;
-	bh=Hm2gsSINyxASyXm+O82PUycRhtyQCwm+OL7u80TaOZI=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=L3dReFgQIiuBskn8vKITtOJKhi9FsY/9XfNr0xxfgYdPEmFYWVZAKirXxWgB4YyE
-	 BF42hFcgNe1Qxxq4XRJOjkhipvE2uN0P76OXAbn2+gOZ1JKykQw1E20eobYYGUIdn
-	 9WqcaYBYg8mnIKSQqGnNPv2sYWMGMTbcom/9U4w3tggCp0uTMgcSh4gX9y/Q96HjV
-	 eMyHi3blIKJ5Mo8ppyfAWo8D3cyRdPozx1b0CC/C+EaG1m6BUHT5xX2DgfLI8entm
-	 XIvTYH9rpWlCKVYWjGwRn/fF+Dk2lSF/3Fc/NOiYzBxNDY7mXKUZjUVShy3zVioNO
-	 V8ZhfnNxHGY+VTRO+g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from del01453.ebgroup.elektrobit.com ([87.150.19.59]) by smtp.web.de
- (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1Mty5w-1t0Mbh3nCu-00zaaT; Fri, 28 Feb 2025 19:18:45 +0100
-From: Michael Estner <michaelestner@web.de>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Michael Estner <michaelestner@web.de>
-Subject: [PATCH] bpftool: Replace strncpy with strscpy
-Date: Fri, 28 Feb 2025 19:18:27 +0100
-Message-Id: <20250228181827.90436-1-michaelestner@web.de>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740766756; c=relaxed/simple;
+	bh=JApBZwRIXITeT7RDTkJfHrhIsGCMN9PP8KGP890U2lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDTv3xmITU2l7hE8Gq6Sp7Cbp2Embl8Wla5tKWwBfkKc6tkwa2r/kwofLAVLqnkMNK1oi16EjF0WvbZ57f5Jek2IN33oG4637VY2II90/rmpEXoltgaRskEcI2fo9kg5iDLpZD/qezOGeJF8f6No9ZrDon/LjiwcENn13qikqdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6QGvTjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EA7C4CED6;
+	Fri, 28 Feb 2025 18:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740766756;
+	bh=JApBZwRIXITeT7RDTkJfHrhIsGCMN9PP8KGP890U2lw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a6QGvTjJahh91nAuR/99i5L/1kCj7MOzD6zkCIhfy7K7uOmcS/rfadj3gScoyeT0c
+	 ChUf78FlPofFEIA8TgWTMFLI0kYXY+ySe3PLKR+poPlf7K+84HwFiCl+JpkvrdBqZX
+	 q65oj/+INMpV90pkDdMhYwICaUeG2ltjJBVSVjihNBmDs3KLd21h+h+R9CsRZsAC3c
+	 J403hWMgigWT2JJ35p0Y9ANI8aRtRVvgo8OGX0Y1zOO+0cNPyYQdydc1PGNb8sYdYT
+	 HZrFHHIjWLgbRkA34tbQ1HVVHDc6Xn88HTM6nBAr0b7XLwz+IMCRulfYIPPJ/oHr3V
+	 +nwlnolI1G+eQ==
+Date: Fri, 28 Feb 2025 18:19:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Paul Boddie <paul@boddie.org.uk>, Tim Bysun <tim.bysun@ingenic.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: Re: [PATCH v2 1/4] bindings: ingenic,pinctrl: add x1600
+Message-ID: <20250228-stimuli-dingy-32502e56f821@spud>
+References: <cover.1740749637.git.hns@goldelico.com>
+ <c42f0ad1aeedbfc90b9a5f10a36b2f5f2da528e2.1740749637.git.hns@goldelico.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WVS54cCjn+9yKs+B"
+Content-Disposition: inline
+In-Reply-To: <c42f0ad1aeedbfc90b9a5f10a36b2f5f2da528e2.1740749637.git.hns@goldelico.com>
+
+
+--WVS54cCjn+9yKs+B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dTJ1bEHopl8bQxzT6+oHnNYmgNuyVP6QWCwbZ70KhlIHpIGhism
- t6XRtAPQPR9OgLHxesMCbqnjAu2gXKzbHQa2ud4f2HYxW5zp/e7SMQXG/u39h8upXtE781K
- Xz6RVrVFl4GT88mKMQ5V6Dn/i8U8+erchfHaUmPXzIyzlmvkfRYMkoPE3eX5by/SU/9+bBV
- T+8tj66PSMBszC+4NsXnw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ErGF/CS68pI=;ttSUjnhCdosvNWlTyoPbi2gETk/
- acYvPgpENAlDADA5d7IhgBma9c+wc8LY0ZX+dng/Cvox9rYurQPGolUtLviVU2fJLfOBX1WdB
- Sa21/o3v7EeDK5vuoWDiRRtcwTzvYw2Jw4JDJZEBz07MXnG2ymNDm4IF4pNyxguS8U57G1AAZ
- O4x1ZmMveqQe8zKBIqGhZjIFZqgqqwH7cVxsXg8Ll+nv+QMp+yfZLEXj5XI6DO0fJgAuwSPN5
- 7ZRdvGGgUV4FRPLajP6oXYj+2GKWA8gfffUd3gLkoSG9Bueg7I2WgTNxc3VAqpa6wg4/Hy/cj
- +j8YVX3QDRriBOGgeNXEFKI/RHKKoAbZutMwfXUwkDMoV4LPQ1lg4Ibagt7gmZgHiAZnvtoAn
- PGzNeSz8rjjQuWnTAJRsc+R0FidoDRXL32sS1Ls3yQ5dSihHvmgQhtRgKeZNJWRHlTc3oUMzr
- 8COA3fjrwoOv+s7NkrL8dG7ifDpaT2NmIH8dO/EMN4EvGFuUiCLPvZlrhhtzgTnpnQS2lM66U
- ad5Ju/ZHdjCmdGca3w9Bgx9GDPaTA0QSc4YEnEF8nnRsQdNEsXhR7b50ZffoTjqok+lv0oRvo
- 4s5Sv69kyKMDEnCcGs4/SMM4m9rLGxKzIck2S3HmWDQ+NvFfTz/NkRXEKVrESrP+8jDb9bdoP
- pp2XadOtw1hCLzUbhxCjDvg2Vhw85NSlCqYkv3Q+t2kcVWcXaa8FCK0RHYLnzF6KgQSgQra46
- 39nVwzKEhOz0CH49wHih9yGo0fBXydWtKmajY3Z5znSd3P7nKgyZ8oi4EiNe96L9gWYiPD7sI
- w0/BehX8roluPcVtH2g5EBNLUpI/bO6DdwycdDbdmNAo+T4M59IowTHRDjE/r2+UBZYtOydJS
- 4yqHdUjPpNNZZE34LLwxGUMXjbwCXT3KFdp0E1ehNt/nhVdTNgjx8Yv2GJJzKfWLV+fv8+4nM
- KkmulHCATdut8lr/LBq9vSn5Gx+9XspIm7ruRYHpn0cAdoa7wCwn/gB9xQXON0GZbdu2UN3Qt
- N40UB+rRK6IpRJ9/STTM5spJcj6UmOkiJZSjKa76NQWCnPkiapvsToqSeFJaDT97hoCi0oZJh
- ynvk7/wQB5yOWJRNks23LGNSL/bi49SJ5MMI41cL4wFAYlvgL5smcBnhrXKhpoirGNADIQ4/Z
- PVbMpwpNBM/q+u77zKwNgczFoFfblI1RuDHfx4QTMoo5BokIeomf827f/7VWu3n7HuG0P7sFl
- 5vgNyoRfynJGXMA8Ci56E9DI1hDkbgTmV89ud3wfXKWWP4ppIZWDa9ktAaLKrmXWJOVrvgHH+
- rRLI2Oi/RISc4+bnJe8X9q7fC+mnKjdWAKHMR5zBfkW59QWpraRPXoZbcC3gezqROHvtfr/rM
- 3ew7DY7ggjsfwD/lYiMDVmzUHdLgTamk/rztfaBg98e4IJDlGYT9qg9UgolZqzGqDGw/bjnrx
- tiN3aloIS/vKIPCla5wD8Am40GHg=
 
-strncpy() is deprecated for NUL-terminated destination buffers. Use
-strscpy() instead and remove the manual NUL-termination.
+On Fri, Feb 28, 2025 at 02:33:55PM +0100, H. Nikolaus Schaller wrote:
+> Add bindings for the Lumissil/Ingenic X1600 SoC.
 
-Compile-tested only.
+FWIW, normal subject ordering here would be more like
+"dt-bindings: pinctrl: ingenic: add x1600"
 
-Link: https://github.com/KSPP/linux/issues/90
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.ya=
+ml b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> index 890961826c6f0..84e960255a36d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> @@ -42,6 +42,7 @@ properties:
+>            - ingenic,jz4780-pinctrl
+>            - ingenic,x1000-pinctrl
+>            - ingenic,x1500-pinctrl
+> +          - ingenic,x1600-pinctrl
+>            - ingenic,x1830-pinctrl
+>            - ingenic,x2000-pinctrl
+>            - ingenic,x2100-pinctrl
+> @@ -81,6 +82,7 @@ patternProperties:
+>            - ingenic,jz4780-gpio
+>            - ingenic,x1000-gpio
+>            - ingenic,x1500-gpio
+> +          - ingenic,x1600-gpio
+>            - ingenic,x1830-gpio
+>            - ingenic,x2000-gpio
+>            - ingenic,x2100-gpio
+> --=20
+> 2.47.0
+>=20
+>=20
 
-Signed-off-by: Michael Estner <michaelestner@web.de>
-=2D--
- tools/bpf/bpftool/xlated_dumper.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--WVS54cCjn+9yKs+B
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_=
-dumper.c
-index d0094345fb2b..60dbe48a91a3 100644
-=2D-- a/tools/bpf/bpftool/xlated_dumper.c
-+++ b/tools/bpf/bpftool/xlated_dumper.c
-@@ -135,8 +135,7 @@ print_insn_json(void *private_data, const char *fmt, .=
-..)
+-----BEGIN PGP SIGNATURE-----
 
- 	va_start(args, fmt);
- 	if (l > 0) {
--		strncpy(chomped_fmt, fmt, l - 1);
--		chomped_fmt[l - 1] =3D '\0';
-+		strscpy(chomped_fmt, fmt);
- 	}
- 	jsonw_vprintf_enquote(json_wtr, chomped_fmt, args);
- 	va_end(args);
-=2D-
-2.25.1
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8H+HgAKCRB4tDGHoIJi
+0rkYAP45VMggPtX0S8CdNjy5aSFDJjgOdnkhVcG304/MGv6Q5QEA4VPOSA000d7w
+rCAKKORtGr+c5d3aotkEkn37btdjTwQ=
+=hmOv
+-----END PGP SIGNATURE-----
 
+--WVS54cCjn+9yKs+B--
 
