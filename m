@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-537680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5FBA48F09
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:16:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B934AA48F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E71E1891C51
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFE33B18D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71FF192B8C;
-	Fri, 28 Feb 2025 03:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5580015A87C;
+	Fri, 28 Feb 2025 03:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lqQYjhqT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="o/J00Skz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DA6191F6C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A53276D37
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740712605; cv=none; b=crVsPfGhBqCygopWApPu85H6p1XH6Pp8nyPPuX3XXyqO1FMTDy7f6eIgXs5G1FQrelbTRtVZA2UD2a0ZPVsOGbDm3+wJhbHX+tzU9oNbDl8P6iPQ3SgT+nhrBNV5DAzAOicDDC7Adeltyc5rhIqd+MIqctylu7BD1jjtSMBUKBg=
+	t=1740712531; cv=none; b=Mk8Xv9CiQSGUIfLRe5b0VkXpATtxK8MHw3vs5pFz7qmbx/GCs2RxPY++bPeQSGJfpxABVVP9WskdKF3rnbfL/pdnFjvjL9hkeN6gWhNhwAcEi9UNau0lA90GS9ifU6tVW/Ha5I8vHMyTLSzOP0AuLS7IoklH4sCR5vJkqCkKhHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740712605; c=relaxed/simple;
-	bh=945iZjBC6be0i+7TRujKrgv5Y70HZgVmXmfGIOQ7IZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RP4WmRIe/aTO/GgK72pDB6eq0nCG7b9cx/B7TfCuFmGrbdxDdSwykneDYvZxu31U7/HGdiJULPNwvHy8wmX7JGaXSCt6iulAKkO7iyeGtcraqwZTcUpMiGL/2nq2f+hInA5pGe2LMGOjCcaGvgZfn0ZcnrnsP+01s0AP5GG4nyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lqQYjhqT; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740712604; x=1772248604;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=945iZjBC6be0i+7TRujKrgv5Y70HZgVmXmfGIOQ7IZk=;
-  b=lqQYjhqT6DIcwDxUxZAVGgt3GMaXXeaPHJi8Ct60n7uY2khhC7FZpQwl
-   zOwb0Gx/88ifdRz1d1iiy+GWr3fRRQl0K3+BSdT/59gcRznu32xGXL3Jq
-   wNUVq0LsDpmRB0cjU/MAboXkosEODvC2B7Sbl0Mqek0rLLKfHkb3QFNNr
-   s3vk/AQpcikLm745AR+Hqp0W/lGTVTSKSd34YeYQDWwrzmDdEivJ41nzF
-   4aVsrF10tZ/PpdK6KxPM6yFmTdjMSdoTr+2lyZc+54Wv8PuaN4sY4ZQHS
-   KKTzVtFcJnRVadbqLcg+3L7XejqxUsf8ZG3r6In72CVpcUkOI50hpQxfl
-   g==;
-X-CSE-ConnectionGUID: wY1rn9+iRAOOPDR0/Ztk+w==
-X-CSE-MsgGUID: Tl2E9GWgRnSQ5+ZCLi5jJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40876274"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="40876274"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 19:16:43 -0800
-X-CSE-ConnectionGUID: lnBAp3OeSsGMY8TYtxyRqw==
-X-CSE-MsgGUID: 8DUBKbovT824AL+9mZx9xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="154397759"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 19:16:41 -0800
-Message-ID: <f6d0fcb1-b974-440f-9208-257422bc01a6@linux.intel.com>
-Date: Fri, 28 Feb 2025 11:13:23 +0800
+	s=arc-20240116; t=1740712531; c=relaxed/simple;
+	bh=nw5vEqkhGgPyQFHb/TYw6eebIhv1qAqoUxPrfuW3GwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GzktSO1AFecSY71Z35PBqKI6ggId5n9NLJEkMr2CD3zAxq4/y6oL6RmDkRSxM4kqhGk4b+nHLsKjlBA4P9DyV8aVbk2pLP01u0RZYUvR9Wjd1Oj96Ucq0gjucP8cb7Fi2og+qwSEZnxgg9dRuDzzKPDXBWwTJKQo4OtpHKiM7IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=o/J00Skz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740712527;
+	bh=nw5vEqkhGgPyQFHb/TYw6eebIhv1qAqoUxPrfuW3GwY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o/J00SkzvMH/iub6bvhMb5enMJo8ZAfBpZjHr6m8UNiIFfBANiw2y52V6UXvbBmKU
+	 W5QmOd+1+eyNrsINee427iEbAwpzuf/hd2a8agu0xMcCKum0KZOXtil6XVx1Sb2VGY
+	 xb1MasyMbfTDBOrQAFpOKI4HuEKQR7qpZCef2Zq2RoWG37LNALhrVlW3+tX8H1V5R6
+	 07aNyXntPaPRmcIGs8m7gEdnFFarHzkfFBIB/QPmS91AvXDz+2mnccOg42/L5HPlaD
+	 YvfYZKZTbNGMYo/xDkWUnez350Z0LECCchAdpKOGmZqCzLXQTcAS8HUy2M5DLMJt0g
+	 M2COvGH2HKnpw==
+Received: from localhost.localdomain (unknown [171.76.85.20])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 35C0E17E05E7;
+	Fri, 28 Feb 2025 04:15:24 +0100 (CET)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.fornazier@gmail.com,
+	airlied@gmail.com,
+	simona.vetter@ffwll.ch,
+	robdclark@gmail.com,
+	dmitry.baryshkov@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	valentine.burley@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] drm/ci: use shallow clone to avoid timeouts
+Date: Fri, 28 Feb 2025 08:44:57 +0530
+Message-ID: <20250228031501.483475-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] iommu: Add private_data_owner to iommu_domain
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- robin.murphy@arm.com, joro@8bytes.org, will@kernel.org
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <cover.1740705776.git.nicolinc@nvidia.com>
- <45c03a1bc86528c9194589cc3a5afe3eb2a15c9e.1740705776.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <45c03a1bc86528c9194589cc3a5afe3eb2a15c9e.1740705776.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/28/25 09:31, Nicolin Chen wrote:
-> Steal two bits from the 32-bit "type" in struct iommu_domain to store a
-> new tag for private data owned by either dma-iommu or iommufd.
-> 
-> Set the domain->private_data_owner in dma-iommu and iommufd. These will
-> be used to replace the sw_msi function pointer.
-> 
-> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-> ---
->   include/linux/iommu.h                | 7 ++++++-
->   drivers/iommu/dma-iommu.c            | 2 ++
->   drivers/iommu/iommufd/hw_pagetable.c | 3 +++
->   3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index e93d2e918599..4f2774c08262 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -209,8 +209,13 @@ struct iommu_domain_geometry {
->   #define IOMMU_DOMAIN_PLATFORM	(__IOMMU_DOMAIN_PLATFORM)
->   #define IOMMU_DOMAIN_NESTED	(__IOMMU_DOMAIN_NESTED)
->   
-> +#define IOMMU_DOMAIN_DATA_OWNER_NONE (0U)
-> +#define IOMMU_DOMAIN_DATA_OWNER_DMA (1U)
-> +#define IOMMU_DOMAIN_DATA_OWNER_IOMMUFD (2U)
-> +
->   struct iommu_domain {
-> -	unsigned type;
-> +	u32 type : 30;
-> +	u32 private_data_owner : 2;
+The python-artifacts job has a timeout of 10 minutes, which causes
+build failures as it was unable to clone the repository within the
+specified limits. Set GIT_DEPTH to 10 to speed up cloning and avoid
+build failures due to timeouts when fetching the full repository.
 
-Is there any special consideration for reserving only 2 bits for the
-private data owner? Is it possible to allocate more bits so that it
-could be more extensible for the future?
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+---
+ drivers/gpu/drm/ci/gitlab-ci.yml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-For example, current iommu core allows a kernel device driver to
-allocate a paging domain and replace the default domain for kernel DMA.
-This suggests the private data owner bits may be needed beyond iommu-dma
-and iommufd.
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index f04aabe8327c..647ef980ad4a 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -40,6 +40,8 @@ variables:
+   ARTIFACTS_BASE_URL: https://${CI_PROJECT_ROOT_NAMESPACE}.${CI_PAGES_DOMAIN}/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts
+   # Python scripts for structured logger
+   PYTHONPATH: "$PYTHONPATH:$CI_PROJECT_DIR/install"
++  # Set to 0 to disable shallow cloning
++  GIT_DEPTH: 10
+ 
+ 
+ default:
+-- 
+2.47.2
 
-Thanks,
-baolu
 
