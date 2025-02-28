@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-537628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DADA48E4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:09:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80899A48E55
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6962B7A7A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC653B79FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C919414375D;
-	Fri, 28 Feb 2025 02:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C1214375D;
+	Fri, 28 Feb 2025 02:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBZ7fC++"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWB9cJDS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A88E125B2;
-	Fri, 28 Feb 2025 02:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1692BAF8
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740708538; cv=none; b=Q6l+ZhUS/YIT6B1DVLtD51pUwUvfy6ym0TcvlydRL8NZUC0Gu03Cq4KL1vDEOeZoIVtMiB0Jbj+j3Eeg3+WaEiOuoD5BLRlMinnSfNbn2VUne/dNmEXRW43EI1Tmt3qjT0gWJXRpoofjvut3vnnxdvtxth3AzqU/MQ8UGhHoLiQ=
+	t=1740708563; cv=none; b=GNDWIUTQL/u7jxo03HLQ07q9P+AAgOKn6eAbwu2BpcTFBQsbhTKlIhpbRFMaYHTPtvXNEuM3on+QUH4eSUIdXuray5zbFd/gdx+W8SKNdVrlnuU6QdI/QSPBY9tjHcbaz1NeFGLUyHnOs8bqH6JxnEbs4of1bYLgUsJCA0Fy3wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740708538; c=relaxed/simple;
-	bh=5pr8uhB5SExy3iDSiDu9M//1Qd4Bg7ELhoDwqC9I9t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pn2hpnZL2rOqh9EhPq/1t1f72wRPA7PLwMGvMkZq+k4/EZn1Z53r/MkNYHMi1/aqOIvi1bCi7EujY6hkea2xxVRzgItxaXDFPJRMrTG2jT4CCV7dRQnGqDx4cboBwTN2yM4YcIaYaq/eLWxSZVUjmduJqWLgexA11WL+8FgWZs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBZ7fC++; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F52CC4CEE9;
-	Fri, 28 Feb 2025 02:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740708537;
-	bh=5pr8uhB5SExy3iDSiDu9M//1Qd4Bg7ELhoDwqC9I9t4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dBZ7fC++U6uUckHrv/9YRCdMjwAi3rZPzwMkhwFTh4J42qa/ywvHDdKubIDBWArjk
-	 cycrsE/IGkX2tjEuSi0ew04SIVU7+lE1V8ztOZU9osSXFnoQnx6HsO7B9QlrKV/Vfp
-	 ioYuk6l9HCCstmqFJNaE1b+GjL1AhI4pKJ6UWNseFaEPawhgjnmCf6Rwhb4YS+wiQB
-	 Udp0OeYe5/V2DFKMtdIWEr6tFPdrFu7c4WDq9OBc9Xw9l/LF3F5gzKG858UvO1UD3b
-	 QR7y1A+t2SZkaF6L3FfsGFixAGm62Jr9ieRgi6jARcqYPNAijugKvYZzrl2vao88VX
-	 RK4VR5A+FF8kw==
-Date: Thu, 27 Feb 2025 18:08:55 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org,
-	clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH] x86/crc32: use builtins to improve code generation
-Message-ID: <20250228020855.GA5588@sol.localdomain>
-References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
- <20250227062859.GA2506@sol.localdomain>
- <CAGG=3QVitM-AwqtYF0QjxpBV7Q8bqv59Os+jELFRUKMnRS9OGA@mail.gmail.com>
+	s=arc-20240116; t=1740708563; c=relaxed/simple;
+	bh=a5JsqXiaGY36Hh7eU8AAOIHxZeTBUupCcWWH+g6XLY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kyHsMad+t5Wcq3jAxOrWv5M9Pb/LRFlayY6PVHyW1rhQuQqCqdxX1n8g1WRbvepFzECZkclJKlWbgQTMWiTcnuPSWd7rmVQMApLbOK+rT3bZzHnjGtNWJBSqtAzPjgSV/4vEDcs+xCIJ6Fu7GmNofUoZuAqfMv4lwlOHmHJBJzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWB9cJDS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740708560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oTGEdMvMyyKhNYQ+tRKpSv2O6+mM21XzlC4cogCh4sA=;
+	b=hWB9cJDShBtyJyGh8LsCuMfTJftlGKhKGAlEQLW8kN8wuKiZPjmHmymhR9++JKZ2JsmSje
+	RG4/pk8BB5/+4Hopg5RNFJaQSQ8awOSJNk2NW3aOSpCOyhv3Kg46A962cO6epbKXCbkVR1
+	nZmx68efu+gIQxSBvRzSWs0Snmkp7Zo=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-534-BNaNzFdmOAqnsvuQyQjUtg-1; Thu, 27 Feb 2025 21:09:19 -0500
+X-MC-Unique: BNaNzFdmOAqnsvuQyQjUtg-1
+X-Mimecast-MFC-AGG-ID: BNaNzFdmOAqnsvuQyQjUtg_1740708558
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f83e54432dso5766995a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:09:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740708558; x=1741313358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oTGEdMvMyyKhNYQ+tRKpSv2O6+mM21XzlC4cogCh4sA=;
+        b=ItpY5EhDHoSRuGl8p/Q/cvywb2gp8eDiCbNiaEJe00Z94zMed02i0vZIlY7vPO9Buz
+         olUZGURQwM90QjjjbV2uKAWmHzrhaiaRR1KsIwIr8hs8clJF5VptrKv7NnVPofujVDp0
+         3JOX6ghDxG/GNZI9rfEwEdjI2b8BY7dvO7Ak/eFFwAIxBe7Dx74pkG4bNj+/J+GWmvbk
+         P7dBk+s5ffsQg8Tht0OqR3xm0V9WYB13R7bevrDlPtRHADGmyZiOqdRdgTTBJp4u2VWa
+         QPy5UDs7n0eCNnX2Y5A4AI5246H7zC5KqZSch7a+rCH79ZH+4A9TFuHzjzIR3m95yCvI
+         RAtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRdX3RqBcTaCEM4wT8nTYnp4SZluB+St4qHXGhDXFu7MGr6LXPzlq5vNvNizO9CWhGRgYvLoCh+ckN5ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmMJgbU+SW05P5gUD6Q5aITITBYSyi6v3fxGJmpOZ7RhSJCpbe
+	UU4itv4q8toFm1sZlqYzke0cypq03NAxwRAVwS/iCacSl/511qD642R1sUP6vEJWanudbdw60A8
+	h+tZgQ5yMDF0w1nKs+l6Q4dbCZDYIC1fRviVQagx1TgLH2Mnh9HQp8qX40V8ZmQ==
+X-Gm-Gg: ASbGncvdl1dW7anoB7YWVPzsLlay56AtoLFlBQsxe8WOFmzPgjbx148qqegbvjR4zUJ
+	HisH7LUljQN+oUWIy+VMr72W1Kw1dXlDz4Re5I0CfzFReAa+0LUeoS0+9sGd3u8tX6hViTSLUVt
+	/Yxp0tpP5C3bHh8neKfN+s98oPjSyGlA9vr2Ybm881JwwFNnN464p7CeiOj+S7nwZqAmryckwsU
+	1ASf84hu8wQCO/TMvcP1QIoT9nIe9cob4+o3uLjfB0kYPF8zwn9aPnt8v5X06ZXBVu1/h3iJ+3l
+	7G+m9ZsoC2cUueNAiQ==
+X-Received: by 2002:a05:6a21:7890:b0:1ee:6d23:20ab with SMTP id adf61e73a8af0-1f2f4cc635emr2465276637.10.1740708558018;
+        Thu, 27 Feb 2025 18:09:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEakws3JelgzGBAXf9l9mWjjAqu+6D7t+HRXAz0cviZfFNy9/h1CazsxywKOWIf5xzhjUujVA==
+X-Received: by 2002:a05:6a21:7890:b0:1ee:6d23:20ab with SMTP id adf61e73a8af0-1f2f4cc635emr2465237637.10.1740708557737;
+        Thu, 27 Feb 2025 18:09:17 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7dec49f1sm2250674a12.58.2025.02.27.18.09.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 18:09:17 -0800 (PST)
+Message-ID: <b46da29d-73ff-4166-b0dd-bf252e9d6457@redhat.com>
+Date: Fri, 28 Feb 2025 12:09:10 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGG=3QVitM-AwqtYF0QjxpBV7Q8bqv59Os+jELFRUKMnRS9OGA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] dma: Introduce generic dma_addr_*crypted helpers
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, linux-kernel@vger.kernel.org
+Cc: will@kernel.org, catalin.marinas@arm.com, maz@kernel.org,
+ steven.price@arm.com, aneesh.kumar@kernel.org, robin.murphy@arm.com,
+ linux-arm-kernel@lists.infradead.org,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
+ <20250227144150.1667735-3-suzuki.poulose@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250227144150.1667735-3-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 11:08:22PM -0800, Bill Wendling wrote:
-> > Doesn't this technically allow the compiler to insert CRC32 instructions
-> > anywhere in arch/x86/ without the needed runtime CPU feature check?  Normally
-> > when using intrinsics it's necessary to limit the scope of the feature
-> > enablement to match the runtime CPU feature check that is done, e.g. by using
-> > the target function attribute.
-> >
-> I'm not sure if CRC32 instructions will automatically be inserted when
-> not explicitly called, especially since the other vector features are
-> disabled. I wanted to limit enabling this flag for only crc32-glue.c,
-> but my Makefile-fu failed me. The file appears to be compiled twice.
-> But adding __attribute__((target("crc32"))) to the function would be
-> much better.
+On 2/28/25 12:41 AM, Suzuki K Poulose wrote:
+> AMD SME added __sme_set/__sme_clr primitives to modify the DMA address for
+> encrypted/decrypted traffic. However this doesn't fit in with other models,
+> e.g., Arm CCA where the meanings are the opposite. i.e., "decrypted" traffic
+> has a bit set and "encrypted" traffic has the top bit cleared.
+> 
+> In preparation for adding the support for Arm CCA DMA conversions, convert the
+> existing primitives to more generic ones that can be provided by the backends.
+> i.e., add helpers to
+>   1. dma_addr_encrypted - Convert a DMA address to "encrypted" [ == __sme_set() ]
+>   2. dma_addr_unencrypted - Convert a DMA address to "decrypted" [ None exists today ]
+>   3. dma_addr_canonical - Clear any "encryption"/"decryption" bits from DMA
+>      address [ SME uses __sme_clr() ] and convert to a canonical DMA address.
+> 
+> Since the original __sme_xxx helpers come from linux/mem_encrypt.h, use that
+> as the home for the new definitions and provide dummy ones when none is provided
+> by the architectures.
+> 
+> With the above, phys_to_dma_unencrypted() uses the newly added dma_addr_unencrypted()
+> helper and to make it a bit more easier to read and avoid double conversion,
+> provide __phys_to_dma().
+> 
+> Suggested-by: Robin Murphy <robin.murphy@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v2:
+>   - Rename helpers- s/dma_*crypted/dma_addr_*crypted (Robin)
+> ---
+>   include/linux/dma-direct.h  | 12 ++++++++----
+>   include/linux/mem_encrypt.h | 23 +++++++++++++++++++++++
+>   2 files changed, 31 insertions(+), 4 deletions(-)
+> 
 
-Technically, limiting it to crc32-glue.c still isn't enough, as much of the code
-in that file is executed before the crc32 instruction support is checked for.
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-I also noticed that -mcrc32 support wasn't added to clang until clang 14, by
-https://github.com/llvm/llvm-project/commit/12fa608af44a80de8b655a8a984cd095908e7e80
-But according to https://docs.kernel.org/process/changes.html the minimum clang
-version to build Linux is 13.0.1.  So there's a missing check for support.
-
-> > Do both gcc and clang consider these builtins to be a stable API, or do they
-> > only guarantee the stability of _mm_crc32_*() from immintrin.h?  At least for
-> > the rest of the SSE and AVX stuff, I thought that only the immintrin.h functions
-> > are actually considered stable.
-> >
-> I don't know the answer for this. In general, once we (Clang) create a
-> __builtin_* function it's not going away, because it will break anyone
-> who uses them. (I assume the same is true for GCC.)
-
-Here are examples of LLVM commits that removed x86 builtins:
-
-* https://github.com/llvm/llvm-project/commit/09857a4bd166ca62a9610629731dfbf8f62cd955
-* https://github.com/llvm/llvm-project/commit/9a14c369c422b244db78f1a9f947a891a75d912f
-* https://github.com/llvm/llvm-project/commit/ec6024d0811b3116e0a29481b01179d5081a3b92
-* https://github.com/llvm/llvm-project/commit/e4074432d5bf5c295f96eeed27c5b693f5b3bf16
-* https://github.com/llvm/llvm-project/commit/9fddc3fd00b3ad5df5a3988e5cc4708254976173
-
-So no, they do not appear to be considered stable.
-
-(The equivalents in immintrin.h are stable, but good luck including immintrin.h
-in the Linux kernel, since it depends on stdlib.h.)
-
-Of course, if we really wanted this we could go with "it works in practice"
-anyway.  But, given the small benefit of this patch vs. the potential risk I
-don't think we should bother with it, unless it's acked by the gcc and clang
-folks on the following points:
-
-* The crc32 builtins are stable.
-
-* gcc and clang will never generate crc32 instructions without explicitly using
-  the builtins.  (BTW, keep in mind this ongoing work:
-  https://gcc.gnu.org/wiki/cauldron2023talks?action=AttachFile&do=get&target=GCC+CRC+optimization.pdf)
-
-Also note that crc32c_arch() already calls into the assembly code in
-arch/x86/lib/crc32c-3way.S to handle lengths >= 512 bytes, and for handling the
-tail data that assembly function already has a nice qword-at-a-time loop which
-is exactly what we are trying to generate here.  A more promising approach might
-be to reorganize things a bit so that we can reuse that assembly code.
-
-- Eric
 
