@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-537850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7CCA491C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:50:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD55A491C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7993616FB22
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BE518939C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E969F1C5D4D;
-	Fri, 28 Feb 2025 06:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB58B1C4A0A;
+	Fri, 28 Feb 2025 06:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJcXqIbM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WmjkAO1O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428D9139E;
-	Fri, 28 Feb 2025 06:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFCC276D25
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740725392; cv=none; b=WI9Np6P0AkgVelyGX/2/CNt9SHO3Fx9QvtHm/Mc65GzzYUmWAortYl01etQxtDloRdl/zH3RoVFjaLEjcuA3VKNyfdV8FaQW/cBwdlB/TNZrB+mdeOb93b3JeaSiLLY8gCEV9rrfqY1IuQphGef/MobV44ddnmqdjkyBCMCx6tA=
+	t=1740725543; cv=none; b=dsCC6NBGpdjF4MCU9MPyfXHw2rnY9fY1HfLFpSHunSc8JzUzmab7WKCZWXukCSmC24goSII6KW0y8SIpi2ln+zc0mMyLs5mmZK5WLgq21FkV3l2Z5nXmLowgrzeUh6oEenECnoefm9BOcvcHz7D/f9E3+DB2T5ZuB9r1kWbwuD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740725392; c=relaxed/simple;
-	bh=rXw9+brQeTau2dxyqBTQ41APqTeb6N30ZtiNWP/sOuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JhiG4Gh33H3ASrndcXAGkmuGYe2GuREkQWRr1iqkYcP2rkfWLpUFApBwrFUAUyIymqlkCb+3gDDsR9ey2Y8X06XcJt85zViESIIAa/Dw66HIhn5B7S+1vjp+JiB2Xtbu3GNJ5G9XNK50qD2rOYSdwKCV3tDM8qBWbyIzHrq7jhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJcXqIbM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CB4C4CED6;
-	Fri, 28 Feb 2025 06:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740725391;
-	bh=rXw9+brQeTau2dxyqBTQ41APqTeb6N30ZtiNWP/sOuk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GJcXqIbMe1WqxF/P4TuxzoQ2UcsxtjKLs7YymQYjgt/3sv2ciecaTJ34B8wyDrwiS
-	 Ssmf3qUP2eHhHC93fsa7XiQ2jhbNi/7pvynqjXzmC9irq5+pGe8LqDCMJrudeJue0f
-	 UcXIoKK1PjRaJI6ye6+nc9jTwD/QfzrlJuac4/XAbN4Hv19YWya+tU8MO0gLa+D+5z
-	 dwQrVtkAXrzqSFrAslEhBPR2t3rZKg6IdO77bWgwlIjdx2WrDjEI4jhAa7LoN+CBHh
-	 KSDa4EtbVINVJkyKYDrDsyPCRt5cLgCi9GccnFcN24nOg7ym7suWXPMpBCd4rzqbYY
-	 /QQ0/mTVNLihg==
-Message-ID: <2d7cedd6-48f6-4cc8-82c3-ce560d7af545@kernel.org>
-Date: Fri, 28 Feb 2025 07:49:45 +0100
+	s=arc-20240116; t=1740725543; c=relaxed/simple;
+	bh=Sbh5ZWWEWe26UKItzj+5zCsDrXi5+H0pVS+AgfDfnoE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=dwmdkRdkUMdwCDDBao2nKg9yhjwddqmhrlZedJ2u466vM9Y/Ys6ws6N8iIvN+fwLU3vXIEAloiZ6He+HM0wPFt0OYjoj0RB/YiyTm4wSColgGsuwv+BpsWiigb+IktmolPe42oW9FyAQCjqmmEhKBC9N4RkB1K3qR11r4nbrPmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WmjkAO1O; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740725540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qwtQNloEq7bsSV3GNAWMqzfEITJvoRQgxNj/TQm4A+M=;
+	b=WmjkAO1Oxju8fR0hnsVwlCkTipn+os5xBH5BhLXezOyCNntEL92TDlDCpsSH2mWU8bMm0w
+	EkhnDI5UUgjjIhJWpBZ1qSOeAHZp/nL7FFmgnYS2/2LLVdtZHrCu4MdsjiB5sVHnXizmP3
+	/Re0aNcbivdKYkF1FZBuxdfWXe1rt0M=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-538-Nl4Ayov0OOyP92iDsWZVqA-1; Fri,
+ 28 Feb 2025 01:52:16 -0500
+X-MC-Unique: Nl4Ayov0OOyP92iDsWZVqA-1
+X-Mimecast-MFC-AGG-ID: Nl4Ayov0OOyP92iDsWZVqA_1740725535
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D88C31944D01;
+	Fri, 28 Feb 2025 06:52:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA825300019F;
+	Fri, 28 Feb 2025 06:52:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250227164918.3b05d94e@kernel.org>
+References: <20250227164918.3b05d94e@kernel.org> <20250224234154.2014840-1-dhowells@redhat.com> <174068405775.1535916.5681071064674695791.git-patchwork-notify@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dhowells@redhat.com, patchwork-bot+netdevbpf@kernel.org,
+    netdev@vger.kernel.org, marc.dionne@auristor.com,
+    davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+    brauner@kernel.org, linux-afs@lists.infradead.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 00/15] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/13] dt-bindings: net: wireless: describe the ath12k
- AHB module for IPQ5332
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227191034.1949954-1-quic_rajkbhag@quicinc.com>
- <20250227191034.1949954-2-quic_rajkbhag@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250227191034.1949954-2-quic_rajkbhag@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3182492.1740725529.1@warthog.procyon.org.uk>
+Date: Fri, 28 Feb 2025 06:52:09 +0000
+Message-ID: <3182493.1740725529@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 27/02/2025 20:10, Raj Kumar Bhagat wrote:
-> Add device-tree bindings for the ATH12K module found in the IPQ5332
-> device.
-> 
-> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-> ---
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Nice job pw-bot! Turns out the first 5 patches were already in the net
+> tree with fixes, and now they made their way to Linus. So let's discard
+> those from v2.
 
-Best regards,
-Krzysztof
+Yes.  I mentioned them specifically in the cover note.
+
+> And even less of a reason for this to go via networking :(
+
+The point wasn't those five patches, but the following rxrpc patches that I
+haven't posted yet that depend on these... but never mind.
+
+David
+
 
