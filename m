@@ -1,154 +1,192 @@
-Return-Path: <linux-kernel+bounces-539613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E44A4A681
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:06:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53704A4A684
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0691171124
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:06:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E718F7A41D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21951DEFC6;
-	Fri, 28 Feb 2025 23:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF31DEFD4;
+	Fri, 28 Feb 2025 23:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3OgbYOC"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jC8clZoq"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D111CAA64;
-	Fri, 28 Feb 2025 23:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB4923F372
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740784007; cv=none; b=kZdwfD2U2s/9E8zPRtlYeyWNgPrsFIpVPlDKdp8dxr0gDiu/jeNAd8mzIQipLgN4r5ezl7HxMy9RQNqDHyf9+rAzLv9XqClNCGgNe00UVV2G6VrP3u5G2GmNntVXfXjntLTYXFiLl0sKaE5VGEdDo45awR1aD9SE79/c5yf2ibo=
+	t=1740784090; cv=none; b=ZMY++BCuznT0DVOQsMEMw5QOMc4NRLp4JwK1lhu73tmhqodt0dUzHbrrpMxrXPZtxyTQamOwb3eP0EA+q8ug7mm4sX5/AvoGeypHhyNiQF/iYtEfwxRVACbYEGKm6UEusPpxCNBOqW3IPLjHJvJvo9WlESALFIPZvL97j00lrRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740784007; c=relaxed/simple;
-	bh=ha9Lqc9uu2OiYFwfdXlhHPoBzpGPSxKHTionUtjg+QU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lUg20qtfOJc82A9quiVzLgpjuu1OmMVFlYuz6UzCMpeXq1Fw6qTpswwczz3PcuP5RuB4RGB7HRA4PVzUuPFlQMuHMveAiSL8PAM5xSh2e8xxV697rdAIhDJaQDPtTvEyNTTTSOPtvZDXAwQmF8i81CouVJjgNTpmSX33Y/Jf+nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3OgbYOC; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so3094115f8f.0;
-        Fri, 28 Feb 2025 15:06:45 -0800 (PST)
+	s=arc-20240116; t=1740784090; c=relaxed/simple;
+	bh=uXQPt8VZsErn0hUYO9Un8NhYWkFxMXU+WNaNm+q/hLI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=UpQBHFiyHpiihhC4xjlyZDn1dft4qRF1DB50P9faMpxOe5BrmlPsghFuobEF+vlJY2tci95yXDlgUNkre7Ab6s9PvOfgn5EoJ2LqSBHkuq7LreyOWYeNh1wS3b+BvY2RrmlfoQFiA8H3tkeViEMzM8zGuex8VXuebufRKO+/q6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jC8clZoq; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8fdfdd94so5524775a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:08:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740784004; x=1741388804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QcXFzlXi0nNGqFNVWBVnchEgBVXyNmXQMOEcMJisjfs=;
-        b=H3OgbYOCnCfazkiERITtxDZ/Dko4s03h77OEtoNcUjGydcZt19qSoOzwOmcqAV4u7y
-         4WQvtpHeno7qW1NwYvcbpzyxXVzIVnU9AWWltRd4+LM7hs7qDeMW8WpNO7PEPoQr+t1x
-         p/+DJ+rPcYevWYOV+o1wQyVefnW6mxkPbO0m+WAKpgeKRrRChwBA9j/Vq7H3fZjSsabd
-         Dt05QBYYjXNsfkweNZwutyE5UvVi+I/iqzYhNfbTgMhjF21vSQzRZgwjB08/wOQTdzdd
-         5Fj2iOu2CsP94QxTf3RwbC+lxkWnUhKdQsMqhlFy5eqZA1s0s2fBrS1PZZ70U7wfErVk
-         U45w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740784004; x=1741388804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1740784088; x=1741388888; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QcXFzlXi0nNGqFNVWBVnchEgBVXyNmXQMOEcMJisjfs=;
-        b=XM6ozCKVOHLR3PLasHmhgOObfb6+Ds3ucJQJha8BvoXNDX4CcIYoHElHSRYl8SBhjG
-         t31XQq9UOjeqx02JO5CZn4Jg2HYQg8EkSFvpdVDI7HNRdWOwNIUa3tkm7mGFCCmzRZjk
-         Zg7orHOKYDWDx1nG+QN6+ShykvlZBadhFe8yOocEiQC8toGHvCc7rJ8oyb/0uFN524vS
-         pKhTV1t/AzWuFhnV4SVrrf1jZKRS5O8cZMHwRp2Pt5mGYchWpSKTiZjkx6CSOq7p7cnd
-         4pF6e2D5L/WrI3arGF650pHcyB/YQQrmRtkriDjec/+o8IAKQ0lY11aUyOjZSBbsk9KC
-         Lijw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw16btX+vinpTnD8DwqS6ayWD22ALN/WJjqYSbT1sLxoPybSeyiCPJsMCpeRtq9Liln+8=@vger.kernel.org, AJvYcCXdGDGF++me8V5cucq0OjE4xQKTq5f+AABPyliBZvN59MLe/ChQ/Y/7p589vT/oBVWcvTFdkz9FVaAaEEk5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQg7q9iQomJhN3M9k6ShVzHfUwM+1dL8E6/U1tyat1cKu+4Mea
-	EeZk/Ze3QDtJ4MN3Eo0JekoYm/xOAu7Ue4VvN9CB7tyALVATL4YJauTatFMwdwyM8tCCz3r7FSA
-	bD9WaiRZPBTpgmnzz2rlXzh0aMkU=
-X-Gm-Gg: ASbGnctqRLYV7QWyjkR8RqNQF6AheUFcHlgvfQ1H29zp6ew4rb6cV/ifCMAo2eed2S2
-	C1yAY1HpUD5QQ5+HAuEqjoA4QsbI2r7L48Sj5a4Svyx8GMMZAICPRxAkNub21xEqFHiQSLtYQ3v
-	MkSDeGsQ9+rULkRijKNIlrc5dgrIj7tK4FIELUv+GbQ10kIc10gG68hfnweg==
-X-Google-Smtp-Source: AGHT+IGQBscwxZSd8a5RobKJ9o7dODcG2nH0kmu6hVFa9SDrJeh8zV30kK7XWJkB6dCJwG+sNLbB2sJAwsjkJicieBs=
-X-Received: by 2002:a5d:47c3:0:b0:38d:d371:e01d with SMTP id
- ffacd0b85a97d-390eca25f7fmr4821747f8f.49.1740784003714; Fri, 28 Feb 2025
- 15:06:43 -0800 (PST)
+        bh=jwvKvZQdOqB/riyMfQK76I4rdRV8E0Twgp+TB8ZZDcQ=;
+        b=jC8clZoqVVeq81d6JFtK5whAaPGE4Z+/1D5K538uR8RM3TE+xY6HVMggpPA1s317Wr
+         3fW6ahwTsq3NJ6dK+y/xDpVm++yN/f2DhIbTxs2qM9DP6sxq1qww0fGaQuUKY00I6yPy
+         TX5qt1eAODPT7ElaAn2dEgsGBxeBbJihi/Ba04mIHGCE76LBwsuNXW1I+OCvHtmUkorh
+         BkZ3/kpt+GbhAVRfPq+cOVn6s0tns1bOHLLkU2gLitfskW3ZHrHIpvHYfjOOTQ48jXu+
+         olqTSQRobLeCQ+M8XpDR1OOBs6MmnCQE1NVRyhePjIPNvTyj9ASW1EIwjkvrwfWquNKV
+         SmZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740784088; x=1741388888;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwvKvZQdOqB/riyMfQK76I4rdRV8E0Twgp+TB8ZZDcQ=;
+        b=uQQddqCDNZl7JfjJNxCMMatyFTBRPltxcKXtA+3dwPO38n+0crJxyFHEPjjKfDAn9w
+         cQ43tobPNqzJGj/lspWplhhx9XC4Gi57X2rn9enalW8G3UB7EabiQExes3YUdRGmVEgX
+         75FeOc6aBBdQIpVZthDcD00DvW58mAdBV6qzA/E4EppzQ91EOe682aY3Ho3Tkqd2O6tV
+         dEZowRXQ5EHOr41E7mQ+g1N0W+St6Muru4WxxWVhtDg6kqxW3xBENQLyPm7IJ65lO7Ph
+         zQlJEg6VaJ/St8ImG7Z0x6VjI4zpm5LxnO32VtJMK3+oZzvCuhXNO9iefRoAUv81NWgP
+         fo5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW966bShel5NzHnNiClUegA1qJEUyjgz0umJ0keAzEfEG7GBBSCRgY67sbndaawq36PtKv2tEbdCVigL9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8An56wyELl9DFY2arTfBAygGtVwGeC9LQlBaUgZ/iJ3aDVNKS
+	B5dNWCnqP3zw2D3ZAXARVwoNjhG85e0sBXEDb/ogsavOyrEi/5OAsl3LolLr8nBFCiVpkvswOSD
+	log==
+X-Google-Smtp-Source: AGHT+IHtav6I9GvJCWlXa8teiyqwYsVwxbQq5DDBFhatDJUnYOVca3VZeno9NRz5PC5d3cEGv4aaIo8yNXc=
+X-Received: from pjbom7.prod.google.com ([2002:a17:90b:3a87:b0:2fa:1b0c:4150])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2247:b0:2ee:863e:9ffc
+ with SMTP id 98e67ed59e1d1-2febab7a555mr7136871a91.21.1740784088699; Fri, 28
+ Feb 2025 15:08:08 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 28 Feb 2025 15:08:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080648369E8A4508220133E99C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DKSgzZB5HZgYN8@slm.duckdns.org> <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DZ9pqlWim8EIwk@slm.duckdns.org> <CAADnVQ+bXk3qTekjVZ7NU0TpCh4zNg1GNFL-zdW++f2=t_BT8Q@mail.gmail.com>
- <Z8IrGagRhkHlUejz@slm.duckdns.org>
-In-Reply-To: <Z8IrGagRhkHlUejz@slm.duckdns.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 28 Feb 2025 15:06:32 -0800
-X-Gm-Features: AQ5f1Jqncos-iHCLYHCuP9wYmyWCo0iBWXaI2EA8M47pPRENSjJX80JHhbSCMDs
-Message-ID: <CAADnVQLkzX8dN9+Uk34idgxcD1rK639hnd8aZsz=0HJibpAwag@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.15 v3 3/5] sched_ext: Add
- scx_kfunc_ids_ops_context_sensitive for unified filtering of
- context-sensitive SCX kfuncs
-To: Tejun Heo <tj@kernel.org>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, 
-	Changwoo Min <changwoo@igalia.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250228230804.3845860-1-seanjc@google.com>
+Subject: [PATCH] KVM: selftests: Ensure all vCPUs hit -EFAULT during initial
+ RO stage
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 1:31=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Thu, Feb 27, 2025 at 06:34:37PM -0800, Alexei Starovoitov wrote:
-> > > Hmm... would that mean a non-sched_ext bpf prog would be able to call=
- e.g.
-> > > scx_bpf_dsq_insert()?
-> >
-> > Not as far as I can tell.
-> > scx_kfunc_ids_unlocked[] doesn't include scx_bpf_dsq_insert.
-> > It's part of scx_kfunc_ids_enqueue_dispatch[].
-> >
-> > So this bit in patch 3 enables it:
-> > +       if ((flags & SCX_OPS_KF_ENQUEUE) &&
-> > +           btf_id_set8_contains(&scx_kfunc_ids_enqueue_dispatch, kfunc=
-_id))
-> >
-> > and in patch 2:
-> > +       [SCX_OP_IDX(enqueue)]                   =3D SCX_OPS_KF_ENQUEUE,
-> >
-> > So scx_bpf_dsq_insert() kfunc can only be called out
-> > of enqueue() sched-ext hook.
-> >
-> > So the restriction is still the same. afaict.
->
-> Hmm... maybe I'm missing something:
->
->   static int scx_kfunc_ids_ops_context_sensitive_filter(const struct bpf_=
-prog *prog, u32 kfunc_id)
->   {
->          u32 moff, flags;
->
->          // allow non-context sensitive kfuncs
->          if (!btf_id_set8_contains(&scx_kfunc_ids_ops_context_sensitive, =
-kfunc_id))
->                  return 0;
->
->          // allow unlocked to be called form all SYSCALL progs
->          if (prog->type =3D=3D BPF_PROG_TYPE_SYSCALL &&
->              btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id))
->                  return 0;
->
->          // *** HERE, allow if the prog is not SCX ***
->          if (prog->type =3D=3D BPF_PROG_TYPE_STRUCT_OPS &&
->              prog->aux->st_ops !=3D &bpf_sched_ext_ops)
+During the initial mprotect(RO) stage of mmu_stress_test, keep vCPUs
+spinning until all vCPUs have hit -EFAULT, i.e. until all vCPUs have tried
+to write to a read-only page.  If a vCPU manages to complete an entire
+iteration of the loop without hitting a read-only page, *and* the vCPU
+observes mprotect_ro_done before starting a second iteration, then the
+vCPU will prematurely fall through to GUEST_SYNC(3) (on x86 and arm64) and
+get out of sequence.
 
-Ohh. You're right. My bad.
-Here it probably needs
-&& !!btf_id_set8_contains(&scx_kfunc_ids_ops_context_sensitive
+Replace the "do-while (!r)" loop around the associated _vcpu_run() with
+a single invocation, as barring a KVM bug, the vCPU is guaranteed to hit
+-EFAULT, and retrying on success is super confusion, hides KVM bugs, and
+complicates this fix.  The do-while loop was semi-unintentionally added
+specifically to fudge around a KVM x86 bug, and said bug is unhittable
+without modifying the test to force x86 down the !(x86||arm64) path.
 
-since later scx_kfunc_set_ops_context_sensitive
-is registered for all of struct-ops.
+On x86, if forced emulation is enabled, vcpu_arch_put_guest() may trigger
+emulation of the store to memory.  Due a (very, very) longstanding bug in
+KVM x86's emulator, emulate writes to guest memory that fail during
+__kvm_write_guest_page() unconditionally return KVM_EXIT_MMIO.  While that
+is desirable in the !memslot case, it's wrong in this case as the failure
+happens due to __copy_to_user() hitting a read-only page, not an emulated
+MMIO region.
+
+But as above, x86 only uses vcpu_arch_put_guest() if the __x86_64__ guards
+are clobbered to force x86 down the common path, and of course the
+unexpected MMIO is a KVM bug, i.e. *should* cause a test failure.
+
+Reported-by: Yan Zhao <yan.y.zhao@intel.com>
+Debugged-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ tools/testing/selftests/kvm/mmu_stress_test.c | 21 ++++++++++++-------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
+index d9c76b4c0d88..6a437d2be9fa 100644
+--- a/tools/testing/selftests/kvm/mmu_stress_test.c
++++ b/tools/testing/selftests/kvm/mmu_stress_test.c
+@@ -18,6 +18,7 @@
+ #include "ucall_common.h"
+ 
+ static bool mprotect_ro_done;
++static bool all_vcpus_hit_ro_fault;
+ 
+ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ {
+@@ -36,9 +37,9 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ 
+ 	/*
+ 	 * Write to the region while mprotect(PROT_READ) is underway.  Keep
+-	 * looping until the memory is guaranteed to be read-only, otherwise
+-	 * vCPUs may complete their writes and advance to the next stage
+-	 * prematurely.
++	 * looping until the memory is guaranteed to be read-only and a fault
++	 * has occurred, otherwise vCPUs may complete their writes and advance
++	 * to the next stage prematurely.
+ 	 *
+ 	 * For architectures that support skipping the faulting instruction,
+ 	 * generate the store via inline assembly to ensure the exact length
+@@ -56,7 +57,7 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ #else
+ 			vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
+ #endif
+-	} while (!READ_ONCE(mprotect_ro_done));
++	} while (!READ_ONCE(mprotect_ro_done) || !READ_ONCE(all_vcpus_hit_ro_fault));
+ 
+ 	/*
+ 	 * Only architectures that write the entire range can explicitly sync,
+@@ -81,6 +82,7 @@ struct vcpu_info {
+ 
+ static int nr_vcpus;
+ static atomic_t rendezvous;
++static atomic_t nr_ro_faults;
+ 
+ static void rendezvous_with_boss(void)
+ {
+@@ -148,12 +150,16 @@ static void *vcpu_worker(void *data)
+ 	 * be stuck on the faulting instruction for other architectures.  Go to
+ 	 * stage 3 without a rendezvous
+ 	 */
+-	do {
+-		r = _vcpu_run(vcpu);
+-	} while (!r);
++	r = _vcpu_run(vcpu);
+ 	TEST_ASSERT(r == -1 && errno == EFAULT,
+ 		    "Expected EFAULT on write to RO memory, got r = %d, errno = %d", r, errno);
+ 
++	atomic_inc(&nr_ro_faults);
++	if (atomic_read(&nr_ro_faults) == nr_vcpus) {
++		WRITE_ONCE(all_vcpus_hit_ro_fault, true);
++		sync_global_to_guest(vm, all_vcpus_hit_ro_fault);
++	}
++
+ #if defined(__x86_64__) || defined(__aarch64__)
+ 	/*
+ 	 * Verify *all* writes from the guest hit EFAULT due to the VMA now
+@@ -378,7 +384,6 @@ int main(int argc, char *argv[])
+ 	rendezvous_with_vcpus(&time_run2, "run 2");
+ 
+ 	mprotect(mem, slot_size, PROT_READ);
+-	usleep(10);
+ 	mprotect_ro_done = true;
+ 	sync_global_to_guest(vm, mprotect_ro_done);
+ 
+
+base-commit: 557953f8b75fce49dc65f9b0f7e811c060fc7860
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
