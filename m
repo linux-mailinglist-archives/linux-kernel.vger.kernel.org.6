@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-538007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F55A49375
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:27:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4002CA49379
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5BD3AA29B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:27:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156B6188CDE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868EB248863;
-	Fri, 28 Feb 2025 08:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB01B24888E;
+	Fri, 28 Feb 2025 08:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfQFEOxO"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TOzKChAT"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B361EEA5F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9407C1DED4F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731270; cv=none; b=kc77Wj1RCK4u0TvXwAFcV0hLs3W6OED2pi1vw+7papHUsIvbPmGW0ez8gHjuCwNI0s09DqX0RK957fpH8D3d5M+kfSjJuUSd9SZ3eIYw/DU8wXDYaiTT8RENHGf2MN1FdzNk5Dequmkm7HjhfO/k7yzoke9vuJRzCFFpnFFpkko=
+	t=1740731311; cv=none; b=AkEJGgMe5evfH6hsYdUUFtuc5ytC2SclVsB8BYGS8zfW09fFR0yXkn7vMt5rM0utKTB6rCGWTL1EP0lk4YOpLsy5CMEZZMQff2znHClOr6kMCZjqZJy7JwYG0OsY6A6t/93kvXyDdBIU/u/6bAZVMAmQ1PMiDYthfIQA0qb/Fnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731270; c=relaxed/simple;
-	bh=1EJkEJ5clKWWBKa67/kejH6W7shjdDPibbwwvGn5zB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hblbvNe6iO9DzSxARMfqLfGvwa61uLXMcc9vkVXB6xTWy/ROwK2sLOzoZUX2tavXbqMTWCwcAWxFiuRVbYwNjqLajT/FJN6teOyOextfSYbP8nNF0w/iA/IUv+fg5YL2AwidvaQ4b3uOFlTOVMPZbNqeXMG3Im4cCS9ATzWsPuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfQFEOxO; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1740731311; c=relaxed/simple;
+	bh=T9ulBbAshyDl3x4dZ9pDpzauMV0I7mHrJpwgJeJ/F6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rR1yrQSRdJ2C6i4eSKY3L+zP1LX4DNP6HtjVmxf8EfiyS6V3TQV3Jv5MVL2PFS0GJkSVMv+jRo1Lu3+XPX8ey4BL/HhZmpZHttWlzNbVehKdHm3ALRKDjLbgjR52VajZ5VUevSN41gmXVCSXmBZbzkobcX5iJuasajTHoufuETo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TOzKChAT; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22334203781so44068105ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:27:49 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30a2594435dso28516261fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:28:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740731269; x=1741336069; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n/YCY4QhV0U17HVcIuIR7hymAR0CmjWSHDk8xrbOfkY=;
-        b=sfQFEOxOiNrVI3ZfsONwXk1AAuT4gSFnaKlb/wFnUrrXY/OWxmA52fwQJPEUpYqSrI
-         m7RGcLgDk4jGqDP/aHz5nNMHzGTDrCS7yDWuJPKGfS4qMFJUbdGCYHbns3S9TyPmLIvG
-         2ga1KqRHNouihCEtPhnTjWelERq9QlIhzeSxWACjSmsjrkisIg6blZUrVKY1CaUyuklT
-         bQ7ZNTeCNcsUcdU7xbyIakBnvCZJfiGMveEtn+/OPvME6R5JEuXKhPNLHcO/GDgJfU2p
-         pHUo2fsyH9TS3Zd1NKOHhhfmrXaSOsAdmxwTX7AOeLKwKwppp2TTOqFo//Y9IntdREvx
-         wCkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731269; x=1741336069;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1740731308; x=1741336108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n/YCY4QhV0U17HVcIuIR7hymAR0CmjWSHDk8xrbOfkY=;
-        b=iWzDisHBmSg2Qbs7CsJmC4S0v2VV/pmZo8NJ+g2PuhAtlY8KSeJ6pjkDEzwR8CTKRy
-         4cRmXo302a6XZnN5z6+bNaBsNYR4i1cwS6omDWXjLxKBr78DXAJhHgwVu5+M2i1YCdOF
-         4RcqYxnWhCbJayamakz+ux6D2Sp4k0oPT5PaDcnzdrRYZ7a5oU4c3Yuuje+ijnedfbHS
-         9aGCCWFy/i9LKeOow3kcNKh036MXSCouxy5Eq6Mp99xCQrkun4pxRDc/5rtSJLzTGnTm
-         9pSLM2y3FQ6qF618JS9hxieSyrizMI/C3DznI6eOY5+jzVRgOE4cNyZnh9NKdxaWPdAN
-         0G5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNHBDOrpcxwVJSX+Ju24AU3Snbp3nZSWXVAmsn7I7K9b8wYEMMlN+1CC0CWZo2y0OGczeaitZzhnk5qFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxAI4F4zX0h/P3uC+gvPrnhyE6l4OxXzD9RClSJk9W6em6pbVm
-	TbcHFj7HmZS+oUrkMy3KKU3K+S/yxp9UdDfltRoc8a+VwSwxWWdZAYKQAUeWLrA=
-X-Gm-Gg: ASbGncvMadAKgVtNto/FpBPlhfgJO2Z2nfGb14Hjdxp6LODDrFG9fYwdA1lM0BNW35Z
-	x+qwg6lQHViyrjXksDBQjCBVkUJr2qplHT9FqXwsSRObvo+hwC01wLzs5EKrelpIg6OW4cKfKcj
-	5T/C0nLNNDLUZVlmmpejC5qwsWEABHjfp/8UlySzNhpb3ssRAH6tuAvUnHVl1HdyrhpCHEwYip0
-	F5m0+Ji0Jh+NXDwHpgr7Hq88DzjW7LnaCeD2p8CZ7eVmOeSNmY7k5E8mxG3XPips+SGIObreFKk
-	MNb2/nm3bHf0m/MDToJFKl2Vms0=
-X-Google-Smtp-Source: AGHT+IHGr47Db6l2St+90Kkhqacb9ZEZ96TNwAIVftc00apKFnyCA1On0wbzyLHpd8HB2mYA3zvL7w==
-X-Received: by 2002:a05:6a00:22c5:b0:732:6a48:22f6 with SMTP id d2e1a72fcca58-7349d2f51cbmr10238365b3a.9.1740731268633;
-        Fri, 28 Feb 2025 00:27:48 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a005fd15sm3149453b3a.168.2025.02.28.00.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:27:48 -0800 (PST)
-Date: Fri, 28 Feb 2025 13:57:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Bill Mills <bill.mills@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_ffa: Set dma_mask for ffa devices
-Message-ID: <20250228082745.rc2u5jiqnq7h737l@vireshk-i7>
-References: <e3dd8042ac680bd74b6580c25df855d092079c18.1737107520.git.viresh.kumar@linaro.org>
- <Z4osWNCUfufciZNG@bogus>
+        bh=T9ulBbAshyDl3x4dZ9pDpzauMV0I7mHrJpwgJeJ/F6w=;
+        b=TOzKChATMFtDUv47T9CF6pLxrWOMTfVH/u2Cbl465n2Hy+TVRws48e43zYHO8+QffK
+         2Dl1lyTocMZa0gBcXUbKyBAbtTxYQNfU1bvdKZT7FPffWRLBvRiBMxG4/9x5UucjOygv
+         NjusRzJ8+u62lrYlA2T52MhBIHIvVGHithhfwsIMDXMA7AlkYDMJI2vuADgmOvLMz7Pt
+         4Rp6SC6/RehLY32x4ULclT4MVhrhnGRc6XR/NIDo9fUxQaft4M9766ZWHMvXZh7OlniK
+         HIxNVsGbi2kLU74N8/3svvuwyznLdBFTOxSRAHOWXBKneN9oS7fkMQIp+ppR57myLSbh
+         NNew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740731308; x=1741336108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T9ulBbAshyDl3x4dZ9pDpzauMV0I7mHrJpwgJeJ/F6w=;
+        b=GLrx3v4t2EV1KhqQUGp6CI5vHldAqH7/u0c3/V81TujJ+pwT1RSMYdj4OkM07SSL4a
+         t2BSHSWJtDCZxMgrYvP712+x6MhaWALZGtch03P298av4OllcuSlQQhFUNYuZBfrSlvM
+         lSXM3a4bn08WE7oaBgzks0hPi2tzh15tuf8hroFGioB7DbKadHDH4+L5g2uMJcm/LiLY
+         OA0mB2ZtZ5vKz/+WlhsCTt9X8l4hot+shVgnmLhjFobhBd7SgNGvzc5VDM1ZbCtKRJVs
+         CUjXUqEAdZM1SkerQO5rHjq9B9tkdPkUypywrbA9An+WxGTm/KQyU7b9MgKShKaDplw2
+         EG6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV7eh3DC7vTEYNq3UjQ10fk3N+LnmO/3VoTzgfL0f0VdC5Jrrig+9UBCgdskAjewQJ04wHAsQP2KwUw4Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzgN5T7YvVwRcrXafZFZQrJvRiDDI9bIvVNrThRo1LGv5UBfU/
+	lhV8xRpD9MW5Bso3cns5FcoGIbGjuyOxFVI2MKa+JDkRzTT4UcYVVrXqqkEEJyEQlpD2LG/X4rC
+	4HDUucl4cLYOOPK4hJqgrAycI7JmS1krSHjJLgA==
+X-Gm-Gg: ASbGncsrOlR4ysC5tnLmz77yVVvI1aPbNddAXChleaxTP3R80vPF1fOb1JAneIXNYiF
+	OkWdLHF90Nic1xsnhR1xBobNWzGr/ODbBkW1m1kvcNh54SRYrjBWGyK6EAFp4YOaxZUNlWF7l2z
+	x4chGJk8Y=
+X-Google-Smtp-Source: AGHT+IHW6S+ROk5t0PkuDeNohOexyGS0WQTsyLpxEm0u/Cb0yy+Ajbahy9tjZIMQn//VEPUie10+SvlVpoJnbWC1gJU=
+X-Received: by 2002:a2e:9210:0:b0:302:3356:35d7 with SMTP id
+ 38308e7fff4ca-30b90a82535mr7451031fa.18.1740731307633; Fri, 28 Feb 2025
+ 00:28:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z4osWNCUfufciZNG@bogus>
+References: <20250227-ntc_thermistor_fixes-v1-0-70fa73200b52@gocontroll.com>
+In-Reply-To: <20250227-ntc_thermistor_fixes-v1-0-70fa73200b52@gocontroll.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 09:28:16 +0100
+X-Gm-Features: AQ5f1Jr0WmX94vB3R141IPBrIS72Kx7MxXzXC6HKJVTA8RfcAOIAB4TGRHOkIms
+Message-ID: <CACRpkdbtgd-BcKhSO+XB8yzbfAjYYJYA+NQs+WtmY=4N-bKdaQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] hwmon: (ntc_thermistor) typo fixes and incorrect
+ table fix
+To: maudspierings@gocontroll.com
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joseph McNally <jmcna06@gmail.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17-01-25, 10:09, Sudeep Holla wrote:
-> On Fri, Jan 17, 2025 at 03:35:52PM +0530, Viresh Kumar wrote:
-> > Set dma_mask for FFA devices, otherwise DMA allocation using the device pointer
-> > lead to following warning:
-> > 
-> > WARNING: CPU: 1 PID: 1 at kernel/dma/mapping.c:597 dma_alloc_attrs+0xe0/0x124
-> >
-> 
-> Looks good, will add to my queue after next -rc1.
+On Thu, Feb 27, 2025 at 1:57=E2=80=AFPM Maud Spierings via B4 Relay
+<devnull+maudspierings.gocontroll.com@kernel.org> wrote:
 
-Ping.
+> Fix some small mistakes in the Kconfig and bindings yaml, also fix the
+> incorrect sensor table for the ncpXXxh103 sensor.
+>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
--- 
-viresh
+The series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
