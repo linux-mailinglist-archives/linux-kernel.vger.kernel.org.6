@@ -1,140 +1,166 @@
-Return-Path: <linux-kernel+bounces-539572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3855A4A5EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:31:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A4BA4A5F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ACE3B02A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C479A3BAFDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF381D88AC;
-	Fri, 28 Feb 2025 22:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAF71DED44;
+	Fri, 28 Feb 2025 22:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+AY5eLR"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ONVpTQlg"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345DE23F39A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB4F23F39A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781872; cv=none; b=C5+zoyAsY3DnzX6ucXW66TaQcRPUtnLxfEqRsurUoedgYFCAsMElBqXI++7xdQ9k5PNWVbFRHUKpPMqglzg2OjwkBE49XiA7A7x0K48c4eCZfR9pCZBVuSSzK1vRmbPLkDZh16SCqYToHDwygUeqctxSNwLis9WC7ctpWWYzYqw=
+	t=1740781942; cv=none; b=nH9vWqQcZ1Fa6j/YlvnPabyM2eT+kI5nAP+ob8WRa16410j77FsEOGnEtrYz34pKcOd1LcHn1z0Lno48jJ4fy4hEFYYhYecZnA+RJJnbdf1D1UKJEisQmYvx/8oS8hulWj39bscLP0kK7WVJoP6xU4rsCtIZ9/uzQvkcS8g4HNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781872; c=relaxed/simple;
-	bh=4LOPtkkRxQ/96b+ValDEXdgDB6o8UX/EDFFRgOMBMVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I7Hv3dayjV8Qiq0QbZLtAmF9PS6DtcRsvmFv2YNNz5NCTtsOkxDfJdZHiQq1wRupnura7DgnVZkMVdZgLCa0WA52kp0lDRgAdKBABiPXm6GTxwK/O7WJgoyFzpONK26PpJHXInUOi2BYYRCfwlwDCIK93e4zKSOhIOctrK5U5hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+AY5eLR; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5494bc8a526so1811492e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:31:10 -0800 (PST)
+	s=arc-20240116; t=1740781942; c=relaxed/simple;
+	bh=lbrTtqbFv3Whh3RcQpbnY2bGfXxrtaICUrF92VRuHxo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=j36z1pc+50NX+1LO0nqPJJTNEjYghiDeIvZyXcdslYdb3mum+vdfGVFHl7S+7idS+gvd74QBH8/DYkucRnMZnJa/2H2ikpf0iL+GDpp5lO3hvLgl4/KMLz+7G0BKCYsrtDydYc2ex5u2Q+UQJHTDCdhVZjy/7fGbVyr+kxFZfhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ONVpTQlg; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22368fafed1so34824435ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:32:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740781869; x=1741386669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IGx2ytRm7DUjV7hYYKMdSIo7INk/6F0hVRvX/gxT4jQ=;
-        b=R+AY5eLRJL5m5tUBAG2or2aLSk3WP8E9hD0lv8ptNXb2eb9IGXBe9ZENXdZ59HT7eR
-         P2ABFRxyMwXjxN90xf9NDE8HEtpqRGhuQKnYRL5UHNktnbeyABMC0RHeneP2DW9XoNdq
-         PMnHdxX8pgbtLo6dFfVCOme8cHr2tE/h4ZnENbL0d+FBV4dNkPyuAHs39YXF0xmPs2U1
-         uc+ZjLzLoVP/KECgEGDizQVuX/vPZb0Qi0GikIYoAGbqrv1HFkR1o3WnnPxw6Q1fVriG
-         qBOVIwEapOJBOB3fl2lbIh9qrGfm25PtsK8rbY/vTRBP72ITD40CGqvazJkPDlJDuZFw
-         8lOA==
+        d=google.com; s=20230601; t=1740781941; x=1741386741; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6E2xuVnec2I+gtyFLC/LUdzxkSAeiHHuFOdb6/52cV4=;
+        b=ONVpTQlgjf04N84e3kdHsjlBZuuNP/UpMhIW2s5npOroEiq5y391Rwq5CbkA2DBejB
+         9IC2OQeficcbNYrpcSPdihDavBSbRagKT6QLw+OuEkQrPPdcMfxFHt9Jadi6UfsD5W3L
+         h1l7ZFLh7wrj/1ocL2+MADLpjCMgir6pGKfz/oyRg23877Q9GGCbwV18/I2+5/dRhGMo
+         DHY+o31ReTTXd6MUrMZ9v2s5Nx10fHTD07+qtIPozU83Dicrk0a0/tCQYtGGOcIFaW1r
+         0qZU3AFQxw9feY9doY1t70cCtCCrc//XCHrD/PlHl24Pclvy9qjKzz9+kswVz1jIpeF1
+         0SCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740781869; x=1741386669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IGx2ytRm7DUjV7hYYKMdSIo7INk/6F0hVRvX/gxT4jQ=;
-        b=MShwh/vv43TlfJXGWOsK9rOp2uaCYg6x6Q01/nGFFFy9AfLMNnhF7aEzZC/wuubTZa
-         xBAYI5x2tScJEhQcKcB914cD1RgLoChNZo9LMtvYZsDgHvRO4kyIdeKCsdz5YJLgFWPe
-         zbeB2KB/2gRkVcAf8/Wz/jizX4ZsYHnEfDw//BmD4HstWPbJXI+npzENjBQgRWtBlAPI
-         e0GTwq0S0gNc46t/kN4tHheT0dTbAgMTWZuS+J8ausKxkIfe+uzD0xahu2f47+ZWKt6l
-         ZgeKLu3CdZcyCP89o89UuwpKz8EojQdcAl/eVL9AHCAVOOrwPlQeeYEtVeU0fwcpbujr
-         12uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTWpTK8WRICfLWh9deLYEuD1Aa5sfQmyAsKWXUPpohSvJLVQPnfsTQoW96HFy88N0N8q4JL+7/0pAaD8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfwH+SWRc2guJfgD/rzBIZubhiAPFm+sgYjfXxY3SXyU3SGy8+
-	wSFR2WjgkSci80v10bdv4lVwhIDUyEooW9248OHBBldbvKi5n0Kf2BodX10TG8FZqq8Ip++v/xu
-	Og1ljh0oH9bNHgxhwDszBRnFW3/Q=
-X-Gm-Gg: ASbGncvXuROy+qL/lApODXGiVStinfcbWmIeGSkpcqh2l/qN/OL5QxnEycWbY+r31qi
-	W82UNYnnY5D5BrTebw+BPJK9kloT2+fgpvNTyAs2qPE+GwfbR9kYyezuywJPAcao/piY+1XZihT
-	fuxwnVQeA=
-X-Google-Smtp-Source: AGHT+IGNNfsciEkYjELFx8y9yM79NeoCyQ/krRiryBA0MOH47ry6xl35fa2d3aSzfnuq/g+h90Eyr8E9/mWWWixu9AA=
-X-Received: by 2002:a05:6512:b97:b0:545:2d4d:36d1 with SMTP id
- 2adb3069b0e04-5494c127a1amr2011965e87.20.1740781868856; Fri, 28 Feb 2025
- 14:31:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740781941; x=1741386741;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6E2xuVnec2I+gtyFLC/LUdzxkSAeiHHuFOdb6/52cV4=;
+        b=Yuaa6eYxbRg46CgO6M6uPtSIw5JaIjZCLZWJ6P0CihGV6nkADBAQRwG9yURdoVR6NN
+         SbEGFMOl1Tu4LvPZKzSIxxdxpY7oNXedS+XvJZG5ikfNgXzbTFtErJNXSg5kJWY5/aOg
+         jwv8Z0RhD4A9k9CekmJae3XwotBMQNiF4SZ6jZ+4EAV7zeZOosazyVjR3bkeAnmxUPZ8
+         G0daf6kfoaaePuxQ1jIyHUewmKr4D/R3AQ3wkjyTkaAcLt+yGkQ39uNnetgMxZyu62Db
+         UNRvTvDUZz1m+Ya8GK3tiLYRGc8r7c1uKwGSC0j+js+4CxWyRRHi9iFccpKFUSRlti/z
+         sYmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXquNySYzZjlOda6DvYls+HMeRWYZ6ejql9y0RsO4iJM17ub/hHv6w216vBwZHBk4kivbWspOwCxzD2xlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3LEqR/XGDTsUE5AyGnk7wM2eUDcT9jFVB4ZzabICrjr//TIoV
+	JFZgKBvW3Joes/btFpopqspSezlsN5dzL71+RISVX61k0PDTjHLx4XbD4Y2JFulflP9iFOjwv7W
+	snA==
+X-Google-Smtp-Source: AGHT+IFVdvcpjdF2xOPtOtzaj3lqomK7UUPeWCpb2tFVi/FPCwoBxXIl4PAdRxnS6Na+PT6qTAHHalPbn2E=
+X-Received: from pfoo3.prod.google.com ([2002:a05:6a00:1a03:b0:730:8f44:a42b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:fae:b0:223:674d:c989
+ with SMTP id d9443c01a7336-223692585fbmr79599735ad.41.1740781940758; Fri, 28
+ Feb 2025 14:32:20 -0800 (PST)
+Date: Fri, 28 Feb 2025 14:32:19 -0800
+In-Reply-To: <cf34c479-c741-4173-8a94-b2e69e89810b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
-In-Reply-To: <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Fri, 28 Feb 2025 23:31:08 +0100
-X-Gm-Features: AQ5f1Jpsth-OnsyRUO_rx_Bd_FAw9y4cpF3mNC4b-OKZbO6KfqZwsOm3HQ8QG5c
-Message-ID: <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <cover.1740512583.git.ashish.kalra@amd.com> <27a491ee16015824b416e72921b02a02c27433f7.1740512583.git.ashish.kalra@amd.com>
+ <Z8IBHuSc3apsxePN@google.com> <cf34c479-c741-4173-8a94-b2e69e89810b@amd.com>
+Message-ID: <Z8I5cwDFFQZ-_wqI@google.com>
+Subject: Re: [PATCH v5 6/7] KVM: SVM: Add support to initialize SEV/SNP
+ functionality in KVM
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <ashish.kalra@amd.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	thomas.lendacky@amd.com, john.allen@amd.com, herbert@gondor.apana.org.au, 
+	michael.roth@amd.com, dionnaglaze@google.com, nikunj@amd.com, ardb@kernel.org, 
+	kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, aik@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Feb 28, 2025 at 5:48=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 2/28/25 04:35, Uros Bizjak wrote:
-> > The code size of the resulting x86_64 defconfig object file increases
-> > for 33.264 kbytes, representing 1.2% code size increase:
-> >
-> >    text    data     bss     dec     hex filename
-> > 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
-> > 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
->
-> So, first of all, thank you for including some objective measurement of
-> the impact if your patches. It's much appreciated.
->
-> But I think the patches need to come with a solid theory of why they're
-> good. The minimum bar for that, I think, is *some* kind of actual
-> real-world performance test. I'm not picky. Just *something* that spends
-> a lot of time in the kernel and ideally where a profile points at some
-> of the code you're poking here.
->
-> I'm seriously not picky: will-it-scale, lmbench, dbench, kernel
-> compiles. *ANYTHING*. *ANY* hardware. Run it on your laptop.
->
-> But performance patches need to come with performance *numbers*.
+On Fri, Feb 28, 2025, Ashish Kalra wrote:
+> Hello Sean,
+> 
+> On 2/28/2025 12:31 PM, Sean Christopherson wrote:
+> > On Tue, Feb 25, 2025, Ashish Kalra wrote:
+> >> +	if (!sev_enabled)
+> >> +		return;
+> >> +
+> >> +	/*
+> >> +	 * Always perform SEV initialization at setup time to avoid
+> >> +	 * complications when performing SEV initialization later
+> >> +	 * (such as suspending active guests, etc.).
+> > 
+> > This is misleading and wildly incomplete.  *SEV* doesn't have complications, *SNP*
+> > has complications.  And looking through sev_platform_init(), all of this code
+> > is buggy.
+> > 
+> > The sev_platform_init() return code is completely disconnected from SNP setup.
+> > It can return errors even if SNP setup succeeds, and can return success even if
+> > SNP setup fails.
+> > 
+> > I also think it makes sense to require SNP to be initialized during KVM setup.
+> 
+> There are a few important considerations here: 
+> 
+> This is true that we require SNP to be initialized during KVM setup 
+> and also as mentioned earlier we need SNP to be initialized (SNP_INIT_EX
+> should be done) for SEV INIT to succeed if SNP host support is enabled.
+> 
+> So we essentially have to do SNP_INIT(_EX) for launching SEV/SEV-ES VMs when
+> SNP host support is enabled. In other words, if SNP_INIT(_EX) is not issued or 
+> fails then SEV/SEV-ES VMs can't be launched once SNP host support (SYSCFG.SNPEn) 
+> is enabled as SEV INIT will fail in such a situation.
 
-I don't consider this patch a performance patch, it is more a patch
-that fixes a correctness issue. The compiler estimates the number of
-instructions in the asm template wrong, so the patch instructs the
-compiler that everything in the template in fact results in a single
-instruction, no matter the pseudos there. The correct estimation then
-allows the compiler to do its job better (e.g. better scheduling,
-better inlining decisions, etc...).
+Doesn't that mean sev_platform_init() is broken and should error out if SNP
+setup fails?  Because this doesn't match the above (or I'm misreading one or both).
 
-The metric of code size is excellent for -Os compile, but not so good
-for -O2 compile, and measured results mirror that.. In the -O2 case,
-we actually requested from the compiler to prioritize the performance,
-not code size, so the code size measurements are only of limited
-relevance. The purpose of these measurements are to show that the
-effect of the patch is limited to the expected 1% of code size
-difference.
+	rc = __sev_snp_init_locked(&args->error);
+	if (rc && rc != -ENODEV) {
+		/*
+		 * Don't abort the probe if SNP INIT failed,
+		 * continue to initialize the legacy SEV firmware.
+		 */
+		dev_err(sev->dev, "SEV-SNP: failed to INIT, continue SEV INIT\n");
+	}
 
-I don't expect some noticeable performance changes from the
-non-algorithmic patch like this. TBH, I would be surprised if they
-were outside the measurement noise. Nevertheless, I'll try to provide
-some performance numbers.
+And doesn't the min version check completely wreck everything?  I.e. if SNP *must*
+be initialized if SYSCFG.SNPEn is set in order to utilize SEV/SEV-ES, then shouldn't
+this be a fatal error too?
 
-Thanks,
-Uros.
+	if (!sev_version_greater_or_equal(SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR)) {
+		dev_dbg(sev->dev, "SEV-SNP support requires firmware version >= %d:%d\n",
+			SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR);
+		return 0;
+	}
+
+And then aren't all of the bare calls to __sev_platform_init_locked() broken too?
+E.g. if userspace calls sev_ioctl_do_pek_csr() without loading KVM, then SNP won't
+be initialized and __sev_platform_init_locked() will fail, no?
+
+> And the other consideration is that runtime setup of especially SEV-ES VMs will not
+> work if/when first SEV-ES VM is launched, if SEV INIT has not been issued at 
+> KVM setup time.
+> 
+> This is because qemu has a check for SEV INIT to have been done (via SEV platform
+> status command) prior to launching SEV-ES VMs via KVM_SEV_INIT2 ioctl. 
+>
+> So effectively, __sev_guest_init() does not get invoked in case of launching 
+> SEV_ES VMs, if sev_platform_init() has not been done to issue SEV INIT in 
+> sev_hardware_setup().
+> 
+> In other words the deferred initialization only works for SEV VMs and not SEV-ES VMs.
+
+In that case, I vote to kill off deferred initialization entirely, and commit to
+enabling all of SEV+ when KVM loads (which we should have done from day one).
+Assuming we can do that in a way that's compatible with the /dev/sev ioctls.
 
