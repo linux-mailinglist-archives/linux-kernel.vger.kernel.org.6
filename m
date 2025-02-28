@@ -1,258 +1,200 @@
-Return-Path: <linux-kernel+bounces-537800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5600DA490FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:39:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63055A49105
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F355E16FE6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1384E1894189
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE561C5D69;
-	Fri, 28 Feb 2025 05:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923E31C3C0F;
+	Fri, 28 Feb 2025 05:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="eUi9771N"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aN/lrN+9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEED21BEF82;
-	Fri, 28 Feb 2025 05:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692C1C07ED
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740721070; cv=none; b=ImbLS0y2NU5mXFpZ1BiDENHh8h6Bk9TbYzaNpPK4WxiNGqg1DSK0HmuxmyzspxzwbUqi4osO3xZsT5uU16hpXJ19HEmrxBcBD7wi6mXIU3T/jCDSZDgA7R1Mjs+u4uIksK6EUafK/g5P6cZBUdOPY1KTVaN6oSUYs4vznB+ZGQg=
+	t=1740721110; cv=none; b=D4bHoBWoEKrcdBHNccyaJtBH9VDCzKMG2Fo9TfCn8JISmEySj3JkWkj2uGdv/sWa/ImufjDYWB12fsVUa5751Tev+VeJbiLgObCymO6EQRUm+LliQsAxRMnsSA9m/RVxINKMBvDn2JA5zKoMUb4IlsC/S6jyO8J5U0741pFyuXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740721070; c=relaxed/simple;
-	bh=EA4My43wV+5AeO1WKhaa9PtLtgh+AvWkwFeiGVXixx8=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=E/gUVT4C3O2htHg2V/Pg/fxP1+s81ZegO3IpmdRnlr4cRjAggRAhgJSvgxJKV/pm59+3JDlSTQat0/9IQ623nvrzJ+odZCB+d6NchjyM3FHbAEYXF3Wx/58QY7ILXwopxpEvAQHZCuRZFJYbqbJx1t+PONo/iNvo9LolhknhG5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=eUi9771N; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1740721046;
-	bh=zej3l/VhWayOFDJihQNo4c7f+zl1RMZdXx+5GGEqHNM=;
-	h=From:Mime-Version:Subject:Message-Id:Date:To;
-	b=eUi9771NanvazT5ScOtRAESr0vtO3kyYsRnYCHRX4Uy8IsEAzdK8Ib34Msfy2Yqp4
-	 LiNJ4lJpPqqimu09pR/aZ8DknymnUVK3kyb8lzyJVquZP0W42/89tVafH6AF+cghv7
-	 t7HZaImjD4rUOW4OSyQsY2tuMFT4VeHrQuJQUnls=
-X-QQ-mid: bizesmtpsz15t1740721041tq2cp8
-X-QQ-Originating-IP: QLvO+yBLxLyi55liIgGjNbdRSHKp8uoEU1FYx7yq+k4=
-Received: from smtpclient.apple ( [202.120.235.76])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 28 Feb 2025 13:37:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1641597565874851230
-From: Kun Hu <huk23@m.fudan.edu.cn>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740721110; c=relaxed/simple;
+	bh=hw1IKnio0hEFUBpGb98LZHc628nITmF0Wle08C5jWo0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eIPgR3NZn/eYys38o/Ie8RTrOGJNymA1aayUMIgsIUaGCpGtfcDU1BtdL2Vrk2KLO25s00Ah6+KAI+gQCfCrZbzja+ZzaJlYmgd6ZZEquY+3PO/eGua8nB4U1DkaQn+h724kKjyd0U3maJRuGTf7+r50ZpQu7czv79vFeGWnMpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aN/lrN+9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RIlVaT015835
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:38:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CH4rVnfK21YMgQrbM2NxvF
+	nBMLD7yj2zij8upDfFnKw=; b=aN/lrN+9hJDwntiFu2B2y+LHSPIDy3IbhPV/yD
+	1wBfZFZpCnsXALWENaHd3QHMeChkukPfeheKoR6thQns0Na7ZGZYCvjiA4UshwWu
+	F16hLvaR6Z2FyQXvprA6xvTZ2FXNxlUuOJGl11iYxCQbTZ4V8pmpcPpZmMDKiMgg
+	QZ6JaVJF8xw9+TDy0rXlM5tbT29Ih4aGZVvdyaidgLOiFqyhRhT6SvuJgSCBuJMd
+	B7uXd5Lcc6dlEU2nWdy8hw5XkaZ1F5A+suE1KJDY2tKfUT1JhwaHe3O8j1ip+c1e
+	WSL7YdPXsAZoI9mLO0R08BV4hWqJ5dOZMx9Y+X8jpOfP7jhQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prnr4k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:38:27 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2233b764fc8so33676065ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:38:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740721106; x=1741325906;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CH4rVnfK21YMgQrbM2NxvFnBMLD7yj2zij8upDfFnKw=;
+        b=Zw3g55hUsQs7V4d4ugUY6ynhqO/0zMZFUkjRRhACBfS02AO3+2oOVnfTxkReV8JU1T
+         b0le+wcwShk2+yb4yqapUU58y0JU/dzQqcSvWuu6mSb+AbwcIBJG2vs2o/uXy2JRVaRg
+         4BrNGX+4+QqvpavH1LpRCs/ciSCwQgU2jOVSZQ6O1iQRHxpZnbRDFl7VRnmMPbBHpXOg
+         trPzAFFrYUcG3wA/1eti4lu9YBxAhrnzjP7ghD5b/auv2TVkX6P0HcqSNqM1QT3TPeuO
+         VGavj0t61eiRhrAkGMRrkoMNJNfNg+IKZTMUeh3kofUT1DNmGbUCqCqankmjdL1oe9GL
+         W2rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxejvKmafbjr5wSyokVi22VIY+ouH6eWTHboAqpVnOEh5IXtSnPI+//ydbpdq9shzxtUi5/jH9yf5FRiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRYws8sOY6QyveFIqqWaHezRmW5787ZUrKXPbRTC8cQCZZoYDY
+	v//jr6X2pAs7C4qXoMg3RebLByRqkZ5WehpxEJBOrxfTr+Xa142FGhRnJu50zY9aIKzYofcDCq+
+	qUTpC5N/yY6NrSm3ueSlg/elTZoI8tC9JcQ3lxky1e8iA0EezrzEdwxgND86X+dk=
+X-Gm-Gg: ASbGncuUkftXz7AGQ8KkTHJmMmI++8hBlw4gZN9pR2Kjqm8Lud62dI1HN028TJYR0/4
+	oatRTsKKk0v4sWhHgtIOZnrlryyVWZay2zqKQaMCj1hytU0KyoHRGnp96TfBXVcFmp13fQOeNfd
+	i9FBAJgqTvFlOEbQ0fJQkoEfaSY8Xd+ZGl9TzmljsJ0U8P68kEpWtm2Xxo9+/psNwt8FTbwFD5V
+	3xgLHY2Fi5uVc5xwDcEAVjLWXDU8Hbpv1lGE6KlXrU3sUyqheC8zwbA1VCBAxcWAMldmcIoplzw
+	iqCk0aIgoUGEg9RAW1eVQ34f5Zh+Sd87SxuSQCF5iM2lfV/umGnAEKcjK8Q7xazjO/3jtV5RrCa
+	QYLMKcek=
+X-Received: by 2002:a17:902:ce06:b0:223:501c:7576 with SMTP id d9443c01a7336-22368f85359mr35092135ad.12.1740721105825;
+        Thu, 27 Feb 2025 21:38:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH9kWwpW0HteN6ONpvYLlIKS/cwxCBm5mIKmi36A6eB7TNk8E8ciGYQXf0L7gtttf53+nHBWg==
+X-Received: by 2002:a17:902:ce06:b0:223:501c:7576 with SMTP id d9443c01a7336-22368f85359mr35091825ad.12.1740721105430;
+        Thu, 27 Feb 2025 21:38:25 -0800 (PST)
+Received: from hu-uchalich-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504dc86esm25058925ad.172.2025.02.27.21.38.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 21:38:24 -0800 (PST)
+From: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
+Subject: [PATCH v5 0/2] SCM: Support latest version of waitq-aware firmware
+Date: Thu, 27 Feb 2025 21:38:15 -0800
+Message-Id: <20250227-multi_waitq_scm-v5-0-16984ea97edf@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: [Bug] missing bounds check for k->u64s=0 in validate_bset_keys:999
-Message-Id: <BB5BB1E2-2146-4F79-8EE9-0DCFA5F0D381@m.fudan.edu.cn>
-Date: Fri, 28 Feb 2025 13:37:08 +0800
-Cc: linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzkaller@googlegroups.com,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
- baishuoran@hrbeu.edu.cn
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MPAlP4yRn0xg5GJlyD8fNxPdgXaOixYmVrbtBKEgcUxmzame/MrBix07
-	Ru5Kxs+RxFdGzeK3crmQtn5KZcP4PkP5uvAnqPAALSTUb6PKoHwpgSunQ0g1kq8XYEYNqVB
-	LKEIIU0xDJIYqqYsJHcauj7aSIfNx7EK36wtPGvycBros0fxSZ15X1pqgkDSONHl/TyWeYs
-	ylP5m2YyP2271skYtMoIMViunxMfvec5b9vU1tkjtsEe9tIT85mfCS4nP1SuUXNd+NkZVjl
-	IYhKO8YG564g36usgwTkSXFn+38gGTEMB3KYt/YmwwlvrL7mLh075xCo7x6Z00q42b1rU0L
-	PSYjVe2gRtv9CFXM1Y3rwfn2xbE5QUEIVKE3i30Fn+yoOk+oPA0A+prhzyQFXx6VAFNwn6A
-	7jlVf3axLwwQg21xiQeELKhjPLpuRF0eISF/KuJUdwiNn8ks33745CyDYGMfDmH1M2YcXOn
-	Wa/eaM1uo2Qr2V/lHsoZVELKpnH/KaXofvk7u3L5cVFvewP3Jqp/uFaO5zesgJIvBTtSW3Q
-	yniC7dHrcKJ5KcoglQaUAXkGIodmgH40XWNupgprEeX3BsCbnZeKDOusaoBoQ3jcrd1Cojt
-	e4YM8JFFEo3RSZ1zMzMBA3aoWAPO6gy9CJZspVMzup4GrS64Nk0+ZvztEuHPXODhadOO0es
-	HtQhRmVImR+Mb8ACJSAhZwXvFD+2KwMDOfdvhcIZ01NvxMTMFePrri4i3+fcUKj5rBb1Xiy
-	cSaECSbMOiAJHA6VuTJpuEqW7yRiwkLCwngFXts8eVUIp98ayqPyP46fEsgkX/17xaEYqyl
-	8dfodAtx2c8iTcJYAHCPYVoylxbdUv0Wb3z4AG8z+faKP0rqvd89RNJ692nQa1Ut6+e6ZWg
-	NdruVC1GF64faX0cNvn7+08r1IYi2zhKWfVBmpCfxsXYdeFgYlRojTcf+OOSwv49Ldv3+Us
-	ekltYtMLdrsRgxHy0dO6PINeUIlfWG55FmPc=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMdLwWcC/x3NQQ6CMBCF4auQWdumFmqNK+9hDIFxgEkolbagC
+ eHuVpbf4v1vg0iBKcKt2CDQypH9lGFOBeDQTD0JfmWDVtoora1wy5i4/jSc5jqiE6btlKmuqrX
+ tGfLqHajj71F8PLO74J1IQ6Dm6KBfKcizLZWt9KW0suck54WxXvLfyDjc/+IJJXoH+/4DlMkS1
+ qIAAAA=
+X-Change-ID: 20250227-multi_waitq_scm-5bf05480b7b1
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@oss.qualcomm.com,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740721104; l=3073;
+ i=unnathi.chalicheemala@oss.qualcomm.com; s=20240514;
+ h=from:subject:message-id; bh=hw1IKnio0hEFUBpGb98LZHc628nITmF0Wle08C5jWo0=;
+ b=3sVqtO1XemxxVymBlGztmpc85ldQcCl4ylp5/HKVotcMEUNCYnF0LGr3VkOjAAGdl9xJ8UG8A
+ xG4TYL5kI0uAvDEzgIlUHcIfir8d6evMHCsgU1hgLIZd8n5skWRpoGh
+X-Developer-Key: i=unnathi.chalicheemala@oss.qualcomm.com; a=ed25519;
+ pk=o+hVng49r5k2Gc/f9xiwzvR3y1q4kwLOASwo+cFowXI=
+X-Proofpoint-GUID: NhZUyu3PwWBMlp2HHj4INbWaPBa8ZjO7
+X-Proofpoint-ORIG-GUID: NhZUyu3PwWBMlp2HHj4INbWaPBa8ZjO7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_08,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280038
 
-Hi Kent,
+This series adds support for the latest improvements made in SCM
+firmware that allow for multiple wait-queues in firmware.
 
-When using our customized Syzkaller to fuzz the latest Linux kernel, the =
-following crash (82th)
-was triggered.
+To support multi VM synchronization when VMs make SMC calls on same CPU,
+waitqueue mechanism is added in firmware which runs at EL2 & EL3 exception
+levels.
 
-HEAD commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-git tree: upstream
-Output: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
-ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/output_on_6.14rc4
-Kernel config: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/config_6.14rc4=
-.txt
-C reproducer: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
-ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/repro.c
-Syzlang reproducer: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
-ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/repro.syz
+P.S. While at Qualcomm, Guru Das Srinagesh authored the initial version of
+these patches.
+Thanks Guru!
 
-The file images in the repro are randomly constructed by syzkaller. =
-According to the report, this issue points to line 999 in the =
-validate_bset_keys function. Based on multiple reproductions of the =
-issue, the problem appears to occur when parsing corrupted btree nodes =
-(where k->u64s might be 0). The memmove_u64s_down operation attempts to =
-shift subsequent data forward, but the calculation of vstruct_end(i) =
-might be out of bounds when handling such invalid nodes. This could lead =
-to heap memory corruption, potentially causing subsequently allocated =
-memory to contain invalid pointers.
+---
+Changes in v5:
+- Use GIC_SPI and GIC_ESPI macros from dt-bindings instead of redefining
+- Modified qcom_scm_query_waitq_count to take struct qcom_scm as
+argument; scm is anyway stored to global struct __scm after
+smp_store_and_release(). 
+- Tested on SM8650 which has multi-waitq support and SM8550, which
+doesn't. No error logs are seen.
+-Link to v4: https://lore.kernel.org/all/cover.1730742637.git.quic_uchalich@quicinc.com/
 
-Our knowledge of the kernel is somewhat limited, and we'd appreciate it =
-if you could determine if there is such an issue. If this issue doesn't =
-have an impact, please ignore it =E2=98=BA.
+Changes in v4:
+- Moving back to redefining GIC_IRQ_TYPE_SPI and GIC_IRQ_TYPE_ESPI macros
+in qcom_scm as seeing compilation issues in linux/irq.h when including
+arm-gic header. Will send a fixes patch and move to dt-bindings in next patchset.
+- Fixed a few compilation errors.
+- Link to v3: https://lore.kernel.org/all/cover.1730735881.git.quic_uchalich@quicinc.com/
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
-<jjtan24@m.fudan.edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
+Changes in v3:
+- Use GIC_SPI and GIC_ESPI macros from dt-bindings instead of redefining
+- Prettified qcom_scm_fill_irq_fwspec_params()
+- Moved waitq initialization before smp_store_release()
+- There is no Gunyah hypercall API that can be used to fetch IRQ information hence
+introducing new SCM call.
+- Link to v2: https://lore.kernel.org/all/cover.1724968351.git.quic_uchalich@quicinc.com/
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-kernel BUG at arch/x86/mm/physaddr.c:28!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 57 Comm: kworker/3:1H Not tainted 6.14.0-rc4 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Workqueue: bcachefs_btree_read_complete btree_node_read_work
-RIP: 0010:__phys_addr+0xdc/0x150
-Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
-4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
-bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
-RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
-RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
-R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
-R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
-FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- qlist_free_all+0x68/0x130
- kasan_quarantine_reduce+0x168/0x1c0
- __kasan_slab_alloc+0x67/0x90
- __kmalloc_node_track_caller_noprof+0x1c5/0x5f0
- krealloc_noprof+0x2a7/0x390
- bch2_printbuf_make_room+0x1be/0x2e0
- bch2_prt_printf+0x18b/0x4d0
- __btree_err+0x16c/0x950
- validate_bset_keys+0xd79/0x18d0
- bch2_btree_node_read_done+0x2223/0x5340
- btree_node_read_work+0xa7e/0x1cc0
- process_scheduled_works+0x5c0/0x1aa0
- worker_thread+0x59f/0xcf0
- kthread+0x42a/0x880
- ret_from_fork+0x48/0x80
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__phys_addr+0xdc/0x150
-Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
-4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
-bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
-RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
-RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
-R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
-R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
-FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
-PKRU: 55555554
-2025/02/26 11:21:55 reproducing crash 'KASAN: slab-out-of-bounds Read in =
-mapping_try_invalidate': final repro crashed as (corrupted=3Dfalse):
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c6c25c03258c59c5 =
-written 1032 min_key POS_MIN durability: 1 ptr: 0:27:0 gen 0 =20
-  node offset 0/1032 bset u64s 33578 bset byte offset 160: bad k->u64s 0 =
-(min 3 max 253), fixing
-------------[ cut here ]------------
-kernel BUG at arch/x86/mm/physaddr.c:28!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 57 Comm: kworker/3:1H Not tainted 6.14.0-rc4 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
-Workqueue: bcachefs_btree_read_complete btree_node_read_work
-RIP: 0010:__phys_addr+0xdc/0x150
-Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
-4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
-bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
-RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
-RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
-R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
-R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
-FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- qlist_free_all+0x68/0x130
- kasan_quarantine_reduce+0x168/0x1c0
- __kasan_slab_alloc+0x67/0x90
- __kmalloc_node_track_caller_noprof+0x1c5/0x5f0
- krealloc_noprof+0x2a7/0x390
- bch2_printbuf_make_room+0x1be/0x2e0
- bch2_prt_printf+0x18b/0x4d0
- __btree_err+0x16c/0x950
- validate_bset_keys+0xd79/0x18d0
- bch2_btree_node_read_done+0x2223/0x5340
- btree_node_read_work+0xa7e/0x1cc0
- process_scheduled_works+0x5c0/0x1aa0
- worker_thread+0x59f/0xcf0
- kthread+0x42a/0x880
- ret_from_fork+0x48/0x80
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__phys_addr+0xdc/0x150
-Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
-4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
-bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
-RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
-RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
-R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
-R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
-FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
-PKRU: 55555554
-(base) qjj@syzkaller109:~/go1.22.1_projects/go_projects/syzkaller$ exit
-exit
+Changes in v2:
+- Dropped "Initialize waitq before setting global __scm" as it was merged here:
+https://lore.kernel.org/r/1711034642-22860-4-git-send-email-quic_mojha@quicinc.com
+- Decoupled "Remove QCOM_SMC_WAITQ_FLAG_WAKE_ALL" from series
+- Converted xarray to a statically sized array
+- Initialize waitq array in probe function
+- Remove reinit of waitq completion struct in scm_get_completion()
+- Introduced new APIs to get no. of waitqueue contexts and waitqueue IRQ no.
+directly from firmware.
+- Link to v1: https://lore.kernel.org/all/20240228-multi_waitq-v1-0-ccb096419af0@quicinc.com/
 
-Script done on 2025-02-26 18:17:09+08:00 [COMMAND_EXIT_CODE=3D"0"]
+Unnathi Chalicheemala (2):
+  firmware: qcom_scm: Add API to get waitqueue IRQ info
+  firmware: qcom_scm: Support multiple waitq contexts
 
----------------
-thanks,
-Kun Hu=
+ drivers/firmware/qcom/qcom_scm.c | 122 ++++++++++++++++++++++++++-----
+ drivers/firmware/qcom/qcom_scm.h |   1 +
+ 2 files changed, 104 insertions(+), 19 deletions(-)
+
+--
+2.34.1
+
+---
+Unnathi Chalicheemala (2):
+      firmware: qcom_scm: Add API to get waitqueue IRQ info
+      firmware: qcom_scm: Support multiple waitq contexts
+
+ drivers/firmware/qcom/qcom_scm.c | 127 +++++++++++++++++++++++++++++++++------
+ drivers/firmware/qcom/qcom_scm.h |   1 +
+ 2 files changed, 109 insertions(+), 19 deletions(-)
+---
+base-commit: 1e15510b71c99c6e49134d756df91069f7d18141
+change-id: 20250227-multi_waitq_scm-5bf05480b7b1
+
+Best regards,
+-- 
+Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
+
 
