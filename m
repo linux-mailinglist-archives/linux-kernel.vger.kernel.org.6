@@ -1,192 +1,284 @@
-Return-Path: <linux-kernel+bounces-539614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53704A4A684
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8902A4A688
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E718F7A41D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:07:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B45F7A8B6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF31DEFD4;
-	Fri, 28 Feb 2025 23:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E17A1DED5E;
+	Fri, 28 Feb 2025 23:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jC8clZoq"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB4923F372
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QZAhk0ys"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEA923F370;
+	Fri, 28 Feb 2025 23:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740784090; cv=none; b=ZMY++BCuznT0DVOQsMEMw5QOMc4NRLp4JwK1lhu73tmhqodt0dUzHbrrpMxrXPZtxyTQamOwb3eP0EA+q8ug7mm4sX5/AvoGeypHhyNiQF/iYtEfwxRVACbYEGKm6UEusPpxCNBOqW3IPLjHJvJvo9WlESALFIPZvL97j00lrRY=
+	t=1740784271; cv=none; b=kvhxkb3n25cbV/tuYyQuORCqM4hWRxaOLKWNPxcRwyAK8AreCjkufDIKh1+hcViMdHdpTyb8a4Xuy611u6SBZyIgDgSKLP/7Zhd8WHh/s+q75c4OwqlahKNy77QSBjug7Pd73DsD3939qxmlpfXgeVy0B/ZhuRpURG2V2xpBwtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740784090; c=relaxed/simple;
-	bh=uXQPt8VZsErn0hUYO9Un8NhYWkFxMXU+WNaNm+q/hLI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=UpQBHFiyHpiihhC4xjlyZDn1dft4qRF1DB50P9faMpxOe5BrmlPsghFuobEF+vlJY2tci95yXDlgUNkre7Ab6s9PvOfgn5EoJ2LqSBHkuq7LreyOWYeNh1wS3b+BvY2RrmlfoQFiA8H3tkeViEMzM8zGuex8VXuebufRKO+/q6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jC8clZoq; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8fdfdd94so5524775a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740784088; x=1741388888; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jwvKvZQdOqB/riyMfQK76I4rdRV8E0Twgp+TB8ZZDcQ=;
-        b=jC8clZoqVVeq81d6JFtK5whAaPGE4Z+/1D5K538uR8RM3TE+xY6HVMggpPA1s317Wr
-         3fW6ahwTsq3NJ6dK+y/xDpVm++yN/f2DhIbTxs2qM9DP6sxq1qww0fGaQuUKY00I6yPy
-         TX5qt1eAODPT7ElaAn2dEgsGBxeBbJihi/Ba04mIHGCE76LBwsuNXW1I+OCvHtmUkorh
-         BkZ3/kpt+GbhAVRfPq+cOVn6s0tns1bOHLLkU2gLitfskW3ZHrHIpvHYfjOOTQ48jXu+
-         olqTSQRobLeCQ+M8XpDR1OOBs6MmnCQE1NVRyhePjIPNvTyj9ASW1EIwjkvrwfWquNKV
-         SmZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740784088; x=1741388888;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwvKvZQdOqB/riyMfQK76I4rdRV8E0Twgp+TB8ZZDcQ=;
-        b=uQQddqCDNZl7JfjJNxCMMatyFTBRPltxcKXtA+3dwPO38n+0crJxyFHEPjjKfDAn9w
-         cQ43tobPNqzJGj/lspWplhhx9XC4Gi57X2rn9enalW8G3UB7EabiQExes3YUdRGmVEgX
-         75FeOc6aBBdQIpVZthDcD00DvW58mAdBV6qzA/E4EppzQ91EOe682aY3Ho3Tkqd2O6tV
-         dEZowRXQ5EHOr41E7mQ+g1N0W+St6Muru4WxxWVhtDg6kqxW3xBENQLyPm7IJ65lO7Ph
-         zQlJEg6VaJ/St8ImG7Z0x6VjI4zpm5LxnO32VtJMK3+oZzvCuhXNO9iefRoAUv81NWgP
-         fo5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW966bShel5NzHnNiClUegA1qJEUyjgz0umJ0keAzEfEG7GBBSCRgY67sbndaawq36PtKv2tEbdCVigL9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8An56wyELl9DFY2arTfBAygGtVwGeC9LQlBaUgZ/iJ3aDVNKS
-	B5dNWCnqP3zw2D3ZAXARVwoNjhG85e0sBXEDb/ogsavOyrEi/5OAsl3LolLr8nBFCiVpkvswOSD
-	log==
-X-Google-Smtp-Source: AGHT+IHtav6I9GvJCWlXa8teiyqwYsVwxbQq5DDBFhatDJUnYOVca3VZeno9NRz5PC5d3cEGv4aaIo8yNXc=
-X-Received: from pjbom7.prod.google.com ([2002:a17:90b:3a87:b0:2fa:1b0c:4150])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2247:b0:2ee:863e:9ffc
- with SMTP id 98e67ed59e1d1-2febab7a555mr7136871a91.21.1740784088699; Fri, 28
- Feb 2025 15:08:08 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 28 Feb 2025 15:08:04 -0800
+	s=arc-20240116; t=1740784271; c=relaxed/simple;
+	bh=CO5S5DajnDPwG34GhKoT/zvuV/gpd9B5vkm8ffwNCbw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=NrDwoDQyGmRuJIv+HGYRoQ0uRpoK+iBiDRefXFG4gp+jmvNBYAFXab2srqJ6hFnkRSs2dE4IL4jqrg5W+h5BfnVsZAXVcRhNc+bDCXws/x6cyntb7AoPGi8tzKz9dE6dXHdtUJ7AaKfsTG2NqaJnJHm1V1fXPSgWMD9tUGLr2zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QZAhk0ys; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1212)
+	id C7001210D0EB; Fri, 28 Feb 2025 15:11:06 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C7001210D0EB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740784266;
+	bh=dUUTfNXiktUwy4B8mz5W2W3rISoz7EQbq4EEUSSrGmQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QZAhk0ys7k1FhkNMJ4YAq+VQUt3b3Xatwb5xSAAQWy3kJIap7nKshwcTFQGs/X6Ly
+	 REGesEmQiP0ef3NSBRxu3I/f78YeenjahgAhiHHXW7Bi++pgJdkAHl6wfWaDtVYdec
+	 52a4+/DG+3GDbL6c2vPsP+DNLh3FaVrOPqW7Ilmg=
+From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+To: wufan@kernel.org
+Cc: audit@vger.kernel.org,
+	corbet@lwn.net,
+	eparis@redhat.com,
+	jasjivsingh@linux.microsoft.com,
+	jmorris@namei.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	paul@paul-moore.com
+Subject: [PATCH v3] ipe: add errno field to IPE policy load auditing
+Date: Fri, 28 Feb 2025 15:11:05 -0800
+Message-Id: <1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
+References: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228230804.3845860-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Ensure all vCPUs hit -EFAULT during initial
- RO stage
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
 
-During the initial mprotect(RO) stage of mmu_stress_test, keep vCPUs
-spinning until all vCPUs have hit -EFAULT, i.e. until all vCPUs have tried
-to write to a read-only page.  If a vCPU manages to complete an entire
-iteration of the loop without hitting a read-only page, *and* the vCPU
-observes mprotect_ro_done before starting a second iteration, then the
-vCPU will prematurely fall through to GUEST_SYNC(3) (on x86 and arm64) and
-get out of sequence.
+Users of IPE require a way to identify when and why an operation fails,
+allowing them to both respond to violations of policy and be notified
+of potentially malicious actions on their systems with respect to IPE.
 
-Replace the "do-while (!r)" loop around the associated _vcpu_run() with
-a single invocation, as barring a KVM bug, the vCPU is guaranteed to hit
--EFAULT, and retrying on success is super confusion, hides KVM bugs, and
-complicates this fix.  The do-while loop was semi-unintentionally added
-specifically to fudge around a KVM x86 bug, and said bug is unhittable
-without modifying the test to force x86 down the !(x86||arm64) path.
+This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD event
+to log policy loading failures. Currently, IPE only logs successful policy 
+loads, but not failures. Tracking failures is crucial to detect malicious 
+attempts and ensure a complete audit trail for security events.
 
-On x86, if forced emulation is enabled, vcpu_arch_put_guest() may trigger
-emulation of the store to memory.  Due a (very, very) longstanding bug in
-KVM x86's emulator, emulate writes to guest memory that fail during
-__kvm_write_guest_page() unconditionally return KVM_EXIT_MMIO.  While that
-is desirable in the !memslot case, it's wrong in this case as the failure
-happens due to __copy_to_user() hitting a read-only page, not an emulated
-MMIO region.
+The new error field will capture the following error codes:
 
-But as above, x86 only uses vcpu_arch_put_guest() if the __x86_64__ guards
-are clobbered to force x86 down the common path, and of course the
-unexpected MMIO is a KVM bug, i.e. *should* cause a test failure.
+* 0: no error
+* -EPERM: Insufficient permission
+* -EEXIST: Same name policy already deployed
+* -EBADMSG: policy is invalid
+* -ENOMEM: out of memory (OOM)
+* -ERANGE: policy version number overflow
+* -EINVAL: policy version parsing error
 
-Reported-by: Yan Zhao <yan.y.zhao@intel.com>
-Debugged-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Here are some examples of the updated audit record types:
+
+AUDIT_IPE_POLICY_LOAD(1422):
+audit:  AUDIT1422 policy_name="Test_Policy" policy_version=0.0.1 
+policy_digest=sha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4299DCA
+92BFFF4DB82E86D3 auid=1000 ses=3 lsm=ipe res=1 errno=0
+
+The above record shows a new policy has been successfully loaded into
+the kernel with the policy name, version, and hash with the errno=0.
+
+AUDIT_IPE_POLICY_LOAD(1422) with error:
+
+audit: AUDIT1422 policy_name=? policy_version=? policy_digest=?
+auid=1000 ses=3 lsm=ipe res=0 errno=-74
+
+The above record shows a policy load failure due to an invalid policy
+(-EBADMSG).
+
+By adding this error field, we ensure that all policy load attempts, 
+whether successful or failed, are logged, providing a comprehensive 
+audit trail for IPE policy management.
+
+Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
 ---
- tools/testing/selftests/kvm/mmu_stress_test.c | 21 ++++++++++++-------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ Documentation/admin-guide/LSM/ipe.rst | 19 ++++++++++++++-----
+ security/ipe/audit.c                  | 15 ++++++++++++---
+ security/ipe/fs.c                     | 16 +++++++++++-----
+ security/ipe/policy_fs.c              | 18 +++++++++++++-----
+ 4 files changed, 50 insertions(+), 18 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
-index d9c76b4c0d88..6a437d2be9fa 100644
---- a/tools/testing/selftests/kvm/mmu_stress_test.c
-+++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-@@ -18,6 +18,7 @@
- #include "ucall_common.h"
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+index f93a467db628..5dbf54471fab 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -423,7 +423,7 @@ Field descriptions:
  
- static bool mprotect_ro_done;
-+static bool all_vcpus_hit_ro_fault;
+ Event Example::
  
- static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+-   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1
++   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1 errno=0
+    type=1300 audit(1653425529.927:53): arch=c000003e syscall=1 success=yes exit=2567 a0=3 a1=5596fcae1fb0 a2=a07 a3=2 items=0 ppid=184 pid=229 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=4294967295 comm="python3" exe="/usr/bin/python3.10" key=(null)
+    type=1327 audit(1653425529.927:53): PROCTITLE proctitle=707974686F6E3300746573742F6D61696E2E7079002D66002E2E
+ 
+@@ -436,11 +436,11 @@ Field descriptions:
+ +----------------+------------+-----------+---------------------------------------------------+
+ | Field          | Value Type | Optional? | Description of Value                              |
+ +================+============+===========+===================================================+
+-| policy_name    | string     | No        | The policy_name                                   |
++| policy_name    | string     | Yes       | The policy_name                                   |
+ +----------------+------------+-----------+---------------------------------------------------+
+-| policy_version | string     | No        | The policy_version                                |
++| policy_version | string     | Yes       | The policy_version                                |
+ +----------------+------------+-----------+---------------------------------------------------+
+-| policy_digest  | string     | No        | The policy hash                                   |
++| policy_digest  | string     | Yes       | The policy hash                                   |
+ +----------------+------------+-----------+---------------------------------------------------+
+ | auid           | integer    | No        | The login user ID                                 |
+ +----------------+------------+-----------+---------------------------------------------------+
+@@ -450,7 +450,16 @@ Field descriptions:
+ +----------------+------------+-----------+---------------------------------------------------+
+ | res            | integer    | No        | The result of the audited operation(success/fail) |
+ +----------------+------------+-----------+---------------------------------------------------+
+-
++| errno          | integer    | No        | The result of the policy error as follows:        |
++|                |            |           |                                                   |
++|                |            |           | +  0: no error                                    |
++|                |            |           | +  -EPERM: Insufficient permission                |
++|                |            |           | +  -EEXIST: Same name policy already deployed     |
++|                |            |           | +  -EBADMSG: policy is invalid                    |
++|                |            |           | +  -ENOMEM: out of memory (OOM)                   |
++|                |            |           | +  -ERANGE: policy version number overflow        |
++|                |            |           | +  -EINVAL: policy version parsing error          |
+++----------------+------------+-----------+---------------------------------------------------+
+ 
+ 1404 AUDIT_MAC_STATUS
+ ^^^^^^^^^^^^^^^^^^^^^
+diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+index f05f0caa4850..8df307bb2bab 100644
+--- a/security/ipe/audit.c
++++ b/security/ipe/audit.c
+@@ -21,6 +21,8 @@
+ 
+ #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
+ 			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
++#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
++				   "policy_digest=?"
+ #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=\"%s\" "\
+ 				    "old_active_pol_version=%hu.%hu.%hu "\
+ 				    "old_policy_digest=" IPE_AUDIT_HASH_ALG ":"
+@@ -254,16 +256,23 @@ void ipe_audit_policy_activation(const struct ipe_policy *const op,
+ void ipe_audit_policy_load(const struct ipe_policy *const p)
  {
-@@ -36,9 +37,9 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ 	struct audit_buffer *ab;
++	int err = 0;
  
- 	/*
- 	 * Write to the region while mprotect(PROT_READ) is underway.  Keep
--	 * looping until the memory is guaranteed to be read-only, otherwise
--	 * vCPUs may complete their writes and advance to the next stage
--	 * prematurely.
-+	 * looping until the memory is guaranteed to be read-only and a fault
-+	 * has occurred, otherwise vCPUs may complete their writes and advance
-+	 * to the next stage prematurely.
- 	 *
- 	 * For architectures that support skipping the faulting instruction,
- 	 * generate the store via inline assembly to ensure the exact length
-@@ -56,7 +57,7 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
- #else
- 			vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
- #endif
--	} while (!READ_ONCE(mprotect_ro_done));
-+	} while (!READ_ONCE(mprotect_ro_done) || !READ_ONCE(all_vcpus_hit_ro_fault));
+ 	ab = audit_log_start(audit_context(), GFP_KERNEL,
+ 			     AUDIT_IPE_POLICY_LOAD);
+ 	if (!ab)
+ 		return;
  
- 	/*
- 	 * Only architectures that write the entire range can explicitly sync,
-@@ -81,6 +82,7 @@ struct vcpu_info {
- 
- static int nr_vcpus;
- static atomic_t rendezvous;
-+static atomic_t nr_ro_faults;
- 
- static void rendezvous_with_boss(void)
- {
-@@ -148,12 +150,16 @@ static void *vcpu_worker(void *data)
- 	 * be stuck on the faulting instruction for other architectures.  Go to
- 	 * stage 3 without a rendezvous
- 	 */
--	do {
--		r = _vcpu_run(vcpu);
--	} while (!r);
-+	r = _vcpu_run(vcpu);
- 	TEST_ASSERT(r == -1 && errno == EFAULT,
- 		    "Expected EFAULT on write to RO memory, got r = %d, errno = %d", r, errno);
- 
-+	atomic_inc(&nr_ro_faults);
-+	if (atomic_read(&nr_ro_faults) == nr_vcpus) {
-+		WRITE_ONCE(all_vcpus_hit_ro_fault, true);
-+		sync_global_to_guest(vm, all_vcpus_hit_ro_fault);
+-	audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
+-	audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=1",
++	if (!IS_ERR(p)) {
++		audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
++	} else {
++		audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
++		err = PTR_ERR(p);
 +	}
 +
- #if defined(__x86_64__) || defined(__aarch64__)
- 	/*
- 	 * Verify *all* writes from the guest hit EFAULT due to the VMA now
-@@ -378,7 +384,6 @@ int main(int argc, char *argv[])
- 	rendezvous_with_vcpus(&time_run2, "run 2");
++	audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=%d errno=%d",
+ 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			 audit_get_sessionid(current));
++			 audit_get_sessionid(current), !err, err);
  
- 	mprotect(mem, slot_size, PROT_READ);
--	usleep(10);
- 	mprotect_ro_done = true;
- 	sync_global_to_guest(vm, mprotect_ro_done);
+ 	audit_log_end(ab);
+ }
+diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+index 5b6d19fb844a..da51264a1d0f 100644
+--- a/security/ipe/fs.c
++++ b/security/ipe/fs.c
+@@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const char __user *data,
+ 	char *copy = NULL;
+ 	int rc = 0;
  
-
-base-commit: 557953f8b75fce49dc65f9b0f7e811c060fc7860
+-	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+-		return -EPERM;
++	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
++		rc = -EPERM;
++		goto out;
++	}
+ 
+ 	copy = memdup_user_nul(data, len);
+-	if (IS_ERR(copy))
+-		return PTR_ERR(copy);
++	if (IS_ERR(copy)) {
++		rc = PTR_ERR(copy);
++		goto out;
++	}
+ 
+ 	p = ipe_new_policy(NULL, 0, copy, len);
+ 	if (IS_ERR(p)) {
+@@ -161,8 +165,10 @@ static ssize_t new_policy(struct file *f, const char __user *data,
+ 	ipe_audit_policy_load(p);
+ 
+ out:
+-	if (rc < 0)
++	if (rc < 0) {
+ 		ipe_free_policy(p);
++		ipe_audit_policy_load(ERR_PTR(rc));
++	}
+ 	kfree(copy);
+ 	return (rc < 0) ? rc : len;
+ }
+diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
+index 3bcd8cbd09df..5f4a8e92bdcf 100644
+--- a/security/ipe/policy_fs.c
++++ b/security/ipe/policy_fs.c
+@@ -12,6 +12,7 @@
+ #include "policy.h"
+ #include "eval.h"
+ #include "fs.h"
++#include "audit.h"
+ 
+ #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
+ 
+@@ -292,21 +293,28 @@ static ssize_t update_policy(struct file *f, const char __user *data,
+ 	char *copy = NULL;
+ 	int rc = 0;
+ 
+-	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+-		return -EPERM;
++	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
++		rc = -EPERM;
++		goto out;
++	}
+ 
+ 	copy = memdup_user(data, len);
+-	if (IS_ERR(copy))
+-		return PTR_ERR(copy);
++	if (IS_ERR(copy)) {
++		rc = PTR_ERR(copy);
++		goto out;
++	}
+ 
+ 	root = d_inode(f->f_path.dentry->d_parent);
+ 	inode_lock(root);
+ 	rc = ipe_update_policy(root, NULL, 0, copy, len);
+ 	inode_unlock(root);
+ 
++out:
+ 	kfree(copy);
+-	if (rc)
++	if (rc) {
++		ipe_audit_policy_load(ERR_PTR(rc));
+ 		return rc;
++	}
+ 
+ 	return len;
+ }
 -- 
-2.48.1.711.g2feabab25a-goog
+2.34.1
 
 
