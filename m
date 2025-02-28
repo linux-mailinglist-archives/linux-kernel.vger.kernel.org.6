@@ -1,489 +1,163 @@
-Return-Path: <linux-kernel+bounces-539607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A36A4A675
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:05:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1276A4A674
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 183557AB85D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7400188A031
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E601DF726;
-	Fri, 28 Feb 2025 23:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60881DEFE6;
+	Fri, 28 Feb 2025 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jxRah8Q+"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="tvR27nhR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d03nxS+H"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9D1DF96C;
-	Fri, 28 Feb 2025 23:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9451DED6B;
+	Fri, 28 Feb 2025 23:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783848; cv=none; b=NNdO1otwsHuxA2MgSl6ZWRjbsU1DMBjItduEj6aGhAcwe8ZZbg4yQ6w9Mktb/lBVDLEDQiNRDqPmvgeM3Y0QL8h4sCmHN4iw6b3VJSY0LzHoN6NyOMB3Btn9N0gw4rXhcOAjrTLT38OzERTPznfqQTnsKU8ejtfrunqKdljqtjw=
+	t=1740783892; cv=none; b=R8kN6svJSTKSUYOdAtd6xdBhDi/fhDopakMaTiXtRd7mwqfV1+G04izqqKlN+MkoNutofsYiw9+J9hYsCChwjchG01U5KddsJkQ1f0ybgZzWxndwRD/j1dXv8YTc/072pUW1Xcm1z/tvZyD7b4iw8VaQPOVqDHApTtFrBReeojc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783848; c=relaxed/simple;
-	bh=rWhoABnjRIWuNQdC70sbA5ayHjGWEK9aSj/rOgtyOGI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gMIkJDKL0AwXv1iiNvzWeKT9xstWhYKg/CJJRAKMmi2uyKJbvIvlte6V9fOkorNfNfMszFzR4gxqHGfydU/pgI9xluNrfSON8evp442eDw0Hl+zcVEM0B0/13u+uIkDqiwuZ5min6RJCZWFiVEKtBYebhF7gWYuUTSM86P55fPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jxRah8Q+; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22334203781so58881445ad.0;
-        Fri, 28 Feb 2025 15:04:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740783846; x=1741388646; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gX+TVLxUjYh9ZXVQaWkExjl0H0sS3BoVnGkX5XmjCUY=;
-        b=jxRah8Q+0CKb37fLL/HS4jTEgf83sK53Ih++0elsRhGRq3O/sQxdU3wQHMqf3324QF
-         q+AzqgPP4aUZ1OuRrRHRy+HvTtDdxl+ADoX0cJGdKK3+Z/7ByX2nBu603xP1r5D4pHGy
-         7ssG/0tiv6oG5VLWNTGqMVeDBK7AlcTGYpSdfx9ymdrIIg2bz0swGNRSfB+4XJ1Z7MWn
-         vnzNb9uVwDfZcYtiicHQQxlO6MiR/GSK2x5Zz2lxOi26UqBOsEDUfDYrUcWy8BvQn6BS
-         taJhhYuBmNSkZeG+q0OvnMsqKxa4tAQ1ZX132+CWCp4mlrwaReFP2PZvmxBwhsoSu7Tn
-         +afQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740783846; x=1741388646;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gX+TVLxUjYh9ZXVQaWkExjl0H0sS3BoVnGkX5XmjCUY=;
-        b=tVVmMe/GLxdVFcEOwLVI1QLlXqLNyzkMMHrbLzUH1TGwocs8y+2ehmz+7Vs5YRUJa5
-         dOHVZeSEXEfQT4t1qoxO7yRnukbMX8taLGEYKBaJ+wKWMsenLOYhYSxUa+WaLu3fkeJI
-         KLCAWESgeqX8u9GODSJsiRm4KdBTlKpyzRuK+Qb3SGEcpyMtlVuOTv4sXElkBeL27s+9
-         YYn3+VR9dC3uWIrN6WDKz9fG2vdXdMrP8AZs542jew7M5lmGVTFwcu7GWroBT/IxXuKJ
-         XqvvIP++n7dzeQwHlWeCJD+omxAFPNaJoXRY9RbuQE+qV/FI6UMbtchBsfLo7mvZKD/e
-         bh/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXZQlVTAYG6mb9qXVY5huyEp9nlKAvWz7/T+r1RsPKBJ2yxbE2qU3Z2bH+ZnCsLFgoD67aN43uR4uFWS78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEqtqJCQZXne34tHHrPJQ0NizPPPGzngMjBpSgoAbBWqqHa7Hp
-	q1GUyou6PBJsnUlUuguD1L5DmXQwNRIXwOtQv5WgmrPuaBae0r9/
-X-Gm-Gg: ASbGncvGLKNc5AGbdvSyJdkkuNZwXhJCHTTc2Zm18JowgIC+JvoPxau4ORe/6RxZG8u
-	wsZbIrEXpVoWTQKvn6VSg2576MqxXBZCnhgjeMDyVVp3In7YmNtdKqNM03+qP0DqeoZIuiNjqdx
-	TIPXxaASP9pTAJfRhxND45QROn2Oba6QhQ02oDdnF87JzpnDx3mmcPN8ULu/pmbPYgqJPmsktNY
-	ZRJJtqRGQ0e6B5DJUgFbxseHwhytMNzYhWWXnQDPDizbSSLr49hShjQCY+a8vkmRRnj7vuUGIwf
-	kMWqDNgEziyDt2EZ4vc0nzKRYg93ge0iYenRhg==
-X-Google-Smtp-Source: AGHT+IHTxT9CuN87cgCP9q3s6v66hAnqJq5K9QlU4dE7udqDKj7GLv95InfDgqeMjNJClih3Tk7a0w==
-X-Received: by 2002:a05:6a20:8407:b0:1f0:e6db:b382 with SMTP id adf61e73a8af0-1f2e3875ba6mr15041684637.8.1740783846265;
-        Fri, 28 Feb 2025 15:04:06 -0800 (PST)
-Received: from [192.168.0.107] ([2804:14d:90a8:854f::10dc])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf230dsm3974875a12.8.2025.02.28.15.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 15:04:05 -0800 (PST)
-From: Gustavo Silva <gustavograzs@gmail.com>
-Date: Fri, 28 Feb 2025 20:03:50 -0300
-Subject: [PATCH v2 3/3] iio: imu: bmi270: add support for data ready
- interrupt trigger
+	s=arc-20240116; t=1740783892; c=relaxed/simple;
+	bh=jhwqS+8UgHrU+nFfkhLgpKb37PyoJnMpRYl+nlaOack=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VocAgsvnJ8eiCcfeETA1lDWu7MCdD3cKIi5F3t0XrXwdRj7UqpXL352G5dBRZDOjzZZr+5WZr51ZLd7ikVjkJGtCExGHPzny+IHNVOEr8EL3E9HcLpZIVQo1z+KeGAyyJrJTSJla6DpLKjvtTsADZffpWt63uAth4F9gA8s9AeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=tvR27nhR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d03nxS+H; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2D8281140142;
+	Fri, 28 Feb 2025 18:04:49 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-03.internal (MEProxy); Fri, 28 Feb 2025 18:04:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1740783889; x=1740870289; bh=1wPPLlxLV8AoIw8qmI9GdCQUordZNsKK
+	ATsbb1y5JqA=; b=tvR27nhRRPzWtgJ/xWx0rUYDqXK2P5r499BJ3UPpXhEoTLCS
+	UAUT2yCihs2A39iMOJKFxAfNZcqtpE+0HC6DcQ/LUoloRqepQEtoXC8VN2Ga/xR5
+	jcHepNyyXmtE/tCOY3UrODH5baP8rZBgETUSbmRjYACygmqx9dnZEOYchQXgF+NS
+	g1eRjIa55uRacBdLyFvyGH5+ESo3eXpMu2LzCN7cN5cSGeYV+D4EX2CwDNCylRvs
+	w9A4Q+T2fG1K+/8s3uu2q0yUjBR9URpqnxujattCddYQ7+pSMqlNOzzTNV/4ZaZF
+	OGOyF7Wf+qQJyEn1VELKeTOXR++B8re09d7EUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740783889; x=
+	1740870289; bh=1wPPLlxLV8AoIw8qmI9GdCQUordZNsKKATsbb1y5JqA=; b=d
+	03nxS+HIq65zT1rBDtqLq7XLN7yQ8qo23nO5ERm+u90QYIFEXfBCN+H+p+AMxldi
+	P+WyO7EaNHWAZsfnIfUMLgTDECFxdpgd2shMCoX0SdwlHzaZT0hW6SPQ5JGjrm2v
+	RXahm8U6D4s1fom7zQNvxvWFbaeR2CxtZn1FJv19VyH8PyCfzaero4RRZMWKLICC
+	yPBPHbpCZNjp/KWVXBtSh9p2M4Bt3WbculMQHuCkFeQpQi7Qt8rKs8hbw+qPGiG6
+	NP0qknnCtHiHBgFHeo5PwVT6tACxITmA9WQGm/vPkzx+MYldp3o6888DHLdU4iJb
+	uGuw/qmCfk3by9dAe0e6g==
+X-ME-Sender: <xms:EEHCZ-wOlwM-6n0gLPYG04iVmFtBS6SrUmJskghJfDcp3-LwM4hC4A>
+    <xme:EEHCZ6R-P_C5dOLyjOIDngOMxmiBUGVJFR-ZKJxSk1aA9F7vxvU7pW29j_YCIzUe2
+    6bsElLVhUxFt1KFEhI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeludeiiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
+    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
+    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
+    tghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghthhgrnhesvg
+    hthhgrnhgtvggufigrrhgushdrtghomhdprhgtphhtthhopegrshgrhhhisehlihhsthhs
+    rdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqshhtrghgihhngheslhhish
+    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:EEHCZwWcYEV3dQxBmnNhsnIxeWJKZvlIfdUF0o0IU0e_z3bQrYKFKw>
+    <xmx:EEHCZ0hYzsWqnJGalWq-8DVI0_He2rWZPFYcz4VI00XuyUjoqNM-sQ>
+    <xmx:EEHCZwAL0KqJNQO50a-NulLpX0_QuXMcmXpOuSvKAp3108F3nejdBg>
+    <xmx:EEHCZ1JLXUm7ljlFcJ2GVJK6uDF4ReVdpVHaJSB123HVu38_hgkiIQ>
+    <xmx:EUHCZz9cXNdOIDaEcHPaqEYkeSK9NmG4EMJcoCdmmDnbz52h0BL_V2gF>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A471EBA0070; Fri, 28 Feb 2025 18:04:48 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Sat, 01 Mar 2025 00:04:27 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Ethan Carter Edwards" <ethan@ethancedwards.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev,
+ asahi@lists.linux.dev
+Message-Id: <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
+In-Reply-To: 
+ <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
+References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
+Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-bmi270-irq-v2-3-3f97a4e8f551@gmail.com>
-References: <20250228-bmi270-irq-v2-0-3f97a4e8f551@gmail.com>
-In-Reply-To: <20250228-bmi270-irq-v2-0-3f97a4e8f551@gmail.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>, 
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gustavo Silva <gustavograzs@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740783832; l=11585;
- i=gustavograzs@gmail.com; s=20250111; h=from:subject:message-id;
- bh=rWhoABnjRIWuNQdC70sbA5ayHjGWEK9aSj/rOgtyOGI=;
- b=3ak+z9a9AmLSLgaRUGAJnoBpOwYT3RYouZxOeL7SohQCEVdbyx2/0X0hLQ2AXiZfPQ+/q1k7i
- jp/yoSbmayHALrHqHzlHG+1miQAMX/QDlVxKIHTV076mmrjCje+tGOK
-X-Developer-Key: i=gustavograzs@gmail.com; a=ed25519;
- pk=g2TFXpo1jMCOCN+rzVoM9NDFNfSMOgVyY0rlyvk4RTM=
 
-The BMI270 sensor provides two interrupt pins that can be used for
-different interrupt sources, including a data ready signal. Add support
-for configuring one the pins as a trigger source.
+Hi,
 
-The interrupt pin can be configured with various options: active high or
-low, push-pull or open-drain, and latched or non-latched.
 
-Acked-by: Alex Lanzano <lanzano.alex@gmail.com>
-Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
----
- drivers/iio/imu/bmi270/bmi270_core.c | 234 +++++++++++++++++++++++++++++++++--
- 1 file changed, 227 insertions(+), 7 deletions(-)
+On Fri, Feb 28, 2025, at 02:53, Ethan Carter Edwards wrote:
+> Lately, I have been thinking a lot about the lack of APFS support on
+> Linux. I was wondering what I could do about that. APFS support is not 
+> in-tree, but there is a proprietary module sold by Paragon software [0].
+> Obviously, this could not be used in-tree. However, there is also an 
+> open source driver that, from what I can tell, was once planned to be 
+> upstreamed [1] with associated filesystem progs [2]. I think I would 
+> base most of my work off of the existing FOSS tree.
+>
+> The biggest barrier I see currently is the driver's use of bufferheads.
+> I realize that there has been a lot of work to move existing filesystem
+> implementations to iomap/folios, and adding a filesystem that uses
+> bufferheads would be antithetical to the purpose of that effort.
+> Additionally, there is a lot of ifndefs/C preprocessor magic littered
+> throughout the codebase that fixes functionality with various different
+> versions of Linux. 
+>
+> The first step would be to move away from bufferheads and the
+> versioning. I plan to start my work in the next few weeks, and hope to
+> have a working driver to submit to staging by the end of June. From
+> there, I will work to have it meet more kernel standards and hopefully
+> move into fs/ by the end of the year.
+>
+> Before I started, I was wondering if anyone had any thoughts. I am open
+> to feedback. If you think this is a bad idea, let me know. I am very
+> passionate about the Asahi Linux project. I think this would be a good
+> way to indirectly give back and contribute to the project. While I
+> recognize that it is not one of Asahi's project goals (those being
+> mostly hardware support), I am confident many users would find it
+> helpful. I sure would.
 
-diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 16deda12a5c1aba6d366f7fcb134266c490d3a75..a86be5af5ccb1f010f2282ee31c47f284c1bcc86 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -4,11 +4,13 @@
- #include <linux/firmware.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/regmap.h>
- #include <linux/units.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-+#include <linux/iio/trigger.h>
- #include <linux/iio/triggered_buffer.h>
- #include <linux/iio/trigger_consumer.h>
- 
-@@ -26,6 +28,9 @@
- #define BMI270_ACCEL_X_REG				0x0c
- #define BMI270_ANG_VEL_X_REG				0x12
- 
-+#define BMI270_INT_STATUS_1_REG				0x1d
-+#define BMI270_INT_STATUS_1_ACC_GYR_DRDY_MSK		GENMASK(7, 6)
-+
- #define BMI270_INTERNAL_STATUS_REG			0x21
- #define BMI270_INTERNAL_STATUS_MSG_MSK			GENMASK(3, 0)
- #define BMI270_INTERNAL_STATUS_MSG_INIT_OK		0x01
-@@ -55,6 +60,20 @@
- #define BMI270_GYR_CONF_RANGE_REG			0x43
- #define BMI270_GYR_CONF_RANGE_MSK			GENMASK(2, 0)
- 
-+#define BMI270_INT1_IO_CTRL_REG				0x53
-+#define BMI270_INT2_IO_CTRL_REG				0x54
-+#define BMI270_INT_IO_CTRL_LVL_MSK			BIT(1)
-+#define BMI270_INT_IO_CTRL_OD_MSK			BIT(2)
-+#define BMI270_INT_IO_CTRL_OP_MSK			BIT(3)
-+#define BMI270_INT_IO_LVL_OD_OP_MSK			GENMASK(3, 1)
-+
-+#define BMI270_INT_LATCH_REG				0x55
-+#define BMI270_INT_LATCH_REG_MSK			BIT(0)
-+
-+#define BMI270_INT_MAP_DATA_REG				0x58
-+#define BMI270_INT_MAP_DATA_DRDY_INT1_MSK		BIT(2)
-+#define BMI270_INT_MAP_DATA_DRDY_INT2_MSK		BIT(6)
-+
- #define BMI270_INIT_CTRL_REG				0x59
- #define BMI270_INIT_CTRL_LOAD_DONE_MSK			BIT(0)
- 
-@@ -78,10 +97,20 @@
- #define BMI260_INIT_DATA_FILE "bmi260-init-data.fw"
- #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
- 
-+enum bmi270_irq_pin {
-+	BMI270_IRQ_DISABLED,
-+	BMI270_IRQ_INT1,
-+	BMI270_IRQ_INT2,
-+};
-+
- struct bmi270_data {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	const struct bmi270_chip_info *chip_info;
-+	enum bmi270_irq_pin irq_pin;
-+	struct iio_trigger *trig;
-+	 /* Protect device's private data from concurrent access */
-+	struct mutex mutex;
- 
- 	/*
- 	 * Where IIO_DMA_MINALIGN may be larger than 8 bytes, align to
-@@ -274,6 +303,8 @@ static int bmi270_set_scale(struct bmi270_data *data, int chan_type, int uscale)
- 		return -EINVAL;
- 	}
- 
-+	guard(mutex)(&data->mutex);
-+
- 	for (i = 0; i < bmi270_scale_item.num; i++) {
- 		if (bmi270_scale_item.tbl[i].uscale != uscale)
- 			continue;
-@@ -291,6 +322,8 @@ static int bmi270_get_scale(struct bmi270_data *data, int chan_type, int *scale,
- 	unsigned int val;
- 	struct bmi270_scale_item bmi270_scale_item;
- 
-+	guard(mutex)(&data->mutex);
-+
- 	switch (chan_type) {
- 	case IIO_ACCEL:
- 		ret = regmap_read(data->regmap, BMI270_ACC_CONF_RANGE_REG, &val);
-@@ -346,6 +379,8 @@ static int bmi270_set_odr(struct bmi270_data *data, int chan_type, int odr,
- 		return -EINVAL;
- 	}
- 
-+	guard(mutex)(&data->mutex);
-+
- 	for (i = 0; i < bmi270_odr_item.num; i++) {
- 		if (bmi270_odr_item.tbl[i].odr != odr ||
- 		    bmi270_odr_item.tbl[i].uodr != uodr)
-@@ -364,6 +399,8 @@ static int bmi270_get_odr(struct bmi270_data *data, int chan_type, int *odr,
- 	int i, val, ret;
- 	struct bmi270_odr_item bmi270_odr_item;
- 
-+	guard(mutex)(&data->mutex);
-+
- 	switch (chan_type) {
- 	case IIO_ACCEL:
- 		ret = regmap_read(data->regmap, BMI270_ACC_CONF_REG, &val);
-@@ -397,6 +434,60 @@ static int bmi270_get_odr(struct bmi270_data *data, int chan_type, int *odr,
- 	return -EINVAL;
- }
- 
-+static irqreturn_t bmi270_irq_thread_handler(int irq, void *private)
-+{
-+	struct iio_dev *indio_dev = private;
-+	struct bmi270_data *data = iio_priv(indio_dev);
-+	unsigned int status;
-+	int ret;
-+
-+	scoped_guard(mutex, &data->mutex) {
-+		ret = regmap_read(data->regmap, BMI270_INT_STATUS_1_REG,
-+				  &status);
-+		if (ret)
-+			return IRQ_NONE;
-+	}
-+
-+	if (FIELD_GET(BMI270_INT_STATUS_1_ACC_GYR_DRDY_MSK, status))
-+		iio_trigger_poll_nested(data->trig);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int bmi270_data_rdy_trigger_set_state(struct iio_trigger *trig,
-+					     bool state)
-+{
-+	struct bmi270_data *data = iio_trigger_get_drvdata(trig);
-+	unsigned int field_value = 0;
-+	unsigned int mask;
-+
-+	guard(mutex)(&data->mutex);
-+
-+	switch (data->irq_pin) {
-+	case BMI270_IRQ_INT1:
-+		mask = BMI270_INT_MAP_DATA_DRDY_INT1_MSK;
-+		set_mask_bits(&field_value, BMI270_INT_MAP_DATA_DRDY_INT1_MSK,
-+			      FIELD_PREP(BMI270_INT_MAP_DATA_DRDY_INT1_MSK,
-+					 state));
-+		break;
-+	case BMI270_IRQ_INT2:
-+		mask = BMI270_INT_MAP_DATA_DRDY_INT2_MSK;
-+		set_mask_bits(&field_value, BMI270_INT_MAP_DATA_DRDY_INT2_MSK,
-+			      FIELD_PREP(BMI270_INT_MAP_DATA_DRDY_INT2_MSK,
-+					 state));
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return regmap_update_bits(data->regmap, BMI270_INT_MAP_DATA_REG, mask,
-+				  field_value);
-+}
-+
-+static const struct iio_trigger_ops bmi270_trigger_ops = {
-+	.set_trigger_state = &bmi270_data_rdy_trigger_set_state,
-+};
-+
- static irqreturn_t bmi270_trigger_handler(int irq, void *p)
- {
- 	struct iio_poll_func *pf = p;
-@@ -404,6 +495,8 @@ static irqreturn_t bmi270_trigger_handler(int irq, void *p)
- 	struct bmi270_data *data = iio_priv(indio_dev);
- 	int ret;
- 
-+	guard(mutex)(&data->mutex);
-+
- 	ret = regmap_bulk_read(data->regmap, BMI270_ACCEL_X_REG,
- 			       &data->buffer.channels,
- 			       sizeof(data->buffer.channels));
-@@ -439,13 +532,15 @@ static int bmi270_get_data(struct bmi270_data *data, int chan_type, int axis,
- 		return -EINVAL;
- 	}
- 
-+	guard(mutex)(&data->mutex);
-+
- 	ret = regmap_bulk_read(data->regmap, reg, &sample, sizeof(sample));
- 	if (ret)
- 		return ret;
- 
- 	*val = sign_extend32(le16_to_cpu(sample), 15);
- 
--	return 0;
-+	return IIO_VAL_INT;
- }
- 
- static int bmi270_read_raw(struct iio_dev *indio_dev,
-@@ -457,11 +552,11 @@ static int bmi270_read_raw(struct iio_dev *indio_dev,
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
-+		if (!iio_device_claim_direct(indio_dev))
-+			return -EBUSY;
- 		ret = bmi270_get_data(data, chan->type, chan->channel2, val);
--		if (ret)
--			return ret;
--
--		return IIO_VAL_INT;
-+		iio_device_release_direct(indio_dev);
-+		return ret;
- 	case IIO_CHAN_INFO_SCALE:
- 		ret = bmi270_get_scale(data, chan->type, val, val2);
- 		return ret ? ret : IIO_VAL_INT_PLUS_MICRO;
-@@ -486,12 +581,21 @@ static int bmi270_write_raw(struct iio_dev *indio_dev,
- 			    int val, int val2, long mask)
- {
- 	struct bmi270_data *data = iio_priv(indio_dev);
-+	int ret;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_SCALE:
--		return bmi270_set_scale(data, chan->type, val2);
-+		if (!iio_device_claim_direct(indio_dev))
-+			return -EBUSY;
-+		ret = bmi270_set_scale(data, chan->type, val2);
-+		iio_device_release_direct(indio_dev);
-+		return ret;
- 	case IIO_CHAN_INFO_SAMP_FREQ:
--		return bmi270_set_odr(data, chan->type, val, val2);
-+		if (!iio_device_claim_direct(indio_dev))
-+			return -EBUSY;
-+		ret = bmi270_set_odr(data, chan->type, val, val2);
-+		iio_device_release_direct(indio_dev);
-+		return ret;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -597,6 +701,116 @@ static const struct iio_chan_spec bmi270_channels[] = {
- 	IIO_CHAN_SOFT_TIMESTAMP(BMI270_SCAN_TIMESTAMP),
- };
- 
-+static int bmi270_int_pin_config(struct bmi270_data *data,
-+				 enum bmi270_irq_pin irq_pin,
-+				 bool active_high, bool open_drain, bool latch)
-+{
-+	unsigned int reg, field_value;
-+	int ret;
-+
-+	ret = regmap_update_bits(data->regmap, BMI270_INT_LATCH_REG,
-+				 BMI270_INT_LATCH_REG_MSK,
-+				 FIELD_PREP(BMI270_INT_LATCH_REG_MSK, latch));
-+	if (ret)
-+		return ret;
-+
-+	switch (irq_pin) {
-+	case BMI270_IRQ_INT1:
-+		reg = BMI270_INT1_IO_CTRL_REG;
-+		break;
-+	case BMI270_IRQ_INT2:
-+		reg = BMI270_INT2_IO_CTRL_REG;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	field_value = FIELD_PREP(BMI270_INT_IO_CTRL_LVL_MSK, active_high) |
-+		      FIELD_PREP(BMI270_INT_IO_CTRL_OD_MSK, open_drain) |
-+		      FIELD_PREP(BMI270_INT_IO_CTRL_OP_MSK, 1);
-+	return regmap_update_bits(data->regmap, reg,
-+				  BMI270_INT_IO_LVL_OD_OP_MSK, field_value);
-+}
-+
-+static int bmi270_trigger_probe(struct bmi270_data *data,
-+				struct iio_dev *indio_dev)
-+{
-+	bool open_drain, active_high, latch;
-+	struct fwnode_handle *fwnode;
-+	enum bmi270_irq_pin irq_pin;
-+	int ret, irq, irq_type;
-+
-+	fwnode = dev_fwnode(data->dev);
-+	if (!fwnode)
-+		return -ENODEV;
-+
-+	irq = fwnode_irq_get_byname(fwnode, "INT1");
-+	if (irq > 0) {
-+		irq_pin = BMI270_IRQ_INT1;
-+	} else {
-+		irq = fwnode_irq_get_byname(fwnode, "INT2");
-+		if (irq < 0)
-+			return 0;
-+
-+		irq_pin = BMI270_IRQ_INT2;
-+	}
-+
-+	irq_type = irq_get_trigger_type(irq);
-+	switch (irq_type) {
-+	case IRQF_TRIGGER_RISING:
-+		latch = false;
-+		active_high = true;
-+		break;
-+	case IRQF_TRIGGER_HIGH:
-+		latch = true;
-+		active_high = true;
-+		break;
-+	case IRQF_TRIGGER_FALLING:
-+		latch = false;
-+		active_high = false;
-+		break;
-+	case IRQF_TRIGGER_LOW:
-+		latch = true;
-+		active_high = false;
-+		break;
-+	default:
-+		return dev_err_probe(data->dev, -EINVAL,
-+				     "Invalid interrupt type 0x%x specified\n",
-+				     irq_type);
-+	}
-+
-+	open_drain = fwnode_property_read_bool(fwnode, "drive-open-drain");
-+
-+	ret = bmi270_int_pin_config(data, irq_pin, active_high, open_drain,
-+				    latch);
-+	if (ret)
-+		return dev_err_probe(data->dev, ret,
-+				     "Failed to configure irq line\n");
-+
-+	data->trig = devm_iio_trigger_alloc(data->dev, "%s-trig-%d",
-+					    indio_dev->name, irq_pin);
-+	if (!data->trig)
-+		return -ENOMEM;
-+
-+	data->trig->ops = &bmi270_trigger_ops;
-+	iio_trigger_set_drvdata(data->trig, data);
-+
-+	ret = devm_request_threaded_irq(data->dev, irq, NULL,
-+					bmi270_irq_thread_handler,
-+					IRQF_ONESHOT, "bmi270-int", indio_dev);
-+	if (ret)
-+		return dev_err_probe(data->dev, ret, "Failed to request IRQ\n");
-+
-+	ret = devm_iio_trigger_register(data->dev, data->trig);
-+	if (ret)
-+		return dev_err_probe(data->dev, ret,
-+				     "Trigger registration failed\n");
-+
-+	data->irq_pin = irq_pin;
-+
-+	return 0;
-+}
-+
- static int bmi270_validate_chip_id(struct bmi270_data *data)
- {
- 	int chip_id;
-@@ -757,6 +971,8 @@ int bmi270_core_probe(struct device *dev, struct regmap *regmap,
- 	data->dev = dev;
- 	data->regmap = regmap;
- 	data->chip_info = chip_info;
-+	data->irq_pin = BMI270_IRQ_DISABLED;
-+	mutex_init(&data->mutex);
- 
- 	ret = bmi270_chip_init(data);
- 	if (ret)
-@@ -769,6 +985,10 @@ int bmi270_core_probe(struct device *dev, struct regmap *regmap,
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->info = &bmi270_info;
- 
-+	ret = bmi270_trigger_probe(data, indio_dev);
-+	if (ret)
-+		return ret;
-+
- 	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
- 					      iio_pollfunc_store_time,
- 					      bmi270_trigger_handler, NULL);
+Agreed, I think it would be helpful for many people (especially those
+who still regularly dual boot between macOS and Linux) to have a working
+APFS driver upstream.
+This may also be useful once we fully bring up the Secure Enclave and need
+to read/write to at least a single file on the xART partition which has
+to be APFS because it's shared between all operating systems running on
+a single machine.
 
--- 
-2.48.1
+
+It looks like there's still recent activity on that linux-apfs github
+repository. Have you reached out to the people working on it to see
+what their plans for upstreaming and/or future work are?
+
+
+
+Best,
+
+
+Sven
 
 
