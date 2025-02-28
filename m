@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-539401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545B7A4A3C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:15:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 779AAA4A3C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E2E189CCA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8209188C41E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B69727E1D1;
-	Fri, 28 Feb 2025 20:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647F2517A3;
+	Fri, 28 Feb 2025 20:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9B5TJvO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeJwB4Qr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E74270EC9;
-	Fri, 28 Feb 2025 20:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5D9251791;
+	Fri, 28 Feb 2025 20:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740773387; cv=none; b=hv+UT7mwzCqjSjPWOsWZLTxsirELBGOy/vPz6yPiICwsCaMt2b6xCT05S5pRaO1/5Jnrfnn7EpHxLuee66gjsIfZjEjPtTVkIwe6wsAWEgBODWATFX95yZsbqdfmkCbQNvRdYNX2aTzqlKjbAB+BW7nEb2Eo992HpVpYRtNd3VI=
+	t=1740773447; cv=none; b=KtxOd+OJDnKdQmX919a3hq8Qf44YqtB3QqzCkh6IbGSbENCOGBxe83cPdQOcY0Ib/FY865cuGDutkdgY8hUqqiKScT5xMWjrysG/SSekqZqvU6gFLyVmTFEbqhOlyspwEI+xA3teT2O7pSrZnCl3nhzv5cvRWOk31puAHS0GGno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740773387; c=relaxed/simple;
-	bh=CcsjvI4s8nt3qjVDCr68+9sFHV7ptEqC8BGwTZNTugw=;
+	s=arc-20240116; t=1740773447; c=relaxed/simple;
+	bh=u1o2k0KyDpnY3J5fmKctnRTEq8YkFZnm9gmNrKfBZI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYvJEpa/WF0MM4swZV9vcIZNjV0isNJ8rJf8HWoDJOPowJVcOdelXE+6abixCABvbILjGtL+6VZRr9mwvplG0KMRF80Pjva7DVb0eZVS2+2nTCFV5QAKmwSGhnXZaedfc7ByeYlqVJ9bL1HcuGGkXtfBY30M1O9XB8koCULwY2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9B5TJvO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4F6C4CED6;
-	Fri, 28 Feb 2025 20:09:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNBj8qhY7aPji+TSmkpqwVkW+aAYC0FP/Oxw3qpAxR+KYyPD1ovntcKDxZ+VapsC4eyDqimtF3qhCijVbZ8ZpsAcZN+iSxnEK8bRxznlFP2AxUF6BHeLGbFOkmnKDjQ5g/wNhFenJVzSOnOJNoGxEmoFWmr4+lP68CYIVvQnIF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeJwB4Qr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F58C4CED6;
+	Fri, 28 Feb 2025 20:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740773387;
-	bh=CcsjvI4s8nt3qjVDCr68+9sFHV7ptEqC8BGwTZNTugw=;
+	s=k20201202; t=1740773446;
+	bh=u1o2k0KyDpnY3J5fmKctnRTEq8YkFZnm9gmNrKfBZI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N9B5TJvOntFWEtmuNvKnpa1nHATisyBvmI4Qs41ewlfntfxp2JCcwjx3tu4iWHkoh
-	 0VoIasoeEEnHN3k8GYAgUCM0ZfEdAVVo0ol3CdGCPqCTPyniRqyZA1dW+UOoPQOfdm
-	 tl1zvyHYzWMICYhVH/h2VXtLKOC44N8nboTEvqh4qtwEUl8HJCf/viUVoW3xdTtCRe
-	 8VUtkuf6rZOsGruc5zy+T6PbQEaFP4BCszqT9E4C4TsW/mYm/OTPw+8+U/xetm06gS
-	 blEf/0y1CX83XNgT0exFy00jtCFhD9rFO3eJXzlGRtymZySLdm0TwuaU2Dusosirh9
-	 TBboOv3trjEOg==
-Date: Fri, 28 Feb 2025 14:09:44 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: linux-phy@lists.infradead.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip: Add rk3562
- naneng-combophy compatible
-Message-ID: <174077338453.3518826.4750088621864636437.robh@kernel.org>
-References: <20250227110836.2343158-1-kever.yang@rock-chips.com>
+	b=CeJwB4QrObCemiMdp0wAypHUn/FzoYrvKRijMa4WYunzEHVac1fyNegGOHZ85a2vO
+	 eF9OXljGFTeHBNSsxDCJOzXDmDtD4o8/0qSVfQaQe0QpSs5vJUg1jTvcgvzinjX6nq
+	 Ovy9FVk7einGFzHi+gc804nCNbISUWHWW3GAQEIZNVmLch+F7fGzdzSaBd9+K6gHny
+	 S3+8TaQyHsJQkCdwoYfIktRIgp9B040YErUA9M+nWhFewHi/g4gbE0HsjPI3MnhgjJ
+	 KHB5ksQ7a8Ss3lF53+c3fqLee1FnitCZew6vl5q5iPCwOhPqepzixkGGu8sf5gaBp2
+	 gGLvqNQqfyjHw==
+Date: Fri, 28 Feb 2025 12:10:43 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-hardening@vger.kernel.org, linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: target: Replace deprecated strncpy() with strscpy()
+Message-ID: <202502281204.CE15A6BA35@keescook>
+References: <20250226121003.359876-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +57,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227110836.2343158-1-kever.yang@rock-chips.com>
+In-Reply-To: <20250226121003.359876-1-thorsten.blum@linux.dev>
 
-
-On Thu, 27 Feb 2025 19:08:35 +0800, Kever Yang wrote:
-> rk3562 use the same Naneng Combo Phy driver as rk3568.
+On Wed, Feb 26, 2025 at 01:10:03PM +0100, Thorsten Blum wrote:
+> Since strncpy() is deprecated for NUL-terminated destination buffers,
+> use strscpy() instead.
 > 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Compile-tested only.
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
+>  drivers/target/target_core_configfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes in v2:
-> - Collect review tag
-> 
->  .../devicetree/bindings/phy/phy-rockchip-naneng-combphy.yaml     | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+> index c40217f44b1b..446682f900e4 100644
+> --- a/drivers/target/target_core_configfs.c
+> +++ b/drivers/target/target_core_configfs.c
+> @@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+>  	}
+>  	filp_close(fp, NULL);
+>  
+> -	strncpy(db_root, db_root_stage, read_bytes);
+> +	strscpy(db_root, db_root_stage, read_bytes);
+>  	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+>  
+>  	r = read_bytes;
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+When doing strncpy() to strscpy() conversions, please include details
+of your analysis for several things:
 
+- why is it safe to be NUL-terminated?
+- why is NUL padding needed/not needed?
+- why is the maximum length argument correct?
+
+In this case, db_root is used with "%s" format strings, so we know it is
+expected to be NUL-terminated. Additionally, it is _only_ ever used with
+"5s" format strings, so padding is not needed.
+
+As for length, read_bytes will always be less than DB_ROOT_LEN because
+it is explicitly tested for against "count" which, enforced by the
+SETATTR API, will always be the number of valid bytes in "page", and
+snprintf() will be limited to DB_ROOT_LEN. (snprintf may return more
+than its length argument, but because of the "count" check, this should
+be impossible.)
+
+While you're in this file, though, can you replace the other strncpy
+that is used in target_init_dbroot() also?
+
+-Kees
+
+-- 
+Kees Cook
 
