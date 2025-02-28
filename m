@@ -1,51 +1,63 @@
-Return-Path: <linux-kernel+bounces-537976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF3BA49326
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB85A4932C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D687E188E4FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A526C160FA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A25122DFBE;
-	Fri, 28 Feb 2025 08:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B7E24292A;
+	Fri, 28 Feb 2025 08:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P4+3jflR"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JcYTfhE6"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17D22CBCB;
-	Fri, 28 Feb 2025 08:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89168241C8C;
+	Fri, 28 Feb 2025 08:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730544; cv=none; b=U+65TI5vdI4PfMzxbL6LgGqGgqkWm4bFRrlhEt8QjzYjYUaDi0XXCpWj5uhJuSgi+cN+tc5EMXvdWkBsklroSmm+2xXm4EVJGy1d/7QuizI6AIar8BDuFxZpnMmVeJGJnACYy/48c0A37ZON6LAP1eQT2geV0ZwJrjE9dQTaCoI=
+	t=1740730680; cv=none; b=MCM8YH9gEdC97LPBBrkYQRW5oUkrJbpnQPlwhIPsY72Pc5JiOXbNwbdCx7qy9HWsB4/gjnI254Hz/T6jHRo0CDo5efRT3QeTzvsOgmm3mGeubb1J9sRykA1jdKWEMRKgpAYCh0BRybiRRtwalxmdysjIr7YYSze/h3hpBtUFU6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730544; c=relaxed/simple;
-	bh=WvAzpXYuDStbIgKgevXS4PEedZ9dOlJ+/Y44X6oyEF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MXLSj76pEr+HXmP9XiNmnQWdrF29x25nob/Ew5eSTSB1GQ6zaPrehLoVS2Lnx+CR+Je4Pw9rm4NJw+oNtdK9BGpBmAsmZh+PIoeEkxBlt+B2IdL6ybxrNNle928ukZPODlIQ1nkD+igLRJfeN3U0ROX21Btcfka7s/m5dLgoqwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P4+3jflR; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C61E944432;
-	Fri, 28 Feb 2025 08:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740730533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1iuifuyC6NwdJO1A+Y1ARBqJ7aQn+uQXOyq27YtuDWY=;
-	b=P4+3jflRxGg/jV135L0ycaPLhy0wFGWV7b4xHnid2vIQ4EWylqaSqoDPc/Mv0xqhG0RF/4
-	bXgBQ9zXbuKck7zg+NcVqYBYSvXMmP+z+mRwEG7KgGNbkTJ4yD7A5FRDMZ+LWcskgcZ0ur
-	U85N9738IWlHE/ypWDJe7IA20sZP+H7/C2AsWAwEGY/GvUr7G7t5okLPnupvntT/QXks/f
-	e2oWQU037PNB84V3g0e028iWOgUa2pdP7XxGHgrncwwXYY6J/QGRVcL9tmh3Uvy+JhiPnM
-	4lU7K0Z25QchE2OoSH06FC/B4VNbhVR0/5Kv/qCW7cIRMR4s/N3JSXsgF8Olhw==
-Message-ID: <d95c15b7-3641-4334-a42b-b56067e5e0f0@bootlin.com>
-Date: Fri, 28 Feb 2025 09:15:32 +0100
+	s=arc-20240116; t=1740730680; c=relaxed/simple;
+	bh=d1+/Gr624dcwgvhxrb15dfxs168a9hSODpY6CPieY3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aDSVHCqTr/584mOP7aopTEu95JpCwQaq76zYUhEmb8z5IHoILnypccvfLUa8t3wl7bH8XT/0GEDJ8nfqYOgGWEsGBQHuYHHdasZ8DRBU1zUmX8Phm2gC+NJ0BAmwyMW6Fqt93Ec5h7KG9adoPEjnMAlpKOPqSF0BlWSl+qXRN1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JcYTfhE6; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51S8HdtC2600433
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 02:17:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740730659;
+	bh=WdZHP572Rh9pNFP6JZgEg9+TLw9B8b1SKcBPxjkgHgE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JcYTfhE6kMM887ZQWGlfXBrFTnLkcSNoDcH6XoxJuS00kQFnuQqEj03QamM8cnYNy
+	 PzFHtQAsxw75tap8t8GwRpHK+lkHwTVftAo2BgO2iS/Rcnlc5LIHZJ89nMHWHxbC8r
+	 8Ett4PUhJTjrT/f23ji5/cVQT7wy9drONJV8LZ+E=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51S8HdNc002235
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Feb 2025 02:17:39 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Feb 2025 02:17:38 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Feb 2025 02:17:38 -0600
+Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51S8HYV9126373;
+	Fri, 28 Feb 2025 02:17:34 -0600
+Message-ID: <a79884b1-660a-4e17-9a10-f22652e4683b@ti.com>
+Date: Fri, 28 Feb 2025 13:47:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,92 +65,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 04/10] selftests/bpf: test_tunnel: Move ip6gre
- tunnel test to test_progs
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
- <20250227-tunnels-v1-4-33df5c30aa04@bootlin.com> <Z8DkxXy9ZAbASXCk@mini-arch>
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHY0IDEvMl0gZHQtYmluZGluZ3M6IG1l?=
+ =?UTF-8?Q?dia=3A_cdns=2Ccsi2rx=2Eyaml=3A_Add_optional_interrupts_for_cdns-c?=
+ =?UTF-8?Q?si2rx?=
+To: Changhuang Liang <changhuang.liang@starfivetech.com>,
+        Jai Luthra
+	<jai.luthra@linux.dev>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "mchehab@kernel.org"
+	<mchehab@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "conor+dt@kernel.org"
+	<conor+dt@kernel.org>,
+        "devarsht@ti.com" <devarsht@ti.com>,
+        "vaishnav.a@ti.com" <vaishnav.a@ti.com>,
+        "r-donadkar@ti.com"
+	<r-donadkar@ti.com>,
+        "u-kumar1@ti.com" <u-kumar1@ti.com>
+References: <20250227082920.744908-1-y-abhilashchandra@ti.com>
+ <20250227082920.744908-2-y-abhilashchandra@ti.com>
+ <20250228-sandy-nightingale-of-improvement-6eef5a@krzk-bin>
+ <24y6ggufmhmjkfxymhhxslthpbrsthfp67hkvq36dmnewpnv5c@dbs3hhhpme4w>
+ <ZQ0PR01MB1302A225A08A120789EC318DF2CCA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <Z8DkxXy9ZAbASXCk@mini-arch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <ZQ0PR01MB1302A225A08A120789EC318DF2CCA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekleekkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeurghsthhivghnucevuhhruhhttghhvghtuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfehgefgteffkeehveeuvdekvddvueefgeejvefgleevveevteffveefgfehieejnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsthhfohhmihgthhgvvhesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrt
- ghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Stanislav
+Hello Krzysztof, Jai and Changhuang
 
-On 2/27/25 11:18 PM, Stanislav Fomichev wrote:
-> On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
->> ip6gre tunnels are tested in the test_tunnel.sh but not in the test_progs
->> framework.
->>
->> Add a new test in test_progs to test ip6gre tunnels. It uses the same
->> network topology and the same BPF programs than the script. Disable the
->> IPv6 DAD feature because it can take lot of time and cause some tests to
->> fail depending on the environment they're run on.
->> Remove test_ip6gre() and test_ip6gretap() from the script.
->>
->> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
->> ---
->>   .../testing/selftests/bpf/prog_tests/test_tunnel.c | 110 +++++++++++++++++++++
->>   tools/testing/selftests/bpf/test_tunnel.sh         |  95 ------------------
->>   2 files changed, 110 insertions(+), 95 deletions(-)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
->> index bd1410b90b94773ba9bc1fa378bb7139f8d4670a..f00727aedee0c283002c55a45a04a96013d39a5d 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
->> @@ -71,6 +71,8 @@
->>   #define IP4_ADDR2_VETH1 "172.16.1.20"
->>   #define IP4_ADDR_TUNL_DEV0 "10.1.1.100"
->>   #define IP4_ADDR_TUNL_DEV1 "10.1.1.200"
->> +#define IP6_ADDR_TUNL_DEV0 "fc80::100"
->> +#define IP6_ADDR_TUNL_DEV1 "fc80::200"
->>   
->>   #define IP6_ADDR_VETH0 "::11"
->>   #define IP6_ADDR1_VETH1 "::22"
->> @@ -101,11 +103,21 @@
->>   #define GRE_TUNL_DEV0 "gre00"
->>   #define GRE_TUNL_DEV1 "gre11"
->>   
->> +#define IP6GRE_TUNL_DEV0 "ip6gre00"
->> +#define IP6GRE_TUNL_DEV1 "ip6gre11"
->> +
->>   #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
->>   
->>   static int config_device(void)
->>   {
->>   	SYS(fail, "ip netns add at_ns0");
+Thank you for the quick confirmation.
+
+On 28/02/25 13:43, Changhuang Liang wrote:
+> Hi, Jai
 > 
-> [..]
+>> Hi Krzysztof,
+>>
+>> On Fri, Feb 28, 2025 at 08:34:22AM +0100, Krzysztof Kozlowski wrote:
+>>> On Thu, Feb 27, 2025 at 01:59:19PM +0530, Yemike Abhilash Chandra
+>> wrote:
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> index 2008a47c0580..054ed4b94312 100644
+>>>> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> @@ -24,6 +24,16 @@ properties:
+>>>>     reg:
+>>>>       maxItems: 1
+>>>>
+>>>> +  interrupts:
+>>>> +    minItems: 1
+>>>> +    maxItems: 2
+>>>> +
+>>>> +  interrupt-names:
+>>>> +    minItems: 1
+>>>> +    items:
+>>>> +      - const: error_irq
+>>>> +      - const: irq
+>>>
+>>> And how is this second interrupt in existing integrations?
+>>>
+>>
+>> TI SoCs integrate both of these if I understood the TRM correctly.
 > 
->> +	/* disable IPv6 DAD because it might take too long and fail tests */
->> +	SYS(fail, "ip netns exec at_ns0 sysctl -wq net.ipv6.conf.default.accept_dad=0");
->> +	SYS(fail, "ip netns exec at_ns0 sysctl -wq net.ipv6.conf.all.accept_dad=0");
->> +	SYS(fail, "sysctl -wq net.ipv6.conf.default.accept_dad=0");
->> +	SYS(fail, "sysctl -wq net.ipv6.conf.all.accept_dad=0");
+> StarFive JH7110 SoC also integrates both of these too.
+
+If that is the case, I will send the next version with both the
+interrupts set as non-optional.
+
+Thanks and Regards
+Yemike Abhilash Chandra
+
 > 
-> `ip addr add ... nodad` should be a less invasive alternative?
-
-I didn't know I could do it through `ip addr`, I'll try this !
-
-
-Best regards,
-Bastien
+> Best Regards,
+> Changhuang
 
