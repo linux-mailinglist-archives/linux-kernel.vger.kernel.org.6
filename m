@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-539189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128A9A4A1D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:40:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8DCA4A1CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6725B3B2D0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B5F1891CA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3127CCF3;
-	Fri, 28 Feb 2025 18:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1B127CCD4;
+	Fri, 28 Feb 2025 18:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="o5KXG+se"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PlQQ6lq4"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F8B27CCE2;
-	Fri, 28 Feb 2025 18:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A2227CCD5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768023; cv=none; b=kHrU1ioI4vj6pHAL6ThKr0jdTzQrW6HX4/eeKLPwjKUivwlQF90K1AiOhr5Ouhf8rG6re+DxtE/axC5CTIeex+A9/l71mlN583rMh09fM50sh4Y42iy68rok3OzMcEwjsRYgkxnOuDagvGoQP8sduh9EYXLIfyoGx0LDaahVIdo=
+	t=1740768002; cv=none; b=ITxtFPsR6vRERQ09XasVDtNvWZt/zx+StJc0JAUcleGIwuJ5kOGbpxLAyF9KgOBS1/j7U6jbCs5ZCu7HZjKI7lEmK22ZtjjUrv5lnq6SmQhrjz52U9RCQjRkvnyvZIOgK2sHTRQkZCib9xMC6R/HCHRzLJteEVXHUOagyuqyIKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768023; c=relaxed/simple;
-	bh=dgwriYuHai0NswtoP8mHODftMD1l0GOWzgSCZTYh98A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ato86R4ZIIZBsGMjkmEDxrcwWVtp0dkSd3pnmwCT798rgcbWw9A1SE0bVSwOalp5Pqer/MKrjW7Fof6f3Iq6jUppSt4uuVxyPJZUJfQC9XFjySD+oZrWGXZ+c8MhGZ8HC/ZuBLXFHIHDXEKB0vlalL76zctMDgyBfaoSjtVHejo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=o5KXG+se; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740768021; x=1772304021;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dgwriYuHai0NswtoP8mHODftMD1l0GOWzgSCZTYh98A=;
-  b=o5KXG+seUOFXTDHCGPQShy/rAhdwy5zcFQGZxAW3iz1cwzYMKWLJATCb
-   pChbHDTnm4i83DHf3YCRdYikpV+57dSEbouysPcqSWuhjvRP70Jx/xGGb
-   MMxkifNFrmA6ocTk4om1GZZ+5x/WGL0uO3lt6WmOXCCNL3RJ1UNx/v6Em
-   7MRdMrdnoKCktZqga28BeY4ItpxjySUEQ+WaaY/UUE/rIs8FYWwKWl43D
-   lVRUujKKlI4C+QGxSxHslFiq9uaUm6BvANaKR3orkilhxTapQNnOgX8QA
-   0+Ms/B4eDIB6awXDGYzh+oMAlR47wOI8P901CzElE8WsDKpW00DE4z5ti
-   A==;
-X-CSE-ConnectionGUID: 0708Gxq6RM22afyZLBfpag==
-X-CSE-MsgGUID: LguonwZOQEWh8tU6Da1OdA==
-X-IronPort-AV: E=Sophos;i="6.13,323,1732604400"; 
-   d="scan'208";a="42424459"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2025 11:40:15 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 28 Feb 2025 11:39:54 -0700
-Received: from [10.171.248.16] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 28 Feb 2025 11:39:52 -0700
-Message-ID: <d1a9fc41-35df-4b30-83cc-5589a649c7ff@microchip.com>
-Date: Fri, 28 Feb 2025 19:39:53 +0100
+	s=arc-20240116; t=1740768002; c=relaxed/simple;
+	bh=qcwdZtGVQ0KgGKyuKhrX6OsMVbA16XsY4lfZ9C5DJmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lh+Weiij94KPgqQVWSefAhc/bWasVFc7KcAByCUQS0pg7OW/sHbMPJsrIqTNe6vYVgUCdqZtBjaI9CEF8kzJ47REkhdgxBpXbIDtmP2ljG5ZhfetzKVkIjX0GPMQd5OWVdectcd39+Ys33TllqebqMu8MrXrPnYq+41qjdaX0Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PlQQ6lq4; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22382657540so396265ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740768000; x=1741372800; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1MgXcypmlC80hGAB4x9hOpR3eZk+5FpjuFNPIV11Z1M=;
+        b=PlQQ6lq4phST4QUyGPlqjtFWY5lKF9f9EnpeZbwp/wtNSYbN2jovyGsurb/bvP4WJh
+         NkKHOPvfPtFvcprWaEhZ0OMebi1PxPiIgyYviGp2ciLKWt1/DlS5CD8H2YOeSZVze12H
+         DiouLZVYpZBukUQ9P0OqkUyhMurEZFGiJ+lG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740768000; x=1741372800;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1MgXcypmlC80hGAB4x9hOpR3eZk+5FpjuFNPIV11Z1M=;
+        b=HZT3ZBz1xzr1nOrrFUSAAY6QVLC4h2jbWOaJ2djtx3o3V381MSef+GUn7wsjc/nr83
+         D5/3AnOtc8S4vVEK97Uet4OCD5BtCWbVdRn2V9JCi4HMsGGuKeLZu2tcvopquq3BZsI5
+         1xoiSc4e8NCCM036sPuKJjl99j75ojjttM5j9Cg1FKPVV6kNhejhH355kGcqPF/zuZh5
+         t/l/lviu40kwgyI0RzGoIOE5UN14iyifj1LIJr1IrfkCMbEgeCnjWhlCiGudId0RDZ2v
+         tCAxQsXUTj0UJk2UOBvkM0PdaVB0ScbG33XDI9BEA60IkPQ4/JK7RzTMA0yKpTBN+bd3
+         mMxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfGLiSpjOTzTd9XS+mUrklMuE736KqqIv4ucD/Lio/Nz1IagR0jeVUbbZv57fBqetLp0BNymBeZlqiTyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvlJP32W2a0oTPebytrum+vFIcjwyStdw+qlLrXOL+/YC5MbwN
+	WMePvWorY958nmihtwFRRaxTrMqn8wSvwDDqfsfab9YNqLIShzOLqxUKOY3vJg==
+X-Gm-Gg: ASbGncu0MPvTQlqpUE8IL0rqtNBcCETECvmpDg0wqRcztQw8NOM9G8DNlHfajcjtgA7
+	/6KjmURJOqV79FprG3RPS8E2enZwobg5T9jZEcVnAJi+7qdScLYWxsk0YmWu5G/4iwMxObYgZlO
+	rkFA1CW8TE+scU141x+ufiXLjDPzue4YHVAtbviuEhazNaclcbbTfzR2/eSOfyE8/XFCH/H9vqe
+	rnTqzpSYdS3/zjRRwfAx/hkx20YCaOBm8MXoiA2OMbgiYfs2yO68S4DnSjOsfKygegQWML+rbu8
+	hSwEE9Cku+noS9JGMfR16WK3tCrxg+quoRkzk28vj/np4OnSFkzMNoohap1snZMi
+X-Google-Smtp-Source: AGHT+IEGJtn6vN/4w0fDLkqBf4MJwKKbPjoLNVSL+iAUMScyBl+Eyxc6RicCXt2Q7IaYZNqA3fSDyA==
+X-Received: by 2002:a17:902:d4cb:b0:21f:b6f:3f34 with SMTP id d9443c01a7336-22368f9d88fmr66301635ad.15.1740768000116;
+        Fri, 28 Feb 2025 10:40:00 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:fd9b:307f:4caf:4649])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2235050fca1sm36748085ad.211.2025.02.28.10.39.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 10:39:59 -0800 (PST)
+Date: Fri, 28 Feb 2025 10:39:57 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Hsin-Yi Wang <hsinyi@chromium.org>,
+	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
+	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+	lukas@wunner.de,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <Z8IC_WDmix3YjOkv@google.com>
+References: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+ <20250228174509.GA58365@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] mmc: atmel-mci: Add missing clk_disable_unprepare()
-To: Gu Bowen <gubowen5@huawei.com>, <ulf.hansson@linaro.org>
-CC: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <ludovic.desroches@microchip.com>,
-	<linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>
-References: <20250225022856.3452240-1-gubowen5@huawei.com>
-Content-Language: en-US, fr
-From: Aubin Constans <aubin.constans@microchip.com>
-In-Reply-To: <20250225022856.3452240-1-gubowen5@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228174509.GA58365@bhelgaas>
 
-On 25/02/2025 03:28, Gu Bowen wrote:
-> The error path when atmci_configure_dma() set dma fails in atmci driver
-> does not correctly disable the clock.
-> Add the missing clk_disable_unprepare() to the error path for pair with
-> clk_prepare_enable().
+Hi Bjorn,
+
+On Fri, Feb 28, 2025 at 11:45:09AM -0600, Bjorn Helgaas wrote:
+> On Tue, Nov 26, 2024 at 03:17:11PM -0800, Brian Norris wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Unlike ACPI based platforms, there are no known issues with D3Hot for
+> > the PCI bridges in Device Tree based platforms. 
 > 
-> Fixes: 467e081d23e6 ("mmc: atmel-mci: use probe deferring if dma controller is not ready yet")
-> Signed-off-by: Gu Bowen <gubowen5@huawei.com>
+> Can we elaborate on this a little bit?  Referring to "known issues
+> with ACPI-based platforms" depends on a lot of domain-specific history
+> that most readers (including me) don't know.
 
-Acked-by: Aubin Constans <aubin.constans@microchip.com>
+Well, to me, the background here is simply the surrounding code context,
+and the past discussions that I linked:
 
-> ---
->   drivers/mmc/host/atmel-mci.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/
+
+The whole reason we need this patch is that:
+(a) there's some vaguely specified reason this function (which prevents
+    standard-specified behavior) exists; and
+(b) that function includes a condition that allows all systems with a
+    DMI/BIOS newer than year 2015 to use this feature.
+
+Digging a bit further, it seems like maybe the only reason this feature
+is prevented on DT systems is from commit ("9d26d3a8f1b0 PCI: Put PCIe
+ports into D3 during suspend"), where the subtext is that it was written
+by and for Intel in 2016, with an arbitrary time-based cutoff ("year
+this was being developed") that only works for DMI systems. DT systems
+do not tend to support DMI.
+
+If any of this is what you're looking for, I can try to
+copy/paste/summarize a few more of those bits, if it helps.
+
+> I don't think "ACPI-based" or "devicetree-based" are good
+> justifications for changing the behavior because they don't identify
+> any specific reasons.  It's like saying "we can enable this feature
+> because the platform spec is written in French."
+
+AIUI, It's involved because of the general strategy of this function
+(per its comments, "recent enough PCIe ports"). So far, it sounds like
+that reason (presumably, old BIOS with poor power management code)
+doesn't really apply to a system based on device tree, where the power
+management code is mostly/entirely in the OS.
+
+But really, the original commit doesn't actually state reasons, so maybe
+the "known issues" phrasing could be weakened a bit, to avoid implying
+there were any stated reasons.
+
+> > Past discussions (Link [1]) determined the restrictions around D3
+> > should be relaxed for all Device Tree systems. 
 > 
-> diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-> index fc360902729d..24fffc702a94 100644
-> --- a/drivers/mmc/host/atmel-mci.c
-> +++ b/drivers/mmc/host/atmel-mci.c
-> @@ -2499,8 +2499,10 @@ static int atmci_probe(struct platform_device *pdev)
->          /* Get MCI capabilities and set operations according to it */
->          atmci_get_cap(host);
->          ret = atmci_configure_dma(host);
-> -       if (ret == -EPROBE_DEFER)
-> +       if (ret == -EPROBE_DEFER) {
-> +               clk_disable_unprepare(host->mck);
->                  goto err_dma_probe_defer;
-> +       }
->          if (ret == 0) {
->                  host->prepare_data = &atmci_prepare_data_dma;
->                  host->submit_data = &atmci_submit_data_dma;
-> --
-> 2.25.1
+> This is far too generic a statement for me to sign up to, especially
+> since "all Device Tree systems" doesn't say anything at all about how
+> any particular hardware works or what behavior we're relying on.
 > 
+> We need to say something about what D3hot means (i.e., only message
+> and type 0 config requests accepted) and that we know anything below
+> the bridge is inaccessible in D3hot and why that's OK.  E.g., maybe we
+> only care about wakeup requests and we know those still work with the
+> bridge in D3hot because XYZ.
 
-Thank you for having identified and fixed this.
+The context of this function is that it applies to situations where we
+are considering runtime all of the PCI hierarchy beneath the port. So
+yes, it applies in situations where we will wake device(s) by PMCSR, or
+they will request wakeup via PME, WAKE#, etc.
+
+Beyond that ... I don't really know what to say. This is how the spec
+says things should work, and AFAICT, the only reason we don't do that is
+because the feature writer was being conservative and happened to assume
+DMI is always present.
+
+Brian
 
