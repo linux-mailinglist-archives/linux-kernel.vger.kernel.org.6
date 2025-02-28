@@ -1,283 +1,138 @@
-Return-Path: <linux-kernel+bounces-539210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5A8A4A20D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:47:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42395A4A1DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3920B177C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBAA176976
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24B82862BF;
-	Fri, 28 Feb 2025 18:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F11F8720;
+	Fri, 28 Feb 2025 18:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EvAtorcI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJyQ47+d"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1A91F8748;
-	Fri, 28 Feb 2025 18:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570BA27CCC4;
+	Fri, 28 Feb 2025 18:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768268; cv=none; b=F3jO72WODhjs6kaTNSToJpjSJ6/LZI4AswGvCu6cT4I/XHEfjPDVtzV+zKo2LWXi9BCEXByMvHtLJ6qxJkTMcyID4lYXmrk5q2PAJYFLuBtyTv8ximp+FPnGbsX5mzZ0SFE+4C2ZKCc1ocFR4dgdPIGCRSOXRJ67IcVpKIBTzKo=
+	t=1740768151; cv=none; b=KpQGxZyQwAwr3hI9RUJgsaGat9D/RjNt+D2LJGmkH01Gxmv/Ldta9dsXdTvpRARmWPJLdDqnUQnYhSyECaXtX4eBM+BWGuN3yRehhR3jx9mcM3NHOfa8sitWzoxhUYkahRWkGiDVlAnhUmrU+LIyxneys3itHGAUWgu343jzu/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768268; c=relaxed/simple;
-	bh=GVsrnZNeki96wtGOxvB911eWqd9c4rpmobInN0izt30=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PGeMX0fx+TfupdS/gOKjrDvD/zD+Ayi51ZeBWPzedkaadfDomDb1ZSZnHXgZ5q+HnAnf+cOP4fToyIDhHhplKkdfbfv0UrDeSVyvduBPqS34H7dhb/GzbrHSxNlEtAjrzWaSijS2Rb4Px/sOg21jXZQsnoaMujPHQaorlEn/Wa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EvAtorcI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXKFu011696;
-	Fri, 28 Feb 2025 18:44:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	F1VrP7jmMMW60dreq3vYBwRfM7LdCPQK65BMku7L0gY=; b=EvAtorcIgXU49GYs
-	2IrLqizDFKHUtpg1Ugx6OtBzhKghepdfUWh5MUkKSC1AwPUQMME1IHYnPv0pJrEt
-	E3o0ZvUylWW4IJf7RnAKeYoyMHCxKmW8TYdin5cIBWDEigJUows1vIpwzdkXRYrr
-	cj0sQIVmMelK+en3mkxvK7o0Ro6Y5jckI2HYKucefPnW1dvxwBDJQDLFsTYPvi9M
-	5CuIxGeCZje5zngBBDnOH75vn6CuuIhMXlOJUWxdx42oNUqzJPGE7NyJ+vWCimFI
-	f2/R4kNwHq4lq54rF4tbA+P+DyN0oZZvbeoPWmhInceMSUf73jD8dD9BQlZ9GF7v
-	5RFr0A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4522sm0df4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 18:44:18 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SIiHAU001259
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 18:44:17 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Feb 2025 10:44:13 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Balamurugan S
-	<quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        "Raj
- Kumar Bhagat" <quic_rajkbhag@quicinc.com>
-Subject: [PATCH v8 13/13] wifi: ath12k: enable ath12k AHB support
-Date: Sat, 1 Mar 2025 00:12:14 +0530
-Message-ID: <20250228184214.337119-14-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
-References: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1740768151; c=relaxed/simple;
+	bh=5lSITHDlRILZPrE35B3ku7igRsvprNxDX13ui0l4HNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHx80wlr/ebYyYr3yfeZ3PLT4i7gI2krPVCGvIcTllJu1aEcVFqxtCNQQ7UakoTxdNw6i84SzY+/RQWfQ5xF9/lFS6x0iA/nfv0CbzSps40Rg8ow+eAa17MdjxAVZm/eP4jD8rBfD6qig4bMJLnV6CLyQRv9IC+YTXxcphB9qFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJyQ47+d; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2232b12cd36so35375745ad.0;
+        Fri, 28 Feb 2025 10:42:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740768149; x=1741372949; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+cMh2PRfuILm2UXO22hatPrnTgkwXb9D7IBTjSStnU8=;
+        b=kJyQ47+dIdC2MZL7r1NmZ5dvrD28r5KtsMqWlP3vGcFNCT+LYSjpYcYAhF0NmeGe2O
+         2rVUE6PMaTZ1OX8U1fvGPuQSb9dIM0t249yJX5z5pzCuiwzG12dKukuvCwmGqDRVsgst
+         VhKiWYBBlMd7gpqSnq929BRBzS80xMdrEzZLUkBVZwilvc+YA6ujoSFd4g05xlXDeY+7
+         qSCRwk4naReMI1YvXXDVQbKyz5MB7i890oA/8hc3gwTcP81hlV+Ei12U4F1cQBvYc3/7
+         A8Al07s+nQO13oYAUiCwxRSRBiptpdbOK6R9QqsEUeIJXBLSmyK65eb+2DxtbEd3vinp
+         p7Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740768149; x=1741372949;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+cMh2PRfuILm2UXO22hatPrnTgkwXb9D7IBTjSStnU8=;
+        b=PQxjPpbh5bgLNh6ucysWgGNjAr0Sqx0McFJ92ca1040l6z5q0mcWCHP1hRg3hZsF+T
+         f6SM/mRI5x/39GkgSR/le6rNBNAGngOna90TxRXRMVqGBcrUMieadTAncPw0fbcL0W6G
+         2/kFKexwdKm8wDoke4lkfUCF+ITkI9xv6AV0NWaPbyyqau7QGV8327MBYXwc0zKEtNkG
+         G+y036PiohJk9GfiCphYMZM3bO7q3RNkT8MAnks77QhcFd4+Og/RSyayC3mh6J2O27QH
+         KI3kjPxVXChIigqW7zkeQ1ro6nC1czD1Np2+D5BHC6jzaW4INzkDtq4ZGHwGQ4sUq0Rj
+         lWiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/T+QwNTN1ALa7qPc07bBK6AjIqF1Gx/oEXCosGAZjT69IPQN3LOGY3vn5EePwpayKOxgfpAfpWYY+5go=@vger.kernel.org, AJvYcCWlzU4hSIBagPwG5OsGU2uWjLoioi/OQYYlq0Mi8bAUTepqsTIJrdduQqvH2BlzJTx7TXTNvh2qxy0=@vger.kernel.org, AJvYcCXTmKWHNgLfD9gShOZLh3IEpCtZHNLFaYro5Tpm26uxwhug/F40Zk6k05CbwzGUfvNCdDyUSEKlVVYYxiT18s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLLJvIJVHgOgcQroaywQdgCvnNWeADeXkGMH1FT8NaX/oFQV8T
+	l2aizglpscnRF4Q1bJIsdYD6MEONaySKnGkzC3Npachz8FOIoOZc
+X-Gm-Gg: ASbGncsB626pZVtas+/PBh1n9NDYpmR4xlAsKZEHOoktrfT/xNm5lY5grXY9z/+HrDo
+	yGMTxDZ6gTsSgzoOQn7d4cVcCV1K/kHf4SOReOYWy1qdH2m/N0uzMhgeXiazS2mIiU0mPgoAdTb
+	h3uFSGdC+aZIkQiQvdaWOhgflLGZwF9GPn73m4Ti5b1xVqXYEnEOF+ZlesNCwP3LLXp8Dfh9tkq
+	cGeOET9ZDOuOzX1inLkDmf8MHnCfKx36vLRnd7CcUIg3rOKrsVwGVWKtRVuETvw5ghDiqmoKjYD
+	fwXe5nv0jmVScv0xaOcHnGxInMpbKmA58wumEo2D0R8i6N+tRg==
+X-Google-Smtp-Source: AGHT+IExhQFhIQ67IxZzaSXKW5q1qrVIn7lWPc2s9Her1UKGTNiUzITjAK5I99TIfkwYv9BXTOSwwg==
+X-Received: by 2002:a05:6a20:6a05:b0:1ee:6b39:c386 with SMTP id adf61e73a8af0-1f2f4cbedfdmr7296811637.13.1740768149474;
+        Fri, 28 Feb 2025 10:42:29 -0800 (PST)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee90c7e519sm1828529a12.61.2025.02.28.10.42.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 10:42:28 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:42:26 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Bitmap bindings for rust
+Message-ID: <Z8IDksO2uEzuq2M8@thinkpad>
+References: <20250224233938.3158-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kKC-4sXcotovQAMN-L6xUK6O-MNY9bnc
-X-Proofpoint-ORIG-GUID: kKC-4sXcotovQAMN-L6xUK6O-MNY9bnc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_05,2025-02-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- mlxscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502280137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224233938.3158-1-yury.norov@gmail.com>
 
-From: Balamurugan S <quic_bselvara@quicinc.com>
+On Mon, Feb 24, 2025 at 06:39:34PM -0500, Yury Norov wrote:
+> The bindings and a new maintenance entry together with the API changes
+> policy.
+> 
+> v1: https://lore.kernel.org/all/20250221205649.141305-1-yury.norov@gmail.com/T/
+> v2:
+>  - export alloc_cpumask_var() @ Viresh;
+>  - clarify that the maintenance rules apply to all bitmap interfaces,
+>    including those not mentioned explicitly in the helpers @ Miguel.
 
-Currently only PCI devices are supported in Ath12k driver. Refactor
-Ath12k module_init and module_exit to include Ath12k AHB support.
+OK, adding in bitmap-for-next for testing.
 
-Add Ath12k AHB support in Kconfig with dependency on Remoteproc
-driver. Ath12k AHB support relies on remoteproc driver for firmware
-download, power up/down etc.
-
-Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
-Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/Kconfig  |  6 ++++
- drivers/net/wireless/ath/ath12k/Makefile |  1 +
- drivers/net/wireless/ath/ath12k/ahb.h    | 11 ++++++++
- drivers/net/wireless/ath/ath12k/core.c   | 35 ++++++++++++++++++++++--
- drivers/net/wireless/ath/ath12k/pci.c    | 10 ++-----
- drivers/net/wireless/ath/ath12k/pci.h    |  4 ++-
- 6 files changed, 55 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
-index 52a1bb19e3da..b2bfcaca00b3 100644
---- a/drivers/net/wireless/ath/ath12k/Kconfig
-+++ b/drivers/net/wireless/ath/ath12k/Kconfig
-@@ -15,6 +15,12 @@ config ATH12K
+Thanks,
+Yury
  
- 	  If you choose to build a module, it'll be called ath12k.
- 
-+config ATH12K_AHB
-+	bool "QTI ath12k AHB support"
-+	depends on ATH12K && REMOTEPROC && QCOM_Q6V5_WCSS_SEC
-+	help
-+	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
-+
- config ATH12K_DEBUG
- 	bool "ath12k debugging"
- 	depends on ATH12K
-diff --git a/drivers/net/wireless/ath/ath12k/Makefile b/drivers/net/wireless/ath/ath12k/Makefile
-index 60644cb42c76..d95ee525a6cd 100644
---- a/drivers/net/wireless/ath/ath12k/Makefile
-+++ b/drivers/net/wireless/ath/ath12k/Makefile
-@@ -23,6 +23,7 @@ ath12k-y += core.o \
- 	    fw.o \
- 	    p2p.o
- 
-+ath12k-$(CONFIG_ATH12K_AHB) += ahb.o
- ath12k-$(CONFIG_ATH12K_DEBUGFS) += debugfs.o debugfs_htt_stats.o debugfs_sta.o
- ath12k-$(CONFIG_ACPI) += acpi.o
- ath12k-$(CONFIG_ATH12K_TRACING) += trace.o
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
-index f8a5c43075c1..d56244b20a6a 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.h
-+++ b/drivers/net/wireless/ath/ath12k/ahb.h
-@@ -66,4 +66,15 @@ static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
- 	return (struct ath12k_ahb *)ab->drv_priv;
- }
- 
-+#ifdef CONFIG_ATH12K_AHB
-+int ath12k_ahb_init(void);
-+void ath12k_ahb_exit(void);
-+#else
-+static inline int ath12k_ahb_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void ath12k_ahb_exit(void) {};
-+#endif
- #endif
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 5bd852f9572b..e63ab7f77260 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -10,15 +10,18 @@
- #include <linux/firmware.h>
- #include <linux/of.h>
- #include <linux/of_graph.h>
-+#include "ahb.h"
- #include "core.h"
- #include "dp_tx.h"
- #include "dp_rx.h"
- #include "debug.h"
--#include "hif.h"
--#include "fw.h"
- #include "debugfs.h"
-+#include "fw.h"
-+#include "hif.h"
-+#include "pci.h"
- #include "wow.h"
- 
-+static int ahb_err, pci_err;
- unsigned int ath12k_debug_mask;
- module_param_named(debug_mask, ath12k_debug_mask, uint, 0644);
- MODULE_PARM_DESC(debug_mask, "Debugging mask");
-@@ -2020,5 +2023,31 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
- 	return NULL;
- }
- 
--MODULE_DESCRIPTION("Core module for Qualcomm Atheros 802.11be wireless LAN cards.");
-+static int ath12k_init(void)
-+{
-+	ahb_err = ath12k_ahb_init();
-+	if (ahb_err)
-+		pr_warn("Failed to initialize ath12k AHB device: %d\n", ahb_err);
-+
-+	pci_err = ath12k_pci_init();
-+	if (pci_err)
-+		pr_warn("Failed to initialize ath12k PCI device: %d\n", pci_err);
-+
-+	/* If both failed, return one of the failures (arbitrary) */
-+	return ahb_err && pci_err ? ahb_err : 0;
-+}
-+
-+static void ath12k_exit(void)
-+{
-+	if (!pci_err)
-+		ath12k_pci_exit();
-+
-+	if (!ahb_err)
-+		ath12k_ahb_exit();
-+}
-+
-+module_init(ath12k_init)
-+module_exit(ath12k_exit)
-+
-+MODULE_DESCRIPTION("Driver support for Qualcomm Technologies 802.11be WLAN devices");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-index b474696ac6d8..e62b172c7f9f 100644
---- a/drivers/net/wireless/ath/ath12k/pci.c
-+++ b/drivers/net/wireless/ath/ath12k/pci.c
-@@ -1831,7 +1831,7 @@ static struct pci_driver ath12k_pci_driver = {
- 	.driver.pm = &ath12k_pci_pm_ops,
- };
- 
--static int ath12k_pci_init(void)
-+int ath12k_pci_init(void)
- {
- 	int ret;
- 
-@@ -1844,14 +1844,8 @@ static int ath12k_pci_init(void)
- 
- 	return 0;
- }
--module_init(ath12k_pci_init);
- 
--static void ath12k_pci_exit(void)
-+void ath12k_pci_exit(void)
- {
- 	pci_unregister_driver(&ath12k_pci_driver);
- }
--
--module_exit(ath12k_pci_exit);
--
--MODULE_DESCRIPTION("Driver support for Qualcomm Technologies PCIe 802.11be WLAN devices");
--MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.h b/drivers/net/wireless/ath/ath12k/pci.h
-index 31584a7ad80e..521fa72333bb 100644
---- a/drivers/net/wireless/ath/ath12k/pci.h
-+++ b/drivers/net/wireless/ath/ath12k/pci.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause-Clear */
- /*
-  * Copyright (c) 2019-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- #ifndef ATH12K_PCI_H
- #define ATH12K_PCI_H
-@@ -145,4 +145,6 @@ void ath12k_pci_stop(struct ath12k_base *ab);
- int ath12k_pci_start(struct ath12k_base *ab);
- int ath12k_pci_power_up(struct ath12k_base *ab);
- void ath12k_pci_power_down(struct ath12k_base *ab, bool is_suspend);
-+int ath12k_pci_init(void);
-+void ath12k_pci_exit(void);
- #endif /* ATH12K_PCI_H */
--- 
-2.34.1
-
+> Viresh Kumar (1):
+>   rust: Add cpumask helpers
+> 
+> Yury Norov [NVIDIA] (1):
+>   MAINTAINERS: add rust bindings entry for bitmap API
+> 
+>  MAINTAINERS                     |  5 ++++
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/helpers/cpumask.c          | 45 +++++++++++++++++++++++++++++++++
+>  rust/helpers/helpers.c          |  1 +
+>  4 files changed, 52 insertions(+)
+>  create mode 100644 rust/helpers/cpumask.c
+> 
+> -- 
+> 2.43.0
 
