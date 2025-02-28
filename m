@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-539482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F66A4A4E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:20:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F04B6A4A4EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C362F3B565F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AE73B449F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31E91D6DB1;
-	Fri, 28 Feb 2025 21:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABC41D6DAD;
+	Fri, 28 Feb 2025 21:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/QMUNUq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQRaHARH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FE61CD205;
-	Fri, 28 Feb 2025 21:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E4B23F370;
+	Fri, 28 Feb 2025 21:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777651; cv=none; b=s3YrASTnyyVe3Ra0qdg7mu7gTFTAD4PHemG8xDyJ4r3u33NUuQA2ItQ9MMVqDR8SXPE3X86Wa+pF+fM1xtygD1fNJHEQtCzXhKjVOcytKDzkTZYDhge6NWQsZXL7npTeXhkU/EljnepEQlui947YxgrbCgaTpNaE6SnfkwCvjJM=
+	t=1740777719; cv=none; b=TU5xnq9FsUMMtypwE2kuNrnN4HJJIuS7qfIYoUE32GAGwnhArI4jZIQClaAPuhXh1lX16/9E/zUfnk6gNTUrtp33DVuEYOoa6+U+1J8RaTk4vpuuxm029eSDpJiVD1uholOtwIcUzKi/tITnDz1zlLREPWeApnxglkHJn2dX5kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777651; c=relaxed/simple;
-	bh=vsXStoKndBZgGgA0zp9Ln/iSvRo3BZ0cXSDsjvieCU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jen5BCdCDjCuyInVUWWXroNbi+yhFSrK4HTnANP3Nor05OSt2ZDQMhT9QDPDHoL2l5aj3LYctGMyeONEkWuoAmWDANrtFnJ7kB8RBUDpYjeSCetbxppmOFrhme3g2gUC4Msgy987FCzcnz8c/WTuHbErnDciNnIRcV8xNKAK6mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/QMUNUq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6485CC4CEE2;
-	Fri, 28 Feb 2025 21:20:50 +0000 (UTC)
+	s=arc-20240116; t=1740777719; c=relaxed/simple;
+	bh=L60g470j6clFCW48lLfoAGvl3xJyYtc+qdJGB29Tw0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MxcBpsgGKM2RNNpM0b9nCRWLZkl2SLTGyayAydc0iDJhQAqPDlyBvSoFGEzwyUBYhaD7uNMcrYuarxl72lOYCeYvSsz03xFmijiRZ6i9IfNIjxYZA34Ujj3VTtfR1be4K6oufgZswJCMO77EHeF9e1k1JgEe4/oQPtxMeFwiTPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQRaHARH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA5BC4CED6;
+	Fri, 28 Feb 2025 21:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777650;
-	bh=vsXStoKndBZgGgA0zp9Ln/iSvRo3BZ0cXSDsjvieCU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/QMUNUqGSPaK18cqkfd3oe6cupTYH1ocioGJl2rLMSy6X4KoUN2cSi+iWXZq800e
-	 tX1EsVETHnKVZmWs9kNBr5QOoIYda2+ntRBmnYSsLeaavGz+6l7oEY6YgqKYYXDjT6
-	 08ZruDM5vCEcYZc42qUkZ9eYdn2KshsUE96DPL+qHOQzQlewfRSrMsFSPDQ/f2Fozd
-	 xRN9nXuvEKrY15bLx17hTjdxJ8k0gLw55LAS9nIVFnkWF3W8sNTCwYVFIRPUvMmBj3
-	 asndgY6FNrPnof0jY02CJcOaiYWJO9eeJcQGFDSHb3YYMPmHhZRP4O2QKAytxZcaF5
-	 A0X/BaUaiAdXw==
-Date: Fri, 28 Feb 2025 21:20:48 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org,
-	clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH v2] x86/crc32: use builtins to improve code generation
-Message-ID: <20250228212048.GA2812743@google.com>
-References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
- <CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com>
+	s=k20201202; t=1740777718;
+	bh=L60g470j6clFCW48lLfoAGvl3xJyYtc+qdJGB29Tw0U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WQRaHARHm6m16LbuYiEpYgtbK6lA9zVejxWIMCipLoe9xO1Zu8cjAtI76ZBpsBFXK
+	 Z8DKDHLxWxLnn5bJ6qTfG24dG4U9oduE3vhfG8EsOIn9F9NrY7yGmVje6/CTqeBN57
+	 Q8jz0TuAUSD2z6pIC6wLIgyE+S9qh15MYsl+ldHQzyTbUJbLaX1ZPs2Puo810HgMaH
+	 J29HfUx2GG43Xh05jsLmiNPV1UBKadv27VFjU3+/E7tXx1M1d7KHwi0G2TqUb3lPYV
+	 Vk4IG0qbkK2k/tuFklAVln/8f3BquQpP10ZBpFdYAPPnewgOzstz8BC/t2/A6BNhy7
+	 n848WO7raVMcA==
+Date: Fri, 28 Feb 2025 15:21:57 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 5/5] PCI: of: Create device-tree PCI host bridge node
+Message-ID: <20250228212157.GA70383@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,24 +64,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com>
+In-Reply-To: <20250224141356.36325-6-herve.codina@bootlin.com>
 
-On Thu, Feb 27, 2025 at 03:47:03PM -0800, Bill Wendling wrote:
-> For both gcc and clang, crc32 builtins generate better code than the
-> inline asm. GCC improves, removing unneeded "mov" instructions. Clang
-> does the same and unrolls the loops. GCC has no changes on i386, but
-> Clang's code generation is vastly improved, due to Clang's "rm"
-> constraint issue.
+On Mon, Feb 24, 2025 at 03:13:55PM +0100, Herve Codina wrote:
+> PCI devices device-tree nodes can be already created. This was
+> introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> bridge").
 > 
-> The number of cycles improved by ~0.1% for GCC and ~1% for Clang, which
-> is expected because of the "rm" issue. However, Clang's performance is
-> better than GCC's by ~1.5%, most likely due to loop unrolling.
+> In order to have device-tree nodes related to PCI devices attached on
+> their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
+> root bus device-tree node is needed. This root bus node will be used as
+> the parent node of the first level devices scanned on the bus. On
+> device-tree based systems, this PCI root bus device tree node is set to
+> the node of the related PCI host bridge. The PCI host bridge node is
+> available in the device-tree used to describe the hardware passed at
+> boot.
+> 
+> On non device-tree based system (such as ACPI), a device-tree node for
+> the PCI host bridge or for the root bus does not exist. Indeed, the PCI
+> host bridge is not described in a device-tree used at boot simply
+> because no device-tree are passed at boot.
+> 
+> The device-tree PCI host bridge node creation needs to be done at
+> runtime. This is done in the same way as for the creation of the PCI
+> device nodes. I.e. node and properties are created based on computed
+> information done by the PCI core. Also, as is done on device-tree based
+> systems, this PCI host bridge node is used for the PCI root bus.
+> 
+> With this done, hardware available in a PCI device that doesn't follow
+> the PCI model consisting in one PCI function handled by one driver can
+> be described by a device-tree overlay loaded by the PCI device driver on
+> non device-tree based systems. Those PCI devices provide a single PCI
+> function that includes several functionalities that require different
+> driver. The device-tree overlay describes in that case the internal
+> devices and their relationships. It allows to load drivers needed by
+> those different devices in order to have functionalities handled.
 
-Also note that the patch
-https://lore.kernel.org/r/20250210210741.471725-1-ebiggers@kernel.org/ (which is
-already enqueued in the crc tree for 6.15) changes "rm" to "r" when the compiler
-is clang, to improve clang's code generation.  The numbers you quote are against
-the original version, right?
+Since this adds host bridge nodes, does this patch specifically enable
+device tree overlays for devices on the root bus?
 
-- Eric
+Were we able to load DT overlays for devices deeper in the hierarchy
+already, even without this patch?
+
+Bjorn
 
