@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-537783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DB0A490A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:56:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF73A490B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:03:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2617188F55D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84CE3A99CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D591B0F35;
-	Fri, 28 Feb 2025 04:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F2D1BCA0C;
+	Fri, 28 Feb 2025 05:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ov1dLN/b"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DlUZmIxd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C18C1ADC7E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038071BBBD4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740718552; cv=none; b=Z5Fxo4Y8Zc4e8RLw5rfur9na1yaMQdiw+8VdY1MG0xGcM8g8kg7USlMOJUn3NBtSwvBRCq4g7dEBQjQe+q8I+S3FyowZsZCMs+cF9SYUYoEbaiB4tnPw3GRXnD9+2Mauxz9cPWJoo6/E7P5QRYEkZPcJAa5bNuGrT9c9Up0jfjo=
+	t=1740719016; cv=none; b=PoABxHXkzfSk4aHq6offyFGvECTRmqYtRYyRoBmUsEKlQzlVY/kyp8NeQe9Dj9OudwBWVyaJjETd+nd6IqEbAuUhtOMiwmNCW7zFL3bGKEmgxjBmiWC8LeM7U42fX79vAzZDmu6+TgdyTutTizMdrAl0mR+mhuLQVhsfjUsDMkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740718552; c=relaxed/simple;
-	bh=Oyl75bEPYRCX3+JQYAFY+KMkLUcjc1Apw/AyJ7p6sFo=;
+	s=arc-20240116; t=1740719016; c=relaxed/simple;
+	bh=4qgnoU2IzYG+runO5deGQ34JtoBImTWSSSAIltL6Cds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHE7iHiRLabyUAjX0DaJoWGx0D/HRcLIc8feAjSMZP8eYwXFKZq1S1HHLcRnxGKKtOcGrfjLZiM1tnifgqovQSgWNq/+3zfE9Xe/bBllzS14Zqb2HyOYVbG3PJK1mDrLMAJDm643BoSo/UxvGZjjMSQ/gNwReXNE0Q1oUSn0cYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ov1dLN/b; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 28 Feb 2025 12:55:41 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740718549;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UTYwm/5Ygxqxdac7uGDVtdRaeuoLmizNAMqcg6f1w220qdDXXHvFdIFDBpq1zimQaS4DveikKMJ/q9hgRkjWUSHwNM4Jph4ekQp3QCI1/QCCqs+gAOdnlRBsxZvHyXmi8tqHfddGJhoywXxdyISwv7gNcBfq2Asc6N+OQt1aEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DlUZmIxd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740719013;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SFH/CqJL4UtfGWPxwRoIS4R5TULoVqXuJV5xQ2LtJhc=;
-	b=ov1dLN/bUvjED2SjAV4KH0ECQ1auhmOEqu2GjUfcbRzWJMMx5PPb0vVmG34IcYYT412OYp
-	/d951uvU/pF3XqsdnHL1Ljl7og/zEU9Zw7+r+3CaIVTY0lyP2UoKxyPFPCKwKI/2KYLWjJ
-	+BHmQVYM1WPu1rRW1FptChqRHigQRY8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: horms@kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	ricardo@marliere.net, viro@zeniv.linux.org.uk, dmantipov@yandex.ru, 
-	aleksander.lobakin@intel.com, linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mrpre@163.com, syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
-Subject: Re: [PATCH net-next v4 1/1] ppp: Fix KMSAN warning by initializing
- 2-byte header
-Message-ID: <wm7gi3hafgaruhnjaz5bqdv7yrduf6cum3gljylypzqkvw2ctw@b2zb75i2hpid>
-References: <20250226013658.891214-1-jiayuan.chen@linux.dev>
- <20250226013658.891214-2-jiayuan.chen@linux.dev>
- <20250227174812.50d2eabe@kernel.org>
+	bh=9rWEuJNQK68ECdNdbzEIN/CxByzhoyQY+jPP6y/Lhd0=;
+	b=DlUZmIxdbxB0zhH7VGi4D4NKUzG3PT7ojdB/4oFSuWcuegiOdnNBwI9JqIBOPEBsWvqd6X
+	HjkLwScEr53OGQfeqhFCkLxAf1UJ5bxKcY11r4a2dG9f6mY1vzWEgLzH29PdgkPWk2G4NR
+	4uTI6jMJoSGys7puYm8sl1DV5fzEsO8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-470-tLxX70tNO6O3fin0MZsonQ-1; Fri,
+ 28 Feb 2025 00:03:29 -0500
+X-MC-Unique: tLxX70tNO6O3fin0MZsonQ-1
+X-Mimecast-MFC-AGG-ID: tLxX70tNO6O3fin0MZsonQ_1740719006
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF7A21800876;
+	Fri, 28 Feb 2025 05:03:25 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.52])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D92E19560B9;
+	Fri, 28 Feb 2025 05:03:22 +0000 (UTC)
+Date: Fri, 28 Feb 2025 13:03:18 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com, Mike Rapoport <mike.rapoport@gmail.com>
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+Message-ID: <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-3-chenste@linux.microsoft.com>
+ <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+ <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,31 +81,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227174812.50d2eabe@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Feb 27, 2025 at 05:48:12PM -0800, Jakub Kicinski wrote:
-> On Wed, 26 Feb 2025 09:36:58 +0800 Jiayuan Chen wrote:
-> > The PPP driver adds an extra 2-byte header to enable socket filters to run
-> Could you add:
+On 02/27/25 at 10:41am, Mimi Zohar wrote:
+> [Cc'ing Mike Rapoport]
 > 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
+> > Hi Steve, Mimi,
+> > 
+> > On 02/18/25 at 02:54pm, steven chen wrote:
+> > > Currently, the mechanism to map and unmap segments to the kimage
+> > > structure is not available to the subsystems outside of kexec.  This
+> > > functionality is needed when IMA is allocating the memory segments
+> > > during kexec 'load' operation.  Implement functions to map and unmap
+> > > segments to kimage.
+> > 
+> > I am done with the whole patchset understanding. My concern is if this
+> > TPM PCRs content can be carried over through newly introduced KHO. I can
+> > see that these patchset doesn't introduce too much new code changes,
+> > while if many conponents need do this, kexec reboot will be patched all
+> > over its body and become ugly and hard to maintain.
+> > 
+> > Please check Mike Rapoport's v4 patchset to see if IMA can register
+> > itself to KHO and do somthing during 2nd kernel init to restore those
+> > TPM PCRs content to make sure all measurement logs are read correctly.
+> > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
 > 
-> And combine the cover letter with the commit message?
-> For a single-patch postings cover letter is not necessary.
+> Hi Baoquan,
 > 
-> > +		*(__be16 *)skb_push(skb, 2) = htons(PPP_FILTER_OUTBOUND_TAG);
-> >  		if (ppp->pass_filter &&
-> >  		    bpf_prog_run(ppp->pass_filter, skb) == 0) {
-> >  			if (ppp->debug & 1)
+> I was hoping to look at Mike's patch set before responding, but perhaps it is
+> better to respond earlier rather than later with my initial thoughts.
 > 
-> The exact same problem seems to be present in ppp_receive_nonmp_frame()
-> please fix them both.
-> -- 
-> pw-bot: cr
-Thanks, Jakub! I'll do that.
+> The IMA measurement list isn't stored in contiguous memory, but has to be
+> marshalled before being carried across kexec, and then unmarshalled to restore
+> it after the kexec.  Roberto Sassu has been thinking about changing how the IMA
+> measurement list is stored so marshalling/unmarshalling wouldn't be necessary. 
+> Making both this change and using KHO going forward would be a good idea.
+> 
+> However, that sort of change wouldn't be appropriate to backport.  So the
+> question comes down to whether being unable to attest the measurement list,
+> because the measurements are copied too early at kexec load, but the TPM is
+> being extended through kexec exec, is considered a bug.  If that is the case,
+> then I suggest finish cleaning up and upstreaming this patch set so that it
+> could be backported.
 
-I was previously worried that the commit message would be too long,
-so I put the detailed information in the cover letter instead. I'll make
-the commit message more concise.
+Ah, I understand your concern. There are stable kernels or distros
+kernels which need be taken care of. If then, we can continue to work on
+polishing this patchset, as you have pointed out, there are still room
+in this patchset to improve before merging.
+
 
