@@ -1,179 +1,104 @@
-Return-Path: <linux-kernel+bounces-537716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591A6A48FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:40:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFBCA48FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9969A3BA420
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857361893406
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755271A5B80;
-	Fri, 28 Feb 2025 03:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgHU+xts"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91A01BBBDD;
+	Fri, 28 Feb 2025 03:34:42 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9D62F2A;
-	Fri, 28 Feb 2025 03:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5970D1A8409;
+	Fri, 28 Feb 2025 03:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713669; cv=none; b=u3Cyr/bqfUxbDM4xVP6XHA+CdZ0g6shCTf3esSKa4fGde7uI4QmjZqAnkc0Qo2IfcHJAZGf+bhq9nZOXSmWxPdfla0tkX+Uo0qjvrDfW9cHW6IIw81tqjVuUj+CEsQx4gNWqnYiiwaLlc2k86p5TbndauP+QC153jXejam3CuUY=
+	t=1740713682; cv=none; b=YkBJYdymByyT6T3QnZy2GQ5EiNF+QRWaEGauEiaqohwUUk+8X0ikVz7HNi5sSRtzuNjDln5dAp/b3jVr2oxKuLWaShXtWMf8QhvZueND2IBL9gOc9uvnDkBHVHNqBSKzFgAHFW9pKhBSM53nAR5Bn7a/QyyEkEn+uPK3aPBUa8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713669; c=relaxed/simple;
-	bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bjl1vlw8M6+eZC/uKGGPRhg54kIzqRM3HSMFtYRyqGB0pHE0e8GwV5d6tibfwCthXcy4Fu7gLwU5xX7u+641JIK26UIBnj8Ve/SM2ITSVBt+n22NKqRpQ7N1jii2K/hhjYSIjhm/5rXVig/eRhHwN+lLZ8Egiqel85mmIQtIWpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgHU+xts; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390ec449556so434449f8f.1;
-        Thu, 27 Feb 2025 19:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740713666; x=1741318466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
-        b=CgHU+xtsq1dSkmELJexFXy18f9zKi/G88e6hBhZqOiOfYAQWlkXteeL51Jusr6iHrK
-         1t17gHl/P1s+9sjRAOQ4tTv+qRZC418wKs/rXyk6arfG0CsJTGahMuIK8hXACepnbOPN
-         5CyGPCNk76Mfwh8W5Rq1c8q50x11SCXQ1+rIIAYu4bY/6cmNKnGDZQuwEI0EQ851tAtg
-         DQczuTzRkeGXoa217YgQjZYXl73kQzfEJFNscKYrre/+SWs9+tO7vHe4GEzckXVXe/r6
-         XUCJjh3l86zKnOUwMFTvPLuaQuieWugOGDpF0buJnxLGaOnmWeLLwIEjdeBdkjYKgcfh
-         YT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740713666; x=1741318466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xewQyuL4nA2p6gR4v1MrOq2dw76pK2ntfkLhDKOBlMs=;
-        b=SlMnVvf19wetiUKrj4MfZaVvKuzq9vgZ5a2/2lMoawMdnG9z8Z1yONAGqQnL2BcAYg
-         +lfZ+4qUX6tI10HzlFOYnpScSfH89A9y+v4Q7FXzGtIrJgJl3OlhFIsTrwZkaH69L2Sj
-         fxvXjpCIJXsszxTCTmKErkXfSCHh+gbNIWiTCvBy6Rnt6Mu/w9Hxn0gIJzQZoSUejNyI
-         Kt7j02qpXIHF7+bkSpBwZOUZK8R7WWY1aARkCdzWVG9ONNMY0neq80jXhXPmYspWtgs3
-         mBi4tbBoOpTBdWGT2CVQIF/Ck2J+4YVTqedgJquSB9j1du2wFO443eK5E1z30/Fi8u5H
-         IGAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQeq3r98PkweSp6yA89tU3T4BAxeGdBPlfk3fdRRqHbnAA6Fj5pqWxR+WjzMl9oJeLt2WhLaY3m2Ce++G+@vger.kernel.org, AJvYcCW+v+Nj5lIQryFDS3ixIaxaeNl7EfSDkfLd7fjmde+4ITjObYevkOBxHzK36kZ4kIS5Jn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi5AsWJOe3qSBGHNR6zPxfAsU8WYBZ3ZgYOcQRBHm4b8ldR8Tf
-	IouavH7VSF65gobL6Tf4WNsB2NJfliL2Dy5auOQUEIMISJNFdFRTFtVlwCyaI3myRt1E7XRimNr
-	i2dgubm3/mLbl7K+Oq6K6c0enIGo=
-X-Gm-Gg: ASbGncunZBImHJUG3TJP8WHxDz26lfwRUQgnhwSkAmEViZZDjoxR0Sc23J6J20k8pS9
-	NmkNNPCVWHoXe3C95+oGgQwVpbkHPq/t4qWgr/dC7T3T2+PGSlEFPoBPvLtXx6MnG8d9Y7IBS7v
-	tUYcnE748RDD42Zn8UIzL5zRwbbW8CJfcRkWv1rTY=
-X-Google-Smtp-Source: AGHT+IHgd3tfWodkiyjPtlDKV6Db1jKtjXRF6i0SrQp49u2uSFNU9lIXTNgQJDqewLoF2eJVuADCD84LJ+hhDB3mf2A=
-X-Received: by 2002:a5d:5846:0:b0:38f:2f0e:9813 with SMTP id
- ffacd0b85a97d-390ec77587bmr1687147f8f.0.1740713666110; Thu, 27 Feb 2025
- 19:34:26 -0800 (PST)
+	s=arc-20240116; t=1740713682; c=relaxed/simple;
+	bh=sZuew6/qnh9yp1NKKxOuD9FyuFysq44fEgAQWmRiQjQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ks2gZnpRxyXvHkx80jtPa5mfedDY6N8AM0KlxFryMWfkzbgTibAAlZxmptCtMoy2UgcDmESCS/MidMybVD4Np78PBcfmjSSnrksN+hNwIc2dZr0vYLXibAxkAq7ptvXa6FbR5mMd57VavzzZeDqtgdnc6oQm4f9gFL10nfDqqNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201622.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202502281134312562;
+        Fri, 28 Feb 2025 11:34:31 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Feb 2025 11:34:30 +0800
+Received: from locahost.localdomain (10.94.9.231) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Feb 2025 11:34:30 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <perex@perex.cz>, <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
+	<hanchunchao@inspur.com>
+Subject: [PATCH v2] ALSA: seq: seq_oss_event: fix inconsistent indenting warning in note_on_event()
+Date: Fri, 28 Feb 2025 11:34:27 +0800
+Message-ID: <20250228033427.7056-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250227092441.19044-1-hanchunchao@inspur.com>
+References: <20250227092441.19044-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
- <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQ+TzLc=Z_Rp-UC6s9gg5hB1byd_w7oT807z44NuKC_TxA@mail.gmail.com> <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 27 Feb 2025 19:34:14 -0800
-X-Gm-Features: AQ5f1Joe29kJVCiuEvWMvNS3gwtkrux_fKgRJ_LxJDT9H1VoMZ1tL0XlbIA07h0
-Message-ID: <CAADnVQ+cokog6j5RjO7qNwBWswXTbu-x2j4EoQEt405-2i5jXw@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
- runtime acquire/release
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201614.home.langchao.com (10.100.2.14) To
+ jtjnmail201607.home.langchao.com (10.100.2.7)
+tUid: 20252281134315347d902aec45dbc892b8b30f4291622
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Thu, Feb 27, 2025 at 1:55=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
-> I have an idea, though not sure if it is helpful.
->
-> (This idea is for the previous problem of holding references too long)
->
-> My idea is to add a new KF_FLAG, like KF_ACQUIRE_EPHEMERAL, as a
-> special reference that can only be held for a short time.
->
-> When a bpf program holds such a reference, the bpf program will not be
-> allowed to enter any new logic with uncertain runtime, such as bpf_loop
-> and the bpf open coded iterator.
->
-> (If the bpf program is already in a loop, then no problem, as long as
-> the bpf program doesn't enter a new nested loop, since the bpf verifier
-> guarantees that references must be released in the loop body)
->
-> In addition, such references can only be acquired and released between a
-> limited number of instructions, e.g., 300 instructions.
+Fix below inconsistent indenting smatch warning.
+smatch warnings:
+sound/core/seq/oss/seq_oss_event.c:297 note_on_event() warn: inconsistent indenting
 
-Not much can be done with few instructions.
-Number of insns is a coarse indicator of time. If there are calls
-they can take a non-trivial amount of time.
-People didn't like CRIB as a concept. Holding a _regular_ file refcnt for
-the duration of the program is not a problem.
-Holding special files might be, since they're not supposed to be held.
-Like, is it safe to get_file() userfaultfd ? It needs in-depth
-analysis and your patch didn't provide any confidence that
-such analysis was done.
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ sound/core/seq/oss/seq_oss_event.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Speaking of more in-depth analysis of the problem.
-In the cover letter you mentioned bpf_throw and exceptions as
-one of the way to terminate the program, but there was another
-proposal:
-https://lpc.events/event/17/contributions/1610/
+diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
+index 7b7c925dd3aa..76fb81077eef 100644
+--- a/sound/core/seq/oss/seq_oss_event.c
++++ b/sound/core/seq/oss/seq_oss_event.c
+@@ -290,16 +290,14 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
+ 		if (note == 255 && info->ch[ch].note >= 0) {
+ 			/* volume control */
+ 			int type;
+-			//if (! vel)
+-				/* set volume to zero -- note off */
+-			//	type = SNDRV_SEQ_EVENT_NOTEOFF;
+-			//else
+-				if (info->ch[ch].vel)
++
++			if (info->ch[ch].vel)
+ 				/* sample already started -- volume change */
+ 				type = SNDRV_SEQ_EVENT_KEYPRESS;
+ 			else
+ 				/* sample not started -- start now */
+ 				type = SNDRV_SEQ_EVENT_NOTEON;
++
+ 			info->ch[ch].vel = vel;
+ 			return set_note_event(dp, dev, type, ch, info->ch[ch].note, vel, ev);
+ 		} else if (note >= 128)
+-- 
+2.43.0
 
-aka accelerated execution or fast-execute.
-After the talk at LPC there were more discussions and follow ups.
-
-Roughly the idea is the following,
-during verification determine all kfuncs, helpers that
-can be "speed up" and replace them with faster alternatives.
-Like bpf_map_lookup_elem() can return NULL in the fast-execution version.
-All KF_ACQUIRE | KF_RET_NULL can return NULL to.
-bpf_loop() can end sooner.
-bpf_*_iter_next() can return NULL,
-etc
-
-Then at verification time create such a fast-execute
-version of the program with 1-1 mapping of IPs / instructions.
-When a prog needs to be cancelled replace return IP
-to IP in fast-execute version.
-Since all regs are the same, continuing in the fast-execute
-version will release all currently held resources
-and no need to have either run-time (like this patch set)
-or exception style (resource descriptor collection of resources)
-bookkeeping to release.
-The program itself is going to release whatever it acquired.
-bpf_throw does manual stack unwind right now.
-No need for that either. Fast-execute will return back
-all the way to the kernel hook via normal execution path.
-
-Instead of patching return IP in the stack,
-we can text_poke_bp() the code of the original bpf prog to
-jump to the fast-execute version at corresponding IP/insn.
-
-The key insight is that cancellation doesn't mean
-that the prog stops completely. It continues, but with
-an intent to finish as quickly as possible.
-In practice it might be faster to do that
-than walk your acquired hash table and call destructors.
-
-Another important bit is that control flow is unchanged.
-Introducing new edge in a graph is tricky and error prone.
-
-All details need to be figured out, but so far it looks
-to be the cleanest and least intrusive solution to program
-cancellation.
-Would you be interested in helping us design/implement it?
 
