@@ -1,139 +1,221 @@
-Return-Path: <linux-kernel+bounces-539576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A720DA4A5F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:35:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B693A4A5FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9B7178544
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D871785D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FB21DE3AC;
-	Fri, 28 Feb 2025 22:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DEE1DED48;
+	Fri, 28 Feb 2025 22:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="clg88Fvi"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfEWj0Dl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278B23F39A;
-	Fri, 28 Feb 2025 22:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3502623F39A;
+	Fri, 28 Feb 2025 22:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740782096; cv=none; b=OLTXJlXDn+uvbx5PheI156WB0itXJ3dLwyc6tKiPVSwbKGxKBvR9YX/rkkPkO/nudYtXjKB69VgQQH8pWqZ7iHSYF0WEE7X9GzlDmIf8kg5CAIBhc174nhns8NxCflt6fATecKV2TO2qckB3LrdSfSByig7ApHgfzNxYm4bmsbM=
+	t=1740782178; cv=none; b=TxlEmt4cywHr6w6qUuoyeqRx0tmyofU3gR8+9ikiiTslSwm3HMwsert44PEyj5wabYp9Iz195ldya4r5bkVksQ3maBzPmzMK3yDLEUehZtjjW/Y2B3A058bTwu8eRk9S71dL+ABIdcwh8pgubkRCscoz3DLau5lz1cpDBf+nt7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740782096; c=relaxed/simple;
-	bh=rIMtkx3BumZFM1f+9gr/3L1rwx+8OL99ijM7SYaHIHA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QsrvaJeRUYmJPMoV8RKiLmshhuboiUA906eE4yjJhVKBUmLuemfgHMUyzKJfKFer5u2dqGh3vHqLUtgeZX4YLl38fCQsu6VcaJ3U5yh4bhvtGG2EjAeqZJ0K26WAYZpkh0aztxcCOSYjl6tOTwF7WxXgd/AWvth3kaGSWD9RtHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=clg88Fvi; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WkMCPfebqRX1ArJd0tbG7Xc61T/aB+raQSI5boJryfM=; t=1740782093; x=1741386893; 
-	b=clg88FvigaDlx6wJQvruwHKpSpN+VDrWkALwnWMeTjx2T3ETDh5HSwU+bNtxlHp4rIIVJ4bqyww
-	gKICx7x3ECymZFApFRwn5+l09Y3p0d4/b2jfYJ7tgwKtDj4kYdyQ0AFjseGvI3vb6xxB6Gcr6athe
-	bEuClnUQmF04pFHfOiMjLWnHjkzkBYb5hoMrcWcvNB65vajKUkG8BfeEbKnH0u42o5QD12Vj4eCGD
-	6oIFnJ3cI1xQJmpfSjuCv5Fz0CkTdr2Jmj+ARO8z51Sn3iacY6hFUiAq1ki1vhS3buiwedfJU4aQb
-	jIxRglGohAmTn+x1G+Gm2odpcnDYym8Aj9gw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1to8wQ-00000001LRv-0LRi; Fri, 28 Feb 2025 23:34:46 +0100
-Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1to8wP-00000000NgP-3X5c; Fri, 28 Feb 2025 23:34:46 +0100
-Message-ID: <a917c1183f85bad8af1312994d330f141c57db04.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Rob Landley <rob@landley.net>, Artur Rojek <contact@artur-rojek.eu>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- Daniel Lezcano	 <daniel.lezcano@linaro.org>, Thomas Gleixner
- <tglx@linutronix.de>, Uros Bizjak	 <ubizjak@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"
-	 <jeff@coresemi.io>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 23:34:44 +0100
-In-Reply-To: <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
-References: <20250216175545.35079-1-contact@artur-rojek.eu>
-	 <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
-	 <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
-	 <48881e2d8efa9d7df8156f5f81cd662c2286e597.camel@physik.fu-berlin.de>
-	 <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740782178; c=relaxed/simple;
+	bh=trd+8GTKhRLhBPavf4IOlzQe3opgYKvvSUglWL26lW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQsORJTkeQdgae7mbLVV+byAWviNAnc0zp4fEWlHQSYuUmvOi4/tR2lj5ZKqN6khssAxx+2L1V8A/FYM2VrjHyyd2WF0hYZSZkU6St5FDXoTp98/CEsUuiCQFthkTFgqqM3Ulj5s+XdjY0k80Revoq1SiW2QjEbOwKUre/ALGGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfEWj0Dl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B44BC4CED6;
+	Fri, 28 Feb 2025 22:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740782177;
+	bh=trd+8GTKhRLhBPavf4IOlzQe3opgYKvvSUglWL26lW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dfEWj0DlqoNjTgGPuPjKK/81b24RfFVVWsbFLyY/EaJQ/l/MuSZfNJRmCA/wgyCGa
+	 Vd00wkjF2fljiMAhtMtaHRXB75v4ca/E7r5wD1xGB8aVtEtZ0my1DX0A/cqFoMZGDm
+	 ZKsX1buNTLCKN0J6PFzHBQf23K+f0UdXglylgebUif2AZkbKnulsVpj7a+GihkmV5c
+	 mQWTRItKUd1QlkGNGeeXiDLSSudUp09NuPBZD5MXf3mucLZGsdanRkmUEgeUn7rA6c
+	 7+jMwri/+XT6+LepZrrZN7lxFzmyenJHCBZcMJq6D233Q+TXiBddbbyEsTn70jhk5U
+	 fbXJVqR/5+9XA==
+Date: Fri, 28 Feb 2025 16:36:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] dt-bindings: usb: Introduce qcom,snps-dwc3
+Message-ID: <20250228223614.GA3792644-robh@kernel.org>
+References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
+ <20250226-dwc3-refactor-v4-1-4415e7111e49@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-dwc3-refactor-v4-1-4415e7111e49@oss.qualcomm.com>
 
-Hi,
+On Wed, Feb 26, 2025 at 04:17:48PM -0800, Bjorn Andersson wrote:
+> The Qualcomm USB glue is not separate of the Synopsys DWC3 core and
+> several of the snps,dwc3 properties (such as clocks and reset) conflicts
+> in expectation with the Qualcomm integration.
+> 
+> Using the newly split out Synopsys DWC3 core properties, describe the
+> Qualcomm USB block in a single block. The new binding is a copy of
+> qcom,dwc3 with the needed modifications.
+> 
+> It would have been convenient to retain the two structures with the same
+> compatibles, but as there exist no way to select a binding based on the
+> absence of a subnode/patternProperty, a new generic compatible is
+> introduced to describe this binding.
+> 
+> To avoid redefining all the platform-specific compatibles, "select" is
+> used to tell the DeviceTree validator which binding to use solely on the
+> generic compatible. (Otherwise if the specific compatible matches during
+> validation, the generic one must match as well)
+> 
+> Mark qcom,dwc3 deprecated, to favor expressing future platforms using
+> the new combined binding.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/usb/qcom,dwc3.yaml         |  13 +-
+>  .../devicetree/bindings/usb/qcom,snps-dwc3.yaml    | 619 +++++++++++++++++++++
+>  2 files changed, 631 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> index a2b3cf625e5b..6d818e6dddbc 100644
+> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> @@ -4,11 +4,22 @@
+>  $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Qualcomm SuperSpeed DWC3 USB SoC controller
+> +title: Legacy Qualcomm SuperSpeed DWC3 USB SoC controller
+>  
+>  maintainers:
+>    - Wesley Cheng <quic_wcheng@quicinc.com>
+>  
+> +# Use the combined qcom,snps-dwc3 instead
+> +deprecated: true
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: qcom,dwc3
+> +  required:
+> +    - compatible
+> +
+>  properties:
+>    compatible:
+>      items:
+> diff --git a/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
+> new file mode 100644
+> index 000000000000..37af52e01803
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
+> @@ -0,0 +1,619 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SuperSpeed DWC3 USB SoC controller
+> +
+> +maintainers:
+> +  - Wesley Cheng <quic_wcheng@quicinc.com>
+> +
+> +description:
+> +  Describes the Qualcomm USB block, based on Synopsys DWC3.
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: qcom,snps-dwc3
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - qcom,ipq4019-dwc3
+> +          - qcom,ipq5018-dwc3
+> +          - qcom,ipq5332-dwc3
+> +          - qcom,ipq5424-dwc3
+> +          - qcom,ipq6018-dwc3
+> +          - qcom,ipq8064-dwc3
+> +          - qcom,ipq8074-dwc3
+> +          - qcom,ipq9574-dwc3
+> +          - qcom,msm8953-dwc3
+> +          - qcom,msm8994-dwc3
+> +          - qcom,msm8996-dwc3
+> +          - qcom,msm8998-dwc3
+> +          - qcom,qcm2290-dwc3
+> +          - qcom,qcs404-dwc3
+> +          - qcom,qcs615-dwc3
+> +          - qcom,qcs8300-dwc3
+> +          - qcom,qdu1000-dwc3
+> +          - qcom,sa8775p-dwc3
+> +          - qcom,sar2130p-dwc3
+> +          - qcom,sc7180-dwc3
+> +          - qcom,sc7280-dwc3
+> +          - qcom,sc8180x-dwc3
+> +          - qcom,sc8180x-dwc3-mp
+> +          - qcom,sc8280xp-dwc3
+> +          - qcom,sc8280xp-dwc3-mp
+> +          - qcom,sdm660-dwc3
+> +          - qcom,sdm670-dwc3
+> +          - qcom,sdm845-dwc3
+> +          - qcom,sdx55-dwc3
+> +          - qcom,sdx65-dwc3
+> +          - qcom,sdx75-dwc3
+> +          - qcom,sm4250-dwc3
+> +          - qcom,sm6115-dwc3
+> +          - qcom,sm6125-dwc3
+> +          - qcom,sm6350-dwc3
+> +          - qcom,sm6375-dwc3
+> +          - qcom,sm8150-dwc3
+> +          - qcom,sm8250-dwc3
+> +          - qcom,sm8350-dwc3
+> +          - qcom,sm8450-dwc3
+> +          - qcom,sm8550-dwc3
+> +          - qcom,sm8650-dwc3
+> +          - qcom,x1e80100-dwc3
+> +      - const: qcom,snps-dwc3
+> +
+> +  reg:
+> +    description: Offset and length of register set for QSCRATCH wrapper
 
-On Fri, 2025-02-28 at 16:19 -0600, Rob Landley wrote:
-> The march 2024 rebuild was in response to that Feb 2024 bugfix, so it=20
-> _should_ have the fix? (I'm waiting for another musl release to rebuild=
-=20
-> them again...)
->=20
-> I just downloaded the toolchain currently at that URL and built mkroot=
-=20
-> and it worked for me:
->=20
-> Run /init as init process
-> sntp: time.google.com:123: Try again
-> Type exit when done.
-> $ cat /proc/version
-> Linux version 6.14.0-rc3 (landley@driftwood) (sh2eb-linux-muslfdpic-cc=
-=20
-> (GCC) 11.2.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Fri Feb 28 15:47:36=
-=20
-> CST 2025
+I think you want to drop this. Or do you need 2 regions? The wrapper 
+regs and the DWC3 regs? Probably worth describing separately even if 
+they are adjacent currently.
 
-Is that on Toybox git HEAD?
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    description: specifies a phandle to PM domain provider node
 
-> And the failure _without_ the fix was deterministic rather than=20
-> intermittent, so...
->=20
-> Keep in mind the init script has a 3 second timeout trying to call sntp=
-=20
-> to set the clock, which will fail if the ethernet isn't connected (or no=
-=20
-> driver, or no internet...)
+Drop the description.
 
-I'll try again this weekend. Also, I will review and pick up the fix.
+Otherwise, looks good.
 
-> P.S. Speaking of intermittent, I hit that hang after "clocksource:=20
-> Switched to clocksource jcore_pit_cs" on one attempt just now. I should=
-=20
-> sit down with the engineers next time I'm in japan and try to root cause=
-=20
-> it. The scheduler fires reliably, so it's _probably_ not a hardware=20
-> issue? We've had Linux uptime of over a year, not just idle but running=
-=20
-> an energy monitoring app, so it's pretty stable in our systems...
-
-I thought it was a software issue?
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Rob
 
