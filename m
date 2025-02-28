@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-539257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A84BA4A286
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:16:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645AAA4A289
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114AE164B79
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C92CB1899EEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AD01B87FB;
-	Fri, 28 Feb 2025 19:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE33277030;
+	Fri, 28 Feb 2025 19:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="MRcgRCOr"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqcx2yEO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9492A277030
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97DA1B87FB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740770212; cv=none; b=WQlA/c5mTma6a+IluqUbsrPPRPK0XEskehLl2YyqGk6uGPffDU/84oH3Rm1Le+QADHBNBbJoWrdLMJSiq+5Gd2snlJTmJy9r/EmUOPT7hci4O6woPHUxz58fe8eu10ZEDl/UrAfK+3ECp0tnN4AciWv1jFSeqVOJ4/3gEo2+sfU=
+	t=1740770233; cv=none; b=A525c3hT0Q2q1At7zCq8t9RJunlO/387lFYQZLSaR3Vpd7s+L9iAcoe8wBML30P7wrUx4jrrSgxNfeLuu5BGOka23ccR6ib+CeV0owwJJ3/7tzqLjwYmjZ7I0z2HXpOXShtgnRKu/m+d+XGQqHQX2Pv9V3RmL7vXIXYJIKnR1L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740770212; c=relaxed/simple;
-	bh=beHI5Po5p0RjCoxuB16ei45Efw+qOgFITPlrDu9pqv4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YDeHVNh/nurQT3pFJoXow8xu2egCwPCc21bKmgb+rHkc9ma6MKG03370vFW39MRhQNav7ACbS3LK20kIDPkVGsqQ+OeddSNGvAkta8DnB2TaPw34mJmxd8W7mrSqaKZuJcu9h12264ekALSUhQPDwJxK3EzTPthCzdmXXt6A7VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=MRcgRCOr; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1740770208; x=1741029408;
-	bh=beHI5Po5p0RjCoxuB16ei45Efw+qOgFITPlrDu9pqv4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=MRcgRCOrQZKKvfwk08CLkR0LUnLviGiOrQLJWTDfG4MG0/5VjnhIzr2XFHRqmvSgd
-	 ZXIHleeLf89/HMcsgObHVCdn+awV6igMLeyPz/qgXNh2ri98S9u2VucCbtrff/SJ72
-	 IRlVsv6mvHr3Qpmou2YNyFtST871fNv7rSgH9NFfulmOkvdLn8b/Ff17SFCyiZ2DiO
-	 6V6eXF7sInJ9jsvGLXMfJOa7muPDb1eANW/aQNJ+MNvhpVTAGOWqQmnNEQ9kl5IObF
-	 zjcvWnwjN+rmQKeMyc+MKrEOqNJ1v8Ml0mPNYiCMouK96qGkday1Bin80ONhfuXh0/
-	 DOB3Whkel9eig==
-Date: Fri, 28 Feb 2025 19:16:41 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8ILlUMGQ221hLJY@laptop>
-In-Reply-To: <Z8IJPzlvioBZaV5M@boqun-archlinux>
-References: <I2EuahEO9YG75qdfIlsanLJ9iOfr0OlKJr6nw_cqOG0rVrZUEZGhdfENkLawNCpSqP8uSGMODCeEmsYv6clgYg==@protonmail.internalid> <sOipp6LTmtfq5A37VN_kCA4Kw9zfclZ2HLIMSJYnOdG4ebnuTKUlXIlT4X3GVRLMXFmwT4IwyIA-eqF69yOhSQ==@protonmail.internalid> <Z8IBiBi6CSRxfxiE@boqun-archlinux> <87senxlwpo.fsf@kernel.org> <Z8IJPzlvioBZaV5M@boqun-archlinux>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 9aea20535d7a6fffc5684da12ed58c2fb2461fb4
+	s=arc-20240116; t=1740770233; c=relaxed/simple;
+	bh=GSLa+/ofIygcHiomx3NmL3qV6YrsCvX1jBYbk/gqezc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kyAn3uIpeb9f7jPelKi6KHIJ7rih4g96qeU6ow8tq7lSkCAWgoMUHvz0FrddDPsT1l9AL74J9RqIlmV5uSETQZKhmk6f/fX6e8H09LiHRxq2VHGsS+RXXLLnyYvK9Gu0UgNjuphmwoPcw0rqeg9jWS6OMFwop0vktEujxn34DAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqcx2yEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0443C4CED6;
+	Fri, 28 Feb 2025 19:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740770232;
+	bh=GSLa+/ofIygcHiomx3NmL3qV6YrsCvX1jBYbk/gqezc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rqcx2yEOalfeikAsIpTdq2SbLuMB9ZOLn9iWM4+0Fd+oWvoeKYZwhtTfLI/8mqp6G
+	 GVa/QXVZLnMH8hQTkSlozItecITWRE1brJPYLZyJesIZKWMr/BgcyQhOqxEJKQrQ2J
+	 7/dsr7U5NN/PSXZxVlandugg0NFCWpwnt7lvHqqIDikcU2r8kPPn4LtwqoEQq8GfnR
+	 rMSj1URc29gaWIkvQ63GN5uZ4te8VIPxsJGxhUaldtCqCgD+qAJ67JLqCjptm7yxs3
+	 KciEi7lAMGtMzk1nWhzp7T/g0gW3b9AzhLAQu9YATXeRqy8r4SqCzS3wAIGMEywTVY
+	 Vb5QGMszXfBNQ==
+Date: Fri, 28 Feb 2025 20:17:03 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [GIT PULL] perf events fixes
+Message-ID: <Z8ILr7mcMg6x46nA@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 250228 1106, Boqun Feng wrote:
->=20
-> Probably because some of Oliver's replys don't have the "in-reply-to"
-> field in the email header. Maybe it's a known issue of protonmail?
->=20
-I think you are right.
+Linus,
 
-Google couldn't tell what to do about it during the last 5 min, though.
-I'm using mutt through protonmail-bridge for mailing.
+Please pull the latest perf/urgent Git tree from:
 
-I will look into it, but if someone has an advice, it would also be
-welcome.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2025-02-28
 
-Oliver
+   # HEAD: f8c857238a392f21d5726d07966f6061007c8d4f uprobes: Remove too strict lockdep_assert() condition in hprobe_expire()
 
+Miscellaneous perf events fixes and a minor HW enablement change:
+
+ - Fix missing RCU protection in perf_iterate_ctx()
+
+ - Fix pmu_ctx_list ordering bug
+
+ - Reject the zero page in uprobes
+
+ - Fix a family of bugs related to low frequency sampling
+
+ - Add Intel Arrow Lake U CPUs to the generic Arrow Lake
+   RAPL support table
+
+ - Fix a lockdep-assert false positive in uretprobes
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Aaron Ma (1):
+      perf/x86/rapl: Add support for Intel Arrow Lake U
+
+Andrii Nakryiko (1):
+      uprobes: Remove too strict lockdep_assert() condition in hprobe_expire()
+
+Breno Leitao (1):
+      perf/core: Add RCU read lock protection to perf_iterate_ctx()
+
+Kan Liang (3):
+      perf/x86: Fix low freqency setting issue
+      perf/core: Fix low freq setting via IOC_PERIOD
+      perf/x86/intel: Use better start period for frequency mode
+
+Luo Gengkun (1):
+      perf/core: Order the PMU list to fix warning about unordered pmu_ctx_list
+
+Tong Tiangen (1):
+      uprobes: Reject the shared zeropage in uprobe_write_opcode()
+
+
+ arch/x86/events/core.c       |  2 +-
+ arch/x86/events/intel/core.c | 85 ++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/events/rapl.c       |  1 +
+ kernel/events/core.c         | 31 ++++++++++------
+ kernel/events/uprobes.c      | 15 ++++++--
+ 5 files changed, 119 insertions(+), 15 deletions(-)
 
