@@ -1,149 +1,208 @@
-Return-Path: <linux-kernel+bounces-538592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DF4A49AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:38:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1E5A49AB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B273BAB84
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2DA33BA337
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B05F26D5A6;
-	Fri, 28 Feb 2025 13:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C714C26BDBA;
+	Fri, 28 Feb 2025 13:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeVdeGL9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O7CpURzV"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7220F1E4A9;
-	Fri, 28 Feb 2025 13:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F51E4A9
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740749898; cv=none; b=Nl0BbQKabbbELlv7TKnMCwKgBpkwzOl7dr8OBwQNl0hMFVcZotBlfcl8G/yViSAAvZgKni78PCX1SousEfxOxhnjbl19PCgWR4IeH5bFOtOCTsJa9CBMZvbDpMgcwh//wlMJKKpNmRffowr2tZHJwxesKyf9WZS1YETtJBVitXE=
+	t=1740750007; cv=none; b=PxdNFDTT54csai8KiLG701xjHwtkZPkog4cJp/dGw1KKQKzGYQJrPYqxVXsmiUJE7NPeLBmSPWj7YsdfaA3slM5roUvzMSCpcZ1loabfGufUv8rwvKM6vT3s4YBLiL/ARoxklgQbvomnIYjLU6LY5vSUwNQNVyQjil9eHWrwIj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740749898; c=relaxed/simple;
-	bh=0mnDp5t6ahjG2frprA1XDZG1zKgNmFNkH0FBio58rNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CU3h+PKhqBbtd+7yz8Yl+cQ7dDHdDz1hZSJ9I+RBu1WluXAntLwPHmRw4n61G3qz0MsKlqW5/Nxfs7ujP4ULTR9MKOR8O0yB4Tm/9ZcQu5Mp7jyBhWJ9Tnvm6QY3nkCwWRX+G0tMs25R78cToVEX+g2EafigWQIcDFONUCy1CEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeVdeGL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B04C4CED6;
-	Fri, 28 Feb 2025 13:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740749893;
-	bh=0mnDp5t6ahjG2frprA1XDZG1zKgNmFNkH0FBio58rNw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YeVdeGL9eIF+ruseMnB3dZ3p8hntl0E85vK3P744e71EWCVFjxAAoNHZRxQt9yAgq
-	 dEpbHkfhWv+uridWc8fWBmcHTNGHY+w14upM2GEiSRYfh4ojS3/bqW3r5xCqkw/EVl
-	 hyY+f2E7UlwBU5H25VZgZhhpN0zXzX3z0xXVbB/Kobvr6Z93utNjPfBrgI9rODenKL
-	 49LkbNs5S2sucpDAug3X6qkMCFDS58/B7jTFBRCG9loo7A/WlRfTWI3UGG8zBXMiv8
-	 GKMUSrYQsPhuST+D+KDXkUUKG9cdS90ORWdMGXBnRecnSkREBr2RYDysj2PDzAGQZU
-	 edoBS3xEzlJhw==
-Date: Fri, 28 Feb 2025 07:38:11 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: net: Convert fsl,gianfar-{mdio,tbi} to
- YAML
-Message-ID: <20250228133811.GA2579246-robh@kernel.org>
-References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
- <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
- <20250221163651.GA4130188-robh@kernel.org>
- <Z7zdawaVsQbBML95@probook>
- <Z72lqrhs50NtoK8m@probook>
- <20250226133114.GA1771231-robh@kernel.org>
- <Z78sOtFfNC8i2amq@probook>
+	s=arc-20240116; t=1740750007; c=relaxed/simple;
+	bh=NAwPmZbi0UHTWKbjxp/L84/WGlh9ifKyccVSGokzDvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mqJGQX3m8uSWV+v0oEPBJJ+AeMbOQt5VCfWEOckqGci15kUVVi7FFcnctIVQ5vsFNJJTDDo/4+tCLjcVRSQLRjBI+IA7FOW/RAXzZlTPDm+UXZz67KHOLaUqB3hNRCBJNlxUDJhlaGg5UDm8AZHoQJi0iN4sXA917lvIIMQpu8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O7CpURzV; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-438a39e659cso14951665e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:40:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740750003; x=1741354803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lHpaguigQqtfUfKYwzCOyMDHP0j6yDmxg20Be5goi7w=;
+        b=O7CpURzVzLEv13CijOWH8a36DORkpnN1pGnltOmmVf6SBWdi+/yT6ccfIYm30l7qJV
+         zFp2hK52Z0Nd9LJw7QSr0JZPRPo/4wcvRXoHKIpZ3Q6kptUm9fdbFy90gs5uyAYNz+a8
+         U6Djv5a9taw+vmWXbDIHDufFyY//pYqIiyWlUULH+w/8vUJA5gETm6UmarXeX1CVnztV
+         1LbJggEtsJ+/MDiq+eUvYkVhGeWGq1W+Yv5RVeGYIU6aOdMjkccmijIN+mVRF3wQMU6l
+         LFboxNfnvnpp5cPfrdtE0JH+c3VBfuOqqQdI0h/oorscblakaAQn9rkNPmOC6aOtFlUx
+         TNVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740750003; x=1741354803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lHpaguigQqtfUfKYwzCOyMDHP0j6yDmxg20Be5goi7w=;
+        b=G5oeyohPFJG3pjt3xQzwp+GJm8Q/HVmlhZDNXneI2H+Os8W4tW3Lx3lSWkJqfXfEoK
+         WW66xFWj1c0hIWvdNueF2IVGW9jalYH4pL3t3BRfkKj+YDky6sn7DUb4f8ubO+BbUDoU
+         ATGUia8QIzhio0hv0qVWXDyVjP1g88YG3tfwVyPyU9I83BwmKr85Piyhu0oPNtCQ803o
+         fbmTJ6jlekRQBak4PtFxCQ/4dI3l8UuJOZJDw6SL558EG6YQAAsMJv1Bn24wlMSB1GZ6
+         ynaT99IJG8V5KX2gy0IBniFyRRSb9ywVP3enJfruQ5uELiiwD1MfhhXCoigPu7CxPOfM
+         KKbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWj2+56mI6yXC+7nThqwXUU73XfAonfK+6ZxfVjBpa5FbhRGjCgbx4qVQZ16kwrxYnlQtX2VYDOOElKmzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyODZOS14TlGoiYzJp56oKadJEHtXPKGeFaBfJlIeVidDyfim0A
+	DYf40RZF5/paMdPL0VuFS6zV+Jick2jF5qRKqdUU7o8uOeq/gvRRdX4OcyQC4ZM=
+X-Gm-Gg: ASbGncvcuAwuNa3Kg1jAMX9EodVXjwrVhOVuF4Ipcbt/4iNnT2EesGsQQvD/L5c+KLb
+	Ws+0JNYganJoPNVSXQxEadvUB3WqZlAkf6dlUaS2hCCdtcgZZo9UZMBb0uNg/MSRaz/gSm5Yj1y
+	F0N0ufmBFzWJ3qFPLTOWLypA/X0oypNODmEL29iln5vF/f2B9B4BkGh6N2JIwu31HbL93Xn++/r
+	nvCGQMQSpI2caYOynks81wEJP2HTKju4tJU8IQncsBJte24v8FBhPMJbTuVA2xySTCswLjopqJn
+	tnOBQhdewC2tyHEmRSvNEHQ95wcCMAoFxQ==
+X-Google-Smtp-Source: AGHT+IGFakDKepvfZnv+mo2cfbk3P8TvRoq1sekBuqWFxjkZG8MzQu0uxXW4xPiVCaIR6bhU773bOg==
+X-Received: by 2002:a05:600c:3b9a:b0:439:8e95:795b with SMTP id 5b1f17b1804b1-43ba6a77357mr30084545e9.31.1740750003179;
+        Fri, 28 Feb 2025 05:40:03 -0800 (PST)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:d4b:473f:a962:e9e2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73717171sm55984405e9.18.2025.02.28.05.40.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 05:40:02 -0800 (PST)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com,
+	pierre.gondois@arm.com,
+	linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io,
+	hongyan.xia2@arm.com,
+	christian.loehle@arm.com,
+	luis.machado@arm.com,
+	qperret@google.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 0/7 v3] sched/fair: Rework EAS to handle more cases
+Date: Fri, 28 Feb 2025 14:39:53 +0100
+Message-ID: <20250228134000.1226665-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z78sOtFfNC8i2amq@probook>
 
-On Wed, Feb 26, 2025 at 02:59:06PM +0000, J. Neuschäfer wrote:
-> On Wed, Feb 26, 2025 at 07:31:14AM -0600, Rob Herring wrote:
-> > On Tue, Feb 25, 2025 at 11:12:42AM +0000, J. Neuschäfer wrote:
-> > > On Mon, Feb 24, 2025 at 08:58:19PM +0000, J. Neuschäfer wrote:
-> > > > On Fri, Feb 21, 2025 at 10:36:51AM -0600, Rob Herring wrote:
-> > > > > On Thu, Feb 20, 2025 at 06:29:21PM +0100, J. Neuschäfer wrote:
-> > > > > > Move the information related to the Freescale Gianfar (TSEC) MDIO bus
-> > > > > > and the Ten-Bit Interface (TBI) from fsl-tsec-phy.txt to a new binding
-> > > > > > file in YAML format, fsl,gianfar-mdio.yaml.
-> > > > > > 
-> > > > > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > > > > ---
-> > > > [...]
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    enum:
-> > > > > > +      - fsl,gianfar-tbi
-> > > > > > +      - fsl,gianfar-mdio
-> > > > > > +      - fsl,etsec2-tbi
-> > > > > > +      - fsl,etsec2-mdio
-> > > > > > +      - fsl,ucc-mdio
-> > > > > > +      - gianfar
-> > > > > 
-> > > > > Can you just comment out this to avoid the duplicate issue.
-> > > > > 
-> > > > > Though I think if you write a custom 'select' which looks for 
-> > > > > 'device_type = "mdio"' with gianfar compatible and similar in the other 
-> > > > > binding, then the warning will go away. 
-> > > > 
-> > > > I'm not sure how the 'select' syntax works, is there a reference
-> > > > document I could read?
-> > > 
-> > > Ok, I think I figured it out, this seems to work as intended:
-> > > 
-> > 
-> > Looks pretty good.
-> > 
-> > > 
-> > > select:
-> > >   oneOf:
-> > >     - properties:
-> > >         compatible:
-> > 
-> > Add "contains" here. That way if someone puts another string in with 
-> > these we still match and then throw a warning.
-> 
-> Good idea.
-> 
-> > 
-> > >           enum:
-> > >             - fsl,gianfar-tbi
-> > >             - fsl,gianfar-mdio
-> > >             - fsl,etsec2-tbi
-> > >             - fsl,etsec2-mdio
-> > >             - fsl,ucc-mdio
-> > > 
-> > >       required:
-> > >         - compatible
-> > > 
-> > >     - properties:
-> > >         compatible:
-> > >           enum:
-> > >             - gianfar
-> > >             - ucc_geth_phy
-> > 
-> > You could move ucc_geth_phy because there's not a collision with it.
-> 
-> ucc_geth_phy also requires device_type = "mdio". It is more compact
-> to write it like this, but perhaps clarity wins out here, and this
-> requirement should be expressed with an "if:"?
+The current Energy Aware Scheduler has some known limitations which have
+became more and more visible with features like uclamp as an example. This
+serie tries to fix some of those issues:
+- tasks stacked on the same CPU of a PD
+- tasks stuck on the wrong CPU.
 
-Yes, an if/then schema outside of the select would be fine.
+Patch 1 fixes the case where a CPU is wrongly classified as overloaded
+whereas it is capped to a lower compute capacity. This wrong classification
+can prevent periodic load balancer to select a group_misfit_task CPU
+because group_overloaded has higher priority.
 
-Rob
+Patch 2 creates a new EM interface that will be used by Patch 3
+
+Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
+others might be a better choice. feec() looks for the CPU with the highest
+spare capacity in a PD assuming that it will be the best CPU from a energy
+efficiency PoV because it will require the smallest increase of OPP.
+This is often but not always true, this policy filters some others CPUs
+which would be as efficients because of using the same OPP but with less
+running tasks as an example.
+In fact, we only care about the cost of the new OPP that will be
+selected to handle the waking task. In many cases, several CPUs will end
+up selecting the same OPP and as a result having the same energy cost. In
+such cases, we can use other metrics to select the best CPU with the same
+energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
+and then the most performant CPU between CPUs. At now, this only tries to
+evenly spread the number of runnable tasks on CPUs but this can be
+improved with other metric like the sched slice duration in a follow up
+series.
+
+perf sched pipe on a dragonboard rb5 has been used to compare the overhead
+of the new feec() vs current implementation.
+
+9 iterations of perf bench sched pipe -T -l 80000
+                ops/sec  stdev 
+tip/sched/core  16634    (+/- 0.5%)
++ patches 1-3   17434    (+/- 1.2%)  +4.8%
+
+
+Patch 4 removed the now unused em_cpu_energy()
+
+Patch 5 solves another problem with tasks being stuck on a CPU forever
+because it doesn't sleep anymore and as a result never wakeup and call
+feec(). Such task can be detected by comparing util_avg or runnable_avg
+with the compute capacity of the CPU. Once detected, we can call feec() to
+check if there is a better CPU for the stuck task. The call can be done in
+2 places:
+- When the task is put back in the runnnable list after its running slice
+  with the balance callback mecanism similarly to the rt/dl push callback.
+- During cfs tick when there is only 1 running task stuck on the CPU in
+  which case the balance callback can't be used.
+
+This push callback mecanism with the new feec() algorithm ensures that
+tasks always get a chance to migrate on the best suitable CPU and don't
+stay stuck on a CPU which is no more the most suitable one. As examples:
+- A task waking on a big CPU with a uclamp max preventing it to sleep and
+  wake up, can migrate on a smaller CPU once it's more power efficient.
+- The tasks are spread on CPUs in the PD when they target the same OPP.
+
+Patch 6 adds task misfit migration case in the cfs tick and push callback
+mecanism to prevent waking up an idle cpu unnecessarily.
+
+Patch 7 removes the need of testing uclamp_min in cpu_overutilized to
+trigger the active migration of a task on another CPU.
+
+Compared to v2:
+- Renamed the push and tick functions to ease understanding what they do.
+  Both are kept in the same patch as they solve the same problem.
+- Created some helper functions
+- Fixing some typos and comments
+- The task_stuck_on_cpu() condition remains unchanged. Pierre suggested to
+  take into account the min capacity of the CPU but the is not directly
+  available right now. It can trigger feec() when uclamp_max is very low
+  compare to the min capacity of the CPU but the feec() should keep 
+  returning the same CPU. This can be handled in a follow on patch
+
+Compared to v1:
+- The call to feec() even when overutilized has been removed
+from this serie and will be adressed in a separate series. Only the case
+of uclamp_min has been kept as it is now handled by push callback and
+tick mecanism.
+- The push mecanism has been cleanup, fixed and simplified.
+
+This series implements some of the topics discussed at OSPM [1]. Other
+topics will be part of an other serie
+
+[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+
+Vincent Guittot (7):
+  sched/fair: Filter false overloaded_group case for EAS
+  energy model: Add a get previous state function
+  sched/fair: Rework feec() to use cost instead of spare capacity
+  energy model: Remove unused em_cpu_energy()
+  sched/fair: Add push task mechanism for EAS
+  sched/fair: Add misfit case to push task mecanism for EAS
+  sched/fair: Update overutilized detection
+
+ include/linux/energy_model.h | 112 ++----
+ kernel/sched/fair.c          | 717 ++++++++++++++++++++++++-----------
+ kernel/sched/sched.h         |   2 +
+ 3 files changed, 515 insertions(+), 316 deletions(-)
+
+-- 
+2.43.0
+
 
