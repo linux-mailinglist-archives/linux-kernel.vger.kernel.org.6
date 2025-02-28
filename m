@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-538015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A9DA49395
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424EEA49397
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D0FF7A2E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDE63AD613
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169C72505DE;
-	Fri, 28 Feb 2025 08:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A81C2528F5;
+	Fri, 28 Feb 2025 08:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auxYLErK"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="aw7sxCaH"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C2E8F6B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2D48F6B;
+	Fri, 28 Feb 2025 08:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731584; cv=none; b=kykgUiqBkk2Hk1Irxs7/itI/I0sqwdkJeB/S99AsbHYDxNynooiaplPIrEDoI0ZCUcdfwO5y3gSH9e/+YrgWBWeDaPsQ/TXVRIil7VzLO6XF6mHJnuvRhk+3ijAm8btGoZSdatpeT+LRZD9F6zOth+P8YCAvVUK4fbMj19j0eWA=
+	t=1740731592; cv=none; b=aKKneXTonUnfzJvg18kobvOh5ErotUK0VYSA0T5ZAEJ2dr9IN1fa9lOr1t5vrYDogx17KMVQvTu0lPVvI42xGI5sb085fUuyIxwuwIuC6h1BI5Ap05rTE6ssVoT4HFp/jZt7jcAaWJVbEawVjepSv/iI6nF/YzFBm1GouU3PCQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731584; c=relaxed/simple;
-	bh=cSHRxodgbIZbSDtPjj7EDL43DTQYJBIzt1WtgpZdaBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FnHz8bi2QplsbKMKia13/We7adBKr3wjEnPQHWd+SxSDNrkxc9xMXTYkVGpuF0MKbow9WiK5P0ZInxgX7Rf2EkCdEL3B3jFW5BUlIB2Y72/Mu5AzHCGSmTW6BCzu4JbKSx1r8KfFIyXh2eiGQsY80Ca3OliusjHKFWfPLW8fpXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auxYLErK; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so33601375ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740731582; x=1741336382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ulduPZI65xlBW/iQZ++ornEYkdX+PksumciMKnXCfdE=;
-        b=auxYLErKsKtEgiMKGmzjC72d2IqMpW+y1seIgTWQ+9hHNEsKZj1+8sFWqL1JL2JuJt
-         6oyAuoBK097/6I65hiTApLXQLHZ6Ffn8bMD79lNNKeiA1Mck9qbdWTDDYJFx1SUnwsLI
-         6mMb8j4wija+8Urvmqnnd1JFz2Hb6yGf5z3VlFtNWNdNOYJ0sfra7rgeqpzRUUAvjknR
-         wbPmWN+UxhyFmjJiqyzbWZEtxuZYtXnJzqnD/rprinD+kHpO03bdt1iZQSyHEC6mdJcR
-         IZrs+u+mPHD+bvTkVVJjOQJoOjljiViRPKRuCPjymMNk0oWNi/mCWgQ7bI1f6KIcXU3o
-         3/rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731582; x=1741336382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ulduPZI65xlBW/iQZ++ornEYkdX+PksumciMKnXCfdE=;
-        b=wtVKjBfpCCnDKSqrEN9r8wi2aioHtt3tCc4UEohHzjMiJZ+vpBXX1I2vSqDI2PlvJN
-         OsSxJrTJ92TF3VFopD8L1cWgd0js0GLzP03nz43xTHqVlX6HduJ5zsLHqveBf6vOrxso
-         ynxvmIQmf459MPfyEamTlSzvR/WzCLTcTjuNCa+tpdxfKBCqpFDLGytR5fGMl122vGjE
-         f0qzXJaDIzvo6VW6WdLPXohtSkmkJKdpXYo8BeOpjewOWev4sJ9+lYPEFmA/Fr5Ly9Ed
-         wcG81GwJNjVJ8Jh1h0Od32esqBr34agOAxQcDzZ+Cc0loGDHUetFf3Fq0Kmz5TFNf445
-         x7vw==
-X-Gm-Message-State: AOJu0YwIdMCOAS3AvRdS76Oko9LzXK0z/b5kQ1cq0UiYiPbRDnX3sLep
-	q+JpCc5rCnSr4vfacJ7GnGDvDnmyQ44NiUG2xrHTfbJBjgFOABDgle1M57nB+MNs8A==
-X-Gm-Gg: ASbGncteC03TpFhO0ATuhf4aIN9tYgddO0Pxg+6sTAV/fU+8mkqj7dYQwjr+CUKa2oT
-	K9jh3gexlobSH+CWCZQTP68c2hJePOfb2VWXOn2xfg/fd1Cv5vPVXCRgcLh896J8Zjtyha+1kai
-	Lu6lYO81XmrVm5HhZh8LZaK/qF8/4eKB8+Dr36MhWnyXbUxXacSkyd/w998U5Yy0O3So1kjWIqP
-	yFZEX1DH3USRdncpBK4+YFCLG3s4kJShvxnrwkIR8f55/nFspjA/8FwDEv+dZq+US/2K7Z5cQ/z
-	cRLtH/ApITghiZjv/1BXrYwdFqUi18uaRumHYQYmpCA=
-X-Google-Smtp-Source: AGHT+IHb/sdbhY1x0Sw1KrjvrY21hsN7ORugOCAcnujSSD+zrlsUowaYK4fAX2IeY9VGc04XaQ6qDw==
-X-Received: by 2002:a05:6a20:a10c:b0:1ee:d384:7553 with SMTP id adf61e73a8af0-1f2f4e016b3mr5237476637.30.1740731582323;
-        Fri, 28 Feb 2025 00:33:02 -0800 (PST)
-Received: from fedora.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de1f7a6sm2803937a12.30.2025.02.28.00.33.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:33:02 -0800 (PST)
-From: Siddharth Menon <simeddon@gmail.com>
-To: laurentiu.tudor@nxp.com
-Cc: linux-kernel@vger.kernel.org,
-	Siddharth Menon <simeddon@gmail.com>
-Subject: [PATCH] MAINTAINERS: fix broken reference to fsl,qoriq-mc binding
-Date: Fri, 28 Feb 2025 14:02:51 +0530
-Message-ID: <20250228083256.55087-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740731592; c=relaxed/simple;
+	bh=FsVOmG+eOn25bBM3FLaDmS1bSRItCTyhAfkQr4QLaYc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V7sGrlnxs6KPxIP86Qy7RcK3FsaxI5/MSXeIaIR0odVvjvSVYEUV8rWWyFsDDX7W78oONKVRRtD/iiARWwi27eWHELkyymlVSi1ZSsoqkvklY0G41YWmt3dXy+26LET8+QMsPSKpSgwM44nKVylU2FiUI/ejdcifbQYSrRtyvrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=aw7sxCaH; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-171-233.tugraz.at (vra-171-233.tugraz.at [129.27.171.233])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z41gB0Bxhz1JJBs;
+	Fri, 28 Feb 2025 09:32:53 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Z41gB0Bxhz1JJBs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740731576;
+	bh=FsVOmG+eOn25bBM3FLaDmS1bSRItCTyhAfkQr4QLaYc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=aw7sxCaH0qhEdPR8CbZIfrvPiH3FGpYjUrQmy1JII1+W+77aVTI44jmglapIsuu+0
+	 HZOOdkh0gL4xUM9Jj957zm1JDYS7VPx6RcxAjEGwcYVztEeFE6x2UWnZWd+9/fhICu
+	 wmpBMTqWDeXOfRyynJGu+nwnLRHttw3txVBjsMpQ=
+Message-ID: <d465e17bfc45e02b2bbd68a4235cc1c7fd7500e1.camel@tugraz.at>
+Subject: Re: C aggregate passing (Rust kernel policy)
+From: Martin Uecker <uecker@tugraz.at>
+To: Ralf Jung <post@ralfj.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>,  "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Ventura Jack
+ <venturajack85@gmail.com>,  Kent Overstreet <kent.overstreet@linux.dev>,
+ Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
+ david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+ hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+ rust-for-linux@vger.kernel.org
+Date: Fri, 28 Feb 2025 09:32:52 +0100
+In-Reply-To: <59c7a1aa-7ff8-4ed1-a83f-5db43094d3a8@ralfj.de>
+References: 
+	<CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	 <20250222141521.1fe24871@eugeo>
+	 <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+	 <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+	 <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	 <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	 <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	 <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	 <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+	 <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+	 <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+	 <59c7a1aa-7ff8-4ed1-a83f-5db43094d3a8@ralfj.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.116
 
-The fsl,qoriq-mc.txt binding has been converted to a YAML schema file,
-but the MAINTAINERS entry still references the old .txt file.
-Update it to point to the correct .yaml binding.
+Am Freitag, dem 28.02.2025 um 09:08 +0100 schrieb Ralf Jung:
 
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> (From a different email)
+> > It sounds you want to see the semantics strengthened in case
+> > of a data race from there being UB to having either the old
+> > or new value being visible to another thread, where at some
+> > point this could change but needs to be consistent for a
+> > single access as expressed in the source code.
+>=20
+> This would definitely impact optimizations of purely sequential code. May=
+be that=20
+> is a price worth paying, but one of the goals of the C++ model was that i=
+f you=20
+> don't use threads, you shouldn't pay for them. Disallowing rematerializat=
+ion in=20
+> entirely sequential code (just one of the likely many consequences of mak=
+ing=20
+> data races not UB) contradicts that goal.=C2=A0
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 896a307fa065..1d60ca116c5c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19299,7 +19299,7 @@ M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
--F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-+F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
- F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
- F:	drivers/bus/fsl-mc/
- F:	include/uapi/linux/fsl_mc.h
--- 
-2.48.1
+This is the feedback I now also got from GCC, i.e. there are cases where
+register allocator would indeed rematerialize a load and they think this is
+reasonable.
+
+> Given that even in highly concurrent=20
+> programs, most accesses are entirely sequential, it doesn't seem unreason=
+able to=20
+> say that the exceptional case needs to be marked in the program (especial=
+ly if=20
+> you have a type system which helps ensure that you don't forget to do so)=
+.
+
+Martin
+
 
 
