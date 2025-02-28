@@ -1,173 +1,125 @@
-Return-Path: <linux-kernel+bounces-538706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE03A49C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:37:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE25A49C2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD6A1897974
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:37:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC3C173792
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF32826FDBD;
-	Fri, 28 Feb 2025 14:37:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA8E26FD84;
-	Fri, 28 Feb 2025 14:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C4C27002E;
+	Fri, 28 Feb 2025 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThEVMJpv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BDD2686A0;
+	Fri, 28 Feb 2025 14:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753451; cv=none; b=Gx/GtLg61jpUqgA1sZbsxA2dfkeQ3kv6Ua5gCzFw8XBIVL5KsvbAEkx0XXuBSkURZOqbkOp+hGVYygrzqqxEw9RbvLw7MSjRc9ZyhkkPbqefK5rmUNRSx6cg6WPUkLJTanhY9upzCEKRCEmFUAXCnkJuKT/ixCxKlB+Y2ZgfuB4=
+	t=1740753546; cv=none; b=eC43oZj5zxkIeaL4oruIT0pYKAnbt31ZlNbxjeV7I7OxTmaBqziAyt5IZZKo+A3prAXgp3AZYAMLgkNoGinh7eoo1iUrLG98Ynw+zbnMICCL7Sl+zJ5p5T5A1N9DC0JZ7pxIHzPSrGwu3788i4krR4ydGgvWoLhXDOHSUoNCTNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753451; c=relaxed/simple;
-	bh=yMgIGlMHYKOZUSzIfEj56HpFq1oS5jJiBWijR4VLAog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=k4gHhrUzQguQtYwp/ua87YORF1odJ9gYbLgp7NvB3KQSmy7gvLtJ9kQGCn2fQHn1Ni7YpZ8n8GRFOTW2cBXRFK8ghdegsDwyreWB74158S539Fx+Yc/9eWe96yLtTBdUT8nHEEIpJt+n6z6F/fcMdBoMOoJ8ITez0NmocfkLmWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 567C91515;
-	Fri, 28 Feb 2025 06:37:44 -0800 (PST)
-Received: from [10.57.79.187] (unknown [10.57.79.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E15E3F6A8;
-	Fri, 28 Feb 2025 06:37:26 -0800 (PST)
-Message-ID: <e101aff2-a08e-4fed-8e38-df1aea44d23e@arm.com>
-Date: Fri, 28 Feb 2025 14:37:24 +0000
+	s=arc-20240116; t=1740753546; c=relaxed/simple;
+	bh=LSZ43G3RguyR8JT13Yid9ixB8s/FRWLidQd9lifiub8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i1gKnJFwRpSmc7PPlRixs1Vl791WK0RTNjTdWPwKS33If5UxK8UPKPTh5PfnLByvGNeqwzWCh2bJNDkBfl7yvA+djNraN2WWCh+dA3+CBpFhOJtZERg81ncMiseKJIzSYOrnlXUM+poKirVi9vSs5C9JiTgAwjaCgcH06Oc7TnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThEVMJpv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EEAC4CED6;
+	Fri, 28 Feb 2025 14:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740753545;
+	bh=LSZ43G3RguyR8JT13Yid9ixB8s/FRWLidQd9lifiub8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ThEVMJpvPz1h4Bnn8Ta0YAgpbhe40tCCl8a7+4tg1JOhTXTKfCEZU4hbHd25THMmz
+	 8oMAaE6qF4jyHRKz0ljMlMJbH9S3fpjmVG6TtpWVbU7pfCAZngVTLJJwPy831SUyEI
+	 1aRpqUdNV92JtJNX0PQ8xJpqT5IUszNfQbIABhqZV2QdrzNUcYGTofJWYvOPVXpBEB
+	 FC7SyboLdhJu9Q6IxIAHVL4DwYNT3suVWhFGaiBNr0cIo8yNBPlZH0WNpCR4dzktar
+	 Ub+Q0Z2BlqtrJBe2AJ+r7vpO/9uctNrilVs3p3/IyPoOdAbu6YZQnKIWc2+rJ6tc3x
+	 nXnFI6D4hJyUQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/5] mptcp: improve code coverage and small
+ optimisations
+Date: Fri, 28 Feb 2025 15:38:34 +0100
+Message-Id: <20250228-net-next-mptcp-coverage-small-opti-v1-0-f933c4275676@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] drivers/thermal/exynos: Refactor clk_sec
- initialization inside SOC-specific case
-To: Anand Moon <linux.amoon@gmail.com>
-References: <20250216195850.5352-1-linux.amoon@gmail.com>
- <20250216195850.5352-2-linux.amoon@gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- Zhang Rui <rui.zhang@intel.com>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- open list <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250216195850.5352-2-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGrKwWcC/zWNwQqDMBBEf0X27EJcKbX9leIhZLftgiYhCSKI/
+ +5S6GEOD+bNHFClqFR4dgcU2bRqigZD30H4+vgRVDYGcnRzRBNGaZa94ZpbyBjSJsVbra5+WTD
+ lpnh3PHEYeKQHgw3lIm/dfycv+Pswn+cFeIPC634AAAA=
+X-Change-ID: 20250228-net-next-mptcp-coverage-small-opti-70d8dc1d329d
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Gang Yan <yangang@kylinos.cn>, Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1407; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=LSZ43G3RguyR8JT13Yid9ixB8s/FRWLidQd9lifiub8=;
+ b=owEBbAKT/ZANAwAIAfa3gk9CaaBzAcsmYgBnwcqFAlyzhVa9vJHyOS5n85FwY4QCgdzPROzqU
+ aY3AB36xciJAjIEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8HKhQAKCRD2t4JPQmmg
+ c9ngD/dobU2167VR16CyPlajKR2shZJyNQJ9LTHUGKH/2ooDvYdjk2V/qKLtJnR6OL+HXjCb3+q
+ FEMsRj+48xxy4mqcOlJ4uM3NC3NFHWHAaPr516Y9XRDbhluV0U6OMkcWhp5lU3pF/6SjJvHrjdb
+ Q1xgbBX8ZMSMbDt0cPn0trbEesye9LSSjBJtQ7UZ71vtqOtc2oJxLqY67glV0s0wCLlw9rZgnNY
+ WiR4ulW9S87XBhyAmXREEjmHo3z9X8bsAVjWC8AaRZ54tbf3ead1vubwinwNr8TO4P+KyvkLxi/
+ Vh/kc9yQLUBIX7Yb+p7U1sjB6G/1+ATeE4poETwDJ/r18yLRStFLkRSmwy2MzV1G99KDGKjX3yd
+ /8WoopSISCrNCW4IV8xE8q98eDtIMkQXjrX+PJmgc1mCjd3EitTiaQ9gyA9dNFX1mjqETXgf5QF
+ EKdCsYRKqflMkSr8TPos+8HwEXWcb8BpP5Pne3PBibx/csrLu1PTGsP9pKv78dc/fvKe67vafAF
+ eII2RDNIgg6WSbAC4mgUDqqDoTt4ztM+GZaQPnUXU4O4Z1W4Gb5DmVtZF1/h/Qaaei+lZrGd50F
+ pwldfa64EIg5viDc/pKnwAS5sr+ayenHjq8ngjZUwDHK0ypBWnaHq/ScGp+PTfXhZ5OhNoyBw75
+ fURSw3/Med34z
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hi Anand,
+This small series have various unrelated patches:
 
-On 2/16/25 19:58, Anand Moon wrote:
-> Refactor the initialization of the clk_sec clock to be inside the
-> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
-> is only initialized for the specified SOC and not for other SOCs,
-> thereby simplifying the code.
+- Patch 1 and 2: improve code coverage by validating mptcp_diag_dump_one
+  thanks to a new tool displaying MPTCP info for a specific token.
 
-So IIUC there was no need to init that clock for other types of SoCs...
-Do we know that for sure (e.g. from other TRMs)?
+- Patch 3: a fix for a commit which is only in net-next.
 
-If that was the case, then simplification here can go further, but after
-some fixes.
+- Patch 4: reduce parameters for one in-kernel PM helper.
 
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v3: improve the commit message
-> ---
->   drivers/thermal/samsung/exynos_tmu.c | 26 +++++++++++++-------------
->   1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 47a99b3c5395..9c138772d380 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1040,19 +1040,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->   	if (IS_ERR(data->clk))
->   		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
->   
-> -	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-> -	if (IS_ERR(data->clk_sec)) {
-> -		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
-> -			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
-> -					     "Failed to get triminfo clock\n");
-> -	} else {
-> -		ret = clk_prepare(data->clk_sec);
-> -		if (ret) {
-> -			dev_err(dev, "Failed to get clock\n");
-> -			return ret;
-> -		}
-> -	}
-> -
->   	ret = clk_prepare(data->clk);
+- Patch 5: exit early when processing an ADD_ADDR echo to avoid unneeded
+  operations.
 
-Here the data->clk is now used in different order.
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Gang Yan (2):
+      selftests: mptcp: Add a tool to get specific msk_info
+      selftests: mptcp: add a test for mptcp_diag_dump_one
 
->   	if (ret) {
->   		dev_err(dev, "Failed to get clock\n");
-> @@ -1060,6 +1047,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->   	}
->   
->   	switch (data->soc) {
-> +	case SOC_ARCH_EXYNOS5420_TRIMINFO:
-> +		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-> +		if (IS_ERR(data->clk_sec)) {
-> +			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
-> +					     "Failed to get triminfo clock\n");
+Geliang Tang (2):
+      mptcp: pm: in-kernel: avoid access entry without lock
+      mptcp: pm: in-kernel: reduce parameters of set_flags
 
-Then here you shouldn't simply copy the old code. Now the data->clk
-is first, so should be 'clk_unprepare()' before return of the function.
+Matthieu Baerts (NGI0) (1):
+      mptcp: pm: exit early with ADD_ADDR echo if possible
 
-> +		} else {
+ net/mptcp/pm.c                                 |   3 +
+ net/mptcp/pm_netlink.c                         |  15 +-
+ tools/testing/selftests/net/mptcp/Makefile     |   2 +-
+ tools/testing/selftests/net/mptcp/diag.sh      |  27 +++
+ tools/testing/selftests/net/mptcp/mptcp_diag.c | 272 +++++++++++++++++++++++++
+ 5 files changed, 311 insertions(+), 8 deletions(-)
+---
+base-commit: 56794b5862c5a9aefcf2b703257c6fb93f76573e
+change-id: 20250228-net-next-mptcp-coverage-small-opti-70d8dc1d329d
 
-You can get rid of this 'else' above and still be safe in your
-refactoring.
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-> +			ret = clk_prepare(data->clk_sec);
-> +			if (ret) {
-> +				dev_err(dev, "Failed to get clock\n");
-> +				return ret;
-> +			}
-
-Here you can further simplify this to something like:
------------------------8<-------------------------------------
-
-+	case SOC_ARCH_EXYNOS5420_TRIMINFO:
-+		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-+		if (IS_ERR(data->clk_sec)) {
-+			clk_unprepare(data->clk); ///// <----
-+			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
-+					     "Failed to get triminfo clock\n");
-+		}
-+		ret = clk_prepare(data->clk_sec);
-+		if (ret) {
-+			dev_err(dev, "Failed to get clock\n");
-+			clk_unprepare(data->clk); ///// <----
-+			return ret;
-+		}
-+
-+	break;
-
---------------------------->8---------------------------------
-
-Or with better 'goto' flow.
-
-> +		}
-> +	break;
->   	case SOC_ARCH_EXYNOS5433:
->   	case SOC_ARCH_EXYNOS7:
->   		data->sclk = devm_clk_get(dev, "tmu_sclk");
-
-
-Also, you should revisit the 'goto' cleanup section at the bottom.
-
-Regards,
-Lukasz
 
