@@ -1,243 +1,298 @@
-Return-Path: <linux-kernel+bounces-539194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06BDA4A1DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:43:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEABA4A203
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A26C3B6591
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74A1189976D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0A27CCE3;
-	Fri, 28 Feb 2025 18:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515F7280A5F;
+	Fri, 28 Feb 2025 18:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XTeC9UQ5"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2041.outbound.protection.outlook.com [40.92.48.41])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="noz7tsAW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FCB27CCDB;
-	Fri, 28 Feb 2025 18:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.48.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768142; cv=fail; b=L9cv9myLagAvAExaaMblKToqdzjRAnFCblfqmKDgAZhw224xy8p8Vmge9yr1b+9lP9McnUhgHNpkOxGWH/q2ZXAG6UVZEjmDpaXHjnztvRKOC+jAtLzP0mqGKIw3MYaQSuXvVDrWsNMN/IqdVd4xl0BMTAQY8ICI/QrQzvaf8Qc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768142; c=relaxed/simple;
-	bh=IYU4yNWQJxcSc4IimLjyVImt8pFgPppWslmXSQefWBU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LgxgntbHIpNDQ0b0jHquNzq4WOqG1MwEfOYIVukk9JkizNrLNDoqYtPi1KVUtH9+5VQsm9tPrC/zW7Xp0x35iAmY7HPlNJTHiCcguXfi7hv0guUzmFMOpTrp17TconjZVGIeX1XAKB1EmO2fmjjRaQPMT8RZyRBYmvni0bnRfQ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XTeC9UQ5; arc=fail smtp.client-ip=40.92.48.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MMfQIuePcZnuZpxlmpn2U0w2AtU+bhB8nspizlqx5O1smqUCDkpXcWi1zW8zWIIPPP44+Di4PdAUcZiRH6IMnvUAq/mersUkdNVMPhZawADqg/xJIozo8niARxwG16NFGlozXqk7y/LT7X062v5VDTMVbaI6lLMMbXU34G2+fE6Y0F55qmxqhV/Zc8rVYJiVkziI/eiUsf5+hZnCA4HHZpe53gnQtryAIdKoNZTkw0AyxI3s8AYF5JXFo6eAB2vcxu8Zg+kDtL1jLYQGAHswg3tP0Z5Upv2OwF62vPNL2rrASh/D+zPnPpm4Wvdwhf1vKMZF8pfE1wRuVe0HRqpQ0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j//WSvoHlwFDBVHuBSxoitbu+/WgacDrwMids6Oqmu4=;
- b=c11KNNMAzS7u3ks7Z385NWluvCXjDxu7pA/zwxMWvplKGXFkSSmxYvCZMKFN2J55fpFJVSQFe7lxF8SqKkx/uuZuJZnESvj8SdkgKvcpXC+yf77nT4EM61lJBgTlqgffsN/Kc5c+Ek5aen7f9Eaki78LpyKDAGD4S4Od3tVgTzu6Qz9FpPanFGEyriCljMgkto2ih528oRSVcHD3+oyApuiWY6ItmL/NMVC0f0vqlbTzNHXt7QdNhS09/2jV36If52sNxddKukG/lmcAkhmWnMkvuZB9TfvulxSwGBgSiydS/1za0oHS4OOqv+oizIOLiL3c3DjkRCykjCiBPneUWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j//WSvoHlwFDBVHuBSxoitbu+/WgacDrwMids6Oqmu4=;
- b=XTeC9UQ5ElNuZRfvZ96iRSdHYiQcKn5AqtO3t0jlbcckk4zQjAEJ0qTmdS3KcEcuerZIjLlr4uyxPWxsC3LmlGsYP3ytnPTlgLdf7zmvJGHd5O9bxzw/MOYFAei6JMmMQeKCSyKl/SUNw8KRK3L8yAwaZWrXVRtktB2QUO1hVBtxdM8pSTR57omlemlh7sK0X7pvMVcDJF/NAquUcgqVpVfnWqVnKcrNu5zakpb/mZljp9XMhf9Mn/fw0pdCSrvj6Q7rUpXYZyhToBS1QiOJ8IHKE0NXLrTR3FdTeHPJRLWMxQE+ypBXzV022nfWDnKF/4YHSHlONZw7cDyigfkC1Q==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by DBAPR03MB6469.eurprd03.prod.outlook.com (2603:10a6:10:190::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.20; Fri, 28 Feb
- 2025 18:42:17 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8489.019; Fri, 28 Feb 2025
- 18:42:17 +0000
-Message-ID:
- <AM6PR03MB50809C9EB32C9705DF6EA14299CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Fri, 28 Feb 2025 18:42:11 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH sched_ext/for-6.15 v3 3/5] sched_ext: Add
- scx_kfunc_ids_ops_context_sensitive for unified filtering of
- context-sensitive SCX kfuncs
-To: Tejun Heo <tj@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, void@manifault.com,
- arighi@nvidia.com, changwoo@igalia.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080648369E8A4508220133E99C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DKSgzZB5HZgYN8@slm.duckdns.org>
- <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0109.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:c::25) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <3d1fa4de-f11f-4dd3-947b-078ccf20ea71@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA8D280A35;
+	Fri, 28 Feb 2025 18:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740768255; cv=none; b=XLs1Zer4K2xcA/MIxcQuE6PYsS1q/+n9JbrFACvWZACG3g3r4JkI7fSIBtFB6HnRkyGwH8ZilndTnhZZFmdf1nOu1FRSW5318NB7Xk5bUJ0q1gQRAgmHL57Ipu90XjccLKIg6qbpm1+C6ITdVuetX0rqp6yzdgKjSlhiDFHesvQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740768255; c=relaxed/simple;
+	bh=VP5ykv4LHxPDvDo/SxzXdvGOsrjZ4YD2RrrzaDGdgiM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A0o/O/pvKbxqbrjig6MUwIVgXROHpH/Zqd2pczXiW0zmPWeHfiZtWC9jds96XAaRckLIBo3V3kcfajZn9UXaxdsmCPI6QtQSb/r+sUMhey/i1olr16OMboHtUW4zqCO9snE0hhCtr+qZesYT+np0XK/I6pQJXpUc6W3Br9eOy0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=noz7tsAW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXGrN018756;
+	Fri, 28 Feb 2025 18:44:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B97ppNrPDPppdC54rMWu0qKrJkkHW7sNQ77xfcM5LQo=; b=noz7tsAW4x605aRg
+	kMrrRwjvbGE58iAtFp8oyuuGD2TRRgobtmovkua9Syi84hK76V3SCGBjopj0Kmkt
+	N7s+t/36ki1FlX9oFuLildVo1uc1iByc1qG7ddYhrav/LdvKON6SoJpEhKMatxLY
+	KOXacdU+8vuo8FZPxl6eorhh58OliwFXLbySiTi/RmCx8FUZUB1e6qEEzxhh7vJE
+	q2G1ZHGMRq7bd1BAevmmvoXkSfpXdQycUtaKVFSSWUAdPhn55ODTch9U9XA5m8XJ
+	ODqy+gCzgWrETJdnRHJ1TlSrFp13eYYp6enGGLvxdNvJY7Kz8MfFM70WGL9nSQM3
+	cbjUpg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prna97j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 18:44:05 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SIi4Dm011486
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 18:44:04 GMT
+Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 28 Feb 2025 10:44:01 -0800
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+To: <ath12k@lists.infradead.org>
+CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sowmiya Sree
+ Elavalagan" <quic_ssreeela@quicinc.com>,
+        Raj Kumar Bhagat
+	<quic_rajkbhag@quicinc.com>
+Subject: [PATCH v8 10/13] wifi: ath12k: Register various userPD interrupts and save SMEM entries
+Date: Sat, 1 Mar 2025 00:12:11 +0530
+Message-ID: <20250228184214.337119-11-quic_rajkbhag@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
+References: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|DBAPR03MB6469:EE_
-X-MS-Office365-Filtering-Correlation-Id: 901536d7-c24d-4cc3-9a07-08dd58279f60
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|15080799006|5072599009|19110799003|6090799003|56899033|440099028|3412199025|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ay9GbHg5N2JaRG9UbmQ1aEJTWlNwenFsMnU0N2N1SHgvWEFleGtyTVpicWZ5?=
- =?utf-8?B?d1VITzYvcFlxUHJkSytvenN0eGl5bGJPR2hhYlNqZXJyY2lnN1I2ZDZnVFY2?=
- =?utf-8?B?d3FQWHRUcVVkV3lFY2l6VGpvUklQMnBPZjlHUGd5dmFYZVdtczRzcCszcmpV?=
- =?utf-8?B?THFzZm9VcFZQLzVxblk2OWJYcmVEcGNCSEtmK3JEc0xNN2kzWHdRN0MwaUNx?=
- =?utf-8?B?ZmpqVnViWkVWbWZCdTlsdUthaWYxUGxjNnBac2VUQ2NDc0wzWGRBVHBIaXdL?=
- =?utf-8?B?UjRSQjErK3k3aHZMbmgvNEJKT1JXL3JNN0lNZ2hwVXpPRlEwL2Q2VW5DT3M5?=
- =?utf-8?B?dmNxdkZnS2NVamh0L0lRK3Z5S2ZoZ3ZmRGFyUzdDQnhlSWZQYWFrajVhM2Mw?=
- =?utf-8?B?Nk9sMEFUQndxUmRnV2lJYW5hWGFWWElqSW8vVXlNYzVXVG1IK0ZsNnk1NGN4?=
- =?utf-8?B?VzFmU1VISEpVakJteDhBaXQvZGUwSDlVeUdpM1hsL3FjbFdBNTZEcHBHYXdV?=
- =?utf-8?B?MGl0eHJzajc4Y1hFSHZiV0lFcmhUMFVNNEtITUdNeFE0YWFXckNhOExUS0VB?=
- =?utf-8?B?d1VDVGRsakxHVGlTcU5ES1Q3U0ZXaWtQNkdhSWhmSVAyWDZPenZ5MlVSS1A3?=
- =?utf-8?B?L1JGRlBnRzl1SWEzTnhBckw0TFJhcjRGNk9sU05oc3dESTVPN0RjbGpGYlk2?=
- =?utf-8?B?eDJrdjR4N2ppd0lDUmkrL3FISEJXNG5JVWFrbXhVcU1COXBtTm80U2txSVAz?=
- =?utf-8?B?eEVEVkNnNzliMFZYZG1NSXN3cHFYa1RuZEpwSmFUZ2hJZUVjbVdkczA5cDVV?=
- =?utf-8?B?SDErSkF6MzZLQngrVGdwR3A4TlY2d1JNNkJqblhSQTNBaGVZQkNlK3hFVWRR?=
- =?utf-8?B?bHBSVE5wT2dnSXMxbEhPQloxQ050S3R6TGI4S2RPajk5VFpna01iQ0wxYURr?=
- =?utf-8?B?UnphZGpYcm94VnUrTnZ5WCt0c2tiZGhENVdWKy9QV0Z1YThSWng4azczMkpP?=
- =?utf-8?B?KzlDMVFHTGNBTitnYk5BODBsWUVzRjdFY1krOGlZbjA4dlJkUUZDSFVtUlRH?=
- =?utf-8?B?Sm1IUEhXcnU0dTZRNC9kNmplVHg0Z2ZNNkRnaW9MaituaHRud25aWldUNGVV?=
- =?utf-8?B?bGVUYnpCNlN2RDk0Q0x6dmxQNFpiSkRTbHJ4bWt2Q25RVTFJeWlTcFVJb0FY?=
- =?utf-8?B?OVpCZFdpWEtJQ01JeUJ4YUhNY1VobkJRUVp3MTNDRFFBZlFuK3BRNTVHZndr?=
- =?utf-8?B?UE5leGdLRCtWMWgveHdWQ2wxM085VmhkQVRZcldVNnZXTkErdWRzZS9zcVli?=
- =?utf-8?B?UlhZcUJZZ1ZEdDZ2N01nVi9ibTlFY0VlZkFGcVdhdjFoeGd6RUJsaVdkQzh6?=
- =?utf-8?B?NVJrbXdtcTlmSjJsaUhhUGRoSVVEWkpPS2liRmtQR1ZKNmRNNiswOVkwNXo2?=
- =?utf-8?B?YzFvY1VIOGRZQVREK3Znam10bFNlRHVFOVRFb1ZxRkQwaHBmSlZZY1FoTStS?=
- =?utf-8?Q?g0alqM=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MHZzWUp2ZmZrWkF5UlREUG11bmN0UGRZTU5pMzRyUTZXL1FvblpUWFVXcGpm?=
- =?utf-8?B?dk43VlZaNkIyV2UrV0FyNWh2V0FNWldZZDVvUjlVSUpteW1oRXlhRUNMN3JB?=
- =?utf-8?B?V0F6YTZBTm9MTWFNR1Z5OU9ZaVF5d1VrNGtJRlVNdkpGZ3V0R0JQK3VOV2NP?=
- =?utf-8?B?S25Bc2tJckxYWjhXSXVIMXNpeE9YZytUL2U3M1BTSUQvelQ2ZndvRG1raStv?=
- =?utf-8?B?MTVEWEpBUTcxU1VkMS9HN2FsRnBtNWt2bTdlTHRVN09BSVhVS3BzNFhETXcr?=
- =?utf-8?B?QW5VMHRKR1pBYjRJQllTN3drejBwUFROcW1VVms1R0hZWmF0ZmN5RVNkL1pv?=
- =?utf-8?B?RzlRWi9QYTc0WWZXYXZlWnNxejJvRVJKbG9Gd3F3TlFzdzBqOWZtdU82ZnB1?=
- =?utf-8?B?MU1FQWwxRzdPcXkzQ1IwK2dwTzd3QkdyUTJjYlQ2M2RBWmdXdjBzRW9peEov?=
- =?utf-8?B?Wmp5VUVzZ1J2VHBuZlpmR3VCTWdCTVhkUEkyZ0lmam9BQ1lzd1gwTkNFNVpH?=
- =?utf-8?B?SUVDcHMvM1JJSkNBd1B2Q245cGNVRnJDU015QWZ3SW4rZ2Z6eWlwdm8zbG84?=
- =?utf-8?B?RWgvYTNRRFhMamRvRXhLMERhSEJRN0lHS1FzU1lnY0NnbjlrUkJnWURhMEE5?=
- =?utf-8?B?RnA3MWtldDhTM2NNMWk0YTJOSm1SNnd4OEJQVm8zRnJ0cThsNEJPcFYwM2Zo?=
- =?utf-8?B?U3htaTNaVXllN0NlK1NtOXBpdzRBNVpwRHA0TzdlK2kxaUc5S0IrR3Y2Z09F?=
- =?utf-8?B?VTBoRjBzbkRLRG1wV2hxdEV2bGdtU01hN1AzblBGN2tmTUcva1NOYit4eUpB?=
- =?utf-8?B?VFpvVHZmeUdwN0p3clo3S0pwUWdqaVRXQTNRc1IySEluZnZTVFAyeVY5cGFz?=
- =?utf-8?B?V3JSNldvaW5Md1gwWkkyUGh1YkJaalVhN0YwNTkyazVhTFREZEk2ZlBtNzUv?=
- =?utf-8?B?cXpTWWFmaWRFaEJmVkRiamNXTzZKWTN5QVRmeUFLTGgrZVk3WmJlb0hwampw?=
- =?utf-8?B?K0V2UGZLU2Z0RzNrRzlid25UUVA4SnhwaHR6aFVqYURNOS9iRStpU0JGTE8y?=
- =?utf-8?B?Wm9LdFo5cUVUTnk4cEJrN3NKTkJCRVdjTkptYWNHSk9TT0gxTURCWnpWNVgz?=
- =?utf-8?B?cml3THIrL2ZYRnlZNTV2NlJDODBkMEcvQkM3YUJUNktadjNWcnJnYllRRnBS?=
- =?utf-8?B?VE12RjJ4alBJR09ydGFnak9oOHFvb0pxVkhSOG1GbkczYmdWcWpKaWZSOFRN?=
- =?utf-8?B?MGtQMDBvajRPYzRhMTAzMVYxdUxoN1FJY3l3eUZyZzRpWTJ1VHFZUWJXM0Jp?=
- =?utf-8?B?aDZ2dUFNNC9LbkJyZUNJeUEycVdEUVJSbWtZY1ZaRnFQbGlvYi85aWpxRzZY?=
- =?utf-8?B?OE1ER092allKVVVjZ1NhWDJyZk1pYmNTblhnME1laVBuQW05SUUvODd4VktX?=
- =?utf-8?B?bEZjeGdzV1F4YWRhTHJzbEFySWRVcnp6UWN5Rmx3aWRpU2o5d20zMWZUNkxs?=
- =?utf-8?B?aDc3MVM4dzNsbDhlay93ZkVCZ0w4ck90bkpGeFovcmJRSTBOdWwvanF2NmlP?=
- =?utf-8?B?Z0tGL1RkK0E5U29hRExCTExPZlI4anFEOVV2MEVXdVpXMitJcHdxMHh6cjVU?=
- =?utf-8?B?b2pZUDNuNGI5RUtTWnpRZlRBZTJEM1NrVzQvaTAyclRlVFBvK21kLzdBWVoz?=
- =?utf-8?Q?mbe67uAZ6w4YmmuxtqVO?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 901536d7-c24d-4cc3-9a07-08dd58279f60
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 18:42:17.2610
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR03MB6469
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jRloaZaJQ95I_huaq1DNneczzG2gqAlJ
+X-Proofpoint-GUID: jRloaZaJQ95I_huaq1DNneczzG2gqAlJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_05,2025-02-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280137
 
-On 2025/2/27 21:32, Tejun Heo wrote:
-> Hello,
-> 
-> On Thu, Feb 27, 2025 at 09:23:20PM +0000, Juntong Deng wrote:
->>>> +	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS &&
->>>> +	    prog->aux->st_ops != &bpf_sched_ext_ops)
->>>> +		return 0;
->>>
->>> Why can't other struct_ops progs call scx_kfunc_ids_unlocked kfuncs?
->>>
->>
->> Return 0 means allowed. So kfuncs in scx_kfunc_ids_unlocked can be
->> called by other struct_ops programs.
-> 
-> Hmm... would that mean a non-sched_ext bpf prog would be able to call e.g.
-> scx_bpf_dsq_insert()?
-> 
+From: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
 
-For other struct_ops programs, yes, in the current logic,
-when prog->aux->st_ops != &bpf_sched_ext_ops, all calls are allowed.
+Q6 and ath12k driver communicates using SMEM and IRQs. Spawn interrupt
+is triggered once the userPD thread is spawned. Ready interrupts denotes
+userPD is completely powered up and ready. Stop-ack is to acknowledge
+the ath12k driver that userPD is stopped. Ath12k driver needs to set spawn
+bit in SMEM to instruct Q6 to spawn a userPD. Similarly stop bit is
+set when userPD needs to be stopped.
 
-This may seem a bit weird, but the reason I did it is that in other
-struct_ops programs, the meaning of member_off changes, so the logic
-that follows makes no sense at all.
+Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
 
-Of course, we can change this, and ideally there would be some groupings
-(kfunc id set) that declare which kfunc can be called by other
-struct_ops programs and which cannot.
+Signed-off-by: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+---
+ drivers/net/wireless/ath/ath12k/ahb.c | 79 ++++++++++++++++++++++++++-
+ drivers/net/wireless/ath/ath12k/ahb.h | 16 ++++++
+ drivers/net/wireless/ath/ath12k/hw.h  |  1 +
+ 3 files changed, 94 insertions(+), 2 deletions(-)
 
->>>> +	/* prog->type == BPF_PROG_TYPE_STRUCT_OPS && prog->aux->st_ops == &bpf_sched_ext_ops*/
->>>> +
->>>> +	moff = prog->aux->attach_st_ops_member_off;
->>>> +	flags = scx_ops_context_flags[SCX_MOFF_IDX(moff)];
->>>> +
->>>> +	if ((flags & SCX_OPS_KF_UNLOCKED) &&
->>>> +	    btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id))
->>>> +		return 0;
->>>
->>> Wouldn't this disallow e.g. ops.dispatch() from calling scx_dsq_move()?
->>>
->>
->> No, because
->>
->>>> [SCX_OP_IDX(dispatch)] = SCX_OPS_KF_DISPATCH | SCX_OPS_KF_ENQUEUE,
->>
->> Therefore, kfuncs (scx_bpf_dsq_move_*) in scx_kfunc_ids_dispatch can be
->> called in the dispatch context.
-> 
-> I see, scx_dsq_move_*() are in both groups, so it should be fine. I'm not
-> fully sure the groupings are the actually implemented filtering are in sync.
-> They are intended to be but the grouping didn't really matter in the
-> previous implementation. So, they need to be carefully audited.
-> 
-
-After you audit the current groupings of scx kfuncs, please tell me how
-you would like to change the current groupings.
-
->>> Have you tested that the before and after behaviors match?
->>
->> I tested the programs in tools/testing/selftests/sched_ext and
->> tools/sched_ext and all worked fine.
->>
->> If there are other cases that are not covered, we may need to add new
->> test cases.
-> 
-> Right, the coverage there isn't perfect. Testing all conditions would be too
-> much but it'd be nice to have a test case which at least confirms that all
-> allowed cases verify successfully.
-> 
-
-Yes, we can add a simple test case for each operation that is not
-SCX_OPS_KF_ANY.
-
-> Thanks.
-> 
+diff --git a/drivers/net/wireless/ath/ath12k/ahb.c b/drivers/net/wireless/ath/ath12k/ahb.c
+index a6edf288c22c..4ac2c9179f2d 100644
+--- a/drivers/net/wireless/ath/ath12k/ahb.c
++++ b/drivers/net/wireless/ath/ath12k/ahb.c
+@@ -9,6 +9,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
++#include <linux/soc/qcom/smem_state.h>
+ #include "ahb.h"
+ #include "debug.h"
+ #include "hif.h"
+@@ -23,6 +24,11 @@ static const struct of_device_id ath12k_ahb_of_match[] = {
+ MODULE_DEVICE_TABLE(of, ath12k_ahb_of_match);
+ 
+ #define ATH12K_IRQ_CE0_OFFSET 4
++#define ATH12K_MAX_UPDS 1
++#define ATH12K_UPD_IRQ_WRD_LEN  18
++static const char ath12k_userpd_irq[][9] = {"spawn",
++				     "ready",
++				     "stop-ack"};
+ 
+ static const char *irq_name[ATH12K_IRQ_NUM_MAX] = {
+ 	"misc-pulse1",
+@@ -547,6 +553,72 @@ static const struct ath12k_hif_ops ath12k_ahb_hif_ops_ipq5332 = {
+ 	.map_service_to_pipe = ath12k_ahb_map_service_to_pipe,
+ };
+ 
++static irqreturn_t ath12k_userpd_irq_handler(int irq, void *data)
++{
++	struct ath12k_base *ab = data;
++	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
++
++	if (irq == ab_ahb->userpd_irq_num[ATH12K_USERPD_SPAWN_IRQ]) {
++		complete(&ab_ahb->userpd_spawned);
++	} else if (irq == ab_ahb->userpd_irq_num[ATH12K_USERPD_READY_IRQ]) {
++		complete(&ab_ahb->userpd_ready);
++	} else if (irq == ab_ahb->userpd_irq_num[ATH12K_USERPD_STOP_ACK_IRQ])	{
++		complete(&ab_ahb->userpd_stopped);
++	} else {
++		ath12k_err(ab, "Invalid userpd interrupt\n");
++		return IRQ_NONE;
++	}
++
++	return IRQ_HANDLED;
++}
++
++static int ath12k_ahb_config_rproc_irq(struct ath12k_base *ab)
++{
++	struct ath12k_ahb *ab_ahb = ath12k_ab_to_ahb(ab);
++	int i, ret;
++	char *upd_irq_name;
++
++	for (i = 0; i < ATH12K_USERPD_MAX_IRQ; i++) {
++		ab_ahb->userpd_irq_num[i] = platform_get_irq_byname(ab->pdev,
++								    ath12k_userpd_irq[i]);
++		if (ab_ahb->userpd_irq_num[i] < 0)
++			return ab_ahb->userpd_irq_num[i];
++
++		upd_irq_name = devm_kzalloc(&ab->pdev->dev, ATH12K_UPD_IRQ_WRD_LEN,
++					    GFP_KERNEL);
++		if (!upd_irq_name)
++			return -ENOMEM;
++
++		scnprintf(upd_irq_name, ATH12K_UPD_IRQ_WRD_LEN, "UserPD%u-%s",
++			  ab_ahb->userpd_id, ath12k_userpd_irq[i]);
++		ret = devm_request_threaded_irq(&ab->pdev->dev, ab_ahb->userpd_irq_num[i],
++						NULL, ath12k_userpd_irq_handler,
++						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++						upd_irq_name, ab);
++		if (ret)
++			return dev_err_probe(&ab->pdev->dev, ret,
++					     "Request %s irq failed: %d\n",
++					     ath12k_userpd_irq[i], ret);
++	}
++
++	ab_ahb->spawn_state = devm_qcom_smem_state_get(&ab->pdev->dev, "spawn",
++						       &ab_ahb->spawn_bit);
++	if (IS_ERR(ab_ahb->spawn_state))
++		return dev_err_probe(&ab->pdev->dev, PTR_ERR(ab_ahb->spawn_state),
++				     "Failed to acquire spawn state\n");
++
++	ab_ahb->stop_state = devm_qcom_smem_state_get(&ab->pdev->dev, "stop",
++						      &ab_ahb->stop_bit);
++	if (IS_ERR(ab_ahb->stop_state))
++		return dev_err_probe(&ab->pdev->dev, PTR_ERR(ab_ahb->stop_state),
++				     "Failed to acquire stop state\n");
++
++	init_completion(&ab_ahb->userpd_spawned);
++	init_completion(&ab_ahb->userpd_ready);
++	init_completion(&ab_ahb->userpd_stopped);
++	return 0;
++}
++
+ static int ath12k_ahb_root_pd_state_notifier(struct notifier_block *nb,
+ 					     const unsigned long event, void *data)
+ {
+@@ -659,7 +731,8 @@ static int ath12k_ahb_configure_rproc(struct ath12k_base *ab)
+ 			goto err_unreg_notifier;
+ 		}
+ 	}
+-	return 0;
++
++	return ath12k_ahb_config_rproc_irq(ab);
+ 
+ err_unreg_notifier:
+ 	ath12k_ahb_unregister_rproc_notifier(ab);
+@@ -764,7 +837,7 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
+ 	const struct ath12k_hif_ops *hif_ops;
+ 	struct ath12k_ahb *ab_ahb;
+ 	enum ath12k_hw_rev hw_rev;
+-	u32 addr;
++	u32 addr, userpd_id;
+ 	int ret;
+ 
+ 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+@@ -782,6 +855,7 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
+ 	switch (hw_rev) {
+ 	case ATH12K_HW_IPQ5332_HW10:
+ 		hif_ops = &ath12k_ahb_hif_ops_ipq5332;
++		userpd_id = ATH12K_IPQ5332_USERPD_ID;
+ 		break;
+ 	default:
+ 		return -EOPNOTSUPP;
+@@ -793,6 +867,7 @@ static int ath12k_ahb_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, ab);
+ 	ab_ahb = ath12k_ab_to_ahb(ab);
+ 	ab_ahb->ab = ab;
++	ab_ahb->userpd_id = userpd_id;
+ 
+ 	/* Set fixed_mem_region to true for platforms that support fixed memory
+ 	 * reservation from DT. If memory is reserved from DT for FW, ath12k driver
+diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
+index 1105473917ce..b17e7693b31a 100644
+--- a/drivers/net/wireless/ath/ath12k/ahb.h
++++ b/drivers/net/wireless/ath/ath12k/ahb.h
+@@ -25,6 +25,13 @@ enum ath12k_ahb_smp2p_msg_id {
+ 	ATH12K_AHB_POWER_SAVE_EXIT,
+ };
+ 
++enum ath12k_ahb_userpd_irq {
++	ATH12K_USERPD_SPAWN_IRQ,
++	ATH12K_USERPD_READY_IRQ,
++	ATH12K_USERPD_STOP_ACK_IRQ,
++	ATH12K_USERPD_MAX_IRQ,
++};
++
+ struct ath12k_base;
+ 
+ struct ath12k_ahb {
+@@ -34,6 +41,15 @@ struct ath12k_ahb {
+ 	struct completion rootpd_ready;
+ 	struct notifier_block root_pd_nb;
+ 	void *root_pd_notifier;
++	struct qcom_smem_state *spawn_state;
++	struct qcom_smem_state *stop_state;
++	struct completion userpd_spawned;
++	struct completion userpd_ready;
++	struct completion userpd_stopped;
++	u32 userpd_id;
++	u32 spawn_bit;
++	u32 stop_bit;
++	int userpd_irq_num[ATH12K_USERPD_MAX_IRQ];
+ };
+ 
+ static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
+diff --git a/drivers/net/wireless/ath/ath12k/hw.h b/drivers/net/wireless/ath/ath12k/hw.h
+index a4332588b117..d4a2e47169d9 100644
+--- a/drivers/net/wireless/ath/ath12k/hw.h
++++ b/drivers/net/wireless/ath/ath12k/hw.h
+@@ -97,6 +97,7 @@
+ #define ATH12K_REGDB_FILE_NAME		"regdb.bin"
+ 
+ #define ATH12K_PCIE_MAX_PAYLOAD_SIZE	128
++#define ATH12K_IPQ5332_USERPD_ID	1
+ 
+ enum ath12k_hw_rate_cck {
+ 	ATH12K_HW_RATE_CCK_LP_11M = 0,
+-- 
+2.34.1
 
 
