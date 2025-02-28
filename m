@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-539153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E43A4A195
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:30:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105D8A4A197
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6110A3AD603
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753143A8737
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3880527780C;
-	Fri, 28 Feb 2025 18:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD53A275617;
+	Fri, 28 Feb 2025 18:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2RVXD+v"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cFwHs9lX"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE974276051
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8431F4C85
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767396; cv=none; b=IyN7mhEwxZY+1YU2FXEV9DOAnwGpTNKSadR8F9JEFHlREIlsHNzHL4Mn3PJDWGSzzo/JuxQGjkn4LgjfmtGYvxLi/lZ9Sv/XCkdQGEi7LTrEG+1JL9NiqQglloJpnEQHunJKuMlLMtp3VYUnKqBZfGZlyRg1W+Dmq/IN+6EFtQE=
+	t=1740767398; cv=none; b=fiOtLdoo/Xowlrl0hQB53xXKRf+9kNBQwFrOUou+oqlCxYrp7ffCdePHBRdzCMmOx5sTOmAcr98NKMLTPPtL+V4jiobUlVx29ddRDh+AJhiHm3RAZHH33ggvS5XIBuQaximvsSElPGvYoEOVbgUfnGoARyRHU13mH2xMEuBl6cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767396; c=relaxed/simple;
-	bh=s0deOUnNgMIFiGIX8UNyQZNO2RKvZSA/G/yOBXDqhdk=;
+	s=arc-20240116; t=1740767398; c=relaxed/simple;
+	bh=2LQrg0zUkb/TTwCKsSCtWsYItLgKQyWOhb8ym+5nzxI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PXU3hYfQK4sDsDAtryfwS7wOvHglUKkma8zJRmZmt2k4y1ouj3SdRM3Xv/qu/XfzhR6qu7S8MLJXvsMkzj2Zx8j4rhqgEjDbkUJxRUCpBxANxhajuvOu3vKrV8ntZuMeZtpGxkcQ1D3VA9opybt42BwIxbk8rA7An7k2tyOXTIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2RVXD+v; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=KDPpElN+1Y8kFLKgoS7cJl0zjwJappUKVkZHRzSCfI1Srh6PZpG6gxCskiOX60bmMdA4RTD+WNwRI54Oa75oCA2jGxSbRQilAx54WYd0c8HpF/vJok+pA6ITOAaTpQuXrMwV6cn0B0AEcwi+/MotC8nH1bKvEZxH2sy8pUQ7LNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cFwHs9lX; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22328fb6cbfso44745285ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:29:54 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1eadf5a8so5048833a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:29:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740767394; x=1741372194; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740767396; x=1741372196; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cv0B4/uThibyDXPGrCU6CzEy8xZoS0FJOJ+cAKPL8G4=;
-        b=e2RVXD+vmKeg6JaEbngDcna7T+WMYhxk0WKLlUgJD740Bw0So2cqUDsAOKVyHJqzV7
-         Cdg4qEG1IV+pvMzDG6XpY22z+fzOrT+Act2cXkSTyed9QLQQtkjdOzsVNRIAlqrEgRYF
-         VLP6wrF+449Fjr3bHO1fuEHbVCQskqbhQyqjnLs7+d7AyaBvyyq2LoiiBkoWteVL/F/1
-         +4LUOMRwuMWiHld4Scd5jkNAoviLvmTt51fsCQC0yiQVaOna/57yAkXS3HYfXQUXxhkO
-         DWQPS8L80zNfIV2CZDMsrFN/GvEmr7stKBwfV1iNCOEdcYuNvWeCTj28zZ+xxYCGTWUl
-         RImw==
+        bh=W6gZ1EoDBME1HGkx1DBWcAG+gCVdWdKNzaRnW4BhOvY=;
+        b=cFwHs9lXI6B9JqRZQzUtpi5B45rhuRQnn6kr7Es3ZYMXwuyiB1wwfIbZeCiTvk1iDk
+         Qnv5f/T9iUKvzFtW4gbrYhOK74Sla0hyqihqs3fonv01UGyecMPcmn1JRi7AI1VP3h8u
+         CB1KiGK2KZUY770Fmpz3kh5SqmSJVBlLyGZ/g/glPljRsMNgJRR0p4Va0elrF9a/h8Rh
+         9T7Z9ZRWxpjtpyPzedOW0SaDU071wj2COt+Lj2mZF3NGOdl50KYWt9VHPO54hT5ssfpb
+         SYs4wuItHfGrnWxh1zXBfQJH2dMcd1AVUaZp97rpYu62zraAdj/UJwubderp6UyV8Zsd
+         ek6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767394; x=1741372194;
+        d=1e100.net; s=20230601; t=1740767396; x=1741372196;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cv0B4/uThibyDXPGrCU6CzEy8xZoS0FJOJ+cAKPL8G4=;
-        b=M8ZmzPXr6hoTSAmrlfBSlKlIeIdN+EEq9b3KVRC46k2Uo0C2STO1VCWhI0hrsb3IPe
-         VTkD7qKDN94FDjdRf0BRetFwF3lSHByYezKCCi644gM5yr8grxGqxxMH9gsZX/ph/R1p
-         o0joXC95alyh1y2clN96lAlnMxdGJtH4ArlBvZM4bwaDYqrCrB5g7YWgFW1v6ZyUeJMr
-         wBZ/osL5W3XfAC2x1JRoHDjdoJ+Ffzo9DGHxVioc0ahH12X273Wd/fZjF9rjVVDeH9KF
-         67lReh61stJRH/pTQZr+vNIohgiLYmr6gZqmEZl31r5i/ffGPNjMR8ngyL0PkZ9yj9zT
-         Tu/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVryUjkhCbRXrDmjVsdBIKV8xDt/JbD8wW8fgwgAGKBB4aAr17nnROT50Pfks/eMzAsGmMzv2nYctH21tI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzse5PbFrvnQBKP7OWp+22+Hx5fGPNnN1GodxUCe1aB4g+NAFPg
-	1ZXxne4Qv/NgYniqmH6FY34QJHmdlknxeaWyxQ6TbOKFHFsDEbo6VrCeZTYsRroSiNHPXg==
-X-Google-Smtp-Source: AGHT+IGsUKkAmT8g+s3WZ9uk+Wed7lmB9nB51UlYclAmGf34PovRshjaGeeXtqu2JnyLABvgZzxxfd3d
-X-Received: from pljc15.prod.google.com ([2002:a17:903:3b8f:b0:220:bf5f:1984])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f693:b0:21f:9c48:254b
- with SMTP id d9443c01a7336-22368fa8f86mr82559765ad.24.1740767394131; Fri, 28
- Feb 2025 10:29:54 -0800 (PST)
-Date: Fri, 28 Feb 2025 18:29:04 +0000
+        bh=W6gZ1EoDBME1HGkx1DBWcAG+gCVdWdKNzaRnW4BhOvY=;
+        b=O/5WQ6bRrb0tm21vUSe5BdFZs6NoYFOrLopv5oxO41kaJ5C11bb9/EaPegC+NKSUh6
+         8Cu48p8l7hofRGQlZl9Kk9+tQRdsC/Mc4emL+77o1yrRvi8Pr/dFqfz1vfmU705ukq2k
+         fX1EhbGJqWQJgVK67+AXCXpHyEe6U6xEXyMV0B2J1D3vMy7GT/vCkbfxQNKJQwe2IWDO
+         MeMeQXvFnoR5wQaw7s42eLMp3luuKkRrXma0CFYzFfgB82V86fOWiL6QDaTox9fPPxBK
+         YTP1At6DiWl16/BUH8SiCMu5VuDC9LBcw7V68l18VYvp/ozBR9i8RavNRiu5L0uqCizH
+         d5RA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsDPAtCbDP3/ns4BX+WF3ITeGxNIS6ah3ZEd39bC0B7k78L1dk0icmxbx3xVmrTL5p/Pz+ZgR8BdbEL0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD8pB5OtfqODX1J1XZwGT8Z+oe/hJbL4vsOoFNh+/iciyLYn0e
+	DncKGSH9SKZZUIOq1C4Et1zET1dwp4iv10sUxfJsxMaJljZSpxSO/c6Rsv5yQF/CMvmYgg==
+X-Google-Smtp-Source: AGHT+IGBekA9yH+3WWdUMJNOD5Pd3PBDucriRK0CwTmdQpzZ//urtl/q/fvn5N6SAkEkZtWc1aZX3AbQ
+X-Received: from pjn14.prod.google.com ([2002:a17:90b:570e:b0:2ea:aa56:49c])
+ (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1e01:b0:2ee:ad18:b30d
+ with SMTP id 98e67ed59e1d1-2febab30c86mr6700197a91.6.1740767395727; Fri, 28
+ Feb 2025 10:29:55 -0800 (PST)
+Date: Fri, 28 Feb 2025 18:29:05 +0000
 In-Reply-To: <20250228182928.2645936-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,114 +72,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228182928.2645936-1-fvdl@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228182928.2645936-4-fvdl@google.com>
-Subject: [PATCH v5 03/27] mm/cma: introduce cma_intersects function
+Message-ID: <20250228182928.2645936-5-fvdl@google.com>
+Subject: [PATCH v5 04/27] mm, hugetlb: use cma_declare_contiguous_multi
 From: Frank van der Linden <fvdl@google.com>
 To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
 Cc: yuzhao@google.com, usamaarif642@gmail.com, joao.m.martins@oracle.com, 
 	roman.gushchin@linux.dev, ziy@nvidia.com, david@redhat.com, 
-	Frank van der Linden <fvdl@google.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org
+	Frank van der Linden <fvdl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Now that CMA areas can have multiple physical ranges,
-code can't assume a CMA struct represents a base_pfn
-plus a size, as returned from cma_get_base.
+hugetlb_cma is fine with using multiple CMA ranges, as long as it
+can get its gigantic pages allocated from them. So, use
+cma_declare_contiguous_multi to allow for multiple ranges,
+increasing the chances of getting what we want on systems
+with gaps in physical memory.
 
-Most cases are ok though, since they all explicitly
-refer to CMA areas that were created using existing
-interfaces (cma_declare_contiguous_nid or
-cma_init_reserved_mem), which guarantees they have just
-one physical range.
-
-An exception is the s390 code, which walks all CMA
-ranges to see if they intersect with a range of memory
-that is about to be hotremoved. So, in the future,
-it might run in to multi-range areas. To keep this check
-working, define a cma_intersects function. This just checks
-if a physaddr range intersects any of the ranges.
-Use it in the s390 check.
-
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 Signed-off-by: Frank van der Linden <fvdl@google.com>
 ---
- arch/s390/mm/init.c | 13 +++++--------
- include/linux/cma.h |  1 +
- mm/cma.c            | 21 +++++++++++++++++++++
- 3 files changed, 27 insertions(+), 8 deletions(-)
+ mm/hugetlb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
-index f2298f7a3f21..d88cb1c13f7d 100644
---- a/arch/s390/mm/init.c
-+++ b/arch/s390/mm/init.c
-@@ -239,16 +239,13 @@ struct s390_cma_mem_data {
- static int s390_cma_check_range(struct cma *cma, void *data)
- {
- 	struct s390_cma_mem_data *mem_data;
--	unsigned long start, end;
- 
- 	mem_data = data;
--	start = cma_get_base(cma);
--	end = start + cma_get_size(cma);
--	if (end < mem_data->start)
--		return 0;
--	if (start >= mem_data->end)
--		return 0;
--	return -EBUSY;
-+
-+	if (cma_intersects(cma, mem_data->start, mem_data->end))
-+		return -EBUSY;
-+
-+	return 0;
- }
- 
- static int s390_cma_mem_notifier(struct notifier_block *nb,
-diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 863427c27dc2..03d85c100dcc 100644
---- a/include/linux/cma.h
-+++ b/include/linux/cma.h
-@@ -53,6 +53,7 @@ extern bool cma_pages_valid(struct cma *cma, const struct page *pages, unsigned
- extern bool cma_release(struct cma *cma, const struct page *pages, unsigned long count);
- 
- extern int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data);
-+extern bool cma_intersects(struct cma *cma, unsigned long start, unsigned long end);
- 
- extern void cma_reserve_pages_on_error(struct cma *cma);
- 
-diff --git a/mm/cma.c b/mm/cma.c
-index 34caa6b29c99..8dc46bfa3819 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -978,3 +978,24 @@ int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data)
- 
- 	return 0;
- }
-+
-+bool cma_intersects(struct cma *cma, unsigned long start, unsigned long end)
-+{
-+	int r;
-+	struct cma_memrange *cmr;
-+	unsigned long rstart, rend;
-+
-+	for (r = 0; r < cma->nranges; r++) {
-+		cmr = &cma->ranges[r];
-+
-+		rstart = PFN_PHYS(cmr->base_pfn);
-+		rend = PFN_PHYS(cmr->base_pfn + cmr->count);
-+		if (end < rstart)
-+			continue;
-+		if (start >= rend)
-+			continue;
-+		return true;
-+	}
-+
-+	return false;
-+}
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 163190e89ea1..fadfacf56066 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -7738,9 +7738,8 @@ void __init hugetlb_cma_reserve(int order)
+ 		 * may be returned to CMA allocator in the case of
+ 		 * huge page demotion.
+ 		 */
+-		res = cma_declare_contiguous_nid(0, size, 0,
+-					PAGE_SIZE << order,
+-					HUGETLB_PAGE_ORDER, false, name,
++		res = cma_declare_contiguous_multi(size, PAGE_SIZE << order,
++					HUGETLB_PAGE_ORDER, name,
+ 					&hugetlb_cma[nid], nid);
+ 		if (res) {
+ 			pr_warn("hugetlb_cma: reservation failed: err %d, node %d",
 -- 
 2.48.1.711.g2feabab25a-goog
 
