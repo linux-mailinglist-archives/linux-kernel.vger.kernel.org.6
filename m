@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-537607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC7DA48E12
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:43:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC36A48D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A627A5F2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:42:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF4F16E238
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9467D4502A;
-	Fri, 28 Feb 2025 01:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXMnK34l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6391805B;
+	Fri, 28 Feb 2025 01:04:57 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC876450EE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0708B29A2;
+	Fri, 28 Feb 2025 01:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740706989; cv=none; b=h7xmsPD8rO2lwxzWgMRVFMiKI4TX4N/ulSoSvZjGiuDxq11fyUjf0GluAgH4dVHz5sj8PVzDFDID9VKmhu9hNn+Zz9KPBvKpeaa+mVY0t1cenYWQjVsg5AtefAwBXY5sg8YAwM4b/pb4zuu4QRkXfLbtMHEYidgCuxxlx/YQz2s=
+	t=1740704697; cv=none; b=H9vxIoU9p1iOrrUb/2aONFnBgZtzQ5MaM0FgT1S19neiJj2MIqDkF5ZuisrzGLHdWJKlxdRrGLI4R/sDz1s8dFLNlRdzSSMMeFg7+0Of9pBsVnP9igrksB0F5xT5EP/uMxAXDj8IGXsjiiRE6JZC3UEWGF4iWopj22Sz2nvoLIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740706989; c=relaxed/simple;
-	bh=4bxHTBKUgXhyLP5114/1Rtwa8qJMLVErQlbUUaq298Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qYw0/NKXNikQh3bd0iycPnofLEawienQ3kNOuxU0UbWUjmS5XIoqgEt8a//WTUlI4NMG726KvAz6KTORSQN8Ghxg3Tv1eum1NTTRTlMK7nttTaK8/8FQkaazEJxmunoRfjesupb4broF1ayB2nWyXQDZjIcCvfek3bzNJRuSTpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXMnK34l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0D18C4CEDD;
-	Fri, 28 Feb 2025 01:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740706988;
-	bh=4bxHTBKUgXhyLP5114/1Rtwa8qJMLVErQlbUUaq298Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aXMnK34lixU/3T7P4eBmggcjLP8+w4YFbd8Y6WF19U+wtDSjjrr4JW4P/EJRBWCK7
-	 Oyn3KaGELp480PUPQbApkSTWHm2r1SklCZZOTiIN4Cdvu4SSz1Nk4zl1M1mpKarm02
-	 ESdWNJIodv49ItHHp9lhuY87bgV2Re9Htg/xPtz4j3adGv66Mb5JQHB0Hm/YmGkJrQ
-	 RkZjXVfLmm7XbJVLv/dcF2mdoRHhE7wmrt6wJi9EjxFiBh5zt6CuW9hqXIOoCcddIP
-	 5LmMRlhJyDxp+UgByKwp6Gpoi/aZe7zYH9gNMcaYYzIIiGqMZfw8WExDG78uJT6xMQ
-	 7RojYi2ibN45g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Leo Stone <leocstone@gmail.com>,
-	syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v5] f2fs: add check for deleted inode
-Date: Thu, 27 Feb 2025 23:54:20 +0800
-Message-Id: <20250227155420.48885-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1740704697; c=relaxed/simple;
+	bh=O+Sc7JEncLXs8OMrX6PMtFN47nfFazZvHFbK66KJAqY=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DBqLgNL5uFX2DYjjEytg0XND3SSd/QsGkVbgXDLl+xpB2RJCWDvg7oq/vvvzF29e3FMclMdSe1KvbCpMbgAdXbXN22uvT+2awT/1tKWd9heFc/W7JD0FiMFC8ZRnOSlowH/ImUBkalOAexHMR9dkXrYRaaOwjWGZBxNkJvDSbME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z3qfd6dFDz9w77;
+	Fri, 28 Feb 2025 09:01:45 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C6961403A0;
+	Fri, 28 Feb 2025 09:04:51 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 09:04:50 +0800
+Message-ID: <69aae0dd-78f4-47e0-bb86-1d314588e7ad@huawei.com>
+Date: Fri, 28 Feb 2025 09:04:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>
+Subject: Re: [PATCH v3 net-next 2/6] net: hibmcge: Add support for rx checksum
+ offload
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20250221115526.1082660-1-shaojijie@huawei.com>
+ <20250221115526.1082660-3-shaojijie@huawei.com>
+ <20250224190937.05b421d0@kernel.org>
+ <641ddf73-3497-433b-baf4-f7189384d19b@huawei.com>
+ <20250225082306.524e8d6a@kernel.org>
+ <11198621-5c04-4a00-a69e-165e22ebf0e8@huawei.com>
+ <20250227064708.7811dfa7@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250227064708.7811dfa7@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-From: Leo Stone <leocstone@gmail.com>
 
-The syzbot reproducer mounts a f2fs image, then tries to unlink an
-existing file. However, the unlinked file already has a link count of 0
-when it is read for the first time in do_read_inode().
+on 2025/2/27 22:47, Jakub Kicinski wrote:
+> On Thu, 27 Feb 2025 19:28:25 +0800 Jijie Shao wrote:
+>> rx checksum offload enable:
+>> 	device check ok ->  CHECKSUM_UNNECESSARY -> stack
+>> 	device check fail ->  drop
+> Don't drop packets on csum validation failure.
+> The stack can easily handle packets with bad csum.
+> And users will monitor stack metrics for csum errors.
+> Plus devices are wrong more often than the stack.
 
-Add a check to sanity_check_inode() for i_nlink == 0.
+OK, I'll modify this in the v4 and modify the statistics as well.
 
-[Chao Yu: rebase the code and fix orphan inode recovery issue]
-Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
-Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
-Signed-off-by: Leo Stone <leocstone@gmail.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v5:
-- only check i_nlink in lookup()
- fs/f2fs/namei.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thanks,
+Jijie Shao
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 949621bc0d07..e39533482b45 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -502,6 +502,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out;
- 	}
- 
-+	if (inode->i_nlink == 0) {
-+		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
-+			  __func__, inode->i_ino);
-+		err = -EFSCORRUPTED;
-+		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-+		goto out_iput;
-+	}
-+
- 	if (IS_ENCRYPTED(dir) &&
- 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
- 	    !fscrypt_has_permitted_context(dir, inode)) {
--- 
-2.40.1
 
 
