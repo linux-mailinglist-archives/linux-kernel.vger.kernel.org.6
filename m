@@ -1,82 +1,128 @@
-Return-Path: <linux-kernel+bounces-538887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7133A49E4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:07:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FD6A49E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BB4172EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:07:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA92189A262
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0C218FC67;
-	Fri, 28 Feb 2025 16:07:29 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACF16F265;
-	Fri, 28 Feb 2025 16:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1846C27182B;
+	Fri, 28 Feb 2025 16:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NK1leaUT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7190E270041;
+	Fri, 28 Feb 2025 16:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758848; cv=none; b=Y4OvIjATAtwX3UfXu6S1EUEDZPdEPJwqrEtnDoVrGN6ntibYLlynRnvQlIT8Y3Hqi/quPdbCMgIxPGSOPwGeTC11JMB/h8jBL6hoXdW3zGyIZ/RV05jFzWOmlOrzln3+9ro8VZezIgKbIRfF2xWOZfGzChr+U/QhjuC7LNqbrrk=
+	t=1740758495; cv=none; b=epWFl9ObTrEdpEdV1XKsGOGcNJikO4SqpkuPVxaKKQtmVgr3p3TLQFb29XnmwiXEvGoIdiwCTLvxEbE26M4oJ+Oz+lRg8s5YOXZHyf+skCiaoo4631SUqUp4rhwQjNFjBS2zWzalOmsmA9I3ys1vBXPF/IT93wW0zUElC+1UJzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758848; c=relaxed/simple;
-	bh=iS7aMQrTuwwVHhltihhmeLdmbIQGuaKuwqL1dNTMGQ0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YPz6mQpbE3wVr1S8DOUyuk1uzGITib93BYGFSIqrlyIcxU0xyjohJFOjPlCavMFCHzvK7yTfMc0vjoCivDpNzekpak9I5UDsjRCvLgfqoN568ePVjgATtCXaB6D7/xgTP3xLZOO/O+Sshoj35n/NOjJwg+66vo6iBJ4geN5kNSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id E4F5792009E; Fri, 28 Feb 2025 17:01:16 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id DDD8792009C;
-	Fri, 28 Feb 2025 16:01:16 +0000 (GMT)
-Date: Fri, 28 Feb 2025 16:01:16 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: WangYuli <wangyuli@uniontech.com>
-cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com, 
-    linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-    niecheng1@uniontech.com, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    zhanjun@uniontech.com
-Subject: Re: [PATCH 5/7] MIPS: dec: Remove dec_irq_dispatch()
-In-Reply-To: <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
-Message-ID: <alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk>
-References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com> <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1740758495; c=relaxed/simple;
+	bh=nLe42b5YqahQ2bBbKWI/L708bdmiC3psGRi86jrrOXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QVK1jrpND3zxq1iw84FEK96KLVVNQxReMcc25jwhQg2jDYZUVlQjqmj9/rKNn9rpPpIzqyBUangCQYOV6991Kqo7kF2ZYNWUCpLjN07Z2E9iNS7vPZPrA0fa2hW1R8bLvlZiesviDaJze1mgDObhR3KdUIDuW/0Uq40LGT//feI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NK1leaUT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B40C4CEE2;
+	Fri, 28 Feb 2025 16:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740758494;
+	bh=nLe42b5YqahQ2bBbKWI/L708bdmiC3psGRi86jrrOXk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NK1leaUT1OwqQKt4H0xAdLLXEpzGhZQnMiT7RCoIWRD8Cw57tBYjuPzgU/ENHlFkE
+	 ToCSFIoox/UImp8s6JjVEHWFyhg3Lv2p0sAKTLBc4/CilmTWRm4atYZBOvE3xtoZlW
+	 8dnIfftXC3yxduqarVzg3gZwvpk2NDu7UwcYQF7yhmxl42dLua0GdLLXKouocXxw+E
+	 ua4ux2sBPAUrF2cDvMc86PH4UsNaacqM/tRfaiUKVHgzkSSFS41Nrnw7WTaJA7g95k
+	 DAFHFibunGV+fwqqpZxForCIAIfxRjBH/MlpxHHwyyN90c+sG3RRPkDKusr4yNRypD
+	 KPkX+mM/6vFDA==
+Date: Fri, 28 Feb 2025 10:01:33 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernelnewbies <kernelnewbies@kernelnewbies.org>,
+	linux-acpi@vger.kernel.org
+Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+Message-ID: <20250228160133.GA51628@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMciSVUFpkuxt-8MzvsRnM9B8F0UQGjfUxBJufGVK1=m2DooNw@mail.gmail.com>
 
-On Tue, 18 Feb 2025, WangYuli wrote:
+On Wed, Feb 26, 2025 at 06:28:33PM +0530, Naveen Kumar P wrote:
+> On Wed, Feb 26, 2025 at 2:08 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Tue, Feb 25, 2025 at 06:46:02PM +0530, Naveen Kumar P wrote:
+> > > On Tue, Feb 25, 2025 at 1:24 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > On Tue, Feb 25, 2025 at 12:29:00AM +0530, Naveen Kumar P wrote:
+> > > > > On Mon, Feb 24, 2025 at 11:03 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > > > On Mon, Feb 24, 2025 at 05:45:35PM +0530, Naveen Kumar P wrote:
+> > > > > > > On Wed, Feb 19, 2025 at 10:36 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > > > > > On Wed, Feb 19, 2025 at 05:52:47PM +0530, Naveen Kumar P wrote:
+> > > > > > > > > Hi all,
+> > > > > > > > >
+> > > > > > > > > I am writing to seek assistance with an issue we are
+> > > > > > > > > experiencing with a PCIe device (PLDA Device 5555)
+> > > > > > > > > connected through PCI Express Root Port 1 to the
+> > > > > > > > > host bridge.
+> > > > > > > > >
+> > > > > > > > > We have observed that after booting the system, the
+> > > > > > > > > Base Address Register (BAR0) memory of this device
+> > > > > > > > > gets reset to 0x0 after approximately one hour or
+> > > > > > > > > more (the timing is inconsistent). This was verified
+> > > > > > > > > using the lspci output and the setpci -s 01:00.0
+> > > > > > > > > BASE_ADDRESS_0 command.
+> > > > > ...
 
-> Currently, dec_irq_dispatch() is exclusively invoked by int-handler.S.
+> I have downloaded the 6.13 kernel source and added additional debug
+> logs in hotplug_event(), then built the kernel. After that rebooted
+> with the new kernel using the following parameters:
+> BOOT_IMAGE=/vmlinuz-6.13.0+ root=/dev/mapper/vg00-rootvol ro quiet
+> libata.force=noncq pci=nomsi pcie_aspm=off pcie_ports=on "dyndbg=file
+> drivers/pci/* +p; file drivers/acpi/* +p"
 
- It always has been, since its inception, see commit 187933f23679 ("[MIPS] 
-do_IRQ cleanup").
+Why "pci=nomsi"?  I don't think that should make a difference.  Also,
+it contributes to the fact that Linux doesn't request OS control of
+several features that it ordinarily does, so you end up in a somewhat
+unusual state (which *should* still work, of course):
 
-> Inline the do_IRQ call into int-handler.S to silence the compiler
-> warning.
+  acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig Segments HPX-Type3]
+  acpi PNP0A08:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
 
- Up to commit 8f99a16265353 ("MIPS: Tracing: Add IRQENTRY_EXIT section for 
-MIPS") `do_IRQ' used to be a macro, that's why.  At the time `do_IRQ' was 
-converted to a macro `dec_irq_dispatch' was created and previously this 
-place used to call `do_IRQ' too.
+Same for "pcie_aspm=off".
 
- It's always good finding out why things are as they are so as to make 
-sure you haven't been missing something.  This cleanup should have been 
-made along with commit 8f99a16265353, so it's pretty old a technical debt 
-being sorted here.
+Why "pcie_ports=on"?  That's not a valid parameter:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/pcie/portdrv.c?id=v6.13#n619
 
- Please add these findings to your commit description in v2.
+> Complete dmesg log and the patch(to get additional debug information)
+> are attached to this email.
+> 
+> Any further guidance on these observations?
 
- NB I'm off on holiday starting from tomorrow and I had issues with DEC 
-hardware in my lab (now sorted, required a visit on site) so I couldn't 
-get to your stuff sooner and also I won't be able to verify any of this 
-until I'm back mid-March.
+I'm out of ideas.  I would instrument the PCI config accessors to log
+all the reads and writes to your device (01:00.0) to see what we do to
+the device.  Maybe there's some hint:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/access.c?id=v6.13#n35
 
-  Maciej
+> Additionally, I noticed that the initial bootup logs with the
+> "0.000000" timestamp are missing in the dmesg log with this new
+> kernel. I'm unsure what might be causing this issue.
+
+Probably overflowed the message buffer.  You can try increasing the
+buffer size:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/kernel-parameters.txt?id=v6.13#n3190
+
+You can also experiment with the dyndbg parameter to be more selective
+about the ACPI messages if some aren't useful.
+
+Bjorn
 
