@@ -1,65 +1,94 @@
-Return-Path: <linux-kernel+bounces-538934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87C9A49EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:36:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A008A49EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C130316180C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE33C3AEF37
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D1E271815;
-	Fri, 28 Feb 2025 16:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392892702B7;
+	Fri, 28 Feb 2025 16:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ovGoa2vf"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYyrYrmb"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E9A25F974
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9AF849C;
+	Fri, 28 Feb 2025 16:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760569; cv=none; b=I5Nj24pW4ND3sw6M/p4bKohklXktCUH41wa4Tt+WR2f9qkYM0UCz+MRFnVgq+HuD8PFG3YY18V4VBxoPBses0pSjZpof9buDeDDew8DqD/BjFyxICUjlWaEWTutCZ9tjEN/O+PE2SQBvyeHfBryKf2541vcaXf98/ao2s4hc/HI=
+	t=1740760615; cv=none; b=eZSkNuBYtaBmZtZDZwTrvcFB4pI1LRJXDVLiZYZCB3NxDv8KHp0EGEkhCnUO/+G9pYueVWjnTzEF2Y+i4EfcEv5kbR+mqbjqubpGLpSc//gQEHAl3Su97iE89F6HAKuxvkdvukEI4PHGC1mbXldHrqchhYhaEv5KZW2lVMV4V2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760569; c=relaxed/simple;
-	bh=K77CUEtfwG/93Vke5Pk7GR9JF/a9/uvCr7iYeET14t8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+52g049uHQ7J3toId5p08JDHqHlaSKhEe3jTsZTmdR9cQpaz1/cVYFjEzhdPIlMe2lmHhjYFbIznfMw4DQZiIetZr/FNb3R4GGgGA0azLsJn8ixWVBcKLxdReEPXW7GvbabF8vT7ZrJjiUmjxTijwfi19Yo+dPDlZpE0ad1/hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ovGoa2vf; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e9vSoM+7hs95bKdKIg7eM5WyD/pdP0vSTAfr15Di75g=; b=ovGoa2vfaZnp6Y6O28EKx54pAK
-	Zj/UuoQrcat4WFUQ+tUC+KgWadHtP4ZC18yJPvdTuzTmlHPmcV+IIamHGRi35wZLrlmMxkHZgXiUq
-	0tGOjVRGcubtySli2aoHuDuZKHZF4WQwgp3hj2jGW64zkEUpRRsSzlRcwBtTpoXwdvtumS3/9nrt3
-	+jciZIOZboUV35URq/DRdKOR3DPSR7Q91iezreRzK/Xh0syqR/MyrgTbY/QhvmKRUYPNN36vjtXcs
-	rCsYOwzZ4jHojdkQvda83BdHrIkPr7Ka5iiCKd7W8KBVRgpX8WeKKPY248Gq8vl5wB2p1GFd7p8aM
-	T2+J+qGg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1to3KR-000000033wq-1NiW;
-	Fri, 28 Feb 2025 16:35:16 +0000
-Date: Fri, 28 Feb 2025 16:35:11 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Liu Shixin <liushixin2@huawei.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Charan Teja Kalla <quic_charante@quicinc.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/migrate: fix shmem xarray update during migration
-Message-ID: <Z8HlvyKod4pbi6le@casper.infradead.org>
-References: <20250228154219.2214149-1-ziy@nvidia.com>
+	s=arc-20240116; t=1740760615; c=relaxed/simple;
+	bh=f5Vl+c/3UPyb4FQoW+s8KkSFVP+u3T2ZREO0hdb0REI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uetpJG/hg2nwVeLBPK0/AdzDW593PNRnhzSxcjSSrd6BGUneZN7eQJmQo5r3V6UslF7Yi/hJPqA4Nk1POmILDHzwOmPGd2a8bnRf81P7cedWfGW9lJQAzcvOf9y7qr6MgUMyXNAKGkv8EfXqA3hYa/rd1BnJbhWT/QwACvoL8GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYyrYrmb; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30737db1aa9so21261171fa.1;
+        Fri, 28 Feb 2025 08:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740760611; x=1741365411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0fzhxTh8dWwPhVoLmGnen103y9OYjaXA/sf9AlCJoY=;
+        b=HYyrYrmbexx6PUl1ABxtfpFRSXyfCHS+xA4CU43vt0tOwP0eZIRRJ/+aeazlBtAAtX
+         nvXMQXnG3fT2FaP8vy7QXsYNC0iDp2yo8oOzujR6/yjNB6NoDB0TlC+4VSW++W3v+xP8
+         +UNP3BbYV7Sub3ZCj+KwEj9n4yWkKQlFjbP8X3dBdFY3Q/utI8fKuK7usD1CEBz8N+m9
+         EmZxzISAyOJgOh3yFJenlNb9lVrOdkMiETzf63IwaHEZYBIX79sZN6UTRGMyrGd/CJGG
+         ht3WMV9ZkwSHMZJoQHf+7pZI0Z/AsSFDJuIBMxxCA4j+cwqphrzHZUcX968uXqCmXtAJ
+         JfAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740760611; x=1741365411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f0fzhxTh8dWwPhVoLmGnen103y9OYjaXA/sf9AlCJoY=;
+        b=VKBtirbmryCHnR7fVEG26bGzqMOxIIYS2IBLFPe+ZUihfWN5ucUV2v2G1d+FHS1VGS
+         5PEoZLd8BWP17bCmXmslcD4BjbBI5EPRG7GEWBfmgtVoo+d5eayAJSj1/5boLpzcXSMj
+         iTpmks7JqEmYip+fRr3g+ZNOiTZKrZAVrnTlls2m0fseMMVBPohw9eUb3KwGzx4hVr3G
+         FJDNyST/X9o62T+3I6Sz1CyZH1IHJmF75xRAQ6sruFdcZgx9TLFWBKebQjd88rjENdtG
+         6JtZDpq2urlzEtkfGWYjgK0V7CmxBT/ngUurz3Fm8xtiLWCHrW24ASe8n/5ZCugeHe5D
+         zArA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+mR8RYbuwq6p3seUZN/pWbGoI4/nRIwNK/4JxSI5iaWBFUXhU2kItgusTM4tz3C7n2ONL@vger.kernel.org, AJvYcCVMIuXdL4s43DRiJ+qW1baWrHayiCMtGoA6p4Lb78s9W80Hd3TZJIYU8B84/JAIfHFnSbqJ+oa7tWa7TuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYIA6mkm/MnS4blPExIBtoZGAf/0k1fNmje652LE02UbtpC9LX
+	0WFDPf7MI+yFhNHi8Rpu0hfGj92SyxxWN2ZCqyV86js1AFTLee+3
+X-Gm-Gg: ASbGncuKxhhM94Bv5QKe1RDFod/TUs9erqWpAYxDAOzqS7vVn5OkyyoxT5AergyvClB
+	E2vZtIbSXrg/EUdaofFJcY2JVjPbrUkKZip/VfSyeKyXsjoIdrxz9ZmBuo1V9KTRc8g5sqCsVOZ
+	Kgl0dk20/DQX7eXmjGnK+F0sk4xxb4L++Feb5/fUdfmz/jtfGh1ncRjY+YZt1GIw2rxwWy8CDvu
+	3yy07n7FPpCcFNRdbOlYAx9FSRbigFxrjtxsUa6NlH+a0ssgU24PSU6VvAyjpFTeW9a73Kcuujn
+	3+57XUjzfv38J19grsyu6Kgkj0dRJ/tzdBXbpJcMmSWcs/cR
+X-Google-Smtp-Source: AGHT+IFYJceD4fh/lNOPw+Ami7jUwQC631WCACN8tEiHvhXnlJUP0YNJgBfciMu1s+t18njTGZuzVg==
+X-Received: by 2002:a05:651c:228:b0:309:17:750d with SMTP id 38308e7fff4ca-30b93413820mr14699801fa.27.1740760610813;
+        Fri, 28 Feb 2025 08:36:50 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86878615sm5598401fa.101.2025.02.28.08.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 08:36:49 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 28 Feb 2025 17:36:47 +0100
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z8HmH85bYNU8enJ2@pc636>
+References: <20250227131613.52683-1-urezki@gmail.com>
+ <20250227131613.52683-3-urezki@gmail.com>
+ <Z8CdB0Hzvdu5ZVSI@Mac.home>
+ <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
+ <Z8Ckb6spK35-Ez4U@pc636>
+ <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,29 +97,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228154219.2214149-1-ziy@nvidia.com>
+In-Reply-To: <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
 
-On Fri, Feb 28, 2025 at 10:42:19AM -0500, Zi Yan wrote:
-> @@ -524,7 +525,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
->  			folio_set_swapcache(newfolio);
->  			newfolio->private = folio_get_private(folio);
->  		}
-> -		entries = nr;
-> +		/* shmem uses high-order entry */
-> +		if (shmem_mapping(mapping))
-
-It's be cheaper to check folio_test_anon() here, right?
-
-Also, how did this bug remain unnoticed for almost 4 years?
-Our testing is terrible ;-(
-
-> +			entries = 1;
-> +		else
-> +			entries = nr;
->  	} else {
->  		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
->  		entries = 1;
-> -- 
-> 2.47.2
+On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
+> On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
+> > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
+> > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
+> > > > Hi Ulad,
+> > > > 
+> > > > I put these three patches into next (and misc.2025.02.27a) for some
+> > > > testing, hopefully it all goes well and they can make it v6.15.
+> > > > 
+> > > > A few tag changed below:
+> > > > 
+> > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
+> > > > > Switch for using of get_state_synchronize_rcu_full() and
+> > > > > poll_state_synchronize_rcu_full() pair to debug a normal
+> > > > > synchronize_rcu() call.
+> > > > > 
+> > > > > Just using "not" full APIs to identify if a grace period is
+> > > > > passed or not might lead to a false-positive kernel splat.
+> > > > > 
+> > > > > It can happen, because get_state_synchronize_rcu() compresses
+> > > > > both normal and expedited states into one single unsigned long
+> > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
+> > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
+> > > > > run.
+> > > > > 
+> > > > > To address this, switch to poll_state_synchronize_rcu_full() and
+> > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
+> > > > > for expedited and normal states.
+> > > > > 
+> > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
+> > > > 
+> > > > I switch this into "Closes:" per checkpatch.
+> > > > 
+> > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
+> > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+> > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > 
+> > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
+> > > > Would you or Paul double-check the Reviewed-by should be here?
+> > > 
+> > > I am good with keeping my Reviewed-by tags.
+> > > 
+> > Thanks Paul!
 > 
+> Except that I got this from overnight testing of rcu/dev on the shared
+> RCU tree:
+> 
+> WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
+> 
+> I see this only on TREE05.  Which should not be too surprising, given
+> that this is the scenario that tests it.  It happened within five minutes
+> on all 14 of the TREE05 runs.
+> 
+Hm.. This is not fun. I tested this on my system and i did not manage to
+trigger this whereas you do. Something is wrong.
+
+--
+Uladzislau Rezki
 
