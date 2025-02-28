@@ -1,259 +1,111 @@
-Return-Path: <linux-kernel+bounces-539009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481DCA49FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 638CAA49FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D58174CCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A77116B8A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC45126FDB1;
-	Fri, 28 Feb 2025 17:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E0C28136C;
+	Fri, 28 Feb 2025 17:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="N2cJHHC2"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQ1WDW3e"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27591274269
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1348281359
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762401; cv=none; b=RiPL4ew5XQPZTCLbbM2x/7yTxtxA+UkxFXj3Y1O+qRtwsxdhvdPFgdEol9X4vzLHzLxCMPQ59rkzAhM/Yb5Bz+4ddog8fi04W4uohe5JCfMPySHROwc7v+h4nMQrk6ZORnXD8IFdW5b0dqFtwkp+j06YD4Q7W/vqUuV7mzuBNJg=
+	t=1740762474; cv=none; b=LHyho1wBgTyATi1IVHPyaOcPV2JDTEHiX4JBrib3WRqwMaDxnPr4oefSH134E+FGOdUASk7tEb+1likCLXJMkLuTzPAJP3GZj+pWzaIA5QlKhD3VBMgqlulsM9F0CqQ/yh2vKT+UW/s7rMsExHltIH0zLi1RXj29FEpsqL+/aug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762401; c=relaxed/simple;
-	bh=LqJp79I0SHXn+9V1u2EorjeF8j76dBe151E56tdKop8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDYPdlmE84cKi1TBhC/ykliJELPMtYChMSqbXqlLtuCxsBCoSy8r8Ip07qfCb9zEJJq9kNr5pKHvJQUaMWsLlOZw9d34dtSElO9boUcOoQz/BOPUnAfgzBVahJ5wSt5ke3ceSISfHDV0nLBa4VApAmdZATwtuys3rp7IPhrA7r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=N2cJHHC2; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390dd3403fdso2058777f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:06:39 -0800 (PST)
+	s=arc-20240116; t=1740762474; c=relaxed/simple;
+	bh=xVmIBS8Yry96LzqfMn80N8uQNorpC8OE2/uVu9ohjIs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GxlpJjZ3Z8Jf/tZWAyUHECBcdPTTHlPip+br1D9hRUk6iV1fNRXH5E6ooXDpaexTB3nHVxptmmX6wJ6O9nTn1ISEU4WU1DH4c5EMnl9N68RRSZKWmldfp3Gr6IG+YFOWfuB4ogYclLwfOso4PDnKC8X7RMtdOCcZmOKzbHEdU5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LQ1WDW3e; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so5065654a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1740762398; x=1741367198; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k6qlfwUD5FmpL5nB2hYAi8mBfOK4uG+dWSAYbDiUuBI=;
-        b=N2cJHHC2auvPVki7p3n9w7zEb1fPwmpjYxYtLo4Tbl8pjY04ibkjnpKoKgWnjibB7+
-         SHjKK27CTFkUpui4f1uvSpz0Rz9cjGqOlRL57gWdnWqSyLx/AyEnYSXmo0K8+JEqUMdT
-         pB40D/HTvpEmJ9s+e7kHcVhY/ynoL/sF0CSiI=
+        d=google.com; s=20230601; t=1740762472; x=1741367272; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2oG6zshz8nl2FBqsuMKiFucOLA6s8CVVHZchlrSE30=;
+        b=LQ1WDW3eTV8sgDqKB7tKT+rAtXMcbxCbuey4CGjycUgthkgR+IVq21tee/osV0rXEk
+         zB0pOLnGy8YSEFQ2F73H3cMArPaG3b8N9gEFz9dmGAu5lteWqi3I3XdE8bgc7uUPJvb4
+         /8FfE8Id8CKYu0OXuBDRpafgqgrVbWPBmOf//ZjSg4HK5uDaoqXSVxvqTvK9kLCAXDYK
+         +xSiYeEDygojoevS/5viPvGyY6XbKvtQHofpVudpu+xHKPekiaFE5sQSc35EjiB9gp8g
+         EcvhJRzQn3MIi7xYIQuF4sXy25ITL0aNY4m0y3Fed+vPgUxD9es+bnbEZpI8VbDwuOXS
+         XyzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740762398; x=1741367198;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k6qlfwUD5FmpL5nB2hYAi8mBfOK4uG+dWSAYbDiUuBI=;
-        b=TY8UI+hFm7Hi4FAW6Hp1VB1sMNHtxLR4Hlqt4AjbW7vBaivGhGobrl7qxEdVK6F2tL
-         iwSZwlZhq87d6/ZylI3qf9dX2WK43mEouxtVcHHkpGyrAQGAiW2povWwA3ibhvjFeMHq
-         2bE9pPNYqbo3atFhfJkm/e9b6adAxJC/grS1mR36o8pzGR4nFJqteVrPXwbEeeh/pbhC
-         5qaHV0kNeHnZotzDMLybPi7Em+lkbiETGqIEcB6KzD8tvvL4X6NL44t8PfKJtb4tI+mY
-         qB7T0USnEbjwd5FkHVOY9MtiN5FMJZVWFjbqyCO3bAqITAWfKeaO9D4WarqfnFRlOxn3
-         J4mw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Jgtx3yY+D8ZGzU8kJlb0vW+hcLfBiR/74GfO0lq8Awvy3aNsGxrTqFwiA9okLDDVzvY9v/j6dZT64Zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdrkmMyOFRbt9p2gikpjGF8jKNDkPnzsCsU/gp4r8gFgQRkMAz
-	W7kU6IysHjusRKX2efEfqTdKux0LFXSuXgYYQk1ql/fORvU/9rGw4Xmgbut5hrk=
-X-Gm-Gg: ASbGncvdLZSrB3y9Cp9aOklhlaWUa9ZaFVXKOhrDz8bnvPJwpfHfhASkw5kQ108dCPD
-	LslrcMlCNqzRM5JzGHyrXAKgSFBDRfC4CuymXDVK4vXHLU81PIcJ+nAf88vHKDcORxHGgDVygS9
-	6QmCATEeppS6YWt0GaDFUAbxgyUPb4HX40fIjNXwgJj/bgWwR+jlohGGHIh8oFXE2NDzOMaVGH/
-	DBYSD2IIssc7WPnXBGWHexYKHPnioAKJZAnAuBjm3Y7fr2LFGshgU5yTL13L8PGSoYQFG/qHYte
-	heCyrf4PAbuGRLJEIt7llncoxyuLkZKdpNRsCg==
-X-Google-Smtp-Source: AGHT+IEHSdLntqA4vJ+k4vNL6cpNL9OkNh+/n1fHS6Zb4QIdLy5PGjtmFk+o+TY+g7KnCy/4qXM9Cg==
-X-Received: by 2002:a05:6000:4027:b0:38d:bccf:f342 with SMTP id ffacd0b85a97d-390eca5b1c2mr3470538f8f.43.1740762398130;
-        Fri, 28 Feb 2025 09:06:38 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm5684867f8f.44.2025.02.28.09.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 09:06:37 -0800 (PST)
-Date: Fri, 28 Feb 2025 18:06:35 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 5/5] panic_qr: use new #[export] macro
-Message-ID: <Z8HtG8fMSfdewkep@phenom.ffwll.local>
-Mail-Followup-To: Alice Ryhl <aliceryhl@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
- <20250228-export-macro-v2-5-569cc7e8926c@google.com>
+        d=1e100.net; s=20230601; t=1740762472; x=1741367272;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2oG6zshz8nl2FBqsuMKiFucOLA6s8CVVHZchlrSE30=;
+        b=DXOzThSpbKdZqZcunMHZPK1AadSgN1jRKMgDPgTAnoVD8lU2gj5s3FSuCN1qqkFDtD
+         jg3h/PfwXUV9ZvMld8rQdblbQ9uDxHVS8dSm4KvMRi8u6R+KKKihYji2EBYp9TZVRPrq
+         eC8CCGqZ88htIUoj9RvW92Uhqh5jFMiMbguxMEHAw9l0k9W70IvDbAjzOhVjXQb2jLAf
+         BlIzywF1npWMSJ7XKngqRoWTBr1/aWt9TbzefakMxB7aXghFiECcvbqQR4AeUajvfCDb
+         bFMw3BOa8goKlwf2o+OXBaKYRqLoSUjc+wnVoML5Rny0IJ/48+pPVgql/1whR6Fb6JqJ
+         B9IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlAzVYQNwzzSjvbvRwSo7RTmq1DxSCrX7XdeyKy3tRchE1GEBcMxvgiL5dhTh0KaHlTstuK0ZOS/Bc/eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw81UVuSloi9kIBA3GF4wXzz+766lVO9vZ8vXVL8GVNkKIdryz
+	ZJ79dn5Wtt83Ky6TZXbPh2LdUdCpgPa5Tv9kFuHN3AmpH4Mg+6FfeDSF+WMS1C+OaGXsm1qEH4/
+	y9g==
+X-Google-Smtp-Source: AGHT+IHxClS6Ov3N4mC2MOcBG8aooiB2l2G7Lim0GoLHj9tgAux8JsYTBZ13NlJ8w5b4r1UNpjTKlpoUIVg=
+X-Received: from pjg7.prod.google.com ([2002:a17:90b:3f47:b0:2f8:49ad:406c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1ccb:b0:2fe:b470:dde4
+ with SMTP id 98e67ed59e1d1-2febab3c659mr7943858a91.12.1740762472274; Fri, 28
+ Feb 2025 09:07:52 -0800 (PST)
+Date: Fri, 28 Feb 2025 09:06:36 -0800
+In-Reply-To: <20250215011437.1203084-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228-export-macro-v2-5-569cc7e8926c@google.com>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+Mime-Version: 1.0
+References: <20250215011437.1203084-1-seanjc@google.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <174041641314.2341854.17309269285047570958.b4-ty@google.com>
+Subject: Re: [PATCH v2 0/5] KVM: x86/xen: Restrict hypercall MSR index
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Joao Martins <joao.m.martins@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Feb 28, 2025 at 12:39:34PM +0000, Alice Ryhl wrote:
-> This validates at compile time that the signatures match what is in the
-> header file. It highlights one annoyance with the compile-time check,
-> which is that it can only be used with functions marked unsafe.
+On Fri, 14 Feb 2025 17:14:32 -0800, Sean Christopherson wrote:
+> Harden KVM against goofy userspace by restricting the Xen hypercall MSR
+> index to the de facto standard synthetic range, 0x40000000 - 0x4fffffff.
+> This obviously has the potential to break userspace, but I'm fairly confident
+> it'll be fine (knock wood), and doing nothing is not an option as letting
+> userspace redirect any WRMSR is at best completely broken.
 > 
-> If the function is not unsafe, then this error is emitted:
+> Patches 2-5 are tangentially related cleanups.
 > 
-> error[E0308]: `if` and `else` have incompatible types
->    --> <linux>/drivers/gpu/drm/drm_panic_qr.rs:987:19
->     |
-> 986 | #[export]
->     | --------- expected because of this
-> 987 | pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
->     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected unsafe fn, found safe fn
->     |
->     = note: expected fn item `unsafe extern "C" fn(_, _) -> _ {kernel::bindings::drm_panic_qr_max_data_size}`
->                found fn item `extern "C" fn(_, _) -> _ {drm_panic_qr_max_data_size}`
-> 
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> [...]
 
-I guess makes most sense to land this all through a rust tree, for that:
+Applied to kvm-x86 xen, with the docs change.  Thanks for the reviews!
 
-Acked-by: Simona Vetter <simona.vetter@ffwll.ch>
+[1/5] KVM: x86/xen: Restrict hypercall MSR to unofficial synthetic range
+      https://github.com/kvm-x86/linux/commit/5c17848134ab
+[2/5] KVM: x86/xen: Add an #ifdef'd helper to detect writes to Xen MSR
+      https://github.com/kvm-x86/linux/commit/bb0978d95a55
+[3/5] KVM: x86/xen: Consult kvm_xen_enabled when checking for Xen MSR writes
+      https://github.com/kvm-x86/linux/commit/a5d7700af6b0
+[4/5] KVM: x86/xen: Bury xen_hvm_config behind CONFIG_KVM_XEN=y
+      https://github.com/kvm-x86/linux/commit/69e5a7dde965
+[5/5] KVM: x86/xen: Move kvm_xen_hvm_config field into kvm_xen
+      https://github.com/kvm-x86/linux/commit/26e228ec1695
 
-The rust macro magic definitely flies above my head, so no revivew from
-me.
-
-Cheers, Sima
-
-> ---
->  drivers/gpu/drm/drm_panic.c     |  5 -----
->  drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
->  include/drm/drm_panic.h         |  7 +++++++
->  rust/bindings/bindings_helper.h |  4 ++++
->  4 files changed, 22 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index f128d345b16d..dee5301dd729 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -486,11 +486,6 @@ static void drm_panic_qr_exit(void)
->  	stream.workspace = NULL;
->  }
->  
-> -extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> -
-> -extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_len, size_t data_size,
-> -				u8 *tmp, size_t tmp_size);
-> -
->  static int drm_panic_get_qr_code_url(u8 **qr_image)
->  {
->  	struct kmsg_dump_iter iter;
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index bcf248f69252..d055655aa0cd 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -27,7 +27,10 @@
->  //! * <https://github.com/bjguillot/qr>
->  
->  use core::cmp;
-> -use kernel::str::CStr;
-> +use kernel::{
-> +    prelude::*,
-> +    str::CStr,
-> +};
->  
->  #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
->  struct Version(usize);
-> @@ -929,7 +932,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->  /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
->  ///
->  /// They must remain valid for the duration of the function call.
-> -#[no_mangle]
-> +#[export]
->  pub unsafe extern "C" fn drm_panic_qr_generate(
->      url: *const kernel::ffi::c_char,
->      data: *mut u8,
-> @@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->  /// * If `url_len` > 0, remove the 2 segments header/length and also count the
->  ///   conversion to numeric segments.
->  /// * If `url_len` = 0, only removes 3 bytes for 1 binary segment.
-> -#[no_mangle]
-> -pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
-> +///
-> +/// # Safety
-> +///
-> +/// Always safe to call.
-> +#[export]
-> +pub unsafe extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
->      #[expect(clippy::manual_range_contains)]
->      if version < 1 || version > 40 {
->          return 0;
-> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> index f4e1fa9ae607..2a1536e0229a 100644
-> --- a/include/drm/drm_panic.h
-> +++ b/include/drm/drm_panic.h
-> @@ -163,4 +163,11 @@ static inline void drm_panic_unlock(struct drm_device *dev, unsigned long flags)
->  
->  #endif
->  
-> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> +extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> +
-> +extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_len, size_t data_size,
-> +				u8 *tmp, size_t tmp_size);
-> +#endif
-> +
->  #endif /* __DRM_PANIC_H__ */
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 55354e4dec14..5345aa93fb8a 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -36,6 +36,10 @@
->  #include <linux/workqueue.h>
->  #include <trace/events/rust_sample.h>
->  
-> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> +#include <drm/drm_panic.h>
-> +#endif
-> +
->  /* `bindgen` gets confused at certain things. */
->  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
->  const size_t RUST_CONST_HELPER_PAGE_SIZE = PAGE_SIZE;
-> 
-> -- 
-> 2.48.1.711.g2feabab25a-goog
-> 
-
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+--
+https://github.com/kvm-x86/linux/tree/next
 
