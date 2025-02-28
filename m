@@ -1,97 +1,295 @@
-Return-Path: <linux-kernel+bounces-538716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2D4A49C4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:42:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F3BA49C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CACB8174A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E193A73EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDD72702A5;
-	Fri, 28 Feb 2025 14:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE4E27002D;
+	Fri, 28 Feb 2025 14:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Yya9l4ou"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="KhslfoJ5"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2AA26B970;
-	Fri, 28 Feb 2025 14:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A86A26B0A1
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753762; cv=none; b=FwmyqiUUDT8ySCQTN1eIx/OAEeRZ079gTc76CS5jeCUTDiaeCWaV5s/0QXjXF+H2o04FVSNJJ3t5TGYyVQQsvcjHFWz53DTuDltkI7yD/17sZxQsoXca6uzyyMnHUp217blIDRPaT7+yw3zyuO1+VApnsSoOo6KzKlw6Zx2qs44=
+	t=1740753800; cv=none; b=QEw4PjFa+r+YwEbB+RymlyvPP9s4BZbRBnqWEhPo0gDjyBj/tHWHA5K4meL/AN1ojg6bFpFKrAHj56lcbfWFXc+vnjZZFsFYBSJc/ZKWDz9SHiZmqN5btaKvjr3Y6qYWkr50daocL0lbrjYT3cKRdZ5ZeEe01exEy5WjO3qoKBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753762; c=relaxed/simple;
-	bh=3fsvnjXaM/CzbH4hRdFI5Frl6zZPizu0LaHFPeLi1PQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WDlnixffmmsaIMkGopX13FtV7Vry31wwVsVNyMsBIoG6ifWH3W7183TXotp5trWH328fFZPnFbhPS9G7S0G42Ws+SFjrBnnUw29UBvom6YxEtUFVQ1V8l4CZM3VaNkx9FI5TdDtnhbFr6KeOoFcg/1GNIhXFnzPhbb8B8+wgj6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Yya9l4ou; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 08422404E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1740753760; bh=VuBD/Hdy0DzyuJe4EYfZHrvz2Ap2tI9MnSTHTevxMIo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Yya9l4ouvsltCpyExs0Vm+yj8+3lAtgjiC/564uxQOraDn3vFydGnLtkUnrEnqEPM
-	 f8kEGY278WBShvSNd+6ZUn1i3o3oS5mMxdgNBgW5p3kXuPU0yrbCSb+VnysUfiyYaL
-	 V44maLEfOvHp/I5wKjfhrPVS+gYxTHJnFUdTeTWKxQIsnTovmoS33dvVLpSmG71HTL
-	 dAJ1c97l2goGAeebgrMuyBytXp4UfzK7YYTQMGZ0ZhGfALHNK4qlN/yOxKchr5wY3b
-	 THMPmmiH4NDnxgNjzeEbd6RMqzXhstLx26VodXjpbeF71dL24RFukiXdGPO6EW1fgj
-	 0Ofu6pdz88o/w==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 08422404E4;
-	Fri, 28 Feb 2025 14:42:39 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: David Jander <david@protonic.nl>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron
- <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 4/7] Documentation: Add Linux Motion Control
- documentation
-In-Reply-To: <20250228140212.346c4ef5@erd003.prtnl>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-5-david@protonic.nl>
- <87y0xrpcnn.fsf@trenco.lwn.net> <20250228140212.346c4ef5@erd003.prtnl>
-Date: Fri, 28 Feb 2025 07:42:39 -0700
-Message-ID: <87o6ymnna8.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1740753800; c=relaxed/simple;
+	bh=vOb8mY5e1oPlCevVNYovv2LO/QoIRkzMo3eW8b0Anbs=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HHxST1vWA3Bq6iQDpx5lgh9e4zHwQ6Ohv4OfKeeKgpitSJrGaHohAKcKfm00Q2K6T3WyYTTEKaxMkJRQ4gYKhIaDl964gK25MMnAcY6N3QU2fDErs/aiVidgPY1w29dnR41jG6IxB5KIpCH1aedd+94I8+zLmaRDloU2+k3Ww84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=KhslfoJ5; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1740753790; x=1741012990;
+	bh=We5T4M5MDH01il41WtMcKSJUjPlRlnalRiyXh1GYoPo=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=KhslfoJ5Lvu47HQfrHJj4dJm99ug+Md09FCtxMUDpKImdcnuouWRlYurMi5bju4Ti
+	 ZI+WptRhTyNnQpaGmLc2tWsJksL5ulzgZ5PnavTDYcwb/pxFayQ5eW6Inzz9gmfvPb
+	 +dZToJ4LqZulwDrmiEYpG3xmFNpSnsT0LyEsqCKi2e87rMFW3cUWrwYhxA6OeDpEGv
+	 JNefP11QX2ZlaSi0WMZoLpx/YfpHeSVacOUTK7c9wmjakDiWzIDiBkmah/FnNqzDSn
+	 mywqgOMN1tsqhorOSo6UhUKJLdPyarZ9hOnhlP99ZUlcDaU1hRqiZrOPGRA3U6pbab
+	 jWIDUx0TI0w5Q==
+Date: Fri, 28 Feb 2025 14:43:03 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
+Message-ID: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 138d58d7ca1271ccaa3cc41ce48e8adfff42cf76
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-David Jander <david@protonic.nl> writes:
+Hi,
 
-> What I am unsure of is the rest of the documentation (which arguably still
-> needs to be written). I initially selected this place because of
-> Documentation/subsystem-apis.rst. LMC being a new "subsystem", made me think it
-> was the right thing to follow the structure of the contents there.
-> What I mean to put there is documentation of the driver API for motion
-> control drivers. I understand that while it doesn't really exist yet, I should
-> leave it out of this patch set, but when I am going to write it, should it
-> still go there, or is there now a better place?
+For usage with block-mq, we found that having a variant of ARef
+which is guaranteed to be unique being useful.
+As chances are it is useful in general, I implemented it
+as kernel::types::UniqueRef.
+The difference between ARef and UniqueRef
+is basically the same as between Arc and UniqueArc.
 
-I've really been pushing to organize our documentation by the audience
-it is addressing, rather than by the developers who write it.  So
-driver-api documentation is best put into ... the driver-api book,
-Documentation/driver-api.
+This v2 of the patch, addressing the issues raised by Andreas Hindborg.
 
-My plan, that I haven't yet acted on, is to create Documentation/devices
-for device-specific docs that don't go anywhere else, then move a lot of
-stuff into it.  Much like what was done with Documentation/arch.  But
-anything that can go into the existing audience-focused manuals should
-go there.
+On 250228 1417, Miguel Ojeda wrote:
+>=20
+> I think should be caught by Clippy -- Oliver, please try building with
+> `CLIPPY=3D1` (we would like Clippy-clean builds as much as reasonably
+> possible),
 
-Thanks,
+Got it. This version should be okay for rustfmt, clippy and checkpatch :)
 
-jon
+Best regards,
+
+Oliver
+
+---
+ rust/kernel/types.rs | 153 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
+
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 55ddd50e8aaa..72a973d9e1c7 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -543,6 +543,12 @@ fn from(b: &T) -> Self {
+     }
+ }
+=20
++impl<T: UniqueRefCounted> From<UniqueRef<T>> for ARef<T> {
++    fn from(b: UniqueRef<T>) -> Self {
++        UniqueRefCounted::unique_to_shared(b)
++    }
++}
++
+ impl<T: AlwaysRefCounted> Drop for ARef<T> {
+     fn drop(&mut self) {
+         // SAFETY: The type invariants guarantee that the `ARef` owns the =
+reference we're about to
+@@ -551,6 +557,153 @@ fn drop(&mut self) {
+     }
+ }
+=20
++/// Types that are [`AlwaysRefCounted`] and can be safely converted to an =
+[`UniqueRef`]
++///
++/// # Safety
++///
++/// Implementers must ensure that the methods of the trait
++/// change the reference count of the underlying object such that:
++/// - the uniqueness invariant is upheld, i.e. it is not possible
++///   to obtain another reference by any means (other than through the [`U=
+niqueRef`])
++///   until the [`UniqueRef`] is dropped or converted to an [`ARef`].
++/// - [`UniqueRefCounted::dec_ref`] correctly frees the underlying object.
++/// - [`UniqueRefCounted::unique_to_shared`] set the reference count to th=
+e value
++/// - that the returned [`ARef`] expects for an object with a single refer=
+ence
++///   in existence.
++pub unsafe trait UniqueRefCounted: AlwaysRefCounted + Sized {
++    /// Checks if the [`ARef`] is unique and convert it
++    /// to an [`UniqueRef`] it that is that case.
++    /// Otherwise it returns again an [`ARef`] to the same
++    /// underlying object.
++    fn try_shared_to_unique(this: ARef<Self>) -> Result<UniqueRef<Self>, A=
+Ref<Self>>;
++    /// Converts the [`UniqueRef`] into an [`ARef`].
++    fn unique_to_shared(this: UniqueRef<Self>) -> ARef<Self>;
++    /// Decrements the reference count on the object when the [`UniqueRef`=
+] is dropped.
++    ///
++    /// Frees the object when the count reaches zero.
++    ///
++    /// It defaults to [`AlwaysRefCounted::dec_ref`],
++    /// but overriding it may be useful, e.g. in case of non-standard refc=
+ounting
++    /// schemes.
++    ///
++    /// # Safety
++    ///
++    /// The same safety constraints as for [`AlwaysRefCounted::dec_ref`] a=
+pply,
++    /// but as the reference is unique, it can be assumed that the functio=
+n
++    /// will not be called twice. In case the default implementation is no=
+t
++    /// overridden, it has to be ensured that the call to [`AlwaysRefCount=
+ed::dec_ref`]
++    /// can be used for an [`UniqueRef`], too.
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // SAFETY: correct by function safety requirements
++        unsafe { AlwaysRefCounted::dec_ref(obj) };
++    }
++}
++
++/// An unique, owned reference to an [`AlwaysRefCounted`] object.
++///
++/// It works the same ways as [`ARef`] but ensures that the reference is u=
+nique
++/// and thus can be dereferenced mutably.
++///
++/// # Invariants
++///
++/// - The pointer stored in `ptr` is non-null and valid for the lifetime o=
+f the [`UniqueRef`]
++///   instance. In particular, the [`UniqueRef`] instance owns an incremen=
+t
++///   on the underlying object's reference count.
++/// - No other references to the underlying object exist while the [`Uniqu=
+eRef`] is live.
++pub struct UniqueRef<T: UniqueRefCounted> {
++    ptr: NonNull<T>,
++    _p: PhantomData<T>,
++}
++
++// SAFETY: It is safe to send `UniqueRef<T>` to another thread
++// when the underlying `T` is `Sync` because
++// it effectively means sharing `&T` (which is safe because `T` is `Sync`)=
+; additionally, it needs
++// `T` to be `Send` because any thread that has an `UniqueRef<T>` may ulti=
+mately access `T` using a
++// mutable reference, for example, when the reference count reaches zero a=
+nd `T` is dropped.
++unsafe impl<T: UniqueRefCounted + Sync + Send> Send for UniqueRef<T> {}
++
++// SAFETY: It is safe to send `&UniqueRef<T>` to another thread when the u=
+nderlying `T` is `Sync`
++// because it effectively means sharing `&T` (which is safe because `T` is=
+ `Sync`); additionally,
++// it needs `T` to be `Send` because any thread that has a `&UniqueRef<T>`=
+ may clone it and get an
++// `UniqueRef<T>` on that thread, so the thread may ultimately access `T`
++// using a mutable reference, for example, when the reference count reache=
+s zero and `T` is dropped.
++unsafe impl<T: UniqueRefCounted + Sync + Send> Sync for UniqueRef<T> {}
++
++impl<T: UniqueRefCounted> UniqueRef<T> {
++    /// Creates a new instance of [`UniqueRef`].
++    ///
++    /// It takes over an increment of the reference count on the underlyin=
+g object.
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that the reference count is set to such a valu=
+e
++    /// that a call to [`UniqueRefCounted::dec_ref`] will release the unde=
+rlying object
++    /// in the way which is expected when the last reference is dropped.
++    /// Callers must not use the underlying object anymore --
++    /// it is only safe to do so via the newly created [`UniqueRef`].
++    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
++        // INVARIANT: The safety requirements guarantee that the new insta=
+nce now owns the
++        // increment on the refcount.
++        Self {
++            ptr,
++            _p: PhantomData,
++        }
++    }
++
++    /// Consumes the [`UniqueRef`], returning a raw pointer.
++    ///
++    /// This function does not change the refcount. After calling this fun=
+ction, the caller is
++    /// responsible for the refcount previously managed by the [`UniqueRef=
+`].
++    pub fn into_raw(me: Self) -> NonNull<T> {
++        ManuallyDrop::new(me).ptr
++    }
++}
++
++impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
++    type Target =3D T;
++
++    fn deref(&self) -> &Self::Target {
++        // SAFETY: The type invariants guarantee that the object is valid.
++        unsafe { self.ptr.as_ref() }
++    }
++}
++
++impl<T: UniqueRefCounted> DerefMut for UniqueRef<T> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        // SAFETY: The type invariants guarantee that the object is valid.
++        unsafe { self.ptr.as_mut() }
++    }
++}
++
++impl<T: UniqueRefCounted> From<&T> for UniqueRef<T> {
++    /// Converts the [`UniqueRef`] into an [`ARef`]
++    /// by calling [`UniqueRefCounted::unique_to_shared`] on it.
++    fn from(b: &T) -> Self {
++        b.inc_ref();
++        // SAFETY: We just incremented the refcount above.
++        unsafe { Self::from_raw(NonNull::from(b)) }
++    }
++}
++
++impl<T: UniqueRefCounted> TryFrom<ARef<T>> for UniqueRef<T> {
++    type Error =3D ARef<T>;
++    /// Tries to convert the [`ARef`] to an [`UniqueRef`]
++    /// by calling [`UniqueRefCounted::try_shared_to_unique`].
++    /// In case the [`ARef`] is not unique it returns again an [`ARef`] to=
+ the same
++    /// underlying object.
++    fn try_from(b: ARef<T>) -> Result<UniqueRef<T>, Self::Error> {
++        UniqueRefCounted::try_shared_to_unique(b)
++    }
++}
++
++impl<T: UniqueRefCounted> Drop for UniqueRef<T> {
++    fn drop(&mut self) {
++        // SAFETY: The type invariants guarantee that the [`UniqueRef`] ow=
+ns the reference
++        // we're about to decrement.
++        unsafe { UniqueRefCounted::dec_ref(self.ptr) };
++    }
++}
++
+ /// A sum type that always holds either a value of type `L` or `R`.
+ ///
+ /// # Examples
+--=20
+2.48.1
+
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+
 
