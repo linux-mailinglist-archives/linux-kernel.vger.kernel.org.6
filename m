@@ -1,245 +1,279 @@
-Return-Path: <linux-kernel+bounces-539027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEBDA49FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A3DA49FF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E77B177124
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF200177070
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5B2277803;
-	Fri, 28 Feb 2025 17:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zTKrngKZ"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5EF276047;
+	Fri, 28 Feb 2025 17:08:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4372755FE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB1D276039
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762536; cv=none; b=RrVG60hqOzeOAhwnlaTX+28yNgBVRtYWlkrVQmHXdDiHGUzpWff3f57RydUdOf/USPDbhNITjQkvtNAtId9NVL55Ub60DQvT30+/8cii5BX/rPx+qJilT9OqhRZMe5l2TBOY1wusz5n56Zo4PxcLd2F4jdbvcBSaUtm30GF68II=
+	t=1740762515; cv=none; b=XsFFPAImg138H6tzubokGvAc1FHqt3JTYgNYWnSNKptrbFoVZJi0j+jH1TDx20Lo6gIdW1F9dT/Lj8Q9evw1Sef9iC89ibzcZDbSoKCac9upxhCS6UJaH/S1MM5N1Z1Se5LKKTjmy1cel1CHLFa7c5RbBd4jOvcEBJVaVGprSpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762536; c=relaxed/simple;
-	bh=EmCyCn2DxF9tSGDIfIoV9yqm+qOWy504WdSnCUBtPkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j7luQYKOtxg2qgp4rcCUI2dLpCpqHCFAAud3nW3Hrn2F3P43KP70JABo5Co1I/yry2AtoFtwSJSU6/BAqvmlm0scfp68K1xGgulZH0qDXHKlxFH1m9VsDmYnBxEBnHxwxCLSH3JuzHKm4FEbnyd4rLdRHcMj8vs/XIoEOwbm93M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zTKrngKZ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390f69e71c8so176634f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:08:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740762532; x=1741367332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaPCTODeLwe+V7QIP7WdzTJW222I9T9UXPmt/Ut/lfU=;
-        b=zTKrngKZ9G3faw9PsTHUDqLHS6RTAeEyOf3hk8v9Cmjc1SKZxanmzcKi5gAn0xX1M0
-         TtP8IVX95H/WlUi9mJXcEfc6XjNpFDfdtb8Khy+24llfG5dllx1KRKSN/f+8d/GP1WT2
-         VYx88hCtYdknv330ee7Wl+sQWWLeKzhqRT7HB4CKMFatEZz0k7H9kH6T7i4aWGOcGMcz
-         +gmOuDkl7jONJ8xIQM7sL4UarpWzeb/EsoBcCJGkleY1FAgMny1Xj/+azSoRLc0F3Btt
-         RfEvAsKNejgrQaL6TMwFRldp8dQxRIDO6XVmyEtWmjKmqKCEXBsGklujPtXUmbENuYtU
-         iV+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740762532; x=1741367332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IaPCTODeLwe+V7QIP7WdzTJW222I9T9UXPmt/Ut/lfU=;
-        b=orc/EYO3McQZznsCCmsD+cNqBIMx0GUOW2MKi8Ak9u3Zb/prWLkgfxMpIA7WWEpbng
-         09iSUTXltt2useK1XIAr5biO/5DClolpgOfI8ZCBNdnt8HyEvRQqskknfOSOoFndQpP0
-         A1/4zDAaNc6AJsh0wg7ZL20UX+sVU75Pg8ac1vlb3gODeiyWIS5OF3DeXljI8qLZDKbr
-         RuRLLgFcWMCMr9pse9tq4470HmS1TtfA7IdI2Ytg/w7zW10yz6aVNb+mu2HRvY5v/+0R
-         cnI2lmtZC2Ml6LZbs2tXyKe+ssdfC/fRIr4mZHIepq7CVQWpVwd31n2rz7PPu1C2ZbCb
-         pMww==
-X-Forwarded-Encrypted: i=1; AJvYcCUQqpHsX3DjQpRcUhsqRb4RMoSk1wIET6/3PzL7W2D82yoLVfPan2lv0gsnMiPTUsyRCqFL+H2NR+tFYnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1SxZwpzVjhABSxodCPvZ1ET1AxkbRMJ99bqr4ZgyW7PF7AJdl
-	THesLZ4MWl+JvZpt6Smm+NMHl5U9v4gN4c8RFghs2zRppZH1Drm9o+A3A+4QpDpQE4kp+d0XnD9
-	iAlwO0tkj5CApzRGqZuyJIv+Ck/DQLdbNL3+E
-X-Gm-Gg: ASbGncthZODfVAQDlm297YSAS4FVxZq17K74cJXZ6GZiTObZhZYiB/7fWHDZuMrSySr
-	YVaaIaviY025XtqYOE5G38YfyguiX38HmJ67ZRM2QrDb+Y8+8yRqn9sxjj9SG0GaKeBX+3baBau
-	Ue+oIVtG6ifIR9YFBrJnPw3vdLw+K7e/WmFJZ+OQ==
-X-Google-Smtp-Source: AGHT+IG54e3GobkjZ8tPZxRoFcianUe+ZFTkJdAFfhIp2F2JiHuS56Xy9kQY/09d8HuGTQm+42i6miBW+7XanJXjdSQ=
-X-Received: by 2002:a05:6000:400a:b0:38f:23c4:208c with SMTP id
- ffacd0b85a97d-390e18c8b0amr6664532f8f.18.1740762530834; Fri, 28 Feb 2025
- 09:08:50 -0800 (PST)
+	s=arc-20240116; t=1740762515; c=relaxed/simple;
+	bh=/PaPFpur610XMWMxsbWrTUWEJDEIaoCa73CoXYSCGWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Do15NJtx5uMb/ZfvofTT+1bUJj7FjJtBJ70+YZxs74Iue6DxQDe1fzdKujUkR6zjaug93HZUy+BTT0FH9Hr4ertWyPHz8d5mmNrx7wPsq1KD6Fj8twRVrxgcc/ezBCe8/yzsI1ID2ghdY1pEF8a6NWqF2ySW5wNI4Nv4xD7GCyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37091C4CEE2;
+	Fri, 28 Feb 2025 17:08:33 +0000 (UTC)
+Date: Fri, 28 Feb 2025 12:09:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Nikolay Kuratov <kniv@yandex-team.ru>
+Subject: [GIT PULL] tracing: Fixes for v6.14-rc4
+Message-ID: <20250228120918.5a050257@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
- <20250228-export-macro-v2-5-569cc7e8926c@google.com> <CAJ-ks9k4rZdpL5dDfwMHuiKFdyYdY00YioYxdtsqszpcbhzjHQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9k4rZdpL5dDfwMHuiKFdyYdY00YioYxdtsqszpcbhzjHQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Feb 2025 18:08:38 +0100
-X-Gm-Features: AQ5f1JpN4S2btnyWpu2cTmIDiHVgyZ8OiCtI3DLh4W0P9eLmgQGdOBc2TieXEkk
-Message-ID: <CAH5fLggDgYYk-0HzCjDmmHjV6JkR7WJhmQU-Nhbo4iBGBw1AJw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] panic_qr: use new #[export] macro
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 4:55=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
- wrote:
-> >
-> > This validates at compile time that the signatures match what is in the
-> > header file. It highlights one annoyance with the compile-time check,
-> > which is that it can only be used with functions marked unsafe.
-> >
-> > If the function is not unsafe, then this error is emitted:
-> >
-> > error[E0308]: `if` and `else` have incompatible types
-> >    --> <linux>/drivers/gpu/drm/drm_panic_qr.rs:987:19
-> >     |
-> > 986 | #[export]
-> >     | --------- expected because of this
-> > 987 | pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len=
-: usize) -> usize {
-> >     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected unsafe fn, =
-found safe fn
-> >     |
-> >     =3D note: expected fn item `unsafe extern "C" fn(_, _) -> _ {kernel=
-::bindings::drm_panic_qr_max_data_size}`
-> >                found fn item `extern "C" fn(_, _) -> _ {drm_panic_qr_ma=
-x_data_size}`
-> >
-> > Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  drivers/gpu/drm/drm_panic.c     |  5 -----
-> >  drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
-> >  include/drm/drm_panic.h         |  7 +++++++
-> >  rust/bindings/bindings_helper.h |  4 ++++
-> >  4 files changed, 22 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> > index f128d345b16d..dee5301dd729 100644
-> > --- a/drivers/gpu/drm/drm_panic.c
-> > +++ b/drivers/gpu/drm/drm_panic.c
-> > @@ -486,11 +486,6 @@ static void drm_panic_qr_exit(void)
-> >         stream.workspace =3D NULL;
-> >  }
-> >
-> > -extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> > -
-> > -extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data=
-_len, size_t data_size,
-> > -                               u8 *tmp, size_t tmp_size);
-> > -
-> >  static int drm_panic_get_qr_code_url(u8 **qr_image)
-> >  {
-> >         struct kmsg_dump_iter iter;
-> > diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_pani=
-c_qr.rs
-> > index bcf248f69252..d055655aa0cd 100644
-> > --- a/drivers/gpu/drm/drm_panic_qr.rs
-> > +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> > @@ -27,7 +27,10 @@
-> >  //! * <https://github.com/bjguillot/qr>
-> >
-> >  use core::cmp;
-> > -use kernel::str::CStr;
-> > +use kernel::{
-> > +    prelude::*,
-> > +    str::CStr,
-> > +};
-> >
-> >  #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
-> >  struct Version(usize);
-> > @@ -929,7 +932,7 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D=
- u8>) {
-> >  /// * `tmp` must be valid for reading and writing for `tmp_size` bytes=
-.
-> >  ///
-> >  /// They must remain valid for the duration of the function call.
-> > -#[no_mangle]
-> > +#[export]
-> >  pub unsafe extern "C" fn drm_panic_qr_generate(
-> >      url: *const kernel::ffi::c_char,
-> >      data: *mut u8,
-> > @@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Item =
-=3D u8>) {
-> >  /// * If `url_len` > 0, remove the 2 segments header/length and also c=
-ount the
-> >  ///   conversion to numeric segments.
-> >  /// * If `url_len` =3D 0, only removes 3 bytes for 1 binary segment.
-> > -#[no_mangle]
-> > -pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usi=
-ze) -> usize {
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Always safe to call.
->
-> This should explain why it's marked unsafe, since it's always safe to cal=
-l.
 
-Safety comments generally do not explain rationale for why they are
-the way they are. Where would you like me to put it?
+Linus,
 
-> > +#[export]
-> > +pub unsafe extern "C" fn drm_panic_qr_max_data_size(version: u8, url_l=
-en: usize) -> usize {
-> >      #[expect(clippy::manual_range_contains)]
-> >      if version < 1 || version > 40 {
-> >          return 0;
-> > diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> > index f4e1fa9ae607..2a1536e0229a 100644
-> > --- a/include/drm/drm_panic.h
-> > +++ b/include/drm/drm_panic.h
-> > @@ -163,4 +163,11 @@ static inline void drm_panic_unlock(struct drm_dev=
-ice *dev, unsigned long flags)
-> >
-> >  #endif
-> >
-> > +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> > +extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> > +
-> > +extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data=
-_len, size_t data_size,
-> > +                               u8 *tmp, size_t tmp_size);
-> > +#endif
-> > +
-> >  #endif /* __DRM_PANIC_H__ */
-> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_h=
-elper.h
-> > index 55354e4dec14..5345aa93fb8a 100644
-> > --- a/rust/bindings/bindings_helper.h
-> > +++ b/rust/bindings/bindings_helper.h
-> > @@ -36,6 +36,10 @@
-> >  #include <linux/workqueue.h>
-> >  #include <trace/events/rust_sample.h>
-> >
-> > +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> > +#include <drm/drm_panic.h>
-> > +#endif
->
-> Why the guard here?
->
-> It'd be nice to have a comment here explaining the atypical need for
-> this include.
+Tracing fixes for v6.14:
 
-It's not necessary. I can drop it.
+- Fix crash from bad histogram entry
 
-Alice
+  An error path in the histogram creation could leave an entry
+  in a link list that gets freed. Then when a new entry is added
+  it can cause a u-a-f bug. This is fixed by restructuring the code
+  so that the histogram is consistent on failure and everything is
+  cleaned up appropriately.
+
+- Fix fprobe self test
+
+  The fprobe self test relies on no function being attached by ftrace.
+  BPF programs can attach to functions via ftrace and systemd now
+  does so. This causes those functions to appear in the enabled_functions
+  list which holds all functions attached by ftrace. The selftest also
+  uses that file to see if functions are being connected correctly.
+  It counts the functions in the file, but if there's already functions
+  in the file, it fails. Instead, add the number of functions in the file
+  at the start of the test to all the calculations during the test.
+
+- Fix potential division by zero of the function profiler stddev
+
+  The calculated divisor that calculates the standard deviation of
+  the function times can overflow. If the overflow happens to land
+  on zero, that can cause a division by zero. Check for zero from
+  the calculation before doing the division.
+
+  TODO: Catch when it ever overflows and report it accordingly.
+        For now, just prevent the system from crashing.
+
+
+Please pull the latest trace-v6.14-rc4 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.14-rc4
+
+Tag SHA1: 91a87e3b52a1683844156e377986aaf69306b31f
+Head SHA1: a1a7eb89ca0b89dc1c326eeee2596f263291aca3
+
+
+Heiko Carstens (1):
+      selftests/ftrace: Let fprobe test consider already enabled functions
+
+Nikolay Kuratov (1):
+      ftrace: Avoid potential division by zero in function_stat_show()
+
+Steven Rostedt (1):
+      tracing: Fix bad hist from corrupting named_triggers list
+
+----
+ kernel/trace/ftrace.c                              | 27 +++++++++----------
+ kernel/trace/trace_events_hist.c                   | 30 +++++++++++-----------
+ .../ftrace/test.d/dynevent/add_remove_fprobe.tc    | 18 ++++++++-----
+ 3 files changed, 38 insertions(+), 37 deletions(-)
+---------------------------
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 6b0c25761ccb..fc88e0688daf 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -540,6 +540,7 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 	static struct trace_seq s;
+ 	unsigned long long avg;
+ 	unsigned long long stddev;
++	unsigned long long stddev_denom;
+ #endif
+ 	guard(mutex)(&ftrace_profile_lock);
+ 
+@@ -559,23 +560,19 @@ static int function_stat_show(struct seq_file *m, void *v)
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	seq_puts(m, "    ");
+ 
+-	/* Sample standard deviation (s^2) */
+-	if (rec->counter <= 1)
+-		stddev = 0;
+-	else {
+-		/*
+-		 * Apply Welford's method:
+-		 * s^2 = 1 / (n * (n-1)) * (n * \Sum (x_i)^2 - (\Sum x_i)^2)
+-		 */
++	/*
++	 * Variance formula:
++	 * s^2 = 1 / (n * (n-1)) * (n * \Sum (x_i)^2 - (\Sum x_i)^2)
++	 * Maybe Welford's method is better here?
++	 * Divide only by 1000 for ns^2 -> us^2 conversion.
++	 * trace_print_graph_duration will divide by 1000 again.
++	 */
++	stddev = 0;
++	stddev_denom = rec->counter * (rec->counter - 1) * 1000;
++	if (stddev_denom) {
+ 		stddev = rec->counter * rec->time_squared -
+ 			 rec->time * rec->time;
+-
+-		/*
+-		 * Divide only 1000 for ns^2 -> us^2 conversion.
+-		 * trace_print_graph_duration will divide 1000 again.
+-		 */
+-		stddev = div64_ul(stddev,
+-				  rec->counter * (rec->counter - 1) * 1000);
++		stddev = div64_ul(stddev, stddev_denom);
+ 	}
+ 
+ 	trace_seq_init(&s);
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 261163b00137..ad7419e24055 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -6724,27 +6724,27 @@ static int event_hist_trigger_parse(struct event_command *cmd_ops,
+ 	if (existing_hist_update_only(glob, trigger_data, file))
+ 		goto out_free;
+ 
+-	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
+-	if (ret < 0)
+-		goto out_free;
++	if (!get_named_trigger_data(trigger_data)) {
+ 
+-	if (get_named_trigger_data(trigger_data))
+-		goto enable;
++		ret = create_actions(hist_data);
++		if (ret)
++			goto out_free;
+ 
+-	ret = create_actions(hist_data);
+-	if (ret)
+-		goto out_unreg;
++		if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
++			ret = save_hist_vars(hist_data);
++			if (ret)
++				goto out_free;
++		}
+ 
+-	if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
+-		ret = save_hist_vars(hist_data);
++		ret = tracing_map_init(hist_data->map);
+ 		if (ret)
+-			goto out_unreg;
++			goto out_free;
+ 	}
+ 
+-	ret = tracing_map_init(hist_data->map);
+-	if (ret)
+-		goto out_unreg;
+-enable:
++	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
++	if (ret < 0)
++		goto out_free;
++
+ 	ret = hist_trigger_enable(trigger_data, file);
+ 	if (ret)
+ 		goto out_unreg;
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+index 449f9d8be746..73f6c6fcecab 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+@@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
+ PLACE2="kmem_cache_free"
+ PLACE3="schedule_timeout"
+ 
++# Some functions may have BPF programs attached, therefore
++# count already enabled_functions before tests start
++ocnt=`cat enabled_functions | wc -l`
++
+ echo "f:myevent1 $PLACE" >> dynamic_events
+ 
+ # Make sure the event is attached and is the only one
+ grep -q $PLACE enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
+ 
+ # It should till be the only attached function
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
+ 
+ grep -q $PLACE2 enabled_functions
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
+ 
+ # should still have 2 left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 2 ]; then
++if [ $cnt -ne $((ocnt + 2)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -57,7 +61,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
+@@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
+ 
+ # Should only have one enabled
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 1 ]; then
++if [ $cnt -ne $((ocnt + 1)) ]; then
+ 	exit_fail
+ fi
+ 
+@@ -73,7 +77,7 @@ echo > dynamic_events
+ 
+ # Should have none left
+ cnt=`cat enabled_functions | wc -l`
+-if [ $cnt -ne 0 ]; then
++if [ $cnt -ne $ocnt ]; then
+ 	exit_fail
+ fi
+ 
 
