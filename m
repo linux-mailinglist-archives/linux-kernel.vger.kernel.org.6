@@ -1,197 +1,259 @@
-Return-Path: <linux-kernel+bounces-537846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257F0A491BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:42:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79C0A491C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1CB518934E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D03B16F754
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C53D1C5D4D;
-	Fri, 28 Feb 2025 06:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="uHhkYeid"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2083.outbound.protection.outlook.com [40.107.20.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63961C3C12;
+	Fri, 28 Feb 2025 06:47:37 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1B71C5D42;
-	Fri, 28 Feb 2025 06:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740724942; cv=fail; b=rCuqwymUUESqcTm+WzSruCxH7M1o+GCpBLhRB8SdobCuRexlTesSg4PICdTsxM/75syASFzT+UTTzcYXD1wBqzWdxhhEfS2dkqBmNC1Qbn6Htjd7VZLPpKrz+VvTURXq1E6CSTLH4Dc19eDZqWHLFeQvwysbEfWmn7x6B6Ts6bI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740724942; c=relaxed/simple;
-	bh=/9fDI96w8I1NPlmJ7LWfvATXkyqCvWc2GZqTCb/2oz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=STQkBxHUfbzYqeCn2kvGXheVsCYjEzY5HSeQLSOhCrR9krXwDwy+bW/xRjjKeSCNGGYa1Ih3tHs8VdkGFOn3+eVmsIPy+cWYXuV9gz+euCyBc8NTspd2D/8krEdlMjyPtd8lSQ0Fwc58fdSgAc1q0HCcdvwgFHOV5ZT8ndz3pjA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=uHhkYeid; arc=fail smtp.client-ip=40.107.20.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bYfyHnZX4Or0nGJAhJr1PhVgl32QGBJlQTeZrU5DC+Bb1feQI0KDFcbF1ZYQ3dgPmDwmMUWRqlAIPJrBxp/dhP9l0a6k0r6RLf3CraBqTzGbBAPQdx62/PW3hrPe44WclvwkvAKfdUmFZZkMtp3Sue+jpHnEYGMd2m/Dd3XjSuTaaCxzHXDhFwH9VHIFH3pbW9Ri8iTU2QU3m97kk8fnwaqHxkWvVpfTkF3IMqWV/ti3hkHZZZJMrfyuyPzDK0Xwla2eiPvhkM85ShHMjd2X2YEQX3jhUr6qVBIgVphQSSY7Nfoc7bTZxOB8jepoGX8gvcuoKml8jkIHsRGJBzVhvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UhTDWYC+4mxaOZ0SbGDO1FsA91DjNdd7I8ASFwD4G+8=;
- b=YMaVhum2Wamq73kO4s4RHEGdWeusuuaS1M0YUXStVSrNgem7FBWG87I2aC5MKhamDBS6UHuO/BEz959htXS5IHwhatGMs+0HMvAg8E/UzkevAEcnoiHplPEvSAbzrtZW5XQu1d2AQVHdaCuA8bVj7P7UCDH+nIicdaS42phB1oA6OFzblY8gPq+ohmZUm3DLPeOEgMhLx4kfTHbA6wWQ1v9DWxEWVL36EFnPrI8wKxHrF9+fegUpk5tP/3FS28O9SnKtdPsM/Gba/wbJMcJb6LWRjuas6F6EmszE2JNz3I2zEMOhTkeGTAYY+5vXpftZzX6UMFRyd4MaKgh1ou6MZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UhTDWYC+4mxaOZ0SbGDO1FsA91DjNdd7I8ASFwD4G+8=;
- b=uHhkYeidIfzlh05Lo0CaM3p4cKbdcq6DFjfw76/RtF93kt3Icv8jSgt+yQxHrdRYxf2V75MVQawpPOct1y22yt3hj/GI3MEKTSc+q4lh5qpD3UXcsLKO/avIzihrJy7FoLzNcghuGuvy2VWfY23vQ8Q1YiwdA33Agi+IqylGw1dHpUMhDuhu+EEeU/NQMVcRFtn3DzeIj/wsDtdTvbAyVBZ7rSWRD04vA0+LPixZfpysn2QKHbV3dU86aGdwbYnE/oK28Z6bOMFaQ+3T5cygRjnDpXy/CFFGLGRG1xDG1QEiF3EfGr4hizZSyWV/nLC8C630GgE7tCiP+XaZfrFmew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from AS8PR03MB6775.eurprd03.prod.outlook.com (2603:10a6:20b:29d::16)
- by AS8PR03MB6743.eurprd03.prod.outlook.com (2603:10a6:20b:29e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
- 2025 06:42:11 +0000
-Received: from AS8PR03MB6775.eurprd03.prod.outlook.com
- ([fe80::8a03:2bdb:89c5:32e8]) by AS8PR03MB6775.eurprd03.prod.outlook.com
- ([fe80::8a03:2bdb:89c5:32e8%4]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
- 06:42:10 +0000
-Date: Fri, 28 Feb 2025 07:42:04 +0100
-From: Manuel Traut <manuel.traut@mt.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-input@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Markus Burri <markus.burri@mt.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: matrix_keypad - add wakeup-source
- property
-Message-ID: <Z8FavNuODoIVepuj@mt.com>
-References: <Z8EMI9ALqYY72VBV@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8EMI9ALqYY72VBV@google.com>
-X-ClientProxiedBy: MI2P293CA0002.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::17) To AS8PR03MB6775.eurprd03.prod.outlook.com
- (2603:10a6:20b:29d::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5153139E;
+	Fri, 28 Feb 2025 06:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740725257; cv=none; b=quto0odL4w0kSApgDnjhzfRdnw2eoPFYRobVglaqxdX4z+It7FSv4jup0B6tYGL2iCa61kW4S18paF5/SsMLxcTP0RR+a52dru3JL6fSTjWgPwmH9A4XcGT4ePXvPMvrZdEO1v+H2zMSlcOuV6y3XtvY19C/Z6ZzCyXE4mVX8Ak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740725257; c=relaxed/simple;
+	bh=8erFOBCpRW578JQFMdC00ciuQNyiLf0rz4V10MaBu64=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H37KGdqOZorkAWEinLroAMcwVBTQg/tF1I1gQPBEDmji+xWJlCE9hZT74JbQMgofw6PNTLYEk4SFh+MtdnSL+DTBzfp/gCbQsKBnm56QXZOrd/ppq2w1AgFshbsgU1b3aJCXdTqFFMthVLHBfMDm3UWvsXS3nF/P6NX9ceKSMfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z3zDs0hSKz1ltZG;
+	Fri, 28 Feb 2025 14:43:25 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id ECA3A14037C;
+	Fri, 28 Feb 2025 14:47:30 +0800 (CST)
+Received: from kwepemn200003.china.huawei.com (7.202.194.126) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 14:47:30 +0800
+Received: from localhost.localdomain (10.175.101.6) by
+ kwepemn200003.china.huawei.com (7.202.194.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 14:47:29 +0800
+From: zhangmingyi <zhangmingyi5@huawei.com>
+To: <martin.lau@linux.dev>
+CC: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<song@kernel.org>, <yhs@fb.com>, <john.fastabend@gmail.com>,
+	<kpsingh@kernel.org>, <sdf@google.com>, <haoluo@google.com>,
+	<jolsa@kernel.org>, <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yanan@huawei.com>, <wuchangye@huawei.com>, <xiesongyang@huawei.com>,
+	<liuxin350@huawei.com>, <liwei883@huawei.com>, <tianmuyang@huawei.com>,
+	<zhangmingyi5@huawei.com>
+Subject: Re: [PATCH v2 2/2] bpf-next: selftest for TCP_ULP in bpf_setsockopt
+Date: Fri, 28 Feb 2025 14:44:42 +0800
+Message-ID: <20250228064442.3218835-1-zhangmingyi5@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <4533d108-9617-4021-b7a9-befe209926da@linux.dev>
+References: <4533d108-9617-4021-b7a9-befe209926da@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB6775:EE_|AS8PR03MB6743:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5623ed3a-acaa-486c-27c9-08dd57c3072a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gIaDcgAtZRwaUFnZOIjfmUmIw+reTMdHTHdVeM8+InWHDtLWbEc1XcIHykLS?=
- =?us-ascii?Q?1zHXkKhS5BHN38QbmYzG1vW4HrL1mAiu6BPGB2Yl+nXbzfkabXvO4ewystvk?=
- =?us-ascii?Q?5NEn23BW1R5qU+N1xtegplxmOowyBjtsKIEDSA6iqKtYBc6+v/M74mn11P5z?=
- =?us-ascii?Q?Qno2+nLm5meaqg/LKPIKpM0S1UuooAu8BfqLhZpzfEKrSnMR20bvT/4Wta+0?=
- =?us-ascii?Q?DdWexUl7qx/vxcDxrFZbgtjLWEY/k/LrQWM7IvkoMyU5n6OKMA7Fg4kLrArV?=
- =?us-ascii?Q?11YO+JiTcZb/0BjrYPBIag1PmRf9k1hmYlyEIznLkNkrUP5XbErMyila2i9N?=
- =?us-ascii?Q?U+F1dquslUgTI9ld1WFh52GeULktObwj5IDtwT+yys0ja0uYt5IDmvT160Bg?=
- =?us-ascii?Q?Q6AfHS9+jFajXQIMTRbnxaEGy2h5vFfNJnfC3kVnKzUIcNBMkMQmp6Yp9tfX?=
- =?us-ascii?Q?CDfU/ho311m+dB9D2xm1vcWP/0gjTE4zdljk3LcB2Q8yovKcUgMyrsOcL6U8?=
- =?us-ascii?Q?caQee+xT3NjwLtwx6d8c0TFWbuZ8cze/SRXekrD31tq8vnNP+JXzXs1gLF0L?=
- =?us-ascii?Q?ss57DxA1lbygQKzgO5iGQKPXa8f99AvHiTzr8aeGa0vXjfo57Fymgw5HQ6Jy?=
- =?us-ascii?Q?5CcDxpzqrgBJCBKIAgJs+43EZ0qFl1Gh+xRYpQMf7bxP7CCI1pRsrJInUdHc?=
- =?us-ascii?Q?7VpGjdSYaIIQFI0Uo8F9JjmwWWpjpWQNeXC9f6M9+howF6gTN8Auw/afu/+c?=
- =?us-ascii?Q?JvuwAAzR/DrLY1FJ8QRF4k/DxLUKZPJ1YHNwHZP5wYRCwBbi+IiJxqQRp4JX?=
- =?us-ascii?Q?b2QXFBuTRmnlbHWN31tWHSSRoKoL85uWIzX8i6FPLkQWX2DMkzhCND0OsAd9?=
- =?us-ascii?Q?2Wsdk/IU8ib+CnIPT1d2MzQYLY3Ue6+nWXy6PVuTJAWF2yFAeycLX2BzXCbL?=
- =?us-ascii?Q?1auGI/tqKhzwfUus2PREHd1KsGMOMzay+QUOs8/sBVTrzLbLsfOn0fXZYjox?=
- =?us-ascii?Q?TN2YGzyu9qMjQ/MjqPqORT3x9+6buNxldO3S4qLjp0XDFJoDw1ifJnxpI+NC?=
- =?us-ascii?Q?l9vChcQw8xJKaKXcRbKUz+WUW6+rf+GymxWN3p7CJEno0Sl84jBnfKZxYoJI?=
- =?us-ascii?Q?WnPu78IAte7PQGk6SmYq51HCczVEAEUDwQgKf3cP8fdP3IwrGto4S/khyt1R?=
- =?us-ascii?Q?6isLPT8nmX3AefuqsahpUhHLfaGuqQ6gUb+2oya0C9dTSIEidPTklf53arKD?=
- =?us-ascii?Q?jsDUonIXket4wGk/FD3ljuQtWVEIN0ifH8463OIKeLSnfEbDYiSncWciChsO?=
- =?us-ascii?Q?f01YaEdRIzcooyQrYk2pYAdIeR7GcIyDknbR6jU2Db2PTpXCj5phyCiqERB8?=
- =?us-ascii?Q?4r4mc/5I4iETlW62h1o4QAHGwdb/Sd00h2G0G/Z2zM59ADcHxCkJb4zgNWkL?=
- =?us-ascii?Q?GY+VFE/TRv5QudPM06mztSONoqSdeG2f?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB6775.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9mbDCwo20SMX9L9kEj9lSuaXvHLD4N3j3CaFvisQ/1LCibNEBaXZdFsUQ5+y?=
- =?us-ascii?Q?fFQ9/Z8NYLYyXplz9ctccNnMTwvsR3fxwGwBR1zDh/Gs/iYqdHIJxcwtAAPb?=
- =?us-ascii?Q?sUD7hTzt5hTRCPNlukgV0glWF3UQpcZA7xNfpxH2LWi7Aq12OqM8pBMy+1j7?=
- =?us-ascii?Q?g9cbfI0b/RVQ8FZtAUTO4LNMYqxUXrjNiSY6VeZRaaAe4St9QGFxSgp2SP1a?=
- =?us-ascii?Q?hXAuCOmkB/gIPlG3miW/Aw7IaRq0JPx8oqjp8OVFaYxPsh4cTkikJObHsuDX?=
- =?us-ascii?Q?kvPDMj+X4quN7OCcHCjNLHDR+f9kSzeUYOQqimHym5U7bKAiEhIcckuH3t62?=
- =?us-ascii?Q?T32tLNCwuTIj4r+Lik3kguWRasXbGMgh1m6Xk0HG0tCFg7silcdp/UnlCcY/?=
- =?us-ascii?Q?Q8ywngggLGYyO3z6nMdCIVSv/FBhzBudea4endCJeBwU4LT1yqkK/wpTRrA1?=
- =?us-ascii?Q?fcyGBjXDrBM5itLG5+hGIpG2BAlqCOB/TRBAfDrsWza64eOy/ZDgxOsb8/6h?=
- =?us-ascii?Q?tTsGcYCuH9Njd12dKVCX9Ig2twEA/kE08aj0RdnCZwBHM8mggwspnlduyFAd?=
- =?us-ascii?Q?8upHoakty5nU7RKq1GHUL6Xrz5sG3P+uFh7daOXAdU7mV5jqJHXDOZzbAI96?=
- =?us-ascii?Q?nE0/xw9BToQa3HImV4uP4DGJify1XqzsgUyWIXAgLCh4cmKfZD2Vj1awlbmd?=
- =?us-ascii?Q?QW0TMTBJYCdHyNMx96oj7ga3yDdbrefKGAfFgq5e/PcI6t/zThS76mKgOeRE?=
- =?us-ascii?Q?IJ4eWbCy/liPh77qQTuLrBBAwbliI1Q7X20MHNc1B0R+yuoAvHb9aOT2f9pY?=
- =?us-ascii?Q?TtyCEFHrKaXGtnRe9+6y9ejk6bja5eAMW98ffvzReet2QrmvPWQq4j3uMhIH?=
- =?us-ascii?Q?kJuWKeJms3vJ3Bkrj/MG/uyMtCuDtVNKV5hg10T9rD+P2fP23zpHzqwMNRwo?=
- =?us-ascii?Q?ls0LwJ8z9UuGxQyZbPTFEe32UIAgySXpnoCmowx/mI0t/hwhgVcVt9TQ04ux?=
- =?us-ascii?Q?9DZXTxI6QTCHYtNJFJOZsQG0LG5bSLd420yZDimmPB7bMO1E29joZJyL+mF9?=
- =?us-ascii?Q?mU/yuyg+nenSfMFqiJ5mePi11XAqbFpUAQ+EZxXZ8xvuKLdNf35X55Ml5LZv?=
- =?us-ascii?Q?GkILuJA6PMKpQPP0pTosPz7pd4aJJE/7npVWzAv03af03ANcGzllwMfSBn8q?=
- =?us-ascii?Q?NsfgwQjQK0+GrA3hzaboTUVy9j4AOZ7hGQQYmVRV5Vm5nwjXUW3fqwpueZyh?=
- =?us-ascii?Q?O8MUjOOuFlzwzy0Dx1S0Bqry0Ny/mo+3jOa7ac6TipgMBAGGpRPs6k8OdNtE?=
- =?us-ascii?Q?E/kRjsL/mjxlbUlSZI9bbeAEfl7KhqEl90Bp1s0msjmrSNPLHMSZYo3ALkvF?=
- =?us-ascii?Q?K1inbWtBX8ptlWUVha8TmV8/IgL/joLFM4QDGM0wIeJ4oKzx9qXWe4LKKdKN?=
- =?us-ascii?Q?Otzi3Tr5ouqE504M0UVikRoP9n5viKZt4znZGTTCf/Uxgz1byyssu9U5Fr/k?=
- =?us-ascii?Q?8L01bPhIpTdFClYot19PGHI75XNNJ7RGC2ZP0rlsB7Mbp2sdsQpmAtVVFnGi?=
- =?us-ascii?Q?OVijIw7Rr68jHlP5Nxl7vMo6O6Vj097jUtRrv81/?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5623ed3a-acaa-486c-27c9-08dd57c3072a
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB6775.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 06:42:10.8156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V3ajf+2aK6X+vtfmyg8h/EsAHgV9lR929gosibhPjVSq+N/GEzVkC6ULA1dClEjbhBJfRJh4pYNR1Xl76HrkGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB6743
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn200003.china.huawei.com (7.202.194.126)
 
-On Thu, Feb 27, 2025 at 05:06:43PM -0800, Dmitry Torokhov wrote:
-> The driver recognizes standard "wakeup-source" property and there are
-> DTS files using it. Add the property to the binding.
+On 2/13/25 3:19 PM, Martin KaFai Lau wrote:
+> On 2/10/25 5:45 AM, zhangmingyi wrote:
+> > From: Mingyi Zhang <zhangmingyi5@huawei.com>
+> > 
+> > We try to use bpf_set/getsockopt to set/get TCP_ULP in sockops, and "tls"
+> > need connect is established.To avoid impacting other test cases, I 
+> > have written a separate test case file.
+> > 
+> > Signed-off-by: Mingyi Zhang <zhangmingyi5@huawei.com>
+> > Signed-off-by: Xin Liu <liuxin350@huawei.com>
+> > ---
+> >   .../bpf/prog_tests/setget_sockopt_tcp_ulp.c   | 78 +++++++++++++++++++
+> >   .../bpf/progs/setget_sockopt_tcp_ulp.c        | 33 ++++++++
+> >   2 files changed, 111 insertions(+)
+> >   create mode 100644 tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
+> >   create mode 100644 
+> > tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
+> > 
+> > diff --git 
+> > a/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c 
+> > b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
+> > new file mode 100644
+> > index 000000000000..748da2c7d255
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
+> > @@ -0,0 +1,78 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502280105.REZ29MVg-lkp@intel.com/
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> This is not right.
+> 
+> > +
+> > +#define _GNU_SOURCE
+> > +#include <net/if.h>
+> > +
+> > +#include "test_progs.h"
+> > +#include "network_helpers.h"
+> > +
+> > +#include "setget_sockopt_tcp_ulp.skel.h"
+> > +
+> > +#define CG_NAME "/setget-sockopt-tcp-ulp-test"
+> > +
+> > +static const char addr4_str[] = "127.0.0.1"; static const char 
+> > +addr6_str[] = "::1"; static struct setget_sockopt_tcp_ulp *skel; 
+> > +static int cg_fd;
+> > +
+> > +static int create_netns(void)
+> > +{
+> > +	if (!ASSERT_OK(unshare(CLONE_NEWNET), "create netns"))
+> > +		return -1;
+> > +	if (!ASSERT_OK(system("ip link set dev lo up"), "set lo up"))
+> > +		return -1;
+> > +	return 0;
+> > +}
+> > +
+> > +static int modprobe_tls(void)
+> > +{
+> > +	if (!ASSERT_OK(system("modprobe tls"), "tls modprobe failed"))
+> > +		return -1;
+> > +	return 0;
+> > +}
+> > +
+> > +static void test_tcp_ulp(int family)
+> 
+> First, the bpf CI still fails to compile for the same reason as v1. You should 
+> have received an email from bpf CI bot. Please ensure it is addressed first 
+> before reposting. This repeated bpf CI error is an automatic nack.
+> 
 
-Reviewed-by: Manuel Traut <manuel.traut@mt.com>
+I'm sorry I didn't notice this and I'll fix this in the next patch
 
-> ---
->  .../devicetree/bindings/input/gpio-matrix-keypad.yaml         | 4 ++++
->  1 file changed, 4 insertions(+)
+> pw-bot: cr
 > 
-> diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> index 73bb153ed241..ebfff9e42a36 100644
-> --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> @@ -68,6 +68,8 @@ properties:
->        Drive inactive columns during scan,
->        default is to turn inactive columns into inputs.
->  
-> +  wakeup-source: true
-> +
->  required:
->    - compatible
->    - row-gpios
-> @@ -96,4 +98,6 @@ examples:
->                          0x0001006A
->                          0x0101001C
->                          0x0201006C>;
-> +
-> +        wakeup-source;
->      };
-> -- 
-> 2.48.1.711.g2feabab25a-goog
+> The subject tagging should be "[PATCH v2 bpf-next ...] selftests/bpf: ... ". 
+> There are many examples to follow in the mailing list if it is not clear.
 > 
+> Regarding the v1 comment: "...separate it out into its own BPF program..."
 > 
-> -- 
-> Dmitry
+> The comment was made at the bpf prog file, "progs/setget_sockopt.c". I meant 
+> only create a separate bpf program. The user space part can stay in 
+> prog_tests/setget_sockopt.c.
+> 
+> Move this function, test_tcp_ulp, to prog_tests/setget_sockopt.c. Then all the 
+> above config preparation codes and the test_setget_sockopt_tcp_ulp() can be 
+> saved. modprobe_tls() is not needed also. Do it after the test_ktls().
+> Take a look at test_nonstandard_opt() in prog_tests/setget_sockopt.c.
+> It is testing another bpf prog in the same prog_tests/setget_sockopt.c.
+>
+
+Well, it seems that I misunderstood you, and I'll change it according to
+your intentions.
+ 
+> Also, for the bpf prog, do you really need to test at 
+> BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB? If not, just testing at 
+> SEC("lsm_cgroup/socket_post_create") will be easier. You can detach the 
+> previously attached skel->links.socket_post_create by using bpf_link__destroy() 
+> first and then attach yours bpf prog to do the test.
+
+My idea is that since tls needs to be setockopt after the link is established,
+it would be easier for me to test BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB in
+sockops ebpf program.
+
+> > +{
+> > +	struct setget_sockopt_tcp_ulp__bss *bss = skel->bss;
+> > +	int sfd, cfd;
+> > +
+> > +	memset(bss, 0, sizeof(*bss));
+> > +	sfd = start_server(family, SOCK_STREAM,
+> > +			   family == AF_INET6 ? addr6_str : addr4_str, 0, 0);
+> > +	if (!ASSERT_GE(sfd, 0, "start_server"))
+> > +		return;
+> > +
+> > +	cfd = connect_to_fd(sfd, 0);
+> > +	if (!ASSERT_GE(cfd, 0, "connect_to_fd_server")) {
+> > +		close(sfd);
+> > +		return;
+> > +	}
+> > +	close(sfd);
+> > +	close(cfd);
+> > +
+> > +	ASSERT_EQ(bss->nr_tcp_ulp, 3, "nr_tcp_ulp"); }
+> > +
+> > +void test_setget_sockopt_tcp_ulp(void) {
+> > +	cg_fd = test__join_cgroup(CG_NAME);
+> > +	if (cg_fd < 0)
+> > +		return;
+> > +	if (create_netns() && modprobe_tls())
+> > +		goto done;
+> > +	skel = setget_sockopt_tcp_ulp__open();
+> > +	if (!ASSERT_OK_PTR(skel, "open skel"))
+> > +		goto done;
+> > +	if (!ASSERT_OK(setget_sockopt_tcp_ulp__load(skel), "load skel"))
+> > +		goto done;
+> > +	skel->links.skops_sockopt_tcp_ulp =
+> > +		bpf_program__attach_cgroup(skel->progs.skops_sockopt_tcp_ulp, cg_fd);
+> > +	if (!ASSERT_OK_PTR(skel->links.skops_sockopt_tcp_ulp, "attach_cgroup"))
+> > +		goto done;
+> > +	test_tcp_ulp(AF_INET);
+> > +	test_tcp_ulp(AF_INET6);
+> > +done:
+> > +	setget_sockopt_tcp_ulp__destroy(skel);
+> > +	close(cg_fd);
+> > +}
+> > diff --git 
+> > a/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c 
+> > b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
+> > new file mode 100644
+> > index 000000000000..bd1009766463
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
+> > @@ -0,0 +1,33 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
+> 
+> Same here.
+> 
+> > +
+> > +#include "vmlinux.h"
+> > +#include "bpf_tracing_net.h"
+> > +#include <bpf/bpf_helpers.h>
+> > +
+> > +int nr_tcp_ulp;
+> > +
+> > +SEC("sockops")
+> > +int skops_sockopt_tcp_ulp(struct bpf_sock_ops *skops) {
+> > +	static const char target_ulp[] = "tls";
+> > +	char verify_ulp[sizeof(target_ulp)];
+> > +
+> > +	switch (skops->op) {
+> > +	case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
+> > +		if (bpf_setsockopt(skops, IPPROTO_TCP, TCP_ULP, (void *)target_ulp,
+> > +							sizeof(target_ulp)) != 0)
+> > +			return 1;
+> > +		nr_tcp_ulp++;
+> > +		if (bpf_getsockopt(skops, IPPROTO_TCP, TCP_ULP, verify_ulp,
+> > +							sizeof(verify_ulp)) != 0)
+> > +			return 1;
+> > +		nr_tcp_ulp++;
+> > +		if (bpf_strncmp(verify_ulp, sizeof(target_ulp), "tls") != 0)
+> > +			return 1;
+> > +		nr_tcp_ulp++;
+> > +	}
+> > +	return 1;
+> > +}
+> > +
+> > +char _license[] SEC("license") = "GPL";
+> > \ No newline at end of file
+> 
 
