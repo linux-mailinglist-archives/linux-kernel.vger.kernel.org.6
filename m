@@ -1,167 +1,154 @@
-Return-Path: <linux-kernel+bounces-538895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979D6A49E7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:15:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC0DA49E83
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E2A1898BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92679175122
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A902727424E;
-	Fri, 28 Feb 2025 16:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E182702C1;
+	Fri, 28 Feb 2025 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="U78h7DY+"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I76fipOA"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E645272918
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F06528E7;
+	Fri, 28 Feb 2025 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759305; cv=none; b=d3TlWlKAVcHBqRO/hSwFCp2cWuzJ0BGolI+dlIHH5+wiMPV1goZGNEdhD45W1adPCAMc8wieoYMARzVmNBUj0tEYlbviNgFiZ5IN323nyM3j5RA9TT7wf9rpBlZy/Omsk4vvDyZPw7noIPpgJcfSKMCr6f2LxN9XmO1pQoiXaY8=
+	t=1740759450; cv=none; b=txR95XapLvpOlXZUNK3DUqzwoCKHygzOUEsIqX3xHJWNwB4YIzFldM7MEPUpDhiHn7KFbeolNetXbl0pEFiYh/3eeUNcF21s2DySR4DH2ImwtNNehN+Nq2uFkmcQu4h++Zmw0cyrecZViea883HIrC1Bf8AzYisXJEoO9Bznm3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759305; c=relaxed/simple;
-	bh=NN2BSvMz+vImvYnvvmxzYFCR0/diT4E56OolYQ8gpNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eIUSTac0V8m3Rl3ORNdSRfptfvyqYAETyG3NASzSm8/PP46Y41+I6HZ330HCUT7sQU1hia4RwSRx9dsGpzrYh9y6/uOWI4T0/kep2AfUoeJ0av/1JP5dQahXKC62WsjqYrRZGuUg+8WeRh3dtS2ZuMsmZCssHIBmEkGsPhtQgzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=U78h7DY+; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2653745276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740759302; x=1741364102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rNQH/48xhzRNzyZG7WNVKT1O7klmUGoSz27GU//AGac=;
-        b=U78h7DY+eGX3gUwoHCVJG/8mIVMzXAlYZq+BrgoEPjLFyPpMoV/I7XbEW4Vx8M3R6J
-         X7kPiDn2zT12xvndEX1KzUNskxM+1q++vjyV8jPANfWPvyjskq6dRufmz6sQTdcnahAe
-         2foTP5cdzTJxEZHz+fVDWzbVSDFQGt1V2PlKvTNhobqXPMwzIS0o6NiKVFV4Fws8+F6K
-         5tY85jaqh/UII+nCsQF7M8vXslfXc0DUQBQuZtigFGeO5ORowXasFOYQZQPUQw5ktI4s
-         j3qw7I3eY2Gw/7KEFIm5+0DXXMMzFw8rxPplVLdmJFzDGL4bgQyT5yc96AtWIpR+XauU
-         FC/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740759302; x=1741364102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rNQH/48xhzRNzyZG7WNVKT1O7klmUGoSz27GU//AGac=;
-        b=q0JBDUoguvi8xl1fukADB4ZmxS3ovrvBmztvW3nbE/QZI3cO5U+usqv/q/PFd+DI1I
-         rQUU8auu7VZyIe0PZ7gNIlpfDWkokKMp1OqTNFbpReaUN5cePyeQ3X/KF2kTjpg/tpxI
-         Q6HRrfVUK0YQUBS4R68Lelu+xCb9caLx8bbuZXDT+lyt87CRSRRuS6nJq0ZWFaS2pmVk
-         2Zeu9aB5eDcOONg26LvEkSrjG0rqfjDuKvlMOvvLR8qij1Fdcad53Dx1OcpqGw8kWWX/
-         U3o1Yhf2jzuKr2+lnMMntHiE8nPn2CSaTWBM67by6OwEuHB4Lube6/cgrDzYaY2g6qpx
-         p3TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWW/zp8ow0DQn9J90V/oRxD3DEqH1ZPGIrWidWkeMcQVj2ehi6BkpmCsfEroS1r4CWfoG/TVKDKI2+N7DY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiTeo2uBacNOTjYyXNaW4cSyfNrTxyCacecQD/EjVh/JZx50x4
-	VafNGQBtML4/xncDArIYNP/34eI0rAJRNYmwFbhTg3iYPoGv2z+/4YyO3NR5Bty7OQfpli1Azck
-	iGmzOBedMPc6rBR+oztM06ATVN5i2HMBrwa5Z
-X-Gm-Gg: ASbGncv2EQM/b8y9ChaliYtdD64svGxfoGHQuCZSrcE9/5wjqRyQJPRM/C+We0c0Q5Q
-	bGBc7uWzIeq6Fk6z5LQoBFip3V+eW0bQpg9LzCTWFUfe6OQyh+5qke1KRsqwvYezc1qqvZyOSoz
-	owUA2P9+I=
-X-Google-Smtp-Source: AGHT+IHZE6Uns2cbOQYVhvG8TYtNK8Tv1OsaBBXNMiqWNmZVSbVWlxDtSg+Lrq9TfWchcohSXBzjfLpZS1izyDom1TM=
-X-Received: by 2002:a05:6902:11c2:b0:e5b:458a:dec2 with SMTP id
- 3f1490d57ef6-e60b2eb2ccbmr4310016276.21.1740759302079; Fri, 28 Feb 2025
- 08:15:02 -0800 (PST)
+	s=arc-20240116; t=1740759450; c=relaxed/simple;
+	bh=2edDRC4ILu3SR2NspAwtrr0fFn5xXiAgXbR1cRFlIE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GmT+7kCMpeKUwxmlWPgH2lBT/TLszzIQGxxgJZI+9i2UXClnCz247vlS+he7esBiif7LjpPC4fOmWcZfnjB9j1N1Qd5PH3PfOmz9c3jQAxs3p+6MUUMYilacZNXi2CtW3WeTkrzVlQnOEgcpaZ7ztKACLEDFDUD3xa/F9hbcyJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I76fipOA; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1C7C4431B;
+	Fri, 28 Feb 2025 16:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740759445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MiOs4t5S7Vba+FbukFmy46w8UUZlBA+9AHiDIzVMiQY=;
+	b=I76fipOAMV7OPHWC4tqyxx8hPk3KRxyyJzzjkT6yeg97wsKfB9m6ApewNq1NavNRoH/KJR
+	D0ZewdrLLIFjrpBQqT7EwFSOJUhPfLiA5jVJa6wPfe+vi/l9r7Mp0tgVJ4dgtIKdfZaM3k
+	wGbOrUxMt+C21aLQaHwvkevZ0xCgVDXJOo6nvoRQ8mjHhCdmaPAUgwKUU5iX7bSGj54Lb6
+	4hMZN83760UNGxmckO3c35zyTtD9APBMET7CgbjtSb1ffXQLO9b/e1rJZuocNIQ5vSfu6Q
+	6+HY3uIkCBvlWOG5rvzISylYNwLyg9Wu/QcRjmDvs4h/d0PqWjMKXrCKO+uCqQ==
+Date: Fri, 28 Feb 2025 17:17:20 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v3 03/13] net: phy: phy_caps: Move phy_speeds
+ to phy_caps
+Message-ID: <20250228171720.62c6b378@fedora.home>
+In-Reply-To: <Z8Hf-9yR3qD9cqsX@shell.armlinux.org.uk>
+References: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
+	<20250228145540.2209551-4-maxime.chevallier@bootlin.com>
+	<Z8Hf-9yR3qD9cqsX@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com> <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
-In-Reply-To: <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 28 Feb 2025 11:14:52 -0500
-X-Gm-Features: AQ5f1Jp5EkE_-0FggbQWB-ImfqO7NRM-jd_0qziHHIp1srmUnL-YEUrpKVWAWJI
-Message-ID: <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtt
+ hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
-> >
-> > I'd still also like to see some discussion about moving towards the
-> > addition of keyrings oriented towards usage instead of limiting
-> > ourselves to keyrings that are oriented on the source of the keys.
-> > Perhaps I'm missing some important detail which makes this
-> > impractical, but it seems like an obvious improvement to me and would
-> > go a long way towards solving some of the problems that we typically
-> > see with kernel keys.
->
-> The proliferation of keyrings won't solve the key usage problem for IMA-
-> appraisal.  IMA-appraisal can be used to verify the kexec image, kernel m=
-odules,
-> firwmare, etc, but it also verifies file signatures contained in userspac=
-e
-> packages.
+Hi Russell,
 
-To be clear I don't think the usage oriented keyring idea will solve
-every keyring problem, but it seems like it solves a fair number of
-things that I've heard lately.
+On Fri, 28 Feb 2025 16:10:35 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
->  To support the latter case, keyrings would need to be application
-> specific.  (This version of Clavis doesn't solve the latter key usage for=
- IMA-
-> appraisal either.)
+> On Fri, Feb 28, 2025 at 03:55:28PM +0100, Maxime Chevallier wrote:
+> > Use the newly introduced link_capabilities array to derive the list of
+> > possible speeds when given a combination of linkmodes. As
+> > link_capabilities is indexed by speed, we don't have to iterate the
+> > whole phy_settings array.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Application specific keyrings are more-or-less what I've been trying
-to describe.
+[...]
 
-> The keys baked into the kernel are trusted because the kernel itself was =
-signed
-> and verified (secure boot).  Anyone building a kernel can build a key int=
-o the
-> kernel image, which establishes a "root of trust".  That key can then be =
-used to
-> verify and load other keys onto the IMA keyring.
+> > +/**
+> > + * phy_caps_speeds() - Fill an array of supported SPEED_* values for given modes
+> > + * @speeds: Output array to store the speeds list into
+> > + * @size: Size of the output array
+> > + * @linkmodes: Linkmodes to get the speeds from
+> > + *
+> > + * Fills the speeds array with all possible speeds that can be achieved with
+> > + * the specified linkmodes.
+> > + *
+> > + * Returns: The number of speeds filled into the array. If the input array isn't
+> > + *	    big enough to store all speeds, fill it as much as possible.
+> > + */
+> > +size_t phy_caps_speeds(unsigned int *speeds, size_t size,
+> > +		       unsigned long *linkmodes)
+> > +{
+> > +	size_t count;
+> > +	int capa;
+> > +
+> > +	for (capa = 0, count = 0; capa < __LINK_CAPA_MAX && count < size; capa++) {
+> > +		if (linkmode_intersects(link_caps[capa].linkmodes, linkmodes) &&
+> > +		    (count == 0 || speeds[count - 1] != link_caps[capa].speed))
+> > +			speeds[count++] = link_caps[capa].speed;
+> > +	}  
+> 
+> Having looked at several of these patches, there's a common pattern
+> emerging, which is we're walking over link_caps in either ascending
+> speed order or descending speed order. So I wonder whether it would
+> make sense to have:
+> 
+> #define for_each_link_caps_asc_speed(cap) \
+> 	for (cap = link_caps; cap < &link_caps[__LINK_CAPA_MAX]; cap++)
+> #define for_each_link_caps_desc_speed(cap) \
+> 	for (cap = &link_caps[__LINK_CAPA_MAX - 1]; cap >= link_caps; cap--)
+> 
+> for where iterating over in speed order is important. E.g. this would
+> make the above:
+> 
+> 	struct link_capabilities *lcap;
+> 
+> 	for_each_link_caps_asc_speed(lcap)
+> 		if (linkmode_intersects(lcap->linkmodes, linkmodes) &&
+> 		    (count == 0 || speeds[count - 1] != lcap->speed)) {
+> 			speeds[count++] = lcap->speed;
+> 			if (count >= size)
+> 				break;
+> 		}
+> 
+> which helps to make it explicit that speeds[] is in ascending value
+> order.
 
-Sure, I'm not saying that trust isn't important, and that there are
-varying levels of trust.  My argument is that having additional,
-usage/application oriented keyrings which contain links back to keys
-imported and stored in the traditional trust oriented keyrings could
-neatly solve a number of keyring access control issues.
+That makes a lot of sense indeed, I will definitely add that.
 
-> The problem is how to safely establish a root of trust without baking the=
- key
-> into the kernel image and then limiting that trust to specific usages or
-> applications.
+Thanks a lot for the review,
 
-My takeaway from Clavis was that it was more about establishing a set
-of access controls around keys already present in the keyrings and my
-comments about usage/spplication oriented keyrings have been in that
-context.  While the access control policy, regardless of how it is
-implemented, should no doubt incorporate the trust placed in the
-individual keys, how that trust is established is a separate issue
-from access control as far as I'm concerned.
-
---=20
-paul-moore.com
+Maxime
 
