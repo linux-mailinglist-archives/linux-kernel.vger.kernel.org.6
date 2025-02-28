@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-537530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A33A48D0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:08:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11898A48D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79DEB1890A29
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEF33B7439
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649761FB3;
-	Fri, 28 Feb 2025 00:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FFA819;
+	Fri, 28 Feb 2025 00:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS9KUTfS"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPSIMBiY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7057F182;
-	Fri, 28 Feb 2025 00:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F105182;
+	Fri, 28 Feb 2025 00:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740701284; cv=none; b=L75UdoCCPKxN8hcgDEu6oFEXWH7C4JZMpjUn6gGbzbqiJTcaottS9cD4njw8kr1Zp0oitqz3oQUG4Y3InlWkpb+DevIgfQXnmN8GwpZVrl26LZkkqzXqShVPvvk0oDeQy9PrddEeAMbqRMxtel7jUz7s7eSC7BUSi+DWDRbB20Y=
+	t=1740701612; cv=none; b=RgKtU00EectsCMbDoVXYUrf6KTCx15/KEzBkD4/169hGzWWLuSLnHQu2+RuhhvDjfjG51MGYwaCYTE09SeB931upsbwnzGZJs+46tVfMWu2WBNl1Ijw8V2vjm0jjJTN+NF3u/7U3Z2WlV1E3H2I4yOGklRuI8s0hSihNAR/2MyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740701284; c=relaxed/simple;
-	bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9BXJStMwgOTaExmYCIkHVnrSwdQjv0U8LSGnK5103yK4fl2k6PIKGshwC03r712ieCRUzWr2pqXp6AM+iMKVHUY+LGgbR1leLkjwdJeN41kU90HpfWQ2yjJETs4F6Szn/bv0Mg7Od/THbnmRU5o4FAYemrLvaUISiOc/h9nJ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fS9KUTfS; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e53c9035003so1201620276.2;
-        Thu, 27 Feb 2025 16:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740701282; x=1741306082; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-        b=fS9KUTfS5FoJ6QY9Gpjw/Bjf2dXuC8UPlucAmaNgEO10HCmi07RS+n6qunPmJIRsNn
-         ZXYgYMz9LKob5oA1CZgk1yKj2jCZVXoksOyrccaYHhmAcGymTwQ26UYbhtaXN0Je+BpY
-         5EJUDR8LS9+k5Q7YID6cq6Qj672weyoeSHWq2JPr90ozo/c2lKs2GuNuaFvQaJpAIw6R
-         MTgfE30qDFft7wXJIuvvhfbuAiIxAYKe7avPkmFaXJSJ1/xY1YkH17z56YGfyM6BptHM
-         6okSKXssVkDQRKFPmAaFfKIOr0oahFYR9K5c7HQv+jzFhrUCTnpkb/716uex5GgInWWG
-         M4Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740701282; x=1741306082;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-        b=MW0VJMO+X8IWGqMNQBFEiU1wJTelKWyyy0rUEQ8t5G11AN7FcqDtifndqfmH0mSor1
-         nG2hU1QDu6zG4SqH/Ypn5rQYTyAqx86y6VABS3HP673AT5SLpo+kpnVdHJwi4gYXLRtT
-         JTrhYsq8rq3FnyZNXPrYJLg/Y5d0c06KxQnIhWqtdtJkKmOfzNSiGO92kHu01O5Per/d
-         zBMGKvnzAhSk6eIf0iVJ8Hz/R+S4a87Qcg1QApQb2NfFKEcrFd/KZ96oZ3Aazgk51Qhm
-         iTHSArIcvRWeVgw57j0B2b9P1IFkzX6z0yqipUByG6mc2fN2b5wwtq+9JehVE5f3AoEd
-         soEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCL7jV5lWjDKmt01ZFVvFZQpsaN9xMeehVbg2AL0UDT8JbOIK0HI3LqXoDQipMDHqSrTO4hyNMtVY9csykgJg=@vger.kernel.org, AJvYcCWLcwo17Q+mcFofW4rysfGMb1faG0Tt37AJPxLOhB8EfBa5OqQJjxz7swK8eA0xrFBcgSWSbh9/k620XQ==@vger.kernel.org, AJvYcCXRZvKuTxv0EDCECikTuPJyhcZd4etiKOC9j1YLTa5oiKGGW7SgXa5Myu03otGB7mPiF9qvCLQVJ0lFDKp2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFYxIRyLdZGzA18zcdJlZTZaZhB9rCS03Jfh+dLe3g5kdtwcwE
-	hElUdGrzO2MT31XSVDbUg2E6FcYfS+P0txQGBlHgu1D1CVpR6lrZG+uvrFtW0tNg+VuOS3lYbIp
-	LwOki8zTvlJ9Y9fQQ2N0thy1ZTvfdAU68
-X-Gm-Gg: ASbGncs83AWGWz4ic5p16yAlUbYpUNamavmeAl4mTJ9mGpHXR7AXX3Shcyl1WJmRS0W
-	XnC63zzyphTNrtypiBu4g1MOvhXKvt9fB7cZtnIc0uJrWJLPzb1r3B5hL9OrQrg0EYJuuDnYx2S
-	6iN2Z4iCzG
-X-Google-Smtp-Source: AGHT+IGEhr/ZHicSGTtEZuhJ6N3SlIjOb86zqjKxfzWPrTvqCQ+fJHYyCtXANdyhaVHo3KkaXMpGjOTZqO4d64PrQNs=
-X-Received: by 2002:a05:6902:2745:b0:e60:b17c:4252 with SMTP id
- 3f1490d57ef6-e60b2f2ec28mr1572454276.44.1740701282378; Thu, 27 Feb 2025
- 16:08:02 -0800 (PST)
+	s=arc-20240116; t=1740701612; c=relaxed/simple;
+	bh=VjWpg7dP0s8mbOXJKdWV+Hs+lOOmlqB/DQ6QK29ok7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzC55F2/vS6N6XDC6neJZmhoxJzAUkaKWGgvYgp89lZAC0Ram7CFQTbnFNU78L+6HAhkYrDKE5UXBfEeIH/dFtygxbSp+9IWPlahk9R2dzfWb3179RQ5ZnmRXneUgDrkajbNlb/6cAR3DxwKydVRhD4qKHvUA61eZVuDmQjkdj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPSIMBiY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F47C4CEDD;
+	Fri, 28 Feb 2025 00:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740701611;
+	bh=VjWpg7dP0s8mbOXJKdWV+Hs+lOOmlqB/DQ6QK29ok7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FPSIMBiYpk65tkQodTo/Q6a3uAXXcYR/A9MIjM+eaZtBDRB7mS3zYuwI8XBJKliJI
+	 ZQIBtAcV49xzFkH3e9QjkktmvszB/CaIPUZBJUUhuLEQgAjYMKC9wkwMGfo00V4Ae/
+	 MwgX177YXb8sLMGtS3MyHLB73/SS8BvzIPBqEOqi5fzMZ8xwbSwfoCylasr+Xg2LV9
+	 gq0sW7FykZKyCJpc7A08PNzE/+EnNFxOcag/9/bPAdT28B8/s5UrXhrpLbQDrtEuN6
+	 y9CuxIxYz2ZZB9KmRu2uT5vlzgqAuFMOcveNTnSzTJX+vGJWGrKUixNRyBuW1qQNep
+	 0ursar10TjhZQ==
+Date: Fri, 28 Feb 2025 09:13:26 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dharma.B@microchip.com,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+Message-ID: <Z8D_phw3GxvdAO8G@ishi>
+References: <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
+ <Z7vihBqOgP3fBUVq@ishi>
+ <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
+ <Z7_xTQeTzD-RH3nH@ishi>
+ <20250227135330.GC182392@tpx1.home>
+ <Z8B1LDT-n2XTTp8q@ishi>
+ <202502271437280a6701d8@mail.local>
+ <Z8CA9RTZWChh9cJW@ishi>
+ <Z8CKQvRjqH9lwzgO@ishi>
+ <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227225046.660865-1-colin.i.king@gmail.com>
-In-Reply-To: <20250227225046.660865-1-colin.i.king@gmail.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Thu, 27 Feb 2025 16:06:58 -0800
-X-Gm-Features: AQ5f1JqUtukwNG-_koyH808F6r_s3Zf95w-09IXYBwR0i-b82eV5Oszn61Fuqls
-Message-ID: <CABPRKS_WubBn_1wN+bKi+xEHw02ankvzx3FBzpbafmxPb8AGAA@mail.gmail.com>
-Subject: Re: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Justin Tee <justin.tee@broadcom.com>, James Smart <james.smart@broadcom.com>, 
-	Dick Kennedy <dick.kennedy@broadcom.com>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aSZS/FbNbRmlzwJh"
+Content-Disposition: inline
+In-Reply-To: <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
 
-Reviewed-by: Justin Tee <justin.tee@broadcom.com>
 
-Thanks looks fine.
+--aSZS/FbNbRmlzwJh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Justin
+On Thu, Feb 27, 2025 at 04:56:17PM +0100, Cs=F3k=E1s Bence wrote:
+> Hi,
+>=20
+> On 2025. 02. 27. 16:52, William Breathitt Gray wrote:
+> > Sorry, let me step back for a moment because maybe I'm trying to solve
+> > a problem that might not actually be a problem.
+> >=20
+> > I see functionality settings available in the TC Block Mode Register
+> > (BMR) that can affect multiple TCCs at a time. Are these BMR settings
+> > exposed already to users in someway? If not, do we have a way to
+> > introduce these settings if someone wants them; e.g. would the
+> > AutoCorrection function enable bit be exposed as a sysfs attribute, or
+> > configured in the devicetree?
+> >=20
+> > Finally, if there's not much interest in general for exposing these BMR
+> > settings, then I suppose there is no need to change how things are right
+> > now with the microchip-tcb-capture module and we can just keep it the
+> > way it is. That's my only concern, whether there are users that want to
+> > control these settings but don't have a way right now.
+>=20
+> My knee-jerk answer to this is that if they do, they will bring it up by
+> submitting a patch or bug request. But I'll let others chime in, we only =
+use
+> an extremely small subset of the features of the TCBs.
+>=20
+> Bence
+
+I think that's a reasonable stance to take. I don't have an elegant
+solution either to this situation, so I'll defer trying to solve it
+until an actual user shows up who needs the functionality. Until then,
+it seems that what we have right now is adequate for the current
+usecases.
+
+William Breathitt Gray
+
+--aSZS/FbNbRmlzwJh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8D/pgAKCRC1SFbKvhIj
+Kze+AP0TSQhmivwKtynvIgpJ5od2IRhKMwMjM51kwMuLN/TrgwEAzg47J/c7uToS
+dZ/ygvQQpXY3J5aXOapiR28Wb6kZLgc=
+=D3Ne
+-----END PGP SIGNATURE-----
+
+--aSZS/FbNbRmlzwJh--
 
