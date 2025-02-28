@@ -1,259 +1,135 @@
-Return-Path: <linux-kernel+bounces-537848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79C0A491C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DA1A491C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D03B16F754
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D00C816EE08
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63961C3C12;
-	Fri, 28 Feb 2025 06:47:37 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B10C1C54BF;
+	Fri, 28 Feb 2025 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GAFB7OzH"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5153139E;
-	Fri, 28 Feb 2025 06:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D3139E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740725257; cv=none; b=quto0odL4w0kSApgDnjhzfRdnw2eoPFYRobVglaqxdX4z+It7FSv4jup0B6tYGL2iCa61kW4S18paF5/SsMLxcTP0RR+a52dru3JL6fSTjWgPwmH9A4XcGT4ePXvPMvrZdEO1v+H2zMSlcOuV6y3XtvY19C/Z6ZzCyXE4mVX8Ak=
+	t=1740725103; cv=none; b=sRhjN4XON7qQYd7fEeQsqx/s/F+IWXXk5NypQ3qBvxEvYP+DcDcFxFbJKfQaURwyq/HVLyYxD1qDGx18MNHoYJsrJl48wGoKzkw+rV45iPnAybd/F+1cz4cEyVlyHDIPfK4y9sYXRkZsmQPdegsvrBIcpdFBHRwda7bGoFy3Ogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740725257; c=relaxed/simple;
-	bh=8erFOBCpRW578JQFMdC00ciuQNyiLf0rz4V10MaBu64=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H37KGdqOZorkAWEinLroAMcwVBTQg/tF1I1gQPBEDmji+xWJlCE9hZT74JbQMgofw6PNTLYEk4SFh+MtdnSL+DTBzfp/gCbQsKBnm56QXZOrd/ppq2w1AgFshbsgU1b3aJCXdTqFFMthVLHBfMDm3UWvsXS3nF/P6NX9ceKSMfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z3zDs0hSKz1ltZG;
-	Fri, 28 Feb 2025 14:43:25 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id ECA3A14037C;
-	Fri, 28 Feb 2025 14:47:30 +0800 (CST)
-Received: from kwepemn200003.china.huawei.com (7.202.194.126) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 14:47:30 +0800
-Received: from localhost.localdomain (10.175.101.6) by
- kwepemn200003.china.huawei.com (7.202.194.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 14:47:29 +0800
-From: zhangmingyi <zhangmingyi5@huawei.com>
-To: <martin.lau@linux.dev>
-CC: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<song@kernel.org>, <yhs@fb.com>, <john.fastabend@gmail.com>,
-	<kpsingh@kernel.org>, <sdf@google.com>, <haoluo@google.com>,
-	<jolsa@kernel.org>, <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanan@huawei.com>, <wuchangye@huawei.com>, <xiesongyang@huawei.com>,
-	<liuxin350@huawei.com>, <liwei883@huawei.com>, <tianmuyang@huawei.com>,
-	<zhangmingyi5@huawei.com>
-Subject: Re: [PATCH v2 2/2] bpf-next: selftest for TCP_ULP in bpf_setsockopt
-Date: Fri, 28 Feb 2025 14:44:42 +0800
-Message-ID: <20250228064442.3218835-1-zhangmingyi5@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <4533d108-9617-4021-b7a9-befe209926da@linux.dev>
-References: <4533d108-9617-4021-b7a9-befe209926da@linux.dev>
+	s=arc-20240116; t=1740725103; c=relaxed/simple;
+	bh=rzzgHjFp/+vBOUdP1pb2/or/MU6AFe3iVEVOCf2GZOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gl6r52B50uGlTBRBfi1gsR4WPrGbpPnngAlaYdBkq0FjLOJGfjCbFC99Amoy7XqM9zsUr8CZk3lq8sI8bU3/aey9Z7Pgh8tkMuG9xCl1Prsd7eUiDvx9hK+0PWohiNPtqaxQxnwyRgu905W84rLrgEBpEu3yGrpDxs/fNd5L3gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GAFB7OzH; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5494bc4d741so833035e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:45:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740725100; x=1741329900; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UwWIKz2ocQO8lKlTLMYiX1hlEMOEiYylG9oMJg+Rd0=;
+        b=GAFB7OzHTJ1W8rAn8PO0VF3TnQ6AuWrZ671ZpEUl2y3mdn9ZigfbJ86vrQPyrtdAH0
+         STbtDPs1mE2v1hYbsPJ94jCpVerSL+GZA72DtNAeUBTYdg9lG76iFX65CwYOmamOOeAV
+         1uHL3A03f57UL1GJg2EXX9tF7mI+6MIJVdumxIAmGsGHp9EiV7DhUH0rro8M/S+/v61F
+         lu9soUhEuW/kee9mDEK8229o0oxp2/ceF843iznz+vrGST1Sgr0DqYbREdYUAUrLI+kq
+         O87pLrfrJZoZpcx+doGFJwJMuTnxs81d2KXz/Mh3Yke0V9BoFPvDfZwwN0IvCm4+0Pmj
+         BU2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740725100; x=1741329900;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7UwWIKz2ocQO8lKlTLMYiX1hlEMOEiYylG9oMJg+Rd0=;
+        b=IWYVqYEJI1uru9p1Ah71ZlqOcSCcNF59vn8P/HaL74WBOFodMof6a7Km9hdlnOEj9J
+         Z1omtxKBM9aM6VVlYdDDgFxyU6wX3Nf1RTu4Ahb7qdZXcydSCB+zyJUhZEb1MZaqMkLz
+         d0pi+22gXX9Y/QfkRuaqDQXxH7x4iPq/nCyRkl6ls6E6qu0SJOUEGLEEdHcaXourxyqZ
+         3650kwXE16eRGZWuCnTJNEGKbhMejaVeRcK5rpC/jLqR7imdT1+tEvzEavIJptty78n3
+         0iBg0zT5x7Zhw8+1kDR1cGT9s4h6jtfO4zODXG/4iU3XyLsYRWYVx+qRfEUp7gUwXXYx
+         z/SA==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0tb46Bl4XybpI7vWni2QQuGLPrYtR7mdkMDJ8tW+K/q1AnY7kFbCUcqL7vKuwYhK0M/of3XQMwyxbyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcgpKAgq1guKg4a+biJnJBwGsEtBVZeT2OoUwKwLsu/aEvDQef
+	C4Rlv/PTPZoSoqXU8ezYUfTznYA15J2EtBcaMHp24rX7yRxerqfOnSLPyWLDyJg=
+X-Gm-Gg: ASbGncvAQIvHe2TAozqb3FJYB2w8OpSlbykJKCggtKGRcT1atMDqZEScf/QPsV2ZBxE
+	Y/9ngGo/XgQDz5EHqX6oMPmilJSLWGdK51vaHq2LT4MRYk6hu21pTKUpdVA1AHDFXZm9emYrlvY
+	4fPwjjishoWd5K6BAoQH2prqTTYod+I33YkjS5GqPGvLBSLw32P3tBlq5srXT8OCmgsFyCYX2T5
+	vUEvyGzuR2nO9FNew9zEuPs471Lz/9IznG7Ltfqq8nKm26VKrY7CrILIr/Bqcv4DTzAYo/6PRcl
+	icJgaLpiTvpjByzvCldh2aNNjbmBdPLTnjYCMSWgR4YNNaLRKwoeByTlRGKGHn55VEbeqf6921I
+	1+MgTPQ==
+X-Google-Smtp-Source: AGHT+IHDB8fBe378tsuV5Q4vwcGascJZUy+amYGeXzsNguWtg8036c86qjE7FSNVxZDOzRfFY6BYFw==
+X-Received: by 2002:a05:6512:114b:b0:545:d72:95e5 with SMTP id 2adb3069b0e04-5494c107c7emr1034250e87.7.1740725100131;
+        Thu, 27 Feb 2025 22:45:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417b853sm385815e87.102.2025.02.27.22.44.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 22:44:58 -0800 (PST)
+Date: Fri, 28 Feb 2025 08:44:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: enable DRM_DISPLAY_CONNECTOR as a
+ module
+Message-ID: <nzv5wokyetzltnmuuufehdztreorhd5s426fs63shrolr7b57q@fyswxst5u2ay>
+References: <20250214-arm64-display-connector-v1-1-306bca76316e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn200003.china.huawei.com (7.202.194.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-arm64-display-connector-v1-1-306bca76316e@linaro.org>
 
-On 2/13/25 3:19 PM, Martin KaFai Lau wrote:
-> On 2/10/25 5:45 AM, zhangmingyi wrote:
-> > From: Mingyi Zhang <zhangmingyi5@huawei.com>
-> > 
-> > We try to use bpf_set/getsockopt to set/get TCP_ULP in sockops, and "tls"
-> > need connect is established.To avoid impacting other test cases, I 
-> > have written a separate test case file.
-> > 
-> > Signed-off-by: Mingyi Zhang <zhangmingyi5@huawei.com>
-> > Signed-off-by: Xin Liu <liuxin350@huawei.com>
-> > ---
-> >   .../bpf/prog_tests/setget_sockopt_tcp_ulp.c   | 78 +++++++++++++++++++
-> >   .../bpf/progs/setget_sockopt_tcp_ulp.c        | 33 ++++++++
-> >   2 files changed, 111 insertions(+)
-> >   create mode 100644 tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
-> >   create mode 100644 
-> > tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> > 
-> > diff --git 
-> > a/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c 
-> > b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
-> > new file mode 100644
-> > index 000000000000..748da2c7d255
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
-> > @@ -0,0 +1,78 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
+On Fri, Feb 14, 2025 at 04:57:11PM +0200, Dmitry Baryshkov wrote:
+> The display connector family of bridges is used on a plenty of ARM64
+> platforms (including, but not being limited to several Qualcomm Robotics
+> and Dragonboard platforms). It doesn't make sense for the DRM drivers to
+> select the driver, so select it via the defconfig.
+
+Gracious ping. Bjorn, could you possibly pick it up, as it affects
+Qualcomm platforms?
+
 > 
-> This is not right.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> > +
-> > +#define _GNU_SOURCE
-> > +#include <net/if.h>
-> > +
-> > +#include "test_progs.h"
-> > +#include "network_helpers.h"
-> > +
-> > +#include "setget_sockopt_tcp_ulp.skel.h"
-> > +
-> > +#define CG_NAME "/setget-sockopt-tcp-ulp-test"
-> > +
-> > +static const char addr4_str[] = "127.0.0.1"; static const char 
-> > +addr6_str[] = "::1"; static struct setget_sockopt_tcp_ulp *skel; 
-> > +static int cg_fd;
-> > +
-> > +static int create_netns(void)
-> > +{
-> > +	if (!ASSERT_OK(unshare(CLONE_NEWNET), "create netns"))
-> > +		return -1;
-> > +	if (!ASSERT_OK(system("ip link set dev lo up"), "set lo up"))
-> > +		return -1;
-> > +	return 0;
-> > +}
-> > +
-> > +static int modprobe_tls(void)
-> > +{
-> > +	if (!ASSERT_OK(system("modprobe tls"), "tls modprobe failed"))
-> > +		return -1;
-> > +	return 0;
-> > +}
-> > +
-> > +static void test_tcp_ulp(int family)
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index cb7da44155999b59aff95966f4cdc9107f2af46a..dfcc754962f7a40377d1f8e0f16983af5ace28f4 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -911,6 +911,7 @@ CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20=m
+>  CONFIG_DRM_PANEL_SITRONIX_ST7703=m
+>  CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
+>  CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
+> +CONFIG_DRM_DISPLAY_CONNECTOR=m
+>  CONFIG_DRM_FSL_LDB=m
+>  CONFIG_DRM_ITE_IT6263=m
+>  CONFIG_DRM_LONTIUM_LT8912B=m
 > 
-> First, the bpf CI still fails to compile for the same reason as v1. You should 
-> have received an email from bpf CI bot. Please ensure it is addressed first 
-> before reposting. This repeated bpf CI error is an automatic nack.
+> ---
+> base-commit: ed58d103e6da15a442ff87567898768dc3a66987
+> change-id: 20250214-arm64-display-connector-c1c1569f9799
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
 
-I'm sorry I didn't notice this and I'll fix this in the next patch
-
-> pw-bot: cr
-> 
-> The subject tagging should be "[PATCH v2 bpf-next ...] selftests/bpf: ... ". 
-> There are many examples to follow in the mailing list if it is not clear.
-> 
-> Regarding the v1 comment: "...separate it out into its own BPF program..."
-> 
-> The comment was made at the bpf prog file, "progs/setget_sockopt.c". I meant 
-> only create a separate bpf program. The user space part can stay in 
-> prog_tests/setget_sockopt.c.
-> 
-> Move this function, test_tcp_ulp, to prog_tests/setget_sockopt.c. Then all the 
-> above config preparation codes and the test_setget_sockopt_tcp_ulp() can be 
-> saved. modprobe_tls() is not needed also. Do it after the test_ktls().
-> Take a look at test_nonstandard_opt() in prog_tests/setget_sockopt.c.
-> It is testing another bpf prog in the same prog_tests/setget_sockopt.c.
->
-
-Well, it seems that I misunderstood you, and I'll change it according to
-your intentions.
- 
-> Also, for the bpf prog, do you really need to test at 
-> BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB? If not, just testing at 
-> SEC("lsm_cgroup/socket_post_create") will be easier. You can detach the 
-> previously attached skel->links.socket_post_create by using bpf_link__destroy() 
-> first and then attach yours bpf prog to do the test.
-
-My idea is that since tls needs to be setockopt after the link is established,
-it would be easier for me to test BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB in
-sockops ebpf program.
-
-> > +{
-> > +	struct setget_sockopt_tcp_ulp__bss *bss = skel->bss;
-> > +	int sfd, cfd;
-> > +
-> > +	memset(bss, 0, sizeof(*bss));
-> > +	sfd = start_server(family, SOCK_STREAM,
-> > +			   family == AF_INET6 ? addr6_str : addr4_str, 0, 0);
-> > +	if (!ASSERT_GE(sfd, 0, "start_server"))
-> > +		return;
-> > +
-> > +	cfd = connect_to_fd(sfd, 0);
-> > +	if (!ASSERT_GE(cfd, 0, "connect_to_fd_server")) {
-> > +		close(sfd);
-> > +		return;
-> > +	}
-> > +	close(sfd);
-> > +	close(cfd);
-> > +
-> > +	ASSERT_EQ(bss->nr_tcp_ulp, 3, "nr_tcp_ulp"); }
-> > +
-> > +void test_setget_sockopt_tcp_ulp(void) {
-> > +	cg_fd = test__join_cgroup(CG_NAME);
-> > +	if (cg_fd < 0)
-> > +		return;
-> > +	if (create_netns() && modprobe_tls())
-> > +		goto done;
-> > +	skel = setget_sockopt_tcp_ulp__open();
-> > +	if (!ASSERT_OK_PTR(skel, "open skel"))
-> > +		goto done;
-> > +	if (!ASSERT_OK(setget_sockopt_tcp_ulp__load(skel), "load skel"))
-> > +		goto done;
-> > +	skel->links.skops_sockopt_tcp_ulp =
-> > +		bpf_program__attach_cgroup(skel->progs.skops_sockopt_tcp_ulp, cg_fd);
-> > +	if (!ASSERT_OK_PTR(skel->links.skops_sockopt_tcp_ulp, "attach_cgroup"))
-> > +		goto done;
-> > +	test_tcp_ulp(AF_INET);
-> > +	test_tcp_ulp(AF_INET6);
-> > +done:
-> > +	setget_sockopt_tcp_ulp__destroy(skel);
-> > +	close(cg_fd);
-> > +}
-> > diff --git 
-> > a/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c 
-> > b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> > new file mode 100644
-> > index 000000000000..bd1009766463
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> > @@ -0,0 +1,33 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
-> 
-> Same here.
-> 
-> > +
-> > +#include "vmlinux.h"
-> > +#include "bpf_tracing_net.h"
-> > +#include <bpf/bpf_helpers.h>
-> > +
-> > +int nr_tcp_ulp;
-> > +
-> > +SEC("sockops")
-> > +int skops_sockopt_tcp_ulp(struct bpf_sock_ops *skops) {
-> > +	static const char target_ulp[] = "tls";
-> > +	char verify_ulp[sizeof(target_ulp)];
-> > +
-> > +	switch (skops->op) {
-> > +	case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
-> > +		if (bpf_setsockopt(skops, IPPROTO_TCP, TCP_ULP, (void *)target_ulp,
-> > +							sizeof(target_ulp)) != 0)
-> > +			return 1;
-> > +		nr_tcp_ulp++;
-> > +		if (bpf_getsockopt(skops, IPPROTO_TCP, TCP_ULP, verify_ulp,
-> > +							sizeof(verify_ulp)) != 0)
-> > +			return 1;
-> > +		nr_tcp_ulp++;
-> > +		if (bpf_strncmp(verify_ulp, sizeof(target_ulp), "tls") != 0)
-> > +			return 1;
-> > +		nr_tcp_ulp++;
-> > +	}
-> > +	return 1;
-> > +}
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > \ No newline at end of file
-> 
+-- 
+With best wishes
+Dmitry
 
