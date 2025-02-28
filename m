@@ -1,350 +1,246 @@
-Return-Path: <linux-kernel+bounces-538869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAAAA49E0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:54:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26887A49E10
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECED1894BF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA3618994AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426552702D6;
-	Fri, 28 Feb 2025 15:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F7E270EA9;
+	Fri, 28 Feb 2025 15:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9RD9JqR"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYrYhf5p"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE221F9AA6;
-	Fri, 28 Feb 2025 15:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2675A1EF360;
+	Fri, 28 Feb 2025 15:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758050; cv=none; b=YvapdAvw8bEmYtfZ1VWseZwFcvLkYGQ9PqtMemParOO+aBypWW/FGkwqCG/ZZMocgBhtbXbgrXVhARjYvOZA2/zV6vSg6iOWUQ46qCsVZlRGuNaNcfk0qg+o+3ZCumeHd9VwYy32l9QkMh7OT9iQ/vCiwTqL8RgDccOPX5n8gCk=
+	t=1740758133; cv=none; b=B7VbJPw+PPfUoqH71TP8MLrUP0PuC+zYifpz4p44WKTtbhVl9Oe/tNWcnDCxXkNbCyUAlkCnbrlPl9Kojb+lD/1BHv+F99fxUyBvOZelWUV3c0nX+87Wb6i5M1olRFxJ7xujL9kxPZhArfKTTcmk6nlHgcXZgLYX7YAYc6gefdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758050; c=relaxed/simple;
-	bh=Jy5xpWECOq8g2BbX66ZPmFhSis92TzmiHpwJvrfN2/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNTTDSElAp+7HonXorXHgrO/t+xWsWCQezpg65pAlrR/pT1b02v1DUATyQ90FioEYNVrslIRvJY3KyzgooKaoOcHKXUO/Dud2nk33JljbpTL72/VcFmCkHmI2h62sJRpSlLV5lXM/nJ/Fz9oXRKqHamRjdf6qqK8JeBVZM90chA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9RD9JqR; arc=none smtp.client-ip=209.85.219.43
+	s=arc-20240116; t=1740758133; c=relaxed/simple;
+	bh=akg3hfMrj8rJseZvQS4QHjk5DvDzbMeTuCXtQ3LNr1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KAWxUU9W2BczSgKAFm9KfbTf0KnYWJVEJP5K4MsW1NEgBeUE9fzqfUMFpVVbooszgNuxMfxS3axclT7/HOPi+1eUTwYnfFDWwa82KlPBQqJZBax4DRGObbpnbgIZsKjhrUvaiaE+14xHkBHxTeXFmFpdGXoDlDOyT1PqMo16j98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYrYhf5p; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e895f3365aso17280396d6.0;
-        Fri, 28 Feb 2025 07:54:08 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307bc125e2eso25039641fa.3;
+        Fri, 28 Feb 2025 07:55:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740758047; x=1741362847; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740758129; x=1741362929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FOuPCznz5V/Qc6HR9+0KsY6tZ7Awjk9O4h21Q0S5mfE=;
-        b=d9RD9JqRqE7+WmmVVkTB+7kIlRIA6vUNqaHySGLNP4BZAWgsU6SdGqDp3ZS9+VKkmI
-         5wui3QKJU+dMyRsLpCfD8lfYrMEkd8+qxB+8Baqj2Xy6eQBox8X/4sVbDx/wPgP12blJ
-         KxaLHSBaqeuB4y2jUwGWIiUx+Z2PaqggRCVIhkYH1cqMOn1/Rbx5KqNJrMFBBfSfKA91
-         yLCJCHI1cLZ4qaEBtauRFLfHvG6T/8qvD6yHgDO7oDhgm/eZfXYBEymn73OeVVcfT7qA
-         sKqh6cBxVvPAEYx0cotDTjqP13HPaYz4UOLhTft5GmiaCp9JH9JbZpflMWqYCHTYZUZI
-         tJEA==
+        bh=bHn0qaSarOO5nkT/BqsOGpUW4y3+EJjr5cHJDOEs+kg=;
+        b=XYrYhf5pg2IuBS7p5Pno1ffiW2tH6VHdJ8PsVsXvB5ebEJfV/bPXjy7tR/0bwZCnk4
+         aFGn68CVO1uCQkXWy60eLjyGv6FESczL+26dmEPcKaMSyXDm74kwho+KNaKmtDwhRLs6
+         w0qZ60ncu++t8r+UDvSjzJ1uBhmq1GFaKBQKtM0qrYiD7aEFKdlBxmU1/OIISVKQ1AXf
+         xpLCdYM31U87MLheByncD16sY6hOuA0zc99BsC6i+R7MUB5UsqQ9mh+kDzxiRYrfaAmZ
+         dtO0DLo+6TL3TCXjHJlUfdEsU5S7QUDawuE1vQ63PTkNji1CwQ8Lv6fCKMrnFzO/XALX
+         G2fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740758047; x=1741362847;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740758129; x=1741362929;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FOuPCznz5V/Qc6HR9+0KsY6tZ7Awjk9O4h21Q0S5mfE=;
-        b=NteyGJH2iNtPlut86HQn+FJgQ/nUmZNzA1p1e8l2m2EpXl3ZEtp5qOW/D7TVMjyxTH
-         IX98Q0OjqVlhBEAy/3ClijOOzza9xd8x6WVRr5biLcgE9qbXeQsJUZ13GT8ainOqMDF/
-         zQpvZe73iGmC0wqkRCHU8Ah7haEa1FzONgJqmErPQ4GnPO2wdHS7oeD3BNcoQhzsRWcy
-         oLqVn7brWBSa45b4FouQz0axigSduFTDR+xoQGfu17s84Ly6dSngEpwsdDhXawP8Kb1F
-         +xBlx40WSMcSrJwr+BP2y/2AhkqwW53UPjelljEb/JHbJwIxnkB0h6zquWWX49+VUiei
-         E0Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXF/pX7mTKdBVVAO56H0VWmD5oPqkETOJdLFePX2vE+3mKCJORjGoxPGNJ0Wwv8zqYgZFOLZcKCoV7eAqjnpYg=@vger.kernel.org, AJvYcCXtfKlEbMpz4JxIQFPPN3DCrkT7HJGAgpNtRkZs9G1FpBFQW4+vVIhSgUqKGwogt1jIcH6+wT+cp38THcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzzQaiKyofisjpr1JW/YR4HexN7uUg2PQ2/qnhbeS4TxD1sB1x
-	DQm8D5mGuQuX5sRPn1fhpX/24LHrrSWVdBzNfyHyvFCTUBul7T2B
-X-Gm-Gg: ASbGnctATQRTyrK0C8bbmGvFLv8utdPY4JGDGiGKG3NgwD+BG2MV+YVzCtukyTQvJk9
-	No4wsZAbPmS/6I3J9MSROwJoqZmkff5X8cboiQiENNNRBG/VZ486Jzkt3/ixi4lKkAmKpe9NNsb
-	UsYEy6NACprBZzsRLnNsUCRbr+rINAHVP7+hebkZYrTFIXRbHa1Ze8tJvDmntJOIh8+Yl/xvpBS
-	haYN+MMg/9ZYlGgv/+kyqiAcAcQkYrhDcub2580TNoUW4YQ3qQU97SNru3ivXDVMu9/GMGSYXLe
-	LpDbt2wXZmzfHfBHjswUz5pLN41QlLQKIO5CLGKhwMKVFg70kpvsFyhGwjoI+jvEKVAtG8zkYlb
-	kHi+P5cJ7/43KFdB2
-X-Google-Smtp-Source: AGHT+IGRioi16+hiQnf3GM/IfLmmQqAOIWJJaTa3+ToTLWETrevMFb53ZZS+OKbixCfp1Mw3WDxfLw==
-X-Received: by 2002:ad4:5f08:0:b0:6e6:61f1:458a with SMTP id 6a1803df08f44-6e8a0d14f35mr55130316d6.14.1740758047282;
-        Fri, 28 Feb 2025 07:54:07 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897634d1dsm23549666d6.5.2025.02.28.07.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 07:54:06 -0800 (PST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 7445E120006B;
-	Fri, 28 Feb 2025 10:54:06 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 28 Feb 2025 10:54:06 -0500
-X-ME-Sender: <xms:HtzBZzMu4Rf70o90PB4kOSpVwuidliOmSA5eFhureCQDCef0ZyFQ4A>
-    <xme:HtzBZ9-ZXJNjf7YsHzZHhlEsrGh58zMoyF0wtBpousVIt7Psy5jce3vaXzKhlcYE2
-    kLLoegrmviGed4XFg>
-X-ME-Received: <xmr:HtzBZyQ2oCNRCR3BwZS6UjMVND7mCg_Cr1heatk3thv4n8ZVe3pSsIA69g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdekudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephfekudfhfeffvdfhhfdvtefhveffhfeftdef
-    vdehjeegkeeftdeggfevfffhveeknecuffhomhgrihhnpehpthhrrdgrshenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghs
-    mhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhe
-    dvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdp
-    nhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeholh
-    hivhgvrhdrmhgrnhhgohhlugesphhmrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhr
-    gheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphht
-    thhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpgh
-    hhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhi
-    nhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvg
-    drtghomhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
-X-ME-Proxy: <xmx:HtzBZ3vR7oGU_E3vFAtMmp_8a7eysgXlG9LafIpkqbmKfaL04JS5XA>
-    <xmx:HtzBZ7d3i-bJ6X5I37k5rzl7FDtFrKs2JM16NN78Qd8NyFfbJRBX_A>
-    <xmx:HtzBZz3_igYYErux4Glw3N_wjlQ5Oc3xouOEphDb_N2Bpd5_UO9RdA>
-    <xmx:HtzBZ38MWU-uK4EsWHvcAJnBh4F2moqeGW9-UIy8rgqxpX8AdbJ2-g>
-    <xmx:HtzBZ-846Xm4i4Yebhakb74JS64XkGCEWE9Bog-xcRCjx_7edlxtssbV>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Feb 2025 10:54:05 -0500 (EST)
-Date: Fri, 28 Feb 2025 07:54:05 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8HcHVtPiG-X6ujP@Mac.home>
-References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
+        bh=bHn0qaSarOO5nkT/BqsOGpUW4y3+EJjr5cHJDOEs+kg=;
+        b=Rcee7ykayfwqOvm8SFdhflSDb/hhxq7SFK3pDYT2dBe/0XV0PWmOC9BFJSGPLEnnBf
+         hdDz983m8WVMgcm2acSFvlWb3m6wxA2Xe3vlyt/JwrB882NjRyE9XDljDVMUFTuuCHOm
+         vWhTWHpKxaPFSje+S9bnTTthXVaBOi4MV0gaV50kEPeZkUcN+q6v0wgqB+WWEtVyWXEy
+         GyLY4ANfFU+rybCeprlH7jJywZx15VjstEmEiscMa8G01K9QqYhiPbiEr2TVNmrq5aEi
+         LNX8ijPmroFQeus9SQBtlGbtBp3ytwRT6KIPo3grtJPwPQJ3SeJLdoA8l2TtqKKFK31B
+         OW+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWm9c8T1q/KXCSBxPvocjCSNgayMD0TOubN0628oNTUSCjBP4xZTIInyy7+MextXp61JF4t4TcaotK02ZmzF+A=@vger.kernel.org, AJvYcCXiLAMgg63mpFG2xXqF81BNwpbKUm4nzCfA15Bx3eaPqIussEVQg/q8ogFZ/fqC0KnGjq1zUPZ4PJs3lc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFdf4oNzBxtNIRsLXhbOGz3Z6Q6sfB0zS1zxHcz1jnE3G+TwGR
+	t9EDAB5OWwoUQC+scn1m7S58o/K/kdtgu2XDNp1R7TbRJLuRrJ8nKJfHDJwH2ZSPJ8TAI5AIniT
+	PYRTSZJtCeWv5obkkQx6zqokS4wI=
+X-Gm-Gg: ASbGncseeFPuU/AUOqlSKII3r041gg5Dh6Yb1/7M1b1hyHMsr6/b+aIBlg9rf24xklx
+	eezRLiN1O4ntAc0GaWt/6yeev/Mu1OHx6haIhLsNmDgvEVXElOy0C6883IxXjLN+XqgS8CaTcjD
+	4coEuV5omLEM95W9TPXOlBl9ZvaaTYRwf4UWItGr6C
+X-Google-Smtp-Source: AGHT+IH4TnWs7AAWR6mSZJGzeTPP/IV0kwlekYfbQHJwIpvtqQS+Igon57DpTKr3TLAm0ffmLUtfQbT9lsn73QyqZdk=
+X-Received: by 2002:a05:651c:555:b0:308:eb34:103a with SMTP id
+ 38308e7fff4ca-30b932f6d82mr16293581fa.28.1740758128998; Fri, 28 Feb 2025
+ 07:55:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
+References: <20250228-export-macro-v2-0-569cc7e8926c@google.com> <20250228-export-macro-v2-5-569cc7e8926c@google.com>
+In-Reply-To: <20250228-export-macro-v2-5-569cc7e8926c@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 28 Feb 2025 10:54:53 -0500
+X-Gm-Features: AQ5f1Jr5a2e-MB7tbyFJrVeNND-UBub9gCfxNxl1epYDa4dtBuxZ-xEM_hkDrMo
+Message-ID: <CAJ-ks9k4rZdpL5dDfwMHuiKFdyYdY00YioYxdtsqszpcbhzjHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] panic_qr: use new #[export] macro
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oliver,
-
-On Fri, Feb 28, 2025 at 02:43:03PM +0000, Oliver Mangold wrote:
-> Hi,
-> 
-> For usage with block-mq, we found that having a variant of ARef
-> which is guaranteed to be unique being useful.
-> As chances are it is useful in general, I implemented it
-> as kernel::types::UniqueRef.
-> The difference between ARef and UniqueRef
-> is basically the same as between Arc and UniqueArc.
-> 
-
-One meta comment: could you add examples for the usage of UniqueRef?
-Ideally, we should have example code for all the new APIs, so that we at
-least have some test payload on them (doctest will be generated as kunit
-test).
-
-Anyway, thanks for the patch!
-
-Regards,
-Boqun
-
-> This v2 of the patch, addressing the issues raised by Andreas Hindborg.
-> 
-> On 250228 1417, Miguel Ojeda wrote:
-> > 
-> > I think should be caught by Clippy -- Oliver, please try building with
-> > `CLIPPY=1` (we would like Clippy-clean builds as much as reasonably
-> > possible),
-> 
-> Got it. This version should be okay for rustfmt, clippy and checkpatch :)
-> 
-> Best regards,
-> 
-> Oliver
-> 
+On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This validates at compile time that the signatures match what is in the
+> header file. It highlights one annoyance with the compile-time check,
+> which is that it can only be used with functions marked unsafe.
+>
+> If the function is not unsafe, then this error is emitted:
+>
+> error[E0308]: `if` and `else` have incompatible types
+>    --> <linux>/drivers/gpu/drm/drm_panic_qr.rs:987:19
+>     |
+> 986 | #[export]
+>     | --------- expected because of this
+> 987 | pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: =
+usize) -> usize {
+>     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected unsafe fn, fo=
+und safe fn
+>     |
+>     =3D note: expected fn item `unsafe extern "C" fn(_, _) -> _ {kernel::=
+bindings::drm_panic_qr_max_data_size}`
+>                found fn item `extern "C" fn(_, _) -> _ {drm_panic_qr_max_=
+data_size}`
+>
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  rust/kernel/types.rs | 153 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 153 insertions(+)
-> 
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 55ddd50e8aaa..72a973d9e1c7 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -543,6 +543,12 @@ fn from(b: &T) -> Self {
->      }
+>  drivers/gpu/drm/drm_panic.c     |  5 -----
+>  drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
+>  include/drm/drm_panic.h         |  7 +++++++
+>  rust/bindings/bindings_helper.h |  4 ++++
+>  4 files changed, 22 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+> index f128d345b16d..dee5301dd729 100644
+> --- a/drivers/gpu/drm/drm_panic.c
+> +++ b/drivers/gpu/drm/drm_panic.c
+> @@ -486,11 +486,6 @@ static void drm_panic_qr_exit(void)
+>         stream.workspace =3D NULL;
 >  }
->  
-> +impl<T: UniqueRefCounted> From<UniqueRef<T>> for ARef<T> {
-> +    fn from(b: UniqueRef<T>) -> Self {
-> +        UniqueRefCounted::unique_to_shared(b)
-> +    }
-> +}
-> +
->  impl<T: AlwaysRefCounted> Drop for ARef<T> {
->      fn drop(&mut self) {
->          // SAFETY: The type invariants guarantee that the `ARef` owns the reference we're about to
-> @@ -551,6 +557,153 @@ fn drop(&mut self) {
->      }
->  }
->  
-> +/// Types that are [`AlwaysRefCounted`] and can be safely converted to an [`UniqueRef`]
+>
+> -extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
+> -
+> -extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_l=
+en, size_t data_size,
+> -                               u8 *tmp, size_t tmp_size);
+> -
+>  static int drm_panic_get_qr_code_url(u8 **qr_image)
+>  {
+>         struct kmsg_dump_iter iter;
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_=
+qr.rs
+> index bcf248f69252..d055655aa0cd 100644
+> --- a/drivers/gpu/drm/drm_panic_qr.rs
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -27,7 +27,10 @@
+>  //! * <https://github.com/bjguillot/qr>
+>
+>  use core::cmp;
+> -use kernel::str::CStr;
+> +use kernel::{
+> +    prelude::*,
+> +    str::CStr,
+> +};
+>
+>  #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
+>  struct Version(usize);
+> @@ -929,7 +932,7 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D u=
+8>) {
+>  /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+>  ///
+>  /// They must remain valid for the duration of the function call.
+> -#[no_mangle]
+> +#[export]
+>  pub unsafe extern "C" fn drm_panic_qr_generate(
+>      url: *const kernel::ffi::c_char,
+>      data: *mut u8,
+> @@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D =
+u8>) {
+>  /// * If `url_len` > 0, remove the 2 segments header/length and also cou=
+nt the
+>  ///   conversion to numeric segments.
+>  /// * If `url_len` =3D 0, only removes 3 bytes for 1 binary segment.
+> -#[no_mangle]
+> -pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize=
+) -> usize {
 > +///
 > +/// # Safety
 > +///
-> +/// Implementers must ensure that the methods of the trait
-> +/// change the reference count of the underlying object such that:
-> +/// - the uniqueness invariant is upheld, i.e. it is not possible
-> +///   to obtain another reference by any means (other than through the [`UniqueRef`])
-> +///   until the [`UniqueRef`] is dropped or converted to an [`ARef`].
-> +/// - [`UniqueRefCounted::dec_ref`] correctly frees the underlying object.
-> +/// - [`UniqueRefCounted::unique_to_shared`] set the reference count to the value
-> +/// - that the returned [`ARef`] expects for an object with a single reference
-> +///   in existence.
-> +pub unsafe trait UniqueRefCounted: AlwaysRefCounted + Sized {
-> +    /// Checks if the [`ARef`] is unique and convert it
-> +    /// to an [`UniqueRef`] it that is that case.
-> +    /// Otherwise it returns again an [`ARef`] to the same
-> +    /// underlying object.
-> +    fn try_shared_to_unique(this: ARef<Self>) -> Result<UniqueRef<Self>, ARef<Self>>;
-> +    /// Converts the [`UniqueRef`] into an [`ARef`].
-> +    fn unique_to_shared(this: UniqueRef<Self>) -> ARef<Self>;
-> +    /// Decrements the reference count on the object when the [`UniqueRef`] is dropped.
-> +    ///
-> +    /// Frees the object when the count reaches zero.
-> +    ///
-> +    /// It defaults to [`AlwaysRefCounted::dec_ref`],
-> +    /// but overriding it may be useful, e.g. in case of non-standard refcounting
-> +    /// schemes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The same safety constraints as for [`AlwaysRefCounted::dec_ref`] apply,
-> +    /// but as the reference is unique, it can be assumed that the function
-> +    /// will not be called twice. In case the default implementation is not
-> +    /// overridden, it has to be ensured that the call to [`AlwaysRefCounted::dec_ref`]
-> +    /// can be used for an [`UniqueRef`], too.
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: correct by function safety requirements
-> +        unsafe { AlwaysRefCounted::dec_ref(obj) };
-> +    }
-> +}
+> +/// Always safe to call.
+
+This should explain why it's marked unsafe, since it's always safe to call.
+
+
+> +#[export]
+> +pub unsafe extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len=
+: usize) -> usize {
+>      #[expect(clippy::manual_range_contains)]
+>      if version < 1 || version > 40 {
+>          return 0;
+> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
+> index f4e1fa9ae607..2a1536e0229a 100644
+> --- a/include/drm/drm_panic.h
+> +++ b/include/drm/drm_panic.h
+> @@ -163,4 +163,11 @@ static inline void drm_panic_unlock(struct drm_devic=
+e *dev, unsigned long flags)
+>
+>  #endif
+>
+> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+> +extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
 > +
-> +/// An unique, owned reference to an [`AlwaysRefCounted`] object.
-> +///
-> +/// It works the same ways as [`ARef`] but ensures that the reference is unique
-> +/// and thus can be dereferenced mutably.
-> +///
-> +/// # Invariants
-> +///
-> +/// - The pointer stored in `ptr` is non-null and valid for the lifetime of the [`UniqueRef`]
-> +///   instance. In particular, the [`UniqueRef`] instance owns an increment
-> +///   on the underlying object's reference count.
-> +/// - No other references to the underlying object exist while the [`UniqueRef`] is live.
-> +pub struct UniqueRef<T: UniqueRefCounted> {
-> +    ptr: NonNull<T>,
-> +    _p: PhantomData<T>,
-> +}
+> +extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_l=
+en, size_t data_size,
+> +                               u8 *tmp, size_t tmp_size);
+> +#endif
 > +
-> +// SAFETY: It is safe to send `UniqueRef<T>` to another thread
-> +// when the underlying `T` is `Sync` because
-> +// it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally, it needs
-> +// `T` to be `Send` because any thread that has an `UniqueRef<T>` may ultimately access `T` using a
-> +// mutable reference, for example, when the reference count reaches zero and `T` is dropped.
-> +unsafe impl<T: UniqueRefCounted + Sync + Send> Send for UniqueRef<T> {}
+>  #endif /* __DRM_PANIC_H__ */
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 55354e4dec14..5345aa93fb8a 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -36,6 +36,10 @@
+>  #include <linux/workqueue.h>
+>  #include <trace/events/rust_sample.h>
+>
+> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+> +#include <drm/drm_panic.h>
+> +#endif
+
+Why the guard here?
+
+It'd be nice to have a comment here explaining the atypical need for
+this include.
+
 > +
-> +// SAFETY: It is safe to send `&UniqueRef<T>` to another thread when the underlying `T` is `Sync`
-> +// because it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally,
-> +// it needs `T` to be `Send` because any thread that has a `&UniqueRef<T>` may clone it and get an
-> +// `UniqueRef<T>` on that thread, so the thread may ultimately access `T`
-> +// using a mutable reference, for example, when the reference count reaches zero and `T` is dropped.
-> +unsafe impl<T: UniqueRefCounted + Sync + Send> Sync for UniqueRef<T> {}
-> +
-> +impl<T: UniqueRefCounted> UniqueRef<T> {
-> +    /// Creates a new instance of [`UniqueRef`].
-> +    ///
-> +    /// It takes over an increment of the reference count on the underlying object.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the reference count is set to such a value
-> +    /// that a call to [`UniqueRefCounted::dec_ref`] will release the underlying object
-> +    /// in the way which is expected when the last reference is dropped.
-> +    /// Callers must not use the underlying object anymore --
-> +    /// it is only safe to do so via the newly created [`UniqueRef`].
-> +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> +        // INVARIANT: The safety requirements guarantee that the new instance now owns the
-> +        // increment on the refcount.
-> +        Self {
-> +            ptr,
-> +            _p: PhantomData,
-> +        }
-> +    }
-> +
-> +    /// Consumes the [`UniqueRef`], returning a raw pointer.
-> +    ///
-> +    /// This function does not change the refcount. After calling this function, the caller is
-> +    /// responsible for the refcount previously managed by the [`UniqueRef`].
-> +    pub fn into_raw(me: Self) -> NonNull<T> {
-> +        ManuallyDrop::new(me).ptr
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
-> +    type Target = T;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: The type invariants guarantee that the object is valid.
-> +        unsafe { self.ptr.as_ref() }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> DerefMut for UniqueRef<T> {
-> +    fn deref_mut(&mut self) -> &mut Self::Target {
-> +        // SAFETY: The type invariants guarantee that the object is valid.
-> +        unsafe { self.ptr.as_mut() }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> From<&T> for UniqueRef<T> {
-> +    /// Converts the [`UniqueRef`] into an [`ARef`]
-> +    /// by calling [`UniqueRefCounted::unique_to_shared`] on it.
-> +    fn from(b: &T) -> Self {
-> +        b.inc_ref();
-> +        // SAFETY: We just incremented the refcount above.
-> +        unsafe { Self::from_raw(NonNull::from(b)) }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> TryFrom<ARef<T>> for UniqueRef<T> {
-> +    type Error = ARef<T>;
-> +    /// Tries to convert the [`ARef`] to an [`UniqueRef`]
-> +    /// by calling [`UniqueRefCounted::try_shared_to_unique`].
-> +    /// In case the [`ARef`] is not unique it returns again an [`ARef`] to the same
-> +    /// underlying object.
-> +    fn try_from(b: ARef<T>) -> Result<UniqueRef<T>, Self::Error> {
-> +        UniqueRefCounted::try_shared_to_unique(b)
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> Drop for UniqueRef<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: The type invariants guarantee that the [`UniqueRef`] owns the reference
-> +        // we're about to decrement.
-> +        unsafe { UniqueRefCounted::dec_ref(self.ptr) };
-> +    }
-> +}
-> +
->  /// A sum type that always holds either a value of type `L` or `R`.
->  ///
->  /// # Examples
-> -- 
-> 2.48.1
-> 
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> 
+>  /* `bindgen` gets confused at certain things. */
+>  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN=
+;
+>  const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
+>
+> --
+> 2.48.1.711.g2feabab25a-goog
+
+With Andy's comment about extern addressed:
+
+Reviewed-by: Tamir Duberstein <tamird@gmail.com>
 
