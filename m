@@ -1,124 +1,175 @@
-Return-Path: <linux-kernel+bounces-538634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AD5A49B38
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:04:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28536A49B3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A4B17473B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:04:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0AE73BC98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260E626D5D2;
-	Fri, 28 Feb 2025 14:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FC826E166;
+	Fri, 28 Feb 2025 14:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eh9vXQjt"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="ng2VadjU"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393AC276D02
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF0B25F984;
+	Fri, 28 Feb 2025 14:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751455; cv=none; b=D+nL4Vo0SyIQw2HxxJl3AiCTpTPFKBTvFwnVMgUPr41d4MnddEx8b7LFaMUiltVbSae0th1utM7ZRq5X5rnPws/RWU3hWq52KbnGmwChnqs6edPnmVSYo45CPzn227D+1IATELezQIUnHtFzVkh667eACUeos9u8niX7RX7iJJ8=
+	t=1740751482; cv=none; b=ZNmpy4IyFRqlugL5+y6Kq28aqDIxjWHx/Ag5MSeFCQu2OMMFJ3DHRy022P+VUVQF3QsY+nlmzf5I64RlwpAXhf8nmudKqkypoSdKsrD3yb/RwDTlaYm+bKppCyGzXCnCYdzIERqMFIi1ieMlBt5OGPpr1DJfwSWL202NmdpH6qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751455; c=relaxed/simple;
-	bh=4Zkhi/3vKA6AEhdPvUdhJ3xbuKEvtPx76JsO2SWk8Ic=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j3GOv53xkVqDoEolmMqp9vNZOYmWtzsJ5iSUizicLt1vEbrMIr8Oeg4leMxWVy7t8Y4qz/JNLuyN9ARe8RxsdvS0plCsEDx3yEK0YF/waFr2Ms206WGOy1MncHDi6MkkANGAjzScjbM+Fa/+f8pnY4PqGJR2lrRTGUk+1m6Y3do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eh9vXQjt; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feb5cd04a0so2724031a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740751453; x=1741356253; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5r7TF3J4CQJcHdUT68P2kvwC87iUS7j4hBRA43VtK0=;
-        b=eh9vXQjtQIYtnvCNCnaIzC25LdbnlephFAMQkIz0Z9aJvRuncwvsULZjj56/ErW3CS
-         BVtzQEYmz7iOrr/GbosVm0SE1uhqsCSbZir3gMZ5AMGfTGvJpHgMm5fwq5wdr9B+XTEA
-         D/aeUz5u0q9LCkvCwqJ8lw0yfVSf2/G64MvApiiw+3WscIhkxFw4buJ2EWYCv/qRcK4b
-         Muc4DOAn+cSrqv0lE9NI/KDlvy7L+HePrPEKLf6MmSoBeJbO8CKg0bY9QtatN1Tu+WbQ
-         /1z6PZGVWsBvUHXK1FNVuCADEcWtGmQPoh+rsPEaUfF9tBkwUu8kVzvLk9hzzcsaDrg/
-         AQfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740751453; x=1741356253;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5r7TF3J4CQJcHdUT68P2kvwC87iUS7j4hBRA43VtK0=;
-        b=ONKqV/7pn8c6LsFoxUkAKqXJZRnuuLzwq0MMukpOTLczJEFw3qVZyQ8HeTKmsJDdIv
-         oM2abE/y5KGU+q8KkyVRdpuoOeY+QBaa/3ksjR0nHp6aUpOvjISd6ITEkLI2xWJ2eiwZ
-         TUUYQZTUAjcXEzG2kSUEgGT6wAYeEPDk1fNqOAv3RxdUQs3i7YshI96ZmeHnxINDZZcE
-         MygvX7CXX3m72LMeJ/43WirXpe45Nsh+i36i2r+rPRPKuw928qBEI2F2I4llbRqqrMDJ
-         hjjQ8bfBRpFvQYlmbLgYFx1IMh/W/6nduypk83KBsEoXMq4/6AFQn6vqH2rnmXjxF95h
-         7g4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXis5dn1/Zbk8LYM0VfaykuF0uAIxm9pSmxpwW5TLNHNxyTY4rqFEFzkXXA7bGTs/qptzT/QwvFojcB8yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMXYIuQAM4gCuxLHGGwyogf1kZ3tcwqMQlS7SGCBjaGdSeT25g
-	/VuOTZcqdvcfT7wvkcVtR2LFV80gJF+TVEPsiLgxSDwKJYqr/RcOVrgn6DZ4DUtlEEWyIe1bqjJ
-	Ezg==
-X-Google-Smtp-Source: AGHT+IERc5Pv7+4vnoDGWvifxkMQiAEGd9EDuqaHFnE+42Ho1Qy7JMZwWwtUBI6rQGIzKNL4E69Gflsjx/E=
-X-Received: from pjbsn4.prod.google.com ([2002:a17:90b:2e84:b0:2fc:13d6:b4cb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c08:b0:2ee:b2fe:eeeb
- with SMTP id 98e67ed59e1d1-2febac04c12mr4780225a91.22.1740751453510; Fri, 28
- Feb 2025 06:04:13 -0800 (PST)
-Date: Fri, 28 Feb 2025 06:04:12 -0800
-In-Reply-To: <653c3c6e-bdfc-4604-bda0-3b67970a0c62@amd.com>
+	s=arc-20240116; t=1740751482; c=relaxed/simple;
+	bh=OyopVVtQjR6T1QykKvLbX64lhWAiOalFIIdWyRVwcKc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RDi5B4p/Us3EHwoFDvgPU5Re3jJa52Vn4QAyRvDb72jrUAV4l8MLri60V0kzBJPi81WdNqGHdTSGItuAHEsSLpbdcEgdKdZhURuTVGlHc7B/7cQ8Yyq71xaFp6DNpuUM0OnWeDUp5D4Q4eCMdniYp6MjORC9OSJsbChDJ0b9g4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=ng2VadjU; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=rV1ER6hoCH82akCLHnGCnJdZysL/ZASqkcfWYifR8jA=; b=ng2VadjUOk6BzueMZZSr7vtVvL
+	1b1pEDWYVLriFa3lAfDtqIlhFE/pmN9ZD7NLH6QmWt4am7E6yFo9R6aN1urdP/xwGOpEio0ffF8Kf
+	G9recA2dNkvr57m4Ohfa7yTJzQ6Jl2T3HsIszvde9yvKt65erGBGStbw8Y0LOePfR+s6EF26ZjlYD
+	HZeSGhN3hvKEGwa7wVwGvUc6n7YCWgZQVThmk1u0FEgg0HD/IQUiQ2o5OcfnJXVcF/GYODcV8dAnF
+	mkjqXjDp3tNkQYho9TPTKiRijjCBKI3L4pYFw63TlM8FAIuHKjLibH51NCTMkMLBUXkKuOBIYMMHx
+	PQiLogFw==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: vigneshr@ti.com,
+	aaro.koskinen@iki.fi,
+	andreas@kemnade.info,
+	khilman@baylibre.com,
+	rogerq@kernel.org,
+	tony@atomide.com,
+	jmkrzyszt@gmail.com,
+	andi.shyti@kernel.org,
+	reidt@ti.com,
+	wsa@kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@kernel.org
+Subject: [PATCH v2] i2c: omap: fix IRQ storms
+Date: Fri, 28 Feb 2025 15:04:20 +0100
+Message-Id: <20250228140420.379498-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227222411.3490595-1-seanjc@google.com> <653c3c6e-bdfc-4604-bda0-3b67970a0c62@amd.com>
-Message-ID: <Z8HCXP0hFYs0dUxM@google.com>
-Subject: Re: [PATCH v3 0/6] KVM: SVM: Fix DEBUGCTL bugs
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, rangemachine@gmail.com, whanos@sergal.fun
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025, Ravi Bangoria wrote:
-> On 28-Feb-25 3:54 AM, Sean Christopherson wrote:
-> > Fix a long-lurking bug in SVM where KVM runs the guest with the host's
-> > DEBUGCTL if LBR virtualization is disabled.  AMD CPUs rather stupidly
-> > context switch DEBUGCTL if and only if LBR virtualization is enabled (not
-> > just supported, but fully enabled).
-> > 
-> > The bug has gone unnoticed because until recently, the only bits that
-> > KVM would leave set were things like BTF, which are guest visible but
-> > won't cause functional problems unless guest software is being especially
-> > particular about #DBs.
-> > 
-> > The bug was exposed by the addition of BusLockTrap ("Detect" in the kernel),
-> > as the resulting #DBs due to split-lock accesses in guest userspace (lol
-> > Steam) get reflected into the guest by KVM.
-> > 
-> > Note, I don't love suppressing DEBUGCTL.BTF, but practically speaking that's
-> > likely the behavior that SVM guests have gotten the vast, vast majority of
-> > the time, and given that it's the behavior on Intel, it's (hopefully) a safe
-> > option for a fix, e.g. versus trying to add proper BTF virtualization on the
-> > fly.
-> > 
-> > v3:
-> >  - Suppress BTF, as KVM doesn't actually support it. [Ravi]
-> >  - Actually load the guest's DEBUGCTL (though amusingly, with BTF squashed,
-> >    it's guaranteed to be '0' in this scenario). [Ravi]
-> > 
-> > v2:
-> >  - Load the guest's DEBUGCTL instead of simply zeroing it on VMRUN.
-> >  - Drop bits 5:3 from guest DEBUGCTL so that KVM doesn't let the guest
-> >    unintentionally enable BusLockTrap (AMD repurposed bits). [Ravi]
-> >  - Collect a review. [Xiaoyao]
-> >  - Make bits 5:3 fully reserved, in a separate not-for-stable patch.
-> > 
-> > v1: https://lore.kernel.org/all/20250224181315.2376869-1-seanjc@google.com
-> 
-> For the series,
-> 
-> Reviewed-and-tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
+On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+storms because NACK IRQs are enabled and therefore triggered but not
+acked.
 
-Thank you for all your help, much appreciated!
+Sending a reset command to the gyroscope by
+i2cset 1 0x69 0x14 0xb6
+with an additional debug print in the ISR (not the thread) itself
+causes
+
+[ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+[ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+[ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+[ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+[ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+[ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+[ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+repeating till infinity
+[...]
+(0x2 = NACK, 0x100 = Bus free, which is not enabled)
+Apparently no other IRQ bit gets set, so this stalls.
+
+Do not ignore enabled interrupts and make sure they are acked.
+If the NACK IRQ is not needed, it should simply not enabled, but
+according to the above log, caring about it is necessary unless
+the Bus free IRQ is enabled and handled. The assumption that is
+will always come with a ARDY IRQ, which was the idea behind
+ignoring it, proves wrong.
+It is true for simple reads from an unused address.
+
+To still avoid the i2cdetect trouble which is the reason for
+commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings"),
+avoid doing much about NACK in omap_i2c_xfer_data() which is used
+by both IRQ mode and polling mode, so also the false detection fix
+is extended to polling usage and IRQ storms are avoided.
+
+By changing this, the hardirq handler is not needed anymore to filter
+stuff.
+
+The mentioned gyro reset now just causes a -ETIMEDOUT instead of
+hanging the system.
+
+Fixes: c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+CC: <stable@kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+This needs at least to be tested on systems where false acks were
+detected.
+
+ drivers/i2c/busses/i2c-omap.c | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 92faf03d64cf..f18c3e74b076 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -1048,23 +1048,6 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+ 	return 0;
+ }
+ 
+-static irqreturn_t
+-omap_i2c_isr(int irq, void *dev_id)
+-{
+-	struct omap_i2c_dev *omap = dev_id;
+-	irqreturn_t ret = IRQ_HANDLED;
+-	u16 mask;
+-	u16 stat;
+-
+-	stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
+-	mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG) & ~OMAP_I2C_STAT_NACK;
+-
+-	if (stat & mask)
+-		ret = IRQ_WAKE_THREAD;
+-
+-	return ret;
+-}
+-
+ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ {
+ 	u16 bits;
+@@ -1095,8 +1078,13 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ 		}
+ 
+ 		if (stat & OMAP_I2C_STAT_NACK) {
+-			err |= OMAP_I2C_STAT_NACK;
++			omap->cmd_err |= OMAP_I2C_STAT_NACK;
+ 			omap_i2c_ack_stat(omap, OMAP_I2C_STAT_NACK);
++
++			if (!(stat & ~OMAP_I2C_STAT_NACK)) {
++				err = -EAGAIN;
++				break;
++			}
+ 		}
+ 
+ 		if (stat & OMAP_I2C_STAT_AL) {
+@@ -1472,7 +1460,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 				IRQF_NO_SUSPEND, pdev->name, omap);
+ 	else
+ 		r = devm_request_threaded_irq(&pdev->dev, omap->irq,
+-				omap_i2c_isr, omap_i2c_isr_thread,
++				NULL, omap_i2c_isr_thread,
+ 				IRQF_NO_SUSPEND | IRQF_ONESHOT,
+ 				pdev->name, omap);
+ 
+-- 
+2.39.5
+
 
