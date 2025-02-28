@@ -1,197 +1,96 @@
-Return-Path: <linux-kernel+bounces-538568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5997A49A4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:14:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EBCA49A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85686173B00
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B4F1739AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344CE26D5CC;
-	Fri, 28 Feb 2025 13:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1E526B976;
+	Fri, 28 Feb 2025 13:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP2cgZ2B"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eNabF+ok"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C788D26B96F;
-	Fri, 28 Feb 2025 13:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0AB25E471;
+	Fri, 28 Feb 2025 13:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740748456; cv=none; b=KEKKlZm0JuhDkycv9GGKcwQzBJnC8pWpehCx/y0Lrzz6V1L+0txQwyHCkW51ucuW9p2fWXB3AngraW/lNu5dS+VuRL4d+4Eq/9pzPoBhVUPvfZocDjL+vxlil7uDzjoxlRPE+hTfF32B5Gns/EStpDhIiMdGt0Nw2izf/iJ6sOg=
+	t=1740748454; cv=none; b=i3E0J56CbME7Ji/8eEgs7GdR0957ntTpMQX7kXnX4NQ0ds8u9xWi4BytCrCwH11wVgNAQkYLDKq8/aGTgI0eQprVo5bN2nuvOlUCfrwuM/VZd2ekvHimues1oCMiVc09BTCYJXq1zEepCikGNx7xigjpkx34trKR+MnqCj5hB1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740748456; c=relaxed/simple;
-	bh=Yex8Ti2Ma8lpdVN84qoVtEAT9MMOpm/ggXTwi83IM3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i6g9iPkPVsU7V0g8heqhdH+ZHTOuSxYhPtcMIyfmjk03RQ44bzCQUrQ4KT++z/PLSEgFiphl5vcnCt46vMu+u+NFCCc/tapzTth03RZ6Gwsve9+iMpUmzImdbd+HR9Fko8pTs4cxtpuo4kSfsWs5LpxqbloJl8FRIwHFZ5/7e24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP2cgZ2B; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a3092a9ebso22488311fa.1;
-        Fri, 28 Feb 2025 05:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740748453; x=1741353253; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eVd/sNt48RsOOazla0J8Qt4X2Bx3rQZOQ1zMd7wjIQ4=;
-        b=SP2cgZ2Bj4WHHIa9ZfxhVmg7FSFBPvv9w/yBGAKlwIRKbSBGZfLks/dbkkPgpQus+k
-         K2XJGU7YNwkPkkzp6Pa7FS3QbwR0iiMMIE/vTZZ7ix5HlRaqzMF8Rv7WJGL/YjyfPA0D
-         lk0RB6fPrpzBWwf3Htw/CzQIJImRFgWoZrUNKw4T+fc3G1jx+9KFNXE2yz8ueRAZiw8g
-         uynXEyVPUh76AgH+SxFdFu92RAhrvEwKkIgLZ4X2vy1+QyDm0MkjoS6VCd+CzItyntKY
-         XALl6Hjolb9OXi7a6IclbGip31RdJwt3nbpwwvb+FIsroF81J5MEinFiXZ6x0tlLg6Px
-         lkXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740748453; x=1741353253;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eVd/sNt48RsOOazla0J8Qt4X2Bx3rQZOQ1zMd7wjIQ4=;
-        b=LMN/Yu9Aj1IDVebzFzQGnan8c+QJa0xcXyd8nHGpgr64Fa1ypzWB0bv3ReczZqXOQp
-         Dg7N+maVdKKHb+bhATNMYfE8ieMRNBNlhxPqvVGJCtXqoalFgEs3L9x94O5uF5/pL0vd
-         Hscp1l6uCqG5g+lSUmYiY0tPEwCRWy+H0MAmPIc7CMOzT4NGivrfo2c4Owa8VjoNSVPX
-         Tiy1t78d4lqwvLNVufn77te2i/zZEIA4JrSZzyI+07V9HpJvIwhEmXU1T1Un+P4yjva9
-         SEX8+WtLLzZ03pe3OnZZAo2jiN3c4bnNeyQybkXYqnzYTj05rF56dvZwSvjJF91zUPYf
-         iOgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsYTzIJWgRv7ALLVj4vHVXXOn1rnJJFha7Gge3cg68TpFtwLb46pGRZbjVQbRkKFL3uBq0GxDUDB6avVel@vger.kernel.org, AJvYcCXc3QAs4rR9j16oYxRucq8Bn/a0ko6Alrtk0ncDv4C993A1lpIJ+00EjZRy8v6BSVEcYKgFh4s38X0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtPl3LKT6RsquwV65OHzUaV+WqnDKWMaSfFu8ekHHCNm3ZW92H
-	73sqctRV5p7t8ekfNtfw2ZPKJsWAk77WlsITTwgKpTgB/bdpXJ5J
-X-Gm-Gg: ASbGncsK3Cn7an38Res2bHEUBP/TpBcc34EiA8eDxLbEJyvepc7rwOVfSPfCJyJXVMj
-	za2SuIlcz6TJzC7Wz5ng1kHqKu7p6DLITjIbaAzNQzadmoM1BPUlYIv2N53SX8d0a+MbGYrYCiE
-	0EOq+5CSqKJHyit1Qs4kFc9UE4F7IMMUcqEPwI34UNRJJuRLxfN9hijwpO0sLM0hLRE8MivdRmV
-	LiE/B4q/PRnzPRHabmxkMvEr8YX6zSe8Ug7AcDbD89HbCD9AG+ZOCDly+S9bhpWk84oC5dXN4eh
-	nwfAfyyMUqA3KTpGubg05enVWR0BZ0tl
-X-Google-Smtp-Source: AGHT+IF+FQuQyF5xVH38vwhaidGe44WwPsjwLtBRtm5sInoLCa4hX/GF7uKgDAd4md8wwhDTkA4AcA==
-X-Received: by 2002:a05:651c:1993:b0:30b:94c9:cb3b with SMTP id 38308e7fff4ca-30b94c9d08bmr9609061fa.32.1740748452706;
-        Fri, 28 Feb 2025 05:14:12 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b928fcd1dsm2900991fa.32.2025.02.28.05.14.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:14:11 -0800 (PST)
-Date: Fri, 28 Feb 2025 15:14:03 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Yu Jiaoliang <yujiaoliang@vivo.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: Include cleanup.h when using guard()
-Message-ID: <5b352ce7241e5904a317dd26950c7cd4daa59fc0.1740748394.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1740748454; c=relaxed/simple;
+	bh=21m3In4wCH+q/UoEDYx7ymPFrvABWf4Rd32gUSleQA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvWNjoDfF5WDPSD3P+eiS+4+D5tKzo1YGYjNnVFWozXRfDpF2pqReaj9DM0WeyXItvrk6hl/ItNPYOfbx0+QEIGOvfVHjN+jxSuhK0HzKhe0HN0tqJf/Vt7qOtauPZP88I51G/mjnIMDG3FZpUukwoUQM19nWyqfHqAdD8geHYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eNabF+ok; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740748450;
+	bh=21m3In4wCH+q/UoEDYx7ymPFrvABWf4Rd32gUSleQA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eNabF+okts2wj5dvZqEBsxkC50bHNM+f5w4lqa7moXIz4uTrl2Dwht6hOqGiod1MK
+	 yrrwclkFsnIodC7SDWabOXUO3KABtHYviBa3il6GwIrYgwLH1s/hT7ISUti/D3SMy2
+	 I+fy4+hm4Sg/qB4K5PCskuRuHDn2TNybZUYToHnYwKxd/1QU0ldBXskBiTgmqL0Ipg
+	 mKxcYEzHxnzBDfv+RguYfrrK7hCZU09YDF3GPxBBGxVMOJcXbQGd2bHXiFKEGKMWKH
+	 bAhOirJHBRJ8C00gWbsqCRO83L4G0d4KGf2d7+IJgDWSEEMdUhkN/fV2iypTRhWoaJ
+	 azj0xU0CSrUkw==
+Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1003])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 733C217E087E;
+	Fri, 28 Feb 2025 14:14:07 +0100 (CET)
+Date: Fri, 28 Feb 2025 10:14:05 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, kernel@collabora.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] ASoC: mediatek: mt6359: Fix DT parse error due to wrong
+ child node name
+Message-ID: <59f79e0a-c99f-4b30-b0dd-81c4889c7807@notapiano>
+References: <20250228-mt6359-fix-probe-failed-v1-1-64941d387b2c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/ZDuC+u021tB27Tz"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250228-mt6359-fix-probe-failed-v1-1-64941d387b2c@collabora.com>
 
+On Fri, Feb 28, 2025 at 11:32:19AM +0100, Louis-Alexis Eyraud wrote:
+> A recent dtbs_check error fix in mt6359.dtsi file changed a node name
+> (from "mt6359codec" to "audio-codec") without modifying the mt6539
+> codec code that uses it.
+> It leads to a probe failure after devicetree parsing returns in error:
+> ```
+> [    1.354025] mt6359-sound mt6359-sound: mt6359_platform_driver_probe() failed to parse dts
+> [    1.355066] mt6359-sound mt6359-sound: probe with driver mt6359-sound failed with error -22
+> ```
+> 
+> So, add the child node retrieval with the new name and if not found,
+> try with the older one for backward compatibility.
+> 
+> Fixes: 76b35f59bbe6 ("arm64: dts: mediatek: mt6359: fix dtbs_check error for audio-codec")
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
---/ZDuC+u021tB27Tz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Directly include the cleanup.h for the guard() instead of relying it to
-be included via other files.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
- drivers/iio/adc/ad4130.c       | 1 +
- drivers/iio/adc/ad7091r-base.c | 1 +
- drivers/iio/adc/ad7606.c       | 1 +
- drivers/iio/adc/max34408.c     | 1 +
- drivers/iio/adc/pac1921.c      | 1 +
- 5 files changed, 5 insertions(+)
-
-diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
-index de32cc9d18c5..afcea2d6d494 100644
---- a/drivers/iio/adc/ad4130.c
-+++ b/drivers/iio/adc/ad4130.c
-@@ -6,6 +6,7 @@
-=20
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
-diff --git a/drivers/iio/adc/ad7091r-base.c b/drivers/iio/adc/ad7091r-base.c
-index 606486c4dfe8..931ff71b2888 100644
---- a/drivers/iio/adc/ad7091r-base.c
-+++ b/drivers/iio/adc/ad7091r-base.c
-@@ -7,6 +7,7 @@
-=20
- #include <linux/bitops.h>
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/iio/events.h>
- #include <linux/iio/iio.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index d8e3c7a43678..11505846eb4f 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -5,6 +5,7 @@
-  * Copyright 2011 Analog Devices Inc.
-  */
-=20
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/err.h>
-diff --git a/drivers/iio/adc/max34408.c b/drivers/iio/adc/max34408.c
-index 971e6e5dee9b..4f45fd22a90c 100644
---- a/drivers/iio/adc/max34408.c
-+++ b/drivers/iio/adc/max34408.c
-@@ -8,6 +8,7 @@
-  */
-=20
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index 90f61c47b1c4..1c28df132e9f 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -7,6 +7,7 @@
-=20
- #include <linux/unaligned.h>
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/i2c.h>
- #include <linux/iio/events.h>
- #include <linux/iio/iio.h>
-
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
---=20
-2.48.1
-
-
---/ZDuC+u021tB27Tz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfBtpAACgkQeFA3/03a
-ocXdMwf/UAl5JU2lJImfnbz9kvty97meOs60nveclGcLK4W28BbNuqzvJg1zlBkL
-1quNf4EIIL9OKzc9EJc8Lm27vIJuefYCkB/XqFFs+lvixLZjx6T5/gXUfyBy1FyQ
-8oIPexjwMqKyKqkROPF/rLaWnYmanyJ8PjQ4VdvgKtM0SQTIXhTDlGhgjJjLnKEa
-8jA1hNQGVsOfZaUGWT+zc7ZiTBN8Oti0CN92loAdjcveSXcd/7pmmVFdi9B1wCcE
-W+9C/k8GOJQITlFWIlpklk7O6z/Mfn3nk19GMJuZ//M1sdc+NoSGvWs4pqR+ZoxI
-2DabpXjTCuTRmAzpef6WebJs52RfCQ==
-=AW6/
------END PGP SIGNATURE-----
-
---/ZDuC+u021tB27Tz--
+Thanks,
+Nícolas
 
