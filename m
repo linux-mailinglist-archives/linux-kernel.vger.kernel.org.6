@@ -1,193 +1,159 @@
-Return-Path: <linux-kernel+bounces-539443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837DFA4A44D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:37:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B2EA4A450
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8766B189349B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:37:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 819777A4DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4171A5B80;
-	Fri, 28 Feb 2025 20:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qqg3pjYy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6202E1CAA9E;
+	Fri, 28 Feb 2025 20:37:27 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B579B23F36A;
-	Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6111423F386
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740775045; cv=none; b=gmLLrtaUcTFEapabMr+7urJ5fTlEp12sidwmjZtjW2JB9tll4H0nukm66BVWzX2Si8axGZMvtlxiWsJIUWLHk2jcU4K2zcYhyzeFl30A4q42cCaTIvenN9+Xncwi/vrFXI3DcF7jcbbnU0o0u4wlxD8tZfyyPkDwI+AQfKIdxjk=
+	t=1740775047; cv=none; b=NoOZfo4KYRBzfUrWd13auAMhYf6u6gN5qL8/7YOeVTF0xPmeAhH7fytvGgzPPGqwlISZP0wG/nRaKsp8i01wgTd4CIDUG51Wb+UC0FR6eDuL4izJ54eVRL2JZsTAW/E588nWNL/tZP+QF00CJwwK7jHreudgB/bkxEY07vLsEdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740775045; c=relaxed/simple;
-	bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=OonF1VtgprYQFiLDxNkmiBlApFcqFj1FycKGY0Npn9pzSEceVjZLIW2U3IM2ep6g9GWEivqrJ+Rb3wbAOflt0U3UmTQHjpLGTkANCJ0I5kdZYne0LX1o1Y4x/avi+SCbPLmApWZlvYWAR+d+oupFs+GeUhJbOc1H6bo1SWOTdgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qqg3pjYy; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740775044; x=1772311044;
-  h=subject:to:cc:from:date:message-id;
-  bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
-  b=Qqg3pjYyRDkjNkVX4O8E6NA4qmkIcNM8aa8oJlfJqAVmd6Jbad+3ZkW7
-   W53Qzpkh9KcLZXbcuum7D8yJ5pV6RNQvx7NSjUrHZBu/BmkXOd0JBqm36
-   t/cF3a8av3IngcR0XJqizAWACiriUF0TPszQyRISbleipvn59RV7kNNJo
-   Cq7YH0Al3NLsbn/H+hsaguIgyqUY+jo8knKKdN7vj0yL3laWpOXwQeNS8
-   64VIl4HR8tfqIcFu/44dIDYnFiRCxFFZTwoYC3IUIzw+SuPT3OCTNVCmt
-   7Pl2m3bOrr9yFTrLG+GrkavCk4nIV3b2QlRO8wn+ZlqSzACMFqfirLhuZ
-   g==;
-X-CSE-ConnectionGUID: VeSKilD7Qx+NRN+PAUFUSg==
-X-CSE-MsgGUID: 778lG40JRiC6NwBffS+Uvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45367465"
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="45367465"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 12:37:23 -0800
-X-CSE-ConnectionGUID: ZGrelpB5SC2QF9vxwxb42g==
-X-CSE-MsgGUID: SPSF5J2lSVKySLWgCerUYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="122393832"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa003.jf.intel.com with ESMTP; 28 Feb 2025 12:37:23 -0800
-Subject: [PATCH] [v2] filemap: Move prefaulting out of hot write path
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,tytso@mit.edu,willy@infradead.org,akpm@linux-foundation.org,mjguzik@gmail.com,david@fromorbit.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 28 Feb 2025 12:37:22 -0800
-Message-Id: <20250228203722.CAEB63AC@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1740775047; c=relaxed/simple;
+	bh=Ljzb965b+3OQC91DRvdpu9r5brh3YKoyoV8uSEqBBo8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XcSTtGIUyn1JBDwAV1ynzRwPkgOdY4HqxKyrcIUXcblMK6AMdzJlfiZsLrSqUeKE9KSpOzQZnjdb1P+k9v6L87w7Yt/+3IxXFaqcUYn5sblvT623f3sV7jYzsKCwqOfKRAzxCOx/RN2yBY2gRa/pBs1KqlReXCNC6/pc0pq7IiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d3e4129028so16534295ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:37:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740775044; x=1741379844;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=do92xcNC0WFQw/Ce4Jou7iOdOxAiPDFL0QRYd03MRmc=;
+        b=os34keSJdDg3czVAJGm7G52KwMHJmDxC1qBV1ndXHxPK2K10AYKa6GMBR1uF3ti2IX
+         +lv2qW60FyAhs10mq20N8K+K562Pu15GrjiPl9ME3OWw77U4jvgG+9BtMlUNnuyI5+UY
+         DDBwnf5/x38KUTHpgnlldXp4M8j0VRFHQP/eB3oKI9F54NagpJS3pZfrLiCHbcIEcH49
+         DZMWh8ipRSS/bGKgXY4j2ndacm/7yCWWexKUODfpiWSARprXRY/DbHm/DeazDhZEjGBx
+         AZwD4vCetTlq8ZIn8jgAWxIJPahgjHNFeyAwVC/WMLIqGJeVOX7qUiLfMloCDnGJ8cXg
+         kubA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdeUXzKUSRZvnefIFKO/UssOjwzNnaP9Ey9uG4LdCSkiOoisyWueq1Cn2l+Ojj7nHkpiOgtX8Huoz4U4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+2Fs34sNs/wkNOcLfU73ZoN9uXc2CCSbQaAh5n0cBFhtzlKTc
+	O3swSxOiYUmJjH8Dc5sH8WlRczJgstyKL6ZmboRA3sN72JJMVFHbGzQu3ZxhBVHVNBYGk01ddP6
+	+OJFH84n+KmIohxsf169cYMH034NmDnYMI+HYn5ajl2OSzljFAC5trqc=
+X-Google-Smtp-Source: AGHT+IHqBkfoR8i6w/+tls7TWCjrAcTvjAR2poqDZFJnZwHhvPVKnHVB5XKg+dX40lgp78juIZg0UgbAjVmei839Qm5EwcMJPMir
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:216c:b0:3cf:bc71:94f5 with SMTP id
+ e9e14a558f8ab-3d3e6f4aaecmr46976555ab.22.1740775044496; Fri, 28 Feb 2025
+ 12:37:24 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:37:24 -0800
+In-Reply-To: <000000000000e39b37061e898704@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c21e84.050a0220.dc10f.0151.GAE@google.com>
+Subject: Re: [syzbot] [fbdev?] KASAN: global-out-of-bounds Read in bit_putcs (3)
+From: syzbot <syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com>
+To: daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    017f704fbfb1 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12128864580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+dashboard link: https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1643dba0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16128864580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d34fb306468f/disk-017f704f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6f1126558a26/vmlinux-017f704f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6d9d912bee27/Image-017f704f.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com
+
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+==================================================================
+BUG: KASAN: global-out-of-bounds in __fb_pad_aligned_buffer include/linux/fb.h:644 [inline]
+BUG: KASAN: global-out-of-bounds in bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
+BUG: KASAN: global-out-of-bounds in bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
+Read of size 1 at addr ffff80008be20810 by task syz-executor101/6448
+
+CPU: 1 UID: 0 PID: 6448 Comm: syz-executor101 Not tainted 6.14.0-rc4-syzkaller-g017f704fbfb1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x198/0x550 mm/kasan/report.c:521
+ kasan_report+0xd8/0x138 mm/kasan/report.c:634
+ __asan_report_load1_noabort+0x20/0x2c mm/kasan/report_generic.c:378
+ __fb_pad_aligned_buffer include/linux/fb.h:644 [inline]
+ bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
+ bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
+ fbcon_putcs+0x390/0x5a0 drivers/video/fbdev/core/fbcon.c:1308
+ do_update_region+0x1e8/0x3d0 drivers/tty/vt/vt.c:609
+ update_region+0x1e0/0x478 drivers/tty/vt/vt.c:633
+ vcs_write+0x9e8/0x1180 drivers/tty/vt/vc_screen.c:698
+ do_loop_readv_writev fs/read_write.c:843 [inline]
+ vfs_writev+0x494/0x92c fs/read_write.c:1052
+ do_writev+0x178/0x304 fs/read_write.c:1096
+ __do_sys_writev fs/read_write.c:1164 [inline]
+ __se_sys_writev fs/read_write.c:1161 [inline]
+ __arm64_sys_writev+0x80/0x94 fs/read_write.c:1161
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+The buggy address belongs to the variable:
+ fontdata_8x16+0x1010/0x1480
+
+The buggy address belongs to the virtual mapping at
+ [ffff80008b810000, ffff80008f6b0000) created by:
+ declare_kernel_vmas+0x58/0xb8 arch/arm64/mm/mmu.c:771
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1a1820
+flags: 0x5ffc00000002000(reserved|node=0|zone=2|lastcpupid=0x7ff)
+raw: 05ffc00000002000 fffffdffc5860808 fffffdffc5860808 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff80008be20700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff80008be20780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff80008be20800: 00 00 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+                         ^
+ ffff80008be20880: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+ ffff80008be20900: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+==================================================================
 
 
-There is a generic anti-pattern that shows up in the VFS and several
-filesystems where the hot write paths touch userspace twice when they
-could get away with doing it once.
-
-Dave Chinner suggested that they should all be fixed up[1]. I agree[2].
-But, the series to do that fixup spans a bunch of filesystems and a lot
-of people. This patch fixes common code that absolutely everyone uses.
-It has measurable performance benefits[3].
-
-I think this patch can go in and not be held up by the others.
-
-I will post them separately to their separate maintainers for
-consideration. But, honestly, I'm not going to lose any sleep if
-the maintainers don't pick those up.
-
-1. https://lore.kernel.org/all/Z5f-x278Z3wTIugL@dread.disaster.area/
-2. https://lore.kernel.org/all/20250129181749.C229F6F3@davehans-spike.ostc.intel.com/
-3. https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
-
---
-
-Changesfrom v1:
- * Update comment to talk more about how filesystem locking and
-   atomic usercopies avoid deadlocks.
-
---
-
-From: Dave Hansen <dave.hansen@linux.intel.com>
-
-There is a bit of a sordid history here. I originally wrote
-998ef75ddb57 ("fs: do not prefault sys_write() user buffer pages")
-to fix a performance issue that showed up on early SMAP hardware.
-But that was reverted with 00a3d660cbac because it exposed an
-underlying filesystem bug.
-
-This is a reimplementation of the original commit along with some
-simplification and comment improvements.
-
-The basic problem is that the generic write path has two userspace
-accesses: one to prefault the write source buffer and then another to
-perform the actual write. On x86, this means an extra STAC/CLAC pair.
-These are relatively expensive instructions because they function as
-barriers.
-
-Keep the prefaulting behavior but move it into the slow path that gets
-run when the write did not make any progress. This avoids livelocks
-that can happen when the write's source and destination target the
-same folio. Contrary to the existing comments, the fault-in does not
-prevent deadlocks. That's accomplished by using an "atomic" usercopy
-that disables page faults.
-
-The end result is that the generic write fast path now touches
-userspace once instead of twice.
-
-0day has shown some improvements on a couple of microbenchmarks:
-
-	https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/all/yxyuijjfd6yknryji2q64j3keq2ygw6ca6fs5jwyolklzvo45s@4u63qqqyosy2/
-Cc: Ted Ts'o <tytso@mit.edu>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>
 ---
-
- b/mm/filemap.c |   27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
-
-diff -puN mm/filemap.c~generic_perform_write-1 mm/filemap.c
---- a/mm/filemap.c~generic_perform_write-1	2025-02-28 11:58:36.499615962 -0800
-+++ b/mm/filemap.c	2025-02-28 12:13:27.845549365 -0800
-@@ -4170,17 +4170,6 @@ retry:
- 		bytes = min(chunk - offset, bytes);
- 		balance_dirty_pages_ratelimited(mapping);
- 
--		/*
--		 * Bring in the user page that we will copy from _first_.
--		 * Otherwise there's a nasty deadlock on copying from the
--		 * same page as we're writing to, without it being marked
--		 * up-to-date.
--		 */
--		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
--			status = -EFAULT;
--			break;
--		}
--
- 		if (fatal_signal_pending(current)) {
- 			status = -EINTR;
- 			break;
-@@ -4198,6 +4187,12 @@ retry:
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
-+		/*
-+		 * Faults here on mmap()s can recurse into arbitrary
-+		 * filesystem code. Lots of locks are held that can
-+		 * deadlock. Use an atomic copy to avoid deadlocking
-+		 * in page fault handling.
-+		 */
- 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
- 		flush_dcache_folio(folio);
- 
-@@ -4223,6 +4218,16 @@ retry:
- 				bytes = copied;
- 				goto retry;
- 			}
-+
-+			/*
-+			 * 'folio' is now unlocked and faults on it can be
-+			 * handled. Ensure forward progress by trying to
-+			 * fault it in now.
-+			 */
-+			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
-+				status = -EFAULT;
-+				break;
-+			}
- 		} else {
- 			pos += status;
- 			written += status;
-_
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
