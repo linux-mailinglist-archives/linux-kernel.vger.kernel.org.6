@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-538623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E24CA49B07
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:54:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99501A49A45
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E99C1897ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394EB169079
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E7A26E16F;
-	Fri, 28 Feb 2025 13:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F1326B2B5;
+	Fri, 28 Feb 2025 13:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ONcz5vJx"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFpiAiDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E665326B950
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433A1C726D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740750859; cv=none; b=Fv9F0ceCDdLjCK9U9TBc0EQVD6MarFYyG/LJpcLJYnxCG1+5iC4zXpURMcLDU0m83brl8BOgl0i6geAkVFv1N+s1y3m10dI5nR1xsHgn+Os3i0YK22g/YFzDOvFyGdPwDyaJ3HG1VqDdlpSEJzI0qr4EoAsa4h7UtLDXeMginh4=
+	t=1740748315; cv=none; b=Plod7cVMg3u7xoGItq6A9ISSi2IVyNOJfBLS5h9rLFArpMOdx7Fzjs39ZKp/ZyIaB1Atq8lu/rMfqe7en2DsnD3Wj1t+TjDgGw51lTzjrefhs8hu5QHTT7w5FR+oYXNt2sfOYbvqpNjTTe4jRZkGlpbYle2fQ7DBCYfnZtNCgbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740750859; c=relaxed/simple;
-	bh=6nQd1xomJJEbRkBicsK3sFU1SOu4he/i1r6HbTBh4CM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=Avfd2e/kDSW9M+59W00gqzqXNXmyx3WVERMLJsw1iFROh6PwYvmNrLUzOR4qqI09Sf+glFKahpovigCwTZ1+VlFJgcgE2y3gU/uDBlynMon1NqWvR/rGeWYx6hlJbKyIAr/WG7EEsM6+zpouIAk15/IeIqQNsoUCt9KcYV0C+T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ONcz5vJx; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250228135414epoutp0427f02e222bbd9123f07bd7499a2a9446~oY63NRquI0697106971epoutp04F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:54:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250228135414epoutp0427f02e222bbd9123f07bd7499a2a9446~oY63NRquI0697106971epoutp04F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740750854;
-	bh=y0i0iP7YFThBflzgZh4OQQwIJEzrlQCTwJu6xXb7Vnk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=ONcz5vJxvL4v7sjoPOj8HWNQ2JvtD5Ow1wDWrONLoJUTdZN8th0A7tSZCJCbHeTPA
-	 tvdJE1s2Op2jANM0jHpLH5nNUtvGFHGkxsDOb4Cu+UQFKg0Y7O/pQ6Lm4J9L6g3on+
-	 bpRUklO8GPytjC5+Hdk0zWGDnYEuvnDHDypetvNY=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20250228135413epcas5p288532ab265f1ea1a509f6d76adec911a~oY62-RNKv2093120931epcas5p2c;
-	Fri, 28 Feb 2025 13:54:13 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z48nw1vKTz4x9Pp; Fri, 28 Feb
-	2025 13:54:12 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	75.86.20052.400C1C76; Fri, 28 Feb 2025 22:54:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250228135411epcas5p1c1bbaea7cec83d32ac8f032817e558b9~oY61I96Gx3181931819epcas5p1v;
-	Fri, 28 Feb 2025 13:54:11 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250228135411epsmtrp11a58f7cef9cdf010eb26d457fe05905d~oY61IJ7nG1147611476epsmtrp1B;
-	Fri, 28 Feb 2025 13:54:11 +0000 (GMT)
-X-AuditID: b6c32a49-3d20270000004e54-6d-67c1c0049544
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7C.0C.18949.300C1C76; Fri, 28 Feb 2025 22:54:11 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.6]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228135410epsmtip21949833392c75f9528f2cd26cfc466d6~oY60PLzcQ2326823268epsmtip2a;
-	Fri, 28 Feb 2025 13:54:10 +0000 (GMT)
-From: Anindya Sundar Gayen <anindya.sg@samsung.com>
-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	daniel.lezcano@linaro.org
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-Subject: [PATCH] clocksource: exynos_mct: fixed a spelling error
-Date: Fri, 28 Feb 2025 18:41:38 +0530
-Message-Id: <20250228131138.9208-1-anindya.sg@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7bCmpi7LgYPpBg9u81oc2ryV3WLeZ1mL
-	y7vmsFks2vqF3WLzpqnMDqwed67tYfN4d+4cu0ffllWMHp83yQWwRGXbZKQmpqQWKaTmJeen
-	ZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gCtVVIoS8wpBQoFJBYXK+nb2RTl
-	l5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZ1yYdpqxoIOtYlsHVwNj
-	M2sXIyeHhICJRP+j44xdjFwcQgK7GSVWn/vDDpIQEvjEKHHpszyE/Y1RYtVzb5iG000r2CAa
-	9jJKvHh0kgXCaWaSmHp6MZDDwcEmYCzR9qASpEFEIFDix78jTCA2s4CZxMy7p1lAbGEBB4mH
-	C78ygtgsAqoSN95uArN5Bawkvv+8xwaxTF5i9YYDzCDzJQQms0vsenaWHSLhItE3bS8LhC0s
-	8er4Fqi4lMTL/jZ2kBskBPIllpzNhgjnSBxY/oAJwraXOHBlDtiZzAKaEut36UOcxifR+/sJ
-	E0Qnr0RHmxCEqSIxsYMFZvbsHzuYIWwPiSmPJjNDQidWYknXc/YJjDKzEGYuYGRcxSiZWlCc
-	m55abFpgmJdaDo+W5PzcTYzgtKPluYPx7oMPeocYmTgYDzFKcDArifDOij2QLsSbklhZlVqU
-	H19UmpNafIjRFBhIE5mlRJPzgYkvryTe0MTSwMTMzMzE0tjMUEmct3lnS7qQQHpiSWp2ampB
-	ahFMHxMHp1QDk26zUI/WpRkrT7LejWO4+6RYxcvOPm79nY05bazfrLwXpNRyLE7cNcGhr1/e
-	Y39PxcpQa94v+5bfV/DVmPhLPyeFO2Ff/MkbcZv5X1bejoq9unf9GSGmzVL3tM7OyWa9Z90x
-	g1tDc4Ni1fK4vS/LbxoHHmgLO8v35Gup2skcH6Ntax8n3N05dep+wdcP278uufg5bZs62w2D
-	Pb8SNkjfbDutnvub/8hGAVs7wxVTNqoeuL1zAvf0Sx27TrU+mDZLbCbf12CBjQnXFV6U3Km+
-	ILG2ssNxqvfeozvOarFLyK4LWH4s52nAJ0n/4Ntdz5pc/tVLfdt35qffonebnyatX1ty4OKW
-	p/Fb5k6OqtV7KzRHiaU4I9FQi7moOBEAIwSWbsQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJMWRmVeSWpSXmKPExsWy7bCSvC7zgYPpBvcu61gc2ryV3WLeZ1mL
-	y7vmsFks2vqF3WLzpqnMDqwed67tYfN4d+4cu0ffllWMHp83yQWwRHHZpKTmZJalFunbJXBl
-	XJh2mrGgg61iWwdXA2MzaxcjJ4eEgInE6aYVbF2MXBxCArsZJS43/mSESEhJ3P7fCWULS6z8
-	95wdoqiRSeLY698sXYwcHGwCxhJtDypBakQEgiW6b/0Fq2cWsJBYueUgM4gtLOAg8XDhV7A4
-	i4CqxI23m8BsXgErie8/77FBzJeXWL3hAPMERp4FjAyrGCVTC4pz03OLDQuM8lLL9YoTc4tL
-	89L1kvNzNzGCQ0RLawfjnlUf9A4xMnEwHmKU4GBWEuGdFXsgXYg3JbGyKrUoP76oNCe1+BCj
-	NAeLkjjvt9e9KUIC6YklqdmpqQWpRTBZJg5OqQYmrRTDlI+Nat4yVwUzS5Zvkbj5Y43Lw8nN
-	D1VS7NkVnT6vfF4b/Kzr9C3d7FVBX3lb5T++f1RpveBBja1jS68B16JPrG99Nfz5xPceSj1W
-	v0zN/ciLQxukk19/0fsff+jZ1IuCM1fPrPQ9+LZObJ28y7/5SQe/piz3kmW27iqTW5E8VeoG
-	752PTaVassusNq9I/T9PzV2msOOn3MaGFIXY5//F1X6bFZ59ttn5rM7W1t2H7ReXHBVscJkY
-	XMjfZj/BwaVkw5UzFgrvtwSs4m3wFlCv4DCZ6HBJs25y9Ca5PPb8gBBZ/628HTx6s+WPJJQK
-	BPVv0Gnob3SfNUFyRvAPpvOPF596sHvz0twXok+VWIozEg21mIuKEwEvA4CcgAIAAA==
-X-CMS-MailID: 20250228135411epcas5p1c1bbaea7cec83d32ac8f032817e558b9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250228135411epcas5p1c1bbaea7cec83d32ac8f032817e558b9
-References: <CGME20250228135411epcas5p1c1bbaea7cec83d32ac8f032817e558b9@epcas5p1.samsung.com>
+	s=arc-20240116; t=1740748315; c=relaxed/simple;
+	bh=ge/ab62pYsGDLvPGgps1hKvOP8NBv8kv6NxDVGP8b2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ve16j/HVtjKJ6BSBz+cveNyBdWM5R3eLC4VWA6HUHgc57eFhhzHWnGx9Sqve7vasxo0vXfGN7mobYU8q5w9TJFZZBz6nyLjxk86psQ7ckD2fnZinNk61zfZCz+xYXC8igazbNybkXVSFYFU0FySvvst7+vG5Gq0ZRwIhKJd7DVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFpiAiDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6177C4CED6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740748314;
+	bh=ge/ab62pYsGDLvPGgps1hKvOP8NBv8kv6NxDVGP8b2g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gFpiAiDB2Ym4OjoyJpI/Tq77xMHJyziAGBVlEkWG14A5XcgLz87oNcicSk+I81C6r
+	 vgGEDYt3YRPOlfG7N2FNnVTH+xxvqMTdJkKpRdz1Gauw5+fBoHudY+JStsEM5CEjoc
+	 So7+A7VjhBLpTPdvqu3aRD/u1pi3b+yE8SmR9tpmo99/pSowfQgkLySGk1rmaKgnGG
+	 thkb6u4BcBbh3Dud2M5nztBBVgbTIT1foNCQEJ+CWRWnF3sy5ZYB4Ei8v3yyBtFZBu
+	 ZYSthpDGDnsfA2uOhvEgV8Pf1XSRGLThPYxR6RXdBaV8fcoCDbN0LxdUY4z7MqV4bj
+	 IxTfj+NTyyO8A==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so2267154e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:11:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVxsIFnCs8mG1Yxjv6cOrK3ZD4n2589Voaf6NyU48tuGVzRB1na5lpNC5c9A8F3RjW8fXfgxezgdkfIv3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPM2cq3UCrP6pzlCNJeDXOlbevlvtG5hdmwO4O6Vx2RjvepMQN
+	2kyhQjp+Cat/SObBqcLROw/kNaAoZUTGuSY9eBe0Lb+wRdySEFFJ51ZfEGN0N5sJcdWojgdsuYq
+	TabI3L7+AOECycS2XWMv8xPQwcWI=
+X-Google-Smtp-Source: AGHT+IEdP/huYmVd7fCqMgbE+DZUs3JfHQr17sTH27XVC4AIB4+C6ohl8aTsAIH4uv1KQS+Dzr0Lv2Drtl4FyJ41zVY=
+X-Received: by 2002:a05:6512:3405:b0:548:526c:fb99 with SMTP id
+ 2adb3069b0e04-5494c323592mr1338653e87.18.1740748313140; Fri, 28 Feb 2025
+ 05:11:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250224062111.66528-1-kpark3469@gmail.com> <CA+KhAHYujgeC2kAd-vs0N0zwprpeqtD8G-8DpJ0w2RSxzZ5SQw@mail.gmail.com>
+ <CAMj1kXH-QmuXGi-5MSEzz7zSpPYWvM2eBPN-NbWF+R=49P2_2g@mail.gmail.com> <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
+In-Reply-To: <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 28 Feb 2025 14:11:41 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHyZ5_+ZrcRtdx4X8LA+mzCNcXUZM_3QcEudYGbuGBq0w@mail.gmail.com>
+X-Gm-Features: AQ5f1JohuAj06yXvicF9Z_FVzZ_LrO0KkK0BS-faeO6tsEXacAnqjZ-WwcujNKc
+Message-ID: <CAMj1kXHyZ5_+ZrcRtdx4X8LA+mzCNcXUZM_3QcEudYGbuGBq0w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
+To: Keun-O Park <kpark3469@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, Keuno Park <keun-o.park@katim.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fixed a spelling issue in driver.
+On Fri, 28 Feb 2025 at 06:55, Keun-O Park <kpark3469@gmail.com> wrote:
+>
+> How about adding a warning message in case of linear region
+> randomization failure?
+> And, there might be two options in my mind by now to consider hotplug memory.
+> Either giving an option for users to override "parange" as kernel
+> param or providing the legacy way((memblock_end_of_DRAM() -
+> memblock_start_of_DRAM()) when CONFIG_MEMORY_HOTPLUG is off.
+> Users believe KASLR will work fine by enabling CONFIG_RANDOMIZE_BASE.
+> In case of linear region randomization failure, I think at least users
+> need to know about this failure.
+> Can you share your thoughts on this please?
+>
 
-Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
----
- drivers/clocksource/exynos_mct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Randomization of the linear map has always been a best effort thing,
+so I don't think this is a big deal.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index e6a02e351d77..da09f467a6bb 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -238,7 +238,7 @@ static cycles_t exynos4_read_current_timer(void)
- static int __init exynos4_clocksource_init(bool frc_shared)
- {
- 	/*
--	 * When the frc is shared, the main processer should have already
-+	 * When the frc is shared, the main processor should have already
- 	 * turned it on and we shouldn't be writing to TCON.
- 	 */
- 	if (frc_shared)
--- 
-2.17.1
-
+I wouldn't object to the new behavior being conditional on
+CONFIG_MEMORY_HOTPLUG, and fallback to the old behavior otherwise. But
+ultimately, it will be up to the maintainers.
 
