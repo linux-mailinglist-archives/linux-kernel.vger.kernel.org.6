@@ -1,95 +1,125 @@
-Return-Path: <linux-kernel+bounces-538659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F929A49B83
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:12:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E569A49B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F77518996C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9636174BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AFD2702AC;
-	Fri, 28 Feb 2025 14:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3009426E637;
+	Fri, 28 Feb 2025 14:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6IfxzwJV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yk8vfdeN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="we6whxQX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jN25aJBW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PHCnYpM3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B7B26E942;
-	Fri, 28 Feb 2025 14:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1036726E173
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751821; cv=none; b=Hj4/cr5t22YtgLLB60WJwt75nvhnd2+c7Td0CiGmslw0VN5m6V21LwdKL8Tqc1vENpL2JWFSUxU4vrUT/Ch//5L246kK2ACep9Gsg4m0nIzYsPu2kVUTR8lLi8x2tebveMcO9xd7GRBZSTDEs9k0RLNWkY7tt03+heJKj32H5/w=
+	t=1740751941; cv=none; b=U8DjFSoycml5TGfDwJ1wLlafWzQIqr84Z6yZd6bM63oxet7pJJ7DkJixEh/LyyDpxLJiQdlaOo6A9REw2BmsT/tC1UicniHEnmKc0GWAvxmNK0MDZRdIcA6eQdSsNA6RCzIz447bQJ7qz4JNUb/kYD+g7+vwmtKHDI2G14Mjsl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751821; c=relaxed/simple;
-	bh=NiAk1dbtJ6c2YxtaV2wJw0KRESAdUGps1hSUUUGLrmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEqvAyi+TyyUDfjvZhsMd2vYZp7YT/2GtHg16yQYL+TP1Ii11wdsqG6jE5qUn7mf0V4AFLQgdR6VLFKccYdc+UCx1xaGCmoOlVWAYJAfr6+o5empUdVN2gIRtk3L4KimDoIXoVmsg/ugCY64TaRTOYOCR9roe5tF0YqzRuyQIp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6IfxzwJV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gP7yF7df2W/n0ExR3W/btMKEa5o1CUcX1v+LkRcx5Ek=; b=6IfxzwJVy45w8i1xUFyaXP6ycZ
-	x8dVWZ1QQBf61YJaIA1eEyOnOwl42i26tZwT0fu7cnOjgJ1/+IFHSEpuzedu6raWMq2sZ5OKTK6hQ
-	td9HeCuQzcenu7zSdWkQVEJPUJpTgj7ZNEGanR6jOgrnW1GhOg529OzBm7Yn4PFkz7M0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1to146-000xje-80; Fri, 28 Feb 2025 15:10:10 +0100
-Date: Fri, 28 Feb 2025 15:10:10 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Parthiban.Veerasooran@microchip.com, linux-kernel@vger.kernel.org,
-	xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com,
-	hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v3 06/14] motorcomm:yt6801: Implement the
- fxgmac_start function
-Message-ID: <f6c63297-a246-4daa-b47b-464c844baedb@lunn.ch>
-References: <20250228100020.3944-1-Frank.Sae@motor-comm.com>
- <20250228100020.3944-7-Frank.Sae@motor-comm.com>
+	s=arc-20240116; t=1740751941; c=relaxed/simple;
+	bh=bBA8WcStvdv9DrY/aI8/nhgp9oVLcIfXeQUbOXgU+LI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WJFe/yV6We0o27v3loYcc9yEph+jaGTROdCDKMf4yyxaJqjU35SV5oBe1xju3leX+0O8F3BICF0OFvt99Dt4RTaGmsBpzakgT7EqRFgtftniN+gxJxGH/Ol2rLgjpyz+EmHTjBnGQb1JFLlpfVgEpd3749hp0ER9X60HAQuWaRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yk8vfdeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=we6whxQX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jN25aJBW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PHCnYpM3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 396A421167;
+	Fri, 28 Feb 2025 14:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740751938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XANyZ3DsSY/1f6AlfTjBwNakvYmlduW+CeVWmecvrKY=;
+	b=Yk8vfdeNCbIKr2Br1rClXqAtlMN25dcPEER/RAo5U7t59E5mNhcTV9SDnUEmUwKrVHXZlJ
+	LnFMgAw0D/deXpY1zO2qs063XegSFNQIS6a7AOpVc85+2XXcB3pF/MwlNMGBkMLxDcagxs
+	bZVDdU5N300pF5/XbBoagxywBQrBajs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740751938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XANyZ3DsSY/1f6AlfTjBwNakvYmlduW+CeVWmecvrKY=;
+	b=we6whxQXyg2ljcPY9WOwSo5iA+AhrsznA3BPsDiBhHie1z8srQTmqyIHm7FHJ8Z2K+C4l+
+	CvHzRA/mH8RJBhAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740751937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XANyZ3DsSY/1f6AlfTjBwNakvYmlduW+CeVWmecvrKY=;
+	b=jN25aJBWZGuVQMJTlOZJ7Gtt9R2drsxW3305pxOGAWGQevoyzGZDOvGUcs7xeFoM1urGm3
+	LL7gBw5aGa6BXX4bdbu2ftQHDxSGAr44o0mONeBk8yduUL9DEQ/mA9LXrXIfn9iQlX5/le
+	sQl39oDBYPH5dvjULLvaAiypDI79og8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740751937;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XANyZ3DsSY/1f6AlfTjBwNakvYmlduW+CeVWmecvrKY=;
+	b=PHCnYpM3uPwxEeS5U0Ynhq5sC/00C2j5A6xc+fkUpdmdGaRu4byBoZ8LAGAbLLipMFKKvw
+	Y5WosRGaNPPnLrDQ==
+Date: Fri, 28 Feb 2025 15:12:17 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
+cc: live-patching@vger.kernel.org, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org, 
+    pmladek@suse.com, joe.lawrence@redhat.com, corbet@lwn.net
+Subject: Re: [PATCH v2] docs: livepatch: move text out of code block
+In-Reply-To: <20250227163929.141053-1-vincenzo.mezzela@suse.com>
+Message-ID: <alpine.LSU.2.21.2502281512030.28984@pobox.suse.cz>
+References: <20250227163929.141053-1-vincenzo.mezzela@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228100020.3944-7-Frank.Sae@motor-comm.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Score: -8.30
+X-Spam-Flag: NO
 
-> +static int fxgmac_phy_connect(struct fxgmac_pdata *priv)
-> +{
-> +	struct phy_device *phydev = priv->phydev;
-> +	int ret;
-> +
-> +	priv->phydev->irq = PHY_POLL;
-> +	ret = phy_connect_direct(priv->netdev, phydev, fxgmac_phylink_handler,
-> +				 PHY_INTERFACE_MODE_INTERNAL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	phy_support_asym_pause(phydev);
-> +	priv->phydev->mac_managed_pm = 1;
-> +	phy_attached_info(phydev);
-> +
-> +	return 0;
-> +}
+On Thu, 27 Feb 2025, Vincenzo MEZZELA wrote:
 
-Please consider swapping to phylink, not phylib. Your current pause
-implementation is broken, which is a common problem with drivers using
-phylib. phylink makes it much harder to get pause wrong. The same can
-be said for EEE, if you decide to implement it.
+> Part of the documentation text is included in the readelf output code
+> block. Hence, split the code block and move the affected text outside.
+> 
+> Signed-off-by: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
 
-	Andrew
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+
+M
 
