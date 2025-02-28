@@ -1,292 +1,201 @@
-Return-Path: <linux-kernel+bounces-537615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46863A48E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77065A48E2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238773B79E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C463B7A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE727DA9C;
-	Fri, 28 Feb 2025 01:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784EA1386DA;
+	Fri, 28 Feb 2025 01:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHpSuR97"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AEgTbo6a"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2067.outbound.protection.outlook.com [40.107.236.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F2B1805A;
-	Fri, 28 Feb 2025 01:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740707351; cv=none; b=O3W5nAVCuNeiHpohcAJRxE+9ydmkhOR+QTv5c9Ez7kQ4WPU05JvP5YtmhApunbRDFSs6VZmQqEQtC2jtJKks1iNwhwQXrzqFQ4KT/aGrGT9pQu3jTYrXewBsOZiwX/fXdc0oCvOVjfvnVFKP+j+58t9tb1ipNFch5FXD6qipD4I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740707351; c=relaxed/simple;
-	bh=4f6/W//9xE9AdBnvNcLwO8IKzB0WtJQz8HWVX03MYe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOuo45yJXvcTY3dJuPk8NA/O7n0wNKnHgXC+PXoJ0Sx28JvcVU5hikJ8BFtgdrU8u8F79VzwcsFPxbLQM6sO75ZOZovMXmeFSJSxn6U0g9Fd44N7eC0bzELK6nIcKjDsHcCAC8YDtLjmZZ515FAnYt7wIxEr2h/UOZXpmaFKcME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHpSuR97; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c0970e2e79so287124485a.3;
-        Thu, 27 Feb 2025 17:49:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740707348; x=1741312148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgnCFalO1rVu1AXO1D06Gc1GDBlEbCjjlOcT3fgeh38=;
-        b=fHpSuR97+2z6lZqrh2LwH04+qrwKG7ZFHTnPqPxKJXd/RgUd70quGQ2hP9PbyM28iw
-         s0yTqU1jiGC2oHeER5MGKUZGITKjJoXCnWXfcGrLQuLUhpHfGOxCRdA6WTaFOl8D7/L3
-         RsenvzcAvqD9DGGGEL27j8vKk7nPbmdTSG15YG5ZQMdHboGQgPET2kxJGELrga+SwRcx
-         NAm0NCRjRvl6C6gXFTtjxCGLASWnvHKmp9AKYiXffjRenlXXwIxUw+poI/it+0Y3XWx+
-         fEJn7hSZLeK0ZSI0JfKyJf94dunntd320iWCWVs6JNCbRVJOgRXOblnzsJVZZRqhfZ4n
-         5iOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740707348; x=1741312148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wgnCFalO1rVu1AXO1D06Gc1GDBlEbCjjlOcT3fgeh38=;
-        b=qoL2b6nuCWlCxlAnCQ/8bAlTNGOORhlY7ujcQZWtNzGvkbpw+8fPYV+MCw2FToBpQN
-         nrEnRn0B4Mb7n1cG2H4z8HMUBL38uaScmZ26Ji70AcGTJ9YbUxT309RMAlO1scSklV+e
-         /kWVFK2xb1AyzUYgeCFRXinQnL38f+vKNKkFFCbCYC0aKNn3PPz//DDueT5/+lHjG8b+
-         h+4xrsZHHGXPoRhvU1dtsOKBXOzTMPYXuKUdBJsSy/ouep9T0YqWxjNPO5yTOfmeqTPS
-         TlX1AyHNS4HEn7BmbvIrRmmsDSyci9MyjMzlZb0VlTdxmqO11/IF12AS/sU8tR9fQaSS
-         Kd7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUANmBqVna1oZftBHJvnyL0dsi9F0ydPJj0CmHfb9EoOU8FWoyoYc9CDwQGQ2OfH4PuuXPuhNu0Jd+fKddn@vger.kernel.org, AJvYcCUW8Apng9E1wjrW+HJRNVfvfMa+WIXs2IFiRlDcz/8FnRl/P+ZYc1l6shLehh2exod1zWhCy/Mst0fy6Q==@vger.kernel.org, AJvYcCW4z8TGGIT5RK93vBOfrn05Q6uqgfhmigmA/y4M6/rr0K78rpArxzxbJ3RAemHkGmNE1HPkzmWUjZUe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBc9zRhAFzAq+Q6+o+q4DOiz57fnVQh6wXDQ4QoNG7IslBdDLO
-	dMGFhgqyx0l/Y0GU8WoHfWR8zroe4tatpXYU+kESQFFMvu1wIekV
-X-Gm-Gg: ASbGncv6VvX4Qrcy4nW6jqg8mXT7OfRgacpN/C3izrd7Bki9PIVSubHhpMW+pBKxTUb
-	S7RFj64zEvuEztwQxY61BTumaHfUiFhip0MJJEEatziH4L9DrjXpv17Dc0TQoFUDBvgXHueO8St
-	xWam1zXBm8h37iGHZLFgUw8z0u1rXIz+fU2C+YPhTM8JlxGyMeoH/LQuzsA2czvztLMeD/gohcP
-	dlOx6Z/itl7IjYX0UOgbk1CG1mo+dz6xA+0XegtW9rsZvC1VyhdZeBmXTm4lvIBjKekFWnkbGVb
-	11jprLFX8K/7IyHbzrGpF7XPRPbJ2NRMv36m/dVgSMpwfAerJOoBi6JGttVBoxXqh750sE3T3vV
-	ZVScw21f2FJAea3Rq
-X-Google-Smtp-Source: AGHT+IH+ANmJBVtGY4D/p2Ms1Ijf1z4GnsONbS648U41oA9SZ64R8X5gd2eiXYMgM3MQubjTaAh0dA==
-X-Received: by 2002:a05:620a:410a:b0:7c0:b81f:7af1 with SMTP id af79cd13be357-7c39c4c7052mr216558685a.33.1740707348135;
-        Thu, 27 Feb 2025 17:49:08 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe2bsm180028885a.88.2025.02.27.17.49.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 17:49:07 -0800 (PST)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 295611200043;
-	Thu, 27 Feb 2025 20:49:07 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Thu, 27 Feb 2025 20:49:07 -0500
-X-ME-Sender: <xms:ExbBZ8MZMzLo6wrs94z19Qna9HA9xNeyrc4pBglvufiqyimFpFKkOg>
-    <xme:ExbBZy9GoWore1KeXe5TixiJYQ5ERVzDbIuOZf2LLKyFkaxkqU0kK_nXAk4E9R8RE
-    cweDv8FBWeYqoq3lg>
-X-ME-Received: <xmr:ExbBZzR0bbi4DNLW6yJmTJhWoxmtNOEUZq42CBvJMgutc1Gz6WTWqp1tog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekledutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvfedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhihuhguvgesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoh
-    eptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopeifihhl
-    lheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgtrgeslhhinhhugidrihgsmhdrtg
-    homhdprhgtphhtthhopehgohhrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohep
-    rghgohhruggvvghvsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepsghorhhnth
-    hrrggvghgvrheslhhinhhugidrihgsmhdrtghomh
-X-ME-Proxy: <xmx:ExbBZ0ue1Fk-rzeaa9ghPHz3tDImUCTQRhkKbVOvUiILSX2jgeNDTw>
-    <xmx:ExbBZ0eMJnkPghCpEqFTDlnOM67LJC_6Mnc_0ibrAZzsceLutZRZxA>
-    <xmx:ExbBZ40gzJsSPQXSLvJLsE6Zzc8WNwCuOHNca4oa5wTpTUoWQMA2eQ>
-    <xmx:ExbBZ48bwnUBk7F59BtYYCPJSorDpmTbgh3D7Vcm33kxiIe9NRK6Yw>
-    <xmx:ExbBZ78C7frC_qb8BNNJIcxUYMBbt7-KUtM0u9RUa1NHtz6cAFLQYJgy>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Feb 2025 20:49:06 -0500 (EST)
-Date: Thu, 27 Feb 2025 17:49:05 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-	Juergen Christ <jchrist@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	"moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
-	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub,
- add}_return()
-Message-ID: <Z8EWEe-zdPzKlOD8@Mac.home>
-References: <20250227221924.265259-1-lyude@redhat.com>
- <20250227221924.265259-3-lyude@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4E68BE7;
+	Fri, 28 Feb 2025 01:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740707377; cv=fail; b=svewvAsbSMazWBvl1IgZ6FTQEOwkx4kOBr5n6kjci5BhlOm3OGDFTsTp4Km09JlExp+OCRON6VAuNtTLvfaR835i6tp7UskZ1/WqZ3rFHyUuojEtzBdydyTaI+R77PygN7I6nZ5zq8gCoqkZz7i9/cLSxjOUSZboFMXv8F/nAlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740707377; c=relaxed/simple;
+	bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jd2lmThl/JXUw9QIHvEa4piTanBlfYB/76+Or8SNNOJhHCuO4UtXX03EW/9mzwG3r+7SWL3cZZsaEuaGMAnVM5Rt6ix+Of8vLyjnpFZ+5CIFBfvhTARtpopPDDksLnSrxXZe8EFEdrz7DlKoLmEwYkEIvnThGiOHEZTikjXWNLM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AEgTbo6a; arc=fail smtp.client-ip=40.107.236.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zBAsWJ0RFcMlM/w4YDBFI0VsDqFSvtZrR532qHfaNdArmg8x8AcSnICKsuE8DeDPTfBKFZ3x6/i6T3TcYoaaDnHsTuUE2Vd4GVIVwYNR9JTW5uF5kyMaTd4zo5aUxWjEeeDHL5ryVwgLv/gd7Nu5dYpkIHa0fcD/j81CJlMIhE/nJVftLE2yMx9TqMzgp+otZ2L6CQ6r2eQyQlpbsZoObFND11fGfVrWRH+tGH9QfNbJakgpzT6/77JGT5NXi7MUG2njjfsRx+ZY2s9HAjIBEnA6+GAumiCG4oncNuKnl0V74fu3p/xvMOLxvD6exvcWWN+FBZEVB+fL0OYu/P81cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
+ b=oj3k+jN8+4eOyBO4awocWpHHOFKoXw7NL/ej95qz9pYMyoPs5ofjDTel042LvknCcdKMSb3IhwMqfhsd6Qy/OAVhM0M0gGRLt0q6DN48A7RL8KtIOVpXTxeChm8xd9DJffasAJo0yHWmcJ3Gd3sN1tif+7vU8YEWOm45b1qQButb9e1vyaunU9LU0YfIaR3kAwgrdavaOBKaEaDUuVdDnWn85RS8Fd3A8WhRChkslYjfNMB23HIzmNBtqmPZWmHqZkJDwbrWV1H1DcFWlGfFJY7w1MgeohZHvBjBROyUynf4OQjdVjWFUSmt09avW0C63uPwdNfHN3LXoU2l74NA8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vQYk5yD/a6BkzlTeJcPmW3CRAB/049S2JTFHuXaTAnk=;
+ b=AEgTbo6a/U/K53daRtRgnbHUt3/AXJFPOvMllsVCQv1xB4AOi12k1Trbxm3eOwmU01gbqjpoDheMBNAEwaxa7ImCdO+2JiBL8sQNDf1oIxiZ9rV+b36JBQ1V9ZH60jdKLFGAovSHm2NIf+SGO+fmnGOnn4lnFWZGBx37Mu7ms2EBE2fi3hHjGe6WqgJBk0bYowjFIIvJ6vnbuQu+EMKfjVnePOOC30mMUpSBA7s0pC54Geg0S2tjvEiV+ke5ZjIDC8mjCV+k8lNEKZzxLq3AWU9tYb+o0lMy6ycWFKEuMbwnEeeAhrXUTuVsrs2tnmknX8ZEuXG5l+ycJ7XS5dwkjQ==
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
+ by IA1PR12MB6435.namprd12.prod.outlook.com (2603:10b6:208:3ad::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 01:49:31 +0000
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::e420:4e37:166:9c56]) by CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::e420:4e37:166:9c56%4]) with mapi id 15.20.8466.016; Fri, 28 Feb 2025
+ 01:49:31 +0000
+From: Timur Tabi <ttabi@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>, "airlied@gmail.com"
+	<airlied@gmail.com>
+CC: "nouveau-bounces@lists.freedesktop.org"
+	<nouveau-bounces@lists.freedesktop.org>, John Hubbard <jhubbard@nvidia.com>,
+	"gary@garyguo.net" <gary@garyguo.net>, "rust-for-linux@vger.kernel.org"
+	<rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "boqun.feng@gmail.com"
+	<boqun.feng@gmail.com>, "dakr@kernel.org" <dakr@kernel.org>,
+	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+	"joel@joelfernandes.org" <joel@joelfernandes.org>, Ben Skeggs
+	<bskeggs@nvidia.com>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Thread-Topic: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Thread-Index:
+ AQHbgUTvmeYidffAF0KVP6y8BIp7/7NMBKGAgABGrACACWwxAIAArz8AgAG08oCAA6E/gIAARoqA
+Date: Fri, 28 Feb 2025 01:49:30 +0000
+Message-ID: <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+	 <Z7OrKX3zzjrzZdyz@pollux>
+	 <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+	 <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com> <Z7xg8uArPlr2gQBU@pollux>
+	 <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
+	 <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
+In-Reply-To:
+ <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|IA1PR12MB6435:EE_
+x-ms-office365-filtering-correlation-id: d52e2d71-227a-4750-272c-08dd579a24d0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NVArS29wemJxRnNqWTN3SmNpRVRITDhjOHRXOXJVbmg5SnZZNWhrY3NXZW5G?=
+ =?utf-8?B?ZmJBS2MxS3E4L2pLZW8wTVRhOWY5Q3I2OUxZcjhvNjNhUkIrZDM3ZW9Pajd5?=
+ =?utf-8?B?VUFWdGxtZTZFZ1BCT25yYkFIUFJoZDNiMHN5NnB0RkRBWU1BOTNIMnhVenhm?=
+ =?utf-8?B?Ly9DZHlmZ1l0dUlleUZzYkVNOW13anZnaGVGdXR2YVZPZDJIUXpzNVpnQ2Vp?=
+ =?utf-8?B?UVdrVktZSHIvM0RNaEx6bE0ra0pMaDFuTGhRQnBFTXdQbzFmY3lyM0EvZkRz?=
+ =?utf-8?B?QzZBdGNtSUZzZjFrRUxvbWxXR0k5R2NlclAxZ0ZCSjNvejJOTlhLYUxIZmhi?=
+ =?utf-8?B?aHNwYlB6SEx3Q3M0N0xBNFcyTEhYa0NieVR3QTFjMngrcU5IeC9OQVJFLzNJ?=
+ =?utf-8?B?MnVILzBzOXpZaFg4cEhKZndIaVJqTEVwSmdyMTJTdGdaTGNaV3l2bG8xQzY2?=
+ =?utf-8?B?ZFk5UHZLNytQOWh6alBDL0VWY0RVcUt2MlJWbng3V0VLOWJPUUhDTnhHRlVK?=
+ =?utf-8?B?d2JMd1VaejVNTmdPZ1lmOE1CamVWTXplS003emM5d255amIydGFiMXptSndD?=
+ =?utf-8?B?aGZGVDZFLzZwNWVaczRGL1VzK3dIeHZVMXgxR0Q1QkxZeG1lMFdtY0pveWRw?=
+ =?utf-8?B?aUdFekRWZWRkZFZxWWd3NHcwa1VkMVFKTVlxd0Y1Y2p6TVJETDE1UEhMOEdD?=
+ =?utf-8?B?N0p3UitGTjdrc09lQTZGN2RHV1ZOM29UUFpKbGF6a1RWVmdQVThBcmdiYmNv?=
+ =?utf-8?B?dXdjd0pIMDIrVmNjdGpteDNVUG9KZ3Y2VVl6QmRkQmNIWENoL1lsNUNRQnhM?=
+ =?utf-8?B?Q1I0cGZXTnJBd2NtRjVHb1RCcHZpZzNhNDBsakpxdGZYZm5MK1hpUUZ1T3Nq?=
+ =?utf-8?B?SlZ6U0FSVW4rRi90bHZSUVFXU1RiOHBvbEhFV1lkR280REg3VnFzWng2Yll2?=
+ =?utf-8?B?azNyb1RWZDdjL1V5VHpMVDhUTkVyMFJCQzJRdUU0MzQ2bHRvcEw1VytmTDBN?=
+ =?utf-8?B?NCtMQ3czKzhwWkZQMDU1RHBUTUR1Tlpabjhuc1c2R2FJMExrQ0xCYklhOU1H?=
+ =?utf-8?B?MkNOMGl1bERuS0ZiVW45R21kQkJSajFKdndzWTBQVWNTYitvVktIQXRRcWJ0?=
+ =?utf-8?B?TUVXMGJmazJEc2R2dWdZSVVkOE8wcVgwTTdUM2FpajI0YmRjYXJsbjc3aTFI?=
+ =?utf-8?B?QXVvRy9FZmdnWDN4RndVTm56VnE2NWI3TW1rK3pYc1ZwYkNLSlFNb2dMR2Uz?=
+ =?utf-8?B?WDZDTzBGdTVxTXE0ZXpGVWZTa0o1M29ZbnNkUWlFK3BLRFFhNXVoTDdsOVlr?=
+ =?utf-8?B?WXhqNEx0RVREMG1NSFR5bXh4VmtZYUJ0QW5PeS9zeGFkYmRtWUpiUlI1d0Nn?=
+ =?utf-8?B?TGdmY2RIbHQxMUkrK3UzTTRQMVFFK1d0TmZmUkJhY0tBblQvNEROZVF0cnU3?=
+ =?utf-8?B?aUowZjYyRm1zdlpyOStQRVo3anlIdkJXNitmeUs0bytpUXJpV2VoeVFFVGVK?=
+ =?utf-8?B?Q1FxUytsbDZMWTJuc2ZQYzZxMmNCbVFsS2c1aGc5UWZieFlIeStidXNkcTJC?=
+ =?utf-8?B?cVZrdnNza2N3R3NPdEJ5bER2dXh2aGF6UEY3TDlTZGU4eHorcDROcXV2T2NV?=
+ =?utf-8?B?dHhsTmRzekE4QzJzMWx0MjBsWksrWGtDRVAweDdPeXM5Vk8xVHhsb1RmU09D?=
+ =?utf-8?B?TnFFUGhaKzJOZUVTSzVWOStPcXlYS3JMS0V2aURKV2RQNkRaM2VKQlUyR2l0?=
+ =?utf-8?B?OFdFTGdKL01oMFh6R3JwYTRvdkVHNk43N2NXbjdoUmg5ck1oN3dNRnFCL1VV?=
+ =?utf-8?B?YjlPZUZSd0lpajVUUzNTbkJzb3hEaFd0SGo2QzdLb0FKUTRsdXdPSW9BL2JC?=
+ =?utf-8?B?WUkzU3E4ci94UnVuSWJ2SGR2dHFjOG1HMnZnUkZNMlFjTGFGL0lSd29pOThO?=
+ =?utf-8?Q?H8kNh+9lfb3KUgQy2ZUJ34ysfWtTwS4K?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Z0txR1lCb09LOWZIcWltZUE0MGtGekx3L1Qzd3BkRmxvRVdwUTZ1bHVacnBT?=
+ =?utf-8?B?ZUhxS3FCT2x0KzBMcjhJZjJLVC9mcHY1cGg3VWIzYldJT2FyMkhGb3BOc2l5?=
+ =?utf-8?B?cDd5eFJXZmlIQVh3YmlzMXhuclNxdGpmcDRCbjZNV2VYcGJFZmxOU3FVY3ZC?=
+ =?utf-8?B?ZnhyUVo0bnN0WkFqRk8zeTdhS2ZYUEwwZGFNTG9uMG9NOHVjSHJrUmM3cncr?=
+ =?utf-8?B?SWE2RzJyY3c0Z1Y4YklweTMwMWdwN2k5MlRRalpDWHNYbWV4TG0zWHVSWnoz?=
+ =?utf-8?B?QjhDRTF3bXBHN0hLNlpFdE1rUGt0SURnOGdiMXhsQnJqL3BHMTA2M0ZkejNO?=
+ =?utf-8?B?Ymo3Zk1RRmNXK1FiK01LSWRpejdVVlEwTUhlVE4yL1J0aGs1STlkd3VDcFFi?=
+ =?utf-8?B?SjR6blJhN0pVSkRJZXhXSmhWZ0RvS1ZGZ3NBcDh3dGp3enVFZEF6QTZVODBH?=
+ =?utf-8?B?cmNDY3JNYmg1clRkaFRzTUFmWGpGeUtka3krbmVlQjBuTWk4L3hzT3Z5eUZn?=
+ =?utf-8?B?NlRmZmtvSDVRM0FUSGFWTFk4TnMxVFJCMUNBVG5rUHJLM0RzbWVnaEdsVWJS?=
+ =?utf-8?B?OGY5SDd0UVZQemR3Wm9FQ1B3QWxSRVNzNkZHL1hMVGpiVUhZbXdWYzhkMnY3?=
+ =?utf-8?B?aVN4bVRmVkN4RUg2bFhDMDlTemF3M01od1lBWEJIUEVKWm42VEwzSjNVNnFh?=
+ =?utf-8?B?MEgrcGlGV2VMc2paU2dvczFSdTNjRlMzYnovc0FUVmlBc3IwWHZ1TE0xNEpU?=
+ =?utf-8?B?dm1XVm1CMVBXZEdFOE5peThZaGtKZXFHSlFleUJhaEo2QmlhaWg4MC9aNytq?=
+ =?utf-8?B?b3ozR21VQW5lRk43T200MGo3NlhGTkliQzhZZGRHN2RNbERwUkN2d05YZEZB?=
+ =?utf-8?B?cUYzRFdJbVRmRG0rZ05RUmttbEdMY0YrZEVBYVZEbHJXbjVsaUJPOW5XNTQ5?=
+ =?utf-8?B?d1M1U21HT3NWZFFtYXpqRktzRmc4aTJaT3lwclJjaTBzQWVFdERoMmxPd1pI?=
+ =?utf-8?B?Z051Q2xlVWJETWlKM0h4UGI0czZseGZ0TURUOXM1MTlXYUhwaHV6OUpKSGNa?=
+ =?utf-8?B?Umg2UjlpbklmQ0NOcDdQSkNFcDN2a0Rzdzl6a2dKTW4yYzZ4RzN6OGk3cHha?=
+ =?utf-8?B?UGsvWVRrbG42Q2tSR0FrUTJ5TTlXOXFxSUlUS1dZTUNuNEZxQy85YjR5OVpn?=
+ =?utf-8?B?cWI0NjBGdm1pL0NnVkhuL3o1eldvek1PODJGZFFuM25na0tjNHJpbTNoVElE?=
+ =?utf-8?B?NGM1Tmd1UHVUNkl1bDVDQldRZ0dnR1gyS0N0Z2FnUWxIeDk3dlJ0Vzllc0Zl?=
+ =?utf-8?B?bzJadVUzcU1BcWk3d2d3Q2M3NjBtc25CNzBQSnkyWnFGd0Y1eGxxZEpkQWZi?=
+ =?utf-8?B?SENlT0w5VFlRdXN3a3NGQTFiU0tOQ25kU0o5YjZEWG94S05GczhUSXdGK2E5?=
+ =?utf-8?B?M2ZjcXdaZDR0QXZUempodzBka1BWMkZXRTF5TTZzdk96eUZTd0dma250aGxz?=
+ =?utf-8?B?RFVMZnY5MVVPaTNTQ2R6a1A2aEF2NFdpYkpERmMwYm5lWkVwZkhxVG1wU2Nh?=
+ =?utf-8?B?UDNTcTAyUSt4SVlwQ1pEK2V0Q21wOG1HZU1iblpwbnh6RGhnTllmak5DMTZL?=
+ =?utf-8?B?Y3FINzd0YzB2OWFRcEtudWE0VXBGNkl4RGw5b3o3dUlkcmdjcXFXOXNzbE41?=
+ =?utf-8?B?bjBFNmFGWUlTa1RMTUNiWkVnV1lsQytINXlIVmwvS3RrRTM5amxYWll5VWN2?=
+ =?utf-8?B?cmhDMkxkd3dFUG5IcFJDMkxHUDc1QXNqWTJsUXdEMGFUYWpOM1V2L1prd1c3?=
+ =?utf-8?B?Q3VNanMwUlpxaExHZSttTHZsNGhMS3RXRnFnZUNQek1GN1kwQ3Vyc01wWUYv?=
+ =?utf-8?B?dUNjcnBZQXRaTTdxWmZCWUx3a21Cc0EyeFhORU5WcHo0QmRmaVl4MTVLc2ZH?=
+ =?utf-8?B?UXMvTFA2NmpzUnA3ajF3ejVIblJlaThWa2RqSDhUTi8wcmJDRzJFNjlqb3hl?=
+ =?utf-8?B?MWRoRklDc0E2UmJaSS80blkxSGc0K0RNaGo5Q2tzdXpYUGFxZVR4akR2Rm1Z?=
+ =?utf-8?B?Z2RKajVDSmVKb1phN3M4NzVqMDlRTHFjbk9nMXhOTHNGZytoMEFtUTBlRUlX?=
+ =?utf-8?B?V25DTlhWRk11bmFiWFdSMk1SdU94ZEwwb3JoVEFpckZxZmNRcm94UTArTWRD?=
+ =?utf-8?Q?DKp4gRBQPXuRoIfXlFlVl/WakOyUTim2TzCof6wKMJwH?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <892CC9B9194DCB45AAAA1B85B2739AA2@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227221924.265259-3-lyude@redhat.com>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d52e2d71-227a-4750-272c-08dd579a24d0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 01:49:31.0211
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aUO95rs/m8iTaj9SVz6jsYDBu7qBb9BTlHIYimpjFq9UbKYxsnXFAlLNZBzL+JBKan6+itLFrPZdPPPzH/rO3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6435
 
-On Thu, Feb 27, 2025 at 05:10:13PM -0500, Lyude Paul wrote:
-> From: Boqun Feng <boqun.feng@gmail.com>
-> 
-
-Lyude, please add something similar to below as the changelog in the
-future version.
-
-In order to use preempt_count() to tracking the interrupt disable
-nesting level, __preempt_count_{add,sub}_return() are introduced, as
-their name suggest, these primitives return the new value of the
-preempt_count() after changing it. The following example shows the usage
-of it in local_interrupt_disable():
-
-	// increase the HARDIRQ_DISABLE bit
-	new_count = __preempt_count_add_return(HARDIRQ_DISABLE_OFFSET);
-
-	// if it's the first-time increment, then disable the interrupt
-	// at hardware level.
-	if (new_count & HARDIRQ_DISABLE_MASK == HARDIRQ_DISABLE_OFFSET) {
-		local_irq_save(flags);
-		raw_cpu_write(local_interrupt_disable_state.flags, flags);
-	}
-
-Having these primitives will avoid a read of preempt_count() after
-changing preempt_count() on certain architectures.
-
-
-Regards,
-Boqun
-
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  arch/arm64/include/asm/preempt.h | 18 ++++++++++++++++++
->  arch/s390/include/asm/preempt.h  | 19 +++++++++++++++++++
->  arch/x86/include/asm/preempt.h   | 10 ++++++++++
->  include/asm-generic/preempt.h    | 14 ++++++++++++++
->  4 files changed, 61 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/preempt.h b/arch/arm64/include/asm/preempt.h
-> index 0159b625cc7f0..49cb886c8e1dd 100644
-> --- a/arch/arm64/include/asm/preempt.h
-> +++ b/arch/arm64/include/asm/preempt.h
-> @@ -56,6 +56,24 @@ static inline void __preempt_count_sub(int val)
->  	WRITE_ONCE(current_thread_info()->preempt.count, pc);
->  }
->  
-> +static inline int __preempt_count_add_return(int val)
-> +{
-> +	u32 pc = READ_ONCE(current_thread_info()->preempt.count);
-> +	pc += val;
-> +	WRITE_ONCE(current_thread_info()->preempt.count, pc);
-> +
-> +	return pc;
-> +}
-> +
-> +static inline int __preempt_count_sub_return(int val)
-> +{
-> +	u32 pc = READ_ONCE(current_thread_info()->preempt.count);
-> +	pc -= val;
-> +	WRITE_ONCE(current_thread_info()->preempt.count, pc);
-> +
-> +	return pc;
-> +}
-> +
->  static inline bool __preempt_count_dec_and_test(void)
->  {
->  	struct thread_info *ti = current_thread_info();
-> diff --git a/arch/s390/include/asm/preempt.h b/arch/s390/include/asm/preempt.h
-> index 6ccd033acfe52..67a6e265e9fff 100644
-> --- a/arch/s390/include/asm/preempt.h
-> +++ b/arch/s390/include/asm/preempt.h
-> @@ -98,6 +98,25 @@ static __always_inline bool should_resched(int preempt_offset)
->  	return unlikely(READ_ONCE(get_lowcore()->preempt_count) == preempt_offset);
->  }
->  
-> +static __always_inline int __preempt_count_add_return(int val)
-> +{
-> +	/*
-> +	 * With some obscure config options and CONFIG_PROFILE_ALL_BRANCHES
-> +	 * enabled, gcc 12 fails to handle __builtin_constant_p().
-> +	 */
-> +	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES)) {
-> +		if (__builtin_constant_p(val) && (val >= -128) && (val <= 127)) {
-> +			return val + __atomic_add_const(val, &get_lowcore()->preempt_count);
-> +		}
-> +	}
-> +	return val + __atomic_add(val, &get_lowcore()->preempt_count);
-> +}
-> +
-> +static __always_inline int __preempt_count_sub_return(int val)
-> +{
-> +	return __preempt_count_add_return(-val);
-> +}
-> +
->  #define init_task_preempt_count(p)	do { } while (0)
->  /* Deferred to CPU bringup time */
->  #define init_idle_preempt_count(p, cpu)	do { } while (0)
-> diff --git a/arch/x86/include/asm/preempt.h b/arch/x86/include/asm/preempt.h
-> index 919909d8cb77e..405e60f4e1a77 100644
-> --- a/arch/x86/include/asm/preempt.h
-> +++ b/arch/x86/include/asm/preempt.h
-> @@ -84,6 +84,16 @@ static __always_inline void __preempt_count_sub(int val)
->  	raw_cpu_add_4(pcpu_hot.preempt_count, -val);
->  }
->  
-> +static __always_inline int __preempt_count_add_return(int val)
-> +{
-> +	return raw_cpu_add_return_4(pcpu_hot.preempt_count, val);
-> +}
-> +
-> +static __always_inline int __preempt_count_sub_return(int val)
-> +{
-> +	return raw_cpu_add_return_4(pcpu_hot.preempt_count, -val);
-> +}
-> +
->  /*
->   * Because we keep PREEMPT_NEED_RESCHED set when we do _not_ need to reschedule
->   * a decrement which hits zero means we have no preempt_count and should
-> diff --git a/include/asm-generic/preempt.h b/include/asm-generic/preempt.h
-> index 51f8f3881523a..c8683c046615d 100644
-> --- a/include/asm-generic/preempt.h
-> +++ b/include/asm-generic/preempt.h
-> @@ -59,6 +59,20 @@ static __always_inline void __preempt_count_sub(int val)
->  	*preempt_count_ptr() -= val;
->  }
->  
-> +static __always_inline int __preempt_count_add_return(int val)
-> +{
-> +	*preempt_count_ptr() += val;
-> +
-> +	return *preempt_count_ptr();
-> +}
-> +
-> +static __always_inline int __preempt_count_sub_return(int val)
-> +{
-> +	*preempt_count_ptr() -= val;
-> +
-> +	return *preempt_count_ptr();
-> +}
-> +
->  static __always_inline bool __preempt_count_dec_and_test(void)
->  {
->  	/*
-> -- 
-> 2.48.1
-> 
+T24gRnJpLCAyMDI1LTAyLTI4IGF0IDA3OjM3ICsxMDAwLCBEYXZlIEFpcmxpZSB3cm90ZToNCj4g
+SSd2ZSB0cmllZCB0byByZXRyb2ZpdCBjaGVja2luZyAweGZmZmZmZmZmIHRvIGRyaXZlcnMgYSBs
+b3QsIEknZA0KPiBwcmVmZXIgbm90IHRvLiBEcml2ZXJzIGdldHRpbmcgc3R1Y2sgaW4gd2FpdCBm
+b3IgY2xlYXIgYml0cyBmb3IgZXZlci4NCg0KVGhhdCdzIHdoYXQgcmVhZF9wb2xsX3RpbWVvdXQo
+KSBpcyBmb3IuICBJJ20gc3VycHJpc2VkIE5vdXZlYXUgZG9lc24ndCB1c2UgaXQuDQo=
 
