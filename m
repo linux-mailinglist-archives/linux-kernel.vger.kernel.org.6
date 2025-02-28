@@ -1,437 +1,238 @@
-Return-Path: <linux-kernel+bounces-538460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B05A498FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 955BCA49901
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7893D3BCDB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE39D3B68C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72ED26A1B8;
-	Fri, 28 Feb 2025 12:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46562356D1;
+	Fri, 28 Feb 2025 12:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EM933yGg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F2S4+9ai"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38D72528EB;
-	Fri, 28 Feb 2025 12:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE1423315A;
+	Fri, 28 Feb 2025 12:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740744922; cv=none; b=fcCgNoiwKSeU5AZKLtEM3x1FTsgb3rxFke1Bjw2l4FcorNc9p38Jd7XAHD9hgeg4Z9pJpBdcu8v+J56XCFvh+H2MCeHR2W4GOgXqFCggK8/2pLu3ARrpRjDACBEXZcR7yfhl8szmjO98OieoyEF32N7rJryn56qKsf4+825msBw=
+	t=1740745006; cv=none; b=LASPF3LkVjj6Rke9HuiirWqA4ZmykhJJJqTjMSUmua716LKHWxc3dYXhnsFEQh1c0kscvK0/4zkAyf53/f/tGQM3RAgh8Bv95gI1k51EawqurKBIYSZcLvbsZ2taaNV6D5vbMCygk8POs12op0b98NcnMF7elmMCdvvT+FW0PbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740744922; c=relaxed/simple;
-	bh=RHGQORkXA8yO1AN0H1gJ2EspY0LIKMqW5ggb7WMbp0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OCnUA79BZe8KRmQWMwkAa91ARjKohW1tnatJy4K2HqnaibLWofgVZJEOz2+Ng4YadZhG1OuFdKbUhYTUhPF/lYO4626wOZq5S2MMcEbi7n+0AwtdsWKr0ldUTT6X9tgWHtxDjxe2kCK/AgDIOB9bl932n+ZAgeCS4UtAOix/eD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EM933yGg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SAXGqo031881;
-	Fri, 28 Feb 2025 12:15:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0N/t0O+RgwxR6lGSFLyQE9Hyk8eHTiIaAyU79jl7SJ4=; b=EM933yGgWHncZm1x
-	0hf8HZ7Q4peETxYqbisB2eLzxqa4E+Q2i6vvCZijVRp2dU685WAzTL7TNHezPIVT
-	gzo16BPW4L51sr4jiPV/+qN0p/wLNiayjjr8ECzkdu/Gs27CtfTWN6/MsgT/AF32
-	k6ZzNtWR8V35BctNlJKh/QrwcVuWbcfqxFRp8+v2zmF59u4lnpqoe80LDwmZ/WXn
-	hCGN0RgrmS7Vty5cPgaV12f8fOICbC99vOjrdEPt5oYqdxi6EhO9+NkxmsEZiliP
-	sdtH3ilbDD1XgLDVpuCcdqOPkaoibxX2NzLanhPhwYSfxfJ1rb7DsO0edXlvUc/Q
-	qGqtHw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prksbhf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 12:15:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51SCFBHp008506
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 12:15:11 GMT
-Received: from [10.50.19.252] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Feb
- 2025 04:15:06 -0800
-Message-ID: <10f54cb9-8939-b8ce-22c2-b633732f8879@quicinc.com>
-Date: Fri, 28 Feb 2025 17:45:02 +0530
+	s=arc-20240116; t=1740745006; c=relaxed/simple;
+	bh=Imv45Fvq22xNgZhJykuszyMaW/DiQ2hopybitukhTTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BqTYIf1Y5T70R6dVX1Vq0+ncr5xRgDFFUTrsCsk/8nV0z8RO5hFvPUktwIbm4hyUvgRWXbUDGCIJdUt/lVQZP0qI9afFpZr3ChyQ4B94QueifdtT4+qtamq45ZbmpUUfjmlcYm+82+MhCrixTtWKqH9m1yXKMXKZt14QgqvEeyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F2S4+9ai; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740745004; x=1772281004;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Imv45Fvq22xNgZhJykuszyMaW/DiQ2hopybitukhTTw=;
+  b=F2S4+9aiBLQsTtpvWdNfvq/Rx5eI+WVP+ICccKHX6fJRwc7vFcyqzGCr
+   6kzEWib1csPKxZ7pR18FGzE+qo3Ivrvi9LZmghLyiQhxUptuWaW1bDob4
+   3nrgB/gttWgQyMNdJ1F0kSddM5yiJinmlApd3O2UoRQ0myo7Hp6Gj4I9/
+   NY+qX7htf33f4RtHq9JLvwncLZOOV6IknIsQb3KcI1ra0a6AXBDgIQhqJ
+   wiCx8ysROzv/siuW1aVx9Zn6JrPI04PSRcPo8JAecKR2gIGSivGwYAqBu
+   3qCQbOy/dARujyJiTDe3K5rAkFqc8B8745Vb52obGNHEnn2LQbeB0Rzwh
+   w==;
+X-CSE-ConnectionGUID: PjKNm9exRLWJ2+tRC/eZpQ==
+X-CSE-MsgGUID: xRSgc5E8QF6n6VLpeLixFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="59209245"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="59209245"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:16:43 -0800
+X-CSE-ConnectionGUID: kYvVF8i1R3O7LxR6R+sejg==
+X-CSE-MsgGUID: kb9H8yrsTbKd+EIxCKSNeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="121931592"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:16:40 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tnzIC-0000000FwOX-1qG2;
+	Fri, 28 Feb 2025 14:16:36 +0200
+Date: Fri, 28 Feb 2025 14:16:36 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "pmladek@suse.com" <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	"sven@svenpeter.dev" <sven@svenpeter.dev>,
+	Janne Grunau <j@jannau.net>,
+	"alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
+Subject: Re: [PATCH v4] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Message-ID: <Z8GpJDGeJVHbIy8X@smile.fi.intel.com>
+References: <DB7F502D-1477-49C9-A36D-1DEE408ED23C@live.com>
+ <Z8B6DwcRbV-8D8GB@smile.fi.intel.com>
+ <PN3PR01MB9597916417D398179C55BD98B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 4/4] media: platform: qcom/iris: add sm8650 support
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
- <20250225-topic-sm8x50-iris-v10-v1-4-128ef05d9665@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250225-topic-sm8x50-iris-v10-v1-4-128ef05d9665@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -xRPEDnEOm5RscQbN7Ol9yw4YXat_JwP
-X-Proofpoint-ORIG-GUID: -xRPEDnEOm5RscQbN7Ol9yw4YXat_JwP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_02,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502280088
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597916417D398179C55BD98B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Thu, Feb 27, 2025 at 05:10:52PM +0000, Aditya Garg wrote:
+> > On 27 Feb 2025, at 8:13 PM, andriy.shevchenko@linux.intel.com wrote:
+> > On Thu, Feb 27, 2025 at 06:30:48AM +0000, Aditya Garg wrote:
+
+...
+
+> >> +Generic FourCC code
+> >> +-------------------
+> >> +
+> >> +::
+> >> +    %p4c[hrbl]    gP00 (0x67503030)
+> >> +
+> >> +Print a generic FourCC code, as both ASCII characters and its numerical
+> >> +value as hexadecimal.
+> >> +
+> >> +The additional ``h``, ``r``, ``b``, and ``l`` specifiers are used to specify
+> >> +host, reversed, big or little endian order data respectively. Host endian
+> >> +order means the data is interpreted as a 32-bit integer and the most
+> >> +significant byte is printed first; that is, the character code as printed
+> >> +matches the byte order stored in memory on big-endian systems, and is reversed
+> >> +on little-endian systems.
+> > 
+> > Btw, this sounds to me that 'h' should be accompanied with 'n', otherwise it's
+> > confusing why BE is the host order out of the blue.
+> > so, it needs more information that this mimics htonl() / ntohl() for networking.
+> > 
+> > Does 'r' actually should be 'n'?
+> 
+> I believe you mean negative endian? Can be done.
+
+No, 'network order' / 'host order'. That's where BE comes from, but you may ask
+the original author about this. h/r pair makes little sense to me as it
+inconsistent.
+
+> >> +Passed by reference.
+> >> +
+> >> +Examples for a little-endian machine, given &(u32)0x67503030::
+> >> +
+> >> +    %p4ch    gP00 (0x67503030)
+> >> +    %p4cr    00Pg (0x30305067)
+> >> +    %p4cb    00Pg (0x30305067)
+> >> +    %p4cl    gP00 (0x67503030)
+> >> +
+> >> +Examples for a big-endian machine, given &(u32)0x67503030::
+> >> +
+> >> +    %p4ch    gP00 (0x67503030)
+> >> +    %p4cr    00Pg (0x30305067)
+> >> +    %p4cb    gP00 (0x67503030)
+> >> +    %p4cl    00Pg (0x30305067)
+> >> +
+
+...
+
+> >> +    switch (fmt[2]) {
+> >> +    case 'h':
+> >> +        val = orig;
+> >> +        break;
+> >> +    case 'r':
+> >> +        orig = swab32(orig);
+> >> +        val = orig;
+> >> +        break;
+> >> +    case 'l':
+> >> +        orig = (__force u32)cpu_to_le32(orig);
+> >> +        val = orig;
+> >> +        break;
+> >> +    case 'b':
+> >> +        orig = (__force u32)cpu_to_be32(orig);
+> >> +        val = orig;
+> >> +        break;
+> >> +    case 'c':
+> >> +        /* Pixel formats are printed LSB-first */
+> >> +        val = swab32(orig & ~BIT(31));
+> >> +        pixel_fmt = true;
+> >> +        break;
+> >> +    default:
+> >> +        return error_string(buf, end, "(%p4?)", spec);
+> >> +    }
+> > 
+> > Actually you can replace all these orig copies by introducing a new boolean, pixel_be.
+> > 
+> > Will become
+> > 
+> >    switch (fmt[2]) {
+> >    case 'h':
+> >        val = orig;
+> >        break;
+> >    case 'r': // or 'n' ?
+> >        val = swab32(orig);
+> >        break;
+> >    case 'l':
+> >        val = (__force u32)cpu_to_le32(orig);
+> >        break;
+> >    case 'b':
+> >        val = (__force u32)cpu_to_be32(orig);
+> >        break;
+> >    case 'c':
+> >        pixel_fmt = true;
+> >        pixel_be = orig & BIT(31);
+> >        /* Pixel formats are printed LSB-first */
+> >        val = swab32(orig & ~BIT(31));
+> >        break;
+> >    default:
+> >        return error_string(buf, end, "(%p4?)", spec);
+> >    }
+> > 
+> > And with this the existence of 'val' now becomes doubtful, we may reuse 'orig',
+> > just name it 'val' everywhere, no?
+> 
+> In case c, val != orig, in rest it is. We can just use pixel_fmt to check
+> this condition, but places where we use orig, and not val will need an if
+> statement or something similar. Tbh, it's an unecessary complication. You
+> might want to see this part of the code:
+
+Fair enough.
+
+> 	if (pixel_fmt) {
+> 		*p++ = ' ';
+> 		strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
+> 		p += strlen(p);
+> 	}
+> 
+> 	*p++ = ' ';
+> 	*p++ = '(';
+> 	p = special_hex_number(p, output + sizeof(output) - 2, orig, sizeof(u32));
+> 	*p++ = ')';
+> 	*p = '\0';
+> 
+> Here, special_hex_number is common to all cases.
+
+I see, thanks for pointing this out.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 2/25/2025 2:35 PM, Neil Armstrong wrote:
-> Add support for the SM8650 platform by re-using the SM8550
-> definitions and using the vpu33 ops.
-> 
-> The SM8650/vpu33 requires more reset lines, but the H.284
-> decoder capabilities are identical.
-> 
-As you also noted, only delta between SM8550 and SM8650 is reset lines,
-rest all configurations are same. Could you think of a better way to reuse
-SM8550 platform data for SM8650.
-
-Thanks,
-Dikshita
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/media/platform/qcom/iris/Makefile          |   1 +
->  .../platform/qcom/iris/iris_platform_common.h      |   1 +
->  .../platform/qcom/iris/iris_platform_sm8650.c      | 266 +++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_probe.c      |   4 +
->  4 files changed, 272 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> index 6b64c9988505afd9707c704449d60bb53209229f..4caba81a95b806b9fa4937d9c7973031dea43d0e 100644
-> --- a/drivers/media/platform/qcom/iris/Makefile
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -11,6 +11,7 @@ qcom-iris-objs += \
->               iris_hfi_gen2_response.o \
->               iris_hfi_queue.o \
->               iris_platform_sm8550.o \
-> +             iris_platform_sm8650.o \
->               iris_power.o \
->               iris_probe.o \
->               iris_resources.o \
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index f6b15d2805fb2004699709bb12cd7ce9b052180c..75e266a6b718acb8518079c2125dfb30435cbf2b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -35,6 +35,7 @@ enum pipe_type {
->  
->  extern struct iris_platform_data sm8250_data;
->  extern struct iris_platform_data sm8550_data;
-> +extern struct iris_platform_data sm8650_data;
->  
->  enum platform_clk_type {
->  	IRIS_AXI_CLK,
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8650.c b/drivers/media/platform/qcom/iris/iris_platform_sm8650.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..823e349dead2606129e52d6d2d674cb2550eaf17
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8650.c
-> @@ -0,0 +1,266 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include "iris_core.h"
-> +#include "iris_ctrls.h"
-> +#include "iris_hfi_gen2.h"
-> +#include "iris_hfi_gen2_defines.h"
-> +#include "iris_platform_common.h"
-> +#include "iris_vpu_common.h"
-> +
-> +#define VIDEO_ARCH_LX 1
-> +
-> +static struct platform_inst_fw_cap inst_fw_cap_sm8650[] = {
-> +	{
-> +		.cap_id = PROFILE,
-> +		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
-> +		.max = V4L2_MPEG_VIDEO_H264_PROFILE_CONSTRAINED_HIGH,
-> +		.step_or_mask = BIT(V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_PROFILE_CONSTRAINED_BASELINE) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_PROFILE_MAIN) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_PROFILE_HIGH) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_PROFILE_CONSTRAINED_HIGH),
-> +		.value = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH,
-> +		.hfi_id = HFI_PROP_PROFILE,
-> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
-> +		.set = iris_set_u32_enum,
-> +	},
-> +	{
-> +		.cap_id = LEVEL,
-> +		.min = V4L2_MPEG_VIDEO_H264_LEVEL_1_0,
-> +		.max = V4L2_MPEG_VIDEO_H264_LEVEL_6_2,
-> +		.step_or_mask = BIT(V4L2_MPEG_VIDEO_H264_LEVEL_1_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_1B) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_1_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_1_2) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_1_3) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_2_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_2_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_2_2) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_3_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_3_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_3_2) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_4_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_4_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_4_2) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_5_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_5_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_5_2) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_6_0) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_6_1) |
-> +				BIT(V4L2_MPEG_VIDEO_H264_LEVEL_6_2),
-> +		.value = V4L2_MPEG_VIDEO_H264_LEVEL_6_1,
-> +		.hfi_id = HFI_PROP_LEVEL,
-> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
-> +		.set = iris_set_u32_enum,
-> +	},
-> +	{
-> +		.cap_id = INPUT_BUF_HOST_MAX_COUNT,
-> +		.min = DEFAULT_MAX_HOST_BUF_COUNT,
-> +		.max = DEFAULT_MAX_HOST_BURST_BUF_COUNT,
-> +		.step_or_mask = 1,
-> +		.value = DEFAULT_MAX_HOST_BUF_COUNT,
-> +		.hfi_id = HFI_PROP_BUFFER_HOST_MAX_COUNT,
-> +		.flags = CAP_FLAG_INPUT_PORT,
-> +		.set = iris_set_u32,
-> +	},
-> +	{
-> +		.cap_id = STAGE,
-> +		.min = STAGE_1,
-> +		.max = STAGE_2,
-> +		.step_or_mask = 1,
-> +		.value = STAGE_2,
-> +		.hfi_id = HFI_PROP_STAGE,
-> +		.set = iris_set_stage,
-> +	},
-> +	{
-> +		.cap_id = PIPE,
-> +		.min = PIPE_1,
-> +		.max = PIPE_4,
-> +		.step_or_mask = 1,
-> +		.value = PIPE_4,
-> +		.hfi_id = HFI_PROP_PIPE,
-> +		.set = iris_set_pipe,
-> +	},
-> +	{
-> +		.cap_id = POC,
-> +		.min = 0,
-> +		.max = 2,
-> +		.step_or_mask = 1,
-> +		.value = 1,
-> +		.hfi_id = HFI_PROP_PIC_ORDER_CNT_TYPE,
-> +	},
-> +	{
-> +		.cap_id = CODED_FRAMES,
-> +		.min = CODED_FRAMES_PROGRESSIVE,
-> +		.max = CODED_FRAMES_PROGRESSIVE,
-> +		.step_or_mask = 0,
-> +		.value = CODED_FRAMES_PROGRESSIVE,
-> +		.hfi_id = HFI_PROP_CODED_FRAMES,
-> +	},
-> +	{
-> +		.cap_id = BIT_DEPTH,
-> +		.min = BIT_DEPTH_8,
-> +		.max = BIT_DEPTH_8,
-> +		.step_or_mask = 1,
-> +		.value = BIT_DEPTH_8,
-> +		.hfi_id = HFI_PROP_LUMA_CHROMA_BIT_DEPTH,
-> +	},
-> +	{
-> +		.cap_id = RAP_FRAME,
-> +		.min = 0,
-> +		.max = 1,
-> +		.step_or_mask = 1,
-> +		.value = 1,
-> +		.hfi_id = HFI_PROP_DEC_START_FROM_RAP_FRAME,
-> +		.flags = CAP_FLAG_INPUT_PORT,
-> +		.set = iris_set_u32,
-> +	},
-> +};
-> +
-> +static struct platform_inst_caps platform_inst_cap_sm8650 = {
-> +	.min_frame_width = 96,
-> +	.max_frame_width = 8192,
-> +	.min_frame_height = 96,
-> +	.max_frame_height = 8192,
-> +	.max_mbpf = (8192 * 4352) / 256,
-> +	.mb_cycles_vpp = 200,
-> +	.mb_cycles_fw = 489583,
-> +	.mb_cycles_fw_vpp = 66234,
-> +	.num_comv = 0,
-> +};
-> +
-> +static void iris_set_sm8650_preset_registers(struct iris_core *core)
-> +{
-> +	writel(0x0, core->reg_base + 0xB0088);
-> +}
-> +
-> +static const struct icc_info sm8650_icc_table[] = {
-> +	{ "cpu-cfg",    1000, 1000     },
-> +	{ "video-mem",  1000, 15000000 },
-> +};
-> +
-> +static const char * const sm8650_clk_reset_table[] = { "bus", "xo", "core" };
-> +
-> +static const struct bw_info sm8650_bw_table_dec[] = {
-> +	{ ((4096 * 2160) / 256) * 60, 1608000 },
-> +	{ ((4096 * 2160) / 256) * 30,  826000 },
-> +	{ ((1920 * 1080) / 256) * 60,  567000 },
-> +	{ ((1920 * 1080) / 256) * 30,  294000 },
-> +};
-> +
-> +static const char * const sm8650_pmdomain_table[] = { "venus", "vcodec0" };
-> +
-> +static const char * const sm8650_opp_pd_table[] = { "mxc", "mmcx" };
-> +
-> +static const struct platform_clk_data sm8650_clk_table[] = {
-> +	{IRIS_AXI_CLK,  "iface"        },
-> +	{IRIS_CTRL_CLK, "core"         },
-> +	{IRIS_HW_CLK,   "vcodec0_core" },
-> +};
-> +
-> +static struct ubwc_config_data ubwc_config_sm8650 = {
-> +	.max_channels = 8,
-> +	.mal_length = 32,
-> +	.highest_bank_bit = 16,
-> +	.bank_swzl_level = 0,
-> +	.bank_swz2_level = 1,
-> +	.bank_swz3_level = 1,
-> +	.bank_spreading = 1,
-> +};
-> +
-> +static struct tz_cp_config tz_cp_config_sm8650 = {
-> +	.cp_start = 0,
-> +	.cp_size = 0x25800000,
-> +	.cp_nonpixel_start = 0x01000000,
-> +	.cp_nonpixel_size = 0x24800000,
-> +};
-> +
-> +static const u32 sm8650_vdec_input_config_params[] = {
-> +	HFI_PROP_BITSTREAM_RESOLUTION,
-> +	HFI_PROP_CROP_OFFSETS,
-> +	HFI_PROP_CODED_FRAMES,
-> +	HFI_PROP_BUFFER_FW_MIN_OUTPUT_COUNT,
-> +	HFI_PROP_PIC_ORDER_CNT_TYPE,
-> +	HFI_PROP_PROFILE,
-> +	HFI_PROP_LEVEL,
-> +	HFI_PROP_SIGNAL_COLOR_INFO,
-> +};
-> +
-> +static const u32 sm8650_vdec_output_config_params[] = {
-> +	HFI_PROP_COLOR_FORMAT,
-> +	HFI_PROP_LINEAR_STRIDE_SCANLINE,
-> +};
-> +
-> +static const u32 sm8650_vdec_subscribe_input_properties[] = {
-> +	HFI_PROP_NO_OUTPUT,
-> +};
-> +
-> +static const u32 sm8650_vdec_subscribe_output_properties[] = {
-> +	HFI_PROP_PICTURE_TYPE,
-> +	HFI_PROP_CABAC_SESSION,
-> +};
-> +
-> +static const u32 sm8650_dec_ip_int_buf_tbl[] = {
-> +	BUF_BIN,
-> +	BUF_COMV,
-> +	BUF_NON_COMV,
-> +	BUF_LINE,
-> +};
-> +
-> +static const u32 sm8650_dec_op_int_buf_tbl[] = {
-> +	BUF_DPB,
-> +};
-> +
-> +struct iris_platform_data sm8650_data = {
-> +	.get_instance = iris_hfi_gen2_get_instance,
-> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-> +	.vpu_ops = &iris_vpu33_ops,
-> +	.set_preset_registers = iris_set_sm8650_preset_registers,
-> +	.icc_tbl = sm8650_icc_table,
-> +	.icc_tbl_size = ARRAY_SIZE(sm8650_icc_table),
-> +	.clk_rst_tbl = sm8650_clk_reset_table,
-> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8650_clk_reset_table),
-> +	.bw_tbl_dec = sm8650_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8650_bw_table_dec),
-> +	.pmdomain_tbl = sm8650_pmdomain_table,
-> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8650_pmdomain_table),
-> +	.opp_pd_tbl = sm8650_opp_pd_table,
-> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8650_opp_pd_table),
-> +	.clk_tbl = sm8650_clk_table,
-> +	.clk_tbl_size = ARRAY_SIZE(sm8650_clk_table),
-> +	/* Upper bound of DMA address range */
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.fwname = "qcom/vpu/vpu33_p4.mbn",
-> +	.pas_id = IRIS_PAS_ID,
-> +	.inst_caps = &platform_inst_cap_sm8650,
-> +	.inst_fw_caps = inst_fw_cap_sm8650,
-> +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8650),
-> +	.tz_cp_config_data = &tz_cp_config_sm8650,
-> +	.core_arch = VIDEO_ARCH_LX,
-> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-> +	.ubwc_config = &ubwc_config_sm8650,
-> +	.num_vpp_pipe = 4,
-> +	.max_session_count = 16,
-> +	.max_core_mbpf = ((8192 * 4352) / 256) * 2,
-> +	.input_config_params =
-> +		sm8650_vdec_input_config_params,
-> +	.input_config_params_size =
-> +		ARRAY_SIZE(sm8650_vdec_input_config_params),
-> +	.output_config_params =
-> +		sm8650_vdec_output_config_params,
-> +	.output_config_params_size =
-> +		ARRAY_SIZE(sm8650_vdec_output_config_params),
-> +	.dec_input_prop = sm8650_vdec_subscribe_input_properties,
-> +	.dec_input_prop_size = ARRAY_SIZE(sm8650_vdec_subscribe_input_properties),
-> +	.dec_output_prop = sm8650_vdec_subscribe_output_properties,
-> +	.dec_output_prop_size = ARRAY_SIZE(sm8650_vdec_subscribe_output_properties),
-> +
-> +	.dec_ip_int_buf_tbl = sm8650_dec_ip_int_buf_tbl,
-> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8650_dec_ip_int_buf_tbl),
-> +	.dec_op_int_buf_tbl = sm8650_dec_op_int_buf_tbl,
-> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8650_dec_op_int_buf_tbl),
-> +};
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index aca442dcc153830e6252d1dca87afb38c0b9eb8f..8e6cc1dc529608696e81f2764e90ea3864030125 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -330,6 +330,10 @@ static const struct of_device_id iris_dt_match[] = {
->  			.data = &sm8250_data,
->  		},
->  #endif
-> +	{
-> +		.compatible = "qcom,sm8650-iris",
-> +		.data = &sm8650_data,
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, iris_dt_match);
-> 
 
