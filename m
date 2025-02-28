@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-539575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FF7A4A5F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:33:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A720DA4A5F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E667A4DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9B7178544
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5BA1DE2B9;
-	Fri, 28 Feb 2025 22:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FB21DE3AC;
+	Fri, 28 Feb 2025 22:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TnOFdZWn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="clg88Fvi"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4561BC9EE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278B23F39A;
+	Fri, 28 Feb 2025 22:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781974; cv=none; b=mpoe2yrsKEafJvi5Pxfsh0cBwDVBNPTjd/iSKLYK3WDXvwVNz4Wgz+elhREr7nP64H1nzIwKCPCfvSlRH3ZwV7purKNsaSFqnZ0ebcDDI+7wCRrgAAlIeBaSvIQ+hWRH2wYykI44T/jzeqhbE6KiYDixyeoPNw8Zvncc/mslsvI=
+	t=1740782096; cv=none; b=OLTXJlXDn+uvbx5PheI156WB0itXJ3dLwyc6tKiPVSwbKGxKBvR9YX/rkkPkO/nudYtXjKB69VgQQH8pWqZ7iHSYF0WEE7X9GzlDmIf8kg5CAIBhc174nhns8NxCflt6fATecKV2TO2qckB3LrdSfSByig7ApHgfzNxYm4bmsbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781974; c=relaxed/simple;
-	bh=O0GebC/SdgLZdHlPcLO5yKRPnT4hiBRcnUmcYB/ugMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKC9bMtWZ0IEGh3DuD9tq20vseszbrMXYEMO/9TrM14V/7V3yt9t8w7VkbGBF30utrOJuUs5PNgHDMNZPRKIUmWUCppjAtU+aqGng+0bJWR4onJL0W1e7BozUxKC85+emPlZDY0nnPab+yqc/0Jx/3tye7u1pzosq2tLLS2w5EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TnOFdZWn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740781971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sB1843xTI8E6I6Uv3+jpu/4UMdPYkCK+nlLxyIrwqY4=;
-	b=TnOFdZWnQc5OiKfMWponE9EtwUYEETtMSCiITvzt0nFbnEFh0fIz6ZTqKss5TB5pv2K0D8
-	/AOwEB12bkLEUmi9bPP1EiKpOM5NG3eVNYA/NL/OdrBGyvNO6nU+O5r/9P6ei+gtrOG2cF
-	RJmNWKZSMp4exUz7p3V0iH8YEYvhIVA=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-319-8cc3FcW7OkiTPFtfP9yy2w-1; Fri, 28 Feb 2025 17:32:46 -0500
-X-MC-Unique: 8cc3FcW7OkiTPFtfP9yy2w-1
-X-Mimecast-MFC-AGG-ID: 8cc3FcW7OkiTPFtfP9yy2w_1740781966
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-472012f2edfso52792971cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:32:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740781966; x=1741386766;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sB1843xTI8E6I6Uv3+jpu/4UMdPYkCK+nlLxyIrwqY4=;
-        b=fTlYUHqZ+/SvClwZ91omAR1sa2kl+E+uc7cZqo3LCd1t8EvygZUXPgPNp+6xzUjlRn
-         /ijQMBEwPd3L5OQia5KjhWggmPd93n7u4laPOhAuS74FR8uP6eRQ43XRCV/bPzQBQ2ma
-         rJujJDSGZd0WcSVtgHBm1cYV45Bzt5x+3h59aizplzkaPYJuLCE+PfdfIb5SbKu8+2LY
-         JFTJv59fTDUWoWFL5N7wiGVTN2D445iRFLBA+wS+b/rEoegKhjl89F6WwoBD3dHzBonq
-         NeEK/6o89cJAL8KFFLj7UQnYwA5jWLq9P9Ab96w55tByH5FMzhg/3F+GMeMzt1agTuNH
-         oOSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHaLmFtjSLlUsqxuOQxfuWhPYnnjCWTiTktlpRUi0Dw1FvsgcS+infjpV8W3GZpD82ATjLMDsuBoJ1IpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweQNB663Q2KNyPTurTkbvjBgEsd+l8DDNWWSWhq+f6GPlmPc8f
-	a+hwabGqRYCt2k0mRlO4H7t0VRQl+/cNWBIiAeOI1u/Fn6Suk1u/RmAk5cX6IHfckrbolmVphHV
-	ere7Cw/r4rb/mo4avRSRzy6sCR5+POpJ1dMp6Q2b1YY5DAabX+z2VYT0pt+77eQ==
-X-Gm-Gg: ASbGncvoCS/O6T9YnMiXsKHAuGjG3A/sy7TxqUIbGZI1LbNB6zJCQ627TBvMWn5ocx9
-	nHteSqy00nNrggBqFrRKFND72ejvCiDP6IdDwHn5mKlfJmhJwh8W0sXQHVmDFKd3nCr58bHreRc
-	bQUbooRxSd/OQ13u4MMz+PnQphETrLm/SfbvsDNvhZQ22xiR1s81bdPJh+d22Q/vdabv0v7yq0k
-	yEmfltLkZx7a/zPXVcfzmmz16xvMNaEcLlwER5CnilIgLRncyjeDwOVEmu0l6w51iKwkydKwPxS
-	a5/84NQ=
-X-Received: by 2002:ac8:7c4d:0:b0:473:882f:bcb1 with SMTP id d75a77b69052e-474bc11553dmr76548621cf.46.1740781966127;
-        Fri, 28 Feb 2025 14:32:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGlD/UdqqRjI56c+mRc1D/klxdusZ2AeL/TuShZH0ZdmlehnjstEE71nYfhGcROB+VVXH5jKQ==
-X-Received: by 2002:ac8:7c4d:0:b0:473:882f:bcb1 with SMTP id d75a77b69052e-474bc11553dmr76548281cf.46.1740781965782;
-        Fri, 28 Feb 2025 14:32:45 -0800 (PST)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474721c0a64sm30437561cf.42.2025.02.28.14.32.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 14:32:44 -0800 (PST)
-Date: Fri, 28 Feb 2025 17:32:41 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-	Olivier Dion <odion@efficios.com>, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-Message-ID: <Z8I5iU6y_nVmCZk6@x1.local>
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
- <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
- <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
- <cc1dec8c-8323-4c67-913f-5d8fb55ce715@efficios.com>
- <Z8HlL4FopVjeveaJ@x1.local>
- <60f148db-7586-4154-a909-d433bad39794@efficios.com>
+	s=arc-20240116; t=1740782096; c=relaxed/simple;
+	bh=rIMtkx3BumZFM1f+9gr/3L1rwx+8OL99ijM7SYaHIHA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QsrvaJeRUYmJPMoV8RKiLmshhuboiUA906eE4yjJhVKBUmLuemfgHMUyzKJfKFer5u2dqGh3vHqLUtgeZX4YLl38fCQsu6VcaJ3U5yh4bhvtGG2EjAeqZJ0K26WAYZpkh0aztxcCOSYjl6tOTwF7WxXgd/AWvth3kaGSWD9RtHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=clg88Fvi; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WkMCPfebqRX1ArJd0tbG7Xc61T/aB+raQSI5boJryfM=; t=1740782093; x=1741386893; 
+	b=clg88FvigaDlx6wJQvruwHKpSpN+VDrWkALwnWMeTjx2T3ETDh5HSwU+bNtxlHp4rIIVJ4bqyww
+	gKICx7x3ECymZFApFRwn5+l09Y3p0d4/b2jfYJ7tgwKtDj4kYdyQ0AFjseGvI3vb6xxB6Gcr6athe
+	bEuClnUQmF04pFHfOiMjLWnHjkzkBYb5hoMrcWcvNB65vajKUkG8BfeEbKnH0u42o5QD12Vj4eCGD
+	6oIFnJ3cI1xQJmpfSjuCv5Fz0CkTdr2Jmj+ARO8z51Sn3iacY6hFUiAq1ki1vhS3buiwedfJU4aQb
+	jIxRglGohAmTn+x1G+Gm2odpcnDYym8Aj9gw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1to8wQ-00000001LRv-0LRi; Fri, 28 Feb 2025 23:34:46 +0100
+Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1to8wP-00000000NgP-3X5c; Fri, 28 Feb 2025 23:34:46 +0100
+Message-ID: <a917c1183f85bad8af1312994d330f141c57db04.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Rob Landley <rob@landley.net>, Artur Rojek <contact@artur-rojek.eu>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ Daniel Lezcano	 <daniel.lezcano@linaro.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Uros Bizjak	 <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"
+	 <jeff@coresemi.io>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 28 Feb 2025 23:34:44 +0100
+In-Reply-To: <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+	 <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
+	 <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
+	 <48881e2d8efa9d7df8156f5f81cd662c2286e597.camel@physik.fu-berlin.de>
+	 <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <60f148db-7586-4154-a909-d433bad39794@efficios.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Fri, Feb 28, 2025 at 12:53:02PM -0500, Mathieu Desnoyers wrote:
-> On 2025-02-28 11:32, Peter Xu wrote:
-> > On Fri, Feb 28, 2025 at 09:59:00AM -0500, Mathieu Desnoyers wrote:
-> > > For the VM use-case, I wonder if we could just add a userfaultfd
-> > > "COW" event that would notify userspace when a COW happens ?
-> > 
-> > I don't know what's the best for KSM and how well this will work, but we
-> > have such event for years..  See UFFDIO_REGISTER_MODE_WP:
-> > 
-> > https://man7.org/linux/man-pages/man2/userfaultfd.2.html
-> 
-> userfaultfd UFFDIO_REGISTER only seems to work if I pass an address
-> resulting from a mmap mapping, but returns EINVAL if I pass a
-> page-aligned address which sits within a private file mapping
-> (e.g. executable data).
+Hi,
 
-Yes, so far sync traps only supports RAM-based file systems, or anonymous.
-Generic private file mappings (that stores executables and libraries) are
-not yet supported.
+On Fri, 2025-02-28 at 16:19 -0600, Rob Landley wrote:
+> The march 2024 rebuild was in response to that Feb 2024 bugfix, so it=20
+> _should_ have the fix? (I'm waiting for another musl release to rebuild=
+=20
+> them again...)
+>=20
+> I just downloaded the toolchain currently at that URL and built mkroot=
+=20
+> and it worked for me:
+>=20
+> Run /init as init process
+> sntp: time.google.com:123: Try again
+> Type exit when done.
+> $ cat /proc/version
+> Linux version 6.14.0-rc3 (landley@driftwood) (sh2eb-linux-muslfdpic-cc=
+=20
+> (GCC) 11.2.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Fri Feb 28 15:47:36=
+=20
+> CST 2025
 
-> 
-> Also, I notice that do_wp_page() only calls handle_userfault
-> VM_UFFD_WP when vm_fault flags does not have FAULT_FLAG_UNSHARE
-> set.
+Is that on Toybox git HEAD?
 
-AFAICT that's expected, unshare should only be set on reads, never writes.
-So uffd-wp shouldn't trap any of those.
+> And the failure _without_ the fix was deterministic rather than=20
+> intermittent, so...
+>=20
+> Keep in mind the init script has a 3 second timeout trying to call sntp=
+=20
+> to set the clock, which will fail if the ethernet isn't connected (or no=
+=20
+> driver, or no internet...)
 
-> 
-> AFAIU, as it stands now userfaultfd would not help tracking COW faults
-> caused by stores to private file mappings. Am I missing something ?
+I'll try again this weekend. Also, I will review and pick up the fix.
 
-I think you're right.  So we have UFFD_FEATURE_WP_ASYNC that should work on
-most mappings.  That one is async, though, so more like soft-dirty.  It
-might be doable to try making it sync too without a lot of changes based on
-how async tracking works.
+> P.S. Speaking of intermittent, I hit that hang after "clocksource:=20
+> Switched to clocksource jcore_pit_cs" on one attempt just now. I should=
+=20
+> sit down with the engineers next time I'm in japan and try to root cause=
+=20
+> it. The scheduler fires reliably, so it's _probably_ not a hardware=20
+> issue? We've had Linux uptime of over a year, not just idle but running=
+=20
+> an energy monitoring app, so it's pretty stable in our systems...
 
-Thanks,
+I thought it was a software issue?
 
--- 
-Peter Xu
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
