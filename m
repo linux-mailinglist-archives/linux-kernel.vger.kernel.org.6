@@ -1,197 +1,505 @@
-Return-Path: <linux-kernel+bounces-539161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4660BA4A19F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:31:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51826A4A1B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE88C176408
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E807AB84F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30261F872D;
-	Fri, 28 Feb 2025 18:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388A327CCE0;
+	Fri, 28 Feb 2025 18:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvN7UDtz"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qwOJd1PK"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2F8286288;
-	Fri, 28 Feb 2025 18:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D736327CCCF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767409; cv=none; b=q3A8+S7/pKW0GJF8Va1PZsDadmNIJvV5IhyHHdjtLETZ2LxnskIDb/Fes4P0ImYFPzTXekrjwuoJ7CqSZvPMTwLipOLDiHIeWC2/OzvLL9OJmKCvPRqg7p+VWqoQzD58qJ8h4KenjObpZ52vXUBqi0LlQxteGMWnYy+je5wFJVk=
+	t=1740767523; cv=none; b=si58aHG6vAWSsyi1YNWC4LrADj5T8wwF4HV296NMKmbkEFHZHFpF7t5W2UcFoUjfuwLlTLIrEjUjkBsf/oh7eIb1fUoU4l9L12z7qJd5I5Q1tQ94hsYOmRhWguKaI+6gdsTOy01fD9hUL/Lc83bQbsxbUDEai4NB2UhWHXky7xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767409; c=relaxed/simple;
-	bh=rEj78UcFQDAHphVHUC5xoGH16EIO4LDyE10+E990cOA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5TXQOwHbkOHRcB9iwwAVS6/1wYHhPZPVJgzsNTTENfv2PiblX8UympBy9+zb+V3BjI10xJli6yxqanBKlW5sxvnnmppu9u0i9Ysdhhwt/yXkgUDWjO47WDB3gqOfh8ZirK0JNZy7Fy16m8VIX2OakKXGOOFnX59lq0SlyNNtrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvN7UDtz; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5494bc4d741so1598486e87.2;
-        Fri, 28 Feb 2025 10:30:06 -0800 (PST)
+	s=arc-20240116; t=1740767523; c=relaxed/simple;
+	bh=guZt1Zi+iXkkSqZIGqCWWaUtqAwC15Ww+zgjipfFYog=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VcvOeuognSaxUB7pC8rdBlCQfg+BuBhIuiRH+d/vMEvjQkWKpg2VQolUubeTQVS9vb162pvynDYHX41P+zR7owVa3LfQCsaJiIeYPO364/RFSB3eDmH3jnMdtl9mg69HczmkF+juDFElrtBZiw29i1qp4q+GdMGkOgAP2kYnVPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qwOJd1PK; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-223725a1e76so12727965ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740767405; x=1741372205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IyGlG6KmyWC/vhmNe6q6s0Da+XSfS6Lsa7LYaDsWvDU=;
-        b=TvN7UDtz2EMmxWZFFkEZ7nNpJw8tnzopV6chW1g47WDX7rlIZK0+3C+bcolwLGq0Kr
-         17Rnv619jDG2s1sMK2/+n2RFGl1yajlRiOusGCAs5/tNaXDZCyUfVSwdGqIBl3Kjoa8b
-         Snd2qwncmIQHh29YXyXIb/7HmS8wrWQf7WDFZNEP6uyn/oxLoa4I0iXQvR9Kwu54njSQ
-         KyVl2dAIvJVKJeAsJRBM3P7eU27/ycieKax4qpjzalDhwJu5D20C7N3jYHhDHHnrtpOe
-         AGWh2BJajlfI4KKMq0M2mbh9TQ/aQfbqtuLsblultRossT4m7Bteb6DlAN7GMTNoVZy/
-         I9yg==
+        d=google.com; s=20230601; t=1740767520; x=1741372320; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6pijisVLPCJj8vW2ZfATw2CQzs5cG5ymgPPQbMYMBHE=;
+        b=qwOJd1PKAiPgSNYHFttS7XbhwtAdlyjX7vmuyw76UEVFOpvAyDzRY6dJbiqhxOz9+C
+         lrLIt5DAKAbbFngQPOMW3jubsd/r9hqewu5kqfhkPqA8l9YM9DIBKQ1bzfmjK9l+KfSH
+         JhQHQAm/deIlz775qoMqZ9JKAtb9JTsXDK/KiCtiny8JmxPsVjHQTHenyHwBvY8HFhYe
+         FUXQsShQPfeWtm5vxK+pTy0wG+xfX7VrPbN2gV8DBoyS9kD+OM9rS7Hn5mTGUmXTMgpj
+         PXvz9tdkI4iMe7UYPI1zRwzM7VroP6xeK2zYzLzY0ZXcd85Nu3FTqaerNrJskdwnbtPP
+         NZ6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740767405; x=1741372205;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IyGlG6KmyWC/vhmNe6q6s0Da+XSfS6Lsa7LYaDsWvDU=;
-        b=RDau0RzIXsKdI5dLHoLlSj4cwp1seT6kha57MhyqVYIul1EWkw5PSVQSV4qW2YMsyY
-         U5fCWA+a+73BaS7yRqc9EKchGTLfibP2ZPABjdEhiFUZz1KP+EPLysVYXRippjyPB1zB
-         RgJRbyfir5Spgu5Ad86wcG4Rio5NO9EaxnCsdd7SXWFYrBH5sYvbFiHYNPHTrTFd7fxT
-         7oIoyeQtU75skP2G8w3mVVLAnTOtMUy2W5Jn7yvKlQCd6R8BeVwo2mBvn50RyqB8ovGG
-         wZlY5vwY5HqPBPaXQkpvp1WNMWrcZIrIkCOhd20Od3MfYUd26E0aZVjBwPUaErzGKVIw
-         5nhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuZ7mo7bGIYadBvr1sNA3AztvISQu+eQds+RLFt700zuNBJS2pxvZMY6aw7KKzVXS9tOW0@vger.kernel.org, AJvYcCWmWRdYUFFy3LyInSqUODCWvgJt58EpjZtwyqt0FMJ+2lrZTOGYSrOPFnehg7lJjdgUC4h9DBYPNLpQsEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI7xvuOziBpRhwRpeHv6ulfA3tZ70qOpZOpIkGR9Izgw2WUenz
-	e0FzjhC5cTHx0bOLHDRzA6WKkvBsuOq+KSPGLr+/w+ahFxxuftUy
-X-Gm-Gg: ASbGncta4N/luzb+XC9GE38P7drsyWTwi79foyiwJVpm/wWa9n4JqK1bDgvhH1zvaif
-	nKoBf4f9aEqV/RP0Yrv2PYbhYVQVhQf2lgrjxSiFkg2L3jyHe6sLd73z0tAbaBeqhDqsXH7li4/
-	u/n34WhKU71761BAIoSDbRpiX2zGVKh0afJfeDpqZPo8qnp4uNtPt35b1J59qKCtIbueDUzo7uE
-	34dulpUI89QY+yeC9zPyY69gCvqy20jwPsIFVVwYWQV3LfTBO+hJoe8ZIjkZyGXsS8VdaFiP7v9
-	xYJy3cefEoMzCWhW6xzt4JJoQaeFRz73Cns4MALsbIlWpI0c
-X-Google-Smtp-Source: AGHT+IEkJ6IMmCKxPFsLqxJMA1GDDzT6covfWgsgXVKfqGf1wEovMTD7mrXAregnRjEGvq2NaapgDw==
-X-Received: by 2002:a05:6512:a8b:b0:545:2302:6835 with SMTP id 2adb3069b0e04-5494c107e6bmr1828479e87.2.1740767404684;
-        Fri, 28 Feb 2025 10:30:04 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549441741d4sm573051e87.33.2025.02.28.10.30.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 10:30:03 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 28 Feb 2025 19:30:01 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z8IAqQ3dYdDsj5GN@pc636>
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
- <Z8Ckb6spK35-Ez4U@pc636>
- <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <Z8Htg565HnNumdxy@pc636>
- <6e4688d1-afe7-4508-9ebc-eeece0692365@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1740767520; x=1741372320;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6pijisVLPCJj8vW2ZfATw2CQzs5cG5ymgPPQbMYMBHE=;
+        b=wMEV6dI7Mz9ZyVDIjDD6/c5aFZifO2HpfKD344duoneouXeqlYUdvnZhpOdJXCZnyB
+         9Qure0LnWkyRpLtEEH1T+yD5oOWO54S5Ay7AChFXo/kEksECJ8XeA6klU7LIdUvNokzk
+         usewguGUrtq8vDHlkLR8lRbqAnH1YeQFzhMQg/LiNn+PHr1AIJLzZpo0G8PpLPydJS/0
+         sR+bj1q0STUM8b+eJ3ADNMixFqA9mBlG8zrIdBy79DIaKJwKdj2tAZQRKxeO9e+AxoOk
+         BEgXQ1HfbOf+wEovRGamsvMqBa3A0weWEchrlXIwRHFKiQx7R7EV7MYMmhGYpOIpVv8C
+         HOpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxjgmPFts0kBM8MjwXXEU6U1WJxAvknvOp1iuNyoy9T7bkuO9zoiuxQxnv2XouA5hUW+3rOu71Kcbbjbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Z/nWVfGXuS9kbZ8EJX8i0MeduuTkAFfvX0Ls7b6JC1lIIJDp
+	DnpYKN9GkTn/leqAPx1lxS384KIoeM5RoecEbVGNEamwBgrkACCSOCIEQIBDkHtTD+yyj4Vinv2
+	SHg==
+X-Google-Smtp-Source: AGHT+IF4N9NsIkmr/dcMIkDaZ4a+7XdgaaufJF3rLHlXHdN4NAQScNU/ckB1oUbOH4qNPSFvkWjtZERYyYU=
+X-Received: from pjboh15.prod.google.com ([2002:a17:90b:3a4f:b0:2ea:5be5:da6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:8cb:b0:220:e63c:5b13
+ with SMTP id d9443c01a7336-2236925e4famr73615075ad.46.1740767520231; Fri, 28
+ Feb 2025 10:32:00 -0800 (PST)
+Date: Fri, 28 Feb 2025 10:31:58 -0800
+In-Reply-To: <27a491ee16015824b416e72921b02a02c27433f7.1740512583.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <cover.1740512583.git.ashish.kalra@amd.com> <27a491ee16015824b416e72921b02a02c27433f7.1740512583.git.ashish.kalra@amd.com>
+Message-ID: <Z8IBHuSc3apsxePN@google.com>
+Subject: Re: [PATCH v5 6/7] KVM: SVM: Add support to initialize SEV/SNP
+ functionality in KVM
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	thomas.lendacky@amd.com, john.allen@amd.com, herbert@gondor.apana.org.au, 
+	michael.roth@amd.com, dionnaglaze@google.com, nikunj@amd.com, ardb@kernel.org, 
+	kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, aik@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: multipart/mixed; charset="UTF-8"; boundary="ZxKkPI+e2NE34Qwk"
+
+
+--ZxKkPI+e2NE34Qwk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e4688d1-afe7-4508-9ebc-eeece0692365@paulmck-laptop>
 
-On Fri, Feb 28, 2025 at 10:25:58AM -0800, Paul E. McKenney wrote:
-> On Fri, Feb 28, 2025 at 06:08:19PM +0100, Uladzislau Rezki wrote:
-> > On Fri, Feb 28, 2025 at 05:36:47PM +0100, Uladzislau Rezki wrote:
-> > > On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
-> > > > On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
-> > > > > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> > > > > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > > > > > > Hi Ulad,
-> > > > > > > 
-> > > > > > > I put these three patches into next (and misc.2025.02.27a) for some
-> > > > > > > testing, hopefully it all goes well and they can make it v6.15.
-> > > > > > > 
-> > > > > > > A few tag changed below:
-> > > > > > > 
-> > > > > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > > > > > Switch for using of get_state_synchronize_rcu_full() and
-> > > > > > > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > > > > > > synchronize_rcu() call.
-> > > > > > > > 
-> > > > > > > > Just using "not" full APIs to identify if a grace period is
-> > > > > > > > passed or not might lead to a false-positive kernel splat.
-> > > > > > > > 
-> > > > > > > > It can happen, because get_state_synchronize_rcu() compresses
-> > > > > > > > both normal and expedited states into one single unsigned long
-> > > > > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > > > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > > > > > > run.
-> > > > > > > > 
-> > > > > > > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > > > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > > > > > > for expedited and normal states.
-> > > > > > > > 
-> > > > > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > > > > > > 
-> > > > > > > I switch this into "Closes:" per checkpatch.
-> > > > > > > 
-> > > > > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > > > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > > > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > > > 
-> > > > > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > > > > > > Would you or Paul double-check the Reviewed-by should be here?
-> > > > > > 
-> > > > > > I am good with keeping my Reviewed-by tags.
-> > > > > > 
-> > > > > Thanks Paul!
-> > > > 
-> > > > Except that I got this from overnight testing of rcu/dev on the shared
-> > > > RCU tree:
-> > > > 
-> > > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> > > > 
-> > > > I see this only on TREE05.  Which should not be too surprising, given
-> > > > that this is the scenario that tests it.  It happened within five minutes
-> > > > on all 14 of the TREE05 runs.
-> > > > 
-> > > Hm.. This is not fun. I tested this on my system and i did not manage to
-> > > trigger this whereas you do. Something is wrong.
-> > >
-> > We have below code to start a new GP, if we detect that processing is
-> > starved:
-> > 
-> > <snip>
-> > /*
-> >  * The "start_new_poll" is set to true, only when this GP is not able
-> >  * to handle anything and there are outstanding users. It happens when
-> >  * the rcu_sr_normal_gp_init() function was not able to insert a dummy
-> >  * separator to the llist, because there were no left any dummy-nodes.
-> >  *
-> >  * Number of dummy-nodes is fixed, it could be that we are run out of
-> >  * them, if so we start a new pool request to repeat a try. It is rare
-> >  * and it means that a system is doing a slow processing of callbacks.
-> >  */
-> >   if (start_new_poll)
-> >     (void) start_poll_synchronize_rcu();
-> > <snip>
-> > 
-> > we do not use a _full() version, since we need to inform rcu-gp-kthread
-> > to initiate a new GP.
-> > 
-> > Any thoughts?
+On Tue, Feb 25, 2025, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> My kneejerk not-to-be-trusted take is that it does not matter which type
-> of grace period gets started so long as a grace period does get started.
-> Presumably you have done the get_state_synchronize_rcu_full() before
-> this point?
+> Move platform initialization of SEV/SNP from CCP driver probe time to
+> KVM module load time so that KVM can do SEV/SNP platform initialization
+> explicitly if it actually wants to use SEV/SNP functionality.
 > 
-Yes, of course. That code is located in the gp-kthread. get_state_synchronize_rcu_full()
-is done before.
+> Add support for KVM to explicitly call into the CCP driver at load time
+> to initialize SEV/SNP. If required, this behavior can be altered with KVM
+> module parameters to not do SEV/SNP platform initialization at module load
+> time. Additionally, a corresponding SEV/SNP platform shutdown is invoked
+> during KVM module unload time.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  arch/x86/kvm/svm/sev.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 74525651770a..0bc6c0486071 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -2933,6 +2933,7 @@ void __init sev_set_cpu_caps(void)
+>  void __init sev_hardware_setup(void)
+>  {
+>  	unsigned int eax, ebx, ecx, edx, sev_asid_count, sev_es_asid_count;
+> +	struct sev_platform_init_args init_args = {0};
+>  	bool sev_snp_supported = false;
+>  	bool sev_es_supported = false;
+>  	bool sev_supported = false;
+> @@ -3059,6 +3060,17 @@ void __init sev_hardware_setup(void)
+>  	sev_supported_vmsa_features = 0;
+>  	if (sev_es_debug_swap_enabled)
+>  		sev_supported_vmsa_features |= SVM_SEV_FEAT_DEBUG_SWAP;
+> +
+> +	if (!sev_enabled)
+> +		return;
+> +
+> +	/*
+> +	 * Always perform SEV initialization at setup time to avoid
+> +	 * complications when performing SEV initialization later
+> +	 * (such as suspending active guests, etc.).
 
---
-Uladzislau Rezki
+This is misleading and wildly incomplete.  *SEV* doesn't have complications, *SNP*
+has complications.  And looking through sev_platform_init(), all of this code
+is buggy.
+
+The sev_platform_init() return code is completely disconnected from SNP setup.
+It can return errors even if SNP setup succeeds, and can return success even if
+SNP setup fails.
+
+I also think it makes sense to require SNP to be initialized during KVM setup.
+I don't see anything in __sev_snp_init_locked() that suggests SNP initialization
+can magically succeed at runtime if it failed at boot.  To keep things sane and
+simple, I think KVM should reject module load if SNP is requested, setup fails,
+and kvm-amd.ko is a module.  If kvm-amd.ko is built-in and SNP fails, just disable
+SNP support.  I.e. when possible, let userspace decide what to do, but don't bring
+down all of KVM just because SNP setup failed.
+
+The attached patches are compile-tested (mostly), can you please test them and
+slot them in?
+
+> +	 */
+> +	init_args.probe = true;
+> +	sev_platform_init(&init_args);
+>  }
+>  
+>  void sev_hardware_unsetup(void)
+> @@ -3074,6 +3086,9 @@ void sev_hardware_unsetup(void)
+>  
+>  	misc_cg_set_capacity(MISC_CG_RES_SEV, 0);
+>  	misc_cg_set_capacity(MISC_CG_RES_SEV_ES, 0);
+> +
+> +	/* Do SEV and SNP Shutdown */
+
+Meh, just omit this comment.  
+
+> +	sev_platform_shutdown();
+>  }
+>  
+>  int sev_cpu_init(struct svm_cpu_data *sd)
+> -- 
+> 2.34.1
+> 
+
+--ZxKkPI+e2NE34Qwk
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-crypto-ccp-Enumerate-SNP-support-in-output-of-sev_pl.patch"
+
+From 7274d7156ff9df5018e4f8ac8fbfae7d7ca8d6d6 Mon Sep 17 00:00:00 2001
+From: Sean Christopherson <seanjc@google.com>
+Date: Fri, 28 Feb 2025 10:01:37 -0800
+Subject: [PATCH 1/4] crypto: ccp: Enumerate SNP support in output of
+ sev_platform_init()
+
+Add an output param to sev_platform_init() to communicate whether or not
+SNP was (or already was) successfully initialized.  The return code from
+sev_platform_init() is completely disconnected from SNP initialization,
+e.g. will return errors if SNP setup succeeded, and will return success if
+SNP setup failed.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ drivers/crypto/ccp/sev-dev.c | 1 +
+ include/linux/psp-sev.h      | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+index cde6ebab589d..5164c5f3bd3f 100644
+--- a/drivers/crypto/ccp/sev-dev.c
++++ b/drivers/crypto/ccp/sev-dev.c
+@@ -1357,6 +1357,7 @@ static int _sev_platform_init_locked(struct sev_platform_init_args *args)
+ 		 */
+ 		dev_err(sev->dev, "SEV-SNP: failed to INIT, continue SEV INIT\n");
+ 	}
++	args->snp_initialized = sev->snp_initialized;
+ 
+ 	/* Defer legacy SEV/SEV-ES support if allowed by caller/module. */
+ 	if (args->probe && !psp_init_on_probe)
+diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
+index 0b3a36bdaa90..726535e302be 100644
+--- a/include/linux/psp-sev.h
++++ b/include/linux/psp-sev.h
+@@ -797,10 +797,12 @@ struct sev_data_snp_shutdown_ex {
+  * @probe: True if this is being called as part of CCP module probe, which
+  *  will defer SEV_INIT/SEV_INIT_EX firmware initialization until needed
+  *  unless psp_init_on_probe module param is set
++ * @snp_initialized: Output param that is true if SNP was initialized.
+  */
+ struct sev_platform_init_args {
+ 	int error;
+ 	bool probe;
++	bool snp_initialized;
+ };
+ 
+ /**
+
+base-commit: ac2ba191f3b6b41c9403b142223dfcc3dfe8903b
+-- 
+2.48.1.711.g2feabab25a-goog
+
+
+--ZxKkPI+e2NE34Qwk
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-KVM-SVM-Reject-SNP-VM-creation-if-SNP-platform-initi.patch"
+
+From 6cd53151470bb088e6a5f1fded0e4d9b66fe7bbe Mon Sep 17 00:00:00 2001
+From: Sean Christopherson <seanjc@google.com>
+Date: Fri, 28 Feb 2025 10:09:48 -0800
+Subject: [PATCH 2/4] KVM: SVM: Reject SNP VM creation if SNP platform
+ initialization failed
+
+Explicitly check that SNP platform initialization succeeded prior to
+creating SNP VMs.  The return from sev_platform_init() only tracks "legacy"
+SEV and SEV-ES support, i.e. can return '0' even if SNP setup fails.
+
+Fixes: 1dfe571c12cf ("KVM: SEV: Add initial SEV-SNP support")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/sev.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 3fc87cdc95c8..dd001a293899 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -449,6 +449,10 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 
+ 	/* This needs to happen after SEV/SNP firmware initialization. */
+ 	if (vm_type == KVM_X86_SNP_VM) {
++		if (!init_args.snp_initialized) {
++			ret = -EIO;
++			goto e_free;
++		}
+ 		ret = snp_guest_req_init(kvm);
+ 		if (ret)
+ 			goto e_free;
+-- 
+2.48.1.711.g2feabab25a-goog
+
+
+--ZxKkPI+e2NE34Qwk
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0003-KVM-SVM-Ignore-sev_platform_init-return-code-when-cr.patch"
+
+From 8dd4327a3e30ce73753e818377c6b47a16e48467 Mon Sep 17 00:00:00 2001
+From: Sean Christopherson <seanjc@google.com>
+Date: Fri, 28 Feb 2025 10:09:48 -0800
+Subject: [PATCH 3/4] KVM: SVM: Ignore sev_platform_init() return code when
+ creating SNP VM
+
+Ignore errors from sev_platform_init() when creating SNP VMs, as SNP
+initialization can succeed even if SEV/SEV-ES initialization fails.
+
+Fixes: 1dfe571c12cf ("KVM: SEV: Add initial SEV-SNP support")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/sev.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index dd001a293899..354f6c32c435 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -443,8 +443,15 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 		goto e_no_asid;
+ 
+ 	init_args.probe = false;
++	/*
++	 * Initialize SEV/SEV-ES if neccessary, i.e. if the CCP driver was
++	 * configured to defer setup.
++	 * Ignore failure for SNP VMs, as SNP initialization can succeed even
++	 * if SEV/SEV-ES initialization fails (and vice versa).  SNP support is
++	 * communicated via an out param, and is checked below.
++	 */
+ 	ret = sev_platform_init(&init_args);
+-	if (ret)
++	if (ret && vm_type != KVM_X86_SNP_VM)
+ 		goto e_free;
+ 
+ 	/* This needs to happen after SEV/SNP firmware initialization. */
+-- 
+2.48.1.711.g2feabab25a-goog
+
+
+--ZxKkPI+e2NE34Qwk
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0004-KVM-SVM-Add-support-to-initialize-SEV-SNP-functional.patch"
+
+From d67d8504d1e288f646e67d264f418b2acc300236 Mon Sep 17 00:00:00 2001
+From: Ashish Kalra <ashish.kalra@amd.com>
+Date: Tue, 25 Feb 2025 21:01:33 +0000
+Subject: [PATCH 4/4] KVM: SVM: Add support to initialize SEV/SNP functionality
+ in KVM
+
+Move platform initialization of SEV/SNP from CCP driver probe time to
+KVM module load time so that KVM can do SEV/SNP platform initialization
+explicitly if it actually wants to use SEV/SNP functionality.
+
+Add support for KVM to explicitly call into the CCP driver at load time
+to initialize SEV/SNP. If required, this behavior can be altered with KVM
+module parameters to not do SEV/SNP platform initialization at module load
+time. Additionally, a corresponding SEV/SNP platform shutdown is invoked
+during KVM module unload time.
+
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/sev.c | 52 +++++++++++++++++++++++++++++++++++++-----
+ arch/x86/kvm/svm/svm.c |  4 +++-
+ arch/x86/kvm/svm/svm.h |  4 ++--
+ 3 files changed, 51 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 354f6c32c435..2b8c1d125164 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -402,7 +402,7 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 			    unsigned long vm_type)
+ {
+ 	struct kvm_sev_info *sev = to_kvm_sev_info(kvm);
+-	struct sev_platform_init_args init_args = {0};
++	struct sev_platform_init_args init_args = { .probe = false };
+ 	bool es_active = vm_type != KVM_X86_SEV_VM;
+ 	u64 valid_vmsa_features = es_active ? sev_supported_vmsa_features : 0;
+ 	int ret;
+@@ -442,10 +442,9 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 	if (ret)
+ 		goto e_no_asid;
+ 
+-	init_args.probe = false;
+ 	/*
+-	 * Initialize SEV/SEV-ES if neccessary, i.e. if the CCP driver was
+-	 * configured to defer setup.
++	 * Initialize SEV/SEV-ES if neccessary, i.e. if setup failued during
++	 * module load, or if the CCP driver was configured to defer setup.
+ 	 * Ignore failure for SNP VMs, as SNP initialization can succeed even
+ 	 * if SEV/SEV-ES initialization fails (and vice versa).  SNP support is
+ 	 * communicated via an out param, and is checked below.
+@@ -456,7 +455,11 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+ 
+ 	/* This needs to happen after SEV/SNP firmware initialization. */
+ 	if (vm_type == KVM_X86_SNP_VM) {
+-		if (!init_args.snp_initialized) {
++		/*
++		 * SNP is initialized during KVM setup, and KVM shouldn't
++		 * advertise support for SNP if initialization failed.
++		 */
++		if (WARN_ON_ONCE(!init_args.snp_initialized)) {
+ 			ret = -EIO;
+ 			goto e_free;
+ 		}
+@@ -2941,9 +2944,10 @@ void __init sev_set_cpu_caps(void)
+ 	}
+ }
+ 
+-void __init sev_hardware_setup(void)
++int __init sev_hardware_setup(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx, sev_asid_count, sev_es_asid_count;
++	struct sev_platform_init_args init_args = { .probe = true };
+ 	bool sev_snp_supported = false;
+ 	bool sev_es_supported = false;
+ 	bool sev_supported = false;
+@@ -3044,6 +3048,38 @@ void __init sev_hardware_setup(void)
+ 	sev_snp_supported = sev_snp_enabled && cc_platform_has(CC_ATTR_HOST_SEV_SNP);
+ 
+ out:
++	/*
++	 * Initialize SEV+ in firmware and throughout the plaform.  If SNP is
++	 * supported by hardare, requested by the user, and fails to initialize,
++	 * reject setup if kvm-amd.ko is built as a module, i.e. if userspace
++	 * can retry and thus decide whether or not SNP is a hard requirement.
++	 * If KVM is fully built-in, continue on so that KVM can still run
++	 * non-SNP VMs.
++	 *
++	 * Leave SEV and SEV-ES as-is; they are compatible with runtime setup,
++	 * and KVM will retry initialization if/when the first SEV/SEV-ES VM is
++	 * created.
++	 *
++	 * Note, if psp_init_on_probe is disabled, this will initialize SNP+,
++	 * but not SEV or SEV-ES.  Deferring SEV/SEV-ES initialization allows
++	 * userspace to hotload firmware (SNP enabling is compatible, "legacy"
++	 * SEV/SEV-ES enabling is not).  As above, KVM will do SEV/SEV-ES at VM
++	 * creation if necessary.
++	 */
++	if (sev_supported) {
++		/*
++		 * Ignore the return value, which only communicates SEV/SEV-ES
++		 * status.  SNP status is provided as an output param.
++		 */
++		sev_platform_init(&init_args);
++		if (!init_args.snp_initialized && sev_snp_supported) {
++			if (IS_MODULE(CONFIG_KVM_AMD))
++				return -EIO;
++
++			sev_snp_supported = false;
++		}
++	}
++
+ 	if (boot_cpu_has(X86_FEATURE_SEV))
+ 		pr_info("SEV %s (ASIDs %u - %u)\n",
+ 			sev_supported ? min_sev_asid <= max_sev_asid ? "enabled" :
+@@ -3070,6 +3106,8 @@ void __init sev_hardware_setup(void)
+ 	sev_supported_vmsa_features = 0;
+ 	if (sev_es_debug_swap_enabled)
+ 		sev_supported_vmsa_features |= SVM_SEV_FEAT_DEBUG_SWAP;
++
++	return 0;
+ }
+ 
+ void sev_hardware_unsetup(void)
+@@ -3085,6 +3123,8 @@ void sev_hardware_unsetup(void)
+ 
+ 	misc_cg_set_capacity(MISC_CG_RES_SEV, 0);
+ 	misc_cg_set_capacity(MISC_CG_RES_SEV_ES, 0);
++
++	sev_platform_shutdown();
+ }
+ 
+ int sev_cpu_init(struct svm_cpu_data *sd)
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 58e377d32627..db48fb8d6257 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -5358,7 +5358,9 @@ static __init int svm_hardware_setup(void)
+ 	 * Note, SEV setup consumes npt_enabled and enable_mmio_caching (which
+ 	 * may be modified by svm_adjust_mmio_mask()), as well as nrips.
+ 	 */
+-	sev_hardware_setup();
++	r = sev_hardware_setup();
++	if (r)
++		return r;
+ 
+ 	svm_hv_hardware_setup();
+ 
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index faa5c0dab0ea..fe7bfab96397 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -773,7 +773,7 @@ static inline struct page *snp_safe_alloc_page(void)
+ void sev_free_vcpu(struct kvm_vcpu *vcpu);
+ void sev_vm_destroy(struct kvm *kvm);
+ void __init sev_set_cpu_caps(void);
+-void __init sev_hardware_setup(void);
++int __init sev_hardware_setup(void);
+ void sev_hardware_unsetup(void);
+ int sev_cpu_init(struct svm_cpu_data *sd);
+ int sev_dev_get_attr(u32 group, u64 attr, u64 *val);
+@@ -797,7 +797,7 @@ static inline struct page *snp_safe_alloc_page(void)
+ static inline void sev_free_vcpu(struct kvm_vcpu *vcpu) {}
+ static inline void sev_vm_destroy(struct kvm *kvm) {}
+ static inline void __init sev_set_cpu_caps(void) {}
+-static inline void __init sev_hardware_setup(void) {}
++static inline int __init sev_hardware_setup(void) { return 0; }
+ static inline void sev_hardware_unsetup(void) {}
+ static inline int sev_cpu_init(struct svm_cpu_data *sd) { return 0; }
+ static inline int sev_dev_get_attr(u32 group, u64 attr, u64 *val) { return -ENXIO; }
+-- 
+2.48.1.711.g2feabab25a-goog
+
+
+--ZxKkPI+e2NE34Qwk--
 
