@@ -1,162 +1,502 @@
-Return-Path: <linux-kernel+bounces-539213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC200A4A211
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:48:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ABDA4A218
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8160D176BE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1623A5D2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2718277015;
-	Fri, 28 Feb 2025 18:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C71277011;
+	Fri, 28 Feb 2025 18:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0cWeGUn"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AQXlqtgU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B42277002
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A0277007
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768481; cv=none; b=k7WL5K1ts51uO/G7aFn1gozM5erg3KwYj0IvcUomJbQ1n0STTg/hxxJ3jfGEMn7p3INVPNNpeiQ1ge//F+hQdEoNj3XTSzKopqUAwQOxQbUPltyHQpeDIC0AHACrSELlzMltGQfxpST7DWX9lkfZn1GHoQGgnQpDt3yS4fTgMnk=
+	t=1740768500; cv=none; b=FNXNd4l7nqbJ4qxul/BNXhUO6hveA3SQpYiVzIoySQTUqMFJwR8LB9SxCy3AGfNGFc/Rc7Q64RK1Km/2RkO36arVB3gCjexGlmA4tfY/ypuDRtc1N11+6+5OXvQSmcE+xFT8DSXXALRRaRkX4ceOlAJDiVmQB/7haLzxXl68Dzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768481; c=relaxed/simple;
-	bh=7Ax2R60DBU0bzgjtg/yzopptdmhv6jVuXKP23Jyuie0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gc/uPb5Odx6RcoYXeiiexbK7ZJCrAWhUAyQSQZCOdga8A3qAlzQPk4zFCU5/JG0MZMxYqrjqR7w7Hc6g+LHrfdzS3fVUAST76z6JHkGyqCbwlWfFIvyzbNgApcwi4Hq4f0qE0oHXfhVyCSnCa23CZgBRmrb+mJ9HQTJFOGHlq4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0cWeGUn; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2feb1d7a68fso3722078a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:47:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740768479; x=1741373279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=;
-        b=W0cWeGUn7OM+qP3V3M07/qBFBBw+uzKYNW+ga2QVahlsIuMydfLVANHdZNw7q6DjwD
-         a1JIPM7gbZGnTHxkBOmEwicEwICcv5BQkmXw34au8QG4xvQhuZCzGQC5ItvcjzudOaCQ
-         WXvHpONJeMmHEvsUbsiA3hSkKSOoOiPMQ5HGO0uCRB7jsMAwJ/kixIK9lhtcJLmflgqM
-         k63tY9SOrK+sZPIwglPZscrad63OXTTPpVdtOaguVnG98raGh688YZ9sjFjS+xldZ3ZY
-         akUZEw9tDT+FpSf2vSn7q/Ai58KxciZqCuugXNsNw8T/qjQVz5fZMT04UEKgAPvXkzI0
-         G//Q==
+	s=arc-20240116; t=1740768500; c=relaxed/simple;
+	bh=JdbMrO62Y4zC05HjU+iVmnj3wX6vMJBY2D9JscCwUPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=faCyBcl3Der7yjn3XdNWXLhUJaB+JVHPQ/s93I+pin3STD/9/EQn3MrZUj00M+ghkMr2+QUtcCNVoT8M71R3WYa7TZjpMEo3ZTfuZfcdrjAdv42sdF0ktmnxJqdOXLjme8NpDoclN8YL5WDOd19S2BXqhncQHNSmLbN9z73VpsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AQXlqtgU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740768497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HEhNRQEX/XtyImrxDo80Pae4kdXbmpmgxsYv7h1bYqk=;
+	b=AQXlqtgUpfECVaMhW2JECZUC8A/PrL6T2/tfDuMhGdCz5y86O89oXkeekDv/wATS6SxCB6
+	9211Nv2EpyPGcsiabdd694u8xwXmE1xj5O1teYrLIopXWhUOkbnOiHR4oWYfPkp8NPHAzI
+	Kzc4rs4/17b2/5wM96mqsrvORUqXDi0=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-570-Iu10JqN2NU2a0ZtJStX90w-1; Fri, 28 Feb 2025 13:48:16 -0500
+X-MC-Unique: Iu10JqN2NU2a0ZtJStX90w-1
+X-Mimecast-MFC-AGG-ID: Iu10JqN2NU2a0ZtJStX90w_1740768495
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d2aaca14bbso1989725ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:48:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740768479; x=1741373279;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=;
-        b=XdfRLhRi+E2bm9Sz5Sqnp9/bq6CGAFHG0qDb66bX4l32IdNT+PJSvXBKRvXUaVkArS
-         5vL6TZ+UhK5sRZmvnN7AcptbzucNFhM7fzsmAxrVrLECp/XDzqR276jKCjWFxywcBUVt
-         cH4qmPB0xrXnfXqWY9jvLXOKQ1W59aLVWlPMEEqWn01gJ0P+QbazaD5LpdeqqjTj1tlU
-         EG1hxb6UnrDdCptzYBsDduIS/APLTc3ODnSYMWiXsh9+NDt1x2kFkHcadlytdu5ogTjm
-         M2FCIMf2qhIcZ+120tvrkOwuOPJsB3TY40lI5xPQA+P2aYG60r+ExJmKZKd5ZTQK0JfY
-         zsZg==
-X-Gm-Message-State: AOJu0YwLmtYyeqkOLwbCelm4LCDytwFETW/UCUrqMEv7euXj38ZtBGKu
-	UZPKpOeqRfUAixQRbPUBKN8ONT2to8QNRwZHLnxbQzsfTpnvYOwRESL434yY
-X-Gm-Gg: ASbGnctUU+R20dFlRjtrEhTc0UFd6rQN/i8ZVtdgBsFHi1Ab+5acofWOrkDMm9T/Lug
-	MvvwnjjRpd3Qc/OIQXRaZFWA5aZRoYcifCaK28BXccBPB+x89SHwexZ0306Hr4/flD5DKyM4ug9
-	WSOjaz27A045KHX+sVK/58Dgmu6AWh0fj0wlgjj4IRDtlcE9MMY3bm+H5h54XAsPENIDjwRNtHm
-	q3Eq3MVmc0TxFriPGvcM6WA/JOMGRFIYRdVfZv49kkrFbR9ppgPw+mYLeBzu7tILwHzLOeszZqh
-	fU78GXcnfdsE/IU6C0KYxVLhoe8tcYCUP65vVgYFsaYIiJq7xFBZIfsyRpdq7A/4jstewSz0PpY
-	/QCdj5xygS1D1ThpNCQ==
-X-Google-Smtp-Source: AGHT+IE0AAxJrN5/b5vWobqize86OydpOF89aPSPX1g8h8GWdL+zHxB2tvIYlSBKzE1qSJDUXslo7w==
-X-Received: by 2002:a17:90b:268f:b0:2fe:b016:a6ac with SMTP id 98e67ed59e1d1-2febab71afcmr8040270a91.15.1740768478584;
-        Fri, 28 Feb 2025 10:47:58 -0800 (PST)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:adc7:2cc2:39e7:4e21])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea696d58esm4164285a91.30.2025.02.28.10.47.57
+        d=1e100.net; s=20230601; t=1740768495; x=1741373295;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HEhNRQEX/XtyImrxDo80Pae4kdXbmpmgxsYv7h1bYqk=;
+        b=FufI8PcnhBzvkNCVT3OBod56qOUoavDQ7lTRaIZpHc505nfiIdNyEJyo0HNyIAQ8K1
+         eF4UnHvjqz/zyu94I0LYvc+fTwdYxR2mDVdhXshz8LUnwXaFTvuoKS9oxq/1Dl4eHch5
+         ehk8kN/CxsK6vxvwsbhuMusE4uqXLhRK8+0wZp0KIZcSvT+nM8PfO+wkxvYs7h2+/00c
+         AIObwxjOcRpb+BqTps19sog0oFfPzDPjAry+mMyBJ2OtB/Y6rINzOhBf2jSBdvV0qI8V
+         SPaIz9d05VsS8AgKcufl8xKot891gkD/yUvIVrV7ApHdgBHCBlQ/8wCSg/9LZt3JZRzE
+         Ts4Q==
+X-Gm-Message-State: AOJu0Yww7Xn/SPwWkugnk8N87AWubDeJOzd4KZg6zFkkq7tmcZ3v0Nlj
+	kbjTTaoEUma+LmLkeNU8n0ugFmpuA4OWZBeBTfu4pGIQ4MFHyo7y1G0+f8YFmcVimfYxA5ubx4O
+	JbaYZzkmo4Vlh6JBKEyAUYZcwk8IaSAl0IdOTT4MqP4zpKv1KPzMG7BbSR5kA9Q==
+X-Gm-Gg: ASbGncsOHMZZHooo7fAqOiGh5nrG/lJseRhkdMbCiW4fXXa2fxBoUUvGmI/pGvo7Lsi
+	9BDwiMBrppE4Uph8dTpnX0iJqcM7V7oBN1vcYbUkjW+CoGgNWuyOjuudAIKnirLqQGPUSihuvRE
+	cH9WDkIDgb8yJPVlB8hO7e4mvzr7qfCYeL/vQkAARBMBx2qRHObm0QVS9mFb4rrSNFDqsMEX+OD
+	HdZnAe/KYxT0q646qXEN1Eiw6tr72Kszc/PYgbWH4o6YC2oUqUJLPC+1FJ8kRjpkPtHy80t+u9Q
+	1guXQBPcnFDuKCEVHAA=
+X-Received: by 2002:a05:6e02:1748:b0:3d3:d156:7836 with SMTP id e9e14a558f8ab-3d3e6f97e8bmr14475535ab.7.1740768495113;
+        Fri, 28 Feb 2025 10:48:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHj9qQMw7QCZRXxjlh1mMaHaANOoR/Pe9gZPG0CzWddy7JRGt3rs0ubsuw6vjilT9lo1H1nAQ==
+X-Received: by 2002:a05:6e02:1748:b0:3d3:d156:7836 with SMTP id e9e14a558f8ab-3d3e6f97e8bmr14475425ab.7.1740768494637;
+        Fri, 28 Feb 2025 10:48:14 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d3dee67ae1sm9759195ab.25.2025.02.28.10.48.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 10:47:58 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH v2] f2fs-tools: add ftruncate command in f2fs_io
-Date: Fri, 28 Feb 2025 10:47:52 -0800
-Message-ID: <20250228184752.1668252-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+        Fri, 28 Feb 2025 10:48:12 -0800 (PST)
+Date: Fri, 28 Feb 2025 11:48:09 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: linux-kernel@vger.kernel.org, nd@arm.com, Jason Gunthorpe
+ <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Philipp Stanner
+ <pstanner@redhat.com>, Yunxiang Li <Yunxiang.Li@amd.com>, "Dr. David Alan
+ Gilbert" <linux@treblig.org>, Ankit Agrawal <ankita@nvidia.com>,
+ kvm@vger.kernel.org (open list:VFIO DRIVER)
+Subject: Re: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioctl
+Message-ID: <20250228114809.57a974c7.alex.williamson@redhat.com>
+In-Reply-To: <20250221224638.1836909-1-wathsala.vithanage@arm.com>
+References: <20250221224638.1836909-1-wathsala.vithanage@arm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Daeho Jeong <daehojeong@google.com>
+On Fri, 21 Feb 2025 22:46:33 +0000
+Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
 
-add ftruncate command to do file truncate.
+> Linux v6.13 introduced the PCIe TLP Processing Hints (TPH) feature for
+> direct cache injection. As described in the relevant patch set [1],
+> direct cache injection in supported hardware allows optimal platform
+> resource utilization for specific requests on the PCIe bus. This feature
+> is currently available only for kernel device drivers. However,
+> user space applications, especially those whose performance is sensitive
+> to the latency of inbound writes as seen by a CPU core, may benefit from
+> using this information (E.g., DPDK cache stashing RFC [2] or an HPC
+> application running in a VM).
+>=20
+> This patch enables configuring of TPH from the user space via
+> VFIO_DEVICE_FEATURE IOCLT. It provides an interface to user space
+> drivers and VMMs to enable/disable the TPH feature on PCIe devices and
+> set steering tags in MSI-X or steering-tag table entries using
+> VFIO_DEVICE_FEATURE_SET flag or read steering tags from the kernel using
+> VFIO_DEVICE_FEATURE_GET to operate in device-specific mode.
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
-v2: update f2fs_io documentation
----
- man/f2fs_io.8           |  3 +++
- tools/f2fs_io/f2fs_io.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+Unless I'm missing it, the RFC in [2] doesn't make use of this
+proposal.  Is there published code anywhere that does use this
+interface?
 
-diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
-index 2ff22f7..648fba6 100644
---- a/man/f2fs_io.8
-+++ b/man/f2fs_io.8
-@@ -180,6 +180,9 @@ Trigger gc to move data blocks from specified address range
- .TP
- \fBget_advise\fR \fI[file]\fR
- Get i_advise value and info in file
-+.TP
-+\fBftruncate\fR \fI[length] [file_path]\fR
-+Do ftruncate a file in file_path with the length
- .SH AUTHOR
- This version of
- .B f2fs_io
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index fa01f8f..08056a9 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -1887,6 +1887,31 @@ static void do_get_advise(int argc, char **argv, const struct cmd_desc *cmd)
- 	printf("\n");
- }
- 
-+#define ftruncate_desc "ftruncate a file"
-+#define ftruncate_help					\
-+"f2fs_io ftruncate [length] [file_path]\n\n"	\
-+"Do ftruncate a file in file_path with the length\n"	\
-+
-+static void do_ftruncate(int argc, char **argv, const struct cmd_desc *cmd)
-+{
-+	int fd, ret;
-+	off_t length;
-+
-+	if (argc != 3) {
-+		fputs("Excess arguments\n\n", stderr);
-+		fputs(cmd->cmd_help, stderr);
-+		exit(1);
-+	}
-+
-+	length = atoll(argv[1]);
-+	fd = xopen(argv[2], O_WRONLY, 0);
-+
-+	ret = ftruncate(fd, length);
-+	if (ret < 0)
-+		die_errno("ftruncate failed");
-+	exit(0);
-+}
-+
- #define CMD_HIDDEN 	0x0001
- #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
- #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-@@ -1932,6 +1957,7 @@ const struct cmd_desc cmd_list[] = {
- 	CMD(removexattr),
- 	CMD(lseek),
- 	CMD(get_advise),
-+	CMD(ftruncate),
- 	{ NULL, NULL, NULL, NULL, 0 }
- };
- 
--- 
-2.48.1.711.g2feabab25a-goog
+> [1]=C2=A0lore.kernel.org/linux-pci/20241002165954.128085-1-wei.huang2@amd=
+.com
+> [2]=C2=A0inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@ar=
+m.com
+>=20
+> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> ---
+>  drivers/vfio/pci/vfio_pci_core.c | 163 +++++++++++++++++++++++++++++++
+>  include/uapi/linux/vfio.h        |  68 +++++++++++++
+>  2 files changed, 231 insertions(+)
+>=20
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci=
+_core.c
+> index 586e49efb81b..d6dd0495b08b 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/nospec.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/iommufd.h>
+> +#include <linux/pci-tph.h>
+>  #if IS_ENABLED(CONFIG_EEH)
+>  #include <asm/eeh.h>
+>  #endif
+> @@ -1510,6 +1511,165 @@ static int vfio_pci_core_feature_token(struct vfi=
+o_device *device, u32 flags,
+>  	return 0;
+>  }
+> =20
+> +static ssize_t vfio_pci_tph_uinfo_dup(struct vfio_pci_tph *tph,
+> +				      void __user *arg, size_t argsz,
+> +				      struct vfio_pci_tph_info **info)
+> +{
+> +	size_t minsz;
+> +
+> +	if (tph->count > VFIO_TPH_INFO_MAX)
+> +		return -EINVAL;
+> +	if (!tph->count)
+> +		return 0;
+> +
+> +	minsz =3D tph->count * sizeof(struct vfio_pci_tph_info);
+> +	if (minsz < argsz)
+> +		return -EINVAL;
+> +
+> +	*info =3D memdup_user(arg, minsz);
+> +	if (IS_ERR(info))
+> +		return PTR_ERR(info);
+> +
+> +	return minsz;
+> +}
+> +
+> +static int vfio_pci_feature_tph_st_op(struct vfio_pci_core_device *vdev,
+> +				      struct vfio_pci_tph *tph,
+> +				      void __user *arg, size_t argsz)
+> +{
+> +	int i, mtype, err =3D 0;
+> +	u32 cpu_uid;
+> +	struct vfio_pci_tph_info *info =3D NULL;
+> +	ssize_t data_size =3D vfio_pci_tph_uinfo_dup(tph, arg, argsz, &info);
+> +
+> +	if (data_size <=3D 0)
+> +		return data_size;
+> +
+> +	for (i =3D 0; i < tph->count; i++) {
+> +		if (!(info[i].cpu_id < nr_cpu_ids && cpu_present(info[i].cpu_id))) {
+
+Not intuitive logic, imo.  This could easily be:
+
+		if (info[i].cpu_id >=3D nr_cpu_ids || !cpu_present(info[i].cpu_id))
+
+> +			info[i].err =3D -EINVAL;
+> +			continue;
+> +		}
+> +		cpu_uid =3D topology_core_id(info[i].cpu_id);
+> +		mtype =3D (info[i].flags & VFIO_TPH_MEM_TYPE_MASK) >>
+> +			VFIO_TPH_MEM_TYPE_SHIFT;
+> +
+> +		/* processing hints are always ignored */
+> +		info[i].ph_ignore =3D 1;
+> +
+> +		info[i].err =3D pcie_tph_get_cpu_st(vdev->pdev, mtype, cpu_uid,
+> +						  &info[i].st);
+> +		if (info[i].err)
+> +			continue;
+> +
+> +		if (tph->flags & VFIO_DEVICE_FEATURE_TPH_SET_ST) {
+> +			info[i].err =3D pcie_tph_set_st_entry(vdev->pdev,
+> +							    info[i].index,
+> +							    info[i].st);
+> +		}
+> +	}
+> +
+> +	if (copy_to_user(arg, info, data_size))
+> +		err =3D -EFAULT;
+> +
+> +	kfree(info);
+> +	return err;
+> +}
+> +
+> +
+> +static int vfio_pci_feature_tph_enable(struct vfio_pci_core_device *vdev,
+> +				       struct vfio_pci_tph *arg)
+> +{
+> +	int mode =3D arg->flags & VFIO_TPH_ST_MODE_MASK;
+> +
+> +	switch (mode) {
+> +	case VFIO_TPH_ST_NS_MODE:
+> +		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_NS_MODE);
+> +
+> +	case VFIO_TPH_ST_IV_MODE:
+> +		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_IV_MODE);
+> +
+> +	case VFIO_TPH_ST_DS_MODE:
+> +		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_DS_MODE);
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +}
+> +
+> +static int vfio_pci_feature_tph_disable(struct vfio_pci_core_device *vde=
+v)
+> +{
+> +	pcie_disable_tph(vdev->pdev);
+> +	return 0;
+> +}
+> +
+> +static int vfio_pci_feature_tph_prepare(struct vfio_pci_tph __user *arg,
+> +					size_t argsz, u32 flags,
+> +					struct vfio_pci_tph *tph)
+> +{
+> +	u32 op;
+> +	int err =3D vfio_check_feature(flags, argsz,
+> +				 VFIO_DEVICE_FEATURE_SET |
+> +				 VFIO_DEVICE_FEATURE_GET,
+> +				 sizeof(struct vfio_pci_tph));
+> +	if (err !=3D 1)
+> +		return err;
+
+We don't seem to account for a host booted with pci=3Dnotph.
+
+> +
+> +	if (copy_from_user(tph, arg, sizeof(struct vfio_pci_tph)))
+> +		return -EFAULT;
+> +
+> +	op =3D tph->flags & VFIO_DEVICE_FEATURE_TPH_OP_MASK;
+> +
+> +	switch (op) {
+> +	case VFIO_DEVICE_FEATURE_TPH_ENABLE:
+> +	case VFIO_DEVICE_FEATURE_TPH_DISABLE:
+> +	case VFIO_DEVICE_FEATURE_TPH_SET_ST:
+> +		return (flags & VFIO_DEVICE_FEATURE_SET) ? 0 : -EINVAL;
+> +
+> +	case VFIO_DEVICE_FEATURE_TPH_GET_ST:
+> +		return (flags & VFIO_DEVICE_FEATURE_GET) ? 0 : -EINVAL;
+
+This is a convoluted mangling of an ioctl into a vfio feature.
+
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int vfio_pci_core_feature_tph(struct vfio_device *device, u32 fla=
+gs,
+> +				     struct vfio_pci_tph __user *arg,
+> +				     size_t argsz)
+> +{
+> +	u32 op;
+> +	struct vfio_pci_tph tph;
+> +	void __user *uinfo;
+> +	size_t infosz;
+> +	struct vfio_pci_core_device *vdev =3D
+> +		container_of(device, struct vfio_pci_core_device, vdev);
+> +	int err =3D vfio_pci_feature_tph_prepare(arg, argsz, flags, &tph);
+> +
+> +	if (err)
+> +		return err;
+> +
+> +	op =3D tph.flags & VFIO_DEVICE_FEATURE_TPH_OP_MASK;
+> +
+> +	switch (op) {
+> +	case VFIO_DEVICE_FEATURE_TPH_ENABLE:
+> +		return vfio_pci_feature_tph_enable(vdev, &tph);
+> +
+> +	case VFIO_DEVICE_FEATURE_TPH_DISABLE:
+> +		return vfio_pci_feature_tph_disable(vdev);
+> +
+> +	case VFIO_DEVICE_FEATURE_TPH_GET_ST:
+> +	case VFIO_DEVICE_FEATURE_TPH_SET_ST:
+> +		uinfo =3D (u8 *)(arg) + offsetof(struct vfio_pci_tph, info);
+> +		infosz =3D argsz - sizeof(struct vfio_pci_tph);
+> +		return vfio_pci_feature_tph_st_op(vdev, &tph, uinfo, infosz);
+
+This is effectively encoding a regular ioctl as a feature.  See below.
+
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
+>  				void __user *arg, size_t argsz)
+>  {
+> @@ -1523,6 +1683,9 @@ int vfio_pci_core_ioctl_feature(struct vfio_device =
+*device, u32 flags,
+>  		return vfio_pci_core_pm_exit(device, flags, arg, argsz);
+>  	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
+>  		return vfio_pci_core_feature_token(device, flags, arg, argsz);
+> +	case VFIO_DEVICE_FEATURE_PCI_TPH:
+> +		return vfio_pci_core_feature_tph(device, flags,
+> +						 arg, argsz);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index c8dbf8219c4f..608d57dfe279 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -1458,6 +1458,74 @@ struct vfio_device_feature_bus_master {
+>  };
+>  #define VFIO_DEVICE_FEATURE_BUS_MASTER 10
+> =20
+> +/*
+> + * Upon VFIO_DEVICE_FEATURE_SET, enable or disable PCIe TPH or set steer=
+ing tags
+> + * on the device. Data provided when setting this feature is a __u32 wit=
+h the
+> + * following flags. VFIO_DEVICE_FEATURE_TPH_ENABLE enables PCIe TPH in
+> + * no-steering-tag, interrupt-vector, or device-specific mode when featu=
+re flags
+> + * VFIO_TPH_ST_NS_MODE, VFIO_TPH_ST_IV_MODE, and VFIO_TPH_ST_DS_MODE are=
+ set
+> + * respectively.
+> + * VFIO_DEVICE_FEATURE_TPH_DISABLE disables PCIe TPH on the device.
+> + * VFIO_DEVICE_FEATURE_TPH_SET_ST set steering tags on a device at an in=
+dex in
+> + * MSI-X or ST-table depending on the VFIO_TPH_ST_x_MODE flag used and d=
+evice
+> + * capabilities. The caller can set multiple steering tags by passing an=
+ array
+> + * of vfio_pci_tph_info objects containing cpu_id, cache_level, and
+> + * MSI-X/ST-table index. The caller can also set the intended memory typ=
+e and
+> + * the processing hint by setting VFIO_TPH_MEM_TYPE_x and VFIO_TPH_HINT_=
+x flags,
+> + * respectively. The return value for each vfio_pci_tph_info object is s=
+tored in
+> + * err, with the steering-tag set on the device and the ph_ignore status=
+ bit
+> + * resulting from the steering-tag lookup operation. If err < 0, the val=
+ues
+> + * stored in the st and ph_ignore fields should be considered invalid.
+> + *
+
+Sorry, I don't understand ph_ignore as described here.  It's only ever
+set to 1.  I guess we assume the incoming state is zero.  But what does
+it mean?
+
+> + * Upon VFIO_DEVICE_FEATURE_GET,=C2=A0 return steering tags to the calle=
+r.
+> + * VFIO_DEVICE_FEATURE_TPH_GET_ST returns steering tags to the caller.
+> + * The return values per vfio_pci_tph_info object are stored in the st,
+> + * ph_ignore, and err fields.
+
+Why do we need to provide an interface to return the steering tags set
+by the user?  Seems like this could be a write-only, SET, interface.
+
+> + */
+> +struct vfio_pci_tph_info {
+
+This seems more of an _entry than an _info.  Note that vfio has various
+INFO ioctls which make this nomenclature confusing.
+
+> +	/* in */
+> +	__u32 cpu_id;
+
+The logical ID?
+
+> +	__u32 cache_level;
+
+Zero based?  1-based?  How many cache levels are there?  What's valid
+here?
+
+> +	__u8  flags;
+> +#define VFIO_TPH_MEM_TYPE_MASK		0x1
+> +#define VFIO_TPH_MEM_TYPE_SHIFT		0
+> +#define VFIO_TPH_MEM_TYPE_VMEM		0	/* Request volatile memory ST */
+> +#define VFIO_TPH_MEM_TYPE_PMEM		1	/* Request persistent memory ST */
+
+Is there a relation to the cache_level here?  Spec references here and
+below, assuming those are relevant to these values.
+
+> +
+> +#define VFIO_TPH_HINT_MASK		0x3
+> +#define VFIO_TPH_HINT_SHIFT		1
+> +#define VFIO_TPH_HINT_BIDIR		0
+> +#define VFIO_TPH_HINT_REQSTR		(1 << VFIO_TPH_HINT_SHIFT)
+> +#define VFIO_TPH_HINT_TARGET		(2 << VFIO_TPH_HINT_SHIFT)
+> +#define VFIO_TPH_HINT_TARGET_PRIO	(3 << VFIO_TPH_HINT_SHIFT)
+
+There needs to be a __u8 padding in here somewhere or flags extended to
+__u16.
+
+> +	__u16 index;			/* MSI-X/ST-table index to set ST */
+> +	/* out */
+> +	__u16 st;			/* Steering-Tag */
+
+Sorry if I'm just not familiar with TPH, but why do we need to return
+the ST?  Doesn't hardware make use of the ST index and the physical
+value gets applied automatically in HW?
+
+> +	__u8  ph_ignore;		/* Processing hint was ignored by */
+
+Padding/alignment, same as above.  "ignored by..."  By what?  Is that
+an error?
+
+> +	__s32 err;			/* Error on getting/setting Steering-Tag*/
+> +};
+
+Generally we'd expect a system call either works or fails.  Why do we
+need per entry error report?  Can't we validate and prepare the entire
+operation before setting any of it into the device?  Ultimately we're
+just writing hints to config space or MSI-X table space, so the write
+operation itself is not likely to be the point of failure.
+
+> +
+> +struct vfio_pci_tph {
+> +	__u32 argsz;			/* Size of vfio_pci_tph and info[] */
+> +	__u32 flags;
+> +#define VFIO_DEVICE_FEATURE_TPH_OP_MASK		0x7
+> +#define VFIO_DEVICE_FEATURE_TPH_OP_SHIFT	3
+> +#define VFIO_DEVICE_FEATURE_TPH_ENABLE		0	/* Enable TPH on device */
+> +#define VFIO_DEVICE_FEATURE_TPH_DISABLE	1	/* Disable TPH on device */
+> +#define VFIO_DEVICE_FEATURE_TPH_GET_ST		2	/* Get steering-tags */
+> +#define VFIO_DEVICE_FEATURE_TPH_SET_ST		4	/* Set steering-rags */
+
+s/rags/tags/
+
+vfio device features already have GET and SET as part of their base
+structure, why are they duplicated here?  It really seems like there
+are two separate features here, one that allows enabling with a given
+mode or disable, and another that allows writing specific steering
+tags.  Both seem like they could be SET-only features.  It's also not
+clear to me that there's a significant advantage to providing an array
+of steering tags.  Isn't updating STs an infrequent operation and
+likely bound to at most 2K tags in the case of MSI-X?
+
+> +
+> +#define	VFIO_TPH_ST_MODE_MASK	(0x3 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
+> +#define	VFIO_TPH_ST_NS_MODE	(0 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
+> +#define	VFIO_TPH_ST_IV_MODE	(1 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
+> +#define	VFIO_TPH_ST_DS_MODE	(2 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
+> +	__u32 count;				/* Number of entries in info[] */
+> +	struct vfio_pci_tph_info info[];
+> +#define VFIO_TPH_INFO_MAX	64		/* Max entries allowed in info[] */
+
+This seems to match the limit if the table is located in extended
+config space, but it's not particularly relevant if the table is
+located in MSI-X space.  Why is this a good limit?
+
+Also, try to keep these all in 80 column.  Thanks,
+
+Alex
+
+> +};
+> +
+> +#define VFIO_DEVICE_FEATURE_PCI_TPH 11
+> +
+>  /* -------- API for Type1 VFIO IOMMU -------- */
+> =20
+>  /**
 
 
