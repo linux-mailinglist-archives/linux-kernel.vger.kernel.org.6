@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-537787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4CAA490D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:18:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96298A490DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A61891453
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:18:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A174016DE5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F9A1BD01E;
-	Fri, 28 Feb 2025 05:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE06E1BD9C5;
+	Fri, 28 Feb 2025 05:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UqHYHbIe"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="S5kESYEQ"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B0F1A4F22
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305CE1BCA0C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740719890; cv=none; b=gBeiNdjJIX42VI5tvckrn9917k0bWWO8RKkENVW6DyXfr7lPnDYNc52ePUxvlM8ddJPbURcSNr816k2/TN1hcUMZ9r4MMOzQVFZeZcfKT4OMtJO07yNi6tzPGXxK0wZWT7/AZHHrn7NglSKtbkig23eoaXimuWL2SSxf3ygVphA=
+	t=1740720115; cv=none; b=KKkRYIUvqBDTn49A9m3IcEWJoOj7Q+S/v0yJyDv34zjc3OvKZ02PMbGDmGn0dRBYY8L8PMbM4NrqOF2jIS+ZQURzMXCuHpaXi3RvCpuoWCCmV8obyAz9hE0MgBds0MIHomNuXoz89nTASoM8hPVQUk1AvVeext0nQzBWCLjjme0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740719890; c=relaxed/simple;
-	bh=Y3QDpjc8x9KPwlveUMGsg1muYaCxAUlYz/LD32JL7DQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxTjXS4B5/qoujSXLGUKLbzIT3chzCeBCPC/HiXpuA6G3Oi6/nfZ7F7i+AsrbkyjB8Bw0rwFgLyu8raGYoJ8X4KnB1y5l0EuoRzvwt8jYB7wORwMrvQHZa5soP9z4uxW0U4IubyYuPBoT6yQtvUdgkcMFM4JeQ+M/Rnf1ZA2tlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UqHYHbIe; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf3cf3d142so2827166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740719886; x=1741324686; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yXmfMp+a66aju4mWW7FzXsEpdGr0D1aag/ZSeEsoTk=;
-        b=UqHYHbIe0v9mn+rVEz+WH3HUFOIWjHaF7ofUJ8vgKe2cgkpsPs0KRMiQBWpBrQjLE8
-         h5tSmgMBIuDKhTqVX2DDTu76nu1fKd4XSJ14SHeOm8KsaoHjVsfVc/LYPCt3vEKA5lsF
-         ahh2WuXp1IhG3Xcl4hrWONKXhK+WNe9rRZnJ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740719886; x=1741324686;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5yXmfMp+a66aju4mWW7FzXsEpdGr0D1aag/ZSeEsoTk=;
-        b=OLB6aY+0KJ93cU477dXoKSz+sv09m7PK0n0AbwJJW0KBc2+FkCyREV5LEh3XRiwqwD
-         2d3T/tCmKtsGv5BU8D7IOrNKaGZ3YLleF3/bqxOB4VtMQv6b2XFKxYOnD6C8mtLqOOSN
-         MKjw9YQxzcF2IeP6DgPL7WTK68qufiixAdM7X5J4wt8GGsPY80eaxK2d/JhyBZy4gUhL
-         7Gtyx938vdmW6LyWjVK1fZJczAdnwYTBj5Ttys+t5RjRRgcNNBezHML6fihApqJPwfwc
-         TibtwwTKbFrZFMCmeMz3kfH31EWk0J93+kPV6+B+8VUn+ljAnP7vjcI6Q/wgVh/5LvoN
-         Iyzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLq5RF89KxBApjuoVfptMnaoJI6m4T/tMCLl+UbUg+11XP8m7OZ9IsnrUHaU5CnqCLEFIKK1a8oCpFUwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbgeVoMU/ucR2b7IW2vaxILzpAyrbUCvpTSvC4llk9wBBXpJq7
-	YgRp8+0rDAK1KSfmC0xWs6Xk/3oYl6TP/wLPjg1KMdZ8zPewD0X+TroSYmRKBmlFH/CklORlQHg
-	CXJssxg==
-X-Gm-Gg: ASbGncvMxt86+9EJph737JzKjtdZra78XQWqLYZdDthoV6a/Bjt3Unu0FCVdB9LGQe+
-	oM7Uwjl9opJVSlPZTtlvznV3stXlqFaJMU1uutnXD7lS8J7XVRZ1gD1MSYjv4bqqiepNHeet38N
-	zS0RfG1rRJnTbM7x5MrA7QQG2+W+82yWdiX1uM6arF2lncXSmraFbbiDKv1cUBXsIeTrm7PSNfh
-	rsNCDCYCJpfuGYZCFNY4ZdQQdi63TWgaIHKas3Oc47hLj1eI5zLZcn1DWXwNf62KqgWp2H+c2eM
-	x8a11NN1SV17YiMD5KIk3kElWWP1TW/uWi9qPmpSLEjbWrD0CT14LIrzdXDqHZROMWgINbYguma
-	y
-X-Google-Smtp-Source: AGHT+IEuD8IjZEnzFZU/4/Z/ENYVzQI+o/JxIFxyB/v01LWdE3e9CdrVeMRMWVfAJVx1rLRMvm/iFQ==
-X-Received: by 2002:a05:6402:3493:b0:5de:b438:1fdb with SMTP id 4fb4d7f45d1cf-5e4d6b629b0mr2997986a12.30.1740719886061;
-        Thu, 27 Feb 2025 21:18:06 -0800 (PST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6ee462sm228739866b.117.2025.02.27.21.18.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 21:18:04 -0800 (PST)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so1934390a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:18:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU9cO7ZI0xUUV7J1Vi7usLP4swEjfgTSNbWlFlB319Evmwqso3KVRZ3772TH85vLo2SSMpcxwvLrapO4CM=@vger.kernel.org
-X-Received: by 2002:a05:6402:2695:b0:5de:594d:e9aa with SMTP id
- 4fb4d7f45d1cf-5e4d6ad7683mr3024531a12.8.1740719883992; Thu, 27 Feb 2025
- 21:18:03 -0800 (PST)
+	s=arc-20240116; t=1740720115; c=relaxed/simple;
+	bh=Q/l3cX4hhsmIp3gU6O9JiApDRNBOKFnPY7oyWOnQ2eA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dSiq4XSyFv5DWaZNMl5OsMeygsKF7bagbD3UW9G2v40yMWIOGzvaw6DyuY+8qPxaZ2dLZbEazKnGD9QCb/J0tgzpzIPngH56wyqOayDb7pR35GrCQoB/R/vgt0lIK/LODxMjlomP0NAEsMQlBHR2XmYjA6qr8yzcUS6A69kHNYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=S5kESYEQ; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740719996;
+	bh=NFX92DKn7l5oFMSy9LZKme5rrsk2p3w4GB7kNrg8upw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=S5kESYEQG3RuSVBSpvuR76YkAfwL5sHNvAlHIz38uPnxhK348XKcSNM74B0T4Vazw
+	 DWhxz9U8xky5B9ql9v2ix3/TAO0FmiakOr/xlnjjO5dmH6iD/fcHDxI2Lhsqz5fha4
+	 toCffKcdyz4iST8T0YXPwBJTGF9Tj9OG/xKf3hLQ=
+X-QQ-mid: bizesmtpip3t1740719946tyalcva
+X-QQ-Originating-IP: BQ3upcRjLhJfUkRuYZGoADXAE1vBfzV3sSe4EpYSAqg=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 28 Feb 2025 13:19:04 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8574307554378089718
+From: WangYuli <wangyuli@uniontech.com>
+To: dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com
+Cc: linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	chenlinxuan@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH] x86/srat: Conditional apic_id vs MAX_LOCAL_APIC comparison
+Date: Fri, 28 Feb 2025 13:18:47 +0800
+Message-ID: <E053FB6951F019A2+20250228051847.50002-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com> <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
-In-Reply-To: <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 27 Feb 2025 21:17:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrfxM-9IRCUJ4y0kXr0sjyAxoJ14Cpfy_Qm1TIXy5Xrapi2wwGX1WZWfdo
-Message-ID: <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Of+SSFCKeSEZm79OFpjWRC8R9VrCYVat8EvIqUxzAuUBUBU2QrKDYZR8
+	n7bDgIJ4j5T0gbH2khm7yTG5VaP+rFh45RrT5PFCeFjNpXy42eJfDwq2Yf1jaYaqBppzxFR
+	r2YP83CVc9J6l7mCD6EVn4GklJiAJfRcUb9k8RJS+ib3Zs27SVi5adVkCTkZrPS9XiADmBf
+	C3ZX5Z5HhNyRVb5hk6gepV0bAb2KwpwbdMPBYtHcNmCcsrSdvWJD0XyosfxMaMpdlL0W+4Q
+	pnLL821iPdJSNNDfODRk75UmFxYpMqTNdphbpOfzgXRLOEATmfwSYBcrsxC8p3yaiI7eDyO
+	/0JMB918jzEQ+9UINLRz3x6QgFcM8ZCxcWYc4RFVE4Ouy3dIPpUWFrUlDKuBlCX2Ahl05n/
+	fzHpFVmzYayvW3b8F4U/BPQiJ2E3qzjWVPVH/33l53D7mgOhij6XdGsE6+mYfWZ7TnvK/4i
+	pYBLEwGUxzaUxRFQuZCEP3TJnUCcBAvTqzvR0kja0UckNBY34IZrv67zIW7KjyjzW+oZ+Qo
+	P83DTk/OwbNygYBIYPFt2jNOaWQXf9e4kVZ9HlBSt1xXyztE3VT4Bnvhglsp0QCB6nLcUho
+	QbKQxzF28AEa69LWuRN+TIasxtJtBC2lg727bzsoGuw3SAypQFKKe4+ouCyXI+JKndl/V5A
+	+G9XA3UOUvD9R5pwIbeuA1aqCvb67iV6ntkLuJTPGmZxL6CT9wB6UeUpcUTuG6a98XnXg5M
+	mFAlX3gCmmTdC2x4aT/VvyR5ts9PDssyq3RVwN5LnkmIumAtz/+Mxz/5wyUNfLuyFPI0a9n
+	q1j2NrnlEVbapR/HPfu/bJPo6lZu5ZpOC8QczJQcESEBuenm3aNf+KqA1OZzD/W1h8bjZUH
+	77UMwuoYFrzCa/s91nyDxleiYP/o9h8jYKM2guC4QyMi1Hhu0mLcmnYsykCNKhFPW76O9/7
+	k9yHnz5USrURc0HW4T8vfmscVem4NjhaUz+cThaPMlpFzrbKxpm6Mo0gSGq8qcZWs3algrf
+	YZE+ecOwgLB3/E+F5IPqQjcn1Jt1g=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> I'd be fine with SKSM replacing KSM entirely. However, I don't
-> think we should try to re-implement the existing KSM userspace ABIs
-> over SKSM.
+The apic_id employed within the acpi_numa_processor_affinity_init()
+function is derived from the acpi_srat_cpu_affinity structure defined
+in acpi/actbl3.h.
 
-No, absolutely. The only point (for me) for your new synchronous one
-would be if it replaced the kernel thread async scanning, which would
-make the old user space interface basically pointless.
+When CONFIG_X86_X2APIC is not enabled, its maximum value is limited
+to 255. It is only capable of exceeding 256 and 32768 —  which
+corresponds to the definition of MAX_LOCAL_APIC — when CONFIG_X86_X2APIC
+is activated.
 
-But I don't actually know who uses KSM right now. My reaction really
-comes from a "it's not nice code in the kernel", not from any actual
-knowledge of the users.
+Consequently, with CONFIG_X86_X2APIC disabled, this code segment will
+elicit the compiler's "-Wtautological-constant-out-of-range-compare"
+warning, as a variable capped at 255 can never satisfy a condition
+requiring it to be greater than or equal to 256 or 32768.
 
-Maybe it works really well in some cloud VM environment, and we're
-stuck with it forever.
+Compiling the kernel with the W=1e flag will, in this scenario, lead
+to compilation failure.
 
-In which case I don't want to see some second different interface that
-just makes it all worse.
+Suggested-by: Huacai Chen <chenhuacai@loongson.cn>
+Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/x86/mm/srat.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                 Linus
+diff --git a/arch/x86/mm/srat.c b/arch/x86/mm/srat.c
+index 6f8e0f21c710..93e5bcc58ead 100644
+--- a/arch/x86/mm/srat.c
++++ b/arch/x86/mm/srat.c
+@@ -90,10 +90,12 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+ 	else
+ 		apic_id = pa->apic_id;
+ 
++#ifdef CONFIG_X86_X2APIC
+ 	if (apic_id >= MAX_LOCAL_APIC) {
+ 		printk(KERN_INFO "SRAT: PXM %u -> APIC 0x%02x -> Node %u skipped apicid that is too big\n", pxm, apic_id, node);
+ 		return;
+ 	}
++#endif /* CONFIG_X86_X2APIC */
+ 
+ 	set_apicid_to_node(apic_id, node);
+ 	node_set(node, numa_nodes_parsed);
+-- 
+2.47.2
+
 
