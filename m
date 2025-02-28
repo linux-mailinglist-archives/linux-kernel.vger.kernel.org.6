@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-538936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0FA49EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AC3A49EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD851882D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130453AC668
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9210B271818;
-	Fri, 28 Feb 2025 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDB7274253;
+	Fri, 28 Feb 2025 16:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="crjVsU99"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O0khgrzr"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614EA254861;
-	Fri, 28 Feb 2025 16:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF2726FDA6;
+	Fri, 28 Feb 2025 16:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760624; cv=none; b=AilXdkTheQvVcdIZ7XyScRZODxBYL9dcla7ssLXq5oqKnf47dqJddoiV5jf5QvVfeg76u2cYGaVnLgw6k4Wlfr1ypK+BOBqeDnFsoxFBTsuNGvwvmhawD5A47ZNVg3MAXhmJXVM1vVzIiMMcrxMh+jdR0q54uPD55HkqN56Xu3M=
+	t=1740760634; cv=none; b=nQK/B/7gnRvB1rCDTlHIvsL2VvZEYsAmt5aKekTGYXnqc6Z1uuahuoJv1JrnsXn6Eamy/Q19MDY0tHviRu6Z40hpRjB4PLqGRzmCOKbTqGIrQXaV2CW3UxmKsqn/lDGj5DOs9eSG+wFU91M5qTk/dPmf3WlHhWh1nc3fNSAiL7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760624; c=relaxed/simple;
-	bh=UcdzUFgY64qhkR/FTBBvQ+8/NVzky6HoTCKp1K6d2DM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=tAjx7PSkQDs1wfsFf4sqieaDAIHZgjiiYQah04VTw08YPEd+TJy1/giw93yoplw/GEi0U6Z6FjzeEZh6MoUWFD9MYobPEP3AvOFXq2ADunMJityYofuHXUCFgOsoyp5oK3wxoIhfTehQ8R9trh+SvQOhMFGGPjl1NNqBnnLvZpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=crjVsU99; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740760611; x=1741365411; i=markus.elfring@web.de;
-	bh=P3aAi1K30diMwcSyotdSLBi8iQUEl+hDB2tmHvN4WgM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=crjVsU99nW/CZBMET6nlxo5P5Ve71G2x3ctFqiGmxnvi7FsxwgfQXyv5sn6OWVsb
-	 x4qIMcrgrPve+oNy2UrDX5r6tSg0n1lSWr+zn5uco0QIgDtF+27/LMp+dXSoSRyS2
-	 5CMin+pvn3H63SnHPS1vPtrLOaEIURSr+hsFC5kieFfAA0rPDZpeH+tb67yq+02AJ
-	 SLaehROwWbAceE2iVSDbnQ/l6015TwXCK9FmDiRiYd7eQsnK2PUIcHEMlfCfZN7uk
-	 5MQQwEL21T+XVl81aMuZRHZZK8OcXMkSw42rTjlB9PBChlON+Ylqkpj/KEjiVzmt6
-	 D946/tidGDGJjMRPYQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSZHv-1th5Lf3hO5-00Hx7y; Fri, 28
- Feb 2025 17:36:50 +0100
-Message-ID: <225be170-472d-40c1-95ed-71b452740ae7@web.de>
-Date: Fri, 28 Feb 2025 17:36:49 +0100
+	s=arc-20240116; t=1740760634; c=relaxed/simple;
+	bh=IsrAoHmwRizMrAZgw1O3gBeL1nVVp1ZkGVdtljxvJTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dInZus5sgQLFT8GGewqoZ98wvb800jORxI0NvSmZj+mMTffapvldP5i+FI4ZSZZVi+E5/adX+cxzKROSn1bUycCnKpPC5bK4MXeJ+x/qPdnxk5nrEo07gla4X9A+xiEwqPu7dRCVs/8nKFeYJupFfwKOsgkNt/yEZidk8QVBLJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O0khgrzr; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SFRSsT026697;
+	Fri, 28 Feb 2025 16:37:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=IsrAoHmwRizMrAZgw1O3gBeL1nVVp1
+	ZkGVdtljxvJTI=; b=O0khgrzrVl5nYQhzDgD/c7xgXWKb2/5qxT5D1hlbh6MJ70
+	f21rcb9Qb1KYCNEBik2HvA6VBB0qBJwKASBvZyVj/EFdkZ2FIQmx28Eiue8j3KFs
+	ZB+r4SAOPe6lh+cQJuy97VQ7dR1nnGvSh2WLzog1PJxVbhXdrIwK5UEKhu+hRKg8
+	IxjqTCqpCFcQt7ObU9hNdqK5VqRNEK8H3/SJYFHhf5D7EqHilkwby8vbRyBQpAB/
+	QhmJRYoHSW2nJSVP2JXpJ2SdA71CEi4NIFTuTE4g4VGXckEHr5Adbmlz080CCQcS
+	GLIcXqdC1cuugdEoT7CE/PzFQroG4mOCOoZ1kvYg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4538uq2m2v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 16:37:07 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51SGb7Yc007908;
+	Fri, 28 Feb 2025 16:37:07 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4538uq2m2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 16:37:07 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51SF3sWX002548;
+	Fri, 28 Feb 2025 16:37:06 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4k751c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 16:37:06 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51SGb4uV31982002
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 16:37:04 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9E17520043;
+	Fri, 28 Feb 2025 16:37:04 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6E8F920040;
+	Fri, 28 Feb 2025 16:37:02 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.39.17.234])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 28 Feb 2025 16:37:02 +0000 (GMT)
+Date: Fri, 28 Feb 2025 22:06:57 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, namhyung@kernel.org, jolsa@kernel.org, irogers@google.com,
+        adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 00/10] perf record --off-cpu: Dump off-cpu samples
+ directly
+Message-ID: <qzkn72zddcdvwst2a4jfeyd3lalfvaydvisx24egxjllvlf2ym@qc5ozzzeqhd4>
+References: <20250213230009.1450907-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Qasim Ijaz <qasdev00@gmail.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/radeon: Simplify maximum determination in
- radeon_uvd_calc_upll_dividers()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pQnRLfx8v4G9J+knpTzjK8SoUNS8MlolvSv3lkROWsw5FtuoZvC
- jejqbXK5eiAEUA/Wy3nz448SRf7fWzTID2DWCqDZk4gpGPTOppr9sNw80VIGYfnyk/hBve/
- MNEtXyvm5MDb4NTUi0brMno2VkKUjZLkPkSn3SG1mbtIUZ6Zc5zQUgAJJVWUt6893KWyP0h
- fhxSENApa2wuLnjbLweRA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IoqzqYMsVKE=;8IMPCWVo7UO+jbp8zxoV4K9CIxH
- WUT5+Lqmgwmg9nmcLw7B62FBoZSApUZoLbTAR08MqOnYrR8NIPjp9H3hVMDqGbXcF1aZWmfh4
- 9DJRGCpInmZXDQmzmF0QLWtBhjeD7nZcwTabq/nthTdMszLW7jtGpixi9g+/UIradL1uPk+Un
- 8CKHNaCau95MOeD2QdI31+1Xu4OopBONfv5QhYKzH4qRYuBxuIAdhKzAtrRmgS6uVIatXLvy1
- zFN0nJHP/Xf8ouS4JzlVspTzNCQjen8K7495sn52gU4Q8xdZ+35q+Qk8/8tFxvW0hB849yGHs
- nPyZd0yxVJl9X3u9gdxtXibEeVrth5sUHVCRspdBF9JVAwuafg+Tjm0/6afVMYgvZx3ifCir1
- i11NcSYwA1Do044NNc0slPpIenXy9SOClbe+MzyyhZhRJRURrsXs+cPbzilwO6g1z0y2mFroS
- g8RTkPjpNf0+bjVyjtZPNNrMzRQmdmxGtL4LAeMRGksCAW6z1DlglCcGLGGSrXC84QabDukpQ
- vLcbn/izySG8Em5eBzNFfD5eRctBnH5fjY0Rq1BJHpSO9kv9hUr2o/tvTR94rXGsC0qpdA0y0
- IXNMY7vDiW3TCoOFiSAaQiXVagS3lEyW9af+Vm5LtntRizcm/Bi0/r0U3yomEQpOrHTP1N82V
- Dwzdht/SZUWDz85cvDj9AbGj9UZAnMkuD0SPaJY4KlreyIqDM4Dgjd8g7OAKKNZ3Vex3oMpM5
- OTunsUnTg4uj7+QG5wlcPmn3AZQ4Ui5dpMWdUdCO9NYHoSi9+VCL60J4VoCqGWdP1/dV+H771
- a7+wyQSedToNCdNfc3/VuWxVdqcXEvxMKmvD3Y50JONzJyV7cdnZ3R4swNo4qA2bp/MMdixZC
- 1xz2af6rOp4rtK/wUT5mfbk2Re1wpccXrZXl42RPI+T+S8o01DuUcZ4sqOfc2cwB8xQlzL2Fd
- +OxUKL0u1lap4P71NQ9Ff2MnMgLtCoT408b4/7nTl8KF0evcN3GZsn5T/N7WL9Dg8dvrUj7va
- vBEivYCkNtF23WB2PttWtQZMS0LwiDZ4DyyWdpGsGPg1tNRsvPBxoAb5L4zFJ93IQ2PcYMdsq
- rXrKccO9wGsLZI47/FUf0ClRHNfUpVJO5yRJ/G26YdvBXb2Dxg9aFnGA6bOrEOdN1VRWlfa/6
- QXg87qVTASNpsvb1iuSXUadOGUDMl0/rUumy6IWUTffs5ySH9FBAwMyx01meX2y2gcBQLE2GC
- LxpIO/8N5+ammdtWZLxtb1+xzFZ82eusr4uMbyOFatsQZbX//2IEWCJU/u85y4YCqrb/StABr
- NUGd5KblsU8y+nFupKcH72vo+HijS5+6PV5Mwc0lVH49vg2HHA006eDF7X0fxqqFkLG27+Y2a
- vnvANt8zRWDhTpU8NZO0aY2CyJCoS6Xhqg1r5qDMgmjS4bU0lzcdsPndYTV4ifzBIXZH2hY0b
- 3x+GMY8rBnsiXlSRihqzpU2pUyUs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213230009.1450907-1-howardchu95@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: PaUtBPrjR9Uwzi6RwrDp72T6LuSlHgAb
+X-Proofpoint-ORIG-GUID: gjKpFC9H8SLI2tVdj1kxRgjceKUniwcF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_04,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 impostorscore=0 mlxlogscore=392
+ clxscore=1011 suspectscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280117
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Feb 2025 17:32:45 +0100
+Tested this series on IBM Power machines (both pseries and PowerNV)
 
-Replace nested max() calls by single max3() call in this
-function implementation.
+Tested-by: Gautam Menghani <gautam@linux.ibm.com>
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/radeon/radeon_uvd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/=
-radeon_uvd.c
-index 058a1c8451b2..ded5747a58d1 100644
-=2D-- a/drivers/gpu/drm/radeon/radeon_uvd.c
-+++ b/drivers/gpu/drm/radeon/radeon_uvd.c
-@@ -961,7 +961,7 @@ int radeon_uvd_calc_upll_dividers(struct radeon_device=
- *rdev,
- 	unsigned optimal_score =3D ~0;
-
- 	/* loop through vco from low to high */
--	vco_min =3D max(max(vco_min, vclk), dclk);
-+	vco_min =3D max3(vco_min, vclk, dclk);
- 	for (vco_freq =3D vco_min; vco_freq <=3D vco_max; vco_freq +=3D 100) {
-
- 		uint64_t fb_div =3D (uint64_t)vco_freq * fb_factor;
-=2D-
-2.48.1
-
+Thanks,
+Gautam
 
