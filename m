@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-538318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C7BA49719
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8156A4971E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4446D18830A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9951C1898BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D947725CC9A;
-	Fri, 28 Feb 2025 10:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F12725D8EA;
+	Fri, 28 Feb 2025 10:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BwBr/a0c"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ywooo/Qw"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838AC2594AA
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37492157A55;
+	Fri, 28 Feb 2025 10:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738154; cv=none; b=RabWXyEl6kI8iXFM2q+LMZeIKxpKkrUfTRC2knobW2i4CLPef6Sdirfazd32cuaoaTzZc9gRgJTQ4k3wNn9VYsxlTMho2DYFnpK3TL8ePzqSquY0MO4zcMMMlOylBSAoDpTGG275AXsC/9g1ToJf04OZqkiqL+auVpfp/kXabbc=
+	t=1740738167; cv=none; b=nj2NjRajig+LWIRJBDiiTXxUurDi16H8d9tUc3btSspnC7mn90orfNvTwSsVxojct+Nb9Dbcw1d1vzAeV0V6QVfvcRjFv/SC59s2+Xh8oyyJhryQwcCWSLbXfSFmddhxA1n8jptagTbTUh/oWX5MYLuNXhU4+PN8JD89L/zbS64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738154; c=relaxed/simple;
-	bh=q9+IlSHTysuLXGwcVeT+yMYlF+AeEVla2PHoUzCEQdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtPvVyQnjeCGivjWHEsbgd4seukpw6Nb/UGMrwrxsBvuDhlpuBuyrrbV1YpA/YPqlnr2GvwrpQnF2edzVTX+15Ns1jOYyYKsr81veXXeJo1Xk8RQF+Imq6evB0na6skgbVp/ZFb1IG53O2C1e63+7hacMRCGYX4stLCr7ObS/kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BwBr/a0c; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30b909f0629so8433631fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:22:32 -0800 (PST)
+	s=arc-20240116; t=1740738167; c=relaxed/simple;
+	bh=zQMkQAtj6vzSQBpImtNQZFAAzOJ67Rs10PHBe6Pdo/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aOkC60npJ5IfJlSZEHokHYP1EJpm9RJY4UOK7P+xZLE0HASWvOGvUibYd+ZhI7thT+Ul4N6RXOIdOTbjuGLa3fWRpppXc6NrphmHKPjxOWxdMy+aCW2LMGl0MPAmu1O9iN3AgqWYnSVDP93FH7uoPYFW2YDcUGTPGP4PTushF98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ywooo/Qw; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fe9596a582so475770a91.3;
+        Fri, 28 Feb 2025 02:22:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740738150; x=1741342950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5R1GwEARUIu4D0vBS31y0VlPu/BaWoEI502D8t7cc8=;
-        b=BwBr/a0cG27cv1nK9Vvt6KhjrEZG8voC8islMNiyaO23VpeteXmo++DGUZi8ZRsGjP
-         izyMBWg8CKpmYsI5qRajp7ySmI3ByqvBFTA/hNy0drhdhHsuZmF33MynjkOrh8pCYLSJ
-         rWcSbOYbJ/cpiD7e/jmULastMJ8Hpxrh5+3DqA9iwklu14tE67ftdG+t8G2LFRgZ/nhZ
-         9MzBz12i6CsvB6LaCEbYWN67Q2efD3KJsN2lieUj68jtfXuHhKjxOYIyCGk0LigXK29G
-         Myihf9Me9L3eeSAi8N9SBA3Oa96Xcp8awZka7rPe3vgwFD2ZwMxvRFNpy3Aw7xe3MYU9
-         zPsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740738150; x=1741342950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740738165; x=1741342965; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z5R1GwEARUIu4D0vBS31y0VlPu/BaWoEI502D8t7cc8=;
-        b=UtQNmUqB19EVFm+aZ/BNVfyhnX0fQ9b+7tu7ZRdiVLYMduzkfNbdufapgvY3wEs1oJ
-         +qt6pW8jT9rYls+jBKv3ZH47cVHhu4n4jLxUyx1iF5gW6ZPudpU+BiXeqSmHr+xP6xiN
-         +vNpSIY/syWf1+j9gfpEHJ8mJaXilOHDnZqwYgk4Qo7yb4wQ/Im35vIC/dMc4IIEJW3i
-         sfZOxByQWV/dagUN2pNBBcaBxXAvlXLOOmzRR8mHdsc5djvo2e+UTwfracJvBEre33Et
-         66litNyQskgQfOg+orRTgyLLDtBFi7h62j44fCVCJQy0aOQI7IjbiwTrzjvAANcGPGzM
-         VZHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXklh5qxioK2NsV+pmplszZjltabnuOsXOMsk6g5rLDzYm/DH/zWiTvuZicRPh1YW+xGBh4sVRvPaLnU7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyTm67qbYBTrosaSgZP9V4FImrMpjs81p0N/TCEeItfaT36FXY
-	M+sJDQhv0tSGgBGqDCWaRmC+GeXKReyvEfm6audwmKFvohQfILlNfl8lKuUXcC8CNFvgXHift46
-	a3Co=
-X-Gm-Gg: ASbGnctOx2jSvOYTyHdEvsriNEUODpy2m+uUbap0Fmmrdrbz834Mi6yM45RGPDinP/u
-	8l5TP9OcDaDc7aGZV16veR18a9tKBE991dwdL50BDNm0XlpfO5KKoO7o5HORflHqneToa6DT58W
-	2FE6WiA70KRreB9/GAWtNlCCbjo9cRU1O2N+Y3D4uKlmrkwZAIg38mR59wsCZyK7zc4IMuzPAKX
-	KeKWuq0LHIdBAjAKZFssA32okJkUZJD/fn6RXr7640AVNirA1ySfmes46/LLN8IIHa4As4/cxOF
-	eejDaZSG3Bp5gtwnXAzO5KRW84TJqHeGDiNA5/Y9lpiZPcLfXjyADv9FJdpUG7tLZyZTXXhUxfs
-	TDv2Dlg==
-X-Google-Smtp-Source: AGHT+IEcFPCTorTFbzvj3XxGZ+gp0Pdf9edgu6c5mZ8c9NQpwr+CURuqlRmoz1kSiZZiiCQv03r7hA==
-X-Received: by 2002:a05:6512:3b99:b0:545:c51:4a03 with SMTP id 2adb3069b0e04-5494c125ad5mr998344e87.11.1740738150508;
-        Fri, 28 Feb 2025 02:22:30 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494e8399c4sm197441e87.213.2025.02.28.02.22.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 02:22:29 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:22:26 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/connector: Fix spelling mistake "provded" ->
- "provided"
-Message-ID: <57owgwkyiaxw7xckoug6tsrzk3g3z5yb74wp47av42rrvhxqby@tzr5aapdua4k>
-References: <20250228085350.678446-1-colin.i.king@gmail.com>
+        bh=zQMkQAtj6vzSQBpImtNQZFAAzOJ67Rs10PHBe6Pdo/Y=;
+        b=Ywooo/QwziEi+rLbWHW9j2XP2SValmUxDlR7gsMikRgjHSH9StwxTZiTmiJjlfK+gm
+         lkLeS2RUVA61KPIacQHjx90ozvovkmc0XaPwejjYAum8RKvDQhIS881gpE/gojJWUHcc
+         EJeQYhITGlcB0o/Zh45jBuNVHd3JMR54TzmxkC9t6dzOL+0Xx2mU/fyFa+qU4+8stK9a
+         KwiKqJzQGoP2leFGamqDMChXojWMCF1QdghuHo8BXauxi2IHhcJ53heLwL3CCJ1ooQSs
+         xe+CKy4GkcyUrXPIatgY+tgh3xxVZlL3vVKjTpb9yZpdxfrnAop4AftuYs+mVYWz+h/5
+         v4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740738165; x=1741342965;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zQMkQAtj6vzSQBpImtNQZFAAzOJ67Rs10PHBe6Pdo/Y=;
+        b=MgyZJEnjyMUws1Vnb9jBHuQ7D9GNCNRoREBGRcosIPoTZjF+cHvaG+eM5yF2zSCUTe
+         Qket5+ZSr/hLCd6xcJm03U0Bqb0No36T7BjugosuRQSNRwv5Dn+3DV5SmASbj67NVzp2
+         UBQOoMEVL0YiiM1l4sOgSnAa1Y8AtOQaJw7w7f4vPsKMBiUEgRZwLGUjtgffruVThIPM
+         YbFg67yE3/lbvtnRvvKEnQQMa1La0ICMDUSv+NL6ZLbSh1uiN//EZWYjkIW9hvrvLKAx
+         V/geGtMqeVN1X4QvrbB4nZRLEFXnyPKwJxxTtLHteSbNEfhWRpAVkTEehxClVyu4Ms9Q
+         PGzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBprYe94Q92qwjGOlHjqeqrZ0IQSVDrhBsis7UjW/peDyMv/bBpTJx+jW130xxZfKYh/92@vger.kernel.org, AJvYcCVknXTQo1o0ApWkS9DZxLAGjtnoP2uiBxNgn7aOcRHc+78g+69CDlxQu+0FLJ1Czm2hOdMLIZS8Kkn6@vger.kernel.org, AJvYcCVqXCiTn/k0u0WIU7+d1FCGFW8ZKDLeRmF78poN4Harj+D4elI0POChb9OQvHip28UawabMCC64y+EY@vger.kernel.org, AJvYcCXGDYvro+L6qve4bFWLo/c1AxPTpvg/s4EtwU0qiECHISDN/LXEWaHpmL5pD6o4uA+RU4ifcXiShVXXu+Yswjw=@vger.kernel.org, AJvYcCXwLdAVn9et3qhMT7lFzIE0G0fECMQoszgkNaTi7bgAFVe7t/VKsKazKuU3so7+88MJp7Os3K8B43N/RYfh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxn71jxs6OzWagodT/liUt0NKeXPyeLxvjcqUukOAiWWlI8NhJ
+	PhpfnqBa5NjaiWA4jiYJt4G7omtcqN4O4xzCgpECUqCJBicst95KANQuABjxgu1IDnO51UDhqWO
+	YQ262G3afKeSo+0WD5pGuYjwv3U8=
+X-Gm-Gg: ASbGncspADguRiiL2x091JegG+aIzErRLi+HnJXbTS9PpS6R5rRf2s8datufvISkr+s
+	+OM+TX1jQkKde/HLM3QcDZNMMfO4SFE8dGZKAvBOgWod5M2Dv832mqZ0c9axKTe77vi3b1U0lRj
+	P9mYVg9bc=
+X-Google-Smtp-Source: AGHT+IHIittGCPQby1z/CAAucXt5JFtqaN9s/CywTLEe2k/+dixEbEMthbGRpWklymixZ1tzV0vdjHdcEd+cYidEN04=
+X-Received: by 2002:a17:90b:1a91:b0:2fe:a747:935a with SMTP id
+ 98e67ed59e1d1-2febabc3f2amr1758599a91.4.1740738165504; Fri, 28 Feb 2025
+ 02:22:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228085350.678446-1-colin.i.king@gmail.com>
+References: <20241219170425.12036-1-dakr@kernel.org> <20241219170425.12036-8-dakr@kernel.org>
+ <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
+ <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
+ <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
+ <Z72jw3TYJHm7N242@pollux> <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
+ <Z8A4E_AyDlSUT5Bq@pollux> <w2udn7qfzcvncghilcwaz4qc6rv2si3dqpjcs2wrbvits3b44k@parw3mnusbuf>
+In-Reply-To: <w2udn7qfzcvncghilcwaz4qc6rv2si3dqpjcs2wrbvits3b44k@parw3mnusbuf>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 28 Feb 2025 11:22:33 +0100
+X-Gm-Features: AQ5f1JoBAMoLfZEmHB4LoCW7CaOXRtnCBfVtt6Z6is_lk4ig8YbV9oYSmUL7ugI
+Message-ID: <CANiq72myNPVD=1jHzFxryvnBuwqdw7-PDbPsQ+FdpCjeYtVzig@mail.gmail.com>
+Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com, 
+	saravanak@google.com, dirk.behme@de.bosch.com, j@jannau.net, 
+	fabien.parent@linaro.org, chrisi.schrefl@gmail.com, paulmck@kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 08:53:50AM +0000, Colin Ian King wrote:
-> There are spelling mistakes in drm_err messages. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/drm_connector.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+On Fri, Feb 28, 2025 at 6:29=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
+> wrote:
+>
+> I'm not sure I agree it works perfectly fine. Developer ergonomics are
+> an important aspect of any build environment, and I'd argue the ergonomic
+> limitation for (2) means it is at least somewhat broken and needs fixing.
+>
+> Anyway thanks for your time and detailed explainations, I really just sta=
+rted
+> this thread as I think reducing friction for existing kernel developers t=
+o start
+> looking at Rust in the kernel is important.
 
-Fixes: c627087cb164 ("drm/connector: Use common colorspace_names array")
++1, it is indeed very, very important.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+But, just to clarify, we have been caring about ergonomics and
+reducing friction for kernel developers since the very beginning,
+including asking upstream Rust for features and so on when applicable.
 
+In general, it has been a factor in most topics we have discussed in
+the team since 2020, not just for source code or debugging features,
+but also docs, KUnit, and so on.
 
--- 
-With best wishes
-Dmitry
+That is why we would like to improve it and why we have it in our
+upstream Rust wishlist and so on. In other words, it is not that we do
+not see the issue!
+
+I hope that clarifies.
+
+Cheers,
+Miguel
 
