@@ -1,220 +1,218 @@
-Return-Path: <linux-kernel+bounces-538205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8EEA495D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:49:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B56A49461
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6C33BB658
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68C61887B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0D25B672;
-	Fri, 28 Feb 2025 09:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A919255E23;
+	Fri, 28 Feb 2025 09:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b/wBmhrA"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fWusdhJn"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924682580F8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736100; cv=none; b=CEXLG5iVeGEkEm/jlhZDZgM3Ny4G9m5uvL69kHIFfvt210CjSRsLO6kMImFNkmcwc/jOMcRUJxKACDHf6ugQrTiLgsL4w+/db2SGxgpARRlQ+06nkr3J4Ctyig2vDMv4bG35v7xqENJMeBFzca7Fyp8JJ8uKkWzZdL7t0HsrshM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736100; c=relaxed/simple;
-	bh=8czOAp1XIVXzJzW/nGeiln/rxS6cj6xKkuUCCr0X8ZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=pNW7XWOmaPFOKL3Ez1SEoboL7DSFox/P8bKkYnmLM9lijzMIvqxk20xqB1s7Fhsth995IWd9PEfu/J6pTdj2bMWwOlWD/xiAYmT57kfA1QpaCmlwwU1fXamizLQnxTqO1Ml/jCWD6JFQSewdvSKytj+sUpHO76XuxtUFgGzM9vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b/wBmhrA; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250228094810epoutp01d0b37687ab2deec6b8c432d11079449f~oVkBT5ssb1418214182epoutp01a
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:48:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250228094810epoutp01d0b37687ab2deec6b8c432d11079449f~oVkBT5ssb1418214182epoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740736090;
-	bh=d/xrksObyuUS+LfR0wsAM0jpJ6JI4C0qssS+Biux8N8=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=b/wBmhrAsfgpVJAMqJYU0R5MjmfQjV+Tzuva/an1oEo2ZZKMTIDgphUuImNnED8gF
-	 PIsG1Dtq+6Ci93Wg7eeBNPS+qq9MSk/naRg1WMvEYzwGYjml8jcQnIQYbCo1U/64TD
-	 M/4navUYX+kJbQ2zzElVnkzBVNoYMZQJiS1Lj/fI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250228094809epcas5p43b4423daa009f9e6d37523f7cd7d890a~oVkA0hqiK1544615446epcas5p4W;
-	Fri, 28 Feb 2025 09:48:09 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z43L006Lmz4x9Pp; Fri, 28 Feb
-	2025 09:48:08 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F4.9D.19956.75681C76; Fri, 28 Feb 2025 18:48:07 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1~oTVm3L9Hm1856518565epcas5p3E;
-	Fri, 28 Feb 2025 07:05:03 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250228070503epsmtrp2cec91f437594f495f6c7d4d7d07cfec2~oTVm2ZPRN1928319283epsmtrp2d;
-	Fri, 28 Feb 2025 07:05:03 +0000 (GMT)
-X-AuditID: b6c32a4b-fe9f470000004df4-33-67c18657ffcd
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	00.CA.18729.F1061C76; Fri, 28 Feb 2025 16:05:03 +0900 (KST)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228070501epsmtip2b98fd1fe64992511d761785b68a5e7a4~oTVlEB6Zi0820508205epsmtip2L;
-	Fri, 28 Feb 2025 07:05:01 +0000 (GMT)
-From: Aakarsh Jain <aakarsh.jain@samsung.com>
-To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
-	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
-	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
-	<aakarsh.jain@samsung.com>
-Subject: [PATCH] media: s5p-mfc: Support for handling RET_ENC_BUFFER_FULL
- interrupt
-Date: Fri, 28 Feb 2025 12:29:52 +0530
-Message-Id: <20250228065952.14375-1-aakarsh.jain@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmhm5428F0g5PTrSye7pjJanF/8WcW
-	i0Obt7Jb3Dywk8ni4sy7LBZ9Lx4yW2x6fI3V4vKuOWwWPRu2slrMOL+PyWLtkbvsFss2/WGy
-	WLT1C7sDr8fiPS+ZPDat6mTzuHNtD5vH5iX1Hn1bVjF6fN4k53Hq62f2APaobJuM1MSU1CKF
-	1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoGuVFMoSc0qBQgGJxcVK
-	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZL/+sZS+4KVOx
-	8/Qa1gbGdxJdjJwcEgImEv13ljB2MXJxCAnsZpS4d2wDlPOJUeLfxmtsEM43RonZExYxdzFy
-	gLU8742CiO9llJjStYcdwvnCKLF+6zFWkCI2AV2Js9tzQFaICKRKvFq3lhWkhllgCZPEoiPP
-	mEASwgKhEo+aPrOD2CwCqhLT/uxkBbF5BWwleg9cYoG4T15i9YYDzCDNEgJv2SVu7/wGdYWL
-	xIXdHhA1whKvjm9hh7ClJD6/28sGYSdLPF70khnCzpFYv2cK1Ex7iQNX5rCAjGEW0JRYv0sf
-	IiwrMfXUOrDTmAX4JHp/P2GCiPNK7JgHY6tJzLnzgxXClpE4vHopI4TtIfHpyBuwGiGBWIk5
-	N56wTWCUnYWwYQEj4ypGydSC4tz01GLTAuO81HJ4PCXn525iBKdBLe8djI8efNA7xMjEwXiI
-	UYKDWUmEd1bsgXQh3pTEyqrUovz4otKc1OJDjKbAIJvILCWanA9MxHkl8YYmlgYmZmZmJpbG
-	ZoZK4rzNO1vShQTSE0tSs1NTC1KLYPqYODilGpjmPY1e8t+Fz27j+UsWdaah1yOmTM79dzn4
-	1bd7jRvfro+ze+/knKJ7NaAj7P9xbQ9xaf1unVUfgw4la16aKfN5fnPq1XzXXaZpK35r7vdM
-	rp50hINb65/qrq6pF1bcWtAiceuUwt8DfvNKhes3fbzb/bBFQ1GHvej7x7m35/REKddq/5+1
-	oejBIRHTc9wvJ8xW/FXF8cjgmRT7tJAi5hVngr2CNl7YUmW9f9WDtKaHuy4uurraKPvqN+X7
-	/U4F27SP9C7ZPelG9br7E4v0fSLk3vrwsJ778OyX732Jg9UlG1Yy8nv/PvUhWf/BqeaWvzHf
-	3V59qMuZtSdync0j1qcfqh+rbCtLOKZxx1NjxfXie0osxRmJhlrMRcWJAM60yisMBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKLMWRmVeSWpSXmKPExsWy7bCSvK58wsF0g/bDyhZPd8xktbi/+DOL
-	xaHNW9ktbh7YyWRxceZdFou+Fw+ZLTY9vsZqcXnXHDaLng1bWS1mnN/HZLH2yF12i2Wb/jBZ
-	LNr6hd2B12PxnpdMHptWdbJ53Lm2h81j85J6j74tqxg9Pm+S8zj19TN7AHsUl01Kak5mWWqR
-	vl0CV8bLP2vZC27KVOw8vYa1gfGdRBcjB4eEgInE896oLkYuDiGB3YwSExdPZeli5ASKy0j8
-	bzvGDmELS6z895wdougTo8SmV2uYQZrZBHQlzm7PAakREUiXmHTnKwtIDbPAOiaJnSsnsoIk
-	hAWCJTasms4MYrMIqEpM+7MTLM4rYCvRe+AS1DJ5idUbDjBPYORZwMiwilEytaA4Nz232LDA
-	MC+1XK84Mbe4NC9dLzk/dxMjOCS1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHeWbEH0oV4UxIrq1KL
-	8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwRV2N/ffr54Nr58REL7Gm
-	LTr3+MUsr4R8g8DQTxP6LNYvsJmyVVk8yP+YZkG/0sJ0z9T/O+Imzg7SeSU3ibe9S3v9Xul3
-	pX2N8Vb3ahNeHxVnPPM7/OMLeyb/dPaUpsjcfSu5X8VdOPqsxz6rQDZxy/snvb48dequ6f9M
-	chkmO/IcSWvXn1ow9/j023MmfXhStUSoZvq/UzUsfod+FwSes9NU02Xl5Mw4+oCnUW5Zudyz
-	hicx37Stl6xRc54mf+Vj0NWZpduWaO46/SnqgoaFVE7DO7YE013bOz4tWS286er1r3WsZpHr
-	u0/ElR3stHVLU401cVvmtYP7f8Kb/fkOPv/uc8ofXs73n2N5yztpJZbijERDLeai4kQA2gjU
-	HbgCAAA=
-X-CMS-MailID: 20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1
-References: <CGME20250228070503epcas5p3260dacbf7b2ce5cdb1783e570af665a1@epcas5p3.samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E761A3158;
+	Fri, 28 Feb 2025 09:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740733539; cv=fail; b=QTb3twE6VihM7wdz5yOj1OMCt1c1X1rPzfjXYdQz6hlvlBZh6tisIieyZAWxoSKhqNoPeD7pnh2Q+U5fuRRCTwmdAVuvhUlz1eXRvBcowdgJsMIFJ3ASVnftMJvY7Zkztp5SAUZa816kgL6ueadr7YNKkZGUCHcmFa83HEXio2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740733539; c=relaxed/simple;
+	bh=wxBTtctkNjQKsWhRKcF1wiTiYFKho3rHZxel+hz+03o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C7xjGAj8/OZO+ZYbcbPC461GNoi2gQshwflRP+OjAICuEsRq7qghLXhkFdondKBNO/G1GajQzNAfcW1103yT+RowrxMVizAS5H05w0q4DsqS0vW3hqw+1ism5NXZICSioHQyvZ92Gv2qHgSNjwtm+ipsYmCg9V6vzidxGQ8z4/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fWusdhJn; arc=fail smtp.client-ip=40.107.94.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yv7vrRz7VW0emM6/NPhrAh9bpwJpTMjOCa2lnPBQVqMHUp3oYFvLPtx483+MOedKzGjSXlZgnfR2w6M/tPyWb0roXcUO6WaJUrdyBSmuOqE+F8/3tmt/A98FL2CnW/gT4hDzgQux6OHxesoNIPIuaYlAzngYdo1+9CxBiW2XoEQxmEAqU99jTYQCnEx0OlVNckVkoPmUvuih1rN3DrCkErstaii+yy0rYfXbsqgMKk/LfEC+cG5tzSlSu3zsh7gZBwCUD5lDgvUKRSy6nzEQVCIil36RwANMEVHJlgh4gw6PuYaUdw3NbDN1+Zv4vugLnrcQJg7NYOn9RPx8Djywpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bS+PZC3EUTudMMth3fF3meGGM8HntlMe2BYSCcNsc3g=;
+ b=zBmjY00B+tvLNcVx5dvo6xy6SFr4SbBN2HCLpK9jJUvFIzn8a/vd+dJfBAQgUOHnxaRW02ye9+PmrpkVs1QH00gRlQMzEjcK5qU42qPxlF0aS0pQ+HVe2A/DjmapOU96Kah8mNWljC78fhn5OnDIbVaSVc3lRXDr/bUKkCZEyg/88eDgDXp08HvWdHsgck8iz91XfMqjYWNbtoH/KgNBYAgzlhTF7H2eXqweITVWHluTg6JoPyaa1sYqNR4z18WKI3/1y6GppUi8ccbFIkIEq5aGEPL2gEoESmT0hWUvToM6sgh4Feianq3946WjEs2qV2TCF+giSoPpxYOHoaGwEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bS+PZC3EUTudMMth3fF3meGGM8HntlMe2BYSCcNsc3g=;
+ b=fWusdhJnXB1IaBoTfPaGvyzKHrjiGzU6nkqpVz16nFbVlZ0d4xvP4NyLvvvrL1VMoPjcNOmo6F/X8NMvLDXNbLdZcrui4LXLanp/wSkFb4WIFvJwnKz/zMgxOarw0vEazPeHvcjNR/o3C45aIVpguRoOsEDZxM1Kv8eyzdKY2ao=
+Received: from MW2PR16CA0009.namprd16.prod.outlook.com (2603:10b6:907::22) by
+ IA0PPF04DCE520E.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bc5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
+ 2025 09:05:35 +0000
+Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
+ (2603:10b6:907:0:cafe::f1) by MW2PR16CA0009.outlook.office365.com
+ (2603:10b6:907::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.20 via Frontend Transport; Fri,
+ 28 Feb 2025 09:05:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 09:05:35 +0000
+Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Feb
+ 2025 03:04:09 -0600
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>,
+	<nikunj@amd.com>, <Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
+	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <huibo.wang@amd.com>,
+	<naveen.rao@amd.com>, <binbin.wu@linux.intel.com>, <isaku.yamahata@intel.com>
+Subject: [RFC PATCH 07/19] KVM: SEV: Do not intercept SECURE_AVIC_CONTROL MSR
+Date: Fri, 28 Feb 2025 14:21:03 +0530
+Message-ID: <20250228085115.105648-8-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250228085115.105648-1-Neeraj.Upadhyay@amd.com>
+References: <20250228085115.105648-1-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|IA0PPF04DCE520E:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b94958c-a917-4ebb-b27b-08dd57d70fef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bzJwbgdZ0m7dxfAbx0xIfRaeu0Z/PTPNBdpmS2h4TQzWbfcPw+yckPjzrZ5a?=
+ =?us-ascii?Q?IoR7pth+XkkZpmf5ncKtI5BDjs6PZKaKKYUt+FdwrOzEQGFL61TZqTAJJlnl?=
+ =?us-ascii?Q?9nBoGn+IgyvxzU4xX1kK5aFzK92FJENZ3gMXtnrYqDhqH9S5dmywBI9nstnn?=
+ =?us-ascii?Q?1Zr0t51Ew/ZzlbMk/KMomAueDGbcfp45hy3Py2WAtwz771a66hAyyVo4lLSw?=
+ =?us-ascii?Q?5+hlyUWSWGUBoV9GgeTzVN83ZU67a8WxWJXA0rUSX3Q8wNxGi+WusYlvtYpz?=
+ =?us-ascii?Q?67mAq+xfyldcJy2H6R95Bs8ux2BgjhHAHCNqtfJVn5i4FV2CjOnMATxgT+VV?=
+ =?us-ascii?Q?g0nte12T8ANP9Bq2sx0ykIdZo5bnkkGUj1arb8DPQ1bHDLr81t0C78IgS4rl?=
+ =?us-ascii?Q?Da7tWXuiRxEdtJP4DOyGISlQJvmzPAaR/7QZa9UPWKPlRJ6ZlpIy/zSmY5li?=
+ =?us-ascii?Q?Qu1czt3iwwKsr8hs+xvIzScQPCz3yHJLpEeJwAY3xD7mCAFKgoBtZu9q9igR?=
+ =?us-ascii?Q?vN48D7FE246kIAoPSadyplOQQEmOEJpdzopEiLO0RJ1nEXcOQYR1xb9GS9pD?=
+ =?us-ascii?Q?e/uuUye2VxuSzT+qkD90SYx78LXgf8j9Pa+I+rQpXX0WdNS+1G0dRD6Q/kGz?=
+ =?us-ascii?Q?97mlnywzJXZElSoZ1X1hUB2ioTwN88IcuhCoD2wDtKSYEeGAzjsyoQ0eLyXW?=
+ =?us-ascii?Q?RV/XWxC2I3LYUf0SIVAwbblyTbE8no/RoqOqGwMXGe5WRw74HxgY9VYfhNHF?=
+ =?us-ascii?Q?VUvuyjJCBzmf3v7jFpoqledbEVdeMyJuCNVZSGvY3sKXnDi/cN84g69XARuN?=
+ =?us-ascii?Q?wftv6kEqolOndxVoW8SU4HVGmOod9kvdsWC5wTrDaPJHkX7meYu4xJmWYI0g?=
+ =?us-ascii?Q?P4pEZ+zbJ4VNdCn/QqrC7fqknjTuJSdkHdiCZYqJ3LxYDrct6BRqgyTExphl?=
+ =?us-ascii?Q?T/lsqKLKH/0mo7/uqNP/WUzsoWftmgwSunFBany3ITEE2L9fiGHt9nwzHMvq?=
+ =?us-ascii?Q?EBL5oMn6r9qnv709HlusaAwvWUgfCANJ5ZP/4JSPGBOW6Q3smW7cd5Y5xckx?=
+ =?us-ascii?Q?uBtuOCUUbPyAg4CFOcWZ8iWN9hh5VRs2lDQzjdygOQDycNapW8vbHA8FKP1q?=
+ =?us-ascii?Q?tVEYULm3GhJruYm2l6gVvenpt91e9b8FPxcwnf3QRVw/eDcPhHNdwZ+GIWa+?=
+ =?us-ascii?Q?XDz+ow67LIQ39J5ziqpi1Mnru5qMxNxTtxyreRQXnNsGyyu9uF/IDmI3jRFs?=
+ =?us-ascii?Q?43Kk4CUkmZZYD9ReoMGVmbJ1OLAB87MmYX7BonuFzyswlovIKW27so6BI1p0?=
+ =?us-ascii?Q?PX1WgsJ1ILbna1iKXvpibeKbvhmJO6fbgFgXT/b/DWlUWTP9sO/nA7T2+wbW?=
+ =?us-ascii?Q?krw5jjiL0FV7J9RPVZxfMORUR1C6DHSXJMYuBmZnOVrgslADn+EnmgWEt7ED?=
+ =?us-ascii?Q?ffjvG8LQva3Nl+xN8N5KLtl1yOoCJVRKZEGxbFnOHqVJouZjbZ/yS1ZeNcPv?=
+ =?us-ascii?Q?Iw1a9OYLOF+jW1c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 09:05:35.1555
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b94958c-a917-4ebb-b27b-08dd57d70fef
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF04DCE520E
 
-When output encoded buffer size provided by userspace
-is insufficient with current encoding parameters, it
-leads to RET_ENC_BUFFER_FULL interrupt which was not
-handled in IRQ handler.
+From: Kishon Vijay Abraham I <kvijayab@amd.com>
 
-On handling of RET_ENC_BUFFER_FULL interrupt leads to
-NAL_ABORT command from host to risc which in turn leads
-to RET_NAL_ABORT interrupt. On receiving RET_NAL_ABORT
-driver clears workbit and VB2 queues for cleaner closing
-of MFC instance.
+The SECURE_AVIC_CONTROL MSR (0xc0010138) holds the GPA of the APIC
+backing page and bitfields to enable Secure AVIC and NMI. This MSR
+is populated by the guest and the hypervisor should not intercept it
+so that the guest can properly set the MSR. Disable intercepting the
+SECURE_AVIC_CONTROL MSR for Secure AVIC enabled guests.
 
-When user encounters "Call on DQBUF after unrecoverable
-error", userspace should close fd and restart with larger
-output encoder buffer size.
-
-Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+Co-developed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 ---
- .../media/platform/samsung/s5p-mfc/regs-mfc-v6.h   |  1 +
- drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   | 14 ++++++++++++++
- .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  1 +
- .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c      |  5 +++++
- 4 files changed, 21 insertions(+)
+ arch/x86/include/asm/msr-index.h | 2 ++
+ arch/x86/kvm/svm/sev.c           | 3 +++
+ arch/x86/kvm/svm/svm.c           | 1 +
+ arch/x86/kvm/svm/svm.h           | 2 +-
+ 4 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-index fa49fe580e1a..075a58b50b8c 100644
---- a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-+++ b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-@@ -45,6 +45,7 @@
- #define S5P_FIMV_H2R_CMD_WAKEUP_V6		8
- #define S5P_FIMV_CH_LAST_FRAME_V6		9
- #define S5P_FIMV_H2R_CMD_FLUSH_V6		10
-+#define S5P_FIMV_H2R_CMD_NAL_ABORT_V6		11
- /* RMVME: REALLOC used? */
- #define S5P_FIMV_CH_FRAME_START_REALLOC_V6	5
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 3ae84c3b8e6d..6fb734228726 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -683,6 +683,8 @@
+ #define MSR_AMD64_SNP_RESV_BIT		18
+ #define MSR_AMD64_SNP_RESERVED_MASK	GENMASK_ULL(63, MSR_AMD64_SNP_RESV_BIT)
  
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-index 5f80931f056d..fa211c2d68a4 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-@@ -739,6 +739,20 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
- 		ctx->state = MFCINST_RUNNING;
- 		goto irq_cleanup_hw;
- 
-+	case S5P_MFC_R2H_CMD_ENC_BUFFER_FULL_RET:
-+		ctx->state = MFCINST_NAL_ABORT;
-+		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-+		set_work_bit(ctx);
-+		WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
-+		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-+		break;
++#define MSR_AMD64_SECURE_AVIC_CONTROL	0xc0010138
 +
-+	case S5P_MFC_R2H_CMD_NAL_ABORT_RET:
-+		ctx->state = MFCINST_ERROR;
-+		s5p_mfc_cleanup_queue(&ctx->dst_queue, &ctx->vq_dst);
-+		s5p_mfc_cleanup_queue(&ctx->src_queue, &ctx->vq_src);
-+		goto irq_cleanup_hw;
-+
- 	default:
- 		mfc_debug(2, "Unknown int reason\n");
- 		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-index 3cc2a4f5c40a..86c316c1ff8f 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-@@ -141,6 +141,7 @@ enum s5p_mfc_inst_state {
- 	MFCINST_RES_CHANGE_INIT,
- 	MFCINST_RES_CHANGE_FLUSH,
- 	MFCINST_RES_CHANGE_END,
-+	MFCINST_NAL_ABORT,
- };
+ #define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
  
- /*
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-index 4cf12f33d706..356adfddcfcf 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -2229,6 +2229,11 @@ static void s5p_mfc_try_run_v6(struct s5p_mfc_dev *dev)
- 		case MFCINST_HEAD_PRODUCED:
- 			ret = s5p_mfc_run_init_enc_buffers(ctx);
- 			break;
-+		case MFCINST_NAL_ABORT:
-+			mfc_write(dev, ctx->inst_no, S5P_FIMV_INSTANCE_ID_V6);
-+			s5p_mfc_hw_call(dev->mfc_cmds, cmd_host2risc,
-+					dev, S5P_FIMV_H2R_CMD_NAL_ABORT_V6, NULL);
-+			break;
- 		default:
- 			ret = -EAGAIN;
- 		}
+ #define MSR_AMD64_RMP_BASE		0xc0010132
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 82209cd56ec6..6313679a65b8 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -4573,6 +4573,9 @@ static void sev_es_init_vmcb(struct vcpu_svm *svm)
+ 	/* Clear intercepts on selected MSRs */
+ 	set_msr_interception(vcpu, svm->msrpm, MSR_EFER, 1, 1);
+ 	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_CR_PAT, 1, 1);
++
++	if (sev_savic_active(vcpu->kvm))
++		set_msr_interception(vcpu, svm->msrpm, MSR_AMD64_SECURE_AVIC_CONTROL, 1, 1);
+ }
+ 
+ void sev_init_vmcb(struct vcpu_svm *svm)
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index d4191c0a0133..d00ae58c0b0a 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -110,6 +110,7 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = MSR_EFER,				.always = false },
+ 	{ .index = MSR_IA32_CR_PAT,			.always = false },
+ 	{ .index = MSR_AMD64_SEV_ES_GHCB,		.always = true  },
++	{ .index = MSR_AMD64_SECURE_AVIC_CONTROL,	.always = false },
+ 	{ .index = MSR_TSC_AUX,				.always = false },
+ 	{ .index = X2APIC_MSR(APIC_ID),			.always = false },
+ 	{ .index = X2APIC_MSR(APIC_LVR),		.always = false },
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 7cde221e477e..e855f101e60f 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned long pa)
+ #define	IOPM_SIZE PAGE_SIZE * 3
+ #define	MSRPM_SIZE PAGE_SIZE * 2
+ 
+-#define MAX_DIRECT_ACCESS_MSRS	48
++#define MAX_DIRECT_ACCESS_MSRS	49
+ #define MSRPM_OFFSETS	32
+ extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
+ extern bool npt_enabled;
 -- 
-2.17.1
+2.34.1
 
 
