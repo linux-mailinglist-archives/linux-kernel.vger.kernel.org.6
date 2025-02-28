@@ -1,228 +1,224 @@
-Return-Path: <linux-kernel+bounces-537941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BAEA492BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:02:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93D8A492B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECFA01887DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA23A3B85D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B181DFE29;
-	Fri, 28 Feb 2025 07:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="Gqh3G4y2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCE11DF727;
+	Fri, 28 Feb 2025 07:59:35 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0E41DFD9F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09EF1DF260
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729584; cv=none; b=SyBKn5LVqx6FKEpNLvTPQXEnPeP0ZVX0VjPge2fDEyGsLeoSh5MvJsWzSxp+KHBnm88YdrRpSj7L1XCLWOeRgrk6YTN31G0ErdFNVQ8OAg0W3z6fETyYoCAH1PNQo2xMB/a7QPdEIC/8Rq1DDIQwjfBgvBeZKhEXecXI9qNoUck=
+	t=1740729574; cv=none; b=JoSzsbZq3aJ/gqGKPcJzzQFA7XzVFjFDk2i6zyJEWk5/hmqEf3QB6drROCp8c5oKlZGkkck9WcWTVZXSe0lSsh1iBiEmuw98lJaP0vBCMro7dwfe+oIbm+CYSrlP4jZitoBwRMmeA9IhoHuMbeTdOvarqHzcK+U4kbe6BYijlHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729584; c=relaxed/simple;
-	bh=efUQp3xn6WYS8yAIVpG+8nNESAbDYNoZwtefI4rJo8g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=SPWj/X4DVNLVipE5UBOm8QS9DkdKvxvehpJ3fwPjLnagAIXw6uTxp0xYmOT3DOMxiC1A1jl/CKl2YJDEEgrwNWD/3riD0cLm+E0BvN62+H4tkeumCAZ8HundA/WOhyz6KUFaT33g9OWqDQ9nRnhdMPOgVjKsjBmGxgHWveq6KQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=Gqh3G4y2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223594b3c6dso27895045ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:59:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1740729582; x=1741334382; darn=vger.kernel.org;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CnuaMjhFxZ/6ziAA9dAFSZFZKEXkUeKJopwW9aMJd8c=;
-        b=Gqh3G4y2yorBO/wUaz28DqJk6URfzL07YhwzAUL57IgGeCHg6O6DSkNejc9o2yZ7fH
-         flsoO6pzdk3tR/aSXtXLRxfSEXnEHdItVrWOre62JaOKjXmCjTj25BAYYyjsKniEZzGS
-         sNazzvKEdKrXHt1+/oWpILl0SCqG3UR+WL8Gv944EroJBOlO4mOPFnEZc5RhjbIyOlo5
-         9kjqG30zibL60i3DGe7f5ZCgb7wrL8hzTA7gdHN3nS2sQwo8mG/lWFvo9IGTRP53D1aL
-         DKHud9VDFXR6C9hzCivxtuJx9SZrBQJlxY5BE69XolHh6Eyb25tDGgpDOdVNapQFpG3c
-         9Wtw==
+	s=arc-20240116; t=1740729574; c=relaxed/simple;
+	bh=63piQ8ItITadkwFWIcbDth9Z3jrcFZkDqN/LSgCU448=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AjEFhtS9ZJown7nIL0VmaxgR1bdVRPXPOBxRE2/UoZJ31DUGOLKtsrHt8v+WvrScVuaK9Hv0PjcRsi62AqRYLdujAlR7fjwhHa67oZRkoWkj1m3jORP5CRvupRoVcG2CRzURee8K7RdntAKpKgcS3vrV71nm5VlCVTlqGvcmzqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3cf64584097so20917575ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:59:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740729582; x=1741334382;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CnuaMjhFxZ/6ziAA9dAFSZFZKEXkUeKJopwW9aMJd8c=;
-        b=aDtjtILZlgwB7YK/L/Cwzh100AUSf0ZQerCCWGxRIJMvX5RCoWt5t9cErkL2Ygt6ky
-         63JMikNa+2f44agm2RqzkJEaUeX7rw/HpunjVDa4nkHZPckh4QqAOQe+YdoKQyUwcYfY
-         6Rdxa0fTPs9uVLCFgoBJKZqwCbVc4By/QWjFUlWS4da0GvcPWUUAGfj96DS0AsBZn5nM
-         s/UrjvWnNF+4Aav9Za7Lpil+I/R4ld9SDWF2+F+Ebmh3KMEvZR+dz0H+1cKnif90PWlT
-         HimEDe5VfsPPzPrJ4nE9rEwcXfiLDMQGRW9n6IuHlWZkrmbEkElD1z7a2zC3NcynJ37e
-         cNvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnmLA3WsgAGg3ybufqPc4K/a+yFFkDYJJSrqU6VMJgcv7ND1mLqQcUGEcHQ87luWcJEIrJWqup9d/bMSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHLX3RYY3mttPZwlWD+XFH9nCQGonCXi3l9pMXaWtGvZrfR8Xq
-	tsLTkPDQfJqCAK15BF/7rWIs7p2XWI0gMUuZSj1Zrk2Y+sjrzsZhcJD0BrNN90c=
-X-Gm-Gg: ASbGncuxPT4HvvoEi9qHiQ9NlzT7qo3/WcboLKt1BJBQpHLaymKBLAX3bPXbtwgM9UR
-	tw8Kw869Risr2vru/jQFNx9QMiycqmaRAuKfF4wrBdvu8S/2KjVFa4yTypy3nvUM8iEvEywu24W
-	rO58ojfwDvSKl4YoRqenJQmGLcje8+DG+XA8GaXEyAr71TXUStGPLa0zJvQ37MRn6DMxe2YPCfI
-	B6tb1D5xcz7AMX58VNG7dN2xHRCWQiFUGcoDsmTsE7TgDGIWwvjc/SW9OgQxQ9pU3Pj4SXU5b5n
-	lJCoFjJ7aGcouFkEouli6uKCAvNOIw==
-X-Google-Smtp-Source: AGHT+IEHq9KgafAA2Kp/V3wkg5JFswjExpfT3tDMSfV41fmOxWgxIOQNfI70dD7nhe9dRE8LZJt4RQ==
-X-Received: by 2002:a17:902:ce91:b0:223:64bb:f657 with SMTP id d9443c01a7336-2236922352bmr33953935ad.46.1740729582283;
-        Thu, 27 Feb 2025 23:59:42 -0800 (PST)
-Received: from localhost ([157.82.207.107])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2235050f18bsm27632835ad.213.2025.02.27.23.59.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 23:59:41 -0800 (PST)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Fri, 28 Feb 2025 16:58:52 +0900
-Subject: [PATCH net-next v7 6/6] vhost/net: Support
- VIRTIO_NET_F_HASH_REPORT
+        d=1e100.net; s=20230601; t=1740729571; x=1741334371;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=znt0tIz2WSnTQBMcXdT5PxAi7Th8sr34BunIklu59O0=;
+        b=UfQ20RmrA6Qs5jLxuN75T0JGXYkhGlG7YszYT0b7qNQPEM8eTcv26rDXmBudUfd5Gv
+         siyMA/OMsfbUEiiCK7le7DmmnYEIKwScxkxpRyjMl2w2ppTghPs/0OUD1oGOIKB688QH
+         tQakeoqzbcyHM8PhyUe7Q7GC+hjn5h0biC6e+pG749Yb8LdnaIwEFkvjv0d31CWSBKDl
+         n1M4TjFBjMoYXntN3Mzjk6ORxPZznEAJDy++RJCnu/g/13ftVpa+30WLY/2mSRoBbFFZ
+         s3RjJ8kcJzmAasxVXqAMeLB6bishCibCJ9As+8evfyIQeBFx2Jps0WiNGxLBCnSbhh6h
+         h9hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJFaMeMeSCyxFZJlpQaGC2a32cctzzRyLzsi61NFOdF2DhW+FJzSRlgrE77QuLV3tZ1tIK1kMdYyc/he0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB1zqutj2lGJohcSuN3zxy624fU5quGy+zp3wg9ctHYCXQj8ye
+	0P7M/pGheZGPRLpOY8Uyo1bL8V35ge8SIx4VrmH5BOjKlEqkl4ZlLHAy2DPbxXUwn3qOZzmdSve
+	QZ/KwuNlPE89YG4o2mCpdCTTJPn20Z/ig3LLjEemli77lR0/qrccIda0=
+X-Google-Smtp-Source: AGHT+IHBmE5QLfh5Lsm6B58SxhZO33IvQigSPu2IetXosJjOk9yLvoEe+gx89Ksc3ABGNP5NhUe3WT0E2BE+vH5CUKIdVyBbQFFw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-rss-v7-6-844205cbbdd6@daynix.com>
-References: <20250228-rss-v7-0-844205cbbdd6@daynix.com>
-In-Reply-To: <20250228-rss-v7-0-844205cbbdd6@daynix.com>
-To: Jonathan Corbet <corbet@lwn.net>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, kvm@vger.kernel.org, 
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
- Yuri Benditovich <yuri.benditovich@daynix.com>, 
- Andrew Melnychenko <andrew@daynix.com>, 
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
- Lei Yang <leiyang@redhat.com>, Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6e02:214e:b0:3d3:e470:6d5 with SMTP id
+ e9e14a558f8ab-3d3e6e70825mr20950715ab.13.1740729570816; Thu, 27 Feb 2025
+ 23:59:30 -0800 (PST)
+Date: Thu, 27 Feb 2025 23:59:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c16ce2.050a0220.1baf.000e.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in invalidate_inode_pages2_range (3)
+From: syzbot <syzbot+de1434c5355cc909b734@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
-host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
-hash values (i.e., the hash_report member is always set to
-VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
-underlying socket will be reported.
+Hello,
 
-VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
+syzbot found the following issue on:
 
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+HEAD commit:    1e15510b71c9 Merge tag 'net-6.14-rc5' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=164eca97980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8de9cc84d5960254
+dashboard link: https://syzkaller.appspot.com/bug?extid=de1434c5355cc909b734
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d297b8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119af064580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ac4579f25f13/disk-1e15510b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c342a1d6167e/vmlinux-1e15510b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d985a65df547/bzImage-1e15510b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4860c171e0ab/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+de1434c5355cc909b734@syzkaller.appspotmail.com
+
+INFO: task syz-executor337:5843 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc4-syzkaller-00169-g1e15510b71c9 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor337 state:D stack:11416 pid:5843  tgid:5842  ppid:5840   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ io_schedule+0x8d/0x110 kernel/sched/core.c:7690
+ folio_wait_bit_common+0x839/0xee0 mm/filemap.c:1318
+ folio_lock include/linux/pagemap.h:1163 [inline]
+ invalidate_inode_pages2_range+0x48f/0x960 mm/truncate.c:637
+ bch2_write_invalidate_inode_pages_range+0xce/0x120 fs/bcachefs/fs-io-pagecache.c:68
+ bch2_direct_write+0x2ebf/0x3190 fs/bcachefs/fs-io-direct.c:653
+ bch2_write_iter+0x19d/0x2cd0 fs/bcachefs/fs-io-buffered.c:1047
+ iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x11b/0x220 fs/splice.c:1164
+ splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+ do_sendfile+0x564/0x8a0 fs/read_write.c:1363
+ __do_sys_sendfile64 fs/read_write.c:1424 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f49c6338bd9
+RSP: 002b:00007f49c62ef218 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f49c63c66c8 RCX: 00007f49c6338bd9
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000005
+RBP: 00007f49c63c66c0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000800000009 R11: 0000000000000246 R12: 00007f49c6392ae4
+R13: 0031656c69662f2e R14: 0000400000000240 R15: 0000400000000040
+ </TASK>
+INFO: task syz-executor337:5854 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc4-syzkaller-00169-g1e15510b71c9 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor337 state:D stack:19160 pid:5854  tgid:5842  ppid:5840   task_flags:0x440140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ __bch2_two_state_lock+0x229/0x2c0 fs/bcachefs/two_state_shared_lock.c:7
+ bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
+ bch2_readahead+0x9e1/0x1240 fs/bcachefs/fs-io-buffered.c:272
+ read_pages+0x179/0x570 mm/readahead.c:161
+ page_cache_ra_order+0xa36/0xca0 mm/readahead.c:516
+ filemap_get_pages+0x59a/0x1fb0 mm/filemap.c:2580
+ filemap_splice_read+0x68e/0xef0 mm/filemap.c:2971
+ do_splice_read fs/splice.c:985 [inline]
+ splice_direct_to_actor+0x4af/0xc80 fs/splice.c:1089
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+ do_sendfile+0x564/0x8a0 fs/read_write.c:1363
+ __do_sys_sendfile64 fs/read_write.c:1424 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f49c6338bd9
+RSP: 002b:00007f49c62ce218 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f49c63c66d8 RCX: 00007f49c6338bd9
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000006
+RBP: 00007f49c63c66d0 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000e3aa6ea R11: 0000000000000246 R12: 00007f49c6392ae4
+R13: 0031656c69662f2e R14: 0000400000000240 R15: 0000400000000040
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8eb38fa0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8eb38fa0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8eb38fa0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
+2 locks held by getty/5583:
+ #0: ffff88803112f0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor337/5843:
+ #0: ffff88807c384420 (sb_writers#9){.+.+}-{0:0}, at: direct_splice_actor+0x49/0x220 fs/splice.c:1163
+1 lock held by syz-executor337/5854:
+ #0: ffff888077d68a80 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
+ #0: ffff888077d68a80 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_order+0x45d/0xca0 mm/readahead.c:492
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.14.0-rc4-syzkaller-00169-g1e15510b71c9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:399
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
+
+
 ---
- drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 20 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -73,6 +73,7 @@ enum {
- 	VHOST_NET_FEATURES = VHOST_FEATURES |
- 			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
- 			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
-+			 (1ULL << VIRTIO_NET_F_HASH_REPORT) |
- 			 (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
- 			 (1ULL << VIRTIO_F_RING_RESET)
- };
-@@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
- 		.msg_controllen = 0,
- 		.msg_flags = MSG_DONTWAIT,
- 	};
--	struct virtio_net_hdr hdr = {
--		.flags = 0,
--		.gso_type = VIRTIO_NET_HDR_GSO_NONE
-+	struct virtio_net_hdr_v1_hash hdr = {
-+		.hdr = {
-+			.flags = 0,
-+			.gso_type = VIRTIO_NET_HDR_GSO_NONE
-+		}
- 	};
- 	size_t total_len = 0;
- 	int err, mergeable;
-@@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
- 	bool set_num_buffers;
- 	struct socket *sock;
- 	struct iov_iter fixup;
--	__virtio16 num_buffers;
- 	int recv_pkts = 0;
- 
- 	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
-@@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
- 			vhost_discard_vq_desc(vq, headcount);
- 			continue;
- 		}
-+		hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
- 		/* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
- 		if (unlikely(vhost_hlen)) {
--			if (copy_to_iter(&hdr, sizeof(hdr),
--					 &fixup) != sizeof(hdr)) {
-+			if (copy_to_iter(&hdr, vhost_hlen,
-+					 &fixup) != vhost_hlen) {
- 				vq_err(vq, "Unable to write vnet_hdr "
- 				       "at addr %p\n", vq->iov->iov_base);
- 				goto out;
- 			}
--		} else {
-+		} else if (likely(set_num_buffers)) {
- 			/* Header came from socket; we'll need to patch
- 			 * ->num_buffers over if VIRTIO_NET_F_MRG_RXBUF
- 			 */
--			iov_iter_advance(&fixup, sizeof(hdr));
-+			iov_iter_advance(&fixup, offsetof(struct virtio_net_hdr_v1, num_buffers));
-+
-+			if (copy_to_iter(&hdr.hdr.num_buffers, sizeof(hdr.hdr.num_buffers),
-+					 &fixup) != sizeof(hdr.hdr.num_buffers)) {
-+				vq_err(vq, "Failed num_buffers write");
-+				vhost_discard_vq_desc(vq, headcount);
-+				goto out;
-+			}
- 		}
- 		/* TODO: Should check and handle checksum. */
- 
--		num_buffers = cpu_to_vhost16(vq, headcount);
--		if (likely(set_num_buffers) &&
--		    copy_to_iter(&num_buffers, sizeof num_buffers,
--				 &fixup) != sizeof num_buffers) {
--			vq_err(vq, "Failed num_buffers write");
--			vhost_discard_vq_desc(vq, headcount);
--			goto out;
--		}
- 		nvq->done_idx += headcount;
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
-@@ -1607,10 +1609,13 @@ static int vhost_net_set_features(struct vhost_net *n, u64 features)
- 	size_t vhost_hlen, sock_hlen, hdr_len;
- 	int i;
- 
--	hdr_len = (features & ((1ULL << VIRTIO_NET_F_MRG_RXBUF) |
--			       (1ULL << VIRTIO_F_VERSION_1))) ?
--			sizeof(struct virtio_net_hdr_mrg_rxbuf) :
--			sizeof(struct virtio_net_hdr);
-+	if (features & (1ULL << VIRTIO_NET_F_HASH_REPORT))
-+		hdr_len = sizeof(struct virtio_net_hdr_v1_hash);
-+	else if (features & ((1ULL << VIRTIO_NET_F_MRG_RXBUF) |
-+			     (1ULL << VIRTIO_F_VERSION_1)))
-+		hdr_len = sizeof(struct virtio_net_hdr_mrg_rxbuf);
-+	else
-+		hdr_len = sizeof(struct virtio_net_hdr);
- 	if (features & (1 << VHOST_NET_F_VIRTIO_NET_HDR)) {
- 		/* vhost provides vnet_hdr */
- 		vhost_hlen = hdr_len;
-@@ -1691,6 +1696,10 @@ static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
- 			return -EFAULT;
- 		if (features & ~VHOST_NET_FEATURES)
- 			return -EOPNOTSUPP;
-+		if ((features & ((1ULL << VIRTIO_F_VERSION_1) |
-+				 (1ULL << VIRTIO_NET_F_HASH_REPORT))) ==
-+		    (1ULL << VIRTIO_NET_F_HASH_REPORT))
-+			return -EINVAL;
- 		return vhost_net_set_features(n, features);
- 	case VHOST_GET_BACKEND_FEATURES:
- 		features = VHOST_NET_BACKEND_FEATURES;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.48.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
