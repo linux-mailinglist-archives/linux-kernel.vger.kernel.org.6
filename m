@@ -1,289 +1,318 @@
-Return-Path: <linux-kernel+bounces-538731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5938A49C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F157A49C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A8C174FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC301885BA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C79270EA7;
-	Fri, 28 Feb 2025 14:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653D281372;
+	Fri, 28 Feb 2025 14:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="XFpL/p47"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010030.outbound.protection.outlook.com [52.101.229.30])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QOM92Ljj"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08150183CC3;
-	Fri, 28 Feb 2025 14:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754540; cv=fail; b=LNCgnRiC+0E9Cww4B/75glkHUwM5NqsjKuO/mL4cV64MnPb/Nst9FW1+jsELx7Uxd/uhGLUKgtL1DyOUKdh2ODxHLMB5VvS8jbzaIdXS608RqCFUgFZ4BJ6/ERkRQHZeYub6sjNI5cxTFzI2LGMIcg9tRoICUqhU/JboNmJyKFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754540; c=relaxed/simple;
-	bh=raq+N8sPLSF7X5sUw/im55xYhn/4U+/uwEE+y4uCDkE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uSFJOyAz/rnYRe0LsAiZpHMLtIq3oyITbYTYgrzOY9S/mD7USWAb61ra6aVfxEQqmOoG6ANPiYj7DJzpPhOwc3j5QviVQtAHFHtdf00ooe0W/Wr4cXeMPWa+1bFWi33X8Tszre6EAOeh65F2/Vk244ZY+pESPp3hwBeadeb+NA0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=XFpL/p47; arc=fail smtp.client-ip=52.101.229.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g0EaeTSVdWHZb7K20kogzfOJ0RMwPPTLOuWDiBgmQH2JPkBa3VrRUpbLuuWQq/UB4QOZ4UZp916WPZFGIXTKgWp3oM38hZUusmFG7HBOckXFAhAhO/hW4PP6h53xCXqgr7G20/sCOapruU61pQnRbhclUMjp9d1p/VHCC3UbcJFvPyj7dVU6+g+vpvN8N7/T8MYoInZ3eymHLTrC8sUxtdD3yHTsSX38Z2o4K1kwDmdTvYKVy/GKyK7acxAII8t/VU5h0dICoyg3ZS5X1MCY10lDr4QGLSTzJEwl93RJMNdy/1JIYHsMiFWya0S8L+wWmrxExuFep5B2R8H06WHQZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l0UQbkyIYfXz+lX8d/NV2K1Ro8W58X5VPfSjzeF0r1w=;
- b=YrfaxlBg9ZAwUof+DhVDbhYN+VdPe1rLl+hr7l+2Qnhdg/+Yjh5OIOElVpTXE9hglpzXidxwQgi4jsKqRNJy+egeWabQcO1dTgdHmOMNrHert0QMOUalD+BTCe++gp8RTn45i8aQxvSZQPwncUdjKntYAYvTDdlj1cFvoQ32Z/E1ZGjNuGYuJ/SFeuVoD9WgE9sLy+eWW40iOfvqcRbe/Pwqo8B4eVtZtBL7x7JPqaQTXQIdP6NxusHjuT/xbLCT59+uyTe+FUns7jVDg5Z1c1EC8P/L3jkwdaUwHulJZc+zQRaRMkJEUzYWrLLePO9HuYoZA70puhDADLqQXSv1Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0UQbkyIYfXz+lX8d/NV2K1Ro8W58X5VPfSjzeF0r1w=;
- b=XFpL/p47vaJJf1HUQ5TLobiYOUfPP06Hqk9gmbPAfERclByV8m2nO+vhyQFpePFRxiFpCa/fhCWT5sG1GAkuSFuGvmasLEowAFZNYCnnf54Vh4djPNSL74cR1qzmT2822GpYigMIqyTykphbdQqzIRL0huRLdFUwRp9347ssBGw=
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
- by OSCPR01MB13240.jpnprd01.prod.outlook.com (2603:1096:604:34f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
- 2025 14:55:34 +0000
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430%7]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
- 14:55:34 +0000
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
- Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
- family of SoCs
-Thread-Topic: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
- family of SoCs
-Thread-Index: AQHbg6hTr6k5RmdmC0qfs3vIpDif/7NWbDgAgAUL6qCAARRzAIAAS6Iw
-Date: Fri, 28 Feb 2025 14:55:34 +0000
-Message-ID:
- <TYCPR01MB12093D1484AD0E755B76FAE35C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
- <20250220150110.738619-4-fabrizio.castro.jz@renesas.com>
- <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
- <TYCPR01MB12093A1002C4F7D7B989D10C4C2CD2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
- <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|OSCPR01MB13240:EE_
-x-ms-office365-filtering-correlation-id: e7d3d658-d992-43bd-a56a-08dd5807f48b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?VwdF6RpVVRNGStkMD3wm790CcU2EERXQrF5Brj8MbEOyNBoikwJ6SPIF5wNQ?=
- =?us-ascii?Q?I1sRwNGozfB7zBMEmVykQKFzh+/ZSsmqQkoJevktqtNO4AgDTO0ilq04tvyi?=
- =?us-ascii?Q?oPvCUnEA7SS0OS07kJuYfwxYrYt94ic95lod3B4RaZDFxQqu/9quvyS63Pho?=
- =?us-ascii?Q?entIwxO3vCvfJcwKLG0wbJ7xcLLENGpfv7WAzF0kC52pKuRkSbTrzifvPBmf?=
- =?us-ascii?Q?5OqoebbkEYneD5TpfHF89pb6x1UX/DFOgwwKfFg4caRdldPG2UmXRgjiDaY2?=
- =?us-ascii?Q?qr2SxdiGw3fYkNedaKT0PZy17Lg0CaDucvrDDoGrDS1hBub0vDw+AhrgF6oa?=
- =?us-ascii?Q?3D+yAGDU5wHgIc74MFMPH+PZUJQ4+rIQnDGXcfS6xhokQ4F/P53FMzf2Zc5w?=
- =?us-ascii?Q?QxalScnrFGFdO3D82DbmtpXnrKvaZ81y96ckDQ7AVcI65ahTeIpU1AEitEea?=
- =?us-ascii?Q?nMRKNZWjPbAlPBRDavUVjjDP1RoBQ7ckAs1E6rfJ5YrSWiEU6kvQ0sofnx/m?=
- =?us-ascii?Q?ffdgXjYvUHx5ICKVVd5d6DAliJREb+r3z9YC57BdjQHlLhbVASW25lVgFQOo?=
- =?us-ascii?Q?HRoBKQrJGkvs9tXapN158y9WavsUzBVr09x6Go+0wCFw2Gl/djPQHhISmN26?=
- =?us-ascii?Q?yvXoKQBaUMOWx0ZgRN1jVapPk1azxqMdLyUY3/CjVCZvSyk7mk0y/N1hnkKY?=
- =?us-ascii?Q?Y3NExP6jaRqJUgjXp4aBK0MqOz7awP6pQJwb0OCI3mg/S7yAIJ5SfZANdnhl?=
- =?us-ascii?Q?CrGr/IFiUppeibj/7v5g9afP7TktpV2THoVyp9AG9nrb9cGGccFsqtH+jVJm?=
- =?us-ascii?Q?EcBuK9INFgIc73glEP4gEj8EAq6Yo1ofCoMEvSC+ZQtA41DptDnNHM0/P9Rz?=
- =?us-ascii?Q?4K1hJ5O35dQLYXVHJDx+WOZmCuYBV2KqtnKHPx6gAhYbWFmpQik61xtU6szQ?=
- =?us-ascii?Q?RFPt7ryJ08F1LvPDMtzZH6Je0Ka1qGGa+SIjJt/1hPvXx5EX6gUDHyF4GjbD?=
- =?us-ascii?Q?vtkh0IcRS2G+IoAHEVw/vkS5jaCcWcwPuiONE8LGHW9gDo8zSDm8SLneg+zG?=
- =?us-ascii?Q?uGQ9d2vyFZWV8prBbZlrtR1i6NWP+CR02hpcVEJvhfGHYHx4IJjkEPO1wi+H?=
- =?us-ascii?Q?3bYJGgEsF166e91lE4v8And3yU+Bf3A85uQsBcWojr5txjKJyC5tYNSx/+T2?=
- =?us-ascii?Q?I81T78UQRIHXM0DzxsofsFUKwfGJeqVdRcghiahNS8Ur0CDphCxSWwYc1X9g?=
- =?us-ascii?Q?ukSmCuU7cCrZ6OnwUVXUF9FdwaL+Z3StaBIslw95ix2bDzAd0golMu4slyG7?=
- =?us-ascii?Q?b5qifApt7cmRoF8Rv5BJw+NM4ApSxYlaxGFEHG2w/Z9JsSVO7OvOoY6xj7cS?=
- =?us-ascii?Q?5E0fjnlA8ssj8XCXp4aV139pU27F9UC5I2/SSh7oRMFC3Lmp9JDBcJqEbHMW?=
- =?us-ascii?Q?UrpwghMXC7gKYVXOkh9bLpfJXLpWu81q?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?W19YJz0OSZhzvNVQdtORZAqm73D527Mb+YiPzGQLGCGQk1IXcqMx33XLeiwE?=
- =?us-ascii?Q?umaGPQbM4jqpnfSjLjkCWx21C/7kQ5fzpvgMMbEfIUcW0fZR4aVTpkmMxpqN?=
- =?us-ascii?Q?mBcIuDVLq/yP+41Cu9zqcCrgphjt1OMNfao+oOLP4oZWNZvPougJ2j9DGVGX?=
- =?us-ascii?Q?FKJFlPrnZZYOez81IaPwaScAHTyy1h9fdrfFUrUc8QSHeZz1K3CWPjH2HNDy?=
- =?us-ascii?Q?efkvnonin+ruQDW/OWwWxsJ4LwAnJSKRlz0UyCoK3DsI/4cn1OUyqSav4dAm?=
- =?us-ascii?Q?E+IsuOFPhncRD+fmDaPT6k7E5p7skOpIn6iZaJGaQOSo22QRhZnmtHQ5OmdC?=
- =?us-ascii?Q?I1hPeOvHtg5kRCzVtekAWuXvgUvaVi/HQDawz+qxMLnZp9Qnihee66HSIcae?=
- =?us-ascii?Q?0fEf17UlhCZh4IERjsqOja3RlaLj+HlBIj0XeVfBsevzj1LbW5DZNOto2PNU?=
- =?us-ascii?Q?OZ/D36xh490pqoQFcD6AeUjIVtQ4QMRPXkDXM6YpiLuzHqaArIHjwRGcgZhb?=
- =?us-ascii?Q?f34gfNhkQ0zUgI0G8Ts1pU6gxKSrk9YZ3y5vvxsiKJaVQoN6Txe79TrGq9IW?=
- =?us-ascii?Q?rJ9XM8iv62aR6G24pQ2EhPErDTZxHqusb3iEAbPzQ6+emqcSdvFU8zqMmmVc?=
- =?us-ascii?Q?BaHIzDnBGNS0bwMib4zaKaY03Q6q3P1a1of6lKWsm5yoh2tbKTwat1ODzqRl?=
- =?us-ascii?Q?pxolHLW7SZTHI1NlLPfJT/0YewD56JfaT0v3XC5S3dZJ/rG2bW7B45kqWavo?=
- =?us-ascii?Q?VjPGicVvuFiWSXJNbPOjuy3Ej6RjLJK+du25s2avhUaiaS2Z4H26CeM2HD0/?=
- =?us-ascii?Q?FFGrRePBSTqYKvKlXZIeF61xOfzT01UWdi2H61q2c9BunLc7VXv4ilMHBuw9?=
- =?us-ascii?Q?Lyssm+Ps0Rucbkp7ylCJMxDtGsIAdrWAOttXHXbOAj/yGDiERv+6J0Kw+lTj?=
- =?us-ascii?Q?HrtvyhvAkKqD5lQv3N1slDAwtXpeqxnIgy4TGb1FsPNwU9xbrP4DI0H2lZOl?=
- =?us-ascii?Q?hNXzWAfmH4gGV+owTRAawaITtnUJSWgYJYNog3eld+mZHyOovtt7hU96LYOO?=
- =?us-ascii?Q?1iNts3dJpO6sBkmLzMpktJh/7a5hsPKaJLo9YjtJge8hnIo/k2tnhaamztgd?=
- =?us-ascii?Q?LEuAwCgETekAJLzI1+r3NlpsWqtVL6llTP5s2BNT2HAN4WuquKDrp3/1U+lP?=
- =?us-ascii?Q?zKd0NMt1jd0nn63foIbHSJnR0L1+GtY+Kd+BrUcVyngCvtP1Dt5BDoGodD6e?=
- =?us-ascii?Q?r9iIbb69v59FdVbTP0qNWBb0MqCC0kOPNujFJlN1LbHGXxqkGdftUiDFgmZ9?=
- =?us-ascii?Q?D9R3RMNv02fcGPfqGQK2Ou26hrMMokFJn9GxaTeYu7As2c7+k4miQJDyxroi?=
- =?us-ascii?Q?iw7tU2Y5pnGiagRkm95q20WVW7FPtIyIVme6n/3gBVL8SGWysKluulVUtKhD?=
- =?us-ascii?Q?0aqhAALmn687zhvsGrDBe1QZUMqIoQQqZeUVpWfR0LWfcv1I9GUaLGRVs/ix?=
- =?us-ascii?Q?/xfq/Hq5JHNuaHPwNeaNflK08zxjAeqYcoxorxOlYeIjKFmXmgp1Ngt0Bx87?=
- =?us-ascii?Q?2vHDjt2cxOUr6Ki5eIOCZZ0jWT4ZMQ6cnTyBplyo2DKyuIin0QWt48z3Vf3X?=
- =?us-ascii?Q?FA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923A427FE85;
+	Fri, 28 Feb 2025 14:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740754557; cv=none; b=nnVycqzSHRD5QhFT3iD4imFLDMNaDub0FPL6l5sFtFDA7Nn8UsMk/JYKW49GM2mkN+4OD7N03Vp4Zw5Nji1SoHYVKZM5YT3fZMDePaB4qbmyatx+auzZf01AE/BbBSPdCv9XPLR196vRrPE+v7E/0Qm6CRzO8j+1m9pCcFBE6aM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740754557; c=relaxed/simple;
+	bh=HaGWPiQLi8g2oCBDshsuN4+48r5L5ts5ve2sX78DEr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tNghlNBSb2YJby+S5W9xPmQAsuMY5qQTxEN8tdWuwIFCFolsKlo5Iw0uoXa02FmR6vaGhL8sfEREQkazpwtjqIz8D/8C16iCLUplRZrKBQvTl0KDt3NqD8FMnQUMi2gELElo/xh3le4eSyxhs/pucgTsC43lqAWl3xFMxgmJhC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QOM92Ljj; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F1F22443FA;
+	Fri, 28 Feb 2025 14:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740754554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kxC2ZGFkbRAqIZMBmo0qAZXeuOHlxHKdlpDBQ0LMTAE=;
+	b=QOM92LjjM62/ZcRAraYYD2ngWtiUKVHgE1OMbG80GwNtiAXb1HqJFBfOfj4UNVFQZJ8D+d
+	f6RRnf/WBcBZiaDHTA6YUbXJR7ywmMMKaG1CN1EaVljML6fmDebEHW8Wjosbbr2Wz5JIjJ
+	oxTeZ+GU4dyKXPHu1Xr5hHgSjzD0mzKX9KMIX2rwJ7/EuvmhoCFuKr57UioYcBwBSfmhTU
+	u8c3Na68MuSBAbNpiFkhE54lgCoEeZPdAgocwLuNpfNusOSeUYcrvExTL0UEDB9OcTtvlU
+	CF3pK+0LaFBwmeyatv+B0RgwbAd4jtdow3NeFCWR5bRXYgQ8j86JDm/lZAqHEg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v3 10/13] net: phy: drop phy_settings and the associated lookup helpers
+Date: Fri, 28 Feb 2025 15:55:35 +0100
+Message-ID: <20250228145540.2209551-11-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
+References: <20250228145540.2209551-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7d3d658-d992-43bd-a56a-08dd5807f48b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 14:55:34.6710
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8d9vUTBzyCvm2qPfuoxgpbqwGbZyPAwvEjD7qieYqUZCk4/Me3eII9EykDM40iLjvZ/gW3SX5kz8XlvuFhs6HccI/F6XRK/BmiW/h5iAK00=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13240
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeilecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpeejnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgri
+ igvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Geert,
+The phy_settings array is no longer relevant as it has now been replaced
+by the link_caps array and associated phy_caps helpers.
 
-Thanks for your feedback!
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/phy/phy-core.c | 184 -------------------------------------
+ include/linux/phy.h        |  13 ---
+ 2 files changed, 197 deletions(-)
 
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
-> Sent: 28 February 2025 10:17
-> Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)=
- family of SoCs
->=20
-> Hi Fabrizio,
->=20
-> On Thu, 27 Feb 2025 at 19:16, Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com> wrote:
-> > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > Sent: 24 February 2025 12:44
-> > > Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2=
-H(P) family of SoCs
-> > >
-> > > On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
-> > > <fabrizio.castro.jz@renesas.com> wrote:
-> > > > Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
-> > > > The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
-> > > > Renesas RZ/G2L family of SoCs, but there are some differences:
-> > > > * It only uses one register area
-> > > > * It only uses one clock
-> > > > * It only uses one reset
-> > > > * Instead of using MID/IRD it uses REQ NO/ACK NO
-> > > > * It is connected to the Interrupt Control Unit (ICU)
-> > > >
-> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > >
-> > > > v1->v2:
-> > > > * Removed RZ/V2H DMAC example.
-> > > > * Improved the readability of the `if` statement.
-> > >
-> > > Thanks for the update!
-> > >
-> > > > --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> > > > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> > > > @@ -61,14 +66,22 @@ properties:
-> > > >    '#dma-cells':
-> > > >      const: 1
-> > > >      description:
-> > > > -      The cell specifies the encoded MID/RID values of the DMAC po=
-rt
-> > > > -      connected to the DMA client and the slave channel configurat=
-ion
-> > > > -      parameters.
-> > > > +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S =
-SoCs, the cell
-> > > > +      specifies the encoded MID/RID values of the DMAC port connec=
-ted to the
-> > > > +      DMA client and the slave channel configuration parameters.
-> > > >        bits[0:9] - Specifies MID/RID value
-> > > >        bit[10] - Specifies DMA request high enable (HIEN)
-> > > >        bit[11] - Specifies DMA request detection type (LVL)
-> > > >        bits[12:14] - Specifies DMAACK output mode (AM)
-> > > >        bit[15] - Specifies Transfer Mode (TM)
-> > > > +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK=
- NO, and the
-> > > > +      slave channel configuration parameters.
-> > > > +      bits[0:9] - Specifies the REQ NO
-> > >
-> > > So REQ_NO is the new name for MID/RID.
->=20
-> These are documented in Table 4.7-22 ("DMA Transfer Request Detection
-> Operation Setting Table").
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 6cb8f857a7f1..e7d0137abd48 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -156,190 +156,6 @@ int phy_interface_num_ports(phy_interface_t interface)
+ }
+ EXPORT_SYMBOL_GPL(phy_interface_num_ports);
+ 
+-/* A mapping of all SUPPORTED settings to speed/duplex.  This table
+- * must be grouped by speed and sorted in descending match priority
+- * - iow, descending speed.
+- */
+-
+-#define PHY_SETTING(s, d, b) { .speed = SPEED_ ## s, .duplex = DUPLEX_ ## d, \
+-			       .bit = ETHTOOL_LINK_MODE_ ## b ## _BIT}
+-
+-static const struct phy_setting settings[] = {
+-	/* 800G */
+-	PHY_SETTING( 800000, FULL, 800000baseCR8_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseKR8_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseDR8_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseDR8_2_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseSR8_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseVR8_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseCR4_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseKR4_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseDR4_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseDR4_2_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseSR4_Full		),
+-	PHY_SETTING( 800000, FULL, 800000baseVR4_Full		),
+-	/* 400G */
+-	PHY_SETTING( 400000, FULL, 400000baseCR8_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseKR8_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseLR8_ER8_FR8_Full	),
+-	PHY_SETTING( 400000, FULL, 400000baseDR8_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseSR8_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseCR4_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseKR4_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseLR4_ER4_FR4_Full	),
+-	PHY_SETTING( 400000, FULL, 400000baseDR4_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseSR4_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseCR2_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseKR2_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseDR2_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseDR2_2_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseSR2_Full		),
+-	PHY_SETTING( 400000, FULL, 400000baseVR2_Full		),
+-	/* 200G */
+-	PHY_SETTING( 200000, FULL, 200000baseCR4_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseKR4_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseLR4_ER4_FR4_Full	),
+-	PHY_SETTING( 200000, FULL, 200000baseDR4_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseSR4_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseCR2_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseKR2_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseLR2_ER2_FR2_Full	),
+-	PHY_SETTING( 200000, FULL, 200000baseDR2_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseSR2_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseCR_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseKR_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseDR_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseDR_2_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseSR_Full		),
+-	PHY_SETTING( 200000, FULL, 200000baseVR_Full		),
+-	/* 100G */
+-	PHY_SETTING( 100000, FULL, 100000baseCR4_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseKR4_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseLR4_ER4_Full	),
+-	PHY_SETTING( 100000, FULL, 100000baseSR4_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseCR2_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseKR2_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseLR2_ER2_FR2_Full	),
+-	PHY_SETTING( 100000, FULL, 100000baseDR2_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseSR2_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseCR_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseKR_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseLR_ER_FR_Full	),
+-	PHY_SETTING( 100000, FULL, 100000baseDR_Full		),
+-	PHY_SETTING( 100000, FULL, 100000baseSR_Full		),
+-	/* 56G */
+-	PHY_SETTING(  56000, FULL,  56000baseCR4_Full	  	),
+-	PHY_SETTING(  56000, FULL,  56000baseKR4_Full	  	),
+-	PHY_SETTING(  56000, FULL,  56000baseLR4_Full	  	),
+-	PHY_SETTING(  56000, FULL,  56000baseSR4_Full	  	),
+-	/* 50G */
+-	PHY_SETTING(  50000, FULL,  50000baseCR2_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseKR2_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseSR2_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseCR_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseKR_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseLR_ER_FR_Full	),
+-	PHY_SETTING(  50000, FULL,  50000baseDR_Full		),
+-	PHY_SETTING(  50000, FULL,  50000baseSR_Full		),
+-	/* 40G */
+-	PHY_SETTING(  40000, FULL,  40000baseCR4_Full		),
+-	PHY_SETTING(  40000, FULL,  40000baseKR4_Full		),
+-	PHY_SETTING(  40000, FULL,  40000baseLR4_Full		),
+-	PHY_SETTING(  40000, FULL,  40000baseSR4_Full		),
+-	/* 25G */
+-	PHY_SETTING(  25000, FULL,  25000baseCR_Full		),
+-	PHY_SETTING(  25000, FULL,  25000baseKR_Full		),
+-	PHY_SETTING(  25000, FULL,  25000baseSR_Full		),
+-	/* 20G */
+-	PHY_SETTING(  20000, FULL,  20000baseKR2_Full		),
+-	PHY_SETTING(  20000, FULL,  20000baseMLD2_Full		),
+-	/* 10G */
+-	PHY_SETTING(  10000, FULL,  10000baseCR_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseER_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseKR_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseKX4_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseLR_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseLRM_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseR_FEC		),
+-	PHY_SETTING(  10000, FULL,  10000baseSR_Full		),
+-	PHY_SETTING(  10000, FULL,  10000baseT_Full		),
+-	/* 5G */
+-	PHY_SETTING(   5000, FULL,   5000baseT_Full		),
+-	/* 2.5G */
+-	PHY_SETTING(   2500, FULL,   2500baseT_Full		),
+-	PHY_SETTING(   2500, FULL,   2500baseX_Full		),
+-	/* 1G */
+-	PHY_SETTING(   1000, FULL,   1000baseT_Full		),
+-	PHY_SETTING(   1000, HALF,   1000baseT_Half		),
+-	PHY_SETTING(   1000, FULL,   1000baseT1_Full		),
+-	PHY_SETTING(   1000, FULL,   1000baseX_Full		),
+-	PHY_SETTING(   1000, FULL,   1000baseKX_Full		),
+-	/* 100M */
+-	PHY_SETTING(    100, FULL,    100baseT_Full		),
+-	PHY_SETTING(    100, FULL,    100baseT1_Full		),
+-	PHY_SETTING(    100, HALF,    100baseT_Half		),
+-	PHY_SETTING(    100, HALF,    100baseFX_Half		),
+-	PHY_SETTING(    100, FULL,    100baseFX_Full		),
+-	/* 10M */
+-	PHY_SETTING(     10, FULL,     10baseT_Full		),
+-	PHY_SETTING(     10, HALF,     10baseT_Half		),
+-	PHY_SETTING(     10, FULL,     10baseT1L_Full		),
+-	PHY_SETTING(     10, FULL,     10baseT1S_Full		),
+-	PHY_SETTING(     10, HALF,     10baseT1S_Half		),
+-	PHY_SETTING(     10, HALF,     10baseT1S_P2MP_Half	),
+-	PHY_SETTING(     10, FULL,     10baseT1BRR_Full		),
+-};
+-#undef PHY_SETTING
+-
+-/**
+- * phy_lookup_setting - lookup a PHY setting
+- * @speed: speed to match
+- * @duplex: duplex to match
+- * @mask: allowed link modes
+- * @exact: an exact match is required
+- *
+- * Search the settings array for a setting that matches the speed and
+- * duplex, and which is supported.
+- *
+- * If @exact is unset, either an exact match or %NULL for no match will
+- * be returned.
+- *
+- * If @exact is set, an exact match, the fastest supported setting at
+- * or below the specified speed, the slowest supported setting, or if
+- * they all fail, %NULL will be returned.
+- */
+-const struct phy_setting *
+-phy_lookup_setting(int speed, int duplex, const unsigned long *mask, bool exact)
+-{
+-	const struct phy_setting *p, *match = NULL, *last = NULL;
+-	int i;
+-
+-	for (i = 0, p = settings; i < ARRAY_SIZE(settings); i++, p++) {
+-		if (p->bit < __ETHTOOL_LINK_MODE_MASK_NBITS &&
+-		    test_bit(p->bit, mask)) {
+-			last = p;
+-			if (p->speed == speed && p->duplex == duplex) {
+-				/* Exact match for speed and duplex */
+-				match = p;
+-				break;
+-			} else if (!exact) {
+-				if (!match && p->speed <= speed)
+-					/* Candidate */
+-					match = p;
+-
+-				if (p->speed < speed)
+-					break;
+-			}
+-		}
+-	}
+-
+-	if (!match && !exact)
+-		match = last;
+-
+-	return match;
+-}
+-EXPORT_SYMBOL_GPL(phy_lookup_setting);
+-
+ static void __set_phy_supported(struct phy_device *phydev, u32 max_speed)
+ {
+ 	phy_caps_linkmode_max_speed(max_speed, phydev->supported);
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 5749aad96862..4a59aa7254f4 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1310,19 +1310,6 @@ const char *phy_rate_matching_to_str(int rate_matching);
+ 
+ int phy_interface_num_ports(phy_interface_t interface);
+ 
+-/* A structure for mapping a particular speed and duplex
+- * combination to a particular SUPPORTED and ADVERTISED value
+- */
+-struct phy_setting {
+-	u32 speed;
+-	u8 duplex;
+-	u8 bit;
+-};
+-
+-const struct phy_setting *
+-phy_lookup_setting(int speed, int duplex, const unsigned long *mask,
+-		   bool exact);
+-
+ /**
+  * phy_is_started - Convenience function to check whether PHY is started
+  * @phydev: The phy_device struct
+-- 
+2.48.1
 
-REQ_NO is documented in both Table 4.7-22 and in Table 4.6-23 (column `DMAC=
- No.`).
-
->=20
-> > It's certainly similar. I would say that REQ_NO + ACK_NO is the new MID=
-_RID.
-> >
-> > > > +      bits[10:16] - Specifies the ACK NO
-> > >
-> > > This is a new field.
-> > > However, it is not clear to me which value to specify here, and if th=
-is
-> > > is a hardware property at all, and thus needs to be specified in DT?
-> >
-> > It is a HW property. The value to set can be found in Table 4.6-27 from
-> > the HW User Manual, column "Ack No".
->=20
-> Thanks, but that table only shows values for SPDIF, SCU, SSIU and PFC
-> (for external DMA requests).  The most familiar DMA clients listed
-> in Table 4.7-22 are missing.  E.g. RSPI0 uses REQ_NO 0x8C/0x8D, but
-> which values does it need for ACK_NO?
-
-Only a handful of devices need it. For every other device (and use case) on=
-ly the
-default value is needed.
-
-But I'll take this out for now, until we get to support a device that actua=
-lly
-needs ACK NO.
-
-Thanks!
-
-Fab
-
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->=20
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
 
