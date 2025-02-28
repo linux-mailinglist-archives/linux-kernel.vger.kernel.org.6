@@ -1,191 +1,150 @@
-Return-Path: <linux-kernel+bounces-537944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB56A492C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:03:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A28A4927F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD3816F687
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:03:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 158E17A4C99
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CC71C8636;
-	Fri, 28 Feb 2025 08:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9191A1C75E2;
+	Fri, 28 Feb 2025 07:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=freeshell.de header.i=@freeshell.de header.b="wqUWew5O"
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pSqybkae"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC7E10E5;
-	Fri, 28 Feb 2025 08:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07602CCC0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740729822; cv=none; b=ewJLBFykgRESBTapMF0PMaUdMxZue6zYkuvtEfW3gz7MfMJKxkJ/Zbwt6tKTSJdFMkEjiJ4SvTeR0k2WmYsdzFa5RtxNqgmI1aEC3VuT7t03Ui0nV/YyLRmDqKkRzH0xRab5rPTS2RUGsze+yG/cEVcQz58rnDcg9SPxYbXe33k=
+	t=1740729323; cv=none; b=a1cFN8ae97PyGARPlV41jVt3zu+wu4q4sBr3Ur1wWOzNPF9id2RgwuIFgzHUCPMDHeDu5QONQBUdMSIolTrfe9k/6aeM9rzf/dwyTxwx1UBb7aKxYwjwbw3zgH8ZzIhFcIQQvXToFEZzOvb09RqBA34CNsJ/tyS4ljpsijdFpeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740729822; c=relaxed/simple;
-	bh=+DQElHBvDKNGBcoSETty3Z7XBYvwn9DMo8M0nqGqAyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1xsfCiwVQsUySpt/zbawAraMG8RwcRqRkwAFUi5I63N7mdYjWB8bINXW04KD6BHfWDvSwm8FVydRoWC1FiLlAjJ10A3eF8kStA80diTiUxerYqlNFNGuzRoIl7XgZVHJypR7YTpNVr0xt4uR1lk2nsyZkCjb0m88Z3iveUMZuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; dkim=pass (1024-bit key) header.d=freeshell.de header.i=@freeshell.de header.b=wqUWew5O; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.35] (unknown [98.97.25.197])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 4DA9AB4C0592;
-	Fri, 28 Feb 2025 08:53:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freeshell.de;
-	s=mail; t=1740729229;
-	bh=AXDPsPyWvICXScXCh1eSoBQkEfWfZVi/WOVQ1cYJJA0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wqUWew5OisMsHSP6/g5SkINKU6ork8UBayx98V8axC131N69Yk1QeqoyWXNjeEgvt
-	 40lVl7yRhMKKK+PFm+KKucXVZdg4CeEXBznZCvkjMMDMJ3jlEP67YeFQoIj2eu4swq
-	 2+I0mynKl/NAZKTr/6jgGYlyflKKGWXVAM34zzwU=
-Message-ID: <8b0f7b4f-e58a-45ae-931f-2b2853918ab4@freeshell.de>
-Date: Thu, 27 Feb 2025 23:53:45 -0800
+	s=arc-20240116; t=1740729323; c=relaxed/simple;
+	bh=6PdmsSO1BI5Z6V3wr7coLkzxxGzPEdCgMUotoEVoD4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFPdwwg0edT5WPON+BYyhKOHuee9jEuY9RuLUZvwtGUSxNjAGb/ZTrZh5fF8Y78NgyDKJqmUbHFvPLBRjMXOgvcvvS0PaIyN9d/tDpFlbDK61JQnhoOYkjO+iZV/h75SKSHtfH8IABvFEjOCIX4hq4LbBGP4imsNZHuNWxHSh2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pSqybkae; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 28 Feb 2025 13:25:11 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740729318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n9di/5YKWkXMpmrcJBjiPkEMKyrNmHmU26fwjOOihFU=;
+	b=pSqybkaemOpma83fuRyyJDdNkqxh30++IBpd1kyepHh+SfnS8R4710Sb76xYHg3drNQw1z
+	kxe6dcM4GqHsLE/9CUHBo6GT2Ct1j2PAb/96/opL2F0oeHELOoRUlycxogw7/HWNBJn4dm
+	HVlH1ocgAYwG7/shTYzXO6fHPCSyza0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, r-donadkar@ti.com, 
+	u-kumar1@ti.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+Message-ID: <24y6ggufmhmjkfxymhhxslthpbrsthfp67hkvq36dmnewpnv5c@dbs3hhhpme4w>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250227082920.744908-1-y-abhilashchandra@ti.com>
+ <20250227082920.744908-2-y-abhilashchandra@ti.com>
+ <20250228-sandy-nightingale-of-improvement-6eef5a@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] riscv: dts: starfive: jh7110-common:
- bootph-pre-ram hinting needed by boot loader
-To: Hal Feng <hal.feng@starfivetech.com>,
- Hal Feng <hal.feng@linux.starfivetech.com>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20250203013730.269558-1-e@freeshell.de>
- <20250203013730.269558-6-e@freeshell.de>
- <25B3D8909DBCC21B+43663a76-4afa-44ae-95e2-3a8792de614c@linux.starfivetech.com>
- <206a6ada-1ef9-47f3-b1cf-fb1a1540e95c@canonical.com>
- <62D89163A60680E7+f0f5a4d4-42f1-454d-9dfe-cf53e2aca4ac@linux.starfivetech.com>
- <cba21857-7eb2-4f10-a1bd-6743ce63dfa6@freeshell.de>
- <ZQ2PR01MB1307ECDF175D20547AC69287E6F1A@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <ZQ2PR01MB1307ECDF175D20547AC69287E6F1A@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="q2o2fulec7ph3r2v"
+Content-Disposition: inline
+In-Reply-To: <20250228-sandy-nightingale-of-improvement-6eef5a@krzk-bin>
+X-Migadu-Flow: FLOW_OUT
 
 
+--q2o2fulec7ph3r2v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+MIME-Version: 1.0
 
-On 2/6/25 19:01, Hal Feng wrote:
->> On 06.02.25 19:17, E Shattow wrote:
->> On 2/5/25 18:59, Hal Feng wrote:
->>> On 2/5/2025 6:01 PM, Heinrich Schuchardt wrote:
->>>> On 2/5/25 08:57, Hal Feng wrote:
->>>>> On 2/3/2025 9:37 AM, E Shattow wrote:
->>>>>> Add bootph-pre-ram hinting to jh7110-common.dtsi:
->>>>>>    - i2c5_pins and i2c-pins subnode for connection to eeprom
->>>>>>    - eeprom node
->>>>>>    - qspi flash configuration subnode
->>>>>>    - memory node
->>>>>>    - uart0 for serial console
->>>>>>
->>>>>>    With this the U-Boot SPL secondary program loader may drop such
->>>>>>    overrides when using dt-rebasing with JH7110 OF_UPSTREAM board
->> targets.
->>>>>>
->>>>>> Signed-off-by: E Shattow <e@freeshell.de>
->>>>>> ---
->>>>>>   arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 6 ++++++
->>>>>>   1 file changed, 6 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->>>>>> b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->>>>>> index 30c5f3487c8b..c9e7ae59ee7c 100644
->>>>>> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->>>>>> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->>>>>> @@ -28,6 +28,7 @@ chosen {
->>>>>>       memory@40000000 {
->>>>>>           device_type = "memory";
->>>>>>           reg = <0x0 0x40000000 0x1 0x0>;
->>>>>> +        bootph-pre-ram;
->>>>>>       };
->>>>>>         gpio-restart {
->>>>>> @@ -247,6 +248,7 @@ emmc_vdd: aldo4 {
->>>>>>       };
->>>>>>         eeprom@50 {
->>>>>> +        bootph-pre-ram;
->>>>>>           compatible = "atmel,24c04";
->>>>>>           reg = <0x50>;
->>>>>>           pagesize = <16>;
->>>>>> @@ -323,6 +325,7 @@ &qspi {
->>>>>>       nor_flash: flash@0 {
->>>>>>           compatible = "jedec,spi-nor";
->>>>>>           reg = <0>;
->>>>>> +        bootph-pre-ram;
->>>>>>           cdns,read-delay = <2>;
->>>>>>           spi-max-frequency = <100000000>;
->>>>>>           cdns,tshsl-ns = <1>;
->>>>>> @@ -405,6 +408,7 @@ GPOEN_SYS_I2C2_DATA,
->>>>>>       };
->>>>>>         i2c5_pins: i2c5-0 {
->>>>>> +        bootph-pre-ram;
->>>>>>           i2c-pins {
->>>>>>               pinmux = <GPIOMUX(19, GPOUT_LOW,
->>>>>>                             GPOEN_SYS_I2C5_CLK, @@ -413,6 +417,7 @@
->>>>>> GPI_SYS_I2C5_CLK)>,
->>>>>>                             GPOEN_SYS_I2C5_DATA,
->>>>>>                             GPI_SYS_I2C5_DATA)>;
->>>>>>               bias-disable; /* external pull-up */
->>>>>> +            bootph-pre-ram;
->>>>>>               input-enable;
->>>>>>               input-schmitt-enable;
->>>>>>           };
->>>>>> @@ -641,6 +646,7 @@ GPOEN_DISABLE,
->>>>>>   };
->>>>>>     &uart0 {
->>>>>> +    bootph-pre-ram;
->>>>>>       clock-frequency = <24000000>;
->>>>>>       pinctrl-names = "default";
->>>>>>       pinctrl-0 = <&uart0_pins>;
->>>>>
->>>>> What about &mmc0, &mmc1, &qspi, &sysgpio, &mmc0_pins,
->> &mmc1_pins, &i2c5?
->>>>> Why not add "bootph-pre-ram;" for them?
->>>>
->>>> Would they be needed before relocation of U-Boot to DRAM?
->>>
->>> Yeah, they are needed by SPL and they are set in U-Boot
->>> arch/riscv/dts/jh7110-common-u-boot.dtsi.
->>>
->>> Best regards,
->>> Hal
->>>
->>
->> When I tested on Star64 there was none of those needed to boot. We can add
->> more bootph-pre-ram as needed but I want to know how to test (because I
->> did not see any need for these).
->>
->> How do you test that these are needed?
-> 
-> In my opinion, SPL need to read U-Boot from EMMC (mmc0) or SDcard (mmc1) or
-> QSPI flash (qspi). Also it need to choose the correct DTB by reading EEPROM
-> mounted on i2c5. To run mmc / i2c drivers, the pin configurations (sysgpio, mmc0/1_pins)
-> are also needed.
-> 
+Hi Krzysztof,
+
+On Fri, Feb 28, 2025 at 08:34:22AM +0100, Krzysztof Kozlowski wrote:
+> On Thu, Feb 27, 2025 at 01:59:19PM +0530, Yemike Abhilash Chandra wrote:
+> > diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b=
+/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > index 2008a47c0580..054ed4b94312 100644
+> > --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > @@ -24,6 +24,16 @@ properties:
+> >    reg:
+> >      maxItems: 1
+> > =20
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  interrupt-names:
+> > +    minItems: 1
+> > +    items:
+> > +      - const: error_irq
+> > +      - const: irq
+>=20
+> And how is this second interrupt in existing integrations?
+>=20
+
+TI SoCs integrate both of these if I understood the TRM correctly.
+
+Not sure about StarFive, maybe Changhuang can confirm that both irq and=20
+error_irq are integrated.
+
+> This is supposed to be constrained per variant... which probably will
+> tell you that these are not optional now.
+>=20
+
+To make sure I understand, we mark them both as non-optional in the binding=
+s=20
+by default. And if some particular SoC chooses to not integrate the second =
+irq=20
+they may add a constraint based on compatible?
+
+That seems perfectly reasonable. With that change,
+
+Reviewed-by: Jai Luthra <jai.luthra@linux.dev>
+
 > Best regards,
-> Hal
+> Krzysztof
+>=20
 
-EMMC or SDcard are not possible to boot (via JH7110 boot ROM, distinct
-from QSPI boot of U-Boot and later EMMC or SDcard capability) in this
-way on some of the boards where transistor logic pairs GPIO0 and GPIO1
-both-off or both-on. SDcard boot is officially recommended against as
-"not supported" by the StarFive reference documentation, and I suppose
-what remains is EMMC boot as valid though I have not heard of any users
-for this.
+--q2o2fulec7ph3r2v
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What is the test procedure for EMMC boot, can you explain and I will try
-it on the Star64?
+-----BEGIN PGP SIGNATURE-----
 
--E
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmfBa98ACgkQQ96R+SSa
+cUUokQ/+K9rL8/asTsSDEg51WsTNzFpEskQ9MtuW5z/tgKHTXufIo02aReD4+7OF
+auow1IVymqv9knHffGrDt54mK3zQja/uZXR8B4rJvtUuGG05DY56ZWINIYsFtr34
+nTasO0/pTvcxAyluZg8I5nigARSvehdPlHPGfrmEWVRygq/zVzdUS2jDFFvXUVP6
+MYTbXVmDlIlQiO+BBWa1yKsxmr0Z7yFRMJkKKFDIvSqPwHCwg6iCOmUDkBY6pVjW
+v3jYQYXEd5zKSBdxdur2/KXRHePWv2YT543u3GbRX9RcaJaZ325rR4h+rKwsIKXw
+6ozMB4L1jfpH28wnvtmjxkGNGiwnMu1zTnggnrb1YRi45+C6Cb0IxsAYn7By8TCQ
+hA4Mit73AYEKIWk2m+Inq3N41yFSLYtr9/QCWrjtBdZP78GrA7TbiAkY/PZCU+A9
+9s+f/UZzTRaUteN/nrG0llvezQ7tl279xa1mY0stBu4wziDQ9p4abQ1mQuP/C17Z
+YjH2in0YrJ8bDFeVom+NSArAF9ISmGdsDIjRZbVYRL+lAd+QoAL9XJurqTwtiMxI
+V5kqu6roqA6pdYdYvMp2/HLJrfQ+faLgvTvIYYZeaJKZSLAs+qvK/4YwitcOvqB2
+HzlnaKd5BmQhVqhCrAzPB16iBNbv1YnFWGONcAD1ko111yw/3AA=
+=ArG9
+-----END PGP SIGNATURE-----
+
+--q2o2fulec7ph3r2v--
 
