@@ -1,103 +1,79 @@
-Return-Path: <linux-kernel+bounces-537573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE75A48D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:06:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B863A48D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2261716E18B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6530116E25A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB071805A;
-	Fri, 28 Feb 2025 01:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBtou5Eu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DBD1805B;
+	Fri, 28 Feb 2025 01:05:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF8538B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F0138B;
+	Fri, 28 Feb 2025 01:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740704774; cv=none; b=DQ8KsI9iqrZEHYmPN2h4W1bwjvZpIelhwliivZkzCca941Db0CzfgHaAbDwISJY4AcKJnwfIqV7hpOOOa9WHwe99od8/zaMW4SOPsuOsYoekAHh+GLV/bK2BVnfERzbl8ZFvPjrUNYImXtgQzKvwX8Vz/4/pvstjSjLg48MoOO8=
+	t=1740704749; cv=none; b=ZVCF8bMGtZai26aPXnhm8C1kDC9WL6NGWmO8wlKIw3ZUeLDnTk56X7TWb5MBZiJMC/d4qH9J123EoYp+tVFJtz9B0Fd0xCfoMbBZX9Xwl0W6n3xUY/MIuH2yOhUzNCXzVqrg06da2kiXAkTxt2ULTPuzEClDPgrNczxejmk7rAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740704774; c=relaxed/simple;
-	bh=icvrXAOQAlAZ4tj2bbyx4S68q4feNaSIgIZsSDcdTsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SgRYgCItGxPkW8Zb2srmMolBTViDEytJaHpy90RMQYSyDVv9whUbpXl0uFpto4ZuiwX6tJ36uyAKxG/T029Ii1M5hoGkX7Bx4FVGZNbR7YCRGrooJLH+XKBexzQw/eV8bhX6gnsJXMOAIqKJQXcpE497g9e+IrOHyDwEwmvfbDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBtou5Eu; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740704773; x=1772240773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=icvrXAOQAlAZ4tj2bbyx4S68q4feNaSIgIZsSDcdTsI=;
-  b=KBtou5Eu5p3/+9YG92svV3GtENbv3MztXoh3TdWr3XUk2+YZ7x0M+pA4
-   0RElxjM7XcThci5GXpgjr89PRAG3BsTohfFs7v2T+93wMWDR7BhvJ7uo9
-   dVdggo91RQaqplvHcU/atCqL0Yr8uAppA8gGrNMyxCSJYAiqdvsYKCsLK
-   bXff57FeWiclWUkFSsgsNl2WpebWXmWWlE5Ot+OmowG04Coxci1TFJgpB
-   C9lLZ39PZGlmE0M/NvbT4cvKXkn88af4R2XDTJyAcBX4yclV5HAFcIeFa
-   eM5Ujf4PcdilmczrzUi5DO81zC+CbPD15+Ku79mvxqHj/mSsiLCd4VEZx
-   w==;
-X-CSE-ConnectionGUID: KcDTuK4uRWugxSLuy5Z4hA==
-X-CSE-MsgGUID: zSg0cHMMRoWfyoCyMoazgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41748071"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41748071"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 17:06:12 -0800
-X-CSE-ConnectionGUID: kPRAsJtfQUSjp91jjOgaBg==
-X-CSE-MsgGUID: O9oQxmPjTPOtW8HHif55Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="122135251"
-Received: from jgarnacx-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.170])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 17:06:12 -0800
-Date: Thu, 27 Feb 2025 17:06:05 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/speculation: Simplify and make CALL_NOSPEC consistent
-Message-ID: <20250228010605.tjgho3cfr5oawdqd@desk>
-References: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
- <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
- <20250227184133.lxm43awa2jgdpl4q@desk>
- <15253834-fb89-408f-8269-65413ad29f7a@citrix.com>
- <20250227231342.jh67quujcd3tgmft@desk>
- <20250228003117.q6f2f5a7ndt2o226@desk>
- <bf053035-6ead-4f3f-b53e-d265824199c3@citrix.com>
+	s=arc-20240116; t=1740704749; c=relaxed/simple;
+	bh=polPD8VaEKf+veiscNjndlyOpxGIQ7eRxcTUeyf9umU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LlxcR7rsnzs6lXCk3O9OATH5zN0/40fp/+pMoR74x1jexavfkoUA9W64gcq8Vsbz16mn9WQA/T293pfXRZzcsTxvS/KFt0HmD/3zoDxeEOorjrHFLId5+d7YBa4x/181Pv0+JCd99HSjgSFS7baaFHbd+uGneZGgI7qtV+dJe+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C815DC4CEDD;
+	Fri, 28 Feb 2025 01:05:47 +0000 (UTC)
+Date: Thu, 27 Feb 2025 20:06:31 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>, "Luis
+ Claudio R. Goncalves" <lgoncalv@redhat.com>, Eder Zulian
+ <ezulian@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] rtla: Save trace when option `--trace` is specified
+Message-ID: <20250227200623.60f20571@gandalf.local.home>
+In-Reply-To: <20250127170251.744751-1-costa.shul@redhat.com>
+References: <20250127170251.744751-1-costa.shul@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf053035-6ead-4f3f-b53e-d265824199c3@citrix.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 12:36:40AM +0000, Andrew Cooper wrote:
-> > Getting rid of one layer of macro makes it less magical:
-> >
-> > #define __CS_PREFIX(reg)				\
-> >             ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15\n"	\
-> >             ".ifc \\rs," reg "\n"                       \
-> >             ".byte 0x2e\n"                              \
-> >             ".endif\n"                                  \
-> >             ".endr\n"
-> >
-> > #define CALL_NOSPEC    __CS_PREFIX("%V[thunk_target]")  \
-> >                         "call __x86_indirect_thunk_%V[thunk_target]\n"
-> > #else
-> > #define CALL_NOSPEC    "call *%[thunk_target]\n"
-> > #endif
-[...]
-> Yeah, I think that's a lot better.
+On Mon, 27 Jan 2025 19:02:40 +0200
+Costa Shulyupin <costa.shul@redhat.com> wrote:
 
-Ok, I will go with this approach for now.
+> +++ b/tools/tracing/rtla/src/osnoise_hist.c
+> @@ -981,12 +981,11 @@ int osnoise_hist_main(int argc, char *argv[])
+>  
+>  	return_value = 0;
+>  
+> -	if (osnoise_trace_is_off(tool, record)) {
+> +	if (osnoise_trace_is_off(tool, record))
+>  		printf("rtla osnoise hit stop tracing\n");
+> -		if (params->trace_output) {
+> -			printf("  Saving trace to %s\n", params->trace_output);
+> -			save_trace_to_file(record->trace.inst, params->trace_output);
+> -		}
+> +	if (params->trace_output) {
+> +		printf("  Saving trace to %s\n", params->trace_output);
+> +		save_trace_to_file(record->trace.inst, params->trace_output);
+>  	}
+
+Without tracing being off, this can run forever if the events come in
+faster than it can be recorded. And save trace uses the "trace" file, which
+is slow to read.
+
+Are you sure you want that?
+
+-- Steve
 
