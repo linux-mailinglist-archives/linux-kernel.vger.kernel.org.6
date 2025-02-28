@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-539055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D6BA4A05D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:27:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464E5A4A060
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 316A61897A2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1BE3B5D73
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0D11EF38C;
-	Fri, 28 Feb 2025 17:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7B1F0997;
+	Fri, 28 Feb 2025 17:28:50 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632AB1F4CBB;
-	Fri, 28 Feb 2025 17:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3113C1F4CBB;
+	Fri, 28 Feb 2025 17:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740763621; cv=none; b=kiGoMcCcWoArE1FvZI4pI6Pq6sqTzbK2TJeM6JnRxP8xdhIgH+XD+dKMZunW0M/B5mC8DKD6+axznFbJDnEObYuMvXokispTlHlRkihl5GWrOgBz74tThW38Kl+DKC36gvwB5hZoTy4LuYWufOww+6XiW0zpl6MeeKdFYMpzy3o=
+	t=1740763729; cv=none; b=YpGHAzozAoZksbggNPgpk+4r37Vrf8YB8AsmxptEXC1ELSMq9aYPMaQSu2xq8vzSUz1uICELaprKbFKelsBTCJ+NcHly6xJ7aBGu9rF+UzOf4lizBX/qZ/BLhLIyGTs2OqQlzsTLA3ObWHVdd+4GDmWEn/P++BFrC4+l56DlC4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740763621; c=relaxed/simple;
-	bh=CW4N1E2K5tm4NvI/q3SQKXvlT5joaCote94ik/M3ROM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VZbZOwFNwi96cPlQROzC08xH9kse4eYHEDts5G9ZnETbQlcPWH7hoEoixYrQBpFrpfoMutpOYR5/NrFkjMtKwGalp5Woj7QXK4gsAL439mp7LDaNcoWF39VeuDr3TfMVgkn++1TTwsiRnHMl6RTOjBqG1y9tkfdnq7GrkS7dSuc=
+	s=arc-20240116; t=1740763729; c=relaxed/simple;
+	bh=a9kQ6V5sbEvFmQom4mCA9pxsi9vl5+Blzhr+rm9bAgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=Pa9VMc0Zld16HiCTX4BbigVBdHTwzzucaj3b6VM6AAdmYLK1IBiWlQLiIqPqU0TnvXihU4jieu65Uws+st3o1YCe05FktXCdGTZ/7E9JQMSxXenQWr1FggjHY5C1z4uSP0anG8+4wAB/wxlrjN+vUeWTWthBRbW1/iacxMBn+oI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBA27150C;
-	Fri, 28 Feb 2025 09:27:14 -0800 (PST)
-Received: from [10.163.40.175] (unknown [10.163.40.175])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E4E03F6A8;
-	Fri, 28 Feb 2025 09:26:55 -0800 (PST)
-Message-ID: <ac08af0d-9cb8-4da4-ab9e-736a572b8f6b@arm.com>
-Date: Fri, 28 Feb 2025 22:56:45 +0530
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98E59150C;
+	Fri, 28 Feb 2025 09:29:02 -0800 (PST)
+Received: from [10.57.79.187] (unknown [10.57.79.187])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BA9B3F6A8;
+	Fri, 28 Feb 2025 09:28:45 -0800 (PST)
+Message-ID: <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
+Date: Fri, 28 Feb 2025 17:28:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,32 +41,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] selftests/mm: Drop unnecessary sudo usage
-To: Brendan Jackman <jackmanb@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
- <20250228-mm-selftests-v3-9-958e3b6f0203@google.com>
+Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
+ acquiring mutex
+To: Anand Moon <linux.amoon@gmail.com>
+References: <20250216195850.5352-1-linux.amoon@gmail.com>
+ <20250216195850.5352-5-linux.amoon@gmail.com>
 Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250228-mm-selftests-v3-9-958e3b6f0203@google.com>
+From: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
+ "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>
+In-Reply-To: <20250216195850.5352-5-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 28/02/25 10:24 pm, Brendan Jackman wrote:
-> This script must be run as root anyway (see all the writing to
-> privileged files in /proc etc).
+On 2/16/25 19:58, Anand Moon wrote:
+> Using guard notation makes the code more compact and error handling
+> more robust by ensuring that mutexes are released in all code paths
+> when control leaves critical section.
 > 
-> Remove the unnecessary use of sudo to avoid breaking on single-user
-> systems that don't have sudo. This also avoids confusing readers.
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v3: new patch
+> ---
+>   drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
+>   1 file changed, 7 insertions(+), 14 deletions(-)
 > 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index fe090c1a93ab..a34ba3858d64 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>   	unsigned int status;
+>   	int ret = 0;
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   	clk_enable(data->clk_sec);
+>   
+> @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>   
+>   	clk_disable(data->clk_sec);
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   
+>   	return ret;
+>   }
+> @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
+>   		return ret;
+>   	}
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   
+>   	data->tmu_set_crit_temp(data, temp / MCELSIUS);
+>   
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   
+>   	return 0;
+>   }
+> @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>   {
+>   	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   	data->tmu_control(pdev, on);
+>   	data->enabled = on;
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   }
+>   
+>   static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
+> @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+>   		 */
+>   		return -EAGAIN;
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   
+>   	value = data->tmu_read(data);
+> @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+>   		*temp = code_to_temp(data, value) * MCELSIUS;
+>   
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   
+>   	return ret;
+>   }
+> @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
+>   	if (temp && temp < MCELSIUS)
+>   		goto out;
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   	data->tmu_set_emulation(data, temp);
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   	return 0;
+>   out:
+>   	return ret;
+> @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+>   
+>   	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   
+>   	/* TODO: take action based on particular interrupt */
+>   	data->tmu_clear_irqs(data);
+>   
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   
+>   	return IRQ_HANDLED;
+>   }
+> @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
+>   {
+>   	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
+>   
+> -	mutex_lock(&data->lock);
+> +	guard(mutex)(&data->lock);
+>   	clk_enable(data->clk);
+>   
+>   	if (low > INT_MIN)
+> @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
+>   		data->tmu_disable_high(data);
+>   
+>   	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+>   
+>   	return 0;
+>   }
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+IMO you should be able to even use something like we have
+core framework:
 
+guard(thermal_zone)(tz);
 
+Your mutex name is simply 'lock' in the struct exynos_tmu_data
+so you should be able to leverage this by:
+
+guard(exynos_tmu_data)(data);
+
+Please try that.
 
