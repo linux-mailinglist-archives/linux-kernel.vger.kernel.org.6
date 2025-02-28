@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-538721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1232BA49C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:44:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D7FA49C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A081C7A9FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B47497A4F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA7D270041;
-	Fri, 28 Feb 2025 14:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBE326E955;
+	Fri, 28 Feb 2025 14:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="EnuqdeUC"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ADngsAa5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C518C31;
-	Fri, 28 Feb 2025 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE45125A2C0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753873; cv=none; b=SWzxVozcd5dTi/EVKkKYFyq62qBE9vAL7GI2ITtAN4tWtaYgeHWbjUs0ZdKMc9lRdwctdARm9e9SU+oLg5peLN+TRYWmn8bWw98+I00sw3OSy5Prx7OuLxlDwF53LJDcdxWwC7AgxBd7gWT+55R6xEE6RMSnd/Sbm+fuwAtBUYg=
+	t=1740753932; cv=none; b=OWHbIODY+Wfge9VwRthmfJxfktZ3j6bwZDTLDLJUVwMu9pmhxQupOiiMubi4RxoMfPUBy+2gD7chOD2MZWo4yvvcf/HZ83NjUg3Sy+ECGNKbGnJx8ZIRR1e2in7KP3YgwmnIqa7CqnEtwdmHPByy1rgv/OOMXQYMMaOH2k/iHWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753873; c=relaxed/simple;
-	bh=sYyt7j+W7NXI/q6IXsYFDTRUuvsWwtgjn1zujNIuo98=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fkZeALQVwJb33q3rKI/cQcpua5TzK77TJrBOpFEztwbLvStx6egs45k5p5Msvo6YZJ8at6WYeaKpcuWWWCdLTHKle4Buy8/vxoFOvD14KKVXZBsR///37+feT0hPeg1eMBjrP68PQ4MAqzu7cE5vzGxrTva4Qc2+Lrv32dQoVXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=EnuqdeUC; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 03987404E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1740753871; bh=EA0Rr524KbYfrmQCryy1Nl43xYiTId+OeKrvkwYK2fM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EnuqdeUCsIB9HgB+vj6QCQBfim/UNu5vpA6iyuMZvZKHKddXqIhjbyMvEf6trrNJq
-	 HmtGUPBbAC7G5ny594wu+JCmUAQ+1/QNGmEW8OcjR0YzjPDdJF4v1oBVHLefa2bfdR
-	 LqP3wJ9i0SaUMtNCaG1hapmnt1u34ugMwnGguUYta419Q+490X/5aLFyU0n1BqAc4U
-	 ydAd9y6Xz1+wedvG7f6V8YWrOjV+P+vCS62bhL9JKJDEs69Txtl0lwmMmiU0NzSK9j
-	 LICURgdJtTIZA6scTFG+QHn4LZ+yVQAKOvKiebD82uFgj/PaxJeTLaL/l8K7xCpGgA
-	 mZWBfDfHPY8pQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
+	s=arc-20240116; t=1740753932; c=relaxed/simple;
+	bh=byHhrmUoG6SZ3TsbUshk2VRISfn1xMThT70emXrC9y4=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=SqJe79lknWDmxtlptaiRAsqblqnOgdCJzj317lWSyTyPKMjmicIgIQJq5hpufBhKcPojkW5KjbP0jikD+UPMlTZSmwmeKFKRn6pocyv8FnWTuIWqxTPuw0mUrqv8xu+XL/Juvq8JFcXD9Y6tOWwivxWIXth/VocHvfmG5XaAQjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ADngsAa5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740753929;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U41DlrCChwyMCjiyWsF6DnAwdYiKyrfG/1RGaWwJ3j4=;
+	b=ADngsAa5GhBR9tx4RAxhjuA/8HUs6uXD1Ba3kp9rnI/a3vP+/9lgxwbwais9Fr3YLSN+h+
+	iRzbhXnvuDLhs81ptPZAUuY7iRM28vfJjtoPsDYmPcIYZmqD5Dw0857iErwJT+iPjRiyR0
+	qGo0WmSPkSE2pMGMtyjleuU1lUBxJpA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-OFd7jWtlMIW4r8DVNW-9GQ-1; Fri,
+ 28 Feb 2025 09:45:27 -0500
+X-MC-Unique: OFd7jWtlMIW4r8DVNW-9GQ-1
+X-Mimecast-MFC-AGG-ID: OFd7jWtlMIW4r8DVNW-9GQ_1740753926
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 03987404E4;
-	Fri, 28 Feb 2025 14:44:30 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Shiju Jose <shiju.jose@huawei.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Mauro Carvalho Chehab
- <mchehab+samsung@kernel.org>, Tony Luck <tony.luck@intel.com>, Jonathan
- Cameron <jonathan.cameron@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the edac tree
-In-Reply-To: <20250228103559.GAZ8GRj0xj6AKGVLj3@fat_crate.local>
-References: <20250228185102.15842f8b@canb.auug.org.au>
- <af3e1e183b034ea89ed6582a5382e5c3@huawei.com>
- <20250228103559.GAZ8GRj0xj6AKGVLj3@fat_crate.local>
-Date: Fri, 28 Feb 2025 07:44:30 -0700
-Message-ID: <87jz9ann75.fsf@trenco.lwn.net>
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1B371954202;
+	Fri, 28 Feb 2025 14:45:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C2FDE1955BCB;
+	Fri, 28 Feb 2025 14:45:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250228062216.77e34415@kernel.org>
+References: <20250228062216.77e34415@kernel.org> <3190716.1740733119@warthog.procyon.org.uk>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@lists.infradead.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3399366.1740753918.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 28 Feb 2025 14:45:18 +0000
+Message-ID: <3399367.1740753918@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Borislav Petkov <bp@alien8.de> writes:
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-> This branch is now public and immutable so you need to send real patches with
-> commit messages which fix things ontop. But before you do...
->
->> diff --git a/Documentation/subsystem-apis.rst b/Documentation/subsystem-apis.rst
->> index b52ad5b969d4..ff4fe8c936c8 100644
->> --- a/Documentation/subsystem-apis.rst
->> +++ b/Documentation/subsystem-apis.rst
->> @@ -71,6 +71,7 @@ Other subsystems
->>  
->>     accounting/index
->>     cpu-freq/index
->> +   edac/index
->>     fpga/index
->>     i2c/index
->>     iio/index 
->> >
->> >--
->
-> ... let's see what Jon says.
->
-> Jon, ack?
->
-> Is that the right place to put this in?
+> fs/afs/cell.c:203:5-22: WARNING: Unsigned expression compared with zero:=
+ cell -> dynroot_ino < 0
 
-That will solve the problem for now, though that file is kind of a
-dumping ground.  I'll clearly have to get back to my project of better
-organizing the device docs...
+I'll make this change:
 
-Thanks,
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -200,7 +200,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net =
+*net,
+        atomic_inc(&net->cells_outstanding);
+        cell->dynroot_ino =3D idr_alloc_cyclic(&net->cells_dyn_ino, cell,
+                                             2, INT_MAX / 2, GFP_KERNEL);
+-       if (cell->dynroot_ino < 0)
++       if ((int)cell->dynroot_ino < 0)
+                goto error;
+        cell->debug_id =3D atomic_inc_return(&cell_debug_id);
+ =
 
-jon
+
+to patch 2 ("afs: Change dynroot to create contents on demand").
+
+I'm not sure why gcc didn't warn about this - I'm sure it used to.
+
+David
+
 
