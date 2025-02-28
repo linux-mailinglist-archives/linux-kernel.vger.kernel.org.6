@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-539221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEE6A4A231
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:52:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD0BA4A223
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CF4177E3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4203A6FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BECE27702F;
-	Fri, 28 Feb 2025 18:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F5B27700F;
+	Fri, 28 Feb 2025 18:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="gRJVfSVA";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bIst71UO"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dT4wVPyB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF277277005;
-	Fri, 28 Feb 2025 18:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768692; cv=pass; b=W4EkuPnOD1TMEqQmU62PRFHTAkfzStkj0ovEpllRG1X6jNxg/AtI0M4rrFBMbRsyIGAtV5VUmH+TkuUfjw5YjOUmQiymQ5ybca4np34Kdx6gdIxG2bTQYKVf4QojRH7Xp1onj5VB6i4242zF5GIe5R8UFWgdNS3qJKJwbU5i4/o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768692; c=relaxed/simple;
-	bh=CWSgS9XJdwR2l2RX3Aso1qZio2y1aTXn9vpmWAWnbIs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=dWjjmfuiEcF64aXW2BxISuWhbSgJJRp9bgKK9P1tmqwFgckEjxq55RRSSn5pB0X+NJJ7NnLU2OoBFNs3HgIkHGhltq92Mincqc/IPruUs2UTal8HmPsXp3Y7f0iPkCA3oIZgJibR3DQsx72zp9M60j4MsWyiH+pLR+ZBBHTlNTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=gRJVfSVA; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=bIst71UO; arc=pass smtp.client-ip=81.169.146.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740768674; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=OAZ3ooUSoj9IZWelTJj3DkzO9MOXH6IMK5hoGOlACtnXZgQDIH9fN2ioHUS0f/0cTe
-    Sg3p0bDODhsDlCQaGgFl2TqYCntE7uj5V8TTPkvAuQIir/odCtJBbJSQyD+Ct34WWgdl
-    f3gOxOAE/g8UHn3t64NwfOE8Et5Fxl8s53YSBDZojJMEzglMxq8GtQ8Ui/5Qni/iwxuD
-    Dj3NYiSahxQYSE72hIWQaFpheePsMCl1sRbKIMTEWBV9pItIgM8p3m1T+wq5jlgDAhF4
-    mB6tyUPPeXUFXpqi6W4xiGt5Md1ggULAg7NLoWOm8vObNL+KoQLDWh5Ost6MQj6J+ybd
-    LtaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740768674;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=hu5mqh9J42pIB/dnWsD6fShYZzFBfeLF8CLj4v05IZg=;
-    b=XiaZU9x/MmZfucBCKgLzcnqPsgt6XjW7uMTOuQ/jaXin9kn8ZMmtOCf2rTgAuaf3OV
-    Si5RqdcFoxnyGxl03ZVVIIepzVueWdHPAeCnf1kvW1zEJUV4NGVAKsX+r4uq6ZlSu3SL
-    PL+TdxMxO1DnmNKZ5zwXb6XLt5JRf4EQf+Z1BH+/Wb9Un/y5WH9Ei0V6xYHT7jFOpNrt
-    jPIKLxCGW5tggr4y7CpBGEdbHQMafpJkIvOj8MzvR7x3tgy3YADDVr4ot5K3H+FNPxGF
-    gLgilumst5xdQniZY3DpA7iEHcg2XGK9viL4nv3UN9POVRoi1jWvo78DdX2pE3Bp7ZEf
-    8R2g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740768674;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=hu5mqh9J42pIB/dnWsD6fShYZzFBfeLF8CLj4v05IZg=;
-    b=gRJVfSVA2vTYaRHtuc9Xh1ITLkJQ+EuxqJm1kSuJOr9QpyPgFyf6kx+FM14y4HCDbU
-    fxzjfxbON0Eg/4uQIDxNy7rZ3oi7vqXG9g4XzSXA4WjBwYjOx1LOY2fUMH51kuvH4d1H
-    jg5tDZWIY3ro2scQsXCJgnK/vBM8rQmOhxEKrQRFtCHRPGEXnjonUt1gd4t4k+81C+EU
-    jiEr6w/OSYRk8cWnr78UwehrnKxwO5yEdQdYoZOBdLoplEAKxyvdrDNru2m+nsXVDGth
-    JCcUvCVM+ayoWkmXmQgWQuKma2V6L6RB1HEgmjD1TMU8zE8aXphPnA8VHmsrxSnQ6Ayy
-    nz0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740768674;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=hu5mqh9J42pIB/dnWsD6fShYZzFBfeLF8CLj4v05IZg=;
-    b=bIst71UOqIgJWUhvJ8sjydSymX01PzXlU6IUXzTbk2mtO2q31JFyo723U5emcKAU37
-    0VAaK+t9J0D5vEZLT9Dg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeTkZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.3.0 DYNA|AUTH)
-    with ESMTPSA id Q56adc11SIpDPpY
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Fri, 28 Feb 2025 19:51:13 +0100 (CET)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5F1277002
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740768658; cv=none; b=fq8InnM1KrltsIWZurdg8rdpAbhfkdqp7DJYMmV+dQChlQDlhYa0aogMkLK5WfFGNiUa4/wAnci5pUNekVsUJI38PHix9ePrAUH/oMoGxZyavfQfteYJ4o2bcKePKPOZlbYfN10tckL/vaCDY5uLDp6m9fkKTOCYGLRWp6nLTk4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740768658; c=relaxed/simple;
+	bh=t8eKw4lsOg3/UxuKFKthagm624JiuuP3Xozn88WN/zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KZ5+yjMH1HYjf1gYLsaB4ttoH8BpdLr9sJSPMdeKmxAAqqOxKi0hnckUMVnEjGPbEbNQmYA71vTXhwJnJcr/UKLVD6kpsWyhwqMNWIC3RgBYy/otiiz+ofHARGBkzfzzXqpkZHU6uGlfQCEuNBoilDclVoICJFpI1zf0HWgBJ6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dT4wVPyB; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740768657; x=1772304657;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=t8eKw4lsOg3/UxuKFKthagm624JiuuP3Xozn88WN/zg=;
+  b=dT4wVPyBXXgXQy5k32tNdqhEJIk32Tr3gIGgwGt8huLSIkqwpyvcFwXw
+   MGU6NrLJ50jePHKkbor8+Svc+dbNFr7Aeqw9/EDbKxgEQ9afYEOW9+dX/
+   D16jcmVAEMrW4vRAyctf36lP56L7miFyVhz7eVIP7l+5JV6KoJRPIBAFO
+   vpl2JhM9fqvsYb5fOpeFNA8rJ3KMBGuk1HEXtlLwWkk5rb1xBvrTqY5ab
+   s8QEhHQzvmpwi6mZOpT/7msoFjWZ1IPY/72Ras80lwxyR0W7UDMRhFC1o
+   RKgSa6LxtMQvF5lSrLLwCTlQn4K/HXnJLxV4PY1YUyDGAw4JtXyqe31rp
+   w==;
+X-CSE-ConnectionGUID: E34NFjGcSWK89wYRrNv/zQ==
+X-CSE-MsgGUID: NM9NDRoPQaWuWL6bfglvsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="52350232"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="52350232"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:50:56 -0800
+X-CSE-ConnectionGUID: KdFcVdIcTRuks86YDmEnyw==
+X-CSE-MsgGUID: JpUj9B0YTp+s4u3dEx6zXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154581354"
+Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.137]) ([10.125.108.137])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:50:56 -0800
+Message-ID: <ff4d9a6e-eae1-48b0-9126-55579cdf5190@intel.com>
+Date: Fri, 28 Feb 2025 10:51:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH v2 4/4] pinctrl: ingenic: jz4730: add pinmux for I2S
- interface
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <f1ffee11ef563d8c7486503eef3d21b8b7e2ccd9.camel@crapouillou.net>
-Date: Fri, 28 Feb 2025 19:51:03 +0100
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Andreas Kemnade <andreas@kemnade.info>,
- Paul Boddie <paul@boddie.org.uk>,
- Tim Bysun <tim.bysun@ingenic.com>,
- linux-gpio@vger.kernel.org,
- devicetree <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-mips@vger.kernel.org,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
- kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <230B1328-40F2-49F4-BA4E-7BFC3456383F@goldelico.com>
-References: <cover.1740749637.git.hns@goldelico.com>
- <1d50f0c980155dd22ccd164a6d281e3ac68e7446.1740749637.git.hns@goldelico.com>
- <f1ffee11ef563d8c7486503eef3d21b8b7e2ccd9.camel@crapouillou.net>
-To: Paul Cercueil <paul@crapouillou.net>,
- Conor Dooley <conor+dt@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
+To: Rik van Riel <riel@surriel.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+ dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+ jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+ Manali.Shukla@amd.com, mingo@kernel.org
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-4-riel@surriel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250226030129.530345-4-riel@surriel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Paul and Conor,
+On 2/25/25 19:00, Rik van Riel wrote:
+> Add helper functions and definitions needed to use broadcast TLB
+> invalidation on AMD EPYC 3 and newer CPUs.
 
-> Am 28.02.2025 um 19:26 schrieb Paul Cercueil <paul@crapouillou.net>:
->=20
-> Hi Nikolaus,
->=20
-> Le vendredi 28 f=C3=A9vrier 2025 =C3=A0 14:33 +0100, H. Nikolaus =
-Schaller a
-> =C3=A9crit :
->> I2S is used for the sound codec of the Alpha400.
->>=20
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> ---
->>  drivers/pinctrl/pinctrl-ingenic.c | 13 ++++++++++++-
->>  1 file changed, 12 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
->> b/drivers/pinctrl/pinctrl-ingenic.c
->> index 08e082e84f5c6..6d7dc077c373e 100644
->> --- a/drivers/pinctrl/pinctrl-ingenic.c
->> +++ b/drivers/pinctrl/pinctrl-ingenic.c
->> @@ -209,10 +209,14 @@ static int jz4730_nand_cs4_pins[] =3D { 0x56, =
-};
->>  static int jz4730_nand_cs5_pins[] =3D { 0x57, };
->>  static int jz4730_pwm_pwm0_pins[] =3D { 0x5e, };
->>  static int jz4730_pwm_pwm1_pins[] =3D { 0x5f, };
->> -
->=20
-> Just a nit - but you remove a blank line in patch 4/4 that was added =
-in
-> 3/4, better not add it in the first place :)
-
-Ah, sometimes this gets missed.
-
->=20
-> That's the only comment I have on the whole patchset, so either fix it
-> in a v3 while adding my review tag, or maybe Linus can do it when
-> applying the patchset.
-
-I'll send a V3 tomorrow together with Conor's comment/fix for 1/4.
-
-BR and thanks,
-Nikolaus
-
->=20
-> Cheers,
-> -Paul
->=20
->>  static int jz4730_mii_pins[] =3D { 0x70, 0x71, 0x72, 0x73, 0x74, =
-0x75,
->> 0x76,
->>   0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c,
->> };
->> =20
->> +static int jz4730_i2s_mclk_pins[] =3D { 0x44, };
->> +static int jz4730_i2s_acreset_pins[] =3D { 0x45, };
->> +static int jz4730_i2s_data_pins[] =3D { 0x46, 0x47, };
->> +static int jz4730_i2s_clock_pins[] =3D { 0x4d, 0x4e, };
->> +
->>  static u8 jz4730_lcd_8bit_funcs[] =3D { 1, 1, 1, 1, 1, 1, 1, 1, 2, =
-2,
->> 2, };
->> =20
->>  static const struct group_desc jz4730_groups[] =3D {
->> @@ -235,6 +239,11 @@ static const struct group_desc jz4730_groups[] =3D=
-
->> {
->>   INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
->>   INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
->>   INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
->> + INGENIC_PIN_GROUP("i2s-mclk-out", jz4730_i2s_mclk, 1),
->> + INGENIC_PIN_GROUP("i2s-acreset", jz4730_i2s_acreset, 1),
->> + INGENIC_PIN_GROUP("i2s-data", jz4730_i2s_data, 1),
->> + INGENIC_PIN_GROUP("i2s-master", jz4730_i2s_clock, 1),
->> + INGENIC_PIN_GROUP("i2s-slave", jz4730_i2s_clock, 2),
->>  };
->> =20
->>  static const char *jz4730_mmc_groups[] =3D { "mmc-1bit", "mmc-4bit",
->> };
->> @@ -251,6 +260,7 @@ static const char *jz4730_nand_groups[] =3D {
->>  static const char *jz4730_pwm0_groups[] =3D { "pwm0", };
->>  static const char *jz4730_pwm1_groups[] =3D { "pwm1", };
->>  static const char *jz4730_mii_groups[] =3D { "mii", };
->> +static const char *jz4730_i2s_groups[] =3D { "i2s-data", =
-"i2s-master",
->> "i2s-slave", };
->> =20
->>  static const struct function_desc jz4730_functions[] =3D {
->>   INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
->> @@ -263,6 +273,7 @@ static const struct function_desc
->> jz4730_functions[] =3D {
->>   INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
->>   INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
->>   INGENIC_PIN_FUNCTION("mii", jz4730_mii),
->> + INGENIC_PIN_FUNCTION("i2s", jz4730_i2s),
->>  };
->> =20
->>  static const struct ingenic_chip_info jz4730_chip_info =3D {
->=20
-
+I don't know if I mentioned it earlier, but I'd leave this explanation
+of where the feature shows up for the cover letter or the Documentation/.
 
