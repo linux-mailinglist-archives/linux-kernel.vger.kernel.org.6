@@ -1,160 +1,177 @@
-Return-Path: <linux-kernel+bounces-537843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA41BA491B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87821A491BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5501D16F29A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F933A4E12
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9086F1D47A2;
-	Fri, 28 Feb 2025 06:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE80A23DE;
+	Fri, 28 Feb 2025 06:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AU8pBJ53"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ibuJJn3L"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC931C4A2D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552EB1C3C12
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740724865; cv=none; b=VPD0VoC6MGQJbzHPxk9LBjJ3IfQwoxsOTqksyHWDDWbF0oCplEu+2RehAtwgPo5+MmmNDWltA2ytPmwDUwAQhJkc/CdYHJVgJTrd7rSfx/QStsno3LaMtb4mZEZiH22VYGL/Ek1FC+IPiYVtyW4nRPdNEonxe+I7C1U9fkz8KGU=
+	t=1740724909; cv=none; b=molDC4FTMN6Z25eT+y8CQJ46E4GAAR8/CxQI8rY17Zi7XhxltpbeVHbJVHjcnRtnMMsqxNgrQUHlvM8jEt/GJGadBv9Vc1ZPGXCLBiO4pVDwSL2Sc/5vOUHwRqIecUebyJcYtJXr9K2HsRnR8uYy73FUh1hhkROAt+KZLS8DBlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740724865; c=relaxed/simple;
-	bh=nyrL5D5OZSi4spdot+X1n5W44KzRKVKMqtlNM/kicWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kax9xjmdAIlQS7vU4jokr+vdm+fdGWzPPJytpX1BAz5uEFS4DGbbPjtiaJMy49RePCYF+Y+jKbZkLwc/T81czxngTaSdwVkwpRX20ZQj+ovJvIv8qD7wI6MdJFj8LO01Pw/oP+gGOBj2DyjVQaZSL7Jg3yNLFVbNDnoJ6oYGzEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AU8pBJ53; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1740724863; bh=5Jo9yXuPRKn/9jusZJeonZA0HEr47rkDIZi25HF2beM=;
- b=AU8pBJ53gaedy5wbK+5PO1U5IhUCnRz4NQDy11w84lUiGkeWs2+3VATDx2H6RsvW1lsvsunR6
- AAHzIq1Vdidm9mUB+HYIgh1AKTSQ6plLZfdtgmcYLYVCDu24q4YbippHtbPjsVYP3dui6HUnODG
- NydKNjgAvb/RN2VerjysOQWBSQXr9jL54/3kjy4Iz4qR+O5iKekXpceUXcJmQRiXa+9lsSmFIiL
- /I56FF7sXBMh9C4RGg8knMNdhW/GVuPtDN/xo+Bu2D+Enb3GygkIfCfhiv5oUleZh1OZD57pP0j
- P8tbKbcqnl/0cHmp9WhWc9aM7iU0u5JhIh9Srsf9knVQ==
-X-Forward-Email-ID: 67c15a7dbcf1d1bd23db022f
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 7/7] arm64: dts: rockchip: Add gpio-leds node to Radxa E20C
-Date: Fri, 28 Feb 2025 06:40:13 +0000
-Message-ID: <20250228064024.3200000-8-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228064024.3200000-1-jonas@kwiboo.se>
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1740724909; c=relaxed/simple;
+	bh=rOwz0bKAjFmlNM797gz5jWGgjA7j0+HQsWD2YlawAKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZXFaRuErTJfiZFHIH2+HK7QeHPxhBOjGIgkjoends5cW2+6qXBnBwIwWkevG2NvCbwFEuH+x8xrDDvMwQwEhq6wsKJa99C+9nssOmt4ZKHMC7u3H0bfeeYDtQQiWlTcDHYg0cSH33o4D4GU0OgJE6NHOcIGgzaffNOZ5F04xWfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ibuJJn3L; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so1513333fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:41:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740724905; x=1741329705; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kEgij+vFUKJr4iFrcQiCT4KMIk6Vb5FvOpq9/ONScgg=;
+        b=ibuJJn3LvrA+6zO51lOJMvh6FD2cIVu760xg9Xytnr7stRBOl1dMtMUnUTzdSt4eNW
+         jQ/rnBp9fC6NtZJo7oR/vHoXbDab/aeY6FC8C1g1l/Ziq5Duf8miX15bXkrzcoT1a4Ma
+         bPSQtUltCdIxoqpjvBS5GS+N0SraSAfASPwS/Lt1rWXKuP3afs3LZn+Bmt/YAYLWyg3D
+         bWeWuE0z4LCuBrxxMj7W0fkqry+N1LIkb4/MBRceeypFBxbu66nMnhmYV2UWETR3TYbq
+         pDlbWsFxh+mNhYKkXl8cc8cFLNqj453Hhl3cZ3I3E1y1v0OT91Uf6T/0fhHN/rzjPvU7
+         4lwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740724905; x=1741329705;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kEgij+vFUKJr4iFrcQiCT4KMIk6Vb5FvOpq9/ONScgg=;
+        b=wYcjgElkMgW2ucEZo/XejYvevgUlePZ9Uw11143Awb/uVYhIo9VMjTzJOp42mtUhvy
+         yep92TOVW0E4ao/zxeTzGydRg5JlvipttwR/+6jJDHUz2m7maBSwOdCFtFKonzMitenw
+         uDYZIpHLxyf1DqFWsUBUkRwSTlBXqTbACUn1dV5898vXgcoS2zjYYnu1E05NiCU35KuY
+         Gc7Mhrw6vu0eV+75FuNGJ+tT2Fguq1+k/6bS5GgnZHi9Uvkq2vyUEdkWXNxlRxIPhV2+
+         dl8e255B5f6YiXw5Vpsa4WduabBOCn/9w/v5nZtCmXZW3r/F4waDGBJma/LDv6Dx7S+n
+         G8Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX9VJ9aqGUf0t4KW19VB/j6ICzsFTFJ6Dc4ZiT7Gdy5ByIZNP1TiSyNu83otnMM2b8392AIcRPaA2jgH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9CCcn/BvdKVWPi4Ymr0wP/1yLQm+u/UyXCpyiWc3Vp8sbY5De
+	Fj8CkWQc8+gnfFQyFOHjmhsJO0icACvwgizgNcSZufdzKvmD2kelq/G0lpEhB5XFfceMqoKWNwe
+	TGXVaaRKllIcoXcVFvepJv16W5q2IJ8MhapUfcg==
+X-Gm-Gg: ASbGncu4E3RIZp4y8fITF+ZkLIuV2upu10GMsylU+jJE2h6p6xCwIIgz+d024wUi4LN
+	4wYKmTQ2eb54fbHe/K9ovTgKkAJ0ptZdOC6O1xvYeELsDtDQPMGVk0SIhrXOgqVJuGgMPg1d1lG
+	oabtXiyQQbf8HkNMVnxU2zSzP0
+X-Google-Smtp-Source: AGHT+IGpsWGXU4pi9mwh3NHOtEFtRPpdEJclCzQQN3B727Qh8UvZFHsiuMJ2yff1nT/VAt/UJKc28gLWXxaF0LPMHi0=
+X-Received: by 2002:a05:6871:521f:b0:2bc:7d6f:fa85 with SMTP id
+ 586e51a60fabf-2c178381b32mr1335889fac.16.1740724905127; Thu, 27 Feb 2025
+ 22:41:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250201110607.34766-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com> <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
+In-Reply-To: <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 28 Feb 2025 14:41:34 +0800
+X-Gm-Features: AQ5f1Joi8eei6BIPpr2-NDt1LLv0lzxhe-reOSOYQ5fHESUpc5vKkKxs7O0Ed-8
+Message-ID: <CAEEQ3wmAxF=PkRt_pKFZE5-r9w1SMY7YQtco2mCyE+vus7vufg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] riscv: print hartid on bringup
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com, 
+	jassisinghbrar@gmail.com, takakura@valinux.co.jp, 
+	valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com, 
+	charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com, 
+	andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Radxa E20C has three gpio controlled leds (sys, wan and lan).
+Hi Alex,
 
-Add a gpio-leds node and set default trigger to heartbeat for the sys
-led and netdev for the lan and wan leds.
+On Wed, Feb 26, 2025 at 10:58=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
+c.com> wrote:
+>
+> Hi Yunhui,
+>
+> On Thu, Feb 20, 2025 at 1:54=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.c=
+om> wrote:
+> >
+> > Hi All,
+> >
+> > Gentle ping. Any comments on this patch?
+> >
+> > On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.=
+com> wrote:
+> > >
+> > > Firmware randomly releases cores, so CPU numbers don't linearly map
+> > > to hartids. When the system has an exception, we care more about hart=
+ids.
+> > >
+> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > ---
+> > >  arch/riscv/kernel/smp.c     | 2 ++
+> > >  arch/riscv/kernel/smpboot.c | 4 ++++
+> > >  2 files changed, 6 insertions(+)
+> > >
+> > > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> > > index d58b5e751286..e650dec44817 100644
+> > > --- a/arch/riscv/kernel/smp.c
+> > > +++ b/arch/riscv/kernel/smp.c
+> > > @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
+> > >  void __init smp_setup_processor_id(void)
+> > >  {
+> > >         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
+> > > +
+> > > +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid);
+> > >  }
+> > >
+> > >  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
+> > > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.=
+c
+> > > index e36d20205bd7..beba0efb00b9 100644
+> > > --- a/arch/riscv/kernel/smpboot.c
+> > > +++ b/arch/riscv/kernel/smpboot.c
+> > > @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
+> > >         riscv_ipi_enable();
+> > >
+> > >         numa_add_cpu(curr_cpuid);
+> > > +
+> > > +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpuid,
+> > > +               cpuid_to_hartid_map(curr_cpuid));
+> > > +
+> > >         set_cpu_online(curr_cpuid, true);
+> > >
+> > >         /*
+> > > --
+> > > 2.39.2
+> > >
+> >
+> > Thanks,
+> > Yunhui
+>
+> IIRC that's a debug feature when you can't reach userspace and use
+> cpuinfo, so what about using pr_debug() instead?
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Using pr_debug needs enabling #define DEBUG in
+arch/riscv/kernel/smpboot.c and adding loglevel=3D8 to cmdline, not
+convenient. Can't always cat /proc/cpuinfo before running in user
+mode.
+It's true that pr_info prints a large amount of information in the
+startup logs, especially when there are many CPU cores.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index d19e319b4100..7a14f8d5d601 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
- #include "rk3528.dtsi"
- 
- / {
-@@ -45,6 +46,36 @@ button-user {
- 		};
- 	};
- 
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&lan_led_g>, <&sys_led_g>, <&wan_led_g>;
-+
-+		led-lan {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
-+			function = LED_FUNCTION_LAN;
-+			gpios = <&gpio4 RK_PB5 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "netdev";
-+		};
-+
-+		led-sys {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "on";
-+			function = LED_FUNCTION_HEARTBEAT;
-+			gpios = <&gpio4 RK_PC1 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-wan {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
-+			function = LED_FUNCTION_WAN;
-+			gpios = <&gpio4 RK_PC0 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "netdev";
-+		};
-+	};
-+
- 	vcc_1v8: regulator-1v8-vcc {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc_1v8";
-@@ -81,6 +112,20 @@ user_key: user-key {
- 			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
- 		};
- 	};
-+
-+	gpio-leds {
-+		lan_led_g: lan-led-g {
-+			rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		sys_led_g: sys-led-g {
-+			rockchip,pins = <4 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		wan_led_g: wan-led-g {
-+			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &saradc {
--- 
-2.48.1
+Do you have a better solution?
 
+
+> Thanks,
+>
+> Alex
+
+Thanks,
+Yunhui
 
