@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-539003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E79A49FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:04:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EA8A49FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA284176758
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E59F188E5A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026A91EF395;
-	Fri, 28 Feb 2025 17:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520811EF38D;
+	Fri, 28 Feb 2025 17:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V+I5ynZ7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+3Tlu7A"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7k6Q8PS"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D461E1F09BF;
-	Fri, 28 Feb 2025 17:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E291F09BE;
+	Fri, 28 Feb 2025 17:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762237; cv=none; b=uKGce/bhdiwZkGWkjzcJy84VyayEc7l7RY+TivbRIQwruTYPsYXxTS0Hq8nRbPKSrsUJ2IX2fjTyAjcKBEq2J5uSuIUz7Y9QXvA9kKdDEHr1mFjQBTv+PJjw3gNZlfdmOgDF7oW7mYmv+3j+QOgfaG5UASVZk7Hu13vjPbSkrAs=
+	t=1740762353; cv=none; b=mBzV3AwykwRCz4lpC3esL9RiDD9EXrwusUz59Wxx8pSQus3IrcAVrLOBLZg/FCmdUv0Zx2OleJxasBCU+aVf/3AlC1Us1/5M2Tgo0esFf0vFUt9Ugha6t5Za4XFb+ux4txF8nKrwhDvDhpMBcz9R8qyiZJV1fcfOKwLj54ja7zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762237; c=relaxed/simple;
-	bh=/Ae4HgG3M2HwDUnSDcbQfoLKCpADxkiZyCQwgxStM88=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=t2TlhiLqN6+nrVSRu0SJvlijiZJ24+ui2a15RIQ4I4FjGi6PAJAJWi6Z5KSyFSdbKPkhYk5PxnjSCmGTckAq6IJa7/0lL3Rud8k46LUGqhIaNloltrZlwq6/AA7wKo3wPiHT6hTpFPg34239aOQNHVGSeGRzKvsOZkVGrFw1mBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V+I5ynZ7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y+3Tlu7A; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Feb 2025 17:03:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740762234;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BY+4NTQYN4S9VPZV9SE1nYFKoK49aDBE7tr7zSSio5Y=;
-	b=V+I5ynZ7cpEI3YukSQCAUrmMH3CEZWyHadp9YrT31Y//a/+GIQxJN3N2ceCKA/A9tNTT8F
-	eKCiZzGgwMHWy/BTffBc7NH1MtniyI0yiNG+eA94Bccspcu/Z3E6oXIOcZzJjEHxxxEgwS
-	uwkQzQcZqRgs33jDesHKV115jSPzupOzCyUeqD/QaN25VCTodO/sD+oaPEJ4PbksexHVE+
-	VWN5SjganIIe7ZAjcRbf3kpUl8CkNko9DHvv/8IpIMS5HAYtJZco//fZJNy3OA/NpgaLwt
-	DakWjhQ313IpEWVZu8cmMErEFsg1ahyEFGI5ER6Eif4N0ViHpbhxwluFRtDiyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740762234;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BY+4NTQYN4S9VPZV9SE1nYFKoK49aDBE7tr7zSSio5Y=;
-	b=y+3Tlu7AuSFFV9YvSjSsSb72sQDuaURkCTipX2/R8REdnKG4rDFviFmWVMdb7buUhjOOuS
-	ZOUJYf7DpqRXt3Ag==
-From: "tip-bot2 for Kevin Brodsky" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/headers] x86/mm: Remove unused __set_memory_prot()
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, Ingo Molnar <mingo@kernel.org>,
- David Hildenbrand <david@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241212080904.2089632-2-kevin.brodsky@arm.com>
-References: <20241212080904.2089632-2-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1740762353; c=relaxed/simple;
+	bh=TNW79YSK3OsEeNu/vaEkL5Qb4FBUwBYlOvorcB5fdTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uMjqZR867h/bhTRPKIGb3Zb70SvdvlRZyuk/Z+Q5PnHiNk7CdOtJgXaeF3wjKk4tPoEZ+fHzx4PW0EIhajKsh5qIbSzI3dByNTtV30ijJ8dlVtkP2JAKdcQziJj6gZHhwa8Fl59+XgO9a5gI3Bxtndx1b1R69Q/JZS0hUIln2Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7k6Q8PS; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so15869445e9.3;
+        Fri, 28 Feb 2025 09:05:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740762350; x=1741367150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uGOz2Vyc9zMleLzstXLRoTeuJutk5JNx48VhwbfM3EA=;
+        b=d7k6Q8PSeZ/GSIsCqXwOaEZwx+MSW+bFckGWLWXTDLQTdGS9eE83KlsQ3YVgfLyAE3
+         WooQFA3vlI1M1qyjvM6xpvCX9Htc4YOpxw1vw/soxzxAyuqJPbIsudqfCvh5cgQWl4aQ
+         p6USzY75H8ej2w83TT6c7Ou2WGQPw11Dsc4MtOZLB38uusyfiq29UBaICqUNJMU1YuIy
+         KEXiRyIyN5xQdD4M2s+epwCwKQS7NRHkv/JN2G4LvZbh8tFT1I1xBTJOl53ZXRxsFhMr
+         fvzRZB0o6WKJ5s8IFZHepHgzmnQxn0s8aheWXkulgC90HD/5Lnws1lAGrhf2Ti553gZ2
+         H0xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740762350; x=1741367150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uGOz2Vyc9zMleLzstXLRoTeuJutk5JNx48VhwbfM3EA=;
+        b=JW2QK3YGRah8p4Kdhpd6fJJIU2kcxDYHZOlbkg4vIAnjeu+DucOO+fhU6Yq7nOObk6
+         VmhlggCt/LTCkc8ibld+7FNvrL712D4yzJTgLGXDcMv52H6H2uDhLefJjxOjj/arHtXO
+         eNZdR306GwYCXvI1QF2d7W1MPZCTAJOhREDi8fgpLzfKQ7Vx6Meez05QjZC8MFQBatAz
+         eIFVqJs5shtoYknmiyoK9cwOZe+ihXrm194K+OJwRcdk/VYXJoQOD79ei69f/8W6RFlg
+         sDFDLkEOlQkdkL5THnAbTZNt3QM65ZfemLce+0GagjqY/mD++8H0VTwH4cLUwlND/lk+
+         C9SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3hts2+lwDa6ljxkOu2zawWkYO8k51fMZXJ6Gciievz79yt11oie9W+0uvopnpI6KZ+huAl0aLnkQD2K4=@vger.kernel.org, AJvYcCWhiq5htnTKpThsoOsogIF0IqoPlKU/E4clhErc21H0cmcfj2YuOaFSmFUA9G0hISh0fToegXNS66QOuGXyNTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyPTWcBFZs9Q4RWkzRZBjuE/pqRemOpkXpqU6FXFj1fJ36uY7u
+	O2Kwt/e2vw+MFKzTS0SOONM73fCTy5e+TbfdWFohFnE3j0Kg7OuOpPHkNHne
+X-Gm-Gg: ASbGncthro9HQWkLnwbUP4/ScLkect+YNVSuFW+jL6CWMLEAaWj6ZA09Z989VQREvhB
+	nnIOpreE6KtNC/4quuf2ONxAELprhTV/AXYfTw6+DqYwqaSvyhu/RXaECL+dcac/D3PRdfbcrVM
+	LcxC9VdqMGQ1lycs1r6O9Zk+RpBW609s+CGvMSnlz8dFMqVlY3Gt0WaZe+s/y3jHJq4xGLd4kbX
+	2TXKO8QPeuE6L/+luz4oU4rtEreom1l6SKqdxj0owhPtw4e83HjG9i/Di8XLZd/NpdnbIMA1Nd1
+	QvKdbLcHVAe8bO0XZYcze3GnEfjN0Q==
+X-Google-Smtp-Source: AGHT+IETFuS4lsDWiG19zxA+TORXRJGy+FoK8y/hVYewKpq3ENo43gzsPdsqGRnorNfRSBt99lXnxA==
+X-Received: by 2002:a05:600c:1387:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-43ba6760305mr36262855e9.29.1740762349946;
+        Fri, 28 Feb 2025 09:05:49 -0800 (PST)
+Received: from fedora.. ([82.67.147.186])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba53945bsm94990965e9.23.2025.02.28.09.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 09:05:49 -0800 (PST)
+From: Guillaume Gomez <guillaume1.gomez@gmail.com>
+To: ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Guillaume Gomez <guillaume1.gomez@gmail.com>
+Subject: [PATCH 1/1] Improve error message in case the original file name from which the doctest was generated from to mention the doctest file path.
+Date: Fri, 28 Feb 2025 18:05:31 +0100
+Message-ID: <20250228170530.950268-2-guillaume1.gomez@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174076223359.10177.192242044439144224.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/headers branch of tip:
+In case the conversion fail, it will allow to get directly the file name
+triggering this bug, making the bug fixing process faster.
 
-Commit-ID:     693bbf2a50447353c6a47961e6a7240a823ace02
-Gitweb:        https://git.kernel.org/tip/693bbf2a50447353c6a47961e6a7240a823ace02
-Author:        Kevin Brodsky <kevin.brodsky@arm.com>
-AuthorDate:    Thu, 12 Dec 2024 08:09:03 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 28 Feb 2025 17:35:14 +01:00
-
-x86/mm: Remove unused __set_memory_prot()
-
-__set_memory_prot() is unused since:
-
-  5c11f00b09c1 ("x86: remove memory hotplug support on X86_32")
-
-Let's remove it.
-
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
-Link: https://lore.kernel.org/r/20241212080904.2089632-2-kevin.brodsky@arm.com
+Signed-off-by: Guillaume Gomez <guillaume1.gomez@gmail.com>
 ---
- arch/x86/include/asm/set_memory.h |  1 -
- arch/x86/mm/pat/set_memory.c      | 13 -------------
- 2 files changed, 14 deletions(-)
+ scripts/rustdoc_test_gen.rs | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index cc62ef7..6586d53 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -38,7 +38,6 @@ int set_memory_rox(unsigned long addr, int numpages);
-  * The caller is required to take care of these.
-  */
+diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
+index 5ebd42ae4..12115979e 100644
+--- a/scripts/rustdoc_test_gen.rs
++++ b/scripts/rustdoc_test_gen.rs
+@@ -87,8 +87,8 @@ fn find_candidates(
  
--int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
- int _set_memory_uc(unsigned long addr, int numpages);
- int _set_memory_wc(unsigned long addr, int numpages);
- int _set_memory_wt(unsigned long addr, int numpages);
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index ef4514d..b289667 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -1942,19 +1942,6 @@ static inline int cpa_clear_pages_array(struct page **pages, int numpages,
- 		CPA_PAGES_ARRAY, pages);
- }
+     assert!(
+         valid_paths.len() > 0,
+-        "No path candidates found. This is likely a bug in the build system, or some files went \
+-        away while compiling."
++        "No path candidates found for `{file}`. This is likely a bug in the build system, or some \
++        files went away while compiling.",
+     );
  
--/*
-- * __set_memory_prot is an internal helper for callers that have been passed
-- * a pgprot_t value from upper layers and a reservation has already been taken.
-- * If you want to set the pgprot to a specific page protocol, use the
-- * set_memory_xx() functions.
-- */
--int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot)
--{
--	return change_page_attr_set_clr(&addr, numpages, prot,
--					__pgprot(~pgprot_val(prot)), 0, 0,
--					NULL);
--}
--
- int _set_memory_uc(unsigned long addr, int numpages)
- {
- 	/*
+     if valid_paths.len() > 1 {
+@@ -97,8 +97,8 @@ fn find_candidates(
+             eprintln!("    {path:?}");
+         }
+         panic!(
+-            "Several path candidates found, please resolve the ambiguity by renaming a file or \
+-            folder."
++            "Several path candidates found for `{file}`, please resolve the ambiguity by renaming \
++            a file or folder."
+         );
+     }
+ 
+-- 
+2.48.1
+
 
