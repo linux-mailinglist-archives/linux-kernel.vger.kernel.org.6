@@ -1,143 +1,365 @@
-Return-Path: <linux-kernel+bounces-538131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8537FA494E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:27:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF07A494EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1B918953FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:27:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D8E3B4676
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ACF2580E0;
-	Fri, 28 Feb 2025 09:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4543E25A33F;
+	Fri, 28 Feb 2025 09:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BavGDj5/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aVu1+Hyp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E097A257429
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF9625A2C5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734791; cv=none; b=q0JcN/Dm/RF4KMti0YsatsOxXaMo4MRxU1ccYdGa/QtfPAgClN6SCmQqFg6Kfedi6MONIPQbrjKZB5asf/3ixe/gLO2oXcreFWKsit66qMXbGo4flRfJDKY1iQE8uMWbl4G3wHDSy5cOUsIpl12NE7kxpDrsdMb75kgEb1ywQ28=
+	t=1740734799; cv=none; b=CT/7kgBLkGts9mJllJdsJKM56INniw5JSJy8uGQGr66MfgIP2ivrILhdff0f31HHvCeHC0iv0/P2X2Yg5AYDH+TyshBgMiZrr1IbuLjlQf2F3vHEYsbHl7SlkqWuAecrAMJ80PAvizxsQ3ACLvvEbF3dHX+CLyzMVIxjR6KCJU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734791; c=relaxed/simple;
-	bh=qyXnd1QeVCFR0UPHxNUE8dIZREv7JdUyyVgv52l4qOU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Iy7sGB2wdlTEPZEQRGQUCKKHBdInMUy7MOZCLOng5EnY0x59TBEGoINAcrosOLFLxLyouMmNi9TWtlfQAz3ykDJS+bcd3woW4GPg5vE4BoIldelI/4wqBMC9wARM5aE27Wwqn81qJ0KX7k94y74FnZ/dtCpUHvYjVrjdybzFkpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BavGDj5/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740734788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qyXnd1QeVCFR0UPHxNUE8dIZREv7JdUyyVgv52l4qOU=;
-	b=BavGDj5/i86PhS/FOnIADA2YgCqonFhRr4ReaM5Qqxn36Fa99XWaTHVyrQXLuEmE9R/OeB
-	0kkRVY4KHIuPXA8gVrop7tJc5CGjzOp9KRxbTDX92ukd5oA7vJmZDVW4h+YT8tqi3xvbTE
-	4TiRlEJjLL70pb9Yv103EWIUvoC7mRs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-jPDHvF8bNvq6ECP5o93GHA-1; Fri, 28 Feb 2025 04:26:27 -0500
-X-MC-Unique: jPDHvF8bNvq6ECP5o93GHA-1
-X-Mimecast-MFC-AGG-ID: jPDHvF8bNvq6ECP5o93GHA_1740734786
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4399c5baac3so13728635e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:26:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740734786; x=1741339586;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qyXnd1QeVCFR0UPHxNUE8dIZREv7JdUyyVgv52l4qOU=;
-        b=ruRmz9ED+fljIofwAXtH/qF4viKdRZsZh3J3Qu2KnxbKBmnm2J2T2GTwwEnZarlMf+
-         W470idKslHBNu4geplRY4sGg4OU4zGjLKavN05q9TacfpkRdk1M73UnilxRkFWLb9EsF
-         jvWDXsJWlfE9GKUAhTZhkx5H9bUd4RMbbHw6bLkC9uGbr0JpIpUqnfevbqUb1biiePNV
-         TVMXcRSX/svwQ7+6TcBmXcGMGpMdilDDkY/G0P2wQaMYtP7SfjQdDn2xZmoKnhudh4Yc
-         Q8Pug6cw51aE+5zCofNcOKqjinEdGjhr2vxbxQSYfdWl+OFkeiVV2Vcppu+t6wb55LDd
-         zvkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVasFOrd8zP/Arfxi5TZ01m/DMc6ZGdGMHSEtn2Doh7JqQjOPDdklckHQVadHmTCkIBSPakB0/tZBhCzxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPQ+74sEJiz8LHpq6ESxHmNVTTfxvU+eNrhSGUc7dIje/VayXe
-	KvSYxh9kJGbo32qOToQbHuhGNjWnmpAPRel44vwpVjIXQ2rL9k4Q6313GQ6LX7wNF7S+YDgXawt
-	OXmTuHbnxGTDyr7RB4ucz6Q9tsi2rM+GwJDsWjB/hstniO2i7JP0zp1+Jkdf3zg==
-X-Gm-Gg: ASbGncsP/uH1dRtv8PWGk1BitxxhMe97Ysaw3h0Iad9nfyogh0sNFuoRe+LC14ptK45
-	BbpHbwbOT+5sWhnV8fjklZgDT0MlREY4ZQRIX3rMgkCGUJt8ab6cWudpImidLxrzYYoPvGTeBU4
-	/3llooMrP6LvvdtsrDp1p0g/gQ9Ao/JnGYo98mwSSjiV3tyF0YSN17VLaQDlTVQiiPrCUBTShjj
-	WDAQdY/Qouf22WuaaID47hQG8TceIdXrc7gOgu6KmhhRH9HPrr8ulfousumjO0Y3q2VNWOsVF3a
-	Vuf3ijIBhjVeyBt5Ol2kwPMJq7R5Y4P+Z6twYGvUmKC1sP1vU/pOSIVxaMCFK8+x4w==
-X-Received: by 2002:a05:600c:1c85:b0:439:89d1:30ec with SMTP id 5b1f17b1804b1-43ba6747587mr20161745e9.29.1740734785953;
-        Fri, 28 Feb 2025 01:26:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFrk8HCJDFMTsz7xCP+NNdsyxhZ1X9lB/qPY5M9JGAe9E6mxJhigejXtxTR6plCVUKRLft8mw==
-X-Received: by 2002:a05:600c:1c85:b0:439:89d1:30ec with SMTP id 5b1f17b1804b1-43ba6747587mr20161455e9.29.1740734785589;
-        Fri, 28 Feb 2025 01:26:25 -0800 (PST)
-Received: from ?IPv6:2001:16b8:3d09:ac00:a782:635e:5e55:166d? ([2001:16b8:3d09:ac00:a782:635e:5e55:166d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27b27bsm49277385e9.31.2025.02.28.01.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 01:26:25 -0800 (PST)
-Message-ID: <a7720a091ea02a6bbaa88c7311d7a642f9c7fdff.camel@redhat.com>
-Subject: Re: [PATCH net-next v4 1/4] stmmac: loongson: Pass correct arg to
- PCI function
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>, Philipp Stanner <phasta@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>,  Huacai Chen
- <chenhuacai@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu
- <guyinggang@loongson.cn>,  Feiyang Chen <chenfeiyang@loongson.cn>, Jiaxun
- Yang <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>,
- netdev@vger.kernel.org,  linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,  Henry Chen
- <chenx97@aosc.io>
-Date: Fri, 28 Feb 2025 10:26:24 +0100
-In-Reply-To: <20250227183545.0848dd61@kernel.org>
-References: <20250226085208.97891-1-phasta@kernel.org>
-	 <20250226085208.97891-2-phasta@kernel.org>
-	 <20250227183545.0848dd61@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1740734799; c=relaxed/simple;
+	bh=pQCEoGBncSLlXRXT6R9po8QIsdRtJnfH8c8ZNRKeTik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j31utIewSm9fcpklOnmm+uh1gzruoMLs+1zBZNOw1SSkzgWSdIM+DQlnhz9in91nQxRg1hR3TGLHlPeFiyb9XkfMzUd6OHYNmNEmVTGoboC5n4533yG2Zt4MwT+vpkfuyP0O9sXIOs5cyJesxdt7E7uwWvHjwocffsPyZXHepJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aVu1+Hyp; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740734798; x=1772270798;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=pQCEoGBncSLlXRXT6R9po8QIsdRtJnfH8c8ZNRKeTik=;
+  b=aVu1+Hyp0N19UbbKVaM9nP32YCLZRcstyYFDkqoPw0YcuYls4ffkqSHH
+   055H+KyWxPeTvnUG39g0itKhLU56a3s/l1tYaY/VVxey9GiNKJGkA/iu5
+   p0FgI//ygE85BT+c5hsSpYisfF0f69h+rVF/Z8D5lJ+G8/hre8SF+R7uM
+   cf/k879jm88joJDXsurf4/scTdBhpam5zmRkQLiAw6tviZ59MQ7RpuRzG
+   Btw5dIdD4GNKrFY7l3/5QB5kKQ/fDf9Dav5e8aD7DLlH2o9S8a/rbfTSY
+   gHsfZeMb6sFEiRvVcRbci5BUw9PHNKUnl6Jl2HN3sQTfVG92v+f4YX5Qt
+   w==;
+X-CSE-ConnectionGUID: wqxrB5+cSQi+t06ZHgshiw==
+X-CSE-MsgGUID: C3HvDGrxQTG/CSAWYmZGPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45438341"
+X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
+   d="scan'208";a="45438341"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 01:26:38 -0800
+X-CSE-ConnectionGUID: /nUBoTIuRFSYvZ63ahn7xQ==
+X-CSE-MsgGUID: h8qvJFXZTzW1Ym9r4vxQAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="148212977"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Feb 2025 01:26:34 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Fenghua Yu <fenghuay@nvidia.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v3 05/12] iommu/vt-d: Move PRI enablement in probe path
+Date: Fri, 28 Feb 2025 17:26:24 +0800
+Message-ID: <20250228092631.3425464-6-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250228092631.3425464-1-baolu.lu@linux.intel.com>
+References: <20250228092631.3425464-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-02-27 at 18:35 -0800, Jakub Kicinski wrote:
-> On Wed, 26 Feb 2025 09:52:05 +0100 Philipp Stanner wrote:
-> > pcim_iomap_regions() should receive the driver's name as its third
-> > parameter, not the PCI device's name.
-> >=20
-> > Define the driver name with a macro and use it at the appropriate
-> > places, including pcim_iomap_regions().
-> >=20
-> > Cc: stable@vger.kernel.org=C2=A0# v5.14+
-> > Fixes: 30bba69d7db4 ("stmmac: pci: Add dwmac support for Loongson")
->=20
-> Since you sent this as a fix (which.. yea.. I guess.. why not..)
-> I'll apply it to the fixes tree. But then the other patches have=20
-> to wait and be reposted next Thu. The fixes are merged with net-next
-> every Thu, but since this series was tagged as net-next I missed
-> it in today's cross merge :(
->=20
+Update PRI enablement to use the new method, similar to the amd iommu
+driver. Enable PRI in the device probe path and disable it when the device
+is released. PRI is enabled throughout the device's iommu lifecycle. The
+infrastructure for the iommu subsystem to handle iopf requests is created
+during iopf enablement and released during iopf disablement.  All invalid
+page requests from the device are automatically handled by the iommu
+subsystem if iopf is not enabled. Add iopf_refcount to track the iopf
+enablement.
 
-Oh OK, I see =E2=80=93 I'm not very familiar with the net subsystem process=
-. So
-far I always had it like this: fire everything into Linus's master and
-Greg & Sasha then pick those with Fixes tags into the stable trees
-automatically :)
+Convert the return type of intel_iommu_disable_iopf() to void, as there
+is no way to handle a failure when disabling this feature.  Make
+intel_iommu_enable/disable_iopf() helpers global, as they will be used
+beyond the current file in the subsequent patch.
 
-Anyways, I interpret your message so that this series is done and I
-don't have to do anything about it anymore. Correct me if I'm wrong.
+The iopf_refcount is not protected by any lock. This is acceptable, as
+there is no concurrent access to it in the current code. The following
+patch will address this by moving it to the domain attach/detach paths,
+which are protected by the iommu group mutex.
 
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+---
+ drivers/iommu/intel/iommu.c | 137 +++++++++++++-----------------------
+ drivers/iommu/intel/iommu.h |   4 ++
+ drivers/iommu/intel/pasid.c |   2 +
+ drivers/iommu/intel/prq.c   |   2 +-
+ 4 files changed, 55 insertions(+), 90 deletions(-)
 
-Thanks
-P.
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 7efb32a0ac96..35acb6438ea4 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1196,6 +1196,37 @@ static void iommu_disable_pci_ats(struct device_domain_info *info)
+ 	info->ats_enabled = 0;
+ }
+ 
++static void iommu_enable_pci_pri(struct device_domain_info *info)
++{
++	struct pci_dev *pdev;
++
++	if (!info->ats_enabled || !info->pri_supported)
++		return;
++
++	pdev = to_pci_dev(info->dev);
++	/* PASID is required in PRG Response Message. */
++	if (info->pasid_enabled && !pci_prg_resp_pasid_required(pdev))
++		return;
++
++	if (pci_reset_pri(pdev))
++		return;
++
++	if (!pci_enable_pri(pdev, PRQ_DEPTH))
++		info->pri_enabled = 1;
++}
++
++static void iommu_disable_pci_pri(struct device_domain_info *info)
++{
++	if (!info->pri_enabled)
++		return;
++
++	if (WARN_ON(info->iopf_refcount))
++		iopf_queue_remove_device(info->iommu->iopf_queue, info->dev);
++
++	pci_disable_pri(to_pci_dev(info->dev));
++	info->pri_enabled = 0;
++}
++
+ static void intel_flush_iotlb_all(struct iommu_domain *domain)
+ {
+ 	cache_tag_flush_all(to_dmar_domain(domain));
+@@ -3752,6 +3783,7 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
+ 
+ 	if (sm_supported(iommu))
+ 		iommu_enable_pci_ats(info);
++	iommu_enable_pci_pri(info);
+ 
+ 	return &iommu->iommu;
+ free_table:
+@@ -3769,6 +3801,7 @@ static void intel_iommu_release_device(struct device *dev)
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 
++	iommu_disable_pci_pri(info);
+ 	iommu_disable_pci_ats(info);
+ 
+ 	if (info->pasid_enabled) {
+@@ -3857,116 +3890,41 @@ static struct iommu_group *intel_iommu_device_group(struct device *dev)
+ 	return generic_device_group(dev);
+ }
+ 
+-static int context_flip_pri(struct device_domain_info *info, bool enable)
++int intel_iommu_enable_iopf(struct device *dev)
+ {
+-	struct intel_iommu *iommu = info->iommu;
+-	u8 bus = info->bus, devfn = info->devfn;
+-	struct context_entry *context;
+-	u16 did;
+-
+-	spin_lock(&iommu->lock);
+-	if (context_copied(iommu, bus, devfn)) {
+-		spin_unlock(&iommu->lock);
+-		return -EINVAL;
+-	}
+-
+-	context = iommu_context_addr(iommu, bus, devfn, false);
+-	if (!context || !context_present(context)) {
+-		spin_unlock(&iommu->lock);
+-		return -ENODEV;
+-	}
+-	did = context_domain_id(context);
+-
+-	if (enable)
+-		context_set_sm_pre(context);
+-	else
+-		context_clear_sm_pre(context);
+-
+-	if (!ecap_coherent(iommu->ecap))
+-		clflush_cache_range(context, sizeof(*context));
+-	intel_context_flush_present(info, context, did, true);
+-	spin_unlock(&iommu->lock);
+-
+-	return 0;
+-}
+-
+-static int intel_iommu_enable_iopf(struct device *dev)
+-{
+-	struct pci_dev *pdev = dev_is_pci(dev) ? to_pci_dev(dev) : NULL;
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+-	struct intel_iommu *iommu;
++	struct intel_iommu *iommu = info->iommu;
+ 	int ret;
+ 
+-	if (!pdev || !info || !info->ats_enabled || !info->pri_supported)
++	if (!info->pri_enabled)
+ 		return -ENODEV;
+ 
+-	if (info->pri_enabled)
+-		return -EBUSY;
+-
+-	iommu = info->iommu;
+-	if (!iommu)
+-		return -EINVAL;
+-
+-	/* PASID is required in PRG Response Message. */
+-	if (info->pasid_enabled && !pci_prg_resp_pasid_required(pdev))
+-		return -EINVAL;
+-
+-	ret = pci_reset_pri(pdev);
+-	if (ret)
+-		return ret;
++	if (info->iopf_refcount) {
++		info->iopf_refcount++;
++		return 0;
++	}
+ 
+ 	ret = iopf_queue_add_device(iommu->iopf_queue, dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = context_flip_pri(info, true);
+-	if (ret)
+-		goto err_remove_device;
+-
+-	ret = pci_enable_pri(pdev, PRQ_DEPTH);
+-	if (ret)
+-		goto err_clear_pri;
+-
+-	info->pri_enabled = 1;
++	info->iopf_refcount = 1;
+ 
+ 	return 0;
+-err_clear_pri:
+-	context_flip_pri(info, false);
+-err_remove_device:
+-	iopf_queue_remove_device(iommu->iopf_queue, dev);
+-
+-	return ret;
+ }
+ 
+-static int intel_iommu_disable_iopf(struct device *dev)
++void intel_iommu_disable_iopf(struct device *dev)
+ {
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 
+-	if (!info->pri_enabled)
+-		return -EINVAL;
++	if (WARN_ON(!info->pri_enabled || !info->iopf_refcount))
++		return;
+ 
+-	/* Disable new PRI reception: */
+-	context_flip_pri(info, false);
++	if (--info->iopf_refcount)
++		return;
+ 
+-	/*
+-	 * Remove device from fault queue and acknowledge all outstanding
+-	 * PRQs to the device:
+-	 */
+ 	iopf_queue_remove_device(iommu->iopf_queue, dev);
+-
+-	/*
+-	 * PCIe spec states that by clearing PRI enable bit, the Page
+-	 * Request Interface will not issue new page requests, but has
+-	 * outstanding page requests that have been transmitted or are
+-	 * queued for transmission. This is supposed to be called after
+-	 * the device driver has stopped DMA, all PASIDs have been
+-	 * unbound and the outstanding PRQs have been drained.
+-	 */
+-	pci_disable_pri(to_pci_dev(dev));
+-	info->pri_enabled = 0;
+-
+-	return 0;
+ }
+ 
+ static int
+@@ -3986,7 +3944,8 @@ intel_iommu_dev_disable_feat(struct device *dev, enum iommu_dev_features feat)
+ {
+ 	switch (feat) {
+ 	case IOMMU_DEV_FEAT_IOPF:
+-		return intel_iommu_disable_iopf(dev);
++		intel_iommu_disable_iopf(dev);
++		return 0;
+ 
+ 	default:
+ 		return -ENODEV;
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 6ea7bbe26b19..f7d78cf0778c 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -774,6 +774,7 @@ struct device_domain_info {
+ 	u8 ats_enabled:1;
+ 	u8 dtlb_extra_inval:1;	/* Quirk for devices need extra flush */
+ 	u8 ats_qdep;
++	unsigned int iopf_refcount;
+ 	struct device *dev; /* it's NULL for PCIe-to-PCI bridge */
+ 	struct intel_iommu *iommu; /* IOMMU used by this device */
+ 	struct dmar_domain *domain; /* pointer to domain */
+@@ -1314,6 +1315,9 @@ void intel_iommu_page_response(struct device *dev, struct iopf_fault *evt,
+ 			       struct iommu_page_response *msg);
+ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid);
+ 
++int intel_iommu_enable_iopf(struct device *dev);
++void intel_iommu_disable_iopf(struct device *dev);
++
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ void intel_svm_check(struct intel_iommu *iommu);
+ struct iommu_domain *intel_svm_domain_alloc(struct device *dev,
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index fb59a7d35958..c2742e256552 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -992,6 +992,8 @@ static int context_entry_set_pasid_table(struct context_entry *context,
+ 		context_set_sm_dte(context);
+ 	if (info->pasid_supported)
+ 		context_set_pasid(context);
++	if (info->pri_supported)
++		context_set_sm_pre(context);
+ 
+ 	context_set_fault_enable(context);
+ 	context_set_present(context);
+diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
+index 064194399b38..5b6a64d96850 100644
+--- a/drivers/iommu/intel/prq.c
++++ b/drivers/iommu/intel/prq.c
+@@ -67,7 +67,7 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
+ 	u16 sid, did;
+ 
+ 	info = dev_iommu_priv_get(dev);
+-	if (!info->pri_enabled)
++	if (!info->iopf_refcount)
+ 		return;
+ 
+ 	iommu = info->iommu;
+-- 
+2.43.0
 
 
