@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-539596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9B7A4A63A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:54:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88D2A4A63D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468287A2455
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63F403A76A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA621DED64;
-	Fri, 28 Feb 2025 22:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D818E1DF26E;
+	Fri, 28 Feb 2025 22:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lrLbKq5M"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D8823F372;
-	Fri, 28 Feb 2025 22:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nX/j+gbK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2111C5F36;
+	Fri, 28 Feb 2025 22:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740783277; cv=none; b=NufSHhqIF2gIy3Sp60ZoJCa0wuq3tr5aWY2f4VvxHAtHKjD67qNE8prOvhxG/H6zaTcZ2XM3/eNhHttd3SnOWy+DmDEPxwF9c2IY4V1TIkQOSX5NShgl+jNE6pfu1K+01ec8zPn2H5Ibdu1ouDdrKx1cQYEtxpHxCpAHPUVNE6A=
+	t=1740783281; cv=none; b=hE73OSqkNDdHaKBTcYTy3lyDFdf8A36r85sPDevH3v/XzUCbOHoIOnZ2jJcAQIAImLeDgAjaA0LdBSsdQQw3gaqu+eNhINJ9v8pknbloLbFJhEjnPGa4yxJDTZE3o2EYcYGmUTq/JPVCDeKESVF05SQPhF8h7aoveil7+cxbg5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740783277; c=relaxed/simple;
-	bh=Y0G3FnraSQXiNQhkOrQUyVD84KOBIVeLzxdHqm2PlH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJClwyuWr+NhnlttKV3a5hOu85sekAVbm534LDM9viIbY5kLy1oi/EvPwhGcUcG7jB3bhmtnZ6xuQ7emKXHsKolTSe6Ima4kjMxyOvIrYZblnuJ6K/3qIls779SvsqQhgQCN7Eg3QqgkveyBAjpim2vfVcFw0P2cWHDE0/IP7DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lrLbKq5M; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 63053210D0EB;
-	Fri, 28 Feb 2025 14:54:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 63053210D0EB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740783275;
-	bh=TCatK5jzZyZHj5IWMa9vYckFbMN+IcQtVDdwoyNHQFg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lrLbKq5Msbgdg556oQJ/q3Vkhz2eFIziDB/Hf1Tzs4Gma9XSJpfWnkLJQKvlZtwLa
-	 k2d8Kk6UneLTSaa1ZEqgRkj49xfyCebhGSPSYnhnLtV/p+lT9gs5iNJgRnRgL34Old
-	 8BgrpEjxHQrb/ycRBfKyWULbvrcCIEbWRSNkZTwY=
-Message-ID: <aba327ea-ee90-4868-b23e-c2a3ce2ede43@linux.microsoft.com>
-Date: Fri, 28 Feb 2025 14:54:35 -0800
+	s=arc-20240116; t=1740783281; c=relaxed/simple;
+	bh=9/BEXh6bZ8n930l+zITwwGD3TVUqcE/AjCK/PLv0gB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9u/2Wqi5zdWwWVh4y+pblw4K0dZs6Z+qqOp/DXdLlKfRsYPfX2h8Q+pltLdhUcO/28Ga4Lx9iN5KuoHqmVCOlJlURy4SlBTbLxkq+L07blx3ZSyLwyjdydvI1799ILDrat5mvtz7wBHH6K2A86t/8SaSqWbksDAHQQq1pOoMgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nX/j+gbK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 365D4C4CEE5;
+	Fri, 28 Feb 2025 22:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740783280;
+	bh=9/BEXh6bZ8n930l+zITwwGD3TVUqcE/AjCK/PLv0gB0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nX/j+gbKMT3qpqycuWs1FLkNZM513VJA/ubbB3ELLAIas2x/UEUSHjmElCnSZJM+3
+	 /foNfRWpibRmmI3jmjSJc/yiXsDYGs9ECi4XlrIOly7Pbrfoahe/tpjpPy6tJafgbB
+	 CtwoIvOOl4cpjJrRGp/q/nmvxdj85NIeDRMwGEZvU64I3sgYW7+O4tihMU4aVJ5Y3O
+	 UU0VxqFdtTGot5sUZKk0BX/4EQx59SwSTYP3i74aIEHCT6RSeoa6kxI2leO3AGhSKY
+	 74+5nSVfV6Rh7RsE+AI5kEI1cFEQ2gOGKz6Ors36uE92f9osGZlLU/utjaXgBx5/Bw
+	 tGDKtrPA5UAxg==
+Date: Fri, 28 Feb 2025 23:54:37 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Kever Yang <kever.yang@rock-chips.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 10/15] dt-bindings: pwm: rockchip: Add
+ rockchip,rk3562-pwm
+Message-ID: <hmqehlztyrudpdkc46afqvgwg2jpanaprru25qxacnmna7tkha@ifz73s2oiqiq>
+References: <20250227111913.2344207-1-kever.yang@rock-chips.com>
+ <20250227111913.2344207-11-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next] scsi: storvsc: Don't call the packet status
- the hypercall status
-To: Michael Kelley <mhklinux@outlook.com>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>
-References: <20250227233110.36596-1-romank@linux.microsoft.com>
- <SN6PR02MB4157749BCF2F3226008575E0D4CC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157749BCF2F3226008575E0D4CC2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7eve6skvx3pjfnjm"
+Content-Disposition: inline
+In-Reply-To: <20250227111913.2344207-11-kever.yang@rock-chips.com>
 
 
+--7eve6skvx3pjfnjm
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 10/15] dt-bindings: pwm: rockchip: Add
+ rockchip,rk3562-pwm
+MIME-Version: 1.0
 
-On 2/28/2025 12:55 PM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Thursday, February 27, 2025 3:31 PM
->>
->> The log statement reports the packet status code as the hypercall
->> status code which causes confusion when debugging.
->>
->> Fix the name of the datum being logged.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   drivers/scsi/storvsc_drv.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
->> index a8614e54544e..d7ec79536d9a 100644
->> --- a/drivers/scsi/storvsc_drv.c
->> +++ b/drivers/scsi/storvsc_drv.c
->> @@ -1183,7 +1183,7 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
->>   			STORVSC_LOGGING_WARN : STORVSC_LOGGING_ERROR;
->>
->>   		storvsc_log_ratelimited(device, loglevel,
->> -			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x hv 0x%x\n",
->> +			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x sts 0x%x\n",
->>   			scsi_cmd_to_rq(request->cmd)->tag,
->>   			stor_pkt->vm_srb.cdb[0],
->>   			vstor_packet->vm_srb.scsi_status,
-> 
-> FWIW, I added that last status value labelled "hv" in commit 08f76547f08d. And
-> to confirm the discussion on the other thread, it's not a hypercall status -- it's a
-> standard Windows NT status returned by the host-side VMBus or storvsp code.
-> The "hv" is shorthand for Hyper-V, not hypercall. Perhaps that status is
-> interpretable in a Windows guest, but it's not really interpretable in a Linux
-> guest. The hex value would be useful only in the context of a support case
-> where someone on the host side could be engaged to help with the
-> interpretation.
-> 
-> I have no strong opinions on the label. Changing it from "hv" to "sts" or
-> to "host" works for me.
+Hello,
 
-Thank you, Michael, for helping us out with that! I'm leaning towards
-"host" after Easwar's suggestion. As I understand from your reply,
-it's fair to keep the tag as you're fine with the "host" option.
+On Thu, Feb 27, 2025 at 07:19:08PM +0800, Kever Yang wrote:
+> The PWM core on Rockchip's RK3562 is the same as the one already
+> included in RK3328. Extend the binding accordingly to allow
+>=20
+> 	compatible =3D "rockchip,rk3562-pwm", "rockchip,rk3328-pwm";
+>=20
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
+> ---
+>=20
+> Changes in v3:
+> - Update the commit message and collect the Acked-by tag.
+>=20
+> Changes in v2: None
+>=20
+>  Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml b/Do=
+cumentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> index 65bfb492b3a4..e4e1976c542d 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> @@ -30,6 +30,7 @@ properties:
+>            - enum:
+>                - rockchip,px30-pwm
+>                - rockchip,rk3308-pwm
+> +              - rockchip,rk3562-pwm
+>                - rockchip,rk3568-pwm
+>                - rockchip,rk3588-pwm
+>                - rockchip,rv1126-pwm
 
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Applied with Rob's Ack to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+=2E
 
--- 
-Thank you,
-Roman
+Best regards
+Uwe
 
+--7eve6skvx3pjfnjm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfCPqsACgkQj4D7WH0S
+/k5fwQf/bAS8biZKL+kTke5xko1/gSdfFCKIQh8hFMMkR1nephPx57Secam01izM
+4hWWBXkLtnA/4WZXDXftApK2+vParfljyN43aL1aX7ZVEYJAofAHo/VgnA5B36dR
+SJgT3Pj4I10+iF3mtX0miBBxT6GpSY+wbYnscXeU/V1iAt9SuF21MsSXBHYaKd12
+RS1XdmCD9FskxIx67EqE4Uee7nlRAxlmYHRLrLc0RTHABK/hWPJstx3yPDqh57TS
+xFMXo643/mz0yJzWSmEJ6wGtDv6YkK59WUbzZSUBXfODP6qMJmYu0MzOodI02qsQ
+WnrZme04x/XgtigQkvtigVEy8JNqyw==
+=8SAG
+-----END PGP SIGNATURE-----
+
+--7eve6skvx3pjfnjm--
 
