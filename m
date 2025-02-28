@@ -1,498 +1,192 @@
-Return-Path: <linux-kernel+bounces-538514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0589A4998D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A476EA4996E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D52170F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565071899274
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D066D26B2D2;
-	Fri, 28 Feb 2025 12:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A0A26B0A0;
+	Fri, 28 Feb 2025 12:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDN6DZlt"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipQWeIzw"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8575E26E626
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DDD25E471;
+	Fri, 28 Feb 2025 12:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746312; cv=none; b=oTGBQtvxvMD2L4FOIGAdqm965+4Qp888sfVAJSUeVPfCOAc4cx7CQSujLaXuQMxpRD01418aO5S1xKkVVJN0jWmPET5O6X3VEtaEXntR4WAHvZ/faVofX5PFFPaz0+RJ3k49O4b6VdZG9s+jdGxsoorcoCKvOg6u5k5oNP2B+5A=
+	t=1740746170; cv=none; b=Flp4YFLhMqB08NXeea1Tn6OlAaTJSvCP0QLdVO6aQtcOCk+TkY2Gq5H7YEnwnea3BpHuBbaCsnWC/k51RlGswx7OKgjcAbxd8E7tZLsfWep/vohSv5zEpJ+OigTgaftyNlgJTITsp1exzeaNmIYWR2DGYENA4hQb+LE8SdCH/vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746312; c=relaxed/simple;
-	bh=mhR4dtrke4P0N8ttaX8p7NCZMyP+TUiYD1BRmMGC1dc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bz4O31+FOZ6srIwLQ/5YSBQdMC2ngSc6gXy7ACfZZNoNqTEgtxV5duXGB8hxGDJEXlBI0/Ose2nNnugMynUkbhCPXjR6otaBcQ3zhAs/ZW83SQ0W6jBKDssPfbOgMh8umz/R54Zt5EcHxHWZaTTJch/5IRxe5MYY3nG+p7ONE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDN6DZlt; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1740746170; c=relaxed/simple;
+	bh=Q4mIv6d1Xkm+34bu8KlWTvemG9bsWxb2/7JMr1FQ7gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dG0JWWkaaIJQryFriDE9AwbKUc+99oWOH528VUwC0cdyah6I5nhEJJQZZ+nVkrfsAk0n2c1HNuWEFiehYMPv4o38f/HwQLiP1PHcyJ6cl/pS+FHkDNHkztKgZkjJp/NRxMXLxm4bjhAR9vVUMJNKnxs7xvtfHfzam/XFfjpp8yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipQWeIzw; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso2683402a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:38:30 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a69c1a8d3so21347351fa.3;
+        Fri, 28 Feb 2025 04:36:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740746309; x=1741351109; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1doiMwGcrOOHqhq59dRiGl75gZObfJxrhgRgmDF2QA=;
-        b=IDN6DZltyE8sGUqQnJfU7Ln9F3di7N7KW9pTxXwLR9Q7wkGOjaPum0cX6Fq+qWcoRY
-         BgBirYe0lA6X1tP3bWkbWP8ek+bK4mSBG2a6fXncRt5FUvgvNO4jd334IfQbnJdnhpLC
-         wgU1QerWh4WNG6WIy6dS84AFL6vP1XkfgyzY2NNvRqRrk0oqCFqQn/1TsWo2SoykUjvc
-         MrsS+FJkeAvZceWnZnbqXYziCnin0J7s1TRNirGnMf8Ir8ZuxuPl2IctO5RFQtfk+Sfv
-         P/JtO74azOLPH4bQrwP6//bbkIFfOfIQA52DYN5Gb7qguzb8I4vxg05d9QOS/0Oqc+3y
-         ysug==
+        d=gmail.com; s=20230601; t=1740746167; x=1741350967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/iowLL7+2kEroYZoI4bPOoU1drVuTgJ8hI6YhqKSW8g=;
+        b=ipQWeIzwnyHUwIjBihakOJ7GVCqxc/MSkqzelUQPe6sXxyz/wIVO91uUN0GzJ9UPtJ
+         /4rnpsz/Rlo7hf2dTEYmFmWlGs/IeTSZgkgjUs7bbQrR8iSjpnnSrIXQV90fTW1dRcVH
+         y9z11ZW2Ikjg0vjwbjksDtTJxDY/5/M2kCbfH2wTvt9w24YMi0QcC9DeKcqCinX2mzkB
+         wSArpylWiaWh2z0xgcG/pP5JUj8K1QUqr+zuvYgNbq/3BlO9Q/jkI+G+ISS5ElK567o0
+         Ns1Nea4r/6hZEh2S0N1KQNMGDbAZUvaegC9vEpxstvtikvT2wxLcnZ5ZAAzIL4pM3eTG
+         H1cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746309; x=1741351109;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U1doiMwGcrOOHqhq59dRiGl75gZObfJxrhgRgmDF2QA=;
-        b=euOJuATA2OKzblino0IZIDIj263Yfm/z2vZzXka6hDWlZESo3uAqAMsFFCpSCB808d
-         D05gOmIlQKjy33ut/KPsdgp3m9iPnbWYUCHmb2kdnG6AptVvn8WotPwhYe/hE0+DGqyp
-         mT8kdQdsTaflqW7S+oYPnsfMmAl5KO5oxVtnQuXehqx9zlSGaMPnWly4+zX36+34/Qm+
-         QePmnauEQB1JaVX/FbN4UXSO8h+AY7Gu2bFSdMUIVaxGTmueEzeSOFQBy36WA9a+DBkQ
-         CCRLI3IH9nIiMpz2oNIXsc5eykxro7EFYsrO3nnkHDk4w67bLncNXdPLphV1PawfRnrb
-         9xNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIH7+duPEOI6NYjtJlZv+5ag8stYHe2SZQlE/yqLhbwrafXmLmNwps/wLUkwI6vF48sWKzuwulvAVQvkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4uHeX1MpZfks/t1iO/rrLvsYz3eqIRicMWB2JRYnHJB1ByiqR
-	X+/1wkLzFAjHModJHXvgojf0lUwwoEPq8GiNcTv/7xrl9SGr2W/h
-X-Gm-Gg: ASbGnctfjg3AOriXPOdNpLlG9fk/st6WgagkCuQOteVPCLRQrFRSg036KD97U2eER26
-	0a47tcB7EyiIA7Z8M8SlUuNHIMeM+u3f5ufUITamUph7kVPuRqUZxgMZf4dMWp6mjY8VsObbyAU
-	2boWYjxXQy3/EcQHz4ypjufxV8S5WqpThZpAY7BQI2pyGWyOd7JNZBHYbw3Hh6i/NVS/2B5cide
-	zLLSvaFfdH1tB0/ZC0dJRxH9rPM3N9TXCDKQgQT0U0SE2w3iieU/fmkxX1rHWIaCeFOJJt3FRJA
-	e5DfgNS43jOHQFfclw==
-X-Google-Smtp-Source: AGHT+IEE+uFeMXOngXBS+MwEu+/njU82ujp2n9Gk7cg/ztp8BdiqgaGc4di7wRVCz5TmsgltNLgP7Q==
-X-Received: by 2002:a17:906:8e0f:b0:abf:22b9:3cb8 with SMTP id a640c23a62f3a-abf22b94180mr348684066b.7.1740746308424;
-        Fri, 28 Feb 2025 04:38:28 -0800 (PST)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0ba58asm283633166b.31.2025.02.28.04.38.27
+        d=1e100.net; s=20230601; t=1740746167; x=1741350967;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/iowLL7+2kEroYZoI4bPOoU1drVuTgJ8hI6YhqKSW8g=;
+        b=h09karSQjpqUXGZLEkj5lgWNgeS83I0vmtCdO7dIX3oLz3e7ZAni9lIegjDn3fE6fM
+         c/MqCEPqs+sX95UpUIlCspRm1IEdJ9M1yN2umbYnue7tnUIchFh7Z9wb2wMxcVUY4z34
+         ZMxUcSzcPNVB+dIotvYqX2CmI4S+aXT7vfNoiwMETqzgHv88wS2PGIdqdDf1BrgDJUVH
+         /lbv2EvyfRvgFhXSt15iThhNUW/m1xVvwkRXWEkcWNaZv2vJ3QIfSO0UWS0awtyC1nMq
+         NJoxI8KCd8Sb7/4iFF8gHlfT5+A/LFyQQYYBGIBxQeX+RFsHX3XWMgSFzczfRxfXE6LT
+         W4oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCcipaJGiZZBcRHMR3BApJOLQUfBQJk+5ADyvWWS0YCkiLkMZODfv0LD58Jc1YnkRy71AOaWD24dqQ@vger.kernel.org, AJvYcCWm3NY4SEa3rom+F8PIccKlo91Hdhcw2jfQ/v7Lbs+gSnje3SqHdTB7kCMlGJ4bW9LFUCjaaxT8vgbW34Fv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys9zl6Flx4BrgRdtXXMv6ptVt3Q2VFiXuSUE6lyx2JoACJGqGP
+	eutxRJx40DrVeXhfZ1S7ylxe+ADFVKUZpD3D7SVQqRZXpXI7zjkW
+X-Gm-Gg: ASbGnctsK9qxP1Bid13bPAwP6tgRD1bm2cYQWXpVZ6WNiow9wH7bZ+idLZ78zKlw1hJ
+	10aNu/gr9YXaAmIuK0k8JfvcEWwNbcjVGBW6mBefhiUr0UTDYO9tC9J3DbU8d/FmQT4sNRWLmj1
+	FprMlIShhsVk0UTAURSf63jMQqpVMYMyS6p+LeX9Tq1Pz5MiAAYKLn7n4bsNUNNpLme4GfLTNRI
+	vq/4ySY8z1/9nvgk6t0HMTwTaUQUt5gPyzt2YfcN0t2+pr7PjApH96St+awGwIK0as8cabD2bV8
+	ICDBcxuAsLWqq4gAmuNpqvCKMqlHvmQM
+X-Google-Smtp-Source: AGHT+IGxcEuoGdguSv+9314BpRKdqdkNtk0mDD8xaq2UpZ7Gax/H11fwZGMXE190GtnkyyipBPUO2A==
+X-Received: by 2002:a05:651c:1541:b0:307:2bc6:5eb4 with SMTP id 38308e7fff4ca-30b931f9d32mr10004901fa.3.1740746166565;
+        Fri, 28 Feb 2025 04:36:06 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867c8f64sm4938531fa.50.2025.02.28.04.36.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 04:38:27 -0800 (PST)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic locking insns
-Date: Fri, 28 Feb 2025 13:35:59 +0100
-Message-ID: <20250228123825.2729925-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Fri, 28 Feb 2025 04:36:05 -0800 (PST)
+Date: Fri, 28 Feb 2025 14:36:01 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 3/4] gpio: gpio-rcar: Drop direct use of valid_mask
+Message-ID: <fae20f205d4d3c9f0bafb133e51dd115f68de84d.1740745270.git.mazziesaccount@gmail.com>
+References: <cover.1740745270.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tBXZ0PzyD4qk4GD4"
+Content-Disposition: inline
+In-Reply-To: <cover.1740745270.git.mazziesaccount@gmail.com>
 
-According to:
 
-  https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html
+--tBXZ0PzyD4qk4GD4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-the usage of asm pseudo directives in the asm template can confuse
-the compiler to wrongly estimate the size of the generated
-code.
+The valid_mask member of the struct gpio_chip is unconditionally written
+by the GPIO core at driver registration. It should not be directly
+populated by the drivers. Hiding the valid_mask in struct gpio_device
+makes it clear it is not meant to be directly populated by drivers. This
+means drivers should not access it directly from the struct gpio_chip.
 
-The LOCK_PREFIX macro expands to several asm pseudo directives, so
-its usage in atomic locking insns causes instruction length estimate
-to fail significantly (the specially instrumented compiler reports
-the estimated length of these asm templates to be 6 instructions long).
+The gpio-rcar checks the valid mask in set/get_multiple() operations.
+This is no longer needed [1]. Drop these checks.
 
-This incorrect estimate further causes unoptimal inlining decisions,
-unoptimal instruction scheduling and unoptimal code block alignments
-for functions that use these locking primitives.
+Additionally, the valid_mask is needed for enabling the GPIO inputs at
+probe time. Use the new valid_mask -getter function instead of accessing
+it directly from the struct gpio_chip.
 
-Use asm_inline instead:
-
-  https://gcc.gnu.org/pipermail/gcc-patches/2018-December/512349.html
-
-which is a feature that makes GCC pretend some inline assembler code
-is tiny (while it would think it is huge), instead of just asm.
-
-For code size estimation, the size of the asm is then taken as
-the minimum size of one instruction, ignoring how many instructions
-compiler thinks it is.
-
-The code size of the resulting x86_64 defconfig object file increases
-for 33.264 kbytes, representing 1.2% code size increase:
-
-   text    data     bss     dec     hex filename
-27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
-27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
-
-mainly due to different inlining decisions of -O2 build.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
- arch/x86/include/asm/atomic.h      | 14 +++++++-------
- arch/x86/include/asm/atomic64_64.h | 14 +++++++-------
- arch/x86/include/asm/bitops.h      | 14 +++++++-------
- arch/x86/include/asm/cmpxchg.h     | 24 ++++++++++++------------
- arch/x86/include/asm/cmpxchg_32.h  |  4 ++--
- arch/x86/include/asm/cmpxchg_64.h  |  4 ++--
- arch/x86/include/asm/rmwcc.h       |  2 +-
- 7 files changed, 38 insertions(+), 38 deletions(-)
+Please note that this change is compile-tested only. All reviewing and
+testing is highly appreciated.
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index 55b4d24356ea..75743f1dfd4e 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -30,14 +30,14 @@ static __always_inline void arch_atomic_set(atomic_t *v, int i)
- 
- static __always_inline void arch_atomic_add(int i, atomic_t *v)
+Revision history:
+v1 =3D> v2:
+ - New patch
+
+[1]: https://lore.kernel.org/all/TY3PR01MB11346EC54C8672C4D28F931F686CC2@TY=
+3PR01MB11346.jpnprd01.prod.outlook.com/
+---
+ drivers/gpio/gpio-rcar.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 2ecee3269a0c..e32d731d0473 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -336,9 +336,6 @@ static int gpio_rcar_get_multiple(struct gpio_chip *chi=
+p, unsigned long *mask,
+ 	unsigned long flags;
+=20
+ 	bankmask =3D mask[0] & GENMASK(chip->ngpio - 1, 0);
+-	if (chip->valid_mask)
+-		bankmask &=3D chip->valid_mask[0];
+-
+ 	if (!bankmask)
+ 		return 0;
+=20
+@@ -380,9 +377,6 @@ static void gpio_rcar_set_multiple(struct gpio_chip *ch=
+ip, unsigned long *mask,
+ 	u32 val, bankmask;
+=20
+ 	bankmask =3D mask[0] & GENMASK(chip->ngpio - 1, 0);
+-	if (chip->valid_mask)
+-		bankmask &=3D chip->valid_mask[0];
+-
+ 	if (!bankmask)
+ 		return;
+=20
+@@ -482,10 +476,13 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *=
+p, unsigned int *npins)
+ static void gpio_rcar_enable_inputs(struct gpio_rcar_priv *p)
  {
--	asm volatile(LOCK_PREFIX "addl %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "addl %1, %0"
- 		     : "+m" (v->counter)
- 		     : "ir" (i) : "memory");
+ 	u32 mask =3D GENMASK(p->gpio_chip.ngpio - 1, 0);
++	const unsigned long *valid_mask;
++
++	valid_mask =3D gpiochip_query_valid_mask(&p->gpio_chip);
+=20
+ 	/* Select "Input Enable" in INEN */
+-	if (p->gpio_chip.valid_mask)
+-		mask &=3D p->gpio_chip.valid_mask[0];
++	if (valid_mask)
++		mask &=3D valid_mask[0];
+ 	if (mask)
+ 		gpio_rcar_write(p, INEN, gpio_rcar_read(p, INEN) | mask);
  }
- 
- static __always_inline void arch_atomic_sub(int i, atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "subl %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "subl %1, %0"
- 		     : "+m" (v->counter)
- 		     : "ir" (i) : "memory");
- }
-@@ -50,14 +50,14 @@ static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
- 
- static __always_inline void arch_atomic_inc(atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "incl %0"
-+	asm_inline volatile(LOCK_PREFIX "incl %0"
- 		     : "+m" (v->counter) :: "memory");
- }
- #define arch_atomic_inc arch_atomic_inc
- 
- static __always_inline void arch_atomic_dec(atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "decl %0"
-+	asm_inline volatile(LOCK_PREFIX "decl %0"
- 		     : "+m" (v->counter) :: "memory");
- }
- #define arch_atomic_dec arch_atomic_dec
-@@ -116,7 +116,7 @@ static __always_inline int arch_atomic_xchg(atomic_t *v, int new)
- 
- static __always_inline void arch_atomic_and(int i, atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "andl %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "andl %1, %0"
- 			: "+m" (v->counter)
- 			: "ir" (i)
- 			: "memory");
-@@ -134,7 +134,7 @@ static __always_inline int arch_atomic_fetch_and(int i, atomic_t *v)
- 
- static __always_inline void arch_atomic_or(int i, atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "orl %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "orl %1, %0"
- 			: "+m" (v->counter)
- 			: "ir" (i)
- 			: "memory");
-@@ -152,7 +152,7 @@ static __always_inline int arch_atomic_fetch_or(int i, atomic_t *v)
- 
- static __always_inline void arch_atomic_xor(int i, atomic_t *v)
- {
--	asm volatile(LOCK_PREFIX "xorl %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "xorl %1, %0"
- 			: "+m" (v->counter)
- 			: "ir" (i)
- 			: "memory");
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index ae12acae5b06..87b496325b5b 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -22,14 +22,14 @@ static __always_inline void arch_atomic64_set(atomic64_t *v, s64 i)
- 
- static __always_inline void arch_atomic64_add(s64 i, atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "addq %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "addq %1, %0"
- 		     : "=m" (v->counter)
- 		     : "er" (i), "m" (v->counter) : "memory");
- }
- 
- static __always_inline void arch_atomic64_sub(s64 i, atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "subq %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "subq %1, %0"
- 		     : "=m" (v->counter)
- 		     : "er" (i), "m" (v->counter) : "memory");
- }
-@@ -42,7 +42,7 @@ static __always_inline bool arch_atomic64_sub_and_test(s64 i, atomic64_t *v)
- 
- static __always_inline void arch_atomic64_inc(atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "incq %0"
-+	asm_inline volatile(LOCK_PREFIX "incq %0"
- 		     : "=m" (v->counter)
- 		     : "m" (v->counter) : "memory");
- }
-@@ -50,7 +50,7 @@ static __always_inline void arch_atomic64_inc(atomic64_t *v)
- 
- static __always_inline void arch_atomic64_dec(atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "decq %0"
-+	asm_inline volatile(LOCK_PREFIX "decq %0"
- 		     : "=m" (v->counter)
- 		     : "m" (v->counter) : "memory");
- }
-@@ -110,7 +110,7 @@ static __always_inline s64 arch_atomic64_xchg(atomic64_t *v, s64 new)
- 
- static __always_inline void arch_atomic64_and(s64 i, atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "andq %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "andq %1, %0"
- 			: "+m" (v->counter)
- 			: "er" (i)
- 			: "memory");
-@@ -128,7 +128,7 @@ static __always_inline s64 arch_atomic64_fetch_and(s64 i, atomic64_t *v)
- 
- static __always_inline void arch_atomic64_or(s64 i, atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "orq %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "orq %1, %0"
- 			: "+m" (v->counter)
- 			: "er" (i)
- 			: "memory");
-@@ -146,7 +146,7 @@ static __always_inline s64 arch_atomic64_fetch_or(s64 i, atomic64_t *v)
- 
- static __always_inline void arch_atomic64_xor(s64 i, atomic64_t *v)
- {
--	asm volatile(LOCK_PREFIX "xorq %1,%0"
-+	asm_inline volatile(LOCK_PREFIX "xorq %1, %0"
- 			: "+m" (v->counter)
- 			: "er" (i)
- 			: "memory");
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index b96d45944c59..100413aff640 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -52,12 +52,12 @@ static __always_inline void
- arch_set_bit(long nr, volatile unsigned long *addr)
- {
- 	if (__builtin_constant_p(nr)) {
--		asm volatile(LOCK_PREFIX "orb %b1,%0"
-+		asm_inline volatile(LOCK_PREFIX "orb %b1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" (CONST_MASK(nr))
- 			: "memory");
- 	} else {
--		asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
-+		asm_inline volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
- 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
- 	}
- }
-@@ -72,11 +72,11 @@ static __always_inline void
- arch_clear_bit(long nr, volatile unsigned long *addr)
- {
- 	if (__builtin_constant_p(nr)) {
--		asm volatile(LOCK_PREFIX "andb %b1,%0"
-+		asm_inline volatile(LOCK_PREFIX "andb %b1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" (~CONST_MASK(nr)));
- 	} else {
--		asm volatile(LOCK_PREFIX __ASM_SIZE(btr) " %1,%0"
-+		asm_inline volatile(LOCK_PREFIX __ASM_SIZE(btr) " %1,%0"
- 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
- 	}
- }
-@@ -98,7 +98,7 @@ static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
- 		volatile unsigned long *addr)
- {
- 	bool negative;
--	asm volatile(LOCK_PREFIX "xorb %2,%1"
-+	asm_inline volatile(LOCK_PREFIX "xorb %2,%1"
- 		CC_SET(s)
- 		: CC_OUT(s) (negative), WBYTE_ADDR(addr)
- 		: "iq" ((char)mask) : "memory");
-@@ -122,11 +122,11 @@ static __always_inline void
- arch_change_bit(long nr, volatile unsigned long *addr)
- {
- 	if (__builtin_constant_p(nr)) {
--		asm volatile(LOCK_PREFIX "xorb %b1,%0"
-+		asm_inline volatile(LOCK_PREFIX "xorb %b1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" (CONST_MASK(nr)));
- 	} else {
--		asm volatile(LOCK_PREFIX __ASM_SIZE(btc) " %1,%0"
-+		asm_inline volatile(LOCK_PREFIX __ASM_SIZE(btc) " %1,%0"
- 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
- 	}
- }
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index fd8afc1f5f6b..b61f32c3459f 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -44,22 +44,22 @@ extern void __add_wrong_size(void)
- 	        __typeof__ (*(ptr)) __ret = (arg);			\
- 		switch (sizeof(*(ptr))) {				\
- 		case __X86_CASE_B:					\
--			asm volatile (lock #op "b %b0, %1\n"		\
-+			asm_inline volatile (lock #op "b %b0, %1"	\
- 				      : "+q" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_W:					\
--			asm volatile (lock #op "w %w0, %1\n"		\
-+			asm_inline volatile (lock #op "w %w0, %1"	\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_L:					\
--			asm volatile (lock #op "l %0, %1\n"		\
-+			asm_inline volatile (lock #op "l %0, %1"	\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
- 		case __X86_CASE_Q:					\
--			asm volatile (lock #op "q %q0, %1\n"		\
-+			asm_inline volatile (lock #op "q %q0, %1"	\
- 				      : "+r" (__ret), "+m" (*(ptr))	\
- 				      : : "memory", "cc");		\
- 			break;						\
-@@ -91,7 +91,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_B:						\
- 	{								\
- 		volatile u8 *__ptr = (volatile u8 *)(ptr);		\
--		asm volatile(lock "cmpxchgb %2,%1"			\
-+		asm_inline volatile(lock "cmpxchgb %2, %1"		\
- 			     : "=a" (__ret), "+m" (*__ptr)		\
- 			     : "q" (__new), "0" (__old)			\
- 			     : "memory");				\
-@@ -100,7 +100,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_W:						\
- 	{								\
- 		volatile u16 *__ptr = (volatile u16 *)(ptr);		\
--		asm volatile(lock "cmpxchgw %2,%1"			\
-+		asm_inline volatile(lock "cmpxchgw %2, %1"		\
- 			     : "=a" (__ret), "+m" (*__ptr)		\
- 			     : "r" (__new), "0" (__old)			\
- 			     : "memory");				\
-@@ -109,7 +109,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_L:						\
- 	{								\
- 		volatile u32 *__ptr = (volatile u32 *)(ptr);		\
--		asm volatile(lock "cmpxchgl %2,%1"			\
-+		asm_inline volatile(lock "cmpxchgl %2, %1"		\
- 			     : "=a" (__ret), "+m" (*__ptr)		\
- 			     : "r" (__new), "0" (__old)			\
- 			     : "memory");				\
-@@ -118,7 +118,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_Q:						\
- 	{								\
- 		volatile u64 *__ptr = (volatile u64 *)(ptr);		\
--		asm volatile(lock "cmpxchgq %2,%1"			\
-+		asm_inline volatile(lock "cmpxchgq %2, %1"		\
- 			     : "=a" (__ret), "+m" (*__ptr)		\
- 			     : "r" (__new), "0" (__old)			\
- 			     : "memory");				\
-@@ -165,7 +165,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_B:						\
- 	{								\
- 		volatile u8 *__ptr = (volatile u8 *)(_ptr);		\
--		asm volatile(lock "cmpxchgb %[new], %[ptr]"		\
-+		asm_inline volatile(lock "cmpxchgb %[new], %[ptr]"	\
- 			     CC_SET(z)					\
- 			     : CC_OUT(z) (success),			\
- 			       [ptr] "+m" (*__ptr),			\
-@@ -177,7 +177,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_W:						\
- 	{								\
- 		volatile u16 *__ptr = (volatile u16 *)(_ptr);		\
--		asm volatile(lock "cmpxchgw %[new], %[ptr]"		\
-+		asm_inline volatile(lock "cmpxchgw %[new], %[ptr]"	\
- 			     CC_SET(z)					\
- 			     : CC_OUT(z) (success),			\
- 			       [ptr] "+m" (*__ptr),			\
-@@ -189,7 +189,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_L:						\
- 	{								\
- 		volatile u32 *__ptr = (volatile u32 *)(_ptr);		\
--		asm volatile(lock "cmpxchgl %[new], %[ptr]"		\
-+		asm_inline volatile(lock "cmpxchgl %[new], %[ptr]"	\
- 			     CC_SET(z)					\
- 			     : CC_OUT(z) (success),			\
- 			       [ptr] "+m" (*__ptr),			\
-@@ -201,7 +201,7 @@ extern void __add_wrong_size(void)
- 	case __X86_CASE_Q:						\
- 	{								\
- 		volatile u64 *__ptr = (volatile u64 *)(_ptr);		\
--		asm volatile(lock "cmpxchgq %[new], %[ptr]"		\
-+		asm_inline volatile(lock "cmpxchgq %[new], %[ptr]"	\
- 			     CC_SET(z)					\
- 			     : CC_OUT(z) (success),			\
- 			       [ptr] "+m" (*__ptr),			\
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 8806c646d452..3dd278593960 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -19,7 +19,7 @@ union __u64_halves {
- 	union __u64_halves o = { .full = (_old), },			\
- 			   n = { .full = (_new), };			\
- 									\
--	asm volatile(_lock "cmpxchg8b %[ptr]"				\
-+	asm_inline volatile(_lock "cmpxchg8b %[ptr]"			\
- 		     : [ptr] "+m" (*(_ptr)),				\
- 		       "+a" (o.low), "+d" (o.high)			\
- 		     : "b" (n.low), "c" (n.high)			\
-@@ -45,7 +45,7 @@ static __always_inline u64 __cmpxchg64_local(volatile u64 *ptr, u64 old, u64 new
- 			   n = { .full = (_new), };			\
- 	bool ret;							\
- 									\
--	asm volatile(_lock "cmpxchg8b %[ptr]"				\
-+	asm_inline volatile(_lock "cmpxchg8b %[ptr]"			\
- 		     CC_SET(e)						\
- 		     : CC_OUT(e) (ret),					\
- 		       [ptr] "+m" (*(_ptr)),				\
-diff --git a/arch/x86/include/asm/cmpxchg_64.h b/arch/x86/include/asm/cmpxchg_64.h
-index 5e241306db26..71d1e72ed879 100644
---- a/arch/x86/include/asm/cmpxchg_64.h
-+++ b/arch/x86/include/asm/cmpxchg_64.h
-@@ -38,7 +38,7 @@ union __u128_halves {
- 	union __u128_halves o = { .full = (_old), },			\
- 			    n = { .full = (_new), };			\
- 									\
--	asm volatile(_lock "cmpxchg16b %[ptr]"				\
-+	asm_inline volatile(_lock "cmpxchg16b %[ptr]"			\
- 		     : [ptr] "+m" (*(_ptr)),				\
- 		       "+a" (o.low), "+d" (o.high)			\
- 		     : "b" (n.low), "c" (n.high)			\
-@@ -65,7 +65,7 @@ static __always_inline u128 arch_cmpxchg128_local(volatile u128 *ptr, u128 old,
- 			    n = { .full = (_new), };			\
- 	bool ret;							\
- 									\
--	asm volatile(_lock "cmpxchg16b %[ptr]"				\
-+	asm_inline volatile(_lock "cmpxchg16b %[ptr]"			\
- 		     CC_SET(e)						\
- 		     : CC_OUT(e) (ret),					\
- 		       [ptr] "+m" (*(_ptr)),				\
-diff --git a/arch/x86/include/asm/rmwcc.h b/arch/x86/include/asm/rmwcc.h
-index 363266cbcada..3821ee3fae35 100644
---- a/arch/x86/include/asm/rmwcc.h
-+++ b/arch/x86/include/asm/rmwcc.h
-@@ -29,7 +29,7 @@ cc_label:	c = true;						\
- #define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
- ({									\
- 	bool c;								\
--	asm volatile (fullop CC_SET(cc)					\
-+	asm_inline volatile (fullop CC_SET(cc)				\
- 			: [var] "+m" (_var), CC_OUT(cc) (c)		\
- 			: __VA_ARGS__ : clobbers);			\
- 	c;								\
--- 
+--=20
 2.48.1
 
+
+--tBXZ0PzyD4qk4GD4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfBrbEACgkQeFA3/03a
+ocVVOwf+MFzFGoU6nJwi4F8sg8/YsmS31B3LHAiwrgc7H3OPaadYuBRTKLZHBvz8
+ahCf7UcEZ/MO/iOwvTRF/vJJ5M8WsuyuZPHVb/66DIzL1KEh1u93P7O0cpkqWbk1
+IlD6tz1LyA0s78M/O35gl9XeEXuK/IR7PKprRqhmbH/YhdhrNBVIG7az9lpIX2uc
+k3nalkoB02b+WT+9gWjC3DaovunI6P4JLy9g0QUeeA4WjM9OU1zvcf19xlrkq0UE
+RSqoyglSswcfYC6Yk9qk+jQ+CiZLspC+cLhGFN1iZ+m+hrbI+2Ot6ONxOTLyUOsR
+cKXkRmw33ruy8CgepanhgK2kb//ocQ==
+=tCpa
+-----END PGP SIGNATURE-----
+
+--tBXZ0PzyD4qk4GD4--
 
