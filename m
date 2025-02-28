@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-537643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FBCA48E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:28:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5528A48EA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A184D7A873A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3CE3B5FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D57015A87C;
-	Fri, 28 Feb 2025 02:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669F317A2FA;
+	Fri, 28 Feb 2025 02:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8swovPk"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qrOcqSsl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B15925757;
-	Fri, 28 Feb 2025 02:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55F615746F;
+	Fri, 28 Feb 2025 02:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740709685; cv=none; b=DPiw4sbd97v0G4mjtIiSds4YimkIOrBB/NRiR6s2qBej6WHTeReuSLhxVGIJ6MUhXu2IpjALSQ9VxoCFVCKGtTg53xCfSZwUQNiIYQxTFAM8446DvBO8HW86kHaQ06nTMMwBw5wO/RanjWmz4cv2N/OXDMBUegN0qS3gU2k4kto=
+	t=1740709807; cv=none; b=uPlDJH316tCojAS+XSS38qv+HOTanabodRZjcMdOe6HkoUVoyfhOpsRjebDLczZzdvTGoVrWE8zIxKOTBrRvjY/mD7MRxPhpRWs4Z7lYpX2LmFjG968JR3OCrjpHvivYTzZF54A5389WWbxjlIx0qroN4iotqbm/awD/XFRoc4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740709685; c=relaxed/simple;
-	bh=aDVkzuDCBgq4xYPepBaFXsSK789trfyEWC75waTnaFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cT8gg69cXjSrLujx0gGfZuEVyj5rhq9SyDgRpfxg+yqZ+ZACkLfL74WvAFwsuJCs0Uu0xJQy6yZRQ7LxzJ7Lrh3aQwHZkseAp1F2vhvGn13iEMOEiy9bQxSPmT7fwgRBuMwge5WDfHI5l2pVnHu3X3mK33z8C27MMHTe5b1IVW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8swovPk; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86911fd168dso655235241.1;
-        Thu, 27 Feb 2025 18:28:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740709683; x=1741314483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w6CtTLnUlZkpeEsnmmvTInGqChea3z0s5g1Y+wiPVGI=;
-        b=I8swovPkcGi60M3D10k1EixTXkLlkLQfm+3MgLQGCfwoQ1U6v/+kAPm8eHMcs4WBjt
-         MX4OPnKkhD3HbDw69O7DeNPsMLBaoOTrYc/3ESsG33fv5T5NytEVc5puth3+wG7w1g/v
-         klDEpvlKVOcRZBuA/uwZ5lrLCr1q+hA7AXK59AM5o1NSF1vNsCxdYdJHbhyHEDMFXuai
-         FPLzaVs9ySfjoei0WbsOP97nx36xd0Q9YGdM3H6rG4cAcBw4wPXuRV+jyq/+MttQvQQI
-         +gkG0H32j+btwYelggvNxCM25SzetWKRrxRJbzna9UvmKxzuhEAHyWjlHECGfNayO+dL
-         FxMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740709683; x=1741314483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w6CtTLnUlZkpeEsnmmvTInGqChea3z0s5g1Y+wiPVGI=;
-        b=eBf/ZrafjKWsr0uPpnZGH6L9xTX0wRyoOZfK83vF+YVld4U9umTVVTj1IvaVM/GSXS
-         XLDpkl7g38R+n0i0p2pwXSTHGrtLXv0jmaKcBczW9U9rpibfdN4kEe5e4fP+YPIhCHmj
-         1zl6ty8QbRXVZ0GGZSDmQijo0FeOwYlWdwVVkosxNZ8vRClkWka9iZbjkwwvCNkHCdp/
-         1Z79DhAoGEFHj8PwWSRyPLbrMAyWdae8UZJOBhA+C73q6iOWqVYH5sckgO+UrEmCachP
-         3t813EHji78RpgQB8YbIftUSJXBkifihoB/6fCbF8vwMIqVn82U5fSKb296zahf0EL+7
-         5OYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUVJMn4psZbrytNML4aWfJNudqRGBpHIqeMvATyxzmgUZCFIv5LflxWla9csh+OjIf+iR7osOmQvsMHpks@vger.kernel.org, AJvYcCUzbazAz7Z+IpXIWyEHN7IeoVM9E86fWpNjsh/TB40RqBT9z+E6F3SZgWcNZZlHaP2b4qj20o65zzJn@vger.kernel.org, AJvYcCWBuBC10hjK2TN0uqx/3PjuPxBLvTbvyW1P1umvsrBe3I6ZyAx5CHY3mICVqQ7l34xTIKfJ3/8NMhY=@vger.kernel.org, AJvYcCXHVQ2+lzvu8LzjJrxP6qP5m3KXYRUMP2X1So6/SPv3D6ekjqz8MkQn9Q5mCM5K1rEBk0FgD5GHJwt9sQuS+bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwjuFZV2KXyvx2SU27CQEQ7LM/qs3lqynD0hxEZCeCRom/5G8+
-	pfH6MUFAaB7Y0NYdnhtHjg0eVb1XiBYMhkyfpY3ofVoneNvI0CcSscrJGpLXJPHUGha/78l+C2D
-	B9QZiL+KbNRu9ZcoQ0p04W+zEOY8=
-X-Gm-Gg: ASbGnctpyFOhXXAj0exEJl9WoasPA6dBYDNTILx2EHxZif2yO2ogY0BnEvWwE615eYC
-	qXonnuT6/UnqfwRXT4U3kUdvbzz9ztbNzeBrlgZ6pZ4r4GSWmjVReN76IBL0QhVofYdFuwd0GOc
-	HyUrrMb5Dh8VYwXj9jZmiHEB+2kr2PUx8AlcKR
-X-Google-Smtp-Source: AGHT+IHYxnsFG3B8+nagcRcL/Ba9q8piG9tBUzdtcgwFD+X0mUW7p1c/rKHvh5LhmTEiiTQ4vIZpmlSGKwXsalm1f48=
-X-Received: by 2002:a05:6102:1512:b0:4b2:c391:7d16 with SMTP id
- ada2fe7eead31-4c0448b9b00mr1397468137.7.1740709682893; Thu, 27 Feb 2025
- 18:28:02 -0800 (PST)
+	s=arc-20240116; t=1740709807; c=relaxed/simple;
+	bh=R1nVNqPAm2ZQTpo0udxcMXFYQ3FxPBlyYe7zlDbN1CM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=S8YJMdEKZGEg1eWflUWT3UzG9Ew4WF4zFRvaRcur3oQjlrslf+qlUdSykgCT7IVn543XrpuzTp//tXtpA/zoFDQvhQ0GcxVX4UQpFHJ9et9Oy5tP/HdFpebXa4cZfyCVwCOTKlcN6rzlQhzqJ+ubLKq/k12SoRtgVLNmFEMzdGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qrOcqSsl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740709796;
+	bh=7Y1Eyx2SKE0LWaPQrAdnGMrDRPwivGsytrjHgeNsiuU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qrOcqSslPq9eDeBqOuIRzSXCdOm0WeWOQDSgYE+u8ThcSfFToMhAu2B899mfEc7CW
+	 uTtBLI9JQBRfU/eLrmleYaHm1H63yC62z6HCx2zQuqawcTgQIcsk5fVH/atqwNIWcy
+	 7KcqRwYeQvFRFioambpoPh5f/T7vWRCmO2NGjeijwLzZUDmEiDCD5RHhFQzeOghc9E
+	 o1UhH9TyNiqJOqPvBdZdVTUpkHwGOSuHfACEzXF41AeB8fpeZN9WoSWigRlyfkDkaa
+	 W0j0Sy7WF2rA/VTX/mu8qMAhEJUqNO4wByotdCO4GLXq0mNgGglCCbAQ7LDRETD4mO
+	 sMcFJPIXz8c2w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3scN0LlGz4wbx;
+	Fri, 28 Feb 2025 13:29:55 +1100 (AEDT)
+Date: Fri, 28 Feb 2025 13:29:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Christian Brauner <brauner@kernel.org>
+Cc: Networking <netdev@vger.kernel.org>, Lin Feng <linf@wangsu.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Stefano Jordhani <sjordhani@gmail.com>
+Subject: linux-next: manual merge of the net-next tree with the vfs-brauner
+ tree
+Message-ID: <20250228132953.78a2b788@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227030952.2319050-1-alistair@alistair23.me>
- <20250227030952.2319050-10-alistair@alistair23.me> <2025022717-dictate-cortex-5c05@gregkh>
- <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com>
- <2025022752-pureblood-renovator-84a8@gregkh> <CANiq72kS8=1R-0yoGP5wwNT2XKSwofjfvXMk2qLZkO9z_QQzXg@mail.gmail.com>
- <2025022749-gummy-survivor-c03a@gregkh>
-In-Reply-To: <2025022749-gummy-survivor-c03a@gregkh>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Fri, 28 Feb 2025 12:27:36 +1000
-X-Gm-Features: AQ5f1JomfSVKBqp82WCWYnRIwxFU_ExnTkp6XsHs-orkc52LW_GeuvuLpBHWN7k
-Message-ID: <CAKmqyKNei==TWCFASFvBC48g_DsFwncmO=KYH_i9JrpFmeRu+w@mail.gmail.com>
-Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are authenticated
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lukas@wunner.de, linux-pci@vger.kernel.org, 
-	bhelgaas@google.com, Jonathan.Cameron@huawei.com, 
-	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, 
-	ojeda@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, gary@garyguo.net, 
-	alex.gaynor@gmail.com, benno.lossin@proton.me, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/z5uY4b5hMjhQlEAu.MxNqqn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/z5uY4b5hMjhQlEAu.MxNqqn
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 5:33=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Feb 27, 2025 at 05:45:02PM +0100, Miguel Ojeda wrote:
-> > On Thu, Feb 27, 2025 at 1:01=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
-.org> wrote:
-> > >
-> > > Sorry, you are right, it does, and of course it happens (otherwise ho=
-w
-> > > would bindings work), but for small functions like this, how is the C
-> > > code kept in sync with the rust side?  Where is the .h file that C
-> > > should include?
+Hi all,
 
-This I can address with something like Alice mentioned earlier to
-ensure the C and Rust functions stay in sync.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> >
-> > What you were probably remembering is that it still needs to be
-> > justified, i.e. we don't want to generally/freely start replacing
-> > "individual functions" and doing FFI both ways everywhere, i.e. the
-> > goal is to build safe abstractions wherever possible.
->
-> Ah, ok, that's what I was remembering.
->
-> Anyway, the "pass a void blob from C into rust" that this patch is doing
-> feels really odd to me, and hard to verify it is "safe" at a simple
-> glance.
+  fs/eventpoll.c
 
-I agree, it's a bit odd. Ideally I would like to use a sysfs binding,
-but there isn't one today.
+between commit:
 
-I had a quick look and a Rust sysfs binding implementation seems like
-a lot of work, which I wasn't convinced I wanted to invest in for this
-series. This is only a single sysfs attribute and I didn't want to
-slow down this series on a whole sysfs Rust implementation.
+  d3a194d95fc8 ("epoll: simplify ep_busy_loop by removing always 0 argument=
+")
 
-If this approach isn't ok for now, I will just drop the sysfs changes
-from the series so the SPDM implementation doesn't stall on sysfs
-changes. Then come back to the sysfs attributes in the future.
+from the vfs-brauner tree and commit:
 
-So the high level question, is "pass[ing] a void blob from C into
-rust" ok or should I defer for a future safer implementation?
+  b9d752105e5f ("net: use napi_id_valid helper")
 
-Alistair
+from the net-next tree.
 
->
-> thanks,
->
-> greg k-h
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/eventpoll.c
+index 9b06a0ab9c32,2fecf66661e9..000000000000
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@@ -447,8 -447,8 +447,8 @@@ static bool ep_busy_loop(struct eventpo
+  	if (!budget)
+  		budget =3D BUSY_POLL_BUDGET;
+ =20
+- 	if (napi_id >=3D MIN_NAPI_ID && ep_busy_loop_on(ep)) {
++ 	if (napi_id_valid(napi_id) && ep_busy_loop_on(ep)) {
+ -		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
+ +		napi_busy_loop(napi_id, ep_busy_loop_end,
+  			       ep, prefer_busy_poll, budget);
+  		if (ep_events_available(ep))
+  			return true;
+
+--Sig_/z5uY4b5hMjhQlEAu.MxNqqn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfBH6EACgkQAVBC80lX
+0Gy+Swf+KR6UyPmPrOnBSQ2BPjkwcU/awAAp/4iFzUq3qoW9mb4Zd4F6Zdc0xC9s
+/yNERQ8VVYZ8QSSKL7XXqF3+IzcDE8/da8LYXI/C60kghX7Z7MCllSbaFE/HWo6g
+XOIbprF3FhulDD5veanRvHPsRZSrwSCn4OhoKl4yPVXd9THg7XmhVuuQD+3tsTJt
+kQmlhZdcrP1Bcx0J1Nt2ZlC7QlDBsW1FGAWKMXB5lR26Z+8Sn/PeuoEwvczdIPwk
+rz0AN3UE80R53ACqSDMXVYR2IUs0jttQ0kaCVSWMkEVztDzisoomC5vD2QOjOliu
+clwMusRaJ4vUclKPLeah/jN6pzsz0A==
+=a4Yz
+-----END PGP SIGNATURE-----
+
+--Sig_/z5uY4b5hMjhQlEAu.MxNqqn--
 
