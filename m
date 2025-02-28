@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-539570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15386A4A5E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:27:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B42A4A5E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A0B1773C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44CD77AA5EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9E01DED58;
-	Fri, 28 Feb 2025 22:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C50A1DE2C4;
+	Fri, 28 Feb 2025 22:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iPaqpljp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8331DE2C4;
-	Fri, 28 Feb 2025 22:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zzveOQAr"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACC1DED78
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781619; cv=none; b=AW93kx5JNKA1JclU6GlnRXY4ejn8cP+4sPcgGVlJbcpZ+oPnjG/sKHxn1quLvFZzwbXeuslgNphNRQVZsL4zbo9QyTfedPpZ9Iva55l5ufugVxd120OQ+fpnrlz1abQpQD/9q28+qWxdodTN6trmU54iu90tnhrVKQlITS0J7BQ=
+	t=1740781639; cv=none; b=t3CU8hDRrjeTWgvjWuwvFuwzs43nLL71NMKq/22ZIq0ruZ2MVbuoJ7RB7LC8YHaUFR7Ijsz6JoCQEPQKEw2NWBMoBvN+GqGUqA3h6TQVhmtViN1FmsxcdPFblyhfJaNam0tP8/iJSyKK9dRpH44B90eply0iTfkUsUMP+oI40Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781619; c=relaxed/simple;
-	bh=EroVIw18pxTxZJ5SU7P+p+0Qd9h+XB1JAMjk4ODpyp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GcdbEu88fPtqepCZhBI5E1yKtpz5dePJoq7u+fLYJ6zdvjVnje4oPQ3IJahSy/GXP6m9L7UIhgHe6cWtuXIvoBES3E5g6hukuebd5DmH2GTqDcbhO9m61UVpOl2j89QZ6nhz5cpXUe8+pH2CSaOXFtaz+Yr1u/012Js/t/w2wrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iPaqpljp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BB67A210D0EB;
-	Fri, 28 Feb 2025 14:26:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BB67A210D0EB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740781618;
-	bh=1A0wwVr+M5YdleD5WdQbyvCNYbPCnowwpdIat8Rx3jU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iPaqpljp0SPsYOEXK7VBrtInRVWgckeDIadHTBLILkbz6lm3ZiSAC5yniZwL98w9Q
-	 F7FNXGkQStzvgrEgW0HShsyY3FA7178mzv+tFFHskRkkW3SP/1XHSFHHr1amJtB1+D
-	 9HGrCNlzv6+oPzIhOR72qkgcAaskPXKU8ovhxizY=
-Message-ID: <65e3bf97-8d3c-4a53-a3ad-42a16c0456d1@linux.microsoft.com>
-Date: Fri, 28 Feb 2025 14:26:57 -0800
+	s=arc-20240116; t=1740781639; c=relaxed/simple;
+	bh=1GVvDDBZou6faFVHwBQsFrVBIFFXe6j/fIeG+Ip72go=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NHiQ5H0SudO/+RgfaoYKmDySsM+HDgIl9Ps13mlRKpVOYBpkH9SYIcCaZFzu8+Y7ILpEb1Xtb/UDaNoVd+pwhwUuUrCUj07/ZLs4/pk8G9x6UoB+B5b2Z6DEVSPZ8kRtcoOfqoDygXvQyU9WaV4NOS1dr9KtEDTnVO5IE1psOrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--colinmitchell.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zzveOQAr; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--colinmitchell.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc404aaed5so8812012a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:27:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740781637; x=1741386437; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1GVvDDBZou6faFVHwBQsFrVBIFFXe6j/fIeG+Ip72go=;
+        b=zzveOQAr0QuReJxobRAitPc5OoX0Qpt3f64jCRjoMgj9uBvoVfZ6KIDst2N84huR4L
+         lEdDPUwY9yWnjc7GSgPY74eJah1u5BPJdrxHZkc/vP/CMm0XEvPQRlKpYPIQ0Ls0nsDc
+         Sxe6sWWYrOwowTlLBniTs9RB4rXG2XwrCtQ+y4V1MUiKeSRHotjuxgZugo6cv7VzqtUj
+         dhcOSWM7ANR/NN4WB1QrLaFx7dCQQaVa3Ei8J5nuUnwbmqe44bPx/vd8qH5WARQpBe83
+         3D45VzWhflffSb8djMpghrcILu6h5on8LmeOBpMdCQgAgepE9w2XsK0t9S5Kegs4v6WT
+         Iiww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740781637; x=1741386437;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1GVvDDBZou6faFVHwBQsFrVBIFFXe6j/fIeG+Ip72go=;
+        b=qkTPibWK02gREuenSJ9xccWH4ozP1oXuAbD9KVl1O2KdJlZWR3hZvbD7xRH1g3OG6w
+         rZ9r0+knd3yNaiDKBUqoonvYb1gXBx1DES/vbR12Tnzuo5t8Z9GHPRDR3eYo4Foox1B0
+         ewRe1VYn/zDf4lTs2IiXkN3DXctn92HZ3vaRdtQy2FXogUa7Wvznqm31UjGC6MkVJE8C
+         zrRaKAEEf9f9i6/ktnI67EYhhRxlDH6lZnGKo2bv/25qUSlANe8L+uhzMA0b5ggrWH7A
+         KZtIJPKD6MqcyhvVnrtbFDGa4q/8BNrOYkfDQdx3AkTfDzZ59o7/oKq/JW87pQs+rlG9
+         RryA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfyeqZDeg+8DnKSqK9Gj/KQrQHsMg6Skkmbv3HZr15qN0BSY+1YEROllhyv6zSnqiYlDYLIXMFefYJ0D8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaN34Fp2oMt1tHMzMJJcA/no/D/Cnih6CiWWdDyvzCpuEJtcPI
+	6hk1w2HlQN/GslcuUBkBtr9Cer9daO+VPVzmRv95ceEVdl4uwWVmrL6hkmlBbfDIdFSnm1PnkpB
+	0o91SynL7JlJjJZ/ndijxQrbuG6LG4Q==
+X-Google-Smtp-Source: AGHT+IF+UNCeXcB/Q/5kDyMmk7LTqlDmlGeJJuyfmr3GyDcLApiPVRnFN6s/m2L3tZpATeQNoXIBT2+jispVMjDbEdyt
+X-Received: from pjbpv14.prod.google.com ([2002:a17:90b:3c8e:b0:2f2:e97a:e77f])
+ (user=colinmitchell job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2688:b0:2fc:b40:339a with SMTP id 98e67ed59e1d1-2febab40303mr9152728a91.10.1740781637746;
+ Fri, 28 Feb 2025 14:27:17 -0800 (PST)
+Date: Fri, 28 Feb 2025 14:27:15 -0800
+In-Reply-To: <b0cf3395-ed21-4f48-ab49-81c67f6a032a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
- decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
- <74af19c4-639f-4bcc-b667-b5f102bbb312@linux.microsoft.com>
- <8338dd00-3aa4-418f-a547-1c19623358cb@linux.microsoft.com>
- <49a69fe3-fca5-426d-999d-61ee0c8f60f3@linux.microsoft.com>
- <70b62e52-639a-4026-9a52-102d1de46ffd@linux.microsoft.com>
- <212cc582-845d-42b2-89f2-1e9579f752ec@linux.microsoft.com>
- <9254eaa1-8ff0-4dd6-a443-5f127049bdaa@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <9254eaa1-8ff0-4dd6-a443-5f127049bdaa@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <b0cf3395-ed21-4f48-ab49-81c67f6a032a@intel.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250228222715.3306015-1-colinmitchell@google.com>
+Subject: Re: [PATCH 0/6] x86/microcode: Support for Intel Staging Feature
+From: Colin Mitchell <colinmitchell@google.com>
+To: chang.seok.bae@intel.com
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+As a potential user, I'd advocate for an option to disable legacy
+loading if staging is supported.
 
+The difference in quiesce time between staging and legacy loading
+can be significant. Since late loading is more of an explicit active
+action, I would believe allowing the initiating process freedom of a retry
+loop or handling any errors from staging makes sense.
 
-On 2/28/2025 12:22 PM, Easwar Hariharan wrote:
-> On 2/28/2025 9:20 AM, Roman Kisel wrote:
->>
-
-[...]
-
->>
->> So I'd think that the hex error codes from the hypervisor give the user
->> exactly as much as the error symbolic names do to get the system to the
->> desired state: nothing.
-> I continue to disagree, seeing HV_STATUS_NO_RESOURCES is better than 0x1D,
-> because the user may think to look at `top` or `free -h` or similar to see
-> what could be killed to improve the situation.
-> 
-
-I agree that the symbolic name might save the step of looking up the
-error code in the headers. Now, the next step depends on how much the
-user is into virt technologies (if at all). That is
-to illustrate the point that a hint in the logs (or in the
-Documentation) is crucial of what to do next.
-
-The symbolic name might mislead; a hex code maybe with an addition of
-"please look up what may fix this at <URL> or report the problem here
-<URL>" would look better to _my imaginary_ customer :) That would be
-as much friendly as possible, if the kernel needs to print any of that
-at all. Likely the VMM in the user land if it gets that code as-is.
-
-Thank you for the fair critique and the time!
-
-[...]
-
->>> Thanks,
->>> Easwar (he/him)
->>
-> 
-
--- 
-Thank you,
-Roman
-
+Presumably load_late_locked could return an error on failure
+to stage leading to an appropriate print.
 
