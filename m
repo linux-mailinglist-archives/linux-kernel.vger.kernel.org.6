@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-538120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D74A494C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:24:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006DBA494D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91534170799
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFCE1894F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F27255E3E;
-	Fri, 28 Feb 2025 09:24:00 +0000 (UTC)
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4AB257429;
+	Fri, 28 Feb 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lGT3I5C6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5861C2324
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C098E25335E;
+	Fri, 28 Feb 2025 09:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734640; cv=none; b=bTygICoK3L5V16lr5IK0XhxjHEXvHDJHmOlG8zZ6A/Mh0HdIM0VegFtEO01SpB/L5rhLusxOkUVKC7HG9R2ay8LQZFp028Itv9+arz3yDzz0OglgYDco+vQjvyrdFqfrljw5XFplTyEhe1KEzSgesSGvcTodO8zn8IYGN417nTc=
+	t=1740734663; cv=none; b=lOIjdSnTH0BvZjKYaxdKNzcKL9h1nmE9DSWC40fdyBYpPPyXN8s2ieLKkbSaZS06nL98fkqjoQQurURf2KLTJ7goC9uUmG9szHqN4sdUF1CkldtPCFtPK78apsqqCX9HrWwK8/aXgWFiPYm6SU4soBTTPHnIJGoVsU+ragwOEUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734640; c=relaxed/simple;
-	bh=lWLCb46R8hij78SjcvmroxuHOuUYtOSrNx+gY4cGZB0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=XjaIWYFQnNy2uHWGzWGL8sYCaHqliBKjt6zl9Aq8sNu14WeMDO1aGh3TyuSoQwDrlSTw6iORrvR7008kVaB2oLe/Kez44Jc7j98wMI/eSzqWBXalq8wQ8+ISOXq0EnhJJT71evSWTZ+Jmm7n3fPnQ4WgAaUEYIoSVQqygBs4PKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from [127.0.0.1] (161-51-78-170.static.ef-service.nl [161.51.78.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 6CDB03F26F;
-	Fri, 28 Feb 2025 10:23:55 +0100 (CET)
-Date: Fri, 28 Feb 2025 10:23:54 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-CC: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] drm/msm/dpu: program master INTF value
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250228-dpu-active-ctl-v2-2-9a9df2ee5193@linaro.org>
-References: <20250228-dpu-active-ctl-v2-0-9a9df2ee5193@linaro.org> <20250228-dpu-active-ctl-v2-2-9a9df2ee5193@linaro.org>
-Message-ID: <CAACA6C8-441A-4B6E-AC07-A46094A02126@somainline.org>
+	s=arc-20240116; t=1740734663; c=relaxed/simple;
+	bh=/jeHPGx6jm3R1xDJMMDaYjvBALHQReLwn93izWT/Byo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3nxNTGJgXWRGkTndFnGMCFISUT1tCd9SUZhXmwEUtKnHS5rl15lR1uXf+kWn9u0KSwD0mfiA1kWM999Cv2AQBKHrib7xu2bc0XKqpN54ScllE3MDVp6r5u2d5o3F3/8zUw3bTNYDUcfuLdzoCuzS1bLVzReoe5OjaZs6YO1bc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lGT3I5C6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/jeHPGx6jm3R1xDJMMDaYjvBALHQReLwn93izWT/Byo=; b=lGT3I5C6xKvNBqb7eUq6t1oyMA
+	TKIoHFnWDeq6k809BZtIhypUMx/9yIkACdkXQsfqZYh7cwTuKb8ur/v3r/e5h0DhBJ7GTxELBBPEU
+	PTDcCY+uNMxYO7Xe+1tKuuw7l8JEuOEXdotDmQ4ZVDppqjXNnkVBRnI2BabPZrL1epAJperOINnok
+	HMNUOGxzSMonqZ/qtdGSBxtHwSbHx0UdOrL4iRIGbukCttTLYAOvEFxW0+Egs5aypmVtYUFOJ9K/u
+	w8uSkvz+kQfsap8Fz6keuxovTlnUfUO3DPZs4jiUEUryiItJ/OScuvrcSrd/yiSegPuDFjnc0M7a/
+	VThUpajQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnwbG-00000003wMH-2wNy;
+	Fri, 28 Feb 2025 09:24:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E673D300756; Fri, 28 Feb 2025 10:24:05 +0100 (CET)
+Date: Fri, 28 Feb 2025 10:24:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+	Juergen Christ <jchrist@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	"moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
+	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub,
+ add}_return()
+Message-ID: <20250228092405.GE5880@noisy.programming.kicks-ass.net>
+References: <20250227221924.265259-1-lyude@redhat.com>
+ <20250227221924.265259-3-lyude@redhat.com>
+ <20250228091509.8985B18-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228091509.8985B18-hca@linux.ibm.com>
 
-On 28 February 2025 05:14:06 CET, Dmitry Baryshkov <dmitry=2Ebaryshkov@lina=
-ro=2Eorg> wrote:
->If several interfaces are being handled through a single CTL, a main
->('master') INTF needs to be programmed into a separate register=2E Write
->corresponding value into that register=2E
->
->Co-developed-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
->Signed-off-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
->Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
->---
-> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec | 12 ++++++++++++
-> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh |  2 ++
-> 2 files changed, 14 insertions(+)
->
->diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec b/drivers/gpu/d=
-rm/msm/disp/dpu1/dpu_hw_ctl=2Ec
->index 32ab33b314fc44e12ccb935c1695d2eea5c7d9b2=2E=2Effff60c4206c6f2833293=
-fdcc56b653f7d3124a5 100644
->--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec
->+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Ec
->@@ -583,6 +583,9 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl =
-*ctx,
-> 	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
-> 	DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
->=20
->+	if (cfg->intf_master)
->+		DPU_REG_WRITE(c, CTL_INTF_MASTER, BIT(cfg->intf_master - INTF_0));
->+
-> 	if (cfg->cdm)
-> 		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
-> }
->@@ -625,6 +628,7 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_h=
-w_ctl *ctx,
-> {
-> 	struct dpu_hw_blk_reg_map *c =3D &ctx->hw;
-> 	u32 intf_active =3D 0;
->+	u32 intf_master =3D 0;
-> 	u32 wb_active =3D 0;
-> 	u32 merge3d_active =3D 0;
-> 	u32 dsc_active;
->@@ -651,6 +655,14 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_=
-hw_ctl *ctx,
-> 		intf_active =3D DPU_REG_READ(c, CTL_INTF_ACTIVE);
-> 		intf_active &=3D ~BIT(cfg->intf - INTF_0);
-> 		DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
->+
->+		intf_master =3D DPU_REG_READ(c, CTL_INTF_MASTER);
->+
->+		/* Unset this intf as master, if it is the current master */
->+		if (intf_master =3D=3D BIT(cfg->intf - INTF_0)) {
->+			DPU_DEBUG_DRIVER("Unsetting INTF_%d master\n", cfg->intf - INTF_0);
+On Fri, Feb 28, 2025 at 10:15:09AM +0100, Heiko Carstens wrote:
 
-Don't think you want to include my testing ramblings here: we didn't print=
- a message either when the master was _set_, and don't print messages for o=
-ther register writes either=2E
+> I couldn't find any cover letter for the whole patch series which describes
+> what this is about, and why it is needed.
+> It looks like some Rust enablement?
 
-After that:
+Yeah, more or less.
 
-Reviewed-by: Marijn Suijten <marijn=2Esuijten@somainline=2Eorg>
+It's replacing local_irq_save() and all related functions
+(spin_lock_irqsave etc..) that take a flags argument with this new thing
+that frobs a recursion count in preempt_count(), obviating the need to
+carry the local flags argument around.
 
->+			DPU_REG_WRITE(c, CTL_INTF_MASTER, 0);
->+		}
-> 	}
->=20
-> 	if (cfg->wb) {
->diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh b/drivers/gpu/d=
-rm/msm/disp/dpu1/dpu_hw_ctl=2Eh
->index 85c6c835cc8780e6cb66f3a262d9897c91962935=2E=2Ee95989a2fdda6344d0cb9=
-d3036e6ed22a0458675 100644
->--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh
->+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl=2Eh
->@@ -36,6 +36,7 @@ struct dpu_hw_stage_cfg {
-> /**
->  * struct dpu_hw_intf_cfg :Describes how the DPU writes data to output i=
-nterface
->  * @intf :                 Interface id
->+ * @intf_master:           Master interface id in the dual pipe topology
+This is nice, even for C code, less flags muck to carry around.
 
-Not sure if you've seen my comment in v1 about the dual word; maybe the qu=
-adpipe series can update it since they might need a master (or two?) as wel=
-l?
+It would be even better if they then went and deleted all of the _irq /
+_irqsave nonsense entirely.
 
-- Marijn
+Yes, that's going to be a big patch :-)
 
->  * @mode_3d:               3d mux configuration
->  * @merge_3d:              3d merge block used
->  * @intf_mode_sel:         Interface mode, cmd / vid
->@@ -45,6 +46,7 @@ struct dpu_hw_stage_cfg {
->  */
-> struct dpu_hw_intf_cfg {
-> 	enum dpu_intf intf;
->+	enum dpu_intf intf_master;
-> 	enum dpu_wb wb;
-> 	enum dpu_3d_blend_mode mode_3d;
-> 	enum dpu_merge_3d merge_3d;
->
-
+Also, IIRC there is some arch stuff that comes unstuck if you do this
+blindly (I tried at some point, it didn't boot).
 
