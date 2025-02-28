@@ -1,160 +1,129 @@
-Return-Path: <linux-kernel+bounces-538935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A008A49EF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC0FA49EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE33C3AEF37
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD851882D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392892702B7;
-	Fri, 28 Feb 2025 16:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9210B271818;
+	Fri, 28 Feb 2025 16:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYyrYrmb"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="crjVsU99"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9AF849C;
-	Fri, 28 Feb 2025 16:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614EA254861;
+	Fri, 28 Feb 2025 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760615; cv=none; b=eZSkNuBYtaBmZtZDZwTrvcFB4pI1LRJXDVLiZYZCB3NxDv8KHp0EGEkhCnUO/+G9pYueVWjnTzEF2Y+i4EfcEv5kbR+mqbjqubpGLpSc//gQEHAl3Su97iE89F6HAKuxvkdvukEI4PHGC1mbXldHrqchhYhaEv5KZW2lVMV4V2k=
+	t=1740760624; cv=none; b=AilXdkTheQvVcdIZ7XyScRZODxBYL9dcla7ssLXq5oqKnf47dqJddoiV5jf5QvVfeg76u2cYGaVnLgw6k4Wlfr1ypK+BOBqeDnFsoxFBTsuNGvwvmhawD5A47ZNVg3MAXhmJXVM1vVzIiMMcrxMh+jdR0q54uPD55HkqN56Xu3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760615; c=relaxed/simple;
-	bh=f5Vl+c/3UPyb4FQoW+s8KkSFVP+u3T2ZREO0hdb0REI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uetpJG/hg2nwVeLBPK0/AdzDW593PNRnhzSxcjSSrd6BGUneZN7eQJmQo5r3V6UslF7Yi/hJPqA4Nk1POmILDHzwOmPGd2a8bnRf81P7cedWfGW9lJQAzcvOf9y7qr6MgUMyXNAKGkv8EfXqA3hYa/rd1BnJbhWT/QwACvoL8GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYyrYrmb; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30737db1aa9so21261171fa.1;
-        Fri, 28 Feb 2025 08:36:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740760611; x=1741365411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0fzhxTh8dWwPhVoLmGnen103y9OYjaXA/sf9AlCJoY=;
-        b=HYyrYrmbexx6PUl1ABxtfpFRSXyfCHS+xA4CU43vt0tOwP0eZIRRJ/+aeazlBtAAtX
-         nvXMQXnG3fT2FaP8vy7QXsYNC0iDp2yo8oOzujR6/yjNB6NoDB0TlC+4VSW++W3v+xP8
-         +UNP3BbYV7Sub3ZCj+KwEj9n4yWkKQlFjbP8X3dBdFY3Q/utI8fKuK7usD1CEBz8N+m9
-         EmZxzISAyOJgOh3yFJenlNb9lVrOdkMiETzf63IwaHEZYBIX79sZN6UTRGMyrGd/CJGG
-         ht3WMV9ZkwSHMZJoQHf+7pZI0Z/AsSFDJuIBMxxCA4j+cwqphrzHZUcX968uXqCmXtAJ
-         JfAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740760611; x=1741365411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f0fzhxTh8dWwPhVoLmGnen103y9OYjaXA/sf9AlCJoY=;
-        b=VKBtirbmryCHnR7fVEG26bGzqMOxIIYS2IBLFPe+ZUihfWN5ucUV2v2G1d+FHS1VGS
-         5PEoZLd8BWP17bCmXmslcD4BjbBI5EPRG7GEWBfmgtVoo+d5eayAJSj1/5boLpzcXSMj
-         iTpmks7JqEmYip+fRr3g+ZNOiTZKrZAVrnTlls2m0fseMMVBPohw9eUb3KwGzx4hVr3G
-         FJDNyST/X9o62T+3I6Sz1CyZH1IHJmF75xRAQ6sruFdcZgx9TLFWBKebQjd88rjENdtG
-         6JtZDpq2urlzEtkfGWYjgK0V7CmxBT/ngUurz3Fm8xtiLWCHrW24ASe8n/5ZCugeHe5D
-         zArA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+mR8RYbuwq6p3seUZN/pWbGoI4/nRIwNK/4JxSI5iaWBFUXhU2kItgusTM4tz3C7n2ONL@vger.kernel.org, AJvYcCVMIuXdL4s43DRiJ+qW1baWrHayiCMtGoA6p4Lb78s9W80Hd3TZJIYU8B84/JAIfHFnSbqJ+oa7tWa7TuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYIA6mkm/MnS4blPExIBtoZGAf/0k1fNmje652LE02UbtpC9LX
-	0WFDPf7MI+yFhNHi8Rpu0hfGj92SyxxWN2ZCqyV86js1AFTLee+3
-X-Gm-Gg: ASbGncuKxhhM94Bv5QKe1RDFod/TUs9erqWpAYxDAOzqS7vVn5OkyyoxT5AergyvClB
-	E2vZtIbSXrg/EUdaofFJcY2JVjPbrUkKZip/VfSyeKyXsjoIdrxz9ZmBuo1V9KTRc8g5sqCsVOZ
-	Kgl0dk20/DQX7eXmjGnK+F0sk4xxb4L++Feb5/fUdfmz/jtfGh1ncRjY+YZt1GIw2rxwWy8CDvu
-	3yy07n7FPpCcFNRdbOlYAx9FSRbigFxrjtxsUa6NlH+a0ssgU24PSU6VvAyjpFTeW9a73Kcuujn
-	3+57XUjzfv38J19grsyu6Kgkj0dRJ/tzdBXbpJcMmSWcs/cR
-X-Google-Smtp-Source: AGHT+IFYJceD4fh/lNOPw+Ami7jUwQC631WCACN8tEiHvhXnlJUP0YNJgBfciMu1s+t18njTGZuzVg==
-X-Received: by 2002:a05:651c:228:b0:309:17:750d with SMTP id 38308e7fff4ca-30b93413820mr14699801fa.27.1740760610813;
-        Fri, 28 Feb 2025 08:36:50 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86878615sm5598401fa.101.2025.02.28.08.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:36:49 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 28 Feb 2025 17:36:47 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z8HmH85bYNU8enJ2@pc636>
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
- <Z8Ckb6spK35-Ez4U@pc636>
- <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
+	s=arc-20240116; t=1740760624; c=relaxed/simple;
+	bh=UcdzUFgY64qhkR/FTBBvQ+8/NVzky6HoTCKp1K6d2DM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=tAjx7PSkQDs1wfsFf4sqieaDAIHZgjiiYQah04VTw08YPEd+TJy1/giw93yoplw/GEi0U6Z6FjzeEZh6MoUWFD9MYobPEP3AvOFXq2ADunMJityYofuHXUCFgOsoyp5oK3wxoIhfTehQ8R9trh+SvQOhMFGGPjl1NNqBnnLvZpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=crjVsU99; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740760611; x=1741365411; i=markus.elfring@web.de;
+	bh=P3aAi1K30diMwcSyotdSLBi8iQUEl+hDB2tmHvN4WgM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=crjVsU99nW/CZBMET6nlxo5P5Ve71G2x3ctFqiGmxnvi7FsxwgfQXyv5sn6OWVsb
+	 x4qIMcrgrPve+oNy2UrDX5r6tSg0n1lSWr+zn5uco0QIgDtF+27/LMp+dXSoSRyS2
+	 5CMin+pvn3H63SnHPS1vPtrLOaEIURSr+hsFC5kieFfAA0rPDZpeH+tb67yq+02AJ
+	 SLaehROwWbAceE2iVSDbnQ/l6015TwXCK9FmDiRiYd7eQsnK2PUIcHEMlfCfZN7uk
+	 5MQQwEL21T+XVl81aMuZRHZZK8OcXMkSw42rTjlB9PBChlON+Ylqkpj/KEjiVzmt6
+	 D946/tidGDGJjMRPYQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSZHv-1th5Lf3hO5-00Hx7y; Fri, 28
+ Feb 2025 17:36:50 +0100
+Message-ID: <225be170-472d-40c1-95ed-71b452740ae7@web.de>
+Date: Fri, 28 Feb 2025 17:36:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Qasim Ijaz <qasdev00@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/radeon: Simplify maximum determination in
+ radeon_uvd_calc_upll_dividers()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pQnRLfx8v4G9J+knpTzjK8SoUNS8MlolvSv3lkROWsw5FtuoZvC
+ jejqbXK5eiAEUA/Wy3nz448SRf7fWzTID2DWCqDZk4gpGPTOppr9sNw80VIGYfnyk/hBve/
+ MNEtXyvm5MDb4NTUi0brMno2VkKUjZLkPkSn3SG1mbtIUZ6Zc5zQUgAJJVWUt6893KWyP0h
+ fhxSENApa2wuLnjbLweRA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IoqzqYMsVKE=;8IMPCWVo7UO+jbp8zxoV4K9CIxH
+ WUT5+Lqmgwmg9nmcLw7B62FBoZSApUZoLbTAR08MqOnYrR8NIPjp9H3hVMDqGbXcF1aZWmfh4
+ 9DJRGCpInmZXDQmzmF0QLWtBhjeD7nZcwTabq/nthTdMszLW7jtGpixi9g+/UIradL1uPk+Un
+ 8CKHNaCau95MOeD2QdI31+1Xu4OopBONfv5QhYKzH4qRYuBxuIAdhKzAtrRmgS6uVIatXLvy1
+ zFN0nJHP/Xf8ouS4JzlVspTzNCQjen8K7495sn52gU4Q8xdZ+35q+Qk8/8tFxvW0hB849yGHs
+ nPyZd0yxVJl9X3u9gdxtXibEeVrth5sUHVCRspdBF9JVAwuafg+Tjm0/6afVMYgvZx3ifCir1
+ i11NcSYwA1Do044NNc0slPpIenXy9SOClbe+MzyyhZhRJRURrsXs+cPbzilwO6g1z0y2mFroS
+ g8RTkPjpNf0+bjVyjtZPNNrMzRQmdmxGtL4LAeMRGksCAW6z1DlglCcGLGGSrXC84QabDukpQ
+ vLcbn/izySG8Em5eBzNFfD5eRctBnH5fjY0Rq1BJHpSO9kv9hUr2o/tvTR94rXGsC0qpdA0y0
+ IXNMY7vDiW3TCoOFiSAaQiXVagS3lEyW9af+Vm5LtntRizcm/Bi0/r0U3yomEQpOrHTP1N82V
+ Dwzdht/SZUWDz85cvDj9AbGj9UZAnMkuD0SPaJY4KlreyIqDM4Dgjd8g7OAKKNZ3Vex3oMpM5
+ OTunsUnTg4uj7+QG5wlcPmn3AZQ4Ui5dpMWdUdCO9NYHoSi9+VCL60J4VoCqGWdP1/dV+H771
+ a7+wyQSedToNCdNfc3/VuWxVdqcXEvxMKmvD3Y50JONzJyV7cdnZ3R4swNo4qA2bp/MMdixZC
+ 1xz2af6rOp4rtK/wUT5mfbk2Re1wpccXrZXl42RPI+T+S8o01DuUcZ4sqOfc2cwB8xQlzL2Fd
+ +OxUKL0u1lap4P71NQ9Ff2MnMgLtCoT408b4/7nTl8KF0evcN3GZsn5T/N7WL9Dg8dvrUj7va
+ vBEivYCkNtF23WB2PttWtQZMS0LwiDZ4DyyWdpGsGPg1tNRsvPBxoAb5L4zFJ93IQ2PcYMdsq
+ rXrKccO9wGsLZI47/FUf0ClRHNfUpVJO5yRJ/G26YdvBXb2Dxg9aFnGA6bOrEOdN1VRWlfa/6
+ QXg87qVTASNpsvb1iuSXUadOGUDMl0/rUumy6IWUTffs5ySH9FBAwMyx01meX2y2gcBQLE2GC
+ LxpIO/8N5+ammdtWZLxtb1+xzFZ82eusr4uMbyOFatsQZbX//2IEWCJU/u85y4YCqrb/StABr
+ NUGd5KblsU8y+nFupKcH72vo+HijS5+6PV5Mwc0lVH49vg2HHA006eDF7X0fxqqFkLG27+Y2a
+ vnvANt8zRWDhTpU8NZO0aY2CyJCoS6Xhqg1r5qDMgmjS4bU0lzcdsPndYTV4ifzBIXZH2hY0b
+ 3x+GMY8rBnsiXlSRihqzpU2pUyUs=
 
-On Fri, Feb 28, 2025 at 07:41:40AM -0800, Paul E. McKenney wrote:
-> On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
-> > On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> > > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > > > Hi Ulad,
-> > > > 
-> > > > I put these three patches into next (and misc.2025.02.27a) for some
-> > > > testing, hopefully it all goes well and they can make it v6.15.
-> > > > 
-> > > > A few tag changed below:
-> > > > 
-> > > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > > Switch for using of get_state_synchronize_rcu_full() and
-> > > > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > > > synchronize_rcu() call.
-> > > > > 
-> > > > > Just using "not" full APIs to identify if a grace period is
-> > > > > passed or not might lead to a false-positive kernel splat.
-> > > > > 
-> > > > > It can happen, because get_state_synchronize_rcu() compresses
-> > > > > both normal and expedited states into one single unsigned long
-> > > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > > > run.
-> > > > > 
-> > > > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > > > for expedited and normal states.
-> > > > > 
-> > > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > > > 
-> > > > I switch this into "Closes:" per checkpatch.
-> > > > 
-> > > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > 
-> > > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > > > Would you or Paul double-check the Reviewed-by should be here?
-> > > 
-> > > I am good with keeping my Reviewed-by tags.
-> > > 
-> > Thanks Paul!
-> 
-> Except that I got this from overnight testing of rcu/dev on the shared
-> RCU tree:
-> 
-> WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> 
-> I see this only on TREE05.  Which should not be too surprising, given
-> that this is the scenario that tests it.  It happened within five minutes
-> on all 14 of the TREE05 runs.
-> 
-Hm.. This is not fun. I tested this on my system and i did not manage to
-trigger this whereas you do. Something is wrong.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 28 Feb 2025 17:32:45 +0100
 
---
-Uladzislau Rezki
+Replace nested max() calls by single max3() call in this
+function implementation.
+
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/radeon/radeon_uvd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/=
+radeon_uvd.c
+index 058a1c8451b2..ded5747a58d1 100644
+=2D-- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -961,7 +961,7 @@ int radeon_uvd_calc_upll_dividers(struct radeon_device=
+ *rdev,
+ 	unsigned optimal_score =3D ~0;
+
+ 	/* loop through vco from low to high */
+-	vco_min =3D max(max(vco_min, vclk), dclk);
++	vco_min =3D max3(vco_min, vclk, dclk);
+ 	for (vco_freq =3D vco_min; vco_freq <=3D vco_max; vco_freq +=3D 100) {
+
+ 		uint64_t fb_div =3D (uint64_t)vco_freq * fb_factor;
+=2D-
+2.48.1
+
 
