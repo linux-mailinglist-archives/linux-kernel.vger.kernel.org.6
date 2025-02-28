@@ -1,91 +1,58 @@
-Return-Path: <linux-kernel+bounces-538242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E9EA4963D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:01:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A56DA4965F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977463A49A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D6F1896530
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9A325D8E2;
-	Fri, 28 Feb 2025 10:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUmAdtcy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483A7260A25;
+	Fri, 28 Feb 2025 10:00:49 +0000 (UTC)
+Received: from out28-98.mail.aliyun.com (out28-98.mail.aliyun.com [115.124.28.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A36225BAB6;
-	Fri, 28 Feb 2025 10:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F271E25FA06;
+	Fri, 28 Feb 2025 10:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736831; cv=none; b=JuzLVOJDfbLYCTlvVMN08YG8T7I+URwh3Oqj1FHdrC/IRGXpL6IA8oL7kZaQbTokeTAOyedMjdzrqvWI00xaps87MP1n0WxI3iiO3U7ooSpqJkQWWp+nEzKeH+PVHmRMQb7iJ+LTYwM5WmHY+IWC9m+DUDii1U67WTVLr/prOmQ=
+	t=1740736848; cv=none; b=Y5f2iHAQHT4b5p5BDq1UpzvNmYhvGflEpcyA1riBaMGRAde5p+/T0usCSOjhWluOXbG+86/vR0KSlngH5MDVTnJON+GY7ddl4bv3buMKt/DvnnB4Y37Z08vAWaITtR4qllb0YkTQboEpC9MyLae+NP55rS43alwwoL8714CWXp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736831; c=relaxed/simple;
-	bh=2yHMsDkER4HjRnd6CZHCqrmnfsYRe9xtFBscYIAxqhQ=;
+	s=arc-20240116; t=1740736848; c=relaxed/simple;
+	bh=m6WuCiV/RYA+a5NP+PJkwLidaergF+ppnvVg4Hw89LQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eJ5cYdjHPpx+TpG2tuSxgCoN5/3ASVimFXN2aAPpdtX/5F8UILQh7czmF+RWkAkrptIKkzfMQ9WPtieBB1gBZXxj0tOraZRNqVh+uMezLUxfWWdoo7YfqN4kFp4dQQPvSvYy43gQm69ljRIxDdn0cJtTytGPPDjL5KHtD6kJSsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUmAdtcy; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740736829; x=1772272829;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2yHMsDkER4HjRnd6CZHCqrmnfsYRe9xtFBscYIAxqhQ=;
-  b=MUmAdtcy3OLZQJXtL4H8L3I9HPg8SCaIOCViiizqLjm6at99eARpm5/5
-   Ruo4Mm3VDTgqPIVhDrNbjQinaABuTj/acfQgDoUElAulA+9xZ2hKzNjOc
-   /52tQlv4RtcHyNATrIyydlDQg5rSiP5+11n07q+qbhO8/gkWF+NADReXF
-   cK3dU1eYYuzUAO8dX+rnSRbgEtPRto9aCaK7+IxXlkpxUOe41LJwJaF5+
-   LgU6A9nQ/QuK/DgZi3wJyEk/ybbcUb8v7crUP/n7aKa0stSS9gTYMprg1
-   c0wM/BYjAlulvobzQWAoJoB/0FEJmd23XwBleKnCS0GfXMzWS8JD4iu8Q
-   Q==;
-X-CSE-ConnectionGUID: idHMJg6zSLut+YCiKpEkuQ==
-X-CSE-MsgGUID: I4cmoNRBTd2qoGFz6HuDAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40902575"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="40902575"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 02:00:26 -0800
-X-CSE-ConnectionGUID: QvtWhEWqRwmK+E0N1RUkWg==
-X-CSE-MsgGUID: eTAuQPsfQM6G6JzddUkWLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="117325694"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.115])
-  by orviesa006.jf.intel.com with ESMTP; 28 Feb 2025 02:00:25 -0800
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	ryan.roberts@arm.com,
-	21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com,
-	akpm@linux-foundation.org,
-	linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	clabbe@baylibre.com,
-	ardb@kernel.org,
-	ebiggers@google.com,
-	surenb@google.com,
-	kristen.c.accardi@intel.com
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v7 02/15] crypto: acomp - New interfaces to facilitate batching support in acomp & drivers.
-Date: Fri, 28 Feb 2025 02:00:11 -0800
-Message-Id: <20250228100024.332528-3-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
-References: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
+	 MIME-Version; b=C7RDIVO8C+y6RxTBUQehez2HWuvWQ57moY3MoBAm8cu3RMVqOVPsHnYxSD2nJ0H0WJfjnca+UowFUiIwIGwY9WV+M9SV6doR6c9TwwRJcexiP2WzkfBxrTTrqBYZqTz+3o98++4NY+W3jOAlUtIN1sdNZIA9YoNc6j1FL57zzoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from sun-VirtualBox..(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.bfyn1DD_1740736834 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 18:00:35 +0800
+From: Frank Sae <Frank.Sae@motor-comm.com>
+To: Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	netdev@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Parthiban.Veerasooran@microchip.com,
+	linux-kernel@vger.kernel.org,
+	xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com,
+	hua.sun@motor-comm.com
+Subject: [PATCH net-next v3 05/14] motorcomm:yt6801: Implement the .ndo_open function
+Date: Fri, 28 Feb 2025 18:00:11 +0800
+Message-Id: <20250228100020.3944-6-Frank.Sae@motor-comm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250228100020.3944-1-Frank.Sae@motor-comm.com>
+References: <20250228100020.3944-1-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,147 +61,366 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds a get_batch_size() interface to:
+Implement the .ndo_open function to Calculate the Rx buffer size, allocate
+ the channels and rings.
 
-  struct acomp_alg
-  struct crypto_acomp
-
-A crypto_acomp compression algorithm that supports batching of compressions
-and decompressions must register and provide an implementation for this
-API, so that higher level modules such as zswap and zram can allocate
-resources for submitting multiple compress/decompress jobs that can be
-batched.
-
-A new helper function acomp_has_async_batching() can be invoked to query if
-a crypto_acomp has registered this API. Further, the newly added
-crypto_acomp API "crypto_acomp_batch_size()" is provided for use by higher
-level modules like zswap and zram. crypto_acomp_batch_size() returns 1 if
-the acomp has not provided an implementation for get_batch_size().
-
-For instance, zswap can call crypto_acomp_batch_size() to get the maximum
-batch-size supported by the compressor. Based on this, zswap can use the
-minimum of any zswap-specific upper limits for batch-size and the
-compressor's max batch-size, to allocate batching resources. Further,
-the way that zswap can avail of the compressor's batching capability is by
-using request chaining to create a list requests chained to a head request.
-zswap can call crypto_acomp_compress() or crypto_acomp_decompress() with
-the head request in the chain for processing the chain as a batch. The call
-into crypto for compress/decompress will thus remain the same from zswap's
-perspective for both, batching and sequential compressions/decompressions.
-
-An acomp_is_reqchain() API is introduced, that a driver can call to query
-if a request received from compress/decompress represents a request chain,
-and accordingly, process the request chain using either one of:
-
-  acomp_do_req_chain()
-  acomp_do_async_req_chain()
-
-These capabilities allow the iaa_crypto Intel IAA driver to register and
-implement the get_batch_size() acomp_alg interface, that can subsequently
-be invoked from the kernel zswap/zram modules to construct a request chain
-to compress/decompress pages in parallel in the IAA hardware accelerator to
-improve swapout/swapin performance.
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
 ---
- crypto/acompress.c                  |  1 +
- include/crypto/acompress.h          | 28 ++++++++++++++++++++++++++++
- include/crypto/internal/acompress.h |  4 ++++
- 3 files changed, 33 insertions(+)
+ .../ethernet/motorcomm/yt6801/yt6801_desc.c   | 223 ++++++++++++++++++
+ .../ethernet/motorcomm/yt6801/yt6801_net.c    |  90 +++++++
+ 2 files changed, 313 insertions(+)
 
-diff --git a/crypto/acompress.c b/crypto/acompress.c
-index cb6444d09dd7..b2a6c06d7262 100644
---- a/crypto/acompress.c
-+++ b/crypto/acompress.c
-@@ -84,6 +84,7 @@ static int crypto_acomp_init_tfm(struct crypto_tfm *tfm)
+diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
+index 3ff5eff11..74a0bec45 100644
+--- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
++++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
+@@ -48,3 +48,226 @@ void fxgmac_desc_data_unmap(struct fxgmac_pdata *priv,
  
- 	acomp->compress = alg->compress;
- 	acomp->decompress = alg->decompress;
-+	acomp->get_batch_size = alg->get_batch_size;
- 	acomp->dst_free = alg->dst_free;
- 	acomp->reqsize = alg->reqsize;
- 
-diff --git a/include/crypto/acompress.h b/include/crypto/acompress.h
-index e6783deba3ac..147f184b6bea 100644
---- a/include/crypto/acompress.h
-+++ b/include/crypto/acompress.h
-@@ -43,6 +43,9 @@ struct acomp_req {
-  *
-  * @compress:		Function performs a compress operation
-  * @decompress:		Function performs a de-compress operation
-+ * @get_batch_size:     Maximum batch-size for batching compress/decompress
-+ *                      operations. If registered, the acomp must provide
-+ *                      a batching implementation using request chaining.
-  * @dst_free:		Frees destination buffer if allocated inside the
-  *			algorithm
-  * @reqsize:		Context size for (de)compression requests
-@@ -51,6 +54,7 @@ struct acomp_req {
- struct crypto_acomp {
- 	int (*compress)(struct acomp_req *req);
- 	int (*decompress)(struct acomp_req *req);
-+	unsigned int (*get_batch_size)(void);
- 	void (*dst_free)(struct scatterlist *dst);
- 	unsigned int reqsize;
- 	struct crypto_tfm base;
-@@ -142,6 +146,13 @@ static inline bool acomp_is_async(struct crypto_acomp *tfm)
- 	       CRYPTO_ALG_ASYNC;
+ 	desc_data->mapped_as_page = 0;
  }
- 
-+static inline bool acomp_has_async_batching(struct crypto_acomp *tfm)
++
++static int fxgmac_ring_init(struct fxgmac_pdata *priv, struct fxgmac_ring *ring,
++			    unsigned int dma_desc_count)
 +{
-+	return (acomp_is_async(tfm) &&
-+		(crypto_comp_alg_common(tfm)->base.cra_flags & CRYPTO_ALG_TYPE_ACOMPRESS) &&
-+		tfm->get_batch_size);
++	/* Descriptors */
++	ring->dma_desc_count = dma_desc_count;
++	ring->dma_desc_head =
++		dma_alloc_coherent(priv->dev, (sizeof(struct fxgmac_dma_desc) *
++				   dma_desc_count),
++				   &ring->dma_desc_head_addr, GFP_KERNEL);
++	if (!ring->dma_desc_head)
++		return -ENOMEM;
++
++	/* Array of descriptor data */
++	ring->desc_data_head = kcalloc(dma_desc_count,
++				       sizeof(struct fxgmac_desc_data),
++				       GFP_KERNEL);
++	if (!ring->desc_data_head)
++		return -ENOMEM;
++
++	return 0;
 +}
 +
- static inline struct crypto_acomp *crypto_acomp_reqtfm(struct acomp_req *req)
++static void fxgmac_ring_free(struct fxgmac_pdata *priv,
++			     struct fxgmac_ring *ring)
++{
++	if (!ring)
++		return;
++
++	if (ring->desc_data_head) {
++		for (u32 i = 0; i < ring->dma_desc_count; i++)
++			fxgmac_desc_data_unmap(priv,
++					       FXGMAC_GET_DESC_DATA(ring, i));
++
++		kfree(ring->desc_data_head);
++		ring->desc_data_head = NULL;
++	}
++
++	if (ring->rx_hdr_pa.pages) {
++		dma_unmap_page(priv->dev, ring->rx_hdr_pa.pages_dma,
++			       ring->rx_hdr_pa.pages_len, DMA_FROM_DEVICE);
++		put_page(ring->rx_hdr_pa.pages);
++
++		ring->rx_hdr_pa.pages = NULL;
++		ring->rx_hdr_pa.pages_len = 0;
++		ring->rx_hdr_pa.pages_offset = 0;
++		ring->rx_hdr_pa.pages_dma = 0;
++	}
++
++	if (ring->rx_buf_pa.pages) {
++		dma_unmap_page(priv->dev, ring->rx_buf_pa.pages_dma,
++			       ring->rx_buf_pa.pages_len, DMA_FROM_DEVICE);
++		put_page(ring->rx_buf_pa.pages);
++
++		ring->rx_buf_pa.pages = NULL;
++		ring->rx_buf_pa.pages_len = 0;
++		ring->rx_buf_pa.pages_offset = 0;
++		ring->rx_buf_pa.pages_dma = 0;
++	}
++	if (ring->dma_desc_head) {
++		dma_free_coherent(priv->dev, (sizeof(struct fxgmac_dma_desc) *
++				  ring->dma_desc_count), ring->dma_desc_head,
++				  ring->dma_desc_head_addr);
++		ring->dma_desc_head = NULL;
++	}
++}
++
++static void fxgmac_rings_free(struct fxgmac_pdata *priv)
++{
++	struct fxgmac_channel *channel = priv->channel_head;
++
++	fxgmac_ring_free(priv, channel->tx_ring);
++
++	for (u32 i = 0; i < priv->channel_count; i++, channel++)
++		fxgmac_ring_free(priv, channel->rx_ring);
++}
++
++static int fxgmac_rings_alloc(struct fxgmac_pdata *priv)
++{
++	struct fxgmac_channel *channel = priv->channel_head;
++	int ret;
++
++	ret = fxgmac_ring_init(priv, channel->tx_ring, priv->tx_desc_count);
++	if (ret < 0) {
++		yt_err(priv, "error initializing Tx ring");
++		goto err_init_ring;
++	}
++
++	for (u32 i = 0; i < priv->channel_count; i++, channel++) {
++		ret = fxgmac_ring_init(priv, channel->rx_ring,
++				       priv->rx_desc_count);
++		if (ret < 0) {
++			yt_err(priv, "error initializing Rx ring\n");
++			goto err_init_ring;
++		}
++	}
++	return 0;
++
++err_init_ring:
++	fxgmac_rings_free(priv);
++	return ret;
++}
++
++static void fxgmac_channels_free(struct fxgmac_pdata *priv)
++{
++	struct fxgmac_channel *channel = priv->channel_head;
++
++	kfree(channel->tx_ring);
++	channel->tx_ring = NULL;
++
++	kfree(channel->rx_ring);
++	channel->rx_ring = NULL;
++
++	kfree(channel);
++	priv->channel_head = NULL;
++}
++
++void fxgmac_channels_rings_free(struct fxgmac_pdata *priv)
++{
++	fxgmac_rings_free(priv);
++	fxgmac_channels_free(priv);
++}
++
++#ifdef CONFIG_PCI_MSI
++static void fxgmac_set_msix_tx_irq(struct fxgmac_pdata *priv,
++				   struct fxgmac_channel *channel, u32 i)
++{
++	if (i != 0) /*only one tx*/
++		return;
++
++	priv->channel_irq[FXGMAC_MAX_DMA_RX_CHANNELS] =
++		priv->msix_entries[FXGMAC_MAX_DMA_RX_CHANNELS].vector;
++	channel->dma_irq_tx = priv->channel_irq[FXGMAC_MAX_DMA_RX_CHANNELS];
++}
++#endif
++
++static int fxgmac_channels_alloc(struct fxgmac_pdata *priv)
++{
++	struct fxgmac_channel *channel_head, *channel;
++	struct fxgmac_ring *tx_ring, *rx_ring;
++	int ret = -ENOMEM;
++
++	channel_head = kcalloc(priv->channel_count,
++			       sizeof(struct fxgmac_channel), GFP_KERNEL);
++
++	if (!channel_head)
++		return ret;
++
++	tx_ring = kcalloc(FXGMAC_TX_1_RING, sizeof(struct fxgmac_ring),
++			  GFP_KERNEL);
++	if (!tx_ring)
++		goto err_tx_ring;
++
++	rx_ring = kcalloc(priv->rx_ring_count, sizeof(struct fxgmac_ring),
++			  GFP_KERNEL);
++	if (!rx_ring)
++		goto err_rx_ring;
++
++	channel = channel_head;
++	for (u32 i = 0; i < priv->channel_count; i++, channel++) {
++		snprintf(channel->name, sizeof(channel->name), "channel-%u", i);
++		channel->priv = priv;
++		channel->queue_index = i;
++		channel->dma_regs = (priv)->hw_addr + MAC_OFFSET + DMA_CH_BASE +
++				    (DMA_CH_INC * i);
++
++		if (priv->per_channel_irq) {
++			priv->channel_irq[i] = priv->msix_entries[i].vector;
++
++			if (IS_ENABLED(CONFIG_PCI_MSI))
++				fxgmac_set_msix_tx_irq(priv, channel, i);
++
++			/* Get the per DMA rx interrupt */
++			ret = priv->channel_irq[i];
++			if (ret < 0) {
++				yt_err(priv, "get_irq %u err\n", i + 1);
++				goto err_irq;
++			}
++
++			channel->dma_irq_rx = ret;
++		}
++
++		if (i < FXGMAC_TX_1_RING)
++			channel->tx_ring = tx_ring++;
++
++		if (i < priv->rx_ring_count)
++			channel->rx_ring = rx_ring++;
++	}
++
++	priv->channel_head = channel_head;
++	return 0;
++
++err_irq:
++	kfree(rx_ring);
++
++err_rx_ring:
++	kfree(tx_ring);
++
++err_tx_ring:
++	kfree(channel_head);
++
++	yt_err(priv, "%s err:%d\n", __func__, ret);
++	return ret;
++}
++
++int fxgmac_channels_rings_alloc(struct fxgmac_pdata *priv)
++{
++	int ret;
++
++	ret = fxgmac_channels_alloc(priv);
++	if (ret < 0)
++		goto err_alloc;
++
++	ret = fxgmac_rings_alloc(priv);
++	if (ret < 0)
++		goto err_alloc;
++
++	return 0;
++
++err_alloc:
++	fxgmac_channels_rings_free(priv);
++	return ret;
++}
+diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
+index 350510174..c5e02c497 100644
+--- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
++++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
+@@ -11,6 +11,8 @@
+ #include "yt6801.h"
+ #include "yt6801_desc.h"
+ 
++const struct net_device_ops *fxgmac_get_netdev_ops(void);
++
+ #define PHY_WR_CONFIG(reg_offset)	(0x8000205 + ((reg_offset) * 0x10000))
+ static int fxgmac_phy_write_reg(struct fxgmac_pdata *priv, u32 reg_id, u32 data)
  {
- 	return __crypto_acomp_tfm(req->base.tfm);
-@@ -311,4 +322,21 @@ static inline int crypto_acomp_decompress(struct acomp_req *req)
- 	return crypto_acomp_reqtfm(req)->decompress(req);
+@@ -391,6 +393,32 @@ static void fxgmac_stop(struct fxgmac_pdata *priv)
+ 	netdev_tx_reset_queue(txq);
  }
  
-+/**
-+ * crypto_acomp_batch_size() -- Get the algorithm's batch size
-+ *
-+ * Function returns the algorithm's batch size for batching operations
-+ *
-+ * @tfm:	ACOMPRESS tfm handle allocated with crypto_alloc_acomp()
-+ *
-+ * Return:	crypto_acomp's batch size.
-+ */
-+static inline unsigned int crypto_acomp_batch_size(struct crypto_acomp *tfm)
++static void fxgmac_restart(struct fxgmac_pdata *priv)
 +{
-+	if (acomp_has_async_batching(tfm))
-+		return tfm->get_batch_size();
++	int ret;
 +
-+	return 1;
++	/* If not running, "restart" will happen on open */
++	if (!netif_running(priv->netdev) && priv->dev_state != FXGMAC_DEV_START)
++		return;
++
++	mutex_lock(&priv->mutex);
++	fxgmac_stop(priv);
++	fxgmac_free_tx_data(priv);
++	fxgmac_free_rx_data(priv);
++	ret = fxgmac_start(priv);
++	if (ret < 0)
++		yt_err(priv, "%s err, ret = %d.\n", __func__, ret);
++
++	mutex_unlock(&priv->mutex);
 +}
 +
- #endif
-diff --git a/include/crypto/internal/acompress.h b/include/crypto/internal/acompress.h
-index 53b4ef59b48c..24b63db56dfb 100644
---- a/include/crypto/internal/acompress.h
-+++ b/include/crypto/internal/acompress.h
-@@ -17,6 +17,9 @@
-  *
-  * @compress:	Function performs a compress operation
-  * @decompress:	Function performs a de-compress operation
-+ * @get_batch_size:     Maximum batch-size for batching compress/decompress
-+ *                      operations. If registered, the acomp must provide
-+ *                      a batching implementation using request chaining.
-  * @dst_free:	Frees destination buffer if allocated inside the algorithm
-  * @init:	Initialize the cryptographic transformation object.
-  *		This function is used to initialize the cryptographic
-@@ -37,6 +40,7 @@
- struct acomp_alg {
- 	int (*compress)(struct acomp_req *req);
- 	int (*decompress)(struct acomp_req *req);
-+	unsigned int (*get_batch_size)(void);
- 	void (*dst_free)(struct scatterlist *dst);
- 	int (*init)(struct crypto_acomp *tfm);
- 	void (*exit)(struct crypto_acomp *tfm);
++static void fxgmac_restart_work(struct work_struct *work)
++{
++	rtnl_lock();
++	fxgmac_restart(container_of(work, struct fxgmac_pdata, restart_work));
++	rtnl_unlock();
++}
++
+ static void fxgmac_config_powerdown(struct fxgmac_pdata *priv)
+ {
+ 	FXGMAC_MAC_IO_WR_BITS(priv, MAC_CR, RE, 1); /* Enable MAC Rx */
+@@ -435,6 +463,59 @@ int fxgmac_net_powerdown(struct fxgmac_pdata *priv)
+ 	return 0;
+ }
+ 
++static int fxgmac_calc_rx_buf_size(struct fxgmac_pdata *priv, unsigned int mtu)
++{
++	u32 rx_buf_size, max_mtu = FXGMAC_JUMBO_PACKET_MTU - ETH_HLEN;
++
++	if (mtu > max_mtu) {
++		yt_err(priv, "MTU exceeds maximum supported value\n");
++		return -EINVAL;
++	}
++
++	rx_buf_size = mtu + ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN;
++	rx_buf_size =
++		clamp_val(rx_buf_size, FXGMAC_RX_MIN_BUF_SIZE, PAGE_SIZE * 4);
++
++	rx_buf_size = (rx_buf_size + FXGMAC_RX_BUF_ALIGN - 1) &
++		      ~(FXGMAC_RX_BUF_ALIGN - 1);
++
++	return rx_buf_size;
++}
++
++static int fxgmac_open(struct net_device *netdev)
++{
++	struct fxgmac_pdata *priv = netdev_priv(netdev);
++	int ret;
++
++	mutex_lock(&priv->mutex);
++	priv->dev_state = FXGMAC_DEV_OPEN;
++
++	/* Calculate the Rx buffer size before allocating rings */
++	ret = fxgmac_calc_rx_buf_size(priv, netdev->mtu);
++	if (ret < 0)
++		goto unlock;
++
++	priv->rx_buf_size = ret;
++	ret = fxgmac_channels_rings_alloc(priv);
++	if (ret < 0)
++		goto unlock;
++
++	INIT_WORK(&priv->restart_work, fxgmac_restart_work);
++	ret = fxgmac_start(priv);
++	if (ret < 0)
++		goto err_channels_and_rings;
++
++	mutex_unlock(&priv->mutex);
++	return 0;
++
++err_channels_and_rings:
++	fxgmac_channels_rings_free(priv);
++	yt_err(priv, "%s, channel alloc err\n", __func__);
++unlock:
++	mutex_unlock(&priv->mutex);
++	return ret;
++}
++
+ #define EFUSE_FISRT_UPDATE_ADDR				255
+ #define EFUSE_SECOND_UPDATE_ADDR			209
+ #define EFUSE_MAX_ENTRY					39
+@@ -932,3 +1013,12 @@ int fxgmac_drv_probe(struct device *dev, struct fxgmac_resources *res)
+ 	free_netdev(netdev);
+ 	return ret;
+ }
++
++static const struct net_device_ops fxgmac_netdev_ops = {
++	.ndo_open		= fxgmac_open,
++};
++
++const struct net_device_ops *fxgmac_get_netdev_ops(void)
++{
++	return &fxgmac_netdev_ops;
++}
 -- 
-2.27.0
+2.34.1
 
 
