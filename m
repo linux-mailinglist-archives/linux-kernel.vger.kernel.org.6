@@ -1,51 +1,86 @@
-Return-Path: <linux-kernel+bounces-538800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7B9A49D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BE7A49D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FF74175C6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:21:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E627AA3F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BB3271269;
-	Fri, 28 Feb 2025 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE752755E1;
+	Fri, 28 Feb 2025 15:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p4MTwS14"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fgeeu5hI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B86D1EF385
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9099274267
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740755965; cv=none; b=nliw4rBV+ycFwD2X1qgLpwMVTMdKIy73izYalNaDuhaRF8uqinMMhPpV7BrqX3l0oPudxJ2p4wU3e/uwUlnD5q3L3A/uyirf0P3FD8nyUr6K1kRZcTXxAQIOj+j574YtvLcylBp9QSI88e9vpaxUTJM07pHqHYNSYFgy1WwnSPo=
+	t=1740755970; cv=none; b=KP1DfSViYJrPGZutM7+j5qB1mGlUuqcugKUvKXpWQCcRpejkaHKQoYUDU+ZpdnDRht6/+wL8vjJAn+HFhQIhrSH16EbKmduosh6lX4amBXzFr00cKNPVzFjzKWPBBjxi+vxD3Iz8B2oAv1WV0qtbETdAMMJUZ2OD4gi5hwUu2qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740755965; c=relaxed/simple;
-	bh=f7EeFDszSQHnUwn3umZYuxnsbamXQDcHfCeof6RrpKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FsIU4rcyjyQ5z8aZOrLQKgjr7fsHmwIlP5eEwDQk1NQj1MGIAp28Ck18tRaVq0j5nPyViCMKqjNtqWptDFH3Vqm6LKTBhg7D3e5m7MCiFEd6R8Sm2NFfqpqi0CwSuATF3l8a0/C8fHpqSPAJja5EvHwEZMbgqrDruSMCiXCTpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p4MTwS14; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E80D9443B4;
-	Fri, 28 Feb 2025 15:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740755954;
+	s=arc-20240116; t=1740755970; c=relaxed/simple;
+	bh=hlCicZosQRWsNRQVCi4guHJEF/qfP1cDfLacBb0OncA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sgQsCkDGrHIcIdzbNayt/5YWoMkNnGPXiX2TKM4dsJeCvZksiVcCrO2gtHOzs27n70NAhtQ/O/8qdtVDxnoSoOBEQCl1EmJ4CuA/cpwFv/R71MUyxuQk5pEwy6oWdRSL87XXiYk0jjZsFV1UcAIp1RQPH0yO0wYaiRbwEic4iE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fgeeu5hI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740755967;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6PsdEcGr91rbEcTkQHklpm6Jk5oSqLiuDoL+gKClvh8=;
-	b=p4MTwS14vrC9dsLEgdm258mnlVN8k6xN2B1BS9a3ez3Xwwl+wG68vP+NIrl+ClZxONRdlC
-	Xk8Do3hvheA8miUFhLXlI0C4iCAoQZ/GckYQTt6bGZjd0IqYPD3olugFBRzqmaQP93RUUH
-	DEdRD8LdG6ZgS/YUg60t9tFSYqPLlD1/GecAK1E1bxeKutsWjY8qJvjl328wri5Syw8U2U
-	3zhu76U6smpHfOs60kA4TwZIw7EAgQ5Z5h61gZEVpMty3jN0LhBefaqVlRnvicb41R774q
-	Udz2jNtfoNzACFIWI2JR8GPUtKbuZPDluOQkapSW4csZy+dHEDZ779NMPn5h4Q==
-Message-ID: <16d2f49f-02f6-44dd-91f2-05b2e5d598da@bootlin.com>
-Date: Fri, 28 Feb 2025 16:19:13 +0100
+	bh=4vbBIUY6t+jDE+HBv3jSoJOW6m+Ign7gsbcQg4cF5JU=;
+	b=Fgeeu5hIjbkhnRrk2OeUeked2eptuHPlsmNobDBfvaD2tFkpWjFKdBSsGxPdt+l9Fg5ke4
+	dUcJ6MXVMLysi28/K/BN8HjPBhqHyiidjXetRE8eagP6OUrr+bmJcAwaQTISf/wo+4fI07
+	rJYRzoDuA3xQh7QvRxc+DAVV6r5F45k=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-M3JUcLlkNXS2R0WbkQPO2Q-1; Fri, 28 Feb 2025 10:19:26 -0500
+X-MC-Unique: M3JUcLlkNXS2R0WbkQPO2Q-1
+X-Mimecast-MFC-AGG-ID: M3JUcLlkNXS2R0WbkQPO2Q_1740755965
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390e5214efdso1318526f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:19:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740755965; x=1741360765;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4vbBIUY6t+jDE+HBv3jSoJOW6m+Ign7gsbcQg4cF5JU=;
+        b=tdMPnqUKUZh+w7jkpiY8OZIAK1MkHcPOKOol3XGtEahp3RO+i2NE1IE/0GA9FwiN/A
+         CiPSYZvskX7Z2LjsUHHI84GW1XFdgyzf7fiEnP23KBGymhs9czqA5St+MychvYmK2C9h
+         39j2BXazcngtlPNoJ87E36Yy1G/CMjTJQnA6fMM1Syju8mPS8qzbtx2Nk/AAsTiVm8UM
+         cgabL0E6Leto5e5aGX314Jur2rJkzNxQK+TVMw6WgVjh0ZBIHyySXTE9lH35VAYQjle+
+         d5GSgsNDzwmiQXD9TTngTZSGRJm7zz26gGV2E2QZeoH/42jIVCpwdggbhjBM3PpXVoOp
+         Xwvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXp/2E0OxNUrsndVNdYcrU4k/T3QxOQ6P52ay/5jDGv+XixQaBDJo6hcLOvW2hsSdCGGo2mxk2hz9OaINU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVF1OSuJBCdytW7VMq/GdsM+J13DAc/qC0iCdYBHacPnt6u1uW
+	ajY9wYH8BmX/mXF8RRqRPZ4lrQJUq7UOlZe3AqtusbF8vPWGsK9JbkVUEZV0kh4fiEqbViZunQY
+	YK5noSXYJzfI3B2pHfbxmtpHQnTInjrL5DHrzdtXjmrdgxnkeAu8MJJPA3G6VGg==
+X-Gm-Gg: ASbGnctn6cj/6iE/SX6mfSLW9Rk242oe+02pZjALlTFF5Uon0ownq2+ZW68Rug2hXdO
+	OFgbj+rfz3tQJhF7c/NIullkLa8GPuVtTbKyKOe4wUkqsPyn1xL5JRHf79oj6tKZC1GJapB55QH
+	4HVs9EaZx+j9lWSpefGnXJHU6xfjZ5WtTeuZMl7Kv3vSwPnf6ZEQ5RzGB6XqlqD9OnYkKyKLUWc
+	3AnE+Z8U+scuiGzD3OdK+j0WB2slyNH6hhp/tjliI2qhVfNPbx/wzia2ZieEff/5L/FHh0eU5nD
+	JoWlL5Pa4RyS9j5rB+E/i+LW
+X-Received: by 2002:a05:6000:188c:b0:38d:e15e:17e1 with SMTP id ffacd0b85a97d-390ec7c6743mr2982640f8f.10.1740755965143;
+        Fri, 28 Feb 2025 07:19:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IESVoeT2S2DdM1k5KmwWSEDG3+Y6ip8nyJ8DaRL56CSQn6DUaBjNk1VxnyULKFcvL58bMulcQ==
+X-Received: by 2002:a05:6000:188c:b0:38d:e15e:17e1 with SMTP id ffacd0b85a97d-390ec7c6743mr2982591f8f.10.1740755964697;
+        Fri, 28 Feb 2025 07:19:24 -0800 (PST)
+Received: from ?IPV6:2a02:8070:4688:86a0::a40b? ([2a02:8070:4688:86a0::a40b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a28b6fbsm58947605e9.35.2025.02.28.07.19.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 07:19:24 -0800 (PST)
+Message-ID: <4705cebb-dc11-4fac-bfcc-74d0cb5af5fc@redhat.com>
+Date: Fri, 28 Feb 2025 16:19:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,418 +88,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/16] drm/vkms: Add and remove VKMS instances via
- configfs
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250225175936.7223-1-jose.exposito89@gmail.com>
- <20250225175936.7223-3-jose.exposito89@gmail.com>
+Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
+From: David Hildenbrand <david@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>,
+ linux-mm@kvack.org
+References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
+ <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
+ <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
+ <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
+ <029759d4-f7b2-4ec6-b5d0-7c8a1c0fbd80@redhat.com>
+ <Z8HPN5sAgInM4dN2@google.com>
+ <e110e00f-9032-43ec-808e-45a912065fb0@redhat.com>
 Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250225175936.7223-3-jose.exposito89@gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <e110e00f-9032-43ec-808e-45a912065fb0@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdejfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepjhhoshgvrdgvgihpohhsihhtohekleesghhmrghilhdrtghomhdprhgtphhtthhopehhrghmo
- hhhrghmmhgvugdrshgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehmvghlihhsshgrrdhsrhifsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-
-
-Le 25/02/2025 à 18:59, José Expósito a écrit :
-> Allow to create, enable, disable and destroy VKMS instances using
-> configfs.
+On 28.02.25 16:10, David Hildenbrand wrote:
+> On 28.02.25 15:59, Sean Christopherson wrote:
+>> On Fri, Feb 28, 2025, David Hildenbrand wrote:
+>>> On 28.02.25 06:17, Linus Torvalds wrote:
+>>>> On Thu, 27 Feb 2025 at 19:03, Mathieu Desnoyers
+>>>> <mathieu.desnoyers@efficios.com> wrote:
+>>>>>
+>>>>> I'd be fine with SKSM replacing KSM entirely. However, I don't
+>>>>> think we should try to re-implement the existing KSM userspace ABIs
+>>>>> over SKSM.
+>>>>
+>>>> No, absolutely. The only point (for me) for your new synchronous one
+>>>> would be if it replaced the kernel thread async scanning, which would
+>>>> make the old user space interface basically pointless.
+>>>>
+>>>> But I don't actually know who uses KSM right now. My reaction really
+>>>> comes from a "it's not nice code in the kernel", not from any actual
+>>>> knowledge of the users.
+>>>>
+>>>> Maybe it works really well in some cloud VM environment, and we're
+>>>> stuck with it forever.
+>>>
+>>> Exactly that; and besides the VM use-case, lately people stated using it in
+>>> the context of interpreters (IIRC inside Meta) quite successfully as well.
+>>
+>> Does Red Hat (or any other KVM supporters) actually recommend using KSM for VMs
+>> in cloud environments?
 > 
-> For the moment, it is not possible to add pipeline items, so trying to
-> enable the device will fail printing an informative error to the log.
-> 
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> ---
->   Documentation/gpu/vkms.rst           |  32 +++++
->   drivers/gpu/drm/vkms/Kconfig         |   1 +
->   drivers/gpu/drm/vkms/Makefile        |   3 +-
->   drivers/gpu/drm/vkms/vkms_configfs.c | 169 +++++++++++++++++++++++++++
->   drivers/gpu/drm/vkms/vkms_configfs.h |   8 ++
->   drivers/gpu/drm/vkms/vkms_drv.c      |   7 ++
->   6 files changed, 219 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
->   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-> 
-> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index ba04ac7c2167..423bdf86b5b1 100644
-> --- a/Documentation/gpu/vkms.rst
-> +++ b/Documentation/gpu/vkms.rst
-> @@ -51,6 +51,38 @@ To disable the driver, use ::
->   
->     sudo modprobe -r vkms
->   
-> +Configuring With Configfs
-> +=========================
-> +
-> +It is possible to create and configure multiple VKMS instances via configfs.
-> +
-> +Start by mounting configfs and loading VKMS::
-> +
-> +  sudo mount -t configfs none /config
-> +  sudo modprobe vkms
-> +
-> +Once VKMS is loaded, ``/config/vkms`` is created automatically. Each directory
-> +under ``/config/vkms`` represents a VKMS instance, create a new one::
-> +
-> +  sudo mkdir /config/vkms/my-vkms
-> +
-> +By default, the instance is disabled::
-> +
-> +  cat /config/vkms/my-vkms/enabled
-> +  0
-> +
-> +Once you are done configuring the VKMS instance, enable it::
-> +
-> +  echo "1" | sudo tee /config/vkms/my-vkms/enabled
-> +
-> +Finally, you can remove the VKMS instance disabling it::
-> +
-> +  echo "0" | sudo tee /config/vkms/my-vkms/enabled
-> +
-> +And removing the top level directory::
-> +
-> +  sudo rmdir /config/vkms/my-vkms
-> +
->   Testing With IGT
->   ================
->   
-> diff --git a/drivers/gpu/drm/vkms/Kconfig b/drivers/gpu/drm/vkms/Kconfig
-> index 3c02f928ffe6..3977bbb99f7d 100644
-> --- a/drivers/gpu/drm/vkms/Kconfig
-> +++ b/drivers/gpu/drm/vkms/Kconfig
-> @@ -7,6 +7,7 @@ config DRM_VKMS
->   	select DRM_KMS_HELPER
->   	select DRM_GEM_SHMEM_HELPER
->   	select CRC32
-> +	select CONFIGFS_FS
->   	default n
->   	help
->   	  Virtual Kernel Mode-Setting (VKMS) is used for testing or for
-> diff --git a/drivers/gpu/drm/vkms/Makefile b/drivers/gpu/drm/vkms/Makefile
-> index d657865e573f..939991fc8233 100644
-> --- a/drivers/gpu/drm/vkms/Makefile
-> +++ b/drivers/gpu/drm/vkms/Makefile
-> @@ -8,7 +8,8 @@ vkms-y := \
->   	vkms_composer.o \
->   	vkms_writeback.o \
->   	vkms_connector.o \
-> -	vkms_config.o
-> +	vkms_config.o \
-> +	vkms_configfs.o
->   
->   obj-$(CONFIG_DRM_VKMS) += vkms.o
->   obj-$(CONFIG_DRM_VKMS_KUNIT_TEST) += tests/
-> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-> new file mode 100644
-> index 000000000000..92512d52ddae
-> --- /dev/null
-> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +#include <linux/cleanup.h>
-> +#include <linux/configfs.h>
-> +#include <linux/mutex.h>
-> +#include <linux/slab.h>
-> +
-> +#include "vkms_drv.h"
-> +#include "vkms_config.h"
-> +#include "vkms_configfs.h"
-> +
-> +/* To avoid registering configfs more than once or unregistering on error */
-> +static bool is_configfs_registered;
-> +
-> +/**
-> + * struct vkms_configfs_device - Configfs representation of a VKMS device
-> + *
-> + * @group: Top level configuration group that represents a VKMS device.
-> + * Initialized when a new directory is created under "/config/vkms/"
-> + * @lock: Lock used to project concurrent access to the configuration attributes
-> + * @config: Protected by @lock. Configuration of the VKMS device
-> + * @enabled: Protected by @lock. The device is created or destroyed when this
-> + * option changes
-> + */
-> +struct vkms_configfs_device {
-> +	struct config_group group;
-> +
-> +	struct mutex lock;
-> +	struct vkms_config *config;
-> +	bool enabled;
-> +};
-> +
-> +#define device_item_to_vkms_configfs_device(item) \
-> +	container_of(to_config_group((item)), struct vkms_configfs_device, \
-> +		     group)
-> +
-> +static ssize_t device_enabled_show(struct config_item *item, char *page)
-> +{
-> +	struct vkms_configfs_device *dev;
-> +
-> +	dev = device_item_to_vkms_configfs_device(item);
-> +
-> +	guard(mutex)(&dev->lock);
-> +	return sprintf(page, "%d\n", dev->enabled);
-> +}
-> +
-> +static ssize_t device_enabled_store(struct config_item *item, const char *page,
-> +				    size_t count)
-> +{
-> +	struct vkms_configfs_device *dev;
-> +	bool enabled;
-> +	int ret = 0;
-> +
-> +	dev = device_item_to_vkms_configfs_device(item);
-> +
-> +	if (kstrtobool(page, &enabled))
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&dev->lock);
-> +
-> +	if (!dev->enabled && enabled) {
-> +		if (!vkms_config_is_valid(dev->config))
-> +			return -EINVAL;
-> +
-> +		ret = vkms_create(dev->config);
-> +		if (ret)
-> +			return ret;
-> +	} else if (dev->enabled && !enabled) {
-> +		vkms_destroy(dev->config);
-> +	}
-> +
-> +	dev->enabled = enabled;
+> Private clouds yes, that's where it is most commonly used for. I would
+> assume that nobody for
 
-Sorry, I was maybe not clear enough, and you may hate me: I don't like 
-`guard(mutex)` :‑(. I proposed scoped_guard because it makes very clear 
-when the mutex is taken/released.
-
-For me guard(mutex) is almost the same as mutex_lock/unlock. Yes, your 
-mutex is always released, but:
-- without reading the code carefully, you don't know you have a mutex 
-(even worse than a mutex_lock because you don't have a bunch of 
-mutex_unlock to remind you)
-- you keep it until the end of the function, which may lock your mutex 
-for too long
-
-The scoped_guard solves the two issues:
-- you are in a dedicated block + indentation, so it is very easy to see 
-that you currently have a mutex
-- you know exactly when the mutex is released: leaving the block
-
-I am very sorry to make you work twice on this
-
-> +
-> +	return (ssize_t)count;
-> +}
-> +
-> +CONFIGFS_ATTR(device_, enabled);
-> +
-> +static struct configfs_attribute *device_item_attrs[] = {
-> +	&device_attr_enabled,
-> +	NULL,
-> +};
-> +
-> +static void device_release(struct config_item *item)
-> +{
-> +	struct vkms_configfs_device *dev;
-> +
-> +	dev = device_item_to_vkms_configfs_device(item);
-> +
-> +	if (dev->enabled)
-> +		vkms_destroy(dev->config);
-> +
-> +	mutex_destroy(&dev->lock);
-> +	vkms_config_destroy(dev->config);
-> +	kfree(dev);
-> +}
-> +
-> +static struct configfs_item_operations device_item_operations = {
-> +	.release	= &device_release,
-> +};
-> +
-> +static const struct config_item_type device_item_type = {
-> +	.ct_attrs	= device_item_attrs,
-> +	.ct_item_ops	= &device_item_operations,
-> +	.ct_owner	= THIS_MODULE,
-> +};
-> +
-> +static struct config_group *make_device_group(struct config_group *group,
-> +					      const char *name)
-> +{
-> +	struct vkms_configfs_device *dev;
-> +
-> +	if (strcmp(name, DEFAULT_DEVICE_NAME) == 0)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> +	if (!dev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	dev->config = vkms_config_create(name);
-> +	if (IS_ERR(dev->config)) {
-> +		kfree(dev);
-> +		return ERR_CAST(dev->config);
-> +	}
-> +
-> +	config_group_init_type_name(&dev->group, name, &device_item_type);
-> +	mutex_init(&dev->lock);
-> +
-> +	return &dev->group;
-> +}
-> +
-> +static struct configfs_group_operations device_group_ops = {
-> +	.make_group = &make_device_group,
-> +};
-> +
-> +static const struct config_item_type device_group_type = {
-> +	.ct_group_ops	= &device_group_ops,
-> +	.ct_owner	= THIS_MODULE,
-> +};
-> +
-> +static struct configfs_subsystem vkms_subsys = {
-> +	.su_group = {
-> +		.cg_item = {
-> +			.ci_name = "vkms",
-> +			.ci_type = &device_group_type,
-> +		},
-> +	},
-> +	.su_mutex = __MUTEX_INITIALIZER(vkms_subsys.su_mutex),
-> +};
-> +
-> +int vkms_configfs_register(void)
-> +{
-> +	int ret;
-> +
-> +	if (is_configfs_registered)
-> +		return 0;
-> +
-> +	config_group_init(&vkms_subsys.su_group);
-> +	ret = configfs_register_subsystem(&vkms_subsys);
-> +
-> +	is_configfs_registered = ret == 0;
-> +
-> +	return ret;
-> +}
-> +
-> +void vkms_configfs_unregister(void)
-> +{
-> +	if (is_configfs_registered)
-> +		configfs_unregister_subsystem(&vkms_subsys);
-> +}
-> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.h b/drivers/gpu/drm/vkms/vkms_configfs.h
-> new file mode 100644
-> index 000000000000..e9020b0043db
-> --- /dev/null
-> +++ b/drivers/gpu/drm/vkms/vkms_configfs.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +#ifndef _VKMS_CONFIGFS_H_
-> +#define _VKMS_CONFIGFS_H_
-> +
-> +int vkms_configfs_register(void);
-> +void vkms_configfs_unregister(void);
-> +
-> +#endif /* _VKMS_CONFIGFS_H_ */
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> index 23817c7b997e..5bcfbcb6c0c5 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -28,6 +28,7 @@
->   #include <drm/drm_vblank.h>
->   
->   #include "vkms_config.h"
-> +#include "vkms_configfs.h"
->   #include "vkms_drv.h"
->   
->   #define DRIVER_NAME	"vkms"
-> @@ -214,6 +215,10 @@ static int __init vkms_init(void)
->   	int ret;
->   	struct vkms_config *config;
->   
-> +	ret = vkms_configfs_register();
-> +	if (ret)
-> +		return ret;
-> +
->   	config = vkms_config_default_create(enable_cursor, enable_writeback, enable_overlay);
->   	if (IS_ERR(config))
->   		return PTR_ERR(config);
-> @@ -250,6 +255,8 @@ void vkms_destroy(struct vkms_config *config)
->   
->   static void __exit vkms_exit(void)
->   {
-> +	vkms_configfs_unregister();
-> +
->   	if (!default_config)
->   		return;
->   
+forgot to complete that sentence: "... nobody really should be using 
+that in public clouds."
 
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers,
+
+David / dhildenb
 
 
