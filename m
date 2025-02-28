@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-538838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64E7A49DA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:39:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E5FA49DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF89169C47
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53A83BCC48
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485D189B80;
-	Fri, 28 Feb 2025 15:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6E25F974;
+	Fri, 28 Feb 2025 15:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pM5ublSD"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqsGOGVy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061A71EF366
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EAC16EB7C;
+	Fri, 28 Feb 2025 15:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740757150; cv=none; b=b2WHTzn4Pi69wDNJQjj+fYTJNSnxgDX8jEeZdkyWWsaCt6Vkan9sPHFcYcEkHeC3MKwLmSoN97/TSce1OIoE+cWy79zjOHKKlzkfPNXGEWH+PM/+uJuj8ohUT9d3ubBEnm2umQpw7haqf/PahBnQ3Xk6D5ZpW1E8jLujdJ/7xHI=
+	t=1740757163; cv=none; b=G0uTRySy4K+Ilnwlvch7HRijpKZe+Y3zZHmHdau7jZ+bcWwZkgIisVCuGT0HcEecB842/t/WLbLiChkVMdmjyUcXX1vV7ZPf/Paeu7L8l2haV/n711Bo3lZaFP8w6F8dGxbT6I/L8t55pSM2RakYf2CM0M1u2muRb2rseK71OLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740757150; c=relaxed/simple;
-	bh=AChTyM9HXnSzNqES1jZlNlbepSmTNsshVFZm47ZYMZ4=;
+	s=arc-20240116; t=1740757163; c=relaxed/simple;
+	bh=B8f9YoA217D5MfhZBuAP3T/3FZZ+EJYwQ1Da0jiEJVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQmJNHVDa5Q9PIQYwJ7cLCjvIgGydBoRtgWYeKilHdCQvaT63oPONNeKVOe8fg3QMqdBxC93X4zfqL/PZoh5r6JyXlwkfblqzZAFDBfF71AO6Erj0luRlGMrq4G6CKiR5ipAL7cg3MmRUg5yFmCsQeCuIBlQQiBcVdmFvKT5Guc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pM5ublSD; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AChTyM9HXnSzNqES1jZlNlbepSmTNsshVFZm47ZYMZ4=; b=pM5ublSDQ9ECIzQvdQM3O6KmRm
-	FxR9hGVcvPRMsVv25Lz+0y0NIiRdV5ioAjWqvB/1N/8cVtZBscKWdGB93r8FwbTOZJ6TL+Pb4pwIx
-	wiISITsF13UD5rWvbY4dh5M0yoNZwn1j1cGpCDFX7PDnu4TKE00Kmq2gTVcXKNL34R7HAmnjMwmDG
-	9AkKdtgvKSfQZ+xe6UozaSvOsmW1evt9Z0cIJ2yr5n0mtyw1PBjhglKllGG2sR9YvDhnwbEAxSsYY
-	YA0IIuS2mqOymTokDvlbru/1o+nhvZJ4O8n7w819/SmcC9/zXQqX6pZDR6bNFZkKDStBX3ers9Bz1
-	05wDpNyw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1to2S3-00000002B9m-168B;
-	Fri, 28 Feb 2025 15:38:59 +0000
-Date: Fri, 28 Feb 2025 15:38:59 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Olivier Dion <odion@efficios.com>,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
-Message-ID: <Z8HYk8bvvpg-n2Yu@casper.infradead.org>
-References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
- <a70158c3-d683-42d6-8af5-c800d51039e4@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3HCNfByGuyWVf+LD/Sbltvl20cG6z3d8hBNQJw7ZqloKMIy/n54+a2nDpwhiAnXhnKNoEqnmD4BMJfD3Pn/jN9V82pq0/rAUesVmM6MqI2E7EIfVBWoeGA1zNlXwkIt5L1bEG69G/NYBkEFYNlUOlXAikOxo4Y2itW/7MAJnS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqsGOGVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850A9C4CED6;
+	Fri, 28 Feb 2025 15:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740757162;
+	bh=B8f9YoA217D5MfhZBuAP3T/3FZZ+EJYwQ1Da0jiEJVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oqsGOGVyOu9yYSdB2GX0A4lXGa3nLORJjJrhnVDHUg9fMvH5+bNb6fAjKnFGEY+kD
+	 JrilKnDRUC9PpZvl1kHG4Az4lbPkMn04JxMpwaeF+2XZxHo2aNXHCTfUoAKt+lOPPG
+	 x+oUWMiTV7/or3OkvMl5jg3XYKk1myk4iI/eqwiFqpeHhcPnA/EYFHuarZB1XFglSs
+	 aNGJ0fRG/q6jghFyjEPeMH3K/8b6Xjam4rC2IMtq2b+sC5l4r3taDPWysMXQE6Z4tl
+	 Ik4bKy9B+qQ8sdjD0NdYMLuZ9EOrMq+lIWd9EaHhq8SrhYJTW5hcpTYTnobweKp7mG
+	 iwWLmLwE1SE/g==
+Date: Fri, 28 Feb 2025 07:39:22 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 09/12] xfs: Add xfs_file_dio_write_atomic()
+Message-ID: <20250228153922.GY6242@frogsfrogsfrogs>
+References: <20250227180813.1553404-1-john.g.garry@oracle.com>
+ <20250227180813.1553404-10-john.g.garry@oracle.com>
+ <20250228011913.GD1124788@frogsfrogsfrogs>
+ <903c3d2d-8f31-457c-b29d-45cc14a2b851@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,12 +62,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a70158c3-d683-42d6-8af5-c800d51039e4@redhat.com>
+In-Reply-To: <903c3d2d-8f31-457c-b29d-45cc14a2b851@oracle.com>
 
-On Fri, Feb 28, 2025 at 04:34:50PM +0100, David Hildenbrand wrote:
-> Maybe it would be comparable to khugepaged vs. MADV_COLLAPSE?
+On Fri, Feb 28, 2025 at 07:45:59AM +0000, John Garry wrote:
+> On 28/02/2025 01:19, Darrick J. Wong wrote:
+> > > +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT) &&
+> > > +	    !(dio_flags & IOMAP_DIO_ATOMIC_SW)) {
+> > > +		xfs_iunlock(ip, iolock);
+> > > +		dio_flags = IOMAP_DIO_ATOMIC_SW | IOMAP_DIO_FORCE_WAIT;
+> > One last little nit here: if the filesystem doesn't have reflink, you
+> > can't use copy on write as a fallback.
+> > 
+> > 		/*
+> > 		 * The atomic write fallback uses out of place writes
+> > 		 * implemented with the COW code, so we must fail the
+> > 		 * atomic write if that is not supported.
+> > 		 */
+> > 		if (!xfs_has_reflink(ip->i_mount))
+> > 			return -EOPNOTSUPP;
+> > 		dio_flags = IOMAP_DIO_ATOMIC_SW | IOMAP_DIO_FORCE_WAIT;
+> > 
+> 
+> Currently the awu max is limited to 1x FS block if no reflink, and then we
+> check the write length against awu max in xfs_file_write_iter() for
+> IOCB_ATOMIC. And the xfs iomap would not request a SW-based atomic write for
+> 1x FS block. So in a around-about way we are checking it.
+> 
+> So let me know if you would still like that additional check - it seems
+> sensible to add it.
 
-I think it is comparable ... because many people find khugepaged
-unacceptable and there are proposals to move that to userspace.
+Yes, please.  The more guardrails the better, particularly when someone
+gets around to enabling software-only RWF_ATOMIC.
 
+--D
+
+> Cheers,
+> John
+> 
+> 
 
