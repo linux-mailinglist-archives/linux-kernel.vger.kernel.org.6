@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-538913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42CFA49EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:29:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3D5A49ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8931899299
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454F2175092
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3527424C;
-	Fri, 28 Feb 2025 16:29:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48C4272904
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D25274249;
+	Fri, 28 Feb 2025 16:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="S58iV5NW"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E1226FDB4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760162; cv=none; b=pcCPpyTxyaFyB9imFm/7jyEkPQ3Y5h2xz1wIVhlFvjoRVSpg/6/x2xCxvSuXusIVIcpJOsJ9PsTF9Af4VEWLNduReSnLI4gvAVAbxWM8b7C+u6BU52oAdpHM6Qlrqp/jaXI+jkCt/PNXL24D1I/nK82M5weHIcctb5IqGrtxYvM=
+	t=1740760180; cv=none; b=ggKQrbEY+vU3mwDQcaUzuViV2lfcHC7pkNxE+wUjSkeLBqLy1G45uokElnI11SgxTt5/Naajz6Xp0xGGa9zgdQ6WjYWoQfUsZRljMtBgvRMpV2jUPONlMef7yx2Cx4scK5ih8MZF7JHIVBFKgfRtEd/L89sD2+KQPc73DiKEkzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760162; c=relaxed/simple;
-	bh=vOo/Bo1/R1UBloB/ZIJslxn+qsT+sZuKVvLq3RgC1VA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eSnk6tH5kJl70yA+R2eeSA5O6l5FfxmNd5aSIkKVvF9swAz8kHMwwI66UvudA+ARWG9S361G1BreXD6rm2Itxl+X32q/Hbol/hlCMuoaNSA45Ar9OfM8dvEUojWV8n2O/KBdf6qwHwaWA32Y2McwFVLe//GpcmXOa5rk4oggN74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C1F1150C;
-	Fri, 28 Feb 2025 08:29:35 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 291C03F5A1;
-	Fri, 28 Feb 2025 08:29:19 -0800 (PST)
-Message-ID: <2754908e-f345-43ca-9cb1-9300abe5d402@arm.com>
-Date: Fri, 28 Feb 2025 16:29:17 +0000
+	s=arc-20240116; t=1740760180; c=relaxed/simple;
+	bh=1fyDN/zRhJehbXX26NZDLFq32q6kxhcXf+X5VBtCp6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDLLj7EBpZoCK7fP056RoFOW4mG6qlR9soXqK7LpzTrpZTxIA5fLwPj8dFy6gs8qviryS2/QuFu4apyO+EQ9XHYVw3dPQdzdZL7WN22SBu663kGDPLElnwq/gQO14OJ/vfVhq4duZIuQr0mF8zWgQ+eQaqaCkuJI5zGDJQBp13o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=S58iV5NW; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=4D0l
+	pTjJil8W4dDF1wyVctPlS+Q+sLcbwZXWf4NgEx4=; b=S58iV5NWedtW7XlPVxtH
+	1Npl8HKZtxPYlIYAdjzCvERQV1D22WGPse1FxML3xqatL3CPuhS/6m/cF1CXEwna
+	bfd5dQS1mUVQA3leH8IGsPtekVNX22HvXxEi1vaXYmOP8oNE3hKytuvpI2Q0GhZ7
+	6FkYszqQ83h5CU3ErbA3eh/zuAP4gNGOIWS/Mu03C8ch5FuRwkitB7UrvrgReVmz
+	Scv1uaIeUorJI/FgV8TeOegG8UDtky/2+crr6gEh/o0b8xfC3kN0mu5R8vfy+34H
+	KWx9MZ1vHRVATN6DZ+sz07g3Ma1ffRlixp6UnUCCbn34Jy9/AeN3y4AXjW1RMkGA
+	8w==
+Received: (qmail 1363046 invoked from network); 28 Feb 2025 17:29:25 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Feb 2025 17:29:25 +0100
+X-UD-Smtp-Session: l3s3148p1@ntFQTzYvhoYujnui
+Date: Fri, 28 Feb 2025 17:29:25 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.14-rc5
+Message-ID: <Z8HkZVLrfEZcCRNh@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <de3dc6brdsrje7p2lnahsgymlmivmzsgocfb3mt2wwvvml3tla@jyo4qtxkoi2n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] iommu: Add private_data_owner to iommu_domain
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- joro@8bytes.org, will@kernel.org
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <cover.1740705776.git.nicolinc@nvidia.com>
- <45c03a1bc86528c9194589cc3a5afe3eb2a15c9e.1740705776.git.nicolinc@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <45c03a1bc86528c9194589cc3a5afe3eb2a15c9e.1740705776.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HCkNuvjZ6CGBxRz3"
+Content-Disposition: inline
+In-Reply-To: <de3dc6brdsrje7p2lnahsgymlmivmzsgocfb3mt2wwvvml3tla@jyo4qtxkoi2n>
 
-On 28/02/2025 1:31 am, Nicolin Chen wrote:
-> Steal two bits from the 32-bit "type" in struct iommu_domain to store a
-> new tag for private data owned by either dma-iommu or iommufd.
-> 
-> Set the domain->private_data_owner in dma-iommu and iommufd. These will
-> be used to replace the sw_msi function pointer.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->   include/linux/iommu.h                | 7 ++++++-
->   drivers/iommu/dma-iommu.c            | 2 ++
->   drivers/iommu/iommufd/hw_pagetable.c | 3 +++
->   3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index e93d2e918599..4f2774c08262 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -209,8 +209,13 @@ struct iommu_domain_geometry {
->   #define IOMMU_DOMAIN_PLATFORM	(__IOMMU_DOMAIN_PLATFORM)
->   #define IOMMU_DOMAIN_NESTED	(__IOMMU_DOMAIN_NESTED)
->   
-> +#define IOMMU_DOMAIN_DATA_OWNER_NONE (0U)
-> +#define IOMMU_DOMAIN_DATA_OWNER_DMA (1U)
-> +#define IOMMU_DOMAIN_DATA_OWNER_IOMMUFD (2U)
-> +
->   struct iommu_domain {
-> -	unsigned type;
-> +	u32 type : 30;
-> +	u32 private_data_owner : 2;
->   	const struct iommu_domain_ops *ops;
->   	const struct iommu_dirty_ops *dirty_ops;
->   	const struct iommu_ops *owner; /* Whose domain_alloc we came from */
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 94263ed2c564..78915d74e8fa 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -403,6 +403,7 @@ int iommu_get_dma_cookie(struct iommu_domain *domain)
->   
->   	mutex_init(&domain->iova_cookie->mutex);
->   	iommu_domain_set_sw_msi(domain, iommu_dma_sw_msi);
-> +	domain->private_data_owner = IOMMU_DOMAIN_DATA_OWNER_DMA;
->   	return 0;
->   }
->   
-> @@ -435,6 +436,7 @@ int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
->   	cookie->msi_iova = base;
->   	domain->iova_cookie = cookie;
->   	iommu_domain_set_sw_msi(domain, iommu_dma_sw_msi);
-> +	domain->private_data_owner = IOMMU_DOMAIN_DATA_OWNER_DMA;
 
-This doesn't help all that much when it can still be called on any old 
-unmanaged domain and silently overwrite whatever the previous user 
-thought they owned...
+--HCkNuvjZ6CGBxRz3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And really the "owner" of MSI cookies is VFIO, it just happens that all 
-the code for them still lives in iommu-dma because it was written to 
-piggyback off the same irqchip hooks. TBH I've long been keen on 
-separating them further from "real" IOVA cookies, and generalising said 
-hooks really removes any remaining reason to keep the implementations 
-tied together at all, should they have cause to diverge further (e.g. 
-with makign the MSI cookie window programmable). What I absolutely want 
-to avoid is a notion of having two types of MSI-mapping cookies, one of 
-which is two types of MSI-mapping cookies.
+On Fri, Feb 28, 2025 at 01:35:32PM +0100, Andi Shyti wrote:
+> Hi Wolfram,
+>=20
+> three fixes for this week, all hardware-specific. I'm glad to
+> have received support from reviewers and maintainers in ensuring
+> the correctness of the hardware interaction.
+>=20
+> I wish you a great weekend,
+> Andi
+>=20
+> The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101=
+b6:
+>=20
+>   Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-fixes-6.14-rc5
+>=20
+> for you to fetch changes up to 9f3c507cb44498067c980674139bcad56e582ee6:
+>=20
+>   i2c: amd-asf: Fix EOI register write to enable successive interrupts (2=
+025-02-26 23:28:41 +0100)
 
-Hopefully that is all clear in the patch I proposed.
+Thanks, pulled!
 
-Thanks,
-Robin.
 
->   	return 0;
->   }
->   EXPORT_SYMBOL(iommu_get_msi_cookie);
-> diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
-> index 7de6e914232e..5640444de475 100644
-> --- a/drivers/iommu/iommufd/hw_pagetable.c
-> +++ b/drivers/iommu/iommufd/hw_pagetable.c
-> @@ -157,6 +157,7 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
->   		}
->   	}
->   	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
-> +	hwpt->domain->private_data_owner = IOMMU_DOMAIN_DATA_OWNER_IOMMUFD;
->   
->   	/*
->   	 * Set the coherency mode before we do iopt_table_add_domain() as some
-> @@ -253,6 +254,7 @@ iommufd_hwpt_nested_alloc(struct iommufd_ctx *ictx,
->   	}
->   	hwpt->domain->owner = ops;
->   	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
-> +	hwpt->domain->private_data_owner = IOMMU_DOMAIN_DATA_OWNER_IOMMUFD;
->   
->   	if (WARN_ON_ONCE(hwpt->domain->type != IOMMU_DOMAIN_NESTED)) {
->   		rc = -EINVAL;
-> @@ -310,6 +312,7 @@ iommufd_viommu_alloc_hwpt_nested(struct iommufd_viommu *viommu, u32 flags,
->   	}
->   	hwpt->domain->owner = viommu->iommu_dev->ops;
->   	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
-> +	hwpt->domain->private_data_owner = IOMMU_DOMAIN_DATA_OWNER_IOMMUFD;
->   
->   	if (WARN_ON_ONCE(hwpt->domain->type != IOMMU_DOMAIN_NESTED)) {
->   		rc = -EINVAL;
+--HCkNuvjZ6CGBxRz3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfB5GEACgkQFA3kzBSg
+KbafqxAAtiaGRT2hIfoJqWY0E4o9O7ADMOT0tNgnPfYd/ntQSO+9x0ciONOJYY72
+M3aZSaD09svSdmkXU+LK0h4x10nmHh9tUcIezPa44Y7nRPDmJseIzoNRxwUbMQ5p
+TY9Ivl3lp2JQVW/UaLc6L7hTc+Si0Ar77SkLdgN/sNgoRAQ84avO7lM+rlyDJi5v
+JwJf9WPUtzSqUL1OCy0lMb4IXOUaTC99vP7qja444svaQixNezNpmpy3zy78gisz
+8bO3mZ0OZ6Woi2uBxkDohjXPdvnnU446FSfC6MEc7UGASE/V3aQaQrHyMaWfKrFx
+Z7KTr1WzOdt9yLUYWpaISJ9OxsqpM6rtoh9bCgem0f5Cxb71x02xxHuhcnVhjWQO
+DavytP5hxlncZIUR/7h48xkIKJ1iQwMuzfftWhstRxQiY13Zjn+ZYhHDcEgWE7vr
+kFuSHjtSC4z9YWaDZD6z5kkXez0s/eqgInt+Te6zUf5nHRBtaE3B74mD8EQzinNg
+V0NSIihAR1G1venLaYn1doOSaQL89kruuPQy/4FWPjTugWcjHeyUh0sgrMc4OHRg
+5JG4K3kTVwa2pLBNTmlCA3mKEmOxCNQE23y11TYha7rCrvTGRTly0Czucb+6+TOQ
+UHoq4o0CX8O7Zw2vMfsYf5cc7mNe8LV5heKAvRoKaRs03Tq1EmY=
+=Jpoj
+-----END PGP SIGNATURE-----
+
+--HCkNuvjZ6CGBxRz3--
 
