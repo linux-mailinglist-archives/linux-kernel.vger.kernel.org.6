@@ -1,103 +1,151 @@
-Return-Path: <linux-kernel+bounces-538416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46AAA4985A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:33:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA1CA49861
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BFF3B9CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAAC16D99E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FFE25D1F5;
-	Fri, 28 Feb 2025 11:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD5523E34B;
+	Fri, 28 Feb 2025 11:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4w4V2Sn"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tBpIfaFz"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B601C3BE3;
-	Fri, 28 Feb 2025 11:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52DF25D1F5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740742390; cv=none; b=ieymkr30z8JJlRohRuwNOnutBj+WXWd4QvYNOk14FeO90Hubgw86mYOhccNyj2CSOzMaqpU3DVS1HHGKXvwfjRsTbd/tEbkd59AQxEwQAAo1TH0vo3IktU8intsePvv/OvMGzbmqckTP0sZ7v66LQ0doRd2HvWGdC979j38xFaY=
+	t=1740742655; cv=none; b=A1OvClWkFRjhwFgu49WaYseNaqNGuCi6BaFxZwcFzuFk+3SUVUSeFvL3+/JwyNW8hE2YQcVlIkB9ZVavCmpopnICSMS4VDpe+HVgxULP1/QO8TrY2lqlXmRL7cCSoPRgTFqe5Zcnu5BS0J3OXcnAytSO5p3tWkDGxcNfqG1/nd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740742390; c=relaxed/simple;
-	bh=Wk3NLoeyNebR1iWWK4A0do2AqVIQvT0KlwiOC64vi/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R42lKJQogo+SzMZYt2RjHSP8EUjUhFJysCs8cEZ8dETDkHlzScGZMJuOVG5qKr7bwiPC7Xqw2LPEx5x5KhgM5r6NXA7xp7h60ufK1R7Mlcfeb0UMqqXl+ROf6Pb0Ghf8dmdvWWhsPZbmz6Fac0GE7ZGByMXwPHOnCAQwY8qZa+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4w4V2Sn; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2feb1d7a68fso2738151a91.1;
-        Fri, 28 Feb 2025 03:33:08 -0800 (PST)
+	s=arc-20240116; t=1740742655; c=relaxed/simple;
+	bh=4WphRhmBskEe1O7l/TMn/svQYxnNymiR11yGWly6ZMM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bEHy8ffjexeb8eqe8pyXWHti/KaMZ9edqwyfgX0HDpZitaLyvu0e9a/9ZZySieLhPda3/zVHyOWMuILi455KfoONhN74DJsuWDPPh7gs6sYztTB/uSSudkuT/x/sdsc0RC0l2Y4rx8LPhG/fdOM+G8awp4HMLg5C+UWTySfXSXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tBpIfaFz; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-439946a49e1so12890595e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:37:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740742388; x=1741347188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wk3NLoeyNebR1iWWK4A0do2AqVIQvT0KlwiOC64vi/c=;
-        b=B4w4V2Sn/iPpIWocsW1rstmLgVa7qiQPUwPKNiY/YyxQ0IWrWwYDuG7lk/x5CBeTzo
-         +uq4IDb3IYYDKBJNO5zWB+S1N+AxF9AlDXTUJQeemqFWuRITDeSes1kcj0Hjkaaq3hLG
-         NMa110BS8BDyikMaNnM3c8daprvEB270WChtyXwr05NyX/3/zvtkOMgAHwbnlHKPeFRl
-         +Ql/9ChnRhoq6OOADE5fpamhaZgOaFC0xL1R3cXlkrMxwgEToj3hsOTpwtHi6uGU1iSD
-         m82lV82P2Cd5bwp19h5qzkC+azKXOGB6vr0vhuHvlaqOARHWVfbX7zhSvtj2gm/9rDjt
-         OQKg==
+        d=linaro.org; s=google; t=1740742652; x=1741347452; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=c/hLcQeQYuvt7E85+DEnVuGUhxPnEJoXJywDNJlyKbY=;
+        b=tBpIfaFzaVmaa5dwaNhMVYXeKYuDf7UFytIFGBW8nkpK4WR4CedTBHyMkhyJ+i9NYt
+         QD8scUSA4ANlJZTz9YZJD97Fal/qElbhx0BAFml571t+6fgJm/LtC/iLUaM7mhg4IXEe
+         XMnftJpK3xsRszjUFg2ke5SvYXfsa7Gr5Nsjs/u6nFoH4A8wQNK2Dg4/+N7qjiaAGjIM
+         9DasUd2rsk/V0oLvNNvWpOe8gz5jn+eXL0scLLeUIUJOFayLl9B6g8dnluB511rHhMn1
+         KGe+4gr95gJo+Jv2R2kFi7tlIgZQ5tXnYFkivqJ9rSWZgzk6rB3BDB2kdQj2K43NdkVK
+         1Bnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740742388; x=1741347188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wk3NLoeyNebR1iWWK4A0do2AqVIQvT0KlwiOC64vi/c=;
-        b=bYlfZJqoPJk4RrfuBSRzyVDfM/LVPHhGu9AJDZsi9Wi2hKtJNe5unrubkN9EFLWc8C
-         Q8mQ70JE9JDKowg5a35JI9H0vpBTzHUuC87/0bajs9DkFbDxkG2duzVft+5Qt1oD5SEH
-         JgEJgHnUnpiuqBzWhL+niJlbxFDtGH3fLU6FwuvkO89UQEOxjjsUsDNx6GegWDq6OIRc
-         LXJS4frUez4CF5YE3mCTx6aMZPW0e4Fz1ZhAPUPAoQdxbCuuUFCBIcIzAObwpolSE81X
-         5GqmLjBxo9vOsyORDIwSsN6H1fcEoB/gJkq19SXsqlvWIRnXerRPeh0INh+81k0ljDj+
-         rjBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ9d+wDMnVrRfU0UlzI5SFRWCsp2sHKomuJWiGA2R6ujPflndCbwrZahQueXwO1rPLlA1rgFpgkvk=@vger.kernel.org, AJvYcCXqF/oajePyYCYiMBWNvPvpOA4i3s8KRND2JwBf+nVpK/p/GGxXNSyYZy6MO+TuRC7XIaB6bQTZ3aaYJWwI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoCjoXqm0XT0rreMMQ1z5LWCdUm8Aq9S6Zqn6HDadIMpzTorOJ
-	IzcfHklmK2oGTRZVf3ObYuLEIOGeUp3dDpKjoN4llD3jmNa+HirDP8eP+4Fy
-X-Gm-Gg: ASbGncvi2vz3rm6WbXgB5yah355JGfArlYaQ0Bj6TR3klVLIA8Hxlu8qDRpgVR9Mf7B
-	v3O/fJ8jtkZUphyeJjifWxW6Q1/9/aG/FJ/0ULaI+xdN9hzSpfzVLwmTC0YYrC4U+LmVm3mxjWv
-	sUsBv1sgKE2EAqyRV8a2ySyuOOj7xYIJuO7qkp7cTEVKFUjFH+EHCT3ceqf7N53bbZhpPWVGr4P
-	Xo2SnVrCWh/PT8Q84WotSKp6bLF+GRj8xLw7+5Px9njNZNRtW4NTRaO8eQI8cZalJC4h7MDVq/J
-	l/wsW7oduDtD2PpsrvVrzb4zqbI=
-X-Google-Smtp-Source: AGHT+IGDl4zxony+vYh3k80V1xozG9YGu1GqiUZd7l8fXP020W+OVECvysFg8dVqbuBRl3s4lyI/yg==
-X-Received: by 2002:a17:90b:3d0a:b0:2f6:be57:49d2 with SMTP id 98e67ed59e1d1-2febab7459bmr5822436a91.17.1740742388119;
-        Fri, 28 Feb 2025 03:33:08 -0800 (PST)
-Received: from danascape.. ([2402:e280:218d:2e5:568f:475:2d46:5965])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5c37sm30704655ad.133.2025.02.28.03.33.06
+        d=1e100.net; s=20230601; t=1740742652; x=1741347452;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c/hLcQeQYuvt7E85+DEnVuGUhxPnEJoXJywDNJlyKbY=;
+        b=wyrXsshzKTbsdXpMNtGRIGVZVazuFK78Y/iGF7cRmeqIODfeDGo22wC9wHBKhACC7Q
+         OyKR/UYyj5p4v2aT8DS44v1yE+K8DJNr/f/odrbaZql7UBaLFrSCGKkaYWlZNUBlSQW7
+         gNe02dGJe5IoekzaN4CYage67WPHShj1yFw30wr92TB3taVi0Y4i8L6Y/b7ppbwEw4G9
+         LMCVbcLQKfTyJoUANbBfEab0nu7qNOp4tYrfZanXqWmlCDkc99p+505D0J2SBpe9MV4A
+         QUDhWk7nWVi2q0UCrbFjT6lCWJXzumhsoS9+Z3ydHYRKnMAb877Rv1e5zpeFmWjVUlrR
+         4eeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJtWJH9ffG3wpdT35e6smqeOo+GWABs4IG5t2SgzsUuNg0upZWGXsMEwKYQrBe7+4Na30vtQdMmdUJyT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL4qeHEVRC0OORTKIH0m/1mt4sRBR8zArl0DjOM5bprA90Ls05
+	jKLPyOP24VX/Fz+ENBUHNfO8oQZNqE/vIAELBHOQrVhqXLMCKrXMRErB5cQH9Gs=
+X-Gm-Gg: ASbGnct07gdB18m2mVTJJuYKM+JSA7ckEbVydXczvms0KCy7zblVFDen5bCJ1LxpXvb
+	eNnS8saWP5c9CxNiPPuSMUWHzpICft+lTxWx1VTkk00J9fusT4WVuAZdVr8lLNGVsNs7k0ztsx+
+	fiySpYyEyNnK3SihQi2v7L0mhhHErZEnFGB6mJnuNUkhoAET/7q73hjTJ3Fh6w2/k1Dehv02Xwc
+	q5LHZuXmocWhcnfqxxwTQEtL1sTx9UF2GFyyRsJXD32CPB4ss30cMmQ53u3z7IaEIPqcjkEKHVz
+	OkbMy4KqPFE8zZZS5DTY2u2BnhF3VQ==
+X-Google-Smtp-Source: AGHT+IHzUCNP7VmFKJ2Rw0oWiCLeL/Benysg+yxlWGkjt2D4Yc4YzpTklR4JnbSyxhhE1CRgClygig==
+X-Received: by 2002:a5d:64cf:0:b0:38f:483f:8319 with SMTP id ffacd0b85a97d-390eca53bd4mr2309089f8f.51.1740742651971;
+        Fri, 28 Feb 2025 03:37:31 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485db82sm4831015f8f.88.2025.02.28.03.37.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 03:33:07 -0800 (PST)
-From: Saalim Quadri <danascape@gmail.com>
-To: marcelo.schmitt@analog.com
-Cc: dragos.bogdan@analog.com,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: GSoC Proposal 2025
-Date: Fri, 28 Feb 2025 17:03:04 +0530
-Message-Id: <20250228113304.63160-1-danascape@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 28 Feb 2025 03:37:31 -0800 (PST)
+Message-ID: <e6ab03fb87c14b1596c4f201485b49d0602c91b7.camel@linaro.org>
+Subject: Re: [PATCH v2 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>,  Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>, "Gustavo A.
+ R. Silva"	 <gustavoars@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Fri, 28 Feb 2025 11:37:30 +0000
+In-Reply-To: <d06058296a194a4f2c9fcbcc5c24816ecb1f51b1.camel@linaro.org>
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
+		 <20250226-max77759-mfd-v2-5-a65ebe2bc0a9@linaro.org>
+		 <CACRpkdYoWuJzjqiKrSNzdXV+5N9Gp0n+pdCwSZgocwy0JHo7Vw@mail.gmail.com>
+	 <d06058296a194a4f2c9fcbcc5c24816ecb1f51b1.camel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi everyone, I am Saalim Quadri an undergrad student at Dayananda Sagar College of Engineering, pursuing Electronics and Communications.
-I wish to participate in the GSoC 2025 as a part of the Linux Foundation, IIO Project.
+On Fri, 2025-02-28 at 10:58 +0000, Andr=C3=A9 Draszik wrote:
+> Hi Linus,
+>=20
+> Thanks for you review!
+>=20
+> On Fri, 2025-02-28 at 08:10 +0100, Linus Walleij wrote:
+> > Hi Andr=C3=A9,
+> >=20
+> > thanks for your patch!
+> >=20
+> > mostly looks fine, given the MFD design is accepted.
+> > Nitpicks below:
+> >=20
+> > On Wed, Feb 26, 2025 at 6:51=E2=80=AFPM Andr=C3=A9 Draszik <andre.drasz=
+ik@linaro.org> wrote:
+> >=20
+> > > +static irqreturn_t max77759_gpio_irqhandler(int irq, void *data)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int handled =3D 0;
+> >=20
+> > bool handled =3D false;
+> >=20
+> > (...)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 for_each_set_bit(offset, &pending, MAX77759_N_GPIOS) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned=
+ int virq;
+> >=20
+> > I usually just call this "irq", as it's not any more virtual than any o=
+ther
+> > Linux magic number, and it can confuse people working with
+> > actual virtualization when we call things virtual like this.
+>=20
+> Calling it 'irq' would shadow the first argument of this irq
+> handler function, which is also and usually called irq and which
+> I'd like to avoid shadowing.
+>=20
+> Are you OK with 'subirq'? Or any other preference?
 
-I have been contributing to the Linux Kernel and have more than 10 accepted patches.
-I have also worked with Android Linux Ecosystem in the past years, and have worked on several subsystems, backports and fixes.
+Actually, there's no real need for that variable, I'll just
+drop it altogether:
 
-I started looking into https://wiki.linuxfoundation.org/gsoc/2025-gsoc-iio-driver and Analog Devices Inc. and I am interested in writing
-the driver for ADE9113 ADC.
+			handle_nested_irq(irq_find_mapping(gc->irq.domain,
+							   offset));
 
-In that sense, I would like to know if anyone in the IIO community could provide with some suggestions for my proposal, and a positive impact.
-Any suggestion or hint is appreciated!
+A.
 
-Sincerely,
-Saalim Quadri
 
