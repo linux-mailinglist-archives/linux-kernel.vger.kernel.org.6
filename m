@@ -1,246 +1,211 @@
-Return-Path: <linux-kernel+bounces-538870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26887A49E10
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:55:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F38A49E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA3618994AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF9971709CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F7E270EA9;
-	Fri, 28 Feb 2025 15:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYrYhf5p"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08208274255;
+	Fri, 28 Feb 2025 15:56:11 +0000 (UTC)
+Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2675A1EF360;
-	Fri, 28 Feb 2025 15:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EE227126A;
+	Fri, 28 Feb 2025 15:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758133; cv=none; b=B7VbJPw+PPfUoqH71TP8MLrUP0PuC+zYifpz4p44WKTtbhVl9Oe/tNWcnDCxXkNbCyUAlkCnbrlPl9Kojb+lD/1BHv+F99fxUyBvOZelWUV3c0nX+87Wb6i5M1olRFxJ7xujL9kxPZhArfKTTcmk6nlHgcXZgLYX7YAYc6gefdE=
+	t=1740758170; cv=none; b=CgLKYZhzdsYnCB1Ik3dz1h2HMPssBg0aPpC+vys3xeHD4MfU72trv8jwK3JBehTsTq6cchA6JaMqzxaq0uhOw+DCkt9zhiKXlPoYOkXoCBeEtHlEqZOksGjt54Dv0EaxZn8cwYWLPMC+Gu/vD3Ft2efR9dhQl1dvRn5Y0oUHhfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758133; c=relaxed/simple;
-	bh=akg3hfMrj8rJseZvQS4QHjk5DvDzbMeTuCXtQ3LNr1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KAWxUU9W2BczSgKAFm9KfbTf0KnYWJVEJP5K4MsW1NEgBeUE9fzqfUMFpVVbooszgNuxMfxS3axclT7/HOPi+1eUTwYnfFDWwa82KlPBQqJZBax4DRGObbpnbgIZsKjhrUvaiaE+14xHkBHxTeXFmFpdGXoDlDOyT1PqMo16j98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYrYhf5p; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307bc125e2eso25039641fa.3;
-        Fri, 28 Feb 2025 07:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740758129; x=1741362929; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bHn0qaSarOO5nkT/BqsOGpUW4y3+EJjr5cHJDOEs+kg=;
-        b=XYrYhf5pg2IuBS7p5Pno1ffiW2tH6VHdJ8PsVsXvB5ebEJfV/bPXjy7tR/0bwZCnk4
-         aFGn68CVO1uCQkXWy60eLjyGv6FESczL+26dmEPcKaMSyXDm74kwho+KNaKmtDwhRLs6
-         w0qZ60ncu++t8r+UDvSjzJ1uBhmq1GFaKBQKtM0qrYiD7aEFKdlBxmU1/OIISVKQ1AXf
-         xpLCdYM31U87MLheByncD16sY6hOuA0zc99BsC6i+R7MUB5UsqQ9mh+kDzxiRYrfaAmZ
-         dtO0DLo+6TL3TCXjHJlUfdEsU5S7QUDawuE1vQ63PTkNji1CwQ8Lv6fCKMrnFzO/XALX
-         G2fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740758129; x=1741362929;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bHn0qaSarOO5nkT/BqsOGpUW4y3+EJjr5cHJDOEs+kg=;
-        b=Rcee7ykayfwqOvm8SFdhflSDb/hhxq7SFK3pDYT2dBe/0XV0PWmOC9BFJSGPLEnnBf
-         hdDz983m8WVMgcm2acSFvlWb3m6wxA2Xe3vlyt/JwrB882NjRyE9XDljDVMUFTuuCHOm
-         vWhTWHpKxaPFSje+S9bnTTthXVaBOi4MV0gaV50kEPeZkUcN+q6v0wgqB+WWEtVyWXEy
-         GyLY4ANfFU+rybCeprlH7jJywZx15VjstEmEiscMa8G01K9QqYhiPbiEr2TVNmrq5aEi
-         LNX8ijPmroFQeus9SQBtlGbtBp3ytwRT6KIPo3grtJPwPQJ3SeJLdoA8l2TtqKKFK31B
-         OW+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWm9c8T1q/KXCSBxPvocjCSNgayMD0TOubN0628oNTUSCjBP4xZTIInyy7+MextXp61JF4t4TcaotK02ZmzF+A=@vger.kernel.org, AJvYcCXiLAMgg63mpFG2xXqF81BNwpbKUm4nzCfA15Bx3eaPqIussEVQg/q8ogFZ/fqC0KnGjq1zUPZ4PJs3lc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFdf4oNzBxtNIRsLXhbOGz3Z6Q6sfB0zS1zxHcz1jnE3G+TwGR
-	t9EDAB5OWwoUQC+scn1m7S58o/K/kdtgu2XDNp1R7TbRJLuRrJ8nKJfHDJwH2ZSPJ8TAI5AIniT
-	PYRTSZJtCeWv5obkkQx6zqokS4wI=
-X-Gm-Gg: ASbGncseeFPuU/AUOqlSKII3r041gg5Dh6Yb1/7M1b1hyHMsr6/b+aIBlg9rf24xklx
-	eezRLiN1O4ntAc0GaWt/6yeev/Mu1OHx6haIhLsNmDgvEVXElOy0C6883IxXjLN+XqgS8CaTcjD
-	4coEuV5omLEM95W9TPXOlBl9ZvaaTYRwf4UWItGr6C
-X-Google-Smtp-Source: AGHT+IH4TnWs7AAWR6mSZJGzeTPP/IV0kwlekYfbQHJwIpvtqQS+Igon57DpTKr3TLAm0ffmLUtfQbT9lsn73QyqZdk=
-X-Received: by 2002:a05:651c:555:b0:308:eb34:103a with SMTP id
- 38308e7fff4ca-30b932f6d82mr16293581fa.28.1740758128998; Fri, 28 Feb 2025
- 07:55:28 -0800 (PST)
+	s=arc-20240116; t=1740758170; c=relaxed/simple;
+	bh=LLgN1Qa4YDx2jNxmqVz2R6UToXM6OqZZqylhOcuSfj4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=KWaHN7cob+RX65ZXxy8I0szv5voQ9DlChFCM8irG0TnLhri6qDsNUrxPYN2Wn90KotLTMduxTIVED3SNGlFbFOVe1faN+8QSlrHVxb5O8rpjreWuGeEL7Wxuy/vH3draDEe/TRyn/P+4HwdNFQafhl6VRlV13/dD9Inw4PSbZO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1to2i5-000PBv-7I; Fri, 28 Feb 2025 16:55:33 +0100
+Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1to2i5-000KUm-1R;
+	Fri, 28 Feb 2025 16:55:32 +0100
+Message-ID: <a1dcd271-c347-4d90-a1fc-fa18bbad3ebe@hetzner-cloud.de>
+Date: Fri, 28 Feb 2025 16:55:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228-export-macro-v2-0-569cc7e8926c@google.com> <20250228-export-macro-v2-5-569cc7e8926c@google.com>
-In-Reply-To: <20250228-export-macro-v2-5-569cc7e8926c@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 28 Feb 2025 10:54:53 -0500
-X-Gm-Features: AQ5f1Jr5a2e-MB7tbyFJrVeNND-UBub9gCfxNxl1epYDa4dtBuxZ-xEM_hkDrMo
-Message-ID: <CAJ-ks9k4rZdpL5dDfwMHuiKFdyYdY00YioYxdtsqszpcbhzjHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] panic_qr: use new #[export] macro
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Lei Yang <leiyang@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, hawk@kernel.org
+References: <20250227142330.1605996-1-marcus.wichelmann@hetzner-cloud.de>
+ <CAPpAL=wLk0Z3jfg9eY75c3ZFhH-3w7H--WqFuaGMcCJ+Bm5q+g@mail.gmail.com>
+Content-Language: en-US
+From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
+ 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
+ wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
+Subject: Re: [PATCH bpf-next v4 0/6] XDP metadata support for tun driver
+In-Reply-To: <CAPpAL=wLk0Z3jfg9eY75c3ZFhH-3w7H--WqFuaGMcCJ+Bm5q+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27563/Fri Feb 28 11:01:44 2025)
 
-On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> This validates at compile time that the signatures match what is in the
-> header file. It highlights one annoyance with the compile-time check,
-> which is that it can only be used with functions marked unsafe.
->
-> If the function is not unsafe, then this error is emitted:
->
-> error[E0308]: `if` and `else` have incompatible types
->    --> <linux>/drivers/gpu/drm/drm_panic_qr.rs:987:19
->     |
-> 986 | #[export]
->     | --------- expected because of this
-> 987 | pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: =
-usize) -> usize {
->     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected unsafe fn, fo=
-und safe fn
->     |
->     =3D note: expected fn item `unsafe extern "C" fn(_, _) -> _ {kernel::=
-bindings::drm_panic_qr_max_data_size}`
->                found fn item `extern "C" fn(_, _) -> _ {drm_panic_qr_max_=
-data_size}`
->
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  drivers/gpu/drm/drm_panic.c     |  5 -----
->  drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
->  include/drm/drm_panic.h         |  7 +++++++
->  rust/bindings/bindings_helper.h |  4 ++++
->  4 files changed, 22 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index f128d345b16d..dee5301dd729 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -486,11 +486,6 @@ static void drm_panic_qr_exit(void)
->         stream.workspace =3D NULL;
->  }
->
-> -extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> -
-> -extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_l=
-en, size_t data_size,
-> -                               u8 *tmp, size_t tmp_size);
-> -
->  static int drm_panic_get_qr_code_url(u8 **qr_image)
->  {
->         struct kmsg_dump_iter iter;
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_=
-qr.rs
-> index bcf248f69252..d055655aa0cd 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -27,7 +27,10 @@
->  //! * <https://github.com/bjguillot/qr>
->
->  use core::cmp;
-> -use kernel::str::CStr;
-> +use kernel::{
-> +    prelude::*,
-> +    str::CStr,
-> +};
->
->  #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
->  struct Version(usize);
-> @@ -929,7 +932,7 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D u=
-8>) {
->  /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
->  ///
->  /// They must remain valid for the duration of the function call.
-> -#[no_mangle]
-> +#[export]
->  pub unsafe extern "C" fn drm_panic_qr_generate(
->      url: *const kernel::ffi::c_char,
->      data: *mut u8,
-> @@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D =
-u8>) {
->  /// * If `url_len` > 0, remove the 2 segments header/length and also cou=
-nt the
->  ///   conversion to numeric segments.
->  /// * If `url_len` =3D 0, only removes 3 bytes for 1 binary segment.
-> -#[no_mangle]
-> -pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize=
-) -> usize {
-> +///
-> +/// # Safety
-> +///
-> +/// Always safe to call.
-
-This should explain why it's marked unsafe, since it's always safe to call.
-
-
-> +#[export]
-> +pub unsafe extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len=
-: usize) -> usize {
->      #[expect(clippy::manual_range_contains)]
->      if version < 1 || version > 40 {
->          return 0;
-> diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> index f4e1fa9ae607..2a1536e0229a 100644
-> --- a/include/drm/drm_panic.h
-> +++ b/include/drm/drm_panic.h
-> @@ -163,4 +163,11 @@ static inline void drm_panic_unlock(struct drm_devic=
-e *dev, unsigned long flags)
->
->  #endif
->
-> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> +extern size_t drm_panic_qr_max_data_size(u8 version, size_t url_len);
-> +
-> +extern u8 drm_panic_qr_generate(const char *url, u8 *data, size_t data_l=
-en, size_t data_size,
-> +                               u8 *tmp, size_t tmp_size);
-> +#endif
-> +
->  #endif /* __DRM_PANIC_H__ */
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
-per.h
-> index 55354e4dec14..5345aa93fb8a 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -36,6 +36,10 @@
->  #include <linux/workqueue.h>
->  #include <trace/events/rust_sample.h>
->
-> +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> +#include <drm/drm_panic.h>
-> +#endif
-
-Why the guard here?
-
-It'd be nice to have a comment here explaining the atypical need for
-this include.
-
-> +
->  /* `bindgen` gets confused at certain things. */
->  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN=
-;
->  const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
->
-> --
-> 2.48.1.711.g2feabab25a-goog
-
-With Andy's comment about extern addressed:
-
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+QW0gMjguMDIuMjUgdW0gMDY6NDMgc2NocmllYiBMZWkgWWFuZzoNCj4gSGkgTWFyY3VzDQo+
+IA0KPiBTaW5jZSB5b3VyIHBhdGNoZXMgYXJlIGFib3V0IHRoZSB2aXJ0dWFsIG5ldHdvcmss
+IEknZCBsaWtlIHRvIHRlc3QgaXQsDQo+IGJ1dCBpdCBjb25mbGljdHMgKFBsZWFzZSByZXZp
+ZXcgdGhlIGF0dGFjaG1lbnQgdG8gcmV2aWV3IG1vcmUgZGV0YWlscykNCj4gd2hlbiBJIGFw
+cGx5IGl0IHRvIHRoZSBtYXN0ZXIgYnJhbmNoLg0KPiBNeSB0ZXN0IGJhc2VkIG9uIHRoaXMg
+Y29tbWl0Og0KPiBjb21taXQgMWUxNTUxMGI3MWM5OWM2ZTQ5MTM0ZDc1NmRmOTEwNjlmN2Qx
+ODE0MSAob3JpZ2luL21hc3Rlciwgb3JpZ2luL0hFQUQpDQo+IE1lcmdlOiBmMDlkNjk0Y2Y3
+OTkgNTRlMWI0YmVjZjVlDQo+IEF1dGhvcjogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxp
+bnV4LWZvdW5kYXRpb24ub3JnPg0KPiBEYXRlOiAgIFRodSBGZWIgMjcgMDk6MzI6NDIgMjAy
+NSAtMDgwMA0KPiANCj4gICAgICBNZXJnZSB0YWcgJ25ldC02LjE0LXJjNScgb2YNCj4gZ2l0
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L25ldGRldi9uZXQN
+Cj4gDQo+ICAgICAgUHVsbCBuZXR3b3JraW5nIGZpeGVzIGZyb20gSmFrdWIgS2ljaW5za2k6
+DQo+ICAgICAgICJJbmNsdWRpbmcgZml4ZXMgZnJvbSBibHVldG9vdGguDQo+IA0KDQpIaSwN
+Cg0KdGhhbmsgeW91IGZvciBpbmNsdWRpbmcgaXQgaW4geW91ciB0ZXN0cy4NCg0KVGhlIG1l
+bnRpb25lZCBjb21taXQgaXMgbm90IHlldCBpbiBicGYtbmV4dCwgYnV0IEkgcmViYXNlZCBt
+eSBwYXRjaCBvbg0KbGF0ZXN0IG1haW5saW5lIGFuZCBhdHRhY2hlZCB0aGUgdXBkYXRlZCBw
+YXRjaCBmb3IgdGhlIGNvbmZsaWN0aW5nDQpjb21taXQuDQoNClRoZSBjb25mbGljdCB3YXMg
+anVzdCBhYm91dCBhIHNlY3Rpb24gdGhhdCB3YXMgcmVtb3ZlZCByaWdodCBiZWxvdw0KbXkg
+YWRkZWQgbGluZSBpbiBuZXR3b3JrX2hlbHBlcnMuaCwgc28gbm8gZnVuY3Rpb25hbCBjaGFu
+Z2UuDQoNCi0tLQ0KDQogRnJvbSBjNzE4MmU1YTRkMjE2OTZiOWU4Y2QyNWY5MmU2NGUyODEy
+OWUyYzZlIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogTWFyY3VzIFdpY2hlbG1h
+bm4gPG1hcmN1cy53aWNoZWxtYW5uQGhldHpuZXItY2xvdWQuZGU+DQpEYXRlOiBUaHUsIDEz
+IEZlYiAyMDI1IDE2OjI4OjE5ICswMDAwDQpTdWJqZWN0OiBbUEFUQ0hdIHNlbGZ0ZXN0cy9i
+cGY6IG1vdmUgb3Blbl90dW50YXAgdG8gbmV0d29yayBoZWxwZXJzDQoNClRvIHRlc3QgdGhl
+IFhEUCBtZXRhZGF0YSBmdW5jdGlvbmFsaXR5IG9mIHRoZSB0dW4gZHJpdmVyLCBpdCdzIG5l
+Y2Vzc2FyeQ0KdG8gY3JlYXRlIGEgbmV3IHRhcCBkZXZpY2UgZmlyc3QuIEEgaGVscGVyIGZ1
+bmN0aW9uIGZvciB0aGlzIGFscmVhZHkNCmV4aXN0cyBpbiBsd3RfaGVscGVycy5oLiBNb3Zl
+IGl0IHRvIHRoZSBjb21tb24gbmV0d29yayBoZWxwZXJzIGhlYWRlciwNCnNvIGl0IGNhbiBi
+ZSByZXVzZWQgaW4gb3RoZXIgdGVzdHMuDQoNClNpZ25lZC1vZmYtYnk6IE1hcmN1cyBXaWNo
+ZWxtYW5uIDxtYXJjdXMud2ljaGVsbWFubkBoZXR6bmVyLWNsb3VkLmRlPg0KUmV2aWV3ZWQt
+Ynk6IFdpbGxlbSBkZSBCcnVpam4gPHdpbGxlbWJAZ29vZ2xlLmNvbT4NCkFja2VkLWJ5OiBK
+YXNvbiBXYW5nIDxqYXNvd2FuZ0ByZWRoYXQuY29tPg0KLS0tDQogIHRvb2xzL3Rlc3Rpbmcv
+c2VsZnRlc3RzL2JwZi9uZXR3b3JrX2hlbHBlcnMuYyB8IDI4ICsrKysrKysrKysrKysrKysr
+Kw0KICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0d29ya19oZWxwZXJzLmggfCAg
+MyArKw0KICAuLi4vc2VsZnRlc3RzL2JwZi9wcm9nX3Rlc3RzL2x3dF9oZWxwZXJzLmggICAg
+fCAyOSAtLS0tLS0tLS0tLS0tLS0tLS0tDQogIDMgZmlsZXMgY2hhbmdlZCwgMzEgaW5zZXJ0
+aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS90b29scy90ZXN0aW5n
+L3NlbGZ0ZXN0cy9icGYvbmV0d29ya19oZWxwZXJzLmMgYi90b29scy90ZXN0aW5nL3NlbGZ0
+ZXN0cy9icGYvbmV0d29ya19oZWxwZXJzLmMNCmluZGV4IDgwODQ0YTVmYjFmZS4uZmNlZTJj
+NGE2MzdhIDEwMDY0NA0KLS0tIGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL25ldHdv
+cmtfaGVscGVycy5jDQorKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0d29y
+a19oZWxwZXJzLmMNCkBAIC01NDgsNiArNTQ4LDM0IEBAIHZvaWQgY2xvc2VfbmV0bnMoc3Ry
+dWN0IG5zdG9rZW4gKnRva2VuKQ0KICAJZnJlZSh0b2tlbik7DQogIH0NCiAgDQoraW50IG9w
+ZW5fdHVudGFwKGNvbnN0IGNoYXIgKmRldl9uYW1lLCBib29sIG5lZWRfbWFjKQ0KK3sNCisJ
+aW50IGVyciA9IDA7DQorCXN0cnVjdCBpZnJlcSBpZnI7DQorCWludCBmZCA9IG9wZW4oIi9k
+ZXYvbmV0L3R1biIsIE9fUkRXUik7DQorDQorCWlmICghQVNTRVJUX0dUKGZkLCAwLCAib3Bl
+bigvZGV2L25ldC90dW4pIikpDQorCQlyZXR1cm4gLTE7DQorDQorCWlmci5pZnJfZmxhZ3Mg
+PSBJRkZfTk9fUEkgfCAobmVlZF9tYWMgPyBJRkZfVEFQIDogSUZGX1RVTik7DQorCXN0cm5j
+cHkoaWZyLmlmcl9uYW1lLCBkZXZfbmFtZSwgSUZOQU1TSVogLSAxKTsNCisJaWZyLmlmcl9u
+YW1lW0lGTkFNU0laIC0gMV0gPSAnXDAnOw0KKw0KKwllcnIgPSBpb2N0bChmZCwgVFVOU0VU
+SUZGLCAmaWZyKTsNCisJaWYgKCFBU1NFUlRfT0soZXJyLCAiaW9jdGwoVFVOU0VUSUZGKSIp
+KSB7DQorCQljbG9zZShmZCk7DQorCQlyZXR1cm4gLTE7DQorCX0NCisNCisJZXJyID0gZmNu
+dGwoZmQsIEZfU0VURkwsIE9fTk9OQkxPQ0spOw0KKwlpZiAoIUFTU0VSVF9PSyhlcnIsICJm
+Y250bChPX05PTkJMT0NLKSIpKSB7DQorCQljbG9zZShmZCk7DQorCQlyZXR1cm4gLTE7DQor
+CX0NCisNCisJcmV0dXJuIGZkOw0KK30NCisNCiAgaW50IGdldF9zb2NrZXRfbG9jYWxfcG9y
+dChpbnQgc29ja19mZCkNCiAgew0KICAJc3RydWN0IHNvY2thZGRyX3N0b3JhZ2UgYWRkcjsN
+CmRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0d29ya19oZWxw
+ZXJzLmggYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0d29ya19oZWxwZXJzLmgN
+CmluZGV4IGViZWM4YThkNmY4MS4uMTc1ZGQ1NDc4NDlmIDEwMDY0NA0KLS0tIGEvdG9vbHMv
+dGVzdGluZy9zZWxmdGVzdHMvYnBmL25ldHdvcmtfaGVscGVycy5oDQorKysgYi90b29scy90
+ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0d29ya19oZWxwZXJzLmgNCkBAIC04LDYgKzgsNyBA
+QA0KICB0eXBlZGVmIF9fdTE2IF9fc3VtMTY7DQogICNpbmNsdWRlIDxsaW51eC9pZl9ldGhl
+ci5oPg0KICAjaW5jbHVkZSA8bGludXgvaWZfcGFja2V0Lmg+DQorI2luY2x1ZGUgPGxpbnV4
+L2lmX3R1bi5oPg0KICAjaW5jbHVkZSA8bGludXgvaXAuaD4NCiAgI2luY2x1ZGUgPGxpbnV4
+L2lwdjYuaD4NCiAgI2luY2x1ZGUgPGxpbnV4L2V0aHRvb2wuaD4NCkBAIC05OCw2ICs5OSw4
+IEBAIGludCBzZW5kX3JlY3ZfZGF0YShpbnQgbGZkLCBpbnQgZmQsIHVpbnQzMl90IHRvdGFs
+X2J5dGVzKTsNCiAgaW50IG1ha2VfbmV0bnMoY29uc3QgY2hhciAqbmFtZSk7DQogIGludCBy
+ZW1vdmVfbmV0bnMoY29uc3QgY2hhciAqbmFtZSk7DQogIA0KK2ludCBvcGVuX3R1bnRhcChj
+b25zdCBjaGFyICpkZXZfbmFtZSwgYm9vbCBuZWVkX21hYyk7DQorDQogIHN0YXRpYyBfX3Ux
+NiBjc3VtX2ZvbGQoX191MzIgY3N1bSkNCiAgew0KICAJY3N1bSA9IChjc3VtICYgMHhmZmZm
+KSArIChjc3VtID4+IDE2KTsNCmRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0
+cy9icGYvcHJvZ190ZXN0cy9sd3RfaGVscGVycy5oIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVz
+dHMvYnBmL3Byb2dfdGVzdHMvbHd0X2hlbHBlcnMuaA0KaW5kZXggZmIxZWI4YzY3MzYxLi5j
+Y2VjMGZjZGFiYzEgMTAwNjQ0DQotLS0gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYv
+cHJvZ190ZXN0cy9sd3RfaGVscGVycy5oDQorKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0
+cy9icGYvcHJvZ190ZXN0cy9sd3RfaGVscGVycy5oDQpAQCAtNSw3ICs1LDYgQEANCiAgDQog
+ICNpbmNsdWRlIDx0aW1lLmg+DQogICNpbmNsdWRlIDxuZXQvaWYuaD4NCi0jaW5jbHVkZSA8
+bGludXgvaWZfdHVuLmg+DQogICNpbmNsdWRlIDxsaW51eC9pY21wLmg+DQogIA0KICAjaW5j
+bHVkZSAidGVzdF9wcm9ncy5oIg0KQEAgLTM3LDM0ICszNiw2IEBAIHN0YXRpYyBpbmxpbmUg
+aW50IG5ldG5zX2RlbGV0ZSh2b2lkKQ0KICAJcmV0dXJuIHN5c3RlbSgiaXAgbmV0bnMgZGVs
+ICIgTkVUTlMgIj4vZGV2L251bGwgMj4mMSIpOw0KICB9DQogIA0KLXN0YXRpYyBpbnQgb3Bl
+bl90dW50YXAoY29uc3QgY2hhciAqZGV2X25hbWUsIGJvb2wgbmVlZF9tYWMpDQotew0KLQlp
+bnQgZXJyID0gMDsNCi0Jc3RydWN0IGlmcmVxIGlmcjsNCi0JaW50IGZkID0gb3BlbigiL2Rl
+di9uZXQvdHVuIiwgT19SRFdSKTsNCi0NCi0JaWYgKCFBU1NFUlRfR1QoZmQsIDAsICJvcGVu
+KC9kZXYvbmV0L3R1bikiKSkNCi0JCXJldHVybiAtMTsNCi0NCi0JaWZyLmlmcl9mbGFncyA9
+IElGRl9OT19QSSB8IChuZWVkX21hYyA/IElGRl9UQVAgOiBJRkZfVFVOKTsNCi0Jc3RybmNw
+eShpZnIuaWZyX25hbWUsIGRldl9uYW1lLCBJRk5BTVNJWiAtIDEpOw0KLQlpZnIuaWZyX25h
+bWVbSUZOQU1TSVogLSAxXSA9ICdcMCc7DQotDQotCWVyciA9IGlvY3RsKGZkLCBUVU5TRVRJ
+RkYsICZpZnIpOw0KLQlpZiAoIUFTU0VSVF9PSyhlcnIsICJpb2N0bChUVU5TRVRJRkYpIikp
+IHsNCi0JCWNsb3NlKGZkKTsNCi0JCXJldHVybiAtMTsNCi0JfQ0KLQ0KLQllcnIgPSBmY250
+bChmZCwgRl9TRVRGTCwgT19OT05CTE9DSyk7DQotCWlmICghQVNTRVJUX09LKGVyciwgImZj
+bnRsKE9fTk9OQkxPQ0spIikpIHsNCi0JCWNsb3NlKGZkKTsNCi0JCXJldHVybiAtMTsNCi0J
+fQ0KLQ0KLQlyZXR1cm4gZmQ7DQotfQ0KLQ0KICAjZGVmaW5lIElDTVBfUEFZTE9BRF9TSVpF
+ICAgICAxMDANCiAgDQogIC8qIE1hdGNoIGFuIElDTVAgcGFja2V0IHdpdGggcGF5bG9hZCBs
+ZW4gSUNNUF9QQVlMT0FEX1NJWkUgKi8NCi0tIA0KMi40My4wDQoNCg==
 
