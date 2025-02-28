@@ -1,91 +1,129 @@
-Return-Path: <linux-kernel+bounces-537691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7080AA48F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:27:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F1FA48F98
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0030516E454
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15CF18934A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1DC18C011;
-	Fri, 28 Feb 2025 03:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C11DE4C7;
+	Fri, 28 Feb 2025 03:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HYG69VvP"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29BE14A4DF;
-	Fri, 28 Feb 2025 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EI9aQ5NP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3951D9587
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 03:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713256; cv=none; b=uR8Awiu0VlmJQEOfB+7mELw3fiRoD94d2I4kbbaZvTFDMQJzfBjo38oq+JEa8XzR7KjDq0nzVFiZJeGrJQ0tuXHKIyShShuy1MHDVcPAUstgFLOxZKFUklyveXsT8kMLPAYgrxSczeNn5rQSoWL1+9l5E9gmoIkxOLVpRrgJQec=
+	t=1740713565; cv=none; b=bicSiSQeerUTaDqA7xNzxU4VIy4SBRw0mgG9UlsRyBJwRKzBzx0OQ6Fw8gJv0bAsh1Q+9s/imNCmMjrOcwIpbl9Xe5aQ8MxQS7h9P/cUhbuxNlWCnCnI7LGzBueGcz+m7v16//9DGTCydw8AWVnljTrME8xIJOdEEo/CuJ0NJ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713256; c=relaxed/simple;
-	bh=42jlYnLuKDhskB3kk6Sbtyrl5aakp19MNrnmogmDXzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lB0wtfWQ1Fuabzjy/vtK0W9hzuGTeDRpnQUxS1DfUQ7X5s5ca+Tm4qUdG1NkK7s/Q9C2opkrUZto7tfq3NG/7CYFOHaaI3ULyPRn0oXK9eRR3PmbMmdltrZmTRRyBU041KAFvoVbBNzBxsrXwi9OMjQGcaVOmUcoFmab5QmAQfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HYG69VvP; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=P95FE
-	Xvftqpy2CJ7poGrPUvDjDKXYMp27W5tWezeZeI=; b=HYG69VvPoLP4yawKaEQFs
-	gITM2Hp0Z8UP++caJNFIKpx0myNHOQXclysZtZpcr+sgE/ADlafsmTU+d8RKxrSq
-	0jnOh5Auou4x8hME3Ha7XxfsysJui2Y+njcXH9F39LvQ5vYUyXnjK4ji72jDjDrk
-	f3nRBFQYP8GtTTY7Hv6ISM=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBnq08ZLcFnrvq6PA--.50291S4;
-	Fri, 28 Feb 2025 11:27:22 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: morbidrsa@gmail.com,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mcb: fix a double free bug in chameleon_parse_gdd()
-Date: Fri, 28 Feb 2025 11:27:20 +0800
-Message-Id: <20250228032720.3745459-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740713565; c=relaxed/simple;
+	bh=O7zRYrsqSiJgycIUYDKf3/11DN1UQDub9iFMRmiysKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5VqRXe7UD2Ag+/UvGjJ6xvlaF5iTIK4MUQmbHfiDtRpLTScu1p7Yc8Nn+tWg4T/xXboaxDXIIeAfUnkDd/D1lcW6PwKjHd41aKfWRuKhaRvIN0nU/1oQF8M2tGD/4xdphmL7+IWl7AtvVSulX2b/n5dbiI/eoITDhSX3srpYkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EI9aQ5NP; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740713564; x=1772249564;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=O7zRYrsqSiJgycIUYDKf3/11DN1UQDub9iFMRmiysKU=;
+  b=EI9aQ5NPrtriNU5EnmjKIT1kSL+oXMBympOIha2tJ8gEK7Vq2nymry8d
+   yI4/6UWxb8/21sBoNQn4JMR7i3fcniS3fy6GZ8uSXwvJwHk56V04rgryJ
+   KzD8Onoj+haIryEsTn4j/T5iLVWfHxZPJjkV0R8IHIKee5DfBS8ClY85O
+   2yJSbKE7maWA80V6XAigTJZ/uI4AXWIOx2vPk1bMzLXHySwG24hcv6PZ1
+   3eY+mBfN+ofzVMySyPMreCaVf1E9WFh93Bx7wMmxmVwZXrG4s0nQqRFaB
+   cntKWPuLDFP1tx7XY6wyD6fBfOVEmCrB5fwpVCN6FQHidAczdgTT2v5B9
+   A==;
+X-CSE-ConnectionGUID: fICTATUrSl6t08sWTLw6XQ==
+X-CSE-MsgGUID: 0dP2JHZfRkmpKSRV1s4N6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="51837283"
+X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
+   d="scan'208";a="51837283"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 19:32:44 -0800
+X-CSE-ConnectionGUID: +FmaSdlySDiIKdS3zqDvQw==
+X-CSE-MsgGUID: fYtp9uDKTBSQRUhMIvO4yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121345743"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 19:32:42 -0800
+Message-ID: <cbf58625-e9f3-4822-9bcb-ccaadeea47bf@linux.intel.com>
+Date: Fri, 28 Feb 2025 11:29:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnq08ZLcFnrvq6PA--.50291S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWruFyDGryrKF15uw48ZF13urg_yoW3KFg_Gr
-	409rW7ZF40kFW3Kry3Jr1Svry8tanFgrZ5ur47t393Ars5WryqqryrZF1fKrykWF1xuFyU
-	Ca4DKryIkrW2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWGQhUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0goCbmfBJpfOVAAAs5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] iommu: Add private_data_owner to iommu_domain
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, robin.murphy@arm.com,
+ joro@8bytes.org, will@kernel.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <cover.1740705776.git.nicolinc@nvidia.com>
+ <45c03a1bc86528c9194589cc3a5afe3eb2a15c9e.1740705776.git.nicolinc@nvidia.com>
+ <f6d0fcb1-b974-440f-9208-257422bc01a6@linux.intel.com>
+ <Z8EsN/Vg2SVeChTp@Asurada-Nvidia>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <Z8EsN/Vg2SVeChTp@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In chameleon_parse_gdd(), if mcb_device_register() fails, 'mdev'
-would be released in mcb_device_register() via put_device().
-Thus, goto 'err' label and free 'mdev' again causes a double free.
-Just return if mcb_device_register() fails.
+On 2/28/25 11:23, Nicolin Chen wrote:
+> On Fri, Feb 28, 2025 at 11:13:23AM +0800, Baolu Lu wrote:
+>> On 2/28/25 09:31, Nicolin Chen wrote:
+>>> Steal two bits from the 32-bit "type" in struct iommu_domain to store a
+>>> new tag for private data owned by either dma-iommu or iommufd.
+>>>
+>>> Set the domain->private_data_owner in dma-iommu and iommufd. These will
+>>> be used to replace the sw_msi function pointer.
+>>>
+>>> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
+>>> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+>>> ---
+>>>    include/linux/iommu.h                | 7 ++++++-
+>>>    drivers/iommu/dma-iommu.c            | 2 ++
+>>>    drivers/iommu/iommufd/hw_pagetable.c | 3 +++
+>>>    3 files changed, 11 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index e93d2e918599..4f2774c08262 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -209,8 +209,13 @@ struct iommu_domain_geometry {
+>>>    #define IOMMU_DOMAIN_PLATFORM	(__IOMMU_DOMAIN_PLATFORM)
+>>>    #define IOMMU_DOMAIN_NESTED	(__IOMMU_DOMAIN_NESTED)
+>>> +#define IOMMU_DOMAIN_DATA_OWNER_NONE (0U)
+>>> +#define IOMMU_DOMAIN_DATA_OWNER_DMA (1U)
+>>> +#define IOMMU_DOMAIN_DATA_OWNER_IOMMUFD (2U)
+>>> +
+>>>    struct iommu_domain {
+>>> -	unsigned type;
+>>> +	u32 type : 30;
+>>> +	u32 private_data_owner : 2;
+>> Is there any special consideration for reserving only 2 bits for the
+>> private data owner? Is it possible to allocate more bits so that it
+>> could be more extensible for the future?
+> It could. This "2" is copied from Jason's suggestion:
+> https://lore.kernel.org/linux-iommu/20250227194749.GJ39591@nvidia.com/
+> 
+>> For example, current iommu core allows a kernel device driver to
+>> allocate a paging domain and replace the default domain for kernel DMA.
+>> This suggests the private data owner bits may be needed beyond iommu-dma
+>> and iommufd.
+> What's the potential "private data" in this case?
 
-Fixes: 3764e82e5150 ("drivers: Introduce MEN Chameleon Bus")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/mcb/mcb-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
-index 02a680c73979..bf0d7d58c8b0 100644
---- a/drivers/mcb/mcb-parse.c
-+++ b/drivers/mcb/mcb-parse.c
-@@ -96,7 +96,7 @@ static int chameleon_parse_gdd(struct mcb_bus *bus,
- 
- 	ret = mcb_device_register(bus, mdev);
- 	if (ret < 0)
--		goto err;
-+		return ret;
- 
- 	return 0;
- 
--- 
-2.25.1
-
+I have no idea, just feeling that we could leave room for tomorrow.
 
