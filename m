@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-537785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF73A490B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:03:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD48EA490B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84CE3A99CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC191893402
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F2D1BCA0C;
-	Fri, 28 Feb 2025 05:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93631BCA11;
+	Fri, 28 Feb 2025 05:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DlUZmIxd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fTzk5aUq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038071BBBD4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DEA1B6CE8;
+	Fri, 28 Feb 2025 05:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740719016; cv=none; b=PoABxHXkzfSk4aHq6offyFGvECTRmqYtRYyRoBmUsEKlQzlVY/kyp8NeQe9Dj9OudwBWVyaJjETd+nd6IqEbAuUhtOMiwmNCW7zFL3bGKEmgxjBmiWC8LeM7U42fX79vAzZDmu6+TgdyTutTizMdrAl0mR+mhuLQVhsfjUsDMkM=
+	t=1740719362; cv=none; b=ij0QyI9obBKL54dqNJ0Re3PKl9hzayxEpB6oWifmgrVhcJWxnOsLvkdqn+gaf+k40ohWhphOj/20h8NGyj707wQhdxfYs7IdJTfkSnMYsp8YKAvPvKCpUAKb2JYPvNJAotaIZYjStP4a6FzT6laqyWTHjxoZ/KAzbvL31IcVwh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740719016; c=relaxed/simple;
-	bh=4qgnoU2IzYG+runO5deGQ34JtoBImTWSSSAIltL6Cds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTYwm/5Ygxqxdac7uGDVtdRaeuoLmizNAMqcg6f1w220qdDXXHvFdIFDBpq1zimQaS4DveikKMJ/q9hgRkjWUSHwNM4Jph4ekQp3QCI1/QCCqs+gAOdnlRBsxZvHyXmi8tqHfddGJhoywXxdyISwv7gNcBfq2Asc6N+OQt1aEjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DlUZmIxd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740719013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9rWEuJNQK68ECdNdbzEIN/CxByzhoyQY+jPP6y/Lhd0=;
-	b=DlUZmIxdbxB0zhH7VGi4D4NKUzG3PT7ojdB/4oFSuWcuegiOdnNBwI9JqIBOPEBsWvqd6X
-	HjkLwScEr53OGQfeqhFCkLxAf1UJ5bxKcY11r4a2dG9f6mY1vzWEgLzH29PdgkPWk2G4NR
-	4uTI6jMJoSGys7puYm8sl1DV5fzEsO8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-470-tLxX70tNO6O3fin0MZsonQ-1; Fri,
- 28 Feb 2025 00:03:29 -0500
-X-MC-Unique: tLxX70tNO6O3fin0MZsonQ-1
-X-Mimecast-MFC-AGG-ID: tLxX70tNO6O3fin0MZsonQ_1740719006
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF7A21800876;
-	Fri, 28 Feb 2025 05:03:25 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.52])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D92E19560B9;
-	Fri, 28 Feb 2025 05:03:22 +0000 (UTC)
-Date: Fri, 28 Feb 2025 13:03:18 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com, Mike Rapoport <mike.rapoport@gmail.com>
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-Message-ID: <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-3-chenste@linux.microsoft.com>
- <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
- <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
+	s=arc-20240116; t=1740719362; c=relaxed/simple;
+	bh=pyEpxRsjDv1Vp5XUqCc2KvoRzTGi4Jn5FvxxFOA8b6M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C71GOp6b91Ag2bsBlSauHizdNYj/PI2bvIzHev/9nC3sosyz3isKV4TwNBCS/mma34CnNoWmmyxP3UJ0H+lswiIUUd//zOFxVmRHf5wAG2+GUghNfG4Bn/jG/CalqqbsNeJXzhV6PEIFHa2JfCnWwy74Hp566THBItZDG+4VqYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fTzk5aUq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJI7Wj017602;
+	Fri, 28 Feb 2025 05:09:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=FVTwoYTTC+nsaPq7ZifRjG3l
+	o1tRW2WUQg1YyfusBZk=; b=fTzk5aUqEiwNtwIsq/sc6SW9Uwa1XU+oqtgSmNE5
+	QfxgEtFQRPw9N0v5evp9qbU/RVUqdrmboKaAfP8zSe4jU379sghfl1Y3w73+eIih
+	dHmnguAS+pPNn2k4dx1Js61zJJzFm3Wp+m/fDYW04gL621d/E7x9fzTtp4F+Qy8k
+	V0GYaf45Nq1DGtKCyyBgn2zXP+BH3k1rkNWV01B2VMQY80crolV4p2yTfJks/d8k
+	dFX1jruGJDr35/Fm5zh64FKcay4sDFJqW/m7lkv3+0aOUJzY5X1r1X6yzcm5/uFm
+	n7TMfvrl0v+iaJsGIdkppFAaM6eG2BXzMbFdOeUdgh6Snw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn81jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 05:09:13 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51S59CgP024814
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 05:09:12 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Feb 2025 21:09:09 -0800
+Date: Fri, 28 Feb 2025 10:39:06 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: Enable MMC
+Message-ID: <Z8FE8nmYm8uqya6k@hu-varada-blr.qualcomm.com>
+References: <20250227094226.2380930-1-quic_varada@quicinc.com>
+ <ryfawl6uykry5ds5kovujvepkwffdwitbqltx75wnnrqrbl4b2@i2pjwegs3u4n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <ryfawl6uykry5ds5kovujvepkwffdwitbqltx75wnnrqrbl4b2@i2pjwegs3u4n>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Ow1mVos_vONoQRd7XiNIWc4sX8C5gp2H
+X-Proofpoint-GUID: Ow1mVos_vONoQRd7XiNIWc4sX8C5gp2H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_08,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=635
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280034
 
-On 02/27/25 at 10:41am, Mimi Zohar wrote:
-> [Cc'ing Mike Rapoport]
-> 
-> On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
-> > Hi Steve, Mimi,
-> > 
-> > On 02/18/25 at 02:54pm, steven chen wrote:
-> > > Currently, the mechanism to map and unmap segments to the kimage
-> > > structure is not available to the subsystems outside of kexec.  This
-> > > functionality is needed when IMA is allocating the memory segments
-> > > during kexec 'load' operation.  Implement functions to map and unmap
-> > > segments to kimage.
-> > 
-> > I am done with the whole patchset understanding. My concern is if this
-> > TPM PCRs content can be carried over through newly introduced KHO. I can
-> > see that these patchset doesn't introduce too much new code changes,
-> > while if many conponents need do this, kexec reboot will be patched all
-> > over its body and become ugly and hard to maintain.
-> > 
-> > Please check Mike Rapoport's v4 patchset to see if IMA can register
-> > itself to KHO and do somthing during 2nd kernel init to restore those
-> > TPM PCRs content to make sure all measurement logs are read correctly.
-> > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-> 
-> Hi Baoquan,
-> 
-> I was hoping to look at Mike's patch set before responding, but perhaps it is
-> better to respond earlier rather than later with my initial thoughts.
-> 
-> The IMA measurement list isn't stored in contiguous memory, but has to be
-> marshalled before being carried across kexec, and then unmarshalled to restore
-> it after the kexec.  Roberto Sassu has been thinking about changing how the IMA
-> measurement list is stored so marshalling/unmarshalling wouldn't be necessary. 
-> Making both this change and using KHO going forward would be a good idea.
-> 
-> However, that sort of change wouldn't be appropriate to backport.  So the
-> question comes down to whether being unable to attest the measurement list,
-> because the measurements are copied too early at kexec load, but the TPM is
-> being extended through kexec exec, is considered a bug.  If that is the case,
-> then I suggest finish cleaning up and upstreaming this patch set so that it
-> could be backported.
+On Thu, Feb 27, 2025 at 05:03:10PM +0200, Dmitry Baryshkov wrote:
+> On Thu, Feb 27, 2025 at 03:12:26PM +0530, Varadarajan Narayanan wrote:
+> > Enable MMC and relevant pinctrl entries.
+> >
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > index b6e4bb3328b3..252687be9dc3 100644
+> > --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > @@ -69,6 +69,14 @@ &qusb_phy_1 {
+> >  	status = "okay";
+> >  };
+> >
+> > +&sdhc {
+> > +	pinctrl-0 = <&sdc_default_state>;
+>
+> Where is it defined?
 
-Ah, I understand your concern. There are stable kernels or distros
-kernels which need be taken care of. If then, we can continue to work on
-polishing this patchset, as you have pointed out, there are still room
-in this patchset to improve before merging.
+Few lines below [1] in the same dts file.
 
+>
+> > +	pinctrl-names = "default";
+> > +	supports-cqe;
+>
+> This property should be a part of the SoC dtsi.
+
+Will move it.
+
+Thanks
+Varada
+
+1 - https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts#n128
+> > +
+> > +	status = "okay";
+> > +};
+> > +
+> >  &sleep_clk {
+> >  	clock-frequency = <32000>;
+> >  };
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
