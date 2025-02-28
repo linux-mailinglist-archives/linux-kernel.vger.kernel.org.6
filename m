@@ -1,293 +1,120 @@
-Return-Path: <linux-kernel+bounces-539300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6564EA4A310
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:50:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2AFA4A312
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FE23A1D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A891170068
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1490230BE6;
-	Fri, 28 Feb 2025 19:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNSV9REg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14779230BD8;
-	Fri, 28 Feb 2025 19:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808A2276026;
+	Fri, 28 Feb 2025 19:50:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA95275617
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772239; cv=none; b=sd7eW9l7Efc6zAQEn01y0FiHAVZLNbMtUmyIAj1a94j99Nhg2dm28oz0O2kCfc8mtEGn7Rr5vrz+9Wkh3+KWfoot1Nc/GxsQSlrpbwitj5QFJ/ND6OH7zBEMG/3veX56MvMEN1N61kcFMP/zTyRtjkJicvy/pYC1aqU2R5Z7NIU=
+	t=1740772244; cv=none; b=lz6+Gt9Ek9Gsxy104c6sZ0bUJI63hBZz1oJEE7OGmafrP/LDrfMyD6B5v9/vHQsgmlyifGyQvMzaS8o/TJfO/wOBi7oGJH7splAN2gkWRCPDzF8xXMiqaUBrGPV4lTtdzCVoS+4vtlgyibHO6HQCJ62FWqnRaiyEXoaiPky7Crc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772239; c=relaxed/simple;
-	bh=1oTYdMLj5IJV7VGpD5+wlKsa4biWQMpU+M06wbYFhIo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y8AXO9DVvqSGDw3Cv+GwPvjuLDX+fRAt2iDxdVbS4XwT4VLtdl/RgkNd0JFEE29imn/0mB2kX52OnEoQvcJUAP4bEnRwjh/Skhq1YwPiN7XhaTFhLOlXcUaJjqkR7MlRR6myuu26/ajToG/7AqhpQ352ycI0Ugy49Ot++WkGWDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNSV9REg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E60EC4CEE9;
-	Fri, 28 Feb 2025 19:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740772238;
-	bh=1oTYdMLj5IJV7VGpD5+wlKsa4biWQMpU+M06wbYFhIo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NNSV9REg9Bw7j6BcHsc5c96iIjmxtrvK6/O2TY92s+YnhYOZMX6JJLeWl3DbsX68o
-	 UG8qnu3QSMo6d9pxOGANjJzTooD/H9tBE+O6wfpecwg7EaOPdqAW6aR4vrC1VoCbZC
-	 jCo0CWla8MGYYgPRDhvM823n5pThGNMYYa+h4g0CA4eNAyDLgJs6ehaX0AZ9AnzK3y
-	 U7MyhzEsGnshu9St8I9bSQTosUNq8exGX+6Y4ex5G936mgiOpQZ7hi0KRFDsVjuiN/
-	 YWgkBSfb39zwG6MA+V83XX2RDr03GfSffShQVgccKmmhCcXNmkKBRxk3Okx0/srYxY
-	 FTfYYFx1e2OAg==
-From: Kees Cook <kees@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-hardening@vger.kernel.org,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] uaccess: Introduce ucopysize.h
-Date: Fri, 28 Feb 2025 11:50:23 -0800
-Message-Id: <20250228195019.work.296-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740772244; c=relaxed/simple;
+	bh=40Yr6/t3hDOT9SinsHto/KxTGV4v/KXAu83vWwWetCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i4X65qcbtza7ENzuBzUWlaCAaTQQkH9PPy1Dtzx5UCALYby5UnPdTEQIxLtQPjfOztQNd5CpVW6zDlw3fwI8ty7msB26h4yVxWCbxrjwarJOXf1P78m279J+1L6sHuE0cqwqEnaXcyfrY1ctAF4sxG1ugHdXqrQXTalDGcJaOIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644E9150C;
+	Fri, 28 Feb 2025 11:50:56 -0800 (PST)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5ABF3F5A1;
+	Fri, 28 Feb 2025 11:50:36 -0800 (PST)
+Message-ID: <63bbb8d0-e4cb-424b-9693-b8159e5414a8@arm.com>
+Date: Fri, 28 Feb 2025 19:50:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6926; i=kees@kernel.org; h=from:subject:message-id; bh=1oTYdMLj5IJV7VGpD5+wlKsa4biWQMpU+M06wbYFhIo=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmHhOstV3qUHGmv73j1crmKgRWbgnLetzi2rXx7u1a87 nrVXC3aUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMJGmBIbfbIK7/dvEfL4GFXF3 Mq7XCf9oESi4/Z3u46Ov7mxxCAg+x8iwzro/V9/fT3zNm8O1HJ+DOGYV+tXZV7qxuAiIzVx6qIM bAA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 04/42] x86/resctrl: Use schema type to determine how to
+ parse schema values
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-5-james.morse@arm.com>
+ <e47db1dc-72cc-434f-bd07-4f0a1ffc6d36@intel.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <e47db1dc-72cc-434f-bd07-4f0a1ffc6d36@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The object size sanity checking macros that uaccess.h and uio.h use
-have been living in thread_info.h for historical reasons. Needing to
-use jump labels for these checks, however, introduces a header include
-loop under certain conditions. The dependencies for the object checking
-macros are very limited, but they are used by separate header files,
-so introduce a new header that can be used directly by uaccess.h and
-uio.h. As a result, this also means thread_info.h (which is rather large)
-and be removed from those headers.
+Hi Reinette,
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502281153.TG2XK5SI-lkp@intel.com/
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-I'll carry this in the hardening tree since the usercopy hardening changes
-depend on it...
+On 19/02/2025 21:52, Reinette Chatre wrote:
+> On 2/7/25 10:17 AM, James Morse wrote:
+>> Resctrl's architecture code gets to specify a function pointer that is
+>> used when parsing schema entries. This is expected to be one of two
+>> helpers from the filesystem code.
+>>
+>> Setting this function pointer allows the architecture code to change
+>> the ABI resctrl presents to user-space, and forces resctrl to expose
+>> these helpers.
+>>
+>> Instead, add a schema format enum to choose which schema parser to
+>> use. This allows the helpers to be made static and the structs used
+>> for passing arguments moved out of shared headers.
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-hardening@vger.kernel.org
----
- MAINTAINERS                 |  1 +
- include/linux/thread_info.h | 48 -------------------------------
- include/linux/uaccess.h     |  2 +-
- include/linux/ucopysize.h   | 56 +++++++++++++++++++++++++++++++++++++
- include/linux/uio.h         |  2 +-
- mm/usercopy.c               |  2 +-
- 6 files changed, 60 insertions(+), 51 deletions(-)
- create mode 100644 include/linux/ucopysize.h
+>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+>> index 496ddcaa4ecf..aed231a6d30c 100644
+>> --- a/include/linux/resctrl.h
+>> +++ b/include/linux/resctrl.h
+>> @@ -192,6 +191,16 @@ enum resctrl_scope {
+>>  	RESCTRL_L3_NODE,
+>>  };
+>>  
+>> +/**
+>> + * enum resctrl_schema_fmt - The format user-space provides for a schema.
+>> + * @RESCTRL_SCHEMA_BITMAP:	The schema is a bitmap in hex.
+>> + * @RESCTRL_SCHEMA_RANGE:	The schema is a decimal number,
+> 
+> Nit: Please let sentence end with a period.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25c86f47353d..a1900962ced9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12586,6 +12586,7 @@ F:	Documentation/ABI/testing/sysfs-kernel-warn_count
- F:	arch/*/configs/hardening.config
- F:	include/linux/overflow.h
- F:	include/linux/randomize_kstack.h
-+F:	include/linux/ucopysize.h
- F:	kernel/configs/hardening.config
- F:	lib/usercopy_kunit.c
- F:	mm/usercopy.c
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index cf2446c9c30d..dd925d84fa46 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -217,54 +217,6 @@ static inline int arch_within_stack_frames(const void * const stack,
- }
- #endif
- 
--#ifdef CONFIG_HARDENED_USERCOPY
--extern void __check_object_size(const void *ptr, unsigned long n,
--					bool to_user);
--
--static __always_inline void check_object_size(const void *ptr, unsigned long n,
--					      bool to_user)
--{
--	if (!__builtin_constant_p(n))
--		__check_object_size(ptr, n, to_user);
--}
--#else
--static inline void check_object_size(const void *ptr, unsigned long n,
--				     bool to_user)
--{ }
--#endif /* CONFIG_HARDENED_USERCOPY */
--
--extern void __compiletime_error("copy source size is too small")
--__bad_copy_from(void);
--extern void __compiletime_error("copy destination size is too small")
--__bad_copy_to(void);
--
--void __copy_overflow(int size, unsigned long count);
--
--static inline void copy_overflow(int size, unsigned long count)
--{
--	if (IS_ENABLED(CONFIG_BUG))
--		__copy_overflow(size, count);
--}
--
--static __always_inline __must_check bool
--check_copy_size(const void *addr, size_t bytes, bool is_source)
--{
--	int sz = __builtin_object_size(addr, 0);
--	if (unlikely(sz >= 0 && sz < bytes)) {
--		if (!__builtin_constant_p(bytes))
--			copy_overflow(sz, bytes);
--		else if (is_source)
--			__bad_copy_from();
--		else
--			__bad_copy_to();
--		return false;
--	}
--	if (WARN_ON_ONCE(bytes > INT_MAX))
--		return false;
--	check_object_size(addr, bytes, is_source);
--	return true;
--}
--
- #ifndef arch_setup_new_exec
- static inline void arch_setup_new_exec(void) { }
- #endif
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index e9c702c1908d..7c06f4795670 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -7,7 +7,7 @@
- #include <linux/minmax.h>
- #include <linux/nospec.h>
- #include <linux/sched.h>
--#include <linux/thread_info.h>
-+#include <linux/ucopysize.h>
- 
- #include <asm/uaccess.h>
- 
-diff --git a/include/linux/ucopysize.h b/include/linux/ucopysize.h
-new file mode 100644
-index 000000000000..b3e1b875d565
---- /dev/null
-+++ b/include/linux/ucopysize.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Perform sanity checking for object sizes for uaccess.h and uio.h. */
-+#ifndef __LINUX_UCOPYSIZE_H__
-+#define __LINUX_UCOPYSIZE_H__
-+
-+#include <linux/bug.h>
-+
-+#ifdef CONFIG_HARDENED_USERCOPY
-+extern void __check_object_size(const void *ptr, unsigned long n,
-+					bool to_user);
-+
-+static __always_inline void check_object_size(const void *ptr, unsigned long n,
-+					      bool to_user)
-+{
-+	if (!__builtin_constant_p(n))
-+		__check_object_size(ptr, n, to_user);
-+}
-+#else
-+static inline void check_object_size(const void *ptr, unsigned long n,
-+				     bool to_user)
-+{ }
-+#endif /* CONFIG_HARDENED_USERCOPY */
-+
-+extern void __compiletime_error("copy source size is too small")
-+__bad_copy_from(void);
-+extern void __compiletime_error("copy destination size is too small")
-+__bad_copy_to(void);
-+
-+void __copy_overflow(int size, unsigned long count);
-+
-+static inline void copy_overflow(int size, unsigned long count)
-+{
-+	if (IS_ENABLED(CONFIG_BUG))
-+		__copy_overflow(size, count);
-+}
-+
-+static __always_inline __must_check bool
-+check_copy_size(const void *addr, size_t bytes, bool is_source)
-+{
-+	int sz = __builtin_object_size(addr, 0);
-+	if (unlikely(sz >= 0 && sz < bytes)) {
-+		if (!__builtin_constant_p(bytes))
-+			copy_overflow(sz, bytes);
-+		else if (is_source)
-+			__bad_copy_from();
-+		else
-+			__bad_copy_to();
-+		return false;
-+	}
-+	if (WARN_ON_ONCE(bytes > INT_MAX))
-+		return false;
-+	check_object_size(addr, bytes, is_source);
-+	return true;
-+}
-+
-+#endif /* __LINUX_UCOPYSIZE_H__ */
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 8ada84e85447..49ece9e1888f 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -6,8 +6,8 @@
- #define __LINUX_UIO_H
- 
- #include <linux/kernel.h>
--#include <linux/thread_info.h>
- #include <linux/mm_types.h>
-+#include <linux/ucopysize.h>
- #include <uapi/linux/uio.h>
- 
- struct page;
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index 83c164aba6e0..16d63bd010af 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -17,7 +17,7 @@
- #include <linux/sched.h>
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
--#include <linux/thread_info.h>
-+#include <linux/ucopysize.h>
- #include <linux/vmalloc.h>
- #include <linux/atomic.h>
- #include <linux/jump_label.h>
--- 
-2.34.1
+... me and my fat fingers ...
 
+
+>> + */
+>> +enum resctrl_schema_fmt {
+>> +	RESCTRL_SCHEMA_BITMAP,
+>> +	RESCTRL_SCHEMA_RANGE,
+>> +};
+>> +
+>>  /**
+>>   * struct rdt_resource - attributes of a resctrl resource
+>>   * @rid:		The index of the resource
+
+
+> | Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+Thanks!
+
+James
 
