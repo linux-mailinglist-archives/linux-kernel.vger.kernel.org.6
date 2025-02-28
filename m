@@ -1,290 +1,559 @@
-Return-Path: <linux-kernel+bounces-538581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F62A49A86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:29:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C694A49A87
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 694AE18972DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:29:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F637A7138
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB27826D5B8;
-	Fri, 28 Feb 2025 13:29:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA691D555;
-	Fri, 28 Feb 2025 13:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A0826E157;
+	Fri, 28 Feb 2025 13:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZWSdug7"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2C31D555;
+	Fri, 28 Feb 2025 13:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740749368; cv=none; b=EPDwY2wBuD1NmiNhvwQjo1QMzskC3Yp774ZwsPNZJBZZKGKYMY3Yj+Ay6PS9fhZv9rQwIcWADfnpGWzR2vldEByDlXECjAmGUThKeQqcec5C5KnYrujGok9UQSmatS3rw6CkP2IEqzrVFYBshGXJRYP/V+PPxjqBW5+F6HNzB+I=
+	t=1740749375; cv=none; b=MGWBCzDgSSPdItPPHjPhHRXNUKWZh06Qc4lwJqupW0td1VmGWvhi8BGk1bVQDUntreCrPeDI0wqA4UXxaQXoScZfUgUloqo+9OKDYX7MuUXOzN/za02DviK800+t5o3SAx6x72zRHRiIfIAfGZag8Ey+S5wqqndNjZCShCxIi2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740749368; c=relaxed/simple;
-	bh=9nEznCs8TmXppNEP6Ri/KXbhxb9P855Eu4NIWIxpH2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bzhO+EoBU6UcOimA7met6ipEe0e85jjew7EaWDN+dmrkh3sQFUEXmePOyalkcyxh0oiUQJW3Fef8LY9kTvWf76Jove7yCRr8haeXS6jmLFHNjrg6HnPt2CFsrhaNFKM1sNJshzE/BJ5+2Cs+PjawMMeEEBMV7ajunAN+8sSWlEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C7541688;
-	Fri, 28 Feb 2025 05:29:39 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 679E23F673;
-	Fri, 28 Feb 2025 05:29:22 -0800 (PST)
-Date: Fri, 28 Feb 2025 13:29:08 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/15] clk: sunxi-ng: Add support for the A523/T527
- CCU PLLs
-Message-ID: <20250228132908.632b82dd@donnerap.manchester.arm.com>
-In-Reply-To: <3341127.44csPzL39Z@jernej-laptop>
-References: <20250214125359.5204-1-andre.przywara@arm.com>
-	<20250214125359.5204-6-andre.przywara@arm.com>
-	<3341127.44csPzL39Z@jernej-laptop>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1740749375; c=relaxed/simple;
+	bh=h1gcfXKxYDFuWGauGFyZ/WuO0uocpWz6LqllgGyg64Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y5vvAhbrrbZAMOWx147VaF4zCruJdvnsaF5kKToMAli326EkVBRtAhZ3ga4qdNOREic15CYH4jcIGcF4WHjm2Sk4oXGLq8lBRjPyUdo2XjlOJhgcJnQkFAcW3I19Iq4bM3dNWHCkxg28meaJMXBGYIWlEbJq8LdSqouZ2ZAG6fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZWSdug7; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4399a1eada3so19544685e9.2;
+        Fri, 28 Feb 2025 05:29:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740749371; x=1741354171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Avez2xSDYscvxHDuCxg1ie5SK+Du5TC+14a6JKYQZoQ=;
+        b=mZWSdug7C7iY/uUmbcqtfyaOqiOS1wWx3lWZQu8g3nlnVIVArHHFqz6tIcHvEiqImw
+         HZmahGN/qPXLST+r710WgDmEUFdp+HdCBUc6/gnnL/ZAkZGr0kSUPJ5GfvjMcLzNcR6u
+         iX+KWfMbZfw/HMy7jrXlmurOBeq0foiQdd7+zMrJ/IdGx5O8Hvs0iqkBBQDfWTaqe80j
+         fmUXKjOwd0V5lwD9/T1L7OZgcblUNM2otKMkvvGj1BWNpzgdAm+2ZjRT7eKa1kvINd6G
+         +8j2PEGoQGJiDI43YkTXhA/qhUyL7H55KbvPldmUECIg03q1ign61jPLbJnqWBmDJJia
+         skfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740749371; x=1741354171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Avez2xSDYscvxHDuCxg1ie5SK+Du5TC+14a6JKYQZoQ=;
+        b=asBJTQ7JuG25uP1uC4tBgfdg+SIeIhg44cUaLQo2Y43lo6VdYQFFYu3k0rgzO/fS9w
+         QdrZhi+4qUWoVJvPjqIuY08mEeevGMsmmPDuXusJpm5LIJyC00/9vHS9VvuB9RNK8GmC
+         /9bH/ezmIbSlWuS0HWgReoC+niFksqfrWXoLDHrc3vHgTKNy46tjF0FYGcfvfaj5KaA8
+         MPqUPJ9iLL2KGaMipVLT1wx65kTddHkY/us0YIaVToUR+BvAgC54vIGBgQczrP5U3U1J
+         XqdxUdt+D6ruxPKMNDgZiGXY1nPf6eX1Bq9NZME77NDq6gmHuGNWlQnmSabzjgr+nU4n
+         Serg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoxZTO4E25j3ku7Riue8UlUGvmYMCLbcn1/uhSMS7tUWouoih5KvBPBv3KbmUqIliPgMu85XEoRbiRTGg=@vger.kernel.org, AJvYcCXPczyvF8vjpZoRPZ9FfB8jqWrMwxdlI/2rjlPoEXXKSvtD7ZjahoCO1TPZsyN5Xt9yBYgVQD4g62xZ1ev7nFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpc0DjYUa5Ae8rqTlJ3D46GXTuFXt6Y6HOkFdqSFksIIUgKL4W
+	WaE46WF5+q0gCRDYiHzRXkWUX8tBxn2dRoQkxAgEx+TfV2My1ov2lyudSVJr
+X-Gm-Gg: ASbGncvIQnW9v7d4j21Xstp/Hukk2TrSGs1ojaRCNNGLQgVor8SJ8BrWRZiKgQQC1c0
+	j56FyDTXkkNebik1W8JlAj2Fm+k9OFW+9onxO1cO31FPsmzA5VSr2tkerGxeUcpFm4HRk6vfcCm
+	vjl2YvmJJ/RY1L+X3mf8RJBZZtL+6BQFDRlnRPQeHZ/oNitE88V9AvDUOSlus6P24DsRaZx9gaQ
+	R5DC9CRsxcu1mfA5wqOG86HF/g4SIexFddf4Qhoda/mUOLluqnw4J76+b1b29Myr+UWALVoG2Lz
+	cGTwlpjFtEy7KjHAOuMxfDhAXzD1pw==
+X-Google-Smtp-Source: AGHT+IGlY+8f/TJ66ysQmZN61hQQEryPUVbnOuK90G1E8TY4dFR0/Hi1Fwk7z2HQ0W6TjEyL1VD/+Q==
+X-Received: by 2002:a05:6000:1f8c:b0:38f:4fa6:bb24 with SMTP id ffacd0b85a97d-390eca530a8mr2830857f8f.39.1740749371055;
+        Fri, 28 Feb 2025 05:29:31 -0800 (PST)
+Received: from fedora.. ([82.67.147.186])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d6dbsm5212693f8f.82.2025.02.28.05.29.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 05:29:30 -0800 (PST)
+From: Guillaume Gomez <guillaume1.gomez@gmail.com>
+To: ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Guillaume Gomez <guillaume1.gomez@gmail.com>
+Subject: [PATCH 1/1] Use new `--output-format=doctest` rustdoc command line flag to improve doctest handling.
+Date: Fri, 28 Feb 2025 14:29:28 +0100
+Message-ID: <20250228132928.880683-1-guillaume1.gomez@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Feb 2025 20:03:38 +0100
-Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
+Before this patch, the code was using very hacky methods in order to retrieve
+doctests, modify them as needed and then concatenate all of them in one file.
 
-Hi Jernej,
+Now, with this new flag, it instead asks rustdoc to provide the doctests
+code with their associated information such as file path and line number.
+---
+ rust/Makefile                   |   8 +-
+ scripts/json.rs                 | 235 ++++++++++++++++++++++++++++++++
+ scripts/rustdoc_test_builder.rs | 115 ++++++++++------
+ scripts/rustdoc_test_gen.rs     |  17 +--
+ 4 files changed, 323 insertions(+), 52 deletions(-)
+ create mode 100644 scripts/json.rs
 
-many thanks for having a look!
-
-> Dne petek, 14. februar 2025 ob 13:53:49 Srednjeevropski standardni =C4=8D=
-as je Andre Przywara napisal(a):
-> > Add the PLL clocks of the main CCU of the Allwinner A523 and T527 SoCs.
-> > The clocks were modelled after the A523 and T527 manual, and double
-> > checked by writing all 1's into the respective register, to spot all
-> > implemented bits.
-> >=20
-> > The PLL and mod clocks for the two CPU clusters and the DSU are part of
-> > a separate CCU, also most audio clocks are collected in a DSP CCU, so
-> > both of these clock groups are missing from this driver.
-> >=20
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Kconfig           |   5 +
-> >  drivers/clk/sunxi-ng/Makefile          |   2 +
-> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 481 +++++++++++++++++++++++++
-> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.h |  14 +
-> >  drivers/clk/sunxi-ng/ccu_mp.h          |  14 +-
-> >  5 files changed, 510 insertions(+), 6 deletions(-)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> > index b547198a2c654..04efbda847cf9 100644
-> > --- a/drivers/clk/sunxi-ng/Kconfig
-> > +++ b/drivers/clk/sunxi-ng/Kconfig
-> > @@ -52,6 +52,11 @@ config SUN50I_H6_R_CCU
-> >  	default y
-> >  	depends on ARM64 || COMPILE_TEST
-> > =20
-> > +config SUN55I_A523_CCU
-> > +	tristate "Support for the Allwinner A523/T527 CCU"
-> > +	default y
-> > +	depends on ARM64 || COMPILE_TEST
-> > +
-> >  config SUN4I_A10_CCU
-> >  	tristate "Support for the Allwinner A10/A20 CCU"
-> >  	default y
-> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makef=
-ile
-> > index 6b3ae2b620db6..01a887f7824bb 100644
-> > --- a/drivers/clk/sunxi-ng/Makefile
-> > +++ b/drivers/clk/sunxi-ng/Makefile
-> > @@ -33,6 +33,7 @@ obj-$(CONFIG_SUN50I_A100_R_CCU)	+=3D sun50i-a100-r-cc=
-u.o
-> >  obj-$(CONFIG_SUN50I_H6_CCU)	+=3D sun50i-h6-ccu.o
-> >  obj-$(CONFIG_SUN50I_H6_R_CCU)	+=3D sun50i-h6-r-ccu.o
-> >  obj-$(CONFIG_SUN50I_H616_CCU)	+=3D sun50i-h616-ccu.o
-> > +obj-$(CONFIG_SUN55I_A523_CCU)	+=3D sun55i-a523-ccu.o
-> >  obj-$(CONFIG_SUN4I_A10_CCU)	+=3D sun4i-a10-ccu.o
-> >  obj-$(CONFIG_SUN5I_CCU)		+=3D sun5i-ccu.o
-> >  obj-$(CONFIG_SUN6I_A31_CCU)	+=3D sun6i-a31-ccu.o
-> > @@ -58,6 +59,7 @@ sun50i-a100-r-ccu-y		+=3D ccu-sun50i-a100-r.o
-> >  sun50i-h6-ccu-y			+=3D ccu-sun50i-h6.o
-> >  sun50i-h6-r-ccu-y		+=3D ccu-sun50i-h6-r.o
-> >  sun50i-h616-ccu-y		+=3D ccu-sun50i-h616.o
-> > +sun55i-a523-ccu-y		+=3D ccu-sun55i-a523.o
-> >  sun4i-a10-ccu-y			+=3D ccu-sun4i-a10.o
-> >  sun5i-ccu-y			+=3D ccu-sun5i.o
-> >  sun6i-a31-ccu-y			+=3D ccu-sun6i-a31.o
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi=
--ng/ccu-sun55i-a523.c
-> > new file mode 100644
-> > index 0000000000000..8374e841e9d82
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> > @@ -0,0 +1,481 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2023-2024 Arm Ltd.
-> > + * Based on the D1 CCU driver:
-> > + *   Copyright (c) 2020 huangzhenwei@allwinnertech.com
-> > + *   Copyright (C) 2021 Samuel Holland <samuel@sholland.org>
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include "../clk.h"
-> > +
-> > +#include "ccu_common.h"
-> > +#include "ccu_reset.h"
-> > +
-> > +#include "ccu_div.h"
-> > +#include "ccu_gate.h"
-> > +#include "ccu_mp.h"
-> > +#include "ccu_mult.h"
-> > +#include "ccu_nk.h"
-> > +#include "ccu_nkm.h"
-> > +#include "ccu_nkmp.h"
-> > +#include "ccu_nm.h"
-> > +
-> > +#include "ccu-sun55i-a523.h"
-> > +
-> > +/*
-> > + * The 24 MHz oscillator, the root of most of the clock tree.
-> > + * .fw_name is the string used in the DT "clock-names" property, used =
-to
-> > + * identify the corresponding clock in the "clocks" property.
-> > + */
-> > +static const struct clk_parent_data osc24M[] =3D {
-> > +	{ .fw_name =3D "hosc" }
-> > +};
-> > +
-> > +/*********************************************************************=
-*****
-> > + *                              PLLs                                  =
-    *
-> > + *********************************************************************=
-*****/
-> > +
-> > +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
-> > +#define SUN55I_A523_PLL_DDR0_REG		0x010
-> > +static struct ccu_nkmp pll_ddr0_clk =3D {
-> > +	.enable		=3D BIT(27),
-> > +	.lock		=3D BIT(28),
-> > +	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 11),
-> > +	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */ =20
->=20
-> Newer manuals, for example A523 manual v1.4, don't mention input dividers=
- anymore.
-> Newer BSP driver doesn't have them either. Should we drop them (for all P=
-LLs)?
-
-I don't know, as you figured, I found them in my copy of the manual. For
-the PLLs we need today (PLL_PERIPH0) it shouldn't matter anyway: it's
-programmed already, and AFAICS Linux actually never reprograms it(?).
-
-In any case, I just left it in for now: the bit is definitely there, I
-verified that in U-Boot by only seeing half of the MMC performance with
-bit 1 set. We can remove them anytime later, without issue, can't we?
-
-Actually, thinking about that: the manual pretty clearly says that for
-instance PLL_PERIPH0 should be set to 1.2GHz and never changed or even
-touched. I wonder if we should honour this somehow in the code? It seems
-like the CCF doesn't do this anyway at the moment, but it could, I guess?
-
->=20
-> > +	.p		=3D _SUNXI_CCU_DIV(0, 1), /* output divider */
-> > +	.common		=3D {
-> > +		.reg		=3D 0x010,
-> > +		.hw.init	=3D CLK_HW_INIT_PARENTS_DATA("pll-ddr0", osc24M,
-> > +							   &ccu_nkmp_ops,
-> > +							   CLK_SET_RATE_GATE |
-> > +							   CLK_IS_CRITICAL),
-> > +	},
-> > +};
-> > +
-
-....
-
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_m=
-p.h
-> > index 687bd2ec798e2..5311835a4db60 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mp.h
-> > +++ b/drivers/clk/sunxi-ng/ccu_mp.h
-> > @@ -100,20 +100,22 @@ struct ccu_mp { =20
->=20
-> These changes doesn't belong in this commit.
-
-Ah, indeed, I missed that. Moved that out into another patch now.
-
-Cheers,
-Andre
-
-> Other than that, this looks like a good start. Thanks!
->=20
-> Best regards,
-> Jernej
->=20
-> >  				   _muxshift, _muxwidth,		\
-> >  				   0, _flags)
-> > =20
-> > -#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(_struct, _name, _parents,=
- _reg, \
-> > +#define SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents, _=
-reg, \
-> >  					_mshift, _mwidth,		\
-> >  					_pshift, _pwidth,		\
-> >  					_muxshift, _muxwidth,		\
-> > -					_gate, _flags,			\
-> > -					_features)			\
-> > +					_gate, _postdiv,		\
-> > +					_flags, _features)		\
-> >  	struct ccu_mp _struct =3D {					\
-> >  		.enable	=3D _gate,					\
-> >  		.m	=3D _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-> >  		.p	=3D _SUNXI_CCU_DIV(_pshift, _pwidth),		\
-> >  		.mux	=3D _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-> > +		.fixed_post_div =3D _postdiv,				\
-> >  		.common	=3D {						\
-> >  			.reg		=3D _reg,				\
-> > -			.features	=3D _features,			\
-> > +			.features	=3D CCU_FEATURE_FIXED_POSTDIV |	\
-> > +						_features,		\
-> >  			.hw.init	=3D CLK_HW_INIT_PARENTS_DATA(_name, \
-> >  								   _parents, \
-> >  								   &ccu_mp_ops,\
-> > @@ -126,11 +128,11 @@ struct ccu_mp {
-> >  					_pshift, _pwidth,		\
-> >  					_muxshift, _muxwidth,		\
-> >  					_gate, _flags)			\
-> > -	SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(_struct, _name, _parents,	\
-> > +	SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents,	\
-> >  					     _reg, _mshift, _mwidth,	\
-> >  					     _pshift, _pwidth,		\
-> >  					     _muxshift, _muxwidth,	\
-> > -					     _gate, _flags, 0)
-> > +					     _gate, 1, _flags, 0)
-> > =20
-> >  #define SUNXI_CCU_MP_DATA_WITH_MUX(_struct, _name, _parents, _reg,	\
-> >  				   _mshift, _mwidth,			\
-> >  =20
->=20
->=20
->=20
->=20
+diff --git a/rust/Makefile b/rust/Makefile
+index ea3849eb7..237ed23f8 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -171,14 +171,14 @@ quiet_cmd_rustdoc_test_kernel = RUSTDOC TK $<
+ 	rm -rf $(objtree)/$(obj)/test/doctests/kernel; \
+ 	mkdir -p $(objtree)/$(obj)/test/doctests/kernel; \
+ 	OBJTREE=$(abspath $(objtree)) \
+-	$(RUSTDOC) --test $(rust_flags) \
++	$(RUSTDOC) --output-format=doctest $(rust_flags) \
+ 		-L$(objtree)/$(obj) --extern ffi --extern kernel \
+ 		--extern build_error --extern macros \
+ 		--extern bindings --extern uapi \
+-		--no-run --crate-name kernel -Zunstable-options \
++		--crate-name kernel -Zunstable-options \
+ 		--sysroot=/dev/null \
+-		--test-builder $(objtree)/scripts/rustdoc_test_builder \
+-		$< $(rustdoc_test_kernel_quiet); \
++		$< $(rustdoc_test_kernel_quiet) > rustdoc.json; \
++	cat rustdoc.json | $(objtree)/scripts/rustdoc_test_builder; \
+ 	$(objtree)/scripts/rustdoc_test_gen
+ 
+ %/doctests_kernel_generated.rs %/doctests_kernel_generated_kunit.c: \
+diff --git a/scripts/json.rs b/scripts/json.rs
+new file mode 100644
+index 000000000..aff24bfd9
+--- /dev/null
++++ b/scripts/json.rs
+@@ -0,0 +1,235 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! JSON parser used to parse rustdoc output when retrieving doctests.
++
++use std::collections::HashMap;
++use std::iter::Peekable;
++use std::str::FromStr;
++
++#[derive(Debug, PartialEq, Eq)]
++pub(crate) enum JsonValue {
++    Object(HashMap<String, JsonValue>),
++    String(String),
++    Number(i32),
++    Bool(bool),
++    Array(Vec<JsonValue>),
++    Null,
++}
++
++fn parse_ident<I: Iterator<Item = char>>(
++    iter: &mut I,
++    output: JsonValue,
++    ident: &str,
++) -> Result<JsonValue, String> {
++    let mut ident_iter = ident.chars().skip(1);
++
++    loop {
++        let i = ident_iter.next();
++        if i.is_none() {
++            return Ok(output);
++        }
++        let c = iter.next();
++        if i != c {
++            if let Some(c) = c {
++                return Err(format!("Unexpected character `{c}` when parsing `{ident}`"));
++            }
++            return Err(format!("Missing character when parsing `{ident}`"));
++        }
++    }
++}
++
++fn parse_string<I: Iterator<Item = char>>(iter: &mut I) -> Result<JsonValue, String> {
++    let mut out = String::new();
++
++    while let Some(c) = iter.next() {
++        match c {
++            '\\' => {
++                let Some(c) = iter.next() else { break };
++                match c {
++                    '"' | '\\' | '/' => out.push(c),
++                    'b' => out.push(char::from(0x8u8)),
++                    'f' => out.push(char::from(0xCu8)),
++                    't' => out.push('\t'),
++                    'r' => out.push('\r'),
++                    'n' => out.push('\n'),
++                    _ => {
++                        // This code doesn't handle codepoints so we put the string content as is.
++                        out.push('\\');
++                        out.push(c);
++                    }
++                }
++            }
++            '"' => {
++                return Ok(JsonValue::String(out));
++            }
++            _ => out.push(c),
++        }
++    }
++    Err(format!("Unclosed JSON string `{out}`"))
++}
++
++fn parse_number<I: Iterator<Item = char>>(
++    iter: &mut Peekable<I>,
++    digit: char,
++) -> Result<JsonValue, String> {
++    let mut nb = String::new();
++
++    nb.push(digit);
++    loop {
++        // We peek next character to prevent taking it from the iterator in case it's a comma.
++        if matches!(iter.peek(), Some(',' | '}' | ']')) {
++            break;
++        }
++        let Some(c) = iter.next() else { break };
++        if c.is_whitespace() {
++            break;
++        } else if !c.is_ascii_digit() {
++            return Err(format!("Error when parsing number `{nb}`: found `{c}`"));
++        }
++        nb.push(c);
++    }
++    i32::from_str(&nb)
++        .map(|nb| JsonValue::Number(nb))
++        .map_err(|error| format!("Invalid number: `{error}`"))
++}
++
++fn parse_array<I: Iterator<Item = char>>(iter: &mut Peekable<I>) -> Result<JsonValue, String> {
++    let mut values = Vec::new();
++
++    'main: loop {
++        let Some(c) = iter.next() else {
++            return Err("Unclosed array".to_string());
++        };
++        if c.is_whitespace() {
++            continue;
++        } else if c == ']' {
++            break;
++        }
++        values.push(parse(iter, c)?);
++        while let Some(c) = iter.next() {
++            if c.is_whitespace() {
++                continue;
++            } else if c == ',' {
++                break;
++            } else if c == ']' {
++                break 'main;
++            } else {
++                return Err(format!("Unexpected `{c}` when parsing array"));
++            }
++        }
++    }
++    Ok(JsonValue::Array(values))
++}
++
++fn parse_object<I: Iterator<Item = char>>(iter: &mut Peekable<I>) -> Result<JsonValue, String> {
++    let mut values = HashMap::new();
++
++    'main: loop {
++        let Some(c) = iter.next() else {
++            return Err("Unclosed object".to_string());
++        };
++        let key;
++        if c.is_whitespace() {
++            continue;
++        } else if c == '"' {
++            let JsonValue::String(k) = parse_string(iter)? else {
++                unreachable!()
++            };
++            key = k;
++        } else if c == '}' {
++            break;
++        } else {
++            return Err(format!("Expected `\"` when parsing Object, found `{c}`"));
++        }
++
++        // We then get the `:` separator.
++        loop {
++            let Some(c) = iter.next() else {
++                return Err(format!("Missing value after key `{key}`"));
++            };
++            if c.is_whitespace() {
++                continue;
++            } else if c == ':' {
++                break;
++            } else {
++                return Err(format!(
++                    "Expected `:` after key, found `{c}` when parsing object"
++                ));
++            }
++        }
++        // Then the value.
++        let value = loop {
++            let Some(c) = iter.next() else {
++                return Err(format!("Missing value after key `{key}`"));
++            };
++            if c.is_whitespace() {
++                continue;
++            } else {
++                break parse(iter, c)?;
++            }
++        };
++
++        if values.contains_key(&key) {
++            return Err(format!("Duplicated key `{key}`"));
++        }
++        values.insert(key, value);
++
++        while let Some(c) = iter.next() {
++            if c.is_whitespace() {
++                continue;
++            } else if c == ',' {
++                break;
++            } else if c == '}' {
++                break 'main;
++            } else {
++                return Err(format!("Unexpected `{c}` when parsing array"));
++            }
++        }
++    }
++    Ok(JsonValue::Object(values))
++}
++
++fn parse<I: Iterator<Item = char>>(iter: &mut Peekable<I>, c: char) -> Result<JsonValue, String> {
++    match c {
++        '{' => parse_object(iter),
++        '"' => parse_string(iter),
++        '[' => parse_array(iter),
++        't' => parse_ident(iter, JsonValue::Bool(true), "true"),
++        'f' => parse_ident(iter, JsonValue::Bool(false), "false"),
++        'n' => parse_ident(iter, JsonValue::Null, "null"),
++        c => {
++            if c.is_ascii_digit() || c == '-' {
++                parse_number(iter, c)
++            } else {
++                Err(format!("Unexpected `{c}` character"))
++            }
++        }
++    }
++}
++
++impl JsonValue {
++    pub(crate) fn parse(input: &str) -> Result<Self, String> {
++        let mut iter = input.chars().peekable();
++        let mut value = None;
++
++        while let Some(c) = iter.next() {
++            if c.is_whitespace() {
++                continue;
++            }
++            value = Some(parse(&mut iter, c)?);
++            break;
++        }
++        while let Some(c) = iter.next() {
++            if c.is_whitespace() {
++                continue;
++            } else {
++                return Err(format!("Unexpected character `{c}` after content"));
++            }
++        }
++        if let Some(value) = value {
++            Ok(value)
++        } else {
++            Err("Empty content".to_string())
++        }
++    }
++}
+diff --git a/scripts/rustdoc_test_builder.rs b/scripts/rustdoc_test_builder.rs
+index e5894652f..9b6bc1c1d 100644
+--- a/scripts/rustdoc_test_builder.rs
++++ b/scripts/rustdoc_test_builder.rs
+@@ -15,58 +15,93 @@
+ //! from that. For the moment, we generate ourselves a new name, `{file}_{number}` instead, in
+ //! the `gen` script (done there since we need to be aware of all the tests in a given file).
+ 
++use std::fs::create_dir_all;
+ use std::io::Read;
+ 
+-fn main() {
+-    let mut stdin = std::io::stdin().lock();
+-    let mut body = String::new();
+-    stdin.read_to_string(&mut body).unwrap();
++use json::JsonValue;
+ 
+-    // Find the generated function name looking for the inner function inside `main()`.
+-    //
+-    // The line we are looking for looks like one of the following:
+-    //
+-    // ```
+-    // fn main() { #[allow(non_snake_case)] fn _doctest_main_rust_kernel_file_rs_28_0() {
+-    // fn main() { #[allow(non_snake_case)] fn _doctest_main_rust_kernel_file_rs_37_0() -> Result<(), impl core::fmt::Debug> {
+-    // ```
+-    //
+-    // It should be unlikely that doctest code matches such lines (when code is formatted properly).
+-    let rustdoc_function_name = body
+-        .lines()
+-        .find_map(|line| {
+-            Some(
+-                line.split_once("fn main() {")?
+-                    .1
+-                    .split_once("fn ")?
+-                    .1
+-                    .split_once("()")?
+-                    .0,
+-            )
+-            .filter(|x| x.chars().all(|c| c.is_alphanumeric() || c == '_'))
+-        })
+-        .expect("No test function found in `rustdoc`'s output.");
++mod json;
+ 
+-    // Qualify `Result` to avoid the collision with our own `Result` coming from the prelude.
+-    let body = body.replace(
+-        &format!("{rustdoc_function_name}() -> Result<(), impl core::fmt::Debug> {{"),
+-        &format!("{rustdoc_function_name}() -> core::result::Result<(), impl core::fmt::Debug> {{"),
+-    );
++fn generate_doctest(file: &str, line: i32, doctest_code: &str) {
++    let file = file
++        .strip_suffix(".rs")
++        .unwrap_or(file)
++        .strip_prefix("../rust/kernel/")
++        .unwrap_or(file)
++        .replace('/', "_");
++    let path = format!("rust/test/doctests/kernel/{file}-{line}.rs");
+ 
++    // We replace the `Result` if needed.
++    let doctest_code = doctest_code.replace(
++        "fn main() { fn _inner() -> Result<",
++        "fn main() { fn _inner() -> core::result::Result<",
++    );
+     // For tests that get generated with `Result`, like above, `rustdoc` generates an `unwrap()` on
+     // the return value to check there were no returned errors. Instead, we use our assert macro
+     // since we want to just fail the test, not panic the kernel.
+     //
+     // We save the result in a variable so that the failed assertion message looks nicer.
+-    let body = body.replace(
+-        &format!("}} {rustdoc_function_name}().unwrap() }}"),
+-        &format!("}} let test_return_value = {rustdoc_function_name}(); assert!(test_return_value.is_ok()); }}"),
++    let doctest_code = doctest_code.replace(
++        "} _inner().unwrap() }",
++        "} let test_return_value = _inner(); assert!(test_return_value.is_ok()); }",
+     );
++    std::fs::write(path, doctest_code.as_bytes()).unwrap();
++}
++
++fn main() {
++    let mut stdin = std::io::stdin().lock();
++    let mut body = String::new();
++    stdin.read_to_string(&mut body).unwrap();
++
++    let JsonValue::Object(rustdoc) = JsonValue::parse(&body).unwrap() else {
++        panic!("Expected an object")
++    };
++    if let Some(JsonValue::Number(format_version)) = rustdoc.get("format_version") {
++        if *format_version != 1 {
++            panic!("unsupported rustdoc format version: {format_version}");
++        }
++    } else {
++        panic!("missing `format_version` field");
++    }
++    let Some(JsonValue::Array(doctests)) = rustdoc.get("doctests") else {
++        panic!("missing `doctests` field");
++    };
++
++    // We ignore the error since it will fail when generating doctests below if the folder doesn't
++    // exist.
++    let _ = create_dir_all("rust/test/doctests/kernel");
+ 
+-    // Figure out a smaller test name based on the generated function name.
+-    let name = rustdoc_function_name.split_once("_rust_kernel_").unwrap().1;
++    let mut nb_generated = 0;
++    for doctest in doctests {
++        let JsonValue::Object(doctest) = doctest else {
++            unreachable!()
++        };
+ 
+-    let path = format!("rust/test/doctests/kernel/{name}");
++        // We check if we need to skip this test by checking it's a rust code and it's not ignored.
++        if let Some(JsonValue::Object(attributes)) = doctest.get("doctest_attributes") {
++            if attributes.get("rust") != Some(&JsonValue::Bool(true)) {
++                continue;
++            } else if let Some(JsonValue::String(ignore)) = attributes.get("ignore") {
++                if ignore != "None" {
++                    continue;
++                }
++            }
++        }
++        if let (
++            Some(JsonValue::String(file)),
++            Some(JsonValue::Number(line)),
++            Some(JsonValue::String(doctest_code)),
++        ) = (
++            doctest.get("file"),
++            doctest.get("line"),
++            doctest.get("doctest_code"),
++        ) {
++            generate_doctest(file, *line, doctest_code);
++            nb_generated += 1;
++        }
++    }
+ 
+-    std::fs::write(path, body.as_bytes()).unwrap();
++    if nb_generated == 0 {
++        panic!("No test function found in `rustdoc`'s output.");
++    }
+ }
+diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
+index 5ebd42ae4..fd6635bbf 100644
+--- a/scripts/rustdoc_test_gen.rs
++++ b/scripts/rustdoc_test_gen.rs
+@@ -48,7 +48,7 @@
+ fn find_real_path<'a>(srctree: &Path, valid_paths: &'a mut Vec<PathBuf>, file: &str) -> &'a str {
+     valid_paths.clear();
+ 
+-    let potential_components: Vec<&str> = file.strip_suffix("_rs").unwrap().split('_').collect();
++    let potential_components: Vec<&str> = file.split('_').collect();
+ 
+     find_candidates(srctree, valid_paths, Path::new(""), &potential_components);
+     fn find_candidates(
+@@ -87,8 +87,8 @@ fn find_candidates(
+ 
+     assert!(
+         valid_paths.len() > 0,
+-        "No path candidates found. This is likely a bug in the build system, or some files went \
+-        away while compiling."
++        "No path candidates found for `{file}`. This is likely a bug in the build system, or some \
++        files went away while compiling.",
+     );
+ 
+     if valid_paths.len() > 1 {
+@@ -97,8 +97,8 @@ fn find_candidates(
+             eprintln!("    {path:?}");
+         }
+         panic!(
+-            "Several path candidates found, please resolve the ambiguity by renaming a file or \
+-            folder."
++            "Several path candidates found for `{file}`, please resolve the ambiguity by renaming \
++            a file or folder."
+         );
+     }
+ 
+@@ -126,12 +126,13 @@ fn main() {
+     let mut valid_paths: Vec<PathBuf> = Vec::new();
+     let mut real_path: &str = "";
+     for path in paths {
+-        // The `name` follows the `{file}_{line}_{number}` pattern (see description in
++        // The `name` follows the `{file}_{line}` pattern (see description in
+         // `scripts/rustdoc_test_builder.rs`). Discard the `number`.
+         let name = path.file_name().unwrap().to_str().unwrap().to_string();
+ 
+-        // Extract the `file` and the `line`, discarding the `number`.
+-        let (file, line) = name.rsplit_once('_').unwrap().0.rsplit_once('_').unwrap();
++        // Extract the `file` and the `line`, discarding the extension.
++        let (file, line) = name.rsplit_once('-').unwrap();
++        let line = line.split('.').next().unwrap();
+ 
+         // Generate an ID sequence ("test number") for each one in the file.
+         if file == last_file {
+-- 
+2.48.1
 
 
