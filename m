@@ -1,61 +1,68 @@
-Return-Path: <linux-kernel+bounces-539538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4252FA4A5A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B46A4A5A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2330D7ABEC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FCD188D742
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796101DE3AC;
-	Fri, 28 Feb 2025 22:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7F51DE4EA;
+	Fri, 28 Feb 2025 22:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nq2iiPk2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPmoMjVp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1761DE3A3;
-	Fri, 28 Feb 2025 22:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A691DE3A3;
+	Fri, 28 Feb 2025 22:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740780223; cv=none; b=SfmyC/bSIZvyGF7v1UoA7i40ymZ0NY92GesBp2KlUBoSnHv+1P/nJJN7pHD5TMrf6Dub1h1ja91VBHfaTQdIL454KzDzrcroyf7OtpqAmrnEUZKUYQuJnmVTzH2QaUO42aTAhMxwMLY9SCY+5htgJeh65OQjVjgDplr8w0fLzJA=
+	t=1740780236; cv=none; b=CAoMGZvSY6dyofpvt0sUUbqozGo9L7Z6mzkWrqMt3Z0TYsry/IjtmJA1rzmfNFeaqnrlBeHgiKQJ37oQkWMK3ibzMC5RVaXx02o1BAWmG/yEDtYcYL/QMtwStKd9xbWu7jX8IZT9sCSNz/7x/pOWgwzUbdPdSrF3yqYFmy/GSmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740780223; c=relaxed/simple;
-	bh=/MYVJ3rlbtoAJvOWV+07+WHhI+Q9ZMyJiRshemc3Pdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ag8JLQ0wQEu2GNZnEWhGP0gr7jbSz6fXJCbyjKfLA1cqYTLyXriRaC98tvEtqP30ag+pYYQ+fe8fsm2XukOLNqNOQvYfxSwoGjbsKzA9GcnVUZvU10gbPOXE51y/eoRBv7eptL4p+euXPOHLkwoDy8xp3tHV/NL9eCLFtcYu2fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nq2iiPk2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8453CC4CED6;
-	Fri, 28 Feb 2025 22:03:43 +0000 (UTC)
+	s=arc-20240116; t=1740780236; c=relaxed/simple;
+	bh=AJB89FzkhwSIbHXzs/7zaZZGPG1GIi2QRgI16BLxGOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t/lTkV/XGlP5nk7ANIr3tanNURzJboqd8ate8o2UAWwj6tjFdLbFTbrnYdbnXJD56HXJjkhiEBXOJ+k3DdPPztsf+y3+i+x/Z0Id/bevkSJM8weeclAyUIYA1w8D4qyRRO4JaXUU3Zn5kXqnwKYBdg0qIEMrmrEiA70+bOjmr6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPmoMjVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82329C4CED6;
+	Fri, 28 Feb 2025 22:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740780223;
-	bh=/MYVJ3rlbtoAJvOWV+07+WHhI+Q9ZMyJiRshemc3Pdc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nq2iiPk2X5wTDN1rEOhOJnEv7NUqTZJOvlOPuG4MMW8vwgYUrCmBJZr0xIR1yo67p
-	 d62wq7xVOamZeT/26kiOHlRTUgVUh+AKnoUpbQvikp9/ocZxHLXyjbkLd3hq84CNsr
-	 itckDfPhKA/XUHOR/oCEIecXteOvOtfPEAVZ+dJlAW9cT0J9Otlla234ZkzQuJFEyR
-	 ICpB0TrNmaOreR88REGBcrAGzRMAo5KqlM4PuuNKBWE2GJES9v5cdNsU8Op9pvsHTT
-	 xy80Iro2FNyawVskSDN6LLFepAILtO1ZerHnL5MBoetcI+LH4E19VwtbKEPXLQDT/s
-	 FgfKKuVTQLcTQ==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v2 8/8] Docs/admin-guide/mm/damon/usage: add intervals_goal directory on the hierarchy
-Date: Fri, 28 Feb 2025 14:03:28 -0800
-Message-Id: <20250228220328.49438-9-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250228220328.49438-1-sj@kernel.org>
-References: <20250228220328.49438-1-sj@kernel.org>
+	s=k20201202; t=1740780236;
+	bh=AJB89FzkhwSIbHXzs/7zaZZGPG1GIi2QRgI16BLxGOI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nPmoMjVplmDLnKgNTdpJMp/9BWvtz7PIMQNubFIwAKooZsBFcs95QFMcHEN3Gw4E4
+	 tQ9I9TkSCDYsmwxSTmFR47mVCJ2OxmjbRmQy35IxMG0mMlc4/+fyxRI/UdZtE5/vUM
+	 s/yTKfRDh3Pyt8I0Fjg1DAXB28K0qCpne2/RwUs352zf1hiN4VC5xdL1aSWedb0duq
+	 ZLnkRxRZCb868YrJcV98HI6Vmd8vrIOWk9nil4mtHZ4LoNfjy+xCGK4Ey3fC+lYpDw
+	 3Y7gmah0vMhqUxDcAnehiDwhVSb6Qi8CGoDkLnortrZ5WNgXXUB+WPqeYNyKN2dbsa
+	 +hUgvlML+AP1g==
+Date: Fri, 28 Feb 2025 14:03:54 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Philipp Stanner <phasta@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu <guyinggang@loongson.cn>,
+ Feiyang Chen <chenfeiyang@loongson.cn>, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Henry Chen
+ <chenx97@aosc.io>
+Subject: Re: [PATCH net-next v4 1/4] stmmac: loongson: Pass correct arg to
+ PCI function
+Message-ID: <20250228140354.5efff3fd@kernel.org>
+In-Reply-To: <a7720a091ea02a6bbaa88c7311d7a642f9c7fdff.camel@redhat.com>
+References: <20250226085208.97891-1-phasta@kernel.org>
+	<20250226085208.97891-2-phasta@kernel.org>
+	<20250227183545.0848dd61@kernel.org>
+	<a7720a091ea02a6bbaa88c7311d7a642f9c7fdff.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,82 +70,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Document DAMON sysfs interface usage for DAMON sampling and aggregation
-intervals auto-tuning.
+On Fri, 28 Feb 2025 10:26:24 +0100 Philipp Stanner wrote:
+> > Since you sent this as a fix (which.. yea.. I guess.. why not..)
+> > I'll apply it to the fixes tree. But then the other patches have=20
+> > to wait and be reposted next Thu. The fixes are merged with net-next
+> > every Thu, but since this series was tagged as net-next I missed
+> > it in today's cross merge :(
+>=20
+> Oh OK, I see =E2=80=93 I'm not very familiar with the net subsystem proce=
+ss. So
+> far I always had it like this: fire everything into Linus's master and
+> Greg & Sasha then pick those with Fixes tags into the stable trees
+> automatically :)
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/admin-guide/mm/damon/usage.rst | 25 ++++++++++++++++++++
- Documentation/mm/damon/design.rst            |  4 ++++
- 2 files changed, 29 insertions(+)
+Admittedly the fixes vs linux-next material routing is a little tricky.
 
-diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
-index 4b25c25d4f4f..8f01ad8792e7 100644
---- a/Documentation/admin-guide/mm/damon/usage.rst
-+++ b/Documentation/admin-guide/mm/damon/usage.rst
-@@ -64,6 +64,7 @@ comma (",").
-     │ │ │ │ :ref:`0 <sysfs_context>`/avail_operations,operations
-     │ │ │ │ │ :ref:`monitoring_attrs <sysfs_monitoring_attrs>`/
-     │ │ │ │ │ │ intervals/sample_us,aggr_us,update_us
-+    │ │ │ │ │ │ │ intervals_goal/access_bp,aggrs,min_sample_us,max_sample_us
-     │ │ │ │ │ │ nr_regions/min,max
-     │ │ │ │ │ :ref:`targets <sysfs_targets>`/nr_targets
-     │ │ │ │ │ │ :ref:`0 <sysfs_target>`/pid_target
-@@ -132,6 +133,11 @@ Users can write below commands for the kdamond to the ``state`` file.
- - ``off``: Stop running.
- - ``commit``: Read the user inputs in the sysfs files except ``state`` file
-   again.
-+- ``update_tuned_intervals``: Update the contents of ``sample_us`` and
-+  ``aggr_us`` files of the kdamond with the auto-tuning applied ``sampling
-+  interval`` and ``aggregation interval`` for the files.  Please refer to
-+  :ref:`intervals_goal section <damon_usage_sysfs_monitoring_intervals_goal>`
-+  for more details.
- - ``commit_schemes_quota_goals``: Read the DAMON-based operation schemes'
-   :ref:`quota goals <sysfs_schemes_quota_goals>`.
- - ``update_schemes_stats``: Update the contents of stats files for each
-@@ -213,6 +219,25 @@ writing to and rading from the files.
- For more details about the intervals and monitoring regions range, please refer
- to the Design document (:doc:`/mm/damon/design`).
- 
-+.. _damon_usage_sysfs_monitoring_intervals_goal:
-+
-+contexts/<N>/monitoring_attrs/intervals/intervals_goal/
-+-------------------------------------------------------
-+
-+Under the ``intervals`` directory, one directory for automated tuning of
-+``sample_us`` and ``aggr_us``, namely ``intervals_goal`` directory also exists.
-+Under the directory, four files for the auto-tuning control, namely
-+``access_bp``, ``aggrs``, ``min_sample_us`` and ``max_sample_us`` exist.
-+Please refer to  the :ref:`design document of the feature
-+<damon_design_monitoring_intervals_autotuning>` for the internal of the tuning
-+mechanism.  Reading and writing the four files under ``intervals_goal``
-+directory shows and updates the tuning parameters that described in the
-+:ref:design doc <damon_design_monitoring_intervals_autotuning>` with the same
-+names.  The tuning starts with the user-set ``sample_us`` and ``aggr_us``.  The
-+tuning-applied current values of the two intervals can be read from the
-+``sample_us`` and ``aggr_us`` files after writing ``update_tuned_intervals`` to
-+the ``state`` file.
-+
- .. _sysfs_targets:
- 
- contexts/<N>/targets/
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index 0cc9f6441354..0cf678d98b1b 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -366,6 +366,10 @@ is recommended.  Note that Parreto principle (80/20 rule) has applied twice.
- That is, assumes 4% (20% of 20%) DAMON-observed access events ratio (source)
- to capture 64% (80% multipled by 80%) real access events (outcomes).
- 
-+To know how user-space can use this feature via :ref:`DAMON sysfs interface
-+<sysfs_interface>`, refer to :ref:`intervals_goal <sysfs_scheme>` part of
-+the documentation.
-+
- 
- .. _damon_design_damos:
- 
--- 
-2.39.5
+> Anyways, I interpret your message so that this series is done and I
+> don't have to do anything about it anymore. Correct me if I'm wrong.
+
+You need to repost patches 2,3,4 once the first patch appears in:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
 
