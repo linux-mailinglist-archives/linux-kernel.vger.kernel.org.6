@@ -1,114 +1,139 @@
-Return-Path: <linux-kernel+bounces-537606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FFBA48E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:42:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CA5A48E15
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94394188B9A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:42:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1631216C055
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8353C450EE;
-	Fri, 28 Feb 2025 01:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF07F4502A;
+	Fri, 28 Feb 2025 01:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="P1Es/sOT"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rNPHmsEw"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C741276D11
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2BA3596A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740706957; cv=none; b=bOiE5OhIYzLDkp/d87ppcOTGb/9TcSevxl1FYgpdXYYdA5Z24KxASR4DkUjElK+6WLhQE/pYk83bdAGApKCQGS3Q3jlzd4f2FSeX0bC/IdS0SWUsLUcZPsre+rAhxhVBAhVo3/naB43QGZvaxYk6RPHmfeWYI/frNT6ICgCXMB8=
+	t=1740707063; cv=none; b=MZAqYqkbPDwxFuBY5q6qJQAIT16xDCZJdMKc+bSHckZ1DndN63VluJyv3S9sLeY04+LlVwmlQuqnuWGNWG7Ay4I5n0o87mXDAVV5H224qkU0IFQqKLvr1v5HsTdePmImlHtCC1epGG91FWw4wIVI/pS3WAZH9XInVfzXE7lM3xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740706957; c=relaxed/simple;
-	bh=0Xz800KTQsMzMf/aTGUirftckoPiF1faIIqhUfnY7mM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FylgN+symh7BQlNbCyUW8dNGCFqeB4o3VK13EKo2tqUtNH43kcttRVJV/nJwWP7h+up7biuWhdwgZs9xxvnSiKxMI+YT9S8sOEdpwXxsx3ACqWVtGWQS/emeAKreMN7bgWG2c4m68XiKUwBCCFfrDsM+3Tn7rJjx7i3bOWutFgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=P1Es/sOT; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
-	by cmsmtp with ESMTPS
-	id nHVxtkEmJMETlnpOdtHblz; Fri, 28 Feb 2025 01:42:35 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id npObtoZxqrdF3npOctHxsj; Fri, 28 Feb 2025 01:42:34 +0000
-X-Authority-Analysis: v=2.4 cv=O5I/vg9W c=1 sm=1 tr=0 ts=67c1148a
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
- a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7T7KSl7uo7wA:10
- a=iit3rYpcdqjZrRsmSfkA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ml+ZtiSZg6m5QioCesBYuryQ6UN65U0bEw11wXgplw4=; b=P1Es/sOTtmwWfMGk7jz8Crg1oi
-	iV3sne7xu/X1QenquevXy7MmUn7PdDXjhR0jfLMM+Kv8PsjW745vcZQNr1aPpG1kOdX+RnX/eD+gY
-	eGw471fKtYiZ2u8kc0m8UhlQjI0feDfPPzUgvnxAsTHTs3FrMZGHHVyHaFndq+eWe79gV1W+tRjP2
-	r5sbEPr1Bvjs2PP+zWi8kqGswjRjGDOBD7c5TQGf8yskQ6g7AInmRDCdjTC7FlY1CPKb4QDa/+gHu
-	7cOaQ/+aPFLnV4Vkl4sdINJIxcUFW5EbvXss2e5NnxQZy+mWUobyJzxoDDQSEGh6QlSai1P/MSvZR
-	uKJwmknw==;
-Received: from [45.124.203.140] (port=53610 helo=[192.168.0.158])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tnpOa-00000003AAi-1kQ8;
-	Thu, 27 Feb 2025 19:42:33 -0600
-Message-ID: <4a6c2392-3200-4e1c-ba5e-236f2e608daa@embeddedor.com>
-Date: Fri, 28 Feb 2025 12:12:28 +1030
+	s=arc-20240116; t=1740707063; c=relaxed/simple;
+	bh=a+hhsISpwSOV3NLgMMWxmhkEHZcRYIqr8+kcQE1b/fo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Scv9u2wYKoN7B3M+sGe8V2yE0AfFvAjlAZFNS7hGC+jpu7RAAOhIqDYxy7zHiU4tvaGtJZOinbjGLj28LfBllia1lxMbKl9/rbaSezJdngew3YB6q33QDzIJYxzSHxRRBa9qmMHqOBGVIgRyac7QYtwF6/hmI3yKM7Ur9xaEa0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vannapurve.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rNPHmsEw; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vannapurve.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22367f4e9b9so8364055ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740707061; x=1741311861; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FqF8Q8XFXYncfUenWuJBDSsEIDlyEuKebDS/PZCwdMY=;
+        b=rNPHmsEwTBZWTvr74VAaKAc1GYnnLOjfnTCZX3LHNYS5keBIy2uiWEilZnHR5bVVcR
+         VyVRP0po4sH9ntczANtwGU0E1yjBMMUx2LEEsJxjlFeR4qHt480uuw1eLk0u6vjkEahl
+         shDJEn7A5Ni69f4H1hVnXQ+sIpJb2wxsrjwqMCCOBANLoZkCASNCC/45qBl+ZLliPQfp
+         o7m0C1i3RZNHWq1qcCcYKhb4hoRVH2MzX6jAW300l6aZsATL4p2t0XXe4F2V7ZbAtvyo
+         K0uH7SlMCMDbXeIvSaQMbL2cmivvona0EQ6EyglUUZNWyjxoMPLnX4PpTASNX6lGoLzR
+         HmaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740707061; x=1741311861;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FqF8Q8XFXYncfUenWuJBDSsEIDlyEuKebDS/PZCwdMY=;
+        b=s5FlBRYV8ZUbnQoMNUR0AsjLFpRDejiQPkLDmGyHDiJdgembRyjxobQ70ztVUO4bWr
+         Ky14wGSV4m9uJjYhAm6phORMiXDqzSdj3LQKUE12ogBYfCHgEqC+IRuD7B6vf0ivGLPD
+         5dt6e++thOmixBAO33npTY0Y1RwaJjuKTpTRfHQf64DBTt9HR/VryelGGoDDTSsQbKSo
+         Kmb7mEWT0R+0LQUQYudLd21XvI8Hz16hxqBfw2ZWyzn2sufxEF8+80YTB4eDl5sfKhEG
+         BTUEicCFNfM0AUp0oko1b4b3/rIoLtRzNCt4VSutUaEoGHESFIVVQcm9Tp0qzz/FbFdL
+         QPsw==
+X-Forwarded-Encrypted: i=1; AJvYcCViUvq533QkrCkqjJypGI9LjR41avRIG42tznCsQv2ZR9zpSpHuoG2vkn783RH3p2c+43K+DwzSzV0WYCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQj6Sj27Y+yLroD0JVtTpV3FfMNdyq1yeoQXNtjJtBvR/HFpI
+	KE5DyUZDUm93pconwNnoFMiytVwPV3rn+D41vjDLrx/CldIh80+S1m4PQa0nVmX/QVZTB9aWh/7
+	ZWyYI1aXWHQLzjCEUqQ==
+X-Google-Smtp-Source: AGHT+IHq3/FYvnhcHmzR3dKBMJGYwE2w4qWoTkMltxQfzf+L6EUDYcTCBM+hlhmazTHObSb1r5X3Jip2Rwz7uXpy
+X-Received: from plble4.prod.google.com ([2002:a17:902:fb04:b0:216:25a2:2ecf])
+ (user=vannapurve job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:298f:b0:21f:3e2d:7d2e with SMTP id d9443c01a7336-22368fbc80emr20133165ad.27.1740707061150;
+ Thu, 27 Feb 2025 17:44:21 -0800 (PST)
+Date: Fri, 28 Feb 2025 01:44:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/nouveau: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-To: Danilo Krummrich <dakr@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <Z6xjZhHxRp4Bu_SX@kspp>
- <df8b8d59-470f-43e6-a8c2-cc40a4ebe5d6@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <df8b8d59-470f-43e6-a8c2-cc40a4ebe5d6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 45.124.203.140
-X-Source-L: No
-X-Exim-ID: 1tnpOa-00000003AAi-1kQ8
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.158]) [45.124.203.140]:53610
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJw1YcrhK8asbmrCEh7aRx/SIvCSpqclg9w1ZoHFvHGxZGsvIvgcOMtREwNtqmBFc5SZhZLi7Kf/tE7biq+l19uX//OJHwbOO2RwN6H0RT7V+LFOUiT6
- vAYNdFYU/FfSYGailZ0Oq09Stg3vmUgeXna3wIhFZCjQSUvGCK2aDmtVo+R7Ew1AUo0g3bwpNgg9OEowTRDy0EtmXQcZd86OhHo8Zf2sgpM2KMRBRlEUfzw4
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250228014416.3925664-1-vannapurve@google.com>
+Subject: [PATCH v7 0/3] x86/tdx: Fix HLT logic execution for TDX VMs
+From: Vishal Annapurve <vannapurve@google.com>
+To: dave.hansen@linux.intel.com, kirill.shutemov@linux.intel.com, 
+	jgross@suse.com, ajay.kaher@broadcom.com, ak@linux.intel.com, 
+	tony.luck@intel.com, thomas.lendacky@amd.com
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com, 
+	pbonzini@redhat.com, seanjc@google.com, kai.huang@intel.com, 
+	chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, erdemaktas@google.com, 
+	ackerleytng@google.com, jxgao@google.com, sagis@google.com, 
+	afranji@google.com, kees@kernel.org, jikos@kernel.org, peterz@infradead.org, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	virtualization@lists.linux.dev, bcm-kernel-feedback-list@broadcom.com, 
+	Vishal Annapurve <vannapurve@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-  > Applied to drm-misc-next, thanks!
+Direct HLT instruction execution causes #VEs for TDX VMs which is routed
+to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shadow
+so IRQs need to remain disabled until the TDCALL to ensure that pending
+IRQs are correctly treated as wake events. As per current TDX spec, HLT
+#VE handler doesn't have access to interruptibility state to selectively
+enable interrupts, it ends up enabling interrupts during #VE handling
+before the TDCALL is executed.
+ 
+Commit bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+effectively solved this issue for idle routines by defining TDX specific
+idle routine which directly invokes TDCALL while keeping interrupts
+disabled, but missed handling arch_safe_halt(). This series intends to fix
+arch_safe_halt() execution for TDX VMs.
 
-Awesome. :)
+Changes introduced by the series include:
+- Move *halt() variants outside CONFIG_PARAVIRT_XXL and under
+  CONFIG_PARAVIRT [1].
+- Add explicit dependency on CONFIG_PARAVIRT for TDX VMs.
+- Route "sti; hlt" sequences via tdx_safe_halt() for reliability.
+- Route "hlt" sequences via tdx_halt() to avoid unnecessary #VEs.
+- Warn and fail emulation if HLT #VE emulation executes with interrupts
+  enabled.
 
-Thank you, guys.
---
-Gustavo
+Changes since v6:
+1) Addressed Kirills's comments.
+2) Fixed a build failure.
+
+v6: https://lore.kernel.org/lkml/20250225004704.603652-1-vannapurve@google.com/
+ 
+Kirill A. Shutemov (1):
+  x86/paravirt: Move halt paravirt calls under CONFIG_PARAVIRT
+
+Vishal Annapurve (2):
+  x86/tdx: Fix arch_safe_halt() execution for TDX VMs
+  x86/tdx: Emit warning if IRQs are enabled during HLT #VE handling
+
+ arch/x86/Kconfig                      |  1 +
+ arch/x86/coco/tdx/tdx.c               | 34 ++++++++++++++++++++++-
+ arch/x86/include/asm/irqflags.h       | 40 +++++++++++++++------------
+ arch/x86/include/asm/paravirt.h       | 20 +++++++-------
+ arch/x86/include/asm/paravirt_types.h |  3 +-
+ arch/x86/include/asm/tdx.h            |  4 +--
+ arch/x86/kernel/paravirt.c            | 14 ++++++----
+ arch/x86/kernel/process.c             |  2 +-
+ 8 files changed, 78 insertions(+), 40 deletions(-)
+
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
