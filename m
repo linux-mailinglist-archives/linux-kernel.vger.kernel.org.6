@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-539287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50269A4A2E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:42:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2966A4A2E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E18A87A7F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:41:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C164F174DB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B962230BC5;
-	Fri, 28 Feb 2025 19:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9B230BCA;
+	Fri, 28 Feb 2025 19:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSjRNMRI"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mew5pbYV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6142A1F874A;
-	Fri, 28 Feb 2025 19:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD111C175A;
+	Fri, 28 Feb 2025 19:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740771760; cv=none; b=BhLwKCk0hvC0Wu5vmQxngP0zg35/sGU7mEJQvmo6sZ0xtLzM7eYmRsbL3o72KiKByKXXd5d1BoEawK8VBmtb9urH86z6yClUW3y8Ii1ZwW4L/8j5fhmW4qWLoVwOCYPBYCxudtlaoJMRfjBQdCZYWhsEH8UKW54FiEjq8Mky+XQ=
+	t=1740771891; cv=none; b=Ai55osaqe4w/Xk01TdxB0ckya5CCGUdiep5B/TPWJoWVggJvsOCVqfwHjz//HFDnadEdOtF5uhiqisc1cLgKcL54iS1CwdZRLq3LybGxHhrE52/Epj6HGwL59QAn0glpm8v2vXiozy9oKuCSpefH+IQ4jFe5k9h9N6Y/hJa+RNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740771760; c=relaxed/simple;
-	bh=ER+r8NXmdkWggNU0HA9uV61RbAhrlmzZHANxsH2Jtn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mD8AOSaZInKGhiQmAGLay9Hb98drLcKqWTnTkAdwPnbyQ7IlqtX8jgIubVLzil5eofZH+Jfe7AzNmRUSuHjnAbJwX5wCtYFUDvtAEEbmp66u+xKzLPCrw5xc7exDHVq8t2sqYTe5bXPOldoYuODQJYFYBBf3V0i784RBhc0lRM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSjRNMRI; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30797730cbdso23748961fa.3;
-        Fri, 28 Feb 2025 11:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740771756; x=1741376556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ER+r8NXmdkWggNU0HA9uV61RbAhrlmzZHANxsH2Jtn8=;
-        b=DSjRNMRI7EZCIeABKzeUL8q26tntstfEUfEs1+zj9xV1tNuA1E1sGXhLvVK1anAIKP
-         I4yQ7Qv4Rr5r0CRITnGargvBPf27EyNr944wwj/7jzOsFQ9O2phLdvaLYh47piA6/Bj0
-         KsxkkDtxZ0quyl3Wtp4qnxT0wnfk/FQLFrAo+j795/zCiuk4uDUzyQ8bH6Vutu39PIwq
-         hIXn9LbOitjcvYVrVi82x5vNnLj08grq/IVuCnExo2PatdmIf7hpVBLLgw3/m8v+4xE3
-         qpPFYI48ZkJExz8Fu2SY5/zHbtrfWRtbudPUfbVDyBXl1NUlk8cWIas0Xz2dQ+vxW+eG
-         mdvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740771756; x=1741376556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ER+r8NXmdkWggNU0HA9uV61RbAhrlmzZHANxsH2Jtn8=;
-        b=vAIhu8VAiBxfRXDAiy3LMITgc2nbJI0v+XEhkT6UxG4N4EYXOyYSj3OikqOK7G4IJh
-         rxxnlDMXvvK6IXNd/JIo9IMVxa+Va1xoOduM9xSfvVuEHIHFeJEbohCm7wvL2UeLI96b
-         ggm+p2rSc6/7JI6jW1NoM80SKjFeaZRvRPp0STbqgtAVojUd+QfY4LO/fiZ3oembmGIQ
-         J3qlfuYkHVjG1iGCp/2c520puwlEKyTvmqGf9daxCUjdXiLYQ43tqJYW8BObt/Ov69pL
-         rypavjOiTqDHkXIPSaLlIz/P3vlQalTz52gv26DKh2Ja3qTcdVt1YtldBpPW48KsOI7t
-         zcUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRdtduq6j8NjRWIHnLljCuKt/gmbea/Haa32FKhwLkMpqIFp19QhW2g1HXG5LaKr1fjIFY3lsBeOmQHkBb@vger.kernel.org, AJvYcCXyXwkDB3R/zQ6jHuOwCw9EZACzBh8ZfaeMPp++HdfUY9YJEwBs62bCz0J4R6q9baMFL3iARx7NuqoI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmbVZOGrDPTFAEZyA4NEHENBSYf4isjog/ZsKTuWCGO0DX3qUn
-	2fbCm59GL/lTGCZOV1tK4msOpcuuXJ/T4PwfozihdxuuPWbNOm5PK7NQEm4mQLurhV3MVWSqqCO
-	QdafR0dd6odk880isjgsrLnKt5/hToDeM
-X-Gm-Gg: ASbGnctSDEa50izWh9+kKQsMJav1TZPTeg/2vzLx4eKhgxEDmOdpZNigvZVP49Vg3pK
-	7+8iUqiaRAPlnYwwPHfIF6M3NHsLiuXvruUQCGa7EGWCYrH+b8kvqVIx2/0T+WFuzY8axieADIx
-	W6LSgI3795l7iAhikk3NjOjqijiPw8EuzJWRspwA==
-X-Google-Smtp-Source: AGHT+IF0kZIiHzdFJYX2bvCwbKhMQkcQPj5hmb4BkhewRGIZt77ta8Te2nCI3MxmD7G1uvJYlftQUPlvNFyy6H3yMRA=
-X-Received: by 2002:a2e:8215:0:b0:308:f860:7c1 with SMTP id
- 38308e7fff4ca-30b93418c69mr12907051fa.30.1740771756188; Fri, 28 Feb 2025
- 11:42:36 -0800 (PST)
+	s=arc-20240116; t=1740771891; c=relaxed/simple;
+	bh=424Fkn4nNOCM9Y+dMU7/oT2OuRdwLB0LtXdfrXQYFT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZGyMGV4LBoE3oF554ioexkybmMzNe9ekeELRyE22aq1aqw5kUsTnmiJ1efvDEN7HCpXD1Lb9BA9kyePIauHwPIS2D6mAhHKI9SQqXEtuW46lGbl1Qmblz7B04KnCcvtbAgf7P00rw4r0JcokfDGFPwbIJ4i52LyImFjZ6kCZQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mew5pbYV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158BCC4CED6;
+	Fri, 28 Feb 2025 19:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740771891;
+	bh=424Fkn4nNOCM9Y+dMU7/oT2OuRdwLB0LtXdfrXQYFT4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mew5pbYVg3EwYGrCytG89O+ckCtqo2Tg44sbp9jb5U87yFSdfqajIqtHQlgwx8Hz2
+	 7u2gim0UuqVIHDzNPoXkScKdgYYFLY/nAC7CEse8dRbpOiL0mwW1Ea3RsLN4P/4gQe
+	 7ya6h/1hZTN6BsNi0z0TrPzAqlxpzyupMl/ExgZjoUtHfxdWaUUefnSMncK9NfqM7e
+	 DyYdDFSadn0Xd+v30O0u7zNkmzNWjldYFfc6OLr/6j0rFJT7EYYZZAEKeYHVkI9g6f
+	 tbAdoUKyRXjiIky332OnPWfSSaaOLYBi6bD1MGmjzME1ZQR8lRcg/mUTNI0bvWyHaX
+	 6OC03Om5038tw==
+Message-ID: <7d76a774-9dad-4c94-b4df-7c040e9dbc47@kernel.org>
+Date: Fri, 28 Feb 2025 13:44:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227170556.589668-1-ernest.vanhoecke@toradex.com> <20250227170556.589668-2-ernest.vanhoecke@toradex.com>
-In-Reply-To: <20250227170556.589668-2-ernest.vanhoecke@toradex.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 28 Feb 2025 16:42:24 -0300
-X-Gm-Features: AQ5f1JoDhtvIJKnD6zt795G88ZFNlnPp4nsAKKBjoBY0YUhUy9idNheY0yKrIcI
-Message-ID: <CAOMZO5ARY0P3nNnh6tmLi1p5N0uXb8ZLqkBs3ZekXD4U_-rOww@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: apalis/colibri-imx6: Enable STMPE811 TS
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add support for hidden choices to platform_profile
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>
+Cc: "platform-driver-x86@vger.kernel.org"
+ <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>
+References: <20250228170155.2623386-1-superm1@kernel.org>
+ <fcf58c76-2c0b-4892-96aa-c9b5b35c3e68@app.fastmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <fcf58c76-2c0b-4892-96aa-c9b5b35c3e68@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 2:06=E2=80=AFPM Ernest Van Hoecke
-<ernestvanhoecke@gmail.com> wrote:
->
-> Enable the STMPE811 touchscreen in the SOM dtsi files. The STMPE811 is
-> part of the SOM. It's self contained within it, therefore, disabling it
-> is not the correct default behavior.
->
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+On 2/28/2025 13:39, Mark Pearson wrote:
+> Hi Mario,
+> 
+> On Fri, Feb 28, 2025, at 12:01 PM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> When two drivers provide platform profile handlers but use different
+>> strings to mean (essentially) the same thing the legacy interface won't
+>> export them because it only shows profiles common to multiple drivers.
+>>
+>> This causes an unexpected behavior to people who have upgraded from an
+>> earlier kernel because if multiple drivers have bound platform profile
+>> handlers they might not be able to access profiles they were expecting.
+>>
+>> Introduce a concept of a "hidden choice" that drivers can register and
+>> the platform profile handler code will utilize when using the legacy
+>> interface.
+>>
+>> There have been some other attempts at solving this issue in other ways.
+>> This serves as an alternative to those attempts.
+>>
+>> Link:
+>> https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257-5b8fc6c24ac9@gmx.de/T/#t
+>> Link:
+>> https://lore.kernel.org/platform-driver-x86/CAGwozwF-WVEgiAbWbRCiUaXf=BVa3KqmMJfs06trdMQHpTGmjQ@mail.gmail.com/T/#m2f3929e2d4f73cc0eedd14738170dad45232fd18
+>> Cc: Antheas Kapenekakis <lkml@antheas.dev>
+>> Cc: "Luke D. Jones" <luke@ljones.dev>
+>>
+>> Mario Limonciello (3):
+>>    ACPI: platform_profile: Add support for hidden choices
+>>    platform/x86/amd: pmf: Add 'quiet' to hidden choices
+>>    platform/x86/amd: pmf: Add balanced-performance to hidden choices
+>>
+>>   drivers/acpi/platform_profile.c    | 94 +++++++++++++++++++++++-------
+>>   drivers/platform/x86/amd/pmf/sps.c | 11 ++++
+>>   include/linux/platform_profile.h   |  3 +
+>>   3 files changed, 87 insertions(+), 21 deletions(-)
+>>
+>> -- 
+>> 2.43.0
+> 
+> The patches are all good - but my question is do we really need the whole hidden implementation bit?
+> 
+> If the options are not hidden, and someone chooses quiet or balanced-performance for the amd-pmf driver - does it really matter that it's going to do the same as low-power or performance?
+> 
+> So, same feedback as I had for Antheas's patches. I understand why this is being proposed but for me it is making things unnecessarily complicated.
+> 
+> My personal vote remains that the amd_pmf driver carries the superset to keep everyone happy (sorry - it sucks to be the CPU vendor that has to play nice with everyone).
+> 
+> Mark
 
-Please run /scripts/checkpatch.pl and fix the following warning:
+Well so the problem with having all of them is specifically what happens 
+when "only" amd-pmf is bound?
 
-From:/Signed-off-by: email address mismatch: 'From: Ernest Van Hoecke
-<ernestvanhoecke@gmail.com>' !=3D 'Signed-off-by: Ernest Van Hoecke
-<ernest.vanhoecke@toradex.com>'
+If you advertise both "low power" and "quiet" it's really confusing to 
+userspace what the difference is.
+
+The fact that it's actually 100% the same brings me to my personal 
+opinion on all of this.  Although I spent time writing up this series to 
+do it this way my "preference" is that we permanently alias "low power" 
+and "quiet" to one another and update all drivers to use "low power" 
+instead.
+
+Granted that doesn't help the case of balance-performance being hidden 
+that Antheas mentioned for acer-wmi and legion-wmi but I don't know 
+serious of a problem that actually is.
 
