@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-539270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177B2A4A2A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:32:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692BAA4A2AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:36:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14E51724AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050EB3B1D8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A281F0981;
-	Fri, 28 Feb 2025 19:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250C11F873E;
+	Fri, 28 Feb 2025 19:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ah1S86zq"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MmyKNJi5"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDC927702E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E7D27702E;
+	Fri, 28 Feb 2025 19:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740771146; cv=none; b=PolfjBGErfwEr+A2RUz+oy3jdoPMbcqbO7myLes4QsYux4EKSAqT2saZIgVr5B27G299gVnr+ggHUfBYJzFGvQ2b69jVRUF5HV6+mUMszXqQtOEsI5LKZCslxexyT5uY6f6pNBlzv5A8yeiCovlfsG0kte/Q7EwaSkhc4g0uDwA=
+	t=1740771352; cv=none; b=aJomGL/b6F4+l/jF1tFcWFJ83Q82oSMWM0W4MlB5dZU3LIOz4bBCKfy8oFGdCveFnntokRC0ZYXgSPdTm4ueI1QIDmArOc3lKX46tE42rQ2vD2XvGvd+3/bDMk2mvN3q9pS5YSr8atQY8I1davi5LBjS7eLbvmhHzpHmKt1h4gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740771146; c=relaxed/simple;
-	bh=sUQoD/oUM2YIJUykZgTKKV8h/csrykSBi4575KKh/QA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksr8+gsS0g054bJB+rfpOBBgQddibnTLa/VcMGUf6SvIDslnWrM1h4nKmrn//6qd+G9jWMdLZWmY14xoLcKj2hMVYbMOI1OOeHvH3BwqsIagLgbr0bC8LSveFeSzP8fgdBy3GwEL5t8yKew81X2B3MQzQtYryhdYNd1VoBsCRFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ah1S86zq; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7be8f28172dso188909485a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1740771143; x=1741375943; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s8ahLP6tau5z9zFvNaThnA7Wz1kGZZr7teXmDUhSLis=;
-        b=ah1S86zqvP1oCdS6hIZnXya0YuyBsSyJxl/0QsK9RdIBKng9Ur+ybWerFqe2YZCRLu
-         G6fsF+QHjlNHQxY7q0e7HvuAe5nO40lP92xqFYNdcgD0xOokDQOQRR7Tk3bi8zZGK56z
-         6yFlY5Ongz/eXCQezSFu+GAQT8hjE0toeO/E0MQHU6kSe9MuAoHCWq5ZEnvBMdt6U6Yg
-         TOhjJiz9AGJAlZ5Qk3eMh4i6bdCLo28fjEhDQffV3DTDffiFFSPp8/0MdohLevK6xW7L
-         EoslNRMCqozaPw/+8EBl2TBSs25bml0gsDKM0Pml820Wo5Cwo7YaVIGuyx8Ln4usCnfF
-         KtOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740771143; x=1741375943;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s8ahLP6tau5z9zFvNaThnA7Wz1kGZZr7teXmDUhSLis=;
-        b=IR3UenY0+0bynD6qR4B+KvH6FN+fMXDS1pc/AtwVnBZgx3VL88jbyLpbjImjogBYdv
-         Recr5AXxuRv14QtRf25/m/iFiEUxaf7oVS2V8hg5pFw9wt4k/NKLqO3GG3K0z0xoJbeH
-         rzAbFFF/GeP8Q/SnFMgfXP9d30GTBGvxOkbvYnrZztg/YHQM7FLYXqfQ7cv8XwyWFSrS
-         oApiQq9Kqy3hnLMcutM4zcImuVEu9Yx7R0b/mw+44jHh0bFHgmkLfUMJjNFyMVByhoY+
-         C3Sr5R28qyscKbzu+HyZYFFnsYSu4A8VemrhDAO5mOxDMts5b8kKbapob/ecvDFswnEW
-         LXFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEoewxYHCQx9sYO6zRkiAZiJ+zVrvhTdHidAbrFuAUXY8TdTLA5aaUyYKsyp3A8pQHFOoXcYnHf3W8Nw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIwa5/G57TrAWLziCgUbPnO6640tHWKqp7NuhRLIwZP0d3+SG0
-	SZxs9SQkfcyFKWpQ53OHIX/k2p1vmjzRMr6/7i6OHoXbO/J7YNn3SyARWmusjak=
-X-Gm-Gg: ASbGncshASTjQ94UC+uwkTRX2mR8xCGtvXJMy99YQlrRCFIzZ+0ca/seDq8H1xs/qNM
-	yrp15W8AgfDo2kAK5lHxwJKxxWyHcz7Hkda7llw91WscYXGagdRBXsWst1H0Jk3STSfK22pWAbh
-	hep816PHp4eoP/KvfR5kcvesBjjD9T7F26GTKwqRRvRGTD5VmTIWtbsO2UebEytbNQ8iraOkbDC
-	dvdSIX8PIdeAsD50VdzCLePHolIcQ+74OW79ggBsETa9iSI1C5u4mYtfKelJG8uxmzOYOKUhhAy
-	x8/XQVYTaY2OOkxy+im4xjAGdZwus5Z4ukHFOah0ddjnzqs1L1OHqiH/jpwsUxYEnJluumxQ5hY
-	=
-X-Google-Smtp-Source: AGHT+IGfp/qlV0bFdQ4UlFF5bJNQ0s1CsbH7fJWc4GjD61AnOXb+ucW0858X/QRyI+8xsu26VjRTjg==
-X-Received: by 2002:a05:620a:668d:b0:7c3:9d4c:8193 with SMTP id af79cd13be357-7c39d4c81bfmr429574885a.5.1740771142740;
-        Fri, 28 Feb 2025 11:32:22 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976da283sm25082546d6.111.2025.02.28.11.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 11:32:22 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1to65t-00000000Th1-2Pej;
-	Fri, 28 Feb 2025 15:32:21 -0400
-Date: Fri, 28 Feb 2025 15:32:21 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com, catalin.marinas@arm.com,
-	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
-	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
-	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
-	david@redhat.com, akpm@linux-foundation.org, nicolinc@nvidia.com,
-	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Message-ID: <20250228193221.GM5011@ziepe.ca>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1740771352; c=relaxed/simple;
+	bh=bp6gbMUp3288WL0ToRvNVxjxkQMxQTnl5A0aQxSywk4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZpdmjtsVA3wH5izo9c5Bjm4M2SwmuFepXrG8lFhChIHtRtTsz/4OQ/J05ubJk1WB8hqLtxMWkXmS/PkOscEWuEwkFKIShVsPOYxd3nCjdXPzZyYdbjUf45z2t+MQ1mtyFrp4Kyalgok9j7I6/m2gg5kijwRTASdBkULMFPoJrA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MmyKNJi5; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id B5784258FD;
+	Fri, 28 Feb 2025 20:35:41 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id C0E-YoFxkxdp; Fri, 28 Feb 2025 20:35:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740771337; bh=bp6gbMUp3288WL0ToRvNVxjxkQMxQTnl5A0aQxSywk4=;
+	h=From:Subject:Date:To:Cc;
+	b=MmyKNJi5Dhjy0uJHfh8yvLRtVRE44e109l5GnaIQQW/dHucAbIZDyuBTP72inZOfh
+	 mX4QPOd6d0hpfGH6eAjq0WAwUk/VgnHte4DHsFj5OuY+zKny9NjlwIuKz7n9Hp6DII
+	 w1SrSCt/SwoTSbyEE9hfC7LrRUpXWOvDntN9Dq5zfaha3+PpnDnDjlpbnSjpH/y2A8
+	 CCnIjnlWpvX8zqLiVvXNmdriIj5Y2GFnte509d/v1zSNd3Gkp55h67hF5s/kxJE0sA
+	 jPtEu0GObgMY/melpG8z7CqJM/iz8ZPzQ6k+WzxYK8pbGpqZR17KOTapcyH0nxGXSg
+	 BDZptplsDf8wg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/3] Introduce pin controller support for Exynos7870
+Date: Sat, 01 Mar 2025 01:05:16 +0530
+Message-Id: <20250301-exynos7870-pinctrl-v3-0-ba1da9d3cd2f@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228182403.6269-6-miko.lenczewski@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPQPwmcC/23NTQqDMBCG4atI1k2ZiT9juuo9SheNJhooRhIJi
+ nj3RqHQgsv3g3lmZUF7qwO7ZSvzOtpg3ZAiv2Ss6V9Dp7ltUzMBogQBOdfzMrhANQEf7dBM/s2
+ BRFUaQgkVsnQ4em3sfKCPZ+rehsn55fgRcV+/XHHGReTAiZSsAaiQiu6tDd656ep8x3Ywih8E5
+ SkiEoLGSIWgjMT8H9m27QNpOlNe+wAAAA==
+X-Change-ID: 20250203-exynos7870-pinctrl-07265f719061
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740771331; l=1455;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=bp6gbMUp3288WL0ToRvNVxjxkQMxQTnl5A0aQxSywk4=;
+ b=tCe2GcdQ+1bzf4pENv8Xc7aJ42CXG+7QuHLbOCQmo6xlDriCKCb9GFMvRIcY6vvE51kZQMDqp
+ ZUszi2MRbpUAslID4B/9HlVwGE1rcsBGtl2h+Tmm0rMkIPHiBvoUqU+
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Fri, Feb 28, 2025 at 06:24:04PM +0000, Mikołaj Lenczewski wrote:
-> For supporting BBM Level 2 for userspace mappings, we want to ensure
-> that the smmu also supports its own version of BBM Level 2. Luckily, the
-> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
-> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
-> BBM level 2 is claimed.
-> 
-> Add the feature and testing for it under arm_smmu_sva_supported().
-> 
-> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> ---
->  arch/arm64/kernel/cpufeature.c                  | 7 +++----
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
->  4 files changed, 13 insertions(+), 4 deletions(-)
+Add support for exynos7870 in the pinctrl driver. Also, document the
+ALIVE pin controller's wakeup interrupt compatible.
 
-This patch looks good, for what it does. However for bisection safety
-it should be earlier, before the patches that change the page table
-algorithms to be unsafe for the SMMU.
+This patch series is a part of Exynos7870 upstreaming.
 
-However, I've heard people talking about shipping chips that have CPUs
-with BBML2 but SMMUs without.
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v3:
+- Reuse some structs and macros from exynos8895.
+- Link to v2: https://lore.kernel.org/r/20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org
 
-On such a system it seems like your series would break previously
-working SVA support because this patch will end up disabling it?
+Changes in v2:
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-pinctrl-v1-0-77b9800749b7@disroot.org
 
-Though I see your MIDR_REV list is limited, so perhaps that worry
-doesn't effect any real chips made with those families? I am trying to
-check some NVIDIA products against this list..
+---
+Kaustabh Chakraborty (3):
+      dt-bindings: pinctrl: samsung: add exynos7870-pinctrl compatible
+      dt-bindings: pinctrl: samsung: add exynos7870-wakeup-eint compatible
+      pinctrl: samsung: add support for exynos7870 pinctrl
 
-Jason
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   2 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 139 +++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |  19 +++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 6 files changed, 164 insertions(+)
+---
+base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
+change-id: 20250203-exynos7870-pinctrl-07265f719061
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
