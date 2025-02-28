@@ -1,189 +1,124 @@
-Return-Path: <linux-kernel+bounces-538060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0F2A49425
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:57:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132CBA49416
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42DD3B31A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C35387A33F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D8255E22;
-	Fri, 28 Feb 2025 08:56:59 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23E5254867;
+	Fri, 28 Feb 2025 08:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkY93gCW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F067C254861;
-	Fri, 28 Feb 2025 08:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B0253F13;
+	Fri, 28 Feb 2025 08:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733019; cv=none; b=UEB6UZIgqdz1E9neI/CCTRbdCEXXMmL11nPNtlTHJT1rKm7E4pK86U2QsnXprZdNvx5cA5H2rg1GX/qmWYIGU8YHac5NVCb6oHS8SXF0wnrKmF+MAf3mJhHA8dO/5k3aEVqfs8H07SRQWP8fc1A7sCZ+XvPLq5kjVL+wQveHu6E=
+	t=1740732869; cv=none; b=ppyw2psa8n0DTuJvqYPQrlTz4Q0ifqLkRsZ9JywJEoFd4YYAfCuVhysT6Iw9j78N0F32/U0LvkyHtLj2hmjaedOMCMu8/NnjAlu5xO06JnDT/FdlQo8rrXKf4hBDmEArExmJuGDkDpACRqHGFup+SbFhx/4dZQwAFObwlTmi1gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733019; c=relaxed/simple;
-	bh=rioT+zs/EUwp5ugIuBu8haUrQ9xy69x6OZ0brgp5GCc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HCieDT6OSL6xz5VZpJuAVdyv7m2l6wcyHfM/OBa9M+t4lGVZwSvgUsLLqeZiQz7KZ3SD1Eb6Wt24e6xeWTTzla7HfJFFlqXd8Gs4qYxSIbUcPlsCk/d1yNZqNiOd+5JW+P+V7eKWJBmVRFo8VRvvozp2QDXlDZ3Bj/Oe++OhcO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z428d3V8qz1R5vg;
-	Fri, 28 Feb 2025 16:54:57 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4C8B914010D;
-	Fri, 28 Feb 2025 16:56:33 +0800 (CST)
-Received: from kwepemn200003.china.huawei.com (7.202.194.126) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 16:56:33 +0800
-Received: from localhost.localdomain (10.175.101.6) by
- kwepemn200003.china.huawei.com (7.202.194.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 16:56:31 +0800
-From: zhangmingyi <zhangmingyi5@huawei.com>
-To: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@google.com>,
-	<haoluo@google.com>, <jolsa@kernel.org>
-CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <yanan@huawei.com>,
-	<wuchangye@huawei.com>, <xiesongyang@huawei.com>, <liuxin350@huawei.com>,
-	<liwei883@huawei.com>, <tianmuyang@huawei.com>, <zhangmingyi5@huawei.com>
-Subject: [PATCH bpf-next v4 2/2] selftest for TCP_ULP in bpf_setsockopt
-Date: Fri, 28 Feb 2025 16:53:40 +0800
-Message-ID: <20250228085340.3219391-3-zhangmingyi5@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250228085340.3219391-1-zhangmingyi5@huawei.com>
-References: <20250228085340.3219391-1-zhangmingyi5@huawei.com>
+	s=arc-20240116; t=1740732869; c=relaxed/simple;
+	bh=ZvK6C2oIFOBpbz7tsIqs78gU5UkTLIzkwpiUI4de2Js=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CifNkzHycDNIgj6mfXh64oVvsLL3fvxULftQ5KJ2OiTPIIIMH/tmZ+vo0bz+4ceAn7Fjonl+Ls2aOuYeRfyBDejz0qg0OEKTvqtN655RBjBmYcjuQdrCKV1KcE91ayXUVddOqCdYasZKc9nA2AAmHZA56jaUmEMsWYnnxyt30dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkY93gCW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so11930905e9.1;
+        Fri, 28 Feb 2025 00:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740732866; x=1741337666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PU3VROE0VC3jFwJOOb4ASIIAwndMW9ZvNWHPQLq2Hc=;
+        b=OkY93gCW2s85y2Zw2SCqr9xrdZ2PFfGwYfNDDBAyiefuixoUP4/XS/CXaSUvbXKsm3
+         BxDYqkpSjSV7/TbBms1O/70qCsB4/xjUkkEGMtuk5zlA5CA1roHtQlMlE10aJrOQePu6
+         h+X00j4wkR5z3SGjKZYkByR2j+OHtdNjU22r1Nyq8VV0FwboDo5tEz+ieVmPpUk4jsLZ
+         NUwqkJXkjNemz3JifF8P003fmnvTsLVF2lbHTA/v1Z4A9zVm5sYFNNAB0YAtyJaiohbQ
+         BN7Wf1So3GVX+/mVXLCu3/gmuzx0+jYzz2RrZB4nkX8pR+rct8Wf8hBR9TgczvdPa73T
+         PH1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740732866; x=1741337666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4PU3VROE0VC3jFwJOOb4ASIIAwndMW9ZvNWHPQLq2Hc=;
+        b=YUS/9axDljZ0l8mundNFGcZGgsFczl5R1jsvW954+WnM+EP4wsUb+28e/jUS29ODZo
+         6oqQbbzzH24Yh4hC+LDKcnM42N2pl0FtSTsUhqYzB7EjbYGpbqZNsC+Z0lElQiFlGYi2
+         molEhl8TqSKIFbnk7dVUH60S+ntls0FhJuIpm07QAQW6/00+kUyAQbemTe0HxUkHc4/J
+         GlvHKoSxWb9m8EdQ7Dd5rHwsB1CKmqBJ+bPJudnMUQ8OJjZYZYJE8x8hDOM152+mqrji
+         DiO8hFLKom4U6T9frmYqsDzhFZgoS9RuLVxXpTymz+PKFwoAcbJ6vxYhkXy5139uI+X8
+         E11A==
+X-Forwarded-Encrypted: i=1; AJvYcCX+9a/A+FQkBejji7LY8wtrdicZaHQdZwyBTXe6S+xxV41pwYYoa/ivNg3R4SpF3kOMkybr4Q9f0njrags=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyD+6IOkiuHBb6z/kxiBcfa2NKHz0wsWC410cHUZgNnrIWKBPc
+	IM+ZmgTECie3+DJVssRSIQb+BpkLHZgQDYdAQJzzUTs1RklxHj91
+X-Gm-Gg: ASbGncuwAjxwjNPntA3BSOC3aW65rRNGB8YjVGD3dF1CgIf0frpMGXhSViyo7GGl0/Z
+	Hf797Gg4oT7SLcxWn20iLeB6lXJTLA2acpah8kl3eV8ufk0Vg6TZaPGIllhMWM1Ljg2KbsDQ87O
+	qjsdGKtDZIdm27YchraAXV9jwd/mW3/UPC7VOzAafE8CKjo4f+GwRWCk8GxDXUXDs0BF1J3YAoM
+	+3ISP8N9tFb7yVeCTOuBSnud3R8qaQLLDDDuV5EW8RIhC361Ey5b4dCk230lm6p09EQ514ElSE8
+	zURNM3ivl0f2s1QDlUNREnBqUrY=
+X-Google-Smtp-Source: AGHT+IFdN9QWjQoWfvRrcmLYLHSNfLWzrvfKg1j1asn0+L35lErLU+3cgXYWH8XIqwOdFUt4mobwmQ==
+X-Received: by 2002:a05:600c:4193:b0:439:9384:7d08 with SMTP id 5b1f17b1804b1-43afdd934eemr55383815e9.2.1740732865675;
+        Fri, 28 Feb 2025 00:54:25 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba5871d8sm79843175e9.37.2025.02.28.00.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:54:25 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/connector: Fix spelling mistake "provded" -> "provided"
+Date: Fri, 28 Feb 2025 08:53:50 +0000
+Message-ID: <20250228085350.678446-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemn200003.china.huawei.com (7.202.194.126)
 
-From: Mingyi Zhang <zhangmingyi5@huawei.com>
+There are spelling mistakes in drm_err messages. Fix them.
 
-We try to use bpf_set/getsockopt to set/get TCP_ULP in sockops, and "tls"
-need connect is established.
-To avoid impacting other test cases, I have written a separate ebpf prog.
-
-Signed-off-by: Mingyi Zhang <zhangmingyi5@huawei.com>
-Signed-off-by: Xin Liu <liuxin350@huawei.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- .../selftests/bpf/prog_tests/setget_sockopt.c | 32 +++++++++++++++++++
- .../selftests/bpf/progs/bpf_tracing_net.h     |  1 +
- .../selftests/bpf/progs/setget_sockopt.c      | 24 ++++++++++++++
- 3 files changed, 57 insertions(+)
+ drivers/gpu/drm/drm_connector.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-index e12255121c15..2953076bc2f0 100644
---- a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
-@@ -199,6 +199,36 @@ static void test_nonstandard_opt(int family)
- 	bpf_link__destroy(getsockopt_link);
- }
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index 5f24d6b41cc6..9cf347f70643 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -2525,13 +2525,13 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
+ 		return 0;
  
-+static void test_tcp_ulp(int family)
-+{
-+	struct setget_sockopt__bss *bss = skel->bss;
-+	struct bpf_link *skops_sockopt_tcp_ulp = NULL;
-+	int sfd = -1, cfd = -1;
-+
-+	memset(bss, 0, sizeof(*bss));
-+
-+	skops_sockopt_tcp_ulp =
-+		bpf_program__attach_cgroup(skel->progs.skops_sockopt_tcp_ulp, cg_fd);
-+	if (!ASSERT_OK_PTR(skel->links.skops_sockopt_tcp_ulp, "attach_cgroup"))
-+		return;
-+
-+	sfd = start_server(family, SOCK_STREAM,
-+			   family == AF_INET6 ? addr6_str : addr4_str, 0, 0);
-+	if (!ASSERT_GE(sfd, 0, "start_server"))
-+		goto err_out;
-+
-+	cfd = connect_to_fd(sfd, 0);
-+	if (!ASSERT_GE(cfd, 0, "connect_to_fd_server"))
-+		goto err_out;
-+	ASSERT_EQ(bss->nr_tcp_ulp, 3, "nr_tcp_ulp");
-+
-+err_out:
-+	close(sfd);
-+	if (cfd != -1)
-+		close(cfd);
-+	bpf_link__destroy(skops_sockopt_tcp_ulp);
-+}
-+
- void test_setget_sockopt(void)
- {
- 	cg_fd = test__join_cgroup(CG_NAME);
-@@ -238,6 +268,8 @@ void test_setget_sockopt(void)
- 	test_ktls(AF_INET);
- 	test_nonstandard_opt(AF_INET);
- 	test_nonstandard_opt(AF_INET6);
-+	test_tcp_ulp(AF_INET6);
-+	test_tcp_ulp(AF_INET);
+ 	if (!supported_colorspaces) {
+-		drm_err(dev, "No supported colorspaces provded on [CONNECTOR:%d:%s]\n",
++		drm_err(dev, "No supported colorspaces provided on [CONNECTOR:%d:%s]\n",
+ 			    connector->base.id, connector->name);
+ 		return -EINVAL;
+ 	}
  
- done:
- 	setget_sockopt__destroy(skel);
-diff --git a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-index 59843b430f76..f3ce0d74be18 100644
---- a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-@@ -47,6 +47,7 @@
- #define TCP_NOTSENT_LOWAT	25
- #define TCP_SAVE_SYN		27
- #define TCP_SAVED_SYN		28
-+#define TCP_ULP			31
- #define TCP_CA_NAME_MAX		16
- #define TCP_NAGLE_OFF		1
- 
-diff --git a/tools/testing/selftests/bpf/progs/setget_sockopt.c b/tools/testing/selftests/bpf/progs/setget_sockopt.c
-index 6dd4318debbf..80b3179c0454 100644
---- a/tools/testing/selftests/bpf/progs/setget_sockopt.c
-+++ b/tools/testing/selftests/bpf/progs/setget_sockopt.c
-@@ -20,6 +20,7 @@ int nr_connect;
- int nr_binddev;
- int nr_socket_post_create;
- int nr_fin_wait1;
-+int nr_tcp_ulp;
- 
- struct sockopt_test {
- 	int opt;
-@@ -417,4 +418,27 @@ int skops_sockopt(struct bpf_sock_ops *skops)
- 	return 1;
- }
- 
-+SEC("sockops")
-+int skops_sockopt_tcp_ulp(struct bpf_sock_ops *skops)
-+{
-+	static const char target_ulp[] = "tls";
-+	char verify_ulp[sizeof(target_ulp)];
-+
-+	switch (skops->op) {
-+	case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
-+		if (bpf_setsockopt(skops, IPPROTO_TCP, TCP_ULP, (void *)target_ulp,
-+							sizeof(target_ulp)) != 0)
-+			return 1;
-+		nr_tcp_ulp++;
-+		if (bpf_getsockopt(skops, IPPROTO_TCP, TCP_ULP, verify_ulp,
-+							sizeof(verify_ulp)) != 0)
-+			return 1;
-+		nr_tcp_ulp++;
-+		if (bpf_strncmp(verify_ulp, sizeof(target_ulp), "tls") != 0)
-+			return 1;
-+		nr_tcp_ulp++;
-+	}
-+	return 1;
-+}
-+
- char _license[] SEC("license") = "GPL";
+ 	if ((supported_colorspaces & -BIT(DRM_MODE_COLORIMETRY_COUNT)) != 0) {
+-		drm_err(dev, "Unknown colorspace provded on [CONNECTOR:%d:%s]\n",
++		drm_err(dev, "Unknown colorspace provided on [CONNECTOR:%d:%s]\n",
+ 			    connector->base.id, connector->name);
+ 		return -EINVAL;
+ 	}
 -- 
-2.43.0
+2.47.2
 
 
