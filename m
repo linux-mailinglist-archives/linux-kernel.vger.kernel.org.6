@@ -1,91 +1,116 @@
-Return-Path: <linux-kernel+bounces-537537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCBCA48D2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:21:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D39A48D38
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD4E3B7346
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B371890E5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E425A4A0F;
-	Fri, 28 Feb 2025 00:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBEB18C31;
+	Fri, 28 Feb 2025 00:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rO2aj4Cu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A86175BF;
-	Fri, 28 Feb 2025 00:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXKUfYbN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E974DA934;
+	Fri, 28 Feb 2025 00:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740702106; cv=none; b=V0zZpVpYnWtLh+m/ljU5lLwb1vGZeBFOPKuVQOTxu4a1I+uqQcgqk9OT+Tx+bbs+0tnW0KcZQ/adL+zr2XLbbO32LNQ7PRbi+ub/umJWHmqeW8HjmPb9aW1a7lzrL2aheLDtvNNk/0B1LW9Voibxu96zAwDZGuT2FkHHmWs6EQA=
+	t=1740702407; cv=none; b=gdosJcN6WTYgN4zFXiB3NuG8442p/mDC5xQCIOMAjEjunDfHgCy/hlSBK6nw/iWzeT636NsomEx0a38/6MC7C2MPGFPt1ETSvR04yroUSR1Gsc98vnOMXz+Q+Jq9CNOmLdyyzeM1p0w3IsGF7RtoU2v+xKGVxD3lDyIFrK7J4UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740702106; c=relaxed/simple;
-	bh=fnbRBzQp+fcMejleRa4ySLM5Rd37akHgiqwA98kULkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EMZS4BZ20CZpKlY1QM/M+dhu0vltUSdCJMvwILkrg78I9W4CrRbUSB2e/nrA+phBZLoyiFlOHjckHTwwksGtzspzWxp2l7/H3rkbZD0UtYg3guEv/ynTGHu4C/C39Ibco1WVfCmSDekttPVlrde9pjzWzCCJp3gX5qQyu4EE1H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rO2aj4Cu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0B9F1210EAC1;
-	Thu, 27 Feb 2025 16:21:44 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B9F1210EAC1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740702104;
-	bh=laxQUa2iwGyTNDtBa6S1LG374rW09RB1CYSVN9bF2Ew=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rO2aj4Cu80fRwlpTq389v36uTw+53TKIzBHJgNH9RbHbV31yyxs7t5moGAqalVVLz
-	 pW3c3b2Rbgis+2faahPrWY0gcG+RyLONFYtSrWhG5J6Di1GR5AyCqPSI3n7BcZYYcr
-	 OPv5FPMPhyWA5pMcsXLrORKizHmr2coZx3nGe46w=
-Message-ID: <9c8b92d3-d3fc-42a6-9493-2e18508c5890@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 16:21:43 -0800
+	s=arc-20240116; t=1740702407; c=relaxed/simple;
+	bh=b52fyAXulgYPgaXAdn+6P89qxSKuyBlkfSkjks/g4Ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pufWZOVR0lf8yFWq3M1bJRJXNCmz4vizvqaMosruQm6oHwU9CNQKnRdaBC6Q2icAVnEx1VcPrczrLBOVkdKljpy3yje8qoiyBsoCd+3jF1EbkbKm46xnR7+eEKyuhxvCEW0ad3pwEBxx4yZe05smfhQC/arcmt7Qlhm/IVJU1KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXKUfYbN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3451C4CEEF;
+	Fri, 28 Feb 2025 00:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740702405;
+	bh=b52fyAXulgYPgaXAdn+6P89qxSKuyBlkfSkjks/g4Ps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pXKUfYbNAEqq/uFuilMHgi+D/nKC70+eFpKPV7Tn2Q3fCcMLm/BwkMV3kX/j6ZFr7
+	 2VOyAetxygCZ56XEiOHOtbEQnIi9ThOSdLYjKHTOtO6x75QBDLy1cPs5AS5Usp+E7T
+	 vTHO/efLyillS4TuEd85Zvhy/n9LWQJyRLSkz8W56sN/3hrSKrdZEukvDlSS7dt8Vz
+	 QAsD8qMchnOsRFLETIqPF2Vihgho2up5pM/DdsvYn27LaBmFopG/lNZyCy3PILEwWa
+	 oxQZPPQUNLnlM+KVSNY2KAHgPqIpA0Pz448mbrmdZD3BxQ8vQbzu4fFdQuW4F6bcXi
+	 eegAVHYl56lVw==
+Date: Thu, 27 Feb 2025 18:26:42 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
+Message-ID: <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
+References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/10] hyperv: Introduce hv_recommend_using_aeoi()
-To: Roman Kisel <romank@linux.microsoft.com>, linux-hyperv@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-acpi@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-5-git-send-email-nunodasneves@linux.microsoft.com>
- <f509907e-019b-4d16-a0d4-1a5acfe8592e@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <f509907e-019b-4d16-a0d4-1a5acfe8592e@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
 
-On 2/27/2025 10:04 AM, Roman Kisel wrote:
+On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
+> The initial QCE node change is reverted by the following patch 
+
+s/is/was/
+
+> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
+> because of the build warning,
 > 
+>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+>     ...
+>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
 > 
-> On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
->> Factor out the check for enabling auto eoi, to be reused in root
->> partition code.
->>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> ---
+> Add the QCE node back that fix the warnings.
 > 
-> I think adding "No functional changes" would bring some benefit:
-> that's an additional invariant to check against when reviewing.
+
+Are you saying that adding this node back will fix the warning?
+
+I'd expect that you would say something like "The changes to the
+Devicetree binding has accepted, so add the node back".
+
+Regards,
+Bjorn
+
+> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-Thanks, I can add it for next version :)
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 23049cc58896..b0d77b109305 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
+>  				 <&apps_smmu 0x481 0x00>;
+>  		};
+>  
+> +		crypto: crypto@1dfa000 {
+> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
+> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
+> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
+> +			dma-names = "rx", "tx";
+> +			iommus = <&apps_smmu 0x480 0x00>,
+> +				 <&apps_smmu 0x481 0x00>;
+> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
+> +					 &mc_virt SLAVE_EBI1 0>;
+> +			interconnect-names = "memory";
+> +		};
+> +
+>  		stm: stm@4002000 {
+>  			compatible = "arm,coresight-stm", "arm,primecell";
+>  			reg = <0x0 0x4002000 0x0 0x1000>,
+> -- 
+> 2.34.1
+> 
 
