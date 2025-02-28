@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-537538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D39A48D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:27:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12CFA48D44
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B371890E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0DE316E233
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBEB18C31;
-	Fri, 28 Feb 2025 00:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC09460;
+	Fri, 28 Feb 2025 00:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXKUfYbN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVFELRzW"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E974DA934;
-	Fri, 28 Feb 2025 00:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE9C1C01;
+	Fri, 28 Feb 2025 00:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740702407; cv=none; b=gdosJcN6WTYgN4zFXiB3NuG8442p/mDC5xQCIOMAjEjunDfHgCy/hlSBK6nw/iWzeT636NsomEx0a38/6MC7C2MPGFPt1ETSvR04yroUSR1Gsc98vnOMXz+Q+Jq9CNOmLdyyzeM1p0w3IsGF7RtoU2v+xKGVxD3lDyIFrK7J4UU=
+	t=1740702465; cv=none; b=f5VyykWzD+OnxpwmMHgBtYUaYhnLMsOsKZr4TEbFoFJ2KDQ23Cs1zNNm3QwoeDJE12T//Psfq2L4VpwgmUUVpi1/jm3xw2dTjNjBc8I6iyhi4YV/xOzKH+6gvVZhi1/dD3tCvUGxw7DwAxHUAQsJwO2hS/L7H066E/Hjn6EEAbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740702407; c=relaxed/simple;
-	bh=b52fyAXulgYPgaXAdn+6P89qxSKuyBlkfSkjks/g4Ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pufWZOVR0lf8yFWq3M1bJRJXNCmz4vizvqaMosruQm6oHwU9CNQKnRdaBC6Q2icAVnEx1VcPrczrLBOVkdKljpy3yje8qoiyBsoCd+3jF1EbkbKm46xnR7+eEKyuhxvCEW0ad3pwEBxx4yZe05smfhQC/arcmt7Qlhm/IVJU1KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXKUfYbN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3451C4CEEF;
-	Fri, 28 Feb 2025 00:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740702405;
-	bh=b52fyAXulgYPgaXAdn+6P89qxSKuyBlkfSkjks/g4Ps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pXKUfYbNAEqq/uFuilMHgi+D/nKC70+eFpKPV7Tn2Q3fCcMLm/BwkMV3kX/j6ZFr7
-	 2VOyAetxygCZ56XEiOHOtbEQnIi9ThOSdLYjKHTOtO6x75QBDLy1cPs5AS5Usp+E7T
-	 vTHO/efLyillS4TuEd85Zvhy/n9LWQJyRLSkz8W56sN/3hrSKrdZEukvDlSS7dt8Vz
-	 QAsD8qMchnOsRFLETIqPF2Vihgho2up5pM/DdsvYn27LaBmFopG/lNZyCy3PILEwWa
-	 oxQZPPQUNLnlM+KVSNY2KAHgPqIpA0Pz448mbrmdZD3BxQ8vQbzu4fFdQuW4F6bcXi
-	 eegAVHYl56lVw==
-Date: Thu, 27 Feb 2025 18:26:42 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-Message-ID: <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
+	s=arc-20240116; t=1740702465; c=relaxed/simple;
+	bh=usACp1Fytu0FQ82mCfBBWBEi7F0eED7aci1NMNS2fJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e/z8ozwKL3iRMJxTSC5biRZk8oGqdePsRGhSC76kSvtJ4B4zg1pWhrGWGWHsNY8P8+WwdjbnmOKBQilqelqJgWIm4fLC3SpMAfvggtgmj873Gwuzx7H3pJbTxyrTRXMrbiRWtta0M8bCPaT0ODghHUbFUKm6BR9BWUyyp2CMFRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVFELRzW; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f44353649aso2555306a91.0;
+        Thu, 27 Feb 2025 16:27:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740702462; x=1741307262; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cOGpWEpFZoFhnnUL6vRF5rCZdZE128rFqODXlLPLjyw=;
+        b=ZVFELRzWILPzPGN61977kZc1X6ND+/fvYiOAjFuvlDSgKW7W9y/mv6cGMRVwsHvNZn
+         IjI/RvvAG6jjt+Y8awhesIvB8L+F+uusEMX0kEuslg7qKmTcWo6h9jFRb0wSl54nd3Kw
+         MUmjsAXI8Qu5X2EfcZ6/OttJDDkLI2c9izAJ9EjbenzTpMSl3HaK7cRX8uwEVpnkoy/v
+         aIFd9FM2x5yGPqRM4OnqI6HkUgo+R/SJ7ZXqk37IiC41nGtuaHFy+WUyN8GAddVeW+YL
+         PVChLbLYvytBvWmzJ2szCAI4LWUnI8a1WX2mP3VvEtEiT3K6w1pLM1R+khyetfQDKVUB
+         6IrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740702462; x=1741307262;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cOGpWEpFZoFhnnUL6vRF5rCZdZE128rFqODXlLPLjyw=;
+        b=fxPJhYmzA6Zu1B8JsyX1Az1ovdYCf/QMlMBROmNWHx2MhPqrQZwOW2NMc6mQpvfdr2
+         OsDxNzDMey8r2KtB8LisKXxKI7JFVxNkBq4N1v2j7qixwLmtAMofU8YgNvVf72YHA210
+         uILnFMHuQd/jc2B3jekWb01V3uRB5hEo2WC8KCjkKR4j8LffYgi5w9e23FVu7GbMLzzm
+         Drep50opFwlwEuA+KXvTnRqb5vFMxhks31eZUDMHffLITCP00LDnm/+9S1zutz6xaYtU
+         RskVleTScVu4L+hdhbg/+NChnXtWe69XTKmtZeP0u5hBGBGZtbH+00ITeU/rvj8k39jB
+         IWhg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3t1a3NIM0o6mmR/mSXWyi7tGo5sj9z9JJ2J9/o5qcOCnLCokKFdPatNuQPYKk2MmsLArCTm1MiXVA@vger.kernel.org, AJvYcCVJAIPSFHwrsFriGGlucz/DERaUcYHMRds1kaZtCGnucjNPi8ewOtWW51/ot2kqA3TUlQtq+oApvra8nXTm@vger.kernel.org, AJvYcCVJwWilvkbN8obE6wt9wKGatmKDeYWOmncDYj3OLd0Ly7OwPMgulAC9rjZlsV1COuXZ3P7NtrhG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzAkjjyq9YezA7MOmgxkTtfdIQy7A5vct/6qHGXazyB38cQkHr
+	f4jlTxpyraJ9lp3V7UxSfzT363khfxdBaEZ8wrXWQrv1lOBkWlvx
+X-Gm-Gg: ASbGncujbebu8JZu3oWk3CG0xscAGndZOr64Da8kFmsGZe42Cmvux3VNCAwtkA2WTPP
+	mZXuTc6clKFWTqr+oUFtKUZt8PLzgDinVKrh+jtf8/v8SDnmZCXT481S+ol/85zhJt63k9zlUy9
+	g+xagE0i2eZlPBbrVInpEVj9EWtsXc9/gYdWDfZMZ5o3G8dhV+zjRR5fJ12hXf2iBSr0DtvlnDV
+	uzK9BGksckbhJVjZxNGo1EnXRpjeltedIBEbXreTPfIeyP6TB9YUMxSwF7AMlSqYaF6Kti2qO4g
+	MoZDfFXa9HQelrkwP+wag0LNx3C0VHp7004dP7a3D6eULg==
+X-Google-Smtp-Source: AGHT+IHXBBC8ljYes/EltY6ClB6ux2PJGByCqbPWFjPc825Ynl4CDOt2cR5oNI8bpcyHrhbht4aknw==
+X-Received: by 2002:a17:90b:4b86:b0:2fe:b5d1:dbf4 with SMTP id 98e67ed59e1d1-2febabdc2f9mr2285289a91.33.1740702461989;
+        Thu, 27 Feb 2025 16:27:41 -0800 (PST)
+Received: from localhost.localdomain ([205.250.172.194])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe82840e62sm4511094a91.34.2025.02.27.16.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 16:27:41 -0800 (PST)
+From: Kyle Hendry <kylehendrydev@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: noltari@gmail.com,
+	jonas.gorski@gmail.com,
+	Kyle Hendry <kylehendrydev@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] net: phy: bcm63xx: add support for BCM63268 GPHY
+Date: Thu, 27 Feb 2025 16:27:14 -0800
+Message-ID: <20250228002722.5619-1-kylehendrydev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
-> The initial QCE node change is reverted by the following patch 
+Some BCM63268 bootloaders do not enable the internal PHYs by default.
+This patch series adds a phy driver to set the registers required 
+for the gigabit PHY to work. 
 
-s/is/was/
+v3 changes:
+- Remove syscon for the GPHY control register
+- Change driver to access the GPIO controller syscon
+- Move syscon phandle from mdio bus to phy node
+- Remove unecessary devm_phy_package_join()
+- Made functions static to fix build warning
+- Fix formatting and whitespace issues
+- Add schema for PHY driver
+- Deassert PHY reset signal 
 
-> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
-> because of the build warning,
-> 
->   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->     ...
->     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
-> 
-> Add the QCE node back that fix the warnings.
-> 
+v2: https://lore.kernel.org/netdev/d819144d-ce2f-4ea5-8bfb-83e341672da6@gmail.com/
+- Remove changes to b53 dsa code and rework fix as a PHY driver
+- Use a regmap for accessing GPHY control register
+- Add documentaion for device tree changes
 
-Are you saying that adding this node back will fix the warning?
+v1: https://lore.kernel.org/netdev/20250206043055.177004-1-kylehendrydev@gmail.com/
 
-I'd expect that you would say something like "The changes to the
-Devicetree binding has accepted, so add the node back".
+Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
 
-Regards,
-Bjorn
+Kyle Hendry (3):
+  net: phy: bcm63xx: add support for BCM63268 GPHY
+  net: phy: enable bcm63xx on bmips
+  dt-bindings: net: phy: add BCM63268 GPHY
 
-> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 23049cc58896..b0d77b109305 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
->  				 <&apps_smmu 0x481 0x00>;
->  		};
->  
-> +		crypto: crypto@1dfa000 {
-> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
-> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
-> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
-> +			dma-names = "rx", "tx";
-> +			iommus = <&apps_smmu 0x480 0x00>,
-> +				 <&apps_smmu 0x481 0x00>;
-> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
-> +					 &mc_virt SLAVE_EBI1 0>;
-> +			interconnect-names = "memory";
-> +		};
-> +
->  		stm: stm@4002000 {
->  			compatible = "arm,coresight-stm", "arm,primecell";
->  			reg = <0x0 0x4002000 0x0 0x1000>,
-> -- 
-> 2.34.1
-> 
+ .../bindings/net/brcm,bcm63268-gphy.yaml      |  51 +++++++++
+ drivers/net/phy/Kconfig                       |   4 +-
+ drivers/net/phy/bcm63xx.c                     | 101 ++++++++++++++++++
+ 3 files changed, 154 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.yaml
+
+-- 
+2.43.0
+
 
