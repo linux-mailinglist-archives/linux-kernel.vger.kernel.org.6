@@ -1,81 +1,157 @@
-Return-Path: <linux-kernel+bounces-538117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B13A494BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:21:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3961A494C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C7317106D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65EE57A985C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD43524C67B;
-	Fri, 28 Feb 2025 09:21:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66EF1C2324
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F183424A046;
+	Fri, 28 Feb 2025 09:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="BB53on2S"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9EE1C2324
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734494; cv=none; b=tRqnQReLd5xkGe7sA6CFulCMqR/9SblPQ+jMH4HdEplvzwZM5/1smG4k7FISv9fM3pREDjW5FztxQfrJGRAGSTalBI3ISXgkpaeFPQaJdUvpa+ZNVdyPpjiJIyaE4s9hpQm5Ie0DUVTlpRyPxKcveq6jMs5krS1fFv53q+g4PYE=
+	t=1740734527; cv=none; b=sMVNPv2qjbrVrN1UrFsAJFZBsmAcpdyBUN52eKuaae0oDxZgaVECO9/3GSAQbIDm7XvvQnTwevOwNWMZ3xJqIkGZG1Ri/t8kbhVKc3kUJMCIyIT8FsubSclzcCogezsDKIUgsztiuNdVXgeV9G3weXNen+ELlLSC1RuAjc4Mdgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734494; c=relaxed/simple;
-	bh=CltBDih/UFpGka+hBw0AlgOQ7YqRsfv+JeLCRzAMn34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ot4sYqcPrmnCQ+yed+IO75SqpYA1He/1lxLxkPB2qszt5feqqJKg7FPKG6kREzJmjTwUlXIOt/2KCVgyFG37CvGWkSQYcF6GlQNcCIf0DwdhMtd8VKChYX0nzDz9lyKoEJndEUpIHyFnt/6UxKfAmVIXryUDkb2STqYZnrG4FBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FA201515;
-	Fri, 28 Feb 2025 01:21:40 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A6FD3F673;
-	Fri, 28 Feb 2025 01:21:23 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:21:20 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Bill Mills <bill.mills@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_ffa: Set dma_mask for ffa devices
-Message-ID: <Z8GAEDVIUiooPjf_@bogus>
-References: <e3dd8042ac680bd74b6580c25df855d092079c18.1737107520.git.viresh.kumar@linaro.org>
- <Z4osWNCUfufciZNG@bogus>
- <20250228082745.rc2u5jiqnq7h737l@vireshk-i7>
+	s=arc-20240116; t=1740734527; c=relaxed/simple;
+	bh=9h4g6Xq7+qt9vrg/isJrzGdIn31jXKxf7V2H9WCRPMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ASyj5QFzwcbM4WqZ9hmHUFcrdHGa+/Qi3uVSbBg4omS91SK7uZHWEWQcMbo+8TyMF5LLKajqOtr8fARYhYvhYaxbaSn9ErqCGwfaLIkx7/afaRoolWCUBwU6ZfVmV+MYNKCT/VAy1zO5uyAAHUUtKIUbcjwV9No5yyeNV4FeXZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=BB53on2S; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=WBBTkblEXBxFsJYPymXDFJAe/vnTFzbtnD/Nx9Tb6DY=;
+	b=BB53on2SKjQ6lG8RncsKGcVUMiRWDwUMORrFQSRaB6f4E7+Yr5nvFrgn4QFlwANrO/R8gmTzPDu4Q
+	 r7jbsdhNvocmYu6nET+d3a7xgifWVXpT4rq44nm5gYXuipymgo1ttyVUlwH418ywCcVed0rFxACq2D
+	 VWPsW2myVCJLismtgz83aTo+MXgod3YTEE4hpDtgNr2DDhyu2Enf6A2DWQdB+caXIaYnJ+r0zhsscX
+	 9gQKxjSCJXC+4qUKgl2bQ4wiZniQKIWQdpDg9xZTuC81vxVh70oSp3aN2i5+ibUkyFWzXfeXvoY4ag
+	 9ZcVM/tQyFo6xHo5PH6KHDld1Y04KuA==
+X-MSG-ID: 77ece18d-f5b5-11ef-a39b-00505681446f
+Date: Fri, 28 Feb 2025 10:22:01 +0100
+From: David Jander <david@protonic.nl>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+Message-ID: <20250228102201.590b4be6@erd003.prtnl>
+In-Reply-To: <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-8-david@protonic.nl>
+	<20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228082745.rc2u5jiqnq7h737l@vireshk-i7>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 01:57:45PM +0530, Viresh Kumar wrote:
-> On 17-01-25, 10:09, Sudeep Holla wrote:
-> > On Fri, Jan 17, 2025 at 03:35:52PM +0530, Viresh Kumar wrote:
-> > > Set dma_mask for FFA devices, otherwise DMA allocation using the device pointer
-> > > lead to following warning:
-> > > 
-> > > WARNING: CPU: 1 PID: 1 at kernel/dma/mapping.c:597 dma_alloc_attrs+0xe0/0x124
-> > >
-> > 
-> > Looks good, will add to my queue after next -rc1.
+
+Dear Krzysztof,
+
+Thanks for reviewing...
+
+On Fri, 28 Feb 2025 08:12:45 +0100
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+> On Thu, Feb 27, 2025 at 05:28:23PM +0100, David Jander wrote:
+> [...]
+> > +description: |  
 > 
-> Ping.
+> Do not need '|' unless you need to preserve formatting.
 > 
+> > +   Simple motor control device based on 1 or 2 PWM outputs  
+> 
+> Your schema does not allow 1. Test it.
 
-Sorry I forgot to respond. I kept this out for now as we need to resolve
-the DT bindings.
+Ok, that came as a surprise to me. Thanks!
 
-If you think it can be used/needed irrespective of how we resolve that
-issue ? If so, I can queue this.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - motion-simple-pwm
+> > +
+> > +  pwms:
+> > +    maxItems: 2  
+> 
+> List and describe items instead.
+> 
+> > +
+> > +  pwm-names:
+> > +    maxItems: 2  
+> 
+> List items instead.
+
+Will do in next iteration. Thanks.
+
+> > +
+> > +  motion,pwm-inverted:
+> > +    $ref: /schemas/types.yaml#/definitions/flag  
+> 
+> And PWM flag does not work?
+
+I have seen PWM controllers that don't seem to support the
+PWM_POLARITY_INVERTED flag and those where it just doesn't work. Should all
+PWM controller drivers always support the PWM_POLARITY_INVERTED flag, even if
+it needs to be inverted in software? If so, there are some drivers that need
+fixing.
+
+> Anyway, there is no "motion" company.
+
+Got it. Dropped all the "motion," prefixes.
+
+> > +    description:
+> > +      If present, this flag indicates that the PWM signal should be inverted.
+> > +      The duty-cycle will be scaled from 100% down to 0% instead 0% to 100%.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - pwms
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/motion/common.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    // This example shows how to use the TI DRV8873 or similar motor controllers
+> > +    // with this driver
+> > +    motion-simple-pwm0 {  
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> e.g. motor {
+
+Will change. Thanks.
+
+Best regards,
 
 -- 
-Regards,
-Sudeep
+David Jander
 
