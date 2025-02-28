@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-539635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5ADEA4A6BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:54:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B18BA4A6BE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C82E3BBFEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5913BC013
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3751DF979;
-	Fri, 28 Feb 2025 23:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285081DF96C;
+	Fri, 28 Feb 2025 23:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9ZnM6JH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iZpP9uaQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F27B1DEFFE;
-	Fri, 28 Feb 2025 23:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55261DED57;
+	Fri, 28 Feb 2025 23:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740786879; cv=none; b=WWwMp/j/1naIw8gHReroNNEkQ9mmu8PkzIPDZBj55Af2UEANgfYtcFByJ5fS6dr2FB2KmmuOAuFUn17mxi6o9LbblXUse6VZLXAf/wynPctR3biW7kEN/kLKWpofbVrYb47khGAr7LqFOCWhzkuAqXSr7D2KwpYPPS1PL/5IaFQ=
+	t=1740786963; cv=none; b=RAE9Tqe9gDSR0IjFqlvTlCfsab8x0qYAm+m37qJtEsScCg/z6kSy1gpmWVepDbyJw05umSZ2v0M+OW0/FgTpYUVl8o0o5kkWx3+SVryo3QjL5uS4QwFL0LgER07ZXL9h0lLhve6LkO5dTpKkrUM6b9E18GKMnUsyDr7p2sCsBeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740786879; c=relaxed/simple;
-	bh=meXfgJ4qxRqs856ARbJTcb0is5paBEeQc14p2Gq+rlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uDTMCPFov578QiwNIXDBd9N555ImgJopn7dFg90z97xvv0j7sHB4S/EkY+n1utD2ZEEn+EFpaM0jnMvkL6G27mb3SZT2Z8fJG+6MKgxQLFfZxnE7kA4JyccfERSVQ1OJu/dMhfBKqtMgDbD0+3UF2tjwlm/dzzymDsHdCMr9BDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9ZnM6JH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A05BC4CED6;
-	Fri, 28 Feb 2025 23:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740786879;
-	bh=meXfgJ4qxRqs856ARbJTcb0is5paBEeQc14p2Gq+rlg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R9ZnM6JH0pKLzwVyveSo5/ao6bSPuqZewXvvSjOciLJSedR0I8JFU4fM2fn2eGXDJ
-	 kpRQDZNpMp22IXlRJ+0KBqoGD5WJHNrW4MJOi/GU7wTKjs0i515Ls84RsMKRk8hKfw
-	 AOfCDaeV5J1CoOp/ryFvmnHiCiDXUPWEuIabh9tcAbew8Q4Ddz+rftbPXKd1YiMyOK
-	 /9ipD9vxBbEuyViTdcxKDwnNHFwdAW2/L4TtnERBv2gbvzCpup+c6Iros7tqxYoOdw
-	 At9YwBe7OH/ykd9GC84fSCKtkWitVBnyz3vz2alwBlVxCbuEY8RLPtbrLELnH9uGfO
-	 BoPeLQ9WAAHpw==
-Date: Fri, 28 Feb 2025 15:54:37 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Paolo Abeni
- <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman
- <gal@nvidia.com>, "Leon Romanovsky" <leonro@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Shahar Shitrit <shshitrit@nvidia.com>,
- Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [PATCH net-next 3/6] net/mlx5e: Enable lanes configuration when
- auto-negotiation is off
-Message-ID: <20250228155437.0a6ec42a@kernel.org>
-In-Reply-To: <20250226114752.104838-4-tariqt@nvidia.com>
-References: <20250226114752.104838-1-tariqt@nvidia.com>
-	<20250226114752.104838-4-tariqt@nvidia.com>
+	s=arc-20240116; t=1740786963; c=relaxed/simple;
+	bh=jTCdtpRYTRHsMVAmFB/azfiEkPNOYIqmEoX6aj1pEFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Avxg7vQ5pdAv8O6SkqnEbKzq0zbY+evpvdYL8kuI92RQlzIXnB8NskHsLx7XmTqtFcEx3zBywFioaKes8GhPS8hkJ86TTIXs2fhJgq8lFd5MLhA+EL3S3b/RFodCoOPYKQAainIQWYhSAGu5TDWpkz5O3AXg1g6d2qpRuNeRCso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iZpP9uaQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E5DB18BE;
+	Sat,  1 Mar 2025 00:54:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740786870;
+	bh=jTCdtpRYTRHsMVAmFB/azfiEkPNOYIqmEoX6aj1pEFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iZpP9uaQpR66kiiaPF92LMEb35IpeO2GD9C2KMxOyqjXlhvDV0zzctzBqODBjYvgs
+	 j0bK89QAMzr4sdPXTBsODKp1N6FM8h658nyRZ+f2f4OtK31bvcBspPHWdB3jBvIBQO
+	 3Nb82ZUj91bm+/UZTXXvHX14ztrSeIZZ7w1jeDk4=
+Date: Sat, 1 Mar 2025 01:55:39 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] media: rkisp1: Remove unnecessary defines
+Message-ID: <20250228235539.GG7342@pendragon.ideasonboard.com>
+References: <20250227114558.3097101-1-stefan.klug@ideasonboard.com>
+ <20250227114558.3097101-4-stefan.klug@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227114558.3097101-4-stefan.klug@ideasonboard.com>
 
-On Wed, 26 Feb 2025 13:47:49 +0200 Tariq Toukan wrote:
-> diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
-> index 84833cca29fe..49d50afb102c 100644
-> --- a/include/uapi/linux/ethtool.h
-> +++ b/include/uapi/linux/ethtool.h
-> @@ -2192,6 +2192,8 @@ enum ethtool_link_mode_bit_indices {
->  #define SPEED_800000		800000
+Hi Stefan,
+
+Thank you for the patch.
+
+On Thu, Feb 27, 2025 at 12:45:01PM +0100, Stefan Klug wrote:
+> The effect modes are not shifts but numbers which are already defined a
+> few lines above. Remove the misleading defines.
+
+s/misleading/misleading and unused/ (I didn't expect you to
+intentionally break the build, and I'm sure it would be caught by my
+build tests, but making it clear for reviewers is always nice)
+
+> 
+> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+No need to resubmit for this, I can update the commit message.
+
+> ---
+>  drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
+> index bf0260600a19..139177db9c6d 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-regs.h
+> @@ -327,13 +327,6 @@
+>  #define RKISP1_CIF_IMG_EFF_CTRL_CFG_UPD			BIT(4)
+>  #define RKISP1_CIF_IMG_EFF_CTRL_YCBCR_FULL		BIT(5)
 >  
->  #define SPEED_UNKNOWN		-1
-> +#define LANES_UNKNOWN		 0
-> +#define MAX_LANES		 8
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_BLACKWHITE_SHIFT	0
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_NEGATIVE_SHIFT	1
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SEPIA_SHIFT	2
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_COLOR_SEL_SHIFT	3
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_EMBOSS_SHIFT	4
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SKETCH_SHIFT	5
+> -#define RKISP1_CIF_IMG_EFF_CTRL_MODE_SHARPEN_SHIFT	6
+>  #define RKISP1_CIF_IMG_EFF_CTRL_MODE_MASK		0xe
+>  
+>  /* IMG_EFF_COLOR_SEL */
 
-Almost missed this.
-
-Any reason you're adding to the uAPI header?
-Just because that's where SPEED_UNKNOWN is defined?
-IIRC lanes are only reported via netlink, so we don't need 
-to worry about sharing unspecified values with user space.
-Stuff added to the uAPI header is harder to clean up,
-if you don't have a strong reason I think we should move 
-these defines to the kernel header.
 -- 
-pw-bot: cr
+Regards,
+
+Laurent Pinchart
 
