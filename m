@@ -1,337 +1,187 @@
-Return-Path: <linux-kernel+bounces-539121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC55A4A12E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A4FA4A12F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB981899E0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC7E3B3D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8A5270041;
-	Fri, 28 Feb 2025 18:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C42726F444;
+	Fri, 28 Feb 2025 18:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTkeFiC4"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fFdVy6LP"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2067.outbound.protection.outlook.com [40.107.101.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0E1A2554;
-	Fri, 28 Feb 2025 18:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740766206; cv=none; b=IXBO3r/24Lqa+5MNHD+vH4dKo+ojo/oT0I4xX86TvPluzPi98gohpBFEXATTE28Jd4zxjGL7hm+9I/94q/QW08vwsBKRFJVGwvFR9YglAsoqKGJ4aaCAXsizHB52Jz39Hv+0lrkir9spy6wQSb2jDdDmT2px9stM2LGkFI7y0Z8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740766206; c=relaxed/simple;
-	bh=rhA4akekKRdwqdS9h1H7Eg8sQ2gCjlaGLY+tCx8QsS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1RWiU/hrfJE9bOP7A6TuuvTOfJwLWtJ1A+DCWs/PaoijpTLLe0MjNXrdr7qATeDQ2afIfZcowIHbn+tttCVVLohcDG0GjZ7FNlk1LA+NXX9C0i58RKeMFEvqASXGkMDspAlz/yBjqa/Jmb8gD0AvlSY4OEWe7Zk/vK98lZc09s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTkeFiC4; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471f88518c8so13669741cf.0;
-        Fri, 28 Feb 2025 10:10:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740766204; x=1741371004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T+wQDbrlA+fHjAMKtxH8m9yh6D78UzXdvzdjms36zho=;
-        b=iTkeFiC48NgpNle3wySbwe6YIaGkuT5/+/X3tUrcXn2LCg8EWCeOO/FXkLd2LRPkdf
-         S4nlvHu7zfjOOZmyygxA4SyJzOZn6tsnJSi8htAnjkvIdJbzzvNTll/tg96LLKTO4LyY
-         NGiQj+OAtdORNGvc5536hWWxaSReY9aYP8eUvrnLKloHeqphBD/AJHKCR7swzsrH7xzr
-         uycg+62xXPImBIEo3FP2KeGLxSx5F6OsggTy5LfOzrCu3Kuz4ZwQGONtt78yUVxZ5mXY
-         MYf3fuo2Vn9aJpz/Hj24WjApS+j7WV8zNLjqYr6JXpOrqT04h/DYYiY7gF5Aozr6cRIT
-         fpzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740766204; x=1741371004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T+wQDbrlA+fHjAMKtxH8m9yh6D78UzXdvzdjms36zho=;
-        b=BmrOPG186XCHGBGlpnUXLVM7SaKkh10hr0bbOUyLMe/6dc+LcDgwCJmK6mgSVacMI1
-         LsQut7pkSjiQz4fPNkbmnghFaDTCPuVuKs/9f82Ll5mM2sF8N7IITfjbz1Q88S/im7G4
-         I9XR4ln7dt/S0+28dJM7ZRav12vpPgPB1SAUMygKgltcPwV5bvHt7UNjF30CsrVufX9z
-         mfI5NFTevLDnZYwFPBQNXewl9vL1XlY7AIx/wvIlZp8NZ7GdDp23yjaFlojG5Xcg9LN+
-         7FGDabIrOMQICWCynM+VBFK/Tx+ytrHI0/ZA0Taq6LZe5TbnnYvylUn88HQ+hbS/tIqj
-         ealw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0wgM+sgY/UbosuujQuEzequr08W2TtkWYq/YQvXJQoB+SROlDgyPZYCNojhRBtJwhVDfqnoCuOh2Atio=@vger.kernel.org, AJvYcCXp0BxlS8KwXv95a5ay3+JMU8roTriXawixBWOBpq0h+8xJX6H5siLGIqDWv1xmOYnEtz9o2tKc/Inuv7J/jPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVgX+njhr5KGUW9eO2b28YP5PLPZ27dXiWJ51v+zcta4Y8qrMJ
-	jKj5CIb/ThWhIRKVXksPsx1Lkfy9qQK+RVIJ5H/7FMqq32+Hz/j8
-X-Gm-Gg: ASbGnctQouF/RXNGlWUSK2aCtV9KdA90F3A+GXQMzS2b704QyT+NWCwTndqomjA8Q0e
-	2t6aX5IuhX0HiiBv79pAuXIMv7w0/nTSMrvUnowUn7NqSOcGQm4QKhCQVHytElU2OAa1kohCpO2
-	I81hcs5RYvW7Q4iJUPh8dy4wyUwWrz03FgpFUK1KSQ4m2i70sOfPGsShOyB9Df462QLirBhVi/G
-	9KM5CaCdgIb7kFk13se9FmKiFrxZKiGoIWFwKmnZjS8T+z9miVdOSFttL+20B+uEyOdAZIPaQzG
-	V6BanjICVYqsh0FFbxoJvacgr165FVOX2w4ic+c1EyEjy53S3n6SF/p/IC9vvWlSyKnfdaUedEB
-	WH93+aTVwr/C3dXZh
-X-Google-Smtp-Source: AGHT+IHuo0HsFsiIjlhxfg+74IXiGdTCyskrqQYRV6vFHzDTSfrqtPY18e74+VczM/PgceUb1pwG8A==
-X-Received: by 2002:a05:622a:646:b0:471:ca95:217c with SMTP id d75a77b69052e-474bc09e3f5mr54460901cf.23.1740766203514;
-        Fri, 28 Feb 2025 10:10:03 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474721bf65asm27261871cf.36.2025.02.28.10.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 10:10:03 -0800 (PST)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 87E321200069;
-	Fri, 28 Feb 2025 13:10:02 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Fri, 28 Feb 2025 13:10:02 -0500
-X-ME-Sender: <xms:-vvBZx4pjCND-jW1ddpWb5J0h2SA_Odo_RCpYlMggzum0VpGmGbzSQ>
-    <xme:-vvBZ-6RPEPI2QpcJsTgmv5nrX1xU4kcFMkKeUxXHAkPNFwsIKbh2LFlHppXR9e4N
-    R7gqpLrU4IDZN0j6A>
-X-ME-Received: <xmr:-vvBZ4dOru6eeK9idQoNhbrZxxSBR5Wl4R9np2vmhzQwn1nOrXVmrBfWns8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeluddtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepieegudejffeggfduveekueelhedvuddvvddu
-    keejjedufeeuhfekgfeuhffgtefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpph
-    htrhdrrghsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghe
-    dtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhes
-    fhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepohhlihhvvghrrdhmrghnghholhgusehpmhdrmhgvpdhrtghpthht
-    oheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvug
-    grsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpth
-    htohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohep
-    sggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprghlihgtvg
-    hrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuhhmihgt
-    hhdrvgguuh
-X-ME-Proxy: <xmx:-vvBZ6IlHPajZp0P52V0xiSwiJgLYMQnyCMzqu2_gY1F8FtIZvFsNQ>
-    <xmx:-vvBZ1JWZ30qnNNRhat-CLklBnveKMUg2Pn7qXqgxiHWY93HtdVlFA>
-    <xmx:-vvBZzwJDG2Y8La5W4Hph6zG4dDYbEXftMCM8NT1hwqg6teEozFt6g>
-    <xmx:-vvBZxJoWTwE9f9RPRA1ATDf5Qypou96i-XO62vbVTDFOMaKij64EA>
-    <xmx:-vvBZ4ZI2poARgxEvEWhqO5gbB2hv5-3EYPtGmjFe-X-gfv_75z6RnLc>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Feb 2025 13:10:01 -0500 (EST)
-Date: Fri, 28 Feb 2025 10:09:11 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] rust: adding UniqueRefCounted and UniqueRef types
-Message-ID: <Z8H7xx6_rIFTyV5V@boqun-archlinux>
-References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
- <Z8H6EUy1HqLrzytE@laptop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5F1A2554
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740766270; cv=fail; b=PuBwAIstctdp1S6M30KDm4/VMWAPq+i5RmwGZpqs+3Gkr/peVNE/6lKR6ru1UPybq6CW2QN2Lkz2D5Uobb81zGkQm+N5Bl/N1nRPS4fpMjBKn4Bg7M8f/rhBO2O/tKOYiCzgdHfJTVWoDpzWL9cqfz/U2wB11WqtEngRU6pYGks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740766270; c=relaxed/simple;
+	bh=oKn+mz+T//gRheIulcRhpQiqqMv193ut3CSLZIGyjy0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivt7yyLKbsJ5aO0zFmdOXa2dQ5LNntKs18Iz0OSnPHtgi3LEmvDPCvuHnJ4w1EXdDg2Hv70D9aCcfEo/B1pjP5cXgV++rVRt1V5Ohhm55gln9zIoHnel3vo9L0yB8Wlbj1vnhUs/QXHPAbDR9ULcBNVt8PjBhyrW1DEgEXmRwTo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fFdVy6LP; arc=fail smtp.client-ip=40.107.101.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tTUYYqoPxKauzQ7zMT+P874l59RtG2ypNKyIolaTV6iA+KHY5C4/YqkZZ7JtbrLopZuJp1mVqI2EJAsUTSsAS5eBG/Zc8bW8a3e6m4xCZRfGliHl350ZRf/+6AWrG4qpLsD3TksUdi+kLqmJv0efKEiY9u6Fd9knm9QYl/WdlXAgkRhm9i2PjPyJ3RHr5n25Dr7wvrnD/MOWKzJ9G0zuktmu25Mz51nUaAUh1Ps5yOKu8dhatQR0gH8f0EucpC5HMdFOjv+rO+OPZ1qpkq6GS3Lme0NGOUFXbZwxc4LYixKSUHykh7jZZwbZYO7Dgv0s/QjwrnqsBE6LosvrpGTQdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wN6FbwONKODgJuGDeixQSnXondekSykquzuRmBat3TM=;
+ b=P23aVsWl9OS72V1/jLXkeUPCOlITqsxJUUXatu6QsmbbcGVX81pSxSB/RwsX+jA4+DeQVUOId1iNHQxhgK/dchQwofqymp5KWhfIklVlTJU5xkNx95wN4dpsNx7rYaHRgoZVnBNKomS2rLudl5DJwElc+61Dv68KtkHXDluEOZqCNIwlwThZLKkcWyYLV2e6bpta7S77VDRrfFaprNd1tXOHQ5XL4/jTDEpEHm23IH7VpkazpEElpmuIS7aI13PR7kmRordCBSR85PmJtbkATh6uG/PrDruhQZW58pkm+CKhNbNgi/cfX9uG67QOrQGklt3q+h6rUfUxZyMMld0iYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wN6FbwONKODgJuGDeixQSnXondekSykquzuRmBat3TM=;
+ b=fFdVy6LPkx/as6HZI34XirKVatVyM28s32bfnXD9CkJbNpWjEfIvL+VJ6wo/6v8ZLbcBKrMe9+IIh1pQK9XfjzREsWd5JSW5kwgll+4sU+CuKWsVLPo+yXvgLGB569WBbMwKf3GWi+8fQbBr8HZ223bh7ldhpmTMcc7IcgSc+SWQctemTo1NZh3gfRH1+Uy6TgkWasnLhvzwAoo9s2BUNrwFI46SirpSAWSwR4NrbC3q7nk+bPFgGU5JohRkOdnXmbS8mtIbO1oUZOo7/iyxQb7BMTTCHn8XTiqQRP+EpcwJRCmreFLXt8vUU7tAO7f3GjGCMNCTWlG0LHtstzC8EA==
+Received: from MW4P222CA0012.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::17)
+ by BL3PR12MB6521.namprd12.prod.outlook.com (2603:10b6:208:3bd::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
+ 2025 18:11:05 +0000
+Received: from SJ1PEPF00001CDC.namprd05.prod.outlook.com
+ (2603:10b6:303:114:cafe::e5) by MW4P222CA0012.outlook.office365.com
+ (2603:10b6:303:114::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.22 via Frontend Transport; Fri,
+ 28 Feb 2025 18:11:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00001CDC.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 18:11:04 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Feb
+ 2025 10:10:45 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 28 Feb
+ 2025 10:10:45 -0800
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 28 Feb 2025 10:10:45 -0800
+Date: Fri, 28 Feb 2025 10:10:43 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<will@kernel.org>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] iommufd: Move iommufd_sw_msi and related
+ functions to driver.c
+Message-ID: <Z8H8I5UTiLfGNESS@Asurada-Nvidia>
+References: <cover.1740705776.git.nicolinc@nvidia.com>
+ <ece6ab9a0144eaabc285eb21a09da683d6d9951c.1740705776.git.nicolinc@nvidia.com>
+ <20250228173212.GC39591@nvidia.com>
+ <Z8H4VL+OUfi2+5eA@Asurada-Nvidia>
+ <20250228180215.GE39591@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Z8H6EUy1HqLrzytE@laptop>
+In-Reply-To: <20250228180215.GE39591@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDC:EE_|BL3PR12MB6521:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6987a4f0-5c30-461b-a735-08dd582343f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?B8dI/XfoKmUh++LCIqLa05UboQojzzWfhANxHPigGNA7MuyAvwgsJY90sBrK?=
+ =?us-ascii?Q?QTESbImiNX3LfaCIf8T0C5KVjMxf8KHMG2iNAEtF85LOwLGGIY2rUTxowTsq?=
+ =?us-ascii?Q?6l3S7S6FHL6RV7bv1+uE8AOBhUyMmOfq3pgWgZrkBQwQOA260iOxSB/D08H+?=
+ =?us-ascii?Q?cSV/BHTxGFSXPW8bJ9AoCbP6D4f9Kmq7zY7BQySbR/ABN1r2ftDJG5T9ibrG?=
+ =?us-ascii?Q?pPWDpFBEznQWXD5kSuNH7PoeZkz+qOP3DyAnfLWGIoX6FxkLIK6J/0w11+j5?=
+ =?us-ascii?Q?MGVpd4cuSD2cQHNW2D7D0GsUH6LTL4Efo9/d/EA1QaVPGptZO+X1NAAk/TbE?=
+ =?us-ascii?Q?EgTeLgw93I/JXQJwZSEqjh0OWu/SRfbbNTB3D06sVIeHxegfxG+jKq4wqK+r?=
+ =?us-ascii?Q?na1gt5hl/YT3l6+oQiQXrwvKBk7Voyt5+N6VKRPzn6rSO29TaZ1h03mgHrE8?=
+ =?us-ascii?Q?rGNZBJpHYIUOHzkg3eKYrxemmy56nEMzknAE7tkJvjigZn251NbrSa+6dmSs?=
+ =?us-ascii?Q?n43u26Tu8iSjwhqJ2eOezMXVburXODsAlrZc1iGjQrL4hClgTjKpSicyg4Pf?=
+ =?us-ascii?Q?zD9Cqsuk5+bM5cRtFLjlpQM+U+U0iYpRBTB5Vq7+N5GM2tp8K9oJ2p8tLP/4?=
+ =?us-ascii?Q?2AA20IMvAxhe0P31o24nD6Voack3UIwbPZg2sRMglYOWm+lBDMYHlIF8/90D?=
+ =?us-ascii?Q?lNNx8oHJjsjTr2bc0JFh5zWyMmJh2McGDBK1kg7o9JiWEUJDQaO/DP9zsr0W?=
+ =?us-ascii?Q?MiduopjZG9b+E+XjLEmiqsBSq4Cv4BPbjAg9Nn8t5aWVoAV8O+ofGNf88iBr?=
+ =?us-ascii?Q?lQze4JnbNCJ/2+KmxvVjvIdLWyZxBjOeEBAC0wGUxWFGYpEjo2yUXHCiDigA?=
+ =?us-ascii?Q?jSMe3OvqV0O7Uq46HPQNAVZt1kQsi/AdcaYD+OJ6GfmFFRyW7Ep3ZD0uGBxc?=
+ =?us-ascii?Q?pHKVybjcHNA09/3qKP6iTmEy05d/QM24xsHo9Wez5t0F7MZjJENMsbmFIc0A?=
+ =?us-ascii?Q?9yiVPRAvoMziOEL9e6omPbvc7Dl6EIWuDY7J/tJffB0rEaEW5ljPETaQ6wnP?=
+ =?us-ascii?Q?9wTFP/7CU2DTctMWMcx3VgNzVVR2q9diiB5F+UH7CEPI1w67bLZLhV4xfT4g?=
+ =?us-ascii?Q?BJTh8DJFJ2fdCN4TduFkNBIqROApvxG/hkAfdQepXeqLZDNU7si9cOti+ZCr?=
+ =?us-ascii?Q?YTaZfc5te2Z1NjQsHTdeKv4NcbLYCXR/3tsqgTrpnQ/P1gE1W6hSV/pQNkd3?=
+ =?us-ascii?Q?39o3Hm3mltIP+WhLgICTVt5fmbvbdr1lrT0rvgGJneUzgAzDGayBL7JSXPSU?=
+ =?us-ascii?Q?h4hJzHVVLHQUfJdzR8kG4hFMaTDaCR8GM0rgRHFOAYwYXZmj153zQTjMCnYu?=
+ =?us-ascii?Q?MyHliLfTCEYFjvYJazF+WCo4TBYHDBF32qbbUHNx6et5ROzPgeklQfJ0bphG?=
+ =?us-ascii?Q?ps/NEEGIruXRorsoX2D0Bxu8E5gs0nX5VIuq19+qoxkyH1caCA0BsUMeI2xs?=
+ =?us-ascii?Q?171LT9tGNM1yZJE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 18:11:04.2122
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6987a4f0-5c30-461b-a735-08dd582343f4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6521
 
-On Fri, Feb 28, 2025 at 06:01:55PM +0000, Oliver Mangold wrote:
-> For usage with block-mq, a variant of ARef
-> which is guaranteed to be unique would be useful.
-> As chances are it is useful in general, This implements it
-> as kernel::types::UniqueRef.
-> The difference between ARef and UniqueRef
-> is basically the same as between Arc and UniqueArc.
+On Fri, Feb 28, 2025 at 02:02:15PM -0400, Jason Gunthorpe wrote:
+> On Fri, Feb 28, 2025 at 09:54:28AM -0800, Nicolin Chen wrote:
+> > > Stubbed out too if CONFIG_IRQ_MSI_IOMMU ?
+> > 
+> > In that case, the other caller iommufd_group_setup_msi() could be
+> > {
+> > #if IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
+> > 	....
+> > 	iommufd_sw_msi_install();
+> > 	...
+> > #endif
+> > 	return 0;
+> > }
+> > ?
 > 
-
-Please add the "# Examples" section as I requested:
-
-	https://lore.kernel.org/rust-for-linux/Z8HcHVtPiG-X6ujP@Mac.home/
-
-I also would like to know why do you think it's OK to ignore my previous
-comment, thanks!
-
-Regards,
-Boqun
-
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> ---
->  rust/kernel/types.rs | 153 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 153 insertions(+)
-> 
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 55ddd50e8aaa..72a973d9e1c7 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -543,6 +543,12 @@ fn from(b: &T) -> Self {
->      }
->  }
+> Or a empty static inline
 >  
-> +impl<T: UniqueRefCounted> From<UniqueRef<T>> for ARef<T> {
-> +    fn from(b: UniqueRef<T>) -> Self {
-> +        UniqueRefCounted::unique_to_shared(b)
-> +    }
-> +}
-> +
->  impl<T: AlwaysRefCounted> Drop for ARef<T> {
->      fn drop(&mut self) {
->          // SAFETY: The type invariants guarantee that the `ARef` owns the reference we're about to
-> @@ -551,6 +557,153 @@ fn drop(&mut self) {
->      }
->  }
->  
-> +/// Types that are [`AlwaysRefCounted`] and can be safely converted to an [`UniqueRef`]
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that the methods of the trait
-> +/// change the reference count of the underlying object such that:
-> +/// - the uniqueness invariant is upheld, i.e. it is not possible
-> +///   to obtain another reference by any means (other than through the [`UniqueRef`])
-> +///   until the [`UniqueRef`] is dropped or converted to an [`ARef`].
-> +/// - [`UniqueRefCounted::dec_ref`] correctly frees the underlying object.
-> +/// - [`UniqueRefCounted::unique_to_shared`] set the reference count to the value
-> +/// - that the returned [`ARef`] expects for an object with a single reference
-> +///   in existence.
-> +pub unsafe trait UniqueRefCounted: AlwaysRefCounted + Sized {
-> +    /// Checks if the [`ARef`] is unique and convert it
-> +    /// to an [`UniqueRef`] it that is that case.
-> +    /// Otherwise it returns again an [`ARef`] to the same
-> +    /// underlying object.
-> +    fn try_shared_to_unique(this: ARef<Self>) -> Result<UniqueRef<Self>, ARef<Self>>;
-> +    /// Converts the [`UniqueRef`] into an [`ARef`].
-> +    fn unique_to_shared(this: UniqueRef<Self>) -> ARef<Self>;
-> +    /// Decrements the reference count on the object when the [`UniqueRef`] is dropped.
-> +    ///
-> +    /// Frees the object when the count reaches zero.
-> +    ///
-> +    /// It defaults to [`AlwaysRefCounted::dec_ref`],
-> +    /// but overriding it may be useful, e.g. in case of non-standard refcounting
-> +    /// schemes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The same safety constraints as for [`AlwaysRefCounted::dec_ref`] apply,
-> +    /// but as the reference is unique, it can be assumed that the function
-> +    /// will not be called twice. In case the default implementation is not
-> +    /// overridden, it has to be ensured that the call to [`AlwaysRefCounted::dec_ref`]
-> +    /// can be used for an [`UniqueRef`], too.
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: correct by function safety requirements
-> +        unsafe { AlwaysRefCounted::dec_ref(obj) };
-> +    }
-> +}
-> +
-> +/// An unique, owned reference to an [`AlwaysRefCounted`] object.
-> +///
-> +/// It works the same ways as [`ARef`] but ensures that the reference is unique
-> +/// and thus can be dereferenced mutably.
-> +///
-> +/// # Invariants
-> +///
-> +/// - The pointer stored in `ptr` is non-null and valid for the lifetime of the [`UniqueRef`]
-> +///   instance. In particular, the [`UniqueRef`] instance owns an increment
-> +///   on the underlying object's reference count.
-> +/// - No other references to the underlying object exist while the [`UniqueRef`] is live.
-> +pub struct UniqueRef<T: UniqueRefCounted> {
-> +    ptr: NonNull<T>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +// SAFETY: It is safe to send `UniqueRef<T>` to another thread
-> +// when the underlying `T` is `Sync` because
-> +// it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally, it needs
-> +// `T` to be `Send` because any thread that has an `UniqueRef<T>` may ultimately access `T` using a
-> +// mutable reference, for example, when the reference count reaches zero and `T` is dropped.
-> +unsafe impl<T: UniqueRefCounted + Sync + Send> Send for UniqueRef<T> {}
-> +
-> +// SAFETY: It is safe to send `&UniqueRef<T>` to another thread when the underlying `T` is `Sync`
-> +// because it effectively means sharing `&T` (which is safe because `T` is `Sync`); additionally,
-> +// it needs `T` to be `Send` because any thread that has a `&UniqueRef<T>` may clone it and get an
-> +// `UniqueRef<T>` on that thread, so the thread may ultimately access `T`
-> +// using a mutable reference, for example, when the reference count reaches zero and `T` is dropped.
-> +unsafe impl<T: UniqueRefCounted + Sync + Send> Sync for UniqueRef<T> {}
-> +
-> +impl<T: UniqueRefCounted> UniqueRef<T> {
-> +    /// Creates a new instance of [`UniqueRef`].
-> +    ///
-> +    /// It takes over an increment of the reference count on the underlying object.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the reference count is set to such a value
-> +    /// that a call to [`UniqueRefCounted::dec_ref`] will release the underlying object
-> +    /// in the way which is expected when the last reference is dropped.
-> +    /// Callers must not use the underlying object anymore --
-> +    /// it is only safe to do so via the newly created [`UniqueRef`].
-> +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> +        // INVARIANT: The safety requirements guarantee that the new instance now owns the
-> +        // increment on the refcount.
-> +        Self {
-> +            ptr,
-> +            _p: PhantomData,
-> +        }
-> +    }
-> +
-> +    /// Consumes the [`UniqueRef`], returning a raw pointer.
-> +    ///
-> +    /// This function does not change the refcount. After calling this function, the caller is
-> +    /// responsible for the refcount previously managed by the [`UniqueRef`].
-> +    pub fn into_raw(me: Self) -> NonNull<T> {
-> +        ManuallyDrop::new(me).ptr
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
-> +    type Target = T;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: The type invariants guarantee that the object is valid.
-> +        unsafe { self.ptr.as_ref() }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> DerefMut for UniqueRef<T> {
-> +    fn deref_mut(&mut self) -> &mut Self::Target {
-> +        // SAFETY: The type invariants guarantee that the object is valid.
-> +        unsafe { self.ptr.as_mut() }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> From<&T> for UniqueRef<T> {
-> +    /// Converts the [`UniqueRef`] into an [`ARef`]
-> +    /// by calling [`UniqueRefCounted::unique_to_shared`] on it.
-> +    fn from(b: &T) -> Self {
-> +        b.inc_ref();
-> +        // SAFETY: We just incremented the refcount above.
-> +        unsafe { Self::from_raw(NonNull::from(b)) }
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> TryFrom<ARef<T>> for UniqueRef<T> {
-> +    type Error = ARef<T>;
-> +    /// Tries to convert the [`ARef`] to an [`UniqueRef`]
-> +    /// by calling [`UniqueRefCounted::try_shared_to_unique`].
-> +    /// In case the [`ARef`] is not unique it returns again an [`ARef`] to the same
-> +    /// underlying object.
-> +    fn try_from(b: ARef<T>) -> Result<UniqueRef<T>, Self::Error> {
-> +        UniqueRefCounted::try_shared_to_unique(b)
-> +    }
-> +}
-> +
-> +impl<T: UniqueRefCounted> Drop for UniqueRef<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: The type invariants guarantee that the [`UniqueRef`] owns the reference
-> +        // we're about to decrement.
-> +        unsafe { UniqueRefCounted::dec_ref(self.ptr) };
-> +    }
-> +}
-> +
->  /// A sum type that always holds either a value of type `L` or `R`.
->  ///
->  /// # Examples
-> -- 
-> 2.48.1
+> > > I'm still wondering if we should use a function pointer, how big was
+> > > this compiled anyhow?
+> > 
+> > Hmm, you mean the size of driver.o? It's 192K (before) vs 212K
+> > (after).
 > 
-> Best regards,
-> 
-> Oliver
-> 
+> Yes, but use the 'size' command to measure before/after
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+    722	     44	      0	    766	    2fe	drivers/iommu/iommufd/driver.o
+After:
+   text	   data	    bss	    dec	    hex	filename
+   1888	    100	      0	   1988	    7c4	drivers/iommu/iommufd/driver.o
+
+Thanks
+Nicolin
 
