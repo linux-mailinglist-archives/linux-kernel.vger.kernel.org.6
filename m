@@ -1,207 +1,243 @@
-Return-Path: <linux-kernel+bounces-539181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845AEA4A1BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:36:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C06A4A1C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0816D7ABC30
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3290917584D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA41F8744;
-	Fri, 28 Feb 2025 18:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3173527CCD6;
+	Fri, 28 Feb 2025 18:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PB+7Tdez"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcFQLij8"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C951F09AF;
-	Fri, 28 Feb 2025 18:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F6727CCC5;
+	Fri, 28 Feb 2025 18:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767677; cv=none; b=BUaeSomdK2a9BMMiD/97spH8CwHEwyHciRQJMKjG98E2ZkYS8LG2uJkGaqyVAvsihKH0QoaDgWdhstBYd5iQFOAvTZw3LG5gdha/fL8jnyleK6uWMXbZBxnYRtjDfUd1qUBECTFVNkaV5WmCXtUlH0IpZ/lDIcD5yEIcjl1tKDA=
+	t=1740767791; cv=none; b=IfGhDYkJiVmwP8P94nCmApzTWHNzjm7H5OPcterKSkVvYT2JeLIU6VaDN1WEkntdT2ss4K5uGuwuqyAEuJv4Y0yvtPxxUFA+9jDEpRSgPEgBPF6JCoU9qSJkRPNnU8shxvdfs8sR+0FIFdkoejU+nKmVBXjusHSMRCxU8V0o2jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767677; c=relaxed/simple;
-	bh=YvlNVVZWhItDH8VpooX0xWem+IyaI415jHJZcKprnzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxMwM1ULTARVg4LQLOe1kTMaosyRD2TzwRtni3mV9ubvkg4rgtirwCPf+5NvtAmJEhcvJqDx/EnICd+5K7mGTBreYHt+GNk2DzS2GLj1f0lXvUo9ITtaa7ektYVvCsLSLh7qTFmOFKQJbb04p57/fxJARPleOtPlDzABbosoj64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PB+7Tdez; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740767676; x=1772303676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YvlNVVZWhItDH8VpooX0xWem+IyaI415jHJZcKprnzQ=;
-  b=PB+7TdezTpuNlKGRryFBzgQdpwkwAvisCm1bFZrEagR2gYJYaA01qbiJ
-   yfDXj1x3aQUuQvvkEKOQh949FLpFcslp0WNMgUe3hlT5tfAZjyRwunjm6
-   zRUdQLFrBYb3AYHoc6fc+UNjATNtOh61X8oRpcJj+G70QIotM/6ZC8n26
-   RSnT8ujIx2FrdQ5LVQuyE40b2LRIIQFL6Q3r8ympTXOTWpQQMKjA+GYSy
-   JTQQublBmfCDZUdHcvkOvg5W9B594Z3PnPaImqlvH7tFNPs5RUkCH7Jtd
-   minqoFMj2hzEbLKoRQpmpgIIilN2Hz8qNeQN9xVC9Q8MGqc5gNyuXTUNH
-   g==;
-X-CSE-ConnectionGUID: ixxlZaicRBaAKuii80bgvw==
-X-CSE-MsgGUID: 4VzMeY9CR3OoHVsTsoMbhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53117241"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="53117241"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:34:35 -0800
-X-CSE-ConnectionGUID: k6Y+Rt/HQfGaeCHmncXfUQ==
-X-CSE-MsgGUID: 5ByvKEnwTC6JqCHLGDpeDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="122546843"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.168])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:34:34 -0800
-Date: Fri, 28 Feb 2025 10:34:32 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
- parsing
-Message-ID: <Z8IBuE714QNscgfJ@aschofie-mobl2.lan>
-References: <20250227103251.390147-1-ming.li@zohomail.com>
- <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
- <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
+	s=arc-20240116; t=1740767791; c=relaxed/simple;
+	bh=FOo85UWm0LlESU87rNVLWaSKK4QP39SCLtxM0G1y7aY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QwyJs7v5PUrM4QVvh/6RhMoYcLDKpD1pdCFrkVpHmaqofzFAGnna7HJSWR+ImuKsbiUepvJ8Y+FreqLeQ5aZs2iIJ8a06h5wf/SYCND8VWS2XpLx6z/BsVfrggSPGt9J6EtABNBSnqCxz6BJroixFKPgS+jzVQx60FQx+/m7Mcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcFQLij8; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ded6c31344so3006511a12.1;
+        Fri, 28 Feb 2025 10:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740767788; x=1741372588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcOciFev494FQi+ie3YAuQXZTVFD/MHMZEBQgtl8Sq4=;
+        b=kcFQLij8BHSltIoBPK3w2aYRv42zty8tn8wsDj4Og4z0d9t58dqmgSpdfN3ozZQFcH
+         bd5Pj9LWZoyHE2feg+fZLM8vTczLpLIEiEFL+1J6vbH5kANjHfcIViwxs1qL5t6bSY3g
+         VnxfvyCwt5fRiNNCXQ8E2Q8SwyO4qtxbzCW3nGfBaC/ztA103jb/MgK0HIdW17rfuul0
+         zYmWGZjkAxKTZQaiFBSv96BtKTgsQDkafC9HveVBH6el5mdOXZZp3WQgS6B/yx2hucRr
+         geq33gvEoNv3aXXql/8AhIl9F+Up1xHMfm9+BEolQGeCUcdYOsuCbI5vql8HuW5y/wHl
+         CvwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740767788; x=1741372588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bcOciFev494FQi+ie3YAuQXZTVFD/MHMZEBQgtl8Sq4=;
+        b=gcXfTji0D8fpRRuBfjOOjnOy7kSbkwsj6D+3JOh/GZDGL0g5lgH17N3R1hyqXLl7ci
+         mG31Nova51EC4w0+dZO5H9X6XdBc2cod14aOEwDzOyc9OlfaYHIIEwhoreB3aZLsGlpV
+         /k578AKsH2xXbQxzY6Zex3IMD9SRebfKIMOFFKw0Gc9kmNsuyKpHgQ3unapShlc2K6dQ
+         tdGtYTl6eiDtJrUQmBtmAOxqjJsMoLYJKuB17LgxHJcDNELkZqwUrioQLpOyVSyvJI1O
+         pG7zLCtO5jEafaW4r5IUjsDchKTKNgusYqg4gNne7pcBwzoeVMUQdqSoqW3RVujRCAyz
+         memw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJ58h6RTDNCeCRkwnW7xcuWe2SY1J/h2hqh5bNNpUOivIEt2+gA0hGqJGF+HZOIpn/u9pfme/7iH4JDc=@vger.kernel.org, AJvYcCW/+ZwdZCcUo7lKkx/zBxGjxmTlG3mSujCM9Wbsy373xXXipdoV4alyNYQKD6I/BKmE8faShza63Q0=@vger.kernel.org, AJvYcCXP2Wu3TNEV40FSzD3TXgOxB2XO/0mdqWts7Q4yqtCVie0yMIkKP0vc8GO3fTP2KyiyEeeMYtoGkJU3unsqdqUbq+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb7LYHQKrvz2Nt2DE982pYgAAzUZ7owOPSfj0I5laen7fyEo9h
+	gyFvAO/zvuaaIupDiVmA0wqn3AYiy6tlS8OtLK1Zd7N8RXnp1pj39/OCpHtvSqW3cG+QfHowycz
+	zzzPRRTCI1IDIVSQ/KdenjIOubcU=
+X-Gm-Gg: ASbGncsjLb3Uh5xkflU2WRrXtnO8DLlHDfgb+9QnQJ3TEDky176u8KhowxE4b0d96uE
+	PbVWIn+qw44DEdeevudBSPqI9PzxeqAMWS0U7BPgu9JfEjmVrxGpWb/aaLXRGhmFPnqvW4+pepM
+	I2qeoOJKI=
+X-Google-Smtp-Source: AGHT+IFE3G2KjHi8I1VMEUvtVVJytNjP0/8SzMhjPmWtNq41A0r54s3RwgOnWAEJT6u1F3AfT20PzYxSV85X9vtUhfM=
+X-Received: by 2002:a05:6402:51c6:b0:5dc:5ada:e0c7 with SMTP id
+ 4fb4d7f45d1cf-5e4d6b4c2edmr8497667a12.26.1740767787540; Fri, 28 Feb 2025
+ 10:36:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
+References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-5-linux.amoon@gmail.com>
+ <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
+In-Reply-To: <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 1 Mar 2025 00:06:10 +0530
+X-Gm-Features: AQ5f1JrCuLXPNSAWoUTKE1NaVm2ihsuQ5JSDdwiiFIEGBSN_Yr_bdvM8NVPBMWc
+Message-ID: <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
+ acquiring mutex
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 28, 2025 at 10:47:12AM +0800, Li Ming wrote:
-> On 2/28/2025 5:47 AM, Alison Schofield wrote:
-> > On Thu, Feb 27, 2025 at 06:32:51PM +0800, Li Ming wrote:
-> >> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
-> >> decoder capability, But according to the implementation of
-> >> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
-> > How does a check against the spec maximums benefit this driver? Is there
-> > a bad path we avoid by checking and quitting at this point.
-> 
-> 
-> My understanding is that no a bad path on driver side if the decoder_count is greater than the maximum number spec defines.
-> 
-> Driver just allocates cxl decoders on the port based on the value of decoder_count. But I am not sure if hardware will have other potential problems when it didn't follow the spec.
+Hi Lukasz,
 
-I had the general thought that the driver is not responsible for
-compliance checking the device, unless it affects function. Excessive
-decoder_count's sound like they cause needless allocations, so let's
-stop doing that - as best we can. 
-
-Is it sufficient to clamp at the spec defined max values and continue
-with only a dev_warn_once or even a dev_info?
-ie. for a device: decoder_count = min(decoder_count, EP_DECODER_MAX);
-
-That'll avoid failing a device that previously snuck by with an
-excessive decoder_count and protect against excessive allocations
-in the driver.
-
-> 
-> 
+On Fri, 28 Feb 2025 at 22:58, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+>
+>
+> On 2/16/25 19:58, Anand Moon wrote:
+> > Using guard notation makes the code more compact and error handling
+> > more robust by ensuring that mutexes are released in all code paths
+> > when control leaves critical section.
 > >
-> > Might this catch silly decoder counts that the driver previously
-> > ignored?
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v3: new patch
+> > ---
+> >   drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
+> >   1 file changed, 7 insertions(+), 14 deletions(-)
 > >
-> >> Per CXL specification, the values ranges of decoder_count and
-> >> target_count are limited. Adding a checking for the values of them
-> >> in case hardware initialized them with wrong values.
-> > Similar question - is this catching something sooner, rather than
-> > later?
-> 
-> 
-> Yes, the check is at the beginning of HDM setup during port probing, if value is wrong, will break HDM setup.
-> 
-> I'm not sure if I fully understand your question, please correct me if I misunderstand it. thanks.
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index fe090c1a93ab..a34ba3858d64 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >       unsigned int status;
+> >       int ret = 0;
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >       clk_enable(data->clk_sec);
+> >
+> > @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >
+> >       clk_disable(data->clk_sec);
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >
+> >       return ret;
+> >   }
+> > @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
+> >               return ret;
+> >       }
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >
+> >       data->tmu_set_crit_temp(data, temp / MCELSIUS);
+> >
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >
+> >       return 0;
+> >   }
+> > @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+> >   {
+> >       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >       data->tmu_control(pdev, on);
+> >       data->enabled = on;
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >   }
+> >
+> >   static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
+> > @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+> >                */
+> >               return -EAGAIN;
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >
+> >       value = data->tmu_read(data);
+> > @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+> >               *temp = code_to_temp(data, value) * MCELSIUS;
+> >
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >
+> >       return ret;
+> >   }
+> > @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
+> >       if (temp && temp < MCELSIUS)
+> >               goto out;
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >       data->tmu_set_emulation(data, temp);
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >       return 0;
+> >   out:
+> >       return ret;
+> > @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+> >
+> >       thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >
+> >       /* TODO: take action based on particular interrupt */
+> >       data->tmu_clear_irqs(data);
+> >
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >
+> >       return IRQ_HANDLED;
+> >   }
+> > @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
+> >   {
+> >       struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
+> >
+> > -     mutex_lock(&data->lock);
+> > +     guard(mutex)(&data->lock);
+> >       clk_enable(data->clk);
+> >
+> >       if (low > INT_MIN)
+> > @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
+> >               data->tmu_disable_high(data);
+> >
+> >       clk_disable(data->clk);
+> > -     mutex_unlock(&data->lock);
+> >
+> >       return 0;
+> >   }
 
-I understand now. This one is different that decoder_count because 
-it was heading to failure anyway and seems good to fail sooner.
+Thanks for your review comments.
+>
+> IMO you should be able to even use something like we have
+> core framework:
+>
+> guard(thermal_zone)(tz);
+>
+> Your mutex name is simply 'lock' in the struct exynos_tmu_data
+> so you should be able to leverage this by:
+>
+> guard(exynos_tmu_data)(data);
+>
+> Please try that.
 
-> 
-> 
-> >
-> >> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> >> ---
-> >> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
-> >> ---
-> >>  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
-> >>  1 file changed, 30 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> >> index 70cae4ebf8a4..a98191867c22 100644
-> >> --- a/drivers/cxl/core/hdm.c
-> >> +++ b/drivers/cxl/core/hdm.c
-> >> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
-> >>  	return true;
-> >>  }
-> >>  
-> >> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
-> >> +{
-> >> +	/*
-> >> +	 * CXL r3.2 section 8.2.4.20.1
-> >> +	 * CXL devices shall not advertise more than 10 decoders,
-> >> +	 * CXL switches and HBs may advertise up to 32 decoders.
-> >> +	 */
-> >> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
-> >> +		return -EINVAL;
-> >> +	else if (cxlhdm->decoder_count > 32)
-> >> +		return -EINVAL;
-> >> +
-> >> +	/*
-> >> +	 * CXL r3.2 section 8.2.4.20.1
-> >> +	 * target count is applicable only to CXL upstream port and HB.
-> >> +	 * The number of target ports each decoder supports should be
-> >> +	 * one of the numbers 1, 2, 4 or 8.
-> >> +	 */
-> >> +	if (!is_cxl_endpoint(cxlhdm->port) &&
-> >> +	    cxlhdm->target_count != 1 &&
-> >> +	    cxlhdm->target_count != 2 &&
-> >> +	    cxlhdm->target_count != 4 &&
-> >> +	    cxlhdm->target_count != 8)
-> >> +		return -EINVAL;
-> > Maybe instead of manual bitwise checks try
-> > 	(!is_power_of_2(cxlhdm->target_count) || cxlhdm->target_count > 8))
-> 
-> 
-> Yes, It is clearer, thanks for that.
-> 
-> 
-> >
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  /**
-> >>   * devm_cxl_setup_hdm - map HDM decoder component registers
-> >>   * @port: cxl_port to map
-> >> @@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
-> >>  	}
-> >>  
-> >>  	parse_hdm_decoder_caps(cxlhdm);
-> >> -	if (cxlhdm->decoder_count == 0) {
-> >> +	rc = cxlhdm_decoder_caps_verify(cxlhdm);
-> >> +	if (rc) {
-> >>  		dev_err(dev, "Spec violation. Caps invalid\n");
-> > Can you move the dev_err to the verify function and include the
-> > specific invalid capability.
-> >
-> >
-> > --Alison
-> 
-> Sure, will do that, thanks.
-> 
-> 
-> Ming
-> 
-> 
+Ok, I will check this
+
+Thanks
+-Anand
 
