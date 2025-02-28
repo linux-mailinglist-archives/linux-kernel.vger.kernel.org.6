@@ -1,161 +1,182 @@
-Return-Path: <linux-kernel+bounces-537661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CAFA48ED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:47:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16864A48EDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035B7189022B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8EF16CB69
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2631155C97;
-	Fri, 28 Feb 2025 02:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EB9155393;
+	Fri, 28 Feb 2025 02:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLdAbsJW"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="S4fBoN9I"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B350D23CB;
-	Fri, 28 Feb 2025 02:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710843; cv=none; b=OgYbTJESbn8Aqyg193kzCkLwAMijnm38qpb37KJwms+nvzVaa8jxLcvxWYfuVomocB3gj/Pf3rlG9qzgCSYLrOZWZWi6IMEsDiwJzsj9sUJPPeududFjtiW6ZOjtmlLGGTiS/jJaoIJOXCRZxHPo7fvphUwPWN5Kp6eJ0bAwaIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710843; c=relaxed/simple;
-	bh=CadUsZNuHdq8T8eYzHT8bwyZSzEW5VSwjR7Y6+NTUvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nbh9c3kzfwVwad1Ym4DLQO9Qhwd9m2sjMgC/MUVTldVs7eO2MtgSf2dPgyYWuxbTVxnFdSG9rW5fFab7Ge9eqpC8IxbdyrUpOokEBH0r7JddEP6VzRrXYxalAznqtFR9mb2jWGJ5ZjN0Hu6RPFZVQY+ZpvfRfyeZ0SNXvyk4gdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLdAbsJW; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2234daaf269so43868675ad.3;
-        Thu, 27 Feb 2025 18:47:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740710841; x=1741315641; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNAmch+SoEKe7ryjnsLMCAL7vRLjtwtIKcvaQelbSko=;
-        b=lLdAbsJWHvOT0Dhe6TCv3WT+5SwjSAg7NN6qMqNjie4MKd98tRvyl6SjrlPTXCAw2F
-         1aGnxmnZ+p7U3r3xnuIMmRiZa/5szEIAu89TVSMJXS2gIaq4vCH/PIWMOAqAStf7QL4H
-         P3ls3LiMGpc0bmxBnJ29bnS6uogyskxPKmGP03jA5udLTsI4pAaYOph9IC2cmG/4971d
-         RDscIuIQObTRqNsi307Vhvp9842yogaWTEkA7x/MqGy0LPQGmSk42lBHtQOa4ywJnxZ+
-         GDRPsqLAGAPsPxOSHU8vW19PV5YWy4kACbo4T6VMhHYTFeDDlNIcIteLU2uJoaIGPhYT
-         uhxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740710841; x=1741315641;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HNAmch+SoEKe7ryjnsLMCAL7vRLjtwtIKcvaQelbSko=;
-        b=a9uGIVgBhkNooDFabTQEoa2NkxYY0AjegyHU5h5p9Ou9C4cPkcjhMKDNkiGzymMtgw
-         /HqQcRz8DlK/AZG+QJqxtOcZZlyrnJeh3aMcX/oXFM2+x6Ul6ijUlTvArq4CpwxnoSB6
-         hdmka8w2YA0OuclzDbgI7W1hb3d8rVntwqulhHPTXJQxEbnGtTE8/34JSS2fX2cDUlQv
-         BTslrQztuPViCJT+to41Ij3l+cDbfkpxgNQb3366ysczwE3HNsppY2hTFW8If6DVJjZx
-         ydVsG52jYuIG58+lHve6e5noDW0CpmHBE2V3teR/QHcnogh0oy4G5oLfjXqhPl6/aMyo
-         nvAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn1HfZWhRExJHHfs0FN5WA7UPW5GBF8oUAGleFCRanvC2s73lfJdYwZaE0alwVZsCmdY7MhhaxRhrdVxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQZmjxbavEsLV62bOdYF3OWHDucyDmFpUhrrczldylNgjDnRSc
-	HNeZdamR72INsB6bPxuB3BcTEn8EQ59SY27GqlxLvTITwMfkJ1Zs
-X-Gm-Gg: ASbGncvyUK5/uOBanMOJ1/2f3LZpYU0qAR2N3hO/YzsVlka9wAb4icxZ+sKlDhg91fg
-	ImA7ow0svDf2UM9bPyEpJ+r5LW8fZjSM+4nfs5hpKHGZhvBTnk7vreWaM1lMHCA27Li7BVzBVeq
-	4HIbUtqS4CiccTryEVbRaQycCisv7mDaPR8HjnoBsafsmAx9unT8Q+qzrZ7HAZ8zFiIBbpzne4x
-	hSsvuv5qjizLXrA4Bm3sJWWIoaJ2RwtnxPweQ4DHb1BCHpYnS1q4rWIYWVLMUWSX0Xgq+55AuYK
-	LGNrO62hhSp9/zr865jKyLFbCSJ4HflJkKE=
-X-Google-Smtp-Source: AGHT+IEkm2n2GFsLQr1/cGIFrqEljjG/OBWtdluCiNaPZ5/OZL835Q+L806wLrDE+32pkVJUZep79Q==
-X-Received: by 2002:a05:6a00:1256:b0:732:5954:a815 with SMTP id d2e1a72fcca58-734ac4259d2mr2702592b3a.22.1740710840591;
-        Thu, 27 Feb 2025 18:47:20 -0800 (PST)
-Received: from [198.18.0.34] ([188.253.5.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe2a61fsm2563807b3a.8.2025.02.27.18.47.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 18:47:20 -0800 (PST)
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-Date: Fri, 28 Feb 2025 10:47:07 +0800
-Subject: [PATCH] riscv: dts: sophgo: sg2042: Add spi devices
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8170742A87;
+	Fri, 28 Feb 2025 02:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740710854; cv=pass; b=YzjS0f/JPHFVkckpDZAz3iUN9LhOnEo/AhsxIGQ3An9KwPMVybtXqrPoHGE2UXdcsc05RXtdiK0ENhB17+5JJJ4HjLS2Mgqmr13ZcNwUkFXBYTs1+z3OSrKFxOuewid5KuXgme/Ww977ySgs8ObMXLmJHYsFGFyS5Gcj7rxWCw4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740710854; c=relaxed/simple;
+	bh=jRnyotKrIz3xE9KAt8CfF5YQ2e5ZHfWxfwXfBWEtk44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OI+6cPjxl1pPfhpxv8bE5YfTaklfpyL4JfoMw3YHYt8x89QxV9SVyTw1FDbzFcvFozBBdN4+itrWbgHsdSnjM0qQGSmwhWwpL7z+YED9Ar/CEdGA9mRm66e5v7I7bDHND1LSzHDmamCqfbhCKPENDkxZR36gSdYjMZBdzO/eTPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=S4fBoN9I; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740710839; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=frC96BHeX3wXQzjLQOr0igZe6s4G2mHnP6CNSYWRTEEvGN9ERdumrEfU+X4JFfca9HtnC+fBWTZLInJzZRyT3AHfv3tajCzaCRIl78eCPgLafnvqyAfkNC2nULOYy4tbVLtJwE5xR8PRpxDMG7FxlskstYGvXMMMs3wwpXJJkrs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740710839; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tmh5ew+H6kLNXBeX0vCkVQk8CqBaGCCXYfCYinqFqiM=; 
+	b=JzyfN+bMu++l28o+dOFiG2Iqt6agBUxHoMEUp0G5AJP8aFa5rVDnywK3YzuzEb1A6pRlYfTxDMkfAk/12fTw6SSOTuVRa2oFmftwTnSRR1q4PMsdowIqFdUEh5yELCtC+qaxQn2SCPFRgc1FMgAfX5Tjry/t79jnnPZFMFF0yyY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740710839;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=tmh5ew+H6kLNXBeX0vCkVQk8CqBaGCCXYfCYinqFqiM=;
+	b=S4fBoN9IKgU3ZOB38Nag1WdV2ARMqNOrigZnPZLzw1DJvkOSqEEcjCk4utfif8Im
+	9296kJ3u6t3Emx3DciYNf49EAzXZAaXr/a3i/H+upktcCkRPIlM+JR+mgWLyL+AXle1
+	Z42MADCNaKz+yympN3iry/AZLELDbMr7tt/x3BMU=
+Received: by mx.zohomail.com with SMTPS id 1740710836113177.21630475431164;
+	Thu, 27 Feb 2025 18:47:16 -0800 (PST)
+Message-ID: <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
+Date: Fri, 28 Feb 2025 10:47:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
+ parsing
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227103251.390147-1-ming.li@zohomail.com>
+ <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-sfg-spi-v1-1-b989aed94911@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKojwWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyML3eK0dN3igkzdVOM0o8TU5EQDy8QkJaDqgqLUtMwKsEnRsbW1AMq
- hYU1ZAAAA
-X-Change-ID: 20250228-sfg-spi-e3f2aeca09ab
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, 
- Zixian Zeng <sycamoremoon376@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740710836; l=1648;
- i=sycamoremoon376@gmail.com; s=20250113; h=from:subject:message-id;
- bh=CadUsZNuHdq8T8eYzHT8bwyZSzEW5VSwjR7Y6+NTUvY=;
- b=ThU7hdNRi9sZfNgaOFMZLr51i5KJl828qHO66z6YVkz8nA0MlNWjIq98bdnG2Y163XYGVp50R
- 7XQ6dEHZAXpARYhDxSXLMK1oHaau0Rj6nwJL94Yv8K6DF2jeJtyD+r4
-X-Developer-Key: i=sycamoremoon376@gmail.com; a=ed25519;
- pk=OYfH6Z2Nx3aU1r0UZdvhskmddV6KC6V1nyFjsQQt4J8=
+Feedback-ID: rr08011227bda5bc386ac7805229bd7b7f0000ebd037d407201db7b3a960f81788134882b82c30e525ef0d46:zu08011227648d5c086ae41ed457b75b3c00000de38bb4fe29b1586f95748c1a14fdd72171a11a158fd6c6aa:rf0801122dafa3877bbf6afd3e80a3bef10000939289b6fe9ee8a39cb3997948a5bad320c2d57bc932ae6f5692edd6086f45:ZohoMail
+X-ZohoMailClient: External
 
-Add spi devices for the sg2042 soc.
+On 2/28/2025 5:47 AM, Alison Schofield wrote:
+> On Thu, Feb 27, 2025 at 06:32:51PM +0800, Li Ming wrote:
+>> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
+>> decoder capability, But according to the implementation of
+>> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
+> How does a check against the spec maximums benefit this driver? Is there
+> a bad path we avoid by checking and quitting at this point.
 
-Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
----
- arch/riscv/boot/dts/sophgo/sg2042.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 0fca16c469cc95aa897b6b57e0a287a687b4d251..d413daa47cf081f23284851db1eeceb3a157e9c0 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -800,5 +800,35 @@ flash@0 {
- 				compatible = "jedec,spi-nor";
- 			};
- 		};
-+
-+		spi0: spi@7040004000 {
-+			compatible = "snps,dw-apb-ssi";
-+			#address-cells = <0x01>;
-+			#size-cells = <0x00>;
-+			reg = <0x70 0x40004000 0x00 0x1000>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <110 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkgen GATE_CLK_APB_SPI>,
-+					<&clkgen GATE_CLK_SYSDMA_AXI>;
-+			clock-frequency = <250000000>;
-+			resets = <&rstgen RST_SPI0>;
-+			num-cs = <0x02>;
-+			status = "okay";
-+		};
-+
-+		spi1: spi@7040005000 {
-+			compatible = "snps,dw-apb-ssi";
-+			#address-cells = <0x01>;
-+			#size-cells = <0x00>;
-+			reg = <0x70 0x40005000 0x00 0x1000>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <111 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkgen GATE_CLK_APB_SPI>,
-+					<&clkgen GATE_CLK_SYSDMA_AXI>;
-+			clock-frequency = <250000000>;
-+			resets = <&rstgen RST_SPI1>;
-+			num-cs = <0x02>;
-+			status = "okay";
-+		};
- 	};
- };
+My understanding is that no a bad path on driver side if the decoder_count is greater than the maximum number spec defines.
 
----
-base-commit: 9ef5d3235d41a6f5230d3ddf5eb994483853b3e8
-change-id: 20250228-sfg-spi-e3f2aeca09ab
+Driver just allocates cxl decoders on the port based on the value of decoder_count. But I am not sure if hardware will have other potential problems when it didn't follow the spec.
 
-Best regards,
--- 
-Zixian Zeng <sycamoremoon376@gmail.com>
+
+>
+> Might this catch silly decoder counts that the driver previously
+> ignored?
+>
+>> Per CXL specification, the values ranges of decoder_count and
+>> target_count are limited. Adding a checking for the values of them
+>> in case hardware initialized them with wrong values.
+> Similar question - is this catching something sooner, rather than
+> later?
+
+
+Yes, the check is at the beginning of HDM setup during port probing, if value is wrong, will break HDM setup.
+
+I'm not sure if I fully understand your question, please correct me if I misunderstand it. thanks.
+
+
+>
+>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+>> ---
+>> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
+>> ---
+>>  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
+>>  1 file changed, 30 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+>> index 70cae4ebf8a4..a98191867c22 100644
+>> --- a/drivers/cxl/core/hdm.c
+>> +++ b/drivers/cxl/core/hdm.c
+>> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
+>>  	return true;
+>>  }
+>>  
+>> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
+>> +{
+>> +	/*
+>> +	 * CXL r3.2 section 8.2.4.20.1
+>> +	 * CXL devices shall not advertise more than 10 decoders,
+>> +	 * CXL switches and HBs may advertise up to 32 decoders.
+>> +	 */
+>> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
+>> +		return -EINVAL;
+>> +	else if (cxlhdm->decoder_count > 32)
+>> +		return -EINVAL;
+>> +
+>> +	/*
+>> +	 * CXL r3.2 section 8.2.4.20.1
+>> +	 * target count is applicable only to CXL upstream port and HB.
+>> +	 * The number of target ports each decoder supports should be
+>> +	 * one of the numbers 1, 2, 4 or 8.
+>> +	 */
+>> +	if (!is_cxl_endpoint(cxlhdm->port) &&
+>> +	    cxlhdm->target_count != 1 &&
+>> +	    cxlhdm->target_count != 2 &&
+>> +	    cxlhdm->target_count != 4 &&
+>> +	    cxlhdm->target_count != 8)
+>> +		return -EINVAL;
+> Maybe instead of manual bitwise checks try
+> 	(!is_power_of_2(cxlhdm->target_count) || cxlhdm->target_count > 8))
+
+
+Yes, It is clearer, thanks for that.
+
+
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  /**
+>>   * devm_cxl_setup_hdm - map HDM decoder component registers
+>>   * @port: cxl_port to map
+>> @@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+>>  	}
+>>  
+>>  	parse_hdm_decoder_caps(cxlhdm);
+>> -	if (cxlhdm->decoder_count == 0) {
+>> +	rc = cxlhdm_decoder_caps_verify(cxlhdm);
+>> +	if (rc) {
+>>  		dev_err(dev, "Spec violation. Caps invalid\n");
+> Can you move the dev_err to the verify function and include the
+> specific invalid capability.
+>
+>
+> --Alison
+
+Sure, will do that, thanks.
+
+
+Ming
+
 
 
