@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-539314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30647A4A32E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E50BA4A32C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F0B189BC89
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4123189BD38
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD9327FE8A;
-	Fri, 28 Feb 2025 19:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C148827FE69;
+	Fri, 28 Feb 2025 19:54:20 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBC727CCFA
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF2A27CCE4;
+	Fri, 28 Feb 2025 19:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772464; cv=none; b=PbqeLYZfYyR6zg/0fdCi+YwuYrw0GOz4TIS9FEXE3/AgTOgAq/fOdm+gqnQCsCRuhIdY+DtdBBh7Hfr+duH/GtQZq8h4hWR9kKiPXD8cufRo94a33ybbzlJQ5dfW9ghrr6K2sYrwFbTiXlgOo+mSWnZAqX7Q9ZaAOw/qZ60S7TI=
+	t=1740772460; cv=none; b=bTh0z0Us2A43lhUHFqOb8gmOd/umFsk/1qK8giDQkAE41HecBz7jt290zVaw2LVHO6BhWFxsFOfdIDb9eL0KYfumIuNwPC/9MEKmTqPM1zqR1C7wsSjgFolg+Zi4XqJZUpl9IdFZczfdDvz4eCidVOSMIVokV99Z4xB8sAo67o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772464; c=relaxed/simple;
-	bh=cQTD7AHJFzhpv6PTG4Mn9jzyhPbu8/ICaJ3ZeWRB2G0=;
+	s=arc-20240116; t=1740772460; c=relaxed/simple;
+	bh=4GkfnwNsKbq/mr/Mi22ZRxvnkRGN0lE29AmS6GLzr1M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQmtp1y5zFjwZLzYNHWrJgiytb1qBm8wH0wwr9nOkRNGas5i0n5aEIRsC98OaCftxnQQT+p2KzY9wgLUBPVKMg2J+HYFQqgkA613Bro/MBagv3Eh+gkEItdcEM68Mramc8ThIfpMVywM+bpKKD8RKa/+XG0/YLHIpaqfUYJBhUM=
+	 In-Reply-To:Content-Type; b=CYkmiscU+rREnarNSDMsqQ/T2WS9+lBP/0A5XHgNuMyv4UZrorpRqTRpsHyZa3kABXgKOEpomrHXyhhU0RoiwmUFfA7lI8Zl/DDcOIcvfyaFnunZFlVlWz+h+UXoCNExg4brBPpnaJn/qpxE5GGR2Z4/1YEe/VDhKHHE9b8smP8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B7611515;
-	Fri, 28 Feb 2025 11:54:37 -0800 (PST)
-Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B3053F5A1;
-	Fri, 28 Feb 2025 11:54:14 -0800 (PST)
-Message-ID: <9aeff0c8-d207-42e8-a678-e6d10356d189@arm.com>
-Date: Fri, 28 Feb 2025 19:54:06 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DD0F150C;
+	Fri, 28 Feb 2025 11:54:32 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53B2F3F7D8;
+	Fri, 28 Feb 2025 11:54:13 -0800 (PST)
+Message-ID: <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
+Date: Fri, 28 Feb 2025 19:54:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,71 +41,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/42] x86/resctrl: Remove rdtgroup from
- update_cpu_closid_rmid()
-To: babu.moger@amd.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
-References: <20250207181823.6378-1-james.morse@arm.com>
- <20250207181823.6378-11-james.morse@arm.com>
- <08d74c2f-29d8-4fd4-8f03-48c093ef7b61@amd.com>
+Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
+To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+ iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+ Randy Dunlap <rdunlap@infradead.org>
+References: <cover.1738765879.git.leonro@nvidia.com>
+ <20250220124827.GR53094@unreal>
+From: Robin Murphy <robin.murphy@arm.com>
 Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <08d74c2f-29d8-4fd4-8f03-48c093ef7b61@amd.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250220124827.GR53094@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Babu,
-
-On 27/02/2025 20:25, Moger, Babu wrote:
-> On 2/7/25 12:17, James Morse wrote:
->> update_cpu_closid_rmid() takes a struct rdtgroup as an argument, which
->> it uses to update the local CPUs default pqr values. This is a problem
->> once the resctrl parts move out to /fs/, as the arch code cannot
->> poke around inside struct rdtgroup.
+On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
+> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
+>> From: Leon Romanovsky <leonro@nvidia.com>
 >>
->> Rename update_cpu_closid_rmid() as resctrl_arch_sync_cpus_defaults()
->> to be used as the target of an IPI, and pass the effective CLOSID
->> and RMID in a new struct.
-
->> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
->> index a939c0cec7fe..da3b344d06d3 100644
->> --- a/include/linux/resctrl.h
->> +++ b/include/linux/resctrl.h
->> @@ -266,6 +266,28 @@ struct resctrl_schema {
->>  	u32				num_closid;
->>  };
->>  
->> +struct resctrl_cpu_defaults {
->> +	u32 closid;
->> +	u32 rmid;
->> +};
->> +
+>> Changelog:
+>> v7:
+>>   * Rebased to v6.14-rc1
 > 
-> Can you please explain why this is part of resctrl.h?
+> <...>
 > 
-> Isn't this part of architecture specific definition?
+>> Christoph Hellwig (6):
+>>    PCI/P2PDMA: Refactor the p2pdma mapping helpers
+>>    dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+>>    iommu: generalize the batched sync after map interface
+>>    iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+>>    dma-mapping: add a dma_need_unmap helper
+>>    docs: core-api: document the IOVA-based API
+>>
+>> Leon Romanovsky (11):
+>>    iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
+>>    dma-mapping: Provide an interface to allow allocate IOVA
+>>    dma-mapping: Implement link/unlink ranges API
+>>    mm/hmm: let users to tag specific PFN with DMA mapped bit
+>>    mm/hmm: provide generic DMA managing logic
+>>    RDMA/umem: Store ODP access mask information in PFN
+>>    RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+>>      linkage
+>>    RDMA/umem: Separate implicit ODP initialization from explicit ODP
+>>    vfio/mlx5: Explicitly use number of pages instead of allocated length
+>>    vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+>>    vfio/mlx5: Enable the DMA link API
+>>
+>>   Documentation/core-api/dma-api.rst   |  70 ++++
+>   drivers/infiniband/core/umem_odp.c   | 250 +++++---------
+>>   drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
+>>   drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
+>>   drivers/infiniband/hw/mlx5/umr.c     |  12 +-
+>>   drivers/iommu/dma-iommu.c            | 468 +++++++++++++++++++++++----
+>>   drivers/iommu/iommu.c                |  84 ++---
+>>   drivers/pci/p2pdma.c                 |  38 +--
+>>   drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
+>>   drivers/vfio/pci/mlx5/cmd.h          |  35 +-
+>>   drivers/vfio/pci/mlx5/main.c         |  87 +++--
+>>   include/linux/dma-map-ops.h          |  54 ----
+>>   include/linux/dma-mapping.h          |  85 +++++
+>>   include/linux/hmm-dma.h              |  33 ++
+>>   include/linux/hmm.h                  |  21 ++
+>>   include/linux/iommu.h                |   4 +
+>>   include/linux/pci-p2pdma.h           |  84 +++++
+>>   include/rdma/ib_umem_odp.h           |  25 +-
+>>   kernel/dma/direct.c                  |  44 +--
+>>   kernel/dma/mapping.c                 |  18 ++
+>>   mm/hmm.c                             | 264 +++++++++++++--
+>>   21 files changed, 1435 insertions(+), 693 deletions(-)
+>>   create mode 100644 include/linux/hmm-dma.h
+> 
+> Kind reminder.
 
-update_closid_rmid() builds an on-stack copy of this, then IPIs each CPU to call
-resctrl_arch_sync_cpu_closid_rmid(). Because of the IPI resctrl would need to invent an
-identical structure.
-If the filesystem and arch code use of this diverge it may be necessary to duplicate them,
-(or declare one inside another), but its not needed today.
+...that you've simply reposted the same thing again? Without doing 
+anything to address the bugs, inconsistencies, fundamental design flaws 
+in claiming to be something it cannot possibly be, the egregious abuse 
+of DMA_ATTR_SKIP_CPU_SYNC proudly highlighting how unfit-for-purpose the 
+most basic part of the whole idea is, nor *still* the complete lack of 
+any demonstrable justification of how callers who supposedly can't use 
+the IOMMU API actually benefit from adding all the complexity of using 
+the IOMMU API in a hat but also still the streaming DMA API as well?
 
+Yeah, consider me reminded.
+
+
+
+In case I need to make it any more explicit, NAK to this not-generic 
+not-DMA-mapping API, until you can come up with either something which 
+*can* actually work in any kind of vaguely generic manner as claimed, or 
+instead settle on a reasonable special-case solution for justifiable 
+special cases. Bikeshedding and rebasing through half a dozen versions, 
+while ignoring fundamental issues I've been pointing out from the very 
+beginning, has not somehow magically made this series mature and 
+acceptable to merge.
+
+Honestly, given certain other scenarios we may also end up having to 
+deal with, if by the time everything broken is taken away, it were to 
+end up stripped all the way back to something well-reasoned like:
+
+"Some drivers want more control of their DMA buffer layout than the 
+general-purpose IOVA allocator is able to provide though the DMA mapping 
+APIs, but also would rather not have to deal with managing an entire 
+IOMMU domain and address space, making MSIs work, etc. Expose 
+iommu_dma_alloc_iova() and some trivial IOMMU API wrappers to allow 
+drivers of coherent devices to claim regions of the default domain 
+wherein they can manage their own mappings directly."
+
+...I wouldn't necessarily disagree.
 
 Thanks,
-
-James
+Robin.
 
