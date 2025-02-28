@@ -1,137 +1,319 @@
-Return-Path: <linux-kernel+bounces-539049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB42A4A039
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B75BFA4A03E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E40B17570A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A733217576B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938E11EF366;
-	Fri, 28 Feb 2025 17:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E87917B50F;
+	Fri, 28 Feb 2025 17:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI4+5GWu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j00hy+Z0"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C641F4C83;
-	Fri, 28 Feb 2025 17:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24AF1F4C81
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740763402; cv=none; b=ImJEFfZCVYPO/CKi+t7NzifHHToGjnDBaJm8y6uD/NMq+i1MYCub0BVKhWzCkRnnIt/0VCaNW1QAWuFMQ9JQEXG8MJoLyvHMlzFlwM7ll1YbNWB6+q7zDuvpbqxK55eoQC/Rn0cwaADhrmvdBlzSBewq7Y1VQ2TTeLfBLEtFEJA=
+	t=1740763465; cv=none; b=W/CvGI2RjsWibq6YDs2j19O651AkrqgbBsgcLZAupAOkwaI4Y/W7nS5J2jh7l7aZh9+w3hjIxSf9G/AdKWHT5M7itxs5i18Mk/45HccxNyLIJYnehPa2PuhE3Pyn1uE5Cp/fU7l8uTdzztOsMWEgSsgho1jHN1iUq/LMGlt6wl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740763402; c=relaxed/simple;
-	bh=kpa5gUq601xY2LLqyDkp+ULt9YfNAfqA5DJnA1T2tiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E80ss6GaMNFGbP+2uTZ8cyaPQpS9WxkWRqgjlbmb3yj4ShhSkE9oOPEDD9XnnEX1U7z5QrYnkVFd6Gm/C82MptNPprb58yASthjesRrZqPvqp9Y/53LXeA48DW7sS52DXhJ8wJnynL/HiV/1uVT5TAsaPdgYLAB17Ap4l36q6Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI4+5GWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0163C4CEE2;
-	Fri, 28 Feb 2025 17:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740763401;
-	bh=kpa5gUq601xY2LLqyDkp+ULt9YfNAfqA5DJnA1T2tiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qI4+5GWu3Wl6VXYHL4b3Ve6TMGej7QVi3Gue5LFr1UrE0smNW9exm5xZmGc5P1H7M
-	 IcPoEhQ7oP2NiOIYjqTII48zvHmppdJY/JvBeWUglKBAWO+b7M5CeSa69+W9lMhP7y
-	 K88IrRDlpBjDiQkcdeMtk05EK4xijZ+Y30glFh82APDAw8MvBOoXTyBU6YZG3rJ843
-	 rxCFHfOZB36Sd1kCXxuZ7j7OWmIH+ZJuC319gGGcR0Ci0q64IDDEn9oRBI4eK0xSS1
-	 j40o6g1LKTK1yKF1xKCIMJccoPo1gHDp2vqkkD2GZjsy8sQRMIjaD7YJasRe9RTbDn
-	 g7X6bzxXphj2A==
-Date: Fri, 28 Feb 2025 22:53:17 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Muni Sekhar <munisekharrms@gmail.com>, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Sanyog Kale <sanyog.r.kale@intel.com>, linux-sound@vger.kernel.org
-Subject: Re: pci: acpi: Query on ACPI Device Tree Representation and
- Enumeration for Xilinx FPGA PCIe Endpoint functions
-Message-ID: <Z8HxBQbLzgV5NDYA@vaman>
-References: <CAHhAz+j46nus_rGJ72rZ86UyzL+AM_HBCivjpZEx3T0thOxqAQ@mail.gmail.com>
- <20250228163219.GA54330@bhelgaas>
+	s=arc-20240116; t=1740763465; c=relaxed/simple;
+	bh=ANOo4RVFpT8QOOZI1F7Uzjr/rClfRnYnXuqCw+UeYBg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pKQ/dbGGzs6BDmfvt9QLIHan4nnan8FJnMzYpRJjpdvixyQ43tqtejYpt8MRsCPwDHo0Ju1GbtOFaCzLZqhN56dTLVqfo5jtX59MmxupIGPMSy3uGlTh47gUzrxP2+ey75+221bjcGXrCVrsmjQ+WXOM/rtdyvhTb/4CI1P2Ur0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j00hy+Z0; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5fcde6cdd8bso136122eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:24:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740763463; x=1741368263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WEwvlNxw2Xxs+TAyoZXFHjuOJ7HCWPZTchi8vXriEjI=;
+        b=j00hy+Z0uetbOjPebqhsTHCIMW3MKA8WD6Yrh+ilWJ+z2YAfpOIRbaPZyRmhwcB4GT
+         mMybHSgHDeqdMSnjhSXbbXbtkNhFSP59ed+WyFPgmVJxNd54fOysWnJ5GKiXb0nGyLHy
+         kPJEkPr8KAkTTJ8kMa7G189NSZiixJSFXZ4BE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740763463; x=1741368263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WEwvlNxw2Xxs+TAyoZXFHjuOJ7HCWPZTchi8vXriEjI=;
+        b=oy/0vTk8xjeiRfZ79WtmEP7ZcNLsWr/MyQjOlEnFVm8Ggbs/fcL+d/spieQepEQdJB
+         8qTi4AZvsvSbiGXpYNrQIs6KKCHnaoiedH1C0gHCaCV5BFaKTZRDPX/t8cjaVmpM0/os
+         CVId/DnQDs2waHfeLaaZMAVDj0DZE3h3DULKbwhI/SiMvSv6Q9zVs5/6Nz4uwx43OOwJ
+         ze42ElzvsBu6t+o9G2AswU+CcHzG1Lu48NFnasxcgIVUj7kr4gOgYyPCzSsMkb/Iw1rQ
+         KlPK5fthmhz2nHbHVcVdPjpv3AaX9zEQDuoJC/ZsbSW9tvHvDJEq6o9kd+jiNJrIRR2E
+         hdkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTJiXwUSteoHrofOZvVTMG42in3TiKwAndju6wy8firDnMnD3jCIgwRXPP5pEnjDrrYXoES+Xm0cWUDJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqJoQ6f/x0y1G8n2MTwiXwSNg9PvW8SzNxhjlI6YtnCYg+LbJb
+	/FaFjpYsU3nzB1stVxs9gF3YbDL9VjDP+AVoyriVQ0RFtETGhiMewkbB34xvszdAqL1nrIjzIMj
+	CE1MtAdf0k6yKw7QgzuXsQ39NYbvUqDLMyN+/
+X-Gm-Gg: ASbGncvw1TEqrEUvWY2CAZZ2OiM/VvyKe0Fu5Zr71GT7+6B9/yzM/zogB6JMw+ogxQt
+	/UAOwUlJIELV/NrkifuBT7lEXq7dw07Xrt9DwDPxT3A+uxzf9cPEMKBSp8AYny5Za37u78hN7KX
+	888L62hJxomLw53fVO1D2SEyVfXRg89QidYaDT
+X-Google-Smtp-Source: AGHT+IELmIZtfBk1UK9h8+WtL5wpgAYYMKF9e2oSSIxoQJia0xhiHJ8VA3Nret0YY6RTyQeg0N3QCQfgbJs/+4ZoALk=
+X-Received: by 2002:a05:6808:4490:b0:3f4:17fa:8b25 with SMTP id
+ 5614622812f47-3f5585f76a9mr1063932b6e.5.1740763462729; Fri, 28 Feb 2025
+ 09:24:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228163219.GA54330@bhelgaas>
+References: <20250224225246.3712295-1-jeffxu@google.com> <e697ee1d-6075-4f24-8365-32aa4bc84d7e@lucifer.local>
+ <CABi2SkXcgB1Zjztqc1W4M-5j9z_wMCRaEtK-wLL3x9_qC1aGHQ@mail.gmail.com>
+ <f65bd1bf-4e81-454a-afaa-f84c13cc6227@lucifer.local> <CABi2SkV2_-LYGjROm3cs8nHrzBiw7pjpe0i7QGNPsPKHSeajog@mail.gmail.com>
+ <60f5b979-2969-4cb0-ad3d-262908869c5f@lucifer.local>
+In-Reply-To: <60f5b979-2969-4cb0-ad3d-262908869c5f@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 28 Feb 2025 09:24:11 -0800
+X-Gm-Features: AQ5f1JrKoMI7MAoJt_s4VBjawQ2oE7qOjznd7nZIAKK-HcNxZUPVPRG1COgivdw
+Message-ID: <CABi2SkX8QM7W0uCUBPFhjrC3psr1HDHLe2i-9hzh81UyKsBuQA@mail.gmail.com>
+Subject: Re: your mail
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	Jann Horn <jannh@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Andrei Vagin <avagin@gmail.com>, Benjamin Berg <benjamin@sipsolutions.net>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, linux-mm@kvack.org, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	"hch@lst.de" <hch@lst.de>, "ojeda@kernel.org" <ojeda@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	"adobriyan@gmail.com" <adobriyan@gmail.com>, 
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	"hca@linux.ibm.com" <hca@linux.ibm.com>, Matthew Wilcox <willy@infradead.org>, 
+	"anna-maria@linutronix.de" <anna-maria@linutronix.de>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>, "Jason@zx2c4.com" <Jason@zx2c4.com>, Helge Deller <deller@gmx.de>, 
+	Randy Dunlap <rdunlap@infradead.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Peter Xu <peterx@redhat.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, 
+	"gerg@kernel.org" <gerg@kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	"ardb@kernel.org" <ardb@kernel.org>, "mhocko@suse.com" <mhocko@suse.com>, 
+	"42.hyeyoo@gmail.com" <42.hyeyoo@gmail.com>, "peterz@infradead.org" <peterz@infradead.org>, 
+	"ardb@google.com" <ardb@google.com>, Elliott Hughes <enh@google.com>, 
+	"rientjes@google.com" <rientjes@google.com>, Guenter Roeck <groeck@chromium.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
+	Mike Rapoport <mike.rapoport@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28-02-25, 10:32, Bjorn Helgaas wrote:
-> [+cc SoundWire folks]
-> 
-> On Fri, Feb 28, 2025 at 08:19:44PM +0530, Muni Sekhar wrote:
-> > On Thu, Feb 27, 2025 at 9:34 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > On Thu, Feb 27, 2025 at 07:25:32PM +0530, Muni Sekhar wrote:
-> > > > I am currently working on a project involving a Xilinx FPGA connected
-> > > > to an x86 CPU via a PCIe root port. The Xilinx FPGA functions as a
-> > > > PCIe endpoint with single function capability and is programmed to
-> > > > emulate the Soundwire Master controller. It can be dynamically
-> > > > reprogrammed to emulate other interfaces as needed. Essentially, the
-> > > > FPGA emulates an interface and connects to the CPU via the PCIe bus.
-> > > >
-> > > > Given this setup, the BIOS does not have prior knowledge of the
-> > > > function implemented in the Xilinx FPGA PCIe endpoint. I have a couple
-> > > > of questions regarding this configuration:
-> > > >
-> > > > Is it possible to define an ACPI Device Tree representation for this
-> > > > type of hardware setup?
-> > > > Can we achieve ACPI-based device enumeration with this configuration?
-> > >
-> > > If the FPGA is programmed before BIOS enumerates PCI devices, the FPGA
-> > > would look just like any other PCI device, and BIOS would be able to
-> > > read the Vendor ID and Device ID and would be able to size and program
-> > > the BARs.
+On Fri, Feb 28, 2025 at 1:35=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Feb 27, 2025 at 04:55:06PM -0800, Jeff Xu wrote:
+> > Hi Lorenzo,
 > >
-> > Yes, the FPGA is programmed with this Soundwire IP before the BIOS
-> > enumerates PCI devices.
-> > We need to port the Soundwire driver
-> > (https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/soundwire/qcom.c)
-> >  to the x86 platform.
-> > 
-> > Since x86 platforms typically do not use device trees, and the
-> > Soundwire IP is implemented in the FPGA, how can we emulate device
-> > tree functionality or use a different mechanism to pass hardware
-> > configuration to the driver? Specifically, how can we handle the
-> > following API calls on an x86 platform?
-> > 
-> >    ret = of_property_read_u32(np, "qcom,din-ports", &val);
-> >    ret = of_property_read_u32(np, "qcom,dout-ports", &val);
-> >    ret = of_property_read_u8_array(np, "qcom,ports-offset1", off1, nports);
-> > 
-> > static const struct of_device_id qcom_swrm_of_match[] = {
-> > { .compatible = "qcom,soundwire-v1.3.0", .data = &swrm_v1_3_data },
-> > { .compatible = "qcom,soundwire-v1.5.1", .data = &swrm_v1_5_data },
-> > { .compatible = "qcom,soundwire-v1.6.0", .data = &swrm_v1_6_data },
-> > { .compatible = "qcom,soundwire-v1.7.0", .data = &swrm_v1_5_data },
-> > { .compatible = "qcom,soundwire-v2.0.0", .data = &swrm_v2_0_data },
-> > {/* sentinel */},
-> > };
-> > 
-> > Basically, how can we define ACPI tables for functions implemented in
-> > an FPGA that connects to the system via PCI?
-> 
-> Seems like a generic problem for PCI sound devices, and I don't know
-> how drivers deal with it.  It looks like all the SoundWire drivers
-> are platform drivers (not PCI drivers), so there's nothing there to
-> look at.
-> 
-> Maybe the sound folks have ideas.
+> > On Tue, Feb 25, 2025, 9:43=E2=80=AFPM Lorenzo Stoakes
+> > >
+> > > > > 2. Tests - could you please add some tests to assert that mremap(=
+) fails
+> > > > >    for VDSO for instance? You've edited an existing test for VDSO=
+ in x86 to
+> > > > >    skip the test should this be enabled, but this is not the same=
+ as a self
+> > > > >    test. And obviously doesn't cover arm64.
+> > > > >
+> > > > >    This should be relatively strightforward right? You already ha=
+ve code
+> > > > >    for finding out whether VDSO is msealed, so just use that to s=
+ee if you
+> > > > >    skip, then attempt mremap(), mmap() over etc. + assert it fail=
+s.
+> > > > >
+> > > > >    Ideally these tests would cover all the cases you've changed.
+> > > > >
+> > > > It is not as easy.
+> > > >
+> > > > The config is disabled by default. And I don't know a way to detect
+> > > > KCONFIG  from selftest itself. Without this, I can't reasonably
+> > > > determine the test result.
+> > >
+> > > Please in future let's try to get this kind of response at the point =
+of the
+> > > request being made :) makes life much easier.
+> > >
+> > There might be miscommunication ?
+> > This version is the first time you ask about adding a self test.
+>
+> Yeah I thought I'd been clear but this might _very well_ have been me not
+> having been, so apologies if so.
+>
+> I mean 'make sure it's tested' is an overloaded term right? So fact you'v=
+e
+> tested on android, chromeos, etc. implies 'tested', but also self
+> tests/kunit/whatever.
+>
+> >
+> > IIRC, you had comments about providing the details of what tests I did,=
+ in V4.
+> > As a follow-up, I added a test-info section in the cover letter of V5
+>
+> Thanks. Appreciate that! And this really does point towards a
+> miscommunication on my part, will try to be super explicit in future.
+>
+> >
+> > Though I have thought about adding a selftest since the beginning,
+> > there are two problems:
+> > 1> This config is by default disabled,
+> > 2> No good pattern to check KCONFIG from selftest.
+>
+> Yeah agreed, it's a TOTAL pain.
+>
+> I wish we had a better way of doing this. Maybe a self-volunteering
+> exercise (*goes to write on writeboard :P*)
+>
+> >
+> > >
+> > > So I think it is easy actually. As I say here (perhaps you missed it?=
+) you
+> > > literally already have code you added to the x86 test to prevent test
+> > > failure.
+> > >
+> > > So you essentially look for [vdso] or whatever, then you look up to s=
+ee if
+> > > it is sealed, ensure an mremap() fails.
+> > >
+> > This suggestion doesn't test the core change of this series, which is
+> > to enable mseal for vdso.
+>
+> Right, and thinking about it, what does this test? Just that mseal works
+> right?
+>
+> It's sort of implicit that, if a VMA is sealed, the seal should work (or
+> rather, tested in mseal tests themselves, rather than mseal system
+> settings).
+>
+> >
+> > When the vdso is marked with "sl", mremap() will fail, that's part of
+> > the mseal() business logic and belongs in mseal_test. The mseal_test
+> > already covers the mseal, and this series doesn't change mseal.
+> >
+> > As for the "sl", as I responded in the "refactor mseal_test" [1] , it
+> > will be part of the verifying step:
+> >
+> > [1] https://lore.kernel.org/all/CABi2SkUv_1gsuGh86AON-xRLAggCvDqJMHxT17=
+mGy-XutSTAwg@mail.gmail.com/
+>
+> OK cool thanks. I will look at this when I can, I'm just snowed under
+> pre-LSF and have been sick so backlog, backlog as discussed off-list. But
+> it's not been forgotten (whiteboard etc. etc.)
+>
+Ya, no worry about that review, please take time to recover, I will wait.
+And appreciate your time and take priority for reviewing this series.
 
-X86-Intel devices are PCI devices but then they are compound devices
-with DSP and SoundWire links. Please check the DisCo spec for SoundWire,
-that already defines the ACPI tables and properties which both Intel and
-AMD drivers already use
+> >
+> > > Of course this doesn't check to see if it _should_ be enabled or not.=
+ I'm
+> > > being nice by not _insisting_ we export a way for you to determine wh=
+ether
+> > > this config option is enabled or not for the sake of a test (since I =
+don't
+> > > want to hold up this series).
+> > >
+> > > But that'd be nice! Maybe in a
+> > > /sys/kernel/security endpoint...
+> > >
+> > >
+> > > ...but I think we can potentially add this later on so we don't hold =
+things
+> > > up here/add yet more to the series. I suspect you and Kees alike woul=
+d
+> > > prioritise getting _this series_ in at this point :)
+> > >
+> > > You could, if you wanted to, check to see if /proc/config.gz exists a=
+nd
+> > > zgrep it (only there if CONFIG_IKCONFIG_PROC is set) and assert based=
+ on
+> > > that, but you know kinda hacky.
+> >
+> > Ya, it is hacky. None of the existing selftest uses this pattern, and
+> > I'm not sure /proc/config.gz is enabled in the default kernel config.
+>
+> Yeah and I'm not sure I even like my hacky suggestion here, I mean let's =
+be
+> honest, it sucks.
+>
+> >
+> > One option is to have ChromeOS or Android to maintain an out-of-tree
+> > test, since the configuration will be enabled there.
+>
+> Nah haha, though of course you can do what you want. Really want somethin=
+g
+> upstream.
+>
+> >
+> > Option two is to create a new path:
+> > tools/testing/selftests/sealsysmap. Then, add
+> > CONFIG_SEAL_SYSTEM_MAPPING=3Dy to the config file and add a selftest to
+> > this path. This seems to be the preferred way by selftest, but we need
+> > a new dir for that.
+>
+> OK I like option 2 let's do this.
+>
+> But let's call it mseal_system_mappings (yes I"m being nitty again :) I
+> really want to try to _explicitly_ say 'mseal' because we have other form=
+s
+> of sealing.
+>
+Sure.
 
-That should be your start point...
+If long path names aren't a problem, I will use mseal_system_mappings,
+otherwise mseal_sysmap.
 
--- 
-~Vinod
+> Not your fault, but we overload terms like _crazy_ in mm and need to be
+> cautious as not to confuse vs. e.g. memfd seals.
+>
+>
+> >
+> > Option three is to add a self-test when we have a process-level opt-in
+> > solution. This would allow the test to deterministically know whether
+> > the vdso should be sealed or not.
+>
+> Yeah one for future.
+>
+> >
+> > >
+> > > But anyway, FWIW I think it'd be useful to assert that mremap() or mu=
+nmap()
+> > > fails here for system mappings for the sake of it. I guess this is, i=
+n
+> > > effect, only checking mseal-ing works right? But it at least asserts =
+the
+> > > existence of the thing, and that it behaves.
+> > >
+> > > Later on, when you add some way of observing that it's enabled or not=
+, you
+> > > can extend the test to check this.
+> >
+> > I think it is best that we don't add a test that doesn't actually
+> > check the code change. Do you think one of the above three options
+> > works ? maybe the second option (with a new path) ?
+>
+> Yeah I actually agree on reflection. And yes agreed option 2 is great,
+> thanks!
+>
+> >
+> > In any case, I think the risk is low, and the code changes are quite
+> > simple, and fully tested.
+>
+> Yeah indeed, but I'd really like _something_ if possible. If option 2 is
+> relatively quick let's get that sorted out!
+>
+Great ! I will work on option 2.
+
+Thanks
+-Jeff
 
