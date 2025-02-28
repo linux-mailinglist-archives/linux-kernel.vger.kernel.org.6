@@ -1,198 +1,101 @@
-Return-Path: <linux-kernel+bounces-537619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF599A48E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:52:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC70A48E34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4A3189170D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:52:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C297A30DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5108D53363;
-	Fri, 28 Feb 2025 01:52:26 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E874E76026;
+	Fri, 28 Feb 2025 01:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="1GTD2Xup"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76171805A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D166653363;
+	Fri, 28 Feb 2025 01:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740707545; cv=none; b=fTZCo/WZleAqAvBBldOZ8ZxOHrHbbk5vaxdA63D4y5+TPsPsbsBlTf7QZS+zsADgt/VkhcgsAyVO+kwUIeLH+xh8RvSHW7npPUWkDuB3ZufKN9fn0FQyYRCSAhJq0ycYt7ZzRMG5Mh+EmO8NFLnUIxUpcZ1aJ9zT4ACP354e8nE=
+	t=1740707647; cv=none; b=HZwzco5RGPpiqVsh4CVSIijptVBassHIyDX8JMXUF2+DHUaco3gcOnJktYx0opva0HK/FoUpASfWIDes6xlzEP9GMFzgue3uVVvawyKnQaKFHgYZdj2l0xQGFQXTd+Y8uaXbwG7V6xboZhF1EHjTN0Pdz7N/AIuTw9xod/paeks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740707545; c=relaxed/simple;
-	bh=jMRX8lDy8SNSLQqZnkKvU/L994cG+F4sDrOdqFgsHqI=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eZSZi5Ad4deacyoySbl2iQkaDD6cr5uc/TNB1h+wOgEzFfWBcLbC1YPt7G1V2PY+q6v6SHyGOeHLNe9w1Ls8txStdNWYnl6BpghMgYkrO7S/W70dFRO1h2rON+CnuWZeC6cRdAa6tuR/1te1VLSEIhe4TzrQRJT0mOPFvloN3Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z3rhJ6fbczvWqh;
-	Fri, 28 Feb 2025 09:48:16 +0800 (CST)
-Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D395180087;
-	Fri, 28 Feb 2025 09:52:02 +0800 (CST)
-Received: from [10.174.179.24] (10.174.179.24) by
- kwepemg200013.china.huawei.com (7.202.181.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Feb 2025 09:52:00 +0800
-Subject: Re: Softlockup when test shmem swapout-swapin and compaction
-To: Zi Yan <ziy@nvidia.com>
-References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
- <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
- <acbfc1da-f743-b11b-191c-ce6e476f1709@huawei.com>
- <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
-CC: Baolin Wang <baolin.wang@linux.alibaba.com>, <linux-mm@kvack.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Barry Song
-	<baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins
-	<hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang
-	<ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>, Ryan Roberts
-	<ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>
-From: Liu Shixin <liushixin2@huawei.com>
-Message-ID: <ffea2791-817e-b1a5-ba41-10ed2a5d9636@huawei.com>
-Date: Fri, 28 Feb 2025 09:52:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1740707647; c=relaxed/simple;
+	bh=evrMTEDSuyIa1W0y6REU7nRQBwJltHcgM+KqsBzG52o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Srq+JIIXpUOg+m4rfHaSAzR19jjc8FSheEn/eJB6mKPXIYT10K/kTZ5czZfSrFFGt0QyZCAkIQy74hRtlXxAl7p3QnKMFlAgLfnNLf3o4LUoPvttCPQ/NLzCU1pMmOvptsQ+Ga56PHXfdWncY+Vo/hnlQkI6e2Fp/IIJNUigEmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=1GTD2Xup; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z3rpv711hz9sRk;
+	Fri, 28 Feb 2025 02:53:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1740707640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=27+nlWbol20EEU9VGn+hQa4trjf7i7iixdALr91E0Po=;
+	b=1GTD2XupHD3pmOuBMNbiAI9CRQ7NpWmMWttdol1n4lkPvWkniRnI5X15iMGUaHGRD7JaV6
+	J1nAdr8+svXAgvqoegydBSDNTixrrFPo2GweU6XSGBpKRLReUhfXrHWaREhzxyUcEB2jqM
+	pS5qiiFLs4Y9Qh5cqiIfvYX9vGvC3jLRHu3G2/MoLroMvQw8wX2QoSlJcyvCVhvc+EyP2u
+	wRO/AU5Jx8pjjE71bZ13CcwETHQgg4Vb7aGwKwnxuq+rt6VARtbEKUUpll+DmzTkxoHOTt
+	S5wjPn/h0/ukT5JhrgjgGSoT8vCL9+OtWkii2ywoJ31d3/DMb2NmDF4AOCXP0w==
+Date: Thu, 27 Feb 2025 20:53:56 -0500
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	asahi@lists.linux.dev
+Subject: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Message-ID: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <696E1819-D7E3-42BD-B3F0-8B3AC67A8ADB@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200013.china.huawei.com (7.202.181.64)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Lately, I have been thinking a lot about the lack of APFS support on
+Linux. I was wondering what I could do about that. APFS support is not 
+in-tree, but there is a proprietary module sold by Paragon software [0].
+Obviously, this could not be used in-tree. However, there is also an 
+open source driver that, from what I can tell, was once planned to be 
+upstreamed [1] with associated filesystem progs [2]. I think I would 
+base most of my work off of the existing FOSS tree.
 
+The biggest barrier I see currently is the driver's use of bufferheads.
+I realize that there has been a lot of work to move existing filesystem
+implementations to iomap/folios, and adding a filesystem that uses
+bufferheads would be antithetical to the purpose of that effort.
+Additionally, there is a lot of ifndefs/C preprocessor magic littered
+throughout the codebase that fixes functionality with various different
+versions of Linux. 
 
-On 2025/2/28 7:43, Zi Yan wrote:
-> On 27 Feb 2025, at 2:04, Liu Shixin wrote:
->
->> On 2025/2/26 15:22, Baolin Wang wrote:
->>> Add Zi.
->>>
->>> On 2025/2/26 15:03, Liu Shixin wrote:
->>>> Hi all,
->>>>
->>>> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
->>>>
->>>>   watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
->>>>   Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
->>>>   CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
->>>>   Tainted: [L]=SOFTLOCKUP
->>>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->>>>   RIP: 0010:xas_load+0x5d/0xc0
->>>>   Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
->>>>   RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
->>>>   RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
->>>>   RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
->>>>   RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
->>>>   R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
->>>>   R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
->>>>   FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
->>>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>   CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
->>>>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>   PKRU: 55555554
->>>>   Call Trace:
->>>>    <IRQ>
->>>>    ? watchdog_timer_fn+0x1c9/0x250
->>>>    ? __pfx_watchdog_timer_fn+0x10/0x10
->>>>    ? __hrtimer_run_queues+0x10e/0x250
->>>>    ? hrtimer_interrupt+0xfb/0x240
->>>>    ? __sysvec_apic_timer_interrupt+0x4e/0xe0
->>>>    ? sysvec_apic_timer_interrupt+0x68/0x90
->>>>    </IRQ>
->>>>    <TASK>
->>>>    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>    ? xas_load+0x5d/0xc0
->>>>    xas_find+0x153/0x1a0
->>>>    find_get_entries+0x73/0x280
->>>>    shmem_undo_range+0x1fc/0x640
->>>>    shmem_evict_inode+0x109/0x270
->>>>    evict+0x107/0x240
->>>>    ? fsnotify_destroy_marks+0x25/0x180
->>>>    ? _atomic_dec_and_lock+0x35/0x50
->>>>    __dentry_kill+0x71/0x190
->>>>    dput+0xd1/0x190
->>>>    __fput+0x128/0x2a0
->>>>    task_work_run+0x57/0x90
->>>>    syscall_exit_to_user_mode+0x1cb/0x1e0
->>>>    do_syscall_64+0x67/0x170
->>>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>   RIP: 0033:0x7fd95776eb8b
->>>>
->>>> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
->>>> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
->>>> compaction which is necessary for reproduction,  although without a clear why.
->>>>
->>>> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
->>>> reproduction program. The reproduction program consists of three parts:
->>>>   1. A process constantly changes the status of shmem large folio by these interfaces:
->>>>          /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
->>>>   2. A process constantly echo 1 > /proc/sys/vm/compact_memory
->>>>   3. A process constantly alloc/free/swapout/swapin shmem large folios.
->>>>
->>>> I'm not sure whether the first process is necessary but the second and third are. In addition,
->>>> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
->>>> so I guess the problem is in migration.
->>>>
->>>> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
->>>> since I have confirmed this porblem still existed after merge the fixed patch.
->>> Could you check if your version includes Zi's fix[1]? Not sure if it's related to the shmem large folio split.
->>>
->>> [1] https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
->>> .
->>>
->> Already include this patch when test.
-> Hi Shixin,
->
-> Can you try the diff below? It fixed my local repro.
->
-> The issue is that after Baolin’s patch, shmem folios now use high-order
-> entry, so the migration code should not update multiple xarray slots.
-Looks reasonable. I'll try it, thanks.
->
-> Hi Baolin,
->
-> Is your patch affecting anonymous swapping out? If yes, we can remove
-> the for loop of updating xarray in __folio_migrate_mapping().
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 365c6daa8d1b..be77932596b3 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -44,6 +44,7 @@
->  #include <linux/sched/sysctl.h>
->  #include <linux/memory-tiers.h>
->  #include <linux/pagewalk.h>
-> +#include <linux/shmem_fs.h>
->
->  #include <asm/tlbflush.h>
->
-> @@ -524,7 +525,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
->  			folio_set_swapcache(newfolio);
->  			newfolio->private = folio_get_private(folio);
->  		}
-> -		entries = nr;
-> +		/* shmem now uses high-order entry */
-> +		if (folio->mapping && shmem_mapping(folio->mapping))
-> +			entries = 1;
-> +		else
-> +			entries = nr;
->  	} else {
->  		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
->  		entries = 1;
->
->
-> Best Regards,
-> Yan, Zi
-> .
->
+The first step would be to move away from bufferheads and the
+versioning. I plan to start my work in the next few weeks, and hope to
+have a working driver to submit to staging by the end of June. From
+there, I will work to have it meet more kernel standards and hopefully
+move into fs/ by the end of the year.
 
+Before I started, I was wondering if anyone had any thoughts. I am open
+to feedback. If you think this is a bad idea, let me know. I am very
+passionate about the Asahi Linux project. I think this would be a good
+way to indirectly give back and contribute to the project. While I
+recognize that it is not one of Asahi's project goals (those being
+mostly hardware support), I am confident many users would find it
+helpful. I sure would.
+
+Thanks,
+Ethan Carter Edwards <ethan@ethancedwards.com>
+
+[0]: https://www.paragon-software.com/us/home/apfs-linux/
+[1]: https://github.com/linux-apfs/linux-apfs-rw
+[2]: https://github.com/linux-apfs/apfsprogs
 
