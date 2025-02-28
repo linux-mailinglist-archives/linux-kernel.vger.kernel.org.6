@@ -1,175 +1,151 @@
-Return-Path: <linux-kernel+bounces-537813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A64A49128
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:53:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4A4A49136
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838E13B74CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE44316F197
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F1D1C6FE7;
-	Fri, 28 Feb 2025 05:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2051A8F98;
+	Fri, 28 Feb 2025 05:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y7m3280f"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFUEVupk"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6901C2432
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3370A10E5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740721928; cv=none; b=rYZ9WftEQFfJgeDf5todjhAjW/3OEiIA/jUbrk3hEPTT9Bc5EiaKhjCyfmjwLpplmI2fvpPoUCVcb1LKrURyYkwiL4ym0CmB5Lg3FlF0X5yP4faKmIaBCYQWMOIe5U5A7ulT0uK8BiJi9Amhle+z71f4CFnoxdlE9PgIHG/JuB8=
+	t=1740722158; cv=none; b=WHeU1uReRXyeSr3teJ+mRO/DOv1pU0l7eMTd6ThxWZ1+qsHoVbOZou34MfXYCUD5Sl/1Mdt/naNNwFLxujZPYiC0fJJr/Yp62VL5GTOR+EQYozv0VFI65VoPcnQjlEiipp2XAmOnmqpRKg0aTN3N5DOqwIcfnlkIiTy2qFk1jbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740721928; c=relaxed/simple;
-	bh=YGlwgS0iclU1RDdEcGSrlFCzWJuaWzjnvf9QGAvqufs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G6u7xLEKZz9Sps7Z3ThekMwzQwrhGZt0/9hxChERcKpEneDt7i1uAMLZ673H+CHAIkZfzuKMDk6G69wgRplSkS70Q4XRzmzfUi0laDf4O/xXmgDswyNEqoEgzdB6GO55FNjwa8BKJnZ6sde8zb3wgTJcZmYl6ZFlCs2fblAj2xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y7m3280f; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740721925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tWGoD/LIkFY1aSDCo/cUvHFAtxAXhzMCTXmZy5rY90A=;
-	b=Y7m3280fbmzlK5sg9jqyV8uHt5j+GOfL8RREEvLRMJvzsIPmEFxHlqb3GaBgP/RilZeQpZ
-	ViOZRQwZ31HDvL/EriQcQPmI5hBYruD5NR4u430guZBWhonh7gb6fqVwmfVfcOmYC4Al0E
-	rA0bS4Yy1ajuyHooeWEYz3buZQRq1sg=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: xiyou.wangcong@gmail.com,
-	john.fastabend@gmail.com,
-	jakub@cloudflare.com,
-	martin.lau@linux.dev
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	mhal@rbox.co,
-	jiayuan.chen@linux.dev,
-	sgarzare@redhat.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	mrpre@163.com,
-	cong.wang@bytedance.com
-Subject: [PATCH bpf-next v2 3/3] selftests/bpf: Add edge case tests for sockmap
-Date: Fri, 28 Feb 2025 13:51:06 +0800
-Message-ID: <20250228055106.58071-4-jiayuan.chen@linux.dev>
-In-Reply-To: <20250228055106.58071-1-jiayuan.chen@linux.dev>
-References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1740722158; c=relaxed/simple;
+	bh=dczW+l9LXncWc723SUUIQqMmHd4Bb6BTlndiQ9Gm9Mg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WJ0reIE3ejybqDH3p5RCsFOq4gIgBGt2nX4xjDSxHkbNbJ/oOkkwyenFyUy6CKuE1OQJMZUmod0XQkQbsjrd+7BspzJJC18bSC6nYoaBHv++RhHQUJn2IJmO/ygcHXwQ/1jnIGRKDzhuFMgIMmpXzkqU/E215nMLyaihx+vHMbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aFUEVupk; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2feaca4e99cso2055025a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:55:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740722156; x=1741326956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tTyDWMq7LuxFszntaa+iD29bxyoweAzlnH0TTz0fmag=;
+        b=aFUEVupkzEsv3BERvOsW2XnteCzBv1cz+Fdgc1+kV0EhR5PaVUZXR1gdBKJOhmWfQd
+         v+AfXjn9E9Qb1Kdp+HQ0Um7k3OJuv/XXGJRmebjmSMrCITy7MC5ys+oYUDaXI3Uhr3G1
+         mciH55PcRSDX3ggxUXYi8aIXpp/dZWmnl6RrMydisUg1fa3FP4zH27zMrUVFyJNguL6r
+         1q6PeLoQAtrxLF/udyOrTiyULM3b22HcT5OeiD0VKzIwHtgKEcocPFroxWjdxCc6vX3l
+         Cr96uMQItBpqM38PfslgHqCmFgyrExtJBDylvOtjx2q6oIfvuIk6qTDS3dNNckq2ex3c
+         iuMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740722156; x=1741326956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tTyDWMq7LuxFszntaa+iD29bxyoweAzlnH0TTz0fmag=;
+        b=OoONgsKWMSjVs2JVOK1bi73+umKHib2JpMydjBJveOHq6h/MNKuzcL5M22aHMm1Y1w
+         Ahvh3t8N/jeojd5l/oj4dImxSlnqI9rjfvmGJALApGKWv/8PBEoMiFfBW/p34+bylQX5
+         Wl7rfOV5UnNU3AX6Ootq1gjRCRD3jIrWajwb4xaWShPMBY4w/LyjlfZgfX5BYsiE0yc+
+         wImZ8WFskeeD5DDA7/UhdODiF/5EMGWDgC8dzCxrpLowQpJ/JH/TAQk0BZDOofcDIuO0
+         OaQyVzK2l987UFJRZx3MeMLs125JH4zXSg6sEHE0ARXUsv2MT4+PpAQWE7Nrs4sPfHxq
+         G1AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTktNeY5uhZs2K/Nx/mXmbr7nhYpeTUKLSrU9dpXB5EvoB9CUIvMYX4RWHj3qgWsP1x2h9sTCB4S1t4W0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2THxMStctgNCS7oxxVgxjM2Z/kXlPVyBx1SfHnIROQdjh9DS+
+	tjQtO0YAemU/Z9NdV2joMEnVXuiGjJW3hVbqqe7fNBfCU7UOf3wUff4pPRKFp/roA3xnE2YvSNj
+	f0fJH4t2Roac9hXkswo88jdE8AMQ=
+X-Gm-Gg: ASbGncvvu1cppeNrFgeEQtRNbufYd+S6kV+nRo6lvjgLiA60CwBhTwX2cqfQnSaNoN4
+	ZTLBcsMEI8YJZ8v1JgzlcXbngPuXsQcP1/Ls97bJLpwMcCivBPyySVfilcF73+5ATDa+/sUTwbH
+	wNvt+X0Bw=
+X-Google-Smtp-Source: AGHT+IH1kXpO6UtU9fFbMiz1TwsUkVKouvQAhEFuVTY7b3q6gVCZwEbIs13RvSk10ypmcMw3ai6cwMKrN9AtOIdFY5g=
+X-Received: by 2002:a17:90b:4f44:b0:2fe:7f40:420a with SMTP id
+ 98e67ed59e1d1-2febab799f7mr3898280a91.17.1740722156297; Thu, 27 Feb 2025
+ 21:55:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250224062111.66528-1-kpark3469@gmail.com> <CA+KhAHYujgeC2kAd-vs0N0zwprpeqtD8G-8DpJ0w2RSxzZ5SQw@mail.gmail.com>
+ <CAMj1kXH-QmuXGi-5MSEzz7zSpPYWvM2eBPN-NbWF+R=49P2_2g@mail.gmail.com>
+In-Reply-To: <CAMj1kXH-QmuXGi-5MSEzz7zSpPYWvM2eBPN-NbWF+R=49P2_2g@mail.gmail.com>
+From: Keun-O Park <kpark3469@gmail.com>
+Date: Fri, 28 Feb 2025 09:55:44 +0400
+X-Gm-Features: AQ5f1Jqv7vZum04ir1zjNFlxNiWh8h_GwAtHGiIdceGOJ9NtD2R77znnZ1Sxpmk
+Message-ID: <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, Keuno Park <keun-o.park@katim.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add edge case tests for sockmap.
+How about adding a warning message in case of linear region
+randomization failure?
+And, there might be two options in my mind by now to consider hotplug memor=
+y.
+Either giving an option for users to override "parange" as kernel
+param or providing the legacy way((memblock_end_of_DRAM() -
+memblock_start_of_DRAM()) when CONFIG_MEMORY_HOTPLUG is off.
+Users believe KASLR will work fine by enabling CONFIG_RANDOMIZE_BASE.
+In case of linear region randomization failure, I think at least users
+need to know about this failure.
+Can you share your thoughts on this please?
 
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- .../selftests/bpf/prog_tests/sockmap_basic.c  | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-index 1e3e4392dcca..ad8bb085baf2 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-@@ -1042,6 +1042,59 @@ static void test_sockmap_vsock_unconnected(void)
- 	xclose(map);
- }
- 
-+void *close_thread(void *arg)
-+{
-+	int *fd = (int *)arg;
-+
-+	sleep(1);
-+	close(*fd);
-+	*fd = -1;
-+	return NULL;
-+}
-+
-+void test_sockmap_with_close_on_write(int family, int sotype)
-+{
-+	struct test_sockmap_pass_prog *skel;
-+	int err, map, verdict;
-+	pthread_t tid;
-+	int zero = 0;
-+	int c = -1, p = -1;
-+
-+	skel = test_sockmap_pass_prog__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-+		return;
-+
-+	verdict = bpf_program__fd(skel->progs.prog_skb_verdict);
-+	map = bpf_map__fd(skel->maps.sock_map_rx);
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach"))
-+		goto out;
-+
-+	err = create_pair(family, sotype, &c, &p);
-+	if (!ASSERT_OK(err, "create_pair"))
-+		goto out;
-+
-+	err = bpf_map_update_elem(map, &zero, &p, BPF_ANY);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem"))
-+		goto out;
-+
-+	err = pthread_create(&tid, 0, close_thread, &p);
-+	if (!ASSERT_OK(err, "pthread_create"))
-+		goto out;
-+
-+	while (p > 0)
-+		send(c, "a", 1, MSG_NOSIGNAL);
-+
-+	pthread_join(tid, NULL);
-+out:
-+	if (c > 0)
-+		close(c);
-+	if (p > 0)
-+		close(p);
-+	test_sockmap_pass_prog__destroy(skel);
-+}
-+
- void test_sockmap_basic(void)
- {
- 	if (test__start_subtest("sockmap create_update_free"))
-@@ -1108,4 +1161,10 @@ void test_sockmap_basic(void)
- 		test_sockmap_skb_verdict_vsock_poll();
- 	if (test__start_subtest("sockmap vsock unconnected"))
- 		test_sockmap_vsock_unconnected();
-+	if (test__start_subtest("sockmap with write on close")) {
-+		test_sockmap_with_close_on_write(AF_UNIX, SOCK_STREAM);
-+		test_sockmap_with_close_on_write(AF_UNIX, SOCK_DGRAM);
-+		test_sockmap_with_close_on_write(AF_INET, SOCK_STREAM);
-+		test_sockmap_with_close_on_write(AF_INET, SOCK_DGRAM);
-+	}
- }
--- 
-2.47.1
-
+On Tue, Feb 25, 2025 at 12:28=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+>
+> On Tue, 25 Feb 2025 at 05:48, Keun-O Park <kpark3469@gmail.com> wrote:
+> >
+> > On Mon, Feb 24, 2025 at 10:21=E2=80=AFAM Keun-O Park <kpark3469@gmail.c=
+om> wrote:
+> > >
+> > > From: Keuno Park <keun-o.park@katim.com>
+> > >
+> > > On systems using 4KB pages and having 39 VA_BITS, linear_region_size
+> > > gets 256GiB space. It was observed that some SoCs such as Qualcomm
+> > > QCM8550 returns 40bits of PA range from MMFR0_EL1. This leads range
+> > > value to have minus as the variable range is s64, so that all the
+> > > calculations for randomizing linear address space are skpped.
+> > > As a result of this, the kernel's linear region is not randomized.
+> > > For this case, this patch sets the range by calculating memblock
+> > > DRAM range to randomize the linear region of kernel.
+> > >
+> > > Change-Id: Ib29e45f44928937881d514fb87b4cac828b5a3f5
+> > > Fixes: 97d6786e0669 ("arm64: mm: account for hotplug memory when rand=
+omizing the linear region")
+> > > Signed-off-by: Keuno Park <keun-o.park@katim.com>
+> > > ---
+> > >  arch/arm64/mm/init.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> > > index 9c0b8d9558fc..2ee657e2d60f 100644
+> > > --- a/arch/arm64/mm/init.c
+> > > +++ b/arch/arm64/mm/init.c
+> > > @@ -290,6 +290,11 @@ void __init arm64_memblock_init(void)
+> > >                 s64 range =3D linear_region_size -
+> > >                             BIT(id_aa64mmfr0_parange_to_phys_shift(pa=
+range));
+> > >
+> > > +               if (range < 0) {
+> > > +                       range =3D linear_region_size -
+> > > +                               (memblock_end_of_DRAM() - memblock_st=
+art_of_DRAM());
+> > > +               }
+> > > +
+> ..
+> >
+> > In most cases, the hotplug memory code will be working the same as befo=
+re.
+>
+> How so? Such memory will usually appear above memblock_end_of_DRAM(),
+> and due to the randomization, there may not be any space left there.
 
