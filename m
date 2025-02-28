@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-537975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E48A49320
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D4EA4934E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25EB1704DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D4318907D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC3C2116EB;
-	Fri, 28 Feb 2025 08:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABBA2459FF;
+	Fri, 28 Feb 2025 08:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R4DIBl66"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVphZviI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABCE202C22
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865A1242904;
+	Fri, 28 Feb 2025 08:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740730504; cv=none; b=ckoiX0JDKESygt9Cw93fcFhl/BZctRkU7S4qhlxmRW8nKmqAxy/+vL2X2nwmY3L9FnFdMhS+zrWDLs802dl17ZOMrH9RGAeDkAWLMC5CFz/XaMeifnIIHF6Ha6/BsdUF3zhv1HjG8GRTlnSFNVTEhLi443ZcAdnb400iaeIBRBA=
+	t=1740730830; cv=none; b=bQdvvksLugzYSDzvAQ33upuIB4jxQGdfLZc4TsMMywJfaYmthvUYc6eWxmIwpIfkExm/QQqSUL8RV58R6klsEpybmP7c0M+plqI8PXHoKyBQVZTzhaih52RBO5ziSxPt5s/tB12FTAWROnzUAYrGk1YRaq9x08ktets6YOJhUDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740730504; c=relaxed/simple;
-	bh=i/awX897IKbbFPKU31yR0reOKho27xl7tHdkuuKPePw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QW7IEUImAMVlJLT12dWtSZ7JhD5Dnv2dmLgr+bvIL2RPQAFpzPaP4KNjlNGJ+/OrK3QitPXFlKMOGMt10XsRdZJxDvth1GXYlrFevcey98NKt0x/mWuMNGyMOdYZEUFvuubrZJr/mvgRCTPQEpK2hNntqBpAn893VXiI4Ok4ZVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R4DIBl66; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740730502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gVPNzs6ByW/HG56n5ZRSBScqeoqqOmHNsYho5zA17Ek=;
-	b=R4DIBl66kcWAN4HHATNQHPQXFkuSUZgAXFwtVCcKRgh7IyyEZxS6AKvxRmjfydOc7UxUrY
-	qGu0qS+axEsE5Tu6XZD+GdIPuhWMzPQKQrRo7J6hdi+zzQSrBCKUwReLRL/5JtcG+vzusW
-	ddrW9aTp48rgjEKotjdKm9dMjm0mudg=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-OX_9k14TPDmJv8ObvGqQOA-1; Fri, 28 Feb 2025 03:14:58 -0500
-X-MC-Unique: OX_9k14TPDmJv8ObvGqQOA-1
-X-Mimecast-MFC-AGG-ID: OX_9k14TPDmJv8ObvGqQOA_1740730498
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fea8e4a655so5243460a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:14:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740730498; x=1741335298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gVPNzs6ByW/HG56n5ZRSBScqeoqqOmHNsYho5zA17Ek=;
-        b=Oao7DR8D1Uh/MQdx3BDjloVhboBFhclEKUB19BPhZGGpIWbPOQQxU/oaCjeFsEv1x8
-         Flm7nIc3Ai8uzfWa5akp74qSP69Oa0ZVklFOzEtm6gO1GqlWuXooAJPd2z0aUAOBige2
-         NtP/UyzrtVxecbPEfWbneXDEQBoySM5avwkMwzz35JN/d7/1ziLjDI+r8w9Ou6+MuZC/
-         xPORuZ6gV/C23Yzp60LHXn7wfaKRjLcU/EIo5GkjhU/fGza4RENzPhhKUgd/h71SGmng
-         GLd4lAhB8+QRkpS7oSl0QwGihVChN1TgbtwkyJNmEaLQS4agNwD3xXCFvA7Tklb1G/ZB
-         gzhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvl7+EnBIcbSRbTapPuf/+Cjicit0JaVTotxJSF5is3wzctZ1mjgvpT9ESczxvG2WjXMbhO1Rxev7UCYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoXrMvYe3BwghQipRNy7Ht2nBDoDypXP3JiFDrlk5RXjE4l0/L
-	Vq1KlcL+ErcqkHIResgbQSsbEKQ50MGxFPGpp/VqihBzkxVENEcFvdJKSTbr0v8kC7H4cZJlCRP
-	q8eBKTf/Ss5XeAb/a63TqmruRrStSDB3NXYtvfSM8kuqBM45qcVPMSuFdY6qUS5u7bu6aV7spmO
-	z9SWqdULvEQ7uMi0LGozpbxC/61NDlSac6hfXd
-X-Gm-Gg: ASbGnctIUjKEy1841VvxYUW3vW6tWhaE5/s/Wc7fRWU0ouJxwT+gGNFbKQpkHzY+jXA
-	P8KnGOl76uIswHsq05l8nTeZ6yKR/xd4/lQQGcK4e9ktWtWaC3+oV+Io/37p37gHK600obBH0MQ
-	==
-X-Received: by 2002:a17:90b:3509:b0:2f9:9ddd:68b9 with SMTP id 98e67ed59e1d1-2febabd9c6bmr3713394a91.26.1740730497705;
-        Fri, 28 Feb 2025 00:14:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGcn+x0GZCIknQ4zTQaIWwzNhdUzSiOqz72PNKBkKpuyU9ZwZnQPTZZgdJG8a4JcV4cazyA92Z/y0DGoohoCj0=
-X-Received: by 2002:a17:90b:3509:b0:2f9:9ddd:68b9 with SMTP id
- 98e67ed59e1d1-2febabd9c6bmr3713377a91.26.1740730497420; Fri, 28 Feb 2025
- 00:14:57 -0800 (PST)
+	s=arc-20240116; t=1740730830; c=relaxed/simple;
+	bh=8yTO/llICtnbsknrcvGs4/GhXN3R2fhImtsrIebDg+g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AeE+FUBcWFXOilxFAQDhSupccVJjPwYJ031SNM56gwKyYyi6UqwDlI8+KR0XzlIDvjY9FXm5tqyGxVvqnps7Po9HFlFcJ28uhtz4ZwsZAuhnwJ/yNyjz+ix0nQFhbSKaxNGEm1gn3blD8U8iTOduamWDKvFFdCUqZUeeqmX9CLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVphZviI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CB0C4CED6;
+	Fri, 28 Feb 2025 08:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740730830;
+	bh=8yTO/llICtnbsknrcvGs4/GhXN3R2fhImtsrIebDg+g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JVphZviI2BP21J+rsLbShFP+I+sXr+H4DNDYOwwFPt7phwM3tNOPrSOAMNwnvIOgN
+	 +jaW6MGSpZZLvuj4Ddk4M96WMF24TmYHMHLZpAjKHDf3DiQw5eMcPxQ7MWnG+lPQbk
+	 dWGgjVEjN4xvakGoYyGY/nG8ZIX6HIHVgg1Hojzsi4IT5xt+x0vDYkLjgoxAQrpUUH
+	 tUlcbEgLiJT++KN50RvHszDn7yaIBigkx+1/Pz3E1HApbUqMKdzzINYpP/YetbiG0m
+	 iVNGxufsOUf6aPNJw/v3W/nr76Sh7+qmYo/IIGggTH5dqvTgc/ey+mSd901kx0xkfz
+	 /SSF3jb9/PdQQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Petr Mladek" <pmladek@suse.com>,  "Steven Rostedt"
+ <rostedt@goodmis.org>,  "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>,  "Rasmus Villemoes"
+ <linux@rasmusvillemoes.dk>,  "Sergey Senozhatsky"
+ <senozhatsky@chromium.org>,  "Andrew Morton" <akpm@linux-foundation.org>,
+  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin"
+ <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,  "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
+ <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "David
+ Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,
+  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 3/4] print: use new #[export] macro for rust_fmt_argument
+In-Reply-To: <20250227-export-macro-v1-3-948775fc37aa@google.com> (Alice
+	Ryhl's message of "Thu, 27 Feb 2025 17:02:01 +0000")
+References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
+	<HPpa1v7Unxin25S5VB3PgIDTgvQzpNQV4MyFqkGDP7w5sHWVmjRpH3OgnbagOSqHHCY9mnBIc3mlkAvEmEP5Kg==@protonmail.internalid>
+	<20250227-export-macro-v1-3-948775fc37aa@google.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 28 Feb 2025 09:15:09 +0100
+Message-ID: <87plj2o582.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227185017.206785-1-jdamato@fastly.com> <20250227185017.206785-4-jdamato@fastly.com>
-In-Reply-To: <20250227185017.206785-4-jdamato@fastly.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 28 Feb 2025 16:14:46 +0800
-X-Gm-Features: AQ5f1Jol8DOnnluZJdrms83ewIQuIWuNFxqYbgH6IOJBaoShyIqsVl50giYriC4
-Message-ID: <CACGkMEus3m5M5ecA4u7irKd-N0p0=ZjnAPanLk-YJgoB6jhgBA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, 
-	gerhard@engleder-embedded.com, xuanzhuo@linux.alibaba.com, kuba@kernel.org, 
-	mst@redhat.com, leiyang@redhat.com, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Feb 28, 2025 at 2:50=E2=80=AFAM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> Use netif_queue_set_napi to map NAPIs to queue IDs so that the mapping
-> can be accessed by user apps. Note that the netif_queue_set_napi
-> currently requires RTNL, so care must be taken to ensure RTNL is held on
-> paths where this API might be reached.
->
-> The paths in the driver where this API can be reached appear to be:
->
->   - ndo_open, ndo_close, which hold RTNL so no driver change is needed.
->   - rx_pause, rx_resume, tx_pause, tx_resume are reached either via
->     an ethtool ioctl or via XSK - neither path requires a driver change.
->   - power management paths (which call open and close), which have been
->     updated to hold/release RTNL.
->   - refill_work, which has been updated to hold RTNL.
->
-> $ ethtool -i ens4 | grep driver
-> driver: virtio_net
->
-> $ sudo ethtool -L ens4 combined 4
->
-> $ ./tools/net/ynl/pyynl/cli.py \
->        --spec Documentation/netlink/specs/netdev.yaml \
->        --dump queue-get --json=3D'{"ifindex": 2}'
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8289, 'type': 'rx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8290, 'type': 'rx'},
->  {'id': 2, 'ifindex': 2, 'napi-id': 8291, 'type': 'rx'},
->  {'id': 3, 'ifindex': 2, 'napi-id': 8292, 'type': 'rx'},
->  {'id': 0, 'ifindex': 2, 'type': 'tx'},
->  {'id': 1, 'ifindex': 2, 'type': 'tx'},
->  {'id': 2, 'ifindex': 2, 'type': 'tx'},
->  {'id': 3, 'ifindex': 2, 'type': 'tx'}]
->
-> Note that virtio_net has TX-only NAPIs which do not have NAPI IDs, so
-> the lack of 'napi-id' in the above output is expected.
->
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+> This moves the rust_fmt_argument function over to use the new #[export]
+> macro, which will verify at compile-time that the function signature
+> matches what is in the header file.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Thanks
+
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
 
 
