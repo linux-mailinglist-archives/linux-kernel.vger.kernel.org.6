@@ -1,113 +1,172 @@
-Return-Path: <linux-kernel+bounces-538092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828F3A4947E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:13:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE26A49493
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082B87A28D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD553B8C50
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A12255E39;
-	Fri, 28 Feb 2025 09:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65582256C6B;
+	Fri, 28 Feb 2025 09:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bsp+D76t"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CR5nCp5R"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C64224C689
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3842F24A046;
+	Fri, 28 Feb 2025 09:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733989; cv=none; b=bLVw91qiM9G5VaE80a39JFigtoaEevOFcXNf1S3xSxY6mPpPO4XIhF5XrlbinUSbW5QjEUgNMImNvLifXSTr6QcadgqvdZ7jDNWMu4OEsFLGt5LSvGbSwCMsX0TKEKck0SHwX1xR4OIsg0iAdWCJR0xjTtJt8jWoAVcRy2bfYW0=
+	t=1740734148; cv=none; b=D7tPKHv7xRbSz7h9evuEFSFQqYkUAo37YE6kl0mYYjTCKOyM4B7e6nqP2EwpH1ampV1xfWmqZGlIgPMdHbaju0mQm2ika6BQbaXJRjcsDQ9ofQNc/dHTFxy2E4A0NR79DuFZO79BUQ5/l5vatI1tD2e4E06/QtVzOHND7If2/qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733989; c=relaxed/simple;
-	bh=pva24aYRpNiWC9FsBo0qUGxWRT3IvW1BGETO5F3BGfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DUxpTH/DQDZUGuJj2oYT0w3fC4U2cD6+LgCiTuNGHoa4gumzKfuxQ9QgkcvxTd5nMoEWZU6DUOJM1wWksN0qmaSlwxpiZf94m6zkQioPSGzDjyQ0UdpBJ1KGTNLeAru6HRseQEJ9jhR9EEhLwjlDCkvJVPdf42kTNC36BILVR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bsp+D76t; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390e88caa4dso715719f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740733986; x=1741338786; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9UE/YvJUupiSsgGzonLP82Lza8kORn2Q/kCp8mnpZHQ=;
-        b=bsp+D76tC2OYyU+/e73gGeMvLbuJPvjRrLx45vR+z2ramIqcKTmzpD5dXyfBXG9IFG
-         I976dRPP454LPE50N1Ow7LI0jIAZSXH06dli85uXTRKawH+Hb8+vTKbylj3eb7DBOHCr
-         U9N3caNtx5oXZqiJmkIoGEI5UWaUX16FyPyp2/XJoj6uBVvWBYr2mVj8Irqsh/a42LX6
-         2ef+TBOHsD/7furnRw8VjVa1Kj2UEpXpfv0vhLLjryWCIQXvj7lATUdyN33MevelbPOm
-         jf9n+ASdmfp0jmYG2MIsUDY9SLEqsLb/Rijr/33X7pVAEVKE9qQ0nJ190BX/TdsGX5hL
-         vEnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740733986; x=1741338786;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9UE/YvJUupiSsgGzonLP82Lza8kORn2Q/kCp8mnpZHQ=;
-        b=bNlB5FVW9HEZvMePD2Ee52G07RIJhHT1CtE4O72qjpHvIf8GjciX50C3jETII9sDVs
-         tkkTSVcSXmaS003eBmEBh3RWZ8slXA4mIg18z/QsN2mFQx02o5TPmP1mRbG7TOo83Aip
-         eQ11F+x87Qr0Tb5xQjy0uXcyHrh4/JuioZiWp/KbrgidkeAPH59Kd+vkQWqolEg6wJmd
-         gKfPMaCn36ojo5NIXQvw3WApPCdinkJXy7/vnTF1myr5rTpeveYGv1gR6wSvS89LEBK9
-         LbVk9gEUqaP7r5Fy8KrMUt9KKslcZ+pQbYTNWS2XwgI9+TWagevCUzOXFCvGJJPeAPSC
-         ctVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvlpN8+TRPOL85mkAmspe/mKI9CFtbKHLOBvijap5pHtyPGhLCCDJdWMv/+YMNUE6CUvjZilsLY5MvGaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkZP7x5A4gWCAGmev/hOWhotYpWOxC7ZZTbGgR5F/XcPFDyxvL
-	0Mn5JCZV1d13mkwnStuXhUEPhOd+Mxpz9fJp0D90R3A7ZWVakSozRhLyUwl/t3Ljy8VMNaiL0Oj
-	ZFTrLa2Sj5XssRcjgLPXZZJD8PaQlqt4/wiZN
-X-Gm-Gg: ASbGnctihx1W2oZxfvK2jFz058rAM++pcQSG3LfRPpAqx18lZ0ezqNKo4FBrdsB0B1r
-	9itss9YtIPGO1RdT3iF2hiv3pqw3jF0lxiUxJDm2sZWmXbYtHJN2SumEKcqemldBlHG6G68B4Dy
-	cp90cZex2mnA20kLTyrlrj5dvPCmdGsYHN5s5j
-X-Google-Smtp-Source: AGHT+IH7F2qgKkeGg7xN40q/xIl5BTHBoei2fR3UaAC9id06WaZp2+BesjSXAFeh/HXA6v5AlrrIvufjLCKcg3xjbbQ=
-X-Received: by 2002:a5d:5c84:0:b0:38f:31b5:b33e with SMTP id
- ffacd0b85a97d-390eca07632mr1728466f8f.35.1740733985837; Fri, 28 Feb 2025
- 01:13:05 -0800 (PST)
+	s=arc-20240116; t=1740734148; c=relaxed/simple;
+	bh=XUXziA+nTZDBj2Li7foJzUDDRkHQt+bXPdaAGNeKlqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfoZmfDuuKyErNSgkxk/qBhzsAxp5LEyKK4lQgOR2wlcka2cldWoYO/e6X0iaOy7hvod7sh3x2XXWtL3ZfwKDy/scKSdJS2lRABEGe11iPCFdzutA3xbK6L2VIKgM1gNmAitRmAgU8UBPdl4704Nj6abNVmkeFwTQ4ZszcIkfrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CR5nCp5R; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51S18l30011287;
+	Fri, 28 Feb 2025 09:15:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=zbXmaRcT2XwkeDCQc4Fd1apB2+M2uJ
+	/a3I4PM1YAgw0=; b=CR5nCp5RBt4kqQy37SzzjYHulkurnB3J6loL1dYZQg3Jw1
+	TRY9FbD2yoZUIsQVu6vsPdB5oazypxeGOE/y89LUz6G1yoNa9PUfNPYP2KzLVc0v
+	ZiyzOnQtoPGKdXFSlsTpr8tRUOGIDGYQqLWU6hidsyNQkR1fKOog+hefQ8uMHdrw
+	hFm12FlgrIhjMZ6tdM0hVcKdXERHMr/0MlGFhklKGj2N30F4q1DxvpYkJF4ja58y
+	nX29zfVCJR4mlOQIPg1jSadnA2UY2/yrU5LwwrNca73oF3TbmlhImTtVeLhRyTV4
+	gPAZVh0J2t72Vp2yFxz65407FMZoUhJRHinNpd+g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45337ahym7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 09:15:17 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51S8xMff016279;
+	Fri, 28 Feb 2025 09:15:16 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45337ahym5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 09:15:16 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51S7xvWL002595;
+	Fri, 28 Feb 2025 09:15:15 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4k5avf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 09:15:15 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51S9FBd120578658
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 09:15:11 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3A512004B;
+	Fri, 28 Feb 2025 09:15:11 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B32D720040;
+	Fri, 28 Feb 2025 09:15:10 +0000 (GMT)
+Received: from osiris (unknown [9.171.87.109])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 28 Feb 2025 09:15:10 +0000 (GMT)
+Date: Fri, 28 Feb 2025 10:15:09 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub,
+ add}_return()
+Message-ID: <20250228091509.8985B18-hca@linux.ibm.com>
+References: <20250227221924.265259-1-lyude@redhat.com>
+ <20250227221924.265259-3-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227101720.1811578-1-bqe@google.com> <20250227105130.wkklh2wpybz3kggl@vireshk-i7>
-In-Reply-To: <20250227105130.wkklh2wpybz3kggl@vireshk-i7>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Feb 2025 10:12:53 +0100
-X-Gm-Features: AQ5f1JqKV_1F7FuHCvDQQhhosn3DkKsdWc424rq9Od7JyKejVlawEpvwzVg8T8A
-Message-ID: <CAH5fLgiP1=Kxi0L0WSOsdR3hXnNgoWs7368pM-STDcJbfrr8WA@mail.gmail.com>
-Subject: Re: [PATCH] rust: add bindings and API for bitmap.h and bitops.h.
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Burak Emir <bqe@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227221924.265259-3-lyude@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PXilDMwrSa6mnq-6V0CgFdcdACh3D8aI
+X-Proofpoint-GUID: uvIo6Uq09NLmGDRrJ19UmGamCa1Xy5fB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_02,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=670
+ priorityscore=1501 impostorscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 mlxscore=0 phishscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280064
 
-On Thu, Feb 27, 2025 at 11:51=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
->
-> On 27-02-25, 10:08, Burak Emir wrote:
-> > Question for Yury: What would you like us to do for the MAINTAINERS
-> > file? For now I just added the new files as F: entries.
->
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> >  BITMAP API [RUST]
->
-> I would suggest adding this too.
->
-> +  M:   Burak Emir <bqe@google.com> (bitmap)
+On Thu, Feb 27, 2025 at 05:10:13PM -0500, Lyude Paul wrote:
+> From: Boqun Feng <boqun.feng@gmail.com>
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  arch/arm64/include/asm/preempt.h | 18 ++++++++++++++++++
+>  arch/s390/include/asm/preempt.h  | 19 +++++++++++++++++++
+>  arch/x86/include/asm/preempt.h   | 10 ++++++++++
+>  include/asm-generic/preempt.h    | 14 ++++++++++++++
+>  4 files changed, 61 insertions(+)
+...
+> diff --git a/arch/s390/include/asm/preempt.h b/arch/s390/include/asm/preempt.h
+> index 6ccd033acfe52..67a6e265e9fff 100644
+> --- a/arch/s390/include/asm/preempt.h
+> +++ b/arch/s390/include/asm/preempt.h
+> @@ -98,6 +98,25 @@ static __always_inline bool should_resched(int preempt_offset)
+>  	return unlikely(READ_ONCE(get_lowcore()->preempt_count) == preempt_offset);
+>  }
+>  
+> +static __always_inline int __preempt_count_add_return(int val)
+> +{
+> +	/*
+> +	 * With some obscure config options and CONFIG_PROFILE_ALL_BRANCHES
+> +	 * enabled, gcc 12 fails to handle __builtin_constant_p().
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES)) {
+> +		if (__builtin_constant_p(val) && (val >= -128) && (val <= 127)) {
+> +			return val + __atomic_add_const(val, &get_lowcore()->preempt_count);
+> +		}
+> +	}
+> +	return val + __atomic_add(val, &get_lowcore()->preempt_count);
+> +}
 
-If a new maintainer is needed, it should probably be me. Burak is
-helping me out with some Binder changes, but I will be the owner of
-the Binder code.
+This should just be
 
-Alice
+static __always_inline int __preempt_count_add_return(int val)
+{
+	return val + __atomic_add(val, &get_lowcore()->preempt_count);
+}
+
+since __atomic_add_const() won't return the original value.
+
+Well.. at least it should not, but the way it is currently implemented it
+indeed does sometimes depending on config options - there is room for
+improvement. That's my fault - going to address that.
+
+I couldn't find any cover letter for the whole patch series which describes
+what this is about, and why it is needed.
+It looks like some Rust enablement?
 
