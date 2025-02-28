@@ -1,132 +1,231 @@
-Return-Path: <linux-kernel+bounces-539044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966D6A4A024
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:20:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22406A4A023
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F0937A2CF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:19:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF551898ABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494FF1F099B;
-	Fri, 28 Feb 2025 17:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B822D1F4CB8;
+	Fri, 28 Feb 2025 17:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uyj8r+4D"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="NaxKrmdu"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013061.outbound.protection.outlook.com [40.107.159.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D818C011
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740763204; cv=none; b=da+j857/yJMBiSlUDAeCd5PnbePm6UqbmJqsJ2Sxt4SqQDsqpphqn9f/QI+lLsarr55IYpYpbY35h+WYSkXO+bQKQkTRGH1OLH/bglwgmlLSgO1TU1hcZFvq/jANxGPIOdK78EIiK3axipuTPWK4UeiQINtk/YvDMQWth3noqBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740763204; c=relaxed/simple;
-	bh=lIWeH3Tboy6HGMoULxi8k18XVvdLTbiErv9XRPiEyeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5PemvEBoIvrgujVGGolIetEAwaRGtU0HkzLLRGK36FvgshjLhl8OOeUbjZqojk5iSfyzHGngueqrf9jQy2T+K6amCq9YmESjO6xsuObZDgvgsDkY4zZ5ER+reyNHHvy0VLrkPacVlQZtWCybVX6jJsIPgspCdhxywY6+NIOAPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uyj8r+4D; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22185cddbffso62365425ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:20:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740763202; x=1741368002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VET5eArBu+43r67oe2DJk0w/RikzXdTiG7eAzr9StgI=;
-        b=Uyj8r+4Duj3eP41C7pkEsVGaKxWuo0DOrwnn98ItOhxbNuYkSfNuv9oyBbszvbIBd+
-         3EpbJ19ut4H91Y/h5C5D+DQkUBgheOFRdGLqPND49mhtvpDXPrdVyKEOLh5c2XnJtqlS
-         NefuC3qKWXc2r4M5RiWJ+fQpnHSmxAKlOp2+2ezF8+MaeBp/q8Xj92oKConKTGhYKMAr
-         FqLDIyvrxsUEqsZM8EM62ADRrvWktfvH2jDP8Xy4y3Bc8KFK/u/liYRQph0Z7w3qElJx
-         G8/Roar2CX9/x75H5YNb62g3EhFVUlNxGQBfAshwRfoE4/pa59dgHRgKQngKIJ0FhLPr
-         7QkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740763202; x=1741368002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VET5eArBu+43r67oe2DJk0w/RikzXdTiG7eAzr9StgI=;
-        b=ivyqZODPZLib5V6SE+uyIg7vjyXlhrH1th92xuYj+VUjVpj4Tq+cbYK3FyyZCAyrRG
-         SGSFifbNprUKQ+HwOOwFenpTSJGaX9Byq0Uq46nHMNihNnHSLicUo+farMpzga3+aCcE
-         QUXxiCUDlGqxq7HR/qZwpE/+tvP36/RBa4l80AOBRu3KO80OSWtL+V/G//isfkJ6ZThC
-         0cLK93SjdH5aWl/gW79uTv7sIIAWacHgrjy2iMU9LoAfQkmHXL59l1HECPg742gXWJJI
-         iqi/nmIox1S99wd/rWq6XlhMaRCn3C+7DJdZtechq4WtG3xpyOD6nx/tCIKi1TqZx6pc
-         yrDg==
-X-Gm-Message-State: AOJu0Yz4ta2g2WGMq2LDQgkZwcZ8CLQu+ezYk+3yZAKkYsZk9hmkEEdK
-	5qXWbLl2YmgI7L1A0S0WQEr8ByyAReuhiqBtT1cICJd3qiKLHb733aDWgwr/EA7CROLK7V4udmO
-	qVIdzk8Jt2dpPjur/dJZqlaLl48A4Ug==
-X-Gm-Gg: ASbGncv705WBz2Zf/Mxkvj0efSBEjWLYGKVnTw5fY2WWzDfMj054bmFFlJdgJijjLFU
-	e5xiBIKI2JQc46AU3DqhXsalvXInemvnK3ecg3G1y080zc181P0DvdOf3xzkVikFK4VoqihJQom
-	bRYLlc4bGVc+oMvTIKDVgUWwY=
-X-Google-Smtp-Source: AGHT+IHJ4/GOLRYcFw2Ss7ass/jeDGaA8yDr4x2SmuOvxIMwiU92+bAaNgF3dBw9uKkeaVtC91FBWypHD++GixJfpfU=
-X-Received: by 2002:a05:6a00:1310:b0:725:41c4:dbc7 with SMTP id
- d2e1a72fcca58-734ac385a52mr7858063b3a.4.1740763202459; Fri, 28 Feb 2025
- 09:20:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60F1F4C83
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740763201; cv=fail; b=npWBxiI9jTf0kXhEzThLPNDuKy1pFDexPsJS3/4+/1W5q4Vp2k/kMin7aDZ4iRPGkrxqMUdB3DzRgyxfJVcdtASAHRdg4lKW6BttgErR2EWM4VUYyQdxbu12v+ALOicHSyG4qKiEETydZ6ErETPDp7kBloC94kHdWq+yElPQ/C4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740763201; c=relaxed/simple;
+	bh=/jyeH2LY4ccSZmpHyhMN2rUAL/Uaow77oqflauGt0Vg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cclY8wEs9tpUtwJnQVxT2n8KA5PKk2tzPH0mxd8nYQ0/EBeftgjzT73OYd9TTKu3S6wLSpwdURQ65XZKNPGg8Rv+/f2Q1LTk5UDfkbzDjGMmzF5SalMLlQvtZy36iSXiB5zUF6XCrqd+JYRsotAuDrZROUFyB6BMjaVQNDyR13w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=NaxKrmdu; arc=fail smtp.client-ip=40.107.159.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BncCCpHTwyJgjZZnIN5wYc67vG5bcGoXAWUrF9cbg6VQsCvqfF2sqW+vWHIS978mhBtb0hUukQ6x/49LcpKPEL+blgDKwrBpmz5x/k9phGdNkav/zxrQuZK95XZxSSEi+jdt8sO9wGVFN2q9/MAohZoJt+3L2r02XsLqlBGFpGDjtoMvTYbJKMC9unKRxpeMWcdIWFxa92ExxLANDhMsjgd+O0Y0ZPvshFFj/xfihiNM4nuLlQCO3y3jhdvjmNYtBMsJHkMhL/J+awEBjz39WPU0Ob+LuqEZdWpGH1iqKmgXzZRg2ZN5NfhFjbqybbfct9r7i1boAr/ZYLkuOrohAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fM5yl+jV66hkBUX8rKXqUuyJWGY3J4aakKl/6m8WSG0=;
+ b=g9wDwDre8GMxRwUrMBXIEeLJI7OVVvYmDFktbzeRLN3WUpoJ1wsGUpaLncorLa+Ls5VnKEi+rAM8XeQgJhuByyiUgqBR1JgeyVWpMdHqtka6CChYnmfrYT4n0cme30UgFnGwcNlzffsGvH7tHpDVYpVOlnOeFgNfzD6Ol8/IisoGvAanZq2qNx9eAfXpB71jVAoaPpWHeTNm4fNbarEcspBwSUh2tdak6z1x4sQwOwBJQdb3vhQM2MfGV6+Wqloi5efSoiuzoAUyq3ejAeizSsBKRysaxAKTqtKK93iFmzNjJNNLDxCQRbZrKbex6R3sfmXRS2qs2k88iUFprXe/sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fM5yl+jV66hkBUX8rKXqUuyJWGY3J4aakKl/6m8WSG0=;
+ b=NaxKrmduNSlFLlAv854qHGuPPkrMR3e0jrgREE5YYqKfI+rxWbcyUXTP8NwrBNElXcHsnh/sFsOft6VB1BfjfsW7H1Vl0r6i5dm6ntnUKGP3LKxk8/i5PXC95CeUWEku2PWCNi2uUYNkc8x9UJD8yupriSXJDbxxumv38vqngBk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by AS8PR04MB9175.eurprd04.prod.outlook.com (2603:10a6:20b:44a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 17:19:55 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 17:19:55 +0000
+Message-ID: <521cb717-68a4-43ce-84fa-580fcd8cd50b@cherry.de>
+Date: Fri, 28 Feb 2025 18:19:54 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/rockchip: lvds: move pclk preparation in with
+ clk_get
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250228165755.405138-1-heiko@sntech.de>
+ <20250228165755.405138-2-heiko@sntech.de>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20250228165755.405138-2-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS9PR05CA0108.eurprd05.prod.outlook.com
+ (2603:10a6:20b:498::19) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227195302.1667654-1-brgerst@gmail.com>
-In-Reply-To: <20250227195302.1667654-1-brgerst@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 28 Feb 2025 09:19:50 -0800
-X-Gm-Features: AQ5f1JoF4dp3S515kJ-LZ8rQYAXYUw-YyJz9Yr5ILyybg6aqPISjFDT8gbdxyTg
-Message-ID: <CAEf4BzZt486SUMQq2DwnRX7n_XS9Rd1KYqMTFxg=6=QRZf=-xA@mail.gmail.com>
-Subject: Re: [PATCH -tip 1/1] x86/bpf: Fix BPF percpu accesses
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB9175:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9011276-c03a-447f-6a55-08dd581c1e70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXZRY2ExOGs2dFpkRThKUmowSGkrVXlMTEJwb0NyTENoT04wa0ZiU3RadFZn?=
+ =?utf-8?B?N3FlZGVONllIZ3plbWEvTVZzM0MwNUtOK3FlM3dzaW5XTURFS0J6Q0N1R0hn?=
+ =?utf-8?B?eHlzZGpPSzduZVM2KzVYNEszK0Z0Vk9FTHRnZUpUS3JxU0JJQnhqM1JtTGU2?=
+ =?utf-8?B?b0kxSDlPd0lKNll4QWZLblpBMGJoRU5Edld3aFE2dTh6ZWFwM0Z1V2E4S1V2?=
+ =?utf-8?B?ZmRLNGFXSlAvRWQyS0tzQUxTWVBFVjJuKzlXYUpBdndkUUJPSW1xeVd4b0NZ?=
+ =?utf-8?B?cFlpZVhqS3ZycUFKNGJGSStWVFkwVURvbzBTMFBTT01peHBFbUlteWg4ejhD?=
+ =?utf-8?B?L05qVGlUakw1VldFZ2h0NFBVTGp5aFIrcURYeUh1VE5QVjR3OE1NUHdPUUJm?=
+ =?utf-8?B?R2RSTi9tb0N6UlJZcWdLcFpFWFA1T2NxR2EreEVwYWxydFYxc3ZHSjdBclhG?=
+ =?utf-8?B?azVtZGJOUitqckZnSERacDFqMGFBWDAyY0c4RnNIOUk4OXRGSjZIaGZ4UkVk?=
+ =?utf-8?B?V2VZSy80b3MxT1d6UWZtMERobUIxNW4yVDhENjRoL0cxV2o0VnBxbWJoRzEv?=
+ =?utf-8?B?U3BqZG13cENKVnB2VGlqU25weE1mRFRsMXkvVUZrL01HdmNJVzFzNWJEUGJr?=
+ =?utf-8?B?dGF6WTdRU2ZzemF5QnZWZUQxSWl5b0NRWjBRZlBjays1T0MyMEIzR21sMFMy?=
+ =?utf-8?B?QlVDcmhCc3EwM3JzUDRmUUZId0VuZXl2Q1RoZnVIR2dTcE14S2xhaUZHTXVp?=
+ =?utf-8?B?QUxKZEM2eUZ5V04xdHJqVTB4LytxaVp6R0xialJ6UEpjM1BOSVBGb1FvazQ5?=
+ =?utf-8?B?SHpERnlUNUdmNlplUjhZWXBXNktQd3BOQzVGbXdHSDdaUmtXVldYdGQ5S0VN?=
+ =?utf-8?B?VjBQYUUycUZXZldqdktoU1MrdW42TWhiNEF3WU9TUEg2ZklXQlB2YTYrUndK?=
+ =?utf-8?B?SG0vZDlWNzdDRjJpR1NpQmp4Mmd2YkVqM1ZxQmZ4NnhUT2F4Mm9zNmNjanky?=
+ =?utf-8?B?S1J4VjMxZXFIeGl6M2h4OFc0SXJ1clJNckpDSHNHc05IS2VBNGJFU3dWRGNK?=
+ =?utf-8?B?Y0R4em56NGdwZkYwU3JMUHI4SVpJR3MrNGdRTHhRUEV6Y2kwZFJUQzhEYlR0?=
+ =?utf-8?B?N2tmbDlUTGJQbWtIcVU1RW4zNWNkY3hBM1RnazUyS3BIYzFoM083WFdCelFh?=
+ =?utf-8?B?TEJaZEZhVml3Nm0wdkpUd2gzclVnUC9Sbm5BTG5CQW50Z3pUWHIwMkNKcHB2?=
+ =?utf-8?B?ZkFNSmduSEFwNjZCdWVEVmI0R2lBNjhYMEpYREYrZ1lOQ2pURFNTc25IOUtI?=
+ =?utf-8?B?MjluK25XcFNsZm8ycHlqRHMrVmliNWc1ZVNOejNjYW1YUXhzR012cW9yZDI2?=
+ =?utf-8?B?Nm1kY0M2aDB5SUtMYWFDcnhDNC9WRTlYMmhTTVVqTXR6SS9ZNkdZeXUrZ3Na?=
+ =?utf-8?B?MkJCNENXTXFFbFVxYU92TDVQQ3F0Y3N2N1JNenlaQU1obEI5UXpydG1Ic1VH?=
+ =?utf-8?B?QWZ5enJ1ZlFFQ0d1eDQ0bmlLUlB0L3B4M0FjbzNKbmpuVW5YV2J5YVM0bEdW?=
+ =?utf-8?B?NTdMWndGalU2WnYvaFZsdkdqODFraHdzN1pjTWpYaXpJbGg5Q3M1QU94ZUsy?=
+ =?utf-8?B?a1dGeWdSbDh0LytOelJNcU1vSGdIRkhITkt3dU5yS1FDM2ozTUNseUNMVXkx?=
+ =?utf-8?B?RS9COG9obXRiRWZ4NlhlZlRXWFBITThnYU9mWDJJdjVrYVdtSnFhbXF5d2tR?=
+ =?utf-8?B?d0xTM214WDlQTmhuYWt1a1FWWGF6aXIyQTQyUXVUdmRxZ2tJbE9wMVNkVGZT?=
+ =?utf-8?B?Qk01NE8wTStaTXUyaHlySWMvTjdIR1lxV0JGUUoxUVFaSzFTR3dmb3ltc1k4?=
+ =?utf-8?Q?TVq/jsamcaWXa?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NlZoK0MvdXZWNm9ZNklpT3IyQ1RIOHdzOGdkRHl0Q2VPMTdlSnNYMjEvVDJo?=
+ =?utf-8?B?RFhObUJFaU1HUzEwRXVlTUc2WHBWMVBFd0I0L29OZWhtaGFoRnZTL2hSSVIw?=
+ =?utf-8?B?aHRVRFE4aUJ5eG05WVZ4ZnFXYXZDRGJSRGU4UTJpMFdYNWNqdkdMZUNzQkth?=
+ =?utf-8?B?NG9XVlprdXZKRTZnQTFlSDJ3ZUpHT3FQc0RaZ3NKUUN0TDZCNlZxVkJwYk1a?=
+ =?utf-8?B?dDdBUXZhREFaY1laMTU4UXMyVTdqbHJqMFBnTTg3RjM3YmVNZ2JmR3NSRU15?=
+ =?utf-8?B?a0NIMHZ3RURGNGIwZVZ5bkF3RC9sWjdGdEprOEZvN0oybnQ2K1haR0FDU3Fq?=
+ =?utf-8?B?VGxuZzJjS1B0bFB4VFJGdEZsd2NpK0tmdGxhalplQjFSMmUvM0NRc2dER2Qy?=
+ =?utf-8?B?QjloUjFoNERKZWUzUm1vVEtEWHVVM3BoTTBSeklvM2QzS1hSeStiMzRvZlll?=
+ =?utf-8?B?TWNlVHJBdDdzR3hRL2hjaUhaU2EvMG8vNEVRMkt6YWZsc0pWdE9GSThFcTVp?=
+ =?utf-8?B?b1JLajZURmc4SmJ1ZzE0dTZ6VlpNYTNKdFRUT3VsL3BwZnB1bWwrdVJTOEN5?=
+ =?utf-8?B?VTQwUWtlbDh3R2IvYjM2NUJoQW50QzAyNDRpNVVPdGNnUFNqRDBzYWp5UXBw?=
+ =?utf-8?B?Ry9oOXEzWVFPYTN5VThIdzNVTStLVmttU3JDL1FNU2EwVEpKc3ZrZGl6NDlO?=
+ =?utf-8?B?SzNWK29iSXpVYk9CQ3dlK2lKd0Q1Q3loNFRBQmF6OVNKcVA2Q1BQMkYzYUhj?=
+ =?utf-8?B?MXNqTGt5QXRvbkx0NnE3aXozQVdyWkpZYTcxQlgzVGVJbjFUMGNyc3NCc2pR?=
+ =?utf-8?B?cGFZZ2ZKeGNEeXY0M0ovZzJnTkFtRnVvd2p5TkpsVTh5L2pBbDBaQ2JXSENG?=
+ =?utf-8?B?NlF0L08vVmRMMzdqUXd5VVQzNE5TTVFibFVZaG5kMEpiN3VWQ1RqZ2ZGZ2dN?=
+ =?utf-8?B?V1o1YkF6dHhrdkl6eDArT285NkJ5RDJraDByVHdMems0cS9kRW04cHdWQ1ZC?=
+ =?utf-8?B?Mk56QXNhZjVtdEUxc1RUY3g1bnVTRm9JK2x2SkdBbkYzK1dCWjRYL0FTdnF0?=
+ =?utf-8?B?MHFXRmZCb3dnaWFtR3NYd05lSVdWcDlUdmtXbEczYjBIdmxVUC9wOWlQSDBH?=
+ =?utf-8?B?SVZscGtYR0JqKzNtN01odWY4Q3NuVGZ1R1lCa2UvQk9CTFIrU3lvVGNtc2dj?=
+ =?utf-8?B?bHdwWk9FT2RnZkE4TUVsZmdNdjcySTlvbHYvbnQyUno1YUdGL256amhWTG5L?=
+ =?utf-8?B?WGVKS2JCaWNRRXdRdTNxN2Z2TjFRZDhSdncwd2VtU0FicC9OYVRaL3VHR1Jy?=
+ =?utf-8?B?cXJjQldxMEdKWDVTYmloWUp0RCs3VmZtTEJQdGlNSllFUDFDQktqaDNjMXl4?=
+ =?utf-8?B?UGUvUXp2WkFzWnFKTThGZ0N2c0N0WHVQT1BLT2F3Tk1McTJjZU1JT3ZhOTNQ?=
+ =?utf-8?B?bkkzZXdSMm00SW1JRkVrdFNoa1BWb0dSMzlQQWpWY21venI4OTVtM0x3bVJC?=
+ =?utf-8?B?RzNobnFPVmZCVnFBWW5jYzVBRVhhaWNjTWpBaEZCa0RZTGN2bVhFRjRNWExw?=
+ =?utf-8?B?ck5pQnpETmR5dGxER1liU0l3SU5vZGpWYit3WjErbWpKa3h3cnVIeUY0ZmJx?=
+ =?utf-8?B?ZEVJOC8zYlhDS2dySlZJVVRjNXhDZ0NERGkxeUVxVS9ZdG5kd0tlY1FXbzd6?=
+ =?utf-8?B?UXZWRUorZ1JiUWhtYVF0eVhVZFNINTJKVDZFMWhEYW9UTlI3RldnalFRRzZu?=
+ =?utf-8?B?dkpUbXBuMThkTnRjejViMGxFMHdzc2NzNW5NZ29CT2RsN2FxVTVEOEZnQmNU?=
+ =?utf-8?B?UW9iMU9rNXUvczBDZnZNbXFWMnBmcXRORm8rT3FGOXl3WEJuekhUSk5pMUZ1?=
+ =?utf-8?B?TkNYMUc2UHFKTFJYT2tMNjl1VVZMdGdmajBwRzR4anc3Z25SaGZXSllwUGJH?=
+ =?utf-8?B?Sjk2a0NjYlQwTk1CYStFcW91WkdoMnBuWHNUdXpsZUZ5WHdrMkdkZlNYNUZF?=
+ =?utf-8?B?SWtXQkZyZkQwb0Y5TG5kdUl5OTRyazZHcDJtVEdWSy9xSWNRSCs5ZFE2VlR1?=
+ =?utf-8?B?OHhwc0lLQ0ttaFA5T3E5WnR3NW9HN1FwcFVxSXkzK1Z2b0JsTW5ocHpCV2Fh?=
+ =?utf-8?B?ekVxNFJMZXdXQmFSZTcvZnVoRHZFcTFxWHN3cElhRldrdFBYZ3Y1YW1YTjQw?=
+ =?utf-8?B?Unc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9011276-c03a-447f-6a55-08dd581c1e70
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 17:19:55.1266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jj4zREq3smGkCVeKA+cgmV7ZY0oagc50OWOwkuVkfB0VCXUBh3iAYbRRWpnR8JbxVogevhNPqlf3V6WwCTvXRClsHak6QgQjZ9FR/ZvfEco=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9175
 
-On Thu, Feb 27, 2025 at 11:53=E2=80=AFAM Brian Gerst <brgerst@gmail.com> wr=
-ote:
->
-> Due to commit 9d7de2aa8b41 ("Use relative percpu offsets"), percpu
-> addresses went from positive offsets from the GSBASE to negative kernel
-> virtual addresses.  The BPF verifier has an optimization for x86-64 that
-> loads the address of cpu_number into a register, but was only doing a
-> 32-bit load which truncates negative addresses.  Change it to a 64-bit
-> load so that the address is properly sign-extended.
->
-> Fixes: 9d7de2aa8b41 ("Use relative percpu offsets")
-> Signed-off-by: Brian Gerst <brgerst@gmail.com>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
+Hi Heiko,
+
+On 2/28/25 5:57 PM, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> 
+> The LVDS block needs a separate pclk only on some socs, so currently
+> requests and prepares it in the soc-specific probe function, but common
+> code is required to unprepare it in the error path or on driver remove.
+> 
+> While this works because clk_unprepare just does nothing if clk is NULL,
+> this mismatch of who is responsible still is not very nice.
+> The clock-framework already has a helper for clk-get-and-prepare even
+> with devres support in devm_clk_get_prepared().
+> 
+> This will get and prepare the clock and also unprepare it on driver
+> removal, saving the driver from having to handle it "manually".
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+Small nitpick below.
+
 > ---
->  kernel/bpf/verifier.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 60611df77957..f4859516b190 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -21707,7 +21707,7 @@ static int do_misc_fixups(struct bpf_verifier_env=
- *env)
->                          * way, it's fine to back out this inlining logic
->                          */
->  #ifdef CONFIG_SMP
-> -                       insn_buf[0] =3D BPF_MOV32_IMM(BPF_REG_0, (u32)(un=
-signed long)&pcpu_hot.cpu_number);
-> +                       insn_buf[0] =3D BPF_MOV64_IMM(BPF_REG_0, (u32)(un=
-signed long)&pcpu_hot.cpu_number);
+>   drivers/gpu/drm/rockchip/rockchip_lvds.c | 17 ++---------------
+>   1 file changed, 2 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> index 385cf6881504..c19b7b1f6cb5 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -448,13 +448,11 @@ struct drm_encoder_helper_funcs px30_lvds_encoder_helper_funcs = {
+>   static int rk3288_lvds_probe(struct platform_device *pdev,
+>   			     struct rockchip_lvds *lvds)
+>   {
+> -	int ret;
+> -
+>   	lvds->regs = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(lvds->regs))
+>   		return PTR_ERR(lvds->regs);
+>   
+> -	lvds->pclk = devm_clk_get(lvds->dev, "pclk_lvds");
+> +	lvds->pclk = devm_clk_get_prepared(lvds->dev, "pclk_lvds");
+>   	if (IS_ERR(lvds->pclk)) {
+>   		DRM_DEV_ERROR(lvds->dev, "could not get pclk_lvds\n");
 
-wouldn't you need to at least drop the (u32) cast? Otherwise what's
-really the point?
+Should we say
 
->                         insn_buf[1] =3D BPF_MOV64_PERCPU_REG(BPF_REG_0, B=
-PF_REG_0);
->                         insn_buf[2] =3D BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF=
-_REG_0, 0);
->                         cnt =3D 3;
-> --
-> 2.48.1
->
+Could not get or prepare pclk_lvds\n
+
+instead?
+
+Thanks!
+Quentin
 
