@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-539063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575DBA4A071
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:32:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0498BA4A072
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE2B1898FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A293B1FEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F981724;
-	Fri, 28 Feb 2025 17:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4711F0998;
+	Fri, 28 Feb 2025 17:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHXY9t1a"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TQy13lMT"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75C641C63
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740763938; cv=none; b=KQ2r0zlKL61miwy73zJl7ofFm5xIhUOPCYfb397PnmB12xfrWj35q3RhlZyDUu6jUwOdJ2VjcFG7bLxUi0JEKbEaq0RWbLovx1w3C3fDcuXihpS4LRcQ0sOXMv3/t/ltRwgF5ZV5qVxpI0tFzeilhT3HjM8Z1BlTIF6OJ/AtnmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740763938; c=relaxed/simple;
-	bh=0X35A1fZOS0POJ7BKgK0KyaRi//1aHcM0Zz6yyZC8zA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqEuv3TXc4Q59gh8lePD2Xamxdhq3V5kPLjwHkXCHO5RmDdzjcGTJLysHCgfS6BIQCux96h18HtXQJZN6BxjupwMM0ucjUih9N2rS9HHyRw6l6Ql9UYhBWMOamJiX5Mj0kLP9cqhgq1bb5oWCHWFYEyD8r7JqIb1NKJvpZfkZrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHXY9t1a; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740763937; x=1772299937;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0X35A1fZOS0POJ7BKgK0KyaRi//1aHcM0Zz6yyZC8zA=;
-  b=nHXY9t1amLCmfYXearwBMqrNh7QcTwqkWJdubbPksLGH0ctJkpoulKbo
-   EmHpF2BtOhChlZpvraEaxhVmqgXuG8xBz4Qs3IeVTnxbT4YPrwA33LacZ
-   ZD4d+aCexBZMFMGDACoDUyWoattIAxqjUx6Pq5jiTsPzaVZRPx5WhT/SG
-   5yk6HjJwVLP64sA/arzXM5+WLxFB7skmKUM2unBLy6x4WFAEAs+J540R6
-   37PtOwVhdk5T5aaWJusxhFHqyozeZTMH4GTYtDLJaFY4+yj0NT5fLYsFi
-   m7C50xRhRd6FfKzplgyqfy7aPmQvqVg2MdDkVXmFnb83zq53FgiAXByRl
-   A==;
-X-CSE-ConnectionGUID: XXwMRCKjTYKGUDOAhMpSgg==
-X-CSE-MsgGUID: IARj9Di7T9m2pLTqz7cB1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="59239411"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="59239411"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 09:32:08 -0800
-X-CSE-ConnectionGUID: ShrOUN/VSLW/JqStEV+a/g==
-X-CSE-MsgGUID: s5M4XoM+ScKozAGi7ZpenQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148305333"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 28 Feb 2025 09:32:06 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1to4D7-000FHS-0N;
-	Fri, 28 Feb 2025 17:31:47 +0000
-Date: Sat, 1 Mar 2025 01:31:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brendan Jackman <jackmanb@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type
- change
-Message-ID: <202503010129.rJvGqZN1-lkp@intel.com>
-References: <20250227-pageblock-lockdep-v1-1-3701efb331bb@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011F81F098E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740763940; cv=fail; b=phf5fwjWmUeBf1q9IoboOo4VKnGnC7ZGNJ7ONyHghU0l/jHa2ivKxNzKRAK8/sVin+m52AvJtBwAkHqRzjBPdxv/RKlaN7WfFbl3kJS18KH5wINhad32XjzlYw62ZzRfANgrxzh/7i40b5A7WU1+7pV+50jVZv06GqlkydJfTBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740763940; c=relaxed/simple;
+	bh=k5M8DbtyJetFgw+hhxTgCr+kFZZJEMIAkVCiucPCtko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ODP5z/Aa1qR01M3EwStHKrz4PkySRIJxYkqE9C95dDH2Ku5EUM3AlATT3HHVh3mWAnVA5nLi9v4p5PGY6ikGr2OijxD8qlph7vmn8WTj2lrkhkjlWHivJJPiVjZOYddhoLLQ1NrK2eu5g0Nj39qoMDc4MQCJ/1J1D9DDgseo2ZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TQy13lMT; arc=fail smtp.client-ip=40.107.244.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SD/opUROeCyHoTwmCUFYjLcVJlQ9dAOdWOJStkjQa4dkUFNBmfiuATCAO0q/TjbHE3Bbq3lTqfECvIj932CgMPKxT/+Z9YnMnanNk/UQ5Kap1S6BgqTLwExDPlh7QCN4mtD3mH/gGwvPts90MuzjglVE7rafndmn+Y2EzpJgGZSjI/i10TBn/XCXiuVWrNgQX2jqPyNE4mklKajZVT8TXuJNruS9m7SNfBaHf/CsAl7anichcmZ7HxzDYv/lbL5ec7jUtN9Q4MITSX0C5mScuvM6FFaxbloD+yJKfv4a/DWm4CEH/OFXjfwQaWrP5sjg+95xwmvIOnHTbxHiHvEh6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XXFX6WuEywKNWv4+z/oDwF2A9E+HrkxmWyJNIpdce14=;
+ b=dgOBX3lBR1193fO81F5A4mZI4I8wiZfgUpjWg/bQ/taUK6DUBXpDp3J6frIMEj0GUaKJuW80l5+7AlxiXjIHtPbjRywmE1Oc7P8W6xQv9QZuLlGJoL6vQgSD/kIQ2fAAe40Scs44sf0ls7TZAHTK8oNSKfZxfm5E4ARPJf38K332u/Pi53FRi+JlZsRTATk0KZmf0KEj4lvu0at0XqLLfjIgkfdASwUZjUUFDpT0nYRp6GDfOr5fgGnR+Akl2e3AI/cLhM5jFlaO2bXt5bH2OZOK/u4GPwECtvBc73wyTsofzRRT4uHhmLg427x/2F9ZtniKuatBgkwOtH3yeR2+Ig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XXFX6WuEywKNWv4+z/oDwF2A9E+HrkxmWyJNIpdce14=;
+ b=TQy13lMT9xJHOXYxl1alcN5qcHKusCHaIVYdd5bsGv3Ysvv+548mMWnGQ3QU9wdh+hUUwOU5SV1JCB4rL0eACEcIvTyRuRIQNie5/17TrFxL8WxLspuzNGgRUuensiYOPTiDk9XL0gvMQTu93K/Ee5RZOjEQWVR/QDEDTmNlsLf6FvYSFx3f4shshJWXpJR6A9WdctMXb7ltyy+8xu1Ijn+OulB7A/Vikwe+W0dy9WYNdOqollvrVo1gKyEe7y40rntxbTjBYn3w2EfhG07nPxfxvQKG1PgDKK6QZ8Ehc2JYHxToJhqVeC26nN39z8DPHzfpFzEMxiyZNzclCfNkIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DM6PR12MB4106.namprd12.prod.outlook.com (2603:10b6:5:221::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
+ 2025 17:32:13 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 17:32:13 +0000
+Date: Fri, 28 Feb 2025 13:32:12 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, robin.murphy@arm.com, joro@8bytes.org,
+	will@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] iommufd: Move iommufd_sw_msi and related
+ functions to driver.c
+Message-ID: <20250228173212.GC39591@nvidia.com>
+References: <cover.1740705776.git.nicolinc@nvidia.com>
+ <ece6ab9a0144eaabc285eb21a09da683d6d9951c.1740705776.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ece6ab9a0144eaabc285eb21a09da683d6d9951c.1740705776.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BN9PR03CA0199.namprd03.prod.outlook.com
+ (2603:10b6:408:f9::24) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227-pageblock-lockdep-v1-1-3701efb331bb@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM6PR12MB4106:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e01b061-71ba-4481-db00-08dd581dd68b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?O/Hhqwzp5rZYjVJlU1gttQ5ifCjcvj4Cidw8/oPlcw7JZAzjH4rCFfpwSSVu?=
+ =?us-ascii?Q?CxTuq7HQ3qVjcSrUZKIq+yeK2JaVUPSyNF5CZGagGyktMB0IvBBR9qC15Rnx?=
+ =?us-ascii?Q?rGWLn3VfA4xene2teKQfNe6AZqR0vlYUHdxBqHPzOo2LYcfxs2vqn3jS/BSk?=
+ =?us-ascii?Q?mb7SdmvzMyqAKB+VFWbfcJ8jefHu2ir89wzJMXSCrzBogQx0o+WTHaLA5Wns?=
+ =?us-ascii?Q?w3dGuOA8M8isKhXc1q9HRfLp89owlIzWaAdCVmIps9fy86mqKJ0p8D5QS4Kd?=
+ =?us-ascii?Q?rjSrywSZDuFkl2usrqQOgfYQhEGONLV+6XPI8Tq1NYeGvCBTJyS7oQIoHCkY?=
+ =?us-ascii?Q?xFehzeo99IkTsncnVu0Ms98BV4fSE7AePTti453DLBtg6q5/KAIt9KJMlzVZ?=
+ =?us-ascii?Q?jGdxuJ3ULoec/XOVMFxQtRRFD/b8aAU+yaeFOfEkA0BAbxvuOLkw4hltD5Os?=
+ =?us-ascii?Q?I/OYqUUgBPyWUVJRCEn2TBsJn/Qmupn0ErzrRMIhVICjz6IntpvE+VLNDZcC?=
+ =?us-ascii?Q?7bFGxlniABdT6hdbVsAw6cDCggNZImaowdqRyAtwI2BxdUqUvQjl7+ucVVqn?=
+ =?us-ascii?Q?VQPSTdswmgTqSEQsR9qmfoPxVjriFVi13eL+EYuGwzzRNCoqokZ4FyR9PZAw?=
+ =?us-ascii?Q?pjYQ0QTTUkAB5echQaJANp8UOa81Ep1p+GSk29zzM9bsdy9cKmwrS+Ekv6p3?=
+ =?us-ascii?Q?gOPDvMRTkOXiIUHUBqdF/gFJcVhRXTi/yDFxBmuhWHPAv5Kp8ooaT4wPqZNM?=
+ =?us-ascii?Q?BC3RvhPi2eh+Z3paqhqB+gztUHjghKFUybYf7L7laB3oGe+gp7IiPBHuIOz6?=
+ =?us-ascii?Q?TAUo8yWc7HDbC9dxQehzp5mklekrjhtBh6/aFjYtfyY0cIWHxb/n8wcfwVY/?=
+ =?us-ascii?Q?/GfLOGKJ6lrW8VpfEKh+FeOdhmaVf15nmeSoujzm1x6ApC2Z7s1lk56BaWWN?=
+ =?us-ascii?Q?8iJwwneqZL+W38YRpX2xLdqy27DdvdhrkYvSn6T2PJfCiLUrGcgwmuipndf9?=
+ =?us-ascii?Q?j9e0HqRg0NFIfjY/RMwsMOkhRBT8pXrDwwix7Sn9TvpuwXphrBy6Y4FhZVbC?=
+ =?us-ascii?Q?Jir/ibUb8G6Tf6cuu7J0Vui0/9i1ZRK5ZYqi2MWcJYGahrF8s0Fwk2IqOIwL?=
+ =?us-ascii?Q?Y3PA62SqN9xT1xLyD8bYTgBKReYL367KXFgRJW0YGf5YWkoxDZJnWjLidHxD?=
+ =?us-ascii?Q?a3fUWRQ6P4NMZCdp4ThiOirWsfSWkk4nzP+MZ2+DYYGkeLWBX3+4TT6Ot2ML?=
+ =?us-ascii?Q?RJoweQDV7Jg6m/YxH8P69ByppFg5W9bJrWDPDbbGghkeI1l7sS6O0k7upYgx?=
+ =?us-ascii?Q?yK1HiXiQcE2TRDYvpI4WHFHTaeNeMhhzyRLd+9uiHCN5euw7H+fRPLnv7G3r?=
+ =?us-ascii?Q?6zhM5df+Ncj6nFA5MvoD9hkxFFWz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?dggKS6smaMbQlCs7R3rTPvfOsmWG3oVRxz7ib1W0o5+fcpcfAaU+GR06rbg0?=
+ =?us-ascii?Q?2hpN3LzEcaJ1GoaVPHun7YQuwUs0LxHfBAuwZHrYnlOyZOiFkABIvu2XsMB8?=
+ =?us-ascii?Q?J68GgZoMQR15g9x24YZb4Juze89ijc/WQ0HOtma1FKOVQjMUe4y3AsdWM3xS?=
+ =?us-ascii?Q?ge/KFWSOUU+VuhtuJcaXrHke/qabYc3oLR77TKyrURffsB4zse4skwVnE0ys?=
+ =?us-ascii?Q?yb72V33RYG9/ltj+f+ah86Uj0A2d/5N3wuBNGmRjvD1Oh3MgGZhf+o2bxC2z?=
+ =?us-ascii?Q?ZY/bQ2LIzzy2RtDJccZ2kwoIYaQg0/7/pikZBCdBjIMbbfSXyCIk4zE1RMln?=
+ =?us-ascii?Q?7bV86COIcZ0y/7SqDX1MCj9KjIOhzRE7Bm9lr969Ja3+YwKgAWHkCk+NihiY?=
+ =?us-ascii?Q?PYVXAOEq4jfErIiBWUCuW6wVLg3KTrnzWbaA1XDyK0upMHWlBxPXwNfcRbaW?=
+ =?us-ascii?Q?e790Zobf5IyEqNq9v12NLf8q3fTJkQ13i9YkO5R323LSejEgMh2IPA665HCG?=
+ =?us-ascii?Q?hkZqffFIA1Kdm0oe8h069c3mB5mTZ5PdfnwEjbDZftYI0R6C9hm+ytFCnBJT?=
+ =?us-ascii?Q?ReUMsMTL0mx6cojYhNhHAZ5fIdTdrgs/K0tgwLfNiFs8Of9i1hDhvAw/jobM?=
+ =?us-ascii?Q?AOjZjHTgsuF6K0W4doyW2RZ7jPSSyaJbHO+MdqAOD6kwwpkyIEbepx2OqYSs?=
+ =?us-ascii?Q?q1/ZmVfif39mxLYUT7U8q5KYirMdzcPqqgXpydpx0PMfB+f39Nyg03JTc92t?=
+ =?us-ascii?Q?uaSxBZ2xDYoRT5QxGe+jF0Aqc5h6YIRhlb8Qpy60uWy+6qOOD9YaGWylz02L?=
+ =?us-ascii?Q?Qd93IP0qEzSISy2WDhbOw6gvyOlXfw1gJOhDeF/VZOWuhzvb+GxEZXr/JW0p?=
+ =?us-ascii?Q?SSn7Fd/4tvI2OCMXH4zd3goRgq8d41rwRGDgTjr2LutjzI8OP6RqnXLzqL5r?=
+ =?us-ascii?Q?B3OLDHt1cohcg9spvpzJCErMnbjhnYtHFRXy8rX2t1DlGNNY3gdHbr9o0C1A?=
+ =?us-ascii?Q?isAYqsVTLJPerHJ4hEIQ9IxQOw9ugo9aRvRwpsL+LcD5rrf3kTX1Rabx3e5S?=
+ =?us-ascii?Q?kjo6IzjLMx2FepkPoEhvoEY5J34BX514XJOWRe9JIvSyA12SfnHnJsCr5TYS?=
+ =?us-ascii?Q?YuKPcd7IEzxa9xJ9Rsy+Y13wxu1jfu/3CXmI+krm+9mqPP74KVa3HnUqwd9r?=
+ =?us-ascii?Q?VWDyUEIhElKtaE49NZCH6vLb8w6IjQuHl38cbFmqT915gvevhq5laMdt46Zp?=
+ =?us-ascii?Q?lIwYaGkE4CMr8XWnf/E0hj6Fx1UpnCNVTTOBlhn4gvXxe0NpYFbjkkdArazh?=
+ =?us-ascii?Q?nGstjG75r8pM4n5T9Pe3NA/KGT1VTOajL3cvbTH1dJtp1XppdigYD/nUgW4K?=
+ =?us-ascii?Q?Fr1KO+DOamq/It4wvAAcm0hKTsHacshARII3FM6iuUDOLnMsahqWbGHyaAAV?=
+ =?us-ascii?Q?qs4vqyslAeTfrGGYs5pQLsafmiycZ+da2UoFl7SzZ1Ax2KPL3IUXCh+K4ADp?=
+ =?us-ascii?Q?Uzb3LKx2tggNMH37qZmTgfIIQtghq7MoBUgLhb+gzvVuywEK+9E9+Rm5hHTb?=
+ =?us-ascii?Q?yF6NlPSHylTly1Qo0U/S4H5KbpEzR0hqL5UbSJsZ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e01b061-71ba-4481-db00-08dd581dd68b
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 17:32:13.4930
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fwcSA36LntgTLHtXU8K06i25+feqQv+zKws+Bl52fsUmDbEStqodh/NJAE2NjtoY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4106
 
-Hi Brendan,
+On Thu, Feb 27, 2025 at 05:31:16PM -0800, Nicolin Chen wrote:
+> @@ -187,6 +188,8 @@ struct iommufd_object *_iommufd_object_alloc(struct iommufd_ctx *ictx,
+>  					     enum iommufd_object_type type);
+>  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  				       unsigned long vdev_id);
+> +int iommufd_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
+> +		   phys_addr_t msi_addr);
 
-kernel test robot noticed the following build errors:
+This should probably go into drivers/iommu/iommu-priv.h ?
 
-[auto build test ERROR on d58172d128acbafa2295aa17cc96e28260da9a86]
+> +int iommufd_sw_msi_install(struct iommufd_ctx *ictx,
+> +			   struct iommufd_hwpt_paging *hwpt_paging,
+> +			   struct iommufd_sw_msi_map *msi_map)
+> +{
+> +	unsigned long iova;
+> +
+> +	lockdep_assert_held(&ictx->sw_msi_lock);
+> +
+> +	iova = msi_map->sw_msi_start + msi_map->pgoff * PAGE_SIZE;
+> +	if (!test_bit(msi_map->id, hwpt_paging->present_sw_msi.bitmap)) {
+> +		int rc;
+> +
+> +		rc = iommu_map(hwpt_paging->common.domain, iova,
+> +			       msi_map->msi_addr, PAGE_SIZE,
+> +			       IOMMU_WRITE | IOMMU_READ | IOMMU_MMIO,
+> +			       GFP_KERNEL_ACCOUNT);
+> +		if (rc)
+> +			return rc;
+> +		__set_bit(msi_map->id, hwpt_paging->present_sw_msi.bitmap);
+> +	}
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iommufd_sw_msi_install, "IOMMUFD");
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Brendan-Jackman/mm-page_alloc-Add-lockdep-assertion-for-pageblock-type-change/20250228-002107
-base:   d58172d128acbafa2295aa17cc96e28260da9a86
-patch link:    https://lore.kernel.org/r/20250227-pageblock-lockdep-v1-1-3701efb331bb%40google.com
-patch subject: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type change
-config: x86_64-buildonly-randconfig-002-20250228 (https://download.01.org/0day-ci/archive/20250301/202503010129.rJvGqZN1-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503010129.rJvGqZN1-lkp@intel.com/reproduce)
+Stubbed out too if CONFIG_IRQ_MSI_IOMMU ?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503010129.rJvGqZN1-lkp@intel.com/
+I'm still wondering if we should use a function pointer, how big was
+this compiled anyhow?
 
-All errors (new ones prefixed by >>):
-
-   In file included from mm/page_alloc.c:19:
-   In file included from include/linux/mm.h:2302:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from mm/page_alloc.c:44:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
->> mm/page_alloc.c:421:3: error: call to undeclared function 'in_mem_hotplug'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     421 |                 in_mem_hotplug() ||
-         |                 ^
-   mm/page_alloc.c:2857:2: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
-    2857 |         __count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
-     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
-         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
-   mm/page_alloc.c:2974:3: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
-    2974 |                 __count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
-     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
-         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
-   mm/page_alloc.c:4745:2: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
-    4745 |         __count_zid_vm_events(PGALLOC, zone_idx(zone), nr_account);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
-     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
-         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
-   6 warnings and 1 error generated.
-
-
-vim +/in_mem_hotplug +421 mm/page_alloc.c
-
-   417	
-   418	void set_pageblock_migratetype(struct page *page, int migratetype)
-   419	{
-   420		lockdep_assert_once(system_state == SYSTEM_BOOTING ||
- > 421			in_mem_hotplug() ||
-   422			lockdep_is_held(&page_zone(page)->lock));
-   423	
-   424		if (unlikely(page_group_by_mobility_disabled &&
-   425			     migratetype < MIGRATE_PCPTYPES))
-   426			migratetype = MIGRATE_UNMOVABLE;
-   427	
-   428		set_pfnblock_flags_mask(page, (unsigned long)migratetype,
-   429					page_to_pfn(page), MIGRATETYPE_MASK);
-   430	}
-   431	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jason
 
