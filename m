@@ -1,252 +1,293 @@
-Return-Path: <linux-kernel+bounces-538149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3542A49507
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:31:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A624A4952D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC6C189586D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB8B3B7E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A3E25B688;
-	Fri, 28 Feb 2025 09:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99355256C8C;
+	Fri, 28 Feb 2025 09:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PPeerhcZ"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jMhCvcPi"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2056.outbound.protection.outlook.com [40.107.236.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810F62580CC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734973; cv=none; b=oiwE+y6PgqhbkdGY837P4uNNmY4NmRw4H1J6tVftQELn0+QZP0OjaKXzp0nM3/tvj4gAPGpnJV29T69QTOgP270yH8joX3CKlfSUY79pc5mg7uXw/AiYGMCfZhmOoHjG3m+Mu/8Pg3x4vyX3rTXHevVTfqRLOiX8VNCYHbnJ7Gk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734973; c=relaxed/simple;
-	bh=HnV1jt5OPbzcl8Zf8JhAfO9ALAwWsVsONLj0GssGnJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lRDe0PMH0Pig7Jkm1UOL0LJy9a+SXfkJ5PNX2VfW5Ft83nkQx8Iceb3UKqvtmao/cezITi6cDFsfZdYDchrKvrj10NXjZXYp6b3nPjCiDjbwHPeTxUVM72qamue4PNTb9uHcB2jwu0F9uJ+pE42WSlMsz61SRfZ6qjK+Vjw7jrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PPeerhcZ; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaec61d0f65so388848066b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740734969; x=1741339769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xi+7sGpT69/lANgMUWz8/8EU1lRH971cs0FJlKGXLWE=;
-        b=PPeerhcZ5Ws7L/h0E59oN4Zhyc4g6fQ3ZkQb1G39/9aO8HrdCAwF5FN1lBpPpwPZ+z
-         3slC2nnPjmj7y+1dkGydaFpcTENWKDWJHk0wUI8nant7bQyOoDZqjXrVKmz31eNAD3c8
-         JQmZLcqUonecZnEuyzfvJDcYtZwUbDlGxBr2EFJryCfdil3KB1a7wdbnxdETlGL+yP1F
-         MdlAWmdnQv781o6zoiPUg/mXycV+2GRZmakTVIu3lj2BlBxe4FxMNhV6rx7epH1LENYZ
-         l63Si8MG1ODdTwLYVE9ktDSj3oeNWX7cJPOgit9RB04ABOB3KDcR7hnQD9je9AcFtHbt
-         dz/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740734969; x=1741339769;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xi+7sGpT69/lANgMUWz8/8EU1lRH971cs0FJlKGXLWE=;
-        b=obuAa+8NXA4P90esJXFWQ2GGO4Ln8o1ornMa9IKIeaFpf1M+ScdP4hKtKuJo51ZpFL
-         1evjFGbq3zMIs+WJoQRbDkLakfJ1HnAa7wEmHmqQfvqeTb1cWDQTr3aBrldUTPpb5tzq
-         RI+9TUMSDtpR2nw7gyvRagx3+OK7pvy86AQy9LEsUTfkbArHMsABie86ZnFEUBMuhaQ2
-         XVOiiIhZ1trguI91+DY+FflyPLMf555A28UtphpYOqxrkumc0wXS9jSmMRw9I+ox/Amg
-         hS4ENZm993papgftEynYbE88frDvSc0wsuSO0250sxFrdyBvu6r/VQR0dmWW6Ync0mKN
-         J2TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq3qDONwPwlreur3u6u2OFuh4xXbUJqcfionl61df6S4UELdRk+5rMI/hsqC33aiC6kikdApnhCs+/3nU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtyGT4ou8WqgWy05LKAbm+U+Kv50Bg+PrTVUG7JXDRvx55yd+V
-	/wMiaxxmB7uhFHomnlWca1BS3iWiEWH5aU0SwbSyd6okBP8r3gVxqklsOflap4M=
-X-Gm-Gg: ASbGnctKDoj7QzFhUVKZ+j0Mkd5QtWz+1Y/Vq1bzKPcQXJoJxQgQMuuqSjqQEoDINzk
-	65XrhpA8XE5uhvepIXuGhXNtzVhRmXwA91m7L0+JzJ0N046ckgbo24TQlC4oGklKuFHG1xTMch3
-	Z3HEZgq+QaY+WNgXwKT6Fk+58NPZTlbpWTJaHfQg8wbhH0WQOwN/enChA9w2zbiouEKYW3SYLEP
-	YahN9qDm+mh1Q4S3ZaldHJrXY1rsTmlfp3YIUcugL9/4ap4lgeNFc7SVUYsl9rcBs66pDlE7xzG
-	1u2frL/3Cqj0ZYFmZwq71hYIVMoue4bzbPE=
-X-Google-Smtp-Source: AGHT+IEfVyttsNVaqFTwGlRNWn1VvhncC0bqlOAdRmlzfyt8y60wXR2u9ff1D1N8THUpzyw8SfSlkA==
-X-Received: by 2002:a17:906:c149:b0:abc:a40:4194 with SMTP id a640c23a62f3a-abf25da22ddmr260249766b.8.1740734968478;
-        Fri, 28 Feb 2025 01:29:28 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c7bb85asm258530166b.162.2025.02.28.01.29.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 01:29:27 -0800 (PST)
-Message-ID: <109244f2-89af-4e08-9723-db6c6b0b26d1@tuxon.dev>
-Date: Fri, 28 Feb 2025 11:29:26 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D119A255E54;
+	Fri, 28 Feb 2025 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740735181; cv=fail; b=E/7orB4MXvSsp3eOa08yCh8IpdpcfNeajN5ZoblAXPGOLGM7fdNqiMUwXS1GqSGy8Xfkyl4VT49OAqDUhnJNs3xTJ/VC0v3KqUDUTWOF8qDAsVVKxv/6oawJYl5q3CN8enI8q6e3amaDDN9acMUdxwvcvbPVdpYcBsGJhX93/Zs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740735181; c=relaxed/simple;
+	bh=t0HbtgQtp2sGuQHrq6SnXQhFPbIWZ9LGvtw1jYf/zHI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fSQqlpsp2RmVLi7tqIiOV2NHGGAxMJ+zNea1KLtxSniq884P4Uiv+X0ES4rFphOITLmhZw1eRDmRUhHeZz/KnnTOCZVIE0VO968aFn55qPERFVwLfm8WaDmbasT4/GW/revrFzewAvmV1KXWSaXTXvy/bsW2PEfruZ29jLw96oc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jMhCvcPi; arc=fail smtp.client-ip=40.107.236.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xhgwDsgUmg+C8WFrL7WWv7mXhrIfDJOzaiZwUXpYXnTLzisQQ9u5ju46ZOgd1p02szSJY8Jq41RVrNstNvj+zYE3k/lWjTWPZhKsMP9vGwZgiHUz2h+sfYGMxpFYNPSscFILXVjTa1m87wKkVG9MqwEVhLDzWW+nrSb6mInqlZz2bG5hbHz7r4rIj9HiV4pPb/mk071ta4eirnfpEZ6eZi4JoXso0A/VzeKJ1IgcWJ7o+wnu0KZGhknmk9GCGd6z6Gu5Ltf94CVuU3JLDY5MRpA8Fa70iwZnK41x/jc7MVYNqD7jd/hfpzgyHZYuIfJ5gzDbiQV/mpKRlNJTc2IGPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hKSgyK3/rVa8a/HUOQyhXrqjKaleFc3EevLQkbq62js=;
+ b=o0XubuSVJPqNgEtEyU6ujvY/s2da9HDHr6dMA6S6kyjAgFXpfwR17Wy4D1BJrxVDDrbjK5MGLaCp7k19AB9gafje2hhUoQ/yCorcf1FqHyIxk2y+yyVl8jOaIjuSa/XMd7sez/vjXDe+yO99sluaG83U3zquXXvQ9rSd0L7/v1if16enQ9ZKFj+OY6MgEgwji9Ka8xYuzk8j6w/HAK/nnNffOGQGDD/BhYu5vAsqNJyufHmE2E0nLx5bZYMsWF8Un307gr1yi0azgK7zp+BkOgTw2p8U9R8YMPJVDhxBw5xZapSe33T1pSed2sMl1iiUbG3jHFUiB4ysX3kYTh3p4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hKSgyK3/rVa8a/HUOQyhXrqjKaleFc3EevLQkbq62js=;
+ b=jMhCvcPiILw0qIfAbSIE2K1oMScUXpgLJuLvC+X9jthhIxm2MJkdQOoGbKd+RWRnLe4I7A0OsAY/c7ut0Yksiz613J/w5Ad6lkgiODy+UgtNUrK38sE4tCx+Npm0nwmgKvb5hyn4yO8R3IewdJbtf8mXTvMObXlXU5k6PQYouCo=
+Received: from MW3PR05CA0001.namprd05.prod.outlook.com (2603:10b6:303:2b::6)
+ by PH8PR12MB6889.namprd12.prod.outlook.com (2603:10b6:510:1c9::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 09:32:52 +0000
+Received: from SJ1PEPF000023CD.namprd02.prod.outlook.com
+ (2603:10b6:303:2b:cafe::f1) by MW3PR05CA0001.outlook.office365.com
+ (2603:10b6:303:2b::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.10 via Frontend Transport; Fri,
+ 28 Feb 2025 09:32:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023CD.mail.protection.outlook.com (10.167.244.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 09:32:51 +0000
+Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Feb
+ 2025 03:31:18 -0600
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <kvm@vger.kernel.org>, <seanjc@google.com>, <pbonzini@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <Thomas.Lendacky@amd.com>,
+	<nikunj@amd.com>, <Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
+	<Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>, <David.Kaplan@amd.com>,
+	<huibo.wang@amd.com>, <naveen.rao@amd.com>, <pgonda@google.com>,
+	<linux-kselftest@vger.kernel.org>, <shuah@kernel.org>
+Subject: [RFC PATCH 00/31] AMD: Add Secure AVIC KVM selftests
+Date: Fri, 28 Feb 2025 14:59:53 +0530
+Message-ID: <20250228093024.114983-1-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers: soc: atmel: fix the args passed to AT91_SOC
- for sam9x7 SoC
-To: Manikandan Muralidharan <manikandan.m@microchip.com>,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- varshini.rajendran@microchip.com, javier.carrasco.cruz@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Dharma Balasubiramani <dharma.b@microchip.com>
-References: <20250220055302.284558-1-manikandan.m@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250220055302.284558-1-manikandan.m@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CD:EE_|PH8PR12MB6889:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff96724e-daf7-447b-0523-08dd57dadf6a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RoRxdPefP4dM7DHJ9DeJLkxXrNcWsLZxZmD49P2cRwhXBKXexeKyQx8Zn4SE?=
+ =?us-ascii?Q?JYzQ/sfFBGoAGlcsoFeFUcXulAtRuL/kypsolRXNpXhBOyVHy9qMj10udKtW?=
+ =?us-ascii?Q?n40pU7rQimOK1qx+Holl7woOfYY2zRY5su69CL6qbr+iTpvzcb5X57YRW3ll?=
+ =?us-ascii?Q?ejFNZ2bGj5ir8ixM4JkBNvDDqFLUqz6p72G1GvFA6rnoz9+lC8ffesXan4/c?=
+ =?us-ascii?Q?gnf0cwyo7cMEXuBAiBPuuhJKzJsaXoJbbIv9VrtoD9cHWfh7E0TvvMrkUOkp?=
+ =?us-ascii?Q?nckSypRZaU7zsh7AqR2deVgfhqKsZ9fV3f7dDX6om9Qw0wUYY19Y3cN30yQ7?=
+ =?us-ascii?Q?QyRniYsMZE++iMCdAVKa77mpNeuTJ+/eQ8TaxvaDpOcLynuvOobTscnCgMId?=
+ =?us-ascii?Q?Du9NP+GLrBWiwGrHC5Kv5e1umLaqjq9pxmyYneRveuNPC7jRm7ZZB7jEtbJ4?=
+ =?us-ascii?Q?xAtVaqhOHFWTiose3Np4csvaVAskTS/H29IAtbwXjDv9siTACSgoIuuu3SMp?=
+ =?us-ascii?Q?DI5dEG6UaAvJeetZL4MJ4usZPUgGXq5gP4Xy0pLMBMmIwF9gEuR0YiiNiedw?=
+ =?us-ascii?Q?ibroPkPfmGpr1ZMwCyGG2tMzFXcxtu1CFcCdA6othoPDKwzlyIX0fz7nx32T?=
+ =?us-ascii?Q?/41E7mna1Dzh001kji97jOMg+Da9ZJt3PhyU22fMHGCUrfu6dcuElq7XR7LK?=
+ =?us-ascii?Q?LguXUlcwJwHd9kDFps5ZRd6MJxaDYJWDhy+5XikYChYe4+GMg70GekL4bRE9?=
+ =?us-ascii?Q?oTNE0q+qXA5cAAqm/YBMP5/xntID/A0YWSM4/bPgRKVemnC1l9EVB31leSaA?=
+ =?us-ascii?Q?zWhBjpvs8Q4v2I+HQ03jg7MJKDHv29QBsFXB6wC6xWVoRL4+i1ZfmTIX3AAj?=
+ =?us-ascii?Q?Y5t/m4NbafdON6FZkpureCdpnTo7brLvEBVlfTfPopZQa2JqelhJVdPdxNjr?=
+ =?us-ascii?Q?/wTIeOq/tZVr5+WD3pZFF7/ZNV1NAQAoRftjNEKa7xxnH1QLpYuYAa263FGf?=
+ =?us-ascii?Q?MgUDAsJFxYWDnCJ7nh+rLi/W2MN9UYBCOHkGgX2FD9FMUUZ6MraLpFgwxgmj?=
+ =?us-ascii?Q?CZPXYo6vAwXFnhWDH7uZkLhE974jN3Ytpd+iABkeVg1/2eMSeWXETPZ+9lOq?=
+ =?us-ascii?Q?jGtXAjS5XeXTzGEW6//K7cA2yEPASg+nk3rCaB+tBvgRY7yyyCWg3PmM9sEh?=
+ =?us-ascii?Q?CCqNbyukmEcoEUD+CCnQGcjbZIybOvbrkwrgj0cx+0kPhx1dQ1q6Lqr6IGtK?=
+ =?us-ascii?Q?FnKycwdWm+mLixJH6ftRFFrHqlymq02Hw6op9oHywBo5QZipHv+7G5wKTxoC?=
+ =?us-ascii?Q?5GPmP9N2TECCcfVUXvDXbsQ07WM1fW30DbE4ySKO9mY7jI16v1npfsAysRQl?=
+ =?us-ascii?Q?R//OKMIBdbu2nR+ppguHd1FiOlxx0WXZWDkPkVJrB2fSb9obzw6BIe+CRjIa?=
+ =?us-ascii?Q?F+XLHUL5VDV3RNXTNuoUoili+7Wqx83a?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 09:32:51.7201
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff96724e-daf7-447b-0523-08dd57dadf6a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023CD.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6889
 
-Hi, Manikandan,
+This series adds KVM selftests for Secure AVIC.
 
-On 20.02.2025 07:53, Manikandan Muralidharan wrote:
-> From: Dharma Balasubiramani <dharma.b@microchip.com>
-> 
-> Fix the arguments passed to the AT91_SOC for sam9x7 SoC
-> updating the SoC revision is skipped since the DBGU Chip ID Register
-> in sam9x7 SoC does not store the current version of the device.
-> 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> [manikandan.m@microchip.com: update CIDR Macros, skip updating the SoC
-> revision]
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
-> changes in v2:
-> - update the version_mask to 0 for sam9x7 SoC to skip upating the SoC revision
-> - add AT91_CIDR_VALUE_MASK to mask bits 0 to 30 as per the datasheet
-> - update the SAM9X7_CIDR_MATCH macro
-> ---
->  drivers/soc/atmel/soc.c | 42 +++++++++++++++++++++++------------------
->  drivers/soc/atmel/soc.h |  4 ++--
->  2 files changed, 26 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
-> index 298b542dd1c0..3e0b8ba4f8ba 100644
-> --- a/drivers/soc/atmel/soc.c
-> +++ b/drivers/soc/atmel/soc.c
-> @@ -26,6 +26,7 @@
->  #define AT91_CIDR_VERSION_MASK_SAMA7G5	GENMASK(3, 0)
->  #define AT91_CIDR_EXT			BIT(31)
->  #define AT91_CIDR_MATCH_MASK		GENMASK(30, 5)
-> +#define AT91_CIDR_VALUE_MASK		GENMASK(30, 0)
+The Secure AVIC KVM support patch series is at:
 
-I would keep it as AT91_CIDR_MASK_SAM9X7 to match with the already existing
-AT91_CIDR_MASK_SAMA7G5
+https://lore.kernel.org/kvm/20250228085115.105648-1-Neeraj.Upadhyay@amd.com/T/#u  
 
->  #define AT91_CIDR_MASK_SAMA7G5		GENMASK(27, 5)
->  
->  static const struct at91_soc socs[] __initconst = {
-> @@ -102,26 +103,26 @@ static const struct at91_soc socs[] __initconst = {
->  		 "sam9x60 8MiB SDRAM SiP", "sam9x60"),
->  #endif
->  #ifdef CONFIG_SOC_SAM9X7
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_MATCH_MASK,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X70_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X70_EXID_MATCH,
->  		 "sam9x70", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_MATCH_MASK,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X72_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X72_EXID_MATCH,
->  		 "sam9x72", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_MATCH_MASK,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X75_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X75_EXID_MATCH,
->  		 "sam9x75", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, SAM9X75_D1M_EXID_MATCH,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X75_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X75_D1M_EXID_MATCH,
->  		 "sam9x75 16MB DDR2 SiP", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, SAM9X75_D5M_EXID_MATCH,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X75_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X75_D5M_EXID_MATCH,
->  		 "sam9x75 64MB DDR2 SiP", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, SAM9X75_D1G_EXID_MATCH,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X75_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X75_D1G_EXID_MATCH,
->  		 "sam9x75 125MB DDR3L SiP ", "sam9x7"),
-> -	AT91_SOC(SAM9X7_CIDR_MATCH, SAM9X75_D2G_EXID_MATCH,
-> -		 AT91_CIDR_VERSION_MASK, SAM9X75_EXID_MATCH,
-> +	AT91_SOC(SAM9X7_CIDR_MATCH, AT91_CIDR_VALUE_MASK,
-> +		 0, SAM9X75_D2G_EXID_MATCH,
->  		 "sam9x75 250MB DDR3L SiP", "sam9x7"),
->  #endif
->  #ifdef CONFIG_SOC_SAMA5
-> @@ -370,8 +371,10 @@ struct soc_device * __init at91_soc_init(const struct at91_soc *socs)
->  
->  	soc_dev_attr->family = soc->family;
->  	soc_dev_attr->soc_id = soc->name;
-> -	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%X",
-> -					   AT91_CIDR_VERSION(cidr, soc->version_mask));
-> +	if (soc->version_mask)
-> +		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%X",
-> +						   AT91_CIDR_VERSION(cidr, soc->version_mask));
-> +
->  	soc_dev = soc_device_register(soc_dev_attr);
->  	if (IS_ERR(soc_dev)) {
->  		kfree(soc_dev_attr->revision);
-> @@ -382,8 +385,11 @@ struct soc_device * __init at91_soc_init(const struct at91_soc *socs)
->  
->  	if (soc->family)
->  		pr_info("Detected SoC family: %s\n", soc->family);
-> -	pr_info("Detected SoC: %s, revision %X\n", soc->name,
-> -		AT91_CIDR_VERSION(cidr, soc->version_mask));
-> +	if (soc->version_mask)
-> +		pr_info("Detected SoC: %s, revision %X\n", soc->name,
-> +			AT91_CIDR_VERSION(cidr, soc->version_mask));
-> +	else
-> +		pr_info("Detected SoC: %s\n", soc->name);
+Git tree is available at:
 
-I'll update it as while applying as follows. Please check and let me know
-if all good with you:
+  https://github.com/AMDESE/linux-kvm/tree/savic-host-latest
 
-@@ -386,8 +389,10 @@ struct soc_device * __init at91_soc_init(const struct
-at91_soc *socs)
+This series depends on SNP Smoke tests patch series by Pratik:
 
-        if (soc->family)
-                pr_info("Detected SoC family: %s\n", soc->family);
--       pr_info("Detected SoC: %s, revision %X\n", soc->name,
--               AT91_CIDR_VERSION(cidr, soc->version_mask));
-+       pr_info("Detected SoC: %s", soc->name);
-+       if (soc->version_mask)
-+               pr_info(", revision %X", AT91_CIDR_VERSION(cidr,
-soc->version_mask));
-+       pr_info("\n");
+https://lore.kernel.org/lkml/20250123220100.339867-1-prsampat@amd.com/
+
+- Patch 1-6 are taken from Peter Gonda's patch series for GHCB support
+  for SEV-ES guests. GHCB support for SNP guests is added to these
+  patches.
+
+  https://lore.kernel.org/lkml/Ziln_Spd6KtgVqkr@google.com/T/#m6c0fc7e2b2e35f71da67402036332afeed8c8021
+
+  Patches 7-8 are fixes on top of Peter's series.
+
+- Patch 9 fixes IDT vector for #VC exception (29) which has a valid
+  error code associated with the exception.
+
+- Patch 10 adds #VC exception handling for rdmsr/wrmsr accesses of
+  SEV-ES guests.
+
+- Patch 11 skips vm_is_gpa_protected() check for APIC MMIO base address
+  in __virt_pg_map() for VMs with protected memory. This is required
+  for xapic tests enablement for SEV VMs.
+
+- Patch 12 and 13 are PoC patches to support MMIO #VC handling for SEV-ES
+  guests. They add x86 instruction decoding support.
+
+- Patch 14 adds #VC handling for MMIO accesses by SEV-ES guests.
+
+- Patch 15 adds movabs instruction decoding for cases where compiler
+  generates movabs for MMIO reads/writes.
+
+- Patch 16 adds SEV guests testing support in xapic_state_test.
+
+- Patch 17 adds x2apic mode support in xapic_ipi_test.
+
+- Patch 18 adds SEV VMs support in xapic_ipi_test.
+
+- Patch 19 adds a library for Secure AVIC backing page initialization
+  and enabling Secure AVIC for a SNP guest.
+
+- Patch 20 adds support for SVM_EXIT_AVIC_UNACCELERATED_ACCESS #VC
+  exception handling for APIC msr reads/writes by Secure AVIC enabled
+  VM.
+
+- Patch 21 adds support for SVM_EXIT_AVIC_INCOMPLETE_IPI #VC error
+  code handling for Secure AVIC enabled VM.
+
+- Patch 22 adds args param to kvm_arch_vm_post_create() to pass
+  vmsa features to KVM_SEV_INIT2 ioctl for SEV VMs.
+
+- Patch 23 adds an api for passing guest APIC page GPA to Hypervisor.
+
+- Patch 24 adds Secure AVIC VM support to xapic_ipi_test test.
+
+- Patch 25 adds a test for verifying APIC regs MMIO/msr accesses
+  for a Secure AVIC VM before it enables x2apic mode, in x2apic mode
+  and after enabling Secure AVIC in the Secure AVIC control msr.
+
+- Patch 26 adds a msr access test to verify accelerated/unaccelerated
+  msr acceses for Secure AVIC enabled VM.
+
+- Patch 27 tests idle hlt for Secure AVIC enabled VM.
+
+- Patch 28 adds IOAPIC tests for Secure AVIC enabled VM.
+
+- Patch 29 adds cross-vCPU IPI testing with various destination
+  shorthands for Secure AVIC enabled VM. 
+
+- Patch 30 adds Hypervisor NMI injection and cross-vCPU ICR based NMI
+  for Secure AVIC enabled VM.
+
+- Patch 31 adds MSI injection test for Secure AVIC enabled VM.
+  
+Neeraj Upadhyay (25):
+  KVM: selftests: Fix ghcb_entry returned in ghcb_alloc()
+  KVM: selftests: Make GHCB entry page size aligned
+  KVM: selftests: Add support for #VC in x86 exception handlers
+  KVM: selftests: Add MSR VC handling support for SEV-ES VMs
+  KVM: selftests: Skip vm_is_gpa_protected() call for APIC MMIO base
+  KVM: selftests: Add instruction decoding support
+  KVM: selftests: Add instruction decoding support
+  KVM: selftests: Add MMIO VC exception handling for SEV-ES guests
+  KVM: selftests: Add instruction decoding for movabs instructions
+  KVM: selftests: Add SEV guests support in xapic_state_test
+  KVM: selftests: Add x2apic mode testing in xapic_ipi_test
+  KVM: selftests: Add SEV VM support in xapic_ipi_test
+  KVM: selftests: Add  Secure AVIC lib
+  KVM: selftests: Add unaccelerated APIC msrs #VC handling
+  KVM: selftests: Add IPI handling support for Secure AVIC
+  KVM: selftests: Add args param to kvm_arch_vm_post_create()
+  KVM: selftests: Add SAVIC GPA notification GHCB call
+  KVM: selftests: Add Secure AVIC mode to xapic_ipi_test
+  KVM: selftests: Add Secure AVIC APIC regs test
+  KVM: selftests: Add test to verify APIC MSR accesses for SAVIC guest
+  KVM: selftests: Extend savic test with idle halt testing
+  KVM: selftests: Add IOAPIC tests for Secure AVIC
+  KVM: selftests: Add cross-vCPU IPI testing for SAVIC guests
+  KVM: selftests: Add NMI test for SAVIC guests
+  KVM: selftests: Add MSI injection test for SAVIC
+
+Peter Gonda (6):
+  Add GHCB with setters and getters
+  Add arch specific additional guest pages
+  Add vm_vaddr_alloc_pages_shared()
+  Add GHCB allocations and helpers
+  Add is_sev_enabled() helpers
+  Add ability for SEV-ES guests to use ucalls via GHCB
+
+ tools/arch/x86/include/asm/msr-index.h        |    4 +-
+ tools/testing/selftests/kvm/.gitignore        |    3 +-
+ tools/testing/selftests/kvm/Makefile.kvm      |   16 +-
+ .../testing/selftests/kvm/include/kvm_util.h  |   14 +-
+ .../testing/selftests/kvm/include/x86/apic.h  |   57 +
+ .../selftests/kvm/include/x86/ex_regs.h       |   21 +
+ .../selftests/kvm/include/x86/insn-eval.h     |   48 +
+ .../selftests/kvm/include/x86/processor.h     |   18 +-
+ .../testing/selftests/kvm/include/x86/savic.h |   25 +
+ tools/testing/selftests/kvm/include/x86/sev.h |   15 +
+ tools/testing/selftests/kvm/include/x86/svm.h |  109 ++
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  109 +-
+ .../testing/selftests/kvm/lib/x86/handlers.S  |    4 +-
+ .../testing/selftests/kvm/lib/x86/insn-eval.c | 1726 +++++++++++++++++
+ .../testing/selftests/kvm/lib/x86/processor.c |   24 +-
+ tools/testing/selftests/kvm/lib/x86/savic.c   |  490 +++++
+ tools/testing/selftests/kvm/lib/x86/sev.c     |  598 +++++-
+ tools/testing/selftests/kvm/lib/x86/ucall.c   |   18 +
+ tools/testing/selftests/kvm/s390/cmma_test.c  |    2 +-
+ tools/testing/selftests/kvm/x86/savic_test.c  | 1549 +++++++++++++++
+ .../selftests/kvm/x86/sev_smoke_test.c        |   40 +-
+ .../selftests/kvm/x86/xapic_ipi_test.c        |  183 +-
+ .../selftests/kvm/x86/xapic_state_test.c      |  117 +-
+ 23 files changed, 5084 insertions(+), 106 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/x86/ex_regs.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/insn-eval.h
+ create mode 100644 tools/testing/selftests/kvm/include/x86/savic.h
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/insn-eval.c
+ create mode 100644 tools/testing/selftests/kvm/lib/x86/savic.c
+ create mode 100644 tools/testing/selftests/kvm/x86/savic_test.c
 
 
-Thank you,
-Claudiu
-
->  
->  	return soc_dev;
->  }
-> diff --git a/drivers/soc/atmel/soc.h b/drivers/soc/atmel/soc.h
-> index 2c78e54255f7..2503a80856bc 100644
-> --- a/drivers/soc/atmel/soc.h
-> +++ b/drivers/soc/atmel/soc.h
-> @@ -44,7 +44,7 @@ at91_soc_init(const struct at91_soc *socs);
->  #define AT91SAM9X5_CIDR_MATCH		0x019a05a0
->  #define AT91SAM9N12_CIDR_MATCH		0x019a07a0
->  #define SAM9X60_CIDR_MATCH		0x019b35a0
-> -#define SAM9X7_CIDR_MATCH		0x09750020
-> +#define SAM9X7_CIDR_MATCH		0x09750030
->  #define SAMA7G5_CIDR_MATCH		0x00162100
->  
->  #define AT91SAM9M11_EXID_MATCH		0x00000001
-> @@ -69,11 +69,11 @@ at91_soc_init(const struct at91_soc *socs);
->  
->  #define SAM9X70_EXID_MATCH		0x00000005
->  #define SAM9X72_EXID_MATCH		0x00000004
-> +#define SAM9X75_EXID_MATCH		0x00000000
->  #define SAM9X75_D1G_EXID_MATCH		0x00000018
->  #define SAM9X75_D2G_EXID_MATCH		0x00000020
->  #define SAM9X75_D1M_EXID_MATCH		0x00000003
->  #define SAM9X75_D5M_EXID_MATCH		0x00000010
-> -#define SAM9X75_EXID_MATCH		0x00000000
->  
->  #define SAMA7G51_EXID_MATCH		0x3
->  #define SAMA7G52_EXID_MATCH		0x2
+base-commit: f7bafceba76e9ab475b413578c1757ee18c3e44b
+-- 
+2.34.1
 
 
