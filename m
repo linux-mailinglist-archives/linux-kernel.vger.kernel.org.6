@@ -1,138 +1,104 @@
-Return-Path: <linux-kernel+bounces-538667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB6DA49B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:14:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DFAA49BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:17:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D908C189964A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248FC17465F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D3D26E64C;
-	Fri, 28 Feb 2025 14:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4370926B97F;
+	Fri, 28 Feb 2025 14:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YT9MBL2M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0ReA9YM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5F1224CC;
-	Fri, 28 Feb 2025 14:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F5426E63B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752076; cv=none; b=giktfRMwp60+hRn58/+gzpeCis85wujWqhbAa9Z5w12pQOJm/bM46mWoFQqUFki80pa9do3/pPqXIPOxUZKT82HKMkVrEctQNElgUZGmCG9GCOC5IMTTcxQZrhIoLWq+Giy8ORKYLIkEBpVH8fou5FSFK3w3y0PaEVH79pHCAD4=
+	t=1740752244; cv=none; b=hlpvzzBUn5N1RGPNbHtVdF9yJlnrg35kw2UOJjBB4JDw8flRTXtc61yJTlvmCSyUjweE1DOSONNLjIViFJfWggoaqc5lvZykQ/ufXe0U45tggvjFEL4LjdkDblMnQ4a/lXZkI+sh9XejooCoZS8ZcmYYCll+/HlH3WBECjLcBak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752076; c=relaxed/simple;
-	bh=7xqVB20YEN9HAmI4aiGua+lmnwEgNMq4jxWz8FsO0cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYjS892Ne4x3WPch4sZq4v4CDcuJgqwWcj1CpI3hyhhOaRq47NGl2mXjm1lLjv2q1FcmUsJaJvkGdu00VgCPp6b7cSV6gAtFDO7oO6eK96Wy75GGHa9iaubXNdzkgGM4O/3PgDKwbRbdZPI5miJiiCUtrTKDIq5XG0SvW7v2T2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YT9MBL2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1790C4CED6;
-	Fri, 28 Feb 2025 14:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740752075;
-	bh=7xqVB20YEN9HAmI4aiGua+lmnwEgNMq4jxWz8FsO0cA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YT9MBL2MQs8HjnJ3HPaCFDHRopXy+1a3sHVKWJeRk1C6GsGRDc96+aB79+B/wZ5Lz
-	 ZR/mc0B9keq8R2t55DkrmhuX1lavLQkeWLYVPkhd44D4KSEyDfBuHJPlb7XvLHXq0P
-	 sCfF2vMyEXHK4FZPdUeRMOzb9R0WEDb4VufuaZ1Pp0DqLjX1mB50aFhgcdZV9KEd4J
-	 1ezOTsprzdF7MVfVFGCZdrkZY0oT8ZP4ChhZYDRzdTM8I/H5uwqHnh9HtLu41gTGAK
-	 nbdgWNpQwFstmCk2a5pvBHqxZEbJ+JbNcqxob3Mw5Fzj0mOtPnzisLpStqgb7W5B2g
-	 DxT4wE0RZrtrg==
-Date: Fri, 28 Feb 2025 08:14:32 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-Message-ID: <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
- <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
- <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
+	s=arc-20240116; t=1740752244; c=relaxed/simple;
+	bh=16brUvkqRfrzkx6Yi38s5UMJmUx0qgk+Q51rGTFtZbs=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ulzcN8DL4JqG3nt/ip5CkEKb5j1khYS/UB/e5ugAdUqXb+WB3PRrBWHL2DCrPH3yOVReunIv1fmXJqHV4XrRFao7cJ3kYX8PLiDNzeHzoPdT/UvA28fA0rktEDiNIzmpCZT60f+CycR4LtWCs2b3K+bM2o9v+OijLwFrSbqXWq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0ReA9YM; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740752243; x=1772288243;
+  h=date:from:to:cc:subject:message-id;
+  bh=16brUvkqRfrzkx6Yi38s5UMJmUx0qgk+Q51rGTFtZbs=;
+  b=e0ReA9YMWF807MwvY19mYFKDMBv12Y4H1dMrMGtpMyCniES3oGIPmkhc
+   FLXphd902EqUoFT5oneAuK9haNgIM6i2dxHywBE+NNvSFAQL0yqBYK4zY
+   Kfu7sW/YT/jlUn3qhB0pK1wrpD+9LgIJBrTkz/1hrUVstsFkEIEpq8dfl
+   bSLh5wh7SIaydgGolZ1fETMYLTGFb/Y+qQin42uS23OD/NI4e6eXyiLqC
+   T6XOJKeM3hGULvcCAgOnhxnhkrtc+1vEip2EqutCXnqyYZQIVBWhQrd3U
+   JaPgctRze0mseYJ6MLylXpDbDowVtpJgknC6DL+ktozXsUzBooY/aXiEP
+   g==;
+X-CSE-ConnectionGUID: gZuSg63RTqKd3SnpMk/tLg==
+X-CSE-MsgGUID: s7oLkZC9RXO9R9TS1CMU9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="53069452"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="53069452"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 06:17:22 -0800
+X-CSE-ConnectionGUID: YyALxu6yRiirmT2Axp0bWw==
+X-CSE-MsgGUID: glJhJJIoQvOwbG3ZTVQMtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="140570524"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 28 Feb 2025 06:17:21 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1to1B1-000F0N-28;
+	Fri, 28 Feb 2025 14:17:19 +0000
+Date: Fri, 28 Feb 2025 22:15:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/boot] BUILD SUCCESS
+ 9c94c14ca39577b6324c667d8450ffa19fc1e5c4
+Message-ID: <202502282231.Ky7O8sDo-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
 
-On Fri, Feb 28, 2025 at 11:01:16AM +0530, Yuvaraj Ranganathan wrote:
-> On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
-> > On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
-> >> The initial QCE node change is reverted by the following patch 
-> > 
-> > s/is/was/
-> > 
-> >> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
-> >> because of the build warning,
-> >>
-> >>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
-> >>     ...
-> >>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
-> >>
-> >> Add the QCE node back that fix the warnings.
-> >>
-> > 
-> > Are you saying that adding this node back will fix the warning?
-> > 
-> > I'd expect that you would say something like "The changes to the
-> > Devicetree binding has accepted, so add the node back".
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> >> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
-> >>  1 file changed, 12 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> >> index 23049cc58896..b0d77b109305 100644
-> >> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> >> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
-> >>  				 <&apps_smmu 0x481 0x00>;
-> >>  		};
-> >>  
-> >> +		crypto: crypto@1dfa000 {
-> >> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
-> >> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
-> >> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
-> >> +			dma-names = "rx", "tx";
-> >> +			iommus = <&apps_smmu 0x480 0x00>,
-> >> +				 <&apps_smmu 0x481 0x00>;
-> >> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
-> >> +					 &mc_virt SLAVE_EBI1 0>;
-> >> +			interconnect-names = "memory";
-> >> +		};
-> >> +
-> >>  		stm: stm@4002000 {
-> >>  			compatible = "arm,coresight-stm", "arm,primecell";
-> >>  			reg = <0x0 0x4002000 0x0 0x1000>,
-> >> -- 
-> >> 2.34.1
-> >>
-> 
-> DeviceTree bindings were accepted but the comptabile string does not
-> properly bind to it. Hence, adding the correct binding string in the
-> compatible has resolved the issue.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
+branch HEAD: 9c94c14ca39577b6324c667d8450ffa19fc1e5c4  x86/bootflag: Replace open-coded parity calculation with parity8()
 
-Please then write that in the commit message.
+elapsed time: 1462m
 
+configs tested: 12
+configs skipped: 127
 
-That said, what did you base this patch on? While I have picked
-Krzysztof's two reverts in my local tree, I have not yet published them.
-So your patch is not even based on v6.14-rc1, which now is 4 weeks old.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Patches sent upstream should be built and tested on a suitable upstream
-branch!
+tested configs:
+i386    buildonly-randconfig-001-20250227    gcc-12
+i386    buildonly-randconfig-002-20250227    gcc-11
+i386    buildonly-randconfig-003-20250227    clang-19
+i386    buildonly-randconfig-004-20250227    gcc-12
+i386    buildonly-randconfig-005-20250227    gcc-11
+i386    buildonly-randconfig-006-20250227    clang-19
+x86_64  buildonly-randconfig-001-20250228    clang-19
+x86_64  buildonly-randconfig-002-20250228    clang-19
+x86_64  buildonly-randconfig-003-20250228    gcc-12
+x86_64  buildonly-randconfig-004-20250228    clang-19
+x86_64  buildonly-randconfig-005-20250228    gcc-12
+x86_64  buildonly-randconfig-006-20250228    gcc-12
 
-Regards,
-Bjorn
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
