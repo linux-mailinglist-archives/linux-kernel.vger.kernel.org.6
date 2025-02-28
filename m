@@ -1,166 +1,148 @@
-Return-Path: <linux-kernel+bounces-539574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A4BA4A5F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:32:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FF7A4A5F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C479A3BAFDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:32:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E667A4DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAF71DED44;
-	Fri, 28 Feb 2025 22:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5BA1DE2B9;
+	Fri, 28 Feb 2025 22:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ONVpTQlg"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TnOFdZWn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB4F23F39A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4561BC9EE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740781942; cv=none; b=nH9vWqQcZ1Fa6j/YlvnPabyM2eT+kI5nAP+ob8WRa16410j77FsEOGnEtrYz34pKcOd1LcHn1z0Lno48jJ4fy4hEFYYhYecZnA+RJJnbdf1D1UKJEisQmYvx/8oS8hulWj39bscLP0kK7WVJoP6xU4rsCtIZ9/uzQvkcS8g4HNw=
+	t=1740781974; cv=none; b=mpoe2yrsKEafJvi5Pxfsh0cBwDVBNPTjd/iSKLYK3WDXvwVNz4Wgz+elhREr7nP64H1nzIwKCPCfvSlRH3ZwV7purKNsaSFqnZ0ebcDDI+7wCRrgAAlIeBaSvIQ+hWRH2wYykI44T/jzeqhbE6KiYDixyeoPNw8Zvncc/mslsvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740781942; c=relaxed/simple;
-	bh=lbrTtqbFv3Whh3RcQpbnY2bGfXxrtaICUrF92VRuHxo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j36z1pc+50NX+1LO0nqPJJTNEjYghiDeIvZyXcdslYdb3mum+vdfGVFHl7S+7idS+gvd74QBH8/DYkucRnMZnJa/2H2ikpf0iL+GDpp5lO3hvLgl4/KMLz+7G0BKCYsrtDydYc2ex5u2Q+UQJHTDCdhVZjy/7fGbVyr+kxFZfhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ONVpTQlg; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22368fafed1so34824435ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740781941; x=1741386741; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6E2xuVnec2I+gtyFLC/LUdzxkSAeiHHuFOdb6/52cV4=;
-        b=ONVpTQlgjf04N84e3kdHsjlBZuuNP/UpMhIW2s5npOroEiq5y391Rwq5CbkA2DBejB
-         9IC2OQeficcbNYrpcSPdihDavBSbRagKT6QLw+OuEkQrPPdcMfxFHt9Jadi6UfsD5W3L
-         h1l7ZFLh7wrj/1ocL2+MADLpjCMgir6pGKfz/oyRg23877Q9GGCbwV18/I2+5/dRhGMo
-         DHY+o31ReTTXd6MUrMZ9v2s5Nx10fHTD07+qtIPozU83Dicrk0a0/tCQYtGGOcIFaW1r
-         0qZU3AFQxw9feY9doY1t70cCtCCrc//XCHrD/PlHl24Pclvy9qjKzz9+kswVz1jIpeF1
-         0SCw==
+	s=arc-20240116; t=1740781974; c=relaxed/simple;
+	bh=O0GebC/SdgLZdHlPcLO5yKRPnT4hiBRcnUmcYB/ugMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKC9bMtWZ0IEGh3DuD9tq20vseszbrMXYEMO/9TrM14V/7V3yt9t8w7VkbGBF30utrOJuUs5PNgHDMNZPRKIUmWUCppjAtU+aqGng+0bJWR4onJL0W1e7BozUxKC85+emPlZDY0nnPab+yqc/0Jx/3tye7u1pzosq2tLLS2w5EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TnOFdZWn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740781971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sB1843xTI8E6I6Uv3+jpu/4UMdPYkCK+nlLxyIrwqY4=;
+	b=TnOFdZWnQc5OiKfMWponE9EtwUYEETtMSCiITvzt0nFbnEFh0fIz6ZTqKss5TB5pv2K0D8
+	/AOwEB12bkLEUmi9bPP1EiKpOM5NG3eVNYA/NL/OdrBGyvNO6nU+O5r/9P6ei+gtrOG2cF
+	RJmNWKZSMp4exUz7p3V0iH8YEYvhIVA=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-319-8cc3FcW7OkiTPFtfP9yy2w-1; Fri, 28 Feb 2025 17:32:46 -0500
+X-MC-Unique: 8cc3FcW7OkiTPFtfP9yy2w-1
+X-Mimecast-MFC-AGG-ID: 8cc3FcW7OkiTPFtfP9yy2w_1740781966
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-472012f2edfso52792971cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:32:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740781941; x=1741386741;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6E2xuVnec2I+gtyFLC/LUdzxkSAeiHHuFOdb6/52cV4=;
-        b=Yuaa6eYxbRg46CgO6M6uPtSIw5JaIjZCLZWJ6P0CihGV6nkADBAQRwG9yURdoVR6NN
-         SbEGFMOl1Tu4LvPZKzSIxxdxpY7oNXedS+XvJZG5ikfNgXzbTFtErJNXSg5kJWY5/aOg
-         jwv8Z0RhD4A9k9CekmJae3XwotBMQNiF4SZ6jZ+4EAV7zeZOosazyVjR3bkeAnmxUPZ8
-         G0daf6kfoaaePuxQ1jIyHUewmKr4D/R3AQ3wkjyTkaAcLt+yGkQ39uNnetgMxZyu62Db
-         UNRvTvDUZz1m+Ya8GK3tiLYRGc8r7c1uKwGSC0j+js+4CxWyRRHi9iFccpKFUSRlti/z
-         sYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXquNySYzZjlOda6DvYls+HMeRWYZ6ejql9y0RsO4iJM17ub/hHv6w216vBwZHBk4kivbWspOwCxzD2xlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3LEqR/XGDTsUE5AyGnk7wM2eUDcT9jFVB4ZzabICrjr//TIoV
-	JFZgKBvW3Joes/btFpopqspSezlsN5dzL71+RISVX61k0PDTjHLx4XbD4Y2JFulflP9iFOjwv7W
-	snA==
-X-Google-Smtp-Source: AGHT+IFVdvcpjdF2xOPtOtzaj3lqomK7UUPeWCpb2tFVi/FPCwoBxXIl4PAdRxnS6Na+PT6qTAHHalPbn2E=
-X-Received: from pfoo3.prod.google.com ([2002:a05:6a00:1a03:b0:730:8f44:a42b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:fae:b0:223:674d:c989
- with SMTP id d9443c01a7336-223692585fbmr79599735ad.41.1740781940758; Fri, 28
- Feb 2025 14:32:20 -0800 (PST)
-Date: Fri, 28 Feb 2025 14:32:19 -0800
-In-Reply-To: <cf34c479-c741-4173-8a94-b2e69e89810b@amd.com>
+        d=1e100.net; s=20230601; t=1740781966; x=1741386766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sB1843xTI8E6I6Uv3+jpu/4UMdPYkCK+nlLxyIrwqY4=;
+        b=fTlYUHqZ+/SvClwZ91omAR1sa2kl+E+uc7cZqo3LCd1t8EvygZUXPgPNp+6xzUjlRn
+         /ijQMBEwPd3L5OQia5KjhWggmPd93n7u4laPOhAuS74FR8uP6eRQ43XRCV/bPzQBQ2ma
+         rJujJDSGZd0WcSVtgHBm1cYV45Bzt5x+3h59aizplzkaPYJuLCE+PfdfIb5SbKu8+2LY
+         JFTJv59fTDUWoWFL5N7wiGVTN2D445iRFLBA+wS+b/rEoegKhjl89F6WwoBD3dHzBonq
+         NeEK/6o89cJAL8KFFLj7UQnYwA5jWLq9P9Ab96w55tByH5FMzhg/3F+GMeMzt1agTuNH
+         oOSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHaLmFtjSLlUsqxuOQxfuWhPYnnjCWTiTktlpRUi0Dw1FvsgcS+infjpV8W3GZpD82ATjLMDsuBoJ1IpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweQNB663Q2KNyPTurTkbvjBgEsd+l8DDNWWSWhq+f6GPlmPc8f
+	a+hwabGqRYCt2k0mRlO4H7t0VRQl+/cNWBIiAeOI1u/Fn6Suk1u/RmAk5cX6IHfckrbolmVphHV
+	ere7Cw/r4rb/mo4avRSRzy6sCR5+POpJ1dMp6Q2b1YY5DAabX+z2VYT0pt+77eQ==
+X-Gm-Gg: ASbGncvoCS/O6T9YnMiXsKHAuGjG3A/sy7TxqUIbGZI1LbNB6zJCQ627TBvMWn5ocx9
+	nHteSqy00nNrggBqFrRKFND72ejvCiDP6IdDwHn5mKlfJmhJwh8W0sXQHVmDFKd3nCr58bHreRc
+	bQUbooRxSd/OQ13u4MMz+PnQphETrLm/SfbvsDNvhZQ22xiR1s81bdPJh+d22Q/vdabv0v7yq0k
+	yEmfltLkZx7a/zPXVcfzmmz16xvMNaEcLlwER5CnilIgLRncyjeDwOVEmu0l6w51iKwkydKwPxS
+	a5/84NQ=
+X-Received: by 2002:ac8:7c4d:0:b0:473:882f:bcb1 with SMTP id d75a77b69052e-474bc11553dmr76548621cf.46.1740781966127;
+        Fri, 28 Feb 2025 14:32:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGlD/UdqqRjI56c+mRc1D/klxdusZ2AeL/TuShZH0ZdmlehnjstEE71nYfhGcROB+VVXH5jKQ==
+X-Received: by 2002:ac8:7c4d:0:b0:473:882f:bcb1 with SMTP id d75a77b69052e-474bc11553dmr76548281cf.46.1740781965782;
+        Fri, 28 Feb 2025 14:32:45 -0800 (PST)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474721c0a64sm30437561cf.42.2025.02.28.14.32.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 14:32:44 -0800 (PST)
+Date: Fri, 28 Feb 2025 17:32:41 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+	Olivier Dion <odion@efficios.com>, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
+Message-ID: <Z8I5iU6y_nVmCZk6@x1.local>
+References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
+ <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
+ <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
+ <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
+ <cc1dec8c-8323-4c67-913f-5d8fb55ce715@efficios.com>
+ <Z8HlL4FopVjeveaJ@x1.local>
+ <60f148db-7586-4154-a909-d433bad39794@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1740512583.git.ashish.kalra@amd.com> <27a491ee16015824b416e72921b02a02c27433f7.1740512583.git.ashish.kalra@amd.com>
- <Z8IBHuSc3apsxePN@google.com> <cf34c479-c741-4173-8a94-b2e69e89810b@amd.com>
-Message-ID: <Z8I5cwDFFQZ-_wqI@google.com>
-Subject: Re: [PATCH v5 6/7] KVM: SVM: Add support to initialize SEV/SNP
- functionality in KVM
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	thomas.lendacky@amd.com, john.allen@amd.com, herbert@gondor.apana.org.au, 
-	michael.roth@amd.com, dionnaglaze@google.com, nikunj@amd.com, ardb@kernel.org, 
-	kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, aik@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <60f148db-7586-4154-a909-d433bad39794@efficios.com>
 
-On Fri, Feb 28, 2025, Ashish Kalra wrote:
-> Hello Sean,
-> 
-> On 2/28/2025 12:31 PM, Sean Christopherson wrote:
-> > On Tue, Feb 25, 2025, Ashish Kalra wrote:
-> >> +	if (!sev_enabled)
-> >> +		return;
-> >> +
-> >> +	/*
-> >> +	 * Always perform SEV initialization at setup time to avoid
-> >> +	 * complications when performing SEV initialization later
-> >> +	 * (such as suspending active guests, etc.).
+On Fri, Feb 28, 2025 at 12:53:02PM -0500, Mathieu Desnoyers wrote:
+> On 2025-02-28 11:32, Peter Xu wrote:
+> > On Fri, Feb 28, 2025 at 09:59:00AM -0500, Mathieu Desnoyers wrote:
+> > > For the VM use-case, I wonder if we could just add a userfaultfd
+> > > "COW" event that would notify userspace when a COW happens ?
 > > 
-> > This is misleading and wildly incomplete.  *SEV* doesn't have complications, *SNP*
-> > has complications.  And looking through sev_platform_init(), all of this code
-> > is buggy.
+> > I don't know what's the best for KSM and how well this will work, but we
+> > have such event for years..  See UFFDIO_REGISTER_MODE_WP:
 > > 
-> > The sev_platform_init() return code is completely disconnected from SNP setup.
-> > It can return errors even if SNP setup succeeds, and can return success even if
-> > SNP setup fails.
-> > 
-> > I also think it makes sense to require SNP to be initialized during KVM setup.
+> > https://man7.org/linux/man-pages/man2/userfaultfd.2.html
 > 
-> There are a few important considerations here: 
+> userfaultfd UFFDIO_REGISTER only seems to work if I pass an address
+> resulting from a mmap mapping, but returns EINVAL if I pass a
+> page-aligned address which sits within a private file mapping
+> (e.g. executable data).
+
+Yes, so far sync traps only supports RAM-based file systems, or anonymous.
+Generic private file mappings (that stores executables and libraries) are
+not yet supported.
+
 > 
-> This is true that we require SNP to be initialized during KVM setup 
-> and also as mentioned earlier we need SNP to be initialized (SNP_INIT_EX
-> should be done) for SEV INIT to succeed if SNP host support is enabled.
+> Also, I notice that do_wp_page() only calls handle_userfault
+> VM_UFFD_WP when vm_fault flags does not have FAULT_FLAG_UNSHARE
+> set.
+
+AFAICT that's expected, unshare should only be set on reads, never writes.
+So uffd-wp shouldn't trap any of those.
+
 > 
-> So we essentially have to do SNP_INIT(_EX) for launching SEV/SEV-ES VMs when
-> SNP host support is enabled. In other words, if SNP_INIT(_EX) is not issued or 
-> fails then SEV/SEV-ES VMs can't be launched once SNP host support (SYSCFG.SNPEn) 
-> is enabled as SEV INIT will fail in such a situation.
+> AFAIU, as it stands now userfaultfd would not help tracking COW faults
+> caused by stores to private file mappings. Am I missing something ?
 
-Doesn't that mean sev_platform_init() is broken and should error out if SNP
-setup fails?  Because this doesn't match the above (or I'm misreading one or both).
+I think you're right.  So we have UFFD_FEATURE_WP_ASYNC that should work on
+most mappings.  That one is async, though, so more like soft-dirty.  It
+might be doable to try making it sync too without a lot of changes based on
+how async tracking works.
 
-	rc = __sev_snp_init_locked(&args->error);
-	if (rc && rc != -ENODEV) {
-		/*
-		 * Don't abort the probe if SNP INIT failed,
-		 * continue to initialize the legacy SEV firmware.
-		 */
-		dev_err(sev->dev, "SEV-SNP: failed to INIT, continue SEV INIT\n");
-	}
+Thanks,
 
-And doesn't the min version check completely wreck everything?  I.e. if SNP *must*
-be initialized if SYSCFG.SNPEn is set in order to utilize SEV/SEV-ES, then shouldn't
-this be a fatal error too?
+-- 
+Peter Xu
 
-	if (!sev_version_greater_or_equal(SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR)) {
-		dev_dbg(sev->dev, "SEV-SNP support requires firmware version >= %d:%d\n",
-			SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR);
-		return 0;
-	}
-
-And then aren't all of the bare calls to __sev_platform_init_locked() broken too?
-E.g. if userspace calls sev_ioctl_do_pek_csr() without loading KVM, then SNP won't
-be initialized and __sev_platform_init_locked() will fail, no?
-
-> And the other consideration is that runtime setup of especially SEV-ES VMs will not
-> work if/when first SEV-ES VM is launched, if SEV INIT has not been issued at 
-> KVM setup time.
-> 
-> This is because qemu has a check for SEV INIT to have been done (via SEV platform
-> status command) prior to launching SEV-ES VMs via KVM_SEV_INIT2 ioctl. 
->
-> So effectively, __sev_guest_init() does not get invoked in case of launching 
-> SEV_ES VMs, if sev_platform_init() has not been done to issue SEV INIT in 
-> sev_hardware_setup().
-> 
-> In other words the deferred initialization only works for SEV VMs and not SEV-ES VMs.
-
-In that case, I vote to kill off deferred initialization entirely, and commit to
-enabling all of SEV+ when KVM loads (which we should have done from day one).
-Assuming we can do that in a way that's compatible with the /dev/sev ioctls.
 
