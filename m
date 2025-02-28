@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-538808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A7A49D46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:23:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB4FA49D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07321888059
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB463B7AA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652DB2702B9;
-	Fri, 28 Feb 2025 15:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB03272934;
+	Fri, 28 Feb 2025 15:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZcWiBkF"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="YED3jtW2"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD1C1EF370;
-	Fri, 28 Feb 2025 15:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86CA271295
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740756117; cv=none; b=o12hUvRgFzmD5I43crYPBAt1Rgl+N0gsN4mpvRJSoWWiDmEt9V7ysrXDJ9NoY0Dg8oIV/I8Kq/u5qk3RAMBO8Fr+31IocTuZ/9H+ukOEytdDrtHvLvXZh+bgBq2ssenK/Dc0bW4bW6Zbbv5rJQGc3tAjWE6uK9+XhBJFCuEZAJg=
+	t=1740756128; cv=none; b=Sedlv4ey7sHAGRQSI4vvnvAHo5CagEda3i+WMLOqkm417kXroTOIPv06cyM8px6h4hOgu7EAX8MMu5cbN4MDY8Hj2aNR9bxOjlqSPz4qsWUirZaUaRiC5pAqkxoyXmMG4m+xs1UJ7tPXUDZgOpcqI306JVIJhmRbwDagfqEzMQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740756117; c=relaxed/simple;
-	bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WVthPlbOPz0wW9+K7hDBTxh3J21zZuCCwATAS//2ovS7Y+D7R9K3owJMDI9vgne1FHaNDuFO2qtteBDD7ft2x8qLGCQH8wdw9o107m2Sli6gp4oyEzFFs0kh381mq+EeiOB76cHylf09C64iQ+2S+73NDc0LDoAAtH9MPVz1fic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZcWiBkF; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22348051cf7so5412925ad.1;
-        Fri, 28 Feb 2025 07:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740756116; x=1741360916; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
-        b=bZcWiBkFlyLIjebJriG0TJ6YMw9yzAllMXa67/skBT4tBmIcC9qpAOyu28xkN84EKP
-         u/Uuti2iT4Q4sJrfCSX0IHo/XdYJ6zEVUQN22Le+hlxT4BRCNgbCGjbns0HRd67Ks5NS
-         ibj6NKqC9cOWIJXDd61IHF3W8BNoPLXTYlfpffTgK8ORhYchG7U0j9MbU+/uwuSkErbK
-         nfZ7agCZ/WWstk8ZD9+mS9UCwBVG3V7TOy/mCGvlJEgXFDNCIA6f8RmCY8iCasyUJfFg
-         frsyFVeGzf+pIBDgKOUM/o7tgAA1m6n+dwatz6SAGHAmz5n4uSRxG4PhUcGRtR+2Tkkb
-         MwCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740756116; x=1741360916;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ACmhJ79hYH9IFo3LzuVdaynq3mT8w0d1v9RWvg98Pk=;
-        b=uj2mhQaiS1Ovp5z7jE/TBj9t3ghWkvxSjhB+kzZNWPk8YDODDij6GgTlnVmNfKIYdo
-         kNipYncWPPKzXiL3ButGpfL8H8WjYSswA1OGwU8jTntmYIByQ+mksvWE2Mk16V8H2DvO
-         F03oUE60U8x3T1TpNsK56ZZu1D65R877Q82OYgEkqFc4emRUJqYH0mQNNu21Hz5UbKla
-         c33990sAwYhN2P/mvfUnYpw2dR/6aiTX016wBj9pFnJure1IQKehNCZMNH5LhVQ2WTwl
-         BShNprnqQ9bXDKzXhbHFlUUTcGtlQJ3a+sjKnIbwYoLWXe3n6JO9k9hQRX/JUBWd8gO1
-         QgeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRF+Uv0RlqoWXNrPHSYDJeutS5WrisDXUDBAZtsEFeCh9WcfuX0vNio03Ca7YUQs1VppbCpEN8zIV/7y8=@vger.kernel.org, AJvYcCXRO2WQJvn43TgeVQitEdRgNBIjEgHBphPTYR+f02H4DRTuYN+5Gy5niVFFXtbvLJPFHYGUeN9JSO1IZmcpmWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCA3ZrJqVZ9GghuOrUdMZOutWbUAsdjf7/vSnemW5Oqf5QTaKo
-	QcSMPVevSlnFrym0+keiBc5zC6pNfCw1Oa9giebZ2iYpI8CiYK+n+GrSPAU3NLEUCp8uA4TO0jC
-	X5ekoWc5Br1ibCksflx9ImRXAa+4=
-X-Gm-Gg: ASbGnctfN6iN+6gMLxkQ5X3BoVbz/RkkEDMHcsydyeDLdjCxbSz2h0I1C2wpp8n4kJN
-	uFzUMdiqAGu91wWkupIIqRuu5ZdMFBWTHvOv1YKfm0cBuIxW1uiVzBIOs/vh3jemm79WzwL60ni
-	XIGiiU6X4=
-X-Google-Smtp-Source: AGHT+IE0xocSm5hllgwGR1/fNKAARoouiHtcKZ6V7E50P+V7phTQQVYrrlf4TPAFnN/ZEGTqXUIgXw8bZTtXdyxvZjo=
-X-Received: by 2002:a17:903:183:b0:223:364f:7a5 with SMTP id
- d9443c01a7336-22369213d54mr21406765ad.11.1740756115602; Fri, 28 Feb 2025
- 07:21:55 -0800 (PST)
+	s=arc-20240116; t=1740756128; c=relaxed/simple;
+	bh=eqs/Lnpa4HkOnUBSn2LQUsgIYfqi/oQAXcXZ9B7TE84=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=i1jgLCRcFrz+CnvLaiSBzIdfv4ag8yf+MVuQHBXRWAL9CG9Dgj5bmmp5PLG/JAOrB7yxgypHDw6HhosxN3oJkqC63cHCSlB1647JI9uGYDS9xo3wAYKCb8wA/S9axPxInRX8FLeOs9w1UuJ6/nq286H/GgC5klXXUfu0T2Zg77I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=YED3jtW2; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1740756110; x=1741015310;
+	bh=JWWk337awRNTupWNOkbpgoyh1dVUMVeu3JpqFA6eCLQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=YED3jtW2WBDO9Tf5yZRBkKifcuXZecItwvMFYABgoNQa3Gs2MJ7tLGjpaTJCGkM+E
+	 Hg0Of41clfCuon7AfIJUUgV6vNzlbEhRFEoYIkGS81ttOfNVe6OS8MPNrwnRQo9mJ5
+	 Bc4MSzkUKHp4xK3Dz/XIXFCzSzC25c4Zomomo3kE5wFehDKCwtocNXUI53QbKLvTne
+	 QyoQEfQH1FIRCRDXkgm/GPFiHl7CPCpDI02KopAEuFxbvpY4osmXmgIb98bjN0sC4h
+	 4hx/ccHIUjA2y8V5kOyRLlAskDhxon37Fq3cpl0+IghkzHEC4G3Mi227bJ/mN6JWrq
+	 gY9IEAWb+dXrw==
+Date: Fri, 28 Feb 2025 15:21:43 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
+Subject: Where can I download Cisco IOS-XE software, since it is based on Linux?
+Message-ID: <bBGfznJBYFxQuIVC8ITSnt1ylbdJXuqWXRGlZKrfzixBuQfx9tKWHxtxyYlGfUI6NI3nPhKz9GuAO9OJMNJ-NMXnr9yjgEvpq78RKBPUXmQ=@protonmail.com>
+Feedback-ID: 39510961:user:proton
+X-Pm-Message-ID: 7777c6bb0901ff579520a48615e34f8e9acb21ed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
-In-Reply-To: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 28 Feb 2025 16:21:42 +0100
-X-Gm-Features: AQ5f1JpUZd9TEX2wazFqdL3Wa8n4UksTu_xV86C587GpeNV0TZCu_fE9i5NuHeY
-Message-ID: <CANiq72=q5subtcx=kEmX+Jh_ryB0=P0RtraQM65CcvPWGvnD7g@mail.gmail.com>
-Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 3:43=E2=80=AFPM Oliver Mangold <oliver.mangold@pm.m=
-e> wrote:
->
-> This v2 of the patch, addressing the issues raised by Andreas Hindborg.
+Subject: Where can I download Cisco IOS-XE software, since it is based on L=
+inux?
 
-Hmm... Something went wrong here -- this patch looks broken, e.g. the
-SoB is at the end, the title does not say v2, these replies seem to be
-part of the patch, etc.
+Good day from Singapore,
 
-(Also, by the way, in case it helps, the message got marked as spam in
-my side for some reason).
+Where can I download the source code for Cisco IOS-XE software, since it is=
+ based on Linux?
 
-> Got it. This version should be okay for rustfmt, clippy and checkpatch :)
+Please refer to the output of the "show version" CLI command below.
 
-Thanks for doing that!
+[CODE]
 
-Cheers,
-Miguel
+Cisco IOS XE Software, Version 03.16.10.S - Extended Support Release
+Cisco IOS Software, ISR Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version=
+ 15.5(3)S10, RELEASE SOFTWARE (fc4)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2019 by Cisco Systems, Inc.
+Compiled Fri 04-Oct-19 06:36 by mcpre
+
+
+Cisco IOS-XE software, Copyright (c) 2005-2019 by cisco Systems, Inc.
+All rights reserved.  Certain components of Cisco IOS-XE software are
+licensed under the GNU General Public License ("GPL") Version 2.0.  The
+software code licensed under GPL Version 2.0 is free software that comes
+with ABSOLUTELY NO WARRANTY.  You can redistribute and/or modify such
+GPL code under the terms of GPL Version 2.0.  For more details, see the
+documentation or "License Notice" file accompanying the IOS-XE software,
+or the applicable URL provided on the flyer accompanying the IOS-XE
+software.
+
+[/CODE]
+
+Since the Cisco IOS-XE software is licensed under GNU General Public Licens=
+e Version 2.0 and is free software, I should be able to download the source=
+ code readily. But Cisco does not provide a download page for the source co=
+de and requires us to purchase a service contract before we can download th=
+e software.
+
+Thank you.
+
+Regards,
+
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individuals in Singapore
+GIMP =3D Government-Induced Medical Problems
+28 Feb 2025 Friday
+
+
+
+
+
+
 
