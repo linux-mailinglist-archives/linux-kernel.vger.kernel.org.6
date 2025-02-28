@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-538556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7723DA49A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:05:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC500A49A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3F5170F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57572188A1B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8565126B96B;
-	Fri, 28 Feb 2025 13:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0CB26B96C;
+	Fri, 28 Feb 2025 13:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUa4d7Lg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WNURMclR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEFE2F41;
-	Fri, 28 Feb 2025 13:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27302F41
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747941; cv=none; b=KpDPGN2DwNPl1lGxgvBNsPNLmzkU9wqt62vpQp4TQOsTelYjRBt7C2z/is1QPtw+KBI2zJ1HNo3bIanmFBsdftbmzEs+3TOzNzpa1N+dfxGt2v2UIelzICTMOhNS8g+5dRHZooe0d2qoB0IpGbCzcHBV1VIhu6XFq85RbZm6G0A=
+	t=1740747990; cv=none; b=m3OLeora4/THTheoQgj80k1H/nUozzJDJHyUPCVgbjGOa/7SlpoKyOHEPyx9B4YCFM9j0jqOIdgYlvFH8zjgYO5MTaG/CYklHjTCJjIrbEH8vnQfvj2ejQ+bbiQF+MzE7mGJovfLAXImT/RTrDyL9hXS3aRBUUQ65viL0hFflFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747941; c=relaxed/simple;
-	bh=BIgz5OKhiCWbjc6Gbdi22MD5aJieg9cn1vGzAVxoOkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVdnQhNFjys8w/LLobFEa1/siqc88n2pcMk+82AAIFDDTD54ijxlTtyV+MHGAqL40DCZZOcQYcdRQAOgrT3sFnT+MqwuqFQwHGO3EHn/mRBQ1zwcTY5A3acIkdmUNNrRvn0oGnfzDbFjPMSScR1j3UuBwDPoOOIhuZYARZUGYqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUa4d7Lg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF6B6C4CED6;
-	Fri, 28 Feb 2025 13:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740747940;
-	bh=BIgz5OKhiCWbjc6Gbdi22MD5aJieg9cn1vGzAVxoOkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WUa4d7LgeIXgQXXcwxOxnWFJ5x3FrwYOKX+F9iwTh3syqpB1V8apYwxkQcZNTqovg
-	 MdR1iwNhoInZKFx+t7ru9rK4lB/74lGw8FYHvyd3gOlh0XXumjyQv+S4epOX7t+bK2
-	 cCH6FsQ/ROrzMogqiqRwhp97SfnLwX3BQbqoH8lgPEXk+7yI2GqEeICA5ESrhKrxBc
-	 vK8hw8Ww84i0Tnze1YRjgMSEljuh6g2WoMkV4TH873Fjx2WZYX78vsc9Pawf8u8TZs
-	 9LY/JQo8B7GngbKD5mYXd4YHk3h6P/113IonH5rOxze1SnW3g7uCX6FTLEX9NMHT2F
-	 7Uq6cxaMZM/nQ==
-Date: Fri, 28 Feb 2025 13:05:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/2] regulator: adp5055: Add driver for adp5055
-Message-ID: <61fe771b-befd-42b5-9f0d-7bad03c0b044@sirena.org.uk>
-References: <20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com>
- <20250225-upstream-adp5055-v1-2-a5a7f8e46986@analog.com>
- <a7f7d4dc-283a-40b9-bb1b-0bc8aceb99c1@sirena.org.uk>
- <SA1PR03MB634020464A151651A08ECAACF1C22@SA1PR03MB6340.namprd03.prod.outlook.com>
- <8afb3d94-336c-4e33-a73b-fc690f287556@sirena.org.uk>
- <PH0PR03MB6351EBB5118D642D00F853F0F1CC2@PH0PR03MB6351.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1740747990; c=relaxed/simple;
+	bh=+GsZ2x5HDjoLoOW+IXY8Q0+AMdGD72Srex7vp56yPeY=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UvUOMaJhm/xEIhEkRDFtw8cVkbalbR2+H3xfMk3A+A1F9IZBuTwJGwnX7icsPLVY9YuFADDkDExMMTJ7vV4+e6NujbY/ugNwb6b96/X8Y0y7QfCPLr1EeFb8jh76U+p+ajvz6hoGn02ogKp8nusSGcRy8CR4ymjpOca2oMhoFIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WNURMclR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740747987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rXONDGo6ihZ0iPAG84+CFGzh14N9ncmYlb6e6RA5ajA=;
+	b=WNURMclRK/elCk10UKIXY71Bnt7gwcf6uyTgVTy6LK4XZcCcRIdb5NYSMMk2+cvA6y1/gE
+	JFF6UiSLT6wfuYEttzu1DE+1brgapqZF5GugSMOTH4Opww2e2ihQoVvOEGYQP0oxI1e03j
+	UR1K/SBp+toD84iDhXxZN6QRDtmVJJM=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-zDEgWlCGO2m6qXc1xIjODQ-1; Fri, 28 Feb 2025 08:06:26 -0500
+X-MC-Unique: zDEgWlCGO2m6qXc1xIjODQ-1
+X-Mimecast-MFC-AGG-ID: zDEgWlCGO2m6qXc1xIjODQ_1740747985
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-54958006b81so13673e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:06:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740747985; x=1741352785;
+        h=mime-version:message-id:date:references:in-reply-to:subject:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rXONDGo6ihZ0iPAG84+CFGzh14N9ncmYlb6e6RA5ajA=;
+        b=hh9LJNBUA+SF5WhlmBKS+aDYh1SJUPzWsG+cNidKxEnSlg09YWOmvDoDewPNuI/oM2
+         +9hyqlJxbuTi7Pf0xDO5knNQDG73c85CSLr9+txWcyX+vnBp1IrPKunI2rXIfv9EXk2o
+         9tvO2mtzf/Hq5EJv6oW3OQNT5nEFP3cMi1Cfa0cNOt++qQA7Bq4hNLGg3RaoqO8RGu/g
+         qfMTwZ/tXRXh4SXthz52NGjYXAz6uo7xKQS7UL2AaiblhtUNTGqDK/fVtORLv90ozJ4A
+         2xAJAI+sMr1D/2qs5LhLHnaS+RYAcmqNvwEDt+V+JuSl41EUrarkZMPvCberjRo9EzIU
+         +/7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVotB20SmNtP+QmQUeqJ326PotruQXWQNUcT4bLiKiHdFDbXzEiapk2b7HW2p9PMBbCQqKSZ0nYfhD/4Vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGVc3pKTLfZIgF4kWyxHQZyc5uyBsQru+YyvQwX4hl3PNSwpGz
+	yP2L759I6KB7T2IQT7Wr4zkKt7Ii7Q9n6uSetshi0Xrt2ZTBVO4wi5VM/V9zpZNE8RNtJu7HSfv
+	NyGOLGi3/wUZZE1BK8PoGqnIwzmB6C46MbY5idkIJpBVySs7g5QTwjDJ996t6CQ==
+X-Gm-Gg: ASbGncvHpmoGm2bhJ7gDs6f3TS4t9OW4PWWapYovb6LEa+P/E8VcPSRFWa/jXguwtYN
+	ACCky/azzC4LycXvRVt5lckon1gh7ShZipJTn690EyAYdF3yhchaA6zl3IsXMermi+L5E0BPB55
+	vqSF1TT0xfPXV5Fic/0fUFLiieaO+ZeaKPJ9CPppWOvU6F95ExYxVY13TFAQtRJ3Jt4oISSSnT1
+	NjYMYm8IXST96BhFJugiX+9VSWPPh592pSyrhFjxpMI+1lbKFFEUWP/yVyGznwGq2lYzdRGMS/y
+	HbR8gGYCSAMG
+X-Received: by 2002:a05:6512:693:b0:545:d35:6be2 with SMTP id 2adb3069b0e04-5494c37b691mr1519554e87.34.1740747984675;
+        Fri, 28 Feb 2025 05:06:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHXotuHxxDRGbkDTRI047dsn/XMby3ovfUFDsR8yccG6wwU82nc0E5sR/kWuqacEJVRyen1nA==
+X-Received: by 2002:a05:6512:693:b0:545:d35:6be2 with SMTP id 2adb3069b0e04-5494c37b691mr1519511e87.34.1740747984188;
+        Fri, 28 Feb 2025 05:06:24 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494cb3352dsm274562e87.184.2025.02.28.05.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 05:06:23 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 970B818B69EB; Fri, 28 Feb 2025 14:06:22 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Qingfang Deng <dqfext@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Michal Ostrowski <mostrows@earthlink.net>, James
+ Chapman <jchapman@katalix.com>, Simon Horman <horms@kernel.org>,
+ linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next v3] ppp: use IFF_NO_QUEUE in virtual
+ interfaces
+In-Reply-To: <20250228100730.670587-1-dqfext@gmail.com>
+References: <20250228100730.670587-1-dqfext@gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 28 Feb 2025 14:06:22 +0100
+Message-ID: <87bjum1anl.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/bAIL7fIJafYDuc2"
-Content-Disposition: inline
-In-Reply-To: <PH0PR03MB6351EBB5118D642D00F853F0F1CC2@PH0PR03MB6351.namprd03.prod.outlook.com>
-X-Cookie: Avoid gunfire in the bathroom tonight.
+Content-Type: text/plain
 
+Qingfang Deng <dqfext@gmail.com> writes:
 
---/bAIL7fIJafYDuc2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> For PPPoE, PPTP, and PPPoL2TP, the start_xmit() function directly
+> forwards packets to the underlying network stack and never returns
+> anything other than 1. So these interfaces do not require a qdisc,
+> and the IFF_NO_QUEUE flag should be set.
+>
+> Introduces a direct_xmit flag in struct ppp_channel to indicate when
+> IFF_NO_QUEUE should be applied. The flag is set in ppp_connect_channel()
+> for relevant protocols.
+>
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+> ---
+> v3:
+>   Move direct_xmit above the unused "latency" member to avoid
+>   confusion. Should I remove it instead?
 
-On Fri, Feb 28, 2025 at 04:01:37AM +0000, Torreno, Alexis Czezar wrote:
+If it really is unused, I think removing it is better to remove it,
+yeah :)
 
-> > You've open coded the operations instead of using the framework helpers=
-, you
-> > shouldn't need to anything other than supply data here.
+-Toke
 
-> I did code this similar to the helper functions like regulator_enable_reg=
-map.
-
-Yes, that's the problem - you shouldn't be copying them at all.
-
-> if having both gpio and register enable isn't that common, I guess it's a=
-n option=20
-> to remove the gpios and stay purely software
-
-It's extremely common to have the option of choosing between a register
-and a GPIO, that should just work with the framework code - we should
-use the GPIO over the register if it's available.
-
---/bAIL7fIJafYDuc2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfBtJ8ACgkQJNaLcl1U
-h9C2OQf+JV/IOupHsp1nb5IDUVREG7aohkPNRsi5mARwdFubR5vVqdsS9/0RXBiw
-8A5EsquPODcS1I7e6Oshr+jW48R4djXp0nlwApcVHS5b1MTAbyZWw8lfDUkt1FsS
-qsRfSalJnuia/etScd1PWCyOyIO9cA3SKh8S/feZGXifAqgsRNxXPhmE/mlJz6n6
-3mND3WyR5aZmHwCbnhKrfFaTBIIkHuw/Ys8j49hojyIj9wSiabqZ+Loke5nQGzaL
-ZvaArmba/2ehOzp4fJT1soi2pkiawV+eS0X4YxNsgoHj61T8BEY/O75VD81o9FcS
-1dvnXoFeLWlX2xlbfwx1OWwyhJRWcg==
-=2myS
------END PGP SIGNATURE-----
-
---/bAIL7fIJafYDuc2--
 
