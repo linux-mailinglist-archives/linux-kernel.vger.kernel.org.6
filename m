@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-538926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1DEA49EE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:34:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88E3A49EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756241776A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7393BDD97
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84CA280A3C;
-	Fri, 28 Feb 2025 16:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08A7280A2A;
+	Fri, 28 Feb 2025 16:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NfSu3/TJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpDetBCS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EEB280A3A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8D271818;
+	Fri, 28 Feb 2025 16:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740760345; cv=none; b=j05f3qmiGS1k5TOuyIy33Lmzhha9g9ln71fL1R73tFbAPMzEPu2ST7z2whrUaKp2zthvLiotwb0vP+pfjfQk9oERxzRjWo4RDqwphfDJFVNi6ttY/QPifdt0cspeIVxhwVkjyn7Oat5St+lQf0nYQc8M0MRbWw2au3fSkEL/A0s=
+	t=1740760341; cv=none; b=CRpOXc49msb7kZO28/8L6vU71NGWXKD86R2Xx+P/jEw9BfWGm/QdTjDydVOaaviUXM8FRsSRSolBKkuu4nHgjFkWgWXFrwdYE9lVtQf3dYucpBDx+/E/oxMDUic9IXR6H7vNAjO7y6eej0hrK14dO2oBrhHXgCiKXkkuswxbB28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740760345; c=relaxed/simple;
-	bh=xHfETFRXXqxzlXTdtZnDhJeu4Hb5RXkwxN6WWVEL74c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MTJdmppIoM4NUTCqYjnwiufV/9S1CSM0/BS0t+CKvCEApTpsdJEF5qh2LC7LzdPbhYuyz0Hi+jhATtRtzcLJUJmHo4QdJwucFeIKv5WTWhsu6HUwwaVxhOJUTczEizgqLMtfsFFTBsAAw3Sk+YnGL7N7b8YyXPbNWrmBpoZ3IN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NfSu3/TJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740760342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XrqrOSYWZtD40E+osmzSBLGghD04Qb3lStl4xZJ4Yw4=;
-	b=NfSu3/TJ7KWSoJINB0NRfqjle0xRnSjT5X+W22wnDBJqy9CUrNmvfN0cdzrQ0Hz4c420+X
-	v0OXsUDJyHjhhyK0QAj0QM/m2FprZA3fFiIJM/AbM+jGA1VcDmn3pPevjCjDeX2+Kry42n
-	Hlc0Mp/9y/JUpCSIG+x+aRBzyrqCy0s=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-61-9DS2Yqd2Nau0WMxjqZ1kMQ-1; Fri, 28 Feb 2025 11:32:20 -0500
-X-MC-Unique: 9DS2Yqd2Nau0WMxjqZ1kMQ-1
-X-Mimecast-MFC-AGG-ID: 9DS2Yqd2Nau0WMxjqZ1kMQ_1740760340
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-858755ba77cso33473839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:32:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740760340; x=1741365140;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XrqrOSYWZtD40E+osmzSBLGghD04Qb3lStl4xZJ4Yw4=;
-        b=QLI3xkzaON82+CUdR/pUUDc1Pe76/wsi7Bs9RkXBtGCHjAPjauJ6ZqSK5qiNcGarTw
-         u/6HRvJuoGsnSamkZUegao3S2dZ5adii9YjfkonaApQl/a8oCzrgV4XOxBAAXiDeccxU
-         0iNtsYiUoIXC7DayNDFlcn/RphGGkp+cj+viF1pbba/0XiF8YFPxTdM6cj3NNfH6+rZl
-         qeq5F0Nq2glRZweaXcd+yuGqjTfohahhtSCDDP8oYe1kvJ9V/5O4WAUK4qgbvcyXmazM
-         D9HQN+7WT16p4vH370QDgR3oRGIm7ynQgCxgfu8BD7j3YnljPsWuhNjwdyEV6crz9iZw
-         bm0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWO3ZMxHgPThzuul19MCrfQGQn9fzCJPL8xa3o1TziM7B+RomiXqliRlqUmCOnmn4DxtQkzELvjx7OOhkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVGIeUAPkNzSVtp41lq0te5+E31qnPzVTL21o1JZ1y/07GvyUA
-	XSMYsMmm6x0oUFEHn2RCORRxc2R6kPbSS9o1FmdiO8LrMXOc0n8tINERJnoOBQWY14xjycPGHkV
-	km+NZmwQAtwDkJGCCpttvH5SubC5OYO7x2H+AfmNT+rnMdJrRf1i9RaC8cjwEJA==
-X-Gm-Gg: ASbGncuUKXUAZqAT9/QBt3quziz8ux7Ekjq2xnfHw3klUQcHu1PbJfYnEGpF0X7P+EB
-	sePLSGBIlgN1nW1nYNqwm0wGCVcTPezefYVbx0llanwRfu13y1YsVZ46JVUlDo0cQPjKelgzBhM
-	n7Gmt6QXkh8KGAr+W+dmDWpGziG8WJ84FXoT1A8o6PISgE50UYpJQTWXl2A2XENPWNR2TyKZRYj
-	ZXgfpyamIQvq412XbDgvye31vAoRpbFogwW87ngMtZtLKd4luHm8rFAPcaB5arAbWsMuzwHpJCu
-	ecetV5XKrON5IgA5bic=
-X-Received: by 2002:a05:6e02:8e:b0:3d3:dcd5:cde5 with SMTP id e9e14a558f8ab-3d3e6f65b5dmr11898975ab.4.1740760339809;
-        Fri, 28 Feb 2025 08:32:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFEQVWdAAouesIuSGFJu/QRRb8A3ncG+n0kWFoE0EBXjfN1U0L9ZvyqALnG5kZJ/4ZmPBGsmw==
-X-Received: by 2002:a05:6e02:8e:b0:3d3:dcd5:cde5 with SMTP id e9e14a558f8ab-3d3e6f65b5dmr11898885ab.4.1740760339544;
-        Fri, 28 Feb 2025 08:32:19 -0800 (PST)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061c701dfsm964449173.60.2025.02.28.08.32.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 08:32:18 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:32:15 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Tomita Moeko <tomitamoeko@gmail.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] vfio/pci: match IGD devices in display controller
- class
-Message-ID: <20250228093215.2901dd7f.alex.williamson@redhat.com>
-In-Reply-To: <20250123163416.7653-1-tomitamoeko@gmail.com>
-References: <20250123163416.7653-1-tomitamoeko@gmail.com>
-Organization: Red Hat
+	s=arc-20240116; t=1740760341; c=relaxed/simple;
+	bh=naU5NcTyc/mk/u2vWARR4qABxP0SYCsR8XPzuhcXIqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rfTCLR0RU/PevXxlQm4P22ooybW95NXSx3hHiqE7QkSnNuVkQ1sHx1NSFyxbgd9u/wWmucRldT+Gn0w13dRh8LuQat7jIR1JgDRTkPTuO1Dz0nrpz6xpgEP4ggZp82U5mPBPWoNSHL+z7h0HOWHNDG5tiX8iw/5wvmftW8she34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpDetBCS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1E2AC4CED6;
+	Fri, 28 Feb 2025 16:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740760340;
+	bh=naU5NcTyc/mk/u2vWARR4qABxP0SYCsR8XPzuhcXIqY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=FpDetBCSWlgBGYHmAWsX4bv9+6pykViHpztrT9L1JYjeU3X9vHu6CnxAb8/rNlZz5
+	 uy+YeWzp8yVumQidC26CsgCnE3548jkJtzNMhmeWgfvdaVyVJplORBp3crJXQdqHdw
+	 Rz+66HRBsjvAa1q/yryzfaAwPGme+RTEAVCgjoSi+p9Y36s8hGra/REouAYQ77UJiZ
+	 mFBa0noorypX9k+GbmhYHvVAiNjRL9qz6F6tyv1RmW931vVthfC+cs0ZEw4KLAIVBf
+	 gCozJs12v1nuz6hYZ0dZ9mvuNonVlaBmiZb7x5Z+FT1RsLEJzBQI5ukPGImylQRKIK
+	 fOYmFS4uZoxJg==
+Date: Fri, 28 Feb 2025 10:32:19 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Muni Sekhar <munisekharrms@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Sanyog Kale <sanyog.r.kale@intel.com>, linux-sound@vger.kernel.org
+Subject: Re: pci: acpi: Query on ACPI Device Tree Representation and
+ Enumeration for Xilinx FPGA PCIe Endpoint functions
+Message-ID: <20250228163219.GA54330@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHhAz+j46nus_rGJ72rZ86UyzL+AM_HBCivjpZEx3T0thOxqAQ@mail.gmail.com>
 
-On Fri, 24 Jan 2025 00:34:15 +0800
-Tomita Moeko <tomitamoeko@gmail.com> wrote:
+[+cc SoundWire folks]
 
-> IGD device can either expose as a VGA controller or display controller
-> depending on whether it is configured as the primary display device in
-> BIOS. In both cases, the OpRegion may be present. A new helper function
-> vfio_pci_is_intel_display() is introduced to check if the device might
-> be an IGD device.
+On Fri, Feb 28, 2025 at 08:19:44PM +0530, Muni Sekhar wrote:
+> On Thu, Feb 27, 2025 at 9:34 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Thu, Feb 27, 2025 at 07:25:32PM +0530, Muni Sekhar wrote:
+> > > I am currently working on a project involving a Xilinx FPGA connected
+> > > to an x86 CPU via a PCIe root port. The Xilinx FPGA functions as a
+> > > PCIe endpoint with single function capability and is programmed to
+> > > emulate the Soundwire Master controller. It can be dynamically
+> > > reprogrammed to emulate other interfaces as needed. Essentially, the
+> > > FPGA emulates an interface and connects to the CPU via the PCIe bus.
+> > >
+> > > Given this setup, the BIOS does not have prior knowledge of the
+> > > function implemented in the Xilinx FPGA PCIe endpoint. I have a couple
+> > > of questions regarding this configuration:
+> > >
+> > > Is it possible to define an ACPI Device Tree representation for this
+> > > type of hardware setup?
+> > > Can we achieve ACPI-based device enumeration with this configuration?
+> >
+> > If the FPGA is programmed before BIOS enumerates PCI devices, the FPGA
+> > would look just like any other PCI device, and BIOS would be able to
+> > read the Vendor ID and Device ID and would be able to size and program
+> > the BARs.
+>
+> Yes, the FPGA is programmed with this Soundwire IP before the BIOS
+> enumerates PCI devices.
+> We need to port the Soundwire driver
+> (https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/soundwire/qcom.c)
+>  to the x86 platform.
 > 
-> Signed-off-by: Tomita Moeko <tomitamoeko@gmail.com>
-> ---
+> Since x86 platforms typically do not use device trees, and the
+> Soundwire IP is implemented in the FPGA, how can we emulate device
+> tree functionality or use a different mechanism to pass hardware
+> configuration to the driver? Specifically, how can we handle the
+> following API calls on an x86 platform?
+> 
+>    ret = of_property_read_u32(np, "qcom,din-ports", &val);
+>    ret = of_property_read_u32(np, "qcom,dout-ports", &val);
+>    ret = of_property_read_u8_array(np, "qcom,ports-offset1", off1, nports);
+> 
+> static const struct of_device_id qcom_swrm_of_match[] = {
+> { .compatible = "qcom,soundwire-v1.3.0", .data = &swrm_v1_3_data },
+> { .compatible = "qcom,soundwire-v1.5.1", .data = &swrm_v1_5_data },
+> { .compatible = "qcom,soundwire-v1.6.0", .data = &swrm_v1_6_data },
+> { .compatible = "qcom,soundwire-v1.7.0", .data = &swrm_v1_5_data },
+> { .compatible = "qcom,soundwire-v2.0.0", .data = &swrm_v2_0_data },
+> {/* sentinel */},
+> };
+> 
+> Basically, how can we define ACPI tables for functions implemented in
+> an FPGA that connects to the system via PCI?
 
-Applied to vfio next branch for v6.15.  Thanks,
+Seems like a generic problem for PCI sound devices, and I don't know
+how drivers deal with it.  It looks like all the SoundWire drivers
+are platform drivers (not PCI drivers), so there's nothing there to
+look at.
 
-Alex
+Maybe the sound folks have ideas.
 
+Bjorn
 
