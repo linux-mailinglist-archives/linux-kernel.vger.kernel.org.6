@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-538332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C66FA49740
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:28:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A075FA49737
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA923AA645
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C8818893E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BD625E81E;
-	Fri, 28 Feb 2025 10:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEA4262D1C;
+	Fri, 28 Feb 2025 10:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="htEwiioE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0OruM/TR"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBEB26138F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13872620EA
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738367; cv=none; b=LZOKZe9JIKfwdz+5BOK/nR1uxPRgYepTeX51BS4fFIO6tie4Xu3dQa62PHtyurAXNvBuBXW/tWxjq97IMdkDc+o+Wb4Z5IhwodhiUD01qboJ3Fe8LPSlXcdk5tW+ubXpqapwoAeJK/xM+WVBsybpxRoUbptmVNg/Y9dUI4w09xE=
+	t=1740738369; cv=none; b=B60gtgkMdBDePW8z0M+VyelOipx0fbIlREnH1neEp8X54r6WiJNzCrqcKutuXMaSaeb5CvnvYHKQGYLHowBfyYzDcPzl3nzgTHI39D3bOCgEdyd7EpJqYeDVz/enKfL8Vyfic9NuwZA3ZTLzs1tQrf1PMbZVUewzATggQw+kFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738367; c=relaxed/simple;
-	bh=c1CjUHd1LkuAdVuDk2RFGH/LeKa2cYSLQB9PFu9Lo1E=;
+	s=arc-20240116; t=1740738369; c=relaxed/simple;
+	bh=0xiZbkVb4PxTBW8naW/8DcTbK2Rc6mIZinJTDH02mGI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IGNhOo0RGThqMhkTXoaP9G8yrNOTWRBoCF3IwZm9RKLVhNk1NRoXFTLR6eu859U4LK2ZyKfUmODcUb+U3cyj4/roOX62oMh4ECZAaaLduhK5hPawxK0eRIaA6xpF3G98zHBOyVOYhZWWSx5fiGFxsM6uFwF1AfH5opoo5VTW478=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=htEwiioE; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=tPoRHMtNjb6fCmMXhY0L+4BTzQXBaUDxdmet8dgH8wsSYiVjhQQTFoSDV/uZrN6AnUhLO+9AXAsemUGEuWSr96f/gKfNP8jcDuQYiUC/6AvdsUEsLxy0ICA880CSkqcdn1NljhqZKTCrAGowCZrK+dleMz1gHSFcEzIh95lqMHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0OruM/TR; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4398ed35b10so10296435e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:26:05 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43995bff469so12445025e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740738364; x=1741343164; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740738366; x=1741343166; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FJ8YKtq6hiI77A4ivZTnaB9Ne+xlMbNHdkfYD+3eEfk=;
-        b=htEwiioEqF9QBfSGEyH7Q8dcZRJZzlyR2pWQxKSAXFZjMMgYDZ7eLIsN+hpGwN4X+V
-         SziZYnRMWubEbcwgoi+FDmflFdf9RUUTyTr6ifyrTeepcetTn9cwrnbBLqNwe07J006p
-         5NYUluXswH/GmPlufvJF/1tEt6R9OXkDxGxMRBfSOiiD659IE7n2GsV564G/1TVaOOWR
-         KC7uMhPbOXTxASo5pcCVdd+Uo8u2WDHV6LzVbcKJLmKA/j7vE0GIlIu1qLGi4GMApty7
-         cjBpz9Jax5JU8b7DqGgc/YNw30XmN42z3kASNY2Ptmz0HqSa34W0QwSkGEetjfhtvQr4
-         hBKA==
+        bh=KTPitoEhlDo5P7Fhw0/so0kkZd/7LTKjAqNYGdJzP/Q=;
+        b=0OruM/TRzGJWJsMB+NoVfpGq9htiKj1C7fjkXfDeRYGmtOvKKbu5ZR2Zlxu8CwZPLo
+         cb0Vj32Q8y7tb2zD9GvA8z9jmUGoc1j1tiaugrLtpi2rO1OUfHTPAeM54Lnf7WRY3kJC
+         xglGsOx8qzB9wQ0j01ybzv+SFMAKDPCgJG2/YkH6+vdoNHCvchuvzF31XZUdvO6mFJYd
+         ztS15VvEW+vSI+jeiNTX5jIWFwRasgAa4/qK7UsUzksPnw8wMJMMgOZtNiMVe5m4Ny+e
+         ZC0e4Gp/MCbglDtdEy4LfsVPzDJJkOEz/c9QQXliX6tHZ/ZRuN7rJlL0rnaVeLGdlFw8
+         VG6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740738364; x=1741343164;
+        d=1e100.net; s=20230601; t=1740738366; x=1741343166;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FJ8YKtq6hiI77A4ivZTnaB9Ne+xlMbNHdkfYD+3eEfk=;
-        b=W1QHpzdr7Y862PVFrLrAwAOftGM+2UR0kX0QYz9mfsTBpqCCG10wKqpUDsbhNob8SG
-         djFciBI6Rvix+V8yUgLqup7dZwZtsx36t2oswF8zo9gWFxsyds3z3XC5u793OY9CEYnu
-         r+jKBJOL0f3E9TgrCVb3KFYVeGP3VBrG2y0ImvRvtMfjTSDzXm/p9Tj0zIhq8mpH+hrP
-         cue7gUvmYbGMFveNB26vDgkMY90fWUkV9hqbINeiVFXmFLO3wmzzLDW1BWWzaN/P3axn
-         h2hPvZ7KLgXa9J1EvdgNARMY9Mmp3AdRRr02lWMP/3nl+R11Tn0FejFK2N6WPNcWWRjU
-         58aA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEXrJIdvFEZYxQD/TNbMvrBdTgTUygz8cw1fgrzZRZR7hMyTy9Xp2QN4MGkpsAYHOBj1RkZVErx0s9rUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFC4rXCmIryykiMiXHdpeFXvK25RYw9LlHVxzmbZZp7Jmek2f7
-	w9x2ELFb1SunFcfbjxD1tKMrsEXTQc8xfQk2P7QJ/pm7CCGhU3cP/O1/2ILa0yWhKOpPvNBC+30
-	NzZdpHHk1WaWCs5xrKQ==
-X-Google-Smtp-Source: AGHT+IF7RliymnqyVqI2LxMXafp0QAO3saYMD0WdzwsnhK9hIXHApQBnwQLte7rc3DZHMIaauPQxquwj982tRnHP
-X-Received: from wmbfm22.prod.google.com ([2002:a05:600c:c16:b0:439:5636:735f])
+        bh=KTPitoEhlDo5P7Fhw0/so0kkZd/7LTKjAqNYGdJzP/Q=;
+        b=dbxntmfbqb6va4hGzfVopUVxfqwXBG4AuO5Qp8tX1q59g7gTrDT6PStoVzKQGrlMpD
+         g10nu7W44EYdi6FRd1hpL43KJvPNookR3cueqW2YomTNqMINeBCEbB2AXb6fRxC/+N5C
+         6LXYmQ+N57r9bHkozXrfPsxP9IVAfTKJ58MnQ/ISapmClUkNUKoy2dRhkO4pfaf2PJ0d
+         r4qTgGAmUfXbpM4zwemEtmJFniQLXMPaXkRkD6AxDI4SgtW357pN7tK7ht1DewuMSZn4
+         RFsJUCErEXHA3qk7B1YX3xnpaiRcN6U6UelXKSU07e437faVryC2hkc3UCFFO6ZPHPuj
+         sl1w==
+X-Forwarded-Encrypted: i=1; AJvYcCX3go1dwycpE5Fwp9RbvI52GVL2qrZdDbp1bcGHyucWdmf/uAQSJD6xnA7vvzJoi5MnmkVhVPPy+EphkL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQQqZSjHT/uPIEpLx3O90Kpvu4EJj+GQjG0rK4jGkuGoXDhqq1
+	tPowOvhILy/gXRIs2u9c+12O4FCKocoWDU/qmYz0skg1apD6zvIXU8WlY+YpyLxeJ6Yi3KzzAkw
+	82ht8h3KlxxOaRqwKBg==
+X-Google-Smtp-Source: AGHT+IEZhgA3sjj9bqeEk1zidbn1TNaulw5oerE9lhwnrZnuvWYyl5QCNJRYqFMrruyHX5mq6Mbs76MBS6SDWMEK
+X-Received: from wmbfj14.prod.google.com ([2002:a05:600c:c8e:b0:439:86cb:c729])
  (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5123:b0:439:9274:81d0 with SMTP id 5b1f17b1804b1-43ba66da2a9mr17359265e9.1.1740738364175;
- Fri, 28 Feb 2025 02:26:04 -0800 (PST)
-Date: Fri, 28 Feb 2025 10:25:25 +0000
+ 2002:a05:600c:5489:b0:439:9543:9491 with SMTP id 5b1f17b1804b1-43ba676062dmr18262165e9.25.1740738366120;
+ Fri, 28 Feb 2025 02:26:06 -0800 (PST)
+Date: Fri, 28 Feb 2025 10:25:26 +0000
 In-Reply-To: <20250228102530.1229089-1-vdonnefort@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250228102530.1229089-1-vdonnefort@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250228102530.1229089-10-vdonnefort@google.com>
-Subject: [PATCH 5/9] KVM: arm64: Add range to __pkvm_host_test_clear_young_guest()
+Message-ID: <20250228102530.1229089-11-vdonnefort@google.com>
+Subject: [PATCH 6/9] KVM: arm64: Convert pkvm_mappings to interval tree
 From: Vincent Donnefort <vdonnefort@google.com>
 To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
 	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
@@ -84,91 +84,196 @@ Cc: qperret@google.com, linux-arm-kernel@lists.infradead.org,
 	Vincent Donnefort <vdonnefort@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-In preparation for supporting stage-2 huge mappings for np-guest. Add a
-nr_pages argument to the __pkvm_host_test_clear_young_guest hypercall.
+From: Quentin Perret <qperret@google.com>
 
+In preparation for supporting stage-2 huge mappings for np-guest, let's
+convert pgt.pkvm_mappings to an interval tree.
+
+No functional change intended.
+
+Suggested-by: Vincent Donnefort <vdonnefort@google.com>
+Signed-off-by: Quentin Perret <qperret@google.com>
 Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-index ad6131033114..0c88c92fc3a2 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-@@ -43,8 +43,8 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
- 			    enum kvm_pgtable_prot prot);
- int __pkvm_host_unshare_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *hyp_vm);
- int __pkvm_host_relax_perms_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
--int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *vm);
- int __pkvm_host_wrprotect_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *hyp_vm);
-+int __pkvm_host_test_clear_young_guest(u64 gfn, u64 nr_pages, bool mkold, struct pkvm_hyp_vm *vm);
- int __pkvm_host_mkyoung_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu);
+diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+index 6b9d274052c7..1b43bcd2a679 100644
+--- a/arch/arm64/include/asm/kvm_pgtable.h
++++ b/arch/arm64/include/asm/kvm_pgtable.h
+@@ -413,7 +413,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
+  */
+ struct kvm_pgtable {
+ 	union {
+-		struct rb_root					pkvm_mappings;
++		struct rb_root_cached				pkvm_mappings;
+ 		struct {
+ 			u32					ia_bits;
+ 			s8					start_level;
+diff --git a/arch/arm64/include/asm/kvm_pkvm.h b/arch/arm64/include/asm/kvm_pkvm.h
+index eb65f12e81d9..f0d52efb858e 100644
+--- a/arch/arm64/include/asm/kvm_pkvm.h
++++ b/arch/arm64/include/asm/kvm_pkvm.h
+@@ -166,6 +166,7 @@ struct pkvm_mapping {
+ 	struct rb_node node;
+ 	u64 gfn;
+ 	u64 pfn;
++	u64 __subtree_last;	/* Internal member for interval tree */
+ };
  
- bool addr_is_memory(phys_addr_t phys);
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index e13771a67827..a6353aacc36c 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -335,7 +335,8 @@ static void handle___pkvm_host_test_clear_young_guest(struct kvm_cpu_context *ho
- {
- 	DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
- 	DECLARE_REG(u64, gfn, host_ctxt, 2);
--	DECLARE_REG(bool, mkold, host_ctxt, 3);
-+	DECLARE_REG(u64, nr_pages, host_ctxt, 3);
-+	DECLARE_REG(bool, mkold, host_ctxt, 4);
- 	struct pkvm_hyp_vm *hyp_vm;
- 	int ret = -EINVAL;
- 
-@@ -346,7 +347,7 @@ static void handle___pkvm_host_test_clear_young_guest(struct kvm_cpu_context *ho
- 	if (!hyp_vm)
- 		goto out;
- 
--	ret = __pkvm_host_test_clear_young_guest(gfn, mkold, hyp_vm);
-+	ret = __pkvm_host_test_clear_young_guest(gfn, nr_pages, mkold, hyp_vm);
- 	put_pkvm_hyp_vm(hyp_vm);
- out:
- 	cpu_reg(host_ctxt, 1) = ret;
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-index c273b9c46e11..25944d3f8203 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -1110,17 +1110,21 @@ int __pkvm_host_wrprotect_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *vm)
- 	return ret;
- }
- 
--int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *vm)
-+int __pkvm_host_test_clear_young_guest(u64 gfn, u64 nr_pages, bool mkold, struct pkvm_hyp_vm *vm)
- {
--	u64 ipa = hyp_pfn_to_phys(gfn);
-+	u64 size, ipa = hyp_pfn_to_phys(gfn);
- 	int ret;
- 
- 	if (pkvm_hyp_vm_is_protected(vm))
- 		return -EPERM;
- 
--	assert_host_shared_guest(vm, ipa, PAGE_SIZE);
-+	ret = __guest_check_transition_size(0, ipa, nr_pages, &size);
-+	if (ret)
-+		return ret;
-+
-+	assert_host_shared_guest(vm, ipa, size);
- 	guest_lock_component(vm);
--	ret = kvm_pgtable_stage2_test_clear_young(&vm->pgt, ipa, PAGE_SIZE, mkold);
-+	ret = kvm_pgtable_stage2_test_clear_young(&vm->pgt, ipa, size, mkold);
- 	guest_unlock_component(vm);
- 
- 	return ret;
+ int pkvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
 diff --git a/arch/arm64/kvm/pkvm.c b/arch/arm64/kvm/pkvm.c
-index 3ea92bb79e8c..2eb1cc30124e 100644
+index 2eb1cc30124e..da637c565ac9 100644
 --- a/arch/arm64/kvm/pkvm.c
 +++ b/arch/arm64/kvm/pkvm.c
-@@ -434,7 +434,7 @@ bool pkvm_pgtable_stage2_test_clear_young(struct kvm_pgtable *pgt, u64 addr, u64
- 	lockdep_assert_held(&kvm->mmu_lock);
- 	for_each_mapping_in_range_safe(pgt, addr, addr + size, mapping)
- 		young |= kvm_call_hyp_nvhe(__pkvm_host_test_clear_young_guest, handle, mapping->gfn,
--					   mkold);
-+					   1, mkold);
+@@ -5,6 +5,7 @@
+  */
  
- 	return young;
+ #include <linux/init.h>
++#include <linux/interval_tree_generic.h>
+ #include <linux/kmemleak.h>
+ #include <linux/kvm_host.h>
+ #include <asm/kvm_mmu.h>
+@@ -270,80 +271,63 @@ static int __init finalize_pkvm(void)
  }
+ device_initcall_sync(finalize_pkvm);
+ 
+-static int cmp_mappings(struct rb_node *node, const struct rb_node *parent)
++static u64 __pkvm_mapping_start(struct pkvm_mapping *m)
+ {
+-	struct pkvm_mapping *a = rb_entry(node, struct pkvm_mapping, node);
+-	struct pkvm_mapping *b = rb_entry(parent, struct pkvm_mapping, node);
+-
+-	if (a->gfn < b->gfn)
+-		return -1;
+-	if (a->gfn > b->gfn)
+-		return 1;
+-	return 0;
++	return m->gfn * PAGE_SIZE;
+ }
+ 
+-static struct rb_node *find_first_mapping_node(struct rb_root *root, u64 gfn)
++static u64 __pkvm_mapping_end(struct pkvm_mapping *m)
+ {
+-	struct rb_node *node = root->rb_node, *prev = NULL;
+-	struct pkvm_mapping *mapping;
+-
+-	while (node) {
+-		mapping = rb_entry(node, struct pkvm_mapping, node);
+-		if (mapping->gfn == gfn)
+-			return node;
+-		prev = node;
+-		node = (gfn < mapping->gfn) ? node->rb_left : node->rb_right;
+-	}
+-
+-	return prev;
++	return (m->gfn + 1) * PAGE_SIZE - 1;
+ }
+ 
+-/*
+- * __tmp is updated to rb_next(__tmp) *before* entering the body of the loop to allow freeing
+- * of __map inline.
+- */
++INTERVAL_TREE_DEFINE(struct pkvm_mapping, node, u64, __subtree_last,
++		     __pkvm_mapping_start, __pkvm_mapping_end, static,
++		     pkvm_mapping);
++
+ #define for_each_mapping_in_range_safe(__pgt, __start, __end, __map)				\
+-	for (struct rb_node *__tmp = find_first_mapping_node(&(__pgt)->pkvm_mappings,		\
+-							     ((__start) >> PAGE_SHIFT));	\
++	for (struct pkvm_mapping *__tmp = pkvm_mapping_iter_first(&(__pgt)->pkvm_mappings,	\
++								  __start, __end - 1);		\
+ 	     __tmp && ({									\
+-				__map = rb_entry(__tmp, struct pkvm_mapping, node);		\
+-				__tmp = rb_next(__tmp);						\
++				__map = __tmp;							\
++				__tmp = pkvm_mapping_iter_next(__map, __start, __end - 1);	\
+ 				true;								\
+ 		       });									\
+-	    )											\
+-		if (__map->gfn < ((__start) >> PAGE_SHIFT))					\
+-			continue;								\
+-		else if (__map->gfn >= ((__end) >> PAGE_SHIFT))					\
+-			break;									\
+-		else
++	    )
+ 
+ int pkvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
+ 			     struct kvm_pgtable_mm_ops *mm_ops)
+ {
+-	pgt->pkvm_mappings	= RB_ROOT;
++	pgt->pkvm_mappings	= RB_ROOT_CACHED;
+ 	pgt->mmu		= mmu;
+ 
+ 	return 0;
+ }
+ 
+-void pkvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
++static int __pkvm_pgtable_stage2_unmap(struct kvm_pgtable *pgt, u64 start, u64 end)
+ {
+ 	struct kvm *kvm = kvm_s2_mmu_to_kvm(pgt->mmu);
+ 	pkvm_handle_t handle = kvm->arch.pkvm.handle;
+ 	struct pkvm_mapping *mapping;
+-	struct rb_node *node;
++	int ret;
+ 
+ 	if (!handle)
+-		return;
++		return 0;
+ 
+-	node = rb_first(&pgt->pkvm_mappings);
+-	while (node) {
+-		mapping = rb_entry(node, struct pkvm_mapping, node);
+-		kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn);
+-		node = rb_next(node);
+-		rb_erase(&mapping->node, &pgt->pkvm_mappings);
++	for_each_mapping_in_range_safe(pgt, start, end, mapping) {
++		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn, 1);
++		if (WARN_ON(ret))
++			return ret;
++		pkvm_mapping_remove(mapping, &pgt->pkvm_mappings);
+ 		kfree(mapping);
+ 	}
++
++	return 0;
++}
++
++void pkvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
++{
++	__pkvm_pgtable_stage2_unmap(pgt, 0, ~(0ULL));
+ }
+ 
+ int pkvm_pgtable_stage2_map(struct kvm_pgtable *pgt, u64 addr, u64 size,
+@@ -371,28 +355,16 @@ int pkvm_pgtable_stage2_map(struct kvm_pgtable *pgt, u64 addr, u64 size,
+ 	swap(mapping, cache->mapping);
+ 	mapping->gfn = gfn;
+ 	mapping->pfn = pfn;
+-	WARN_ON(rb_find_add(&mapping->node, &pgt->pkvm_mappings, cmp_mappings));
++	pkvm_mapping_insert(mapping, &pgt->pkvm_mappings);
+ 
+ 	return ret;
+ }
+ 
+ int pkvm_pgtable_stage2_unmap(struct kvm_pgtable *pgt, u64 addr, u64 size)
+ {
+-	struct kvm *kvm = kvm_s2_mmu_to_kvm(pgt->mmu);
+-	pkvm_handle_t handle = kvm->arch.pkvm.handle;
+-	struct pkvm_mapping *mapping;
+-	int ret = 0;
++	lockdep_assert_held_write(&kvm_s2_mmu_to_kvm(pgt->mmu)->mmu_lock);
+ 
+-	lockdep_assert_held_write(&kvm->mmu_lock);
+-	for_each_mapping_in_range_safe(pgt, addr, addr + size, mapping) {
+-		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn, 1);
+-		if (WARN_ON(ret))
+-			break;
+-		rb_erase(&mapping->node, &pgt->pkvm_mappings);
+-		kfree(mapping);
+-	}
+-
+-	return ret;
++	return __pkvm_pgtable_stage2_unmap(pgt, addr, addr + size);
+ }
+ 
+ int pkvm_pgtable_stage2_wrprotect(struct kvm_pgtable *pgt, u64 addr, u64 size)
 -- 
 2.48.1.711.g2feabab25a-goog
 
