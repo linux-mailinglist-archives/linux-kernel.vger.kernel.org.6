@@ -1,189 +1,165 @@
-Return-Path: <linux-kernel+bounces-538674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B935A49BBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71882A49BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49931894660
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE961896156
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93F626BDBB;
-	Fri, 28 Feb 2025 14:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B350526E16D;
+	Fri, 28 Feb 2025 14:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="id7j/O+p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ms4c/5Cg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6a8sGrdQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9384453363
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E27753363
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752414; cv=none; b=GG5dY4qcQZpzhcAjRr525TrXlaZymWTskw/1wwUsNo0BfiXGcWClZRTTSwA65kgap0FeQF+6iDBQBC10M4ca6DthwC2xftgj7liltp5Ct58p1kZq8y2RUXj88ihX8OLaXsXVS5b4LUg1KqL+Vqp7aO8mhZAgEjyHvx9NgUddKII=
+	t=1740752439; cv=none; b=P1N4qwOSrkY3w4/Zbu+rhhmOuWXeZ6C0UDtd36dt1FqJnB7JU13i8tgWqQqVnngkejDk9pfK0jHkCuVpsVmcBROTrT6DuXzNyMWyuBj/9xCJwRRTpJqQAtrPQYOodKdh5Hz7KXSX+S/Wy+agUMpxOQGLJ1hurq6u19SqT8PApEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752414; c=relaxed/simple;
-	bh=SRQ0m/MZA7tHF75eUQbdOEzdkJsnHTBVME2DOpyXpBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p31NOF39H2RxUkAQPE+7tSCf9736jWa2enE5GWnyALT2Z3XlnJAMG+SibEpQlJXC4DmQLWsL2xz9q9d6Lzv0RqjKsWgKokw70kkEY0h1oThLYFAtMAYLw7/nIvLwM3QZZtW/WDcTyjQkhwVRS4U2+fsoqqoRgt4yzIZwj8AmTJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=id7j/O+p; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740752412; x=1772288412;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SRQ0m/MZA7tHF75eUQbdOEzdkJsnHTBVME2DOpyXpBc=;
-  b=id7j/O+p+XgyYbEWnpAvx4VJxsbaSfsqBVQdEpW61Kfadm82Kp/sb1dj
-   ZER2FNd0O2niffD8LUXnGLQbxvTxGFkdMJ8LTs2zJH++VzHrTYch18G1X
-   0jyKxSqZRNf6QIgllvj11oKuy3KWIw8ancyEpsL+cUhXWZ9yx9/VeqFPb
-   MI0AeodtSqisZIeN4RSXCTzZPDRLppRriNSDJFrChspRVLXoa+ke48YH6
-   y42sUG1rXTzXOn4CVAdgXxRC34FvPH8gyv61R8IkUx2nXLA8pkZUavBMv
-   v/nYQEdchNGiagYQ2vA9kR5y0fOrtSXRssEnRQEb54QOBc9NozfQvAhtS
-   A==;
-X-CSE-ConnectionGUID: PYZ7DJ3NTp+bJqsgUUmOpg==
-X-CSE-MsgGUID: QaFjbEoGThOpLzL/97VUkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="51885155"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="51885155"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 06:20:11 -0800
-X-CSE-ConnectionGUID: g14DsdlNTRe0FmDqqTkSlQ==
-X-CSE-MsgGUID: X9pyEn+vSBGgLvpWvWl8Hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="121954926"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 06:20:08 -0800
-Date: Fri, 28 Feb 2025 16:20:05 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	'Christian =?iso-8859-1?Q?K=F6nig'?= <christian.koenig@amd.com>,
-	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
-	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
-	lucas.demarchi@intel.com
-Subject: Re: [PATCH 1/2] drm: Create an app info option for wedge events
-Message-ID: <Z8HGFRGOYvyCCWWu@black.fi.intel.com>
-References: <20250228121353.1442591-1-andrealmeid@igalia.com>
- <20250228121353.1442591-2-andrealmeid@igalia.com>
+	s=arc-20240116; t=1740752439; c=relaxed/simple;
+	bh=Oh7P4Jz0C18b7vPHUv3/Zd2LYJ1SuvtlT2JJoG4kL+o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rup1R66sStyflv+UC9QSv3uU6cCj4w3ZJzFDcTTQQgApQ/TI8LzkC3O10WlOdsg64KHLIWuIRlnIxA3BXu+D+nZ3Vj/WA4BjyvJkmvdoGhG5x1gCqaIlDkOCCMogGWCln7CUBa+Sr9lli4Lyuj9R8YFvr9i5NvwkoIh9yT8JRx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ms4c/5Cg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6a8sGrdQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740752435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CXlHhn3/4c4lCIOTagOdmV/oDVlTo29eKoQ6Y0m2o3c=;
+	b=ms4c/5CgPEPiziUSdAKo2vSF5UuQhVRGuXDL26WP0eYoc5wUqHkQ40Qo8rXekxG2hXdyNd
+	68Dljh5DuUrvpL4Yocgvth1AQX4UOLVBxY6U3ioiLGMK4YAT1/SzFBbFQOuwj4L5dxmcy+
+	FLp5SDdq/l+v8vGmJ1y8mzXickHJRcN9sf6iw1FR7UZZ0fqF3H5aZf2sVF+PskTL2Wv/o4
+	qUVg7hIxMLCbgUSu6GRYDLOP1SWYXOHcAEOXDNv1wpypDMzNf40T4StBUlkb3Vux7pIsyU
+	s3jEBgi+CcCX7BtWwB9yss5YUWDcI2BXOPdtnLhnyCEhnpVOp3iSq34r/MOZUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740752435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CXlHhn3/4c4lCIOTagOdmV/oDVlTo29eKoQ6Y0m2o3c=;
+	b=6a8sGrdQ0OASjWbIW2h9p/hX4GwVbVEaaKFVxMTCcLvEC41EzAp/SeFrpGdxvWgy2jTY29
+	SsegL8+HoI5YJyBw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Donghyeok Choe <d7271.choe@samsung.com>, linux-kernel@vger.kernel.org,
+ takakura@valinux.co.jp, youngmin.nam@samsung.com, hajun.sung@samsung.com,
+ seungh.jung@samsung.com, jh1012.choi@samsung.com
+Subject: Re: printk: selective deactivation of feature ignoring non panic
+ cpu's messages
+In-Reply-To: <Z78eGNIuG_-CVOGl@pathway.suse.cz>
+References: <CGME20250226031756epcas2p3674cccc82687effb40575aa5fa2956e0@epcas2p3.samsung.com>
+ <20250226031628.GB592457@tiffany> <84ikoxxrfy.fsf@jogness.linutronix.de>
+ <Z78eGNIuG_-CVOGl@pathway.suse.cz>
+Date: Fri, 28 Feb 2025 15:26:34 +0106
+Message-ID: <8434fytakt.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228121353.1442591-2-andrealmeid@igalia.com>
+Content-Type: text/plain
 
-Cc: Lucas
+On 2025-02-26, Petr Mladek <pmladek@suse.com> wrote:
+> I wonder if this is actually safe. I recall that we simplified the
+> design somewhere because we expected that non-panic CPUs will not
+> add messages.
 
-On Fri, Feb 28, 2025 at 09:13:52AM -0300, André Almeida wrote:
-> When a device get wedged, it might be caused by a guilty application.
-> For userspace, knowing which app was the cause can be useful for some
-> situations, like for implementing a policy, logs or for giving a chance
-> for the compositor to let the user know what app caused the problem.
-> This is an optional argument, when `PID=-1` there's no information about
-> the app caused the problem, or if any app was involved during the hang.
-> 
-> Sometimes just the PID isn't enough giving that the app might be already
-> dead by the time userspace will try to check what was this PID's name,
-> so to make the life easier also notify what's the app's name in the user
-> event.
-> 
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  2 +-
->  drivers/gpu/drm/drm_drv.c                  | 16 +++++++++++++---
->  drivers/gpu/drm/i915/gt/intel_reset.c      |  3 ++-
->  drivers/gpu/drm/xe/xe_device.c             |  3 ++-
->  include/drm/drm_device.h                   |  8 ++++++++
->  include/drm/drm_drv.h                      |  3 ++-
->  7 files changed, 29 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index 24ba52d76045..00b9b87dafd8 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -6124,7 +6124,7 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
->  	atomic_set(&adev->reset_domain->reset_res, r);
->  
->  	if (!r)
-> -		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-> +		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
->  
->  	return r;
->  }
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> index ef1b77f1e88f..3ed9cbcab1ad 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> @@ -150,7 +150,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  			amdgpu_fence_driver_force_completion(ring);
->  			if (amdgpu_ring_sched_ready(ring))
->  				drm_sched_start(&ring->sched, 0);
-> -			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-> +			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
->  			dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
->  			goto exit;
->  		}
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index 17fc5dc708f4..48faafd82a99 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -522,6 +522,7 @@ static const char *drm_get_wedge_recovery(unsigned int opt)
->   * drm_dev_wedged_event - generate a device wedged uevent
->   * @dev: DRM device
->   * @method: method(s) to be used for recovery
-> + * @info: optional information about the guilty app
->   *
->   * This generates a device wedged uevent for the DRM device specified by @dev.
->   * Recovery @method\(s) of choice will be sent in the uevent environment as
-> @@ -534,13 +535,14 @@ static const char *drm_get_wedge_recovery(unsigned int opt)
->   *
->   * Returns: 0 on success, negative error code otherwise.
->   */
-> -int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
-> +int drm_dev_wedged_event(struct drm_device *dev, unsigned long method,
-> +			 struct drm_wedge_app_info *info)
->  {
->  	const char *recovery = NULL;
->  	unsigned int len, opt;
->  	/* Event string length up to 28+ characters with available methods */
-> -	char event_string[32];
-> -	char *envp[] = { event_string, NULL };
-> +	char event_string[32], pid_string[15], comm_string[TASK_COMM_LEN];
-> +	char *envp[] = { event_string, pid_string, comm_string, NULL };
->  
->  	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
->  
-> @@ -562,6 +564,14 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
->  	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
->  		 "but recovered through reset" : "needs recovery");
->  
-> +	if (info) {
-> +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
-> +		snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
-> +	} else {
-> +		snprintf(pid_string, sizeof(pid_string), "%s", "PID=-1");
-> +		snprintf(comm_string, sizeof(comm_string), "%s", "APP=none");
-> +	}
+Perhaps you are recalling commit 7412dc6d55ee ("dump_stack: Do not get
+cpu_sync for panic CPU").
 
-This is not much use for wedge cases that needs recovery, since at that point
-the userspace will need to clean house anyway.
+> I am not sure that I found all locations. But
+> we might want to revise:
+>
+>
+> 1st problem: _prb_read_valid() skips non-finalized records on non-panic CPUs.
+>
+>    opinion: We should not do it in this case.
 
-Which leaves us with only 'none' case and perhaps the need for standardization
-of "optional telemetry collection".
+I don't know. This could result in seeing even less output if some CPU
+didn't finalize a record.
 
-Thoughts?
+> 2nd problem: Is _prb_read_valid() actually safe when
+> 	panic_triggering_all_cpu_backtrace is true?
+>
+>    opinion: It should be safe because the backtraces from different CPUs
+> 	are serialized via printk_cpu_sync_get_irqsave().
 
-Raag
+To clarify, by "safe" you mean it does not skip backtrace records from
+other CPUs.
+
+It does not skip their records because trigger_all_cpu_backtrace() waits
+(up to 10 seconds) for the other CPUs to finish storing their backtraces
+before continuing.
+
+The use of the printk_cpu_sync is only to avoid interweaving the
+multiple non-panic CPU backtraces.
+
+> 3rd problem: nbcon_get_default_prio() returns NBCON_PRIO_NORMAL on
+> 	non-panic CPUs. As a result, printk_get_console_flush_type()
+> 	would suggest flushing like when the system works as expected.
+>
+> 	But the legacy-loop will bail out after flushing one
+> 	message on one console, see console_flush_all(). It is weird
+> 	behavior.
+
+I believe you are talking about commit 8ebc476fd51e ("printk: Drop
+console_sem during panic")? And also be aware of commit 51a1d258e50e
+("printk: Keep non-panic-CPUs out of console lock").
+
+> 	Another question is who would flush the messages when the panic()
+> 	CPU does not reach the explicit flush.
+
+Nobody. That is by design.
+
+>    opinion: We should probably try to flush the messages on non-panic
+> 	CPUs in this mode when safe. This is why I prefer the name
+> 	"printk_debug_non_panic_cpus".
+>
+> 	We should update console_flush_all() to do not bail out when
+> 	the new option is set.
+
+It is not that simple. Legacy printing involves acquiring the
+console_lock, which currently is not possible for non-panic CPUs during
+panic.
+
+> 	We should call nbcon_atomic_flush_pending() on non-panic CPUs
+> 	when the new option is set. printk_get_console_flush_type()
+> 	should behave like with NBCON_PRIO_EMERGENCY.
+
+Note that non-panic CPUs during panic are also forbidden from acquiring
+console ownership.
+
+> 	Maybe, nbcon_get_default_prio() should actually return
+> 	NBCON_PRIO_EMERGENCY on non-panic CPUs when this option is set.
+> 	It allow the non-panic CPUs to take over the nbcon context
+> 	from the potentially frozen kthread.
+
+Note that nbcon_waiter_matches() requires that "Only one CPU is allowed
+to request PANIC priority."
+
+IMO it is opening up a huge can of worms to start allowing non-panic
+CPUs to acquire the console_lock, take over console ownership, and print
+(possibly with PANIC priority).
+
+You could argue that this is just a debug mode. But I don't think that
+is justification to allow things to explode and possibly deadlock, when
+they otherwise would not have.
+
+Perhaps Donghyeok might be happy enough if the debug option simply
+allowed the non-panic CPUs to store records. There are plenty of tools
+available to get at the dmesg buffer.
+
+John
 
