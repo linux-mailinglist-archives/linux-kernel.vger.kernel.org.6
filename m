@@ -1,164 +1,169 @@
-Return-Path: <linux-kernel+bounces-537625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D7BA48E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:04:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2683FA48E4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:07:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58C7188B207
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B951891929
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31E0126C02;
-	Fri, 28 Feb 2025 02:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6308482F2;
+	Fri, 28 Feb 2025 02:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2MJx2+R"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="exAF7g0x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02228125B2;
-	Fri, 28 Feb 2025 02:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F19125B2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740708256; cv=none; b=vBX6DKFgiW99WwnwiyvqmlVRkbvk0CV8KUNm0owmALyxAFW4hMnnX9nTO1OgYVjGH5nMs7xEh0CF/Md4gI6XC82gL1KicPa97AqDVLZXuBnhfsI42tLhUQ8lQ0VK17ruXR5rXclUvKrzz/7NJegvKOb3bBxRUnzAHqfVBx6KTSo=
+	t=1740708456; cv=none; b=QKHHxW4tyQ62UnwVVUrRc/u3YGSte3nphP9QMylyRhfVcUi/0Icb6vpv31ca/0+cXEFBEQ5LHIGfd1wJSdaf36Gw02ngqf84QoDt+9KRrNolMfJm9q6Q4oMlHkJJG5P8QfX/QMsvGcGA+RjsEjpaQ24zz2EbPKoTATVrrpkX9a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740708256; c=relaxed/simple;
-	bh=pttPMi2OGMYeRMexHzwLllEh+UDP/eVvvhW58rJRU6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MORUua00A+oWUwH7eH2mNDnVULcjCNLSNSvtmG+ZdxyldiRnhb4kSpYic6kJDmpTSxgB/VxFNJG4/KonXwdJdPvVFRx8fAqnv5px8B5/1Rez/PZ47VXEyjC0rzHawyrYdAkykM4tJmEvdTjA4hNljVdsjRrfhNZxiDoHbRlwj8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2MJx2+R; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22355618fd9so24792915ad.3;
-        Thu, 27 Feb 2025 18:04:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740708254; x=1741313054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DO4u9Pvzwx6HigYVezagh1f5xC7V2c+sTGulXIlhhlg=;
-        b=h2MJx2+RH02CP1NQ1QbVMFUz7FA4FR+jaAFGvBK9LxPpeOV6LaHSH5IUyHrMTvXJS0
-         GocK6YlZhxLQZGhYzVeONqOq4ONDS8OnytcN0MVsaj+9Caikxh0/SfmlqlnPtCdKi8QX
-         nPI/mQ96OiURxPbUfK6RpG0BH9cYqBrmhvro10XT/JgqO1i83ikTMTZTP1/gXoXxXFdp
-         D2O4BSLbkIk2ruJooHRbwR7vV58nveG0JYjbIxKOlxOXIzpNjyDVHbuqd6SSO8PaoctZ
-         Myo29GJXBoD8sV4Z+JDLlf5+d0oJpj8I8SE8ZlU0yrLd1mPBgK2LCrX5nN2zwtW4lB7Y
-         uebg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740708254; x=1741313054;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DO4u9Pvzwx6HigYVezagh1f5xC7V2c+sTGulXIlhhlg=;
-        b=Oiwi3O1wUgxIrptMzsaL1CAXshfhH0Eapm+PCSpZQM8KtoCarlZxHPZGRaZvu/zPsE
-         KPmp9uPhvrkK8N9SUGNEMOI2EtNGXPaAreI9ibqfIRlFtNnpnQHqUKirZdJnir2FLbk1
-         zlfIuNgQV1r/cEoC6Y8BBGTXC5zQCg23333VOPXIIVuVGaQ+/VRUdji6T3an7A0qtvYM
-         H3h1YXAXvQ6Npii1BZJPgRp5NQOyc2L8PLTkFp2lSsQ9AcCEESHzlopjNsuDry0lK/ET
-         4TcGtrig/34ow6+uMGtCo1v1eW6Hov42+XGDY60RXPTugxs1eySEBv4efiIDfPscJB4V
-         UYzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUawoFH82tbQIFOg/WC09eoRUn5iRv/FApvOM3qywE/7+QN8071VJddlqOgxunYRTbg1Zy1erWMpxg=@vger.kernel.org, AJvYcCXJVJajBou5q0UNHM4jyOLq30zRbj6RxDNYXVyLh7DTUhiNLhm/rav55qyI/R4TxCkQaruYry9uFWtR13uOmw==@vger.kernel.org, AJvYcCXodkh5JFBg0O2gZ0dSGmKMusNaUxNz3GdCnR55m0Cr7EyckXhEh2f58SCQAXo/R8MqZwseDILMFOA+daQM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh6gtEvt/Zjcvhs1CHGxWcaqGndUxgJyANotG1nsVsV+UavpZD
-	Nj4/9wnK9laN4hsO84ePY+IEl3H9R5bvYhlAkyHfRDO2xN+hihbARbxQLw==
-X-Gm-Gg: ASbGncusA3Ojdr1IrOSudKrlHAyDX7a/XKfYgBCPDkCSBfXnecfgxdFn/GqLB4jN6sE
-	ZC5sLsMf1lC4lEboEBwxV3rTIYXAsPZk6343SRc5DOtsi7CxPBHzAKOuoawNWZthcwwdEn+c+K4
-	sJcfkk5+y2cG61/QOkekwL67C4AM0rafbqVkxFr13g4MWdh7eVPPyjk4YF0E73fxUscgx3zc2lW
-	As08HDmHLvRrDDUoijK5gfd7ohDauUWKd2OfW3p7Kxou9eI33ZI3AMQ/BR5YJa/z3ih73Ed5Cjh
-	PL3+UtFgJ/C6ffkGbGn/0eKmEA==
-X-Google-Smtp-Source: AGHT+IF7AKdsmEQqtj6UYHITURHyn9gUthf6RS67BxodfjGc0ZQH4wboAO5Vc51/FxngbDwVPS+EzQ==
-X-Received: by 2002:a17:902:e750:b0:220:e9ac:e746 with SMTP id d9443c01a7336-2236927f595mr28831515ad.53.1740708254010;
-        Thu, 27 Feb 2025 18:04:14 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fa95asm22582245ad.73.2025.02.27.18.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 18:04:13 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 6366F412B0AC; Fri, 28 Feb 2025 09:04:11 +0700 (WIB)
-Date: Fri, 28 Feb 2025 09:04:11 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>,
-	live-patching@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
-	joe.lawrence@redhat.com, corbet@lwn.net
-Subject: Re: [PATCH v2] docs: livepatch: move text out of code block
-Message-ID: <Z8EZm2CXB6yVRoue@archie.me>
-References: <20250227163929.141053-1-vincenzo.mezzela@suse.com>
+	s=arc-20240116; t=1740708456; c=relaxed/simple;
+	bh=FDgvtZB2M1mr4d9hMNDvxDNWzzZYeZLVpt/cbsyvj8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WuznveYdAQBBV3UeFhal/L4KarHkqyK8yI+dmxijWApgeiA3CT7NHYjFT20FHM9dE8pV3I6d7qRGmClSY9GBkDXZ/JPVCjv6NXT2qcb7kU7seh3YhmOULxcUhvGjoNwTpQUlE76ax71kb6SKVNEMFETXHJ9i8LlPmc2rmeDuh9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=exAF7g0x; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740708455; x=1772244455;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=FDgvtZB2M1mr4d9hMNDvxDNWzzZYeZLVpt/cbsyvj8M=;
+  b=exAF7g0xJjmEwkUomcRwzcQQFihYQqQccG+qsO5CvWSXCqPWHWKLrh5t
+   1U40QQGogZZvIhLT3QSkz39V8KtNEMvR5+jXbd1qmIAPp2ACWVxRp9EEt
+   /Zrth5df546KlVJe3vEelwykKJVcgq4Z4FPqlYjMtUWH8UvHbPXfL0y0w
+   JG/F+36eArP7DAYtMxjKFtCoPZWvXVJbXUffvwQ3gxfI59T8ALipF36kc
+   Hw891mzMprYXDrCRSVj5vNJvcAUAzMvj/npLF/CaXbejzNj4lqHVuAWUq
+   Y6Se56f5tVH3rm6UE8kuP1zXRFgf3VH5SuJIREg9MuD8cC3kry0LRkKKx
+   A==;
+X-CSE-ConnectionGUID: j4hXvAMzS9Cyc1KbdwFALw==
+X-CSE-MsgGUID: mkDnH7rXSuCnUHl6OKyJIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41755930"
+X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
+   d="scan'208";a="41755930"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 18:07:35 -0800
+X-CSE-ConnectionGUID: f4ueGVtySYaboTEPQk8TxQ==
+X-CSE-MsgGUID: pRTHOEu7RmK8WxNxcRc51g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="122431943"
+Received: from jgarnacx-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.170])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 18:07:34 -0800
+Date: Thu, 27 Feb 2025 18:07:33 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86/speculation: Simplify and make CALL_NOSPEC consistent
+Message-ID: <20250227-call-nospec-v2-1-895a30dceaac@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAIIUwWcC/23MQQ7CIBCF4as0s5aGErDVlfcwXSBM7SQIDVRS0
+ 3B3sWuX/0vet0PCSJjg2uwQMVOi4GuIUwNm1v6JjGxtEFwoLsSZGe0c8yEtaNjjIgc+TNyaXkF
+ 9LBEn2g7tPtaeKa0hfg48d7/1v5M71jFpLXKplel1f3Pk31tLfkXXmvCCsZTyBVaIxYKsAAAA
+X-Mailer: b4 0.14.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tKj0ZzgmyVi1MADl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227163929.141053-1-vincenzo.mezzela@suse.com>
 
+CALL_NOSPEC macro is used to generate Spectre-v2 mitigation friendly
+indirect branches. At compile time the macro defaults to indirect branch,
+and at runtime those can be patched to thunk based mitigations.
 
---tKj0ZzgmyVi1MADl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This approach is opposite of what is done for the rest of the kernel, where
+the compile time default is to replace indirect calls with retpoline thunk
+calls.
 
-On Thu, Feb 27, 2025 at 05:39:29PM +0100, Vincenzo MEZZELA wrote:
-> diff --git a/Documentation/livepatch/module-elf-format.rst b/Documentatio=
-n/livepatch/module-elf-format.rst
-> index a03ed02ec57e..5d48778d4dfc 100644
-> --- a/Documentation/livepatch/module-elf-format.rst
-> +++ b/Documentation/livepatch/module-elf-format.rst
-> @@ -217,16 +217,19 @@ livepatch relocation section refer to their respect=
-ive symbols with their symbol
->  indices, and the original symbol indices (and thus the symtab ordering) =
-must be
->  preserved in order for apply_relocate_add() to find the right symbol.
-> =20
-> -For example, take this particular rela from a livepatch module:::
-> +For example, take this particular rela from a livepatch module::
-> =20
->    Relocation section '.klp.rela.btrfs.text.btrfs_feature_attr_show' at o=
-ffset 0x2ba0 contains 4 entries:
->        Offset             Info             Type               Symbol's Va=
-lue  Symbol's Name + Addend
->    000000000000001f  0000005e00000002 R_X86_64_PC32          000000000000=
-0000 .klp.sym.vmlinux.printk,0 - 4
-> =20
-> -  This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the sy=
-mbol index is encoded
-> -  in 'Info'. Here its symbol index is 0x5e, which is 94 in decimal, whic=
-h refers to the
-> -  symbol index 94.
-> -  And in this patch module's corresponding symbol table, symbol index 94=
- refers to that very symbol:
-> +This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symb=
-ol
-> +index is encoded in 'Info'. Here its symbol index is 0x5e, which is 94 in
-> +decimal, which refers to the symbol index 94.
-> +
-> +And in this patch module's corresponding symbol table, symbol index 94 r=
-efers
-> +to that very symbol::
-> +
->    [ snip ]
->    94: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT OS [0xff20] .klp.sym=
-=2Evmlinux.printk,0
->    [ snip ]
+Make CALL_NOSPEC consistent with the rest of the kernel, default to
+retpoline thunk at compile time when CONFIG_MITIGATION_RETPOLINE is
+enabled.
 
-LGTM, thanks!
+Also add the missing __CS_PREFIX to the CALL_NOSPEC macro to make it
+compatible with -mindirect-branch-cs-prefix.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+v2:
+- Fixed the inconsistency in the use of "\" in __CS_PREFIX. (Andrew)
+- Fixed the comment to reflect that __CS_PREFIX only emits the prefix and
+  not the JMP/CALL. (Andrew)
 
---=20
-An old man doll... just what I always wanted! - Clara
+v1: https://lore.kernel.org/r/20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com
+---
+ arch/x86/include/asm/nospec-branch.h | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
---tKj0ZzgmyVi1MADl
-Content-Type: application/pgp-signature; name=signature.asc
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 7e8bf78c03d5..aee26bb8230f 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -198,9 +198,8 @@
+ .endm
+ 
+ /*
+- * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
+- * to the retpoline thunk with a CS prefix when the register requires
+- * a RAX prefix byte to encode. Also see apply_retpolines().
++ * Emits a conditional CS prefix that is compatible with
++ * -mindirect-branch-cs-prefix.
+  */
+ .macro __CS_PREFIX reg:req
+ 	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15
+@@ -420,20 +419,27 @@ static inline void call_depth_return_thunk(void) {}
+ 
+ #ifdef CONFIG_X86_64
+ 
++/*
++ * Emits a conditional CS prefix that is compatible with
++ * -mindirect-branch-cs-prefix.
++ */
++#define __CS_PREFIX(reg)				\
++	".irp rs,r8,r9,r10,r11,r12,r13,r14,r15\n"	\
++	".ifc \\rs," reg "\n"				\
++	".byte 0x2e\n"					\
++	".endif\n"					\
++	".endr\n"
++
+ /*
+  * Inline asm uses the %V modifier which is only in newer GCC
+  * which is ensured when CONFIG_MITIGATION_RETPOLINE is defined.
+  */
+-# define CALL_NOSPEC						\
+-	ALTERNATIVE_2(						\
+-	ANNOTATE_RETPOLINE_SAFE					\
+-	"call *%[thunk_target]\n",				\
+-	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
+-	X86_FEATURE_RETPOLINE,					\
+-	"lfence;\n"						\
+-	ANNOTATE_RETPOLINE_SAFE					\
+-	"call *%[thunk_target]\n",				\
+-	X86_FEATURE_RETPOLINE_LFENCE)
++#ifdef CONFIG_MITIGATION_RETPOLINE
++#define CALL_NOSPEC	__CS_PREFIX("%V[thunk_target]")	\
++			"call __x86_indirect_thunk_%V[thunk_target]\n"
++#else
++#define CALL_NOSPEC	"call *%[thunk_target]\n"
++#endif
+ 
+ # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
+ 
 
------BEGIN PGP SIGNATURE-----
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250226-call-nospec-b94808f0dc75
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ8EZmwAKCRD2uYlJVVFO
-ownAAQDyLeqKMUb6Yuhq8W/qmxH1ELSo4SEB64yCA4NSt88epQEAlF8kXX7FR59i
-DIs8FAedjxwBYTmqlS/jpOZMpnPSkwo=
-=5LGe
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Pawan
 
---tKj0ZzgmyVi1MADl--
 
