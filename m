@@ -1,177 +1,231 @@
-Return-Path: <linux-kernel+bounces-538353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913B2A49782
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:35:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08315A4977C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59AC16D989
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0460D16CF3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A8825F79C;
-	Fri, 28 Feb 2025 10:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rA61Ea4E"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD15925E807;
+	Fri, 28 Feb 2025 10:34:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D425DCE5;
-	Fri, 28 Feb 2025 10:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8B225A334
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738936; cv=none; b=L6ZpXaHgzO8z57sjUVZgBeBVSB6YoMQccH0epKUNjW/KLAH5NwHXIPRoUiy4uxrv3sAwRZr0QqkwWK89wc73CKulY09lisVs1ZqBsGm0uZW6R6K07O6pKPx4ckTanPJlZG0ewWxCb113yZQVQAC3XCJgn5vFkuA3vur76mirdoU=
+	t=1740738897; cv=none; b=OAluh0AWp/3TQVdb23qsNMJWKcv+6fSgVdomWfXDZTXwF8rrwMstiVu19GaF1TR22iQXD1IItWqJTywM3LFRYiLq1Dj/IDcqnFq5ER1wIP/o2b49/dcgrI0GzZlmc7QGa5/HsCvNJeSD1TQX0S4DmBsfN8nLbHT2KwCvDYecF2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738936; c=relaxed/simple;
-	bh=DHSdtp+XdtA3NPlxrJ57qvr55VazblL+nsCKRKoaPpo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dQa1LhN83WMRxgzvmRPw6vcVnEhCvyMV4lctFpjfvdZF46wH53z8sisncSbQvxXiqK+6UASF6YtupPJ48JtP1E56nX0WyU+/mRWL5UU2Fii7Bar2soxDLMa4jIoZmAh6Yk6gU1ixvTjKvfMmWb5fu0upyfEQxIs6aZCwOctGrfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rA61Ea4E; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740738934; x=1772274934;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DHSdtp+XdtA3NPlxrJ57qvr55VazblL+nsCKRKoaPpo=;
-  b=rA61Ea4ETnupT3PKS7nHqTqebqA84e9tvRrVDM+o61kMhGejeg6tR3ii
-   OxrG16MeT14Lfb7CjImMsG/lftNMFBzlPkIDSRsVV284Xy/NJupTljTUO
-   ZnY+G4GXjlOGkbmf5gfIHHUnYvDLZigqKAVPLOmVCxAPbN4lRMzUQxPcQ
-   h0SrePD0j8RUZxXUM2s27NwVjA1mch54ZITWZQXGkbOmOnItwCNTml6Kj
-   DmfYtlB98dgrZJHbSargbkDqTxxbadUjii47k0jFBotTtaCphidikSMwl
-   p137FVX/AKquTNpfho1gGNejW5OL+C5jPDDhlTNU75pk34gmasnZU5Bqo
-   g==;
-X-CSE-ConnectionGUID: JknLepFYT8+gGnbGNwKrzg==
-X-CSE-MsgGUID: euHk0iX9RZ6/bFeHB0LeVg==
-X-IronPort-AV: E=Sophos;i="6.13,322,1732604400"; 
-   d="scan'208";a="205787153"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2025 03:35:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 28 Feb 2025 03:35:27 -0700
-Received: from microchip1-OptiPlex-9020.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 28 Feb 2025 03:35:24 -0700
-From: shravan kumar <shravan.chippa@microchip.com>
-To: <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>
-CC: <kieran.bingham@ideasonboard.com>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <conor.dooley@microchip.com>,
-	<valentina.fernandezalanis@microchip.com>, <praveen.kumar@microchip.com>,
-	<shravan.chippa@microchip.com>
-Subject: [PATCH V6 3/3] media: i2c: imx334: add modes for 720p and 480p resolutions
-Date: Fri, 28 Feb 2025 16:03:32 +0530
-Message-ID: <20250228103332.3647098-4-shravan.chippa@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228103332.3647098-1-shravan.chippa@microchip.com>
-References: <20250228103332.3647098-1-shravan.chippa@microchip.com>
+	s=arc-20240116; t=1740738897; c=relaxed/simple;
+	bh=tEvnyaMU3oSs/ueZnSN+9o+Po1ID/44xfiu3e/Usr6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHUShQp6ll4FMWGD1Iyl/JuSn3+YFfbl8gsUSZIIMPvtaVHBfp++xJlNGEM04Kb8fw9f2BK6huRtMFOnFD38HDxTQaobVFNV9Wn0Pm++8KeGeor2VzJDxsWbyf3YteByIowZjh/9Z8U448Unan2yEkMUy/tqsscHFAJT2K9qbDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnxhM-0002hu-RK; Fri, 28 Feb 2025 11:34:28 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tnxhK-003HLv-02;
+	Fri, 28 Feb 2025 11:34:26 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 9701F3CE1FD;
+	Fri, 28 Feb 2025 10:34:25 +0000 (UTC)
+Date: Fri, 28 Feb 2025 11:34:25 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v7 4/7] can: Add Nuvoton NCT6694 CANFD support
+Message-ID: <20250228-magic-seahorse-of-abracadabra-f2a402-mkl@pengutronix.de>
+References: <20250207074502.1055111-1-a0282524688@gmail.com>
+ <20250207074502.1055111-5-a0282524688@gmail.com>
+ <20250207-savvy-beaver-of-culture-45698d-mkl@pengutronix.de>
+ <CAOoeyxWKWA=OJB_MdWPdJQDic8=AXEbJiu2qW5u=CvphyAykzQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h2qx7abh3roax2kn"
+Content-Disposition: inline
+In-Reply-To: <CAOoeyxWKWA=OJB_MdWPdJQDic8=AXEbJiu2qW5u=CvphyAykzQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Shravan Chippa <shravan.chippa@microchip.com>
 
-Added support for 1280x720@30 and 640x480@30 resolutions
+--h2qx7abh3roax2kn
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 4/7] can: Add Nuvoton NCT6694 CANFD support
+MIME-Version: 1.0
 
-Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
----
- drivers/media/i2c/imx334.c | 66 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+On 12.02.2025 10:49:43, Ming Yu wrote:
+> > > +static void nct6694_can_handle_state_errors(struct net_device *ndev,=
+ u8 status)
+> > > +{
+> > > +     struct nct6694_can_priv *priv =3D netdev_priv(ndev);
+> >
+> > It seems you don't have dedicated RX and TX states, so call
+> > nct6694_can_get_berr_counter() and use can_state_get_by_berr_counter()
+> > to get the states. Then basically do that what what
+> > mcp251xfd_handle_cerrif() does, starting with "new_state =3D max(tx_sta=
+te, rx_state);"
+> >
+>=20
+> Excuse me, do you mean that nct6694_can_handle_state_change() the flow
+> should like v5?
+> https://lore.kernel.org/linux-can/CAMZ6RqLHEoukxDfV33iDWXjM1baK922QnWSkOP=
+01VzZ0S_9H8g@mail.gmail.com/
 
-diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-index f80a8ce8f9c5..b8d63e0fad66 100644
---- a/drivers/media/i2c/imx334.c
-+++ b/drivers/media/i2c/imx334.c
-@@ -314,6 +314,46 @@ static const struct imx334_reg common_mode_regs[] = {
- 	{0x3002, 0x00},
- };
- 
-+/* Sensor mode registers for 640x480@30fps */
-+static const struct imx334_reg mode_640x480_regs[] = {
-+	{0x302c, 0x70},
-+	{0x302d, 0x06},
-+	{0x302e, 0x80},
-+	{0x302f, 0x02},
-+	{0x3074, 0x48},
-+	{0x3075, 0x07},
-+	{0x308e, 0x49},
-+	{0x308f, 0x07},
-+	{0x3076, 0xe0},
-+	{0x3077, 0x01},
-+	{0x3090, 0xe0},
-+	{0x3091, 0x01},
-+	{0x3308, 0xe0},
-+	{0x3309, 0x01},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
-+/* Sensor mode registers for 1280x720@30fps */
-+static const struct imx334_reg mode_1280x720_regs[] = {
-+	{0x302c, 0x30},
-+	{0x302d, 0x05},
-+	{0x302e, 0x00},
-+	{0x302f, 0x05},
-+	{0x3074, 0x84},
-+	{0x3075, 0x03},
-+	{0x308e, 0x85},
-+	{0x308f, 0x03},
-+	{0x3076, 0xd0},
-+	{0x3077, 0x02},
-+	{0x3090, 0xd0},
-+	{0x3091, 0x02},
-+	{0x3308, 0xd0},
-+	{0x3309, 0x02},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
- /* Sensor mode registers for 1920x1080@30fps */
- static const struct imx334_reg mode_1920x1080_regs[] = {
- 	{0x302c, 0xf0},
-@@ -434,6 +474,32 @@ static const struct imx334_mode supported_modes[] = {
- 			.num_of_regs = ARRAY_SIZE(mode_1920x1080_regs),
- 			.regs = mode_1920x1080_regs,
- 		},
-+	}, {
-+		.width = 1280,
-+		.height = 720,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_1280x720_regs),
-+			.regs = mode_1280x720_regs,
-+		},
-+	}, {
-+		.width = 640,
-+		.height = 480,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_640x480_regs),
-+			.regs = mode_640x480_regs,
-+		},
- 	},
- };
- 
--- 
-2.34.1
+The handling of
+CAMZ6RqLHEoukxDfV33iDWXjM1baK922QnWSkOP01VzZ0S_9H8g@mail.gmail.com in v5
+was better, but there were some questions by Vincent...
 
+So let's continue the discussion from v5 here:
+
+> > +static void nct6694_can_handle_state_change(struct net_device *ndev,
+> > +                                           u8 status)
+> > +{
+> > +       struct nct6694_can_priv *priv =3D netdev_priv(ndev);
+> > +       enum can_state new_state =3D priv->can.state;
+> > +       enum can_state rx_state, tx_state;
+> > +       struct can_berr_counter bec;
+> > +       struct can_frame *cf;
+> > +       struct sk_buff *skb;
+> > +
+> > +       nct6694_can_get_berr_counter(ndev, &bec);
+> > +       can_state_get_by_berr_counter(ndev, &bec, &tx_state, &rx_state);
+>=20
+> Here, you set up tx_state and rx_state...
+>=20
+
+remove the switch (status)...
+
+> > +       switch (status) {
+> > +       case NCT6694_CAN_EVT_STS_ERROR_ACTIVE:
+> > +               new_state =3D CAN_STATE_ERROR_ACTIVE;
+> > +               break;
+> > +       case NCT6694_CAN_EVT_STS_ERROR_PASSIVE:
+> > +               new_state =3D CAN_STATE_ERROR_PASSIVE;
+> > +               break;
+> > +       case NCT6694_CAN_EVT_STS_BUS_OFF:
+> > +               new_state =3D CAN_STATE_BUS_OFF;
+> > +               break;
+> > +       case NCT6694_CAN_EVT_STS_WARNING:
+> > +               new_state =3D CAN_STATE_ERROR_WARNING;
+> > +               break;
+> > +       default:
+> > +               netdev_err(ndev, "Receive unknown CAN status event.\n");
+> > +               return;
+> > +       }
+
+replace it by:
+
+	new_state =3D max(tx_state, rx_state);
+
+> > +
+> > +       /* state hasn't changed */
+> > +       if (new_state =3D=3D priv->can.state)
+> > +               return;
+> > +
+> > +       skb =3D alloc_can_err_skb(ndev, &cf);
+> > +
+
+remove this VVV
+> > +       tx_state =3D bec.txerr >=3D bec.rxerr ? new_state : 0;
+> > +       rx_state =3D bec.txerr <=3D bec.rxerr ? new_state : 0;
+            ^^^
+
+>=20
+> ... but you never used the values returned by
+> can_state_get_by_berr_counter() and just overwrote the tx and rx
+> state.
+>=20
+> What is the logic here? Why do you need to manually adjust those two
+> values? Isn't the logic in can_change_state() sufficient?
+>=20
+> > +       can_change_state(ndev, cf, tx_state, rx_state);
+> > +
+> > +       if (new_state =3D=3D CAN_STATE_BUS_OFF) {
+
+if (priv->can.state =3D=3D CAN_STATE_BUS_OFF) {
+
+>=20
+> Same for the new_state. The function can_change_state() calculate the
+> new state from tx_state and rx_state and save it under
+> can_priv->state. But here, you do your own calculation.
+>=20
+> Only keep one of the two. If your device already tells you the state,
+> then fine! Just use the information from your device and do not use
+> can_change_state(). Here, you are doing double work resulting in a
+> weird mix.
+>
+
+what does your device do when it goes into bus off?
+
+> > +               can_bus_off(ndev);
+> > +       } else if (skb) {
+> > +               cf->can_id |=3D CAN_ERR_CNT;
+> > +               cf->data[6] =3D bec.txerr;
+> > +               cf->data[7] =3D bec.rxerr;
+> > +       }
+> > +
+
+if (skb)
+
+> > +       nct6694_can_rx_offload(&priv->offload, skb);
+> > +}
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--h2qx7abh3roax2kn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfBkS4ACgkQDHRl3/mQ
+kZx8rAf/YwHWaPQeJt2a23AqQMCRA4js5IxIDrKEDC6om3BvkuibxwOwYh8vEl8Y
+IZOCA5tIkrQvRDZxSCQBe4yb3qkd8xVWeOR02lqIz5ZmYH9TjRuF4DrxXeustZpz
+ik5+osAJwCt6OaWhClj8hyGFb4koVa2usLbi71ynDPW9RfOcfHyNvkgEgqS838LV
+gP14GLvw7MaoruLgV4B+hAbA56cST7RLm+F9aQehMUej1lVU7G2vQTgcDGgIyN6j
+tRT7p6+EplB3uVCDU/aq3iB5hY1R6hZY1im0aYqfg1p1UzzYN4pK8Z5C63KmHfr8
+3gWlCeaQJC5+CDfvtp9fm3La49zFcQ==
+=3lgQ
+-----END PGP SIGNATURE-----
+
+--h2qx7abh3roax2kn--
 
