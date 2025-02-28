@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-538749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B07AA49CA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:01:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB1FA49CAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29CE37A9172
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83869189AE59
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5B275605;
-	Fri, 28 Feb 2025 14:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5341EF366;
+	Fri, 28 Feb 2025 14:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="NUxlybCl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DuTvYExH"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i27F/Wzk"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4EE270EA9;
-	Fri, 28 Feb 2025 14:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273121EF367
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740754770; cv=none; b=ZJJJGb+rxHZAL2ZWYeW5CBeyQ5+OkthblGAbjC1K6V4tTqbC32v1EPXFid0hjuFYFOzwVgvIpxx345MQEX6VYgQJXfeoWyl9Qa78TkH0rg1Svsg5w54YPvQe+9tsz1aOF9gVASasYP1PDt0JgJJhOC1jXwBbevIbO3Ly7UZloJ0=
+	t=1740754792; cv=none; b=ndVAUaSIDgxCW94MMeuTCPSvBPGqiUEXCH00I65kZl/9yObSltc78C75jZlbcSSeS2R4RPMIgKfhF3GKcvNRFNxsBGJQfdRzeFVschuJD0R7wVSCWj/RwDZBc9cSmiUEHI8mhON46D+QAx6e9LhB4u3/Hk35cWGqIWbT61gQ/7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740754770; c=relaxed/simple;
-	bh=MR+6e54mvrr55U2P4InC/IkkhvtYltb38oGdqZ14wLA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=m9XzIdI3fTYusz6C22b1qLAjiZWu1//eXXmckF9un65oJamhE3dQEXUgUfR55R8Dh5VItfswcPbIb/GlWhuEgn+updrj/776OGCioE99h0xv9jm7vpQlH4Z911k98pvrdUhIBRDn4KpaOTxf5nnIr2VfcSlIKW88qRHwetzAuLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=NUxlybCl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DuTvYExH; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7CC3911401A1;
-	Fri, 28 Feb 2025 09:59:26 -0500 (EST)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-06.internal (MEProxy); Fri, 28 Feb 2025 09:59:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740754766;
-	 x=1740841166; bh=SkKwIhvnfqN2r+QHSzxVSlp38AINO68uiTWQnDmFEaM=; b=
-	NUxlybClqhUUMJKEhwaSw9gahKPK/yi6cKqYkNcj/Z+SSv9EMtvrT81Z4JL7ujhl
-	4AtjvgXLqUMFGCYCTNWhsz6/pJSQp2GeaI41UMV18cW2LEXgqZfEBZn8LSbsHvgC
-	FjUv9D5DQtBnLxcpHyvtCzY+XIGVuSINivBhq4O1w6k50IpUFLNUGuEvnqZQ7wIT
-	QPgQ6BzSG3/qvr5a/N6Vz3sY0sDVfHjHjVR4O5vYElyIGwI96Q+CFFYxOXDm4VgN
-	mLGc089/E6fH5gqtzg3SZeCp/JCD0VV2Hbjt0tbvCEVeOdAXS4C8myyHFkoSvPFP
-	erFxVBVBfdEG8fqxySdCyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740754766; x=
-	1740841166; bh=SkKwIhvnfqN2r+QHSzxVSlp38AINO68uiTWQnDmFEaM=; b=D
-	uTvYExHaNIlUxU7caUsluXfPuLmeoLKJSy/k2F4mwCS/aeRiFiwUcQAnfO/YRN7Q
-	yAFVHY6hofkLpcP60hihjYTFciaZ1TEXUaBdPH5sVTUxdP/QPpuJGHiTxmaxw64J
-	vd2IYBrSEKzeUr5sSVe3fnBi6eMnw4AT04r6qXZ/QDKUbwaMoLwqZsuqHvhApWbL
-	CYHRLLqh58fllgFGiUHHfvMFQsVjbhr3hc7JhX9z1bcTyu8VUWyA5ubSM0cUgDVx
-	6AxsZ0nWxooV813ipSlyU0Ai/8N2yP+XB/ftSCVZDlWJbxObPMOl+KjDKrcjvCCV
-	tL792Fv0D/su1FvXqEjxw==
-X-ME-Sender: <xms:Tc_BZyRfJVovarecw5r84IZmVCOkEtAzwaudCPx7n957vpFzvXqivA>
-    <xme:Tc_BZ3z2iSoFyu7rOZ5oiwqIRzK74GsQRpfJ8kFBFJL93O9ZDDe5zaHHtk2k8iWku
-    cwmzQQ9RR9vAY4BwUw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeltdeilecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
-    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
-    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthht
-    ohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhhthhhonh
-    ihrdhlrdhnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihs
-    lhgrfidrkhhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehkuhgsrgeskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhi
-    shhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvh
-    eslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphht
-    thhopehprggsvghnihesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:Tc_BZ_2y4ckCx23_IJtJSJpM74WixsElSA9JsqF9gxnoE7Nz6sq2XA>
-    <xmx:Tc_BZ-DvB2iQbtIdAdbNTYviTfRMepNlnuC5QywMZSEBire0mHM5yA>
-    <xmx:Tc_BZ7gmqAu6cVv3Ovw99YRgaLlNVQW2Q4rT_1FFMzfr_NxdV__vpA>
-    <xmx:Tc_BZ6po6MsSJ-Hj_N1N9AtyH3dnMYZWBa70Dpir5wb33eJHrHSOMA>
-    <xmx:Ts_BZwbXxWGU-98a7GoEX06bG8wLsWjZi7oeM-MOl_g2BOX1Tf9Ju4vd>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 85C9D3C0066; Fri, 28 Feb 2025 09:59:25 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740754792; c=relaxed/simple;
+	bh=DN3OR3UNLTVv3BZYUZUuzBf8MA/QbjKRmT91vw7vVlo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sFGpZGvGoTRWvfjtbhMsVvc7UI9ws4GkB+NKQCZ4b3hTnvM7rTIlSFf9JUguvLTaYFqOm7P3lN872FMay0YsSnZhSwSoOLGK/ZKWGqBwLfrZ3R//OCB+LWTad6ggnX1Namw2LwoOJ8cIE/tsU6qvKcU2J2kQEXw2ayh0wD6UsrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i27F/Wzk; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390ef13838cso89471f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 06:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740754789; x=1741359589; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aw1wgbpjG14q+kZJA/ykHz++iHt5asV20YBMvXwJ2LA=;
+        b=i27F/WzkROLOKEHfVdRS1fFV/cbCMIa7zqgFyFi50Qh2Bi+Iq/0Dv1byuL+lK8bKg1
+         CJZj/a/O7IcbXhLooDPY7Go2ssKZ4P45PeE2FKlLd6xUMnmZ+4Ta7FTVzSnFDU1Xf+nB
+         S0p6oB9NRSQ40aTlHzZHd8q18aygfLyEDPYRl9OzL07g/LclUVpHn8gUmor3uptTQxN4
+         pbewcdmETaLJkyEGeogtiFT4/tqidJlRbLNT4TGZ8cBnRSB8gEMnEcDWHET/1P0KXPVb
+         D6x22rB/v0AsWrzFqDFfqPoWj7CUv2oawyj8B0u1Qk1xwUVKsLz/6eq4hnZM73ppczrv
+         Km9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740754789; x=1741359589;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Aw1wgbpjG14q+kZJA/ykHz++iHt5asV20YBMvXwJ2LA=;
+        b=TDbQr1z9krdy3Fx9i3MfB0kn40P0xj8/l44i0xW/xT/NbDDXB0n9LXIaJr6p/DdLnm
+         b1iZhWDbRFftoaCHLcvacyFaTPcJRNXuyfsBP4pQJAWlbmVq140M8rjNDsdOB5YDyuPM
+         3D3edwcXyVqQt1EadPDt/f9TnTbo+G2sfK4b5NSXJrs+IbMp+E0bwZRKLRcPlJXOFBZO
+         e38ljkJCzGZkMXH94WbdNO6QaBZ2GivGhX4Y56M9DzOXq0BimAR4fkCpmUQLBy/+ApwM
+         BJNmF6EYek7ZuSLjmxwWvchWk89RXHYFa6MtYe5tdCZDdpDOGcjzTO5oqBg1rCvkC+dS
+         nPAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWW2cs52OQ1yFy3mkqB/RLxY20pEWhu9RJQ9sGN15lFo1xJJiQwmrg4aldD57eaSxxCODmoO8cnRMolev4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN3QKCufcRtHbUqz/iiJS91IDPpr2j3MEX1p91SlyN5i047+96
+	oPYS5X6YXpzHXQDGbVo1v3/zeBIMii4sTr7vVfGbWUgNgIwWGIaOdrV+CqPBjnNdXq9aqKU4Zwp
+	k3T4=
+X-Gm-Gg: ASbGncvm1V7Brl70WhXWGVGKPvLoB9947EoYNSPnFGwXoG8oDpELJQUCvnIyWtQdKfZ
+	t906gM5tqDdkpNa6brxFTV9lmwbGY0Y51NWdjmk7g/gl0mDAif+BKK+8OFzPMCRPcBFWYzEA0Il
+	e3X4V+LwJ/+X22neWcpcxED0SkXDS6A99GlN2+Fou2F/mq5f2SWQH0xDZQg1MKxfh/uPJEKu2YM
+	13dMcvr2/WXb1jCH16OOpcXEkc4gwXziBlKad6fG27pyKhr4JvHejcry+Znai6D1NlMbZAnuCQh
+	z99G7j1Ogfm+f8Y4IAlSNSqVhNmQoVPrfwOmmdlgXw==
+X-Google-Smtp-Source: AGHT+IGdH2qmH4oSCKqIKPqOphvmigtP0oYR69hECCBe35mqJksQQnWDr1GbP2Gygro+ZUA+rzOu2Q==
+X-Received: by 2002:a5d:598f:0:b0:38d:be5e:b2a7 with SMTP id ffacd0b85a97d-390eca89669mr1148746f8f.10.1740754788946;
+        Fri, 28 Feb 2025 06:59:48 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d785sm5450770f8f.83.2025.02.28.06.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 06:59:48 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] clk: qcom: Constify 'struct qcom_cc_desc'
+Date: Fri, 28 Feb 2025 15:59:37 +0100
+Message-Id: <20250228-clk-qcom-const-v1-0-611ab80d45e4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 28 Feb 2025 09:59:05 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
-In-Reply-To: <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
-References: <mpearson-lenovo@squebb.ca>
- <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
- <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
- <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
- <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
-Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFnPwWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyML3eScbN3C5Pxc3eT8vOISXRMjQ4tkEyNzQ4NESyWgpoKi1LTMCrC
+ B0bG1tQC4PRM/YAAAAA==
+X-Change-ID: 20250228-clk-qcom-const-4218c42710a9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1409;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=DN3OR3UNLTVv3BZYUZUuzBf8MA/QbjKRmT91vw7vVlo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnwc9blSazgMczCJY+a4uFENOuZleWk2vJAA/pf
+ +hHkFsdDNeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8HPWwAKCRDBN2bmhouD
+ 1zmiD/4+Kk7fGDoVklFFYQFk7elu4O4WZHQsWx2P0xeTLS8VoRAwjq8yenRESg0YmawIb1u1Zka
+ Z77ZJaKWc5fysGYLRrYktBXYK//RfdwU3wCFOgAl8uenBC2m+xiCCIueSQuAWGJrsee0Bi7fOWE
+ GWOVs+bL3/ZAPlRJp701WzC/o39QWxFPuDDwlUD40Asia2gGAV5iaXJEMW4UzPSF4EotaddYGyr
+ e0rOUaaQZPpHCWhlx+p+ucayKTAggcLnADPoPDEBrKfTmAO0OAUzDylkWPucqOLLXb6Fdj8ELfy
+ 5pxTP7S/eARVJJbRyRssQNFaT/0nJbVdfdwjUUX2yrr0h7Zx+U4coCgnkpc1Io3X6m6mVw4teTa
+ HXqXCkn4HvOuMNbuRy8hvLgHQb32wGekUop8JQ9XAgwX7GsYeDTwA06In07DIa7f0oEiMIoqmqU
+ m+l2D7wge8x5lAZIHZ3U0cTwGdNegpNAO19P+c4woJMH3SCzp2PxqkZaqovwNmrPfu2XS9RQFZn
+ w2siDi//Xn6nb8VR6qy2T/M4CUHufUdDCwjDW1DG+XHedznJsCUh9XxXubn3+wcK69y3AHQV0m4
+ KhT2BDV5DUZQx5otspMy2SnT2FasDwcRmwf49YBewfbf4H65du/dfzO77nGH3nMxJA8RDX/aEp+
+ qKaSMuOTQSodFMQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi Andrew
+Make static 'struct qcom_cc_desc' const.
 
-On Thu, Feb 27, 2025, at 11:07 AM, Andrew Lunn wrote:
->> >> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
->> >
->> > Please add some #define for these magic numbers, so we have some idea
->> > what PHY register you are actually reading. That in itself might help
->> > explain how the workaround actually works.
->> >
->> 
->> I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
->
-> What PHY is it? Often it is just a COTS PHY, and the datasheet might
-> be available.
->
-> Given your setup description, pause seems like the obvious thing to
-> check. When trying to debug this, did you look at pause settings?
-> Knowing what this register is might also point towards pause, or
-> something totally different.
->
-> 	Andrew
+Best regards,
+Krzysztof
 
-For the PHY - do you know a way of determining this easily? I can reach out to the platform team but that will take some time. I'm not seeing anything in the kernel logs, but if there's a recommended way of confirming that would be appreciated.
+---
+Krzysztof Kozlowski (4):
+      clk: qcom: camcc: Constify 'struct qcom_cc_desc'
+      clk: qcom: dispcc: Constify 'struct qcom_cc_desc'
+      clk: qcom: gpucc: Constify 'struct qcom_cc_desc'
+      clk: qcom: videocc: Constify 'struct qcom_cc_desc'
 
-We did look at at the pause pieces - which I agree seems like an obvious candidate given the speed mismatch on the network.
-Experts on the Intel networking team did reproduce the issue in their lab and looked at this for many weeks without determining root cause. I wish it was as obvious as pause control configuration :)
+ drivers/clk/qcom/camcc-sa8775p.c   | 2 +-
+ drivers/clk/qcom/camcc-sc8280xp.c  | 2 +-
+ drivers/clk/qcom/camcc-sm4450.c    | 2 +-
+ drivers/clk/qcom/camcc-sm8150.c    | 2 +-
+ drivers/clk/qcom/camcc-sm8550.c    | 2 +-
+ drivers/clk/qcom/camcc-sm8650.c    | 2 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c | 4 ++--
+ drivers/clk/qcom/dispcc-sm4450.c   | 2 +-
+ drivers/clk/qcom/dispcc-sm8450.c   | 2 +-
+ drivers/clk/qcom/dispcc-sm8550.c   | 2 +-
+ drivers/clk/qcom/dispcc-sm8750.c   | 2 +-
+ drivers/clk/qcom/dispcc0-sa8775p.c | 2 +-
+ drivers/clk/qcom/dispcc1-sa8775p.c | 2 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c  | 2 +-
+ drivers/clk/qcom/gpucc-x1p42100.c  | 2 +-
+ drivers/clk/qcom/videocc-sa8775p.c | 2 +-
+ drivers/clk/qcom/videocc-sm8350.c  | 2 +-
+ drivers/clk/qcom/videocc-sm8450.c  | 2 +-
+ drivers/clk/qcom/videocc-sm8550.c  | 2 +-
+ 19 files changed, 20 insertions(+), 20 deletions(-)
+---
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+change-id: 20250228-clk-qcom-const-4218c42710a9
 
-Thanks
-Mark
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
