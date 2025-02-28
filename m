@@ -1,219 +1,236 @@
-Return-Path: <linux-kernel+bounces-538865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E6CA49E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:51:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5645AA49E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF133BCF58
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAFFF16B61D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F075D271835;
-	Fri, 28 Feb 2025 15:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3DC1B4250;
+	Fri, 28 Feb 2025 15:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mp65QVT/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PwZooPW7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mp65QVT/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PwZooPW7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DRoPTadN"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C4226FA7D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740757768; cv=none; b=MVp3lQlCpJHrYLnfQjEVcKWhN2cU7I87A93HOzWiL4Wmf8XvqiVICXNADpuY5bYAxGPnWKDD7C6JFK+ev2AbPTv6LNhKg/AqYHMmbcizNn2VUURIR3cc8ZexxPgVhAgwXLzh5R85/NbiHqXoAGsZMfKre6JTevdh1Zpw1MRnDJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740757768; c=relaxed/simple;
-	bh=Npbl6efmRnsldm+HIoxkOsIdMiI+d40Nv5k1ThiOJpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewJ5oh2hA+InhbWT2tdrxW52AEbwnXdFWH/4SLFyKs2RGe3rLRlDOIzloC3fnST9JtvHJ1/QArxUH7Kk0Cwwg1O6Ou17RwvszdPGH1Wlt3mT2Ek9Qop9PNFGttdZSL3B71V7zzKR8Qnu+MiahreQWFAsXbaGQvzX4bm+zfQoaLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mp65QVT/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PwZooPW7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mp65QVT/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PwZooPW7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B7EE21179;
-	Fri, 28 Feb 2025 15:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740757764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X30CzGKpErV/mbzwMYQ0nUzc2buSuGpj1sVMr9Ac3sM=;
-	b=mp65QVT/+RW6cASixZ6Jc6/CfrYVjBZP6gFNe98pIHBwMjiW0zW1lkEWBxYHK3Z6QTZgI6
-	2tWuCGU2dFAzc/twRPgVgL5xH0fglFFcHMuj7U+A/WNykeRMlQP/aszId5ba7joEXSY7IF
-	NO8zOWV9as7kKWteRgt/nJRU8VsoP/8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740757764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X30CzGKpErV/mbzwMYQ0nUzc2buSuGpj1sVMr9Ac3sM=;
-	b=PwZooPW7rytxRpZ7sXkWufegZ4Nruk9XQV2mLhPbmuTBz0VwTO+uCU3jeFjAWqUhLxpsR1
-	D3RRGBhUYZxP8PBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="mp65QVT/";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=PwZooPW7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740757764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X30CzGKpErV/mbzwMYQ0nUzc2buSuGpj1sVMr9Ac3sM=;
-	b=mp65QVT/+RW6cASixZ6Jc6/CfrYVjBZP6gFNe98pIHBwMjiW0zW1lkEWBxYHK3Z6QTZgI6
-	2tWuCGU2dFAzc/twRPgVgL5xH0fglFFcHMuj7U+A/WNykeRMlQP/aszId5ba7joEXSY7IF
-	NO8zOWV9as7kKWteRgt/nJRU8VsoP/8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740757764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X30CzGKpErV/mbzwMYQ0nUzc2buSuGpj1sVMr9Ac3sM=;
-	b=PwZooPW7rytxRpZ7sXkWufegZ4Nruk9XQV2mLhPbmuTBz0VwTO+uCU3jeFjAWqUhLxpsR1
-	D3RRGBhUYZxP8PBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B6031344A;
-	Fri, 28 Feb 2025 15:49:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pLwAFgTbwWdZUgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 28 Feb 2025 15:49:24 +0000
-Message-ID: <b97fdb00-6367-4eec-87cd-47f6765fd2cc@suse.cz>
-Date: Fri, 28 Feb 2025 16:49:24 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57468270EC9;
+	Fri, 28 Feb 2025 15:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740757786; cv=fail; b=ECd+qvbKwGtHJmQuMhLCo9/UEA+YRZWQkWcC23NQpNRKZy7N/VzvcEFzUghfjgp18pk+oIow2JYVs8k9/e99UOHiJVub8t+lRuj7Kh5NWrS2jHLoJpm11lhdJuecK/M+AjHxxUm7v64H096p1LnO/hEeFRg/A8yowdtGjtkjiuU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740757786; c=relaxed/simple;
+	bh=3aRgNNJsezhCje4/XntjB/+k1oDRo4sN3XGlcAdx9uA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q7v0+pTcq03oxcpzRWAerYa7JVu3UOmKnoSed4HavZyjIGmExXXWkdb7aEVcCldRVop7fOtwmhyngVbRTQDBqTrdXqMJ11yCznWZSoz8Z96CT8Z/S+sm9mjIRCdYtZ9gPYHzpL8i+Up4vuLQIdgcvN7cwD3p1ZWwGN6MH/I7468=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DRoPTadN; arc=fail smtp.client-ip=40.107.100.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zWR+AOxMBEKf2HfuD/OpS/Fh55z/uk9Jh4P5i7pyQ7WH0BWXqYoLx3NOpRmm96K6pGOha97BmN8ocDLWEL9Hz7yOHoLt8Noj8O5F92S9sVBc3/HgW8Q+b/4HPynHeHFMBgqJVU6EYKDKY3MTY+OG2jMqzMOlkul1JMEat1Q43UbdPCaFWt5xyZVzpRfFJAGkwqVjbgPmihpCzifnbo6UV/VgQUw7LiG7qER+jLRd5TTi6fTZXzbwoiKZmbWnDwoJFNznRdoZnGz4Uamt5d30d+1hh6hzT2588VL5J4xPRwghfRW+29VlHNmYi3WtXwsYKZVN/wN3ZmvM8ygCruX2Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f6eCanl3AfKrogtlufIGdOlpTQnTFDfpT4F8DamMYhI=;
+ b=kFUUJAmvf+dG+CAcjEhFX/M+PB2FdbxLo0QZUGtLCfKqWMhNbTZ0ehWTZ3dmVPoemqXLFDixcqYum0uv+cBpmw3kLOpCRdNDrAx5Y6VEPzfUdulfpJqMQyoehtSTKNarl53IG+6JS9dfMNAnB4xMLlwTsBDeehwhl6KIPQz3J8TOtwZQDI/xOtjep00BGrshxAjbCXS1JmCIX6Kf9VwkgwU8ka0DrYA+Gyv+9SaNSPvHBTaP+0Oa1shiSBKDtq+Qivpvm42fhdL94cX0VbzRQ/z9D1mKbiP562m1dPcn07uz/ee1n5r73gaa5bDZXeL+qsDxH/MQPcIY9HTw9nh/zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f6eCanl3AfKrogtlufIGdOlpTQnTFDfpT4F8DamMYhI=;
+ b=DRoPTadNcg7OEkDfd/jnxrf3XiL8bpg8mMNQ2EuFKkyUXjOZY7+JoVRoYBzO5ZRFTrgVRf4YElrljpAErp6P/k528YM2bvoqfgMPV70W4R81GCjOjB5E/y6L2+XLiDFO+roblb92ykKROmmkn4wTmV8lDHwEtl8//QuHCWZw9Rs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5033.namprd12.prod.outlook.com (2603:10b6:408:132::14)
+ by LV8PR12MB9417.namprd12.prod.outlook.com (2603:10b6:408:204::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 15:49:39 +0000
+Received: from BN9PR12MB5033.namprd12.prod.outlook.com
+ ([fe80::deef:fa00:d7d4:5069]) by BN9PR12MB5033.namprd12.prod.outlook.com
+ ([fe80::deef:fa00:d7d4:5069%5]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 15:49:39 +0000
+Message-ID: <38868fe1-9194-4346-b7fd-b8d56e410f1b@amd.com>
+Date: Fri, 28 Feb 2025 21:19:34 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: Kernel module ae4dma caused my system to not boot
+To: Jesper Dangaard Brouer <hawk@kernel.org>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@cloudflare.com>
+References: <45ddbb23-bf92-4d46-84b6-6c80886d4278@kernel.org>
+Content-Language: en-US
+From: Basavaraj Natikar <bnatikar@amd.com>
+In-Reply-To: <45ddbb23-bf92-4d46-84b6-6c80886d4278@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0173.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::17) To BN9PR12MB5033.namprd12.prod.outlook.com
+ (2603:10b6:408:132::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] kunit, slub: Add test_kfree_rcu_wq_destroy use
- case
-Content-Language: en-US
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
- Keith Busch <kbusch@kernel.org>
-References: <20250228121356.336871-1-urezki@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250228121356.336871-1-urezki@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7B7EE21179
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,kvack.org,linux-foundation.org];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linux.com,kernel.org,google.com,lge.com,linux.dev,gmail.com,sony.com];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5033:EE_|LV8PR12MB9417:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1f495ec-a7e9-4098-5a88-08dd580f825b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWJiNnN0NkRtU1J4dU9tNXcrT1lGSE1jeXhaSklQWlBiSUlVdXpyaTRBZy9J?=
+ =?utf-8?B?WEMvdDVCdlJ6Z1FsaE40cjN2Yk10M3ZzdWw5blZjU3lkb1Fma3E2N3ZXNWFE?=
+ =?utf-8?B?RFViMkhnL3p1SmRlK3IyVEZtZjliU3VrdnYyU2ZmZndMUzJFZUZMdWVpbmxh?=
+ =?utf-8?B?bSszcE9CVkdJaXM2MVNOZGNYOXRXcWM2aFZkMU81TFYrZkVhdVM3YVB2N1la?=
+ =?utf-8?B?R0hUUWtXZEMvQmt0bWtsMkFUUzUvVnV6S3Q4bmgvcEQrN0hkK1F4cUZmMzNz?=
+ =?utf-8?B?dnhzSzNBbmx5Y3FRK1JQeWlTSjV5UTB0VCtkNzdnd01uOUdHTXBkbStpZ2ZM?=
+ =?utf-8?B?NWdwcnJyUjEweWNzaHFTTXdQN1NTWExGKzRFa3J3Ulp1WXZJWnZUSHhqSExW?=
+ =?utf-8?B?UUUyWTFVTU04VEllMEhOYUM0OVNBemRHUHloMzN1WXYvOEQxbHNxd2ZvWFlU?=
+ =?utf-8?B?ZG9BSHZCdHpVZXBXWVJEQXVaNGN2M3lwZ3BIZ210b3cxbVZBZmpMNHBaMDZt?=
+ =?utf-8?B?QzVwTWtQdXBKbVlyM3VtQytIUGpOSHhtN3djK1ZRVld3dXErOXd4a2hCSG9B?=
+ =?utf-8?B?L3FnQWZZL0diNjZYSHpuRU05Ny8zaSs4Qm5lTTVBVlRodDUyendTS0xSWm9u?=
+ =?utf-8?B?Q01EZWxwMTB1MmN4bUVSOWxTbUxKNDQvRTZDNFY1RXUrTjczSmMxWEJJc0NL?=
+ =?utf-8?B?VWI3b0EvVnNRK2FrSWc5UVhna3YySTh5Zi9aRllrSzF1Y3pJMDA3OSsvU3Vw?=
+ =?utf-8?B?ZWQ1ZzA2aGk3OHdBeTJWc3l6d2p1YzRGdnlocTEzYzlENFRHdVdKWmNweUJR?=
+ =?utf-8?B?b2J2K2gzTDVhVnJwRXFjTTVCWUczZFI3dWc3RVplMG9RSzMzQ0ora0ZEemRn?=
+ =?utf-8?B?VmRzc0dTK09VbU4vWE5aWGliS2tsUFhmRm84MTR0TFRESXhKOURSUE1NQW9y?=
+ =?utf-8?B?WE9UNWNnT1Z2THR1aUc5UzNUTjVNc29YZXRnSmtYNXlYd0loaXZxL0h4bjZv?=
+ =?utf-8?B?Rm5jQm56clpLVGFGTDA5eWJpVE5HV1NvZ3JaL1lJbTdaNG1EbVRwVlNzTXBy?=
+ =?utf-8?B?WlEzYkJpQ2xScGg0aElzL284YkVpSjM1TGtpZkdWMTFmTHhpTERpamh3a3Nv?=
+ =?utf-8?B?dDNKKzZJbU1aZ0hab3Z2UjMyckMyT2xtMGZIWk9xT0FBY0Z1aHB2bFJ6bEtx?=
+ =?utf-8?B?SzNSaFlVYXk0OGhVbUwrUjg2WHNvbjZ1RVU5K0NZc2tWeXlGVkI2cWwzL2N1?=
+ =?utf-8?B?MEF0bU1Pc2dsb2w0TXhFRFhlRE1xTGt2SEh6Ulk0YU1paEVRbXI1TCszWlpN?=
+ =?utf-8?B?bHhUZTNIYThZdW5TcnBXRVdMcHZjQnd0bDF3dUdFSTNTQXpKTlEzZlhKRmdT?=
+ =?utf-8?B?WGMrVHEreU5VYVBKbTBkamUvNlZxMnpKZ2VKYzhJOUZGWXZVSXJrc2NlNFhI?=
+ =?utf-8?B?REhycXpCVlJrSGl0amdTWWJuZUZTYlBFblN5MVNLcE8rWTFnUzE0N01PTjQy?=
+ =?utf-8?B?Um0vYXdtbEl2VnVOdktlSUlyOXZycmEwVURLd1Q2WXJ4LytnOEQ2MitUeGI2?=
+ =?utf-8?B?cURLWnQ4ZGt4cCtRU1BFOFNNeDlBYlN3SFliTkdFN3NXZXlIWUN3U1VuM1Z3?=
+ =?utf-8?B?TldZdnhnZlAycllXL3U2bE9md3FnUmd4bUp3dGtCWWptV1Q3K29hMUNZY1h1?=
+ =?utf-8?B?WGxvbWZLMDNRQkFRVjBENUlFZEtTV3pvUm82RXRYb0gzRkdQMEVWdTRiakJ0?=
+ =?utf-8?B?L0RPMkVwci9QaTc2ajJLMXVWZTZxTG55eGJMdkdXSEcrdVFVS0pKOW4xWWx1?=
+ =?utf-8?B?c2t4M2RCTlBvMEY1UmV4Y0wwcXd1VzJJa0JiMkJPRVcxVmxNRHdRZ1hqalMy?=
+ =?utf-8?Q?TBJ25y2aHdwfs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5033.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RVVuRVppODlFb1VZaTIvNFNUTms5VmFISkdNcExuMDFLck9KLys5ZVExNnB3?=
+ =?utf-8?B?b09MMkErS2pwQytnVmxRNkhIbGNzYVdncVNLQ3paK3lMcHRBMHUwUXc5MG94?=
+ =?utf-8?B?UjkrdFhLUDE3OUljSVNJN3V6Q0dJcFd0ZHorNHVlV2NSREpLak0wRktrOWxi?=
+ =?utf-8?B?RjhOblZzUkQzSVE0dFFmTzlsSjdPZ0tsU25qMUdmZ0ZaR0hsbTF0UGFZSDdH?=
+ =?utf-8?B?SVVod3lZcFFadWhmZERtQjFtVW9yMm9PNEtheVpnamhBOTlZT2xPaHRxNko4?=
+ =?utf-8?B?Ti9sWC9hTVE5OFdncWhQT3RzNmE2N1dFS0NreFJmQVp3aUhhcWJmYWExMW5P?=
+ =?utf-8?B?VzlxK3kxclhHOTRjR1EyK3Y1MmFBclNxUmlOVVhhTG5WZmNxL1dzMWE1djdm?=
+ =?utf-8?B?c0tZdUt1OWZZRUpaeitTODVkamZ6K1VsczZpWmFGUGRjdkpGaSt1OWJaQ1hZ?=
+ =?utf-8?B?b0xvSnloMDFxWnpGUlpnR0RKanpzci9HejE4MWRqRGc4ZStYZXcrZjJySEZu?=
+ =?utf-8?B?NC9iY0hPcStiUzFCT1pDbEZHUDRpYXZnMitpUmJ1OW51a1RaMWl4dHppdldT?=
+ =?utf-8?B?Q1VtSmwrTXpvTmEzM3M2cUpzcllacVU5alptdWxZbEk0SUt0V0NSeGRRdU4x?=
+ =?utf-8?B?aFNwQUk4V1VKMlE4SHFpQStNcDRqbFV6dG9KRTBreEhvSkJXYitjdU5VTkx1?=
+ =?utf-8?B?ajBSdEdMOXdlZFMrTFZDSExYVzZRZG1zUEtkTTU0Y0VlZm1MS0JXTXZBeHQv?=
+ =?utf-8?B?ODl6OStzZW1MZW0rcEp2QWpLU1JDWEhDWTdYUzJWQjNOUldKZFdwbldBS1ly?=
+ =?utf-8?B?SjNtS1pCbGJzdVNHdS9YbkVZZHNsY0lUc3NtSzZrN1hQcnh5aThjNTIwbTJI?=
+ =?utf-8?B?WkhhdU5NMSsvSXk5Qjl3VWhxNUMzQTNSeEhOcTIwN292NGNzMzNNUWRFM3d5?=
+ =?utf-8?B?NnRkaWUyWGFRREdjRWZsbDdORVg3V0JnOEh4aDZmZXN5YXBxdGkweFBwOUg2?=
+ =?utf-8?B?SmZ1ZlVmTGRXRHpVQWZZUXhqT01aQkdwNlV6UmtEL0ZpNE9NZXZvbEx5L2NQ?=
+ =?utf-8?B?d2ZvOEpMWXVNK01yNHNXZm1ueEVYZ0YxV0VVQnZrZnc0ajZLeUtBdlZqSTZs?=
+ =?utf-8?B?U1JJd1dkKy9BN29LYWlURFFCNHJleWRDbTNxUGdwUG1pcGR3YmJBUytJeG1L?=
+ =?utf-8?B?SXVBTGp5UDNJVWpDbmNaaVE0cXpyRk9UOG1wY2lBSmhyWlBlajBZSU1JeDNS?=
+ =?utf-8?B?ZWNoMUdYWkJITGtXSVV6L3RKcDB4cmJRV1ZFWWlEbW9PTGx4N2M5anM4NHZH?=
+ =?utf-8?B?Tkg5cG5QTERZT3NOZi9yM1ZNTHlPZ3pkZnE0bUcvdXh5ZDl2bzQzRHkyNHV1?=
+ =?utf-8?B?MTl2MmRETVc4RjBmMS9Uc3h4dTVxMDVzSTVmSFVJR01rOW9TWEN4U255b0c1?=
+ =?utf-8?B?VFRSblVNTmNRVGRHOFpYSzVidjE3TndFUTYzZTBCLzBZaGlmcVNGWFFzYktJ?=
+ =?utf-8?B?MXpVS1JNMWNxcXB5bjlLYWV6QkN1U01Id2o5aytEdU13S3BTdTVnWmlOR2ZV?=
+ =?utf-8?B?NXhiYzRWVnNNc2tJZVl3SUUyMmI2TDdYblA2Z216SThveFc3OXlaUXRFSGJ4?=
+ =?utf-8?B?TXloaGJUQ2dFUUtWanJicTdkbUdDdnEyRE5mR0ptLzdMTkd0bFB2RHUvNmVr?=
+ =?utf-8?B?c2ZXaEx4SU9YVnEvSlZjeW5IQVEzeWJlNkhvYlhKSXUwSTRjdW52Nkh6YkJC?=
+ =?utf-8?B?QjNJQk53NDY5aVl4QjVvZWxheFN4RXVzRWI2K3FqZDR3R0xSRTY0ckZpeU9U?=
+ =?utf-8?B?NjczdUp5SExNT1p5SVZidjMrdmJnZjZHWUdyVnlEMlkrODh1M2JUZ1lRNVFG?=
+ =?utf-8?B?UC8zWmZodUZVbGlGUE9nSmJtVTAreG1FMGdobmRDUzM3cmpvUzU2UFpZV1cz?=
+ =?utf-8?B?d0FISnFYb3hRRzIrdW5iY2ZYMzNKL1ZaSlhxRkh3Ky85emQ3NWptcmxKeWJ2?=
+ =?utf-8?B?NGcwcGtMNTRsdUhCdkNZWmYyeU9pdUNYOHVKOGZxd2pEb2l4ZGc3bHVLZmt2?=
+ =?utf-8?B?WWRWWUVSVHdOVUZwazZ1OVNUMGVoTEhqK0g1bFFmeWVocXpqYyt4ZXNpYnFl?=
+ =?utf-8?Q?fGutN/4RVVbq0r36dowIGFdJf?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1f495ec-a7e9-4098-5a88-08dd580f825b
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5033.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 15:49:39.5204
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tIdWp8X9VWgCjXTmdG9XEi+44kEfVN70rtSmNJzeUAOXtUNZ5AFC6bWQB3VhLs9f9MOWfeVH+olFc0sNKHb23g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9417
 
-On 2/28/25 13:13, Uladzislau Rezki (Sony) wrote:
-> Add a test_kfree_rcu_wq_destroy test to verify a kmem_cache_destroy()
-> from a workqueue context. The problem is that, before destroying any
-> cache the kvfree_rcu_barrier() is invoked to guarantee that in-flight
-> freed objects are flushed.
-> 
-> The _barrier() function queues and flushes its own internal workers
-> which might conflict with a workqueue type a kmem-cache gets destroyed
-> from.
-> 
-> One example is when a WQ_MEM_RECLAIM workqueue is flushing !WQ_MEM_RECLAIM
-> events which leads to a kernel splat. See the check_flush_dependency() in
-> the workqueue.c file.
-> 
-> If this test does not emits any kernel warning, it is passed.
+Hi Jesper,
 
-Well the workqueue warning doesn't seem to make the test fail. But someone
-will notice the warning, so that should be enough. We can't instrument
-warnings in other subsystem's code for slub kunit context anyway. It would
-have to be a generic kunit's hook for all warns.
+Could you please use below patch series which fixes below issue.
 
-> Reviewed-by: Keith Busch <kbusch@kernel.org>
-> Co-developed-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+https://lore.kernel.org/all/20250203162511.911946-1-Basavaraj.Natikar@amd.com/
 
-Pushed to slab/for-next, thanks.
+
+Thanks,
+--
+Basavaraj
+
+
+On 2/28/2025 8:05 PM, Jesper Dangaard Brouer wrote:
+> Hi Basavaraj,
+>
+> When rebasing my devel kernel to v6.14 (6.14.0-rc3-traits-009-bench+),
+> my AMD testlab system didn't boot due to the kernel module: ae4dma.
+> I disabled the kernel module via CONFIG_AMD_AE4DMA so I can boot my
+> system again.
+>
+> CPU: AMD EPYC 9684X 96-Core Processor
+>
+> As a help for you to debug here are the kernel console messages that
+> seems relevant:
+>
+> [   13.853689] ae4dma 0000:85:00.1: enabling device (0000 -> 0002)
+> [   13.861287] genirq: Flags mismatch irq 0. 00000000 (0000:85:00.1) 
+> vs. 00215a00 (timer)
+> [   13.870123] CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 
+> 6.14.0-rc3-traits-009-bench+ #32
+> [   13.870125] Hardware name: Lenovo HR355M-V3-G12/HR355M_V3_HPM, BIOS 
+> HR355M_V3.G.026 10/13/2023
+> [   13.870126] Workqueue: events work_for_cpu_fn
+> [   13.870132] Call Trace:
+> [   13.870134]  <TASK>
+> [   13.870136]  dump_stack_lvl+0x64/0x80
+> [   13.870141]  __setup_irq+0x522/0x6d0
+> [   13.870145]  request_threaded_irq+0x10d/0x180
+> [   13.870146]  devm_request_threaded_irq+0x71/0xd0
+> [   13.870149]  ? __pfx_ae4_core_irq_handler+0x10/0x10 [ae4dma]
+> [   13.870153]  ae4_core_init+0x8f/0x2f0 [ae4dma]
+> [   13.870155]  ae4_pci_probe+0x1f3/0x270 [ae4dma]
+> [   13.870156]  local_pci_probe+0x42/0xa0
+> [   13.870161]  work_for_cpu_fn+0x17/0x30
+> [   13.870162]  process_one_work+0x181/0x3a0
+> [   13.870165]  worker_thread+0x251/0x360
+> [   13.870166]  ? __pfx_worker_thread+0x10/0x10
+> [   13.870168]  kthread+0xee/0x240
+> [   13.870170]  ? finish_task_switch.isra.0+0x88/0x2d0
+> [   13.870173]  ? __pfx_kthread+0x10/0x10
+> [   13.870174]  ret_from_fork+0x31/0x50
+> [   13.870177]  ? __pfx_kthread+0x10/0x10
+> [   13.870178]  ret_from_fork_asm+0x1a/0x30
+> [   13.870182]  </TASK>
+> [   14.010326] ccp 0000:03:00.5: SEV firmware updated from 1.55.32 to 
+> 1.55.37
+> [   16.565527] ae4dma 0000:85:00.1: probe with driver ae4dma failed 
+> with error -16
+> [   16.574958] ae4dma 0000:c1:00.1: enabling device (0000 -> 0002)
+>
+> Let me know if you need other data,
+> --Jesper
+>
 
 
