@@ -1,131 +1,189 @@
-Return-Path: <linux-kernel+bounces-537531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11898A48D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:13:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C0AA48D13
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEF33B7439
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADED316940C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FFA819;
-	Fri, 28 Feb 2025 00:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367FD632;
+	Fri, 28 Feb 2025 00:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPSIMBiY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fCen5HXq"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F105182;
-	Fri, 28 Feb 2025 00:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D63625;
+	Fri, 28 Feb 2025 00:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740701612; cv=none; b=RgKtU00EectsCMbDoVXYUrf6KTCx15/KEzBkD4/169hGzWWLuSLnHQu2+RuhhvDjfjG51MGYwaCYTE09SeB931upsbwnzGZJs+46tVfMWu2WBNl1Ijw8V2vjm0jjJTN+NF3u/7U3Z2WlV1E3H2I4yOGklRuI8s0hSihNAR/2MyQ=
+	t=1740701662; cv=none; b=cno8zCf5omiWQrZ4JL0TJnkUGMM9/Z1EBRlagkCXyy7o25GFOEdPPk1UpDcSh/GiiD8RYuiN9cQiC3r9a08GB7ks1WT7VYm5vVjoFt94pybXkD3Z0kNTUoHggzKF8VsGzfXX1x8+Mf79R7tpe4ibUJd1jvIENsvL0knyG6LwqRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740701612; c=relaxed/simple;
-	bh=VjWpg7dP0s8mbOXJKdWV+Hs+lOOmlqB/DQ6QK29ok7o=;
+	s=arc-20240116; t=1740701662; c=relaxed/simple;
+	bh=YpFKDckJcGlaQ12DrPDrRSEdA7hf5lD/qWGC/iBYyaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzC55F2/vS6N6XDC6neJZmhoxJzAUkaKWGgvYgp89lZAC0Ram7CFQTbnFNU78L+6HAhkYrDKE5UXBfEeIH/dFtygxbSp+9IWPlahk9R2dzfWb3179RQ5ZnmRXneUgDrkajbNlb/6cAR3DxwKydVRhD4qKHvUA61eZVuDmQjkdj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPSIMBiY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F47C4CEDD;
-	Fri, 28 Feb 2025 00:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740701611;
-	bh=VjWpg7dP0s8mbOXJKdWV+Hs+lOOmlqB/DQ6QK29ok7o=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqnJjutw7Zqz2VHf505Azv74ouX7Krejskm8077GJ7g2/dHmISNvFAAQCyaH6+09NGm1Vh9XjxYPnc3I3i47TJef1FBWnWAZuPMJbbDNwwH8PxFk5Q6y+VrA8EgUYTB2jiwyHQHadfOjmeRcurT69MXD0Y0HFGFtyUaF5aQhciA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fCen5HXq; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C35B340E01A3;
+	Fri, 28 Feb 2025 00:14:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id XuBg49EtYIA9; Fri, 28 Feb 2025 00:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740701650; bh=qVstrUsxYc2/NoUvp8ScFWEXiT4iBru3dhQ7NsRBFPU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FPSIMBiYpk65tkQodTo/Q6a3uAXXcYR/A9MIjM+eaZtBDRB7mS3zYuwI8XBJKliJI
-	 ZQIBtAcV49xzFkH3e9QjkktmvszB/CaIPUZBJUUhuLEQgAjYMKC9wkwMGfo00V4Ae/
-	 MwgX177YXb8sLMGtS3MyHLB73/SS8BvzIPBqEOqi5fzMZ8xwbSwfoCylasr+Xg2LV9
-	 gq0sW7FykZKyCJpc7A08PNzE/+EnNFxOcag/9/bPAdT28B8/s5UrXhrpLbQDrtEuN6
-	 y9CuxIxYz2ZZB9KmRu2uT5vlzgqAuFMOcveNTnSzTJX+vGJWGrKUixNRyBuW1qQNep
-	 0ursar10TjhZQ==
-Date: Fri, 28 Feb 2025 09:13:26 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dharma.B@microchip.com,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
- Overflow etc. events
-Message-ID: <Z8D_phw3GxvdAO8G@ishi>
-References: <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
- <Z7vihBqOgP3fBUVq@ishi>
- <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
- <Z7_xTQeTzD-RH3nH@ishi>
- <20250227135330.GC182392@tpx1.home>
- <Z8B1LDT-n2XTTp8q@ishi>
- <202502271437280a6701d8@mail.local>
- <Z8CA9RTZWChh9cJW@ishi>
- <Z8CKQvRjqH9lwzgO@ishi>
- <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
+	b=fCen5HXqFPb4/NNMOrj++SNb+z5qXcNPwm5hTZLvnj6Aedfy5710/HL5sbDxYWcNb
+	 brPLzPrgx3+YiBYI3yipFirrpMPkeDXffgWjQTz8Q915tBCj5DQsmF2EOZy7L5BmYA
+	 Y62IIgPWy4XYtci3yjlIglCawk9ZHe2jxPwmWa/GZqS3C8De3HKXqhMSAf0f3P3L6p
+	 gXguxaqbA+J5vbMHwLQphcts6e8OIWfXxNiotLP9pal2P4cYFjj7ll22e6QH4WHr/t
+	 0szPSvfLnJys/vo87a/5zhSoOXsPnrYD5yKCRDtOp21wDCkp58Ybo5msKU5qvZpF8i
+	 rn8RHRwpfVZJDQ99mvYsN9dKtylhv8tVhOs6+M68BgRH5x5sHmkjiIdBd1aYpJqIwY
+	 pnLiN8cdNtLjfXNmnsBoy0Ca6Kj7sx8eqyuI7p60jLANiYcxVROuma6ziIAmBpvOlQ
+	 8GKETJwCy49lQK6X684XGvYMAWXq5xpsEKmR9KdoQZstVNWuiDLTYKHshiJggcVVNh
+	 zAyQvGgH1zhYju6lAivxqeef6lT0OIqxbuUQnVQu3Jxf1moFtS1FswjN8wQFxVwwC+
+	 7OOU9yBjcSVS0QBPOzxwQ0LmseS923hKDgtBQeikbuXdGpMrVhjC79VL6EytYwnnbx
+	 fbk5c0e/eihW+ZErREwgTCk4=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9D78A40E01A1;
+	Fri, 28 Feb 2025 00:14:05 +0000 (UTC)
+Date: Fri, 28 Feb 2025 01:13:58 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Max Grobecker <max@grobecker.info>,
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org
+Subject: Re: [tip: x86/cpu] x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in
+ init_amd_k8() on AMD when running in a virtual machine
+Message-ID: <20250228001358.GJZ8D_xlMr6DxUT_sO@fat_crate.local>
+References: <533f9cf-1957-41e8-a8cc-ddce5438f658-max@grobecker.info>
+ <174069015279.10177.12820241052987007054.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aSZS/FbNbRmlzwJh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
+In-Reply-To: <174069015279.10177.12820241052987007054.tip-bot2@tip-bot2>
 
+On Thu, Feb 27, 2025 at 09:02:22PM -0000, tip-bot2 for Max Grobecker wrote:
+> This can prevent some docker containers from starting or build scripts to create
+> unoptimized binaries.
 
---aSZS/FbNbRmlzwJh
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Who does docker containers with a K8 CPU model? What's the advantage?
 
-On Thu, Feb 27, 2025 at 04:56:17PM +0100, Cs=F3k=E1s Bence wrote:
-> Hi,
->=20
-> On 2025. 02. 27. 16:52, William Breathitt Gray wrote:
-> > Sorry, let me step back for a moment because maybe I'm trying to solve
-> > a problem that might not actually be a problem.
-> >=20
-> > I see functionality settings available in the TC Block Mode Register
-> > (BMR) that can affect multiple TCCs at a time. Are these BMR settings
-> > exposed already to users in someway? If not, do we have a way to
-> > introduce these settings if someone wants them; e.g. would the
-> > AutoCorrection function enable bit be exposed as a sysfs attribute, or
-> > configured in the devicetree?
-> >=20
-> > Finally, if there's not much interest in general for exposing these BMR
-> > settings, then I suppose there is no need to change how things are right
-> > now with the microchip-tcb-capture module and we can just keep it the
-> > way it is. That's my only concern, whether there are users that want to
-> > control these settings but don't have a way right now.
->=20
-> My knee-jerk answer to this is that if they do, they will bring it up by
-> submitting a patch or bug request. But I'll let others chime in, we only =
-use
-> an extremely small subset of the features of the TCBs.
->=20
-> Bence
+> Admittably, this is more a small inconvenience than a severe bug in the kernel
+> and the shoddy scripts that rely on parsing /proc/cpuinfo
+> should be fixed instead.
 
-I think that's a reasonable stance to take. I don't have an elegant
-solution either to this situation, so I'll defer trying to solve it
-until an actual user shows up who needs the functionality. Until then,
-it seems that what we have right now is adequate for the current
-usecases.
+Yes.
 
-William Breathitt Gray
+I find such "wag-the-dog" patches awful.
 
---aSZS/FbNbRmlzwJh
-Content-Type: application/pgp-signature; name="signature.asc"
+> This patch adds an additional check to see if we're running inside a
 
------BEGIN PGP SIGNATURE-----
+Avoid having "This patch" or "This commit" in the commit message. It is
+tautologically useless.
 
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8D/pgAKCRC1SFbKvhIj
-Kze+AP0TSQhmivwKtynvIgpJ5od2IRhKMwMjM51kwMuLN/TrgwEAzg47J/c7uToS
-dZ/ygvQQpXY3J5aXOapiR28Wb6kZLgc=
-=D3Ne
------END PGP SIGNATURE-----
+Also, do
 
---aSZS/FbNbRmlzwJh--
+$ git grep 'This patch' Documentation/process
+
+for more details.
+
+> virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
+> understanding, can't be present on a real K8 processor as it was introduced
+> only with the later/other Athlon64 models.
+> 
+> Example output with the "lahf_lm" flag missing in the flags list
+> (should be shown between "hypervisor" and "abm"):
+> 
+>     $ cat /proc/cpuinfo
+>     processor       : 0
+>     vendor_id       : AuthenticAMD
+>     cpu family      : 15
+>     model           : 6
+>     model name      : Common KVM processor
+>     stepping        : 1
+>     microcode       : 0x1000065
+>     cpu MHz         : 2599.998
+>     cache size      : 512 KB
+>     physical id     : 0
+>     siblings        : 1
+>     core id         : 0
+>     cpu cores       : 1
+>     apicid          : 0
+>     initial apicid  : 0
+>     fpu             : yes
+>     fpu_exception   : yes
+>     cpuid level     : 13
+>     wp              : yes
+>     flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+>                       cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
+>                       lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
+>                       pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
+>                       tsc_deadline_timer aes xsave avx f16c hypervisor abm
+>                       3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
+
+This dump is purely useless - it is clear what the code does currently. No
+need to dump it.
+
+> 
+> ... while kcpuid shows the feature to be present in the CPU:
+> 
+>     # kcpuid -d | grep lahf
+>          lahf_lm             - LAHF/SAHF available in 64-bit mode
+> 
+> [ mingo: Updated the comment a bit. ]
+> 
+> Signed-off-by: Max Grobecker <max@grobecker.info>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Link: https://lore.kernel.org/r/533f9cf-1957-41e8-a8cc-ddce5438f658-max@grobecker.info
+> ---
+>  arch/x86/kernel/cpu/amd.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 54194f5..c1f0a5f 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -631,8 +631,11 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+>  	 * Some BIOSes incorrectly force this feature, but only K8 revision D
+>  	 * (model = 0x14) and later actually support it.
+>  	 * (AMD Erratum #110, docId: 25759).
+> +	 * Only clear capability flag if we're running on baremetal,
+> +	 * as we might see a wrong model ID as a guest kernel. In such a case,
+> +	 * we can safely assume we're not affected by this erratum.
+>  	 */
+
+This comment needs to be in the commit message - we don't document every use
+of X86_FEATURE_HYPERVISOR.
+
+> -	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
+> +	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
+>  		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+>  		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
+>  			value &= ~BIT_64(32);
+
+But again, I'm very sceptical about K8 and docker containers and don't buy it.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
