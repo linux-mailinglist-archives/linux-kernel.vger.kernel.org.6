@@ -1,172 +1,170 @@
-Return-Path: <linux-kernel+bounces-538307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D1CA496F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:20:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA03A49705
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98FB176318
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBDE4173122
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC8825D91A;
-	Fri, 28 Feb 2025 10:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F7D25E44C;
+	Fri, 28 Feb 2025 10:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JLdgHBis"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1TYz3CHn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XU2PVu7j"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EEE25C71F;
-	Fri, 28 Feb 2025 10:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE03E25DB0A;
+	Fri, 28 Feb 2025 10:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740737916; cv=none; b=egSC6igY0hEvoT4N79dhv0M0MqXm+gVG+0pPlH0WOXnTa6Q0d9axGaE4XaohAdzx55tjm9VRDcLCI/B0RukzJKNJha6B/L5xNbzv5E7Tj8wncIX9695bjFo8KPXg1IFe//Cng0ksRy5yCuhS1N3TnvGcPRbJmXlq9lhUw1AGKYM=
+	t=1740737936; cv=none; b=J0EvXWf+ahAb4+b8avU2gi6rBx5LwikvR1wwwKQd7GWWEHDlLVJe6PVmSlT47OnETIZZNYU2vKcl3Skd4qacHOVp8XWmpooI7nnGrFWSeTjP4zTpVLNolyzVSl81osnDlrwMEXCqhGldjZ4SJJPxLTKdjFCSKHms5kQWlvJdFIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740737916; c=relaxed/simple;
-	bh=x8P7iYSS8zlM2MxoipbGfAAaEUD4PJmjBAoZcxc5kD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szOXNBPcv7nor0k2a8A7FbJOGsRjaGO/xX0yTjWHRR5usHYJq2QSgvFDfd8A+iOxpn1wrXJ9AkbLn7uzY0jWiS5CBRPOYUb3gv/6yJ2FWPNVQGrHCc9B4xShBdLOMDgHqtmu5F/s6vCwPychZtWGHNObHGXgGSRyeTq4cpwpMLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JLdgHBis; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 75AB99FF;
-	Fri, 28 Feb 2025 11:17:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740737822;
-	bh=x8P7iYSS8zlM2MxoipbGfAAaEUD4PJmjBAoZcxc5kD4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JLdgHBis3RLKhkT3eW8n714D7El9DRKo8B1AEoctvAa5Q2jchorf+TUWnERxqGPqf
-	 MVpc40jDJ4R7HJ3v7PaaIQPhYTgJadDRTabMXTWVgWnJlI/9M4U6n0QUDdhb8EPmBB
-	 GrRhSm9wKggZ143auapEEkNHipGQOP0W1v9J7Pgc=
-Date: Fri, 28 Feb 2025 11:18:28 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Mikhail Rudenko <mike.rudenko@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: rkisp1: allow non-coherent video capture buffers
-Message-ID: <bgnkzjpegpmif7gohoijt42rku6jruovjsxscg75dprdz5ek2i@ntfh2yyjyiry>
-References: <20250102-b4-rkisp-noncoherent-v1-1-bba164f7132c@gmail.com>
- <20250103152326.GP554@pendragon.ideasonboard.com>
- <87bjw9s4s3.fsf@gmail.com>
- <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
- <CAAFQd5DS2x3sX59EdkTEMuO=eXc=Q0jD44EUwMisP6ocWz11qg@mail.gmail.com>
+	s=arc-20240116; t=1740737936; c=relaxed/simple;
+	bh=h5oR+UK+IF9s7jct0xLfzPSaVXMUfp4JhlUkjTrZgng=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NNX2savK/EYUcIxn6zHfJzMNj+nPD257DGEwe3CJEGEL4vbD75Tuub6E2IpRQQFp49bZo/QQGe3usfyiLXdXvK0DLmJFpcBGUFazF9Syzr+gXkPbIPai+DWxDqC2Xsf/fkgy9sHwAtUCMybQE99Bgd6B3/g46o6sIKB58cdraEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1TYz3CHn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XU2PVu7j; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 28 Feb 2025 10:18:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740737933;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Td20xOtlGWt2GXh9rt3aM23ulWnm3sPZmLCuqautPU=;
+	b=1TYz3CHnSzsEOkquzilQOW2yceLv1SgAQcH/ItK23OFPcEv9qXShjFrnqirT8yE/yJpfNS
+	fPj80ImbRMtIlDuZy8Rq1PKiQO5tfMBpYDITlhLqPC8yazs+c11+aZwcerz/k5YcH16Upj
+	zJHXrh831gZ/6mJLwNhHKWQ17d0wpgPdNkomh4ut8A6AVDuO24iB61W9bJiYHrZ0rQ5d2E
+	j14+DOsJ6QTb7pR1q9Oscu79/DE5UmgxcWMnEk4kARHA8EBJXkZ4AX2fLotXwn2/ALU52R
+	nLQCw5xoR2y8VtnG1CvJzq8yaarS0rfLUs7BrVY/H/zCew8DBYSZyGc581oENQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740737933;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Td20xOtlGWt2GXh9rt3aM23ulWnm3sPZmLCuqautPU=;
+	b=XU2PVu7jw3NxpLQrietN30W25wZWrMvdWWTPKxBAlNmQ7r2XTWoFMNIiQEQ4qAYS5QiMwQ
+	keFQDSbXA1CAt6Ag==
+From: "tip-bot2 for Brendan Jackman" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Enable modifying CPU bug flags with
+ '{clear,set}puid='
+Cc: Brendan Jackman <jackmanb@google.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241220-force-cpu-bug-v2-3-7dc71bce742a@google.com>
+References: <20241220-force-cpu-bug-v2-3-7dc71bce742a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAFQd5DS2x3sX59EdkTEMuO=eXc=Q0jD44EUwMisP6ocWz11qg@mail.gmail.com>
+Message-ID: <174073793204.10177.9171183498085789285.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Tomasz
+The following commit has been merged into the x86/cpu branch of tip:
 
-On Fri, Feb 28, 2025 at 07:00:57PM +0900, Tomasz Figa wrote:
-> Hi Jacopo,
->
-> On Fri, Feb 28, 2025 at 2:11 AM Jacopo Mondi
-> <jacopo.mondi@ideasonboard.com> wrote:
-> >
-> > Hi Mikhail
-> >
-> > On Tue, Jan 14, 2025 at 07:00:39PM +0300, Mikhail Rudenko wrote:
-> > >
-> > > Hi Laurent,
-> > >
-> > > On 2025-01-03 at 17:23 +02, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-> > >
-> > > > On Thu, Jan 02, 2025 at 06:35:00PM +0300, Mikhail Rudenko wrote:
-> > > >> Currently, the rkisp1 driver always uses coherent DMA allocations for
-> > > >> video capture buffers. However, on some platforms, using non-coherent
-> > > >> buffers can improve performance, especially when CPU processing of
-> > > >> MMAP'ed video buffers is required.
-> > > >>
-> > > >> For example, on the Rockchip RK3399 running at maximum CPU frequency,
-> > > >> the time to memcpy a frame from a 1280x720 XRGB32 MMAP'ed buffer to a
-> > > >> malloc'ed userspace buffer decreases from 7.7 ms to 1.1 ms when using
-> > > >> non-coherent DMA allocation. CPU usage also decreases accordingly.
-> > > >
-> > > > What's the time taken by the cache management operations ?
-> > >
-> > > Sorry for the late reply, your question turned out a little more
-> > > interesting than I expected initially. :)
-> > >
-> > > When capturing using Yavta with MMAP buffers under the conditions mentioned
-> > > in the commit message, ftrace gives 437.6 +- 1.1 us for
-> > > dma_sync_sgtable_for_cpu and 409 +- 14 us for
-> > > dma_sync_sgtable_for_device. Thus, it looks like using non-coherent
-> > > buffers in this case is more CPU-efficient even when considering cache
-> > > management overhead.
-> > >
-> > > When trying to do the same measurements with libcamera, I failed. In a
-> > > typical libcamera use case when MMAP buffers are allocated from a
-> > > device, exported as dmabufs and then used for capture on the same device
-> > > with DMABUF memory type, cache management in kernel is skipped [1]
-> > > [2]. Also, vb2_dc_dmabuf_ops_{begin,end}_cpu_access are no-ops [3], so
-> > > DMA_BUF_IOCTL_SYNC from userspace does not work either.
-> > >
-> > > So it looks like to make this change really useful, the above issue of
-> > > cache management for libcamera/DMABUF/videobuf2-dma-contig has to be
-> > > solved. I'm not an expert in this area, so any advice is kindly welcome. :)
-> >
-> > It would be shame if we let this discussion drop dead.. cache
-> > management policies are relevant for performances, specifically for
-> > cpu access, and your above 7.7ms vs 1.1 ms test clearly shows that.
-> >
-> > >
-> > > [1] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n411
-> >
-> > I would like to know from Hans if the decision to disallow cache-hints
-> > for dmabuf importers is a design choice or is deeply rooted in other
-> > reasons I might be missing.
->
-> When DMA-buf is used, the responsibility for cache management is
-> solely on the CPU users' side, so cache-hints don't really apply. It's
-> the exporter (=allocator) who determines the mapping policy of the
-> buffer and provides necessary DMA_BUF_SYNC operations (can be no-op if
-> the buffer is coherent).
+Commit-ID:     ab68d2e36532806b8f86ff2f60861dbb8443f0be
+Gitweb:        https://git.kernel.org/tip/ab68d2e36532806b8f86ff2f60861dbb8443f0be
+Author:        Brendan Jackman <jackmanb@google.com>
+AuthorDate:    Fri, 20 Dec 2024 15:18:33 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 28 Feb 2025 10:57:50 +01:00
 
-This all makes sense.
+x86/cpu: Enable modifying CPU bug flags with '{clear,set}puid='
 
-I take it as, for libcamera, users of the FrameBufferAllocator helper
-(which first exports MMAP buffers from the video device and the
-imports them back as DMABUF) won't be able to control the cache
-policies.
+Sometimes it can be very useful to run CPU vulnerability mitigations on
+systems where they aren't known to mitigate any real-world
+vulnerabilities. This can be handy for mundane reasons like debugging
+HW-agnostic logic on whatever machine is to hand, but also for research
+reasons: while some mitigations are focused on individual vulns and
+uarches, others are fairly general, and it's strategically useful to
+have an idea how they'd perform on systems where they aren't currently
+needed.
 
-Now, in the long term, we want FrameBufferAllocator to go away and
-have either buffers exported by the consumer (likely DRM) or by a
-system wide buffer allocator (when we'll have one) and have the video
-devices operate as pure importers. But for the time being the
-"first export then import" use case is possibile and valid so I wonder
-if we should consider measures to allow controlling caching policies
-for this use case too.
+As evidence for this being useful, a flag specifically for Retbleed was
+added in:
 
->
-> Best regards,
-> Tomasz
->
-> >
-> > I'm asking because the idea is for libcamera to act solely as dma-buf
-> > importer, the current alloc-export-then-import trick is an helper for
-> > applications to work around the absence of a system allocator.
-> >
-> > If the requirement to disable cache-hints for importers cannot be
-> > lifted, for libcamera it means we would not be able to use it.
-> >
-> >
-> > > [2] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n829
-> > > [3] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-dma-contig.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n426
-> > >
-> > > --
-> > > Best regards,
-> > > Mikhail Rudenko
-> > >
-> >
+  5c9a92dec323 ("x86/bugs: Add retbleed=force").
+
+Since CPU bugs are tracked using the same basic mechanism as features,
+and there are already parameters for manipulating them by hand, extend
+that mechanism to support bug as well as capabilities.
+
+With this patch and setcpuid=srso, a QEMU guest running on an Intel host
+will boot with Safe-RET enabled.
+
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241220-force-cpu-bug-v2-3-7dc71bce742a@google.com
+---
+ arch/x86/include/asm/cpufeature.h |  1 +
+ arch/x86/kernel/cpu/common.c      | 16 ++++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index de1ad09..e5fc003 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -50,6 +50,7 @@ extern const char * const x86_power_flags[32];
+  * X86_BUG_<name> - NCAPINTS*32.
+  */
+ extern const char * const x86_bug_flags[NBUGINTS*32];
++#define x86_bug_flag(flag) x86_bug_flags[flag]
+ 
+ #define test_cpu_cap(c, bit)						\
+ 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index ff483c9..0f32b6f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1494,7 +1494,8 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
+ 
+ 		/*
+ 		 * Handle naked numbers first for feature flags which don't
+-		 * have names.
++		 * have names. It doesn't make sense for a bug not to have a
++		 * name so don't handle bug flags here.
+ 		 */
+ 		if (!kstrtouint(opt, 10, &bit)) {
+ 			if (bit < NCAPINTS * 32) {
+@@ -1518,11 +1519,18 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
+ 			continue;
+ 		}
+ 
+-		for (bit = 0; bit < 32 * NCAPINTS; bit++) {
+-			if (!x86_cap_flag(bit))
++		for (bit = 0; bit < 32 * (NCAPINTS + NBUGINTS); bit++) {
++			const char *flag;
++
++			if (bit < 32 * NCAPINTS)
++				flag = x86_cap_flag(bit);
++			else
++				flag = x86_bug_flag(bit - (32 * NCAPINTS));
++
++			if (!flag)
+ 				continue;
+ 
+-			if (strcmp(x86_cap_flag(bit), opt))
++			if (strcmp(flag, opt))
+ 				continue;
+ 
+ 			pr_cont(" %s", opt);
 
