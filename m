@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-538878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FBFA49E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:00:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD8CA49E32
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6292F3A8564
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5EF1895656
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4F3191F89;
-	Fri, 28 Feb 2025 16:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FB918CBFE;
+	Fri, 28 Feb 2025 16:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iDXUUpNR"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtLnVY4+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77F31EF37E;
-	Fri, 28 Feb 2025 16:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B39B1EF37E;
+	Fri, 28 Feb 2025 16:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758439; cv=none; b=um3ICPOgJca3jP2d1lz8th7NhhsWGI3tPAi2Mklhux6FyMYZHREAyjmG/utr//OwI8zmI8d1hFqJVNRqB0yGv1W4A8uNTZsHLyoyt3zESb4O2hW7bNTulgc04nArQTPKVeic/bOTard2/k9Quues9p/B5T8KWKQ5zLqq+JarvTU=
+	t=1740758447; cv=none; b=Wg4iOzI9OXOKJrD32EVh099poTDgZHXh39pJk+jQa0nh+bQDrL75yNk6+k/+JctZH456Sron5IDIUmsUML3eCThNfoR14YSAOY122S+T8ZSEVuFBtJ5Re56++TRuJX13NAlAA9zwGgdKCrwD40ujgVMQ3O1IDQc2XyO7YM9Cb9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758439; c=relaxed/simple;
-	bh=cgP2s/EHQk8RYIE8hxTnpji7BZLYjtN6szVkZy3cQvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AKddnh3xEV+erjHZrmvgaj0J3jVkt2bZow6AvhUzXoo0FLEG4+riSk9kMRB0w9iVhClrajqZ7dPTlBNmhF0KEcmT3t+qySBw5VEk3iH/ky1nFiRrBpNft6fVn1ej8Ski8LwyMhPVbuFwJ97fZmVUaJgRNojle+kjeWeek7lUcKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iDXUUpNR; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740758413; x=1741363213; i=markus.elfring@web.de;
-	bh=cgP2s/EHQk8RYIE8hxTnpji7BZLYjtN6szVkZy3cQvA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=iDXUUpNRIpE92v0ffZo/ZYwLuFULwQZj8y9Iu9JALbogwuFALqm2c3hrENa/L0SB
-	 X8Yq3B8cJa7K8USvCzY9W5ZpsZblXddTcY8qRih1I7+VX7W1zcptMjRL5vHii0tJN
-	 EcbWHJnmHla88uOAY/7nYJrRqmmle2w0veGn4Te4P3kD5lizM9BCmXeRVpEc+wsiq
-	 I2mpyNns+lOwtwlFXHMs0u9ZX6QMQ7jJOmn4sDxraPIi2KfPiIf/vko5OvMGpxRXk
-	 JDebBBIUqgxlg8DENCgbHFwEAw9eVVZP293aALPVl8h5FsYSqFfM6oMcq/IEt1lHI
-	 9W0VGWYGtViQ40/+EQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MN6Bb-1tXCDg30I1-00U5Ft; Fri, 28
- Feb 2025 17:00:13 +0100
-Message-ID: <18be1b16-fd2f-4b24-a821-c91c3b559ff0@web.de>
-Date: Fri, 28 Feb 2025 17:00:12 +0100
+	s=arc-20240116; t=1740758447; c=relaxed/simple;
+	bh=s8EVLeL9JkpXmrQAJgfJcM2yO6cO/2irxrxpAKm2B8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pexp2OL/e7bQEuFGWa9UqdQywkhevxGPQKti9YWLq7KPEoFAo1AfBh7kYlOtkx7B8/Orl+pP/2R1m6wLsCFJp2Nbzm1gWXQrPy9dP+nr5QWdCSrwYB7wPP+axz3XOaALAv5PI5Bt8BlSZDfdEypVHo9JBJp3iS1xm2BGSGnx2x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtLnVY4+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CBCC4CED6;
+	Fri, 28 Feb 2025 16:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740758446;
+	bh=s8EVLeL9JkpXmrQAJgfJcM2yO6cO/2irxrxpAKm2B8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DtLnVY4+AFU9mbqdGDbYmSD81Nn9n6Y0WZWO4H3BP5UqoUDTed3cCG3z3fAw0G0GQ
+	 KtCwUXaspFtL7w3cWTtVGvlfxODOvzCNfK3Lehuzy845TyJ8/2AEqCpGPJAjNXgxuJ
+	 6B/NnLYFZ4tk50WBe3zEjwYcA2NRcrk/FpqcwIsgG6b+jhVTVBsZMSNcD37YqBsksx
+	 7qU+gkSfrit1iagBMUMPAECewN9p/KRvA7yvX9Mrem1eeqkv1X0sGZnH7dGNiX7LxX
+	 84OzimCOnXDOc4j53No9Nn1WzK8tSkjZ3qEkWodBEHc6mL6hAY+kaed6ecp3FHDKNE
+	 UXOqwurON6AcA==
+Date: Fri, 28 Feb 2025 10:00:43 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Anjelique Melendez <quic_amelende@quicinc.com>, Kamal Wadhwa <quic_kamalw@quicinc.com>, 
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] leds: rgb: leds-qcom-lpg: Fix pwm resolution for Hi-Res
+ PWMs
+Message-ID: <gkqghs2xmmepk67oeey2zmgxmqbq7n5xn5577ai6n3kke6y7bv@sxshxrj42ny2>
+References: <20250220-leds-qcom-lpg-fix-max-pwm-on-hi-res-v1-1-a161ec670ea5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: nvme-fc: Simplify minimum determination in two functions
-To: Qasim Ijaz <qasdev00@gmail.com>, linux-nvme@lists.infradead.org
-Cc: Christoph Hellwig <hch@lst.de>, James Smart <james.smart@broadcom.com>,
- Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <Z8HY1RX5-SOjYOdx@qasdev.system>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Z8HY1RX5-SOjYOdx@qasdev.system>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:33vHCRLZ2Nx6E8dU3GxJqWNO1JvkefG+apIROXoRTerGO+K2DwQ
- bhqf+X1k+jqCzj9D0aNQ/R+YCvIuXyQSMu04mdYINCAw7rncgR2bYow8YvYvEbZ1Mr24iv8
- iy91Q4MKXJ4Bw4h+aZwn6NrJsrbaTIRW+ZmQ6wPB6CQGMxVG76ZuydMpa8HUhN+p5OJOx8V
- GFQGwe8ck4vszgQeSTCvA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+4yAa5LsNfY=;8lEVGwcl4u+NYv57TGg5LeppPu3
- 3/j8sKTU0JL3zu6QwdjvR3llHlqqxdXTUo8w+hbEyYDl0opJgfEEB7N3RuqTTN3a/JIZTbYO4
- N4VWSyzHOqUSf4oD8nkDDYnry/y76ynkQ8VcSDhjDeGRBsxDaIWkpZguMlGeogwn/LpH8zPOU
- Gx0mS4fT3mc7Ab2KGS3jEsRRJZrsbYfqk+pqIw3oCoAM+TV2Kb+MVk0S7NO7NRWDIDOHnSo1A
- xRYy9eMHct6MGAsmjZspqN9iKC3OawbGmKndDss4FBQ9V5oU26PzZD9OAUEmqQ6gtTLCJakNp
- Ezu0cRIwqHKzLDafRxBZBbLsHEwpexUt6a5Sca3h3WFH1aW2XrE1Mpo12Ri3OiZqP6SkFCb87
- Vn8UWg/wJdG0Uqjjx1LiZnlRd7nIvPVXxDHtL8dDgKFohlBiOfTwViaN3US1kEl1U0pvftEnj
- DG4WCA7Gti6Gk61uWVMoh3+2kY/NAImWM+QrHhQGMQcIMnETcVSRX0l6lhAl1sz9mjuH9Vkpo
- Nm7DrbJvBZvGbpTUB5xnqsYn39PlyXaarEdtgF0XPsXDB2nQ20l3hhbXOvqaAf1EaVsVN/V8a
- s603WK1a5LvNDB80QuhCwk3rb3ylNdVNp1blzOZRPAEXRxgMKpUAA0gTQU6z341fivDebc1WF
- z/6u0ezQ3kG2khLo5zpoGZHrd09Y94EYSJGYprKmEzKFeSLFF0ZxDkCZ9gouUX2o2BKwsZTgK
- weAGzM6qyjhiR7RaM2a/ZQbRHuBZxsQlt9yUvWTr0IfQ21n/8fzm1xO7q6QtEjKD1vILqfqAy
- zlQ6GZwxFv5R0pSAO8xEVakUr9d5Yu1RXRC+VOjuIW4xQGQbAPVucjSe/aArAjMbZynxr6Qcq
- tN39b89iU13NoFLNhjDMtVfTDlwovonzNzxn9G+/uNUay08sAhZm3sxAShaAMJ+D/XyEjiNps
- L0UhiEU2ae/kufI2Mmef4rZw7GNbX3sxDEoNVTMQqgcXDzCNZVYzotEpc4IcwncBx/+unEKvQ
- MzODpDmhokrSUfumobqT1JRM15afIVHrzJDWg1x1AUIX183Z/XWyrSKmET5kOwhz5z/y/T/Xx
- cC7JpuPGnxRRB3LZy5bhgZXaKLZm/MdsOmhNF572O9CPwI5jUa661zyUR9ufDoCaQgkS1E888
- d+o2iF4fkwengXJQqjGhQRlqy7jxm9kilDECvwFNwN+qVolK52Oz9lRmM+u6DSHpgf+ul/I4f
- hDuVpsjYCCzr4+ZM4KgzkhmVy49Hh2Ujg6716go0o36TeG+P6o+VXmyCZqaEh6qc5W5wpkz5g
- ZHcHhkjs6c98XMigLDwX/Ot1hSmf6WgVcEr/u53Wi+POqfoDN1qoL2cVMtC0HtOezBaxhOqos
- 4xZdn106AYkR6U8cMpaMMSTPLc09fpaVbETq0jHsRkeR3IaNIbXOOmGSj6Oip1/Ofca+DkqbD
- JDhTlCJSWuVYTD7+cf+gjHYU5ZyM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-leds-qcom-lpg-fix-max-pwm-on-hi-res-v1-1-a161ec670ea5@linaro.org>
 
-> I have already submitted a patch for this twice in the past:
+On Thu, Feb 20, 2025 at 12:31:00PM +0200, Abel Vesa wrote:
+> Currently, for the high resolution PWMs, the resolution, clock,
+> pre-divider and exponent are being selected based on period. Basically,
 
-Thanks for the reminder.
+Is this problem really limited to the high resolution channels?
 
-I am curious then which change variant will be integrated finally.
+> the implementation loops over each one of these and tries to find the
+> closest (higher) period based on the following formula:
+> 
+>                           period * refclk
+> prediv_exp = log2 -------------------------------------
+>                     NSEC_PER_SEC * pre_div * resolution
+> 
+> Since the resolution is power of 2, the actual period resulting is
+> usually higher than what the resolution allows. That's why the duty
+> cycle requested needs to be capped to the maximum value allowed by the
+> resolution (known as PWM size).
+> 
+> Here is an example of how this can happen:
+> 
+> For a requested period of 5000000, the best clock is 19.2MHz, the best
+> prediv is 5, the best exponent is 6 and the best resolution is 256.
+> 
+> Then, the pwm value is determined based on requested period and duty
+> cycle, best prediv, best exponent and best clock, using the following
+> formula:
+> 
+>                             duty * refclk
+> pwm_value = ----------------------------------------------
+>                 NSEC_PER_SEC * prediv * (1 << prediv_exp)
+> 
+> So in this specific scenario:
+> 
+> (5000000 * 19200000) / (1000000000 * 5 * (1 << 64)) = 300
+> 
+> With a resolution of 8 bits, this pwm value obviously goes over.
+> 
+> Therefore, the max pwm value allowed needs to be 255.
+> 
+> If not, the PMIC internal logic will only value that is under the set PWM
+> size, resulting in a wrapped around PWM value.
+> 
+> This has been observed on Lenovo Thinkpad T14s Gen6 (LCD panel version)
+> which uses one of the PMK8550 to control the LCD backlight.
+> 
+> Fix the value of the PWM by capping to a max based on the chosen
+> resolution (PWM size).
+> 
+
+I think you should be able to write this more succinct.
+
+The important part of the problem description is that the requested
+period will be rounded down to a possible hardware configuration, while
+the duty cycle isn't. The calculated PWM_VALUE might therefor exceed the
+calculated resolution, but the value is only capped to 15 bits for high
+resolution channels.
+
+
+Unless I'm misunderstanding Uwe's comment, this is how the API is
+expected to work (although I was under the impression that we rounded
+the period up, rather than down...)
+
+
+Worth pointing out then is that, as there's a finite number of possible
+periods that the hardware can operate at, you might want to tweak the
+period given in the Devicetree to best facilitate the expected
+brightness range.
+
+And the same would go for my choice of NSEC_PER_MSEC for the non-PWM
+code paths... I can't explain that choice...
+
+> Cc: stable@vger.kernel.org    # 6.4
+
+v6.4 is when b00d2ed37617 was introduced, so that's a given...
+
+> Fixes: b00d2ed37617 ("leds: rgb: leds-qcom-lpg: Add support for high resolution PWM")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Note: This fix is blocking backlight support on Lenovo Thinkpad T14s
+> Gen6 (LCD version), for which I have patches ready to send once this
+> patch is agreed on (review) and merged.
+> ---
+>  drivers/leds/rgb/leds-qcom-lpg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+> index f3c9ef2bfa572f9ee86c8b8aa37deb8231965490..146cd9b447787bf170310321e939022dfb176e9f 100644
+> --- a/drivers/leds/rgb/leds-qcom-lpg.c
+> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+> @@ -529,7 +529,7 @@ static void lpg_calc_duty(struct lpg_channel *chan, uint64_t duty)
+>  	unsigned int clk_rate;
+>  
+>  	if (chan->subtype == LPG_SUBTYPE_HI_RES_PWM) {
+> -		max = LPG_RESOLUTION_15BIT - 1;
+> +		max = BIT(lpg_pwm_resolution_hi_res[chan->pwm_resolution_sel]) - 1;
+
+This looks correct!
 
 Regards,
-Markus
+Bjorn
+
+>  		clk_rate = lpg_clk_rates_hi_res[chan->clk_sel];
+>  	} else {
+>  		max = LPG_RESOLUTION_9BIT - 1;
+> 
+> ---
+> base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+> change-id: 20250220-leds-qcom-lpg-fix-max-pwm-on-hi-res-067e8782a79b
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
 
