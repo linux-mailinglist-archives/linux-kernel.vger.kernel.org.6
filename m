@@ -1,295 +1,243 @@
-Return-Path: <linux-kernel+bounces-539447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF1CA4A45D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:41:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39BCA4A45F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EFE3B42F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50D88161B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE1B23F36A;
-	Fri, 28 Feb 2025 20:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED7F1A5B80;
+	Fri, 28 Feb 2025 20:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vnu8sf4z"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fbX7dEtD"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2079.outbound.protection.outlook.com [40.107.100.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC1623F396;
-	Fri, 28 Feb 2025 20:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740775283; cv=none; b=sPqHsgRsYAArNW9u8aYznI8i9SFz58JQDZB+KFcGwxKSTCyhExvzTxNEUXemauxtrc7uoBpcR8IKfJCJOZxdsgZoy6SQNlEgqdFL3MHvUhyjlFK3H9GH8FXD//prTaRNgMXgl+r9NkzedJ7MJD0Bzew0vFOrf8H3qhDgZpqlyE0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740775283; c=relaxed/simple;
-	bh=NyoxD5FM4MyfifUH/TlyijlcyvzAGaA7dBWQ5fmKH/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tv/5t0BwP1InKgy6SOfl1R06RBsXOJW2ipqQwuu8az5T1PHTJWKlPK+0A3+pRN6QB+jGm7kvJ7o6VvaptDBQ5+RXAa2nMmlc19zm3AxyF8HwwXCixizeJvtz9a1y/7CS6rzLFWP150+Sz7OoozbKF/RpnaTvb8l08dQu6WO+RjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vnu8sf4z; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54605bfcc72so4120816e87.0;
-        Fri, 28 Feb 2025 12:41:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740775279; x=1741380079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Ka+qpefvaYCndZeG6fscUB20UShtau6GzZnUcPiIdQ=;
-        b=Vnu8sf4z+qTd6fV4IVWNHAfWhcMLSglUsCPFIu7aL4Zb5URpLRjbUA6IVrQyj9l1XW
-         glwNbqhFm6R97pxf2INlDxcZCDDslrl5TtushNzMYQGqnf2qhqsHU3CMsLS76/SgjSOX
-         fRxyMtGKIb6txVNyRt903a/2pOkdqwrfw0RmePNWAWKoIGsvLExNzuRH8IEwuctQJ+zb
-         GdOywqBzGgnvD2N7Ni9tFlGbb511gAJ2uxhoQrbPJmpUAy0IQMGQHQybqjtUaNtcnp3t
-         zIY3QPj7FEm/8c3L85tE42NaO/v//hz9MoomT6/oKkaTEoLJr66APSi1ZufXocioc9Lm
-         mduA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740775279; x=1741380079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Ka+qpefvaYCndZeG6fscUB20UShtau6GzZnUcPiIdQ=;
-        b=IRaJOpYXPKCxh5vLBYuL6nei09yVMrPYGdYkn0dRmbz0gAKNYIu+6p7G1MxD6PyvO+
-         X6ADUhNWWKqYDM40akITHd/+N878Vz2Ztjf8VvHaWOd5w5uhavlxNmeGRQdsc6k2OyYn
-         k/mFH/X3teHL/DDf2/h5Zyv+K+Nvyoh/Z4zP8RNQ5KkkY5ANn/y3U1jUdiaP6qr/Y5wB
-         J/5Nuf1AK+wDq3vq2kNMeWj74RAtRqDRPHKvJjgDjBjNCMPGyILDrlJVqRe+F3nOMpJq
-         E3j9Ku7N0l/Ub2mVkEdN+s1Wt8oWQnL6t+e3gjJ02R4ZqqkcpLkIxF/wBiZeZ6uWiHo4
-         R+Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7vWt7svbjPqTM7EB8QLxd2/hF3CvZFE2l/GXh0Mz7cmjJbdrYNG/6G6KBIY2LGaWCKJb0doIMdWCFM5D2YB8=@vger.kernel.org, AJvYcCW7XOqubNrDQufDAHlf+GCEIlgRvOQWLvH+jqALTvPVxiR0Bn8bSKD7cOoc2HfROsN2stmIZ2RXpYSgR3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYuxz8VTlw3RAbHf5//KnFIdkRfhMLCl/P7TwmijctLi2b8FcA
-	N23t4fBdeD42tgu09jgrgMuqIqJACI0T70In7r7WtH3DtSIvY/ObsQvYQTCd+fJGfZXrBdoFs4c
-	ceX8h24M0YBceHeJxKq18Gvmditk=
-X-Gm-Gg: ASbGnctPPbh4nWcQgyaA0lNFqXRSj9gHsgxe0m92BEgx0o1Qiiev0qSH1PEGMnBAi9w
-	/WtHB4/e7OPhYOBn1AVqVzaAeALYoqtGOgxfTjktPOdmDCsdL1kHx56KYBe/IcyRQIzgKs2g6oM
-	x68cee4pdg
-X-Google-Smtp-Source: AGHT+IE343ZsG6URo4IRhQD7BvVekBbL2Qb93StuNoTGwfkNAY5UKRBk3qRaIi8+OpCzNNF3e3OlpsyKsnqhKH8UQRI=
-X-Received: by 2002:a05:6512:158f:b0:545:550:83e6 with SMTP id
- 2adb3069b0e04-5494c107f7cmr1522453e87.5.1740775278882; Fri, 28 Feb 2025
- 12:41:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE1F23F36A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740775385; cv=fail; b=keS/Qn5ERGPcDV/hG7BViL4tjdVGH1ugBgrXPkp4u0HT0CUeqHxS2NysVP1ooEOnZHu0apr/0Qz1p5F5O19OCOcqcip+jBURweGIFQ629jA5ba1/fSOIvuaz14t/V9aUUb2hh34Q8SxjVhu+A4ZnFb/4/MiqiFQ9XzN9b0rtpMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740775385; c=relaxed/simple;
+	bh=WrRQSfeKXQfMvyk4lcvA9cw1vRqvZvBzEsOY1v0j78c=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZwLKlBripndq7nRSUJfC+NQh29rcAjq7dHSEHtpiLLIbQirNQdkvRdvKPge011NObMKg6DeEKv2GP9pRfHzT4C92dNgkjAVOzlyJlQ3VryIRlbgGA3WDX+L8xRS7iHo8Ga3VbLgrmBte8xufQJEQI94GQMFMx1uztv5iblm2F2c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fbX7dEtD; arc=fail smtp.client-ip=40.107.100.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FYAAJS55CwOzHK3ytykP4bqlYuxspCr8xGCm+550JjnMaMyyVbuvCGE7B66+j+VhySxXyYAj/5gwEMVwNG4qIRxBVXf6hhch3MgjqlATY/5pk0pprEPV3ASiWba6/xipGnj+be3S2RyrA7NOJ7NtEiewDqqpRhXqqm2uyZ2szrA+8hjVlSym/PrhFaRc0TsS50+WI2MC5nnsdSJYLCTY1UquuOnHXIJ2QKcgblc/BSrgRQSZra+AYW9qPqPgPewDN+wxnVYtz0Y5qp2WuOBR24cGerb/GP4Qvg9bcqcqA6To1ta13SPWa5t4fI8psrCakOwC8zs/OjH2Pt2wsAqjhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fKMwseS52GboXNIU0MKhh9Gi6JLsSWnGvqdNx+k5DSo=;
+ b=AOR812TbVpI6T6O3nvq1H5pOscC/2qRuC0qRy1dInI7aA1vvUqo0BC8UzB/CPyJPOODu90EG3gXFXFngUU5ZSLN0+b/uE9bhisDoQzqvc7BXU8NBz1L+VcXonI2dymtLYfR5lKJOeLqpk5gIN8yiw7SQcgkPmm+5hJVve/bnpFQGEadZ1Xha/BDF53+0qHVCWKg6XkGOX9MkOqXlDk7oHIQDRi9f+zsSNutB4oYPDssyOA3pz7WtHuB5UrDoNtarqxLXLbJdCPf3r/UPxlWXKCHt6dnatwIQ8Xg5lsGZdyxFA/L4z5c6qf5RQ2wxV92OXflY4YraTPx6lZSNJahw8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fKMwseS52GboXNIU0MKhh9Gi6JLsSWnGvqdNx+k5DSo=;
+ b=fbX7dEtDWu+qn0LzWfc4yXXUZrinDk/yfb9NR94z8PiJurexf8j/qM6huImD8499K9U5byukBPxmsT6apncgvUtr8HDH7hc5orZ1qscy+m1Yhncc1DVJWQVvXL3DfE2CtX7WA19eoe9IQPB4qjL7B5k9sosoMPNKaTinjkjl8nk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by IA1PR12MB9467.namprd12.prod.outlook.com (2603:10b6:208:594::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Fri, 28 Feb
+ 2025 20:43:01 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 20:43:00 +0000
+Message-ID: <ab0516f6-0fda-b03f-01c5-a64b9b5f04f5@amd.com>
+Date: Fri, 28 Feb 2025 14:42:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v13 06/14] x86/mm: use broadcast TLB flushing for page
+ reclaim TLB flushing
+Content-Language: en-US
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: Rik van Riel <riel@surriel.com>, Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+ dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, kernel-team@meta.com, linux-mm@kvack.org,
+ akpm@linux-foundation.org, jackmanb@google.com, jannh@google.com,
+ mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali.Shukla@amd.com,
+ mingo@kernel.org
+References: <20250223194943.3518952-1-riel@surriel.com>
+ <20250223194943.3518952-7-riel@surriel.com>
+ <20250224132711.GHZ7xzr0vdhva3-TvK@fat_crate.local>
+ <7c2baf33265444089ab780848de29a1336a9a4cc.camel@surriel.com>
+ <20250225203803.GGZ74qK1oZWk8u69O4@fat_crate.local>
+ <20250225210300.GHZ74wBP2ogmM5P5lP@fat_crate.local>
+ <680053d3-4cf9-534a-1c52-c6e259b85452@amd.com>
+ <297b28e9ef9f4cd983ae2e3dd4cf1fce8b74d0f1.camel@surriel.com>
+ <059ba03a-a892-6a68-6000-c7db3dd6cf9c@amd.com>
+ <9086371cfe69760780d67ec279f69e91f65086a7.camel@surriel.com>
+ <2731f073-d529-7870-6d25-ebd2e44cd10c@amd.com>
+ <c6a38a1b6f27ae787dbfd99df225f464c274590e.camel@surriel.com>
+ <75e45ec0-25da-45c5-827c-ee048c0ebd86@amd.com>
+In-Reply-To: <75e45ec0-25da-45c5-827c-ee048c0ebd86@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P222CA0008.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:124::12) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
- <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
- <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de> <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
- <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de> <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
- <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de> <CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
- <d29ebda1-e6ca-455d-af07-ac1daf84a3d2@ralfj.de> <CAFJgqgQ=dJk7Jte-aaB55_CznDEnSVcy+tEh83BwmrMVvOpUgQ@mail.gmail.com>
- <651a087b-2311-4f70-a2d3-6d2136d0e849@ralfj.de>
-In-Reply-To: <651a087b-2311-4f70-a2d3-6d2136d0e849@ralfj.de>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Fri, 28 Feb 2025 13:41:05 -0700
-X-Gm-Features: AQ5f1JrAbA6K6JebhOeWZy3fiMcSsvoqLjzuz3CjRiPPweW9ZITnovK2-gGD5SU
-Message-ID: <CAFJgqgRFEvsyf9Hej-gccSdC-Ce8DbO5DgHatLoJ-aYi1_ZcyA@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Ralf Jung <post@ralfj.de>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|IA1PR12MB9467:EE_
+X-MS-Office365-Filtering-Correlation-Id: d307d779-268b-4250-1b87-08dd58387da8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a2NlQjBEOEpRVVYxZ2xaSGVWK0RZby9zNldVMm5OaU11ekxMSW01YkpiSGla?=
+ =?utf-8?B?OUxyYTVaT1Z3M3VUSVlMTWNGN09QbE5YWDk0STFpR211WjJ2UThEZzFJM3hN?=
+ =?utf-8?B?azJ6dm11UHFPUGkvSS9JZ085aGhDbUFjdWYxQnhYU3FQRE9CRWl4T0NwQkQ1?=
+ =?utf-8?B?cFdWOTNrNVdRazNPcFNJa3V3MVY3a05IOUplaUV0OEFLR2hKRExWcHdjbkJo?=
+ =?utf-8?B?WGo5MTdqUlQrL0RGdFhxWGIwY0xNWmVob05OS3d1NUYwbVl2VmVKVjE4MVpM?=
+ =?utf-8?B?ZnNTWTZUM3plek1Rd0xkUDF2UEtqQUwwdDhYMFp2bDhQekpOTzBrU1ZqVTdP?=
+ =?utf-8?B?c0VneFdpaFBRUEJ0MGw4cmJiM1k3MzllNS9YcWVtVlR6bzM1VWVSc3M0WC9F?=
+ =?utf-8?B?VmNmMUx0Q0V4ZGFwQVR4QWZvZjU2Y0VmL0ZRRzlhdmd5V1B5SDEvL1FsdVpi?=
+ =?utf-8?B?UldGMGYzbjgxVWcxUW9QME9GUEEvN3RUcFJhT1VaUGNmc0xTRll3aW80Q3Yz?=
+ =?utf-8?B?amJQUVAzTFlENGVBaktzb2tZUnY0VGhJbk5YcTFqc3kxQjR5cm45TDM5WElI?=
+ =?utf-8?B?bllKWGE5RUJ5b1lWdEFCVFJreUtjL0xneVN5YVROL0ZZbnlEN3NHN0gzVXpF?=
+ =?utf-8?B?YnhGeSs1NGhQSkV0YTlWeTRVL01YbE1pRFBvZC9XeUdYbURyVGc4bWtENTRa?=
+ =?utf-8?B?RUNPZzY3S0ZEMzZBeW9kTktyWVU4eXdRNVcreHA0aHVhRlFwVHNSVUNON3RB?=
+ =?utf-8?B?dHV0MDBzNE1Dek9PVHlHZlk2WE1ScGx2NzMvb29wZ0l3VE4wNGUweWRtR3JI?=
+ =?utf-8?B?U1orUjgyS1hMdHgvT1d6NitWbTlUOFpXZ29hR1lJT1VnK3BUM2o5YmYwbGRK?=
+ =?utf-8?B?V2hBMWpKOWFRN3F6VEtCNXZiRVVlcjArdlJoc2l5Y0Y5T0FYWURQbzhUdE5P?=
+ =?utf-8?B?MCtPOFN2ZmVaQjJhM01uVGwvSERlQ2NSTm5MZ2wrdnNFTWFGcEVDc0pDdzNX?=
+ =?utf-8?B?M2Q5VTFzVGV5ckFKTC9LemdhNnlFQ1g1MFl3M2VaM1pLYTIyTzBXRi9GNTY1?=
+ =?utf-8?B?SVJjZTN1UURycmJTbU9PazB0dDlQcTh0REl3RU9McWNmUWhtQTlkME03NVB4?=
+ =?utf-8?B?SzlxZzFSa1pESlROamxnZlNuWDM2STJJd05hVjYyNlRHdVNqUkgwQlpNUjhu?=
+ =?utf-8?B?ZXUwREN1RnI5VXdGSjhvMllBeGl2L0ZRYUJvaE9NVUNjT3ZFb3g1S0FqQjV6?=
+ =?utf-8?B?R1NMaUdnVDhxYStHNmJrcnhwZ05Wb1k0Z3dCQzRCNG0waytRZ093NTZjUnha?=
+ =?utf-8?B?UWIrSkc0UlV1YThTSXFzYUVXMUVYY3lRcy9kUmFCK1VQS3FjNmNNV1JKendj?=
+ =?utf-8?B?MEEra0QvWmZkNkt3ZEtSWTIrZDdxNWxoSGhvSTZrQ0tYWHA2ODRJMGZJVlVK?=
+ =?utf-8?B?dHV0YmJ3cXBJMW1wd1B4ay9EMFo2UzZXRGlkdzZOLzVqNUdVbkZzOEVFaTZj?=
+ =?utf-8?B?NTBVYzhOb3c3WUVDTTFpVy9zQktaTW84b1ZmaWlpYmV4bmxHNnhsNUNHaTVm?=
+ =?utf-8?B?blkwZzZlaWRxUDNrUll2WjU0VldWUWd1QWEveEdvSUFhanpEMlRWcFlyaHlK?=
+ =?utf-8?B?R1hPMFdRN1U5ZDNodGdWTDhac011ZTJVNjlJWGxuckJZamU4dk5ESFVmbjdS?=
+ =?utf-8?B?Tm9VQ2kvVUNRQ29wK21STGx3SWkrbXRjTmVoTXlWQThza2pCQVJ6RnFZU2hC?=
+ =?utf-8?B?YXlOVlBZMWRuTnlIVTYybUhHUk5rRGo2UE0ycm1HZXVEVFYvek5YUUlQbVNx?=
+ =?utf-8?B?eVdnVWxWZkI0NHI1ZkN5ZzZuUllyZmFmVzE0TTZBc0ZYK2ZxWnBYZDVOajdt?=
+ =?utf-8?Q?d/6XEZ5WLzL9U?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M1VpaEthemJmT0tGanRFTjhVYW51Tk14Uk5jdnpuR05Wam54N0wxSmZQeFVF?=
+ =?utf-8?B?dXFFZGFtaFQzanJtb2kxVkFndks5WU04V1RwMVZ6OWQ0ejFhV1JQNis1SDFW?=
+ =?utf-8?B?R1RxaWNONklwQjZGK0hqMzlUQUxKZ3pDazV3YzNFWDB4VHhpTWxucnFqY3VJ?=
+ =?utf-8?B?RmJqVk4xSlUra1ZmeURBWEJicEZYdGRuY2JEVE9sTG5JUG9KWUEvVzBNVG52?=
+ =?utf-8?B?S2VRREJTTEwxa1VJQWtFMEZjUVVBWTZrRjBlb1I2RG8yd2xlc2NWOUtocU9B?=
+ =?utf-8?B?V1hzVFRaZkhXeC9Kb3pkNThqR0pyNXppdVJmSS9QWVhTUWN1aDlPOHFUbEpT?=
+ =?utf-8?B?NCs5TVRhUDJWcDJDam1rd3hFb296anRtSy9iTWNZSVloWVhFNWhUSGs1Nm85?=
+ =?utf-8?B?VitYYmU4em5iNUd0cnhpcXd6MnRML2pFZThrY2dIZmxZczhoK0pyWXlCQzlS?=
+ =?utf-8?B?RElwNEZVdVBKdUU5Mm9wK3hyV1FqUWJjaUcvYkN5dDRvNDd6WVpSa3lTQTJl?=
+ =?utf-8?B?dURqS2RseHFCMTh2N1pLdURLazJydEdoMFNCdnJRM2krZlRadzgycDJKd1gz?=
+ =?utf-8?B?V1JNSGxDN2VteU0rcjgvTm5DT09qSW9DNVZyWUh5dzIrZVoybDBDU3BlNlVI?=
+ =?utf-8?B?YkJVU0hLWXh0dEZwYy9tTXRnSlZxOGRqUXF6cjd0Q3l5QkM5RkVUejJ3Lysz?=
+ =?utf-8?B?U0RZdjlvamtmM0hRSFA4M0VKb2tBa3NTbVJJM0RqdUNZL3U5RWw2QVo5VERU?=
+ =?utf-8?B?VnMwUTF4RVUrZUZhaEM1ZmNadVNhNFRQNmdES0c5eEEwbzVIcDdwVnEvVFZp?=
+ =?utf-8?B?a010SVhxMXMxSU4yTlZSTmY2clZiZDlCODNoUFlPUms4SVpuWU52RllLdDRy?=
+ =?utf-8?B?b3NkeFdVWXhwcjQrS2tZWkxkOXcvSUMrYnFsRFQ1ejdKdHhMSUEvVTY0aDVC?=
+ =?utf-8?B?NEFtNFB6YXpYeXhpRjVGRTYycmFibFhEUWNTamVKL1d1dTRHblVDVVpYL0RF?=
+ =?utf-8?B?dWhtRFBiLy9uS0hEK1ZHbzhWZ0RxOU1ITytIYVFsa3FwVnBUMmViaTF1dHJs?=
+ =?utf-8?B?SzFoaGhiYjNPRkNIZDF1K01LN3FDWVExYUx1bnA4Q296UVhoV2pMb2xtMkow?=
+ =?utf-8?B?NmdJM2ROQjFMNVFkMUdEdTJlOFdtR3NVNGdEOHUxczI1RGRWemEwNU16Zzhl?=
+ =?utf-8?B?T2p0Ujc1Z1QwSjJuSksxN3pLZmVMNjNuZDBuUU96WUNCV3F3aG41WmhCMHNt?=
+ =?utf-8?B?dFRCTGZnVkRLR0Zncm5tc0h6SEpYK2o5dG55a0x1WmxjZnExenBJS2w0SW9q?=
+ =?utf-8?B?d1hHR0d4b0lZRGkxTXoxS25oSEZYVnZIT0F4azIvdFJGeTlmY0pOSWZrREtu?=
+ =?utf-8?B?dW1CWUVMSzRGcnRHTXk1a21pSC9mdjNSa0xmZk9oVi9vaFh1R0ErNHZ2NGxX?=
+ =?utf-8?B?WnhIYzJkblVETTl0T2ZEei9YeTVqdmcvWVRtdTVRdHFudVRxQ0hIbE5mUC9z?=
+ =?utf-8?B?WUZpUklzVEdiL1l4NFNjeXVaTTJZNVdqaU56R25wRmg5NStNaWVYQUlsKzJ2?=
+ =?utf-8?B?bDI1YnVrTjNzSmdJNXI4ZnRieHpabG1HUzVlS2VFdGhaUFp2ZHBENlVPQ2Ey?=
+ =?utf-8?B?Ukptbk8xUkRiay9NLzcxV2tzVUhtWnplU0VOYjFTczVTM2F5TEJLalhvdFQz?=
+ =?utf-8?B?MFl3d2hrbHRsUTJDdzZieTUxWFRPWGh2WW4wbm9KQlo1b1N5OVVDai9XL0Ro?=
+ =?utf-8?B?UUlvRHFXLzIwTjc0T293azNKWnlwY05UWng3N2lrOTc3anNKb1h4Zmk2OXlT?=
+ =?utf-8?B?clh3VW9XTHErU3Jva2ZQSUFMa3FiV09YV28rQzBWWmVsSFJpenh6Rmx2UWdj?=
+ =?utf-8?B?K0xuNDFZSCtDZ2piTklFUDFkcWxHQnNXa2hycEdtTVJBV0dqYVhqNk5NSno0?=
+ =?utf-8?B?Q2x6dzBEWDVFcEtSMVNqQlIzSlhvdXBDRUcrZ3YwemM4KzFuWVlDK0ZYMDZq?=
+ =?utf-8?B?eDRYZkozc0ZHWjAxMmpLNy9PMzRvQklPRWJZWVUwZFRLNHJxN2dVZUt0ZVpl?=
+ =?utf-8?B?UHFkeVdGZlNoR3o3OFNpY1RKTHo3dU5SU3lLMmZDTlJlQ01yTklGSmRoVHdh?=
+ =?utf-8?Q?YnMqg5f6mn0QQ0xzBy3VbK3xl?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d307d779-268b-4250-1b87-08dd58387da8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 20:43:00.7632
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A/8LFx3MkjLCLK9C//ySh2gWm803JJdh2tpkSYxtuGHe5YAkTIBzNJiAvXdLT5rgp/DJmGghQoe7sObxm8Suig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9467
 
-On Thu, Feb 27, 2025 at 12:45=E2=80=AFPM Ralf Jung <post@ralfj.de> wrote:
->
-> Hi,
->
-> >>> If C was willing to break code as much as Rust, it would be easier to
-> >>> clean up C.
-> >>
-> >> Is that true? Gcc updates do break code.
-> >
-> > Surely not as much as Rust, right? From what I hear from users
-> > of Rust and of C, some Rust developers complain about
-> > Rust breaking a lot and being unstable, while I instead
-> > hear complaints about C and C++ being unwilling to break
-> > compatibility.
->
-> Stable Rust code hardly ever breaks on a compiler update. I don't know wh=
-ich
-> users you are talking about here, and it's hard to reply anything concret=
-e to
-> such a vague claim that you are making here. I also "hear" lots of things=
-, but
-> we shouldn't treat hear-say as facts.
-> *Nightly* Rust features do break regularly, but nobody has any right to c=
-omplain
-> about that -- nightly Rust is the playground for experimenting with featu=
-res
-> that we know are no ready yet.
+On 2/28/25 09:02, Tom Lendacky wrote:
+> On 2/27/25 19:13, Rik van Riel wrote:
+>> On Wed, 2025-02-26 at 12:12 -0600, Tom Lendacky wrote:
+>>>
+>>> As long as you keep the ASID value in EDX[15:0] as 0, then you won't
+>>> #GP. ASID 0 is the host/hypervisor. An ASID > 0 belongs to a guest.
+>>>
+>> I've been spending some time reading the KVM code,
+>> and I don't think invlpgb would be currently useful
+>> with KVM.
+>>
+>> From reading pre_svm_run(), new_asid(), and svm_vcpu_run(),
+>> it looks like the ASID number used might be different for
+>> each VCPU, assigned on a per (physical host) CPU basis.
+>>
+>> It would take some surgery to change that around.
+>>
+>> Some googling around also suggests that the ASID address
+>> space is even more limited than the PCID address space :(
+> 
+> Right, to support using INVLPGB in guests you need a global ASID, which is
+> an ASID that doesn't change over the VMs lifetime and is used on all
+> vCPUs. Global ASIDs are only available and used today with SEV guests. At
+> that point you would not intercept the instruction and, based on APM vol
+> 3, the ASID value is replaced with the guest ASID value.
+> 
+> "A guest that executes a legal INVLPGB that is not intercepted will have
+> the requested ASID field replaced by the current ASID and the valid ASID
+> bit set before doing the broadcast invalidation."
+> 
+> So I'm in the process of verifying that issuing INVLPLG in a guest with
+> the ASID valid bit set and an ASID value of 0 (EDX[15:0]) won't #GP, but
+> will just replace the specified ASID value with the guest ASID value in
+> hardware.
 
-I did give the example of the time crate. Do you not consider
-that a very significant example of breakage? Surely, with
-as public and large an example of breakage as the time crate,
-there clearly is something.
+I verified that when (a non-intercepted) INVLPGB is issued in a guest,
+hardware will set the ASID valid bit and use the guest ASID value
+(regardless of the value specified in EDX[15:0]) before doing the
+broadcast invalidation.
 
-I will acknowledge that Rust editions specifically do not
-count as breaking code, though the editions feature,
-while interesting, does have some drawbacks.
+So the implementation of setting the ASID-valid bit and specifying ASID 0
+is not incompatible in the guest.
 
-The time crate breakage is large from what I can tell. When I
-skim through GitHub issues in different projects,
-it apparently cost some people significant time and pain.
+Thanks,
+Tom
 
-    https://github.com/NixOS/nixpkgs/issues/332957#issue-2453023525
-        "Sorry for the inconvenience. I've lost a lot of the last
-        week to coordinating the update, collecting broken
-        packages, etc., but hopefully by spreading out the
-        work from here it won't take too much of anybody
-        else's time."
-
-    https://github.com/NixOS/nixpkgs/issues/332957#issuecomment-2274824965
-        "On principle, rust 1.80 is a new language due
-        to the incompatible change (however inadvertent),
-        and should be treated as such. So I think we need
-        to leave 1.79 in nixpkgs, a little while longer. We can,
-        however, disable its hydra builds, such that
-        downstream will learn about the issue through
-        increased build times and have a chance to step up,
-        before their toys break."
-
-Maybe NixOS was hit harder than others.
-
-If you look at.
-
-    https://github.com/rust-lang/rust/issues/127343#issuecomment-2218261296
-
-It has 56 thumbs down.
-
-Some Reddit threads about the time crate breakage.
-
-    https://www.reddit.com/r/programming/comments/1ets4n2/type_inference_br=
-eakage_in_rust_180_has_not_been/
-
-        "That response reeks of "rules for thee, but
-        not for me" ... a bad look for project that wants
-        to be taken seriously."
-    https://www.reddit.com/r/rust/comments/1f88s0h/has_rust_180_broken_anyo=
-ne_elses_builds/
-
-        "I'm fine with the Rust project making the call that
-        breakage is fine in this case, but I wish they would
-        then stop using guaranteed backwards compatibility
-        as such a prominent selling point. One of the most
-        advertised features of Rust is that code that builds
-        on any version will build on any future version
-        (modulo bugfixes). Which is simply not true (and
-        this is not the only case of things being deemed
-        acceptable breakage)."
-
-Some of the users there do complain about Rust breaking.
-Though others claim that since Rust 1.0, Rust breaks very
-rarely. One comment points out that Rust is allowed to
-break backwards compatibility in a few cases,
-according to its pledge, such as type inference changes.
-This does not refer to Rust editions, since those are
-clearly defined to have language changes, and have automated
-tools for conversion, and Rust projects compile against
-the Rust edition specified by the project independent
-of compiler version.
-
-rustc/Rust does have change logs.
-
-    https://releases.rs/
-
-and each of the releases have a "Compatibility Notes"
-section, and in many of the GitHub issues, crater is
-run on a lot of projects to see how many Rust libraries,
-if any, are broken by the changes. Though, for bug fixes
-and fixing holes in the type system, such breakage
-I agree with is necessary even if unfortunate.
-
-> > Rust does admittedly a lot of the time have tools to
-> > mitigate it, but Rust sometimes go beyond that.
-> > C code from 20 years ago can often be compiled
-> > without modification on a new compiler, that is a common
-> > experience I hear about. While I do not know if that
-> > would hold true for Rust code. Though Rust has editions.
->
-> Well, it is true that Rust code from 20 years ago cannot be compiled on t=
-oday's
-> compiler any more. ;)  But please do not spread FUD, and instead stick to
-> verifiable claims or cite some reasonable sources.
-
-Sorry, but I did not spread FUD, please do not accuse
-me of doing so when I did not do that. I did give an
-example with the time crate, and I did give a source
-regarding the time crate. And you yourself acknowledge
-my example with the time crate as being a very significant
-one.
-
-> > The time crate breaking example above does not
-> > seem nice.
->
-> The time issue is like the biggest such issue we had ever, and indeed tha=
-t did
-> not go well. We should have given the ecosystem more time to update to ne=
-wer
-> versions of the time crate, which would have largely mitigated the impact=
- of
-> this. A mistake was made, and a *lot* of internal discussion followed to
-> minimize the chance of this happening again. I hope you don't take that a=
-ccident
-> as being representative of regular Rust development.
-
-Was it an accident? I thought the breakage was intentional,
-and in line with Rust's guarantees on backwards
-compatibility, since it was related to type inference,
-and Rust is allowed to do breaking changes for that
-according to its guarantees as I understand it.
-Or do you mean that it was an accident that better
-mitigation was not done in advance, like you describe
-with giving the ecosystem more time to update?
-
->
-
-Another concern I have is with Rust editions. It is
-a well defined way of having language "versions",
-and it does have automated conversion tools,
-and Rust libraries choose themselves which
-edition of Rust that they are using, independent
-of the version of the compiler.
-
-However, there are still some significant changes
-to the language between editions, and that means
-that to determine the correctness of Rust code, you
-must know which edition it is written for.
-
-For instance, does this code have a deadlock?
-
-    fn f(value: &RwLock<Option<bool>>) {
-        if let Some(x) =3D *value.read().unwrap() {
-            println!("value is {x}");
-        } else {
-            let mut v =3D value.write().unwrap();
-            if v.is_none() {
-                *v =3D Some(true);
-            }
-        }
-    }
-
-The answer is that it depends on whether it is
-interpreted as being in Rust edition 2021 or
-Rust edition 2024. This is not as such an
-issue for upgrading, since there are automated
-conversion tools. But having semantic
-changes like this means that programmers must
-be aware of the edition that code is written in, and
-when applicable, know the different semantics of
-multiple editions. Rust editions are published every 3
-years, containing new semantic changes typically.
-
-There are editions Rust 2015, Rust 2018, Rust 2021,
-Rust 2024.
-
-Best, VJ.
+> 
+> For non-SEV guests, INVLPGB would need to be intercepted and somehow
+> emulated or just not advertised to the guest so that the IPI path is used.
+> 
+> Thanks,
+> Tom
+> 
+>>
 
