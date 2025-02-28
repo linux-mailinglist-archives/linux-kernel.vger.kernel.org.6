@@ -1,297 +1,266 @@
-Return-Path: <linux-kernel+bounces-538680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA897A49BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:23:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBC5A49BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F734189971E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539A418946B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909FA26E16B;
-	Fri, 28 Feb 2025 14:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C9126E652;
+	Fri, 28 Feb 2025 14:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="c9nJMMt4"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqIzyxCX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BFD1AA1FA;
-	Fri, 28 Feb 2025 14:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D658BE7;
+	Fri, 28 Feb 2025 14:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740752565; cv=none; b=pj6ipJudrXZJ97zc08g6vU+A2fTYpswnZWlAC0VfaRjKoQvHqrNiwmIx2S1v4DgtIwXQ/azi4s0XDUy2glMxanRwDOE48lvuai/+SWOE58vOEs3KRD77gDMHXQMj67Q6wHyvR3Wt1Ul4OHXsCQsyj/hHzQ3XwATu6/1hhsJK3eE=
+	t=1740752636; cv=none; b=pMqjXp316tKYByKZVpQcu5wb0UvoqsgkxMY2V6XCxqC7XuMzlsw8yCT+Y4r3R8P2OSsi1ORESgXVTGjPiWaAmynIZlnbcfzxBYi/BbXl6HWc4cN6tzSrP9ETMTpziBWI0H/apBm5d0xn+gIy4U5quZ4VZK/15FL7+4jiD6udpds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740752565; c=relaxed/simple;
-	bh=6UXEncONaPYz2j1TSNLuTfEKvtKMh5PTmmSy/EJTvtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTPyQbScT3JFDMq/06Vy3B2ixKMMXaG4dCHfo3LRchIkAIMZ01PEkNJwf/XXMNvS0CkfAgrt+w9LYR93KF13ALYPwhpcpT93zM/PTN2CMSl3IDmBSQxcPLNy4cNx/nsTYxTytRv+jxNijMwMFtDOouqieNYdxBhuN0rKHeXBCu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=c9nJMMt4; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z/PkK21dX5bu6dg00h631OfOQu8sWV88qftNm6kJCdU=; b=c9nJMMt4G24TfQe5jMCZ4HldH+
-	cLQEXKYwwawK1xwt+CqoEXIH0CrV0i7Ur//g6P/nPDgjdeTaIyxyAWh+OPntPSvtYYPKJzSgGklA/
-	BghsEOMs3BOSzyuNrblnZq9HL0dkLeEtUlHe/QgzAQDG0nUd/9FcBC99L3r3zeS6TnePd+z4Me5od
-	gdgUcMrcIxNZ7m/+O+hNVU29AbBycEjFVEuuGM3GETLG9SanJKpqfazlRFd+hc1DKrmvJIMRl/PCN
-	dBuQBws5BM8eKurVQ3+Lvp7u1J0Nhn+Qrx7qsK9Wf9sIx0dYtIAG6tQc1jobdz5qtYII8qguCvMpW
-	rkiud2yg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38986)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1to1Fz-00025B-27;
-	Fri, 28 Feb 2025 14:22:27 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1to1Fv-0000o8-03;
-	Fri, 28 Feb 2025 14:22:23 +0000
-Date: Fri, 28 Feb 2025 14:22:22 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Lei Wei <quic_leiwei@quicinc.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, quic_kkumarcs@quicinc.com,
-	quic_suruchia@quicinc.com, quic_pavir@quicinc.com,
-	quic_linchen@quicinc.com, quic_luoj@quicinc.com,
-	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
-	vsmuthu@qti.qualcomm.com, john@phrozen.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH net-next v5 0/5] Add PCS support for Qualcomm IPQ9574 SoC
-Message-ID: <Z8HGnop3ONe5mDGk@shell.armlinux.org.uk>
-References: <20250207-ipq_pcs_6-14_rc1-v5-0-be2ebec32921@quicinc.com>
- <20250211195934.47943371@kernel.org>
- <Z6x1xD0krK0_eycB@shell.armlinux.org.uk>
- <71a69eb6-9e24-48ab-8301-93ec3ff43cc7@quicinc.com>
+	s=arc-20240116; t=1740752636; c=relaxed/simple;
+	bh=imtC1b2Zt5O+kWIgI4T/K6hVYDtoitkEABdlSgp1tlA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RgwjPbsmqJUrn6PNvS7foaNK8xn+mN1bxeeuH8SD35u7h0Y6WFCcPqeh8CYOo4Vxfw0e4orrvHrhxbcWoFz83Uvr76SF/IrpmiLVnvPCeACqa+2BY1esJmECrEhT+TgU8pLBlW7PiMqQgEut9CyNfG1udi4H0XToC5IBIW7v8Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqIzyxCX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741C5C4CED6;
+	Fri, 28 Feb 2025 14:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740752635;
+	bh=imtC1b2Zt5O+kWIgI4T/K6hVYDtoitkEABdlSgp1tlA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=cqIzyxCXFHpEln6m74m1toIc4WkDWDgNLB7QEUnsrlzFUOyRwJEqq8cHPfxf72lpn
+	 zoCSnLvVHvW4tnYd8OqL350Z434mK4CelWznvuSVO3oa1Al7V9kTBqC536aEGskDg6
+	 1d/tqUA8DU/vpqa3Hp7zCxiRn5PzoxIhvylfYl92oQwncFvQbqaBCm21iczLDmSLG6
+	 E4qBqfa8NjBKtjvHTqUxrx5bJ+S8nc1pExz35ybbcE826ji0ALynY2QUD0jFcRRkkG
+	 Z2meneq9l3Bu8J+TnDJs8I6CB7FnXTN3+3Vr4G9v24QLy2GLw1GzT8t7UPYew8FVN2
+	 ZGZuxwi4s7hvA==
+Date: Fri, 28 Feb 2025 08:23:53 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71a69eb6-9e24-48ab-8301-93ec3ff43cc7@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: imx@lists.linux.dev, Fabio Estevam <festevam@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+In-Reply-To: <20250227170556.589668-1-ernest.vanhoecke@toradex.com>
+References: <20250227170556.589668-1-ernest.vanhoecke@toradex.com>
+Message-Id: <174075232542.2756045.6013809147332771142.robh@kernel.org>
+Subject: Re: [PATCH 0/2] ARM: dts: apalis/colibri-imx6: Add support for
+ v1.2
 
-On Wed, Feb 19, 2025 at 06:46:57PM +0800, Lei Wei wrote:
-> > 2) there's yet another open coded "_get" function for getting the
-> > PCS given a DT node which is different from every other "_get"
-> > function - this one checks the parent DT node has an appropriate
-> > compatible whereas others don't. The whole poliferation of "_get"
-> > methods that are specific to each PCS still needs solving, and I
-> > still have the big question around what happens when the PCS driver
-> > gets unbound - and whether that causes the kernel to oops. I'm also
-> > not a fan of "look up the struct device and then get its driver data".
-> > There is *no* locking over accessing the driver data.
-> 
-> The PCS device in IPQ9574 chipset is built into the SoC chip and is not
-> pluggable. Also, the PCS driver module is not unloadable until the MAC
-> driver that depends on it is unloaded. Therefore, marking the driver
-> '.suppress_bind_attrs = true' to disable user unbind action may be good
-> enough to cover all possible scenarios of device going away for IPQ9574 PCS
-> driver.
 
-What I am concerned about is the proliferation of these various PCS
-specific "_get" methods. Where the PCS is looked up by firmware
-reference, we should have a common way to do that, rather than all
-these PCS specific ways.
+On Thu, 27 Feb 2025 18:04:51 +0100, Ernest Van Hoecke wrote:
+> Apalis/Colibri iMX6 V1.2 replaced the STMPE811 ADC/touch controller,
+> which is EOL, with the TLA2024 ADC and AD7879 touch controller.
+> 
+> Accurately describe the new hardware.
+> 
+> v1.1 of these SoMs is still described by the following DTSI files:
+> imx6qdl-apalis.dtsi
+> imx6qdl-colibri.dtsi
+> 
+> The STMPE811 touchscreen controller is no longer disabled by default.
+> The STMPE811 is self contained within the SoM, therefore, disabling it
+> is not the correct default behavior.
+> 
+> v1.2 is now supported by a DTSI that modifies v1.1:
+> imx6qdl-apalis-v1.2.dtsi
+> imx6qdl-colibri-v1.2.dtsi
+> 
+> For each carrier board using these modules, a new DTS file was added
+> that includes the v1.1 DTS and modifies it with this v1.2 DTSI.
+> 
+> The original DTS can be used for modules up to and including v1.1.
+> 
+> Ernest Van Hoecke (2):
+>   ARM: dts: apalis/colibri-imx6: Enable STMPE811 TS
+>   ARM: dts: apalis/colibri-imx6: Add support for v1.2
+> 
+>  arch/arm/boot/dts/nxp/imx/Makefile            |  9 +++
+>  .../dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts | 11 ++++
+>  .../nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts   | 11 ++++
+>  .../nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts   | 11 ++++
+>  .../dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts  | 11 ++++
+>  .../nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts   | 11 ++++
+>  .../dts/nxp/imx/imx6q-apalis-v1.2-eval.dts    | 11 ++++
+>  .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts  | 11 ++++
+>  .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts  | 11 ++++
+>  .../dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts   | 11 ++++
+>  .../boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi | 57 +++++++++++++++++++
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi |  1 -
+>  .../dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi     | 57 +++++++++++++++++++
+>  .../arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi |  1 -
+>  14 files changed, 222 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-I did start work on that, but I just haven't had the time to take it
-forward. This is about as far as I'd got:
 
-diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
-index 4f7920618b90..0b670fee0757 100644
---- a/drivers/net/pcs/Makefile
-+++ b/drivers/net/pcs/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for Linux PCS drivers
- 
-+obj-$(CONFIG_PHYLINK)		+= pcs-core.o
-+
- pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-plat.o \
- 				   pcs-xpcs-nxp.o pcs-xpcs-wx.o
- 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 976e569feb70..1c5492dab00e 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -2483,6 +2483,15 @@ void phylink_pcs_change(struct phylink_pcs *pcs, bool up)
- }
- EXPORT_SYMBOL_GPL(phylink_pcs_change);
- 
-+/**
-+ * phylink_pcs_remove() - notify phylink that a PCS is going away
-+ * @pcs: PCS that is going away
-+ */
-+void phylink_pcs_remove(struct phylink_pcs *pcs)
-+{
-+	
-+}
-+
- static irqreturn_t phylink_link_handler(int irq, void *data)
- {
- 	struct phylink *pl = data;
-diff --git a/include/linux/phylink.h b/include/linux/phylink.h
-index 071ed4683c8c..1e6b7ce0fa7a 100644
---- a/include/linux/phylink.h
-+++ b/include/linux/phylink.h
-@@ -1,6 +1,7 @@
- #ifndef NETDEV_PCS_H
- #define NETDEV_PCS_H
- 
-+#include <linux/list.h>
- #include <linux/phy.h>
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
-@@ -435,9 +436,11 @@ int mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
- #endif
- 
- struct phylink_pcs_ops;
-+struct pcs_lookup;
- 
- /**
-  * struct phylink_pcs - PHYLINK PCS instance
-+ * @lookup: private member for PCS core management
-  * @supported_interfaces: describing which PHY_INTERFACE_MODE_xxx
-  *                        are supported by this PCS.
-  * @ops: a pointer to the &struct phylink_pcs_ops structure
-@@ -455,6 +458,7 @@ struct phylink_pcs_ops;
-  * the PCS driver.
-  */
- struct phylink_pcs {
-+	struct pcs_lookup *lookup;
- 	DECLARE_PHY_INTERFACE_MASK(supported_interfaces);
- 	const struct phylink_pcs_ops *ops;
- 	struct phylink *phylink;
-@@ -692,6 +696,7 @@ int phylink_set_fixed_link(struct phylink *,
- 
- void phylink_mac_change(struct phylink *, bool up);
- void phylink_pcs_change(struct phylink_pcs *, bool up);
-+void phylink_pcs_remove(struct phylink_pcs *);
- 
- int phylink_pcs_pre_init(struct phylink *pl, struct phylink_pcs *pcs);
- 
-@@ -790,4 +795,11 @@ void phylink_mii_c45_pcs_get_state(struct mdio_device *pcs,
- 
- void phylink_decode_usxgmii_word(struct phylink_link_state *state,
- 				 uint16_t lpa);
-+
-+/* PCS lookup */
-+struct phylink_pcs *pcs_find(void *id);
-+void pcs_remove(struct phylink_pcs *pcs);
-+int pcs_add(struct phylink_pcs *pcs, void *id);
-+int devm_pcs_add(struct device *dev, struct phylink_pcs *pcs, void *id);
-+
- #endif
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-The idea is that you add the device using whatever identifier you decide
-(the pointer value is what's matched). For example, a fwnode. You can
-then find it using pcs_find().
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-If it returns NULL, then it's not (yet) registered - if you know that it
-should exist (e.g. because the fwnode is marked as available) then you
-can return -EPROBE_DEFER or fail.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-There is a hook present so phylink can do something on PCS removal -
-that's still to be implemented with this. I envision keeping a list
-of phylink instances, and walking that list to discover if any phylink
-instances are currently using the PCS. If they are, then we can take
-the link down.
+  pip3 install dtschema --upgrade
 
-> I would like to clarify on the hardware supported configurations for the
-> UNIPHY PCS hardware instances. [Note: There are three instances of 'UNIPHY
-> PCS' in IPQ9574. However we take the example here for PCS0]
-> 
-> UNIPHY PCS0 --> pcs0_mii0..pcs0_mii4 (5 PCS MII channels maximum).
-> Possible combinations: QSGMII (4x 1 SGMII)
-> 			PSGMII (5 x 1 SGMII),
-> 			SGMII (1 x 1 SGMII)
-> 			USXGMII (1 x 1 USXGMII)
-> 	
-> As we can see above, different PCS channels in a 'UNIPHY' PCS block working
-> in different PHY interface modes is not supported by the hardware. So, it
-> might not be necessary to detect that conflict. If the interface mode
-> changes from one to another, the same interface mode is applicable to all
-> the PCS channels that are associated with the UNIPHY PCS block.
-> 
-> Below is an example of a DTS configuration which depicts one board
-> configuration where one 'UNIPHY' (PCS0) is connected with a QCA8075 Quad
-> PHY, it has 4 MII channels enabled and connected with 4 PPE MAC ports, and
-> all the PCS MII channels are in QSGMII mode. For the 'UNIPHY' connected with
-> single SGMII or USXGMII PHY (PCS1), only one MII channel is enabled and
-> connected with one PPE MAC port.
-> 
-> PHY:
-> &mdio {
-> 	ethernet-phy-package@0 {
->                 compatible = "qcom,qca8075-package";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x10>;
->                 qcom,package-mode = "qsgmii";
-> 
->                 phy0: ethernet-phy@10 {
->                         reg = <0x10>;
->                 };
-> 
->                 phy1: ethernet-phy@11 {
->                         reg = <0x11>;
->                 };
-> 
->                 phy2: ethernet-phy@12 {
->                         reg = <0x12>;
->                 };
-> 
->                 phy3: ethernet-phy@13 {
->                         reg = <0x13>;
->                 };
-> 	};
-> 	phy4: ethernet-phy@8 {
->                 compatible ="ethernet-phy-ieee802.3-c45";
->                 reg = <8>;
->         };
-> }
-> 
-> PCS:
-> pcs0: ethernet-pcs@7a00000 {
-> 	......
-> 	pcs0_mii0: pcs-mii@0 {
-> 		reg = <0>;
-> 		status = "enabled";
-> 	};
-> 
-> 	......
-> 
-> 	pcs0_mii3: pcs-mii@3 {
-> 		reg = <3>;
-> 		status = "enabled";
-> 	};
-> };
 
-Given that this is a package of several PCS which have a global mode, I
-think it would be a good idea to have a property like
-"qcom,package-mode" which defines which of the four modes should be used
-for all PCS.
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nxp/' for 20250227170556.589668-1-ernest.vanhoecke@toradex.com:
 
-Then the PCS driver initialises supported_interfaces for each of these
-PCS to only contain that mode, thereby ensuring that unsupported
-dissimilar modes can't be selected or the mode unexpectedly changed.
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu1_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /soc/bus@2100000/i2c@21a0000/pcie-switch@58: failed to match any schema with compatible: ['plx,pex8605']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: panel-lvds: compatible:0: 'panel-lvds' is not one of ['admatec,9904379', 'auo,b101ew05', 'auo,g084sn05', 'chunghwa,claa070wp03xg', 'edt,etml0700z9ndha', 'hannstar,hsd101pww2', 'hydis,hv070wx2-1e0', 'jenson,bl-jt60050-01a', 'tbs,a711-panel']
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dtb: panel-lvds: compatible: ['panel-lvds'] is too short
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: panel-lvds: compatible:0: 'panel-lvds' is not one of ['admatec,9904379', 'auo,b101ew05', 'auo,g084sn05', 'chunghwa,claa070wp03xg', 'edt,etml0700z9ndha', 'hannstar,hsd101pww2', 'hydis,hv070wx2-1e0', 'jenson,bl-jt60050-01a', 'tbs,a711-panel']
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dtb: panel-lvds: compatible: ['panel-lvds'] is too short
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: panel-lvds: compatible:0: 'panel-lvds' is not one of ['admatec,9904379', 'auo,b101ew05', 'auo,g084sn05', 'chunghwa,claa070wp03xg', 'edt,etml0700z9ndha', 'hannstar,hsd101pww2', 'hydis,hv070wx2-1e0', 'jenson,bl-jt60050-01a', 'tbs,a711-panel']
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dtb: panel-lvds: compatible: ['panel-lvds'] is too short
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu1_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu1_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: panel-lvds: compatible:0: 'panel-lvds' is not one of ['admatec,9904379', 'auo,b101ew05', 'auo,g084sn05', 'chunghwa,claa070wp03xg', 'edt,etml0700z9ndha', 'hannstar,hsd101pww2', 'hydis,hv070wx2-1e0', 'jenson,bl-jt60050-01a', 'tbs,a711-panel']
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dtb: panel-lvds: compatible: ['panel-lvds'] is too short
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: panel-lvds: compatible:0: 'panel-lvds' is not one of ['admatec,9904379', 'auo,b101ew05', 'auo,g084sn05', 'chunghwa,claa070wp03xg', 'edt,etml0700z9ndha', 'hannstar,hsd101pww2', 'hydis,hv070wx2-1e0', 'jenson,bl-jt60050-01a', 'tbs,a711-panel']
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dtb: panel-lvds: compatible: ['panel-lvds'] is too short
+	from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: iomuxc-gpr@20e0000: 'ipu1_csi0_mux', 'ipu1_csi1_mux' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /soc/bus@2100000/mipi@21dc000: failed to match any schema with compatible: ['fsl,imx6-mipi-csi2']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /capture-subsystem: failed to match any schema with compatible: ['fsl,imx-capture-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
+arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dtb: /disp0: failed to match any schema with compatible: ['fsl,imx-parallel-display']
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+
+
+
 
