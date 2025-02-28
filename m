@@ -1,119 +1,90 @@
-Return-Path: <linux-kernel+bounces-539226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF623A4A23B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B1DA4A23C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 555BE7A8A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E91B17426D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5746E1F4CAA;
-	Fri, 28 Feb 2025 18:54:53 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9DF277033;
+	Fri, 28 Feb 2025 18:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JiW3mquv"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB8B1F4C85;
-	Fri, 28 Feb 2025 18:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDE327700B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768893; cv=none; b=VtmZn1pCfTvZLsVHxgV+Bk02fnOT6bftAkYK9hFIYK9ILrJFCkNR/f8pHACfknGsd7CfKiO6K8lPM7ZY8pIqfoEF4IM6/H6f7jouV9ZGnzLOeqDnB60syh9CCV6Wx7SOF9GI4bBXqNWVkt26t76G9pJwCupEEwAYL3ujIUz+E5g=
+	t=1740768934; cv=none; b=QzgNjJfZRZ/DlKLKg5zXpykThdlATzVHWAydSDWdo4vSZPs6dbGxz7RH1ePalGZU4yXETnfs0/zYZgfv9RocNYBn3Qo58bvsxvpkjhO8YXVvWLv30Ndty4NPNcB1vznGNV59CSqZvqTAs2PcR+Y5CtKx01kNozSURI2p+iFNcmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768893; c=relaxed/simple;
-	bh=xSeI8SzAJ1aDpOrBjd/hAZfvQVcKMWue9Nv0j6Pw46k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGW/9CZBZ2/H69R1/kaMRWb27vjpgAXY8NhBNzU67Uj/BjWuWpuo1h+dfNaGS2t6xtsUxl8NQVuonOdcqWsA4sOY1FT27W4kDh0X671XOkYPxlngYjKXC10U4NpYlcZiiQmh9ZjlGhzy16oMc42+rostCpA4gV9/VGHWuD1i+SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: WX/lxBl+Srelwk3o8oc99w==
-X-CSE-MsgGUID: XSIMB8C7QJqXSsyJdLRnQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41955454"
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="41955454"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:54:51 -0800
-X-CSE-ConnectionGUID: 4dGhwxRWR3GPxUu6Jw8pow==
-X-CSE-MsgGUID: dQLJJYebRySwOs1YChFZ3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="117910604"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 10:54:49 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1to5VW-0000000G3pk-25wJ;
-	Fri, 28 Feb 2025 20:54:46 +0200
-Date: Fri, 28 Feb 2025 20:54:46 +0200
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: use the required minimum set of headers
-Message-ID: <Z8IGduXgC3O74ipE@smile.fi.intel.com>
-References: <20250225095210.25910-1-brgl@bgdev.pl>
- <Z72fBfM4afo5SL0m@smile.fi.intel.com>
- <20250226214613.1e814f9a@pumpkin>
- <Z8Au4WwXDlPQwfn2@surfacebook.localdomain>
- <20250228175019.1a01e698@pumpkin>
+	s=arc-20240116; t=1740768934; c=relaxed/simple;
+	bh=/KcXav0rabKJcPCYp34mQZzZViXUMDBOctIouFNUP98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SkF6dDHZ83Z4DDKqW+zjD57/84gPdylv6582b8d63bWUGGNIwhH3xtj3IRPmtVPXW/GLB+NJX1P3uNwmt4LzSul28MBDZGIff/gA9HI6m26vfV+O1Ov9NyJzvRu6KAOjw5C7pcy2WQVQd2sU+AHTK38Pj//HzKSpSigkRtc9u6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JiW3mquv; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <331d97f7-c1de-4b46-a1e5-75a3261d4e97@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740768929;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1iKOUsrjeukuigNTKIIt0ORYtWT59cRVVyENYRJLiyo=;
+	b=JiW3mquvsYYc9+1X3hlSZ6D3wCDFr3YthSmAfPn2WKNtyuXY5diXF9fTzP/3k7YagJDkV1
+	AX0eb51cjtxIsG5kFnYBxVX8I0btbzILvOQ8EMHaKmq47f7ykhmHx8VslkRmkWxw+YP+21
+	Ani+b4ufzj/fMQxszueUhOr2es1MUeo=
+Date: Fri, 28 Feb 2025 10:55:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228175019.1a01e698@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Subject: Re: [PATCH net-next] net: filter: Avoid shadowing variable in
+ bpf_convert_ctx_access()
+Content-Language: en-GB
+To: Breno Leitao <leitao@debian.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228-fix_filter-v1-1-ce13eae66fe9@debian.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250228-fix_filter-v1-1-ce13eae66fe9@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 28, 2025 at 05:50:19PM +0000, David Laight wrote:
-> On Thu, 27 Feb 2025 11:22:41 +0200
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-...
 
-> > > A 'fun' activity is to pick a random file add "#define _IOW xxx" at the
-> > > top and see where ioctl.h is is first included from.
-> > > (I've not got a build machine up at the moment.)
-> > > 
-> > > Then start fixing that include sequence.
-> > > Moving a few headers around is otherwise pretty pointless.  
-> > 
-> > Have you tried to help with reviewing this?
-> > 
-> > https://lwn.net/ml/linux-kernel/YdIfz+LMewetSaEB@gmail.com/
-> > 
-> 
-> Not seriously, though maybe I remember it.
-> 
-> 'dayjobs' makefile first deletes all the SUFFIX and builtin rules.
-> Then it copies lots of headers from all over everywhere into a (fairly
-> flat) obj/include tree to reduce the number of -Ipath to a minimum.
-> A 'create' dependency is added to all the main targets to ensure the
-> headers get copied (the .d files pick up updates).
-> 
-> It then generates explicit rules for each .o against its .c file.
-> 
-> Definitely speeds things up because make is no longer searching
-> directories for all sorts of files that might be needed - but never are.
-> 
-> (I've not dug through the bowels of the kernel makefile, but probably
-> have the skills to do so!)
-> 
-> But that is all different from solving the 'all the header files always
-> get included' issue.
+On 2/28/25 10:43 AM, Breno Leitao wrote:
+> Rename the local variable 'off' to 'offset' to avoid shadowing the existing
+> 'off' variable that is declared as an `int` in the outer scope of
+> bpf_convert_ctx_access().
+>
+> This fixes a compiler warning:
+>
+>   net/core/filter.c:9679:8: warning: declaration shadows a local variable [-Wshadow]
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-How? That gigantic series makes the headers cleaner in a sense to avoid
-"include everything" thingy.
+Make sense to me.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
 
