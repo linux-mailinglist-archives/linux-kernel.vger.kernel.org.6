@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-539375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D99A4A389
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:09:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19525A4A388
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E7477A7C3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3765317907D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6306227E1D9;
-	Fri, 28 Feb 2025 20:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B683927E1D1;
+	Fri, 28 Feb 2025 20:02:29 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D5F27E1B4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B2227E1DF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772945; cv=none; b=r5pWwj5hmFprbef03HOEClbUMsP6/GORRnofea/F1OehujI/EYHmrer9Zt4EtJRsLI+NawptSQKRQXjdQ9IsYvwPjtOt6jFcX3F1uqkrmNr7k0JBjDHvW3UR23F4UTJPWa0PL4kzzTw83ycQyyJwU4qE+gzwRgoCuAwf8pKQnbY=
+	t=1740772949; cv=none; b=gnJ6n1xzc0Snmw8qqWVFnJppMGGJUwRQ+sxSxXVzLNSt5RAwMfaUi2FishOYkRmJET2QXk/WNZ0+MHI7h3YCosMdsuYQQ8qG4DDCyYMh53ro2LFsXdY3oseDCOCU51X95E7ZRvMJrnud3r5TVu8GkDTDm0i0mZvZiYXuIN4GeRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772945; c=relaxed/simple;
-	bh=gwosyeP6HN5OsYMzjNH57v5TjWjA31J6jZGxUnp/LiY=;
+	s=arc-20240116; t=1740772949; c=relaxed/simple;
+	bh=BW1UI0m87FHcTmzV9RfroD4MAQ8xj4ayKoMZdIpMAnE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GXHFblSokT60n2YKNQWuYvV5GlM5/4/cyipj4QRIgGt41vuTtHqbmxRF2Sap+aU+Ym79oo0LgwgYNpObIQ+0c2/wNYWKMoJDu/73+DIgRNTS/K8hUyVxkzKzeCMG1+6uJe7kXu6DY9AWa5oFoG+aLBvWDCYu7LpVbWKJHE/yIJI=
+	 MIME-Version; b=b6WYLc8WAZFx0OPUUeZpZ+Ds7IOvwGhy1XEViH0UdZXT6fyxcdlfkPwii3LT/GKI4aFeg3iVvPOpobtedxPAOalpbvLbRRbA+dGibVPhsaoCUwgFa2ZeDjM1CzzAXtsQxgePGODXsOpZW70Xv+oo+HTQdEmlejgOvqOYrl6NEVw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81D2519F0;
-	Fri, 28 Feb 2025 12:02:38 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E8D71A2D;
+	Fri, 28 Feb 2025 12:02:42 -0800 (PST)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA7153F5A1;
-	Fri, 28 Feb 2025 12:02:19 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8D153F5A1;
+	Fri, 28 Feb 2025 12:02:23 -0800 (PST)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -63,9 +63,9 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Dave Martin <Dave.Martin@arm.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 40/49] fs/resctrl: Add boiler plate for external resctrl code
-Date: Fri, 28 Feb 2025 19:59:04 +0000
-Message-Id: <20250228195913.24895-41-james.morse@arm.com>
+Subject: [PATCH v7 41/49] x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
+Date: Fri, 28 Feb 2025 19:59:05 +0000
+Message-Id: <20250228195913.24895-42-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250228195913.24895-1-james.morse@arm.com>
 References: <20250228195913.24895-1-james.morse@arm.com>
@@ -77,12 +77,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Makefile and Kconfig for fs/resctrl. Add ARCH_HAS_CPU_RESCTRL
-for the common parts of the resctrl interface and make X86_CPU_RESCTRL
-select this.
+Once the filesystem parts of resctrl move to fs/resctrl, it cannot rely
+on definitions in x86's internal.h.
 
-Adding an include of asm/resctrl.h to linux/resctrl.h allows the
-/fs/resctrl files to switch over to using this header instead.
+Move definitions in internal.h that need to be shared between the
+filesystem and architecture code to header files that fs/resctrl can
+include.
+
+Doing this separately means the filesystem code only moves between files
+of the same name, instead of having these changes mixed in too.
 
 Co-developed-by: Dave Martin <Dave.Martin@arm.com>
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
@@ -93,310 +96,97 @@ Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
 Changes since v6:
- * Added 'depends on RESCTRL_FS' to the hidden kconfig options.
-
-Changes since v5:
- * Removed double include.
- * Removed duplicate pseudo lock Kconfig define
- * Grammar fix and closid capitalisation change.
-
-Changes since v4:
- * Tweaking of the commit message.
+ * Moved resctrl_arch_set_cdp_enabled() to rdtgroup.c instead of core.c
 
 Changes since v3:
- * Reworded 'if unsure say N' from the Kconfig text, the user doesn't have
-   the choice anyway at this point.
- * Added PWD to monitor.o's CFLAGS for the ftrace rube-goldberg build machine.
- * Added split trace files.
+ * Changed the number of hyphens at the end of the commit message.
 
 Changes since v2:
- * Dropped KERNFS dependency from arch side Kconfig.
- * Added empty trace.h file.
- * Merged asm->linux includes from Dave's patch to decouple those
-   patches from this series.
+ * Dropped the rfflags and some other defines from being moved.
 
 Changes since v1:
- * Rename new file psuedo_lock.c to pseudo_lock.c, to match the name
-   of the original file (and to be less surprising).
+ * Revert apparently unintentional duplication of a couple of variable
+   declarations in <linux/resctrl.h>.
 
- * [Whitespace only] Under RESCTRL_FS in fs/resctrl/Kconfig, delete
-   alignment space in orphaned select ... if (which has nothing to line
-   up with any more).
-
- * [Whitespace only] Reflow and re-tab Kconfig additions.
+   No functional change.
 ---
- MAINTAINERS                               |  1 +
- arch/Kconfig                              |  8 +++++
- arch/x86/Kconfig                          | 11 ++-----
- arch/x86/kernel/cpu/resctrl/internal.h    |  2 --
- arch/x86/kernel/cpu/resctrl/monitor.c     |  2 +-
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  2 +-
- fs/Kconfig                                |  1 +
- fs/Makefile                               |  1 +
- fs/resctrl/Kconfig                        | 39 +++++++++++++++++++++++
- fs/resctrl/Makefile                       |  6 ++++
- fs/resctrl/ctrlmondata.c                  |  0
- fs/resctrl/internal.h                     |  0
- fs/resctrl/monitor.c                      |  0
- fs/resctrl/monitor_trace.h                |  0
- fs/resctrl/pseudo_lock.c                  |  0
- fs/resctrl/pseudo_lock_trace.h            |  0
- fs/resctrl/rdtgroup.c                     |  0
- include/linux/resctrl.h                   |  4 +++
- 19 files changed, 66 insertions(+), 13 deletions(-)
- create mode 100644 fs/resctrl/Kconfig
- create mode 100644 fs/resctrl/Makefile
- create mode 100644 fs/resctrl/ctrlmondata.c
- create mode 100644 fs/resctrl/internal.h
- create mode 100644 fs/resctrl/monitor.c
- create mode 100644 fs/resctrl/monitor_trace.h
- create mode 100644 fs/resctrl/pseudo_lock.c
- create mode 100644 fs/resctrl/pseudo_lock_trace.h
- create mode 100644 fs/resctrl/rdtgroup.c
+ arch/x86/include/asm/resctrl.h         | 3 +++
+ arch/x86/kernel/cpu/resctrl/internal.h | 9 ---------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 5 +++++
+ include/linux/resctrl_types.h          | 3 +++
+ 4 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3487ac429a9a..433ba4a5a84a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19881,6 +19881,7 @@ S:	Supported
- F:	Documentation/arch/x86/resctrl*
- F:	arch/x86/include/asm/resctrl.h
- F:	arch/x86/kernel/cpu/resctrl/
-+F:	fs/resctrl/
- F:	include/linux/resctrl*.h
- F:	tools/testing/selftests/resctrl/
+diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
+index 7a39728b0743..6eb7d5c94c7a 100644
+--- a/arch/x86/include/asm/resctrl.h
++++ b/arch/x86/include/asm/resctrl.h
+@@ -210,6 +210,9 @@ int resctrl_arch_measure_l2_residency(void *_plr);
+ int resctrl_arch_measure_l3_residency(void *_plr);
+ void resctrl_cpu_detect(struct cpuinfo_x86 *c);
  
-diff --git a/arch/Kconfig b/arch/Kconfig
-index b8a4ff365582..2778a7859c11 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1518,6 +1518,14 @@ config STRICT_MODULE_RWX
- config ARCH_HAS_PHYS_TO_DMA
- 	bool
- 
-+config ARCH_HAS_CPU_RESCTRL
-+	bool
-+	help
-+	  An architecture selects this option to indicate that the necessary
-+	  hooks are provided to support the common memory system usage
-+	  monitoring and control interfaces provided by the 'resctrl'
-+	  filesystem (see RESCTRL_FS).
++bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l);
++int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
 +
- config HAVE_ARCH_COMPILER_H
- 	bool
- 	help
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a89574a58f7..ea29d22a621f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -503,8 +503,9 @@ config X86_MPPARSE
- config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
--	select KERNFS
--	select PROC_CPU_RESCTRL		if PROC_FS
-+	depends on MISC_FILESYSTEMS
-+	select ARCH_HAS_CPU_RESCTRL
-+	select RESCTRL_FS
- 	select RESCTRL_FS_PSEUDO_LOCK
- 	help
- 	  Enable x86 CPU resource control support.
-@@ -522,12 +523,6 @@ config X86_CPU_RESCTRL
+ #else
  
- 	  Say N if unsure.
- 
--config RESCTRL_FS_PSEUDO_LOCK
--	bool
--	help
--	  Software mechanism to pin data in a cache portion using
--	  micro-architecture specific knowledge.
--
- config X86_FRED
- 	bool "Flexible Return and Event Delivery"
- 	depends on X86_64
+ static inline void resctrl_arch_sched_in(struct task_struct *tsk) {}
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 16c1a391d012..ee50b7375717 100644
+index ee50b7375717..a569e31d75f6 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -9,8 +9,6 @@
- #include <linux/jump_label.h>
- #include <linux/tick.h>
+@@ -16,8 +16,6 @@
+ #define CQM_LIMBOCHECK_INTERVAL	1000
  
--#include <asm/resctrl.h>
+ #define MBM_CNTR_WIDTH_BASE		24
+-#define MBM_OVERFLOW_INTERVAL		1000
+-#define MAX_MBA_BW			100u
+ #define MBA_IS_LINEAR			0x4
+ #define MBM_CNTR_WIDTH_OFFSET_AMD	20
+ 
+@@ -403,13 +401,6 @@ extern struct rdtgroup rdtgroup_default;
+ extern struct dentry *debugfs_resctrl;
+ extern enum resctrl_event_id mba_mbps_default_event;
+ 
+-static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
+-{
+-	return rdt_resources_all[l].cdp_enabled;
+-}
 -
- #define L3_QOS_CDP_ENABLE		0x01ULL
+-int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
+-
+ void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d);
  
- #define L2_QOS_CDP_ENABLE		0x01ULL
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 90e7f8754b91..fcd3c41db554 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -19,11 +19,11 @@
- 
- #include <linux/cpu.h>
- #include <linux/module.h>
-+#include <linux/resctrl.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
- 
- #include <asm/cpu_device_id.h>
--#include <asm/resctrl.h>
- 
- #include "internal.h"
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 5c14f4999d55..69dff2bb2c09 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -18,12 +18,12 @@
- #include <linux/mman.h>
- #include <linux/perf_event.h>
- #include <linux/pm_qos.h>
-+#include <linux/resctrl.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/cpu_device_id.h>
--#include <asm/resctrl.h>
- #include <asm/perf_event.h>
- 
- #include "../../events/perf_event.h" /* For X86_CONFIG() */
+ /* CPUID.(EAX=10H, ECX=ResID=1).EAX */
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 4209d78b7aae..4108c0de298c 100644
+index 4108c0de298c..3d90e9334b1f 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -18,6 +18,7 @@
- #include <linux/fs_parser.h>
- #include <linux/sysfs.h>
- #include <linux/kernfs.h>
-+#include <linux/resctrl.h>
- #include <linux/seq_buf.h>
- #include <linux/seq_file.h>
- #include <linux/sched/signal.h>
-@@ -28,7 +29,6 @@
+@@ -2520,6 +2520,11 @@ int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable)
+ 	return 0;
+ }
  
- #include <uapi/linux/magic.h>
++bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
++{
++	return rdt_resources_all[l].cdp_enabled;
++}
++
+ /*
+  * We don't allow rdtgroup directories to be created anywhere
+  * except the root directory. Thus when looking for the rdtgroup
+diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
+index 654323066174..a7faf2cd5406 100644
+--- a/include/linux/resctrl_types.h
++++ b/include/linux/resctrl_types.h
+@@ -7,6 +7,9 @@
+ #ifndef __LINUX_RESCTRL_TYPES_H
+ #define __LINUX_RESCTRL_TYPES_H
  
--#include <asm/resctrl.h>
- #include "internal.h"
++#define MAX_MBA_BW			100u
++#define MBM_OVERFLOW_INTERVAL		1000
++
+ /* Reads to Local DRAM Memory */
+ #define READS_TO_LOCAL_MEM		BIT(0)
  
- DEFINE_STATIC_KEY_FALSE(rdt_enable_key);
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 64d420e3c475..709e4d6656e2 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -334,6 +334,7 @@ source "fs/omfs/Kconfig"
- source "fs/hpfs/Kconfig"
- source "fs/qnx4/Kconfig"
- source "fs/qnx6/Kconfig"
-+source "fs/resctrl/Kconfig"
- source "fs/romfs/Kconfig"
- source "fs/pstore/Kconfig"
- source "fs/sysv/Kconfig"
-diff --git a/fs/Makefile b/fs/Makefile
-index 15df0a923d3a..73512f13e969 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -129,3 +129,4 @@ obj-$(CONFIG_EROFS_FS)		+= erofs/
- obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
- obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
- obj-$(CONFIG_BPF_LSM)		+= bpf_fs_kfuncs.o
-+obj-$(CONFIG_RESCTRL_FS)	+= resctrl/
-diff --git a/fs/resctrl/Kconfig b/fs/resctrl/Kconfig
-new file mode 100644
-index 000000000000..478a8e2ad99f
---- /dev/null
-+++ b/fs/resctrl/Kconfig
-@@ -0,0 +1,39 @@
-+config RESCTRL_FS
-+	bool "CPU Resource Control Filesystem (resctrl)"
-+	depends on ARCH_HAS_CPU_RESCTRL
-+	select KERNFS
-+	select PROC_CPU_RESCTRL if PROC_FS
-+	help
-+	  Some architectures provide hardware facilities to group tasks and
-+	  monitor and control their usage of memory system resources such as
-+	  caches and memory bandwidth.  Examples of such facilities include
-+	  Intel's Resource Director Technology (Intel(R) RDT) and AMD's
-+	  Platform Quality of Service (AMD QoS).
-+
-+	  If your system has the necessary support and you want to be able to
-+	  assign tasks to groups and manipulate the associated resource
-+	  monitors and controls from userspace, say Y here to get a mountable
-+	  'resctrl' filesystem that lets you do just that.
-+
-+	  If nothing mounts or prods the 'resctrl' filesystem, resource
-+	  controls and monitors are left in a quiescent, permissive state.
-+
-+	  On architectures where this can be disabled independently, it is
-+	  safe to say N.
-+
-+	  See <file:Documentation/arch/x86/resctrl.rst> for more information.
-+
-+config RESCTRL_FS_PSEUDO_LOCK
-+	bool
-+	depends on RESCTRL_FS
-+	help
-+	  Software mechanism to pin data in a cache portion using
-+	  micro-architecture specific knowledge.
-+
-+config RESCTRL_RMID_DEPENDS_ON_CLOSID
-+	bool
-+	depends on RESCTRL_FS
-+	help
-+	  Enabled by the architecture when the RMID values depend on the CLOSID.
-+	  This causes the CLOSID allocator to search for CLOSID with clean
-+	  RMID.
-diff --git a/fs/resctrl/Makefile b/fs/resctrl/Makefile
-new file mode 100644
-index 000000000000..e67f34d2236a
---- /dev/null
-+++ b/fs/resctrl/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_RESCTRL_FS)		+= rdtgroup.o ctrlmondata.o monitor.o
-+obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
-+
-+# To allow define_trace.h's recursive include:
-+CFLAGS_monitor.o = -I$(src)
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/monitor_trace.h b/fs/resctrl/monitor_trace.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/pseudo_lock.c b/fs/resctrl/pseudo_lock.c
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/pseudo_lock_trace.h b/fs/resctrl/pseudo_lock_trace.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index b8f8240050b4..5c7c8bf2c47f 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -8,6 +8,10 @@
- #include <linux/pid.h>
- #include <linux/resctrl_types.h>
- 
-+#ifdef CONFIG_ARCH_HAS_CPU_RESCTRL
-+#include <asm/resctrl.h>
-+#endif
-+
- /* CLOSID, RMID value used by the default control group */
- #define RESCTRL_RESERVED_CLOSID		0
- #define RESCTRL_RESERVED_RMID		0
 -- 
 2.39.5
 
