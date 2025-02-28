@@ -1,181 +1,175 @@
-Return-Path: <linux-kernel+bounces-537771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1273AA4906E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:36:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526EDA49072
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059FB16F094
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:36:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B69816F08E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 04:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451FE1A9B5D;
-	Fri, 28 Feb 2025 04:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D611ACEBA;
+	Fri, 28 Feb 2025 04:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYGnsNzI"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQJMXive"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90B1819
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2892157A55;
+	Fri, 28 Feb 2025 04:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740717393; cv=none; b=GneGvgT2hmkc76LVY8KAoBIxea/H0CbF74PhbztYGcEgI3m5leGVw/3AY6F3HFiYmbjSuvpl0PS+NeoynroMRTYRQMkhK+wVA3rcLo4nH33wMCHjOxKw4FP0es/yvSZbtkElHf2W5nlR+JGRBxMQGZ0N0jUbYIH8j1q9Kj4ck0c=
+	t=1740717582; cv=none; b=Nht/t4ADQGGPdX7fB4mSsgGFUbrKGpVVEYR1i6CkWMpmQO7xRQiFYvq5ln46e6lmI/4/XSiOTq7//YIah2vYWmHFLE6K4eS2sR6WoKto5Xfl9xqlq5DYlmum+gkcU8pc1xRHaTD2s6grtTckMj/ohwgGvFYpmj6x9CMqgLp/4BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740717393; c=relaxed/simple;
-	bh=JNNNAXVJUB1dUrWe5/CzrO8g7HtIc9lV+IcdN6AiXIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3ecZYC/rqq6nx0+f97hia2pyCt0jy7rhTtMkl0M3L3dSdNpc/1QPJrX/JGg/BIrHW+IDSIUYnpH1MgjIsqa7VexSdcZTdw3mR1nLHyJfDugeuV4tmUQBVwgdVHj/dPV9kNl7vKCjsPGqhcvzimhsSZS8uncnDjWVJc9rotgmLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYGnsNzI; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-545316f80beso1636318e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:36:31 -0800 (PST)
+	s=arc-20240116; t=1740717582; c=relaxed/simple;
+	bh=8aZ49bvuDjKomHLXgnAinIV22zHwW7rGZjJkxM4aF6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dXpPhPy+NBmls4pcICkKAZ3IE1V4z3LDbqogzA6UQv+I7Ee8duEeMR349mXKNKU6IwJXUdupJi+VbJ7RGHfJCQIVIAnCOEc6dad5DCpaLdGo+00Mp4/BBUfUQvkHDYJDt8wiRsUFr9Pxiyh9QzsQtKU7RcetKqWM1wg3NHrPAg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQJMXive; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c0ba9825e9so116194185a.0;
+        Thu, 27 Feb 2025 20:39:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740717390; x=1741322190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIRTgNdswGDhbNbRHETd6FrKEXOOj6YkPcm/rw/JxR8=;
-        b=GYGnsNzI0x+RL+N/SS53OaMfHg7jTgV2UjHNGcVLcpGQb8xexAjMRxXe+3wqHwKKsh
-         uht+Puin7KkCFwyrmyIDlcbfm7O71eyuntT62AShW5AUdw+2cfczclCy7Dn9uI8j/iQg
-         M2/I8zX1DJ7XKl9f8tjN6WOy/HwHtLvjS6N83LbyefAxkXU3QCfRXC4Pmuouq/1bhbad
-         /DSMM/IzZ2I9R6yyPlqqSrPI8dPMsfVnvEy1i7UYDkhP0RQu91evgeIXArROwRbP9Zua
-         qCBQA9Zjpr4sNoafgqdUK30eb/FXW5HkhwDWYLDvTtfdpD5ymCxc7FJ8U7glEg+Vi1kp
-         c/vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740717390; x=1741322190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740717579; x=1741322379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tIRTgNdswGDhbNbRHETd6FrKEXOOj6YkPcm/rw/JxR8=;
-        b=mbeoBYB2RQVcOgz2XHYPPVWP4XPBtepbozikIAHKhpUh1BaLJr9tBMaVJwUcKmjo7T
-         HNB7Wn7n9bR/V/bIzhYSMULLNvHAIwHMSdB+Fc2DNvhh+0cbz86zhNtt0secb7mzf4Vk
-         0XgICnsz9tnz/2Zeib4CKodsjRUl55FvT3t586yAT2qCWypA1GQAquyOohp5cd1WzV+H
-         SK/sHa95oIG6kk5AJ3yS4LVnc/dARTQKCks9c2Eqzy+VeGu+FVMjfvD2PmwfA0tgarxx
-         MYnGDtV/CQ8BSV5TaDzF4bqiYs7s3R36YklVHjccbqSZLS4q5E0U5zprDOMLCcyG7nj1
-         vg7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUro80NeIB++Hd2ly7D2TFNEYDtHS7cNCU5KWSi4voKRghsSCnhdj+ehbcO4RacveXgVrVbCJsaT/9ZeiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+YrB/lprpWjYCUx3YI4Zgf58T6v4BWA1Ao93TqfAKuEQo3j0
-	Ap3dMHySX19Mvy+4jJOft33vlO/VnE328O4Erb2t8iJKJ5Uo+40bhRc+lmrR0ig=
-X-Gm-Gg: ASbGnctLsIeVrW97VooI+/2IKi8Hg1qOBy8StGAHiVUL1+P/yD+qUxetUQaInBm+e7w
-	jqdB0LmQZ2YBNtYKszR4UGBoP5fyAnhh9Xo47wneRUfF5DYFSNtuh532BA0AZ2hOKJoTcilvQqi
-	SAukwAz2xeZJ/+wm6VSJsHTO6Kaaqqm87fUP4X4ZqHDRPMdeFOjCkomOkdVP3rmWm/BtDh2l2vk
-	yPy9/DNBA7J9EwX89xomXOcyjPMTFCKK7Rd1ztsMe2QG3B2hpcssCbVdXDrSwv9cZJxzh7JyGWd
-	FxqKlp41DVfamSu4w/f4uSkiJja8CX52TUtZGtOvZMtR8nF93xO3gLSrVx3ccUNN8Y/qQ/wdIPt
-	jX965bw==
-X-Google-Smtp-Source: AGHT+IGHdROVsAiv4I0ViQ1CiojRZcJgPBqIJ5QDNvWA3K8bpxYgEX8MrL0nwpc0aa81lDswmCSX0A==
-X-Received: by 2002:a05:6512:281d:b0:545:2950:5361 with SMTP id 2adb3069b0e04-5494c129f93mr754571e87.5.1740717389644;
-        Thu, 27 Feb 2025 20:36:29 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54951f50e37sm29273e87.38.2025.02.27.20.36.27
+        bh=9smtCjYcxndzyuV/cVbRKleBRB09EObWKV/3vjpHQ1g=;
+        b=lQJMXive/ZdwDpWPLc8K9r4gdh+HlkLwTmvYTy4+9RpNbmPGNVvCinYH3R6SDk5qzs
+         dpzwRisbALVsiEwmv4zkX5FoP9FWQpdmfS7do/DPO4U+8Py8yfDXISCI3yVgCnoqf/+w
+         PoL47bn9fIDLxoYGu/OSufRau6JKsAdj8LbpmEDpIxavriLBV8VAkuaDZUlcXwNWzza3
+         hyMym8VJtohDv3dPzW98NpGoY2hy7zL16XBn+sOUZGijqo1SF3rNxCop0tvDO4aySyu0
+         rdEWgaO602H5w2/D3RkL+lTJU14ABq2dAA7K2vcfwXXinDaKCfqQhpity4RxLGC1M9Ej
+         gLaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740717579; x=1741322379;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9smtCjYcxndzyuV/cVbRKleBRB09EObWKV/3vjpHQ1g=;
+        b=nonWlFPa3u6aUJlJAJQMg/XYOTk2TkPk0MMeXirOW4tv87Yzgz9tJ/RBFWZLQliz2E
+         pu59WqFKARfKTF/h0fITgtTTE3R7gyhnqlJJsB3vzxo/1fkAlFO8DRqlMMOoUJXZ7jTc
+         3CIBEiFxVyyS6os2Dolc3LzSvApCCm8DOH/Uieo89LOro3mR0d2/R8XfY0wUxnnti6Q8
+         nMays+Zl/0RIP5CjLjbVlFVezQuJn05zrFpdQBpQK6Cd0H7hPegfZfbfYcmYZtprQcO6
+         FkWH7cj5cO1Du96HfnMuWUBXFgOBMlq9cfSFzzOOVNAZ4g8cJj7AoqPvQN2bGyRcqWov
+         M+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2JGbtrIb2Qmgi7cCpG//tgttICrsjk/hfNTzvknvDL/UuSf/uP6wlQzJJvzr1DYp0jKBJYdzp8aHxkGal@vger.kernel.org, AJvYcCXkJpuKp6LA/Nwvy15NcL2Wl6CTAzmWX97KA1NoRwgNFfsWXeTjTpzH8IbJe/ZSmPv9HDPl0KHSSER7e9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiwyfcU8pTEhSMzJKMs3LAfyt89o2Gu5LimRy9XbKNV+zJuH1E
+	vhSeKZngmPcXZPQtno5L5Zz9WGutO+PwyxEqnqPh4sQcHJQdbKVx
+X-Gm-Gg: ASbGncuLgd9zdVUZXLsmOyPVfnJyYrZACvqw9gHnUQr3Wlc8uYWqdD8aDhzkh5LoGkk
+	GezLa/FQsx0yPT4lFo/MmoVtxDBcIzp/e5sEGobAl8OmEzXWAMy+0aHhF4TVZh96ZFlY/OpiUfu
+	j/VkbzTT7nrj8aC9VBnOPJkCKDPwPUTHTAOAufooZqslp04bpqGhyTuG9LdT1nkp/B5/x7Qp3+W
+	emwwuBSIHfSxVyXL4CIS0t7WdCVVO4X9NDoVCCEOcpC9e+iSIRIzYF3WTim09Ku5rvzfEmchlbw
+	4YiJixAK5Ti3p04uvdCIom9Pq/OOiSr524Lyeo8Ip8ftfjw=
+X-Google-Smtp-Source: AGHT+IGg3xj8a/rl8KC65AhaGGrHyAEQ1UUGT9knkuDeL97ZFJI6SYvvRE+VeaebdQysoYooaCB1Xg==
+X-Received: by 2002:a05:620a:f04:b0:7c0:a5f4:4df with SMTP id af79cd13be357-7c39c4cd3e9mr304731185a.34.1740717579497;
+        Thu, 27 Feb 2025 20:39:39 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:5bd2:dbc7:4aba:299e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe97sm199383585a.73.2025.02.27.20.39.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 20:36:28 -0800 (PST)
-Date: Fri, 28 Feb 2025 06:36:25 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 12/15] drm/msm/dpu: blend pipes per mixer pairs config
-Message-ID: <56fcpdrg6lonf7trasxurwpoausfv4lahtlggab7vcsxmxrnwz@jseugb2oidwt>
-References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
- <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-12-8d5f5f426eb2@linaro.org>
+        Thu, 27 Feb 2025 20:39:38 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject:
+ Re: [PATCH v5 1/2] ttynull: Add an option to allow ttynull to be used as a
+ console device
+Date: Thu, 27 Feb 2025 23:39:30 -0500
+Message-ID: <10956921.NyiUUSuA9g@nerdopolis2>
+In-Reply-To:
+ <CAHp75Vdr1yNamVMP12X2bZs5=PL=R+Lsio5b+ba_NaPOsvzobA@mail.gmail.com>
+References:
+ <20250224123915.2859682-1-adamsimonelli@gmail.com>
+ <10194425.EvYhyI6sBW@nerdopolis2>
+ <CAHp75Vdr1yNamVMP12X2bZs5=PL=R+Lsio5b+ba_NaPOsvzobA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-12-8d5f5f426eb2@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 08:31:01PM +0800, Jun Nie wrote:
-> Currently, only 2 pipes are used at most for a plane. A stage structure
-> describes the configuration for a mixer pair. So only one stage is needed
-> for current usage cases. The quad-pipe case will be added in future and 2
-> stages are used in the case. So extend the stage to an array with array
-> size STAGES_PER_PLANE and blend pipes per mixer pair with configuration
-> in the stage structure.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 45 +++++++++++++++++++----------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  3 +-
->  2 files changed, 31 insertions(+), 17 deletions(-)
-> 
-> @@ -463,15 +463,24 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
->  		if (pstate->stage == DPU_STAGE_BASE && format->alpha_enable)
->  			bg_alpha_enable = true;
->  
-> -		for (i = 0; i < PIPES_PER_PLANE; i++) {
-> -			if (!pstate->pipe[i].sspp)
-> -				continue;
-> -			set_bit(pstate->pipe[i].sspp->idx, fetch_active);
-> -			_dpu_crtc_blend_setup_pipe(crtc, plane,
-> -						   mixer, cstate->num_mixers,
-> -						   pstate->stage,
-> -						   format, fb ? fb->modifier : 0,
-> -						   &pstate->pipe[i], i, stage_cfg);
-> +		/* loop pipe per mixer pair with config in stage structure */
-> +		for (stage = 0; stage < STAGES_PER_PLANE; stage++) {
-> +			head_pipe_in_stage = stage * PIPES_PER_STAGE;
-> +			for (i = 0; i < PIPES_PER_STAGE; i++) {
-> +				pipe_idx = i + head_pipe_in_stage;
-> +				if (!pstate->pipe[pipe_idx].sspp)
-> +					continue;
+On Wednesday, February 26, 2025 2:22:20 PM EST Andy Shevchenko wrote:
+> On Wed, Feb 26, 2025 at 3:39=E2=80=AFPM Adam Simonelli <adamsimonelli@gma=
+il.com> wrote:
+> > On Tuesday, February 25, 2025 11:19:04 AM EST Petr Mladek wrote:
+>=20
+> ...
+>=20
+> > > My proposal is to call:
+> > >
+> > > #ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
+> > >       add_preferred_console("ttynull", 0, NULL);
+> > > #endif
+> > >
+> > > somewhere in the kernel code. The question is where.
+> > > I wonder if the following would work:
+> > >
+> >
+> > > #ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
+> > > static int __init ttynull_default_console(void)
+> > > {
+> > >       add_preferred_console("ttynull", 0, NULL);
+> > >       return 0;
+> > > }
+> > > console_initcall(ttynull_register);
+> > > #endif
+> > >
+> > OK, actually in earlier revisions locally, I did actually have
+> >
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index dddb15f48d59..c1554a789de8 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -3712,6 +3712,11 @@ void __init console_init(void)
+> >         initcall_t call;
+> >         initcall_entry_t *ce;
+> >
+> > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > +       if (!strstr(boot_command_line, "console=3D"))
+>=20
+> Just a side note: strstr() is fragile as theoretically "console=3D" can
+> be part of an argument unrelated to the console, like
+> foo=3D"bar,baz,console=3D10,key=3Dvalue". Although I haven't checked if t=
+his
+> is allowed by cmdline parser (lib/cmdline.c).
+>=20
+Dang, good call. As a crude test, console=3Dttynull=3D results in a panic, =
+so it
+does look like it allows =3D's in parameter values, as it looks like it is
+handling the =3D...
 
-empty line
+Gotta find a better way to parse it if I'm to do the `add_preferred_console`
+route, Maybe I can try get_option...
 
-> +				lms_in_pair = min(cstate->num_mixers - (stage * PIPES_PER_STAGE),
-> +						  PIPES_PER_STAGE);
-> +				set_bit(pstate->pipe[pipe_idx].sspp->idx, fetch_active);
-> +				_dpu_crtc_blend_setup_pipe(crtc, plane,
-> +							   &mixer[head_pipe_in_stage],
-> +							   lms_in_pair,
-> +							   pstate->stage,
-> +							   format, fb ? fb->modifier : 0,
-> +							   &pstate->pipe[pipe_idx], i,
-> +							   &stage_cfg[stage]);
-> +			}
->  		}
->  
->  		/* blend config update */
+What do you think of the placement of it too?
+> > +               add_preferred_console("ttynull", 0, NULL);
+> > +#endif
+> > +
+> >         /* Setup the default TTY line discipline. */
+> >         n_tty_init();
+> >
+> >
+> >
+> > Which worked as far as I could tell, at least on x86. Not sure if that =
+was the
+> > right place, and yeah, I was trying to better copy how CONFIG_VT_CONSOL=
+E worked
+> > because I thought that was more correct.
+>=20
+>=20
 
-[...]
 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> index 5f010d36672cc6440c69779908b315aab285eaf0..74bf3ab9d6cfb8152b32d89a6c66e4d92d5cee1d 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> @@ -34,8 +34,9 @@
->  #define DPU_MAX_PLANES			4
->  #endif
->  
-> -#define PIPES_PER_PLANE			2
-> +#define STAGES_PER_PLANE		1
->  #define PIPES_PER_STAGE			2
-> +#define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
 
-PLease move this to the previous patch.
 
-With that fixed:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
->  #ifndef DPU_MAX_DE_CURVES
->  #define DPU_MAX_DE_CURVES		3
->  #endif
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
 
