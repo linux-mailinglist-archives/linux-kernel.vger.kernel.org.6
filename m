@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-537658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BCAA48EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:41:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9A8A48ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C4E1890A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4058C16CAA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E628719F43A;
-	Fri, 28 Feb 2025 02:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4537155393;
+	Fri, 28 Feb 2025 02:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="THXMXRvd"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cdGvg9LM"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3F0192D7E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3AF13213E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740710456; cv=none; b=s6HCY804MiHTYdj89Gb8c9f0oKaP6X+GHro8TWziEp/28GviReokk/Z1Jhn0fl5ibgOKkN59UxptK9A34dZ60LXIbaZB773P21p9u3A8u0u602/zcp3Img+zu6LEECQchBcCjz5/yGepCnbXmO6dVp6o9g/AlXswmNY2qNjAV6o=
+	t=1740710676; cv=none; b=prOHyEEFgVXAfjNSp2/b5O+5LV06N1XOaoj6dWJxy1E6+goarQOYPDy6Qqev8T++OjoJ06uy5ghrTAzcCn5MPDiRyk4C4OmxVmWre79GIPiMn5769U5ptMQ6VMewx2GlJnVXZ5FEdgK2rzzd4ppM9m//qLAUftXu+JWwGVcXWgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740710456; c=relaxed/simple;
-	bh=5ERbWujSiKto3U+OO7RC5nldxvAV3Xb1FsVd/34DI+E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VBI7c+1/d0HCaErsDwrrAHJ4YgVD+AksEsQIrQ+b5MS4p4UJvvg18xzegp4p2FHC6+Y6Dr9IDR1P3FSDiUaHEp4Wwwyxcr4/u5l7heIuiDZGqSHocNVHwrizQVc2Vq55jZR8eL+3D522Qa/jMmQ9ZjARcfvwe2tUsNZfdUaNgR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=THXMXRvd; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30613802a04so17642141fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:40:54 -0800 (PST)
+	s=arc-20240116; t=1740710676; c=relaxed/simple;
+	bh=0fz6H8dlUgf8ko9N18YypQHlBg79eNoT5rDDE25IBq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cA0RFFqLSScOWXqYfgvbqXaRFeMaZ9o3kcy5Rh3lBwF2gYLBpXYT6nh/QbSAQBBOQA5mmFyS7fz21DlBDamXgFodKuD76u/B6UOkyboD80DJai6voI/oSrfS6O1rI8dKkN0zO6D8akXhuayKvAbQqCmQzNjmp2WoVAQSp308vME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cdGvg9LM; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22185cddbffso48455855ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:44:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740710453; x=1741315253; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C0drAA2PvbJ4hUCTdzmpW/pfB1rIMSFKchoim7lWctY=;
-        b=THXMXRvdIlfXj56fnnVKkVPc6C2OO/0JQlblGwdyclizvvKfuCl80dSXXLPxjQKijP
-         iSN5C+f/n9yhyDH9PqBwmhzk830A0prpcHRcDekKAmcDa7Bs9VOAyyx0725Yl2D20TYv
-         qHaZ40jlDQyi4CgFHKaMndE697BD8lq+H4xOcGu+zRC0jgYqk4YwNsPNqy7np0fcD5uM
-         XoxdYgQhDD/TV0Z3nkemnpREzxLgvUcogVwZi5cxv3wPYiV5bA6JD/TNq4VM29Bt9ADb
-         +fOgXGHb1Bi555pSWO1Hk40Y9nXgZshKhjmBOow2E7ibda+XZHkIlbGVMoS8nKXnNBYn
-         WaFg==
+        d=bytedance.com; s=google; t=1740710673; x=1741315473; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KrHEppDznEYNt+aFJHMFnsD9ySUlfKEU8kXo3t7+HP0=;
+        b=cdGvg9LMCPgA86eF1veU8MttIzjFc4M9bOp1Q+ej90hvu2aZr7uyASxs7uRlr3D8kE
+         YQQQANN+KG+nVURDCNJSv5gXBZoaa0W0i35WiZlp+mcBPmLoJfGx/iPTsUQgBx1Od+bK
+         riOJ/vkAG14G2L8zko8aUF3QwPxJv+wmmzqITfAAwEEj6QVyvyt382VqOYTnBuj9KJAU
+         HZNHwiMw671NsErHZxT6yRYWcQ8PvZzb/ikpwi5VOwlvOlu3HTNLh12KwEYvo2mJ8GYP
+         PjXRKUtbafnl+V/PCk7t9Iw7EHZB8TYDo5psvQDupJbFjo70IVyq0wgSs20gO+qgyNoS
+         eNKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740710453; x=1741315253;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C0drAA2PvbJ4hUCTdzmpW/pfB1rIMSFKchoim7lWctY=;
-        b=NEtaZhNSpLzTAu9e//2WExKv10Xfj7vaJOp4Xl2WUXjXWgzIR8uwWIwpVNYKTsRibH
-         qxdTUW8KHiOxhCXYp/cfx3x+GMQY+LXd5b1iwYMP8sXIcrdk9ZqjmtTTmUYfyjr6qSXK
-         wEA8qGmLz6V8xQxwG0yRgxIVRpFwiA/VL4PjS1miotIg3/6DkhitscNiJAc9SBcdOc8F
-         eIRgmR8j0RFD6QJKWxy+qIOLeL59S3rsgHIRF8qMxEwNGAyBBDurfTSnOdiyLB6pKCCc
-         Aw4p/Z1RcGmSTHLsrFR9wmiHH9weu6mWHXmLc4Shcux35vwDOrUHyMo8HD8cy9w2pe3H
-         a4Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCfDou0goeCi2Or2wnk+aLwJ9SnV2rnV9FG3J2bXcbTv46mdYjTEaIacVQwxD+t6zwjdTWdY5eL943qmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCP3kQJkfRxFYLMospg70w0odDlGofe5YaY90o6ggnc5ulhKOg
-	Rv6cC36d6zdyakvr8E2fw1onLtqRSq3idyOHbteEhqUXdKNAmSeKuc/4ZGXzgeY=
-X-Gm-Gg: ASbGncu1R430LMbOHEfiv6F3WaTPeALr4crVx+qou08jRLSqz7AhRS2sVZpwev5eSQh
-	jPPKT/iayWpAczUkt7HTotBuatvxQyXby9RCywOi+T4LpP+1/R0ZxgnLNFFXky8wjMfR7OVHNyI
-	fh9itKN9ldVVOiTEDaBePLoZj+u261zdlE42v0vTk3LeJ4JKpq5EEQtjXqxet5JLHnIbygfkAqh
-	eAQRCP0vU8rMEBp/XBMBwQ1ksOy0yY+E+gAakaLv4qWkfmlcnXI1vpbVmhBF4hxUtZ52BMzs1HW
-	7KUZaKIEFOHEDmyskqgJQVsgIvYuJCRi7w==
-X-Google-Smtp-Source: AGHT+IEyA6OYswRzZk6KES4gyk4YksuY5o9aOh5bM9ecrpKh5LG64AXf+j9DZx4ELbV5JDnuU1skDA==
-X-Received: by 2002:a05:651c:b0d:b0:30b:8de7:c877 with SMTP id 38308e7fff4ca-30b932f27f5mr3782391fa.29.1740710452656;
-        Thu, 27 Feb 2025 18:40:52 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a7403sm3493881fa.17.2025.02.27.18.40.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 18:40:51 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 28 Feb 2025 04:40:41 +0200
-Subject: [PATCH 4/4] drm/msm/dpu: remove DSC feature bit for PINGPONG on
- SDM630
+        d=1e100.net; s=20230601; t=1740710673; x=1741315473;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KrHEppDznEYNt+aFJHMFnsD9ySUlfKEU8kXo3t7+HP0=;
+        b=F5qBP9KGLwK7VIhargEUpe/cjLGIpKFKZWUP3Z2o2TIE1E5NqISq0Hpu4OEcdE82Tr
+         lPqpvD0Ph6Ur4IEI79k58fts8hXcALDa53q4Kdir074MtCsQZfONyG/+DTcbpT0uWcBK
+         QpRmx/R+JCa5FDSIph+7KWepCOpCcAVpuLKhh3OPHCcP7oeba1UwovbKK+wCEbUOzktD
+         FwOQzeqPKz5VfF8sib87OG148VVZRtvJFscDY6c/5j1W8Ot46g/ZWOs1GA4vQKkQvujA
+         twgJp15/KkVsTjJliD1d3oeFaB1oa2/tyNOhnjmBIs2sRIUvXVd1+Hj3EK1CKeQqCZOj
+         7veQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkzvBRdrmaUem0Ia0L19TS2NN4/GM0qgP/7pybVBAsDCoM5qRrSPYNguLTMvn658OBiGmiBhbZaG+gXKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg6wplqOrBPFrJCQjah5XC4ZX4SmRTRR5LNkj7SB3fIrlf+SWM
+	6X99rOKBgW1Pdn4vuVKjsbx/oVux6xoVq4nKUFEGu8aLDyOMiu27kKxH6QYfh6M=
+X-Gm-Gg: ASbGncsOJcdyzhUIE6oBM0eh/5HJnpPMZKwzglMHQWJTGN+UGFigl2f5npGYZsj4Jom
+	iWjlrODAEAhUmChauuPQK7xYtP2TQnYWzl34LmTRwuBY5aAFRg7uV/JSVY5jt9Q0VBtMDe+to8f
+	jVvY9nhkZ435iEamlDn6KIbfQpCAD/ZRY9Q+5q4xsURsStqv3tNno5lPNwIIV8tIGJMzTaKV4IQ
+	yr0ZYie7Sdvm4cu+F0bWLzfPhwzgoSoxXlx6lVZBpuWPsVA2tAQw6X+e6/7dfTBgVgVRai6XXRM
+	Nxcc8PrY1pCBlqbMyLGxHT+eLJNOS0skrWoU7/rnUSL9CAB/sA==
+X-Google-Smtp-Source: AGHT+IF4hsdZRiz/aSbemK655CZrsY9ZUuvu4Xu2ENST8y9hxHTSO7PJo35OmCgDgimYWycuvOakGg==
+X-Received: by 2002:a05:6a20:1591:b0:1ee:d19c:45f9 with SMTP id adf61e73a8af0-1f2f3e11f86mr2902815637.19.1740710672736;
+        Thu, 27 Feb 2025 18:44:32 -0800 (PST)
+Received: from [10.68.122.90] ([63.216.146.179])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe514besm2559832b3a.71.2025.02.27.18.44.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 18:44:32 -0800 (PST)
+Message-ID: <e5f4e310-5bcd-4901-8ec3-757cf55dfa64@bytedance.com>
+Date: Fri, 28 Feb 2025 10:44:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] mm: pgtable: convert some architectures to use
+ tlb_remove_ptdesc()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: peterz@infradead.org, kevin.brodsky@arm.com, riel@surriel.com,
+ vishal.moola@gmail.com, david@redhat.com, jannh@google.com,
+ hughd@google.com, willy@infradead.org, yuzhao@google.com,
+ muchun.song@linux.dev, akpm@linux-foundation.org, will@kernel.org,
+ aneesh.kumar@kernel.org, npiggin@gmail.com, arnd@arndb.de,
+ dave.hansen@linux.intel.com, rppt@kernel.org, alexghiti@rivosinc.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
+ <19db3e8673b67bad2f1df1ab37f1c89d99eacfea.1740454179.git.zhengqi.arch@bytedance.com>
+ <CAMuHMdU8ttibKCiUPxSNBpJyrtBbrt1CqLa++jq6CpJFbFCwAg@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAMuHMdU8ttibKCiUPxSNBpJyrtBbrt1CqLa++jq6CpJFbFCwAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250228-dpu-fix-catalog-v1-4-b05d22fbc2b4@linaro.org>
-References: <20250228-dpu-fix-catalog-v1-0-b05d22fbc2b4@linaro.org>
-In-Reply-To: <20250228-dpu-fix-catalog-v1-0-b05d22fbc2b4@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1666;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=5ERbWujSiKto3U+OO7RC5nldxvAV3Xb1FsVd/34DI+E=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnwSIppBKKZZWahn5Gl8puGu+J1APz0T7Ew7c91
- NvB4zUOR9WJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8EiKQAKCRCLPIo+Aiko
- 1eomB/kBscyXJstvxO1FfWarKxnLaj7+/cQqdJ7b2BZA4oKjEbWHt2gFNgSYoHv7kOWYpUX11BW
- GOEP2C05FVnfyF6dAFFx0mebAYSL3KQGKruZ5UmU/fXl3oAMzp5l3/H8Wav17TR+3S6eREXFEUX
- P6EYdVUAY+SIMsvoVXjsm+MEfBEe6hrDo6xtWeHDslnkniKMMZ8W6mfbNjXmaYMRafQtpOPTg+9
- EzqgYx/i//5cMR3KYNmfD8xzFYv6b1AjfzxcKEYahT3njHxlN0xubMbY9xyrNbULC769joFbum5
- 2HMO77CtKfK4Aaxm3utxQUGoihOPJq58CCHDcD12f+w5MiYE
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The MSM8937 platform doesn't have DSC blocks nor does have it DSC
-registers in the PINGPONG block. Drop the DPU_PINGPONG_DSC feature bit
-from the PINGPONG's feature mask, replacing PINGPONG_SDM845_MASK and
-PINGPONG_SDM845_TE2_MASK with proper bitmasks.
 
-Fixes: 7204df5e7e68 ("drm/msm/dpu: add support for SDM660 and SDM630 platforms")
-Reported-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h
-index df01227fc36468f4945c03e767e1409ea4fc0896..4fdc9c19a74a0c52ae502b77fb8697a53bef0f97 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h
-@@ -115,14 +115,15 @@ static const struct dpu_pingpong_cfg sdm630_pp[] = {
- 	{
- 		.name = "pingpong_0", .id = PINGPONG_0,
- 		.base = 0x70000, .len = 0xd4,
--		.features = PINGPONG_SDM845_TE2_MASK,
-+		.features = BIT(DPU_PINGPONG_DITHER) |
-+			    BIT(DPU_PINGPONG_TE2),
- 		.sblk = &sdm845_pp_sblk_te,
- 		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 8),
- 		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
- 	}, {
- 		.name = "pingpong_2", .id = PINGPONG_2,
- 		.base = 0x71000, .len = 0xd4,
--		.features = PINGPONG_SDM845_MASK,
-+		.features = BIT(DPU_PINGPONG_DITHER),
- 		.sblk = &sdm845_pp_sblk,
- 		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 10),
- 		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 14),
+On 2/27/25 9:21 PM, Geert Uytterhoeven wrote:
+> Hi Qi,
+> 
+> On Tue, 25 Feb 2025 at 04:46, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>> Now, the nine architectures of csky, hexagon, loongarch, m68k, mips,
+>> nios2, openrisc, sh and um do not select CONFIG_MMU_GATHER_RCU_TABLE_FREE,
+>> and just call pagetable_dtor() + tlb_remove_page_ptdesc() (the wrapper of
+>> tlb_remove_page()). This is the same as the implementation of
+>> tlb_remove_{ptdesc|table}() under !CONFIG_MMU_GATHER_TABLE_FREE, so
+>> convert these architectures to use tlb_remove_ptdesc().
+>>
+>> The ultimate goal is to make the architecture only use tlb_remove_ptdesc()
+>> or tlb_remove_table() for page table pages.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> Thanks for your patch!
+> 
+>>   arch/m68k/include/asm/sun3_pgalloc.h | 3 +--
+> 
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
 
--- 
-2.39.5
+Thanks for your review.
+
+> 
+>> --- a/arch/m68k/include/asm/sun3_pgalloc.h
+>> +++ b/arch/m68k/include/asm/sun3_pgalloc.h
+>> @@ -19,8 +19,7 @@ extern const char bad_pmd_string[];
+>>
+>>   #define __pte_free_tlb(tlb, pte, addr)                         \
+>>   do {                                                           \
+>> -       pagetable_dtor(page_ptdesc(pte));                       \
+>> -       tlb_remove_page_ptdesc((tlb), page_ptdesc(pte));        \
+>> +       tlb_remove_ptdesc((tlb), page_ptdesc(pte));             \
+>>   } while (0)
+>>
+> 
+> With only a single statement remaining, you can remove the do { ... }
+> while construct, too.
+
+Ah, right. Will do in the next version.
+
+Thanks!
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
 
 
