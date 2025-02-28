@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-537909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF621A4925A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:39:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B783A4925F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD29316D084
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:39:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E3716DDF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4901C701D;
-	Fri, 28 Feb 2025 07:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC541C701E;
+	Fri, 28 Feb 2025 07:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E4clRksz"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QJqtmSoc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964681C3BE8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557891D47B5;
+	Fri, 28 Feb 2025 07:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740728338; cv=none; b=VFs3W6JusI3N1p1+ikn7DsP6RwFTJyPkjeHwkYiolqEhfzfn222b+DbgtRyQXFoV3dZDkHe35VbqZRZJpg6+z9UyEceQxIp81VZcuf6aY3dC3CXAkb5dCtnv4utbXN1qgDu4QW2AzUrMf4sliR4oD4IamjDzeElqUV5mUVcCH+U=
+	t=1740728706; cv=none; b=qk3PP/WunktEBSRUgThTQNUbJa88Ke8naeQsWnkZHdcwK/6tHKs0xJCest07YPCY1nUiQN848rh4zOycSEbAsd7pr7BvAa8qn9rBPhc60xrqYbRYJpZBaRD+CIpHOGpe0Ezqi89QKQ7VvC8XLEeQW3yJ0SJTdSdXEMIcBTDoxDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740728338; c=relaxed/simple;
-	bh=BY9q3rOxqkIVBMa7s2bmBZBkhUcguD3ZuXRRp63Ut6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=ugmvTGRNkoIP59VU2E6gsA47uqfm5zLExAc2eDhAldkViUGEhYR+FZmmChGqVuEvoFZ2wU45D+zuOOYkmn9HW9i3Nb+Vc7sx9/yxm5btyfJBKI/iL07GqLOoftSl5H/El2VegdS6g2VBC+j2qUmSkDxkznx1Ef8z08n48/wh0fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E4clRksz; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250228073853euoutp011287660d91da8bef480d0a81e2f86fc9~oTzJcqtbD1969219692euoutp01G
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:38:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250228073853euoutp011287660d91da8bef480d0a81e2f86fc9~oTzJcqtbD1969219692euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740728333;
-	bh=fB1uu5Zm/JdUcvGbMy3KqsovvuV6bSi/1lbv+zVs20Q=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=E4clRksz1SUtlg+e1C0maB9+KnaXKDWsITIMWljPSLwLsF5HLwawlrv9y3qz8CR8A
-	 m1xoRjArPxkwbx5Rq0kSHJQUXMzLVaNS2UOQE0a6Iiof0KmPbofRg3Mh+N1Jy7EZcd
-	 QlaVR+XtV0E7cjL1mggU6pLM5+K2tsv+QxZKxgF8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250228073849eucas1p2ea3c0061bc5efce9c318f48e23b0679e~oTzFTULj60716307163eucas1p2m;
-	Fri, 28 Feb 2025 07:38:49 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id D0.76.20821.90861C76; Fri, 28
-	Feb 2025 07:38:49 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228073848eucas1p2c71a5ff2b7b1ec8388ea57bec7bd9b09~oTzEuBMhB3132931329eucas1p21;
-	Fri, 28 Feb 2025 07:38:48 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250228073848eusmtrp28a1e245fe1fb3aa7b5c93c5051f85326~oTzEtV3u30517905179eusmtrp2W;
-	Fri, 28 Feb 2025 07:38:48 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-85-67c168094b8f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id BD.9B.19920.80861C76; Fri, 28
-	Feb 2025 07:38:48 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250228073847eusmtip26d0d11427c3f7d3a2a2b24ab1aa31f3d~oTzDOuM0w0250102501eusmtip2j;
-	Fri, 28 Feb 2025 07:38:46 +0000 (GMT)
-Message-ID: <b0a3d6de-34c7-484a-9622-75431248e4eb@samsung.com>
-Date: Fri, 28 Feb 2025 08:38:46 +0100
+	s=arc-20240116; t=1740728706; c=relaxed/simple;
+	bh=5ag7gsXAZxgxgilgQ2+lunikPzAiBcdUV14v4mT/YNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jwMh0PEGhsWP5tD1TCZwDNm05Y2/PUhO2oMoZ/7F6ImFDNItJZkiv9nC6bGq+bHs4j8jZQkLBVRWHIci3Sx2DubNLWA9jgkaZqaxWHnMXLcEh4zaQ3N7R/88T0F0IZtOYCK8YnxfU6GNmxG0z5AgBqkxrMXcwLfiFYgpMMGqY/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QJqtmSoc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RL65d4030047;
+	Fri, 28 Feb 2025 07:44:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B6O06nCues7TjS3vEUr8Hzch/RGBixqkLvbgwaXBhdM=; b=QJqtmSocELidA9nF
+	1ETFYpiplNR8b4rlg7TT84Aka2XKbuAf8ziVRm+4gpDtuJZwC0B28bBS9cC3sT73
+	EVFY97ub2LQZTAeT1aKXlQtnpz5PtMUrEOcS8RDG2CaKb/4YRP0wW1Le47f8WnJz
+	mUFXNpwosPcSqHhduQXM3I6ADepLS7Ilp5b9ZF8RLFRp44fJZtZdhFdG5188rZ9p
+	ZgUACHxuCx0++2+IvYgkHzT1FG2/0cSh0mGl8V4kCr3gwH2yKKazE81qozDI/KVf
+	aKZLG0HqQN3jWF1g3eLqWuXy23YnCsMzM6+4vwvyBx9GXtIzCU7cCm4Lok7ZaSZx
+	zl+S5g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 452ynwsc3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 07:44:53 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51S7ipLu002399
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 07:44:51 GMT
+Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Feb
+ 2025 23:44:45 -0800
+Message-ID: <36f63775-cee8-46e0-a5bf-5e44ff0e582e@quicinc.com>
+Date: Fri, 28 Feb 2025 15:44:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,100 +64,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	krzysztof.kozlowski+dt@linaro.org, linux-samsung-soc@vger.kernel.org,
-	gost.dev@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH 4/5] coresight-tnoc: add node to configure flag type
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark
+	<james.clark@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250221-trace-noc-driver-v1-0-0a23fc643217@quicinc.com>
+ <20250221-trace-noc-driver-v1-4-0a23fc643217@quicinc.com>
+ <d9eff439-27ae-4555-a0c5-21acdf60d321@kernel.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250226102251.9040-1-aakarsh.jain@samsung.com>
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+In-Reply-To: <d9eff439-27ae-4555-a0c5-21acdf60d321@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djP87qcGQfTDXZM5bB4umMmq8X9xZ9Z
-	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jotlm/4wWSza+oXd
-	gcdj8Z6XTB6bVnWyedy5tofNY/OSeo++LasYPT5vkvM49fUzewB7FJdNSmpOZllqkb5dAlfG
-	nWkbmQq281fcWb2KqYGxjbeLkZNDQsBEYuf5K0xdjFwcQgIrGCXOP57CDOF8YZRYuX8mVOYz
-	o8T+X8uZYVqeXDgEVbWcUWLhqimsEM5HRoljf4+yg1TxCthJrPywkRHEZhFQlXj+pgEqLihx
-	cuYTFhBbVEBe4v6tGWBxYQFPiVc7J4KtExGYwChx/eMpFhCHWeAuo8SsRc9ZQaqYBcQlbj2Z
-	zwRiswkYSnS97WLrYuTg4BSwlVjfwwRRIi+x/e0csPMkBPo5Jd5eeM0GcbeLxMKl95ggbGGJ
-	V8e3sEPYMhL/d85ngmhoZ5RY8Ps+lAN0RsPzW4wQVdYSd879AtvGLKApsX6XPkTYUWLL+pms
-	IGEJAT6JG28FIY7gk5i0bTozRJhXoqNNCKJaTWLW8XVwaw9euMQ8gVFpFlK4zELy5Swk78xC
-	2LuAkWUVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYDI7/e/4px2Mc1991DvEyMTBeIhR
-	goNZSYR3VuyBdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8i/a3pgsJpCeWpGanphakFsFkmTg4
-	pRqYGtjE2ws+31Tu4TEXO/32b/t2hqfcSkLqifdc36kWVRR1rL2+hS+/4eUx4aLrzhv2nPOd
-	EKFeFD/vtazM5SAPxdaZG8/Jc2/Y78s7v/2VoIpxQUHarzNi17efOc5ya8qr2npv6V+tCaul
-	4k/P7ug0eur5vFvlne9cS8POaQVPS4TenfSfVe59csKxqeen3LVU36JdcDLy80JW9et+TT3a
-	5e+t2hS9Ltm2/PpsFJtRUKTP692sp7h1uvoyRu1JSzkbf13LPbq21rnsWbHeidwfredrpjZF
-	GKo0XRb4cdCueuNZ47ONp7frOJa5PrJmnZhyyOPmhqAXa31Znz2v2PxRtmnaSc89HZPXvcia
-	ncKuxFKckWioxVxUnAgAmXs5TdUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7ocGQfTDeZel7d4umMmq8X9xZ9Z
-	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jotlm/4wWSza+oXd
-	gcdj8Z6XTB6bVnWyedy5tofNY/OSeo++LasYPT5vkvM49fUzewB7lJ5NUX5pSapCRn5xia1S
-	tKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GnWkbmQq281fcWb2KqYGxjbeL
-	kZNDQsBE4smFQ8xdjFwcQgJLGSWuX97HDpGQkTg5rYEVwhaW+HOtiw2i6D2jxOmF58ESvAJ2
-	Eis/bGQEsVkEVCWev2lgh4gLSpyc+YQFxBYVkJe4f2sGWFxYwFPi1c6JTCCDRAQmAA16NwOs
-	mVngLqPEv15fiA1Aib2b3rNDJMQlbj2ZzwRiswkYSnS9BTmDg4NTwFZifQ8TRImZRNfWLqg5
-	8hLb385hnsAoNAvJHbOQTJqFpGUWkpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAmN3
-	27Gfm3cwznv1Ue8QIxMH4yFGCQ5mJRHeWbEH0oV4UxIrq1KL8uOLSnNSiw8xmgIDYyKzlGhy
-	PjB55JXEG5oZmBqamFkamFqaGSuJ87pdPp8mJJCeWJKanZpakFoE08fEwSnVwFR39Oa66oB3
-	YiH7Odte7U1SK+4ts3msLrB69f9i/z2fdsbW2R3TfeHRoLA69OCGNH/t/xJxWbHRxXYSPtdF
-	/tzZv+tN5IQyr03r0zMV4o9auu6q4tpz9HH3H/8rv3NOLrLX2f395/QJ9gobJmwO2yRbc72f
-	Z+3HwrwdvJE/7Nmu8gnNuM+lckVv8dLgqDNtKdNjn8TKvS3/dq1l0+Mvou3cR+b6dKwK+n82
-	w+LMpt1Zqw45s3TsLambzL7Gf5di36HbOlLi+kG9/GoVr59EnS2SzFH8u/mvqls9z9qE85JH
-	jKLvxnvxrPdhLPsvljTdwafooPnGi2UfRCYteLWR5Vjn2gM/NihZzz70QWjOVwUlluKMREMt
-	5qLiRABTtNcrZgMAAA==
-X-CMS-MailID: 20250228073848eucas1p2c71a5ff2b7b1ec8388ea57bec7bd9b09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
-References: <CGME20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef@epcas5p3.samsung.com>
-	<20250226102251.9040-1-aakarsh.jain@samsung.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8kWV_iwHsAArISmsCcAxWvAsf4HTuX20
+X-Proofpoint-GUID: 8kWV_iwHsAArISmsCcAxWvAsf4HTuX20
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_01,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=822 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280054
 
-On 26.02.2025 11:22, Aakarsh Jain wrote:
-> There is a possibility of getting page fault if the overall
-> buffer size is not aligned to 256bytes. Since MFC does read
-> operation only and it won't corrupt the data values even if
-> it reads the extra bytes.
-> Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
-> and V4L2_PIX_FMT_NV21M pixel format.
->
-> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> changelog:
-> v1->v2
-> Patch link: https://patchwork.kernel.org/project/linux-media/patch/20240806115714.29828-1-aakarsh.jain@samsung.com/
-> Removed duplicate code and aligned luma and chroma size
-> to multiple of 256bytes as suggested by Hans.
->   drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> index 73f7af674c01..0c636090d723 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> @@ -549,8 +549,9 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
->   		case V4L2_PIX_FMT_NV21M:
->   			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
->   			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
-> -			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
-> -			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
-> +			ctx->luma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height, 16), 256);
-> +			ctx->chroma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height / 2, 16),
-> +					256);
->   			break;
->   		case V4L2_PIX_FMT_YUV420M:
->   		case V4L2_PIX_FMT_YVU420M:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+
+On 2/22/2025 6:55 PM, Krzysztof Kozlowski wrote:
+> On 21/02/2025 08:40, Yuanfang Zhang wrote:
+>> +
+>> +static ssize_t flag_type_show(struct device *dev,
+>> +			      struct device_attribute *attr,
+>> +			      char *buf)
+>> +{
+>> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>> +
+>> +	return sysfs_emit(buf, "%u\n", drvdata->flag_type);
+>> +}
+>> +static DEVICE_ATTR_RW(flag_type);
+>> +
+>>  static struct attribute *trace_noc_attrs[] = {
+>>  	&dev_attr_flush_req.attr,
+>>  	&dev_attr_flush_status.attr,
+>> +	&dev_attr_flag_type.attr,
+> 
+> Where is the ABI documentation?
+will update in V3.
+> 
+> Best regards,
+> Krzysztof
 
 
