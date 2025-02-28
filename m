@@ -1,98 +1,100 @@
-Return-Path: <linux-kernel+bounces-538526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD371A499A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:44:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD65FA499A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95943B6BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:44:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA766172D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E756426B97A;
-	Fri, 28 Feb 2025 12:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C2426BDA8;
+	Fri, 28 Feb 2025 12:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnYFLf//"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVK2ydqE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13726AABF;
-	Fri, 28 Feb 2025 12:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCC926738F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746643; cv=none; b=L8cx1Bw0g90WqH1LNmXKrX2w4SIGawE/ftkDpaVFsu8W9rBX7l8Qsl9sBxf62haeLf4QVUtWucoZB9yEMsQAj9wJo+U6heEyBEUegesexcFhYdypB/nF62pKNwiULtKLfhDt2ZyQL9xzMFr9rkEFpgNPWDVmNTsm4eiBemo8Zn0=
+	t=1740746644; cv=none; b=WhA48AhgbM02QHx1Cd13Fj8qmuBGpI4mxaDAZ+gLxBD5o1fgXbF0lilh2m+j46rmzR+Y5k02TwFVfijb4w6ItQWGo6XqDvhoY9YszcZNHtDHBh4TzXxWxKL1I14jtcizv+jb0rxm5GhWM723fR1XGmBZX+w8zTHZ4WKN83MwRcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746643; c=relaxed/simple;
-	bh=zdXip2FYZUEqtBBqgGrnFxMSITYB0sBgruxmuMhZuGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vcr7OeMjUutyubvYGyR4y1GDeQRHuDNLOYUds16E9Hl/N60i80W2ayGMmGA2io0alj3HUKt9+9yIVm592dITpOL4mGNWAEY0mvOnod3MSmEHWBDZ4XYviEtaLaM+XOAJn7COVB92HPRYGE0fzW+EGYZO2EDnQ7GL3LwV7BfdNE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnYFLf//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1659C4CEE7;
-	Fri, 28 Feb 2025 12:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740746642;
-	bh=zdXip2FYZUEqtBBqgGrnFxMSITYB0sBgruxmuMhZuGA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JnYFLf//Yqe46jhUuz2wyiXBupsKVnH7nHF5H2Y2O8NQG33br4Fm671pFwOleQm/C
-	 rnqk+zM2akxM/JkrujUpngW/avkmhpMNlBagAhT4KVhAPRbo5JitBLaH58Jc8oDBgl
-	 BEKuxLNXg9MGXO425n/rCIci0qAlDc1pKJpUCyaE/ArUuHvWDbQeb7xl9vk+vmgSAY
-	 hUVMXDoWIQBi7FrdZC3ci38wDqk5rDzTf0Ym2qCru/wGCn5itWErayVsXbMrIXlWbx
-	 15zO7unswkjX8etwSt8jeCwzBt7nI6jydxeVakwQMnvnc1hagyjX81ok8NMeUL3P2O
-	 zFjEtraZPXSRQ==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso24594621fa.2;
-        Fri, 28 Feb 2025 04:44:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUeD2VcaJmUsa+TN/clh6MP1uWUJqojXKWvZnjKmYApJjfiNK+GQblFQt+2Nl62ZGGmg1A+OZw5NTSlvso=@vger.kernel.org, AJvYcCV6TeLynZTVRbSkVDEm2voGfdYRVJKKpwvf/QJKzzrS/jsw84i3yec1gFR2lx9V9lfxsUa5cUt+ekfvw9oO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyop584OALeZUDN0o+vMTmWVCFoVkJb4rHN7yN9ePlzuCLDeeNm
-	KEhpDule8Q3VGaje7iTiwhoM7+jYC537t9OBCI3znwUihysSMb+Vje9JW9CF9XM2bayyIgEaKIa
-	Xmm94Fq8dRj4QFTcUxTLIwrF0AUg=
-X-Google-Smtp-Source: AGHT+IGSFonTM2tA84B5Bx6euBEN58t9VKOoQn5q8Je78hewQwZkeCN8PBkPYsIPynya7vLCOWfPSnsJTp7sP3NAKYw=
-X-Received: by 2002:a05:651c:158a:b0:30b:8f60:cdb7 with SMTP id
- 38308e7fff4ca-30b932da780mr12662301fa.24.1740746641179; Fri, 28 Feb 2025
- 04:44:01 -0800 (PST)
+	s=arc-20240116; t=1740746644; c=relaxed/simple;
+	bh=QpwP5dDbs++pwyXHcXaib60iS3oSbodKiBqpIqSeB0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3vqA1ThcZuymghQg8B/peHVNVXdW1xPquW+W/A3oaL7zZH+0w52zpZd1DOJe0q3+qXQHSip/VSaIefIuayZI4WabxPw3BR6krYdxbJKV7vG1ckqdSrtqhNEqSlWb6trRh1BnA59+D27Bh4WyP0tA0TJU4N24+OCT1tl3nAekd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVK2ydqE; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740746642; x=1772282642;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=QpwP5dDbs++pwyXHcXaib60iS3oSbodKiBqpIqSeB0Y=;
+  b=JVK2ydqEtKZ3Gi8rFPWftmQaUk0D5BtOHb9IcYj/4gXUR6aouUPc0hV+
+   SoHDzIRofiejIA64XQysglbQJvnvGwHuKZ0Kxs7RECD5jBM2VCwnsLPG2
+   hQNat67hFe5e1N4YdTGc7VJ1NlIa+uxu9bm6E4aX6umN2omO6MLSIrUZH
+   0URDfgUyC92d1EsnRSSUU6T0opv7kyZOuMAAx/KiOcIG9gJqsVOUM1Pdt
+   J4Gd34UsUpUxXS/H+mZdmlXoMyGsXqygCxJFP7e8wVMoxy/xVg6me8W/y
+   1sTQteQIa8U0u8ZrpXRkoTXXTJ5xqZIpFk7IIEv9zsmMfRthhXz6yEAmA
+   w==;
+X-CSE-ConnectionGUID: en5Nl6J9S021TFPA97eO3w==
+X-CSE-MsgGUID: aN/WSH9FRJyfO3mOkpt+yg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="52317169"
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="52317169"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:44:02 -0800
+X-CSE-ConnectionGUID: G8n7rWATTs6d/GMpgK4HCA==
+X-CSE-MsgGUID: zbl+3/OSSkCP/0QSjq2TAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
+   d="scan'208";a="117085125"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:44:01 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tnzif-0000000FwlI-2gOJ;
+	Fri, 28 Feb 2025 14:43:57 +0200
+Date: Fri, 28 Feb 2025 14:43:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: xiaopeitux@foxmail.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] driver core: Split devres APIs to device/devres.h
+Message-ID: <Z8GvjSUdl6dGx1UE@smile.fi.intel.com>
+References: <tencent_66CF9C91EB4A4417F70E9511649A57DEC906@qq.com>
+ <9a2d29f3-3e8b-4851-b481-cc72cd804ea6@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au> <20250226130037.GS5777@twin.jikos.cz>
- <qahmi4ozfatd4q5h4qiykinucdry6jcbee6eg4rzelyge2zmlg@norwskwechx6>
-In-Reply-To: <qahmi4ozfatd4q5h4qiykinucdry6jcbee6eg4rzelyge2zmlg@norwskwechx6>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 28 Feb 2025 13:43:50 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFKBynkfBFmQ1tbgZ0fTOP0pg5453NFGxVGvmePrKssug@mail.gmail.com>
-X-Gm-Features: AQ5f1JqIOExld1avZ7R_dc18PeVvNeFx8ju7YRn-qvNjpIyXvXD0V3XBYYy_LL8
-Message-ID: <CAMj1kXFKBynkfBFmQ1tbgZ0fTOP0pg5453NFGxVGvmePrKssug@mail.gmail.com>
-Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: David Sterba <dsterba@suse.cz>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitin Gupta <nitingupta910@gmail.com>, 
-	Richard Purdie <rpurdie@openedhand.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>, Dave Rodgman <dave.rodgman@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a2d29f3-3e8b-4851-b481-cc72cd804ea6@kylinos.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 28 Feb 2025 at 06:24, Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (25/02/26 14:00), David Sterba wrote:
-> > What strikes me as alarming that you insert about 20 branches into a
-> > realtime compression algorithm, where everything is basically a hot
-> > path.  Branches that almost never happen, and never if the output buffer
-> > is big enough.
+On Fri, Feb 28, 2025 at 05:28:56PM +0800, Pei Xiao wrote:
+> 在 2025/2/28 17:18, xiaopeitux@foxmail.com 写道:
 > >
-> > Please drop the patch.
->
-> David, just for educational purposes, there's only safe variant of lzo
-> decompression, which seems to be doing a lot of NEED_OP (HAVE_OP) adding
-> branches and so on, basically what Herbert is adding to the compression
-> path.  So my question is - why NEED_OP (if (!HAVE_OP(x)) goto output_overrun)
-> is a no go for compression, but appears to be fine for decompression?
->
+> > Since a21cad931276 ("driver core: Split devres APIs to
+> > device/devres.h"),but some APIs like 'devm_alloc_percpu' didn't move to
+> > devres.h. we should also move it.
+> sorry, I forgot to modify the subject. This is an RFC.
 
-Because compression has a bounded worst case (compressing data with
-LZO can actually increase the size but only by a limited amount),
-whereas decompressing a small input could produce gigabytes of output.
+You don't need to have it as an RFC, just base on the resent changes.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
