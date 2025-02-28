@@ -1,89 +1,112 @@
-Return-Path: <linux-kernel+bounces-537638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B41A48E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:24:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438A9A48E8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A05C188BE68
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD7188F01D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D386614B07A;
-	Fri, 28 Feb 2025 02:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F217A2FE;
+	Fri, 28 Feb 2025 02:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rs+9tShZ"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVZlB3+b"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E7276D11
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CE276D33;
+	Fri, 28 Feb 2025 02:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740709465; cv=none; b=slEMZOxRdDsEWREy3FJGGKjMfWOjMRMRp735hrgP6bU5ip7t+F5GGnDOp7C9pCsVQ9DxEvQCnAxvCpCcdAZGSKO01NbcIDiRFTu8D1Sd1QdOM13DWEMOjMlnScN3ZQRIu+dH7ZOKERgeYIX2KdMnxi+tICzPPzng1vgY6fCM8vQ=
+	t=1740709505; cv=none; b=kVPxjvAw1a2hUcUD/ZukuW+lyI/S9YWlVQj7QdoIzmIpI7h+s+OKbxHqDCg4OSa6/26QXfvG3gmIn2ZiB+XMM7rI4GHDSx4Q3MPlZ+fXzi7+ZeebO9azoIabhIe2Yvc6WJ7RG1+K/0hUzsuwIWNnrxrULaPUSlv2wKzTs1o/1/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740709465; c=relaxed/simple;
-	bh=t+z+Ab5hCBy0d3nX2BW88pd29C4FlZnEv8vt1DthmI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tHOkuOjIHbTHZ7OlSAvwhaBUVJ4MRDGctlOpzYODEab1PKzqYyUf/MRw2iyEA7s4n6nXIdhAyQl1MGGJsDp0ETs/0rb8van31by7jFEqRZC4lKJ285yQebCrtCOiDeeDK5ThZkEpuvltmPS1veAegCzwHmdhBJH/+VYJ92DAGok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rs+9tShZ; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740709445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9qFzyRfTPW1C1fRHIqsxr2Zjz7ISCd8XwmKzi9XRiC8=;
-	b=rs+9tShZb+fPHx4CoGGzSymGkA9Ypd47eJItJS1loSkNgOz0npB/+TJ2u8BwU1qUfKNZnn
-	reOdn3qAUbVW/fTm7504Fg1fGf1w8nbCzlM7EETpDR98cfdRcrfif3oWRmNJI5UkgY4oGI
-	B9InCh/wppTkkvPwDWT3J6jkS7AJ348=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH] memcg: bypass root memcg check for skmem charging
-Date: Thu, 27 Feb 2025 18:23:54 -0800
-Message-ID: <20250228022354.2624249-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1740709505; c=relaxed/simple;
+	bh=TH8GhiewyAoHOD6iRuesAFPW40a34FfeI1owzcTXXm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rk6dR2wHRqUlJ+cAKZmfKM/iWFAE/T42jqERUyNhxN5bEN6Fazdu5TYLyLv7P/iIfzDa5iKiJHTChux1BJ7m6BU5u/MV3SvyCz3L7x8xfnfk8nFH/vLcI+UxAy8/1kuele5n/vDmPYZrxlvGz43YIBDKHXtwieRVw9MaKOZguJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVZlB3+b; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so1820618a12.3;
+        Thu, 27 Feb 2025 18:25:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740709502; x=1741314302; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HOiFb2uaZTM/Hc5eDFna0HdsQUy4+S1apmiGNsTq08Y=;
+        b=RVZlB3+bgByvH7jV91p//4N7lsiEjjV24s5qCO6gK0LWbapy7rtCCdWdxpkHhebeqJ
+         ap4Bio/wdO1hkDfN5f9mRsTKeDKe4cBAdIR5Gnh/dmAn/to+md4SxdZY0EgOv+NNu6pO
+         l7Qp3RtpjQevsseskpnVYq79lJHnWno+99BhmdazU0eegiXWyC4XZFrzLDWge9YuVaq9
+         F5NoCgdnkhNCGaxyON5PWeNsbqvxd7ADLC+oef0oVV7Qe1qkUs5J/bEcZIdhQv005Dfh
+         8srTKkVix+xGMdii16NdcOv8uX0Uw2Wm13uocqPPtTeccXcbsZzwA9QFzMspWexchJdd
+         Njlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740709502; x=1741314302;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HOiFb2uaZTM/Hc5eDFna0HdsQUy4+S1apmiGNsTq08Y=;
+        b=pdU0sYomY1126zqMecxF5AbHhr19j4GZ0kC1QLL7osFZFH2nDvIv5sMNkM71MtusrO
+         uuyW29zXKf08m9wY1fid+evJAoV5SLh5DjnNhupTp+NDEZ1pgdOEr9d7YBgYp8iWmdEw
+         uO2O8INm0jwjRb79vgPSNhKSVLls+t5idmT08URWrRPvQnU73CCAlhWUa4xWL8/ico/8
+         KYgyN47RNHm1KVgb8H0H6gp2dirS+F5usuPX8ju26MWLudLQB6CNGZDYwNJHbq3xzJwn
+         MhzCBTZXr9mmevkxNcXQ6Z7I47pzt5e0wv5i9TGhvTHa7YCnN+H5o0CJZmt7yGsz8Apw
+         oeGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWGpQNX+8PQDIG2YOtkPF6haoyZ8Wb8TJtHJkPpAxzDcWOACA9B1eYtxHHpVFmwlUT6uGVSc3PcFYiZBY8eNM=@vger.kernel.org, AJvYcCX+Ddu8KS6JEWgz2lJr0QsdDfC85PeBGTqZe1+5jFov8l3HnHjq/F/O5Zf3JWhvWFpbhcrS2fngFC+baCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfDKe28+eecxPxp4d/7zvwf3J+DKZMMzrVHBmUQEj5fMg2ng3s
+	f3A4V1J2siCl2FEZpqceCSYIK7Qn7NVtW3C+9Kj1ijhURwTUftzuAuRtPD76hetq7aIj5VGN+p3
+	u4u4kgc5HZTcCgiT4i1YT/51OTRE=
+X-Gm-Gg: ASbGncueNPjoZCfy7F4aVnTVohaRPi0SaJVKTG3+ptZdLYSQMiDPHcvNCWh56scTunF
+	ubwr6jb3ZmVwlp71gIddRafFXxh9m7PSEhWQD6V7uUS/TJG3yZPmj17uuG0JOaW3VVXYvwQLkgO
+	tdzDRrHA==
+X-Google-Smtp-Source: AGHT+IG8P/Rf7Nhp6ubr6y0mJxpSoaHQ23pNLudbTvjrOGOm94lBjX0PH2uiYGY5ebcGSTw2itPEiP8WYWZIYVpcOo8=
+X-Received: by 2002:a05:6402:1ecf:b0:5e4:ce6e:388b with SMTP id
+ 4fb4d7f45d1cf-5e4d6ac54a7mr3056695a12.6.1740709502364; Thu, 27 Feb 2025
+ 18:25:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux> <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com> <Z7xg8uArPlr2gQBU@pollux>
+ <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com> <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
+ <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
+In-Reply-To: <d9c7e8ff4b32f06650b2ad4e3b993d217b286aa9.camel@nvidia.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 28 Feb 2025 12:24:50 +1000
+X-Gm-Features: AQ5f1Jo9MDruhrTr2qymJBq8i--oaJMjPPjA2VFHO726289NAQO1EfWzdBHtnOI
+Message-ID: <CAPM=9txa5Uo0qC-5OqNOcrWaGNjJEr8+J+ug0C3e6fMk9t18Zg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice implementation
+To: Timur Tabi <ttabi@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, 
+	"nouveau-bounces@lists.freedesktop.org" <nouveau-bounces@lists.freedesktop.org>, John Hubbard <jhubbard@nvidia.com>, 
+	"gary@garyguo.net" <gary@garyguo.net>, 
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"boqun.feng@gmail.com" <boqun.feng@gmail.com>, "dakr@kernel.org" <dakr@kernel.org>, 
+	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, 
+	"joel@joelfernandes.org" <joel@joelfernandes.org>, Ben Skeggs <bskeggs@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The root memcg is never associated with a socket in mem_cgroup_sk_alloc,
-so there is no need to check if the given memcg is root for the skmem
-charging code path.
+On Fri, 28 Feb 2025 at 11:49, Timur Tabi <ttabi@nvidia.com> wrote:
+>
+> On Fri, 2025-02-28 at 07:37 +1000, Dave Airlie wrote:
+> > I've tried to retrofit checking 0xffffffff to drivers a lot, I'd
+> > prefer not to. Drivers getting stuck in wait for clear bits for ever.
+>
+> That's what read_poll_timeout() is for.  I'm surprised Nouveau doesn't use it.
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That doesn't handle the PCIE returns 0xffffffff case at all, which is
+the thing we most want to handle, it also uses the CPU timer whereas
+nouveau's wait infrastructure uses the GPU timer usually (though that
+could be changed).
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f571c67ab088..55b0e9482c00 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4879,7 +4879,7 @@ bool mem_cgroup_charge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages,
- 	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		return memcg1_charge_skmem(memcg, nr_pages, gfp_mask);
- 
--	if (try_charge(memcg, gfp_mask, nr_pages) == 0) {
-+	if (try_charge_memcg(memcg, gfp_mask, nr_pages) == 0) {
- 		mod_memcg_state(memcg, MEMCG_SOCK, nr_pages);
- 		return true;
- 	}
--- 
-2.43.5
-
+Dave.
 
