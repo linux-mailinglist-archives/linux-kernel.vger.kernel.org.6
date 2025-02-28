@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-538386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B66A49805
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6807BA49808
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5566188F5F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB7C1891C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BC9260A37;
-	Fri, 28 Feb 2025 11:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBF4260A55;
+	Fri, 28 Feb 2025 11:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TORL20zd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rePhrVR8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EfvuF9Kp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iZFI9tgS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLuL/WIl"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D4B26039A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 11:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FDD26039D;
+	Fri, 28 Feb 2025 11:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740740520; cv=none; b=iZx6ua9VilNfXkom3HYvuNaqQ1jCPMd+bK3gNUyrHrl0hUo1ZzfHOk6N67zwZo6xlloZSSyzidFd1B8yWl6ubxu7DdYcySKNhEkc/M0Q2+hHAULlrHVPB090sIus0QtIV475fnN2IuibfenUQKjUaDqaIZafdkUJSkcjkHAR2a0=
+	t=1740740537; cv=none; b=AadR+k0RjRBnHHnWMzTLZgM9RecPWzw5s4QPlU0q5MEFXjg6HAX9o43ASkPxLty18fyiLdRG/khOaCx9FlUPeBDMrv7BNi1TjpynSO1bi9Q74EPkJjCXNoylox2LZ0AfPC1N9xqNNrltkWFs2E63QnmuaY7PUjEElvwIqnLTjG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740740520; c=relaxed/simple;
-	bh=cY56ByAkfiIl0iBp/zTCSGmqGQi/efmcrUMWaqORfUQ=;
+	s=arc-20240116; t=1740740537; c=relaxed/simple;
+	bh=GKbfTVVBzFS05bQYVRz8cUh9rUzCJxDRjO1p1JsKzLM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSo10Fowwcmc81wzzHY5y5awF9Hz+pftmf2sS7o9hcrz1ESLvIE1JyNqc3RCXUenvDsWZFeXJWL9Ve9NRYTly6a6f6uJWax6Ls2g07AzJLeYiC+0bLYK45yPQx8emLxdXJWQQ2An+YORMyIluJ2/5folQldM9wjck4x0juP9Hdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TORL20zd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rePhrVR8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EfvuF9Kp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iZFI9tgS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F19EB21165;
-	Fri, 28 Feb 2025 11:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740740517; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5xYsE7kl/f83kURL9obXqUw2kpX8E5zSQwx+IhLd9K8=;
-	b=TORL20zd+sC0lUWxxEkVFJFdvcXAUmh/FefB9aLU1rNrFQispbclnlXuBv2C3c2SKqF+Qx
-	R83DPgMYw+KF0h0zLvRy8dvH0Xgxuka56pdSZGyNwm0KYER1ReDVCO2VE0cO5dkx1H4L+b
-	n42XKTH+UNdnuNvdadNA+LqRrlmIf1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740740517;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5xYsE7kl/f83kURL9obXqUw2kpX8E5zSQwx+IhLd9K8=;
-	b=rePhrVR8C5/uWE/xk4lv7svUkI5Tezrr8Ga+BBYgftK9rnq6ifWYrNYGZxprZex1FHJxzS
-	t4yoguD+sLIugnCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740740516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5xYsE7kl/f83kURL9obXqUw2kpX8E5zSQwx+IhLd9K8=;
-	b=EfvuF9KpmeySxU2JAzozbP3omJvZ9Yr1mU1L6+Spo3V4j+XQ6tEBmw2Dtq8tz5ab7TdEpp
-	xodLj3FvnsWlAnaajEw0GnC8JHZozZwZ+se8yoVOMqOwH37uIJXoR6/XlJEt7vF3mLJYvM
-	9kYGnU22VUQnJJ+NoD1h7eUzZQT2L0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740740516;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5xYsE7kl/f83kURL9obXqUw2kpX8E5zSQwx+IhLd9K8=;
-	b=iZFI9tgSVhcICIbYA2y+5pGdpZ6MMoN7OjLt4CC1CJFTORSAzWfxNcRAvGN/3ACm4QQDPr
-	IwOd91LoTBb9t4Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D66861344A;
-	Fri, 28 Feb 2025 11:01:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ORfIMaSXwWfTbQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 28 Feb 2025 11:01:56 +0000
-Message-ID: <047cdda5-d6bd-4ce0-8905-f1bc00153d6d@suse.cz>
-Date: Fri, 28 Feb 2025 12:01:56 +0100
+	 In-Reply-To:Content-Type; b=uT1l89pmhdS7YXiiUZInFv0Hc/eExBG/UWqVeGHpjbYUkN8yaQxuo5R5NHH2K5jyozKVlVv+rB2VR+Oo1OwaQn61ry7RPoCxuQRR+SkVYFcA33j0LiYz2qb7hgRtibVNLOlp4J+bCR5EaHxbdYILn/42OpnLkqt7LiuQQ9INhio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLuL/WIl; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30b83290b7bso22409541fa.1;
+        Fri, 28 Feb 2025 03:02:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740740533; x=1741345333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wLRv3eG3zdusORbtebi07X/GcqJtVtkbojLCzySdZrc=;
+        b=gLuL/WIlh9Xjb68IlrsyXelmTnW5Fo9PzAQLlgrqPFh7bnxpSpWIn3Q7ZfalsGKt+4
+         HTB7sA5msu6stK8twjZL/7rZJFPwkHgg3fyWBX+fP8xKRblQz/Fg3Z0vtvd1vo/2e+3C
+         YyHcLks/Ebsx3C+Ash85pagGdKenHQLDCvVHIg4S1OKBly6yWh2QWWp51cW0hlEbkEBf
+         LATk9InaYYgnXWonbuxOJodIOSgnzLcwq6kbbNys0STBfMRV9GbI23FQUufYdsds+Eiv
+         avNjZ6FLhhfJ+PSCOSXXq+jKyf5F/LYZE71GnT+i4Ca5uiN5B1ZX14NXbQP2zduJgJ+l
+         PGyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740740533; x=1741345333;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wLRv3eG3zdusORbtebi07X/GcqJtVtkbojLCzySdZrc=;
+        b=ZROQozNd9Opd2sYBLPrM3cRKIlzzuJQK57ve673sl3PP613T/KkhGPNhCSNZBWdxZo
+         SwUJFOp8I39ofFO4aHGPQLwYaCSTkzxR9BWH/97ienrEkEvz7xj/OF1xX2cxRpoafUnP
+         EFHefp0f1b1YcNlWE6ka8gAw7pJhSdNt0C44OPFf/HDhhXKQmNcV2ynyJ6uvB8abp6fu
+         WiB5ccYooXJk7SKZ+8pqHgkLb9jrTPx+5UGSEuhkqk8j3nFGtUtz2gjiKTu7rECtb3++
+         DbLUwlQMt/R2P6ooCcXjXsRu8pDDpuIZJ6IA/C1Pc14soSl7hB+YCth83NZXRlAGMCyE
+         uXUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZRIusoMNgY5iBTC5zKa/n/7vh97Ipv32CXnEL16LmMA7oTHRooDt2eJgtPOZ/fbXZRL+ydSExKB/z@vger.kernel.org, AJvYcCVKw4880cTn+INLfnYUifEkdK5xwViV5pBAEF1uIDPzOPJldAIXZRVBAm+J/bOvWtDMeYjcWWUQYUMNk0Dm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYpcc57dukYuyr6V8PJ1JIeJeHZcMPjLFwiYIcJRGmA07HR8T0
+	OSI4WguIh2m3lBHYU8SiGlVfVUuT85XpTBzV4nNHkbotMMniQshA
+X-Gm-Gg: ASbGnctK+rIwQrLaB9syii8Ve6vZmZwtoElNgUQoun5OcZ5vvxdWEDku/tsSsfSNysk
+	4DwSSCGAdSzklLoGx/51doL6c2XvkNkzCm3o1S06NmJSCfvbWGNMgXGmQzQYKNYCI64wJoOatN7
+	clFcU3qG11xlLPpPH9fNR7Q74L6ZrWVhgZhLtgYEpypr6+8l8ypWhZlNv7b+aAHwzfnVbc5L5lZ
+	NfjE7/MLI1fFwzDNEyhD+fXS+ZVraPdfntQse8C5qgC8sKqdSpIqdxnIAqO0GY73xwZgKJL63IA
+	/8IBfL2SNnvGuCCfQ0VedXwNM47CyDVDquR1tsEsEogw9+fFp3Na8MkwQWBF8uM1k05PYSfYUuT
+	wcwBqPi8=
+X-Google-Smtp-Source: AGHT+IFH+FPUG+e6rr/M/QAjKf9NADr9X83JGVNVPFvJDBZrfa49fctGrXZj1+DOchP+ubpHxQWhwg==
+X-Received: by 2002:a05:6512:683:b0:545:b28:2f94 with SMTP id 2adb3069b0e04-5494c329096mr1098906e87.25.1740740532940;
+        Fri, 28 Feb 2025 03:02:12 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549570fc8fbsm42417e87.80.2025.02.28.03.02.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 03:02:11 -0800 (PST)
+Message-ID: <f9fdc656-27c8-4243-9a54-3add4d4722c8@gmail.com>
+Date: Fri, 28 Feb 2025 13:02:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,170 +81,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: make the maximum number of highatomic
- pageblocks resizable
-Content-Language: en-US
-To: zhongjinji@honor.com, akpm@linux-foundation.org,
- Mel Gorman <mgorman@techsingularity.net>,
- Johannes Weiner <hannes@cmpxchg.org>, Brendan Jackman <jackmanb@google.com>
-Cc: yuzhao@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- rientjes@google.com, yipengxiang@honor.com, liulu.liu@honor.com,
- feng.han@honor.com
-References: <20250226024126.3718-1-zhongjinji@honor.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250226024126.3718-1-zhongjinji@honor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+ <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+ <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+ <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+ <CACRpkdasQZ26cEv7CCSu75MJH=Pn8a45XQvZmNt4MB=hzTSa6A@mail.gmail.com>
+ <CAMuHMdVLqS0=OXBMPAct9bkNWcRHTEN49v0uUiZdK8M-hmRKxw@mail.gmail.com>
+ <TY3PR01MB11346EC54C8672C4D28F931F686CC2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <TY3PR01MB11346EC54C8672C4D28F931F686CC2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-+Cc Mel, Johannes and Brendan, please keep on future submissions
+Hi dee Ho peeps (Biju, Geert, Linus and all)
 
-On 2/26/25 03:41, zhongjinji@honor.com wrote:
-> From: zhongjinji <zhongjinji@honor.com>
+On 28/02/2025 12:28, Biju Das wrote:
+> Hi Geert,
 > 
-> In the past, nr_reserved_highatomic was considered to be part of
-> unusable_free when there was no ALLOC_RESERVES flag. To prevent
-> unusable_free from being too large, it is reasonable to set a
-> fixed maximum highatomic value.
-> 
-> Even if the maximum number of highatomic pageblocks is set to be larger,
-> unusable_free may not increase, since Yu Zhao provided the modification
-> about nr_free_highatomic in
-> https://lore.kernel.org/all/20241028182653.3420139-1-yuzhao@google.com/T/#u
+>> -----Original Message-----
+>> From: Geert Uytterhoeven <geert@linux-m68k.org>
+>> On Fri, 28 Feb 2025 at 09:07, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Wed, Feb 26, 2025 at 12:42 PM Matti Vaittinen
+>>> <mazziesaccount@gmail.com> wrote:
+>>>> On 26/02/2025 12:18, Linus Walleij wrote:
 
-I think I raised in discussing that patch the fact that
-unreserve_highatomic_pageblock() is flawed in that it will only find a
-highatomic block to unreserve if it has some free pages as it searches via
-freelist. So if the existing reserve becomes fully used up, it's dead
-weight, unless the highatomic allocations are shortlived. It could make
-sense to remove the HIGHATOMIC marking so other, more free blocks might be
-reserved instead.
 
-I fear if this approach isn't just working around that limitation.
+> I agree, when the code is mainlined at that time set_multiple() has some draw backs and hence
+> the check is added to take care of GPIO holes.
 
-> More highatomic pageblocks are beneficial for the successful allocation
-> of high-order page, which is helpful in some devices. Therefore, use
+If I don't read it wrong, rcar GPIO supports some input enabling "en 
+masse" during the probe. It seems to me the gpio_rcar_enable_inputs() 
+does also need the valid GPIOs information - I suppose some of the GPIOs 
+may have been masked in the device-tree, and those shouldn't be enabled.
 
-Can you elaborate what is it helpful with? And what kind of values you
-expect to be using? Do you find that your existing HIGHATOMIC blocks are
-fully depleted as I speculate above? Are your highatomic allocations short
-or long lived?
+It feels counter productive to hide the valid_mask - and do some 
+device-tree parsing in the driver(s) which may need it.
 
-Maybe simply at this point nr_free_highatomic would be a better metric than
-nr_reserved_highatomic to decide if we should reserve another pageblock? The
-counter didn't exist when highatomic reserves were introduced.
+I suppose we can still hide the valid_mask in struct gpio_device as 
+suggested - but then we should probably create a getter for it in the 
+gpiolib.
 
-But maybe also some mechanism (compaction maybe?) could also be looking for
-highatomic blocks that are fully used and unreserve them?
+Or does someone see a way around needing the valid_mask in the 
+gpio_rcar_enable_inputs() ?
 
-> highatomic_reserve_ratio to adjust the maximum number of highatomic
-> pageblocks.
-> 
-> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+Have a nice weekend!
 
-Minimally this needs to be documented in e.g.
-Documentation/admin-guide/sysctl/vm.rst, it's not obvious that the value is
-divided by 1000 and not 100 for example.
-
-> ---
->  mm/page_alloc.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 579789600a3c..dbdce6a0f694 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -273,6 +273,7 @@ int min_free_kbytes = 1024;
->  int user_min_free_kbytes = -1;
->  static int watermark_boost_factor __read_mostly = 15000;
->  static int watermark_scale_factor = 10;
-> +static int highatomic_reserve_ratio = 10;
->  
->  /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
->  int movable_zone;
-> @@ -2046,7 +2047,8 @@ static void reserve_highatomic_pageblock(struct page *page, int order,
->  	 */
->  	if ((zone_managed_pages(zone) / 100) < pageblock_nr_pages)
->  		return;
-> -	max_managed = ALIGN((zone_managed_pages(zone) / 100), pageblock_nr_pages);
-> +	max_managed = ALIGN((zone_managed_pages(zone) * highatomic_reserve_ratio / 1000),
-> +		      pageblock_nr_pages);
->  	if (zone->nr_reserved_highatomic >= max_managed)
->  		return;
->  
-> @@ -6199,6 +6201,13 @@ static const struct ctl_table page_alloc_sysctl_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= percpu_pagelist_high_fraction_sysctl_handler,
->  		.extra1		= SYSCTL_ZERO,
-> +	},
-> +		.procname	= "highatomic_reserve_ratio",
-> +		.data		= &highatomic_reserve_ratio,
-> +		.maxlen		= sizeof(highatomic_reserve_ratio),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= SYSCTL_ZERO,
->  	},
->  	{
->  		.procname	= "lowmem_reserve_ratio",
+Yours,
+	-- Matti
 
 
