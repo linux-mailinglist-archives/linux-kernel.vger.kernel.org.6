@@ -1,133 +1,215 @@
-Return-Path: <linux-kernel+bounces-538872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FBBA49E17
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:56:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2427AA49E26
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2877216D712
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D73D3A9FE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB176271277;
-	Fri, 28 Feb 2025 15:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BVw8fyRw"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28327182B;
+	Fri, 28 Feb 2025 15:57:09 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB6F25DD1E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B130C2702B1;
+	Fri, 28 Feb 2025 15:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758166; cv=none; b=sykHUaB8XW12JS0EYeGqJynyPTpAunU3aq7IWj/OTGDAg/gdnQ7N8pkz+sLCbUfInMak3nHyTR4kofUFCXN+znbBKG3E18L3rEufQxCi0blLgz5K7Ig5ml3U0fKwoKcuzE88J9suG/0JmGt9NtL2sYTX+vhanEqph/Tq3dAUxQ0=
+	t=1740758228; cv=none; b=Nn8qhZX5aVH2YovsiVZqaNhbO2uuVHm1LuL9JbCun/NNvwFtMYr+7wSfSsLQDCu98U+j+AWV/zRQCoP8/ypwWi8Sl5RmE3IXe57ag54ztNNimyhuoLkBnqnVosxsVNV6yVTAijCGKGndIxsZWKzK53ayNIGHktZ7tULFd9/R060=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758166; c=relaxed/simple;
-	bh=OJHp7VZvRwWS1K/7eV214nwFzt7cYL2SY5OmYa4hj/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M92UyxGcecOwD5cY+mq/RDP3IVWyXYM4gczuwf0Q3bT4xT3FREnM6l52GNV9SmWXmCor3D2BX3SDZN5y5NragCZxM57dO7iBFZXc3Qjz31nD14QXVEwsgtvVCdrbHJ/og6o8cRgKDXdVjYPuTDkPSjbAbxsOF6VXwuq8kZ4YJgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BVw8fyRw; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3f3fa7ba7f4so1939359b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740758163; x=1741362963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jSu8j+FYHI2OUVoF0suPQbNQe842QD9Q4xMlM7FXCrw=;
-        b=BVw8fyRwu+r3c34756uI30aUJo0lj1GgcZrnhgPrWTdi5hyLjmZ1ZwHEgx5fiYj22T
-         ZbjDlUO530z/AdZOeRLTA4F4b67J/Lv1jZ5v1I1LPe6gqCPAbsLBPoNXVY+Jn6Y/Wfkw
-         PgHDIISh9Xx0KIP4Ete94ig3LLq/Zr57x/okc/4bvZSpVYMVmxIYBlD99qi/C1a0DS4q
-         7JJR8WgSw7ZAVzlr34H0NNW7GJDMI6cmAfQ4TlW5X6rfEYPiiUKTMPtTDsEB4Ewrpgvb
-         zjXzV28mJRo3jFuJQaHPDGzwmjZxivocicaEZ35aKkegxVAyViRfat2l4TzrQzOnkKHp
-         9lMA==
+	s=arc-20240116; t=1740758228; c=relaxed/simple;
+	bh=cwQm+Cj57JzUKKfj1O10gB0/JWUcjyW0UfIvHpZAH3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XbMrCDwy+ziI9MnlEInj0FFwe3+A1ykp9MJ3eIRatLiEztyc0E6CkS2FnfiGH0w3/d8NPrjY+UXSdRFZoVdqqVEggoiHU9D3bjXCHaTz7iw5gg6Aucy5l+9u9+MPOh2bPTekB3WZJxardvOl/+RPZZpASFbGVyHX2eCl2BHwbAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51eb1a6ca1bso886759e0c.1;
+        Fri, 28 Feb 2025 07:57:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740758163; x=1741362963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jSu8j+FYHI2OUVoF0suPQbNQe842QD9Q4xMlM7FXCrw=;
-        b=oMTkObuxY/hnNKRIHdwhBc/nthGrWJsqmN1lzWwJb/+swKvNT9WlfLLBQ3W3ESTQO8
-         Pv012UXuJ/um6D1498r2INr7qbBY00tpoRY5PxO4hSVcCHkewZXx3tnvYmda8sJuXrwF
-         +7F/D29WY0QE+JbQVufw7/7MWg6ySClcHFipqGhkrXtgbAhRnT/dmp5nJ5wt8UeHZxad
-         8qRfM91Rs0dx3sh155uEpl6Tr2Omn+YipaJalEOcF+9BL3yXznT6GSgOhIRXPGTA4cqj
-         cEJ2EIlyGQkg/1iDa0xlt3mgMBJNaYcpSozrI766GlZhaSbKbDBYX9bgB55j3gh6pZnR
-         xjhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqUselq+Fqd7QfdSAQubjaVCaufqxJ5bPX6J2U/tbtBOznoErg9aUcjshcBdXOtBbikvRjzWZ3HxRvNts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX4U++iZzwJwGBmmFA948YxZKxt/H2Mq/Nzdmh9jsaJxENem1O
-	egDiXWEZDYVQjcQShvYi04uhQDk3tLjv/PuzlqLPJI1cHtMKKLATrAd2d1nnur4=
-X-Gm-Gg: ASbGncs/bArOLkIdikXvzT7xyBKqtY/oQY6/NlhAhQpfPSZB+PpMbW4+44rbmQQJDau
-	DJAxqKY/u/VdrVm2u/bckiP29guNkhPtYdYjfSoW7G7VwvOa6wlvtKqDNkbKDskSIFLblu8dEzV
-	Jx765cc50LqycZdC7UItdpIH888uKFdAPupsKpwv1qwY+CkUX2rpLydbaUL8u0pwRqi53airq5Z
-	ml2yVUbxw7Ww8lKb1guvNaJleEdHgHPV6v0wj9jhqWIVNVLN8lo7etgUqqVuhtV8yy5NEm279UA
-	JzjY0+8APhgDJ8Cb+TKReRbaDQscO0WfopvuXwE3Pre7gP2xywNpSQsyK5JxIi0=
-X-Google-Smtp-Source: AGHT+IEz+QWsZh9g7sxv9lpVwgpRYlPz2JWY5g4GsIrrNkXKATdXv7zz/1J+LshZPEHdJvIMw4mGhQ==
-X-Received: by 2002:a05:6808:3a07:b0:3f3:b8c5:5008 with SMTP id 5614622812f47-3f54edc725amr5092826b6e.12.1740758163061;
-        Fri, 28 Feb 2025 07:56:03 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f5507bfa32sm680421b6e.41.2025.02.28.07.56.00
+        d=1e100.net; s=20230601; t=1740758223; x=1741363023;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2G0vU8Rq6c84B/9Y29hmpks/69aHQnjdEb/z06wUAUY=;
+        b=cpOSZRZfvWKC4iCI+h2pLRohQDseGOvzoUna+qt/Ny+Elv4eO+VMyFrTPQivCon5q6
+         xN0u1LK9lOgH2GrzruDVxouQ12Awt+kLx7mMoFpc8Z7vDAbvTaomuPmyFJKxOGkLaCtk
+         YJK88YnawzcEeFb4zuogo0QYX89ziAaWnIJx4F6JMKAGB5dqyzInC7yDPyw9MhJMcaUi
+         mTUoYrRecYEinwGxEp8Fj6VVetfEUlI8cr86iBP9S9/n9Ii0PIWHK8ptHIj/ucjP6QC6
+         A0iQsUEkZuOyTYcBcsEZQh+XI/tyD9NxfEYsg/CkJI44Y2/F6XOnUIN3vcpGQ7PiDwaC
+         QlcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBZtlcSQ9O9fkvJMjTXtsWIDSm4e/ttLAIHGeUTgE28vCdzBB4zyIB8ixWZH83nFQMtdnwoIuK7CAR5Ot75KjwGho=@vger.kernel.org, AJvYcCVSEMFlVTHkGRLcCTBaPe6mhccSLT7z1vr51xKvRLU/MeU+HuV1cYQ08a6oP1uB7jq1EBGXyPWbTL/K@vger.kernel.org, AJvYcCVg6Y3PvSECDPTd8ZaRc8miQ2xrxULoZ+eDJTgDYH6D1vP+c/wAQ8MnFI34T2AZOrr2rfGbgBQCyHPuKKvk@vger.kernel.org, AJvYcCXzpJApeVAP+dnbI/OHEUd/THtmgeRUG/ge1zEr5f42XcF7Zr/0J+aZTqCUJoYC9hRoKn2KkjxfhlZf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys4Q55WfgNJjZhtogHO2SXAegXJJVQH3fMDHZfbOPu0sq4YwdU
+	WWW0jtG2iGuNGx07ShqZkSfA/Vd1pJV0ozRwCfZBxI52tm8+09QuDz53XS9c
+X-Gm-Gg: ASbGncs5MGgqMI1pTmnqVPff372KNolf/TsCZ2AU1oAiwVDmG+R5NhogUUFfBftyXCF
+	OHR5TtOMc+xfZqPZfC1s+XkkJFj8BhxEvONGyoGCrLtr7DjNXq838CqZgkTsRAUlAYEbjpAnt7D
+	h0F0TdBJepZS8m0kJkGCdF9MmLCjTAvkT369Cu03lgM6NdS1YVQ8nN7Pl9rXDf0cphXOCMXJEQi
+	0LEBK3xa0/lgzFFd0hsQyUDPl5/+QaZtytQcGXoyQvrT6WQcE2kkhsqY9xsiHuZGpn71+M7OeBu
+	k27y7jA968lsqvCrjPVUiPdCreM04je8CB+SH6f8ccQcKiXIr68p1TkAbFg91xI+
+X-Google-Smtp-Source: AGHT+IGyjOu06I0NN9WsKcfVjrA790CQIRxjiKjRg8eB0f79nAy2nLAMdRnfbegysKoNvub2Uy7YiA==
+X-Received: by 2002:a05:6122:3a11:b0:516:230b:eec with SMTP id 71dfb90a1353d-5235b76fb2dmr2696702e0c.5.1740758223505;
+        Fri, 28 Feb 2025 07:57:03 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5234bf39480sm622589e0c.21.2025.02.28.07.57.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 07:56:01 -0800 (PST)
-Message-ID: <ddb448f0-1cfc-497b-ac1f-9f3d9e9fcc3a@baylibre.com>
-Date: Fri, 28 Feb 2025 09:55:59 -0600
+        Fri, 28 Feb 2025 07:57:02 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86714f41f5bso981164241.3;
+        Fri, 28 Feb 2025 07:57:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU71S5j1K4fpcRybSSrdaHwk0MpdRo340ciloyH3yfqHRdi2sx2cE9mMP3xrii3Re47DbL9yNs9VfW4dAjZ@vger.kernel.org, AJvYcCVjxRYqQOccwXuIhe35pbo/rVVI4PqJA4WeBNEyAO2u5udyDi+Ad5NEiufL16z8VnzKAZ5r1rjofqX6@vger.kernel.org, AJvYcCWcP/De/x1rrUaPMveffXEyxheCM6kBlzc0joZHBAwJgTl8oF/pJRD1JBHXLUW6Gr+sgtfkRqkiPM4yiQP9MIKXN+A=@vger.kernel.org, AJvYcCXhpd0ssIXGqbYTV8O1W4Cq9HCapMvUulnDf4AcxkCRHm1G2KB9OQH1dRHjshbIhTRXPKP4fwezu3RX@vger.kernel.org
+X-Received: by 2002:a05:6102:1626:b0:4bb:d7f0:6e7d with SMTP id
+ ada2fe7eead31-4c044fbc94dmr2848825137.25.1740758222518; Fri, 28 Feb 2025
+ 07:57:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 12/17] iio: adc: ad7768-1: Add GPIO controller
- support
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jonath4nns@gmail.com, marcelo.schmitt1@gmail.com
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
- <62cb9786b02adde118db9349617cb796585ceb02.1739368121.git.Jonathan.Santos@analog.com>
- <CACRpkdaSY7WH191makzPcZqLd-vBsC_f6yagWzBa65MrC+pjKA@mail.gmail.com>
- <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
- <CACRpkdbw3BkpzPQp2PdV8M61V2XXaLcmuOpGTsxSoiQTH7wZXw@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CACRpkdbw3BkpzPQp2PdV8M61V2XXaLcmuOpGTsxSoiQTH7wZXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
+ <20250220150110.738619-4-fabrizio.castro.jz@renesas.com> <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
+ <TYCPR01MB12093A1002C4F7D7B989D10C4C2CD2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+ <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
+ <TYCPR01MB12093D1484AD0E755B76FAE35C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+ <CAMuHMdWUdOEjECPAJwKf7UwVs4OsUAEJ49xK+Xdn_bKXhRrt2Q@mail.gmail.com> <TYCPR01MB12093BE16360C82F9CB853AF4C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB12093BE16360C82F9CB853AF4C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Feb 2025 16:56:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXkgK-EdGhyrE6PRzskRXkJ8u+xQ=c5x1-=couedtcmqw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jqh5PiS9QO2zKO20WUKxRlP2hyuDNVJ1z4RYhHQm3YEMTC5gqqz5dI3neA
+Message-ID: <CAMuHMdXkgK-EdGhyrE6PRzskRXkJ8u+xQ=c5x1-=couedtcmqw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/28/25 2:52 AM, Linus Walleij wrote:
-> On Thu, Feb 20, 2025 at 11:27 PM David Lechner <dlechner@baylibre.com> wrote:
->> On 2/19/25 2:34 PM, Linus Walleij wrote:
-> 
->>> Is it not possible to use the gpio regmap library in this driver
->>> like we do in drivers/iio/addac/stx104.c?
->>>
->>> It cuts down the code size of simple GPIO chips on random
->>> chips quite a lot.
->>
->> I think the answer is "no" since we need to hold a conditional lock
->> while accessing registers. Namely: iio_device_claim_direct_mode()/
->> iio_device_release_direct_mode().
-> 
-> Sorry for potentially dumb question, but if this is required to access
-> the registers, why is it not done in the regmap abstraction itself?
-> It's kind of that stuff regmap is supposed to hide.
-> 
-> Yours,
-> Linus Walleij
+Hi Fabrizio,
 
-In some cases, we need to do multiple regmap operations while
-holding the lock. Moving it to the regmap abstraction would only
-allow the lock to be held for each individual regmap_x() call.
-That would leave us vulnerable to race conditions.
+On Fri, 28 Feb 2025 at 16:38, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > On Fri, 28 Feb 2025 at 15:55, Fabrizio Castro
+> > <fabrizio.castro.jz@renesas.com> wrote:
+> > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > On Thu, 27 Feb 2025 at 19:16, Fabrizio Castro
+> > > > <fabrizio.castro.jz@renesas.com> wrote:
+> > > > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > > > Sent: 24 February 2025 12:44
+> > > > > > Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family of SoCs
+> > > > > >
+> > > > > > On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
+> > > > > > <fabrizio.castro.jz@renesas.com> wrote:
+> > > > > > > Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> > > > > > > The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> > > > > > > Renesas RZ/G2L family of SoCs, but there are some differences:
+> > > > > > > * It only uses one register area
+> > > > > > > * It only uses one clock
+> > > > > > > * It only uses one reset
+> > > > > > > * Instead of using MID/IRD it uses REQ NO/ACK NO
+> > > > > > > * It is connected to the Interrupt Control Unit (ICU)
+> > > > > > >
+> > > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > > > > >
+> > > > > > > v1->v2:
+> > > > > > > * Removed RZ/V2H DMAC example.
+> > > > > > > * Improved the readability of the `if` statement.
+> > > > > >
+> > > > > > Thanks for the update!
+> > > > > >
+> > > > > > > --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > > > > > > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> > > > > > > @@ -61,14 +66,22 @@ properties:
+> > > > > > >    '#dma-cells':
+> > > > > > >      const: 1
+> > > > > > >      description:
+> > > > > > > -      The cell specifies the encoded MID/RID values of the DMAC port
+> > > > > > > -      connected to the DMA client and the slave channel configuration
+> > > > > > > -      parameters.
+> > > > > > > +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S SoCs, the cell
+> > > > > > > +      specifies the encoded MID/RID values of the DMAC port connected to the
+> > > > > > > +      DMA client and the slave channel configuration parameters.
+> > > > > > >        bits[0:9] - Specifies MID/RID value
+> > > > > > >        bit[10] - Specifies DMA request high enable (HIEN)
+> > > > > > >        bit[11] - Specifies DMA request detection type (LVL)
+> > > > > > >        bits[12:14] - Specifies DMAACK output mode (AM)
+> > > > > > >        bit[15] - Specifies Transfer Mode (TM)
+> > > > > > > +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK NO, and the
+> > > > > > > +      slave channel configuration parameters.
+> > > > > > > +      bits[0:9] - Specifies the REQ NO
+> > > > > >
+> > > > > > So REQ_NO is the new name for MID/RID.
+> > > >
+> > > > These are documented in Table 4.7-22 ("DMA Transfer Request Detection
+> > > > Operation Setting Table").
+> > >
+> > > REQ_NO is documented in both Table 4.7-22 and in Table 4.6-23 (column `DMAC No.`).
+> >
+> > Indeed. But not for all of them. E.g. RSPI is missing, IIC is present.
+>
+> I can see the RSPI related `REQ No.` in the version of the manual I am using,
+> although one must be very careful to look at the right entry in the table,
+> as the table is quite big, and the entries are ordered by `SPI No.`.
+>
+> For some devices, the SPI numbers are not contiguous therefore the device specific
+> bits may end up scattered.
+> For example, for `Name` `RSPI_CH0_sp_rxintpls_n` (mind that the `pls_n` substring
+> is on a new line in the table) you can see from Table 4.6-23 that
+> its `DMAC No.` is 140 (as you said, in decimal...).
 
-regmap_multi_reg_write() couldn't be used for this currently
-either because regmap_lock does not allow for a conditional
-lock.
+Thanks, I had missed it because the RSPI interrupts are spread across
+two places...
 
+> > And the numbers are shown in decimal instead of in hex ;-)
+> >
+> > > > > It's certainly similar. I would say that REQ_NO + ACK_NO is the new MID_RID.
+> > > > >
+> > > > > > > +      bits[10:16] - Specifies the ACK NO
+> > > > > >
+> > > > > > This is a new field.
+> > > > > > However, it is not clear to me which value to specify here, and if this
+> > > > > > is a hardware property at all, and thus needs to be specified in DT?
+> > > > >
+> > > > > It is a HW property. The value to set can be found in Table 4.6-27 from
+> > > > > the HW User Manual, column "Ack No".
+> > > >
+> > > > Thanks, but that table only shows values for SPDIF, SCU, SSIU and PFC
+> > > > (for external DMA requests).  The most familiar DMA clients listed
+> > > > in Table 4.7-22 are missing.  E.g. RSPI0 uses REQ_NO 0x8C/0x8D, but
+> > > > which values does it need for ACK_NO?
+> > >
+> > > Only a handful of devices need it. For every other device (and use case) only the
+> > > default value is needed.
+> >
+> > The default value is RZV2H_ICU_DMAC_ACK_NO_DEFAULT = 0x7f?
+
+If you take this out, how to distinguish between ACK_NO = 0 and
+the default?
+
+> > Which I believe already causes you to run into the out-of-range DMACKSELk
+> > register offset in rzv2h_icu_register_dma_req_ack()?
+> >
+> > > But I'll take this out for now, until we get to support a device that actually
+> > > needs ACK NO.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
