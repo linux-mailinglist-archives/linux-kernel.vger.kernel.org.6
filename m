@@ -1,157 +1,97 @@
-Return-Path: <linux-kernel+bounces-538884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD21A49E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:05:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEB1A49E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF841898BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C8E3A9488
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6845E272934;
-	Fri, 28 Feb 2025 16:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB428192D7E;
+	Fri, 28 Feb 2025 16:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="QvwzTtHG"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Wrl36nR7"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA5018CBFE;
-	Fri, 28 Feb 2025 16:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3FC1EF36E;
+	Fri, 28 Feb 2025 16:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758680; cv=none; b=QWIvvSWHehW6AWUqMqs2OShXfMdZsulYjlzXwHtYLsbUrIT+NEVeuuGVuMygYFGB0h508HjbxrWpYB+UG8d+MlBd68nxeqGlnRYWhsB4n5n0Df7gId3ph2UNiMml75/o6zoJ1Ki3SSQNfwi4G4+CcCC0Ku9Xt/kexZa1r3ORNAg=
+	t=1740758776; cv=none; b=iZklwLomNYdvt/lWLDlXY983n8zfrIgr0Pb7mN5GoQt+CwzOV/YcyG7eCwsWeWXFXzpFVycBQr8OD7bMidNZD2ESDdnSbZfcAdsE7bYdL276SPlPxsb2sOwhFWMD93rt2Wkin5le20SedAXiEJ79lpLBaiFdSd1f7scmILw55XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758680; c=relaxed/simple;
-	bh=woTai9LiAziQ+4jY6qec3hdV9cbf93oJqaAR5gjFPqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KVObQFeL2ZETxxxUJ9kTtBl+/3moKtr9Ura1c1VIPohqOzXLV47UQOqSO0Zr8dO8B2b0mil5o3LT7KH5hmZnKRtvSjWc23nKX7lXMXZXT9dXwl09hMOFJWMXbgLyjlMYaZwVmgze2Hn0PUrw0O/jHX1IirAutJFi3a/ey5zXyS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=QvwzTtHG; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [192.168.8.249] (unknown [107.127.24.18])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z4ChL495wz4Rv0;
-	Fri, 28 Feb 2025 11:04:34 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1740758677; bh=woTai9LiAziQ+4jY6qec3hdV9cbf93oJqaAR5gjFPqw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=QvwzTtHGOEVAexRJ1Mrk/8nLcObzquf286sNDx9DDjw7oo35hNGCIcPUJy2r+GJbd
-	 uQfqDaN/ycfU1SJRk6VsFnnfRsoHOT6cZfMc3bSrMpKqC5lpyoi37pIwBSG3lAGprU
-	 t116CDPstv1XE3F3SQQjGtcAaX0T6hQlenoglSnA=
-Message-ID: <1f214d95-61c0-4be9-8b19-5aef76631c0e@panix.com>
-Date: Fri, 28 Feb 2025 08:04:32 -0800
+	s=arc-20240116; t=1740758776; c=relaxed/simple;
+	bh=cCAI4rWuDYKnaxg2mTxzS8Vaq+Ng6/IvAK31njQRb5o=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JDOcbtU8t0U1MPjfpI87oAKSZWodvFTLnzeMRFd3Xai9eSbqZ2j0bkYW7tWY6/oPghYIQZsqPthcDJw+Ld6wR2dlGJs8i/z9EpPP5K6kw2lLEcv4lKWZT46/IkUX5dtDGd+bIZ1g4Y1mWc18MCk+tKkrZipFSiPwQXGuTgtAmTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Wrl36nR7; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1740758766; x=1741017966;
+	bh=cCAI4rWuDYKnaxg2mTxzS8Vaq+Ng6/IvAK31njQRb5o=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=Wrl36nR7LUTOAThUn9KGPZ8MnvhKSg+epEuSZDJt8/nsWjm/Pm42VAc//yThb8eQq
+	 7h5RQG2r0DkQ4BUu5TfkqKE9LumRgRL1ov99prgit08pwRnfTorEvWVfbff1+MOAli
+	 MIXcfOgPkQNya/dWjOERy449ztQK22ANq09uuVN0dMx64HscDML50fPslJ8RUc8qLa
+	 coepNn20jEZHiPztbaqbj3ZrQidR+kG9Kqh0lm2lL9THe+E8gtbWRcMdAOOpBgXSXa
+	 fIbL2C2rRU3usuXG9XSXd69PbhmLSLM8WR4mc5nc02eZOlAA8+X49Ehy0RLfkoYiau
+	 Z649e6WxWNjXA==
+Date: Fri, 28 Feb 2025 16:06:01 +0000
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: adding UniqueRefCounted and UniqueRef types
+Message-ID: <kQ8hbiYXcV2MseWnElEexwgQswt23842ggoLF2xsd1hDd-4K106zO_gGho5K6KI147luazt2rZNOY3NOJP4JOw==@protonmail.internalid>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 8e4ea72dbc34624db418fc3d0543cb5df1a24145
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Kenneth Crudup <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
- <b6eff06e-1a8c-48c3-b536-39b567015d0c@panix.com>
- <5c131927-87c1-4e21-90f8-8e3a34cd6dbf@panix.com>
- <20250228104925.GO3713119@black.fi.intel.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20250228104925.GO3713119@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+>=20
+> Hmm... Something went wrong here -- this patch looks broken, e.g. the
+> SoB is at the end, the title does not say v2, these replies seem to be
+> part of the patch, etc.
+>
+Hi,
 
-I'm still several hundred miles from the consistently-reproducible 
-hardware for another couple of days yet, so I've been logging the other 
-failures as they happen.
+should I post it again with a fix, then?
 
-Don't worry about the printk()s WRT to the code; a couple of weeks ago 
-I'd seen an NPE on resume in __tb_path_deactivate_hop so threw in a 
-bunch of tb_port_info(port, "%s(): %d\n", __func__, __LINE__); so I 
-could get an idea of where the crash was.
+> (Also, by the way, in case it helps, the message got marked as spam in
+> my side for some reason).
+>=20
 
-I'll have more info Sunday with the original kernel, one with the 
-revert, and with some of Lukas' proposed(? not sure if they made it in 
-there) changes from his previous E-mail.
+Cannot comment on that. The mysteries of a spam filter :)
 
--K
+On 250228 0754, Boqun Feng wrote:
+>=20
+> One meta comment: could you add examples for the usage of UniqueRef?
+> Ideally, we should have example code for all the new APIs, so that we at
+> least have some test payload on them (doctest will be generated as kunit
+> test).
 
-On 2/28/25 02:49, Mika Westerberg wrote:
-> Hi,
-> 
-> On Thu, Feb 27, 2025 at 09:46:07AM -0800, Kenneth Crudup wrote:
->> So I think, the failure mode may be related in some part to DP/Tunneling,
->> too- I finally got another lockup (this time, after a hibernate, which I
->> guess is some of the same facility) but what was different about this time
->> where I couldn't reproduce the lockups (and what happens when I use my
->> CalDigit dock) was I had an external USB-C monitor connected when I resumed,
->> and when I'm home (where I sometimes forget to remove the NVMe USB4 adaptor)
->> I always have my monitor connected to the dock.
-> 
-> It would be good to stick with a "proven" use-case so that the steps are
-> always the same. This may involve several issues in various parts of the
-> kernel and we need to track them one by one. If you change the steps in the
-> middle then we may end up finding completely different issues and it is not
-> helping the debugging effort.
-> 
-> The steps at the moment would be simply this:
-> 
-> 1. Boot the system up, nothing connected.
-> 2. Connect Thunderbolt dock and make sure UI authorizes it.
-> 3. Connect Thunderbolt NVMe to the Thunderbolt dock and make sure UI authorizes it.
-> 4. Verify that the devices behind PCIe tunnels are visible and functional (lspci for example)
-> 5. Suspend the laptop by closing lid.
-> 6. Unplug the dock (and the NVMe).
-> 7. Resume the laptop by opening the lid.
-> 
-> Expectation: The system resumes just fine, finds the devices gone and stays functional.
-> Actual result: The system does not resume properly, seems to crash and burn the screen
-> 	       is black.
-> 
-> Please correct me if I got something wrong. This is essentially that you go
-> from work to home, unplugging the dock and then resuming it at home.
-> 
-> The other thing is that in the pstore I see these:
-> 
-> thunderbolt 0000:00:0d.2: 0:5: __tb_path_deactivate_hop(): 401
-> 
-> but there is no such log in the mainline. If you have done some local
-> changes I suggest to drop all them to make sure we are looking at the same
-> source code.
-> 
->> See attached dump log. I'm using the (somewhat still experimental) Xe
->> display driver, but I've seen this same lockup happen with i915.
-> 
-> Please also keep using tha same graphics driver.
-> 
->> In any case, I've now reverted 9d573d19, and when I get back to my CalDigit
->> I can try instrumenting the code paths in the commit and see exactly where
->> we're locking up.
-> 
-> No need to add any changes. Just try with the revert and see if that at
-> least makes the system resume properly. If it does then there could be
-> other issues but then you can take full dmesg and send to us instead of
-> those pstore snippets.
-> 
+For now I can point you to the implementation for block::mq::Request which
+Andreas did on top of this. So there will shortly at least one actual user
+of the API (which uses all the features, as I believe).
 
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
+https://github.com/metaspace/linux/commit/797b90ae0f83b45495364d4c31651bca0=
+6471ef0
+
+But if you still need a separate test, I can do one during the next couple
+of days.
+
+Best,
+
+Oliver
 
 
