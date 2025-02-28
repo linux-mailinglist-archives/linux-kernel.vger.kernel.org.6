@@ -1,221 +1,180 @@
-Return-Path: <linux-kernel+bounces-539578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B693A4A5FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:36:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A23A4A601
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D871785D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C7817864A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 22:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DEE1DED48;
-	Fri, 28 Feb 2025 22:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2561DED46;
+	Fri, 28 Feb 2025 22:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfEWj0Dl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P9EXVml5"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3502623F39A;
-	Fri, 28 Feb 2025 22:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5067E1DE3C2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740782178; cv=none; b=TxlEmt4cywHr6w6qUuoyeqRx0tmyofU3gR8+9ikiiTslSwm3HMwsert44PEyj5wabYp9Iz195ldya4r5bkVksQ3maBzPmzMK3yDLEUehZtjjW/Y2B3A058bTwu8eRk9S71dL+ABIdcwh8pgubkRCscoz3DLau5lz1cpDBf+nt7s=
+	t=1740782198; cv=none; b=Y4e7ynzAwZTeGQuKoHMWwzYDoD82G2b7gX5T0NNZGOaONQrr2iCbJxXt1eIUUvfuFczIEsBJzTnZbdNlZLQV01HWUn6ysVqXMeTh7oLTxB/SbqMvbQFVWBGcqMLhmRSN/dyqfknoDk0AQZx9qIul5iUwRAjuTBZHwYsdVl2wsFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740782178; c=relaxed/simple;
-	bh=trd+8GTKhRLhBPavf4IOlzQe3opgYKvvSUglWL26lW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQsORJTkeQdgae7mbLVV+byAWviNAnc0zp4fEWlHQSYuUmvOi4/tR2lj5ZKqN6khssAxx+2L1V8A/FYM2VrjHyyd2WF0hYZSZkU6St5FDXoTp98/CEsUuiCQFthkTFgqqM3Ulj5s+XdjY0k80Revoq1SiW2QjEbOwKUre/ALGGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfEWj0Dl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B44BC4CED6;
-	Fri, 28 Feb 2025 22:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740782177;
-	bh=trd+8GTKhRLhBPavf4IOlzQe3opgYKvvSUglWL26lW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfEWj0DlqoNjTgGPuPjKK/81b24RfFVVWsbFLyY/EaJQ/l/MuSZfNJRmCA/wgyCGa
-	 Vd00wkjF2fljiMAhtMtaHRXB75v4ca/E7r5wD1xGB8aVtEtZ0my1DX0A/cqFoMZGDm
-	 ZKsX1buNTLCKN0J6PFzHBQf23K+f0UdXglylgebUif2AZkbKnulsVpj7a+GihkmV5c
-	 mQWTRItKUd1QlkGNGeeXiDLSSudUp09NuPBZD5MXf3mucLZGsdanRkmUEgeUn7rA6c
-	 7+jMwri/+XT6+LepZrrZN7lxFzmyenJHCBZcMJq6D233Q+TXiBddbbyEsTn70jhk5U
-	 fbXJVqR/5+9XA==
-Date: Fri, 28 Feb 2025 16:36:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: usb: Introduce qcom,snps-dwc3
-Message-ID: <20250228223614.GA3792644-robh@kernel.org>
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-1-4415e7111e49@oss.qualcomm.com>
+	s=arc-20240116; t=1740782198; c=relaxed/simple;
+	bh=dj9aUqKq7K6s4IS0PgCRGxyEXLKogXQQAAAwNjRJNiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foc31b1Y+AwgHgogFg6l9yL4yZ84qivok8mqUpPqymk2DuSJb9mQTxNqyn93xe/xqBLaAj/9IY3YCwVLQr4UZAzh1dr54S/83ehip+kIR+bYDzoFZGqMM3iNBII4Bxtvyt2sPZopQVRWLbPofojRh8d7tAHYNwjB+tW4+7wJXN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P9EXVml5; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2a88c7fabdeso1634189fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:36:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740782195; x=1741386995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LxgtYWhq4VVZT74cQGrqn2Xp9MqE7TZL5iblYOskVVA=;
+        b=P9EXVml5rY8bLRRb/M8X7ARx055Ghot55OhMINyh4qlZscyfQhYLJyZxDxv4eW6eu2
+         q0MykSLQ/7Rey1gcHCPGWIXqGQVhjc8pl0ZEY+ORWGAdWsIPCFFl4JJWvUBt4d8esvMH
+         KfGNe4zrFa3YMb1icOyyVsTBhhMGANQ2JbVJSTy7D9q7bPGGkSQDW82D7DaWF7fqf1bI
+         I5OqEgV4yHzx2FPMYU/uUPP+4De9DnZv1kY573N2AZ+t0uZdiF5me6lSKOexsgFntIOd
+         4ogCxsJm8fGeJe5oi4vUy4u4l9JPJkHpaLhBEU0FAYja51dylDhd2R7VJHJ1/KuSJTLz
+         ISDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740782195; x=1741386995;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LxgtYWhq4VVZT74cQGrqn2Xp9MqE7TZL5iblYOskVVA=;
+        b=KMz1nlNPTB1/YZi9WaK8wcd15V7fjCj+PsaZKbBxjZ0V4IAAVl578tM6+r3XkD9HPe
+         GOomSztFow2sE5vtHFuAnPoFWMKW5FcEWCvgDGy+fqLb5rO1b1d6NvGAKRNdScaYQLCF
+         d0Un8nGFc2v2KlVj4Sf0XvS7CMFdEzim9viMjpxFfIE4fbApJXlfk2t3d8GziH77Zdwl
+         PF9eu436mxntFnKj+2Tlp8UQa/E620iLPRI9JZQO3qEqkXQuRJ0aJL5OKM2BHZTXBTpn
+         /vrxkieFdITbNyCzt5LeplPsW4vRzA869GD5B5WEtIt8/6dAwAQ1COUI4DzcFXg8bWHL
+         taPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVobyjLFRLAI5xGx/SPgE+pLWca0dkX9rnEm2KDctTYbV2t+8+yxWZ/M2rYcC+vDX1J23kJUV9KtGBm+Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCT6q9ky0nNLfadLq1D4ufi/tlDrRJmTHk1I7TWdAKQaRJNe+f
+	vZgu9sXqQ/LVWKWUBBVA7LVb0e1ci3RKpVXZsq47xpe527VuPr/IMJvpeFqxiKw=
+X-Gm-Gg: ASbGncshLy5nykWcWawzH3yXkPU98i9Vw6GH+WCklnGi2GuIPSFDBSYpCC2OZ5SYYgc
+	LIEsdTrh6VTHv1B06OvoR6T579Bi33v/mCtj5QwN21or5h5IIULNlAkkC/at4A5L1g9A6NQoHGO
+	aK23E0azkgLQbKAPGKdOHb1aTTYbg1D2VYYNFw86CV918KMdNuahsqM3eGZ9svcxD3shU1YQ/7V
+	fD+izGK+AwgLPaHO4bHgEhtMv7NoNn4MxIdHQpmkFdzHPTtBWOKyHcrGUtfv42m3FQa20NQlNT1
+	lqlvsmC7FaHxF3tY8h/LKTzt2UMMgkZLrJl4BrwTfAIqZ3QYkn2bxNdrgF/ickC7zXbZiXm/X1j
+	PLs6xwA==
+X-Google-Smtp-Source: AGHT+IHqvEXueQVCTasX8QfXzE6WK79uLmJfT3y2kkxzOgtoyjC6KYNPZrv39VbgXM+hrCQRR8Y13A==
+X-Received: by 2002:a05:6870:a686:b0:2b8:2a9d:5663 with SMTP id 586e51a60fabf-2c1783b22cbmr3269639fac.11.1740782195287;
+        Fri, 28 Feb 2025 14:36:35 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c15c1aa1f2sm902532fac.27.2025.02.28.14.36.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 14:36:33 -0800 (PST)
+Message-ID: <09afc3cc-a307-4662-bd70-0cf83f8f38e0@baylibre.com>
+Date: Fri, 28 Feb 2025 16:36:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-dwc3-refactor-v4-1-4415e7111e49@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] Add Linux Motion Control subsystem
+To: David Jander <david@protonic.nl>, linux-kernel@vger.kernel.org
+Cc: linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
+References: <20250227162823.3585810-1-david@protonic.nl>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250227162823.3585810-1-david@protonic.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 04:17:48PM -0800, Bjorn Andersson wrote:
-> The Qualcomm USB glue is not separate of the Synopsys DWC3 core and
-> several of the snps,dwc3 properties (such as clocks and reset) conflicts
-> in expectation with the Qualcomm integration.
+On 2/27/25 10:28 AM, David Jander wrote:
+> Request for comments on: adding the Linux Motion Control subsystem to the
+> kernel.
 > 
-> Using the newly split out Synopsys DWC3 core properties, describe the
-> Qualcomm USB block in a single block. The new binding is a copy of
-> qcom,dwc3 with the needed modifications.
-> 
-> It would have been convenient to retain the two structures with the same
-> compatibles, but as there exist no way to select a binding based on the
-> absence of a subnode/patternProperty, a new generic compatible is
-> introduced to describe this binding.
-> 
-> To avoid redefining all the platform-specific compatibles, "select" is
-> used to tell the DeviceTree validator which binding to use solely on the
-> generic compatible. (Otherwise if the specific compatible matches during
-> validation, the generic one must match as well)
-> 
-> Mark qcom,dwc3 deprecated, to favor expressing future platforms using
-> the new combined binding.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/usb/qcom,dwc3.yaml         |  13 +-
->  .../devicetree/bindings/usb/qcom,snps-dwc3.yaml    | 619 +++++++++++++++++++++
->  2 files changed, 631 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> index a2b3cf625e5b..6d818e6dddbc 100644
-> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> @@ -4,11 +4,22 @@
->  $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Qualcomm SuperSpeed DWC3 USB SoC controller
-> +title: Legacy Qualcomm SuperSpeed DWC3 USB SoC controller
->  
->  maintainers:
->    - Wesley Cheng <quic_wcheng@quicinc.com>
->  
-> +# Use the combined qcom,snps-dwc3 instead
-> +deprecated: true
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: qcom,dwc3
-> +  required:
-> +    - compatible
-> +
->  properties:
->    compatible:
->      items:
-> diff --git a/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
-> new file mode 100644
-> index 000000000000..37af52e01803
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
-> @@ -0,0 +1,619 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SuperSpeed DWC3 USB SoC controller
-> +
-> +maintainers:
-> +  - Wesley Cheng <quic_wcheng@quicinc.com>
-> +
-> +description:
-> +  Describes the Qualcomm USB block, based on Synopsys DWC3.
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: qcom,snps-dwc3
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - qcom,ipq4019-dwc3
-> +          - qcom,ipq5018-dwc3
-> +          - qcom,ipq5332-dwc3
-> +          - qcom,ipq5424-dwc3
-> +          - qcom,ipq6018-dwc3
-> +          - qcom,ipq8064-dwc3
-> +          - qcom,ipq8074-dwc3
-> +          - qcom,ipq9574-dwc3
-> +          - qcom,msm8953-dwc3
-> +          - qcom,msm8994-dwc3
-> +          - qcom,msm8996-dwc3
-> +          - qcom,msm8998-dwc3
-> +          - qcom,qcm2290-dwc3
-> +          - qcom,qcs404-dwc3
-> +          - qcom,qcs615-dwc3
-> +          - qcom,qcs8300-dwc3
-> +          - qcom,qdu1000-dwc3
-> +          - qcom,sa8775p-dwc3
-> +          - qcom,sar2130p-dwc3
-> +          - qcom,sc7180-dwc3
-> +          - qcom,sc7280-dwc3
-> +          - qcom,sc8180x-dwc3
-> +          - qcom,sc8180x-dwc3-mp
-> +          - qcom,sc8280xp-dwc3
-> +          - qcom,sc8280xp-dwc3-mp
-> +          - qcom,sdm660-dwc3
-> +          - qcom,sdm670-dwc3
-> +          - qcom,sdm845-dwc3
-> +          - qcom,sdx55-dwc3
-> +          - qcom,sdx65-dwc3
-> +          - qcom,sdx75-dwc3
-> +          - qcom,sm4250-dwc3
-> +          - qcom,sm6115-dwc3
-> +          - qcom,sm6125-dwc3
-> +          - qcom,sm6350-dwc3
-> +          - qcom,sm6375-dwc3
-> +          - qcom,sm8150-dwc3
-> +          - qcom,sm8250-dwc3
-> +          - qcom,sm8350-dwc3
-> +          - qcom,sm8450-dwc3
-> +          - qcom,sm8550-dwc3
-> +          - qcom,sm8650-dwc3
-> +          - qcom,x1e80100-dwc3
-> +      - const: qcom,snps-dwc3
-> +
-> +  reg:
-> +    description: Offset and length of register set for QSCRATCH wrapper
+> The Linux Motion Control subsystem (LMC) is a new kernel subsystem and
+> associated device drivers for hardware devices that control mechanical
+> motion. Most often these are different types of motors, but can also be
+> linear actuators for example.
 
-I think you want to drop this. Or do you need 2 regions? The wrapper 
-regs and the DWC3 regs? Probably worth describing separately even if 
-they are adjacent currently.
+This is something that I played around with when I first got into Linux
+kernel hacking as a hobbyist. It's something I've always wanted to see get
+upstreamed, so feel free to cc me on any future revisions of this series.
+I'm very interested. :-)
 
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    description: specifies a phandle to PM domain provider node
+We made drivers for basic DC motors driven by an H-bridge both with and without
+position feedback and also a driver for hobby-type servo motors. For those
+interested, there is code [1] and docs [2]. One thing we would do different
+if doing it over again is use a character device instead of sysfs attributes
+as the interface for starting/stopping/adjusting actuation.
 
-Drop the description.
+[1]: https://github.com/ev3dev/lego-linux-drivers/tree/ev3dev-stretch/motors
+[2]: http://docs.ev3dev.org/projects/lego-linux-drivers/en/ev3dev-stretch/motors.html
 
-Otherwise, looks good.
+> 
+> This subsystem defines a new UAPI for motion devices on the user-space
+> side, as well as common functionality for hardware device drivers on the
+> driver side.
+> 
+> The UAPI is based on a ioctl() interface on character devices representing
+> a specific hardware device. The hardware device can control one or more
+> actuators (motors), which are identified as channels in the UAPI. It is
+> possible to execute motions on individual channels, or combined
+> affecting several selected (or all) channels simutaneously. Examples of
+> coordinated movements of several channels could be the individual axes
+> of a 3D printer or CNC machine for example.
+> 
+> On the hardware side, this initial set of patches also includes two drivers
+> for two different kinds of motors. One is a stepper motor controller
+> device that containes a ramp generator capable of autonomously executing
+> controlled motions following a multi-point acceleration profile
+> (TMC5240), as well as a simple DC motor controller driver that can control
+> DC motors via a half-bridge or full H-bridge driver such as the TI DRV8873
+> for example.
+> 
+> Towards the IIO subsystem, LMC supports generating iio trigger events that
+> fire at certain motion events, such as passing a pre-programmed position or
+> when reaching the motion target position, depending on the capabilities of
+> the hardware device. This enables for example triggering an ADC measurement
+> at a certain position during a movement.
 
-Rob
+I would expect to be using the counter subsystem for position, at least in
+cases where there is something like a quadrature encoder involved.
+
+> 
+> In the future, making use of PREEMPT_RT, even dumb STEP/DIR type stepper
+> motor controller drivers may be implemented entirely in the kernel,
+> depending on some characteristics of the hardware (latency jittter,
+> interrupt latency and CPU speed mainly).
+> 
+> The existence of this subsystem may affect other projects, such as
+> Linux-CNC and Klipper for example.
+> 
+> This code is already in use controlling machines with up to 16 stepper
+> motors and up to 4 DC motors simutaneously. Up to this point the UAPI
+> has shown to be adequate and sufficient. Careful thought has gone into
+> the UAPI design to make sure it coveres as many use-cases as possible,
+> while being versioned and extensible in the future, with backwards
+> compatibility in mind.
+> 
+> David Jander (7):
+>   drivers: Add motion control subsystem
+
+Would it be too broad to call this an actuation subsystem instead where motion
+is just one kind of actuation?
+
+>   motion: Add ADI/Trinamic TMC5240 stepper motor controller
+>   motion: Add simple-pwm.c PWM based DC motor controller driver
+>   Documentation: Add Linux Motion Control documentation
+>   dt-bindings: motion: Add common motion device properties
+>   dt-bindings: motion: Add adi,tmc5240 bindings
+>   dt-bindings: motion: Add motion-simple-pwm bindings
+> 
 
