@@ -1,153 +1,193 @@
-Return-Path: <linux-kernel+bounces-539442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D657DA4A44A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 837DFA4A44D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 21:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D3A188F9A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8766B189349B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1313A1AF0C0;
-	Fri, 28 Feb 2025 20:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4171A5B80;
+	Fri, 28 Feb 2025 20:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6qJbMN0"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qqg3pjYy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF61223F396;
-	Fri, 28 Feb 2025 20:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B579B23F36A;
+	Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740774650; cv=none; b=UlIfwvPy4OOJrJvzJnMWn2S5pvAPEXuzBY6nbpACndtejRxV/181ggRmlEoNaGiHqRFH9hTGxYkIutKJJyuc+G9KdDGFEVhvzYCDHqLhGqYLyCtl5M1G6CLN5hfZYc9e+a4VG0rZi9s02d+d18EVYVV0f17QL53SLZQ2EVDYKkM=
+	t=1740775045; cv=none; b=gmLLrtaUcTFEapabMr+7urJ5fTlEp12sidwmjZtjW2JB9tll4H0nukm66BVWzX2Si8axGZMvtlxiWsJIUWLHk2jcU4K2zcYhyzeFl30A4q42cCaTIvenN9+Xncwi/vrFXI3DcF7jcbbnU0o0u4wlxD8tZfyyPkDwI+AQfKIdxjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740774650; c=relaxed/simple;
-	bh=kXgIwUFfcnXRTfKL18xxHQyr5xsRYovfLqKmpOqaIBU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=uaZwkzGd2qbPrvZkPOy7hn0yNzbtTm+hQOb4XQPnQAkJMl0/2AVunTsVXbZpJTSnqm7bbpytWMjyzW18ngFMrkkaGyJOti7cI2uKGPrf/L766JSBWGsTRBNGxrh6sAdSCHJYk4yXgjPUXnXXG7FTCts3umfCGELry1Qm+4Xs030=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6qJbMN0; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so3752256a12.0;
-        Fri, 28 Feb 2025 12:30:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740774647; x=1741379447; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXgIwUFfcnXRTfKL18xxHQyr5xsRYovfLqKmpOqaIBU=;
-        b=Z6qJbMN0JUbdkC4hRcegbP5c5uJm7A0pYP4/9gMG6bLGpmAcSkgqAo8uLh8oP8T/jt
-         MK/ryjQz9DsJjsn2MDlMPId+OHNGWEKZqabq21OKtWiBKdLbWMR2RU8TX8p/QeVyb2rK
-         QxsO/JmGOOIAliv7pVfiCFMh+RLldgeP7r0R9vlFIJfJl3Q0Nf5GkEalZD2FOF6MLwAg
-         gKVU9G40lxc/hgT4TuK+XZG7/E/e3MKv+O8llp9T1zplpdSxCmraR+CHsIT4OFiz0POp
-         B/wbbQJo7qrRWiDVA8OuXbpus+59Rjn9cc0iQAwCLj6n0hUNuW4s4zzI7hyI1QiBeP9i
-         F0LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740774647; x=1741379447;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXgIwUFfcnXRTfKL18xxHQyr5xsRYovfLqKmpOqaIBU=;
-        b=Eo1ojlow0q6Tk5cx1qpk+nZTcrtpm9riTBQGxLh4plm3o56AKY82ucbIt6dYyt9nxs
-         gZi+pTdjbwmkVd9APbd2/S4W+qpeBn56tZKtIX5/ImVU9bC3a0fezSasPn9lTuWHSely
-         /mhHTX9ptR3b7UGjwfaiotiZjfS+b43Uk8IZiZ4T9RcRzzuzKs4o4D/Wb5FvBR7k28P8
-         S1cQrIh6IO5P2Ucy2C852RN6g52538J+zzPwD8ofHfrW+jl0NfUn9Dh4dsRE+6wid6g/
-         NCY/JeaIisXoWycIyA4O+y6/C+8agIyRkmPX8U7GxtnFMNiV68AGFHr3z6QHJEd2t3C5
-         STwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoB9zHtqSPutTRCUV1aFtC90fQw0pkdzvOKYC/mYaceOPE8r61Q4WDv9jqiE+felwH+Y/6VBvc9pkrk5G9@vger.kernel.org, AJvYcCXx6CnQfsGRFROr8P2Q8DXVLwY/GpGIWiYhRdI1j++2iFwRT9/AYtz5VAdHO5V995gr+E1u25I6PDUv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgM1Bz28KVokIQjn+UzxFMqOV79B96sSwCD1ZHfclDTg8pNfNb
-	ISWkVzDz0Uvubuq9F7EvFnTdZwcn/Bz3xylnHgi+zcQszh/v03bS
-X-Gm-Gg: ASbGncvH56RD2UMG6SBLrlND8AEMdtGxLz9jC7Ad+/NKlzctnEj9uaImnSS+IaKoPDW
-	JJB+ZYdoFfllP2+QU+Npat/OgGFSxu3bo2E/tkMFMUKmM9Usu0LdQn+4IyZbZdTw8FSW1E0iPJq
-	wdVzOPWw3KlCczzPEhtJVxH6hEmLSd1NxxImXK3EZd8nUGtrTk9lusLsbxteFx2THzh8fCuGZHF
-	m3kaA4GwKvfxKdvuqfzp+ZBpawFkJN0DM5InrX2G6zng4M1zjZZdncdOwCq49/6qgkg17EMGUIj
-	1RyE1mIP4sTReRbNr47X0/acjdVbg2nQwXi1w7GN6BulbDawuTTZsJrDtgnvHHOpXAIxxMsYoG6
-	8E2zAQQ8=
-X-Google-Smtp-Source: AGHT+IG2W1DgzC5HFOlMxfquiHOJsjopf4V1IKQfO3ADcRZT8QfnlN9j9L7rrPBIsVSyavnVTfhblA==
-X-Received: by 2002:a17:907:9716:b0:abe:e1b3:78d with SMTP id a640c23a62f3a-abf261fba01mr544156566b.8.1740774646893;
-        Fri, 28 Feb 2025 12:30:46 -0800 (PST)
-Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf508f2288sm890766b.2.2025.02.28.12.30.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2025 12:30:46 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740775045; c=relaxed/simple;
+	bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=OonF1VtgprYQFiLDxNkmiBlApFcqFj1FycKGY0Npn9pzSEceVjZLIW2U3IM2ep6g9GWEivqrJ+Rb3wbAOflt0U3UmTQHjpLGTkANCJ0I5kdZYne0LX1o1Y4x/avi+SCbPLmApWZlvYWAR+d+oupFs+GeUhJbOc1H6bo1SWOTdgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qqg3pjYy; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740775044; x=1772311044;
+  h=subject:to:cc:from:date:message-id;
+  bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
+  b=Qqg3pjYyRDkjNkVX4O8E6NA4qmkIcNM8aa8oJlfJqAVmd6Jbad+3ZkW7
+   W53Qzpkh9KcLZXbcuum7D8yJ5pV6RNQvx7NSjUrHZBu/BmkXOd0JBqm36
+   t/cF3a8av3IngcR0XJqizAWACiriUF0TPszQyRISbleipvn59RV7kNNJo
+   Cq7YH0Al3NLsbn/H+hsaguIgyqUY+jo8knKKdN7vj0yL3laWpOXwQeNS8
+   64VIl4HR8tfqIcFu/44dIDYnFiRCxFFZTwoYC3IUIzw+SuPT3OCTNVCmt
+   7Pl2m3bOrr9yFTrLG+GrkavCk4nIV3b2QlRO8wn+ZlqSzACMFqfirLhuZ
+   g==;
+X-CSE-ConnectionGUID: VeSKilD7Qx+NRN+PAUFUSg==
+X-CSE-MsgGUID: 778lG40JRiC6NwBffS+Uvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45367465"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="45367465"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 12:37:23 -0800
+X-CSE-ConnectionGUID: ZGrelpB5SC2QF9vxwxb42g==
+X-CSE-MsgGUID: SPSF5J2lSVKySLWgCerUYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="122393832"
+Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
+  by orviesa003.jf.intel.com with ESMTP; 28 Feb 2025 12:37:23 -0800
+Subject: [PATCH] [v2] filemap: Move prefaulting out of hot write path
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,tytso@mit.edu,willy@infradead.org,akpm@linux-foundation.org,mjguzik@gmail.com,david@fromorbit.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 28 Feb 2025 12:37:22 -0800
+Message-Id: <20250228203722.CAEB63AC@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <20250223113036.74252-1-andyshrk@163.com>
-Date: Fri, 28 Feb 2025 21:30:33 +0100
-Cc: heiko@sntech.de,
- neil.armstrong@linaro.org,
- sebastian.reichel@collabora.com,
- devicetree@vger.kernel.org,
- hjc@rock-chips.com,
- mripard@kernel.org,
- linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- yubing.zhang@rock-chips.com,
- dri-devel@lists.freedesktop.org,
- Andy Yan <andy.yan@rock-chips.com>,
- krzk+dt@kernel.org,
- robh@kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AC3DE87B-64B1-4C34-8E1B-3900E2C53AA3@gmail.com>
-References: <20250223113036.74252-1-andyshrk@163.com>
-To: Andy Yan <andyshrk@163.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
 
+There is a generic anti-pattern that shows up in the VFS and several
+filesystems where the hot write paths touch userspace twice when they
+could get away with doing it once.
 
-> Wiadomo=C5=9B=C4=87 napisana przez Andy Yan <andyshrk@163.com> w dniu =
-23 lut 2025, o godz. 12:30:
->=20
-> From: Andy Yan <andy.yan@rock-chips.com>
->=20
->=20
-> There are two DW DPTX based DisplayPort Controller on rk3588 which
-> are compliant with the DisplayPort Specification Version 1.4 with
-> the following features:
->=20
-> * DisplayPort 1.4a
-> * Main Link: 1/2/4 lanes
-> * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
-> * AUX channel 1Mbps
-> * Single Stream Transport(SST)
-> * Multistream Transport (MST)
-> *=EF=81=AEType-C support (alternate mode)
-> * HDCP 2.2, HDCP 1.3
-> * Supports up to 8/10 bits per color component
-> * Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
-> * Pixel clock up to 594MHz
-> * I2S, SPDIF audio interface
->=20
-> The current version of this patch series only supports basic display =
-outputs.
-> I conducted tests in 1080p and 4K@60 YCbCr4:2:0 modes; the ALT/Type-C =
-mode
-> hasn't been tested yet, but I suspect it will likely work. HDCP and =
-audio
-> features remain unimplemented. For RK3588, it's only support SST, =
-while in
-> the upcoming RK3576, it can support MST output.
->=20
+Dave Chinner suggested that they should all be fixed up[1]. I agree[2].
+But, the series to do that fixup spans a bunch of filesystems and a lot
+of people. This patch fixes common code that absolutely everyone uses.
+It has measurable performance benefits[3].
 
-Andy,
+I think this patch can go in and not be held up by the others.
 
-Is tis series enough to get usbc1/dp1 working as video output ?
-(assuming i will add necessary code in dt)=20
+I will post them separately to their separate maintainers for
+consideration. But, honestly, I'm not going to lose any sleep if
+the maintainers don't pick those up.
 
-rock5-itx has second hdmi port using usbc1/dp1 lanes 2,3 to ra620 =
-dp->hdmi converter
+1. https://lore.kernel.org/all/Z5f-x278Z3wTIugL@dread.disaster.area/
+2. https://lore.kernel.org/all/20250129181749.C229F6F3@davehans-spike.ostc.intel.com/
+3. https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
 
-is it worth to play with this or it is too early?
-=20
+--
+
+Changesfrom v1:
+ * Update comment to talk more about how filesystem locking and
+   atomic usercopies avoid deadlocks.
+
+--
+
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+There is a bit of a sordid history here. I originally wrote
+998ef75ddb57 ("fs: do not prefault sys_write() user buffer pages")
+to fix a performance issue that showed up on early SMAP hardware.
+But that was reverted with 00a3d660cbac because it exposed an
+underlying filesystem bug.
+
+This is a reimplementation of the original commit along with some
+simplification and comment improvements.
+
+The basic problem is that the generic write path has two userspace
+accesses: one to prefault the write source buffer and then another to
+perform the actual write. On x86, this means an extra STAC/CLAC pair.
+These are relatively expensive instructions because they function as
+barriers.
+
+Keep the prefaulting behavior but move it into the slow path that gets
+run when the write did not make any progress. This avoids livelocks
+that can happen when the write's source and destination target the
+same folio. Contrary to the existing comments, the fault-in does not
+prevent deadlocks. That's accomplished by using an "atomic" usercopy
+that disables page faults.
+
+The end result is that the generic write fast path now touches
+userspace once instead of twice.
+
+0day has shown some improvements on a couple of microbenchmarks:
+
+	https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/yxyuijjfd6yknryji2q64j3keq2ygw6ca6fs5jwyolklzvo45s@4u63qqqyosy2/
+Cc: Ted Ts'o <tytso@mit.edu>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>
+---
+
+ b/mm/filemap.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff -puN mm/filemap.c~generic_perform_write-1 mm/filemap.c
+--- a/mm/filemap.c~generic_perform_write-1	2025-02-28 11:58:36.499615962 -0800
++++ b/mm/filemap.c	2025-02-28 12:13:27.845549365 -0800
+@@ -4170,17 +4170,6 @@ retry:
+ 		bytes = min(chunk - offset, bytes);
+ 		balance_dirty_pages_ratelimited(mapping);
+ 
+-		/*
+-		 * Bring in the user page that we will copy from _first_.
+-		 * Otherwise there's a nasty deadlock on copying from the
+-		 * same page as we're writing to, without it being marked
+-		 * up-to-date.
+-		 */
+-		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
+-			status = -EFAULT;
+-			break;
+-		}
+-
+ 		if (fatal_signal_pending(current)) {
+ 			status = -EINTR;
+ 			break;
+@@ -4198,6 +4187,12 @@ retry:
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_folio(folio);
+ 
++		/*
++		 * Faults here on mmap()s can recurse into arbitrary
++		 * filesystem code. Lots of locks are held that can
++		 * deadlock. Use an atomic copy to avoid deadlocking
++		 * in page fault handling.
++		 */
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+ 		flush_dcache_folio(folio);
+ 
+@@ -4223,6 +4218,16 @@ retry:
+ 				bytes = copied;
+ 				goto retry;
+ 			}
++
++			/*
++			 * 'folio' is now unlocked and faults on it can be
++			 * handled. Ensure forward progress by trying to
++			 * fault it in now.
++			 */
++			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
++				status = -EFAULT;
++				break;
++			}
+ 		} else {
+ 			pos += status;
+ 			written += status;
+_
 
