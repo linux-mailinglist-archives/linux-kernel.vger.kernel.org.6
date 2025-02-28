@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-538268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D63A49671
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:09:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BA7A4967A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 756347AA818
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F76188F94B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103F5268C44;
-	Fri, 28 Feb 2025 10:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA7C269B0E;
+	Fri, 28 Feb 2025 10:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQWr7ab1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XhiNexaA"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1D1267F64;
-	Fri, 28 Feb 2025 10:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F627269AF2;
+	Fri, 28 Feb 2025 10:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740736893; cv=none; b=qTLhNlxfmWX38NO/exmsFE8my4xO1WZ8Q4aRjyH9XtQBc/3sSbY0Y7n3j/RcegKUhh2XbrUYMw7su0c7NZ98FKQLN39srat0iMalS0rQmfYNVdH2KgPpViYXuwj9OFz3G74bBIE3TuWZoWIaeFUTwFrPeJQwfmQBsAKo/Bb/Wps=
+	t=1740736913; cv=none; b=jWw6ufKXBEVi7HmqVh74iExbji0w0B1dYPDtguIdW241jXhcwe+goy23avbaL/mFaihr8DCpSbL7vU+z3ExeHLeSMlPhvHNM/Cx5/5QKLDiW3RM01aYCi61YOaXdi3lnNdaZVPLtmKHH2TG6RTYjI0IAJcKtI+NtHfugIf2OiEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740736893; c=relaxed/simple;
-	bh=3ixW/Qr94W9OYIgrJTGB6BVvyrepGcSodMz6xnfcDhI=;
+	s=arc-20240116; t=1740736913; c=relaxed/simple;
+	bh=BxWvwWJXkiVke6UswN453oEGpo4pRgTvp8ThHzvIFik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMXHwg1m1fMpy5BtD2+BJeFbiH/p4CkwTG6NoMaRYdIhRFEt97IwSmxoopcXZ8njV+7ByaYluiVwnhIKcQdFNm6eBDL33ASnIbhp1OjbNagrB4DHcnhtwT68mnnqgHjkgyKupVF+WjuRtYc/8ubHMCsQa5n6uhiUjX/OZmwgvEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQWr7ab1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78FCC4CEE7;
-	Fri, 28 Feb 2025 10:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740736892;
-	bh=3ixW/Qr94W9OYIgrJTGB6BVvyrepGcSodMz6xnfcDhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AQWr7ab1MbrNOu8p5qRki7wqakEdymxwtsblN5kordtQQZQ8/oT7bD+aVuI6M/tW6
-	 bmN42maG5R/qiq8eXaeWsZs2SCcxUvgnq07FqzQV98B3Cn+Q0+X/kdEd5Xd87zoxWi
-	 /2u6L/6Wz70mu+VxCYidTTtWRTgUDy++HlPbyIB/LjDdAL9BG/VxJyHxYzzhhPLDLa
-	 s0tbPHT+oE9jM/i96a82e61U3F82BQlcuwmmpy8boyGEqutMzzxVLiOVcys8pLhrFB
-	 dmkkldn4VAl6orDK0CoASdhhRT3ta1rv120G9YPLpf5Iqm5anqYD2vvkU4ZTft2dt8
-	 J9lyGZjnWbZDw==
-Date: Fri, 28 Feb 2025 11:01:26 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-Message-ID: <Z8GJduPzVBZ7ugWv@pollux>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <k3GMnfXzzvUVOgSnuMlEq3eVRyq1qjcf_tDtILRbOwj08EIQpwQ4bGtGhwWufr8lUn-VlHnNjP8FxIA48Jv-Ug==@protonmail.internalid>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <87seo3z9qr.fsf@kernel.org>
- <6f154af8-6379-4b1f-9e30-2b99f7f736dd@gmail.com>
- <D83XWBJ9U50G.1BIIYOMMFUIAJ@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eb+DYZDcmmi7XghffdbB5xj3Hw5tq/90XGiGOT/EGN40Sa2S9W5zALxy+7h40u7XOXOVPX7duGxHZpD8hpZhp4EhSxAIu9EVXV3+0iC+JuFzwc7yfInCVoEwAWRXzaIT+cxhNbp3IRes55w+dTV059H7z837cbwnjYaLTMTeCH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XhiNexaA; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740736901; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=qqdjs9uYKWL6AnUSV2VSVPfmJAZIYK7C9baXgx0fnAg=;
+	b=XhiNexaAW6wJBbmjvO+IZMHoSVHSGZbRX45Xds+g6Di+opGkSd+agHH0sGs42cuSYzdIuyvVsWMmChaSSF1KRxhPIcDHjPRQ22AmM3gop19VDM6POd23g2DMHK7z/j9UIIZhGM2sacHc06zGP+vQcc9QeTiGZbYEjov+v0QLIiw=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQPM.Ry_1740736899 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 18:01:40 +0800
+Date: Fri, 28 Feb 2025 18:01:39 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: rafael@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
+	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z8GJg30JYWHeMFHK@U-2FWC9VHC-2323.local>
+References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+ <20250224034500.23024-3-feng.tang@linux.alibaba.com>
+ <Z7y2e-EJLijQsp8D@wunner.de>
+ <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
+ <Z71Ap7kpV4rfhFDU@wunner.de>
+ <Z71KHDbgrPFaoPO7@U-2FWC9VHC-2323.local>
+ <Z8FXyVyMyAe4_bI3@U-2FWC9VHC-2323.local>
+ <Z8FiPOgKFTt8T0ym@wunner.de>
+ <Z8GC9xiGAtUnWj-I@U-2FWC9VHC-2323.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D83XWBJ9U50G.1BIIYOMMFUIAJ@nvidia.com>
+In-Reply-To: <Z8GC9xiGAtUnWj-I@U-2FWC9VHC-2323.local>
 
-On Fri, Feb 28, 2025 at 05:35:26PM +0900, Alexandre Courbot wrote:
-> On Tue Feb 25, 2025 at 1:27 AM JST, Abdiel Janulgue wrote:
-> >
-> > On 24/02/2025 16:40, Andreas Hindborg wrote:
-> >> "Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
-> >> 
-> >> [...]
-> >> 
-> >>> +/// Inform the kernel about the device's DMA addressing capabilities. This will set the mask for
-> >>> +/// both streaming and coherent APIs together.
-> >>> +pub fn dma_set_mask_and_coherent(dev: &Device, mask: u64) -> i32 {
-> >>> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
-> >>> +    unsafe { bindings::dma_set_mask_and_coherent(dev.as_raw(), mask) }
-> >>> +}
-> >>> +
-> >>> +/// Same as `dma_set_mask_and_coherent`, but set the mask only for streaming mappings.
-> >>> +pub fn dma_set_mask(dev: &Device, mask: u64) -> i32 {
-> >>> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
-> >>> +    unsafe { bindings::dma_set_mask(dev.as_raw(), mask) }
-> >>> +}
-> >> 
-> >> Sorry if it was asked before, I am late to the party. But would it make
-> >> sense to put these to functions on `Device` and make them take `&self`.
-> >
-> > Thanks for checking this. The API is about the dma addressing 
-> > capabalities of the device, my thoughts would be to group them with the 
-> > rest of the dma API? But either way, I don't have a strong preference. 
-> > I'll let others comment.
+On Fri, Feb 28, 2025 at 05:33:43PM +0800, Feng Tang wrote:
+> > The problem with the nomsi irq storm is really that if the platform
+> > (i.e. BIOS) doesn't grant OSPM control of hotplug, OSPM (i.e. the kernel)
+> > cannot modify hotplug registers because the assumption is that the
+> > platform controls them. 
 > 
-> FWIW I was about to make the same comment as Andreas. The mask is set on
-> a Device, it should thus be part of its implementation.
+> Yes, very reasonable. I also talked with some firmware engineer, who
+> shared there is working sample that on some old x86 platform, the
+> firmware itself is really capable of handling the hotplug stuff when
+> MSI is disabled.
+> 
+> > If the platform doesn't actually handle
+> > hotplug, but keeps the interrupts enabled, that's basically a bug
+> > of the specific platform.
+> 
+> That's what happened in our case :)
+> 
+> > I think the kernel community's stance in such situations is that the
+> > BIOS vendor should provide an update with a fix.  In some cases
+> > that's not posible because the product is no longer supported,
+> > or the vendor doesn't care about Linux issues because it only
+> > supports Windows or macOS.  In those cases, we deal with these
+> > problems with a quirk.  E.g. on x86 we often use a DMI quirk to
+> > recognize affected hardware and the quirk would then disable the
+> > hotplug interrupts.
+> 
+> I see.
+> 
+> As you dug out the history in https://lore.kernel.org/lkml/Z6RU-681eXl7hcp6@wunner.de/
+> 
+> Our previous debug could go through the OSC check in nomsi case,
+> only after below patch:
+> 
+> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+> index 84030804a763..e7d9328cba45 100644
+> --- a/drivers/acpi/pci_root.c
+> +++ b/drivers/acpi/pci_root.c
+> @@ -38,8 +38,7 @@ static int acpi_pci_root_scan_dependent(struct acpi_device *adev)
+>  
+>  #define ACPI_PCIE_REQ_SUPPORT (OSC_PCI_EXT_CONFIG_SUPPORT \
+>  				| OSC_PCI_ASPM_SUPPORT \
+> -				| OSC_PCI_CLOCK_PM_SUPPORT \
+> -				| OSC_PCI_MSI_SUPPORT)
+> +				| OSC_PCI_CLOCK_PM_SUPPORT)
+> 
+> Otherwise, the OSC function won't be executed, but kernel will simply
+> disable PCIe hotplug,
 
-Yes, this should be Device methods. Please also add them in a separate commit.
+> which breaks the working sample I mentioned above.
+Sorry, this saying is wrong, the patch doesn't change anything for cases
+that firwmare would handle the PCIe hotplug.
 
-> You can still
-> keep them with the rest of the DMA API in this file by just adding an
-> `impl Device` block here - since Device resides in the same crate, it is
-> allowed.
+But still, it is reasonable to let firmware decide if it would grant
+the control to OSPM.
 
-Eventually, the build system will support to move rust code to the corresponding
-subsystem entires in separate crates.
+Thanks,
+Feng
+
+> We'd better also include take this change?
+> 
+> Thanks,
+> Feng
+> 
+> > 
+> > Thanks,
+> > 
+> > Lukas
 
