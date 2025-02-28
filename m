@@ -1,74 +1,49 @@
-Return-Path: <linux-kernel+bounces-538542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720E8A499FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454A5A49A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E25A175A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61523B3EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7841226E14F;
-	Fri, 28 Feb 2025 12:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvNre4wq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391126B94B;
+	Fri, 28 Feb 2025 12:56:09 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1AB26D5CF;
-	Fri, 28 Feb 2025 12:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864526B2D2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747125; cv=none; b=LdiEMzkXPAQ/PvPsbcqx9+ksPI3IvRHK5Q+IwxBhxwmjegPmHYT3/6/vrjwn6tRAo6symItOPlu7wNDsCFT5MfvqnufPlxZfN525q2PvLJeWDC1WX2trPUCNbXtq0fOP9v6CG8y/sT6RqFwO3l8zWmFVxrxVQ0DV4wrYAnI7jsA=
+	t=1740747369; cv=none; b=Yd279drlvoGmwRgVuwEhN8jK0qr2egZ+bV/kA+5lCSkR3mjNTa5gVetA1KgYg/tMY+aQdj7yGiTxEklsRXZy4+mpa2biuPmepcxeZ0+HzQlKxNmN3X+ZgXhE2hDkn5oQYtxD9xNgpKZkSti1oB/PyaWyWTFZofFOK7yzkOWyOyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747125; c=relaxed/simple;
-	bh=qtVHDkxhDZ9QRs/IpSQz8H/vIugC+ZZc6I5P81tsh3o=;
+	s=arc-20240116; t=1740747369; c=relaxed/simple;
+	bh=dzZoHI9rMddSbHvJRJirHefyns5NJEYPlg5bQ0h6LgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iellDexHAcDVcec5dsvtZ1px00TqzW1feSovQRG20DNehS1Uw0HB0K3tb/afQfynZRGtHguEAywiK+0KGRDRvZokeIBY3iCItq+yWokZfKBWI2SwVoOW7XLC9M2ITgEGegF1N+WMC/b9qsEwCCRScaA2YOYc5j/xgZs+9oiiWqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvNre4wq; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740747124; x=1772283124;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qtVHDkxhDZ9QRs/IpSQz8H/vIugC+ZZc6I5P81tsh3o=;
-  b=bvNre4wq1KkK+3ETkSKQ3oSqqEM0gcspyIYazhnmf1RADq+c++7ORO7P
-   20WLZsPfP9sBi3OQq4siNVhd6k8CVF/IX3bhWl3I5wVu3NIN30B4Tlb5N
-   0rIR3BTZsRgh9CkYpkGhO0s+ZaaMcdn85AXabskVAudzGEzTH0zW6K9ye
-   ihDul0UAGrP6wVol8x//6B3LWxo3nP7xoIH1sUetSuMCAurw6AGjwzsSI
-   9Q+iDFMFW2V+Rr7BKKsODz0+eHQ368RJC0M40/hwQUpYDzNZ3a+X8zPyI
-   zxMy2kYLHkMFk4aPC8oIiVDN7RopwYBJUrOQ1MdPyEXUn2FBCdqe5Z0oI
-   A==;
-X-CSE-ConnectionGUID: Qff0poL2RbGLGj6i+bUGGg==
-X-CSE-MsgGUID: atSU7u8zSyGEwBiL3Ingug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="40849901"
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="40849901"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:52:04 -0800
-X-CSE-ConnectionGUID: UX3fm5sFQMqvM00VuJddLQ==
-X-CSE-MsgGUID: X/emzOIwQWKEk2GRoPyu6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,322,1732608000"; 
-   d="scan'208";a="122460635"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 04:52:02 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tnzqS-0000000Fwst-1v2M;
-	Fri, 28 Feb 2025 14:52:00 +0200
-Date: Fri, 28 Feb 2025 14:52:00 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v1 0/4] Input: Increase size of phys in the drivers
-Message-ID: <Z8GxcGgyAuMyRv5D@smile.fi.intel.com>
-References: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aR7m/nWMxsk/lRnKckzrQW1ectcuvIYi/iTiH1Q7DkjqcXW2xVV4k51vWAX33slw4AqceOOTgA0604mRZTf541JUia1aqkGkErv+WbbHqX0+cOaAzVaxwAsA5LEugj1JzqYxci8Wkh0pXf9lHA5WKkHGSBHUyLVf3zxKQYEDJWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-112-92.bstnma.fios.verizon.net [173.48.112.92])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51SCtgrI031380
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 07:55:43 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 78D4B2E010B; Fri, 28 Feb 2025 07:55:42 -0500 (EST)
+Date: Fri, 28 Feb 2025 07:55:42 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-staging@lists.linux.dev, asahi@lists.linux.dev
+Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Message-ID: <20250228125542.GA15240@mit.edu>
+References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,22 +52,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
 
-On Fri, Feb 28, 2025 at 02:07:43PM +0200, Andy Shevchenko wrote:
-> The drivers are using local member of 32 bytes to hold up to 40 (one-byte)
-> characters. GCC complains on that. This series fixes the issue in the affected
-> input drivers. Note, this is currently the biggest part of the warnings that
-> are being treated as errors with the default configurations on x86. With this
-> being applied we become quite close to enable CONFIG_WERROR=y (which is default
-> and basically reverted) in CIs. Clang, OTOH, has currently no issues with that.
+On Thu, Feb 27, 2025 at 08:53:56PM -0500, Ethan Carter Edwards wrote:
+> Lately, I have been thinking a lot about the lack of APFS support on
+> Linux. I was wondering what I could do about that. APFS support is not 
+> in-tree, but there is a proprietary module sold by Paragon software [0].
+> Obviously, this could not be used in-tree. However, there is also an 
+> open source driver that, from what I can tell, was once planned to be 
+> upstreamed [1] with associated filesystem progs [2]. I think I would 
+> base most of my work off of the existing FOSS tree.
+> 
+> The biggest barrier I see currently is the driver's use of bufferheads.
+> I realize that there has been a lot of work to move existing filesystem
+> implementations to iomap/folios, and adding a filesystem that uses
+> bufferheads would be antithetical to the purpose of that effort.
+> Additionally, there is a lot of ifndefs/C preprocessor magic littered
+> throughout the codebase that fixes functionality with various different
+> versions of Linux.
 
-If acceptable, it would be good to have them as fixes for v6.14 cycle.
+I don't see the use of bufferheads as a fundamental barrier to the
+mainline kernel; certainly not for staging.  First of all, there are a
+huge number of file systems which still use buffer heads, including:
 
--- 
-With Best Regards,
-Andy Shevchenko
+   adfs affs befs bfs ecryptfs efs exfat ext2 ext4 fat
+   freevxfs gfs2 hfs hfsplus hpfs isofs jfs minix nilfs2
+   ntfs3 ocfs2 omfs pstore qnx4 qnx6 romfs sysv udf ufs
 
+There are many reasons to move to folios, including better
+performance, and making it easier to make sure things are done
+correctly if you can take advantage of iomap.
 
+For example, with ext4 we plan to work towards moving to use folios
+and iomap for the data plane operations for buffered write (we already
+use iomap for Direct I/O, FIEMAP support, etc.) and while we might
+want to move away from buffer heads for metadata blocks, we would need
+to change the jbd2 layer to use some simplified layer that looks an
+awful lot like buffer heads before we could do that.  We might try to
+fork buffer heads, and strip out everything we don't need, and then
+merge that with jbd2's journal_head structure, for example.  But
+that's a mid-term to long-term project, because using bufferheads
+doesn't actually hurt anyone.  (That being said, if anyone wants to
+help out with the project of allowing us to move jbd2 away from buffer
+heads, let me know --- patches are welcome.)
+
+In any case, cleaning up preprocessor magic and other thigns that were
+needed because the code was designed for out of tree use would be
+something that I'd encourage you to focus on first, and then try a
+proposal to submit it to staging.
+
+Cheers,
+
+					- Ted
+
+P.S.  Something that you might want to consider using is fstests (AKA
+xfstests), which is the gold standard for file system testing in
+Linux.  I have a test appliance VM of xfstests, which you can find
+here[1].  I test x86 and arm64 kernels using Google Cloud, and on
+local systems, using qemu/kvm.  For qemu/kvm testing, this is being
+used on Debian, Fedora, OpenSuSE, and MacOS.
+
+[1] https://github.com/tytso/xfstests-bld
+
+For kernel development on my Macbook Air M2, I can build arm64 kernels
+using Debian running in a Parallels VM, and then to avoid the double
+virtualization overhead, I run qemu on MacOS using the hvf
+accelerator.  It shouldn't be hard to make this work on your Ashai
+Linux development system; see more on that below.
+
+For more details about this test infrastructure, including its use on
+Google Cloud see the presentation here[2].  I am using gce-xfstests to
+perform continuous integration testing by watching a git branch, and
+when it gets updated, the test manager (running in an e2-micro VM)
+automatically starts a 4 CPU VM to build the kernel, and then launches
+multiple 2 CPU VM's to test multiple file system configurations in
+parallel --- for example, I am currently running over two dozen fs
+kernels testing ext4, xfs, btrfs, and f2fs on a Linux-next branch
+every day).  Running a smoke test costs pennies.  A full-up test of a
+dozen ext4 configuration (a dozen VM's, running for 2 hours of wall
+clock time), costs under $2 at US retail prices.  For APFS, if you
+start with a single configuration, with many of the tests disable
+because APFS won't many of the advanced file systems of ext4 and xfs,
+I'm guessing it will cost you less than 25 cents per test run.
+
+[2] https://thunk.org/gce-xfstests
+
+Or of course you can use qemu-xfstests or kvm-xfstests using local
+compute.  I do love though being able to fire off a set of tests, then
+suspend my laptop, knowing that I will receive e-mail with the test
+results when they are ready.
+
+If you are interested in trying to use this on Asahi linux, I'd
+certainly be happy help you with it.  I suspect modulo some
+instructures about which packages are needed, it shouldn't be that
+hard to run a test appliance.  Building new versions of the appliance
+does require a Debian build chroot, which might be tricker to set up
+on Asahi, but that's not necessary while you are getting started.
+
+In any case, I strongly encourage file system developers to use
+xfstests earlier rather than later.  See the last slide of [2] for my
+opinion of "File system development without testing".  :-)
 
