@@ -1,83 +1,157 @@
-Return-Path: <linux-kernel+bounces-538159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50748A49535
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:36:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AC1A49521
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188393BAABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB89166332
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C24256C6F;
-	Fri, 28 Feb 2025 09:33:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BC42566E4;
+	Fri, 28 Feb 2025 09:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jGBRfURx"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EC1257434
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9EB25335E;
+	Fri, 28 Feb 2025 09:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735209; cv=none; b=EPCCTMc7GQlX0XkiC6p6Oj1+6KcQvE9XxBfOT2xn1SodMBJGQQFGy4HZkiDgE/948V49zeGWos0WR2NZIBsF59v6Mv1DbmkyR1hg+nS/9Zce/0u6OQRh6beT4MguD2TklQ/VnMH3W3gFG1cmdfUHQmLGeY+hPAiHYL3mvAHDE70=
+	t=1740735237; cv=none; b=bitj+21IBK/H65yRrYoairHE2t8nnY8fY5gjWtqLtO93zkvyebm/3AlEFXun2kNo6uSxMM1khT79Y9cRuqhYHYzF4QsK3il1aLT92Ig0JxOSYGKC6RWGI4WS4YHbBAz6wXoDBA4Fl6xsMcR3aeAElojv4HcecBOvjZYcijyNpyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735209; c=relaxed/simple;
-	bh=TMX49n56xtLsEf2eVO2nQxZ9UvOb1JUvO0arTHreRFw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ky71aSF+Av5hSDRY0UYPVKPOYzZmjxe7suwj9nJrxWTAS8wgAgHQ7JlW/u5HaQhfsyjGpNjDzXrHEUsAozHP1So9T3wfk2NeUuW+JPfLiqUpAyEPCo2Uo4jl7OOHHHNU8jkgnkAD6R/DTjkvzlkdRM56BNrTbbTe0KIWmmgEcNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z42wZ6cRXz6L5Nw;
-	Fri, 28 Feb 2025 17:29:34 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E659140B55;
-	Fri, 28 Feb 2025 17:33:25 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 28 Feb
- 2025 10:33:22 +0100
-Date: Fri, 28 Feb 2025 17:33:18 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
-	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
-	<qemu-devel@nongnu.org>, Ani Sinha <anisinha@redhat.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 17/19] tests/acpi: virt: update HEST and DSDT tables
-Message-ID: <20250228173318.00000f9d@huawei.com>
-In-Reply-To: <7a6a1a1ba78f7dac2be6b7335280c1d0b380a175.1740671863.git.mchehab+huawei@kernel.org>
-References: <cover.1740671863.git.mchehab+huawei@kernel.org>
-	<7a6a1a1ba78f7dac2be6b7335280c1d0b380a175.1740671863.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1740735237; c=relaxed/simple;
+	bh=hoojCCSHc/q+dNOoqDAtBTI6MuTE62h/+6RDn5nG4U8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELsp5sZK3SP9ew0RAhEzEUuGH9QOIVAhYccRJ0utOMNeiPdF01SVlYlG1FoYAItsvWAxrSCDbAzLS6SUtN7Hn0JRx+Mqi+cCnFlSE/AxPrRSwn2ijtRtiV/LJPaZRXE7AyYcyBL4nE9sYJABK0CoJxvx365NUJw33gZtNtLEsoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jGBRfURx; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740735225; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=dp/DcSJ/kAXW2YxVXdVPgsXdGG4LCzYOVrcvn8ANSZE=;
+	b=jGBRfURx+7cr9trgiufqj5CanN8sEJWpoQrMTyZHHIy0BSJqfhDITpVuDTwAPdUtfePb7nYLCLK3sksz6PSs4e2zOJNGeDL0saraKz6DX2LVW6wil2GSKgrfwPdzSUi+LPvuPvgK68ezu8wkpeU8cVCcoSzb2mg00xWJS6KyGJo=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQPKkmW_1740735223 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 17:33:44 +0800
+Date: Fri, 28 Feb 2025 17:33:43 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: rafael@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
+	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z8GC9xiGAtUnWj-I@U-2FWC9VHC-2323.local>
+References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+ <20250224034500.23024-3-feng.tang@linux.alibaba.com>
+ <Z7y2e-EJLijQsp8D@wunner.de>
+ <Z70zyhZe6OrxNNT3@U-2FWC9VHC-2323.local>
+ <Z71Ap7kpV4rfhFDU@wunner.de>
+ <Z71KHDbgrPFaoPO7@U-2FWC9VHC-2323.local>
+ <Z8FXyVyMyAe4_bI3@U-2FWC9VHC-2323.local>
+ <Z8FiPOgKFTt8T0ym@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z8FiPOgKFTt8T0ym@wunner.de>
 
-On Thu, 27 Feb 2025 17:00:55 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Hi Lukas,
 
-> - The HEST table now accept two sources;
-> - The DSDT tables now have a GED error device.
+On Fri, Feb 28, 2025 at 08:14:04AM +0100, Lukas Wunner wrote:
+> On Fri, Feb 28, 2025 at 02:29:29PM +0800, Feng Tang wrote:
+> > On Tue, Feb 25, 2025 at 12:42:04PM +0800, Feng Tang wrote:
+> > > > > There might be some misunderstaning here :), I responded in
+> > > > > https://lore.kernel.org/lkml/Z6LRAozZm1UfgjqT@U-2FWC9VHC-2323.local/
+> > > > > that your suggestion could solve our issue.
+> > > > 
+> > > > Well, could you test it please?
+> > > 
+> > We just tried the patch on the hardware and initial 5.10 kernel, and
+> > the problem cannot be reproduced, as the first PCIe hotplug command
+> > of disabling CCIE and HPIE was not issued.
 > 
-> @@ -1,39 +1,39 @@
->  /*
->   * Intel ACPI Component Architecture
->   * AML/ASL+ Disassembler version 20240322 (64-bit version)
->   * Copyright (c) 2000 - 2023 Intel Corporation
->   *
-> - * Disassembly of tests/data/acpi/aarch64/virt/HEST
-> + * Disassembly of /tmp/aml-DMPE22
-This is an artifact of where you happened to get file
-from so if we are being really fussy drop the change 
-diff in the patch description for it.  I don't really care though.
->   *
+> Good!
+> 
+> > Should I post a new version patch with your suggestion?
+> 
+> Yes, please.
+
+Will do, thanks
+
+> 
+> > Also I would like to separate this patch from the patch dealing the
+> > nomsi irq storm issue. How do you think?
+> 
+> Makes sense to me.
+> 
+> The problem with the nomsi irq storm is really that if the platform
+> (i.e. BIOS) doesn't grant OSPM control of hotplug, OSPM (i.e. the kernel)
+> cannot modify hotplug registers because the assumption is that the
+> platform controls them. 
+
+Yes, very reasonable. I also talked with some firmware engineer, who
+shared there is working sample that on some old x86 platform, the
+firmware itself is really capable of handling the hotplug stuff when
+MSI is disabled.
+
+> If the platform doesn't actually handle
+> hotplug, but keeps the interrupts enabled, that's basically a bug
+> of the specific platform.
+
+That's what happened in our case :)
+
+> I think the kernel community's stance in such situations is that the
+> BIOS vendor should provide an update with a fix.  In some cases
+> that's not posible because the product is no longer supported,
+> or the vendor doesn't care about Linux issues because it only
+> supports Windows or macOS.  In those cases, we deal with these
+> problems with a quirk.  E.g. on x86 we often use a DMI quirk to
+> recognize affected hardware and the quirk would then disable the
+> hotplug interrupts.
+
+I see.
+
+As you dug out the history in https://lore.kernel.org/lkml/Z6RU-681eXl7hcp6@wunner.de/
+
+Our previous debug could go through the OSC check in nomsi case,
+only after below patch:
+
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 84030804a763..e7d9328cba45 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -38,8 +38,7 @@ static int acpi_pci_root_scan_dependent(struct acpi_device *adev)
+ 
+ #define ACPI_PCIE_REQ_SUPPORT (OSC_PCI_EXT_CONFIG_SUPPORT \
+ 				| OSC_PCI_ASPM_SUPPORT \
+-				| OSC_PCI_CLOCK_PM_SUPPORT \
+-				| OSC_PCI_MSI_SUPPORT)
++				| OSC_PCI_CLOCK_PM_SUPPORT)
+
+Otherwise, the OSC function won't be executed, but kernel will simply
+disable PCIe hotplug, which breaks the working sample I mentioned above.
+We'd better also include take this change?
+
+Thanks,
+Feng
+
+> 
+> Thanks,
+> 
+> Lukas
 
