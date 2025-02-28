@@ -1,257 +1,597 @@
-Return-Path: <linux-kernel+bounces-538953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA764A49F31
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96C7A49F34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E35A188E37C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783D03A660D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC327425F;
-	Fri, 28 Feb 2025 16:44:12 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DBC2702B7;
+	Fri, 28 Feb 2025 16:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="asT9qXR7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3276257430;
-	Fri, 28 Feb 2025 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A4C25BAA0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740761051; cv=none; b=LPFt6ofVvs7seh0hruKeq0OmJZeRDdQbmTrfkbb392OwVjW9L5qHoiLBaC1uYl7zS53I3K1gFJMQ5yYM3nJlPaxloZ7B63b//uZyLP/HmJon/6fN+N7y/CSVp3guiExap7MeR03jDWKHZZ7YBV/dshOqbFd9F+6FsaO7ujexHKE=
+	t=1740761073; cv=none; b=QEHc93eGqWMcn+JnBphjNFjodeQjb3SjWeXT6Fy1/4AMjasuscXzc4IZRq3cTSVXPLod7j3Y6o8Zcz/W9VJlPNpi99eGxzx4LZ7nJdAXkOgIsiuoWkzxevSp3vn7L9dsdVk8nGnrYJKrGAFNCqYQB6UYto8F3jLSg9DV8YQA6sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740761051; c=relaxed/simple;
-	bh=rf3m6v1r74fRweU0q1PXsT9I9UyzsTiIrux0xoUMKMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kk2liYUi6cnjyRFkOhP/mQ9mxpYHEkd8cYW6rYH3fOaRf2ETT1Y8dOJkkV7jc+F/8R6NRsehg+fJQ3J69zeOxgiB5FtqBh5Sd91XwZfQifZDFz6fVy/bNPTraax87CUAqNucHBwQcABUzWD/CcrL9+jBc/ZqinF1Kak51Rurg9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-520aede8ae3so1103394e0c.0;
-        Fri, 28 Feb 2025 08:44:09 -0800 (PST)
+	s=arc-20240116; t=1740761073; c=relaxed/simple;
+	bh=qXA0c1IR/us4lTUTlJHNdr8KlfNpmil6daBUR0/wFb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hipF+k6i/0fFLGBB0TVe1wmdGmvXyvCxdVe6paxQxzzjH/3CIE4n4NQvfqYoU6clBH2z+4beOSji21dUANCfQc/ztK9ckiHgFpZdzb9bB6MnC4+4MQ9X/31K7m5Rcb6mIAIjX3czFDB7xfG0VtESbtZIJSrtGlHy0HG5198TS5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=asT9qXR7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab78e6edb99so314784066b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740761070; x=1741365870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/pohaoVOYa7MLiqI6t3X8roTJn1qw8ViB7ehkN63Og=;
+        b=asT9qXR7U3JZzYhRdsraoh14R6etU1THQJOuMlvLFxdXCJZm8yPoHxceEW+bFcZMSs
+         CpOjK4UXGq3nz8u0kwuTxSMXsexLDIiss7ClwkVC1E5PfArkDqyEcvVv+GjC9N9ezMR6
+         wm8Btsu/XDo4l+av7VuXrt7WvfuoHCdkZgT+v/cEmufbte6BxtMP3+nE0n+LegLEkoXy
+         e3N8Vh3kHl/coMy1CNrzlqL5OqJNquLKvds0O2UmTIihKYRsWj4S6pKMDpwp3luIpcFq
+         u1p+3eu0UN9A4SlzJ32tkCPda16Do0UNC3wqG6G0luZh0Om9GP3i1dD1WnMLDiDPY1Ut
+         HGGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740761047; x=1741365847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wZmsTExTN/j4WLtlXf53YNm76oJhWdLwjJkLBAO41lg=;
-        b=a2Txmw04H08+cQOF2aK0wpJjpo+HKXKI4jp6HtSWATKrCIr94EQsSE2WyPtbVtbo4o
-         Cpj38x2ACs4HDi8BmEynXOQvpYoowHhJK+LofiOeBrZ5csJUK1g7JA7uLUJfum36cPqt
-         mr3RRJ+Omne6vXHxzcuVTgv9ntk96biRl4bgdEDYv5oMKu4xIhZ8vF3gSGuZvBINLPnZ
-         IOgIXblOnhGcP/Q8qN0Gyi1T9PSw5/hak7ZPI9iO9pDaAIyO25y9oEQ0yHdEnIns6KxR
-         bmNb7rKnbZ32iMhUKh3RQLC7HgPrCM6RzxifR9FNQKN4h7KU3EDhMGa1xcYsIMr/Q7xM
-         sPkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQhHZg8XMsPu7ZX8ICVzKJexb6njOcLR3qmbzGQfCG/uPsR0FvvKDxftnloksRwrCQ9/kYkQ+6qGuU@vger.kernel.org, AJvYcCUeeFp8jsvh4WpRIjdvtmNb97h9AKDwF9BD9mL3QqI3j83Hc4axtR3mYJWrHbAHOEzURlr/S/bgFC4gRl8KT++OLWs=@vger.kernel.org, AJvYcCWSvVQMJgiqPeMk5Hu9VTEnCx0El6sHWiLUkiBfzkFPV8yjMYMbYGu3f3YZ0XIAn5iPPbAKvTNqxJh0S61R@vger.kernel.org, AJvYcCX+hng0wrY2zrto53ctaLqz6M0orXnx+mThkQVo0stpGHuhSkxXnQjE56UKQo7vB1gNwzlDi/DdhVm1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaF58nXNlhhJQvoQIh1+J2VWZRIqVqhI+zQYCX9L+B6PBEx1ME
-	/ckS4vQYh7Bl3cTD5KQx7IF4qvoKyMvFo9r3agIeTzawPo1Hp1NOxpQDWVrm
-X-Gm-Gg: ASbGncs/W6u82ABLisOsUZJGm0/7Isf8mu+YNfK16m88ge3a7kSJ83jfOkP/9Pw4Vx1
-	j6flowGkyjlaAXnt1FNzbpFX7WebxBsfmlXfiFRX+D0sxIqEiOOausy/nYYx8bM6j9uD9EReNkh
-	5+x2OHVuBD0q1GvIxN0zDa+hxhuDBp2S6GTIIuGwVoP+vzkuEpWf1/4L9O+fdpvgFN8VbTBit+9
-	Xn0soDVUC8885Nz3U6vlWyfgRBWd6nf/ugPrViIvs0+TxG06n69/TfuR72BqXue9oD0RaqwgIh9
-	Q7A7uAPld/44OfJcfRgEDJ6bpUSfFMgD8feGHRuv8Hrp3dAeixqqGtoYc7YzS09VRlBf
-X-Google-Smtp-Source: AGHT+IG8RXSvKIMrvgqfdujKmAoSNjsr32gwiYZKAgnvTQW5Z4XnXqJt7XsrBAx/9w9RIKq8I4O2NQ==
-X-Received: by 2002:a05:6102:3f0c:b0:4bb:e8c5:b164 with SMTP id ada2fe7eead31-4c044a0afc4mr3208679137.7.1740761045712;
-        Fri, 28 Feb 2025 08:44:05 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86b3dd048d7sm562733241.23.2025.02.28.08.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 08:44:05 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb1a6ca1bso908785e0c.1;
-        Fri, 28 Feb 2025 08:44:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWIxZX6/NAaK8i7YcggE2GQYP2kGvh5bqu9GF+6yA//fq0uob5ueSXGUMsPIcQ32qgdqhjUKjiO7OeRtlyc@vger.kernel.org, AJvYcCWgX0JwFL45Dz74XLk3978hELanCHjjz+r64AaEq0MJZRqNH7OefaUbuXh0EcIw6JMJQxj9uHKfUGsr7zgxLvsYvYE=@vger.kernel.org, AJvYcCWjWFfXdJAMfGLoYPENKp3tCvsY4win29dFTkZOdW961HYcYKjKTKFlriAvL+0sc3T1tCM62WJUMf/i@vger.kernel.org, AJvYcCXlNRlxNClTmFWGIp7KduY5jZ51dLKcs+KL54hAhyY3b8zW17cAgwNno4LFX6XC9T2oHXXMkwq0UFap@vger.kernel.org
-X-Received: by 2002:a05:6102:6e89:b0:4c1:6feb:83aa with SMTP id
- ada2fe7eead31-4c16feb907bmr1367676137.9.1740761044598; Fri, 28 Feb 2025
- 08:44:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740761070; x=1741365870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o/pohaoVOYa7MLiqI6t3X8roTJn1qw8ViB7ehkN63Og=;
+        b=G0k2lccawV7hiL2pmDfTf9KqbrEgl1mNYBpj5Kd2U49m2ffUFU3rBQ8dNON04VvNFZ
+         Obr9IFEEwiVlHU8uOJtv6h6xa37m9z6n6N3EYPI6OJhchbHBob2w0aaHD0Oa7iw8xyUc
+         j6MU7JYKP9GTlgzleBu14SqWKq7EBKUfuXIzFQzPp4w9sabPojSP33OUboHGDsrbgLhO
+         FJQ1ZHpemZyY0hRUf0FI/SxIvHPkrrNpvthLp3+HEIW8xNuXguD5/hrsPxqLnbHZYT9T
+         hcJJYICDEtvAK2l+WIZD2kOLeWbxm2PMEn0Y+0E9jt2Cy+UZCPscWQy4YsvmHrd5vWaM
+         /BPA==
+X-Gm-Message-State: AOJu0YxlpasVMj/OVV4KW/NV/6kOTlVAmHKxHbVAttmR0ViDcM9y4JdU
+	QYflj4lj5RToI0A0ny/I/m8y++xoFliwvd7n+M5NdkjyapKDHYj1sCfI0OqE9Ic=
+X-Gm-Gg: ASbGncsrlmsc4N2c3i5MN626ZIjvapRFZ79m4CqLpF74WEATzyFR2GEzYPHGxdIBQZ9
+	9Xiu/1K0kUmvt1ull6AmG2Opi/HIMjGm2UY14/kjR+m5/cF0zsG30Xh6CSX/3yRjTslqqpqowq0
+	qdRmHNtaFsvacFNQigqJZWljG4N+nudiZ8w0MAbHamne50E/G2wxDSOnYTQ6dl4dkMmOfK1p/bF
+	KastfIM8Dc7WQPSAfb4hxm4Zv6vrFQzwrOuOp3f6gyZOztzvhmPo/7sQEKI0MdZemhWXQd19pn+
+	W6b6Na+GXfmNIgTab9BqS/zT0FCgvWUsRV8jIEU1F+nXunEysbbXGeJAydmE+OEn
+X-Google-Smtp-Source: AGHT+IG+DO6MXCnzc/DlUfglyLe/ZcGADst0PEmKnrvnBgpbBQ4AnIFQT1EaCSqAAz8kPgNagFnWhg==
+X-Received: by 2002:a17:906:7310:b0:abf:13cb:c411 with SMTP id a640c23a62f3a-abf25fabbaemr476729066b.18.1740761069411;
+        Fri, 28 Feb 2025 08:44:29 -0800 (PST)
+Received: from localhost (p200300f65f2c000400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f2c:4::1b9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b92d3sm319704866b.12.2025.02.28.08.44.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 08:44:28 -0800 (PST)
+Date: Fri, 28 Feb 2025 17:44:27 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: David Jander <david@protonic.nl>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+References: <20250227162823.3585810-1-david@protonic.nl>
+ <20250227162823.3585810-2-david@protonic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
- <20250220150110.738619-4-fabrizio.castro.jz@renesas.com> <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
- <TYCPR01MB12093A1002C4F7D7B989D10C4C2CD2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
- <CAMuHMdWzuNz_4LFtNtoiowq31b=wbA_9Qahj1f0EP-9Wq8X4Uw@mail.gmail.com>
- <TYCPR01MB12093D1484AD0E755B76FAE35C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
- <CAMuHMdWUdOEjECPAJwKf7UwVs4OsUAEJ49xK+Xdn_bKXhRrt2Q@mail.gmail.com>
- <TYCPR01MB12093BE16360C82F9CB853AF4C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
- <CAMuHMdXkgK-EdGhyrE6PRzskRXkJ8u+xQ=c5x1-=couedtcmqw@mail.gmail.com> <TYCPR01MB120935A45DD8D9E414D869453C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB120935A45DD8D9E414D869453C2CC2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Feb 2025 17:43:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXaQ727Z9iTtZQ-jXfKV7=CN9Kootc8xtgqKazxP2XmAw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqUjSj3XKk5vEOPOzlGpPhcerwgQOUvaXb7BuaBVldjXjsVJ49hpyOk6Go
-Message-ID: <CAMuHMdXaQ727Z9iTtZQ-jXfKV7=CN9Kootc8xtgqKazxP2XmAw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
- family of SoCs
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3afczumwzxjy3taw"
+Content-Disposition: inline
+In-Reply-To: <20250227162823.3585810-2-david@protonic.nl>
 
-Hi Fabrizio,
 
-On Fri, 28 Feb 2025 at 17:32, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Fri, 28 Feb 2025 at 16:38, Fabrizio Castro
-> > <fabrizio.castro.jz@renesas.com> wrote:
-> > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > On Fri, 28 Feb 2025 at 15:55, Fabrizio Castro
-> > > > <fabrizio.castro.jz@renesas.com> wrote:
-> > > > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > > > On Thu, 27 Feb 2025 at 19:16, Fabrizio Castro
-> > > > > > <fabrizio.castro.jz@renesas.com> wrote:
-> > > > > > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > > > > > Sent: 24 February 2025 12:44
-> > > > > > > > Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family of SoCs
-> > > > > > > >
-> > > > > > > > On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
-> > > > > > > > <fabrizio.castro.jz@renesas.com> wrote:
-> > > > > > > > > Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
-> > > > > > > > > The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
-> > > > > > > > > Renesas RZ/G2L family of SoCs, but there are some differences:
-> > > > > > > > > * It only uses one register area
-> > > > > > > > > * It only uses one clock
-> > > > > > > > > * It only uses one reset
-> > > > > > > > > * Instead of using MID/IRD it uses REQ NO/ACK NO
-> > > > > > > > > * It is connected to the Interrupt Control Unit (ICU)
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > > > > > >
-> > > > > > > > > v1->v2:
-> > > > > > > > > * Removed RZ/V2H DMAC example.
-> > > > > > > > > * Improved the readability of the `if` statement.
-> > > > > > > >
-> > > > > > > > Thanks for the update!
-> > > > > > > >
-> > > > > > > > > --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> > > > > > > > > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> > > > > > > > > @@ -61,14 +66,22 @@ properties:
-> > > > > > > > >    '#dma-cells':
-> > > > > > > > >      const: 1
-> > > > > > > > >      description:
-> > > > > > > > > -      The cell specifies the encoded MID/RID values of the DMAC port
-> > > > > > > > > -      connected to the DMA client and the slave channel configuration
-> > > > > > > > > -      parameters.
-> > > > > > > > > +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S SoCs, the cell
-> > > > > > > > > +      specifies the encoded MID/RID values of the DMAC port connected to the
-> > > > > > > > > +      DMA client and the slave channel configuration parameters.
-> > > > > > > > >        bits[0:9] - Specifies MID/RID value
-> > > > > > > > >        bit[10] - Specifies DMA request high enable (HIEN)
-> > > > > > > > >        bit[11] - Specifies DMA request detection type (LVL)
-> > > > > > > > >        bits[12:14] - Specifies DMAACK output mode (AM)
-> > > > > > > > >        bit[15] - Specifies Transfer Mode (TM)
-> > > > > > > > > +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK NO, and the
-> > > > > > > > > +      slave channel configuration parameters.
-> > > > > > > > > +      bits[0:9] - Specifies the REQ NO
-> > > > > > > >
-> > > > > > > > So REQ_NO is the new name for MID/RID.
-> > > > > >
-> > > > > > These are documented in Table 4.7-22 ("DMA Transfer Request Detection
-> > > > > > Operation Setting Table").
-> > > > >
-> > > > > REQ_NO is documented in both Table 4.7-22 and in Table 4.6-23 (column `DMAC No.`).
-> > > >
-> > > > Indeed. But not for all of them. E.g. RSPI is missing, IIC is present.
-> > >
-> > > I can see the RSPI related `REQ No.` in the version of the manual I am using,
-> > > although one must be very careful to look at the right entry in the table,
-> > > as the table is quite big, and the entries are ordered by `SPI No.`.
-> > >
-> > > For some devices, the SPI numbers are not contiguous therefore the device specific
-> > > bits may end up scattered.
-> > > For example, for `Name` `RSPI_CH0_sp_rxintpls_n` (mind that the `pls_n` substring
-> > > is on a new line in the table) you can see from Table 4.6-23 that
-> > > its `DMAC No.` is 140 (as you said, in decimal...).
-> >
-> > Thanks, I had missed it because the RSPI interrupts are spread across
-> > two places...
-> >
-> > > > And the numbers are shown in decimal instead of in hex ;-)
-> > > >
-> > > > > > > It's certainly similar. I would say that REQ_NO + ACK_NO is the new MID_RID.
-> > > > > > >
-> > > > > > > > > +      bits[10:16] - Specifies the ACK NO
-> > > > > > > >
-> > > > > > > > This is a new field.
-> > > > > > > > However, it is not clear to me which value to specify here, and if this
-> > > > > > > > is a hardware property at all, and thus needs to be specified in DT?
-> > > > > > >
-> > > > > > > It is a HW property. The value to set can be found in Table 4.6-27 from
-> > > > > > > the HW User Manual, column "Ack No".
-> > > > > >
-> > > > > > Thanks, but that table only shows values for SPDIF, SCU, SSIU and PFC
-> > > > > > (for external DMA requests).  The most familiar DMA clients listed
-> > > > > > in Table 4.7-22 are missing.  E.g. RSPI0 uses REQ_NO 0x8C/0x8D, but
-> > > > > > which values does it need for ACK_NO?
-> > > > >
-> > > > > Only a handful of devices need it. For every other device (and use case) only the
-> > > > > default value is needed.
-> > > >
-> > > > The default value is RZV2H_ICU_DMAC_ACK_NO_DEFAULT = 0x7f?
-> >
-> > If you take this out, how to distinguish between ACK_NO = 0 and
-> > the default?
->
-> I am not sure I understand what you mean, so my answer here may be completely off.
->
-> ACK No. 0 corresponds to SPDIF, CH0, TX, while ACK No. 0x7F is not valid.
+--3afczumwzxjy3taw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+MIME-Version: 1.0
 
-OK, that was my understanding, too.
+Hello David,
 
-> My understanding of this is that there is a DACK_SEL field per ACK No (23 ICU_DMACKSELk
-> registers, 4 DACK_SEL fields per ICU_DMACKSELk registers -> 23 * 4 = 92 DACK_SEL fields),
-> to match the 92 ACK numbers listed in Table 4.6-27.
->
-> Each DACK_SEL field should contain the global channel index (5 DMACs, 16 channels per DMAC
-> -> 5 * 16 = 80 channels in total) associated to the ACK No.
-> If DACK_SEL contains a valid channel number (0-79), then the corresponding signal
-> gets controlled accordingly, otherwise a fixed output is generated instead.
->
-> Mind that the code I sent wasn't dealing with it properly, but wasn't spotted due
-> to limited testing capabilities, and it's safe to take out, as the DACK_SEL fields
-> will all contain invalid channel numbers by default.
->
-> Looking ahead, there is a similar scenario with the TEND signals as well.
->
-> So for now the plan is to upstream support for memory/memory and device/memory (REQ No.,
-> tested with RSPI), add support for ACK No later (perhaps testing it with audio, or via
-> an external device), and finally TEND No if we get to it.
+just a few highlevel review comments inline.
 
-So which values will you put in the dmas property for RSPI?
-I assume:
-       bits[0:9] - Specifies REQ_NO value
-       bit[10] - Specifies DMA request high enable (HIEN)
-       bit[11] - Specifies DMA request detection type (LVL)
-       bits[12:14] - Specifies DMAACK output mode (AM)
-       bit[15] - Specifies Transfer Mode (TM)
-i.e. all remaining bits will be zero?
+On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> diff --git a/drivers/motion/motion-core.c b/drivers/motion/motion-core.c
+> new file mode 100644
+> index 000000000000..2963f1859e8b
+> --- /dev/null
+> +++ b/drivers/motion/motion-core.c
+> @@ -0,0 +1,823 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Motion Control Subsystem - Core
+> + *
+> + * Copyright (C) 2024 Protonic Holland
+> + *                    David Jander <david@protonic.nl>
+> + */
+> +
+> +#include <asm-generic/bitops/builtin-fls.h>
+> +#include <asm-generic/errno-base.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irqreturn.h>
+> +#include <linux/container_of.h>
+> +#include <linux/hrtimer_types.h>
+> +#include <linux/gfp_types.h>
+> +#include <linux/module.h>
+> +
+> +#include <linux/fs.h>
+> +#include <linux/errno.h>
+> +#include <linux/kernel.h>
+> +#include <linux/major.h>
+> +#include <linux/init.h>
+> +#include <linux/device.h>
+> +#include <linux/kmod.h>
+> +#include <linux/motion.h>
+> +#include <linux/poll.h>
+> +#include <linux/ptrace.h>
+> +#include <linux/ktime.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/gpio/consumer.h>
+> +
+> +#include "motion-core.h"
+> +#include "motion-helpers.h"
+> +#include <linux/time.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/string.h>
+> +#include <linux/math64.h>
+> +#include <linux/mutex.h>
+> +#include <linux/math.h>
+> +#include <linux/math64.h>
 
-How do you plan to handle adding ACK_NO bits later?
-I.e. how to distinguish between remaining bits zero and remaining
-bits containing a valid ACK_NO value (which can be zero, for SPDIF)?
+Order all <...> includes over the "..." ones.
 
-I hope I made myself clear this time.
-If not, weekend time ;-)
+> +#define MOTION_PROFILE_VALID BIT(31)
+> +
+> +static LIST_HEAD(motion_list);
+> +static DEFINE_MUTEX(motion_mtx);
+> +static int motion_major;
+> +static DEFINE_IDA(motion_minors_ida);
+> +
+> +struct iio_motion_trigger_info {
+> +	unsigned int minor;
+> +};
+> +
+> +static int motion_minor_alloc(void)
+> +{
+> +	int ret;
+> +
+> +	ret = ida_alloc_range(&motion_minors_ida, 0, MINORMASK, GFP_KERNEL);
+> +	return ret;
 
-Have a nice weekend!
+This could be a one-liner.
 
-Gr{oetje,eeting}s,
+> +}
+> +
+> +static void motion_minor_free(int minor)
+> +{
+> +	ida_free(&motion_minors_ida, minor);
+> +}
+> +
+> +static int motion_open(struct inode *inode, struct file *file)
+> +{
+> +	int minor = iminor(inode);
+> +	struct motion_device *mdev = NULL, *iter;
+> +	int err;
+> +
+> +	mutex_lock(&motion_mtx);
 
-                        Geert
+If you use guard(), error handling gets a bit easier.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	list_for_each_entry(iter, &motion_list, list) {
+> +		if (iter->minor != minor)
+> +			continue;
+> +		mdev = iter;
+> +		break;
+> +	}
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This should be easier. If you use a cdev you can just do
+container_of(inode->i_cdev, ...);
+
+> +	if (!mdev) {
+> +		err = -ENODEV;
+> +		goto fail;
+> +	}
+> +
+> +	dev_info(mdev->dev, "MOTION: open %d\n", mdev->minor);
+
+degrade to dev_dbg.
+
+> +	file->private_data = mdev;
+> +
+> +	if (mdev->ops.device_open)
+> +		err = mdev->ops.device_open(mdev);
+> +	else
+> +		err = 0;
+> +fail:
+> +	mutex_unlock(&motion_mtx);
+> +	return err;
+> +}
+> +
+> +static int motion_release(struct inode *inode, struct file *file)
+> +{
+> +	struct motion_device *mdev = file->private_data;
+> +	int i;
+> +
+> +	if (mdev->ops.device_release)
+> +		mdev->ops.device_release(mdev);
+> +
+> +	for (i = 0; i < mdev->num_gpios; i++) {
+> +		int irq;
+> +		struct motion_gpio_input *gpio = &mdev->gpios[i];
+> +
+> +		if (gpio->function == MOT_INP_FUNC_NONE)
+> +			continue;
+> +		irq = gpiod_to_irq(gpio->gpio);
+> +		devm_free_irq(mdev->dev, irq, gpio);
+
+It seems devm is just overhead here if you release by hand anyhow.
+
+> +		gpio->function = MOT_INP_FUNC_NONE;
+> +	}
+> +
+> +	if (!kfifo_is_empty(&mdev->events))
+> +		kfifo_reset(&mdev->events);
+> +
+> +	/* FIXME: Stop running motions? Probably not... */
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t motion_read(struct file *file, char __user *buffer,
+> +			  size_t count, loff_t *ppos)
+> +{
+> +	struct motion_device *mdev = file->private_data;
+> +	unsigned int copied = 0L;
+> +	int ret;
+> +
+> +	if (!mdev->dev)
+> +		return -ENODEV;
+> +
+> +	if (count < sizeof(struct mot_event))
+> +		return -EINVAL;
+> +
+> +	do {
+> +		if (kfifo_is_empty(&mdev->events)) {
+> +			if (file->f_flags & O_NONBLOCK)
+> +				return -EAGAIN;
+> +
+> +			ret = wait_event_interruptible(mdev->wait,
+> +					!kfifo_is_empty(&mdev->events) ||
+> +					mdev->dev == NULL);
+> +			if (ret)
+> +				return ret;
+> +			if (mdev->dev == NULL)
+> +				return -ENODEV;
+> +		}
+> +
+> +		if (mutex_lock_interruptible(&mdev->read_mutex))
+> +			return -ERESTARTSYS;
+> +		ret = kfifo_to_user(&mdev->events, buffer, count, &copied);
+> +		mutex_unlock(&mdev->read_mutex);
+> +
+> +		if (ret)
+> +			return ret;
+> +	} while (!copied);
+> +
+> +	return copied;
+> +}
+> +
+> +static __poll_t motion_poll(struct file *file, poll_table *wait)
+> +{
+> +	struct motion_device *mdev = file->private_data;
+> +	__poll_t mask = 0;
+> +
+> +	poll_wait(file, &mdev->wait, wait);
+> +	if (!kfifo_is_empty(&mdev->events))
+> +		mask = EPOLLIN | EPOLLRDNORM;
+> +	dev_info(mdev->dev, "Obtained POLL events: 0x%08x\n", mask);
+
+dev_dbg
+
+> +
+> +	return mask;
+> +}
+> +
+> [...]
+> +
+> +static long motion_start_locked(struct motion_device *mdev, struct mot_start *s)
+> +{
+> +	long ret = 0L;
+> +	mot_time_t conv_duration;
+> +
+> +	lockdep_assert_held(&mdev->mutex);
+> +
+> +	if (s->reserved1 || s->reserved2)
+> +		return -EINVAL;
+> +	if (s->channel >= mdev->capabilities.num_channels)
+> +		return -EINVAL;
+> +	if ((s->index >= MOT_MAX_PROFILES) || (s->direction > MOT_DIRECTION_RIGHT))
+> +		return -EINVAL;
+> +	if (!(mdev->profiles[s->index].index & MOTION_PROFILE_VALID))
+> +		return -EINVAL;
+> +	if (s->when >= MOT_WHEN_NUM_WHENS)
+> +		return -EINVAL;
+> +	if (s->duration && s->distance)
+> +		return -EINVAL;
+> +	if (!mdev->ops.motion_distance && !mdev->ops.motion_timed)
+> +		return -EOPNOTSUPP;
+
+I would add empty lines between these ifs to improve readability. Maybe
+thats subjective though.
+
+> +	if (s->duration) {
+> +		if (!mdev->ops.motion_timed)
+> +			return -EOPNOTSUPP;
+> +		/* FIXME: Implement time to distance conversion? */
+> +		return mdev->ops.motion_timed(mdev, s->channel, s->index,
+> +				s->direction, s->duration, s->when);
+> +	}
+> +	if (!mdev->ops.motion_distance) {
+> +		ret = motion_distance_to_time(mdev, s->index, s->distance,
+> +				&conv_duration);
+> +		if (ret)
+> +			return ret;
+> +		return mdev->ops.motion_timed(mdev, s->channel, s->index,
+> +				s->direction, conv_duration, s->when);
+> +	}
+> +	ret = mdev->ops.motion_distance(mdev, s->channel, s->index,
+> +			s->distance, s->when);
+> +
+> +	return ret;
+> +}
+> [...]
+> +
+> +static long motion_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct motion_device *mdev = file->private_data;
+> +	void __user *argp = (void __user *)arg;
+> +	long ret;
+> +
+> +	switch (cmd) {
+> +	case MOT_IOCTL_APIVER:
+> +		force_successful_syscall_return();
+> +		return MOT_UAPI_VERSION;
+
+force_successful_syscall_return() is only needed if the return value is
+negative but no error.
+
+> +	case MOT_IOCTL_BASIC_RUN: {
+> +		struct mot_speed_duration spd;
+> +
+> +		if (copy_from_user(&spd, argp, sizeof(spd)))
+> +			return -EFAULT;
+> +		if (!mdev->ops.basic_run)
+> +			return -EINVAL;
+> [...]
+> +
+> +static const struct class motion_class = {
+> +	.name		= "motion",
+> +	.devnode	= motion_devnode,
+
+IIRC it's recommended to not create new classes, but a bus.
+
+> +};
+> +
+> +static const struct file_operations motion_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.read		= motion_read,
+> +	.poll		= motion_poll,
+> +	.unlocked_ioctl = motion_ioctl,
+> +	.open		= motion_open,
+> +	.llseek		= noop_llseek,
+> +	.release	= motion_release,
+> +};
+> +
+> +static int motion_of_parse_gpios(struct motion_device *mdev)
+> +{
+> +	int ngpio, i;
+> +
+> +	ngpio = gpiod_count(mdev->parent, "motion,input");
+> +	if (ngpio < 0) {
+> +		if (ngpio == -ENOENT)
+> +			return 0;
+> +		return ngpio;
+> +	}
+> +
+> +	if (ngpio >= MOT_MAX_INPUTS)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < ngpio; i++) {
+> +		mdev->gpios[i].gpio = devm_gpiod_get_index(mdev->parent,
+> +				"motion,input", i, GPIOD_IN);
+> +		if (IS_ERR(mdev->gpios[i].gpio))
+> +			return PTR_ERR(mdev->gpios[i].gpio);
+> +		mdev->gpios[i].function = MOT_INP_FUNC_NONE;
+> +		mdev->gpios[i].chmask = 0;
+> +		mdev->gpios[i].index = i;
+> +	}
+> +
+> +	mdev->num_gpios = ngpio;
+> +	mdev->capabilities.num_ext_triggers += ngpio;
+> +
+> +	return 0;
+> +}
+> +
+> +static void motion_trigger_work(struct irq_work *work)
+> +{
+> +	struct motion_device *mdev = container_of(work, struct motion_device,
+> +							iiowork);
+> +	iio_trigger_poll(mdev->iiotrig);
+> +}
+> +
+> +/**
+> + * motion_register_device - Register a new Motion Device
+> + * @mdev: description and handle of the motion device
+> + *
+> + * Register a new motion device with the motion subsystem core.
+> + * It also handles OF parsing of external trigger GPIOs and registers an IIO
+> + * trigger device if IIO support is configured.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int motion_register_device(struct motion_device *mdev)
+> +{
+> +	dev_t devt;
+> +	int err = 0;
+> +	struct iio_motion_trigger_info *trig_info;
+> +
+> +	if (!mdev->capabilities.num_channels)
+> +		mdev->capabilities.num_channels = 1;
+> +	if (mdev->capabilities.features | MOT_FEATURE_PROFILE)
+> +		mdev->capabilities.max_profiles = MOT_MAX_PROFILES;
+> +	if (!mdev->capabilities.speed_conv_mul)
+> +		mdev->capabilities.speed_conv_mul = 1;
+> +	if (!mdev->capabilities.speed_conv_div)
+> +		mdev->capabilities.speed_conv_div = 1;
+> +	if (!mdev->capabilities.accel_conv_mul)
+> +		mdev->capabilities.accel_conv_mul = 1;
+> +	if (!mdev->capabilities.accel_conv_div)
+> +		mdev->capabilities.accel_conv_div = 1;
+> +
+> +	mutex_init(&mdev->mutex);
+> +	mutex_init(&mdev->read_mutex);
+> +	INIT_KFIFO(mdev->events);
+> +	init_waitqueue_head(&mdev->wait);
+> +
+> +	err = motion_of_parse_gpios(mdev);
+> +	if (err)
+> +		return err;
+> +
+> +	mdev->minor = motion_minor_alloc();
+> +
+> +	mdev->iiotrig = iio_trigger_alloc(NULL, "mottrig%d", mdev->minor);
+> +	if (!mdev->iiotrig) {
+> +		err = -ENOMEM;
+> +		goto error_free_minor;
+> +	}
+> +
+> +	trig_info = kzalloc(sizeof(*trig_info), GFP_KERNEL);
+> +	if (!trig_info) {
+> +		err = -ENOMEM;
+> +		goto error_free_trigger;
+> +	}
+> +
+> +	iio_trigger_set_drvdata(mdev->iiotrig, trig_info);
+> +
+> +	trig_info->minor = mdev->minor;
+> +	err = iio_trigger_register(mdev->iiotrig);
+> +	if (err)
+> +		goto error_free_trig_info;
+> +
+> +	mdev->iiowork = IRQ_WORK_INIT_HARD(motion_trigger_work);
+> +
+> +	INIT_LIST_HEAD(&mdev->list);
+> +
+> +	mutex_lock(&motion_mtx);
+> +
+> +	devt = MKDEV(motion_major, mdev->minor);
+> +	mdev->dev = device_create_with_groups(&motion_class, mdev->parent,
+> +				devt, mdev, mdev->groups, "motion%d", mdev->minor);
+
+What makes sure that mdev doesn't go away while one of the attributes is
+accessed?
+
+> +	if (IS_ERR(mdev->dev)) {
+> +		dev_err(mdev->parent, "Error creating motion device %d\n",
+> +				mdev->minor);
+> +		mutex_unlock(&motion_mtx);
+> +		goto error_free_trig_info;
+> +	}
+> +	list_add_tail(&mdev->list, &motion_list);
+> +	mutex_unlock(&motion_mtx);
+> +
+> +	return 0;
+> +
+> +error_free_trig_info:
+> +	kfree(trig_info);
+> +error_free_trigger:
+> +	iio_trigger_free(mdev->iiotrig);
+> +error_free_minor:
+> +	motion_minor_free(mdev->minor);
+> +	dev_info(mdev->parent, "Registering motion device err=%d\n", err);
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(motion_register_device);
+> [...]
+> +struct mot_capabilities {
+> +	__u32 features;
+> +	__u8 type;
+> +	__u8 num_channels;
+> +	__u8 num_int_triggers;
+> +	__u8 num_ext_triggers;
+> +	__u8 max_profiles;
+> +	__u8 max_vpoints;
+> +	__u8 max_apoints;
+> +	__u8 reserved1;
+> +	__u32 subdiv; /* Position unit sub-divisions, microsteps, etc... */
+> +	/*
+> +	 * Coefficients for converting to/from controller time <--> seconds.
+> +	 * Speed[1/s] = Speed[controller_units] * conv_mul / conv_div
+> +	 * Accel[1/s^2] = Accel[controller_units] * conv_mul / conv_div
+> +	 */
+> +	__u32 speed_conv_mul;
+> +	__u32 speed_conv_div;
+> +	__u32 accel_conv_mul;
+> +	__u32 accel_conv_div;
+> +	__u32 reserved2;
+> +};
+
+https://docs.kernel.org/gpu/imagination/uapi.html (which has some
+generic bits that apply here, too) has: "The overall struct must be
+padded to 64-bit alignment." If you drop reserved2 the struct is
+properly sized (or I counted wrongly).
+
+> +struct mot_speed_duration {
+> +	__u32 channel;
+> +	speed_raw_t speed;
+
+What is the unit here?
+
+> +	mot_time_t duration;
+
+duration_ns? That makes usage much more ideomatic and there should be no
+doubts what the unit is.
+
+> +	pos_raw_t distance;
+
+What is the unit here?
+
+> +	__u32 reserved[3];
+
+Again the padding is wrong here.
+
+> +};
+
+Best regards
+Uwe
+
+--3afczumwzxjy3taw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfB5+gACgkQj4D7WH0S
+/k5C1wf+IR16wHxTa97rqqBTKhKSRqGGyRlmIbst2s3km2q+yRD9ko9pEaBdJX/4
+zsJnADhNXYnrU+ZIi08XShlMK88pz9J3Vbm53B1fLjCNSxUTOdNtIz6ARic4+XtY
+PzaOtt7Zp56yD4mOdiogAO1ZMll5E1Ol/Qsx/0b8zHBznzL1AuNpHb0vGazQlpYC
+55a4XT3ZBdMeFmEHtrazlwEGrYNb2d9YXe5TkA5sYBZAouwdUX8JVTWrbbnzAHAm
+DE0FdbBhSQmgPalQXOoxwaWDwH0IDJd6JiDblZlawwb02vKUajAdpyl1lndEoUcs
+fkBSnJnFK/COPjbcavaZ5PEke+raTg==
+=z/7b
+-----END PGP SIGNATURE-----
+
+--3afczumwzxjy3taw--
 
