@@ -1,108 +1,80 @@
-Return-Path: <linux-kernel+bounces-537884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02912A49212
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:21:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8DFA49218
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85EC189315B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2258E16C15A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 07:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887CF1D5165;
-	Fri, 28 Feb 2025 07:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004431C726D;
+	Fri, 28 Feb 2025 07:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xh/qEr4B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxlI25C8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92B61CAA6C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 07:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9A276D12;
+	Fri, 28 Feb 2025 07:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740727269; cv=none; b=CgbZ7CTvkcShW6+DsOzFyTJ2GXAP1dvGPs9UJHc9vP9EXvKHdRWyDufGWtImwcAtwYP4JpwED8PUY/WFMpj0BGfS+gOR09u6cme8LfKrGBynnDMFtg82oY8fcpKDelkXXulkRwaROvIEtuj1jo2iWfaKJWDm8Mg2T223tjvMxpM=
+	t=1740727415; cv=none; b=N4eTiRYXkjR/6MIHFX1gQv4Met035LpDQPt2S+a33WdDWXy+pwHB5ZmRpgzI9BVcgVTz/JtgQKXCCQMItbIaqlD1siCV02ovCoW/eNwbl4qM4/VUE3XX7o8Rlj/Rc6WHrPPATUcOyI8G6HP/jV/UWHstAnxq/F+SZ5p+ABAvYCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740727269; c=relaxed/simple;
-	bh=LiGS3+6W4VSmf7HQmdSuxLihLsGhBnmgTm1eWOTnPMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fQlzqVTeWtd/UmAUxHh9jt/58cMyJkt2jNrRtXrWzCDiIFH4MMiSZzfNNn3pikTYeHFHBNCuVOGjXRK9vKa8r/c74w978LJH7Wni1SrcWVdjIvyu/0t8oP6fzJZq1gywxS4m8pAANou68MbGb0ZY5hIAcRreONrqKKd/olncVY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xh/qEr4B; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740727267; x=1772263267;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LiGS3+6W4VSmf7HQmdSuxLihLsGhBnmgTm1eWOTnPMo=;
-  b=Xh/qEr4BxFK1GZBWQezpog/y+CjvykEp6pz5DH0GXUm8bVafZgUdpJ8z
-   6K+gjvJGwfPd7jEuNH/IZETuTWH9DHS+R1HFltKETtxKUdSAFMMh6WBwe
-   VuezOwVyTudQUHtl6IlDZY5T8CWtC0pBqVj8dsj9KA5pQiTnHmT7z5MjB
-   tRNq6DaCeYv1dh1S8gDME9bCIyAq6ieVTu12YcXXC7UYgk7ge6gX2uaGe
-   9oFaV1U4Wns/QtiR/ikWR1Og6OdtAZHs4YdW81dgdMa2fJ0lk1zFcskIO
-   0T1PC/XUnXf6C6AhpeCG08TI2Rzt7QIhzkUxd3lovxEtcuF/w2c7FjJ3x
-   w==;
-X-CSE-ConnectionGUID: X2jW5kNISSyoWyvJdvFRDA==
-X-CSE-MsgGUID: TDrJq5S3RRGv9OjMbSPhXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="29242637"
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="29242637"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 23:21:06 -0800
-X-CSE-ConnectionGUID: AovqdcdhTDGSC0sXB8Nryg==
-X-CSE-MsgGUID: 0R8SLaQyThiei2WV3iTnFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,321,1732608000"; 
-   d="scan'208";a="140487428"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Feb 2025 23:21:03 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	bleung@chromium.org,
-	groeck@chromium.org,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2 2/2] regulator: cros-ec: use devm_kmemdup_array()
-Date: Fri, 28 Feb 2025 12:50:57 +0530
-Message-Id: <20250228072057.151436-3-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228072057.151436-1-raag.jadav@intel.com>
-References: <20250228072057.151436-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1740727415; c=relaxed/simple;
+	bh=FySeXdrRimFrLVwqw1+E2oUqxSwEtboPGGyAWNpiM8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bx8gLYhcZE2elC3EfTmzOJJD8Oy15nKuVpGUxV2qJtv5NFwGW3zOioJqOZg15vZUj8kDixik0oL1jN9+ZleLm8Zzi3dFIpM12gue1TPLF1CJighXYUz5AqsXuavn/eBIRUvXjms5zaLkKf9xZEa9ejcqZZXW0OlBee/QfB2fVN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxlI25C8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61D1C4CEE4;
+	Fri, 28 Feb 2025 07:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740727414;
+	bh=FySeXdrRimFrLVwqw1+E2oUqxSwEtboPGGyAWNpiM8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BxlI25C8FPop0ydCWps70MR+y6z76vAm2/cmEbbvriw8jRoYW4nteDqzBhRlHvSW5
+	 EjwliWi4pQJb9u08ilDAtoT0VjlGKJo3+pCCu4mUhO0eOr+k4T6cqrN+IEWA9uf7Du
+	 A5rNn2+ixyLpGcVQYcFII68RThKSTEvPzPyp1J/9QjN+2fFAensv9Y8HUxMWPKzc6w
+	 ce3/EGPnt9CT0VUF4/KCuO4cgtUln63CjgUctezHut7tNjEeAduuc9IPOjRLQTrs+L
+	 k4CyYDl2cIoAXXEgkVYgZ4H76fIp9QhfkICdYTCIe3tqDJfLCW5Q6GSZBu2VDzJw6M
+	 yYB7OMke3AnNA==
+Date: Fri, 28 Feb 2025 08:23:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v3 4/6] arm64: Kconfig: add ARCH_CIX for cix silicons
+Message-ID: <20250228-spiked-spaniel-of-painting-c5e5bd@krzk-bin>
+References: <20250227120619.1741431-1-peter.chen@cixtech.com>
+ <20250227120619.1741431-5-peter.chen@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227120619.1741431-5-peter.chen@cixtech.com>
 
-Convert to use devm_kmemdup_array() and while at it, make the size robust
-against type changes.
+On Thu, Feb 27, 2025 at 08:06:17PM +0800, Peter Chen wrote:
+> From: Fugang Duan <fugang.duan@cixtech.com>
+> 
+> Add ARCH_CIX for CIX SoC series support.
+> 
+> Signed-off-by: Fugang Duan <fugang.duan@cixtech.com>
+> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> ---
+>  arch/arm64/Kconfig.platforms | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/regulator/cros-ec-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/regulator/cros-ec-regulator.c b/drivers/regulator/cros-ec-regulator.c
-index fb9643ed7a49..fb0767b33a36 100644
---- a/drivers/regulator/cros-ec-regulator.c
-+++ b/drivers/regulator/cros-ec-regulator.c
-@@ -138,8 +138,8 @@ static int cros_ec_regulator_init_info(struct device *dev,
- 	data->num_voltages =
- 		min_t(u16, ARRAY_SIZE(resp.voltages_mv), resp.num_voltages);
- 	data->voltages_mV =
--		devm_kmemdup(dev, resp.voltages_mv,
--			     sizeof(u16) * data->num_voltages, GFP_KERNEL);
-+		devm_kmemdup_array(dev, resp.voltages_mv, data->num_voltages,
-+				   sizeof(resp.voltages_mv[0]), GFP_KERNEL);
- 	if (!data->voltages_mV)
- 		return -ENOMEM;
- 
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
