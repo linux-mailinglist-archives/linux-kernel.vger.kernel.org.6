@@ -1,111 +1,346 @@
-Return-Path: <linux-kernel+bounces-539019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638CAA49FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:09:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B0AA49FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A77116B8A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633AD3BD56D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E0C28136C;
-	Fri, 28 Feb 2025 17:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE43275604;
+	Fri, 28 Feb 2025 17:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQ1WDW3e"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKiLaa2J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1348281359
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E002702A5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740762474; cv=none; b=LHyho1wBgTyATi1IVHPyaOcPV2JDTEHiX4JBrib3WRqwMaDxnPr4oefSH134E+FGOdUASk7tEb+1likCLXJMkLuTzPAJP3GZj+pWzaIA5QlKhD3VBMgqlulsM9F0CqQ/yh2vKT+UW/s7rMsExHltIH0zLi1RXj29FEpsqL+/aug=
+	t=1740762457; cv=none; b=ICaXxThuSsyIQls7ioap+aDYcxmG0I5bX74BQcaNjJOe5nfjz2vWv+zmNZZDe42PTzrEVoXW3fhKtdwgWUObRAEroP2Q4cdO53PxfT1tjf6VEFwIdCwJx3FhiGGhnl+MYHJLeWwusrjh+CWgurlVsB+PvMK0FYTKxBAuBgpmocA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740762474; c=relaxed/simple;
-	bh=xVmIBS8Yry96LzqfMn80N8uQNorpC8OE2/uVu9ohjIs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GxlpJjZ3Z8Jf/tZWAyUHECBcdPTTHlPip+br1D9hRUk6iV1fNRXH5E6ooXDpaexTB3nHVxptmmX6wJ6O9nTn1ISEU4WU1DH4c5EMnl9N68RRSZKWmldfp3Gr6IG+YFOWfuB4ogYclLwfOso4PDnKC8X7RMtdOCcZmOKzbHEdU5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LQ1WDW3e; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so5065654a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740762472; x=1741367272; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2oG6zshz8nl2FBqsuMKiFucOLA6s8CVVHZchlrSE30=;
-        b=LQ1WDW3eTV8sgDqKB7tKT+rAtXMcbxCbuey4CGjycUgthkgR+IVq21tee/osV0rXEk
-         zB0pOLnGy8YSEFQ2F73H3cMArPaG3b8N9gEFz9dmGAu5lteWqi3I3XdE8bgc7uUPJvb4
-         /8FfE8Id8CKYu0OXuBDRpafgqgrVbWPBmOf//ZjSg4HK5uDaoqXSVxvqTvK9kLCAXDYK
-         +xSiYeEDygojoevS/5viPvGyY6XbKvtQHofpVudpu+xHKPekiaFE5sQSc35EjiB9gp8g
-         EcvhJRzQn3MIi7xYIQuF4sXy25ITL0aNY4m0y3Fed+vPgUxD9es+bnbEZpI8VbDwuOXS
-         XyzA==
+	s=arc-20240116; t=1740762457; c=relaxed/simple;
+	bh=/RvA9r65QapsK4A1GAT1dVLM+H7F3owsWsN7y2Q2Trs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OGSktZ7T7UFxyedWD8/e/OOjAHZYBPOF1dg7oZRoWzvWK5O3SYGluoMj1+ojK0Wxys26iVT0x3ZH7MTX8CX9eB9mnObBvcZ/BDuuebp+X+u/UkIjv0HthWh5pt0P9aDJhPBb3r3NIhSYxxKmzvF0AgkgY/dNFGywl4n30qAbtFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKiLaa2J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740762454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rYSCAfZyuD0d3DxBU/ccZy8rRQiRa9ZEu27E2u5eVcs=;
+	b=fKiLaa2JPL7D1KjmUGYIp0pplp2MBc2fg5hykqXSgGUfLY6WhlotBEHEg87O/EDIA+hK58
+	mZIUCCXcD8UCp67YOBZ3E8QF01Nrk3YIgO72jjgfj0FqRklzUQNDnn8sjVQeaT3iW95THj
+	0zU1cUHUvKA7tdwMBCNI/cz0mezdbAI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-lWwucLoHN_msTnnCw_zJ8A-1; Fri, 28 Feb 2025 12:07:32 -0500
+X-MC-Unique: lWwucLoHN_msTnnCw_zJ8A-1
+X-Mimecast-MFC-AGG-ID: lWwucLoHN_msTnnCw_zJ8A_1740762451
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-390df5962e1so1368480f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740762472; x=1741367272;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2oG6zshz8nl2FBqsuMKiFucOLA6s8CVVHZchlrSE30=;
-        b=DXOzThSpbKdZqZcunMHZPK1AadSgN1jRKMgDPgTAnoVD8lU2gj5s3FSuCN1qqkFDtD
-         jg3h/PfwXUV9ZvMld8rQdblbQ9uDxHVS8dSm4KvMRi8u6R+KKKihYji2EBYp9TZVRPrq
-         eC8CCGqZ88htIUoj9RvW92Uhqh5jFMiMbguxMEHAw9l0k9W70IvDbAjzOhVjXQb2jLAf
-         BlIzywF1npWMSJ7XKngqRoWTBr1/aWt9TbzefakMxB7aXghFiECcvbqQR4AeUajvfCDb
-         bFMw3BOa8goKlwf2o+OXBaKYRqLoSUjc+wnVoML5Rny0IJ/48+pPVgql/1whR6Fb6JqJ
-         B9IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlAzVYQNwzzSjvbvRwSo7RTmq1DxSCrX7XdeyKy3tRchE1GEBcMxvgiL5dhTh0KaHlTstuK0ZOS/Bc/eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw81UVuSloi9kIBA3GF4wXzz+766lVO9vZ8vXVL8GVNkKIdryz
-	ZJ79dn5Wtt83Ky6TZXbPh2LdUdCpgPa5Tv9kFuHN3AmpH4Mg+6FfeDSF+WMS1C+OaGXsm1qEH4/
-	y9g==
-X-Google-Smtp-Source: AGHT+IHxClS6Ov3N4mC2MOcBG8aooiB2l2G7Lim0GoLHj9tgAux8JsYTBZ13NlJ8w5b4r1UNpjTKlpoUIVg=
-X-Received: from pjg7.prod.google.com ([2002:a17:90b:3f47:b0:2f8:49ad:406c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1ccb:b0:2fe:b470:dde4
- with SMTP id 98e67ed59e1d1-2febab3c659mr7943858a91.12.1740762472274; Fri, 28
- Feb 2025 09:07:52 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:06:36 -0800
-In-Reply-To: <20250215011437.1203084-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1740762449; x=1741367249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rYSCAfZyuD0d3DxBU/ccZy8rRQiRa9ZEu27E2u5eVcs=;
+        b=u7K3lPEZ287sJQUYYyNIff35Njx5NxwtX89l79sJd2khO2nZBc9aMNbshVJWzbVfoa
+         CZFkcExsXSkyH7O/y/6vtk2U307t6AllHxhn5WT+RgUVQtKQ1TO7n6yMBypqrf3o3jui
+         UMTIdmlWMMYIITX3/LyvGwyHNUiO+D8zt7Ry1sLNiYIWvw/7VUsct3X+dAQXCwEepwuX
+         4zXkVorVBBS1jk60sjBf8HQark3Ps28zpqXnsF/kTc2WkdQgjtc86NiaNUGaVloHjL2z
+         TS8iv2ryLdmdc0iyOyvTWVxWyPP0DqCbRcCFVRpVwYfW2KvmWZGIxLokkFDG7MypO9bX
+         dBqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyRsqAYv0X9jdsq5oWU44pOz1FiKYgkOqN2sUlnUCBr+6cdXc6exRiOe4yL4VeEgvAn3eHjTGsT9+SBlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy5t1UfHZJW/Fk2U8mK2PWyeIXDktTG6Smgx+m0YIu8daHqVaQ
+	NmQyGVQqJgryivAELr6/aNyvr6hKIri9j3sPJD2T2/IwwMuBTUGY8mkb8P3E/T9BzMaOJIGJpDR
+	CNXMB6vULwfBldIfdXMQ1XnFQH4gFqBfBbkiimVookbDyQUI+rTak3Tb9PglIgQ==
+X-Gm-Gg: ASbGncuMbIAn6VlIdKtdorywjgQ12Wz0bF73aPmSMsNxrgRgyz4sT/8OpQg5UsqJ+IN
+	IVCTpeUrwjmr66Jmg5vmU4G8xDpKS6pYRQc40DJQXpPEdV8vtBSyA2X/w17sfg9ebtPa2622w+/
+	bv0uECA4FqmhSdb/5F59+HPQwQHy2wH6ThjLtvnUncfMzkOloV8P1owKPsAH7TuGHTO5Uru/8GW
+	/uGIBv0MnOfZTgGKx8H1YKrZDY8Qj+BK4c/xgC3GFynUS0k4s1z4u0XQu8C/yDyIwxc0D1io5Y1
+	fnAyyNbxe99xXfQkjc1T
+X-Received: by 2002:a5d:47ad:0:b0:38d:b028:d906 with SMTP id ffacd0b85a97d-390ec1658f3mr4919648f8f.21.1740762446975;
+        Fri, 28 Feb 2025 09:07:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHtVYlKKW8a4KALXus8eZuA/K3Vl0LzZxrwI6Pap0hcUB9luMzYgXS5z5tRoXmaqfZdOyLkrw==
+X-Received: by 2002:a5d:47ad:0:b0:38d:b028:d906 with SMTP id ffacd0b85a97d-390ec1658f3mr4919346f8f.21.1740762444740;
+        Fri, 28 Feb 2025 09:07:24 -0800 (PST)
+Received: from stex1.redhat.com ([5.179.147.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a7473sm5847296f8f.38.2025.02.28.09.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 09:07:23 -0800 (PST)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>,
+	linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [RFC PATCH v2 0/6] Enlightened vTPM support for SVSM on SEV-SNP
+Date: Fri, 28 Feb 2025 18:07:14 +0100
+Message-ID: <20250228170720.144739-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.48.1
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250215011437.1203084-1-seanjc@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174041641314.2341854.17309269285047570958.b4-ty@google.com>
-Subject: Re: [PATCH v2 0/5] KVM: x86/xen: Restrict hypercall MSR index
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Joao Martins <joao.m.martins@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 17:14:32 -0800, Sean Christopherson wrote:
-> Harden KVM against goofy userspace by restricting the Xen hypercall MSR
-> index to the de facto standard synthetic range, 0x40000000 - 0x4fffffff.
-> This obviously has the potential to break userspace, but I'm fairly confident
-> it'll be fine (knock wood), and doing nothing is not an option as letting
-> userspace redirect any WRMSR is at best completely broken.
-> 
-> Patches 2-5 are tangentially related cleanups.
-> 
-> [...]
+I put RFC back in because we haven't yet decided if this is the best
+approach to support SVSM vTPM, but I really like to receive feedbacks
+especially from the maintainer/reviewers of the TPM subsystem, to see if
+this approach is acceptable.
 
-Applied to kvm-x86 xen, with the docs change.  Thanks for the reviews!
+Also James, Claudio, I left some questions for you in patches 2 and 4,
+since I reused your code, but I changed the context quite a bit, so for
+now I reset the author and added C-o-b, but I'm not sure it's okay for you.
 
-[1/5] KVM: x86/xen: Restrict hypercall MSR to unofficial synthetic range
-      https://github.com/kvm-x86/linux/commit/5c17848134ab
-[2/5] KVM: x86/xen: Add an #ifdef'd helper to detect writes to Xen MSR
-      https://github.com/kvm-x86/linux/commit/bb0978d95a55
-[3/5] KVM: x86/xen: Consult kvm_xen_enabled when checking for Xen MSR writes
-      https://github.com/kvm-x86/linux/commit/a5d7700af6b0
-[4/5] KVM: x86/xen: Bury xen_hvm_config behind CONFIG_KVM_XEN=y
-      https://github.com/kvm-x86/linux/commit/69e5a7dde965
-[5/5] KVM: x86/xen: Move kvm_xen_hvm_config field into kvm_xen
-      https://github.com/kvm-x86/linux/commit/26e228ec1695
+As requested, I try to add more context:
 
---
-https://github.com/kvm-x86/linux/tree/next
+AMD SEV-SNP defined a new mechanism for adding privileged levels (VMPLs)
+in the context of a Confidential VM. These levels can be used to run the
+guest OS at a lower privilege level than a Secure VM Service Module (SVSM).
+In this way SVSM can be used to emulate those devices (such as TPM) that
+cannot be delegated to an untrusted host.
+
+The guest OS can talk to SVSM using a specific calling convention and
+instructions (a kind of system call/hyper call) and request services such
+as TPM emulation.
+
+The main goal of this series is to add a driver for the vTPM defined by
+the AMD SVSM spec [3]. The specification defines a protocol that a
+SEV-SNP guest OS (running on VMPL >= 1) can use to discover and talk to
+a vTPM emulated by the SVSM in the guest context, but at a more
+privileged level (VMPL0).
+
+This series is based on the RFC sent by James last year [1].
+In the meantime, the patches have been maintained and tested in the
+Coconut Linux fork [2] along with the work to support the vTPM
+emulation in Coconut SVSM.
+
+The first two patches add public APIs to use AMD SVSM vTPM.
+They use SVSM_VTPM_QUERY call to probe for the vTPM device and
+SVSM_VTPM_CMD call to execute vTPM operations as defined in the
+AMD SVSM spec [3].
+
+The third patch add a new send_recv() tpm_class_ops callback as suggested
+by Jason to be used with devices that do not support interrupts and provide
+a single operation to send the command and receive the response on the same
+buffer.
+
+The fourth patch adds an interface to talk to emulated devices via the TCG
+reference implementation and then used by the fifth patch to implement the
+SVSM vTPM driver. The sixth patch simply registers the platform device.
+
+Since all SEV-SNP dependencies are now upstream, this series can be
+applied directly to the Linus' tree.
+
+These patches were tested in an AMD SEV-SNP guest running:
+- a recent version of Coconut SVSM [4] containing an ephemeral vTPM
+- a PoC [5] containing a stateful vTPM used for sealing/unsealing a LUKS key
+
+Changelog:
+
+v1 -> v2 RFC
+- Added send_recv() tpm_class_ops callback
+- Removed the intermediate tpm_platform.ko driver
+- Renamed tpm_platform.h to tpm_tcgsim.h and included some API to fill
+  TPM_SEND_COMMAND requests and parse responses from a device emulated using
+  the TCG Simulatore reference implementation
+- Added public API in x86/sev usable to discover and talk with the SVSM vTPM
+- Added the tpm-svsm platform driver in driver/char/tpm/
+- Fixed some SVSM TPM related issues (resp_size as u32, don't fail on
+  features !=0, s/VTPM/vTPM)
+
+v0 RFC -> v1: https://lore.kernel.org/linux-integrity/20241210143423.101774-1-sgarzare@redhat.com/
+- Used SVSM_VTPM_QUERY to probe the TPM as Tom Lendacky suggested
+- Changed references/links to TCG TPM repo since in the last year MS
+  donated the reference TPM implementation to the TCG.
+- Addressed Dov Murik's comments:
+  https://lore.kernel.org/all/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
+- Added a new patch with SVSM call macros for the vTPM protocol, following
+  what we already have for SVSM_CORE and SVSM_ATTEST
+- Rebased on v6.13-rc2
+
+Thanks,
+Stefano
+
+[1] https://lore.kernel.org/all/acb06bc7f329dfee21afa1b2ff080fe29b799021.camel@linux.ibm.com/
+[2] https://github.com/coconut-svsm/linux/tree/svsm
+[3] "Secure VM Service Module for SEV-SNP Guests"
+    Publication # 58019 Revision: 1.00
+    https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
+[4] https://github.com/coconut-svsm/svsm/commit/6522c67e1e414f192a6f014b122ca8a1066e3bf5
+[5] https://github.com/stefano-garzarella/snp-svsm-vtpm
+
+Stefano Garzarella (6):
+  x86/sev: add SVSM call macros for the vTPM protocol
+  x86/sev: add SVSM vTPM probe/send_command functions
+  tpm: add send_recv() ops in tpm_class_ops
+  tpm: add interface to interact with devices based on TCG Simulator
+  tpm: add SNP SVSM vTPM driver
+  x86/sev: register tpm-svsm platform device
+
+ arch/x86/include/asm/sev.h       |   7 ++
+ include/linux/tpm.h              |   2 +
+ include/linux/tpm_tcgsim.h       | 136 +++++++++++++++++++++++++++++++
+ arch/x86/coco/sev/core.c         |  55 +++++++++++++
+ drivers/char/tpm/tpm-interface.c |   8 +-
+ drivers/char/tpm/tpm_svsm.c      | 120 +++++++++++++++++++++++++++
+ drivers/char/tpm/Kconfig         |  10 +++
+ drivers/char/tpm/Makefile        |   1 +
+ 8 files changed, 338 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/tpm_tcgsim.h
+ create mode 100644 drivers/char/tpm/tpm_svsm.c
+
+
+base-commit: ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
+prerequisite-patch-id: 46b3bb004bd044863a404b15d704b0ab5cb3adf3
+prerequisite-patch-id: 6448736bc6cd561e6ddc10d21f43952a585c5657
+prerequisite-patch-id: 9dd308a4f5a115129c6c1b403083651ade63a3de
+prerequisite-patch-id: 0a97c8378dbe85c3547a39ecb008190b84c7e797
+prerequisite-patch-id: 776de0155dee63ac4ad062e30c97ba09c2d3da83
+prerequisite-patch-id: e0f8dda234962608edc6226074c8f1b177a9e8eb
+prerequisite-patch-id: 9d957abb4542e6d5968b638b8e593e287a3018db
+prerequisite-patch-id: 8e8a0d9828e2b76a80a749b99f88da395c831877
+prerequisite-patch-id: 2549a12c40bca1c4f984abf247a1223348676c62
+prerequisite-patch-id: 4f16ae35dae2290ebe784c8bb173922d85e3d1bb
+prerequisite-patch-id: 12c769f55c189894f9e4a81978e8c3cbb0cf344b
+prerequisite-patch-id: 4dae8c09727f2d9ba2eb49c274d04621b9651410
+prerequisite-patch-id: e96507d220ebb1e6f32c6d8551eb5bc10d9b2d6f
+prerequisite-patch-id: 3bc6b3c406f5ce6ca862ef62e8483fafc4b4ec88
+prerequisite-patch-id: 57a35b09322e2cb4cffa6612b7c3384523c6235d
+prerequisite-patch-id: db039fb5a3137ef06c3483840ded33f144f94acf
+prerequisite-patch-id: 23b6c2faacb3d81ad087c569ea959b5862b0bb87
+prerequisite-patch-id: 8e5d5fa9bc52f32532ca9723db5bcab0386e850d
+prerequisite-patch-id: 7a6a804bc82fb058ee67392e6e468ae27023ae29
+prerequisite-patch-id: ff86959f0d768eae5336288912823035f77609f9
+prerequisite-patch-id: c3ebb29e9b269792ce0a7b46b657422777106d34
+prerequisite-patch-id: f5e3de6141e5637587010201301d9d72cd97890a
+prerequisite-patch-id: aded4f4affa33b2b9cf3247196280dd1d293a058
+prerequisite-patch-id: 9b2acb5e0e86ebb7c4a61499e5f429393692e370
+prerequisite-patch-id: cb08f24e1fd645370f6bb82ba0886aa0aff83bbf
+prerequisite-patch-id: 2f41ac08e7779c81fd8f101c8796e1613a81739c
+prerequisite-patch-id: cf8b634831df57eb9db1a68642934844d28d528c
+prerequisite-patch-id: 914c0f3b919369a63759101879ea37728706cca7
+prerequisite-patch-id: 8d3e72411f2a3bd3c8ba3b5551b92ab177689d62
+prerequisite-patch-id: 26b64e4869e65950cb4760a37fa2ba991d771c28
+prerequisite-patch-id: 1859575bea729b23e4936e8ef875a9de0bfc70ea
+prerequisite-patch-id: f494c8149085ecbc106fa7335aed94d31c02d7c0
+prerequisite-patch-id: 40b847f228570992cfbbba8f23b15172df9ab52e
+prerequisite-patch-id: f78efee71866139b424e27b803bee565742f8a59
+prerequisite-patch-id: cda7b586a4ddbbe74bb4c4fc009d8abad8d4d8c8
+prerequisite-patch-id: 6862c1fea0d7449595527d981e9b5b7b02869a14
+prerequisite-patch-id: f5fb751bf87f37baef653ed4b377c5921eee01fc
+prerequisite-patch-id: 8cf70f391bea57332e1213c6e886763f2bc041b0
+prerequisite-patch-id: 384a60f2f5ddff6455dd7a0855583acc941b3f34
+prerequisite-patch-id: 40db4cf493393f9144098482eade1fa86af02d4d
+prerequisite-patch-id: 9cedf11607dc4cfca44ab5309444889bd4659b23
+prerequisite-patch-id: 93d8536a3f2c81978b73d322b3e479aafadcb672
+prerequisite-patch-id: 5f9c2f1b1e7d896c49b1b45a148f19b40b887248
+prerequisite-patch-id: 86a2350095820314ff778c848669419975886370
+prerequisite-patch-id: eabfaf40df547e88d3afe7cf5aa644fd23baa611
+prerequisite-patch-id: 60aaecfd948b2cd54cbf1db649789170f9883002
+prerequisite-patch-id: 161a1c31a55741b14613fcea7818746482bc7633
+prerequisite-patch-id: 4be263ce33796df2b89b11a4bba1f1505840b970
+prerequisite-patch-id: 85a0fc5a0963f2794ad148d33b23e8a6a7bf4209
+prerequisite-patch-id: df6f925e58999583d8f26f4c6956c7e68d1a3ac5
+prerequisite-patch-id: 7a817e7b23e1583e23dee2235be954cbdce6ef52
+prerequisite-patch-id: 580827936003011c14917c4c2ebf302d1aaac3cb
+prerequisite-patch-id: b4730418ea0df499c0bbebcf4d891bd32dbbcadb
+prerequisite-patch-id: dc8277acf8a53927ef1ef35cc5e00753f2aa403f
+prerequisite-patch-id: 9e3a142dee392a0ecbcc12784ccd83a709393085
+prerequisite-patch-id: ccfb87f2935ec4d801f77def75803cfb8fdc3284
+prerequisite-patch-id: c84ff30a6f578b641b7d9fc2c1a4a04925046c07
+prerequisite-patch-id: 5bcce2542b9969633e0629f81be10dbb8bd692f6
+prerequisite-patch-id: b0410e17e89b77719d801f6a86e367f9cda6524d
+prerequisite-patch-id: 6809f0f4f5a657b6c6c69d548f8e5585b4aa3bd8
+prerequisite-patch-id: f347001242aa07e52b27b4aac3bd51e2a9ccd969
+prerequisite-patch-id: 2604b8e195ad9ad8cfa896e09d7d87c7114ad050
+prerequisite-patch-id: 82625989e67c3c0a42f37f6148f108955330a3c8
+prerequisite-patch-id: d7a34ae135becb97eeacaf6039295ed9c394cb26
+prerequisite-patch-id: 3afe6b2a2fde5e713601b0df5d50435d40a3bb37
+prerequisite-patch-id: 09aa6359e40fc4658db4581301a782e53c174d4d
+prerequisite-patch-id: 3f833b1be3fb9890617802e28fa19e7383bb0d2f
+prerequisite-patch-id: 509339bee2ca8da4bc851e29079a15ff81ec0c7b
+prerequisite-patch-id: aa00b8e789f29936d2006cbdb14ba221a355d8ee
+prerequisite-patch-id: 520064842ff26fb20a47399602ad2c1dab5895dc
+prerequisite-patch-id: ffc71ff6ba4ff6aa165613420c94c2fb502083b4
+prerequisite-patch-id: f53ec70257559bbd20d3d70426ebf32be55ee1fc
+prerequisite-patch-id: 63f833233f2f563950f62e3ae0e738420e41e6bf
+prerequisite-patch-id: a497894b0fe12ec4c52ecc6d1403c08d014f138b
+prerequisite-patch-id: 0d38ff6d0fdb057d83749721c06d7e04156d53ce
+prerequisite-patch-id: 2388b49b66051dc3120eca75d663dce059ce5eca
+prerequisite-patch-id: 520f30d4408e1878d798cb4189c2496f63898147
+prerequisite-patch-id: e675f425948372b45c2edc04fd050be960a551e9
+prerequisite-patch-id: 0aa98f774107e4591a2afc12ba6be883c1a34e73
+prerequisite-patch-id: b00b1f4a4213f6a58fc074088f414198d2eeabaf
+prerequisite-patch-id: 17098f00d571080ebce81e0720ad4d9fb9aac64e
+prerequisite-patch-id: dc2c08a314fc2bd9ffe05c9ff0bc8442079062fb
+prerequisite-patch-id: d87f4aeeb50fffb2458018e8280e70d7bbaad859
+prerequisite-patch-id: 6b5e2e247b92dbb307b67e2bdbc6558328119755
+prerequisite-patch-id: 11889a6cee65fc3a250381045c120b39060158fb
+prerequisite-patch-id: 6f3013bb99b7747c54488395d0ac815e5beec7f3
+prerequisite-patch-id: 8fb5d94c890967f11c626e5a26aa50a7e87a0689
+prerequisite-patch-id: f753b6aa34bbe6675a810aa7e9f5a46bd6f8f3f8
+prerequisite-patch-id: 23e13c044f53fddead4c4e7906d1fd3d36f4a38b
+prerequisite-patch-id: 671f9588d17aebb0cc3dd824df196dc5b11ddc82
+prerequisite-patch-id: 820a1403805a5892a8cc524960a28c64f9c9141d
+prerequisite-patch-id: 92c96e640574d9351f22854a926f3252047e2366
+prerequisite-patch-id: 0842ca6be6e6f1516797be8445eef3db6da9191b
+prerequisite-patch-id: 5e713ef45b4467792deed932f3c88cc28c65a87f
+prerequisite-patch-id: 018699af6673b5e68f91b15f851085febe645de6
+prerequisite-patch-id: 5a2726fd0f676d19f9acea73521ba303fa9097ad
+prerequisite-patch-id: c9a993ef4a6ba2f497aff0c790fe68b6da1ff53b
+prerequisite-patch-id: 536149fa9ba99fc70926409b736c6c5383f7896b
+prerequisite-patch-id: 0c9a37733251c55d7e12cdf68403b5e5e0f424ef
+prerequisite-patch-id: 2df5ee9c2ccd3a87f0dcd1b8b6c0e31899b8c095
+prerequisite-patch-id: e6d17eea6658913932b1fc7bd4860a86d670b360
+prerequisite-patch-id: 96ae72d3ad07fbc884a733d39e7f67b2f26be24a
+prerequisite-patch-id: d6165a80a726f18e2d807b935e3a9778aaf39b69
+prerequisite-patch-id: dd32309c586ea3322992a866b5b53aff74111dd5
+prerequisite-patch-id: 3a98988c76cc915f621135bf0835951dc33022af
+prerequisite-patch-id: ea9d299351cf85a2705ac042cd9a73a90f3bef86
+prerequisite-patch-id: ee8f1635bb0961f027355d23bf28bf14bf945cf8
+prerequisite-patch-id: c4619dd03f29f1b52694dbffb2d474c519a8cc71
+prerequisite-patch-id: 1f6e4e43695fc8a9ba08962e8f6eb4113b24a6c0
+prerequisite-patch-id: e01e23c6bcc7d5441aa58f3b7b92324d0dd261f3
+prerequisite-patch-id: bede20cdd06b49f7f597feafaffec54f78bd545a
+prerequisite-patch-id: acefd770d66151a76d2d9a0c24acfd8298cbf01c
+prerequisite-patch-id: 25deaeae53c6ccde2dab5992032e0b0076e8ff75
+prerequisite-patch-id: 3fb34ce6400e2ad5c181c8d74d8a868cef98f642
+prerequisite-patch-id: ce7b927531beaaf400f212f4ea9278793e0e02be
+prerequisite-patch-id: 4974f215f056d8c69066ed7dafc53c665f773bd8
+prerequisite-patch-id: fd2d88bdc268b146f4c1c8b77f22f1306735365d
+prerequisite-patch-id: 5410bd3eaa7b3cbf851cca45739e4f90563611ee
+prerequisite-patch-id: 51602abbab6a2f787672464a0dc675a7a3a479ce
+prerequisite-patch-id: 51b3769fcd6e6f646434e0892880d706ec51db8c
+prerequisite-patch-id: 99586bd8c136330bae2cf184cadd6825ab9f30b6
+prerequisite-patch-id: c1d59f2a4e0d37ac6d1a03fcf3754dd142df0a30
+-- 
+2.48.1
+
 
