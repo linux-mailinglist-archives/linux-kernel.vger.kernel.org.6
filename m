@@ -1,294 +1,298 @@
-Return-Path: <linux-kernel+bounces-538361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6503FA49796
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:40:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC12A4979F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 11:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E657A6BA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E193BA50F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B73525F7A2;
-	Fri, 28 Feb 2025 10:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD2225F7A9;
+	Fri, 28 Feb 2025 10:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AxZb5GhK";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lFhLVS0U"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="iiOyoC/F"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADE125E461;
-	Fri, 28 Feb 2025 10:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740739200; cv=fail; b=eDoMO1mb2tOk1sFMb3k73Db1240ByobBlKChFMb82rdj8qSII7CcZZWj/xHD43N07jetHF1N+Iepq7yAbj+3OOJyTE/muoCjB+EOJ2n7QL3f+l9N6ROKCXjAR2B204OZMM546FSqhhRao5draJGd8Mw62O39e2hwc66VExW5F48=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740739200; c=relaxed/simple;
-	bh=jr+3HE+kvLnRkGnVZ1TmzNBqx9kbrmJsD2KpEbtXQws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=s/OWPVNQsGhN9Yuzf/v4+gmxRstAkBOqVX/sluf7q7h8QyNGp3AQAtmNAiJshp8i6ucXCs/YbYjpxwRD7SgJDGx8Y9AGWotYvjUhN+izxWEI4sJlmFChJZWZqA+2D2CdLmMvVLGIC6K0OoVbva4r8TTf05d0PdxOPZzrwbUH5iY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AxZb5GhK; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lFhLVS0U; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51S9Berd010450;
-	Fri, 28 Feb 2025 10:39:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=RRUf07szAzm9Gd5epvQkIfD6FBrrZ9MbQqphkSzN+W0=; b=
-	AxZb5GhKqY0WiWxgX+d5/+zDtT4IYOAHgC6UgBW8tctGC7N6EnKNXF8gLs2s533R
-	0S0g1gWpiSipZqYaNFp6eQG59miv2y9K+f6hm6PbrZK68IzPfMP2PZzVHcgAfG2y
-	fsQxZ2gcVP0zOMogjIIiH7ayvoMWBx6TINpCd5Xs2cqrR+6lFtzm17VVjHIomFh6
-	IpQcbDGgZ31BOhIkyXdfb1yz9K2/9Y/v4kfMVVqip9sfRKLEm7VyqY3oe/SIwdYp
-	NT5JrmnLWNeAURe0C3Yd+EpMTZ240ZRq5GhWQGSB6v6d7v7aWzNLhevnWPCh7NIb
-	+QoHXFauXJmZvm2ORQgfHw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451pse59yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Feb 2025 10:39:17 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51S8pBcB002777;
-	Fri, 28 Feb 2025 10:39:16 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2172.outbound.protection.outlook.com [104.47.58.172])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51dnu4w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Feb 2025 10:39:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WZvN6ao10PY0ISkdfr5aNOjZEea7yLtO5YVGPIajfeNOBFVn0grXiXDkpEgQqUNjRFZFKq9ygEk0bu8tVPhWLBw3qAc0oOHhtn4YHDfzdmf/BZ6X+wF788Vzf8HHAcxPgZBsrzD92Vgs+DlVJ6T+hkj8NyHwJ9SLKdKBP8tdWBb4P5vJ3VosxiVY9cwdLXfGE1zHLkLExPjjvLzJr4xG/H31ig9CYE/9gXwmb2aTMbtY/YKqTq8iG9ZAUqE7QFGd8R5ZFFwQ4J7qSI8ukrJ951KghH4dO7h8oTl4Mu1lmxuyRIMM5dz+fypbFQY+WYgg4Mt24+lJmionv6E/GyHatg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RRUf07szAzm9Gd5epvQkIfD6FBrrZ9MbQqphkSzN+W0=;
- b=vhjezLP/rW3BYhmG14/pPdiJ55C0YVIU3f6mKWhWxiuODmw63rnJVSBjDyS+alYn1dvpWMt/je2kGm/jeYd/LzkcDpqR1bMyJeBNNU/GZr9g9yVpKpR0biKLJ4a/KuMkvj331ayAJXiFuuv1pzHWeTpFYGZ3YLNYQTNnjNETNV1cYAIed4A5FD5MQlbCO93RnSk3oXIR2fB0CAzW9yRpSD3SqotEw5k5Ku/Pd2C+MMW7SsgS4zle1j3/MDBegRAabXTsqW+hyCsf46IwXn0wEqYizGnx5eqvky/a+meumoSJBD9yPjwQ9Vz59fJohZUlYgj7qwIoZCFUjxJ/4suEtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B3925C715
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 10:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740739442; cv=none; b=ipHHdPUuZyVAzjUdmxMoz9DAkS+RnNdVzvO/sZF+pQ/kaWUmV2lJu3lJl4+BXQN+sjoVe1CQBxFvyvUJodZ875v+AggmvOgyeOcM8s8JhiTNBy7qSHIO20FOdMn/ps0+R6tFcFTf5FPubPtiFr8MU2jL9iilczEsVMx5QPIhzWQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740739442; c=relaxed/simple;
+	bh=30gTwZ7bAoXwE4rB6Ipx4ul5/zTbp92zD7vXVbloYAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K0ulCj+HAsqrU/jnUse3VmYFK4u3fk+8nmpEUpNSDgZM914Pv5vx6GsdCVnzL5RzVLD0K5UPPHed2JigGhdXmnnQ+oGtC/KzPyxGPVCY5kuQ/29birw1tZOOMTqS4zOLaEYD/dxwgiNfmKcVvml+8N5uxKKj0lKzMwnZfVD5LHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=iiOyoC/F; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso4026917a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 02:44:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RRUf07szAzm9Gd5epvQkIfD6FBrrZ9MbQqphkSzN+W0=;
- b=lFhLVS0USAeeW/FIQQ2z4iYNI5akvbbBVV1Bt53AdWV0xKzHGSJ+J4La0iYPAG3BBvOaKgrYNhRoHJDfoXClf6Q7qzpCQslUH3kCQ9/vawvg34OxjiDsg59kUxVG2IW88VY9Wh4aFX0yh9FozgfmkAT/Fu8ZE2GVZJMvJfnOg60=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by DS7PR10MB5215.namprd10.prod.outlook.com (2603:10b6:5:3a3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
- 2025 10:39:13 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.018; Fri, 28 Feb 2025
- 10:39:13 +0000
-Date: Fri, 28 Feb 2025 10:39:09 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, akpm@linux-foundation.org,
-        keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org,
-        vbabka@suse.cz, Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org,
-        avagin@gmail.com, benjamin@sipsolutions.net,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
-        hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-        adobriyan@gmail.com, johannes@sipsolutions.net,
-        pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-        anna-maria@linutronix.de, mark.rutland@arm.com,
-        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-        enh@google.com, rientjes@google.com, groeck@chromium.org,
-        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-        mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-Message-ID: <97c821e6-e59f-4a7b-a309-acbb81108b86@lucifer.local>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-7-jeffxu@google.com>
- <20250226162604.GA17833@redhat.com>
- <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
- <20250226180135.GI8995@redhat.com>
- <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
- <20250226182050.GK8995@redhat.com>
- <ba83f8c3-6f8f-4ed9-81ec-104f72ea4ef1@lucifer.local>
- <CABi2SkUi6EOfMag37GOLNt3Fb71-QgYiXbcwVuiVTreRuEFW2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABi2SkUi6EOfMag37GOLNt3Fb71-QgYiXbcwVuiVTreRuEFW2Q@mail.gmail.com>
-X-ClientProxiedBy: LO4P123CA0127.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:193::6) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+        d=shopee.com; s=shopee.com; t=1740739440; x=1741344240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=joQAlWzi3rsOp1MlSht4qO1NHlVdWdwzqn85zxRvT2o=;
+        b=iiOyoC/FoD0rsrtsUY6TsSh3hzXcKgPGfDAod6ZSGAT/05ohiK+P9/vg1tpiZc5qAN
+         DbW8wt4+m8T4WAkTyXw0QnemFbfEzy25CbPOQXyZz6+gWtHYiiXSq4fy/kWFGtZy8En/
+         qdBf9rYFziIL5f/Y+F01quQmPanQZZshJjprCo4GJNOadCoTnpY/sf4XSLhE5TZqoGss
+         MEDahcZ27jjWwODWRl0ZKxaNI26ZHtWXBL5acGNihfYQRinxantiW370kTn4j1LmErc2
+         PILuASAmqhiDiqXxPeAuEnpDVKekiGi+NorPLgQfiSmWwl8JHQeHiifSyMWMQ9r1Kv11
+         1OTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740739440; x=1741344240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=joQAlWzi3rsOp1MlSht4qO1NHlVdWdwzqn85zxRvT2o=;
+        b=E0R+r3eRyvJQ4NBkZD5dAS4vfPkKi3VR9Ftf4OTdRl46WMihUNBwmMfGMWZXSmvisd
+         5mqb7/OXfzJhQXdQsSCmcsVMYwZ1SbaB/Dlkr+vbgG2tlPX9bKBj9u2XqysKTB63eRgn
+         C+FQugtmvnhkzM9HAy7kDvRL3qDegI/dZxHnIPpbFq+MwJR6zl4OTP1vlwblEsgLJP0i
+         wymyNLEKIQ+PYzhwbJquQkSSMk77RBtKiayprDPVEIJR02SeXtvtcf1h+r3mXF75K8sL
+         kkuYZmtXfkbnB2qwbd+yoavZE7iqt51LJ7x7ZSK2mrM4i+dPlK5WH5PnFJw5yMcUAQr6
+         b51Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWdsUSY6Q//AfWDGSR8MjCvnjhvpeYtV0f6mPo/Fyahhw14JXWPWkzB/1mTX9at/3Miaa7NDpswU8jKH60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNw1Jf1KnpHdRpinUyMyPJ0Ho7rPuO0I2UgnyTHFcZ5SKeFRl+
+	fXy6Bnqb2mErID791KhSI9vTIApfplTOSIUWHpJIGZIZSKNMXAj3SlOKy7+QEog=
+X-Gm-Gg: ASbGnctyVZq35pMLiKLv6m2MyW+0oJe0hmiHQ7ifmV3jyjgwZKfCqorKnsnL8QpQSoE
+	O+lbJ70WcQyuCnozNbrkWIZUP0VlAyMhRVKuSeJT1JU7aDifc7w0t0If1wJNLTB6QRxg90DrUhc
+	6ppb4DoKkcwvgNde5O4zyKhl81U4nwN4WuWQS7OZ0nNCXZUwGhxCsKRrZbCNL59jAqQEoe4KalX
+	LXfcgY635PF1F9eKUgg16oxNyyOJwebyh1i+EZHHBf3zJTlY7JeDTTbfqypxl0N0iiCBOJKOzrE
+	1tnU0nnXCvTAy12oP0ZLDYY+r5OOY9YwVt6wfsk=
+X-Google-Smtp-Source: AGHT+IEXM8Hl65f9VBidJfr6xhS16N45GlUrNTaace61xpGVMFjlV4G78nmeJfiFIijTFbWQihn3xw==
+X-Received: by 2002:a17:90b:574c:b0:2fa:b84:b304 with SMTP id 98e67ed59e1d1-2febabdc1fdmr4085761a91.22.1740739440439;
+        Fri, 28 Feb 2025 02:44:00 -0800 (PST)
+Received: from localhost.localdomain ([143.92.64.18])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825a98e7sm5534840a91.4.2025.02.28.02.43.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 02:43:59 -0800 (PST)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: brauner@kernel.org,
+	ebiederm@xmission.com,
+	asml.silence@gmail.com
+Cc: axboe@kernel.dk,
+	olivier@trillion01.com,
+	jack@suse.cz,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH RESEND] io_uring: fix the dead lock between io_uring and core dump
+Date: Fri, 28 Feb 2025 18:43:53 +0800
+Message-ID: <20250228104353.300686-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|DS7PR10MB5215:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01b1f50b-7dbd-4b3c-1b19-08dd57e4243d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VDZENzlSMXl0SGROc0hsNGlHOEtoS0pvYVJtNFNOUE5NY2duNDcwZkNGdkFV?=
- =?utf-8?B?amNycmg1d0RPSVVicm1IVWRlSVVYMTNHTElwWU5vQldPUmt0YnJmVThTOFND?=
- =?utf-8?B?OW0zbENnRWlxd2xKZ0FXR01EQXJaTWNENlk3YjRONXl1SEwzamFabXYyR0lH?=
- =?utf-8?B?ZlJOWHpIMWtMT213TE1qdEozSmR0VFJiWTh2dG12aDAxT3N2a2hPeEF0a0dY?=
- =?utf-8?B?MW9TMHNETlJzWG5vSndkS1pHL0gwdURvdytDbmVweXpWV0U0OTB1anMwa1Zy?=
- =?utf-8?B?TFNBQkR1RnJHTk1pbnZqRi9VNy8vQnRpUUQ4MlFSTzZPUlQzT3pLdHFUd3VY?=
- =?utf-8?B?ejY1U0ZLMS9RclIxZytuL1NZdXVpQ0JNbHUzZFBrM0FVbXBnNVFhV1VIalpj?=
- =?utf-8?B?R2VpbFh3VUVFZXdTRWhpRTRTTThIRFNUeDAwbnY0UDIrSHlnSFR5WUVhRFNl?=
- =?utf-8?B?SklDQm1aWjdDOXBjUm9jbVRMRmR1emlwTFRwS01FSXdENXRReGFzR3hQQ0FM?=
- =?utf-8?B?dkxHMjUvREE5S0JHai9BcTJSU0VvZTBHT0hJaU05NExGZitCWHNsZW1xTlRs?=
- =?utf-8?B?NFNaSGtJL0g5NW5jTTNQM2VOTVhrdlZITWZneEF4TUlmbXIyRzg1NGZkaDIz?=
- =?utf-8?B?ZkVyKy9EZGpzOCtLY1pPVmMzMktXOHpKV3B1VmRyVEFRTnBWc2l5ejJGY0Vk?=
- =?utf-8?B?RW5RNmNGMThBMm5HZ0dVeCtUR0dVanNtdC9jcTBrbEUyR0JDdnl2b2pod3E5?=
- =?utf-8?B?K1cvQ093VW1JbEtLZkc3eFFOZE1BQ0NwanQ0K0VIRXo3SEhnM00xQm1DQVBS?=
- =?utf-8?B?WmdraEJIckwvVUJBc1d1STFqWDM3M0hwSWZUQzJGSTdxeEhqUEcra1lhNC9G?=
- =?utf-8?B?K3F1aFlOcDUxaUkxT2tBckN3c3h0Y2d2UlliSXpVaE00bXBVMzdGRFdOSEcw?=
- =?utf-8?B?bkpWdXpHUCtRT1ZOeEhLWlRneit0bUZsWDAwdlgyalhuUElSdnArOWlPVEtO?=
- =?utf-8?B?NTRtNnN1UVpySEQ0c0hOclRHK25vOFZGeFZuMDI0R1A3SGVQaGcxK0h6ajJQ?=
- =?utf-8?B?RnhySElQZnBrMmRNbW1IZGpnbzJKU053OGt1KzBEWVBZZGZuK0tTQjJVcUgz?=
- =?utf-8?B?NzZGSTViNlpLcllYMUFxYTlOYkFBNjZUcTdiM2Y3L3M5c2hKT01vc0p2Z1lH?=
- =?utf-8?B?VWZvNm9UaTdGbU5tMUsxNng4NEh5NUgyL3Jsb0VZTnJTZEg3UlRNcC9NTmZ4?=
- =?utf-8?B?ZXV3QnZqallOTTk4ZzYxR1M3SVlRT2pQaTV1NlNmMm05LzFLL2VzS2luRWxC?=
- =?utf-8?B?aitHaWwzN1Z4dlUrdGFFbXc3TWNseVdENE1WTyszZFc0NW14N0dqaEpvUlVO?=
- =?utf-8?B?T1lRdmRjV1VHc05zT1k0dWZSUWcxSVkrenQzTWlzaXlEa1pqaUlTMkllcnNx?=
- =?utf-8?B?ZlM4S1phTnlVeURZcDEva0U1ZUJPSmk0QlBZbGFDRDhMSElZNVRNVUw1NSt4?=
- =?utf-8?B?VEhTaklydFMwaEtwVWdUTC9mMW9ZU3cwN3h0OS9JMnhGb3ArU25iOGR3Z2dG?=
- =?utf-8?B?aTROZk5WcklMWS8wNitUWEpIbFZuZTZ5eE5scFdXUHQzdkUybTE3aEoyN0Jo?=
- =?utf-8?B?T282MW9LSjM2YkszaHh4S3VKRkxBYlNDZHNqS0ZGbHRlV2wzbmc4ZUVUSEJY?=
- =?utf-8?B?UWtVa0Zxb2R6RTlselI0bHVnczZuak84RlFLT3VSdnFsZ0ZqYXNkdVVOdDJZ?=
- =?utf-8?B?MmRRZjRNbWRvb29ONjd0TkpqTmtmZ0Z1UUsrSFVWaXJYb29Mdm11Y0ZxbzI5?=
- =?utf-8?B?NlY0b3JOR04rOXBoS1RKMmRjSlVqTWNPQ0hMaCsrUFZTY3pJQk9lY2kvNzFl?=
- =?utf-8?Q?vdDY0FYw7Ha8q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUF3WUJDOExEU0Zkc2M0S1FreTdOVFlKTno3MXorWjU1dXYvaUdzNHkzUjl0?=
- =?utf-8?B?K2NUMHJsNFhXY2ZPUElUekVCOTMzb2tWWGtNYUE0MStnek9GMlp3SERIdERu?=
- =?utf-8?B?TWJVd0NGNWFKeHpwYnl5SFFZcjRQNCt6amtHY3laMmdoWkRwY2xFSUVPQUpR?=
- =?utf-8?B?M2RGUjlqdmpwR0pibTFxRHFReXNoaWY1WllTa2lmbWpiODRqdCtXeTBqZWJC?=
- =?utf-8?B?NGNEc2paRkUyOXFrTlVMR1Z1SXlGMHhCT1JVL1BKVkJ6S3RJK3FvWDhzdi8w?=
- =?utf-8?B?Y3dUbVNBWVYxWFd2REhMWHZpc21aQk8zcnhwQ2FOODJaYzlXbFVjZ0w4RElm?=
- =?utf-8?B?VkMrSkxoV0I1VW02elBFeDZYOXJBdFFBcUNpZnRjQnNqcWt6cmJhT2lCQ2Vl?=
- =?utf-8?B?VVVYbVNaVjl6MXE0MkpWelFmRlA4bmpKUCtybnhxcnBvd1pVaGFPVGtqa3Qy?=
- =?utf-8?B?Q00yM0ppTlBSbWlkTmV0TFpXWm1yT3o4S3JKNjNHQTZGTEpsRjhNM0IrOEtH?=
- =?utf-8?B?VVFzSVcvTDkwZEhPdUM5cEhzQVFQa1lPY2ZrQTRrNTdNdWdwaVR5a0pONDEy?=
- =?utf-8?B?VlhXRmZwa2hweGhwMmw4VU1GSTlWZlJRQ3h2dEY5YWhkSVRBQ0JwUThJRTRx?=
- =?utf-8?B?VXRIZzdRRHJxaXNLLzFQVEN3aDJQTElqdkFwSVc3SjQxRTlQa3o3K2VlQ1BW?=
- =?utf-8?B?TmxsSS9nM2pPN3Z2bzJQQ1E5cUkyN3BMeFc3bzFzN0VCK0ZrMm5rMlRnU2hK?=
- =?utf-8?B?bFlxMjkvQVpDVU1DTlBMUWpjRndTSHFNL0xnK1oyQ3ZaMXVmNlpoVG9scXVN?=
- =?utf-8?B?Mm5EVlNQT1Zuc1VOVURBbWRWU3E4Z0V2RnNZYk13THNUZTE0YTRPRnNBejRU?=
- =?utf-8?B?NEdhUFFiS1RkNXpnTTAzbHZlYjFKWUxMREpuS1dSTS9DekxMWStLRENxckl0?=
- =?utf-8?B?ek8wSDBoc0R1WXFVb1VYSi9xRWVZNmd2V1ViNkhzWC9JYnpjbmw0WWtWQ3Jt?=
- =?utf-8?B?RVI5WkdkNzFXVDJHRnF4TFd5ZVVFVUVibTMwYmVuaTZZeTFwZnBMcHU5Rk1p?=
- =?utf-8?B?SEJPQ1FTK1hhY3h3NFRtM0QyZHpqR3Rud3JINkZoeDZVNUszYjlnL2Zpa1FE?=
- =?utf-8?B?NStNY2dMWklLeGZrdm52T0pUaThEWXlDUlZzUlpaZVBxbGZwdEZWamFyMUU4?=
- =?utf-8?B?dUtON3UvVFBTMHVOZE5uYlZTcGhGR3J6ZjFzaytlSnlXMHkrbUdiWmNrOW5K?=
- =?utf-8?B?NXExZ0RQMjJ0Z1BLUkV3OUd6T2FXMWdEa09jMnFVaGtXMzFyL3lMYklRSm1R?=
- =?utf-8?B?VnpGNzFtbEhtbms2MDRXT1NVLzBRclRjL254K1UyZVVtVjBwc1BmUk5lbnM0?=
- =?utf-8?B?M1pKcTNFNzI0bFd0VEw1SUI3OHB6VlVwcHM3VWtFc3JmU1Z4NmV2b0FUZ3A5?=
- =?utf-8?B?YVFpV3VDQnJObkh2WmZUYUdDL1ROZGtMVzk0YU1iWWF4YzhKZnkyNzR3ZXgw?=
- =?utf-8?B?N0M5dmhNY1ZVM0NneDE0K2dlaXlhSUlFNDJ5SFRKemx0c2RmakZnNU5FS3lr?=
- =?utf-8?B?ZDJwL1pPSkprZkdCY2R0NlVBcmJweE13MWwrTGNyQ2haaGFMWUpyUktaWkY0?=
- =?utf-8?B?a2g5QkoyejFXdldVbjVpNGdFdWdQMHFlNWgwTDBOdktBSmpjUDVMWlo0RnB1?=
- =?utf-8?B?ditZdmUvY2wvRExjUm1vbmVUUVc5UkdhdmZXT1lMQWdMTFZXUHd5ell2ZjMr?=
- =?utf-8?B?eU15ZWU5TmdEam9mcXQyZEZGYVE0MnJ6d3A3dFVMZVgwMVFzbVhWb1RJM0tD?=
- =?utf-8?B?VkltQnZPaHhFSW9mLyswMW1NRmdRREs4WVZjNng2aXNka3g3b1RSY2VqWFl5?=
- =?utf-8?B?STlnRS9xZ3hRdjRaZXZLUHU5NjdvTUtpQU5RN2NLdDk3aXFyak1qRnpnT01M?=
- =?utf-8?B?a1FJREFoTGR6S2ZaL01KdGhDTFdPLzV6eXVMbkxlS3VtQzJ3ckhVTS9CeDZB?=
- =?utf-8?B?NmNscGxYNnNRbjhkNEJkNGdiVUlmWlFqUkVXVmJlODlNaTU2RFBKNWRlR09J?=
- =?utf-8?B?c1lEUklRZzM3Tk55ZDFIREV2KzJpMkFlWWtjS3Q1ellVbGV0UElHalFSNDdu?=
- =?utf-8?B?KzdYazdha1FNMXhWZE5LVGVuaG5pYUdsNUVXZWhySy9NbDIvVlp3SFo0eEU4?=
- =?utf-8?B?Y3c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	44lQ15QrK007nGhP3tNSvkhXh4U1uKl6/4GH4+dfD4YFnduiF4XB2Ciq/qw//AJUDg5GMRwfjgNAv54yy7636tcElsmMliq+4z+jL9o+cKCoFgYdALrLiG1iz7qToADxpCyVKC4TtN6+x8IKZFmU3LNMRLmr59UHet/JGL5PeVHvFj124QN+fJBu0icDSFV/OzVo/o3PvKaVCv/slhV9zR40U+6cgRJshHto2WUeRr2TYoVR0ALQRUYdz9sLXUj2YiQwf98LozpjbTGl/4UGRChVNsgwqevDB3Y2J8mCst3p9fO9hGpODxtHN2UKyRVOUY/BturmRrzjJJo2FKpX3HuJ6e0WOHOWnDcgU/ZZqEub4IPHTeHQSRK9ZGhR/7fXNNilFIZ4i5HGfDenojPZObVbMxZabHlgiVQhW1dGKTdR9V4l7A8RpmMpjBYvT+DKPnB5ElInjdKDLFnhApLm/4CXYCOz50P4IAGPS7C0KY7DAtjinMMAIt0nxroBJAPVheApDyL6QUfRj2rLEOWegF3+OoXd1QLiQ9EFH2WLnlep1Snlgf4tm+jD5na6vncYn2LXbFJ9Z1O4JVW0tKgQhXoIebEiaq80lYwDY0lmXWE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01b1f50b-7dbd-4b3c-1b19-08dd57e4243d
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 10:39:12.9812
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TA3lvGA+5b8KCzkCzd6odA9UksJwZqaX6MSIadtQ10C/3Ni2icWZ31rleBCbdHWYDWBdSsLKK9FPwhNDAclG+uUraziik21YABCbwqDEB8w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5215
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_02,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502100000 definitions=main-2502280076
-X-Proofpoint-ORIG-GUID: Mgj0ulSZ5oP-r6oanBuMlClnQuzGBMwE
-X-Proofpoint-GUID: Mgj0ulSZ5oP-r6oanBuMlClnQuzGBMwE
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 03:38:47PM -0800, Jeff Xu wrote:
-> On Wed, Feb 26, 2025 at 10:25 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 07:20:50PM +0100, Oleg Nesterov wrote:
-> > > On 02/26, Lorenzo Stoakes wrote:
-> > > >
-> > > > Like I said, Jeff opposes the change. I disagree with him, and agree with you,
-> > > > because this is very silly.
-> > > >
-> > > > But I don't want to hold up this series with that discussion (this is for his
-> > > > sake...)
-> > >
-> > > Neither me, so lets go with VM_SEALED_SYSMAP.
-> > >
-> > > My only objection is that
-> > >
-> > >       vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
-> > >       vm_flags |= VM_SEALED_SYSMAP;
-> > >
-> > > looks unnecessarily confusing to me,
-> > >
-> > >       vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP;
-> > >
-> > > or just
-> > >
-> > >       vma = _install_special_mapping(...,
-> > >                               VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMAP,
-> > >                               ...
-> > >
-> > > looks more readable. But this is cosmetic/subjective, so I won't argue/insist.
-> >
-> > Agreed. This would be good.
-> >
-> > >
-> > > > Jeff - perhaps drop this and let's return to it in a follow up so this series
-> > > > isn't held up?
-> > >
-> > > Up to you and Jeff.
-> > >
-> > > But this patch looks "natural" to me in this series.
-> >
-> > OK, I mean in that case I'm ok with it as-is, as you confirms there's no
-> > issue, I've looked at the code and there's no issue.
-> >
-> > It was only if we wanted to try the VM_SEALED thing, i.e. _always_ seal
-> > then it'd do better outside of the series as there'd be a discussion about
-> > maybe changing this CONFIG_64BIT thing yada yada.
-> >
-> > >
-> > > Oleg.
-> > >
-> >
-> > Jeff - in that case, do NOT drop this one :P but do please look at the
-> > above style nit.
-> >
-> Ok.
+In our production environment, we found many hung tasks.
 
-Thanks :)
+	Thead A (exit_mm)
+	...
+		if (core_state) {
+		struct core_thread self;
 
->
->
-> > Let's keep things moving... :)
+		mmap_read_unlock(mm);
+
+		self.task = current;
+		if (self.task->flags & PF_SIGNALED)
+			self.next = xchg(&core_state->dumper.next, &self);
+		else
+			self.task = NULL;
+		/*
+		 * Implies mb(), the result of xchg() must be visible
+		 * to core_state->dumper.
+		 */
+		if (atomic_dec_and_test(&core_state->nr_threads))
+			complete(&core_state->startup);
+
+		for (;;) {
+			set_current_state(TASK_UNINTERRUPTIBLE);
+			if (!self.task) /* see coredump_finish() */
+				break;
+			freezable_schedule();
+		}
+		__set_current_state(TASK_RUNNING);
+		mmap_read_lock(mm);
+	}
+	...
+
+	Thead B (coredump_wait)
+	...
+		if (core_waiters > 0) {
+		struct core_thread *ptr;
+
+		freezer_do_not_count();
+		wait_for_completion(&core_state->startup);
+		freezer_count();
+		/*
+		 * Wait for all the threads to become inactive, so that
+		 * all the thread context (extended register state, like
+		 * fpu etc) gets copied to the memory.
+		 */
+		ptr = core_state->dumper.next;
+		while (ptr != NULL) {
+			wait_task_inactive(ptr->task, 0);
+			ptr = ptr->next;
+		}
+	...
+
+	Thead C (io_worker_exit)
+	...
+		if (refcount_dec_and_test(&worker->ref))
+		complete(&worker->ref_done);
+		wait_for_completion(&worker->ref_done);
+	...
+
+Thread A is waiting Thead B to finish core dump, but Thead B found that there is
+still one thread which doesn't step into exit_mm() to dec core_state->nr_threads.
+The thead is Thread C, it has submitted a task_work (create_worker_cb) to Thread B
+and then wait Thread B to execute or cancel the work. So this causes deadlock between
+io_uring and core dump.
+
+Our kernel vesion is stable 5.15.125, and the commit 1d5f5ea7cb7d ("io-wq: remove worker to owner tw dependency")
+is included. When the last io woker exits, it doesn't find any callback. Once scheduled out,
+it will invoke io_wq_worker_sleeping() to submit a task work to the master thread. So the
+commit 1d5f5ea7cb7d ("io-wq: remove worker to owner tw dependency") won't help in this case.
+
+For the core dump thread, we can set a timeout to check whether the taks_work callback exists,
+If needed, cancel the task_work and wake up the io worker, so the dead lock will be resolved.
+
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+---
+ fs/coredump.c              |  6 ++++--
+ include/linux/completion.h |  2 ++
+ io_uring/io-wq.c           |  3 +--
+ io_uring/io-wq.h           |  1 +
+ kernel/sched/completion.c  | 11 +++++++++++
+ kernel/sched/core.c        |  8 ++++++++
+ 6 files changed, 27 insertions(+), 4 deletions(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 591700e1b2ce..1d972d5882f0 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -42,6 +42,7 @@
+ #include <linux/path.h>
+ #include <linux/timekeeping.h>
+ #include <linux/sysctl.h>
++#include <linux/sched/sysctl.h>
+ #include <linux/elf.h>
+ 
+ #include <linux/uaccess.h>
+@@ -406,6 +407,7 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
+ {
+ 	struct task_struct *tsk = current;
+ 	int core_waiters = -EBUSY;
++	unsigned long hang_check = sysctl_hung_task_timeout_secs;
+ 
+ 	init_completion(&core_state->startup);
+ 	core_state->dumper.task = tsk;
+@@ -415,8 +417,8 @@ static int coredump_wait(int exit_code, struct core_state *core_state)
+ 	if (core_waiters > 0) {
+ 		struct core_thread *ptr;
+ 
+-		wait_for_completion_state(&core_state->startup,
+-					  TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
++		wait_for_completion_state_timeout(&core_state->startup, TASK_UNINTERRUPTIBLE|TASK_FREEZABLE,
++						  hang_check * (HZ/2));
+ 		/*
+ 		 * Wait for all the threads to become inactive, so that
+ 		 * all the thread context (extended register state, like
+diff --git a/include/linux/completion.h b/include/linux/completion.h
+index fb2915676574..432de8ecc32d 100644
+--- a/include/linux/completion.h
++++ b/include/linux/completion.h
+@@ -104,6 +104,8 @@ extern void wait_for_completion_io(struct completion *);
+ extern int wait_for_completion_interruptible(struct completion *x);
+ extern int wait_for_completion_killable(struct completion *x);
+ extern int wait_for_completion_state(struct completion *x, unsigned int state);
++extern int wait_for_completion_state_timeout(struct completion *x, unsigned int state,
++					     unsigned long timeout);
+ extern unsigned long wait_for_completion_timeout(struct completion *x,
+ 						   unsigned long timeout);
+ extern unsigned long wait_for_completion_io_timeout(struct completion *x,
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 91019b4d0308..1c03dc57a3b3 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -141,7 +141,6 @@ static bool io_acct_cancel_pending_work(struct io_wq *wq,
+ 					struct io_wq_acct *acct,
+ 					struct io_cb_cancel_data *match);
+ static void create_worker_cb(struct callback_head *cb);
+-static void io_wq_cancel_tw_create(struct io_wq *wq);
+ 
+ static bool io_worker_get(struct io_worker *worker)
+ {
+@@ -1230,7 +1229,7 @@ void io_wq_exit_start(struct io_wq *wq)
+ 	set_bit(IO_WQ_BIT_EXIT, &wq->state);
+ }
+ 
+-static void io_wq_cancel_tw_create(struct io_wq *wq)
++void io_wq_cancel_tw_create(struct io_wq *wq)
+ {
+ 	struct callback_head *cb;
+ 
+diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+index b3b004a7b625..48ba66b5d0bd 100644
+--- a/io_uring/io-wq.h
++++ b/io_uring/io-wq.h
+@@ -43,6 +43,7 @@ struct io_wq_data {
+ 	free_work_fn *free_work;
+ };
+ 
++void io_wq_cancel_tw_create(struct io_wq *wq);
+ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data);
+ void io_wq_exit_start(struct io_wq *wq);
+ void io_wq_put_and_exit(struct io_wq *wq);
+diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+index 3561ab533dd4..9e7936a3cad4 100644
+--- a/kernel/sched/completion.c
++++ b/kernel/sched/completion.c
+@@ -269,6 +269,17 @@ int __sched wait_for_completion_state(struct completion *x, unsigned int state)
+ }
+ EXPORT_SYMBOL(wait_for_completion_state);
+ 
++int __sched wait_for_completion_state_timeout(struct completion *x, unsigned int state,
++					      unsigned long timeout)
++{
++	long t = wait_for_common(x, timeout, state);
++
++	if (t == -ERESTARTSYS)
++		return t;
++	return 0;
++}
++EXPORT_SYMBOL(wait_for_completion_state_timeout);
++
+ /**
+  * wait_for_completion_killable_timeout: - waits for completion of a task (w/(to,killable))
+  * @x:  holds the state of this particular completion
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9aecd914ac69..e0c9694d8134 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6806,6 +6806,14 @@ static inline void sched_submit_work(struct task_struct *tsk)
+ 		wq_worker_sleeping(tsk);
+ 	else if (task_flags & PF_IO_WORKER)
+ 		io_wq_worker_sleeping(tsk);
++#ifdef CONFIG_IO_URING
++	else if (task_flags & PF_DUMPCORE) {
++		struct io_uring_task *io_uring = tsk->io_uring;
++
++		if (io_uring)
++			io_wq_cancel_tw_create(io_uring->io_wq);
++	}
++#endif
+ 
+ 	/*
+ 	 * spinlock and rwlock must not flush block requests.  This will
+-- 
+2.43.0
+
 
