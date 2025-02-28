@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-539302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E7A4A313
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:51:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A87A4A314
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C807189415F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EE537AB1F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58357230BE8;
-	Fri, 28 Feb 2025 19:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A43F230BE8;
+	Fri, 28 Feb 2025 19:51:22 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CE61EF395
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79506230BF2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772275; cv=none; b=HykqU8iRIySoI7QFv3SyiMoaSXWpgJBYAE7kaHoJz4FKeqcv9Qi870vwR5XW5Y8nx2M8KuucmsNR5Ern4meoOQiIcAvHVSx8EONPdUxnHcaV1XUKaJpJmUyMZb2wTMA4P3WGx+bVi4+VJCXufDBW51Bw84/P3ifwZq6WXq7iO8E=
+	t=1740772282; cv=none; b=Jmpc3bu8MgXko8lNfvy1RkpLXeBMUhFfsX3jlpfxtOVYUCHSgsbHIOCC+G1M8jkFL4nopu2dFCdtId1EzZvMvnLEgVbBILqkeZQPNm07UyQKgp6wM0dHdi0OOth9S0YyNmhgPOm8SC9y4jbwNsZkYJzTyfSc5ZaQB3k4As5Pi9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772275; c=relaxed/simple;
-	bh=86HXAhtgWKW39kGCVqxCQEoCVTo64On54IjCyala9o4=;
+	s=arc-20240116; t=1740772282; c=relaxed/simple;
+	bh=Fqhvk8ccwibMgl+QYB+mBj3Dt4JWxA+pcsAwJKDSwPY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pdG2AuKz8tzlJzkHKW58NFAckB/zpMZyXVG2jAcwkDQp6ns60Gqsa8lTMqjmZCtgiUZsNIZc/hettRFz2FcpEayhJFtCS4Q2ny8Y4S+q5yH0EQwDWmW8SsiJM8SAG9A1gUUlCoXjNbcT6QzIXHU9MN9B+OITbA0qXheaVHFYEts=
+	 In-Reply-To:Content-Type; b=XCwmrCnpnGjwOIdvv3XQHV7aYM9HD+2xXY4lLnvD8ai/GIXXFxlyt10ypEjTij6PqhkkImYatLdpV4nYJoATa4+E6J8WGjVjJSUNSQtUfz0K79VLRv6NF7SzWJ32NHfCL6k7jFQSF9rYHZDTIhdXyrgsLtcgiudcIZ/F1dKfe3M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F9591515;
-	Fri, 28 Feb 2025 11:51:27 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD9D7176A;
+	Fri, 28 Feb 2025 11:51:34 -0800 (PST)
 Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 069F93F5A1;
-	Fri, 28 Feb 2025 11:51:07 -0800 (PST)
-Message-ID: <44cf4fb5-fa3f-42bc-ba16-46645495d669@arm.com>
-Date: Fri, 28 Feb 2025 19:51:06 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D86D53F5A1;
+	Fri, 28 Feb 2025 11:51:14 -0800 (PST)
+Message-ID: <60a1043d-014e-408c-a9a6-690f610ac609@arm.com>
+Date: Fri, 28 Feb 2025 19:51:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,7 +41,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 29/42] x86/resctrl: Move get_config_index() to a header
+Subject: Re: [PATCH v6 13/42] x86/resctrl: Move resctrl types to a separate
+ header
 To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -58,77 +59,74 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>,
  Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
 References: <20250207181823.6378-1-james.morse@arm.com>
- <20250207181823.6378-30-james.morse@arm.com>
- <3749ab92-6f6e-43b4-8147-22775e31d21b@intel.com>
+ <20250207181823.6378-14-james.morse@arm.com>
+ <8ff43700-25f4-4606-ba99-3ed71721d9fe@intel.com>
 Content-Language: en-GB
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <3749ab92-6f6e-43b4-8147-22775e31d21b@intel.com>
+In-Reply-To: <8ff43700-25f4-4606-ba99-3ed71721d9fe@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Reinette,
 
-On 20/02/2025 01:27, Reinette Chatre wrote:
-> On 2/7/25 10:18 AM, James Morse wrote:
->> get_config_index() is used by the architecture specific code to map a
->> CLOSID+type pair to an index in the configuration arrays.
+On 19/02/2025 23:29, Reinette Chatre wrote:
+> On 2/7/25 10:17 AM, James Morse wrote:
+>> When resctrl is fully factored into core and per-arch code, each arch
+>> will need to use some resctrl common definitions in order to define its
+>> own specializations and helpers.  Following conventional practice, it
+>> would be desirable to put the dependent arch definitions in an
+>> <asm/resctrl.h> header that is included by the common <linux/resctrl.h>
+>> header.  However, this can make it awkward to avoid a circular
+>> dependency between <linux/resctrl.h> and the arch header.
 >>
->> MPAM needs to do this too to preserve the ABI to user-space, there is
->> no reason to do it differently.
+>> To avoid such dependencies, move the affected common types and
+>> constants into a new header that does not need to depend on
+>> <linux/resctrl.h> or on the arch headers.
 >>
->> Move the helper to a header file.
+>> The same logic applies to the monitor-configuration defines, move these
+>> too.
+>>
+>> Some kind of enumeration for events is needed between the filesystem
+>> and architecture code. Take the x86 definition as its convenient for
+>> x86.
+>>
+>> The definition of enum resctrl_event_id is needed to allow the
+>> architecture code to define resctrl_arch_mon_ctx_alloc() and
+>> resctrl_arch_mon_ctx_free().
+>>
+>> The definition of enum resctrl_res_level is needed to allow the
+>> architecture code to define resctrl_arch_set_cdp_enabled() and
+>> resctrl_arch_get_cdp_enabled().
+>>
+>> The bits for mbm_local_bytes_config et al are ABI, and must be the same
+>> on all architectures. These are documented in
+>> Documentation/arch/x86/resctrl.rst
+>>
+>> The maintainers entry for these headers was missed when resctrl.h was
+>> created. Add a wildcard entry to match both resctrl.h and
+>> resctrl_types.h.
 
->> --- a/include/linux/resctrl.h
->> +++ b/include/linux/resctrl.h
->> @@ -384,6 +384,21 @@ void resctrl_arch_mon_event_config_write(void *config_info);
->>   */
->>  void resctrl_arch_mon_event_config_read(void *config_info);
->>  
->> +/* For use by arch code to remap resctrl's smaller CDP CLOSID range */
->> +static inline u32 resctrl_get_config_index(u32 closid,
->> +					   enum resctrl_conf_type type)
->> +{
->> +	switch (type) {
->> +	default:
->> +	case CDP_NONE:
->> +		return closid;
->> +	case CDP_CODE:
->> +		return closid * 2 + 1;
->> +	case CDP_DATA:
->> +		return closid * 2;
->> +	}
->> +}
->> +
+>> diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
+>> new file mode 100644
+>> index 000000000000..51c51a1aabfb
+>> --- /dev/null
+>> +++ b/include/linux/resctrl_types.h
+>> @@ -0,0 +1,54 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2024 Arm Ltd.
+> 
+> Please note year.
 
-> Could you please add the motivation for the use of an inline function?
-
-Putting this in the header file means it isn't duplicated, so its behaviour can't become
-different. If its in a header file, it has to be marked inline otherwise every C file that
-includes it gets a copy that probably isn't used, and upsets the linker.
-
-Calling from the arch code into the filesystem prevents the arch code from being
-standalone. This is a useful direction of travel because it allows fs/resctrl to one
-day become a module
-
-Today, the compiler is choosing to inline this:
-| x86_64-linux-objdump -d ctrlmondata.o | grep resctrl_get_config_index | wc -l
-| 0
-
-This kind of arithmetic for an array lookup is the kind of thing its good to give the
-compiler full visibility of as its good fodder for constant folding.
-
-For so few call sites, I don't think this is really worth thinking about.
-Forcing this call out of line makes the kernel text bigger, but only by 32 bytes.
+I've changed it.
 
 
-I've expanded the last paragraph of the commit message to read:
-| Move the helper to a header file to allow all architectures that either
-| use or emulate CDP to use the same pattern of CLOSID values. Moving
-| this to a header file means it must be marked inline, which matches
-| the existing compiler choice for this static function.
+[...]
+
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
 
-Thanks,
+Thanks!
 
 James
 
