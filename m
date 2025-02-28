@@ -1,168 +1,263 @@
-Return-Path: <linux-kernel+bounces-537576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788ABA48DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:08:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D237A48DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8541891016
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB76E16E6D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 01:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F44620330;
-	Fri, 28 Feb 2025 01:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE421D555;
+	Fri, 28 Feb 2025 01:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHJdtDvm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4bYjZhUp"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E917741;
-	Fri, 28 Feb 2025 01:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F189A17BD6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 01:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740704901; cv=none; b=tVeSYvH0F5LT9hu9R20L16Bt6Rhak/eEoDP5KG59C7i1rwPFwa69mAdS/asTRxavSoSsYVnKmXwIJtGcim4VwmA9irn3aGMAYAe5tSQ6fhI75mK/f5V6Fz/H+woYj/jWIlNBGD1AMQXxt/J2YKIjOnlGj/qOFzyCvdcyt32zaNw=
+	t=1740704948; cv=none; b=ZISjjMgtOW0oHjoty1zw+3y9q+QvVzJuw77fV3K0/8WQ9+5LNUdaV2cfNkA7k1EiiTdQM9CaTQtbydpQdg/GUniF93PTE1sjci7462mGbmkxIJ4CfkMnUeADbWRPjTG4QvhImGqWy+NvZ2n0G0WkD/br9mOZew4VV95BFa+NxWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740704901; c=relaxed/simple;
-	bh=r204P3/o5tj0rdMt2fYtelvoijFFzJ47ze5idBCOS9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pad3YVKRT1uOuDIolKbd0RXVrxmaiBZZjDj8jFalb3wmewOriGZX+QjJPPORq+GGXyNiNm5F7RRb4PVyrxMIzgJgdIbEGGkh3rlr7YvIQ5WfCdl3fqjv/w2TCYyZ/H7fIRMc0SseqNEKkuQSpadiTbpBXVXV/Duvfx9vC84anTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHJdtDvm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46B3C4CEDD;
-	Fri, 28 Feb 2025 01:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740704900;
-	bh=r204P3/o5tj0rdMt2fYtelvoijFFzJ47ze5idBCOS9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RHJdtDvmzOr7jxlj+heg4PLyT24i+BDwsC1VHcEYHWDKQnK4ahjgWkduJe0Abp8dT
-	 LZO722W1Ks8lWVZbWua5cGKv9b9D3hq7pe9RBHoPRM+hCDAVmyoYJG2Pg8dFUuM48i
-	 Lk4aOPH3tXcSWn2mzbhtsbCl7GBhpcNwMaae0b0r2kuLOuYWy6aYjP+T+VHwKEMV1R
-	 H8zSJjAfRVEYKfm1ly1rizwIV2z9x7jf6QAyyzjxqLNjj7tS8iFRn1Ei3vbMWju5oq
-	 shIpwAIEyfTUuj3Zug4VpzjQliSNAhckxSfSZqWc+yZOL070XsnvvAmiaWWnYuSzmj
-	 sVjqD0W1RDaHg==
-Date: Thu, 27 Feb 2025 17:08:20 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 05/12] iomap: Support SW-based atomic writes
-Message-ID: <20250228010820.GB1124788@frogsfrogsfrogs>
-References: <20250227180813.1553404-1-john.g.garry@oracle.com>
- <20250227180813.1553404-6-john.g.garry@oracle.com>
+	s=arc-20240116; t=1740704948; c=relaxed/simple;
+	bh=8joGwOlGDtKm/Ou163mKi9Jps79mbX1bhWxA8lqK9As=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YGZXixYOt8///KiZCagFe+Jv4w48AGDZqaR7kqROnk62WNEkv/IQDxTsEP02eB55h+ufTmhUmCOZJ+/S7W4fhH9DY8BqihcLQp2uEdr//Uxy+FqWo0oPrhLPYELwhw4dGQoI2gHDO6kcMxQBk4q9EGxwbs5yPKaSX/ifEOytocU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4bYjZhUp; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fb7d64908fso14988167b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740704946; x=1741309746; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C7O0pcoKAAbkmC6anJMdQDr5zFGZCy6HhbubzNF3bDI=;
+        b=4bYjZhUp9HI3Ch/fCS36z4Z9m6lmG8iLQvcIeFd8MJ+NH7ipFr+SBMZS99/Wv7sDTJ
+         gSesXRrkXDsh3V9KDOlQefxQMOlEFYGRWW8YhWJmlBa6Qgc1G3EakKzzFkR1cLKKVh90
+         zRX8U4qPhrj6D5WD0sgZ+Hb4b1iPlIubeW52u7M2303pcm/4T8UebiznSyr//9QZUytj
+         i0eE1NSxGGT1gIXfDsBY9J1qcRtPOPNboDhe3HpR6ajVMgtzXI7xin6R8OnrrWNwL+dl
+         DbqQoMMF1XTlAlplbzF+EI2e6rndsW3Rth9jjevZh2If5tis3EznoaHqU2HY4vZ1lJAf
+         2i1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740704946; x=1741309746;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C7O0pcoKAAbkmC6anJMdQDr5zFGZCy6HhbubzNF3bDI=;
+        b=YRkzwCt11mvUioT/bE4ISIJfz22MuTyi+HEChaiHnq0oqBQxvNDucefb9xBOpgib95
+         xseeIwY+gxnT1IfWKUvobhVT6G75p2UZfHU9Im5IluPtf3DRgCM/pdlazv2SbENQrTxe
+         A4GM/NkvCxH8rFbMhEMQDcOovjGBEkhkl1NmpFDvD2Cwt2NKbBEm75yhjij3TPiTuJae
+         vJ2CD4kUcKVdQ8KltOlzMkgmdHEFEzy5pNojeEAeec4k4J6ZVj4tt4SuE/81qc5VjWCc
+         RWgnf2p0xre20E4PNI3zC/MZeEivg1ZR7bWEDVk8VRLgEjS3oqesTeu3qoXeyOyWZ7UA
+         O3SA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMVZZBa5oTcFzOKrZidB42FkdBVtUHVChed5orlY/BOdIHQmjILwqqdiB5ODYgOhRX1aGZbE174d31lDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3tJkLjD7gNPdikIzyBHe9PuccYZTxhCofwUgNkF6Hk7yrZjHZ
+	1DgyqGS0kiuv6kb5TtXtZLQw5OBQrsSsPdNWsXjM1sU9H4XMLQV7T+WNoQH+sfy5Zt2yYyihxaB
+	lqD6Y+n6wW3dC4KEU7DUGI6gZNG5Ve6H9WOpRLTwcM3K/qXzRKBTf
+X-Gm-Gg: ASbGnctxsl+NcEPLXNIjE3DI1Ogv8zjHc6jU9y3liUMkyKzZywpNOBNY0J2FDXM4TZq
+	Bh0Z7EHERuQkieiDGyJKlYms75rfDtz4KQhANVKK2b0CG2e8giJrUZMXbjrjO7V0BL8t4tfIM1W
+	F7ElI3A6s=
+X-Google-Smtp-Source: AGHT+IE1do07rAVeM26LWM44sDcYkndMMS6PqevsrML44Ig1O2UNIGxaZZ09D+v1YjMHpR+yUbCrMZa0Okg5Z9Qp2hI=
+X-Received: by 2002:a05:690c:288b:b0:6fb:968b:d8f5 with SMTP id
+ 00721157ae682-6fd4a16c59fmr18940297b3.36.1740704945595; Thu, 27 Feb 2025
+ 17:09:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227180813.1553404-6-john.g.garry@oracle.com>
+References: <20250227171417.4023415-1-chharry@google.com> <CABBYNZ+QdWQ49ZMxPLj86d=kjr7Sf38LR1PrYrPhU8kZMQuh0A@mail.gmail.com>
+In-Reply-To: <CABBYNZ+QdWQ49ZMxPLj86d=kjr7Sf38LR1PrYrPhU8kZMQuh0A@mail.gmail.com>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Fri, 28 Feb 2025 09:08:29 +0800
+X-Gm-Features: AQ5f1JqF-8o4G0RZxdRRArwn7xPaMsiW2qBDGccNZn9lTrdQL5jZD7L3Flx9z8M
+Message-ID: <CADg1FFcK1e_y6mroLuh2kkWA32BU3esbtT9vLbntviDUtkoLJw@mail.gmail.com>
+Subject: Re: [PATCH v3] Bluetooth: btusb: Configure altsetting for HCI_USER_CHANNEL
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, gregkh@linuxfoundation.org, 
+	pmenzel@molgen.mpg.de, chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 06:08:06PM +0000, John Garry wrote:
-> Currently atomic write support requires dedicated HW support. This imposes
-> a restriction on the filesystem that disk blocks need to be aligned and
-> contiguously mapped to FS blocks to issue atomic writes.
-> 
-> XFS has no method to guarantee FS block alignment for regular,
-> non-RT files. As such, atomic writes are currently limited to 1x FS block
-> there.
-> 
-> To deal with the scenario that we are issuing an atomic write over
-> misaligned or discontiguous data blocks - and raise the atomic write size
-> limit - support a SW-based software emulated atomic write mode. For XFS,
-> this SW-based atomic writes would use CoW support to issue emulated untorn
-> writes.
-> 
-> It is the responsibility of the FS to detect discontiguous atomic writes
-> and switch to IOMAP_DIO_ATOMIC_SW mode and retry the write. Indeed,
-> SW-based atomic writes could be used always when the mounted bdev does
-> not support HW offload, but this strategy is not initially expected to be
-> used.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+Hi Luiz,
 
-Looks good now, thank you.
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+On Fri, Feb 28, 2025 at 5:40=E2=80=AFAM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> Hi Hsin-chen,
+>
+> On Thu, Feb 27, 2025 at 12:14=E2=80=AFPM Hsin-chen Chuang <chharry@google=
+.com> wrote:
+> >
+> > From: Hsin-chen Chuang <chharry@chromium.org>
+> >
+> > Automatically configure the altsetting for HCI_USER_CHANNEL when a SCO
+> > is connected.
+> >
+> > The motivation is to enable the HCI_USER_CHANNEL user to send out SCO
+> > data through USB Bluetooth chips, which is mainly used for bidirectiona=
+l
+> > audio transfer (voice call). This was not capable because:
+> >
+> > - Per Bluetooth Core Spec v5, Vol 4, Part B, 2.1, the corresponding
+> >   alternate setting should be set based on the air mode in order to
+> >   transfer SCO data, but
+> > - The Linux Bluetooth HCI_USER_CHANNEL exposes the Bluetooth Host
+> >   Controller Interface to the user space, which is something above the
+> >   USB layer. The user space is not able to configure the USB alt while
+> >   keeping the channel open.
+> >
+> > This patch intercepts the HCI_EV_SYNC_CONN_COMPLETE packets in btusb,
+> > extracts the air mode, and configures the alt setting in btusb.
+> >
+> > This patch is tested on ChromeOS devices. The USB Bluetooth models
+> > (CVSD, TRANS alt3 and alt6) could work without a customized kernel.
+> >
+> > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control =
+USB alt setting")
+> > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+> > ---
+> >
+> > Changes in v3:
+> > - Remove module parameter
+> > - Set Kconfig to default y if CHROME_PLATFORMS
+> >
+> > Changes in v2:
+> > - Give up tracking the SCO handles. Only configure the altsetting when
+> >   SCO connected.
+> > - Put the change behind Kconfig/module parameter
+> >
+> >  drivers/bluetooth/Kconfig | 11 ++++++++++
+> >  drivers/bluetooth/btusb.c | 43 +++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 54 insertions(+)
+> >
+> > diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> > index 4ab32abf0f48..cdf7a5caa5c8 100644
+> > --- a/drivers/bluetooth/Kconfig
+> > +++ b/drivers/bluetooth/Kconfig
+> > @@ -56,6 +56,17 @@ config BT_HCIBTUSB_POLL_SYNC
+> >           Say Y here to enable USB poll_sync for Bluetooth USB devices =
+by
+> >           default.
+> >
+> > +config BT_HCIBTUSB_AUTO_SET_ISOC_ALT
+> > +       bool "Auto set isoc_altsetting for HCI_USER_CHANNEL when SCO co=
+nnected"
+> > +       depends on BT_HCIBTUSB
+> > +       default y if CHROME_PLATFORMS
+> > +       help
+> > +         Say Y here to enable auto set isoc_altsetting for HCI_USER_CH=
+ANNEL
+> > +         when SCO connected
+> > +
+> > +         When enabled, btusb intercepts the HCI_EV_SYNC_CONN_COMPLETE =
+packets
+> > +         and configures isoc_altsetting automatically for HCI_USER_CHA=
+NNEL.
+> > +
+> >  config BT_HCIBTUSB_BCM
+> >         bool "Broadcom protocol support"
+> >         depends on BT_HCIBTUSB
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index de3fa725d210..2642d2ca885f 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -34,6 +34,8 @@ static bool force_scofix;
+> >  static bool enable_autosuspend =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTOS=
+USPEND);
+> >  static bool enable_poll_sync =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_POLL_SY=
+NC);
+> >  static bool reset =3D true;
+> > +static bool auto_set_isoc_alt =3D
+> > +       IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTO_SET_ISOC_ALT);
+> >
+> >  static struct usb_driver btusb_driver;
+> >
+> > @@ -1113,6 +1115,42 @@ static inline void btusb_free_frags(struct btusb=
+_data *data)
+> >         spin_unlock_irqrestore(&data->rxlock, flags);
+> >  }
+> >
+> > +static void btusb_sco_connected(struct btusb_data *data, struct sk_buf=
+f *skb)
+> > +{
+> > +       struct hci_event_hdr *hdr =3D (void *) skb->data;
+> > +       struct hci_ev_sync_conn_complete *ev =3D
+> > +               (void *) skb->data + sizeof(*hdr);
+> > +       struct hci_dev *hdev =3D data->hdev;
+> > +       unsigned int notify_air_mode;
+> > +
+> > +       if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT)
+> > +               return;
+> > +
+> > +       if (skb->len < sizeof(*hdr) || hdr->evt !=3D HCI_EV_SYNC_CONN_C=
+OMPLETE)
+> > +               return;
+> > +
+> > +       if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->status)
+> > +               return;
+> > +
+> > +       switch (ev->air_mode) {
+> > +       case BT_CODEC_CVSD:
+> > +               notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
+> > +               break;
+> > +
+> > +       case BT_CODEC_TRANSPARENT:
+> > +               notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANSP;
+> > +               break;
+> > +
+> > +       default:
+> > +               return;
+> > +       }
+> > +
+> > +       bt_dev_info(hdev, "enabling SCO with air mode %u", ev->air_mode=
+);
+> > +       data->sco_num =3D 1;
+> > +       data->air_mode =3D notify_air_mode;
+> > +       schedule_work(&data->work);
+> > +}
+> > +
+> >  static int btusb_recv_event(struct btusb_data *data, struct sk_buff *s=
+kb)
+> >  {
+> >         if (data->intr_interval) {
+> > @@ -1120,6 +1158,11 @@ static int btusb_recv_event(struct btusb_data *d=
+ata, struct sk_buff *skb)
+> >                 schedule_delayed_work(&data->rx_work, 0);
+> >         }
+> >
+> > +       /* Configure altsetting for HCI_USER_CHANNEL on SCO connected *=
+/
+> > +       if (auto_set_isoc_alt &&
+> > +           hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
+> > +               btusb_sco_connected(data, skb);
+> > +
+> >         return data->recv_event(data->hdev, skb);
+> >  }
+> >
+> > --
+> > 2.48.1.658.g4767266eb4-goog
+>
+> This has been merged, I did some minor rewording here and there but
+> the logic remains the same, now we can problem revert b16b327edb4d
+> ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")?
+>
+> --
+> Luiz Augusto von Dentz
 
---D
+Yes, sure. We could revert b16b327edb4d now.
 
-> ---
->  Documentation/filesystems/iomap/operations.rst | 16 ++++++++++++++--
->  fs/iomap/direct-io.c                           |  4 +++-
->  include/linux/iomap.h                          |  6 ++++++
->  3 files changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> index 82bfe0e8c08e..b9757fe46641 100644
-> --- a/Documentation/filesystems/iomap/operations.rst
-> +++ b/Documentation/filesystems/iomap/operations.rst
-> @@ -525,8 +525,20 @@ IOMAP_WRITE`` with any combination of the following enhancements:
->     conversion or copy on write), all updates for the entire file range
->     must be committed atomically as well.
->     Only one space mapping is allowed per untorn write.
-> -   Untorn writes must be aligned to, and must not be longer than, a
-> -   single file block.
-> +   Untorn writes may be longer than a single file block. In all cases,
-> +   the mapping start disk block must have at least the same alignment as
-> +   the write offset.
-> +
-> + * ``IOMAP_ATOMIC_SW``: This write is being issued with torn-write
-> +   protection via a software mechanism provided by the filesystem.
-> +   All the disk block alignment and single bio restrictions which apply
-> +   to IOMAP_ATOMIC_HW do not apply here.
-> +   SW-based untorn writes would typically be used as a fallback when
-> +   HW-based untorn writes may not be issued, e.g. the range of the write
-> +   covers multiple extents, meaning that it is not possible to issue
-> +   a single bio.
-> +   All filesystem metadata updates for the entire file range must be
-> +   committed atomically as well.
->  
->  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
->  calling this function.
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index f87c4277e738..575bb69db00e 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -644,7 +644,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
->  		}
->  
-> -		if (iocb->ki_flags & IOCB_ATOMIC)
-> +		if (dio_flags & IOMAP_DIO_ATOMIC_SW)
-> +			iomi.flags |= IOMAP_ATOMIC_SW;
-> +		else if (iocb->ki_flags & IOCB_ATOMIC)
->  			iomi.flags |= IOMAP_ATOMIC_HW;
->  
->  		/* for data sync or sync, we need sync completion processing */
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index e7aa05503763..4fa716241c46 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -183,6 +183,7 @@ struct iomap_folio_ops {
->  #define IOMAP_DAX		0
->  #endif /* CONFIG_FS_DAX */
->  #define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
-> +#define IOMAP_ATOMIC_SW		(1 << 10)/* SW-based torn-write protection */
->  
->  struct iomap_ops {
->  	/*
-> @@ -434,6 +435,11 @@ struct iomap_dio_ops {
->   */
->  #define IOMAP_DIO_PARTIAL		(1 << 2)
->  
-> +/*
-> + * Use software-based torn-write protection.
-> + */
-> +#define IOMAP_DIO_ATOMIC_SW		(1 << 3)
-> +
->  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
->  		unsigned int dio_flags, void *private, size_t done_before);
-> -- 
-> 2.31.1
-> 
+
+Best Regards,
+
+Hsin-chen
 
