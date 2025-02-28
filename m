@@ -1,771 +1,258 @@
-Return-Path: <linux-kernel+bounces-537802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3783A49102
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5600DA490FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 06:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 786CE16FEF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:39:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F355E16FE6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 05:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA3A1C7B62;
-	Fri, 28 Feb 2025 05:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE561C5D69;
+	Fri, 28 Feb 2025 05:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U6qxqz4v"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2069.outbound.protection.outlook.com [40.107.237.69])
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="eUi9771N"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276B11C6FF4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 05:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740721079; cv=fail; b=ouLOvKJpbzxT7fWbxtf8I9/Dpp1B7GK8qbnw1T+iP9BjVtg1m3G30nQCAH59NnqM7sjheGqrEoF24/9MIMyCFRF2yhYpmKehP5TAP1oUHzBusmKhJKlXsgIjxnjmS44WTJN4L4gYqV7fWwdBTthka8I3rKQzzkDoves7UQmIdRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740721079; c=relaxed/simple;
-	bh=v44+cLA7svVSR7x3zSpuCi6MIyKSH3FC8qJhdZn1CCc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A7f2sFAkIKMG6yW0ty1VAdffKCbklBOiyv/BQ9suuKTTTh7sI6iVYYJ4YZIPy3F62b7Zou3NYKzj87dUFw4rvlLvfVZ9OzPDUqR1i/UrMUULFUFqVhyBNVpRla7wxoIW0HaBSnZXjnM7rDuysoDa7iHtDig1q+iK59DjhRyqgLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U6qxqz4v; arc=fail smtp.client-ip=40.107.237.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RqqLbdKsWoIIYt0ZpMebq9l740CABzrEUtrXcAyrpelfbA4cLuA+bmyytfX16iQxUSgcG0EWywpf/Hxl2VYs6Xij4Ty4saCDFL8h6Rp9xaKiqlWDK1uUwsuFP0wkuhSEJi/K16hPHXvSWiAlJZ6elX+DlNJ4wUbfwyOimWWhuZcNQbvnT+yBPBn483cNBqbXF1VqSu/F4bRtbl7rDPOA7C2bs2hLRFAOhAZwHipdL01Fm/5n84doqd45lwmafXRjIrzc8Rhu1puMq0lR8cZD30UUR7IVT9dgREGqMhzjEsYdYjuHUSjCvyufs2k72nOktmECrcsygB46GMWt2NSu6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IENX2icIAE/2alZm2gjaUEnCoOPizoTbRyZf94wWu4w=;
- b=cZbTMDNqCBCa16bN6KgMFFbWGEVxzgSWzYr35FvoWoZ9JAe3c0FSqM00451u5DPOj3vnVGAcCy2Kb62B1nQEECBtSxUn0gYYAh0HNchFcMx3Nw+6wQ8mZKKmvj8kxs7vqxb2fNZCNNAkntvpKkWUogazi5CgimIx9bpswHFSh+Z1qRIjELSzgI6KtF4XRp66sqoXlH+HAaLzU07UHzoPfhEKn1Z5VQW1D3jk5uMYLvRdnqmzVZZQT2A/axxrqXcVSBLO9t8bAtVpyR5KF6qLUwYAwktYO39qjXZcmX8SPJrWavpNJRwbvTeNKNVmSME/HIFy307Mp2+ko5CGYijAwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IENX2icIAE/2alZm2gjaUEnCoOPizoTbRyZf94wWu4w=;
- b=U6qxqz4v+f2f9bU0Ar0PK1Ap2xsslSCXr3JuF6dzvPAqa3naJB/HP14c+VDFf2fBQM9mVb+6bIsHp1BcOMlPBjq2Anj6QLtrVmGYD38cGkIr6xtxMqCOGMEXY1yIor5Kks0gqa/1z4H65YSKgZlrfKRnvor1pPvqmujvpN/cono=
-Received: from BN9PR03CA0181.namprd03.prod.outlook.com (2603:10b6:408:f9::6)
- by DM6PR12MB4204.namprd12.prod.outlook.com (2603:10b6:5:212::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 28 Feb
- 2025 05:37:52 +0000
-Received: from BN3PEPF0000B071.namprd04.prod.outlook.com
- (2603:10b6:408:f9:cafe::23) by BN9PR03CA0181.outlook.office365.com
- (2603:10b6:408:f9::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.23 via Frontend Transport; Fri,
- 28 Feb 2025 05:37:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B071.mail.protection.outlook.com (10.167.243.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Fri, 28 Feb 2025 05:37:51 +0000
-Received: from jenkins-honglei.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Feb
- 2025 23:37:47 -0600
-From: Honglei Huang <honglei1.huang@amd.com>
-To: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter
-	<simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, Huang Rui
-	<ray.huang@amd.com>
-CC: <dri-devel@lists.freedesktop.org>, <virtualization@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Demi Marie Obenour <demiobenour@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Honglei Huang
-	<Honglei1.Huang@amd.com>
-Subject: [PATCH v1 7/7] drm/virtio: implement userptr: add mmu notifier
-Date: Fri, 28 Feb 2025 13:36:50 +0800
-Message-ID: <20250228053650.393646-8-honglei1.huang@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250228053650.393646-1-honglei1.huang@amd.com>
-References: <20250228053650.393646-1-honglei1.huang@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEED21BEF82;
+	Fri, 28 Feb 2025 05:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740721070; cv=none; b=ImbLS0y2NU5mXFpZ1BiDENHh8h6Bk9TbYzaNpPK4WxiNGqg1DSK0HmuxmyzspxzwbUqi4osO3xZsT5uU16hpXJ19HEmrxBcBD7wi6mXIU3T/jCDSZDgA7R1Mjs+u4uIksK6EUafK/g5P6cZBUdOPY1KTVaN6oSUYs4vznB+ZGQg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740721070; c=relaxed/simple;
+	bh=EA4My43wV+5AeO1WKhaa9PtLtgh+AvWkwFeiGVXixx8=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=E/gUVT4C3O2htHg2V/Pg/fxP1+s81ZegO3IpmdRnlr4cRjAggRAhgJSvgxJKV/pm59+3JDlSTQat0/9IQ623nvrzJ+odZCB+d6NchjyM3FHbAEYXF3Wx/58QY7ILXwopxpEvAQHZCuRZFJYbqbJx1t+PONo/iNvo9LolhknhG5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=eUi9771N; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1740721046;
+	bh=zej3l/VhWayOFDJihQNo4c7f+zl1RMZdXx+5GGEqHNM=;
+	h=From:Mime-Version:Subject:Message-Id:Date:To;
+	b=eUi9771NanvazT5ScOtRAESr0vtO3kyYsRnYCHRX4Uy8IsEAzdK8Ib34Msfy2Yqp4
+	 LiNJ4lJpPqqimu09pR/aZ8DknymnUVK3kyb8lzyJVquZP0W42/89tVafH6AF+cghv7
+	 t7HZaImjD4rUOW4OSyQsY2tuMFT4VeHrQuJQUnls=
+X-QQ-mid: bizesmtpsz15t1740721041tq2cp8
+X-QQ-Originating-IP: QLvO+yBLxLyi55liIgGjNbdRSHKp8uoEU1FYx7yq+k4=
+Received: from smtpclient.apple ( [202.120.235.76])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 28 Feb 2025 13:37:19 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1641597565874851230
+From: Kun Hu <huk23@m.fudan.edu.cn>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B071:EE_|DM6PR12MB4204:EE_
-X-MS-Office365-Filtering-Correlation-Id: b945154c-cc7e-4018-6603-08dd57ba0b16
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DApX7MH1Wn0I5WArArp4V6jKBe5V/M3594Gp81ojVS0cNoIM+gmruHhBKb47?=
- =?us-ascii?Q?H5/YyBfHWVC1m/eGoakuWMKQRIxC6CWAOTjP1F16z1pWxgidS9ctG3Ulya9V?=
- =?us-ascii?Q?ih8jEQDR64y8BBkEEahCdmiI9gHWgrBgsBWGkag08DzDhMJu157DdS5PAuJo?=
- =?us-ascii?Q?KWueVU3uh6CiXI59OFppV31ixDstT7OBODfY8qV+cdXw0DrWzh4urECJ00nA?=
- =?us-ascii?Q?9XwXgpY0oPzEm1u443dPtuuMCD5jyPHcvK1EjKGC6GRDW85Z4btmHJaYur1f?=
- =?us-ascii?Q?s3uIWG3yt/jmv5c8VWuCdIF4aKm/Not+kV1VWMwDK6hQ76OMCL/zlcjf5diX?=
- =?us-ascii?Q?FRixK7dXBJkLJWeMVt5vJinidqD6epib74Zjsjr7uvittjg0YxpLUzghK57K?=
- =?us-ascii?Q?2LzFA5SVZj3pISTujoM3oJkSV4kG0DdU0VmK/aXl5Ig8NI5vpg+VlVvCxs8u?=
- =?us-ascii?Q?+zf9Yv/aTh+loTuscMFdB7GAPwE0WqgAtronCWHn5T8BYRXoIQsUEbF2RLmp?=
- =?us-ascii?Q?eVKqGu7+D9JOYHWK9F9k635xzF/GtbdccSy1gwEiVnH+thLW2VZ2mVvqKeeb?=
- =?us-ascii?Q?gSUlBW/f2oWVMFxJV46+CD1KEij9MF9oqQShhxWVG6wa8vGj2X/kOym6KCbg?=
- =?us-ascii?Q?jOJ5fq7gRhSRANy4BRFdONj6qZCSxTJf++28qT0m417TCP6uC7eOVEsSSBrT?=
- =?us-ascii?Q?eBho+Igwjh1A5hXgzxRHEERm+pVqTCIUsWmRGTtW8Xsj4XdCxdGXHJoclVYu?=
- =?us-ascii?Q?KqElri+665AaPd0nxAw+bAQnSkT2vT+XWIwUCP8pqHLyEqT7/86Is3Xlsf1w?=
- =?us-ascii?Q?qfwH7UX9gFzfTvxvoRJ9y0cHXd65yBNV+2E/w6DF8ZsMBnpHk46pcF8S24Ym?=
- =?us-ascii?Q?lK7jaT4QRIr4xJGdMcPhURGM324r+XoCH5kUTWji2CHxPK89IeBZ8jjjg3VU?=
- =?us-ascii?Q?8GbLvKE1/T2QJRth1CCubIohiTRtxkWspclAAueEdUY/0Ep2legsEs+WFYiD?=
- =?us-ascii?Q?I6oElJP0K/f8Ux++MO5wfg5pd8+uN0eP+wsOjwErTtcUF6FDinGt1e50o/Un?=
- =?us-ascii?Q?XBMy7MRK272Zz+RNog0YW/OyFRY7TQ0Fu4gW/1qOB8QTYaCL7pbH6mTmeTT8?=
- =?us-ascii?Q?ubywRIGS/qU0aWSHhHUkWTtjr13+8T+4AEngJm1j5BrYiozXGrfVMdlvFiav?=
- =?us-ascii?Q?N4+lnwP/9A6Y5+E3Yyd+XmCrbBGBjizoB8BU8I0vLd16WClSBDeKGx9tHDWg?=
- =?us-ascii?Q?9kqd4bBfFlsyQ82K7mDasvcVu2/jhXdXPeurShRLkwIOpvfuCEzTV6mm7O9M?=
- =?us-ascii?Q?MMPfkwdeZhD4393Mk9g8134/jYKmbqXMOQu1HRTnODcCBRa/PxejWgonFJQh?=
- =?us-ascii?Q?b/0+1O76kONM6aL/61464UYsuV9KGiNZ/AE/ISGCgxh/1kol6pmrq9F9nqEw?=
- =?us-ascii?Q?Pn63kgQ1KqymfMlNMrV1PxEuENN+nDCvz5XcVxi43xXRliYTP/Ev7RctkkZs?=
- =?us-ascii?Q?PdI1GB8xooxhtJjWWUww1pUAEgP3wpUdzDho?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 05:37:51.7560
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b945154c-cc7e-4018-6603-08dd57ba0b16
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B071.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4204
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: [Bug] missing bounds check for k->u64s=0 in validate_bset_keys:999
+Message-Id: <BB5BB1E2-2146-4F79-8EE9-0DCFA5F0D381@m.fudan.edu.cn>
+Date: Fri, 28 Feb 2025 13:37:08 +0800
+Cc: linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzkaller@googlegroups.com,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
+ baishuoran@hrbeu.edu.cn
+To: Kent Overstreet <kent.overstreet@linux.dev>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MPAlP4yRn0xg5GJlyD8fNxPdgXaOixYmVrbtBKEgcUxmzame/MrBix07
+	Ru5Kxs+RxFdGzeK3crmQtn5KZcP4PkP5uvAnqPAALSTUb6PKoHwpgSunQ0g1kq8XYEYNqVB
+	LKEIIU0xDJIYqqYsJHcauj7aSIfNx7EK36wtPGvycBros0fxSZ15X1pqgkDSONHl/TyWeYs
+	ylP5m2YyP2271skYtMoIMViunxMfvec5b9vU1tkjtsEe9tIT85mfCS4nP1SuUXNd+NkZVjl
+	IYhKO8YG564g36usgwTkSXFn+38gGTEMB3KYt/YmwwlvrL7mLh075xCo7x6Z00q42b1rU0L
+	PSYjVe2gRtv9CFXM1Y3rwfn2xbE5QUEIVKE3i30Fn+yoOk+oPA0A+prhzyQFXx6VAFNwn6A
+	7jlVf3axLwwQg21xiQeELKhjPLpuRF0eISF/KuJUdwiNn8ks33745CyDYGMfDmH1M2YcXOn
+	Wa/eaM1uo2Qr2V/lHsoZVELKpnH/KaXofvk7u3L5cVFvewP3Jqp/uFaO5zesgJIvBTtSW3Q
+	yniC7dHrcKJ5KcoglQaUAXkGIodmgH40XWNupgprEeX3BsCbnZeKDOusaoBoQ3jcrd1Cojt
+	e4YM8JFFEo3RSZ1zMzMBA3aoWAPO6gy9CJZspVMzup4GrS64Nk0+ZvztEuHPXODhadOO0es
+	HtQhRmVImR+Mb8ACJSAhZwXvFD+2KwMDOfdvhcIZ01NvxMTMFePrri4i3+fcUKj5rBb1Xiy
+	cSaECSbMOiAJHA6VuTJpuEqW7yRiwkLCwngFXts8eVUIp98ayqPyP46fEsgkX/17xaEYqyl
+	8dfodAtx2c8iTcJYAHCPYVoylxbdUv0Wb3z4AG8z+faKP0rqvd89RNJ692nQa1Ut6+e6ZWg
+	NdruVC1GF64faX0cNvn7+08r1IYi2zhKWfVBmpCfxsXYdeFgYlRojTcf+OOSwv49Ldv3+Us
+	ekltYtMLdrsRgxHy0dO6PINeUIlfWG55FmPc=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-From: Honglei Huang <Honglei1.Huang@amd.com>
+Hi Kent,
 
-Add mmu notifier, there are some benefits:
-- UMD do not need manage the userptrs, just alloc and free user space
-memory, with the MMU notifier userpters can be managed by kernel.
-- Can achieve a performance improvement of 20%~30%. With the MMU notifier
-UMD like OpenCL can achieve 98% performance compared to bare metal in
-some bench marks like Geekbench and CLpeak.
+When using our customized Syzkaller to fuzz the latest Linux kernel, the =
+following crash (82th)
+was triggered.
 
-Signed-off-by: Honglei Huang <Honglei1.Huang@amd.com>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h     |  47 ++-
- drivers/gpu/drm/virtio/virtgpu_ioctl.c   |   4 +-
- drivers/gpu/drm/virtio/virtgpu_kms.c     |   2 +
- drivers/gpu/drm/virtio/virtgpu_userptr.c | 423 ++++++++++++++++++++++-
- 4 files changed, 469 insertions(+), 7 deletions(-)
+HEAD commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+git tree: upstream
+Output: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
+ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/output_on_6.14rc4
+Kernel config: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/config_6.14rc4=
+.txt
+C reproducer: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
+ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/repro.c
+Syzlang reproducer: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0225_6.14rc2/82-KASAN_%20sl=
+ab-out-of-bounds%20Read%20in%20mapping_try_invalidate/repro.syz
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index fa5dd46e3732..6fa6dd9d1738 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -42,6 +42,7 @@
- #include <drm/drm_ioctl.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/virtgpu_drm.h>
-+#include <linux/mmu_notifier.h>
- 
- #define DRIVER_NAME "virtio_gpu"
- #define DRIVER_DESC "virtio GPU"
-@@ -121,9 +122,33 @@ struct virtio_gpu_object_userptr_ops {
- 	int (*get_pages)(struct virtio_gpu_object_userptr *userptr);
- 	void (*put_pages)(struct virtio_gpu_object_userptr *userptr);
- 	void (*release)(struct virtio_gpu_object_userptr *userptr);
--	int (*insert)(struct virtio_gpu_object_userptr *userptr, struct virtio_gpu_fpriv *fpriv);
--	int (*remove)(struct virtio_gpu_object_userptr *userptr, struct virtio_gpu_fpriv *fpriv);
-+	int (*insert)(struct virtio_gpu_object_userptr *userptr,
-+		      struct virtio_gpu_fpriv *fpriv);
-+	int (*remove)(struct virtio_gpu_object_userptr *userptr,
-+		      struct virtio_gpu_fpriv *fpriv);
-+	bool (*valid)(struct virtio_gpu_object_userptr *userptr);
-+	void (*notifier_init)(struct virtio_gpu_object_userptr *userptr,
-+			      struct mm_struct *mm);
-+	int (*notifier_add)(struct virtio_gpu_object_userptr *userptr,
-+			    unsigned long start, unsigned long length);
-+	void (*notifier_remove)(struct virtio_gpu_object_userptr *userptr);
-+	int (*split)(struct virtio_gpu_object_userptr *userptr,
-+		     unsigned long start, unsigned long last,
-+		     struct virtio_gpu_object_userptr **pnew);
-+	void (*evict)(struct virtio_gpu_object_userptr *userptr);
-+	void (*update)(struct virtio_gpu_object_userptr *userptr);
-+	struct virtio_gpu_object_userptr *(*split_new)(
-+		struct virtio_gpu_object_userptr *userptr, unsigned long start,
-+		unsigned long last);
- };
-+
-+enum userptr_work_list_ops {
-+	USERPTR_OP_NULL,
-+	USERPTR_OP_UNMAP,
-+	USERPTR_OP_UPDATE,
-+	USERPTR_OP_EVICT,
-+};
-+
- struct virtio_gpu_object_userptr {
- 	struct virtio_gpu_object base;
- 	const struct virtio_gpu_object_userptr_ops *ops;
-@@ -142,6 +167,16 @@ struct virtio_gpu_object_userptr {
- 	struct sg_table *sgt;
- 
- 	struct interval_tree_node it_node;
-+
-+#ifdef CONFIG_MMU_NOTIFIER
-+	struct list_head work_list;
-+	enum userptr_work_list_ops op;
-+	atomic_t in_release;
-+	struct mm_struct *mm;
-+	uint64_t notifier_start;
-+	uint64_t notifier_last;
-+	struct mmu_interval_notifier notifier;
-+#endif
- };
- 
- #define to_virtio_gpu_shmem(virtio_gpu_object) \
-@@ -317,6 +352,12 @@ struct virtio_gpu_fpriv {
- 	bool explicit_debug_name;
- 	struct rb_root_cached userptrs_tree;
- 	struct mutex userptrs_tree_lock;
-+
-+#ifdef CONFIG_MMU_NOTIFIER
-+	struct work_struct userptr_work;
-+	struct list_head userptr_work_list;
-+	spinlock_t userptr_work_list_lock;
-+#endif
- };
- 
- /* virtgpu_ioctl.c */
-@@ -536,4 +577,6 @@ bool virtio_gpu_is_userptr(struct virtio_gpu_object *bo);
- void virtio_gpu_userptr_interval_tree_init(struct virtio_gpu_fpriv *vfpriv);
- void virtio_gpu_userptr_set_handle(struct virtio_gpu_object *qobj,
- 				   uint32_t handle);
-+uint32_t virtio_gpu_userptr_get_handle(struct virtio_gpu_object *qobj);
-+void virtio_gpu_userptr_list_work_init(struct virtio_gpu_fpriv *vfpriv);
- #endif
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index ad1ac8d0eadf..14326fd8fee9 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -697,8 +697,10 @@ static int virtio_gpu_context_init_ioctl(struct drm_device *dev,
- 		}
- 	}
- 
--	if (vfpriv->context_init & VIRTIO_GPU_CAPSET_HSAKMT)
-+	if (vfpriv->context_init & VIRTIO_GPU_CAPSET_HSAKMT) {
-+		virtio_gpu_userptr_list_work_init(vfpriv);
- 		virtio_gpu_userptr_interval_tree_init(vfpriv);
-+	}
- 
- 	virtio_gpu_create_context_locked(vgdev, vfpriv);
- 	virtio_gpu_notify(vgdev);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index 3d5158caef46..3dc44eb16fb8 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -345,6 +345,8 @@ void virtio_gpu_driver_postclose(struct drm_device *dev, struct drm_file *file)
- 		return;
- 
- 	if (vfpriv->context_created) {
-+		if (vfpriv->context_init & VIRTIO_GPU_CAPSET_HSAKMT)
-+			flush_work(&vfpriv->userptr_work);
- 		virtio_gpu_cmd_context_destroy(vgdev, vfpriv->ctx_id);
- 		virtio_gpu_notify(vgdev);
- 	}
-diff --git a/drivers/gpu/drm/virtio/virtgpu_userptr.c b/drivers/gpu/drm/virtio/virtgpu_userptr.c
-index 03398c3b9f30..10264227f3e7 100644
---- a/drivers/gpu/drm/virtio/virtgpu_userptr.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_userptr.c
-@@ -3,6 +3,7 @@
- #include <linux/mm.h>
- #include <linux/pid.h>
- #include <linux/vmalloc.h>
-+#include <linux/mmu_notifier.h>
- 
- #include "virtgpu_drv.h"
- #include "drm/drm_gem.h"
-@@ -13,21 +14,422 @@ virtio_gpu_userptr_get_sg_table(struct drm_gem_object *obj);
- static int virtio_gpu_userptr_insert(struct virtio_gpu_object_userptr *userptr,
- 				     struct virtio_gpu_fpriv *vfpriv)
- {
-+	int ret;
-+
- 	if (!userptr->ops->insert)
- 		return -EINVAL;
- 
--	return userptr->ops->insert(userptr, vfpriv);
-+	ret = userptr->ops->insert(userptr, vfpriv);
-+	if (ret)
-+		return ret;
-+
-+	if (userptr->ops->notifier_add)
-+		ret = userptr->ops->notifier_add(userptr, userptr->start,
-+						 userptr->last -
-+							 userptr->start + 1UL);
-+
-+	return ret;
- }
- 
- static int virtio_gpu_userptr_remove(struct virtio_gpu_object_userptr *userptr,
- 				     struct virtio_gpu_fpriv *vfpriv)
- {
-+	int ret;
-+
- 	if (!userptr->ops->remove)
- 		return -EINVAL;
- 
--	return userptr->ops->remove(userptr, vfpriv);
-+	ret = userptr->ops->remove(userptr, vfpriv);
-+	if (ret)
-+		return ret;
-+
-+	if (userptr->ops->notifier_remove)
-+		userptr->ops->notifier_remove(userptr);
-+
-+	return ret;
-+}
-+
-+static bool virtio_gpu_userptr_valid(struct virtio_gpu_object_userptr *userptr)
-+{
-+	if (userptr->ops->valid)
-+		return userptr->ops->valid(userptr);
-+
-+	return true;
-+}
-+
-+#ifdef CONFIG_MMU_NOTIFIER
-+
-+static bool
-+virtio_gpu_userptr_invalidate(struct mmu_interval_notifier *mn,
-+			      const struct mmu_notifier_range *range,
-+			      unsigned long cur_seq);
-+
-+static const struct mmu_interval_notifier_ops virtio_gpu_userptr_mn_ops = {
-+	.invalidate = virtio_gpu_userptr_invalidate,
-+};
-+
-+static int
-+virtio_gpu_userptr_add_notifier(struct virtio_gpu_object_userptr *userptr,
-+				unsigned long start, unsigned long length)
-+{
-+	if (!start || !length)
-+		return -EINVAL;
-+
-+	return mmu_interval_notifier_insert(&userptr->notifier, userptr->mm,
-+					    start, length,
-+					    &virtio_gpu_userptr_mn_ops);
-+}
-+
-+static void
-+virtio_gpu_userptr_remove_notifier(struct virtio_gpu_object_userptr *userptr)
-+{
-+	mmu_interval_notifier_remove(&userptr->notifier);
-+}
-+
-+static void virtio_gpu_userptr_unmap(struct virtio_gpu_object_userptr *userptr)
-+{
-+	drm_gem_handle_delete(userptr->file, userptr->bo_handle);
-+}
-+
-+static void virtio_gpu_userptr_update_notifier_and_interval_tree(
-+	struct virtio_gpu_object_userptr *userptr)
-+{
-+	unsigned long start = userptr->notifier.interval_tree.start;
-+	unsigned long last = userptr->notifier.interval_tree.last;
-+
-+	if (userptr->start == start && userptr->last == last)
-+		return;
-+
-+	if (start != 0 && last != 0)
-+		virtio_gpu_userptr_remove(userptr, userptr->file->driver_priv);
-+
-+	virtio_gpu_userptr_insert(userptr, userptr->file->driver_priv);
-+	userptr->op = 0;
- }
- 
-+static int virtio_gpu_userptr_split(struct virtio_gpu_object_userptr *userptr,
-+				    unsigned long valid_start,
-+				    unsigned long valid_last,
-+				    struct virtio_gpu_object_userptr **new)
-+{
-+	uint64_t old_start = userptr->start;
-+	uint64_t old_last = userptr->last;
-+
-+	if (old_start != valid_start && old_last != valid_last)
-+		return -EINVAL;
-+	if (valid_start < old_start || valid_last > old_last)
-+		return -EINVAL;
-+
-+	if (userptr->ops->split_new)
-+		*new = userptr->ops->split_new(userptr, valid_start,
-+					       valid_last);
-+
-+	userptr->start = valid_start;
-+	userptr->last = valid_last;
-+
-+	return 0;
-+}
-+
-+static void
-+virtio_gpu_userptr_update_split(struct virtio_gpu_object_userptr *userptr,
-+				unsigned long mn_start, unsigned long mn_last)
-+{
-+	struct virtio_gpu_object_userptr *head;
-+	struct virtio_gpu_object_userptr *tail;
-+
-+	if (!userptr->ops->split)
-+		return;
-+	if (userptr->op == USERPTR_OP_UNMAP)
-+		return;
-+
-+	if (mn_start > userptr->last || mn_last < userptr->start)
-+		return;
-+
-+	head = tail = userptr;
-+	if (mn_start > userptr->start)
-+		userptr->ops->split(userptr, userptr->start, mn_start - 1UL,
-+				    &tail);
-+	else if (mn_last < userptr->last)
-+		userptr->ops->split(userptr, mn_last + 1UL, userptr->last,
-+				    &head);
-+}
-+
-+static void
-+virtio_gpu_userptr_add_list_work(struct virtio_gpu_object_userptr *userptr,
-+				 int op)
-+{
-+	struct virtio_gpu_fpriv *vfpriv = userptr->file->driver_priv;
-+
-+	spin_lock(&vfpriv->userptr_work_list_lock);
-+
-+	if (!list_empty(&userptr->work_list)) {
-+		if (op != USERPTR_OP_NULL && userptr->op != USERPTR_OP_UNMAP)
-+			userptr->op = op;
-+	} else {
-+		userptr->op = op;
-+		list_add_tail(&userptr->work_list, &vfpriv->userptr_work_list);
-+	}
-+
-+	spin_unlock(&vfpriv->userptr_work_list_lock);
-+}
-+
-+static int virtio_gpu_follow_pfn(struct vm_area_struct *vma, uint64_t addr,
-+				 unsigned long *pfn)
-+{
-+	struct follow_pfnmap_args args = { .vma = vma, .address = addr };
-+
-+	if (follow_pfnmap_start(&args))
-+		return -EINVAL;
-+
-+	*pfn = args.pfn;
-+	follow_pfnmap_end(&args);
-+
-+	return 0;
-+}
-+
-+static int virtio_gpu_userptr_check(struct virtio_gpu_object_userptr *userptr,
-+				    struct vm_area_struct *vma, uint64_t start,
-+				    uint64_t end)
-+{
-+	uint64_t addr;
-+	int ret;
-+	unsigned long pfn;
-+
-+	for (addr = start; addr < end; addr += PAGE_SIZE) {
-+		ret = virtio_gpu_follow_pfn(vma, addr, &pfn);
-+		if (ret)
-+			return -EINVAL;
-+
-+		if (page_to_pfn(userptr->pages[(addr - userptr->start) >>
-+					       PAGE_SHIFT]) != pfn)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+virtio_gpu_userptr_check_range(struct virtio_gpu_object_userptr *userptr,
-+			       uint64_t notifier_start, uint64_t notifier_last)
-+{
-+	uint64_t start, end, addr;
-+	int r = 0;
-+
-+	start = notifier_start;
-+	end = notifier_last + (1UL << PAGE_SHIFT);
-+
-+	for (addr = start; !r && addr < end;) {
-+		struct vm_area_struct *vma;
-+		uint64_t next = 0;
-+
-+		vma = vma_lookup(userptr->mm, addr);
-+
-+		if (vma) {
-+			next = min(vma->vm_end, end);
-+			r = virtio_gpu_userptr_check(userptr, vma, start, next);
-+			if (r)
-+				break;
-+		} else {
-+			r = -EFAULT;
-+			break;
-+		}
-+
-+		addr = next;
-+	}
-+
-+	return r;
-+}
-+
-+static void
-+virtio_gpu_update_or_remove_userptr(struct virtio_gpu_object_userptr *userptr,
-+				    unsigned long start, unsigned long last)
-+{
-+	if ((userptr->start) >= start && (userptr->last) <= last) {
-+		if (atomic_xchg(&userptr->in_release, 1) == 0) {
-+			virtio_gpu_userptr_add_list_work(userptr,
-+							 USERPTR_OP_UNMAP);
-+		}
-+	} else {
-+		virtio_gpu_userptr_update_split(userptr, start, last);
-+		virtio_gpu_userptr_add_list_work(userptr, USERPTR_OP_UPDATE);
-+	}
-+}
-+
-+static void virtio_gpu_userptr_evict(struct virtio_gpu_object_userptr *userptr)
-+{
-+	if (!userptr->notifier_start || !userptr->notifier_last)
-+		return;
-+
-+	if (userptr->notifier_start < userptr->start ||
-+	    userptr->notifier_last > userptr->last)
-+		return;
-+
-+	if (virtio_gpu_userptr_check_range(userptr, userptr->notifier_start,
-+					   userptr->notifier_last)) {
-+		virtio_gpu_update_or_remove_userptr(
-+			userptr, userptr->notifier_start,
-+			userptr->notifier_last + (1UL << PAGE_SHIFT) - 1UL);
-+	}
-+
-+	userptr->notifier_start = 0;
-+	userptr->notifier_last = 0;
-+}
-+
-+static void
-+virtio_gpu_userptr_handle_list_work(struct virtio_gpu_object_userptr *userptr)
-+{
-+	switch (userptr->op) {
-+	case USERPTR_OP_NULL:
-+		break;
-+	case USERPTR_OP_UNMAP:
-+		virtio_gpu_userptr_unmap(userptr);
-+		break;
-+	case USERPTR_OP_UPDATE:
-+		if (userptr->ops->update)
-+			userptr->ops->update(userptr);
-+		break;
-+	case USERPTR_OP_EVICT:
-+		if (userptr->ops->evict)
-+			userptr->ops->evict(userptr);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+static void virtio_gpu_userptr_invalidate_work(struct work_struct *work)
-+{
-+	struct virtio_gpu_fpriv *vfpriv;
-+	struct virtio_gpu_object_userptr *userptr;
-+
-+	vfpriv = container_of(work, struct virtio_gpu_fpriv, userptr_work);
-+
-+	spin_lock(&vfpriv->userptr_work_list_lock);
-+	while (!list_empty(&vfpriv->userptr_work_list)) {
-+		userptr = list_first_entry(&vfpriv->userptr_work_list,
-+					   struct virtio_gpu_object_userptr,
-+					   work_list);
-+		spin_unlock(&vfpriv->userptr_work_list_lock);
-+
-+		mmap_write_lock(userptr->mm);
-+
-+		spin_lock(&vfpriv->userptr_work_list_lock);
-+		list_del_init(&userptr->work_list);
-+		spin_unlock(&vfpriv->userptr_work_list_lock);
-+
-+		mutex_lock(&vfpriv->userptrs_tree_lock);
-+
-+		virtio_gpu_userptr_handle_list_work(userptr);
-+
-+		mutex_unlock(&vfpriv->userptrs_tree_lock);
-+		mmap_write_unlock(userptr->mm);
-+
-+		spin_lock(&vfpriv->userptr_work_list_lock);
-+	}
-+	spin_unlock(&vfpriv->userptr_work_list_lock);
-+}
-+
-+void virtio_gpu_userptr_list_work_init(struct virtio_gpu_fpriv *vfpriv)
-+{
-+	INIT_WORK(&vfpriv->userptr_work, virtio_gpu_userptr_invalidate_work);
-+	INIT_LIST_HEAD(&vfpriv->userptr_work_list);
-+	spin_lock_init(&vfpriv->userptr_work_list_lock);
-+}
-+
-+static void
-+virtio_gpu_userptr_schedule_list_work(struct virtio_gpu_fpriv *vfpriv)
-+{
-+	spin_lock(&vfpriv->userptr_work_list_lock);
-+	if (!list_empty(&vfpriv->userptr_work_list))
-+		schedule_work(&vfpriv->userptr_work);
-+	spin_unlock(&vfpriv->userptr_work_list_lock);
-+}
-+
-+static bool
-+virtio_gpu_userptr_invalidate(struct mmu_interval_notifier *mn,
-+			      const struct mmu_notifier_range *range,
-+			      unsigned long cur_seq)
-+{
-+	struct virtio_gpu_object_userptr *userptr;
-+	unsigned long start;
-+	unsigned long last;
-+
-+	if (range->event == MMU_NOTIFY_RELEASE)
-+		return true;
-+	if (!mmget_not_zero(mn->mm))
-+		return true;
-+
-+	start = mn->interval_tree.start;
-+	last = mn->interval_tree.last;
-+	start = (max(start, range->start) >> PAGE_SHIFT) << PAGE_SHIFT;
-+	last = (min(last, range->end - 1UL) >> PAGE_SHIFT) << PAGE_SHIFT;
-+
-+	userptr = container_of(mn, struct virtio_gpu_object_userptr, notifier);
-+	userptr->mm = mn->mm;
-+
-+	mutex_lock(&userptr->lock);
-+	mmu_interval_set_seq(mn, cur_seq);
-+
-+	if (userptr->op != USERPTR_OP_UNMAP) {
-+		switch (range->event) {
-+		case MMU_NOTIFY_UNMAP:
-+			virtio_gpu_update_or_remove_userptr(
-+				userptr, start,
-+				last + (1UL << PAGE_SHIFT) - 1UL);
-+			break;
-+		default:
-+			userptr->notifier_start = start;
-+			userptr->notifier_last = last;
-+			virtio_gpu_userptr_add_list_work(userptr,
-+							 USERPTR_OP_EVICT);
-+			break;
-+		}
-+	}
-+
-+	virtio_gpu_userptr_schedule_list_work(userptr->file->driver_priv);
-+
-+	mutex_unlock(&userptr->lock);
-+	mmput(mn->mm);
-+	return true;
-+}
-+
-+static void
-+virtio_gpu_userptr_lock_and_flush_work(struct virtio_gpu_fpriv *vfpriv)
-+{
-+retry_flush_work:
-+	flush_work(&vfpriv->userptr_work);
-+
-+	if (list_empty(&vfpriv->userptr_work_list))
-+		return;
-+
-+	goto retry_flush_work;
-+}
-+
-+static bool virtio_gpu_userptr_valid_with_notifier(
-+	struct virtio_gpu_object_userptr *userptr)
-+{
-+	return (!atomic_read(&userptr->in_release)) && (!userptr->op);
-+}
-+
-+static void
-+virtio_gpu_userptr_notifier_init(struct virtio_gpu_object_userptr *userptr,
-+				 struct mm_struct *mm)
-+{
-+	userptr->notifier_start = 0;
-+	userptr->notifier_last = 0;
-+	atomic_set(&userptr->in_release, 0);
-+	INIT_LIST_HEAD(&userptr->work_list);
-+	mutex_init(&userptr->lock);
-+	userptr->mm = mm;
-+}
-+
-+#else
-+static void
-+virtio_gpu_userptr_lock_and_flush_work(struct virtio_gpu_fpriv *vfpriv)
-+{
-+}
-+#endif /* CONFIG_MMU_NOTIFIER */
-+
- static uint64_t virtio_gpu_userptr_get_offset(struct virtio_gpu_object *qobj,
- 					      uint64_t addr)
- {
-@@ -52,7 +454,8 @@ virtio_gpu_userptr_from_addr_range(struct virtio_gpu_fpriv *vfpriv,
- 		userptr = container_of(node, struct virtio_gpu_object_userptr,
- 				       it_node);
- 
--		if (start >= userptr->start && last <= userptr->last) {
-+		if (start >= userptr->start && last <= userptr->last &&
-+		    virtio_gpu_userptr_valid(userptr)) {
- 			ret = userptr;
- 			return ret;
- 		}
-@@ -92,7 +495,6 @@ void virtio_gpu_userptr_set_handle(struct virtio_gpu_object *qobj,
- 				   uint32_t handle)
- {
- 	struct virtio_gpu_object_userptr *userptr = to_virtio_gpu_userptr(qobj);
--
- 	userptr->bo_handle = handle;
- }
- 
-@@ -254,6 +656,9 @@ virtio_gpu_userptr_init(struct drm_device *dev, struct drm_file *file,
- 	obj = &userptr->base.base.base;
- 	obj->funcs = &virtio_gpu_userptr_funcs;
- 
-+	if (userptr->ops->notifier_init)
-+		userptr->ops->notifier_init(userptr, current->mm);
-+
- 	drm_gem_private_object_init(dev, obj, aligned_size);
- 
- 	ret = virtio_gpu_resource_id_get(userptr->vgdev,
-@@ -268,6 +673,15 @@ static const struct virtio_gpu_object_userptr_ops virtio_gpu_userptr_ops = {
- 	.release = virtio_gpu_userptr_release,
- 	.insert = virtio_gpu_userptr_insert_interval_tree,
- 	.remove = virtio_gpu_userptr_remove_interval_tree,
-+#ifdef CONFIG_MMU_NOTIFIER
-+	.valid = virtio_gpu_userptr_valid_with_notifier,
-+	.notifier_init = virtio_gpu_userptr_notifier_init,
-+	.notifier_add = virtio_gpu_userptr_add_notifier,
-+	.notifier_remove = virtio_gpu_userptr_remove_notifier,
-+	.split = virtio_gpu_userptr_split,
-+	.update = virtio_gpu_userptr_update_notifier_and_interval_tree,
-+	.evict = virtio_gpu_userptr_evict,
-+#endif
- };
- 
- int virtio_gpu_userptr_create(struct virtio_gpu_device *vgdev,
-@@ -290,6 +704,7 @@ int virtio_gpu_userptr_create(struct virtio_gpu_device *vgdev,
- 		       params->size))
- 		return -EFAULT;
- 
-+	virtio_gpu_userptr_lock_and_flush_work(vfpriv);
- 	mutex_lock(&vfpriv->userptrs_tree_lock);
- 
- 	userptr = virtio_gpu_userptr_from_addr_range(
--- 
-2.34.1
+The file images in the repro are randomly constructed by syzkaller. =
+According to the report, this issue points to line 999 in the =
+validate_bset_keys function. Based on multiple reproductions of the =
+issue, the problem appears to occur when parsing corrupted btree nodes =
+(where k->u64s might be 0). The memmove_u64s_down operation attempts to =
+shift subsequent data forward, but the calculation of vstruct_end(i) =
+might be out of bounds when handling such invalid nodes. This could lead =
+to heap memory corruption, potentially causing subsequently allocated =
+memory to contain invalid pointers.
 
+Our knowledge of the kernel is somewhat limited, and we'd appreciate it =
+if you could determine if there is such an issue. If this issue doesn't =
+have an impact, please ignore it =E2=98=BA.
+
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
+<jjtan24@m.fudan.edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+kernel BUG at arch/x86/mm/physaddr.c:28!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 57 Comm: kworker/3:1H Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+Workqueue: bcachefs_btree_read_complete btree_node_read_work
+RIP: 0010:__phys_addr+0xdc/0x150
+Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
+4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
+bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
+RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
+RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
+R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
+R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
+FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ qlist_free_all+0x68/0x130
+ kasan_quarantine_reduce+0x168/0x1c0
+ __kasan_slab_alloc+0x67/0x90
+ __kmalloc_node_track_caller_noprof+0x1c5/0x5f0
+ krealloc_noprof+0x2a7/0x390
+ bch2_printbuf_make_room+0x1be/0x2e0
+ bch2_prt_printf+0x18b/0x4d0
+ __btree_err+0x16c/0x950
+ validate_bset_keys+0xd79/0x18d0
+ bch2_btree_node_read_done+0x2223/0x5340
+ btree_node_read_work+0xa7e/0x1cc0
+ process_scheduled_works+0x5c0/0x1aa0
+ worker_thread+0x59f/0xcf0
+ kthread+0x42a/0x880
+ ret_from_fork+0x48/0x80
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0xdc/0x150
+Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
+4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
+bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
+RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
+RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
+R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
+R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
+FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
+PKRU: 55555554
+2025/02/26 11:21:55 reproducing crash 'KASAN: slab-out-of-bounds Read in =
+mapping_try_invalidate': final repro crashed as (corrupted=3Dfalse):
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c6c25c03258c59c5 =
+written 1032 min_key POS_MIN durability: 1 ptr: 0:27:0 gen 0 =20
+  node offset 0/1032 bset u64s 33578 bset byte offset 160: bad k->u64s 0 =
+(min 3 max 253), fixing
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:28!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 57 Comm: kworker/3:1H Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+Workqueue: bcachefs_btree_read_complete btree_node_read_work
+RIP: 0010:__phys_addr+0xdc/0x150
+Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
+4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
+bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
+RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
+RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
+R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
+R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
+FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ qlist_free_all+0x68/0x130
+ kasan_quarantine_reduce+0x168/0x1c0
+ __kasan_slab_alloc+0x67/0x90
+ __kmalloc_node_track_caller_noprof+0x1c5/0x5f0
+ krealloc_noprof+0x2a7/0x390
+ bch2_printbuf_make_room+0x1be/0x2e0
+ bch2_prt_printf+0x18b/0x4d0
+ __btree_err+0x16c/0x950
+ validate_bset_keys+0xd79/0x18d0
+ bch2_btree_node_read_done+0x2223/0x5340
+ btree_node_read_work+0xa7e/0x1cc0
+ process_scheduled_works+0x5c0/0x1aa0
+ worker_thread+0x59f/0xcf0
+ kthread+0x42a/0x880
+ ret_from_fork+0x48/0x80
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0xdc/0x150
+Code: ff 48 d3 eb 48 89 de e8 22 76 4f 00 48 85 db 75 13 e8 d8 73 4f 00 =
+4c 89 e0 5b 5d 41 5c 41 5d e9 e5 c0 a5 ff e8 c5 73 4f 00 90 <0f> 0b e8 =
+bd 73 4f 00 48 c7 c0 10 a0 fa 8d 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc9000071efe8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffffffff816a7fa2
+RDX: 000077800000000e RSI: ffff8880412ac900 RDI: 0000000000000002
+RBP: 000000008000000e R08: 0000000000000000 R09: fffffbfff2de6d9f
+R10: fffffbfff2de6d9e R11: 0000000000000001 R12: 000077800000000e
+R13: 0000000000000000 R14: ffffc9000071f048 R15: ffff888075c2a140
+FS:  0000000000000000(0000) GS:ffff88807ef00000(0000) =
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f955b82c15d CR3: 000000006f1e0000 CR4: 0000000000750ef0
+PKRU: 55555554
+(base) qjj@syzkaller109:~/go1.22.1_projects/go_projects/syzkaller$ exit
+exit
+
+Script done on 2025-02-26 18:17:09+08:00 [COMMAND_EXIT_CODE=3D"0"]
+
+---------------
+thanks,
+Kun Hu=
 
