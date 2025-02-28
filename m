@@ -1,430 +1,182 @@
-Return-Path: <linux-kernel+bounces-537633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D00A48E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:17:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799CAA48E67
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 03:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39B3B7A8F6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6912A16EADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 02:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0352516B3B7;
-	Fri, 28 Feb 2025 02:15:21 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79A513CFB6;
+	Fri, 28 Feb 2025 02:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vuQWrJ/Z"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24359139E;
-	Fri, 28 Feb 2025 02:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A96C2EF;
+	Fri, 28 Feb 2025 02:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740708920; cv=none; b=QxwG7mx5KDz1fAQN+QAINHmgxKvrAXaEFUdVYgR+T3gC0YCY2gVN2Wm8SN3A7UFkNIcCjUmf98oa7jLL3bQHHoZSpHqQM7OMNzpThnDG9TLW4mSYTEpbuILc0UjAawN/Dg5OS9qilPlTxuYChxZdcjw02SVxlu7+i7flP1DG+hA=
+	t=1740708919; cv=none; b=MWoFLK1AWzBcciMtf08OdTY9vqLNvflh6euUOXD534elLf+oVyBtC3b69S/xXr0c7d4eQK9qE8q4foOty5CnQYxrRMLg4Y+OyRSKl5+MMISwZuiODdYAsdBZAACHiK01RDFJtxO1hLuMXhCgHfwIhC7A3t63+8NUimzWB9YyJDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740708920; c=relaxed/simple;
-	bh=lnSpolmVmbsLZUSV/Vy9GXK+El8CCUSe80kmO4zr6C0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=er5Yrfp0ld+m+mm72gy8HGsPk5t2mRJKTg+MCkhAHXQhHa3OREGTFDGkVB/hjL7HimXig+LxqFYs9vPzvoL4C0EfE2Kxbx6n5yZPlpWm9Zi0gFVyqkpq+rfnC60UvVxvdTNn0NMHF33mpgj3e9+PjvzFoSfPKgg/DDpZRDvnCw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1tnptw-000000006iu-3YZk;
-	Fri, 28 Feb 2025 02:14:56 +0000
-Date: Fri, 28 Feb 2025 02:14:48 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	SkyLake Huang <SkyLake.Huang@mediatek.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next] net: dsa: mt7530: make use of REGMAP_IRQ
-Message-ID: <0d50a1437c6d298b13fb19db546a20d10b643cc3.1740708525.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1740708919; c=relaxed/simple;
+	bh=rz8RdKkLlokbH4sKol1d/bV3rts1gn8LT5S3xrhiBUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iNYXb51A/0+ALLwbmEx4IhVBk7s5xNcEPVfBhZpu85Td/ek/hTlV/g4SJvigMQsJu24k+sEPC3wvoIH2DODjeBBpA6rclD46vWUuQmtYuNv1aOWIyq8fwLQEcGzoN9lNJWzpzTO0kwR3zgX5vKjoviVrH1X6RbQuPBXgIeKO8Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vuQWrJ/Z; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740708907; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=gTFeOqq88phqpoT4WIY9JbYheL3v079KB0JY682X56M=;
+	b=vuQWrJ/ZYB1cK/tMMDau+I2kO2Gty+NmskNwogH/SkuIGZq4IAbkvCGBdWKysQDzjYp25xmQpi3bKDOJiqeXWVXh6kc1S4t6GYTkgSUGTGFVPbFApEN6Vdkz6tM4Eju0KIcB7XXkoY8vGH3kqX8BWXDQr08OFc9edy50/Q6gvRQ=
+Received: from localhost(mailfrom:zijie.wei@linux.alibaba.com fp:SMTPD_---0WQNrY87_1740708902 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Feb 2025 10:15:06 +0800
+From: weizijie <zijie.wei@linux.alibaba.com>
+To: Sean Christopherson <seanjc@google.com>,
+	kai.huang@intel.com,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: weizijie <zijie.wei@linux.alibaba.com>,
+	xuyun <xuyun_xy.xy@linux.alibaba.com>
+Subject: [PATCH v3] KVM: x86: ioapic: Optimize EOI handling to reduce unnecessary VM exits
+Date: Fri, 28 Feb 2025 10:15:00 +0800
+Message-ID: <20250228021500.516834-1-zijie.wei@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
+References: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Use REGMAP_IRQ instead of open-coding irq chip handler and mask/unmask.
-This greatly simplifies the code and allows to remove (almost) all
-interrupt related functions from mt7530.c.
+Address performance issues caused by a vector being reused by a
+non-IOAPIC source.
 
-Tested on MT7988A built-in switch as well as MT7531AE IC.
+Commit 0fc5a36dd6b3
+("KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race")
+addressed the issues related to EOI and IOAPIC reconfiguration races.
+However, it has introduced some performance concerns:
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Configuring IOAPIC interrupts while an interrupt request (IRQ) is
+already in service can unintentionally trigger a VM exit for other
+interrupts that normally do not require one, due to the settings of
+`ioapic_handled_vectors`. If the IOAPIC is not reconfigured during
+runtime, this issue persists, continuing to adversely affect
+performance.
+
+Simple Fix Proposal:
+A straightforward solution is to record highest in-service IRQ that
+is pending at the time of the last scan. Then, upon the next guest
+exit, do a full KVM_REQ_SCAN_IOAPIC. This ensures that a re-scan of
+the ioapic occurs only when the recorded vector is EOI'd, and
+subsequently, the extra bit in the eoi_exit_bitmap are cleared,
+avoiding unnecessary VM exits.
+
+Co-developed-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
 ---
- drivers/net/dsa/Kconfig  |   1 +
- drivers/net/dsa/mt7530.c | 235 +++++++++------------------------------
- drivers/net/dsa/mt7530.h |   4 -
- 3 files changed, 56 insertions(+), 184 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/ioapic.c           | 10 ++++++++--
+ arch/x86/kvm/irq_comm.c         |  9 +++++++--
+ arch/x86/kvm/lapic.c            | 10 ++++++++++
+ 4 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
-index 2d10b4d6cfbb..bb9812b3b0e8 100644
---- a/drivers/net/dsa/Kconfig
-+++ b/drivers/net/dsa/Kconfig
-@@ -37,6 +37,7 @@ config NET_DSA_LANTIQ_GSWIP
- config NET_DSA_MT7530
- 	tristate "MediaTek MT7530 and MT7531 Ethernet switch support"
- 	select NET_DSA_TAG_MTK
-+	select REGMAP_IRQ
- 	imply NET_DSA_MT7530_MDIO
- 	imply NET_DSA_MT7530_MMIO
- 	help
-diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-index 8422262febaf..a62a6d3d3a59 100644
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -2050,131 +2050,6 @@ mt7530_setup_gpio(struct mt7530_priv *priv)
- }
- #endif /* CONFIG_GPIOLIB */
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0b7af5902ff7..8c50e7b4a96f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1062,6 +1062,7 @@ struct kvm_vcpu_arch {
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	hpa_t hv_root_tdp;
+ #endif
++	u8 last_pending_vector;
+ };
  
--static irqreturn_t
--mt7530_irq_thread_fn(int irq, void *dev_id)
--{
--	struct mt7530_priv *priv = dev_id;
--	bool handled = false;
--	u32 val;
--	int p;
--
--	mt7530_mutex_lock(priv);
--	val = mt7530_mii_read(priv, MT7530_SYS_INT_STS);
--	mt7530_mii_write(priv, MT7530_SYS_INT_STS, val);
--	mt7530_mutex_unlock(priv);
--
--	for (p = 0; p < MT7530_NUM_PHYS; p++) {
--		if (BIT(p) & val) {
--			unsigned int irq;
--
--			irq = irq_find_mapping(priv->irq_domain, p);
--			handle_nested_irq(irq);
--			handled = true;
--		}
--	}
--
--	return IRQ_RETVAL(handled);
--}
--
--static void
--mt7530_irq_mask(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	priv->irq_enable &= ~BIT(d->hwirq);
--}
--
--static void
--mt7530_irq_unmask(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	priv->irq_enable |= BIT(d->hwirq);
--}
--
--static void
--mt7530_irq_bus_lock(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	mt7530_mutex_lock(priv);
--}
--
--static void
--mt7530_irq_bus_sync_unlock(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	mt7530_mii_write(priv, MT7530_SYS_INT_EN, priv->irq_enable);
--	mt7530_mutex_unlock(priv);
--}
--
--static struct irq_chip mt7530_irq_chip = {
--	.name = KBUILD_MODNAME,
--	.irq_mask = mt7530_irq_mask,
--	.irq_unmask = mt7530_irq_unmask,
--	.irq_bus_lock = mt7530_irq_bus_lock,
--	.irq_bus_sync_unlock = mt7530_irq_bus_sync_unlock,
--};
--
--static int
--mt7530_irq_map(struct irq_domain *domain, unsigned int irq,
--	       irq_hw_number_t hwirq)
--{
--	irq_set_chip_data(irq, domain->host_data);
--	irq_set_chip_and_handler(irq, &mt7530_irq_chip, handle_simple_irq);
--	irq_set_nested_thread(irq, true);
--	irq_set_noprobe(irq);
--
--	return 0;
--}
--
--static const struct irq_domain_ops mt7530_irq_domain_ops = {
--	.map = mt7530_irq_map,
--	.xlate = irq_domain_xlate_onecell,
--};
--
--static void
--mt7988_irq_mask(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	priv->irq_enable &= ~BIT(d->hwirq);
--	mt7530_mii_write(priv, MT7530_SYS_INT_EN, priv->irq_enable);
--}
--
--static void
--mt7988_irq_unmask(struct irq_data *d)
--{
--	struct mt7530_priv *priv = irq_data_get_irq_chip_data(d);
--
--	priv->irq_enable |= BIT(d->hwirq);
--	mt7530_mii_write(priv, MT7530_SYS_INT_EN, priv->irq_enable);
--}
--
--static struct irq_chip mt7988_irq_chip = {
--	.name = KBUILD_MODNAME,
--	.irq_mask = mt7988_irq_mask,
--	.irq_unmask = mt7988_irq_unmask,
--};
--
--static int
--mt7988_irq_map(struct irq_domain *domain, unsigned int irq,
--	       irq_hw_number_t hwirq)
--{
--	irq_set_chip_data(irq, domain->host_data);
--	irq_set_chip_and_handler(irq, &mt7988_irq_chip, handle_simple_irq);
--	irq_set_nested_thread(irq, true);
--	irq_set_noprobe(irq);
--
--	return 0;
--}
--
--static const struct irq_domain_ops mt7988_irq_domain_ops = {
--	.map = mt7988_irq_map,
--	.xlate = irq_domain_xlate_onecell,
--};
--
- static void
- mt7530_setup_mdio_irq(struct mt7530_priv *priv)
- {
-@@ -2191,49 +2066,71 @@ mt7530_setup_mdio_irq(struct mt7530_priv *priv)
+ struct kvm_lpage_info {
+diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+index 995eb5054360..40252a800897 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -297,10 +297,16 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+ 			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
+ 
+ 			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						e->fields.dest_id, dm) ||
+-			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
++						e->fields.dest_id, dm))
+ 				__set_bit(e->fields.vector,
+ 					  ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
++				__set_bit(e->fields.vector,
++					  ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = e->fields.vector >
++					vcpu->arch.last_pending_vector ? e->fields.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
  	}
- }
+ 	spin_unlock(&ioapic->lock);
+diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+index 8136695f7b96..1d23c52576e1 100644
+--- a/arch/x86/kvm/irq_comm.c
++++ b/arch/x86/kvm/irq_comm.c
+@@ -426,9 +426,14 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
  
-+static const struct regmap_irq mt7530_irqs[] = {
-+	REGMAP_IRQ_REG_LINE(0, 32), /* PHY 0 */
-+	REGMAP_IRQ_REG_LINE(1, 32), /* PHY 1 */
-+	REGMAP_IRQ_REG_LINE(2, 32), /* PHY 2 */
-+	REGMAP_IRQ_REG_LINE(3, 32), /* PHY 3 */
-+	REGMAP_IRQ_REG_LINE(4, 32), /* PHY 4 */
-+	REGMAP_IRQ_REG_LINE(5, 32), /* PHY 5 */
-+	REGMAP_IRQ_REG_LINE(6, 82), /* PHY 6 */
-+	REGMAP_IRQ_REG_LINE(16, 32), /* MAC */
-+	REGMAP_IRQ_REG_LINE(17, 32), /* BMU */
-+	REGMAP_IRQ_REG_LINE(18, 32), /* MIB */
-+	REGMAP_IRQ_REG_LINE(22, 32), /* ARL_COL_FULL_COL */
-+	REGMAP_IRQ_REG_LINE(23, 32), /* ARL_COL_FULL */
-+	REGMAP_IRQ_REG_LINE(24, 32), /* ARL_TLB_ERR */
-+	REGMAP_IRQ_REG_LINE(25, 32), /* ARL_PKT_QERR */
-+	REGMAP_IRQ_REG_LINE(26, 32), /* ARL_EQ_ERR */
-+	REGMAP_IRQ_REG_LINE(27, 32), /* ARL_PKT_BC */
-+	REGMAP_IRQ_REG_LINE(28, 32), /* ARL_SEC_IG1X */
-+	REGMAP_IRQ_REG_LINE(29, 32), /* ARL_SEC_VLAN */
-+	REGMAP_IRQ_REG_LINE(30, 32), /* ARL_SEC_TAG */
-+	REGMAP_IRQ_REG_LINE(31, 32), /* ACL */
-+};
+ 			if (irq.trig_mode &&
+ 			    (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						 irq.dest_id, irq.dest_mode) ||
+-			     kvm_apic_pending_eoi(vcpu, irq.vector)))
++						 irq.dest_id, irq.dest_mode)))
+ 				__set_bit(irq.vector, ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, irq.vector)) {
++				__set_bit(irq.vector, ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = irq.vector >
++					vcpu->arch.last_pending_vector ? irq.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
+ 	}
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index a009c94c26c2..5d62ea5f1503 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1466,6 +1466,16 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
+ 	if (!kvm_ioapic_handles_vector(apic, vector))
+ 		return;
+ 
++	/*
++	 * When there are instances where ioapic_handled_vectors is
++	 * set due to pending interrupts, clean up the record and do
++	 * a full KVM_REQ_SCAN_IOAPIC.
++	 */
++	if (apic->vcpu->arch.last_pending_vector == vector) {
++		apic->vcpu->arch.last_pending_vector = 0;
++		kvm_make_request(KVM_REQ_SCAN_IOAPIC, apic->vcpu);
++	}
 +
-+static const struct regmap_irq_chip mt7530_regmap_irq_chip = {
-+	.name = KBUILD_MODNAME,
-+	.status_base = MT7530_SYS_INT_STS,
-+	.unmask_base = MT7530_SYS_INT_EN,
-+	.ack_base = MT7530_SYS_INT_STS,
-+	.init_ack_masked = true,
-+	.irqs = mt7530_irqs,
-+	.num_irqs = ARRAY_SIZE(mt7530_irqs),
-+	.num_regs = 1,
-+};
-+
- static int
- mt7530_setup_irq(struct mt7530_priv *priv)
- {
-+	struct regmap_irq_chip_data *irq_data;
- 	struct device *dev = priv->dev;
- 	struct device_node *np = dev->of_node;
--	int ret;
-+	int irq, ret;
- 
- 	if (!of_property_read_bool(np, "interrupt-controller")) {
- 		dev_info(dev, "no interrupt support\n");
- 		return 0;
- 	}
- 
--	priv->irq = of_irq_get(np, 0);
--	if (priv->irq <= 0) {
--		dev_err(dev, "failed to get parent IRQ: %d\n", priv->irq);
--		return priv->irq ? : -EINVAL;
--	}
--
--	if (priv->id == ID_MT7988 || priv->id == ID_EN7581)
--		priv->irq_domain = irq_domain_add_linear(np, MT7530_NUM_PHYS,
--							 &mt7988_irq_domain_ops,
--							 priv);
--	else
--		priv->irq_domain = irq_domain_add_linear(np, MT7530_NUM_PHYS,
--							 &mt7530_irq_domain_ops,
--							 priv);
--
--	if (!priv->irq_domain) {
--		dev_err(dev, "failed to create IRQ domain\n");
--		return -ENOMEM;
-+	irq = of_irq_get(np, 0);
-+	if (irq <= 0) {
-+		dev_err(dev, "failed to get parent IRQ: %d\n", irq);
-+		return irq ? : -EINVAL;
- 	}
- 
- 	/* This register must be set for MT7530 to properly fire interrupts */
- 	if (priv->id == ID_MT7530 || priv->id == ID_MT7621)
- 		mt7530_set(priv, MT7530_TOP_SIG_CTRL, TOP_SIG_CTRL_NORMAL);
- 
--	ret = request_threaded_irq(priv->irq, NULL, mt7530_irq_thread_fn,
--				   IRQF_ONESHOT, KBUILD_MODNAME, priv);
--	if (ret) {
--		irq_domain_remove(priv->irq_domain);
--		dev_err(dev, "failed to request IRQ: %d\n", ret);
-+	ret = devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev),
-+					      priv->regmap, irq,
-+					      IRQF_ONESHOT,
-+					      0, &mt7530_regmap_irq_chip, &irq_data);
-+	if (ret)
- 		return ret;
--	}
-+
-+	priv->irq_domain = regmap_irq_get_domain(irq_data);
- 
- 	return 0;
- }
-@@ -2253,26 +2150,6 @@ mt7530_free_mdio_irq(struct mt7530_priv *priv)
- 	}
- }
- 
--static void
--mt7530_free_irq_common(struct mt7530_priv *priv)
--{
--	free_irq(priv->irq, priv);
--	irq_domain_remove(priv->irq_domain);
--}
--
--static void
--mt7530_free_irq(struct mt7530_priv *priv)
--{
--	struct device_node *mnp, *np = priv->dev->of_node;
--
--	mnp = of_get_child_by_name(np, "mdio");
--	if (!mnp)
--		mt7530_free_mdio_irq(priv);
--	of_node_put(mnp);
--
--	mt7530_free_irq_common(priv);
--}
--
- static int
- mt7530_setup_mdio(struct mt7530_priv *priv)
- {
-@@ -2307,13 +2184,13 @@ mt7530_setup_mdio(struct mt7530_priv *priv)
- 	bus->parent = dev;
- 	bus->phy_mask = ~ds->phys_mii_mask;
- 
--	if (priv->irq && !mnp)
-+	if (priv->irq_domain && !mnp)
- 		mt7530_setup_mdio_irq(priv);
- 
- 	ret = devm_of_mdiobus_register(dev, bus, mnp);
- 	if (ret) {
- 		dev_err(dev, "failed to register MDIO bus: %d\n", ret);
--		if (priv->irq && !mnp)
-+		if (priv->irq_domain && !mnp)
- 			mt7530_free_mdio_irq(priv);
- 	}
- 
-@@ -3096,8 +2973,6 @@ mt753x_setup(struct dsa_switch *ds)
- 		return ret;
- 
- 	ret = mt7530_setup_mdio(priv);
--	if (ret && priv->irq)
--		mt7530_free_irq_common(priv);
- 	if (ret)
- 		return ret;
- 
-@@ -3108,11 +2983,11 @@ mt753x_setup(struct dsa_switch *ds)
- 		priv->pcs[i].port = i;
- 	}
- 
--	if (priv->create_sgmii) {
-+	if (priv->create_sgmii)
- 		ret = priv->create_sgmii(priv);
--		if (ret && priv->irq)
--			mt7530_free_irq(priv);
--	}
-+
-+	if (ret && priv->irq_domain)
-+		mt7530_free_mdio_irq(priv);
- 
- 	return ret;
- }
-@@ -3356,8 +3231,8 @@ EXPORT_SYMBOL_GPL(mt7530_probe_common);
- void
- mt7530_remove_common(struct mt7530_priv *priv)
- {
--	if (priv->irq)
--		mt7530_free_irq(priv);
-+	if (priv->irq_domain)
-+		mt7530_free_mdio_irq(priv);
- 
- 	dsa_unregister_switch(priv->ds);
- 
-diff --git a/drivers/net/dsa/mt7530.h b/drivers/net/dsa/mt7530.h
-index 448200689f49..747ad2f9cd2b 100644
---- a/drivers/net/dsa/mt7530.h
-+++ b/drivers/net/dsa/mt7530.h
-@@ -815,9 +815,7 @@ struct mt753x_info {
-  * @p5_mode:		Holding the current mode of port 5 of the MT7530 switch
-  * @p5_sgmii:		Flag for distinguishing if port 5 of the MT7531 switch
-  *			has got SGMII
-- * @irq:		IRQ number of the switch
-  * @irq_domain:		IRQ domain of the switch irq_chip
-- * @irq_enable:		IRQ enable bits, synced to SYS_INT_EN
-  * @create_sgmii:	Pointer to function creating SGMII PCS instance(s)
-  * @active_cpu_ports:	Holding the active CPU ports
-  * @mdiodev:		The pointer to the MDIO device structure
-@@ -842,9 +840,7 @@ struct mt7530_priv {
- 	struct mt753x_pcs	pcs[MT7530_NUM_PORTS];
- 	/* protect among processes for registers access*/
- 	struct mutex reg_mutex;
--	int irq;
- 	struct irq_domain *irq_domain;
--	u32 irq_enable;
- 	int (*create_sgmii)(struct mt7530_priv *priv);
- 	u8 active_cpu_ports;
- 	struct mdio_device *mdiodev;
+ 	/* Request a KVM exit to inform the userspace IOAPIC. */
+ 	if (irqchip_split(apic->vcpu->kvm)) {
+ 		apic->vcpu->arch.pending_ioapic_eoi = vector;
 -- 
-2.48.1
+2.43.5
 
 
