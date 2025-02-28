@@ -1,219 +1,174 @@
-Return-Path: <linux-kernel+bounces-538531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4087A499D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:50:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3337BA499D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 13:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C0F7A7770
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2190188FCE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 12:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BBD26AABD;
-	Fri, 28 Feb 2025 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hXokxL6B"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A42A26B2D2;
+	Fri, 28 Feb 2025 12:50:45 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190418468
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 12:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFCF24169E;
+	Fri, 28 Feb 2025 12:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740746992; cv=none; b=R7l4LhmhSdfN/g07QJQyWirXMkMGN9SnyFE4917BqAj7AgOzpV8CG4/vnIRSJ+dWegm0Qy80o8H5P6mlkRobpE6IcRqEogDet90E4dJ1ZeFSGjtFSpeCZAn5XbBIc6Ih08z9uXAS6HU5NTjewAGqcrbMfND0sm6rA015D7emjyU=
+	t=1740747045; cv=none; b=gZ36iCSClQhS1UID7mljfKj3BBifBCW6TORzc/aT4SYLqhQOvXnuBf820a6SVauL6pEgAccnQcVy8fPIMlIxrerj7zZ7d+YKyuB9FXq8I7JGveuo84zuZ7I5SEtWsyIjk3xHRQJZnDXedVUyfuTVKPVvb1BTy9xrBoKrINLDUI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740746992; c=relaxed/simple;
-	bh=5pYG09BI/FScw9Yxy9QDJaCp6VH4md7A1XoDAT/MQ2w=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CloRvbuNcljAHboA6AgLAhWLT1Iv6MJjUlHQIzZBLVXHM2CL8Pjtd2u038/7+bek5ktafa55Wz9o6WGNrRMMR70G9JCe7Rd6TyKbGqMoNk2uF8XqQ/q+9cijF9ezyPLSHE+q9iQjmPLpnjs0OpJtVn08OYvRuG8PPbrZ7ToSk/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hXokxL6B; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5452e6f2999so2070812e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 04:49:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740746988; x=1741351788; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=k9ZVSga6lwI98W0bLvyFgnwGf/I1aLNhuhYX32VhGps=;
-        b=hXokxL6BlU3MKUEucc4PCvjnPxVZaq6Vr0/3elJhrFqs8FpyAttGQBT+jBEsjwsg1G
-         6l/bFwZkZ2Ma2GJIx88oHP4ygIsS3Z8Tw/8/hjJyQ1z6SduzaKkpQH9AboLTVPImej73
-         ktg1OfF73baoQWiiNEzHzL8tjjgGeVmPgydHZdkRcZecWv4vbHZvDdjtuVXHGHDqhIJr
-         GwTDs6pdfv3Mss2YLJuXl2vFL8fkVSTI9NN61e10rtMtNvvcw95lnuyntcpVV5flgQxi
-         HmVmw6FSJ/hS3EvuSeW4ny4gf07JsNx9xMU5gqfnbEmEhPbR4l0o9AFl6rKRky62TPGT
-         0jfw==
+	s=arc-20240116; t=1740747045; c=relaxed/simple;
+	bh=EuNVp8z3++mrhPK2m1ue9Hk3T3UfhFDPlzWASwctmxg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e/nvbYsgSS6glRRCkEHKMZPBhhyCSOKwDGBLsxPIpnK/Bf2xWX7GtJSyVbvYKtyJ9bBCvcwVldJs+NQfxParE0UYim6tkt9WdTuOSB0JlBh8NolY/mIoDqikxpdGHP0VrsWu/zwAYN2kIsAwhPX8jVzBS850PqpxutY2A6oljEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so3917508a12.0;
+        Fri, 28 Feb 2025 04:50:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740746988; x=1741351788;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k9ZVSga6lwI98W0bLvyFgnwGf/I1aLNhuhYX32VhGps=;
-        b=rBg7A69AZFXwVBTXw7/iS88/7l5ZtHJRXlkOPMGrhLzvka+I4wF5iMlDhUfwMJhDHG
-         bmglH8MGPY1APLJea56qZsBZFVWPCY8i8qe71KKi2cKbLGqFo82SzOxR8CZj1s0MKKPe
-         bPsqz3I326/n51Mr5fs23O/3ivigG0INzu0Db3Q8diENKPZfyxk0M5SU6xV8YAdQc6pL
-         KKWDZsT3vUi8pFTWpA9BoziXMuIkDrdft/nTHyxhc7p+3JALvXr3AXoexAFieu6FIIk+
-         ivO7l1ctuqM2zw2j6NOMwC1t+3wqBXJ/F4GVfYQ9bljAEx32KsDix9W+rHLeQa8ZV974
-         aJ8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWelZRhU5iE5Swb40DPc2+nU1ZNSAUw4sFuL+T/p7iCTSikgM8ulIZg7Ar+0PtZeu5v1+DdrvSbVICgR3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrwg7KrGPqU9VaRq1AbcOdW0c9+f7uXRKFQyaboWrX3iYxm44G
-	kV8LsryAUD90Mi8si6TkqFBn8fZQnpaEUaXUiZvVroWDv4L8XvCl1AmcGPXLpeeQiGVB9Qrm4TO
-	RpFlNF+r6+R9KwHF4G/xF8jfom4G6a+yZZTg5tBCwcTxnDmCcL4w=
-X-Gm-Gg: ASbGncvqBXxpj0mrsPCGBUS8cmczXoUiLGGmTJcjLjXn+8Gkzuyb/05u+aWqCtOZ2jI
-	kL4V2Nec+oT9tyt2zO3QEVOLRzEPUP2vdRLIGERCaM05fGE9VwBmiKSlVTiy/wZLLScFw3aUbc8
-	qbbeDP4zc=
-X-Google-Smtp-Source: AGHT+IHv83YpGHio3+QUhR9YCHOCFGwkWFesxurjw0y4ui3gJWLrfpdRDm9UFJwwj67jhbgnlPAfU8P+mtTd204EoWM=
-X-Received: by 2002:a05:6512:701:b0:549:4e7e:d397 with SMTP id
- 2adb3069b0e04-5494e7ed39amr937756e87.0.1740746987344; Fri, 28 Feb 2025
- 04:49:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740747042; x=1741351842;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sQCVjtAdGYLZyDRajofcdbb+AJ1lQTIhLgamy1ixjjs=;
+        b=qQRuKw8374gsACUWxrrWzxn3SlwQ72OWNPno1cXaPQ9ZjvOroc42MxRfN7s08EMc1u
+         b6LbtHV6aQbVdJpT7V5dt/jkTXGr9am8DLkpY4qR3WMo0lzNqNBnkkiUc6Z6WdamF8uw
+         njvGYDQ14nNqcMV5Gy6F3yOsmFmi6A20hXZLTOXWdhJulyzDQwxognXmOhiy+FnqzM2Z
+         sIBqwod4E6QiswvB40KtAgLWUieEa1cg17kpORNqfkothFR1AZEgOX/9aAfFU+B9Ixr3
+         ZmC0w7aQTtYKCVYcsxEDX8TJ78xjqOr2U+3TJewgIY9NcHJmzOUklnF/V/em4/6nDpY5
+         e9uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlC7NTZIdEHOTxwuq+dV9EHvqkQgE0b9LaAyPD6zcYUQKH0rmfOYlMF2voIYqizmNPENwAFBOloJ8=@vger.kernel.org, AJvYcCUuh5pqt4kxj1+rJxh+Oz73sp0JMWOyLErwNN1QHpm2kAK2hPlt/dpTFj4xA3SXebsDpMch7c2Zqbfr8NyL@vger.kernel.org, AJvYcCWtifDc7IV31v0gFkD+/lT1tT8cc4nnkCRB62KidDLhN+Xvq/UauqIO/cVOeoojcS+U6mWCKsu5dZFONHgOoE3L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7dKTI2XIymnrY74RgrP+CuidyZsqogkH2Bt7mO0jTABtyJr5G
+	Z40yySYyVXla3qaf7WyexNDI+UNARRfVfaaaErsjTpupPt4FaIbC
+X-Gm-Gg: ASbGncui/x8Fk0obilRuYqrsjTmZaYh5bddFAfRe3U/kabhOrkKvzBq4O6DhkjJ95DF
+	D82dadUnD+L+ceCPMV+lBeI3jHvIKqICXtLxojfgv4UJ7pgS3Q27mX6QpeMRhMVPPIeg+KoAa1y
+	qeSUzD3IkcNpqh6TOdAc0M9bh7w2KzGJGqwznTd0balDXpUNt64OYU02fdX1z1y8UG42Ivko7os
+	zogmGpM1DWMz3g9hE428HxbM9nnJGudKfxk0Jvxx1latvVN82aDCLuT0GA+VrF26tcu2iaXDcSP
+	fwXesSgTEXNLsFYn
+X-Google-Smtp-Source: AGHT+IGBbena9+3YSHkdWVzW2Tn6scWunoqaZEb2ntm63xsfQ8TO5zZbm2rTPlnx0XgNg5RDpDfV7A==
+X-Received: by 2002:a05:6402:354c:b0:5e0:8a34:3b5c with SMTP id 4fb4d7f45d1cf-5e4d51fef15mr3114383a12.0.1740747041391;
+        Fri, 28 Feb 2025 04:50:41 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb610dsm2408227a12.58.2025.02.28.04.50.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 04:50:39 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v2 0/8] netconsole: Add taskname sysdata support
+Date: Fri, 28 Feb 2025 04:50:16 -0800
+Message-Id: <20250228-netcons_current-v2-0-f53ff79a0db2@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 13:49:36 +0100
-X-Gm-Features: AQ5f1Jr1JCLHNsD1t1m2zbNIWF1lepmNOrK6kS2jMjpmw7TZR5By60X1siM-XvU
-Message-ID: <CACRpkdZCiiMTwf7eGJJ9aCKFOC3_xTGv1JKQUijjyp+_++cZ_A@mail.gmail.com>
-Subject: [GIT PULL] Generic entry for ARM
-To: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAmxwWcC/2XOwQrCMBAE0F8JezbSrKSWnPwPKZImW92DqSZpU
+ Er/XWyLF8/DvJkJEkWmBEZMEKlw4iGAEbgT4G42XEmyByMAK9QVqqMMlN0Q0sWNMVLIEl190L3
+ VHXkLOwGPSD2/FvEMgbIM9MrQrkmk58iJ8xb/FozYfPz6nkriu0TdePQ1NuqoTTksxo1THuJ7u
+ VvUgqxNVH/PipKVROWa2lLTu8qfPHVsw36IV2jnef4AoUdL2P0AAAA=
+X-Change-ID: 20250217-netcons_current-2c635fa5beda
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3222; i=leitao@debian.org;
+ h=from:subject:message-id; bh=EuNVp8z3++mrhPK2m1ue9Hk3T3UfhFDPlzWASwctmxg=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnwbEes1NS7ZqTroFBCIkT12YMSfLfW/KqcMrJv
+ i3j8FEfcbaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8GxHgAKCRA1o5Of/Hh3
+ bTtLD/wM3An0Eeu/qJwa4dQL5xpKBvUZRqV3xnVlumZOL2u7r85RQdEgCcalYPkbQcypMQFgeKn
+ EUikyn+8OBd3bVckxIbc7zT45gDXpB0ykgPBhqBAUFoNoGUOU430M11COdsXkuQyGxoOnJKrxHL
+ /gMxuFIOVEoJl4auDjSHxUHpYD8SExXfzxjSgOtaHzzv9HMX99GBU6TYmQ37QZYOTqmuMYvs+Id
+ LLX1GN9oAG6E6hDuTui6kkfSAh2l4mJlkBHwrsSE0grwJXC6/5ZVX9bQ8AIUsOCsuoQVnZgCwQP
+ ZSgKlLnUap1io1M01XvfgQ7rwlbDOw7d8Q+ZTmX3VH0wJlUusVH0/EqS7E9WiuWwuvfo2KEc10m
+ c3UKFiR1KJ/pjLMIHfyOO5eH7l/2hVQnDwqFCDqmXVAyilW3dt45mGwTC2iAjl4qb5j2uaHQqDN
+ 9bBvQO6BX43xWx/yZU+/kfoIVg9R/7SXAr9EP7Qa8/G0+lPkk9QaD12FRQ2Lefqlqq32t5xrwN6
+ hNvcEoqVrFpPNi1QdpUcvl9sO5+0LAVWDzDmBdmNGy3l+5hIUe3HHCp2jvRyWGhE/sZ8Yh5Adnl
+ 9jorHzDFjnxPKLq+oIwr13uHMLM82KiA+hMMKBq/ABKhaZiemnuZGsh2i2DnvwZBEeLSqcuRGdb
+ xfVGrL5rDrqzD7A==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hi Russell,
+This patchset introduces a new feature to the netconsole extradata
+subsystem that enables the inclusion of the current task's name in the
+sysdata output of netconsole messages.
 
-please consider pulling the following git branch for generic entry,
-see below.
+This enhancement is particularly valuable for large-scale deployments,
+such as Meta's, where netconsole collects messages from millions of
+servers and stores them in a data warehouse for analysis. Engineers
+often rely on these messages to investigate issues and assess kernel
+health.
 
-This branch was just harvested from my own v5 patch series on
-lore with b4 am -t 20250225-arm-generic-entry-v5-0-2f02313653e5@linaro.org
-then git am on top of v6.14-rc1, so you can do the same if you
-prefer.
+One common challenge we face is determining the context in which
+a particular message was generated. By including the task name
+(task->comm) with each message, this feature provides a direct answer to
+the frequently asked question: "What was running when this message was
+generated?"
 
-It's possible to squash patches, even all of them into one
-big all-or-nothing patch, given the not very gradual nature generic
-entry conversion seems to have.
+This added context will significantly improve our ability to diagnose
+and troubleshoot issues, making it easier to interpret output of
+netconsole.
 
-Main upsides and downsides are in the signed tag.
+The patchset consists of seven patches that implement the following changes:
 
-I don't know who the most important stakeholders are, but I guess
-the context tracker maintainer (Paul McKenney) and the people working
-on generic entry (tglx) could have a say on how important this is, or isn't.
+ * Refactor CPU number formatting into a separate function
+ * Prefix CPU_NR sysdata feature with SYSDATA_
+ * Patch to covert a bitwise operation into boolean
+ * Add configfs controls for taskname sysdata feature
+ * Add taskname to extradata entry count
+ * Add support for including task name in netconsole's extra data output
+ * Document the task name feature in Documentation/networking/netconsole.rst
+ * Add test coverage for the task name feature to the existing sysdata selftest script
 
-I think it's pretty neat.
+These changes allow users to enable or disable the task name feature via
+configfs and provide additional context for kernel messages by showing
+which task generated each console message.
 
-Yours,
-Linus Walleij
+I have tested these patches on some servers and they seem to work as
+expected.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Add an extra patch to convert the comparison more stable. (Paolo)
+- Changed the argument of a function (Simon)
+- Removed the warn on `current == NULLL` since it shouldn't be the case.
+  (Simon and Paolo)
+- Link to v1: https://lore.kernel.org/r/20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+---
+Breno Leitao (8):
+      netconsole: prefix CPU_NR sysdata feature with SYSDATA_
+      netconsole: Make boolean comparison consistent
+      netconsole: refactor CPU number formatting into separate function
+      netconsole: add taskname to extradata entry count
+      netconsole: add configfs controls for taskname sysdata feature
+      netconsole: add task name to extra data fields
+      netconsole: docs: document the task name feature
+      netconsole: selftest: add task name append testing
 
-are available in the Git repository at:
+ Documentation/networking/netconsole.rst            | 28 +++++++
+ drivers/net/netconsole.c                           | 95 ++++++++++++++++++----
+ .../selftests/drivers/net/netcons_sysdata.sh       | 51 ++++++++++--
+ 3 files changed, 153 insertions(+), 21 deletions(-)
+---
+base-commit: 56794b5862c5a9aefcf2b703257c6fb93f76573e
+change-id: 20250217-netcons_current-2c635fa5beda
+prerequisite-change-id: 20250212-netdevsim-258d2d628175:v3
+prerequisite-patch-id: 4ecfdbc58dd599d2358655e4ad742cbb9dde39f3
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator.git
-tags/arm-generic-entry-for-v6.15
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-for you to fetch changes up to 98b8e133458a3feefdf882ea16fb7f1f576a49e5:
-
-  ARM: entry: Reimplement local restart in C (2025-02-28 13:40:44 +0100)
-
-----------------------------------------------------------------
-Main upsides:
-
-- Using the same common entry as used by x86_64, RISCV, S390
-  and Loongarch, probably soon also ARM64.
-
-- Moves ARM away from the obsoleted context tracker entry points
-  user_enter_callable() and user_exit_callable() are now only used
-  by ARM, CSKY and Xtensa.
-
-- Solves a few lockdep warnings in the process.
-
-- Converts a bit of assembly into C.
-
-Main downside:
-
-- Slightly increased system call overhead, around 6% in
-  measurements.
-
-----------------------------------------------------------------
-Linus Walleij (31):
-      ARM: Prepare includes for generic entry
-      ARM: ptrace: Split report_syscall()
-      ARM: entry: Skip ret_slow_syscall label
-      ARM: process: Rewrite ret_from_fork i C
-      ARM: process: Remove local restart
-      ARM: entry: Invoke syscalls using C
-      ARM: entry: Rewrite two asm calls in C
-      ARM: entry: Move trace entry to C function
-      ARM: entry: save the syscall sp in thread_info
-      ARM: entry: move all tracing invocation to C
-      ARM: entry: Merge the common and trace entry code
-      ARM: entry: Rename syscall invocation
-      ARM: entry: Create user_mode_enter/exit
-      ARM: entry: Drop trace argument from usr_entry macro
-      ARM: entry: Separate call path for syscall SWI entry
-      ARM: entry: Drop argument to asm_irqentry macros
-      ARM: entry: Implement syscall_exit_to_user_mode()
-      ARM: entry: Drop the superfast ret_fast_syscall
-      ARM: entry: Remove fast and offset register restore
-      ARM: entry: Untangle ret_fast_syscall/to_user
-      ARM: entry: Do not double-call exit functions
-      ARM: entry: Move work processing to C
-      ARM: entry: Stop exiting syscalls like IRQs
-      ARM: entry: Complete syscall and IRQ transition to C
-      ARM: entry: Create irqentry calls from kernel mode
-      ARM: entry: Move in-kernel hardirq tracing to C
-      ARM: irq: Add irqstack helper
-      ARM: entry: Convert to generic entry
-      ARM: entry: Handle dabt, pabt, and und as interrupts
-      ARM: entry: Block IRQs in early IRQ context
-      ARM: entry: Reimplement local restart in C
-
- arch/arm/Kconfig                    |   1 +
- arch/arm/include/asm/entry-common.h |  66 ++++++++++++
- arch/arm/include/asm/entry.h        |  14 +++
- arch/arm/include/asm/ptrace.h       |   8 +-
- arch/arm/include/asm/signal.h       |   4 -
- arch/arm/include/asm/stacktrace.h   |   2 +-
- arch/arm/include/asm/switch_to.h    |   4 +
- arch/arm/include/asm/syscall.h      |   7 ++
- arch/arm/include/asm/thread_info.h  |  22 ++--
- arch/arm/include/asm/traps.h        |   5 +-
- arch/arm/include/uapi/asm/ptrace.h  |   2 +
- arch/arm/kernel/Makefile            |   5 +-
- arch/arm/kernel/asm-offsets.c       |   1 +
- arch/arm/kernel/entry-armv.S        |  82 ++++-----------
- arch/arm/kernel/entry-common.S      | 198 +++++++++++++-----------------------
- arch/arm/kernel/entry-header.S      | 100 ++----------------
- arch/arm/kernel/entry.c             | 120 ++++++++++++++++++++++
- arch/arm/kernel/irq.c               |   6 ++
- arch/arm/kernel/irq.h               |   2 +
- arch/arm/kernel/process.c           |  25 ++++-
- arch/arm/kernel/ptrace.c            |  81 +--------------
- arch/arm/kernel/signal.c            |  68 +++----------
- arch/arm/kernel/syscall.c           |  59 +++++++++++
- arch/arm/kernel/traps.c             |  30 +-----
- arch/arm/mm/abort-ev4.S             |   2 +-
- arch/arm/mm/abort-ev4t.S            |   2 +-
- arch/arm/mm/abort-ev5t.S            |   4 +-
- arch/arm/mm/abort-ev5tj.S           |   6 +-
- arch/arm/mm/abort-ev6.S             |   2 +-
- arch/arm/mm/abort-ev7.S             |   2 +-
- arch/arm/mm/abort-lv4t.S            |  36 +++----
- arch/arm/mm/abort-macro.S           |   2 +-
- arch/arm/mm/abort-nommu.S           |   2 +-
- arch/arm/mm/fault.c                 |   4 +-
- arch/arm/mm/fault.h                 |   8 +-
- arch/arm/mm/pabort-legacy.S         |   2 +-
- arch/arm/mm/pabort-v6.S             |   2 +-
- arch/arm/mm/pabort-v7.S             |   2 +-
- 38 files changed, 484 insertions(+), 504 deletions(-)
- create mode 100644 arch/arm/include/asm/entry-common.h
- create mode 100644 arch/arm/include/asm/entry.h
- create mode 100644 arch/arm/kernel/entry.c
- create mode 100644 arch/arm/kernel/irq.h
- create mode 100644 arch/arm/kernel/syscall.c
 
