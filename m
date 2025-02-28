@@ -1,266 +1,202 @@
-Return-Path: <linux-kernel+bounces-539228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592C5A4A240
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:55:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768B9A4A241
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EDD3B7156
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E301189A222
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4751F1F8724;
-	Fri, 28 Feb 2025 18:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B921F8737;
+	Fri, 28 Feb 2025 18:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6JcuCF4"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xp6nZzlv"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2065.outbound.protection.outlook.com [40.107.243.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91FE27700B;
-	Fri, 28 Feb 2025 18:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740768939; cv=none; b=ZqhJedkYf3Brv/HBfErG2tecaODijlk9ydErxPNar4/q/ULz0JL6Qo9qwCDodjl33wvga64j0sK2+9QstF6VELrFwYXSTQnTMeeaSwhnwMhZr5xXa/g5SnCnf1bz26RnihvldpwjLiegbpPQ6ypt9IAxKMw0Q5QxgDCxrp1FjIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740768939; c=relaxed/simple;
-	bh=qqiIh6rmfqsqrrc8shoq/c35GXjPGHne7gjq1NwDyqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CcPvoIYs/b2XmYhj1TpsR7nX61G4dBIaDtHBaG7cCLhRg7emhmNUnz5edWGa+F0d7Kwm5eihBoJmH9ri1jKhVpDCX9HB/g+MilKwiK2Yarou79FYV+psVTEzQAqN3GDZJ4Ha6PxRgX6VKZ9p/AB7E2T4cVcNzAmI8toaAwjvWpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6JcuCF4; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22334203781so56124635ad.0;
-        Fri, 28 Feb 2025 10:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740768937; x=1741373737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WbTH0UTxoxfveyPapeklW//IOypLA0HMVy+eii2u6NQ=;
-        b=a6JcuCF4zTAVZP8fU7g2Uum4AyGuPfpdZg+Kpdh/VCjd+Hs7c477o5LaEvKD9n2gKa
-         +S2bJxIrzU6JBi3Psp9/kilhIHIur9sx0ZtAzmy7Vx89c1y1KcBTlDdfpGKd97KUnvCZ
-         eCeqlhJ0UqmS+CCoH7JZUAL6tuBZ6fbgBQXYRPb9ohJyYldc+pm1ol4NVz5M+K5FUuzJ
-         VSkuq20gMaJC0dYQBd1fHLuDqjCkP6o3ghJgcVPoMu+iCln2U/FWBfxQm7Eget79Wg2Z
-         chxK7ILE/JBUJGgdyxOWtnkWjGqthjhkUTV6dYEZBG5Zzssupkam/yG8mkzZLTmhAC3t
-         iL1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740768937; x=1741373737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WbTH0UTxoxfveyPapeklW//IOypLA0HMVy+eii2u6NQ=;
-        b=XOxykP7tdHmoKKZeSt67dOcZl4BYQM0HBGmfkiMajdWY3OkXohNXXewILV89968bGX
-         LAUnb7O+SZrlL+tBM8SjRecmKKloLpj2xR2wiEZNrnygSOGQ6O0OzE8Z06SCNtHkkV1D
-         pc/cSoTNSVb3GqHFMp8DaZxyXUdbhqgN5KytYUbWBz4h8Lkb4cYG//3kX9hVmP0uml/0
-         8rIoyH7g9siGSTg3NIm9+Vvm0buD3dwFAI92+aF+5g2XZKnWrcbwySbP3mO6KKgmTLj1
-         DrotQ9z1sl0ft2hbUR0x56N0TeVARDCV0/NgF7vgT8HGe14oDBcdr7ZZKq0eH22jqFWi
-         jN1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW7tGkX9NL14jeCIixxaStCRaZ+vqScRG3XZDV8PPhw7248CeVJMiFK4VomyuvQyIcmRb9QsVaMFBwWQNGxaWM0BkuX@vger.kernel.org, AJvYcCWac7/IU5Z3CgOweT97bi/mRqO5q3wgaoJKyussnFu/60Ah0kw1v/a6DMjPM2deF3xhOKI=@vger.kernel.org, AJvYcCXv2q7ph5YTNJGwVOvaKVh9Q8rxUOs2pGBUjzh72nYk8cZ3AdhQ7gy2jC81EPf+sSGzNMeWLPhH3T/KSTaR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKrKnD1QDknsIt8E6VNoNCKj8O7um/8EI8ZUz2Ve7TQHASzk62
-	OEXSMINQ0CjDbko7foPgU3aFwsSjoUHeaxZe8AcjfTDD67w3lWUBJwhbWj2mQKtLEPB7vrDLhEL
-	vduEuJ08O08X74nOs6SMGPZDCk7g=
-X-Gm-Gg: ASbGnctTqQaCDONKmdWVm7BUsjFkyby9Y1C4f4xozgZxuALwarBDVRFNx5TA1nEcoUP
-	IIkTyEdONj46IK7fsZsu3yzIz15U6erYB5GcYOGpx4wGsUbqZyY//17dtgKtz6IFZbodoMT16A9
-	UlPLXXLUoF0tarq3NgJkykYiY=
-X-Google-Smtp-Source: AGHT+IHWYg7JalQt0NqATGXccoU6fEfl5DvQ6QmNoIB7isjFTNW6yaciFgvu+xAk8Vw7lq7K96arvyoIe1mf8zhj4sA=
-X-Received: by 2002:a05:6a00:3918:b0:728:f21b:ce4c with SMTP id
- d2e1a72fcca58-734ac385bf8mr8419527b3a.5.1740768936952; Fri, 28 Feb 2025
- 10:55:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC971F4C85;
+	Fri, 28 Feb 2025 18:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740768940; cv=fail; b=B1uXokROKbPCL7XCInuBj4jMePz3nA7jFEVxv548KC01ZGfDm4KADUxfM5/6Z19FtawgvvHLSsexospUnRalg0XU7qSXOXJfcDU/Yz5EwkC50GyRFCfEf4KTyjVY+jQW86ob0ZUK/yvIrQz2XjK9jmx7m4o/aXw4+IHll0pmk4M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740768940; c=relaxed/simple;
+	bh=263/AUsZQPJHjiKOjIejB43mKE8xG7E7FbHB3QDUBjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rIkouyrPVaZH/XATm1/gZ6pobh/6ppodSclq201tI7aOyusBUOICNbk6h2F7132aMRf3PGKlQvsXNdQuTGnU7cZSnvegmw1Rssz3gsrjs7CAdz1W8U3GnDTSVUXJZCqrEP2V2r5/nR8AICdkNvVfl+uOhPURSK0qTakNEeehCJw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xp6nZzlv; arc=fail smtp.client-ip=40.107.243.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=koLPzgIKzgaSvJQwIVErmOABfSR4nVBlFFTsPYjYdhHi3anqcC8jIcSq+CLbL6uMwVkoShUUG4kumzbqndJwPIVfmu3iEotyL7FjzIbo1ItrmH7fnKc1s5QjALCfYWdPjbDls2wqa/NnXA638VmBkNQpfAnwJPc/Z/Oo56mnRBjlkyJVjUZRmW73gk/rkKSclq/amTqcIGZodsOvSQlv+K/bCL2vTXoT6FhW4hyT+EAB7OcxxKHkJSrX8pLgQwmZJsbBka28TWYA3ZbbSVUmbftniJrcWcqH1r3G0sGsLt7Q6gQXOEx8bVZ7RRXbIzq4FsjoweyWJ1CteETIuntRVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=luUy2ZQNi6pYJpbk1DDwSE+Q6iKkWHGCQ9t+VOOlDTM=;
+ b=HcK5mltOPx5VG4xveoMIufNIUZRmVj/plJk3IzsgZygFl+SccUdEUWCXYLds7Wd7FM9zBeTmvXqC/rvZXRRLehpqzCZn0JuDuxA5TShik2GgB3txYX9//yiS82o5HyWa+om7ZLxv206Wl0s7UxQPaYvLa0Wtho03I1bauycFy7DR442F4PoU1wcEX3/JmSONzcigiu228udPTJLv26XNrfhqlmS75gOcQQYlJbuxvIjBKh7BtmWmpZCQ8YDteJOV4iNsXD/cCYnCzTyN1q8+cfoX3Aim+Gx+oYHb2475uXUYLAI9PhXTKXQ2YSff8A22/pv5ryeeD+LD7yf47ozPHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=luUy2ZQNi6pYJpbk1DDwSE+Q6iKkWHGCQ9t+VOOlDTM=;
+ b=Xp6nZzlvnzYi9gJSmOT2ihmW9qVwuQzGYhLoib+aaC690cpUJhVPCJbZJPsvD7Cd+FoVXZVe1xYZRdB04a2/S4G9aFMEtjtDjxMt/85pOHMWfQW/7QN5A9lkxNaZCEk/bkTIYvU7KIUmTUrhBcv3HvwbxtVW/4Fe11C9ReapJ3H+OzcQz7b/QXnf8tOv7u82nABa+uXZrTFkBszK/yRcUnku8iPFW8JbHfQitgmOwvQYKNUWHYnQSOWhnOPBWu2BsKXJudISty7iABGXOyDwmi5NVse3e9F8ujvXwhhm0jJX5AN3/DwXZkOkk37ByJtVY2Vty3hXpSFKeiPvWX3Zgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DM4PR12MB7719.namprd12.prod.outlook.com (2603:10b6:8:101::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Fri, 28 Feb
+ 2025 18:55:35 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 18:55:35 +0000
+Date: Fri, 28 Feb 2025 14:55:34 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250228185534.GH39591@nvidia.com>
+References: <Z7-0pOmWO6r_KeQI@boqun-archlinux>
+ <20250227144618.GE39591@nvidia.com>
+ <Z8CCKl_yA74WjpQ1@Mac.home>
+ <20250227161733.GH39591@nvidia.com>
+ <Z8CY7fqbtbO4v1jv@Mac.home>
+ <Z8ChnwPC0UwM8xBe@cassiopeiae>
+ <20250227192321.GA67615@nvidia.com>
+ <Z8DYNszfONdsKZsl@boqun-archlinux>
+ <20250227220013.GQ39591@nvidia.com>
+ <Z8Dp9dM1MxhzuvmR@pollux>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8Dp9dM1MxhzuvmR@pollux>
+X-ClientProxiedBy: BN9PR03CA0364.namprd03.prod.outlook.com
+ (2603:10b6:408:f7::9) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224140151.667679-1-jolsa@kernel.org> <20250224140151.667679-13-jolsa@kernel.org>
-In-Reply-To: <20250224140151.667679-13-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 28 Feb 2025 10:55:24 -0800
-X-Gm-Features: AQ5f1JrWLS6lddUwkgojGshVfBqV95kvvKU1l5AvnsUomP_dmtSZ6jSlPueJD54
-Message-ID: <CAEf4BzbE1dhqZWpLYhZFo7cuuK04t9iM+1ykHA5_PbM_xdb1PQ@mail.gmail.com>
-Subject: Re: [PATCH RFCv2 12/18] uprobes/x86: Add support to optimize uprobes
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM4PR12MB7719:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15ad8411-05a4-49a0-b2d0-08dd58297be4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ysGOHKeXLJZsqo3lRmqNccYxPWdKPkHF/wsuGPxtNshekzNR2fGMnRY7iM/R?=
+ =?us-ascii?Q?SSOB3ieND9ErkuK6j3t51uzaqxmWiXvDlKZ/XO3B6pdAQCNRsbDf6YbjsuXK?=
+ =?us-ascii?Q?pccsfFaxWY/j5fsFDCYOhuoLS8AR1rvhNNChHjz3x5cnzc/IYIM780Ety5KK?=
+ =?us-ascii?Q?BnD0vB4KAXFWiOEOQ4qvXr0geJ0aoWWaysJfmHJb9+m0ytjpWpem8yqvPQaD?=
+ =?us-ascii?Q?jsShsZyPsyfm66FxO1TJswZgWb0whLpi4Hlq3hW6CmmB6KnJTmBeZhTaY2Bg?=
+ =?us-ascii?Q?WsO2B+e3DTvdNwPRRYvQq9v8e5ElFz1CBGQWKJgzGwL5yxxeJP/Dqhg8BOTn?=
+ =?us-ascii?Q?sR/zTLr6lxqdT84iYhMErlrq4ub0QNPNR0ybV210cuy/nxBjZTPyK4VyqrOf?=
+ =?us-ascii?Q?hfDYq9atC/DHK9iLWjV9W5S6ARL/X43x6UnE+yY8nLV+fVh1NYAfXjSUAgR0?=
+ =?us-ascii?Q?hji7QYX61agt8PgFd9mzAvE1Pted/sMrVdBfDSPHkaKKBrDcpQ+6mZVPoyZh?=
+ =?us-ascii?Q?hvjCEfWMU/iEzX83AKl9bWYJ5clf25LJ/+regcqK3gnTEyfsCoPONmHzOnw6?=
+ =?us-ascii?Q?nC6WOjTzF9do8ioNwLa62NrRF7naVnzdseQ4LH/8HSzM8h8+i2xoUAjQfvKx?=
+ =?us-ascii?Q?0Jxq3BR5EIgi48bR2NyO4UfDv6cQiuULo7RCDcxLzmcs9KG66LsYQ7vIAua9?=
+ =?us-ascii?Q?FE9dtfeAxv2APq8lk6yY4ZeMs33IxDpfrj6VGxOvNbBu/BKGhn8/nG8fzSXg?=
+ =?us-ascii?Q?s7qbbYKO2ZUfj0a0b6vS0JCtHVkRrurTBQwqfmzfrs5ZLupyKfY1KodFl7mT?=
+ =?us-ascii?Q?QsIvgiIOA7nhlozbbWNkuObMvkR20XiJxChXg8JuAPxoIA263NHG3CL+h0IY?=
+ =?us-ascii?Q?onJayHS5P9yzjEmC9t+JBKMkhnYEYawXCyCc8Vm0kYVaPqbZXat0YRP2nJsn?=
+ =?us-ascii?Q?Sg8NQ4MroE0DofJ5lfSz5Ngztplj86y9+vVavEopaOir1yUiwvTMFh/sl4e6?=
+ =?us-ascii?Q?XSLFILPvCPJ95g/61EZBX0I0EZmBi5TcSYlz5J9KXjosQGb4F5waK4pFNkJd?=
+ =?us-ascii?Q?oaE90GJ0o9s8nx15gtAQDFAmUovtUUsXQ7nwWgSoh43Lc+hRwlXCCTBF7KeS?=
+ =?us-ascii?Q?lgjSdKUcLIfOx3bvudtNS6Qf7SaeppVGa0/up2+EA4fH76J6t1BgydJqRT6Y?=
+ =?us-ascii?Q?Yr2H4kjjwrJTiNnglWQ8MBUCWPAOn/BjwuhSSeM5ZRrdJ9D1bwnJpQD+c/l1?=
+ =?us-ascii?Q?U8DlcmSynYLVHL4d4uEQv0AH9xtprqwXZC7lX6mlakb5G9QQlX0+80upE41t?=
+ =?us-ascii?Q?5HCGyPbFXEgesGBXQg3KFFS+cXkTaue2a3kapuUnp7KOXCoD3K8895BA0AKJ?=
+ =?us-ascii?Q?jHwvKbli5/65B5SuQt2ilY1/Ljdi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eVF6dXc+dUlX/0quwdBLIhINoLbOl3PxCqm4Av3iOD3PpImnTuamHQhdHo4L?=
+ =?us-ascii?Q?EKS7PPTzwcG3iY+wQs02p9zpc89EOpmruSJT4AmCEagCzS3wCbufi8PuAN8j?=
+ =?us-ascii?Q?/XHLxLH3uAAz3GPmWwAFm5ENeOjAdApcm30nKyYO0qJvca/7n/rXNOvsYVEv?=
+ =?us-ascii?Q?ul5TmJSqyuRe8N/8jeB5O7Me9tiyBAEz8f2XdSBU7En5ULYqu63iU4VYkuB5?=
+ =?us-ascii?Q?ZOmO25AD7li8uSeWIIsRRVgsI33H2LJCjPQLCmYrrJffexsLTLSmYruEadsD?=
+ =?us-ascii?Q?eoQ0oTlg6W+vJs0GqlRDo7sdc397Z5A7IPG9YhRkPsk6QwP4qtaNCAGM8n1Z?=
+ =?us-ascii?Q?sUa6nuauWd/cb31duK9/VadFW3/2eQlUwqcAj03BxdUrGCsAAc4pM9gHX9eV?=
+ =?us-ascii?Q?otXnbgCkZYvR2ksZSWfQdVK6c3dUPqyzggi3G2fnVubL7hCgHi0SO8dE6A37?=
+ =?us-ascii?Q?rwAKh78nt+Gi0VxKc49qX0tNlXPwzF7kTj1IJL1eWuxTHdIdiDScT8Ap+xWF?=
+ =?us-ascii?Q?+QdY4SIp9xTX6Vk7qn3CVSsPee5bjTWkr+ZpyFem33l7cX+fyhg9TY4AU1MT?=
+ =?us-ascii?Q?V5UAjZSKEYRWB210KOxOnZ20IR796PxEZe92QLKNWJTqTmDkggwKxJt2cc5z?=
+ =?us-ascii?Q?AAHcAeVUc4O0jLWP4reqyYncxEAdjUXcR7OKvyC6VCH9IyLbLWX/prPSOvEW?=
+ =?us-ascii?Q?w5CuJMf//LpOuhb0v6wEsKbwD1b/P7tk5uUTh8k7RDOzfczssloT5Z1MTIlA?=
+ =?us-ascii?Q?HDH77d2h0UAF4iIaXyEfv4JNl5y23KOvV/cmBaPqyeGtMswWdW+TrmSQ9qlX?=
+ =?us-ascii?Q?U7lzeRAXvpnvNMYOO2d0KEMynHK9ChNGCJFCBXKDYHM0HbwxnGi2LGHMGRc7?=
+ =?us-ascii?Q?pM3wllYoaxpxSf4txeM9pDGoNE15sbc/z5JXHMv9iJPmzMngNnG47ocBfx98?=
+ =?us-ascii?Q?w84IIiaunbtgxIUhhT//ZYaHLKoWSv8ISE0JpLkdg+JnmUPPKLOUUxXDDh+q?=
+ =?us-ascii?Q?ha3DIAF4ZfK2uCnYqFjiG8F/PO70IkNh7meiYRoENfwxIJ2VPwYOGOGd9kQ1?=
+ =?us-ascii?Q?cJCdPQ1RrBGW3XHIiJWK7JYkFYSMLFFUGKmuw4ZfBoWJTKeRV1s5PL/X0//A?=
+ =?us-ascii?Q?+v0WuLy1at4gjsSlNQOU3t/JzvdCOlj4QU/9z2kMNhTcrxnoz+FIP1rCPov3?=
+ =?us-ascii?Q?Yn93jg319Ke1qUH9MFTbeccTfM3DUx/qK1SJccQusk3AaX1T14gmG+tvW2Ln?=
+ =?us-ascii?Q?p+rjqDdwGqeRkC+MhKynaTeLZQP0xZxKg5P/fKyj3EFwlLDhm80m0R1QevXC?=
+ =?us-ascii?Q?MnIHBgr11ugLyB0olpEci34i4hsvKDeD9cunGsBl72mpUEDupfORR4RZOeKu?=
+ =?us-ascii?Q?9gNyGeP+psYnC+ROPMEj96YBY7od8OSLMWVJi9zFuzumrjQzZlda6TP1LCx6?=
+ =?us-ascii?Q?vgMMosIzdZKj6YCsPu1XSi+vxjcT4gpU9MvwillumhnhQZpXq2efMKHdl2JW?=
+ =?us-ascii?Q?6/gVuV6DpAIRp7f/tNIiFnzWUCrzBPdsh5hTT2uMA8MLD/DYOjbff0ykyMvk?=
+ =?us-ascii?Q?wBSqOdwtYPEG6maMOyt7e7pnJQM2pzgYRXDltXZ8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15ad8411-05a4-49a0-b2d0-08dd58297be4
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 18:55:35.3559
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SvKw/jKqxp4mY9AEa33NyM9I2+8j5QRLXrvDYxcshr15NEUO/eR53MSQmbaUn8q1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7719
 
-On Mon, Feb 24, 2025 at 6:04=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Putting together all the previously added pieces to support optimized
-> uprobes on top of 5-byte nop instruction.
->
-> The current uprobe execution goes through following:
->   - installs breakpoint instruction over original instruction
->   - exception handler hit and calls related uprobe consumers
->   - and either simulates original instruction or does out of line single =
-step
->     execution of it
->   - returns to user space
->
-> The optimized uprobe path
->
->   - checks the original instruction is 5-byte nop (plus other checks)
->   - adds (or uses existing) user space trampoline and overwrites original
->     instruction (5-byte nop) with call to user space trampoline
->   - the user space trampoline executes uprobe syscall that calls related =
-uprobe
->     consumers
->   - trampoline returns back to next instruction
->
-> This approach won't speed up all uprobes as it's limited to using nop5 as
-> original instruction, but we could use nop5 as USDT probe instruction (wh=
-ich
-> uses single byte nop ATM) and speed up the USDT probes.
->
-> This patch overloads related arch functions in uprobe_write_opcode and
-> set_orig_insn so they can install call instruction if needed.
->
-> The arch_uprobe_optimize triggers the uprobe optimization and is called a=
-fter
-> first uprobe hit. I originally had it called on uprobe installation but t=
-hen
-> it clashed with elf loader, because the user space trampoline was added i=
-n a
-> place where loader might need to put elf segments, so I decided to do it =
-after
-> first uprobe hit when loading is done.
->
-> We do not unmap and release uprobe trampoline when it's no longer needed,
-> because there's no easy way to make sure none of the threads is still
-> inside the trampoline. But we do not waste memory, because there's just
-> single page for all the uprobe trampoline mappings.
->
-> We do waste frmae on page mapping for every 4GB by keeping the uprobe
-> trampoline page mapped, but that seems ok.
->
-> Attaching the speed up from benchs/run_bench_uprobes.sh script:
->
-> current:
->         usermode-count :  818.836 =C2=B1 2.842M/s
->         syscall-count  :    8.917 =C2=B1 0.003M/s
->         uprobe-nop     :    3.056 =C2=B1 0.013M/s
->         uprobe-push    :    2.903 =C2=B1 0.002M/s
->         uprobe-ret     :    1.533 =C2=B1 0.001M/s
-> -->     uprobe-nop5    :    1.492 =C2=B1 0.000M/s
->         uretprobe-nop  :    1.783 =C2=B1 0.000M/s
->         uretprobe-push :    1.672 =C2=B1 0.001M/s
->         uretprobe-ret  :    1.067 =C2=B1 0.002M/s
-> -->     uretprobe-nop5 :    1.052 =C2=B1 0.000M/s
->
-> after the change:
->
->         usermode-count :  818.386 =C2=B1 1.886M/s
->         syscall-count  :    8.923 =C2=B1 0.003M/s
->         uprobe-nop     :    3.086 =C2=B1 0.005M/s
->         uprobe-push    :    2.751 =C2=B1 0.001M/s
->         uprobe-ret     :    1.481 =C2=B1 0.000M/s
-> -->     uprobe-nop5    :    4.016 =C2=B1 0.002M/s
->         uretprobe-nop  :    1.712 =C2=B1 0.008M/s
->         uretprobe-push :    1.616 =C2=B1 0.001M/s
->         uretprobe-ret  :    1.052 =C2=B1 0.000M/s
-> -->     uretprobe-nop5 :    2.015 =C2=B1 0.000M/s
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  arch/x86/include/asm/uprobes.h |   6 ++
->  arch/x86/kernel/uprobes.c      | 191 ++++++++++++++++++++++++++++++++-
->  include/linux/uprobes.h        |   6 +-
->  kernel/events/uprobes.c        |  16 ++-
->  4 files changed, 209 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/x86/include/asm/uprobes.h b/arch/x86/include/asm/uprobe=
-s.h
-> index 678fb546f0a7..7d4df920bb59 100644
-> --- a/arch/x86/include/asm/uprobes.h
-> +++ b/arch/x86/include/asm/uprobes.h
-> @@ -20,6 +20,10 @@ typedef u8 uprobe_opcode_t;
->  #define UPROBE_SWBP_INSN               0xcc
->  #define UPROBE_SWBP_INSN_SIZE             1
->
-> +enum {
-> +       ARCH_UPROBE_FLAG_CAN_OPTIMIZE   =3D 0,
-> +};
-> +
->  struct uprobe_xol_ops;
->
->  struct arch_uprobe {
-> @@ -45,6 +49,8 @@ struct arch_uprobe {
->                         u8      ilen;
->                 }                       push;
->         };
-> +
-> +       unsigned long flags;
->  };
->
->  struct arch_uprobe_task {
-> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-> index e8aebbda83bc..73ddff823904 100644
-> --- a/arch/x86/kernel/uprobes.c
-> +++ b/arch/x86/kernel/uprobes.c
-> @@ -18,6 +18,7 @@
->  #include <asm/processor.h>
->  #include <asm/insn.h>
->  #include <asm/mmu_context.h>
-> +#include <asm/nops.h>
->
->  /* Post-execution fixups. */
->
-> @@ -768,7 +769,7 @@ static struct uprobe_trampoline *create_uprobe_trampo=
-line(unsigned long vaddr)
->         return NULL;
->  }
->
-> -static __maybe_unused struct uprobe_trampoline *uprobe_trampoline_get(un=
-signed long vaddr)
-> +static struct uprobe_trampoline *uprobe_trampoline_get(unsigned long vad=
-dr)
->  {
->         struct uprobes_state *state =3D &current->mm->uprobes_state;
->         struct uprobe_trampoline *tramp =3D NULL;
-> @@ -794,7 +795,7 @@ static void destroy_uprobe_trampoline(struct uprobe_t=
-rampoline *tramp)
->         kfree(tramp);
->  }
->
-> -static __maybe_unused void uprobe_trampoline_put(struct uprobe_trampolin=
-e *tramp)
-> +static void uprobe_trampoline_put(struct uprobe_trampoline *tramp)
->  {
->         if (tramp =3D=3D NULL)
->                 return;
-> @@ -807,6 +808,7 @@ struct mm_uprobe {
->         struct rb_node rb_node;
->         unsigned long auprobe;
->         unsigned long vaddr;
-> +       bool optimized;
->  };
->
+On Thu, Feb 27, 2025 at 11:40:53PM +0100, Danilo Krummrich wrote:
+> On Thu, Feb 27, 2025 at 06:00:13PM -0400, Jason Gunthorpe wrote:
+> > On Thu, Feb 27, 2025 at 01:25:10PM -0800, Boqun Feng wrote:
+> > > 
+> > > Most of the cases, it should be naturally achieved, because you already
+> > > bind the objects into your module or driver, otherwise they would be
+> > > already cancelled and freed. 
+> > 
+> > I'm getting the feeling you can probably naturally achieve the
+> > required destructors, but I think Danillo is concerned that since it
+> > isn't *mandatory* it isn't safe/sound.
+> 
+> Of course you can "naturally" achieve the required destructors, I even explained
+> that in [1]. :-)
+> 
+> And yes, for *device resources* it is unsound if we do not ensure that the
+> device resource is actually dropped at device unbind.
 
-I'm trying to understand if this RB-tree based mm_uprobe is strictly
-necessary. Is it? Sure we keep optimized flag, but that's more for
-defensive checks, no? Is there any other reason we need this separate
-look up data structure?
+Why not do a runtime validation then?
 
->  #define __node_2_mm_uprobe(node) rb_entry((node), struct mm_uprobe, rb_n=
-ode)
-> @@ -874,6 +876,7 @@ static struct mm_uprobe *insert_mm_uprobe(struct mm_s=
-truct *mm, struct arch_upro
->         if (mmu) {
->                 mmu->auprobe =3D (unsigned long) auprobe;
->                 mmu->vaddr =3D vaddr;
-> +               mmu->optimized =3D false;
->                 RB_CLEAR_NODE(&mmu->rb_node);
->                 rb_add(&mmu->rb_node, &mm->uprobes_state.root_uprobes, __=
-mm_uprobe_less);
->         }
+It would be easy to have an atomic counting how many devres objects
+are still alive.
 
-[...]
+Have remove() WARN_ON to the atomic and a dumb sleep loop until it is 0.
+
+Properly written drives never hit it. Buggy drivers will throw a
+warning and otherwise function safely.
+
+I'm thinking the standard design pattern is a problem that is too
+complex for static analysis to solve.
+
+Jason
 
