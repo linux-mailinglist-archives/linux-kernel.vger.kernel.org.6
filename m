@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-538843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DE9A49DB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:41:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C2AA49DC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873241708DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:41:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B9147A50CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C21A19007E;
-	Fri, 28 Feb 2025 15:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A419272925;
+	Fri, 28 Feb 2025 15:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEJ4+BNb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JLtXwvZY"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018341EF399;
-	Fri, 28 Feb 2025 15:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD1925DD1D;
+	Fri, 28 Feb 2025 15:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740757302; cv=none; b=Hs4Y/1RQ5eXktKGNheZwdUlPYi8Ppax02jcH3FcsTQDpB4gULp8cgF5TXYe3zvjcPeEM7Mnm7xr8v5ot2BX3j1zX0rzDk7BPhLWAHfVtM+8haJ/oz4qqPtU/SCdih9BxYUzI0CFDpfl6YLOT9bS5rjtKFm78K6wGk+zdQ1vOJfQ=
+	t=1740757345; cv=none; b=dpI8nON0MDmpTDjSVMSPGo8HLh8b6btb5s58pKlXI5FA3ajAsYPDtQm+cwD1WyojIRKwLVwjPc9fdMkBCQSIobnFf7mXj+DuCucGaMzPKZmWUqzlU4Qf+CBhtbSiOYuS1EeJhvtHr5jjW6wnDWl/cSzL4fn4qy5YFLSL3/11GzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740757302; c=relaxed/simple;
-	bh=BCaOwpKwAe2iR8W7rXlgoLie6yh6rPXawN66ANiiYGw=;
+	s=arc-20240116; t=1740757345; c=relaxed/simple;
+	bh=HpX8jK3ZmcUD3IyJx4wNfma93JabP/1U6yUFggcLjdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfooHcmHGsXZ+4reyJbPHsVDUoveoR2tg6zJep2duGVv+nBPB07WnppinBfXGZCs90jKipxnpj+WIFZTEFHLpWWzUDWjLvdsRg3nCGjDbfajxMSAn+3I2G7YTpb39DS5OS2EcnL2wgU1VV/y1seYHkbq9qvA6o1O7O5FCosx2ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEJ4+BNb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C0BC4CEEB;
-	Fri, 28 Feb 2025 15:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740757301;
-	bh=BCaOwpKwAe2iR8W7rXlgoLie6yh6rPXawN66ANiiYGw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=UEJ4+BNbm2XZJJI3Cxz9uwBm1IS4h1iw91MI7ZOgka/OaOKLTUN43q4IdzpbYyPQW
-	 qkGA+1h90JHzSylifihfxCRirjBMyjAWK5H0ABFEOoi0NtHCAJ2ltJ2srMh9otnkK3
-	 xh45gdILQBFgc/0rDRx67ZkgvTlWR5ckVn8R1HVGANsV83u1ztlDCzq+MT42DXQu4k
-	 qz6vi6QNVzirG0buyWCQPEAArAggKVCYkdQdF8tY3QMBczaHnL2nKsLkgMhDtD2dN9
-	 MtohUXcxRXedyQSBSBXbgLmncBArJbe64rzsEijkg328lpaX3taM4EMx1T2AhVdiKc
-	 2IgC3A1Jl0P/w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 90F5BCE0928; Fri, 28 Feb 2025 07:41:40 -0800 (PST)
-Date: Fri, 28 Feb 2025 07:41:40 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
- <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
- <Z8Ckb6spK35-Ez4U@pc636>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NF96Vccu3X2SK3mNMUYrRN9VtzOobTmpIZdfqA5GTHh+83g1NCSwJU8Vt8T5CANNYxDE+GzdmbBVMOf/QFQVAovLVGQZCLuCCZoUctC4TEgN7DoleuVHf7ibznVIrqD8xq5JkfxuxTIhh2SGuvglUOf0aT0S7Sr2L3Fe1ZZx1/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JLtXwvZY; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=QzjgdiXNQn2lVM94vvC1YOjh1DnAuEwZM6OUPbLdXjw=; b=JLtXwvZY9rod+vN/
+	6zix4+Vc9e0yIA9MhNtdoGNIHovyFlBBn8P4lF9sMuFQ9qVwfCWkNPBpfz15TMrGpY6Vo7/Cezb9L
+	ox2oOdEjwzmJTvgPqUezZT6aN9i0pYPsJmEEFp4PsBXl+nudrh8B+fvMxDR792jSBLMOdHLiTFF3L
+	DihJk7VwIfSzKhdRAWh8/+U4jT2ywSaj1DsNVTUnNAJ8LCPNJpA8KZc5yXU2vdavYnbbyV1d8G+Cy
+	PzWqlc7Qn7IrthdfZqlZbNpXS6rc2FdK6Rjsjr+N/jzMAtGZD91OfXNTsRUED08EwU7q90hbm5zT4
+	UxVAQ7K8X2/euUVlxA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1to2VD-001g24-2A;
+	Fri, 28 Feb 2025 15:42:15 +0000
+Date: Fri, 28 Feb 2025 15:42:15 +0000
+From: "Dr. David Alan Gilbert" <dave@treblig.org>
+To: tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, p.zabel@pengutronix.de,
+	deller@gmx.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] gpu: ipu-v3: Remove unused functions
+Message-ID: <Z8HZV3RuIeTtcd3a@gallifrey>
+References: <20241226022752.219399-1-linux@treblig.org>
+ <gugwtvw6qqknstlscr4hxfrvcgfa4gfwwgxdosr24mf7huk433@oh7axkbesrjs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Z8Ckb6spK35-Ez4U@pc636>
+In-Reply-To: <gugwtvw6qqknstlscr4hxfrvcgfa4gfwwgxdosr24mf7huk433@oh7axkbesrjs>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:40:47 up 296 days,  2:54,  1 user,  load average: 0.01, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Feb 27, 2025 at 06:44:15PM +0100, Uladzislau Rezki wrote:
-> On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
-> > On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> > > Hi Ulad,
-> > > 
-> > > I put these three patches into next (and misc.2025.02.27a) for some
-> > > testing, hopefully it all goes well and they can make it v6.15.
-> > > 
-> > > A few tag changed below:
-> > > 
-> > > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > Switch for using of get_state_synchronize_rcu_full() and
-> > > > poll_state_synchronize_rcu_full() pair to debug a normal
-> > > > synchronize_rcu() call.
-> > > > 
-> > > > Just using "not" full APIs to identify if a grace period is
-> > > > passed or not might lead to a false-positive kernel splat.
-> > > > 
-> > > > It can happen, because get_state_synchronize_rcu() compresses
-> > > > both normal and expedited states into one single unsigned long
-> > > > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > > > run.
-> > > > 
-> > > > To address this, switch to poll_state_synchronize_rcu_full() and
-> > > > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > > > for expedited and normal states.
-> > > > 
-> > > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> > > 
-> > > I switch this into "Closes:" per checkpatch.
-> > > 
-> > > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > 
-> > > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> > > Would you or Paul double-check the Reviewed-by should be here?
+Hi All,
+
+* Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
+> On Thu, Dec 26, 2024 at 02:27:45AM +0000, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > > 
-> > I am good with keeping my Reviewed-by tags.
+> > Hi,
+> >   This set removes a bunch of functions in ipu-v3 that
+> > have been unused for a long time (since 2012-2017).
 > > 
-> Thanks Paul!
+> >   No changes to functions are made, just full deletions.
+> > 
+> >   Build tested only.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > 
+> 
+> 
+> For the series:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Except that I got this from overnight testing of rcu/dev on the shared
-RCU tree:
+Could this be picked up for drm please?
 
-WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
+Thanks,
 
-I see this only on TREE05.  Which should not be too surprising, given
-that this is the scenario that tests it.  It happened within five minutes
-on all 14 of the TREE05 runs.
+Dave
 
-This commit, just to avoid any ambiguity:
-
-7cb48b64a563 ("MAINTAINERS: Update Joel's email address")
-
-							Thanx, Paul
+> -- 
+> With best wishes
+> Dmitry
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
