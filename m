@@ -1,181 +1,123 @@
-Return-Path: <linux-kernel+bounces-538014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33007A49393
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBAAA4939A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A16FA3B5845
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B503B3F0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4EA2512C1;
-	Fri, 28 Feb 2025 08:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F9F2505DE;
+	Fri, 28 Feb 2025 08:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7BSUqNx"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk1t9kI8"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A1A2500C6;
-	Fri, 28 Feb 2025 08:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384262505B0;
+	Fri, 28 Feb 2025 08:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731474; cv=none; b=fvVqIB5PYf8xyDTvNuNlVmbFbp9OIhU8P4d6YwV7q45gjuHJFgqX+Ill8DsLe8x/xG1fS8Bx8/3fz1dcsuvFaFNL7e7w0G0+mxqAnoIYaczMwFbSaf2on5d7n65EWEBabZLdFFPhZjWuY2wMmOQrgHBYY0d2IiEls7IVqZLbuNY=
+	t=1740731606; cv=none; b=OM3p3E4+P+tevhNTS+Rrj85zoKVozwhCaz8Q2iqsXsjxtwbJbuQ37YqvJ8jfPmJDbwEZNJTkpodo0XbZIoKZnmTsMumQ5U5mpTDmw6n/wUpfXYbSNUUf8hQjLBKBIh7k38/Qd5mO327doo89QlfamlDRhbB85/DOeREDpcfCuyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731474; c=relaxed/simple;
-	bh=5iqVhUSMbrrLIJmFMWofm6eeEs0Wbgd95ErlLUB/mH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWFjSJHLBRlOZrhYPpB6DOglSH4RjHJ3Rnb29dHNNKLQI6CRLAM2kf4Fz4u8piHhFebuQ78/iAUbpGAnbkGLPQwlH+j2g+bhbwc21KijtstaVRSPSHcmFRmSVLFcrIsgY/TpagryMrhWX7Ol1DWiaf7zHpLnaKk1+3Ck6A6wteg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7BSUqNx; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1740731606; c=relaxed/simple;
+	bh=LRCy5Q6xrGTrkxnCGNdgxl18T95wjYXYomd6Qcd8JpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O+G1qyaPyCFUo0+1nJt6rR1seg3QfqkdTnPwAbN+mcbQQY/dMz3N7EYzRmIIFQB0c7pfYIMZWLQTRT4wPVOo4AEecHAne/YQRPaQ/uYRomIzMIXN+7aZ61ysNkKk8Nmieonn7GO0/Ggb5yVkH4wSOw8cpkSOVg/d9IOf/c9yraw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vk1t9kI8; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5494bc4d796so912588e87.3;
-        Fri, 28 Feb 2025 00:31:12 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so11888405e9.3;
+        Fri, 28 Feb 2025 00:33:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740731471; x=1741336271; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ar+75AnkBBOHQ0nLi6eO6uSmIlq6oLIRyUDgVOMz5CE=;
-        b=g7BSUqNxO9+3KakkagdmFb11nRdREdkhVXYul2nHEfvmRjO1Ya6sfpxw2LCmeVVln5
-         GnCJGGcZjmdCn0fz4aM0yYfEUEEx4NkDoGKyZr9IVZO/PzziVXAqPtGnywPcOgjw7MWm
-         Ke7ZNR9yMLAtE4Lh1EgD8ElOzj3IteEi26baMbiimpu0L4sPwGuBk56YoBrHX6UUGVaS
-         jlBbQg3q4/CgWLaY5k7dihdhy1UZcMXYsJRlNPdFWWUCtFgY50XKBdbAv5X2hYfAt56t
-         /PLKubg7nbzlxPVRcNc1HNdZoPD7y2ijcFTqadfKIwHzBu/Qhp5fqgdyosnlD7myVADf
-         8sZg==
+        d=gmail.com; s=20230601; t=1740731603; x=1741336403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=altOlD5OfS9XMQsr9JEVj89aEfRHMr4jhcpHBqrXJ/0=;
+        b=Vk1t9kI84Jc9I8KCv57ch9YcjkHl+Ldespo6RzhK4cU3OSQYsB4jKgOnPHPWFmNsO9
+         r4SWJUq8tjFtrhXvjCBcYsDgHAxoILZ3tlf2e4Fr54djkwI1MoUN6OO/7aAz+mBduxYu
+         dwVBw+S+i8VsXKLsLx7t/J178aGaUUA5hzxNK7AAe1/dQLw4zkyGxsSJ7P6iGN+jTAYy
+         OzrOU89W/Buz3e6oaJaJj32Hnm7RXdC4bgi/n1yya2M1j77YH9g5feLZeV79bYIUZkkj
+         tJY9/S/LVZeg1PAcla4yjtrhK7ORXZr/0oJuVjSTwCRbHZlto2bP+YbtsnML5Fu0FD7s
+         nNng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731471; x=1741336271;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ar+75AnkBBOHQ0nLi6eO6uSmIlq6oLIRyUDgVOMz5CE=;
-        b=lNnXD4HFWaAHZ+xAi4snJJ1WSJRNABFraFGpHOEzZsQ/82PU66h0GQQN/VQpYZIpbP
-         9QWyRqKJrcSuC+wqv5Q1pbMSzlGBNkbns4XHq9BUsGSZBMDeMSfJTmTwGkIcxE5tFf6W
-         gCWKGaLYGzC7MY777bP69DY7bkGHPwLtSyjKGMcUpNW6WXMHyjiOptBrry9t2jGTEXKv
-         6F6xeawaYLc1O1Giy41/H0A6l4+2/E3oG67Iqs/3GaQYvoTjv0pL2+kmVTVngd2wT9bF
-         3zAAtpwSBr+VvMYrC6pnQ3wy3Zzhxj/Ir3AZdT8qUvH6wjx1B9+fw1eHnIrvxil0rwot
-         fhhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmKPkjbvT8bODZMtfjlKlUJnm1ecoSxshY9LtS6L5G/63Bkn8XGCt8ZaSVY9aDC8cxhuzFmpq/MGRSZV5K@vger.kernel.org, AJvYcCWn738r2OznOlGTpbYvxnXUPwoGEXG+HMjUlenEf6S95yHZzbWZTYERfEyc6mhaWp06BseP5yJMzYA+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMkN6vwI0wZNv3fgTv7tOH/XQpZPCGyHKLEBJfVhYg0NyYMwLn
-	UKjqTHCMNA19mkG8h4f+BZLG7vcGUfvoKT4NMdXKNhzEXtna+hbOXt8H0Q==
-X-Gm-Gg: ASbGncu5oPAgQ6BteFg+FPTYx3121m28V2lXaO4njkIdnhmj0TUi51htXv5JovYqd3F
-	y6hy63Um96UMeitxWcqD96dLnQiYXUXdof+FypHGQUuBuR7lPnWYZl2gk9UmOv2q3ayoeTCf068
-	GV2A2Mz7wOk5YXccX4/MjSxcSHKjZ787o3KWk5B48TfYbOHpsx6M8Ze0x5Ba3PvvRD4ww44sgHQ
-	KiCX+Zm4NKPCzflGhZ/grIn3mNdxBEZNrBrmAl9Q2XDI9XzOIVAZfjydGf1w1jnQT/5veXvwxeA
-	ouyAdcdRzRrLRSEBqIGBX6wjrKPCuznuBdo9xRAxzCK9CWFgT9PR7Q5cqOnd6/vcTLLpNt8XxmQ
-	X27xvby0=
-X-Google-Smtp-Source: AGHT+IHxVkOw5BtxvUJMaOvnDYyVVaA3CeL8lM42/0WkC0yeBuVAq4HENA/rmwXRepTmE3P8POujgQ==
-X-Received: by 2002:a05:6512:114c:b0:540:2fd2:6c87 with SMTP id 2adb3069b0e04-5494c31c81bmr982411e87.16.1740731470329;
-        Fri, 28 Feb 2025 00:31:10 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417b62asm411711e87.85.2025.02.28.00.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 00:31:08 -0800 (PST)
-Message-ID: <b4319228-44c1-4037-8474-2cbadcb839df@gmail.com>
-Date: Fri, 28 Feb 2025 10:31:06 +0200
+        d=1e100.net; s=20230601; t=1740731603; x=1741336403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=altOlD5OfS9XMQsr9JEVj89aEfRHMr4jhcpHBqrXJ/0=;
+        b=KZtq7OxR+vzmW/BW8ikfGm4IiO6I2AN53JRerJrSy1p2VznMMgLhrFxolNF3a20TYn
+         WZuqN7IHhLWhxoLz4P7/TSzD8oocD7uqKWHLwnGC7UxE3y8lPLeSUQWr7s06hAxxmV0E
+         cTG86gI6uXfzL8qfRXL5i63D4DTw3DvxESIvemom0wjuRJ864g1MUXGBKGHrme2Bd8Ck
+         B9DroNnRPXwOgJ6VnsdcQrwRImuKTf0zUyzRb5BmmuVAOgfOWm5ODByalxL2j18f5hlR
+         N3YoxFGPD4RCCj6izfNXMYE3yMZs20AeX2CeQOuzVMl25GQSu7mCmMGntDJzW3ElWh5s
+         JgSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKcggbB5Uq1SORfy0L/0exsOaTlRCE64ei/BGMnEkTXz7xuRi95dvZJvawlqDd7Gu1si5oao8bwyG+lY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhg//eLXJzc08IY86ysAddSAFidDtOR660lTqitA5Ly136zixS
+	R/q51gw/XRAd0Kfzt3xsZ2dho/HC7FxxZv3ElDnY3vihmc0LLTrL
+X-Gm-Gg: ASbGncsOewJNKdueuu03z2WuR2pvOWTCnsGtz9J01k8tE5d1g2xnxnuPq9BuenLnAtF
+	dMTLDnlzVr3dN1ICKz1kI3JaxPqqFYaLq8DjYhihkrklJXWIKw2RmnIS0v6b7liK0zwlNfPBsbW
+	oniJI4TfnUCaEhuhz5lU36G/D4ahXiudpFVk8vDvD8BaGvgjL0uj3Sovliogs8+Wpe/kZoS1AE9
+	TmFsugdLzxtIrpgky94/35giYSn4aZkisrXAzmDRD4x/tb4DI0QWHfSW+5EapbNvST9mkPUUaZb
+	2MWpfgpclyHbYthv5Fli9He2hhs=
+X-Google-Smtp-Source: AGHT+IFow7FUOytG/ykCncfTbL0sB2LYY5hKFmRDCWNXGIyfl+KPtU4kWQ6hYwmvBGNpZfuJxe3aQQ==
+X-Received: by 2002:a05:600c:3b0d:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-43ba66da7eemr16388845e9.2.1740731603153;
+        Fri, 28 Feb 2025 00:33:23 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba532b2fsm79801705e9.10.2025.02.28.00.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:33:22 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/bridge: Fix spelling mistake "gettin" -> "getting"
+Date: Fri, 28 Feb 2025 08:32:47 +0000
+Message-ID: <20250228083248.676473-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Z71qphikHPGB0Yuv@mva-rohm>
- <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
- <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
- <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
- <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
- <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
- <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CACRpkdafJfmuO++XXSFha51Q5=9DrqqRtxOpNeUsmvy7BHrC2g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 28/02/2025 10:23, Linus Walleij wrote:
-> On Thu, Feb 27, 2025 at 9:24 AM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> 
->> I did some quick testing. I used:
-> (...)
->> which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7
->> unmasked.
->>
->> Then I added:
->> gpiotst {
->>          compatible = "rohm,foo-bd72720-gpio";
->>          rohm,dvs-vsel-gpios = <&adc 5 0>, <&adc 6 0>;
->> };
->>
->> and a dummy driver which does:
->> gpio_array = devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
->>                                    GPIOD_OUT_LOW);
->>
->> ...
->>
->> ret = gpiod_set_array_value_cansleep(gpio_array->ndescs,
->>                  gpio_array->desc, gpio_array->info, values);
->>
->> As a result the bd79124 gpio driver got it's set_multiple called with
->> masked pins. (Oh, and I had accidentally prepared to handle this as I
->> had added a sanity check for pinmux register in the set_multiple()).
-> 
-> But... how did you mask of the pins 0..5 in valid_mask in this
-> example?
+There is a spelling mistake in a dev_err message. Fix it.
 
-I will double-check this soon, but the BD79124 driver should use the 
-init_valid_mask() to set all ADC channels 'invalid'. I believe I did 
-print the gc->valid_mask in my test-run (0x80) and had the 
-set_multiple() called with mask 0x60.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/bridge/sii902x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I need to rewind _my_ stack as I already switched to work with BD79104 
-instead :) So, please give me couple of hours...
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 2100a687096e..914a2609a685 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -887,7 +887,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
+ 		lanes[0] = 0;
+ 	} else if (num_lanes < 0) {
+ 		dev_err(dev,
+-			"%s: Error gettin \"sil,i2s-data-lanes\": %d\n",
++			"%s: Error getting \"sil,i2s-data-lanes\": %d\n",
+ 			__func__, num_lanes);
+ 		return num_lanes;
+ 	}
+-- 
+2.47.2
 
-> If this is device tree, I would expect that at least you set up
-> gpio-reserved-ranges = <0 5>; which will initialize the valid_mask.
-> 
-> You still need to tell the gpiolib that they are taken for other
-> purposes somehow.
-> 
-> I think devm_gpiod_get_array() should have failed in that case.
-> 
-> The call graph should look like this:
-> 
-> devm_gpiod_get_array()
->      gpiod_get_array()
->          gpiod_get_index(0...n)
->              gpiod_find_and_request()
->                  gpiod_request()
->                      gpiod_request_commit()
->                          gpiochip_line_is_valid()
-
-I remember trying to follow that call stack in the code. The beginning 
-of it seems same, but for some reason I didn't end up in the 
-gpiochip_line_is_valid(). This, however, requires confirmation :)
-
-> 
-> And gpiochip_line_is_valid() looks like this:
-> 
-> bool gpiochip_line_is_valid(const struct gpio_chip *gc,
->                  unsigned int offset)
-> {
->      /* No mask means all valid */
->      if (likely(!gc->valid_mask))
->          return true;
->      return test_bit(offset, gc->valid_mask);
-> }
-> 
-> So why is this not working?
-
-couple of hours please, couple of hours ;)
-
-Yours,
-	-- Matti
 
