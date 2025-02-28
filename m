@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-538903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7B9A49EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:22:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0813A49EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749847A95F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FEFA1742FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 16:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F3627293D;
-	Fri, 28 Feb 2025 16:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E65B272904;
+	Fri, 28 Feb 2025 16:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SAmqQvx7"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yS5wuYoh"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75D017A2E8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77F6199FBA
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759730; cv=none; b=p3v1xEF9jkRMECWUCbWvpanG2CU91OWyPn2qJYxpB+gSA2uHXst9HQWPEdH6eSEzBnCjHnbf4LsTI40N/tWBsTBpSeGnrEuHknY1dpov9RqdXMmyZiYFsjHSBuQ2R+l0vjRXKmaHqUmlfLRZrzaw5y1gpvSgdQ+MftWWSsLmkGA=
+	t=1740759793; cv=none; b=mFxRMEryEHAblCoF9dDa9D57AyB9cuEGcdxLh0GXLMxI7VKm3Cwm5v4QN15BcnUYex2bpchAuYLbZscnSbPMbywokPEs44rCjQ3s/gWw9dcXk2pWzXc3J7Hk7jcuTSvf6DoxamHSa86IJQnKX/jwsduItGSFUzEs51G37YVIuac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759730; c=relaxed/simple;
-	bh=mOh36F/FeSkCgHWlr2jtMP4f+QGrB7mDuoTaTfqRy9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bi6R/ltDVh6tblo1Eebs9OMP3KU6ukq+9O1G7V0p5DO0nAvm2s9zp2E4jksmHWXzfaw1BP1EpX4JewI6GaHBGrHwPuHNsjE93ouDOkKm+FZSF0zn6besbDUtBI1LgRoVa4qT/64JxqSOIasIzoJNn1gF+TLtIVtKaBsT4Poc3l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SAmqQvx7; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 28 Feb 2025 11:21:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740759716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jzKc3rBUKoHHye8u6hnRwGozyJjYumTyHV57CCW+rTs=;
-	b=SAmqQvx7xn1SLBOUbdz0Ny3Hp3tZf5lg+rBdIHk06M54E0RMHrg9JThfULp1L0pzA04PUW
-	W+uDMW9P6aQ2vsFLiWpdi3WUBrfr+XpNTe3dn0aysJ3gGEa6X3mzv9+ZiSb27hP2vf+ItP
-	4BPlJNl/NWKFo3SQoeJ7p/eH4RCeYIg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Ralf Jung <post@ralfj.de>, David Laight <david.laight.linux@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Martin Uecker <uecker@tugraz.at>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, airlied@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <p4bawegz52nu3v2l25gnj5gh34patcxeggcdbom327wh3dhxyq@cp735olb55ps>
-References: <20250226165619.64998576@gandalf.local.home>
- <20250226171321.714f3b75@gandalf.local.home>
- <CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
- <20250226173534.44b42190@gandalf.local.home>
- <20250227204722.653ce86b@pumpkin>
- <07acc636-75d9-4e4b-9e99-9a784d88e188@ralfj.de>
- <fbwwitktndx6vpkyhp5znkxmdfpforylvcmimyewel6mett2cw@i5yxaracpso2>
- <Z8HaT4X4ikQzAghu@Mac.home>
- <vvtxa4jjk2wy7q6wnnxxgidopfd3pzxgntuehsu4skex24x5ml@yejfkrtg5dqc>
- <Z8HglTh3EKO63lmu@Mac.home>
+	s=arc-20240116; t=1740759793; c=relaxed/simple;
+	bh=UMUMB04Duvtt1hisoD9El/5o2j4ORykTX88imss5UUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FAuj4RZ8gNHGujhFkcNje7Eyg42XjMc6aqF24WZJvhquB+Dw9VkYWB8kuzzJ9LDieRyJycuY044xsZpPd7SdXNR2frk/6tgWbSO405yyUGf/dzsttfJNs6zxmwZuLuGBOhu7f2BLl200LjWLb3IYtoxpHueQ9ywXNlOs31Yg778=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yS5wuYoh; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390df942558so1824172f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740759790; x=1741364590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B9NRbb2H47YH88i6L1c0H91IgGIN8sJwVUopLL7++Gk=;
+        b=yS5wuYoh+WcM+/mRR6da1K+ieuMlInn+BlRyHhDTw19oJmYi1C9XPzmAbCPotmUY9l
+         +Zyr7wXdWZKsBBvzWV8+gCquHD8pu0NOYfoXAyN6KVo29kbt8r992QD7QKp1poBqduwN
+         SQl8kaEd5HXITXH4/EbnUzgD9HLe/rpuxRibj2rkB+6ESnAPffyEGE6U3bNBKVaXxttV
+         bORhgu4VE04xhUqcb4pcyG1s88q7jXWNwdWTRH2f3klmlyieLNVY8qJfeUdgo55jPrIq
+         7u7gKmSwuH3NMrgEN1mITSn3Gb5PL1mq8nr150vy5szZQChE76tJX8yH3eZU2KJX1vwr
+         IDzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740759790; x=1741364590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B9NRbb2H47YH88i6L1c0H91IgGIN8sJwVUopLL7++Gk=;
+        b=PW7z/UbqtsMYsc1JsA5VAXL4G0673rpwk9LybwapDds21m3je2mBa7oGDYGGnBsBUz
+         Lbza0FfwYW15+OGDcS7Rf27CFnmj6/VrScmPVJBmYzfhVn/EztlsywAXrspgAfpYGJyR
+         NGxbyxg63GeEbtyipu9o8MeAX5DkxZf5iIEZmZMQG7PSGg9BEIZPMbSXndjbZJRDr8Z7
+         jdhoqOcWS4vJtVY28piYYhNDN1mCGAQdaJQCW1QhDPDq2zxpINrtmS3vyyRcM/ghMEdZ
+         OS8sIdipIWAXetYQF9cBR26QUQVp5tQRAkOlJvb+x12ZRrsWkmEloFOoMH/1mUOKRazK
+         hdFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7At7omuZFVuKFSQ51wYVL2gPdcYpnNrmZ3SZjPwB4Z09eNMglKl+nA8OxOvHVHI9NIOCFusWQFuIr02k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnxnIyDraG1V7md0Qu6OhgS0jhxON9lJPoKw0Rwt4mpj7vVnPd
+	bFNFc5Cy1UgUSG+2Zs44C5ZwnyXHb5gGYQeD/QA6YCJ5l7SePYGythHl4YwTybo=
+X-Gm-Gg: ASbGncsPcwzR1ANJfFlisbFqjKMJMDuCMfTuffM2BHWfBnM+dkkcIgehJ4FwNecrLL1
+	IlE3yfPfk3/wYo8k9FiQRj5r7DwQSvZLmkuIM7JvSDh5Z8mPfrbqCxxFZTcEVS4kFFX2qDWTDoT
+	iHoFeXvV51wWufXG3q4kqe4o7waumzO2N+Bk0rK53hVbVYNkS/ZiqJ2yI1+3r+CH+cfkbpqbgI8
+	179j9vvyZDwsObc6ar0Kzuk/14J/UMWQixwX1PWDN4SMn1/jYNzlh89S1rhzdc7bh0O6j0gfDQt
+	pfR2uADN3ARTaJ3OMDHlD2XLY1YrG9Q=
+X-Google-Smtp-Source: AGHT+IGtvBLdlQKwy4eRpJlFTD3uaH0lWK59AI4HrdVHengzh1kTNPMLeyRP3eg+L8x2PLVmtb6iXA==
+X-Received: by 2002:a5d:5f91:0:b0:38f:3c8a:4bf4 with SMTP id ffacd0b85a97d-390ec7cd27fmr3516679f8f.6.1740759789972;
+        Fri, 28 Feb 2025 08:23:09 -0800 (PST)
+Received: from tux.Home ([2a02:c7c:7213:c700:e992:6869:474c:a63f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba53945bsm93905965e9.23.2025.02.28.08.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 08:23:09 -0800 (PST)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: andersson@kernel.org,
+	konradybcio@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: qrb5165-rb5: add compressed playback support
+Date: Fri, 28 Feb 2025 16:23:08 +0000
+Message-ID: <20250228162308.388818-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8HglTh3EKO63lmu@Mac.home>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 08:13:09AM -0800, Boqun Feng wrote:
-> On Fri, Feb 28, 2025 at 11:04:28AM -0500, Kent Overstreet wrote:
-> > On Fri, Feb 28, 2025 at 07:46:23AM -0800, Boqun Feng wrote:
-> > > On Fri, Feb 28, 2025 at 10:41:12AM -0500, Kent Overstreet wrote:
-> > > > On Fri, Feb 28, 2025 at 08:44:58AM +0100, Ralf Jung wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > > > I guess you can sum this up to:
-> > > > > > > 
-> > > > > > >    The compiler should never assume it's safe to read a global more than the
-> > > > > > >    code specifies, but if the code reads a global more than once, it's fine
-> > > > > > >    to cache the multiple reads.
-> > > > > > > 
-> > > > > > > Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
-> > > > > > > And when I do use it, it is more to prevent write tearing as you mentioned.
-> > > > > > 
-> > > > > > Except that (IIRC) it is actually valid for the compiler to write something
-> > > > > > entirely unrelated to a memory location before writing the expected value.
-> > > > > > (eg use it instead of stack for a register spill+reload.)
-> > > > > > Not gcc doesn't do that - but the standard lets it do it.
-> > > > > 
-> > > > > Whether the compiler is permitted to do that depends heavily on what exactly
-> > > > > the code looks like, so it's hard to discuss this in the abstract.
-> > > > > If inside some function, *all* writes to a given location are atomic (I
-> > > > > think that's what you call WRITE_ONCE?), then the compiler is *not* allowed
-> > > > > to invent any new writes to that memory. The compiler has to assume that
-> > > > > there might be concurrent reads from other threads, whose behavior could
-> > > > > change from the extra compiler-introduced writes. The spec (in C, C++, and
-> > > > > Rust) already works like that.
-> > > > > 
-> > > > > OTOH, the moment you do a single non-atomic write (i.e., a regular "*ptr =
-> > > > > val;" or memcpy or so), that is a signal to the compiler that there cannot
-> > > > > be any concurrent accesses happening at the moment, and therefore it can
-> > > > > (and likely will) introduce extra writes to that memory.
-> > > > 
-> > > > Is that how it really works?
-> > > > 
-> > > > I'd expect the atomic writes to have what we call "compiler barriers"
-> > > > before and after; IOW, the compiler can do whatever it wants with non
-> > > 
-> > > If the atomic writes are relaxed, they shouldn't have "compiler
-> > > barriers" before or after, e.g. our kernel atomics don't have such
-> > > compiler barriers. And WRITE_ONCE() is basically relaxed atomic writes.
-> > 
-> > Then perhaps we need a better definition of ATOMIC_RELAXED?
-> > 
-> > I've always taken ATOMIC_RELAXED to mean "may be reordered with accesses
-> > to other memory locations". What you're describing seems likely to cause
-> 
-> You lost me on this one. if RELAXED means "reordering are allowed", then
-> why the compiler barriers implied from it?
+Audio DSP supports compressed playback on this SoC. It is required
+to add compressed DAI and separate MultimeMedia DAI link to enable this.
 
-yes, compiler barrier is the wrong language here
+Fcplay or cplay tools from tinycompress can playback, say, mp3 files:
+fcplay -c 0 -d 3 test.mp3
 
-> > e.g. if you allocate a struct, memset() it to zero it out, then publish
-> > it, then do a WRITE_ONCE()...
-> 
-> How do you publish it? If you mean:
-> 
-> 	// assume gp == NULL initially.
-> 
-> 	*x = 0;
-> 	smp_store_release(gp, x);
-> 
-> 	WRITE_ONCE(*x, 1);
-> 
-> and the other thread does
-> 
-> 	x = smp_load_acquire(gp);
-> 	if (p) {
-> 		r1 = READ_ONCE(*x);
-> 	}
-> 
-> r1 can be either 0 or 1.
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/qrb5165-rb5.dts | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-So if the compiler does obey the store_release barrier, then we're ok.
+diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+index 7afa5acac3fc..dcb7dca20415 100644
+--- a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
++++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+@@ -1018,6 +1018,12 @@ dai@1 {
+ 	dai@2 {
+ 		reg = <2>;
+ 	};
++
++	dai@3 {
++		direction = <Q6ASM_DAI_RX>;
++		is-compress-dai;
++		reg = <3>;
++	};
+ };
+ 
+ &sdhc_2 {
+@@ -1044,7 +1050,8 @@ &sound {
+ 		"VA DMIC1", "vdd-micb",
+ 		"MM_DL1",  "MultiMedia1 Playback",
+ 		"MM_DL2",  "MultiMedia2 Playback",
+-		"MultiMedia3 Capture", "MM_UL3";
++		"MultiMedia3 Capture", "MM_UL3",
++		"MM_DL4", "MultiMedia4 Playback";
+ 
+ 	mm1-dai-link {
+ 		link-name = "MultiMedia1";
+@@ -1067,6 +1074,14 @@ cpu {
+ 		};
+ 	};
+ 
++	mm4-dai-link {
++		link-name = "MultiMedia4";
++
++		cpu {
++			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA4>;
++		};
++	};
++
+ 	hdmi-dai-link {
+ 		link-name = "HDMI Playback";
+ 		cpu {
+-- 
+2.47.2
 
-IOW, that has to override the "compiler sees the non-atomic store as a
-hint..." - but the thing is, since we're moving more to type system
-described concurrency than helpers, I wonder if that will actually be
-the case.
-
-Also, what's the situation with reads? Can we end up in a situation
-where a non-atomic read causes the compiler do erronious things with an
-atomic_load(..., relaxed)?
 
