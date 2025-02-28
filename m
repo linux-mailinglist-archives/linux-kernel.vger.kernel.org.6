@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-538033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DDEA493CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:42:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3CFA493CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8716B1893C77
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1920C3ACB6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63662528F7;
-	Fri, 28 Feb 2025 08:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4412528FA;
+	Fri, 28 Feb 2025 08:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jggea6Z3"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oSdMfQuN"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830AC8F6B;
-	Fri, 28 Feb 2025 08:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B0D250C0F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732138; cv=none; b=UeXGo4Q/QIt3T13Zic5W8vMLKji1eyUhbYGASwA7wmKqbLnXUEJAY95BrmLioFBh7J+1eoaL4Cbift1P9adwwuBEz3Ded3P6uQTxn3mkK6zodMQ0NsmixOHlD3l8URYgqLYRE/hIE3UPhGEKfVbCTJ40D0fakI5oY8MkTm44VCc=
+	t=1740732185; cv=none; b=N65SiO5x0LwAp2IHebL7qwbWcrMBxzizwgaD6SGe3hVqY9AudEPA1xEhnPlmAsbKJGuCKd3KO3GagASw24t76rVlE+bhInxoHXjGCHenrCibt50JOO4H86uqcMYRTPrG67R6kzDH6J/79DjA7NfG1+IUUzBd0CDv3X6qlOMAuqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732138; c=relaxed/simple;
-	bh=osdo+DPfQvjZ0yOzZ7Pme69F1fImkLi/D5J06hHJ8lY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rWLV/ZPebe5FIGB/IqWTPCrWTtvyxE6uoyep2tyDOJFhvpwEQgCvWr4mgFX54TOpsXjj0lEY/DAPFNObn+50QqDrnEC0+bch0WhOOC2hhHb8FuRfKSbcfo/mUh8Ah4CX0OMNUOUIHOPxvFR+j2ufyyjuEMq+f5zhmYsvJSsfNEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jggea6Z3; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so18415115e9.0;
-        Fri, 28 Feb 2025 00:42:16 -0800 (PST)
+	s=arc-20240116; t=1740732185; c=relaxed/simple;
+	bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0RwDVXkz+GFQAiCYuDKZUptZUv3W4wGyoHzv5U4mlqv88PqHqIVYllPuedp5QnXdL9HWhyls5pUOmOdXVRaEuwWB9gw70wZTh0pwe1bqv3Ok9763/WbIz+X1tuisNEpXeT2EzizcUptRlJvatAcqi8sQ6qotlDPZeQR9rSNzcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oSdMfQuN; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a28bf1baaso18223541fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 00:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740732135; x=1741336935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0gnLYtf1/zA3bARRRWL+C18PA2T1Aj8kNcoFSAF1f0=;
-        b=jggea6Z31ALXsHkDWL88jqoSmz2likIqzHIye76FPTtDPdZLCYQcrtKSXz9hTIdtNh
-         SqZCcDCocZzyZk3i4qRkAV8ZNVKHzK+X0TLSQuVq9SY6sYKyoTK9uhEuAfNB3UVY60Al
-         CBOKpA5wT+5kqkSYKseF6FnL75LipSSRfJPvPEyj6GBllQXJmlhGU1rdHlfgZFqmU6V0
-         BsgYMqUSXpCody3m682kaCHFspbmZr/ppaLtbbztZLV/27DwX/3EaLMbNKZo7iu9++6X
-         td0wgFpQYXc+m8pBSdqh9XWXVFoCaI0twnG3YzCTHG6nmWCrIxxqfJ9BcvcsnIMVB1PZ
-         6uIw==
+        d=linaro.org; s=google; t=1740732181; x=1741336981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
+        b=oSdMfQuNDVth3wWTaRks3YxgepFFHPDjNkiaa3KJatMYwcWQAR4kShm7/1kihKx3Uc
+         IYddF7UJXGd8MQ6IK6ZquCshGaxMQfF8t9WC/txbXPp8hLkt4L77st87XQKUjLuuQRkZ
+         i5s0aQV9uXLhEyWMhTe7r48iwEEmMD/It67fscjfMFqTQm0kvzwoBOZk9xrBF55MFdAP
+         s5nEJpWgXdSRNY+aNt2ssFeDFavjWsU5G637ujmJkjT9li1hqqQB22nL8cUYTmvpGLeu
+         p3wiNScWHxT92sredgOHkX2alyUwJ5Hm4YdMxExD2CCqbABPAo6qnq5vUByuVovDB+Ev
+         AVEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740732135; x=1741336935;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c0gnLYtf1/zA3bARRRWL+C18PA2T1Aj8kNcoFSAF1f0=;
-        b=UnK57AWwEvcS3LXt+livB8JUWCIm7FHVKE0YTTfXkp/Xt2SW9B9wkCEtz2qLkivLwr
-         y0wCTZcYH/pftlVBf99FATfQy3jWFU6n//IMoAI3GVzNOZIyo7g8xKhoY/BtQolLl4Nu
-         4a5+PbK3cbQrogVdImkyempgpR9+O9d1BhAWtXmJiOAFxxb/B62YUPAZuIdqpkRY3441
-         O5AlCFRUvJZIjsqydwaekyE98/Urs5+8ud+Tt9qDkKITT6aQjB3a+PguSbhEKHj0L5d3
-         9DqEHwaptylOLEbuAW31diOBs1DuxCOB7Pmwcitf+0LHJGE2FvIKAy+RhjGS58RpdA0v
-         XJiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ6J3Jo1eeeFo6fc9svGMoF6uW1XLkUyph/ozIW5cYYWdBk5W36TnfaedEiD0Kg9bAUcsfq1W5xUvijENY@vger.kernel.org, AJvYcCUsVk0G/6IuuP+LAAmzQYBOG3OZ7QeikhWu9QwbQ/oCNmhDM+dmUlHcISC2aHN0kCkfv12GqKCu3xhAHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCaGvWW4G6xDClDeY2s9sOQI7NIVBcw3KWrvvMFibrNRrybUZP
-	c/btAPjnOPwrNCcENYjloWOCx+bfIjg0kMQmLULiKTV+izjFItDtT/5qYsoiWcs=
-X-Gm-Gg: ASbGnctv0wbDyuXPTC8VKu0GpVjOaQIIWfwbp+eJpvkkfw26w3s/CcOf+PUaf6SsQ15
-	7sqRwmcu7NpRY815pjwH33I1JDguHZez4/ArDSyoeyiw3uO25U2WGCwjqieXijo7hgmL+7nWZ86
-	FRIl8w4907T5GuQAQLA3w9J0GlLubZPBlt2vZ9KHeYzGRNnvyXNMxABTx7FARaRZVEg4IphA1Xj
-	o/WUOcgFNmYXuSggHJJRaPB8W/sbkCSCceLHPKm51v6DJI5ZimU7HtPsFMapKW5fZpS3FrgePYe
-	WLm0hCAXXv9wK2dl8qotqRAM6Go=
-X-Google-Smtp-Source: AGHT+IF4w/HceXwen2E7Oq1o05vuk+z4iwc9BPVsEhDgiRZE/XRNkqQYvAP5FQfg6bIWxhOfv6FIEw==
-X-Received: by 2002:a5d:588c:0:b0:38f:4ffd:c757 with SMTP id ffacd0b85a97d-390ec122c4cmr1868473f8f.2.1740732134651;
-        Fri, 28 Feb 2025 00:42:14 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47b7c43sm4433100f8f.49.2025.02.28.00.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:42:14 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Even Xu <even.xu@intel.com>,
-	Xinpeng Sun <xinpeng.sun@intel.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: intel-thc-hid: Fix spelling mistake "intput" -> "input"
-Date: Fri, 28 Feb 2025 08:41:39 +0000
-Message-ID: <20250228084139.677391-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1740732181; x=1741336981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kx5ixhvdP6EmZ7yF5ftbKYrRukemNttfsGC0jekV/Og=;
+        b=Toy4TB7WfBHZ9sGFf8wwZQcki0+ZzVX1QK7maciruHIGPGXhl9VGETx28qlyQ9Tp4c
+         2kYkHE3CMIA/iHzp3MlfUHepu8zmYsh5ZdESFKD5+flv5U9rn4qDYI98U337zY7mYKMX
+         dzy+LU7ME5F8cG5NQRWc3MBlds2La4V/9b33Rp3vQtafep0qJ/GnI5cVmqBUUlPMvlgZ
+         x0XQoeU1qv0ot07aNB3okc/3UjWt2bEHP+fUONKcHmnuwGA3HCRzN/pf6ZO7mYQmEELf
+         uP58HOStjyRVIrR6P+yPn0l0djBamkLCGgtmtjPpX4CZxZ/O9PW3Ke5WAKEyFr776KDT
+         i1Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj0lTISTNKE/jAdckyJtW3DHQ3r4DydQ2ugZLwuMbcgDQ9wl+rcVQv+ZsYv+21cofEp+mCm3aYvF8SlJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3yIlP/9Ay8ccst+TF7Lt/Udo4CDXBXNf+WnuhinXYsr4NmjIz
+	mpMgLWZEUO6iWJdzOjqGZjOkzITz5FRbUAXZUwqThmkvb2pHcPwz1xm4/B/0HgMNhQ6HO4fv7UV
+	Vf+0RM7ObSxQUgzpwNLe0mhy4SdeC/zU2tKN6ujVdLfzVR41x
+X-Gm-Gg: ASbGnct4R+urb2suCPiSR5UqNdeVXdRJPqd6enSTsqnM12GhVKduxka2/LOpLh2RVlW
+	SjF5IGoNYyjynPqu60xQOwAtgCLXiGIToEJS/YTAktbL/vAKDmw6g/uCMEzjbA793KdDyfusltb
+	dfUcw6mzY=
+X-Google-Smtp-Source: AGHT+IFnojnEU0ZTQwdhFM8EZ+VzCTRW5WfJ+IRPsOQXruxW3ArvgVeYghHEs1cbMHob7yzBli3HbDb90ZQPHvgxO/A=
+X-Received: by 2002:a05:6512:4021:b0:545:f9c:a825 with SMTP id
+ 2adb3069b0e04-5494c312576mr703967e87.2.1740732181275; Fri, 28 Feb 2025
+ 00:43:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250227-tlmm-test-v1-1-d18877b4a5db@oss.qualcomm.com>
+In-Reply-To: <20250227-tlmm-test-v1-1-d18877b4a5db@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 09:42:50 +0100
+X-Gm-Features: AQ5f1Jq7kGENpEdbNLcHzj870r4DoaeXZChk9tcwrlm_rnPAZaKo-WGL4SgZr-A
+Message-ID: <CACRpkdZP4u+LwhfRYnjhD6bkoBAG7AHX3SnF=5R8fc72BDradg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: Add test case for TLMM interrupt handling
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a dev_err_once message. Fix it.
+On Thu, Feb 27, 2025 at 9:33=E2=80=AFPM Bjorn Andersson
+<bjorn.andersson@oss.qualcomm.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> While looking at the X1E PDC GPIO interrupts it became clear that we're
+> lacking a convenient and accessible way to validate if the TLMM
+> interrupt code performing as expected.
+>
+> This introduces a kunit-based "hack" that relies on pin bias/pull
+> configuration to tickle the interrupt logic in non-connected pins to
+> allow us to evaluate that an expected number of interrupts are
+> delivered.
+>
+> The bias/pull configuration is done with mmio accesses directly from the
+> test code, to avoid having to programmatically acquire and drive the
+> pinconf interface for the test pin. This limits the scalability of the
+> code to targets with a particular register layout, but serves our needs
+> for now.
+>
+> The pin to be used for testing is specified by the tester using the
+> "tlmm-test.gpio" module parameter.
+>
+> Worth mentioning is that some of the test cases currently fails for
+> GPIOs that is not backed by PDC (i.e. "non-wakeup" GPIOs), as lingering
+> latched interrupt state is being delivered at IRQ request time.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-index 7373238ceb18..918050af73e5 100644
---- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-+++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-@@ -107,7 +107,7 @@ static int quickspi_get_device_descriptor(struct quickspi_device *qsdev)
- 		return 0;
- 	}
- 
--	dev_err_once(qsdev->dev, "Unexpected intput report type: %d\n", input_rep_type);
-+	dev_err_once(qsdev->dev, "Unexpected input report type: %d\n", input_rep_type);
- 	return -EINVAL;
- }
- 
--- 
-2.47.2
+That looks like a super dangerous footgun to shoot oneself in the
+foot with.
 
+But the usecase is 100% valid and I see why you need this.
+
+Patch applied!
+
+Yours,
+Linus Walleij
 
