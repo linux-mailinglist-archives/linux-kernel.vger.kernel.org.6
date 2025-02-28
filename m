@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-539251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893D2A4A273
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:09:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A98A4A277
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 20:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67CD8188F184
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CAB5188F9EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 19:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF52C1F872A;
-	Fri, 28 Feb 2025 19:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6241F8733;
+	Fri, 28 Feb 2025 19:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUCWplPE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GP6pfxBZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198921ADC8C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 19:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9096D27700D;
+	Fri, 28 Feb 2025 19:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740769734; cv=none; b=A7NTpn/kdSJfJrj/GbGRZUhfyUWPHh4OYkoa/qWkA86m3gnKcg95BIPhAMFac18l8a8ELkEMfvVFQN/4JrqHXq5cuZC/YYtMi4UvRhRKrqDcQggNMwoh8qEci9pdP13MgBUzGO6VPgktilL06X6Kv50Jz6621vj5rWm97diq+sQ=
+	t=1740769772; cv=none; b=JXGTB39ZKq1wPJJmr9UDl2YoN5gAdFZ4s/ksz6eeeJUMFR9YRgcVjOOWu4+FZTwffSyub2XRTTVEsSj/VW+m3LljuF9jrd7hYFvPUmUHpURocXO0Ke5Q0yTTPW5vIs+b4apFb3KTGwjEF9tywzLA+1hfHz85kr2NGgRQefOgCk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740769734; c=relaxed/simple;
-	bh=Kb2hdxm/Zjz+YD63WEuXjA2oClC/omYoCQR8WBWzkK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZcTn8gkAc1yjBdCdLdbadYjX4Zvn5LtSiFNoXw3uSt3hVuI6Yug0jcTVGNzKn63Vh26gmbggicCUibBpKCO7ANINUkblUwJt4vaipEB4CGoPce/ThcF2jyZasUhbWM0JXc2AXXAZSt0lyVViUHB1Z5pudAWtzLfYas5d/EBPRaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUCWplPE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC081C4CED6;
-	Fri, 28 Feb 2025 19:08:50 +0000 (UTC)
+	s=arc-20240116; t=1740769772; c=relaxed/simple;
+	bh=zhJ3QBOrHMKMn080recEziExaq+khBOdjjOCVr5uLWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjtMwkr0eItBaZhQFZf0CD2PVB2pscgHwsK/vGhT17QeOs4O85HMAR987OZWHPsDGWvjAHl/i/Aajzz6rSZQb7mSe5P+OwbVQLuHZThNtN3Q8GHma4y5qnOo+VnJ4uollF5bAhiVTtGO7i6Jc/GyxibRikKZ2OOSMbKlUeKM4IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GP6pfxBZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF270C4CED6;
+	Fri, 28 Feb 2025 19:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740769732;
-	bh=Kb2hdxm/Zjz+YD63WEuXjA2oClC/omYoCQR8WBWzkK8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZUCWplPEFF6L9hiXY/kTMwtox8yGaY1PGFT80HBf5AUIhCJFTICqWI4rpA0d6VoTq
-	 XVLXuJtmoPfVfR0VJboe3c+3iQXaIvaoPQA5DLHU+Dmrz1tuBFB9InyOW1mh035o8Y
-	 hhKBcRF2uTPAs+4hCOL4RD/ZYlT9kMaLaxfKSH5CUIXyyTDUYuJlAZJSeIyVyOjJiM
-	 P4mkl5/zadjZ5Jar+ROTNzy5jXoyNf4AM3FcVTLEZBb8/sxOiaHLTY9BhuO4heX/rY
-	 esiJpyZFSxXpg17NwTacAhUu6OWm89JuXIzQZgaLNCtMj3Vw4uCXBMxcuT9yuIpgaH
-	 r4vMiCfio5LCA==
-Date: Fri, 28 Feb 2025 20:08:40 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [GIT PULL] objtool fixes
-Message-ID: <Z8IJuFbHZVoe8joF@gmail.com>
+	s=k20201202; t=1740769772;
+	bh=zhJ3QBOrHMKMn080recEziExaq+khBOdjjOCVr5uLWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GP6pfxBZQPS0HuAfJ0JdudFGxBbXika0HLAvLl3//9haacIvzPgrabNyuVP1tmdFi
+	 Qv2vqVIaKe4kTBGYsuVh3YGDQL5Nb4mQ2+pwkUXJrCOopBENltAXK9kh7sQeCrFKLl
+	 EvMkoaAbBDZ77Kjen4V4/lCNojgUEU7JZD4olLwU3Me0ekiBH7NKJNc7JQCIOVMUMC
+	 0wGmu7q71ViXrCnI9QsTxzSQbWuZc9wkU3568kBTLNcgUgNF2k9wTp3hP/FGvYaDs2
+	 GbIu2XuNSvCd9QtsWh/zsanc9U3CX/Ogm4Tuy860eLr88dMVPo4JQWcjuUOQAqs2SB
+	 prQb45lQwPMzQ==
+Date: Fri, 28 Feb 2025 19:09:27 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Mathis Foerst <mathis.foerst@mt.com>
+Cc: linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	manuel.traut@mt.com
+Subject: Re: [PATCH v1 0/8] MT9M114 driver bugfix and improvements
+Message-ID: <20250228-valid-chastise-db8819061ec5@spud>
+References: <20250226153929.274562-1-mathis.foerst@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wjlbXatp+vm/Zg2k"
+Content-Disposition: inline
+In-Reply-To: <20250226153929.274562-1-mathis.foerst@mt.com>
+
+
+--wjlbXatp+vm/Zg2k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Wed, Feb 26, 2025 at 04:39:21PM +0100, Mathis Foerst wrote:
+> Hi,
+>=20
+> this patch series contains the following bugfix and improvements
+> for the MT9M114 camera driver:
+>=20
+> Bugfixes:
+> - Fix a deadlock when using the V4L2 pad-ops get/set_frame_interval
+>=20
+> Compatibility:
+> - Implement the missing get_mbus_config() function to be compatible
+>   with the i.MX6 camera framework
+>=20
+> New Features:
+> - Allow to bypass the internal PLL (configurable via DT)
+> - Make the slew-rate of the output pads configurable via DT
+> - Allow to change the cropping configuration and the horizontal/vertical
+>   flipping while the sensor is in streaming state
+>=20
+> Thanks,
+> Mathis
+>=20
+>=20
+> Mathis Foerst (8):
+>   MT9M114: Add bypass-pll DT-binding
+>   MT9M114: Add pad-slew-rate DT-binding
+>   MT9M114: Add get_mbus_config
+>   MT9M114: Add option to bypass PLL
+>   MT9M114: Factor out mt9m114_configure_pa
+>   MT9M114: Allow set_selection while streaming
+>   MT9M114: Fix deadlock in get_frame_interval/set_frame_interval
+>   MT9M114: Set pad-slew-rate
 
-Please pull the latest objtool/urgent Git tree from:
+Please take a look (via git log) what normal patch subjects look like.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git objtool-urgent-2025-02-28
+Thanks,
+Conor.
 
-   # HEAD: b4ae43b053537ec28f430c0ddb9b916ab296dbe5 objtool: Add bch2_trans_unlocked_or_in_restart_error() to bcachefs noreturns
+>=20
+>  .../bindings/media/i2c/onnn,mt9m114.yaml      |  10 ++
+>  drivers/media/i2c/mt9m114.c                   | 161 +++++++++++++-----
+>  2 files changed, 129 insertions(+), 42 deletions(-)
+>=20
+>=20
+> base-commit: ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
+> --=20
+> 2.34.1
+>=20
 
-Fix an objtool false positive, and objtool related
-build warnings that happens on PIE-enabled architectures
-such as LoongArch.
+--wjlbXatp+vm/Zg2k
+Content-Type: application/pgp-signature; name="signature.asc"
 
- Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-	Ingo
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8IJ5wAKCRB4tDGHoIJi
+0pAJAQCDOLZhBDvRloyCfH0G/Qs7d6KZ8DEhurRP5lf0T04+lAEA4PFC3e5Fxp7C
+09GHPWpq/LQRGA0K42u0rvsJ6aoylQo=
+=nwS+
+-----END PGP SIGNATURE-----
 
------------------->
-Ard Biesheuvel (2):
-      vmlinux.lds: Ensure that const vars with relocations are mapped R/O
-      objtool: Fix C jump table annotations for Clang
-
-Youling Tang (1):
-      objtool: Add bch2_trans_unlocked_or_in_restart_error() to bcachefs noreturns
-
-
- include/asm-generic/vmlinux.lds.h       | 2 +-
- include/linux/compiler.h                | 2 +-
- tools/objtool/check.c                   | 7 ++++---
- tools/objtool/include/objtool/special.h | 2 +-
- tools/objtool/noreturns.h               | 2 +-
- 5 files changed, 8 insertions(+), 7 deletions(-)
+--wjlbXatp+vm/Zg2k--
 
