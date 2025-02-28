@@ -1,162 +1,125 @@
-Return-Path: <linux-kernel+bounces-538052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0DCA4940D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:53:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C345A49421
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:56:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF9C07A5018
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:52:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4AFE7A3023
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 08:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B5624FC08;
-	Fri, 28 Feb 2025 08:53:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA0E2561B4;
+	Fri, 28 Feb 2025 08:56:35 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858F25484A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 08:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3432561A8;
+	Fri, 28 Feb 2025 08:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732791; cv=none; b=MxrSan2Cu6/1Yo77XFWmRG2dCTQsBH8WRwRvLK0B8rITOLwi0pQ3DZUw8+A4cRLhDa7fymUZ2rlY1UpSi5mNjvJngwF7SD6xKk/x8MUCr8h+AhfjWNgtQTcbDUxCbZmxsdFtWubr5BAUc1lAvUPbIVVyMiXfjokk6Cq0G4LjrzM=
+	t=1740732994; cv=none; b=gb9b1+3hDg0nE12Ih5MZMwuZbQ8Dze9ukj+5aUmrexh40Rc/Z7qqWy3xmiSVXhDQZR5WsBMthnF4J1SzWILytdlEw0IlfLVHSy8RvipziQNyWne57V3jOP8fsikVdrBZDQk7IS2xefN5zlfXGnTAum9iJtb2cRajVy1egi3X+d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732791; c=relaxed/simple;
-	bh=qNe0LEGqpQQi8GIgH/wydL5K/ZSIvkZpuYesUP7jE8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oaL8KcceqrNLUIyQaRkMeNz4aSEBXZ1Q9+OAh+RXgNpstL4XLj0zoPxdXMch3K3O2AOZI076R1QVjuh46mgpa3O1IdRi9tt+AHm9kZWxpxw4ALSlCzSzzQWOYoM2ezNptqT6mWO1N3+nZz9aS/PSl5gBWcVGNqV8EGMGGSeAI2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tnw6m-0005fo-VB; Fri, 28 Feb 2025 09:52:36 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tnw6j-003GS3-27;
-	Fri, 28 Feb 2025 09:52:33 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 28E693CDF52;
-	Fri, 28 Feb 2025 08:52:33 +0000 (UTC)
-Date: Fri, 28 Feb 2025 09:52:31 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20250228-married-bullfrog-of-reading-89042b-mkl@pengutronix.de>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-2-a0282524688@gmail.com>
+	s=arc-20240116; t=1740732994; c=relaxed/simple;
+	bh=hSjEqASt/a6itvpgkX6eFp32ZkKUAg9F2uRWSCt8/Dg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r0rwP4VKVapdlSlPKu8QOvdx2LgwpWBzUFpX/m4CBdmZJw0fEcWQbFERTKHrGTxaU7UFZP96jCCPF7eTePdsXhpYL47GjUdp462X3XqjV+LCbL0FPEttpyl1aVgmd1KrVY/HUJjjfU12BXV7FtE/oipfqn8g94lSNbNiWPWtGlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z42641pjSzvWrq;
+	Fri, 28 Feb 2025 16:52:44 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
+	by mail.maildlp.com (Postfix) with ESMTPS id 826E7140257;
+	Fri, 28 Feb 2025 16:56:29 +0800 (CST)
+Received: from kwepemn200003.china.huawei.com (7.202.194.126) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 28 Feb 2025 16:56:29 +0800
+Received: from localhost.localdomain (10.175.101.6) by
+ kwepemn200003.china.huawei.com (7.202.194.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 28 Feb 2025 16:56:27 +0800
+From: zhangmingyi <zhangmingyi5@huawei.com>
+To: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <song@kernel.org>, <yhs@fb.com>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@google.com>,
+	<haoluo@google.com>, <jolsa@kernel.org>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <yanan@huawei.com>,
+	<wuchangye@huawei.com>, <xiesongyang@huawei.com>, <liuxin350@huawei.com>,
+	<liwei883@huawei.com>, <tianmuyang@huawei.com>, <zhangmingyi5@huawei.com>
+Subject: [PATCH bpf-next v4 0/2] Introduced to support the ULP to get or set sockets
+Date: Fri, 28 Feb 2025 16:53:38 +0800
+Message-ID: <20250228085340.3219391-1-zhangmingyi5@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="thau7tfhkoq4fek3"
-Content-Disposition: inline
-In-Reply-To: <20250225081644.3524915-2-a0282524688@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemn200003.china.huawei.com (7.202.194.126)
 
+From: Mingyi Zhang <zhangmingyi5@huawei.com>
 
---thau7tfhkoq4fek3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
-MIME-Version: 1.0
+We want call bpf_setsockopt to replace the kernel module in the TCP_ULP
+case. The purpose is to customize the behavior in connect and sendmsg
+after the user-defined ko file is loaded. We have an open source
+community project kmesh (kmesh.net). Based on this, we refer to some
+processes of tcp fastopen to implement delayed connet and perform HTTP
+DNAT when sendmsg.In this case, we need to parse HTTP packets in the
+bpf program and set TCP_ULP for the specified socket.
 
-On 25.02.2025 16:16:38, Ming Yu wrote:
+Note that tcp_getsockopt and tcp_setsockopt support TCP_ULP, while
+bpf_getsockopt and bpf_setsockopt do not support TCP_ULP.
+I'm not sure why there is such a difference, but I noticed that
+tcp_setsockopt is called in bpf_setsockopt.I think we can add the
+handling of this case.
 
-[...]
+Change list:
+- v3 -> v4:
+  - fixed selftest compilation issues in kernel ci
 
-> +static int nct6694_usb_probe(struct usb_interface *iface,
-> +			     const struct usb_device_id *id)
-> +{
-> +	struct usb_device *udev =3D interface_to_usbdev(iface);
-> +	struct usb_endpoint_descriptor *int_endpoint;
-> +	struct usb_host_interface *interface;
-> +	struct device *dev =3D &iface->dev;
-> +	struct nct6694 *nct6694;
-> +	int pipe, maxp;
-> +	int ret;
-> +
-> +	nct6694 =3D devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
-> +	if (!nct6694)
-> +		return -ENOMEM;
-> +
-> +	pipe =3D usb_rcvintpipe(udev, NCT6694_INT_IN_EP);
-> +	maxp =3D usb_maxpacket(udev, pipe);
-> +
-> +	nct6694->usb_msg =3D devm_kzalloc(dev, sizeof(union nct6694_usb_msg), G=
-FP_KERNEL);
-> +	if (!nct6694->usb_msg)
-> +		return -ENOMEM;
-> +
-> +	nct6694->int_buffer =3D devm_kzalloc(dev, maxp, GFP_KERNEL);
-> +	if (!nct6694->int_buffer)
-> +		return -ENOMEM;
-> +
-> +	nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
-> +	if (!nct6694->int_in_urb)
-> +		return -ENOMEM;
-> +
-> +	nct6694->domain =3D irq_domain_add_simple(NULL, NCT6694_NR_IRQS, 0,
-> +						&nct6694_irq_domain_ops,
-> +						nct6694);
-> +	if (!nct6694->domain) {
-> +		ret =3D -ENODEV;
-> +		goto err_urb;
-> +	}
-> +
-> +	nct6694->dev =3D dev;
-> +	nct6694->udev =3D udev;
-> +	nct6694->timeout =3D NCT6694_URB_TIMEOUT;	/* Wait until URB completes */
+- v2 -> v3:
+  - fixed some compilation issues and added TCP_ULP macro
+  - Move __tcp_set_ulp outside rcu_read_unlock
 
-Why do you need this variable? You can directly use NCT6694_URB_TIMEOUT
-in the usb_bulk_msg() and friends calls.
+- v1 -> v2:
+  - modified the do_tcp_setsockopt(TCP_ULP) process by referring to
+  section do_tcp_setsockopt(TCP_CONGESTION), avoid sleep
+  - The selftest case is modified. An independent file is selected
+  for the test to avoid affecting the original file in setget_sockopt.c
+  - fixed some formatting errors, such as Signed and Subject
 
-regards,
-Marc
+Revisions:
+- v1
+  https://lore.kernel.org/bpf/20250127090724.3168791-1-zhangmingyi5@huawei.com/
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+- v2
+  https://lore.kernel.org/bpf/20250210134550.3189616-1-zhangmingyi5@huawei.com/
 
---thau7tfhkoq4fek3
-Content-Type: application/pgp-signature; name="signature.asc"
+- v3
+  https://lore.kernel.org/bpf/20250228070628.3219087-1-zhangmingyi5@huawei.com/
 
------BEGIN PGP SIGNATURE-----
+Mingyi Zhang (2):
+  Introduced to support the ULP to get or set sockets
+  selftest for TCP_ULP in bpf_setsockopt
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfBeUwACgkQDHRl3/mQ
-kZwj8Qf/ZqqBAFXxAYb+Ol2EYuIUSztYKNYnXALK+Hmv/b3tCAl+WuYuPRuK3nal
-tYrpJPUVfYcm7WGux3J3oGKiRAZDaOMCPHitSwdEscltvot8zwcA0hHcKqL7Itij
-Qu5x/rzaoPfQAc7vMQ1EFTQZRJEtrQUP2xe4c4tH+bSDbG0rWNy7I824ATNnl8mi
-UlFsGcRv6QZB0DtF7LX4qme7Ufm2+Io91ImVCkN19DH2Q3yW6rjTyQwEs9ZNBsgj
-X9rbbaIqxYYtkYD+4oJ0wC6OqIBhyuzTJvOWp8WOUb3rjgCuELkVrST4Jz86u/oy
-/+qVxFkZP/3CWH8ORdrd3TAfXxZSUQ==
-=5Ywe
------END PGP SIGNATURE-----
+ include/net/tcp.h                             |  2 +-
+ net/core/filter.c                             |  1 +
+ net/ipv4/tcp.c                                |  2 +-
+ net/ipv4/tcp_ulp.c                            | 28 ++++++++--------
+ net/mptcp/subflow.c                           |  2 +-
+ .../selftests/bpf/prog_tests/setget_sockopt.c | 32 +++++++++++++++++++
+ .../selftests/bpf/progs/bpf_tracing_net.h     |  1 +
+ .../selftests/bpf/progs/setget_sockopt.c      | 24 ++++++++++++++
+ 8 files changed, 76 insertions(+), 16 deletions(-)
 
---thau7tfhkoq4fek3--
+-- 
+2.43.0
+
 
