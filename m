@@ -1,186 +1,146 @@
-Return-Path: <linux-kernel+bounces-538633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E27A49B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:02:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B25A49C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 15:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E3118978B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580A73B7EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 14:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D869325F984;
-	Fri, 28 Feb 2025 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA76D26FDBE;
+	Fri, 28 Feb 2025 14:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lc/99VkK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/MdT/ZA7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lc/99VkK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/MdT/ZA7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ttd+pUnc"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE48E25E444
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6819125DAF0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740751335; cv=none; b=IaGe/Mqhc1yui1q1A2GyhCDiZ9tmurKgSPhaONGXqrZ50kQqglMSbtkQg1cWnc6/8xrx62vr6IzWVKqUMbUXvVvMiDiNUvxuW7bACD0FPZXhL6F0h3aaAnPP5DhPqp1a54wrQ4vOj7VU7GIcTwJwAcPmF2Z7Rq+PEzJ4JYBLbSI=
+	t=1740753940; cv=none; b=nZRTipVItGzwYK5ahtLEAWVCH5pFUa3EpGnVINkXW/jcoW4XSYRbwPrDpfGSQLzUYeHwfjwHt3WqWumM2R+Moq6ncKmcQ+qeL7DeVgV/hnAki17DjEP2ndX0FPpZJgp586EVLoQsJL0DqX3WWKffRGUGCObBMzXfn++PKBdV9N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740751335; c=relaxed/simple;
-	bh=60f2tf8+Q61ODb9EAamNDtZStEDwNFI/8mtjmT4G+vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5a8k2DDDMdh1RxstRR7JC8cOU+dBjYjgtxR9k+S12jCEkbMv3dcDJgWEwC31JJGOD7+3N9b57lNe0Y9Aij4qpl9cGjCd4eF3/DpfaRkDTUhom8GLapgbojQEA3WE+SjJFpUchgKxUSHJ4E9KkDA5o/X7L1cNE6LypohCYM+VHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lc/99VkK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/MdT/ZA7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lc/99VkK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/MdT/ZA7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8AC6A2115A;
-	Fri, 28 Feb 2025 14:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740751331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieFVkh81wzHwy4yD1oAp6FeseWp9jqBiLhRYlkqkKlg=;
-	b=Lc/99VkK7P5nqTnylAC2eYLlISSWY+Bh95K7CjxIz2ur1OIjEX5hFq5Yp0/5lidze8R+VY
-	MZMWe2NwhgZSlJx/UnolyHeufrGCPsbEOgY7k2d6uZcEgiiT52gkBzwJywb5EYaJG++Uq7
-	5695VzdkruGTAhuHkgxslBhRqHaBKuk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740751331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieFVkh81wzHwy4yD1oAp6FeseWp9jqBiLhRYlkqkKlg=;
-	b=/MdT/ZA704IGk/ag5YsKVhB5+sqBcnbxaIMbS77r6vQhO4STxQs0NoE3CYAdWEfDBMZL+L
-	N0WECa9W9tPD05DQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Lc/99VkK";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/MdT/ZA7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740751331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieFVkh81wzHwy4yD1oAp6FeseWp9jqBiLhRYlkqkKlg=;
-	b=Lc/99VkK7P5nqTnylAC2eYLlISSWY+Bh95K7CjxIz2ur1OIjEX5hFq5Yp0/5lidze8R+VY
-	MZMWe2NwhgZSlJx/UnolyHeufrGCPsbEOgY7k2d6uZcEgiiT52gkBzwJywb5EYaJG++Uq7
-	5695VzdkruGTAhuHkgxslBhRqHaBKuk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740751331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieFVkh81wzHwy4yD1oAp6FeseWp9jqBiLhRYlkqkKlg=;
-	b=/MdT/ZA704IGk/ag5YsKVhB5+sqBcnbxaIMbS77r6vQhO4STxQs0NoE3CYAdWEfDBMZL+L
-	N0WECa9W9tPD05DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64235137AC;
-	Fri, 28 Feb 2025 14:02:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3cA0GOPBwWe6LAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 28 Feb 2025 14:02:11 +0000
-Date: Fri, 28 Feb 2025 15:02:10 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Nitin Gupta <nitingupta910@gmail.com>,
-	Richard Purdie <rpurdie@openedhand.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
-	Dave Rodgman <dave.rodgman@arm.com>
-Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
-Message-ID: <20250228140210.GI5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
- <20250226130037.GS5777@twin.jikos.cz>
- <qahmi4ozfatd4q5h4qiykinucdry6jcbee6eg4rzelyge2zmlg@norwskwechx6>
- <CAMj1kXFKBynkfBFmQ1tbgZ0fTOP0pg5453NFGxVGvmePrKssug@mail.gmail.com>
- <bnvklfvsoh34663ttsboec6aidxmu2cib32okb4vyi2iitdqme@lbvte54od7gi>
+	s=arc-20240116; t=1740753940; c=relaxed/simple;
+	bh=au8sBRE5mBCqJi5w2IwoBc9mkXkseL6XNqfDVOtZ8Bs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=pvoXEGMZ3xC4r8GmmbJI39Ekd0iJZbV+htrNrP75pRzJoUCJ8P8B1y3h6s3jGgye1x4KTGDLn49GY5Tq7kZ3aC3A0I+xnPu86P1ytgCRvLGKr8MvOFcfhYv78K1qbJWlJi4uwb54QjsnXAxSSKrDERRF4xpCO6AZMg3OE9J5ZZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ttd+pUnc; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250228144535epoutp03eb47743edeab73e7c4b1535a256ceb14~oZnsiX3uy0890308903epoutp03A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 14:45:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250228144535epoutp03eb47743edeab73e7c4b1535a256ceb14~oZnsiX3uy0890308903epoutp03A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740753935;
+	bh=rHvKJLvygA9GD0SeTmwciLbo162z0lSbgYmgI1PHUcE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ttd+pUnciB9kSxRVB67Jw8fPbw5Ppj2UG6Vwb/uhyl7OqEuLsCZpKqrI4EBEupfbd
+	 sK5zE/o2Sr5gqmAaZSn3mZWI++TFHIISKLNITwYXZjawWlD/0cHGbJa9LN43ERSlsk
+	 Pm1pa4ypJuZ+NKaDQyf/gJEuRPGQcizjzzyoOQxs=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20250228144533epcas5p1366a164956bc530c046b29a778e0fc84~oZnrj4LXE0649806498epcas5p1M;
+	Fri, 28 Feb 2025 14:45:33 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z49x80ytDz4x9Pp; Fri, 28 Feb
+	2025 14:45:32 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.6A.20052.C0CC1C76; Fri, 28 Feb 2025 23:45:32 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250228144531epcas5p217fab73da682601a89e208fff5a3775e~oZnpQO48S1123011230epcas5p2G;
+	Fri, 28 Feb 2025 14:45:31 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250228144531epsmtrp2c9ba04d92e99f0522ffdc7b96ac4ccb3~oZnpPn-q82769427694epsmtrp2W;
+	Fri, 28 Feb 2025 14:45:31 +0000 (GMT)
+X-AuditID: b6c32a49-3d20270000004e54-52-67c1cc0ccff4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1D.C6.23488.B0CC1C76; Fri, 28 Feb 2025 23:45:31 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.6]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250228144530epsmtip15c4a6355b383e399ecdc8d3e5da32266~oZnoLHFPS1886718867epsmtip1e;
+	Fri, 28 Feb 2025 14:45:30 +0000 (GMT)
+From: Anindya Sundar Gayen <anindya.sg@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com,
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: aswani.reddy@samsung.com
+Subject: [PATCH] drm/exynos: fixed a spelling error
+Date: Fri, 28 Feb 2025 19:32:57 +0530
+Message-Id: <20250228140257.75045-1-anindya.sg@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7bCmui7PmYPpBudPsFo8mLeNzeLQ5q3s
+	Fle+vmezOH9+A7vFpsfXWC0u75rDZjHj/D4mB3aPTas62Tzudx9n8ti8pN6jb8sqRo/Pm+QC
+	WKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOArlBS
+	KEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUm
+	ZGf07L7AVrCHo2Ltnh/MDYwt7F2MnBwSAiYSE7ZPYOti5OIQEtjNKPGvbQ8ThPOJUeLO+svM
+	EM43RomNV3vgWg7e+8kEYgsJ7GWU+PZEB6KomUniw8PTLF2MHBxsAsYSbQ8qQWpEBHYwSvTf
+	zgSxmQVkJFZc2soIYgsDlSxp+g42k0VAVWLxt+lgM3kFrCW+z+pmg9glL7F6wwGwIyQEVrFL
+	rFiyAeoIF4mXHd2MELawxKvjW6DiUhKf3+1lA7lBQiBfYsnZbIhwjsSB5Q+YIGx7iQNX5oCd
+	ySygKbF+lz7EaXwSvb+fMEF08kp0tAlBmCoSEztYYGbP/rGDGcL2kFi9s50FEgixEqdOzmWZ
+	wCgzC2HmAkbGVYySqQXFuempxaYFhnmp5fCISc7P3cQITkxanjsY7z74oHeIkYmD8RCjBAez
+	kgjvrNgD6UK8KYmVValF+fFFpTmpxYcYTYGBNJFZSjQ5H5ga80riDU0sDUzMzMxMLI3NDJXE
+	eZt3tqQLCaQnlqRmp6YWpBbB9DFxcEo1MK07yKm1pOt5zcTCVcmlHxzSfu3RPB9cHPCWYW9s
+	yLP0VS9CLpzLyHs5/bmzdkTAHakbYneOTrm5vvqDxgbl391sVjkna2OyJngs9uAomapUHW4w
+	rbiK9dPpy76xtaoPjihnWDUzXKnkyDS6mxZ1fbGH3msnhdUnZSzeHZuSM8f66GP3T/Jp3Ct+
+	XI2eELTj4c3O+P+WO1JnHriyp33KhX01DME2d10+7Xgz23VimoBFQdbBTz12Mxu0FWvLhZ4/
+	tSiuP37p9QN1M1/nBVVJp+JKWreICv7S3x25oVj7qf3EvlrdysQ/h6S3h+1vNv39S+vBF29d
+	vR7nbQJ3pU/deTbXerlQ0lFRY98je8/paSqxFGckGmoxFxUnAgB6Y1/B1QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHJMWRmVeSWpSXmKPExsWy7bCSnC73mYPpBv//SFg8mLeNzeLQ5q3s
+	Fle+vmezOH9+A7vFpsfXWC0u75rDZjHj/D4mB3aPTas62Tzudx9n8ti8pN6jb8sqRo/Pm+QC
+	WKO4bFJSczLLUov07RK4Mnp2X2Ar2MNRsXbPD+YGxhb2LkZODgkBE4mD934ydTFycQgJ7GaU
+	uPxqGhtEQkri9v9ORghbWGLlv+fsEEWNTBL7T24D6uDgYBMwlmh7UAkSFxHYxyix+8BUsKnM
+	AjISKy5tBWsWBqpZ0vQdLM4ioCqx+Nt0JhCbV8Ba4vusbqhl8hKrNxxgnsDIs4CRYRWjZGpB
+	cW56brJhgWFearlecWJucWleul5yfu4mRnAQaWnsYHz3rUn/ECMTB+MhRgkOZiUR3lmxB9KF
+	eFMSK6tSi/Lji0pzUosPMUpzsCiJ8640jEgXEkhPLEnNTk0tSC2CyTJxcEo1MPVe4/D7vfvV
+	ty/+ZRw2kSFlqRmM8495uSq1zvbo8X3XWv1hkezNqwtWrjrOLqvOpOm4dfIBvzXqrC1y9Rv3
+	CYS92rhcY0Wf2IxJySme3222tlcmnOkt/tebK7pF9amR4elKO2HxSZn/9RveXnfPi+GNV8rj
+	6i5YyvuecbJjCfvynAXFt20XP7n4S+tVZJnPw+uJL1uzFENCtsssmenx9OCt+bsEf2c77nqQ
+	VtC1tOe+ySXpxTGB//0ZHjbEtHtZO9y/XPr6osXPOxJiJjlN51tTYnfaSq73Pfk44f2KNw4W
+	kZ7fUiIyU68rLyhYGTk31nHT5EQT7kWxy34krtWK1H6zKP6c8tV5ItZ+v5PUlFiKMxINtZiL
+	ihMBp1UOxJECAAA=
+X-CMS-MailID: 20250228144531epcas5p217fab73da682601a89e208fff5a3775e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250228144531epcas5p217fab73da682601a89e208fff5a3775e
+References: <CGME20250228144531epcas5p217fab73da682601a89e208fff5a3775e@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bnvklfvsoh34663ttsboec6aidxmu2cib32okb4vyi2iitdqme@lbvte54od7gi>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 8AC6A2115A
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gondor.apana.org.au,vger.kernel.org,gmail.com,openedhand.com,linux-foundation.org,oberhumer.com,arm.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Fri, Feb 28, 2025 at 10:55:35PM +0900, Sergey Senozhatsky wrote:
-> On (25/02/28 13:43), Ard Biesheuvel wrote:
-> > On Fri, 28 Feb 2025 at 06:24, Sergey Senozhatsky
-> > <senozhatsky@chromium.org> wrote:
-> > >
-> > > On (25/02/26 14:00), David Sterba wrote:
-> > > > What strikes me as alarming that you insert about 20 branches into a
-> > > > realtime compression algorithm, where everything is basically a hot
-> > > > path.  Branches that almost never happen, and never if the output buffer
-> > > > is big enough.
-> > > >
-> > > > Please drop the patch.
-> > >
-> > > David, just for educational purposes, there's only safe variant of lzo
-> > > decompression, which seems to be doing a lot of NEED_OP (HAVE_OP) adding
-> > > branches and so on, basically what Herbert is adding to the compression
-> > > path.  So my question is - why NEED_OP (if (!HAVE_OP(x)) goto output_overrun)
-> > > is a no go for compression, but appears to be fine for decompression?
-> > >
-> > 
-> > Because compression has a bounded worst case (compressing data with
-> > LZO can actually increase the size but only by a limited amount),
-> > whereas decompressing a small input could produce gigabytes of output.
-> 
-> One can argue that sometimes we know the upper bound.  E.g. zswap
-> and zram always compress physical pages, so decompression cannot
-> result in a bigger (than the original physical page) data.
+Corrected a spelling mistake in the exynos_drm_fimd driver to improve code
+readability. No functional changes were made.
 
-So for ZRAM it would make sense to have "unsafe" decompression as the
-data never leave the kernel space and cannot be tampered with from the
-outside, unlike what filesystem deals with. This can gain some speed up.
+Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 1ad87584b1c2..c394cc702d7d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -731,7 +731,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 	/*
+ 	 * Setting dma-burst to 16Word causes permanent tearing for very small
+ 	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
+-	 * plane size is not recommended as plane size varies alot towards the
++	 * plane size is not recommended as plane size varies a lot towards the
+ 	 * end of the screen and rapid movement causes unstable DMA, but it is
+ 	 * still better to change dma-burst than displaying garbage.
+ 	 */
+-- 
+2.17.1
+
 
