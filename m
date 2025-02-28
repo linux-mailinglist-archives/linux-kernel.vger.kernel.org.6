@@ -1,277 +1,249 @@
-Return-Path: <linux-kernel+bounces-538147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-538150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32532A49505
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:31:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCBDA4950A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 10:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B49418959C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A2B189598B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 09:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE4E257432;
-	Fri, 28 Feb 2025 09:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oVLXUnOn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ItyjmeQk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2989725BAB5;
+	Fri, 28 Feb 2025 09:29:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C271125335E;
-	Fri, 28 Feb 2025 09:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB74725B682
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 09:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740734933; cv=none; b=kF8livH65YZIo3cqvaXsScyAXp8hrWpHpT8F26lr8mQX6LYD1gHnMemcJzTZ8S6agNwEuWZ1JqLuzzoROMcW2sEW9khiEZVjRKSyo0FG6gTsHDOMtD8kbqtHbFd2TKovSRH53yzYO97paqU8hnGTYrgIPHFN953W1CobTcp/lwQ=
+	t=1740734981; cv=none; b=eTjOzgnX4b+NbRxV1kjIs7zWdlUZFFPSnotecSTUC1aDbEV5lZbKtZ++pib2nGW5gnfNuxcq4s5R+SHM3fHaDV2cXuGET44ENAzvCCCDLFiTolQ+bxVAOnGde7TsDOovvdGf1x3hlPUPC8VOc5AypejYmUwJzOFZoWHCEBBXzbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740734933; c=relaxed/simple;
-	bh=UWdEkwmQSd5RN3XbDvZInCegn9+g4c/I3N5soOTqBUI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jiDbaGVdAJWfQyLESYkzdky3qYieH8tazgYAPbFy10M1gnVYFnfsjpUJYRMvxYpl7bIedhHVLtRO/sSE0BhdO5hBswS9+GQPnh8RcZLh+7irsKrs+aivMXCJPNT8JEJaDLwV4Z57g54nqwsx27QcHkz13f4kY82k0ffFys7LD1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oVLXUnOn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ItyjmeQk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Feb 2025 09:28:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740734923;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e5KXKFDv51Vv6rCZ4mecvKZYZ8RbaGXYpLD2asuihIg=;
-	b=oVLXUnOnq90/QxxB2giTnFOjZaYkXtLErLYR7D6HBEkKR1zghYTMkVnkGHTD3Ec/ria/uA
-	YE1ZU+Wv53Rt35+AeHbFQ3rh8Gmc6vNxu/h5GKnVMBsAKsIRhnZYMVi64wqBPCa9SZo38r
-	2sBTv8657Y4QHtvwutBJVCAzn6ret3YWdrwI06g9Pfk5lff4AQJ6uh+w0DXXZYKGMHw5UL
-	plyHw3Dp5LuWnxClPsmZyDPkrLyc1wrB3XwYVedrYEI2Gw4eO4NcE+bFrCiH4d7lpIKbIO
-	reOMZIsNAI21/ZIJZANQGnILi+txfdc7kTTh6p8RHgYVoTAZVXPNmwDjrv3TKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740734923;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e5KXKFDv51Vv6rCZ4mecvKZYZ8RbaGXYpLD2asuihIg=;
-	b=ItyjmeQkiC/DouVEZsF/OiYkfhCv+Pz7xqcB2/jEXdttC4JaRzD/DxgVhNyJjy/DLIEwrf
-	P9iwSAXznqLh7eCA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] x86/locking: Remove semicolon from "lock" prefix
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250228085149.2478245-1-ubizjak@gmail.com>
-References: <20250228085149.2478245-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1740734981; c=relaxed/simple;
+	bh=UXiUhN4N7T8EpYQf4KVnX9rZ83+Lp7G3ulYyEtED3Bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=thgUBW7fOoElOgMFYqEbuAyy7V7v+qruxDBEtDdTD4xGA7JUtWR3vYa+VS3BfOGb7bcnKvtf+1M3u45DefPz2hQFF2SkqS0uHf+QqatfxqvXs14NpHnCQA5n2Rgn/QhaHbOdFHgFbtKeu1xOHEaxTlIRyZOOiDyiNiAtYH/QC5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7efd4082f5b611efa216b1d71e6e1362-20250228
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:a1ec6bbf-c692-4c01-aad9-67ba5037b033,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f5053b87fe18f5b0ed1d8aaa37a172d6,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7efd4082f5b611efa216b1d71e6e1362-20250228
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1953297668; Fri, 28 Feb 2025 17:29:23 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 591BE16002081;
+	Fri, 28 Feb 2025 17:29:23 +0800 (CST)
+X-ns-mid: postfix-67C181F3-2709561540
+Received: from [10.42.13.56] (unknown [10.42.13.56])
+	by node4.com.cn (NSMail) with ESMTPA id 720AD16002081;
+	Fri, 28 Feb 2025 09:29:22 +0000 (UTC)
+Message-ID: <9a2d29f3-3e8b-4851-b481-cc72cd804ea6@kylinos.cn>
+Date: Fri, 28 Feb 2025 17:28:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174073491910.10177.9422897371260856615.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: Split devres APIs to device/devres.h
+To: xiaopeitux@foxmail.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
+References: <tencent_66CF9C91EB4A4417F70E9511649A57DEC906@qq.com>
+From: Pei Xiao <xiaopei01@kylinos.cn>
+In-Reply-To: <tencent_66CF9C91EB4A4417F70E9511649A57DEC906@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     023f3290b02552ea006c1a2013e373750d2cbff6
-Gitweb:        https://git.kernel.org/tip/023f3290b02552ea006c1a2013e373750d2cbff6
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Fri, 28 Feb 2025 09:51:15 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 28 Feb 2025 10:18:26 +01:00
-
-x86/locking: Remove semicolon from "lock" prefix
-
-Minimum version of binutils required to compile the kernel is 2.25.
-This version correctly handles the "lock" prefix, so it is possible
-to remove the semicolon, which was used to support ancient versions
-of GNU as.
-
-Due to the semicolon, the compiler considers "lock; insn" as two
-separate instructions. Removing the semicolon makes asm length
-calculations more accurate, consequently making scheduling and
-inlining decisions of the compiler more accurate.
-
-Removing the semicolon also enables assembler checks involving lock
-prefix. Trying to assemble e.g. "lock andl %eax, %ebx" results in:
-
-  Error: expecting lockable instruction after `lock'
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250228085149.2478245-1-ubizjak@gmail.com
----
- arch/x86/include/asm/alternative.h |  2 +-
- arch/x86/include/asm/barrier.h     |  8 ++++----
- arch/x86/include/asm/cmpxchg.h     |  4 ++--
- arch/x86/include/asm/cmpxchg_32.h  |  4 ++--
- arch/x86/include/asm/edac.h        |  2 +-
- arch/x86/include/asm/sync_bitops.h | 12 ++++++------
- 6 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index e3903b7..3b3d3aa 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -48,7 +48,7 @@
- 		".popsection\n"				\
- 		"671:"
- 
--#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
-+#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock "
- 
- #else /* ! CONFIG_SMP */
- #define LOCK_PREFIX_HERE ""
-diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-index 7b44b3c..db70832 100644
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -12,11 +12,11 @@
-  */
- 
- #ifdef CONFIG_X86_32
--#define mb() asm volatile(ALTERNATIVE("lock; addl $0,-4(%%esp)", "mfence", \
-+#define mb() asm volatile(ALTERNATIVE("lock addl $0,-4(%%esp)", "mfence", \
- 				      X86_FEATURE_XMM2) ::: "memory", "cc")
--#define rmb() asm volatile(ALTERNATIVE("lock; addl $0,-4(%%esp)", "lfence", \
-+#define rmb() asm volatile(ALTERNATIVE("lock addl $0,-4(%%esp)", "lfence", \
- 				       X86_FEATURE_XMM2) ::: "memory", "cc")
--#define wmb() asm volatile(ALTERNATIVE("lock; addl $0,-4(%%esp)", "sfence", \
-+#define wmb() asm volatile(ALTERNATIVE("lock addl $0,-4(%%esp)", "sfence", \
- 				       X86_FEATURE_XMM2) ::: "memory", "cc")
- #else
- #define __mb()	asm volatile("mfence":::"memory")
-@@ -50,7 +50,7 @@
- #define __dma_rmb()	barrier()
- #define __dma_wmb()	barrier()
- 
--#define __smp_mb()	asm volatile("lock; addl $0,-4(%%" _ASM_SP ")" ::: "memory", "cc")
-+#define __smp_mb()	asm volatile("lock addl $0,-4(%%" _ASM_SP ")" ::: "memory", "cc")
- 
- #define __smp_rmb()	dma_rmb()
- #define __smp_wmb()	barrier()
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index 5612648..fd8afc1 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -134,7 +134,7 @@ extern void __add_wrong_size(void)
- 	__raw_cmpxchg((ptr), (old), (new), (size), LOCK_PREFIX)
- 
- #define __sync_cmpxchg(ptr, old, new, size)				\
--	__raw_cmpxchg((ptr), (old), (new), (size), "lock; ")
-+	__raw_cmpxchg((ptr), (old), (new), (size), "lock ")
- 
- #define __cmpxchg_local(ptr, old, new, size)				\
- 	__raw_cmpxchg((ptr), (old), (new), (size), "")
-@@ -222,7 +222,7 @@ extern void __add_wrong_size(void)
- 	__raw_try_cmpxchg((ptr), (pold), (new), (size), LOCK_PREFIX)
- 
- #define __sync_try_cmpxchg(ptr, pold, new, size)			\
--	__raw_try_cmpxchg((ptr), (pold), (new), (size), "lock; ")
-+	__raw_try_cmpxchg((ptr), (pold), (new), (size), "lock ")
- 
- #define __try_cmpxchg_local(ptr, pold, new, size)			\
- 	__raw_try_cmpxchg((ptr), (pold), (new), (size), "")
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 95b5f99..8806c64 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -105,7 +105,7 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp, 
- 
- static __always_inline u64 arch_cmpxchg64(volatile u64 *ptr, u64 old, u64 new)
- {
--	return __arch_cmpxchg64_emu(ptr, old, new, LOCK_PREFIX_HERE, "lock; ");
-+	return __arch_cmpxchg64_emu(ptr, old, new, LOCK_PREFIX_HERE, "lock ");
- }
- #define arch_cmpxchg64 arch_cmpxchg64
- 
-@@ -140,7 +140,7 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64 
- 
- static __always_inline bool arch_try_cmpxchg64(volatile u64 *ptr, u64 *oldp, u64 new)
- {
--	return __arch_try_cmpxchg64_emu(ptr, oldp, new, LOCK_PREFIX_HERE, "lock; ");
-+	return __arch_try_cmpxchg64_emu(ptr, oldp, new, LOCK_PREFIX_HERE, "lock ");
- }
- #define arch_try_cmpxchg64 arch_try_cmpxchg64
- 
-diff --git a/arch/x86/include/asm/edac.h b/arch/x86/include/asm/edac.h
-index 426fc53..dfbd1eb 100644
---- a/arch/x86/include/asm/edac.h
-+++ b/arch/x86/include/asm/edac.h
-@@ -13,7 +13,7 @@ static inline void edac_atomic_scrub(void *va, u32 size)
- 	 * are interrupt, DMA and SMP safe.
- 	 */
- 	for (i = 0; i < size / 4; i++, virt_addr++)
--		asm volatile("lock; addl $0, %0"::"m" (*virt_addr));
-+		asm volatile("lock addl $0, %0"::"m" (*virt_addr));
- }
- 
- #endif /* _ASM_X86_EDAC_H */
-diff --git a/arch/x86/include/asm/sync_bitops.h b/arch/x86/include/asm/sync_bitops.h
-index 6d8d6bc..cd21a04 100644
---- a/arch/x86/include/asm/sync_bitops.h
-+++ b/arch/x86/include/asm/sync_bitops.h
-@@ -31,7 +31,7 @@
-  */
- static inline void sync_set_bit(long nr, volatile unsigned long *addr)
- {
--	asm volatile("lock; " __ASM_SIZE(bts) " %1,%0"
-+	asm volatile("lock " __ASM_SIZE(bts) " %1,%0"
- 		     : "+m" (ADDR)
- 		     : "Ir" (nr)
- 		     : "memory");
-@@ -49,7 +49,7 @@ static inline void sync_set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void sync_clear_bit(long nr, volatile unsigned long *addr)
- {
--	asm volatile("lock; " __ASM_SIZE(btr) " %1,%0"
-+	asm volatile("lock " __ASM_SIZE(btr) " %1,%0"
- 		     : "+m" (ADDR)
- 		     : "Ir" (nr)
- 		     : "memory");
-@@ -66,7 +66,7 @@ static inline void sync_clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void sync_change_bit(long nr, volatile unsigned long *addr)
- {
--	asm volatile("lock; " __ASM_SIZE(btc) " %1,%0"
-+	asm volatile("lock " __ASM_SIZE(btc) " %1,%0"
- 		     : "+m" (ADDR)
- 		     : "Ir" (nr)
- 		     : "memory");
-@@ -82,7 +82,7 @@ static inline void sync_change_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool sync_test_and_set_bit(long nr, volatile unsigned long *addr)
- {
--	return GEN_BINARY_RMWcc("lock; " __ASM_SIZE(bts), *addr, c, "Ir", nr);
-+	return GEN_BINARY_RMWcc("lock " __ASM_SIZE(bts), *addr, c, "Ir", nr);
- }
- 
- /**
-@@ -95,7 +95,7 @@ static inline bool sync_test_and_set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline int sync_test_and_clear_bit(long nr, volatile unsigned long *addr)
- {
--	return GEN_BINARY_RMWcc("lock; " __ASM_SIZE(btr), *addr, c, "Ir", nr);
-+	return GEN_BINARY_RMWcc("lock " __ASM_SIZE(btr), *addr, c, "Ir", nr);
- }
- 
- /**
-@@ -108,7 +108,7 @@ static inline int sync_test_and_clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline int sync_test_and_change_bit(long nr, volatile unsigned long *addr)
- {
--	return GEN_BINARY_RMWcc("lock; " __ASM_SIZE(btc), *addr, c, "Ir", nr);
-+	return GEN_BINARY_RMWcc("lock " __ASM_SIZE(btc), *addr, c, "Ir", nr);
- }
- 
- #define sync_test_bit(nr, addr) test_bit(nr, addr)
+=E5=9C=A8 2025/2/28 17:18, xiaopeitux@foxmail.com =E5=86=99=E9=81=93:
+> From: Pei Xiao <xiaopei01@kylinos.cn>
+>
+> Since a21cad931276 ("driver core: Split devres APIs to
+> device/devres.h"),but some APIs like 'devm_alloc_percpu' didn't move to
+> devres.h. we should also move it.
+sorry, I forgot to modify the subject. This is an RFC.
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+>  include/linux/device.h        | 60 -----------------------------------
+>  include/linux/device/devres.h | 58 +++++++++++++++++++++++++++++++++
+>  2 files changed, 58 insertions(+), 60 deletions(-)
+>
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index ec330af24151..ab383a9bbc17 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -281,63 +281,6 @@ int __must_check device_create_bin_file(struct dev=
+ice *dev,
+>  void device_remove_bin_file(struct device *dev,
+>  			    const struct bin_attribute *attr);
+> =20
+> -/* allows to add/remove a custom action to devres stack */
+> -int devm_remove_action_nowarn(struct device *dev, void (*action)(void =
+*), void *data);
+> -
+> -/**
+> - * devm_remove_action() - removes previously added custom action
+> - * @dev: Device that owns the action
+> - * @action: Function implementing the action
+> - * @data: Pointer to data passed to @action implementation
+> - *
+> - * Removes instance of @action previously added by devm_add_action().
+> - * Both action and data should match one of the existing entries.
+> - */
+> -static inline
+> -void devm_remove_action(struct device *dev, void (*action)(void *), vo=
+id *data)
+> -{
+> -	WARN_ON(devm_remove_action_nowarn(dev, action, data));
+> -}
+> -
+> -void devm_release_action(struct device *dev, void (*action)(void *), v=
+oid *data);
+> -
+> -int __devm_add_action(struct device *dev, void (*action)(void *), void=
+ *data, const char *name);
+> -#define devm_add_action(dev, action, data) \
+> -	__devm_add_action(dev, action, data, #action)
+> -
+> -static inline int __devm_add_action_or_reset(struct device *dev, void =
+(*action)(void *),
+> -					     void *data, const char *name)
+> -{
+> -	int ret;
+> -
+> -	ret =3D __devm_add_action(dev, action, data, name);
+> -	if (ret)
+> -		action(data);
+> -
+> -	return ret;
+> -}
+> -#define devm_add_action_or_reset(dev, action, data) \
+> -	__devm_add_action_or_reset(dev, action, data, #action)
+> -
+> -/**
+> - * devm_alloc_percpu - Resource-managed alloc_percpu
+> - * @dev: Device to allocate per-cpu memory for
+> - * @type: Type to allocate per-cpu memory for
+> - *
+> - * Managed alloc_percpu. Per-cpu memory allocated with this function i=
+s
+> - * automatically freed on driver detach.
+> - *
+> - * RETURNS:
+> - * Pointer to allocated memory on success, NULL on failure.
+> - */
+> -#define devm_alloc_percpu(dev, type)      \
+> -	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
+> -						      __alignof__(type)))
+> -
+> -void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
+> -				   size_t align);
+> -void devm_free_percpu(struct device *dev, void __percpu *pdata);
+> -
+>  struct device_dma_parameters {
+>  	/*
+>  	 * a low level driver may set these to teach IOMMU code about
+> @@ -1163,9 +1106,6 @@ static inline void device_remove_group(struct dev=
+ice *dev,
+>  	device_remove_groups(dev, groups);
+>  }
+> =20
+> -int __must_check devm_device_add_group(struct device *dev,
+> -				       const struct attribute_group *grp);
+> -
+>  /*
+>   * get_device - atomically increment the reference count for the devic=
+e.
+>   *
+> diff --git a/include/linux/device/devres.h b/include/linux/device/devre=
+s.h
+> index 9b49f9915850..8f93f7388dc1 100644
+> --- a/include/linux/device/devres.h
+> +++ b/include/linux/device/devres.h
+> @@ -126,4 +126,62 @@ void __iomem *devm_of_iomap(struct device *dev, st=
+ruct device_node *node, int in
+> =20
+>  #endif
+> =20
+> +/* allows to add/remove a custom action to devres stack */
+> +int devm_remove_action_nowarn(struct device *dev, void (*action)(void =
+*), void *data);
+> +
+> +/**
+> + * devm_remove_action() - removes previously added custom action
+> + * @dev: Device that owns the action
+> + * @action: Function implementing the action
+> + * @data: Pointer to data passed to @action implementation
+> + *
+> + * Removes instance of @action previously added by devm_add_action().
+> + * Both action and data should match one of the existing entries.
+> + */
+> +static inline
+> +void devm_remove_action(struct device *dev, void (*action)(void *), vo=
+id *data)
+> +{
+> +	WARN_ON(devm_remove_action_nowarn(dev, action, data));
+> +}
+> +
+> +void devm_release_action(struct device *dev, void (*action)(void *), v=
+oid *data);
+> +
+> +int __devm_add_action(struct device *dev, void (*action)(void *), void=
+ *data, const char *name);
+> +#define devm_add_action(dev, action, data) \
+> +	__devm_add_action(dev, action, data, #action)
+> +
+> +static inline int __devm_add_action_or_reset(struct device *dev, void =
+(*action)(void *),
+> +					     void *data, const char *name)
+> +{
+> +	int ret;
+> +
+> +	ret =3D __devm_add_action(dev, action, data, name);
+> +	if (ret)
+> +		action(data);
+> +
+> +	return ret;
+> +}
+> +#define devm_add_action_or_reset(dev, action, data) \
+> +	__devm_add_action_or_reset(dev, action, data, #action)
+> +
+> +/**
+> + * devm_alloc_percpu - Resource-managed alloc_percpu
+> + * @dev: Device to allocate per-cpu memory for
+> + * @type: Type to allocate per-cpu memory for
+> + *
+> + * Managed alloc_percpu. Per-cpu memory allocated with this function i=
+s
+> + * automatically freed on driver detach.
+> + *
+> + * RETURNS:
+> + * Pointer to allocated memory on success, NULL on failure.
+> + */
+> +#define devm_alloc_percpu(dev, type)      \
+> +	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
+> +						      __alignof__(type)))
+> +
+> +void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
+> +				   size_t align);
+> +void devm_free_percpu(struct device *dev, void __percpu *pdata);
+> +int __must_check devm_device_add_group(struct device *dev,
+> +				       const struct attribute_group *grp);
+>  #endif /* _DEVICE_DEVRES_H_ */
 
