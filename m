@@ -1,89 +1,125 @@
-Return-Path: <linux-kernel+bounces-539090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE3AA4A0B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A20F0A4A0B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 18:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4A9176152
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B07162FA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 17:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EB526B2C8;
-	Fri, 28 Feb 2025 17:43:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C906B170A11
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292872702BF;
+	Fri, 28 Feb 2025 17:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="fk9sbzBJ"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102221F09BF;
+	Fri, 28 Feb 2025 17:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764627; cv=none; b=ldwNDS7IdIKf0Ikj/HOUmjpakjOVgcRCwi1ifF5hzkfCXs+gq0AjP19at831N6skDyeWvySQkLG1aWWibSKwGTfhIIJJ4qzDMJOs5eTANxsJIulybdxegVJcFedNvoF9Yy4eihyyGUOj/KVbFpNL2Qt528vykqlEIm9Xqx3Brjw=
+	t=1740764687; cv=none; b=SE0jz85GNnqWwY9GpnlAcF3XYEA1evhR/cMHtnKTalXZIf0Xr7BawXLaxI4fxkW3L/wWxaGAk6HHaoCoGz8h6yGwGJimKKrN3uMLdIaSG9KsMl45B1PCtmDc20k+oK0Q2fx91HMjAZkKElBStAcLLfzJU28Z3bjMG3dZhwmBu3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764627; c=relaxed/simple;
-	bh=XndCvziIH+5t3X647mBAznTH3Tt9axCF2JGxfpTje8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZWfr08iOjQBWLcVlQzRB2gj687o1AeTF1lUyBOmJuetLFPiP4gZENhknKenFtDjskiFhOEgsuAd/cfrZnSww+JuHwYuCiWls0iEF2JkH9TmX8baLBm+t6lGo5U9VredXrQBCkCIea70RpRf/JFAE+vRGCufU2bX00Bzn4HA7Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49D45150C;
-	Fri, 28 Feb 2025 09:43:59 -0800 (PST)
-Received: from [10.57.65.205] (unknown [10.57.65.205])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0583F6A8;
-	Fri, 28 Feb 2025 09:43:41 -0800 (PST)
-Message-ID: <21450528-06b7-4964-b975-5f4ab113373a@arm.com>
-Date: Fri, 28 Feb 2025 18:43:39 +0100
+	s=arc-20240116; t=1740764687; c=relaxed/simple;
+	bh=ZRCj/8TAJAuJJJ0i17Nh93VZ/UIjIMRuizn2fdB09cA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lZBK6UbFK1wr8B67YcaZNQ6Yktx6LSs+ew332nccpQ6bOiFMZBaqWGThLaZ53nPz3fusyDQm4+CXfby7FEi29VCOp/94k8X/E6K/GFYEMm0amSrzJCIP66+DtqoubDE4KKn5MRiMCCtbNFYNIjx7J81PLgeaW90mmN1AaWEjX7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=fk9sbzBJ; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1740764682; x=1741023882;
+	bh=ZRCj/8TAJAuJJJ0i17Nh93VZ/UIjIMRuizn2fdB09cA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=fk9sbzBJMBVZrv7z3GCpRvHpsWTvPCNjq+XIfPVndaeg1kWMHvmDQL3CYq+tX3i0q
+	 T9tHtYfm1uvQqnoHlWSPR5XNRIIgppZI+KXKCblrafxV+OmOSGTT1Ufo/pWAtwj1VT
+	 I7S6DnOkDMieOkOxQTMGa0sFEp05wlJqyg1PWl/N5MX2SRPPFMP36zvlMauBKWKQc0
+	 15yXL3S/xqbl1bR++2sc8rhrqKkaRdi0h0JI7Jp2bJst58tF8Z/bZsUwNM1/Pkv8Qx
+	 MfsW4p+rDi8F/jhkO13BcMiabRZsjTkQuYw2VtI+G7Rw/4B9fR8WIJmUU5clFIfD/b
+	 RJNf6S4oJQnDg==
+Date: Fri, 28 Feb 2025 17:44:38 +0000
+To: Peter Seiderer <ps.report@gmx.net>
+From: fossben@pm.me
+Cc: Christian Heusel <christian@heusel.eu>, Ming Yen Hsieh <mingyen.hsieh@mediatek.com>, stable@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org
+Subject: Re: [REGRESSION][BISECTED][STABLE] MT7925 wifi throughput halved with 6.13.2
+Message-ID: <JZIl1iVcv9U3s8KnXJqR-ZKFBUzbVvbqR3NN0LO4as5_yXxPPS4yIfzGK22Z6rNZOyOysBzWPZGQgL-8eychueJtr7TvC3A0I-s3CVHHDUo=@pm.me>
+In-Reply-To: <20250228161420.11ac4696@gmx.net>
+References: <b994a256-ee2f-4831-ad61-288ae7bc864b@heusel.eu> <20250228161420.11ac4696@gmx.net>
+Feedback-ID: 134317997:user:proton
+X-Pm-Message-ID: a944d88e39b523d475fe769a680d961766ce4442
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
-To: Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
- dan.j.williams@intel.com, dave.hansen@linux.intel.com, david@redhat.com,
- jane.chu@oracle.com, osalvador@suse.de, tglx@linutronix.de
-References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
- <20241212080904.2089632-3-kevin.brodsky@arm.com> <Z8BiUnkPnvrx06vp@gmail.com>
- <Z8BirVtqibWY6zaT@gmail.com> <ce29384e-b3fe-4196-a986-bb57a5d693d6@arm.com>
- <Z8Hu8oDHRnLx_gxm@gmail.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <Z8Hu8oDHRnLx_gxm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 28/02/2025 18:14, Ingo Molnar wrote:
-> * Kevin Brodsky <kevin.brodsky@arm.com> wrote:
->
->> On 27/02/2025 14:03, Ingo Molnar wrote:
->>> * Ingo Molnar <mingo@kernel.org> wrote:
->>>
->>>> So I tried to pick up this patch belatedly, but there's more places 
->>>> that mistakenly learned to rely on the stray <linux/mm.h> inclusion, 
->>>> for example on x86 defconfig-ish kernels:
->>>>
->>>>
->>>>   In file included from drivers/gpu/drm/i915/gt/intel_ggtt.c:6:
->>>>   ./arch/x86/include/asm/set_memory.h:40:57: error: unknown type name ‘pgprot_t’
->>>>   40 | int __set_memory_prot(unsigned long addr, int numpages, pgprot_t prot);
->>>>   |                                                         ^~~~~~~~
->> This patch relies on patch 1 in this series, which removes 
->> __set_memory_prot(). I seem to be able to build x86_64_defconfig 
->> without issue with both patches applies on the latest mainline.
-> Oh, the 1/2 patch was missing from my mailbox (my mbox's fault, not yours),
-> and apparently the 'PATCH 2/2' tag wasn't a big enough of a clue for me
-> that there's a dependent patch. ;-)
+Hello all!
 
-Ah that would explain it! Naughty mailbox eating patches :)
+Christian provided me with a linux-mainline-6.14rc4-1-x86_64 package to tes=
+t with today and I am still experiencing the issue, so I am assuming that r=
+evert did not happen yet.
 
-> Anyway, I re-tested it with both patches applied and it's all looking 
-> good now, and I have applied them to tip:x86/headers.
+To give some additional context for the performance regression, I have an A=
+T&T 500/500 fiber line. As of this morning on kernel 6.13.1, I get 550 down=
+ / 470 up over Wifi 6 on speedtest.net. Testing immediately afterwards with=
+ Christian's mainline package, I got a result of 170 down / 75 up, which is=
+ similar to the results that I got for all the other bisection kernels Chri=
+stian gave me to test.
 
-Great, thank you!
+Thanks!
+Ben
 
-- Kevin
+
+On Friday, February 28th, 2025 at 9:14 AM, Peter Seiderer <ps.report@gmx.ne=
+t> wrote:
+
+>=20
+>=20
+> Hello Christian,
+>=20
+> On Fri, 28 Feb 2025 11:19:52 +0100, Christian Heusel christian@heusel.eu =
+wrote:
+>=20
+> > Hello everyone,
+> >=20
+> > on the Arch Linux Bugtracker1 Benjamin (also added in CC) reported
+> > that his MT7925 wifi card has halved it's throughput when updating from
+> > the v6.13.1 to the v6.13.2 stable kernel. The problem is still present
+> > in the 6.13.5 stable kernel.
+> >=20
+> > We have bisected this issue together and found the backporting of the
+> > following commit responsible for this issue:
+> >=20
+> > 4cf9f08632c0 ("wifi: mt76: mt7925: Update mt7925_mcu_uni_[tx,rx]_ba for=
+ MLO")
+>=20
+>=20
+> Seems there is already a suggested revert of the mentioned commit, see
+>=20
+> [PATCH v4 1/6] Revert "wifi: mt76: mt7925: Update mt7925_mcu_uni_[tx,rx]_=
+ba for MLO"
+> https://lore.kernel.org/linux-wireless/20250226025647.102904-1-sean.wang@=
+kernel.org/#r
+>=20
+> Regards,
+> Peter
+>=20
+> > We unfortunately didn't have a chance to test the mainline releases as
+> > the reporter uses the (out of tree) nvidia modules that were not
+> > compatible with mainline release at the time of testing. We will soon
+> > test against Mainline aswell.
+> >=20
+> > I have attached dmesg outputs of a good and a bad boot aswell as his
+> > other hardware specs and will be available to debug this further.
+> >=20
+> > Cheers,
+> > Christian
 
