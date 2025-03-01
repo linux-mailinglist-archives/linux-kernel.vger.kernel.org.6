@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-540112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A0FA4ADBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:10:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67586A4ADCD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6D0166728
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE251702C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771511E835D;
-	Sat,  1 Mar 2025 20:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D1B1E8329;
+	Sat,  1 Mar 2025 20:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnepYlJR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M6L20/+N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C0E1E3796;
-	Sat,  1 Mar 2025 20:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3621E1C5F1E;
+	Sat,  1 Mar 2025 20:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740859810; cv=none; b=X3lpKzdqo9vgrIhITakEPGo+dlbuXABVffS8voLTQ2fSkaT0FIX2CBzmlhePTkkUJ32LwX6Q0JNVc0NsQAeSX6kg2HikVqMI76DzQTSOJzUJY5B6VaYI8Cj39TZd1Q/TPaJlRgj5kD8voPt8PDWx5u9XQibNhE7MJpWzg0+dhGs=
+	t=1740860445; cv=none; b=ukx51Uelk5Kbpckr2Qj2yG/A4UIFWnq66fspRQ7VINtggiTP1FUEtliffQaY5yLYTBaj0qfTJh3r33qO6vObfYz5DvDL669WRC3+yo/6ucTCXx/auCK8pC5hk0Ewj09pmEA33v7IAR6JRuc7OS3miCo5vHOnLhFV0QvqBWYRTi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740859810; c=relaxed/simple;
-	bh=FBynrjpYhkx1HFfcCPVjap8bi0l955UavvMGpYL9ArM=;
+	s=arc-20240116; t=1740860445; c=relaxed/simple;
+	bh=6vIeTwmtJ1CsQjKzPDtsmgP96gOLvVQrci7HtsL6z3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYb1+g4Z+rqjXVrxLCji1ONwyTRSgHqCmgWdjTz4R37b/JnzHZwEoKBqxt70hW9Tya2a6pxt+yU/7AbUCq9NamKHVbW9ByZRuDPgkquKV5wimCuvd7lo4Z+6Th+Rnj6hfr+1iVOTrWit4eL3nwgbQAQ3U6npz5QzpM2KWcWGr0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnepYlJR; arc=none smtp.client-ip=198.175.65.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=SiOd53XM3ecL53Pmg3wWupQqjJ2DmYI93Pe+C7v1jvwAF9Mj9AHvfhgVWKMdtso4fcjP6x4Vytt5HLI0druOMsmyV9hKEztI5Pa0DKyNWs6v9aEH0+4JhEfA8R9+ka7fST8myKTw3fgDnPHF//ZJ488LTh7lvrfvDoLshA289ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M6L20/+N; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740859809; x=1772395809;
+  t=1740860444; x=1772396444;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=FBynrjpYhkx1HFfcCPVjap8bi0l955UavvMGpYL9ArM=;
-  b=WnepYlJRour3igiD5MgngcJoUABG0ykOEY8upEARjdLHtQ9Crhkg7qwl
-   x91i/rl/JgNunkpn+4mj4YOHy7K8TtaJQ3+XBzcVp9xCFH+79BYa05nM8
-   cd55mmrT4phnr0JMObqCfydYkjveP8k1rWczc/29Hvhm3TdZniXjZRtgp
-   zMqmkwEI7yTjoAUzK5Khd1KyCTIebc7+2/TXsb77/ZlFtknj3JaSNInC+
-   BbeY1tY1eqCDYUYUEUvIZ+ic+BsB5vnHbH/bWJ4rjV9sTlJEgex1fhZCO
-   YvypL03EXoCSQ967RGp/yIAaobe8v7L7M01VYQcgjPtkZL9MkXYVXJYdG
+  bh=6vIeTwmtJ1CsQjKzPDtsmgP96gOLvVQrci7HtsL6z3Y=;
+  b=M6L20/+NEgqFXplxgBStEtGlRn0zLBobN6yc78EudeE90mNCgHBM9MzZ
+   z12FGyPY4sqA++eAy8yiU+ESGef+MbnPQlTdwC3USKCq/OPIHyyOCCr4d
+   g3h9Q/5254tdGhm7RUG2/QWRHWaAIioyMKGs7mHqINmMqyLgDQV4LkApl
+   Bc4p9ZnTUW30q8XjQWQoupXeJGsqvC/faJ4o8tpWITpvzEQCAEpYg/KiR
+   s3YCDg4d/5HwlgWWyy6tAvWDAxaDuyUOGrMY0Jqm/j9OsTAH6TuGHZzPB
+   vr2fVqY++ykyEqdVoaNpapl6Sf28GmWk00dhEuZLG0YtSrpcTOT9ilm+2
    w==;
-X-CSE-ConnectionGUID: WY50oHcPTnaLOIye7boRAg==
-X-CSE-MsgGUID: XGofDEzXSiixmzHisN3r1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41959948"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="41959948"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 12:10:08 -0800
-X-CSE-ConnectionGUID: gzFfgN1jRIuUQbHQm7LDzA==
-X-CSE-MsgGUID: cDEiiL2+Q7q6mvz25U0Awg==
+X-CSE-ConnectionGUID: OpK9meZdT6uMTU/z0PlApg==
+X-CSE-MsgGUID: cZelTt5tQAiEkk+Fm0yYCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="42018045"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="42018045"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 12:20:44 -0800
+X-CSE-ConnectionGUID: 7u6lqpU+RrmQYuAah9RXNg==
+X-CSE-MsgGUID: t3rt7YX3TOKeoGdVfb5V+w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117626677"
+   d="scan'208";a="122774739"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 01 Mar 2025 12:10:04 -0800
+  by fmviesa004.fm.intel.com with ESMTP; 01 Mar 2025 12:20:37 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1toT9u-000Gem-1E;
-	Sat, 01 Mar 2025 20:10:02 +0000
-Date: Sun, 2 Mar 2025 04:09:17 +0800
+	id 1toTK1-000GfL-2p;
+	Sat, 01 Mar 2025 20:20:31 +0000
+Date: Sun, 2 Mar 2025 04:19:49 +0800
 From: kernel test robot <lkp@intel.com>
-To: Su Hui <suhui@nfschina.com>, lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, Su Hui <suhui@nfschina.com>,
-	ilpo.jarvinen@linux.intel.com, andriy.shevchenko@linux.intel.com,
-	michael.j.ruhl@intel.com, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-Message-ID: <202503020347.z00djbJE-lkp@intel.com>
-References: <20250227073205.1248282-1-suhui@nfschina.com>
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Woodhouse <dwmw@amazon.co.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	NeilBrown <neilb@suse.de>, Zqiang <qiang.zhang1211@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/9] irq & spin_lock: Add counted interrupt
+ disabling/enabling
+Message-ID: <202503020344.HCIfRKwM-lkp@intel.com>
+References: <20250227221924.265259-4-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,36 +99,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227073205.1248282-1-suhui@nfschina.com>
+In-Reply-To: <20250227221924.265259-4-lyude@redhat.com>
 
-Hi Su,
+Hi Lyude,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on drm-xe/drm-xe-next]
-[also build test WARNING on linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test ERROR on 2014c95afecee3e76ca4a56956a936e23283f05b]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Su-Hui/drm-xe-Select-INTEL_VSEC-to-fix-build-dependency/20250227-153437
-base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-patch link:    https://lore.kernel.org/r/20250227073205.1248282-1-suhui%40nfschina.com
-patch subject: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-config: x86_64-kismet-CONFIG_INTEL_VSEC-CONFIG_DRM_XE-0-0 (https://download.01.org/0day-ci/archive/20250302/202503020347.z00djbJE-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250302/202503020347.z00djbJE-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Lyude-Paul/preempt-Introduce-HARDIRQ_DISABLE_BITS/20250228-062508
+base:   2014c95afecee3e76ca4a56956a936e23283f05b
+patch link:    https://lore.kernel.org/r/20250227221924.265259-4-lyude%40redhat.com
+patch subject: [PATCH v9 3/9] irq & spin_lock: Add counted interrupt disabling/enabling
+config: sparc-randconfig-001-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020344.HCIfRKwM-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020344.HCIfRKwM-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020347.z00djbJE-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020344.HCIfRKwM-lkp@intel.com/
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for INTEL_VSEC when selected by DRM_XE
-   WARNING: unmet direct dependencies detected for INTEL_VSEC
-     Depends on [n]: X86_PLATFORM_DEVICES [=n] && PCI [=y]
-     Selected by [y]:
-     - DRM_XE [=y] && HAS_IOMEM [=y] && DRM [=y] && PCI [=y] && MMU [=y] && (m [=m] && MODULES [=y] || KUNIT [=y]=y [=y])
+All errors (new ones prefixed by >>):
+
+   kernel/locking/spinlock.c: In function '_raw_spin_lock_irq_disable':
+>> kernel/locking/spinlock.c:178:9: error: implicit declaration of function '__raw_spin_lock_irq_disable'; did you mean '_raw_spin_lock_irq_disable'? [-Wimplicit-function-declaration]
+     178 |         __raw_spin_lock_irq_disable(lock);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |         _raw_spin_lock_irq_disable
+
+
+vim +178 kernel/locking/spinlock.c
+
+   174	
+   175	#ifndef CONFIG_INLINE_SPIN_LOCK_IRQ
+   176	noinline void __lockfunc _raw_spin_lock_irq_disable(raw_spinlock_t *lock)
+   177	{
+ > 178		__raw_spin_lock_irq_disable(lock);
+   179	}
+   180	EXPORT_SYMBOL_GPL(_raw_spin_lock_irq_disable);
+   181	#endif
+   182	
 
 -- 
 0-DAY CI Kernel Test Service
