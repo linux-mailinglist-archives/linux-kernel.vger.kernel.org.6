@@ -1,162 +1,219 @@
-Return-Path: <linux-kernel+bounces-539906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE55A4AAAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:36:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BE6A4AAAF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A363B9E85
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:36:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 514EC7A58DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471641DD525;
-	Sat,  1 Mar 2025 11:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5F31DE891;
+	Sat,  1 Mar 2025 11:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R1WRrfQY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4YkjQGX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E511CEAC3
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACD81CEAC3;
+	Sat,  1 Mar 2025 11:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829007; cv=none; b=a8+cKzuctf9xMPLHBc4/0DErhvmcQ70eGc0JglGeZJYVjUxOvI/IfLxbt07heMWQkDMyr1KBf1C8kAB/pcpJxya6ykGMgo0ZuIEWLJ0O5EKmmMjQQDhe7NGdvxIfVl9z2QNwnvv+IRdESJVCUEBPGkzP5QrmpDs4U/Gn/duehwQ=
+	t=1740829039; cv=none; b=uIc28j42mnQRbpP+dFuiz33I8XDGH23/RtBVz0mlZjJJQU2UqwHWxKbLZmizkw6zoLj5JB5+B/tY5rlE9cWMp/8jWEbFLYxWqzeEleh1Ldp3Y9LdRi4x9vZ5+4BHzK+VjeHuxboZQIsdDVjiOKtUvU1FHE36uHe/3LdFoE2mrvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829007; c=relaxed/simple;
-	bh=1N0XJWm2DllF8RnfekMenla1Kf7ixW0UheHRRT6WGPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UYJ37z3wcVrZAbjrY95JG10H/rTOFQGO145QwNY5O/LT4Y/Mr7IqK9f+MXIiDw+Z+0Pk+AupDLbRk8KYi7BPO1BVoqFQuTzfICXTIhS2AiAXSAYJDNSNt68gpacdrcTWcDSLbxo2YETTLjFPWNixLBJYYt57OTbGcSb9Q1BXOEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R1WRrfQY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740829004;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fbORu6qgQcd6DUt/THQ0CSEvNH/qSwH/OAlOYxx8xys=;
-	b=R1WRrfQYq57Zo1gSD7GDi0YfiD0BcFd81BzorJbsEQMlpZpE7qHqpjERqB32R6OiMnz8If
-	aOkLAfRPLynuinnk52fQAdhyG2yMwj8elggNI4idQkX6Ii9esDtLmq3oNmIDHFPJ/8Y4Uc
-	Jvqc7FY7MCZlT7y0d9Iy+PwtaaXZ4m4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-kmdUGAj_M7SrTCXy6_fw5g-1; Sat, 01 Mar 2025 06:36:43 -0500
-X-MC-Unique: kmdUGAj_M7SrTCXy6_fw5g-1
-X-Mimecast-MFC-AGG-ID: kmdUGAj_M7SrTCXy6_fw5g_1740829002
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abf46dba035so90653566b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:36:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740829002; x=1741433802;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fbORu6qgQcd6DUt/THQ0CSEvNH/qSwH/OAlOYxx8xys=;
-        b=jVAcFhYJQuDDmtxSY4wR0DmJBpS27B1nRPiRgRVmHk35yuAuAeFZP9XQyg+8kPaUyp
-         wR7aDQptVqwToTmvflq7hswCp561DcY3p0IMma7yJnniaA3l4wsXNSbSjaLj54f892Mc
-         JEW0K4wNPBYVkJ8z3pP6TlmXilf0erqAHM44rNjIfU885FjyZkLIAXih0xldMAMJtJTL
-         Xt127hAbx2iTYHvzDJ3so9Ye4d+PhtcL519q4h7PorlyD+aQhGAuzY8Bl5HsstJ7B4jU
-         gHv2EJGzpOCjfmzg2jLD3Iw7zqYQM8a2wwClXZ1wp3Liv7wppPkNMtJAvv7uTCVjSerZ
-         XnFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+JNQpMl4FGEb/QMq0pQh00PzQwRVbWlJmmqLLeFSmrysagj+LFnM5LN0f1xgOoKDI9rWAQiQZktqAjRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO4Pt8L7PV3oElrfTkDOOdbL9DHqREa2JgaYvXSl4zeeWVqhoD
-	5uOX7NtvYtV38tAVq2xXIsgyTm/CdySib3WgS6wNSohMzOpB/PnGUMF2bWRkyBJ/vw35vLTrYcg
-	Uvl650h1krhOFfwPXMMHbHbFUFBhDr9TVfbPb+hyJk1s2KOr5+BTxLDk3klj0yA==
-X-Gm-Gg: ASbGncsGjtGzakLHIvK7QI5Ib3klR8PHeIzB8t5IVaY++kUkjwRfAG+Wep8/bhYyRV6
-	s9/4FK47lCjNt7+KCScmbuYj9729yLE85p/tlJOt9pQTO6qeF0UG3djIVi6jWMHjrqhV3Z4vTZ8
-	618roCE6gGn5iyE8OnkVqnssWY2Ef434TYBJB/9KDmBSc7WlKvEY8IchlI6uQToXmjiTZcwNHB2
-	eSNfZ+S53ED681/1TXsA9QhrZKcF4/LXsofi9up9Elmg81AOHR3mq06StFmUS8NC46SVThMeAeI
-	MYkbn1N9hA4p66zsqfvF/YcWa3NjmGzsBzmyv2mewEqasEtWM7lXPCTsxqai2/vrvfyHKAxYu+J
-	g2tx09QFW2P68b+k01vnIN6/QCaQ4FjM95IOcy1AyEPlCRGVwgjnNaoF4F/03MNUnpA==
-X-Received: by 2002:a17:907:7285:b0:abf:2b4:c6fb with SMTP id a640c23a62f3a-abf2686a09amr843681266b.57.1740829002221;
-        Sat, 01 Mar 2025 03:36:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHPCf2wWBViuMG6idxiK+1QfLm7qmZEGg/zDdM1CgqlrIMVKlaPktbzXdcY8xCu+LIzOF/c0g==
-X-Received: by 2002:a17:907:7285:b0:abf:2b4:c6fb with SMTP id a640c23a62f3a-abf2686a09amr843679466b.57.1740829001798;
-        Sat, 01 Mar 2025 03:36:41 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b92d3sm463900866b.12.2025.03.01.03.36.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 03:36:41 -0800 (PST)
-Message-ID: <72619870-bf83-47f9-9b66-6678e245364c@redhat.com>
-Date: Sat, 1 Mar 2025 12:36:40 +0100
+	s=arc-20240116; t=1740829039; c=relaxed/simple;
+	bh=dT1M1OX+ylPajgi5Td8FsnYT9PqPEbMJ8aqpho8rjqg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f5tTayQWvl83Lm1moGzPOHS2jJdhwG7tlpGZfFyj6C10wa32ATpFNK94YzLJWQQC1tnj1rVZbFOKJKS4tRxwAZ+Q7XTP/qGqO147id7Jhp8TGLgW21nyVnvhiaVcnjfQ9M4nf3EUnlAcfG40vJZdl6olJXuT5OGrGQzJjROVlNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4YkjQGX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65B4C4CEDD;
+	Sat,  1 Mar 2025 11:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740829038;
+	bh=dT1M1OX+ylPajgi5Td8FsnYT9PqPEbMJ8aqpho8rjqg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=C4YkjQGX6x6uoqD6Yp0dQzTZmmjynM5ZIjQO1YdQc/B25rqm+rh5x1Bvsl3Dj58HK
+	 YScw9Ja1tcJ+UlVcN96f3Jy3ZvCLC1oGKJxQcwbyNt5yXICRQyar9NwH56rNV0topG
+	 jrVpGwESZOOLk5ipIfxlDX5vS8c+mUKwL0v88GwfqX20dXbetBND2cLR2SEdaQhU4k
+	 IITTb+dvnaHe598YW8cwOLVdH9RtR9jrl1Il7lpAqzLA/77pRVd8khTcG878nI227d
+	 QMiaFy+Li24BsLTa+GTXdBejTqgQ+27pLw8Y1XEw33fAy0FBukYnULAwheiuenQiU9
+	 unJQ/MU58slxQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1toL9f-009LZ4-9D;
+	Sat, 01 Mar 2025 11:37:15 +0000
+Date: Sat, 01 Mar 2025 11:37:14 +0000
+Message-ID: <86o6ylouc5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
+ <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
+ <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
+ <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
+ <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
+ Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
+ <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
+ Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
+ <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 04/15] irqchip/gic-v3-its: Add support for device tree msi-map and msi-mask
+In-Reply-To: <20250211-ep-msi-v15-4-bcacc1f2b1a9@nxp.com>
+References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+	<20250211-ep-msi-v15-4-bcacc1f2b1a9@nxp.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] Plans for GDIX1003 Support in Goodix Touchscreen
- Driver
-To: Weikang Guo <guoweikang.kernel@gmail.com>
-Cc: Bastien Nocera <hadess@hadess.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org
-References: <CAOm6qnnhR9++REgtjhZpqNXkBbBAZsGAY8Oy89cXUF9S=Vy-9Q@mail.gmail.com>
- <8c7b5560-27d0-42bc-8f25-0797500fb889@redhat.com>
- <CAOm6qnmYSQz_YVaWw1c-fMm3NCVV9MoQhLQ0XGzK9o2RybLHmw@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAOm6qnmYSQz_YVaWw1c-fMm3NCVV9MoQhLQ0XGzK9o2RybLHmw@mail.gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Frank.Li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi WeiKang,
+On Tue, 11 Feb 2025 19:21:57 +0000,
+Frank Li <Frank.Li@nxp.com> wrote:
+>=20
+> Some platform devices create child devices dynamically and require the
+> parent device's msi-map to map device IDs to actual sideband information.
+>=20
+> A typical use case is using ITS as a PCIe Endpoint Controller(EPC)'s
+> doorbell function, where PCI hosts send TLP memory writes to the EP
+> controller. The EP controller converts these writes to AXI transactions
+> and appends platform-specific sideband information.  See below figure.
+>=20
+>                =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=90
+>                =E2=94=82                                =E2=94=82
+>                =E2=94=82     PCI Endpoint Controller    =E2=94=82
+>                =E2=94=82                                =E2=94=82
+>                =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=90   =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=90     =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=90 =E2=94=82
+>     PCI Bus    =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
+=82     =E2=94=82     =E2=94=82 =E2=94=82
+>     =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=96=BA =E2=94=82  =E2=94=82Func1=E2=94=82   =E2=94=82Func2=
+=E2=94=82 ... =E2=94=82Func =E2=94=82 =E2=94=82
+>     TLP Memory =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
+=82     =E2=94=82<n>  =E2=94=82 =E2=94=82
+>     Write Push =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
+=82     =E2=94=82     =E2=94=82 =E2=94=82
+>     DoorBell   =E2=94=82  =E2=94=94=E2=94=80=E2=94=AC=E2=94=80=E2=94=AC=
+=E2=94=80=E2=94=98   =E2=94=94=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=
+=E2=94=98     =E2=94=94=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=
+=98 =E2=94=82
+>                =E2=94=82    =E2=94=82 =E2=94=82        =E2=94=82         =
+  =E2=94=82    =E2=94=82
+>                =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=BC=E2=
+=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=98
+>         sideband    =E2=94=82 =E2=94=82 Address=E2=94=82           =E2=94=
+=82
+>         information =E2=96=BC =E2=96=BC /Data  =E2=96=BC           =E2=96=
+=BC
+>                    =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=90
+>                    =E2=94=82    MSI Controller      =E2=94=82
+>                    =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=98
+>
 
-On 27-Feb-25 12:36 PM, Weikang Guo wrote:
-> Hi, Hans
-> 
-> On Tue, 25 Feb 2025 at 20:09, Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi WeiKang,
->>
->> On 25-Feb-25 3:04 AM, Weikang Guo wrote:
->>> Hi Bastien, Hans, Dmitry,
->>>
->>> I am currently working on the Ayaneo Flip DS device, which I installed Kali
->>> Linux with kernel version 6.8.11-amd. This device has two touchscreens,
->>> but only one is functional. After investigating, I found that the second
->>> touchscreen has the device ID GDIX1003(confirmed by exporting the results
->>> through acpidump), and upon comparing with the current driver, I noticed
->>> that only GDIX1001, GDIX1002, and GDX9110 are supported.
->>>
->>> I have also reviewed the ACPI description and can provide the details if
->>> needed. Any guidance or updates on this would be greatly appreciated.
->>
->> I think this might just work with the existing goodix driver, just
->> add the new GDIX1003 HID to the goodix_acpi_match table:
->>
->> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
->> index a3e8a51c9144..4b497540ed2d 100644
->> --- a/drivers/input/touchscreen/goodix.c
->> +++ b/drivers/input/touchscreen/goodix.c
->> @@ -1519,6 +1519,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
->>  static const struct acpi_device_id goodix_acpi_match[] = {
->>         { "GDIX1001", 0 },
->>         { "GDIX1002", 0 },
->> +       { "GDIX1003", 0 },
->>         { "GDX9110", 0 },
->>         { }
->>  };
->>
->> Note I'm not sure this will work, but is worth a try.
->>
-> 
-> It works, thank you very much.
+Please stop using these figures in commit messages. I don't think they
+help, and they are not in consistent with the way the commit messages
+are managed.
 
-Thank you for testing.
+> EPC's DTS will provide such information by msi-map and msi-mask. A
+> simplified dts as
+>=20
+> pcie-ep@10000000 {
+> 	...
+> 	msi-map =3D <0 &its 0xc 8>;
+>                           ^^^ 0xc is implement defined sideband informati=
+on,
+> 			      which append to AXI write transaction.
+> 	           ^ 0 is function index.
 
-I've submitted a patch upstream to add this new hardware-ID
-to the kernel:
+What does this sideband field represent? How is the ITS driver
+supposed to use that data? Is it the full devid as presented to the
+ITS? Something combined with the "function index"? Is the "function
+index" a full RID, as defined in the documentation?
 
-https://lore.kernel.org/linux-input/20250301113525.6997-1-hdegoede@redhat.com/
+Also, msi-map is so far reserved to a PCIe RC, not this sort of wonky
+contraption. This needs to be documented.
 
-Regards,
+>=20
+> 	msi-mask =3D <0x7>
+> }
+>=20
+> Check msi-map if msi-parent missed to keep compatility with existed syste=
+m.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change from v14 to v15
+> - none
+>=20
+> change from v13 to v14
+> new patch
+> ---
+>  drivers/irqchip/irq-gic-v3-its-msi-parent.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchi=
+p/irq-gic-v3-its-msi-parent.c
+> index e150365fbe892..6c7389bb84a4a 100644
+> --- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+> +++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+> @@ -118,6 +118,14 @@ static int of_pmsi_get_dev_id(struct irq_domain *dom=
+ain, struct device *dev,
+>  		index++;
+>  	} while (!ret);
+> =20
+> +	if (ret) {
+> +		struct device_node *np =3D NULL;
+> +
+> +		ret =3D of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &n=
+p, dev_id);
+> +		if (np)
+> +			of_node_put(np);
+> +	}
+> +
+>  	return ret;
+>  }
+> =20
+>=20
 
-Hans
+Thanks,
 
+	M.
 
-
+--=20
+Without deviation from the norm, progress is not possible.
 
