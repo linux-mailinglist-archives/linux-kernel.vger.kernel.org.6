@@ -1,102 +1,105 @@
-Return-Path: <linux-kernel+bounces-539773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA202A4A86A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:00:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B87A4A86B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753893BA5A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582E8189C1A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D47F1AF0D7;
-	Sat,  1 Mar 2025 04:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F2A1B4254;
+	Sat,  1 Mar 2025 04:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IS7EKFwF"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP9vnDIp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8623F37C;
-	Sat,  1 Mar 2025 04:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFB815624B;
+	Sat,  1 Mar 2025 04:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740801639; cv=none; b=bubdL/QYnhUx7HmhEEP66T8i+KkMRE16ee75BDMuO2VnLH8QzulUMbDgqflW2WmbR7IxIUknvNML7iZBoSG9xaIfI0uipBQrvTqIIh4ym6Rq99Kh+ZhO/M0MXUpCPRaN+j39yBHDfE9Ec+wv0m4Q5TVCwUGg75ZkGmbPmE0t8cw=
+	t=1740801774; cv=none; b=ST9k9Bs2G9AH9anQuneWxYRBLlvuZG9uGX9cu6tapB4mbwdTEXFORpWvw73URlUgQ2QcY2qIvH2pNuSQqoZt/tcnyOIShQdyvdclXYBE5mPWRDDyM1WBGzh0wWuGvxo8gezWEnEVoaliOKlbBL+wGASwpozuaBvsedW98V+rGL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740801639; c=relaxed/simple;
-	bh=gES+/B8lkFtwldnFslAofLXHw2x8wMNSxzDj7F9SjQk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=GbftpIcszsoi/OQI0eEvxAvqtt2cpnZ9DPjApXxSvP0YTRMCS4MnD2nO9s/sqBllUbl9kusMED7CrwOFTKh32vHwEZAlAjywT3e5fE1LywRS/XOtlBa202b1/Wnqntiid9n5xkJx82E/TbLDl4IgWWDDwic013KxHkmmINEhDUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IS7EKFwF; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5964F25C4F;
-	Sat,  1 Mar 2025 05:00:36 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id DaIIIFkxqZ9H; Sat,  1 Mar 2025 05:00:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740801635; bh=gES+/B8lkFtwldnFslAofLXHw2x8wMNSxzDj7F9SjQk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=IS7EKFwFlT01d5ScSbPJO/i4rajHNOoV7v1YPUJTpbAAaSrfLJX1gpq4MtQw3AWEH
-	 HBUXSxVddzNjtS/NmlF5fwC56kwODlv5d0+iW/71vNU/UTZWJq1GTa8S0FcNN54mE8
-	 /Geb/Cg32yWfkeP2h1x7MQsdZJBD/0Aeiqd2nFUlyKSJPIoXWoa9wheIwOPTp1Er/g
-	 zWg5YeF4T+Qn6xB7bNUgoLzZYdwq1xjV1JPnPslh1CatoUvwpf+YBIDFHKIuRwb9Pl
-	 bwy1nGuWBXdFk1Zrbw5z71CMg72gf72GqRUp6FF6wyetl+E1i01ISg/Igcm/YZTUzp
-	 OoLIAyUyMKXRg==
+	s=arc-20240116; t=1740801774; c=relaxed/simple;
+	bh=Dd8r+xgDiDwAIFehg90/G7azbwedq+a8rXeu/+rmTqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kb81vR17ZReoCgzhhEXY/XcpXT5UxwbIfd2JnSs1URqvReI6JUXIxGtFnhY6vDWaajhCuSsPt4iPieISPNYVBbJCjiD2WQNnt03uVAy6Dq51Bb9WxPtDJPuUSuNFmbhcZupc0VkZIbt6c3WzEoJ1Z2deYJHcChmkmfe/Wfi97yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP9vnDIp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6039AC4CEDD;
+	Sat,  1 Mar 2025 04:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740801773;
+	bh=Dd8r+xgDiDwAIFehg90/G7azbwedq+a8rXeu/+rmTqs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jP9vnDIphiO+ZBqGtZqju5PxH+yH/9YmpFM8DfanlIwKjLW/yx1pO4DAGhS2Ux8NA
+	 PD10VjyAMFfgfmdqYzI/sZ7BrYMyHyNQE5P/7ZVzf0p0LULAq2XkFyqd4SzudnA3ef
+	 rAsClnykPc6oKcs4l8Ydm/469x7+XMFNMxWteeMh0a0UPZ6FaJP2wf+l7JuT0R90cJ
+	 WWGeJTFFzOLIuXPBSuEOipiat5wBXDdo5pUT+NNQpC2FrYL03fvF6xstdmPKw3Lp8N
+	 bltoz8KX6fDuzB74fg1hCfp1bOZs6oywR29WoqlrnKlwYGR+/tbRwGAXEA6YyI5EaT
+	 mfN1jzOQ+GKng==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 0/4] perf test: Assorted fixes and updates
+Date: Fri, 28 Feb 2025 20:02:48 -0800
+Message-ID: <20250301040252.1586750-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 01 Mar 2025 04:00:35 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
- Piccoli" <gpiccoli@igalia.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Kaustabh
- Chakraborty <kauschluss@disroot.org>
-Subject: Re: [PATCH v4 0/7] Add support for the Exynos7870 SoC, along with
- three devices
-In-Reply-To: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
-References: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
-Message-ID: <f37fab8e85cf0c333dc9acc97c1733fd@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-02-28 19:46, Kaustabh Chakraborty wrote:
-> Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that was
-> announced in 2016. The chipset was found in several popular mid-range to
-> low-end Samsung phones, released within 2016 to 2019.
-> 
-> This patch series aims to add support for Exynos 7870, starting with the
-> most basic yet essential components such as CPU, GPU, clock controllers,
-> PMIC, pin controllers, etc.
-> 
-> Moreover, the series also adds support for three Exynos 7870 devices via
-> devicetree. The devices are:
->  * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
->  * Samsung Galaxy J6		- released 2018, codename j6lte
->  * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
-> 
-> Additional features implemented in this series include:
->  * I2C	- touchscreen, IIO sensors, etc.
->  * UART	- bluetooth and serial debugging
->  * MMC	- eMMC, Wi-Fi SDIO, SDCard
->  * USB	- micro-USB 2.0 interface
-> 
-> Build dependencies are in these sub-series:
->  * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
->  * pmu-clocks		- https://lore.kernel.org/all/20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org/
+Hello,
 
-Find v5 of exynos7870-pmu-clocks here:
-https://lore.kernel.org/all/20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org/
+This is a list of random fixes and updates in perf test.  I've added a
+new test case for perf trace and updated perf stat output test to
+check the --metric-only option.  Also make perf probe and trace tests
+for non-root users as they need priviledged operations.
+
+Maybe we need to fix perf stat --metric-only output not to include
+bogus metrics like GHz, but let's keep it for later. :)
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (4):
+  perf test: Add --metric-only to perf stat output tests
+  perf test: Skip perf probe tests when running as non-root
+  perf test: Skip perf trace tests when running as non-root
+  perf test: Add trace record and replay test
+
+ .../tests/shell/lib/perf_json_output_lint.py  |  7 +++++++
+ tools/perf/tests/shell/lib/stat_output.sh     |  8 +++++++
+ .../tests/shell/perftool-testsuite_probe.sh   |  1 +
+ tools/perf/tests/shell/probe_vfs_getname.sh   |  1 +
+ .../shell/record+probe_libc_inet_pton.sh      |  1 +
+ .../shell/record+script_probe_vfs_getname.sh  |  1 +
+ tools/perf/tests/shell/stat+csv_output.sh     |  2 ++
+ tools/perf/tests/shell/stat+json_output.sh    |  9 ++++++++
+ tools/perf/tests/shell/stat+std_output.sh     |  8 +++++++
+ .../shell/test_uprobe_from_different_cu.sh    | 11 +++++-----
+ .../tests/shell/trace+probe_vfs_getname.sh    |  1 +
+ tools/perf/tests/shell/trace_btf_enum.sh      |  1 +
+ tools/perf/tests/shell/trace_btf_general.sh   |  1 +
+ tools/perf/tests/shell/trace_exit_race.sh     |  1 +
+ tools/perf/tests/shell/trace_record_replay.sh | 21 +++++++++++++++++++
+ 15 files changed, 68 insertions(+), 6 deletions(-)
+ create mode 100755 tools/perf/tests/shell/trace_record_replay.sh
+
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
