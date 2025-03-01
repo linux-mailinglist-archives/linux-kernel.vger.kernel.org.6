@@ -1,213 +1,206 @@
-Return-Path: <linux-kernel+bounces-539952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44495A4AB3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:34:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FE6A4AB3A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C10E16B9FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3B33B5754
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F521DF738;
-	Sat,  1 Mar 2025 13:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850B1DED79;
+	Sat,  1 Mar 2025 13:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QTMG5tFI"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4o2HOn9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE40738DDB;
-	Sat,  1 Mar 2025 13:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BA879CD;
+	Sat,  1 Mar 2025 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836035; cv=none; b=o3tIQodoAOmtimzfku/UYwVlJm/o+bzj2Y8XcNNdRScVMWwK/wa4KYTV1H/YzeJnwzgQyOQYOTJ1rslwbru9btYbq/p2PFXGKTOa4kpL29ChH2BxV4RA9CWMj484TH2MenZY5KOgsaH3aL4HgnmyLjRoQ4n+XnRGZRc0mH38edw=
+	t=1740836016; cv=none; b=CMmQlDRqI4pd4Okl+Rl/ho/U21DaeOnWjGTugvk4QjJN4e04OubkrLKDqN8m+hwaOfaYh6iAUaZR6u/vUI+Q2rjEqTLQImiuxQimLhU4OE/DJVxnmaWprwgCHBeqGwjLy5/UX4cAwCPnSE/IuFgRz7695hK15nf9aB5xcSrmSiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836035; c=relaxed/simple;
-	bh=xXhNfYs+Cv3fr3hX+44GY6JZm8B/alrDUCYDIA/ILNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MABZhRLRCINZs+juEW459pjf1dmgA6TSM8AGPhn35VePLB5yLkv5U4oGh3fUvOpdszuOyyIRivpNv3tDU03zYVPXlSMtq63B8LZigCvaHXZXdr6KCB2QLs0/oJ/HkywFYXpoR88GN7lfRDks+qkmt7waPBhAbYXjcuUC6mY/YzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QTMG5tFI; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E788925D49;
-	Sat,  1 Mar 2025 14:33:49 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id hNqLrBIrmw-s; Sat,  1 Mar 2025 14:33:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740836025; bh=xXhNfYs+Cv3fr3hX+44GY6JZm8B/alrDUCYDIA/ILNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QTMG5tFIqlv9LH5jixi4XxdUJKRFJpm4Rs5l2NruS3JwN2+12m0f5f1cVWZmwGD0k
-	 w84ZoPqHAOjEyFradRFbRJxjfkAsjZLtCBVDmwr3VN6EjKybTPe/w4bR7t3HwwzkIr
-	 D0FynI+BR+izgsEsEMEZUfeceFlVar3wYfI9KqgfRuLj19mx4L/CBz6ZH7hRO8Pt0T
-	 R3HllikmI8V/V7/P+NT8CuQRCfKijIQ7aaCQ/Ljjw8JR7mFPM+tqQP0SrbjULnUCY6
-	 gObIsg3FpsedbizyfKVUuhjJ5DwIAGmHP2cTlX8BKjXgD6Ko/fj0UFVYP/zOawg9gq
-	 2okGgpIGJffJQ==
-Date: Sat, 1 Mar 2025 13:33:15 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for
- RK3528
-Message-ID: <Z8MMm7X31p_CrStZ@pie>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104749.36423-1-ziyao@disroot.org>
- <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
+	s=arc-20240116; t=1740836016; c=relaxed/simple;
+	bh=na7Oc5m3ZES7mOLyuPIWWrbAkPeR1a8qIofYaADZ0zA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U9ECPkAvbULf4DEvTK8onzw22kfjSod3/o1AyhHOOBjYc1bRKPaVJZ9ISGLwV5WC1fPtJ8eoHzeBvc5rFuMXKLPoqx89CoaErBELhQpt43VjDC9sksW5QPemNX0FBgEIZ2kS0MlgBMF1dEV9WV1PvwAQKhNPnsf130UuY+0y19I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4o2HOn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5851C4CEDD;
+	Sat,  1 Mar 2025 13:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740836015;
+	bh=na7Oc5m3ZES7mOLyuPIWWrbAkPeR1a8qIofYaADZ0zA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=A4o2HOn9Zpq1oyZiNOSB39uaRvlcd/3NvlmI+JrCU4R4tVeoR8UDV3NRVamFb4doc
+	 Zo5Xj/IJTX99dVtMaAnYPmRZUASYrtqlB52Dl2Ga10gQ0t9hdPJX82fc4WsCV924Ak
+	 VpbxcT8Klm9bplJc8Lcm/7/h6MbeYQ6049ViYc77JVmhxHN+xfjqjUQe6pkwk/e7DI
+	 ohZrp9fgQOneuMT8f7TisA1Swq0EW7UX4oKvFoI+0Ovv2cTuAhmDiNpn/Omg0RGUEU
+	 JZ5M0Ggj1Xl1hMfPMkcAcshTUJHaXlmm/YrXOnFeUyoGpwR29wx2lxtBIn02wJ6BBL
+	 g6Cq5M5dS49QQ==
+Message-ID: <d5666c26-164b-4b20-ad9e-0e1e5b0d4ebe@kernel.org>
+Date: Sat, 1 Mar 2025 14:33:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com
+References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 01, 2025 at 01:47:47PM +0100, Jonas Karlman wrote:
-> Hi,
+On 28/02/2025 17:45, Pratap Nirujogi wrote:
+> The camera sensor is connected via ISP I2C bus in AMD SOC
+> architectures. Add new I2C designware driver to support
+> new camera sensors on AMD HW.
 > 
-> On 2025-03-01 11:47, Yao Zi wrote:
-> > RK3528 features two SDIO controllers and one SD/MMC controller, describe
-> > them in devicetree. Since their sample and drive clocks are located in
-> > the VO and VPU GRFs, corresponding syscons are added to make these
-> > clocks available.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > index 5b334690356a..078c97fa1d9f 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -7,6 +7,7 @@
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
-> > +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
-> >  
-> >  / {
-> >  	compatible = "rockchip,rk3528";
-> > @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
-> >  			#interrupt-cells = <3>;
-> >  		};
-> >  
-> > +		vpu_grf: syscon@ff340000 {
-> > +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+>  drivers/i2c/busses/Kconfig                 |  10 +
+>  drivers/i2c/busses/Makefile                |   1 +
+>  drivers/i2c/busses/i2c-designware-amdisp.c | 266 +++++++++++++++++++++
+>  drivers/i2c/busses/i2c-designware-amdisp.h |  24 ++
+>  4 files changed, 301 insertions(+)
+>  create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
+>  create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.h
 > 
-> vpu_grf is also used for gmac1, so should possible be a "syscon",
-> "simple-mfd", or have I misunderstood when to use simple-mfd ?
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index fc438f445771..79448211baae 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called i2c-designware-platform.
+>  
+> +config I2C_DESIGNWARE_AMDISP
+> +	tristate "Synopsys DesignWare Platform for AMDISP"
+> +	depends on I2C_DESIGNWARE_CORE
+> +	help
+> +	  If you say yes to this option, support will be included for the
+> +	  AMDISP Synopsys DesignWare I2C adapter.
+> +
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called amd_isp_i2c_designware.
+> +
+>  config I2C_DESIGNWARE_AMDPSP
+>  	bool "AMD PSP I2C semaphore support"
+>  	depends on ACPI
+> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> index 1c2a4510abe4..cfe53038df69 100644
+> --- a/drivers/i2c/busses/Makefile
+> +++ b/drivers/i2c/busses/Makefile
+> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
+>  i2c-designware-platform-y 				:= i2c-designware-platdrv.o
+>  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
+>  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
+> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
+>  obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
+>  i2c-designware-pci-y					:= i2c-designware-pcidrv.o
+>  obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
+> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+> new file mode 100644
+> index 000000000000..dc90510a440b
+> --- /dev/null
+> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+> @@ -0,0 +1,266 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + * OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/dmi.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
 
-Just as Heiko explained, "simple-mfd" is only required when the child
-nodes should be populated automatically. Here these two GRFs are only
-referenced and have no child, thus "simple-mfd" compatible isn't useful.
+Hm?
 
-> > +			reg = <0x0 0xff340000 0x0 0x8000>;
-> > +		};
-> > +
-> > +		vo_grf: syscon@ff360000 {
-> > +			compatible = "rockchip,rk3528-vo-grf", "syscon";
-> 
-> similar here, vo_grf is also used for gmac0.
-> 
-> > +			reg = <0x0 0xff360000 0x0 0x10000>;
-> > +		};
-> > +
-> >  		cru: clock-controller@ff4a0000 {
-> >  			compatible = "rockchip,rk3528-cru";
-> >  			reg = <0x0 0xff4a0000 0x0 0x30000>;
-> > @@ -251,5 +262,56 @@ uart7: serial@ffa28000 {
-> >  			reg-shift = <2>;
-> >  			status = "disabled";
-> >  		};
-> > +
-> > +		sdio0: mmc@ffc10000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc10000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDIO0>,
-> > +				 <&cru CCLK_SRC_SDIO0>,
-> > +				 <&cru SCLK_SDIO0_DRV>,
-> > +				 <&cru SCLK_SDIO0_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDIO0>;
-> > +			reset-names = "reset";
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		sdio1: mmc@ffc20000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc20000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDIO1>,
-> > +				 <&cru CCLK_SRC_SDIO1>,
-> > +				 <&cru SCLK_SDIO1_DRV>,
-> > +				 <&cru SCLK_SDIO1_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDIO1>;
-> > +			reset-names = "reset";
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		sdmmc: mmc@ffc30000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc30000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDMMC0>,
-> > +				 <&cru CCLK_SRC_SDMMC0>,
-> > +				 <&cru SCLK_SDMMC_DRV>,
-> > +				 <&cru SCLK_SDMMC_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDMMC0>;
-> > +			reset-names = "reset";
-> 
-> Suggest adding default pinctrl props here:
-> 
->   pinctrl-names = "default";
->   pinctrl-0 = <&sdmmc_bus4>, <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_det>;
-> 
-> And possible also for sdio0 and sdio1.
-> 
-> Regards,
-> Jonas
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 
-It makes sense. As mentioned in the cover letter, I depended on the
-bootloader to setup pinctrl, to minimize dependency of the series.
+Drop... or you miss bindings.
 
-Will complete the pinctrl properties in next version.
-
-> > +			status = "disabled";
-> > +		};
-> >  	};
-> >  };
-> 
+Many more headers look not used or even wrong.
 
 Best regards,
-Yao Zi
+Krzysztof
 
