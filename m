@@ -1,132 +1,108 @@
-Return-Path: <linux-kernel+bounces-539656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272C3A4A6F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:23:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF36A4A6F4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C017E3BDB94
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569873A5FC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A407AAD2F;
-	Sat,  1 Mar 2025 00:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111B3A936;
+	Sat,  1 Mar 2025 00:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnuikQIL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWrRSZV3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798974C98;
-	Sat,  1 Mar 2025 00:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC83101DE;
+	Sat,  1 Mar 2025 00:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740788581; cv=none; b=CZtrn9DOK+NSi8NJO/vPbCyce9MHlilOTs0hWXd4fEfBl2jJIADANUQo3T0Ca0JAFFolWSD/ZqVzqI0dS1ci7skekFUKN1EDRUdbZEY42IJLvf/wySvOOi39XeId5A0B7UtYeiE9tnlyOaH019TGIbGtUz7JuF/X3r0Y7EPZ4XY=
+	t=1740788715; cv=none; b=kBZak/tGhWWAQhU56Pg79E27vsZCKvR7jla8t/AdPniYvCVgurUz9xNZ/UWx7u78oA+xoQrAMKNCE3S/BnkxAg9sCGghhw44M/CR1gYwK8luqn5YKdDHsznhFudWL58uSsnvFfsS2/9FF9hfYu3FvNoNWwjsNJP+k8QUwy8k1jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740788581; c=relaxed/simple;
-	bh=BJ85jd9LWmkfvxQt+PubnvRoJI2+CN6NMADWkuH7ehQ=;
+	s=arc-20240116; t=1740788715; c=relaxed/simple;
+	bh=XFbCzOr8x0mc18tDs3UGrvj7/ouKNDpWSIKYwUY499s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GmxoX0+gnSK+1bZlhcJQcUOlk3AHlBp/RVcLJr4GsMUXcMBrC8iCF/jgdLJi3x7pm/L3g0LV+ApG2Dj2JWnW8BzYFdDGj7k5abT4HjWXnOIkt41uVGt4KwGU29+olTo2ICMUHKT0mMQlO94fpZQEJuvWhLbj8grhYZkKIAC7X10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dnuikQIL; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390f5556579so479084f8f.1;
-        Fri, 28 Feb 2025 16:22:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740788578; x=1741393378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJ85jd9LWmkfvxQt+PubnvRoJI2+CN6NMADWkuH7ehQ=;
-        b=dnuikQILYIxLTKbaeTt4xeEV9N5MfH91TUY9cSU2EcRG0HOLpswPqT/NS9fQ/ydgCh
-         0lX+v6hjUn3Y1y0ov7nDl1Q6wPfvYKTSMcWmI9QvE3zr9fAzEZfcjVJKetbboZIL2uoF
-         75TyC+pzsGomN/E6s4vFzdv8pk6Q0Kt/I4JrHQks/CXInET8SEJ66cIU/Fg35lHHsvkL
-         3OlxBR6ugfYIUjza3a2bX44xyWyNChL2V990WO3BbI6+G6iR+7qPCCHXhJMlDmwarjFb
-         5MbPb8r7tbEaAFdjPu1yPO7zFAsNgbBXxYoGNDGy/ENFmOnnI0/oD65vTi54MhYHcKGC
-         zmIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740788578; x=1741393378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BJ85jd9LWmkfvxQt+PubnvRoJI2+CN6NMADWkuH7ehQ=;
-        b=q4NbfWV0hOA0bhpJ4MJJGH+9hFSTXoE6/6B6KCw2S3fEqoeQJmDlaeuPLV4/ZvDrpn
-         doV90NBb4cSFIDQUEr4IrJjBPnUM63WqFj7OIVNYFov5PCxd7fWvx++njTtsRpwFABL1
-         pCJJjbbuTxYUWHqC21TtCAfCaCvEbKi6lsEFZU4bFIRd9rVMEW8C8BA48AxDvm5Ory8b
-         Iv4N02uxlMauNoGt9V22rUCyrTaMXTo8rEPxEbcYdt9NNAny56XKNbpUjyK43RHV+fbc
-         FxnpfTaFcxlwDuzO4Dvna4cfFGSXjqxlWdsbw6VDtfneUYTYPb0tZ4z7+TzYYhfPxZZt
-         gZBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVB9UUaT4HCT85kdSPUX6q+CEZgHa37cDacZjDXhOh0fxEy9E/Gto7s5s5G3568lDB6VjM9LD0we4w=@vger.kernel.org, AJvYcCVQWPfTjFjY+obWieiBjKY12MYxy65F9yDBtUiwjdSThIC9qMG0H5ifgnU9TeiYohlQzL70lXzYJo0xhgO3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAJvy/qkmLQ4wiF5cjiJBqZ6NDWmOiU6imaBCZ/SaZeB7k7WMh
-	lpYvtQemwfhJchl2GO4KI9cZ3Mg3CxpS1OofifpIQEx3tsqLwMsZ3++XOuEdIf+vGCwvEw6B6a/
-	VApY2oKU0RJbEWE1Hnvnb+3MvlbI=
-X-Gm-Gg: ASbGncuMto9cOjzXE9O3U2xRVoI5Hqt8HWPjfJgzX6HAMxwWaUXCcE0DCnoBNo5mZKx
-	j3f62RhT6zKyXIG6Dttd2iR1g36ni+tvY5m4CHDexi+aW0qoK7dICxmq5Zg7n1EYfxRv3GHwsag
-	noOeLnXlaGH/CHcz0qskihpjjFdigu
-X-Google-Smtp-Source: AGHT+IGOs2J8Ec3SpsExVrc6QQu8Fiv07hIlgJmQJEhCPmeI+K9xrAkJp6tJ/1xDwbSrLdOEQrceGucIYIyYI4ePgr0=
-X-Received: by 2002:a05:6000:1849:b0:390:f698:ecd0 with SMTP id
- ffacd0b85a97d-390f698ed13mr2102576f8f.11.1740788577700; Fri, 28 Feb 2025
- 16:22:57 -0800 (PST)
+	 To:Cc:Content-Type; b=F1a1DjG/CxHeCql832OWt5p+cqOhoXcPmHKfqwVk+iJkjkOb2dBRzACE+NY+BBOe2RYIThqKsJE2XYterjalLJRhPak8GhBJs+v3nqGmraIHEzYFvvrGfdPhKI6AO7AuEvAaMx3lV4DSdEvz4RYCnYrisHEPcK+stkaZ7vhCPmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWrRSZV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD26C4CEEA;
+	Sat,  1 Mar 2025 00:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740788715;
+	bh=XFbCzOr8x0mc18tDs3UGrvj7/ouKNDpWSIKYwUY499s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HWrRSZV3nrp7Z8h7Pt4HeIHRsCK+4268yO2gzD0BIyMp5ru+YvoE6f7LRdyu0gMXp
+	 iP1MPVSESLrvGY5vrvAXAZ1EJcuCICfqynVE9Wzx+3XpLtUdQm61PKOqlSdtgyIXGz
+	 3pRxHa3mokJ3JQqneLYqCNJFxH5f+vsPcWEYcT7gkf9RYhetxWFYzRad/nMKzduHhL
+	 PwOXR7xZXunJ9cLNU+4uNYRsNIibJJfx7dZdzjgDVxM3kikuViji8COc13MrJc9KZx
+	 Iq72Hdy2dF+qENYVVX4xBOrJhDxWaGO+kPNSK+zn7N6P36Ad9NmwCWWxpZTt9SqbQq
+	 3wQKS79KG1ZeA==
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-856295d1f6cso197336339f.3;
+        Fri, 28 Feb 2025 16:25:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUmN34+rktrt1YRXNd9V2nuouxC45RjoJwtdUGi0cBmroXFCDmX1SY2JGPBrR5mYY6bpuTskraewe2ESDQ=@vger.kernel.org, AJvYcCVnujSB0rKMORMIkpLCssTROhiomANQySDtRcFwU1+rgN8skS/ArMDk6e/PwVcr3DMMX9Z3m6ERnscQgl56YetcrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsmx5km+raN4M5YoTI4aASoCWp0C/xOp5AwTZcxtjq6KzLu4wA
+	r1SeoWLvgeevcMemm7L37KMcl12B1GUMIAgTKMw6lia8g0UuG1hBYm7OimX3VYk+mgG9wwx6qw7
+	GOfpwIHrw4zG0C01BiRBQNBxyOCo=
+X-Google-Smtp-Source: AGHT+IGAp0GbHqRmi6hlPED+wTmAowfkgSomr4+J8+M5z34mjBfwhbZTMkguL3rXPh0edlmJoWRZwclgslkJCRmboY0=
+X-Received: by 2002:a05:6e02:13af:b0:3d3:e536:308c with SMTP id
+ e9e14a558f8ab-3d3e6e71ceemr59314225ab.8.1740788714543; Fri, 28 Feb 2025
+ 16:25:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
- <168f775c4587f3a1338271390204a9fe16b150dd.1739866028.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZcVSwUAC9_xtVAHvO6+RWDzt6wOzWN623m=dT-3G=NnTQ@mail.gmail.com>
- <cik7z3nwspdabtw5n2sfoyrq5nqfhuqcsnm42iet5azibsf4rs@jx3qkqwhf6z2>
- <CA+fCnZd6O0_fc1U-D_i2shcF4Td-6389F3Q=fDkdYYXQupX1NA@mail.gmail.com>
- <uup72ceniis544hgfaojy5omctzf7gs4qlydyv2szkr5hqia32@t6fgaxcaw2oi>
- <CA+fCnZfb_cF1gbASZsi6Th_zDwXqu4KMtRUDxbsyfnyCfyUGfQ@mail.gmail.com> <paotjsjnoezcdjj57dsy3ufuneezmlxbc3zk3ebfzuiq722kz2@6vhollkdhul7>
-In-Reply-To: <paotjsjnoezcdjj57dsy3ufuneezmlxbc3zk3ebfzuiq722kz2@6vhollkdhul7>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Sat, 1 Mar 2025 01:22:46 +0100
-X-Gm-Features: AQ5f1Jp9iybs6pTKPBUq6fE1AmEKUlDJIkwe5Kr9NN_-2VapuhLDqeATKkl6mP4
-Message-ID: <CA+fCnZcCCXPmeEQw0cyQt7MLchMiMvzfZj=g-95UOURT4xK9KQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/14] kasan: sw_tags: Use arithmetic shift for shadow computation
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: kees@kernel.org, julian.stecklina@cyberus-technology.de, 
-	kevinloughlin@google.com, peterz@infradead.org, tglx@linutronix.de, 
-	justinstitt@google.com, catalin.marinas@arm.com, wangkefeng.wang@huawei.com, 
-	bhe@redhat.com, ryabinin.a.a@gmail.com, kirill.shutemov@linux.intel.com, 
-	will@kernel.org, ardb@kernel.org, jason.andryuk@amd.com, 
-	dave.hansen@linux.intel.com, pasha.tatashin@soleen.com, 
-	guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, mark.rutland@arm.com, 
-	broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, rppt@kernel.org, 
-	kaleshsingh@google.com, richard.weiyang@gmail.com, luto@kernel.org, 
-	glider@google.com, pankaj.gupta@amd.com, pawan.kumar.gupta@linux.intel.com, 
-	kuan-ying.lee@canonical.com, tony.luck@intel.com, tj@kernel.org, 
-	jgross@suse.com, dvyukov@google.com, baohua@kernel.org, 
-	samuel.holland@sifive.com, dennis@kernel.org, akpm@linux-foundation.org, 
-	thomas.weissschuh@linutronix.de, surenb@google.com, kbingham@kernel.org, 
-	ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, xin@zytor.com, 
-	rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, cl@linux.com, 
-	jhubbard@nvidia.com, hpa@zytor.com, scott@os.amperecomputing.com, 
-	david@redhat.com, jan.kiszka@siemens.com, vincenzo.frascino@arm.com, 
-	corbet@lwn.net, maz@kernel.org, mingo@redhat.com, arnd@arndb.de, 
-	ytcoode@gmail.com, xur@google.com, morbo@google.com, 
-	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
+References: <20250227051718.1176930-1-namhyung@kernel.org> <CAPhsuW6wuBjCo9ygCFhyYimEHg5ZNtN7-Yd+gWuMJPTU781vFw@mail.gmail.com>
+ <Z8JS2P-QwHcPUpTV@google.com>
+In-Reply-To: <Z8JS2P-QwHcPUpTV@google.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 28 Feb 2025 16:25:03 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5JFP-QuE_HZBJm+RT+ytsV72ihP0g_CvByKB_S+fHV_g@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr2VUA2S9023QU5IkVaAbXI4g0PBBEnWq_T787XPOc8iygntsGUUGHqtUI
+Message-ID: <CAPhsuW5JFP-QuE_HZBJm+RT+ytsV72ihP0g_CvByKB_S+fHV_g@mail.gmail.com>
+Subject: Re: [PATCH v2] perf tools: Skip BPF sideband event for userspace profiling
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, James Clark <james.clark@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 1:33=E2=80=AFPM Maciej Wieczor-Retman
-<maciej.wieczor-retman@intel.com> wrote:
+On Fri, Feb 28, 2025 at 4:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> Btw just out of curiosity on the topic. If we used a runtime specified ka=
-san
-> offset, could the gdb script issue (not knowing the offset at compile-tim=
-e) be
-> fixed by just exporting the value through sysfs?
+> On Thu, Feb 27, 2025 at 10:50:26AM -0800, Song Liu wrote:
+> > On Wed, Feb 26, 2025 at 9:17=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > The BPF sideband information is tracked using a separate thread and
+> > > evlist.  But it's only useful for profiling kernel and we can skip it
+> > > when users profile their application only in userspace.
+> > >
+> > > It seems it already fails to open the sideband event in that case.
+> > > Let's remove the noise in the verbose output anyway.
+> > >
+> > > Cc: Song Liu <song@kernel.org>
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> >
+> > This turns out to be more complicated than I thought. I actually
+> > like v1 better.
 >
-> I know that in inline mode the compiler would still need to know the offs=
-et
-> value but I was curious if this approach was okay at least in outline mod=
-e?
+> Sure, the complexity comes from moving the code to reduce the
+> duplication.  But either is fine to me.
+>
+> Can I add your Acked-by to v1, then?
 
-I think this would work, assuming that GDB can pick it up from sysfs.
+Yes, you can add to v1:
+
+Acked-by: Song Liu <song@kernel.org>
+
+Thanks,
+Song
 
