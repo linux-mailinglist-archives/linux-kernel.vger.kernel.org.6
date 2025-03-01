@@ -1,335 +1,282 @@
-Return-Path: <linux-kernel+bounces-539683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830C9A4A757
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B398A4A75C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E34189C3FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E681A188DF2A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1ED1BC58;
-	Sat,  1 Mar 2025 01:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA4B7B3E1;
+	Sat,  1 Mar 2025 01:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFDOBIOr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGt236Ax"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2137463A9;
-	Sat,  1 Mar 2025 01:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740791882; cv=fail; b=djkyXajjfwxUPoLBy671wt1SaX9XTIAZrs25izaUpoTs45CPsYVbsjKUkS5/t/w0pkJpb8friOT6zzC5dM8VQJLcIHo0gaQJKwp/AAGhiO8x+HnZAYIwF4S/dB8BxAgIkCKyU9MBbd3okSG6Xw03JrMfo+7IzCPam+9sj6wZ6UE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740791882; c=relaxed/simple;
-	bh=DzW3BLlt4MiuyKWSTuTm0pGpO6yuXPZq0+6uhhao+YM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZNjlReHbAxmt4s7Yd/KThjGhLTImCp2VHWiyEUqIm4hu7Q9pT8U8/5ouf4+iBRowSWx70OlODeyXwIhuTZ2dlwzjlGIsRsKdwZkhPFu6PcphdVtI2Cgn8W/XIyY3eEz/WpXglyB83k4MP2tmi+315HL4hu9L6Gb481doWvpqeB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFDOBIOr; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740791881; x=1772327881;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DzW3BLlt4MiuyKWSTuTm0pGpO6yuXPZq0+6uhhao+YM=;
-  b=cFDOBIOrcKu65RG2LXe05f+IrHsFZmoIti/8LDjzn4w6EonoOGRlF9y8
-   Py1xgGMRIBvPbckoLCuY5mAr4M4Is+TMlHM4WcLCbVZoW9OdoJkhewX79
-   t081T4qEhO1wKU6W7DtqR2tTFNTLGKdhkDSibKlzCdBBjaCKnF8Dd9Iny
-   DmPMaU9HZ2m0Ympc5JGmbD8uNbvUc1i8n7E0Xz2UL7d7IOxzQNmuKwu/4
-   rXOqLA+9N6PJ4ok9HtoLcPjg4fGHZCpaog/SaE2gTSb+pNuG6rjR7jZ+d
-   xqpbtkRKZu1vX2hDnVqu9N7t/a+8E0X1/rVw7G2Q6JW+nVSE3adQfrnQP
-   Q==;
-X-CSE-ConnectionGUID: WLPgmCCDQgqs51EknXPi4g==
-X-CSE-MsgGUID: MDFeJBA1TOyTRBoqYJmZnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41860231"
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="41860231"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 17:17:59 -0800
-X-CSE-ConnectionGUID: fwpG5yIoRxCztuwhR1xkiQ==
-X-CSE-MsgGUID: KdDH+dyqS32LghwWbg8utw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="154662480"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Feb 2025 17:17:59 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 28 Feb 2025 17:17:58 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 28 Feb 2025 17:17:58 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 28 Feb 2025 17:17:58 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WlDsm6brTf+NZd8EGMBNyPPBYBR7bXHjzoU74V+UQfcgskGhB1AWcRceMowsx4YMfnfXtgqiqvWPlWRuFhq3alPHl8sOW+KuzwTORmniSbvzDis6yncoNWK+jNkA/Jo9yosZaByxUFQ5brWxes39s7eCRI0LEBZEls99zFmEd10qHoxtldZu3GYSZeuzVCgqSJSoGYOrCWwbFWqZ/Oi/BA9+EQBR5BhCbnOnvj8zunXaaXvKx4ovg7cEqPbepE1Sw2eIg8XTmFyumQSymvPisKPz/Q0qcrZylV/i+3TFQGohkroa1ZfUl6gy90HuBjxtq6p3PjXo/EflRRMvoiEKhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HRP6Emh6R9OuedHcTXkyB6jKDeG6mZrJEP6s/3b0d8w=;
- b=Rb4y0vz0HmfIYWABeRclnLUKw6LaJQYXNSsq/mwhY7iH0HvqGWrIE4KL+BarXNcWrRnKvN5H1fcaPGhUhi1WrIfIQNAyw7aRBpMkjUpTwwGKt3cBKiJ8lLvI41CZqNzjohUbPX7P6ttZwwfWjt3P6JGGPF7z9V0hqc5abD1bIu+CZzmE3/PzHs9IfIXAFFqLHmpgIlRz51vizq5jAtMkbeXq7FNQZxp46ULE8a6eQs/7dxYLjzsnkibWFZhbwXJ85ZbfbbC84nikUWvIM0beLY1clZrKP1UHoHld8oYrtJGgJWpLAGkU3v18DHIQmIc2aEpgZhrK2p40tSXGGcP+FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SA3PR11MB8120.namprd11.prod.outlook.com (2603:10b6:806:2f3::7)
- by PH7PR11MB6548.namprd11.prod.outlook.com (2603:10b6:510:210::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Sat, 1 Mar
- 2025 01:17:42 +0000
-Received: from SA3PR11MB8120.namprd11.prod.outlook.com
- ([fe80::3597:77d7:f969:142c]) by SA3PR11MB8120.namprd11.prod.outlook.com
- ([fe80::3597:77d7:f969:142c%5]) with mapi id 15.20.8489.021; Sat, 1 Mar 2025
- 01:17:42 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
-	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
-	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh"
-	<vinodh.gopal@intel.com>, "Sridhar, Kanchana P"
-	<kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v7 00/15] zswap IAA compress batching
-Thread-Topic: [PATCH v7 00/15] zswap IAA compress batching
-Thread-Index: AQHbiceg39kI/20AU0W9GEohTPKAv7Ndd0cQgAADMYCAAAEzoA==
-Date: Sat, 1 Mar 2025 01:17:42 +0000
-Message-ID: <SA3PR11MB81204DB5927750D24860FAEEC9CF2@SA3PR11MB8120.namprd11.prod.outlook.com>
-References: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
- <SA3PR11MB8120AD2AD0A9208BDA861580C9CF2@SA3PR11MB8120.namprd11.prod.outlook.com>
- <Z8JfA5eJa-HUbYO3@google.com>
-In-Reply-To: <Z8JfA5eJa-HUbYO3@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA3PR11MB8120:EE_|PH7PR11MB6548:EE_
-x-ms-office365-filtering-correlation-id: e3e8da0e-4965-491a-35b4-08dd585eddad
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?qINNafL1AYlhopR6GJ6iizZoQfnxQLw9cwld/0Y29fUB1h9hfu7mp9pUhUrl?=
- =?us-ascii?Q?bJc6rjiHFZaZ+OWOjf015bKj4OoBUwJJvbwY0VvjzYeHb98VEXz3B9kc/xAn?=
- =?us-ascii?Q?vblEjkyCiPUUz29kLgK2yxBh8zOx3uO8ssBPplkJz4ZhQ5j2JCL+FaylQNxD?=
- =?us-ascii?Q?Srr28BOmjpDRXg6+SNXI3zu6NP+CDz+rPk7A0UqSkIzXpH+u6Y1XmI1ZSx9f?=
- =?us-ascii?Q?6DAJ5xZRJVABlZ0k7Vc3WXVWvi9y4xTPWkQSy6tTQxTMKXGQt4O6DR/pXoir?=
- =?us-ascii?Q?IEbke9BHbJ0RBaxBzCNVEEuot8gpUKiUCFm740LFVtWJogxtExGGV9FDMiZO?=
- =?us-ascii?Q?e4ITBDyDpKKMG6VTyuPj5VkPolKarge9W8QLlPRC+sqYmyuRneYEnaE6ojGd?=
- =?us-ascii?Q?N3L4mTrI/mHWZlfx9fKcD51ka+GDIQ+3xj2K+qHJfkP1LKeYjoAtC1UhrnZ1?=
- =?us-ascii?Q?0P+LqfOOBllcmE4718Ga7GwCvQXcrAY8Od8IG9bpva1qMZplVrdnO/NtC+hq?=
- =?us-ascii?Q?C5Q+8VuciroLRb0/Uiw1UTkw6kZ8mIypIwtsimrAkM2/1feyrmpx6Pr0Vomp?=
- =?us-ascii?Q?vLy4mRNgJddvnutrSYWjI/wky68M/0UaypNrr/frIHU9W+KteJvcl3RdsX51?=
- =?us-ascii?Q?lZndHxo2i8pTzWTukklRk7o8VASahGFqiWe0Y16nnFa3JcHrLEKfoYbne2bv?=
- =?us-ascii?Q?cidrVxr91rEsE0wfUmeWb38F8jAN3UeGUx+P0O1QJeoIuy99uVzAZtr5TEgD?=
- =?us-ascii?Q?xJmInvrDu+V8FCCMjYe9B7ge5RbKUT+gaAC/yLzViPgICV9qOH9+XSRPlSzv?=
- =?us-ascii?Q?PGJnCaxBQmj+n8osVAwRwSSZIowIRE2I0z04V6pk0Nqr69RnaSbVWOii3s5X?=
- =?us-ascii?Q?KRgEUQQuhXzkMv/6JAPAybnbnlZx71KaRpHcHUfbc42+aWgWtZnsN3sRwgYQ?=
- =?us-ascii?Q?x21+G22duB4YJgTNrIVPF5muaIy1f6yJbEM6PxFIEuqSIfxRjFq5N9nm7tct?=
- =?us-ascii?Q?7kJb5W6SAt3sm1V2ivFoX2wX2FAg7wkp9Ih2io4A1sN/E+8vqQR3QCRtymAn?=
- =?us-ascii?Q?7mcg8ibn9j96dDGm9O+fZXrHfoeBWOHTQDZc3/CJDzscmO9fUgOmN8qaHlHl?=
- =?us-ascii?Q?IKDMpO+w1Gb5CT0MYi+SAwKnX+DNkpSJIETpamqCHS8L/04cGnoqx7YtN2y7?=
- =?us-ascii?Q?QbkR0mPip1Z9XP150KxpMKadbH2/PhqBQi2f/1ZQPZ0JFMQbCLDJH/E1bkUx?=
- =?us-ascii?Q?Xv63jraI4ySsJYv0RTaKKOw+MqJswNk8tPgCY51CYpdlLzoObw3H84zFrnIw?=
- =?us-ascii?Q?dVSQwZTZ6SBikZ2ESjrvwJkE3DQ+4sh7v4RqyMlzr3xios5U8UyOeCrrTBD3?=
- =?us-ascii?Q?Qg4JqkPG/UL9cRqNNSfpYEBLjjP8onMkuAtErd4vya2BuVvn6jkRZhYgMryK?=
- =?us-ascii?Q?of41kXlarRdEbgbEkCtdWhce1lboIVrU?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8120.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6pH/Rl00xlvpYFOHaDfcAVz0SYdhMtxa07OdjN27tlUVqWw5g640PZ1UtCGF?=
- =?us-ascii?Q?yDvgjVcr3401NrIz8qoyVzy2cQgFZTHL7Y16l7sS152X3AfV/+5Y3XzrHChp?=
- =?us-ascii?Q?434MbxepGtITGAhJ8EygSya1mYPDqiWwQhS2yTGgr9ygsbL9dtUEDoTwS6eR?=
- =?us-ascii?Q?U46/wOwLeBuXR5qyx1Y29joP1ztPND+a3RuTbCdeIRPKr5V7DGm5HEs9kfNe?=
- =?us-ascii?Q?bnFFx2fHObNX+JQbZZL/L014mf6Ee+UugdRL4p0r+eVHc67qhBaFkSimVJ5/?=
- =?us-ascii?Q?POCmlNf2a20gy1wcjoDYeRvynWFuwPP3re+YJ5ts3+fkoM66ATo3OX5W2Wh1?=
- =?us-ascii?Q?avE6RP3zzTZG7AP+0ykRDmnRFi5vkqhLAO18xOA0zdOq68vdmAV+4GIaDrgY?=
- =?us-ascii?Q?zbbFV6D6leryEM0opQIPfa9FFQN2GDZG6M1J2mtIP+d3Gpx9BvX8d/wJdYAt?=
- =?us-ascii?Q?ZIRjDYCxOXDZu6TmvfA9hF74goc00EXbKCSHUaXmayG1X2ADe4HI40I9hvtR?=
- =?us-ascii?Q?nSdHF821hd1uDg6kIh2XCHwJqoq93g6ItHAaldJx5eED8MgW2VPpor34ulXk?=
- =?us-ascii?Q?mW3pwyqEjqIPoMD+XQ+DgEG9lBOmVN/hW1J9uLScFhWibOw7cxqOzBr4/GvD?=
- =?us-ascii?Q?4Deuz5UIH0mXzyFzVJxPvXWTfc3EXNUGrfupmqwJ0F9wC2RsOOY0IETB7LlG?=
- =?us-ascii?Q?7yjQ/Avrzz5mZfQgpkKN9C6XUvlnzBgKMf8ZgIXUF16jstqP0sMR4yY4tdNA?=
- =?us-ascii?Q?DISmaF5Gz1j17oj/Dx3/nNUc5AsMZtflGBtAWJJ9MKxt2NsC9yTJDgmXkrq5?=
- =?us-ascii?Q?SgwRsk7M6ofmSWlxRjmYMDuJq18LCJHd2J/y0YWHdl6nIwimoqFYLmcWf3Pp?=
- =?us-ascii?Q?ExCU72VFIfw64NO3i9vshu6csLG+l0SF2t76cUfZE8fKVwv5G7SE7CJDHGgg?=
- =?us-ascii?Q?47AlpG9YixN4JTqqEtmtwXNYWp65qBu0goGjOvpXF5n9Rw4lmCvb3nCRx/bJ?=
- =?us-ascii?Q?1sGHUUywPI/E0+8lPXRLDo8jA4X+q9nPnSi1ngi1Dos2oGDfbtOqAatIMj4B?=
- =?us-ascii?Q?y4CklYrKeOpkIzmgVqnah3A4PLT6YfDSYHptTS0LUIH+yg7VdO6eXmrQJ25g?=
- =?us-ascii?Q?yx/swsNCS4ba2IvIvnmNpbLI9XeHIv3oRvDFLVpLijLMwVTCxzWWN/FvRVmx?=
- =?us-ascii?Q?r5MbwBYWcDlmJnE7hmwvwd8tCVLukoIkw6ZdhrMmvef8nh8rvX8bVRfIczP6?=
- =?us-ascii?Q?5Yb3MvdtIDu2YXhUKReBJsPFwDu5tLDbbd2kW/9p6QPk6gySJqxFVGzApHCY?=
- =?us-ascii?Q?53nLOWC9NdF4K5wihcVMYgCOd0pIWvd9Nx3yCSANhqkZ3zhGWWWP5FpCovLC?=
- =?us-ascii?Q?nxlJ+KvkwSTQGXnH0WSEr2ouH5eunDUuhYDNuDKnp94iDVQpLTFt5M12pORw?=
- =?us-ascii?Q?J/krvYw/3VMtHJLRK4DB9fOKUZXZRqL2o6HRJmydEruBD5ijSD29X0atH2pu?=
- =?us-ascii?Q?9H88P5x2NIMIwC8wQqPZZTpEBrJcziQHvjZsdvs0HUKHixWfFliz78j7Vg33?=
- =?us-ascii?Q?vzq1V9J0KZTagM2sq34dpFr3RWjp5NP+hRzVIY5YBi1NIhke4FkOc3Rl2n/K?=
- =?us-ascii?Q?zA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258C14A82;
+	Sat,  1 Mar 2025 01:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740792237; cv=none; b=o9oktXGP5+TPKrQmnj3erOxXfocdAoneNBKbfrjOmrorZkHddtYMdFrGR8lEc3XkAM5qpvQTjqSKswJm96h4mtEq9+TLRyLw9oXDm3/pZ1J0C6LZeHoq9Z9qLJG0JL6JG99RSm/WJuHp8oHNKmo1e04FC4FR6iX74c+Cb/eIfl4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740792237; c=relaxed/simple;
+	bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iQ6Oky2cLM0/40OugCp8TKKtWBcwSILidKtr0A0yoQ18hoBRRdLr0WRTDjHLh/QjX5m3vPyyyBoHjx/VKDeU8aWyhrlIsYm1svXbjGLPsyoOzHmT27EWGibyeEaxdCnoN+iFAn6OxfRIQVFi3HKrCu+WQjE2XzCkzofLgDYrqWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGt236Ax; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-abbdf897503so675123966b.0;
+        Fri, 28 Feb 2025 17:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740792233; x=1741397033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
+        b=dGt236AxLNuo4WLjgp5ssqIsG2ZpNQcRNuVhaQBSQX8N+6Cl7uzzqqRS1Tw6eR5cD2
+         /g57MMFC6Eg7xtu0HHmt2h7dQOi67QuZ6RBHniWVV/ReWqtKW5HWGVBnp3ZD5tOf8WEo
+         7u0HHLoFf1/g74uiFedmb4xufLfHk2uJ7mb4n5F2HfnbzG8o7JAb/BxeslTgIOoRwgfi
+         dekScUWvqGxVYloomw//zAqZ5hA+OVA/mP3xZTqO0QzVaJLH+mjL0TLWOfwYHNDBg2LJ
+         4lJIPH13QjJoz7n9pf0mu46y/ylktG+J6pFIDEppPIX3/fWgebUec6hoj9o9KOn5UOZ2
+         Qjag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740792233; x=1741397033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
+        b=DZDRTY0RTRWpnYZdIibupYPs5dxqqKUVSYNKk/Krow0E883vkjSjDUabC6e86dK+25
+         w8D50p4flMm9VDcI+j629FeCYBEuvuFC9QYTwIszkzogH1NVwjkNqATCKrYyUOGz7OVU
+         BwKzox9oVbLmWnJnkO2R0tsByUWW1b/alfYet4VRGuWH+rOkv05poTSMOupi4kMXKmrJ
+         mL1vC6EJaiupEZZN1qmgNpcGM/VVlcZnfN7KFq2DjTv5NYONgzlQPc3w4jiVR4g6fSbx
+         rXN7UnkX7tCeKzUpfPPXlldfih2uiA4I79CiG+Iv24qctfj8pnvVeo9VniuV7cXC8D7K
+         vwpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEZ+2vCLQPx9HZJ2jFyuvNc4nH9Wpiw67EzmUSwkG7gYF+kgRvaMh+q2SKmXDpCVPlHM=@vger.kernel.org, AJvYcCVwVs8f8aG9lXdOnuxosVoIsLWGlVIQT1VIc8K+odCKhpJGlxpxKzvE/gqRmkmWQ9hGTVsDt11jtp6GbLKl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8OmiO4Pco4o73EGmoHlWofipDu8IggllWqvgmgySARZzWVbCd
+	rgveXdlm5zOvhU9oE386D8XErxf6Uqbkl6BC5G/X6q4ub6baauJ9xhAVXi2R71+mPkjaOYwTy2U
+	A1NEW6ipX/NxySKFBrgFyHvRDqf0=
+X-Gm-Gg: ASbGnctO02B70Cp7q/1RbrPqoIyP93sJ6MuKc3kFAdcUhGD9jh925uqXQJPQ6s8asGl
+	KazDo2qhhVhrbxG0sMSjLQ9K5vpiZx5K4HbMwFy0xmDToxlJqsBeYyBel6ZLK1G6lYox0KOHa3s
+	+hu6Qvg5682OlanuJk3iZaR6yu7Bo=
+X-Google-Smtp-Source: AGHT+IFKObYM3YgueqkWMDolNhSPNwztcgIsG4jMhFoy5JPSqsEUqCIb3ihURn8O+dY9SQmWbENCzXA8blCQQc67NyI=
+X-Received: by 2002:a17:907:7fa6:b0:ab7:798:e16e with SMTP id
+ a640c23a62f3a-abf2656df67mr466577466b.15.1740792233075; Fri, 28 Feb 2025
+ 17:23:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8120.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3e8da0e-4965-491a-35b4-08dd585eddad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2025 01:17:42.5515
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IyumFC+28BgYuzB0d3S79CwAYNsYNpitt0rUgaqMSZjQGsVSHVQ/UOx2wqQ67hMmdNEdbePoFfCkalcDskrlLCMJ0mQ38hUl5Ht8iC1wWmg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6548
-X-OriginatorOrg: intel.com
+References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
+ <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQ+TzLc=Z_Rp-UC6s9gg5hB1byd_w7oT807z44NuKC_TxA@mail.gmail.com>
+ <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <CAADnVQ+cokog6j5RjO7qNwBWswXTbu-x2j4EoQEt405-2i5jXw@mail.gmail.com> <AM6PR03MB5080FC54F845102C913B596599CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5080FC54F845102C913B596599CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Sat, 1 Mar 2025 02:23:16 +0100
+X-Gm-Features: AQ5f1JrRwwDAnpo9fm4HMTRfwiSniLMv1ZduTyuzbO3dYdt1Tw1gVs6R2Ary14s
+Message-ID: <CAP01T76m7OP_u8C1hJMrpVqJGf77W00DE9qB-8Yq6Cd-BMQ=7g@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
+ runtime acquire/release
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-> -----Original Message-----
-> From: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Sent: Friday, February 28, 2025 5:13 PM
-> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
-> ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
-> crypto@vger.kernel.org; herbert@gondor.apana.org.au;
-> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.co=
-m>;
-> Gopal, Vinodh <vinodh.gopal@intel.com>
-> Subject: Re: [PATCH v7 00/15] zswap IAA compress batching
->=20
-> On Sat, Mar 01, 2025 at 01:09:22AM +0000, Sridhar, Kanchana P wrote:
-> > Hi All,
+On Fri, 28 Feb 2025 at 20:00, Juntong Deng <juntong.deng@outlook.com> wrote=
+:
+>
+> On 2025/2/28 03:34, Alexei Starovoitov wrote:
+> > On Thu, Feb 27, 2025 at 1:55=E2=80=AFPM Juntong Deng <juntong.deng@outl=
+ook.com> wrote:
+> >>
+> >> I have an idea, though not sure if it is helpful.
+> >>
+> >> (This idea is for the previous problem of holding references too long)
+> >>
+> >> My idea is to add a new KF_FLAG, like KF_ACQUIRE_EPHEMERAL, as a
+> >> special reference that can only be held for a short time.
+> >>
+> >> When a bpf program holds such a reference, the bpf program will not be
+> >> allowed to enter any new logic with uncertain runtime, such as bpf_loo=
+p
+> >> and the bpf open coded iterator.
+> >>
+> >> (If the bpf program is already in a loop, then no problem, as long as
+> >> the bpf program doesn't enter a new nested loop, since the bpf verifie=
+r
+> >> guarantees that references must be released in the loop body)
+> >>
+> >> In addition, such references can only be acquired and released between=
+ a
+> >> limited number of instructions, e.g., 300 instructions.
 > >
-> > > Performance testing (Kernel compilation, allmodconfig):
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > The experiments with kernel compilation test, 32 threads, in tmpfs us=
-e the
-> > > "allmodconfig" that takes ~12 minutes, and has considerable
-> swapout/swapin
-> > > activity. The cgroup's memory.max is set to 2G.
-> > >
-> > >
-> > >  64K folios: Kernel compilation/allmodconfig:
-> > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > >  --------------------------------------------------------------------=
------------
-> > >                      mm-unstable               v7   mm-unstable      =
-      v7
-> > >  --------------------------------------------------------------------=
------------
-> > >  zswap compressor    deflate-iaa      deflate-iaa          zstd      =
-    zstd
-> > >  --------------------------------------------------------------------=
------------
-> > >  real_sec                 775.83           765.90        769.39      =
-  772.63
-> > >  user_sec              15,659.10        15,659.14     15,666.28     1=
-5,665.98
-> > >  sys_sec                4,209.69         4,040.44      5,277.86      =
-5,358.61
-> > >  --------------------------------------------------------------------=
------------
-> > >  Max_Res_Set_Size_KB   1,871,116        1,874,128     1,873,200     1=
-,873,488
-> > >  --------------------------------------------------------------------=
------------
-> > >  memcg_high                    0                0             0      =
-       0
-> > >  memcg_swap_fail               0                0             0      =
-       0
-> > >  zswpout             107,305,181      106,985,511    86,621,912    89=
-,355,274
-> > >  zswpin               32,418,991       32,184,517    25,337,514    26=
-,522,042
-> > >  pswpout                     272               80            94      =
-      16
-> > >  pswpin                      274               69            54      =
-      16
-> > >  thp_swpout                    0                0             0      =
-       0
-> > >  thp_swpout_fallback           0                0             0      =
-       0
-> > >  64kB_swpout_fallback        494                0             0      =
-       0
-> > >  pgmajfault           34,577,545       34,333,290    26,892,991    28=
-,132,682
-> > >  ZSWPOUT-64kB          3,498,796        3,460,751     2,737,544     2=
-,823,211
-> > >  SWPOUT-64kB                  17                4             4      =
-       1
-> > >  --------------------------------------------------------------------=
------------
-> > >
-> > > [...]
-> > >
-> > > Summary:
-> > > =3D=3D=3D=3D=3D=3D=3D=3D
-> > > The performance testing data with usemem 30 processes and kernel
-> > > compilation test show 61%-73% throughput gains and 27%-37% sys time
-> > > reduction (usemem30) and 4% sys time reduction (kernel compilation)
-> with
-> > > zswap_store() large folios using IAA compress batching as compared to
-> > > IAA sequential. There is no performance regression for zstd/usemem30
-> and a
-> > > slight 1.5% sys time zstd regression with kernel compilation allmod
-> > > config.
+> > Not much can be done with few instructions.
+> > Number of insns is a coarse indicator of time. If there are calls
+> > they can take a non-trivial amount of time.
+>
+> Yes, you are right, limiting the number of instructions is not
+> a good idea.
+>
+> > People didn't like CRIB as a concept. Holding a _regular_ file refcnt f=
+or
+> > the duration of the program is not a problem.
+> > Holding special files might be, since they're not supposed to be held.
+> > Like, is it safe to get_file() userfaultfd ? It needs in-depth
+> > analysis and your patch didn't provide any confidence that
+> > such analysis was done.
 > >
-> > I think I know why kernel_compilation with zstd shows a regression wher=
-eas
-> > usemem30 does not. It is because I lock/unlock the acomp_ctx mutex once
-> > per folio. This can cause decomp jobs to wait for the mutex, which can =
-cause
-> > more compressions, and this repeats. kernel_compilation has 25M+
-> decomps
-> > with zstd, whereas usemem30 has practically no decomps, but is
-> > compression-intensive, because of which it benefits the once-per-folio =
-lock
-> > acquire/release.
+>
+> I understand, I will try to analyze it in depth.
+>
+> > Speaking of more in-depth analysis of the problem.
+> > In the cover letter you mentioned bpf_throw and exceptions as
+> > one of the way to terminate the program, but there was another
+> > proposal:
+> > https://lpc.events/event/17/contributions/1610/
 > >
-> > I am testing a fix where I return zswap_compress() to do the mutex
-> lock/unlock,
-> > and expect to post v8 by end of the day. I would appreciate it if you c=
-an hold
-> off
-> > on reviewing only the zswap patches [14, 15] in my v7 and instead revie=
-w
-> the v8
-> > versions of these two patches.
->=20
-> I was planning to take a look at v7 next week, so take your time, no
-> rush to post it on a Friday afternoon.
->=20
-> Anyway, thanks for the heads up, I appreciate you trying to save
-> everyone's time.
+> > aka accelerated execution or fast-execute.
+> > After the talk at LPC there were more discussions and follow ups.
+> >
+> > Roughly the idea is the following,
+> > during verification determine all kfuncs, helpers that
+> > can be "speed up" and replace them with faster alternatives.
+> > Like bpf_map_lookup_elem() can return NULL in the fast-execution versio=
+n.
+> > All KF_ACQUIRE | KF_RET_NULL can return NULL to.
+> > bpf_loop() can end sooner.
+> > bpf_*_iter_next() can return NULL,
+> > etc
+> >
+> > Then at verification time create such a fast-execute
+> > version of the program with 1-1 mapping of IPs / instructions.
+> > When a prog needs to be cancelled replace return IP
+> > to IP in fast-execute version.
+> > Since all regs are the same, continuing in the fast-execute
+> > version will release all currently held resources
+> > and no need to have either run-time (like this patch set)
+> > or exception style (resource descriptor collection of resources)
+> > bookkeeping to release.
+> > The program itself is going to release whatever it acquired.
+> > bpf_throw does manual stack unwind right now.
+> > No need for that either. Fast-execute will return back
+> > all the way to the kernel hook via normal execution path.
+> >
+> > Instead of patching return IP in the stack,
+> > we can text_poke_bp() the code of the original bpf prog to
+> > jump to the fast-execute version at corresponding IP/insn.
+> >
+> > The key insight is that cancellation doesn't mean
+> > that the prog stops completely. It continues, but with
+> > an intent to finish as quickly as possible.
+> > In practice it might be faster to do that
+> > than walk your acquired hash table and call destructors.
+> >
+> > Another important bit is that control flow is unchanged.
+> > Introducing new edge in a graph is tricky and error prone.
+> >
+> > All details need to be figured out, but so far it looks
+> > to be the cleanest and least intrusive solution to program
+> > cancellation.
+> > Would you be interested in helping us design/implement it?
+>
+> This is an amazing idea.
+>
+> I am very interested in this.
+>
+> But I think we may not need a fast-execute version of the bpf program
+> with 1-1 mapping.
+>
+> Since we are going to modify the code of the bpf program through
+> text_poke_bp, we can directly modify all relevant CALL instructions in
+> the bpf program, just like the BPF runtime hook does.
 
-Thanks Yosry!
+Cloning the text allows you to not make the modifications globally
+visible, in case we want to support cancellations local to a CPU.
+So there is a material difference
 
+You can argue for and against local/global cancellations, therefore it
+seems we should not bind early to one specific choice and keep options
+open.
+It is tied to how one views BPF program execution.
+Whether a single execution of the program constitutes an isolated
+invocation, or whether all invocations in parallel should be affected
+due to a cancellation event.
+The answer may lie in how the cancellation was triggered.
+
+Here's an anecdote:
+At least when I was (or am) using this, and when I have assertions in
+the program (to prove some verification property, some runtime
+condition, or simply for my program logic), it was better if the
+cancellation was local (and triggered synchronously on a throw). In
+comparison, when I did cancellations on page faults into arena/heap
+loads, the program is clearly broken, so it seemed better to rip it
+out (but in my case I still chose to do that as a separate step, to
+not mess with parallel invocations of the program that may still be
+functioning correctly).
+
+Unlike user space which has a clear boundary against the kernel, BPF
+programs have side effects and can influence the kernel's control
+flow, so "crashing" them has a semantic implication for the kernel.
+
+>
+> For example, when we need to cancel the execution of a bpf program,
+> we can "live patch" the bpf program and replace the target address
+> in all CALL instructions that call KF_ACQUIRE and bpf_*_iter_next()
+> with the address of a stub function that always returns NULL.
+>
+> During the JIT process, we can record the locations of all CALL
+> instructions that may potentially be "live patched".
+>
+> This seems not difficult to do. The location (ip) of the CALL
+> instruction can be obtained by image + addrs[i - 1].
+>
+> BPF_CALL ip =3D ffffffffc00195f1, kfunc name =3D bpf_task_from_pid
+> bpf_task_from_pid return address =3D ffffffffc00195f6
+>
+> I did a simple experiment to verify the feasibility of this method.
+> In the above results, the return address of bpf_task_from_pid is
+> the location after the CALL instruction (ip), which means that the
+> ip recorded during the JIT process is correct.
+>
+> After I complete a full proof of concept, I will send out the patch
+> series and let's see what happens.
+
+We should also think about whether removing the exceptions support makes se=
+nse.
+Since it's not complete upstream (in terms of releasing held resources), it
+hasn't found much use (except whatever I tried to use it for).
+There would be some exotic use cases (like using it to prove to the
+verifier some precondition on some kernel resource), but that wouldn't
+be a justification to keep it around.
+
+One of the original use cases was asserting that a map return value is not =
+NULL.
+The most pressing case is already solved by making the verifier
+smarter for array maps.
+
+As such there may not be much value, so it might be better to just
+drop that code altogether and simplify the verifier if this approach
+seems viable and lands.
+Since it's all exposed through kfuncs, there's no UAPI constraint.
+
+
+>
+> But it may take some time as I am busy with my university
+> stuff recently.
 
