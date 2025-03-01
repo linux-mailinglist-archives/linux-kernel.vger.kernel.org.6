@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-540075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC36A4AD54
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:26:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045CBA4AD59
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C3A1700B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC45C1896AD9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9350B19D067;
-	Sat,  1 Mar 2025 18:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40551E5716;
+	Sat,  1 Mar 2025 18:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fMRzFkOO"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RAXDiiw1"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185A38F7D
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237D11C5D61;
+	Sat,  1 Mar 2025 18:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740853606; cv=none; b=MtPUu9qNgR/tWXuC/j286J/tYsE6cHgIn1iLKhYBeXFdqEyWr4Bdf22e8T64BF9OITtRz/+TKxhS3yFS7APQ4bQGdvHxNZBTk+/5Nw87ccN8NgTN/M4sdsfZTfsmZcY+JA2rYRSdNaaADTwweiAu+NTFsAlG7snaLzvzDtcbqOw=
+	t=1740853710; cv=none; b=YpmE6MoHFpuTerdQ4YPzvZrEH276bFNt+NFtDVrwfisMz5VBHPtbt0rO86DrkdRdT5jUMA8S+OYojVyKUZ8utc7EF7KaVse5T5kwouNKyckSaB2hqIkIjZ2H+kMWkifLEDO//IyO7b1KY2lLCe8a8uP8Bx+qeywB5avo5eH8dMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740853606; c=relaxed/simple;
-	bh=BUyMLGKoaHqFNhbLKEJ58fyXJjdRMGC55aFapC0p4wY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJXpC7mfk2vw8nQeCZwUloGYuRa+1K8kJY7QLjoOKlGvcgEspUUrHT8QJGBHjagBfGaoVwCrYTjN3zG2ZKLJoJ1k3BOTuXOX59e6FCy4tqvSQpHLaOyWmS+6Yu8XR6x1U8GhP5oPv3sercKx0F4eX4Wf75a4DSqtY+ddqsOlWMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fMRzFkOO; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fea4cc08edso778158a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 10:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740853604; x=1741458404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
-        b=fMRzFkOOKcMjTTlMfvXI6XW6m//lZz5lzzozKlSLnQjxSkA9qOyrEm1haetQuxpx7c
-         DfT01qDqg36rU8sS/AqFeDnacj3QzixK7JZTum5kXqicb3GGxeqt/XsJU/fOP7zKr1CJ
-         RZsWadzAR0tun23368kJ6MOoWoY7thSwziXsWkyDRuISH4JciN+D7Z6aQ5uXujPne+EM
-         xzdtO+hgf9Gq3lzcghkgO3QYN4/QEn2RDKHXeHN9AuL2oF0nE6kJR0Bp2RwYCir3OGk6
-         GInDlgaxm4qpJAMbzhBb2BcuIGEU8x9VGDyZ+uA6kfnK42NbMlrUCoJnLM8416+3MW2w
-         HPDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740853604; x=1741458404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
-        b=qd74J2np14lkucpBAImIUr1Fm/vrnblbXK2aDwnJAnCeQmqZuH2QCjADw8PCgkr3/M
-         j+AtY8TTsYP1EU9cYSOxtXFJrsOUPvKji3fASZMpdXvIGAOpZ7M3sJj+gk0Qwz6wM2is
-         sPr414rjv3qlc+Sci9jZ1bf+yiyyjfVzhnXH8z9yZorQyBdbRdK1fNsKP46KP6aLpMTq
-         wF3xEy8FBu9ysvj1wTqG32/FyFrp9DJccQ6w+/rOc7Q7rUTLPg5+PYfN1ylMAftpFXmx
-         CJIllMwrXBIbJQfnvCNxQpe05b0RGu9+YmWE35eeQK+aOsEpKQ3C31cuHignv8qYZMEH
-         EYxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGZ8ony6Pm8F7U3oolwXb1iLWSJz63CcI4Tgf4cY/NoZKTOQeJQG0OubEmQXPuodKkk0TTcDEWqnTwW6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywUDi6FBZRM1jOcpUsmv8qXZDxghvv94V/WCZOgW4KPejk1j2n
-	gOxlQmfZxEqEuC1N3LmxLy4FNCUM6045k4tWvoRXvoZMEpV77G295MF7N5U/ffQyRISMuTDrNqP
-	L0xVRl/XuKpN2pOtsSpI9TfXMn9BhNOtqfnlZLeBCoSAtykwn7bo=
-X-Gm-Gg: ASbGncsS3lJVrqKLE6HHXYEqBgDGrJdX9Cyv6L1LTXrE79zOxrVtQp1NCeiInfybk6L
-	ZvFClA05sYQ9/b1FLShIw5iaiSyjVwtNmSnsaDFmffIZRj6rTNLUpmyM8dOMEpQoL3FBwGkDckG
-	/Datwv4XhgZcCtPQ2WhkT5ECHM
-X-Google-Smtp-Source: AGHT+IFldxOK6OJbDdbWpVRrspMM77OA3WhEQBn3nrMDky43Gr52XcLxm7oy/5RrmJlVL3sdDmhBzIRbDFjUTuC7qE4=
-X-Received: by 2002:a17:90b:1d10:b0:2fe:afef:b706 with SMTP id
- 98e67ed59e1d1-2febac10656mr4566239a91.7.1740853604275; Sat, 01 Mar 2025
- 10:26:44 -0800 (PST)
+	s=arc-20240116; t=1740853710; c=relaxed/simple;
+	bh=HbQ1yPq8BeEqX0CXAVNZ0UfzgnFZIeuoYkVsuEjiOew=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dgyis+REQSUFMESONZnL1tvG/LQqgthwCSjfNh9g3d4Smm7Lv4adShHPeUdq/nLGhCueiPnFDm3g5JpSLUjy5xbDrWga/1Y+3dRg7uogSG/ywvI05bSPzB3PzxgAn73QHlw3WsTXcSLp+qtzM4WkRx2ACVo9PZEA+rFBHsX0qgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RAXDiiw1; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HbQ1yPq8BeEqX0CXAVNZ0UfzgnFZIeuoYkVsuEjiOew=; b=RAXDiiw1szmRllTLCsfWYIkABt
+	5M8maW8X5dftva5kJfNjYhbrEiREaIWbM3x+REQqlJL7bcCn1Z10xqzpbfZvPVIT45jUIVO9A+eKG
+	Cbz3lXNaXNOS3gfbZe/yiGJh+8tRby+A2h95UQq9uCqY9eh9Jwqza2aZ3B1OkJ5Ub9JEF0RIv0vGP
+	C/ExROWSCvB54jyp+5F+wTqmDq8p07T70hGukeIUGZH3yPeWFM+I9IDYdziOdyfh7/J5UvhOXmvm9
+	hpVnlBWNUkTlOZvyvlyvemfMDjWahGTZ48J0KUdCFiVEthOngTmp8xf9oJHRfGF9ogTWYCH9m137n
+	x7hiSpMw==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1toRZ4-0001tc-FW; Sat, 01 Mar 2025 19:27:54 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ dri-devel@lists.freedesktop.org, Niklas Cassel <cassel@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, kernel@collabora.com,
+ David Airlie <airlied@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>, linux-rockchip@lists.infradead.org,
+ Chen-Yu Tsai <wens@csie.org>, FUKAUMI Naoki <naoki@radxa.com>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Alexey Charkov <alchark@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v7 0/3] Add HDMI audio on the rk3588 SoC
+Date: Sat, 01 Mar 2025 19:27:52 +0100
+Message-ID: <23891130.6Emhk5qWAg@diego>
+In-Reply-To: <0A30138B-183E-4816-80FF-AACDCFE3B3A6@gmail.com>
+References:
+ <20250217215641.372723-1-detlev.casanova@collabora.com>
+ <3337030.aeNJFYEL58@trenzalore>
+ <0A30138B-183E-4816-80FF-AACDCFE3B3A6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228235916.670437-1-csander@purestorage.com>
- <20250228235916.670437-3-csander@purestorage.com> <f74d6e16-29fb-4a9a-a6aa-9a7170c683ba@gmail.com>
- <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
-In-Reply-To: <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Sat, 1 Mar 2025 10:26:32 -0800
-X-Gm-Features: AQ5f1JoAnn34QyE_05Wc_hwwFc2GahHIUfSpbqlLvw2hci4HLHC_a_BQDPGL19g
-Message-ID: <CADUfDZqZ794CXKPeXnJ3oX3MrKPg6VtgQATLOTmrMv5wEhucRA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] io_uring/rsrc: call io_free_node() on
- io_sqe_buffer_register() failure
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Feb 28, 2025 at 6:23=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 2/28/25 6:31 PM, Pavel Begunkov wrote:
-> > On 2/28/25 23:59, Caleb Sander Mateos wrote:
-> >> io_sqe_buffer_register() currently calls io_put_rsrc_node() if it fail=
-s
-> >> to fully set up the io_rsrc_node. io_put_rsrc_node() is more involved
-> >> than necessary, since we already know the reference count will reach 0
-> >> and no io_mapped_ubuf has been attached to the node yet.
-> >>
-> >> So just call io_free_node() to release the node's memory. This also
-> >> avoids the need to temporarily set the node's buf pointer to NULL.
-> >>
-> >> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> >> ---
-> >>   io_uring/rsrc.c | 3 +--
-> >>   1 file changed, 1 insertion(+), 2 deletions(-)
-> >>
-> >> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> >> index 748a09cfaeaa..398c6f427bcc 100644
-> >> --- a/io_uring/rsrc.c
-> >> +++ b/io_uring/rsrc.c
-> >> @@ -780,11 +780,10 @@ static struct io_rsrc_node *io_sqe_buffer_regist=
-er(struct io_ring_ctx *ctx,
-> >>           return NULL;
-> >>         node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
-> >>       if (!node)
-> >>           return ERR_PTR(-ENOMEM);
-> >> -    node->buf =3D NULL;
-> >
-> > It's better to have it zeroed than set to a freed / invalid
-> > value, it's a slow path.
->
-> Agree, let's leave the clear, I don't like passing uninitialized memory
-> around.
+Am Samstag, 1. M=C3=A4rz 2025, 10:11:54 MEZ schrieb Piotr Oniszczuk:
+>=20
+> > Wiadomo=C5=9B=C4=87 napisana przez Detlev Casanova <detlev.casanova@col=
+labora.com> w dniu 25 lut 2025, o godz. 15:58:
+> >=20
+> > From what I see, the error is not present anymore on linux 6.14-rc4. I =
+tried=20
+> > reverting your patch "ASoC: simple-card-utils.c: add missing dlc->of_no=
+de"=20
+> > (dabbd325b25edb5cdd99c94391817202dd54b651) and the error reappears.
+>=20
+> Guys,
+>=20
+> Just FYI:
+>=20
+> On 6.14-rc4 without 0001-ASoC-simple-card-utils-Don-t-use-__free-device_n=
+ode-.patch - i still have oops like this: https://gist.github.com/warpme/ed=
+75c05d3b68f995d429dbd9097005ba
+> They are happening not every boot - but still happening.
+>=20
+> However applying 0001-ASoC-simple-card-utils-Don-t-use-__free-device_node=
+=2D.patch (with some adaptations as it not applies cleanly on 6.140rc4) - d=
+mesg becomes clean (10 boots; all ok)
 
-io_rsrc_node_alloc() actually does already zero all of io_rsrc_node's
-fields (file_ptr is in a union with buf):
+that patch was submitted yesterday [0], so hopefully will make its
+way into 6.14-rc next week or so.
 
-struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type)
-{
-        struct io_rsrc_node *node;
 
-        node =3D io_cache_alloc(&ctx->node_cache, GFP_KERNEL);
-        if (node) {
-                node->type =3D type;
-                node->refs =3D 1;
-                node->tag =3D 0;
-                node->file_ptr =3D 0;
-        }
-        return node;
-}
 
-How about I remove the redundant node->buf =3D NULL; in a separate
-patch, since it's not dependent on switching the error path to
-io_free_node()?
+[0] https://lore.kernel.org/all/87eczisyhh.wl-kuninori.morimoto.gx@renesas.=
+com/T/#me866307a928c2d592a2ba883867f028c5c8b9b40
 
-Thanks,
-Caleb
+
 
