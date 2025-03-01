@@ -1,168 +1,139 @@
-Return-Path: <linux-kernel+bounces-539872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34124A4AA1D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2412A4AA2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4822A1897DB8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAEF1897FBA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB851D63D8;
-	Sat,  1 Mar 2025 10:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38391D6DA9;
+	Sat,  1 Mar 2025 10:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="h3oWTPQM";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="HIf3I4AJ"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtO2Qlm+"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973501C3BEB;
-	Sat,  1 Mar 2025 10:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740823261; cv=pass; b=hHhkjW1wn5CUrgLfvoS4QaHCyC6ualJu50mN05uk8ecgXeNVDF8YYNL5oR6tqlChxL6RVkF+wkSo4HFM2pZfY7VhAOO7sRkrzxeXjqItTyPchv9Ofd8MBAIaHOWvORdrngTfYbR+GHSUweRNpNYv/YV5ZHR6buh/R38lMzgl7H8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740823261; c=relaxed/simple;
-	bh=uKJdpQCSbPPB5HN4bVQy18UmETpaVnNAq6aLSQSEJSE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D91D63F7
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 10:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740823445; cv=none; b=uf/TcxuDNCAGJx1BKl+5yf0sbGS0zRoMn125lIhwFumGzFu+V34v2COi+JynCqw7ZdjS7gR61QmbdP4xv12pzDuk6QiyMtrILCNDshT3O2GLgy55sHJ5fAKzf7v7gYEaJ5mV2MsgzhwJKVdYxFcGoxWZeRe7yB47ssqWX2XPWnU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740823445; c=relaxed/simple;
+	bh=ed0rxhmjszvCD6sXc1nM0sLqEzWbX15UwVBTYrlX7o8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SWm9tbXQOwCTvhfhpivxzciI+DzOKqkurbmeO468qLAH7e3qXgw4AKAhD2fsYfTHPqVV3Kh2FWE35csD27CCVXClmhdJ8S0+eBQ0RJsHGrQOYAEp3X3BKgvYXgHJrUvQa8giPnbtVGRvQPncohNSqnkksaSNsqifvzcZTGzAHLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=h3oWTPQM; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=HIf3I4AJ; arc=pass smtp.client-ip=81.169.146.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740823246; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=B2SWVCpRtiHYOnoSPTrC//h8W/FMt8MSTVvI11FbpR3DUyg+BHeZJ0hIsH0j1BkQzQ
-    nushWZ012isEqP5BxIkchEPC2QQ25atLMxL/GdMBd590bQGStxGBSkHxvKuzyRQ7Hpot
-    1/ddc1MVA4SjaIhnH0bp3+1btIPm76P2WRJWLnqnEv/h84EA1/tnYId1yANC4QEzGZca
-    8WDt1Jwp1m8L+CFIIuwa93voXpS8norsnn2NMn/tN2+N506BgrSVoHlPJBIPSOJYx5Ib
-    O1qWHozH5KfFeZQqgmeuLnDMfwJqKifNySuTBP5rYXW9TKt6ZED8jEtwdyTTCRBiKx54
-    ZP1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740823246;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=lnTVppnPxxg35JdZy9tXb8y01L1leqSyD1ShwbOMzbI=;
-    b=Xhzp6kUVmB2qDttEKZVuHaLFwXVwNPHrifRbeLhkVB/dzRZxosbXQacinRPZPBBMqG
-    H0Lb5In5crfQrqOCRp1bQKDlmKuhCrigickQq5lk9SHo+O8gUHJ8FMznX7s24f+3QwAl
-    UUoektqlLYmCy+4+FubNm2oMXmO3zrV2pBkUI/tuo50FjuLMlWAn8Kz1ZDp3o429O3FA
-    l2V1wH0XLr7rY1+hBEnOdpe8ysPYF/NqJir5GXVbiDLctwvgXXnfhfeS7C9/D19ooEKl
-    a+NKgzbNfwSs61oY+9+lspGVim0eL0EOURVEVZQ4PCnGeJTIH1z/BWPF2gyoFShoKKLb
-    FnYg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740823246;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=lnTVppnPxxg35JdZy9tXb8y01L1leqSyD1ShwbOMzbI=;
-    b=h3oWTPQMxIn9iTmbJW42r8jjkyymEJKXIro1c9/WNNvwKYcW3gs68t9bdWX32K1g5O
-    0mDK0hRBegscqsC3hyj/vRe7Gb9YETDhkP/E9D7Xr/5WJTHkpbVeBRoyHx1+6uRauwPZ
-    OaUKXkQRDXU6RynAT/LNijl08WZDl+LQImHapaKoRxCh9r6TXFjvUTQMH2JYal2IktVy
-    bs8dazgmZktHrW1l7V9wprKoRu0jWPpXC2EBO2qEmycMepkczynEU/g664mMZAFbYmp9
-    g9qn9/Ugv5Yn4sqrwmdPOkSVEXypzsbrOVYMU3L+VOVJXYCzSEcRXN76CGLq63hp2dce
-    ztrg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740823246;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=lnTVppnPxxg35JdZy9tXb8y01L1leqSyD1ShwbOMzbI=;
-    b=HIf3I4AJuLvimbZgyTEIemJmhJdEGfpIvZ6UJ8wFrSxmv1f3QEUw5NHOkaJiJsKmim
-    0dDGsFb3ooelsX0QGiBg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjEZ"
-Received: from localhost.localdomain
-    by smtp.strato.de (RZmta 51.3.0 DYNA|AUTH)
-    with ESMTPSA id Q56adc121A0jbfj
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sat, 1 Mar 2025 11:00:45 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	Paul Boddie <paul@boddie.org.uk>,
-	Tim Bysun <tim.bysun@ingenic.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	kernel@pyra-handheld.com,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v3 4/4] pinctrl: ingenic: jz4730: add pinmux for I2S interface
-Date: Sat,  1 Mar 2025 11:00:41 +0100
-Message-ID: <7e79b16be569fb0f501032b2b6ec726e4a09411f.1740823241.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1740823241.git.hns@goldelico.com>
-References: <cover.1740823241.git.hns@goldelico.com>
+	 MIME-Version:Content-Type; b=paGwE0z9RWhuewri+bJzwanRUuBfxfLFPihLyJOL0X/PQYUjVmg0oQVEqW3wy3vqqWCwgyM52Ez6TsdlcTuO4tiwl/VSTejbrwCsW513qkdeRHsOxydEY7te04d+7OeS7Jyko0Ha4HCEo94AQlxuISaZKLepiGrnjLyPVGMnPyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtO2Qlm+; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54298ec925bso4374174e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 02:04:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740823441; x=1741428241; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=76ANipvR3P/jVIpgRlnkUUgAgrkLoL0o+K6EABpA1ek=;
+        b=gtO2Qlm+B0LgpLMulFjM9s9gA+B6U+wBaztr+IB7HA/g7HxQKk1OUUVw9R4eYoZKlQ
+         GV7PysK1TweGty+29iQnzmBZ9NdZWKnj+Yb65LptAjQ/gI3abn381Uk0Z809Cj5UvS4P
+         Z1VwGjWLt4G93ulkvgZeQuIe0CXbYsbr1JoOjciuO13Vc3zMsOv7L6WefflM8kX5ItVw
+         QgcAjVN0VtDngXIv4T3f3QrepcLuZDNDQTUJICqt5Mm/xkARc3Z+/Imd1iY88H7lzYgE
+         719Po/9MPExADEDfT/IU+RXmxI/Ll6+9655IsH0U4bA4EXcML60029J0O3DJfvfJiDkj
+         Y9LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740823441; x=1741428241;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=76ANipvR3P/jVIpgRlnkUUgAgrkLoL0o+K6EABpA1ek=;
+        b=rLvZWR6mxCr9Flwiw4EbSl2FUmSMq5spEPoS7WQEuK8cDnlt4YTkRRiCLiYyMeLU2B
+         DZ0cjOGl3shrmjsOzOxdk0M2QtAX5BUC3/xgQbDBwNGlJ+vpVB4IARu5IgiP/8Jr3YEk
+         KQKYchogWvE/V8ZSEUuMuTJOpMHweRSAHgW57g+LzreVt8i0KLtmprCwHn8nV9Gp9Qdl
+         9Ta21G2a+pJh8Nhk/sbDKPqI9lQR62IUPWzNCKAploKTWfERbMFpR7F2lGrMmdI4oNWL
+         lE3QP2YfYCIWjEuorPBwrQK2QObNp+VSAvWTSHOITVql8p6rSYWig1eoAh/GmAnDcW3v
+         QuUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUqhSqHU0p2nv6NuBCwJj/m64MoJNpSTXvauSiKDozC9KgoDKHZgcXsic7JtL5BVTV/c/kuj9DWPzO1qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMe1jioJVn0F2rDl+HXxMLayU94rrP+RDYOvsA72dN34vn3p8i
+	dZMRLJED3liGiQg66Ug6ynijPlIbQdXjqGOAviyxdj0rFZgY0y0Ka7cAcyMZYYkOmn8qJwgeNLb
+	HkMo=
+X-Gm-Gg: ASbGnct129yP7an0wijBxe7nenORHZvqLSKBvj8qpup4RLmtTCkamlVWVLgpNx/J4UF
+	GfrROU9Flpsnabz821vZOqkR2ZCxJ8Rjvf6RqQnRhxGddGU2QKC7JJ6lGe0gQS3m+Wt9jbLTL6e
+	oFogx8wz0E2WK/tNCB+cz9ohnSVfmUhluGCpZVI7GTM2hqug71P/cYCQ65uJycNOQDz6LHO6p/1
+	t6Ll/oByFlmRv8luV5nCx+GOr07Iwd/PFLUKbRsQ0fVUiRX8GNVwvsbu1AJjaNF5lO4vyBIdUOd
+	glK/AtuoJ8adeJn339dVSke2UakssSAdoo32Ufc4t3laXeY3MvYAZ67ujRiJ7DzJ0F3Ug1zoLfX
+	PlGyj/ytl+LuH
+X-Google-Smtp-Source: AGHT+IFuYzubuDyf6X5ei2oE/n7MHEB/XJ+jimftn4XgARTj9v/mjL84XjfF68VTOLYEok0MXR5YaA==
+X-Received: by 2002:a05:6512:3f1d:b0:545:aa5:d44a with SMTP id 2adb3069b0e04-5494c33304bmr2297080e87.42.1740823441381;
+        Sat, 01 Mar 2025 02:04:01 -0800 (PST)
+Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494f8bdde9sm463722e87.148.2025.03.01.02.03.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 02:04:00 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	deller@gmx.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux@treblig.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] gpu: ipu-v3: Remove unused functions
+Date: Sat,  1 Mar 2025 12:03:57 +0200
+Message-ID: <174082343297.2941786.11452976094065423321.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20241226022752.219399-1-linux@treblig.org>
+References: <20241226022752.219399-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
 
-I2S is used for the sound codec of the Alpha400.
+On Thu, 26 Dec 2024 02:27:45 +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> Hi,
+>   This set removes a bunch of functions in ipu-v3 that
+> have been unused for a long time (since 2012-2017).
+> 
+>   No changes to functions are made, just full deletions.
+> 
+> [...]
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/pinctrl/pinctrl-ingenic.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Applied to drm-misc-next, thanks!
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 08e082e84f5c6..a9e48eac15f62 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -213,6 +213,11 @@ static int jz4730_pwm_pwm1_pins[] = { 0x5f, };
- static int jz4730_mii_pins[] = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
- 				 0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c, };
- 
-+static int jz4730_i2s_mclk_pins[] = { 0x44, };
-+static int jz4730_i2s_acreset_pins[] = { 0x45, };
-+static int jz4730_i2s_data_pins[] = { 0x46, 0x47, };
-+static int jz4730_i2s_clock_pins[] = { 0x4d, 0x4e, };
-+
- static u8 jz4730_lcd_8bit_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, };
- 
- static const struct group_desc jz4730_groups[] = {
-@@ -235,6 +240,11 @@ static const struct group_desc jz4730_groups[] = {
- 	INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
- 	INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
- 	INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
-+	INGENIC_PIN_GROUP("i2s-mclk-out", jz4730_i2s_mclk, 1),
-+	INGENIC_PIN_GROUP("i2s-acreset", jz4730_i2s_acreset, 1),
-+	INGENIC_PIN_GROUP("i2s-data", jz4730_i2s_data, 1),
-+	INGENIC_PIN_GROUP("i2s-master", jz4730_i2s_clock, 1),
-+	INGENIC_PIN_GROUP("i2s-slave", jz4730_i2s_clock, 2),
- };
- 
- static const char *jz4730_mmc_groups[] = { "mmc-1bit", "mmc-4bit", };
-@@ -251,6 +261,7 @@ static const char *jz4730_nand_groups[] = {
- static const char *jz4730_pwm0_groups[] = { "pwm0", };
- static const char *jz4730_pwm1_groups[] = { "pwm1", };
- static const char *jz4730_mii_groups[] = { "mii", };
-+static const char *jz4730_i2s_groups[] = { "i2s-data", "i2s-master", "i2s-slave", };
- 
- static const struct function_desc jz4730_functions[] = {
- 	INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
-@@ -263,6 +274,7 @@ static const struct function_desc jz4730_functions[] = {
- 	INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
- 	INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
- 	INGENIC_PIN_FUNCTION("mii", jz4730_mii),
-+	INGENIC_PIN_FUNCTION("i2s", jz4730_i2s),
- };
- 
- static const struct ingenic_chip_info jz4730_chip_info = {
+[1/7] gpu: ipu-v3: ipu-ic: Remove unused ipu_ic_task_graphics_init
+      commit: 16e3bf497fb2d379f3d461fa0c85d14de0a3d183
+[2/7] gpu: ipu-v3: Remove unused ipu_rot_mode_to_degrees
+      commit: a52ba18c254c0a3819e632e6371554f1c6f5bd16
+[3/7] gpu: ipu-v3: Remove unused ipu_idmac_channel_busy
+      commit: 4f9c64e95c3510f4a5192bd401de5611c1dd5637
+[4/7] gpu: ipu-v3: Remove unused ipu_image_convert_* functions
+      commit: 96e9d754b35e87a5be2de7dce3c810ffdd769c84
+[5/7] gpu: ipu-v3: Remove unused ipu_vdi_unsetup
+      commit: 27985c86e283e1e5ac8a9809f189f03643a6f5f2
+[6/7] gpu: ipu-v3: ipu-csi: Remove unused functions
+      commit: c687c3147d5de801ed835b077802b68fe85d8a3d
+[7/7] gpu: ipu-v3 ipu-cpmem: Remove unused functions
+      commit: 2800028d5bdee8e9a3cda2fec782dadc32225d8d
+
+Best regards,
 -- 
-2.47.0
+With best wishes
+Dmitry
 
 
