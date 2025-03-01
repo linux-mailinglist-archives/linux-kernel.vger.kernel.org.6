@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-539687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65EB3A4A75E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E219A4A759
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7603E169E04
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2ED81887ABA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE2E1BC3F;
-	Sat,  1 Mar 2025 01:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A95F1BC3F;
+	Sat,  1 Mar 2025 01:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CnfgnKyk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiCNdXTh"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF2A935
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E2CBE6C;
+	Sat,  1 Mar 2025 01:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792291; cv=none; b=mu+2QTFmu+B9z7IPUqihLivxKHTbn36wppjTLsk7pCNf1+4kpFkHPSKmU3skijyqWWUtqIZL83i9d0bcCxTWv+jqPtorF4zg57g1+VpbK87E6mUZLp/dW/JLDvLCnawcShofjhTSnLVuVxPdtG+Z76fCGShi6mrZkwYB9vWfmnM=
+	t=1740792215; cv=none; b=frHixKTRORyrXclMDR2/EE6x/rcL98/DfHlH4fTTij+B9J9WIE/0/EdBbGHBD1qYkdEevFSQVIe+FN0yS/UsOj9K762NJcBjuC97HHURzduzqtbzUuu/y/EAu4MyNkri391dgy9k+MqnyEYrhFIg2cgDCcdytS9foMUBuwo1Ckw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792291; c=relaxed/simple;
-	bh=5nOsIwHbbcbLoA3xmRhsRYuQAs3fWV0c4VOuHUGKw3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VExHNwyX8km5JTfx9gp0+eQMQlui5WIFo4IVa6xDiMnRv7BqKHHvCfg0ShRE9DY0AQwEvYhfaHUHaN+WGww/F79s0GzIKzl27PzReJnso1VqReAIf+JkLirPNmKc5XAFv28f/YbQIfJYYvtvojpk08SwJN6l9U375jsVdISB3BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CnfgnKyk; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740792290; x=1772328290;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=5nOsIwHbbcbLoA3xmRhsRYuQAs3fWV0c4VOuHUGKw3o=;
-  b=CnfgnKyk5JtaaGbvJ0+UYV2PC0RuhiVD8QfvMFN7IjS+JIMyJPsgNFCB
-   C48Qh/Lg5quWtir8BoxzQ5L74UhAf7XpNsr4KlwbViUqMdRUu/E28QgSb
-   dFwpczJwlIPKyjwoA48h3S0r563RxqFAny7p3CHnqPIqQ3tY49oOKWZ0n
-   nBKnFFDmYYcv5E+WqXKxYA71/ODlejl+ekeflz8u3etkup2ApsvsOfPiC
-   NdBbA2wzI7Akffw2TvXliKvSWXsORIHaKWz2qr76gvTFsntJNCIgMibpT
-   G8z1UMHXf6ML3x9bW6dtC+Bxzq2UmAysmxdFOacHSTc1xD8e81c4YOPuV
-   Q==;
-X-CSE-ConnectionGUID: yENmr0CZTiWfepYIm7q4ow==
-X-CSE-MsgGUID: GJyTNsP1Tl2tdA1WN717iQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41619043"
-X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
-   d="scan'208";a="41619043"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 17:24:49 -0800
-X-CSE-ConnectionGUID: x8x86C9qS+C/yhTEgObFDA==
-X-CSE-MsgGUID: 6mj10fIJQsKTP8yTF4UhHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
-   d="scan'208";a="122097547"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 28 Feb 2025 17:24:47 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toBau-000FiI-39;
-	Sat, 01 Mar 2025 01:24:44 +0000
-Date: Sat, 1 Mar 2025 09:24:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huang Ying <ying.huang@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: kernel/resource.c:1838:43: warning: implicit conversion from
- 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value
- from 68719476735 to 4294967295
-Message-ID: <202503010926.R1fZJVo3-lkp@intel.com>
+	s=arc-20240116; t=1740792215; c=relaxed/simple;
+	bh=PTNepDljdJmBLPx1Vt119k3gOjDnw3szWpNNxq3pGPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4xCkZEkHAMOQ5Q0YdCgK29Isw2p12s3awZyDiSIzWbxxx2Xn3ZDURZbsGdIwy5LGB/CJ3fNS+CDvExPUE6yhtI3gGp25I9GF58TZu159zNEklQL4miqysg+3CzHCYEBp78hhxXzlogXZPMVQxxYFypeDUqDYMlhcFcSWy+5De4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiCNdXTh; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4dc3d22b8so2555189a12.0;
+        Fri, 28 Feb 2025 17:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740792212; x=1741397012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
+        b=OiCNdXThHWlUlA0Vvm9JMiPWqo6rskc1v74Ww9Xa/wl2GErIRjAvqIFuZ02eZlXP6e
+         A20B3vHwSZrTzNM9g9Iu3T1XewQfl5c5aLAxTtlhJYkLV7GGWcWtI7mqWphvsyyhf3PW
+         M27y3zwBnzu3LPvZKGmxhE1bXbxjrUPRRUzW5Ph731q5NtQrE6tFS6dDe6VgamiYj7vH
+         prSFXypPs64GtBOjdfb+77muFdQstg2rv03UVzTU0YSB2vobTi3tvYlaJC1uR+N2lTJu
+         Sxk2+BKW7J1WKppWCtXvEzNI9QnDIjVHO9lX2CNLb0UAK3lt0ARY2bIvmMtcqfyULUeN
+         EnEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740792212; x=1741397012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMeHz62fDGvf8tHSG9UR0lUzfNjHQKzyZfW4Wd98gl8=;
+        b=pIpdtNjf2cnrGzud7Lt1tHqz3EqTHrtgZyJPN/YwTJpS4VQtKgwOSB+u2q6ozu/ZR2
+         HaVtD6538vZx1NJp59uTX3OvjjRf0srvsIMzzC5hT/tcw0fmWQwE2+PF6z5gjRyxxGi/
+         0fe33cqyZR3LQUDnoTLVmSeWlIA/IHfyeWP4XZ7Vw+sSSbdwFh1SfwwO3bU6g8/Ur+Xm
+         buFAyOVCGlLkWYt+PiEwKuK1XGwwJ1s/QgdxHZ7Q8+/wlEJxifpx0LTSZlVWnEj+ufhA
+         J5LQD+NGJvFDxAQynF6UqIwjHXLZWtRWHTiHJ9hbb25GkXKDxUlo1ADeYxrJYQGV3aG3
+         aMBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvd7mvBNKxPBZqInINHU6tgANWO11sI4xNemcP1z9A4owDqouYwU885wrDVADY7oNb38l0l0dRSe0PRJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz+cziR97XOGhsmiVFeIRLWqZ648YmTZMkFPWIWeSNAdMKgepK
+	W8fjmK9RGZOPV7FfXuhS08hpTvrZyn/CJdcymu/EJbTFdGfuKg6jcU+6wA==
+X-Gm-Gg: ASbGncsVhxb3K7lD+CkGR39fTg2S4zV1Y2P50CO0S47jI8ueMPY18bpAwa4c7qFA2ES
+	kiVNVZeTkNP1bmX3grz6mLwivth42kh9vl73U0r3rgn6PwWckk2XVmkNKc3qP6y1BjBuGwqE6bO
+	Y6Jt6EDdv2A7Rhqgd6ym2NgzxP2smUB+nqdwzOVcPKGQW50+99MqJiS6qZD637DTs+syWQHSGcJ
+	9vAH6viThfGiasKPhR8pVUd3TMUc57ZGkCgQ+tV8fCZYaI+1Fl7SYQt+ARHDmgwYev0DnJ4yx18
+	KWYhq3n+KAL3VS6Wxj2soX6/JdhCxeG6dmyIBxz00fsaWkjDxxq9U/w=
+X-Google-Smtp-Source: AGHT+IHtFXWej0XzCMOuuyU0kbm3HzU+Nw3gsnAMeOWJO4CqvFP+K5eNx+djd4/aojUFBbQanSEADA==
+X-Received: by 2002:a17:907:1c8d:b0:abf:23a7:fc6 with SMTP id a640c23a62f3a-abf2656e759mr608356066b.16.1740792211898;
+        Fri, 28 Feb 2025 17:23:31 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.144.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf20eebff7sm274705266b.60.2025.02.28.17.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 17:23:30 -0800 (PST)
+Message-ID: <6272ce74-cd1e-4386-ac84-2ca7df5dab33@gmail.com>
+Date: Sat, 1 Mar 2025 01:24:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: use rq_data_dir() to compute bvec dir
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228223057.615284-1-csander@purestorage.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250228223057.615284-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Huang,
+On 2/28/25 22:30, Caleb Sander Mateos wrote:
+> The macro rq_data_dir() already computes a request's data direction.
+> Use it in place of the if-else to set imu->dir.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>   io_uring/rsrc.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 45bfb37bca1e..3107a03d56b8 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -957,15 +957,11 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+>   	imu->nr_bvecs = nr_bvecs;
+>   	refcount_set(&imu->refs, 1);
+>   	imu->release = release;
+>   	imu->priv = rq;
+>   	imu->is_kbuf = true;
+> -
+> -	if (op_is_write(req_op(rq)))
+> -		imu->dir = IO_IMU_SOURCE;
+> -	else
+> -		imu->dir = IO_IMU_DEST;
+> +	imu->dir = 1 << rq_data_dir(rq);
 
-FYI, the error/warning still remains.
+rq_data_dir returns READ/WRITE, which should be fine, but it'd
+be nicer to be more explicit unless it's already enforced
+somewhere else
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5c44ddaf7df3a06391684dde65083a092e06052b
-commit: 99185c10d5d9214d0d0c8b7866660203e344ee3b resource, kunit: add test case for region_intersects()
-date:   6 months ago
-config: arm-randconfig-001-20241228 (https://download.01.org/0day-ci/archive/20250301/202503010926.R1fZJVo3-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503010926.R1fZJVo3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503010926.R1fZJVo3-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/resource.c:1838:43: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
-                   end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
-   #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
-                                                               ^
-   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
-   #define min_t(type, x, y) __cmp_once(min, type, x, y)
-                             ~~~~~~~~~~~~~~~~~~~~~~~~~^~
-   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
-           __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
-           ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-                                  ~~    ^
-   kernel/resource.c:1855:45: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
-                   addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
-   #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
-                                                               ^
-   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
-   #define min_t(type, x, y) __cmp_once(min, type, x, y)
-                             ~~~~~~~~~~~~~~~~~~~~~~~~~^~
-   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
-           __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
-           ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-                                  ~~    ^
-   2 warnings generated.
+BUILD_BUG_ON(WRITE ==  ITER_SOURCE);
+ditto for READ
 
 
-vim +1838 kernel/resource.c
-
-  1831	
-  1832	static resource_size_t gfr_start(struct resource *base, resource_size_t size,
-  1833					 resource_size_t align, unsigned long flags)
-  1834	{
-  1835		if (flags & GFR_DESCENDING) {
-  1836			resource_size_t end;
-  1837	
-> 1838			end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-  1839			return end - size + 1;
-  1840		}
-  1841	
-  1842		return ALIGN(max(base->start, align), align);
-  1843	}
-  1844	
+>   
+>   	bvec = imu->bvec;
+>   	rq_for_each_bvec(bv, rq, rq_iter)
+>   		*bvec++ = bv;
+>   
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Pavel Begunkov
+
 
