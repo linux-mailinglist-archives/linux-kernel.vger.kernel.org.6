@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-539814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4636BA4A94C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:38:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6616A4A94F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A6E3B7054
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D751C176065
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B62A1C07F3;
-	Sat,  1 Mar 2025 06:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9431A1C1F21;
+	Sat,  1 Mar 2025 06:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6/qIa6r"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBCwc1Lb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D1E1ADC78
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 06:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E877A1BD9C7
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 06:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740811074; cv=none; b=iFAompJilnxQYs94IJ3NugnOFKyMjWMxAUAAncId0SCMpEuQbf1LXThvPPnUSNhGHGFxtTmh7Ud+2hg8yzpOwuDr7Zd/qJBV2U/dw97s/mxDm6ojdZsAsraodECQ3sSGyUx3DuxjokntTSjq0yFKIsRSgEFE9xNPXt3Htc+1G/Q=
+	t=1740811435; cv=none; b=ctD8Pfc3eAyjBj8net75umtxUiEw/KynTSfXgUIEVxz5Av0w3UzNU118Lgx8C16VBdw2LWv2Cq3Bfqo170JgZ+XvUpyeKkADDJJYi4I32Sdy6USj9UGtlkAB9nfwMmK4wwYhud6I+p/x4doeVCXb2m1mKkhZFyv4VNOzQnBZRqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740811074; c=relaxed/simple;
-	bh=sP27WLF3Kyr8Bfxk0fH+w8RbmgSoEoVftNHnBn/VIfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cFqUl4USSpAuy35a0pgAtFtZyytaoWbLJGUmE3ImFNZHw7RtFSve2Uoh5G2G3I/Lc0/DT+nRFoXEELVv4Sp+Vtte5bPRWeEhA0wumFNyJlpoDyTk8Lz5T0sR+9MoaKUpSJLl/AIufpQNfsbgkFqkTGbKgwwpcdRtH7P4b53d+Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6/qIa6r; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so4452006a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 22:37:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740811072; x=1741415872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gbI6Lx1SwHUo016RUwsEL/Zpp8Wju2RW9C01nQ37/k=;
-        b=L6/qIa6r7d2CEOMvk322trFFrBmsUL8D93Ims0x4ULaRPzH2i++VxTC14X6lMNoCmh
-         MZFIKbkISu+oHZHxqqwiCgxjEg1c0koBQ9EgEBM67ctcc3HKiT5Os7pEzHNiuev9m+9R
-         E+PuSP0ZFDq0OBzq8a/GZ/8suzb3GQxZuEBXilFn4yP072poh90zPTCj4qJcqJYWXiPS
-         TU85d5f4LpmIMS9PXBjO17eFdWqx7qk7a8vsbyFE+o6R1EsYo2hofuQ7Rq03CPwN9KFd
-         e5Nru9oSgWOslWNr7uRe4vhZ/iQ4WMSCA/b+DyhZQjliCsDP2/nO/yd7b8KLZ1o0D/LJ
-         hZdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740811072; x=1741415872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2gbI6Lx1SwHUo016RUwsEL/Zpp8Wju2RW9C01nQ37/k=;
-        b=NgHR59qlABx+pTL+AhpJgZCSAJb6F4U/41FQMi3VoMPiDOdqQ0ZNUNl1CRJSDHucHF
-         HEYxUITHBl5G6pv/f9V/XaDhZB6ss08Vg/V7+Sr0aK0jwKc63MmT7OH3fV3wQ2jY7xiK
-         1QEqBdcVPyBK1y+7C0JiPyn9y3nBJk09DPva5tyqqE8tUuq9Pqifsv+EiZ1krsCdNiXs
-         7jvH+msnupSrJ8YoddVKptrfr60DsgfzaQCER3Vv09GW32UfeG0oBKH6OZNrovWWo3ZU
-         d/duLRAktqMrkuMFNWt7Ekz9ed40inj+79VSC154xNRicv5p3yNwGBunSppdUf3i3FQ4
-         7dzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3DZXRFiy67VTkZwJdkg9Lq88UMFXQMKc37y+8E5U4PtxIM2H8Ba771Ud0EeHcgRCmE1j8cN8Eos0wQpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY7zyQujBRWOFWE+xdqE1EhTnpGsCC5DuOmAp8wLFM6vkJ+VV6
-	06blytH0PE7NQNSCrrdf7/o6TR3pKc59juy6JAXtCIBH85MxcPoHhkdgPffqJ1eIbIwFUhP8qbP
-	9XiX4/h4VFU3k83hRiI+Qlsf2XBg=
-X-Gm-Gg: ASbGncv4wnBQpiMZwGiL4ecuIiQ7/lYid+mi5w/d/jTg7x2U95P26J2p/MIjLPRQl7i
-	vQupGtkn5f28NFTriB8I8WY8LFwCNHetayypaZM6VwBSxTHsMt+LbKHDfzDnaNf2F7fyqPJAy9m
-	NiBpFKDxbAu6h68bUbj1u4lDhSvw==
-X-Google-Smtp-Source: AGHT+IFe0JmXdmCI+lvsXXlYr7ZEtGT1XLaPZczWDqoXge/PaGceZFxsFgT1DV1FgHz/TlL2p/n7Cz1UWpNfyIleyjQ=
-X-Received: by 2002:a17:90b:3d4e:b0:2fe:b9a2:fd3b with SMTP id
- 98e67ed59e1d1-2febabf8336mr10223520a91.30.1740811072227; Fri, 28 Feb 2025
- 22:37:52 -0800 (PST)
+	s=arc-20240116; t=1740811435; c=relaxed/simple;
+	bh=cpfdLDnv01K3lMmbWvGqTS+lBbMcEeQPx8Q2+PRAk6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpJDkxVDIybVobbZ2O4X+RYHphsclfMidNBtcyROQtdfHf4cDBQ5KWACaH4iXb6JAgk6McaJHFS0Y/0mIXdVz0H7ua1LNxIwR7wxnVKw2Dp4eVWNNFDJVkjdaUr73YWzWvC9u6cokEqGA8yZuzhZWKgmW3Ju9G22uwPt3zgEm+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBCwc1Lb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FECC4CEDD;
+	Sat,  1 Mar 2025 06:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740811434;
+	bh=cpfdLDnv01K3lMmbWvGqTS+lBbMcEeQPx8Q2+PRAk6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VBCwc1LbLIfrWcd2iFWFdFCGkh25i+cvKkfjbHveyU1eRK0idLhodj1FF5WZ7d2pc
+	 nZc6FQQ+j0HJyKlHwKt96vhEZB7/XJQpiX/y7uEnYhETIo8s9wWmP3VLBNUiQtkh4t
+	 MkI0J5gDMdTspVZWZSM6Btg3dwJ/rDh3NM6I2hoD28vhlbnZaFoZd70o4mi1syvi/c
+	 xJ5AIM0zkaZG0sz3WJyIaCVjAPiMu9njQk6enRDEvFAnt7o44RBHlXhPC2CsjGPEoS
+	 /+j4wyainajsE/xtwbFKvy9xB3UIiJu7Sc4Pc0F9b5VQ+wn9E4AUX3MvCGNYw9I5ki
+	 MtUFkpvUFGZRQ==
+Date: Sat, 1 Mar 2025 06:43:49 +0000
+From: Will Deacon <will@kernel.org>
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
+	prime.zeng@hisilicon.com, linuxarm@huawei.com,
+	yangyicong@hisilicon.com, wangyushan12@huawei.com
+Subject: Re: [PATCH 4/9] drivers/perf: hisi: Use ACPI driver_data to retrieve
+ SLLC PMU information
+Message-ID: <20250301064347.GB27700@willie-the-truck>
+References: <20250218092000.41641-1-yangyicong@huawei.com>
+ <20250218092000.41641-5-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224062111.66528-1-kpark3469@gmail.com> <CA+KhAHYujgeC2kAd-vs0N0zwprpeqtD8G-8DpJ0w2RSxzZ5SQw@mail.gmail.com>
- <CAMj1kXH-QmuXGi-5MSEzz7zSpPYWvM2eBPN-NbWF+R=49P2_2g@mail.gmail.com>
- <CA+KhAHYDui3VkebjxZLnN_ijMUzJf2BRMqtPqqos+rCbf8J7Ww@mail.gmail.com>
- <CAMj1kXHyZ5_+ZrcRtdx4X8LA+mzCNcXUZM_3QcEudYGbuGBq0w@mail.gmail.com> <20250301043948.GA27296@willie-the-truck>
-In-Reply-To: <20250301043948.GA27296@willie-the-truck>
-From: Keun-O Park <kpark3469@gmail.com>
-Date: Sat, 1 Mar 2025 10:37:40 +0400
-X-Gm-Features: AQ5f1JpXv5NUIffsINAwSjLUyU7sJARB6pcCqCs1GLV50mEcwA1SDJXzdVAxsr8
-Message-ID: <CA+KhAHaXHUYs0aXcD9uJQWfwDMFngEE03wapeVwS35OgZO82JA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
-To: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, catalin.marinas@arm.com, 
-	Keuno Park <keun-o.park@katim.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218092000.41641-5-yangyicong@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sat, Mar 1, 2025 at 8:39=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
->
-> On Fri, Feb 28, 2025 at 02:11:41PM +0100, Ard Biesheuvel wrote:
-> > On Fri, 28 Feb 2025 at 06:55, Keun-O Park <kpark3469@gmail.com> wrote:
-> > >
-> > > How about adding a warning message in case of linear region
-> > > randomization failure?
-> > > And, there might be two options in my mind by now to consider hotplug=
- memory.
-> > > Either giving an option for users to override "parange" as kernel
-> > > param or providing the legacy way((memblock_end_of_DRAM() -
-> > > memblock_start_of_DRAM()) when CONFIG_MEMORY_HOTPLUG is off.
-> > > Users believe KASLR will work fine by enabling CONFIG_RANDOMIZE_BASE.
-> > > In case of linear region randomization failure, I think at least user=
-s
-> > > need to know about this failure.
-> > > Can you share your thoughts on this please?
-> > >
-> >
-> > Randomization of the linear map has always been a best effort thing,
-> > so I don't think this is a big deal.
-> >
-> > I wouldn't object to the new behavior being conditional on
-> > CONFIG_MEMORY_HOTPLUG, and fallback to the old behavior otherwise. But
-> > ultimately, it will be up to the maintainers.
->
-> Personally, given the confusion that linear map randomization seems to
-> cause, I'd rather reduce the number of variables on which it depends.
->
-> I also wonder whether it's actually useful at all...
->
-> Will
+On Tue, Feb 18, 2025 at 05:19:55PM +0800, Yicong Yang wrote:
+> From: Junhao He <hejunhao3@huawei.com>
+> 
+> Make use of struct acpi_device_id::driver_data for version specific
+> information rather than judge the version register. This will help
+> to simplify the probe process and also a bit easier for extension.
+> 
+> Factor out SLLC register definition to struct hisi_sllc_pmu_regs.
+> No functional changes intended.
+> 
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> ---
+>  drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c | 191 ++++++++++++------
+>  1 file changed, 125 insertions(+), 66 deletions(-)
+> 
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
+> index dbd079016fc4..c1fd60d397c3 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
+> +++ b/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
+> @@ -36,11 +36,14 @@
+>  #define SLLC_SRCID_NONE			0x0
+>  #define SLLC_TGTID_EN			BIT(5)
+>  #define SLLC_TGTID_NONE			0x0
+> -#define SLLC_TGTID_MIN_SHIFT		1
+> -#define SLLC_TGTID_MAX_SHIFT		12
+> -#define SLLC_SRCID_CMD_SHIFT		1
+> -#define SLLC_SRCID_MSK_SHIFT		12
+> +#define SLLC_TGTID_MIN_MSK		GENMASK(11, 1)
+> +#define SLLC_TGTID_MAX_MSK		GENMASK(22, 12)
+> +#define SLLC_SRCID_CMD_MSK		GENMASK(11, 1)
+> +#define SLLC_SRCID_MSK_MSK		GENMASK(22, 12)
+>  #define SLLC_NR_EVENTS			0x80
+> +#define SLLC_EVENT_CNTn(cnt0, n)	((cnt0) + (n) * 8)
+> +#define SLLC_FIRST_BIT(_mask)		(find_first_bit((const unsigned long *)&(_mask), 32))
+> +#define SLLC_FIELD_PREP(_mask, _val)	(_mask & (_val << SLLC_FIRST_BIT(_mask)))
 
-I have thought of reducing parange until it fits into linear_region_size th=
-ough.
-+               if (range < 0) {
-+                       pr_warn("parange(%d) does not fit into linear
-region size\n", \
-+                               id_aa64mmfr0_parange_to_phys_shift(parange)=
-);
-+                       if (IS_ENABLED(CONFIG_MEMORY_HOTPLUG)) {
-+                               while (range < 0 && parange > 0) {
-+                                       range =3D linear_region_size -
-+
-BIT(id_aa64mmfr0_parange_to_phys_shift(--parange));
-+                               }
-+                               pr_warn("smaller parange(%d) is chosen
-for linear region randomization\n",
-+
-id_aa64mmfr0_parange_to_phys_shift(parange));
-+                       } else {
-+                               pr_warn("falling back to the range
-considering on-boot DRAM size\n");
-+                               range =3D linear_region_size -
-+                                       (memblock_end_of_DRAM() -
-+                                        memblock_start_of_DRAM());
-+                       }
-+               }
+It's a bit of a shame to have to compute this dynamically given that the
+input mask is constant for a given device. Is it not possible to use the
+generic FIELD_PREP macro in per-device code and then just dispatch to
+that, instead of funneling everything through hisi_sllc_pmu_regs?
 
-But, in a certain case, hotplug memory may get an address out of the
-linear region at some point, as still SoC's parange can cover more
-memory(ex. in this case, 1TiB).
-So I think leaving a warning message for users might be the best
-option. Then users feel it's time to move to a bigger address space to
-resolve the issue.
-
-               if (range < 0) {
-+                       if (IS_ENABLED(CONFIG_MEMORY_HOTPLUG)) {
-+                               WARN(true, "linear region is not
-randomized due to bigger parange\n");
-+                       } else {
-+                               range =3D linear_region_size -
-+                                       (memblock_end_of_DRAM() -
-+                                        memblock_start_of_DRAM());
-+                       }
-+               }
+Will
 
