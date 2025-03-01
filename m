@@ -1,218 +1,109 @@
-Return-Path: <linux-kernel+bounces-539663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0DFA4A703
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:33:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D950A4A707
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701F6189D017
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A3E189CF88
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5489017580;
-	Sat,  1 Mar 2025 00:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B606017BCE;
+	Sat,  1 Mar 2025 00:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP6usaP8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZfQuufTh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A022512B73
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D62D2FB;
+	Sat,  1 Mar 2025 00:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789203; cv=none; b=Cru7qqrIWVSlnklhhhT6NJRYdU6DpnylSyqp5234CfZbDvGxLeXpGdQP9Sn0sPGateIcFEoZTHU9u+tX+bMRvWUqs8dsxu9niWFcfoJVgAc7Q5XS6QtPMilxVNR21KYDgH/eR3EIXwXuwHsnPTuIq+mvVge8w1uvtYTXrIOk4Ho=
+	t=1740789309; cv=none; b=AP2W2ZPs3XqAEgHo6cZpOmkEgoaaNCREx843Q4sy9ZJI6aqI/2/r4HFWaaUhM9lUwsDNAaVwX81QFMim6MnUBEe9sS9hD39SYwKNVoIMA0SrUsRgygACGsRHjYkjkr8PbIEUR5aW9RFds6b5EoDwcscc8YrA5RaL+lxDA46BcMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789203; c=relaxed/simple;
-	bh=zWKzoDryyg6Rn7A17K2agTJJZfVSssFh1IkiOhO/i/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uv65CqUgrxUsSLLoBF10bEim1i3eOtxa48owxoc19O5tv+b+6J79XI81Xu553XDanOkENJodkox41sCaybZpLLVb558xpt8wjnG8IATnQMMLhcu2cQUAAX4M5ArYWREK95POQsbLJMPZvByZiTENOv7ELNJXn13YJkqc/+2TwRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP6usaP8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742B7C4CED6;
-	Sat,  1 Mar 2025 00:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740789203;
-	bh=zWKzoDryyg6Rn7A17K2agTJJZfVSssFh1IkiOhO/i/g=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=uP6usaP8CuqzJGSax/Zzw5t0b/nUiDA/HSvW/iO7XCoxXZiUTB5+EOiYuTu7FkVWX
-	 i4VeejKxS4Pe1nS5k8CXZlROBjDrDkeDierSm2DzDsb5mxX1j1FQDRmEZkIHpkOF17
-	 nJtuvjs3KVl6Ula64hyrdeW1LvbhrXuyr/U2ct/uzMkj9biwH5dfKpJ/Y/GSgZemdf
-	 NBExFTA7DouP3FTxO3wA8Z78RORCjS33ngshEP2kaBJdcSU/7OUdMkE6y22OJ4j3JW
-	 lXDhen3ejzPuekukB6I4fBwXr/Fg++gaC0qPtum3D3IERvLGwelmlfHj6ozRBdpisr
-	 JtYrflvQJj2xQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0E017CE0DEB; Fri, 28 Feb 2025 16:33:23 -0800 (PST)
-Date: Fri, 28 Feb 2025 16:33:23 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: patryk.wlazlyn@linux.intel.com, artem.bityutskiy@linux.intel.com,
-	dave.hansen@linux.intel.com, gautham.shenoy@amd.com,
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
-	sfr@canb.auug.org.au, peterz@infradead.org
-Subject: Re: [BUG objtool,x86] Missing __noreturn annotation in
- acpi_processor_ffh_play_dead()
-Message-ID: <25592ab5-5d8a-46ed-86a2-a0c58eed9f60@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <9a09eebe-f8fa-4993-83c1-7d58abac28af@paulmck-laptop>
- <20250228191213.7drb265s7jrrjf7b@jpoimboe>
- <35dfcb6b-ccdf-4ac2-a44b-94edd72ed302@paulmck-laptop>
- <20250228220039.tjimagjqkswzooi4@jpoimboe>
+	s=arc-20240116; t=1740789309; c=relaxed/simple;
+	bh=IEuRO14YdnRL/A9Gkx3TT3Wd26fHbkUoPOs8AGRadgA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pn2db1yDe4NtCB4euZpBzWzIrFoddL7mpRVmzUNOog6Z/JaY/p7HhvDTvsNesCcsDrWgFtUX6MzrLUp1URNlH5SLxXFT5uHGVVKQ4oW/o0C5O7CoqUs3OkSpdJzf+dY3jXCmxASYghY92Lia3uSZi88N8i3zxcmtxGK1dJUVikY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZfQuufTh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SMj4KF030921;
+	Sat, 1 Mar 2025 00:35:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=AFexQ02lH0+4Iu6zY7kVwC
+	pkKaWe3CsrR+B8JwD/L34=; b=ZfQuufThCWgzssZ1UVifiJidtTBmWEjCWhQB7h
+	moe4s6Cbtjf0hZM6F4DEaD2MM6SqQMs57CIMEixOx0al/yZzcBbWCLvuNXuuhjB1
+	RNBTZwRbXpDqtLpAONnTG4VT3GMtLfvIeGNsHJX8Eszg9P8UThVpsoPOgxQ3aums
+	elNJjTfZbr8VTTFdmkrxDuWYubw7rpNFg0EezIzBxqSqP4x0nxJ/suIPTtWEugOB
+	KCFIr0R/axnVmCj4T2T57pJMbY5KoXXdVnCaw5SxERXiRgHNWXzq77i+VPKeWFeD
+	zXFxmgNfUd+7jAn5cZp9j6SnRk1qOsIANMOJ6MtC6Toiq3hw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmty28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Mar 2025 00:35:03 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5210Z257025297
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 1 Mar 2025 00:35:02 GMT
+Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 28 Feb 2025 16:35:02 -0800
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+To: <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Wesley Cheng
+	<quic_wcheng@quicinc.com>
+Subject: [PATCH 0/2] Fix use after freed situation in UDC core
+Date: Fri, 28 Feb 2025 16:34:50 -0800
+Message-ID: <20250301003452.2675360-1-quic_wcheng@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250228220039.tjimagjqkswzooi4@jpoimboe>
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5lMkL-mUWlRV57X7w5ZLmG3WvqBH604s
+X-Proofpoint-ORIG-GUID: 5lMkL-mUWlRV57X7w5ZLmG3WvqBH604s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_07,2025-02-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=636
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2503010002
 
-On Fri, Feb 28, 2025 at 02:00:39PM -0800, Josh Poimboeuf wrote:
-> On Fri, Feb 28, 2025 at 11:51:26AM -0800, Paul E. McKenney wrote:
-> > On Fri, Feb 28, 2025 at 11:12:13AM -0800, Josh Poimboeuf wrote:
-> > > On Fri, Feb 28, 2025 at 11:00:07AM -0800, Paul E. McKenney wrote:
-> > > > Hello!
-> > > > 
-> > > > My recent -next testing hits this objtool complaint:
-> > > > 
-> > > > vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
-> > > > 
-> > > > My attempts to silence this by adding the suggested __noreturn annotations
-> > > > didn't help, and often got me compiler warnings about __noreturn functions
-> > > > actually returning.  So I bisected, which converges on this innocent-looking
-> > > > commit:
-> > > > 
-> > > > a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
-> > > > 
-> > > > Several runs verified that this really is the commit that objtool is
-> > > > complaining about.  Unfortunately, this commit does not revert cleanly.
-> > > > 
-> > > > This is from builds using clang version 19.1.5 (CentOS 19.1.5-2.el9).
-> > > > 
-> > > > Help?
-> > > 
-> > > I can take a look.  Is it LLVM defconfig?  Otherwise can you send the
-> > > .config?
-> > 
-> > Thank you!  And rcutorture modifies whatever defconfig it gets. so please
-> > see below for the full .config.
-> 
-> With your config I actually get a different warning:
-> 
->         vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
-> 
-> The below patch should fix both, can you confirm it fixes yours?
-> 
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> Subject: [PATCH] x86/smp: Fix __noreturn annotations for mwait_play_dead() and
->  acpi_processor_ffh_play_dead()
-> 
-> mwait_play_dead() doesn't return, but only has a partial __noreturn
-> annotation.
-> 
-> acpi_processor_ffh_play_dead() also doesn't return due to its
-> unconditional calling of mwait_play_dead().
-> 
-> Fix the annotations for both functions.
-> 
-> This fixes the following warnings:
-> 
->   vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
->   vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
-> 
-> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Fixes: a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
-> Fixes: 541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+commit 1ff24d40b3c3 ("usb: dwc3: gadget: Fix incorrect UDC state after
+manual deconfiguration")
 
-Aha!  The tools/objtool/noreturns.h is either new to me or was forgotten
-by me.  ;-)
+Added a use after freed situation due to the fact that the
+usb_gadget_set_state() API queuing asynchronous work to be run at a later
+time.  When moving from device to host mode, the UDC is removed, and this
+is the condition where this is seen.  Relocate this fix from the DWC3
+gadget, and apply it within the UDC core, so that we can properly manage
+the gadget->work.  It also makes sense, as during soft disconnection
+sequence, the USB link is unavailable, so any UDC should reflect the
+proper state.
 
-This does indeed handle the objtool warnings for CONFIG_SMP=y builds,
-so thank you!
+Wesley Cheng (2):
+  Revert "usb: dwc3: gadget: Fix incorrect UDC state after manual
+    deconfiguration"
+  usb: gadget: udc: Update USB gadget state during soft disconnect
 
-But for CONFIG_SMP=n builds, I get the following:
+ drivers/usb/dwc3/gadget.c     | 2 --
+ drivers/usb/gadget/udc/core.c | 5 ++++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-arch/x86/kernel/acpi/cstate.c: In function ‘acpi_processor_ffh_play_dead’:
-arch/x86/kernel/acpi/cstate.c:216:1: error: ‘noreturn’ function does return [-Werror
-
-And in this build configuration, it does look like mwait_play_dead is an
-empty static inline function.  I could imagine making that __noreturn be
-a CPP macro, but I could also imagine making mwait_play_dead() refrain
-from returning.
-
-Thoughts?
-
-							Thanx, Paul
-
-> ---
->  arch/x86/include/asm/smp.h    | 2 +-
->  arch/x86/kernel/acpi/cstate.c | 2 +-
->  include/acpi/processor.h      | 2 +-
->  tools/objtool/noreturns.h     | 2 ++
->  4 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-> index 80f8bfd83fc7..9c7ae0a214dc 100644
-> --- a/arch/x86/include/asm/smp.h
-> +++ b/arch/x86/include/asm/smp.h
-> @@ -114,7 +114,7 @@ void wbinvd_on_cpu(int cpu);
->  int wbinvd_on_all_cpus(void);
->  
->  void smp_kick_mwait_play_dead(void);
-> -void mwait_play_dead(unsigned int eax_hint);
-> +void __noreturn mwait_play_dead(unsigned int eax_hint);
->  
->  void native_smp_send_reschedule(int cpu);
->  void native_send_call_func_ipi(const struct cpumask *mask);
-> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-> index 86c87c01d23d..d25584255ab8 100644
-> --- a/arch/x86/kernel/acpi/cstate.c
-> +++ b/arch/x86/kernel/acpi/cstate.c
-> @@ -206,7 +206,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
->  }
->  EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
->  
-> -void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
-> +void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
->  {
->  	unsigned int cpu = smp_processor_id();
->  	struct cstate_entry *percpu_entry;
-> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-> index 63a37e72b721..86b6b17b0f70 100644
-> --- a/include/acpi/processor.h
-> +++ b/include/acpi/processor.h
-> @@ -280,7 +280,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
->  				    struct acpi_processor_cx *cx,
->  				    struct acpi_power_register *reg);
->  void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
-> -void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
-> +void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
->  #else
->  static inline void acpi_processor_power_init_bm_check(struct
->  						      acpi_processor_flags
-> diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-> index b2174894f9f7..5a4aec4c4639 100644
-> --- a/tools/objtool/noreturns.h
-> +++ b/tools/objtool/noreturns.h
-> @@ -16,6 +16,7 @@ NORETURN(__tdx_hypercall_failed)
->  NORETURN(__ubsan_handle_builtin_unreachable)
->  NORETURN(__x64_sys_exit)
->  NORETURN(__x64_sys_exit_group)
-> +NORETURN(acpi_processor_ffh_play_dead)
->  NORETURN(arch_cpu_idle_dead)
->  NORETURN(bch2_trans_in_restart_error)
->  NORETURN(bch2_trans_restart_error)
-> @@ -34,6 +35,7 @@ NORETURN(kunit_try_catch_throw)
->  NORETURN(machine_real_restart)
->  NORETURN(make_task_dead)
->  NORETURN(mpt_halt_firmware)
-> +NORETURN(mwait_play_dead)
->  NORETURN(nmi_panic_self_stop)
->  NORETURN(panic)
->  NORETURN(panic_smp_self_stop)
-> -- 
-> 2.48.1
-> 
 
