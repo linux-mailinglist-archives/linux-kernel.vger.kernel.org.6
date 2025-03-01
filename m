@@ -1,139 +1,122 @@
-Return-Path: <linux-kernel+bounces-539639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D031EA4A6C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:59:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24051A4A6D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54EE97AA7F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 23:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3BE3A8197
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AD21DF965;
-	Fri, 28 Feb 2025 23:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5CE6FB9;
+	Sat,  1 Mar 2025 00:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Bb3+dpIj"
-Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULRYrN+h"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B359C1DF747
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 23:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE6801
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740787170; cv=none; b=TXpchPAhwPPasS9/hf9dv4rByogDH190LZcpIl4yybZ3eIilIt8H6oX1bnejOD0fdrhZXcKk7bu3EY969pWgNuiuy+Tkfy9vjSKybhHl62tz+B2aiFe8afoFVz8aDZcgUZcKL3nCGKnLn4b/Tb1LwF5t2gS022zb1SkpjTl8moQ=
+	t=1740787392; cv=none; b=Hd9AYQiPXJbHa6mvXilkU45nnF52hWJRA1+iNGRLkGZjZtjc2Mhp7CsTEw04+gexeVpPxxUPRRaGuTOu4Sr39tfzMUcAeawRRN7RrpeEdjobVtxbBj7AAide4KEtjFWpWKUvmUNWYWT/ScT8Fys1xGR7IQL0jU63JIwQZ/oLJWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740787170; c=relaxed/simple;
-	bh=/ShPFdmtDi5zFWZPDuX4uvqo7DJ/+xJn2xPk55ZuQbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K+O5zXtYFk4NnPRzzVtZW+lJvYhYk0o8Cu8ti6mbFcd0uRdmnhg6sGL2D9dSWjAhCis4flo4lZHvLJYqL58XWJi05nv4pFVblBpQK7TRzcTDvFo2jqpN3w5yyIHZ8m/Ug7G5q7DfycLk+ZBCEPas6jqkt9giLtpld4K+BVUK9R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Bb3+dpIj; arc=none smtp.client-ip=209.85.214.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-223532fae14so6043565ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 15:59:28 -0800 (PST)
+	s=arc-20240116; t=1740787392; c=relaxed/simple;
+	bh=xNrgVKborPQ4Jg+P6ehVIspOwfeUc+beftNnuNY4vCY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=abmBkruq5EtHyxlh3LsBeB+ibdln7WJEeckGSvj2CGcp7FeqHicqwmCO2XxkQOpNAZuI0yWdEGI+aLwHAarJjWrmgORjZmMOLdRY8W4IsNLm/AlMnWyKwEhV69pzQacE+hDu6qE2UCEPAtQ2ReQsVHWBQ4kazXWpqwDyxPeXmyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ULRYrN+h; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe8fa38f6eso5530896a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740787168; x=1741391968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YG/WzviAKa26P9kIv9dajWRH9oVJW/MjIO0ud3obPZI=;
-        b=Bb3+dpIjNzolqpvPRpJTdPDkx/FQNie4AbcF1y+slnYdzPXF0sf5PxMSCmr3d7DZm0
-         385BqwwE9IUtlAbGNOtcIeBXlc7mK1uc1EfkMKZLRmLQAR7nkfvkc+/gUavjRyW3LUin
-         PDBz67WofuHZTS3nCWHwLXdAo+6/1IHSstmluuwcaBfXZKe7fQsWuU1ZYe6vs8Uo054d
-         Kzua77Z+HwN7rNSgzy0Oeau1YH601ptEpvshJpoBs/VuzlTUgWTmE0IFtDOwcpCyoWrB
-         U+lrIMFch4Zb5jnuAUEqFwJwO7yKN05RV6Wbc7BAtAYC703T1eP83TYjMOAIYlRqX2/i
-         yD6A==
+        d=google.com; s=20230601; t=1740787390; x=1741392190; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dAmSC5T02PcTsxNjNKU5koqfrVaWqSMeJo5eAXs8QN0=;
+        b=ULRYrN+h2mO04qGaF7WFvAXM5Fu+GTXkNCufB50qv/Yf2fW91pASI9GTt4PTuX+XD6
+         7mDC8iIhtKtUwkMZOzDDioTWccv1WEg6ZLibhOG/bbdWTWCutN1pY4vb4lyph7cBJkVH
+         KraRATg4mRR38pGKJNUXcyuEabm4OE5ZSjezbTmlnqQJ9z0XnDIND44P6gqan/EFCVzK
+         QRacMWqMu+Z/I7c6JrSwsIpkMlH0wFScu71irqWlf3QFnL9JzP1eREi0C8gefxeI+Y9D
+         ibRQW9oAl1nKR8wrq9NinaOcxWp73nrw0S/yrvMtm+KJD0S1VU71iniY1tKfubgRZ0Lk
+         Z2oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740787168; x=1741391968;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YG/WzviAKa26P9kIv9dajWRH9oVJW/MjIO0ud3obPZI=;
-        b=noA6aXtfbPs9T5UL+FA5qtpQnVasQwfojWl432ZEAC3y9zUUZKxRyXeCBarAeX3Yo7
-         QPO5m7/Q3fd/TuWJxXw9B6MohSAJKa0CQEcwFSGg1Pb+yLQDMSzMVicb+arZ5suZ8Dgc
-         R6ADVJeHN611JhnNAXqUQ7rLt4U/PND4ostg0E5f+1nmJtUEVyTmR2ZHPUBwvvG9xMIS
-         WluCXBnVHtUXOYRvmOEfRx/a32Q5nasoxQWMjZqxhw6/9MNQ3hOmCwYkTk/BHgyNv5QZ
-         kGpy5wRcKuG7bEhkcojNmlDg7PGkSnHCbMNyoMA4QIsWeO2Ccuksjn49+R6jlADewK8g
-         y/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhrxiR7ZLuaCqjV2oENpiijC7yp2OpsS5/sVWozqgan+S6Y9JEivD5bHroPHeCKIfm5s09/MmNAYlj3DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwehksmzFrLlZTRVPtl/zlgkQ/oCWvBtWCuskO79l+TeeK/O+bx
-	US8xhDc0rKy/p0Wf35mNrMxSdej3wIi0D+3yaFxSXEspUwG5KPEbcr3AHHT5Jn+p2i09/achsVB
-	dk1wsCCGYCDO47Wm8RBJawkV0H54oJLtKbnouTpODgU6vssZm
-X-Gm-Gg: ASbGnctm1wAO/zuyrmTLK/ruolemR4QEbKaqi8hszpGcJg7mM7drHa0C9FkKmrI3q54
-	olz23QQMZBJ4xqUo3BQW3hOzcPFQURjBBOnbH41WXegH+LpnCpIpXzMPFwDMN75eBJS3SrEaPJt
-	4O3uZ76B9h02NoISOMSVgKHtoCGXkJbK0C+xl1afZ6vjFk5gI38agfrpqr/haS/FgL5THV2+aIf
-	ANjnjLREG0lxrfv7i/NijHmCYgswPhx9NAfPy5q+WLNwjz2ukAXimOsQ4Qj3QjTahqBNMlHBXHb
-	8pJe9+kt38eNfuLxHDP6B8RVUz3Sk4M/ow==
-X-Google-Smtp-Source: AGHT+IFHsPC6/EgweKrZsOqRp/ximYusBvGZYTTJpG1c/+bUJfy0qECQNUKeO9TX9U6nuPa28QKEjcpBKwxD
-X-Received: by 2002:a17:902:d541:b0:223:5525:622f with SMTP id d9443c01a7336-22368f6c10amr31026015ad.1.1740787167809;
-        Fri, 28 Feb 2025 15:59:27 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-223501f9de3sm2367515ad.32.2025.02.28.15.59.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 15:59:27 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0807434028F;
-	Fri, 28 Feb 2025 16:59:27 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 008E0E41AF2; Fri, 28 Feb 2025 16:59:26 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] io_uring/rsrc: skip NULL file/buffer checks in io_free_rsrc_node()
-Date: Fri, 28 Feb 2025 16:59:14 -0700
-Message-ID: <20250228235916.670437-5-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250228235916.670437-1-csander@purestorage.com>
-References: <20250228235916.670437-1-csander@purestorage.com>
+        d=1e100.net; s=20230601; t=1740787390; x=1741392190;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dAmSC5T02PcTsxNjNKU5koqfrVaWqSMeJo5eAXs8QN0=;
+        b=qpurn1ExGSktMfJ9xzB2hWVlW6ohYcPduGOP0Cs17RGfKrgl4jrGm8uUEayBa2ZSq4
+         5gXTSPAzIarzD3YQZ0cKHSPUsDNCJqPMN/n/gU2qdCdk0ABwP4xGtZKnVSUtUOfCrFJn
+         Rj05GZ06L+/bskOyjZHmfxsMivxuKfDSUEosoekERwemdMjr7vt6llBQgNT0h0uggLUH
+         H0GTqcvowfsIXj067X1FrbXDwGNmwSxEVp4+5MUysONMMNviaYfx/N4sFKyulvMG8Mqr
+         VwtiA1E+31kXw5KOyDQvDBQ6DyNYfjbtWG3iw/ESgNhypDGSAvoppnkxrJHdiQeKndPc
+         CDVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfT7O1I7ZyPhlQQY6IBEyeDnbE9ov5Nb2TCzg8CKW4VTLEJCoGFhzcWICGof05RhO8jwBHuOvYZvByDyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZJ8PAyDCqAiEHJ6yhkelxghzZnvfspMpzM6ubhOOchd3bHJmf
+	PavKnEajzUbM1PGV7LkoBu+CN1QaoF5CiQYzrCzk3P7+Nj/MFgzws6wRc7si+uxr4Nt2FS2x36N
+	Vgg==
+X-Google-Smtp-Source: AGHT+IHGZPMd9GM7Z250yBBG/+OcfufCLuaBQlCFX7fV9dGD0utgxxLHuDNtXqSliyjHipvuZKUjNQWW0Sg=
+X-Received: from pjbsi12.prod.google.com ([2002:a17:90b:528c:b0:2fc:1e77:d6b6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d40e:b0:2ee:c9b6:c26a
+ with SMTP id 98e67ed59e1d1-2febab50df6mr9170769a91.11.1740787390036; Fri, 28
+ Feb 2025 16:03:10 -0800 (PST)
+Date: Fri, 28 Feb 2025 16:03:08 -0800
+In-Reply-To: <20250205182402.2147495-2-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev> <20250205182402.2147495-2-yosry.ahmed@linux.dev>
+Message-ID: <Z8JOvMx6iLexT3pK@google.com>
+Subject: Re: [RFC PATCH 01/13] KVM: nSVM: Track the ASID per-VMCB
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-io_rsrc_node's of type IORING_RSRC_FILE always have a file attached
-immediately after they are allocated. IORING_RSRC_BUFFER nodes won't be
-returned from io_sqe_buffer_register()/io_buffer_register_bvec() until
-they have a io_mapped_ubuf attached.
++Jim, for his input on VPIDs.
 
-So remove the checks for a NULL file/buffer in io_free_rsrc_node().
+On Wed, Feb 05, 2025, Yosry Ahmed wrote:
+> The ASID is currently tracked per-vCPU, because the same ASID is used by
+> L1 and L2. That ASID is flushed on every transition between L1 and L2.
+> 
+> Track the ASID separately for each VMCB (similar to the
+> asid_generation), giving L2 a separate ASID. This is in preparation for
+> doing fine-grained TLB flushes on nested transitions instead of
+> unconditional full flushes.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/rsrc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+After having some time to think about this, rather than track ASIDs per VMCB, I
+think we should converge on a single approach for nVMX (VPID) and nSVM (ASID).
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 95def9e5f3a7..c8b79ebcff68 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -498,16 +498,14 @@ void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
- 	if (node->tag)
- 		io_post_aux_cqe(ctx, node->tag, 0, 0);
- 
- 	switch (node->type) {
- 	case IORING_RSRC_FILE:
--		if (io_slot_file(node))
--			fput(io_slot_file(node));
-+		fput(io_slot_file(node));
- 		break;
- 	case IORING_RSRC_BUFFER:
--		if (node->buf)
--			io_buffer_unmap(ctx, node->buf);
-+		io_buffer_unmap(ctx, node->buf);
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		break;
- 	}
--- 
-2.45.2
+Per **VM**, one VPID/ASID for L1, and one VPID/ASID for L2.
 
+For SVM, the dynamic ASID crud is a holdover from KVM's support for CPUs that
+don't support FLUSHBYASID, i.e. needed to purge the entire TLB in order to flush
+guest mappings.  FLUSHBYASID was added in 2010, and AFAIK has been supported by
+all AMD CPUs since.
+
+KVM already mostly keeps the same ASID, except for when a vCPU is migrated, in
+which case KVM assigns a new ASID.  I suspect that following VMX's lead and
+simply doing a TLB flush in this situation would be an improvement for modern
+CPUs, as it would flush the entries that need to be flushed, and not pollute the
+TLBs with stale, unused entries.
+
+Using a static per-VM ASID would also allow using broadcast invalidations[*],
+would simplify the SVM code base, and I think/hope would allow us to move much
+of the TLB flushing logic, e.g. for task migration, to common code.
+
+For VPIDs, maybe it's because it's Friday afternoon, but for the life of me I
+can't think of any reason why KVM needs to assign VPIDs per vCPU.  Especially
+since KVM is ridiculously conservative and flushes _all_ EPT/VPID contexts when
+running a different vCPU on a pCPU (which I suspect we can trim down?).
+
+Am I forgetting something?
+
+[*] https://lore.kernel.org/all/Z8HdBg3wj8M7a4ts@google.com
 
