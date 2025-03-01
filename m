@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-539783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B41EA4A894
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:26:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6978DA4A896
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:29:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27FBB189B015
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B95E1724CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A181AF0C8;
-	Sat,  1 Mar 2025 04:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE3191F77;
+	Sat,  1 Mar 2025 04:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akqztUmN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHE3bw1i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0015B2C9A;
-	Sat,  1 Mar 2025 04:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CF21ADC69;
+	Sat,  1 Mar 2025 04:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740803158; cv=none; b=ua6CRMhySu0d1w7RqTvastkVhx1TVwd5EuZ0xL+GMdanZUImLMMRYklaoS7xpKc0LFZKc4pWjiVninFpxggVd29xz+B1c95BfC6KSwadcw5uXGB83KO2dq8xTHZlysf6F5pdTc1VhzEyvQie+6vYoQ2onhagsamcvsTnpLyqJVM=
+	t=1740803364; cv=none; b=myvqB+0GWE+55P+/LgVEV1BV/BkRIJB6zsbnGkMZnESHux50v2iBhqjDKyhmS0cTZOIcG7NNvaneOemxPKnMejX7LK8OvumiRhBhbkXlZDhwwPpIedb7NJvpXfP0XzTrEvCgRr7pwdbzlQ1HYXF1c7Mq5yopbjFu7VEFj5i3wL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740803158; c=relaxed/simple;
-	bh=pWaCimXUsHigEq/oorBCKxI41iZIQds1Cj6USoZA9wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dgfy1IYm7HV4DFefiGv6ecbmQ2JAGSG+VVNJ9Htdb1FmSJ6ze9Ha3fVtdckeEVKpBNr9ODNplp7g24i7mDsB/Km/EW4HPhIrGVHI2ZFiCjllRiIBZXLrUVDgzTCR2hZwYzZTelVpo0pNSrXWySXGw9WhvNhr53Hj2M0WkldoaSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akqztUmN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF431C16AAE;
-	Sat,  1 Mar 2025 04:25:54 +0000 (UTC)
+	s=arc-20240116; t=1740803364; c=relaxed/simple;
+	bh=QlMqZUF6PVsD/Q1uKf9ldioDq2PBkyyJ3o4p/4H4jrQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=U4DmqZ3hvdarllpievbhGQ1ThaJjwyTyW5EpbdkY4NKHUYpxHNmzzWPFwn9soW590z2RNEv7ijwHaOz3NziyfgFFtorC6hpUEschPLOLWmwkmO5CWwiXweea6sNBE9sIe+auJNDLnl2WiFQuqGt7KrgqvkK26A0VMoo994xFR/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHE3bw1i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31474C4AF53;
+	Sat,  1 Mar 2025 04:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740803157;
-	bh=pWaCimXUsHigEq/oorBCKxI41iZIQds1Cj6USoZA9wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akqztUmNh3pE5H4039Ogzdf2oxsmAfzWBob1fVnONnq7gI+bQ7WlASXy+JZnnD+9+
-	 Ks/tOeXHyrB1zi8zFyBF8ywtjv1Q6I1XM6lEJT4bDvyXV+JuAh1QekMkZnw1PqapWG
-	 tW0nOaiOkiuL1WBqaJvZ5H6EpbozMwSD7TTUD+kYKxYwDukPOGfGfmmz0yHHLswy4B
-	 aVEY9fkXwyBaHIIKAWAkMKToTfuKWAr2oZNyfkbBVwKPAXTQwCBO2ZrE0BtgUgoCc6
-	 XtJTnVtQPpUrmkVI2f7gIbgLciMDTuY/aMf+jnzCOZE495E+In7e2iUIpRaAj3B4rh
-	 SZJHh+AXmttTg==
-Date: Fri, 28 Feb 2025 21:25:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: masahiroy@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chenhuacai@loongson.cn,
-	kernel@xen0n.name, revy@deepin.org, zhanjun@uniontech.com,
-	niecheng1@uniontech.com, guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com, Shiwei Liu <liushiwei@anheng.com.cn>
-Subject: Re: [PATCH] kbuild: deb-pkg: add debarch for ARCH=loongarch64
-Message-ID: <20250301042551.GA3565873@ax162>
-References: <DB8BF02DB314013F+20250224182619.1557027-1-wangyuli@uniontech.com>
+	s=k20201202; t=1740803364;
+	bh=QlMqZUF6PVsD/Q1uKf9ldioDq2PBkyyJ3o4p/4H4jrQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hHE3bw1ik51pzsdYnIbPDIJbP5zW+DQFIXXWkkHvjv5dOX/4GPimTK8dEpSNYuxRp
+	 rSK/J+G3M6PFTs3i68XL0JNpPUseXZ30z+KIvbqLXRlsaWrRVu7lhxISlzczw/Onua
+	 E8pYh2iixHIKXsWYAebEsM/chYKAocxQqXgLI4+8mdz8uVQUZltMB87dPoyBcsiXrt
+	 D+TzojjlaodDiYjNYq4EIZM0Sl7uNKgHxYeCY6kcpM2/57ZBl/W5ApuPZl6+FhaZpL
+	 PZZGNcBmZ1YFvzMP/ExthRWRbLFGWOVXq9HBX2kqdQnxUyGsag2Pqg56On/b+L3b5o
+	 1qhuMdxU28PRg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE72E380CFF1;
+	Sat,  1 Mar 2025 04:29:57 +0000 (UTC)
+Subject: Re: [GIT PULL] Power management fix for v6.14-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0i5aHWRWPsvWvmqjgNZ5TXiECs47WH3X45+P-nJpLKwcw@mail.gmail.com>
+References: <CAJZ5v0i5aHWRWPsvWvmqjgNZ5TXiECs47WH3X45+P-nJpLKwcw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-pm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0i5aHWRWPsvWvmqjgNZ5TXiECs47WH3X45+P-nJpLKwcw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.14-rc5
+X-PR-Tracked-Commit-Id: c157d351460bcf202970e97e611cb6b54a3dd4a4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 14ebe69091935d65d9dc452c1bad8fed20d06c29
+Message-Id: <174080339625.2364407.15929511270489736994.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Mar 2025 04:29:56 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB8BF02DB314013F+20250224182619.1557027-1-wangyuli@uniontech.com>
 
-On Tue, Feb 25, 2025 at 02:26:19AM +0800, WangYuli wrote:
-> Fix follow warning when 'make ARCH=loongarch64 bindeb-pkg':
-> 
->   ** ** **  WARNING  ** ** **
-> 
->   Your architecture doesn't have its equivalent
->   Debian userspace architecture defined!
->   Falling back to the current host architecture (loong64).
->   Please add support for loongarch64 to ./scripts/package/mkdebian ...
-> 
-> Reported-by: Shiwei Liu <liushiwei@anheng.com.cn>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+The pull request you sent on Fri, 28 Feb 2025 22:15:41 +0100:
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.14-rc5
 
-> ---
->  scripts/package/mkdebian | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index b6dd98ca860b..0178000197fe 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -77,6 +77,8 @@ set_debarch() {
->  			debarch=i386
->  		fi
->  		;;
-> +	loongarch64)
-> +		debarch=loong64 ;;
->  	esac
->  	if [ -z "$debarch" ]; then
->  		debarch=$(dpkg-architecture -qDEB_HOST_ARCH)
-> -- 
-> 2.47.2
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/14ebe69091935d65d9dc452c1bad8fed20d06c29
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
