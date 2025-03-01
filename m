@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-540134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C19A4AE21
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:21:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F04A4AE20
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912BC16F284
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:21:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EB07A6A4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2271E8335;
-	Sat,  1 Mar 2025 22:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7941E5B79;
+	Sat,  1 Mar 2025 22:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTRBEODa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4Xns9mL"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C8189BB0
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 22:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABED189BB0;
+	Sat,  1 Mar 2025 22:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740867687; cv=none; b=WCccrLey7eN/Ol2BqBwf5Pc+Rj+6vMEPsD5NIYM8fHToUv3na7MajId2FHKcecK9hVGK6yg8syBKRQue98g44YgTPoYXb9nZP/BigLsf9eLXsuozAQt4SyyP1u4/LMIRckdNlx7CqEFT2hOhZaLWwYJ9q6nmVZP/RrkUSc7ATyc=
+	t=1740867644; cv=none; b=HiPh3UHi/wqSKvWVm6tndUxYNWSz51471QxayPam7y3UsTeMgSxgGOMtVn5ysQDaR32TWZaoM9BUYu6UU6X2QILgbVsrzjPIiYhJp1rm34OXFbFNvolCWNri8hRFX+fLouEJy2IvdBoG2RuLiKeJ1l2bebBMMPVU7OkcKdis/Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740867687; c=relaxed/simple;
-	bh=/kr/iiN+6mWFEvfTzLn/BSJFlMOee4GjMK9oB8NIYCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZgQ9zMIJVOcmdah4BtKqPz1MFuP2iRvFF/EUfPPh4Pc2RA8msNrTlVqN1R/5nErGONBiVoM/Se38FjztvZg6SPoW9mOlnsu7ioIMpV3K33SiWmEUFQbFxTN03mAuuFc2S8Ao+GL1lVX1Cp8omJE8Ua56lLZsahJ0m/8ozVSmPhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTRBEODa; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740867685; x=1772403685;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/kr/iiN+6mWFEvfTzLn/BSJFlMOee4GjMK9oB8NIYCk=;
-  b=aTRBEODacebNxZYIjACBPGBS1/t1p8fDY0Y//mX68tLj5yfa5CGPAfa0
-   RyUu3cOB/Yg4TC/bXo6QqPPFJo0b85TnbdO07jQY+A0KXZpX0ceW68+sp
-   nS0k/DvePLiCcFvE235wlUaJcXr/ZtoeZViRw9t9Tf8yZ0/W5NNslobj8
-   m0iAXqmAJGijr9Blv9t8MniD3onea6LplPKbvXnPcJurPOZK1ImyGwxhz
-   /ai4BtFedtvzxCJeTf8DFZOSk+1hO+JuAJnfFxY3ED223kfwGXZyQEtYf
-   vW+7mftZFTSuJ47lfidoEK0qldlmJZbjNx27spxpGU8XgnQXP31aTK4yG
-   w==;
-X-CSE-ConnectionGUID: cKT0Fa5fSEeu6xIhp2OPXw==
-X-CSE-MsgGUID: G9xG/Ld4Shax5SOCcZtmqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="44590853"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="44590853"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 14:21:24 -0800
-X-CSE-ConnectionGUID: EYT6N8NcRiGashzEsgUFFw==
-X-CSE-MsgGUID: HXzo8lDLSXeR96Wdb8LBug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117837338"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 01 Mar 2025 14:21:23 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toVCz-000GmI-0N;
-	Sat, 01 Mar 2025 22:21:21 +0000
-Date: Sun, 2 Mar 2025 06:21:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
- parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
-Message-ID: <202503020637.6SBId7IR-lkp@intel.com>
+	s=arc-20240116; t=1740867644; c=relaxed/simple;
+	bh=bWi5F8JskvMUXwDgg6TYargD0S/3onvbWna1Z9b1pt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LnQHvitFZPsXfFMUjp8gb47oksZ+CWFGJv/6C8Yl56zwPjoEIvGBc8EpwcjPZ8ELk4uSu/cewvIaK5hEJGV1uymtuXg4+3NGJATshdaRcz3gfnpXVAGKxAA3AnxRMUTO64zoFSZ9c0q9slzR7XqORQatLx94MeIsEm3G9KNq318=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4Xns9mL; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47208e35f9cso39753131cf.3;
+        Sat, 01 Mar 2025 14:20:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740867641; x=1741472441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2JFrSTKfau8m6kxQWUnIa48KZ7ucuFBY64RIjU9F4I=;
+        b=P4Xns9mLIB/r9QqIXWMpx+yYJTOCzWHKWK7GC2VI0y7V+GBHE96SKbY1paM5ly5Kma
+         YMV75WfY014Fm4H4TIV8nUjqklFo+knAjIxy5njBc+G4ZN85VYBMEMI7Q8JoijEZhcuw
+         jhowRc78296+SjpVE8CR7070N/rM1zEuHEYw4LUsvKRq3ibe7sGFpMcJXxdigP4zGmbt
+         0MtOE8FHEsWixMHNIrBZJESBIBdh9ieyfg+MKSN/0NrWlEOcJY++UgJfrRpnDgtN1XeY
+         eZHa1b/y16zPayzwGRpddvr4UptqJxU5JMqw7Q0xq+Sf4q0V4JbOwFF55OpG2Tw1mB1B
+         /66w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740867641; x=1741472441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w2JFrSTKfau8m6kxQWUnIa48KZ7ucuFBY64RIjU9F4I=;
+        b=M3WbOXQX7Bwfh/er5ddlSR6MaaD1JrXC0bW62KlA7KIiOORLLyS1/dplgsSekzpx06
+         2krvihMaASXi0XgYu3oo4/c/0u8nbn7uaS6recuSvf2qqiDWeo3W1pnqzh4C+6PHzNwk
+         4isubELjPMG9rQlhQdzgqvZypvm5FSa5hO5M7I3f+XFa4dsQZzn6FcZX9h0RLkj6O/1o
+         8Kro9ZRRuLRnUU33f1fZbcHK/ROtP7VKaFpE8dwEFP53SUVWTGwpmQsknkNVHmyDQNXy
+         U3resDYS//BjRbeIqb4K7VMkPggjmfalq882VwtNlJgTp+3TjJaWE64NyFyE0ibYqDkV
+         73QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRRWvH6c7bQzqfUBbucize+s27XMdcwClwHvOeoAqtS+Fa7BpwOfkPpx9NPvCY/f3cUuAMU8h+uRGkwas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuL8bRF7QEkXdGDFutcT83My5TfL/M19qb2N/oHuPAyW7nsqhm
+	N7zFolJK+ZjwUcwHUghfey6NnFDHpKE6soahk/zqnYtWkLEtkmEF
+X-Gm-Gg: ASbGnct2F8p4+TpRFBhhfUQTDw/8bL83KFiUf/pdsLSLuXmFWd047QD+PmLcqMjQk/L
+	pNTh/8wyhP9e7aANwsjEXe6WnLz+3Iqlm1w8X9YgAsc+Evac/qhAMENtHsXW3abAjj4qNljLLnJ
+	5zQCNYkrMvujyyZF1Y/6dZWBxY85ai+b//5Txv/WKzF8t+P03rHhNsuICjpPMJwayET29iOdFJH
+	ISqPYkqrZxAeDWp4sCqVuMvLaNzIlZmlXevZv5elGB/lcC2id+9W90b/DlomZ2YKt/5Hs71uEa7
+	xLYxry4XmEZJsQqpCa0FtMkLmcdsPREErWADV/ABRM44HA==
+X-Google-Smtp-Source: AGHT+IGAPwp+ISQn26o9aqiS0lxaAntODE0R4hb1MMh8gugmxccnoljIhp8g8WWDVGlv0CoUEvB+aw==
+X-Received: by 2002:a05:6214:226b:b0:6e6:668a:a27f with SMTP id 6a1803df08f44-6e8a0cfff83mr134583676d6.17.1740867641363;
+        Sat, 01 Mar 2025 14:20:41 -0800 (PST)
+Received: from iman-pc.home ([142.198.73.227])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976346fcsm36843696d6.14.2025.03.01.14.20.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 14:20:41 -0800 (PST)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH v2] kbuild: fix argument parsing in scripts/config
+Date: Sat,  1 Mar 2025 17:21:37 -0500
+Message-ID: <20250301222137.18617-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Peng,
+The script previously assumed --file was always the first argument,
+which caused issues when it appeared later. This patch updates the
+parsing logic to scan all arguments to find --file, sets the config
+file correctly, and resets the argument list with the remaining
+commands.
 
-FYI, the error/warning still remains.
+It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=$FN
+to make oldconfig.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   df87d843c6eb4dad31b7bf63614549dd3521fe71
-commit: 40df0a91b2a5228ded8e5f75b80d28c96c6831cd remoteproc: add is_iomem to da_to_va
-date:   4 years ago
-config: arm-randconfig-c041-20230507 (https://download.01.org/0day-ci/archive/20250302/202503020637.6SBId7IR-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020637.6SBId7IR-lkp@intel.com/reproduce)
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+---
+Changes in v2:
+Specified the script name in the commit message.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020637.6SBId7IR-lkp@intel.com/
+ scripts/config | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-All warnings (new ones prefixed by >>):
-
->> drivers/remoteproc/omap_remoteproc.c:732: warning: Function parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
-
-
-vim +732 drivers/remoteproc/omap_remoteproc.c
-
-34ed5a33b1218e Ohad Ben-Cohen 2011-10-20  716  
-530a1b57e8590f Suman Anna     2020-03-24  717  /**
-530a1b57e8590f Suman Anna     2020-03-24  718   * omap_rproc_da_to_va() - internal memory translation helper
-530a1b57e8590f Suman Anna     2020-03-24  719   * @rproc: remote processor to apply the address translation for
-530a1b57e8590f Suman Anna     2020-03-24  720   * @da: device address to translate
-530a1b57e8590f Suman Anna     2020-03-24  721   * @len: length of the memory buffer
-530a1b57e8590f Suman Anna     2020-03-24  722   *
-530a1b57e8590f Suman Anna     2020-03-24  723   * Custom function implementing the rproc .da_to_va ops to provide address
-530a1b57e8590f Suman Anna     2020-03-24  724   * translation (device address to kernel virtual address) for internal RAMs
-530a1b57e8590f Suman Anna     2020-03-24  725   * present in a DSP or IPU device). The translated addresses can be used
-530a1b57e8590f Suman Anna     2020-03-24  726   * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-530a1b57e8590f Suman Anna     2020-03-24  727   *
-530a1b57e8590f Suman Anna     2020-03-24  728   * Return: translated virtual address in kernel memory space on success,
-530a1b57e8590f Suman Anna     2020-03-24  729   *         or NULL on failure.
-530a1b57e8590f Suman Anna     2020-03-24  730   */
-40df0a91b2a522 Peng Fan       2021-03-06  731  static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
-530a1b57e8590f Suman Anna     2020-03-24 @732  {
-530a1b57e8590f Suman Anna     2020-03-24  733  	struct omap_rproc *oproc = rproc->priv;
-530a1b57e8590f Suman Anna     2020-03-24  734  	int i;
-530a1b57e8590f Suman Anna     2020-03-24  735  	u32 offset;
-530a1b57e8590f Suman Anna     2020-03-24  736  
-530a1b57e8590f Suman Anna     2020-03-24  737  	if (len <= 0)
-530a1b57e8590f Suman Anna     2020-03-24  738  		return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  739  
-530a1b57e8590f Suman Anna     2020-03-24  740  	if (!oproc->num_mems)
-530a1b57e8590f Suman Anna     2020-03-24  741  		return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  742  
-530a1b57e8590f Suman Anna     2020-03-24  743  	for (i = 0; i < oproc->num_mems; i++) {
-530a1b57e8590f Suman Anna     2020-03-24  744  		if (da >= oproc->mem[i].dev_addr && da + len <=
-530a1b57e8590f Suman Anna     2020-03-24  745  		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-530a1b57e8590f Suman Anna     2020-03-24  746  			offset = da - oproc->mem[i].dev_addr;
-530a1b57e8590f Suman Anna     2020-03-24  747  			/* __force to make sparse happy with type conversion */
-530a1b57e8590f Suman Anna     2020-03-24  748  			return (__force void *)(oproc->mem[i].cpu_addr +
-530a1b57e8590f Suman Anna     2020-03-24  749  						offset);
-530a1b57e8590f Suman Anna     2020-03-24  750  		}
-530a1b57e8590f Suman Anna     2020-03-24  751  	}
-530a1b57e8590f Suman Anna     2020-03-24  752  
-530a1b57e8590f Suman Anna     2020-03-24  753  	return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  754  }
-530a1b57e8590f Suman Anna     2020-03-24  755  
-
-:::::: The code at line 732 was first introduced by commit
-:::::: 530a1b57e8590f2ebbb6a35effa0efa988aabf6c remoteproc/omap: Add the rproc ops .da_to_va() implementation
-
-:::::: TO: Suman Anna <s-anna@ti.com>
-:::::: CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-
+diff --git a/scripts/config b/scripts/config
+index ff88e2faefd3..ea475c07de28 100755
+--- a/scripts/config
++++ b/scripts/config
+@@ -32,6 +32,7 @@ commands:
+                              Disable option directly after other option
+ 	--module-after|-M beforeopt option
+                              Turn option into module directly after other option
++	--refresh            Refresh the config using old settings
+ 
+ 	commands can be repeated multiple times
+ 
+@@ -124,16 +125,22 @@ undef_var() {
+ 	txt_delete "^# $name is not set" "$FN"
+ }
+ 
+-if [ "$1" = "--file" ]; then
+-	FN="$2"
+-	if [ "$FN" = "" ] ; then
+-		usage
++FN=.config
++CMDS=()
++while [[ $# -gt 0 ]]; do
++	if [ "$1" = "--file" ]; then
++		if [ "$2" = "" ]; then
++			usage
++		fi
++		FN="$2"
++		shift 2
++	else
++		CMDS+=("$1")
++		shift
+ 	fi
+-	shift 2
+-else
+-	FN=.config
+-fi
++done
+ 
++set -- "${CMDS[@]}"
+ if [ "$1" = "" ] ; then
+ 	usage
+ fi
+@@ -217,9 +224,8 @@ while [ "$1" != "" ] ; do
+ 		set_var "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
+ 		;;
+ 
+-	# undocumented because it ignores --file (fixme)
+ 	--refresh)
+-		yes "" | make oldconfig
++		yes "" | make oldconfig KCONFIG_CONFIG=$FN
+ 		;;
+ 
+ 	*)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
