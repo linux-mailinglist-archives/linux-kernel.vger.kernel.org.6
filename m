@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368FDA4AB23
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:13:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A22A4AB27
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:18:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AF367A80EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F453B485A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D221DF252;
-	Sat,  1 Mar 2025 13:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C72F1DEFD9;
+	Sat,  1 Mar 2025 13:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmcMGo3U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fkgx4kJW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8BA1DEFEE;
-	Sat,  1 Mar 2025 13:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1C3249F9;
+	Sat,  1 Mar 2025 13:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740834825; cv=none; b=GIV3NeRvY/g/q+ih8iko8/QrIwlxLSiZLd+hFCLbz5zlXa1ImjO5S6bMgD4rVAUQ945pDTOPVgIldSX13HeEdMM28DYTE92VgpFr4Vq+xJf8C0jZ8HtoR1OF1C4kkQAdj8auqlf/Wc2uxG62gjz7t/eBqePhorJQ/Vk5oHDkEQs=
+	t=1740835127; cv=none; b=EiqMX0/ZrikCP2aN6X3xaMjx53q3BXqw7IxM6Sl5DlVKXZtGIwGFhm+reVL5JZWJzH3ZOiYaK+B9xZZHDokUbv7w0Vzj/6SVUy+j2okwHe2UBnwZE/7Ymgf3Brag4nrvta24Kac/x6pzO0f1OOSv0xas5ZcOFL8yOvdexYUviiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740834825; c=relaxed/simple;
-	bh=YfxsKJ5+yxq8wyJbCuPcN6CZ0Y0RsZRQOSZk7hpnJm0=;
+	s=arc-20240116; t=1740835127; c=relaxed/simple;
+	bh=lyJ2V25Qg+A5GIPSVs2EsZT71onWrcPKfIl7hdeTGQo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjO4UrGaII5fXRQ9eC5ohWI7y0huLLeZ06cuqdCAIwKTP0G+nomIX0u4O/ZtVIEn2H/WL+FGc+D3itU/iQVRb05O41YZo28NFhocmvwNVzPHjyD548rgRurhcd5nnVUd/DwK37sJKL0PKB63QNmSr2KC8oCMZgkLwD/3NnVJfWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmcMGo3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573F8C4CEDD;
-	Sat,  1 Mar 2025 13:13:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=DNHt0XnYoF0DhPdoB2QXq/3FWhPZEIev5CY+UHmsOZdeyp8K5i3pyips1GCoqFxgxN4+xoWSK+tQsWdhS5eWeU4+RFUl6Ro8w/BdnBnL7gGByaJY1XWITRmipuNWSGnk8rfXU3ugmuBwJTLorCmVQIwfTeMeWsQfYJGQGuBUPFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fkgx4kJW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7385C4CEDD;
+	Sat,  1 Mar 2025 13:18:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740834824;
-	bh=YfxsKJ5+yxq8wyJbCuPcN6CZ0Y0RsZRQOSZk7hpnJm0=;
+	s=k20201202; t=1740835127;
+	bh=lyJ2V25Qg+A5GIPSVs2EsZT71onWrcPKfIl7hdeTGQo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RmcMGo3Uo1oat5nsMFmmbFvc1zZPoiWg4Om8TxWw+JFH/yMjgWJvOSauHKoLqzoWg
-	 7cvtI3b+3U51++mbM32U0I7FAhcIWJmaaGjEuAR1mF7j3t32xlIiDtflUvbTJA9G+O
-	 3oP1szLNSD0HDgDMG0YFvglAaOpEIHadR3jfxgq0WflJw9sVyZnwjygtE53vsjG0nW
-	 DsYAd7zK46GzC7vF1WX8NT4EOLERIrQvt1lIe0dj0pqtdoZqk0nh2oh8R0P+8qPqxp
-	 h/LBOh81bZXAxtqh1Lr7gQDdSdRBy+t91wsCGA+ZZ4gAIWD+NzR7yP4jkbyxkvCz/v
-	 ioc8l2b+Mc2GQ==
-Message-ID: <e08dbe2b-6f0c-4021-9d6b-f2205bd1c273@kernel.org>
-Date: Sat, 1 Mar 2025 14:13:37 +0100
+	b=Fkgx4kJWGmo4PgVzF6bPTiyzw0rLC3l0oDCJZ9UxXQn5JWUDuSeMxWLiaeBJii/EN
+	 moj82CzBXQPAC9rmdupdwDyviVo7qP0ZuR/GKqaWp/5xNdYrhoGx4+2dNNas3nEqLG
+	 hA5Y1AJuoi3DCOphDpKA7lh6BT/pLQis1mpOdIiyfQGhdKvhW240imTuw59feUUu3y
+	 dw7XX0BYEHCxcbsVWruk81eQUk6bDzvbCouO3aXIMEuXpUZX8zy4FOtsHyvcRtjzOg
+	 xo1qxrJNIImqxnDUuw/Fq3+XBNJWMQDX4kuCTVY3pDgW7LGiGdGsDv1q+CdAuVz9Wl
+	 5HI8J348J21cg==
+Message-ID: <87877293-a6e2-4c36-8932-9e6357a0385b@kernel.org>
+Date: Sat, 1 Mar 2025 14:18:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4 2/3] dt-bindings: fpga: Add Efinix SPI programming bindings
-To: iansdannapel@gmail.com, linux-fpga@vger.kernel.org
-Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
- Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
+Subject: Re: [PATCH 17/18] rtc: max77686: use dev_err_probe() where
+ appropriate
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
  Neil Armstrong <neil.armstrong@linaro.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Aradhya Bhatia <a-bhatia1@ti.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20250228094732.54642-1-iansdannapel@gmail.com>
- <20250228094732.54642-3-iansdannapel@gmail.com>
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ =?UTF-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>,
+ Dianlong Li <long17.cool@163.com>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org
+References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
+ <20250228-rtc-cleanups-v1-17-b44cec078481@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,35 +112,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228094732.54642-3-iansdannapel@gmail.com>
+In-Reply-To: <20250228-rtc-cleanups-v1-17-b44cec078481@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/02/2025 10:47, iansdannapel@gmail.com wrote:
-> +
-> +  References:
-> +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.3.pdf
-> +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.8.pdf
-> +  - https://www.efinixinc.com/docs/an061-configuring-topaz-fpgas-v1.1.pdf
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - efinix,trion-spi
-> +      - efinix,titanium-spi
-> +      - efinix,topaz-spi
+On 28/02/2025 15:07, André Draszik wrote:
+> dev_err_probe() exists to simplify code and harmonise error messages,
+> there's no reason not to use it here.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/rtc/rtc-max77686.c | 29 ++++++++++++-----------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
 
-
-Same comments as before about compatibility. Address or implement.
-
-> +      - efinix,fpga-spi
-
-
-And this one is for which device? It is not even used.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
