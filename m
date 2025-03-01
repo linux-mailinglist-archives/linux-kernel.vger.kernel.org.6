@@ -1,64 +1,146 @@
-Return-Path: <linux-kernel+bounces-540045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39448A4ACE1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 17:33:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3008EA4ACE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 17:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351191897311
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5437316ACC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A6D1E285A;
-	Sat,  1 Mar 2025 16:33:02 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47451B3927;
-	Sat,  1 Mar 2025 16:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F971E503C;
+	Sat,  1 Mar 2025 16:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="A2jA9XJy"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19EC19007D;
+	Sat,  1 Mar 2025 16:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740846782; cv=none; b=a764HfuQg4SRdR+3x3h/cHFu1d/Wu+OAyNELqv8pCXoGXaVC+tZmTkw38ixsX7gcUVWMFdiE/hUfzdYRPpx5yb//RLqPSoDl08dJa8mC2+dO6lgFY0gIdpwD3Re2XMKD6ungzgzUbv8Rk57uJUR2GPzjuTbladVaDMXB2TS72rU=
+	t=1740847202; cv=none; b=Em5xLUa5XcqAUMb2bAdP4297Jf81vAF0ZZZ3AD9Ww3sVR7GGtW+eo0lQYTimDkR3HF9cDyTUAmjhGv3WaHuHD2lL66YkF/fbHFRD+R+loGnyOaucVMpoJ8hUZJBSyXNONRcK72LQUSWba0HKsNB+DtMMhemgnN4z+7Svp5cUVIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740846782; c=relaxed/simple;
-	bh=54hW+egiEXB+sL2tiSUc0YgU0BsvzKY+qeJO+swH59s=;
+	s=arc-20240116; t=1740847202; c=relaxed/simple;
+	bh=FVQpJz2NQLO72Ywv6QilmFahoejCINbXoE91tlE00/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyfYatymjsP7jUklfZXxgOp3FviQ4Ne3qhB9T3/rbxYs124DDOIDq+mPRIuF9eDsXTpRo7ievfI+TFUOzYa/FNeK4w1/cA+tskE5pcFs+R+nvVeYRN/vbRSXhk1+mVR/ic9CfW9EpKUKs1uNi5wwynlA2gytheEn6dltqElrr+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 521GWq0X015260;
-	Sat, 1 Mar 2025 17:32:52 +0100
-Date: Sat, 1 Mar 2025 17:32:52 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] selftests/nolibc: add armthumb configuration
-Message-ID: <20250301163252.GC13434@1wt.eu>
-References: <20250301-nolibc-armthumb-v1-0-d1f04abb5f6d@weissschuh.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYWa/fPup72lcGYZU9oVTcXF8z3Lm0Cx/yqR5Qd3+V7M53/fUZHPUU6oYghydqmCa+aXBXycBgy7R7c0P3A+3FvEEeYRJl/2s3OZj08RfiYF6B9EksQb5+7YDpPLR83hbc+w4xFWB+zN0WQwhF386oWefkkBDfIKcmQEJ/GfhWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=A2jA9XJy; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z4rQY4q0Hz9sl3;
+	Sat,  1 Mar 2025 17:39:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1740847190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2U/JC9Mkv2iTVLlyM6LmZFkoV9o6Q7G7toYDxFnoFrQ=;
+	b=A2jA9XJyjbGcbS47afkSTerq1syUKrXRObXYBL1JQNZrC9B/DDbXSdIryAkOlqWo0Z+CcU
+	8xZueFTRziHzn+JQQ0mHIpCtSJXI0td/jKn3u90tZ7HqG+fZgVPlsxZBKAn87ZE/KKtebY
+	r7oRypgas1aMscsLfRYmh/WFKhBS9tTaHTy0scPDsIhvCwYxaqpQT+cCnFpjhWG/B8FS7b
+	vJPZ7P9b1wG05AucfmNpakKsu+PjzD/S1R0I5kvbxXXxm8rH9PyZvaG61An3Os2yZmS42d
+	B/L5dzwYMUAmDdPDG+BJBjib0x8E2vfhJ8uh7yNeNTOY+97c95p1r7oZjDC0gg==
+Date: Sat, 1 Mar 2025 11:39:46 -0500
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+To: Sven Peter <sven@svenpeter.dev>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-staging@lists.linux.dev, asahi@lists.linux.dev
+Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Message-ID: <upqd7zp2cwg2nzfuc7spttzf44yr3ylkmti46d5udutme4cpgv@nbi3tpjsbx5e>
+References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
+ <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250301-nolibc-armthumb-v1-0-d1f04abb5f6d@weissschuh.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
 
-On Sat, Mar 01, 2025 at 12:23:58PM +0100, Thomas Weißschuh wrote:
-> While nolibc does support ARM Thumb instructions,
-> that support was not tested specifically.
+On 25/03/01 12:04AM, Sven Peter wrote:
+> Hi,
+> 
+> 
+> On Fri, Feb 28, 2025, at 02:53, Ethan Carter Edwards wrote:
+> > Lately, I have been thinking a lot about the lack of APFS support on
+> > Linux. I was wondering what I could do about that. APFS support is not 
+> > in-tree, but there is a proprietary module sold by Paragon software [0].
+> > Obviously, this could not be used in-tree. However, there is also an 
+> > open source driver that, from what I can tell, was once planned to be 
+> > upstreamed [1] with associated filesystem progs [2]. I think I would 
+> > base most of my work off of the existing FOSS tree.
+> >
+> > The biggest barrier I see currently is the driver's use of bufferheads.
+> > I realize that there has been a lot of work to move existing filesystem
+> > implementations to iomap/folios, and adding a filesystem that uses
+> > bufferheads would be antithetical to the purpose of that effort.
+> > Additionally, there is a lot of ifndefs/C preprocessor magic littered
+> > throughout the codebase that fixes functionality with various different
+> > versions of Linux. 
+> >
+> > The first step would be to move away from bufferheads and the
+> > versioning. I plan to start my work in the next few weeks, and hope to
+> > have a working driver to submit to staging by the end of June. From
+> > there, I will work to have it meet more kernel standards and hopefully
+> > move into fs/ by the end of the year.
+> >
+> > Before I started, I was wondering if anyone had any thoughts. I am open
+> > to feedback. If you think this is a bad idea, let me know. I am very
+> > passionate about the Asahi Linux project. I think this would be a good
+> > way to indirectly give back and contribute to the project. While I
+> > recognize that it is not one of Asahi's project goals (those being
+> > mostly hardware support), I am confident many users would find it
+> > helpful. I sure would.
+> 
+> Agreed, I think it would be helpful for many people (especially those
+> who still regularly dual boot between macOS and Linux) to have a working
+> APFS driver upstream.
+> This may also be useful once we fully bring up the Secure Enclave and need
+> to read/write to at least a single file on the xART partition which has
+> to be APFS because it's shared between all operating systems running on
+> a single machine.
+> 
+> 
+> It looks like there's still recent activity on that linux-apfs github
+> repository. Have you reached out to the people working on it to see
+> what their plans for upstreaming and/or future work are?
 
-Good idea! In my case (and most likely most users), it actually allows
-to test the Arm mode, because I think that the majority of Arm cross
-compilers are configured to produce thumb2 code by default since it's
-generally faster and quite smaller.
+I did ask the upstream maintainer and he said he did not see it
+happening. He specifically mentioned the use of bufferheads as a barrier
+to mainline merging, but I get the sense that he does not have the
+time/desire to commit to upstreaming it. [0]
 
-Tested-by: Willy Tarreau <w@1wt.eu>
+I did have a question/concern over the inclusion of the LZFSE/LZVN [1]
+compression library included in the module. It is BSD3 licensed, which,
+as far as I know is GPL-compatible, but what is the kernel's policy on
+external algorithms being included? It was originally developed by Apple
+and as far as I can tell is pretty necessary to read (and write)
+compressed files on APFS. Also, the library does produce an objtool
+warning.
 
-Willy
+Ted, looping you in here, your thoughts?
+
+> 
+> 
+> 
+> Best,
+> 
+> 
+> Sven
+> 
+
+Thanks,
+Ethan
+
+[0]: https://github.com/linux-apfs/linux-apfs-rw/issues/68
+[1]: https://github.com/linux-apfs/linux-apfs-rw/tree/master/lzfse
 
