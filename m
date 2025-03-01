@@ -1,148 +1,165 @@
-Return-Path: <linux-kernel+bounces-539861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9F3A4AA05
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:26:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B8AA4AA0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:29:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8C21746B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C13188F95B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4AE1D54C2;
-	Sat,  1 Mar 2025 09:26:37 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF101D54EE;
+	Sat,  1 Mar 2025 09:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="COPRH/g0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972D21C5D79
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 09:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989921C3BF1;
+	Sat,  1 Mar 2025 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740821197; cv=none; b=RIL381Xrxw6Z0j99WAUfEdLpHIKf3z/bC3Lo/WulxGxVXw7MHMlqEMBZstjcTZ5huGnJzc4nLlfjPWhnC9MlXOi5wsLJhzwCNv3xodmKXoVRtIteJ7/quGClsTVwymbti+5UDoEa8vZW71aoLqFKr8OuWvlVFu5Z6BP+PZGOGK0=
+	t=1740821363; cv=none; b=LGmg+TXfzvBk0GqtlYtxyPY0jJlq+DpuS4F/7C4gXQ/ipFDxoph2wWl5Ai7TulN1vdTOa+XQKo2xlgOhOKbQ3AFQ3QceKuFh/U5eCau2ZEccJBsbpoHDvwWbnzSOgfOtJLA7QAdPiU24vVticVSk/zQIiSdUr7OAU6TxJMEP7vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740821197; c=relaxed/simple;
-	bh=QJaox352Ycg4ji4TTT6HqLTFL029xkbI/FSW0iYv+zE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=eAJ7oFKGE2VkWQdcBF3QKtTzEQI77JAC974J91uhBQcilcmdzxdedN8QcOaOFTDG+0xlzS+S9OiZJvSRzLlq66efXtIrX8lWTzhJii7I4tgUP0HCPxW6gwVTQXwsrbIvXiRy+qZ/uaXeWXMWGxC65pdNMdp5IDfdLqHodMN7MzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso29253925ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 01:26:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740821193; x=1741425993;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+cTUFcfA4nD0TA+byzfmiBfeOCVzsCiVGYn6UQ/fn7U=;
-        b=EXG2jLx3EzX8BiG1wXxslklgnNsONOCcrjunzF7fSUZlymWKEOGTEE7pSkjSbxktcN
-         2h1HyYOILODoIYvbch6FC5Ffesh7yIc0T5rSTJMbJhJ+M86dpPTzRiHyBGmNtLQyG4rv
-         Fu1i502eEMcstqZ1XDmSdL0GsWwxLbEEoJ57OQdzE6ZffPhBYO+mLHxZTSFFITL/ShuY
-         E7exIpeXXePHvYbVuq+Ffec5tlTskkL/9EnLfCPuZn5+n7vt+4ptqedOr+kxUM/4ebj5
-         F/Os8y1wzdzEUQALAwCPrDrmtfhc1s6mB/UV6RaUBWk/LlGPDc3nEe1spVzm7XC61pEu
-         To6g==
-X-Gm-Message-State: AOJu0YxOOCUptnjV00Gu8ALMyc0ZgQKa1NnjehX6qbTqnH3ALywOCMEP
-	bplcTLsMCPj8bfWOYMvCno/Mvi9A+2sZ0wdQZk7w0lm5w0ihPhs7Ip5aYhFjjukzVJ5KCQ78Z4z
-	FZu7B7Y/minu1VkybasxLmU4WYPykYOMgvctMrb697mXKWGsfHxC/bZ4=
-X-Google-Smtp-Source: AGHT+IHJw9ko2BtcVjE0Kpc25vlmUqs0Y33A2bsVGXQEK1thpAJlaYqlI1kxhQiFKP2rRdl69DFfNsMyuO+HJ8ENh4PIkKA3wZTx
+	s=arc-20240116; t=1740821363; c=relaxed/simple;
+	bh=jEwK21kfmrUQKCsYQRS+7dOxvBfeSC5o9qX2wR0QSPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsquN9m049gGKBTKj1yAYUd8M32dpP0bFccdADlo0TK5xF+0NByWewV1IlcWSg4ZshP7g5ojj761r5Wh2S5DNZX0JTjXA4YIw/3J6+sSzZOnqzqcDe5moAXAq/NIcDqC2+enZtlQNCG7HXkhDM18kjNr9lURq9zAtvt0EwX/qW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=COPRH/g0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740821362; x=1772357362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jEwK21kfmrUQKCsYQRS+7dOxvBfeSC5o9qX2wR0QSPA=;
+  b=COPRH/g0ChfrEhAgOkorUwZ9uxWvX3FomHf4jE8ld8pMDulek+MO4Z5D
+   woqKJF+a2OH9yTePVs0McqL//dDQ5MBB9QRPNpYuMFzboRICEyI6ca8GL
+   hsgRq96ljwEPpw3WeyD9RCS9BQeGt9t+m3iHJmlbuhCo+1/eHSOvQ7gze
+   FBuldFyyhmDTszg7hXeO5zwcSpcuZ6k0VF8nRSjQASArqJxHlT85QT9Ez
+   r3ykErZfva6R3GlVhv66k7/wmFpM6rFbxNqR3IbIhVPoyyyBnuBz1SX61
+   RAzZgxsnYpQYtDluuAB3auck8zqlvhXFRJ1BHXLBr7/MK6+SBVtsCmjHp
+   g==;
+X-CSE-ConnectionGUID: V/LraqzfQZaMf8rQoMzVSg==
+X-CSE-MsgGUID: GqpNC3agQ9+xFgVNAnmuww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="64209227"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="64209227"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 01:29:21 -0800
+X-CSE-ConnectionGUID: NCKkDS+UT02fzqZYoQG4hw==
+X-CSE-MsgGUID: rX+3mIBQT02FkU4evzR0wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="117336465"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2025 01:29:17 -0800
+Date: Sat, 1 Mar 2025 17:27:19 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Marco Pagani <marco.pagani@linux.dev>
+Cc: Nava kishore Manne <nava.kishore.manne@amd.com>, git@amd.com,
+	mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
+	trix@redhat.com, robh@kernel.org, saravanak@google.com,
+	linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for
+ runtime FPGA programming
+Message-ID: <Z8LS93jh4KBvNlCd@yilunxu-OptiPlex-7050>
+References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
+ <20241029091734.3288005-2-nava.kishore.manne@amd.com>
+ <ZzwQrYeWVF6cRtgA@yilunxu-OptiPlex-7050>
+ <9bfaf1cf-3313-4cb3-9963-2b4bad2d3165@redhat.com>
+ <Z0fIiQPCS69O2d/n@yilunxu-OptiPlex-7050>
+ <00e5c1c1-a98e-4360-b7e5-ffaa384e1036@linux.dev>
+ <Z6RRAXocxWHsZZLF@yilunxu-OptiPlex-7050>
+ <a51c0c24-fd21-42b3-9c4a-39ebc0751f03@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1906:b0:3d3:e11a:3a8 with SMTP id
- e9e14a558f8ab-3d3e6f3cf76mr57538475ab.14.1740821193620; Sat, 01 Mar 2025
- 01:26:33 -0800 (PST)
-Date: Sat, 01 Mar 2025 01:26:33 -0800
-In-Reply-To: <6610cdb8-072e-47fe-b9bc-f4f5b9a79f8e@quicinc.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c2d2c9.050a0220.dc10f.0161.GAE@google.com>
-Subject: Re: [syzbot] [sound?] BUG: sleeping function called from invalid
- context in snd_card_locked
-From: syzbot <syzbot+4cb9fad083898f54c517@syzkaller.appspotmail.com>
-To: quic_zhonhan@quicinc.com
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	quic_zhonhan@quicinc.com, syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a51c0c24-fd21-42b3-9c4a-39ebc0751f03@linux.dev>
 
->  > Hello,
->  >
->  > syzbot found the following issue on:
->  >
->  > HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
->  > git tree:       upstream
->  > console output: https://syzkaller.appspot.com/x/log.txt?x=14e3d7a4580000
->  > kernel config: 
-> https://syzkaller.appspot.com/x/.config?x=8f2f8fb6ad08b539
->  > dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=4cb9fad083898f54c517
->  > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils 
-> for Debian) 2.40
->
->
-> BUG: sleeping function called from invalid context and
-> raw_local_irq_restore() called with IRQs enabled seems can be
-> fixed by below change. if it is valid, will arise the PATCH.
->
-> #syz test:
+On Mon, Feb 17, 2025 at 04:18:36PM +0100, Marco Pagani wrote:
+> 
+> 
+> On 06/02/25 07:04, Xu Yilun wrote:
+> >>>> I'm currently working on an RFC to propose a rework of the fpga
+> >>>> subsystem in order to make it more aligned with the device model. One of
+> >>>> the ideas I'm experimenting with is having a bus (struct bus_type) for
+> >>>> fpga regions (devices) so that we can have region drivers that could
+> >>>> handle internal device enumeration/management whenever a new region is
+> >>>> configured on the fabric. Does this make sense in your opinions?
+> >>>
+> >>> mm.. I didn't fully understand the need to have a region driver, what's
+> >>> the issue to solve?
+> >>>
+> >>
+> >> Sorry for the late reply. The general idea is to handle regions in a way
+> >> that is more aligned with the device model without having to resort to
+> >> extra ops and additional devices.
+> >>
+> >> Having an fpga bus would allow us to handle enumeration using proper
+> >> region drivers (in the device model sense of the term, i.e., struct
+> >> device_driver) instead of derived region devices.
+> >>
+> >> On second thought, I think having a reconfiguration interface at the
+> >> fpga manager level is sounder than having it at the region level (one
+> >> for each region).
+> > 
+> > I don't think so. A firmware image may contain enumeration info, e.g.
+> > of-fpga-region. And I think the fpga-region should parse these
+> > enumeration info rather than fpga manager. fpga manager should only deal
+> > with content writing stuff and not be exposed to user.
+> 
+> I agree with that. In my proposal, the fpga manager should be
+> responsible only for writing the image into the configuration memory
+> and allocating region devices. In-region enumeration should be handled by
+> the region drivers.
+> 
+> My worry with having one reconfiguration interface for each region is
+> that it does not reflect how the hardware works. To my knowledge, all
+> major FPGA implementations use a DMA engine (controlled by the fpga
+> manager) that performs the reconfiguration through a single port. So,
+> having one interface per region might be conceptually confusing and give
+> the impression that it is possible to configure regions independently in
+> parallel.
 
-want either no args or 2 args (repo, branch), got 4
+One interface per region means the regions could be independently
+reprogrammed, i.e. reprogramming of one region won't affect the working
+of another region. But they don't have to be reprogrammed in parallel.
+If it cannot be reprogrammed now, the interface call could fail.
 
->
-> diff --git a/sound/core/timer.c b/sound/core/timer.c
-> index fbada79380f9..5290c1b9f2b8 100644
-> --- a/sound/core/timer.c
-> +++ b/sound/core/timer.c
-> @@ -767,6 +767,7 @@ static void snd_timer_process_callbacks(struct 
-> snd_timer *timer,
->   {
->          struct snd_timer_instance *ti;
->          unsigned long resolution, ticks;
-> +       unsigned long flags;
->
->          while (!list_empty(head)) {
->                  ti = list_first_entry(head, struct snd_timer_instance,
-> @@ -780,10 +781,10 @@ static void snd_timer_process_callbacks(struct 
-> snd_timer *timer,
->                          ti->pticks = 0;
->                          resolution = ti->resolution;
->                          ti->flags |= SNDRV_TIMER_IFLG_CALLBACK;
-> -                       spin_unlock(&timer->lock);
-> +                       spin_unlock_irqrestore(&timer->lock, flags);
->                          if (ti->callback)
->                                  ti->callback(ti, resolution, ticks);
-> -                       spin_lock(&timer->lock);
-> +                       spin_lock_irqsave(&timer->lock, flags);
->                          ti->flags &= ~SNDRV_TIMER_IFLG_CALLBACK;
->                  }
->          }
-> @@ -805,14 +806,16 @@ static void snd_timer_clear_callbacks(struct 
-> snd_timer *timer,
->   static void snd_timer_work(struct work_struct *work)
->   {
->          struct snd_timer *timer = container_of(work, struct snd_timer, 
-> task_work);
-> +       unsigned long flags;
->
->          if (timer->card && timer->card->shutdown) {
->                  snd_timer_clear_callbacks(timer, &timer->sack_list_head);
->                  return;
->          }
->
-> -       guard(spinlock_irqsave)(&timer->lock);
-> +       spin_lock_irqsave(&timer->lock, flags);
->          snd_timer_process_callbacks(timer, &timer->sack_list_head);
-> +       spin_unlock_irqrestore(&timer->lock, flags);
->   }
->
->   /*
->
->
->
->
->
-> Thanks
-> Zhongqiu Han
+> 
+> >> With that in place, the fpga manager could request a firmware image,
+> >> parse it, write the content into the fpga configuration memory, and then
+> >> instantiate the region devices and add them to its fpga bus. Then, if
+> > 
+> > I think an fpga-region is always there no matter it is cleared, being
+> > reprogrammed, or working. So I don't think an fpga-region needs to be
+> > re-instantated. The sub devices inside fpga-region needs
+> > re-instantating. That's also why I'm hesitating to fpga bus.
+> 
+> I think one of the issues with the current subsystem architecture is
+> that it coalesces two cases: full and partial images. With partial
+> images, it makes sense to keep the region devices and rerun the internal
+> enumeration. With full images, I believe it makes sense to clear and
+> reallocate new devices to set a new region tree.
+
+MM.. I don't actually understand what's the fundamental differences
+between full & partial. If a full region supports full & partial
+reconfiguration, the full region contains partial regions as
+sub-devices. The partial reconfiguration reallocates it sub-devices and
+won't change partial region itself. The full reconfiguration also
+reallocates it sub-devices including partial regions, and won't change
+full region itself.
+
+Thanks,
+Yilun
 
