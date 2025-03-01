@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-539896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D454DA4AA8D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:09:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3D9A4AA9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C59189655B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C585216C07C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C941DE2D8;
-	Sat,  1 Mar 2025 11:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D60F1DE3A4;
+	Sat,  1 Mar 2025 11:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="YwUKfg9K"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ELPdYg+l"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BD61D89FD;
-	Sat,  1 Mar 2025 11:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580681C5F2D;
+	Sat,  1 Mar 2025 11:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740827361; cv=none; b=F9qq49KUgLbNGFl5R8QbbUDqQiYd+NLERmYYWnV7oF1bl7Whg+yz0+DFe2wfvg/AIAwlgXqja4K8HtX/B1+0KCN6bFSKITI2uWZqxMOLry8VrHrd7luRZv3bg+R02zIflHlOw4MGGxPC8lv6ifqElb874tS1rPpznpaXc2c+cIQ=
+	t=1740827616; cv=none; b=ml3dKCZ3BIYSQndRtM5lIlypbsk7i957+YRT+yh0bZBO8WEGGq5MKp8i1CsZ9bcot1paY45NDSF1u3JdcJmB8Pbi75mWbQal8ksceIWfwDWU+8a91KxRRtKvgbUjf5tHPvGGxDx+nWfWq4jdAVsssqhiz1XxkvxGNhGRVyWqMHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740827361; c=relaxed/simple;
-	bh=u8j9VzTVmndaVO3HrV8NL99wet7gCToCq5y54FRq/LM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LB4ZP02ZzBVL/obiKsBbIerJ+40nGy10qy7d7vBYzsibMdXQyvbHUSbodEng61L9wlCOx+vGLWctVa1d2uKcMVws5WSVKxd6sNJcFpZggtnP3hOGIgc6QE/m83alcy2HW5mKxSvNHXF6k4BxMFK8DPGiv/rfV9EpCj5xmKslFzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=YwUKfg9K; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id F3C9A2E024A4;
-	Sat,  1 Mar 2025 13:09:14 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740827355;
-	bh=ODZmMANDWFstVv7l6HIL2/TBZdfFHuhroNovE4QTtSY=;
-	h=Received:From:Subject:To;
-	b=YwUKfg9KX1jk+DV2OCNqOm4j/2oL9f9oro6KZUQw8xbpgcSgyPkAuH5qZgsZkiNO0
-	 Vc6gQ01eJbZ7Qj//twHWYiter7+Xle5Ett5F1+XQJ12sZHy+bV1uNa5LTuzQNA0HvH
-	 sa5y46tM/SilENTWfPNLnA3FL5375bV9/vD0DQzM=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.178) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f178.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f178.google.com with SMTP id
- 38308e7fff4ca-30a36eecb9dso34486541fa.2;
-        Sat, 01 Mar 2025 03:09:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVU52APMA4lrVfxwCPfOfLaH+zp5xPRXIDeH2/+qGeqaRLIVydPI7G0AxOWS87/YyTv/W6C6+3t2Sn0@vger.kernel.org,
- AJvYcCWXPRMwDUga05uelisqDIC4tl2Ejh0sQEvbEiU/uAhro+fU49f/u5130gCacnfzRj1wfq+CwUbD1PtFEeqN@vger.kernel.org,
- AJvYcCXM72Z1gmHigsRgEzTkHuvZKj0NNeKd7rqhxtKWAejHrDun4tPKFrd1jF/I/R8mWhg6keR3hHNZAGr0smDah4fkmdZ3Yw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfaXqClGbmc3a8rggLV1FrLvuDSmXZqHT85QMD0Bc7FMd02Xcl
-	HOwNsovDTQuo0Q0URrYo0HHx/y8JVB3K4TClZDozY1Ek6GvI7xAUCHl6tNCjunHyxpSwIPZNEPv
-	U1rsPUQf+1FgOCnonzN9V1kgnLHs=
-X-Google-Smtp-Source: 
- AGHT+IHTOa4F6D9CTZsCBIW6VFH+IFkkhOF8T74ihTQSD4AUyeJQikuHi1jq0jqcTJiIoHPf9JAzsEVz37+2ViBhjr0=
-X-Received: by 2002:a2e:bc26:0:b0:300:3bcd:8d05 with SMTP id
- 38308e7fff4ca-30b9320eb4fmr22069881fa.15.1740827354350; Sat, 01 Mar 2025
- 03:09:14 -0800 (PST)
+	s=arc-20240116; t=1740827616; c=relaxed/simple;
+	bh=+AbNtnaDXud5s74tJVuptbsFx8r7MhvvdNtsYu3ZnYQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P+MlbyyNfl6Zf2P40ph0A2X8zb6TxpTLsajx9Bj+uIqLr/6FrPaCaXO5j99P8kNBWXrelQBz2pFhp01eBJqJkC2F2A//qAf6RImqPsG563KMncl8x40yhCtrF8U7tiRBh1uKuFmW3pJ2MC4zQJ4VYxHk7qIL3Fxmf2SLkWf2Jfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ELPdYg+l; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 0BCBCC0010;
+	Sat,  1 Mar 2025 14:13:24 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 0BCBCC0010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1740827604; bh=QQhkhPBQhZUQUCZDT/NBlpDqW9OIbH89a7upfUDq8Fc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ELPdYg+lR8sntCXynN9bMOO2/F9rne5oWjPqJZTJg+DCWlgEUJX/8iYd6BFjfrMvj
+	 HWeFMCZ7i+UISQ3N4mBYrMvW1xcYyn6taC5iiykMXsWEURKhsKCkYJnqKZLqOxWqBz
+	 hkloNiHPi7rxHhWkhALanWTi5QIHA4E7Jq7AooTavz/arjdca+hUVkKYASagejOg5/
+	 m3Mnvqx4h83yoe8gDgfEo8hpztM6AtNFp/QErej8k0NufKe6i9LUBFAf6medJozTxw
+	 QhxcBpmkQGSWEqt1QLsu9yD5hin3yzJ3wz9YUXvSxsPzBNmg+cW6DdbSsHXCiVUGTB
+	 ZFAdpn5C5018Q==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Sat,  1 Mar 2025 14:13:23 +0300 (MSK)
+Received: from localhost.maximatelecom.ru (5.1.51.90) by mmail-p-exch01.mt.ru
+ (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Sat, 1 Mar 2025
+ 14:13:22 +0300
+From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] media: cec: avoid wraparound in timer interval calculation
+Date: Sat, 1 Mar 2025 16:09:57 +0500
+Message-ID: <20250301111053.2661-1-v.shevtsov@mt-integration.ru>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228170155.2623386-1-superm1@kernel.org>
-In-Reply-To: <20250228170155.2623386-1-superm1@kernel.org>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Sat, 1 Mar 2025 12:09:03 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwFoqUPiZjozj5MHV5-4dVF3Ef0Wy-Sn5v38keHp2BfStQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqjRZxLi0ktJ29MmA7xLit19qlo9jBgU5EzfP79arEXoDKIV5ceEM3pjbk
-Message-ID: 
- <CAGwozwFoqUPiZjozj5MHV5-4dVF3Ef0Wy-Sn5v38keHp2BfStQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add support for hidden choices to platform_profile
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
-	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174082735531.24655.3644409426825857509@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
+ (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 191398 [Mar 01 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/01 07:55:00 #27511358
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-I just tested this. The behavior of this patch series matches mine
-1-1. Feel free to add a tested-by.
+[Why]
+The timer function code may have an integer wraparound issue. Since both
+pin->tx_custom_low_usecs and pin->tx_custom_high_usecs can be set to up to
+9999999 from the user space via cec_pin_error_inj_parse_line(), this may
+cause usecs to be overflowed when adap->monitor_pin_cnt is zero and usecs
+is multiplied by 1000.
 
-IMO it is a bit cleaner/thought through than my series, so I am fine
-with dropping mine. Should be as it is essentially a V3
+[How]
+Fix this by casting usecs to u64 when it is being converted from
+microseconds to nanoseconds.
 
-Antheas
+Found by Linux Verification Center (linuxtesting.org) with Svace.
 
-On Fri, 28 Feb 2025 at 18:02, Mario Limonciello <superm1@kernel.org> wrote:
->
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> When two drivers provide platform profile handlers but use different
-> strings to mean (essentially) the same thing the legacy interface won't
-> export them because it only shows profiles common to multiple drivers.
->
-> This causes an unexpected behavior to people who have upgraded from an
-> earlier kernel because if multiple drivers have bound platform profile
-> handlers they might not be able to access profiles they were expecting.
->
-> Introduce a concept of a "hidden choice" that drivers can register and
-> the platform profile handler code will utilize when using the legacy
-> interface.
->
-> There have been some other attempts at solving this issue in other ways.
-> This serves as an alternative to those attempts.
->
-> Link: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257-5b8fc6c24ac9@gmx.de/T/#t
-> Link: https://lore.kernel.org/platform-driver-x86/CAGwozwF-WVEgiAbWbRCiUaXf=BVa3KqmMJfs06trdMQHpTGmjQ@mail.gmail.com/T/#m2f3929e2d4f73cc0eedd14738170dad45232fd18
-> Cc: Antheas Kapenekakis <lkml@antheas.dev>
-> Cc: "Luke D. Jones" <luke@ljones.dev>
->
-> Mario Limonciello (3):
->   ACPI: platform_profile: Add support for hidden choices
->   platform/x86/amd: pmf: Add 'quiet' to hidden choices
->   platform/x86/amd: pmf: Add balanced-performance to hidden choices
->
->  drivers/acpi/platform_profile.c    | 94 +++++++++++++++++++++++-------
->  drivers/platform/x86/amd/pmf/sps.c | 11 ++++
->  include/linux/platform_profile.h   |  3 +
->  3 files changed, 87 insertions(+), 21 deletions(-)
->
-> --
-> 2.43.0
->
+Fixes: 865463fc03ed ("media: cec-pin: add error injection support")
+Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+---
+ drivers/media/cec/core/cec-pin.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
+index a70451d99ebc..f15ed5c67a65 100644
+--- a/drivers/media/cec/core/cec-pin.c
++++ b/drivers/media/cec/core/cec-pin.c
+@@ -1021,7 +1021,7 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
+ 		pin->wait_usecs = 0;
+ 		pin->timer_ts = ktime_add_us(ts, usecs);
+ 		hrtimer_forward_now(timer,
+-				ns_to_ktime(usecs * 1000));
++				ns_to_ktime((u64)usecs * 1000));
+ 		return HRTIMER_RESTART;
+ 	}
+ 	pin->wait_usecs = usecs - 100;
+-- 
+2.48.1
+
 
