@@ -1,171 +1,126 @@
-Return-Path: <linux-kernel+bounces-539925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90D1A4AAEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:28:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5BEA4AAEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 295FD7A9C7B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:27:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D460C1897235
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1D21DA314;
-	Sat,  1 Mar 2025 12:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CF71DED5B;
+	Sat,  1 Mar 2025 12:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="zaxc8Sea"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCbys6NZ"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E979F1D5CD7
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 12:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A11E519;
+	Sat,  1 Mar 2025 12:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740832127; cv=none; b=HFm88pwdv36o4g5oiiTEwROlFfnyg8LgKwXYz7pJi5agK0rIT1vdNy5yWi1Wmc6/40xXM/fguRWNHTXwXC/41UHVHL9O6XSa0J9j/l1WtB8dCGrnZB6vqn5Vgw7MEyEc5YSMvfwI0P4wdZDpJj8tpG7bLHxGqX18i/wEvjQ1yBs=
+	t=1740832338; cv=none; b=np+36HosLmf40U/tt+m8U5/t4vULf1FTxpvryHTSSM4Ly+IG74RnuVv8flMw58u5+oKl0qE/OldM+yp7G4GkDFaKDjbw1en16sXv/q5JuHdrydLqyxNo3e0D3EhOlImRnClLX9rmtK+kq2yNoHYnQwqV2fuuVPqSi6B1h0L01xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740832127; c=relaxed/simple;
-	bh=NqrbvWy4FjnXM7il11X7GEnPis/8CASWT3OsbTC9DsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVKBHJjRBAQRdRIIY2lyC2YrmOzfmJvkAZg/urtfw0IKZWelE22nVVw6nWzmMuLnVbQKGVdPd0al3bjK00wBU8Ht7Ndr/Hu+4i8J6HUIVJ9y+im4jjXVtFti6adFgRGEHO/+wKAqGyqlw+JMvJYzIiRubC2yuwERihBY1+aLB0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=zaxc8Sea; arc=none smtp.client-ip=212.77.101.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 36133 invoked from network); 1 Mar 2025 13:28:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1740832115; bh=3hL3gu4+phjo6I/CspOjLAoXyyGic55LKqTv9Puz30w=;
-          h=From:To:Cc:Subject;
-          b=zaxc8SeaUciiZUKVbZnqy47FCT1BHrj84ds+FBPeBI09vDaB8KbgbVH4m+cTUhCB4
-           +CQug0EJ3oEa4T+AYLwL/ZECP2RN/XheLfmfphVQ7cJ/0EKSlSkjC4aFDMW2T3lhfI
-           XzmZnEnLGqtMxCUteejldUTJVQqesxl6qcPMEHZs6gqzust+SInUAFiI55WKge9jyy
-           uSlN4gcUf5Ax7gEXqf9JdhqKnBRuqfXHVI40CvpxqIxIwVjOFDV8/0GnHZzA6bqpuU
-           UZz2puN11B5Tmn1VPnR2eb+zhAPV4Ba/X76GVxPjWvKClZ0RDO1nbU9Bzuk1e45LkL
-           6okDkiqz3y5eg==
-Received: from 89-64-0-97.dynamic.chello.pl (HELO localhost) (stf_xl@wp.pl@[89.64.0.97])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <arnd@kernel.org>; 1 Mar 2025 13:28:35 +0100
-Date: Sat, 1 Mar 2025 13:28:34 +0100
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@kernel.org>,
-	Ben Hutchings <ben@decadent.org.uk>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with
- DEBUG_FS=n
-Message-ID: <20250301122834.GA55739@wp.pl>
-References: <20250225145359.1126786-1-arnd@kernel.org>
+	s=arc-20240116; t=1740832338; c=relaxed/simple;
+	bh=ra8gIKFKFiVeUd/HquZVV+FuM2qhRTGX+65IuN5qPDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jp9CcG9ewnRRUGbyWevpLNwU82fUrgaldGjA7LccDbi/IePqLM+ATTCxqG2bBKEhmExNb7DQfrAPn7/R+TKRMaqAn1zcNjq236IVEUFI8ZHoNE4fDUvmzzw6edarzbG2xc5XfJkx9BjqwV3NoEX/MefVqZwmehtIabhnumKS1aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCbys6NZ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fea795bafeso4560900a91.1;
+        Sat, 01 Mar 2025 04:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740832335; x=1741437135; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ra8gIKFKFiVeUd/HquZVV+FuM2qhRTGX+65IuN5qPDE=;
+        b=BCbys6NZ5jNzNS/dH8lRQs/PfOyYNr4pCN6D0cMCc8YPMf8Unglr3tJv9b4xB7nl2i
+         cnCZajqy4UZKnUoSAIcLIfDzEwJIAOdiPjTsQJ+P1g0upGmDSyhlobWs+ceIplP0ib+0
+         uNTslGWhULzZQv/mcJWkqXUmOiSXJkDNAdKTqmw/41Xaq+hU5JWh78YLNn6K+p84yV40
+         xwKM4vOxQiK30/5UBIheJ1J265xTdUHs50fTSqAK5DXffqyfmvWsuTrlxAPZZzS8jaQH
+         smH63BNb2a0JKS4fsu4Rj5CTXuwab2RJWj3gpjmZSKlEAhwXej/1vwGJxstZoGej5F71
+         ZOxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740832335; x=1741437135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ra8gIKFKFiVeUd/HquZVV+FuM2qhRTGX+65IuN5qPDE=;
+        b=DZ+GHphvl1Rqe4LpcmJcFcunqBBBkWSzY9tqG03El93D0U6+XtGlYIn+IjN3TfvHPP
+         Jk4D6fnZdtt7yU0mbv19L9AcLyKf/wBaEHGeVOtdMWU4hdtIr7LK4aRutodlS0S9q2lT
+         5IBJlZs8l+J9T9EV//X3fayAejcJONIfCP63nQWgfha9jt7+kvr20QBu9DisLr85OJ+4
+         E+MRoQoZXFtJhdCvppxM+Drv9yb/WB9rFIbdXk1gViEC/quYF+rNOHiVHMV9GJvQbqNT
+         eAslre0s49Oi4D4NXYn42mXbp4PRqftVddEW0x2SSpPVAYSLDJp0I6ZYHwG/l9tpTN8X
+         WrkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+zRhZ5bvjIb5YyWLu/VQ8Epr7rS3V3FnCQW83n3oMJ+LUppaXb5MZIOgUusvxUSQ7TlZpx3cTAVYNrlWZ@vger.kernel.org, AJvYcCWflUayYWTytunxHR+p0pFnaS2Ehc8oazXqEM1LdMq9+pnGE+yWPLn7uyUPlk++/tfT/xY5yxJLpFVd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNFVttTaQ7CVac8ro3uMN1rc/ode1YwBbi4qECcahwBq/R98My
+	+UwKBwMmsAyTqqJBothCgImancn8nlDDZ32jnSQp0ceVo3Uq2Ytt
+X-Gm-Gg: ASbGncsYe+Lor2rrZfIF6Fj961ZNtqDsQV9pU3tCdqL7eR/MjVVUOmYxME+IYJms1mu
+	S90HOWn5uqwzXmDTmFRWgWMM3V8HSqTsi1mAFjITJlYmXnLinybuJC0kl+CnlsNIY3MHZgQ6OpL
+	NIGPpHboeqVErbRhu8/SeJE85E5aT0RsTVFQj0L7huh9asm4ENu080obh7VwnzoUyq5oXaxtbQw
+	vMXR9PrnVyZshH0ArVEidvHVVOUR+3He0xsfH2WCe7pXKAKf2Jv0Bb19475+gDN5gIutvZS7Yu/
+	s++c5N+u4JflnTdxC8xSfdzynltpRIm9uUpWqD47FWOTh8Sjobn/dLZOYE5G40XL4wW9
+X-Google-Smtp-Source: AGHT+IF1mhUuctMChazLjJnYgbLD4i8xF/OkaFyb4KVb61pxcTtGOZi+8D/BZaLS5+Cyjw+B2Dpcww==
+X-Received: by 2002:a17:90b:1e51:b0:2ee:c30f:33c9 with SMTP id 98e67ed59e1d1-2feba92bfc9mr11663696a91.14.1740832334925;
+        Sat, 01 Mar 2025 04:32:14 -0800 (PST)
+Received: from [192.168.0.101] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825a99a7sm8346849a91.6.2025.03.01.04.32.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Mar 2025 04:32:14 -0800 (PST)
+Message-ID: <83130117-509a-45ff-bf96-26beb77246e1@gmail.com>
+Date: Sat, 1 Mar 2025 20:32:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225145359.1126786-1-arnd@kernel.org>
-X-WP-MailID: 42cec4a7e71b348584fd2301367d5215
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000001 [geIR]                               
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/9] arm64: dts: apple: Add CPU cache information for
+ Apple A7-A11, T2 SoCs
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220-caches-v1-0-2c7011097768@gmail.com>
+ <4670e5f8-2a92-46bd-8faa-dd3774517f3e@app.fastmail.com>
+Content-Language: en-US
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <4670e5f8-2a92-46bd-8faa-dd3774517f3e@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The reference to il_rate_mcs is inside of an #ifdef, causing a W=1 warning:
-> 
-> drivers/net/wireless/intel/iwlegacy/4965-rs.c:189:38: error: unused variable 'il_rate_mcs' [-Werror,-Wunused-const-variable]
-> static const struct il_rate_mcs_info il_rate_mcs[RATE_COUNT] = {
-> 
-> Replace the #ifdef with a PTR_IF() for better compile time analysis.
-> The dead code will still get eliminated, but the warning goes away.
 
-But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
-case, it does compile for me:
+Sven Peter 於 2025/3/1 夜晚7:11 寫道:
+> Hi,
+>
+> On Thu, Feb 20, 2025, at 13:21, Nick Chan wrote:
+>> Add CPU cache information for Apple A7-A11, T2 SoCs. On Apple
+>> A10 (T8010), A10X (T8011), T2 (T8012), only the caches in one of the
+>> CPU clusters can be used due to the "Apple Fusion Architecture"
+>> big.LITTLE switcher. The values for the P-cluster is used in this
+>> case.
+> So this means that the cache information will be "wrong" when the CPU
+> is in the lower power states and only correct for the higher ones?
+> I'm not familiar with how these values are used; are you and do you
+> know if this will have any weird or unexpected effects?
+> Would it be better to use the cache size for the lower rather than
+> the higher states or does this not matter much?
+The information in the device tree is only used for reporting cache sizes in /sys/devices/system/cpu.
+It represents the physical cache size which may not be the same as the architecturally visible cache
+size. Cache operations in the kernel consult ccsidr_el1 and csselr_el1, so it should be fine.
+>
+>
+>
+> Best,
+>
+>
+> Sven
+Nick Chan
 
--  22475	   1160	      0	  23635	   5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
-+  23008	   1168	      0	  24176	   5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
-
-How about moving  
-static const struct il_rate_mcs_info il_rate_mcs[RATE_COUNT]
-under CONFIG_MAC80211_DEBUGFS ? Maybe inside the function that use it ? 
-
-Regards
-Stanislaw
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: use correct config symbol consistently
-> ---
->  drivers/net/wireless/intel/iwlegacy/4965-rs.c | 15 ++-------------
->  drivers/net/wireless/intel/iwlegacy/common.h  |  2 --
->  2 files changed, 2 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-rs.c b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
-> index 718efb1aa1b0..f754fb979546 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
-> +++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
-> @@ -132,15 +132,8 @@ static void il4965_rs_fill_link_cmd(struct il_priv *il,
->  static void il4965_rs_stay_in_table(struct il_lq_sta *lq_sta,
->  				    bool force_search);
->  
-> -#ifdef CONFIG_MAC80211_DEBUGFS
->  static void il4965_rs_dbgfs_set_mcs(struct il_lq_sta *lq_sta,
->  				    u32 *rate_n_flags, int idx);
-> -#else
-> -static void
-> -il4965_rs_dbgfs_set_mcs(struct il_lq_sta *lq_sta, u32 * rate_n_flags, int idx)
-> -{
-> -}
-> -#endif
->  
->  /*
->   * The following tables contain the expected throughput metrics for all rates
-> @@ -2495,8 +2488,6 @@ il4965_rs_free_sta(void *il_r, struct ieee80211_sta *sta, void *il_sta)
->  	D_RATE("leave\n");
->  }
->  
-> -#ifdef CONFIG_MAC80211_DEBUGFS
-> -
->  static void
->  il4965_rs_dbgfs_set_mcs(struct il_lq_sta *lq_sta, u32 * rate_n_flags, int idx)
->  {
-> @@ -2758,7 +2749,6 @@ il4965_rs_add_debugfs(void *il, void *il_sta, struct dentry *dir)
->  	debugfs_create_u8("tx_agg_tid_enable", 0600, dir,
->  			  &lq_sta->tx_agg_tid_en);
->  }
-> -#endif
->  
->  /*
->   * Initialization of rate scaling information is done by driver after
-> @@ -2781,9 +2771,8 @@ static const struct rate_control_ops rs_4965_ops = {
->  	.free = il4965_rs_free,
->  	.alloc_sta = il4965_rs_alloc_sta,
->  	.free_sta = il4965_rs_free_sta,
-> -#ifdef CONFIG_MAC80211_DEBUGFS
-> -	.add_sta_debugfs = il4965_rs_add_debugfs,
-> -#endif
-> +	.add_sta_debugfs = PTR_IF(IS_ENABLED(CONFIG_MAC80211_DEBUGFS),
-> +				  il4965_rs_add_debugfs),
->  };
->  
->  int
-> diff --git a/drivers/net/wireless/intel/iwlegacy/common.h b/drivers/net/wireless/intel/iwlegacy/common.h
-> index 92285412ab10..52610f5e57a3 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/common.h
-> +++ b/drivers/net/wireless/intel/iwlegacy/common.h
-> @@ -2815,9 +2815,7 @@ struct il_lq_sta {
->  	struct il_scale_tbl_info lq_info[LQ_SIZE];	/* "active", "search" */
->  	struct il_traffic_load load[TID_MAX_LOAD_COUNT];
->  	u8 tx_agg_tid_en;
-> -#ifdef CONFIG_MAC80211_DEBUGFS
->  	u32 dbg_fixed_rate;
-> -#endif
->  	struct il_priv *drv;
->  
->  	/* used to be in sta_info */
-> -- 
-> 2.39.5
-> 
 
