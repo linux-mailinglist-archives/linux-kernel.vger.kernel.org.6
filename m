@@ -1,179 +1,99 @@
-Return-Path: <linux-kernel+bounces-539782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF55BA4A891
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:23:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B41EA4A894
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C89B3BB7C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27FBB189B015
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6231C1F10;
-	Sat,  1 Mar 2025 04:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A181AF0C8;
+	Sat,  1 Mar 2025 04:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dCNDU0bP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64AF16F858;
-	Sat,  1 Mar 2025 04:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akqztUmN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0015B2C9A;
+	Sat,  1 Mar 2025 04:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740802986; cv=none; b=ACD69u7xrEOJlXcwhodRhcGVYhwcerszGxKlYwfNbWPv4U22AmQMEhM7p3rWqYmrb4y4st+bMU4NsDuzbzP9x5ZybZM3Tg5tnLoYs/E5IEMffNcshTmSStHxYXLcy8MIwIGwVkD4e6xyXIOjSnrpRz4JhO34tVmV6bKWPxt+REk=
+	t=1740803158; cv=none; b=ua6CRMhySu0d1w7RqTvastkVhx1TVwd5EuZ0xL+GMdanZUImLMMRYklaoS7xpKc0LFZKc4pWjiVninFpxggVd29xz+B1c95BfC6KSwadcw5uXGB83KO2dq8xTHZlysf6F5pdTc1VhzEyvQie+6vYoQ2onhagsamcvsTnpLyqJVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740802986; c=relaxed/simple;
-	bh=XArbmJZdbBMg9qGsiGEE7sni6MOxX5PA0DU/Xto11R4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q0hfqgfvpiQWmzAf0LgC2ZXU0+lSpEo6ZK7x6LBnvyt59AA3M0Ibnb7p6AV5NsJ36pGTYE4vwTvyRATVx0qvmo/V+x0zUZ3Jejxda/fhDoepbmm+Egi/Lzu9XAsfpU0ikYSoTe6aHFE5m3QchL2SG61+P2QJcUSRxZZsghBB9G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dCNDU0bP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6D7992038A29;
-	Fri, 28 Feb 2025 20:23:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6D7992038A29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740802984;
-	bh=kuSyaGsK8xjvWVKJHBcTuVFDF/vLxtEYezbaQdS5+RQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dCNDU0bPC2dMwZCrDMI6INg8KDSYCDyp0t+G7prkFFKLkTpjqCkn9xUv0w2EhcZ10
-	 Y8X18OU8CaJ4/jPClZ6EDchj61aeGgEB5Clipx4NTwX/DOuNMCpCeq16GdZPAptE6b
-	 z58xgck8n2XQgZZh/S/mDc7NSHDEu1aBOrClDPnI=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Sat, 01 Mar 2025 04:22:53 +0000
-Subject: [PATCH v4 2/2] libceph: convert timeouts to secs_to_jiffies()
+	s=arc-20240116; t=1740803158; c=relaxed/simple;
+	bh=pWaCimXUsHigEq/oorBCKxI41iZIQds1Cj6USoZA9wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dgfy1IYm7HV4DFefiGv6ecbmQ2JAGSG+VVNJ9Htdb1FmSJ6ze9Ha3fVtdckeEVKpBNr9ODNplp7g24i7mDsB/Km/EW4HPhIrGVHI2ZFiCjllRiIBZXLrUVDgzTCR2hZwYzZTelVpo0pNSrXWySXGw9WhvNhr53Hj2M0WkldoaSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akqztUmN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF431C16AAE;
+	Sat,  1 Mar 2025 04:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740803157;
+	bh=pWaCimXUsHigEq/oorBCKxI41iZIQds1Cj6USoZA9wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=akqztUmNh3pE5H4039Ogzdf2oxsmAfzWBob1fVnONnq7gI+bQ7WlASXy+JZnnD+9+
+	 Ks/tOeXHyrB1zi8zFyBF8ywtjv1Q6I1XM6lEJT4bDvyXV+JuAh1QekMkZnw1PqapWG
+	 tW0nOaiOkiuL1WBqaJvZ5H6EpbozMwSD7TTUD+kYKxYwDukPOGfGfmmz0yHHLswy4B
+	 aVEY9fkXwyBaHIIKAWAkMKToTfuKWAr2oZNyfkbBVwKPAXTQwCBO2ZrE0BtgUgoCc6
+	 XtJTnVtQPpUrmkVI2f7gIbgLciMDTuY/aMf+jnzCOZE495E+In7e2iUIpRaAj3B4rh
+	 SZJHh+AXmttTg==
+Date: Fri, 28 Feb 2025 21:25:51 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: masahiroy@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chenhuacai@loongson.cn,
+	kernel@xen0n.name, revy@deepin.org, zhanjun@uniontech.com,
+	niecheng1@uniontech.com, guanwentao@uniontech.com,
+	chenlinxuan@uniontech.com, Shiwei Liu <liushiwei@anheng.com.cn>
+Subject: Re: [PATCH] kbuild: deb-pkg: add debarch for ARCH=loongarch64
+Message-ID: <20250301042551.GA3565873@ax162>
+References: <DB8BF02DB314013F+20250224182619.1557027-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250301-converge-secs-to-jiffies-part-two-v4-2-c9226df9e4ed@linux.microsoft.com>
-References: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
-In-Reply-To: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
- Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
- Xiubo Li <xiubli@redhat.com>
-Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Easwar Hariharan <eahariha@linux.microsoft.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB8BF02DB314013F+20250224182619.1557027-1-wangyuli@uniontech.com>
 
-Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-secs_to_jiffies().  As the value here is a multiple of 1000, use
-secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
+On Tue, Feb 25, 2025 at 02:26:19AM +0800, WangYuli wrote:
+> Fix follow warning when 'make ARCH=loongarch64 bindeb-pkg':
+> 
+>   ** ** **  WARNING  ** ** **
+> 
+>   Your architecture doesn't have its equivalent
+>   Debian userspace architecture defined!
+>   Falling back to the current host architecture (loong64).
+>   Please add support for loongarch64 to ./scripts/package/mkdebian ...
+> 
+> Reported-by: Shiwei Liu <liushiwei@anheng.com.cn>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 
-This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-the following Coccinelle rules:
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-@depends on patch@ expression E; @@
-
--msecs_to_jiffies(E * 1000)
-+secs_to_jiffies(E)
-
-@depends on patch@ expression E; @@
-
--msecs_to_jiffies(E * MSEC_PER_SEC)
-+secs_to_jiffies(E)
-
-Change the checks for range to check against HZ.
-
-Acked-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- include/linux/ceph/libceph.h | 12 ++++++------
- net/ceph/ceph_common.c       | 18 ++++++++----------
- net/ceph/osd_client.c        |  3 +--
- 3 files changed, 15 insertions(+), 18 deletions(-)
-
-diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-index 733e7f93db66a7a29a4a8eba97e9ebf2c49da1f9..5f57128ef0c7d018341c15cc59288aa47edec646 100644
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -72,15 +72,15 @@ struct ceph_options {
- /*
-  * defaults
-  */
--#define CEPH_MOUNT_TIMEOUT_DEFAULT	msecs_to_jiffies(60 * 1000)
--#define CEPH_OSD_KEEPALIVE_DEFAULT	msecs_to_jiffies(5 * 1000)
--#define CEPH_OSD_IDLE_TTL_DEFAULT	msecs_to_jiffies(60 * 1000)
-+#define CEPH_MOUNT_TIMEOUT_DEFAULT	secs_to_jiffies(60)
-+#define CEPH_OSD_KEEPALIVE_DEFAULT	secs_to_jiffies(5)
-+#define CEPH_OSD_IDLE_TTL_DEFAULT	secs_to_jiffies(60)
- #define CEPH_OSD_REQUEST_TIMEOUT_DEFAULT 0  /* no timeout */
- #define CEPH_READ_FROM_REPLICA_DEFAULT	0  /* read from primary */
- 
--#define CEPH_MONC_HUNT_INTERVAL		msecs_to_jiffies(3 * 1000)
--#define CEPH_MONC_PING_INTERVAL		msecs_to_jiffies(10 * 1000)
--#define CEPH_MONC_PING_TIMEOUT		msecs_to_jiffies(30 * 1000)
-+#define CEPH_MONC_HUNT_INTERVAL		secs_to_jiffies(3)
-+#define CEPH_MONC_PING_INTERVAL		secs_to_jiffies(10)
-+#define CEPH_MONC_PING_TIMEOUT		secs_to_jiffies(30)
- #define CEPH_MONC_HUNT_BACKOFF		2
- #define CEPH_MONC_HUNT_MAX_MULT		10
- 
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 4c6441536d55b6323f4b9d93b5d4837cd4ec880c..ee701b39960e1c9778db91936ac7503467ee1162 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -527,29 +527,27 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
- 
- 	case Opt_osdkeepalivetimeout:
- 		/* 0 isn't well defined right now, reject it */
--		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
-+		if (result.uint_32 < 1 || result.uint32 > INT_MAX / HZ)
- 			goto out_of_range;
--		opt->osd_keepalive_timeout =
--		    msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->osd_keepalive_timeout = secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_osd_idle_ttl:
- 		/* 0 isn't well defined right now, reject it */
--		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
-+		if (result.uint_32 < 1 || result.uint32 > INT_MAX / HZ)
- 			goto out_of_range;
--		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_mount_timeout:
- 		/* 0 is "wait forever" (i.e. infinite timeout) */
--		if (result.uint_32 > INT_MAX / 1000)
-+		if (result.uint32 > INT_MAX / HZ)
- 			goto out_of_range;
--		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->mount_timeout = secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_osd_request_timeout:
- 		/* 0 is "wait forever" (i.e. infinite timeout) */
--		if (result.uint_32 > INT_MAX / 1000)
-+		if (result.uint32 > INT_MAX / HZ)
- 			goto out_of_range;
--		opt->osd_request_timeout =
--		    msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->osd_request_timeout = secs_to_jiffies(result.uint_32);
- 		break;
- 
- 	case Opt_share:
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index b24afec241382b60d775dd12a6561fa23a7eca45..ba61a48b4388c2eceb5b7a299906e7f90191dd5d 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -4989,8 +4989,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
- 	linger_submit(lreq);
- 	ret = linger_reg_commit_wait(lreq);
- 	if (!ret)
--		ret = linger_notify_finish_wait(lreq,
--				 msecs_to_jiffies(2 * timeout * MSEC_PER_SEC));
-+		ret = linger_notify_finish_wait(lreq, secs_to_jiffies(2 * timeout));
- 	else
- 		dout("lreq %p failed to initiate notify %d\n", lreq, ret);
- 
-
--- 
-2.43.0
-
+> ---
+>  scripts/package/mkdebian | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index b6dd98ca860b..0178000197fe 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -77,6 +77,8 @@ set_debarch() {
+>  			debarch=i386
+>  		fi
+>  		;;
+> +	loongarch64)
+> +		debarch=loong64 ;;
+>  	esac
+>  	if [ -z "$debarch" ]; then
+>  		debarch=$(dpkg-architecture -qDEB_HOST_ARCH)
+> -- 
+> 2.47.2
+> 
 
