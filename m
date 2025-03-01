@@ -1,208 +1,172 @@
-Return-Path: <linux-kernel+bounces-539763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3F6A4A846
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:25:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8540CA4A850
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED6F1773D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137BD189BA66
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD66E1B0408;
-	Sat,  1 Mar 2025 03:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV1yj3pP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5D21ADC9B;
+	Sat,  1 Mar 2025 03:33:52 +0000 (UTC)
+Received: from out28-98.mail.aliyun.com (out28-98.mail.aliyun.com [115.124.28.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1D71CD15;
-	Sat,  1 Mar 2025 03:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDB12CA8;
+	Sat,  1 Mar 2025 03:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740799542; cv=none; b=ScnnbYWqzmdzoGXE7nkjSnfZJVQ8vmffM9DycY0871rBPwT+RpSLLmAYsnSpB3dXb+UavnZjdzdDCylHML2GZ5rlrKCMph0sA0pP4x+wyZBfKskjUvIf4mHD/NjrCXLNSn/JSXVbiJUuhy1Nc66wfRq3xy8Xjq3dpjzvNxh5Fwo=
+	t=1740800032; cv=none; b=i8jHQIBVqzbrMRfivFon7mY2Gz2sw0vReKs+6sIYF8TcsI0qo9ajipRxvmpT4JdxQ/EuUVY1oilhqr4DafrRS39fnBwQ0NDdvHNKb0rwxs9gI8RqBI16IcNf7n5xzPMGtbFKdgOBv++SFdgwl/pHdHx8lfMPz8V06BxVuFTqbZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740799542; c=relaxed/simple;
-	bh=FmQ/Wz4ZtwGsNlXMLA2I4TgbrEPenZCG9Iv0gdXbVDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uI+aXHhdrVCV1cgBOwZr6u4L9UN6Zod/qpIMXK4nk8ZlvQar017VVd6yXsgmOKKCOoehfgOuDok5afU8eG2UI21aPI3rJrx5luLb59VkR3uwcthIPmMDzpp6FNdJg7u/rNKQWbC56rMb3Zjt8ww+wQ1LSP/6itkHM35BcqUibug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV1yj3pP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A14C4CED6;
-	Sat,  1 Mar 2025 03:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740799541;
-	bh=FmQ/Wz4ZtwGsNlXMLA2I4TgbrEPenZCG9Iv0gdXbVDg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qV1yj3pP/YiTqZmytVT+45Crbjp118n/HZY9xCXrKEDhw6EhxgHtjfA2o8ZdUF12+
-	 ZbIOz258SUZx59KzguFDK05TvwmCAgWyRV2iOzm2Zx2M5WeHOQOSsUR3rJeRR26G9j
-	 vWwoRxzoBRTKWaFrFAp8HenVq+Z0uSLafSMVdOHiDYHg36sCMgNiQUSFbPaAY0h1o6
-	 6WCCeGb5OyzmoNepcX1bJQmEy4U+82W5hnAVDVz0qYLpN17t3CkijlOR0tHcHNF1k9
-	 ry4cRubRiLiX08yUeLpCZosIvSYsZLp7m+uDTzl3ze6ScOZg9eHc77y5kbk1THz1Kl
-	 Q1XbG+Sek+o7A==
-Date: Sat, 1 Mar 2025 03:25:19 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- agross@kernel.org, andersson@kernel.org, dmitry.baryshkov@linaro.org,
- konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
- amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
- rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
- david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
- quic_kamalw@quicinc.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- lars@metafoo.de, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org,
- quic_skakitap@quicinc.com, neil.armstrong@linaro.org
-Subject: Re: [PATCH V5 4/5] iio: adc: Add support for QCOM PMIC5 Gen3 ADC
-Message-ID: <20250301032519.16e77288@jic23-huawei>
-In-Reply-To: <9e14f58f-e345-4bae-b14e-de25fc28d9a8@oss.qualcomm.com>
-References: <20250131183242.3653595-1-jishnu.prakash@oss.qualcomm.com>
-	<20250131183242.3653595-5-jishnu.prakash@oss.qualcomm.com>
-	<20250201121134.53040aae@jic23-huawei>
-	<9e14f58f-e345-4bae-b14e-de25fc28d9a8@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740800032; c=relaxed/simple;
+	bh=iK2AfIKSUL8nmfJkunk9Xi1ujvLSDFVFQFMT7ZKBPTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mynap91s4Lc5HGfUddmeJs0etcUSSIxWxHl+eZOn9bEQJ6xDhkZj4ysbvFVUbfsQLpYfNfqv+FF+M725Z8lnOm4pIMURY/FpCawA2g9NGh4wF/VKZrffWVGnECpZBh03EGMD0Agbgn6fFQScC5B1AUy2S6wT9jGWsfUPC5J6akA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=115.124.28.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
+Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.bgf2kBq_1740799702 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Sat, 01 Mar 2025 11:28:22 +0800
+From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+To: helgaas@kernel.org
+Cc: bhelgaas@google.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	rafael@kernel.org,
+	zhoushengqing@ttyinfo.com
+Subject: Re: Re: [PATCHv4] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev id doesn't match with spec
+Date: Sat,  1 Mar 2025 03:28:22 +0000
+Message-Id: <20250301032822.17486-1-zhoushengqing@ttyinfo.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250227184053.GA609152@bhelgaas>
+References: <20250227184053.GA609152@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 14:22:05 +0530
-Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
-
-> Hi Jonathan,
-> 
-> On 2/1/2025 5:41 PM, Jonathan Cameron wrote:
-> > On Sat,  1 Feb 2025 00:02:41 +0530
-> > Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
-> >   
-> >> The ADC architecture on PMIC5 Gen3 is similar to that on PMIC5 Gen2,
-> >> with all SW communication to ADC going through PMK8550 which
-> >> communicates with other PMICs through PBS.
-> >>
-> >> One major difference is that the register interface used here is that
-> >> of an SDAM (Shared Direct Access Memory) peripheral present on PMK8550.
-> >> There may be more than one SDAM used for ADC5 Gen3 and each has eight
-> >> channels, which may be used for either immediate reads (same functionality
-> >> as previous PMIC5 and PMIC5 Gen2 ADC peripherals) or recurring measurements
-> >> (same as ADC_TM functionality).
-> >>
-> >> By convention, we reserve the first channel of the first SDAM for all
-> >> immediate reads and use the remaining channels across all SDAMs for
-> >> ADC_TM monitoring functionality.
-> >>
-> >> Add support for PMIC5 Gen3 ADC driver for immediate read functionality.
-> >> ADC_TM is implemented as an auxiliary thermal driver under this ADC
-> >> driver.
-> >>
-> >> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>  
-> > Hi,
+On Thu, Feb 27, 2025 at 6:40 PM Bjorn Helgaas wrote:
+> On Mon, Dec 16, 2024 at 05:27:51AM +0000, Zhou Shengqing wrote:
+> > Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
+> > for PCI. Preserve PCI Boot Configuration Initial Revision ID changed to 2.
+> > But the code remains unchanged, still 1.
 > > 
-> > A few minor things inline.  One general one is keep to under 80 chars
-> > for line wrap unless going over that makes a significant improvement
-> > to readability.
+> > v4:Initialize *obj to NULL.
+> > v3:try revision id 1 first, then try revision id 2.
+> > v2:add Fixes tag.
+> 
+> Thanks for working on this issue.
+> 
+>   - Thanks for the revision history.  For future posts, put it below
+>     the "---" line so it's in the email but not part of the commit log.
+> 
+>   - I think there's a leak in pci_acpi_preserve_config() because it
+>     doesn't free "obj" before it returns true.  If you agree, add a
+>     preparatory patch to fix this.
+> 
+>   - Add a preparatory patch to return false early in
+>     pci_acpi_preserve_config() if !ACPI_HANDLE(&host_bridge->dev) so
+>     the body of the function is unindented, similar to what
+>     acpi_pci_add_bus() does.
+> 
+>   - Add another preparatory patch that adds acpi_check_dsm() of the
+>     desired function/rev ID for DSM_PCI_PRESERVE_BOOT_CONFIG,
+>     DSM_PCI_POWER_ON_RESET_DELAY, DSM_PCI_DEVICE_READINESS_DURATIONS.
+>     Move the "Evaluate PCI Boot Configuration" comment above the
+>     acpi_check_dsm() since it applies to the whole function, not just
+>     the rev 1 code in this patch.
+> 
+>   - Rework this patch so it only adds acpi_check_dsm() and
+>     acpi_evaluate_dsm_typed() for rev 2.
+
+Could you please explain this in more detail? Do you mean we don't need to
+consider rev 1 anymore?
+
+> 
+>   - Throughout, wrap code and comments to fit in 80 columns because
+>     that's the convention for the rest of the file.
+> 
+>   - You can use "BIT(DSM_PCI_PRESERVE_BOOT_CONFIG)" and similar
+>     instead of "1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG" when calling
+>     acpi_check_dsm().
+> 
+>   - Add a [0/n] cover letter when posting the series.  Each patch
+>     should be a response to the cover letter.  "git format-patch" and
+>     "git send-email" will do that for you automatically.
+> 
+> > Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
 > > 
-> > Jonathan
-> >   
-> >> ---
-> >> Changes since v4:
-> >> - Moved out common funtions from newly added .h file into a separate .c
-> >>   file to avoid duplicating them. Updated interrupt name as suggested
-> >>   by reviewer. Updated namespace export symbol statement to have a string
-> >>   as second argument to follow framework change.
-> >>  
-> 
-> ...
-> 
-> >> +
-> >> +			if (!conv_req)
-> >> +				return 0;
-> >> +		}
-> >> +
-> >> +		usleep_range(ADC5_GEN3_HS_DELAY_MIN_US, ADC5_GEN3_HS_DELAY_MAX_US);  
-> > fsleep() perhaps as I doubt the extra tolerance that will give will matter
-> > much.  
-> >> +	}
-> >> +
-> >> +	pr_err("Setting HS ready bit timed out, sdam_index:%d, status:%#x\n", sdam_index, status);
-> >> +	return -ETIMEDOUT;
-> >> +}
-> >> +EXPORT_SYMBOL(adc5_gen3_poll_wait_hs);  
+> > Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+> > ---
+> >  drivers/pci/pci-acpi.c | 42 ++++++++++++++++++++++++++++++++----------
+> >  1 file changed, 32 insertions(+), 10 deletions(-)
 > > 
-> > At some point may be worth namespacing all these exports.
-> > Probably not in this series though!  
-> 
-> In the main driver file (qcom-spmi-adc5-gen3.c), I have already exported some functions to a namespace ("QCOM_SPMI_ADC5_GEN3"),
-> which is imported in the auxiliary driver file (qcom-spmi-adc-tm5-gen3.c).
-> 
-> Do you think I should export these functions to the same or a different namespace? Or should we check this later?
-Later is fine.
-
-> >> +void adc5_take_mutex_lock(struct device *dev, bool lock)
-> >> +{
-> >> +	struct iio_dev *indio_dev = dev_get_drvdata(dev->parent);
-> >> +	struct adc5_chip *adc = iio_priv(indio_dev);
-> >> +
-> >> +	if (lock)
-> >> +		mutex_lock(&adc->lock);
-> >> +	else
-> >> +		mutex_unlock(&adc->lock);
-> >> +}
-> >> +EXPORT_SYMBOL_NS_GPL(adc5_take_mutex_lock, "QCOM_SPMI_ADC5_GEN3");  
-> > 
-> > This is potentially going to make a mess for sparse.  Might be better to split
-> > it in two so you can had __acquires and __releases markings.
-> > 
-> > If you don't get any warnings with sparse then I guess we are fine.
-> >   
-> 
-> I had tried building with sparse in my local workspace and I did not get any errors in this file. Do you think I can keep this unchanged?
-> Also, would any kernel bots run sparse later on this patch, if it's not already done?
-
-Problems around this tend to turn up a bit late in build tests as requires
-particular combinations of features.  Here you may not see problems because
-sparse can't see far enough to understand the locking.
-
-I would still split this into lock / unlock as that matches better
-with common syntax for locks.  We can then add markings
-as necessary later.
-
-> >> +/*  
-> > 
-> > Looks like valid kernel doc, so /** and check it builds fine
-> > with the kernel-doc script.
-> >   
-> >> + * struct adc5_channel_prop - ADC channel property.
-> >> + * @channel: channel number, refer to the channel list.
-> >> + * @cal_method: calibration method.
-> >> + * @decimation: sampling rate supported for the channel.
-> >> + * @sid: slave id of PMIC owning the channel.  
-> > 
-> > In common with most of the kernel, if there is another name that
-> > can be used, I'd prefer avoiding that term.
-> > ID probably fine for example or leave it ambiguous as SID
-> >   
-> 
-> Just to be sure, does this look fine?
-> 
-> @sid: ID of PMIC owning the channel.
-Ok.
-> 
-> I'll address all your other comments in the next patch series.
-> 
-When replying with feedback on some items crop out the rest
-of the email just to maintain relevant context.
-Saves time and makes less likely important parts of your reply
-might be missed.
-
-thanks,
-
-Jonathan
-
-> Thanks,
-> Jishnu
+> > diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> > index af370628e583..f805cd134019 100644
+> > --- a/drivers/pci/pci-acpi.c
+> > +++ b/drivers/pci/pci-acpi.c
+> > @@ -123,19 +123,41 @@ phys_addr_t acpi_pci_root_get_mcfg_addr(acpi_handle handle)
+> >  bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
+> >  {
+> >  	if (ACPI_HANDLE(&host_bridge->dev)) {
+> > -		union acpi_object *obj;
+> > +		union acpi_object *obj = NULL;
+> >  
+> >  		/*
+> > -		 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
+> > -		 * exists and returns 0, we must preserve any PCI resource
+> > -		 * assignments made by firmware for this host bridge.
+> > +		 * Per PCI Firmware r3.2, released Jan 26, 2015,
+> > +		 * DSM_PCI_PRESERVE_BOOT_CONFIG Revision ID is 1.
+> > +		 * But PCI Firmware r3.3, released Jan 20, 2021,
+> > +		 * changed sec 4.6.5 to say
+> > +		 * "lowest valid Revision ID value: 2". So try revision 1
+> > +		 * first for old platform, then try revision 2.
+> >  		 */
+> > -		obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
+> > -					      &pci_acpi_dsm_guid,
+> > -					      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
+> > -					      NULL, ACPI_TYPE_INTEGER);
+> > -		if (obj && obj->integer.value == 0)
+> > -			return true;
+> > +		if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev), &pci_acpi_dsm_guid, 1,
+> > +				   1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG)) {
+> > +			/*
+> > +			 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
+> > +			 * exists and returns 0, we must preserve any PCI resource
+> > +			 * assignments made by firmware for this host bridge.
+> > +			 */
+> > +			obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
+> > +						      &pci_acpi_dsm_guid,
+> > +						      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
+> > +						      NULL, ACPI_TYPE_INTEGER);
+> > +			if (obj && obj->integer.value == 0)
+> > +				return true;
+> > +		}
+> > +
+> > +		if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev), &pci_acpi_dsm_guid, 2,
+> > +				   1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG)) {
+> > +			obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
+> > +						      &pci_acpi_dsm_guid,
+> > +						      2, DSM_PCI_PRESERVE_BOOT_CONFIG,
+> > +						      NULL, ACPI_TYPE_INTEGER);
+> > +			if (obj && obj->integer.value == 0)
+> > +				return true;
+> > +		}
+> > +
+> >  		ACPI_FREE(obj);
+> >  	}
+> >  
+> > -- 
+> > 2.39.2
+> >
 
