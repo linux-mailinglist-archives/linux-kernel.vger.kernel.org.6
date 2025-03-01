@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-539938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD572A4AB0B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:56:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3E7A4AB10
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B821898364
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0768A7A81C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899B1DF24F;
-	Sat,  1 Mar 2025 12:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yrqnQ9n8"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4DD1DF276;
+	Sat,  1 Mar 2025 13:01:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7891D5CDB;
-	Sat,  1 Mar 2025 12:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115521DF265
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740833769; cv=none; b=Dea8zx54YBD+dYZtnwE4SnykyCqsKxlCL24XWLkxveomj5n0SF2gUkWoci7nmXtzQD0JF+bCbkhfCTDP1hBgescJkEX1eAlc6Y3m5ipvG+e+kIq/2xTLAFqLX/4kszQtWZNvSiaDNzJzTK5QHhtV6uQQBSsPvUXPyMGJvD4PPds=
+	t=1740834076; cv=none; b=Iu+bqsEtrEOFXbXtQ9alZ2PtB2ypos7eRGVpwiq4B9yFX7oasOC4K32yUGYGjLloftfic3tEBMqO3t4G9tLAPrzPgWJZOPiCd+nLjqmeUsNYa22Tp1WplOPolmAP0Ibwv2nMdoYdnaZWx8jYRn4Q+Ef8O3xuc7a21BC4vl3BQx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740833769; c=relaxed/simple;
-	bh=uz1g3qaKQVfqxor+NFXIvS/fObGoSqmtDDOoAu6OwGA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KQSl6bCQMjtSVGQwSOGq+XxzRp1Q8KW6/TdQMzAVD2X6YmPFthsAzouY7GXv47Rn3pwwNBfrsdS9SpzyTStn5Zc2MGMSNAnl6BUUOS7GyWT9KI6cc0shUdCWKqHRNNkcwlEWw6aeR/7JIJpSFMwJSXotZSqGzVp0JhJLIM5qpJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yrqnQ9n8; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QQbVUX9DGectl4cZrWM+928q6CAZcLW6ZWeZi0G8Co0=; b=yrqnQ9n8A3aSrv/NYvybjVGf10
-	ts1rw/5eQKEt40caJ4d+/dnSv5q4UHtWYEnHaUjswye8w0xjrMQOvq1E+6Sqg1as1RA0jOK1Mfmyk
-	rj1pt6cCZJQzHUf3kAuQ6ngCUWaLVl6EOn8dY5P/b6rrJPXbV70H38nAyAZaE0Crv9hNoRA9msWZc
-	9MOL5/Tcv3jQR/Xceg5I8sINY48k0koIl1W4wQ7syhBdlYbfB8LmVvMYMZqCU0cuyQPI5qJNdQglR
-	994u4Xh9A8I0AO3O4X65sHENstTs9ALMWwoh6wdMspFTG/MIgKVU3sUl9eC+vMd/0DTkaIvwisBVU
-	sa0ITHTw==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1toMNm-0008HZ-Vb; Sat, 01 Mar 2025 13:55:55 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Yao Zi <ziyao@disroot.org>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Frank Wang <frank.wang@rock-chips.com>,
- Shresth Prasad <shresthprasad7@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
-Date: Sat, 01 Mar 2025 13:55:53 +0100
-Message-ID: <3574922.QJadu78ljV@diego>
-In-Reply-To: <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
-References:
- <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104749.36423-1-ziyao@disroot.org>
- <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
+	s=arc-20240116; t=1740834076; c=relaxed/simple;
+	bh=mKLPjyiZUnld6i3DaHnwwGaNNhqCVD5Nat+a58bVjWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtGjyeSoZO4BiVWY1cElo0QCdyMGY8LroJ7WNFueR7TK5l+9Y/37TgZ2x7Ya9eob2Ae4I9GZw0EVvmVK3G/48P28amomwnyfsAnfsPzPII/wRQ9y3TOjL/CiSIXBFx08UygJHKvLGVkQ9obw9XAya9BPolclve6SRHi/oHHuu9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1toMSU-0003w3-PV; Sat, 01 Mar 2025 14:00:46 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1toMSR-003Sv8-2F;
+	Sat, 01 Mar 2025 14:00:43 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1toMSR-007APN-1n;
+	Sat, 01 Mar 2025 14:00:43 +0100
+Date: Sat, 1 Mar 2025 14:00:43 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <Z8ME-90Xg46-pNhA@pengutronix.de>
+References: <20250224134522.1cc36aa3@kernel.org>
+ <20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
+ <20250225174752.5dbf65e2@kernel.org>
+ <Z76t0VotFL7ji41M@pengutronix.de>
+ <Z76vfyv5XoMKmyH_@pengutronix.de>
+ <20250226184257.7d2187aa@kernel.org>
+ <Z8AW6S2xmzGZ0y9B@pengutronix.de>
+ <20250227155727.7bdc069f@kmaincent-XPS-13-7390>
+ <Z8CVimyMj261wc7w@pengutronix.de>
+ <20250227192640.20df155d@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250227192640.20df155d@kmaincent-XPS-13-7390>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hey Joas,
+On Thu, Feb 27, 2025 at 07:26:40PM +0100, Kory Maincent wrote:
+> On Thu, 27 Feb 2025 17:40:42 +0100
+> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> 
+> > On Thu, Feb 27, 2025 at 03:57:27PM +0100, Kory Maincent wrote:
+> > > On Thu, 27 Feb 2025 08:40:25 +0100
+> > > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> > >   
+> > > > On Wed, Feb 26, 2025 at 06:42:57PM -0800, Jakub Kicinski wrote:  
+> >  [...]  
+> >  [...]  
+> >  [...]  
+> > > > 
+> > > > Ok, I see. @Köry, can you please provide regulator_summary with some
+> > > > inlined comments to regulators related to the PSE components and PSE
+> > > > related outputs of ethtool (or what ever tool you are using).
+> > > > 
+> > > > I wont to use this examples to answer.  
+> > > 
+> > > On my side, I am not close to using sysfs. As we do all configurations
+> > > through ethtool I have assumed we should continue with ethtool.  
+> > 
+> > Yes, I agree. But it won't be possible to do it for all components.
+> > 
+> > > I think we should set the port priority through ethtool.  
+> > 
+> > ack
+> > 
+> > > but indeed the PSE  power domain method get and set could be moved to
+> > > sysfs as it is not something  relative to the port but to a group of
+> > > ports.  
+> > 
+> > I would prefer to have it in the for of devlink or use regulator netlink
+> > interface. But, we do not need to do this discussion right now.
+> 
+> If we want to report the method we should discuss it now. We shouldn't add
+> BUDGET_EVAL_STRAT uAPI to ethtool if we use another way to get and set the
+> method later.
 
-Am Samstag, 1. M=C3=A4rz 2025, 13:47:47 MEZ schrieb Jonas Karlman:
-> On 2025-03-01 11:47, Yao Zi wrote:
-> > RK3528 features two SDIO controllers and one SD/MMC controller, describe
-> > them in devicetree. Since their sample and drive clocks are located in
-> > the VO and VPU GRFs, corresponding syscons are added to make these
-> > clocks available.
-> >=20
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot=
-/dts/rockchip/rk3528.dtsi
-> > index 5b334690356a..078c97fa1d9f 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -7,6 +7,7 @@
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
-> > +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
-> > =20
-> >  / {
-> >  	compatible =3D "rockchip,rk3528";
-> > @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
-> >  			#interrupt-cells =3D <3>;
-> >  		};
-> > =20
-> > +		vpu_grf: syscon@ff340000 {
-> > +			compatible =3D "rockchip,rk3528-vpu-grf", "syscon";
->=20
-> vpu_grf is also used for gmac1, so should possible be a "syscon",
-> "simple-mfd", or have I misunderstood when to use simple-mfd ?
+Ok, I assume we are talking about different things. I mean - not port
+specific configurations and diagnostic, will have different interface.
 
-simple-mfd is needed when the additional device is completely contained
-inside the particular syscon.
+BUDGET_EVAL_STRAT is port specific. HP and Cisco implement it as port
+specific. PD692x0 Protocol manual describe it as port specific too:
+3.3.6 Set BT Port Parameters
+ Bits [3..0]—BT port PM mode
+  0x0: The port power that is used for power management purposes is
+       dynamic (Iport x Vmain).
+  0x1: The port power that is used for power management purposes is port
+       TPPL_BT.
+  0x2: The port power that is used for power management purposes is
+       dynamic for non LLDP/CDP/Autoclass ports and TPPL_BT for LLDP/CDP/Autoclass ports.
+  0xF: Do not change settings.
 
-=46or example, the usb2phy0 on rk3588 is completely living inside the
-usb2phy0-grf.
+> We could also not report the method for now and assume the user knows it for
+> the two controllers currently supported.
 
-Similarly the power-domains are living inside the rk3588 pmugrf.
-But the pmugrf also contains more stuff, so the power-domains are a
-subset of the pmugrf.
+On one side: it is not just status, but also active configuration. By
+implementing the interface we may break default configuration and user
+expectations.
 
-Both of these above are a case for a simple-mfd.
+On other side: PD692x0 seems to need more then just setting prios to
+manage them correctly. For example power bank limits should be set,
+otherwise internal firmware won't be able to perform budget calculations.
 
+So, I assume, critical components are missing anyway.
 
-Similarly, gmac1 on rk3588 is ethernet@fe1c0000 , so a completely separate
-io-memory area, but references both the sysgrf as well as the php-grf
-as syscons for additional settings.
-
-So here the syscon does not need to be a simple-mfd.
-
-
-Hope that helps a bit
-Heiko
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
