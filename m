@@ -1,127 +1,254 @@
-Return-Path: <linux-kernel+bounces-539710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8239DA4A7A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:46:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F98AA4A7AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67899189A432
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64495170086
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87085C5E;
-	Sat,  1 Mar 2025 01:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284EC1509A0;
+	Sat,  1 Mar 2025 01:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iK9uMKT1"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU+BfRII"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D919461;
-	Sat,  1 Mar 2025 01:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A25385C5E;
+	Sat,  1 Mar 2025 01:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740793554; cv=none; b=QL2GkiCDCWnTc4Eqh6M55h5YE9HQc5ymSq1W4zpuZtxjAZCgyt5dcd/nBoOw2Llhy4hxIYjqV8ptf3Oo+/rCgQNmNpqUwAinkgMZoyXLqOu1MrTmMmFNegMyBV6/G0TB+MXOJy9UHlJnd80090DNA33SVI/800GDk/onI8zHX6U=
+	t=1740793720; cv=none; b=XhylCvGurilUp636KP/w/ex4ZTZaBWN7QlOiOkYlJn4se2eQGYjgAn2mwDQ+eZo8Q6dPGsmICkjnj5osgigUiUpTfPXfIQ8QO9ovqoy7gSnY2PD21o2hDL5r1CjVTxTCuUdvZTgBy/tjMMWSLc1YvOj5c1uWxQ2uUUmjLoKUu8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740793554; c=relaxed/simple;
-	bh=3TDkV+2SC8MLKusalhQ+6g069yP2i+Xbndn0TmtRGLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBF+KmD1eRkal2EI3cmD1GYFkelFMSqQo+HP9ICWWAvSOHhOPWmDHIByPyo6gaZO8aqN24WFIarJ+bo4qncGDsRTc1n7pVNPhG37gkqSeIfr7Vt9/BQKVJZz1aV/7mtujaCDFonX0kKBft6KTVQB4ZDU2YziWrN2O3gB5akZBro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iK9uMKT1; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf48293ad0so104802766b.0;
-        Fri, 28 Feb 2025 17:45:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740793551; x=1741398351; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gqZyxdu6NvwN5cQicbg3iM4jvo3YwMEvAbDEez2B+m8=;
-        b=iK9uMKT1diBAccYHsC/szD72SkSMPXoCIY5yEsxKNvbOv8stQ80QcMRs8pdG7bUk58
-         V9a+NDn9aHh3GG5HFOWTQWfOq2uiMxmVZ5rgdg3chHlQrBuPXLXoGtIos8MQ4u+R8kLW
-         jZ2htutd9yH70QoHT4gIvSR1NpRxpE5K2+JBzEftEwrNpVBv+Q2Yy2rxOnrGnMvoHz52
-         +P/G9+GO+vut9Snm/cX/y0U8pW80FWGqLgGG7UDoRCBhc2NaVj5qwYtUbx9WMn5Ed3/h
-         D+1mhKgzsLzbPw/RABXgE0rOvmwOEcjoa9qDdJzFlDCJONuqZOTEIAGHe35QZ+eTaTZM
-         MNSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740793551; x=1741398351;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gqZyxdu6NvwN5cQicbg3iM4jvo3YwMEvAbDEez2B+m8=;
-        b=Y0geK7XMs8n6CGXbfr/gBlq5JwMd1UAr8/o0Zu4147PGLrTNLB1CYo7L4+UH/DdRwT
-         InKwOIogxNe/8aEo/DwujMafQtIuGJiN1JjAtrb/+n3CMS1iJZy/RslR/0F8CaAQWkQg
-         G7jbss3r9ePXK36iA2sqNXFZeuyS5KuCro4y48EzD4JD/eMZC5UXwG66NLH4vAQxGJtR
-         MrBrAOi+s9SQZBMv3Y7nK9P6frRigMsEGr03+sSnlwHD2wGOemqWkAEFHBbhU/3h4xsA
-         SbvSCjIBKFQiqHjM5oUgzPw8iAwUQJOgEbyHVzDbJqj/MpBdZeGRCr9u0TiCu2ef9ava
-         jp2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVw5pjBOCyf+ALH0m7qgOnuBRg7ByYPZ+OQnjCtejMO852qJQNVjBYopnqD/BlOBK5zBbfTQrXaW6d6xfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx1w10CuLbdHKmnKf7h/4SxtNaXC0kFybZUKhZuzVkBuIH1fDb
-	sD/A89nBmlVhlamNR4yfET7xkEkcoGPKCvAcgPARNRKU6ykYOJ4M
-X-Gm-Gg: ASbGncs8aM+rEle4oAuPqYXW04cVMM4cf74t7rUJ+A9s21xWVxZNcVVOzlPcy8MMZtN
-	dyjYZcEJ3D4w6jHt0mqDp1q26xADc8yGhCgNlvrEmD5OippSdQzuMO8H2mmaQa/duzBFDtSi/SC
-	uXeV/qq9olTqTlfpvo6tJ3FZM6F8Gl3VTdb/N3M9R2IiWbnJYSZol3WxX1lE6syPHaDpj9YGiaD
-	5MvHsOZC8p3yReCmPjyey0pCCJBHHF7NnHEGU+lCi2JG8VZkpm/v999YZvvl9MsZMdU3Dcn8bCu
-	WWWjHD41o0dfAOAPvEr/V2VvjVLuyX4K8gioH0xl1xcqU54yG0vxtl0=
-X-Google-Smtp-Source: AGHT+IG5Mfv6RupWeEFxXVmnzOHffxMoautW2BMU+YRo2ZuUcbZZ42i1X7oc9F9dPx3LMUrjqR4b0Q==
-X-Received: by 2002:a17:906:a389:b0:abf:486a:5e0e with SMTP id a640c23a62f3a-abf486a6354mr183904666b.22.1740793550844;
-        Fri, 28 Feb 2025 17:45:50 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.144.117])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75e499sm383413266b.149.2025.02.28.17.45.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 17:45:50 -0800 (PST)
-Message-ID: <86d5f210-d70f-4854-8ecf-eb771f26685a@gmail.com>
-Date: Sat, 1 Mar 2025 01:46:57 +0000
+	s=arc-20240116; t=1740793720; c=relaxed/simple;
+	bh=qZBOn/Wng+BIV3lXMuztkKv+nvAUVZl/1eNFY5+QDRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+t3Wm+ucI+bQAUNgrWEa9qhkBnpJqmYnDf4/ySQclqUkbPegF2Jown3+q0cKuxWcxkgHKcRXNFkqqa0arRmGyvEiIVJosqcxlT+exdvPyRtjs8NPmWrSbuPWD+2ITtxUP/muctgTm9dHDPqkqi7/O1EVFzGkmshygEhT2Huy5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU+BfRII; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB86C4CED6;
+	Sat,  1 Mar 2025 01:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740793719;
+	bh=qZBOn/Wng+BIV3lXMuztkKv+nvAUVZl/1eNFY5+QDRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SU+BfRIINqmDpUNfjIU7OwJDRljFfSkTl5cW5hyQy7oeJHsmZAHGWziM8WOBs4Iz+
+	 FIX7Tc2g0MsEkB2vUOi95T3Rw26xzZR5bHwVR8mlavAB9Ns2bd737MEvW7XCxC2lVy
+	 J0ge2QAYzmSfgO6/XvZpIFK9Dzj69WblN5/kFNS8BoCZih04gWPMae/0mDHC4fVjit
+	 AuhDxef4Kl/T7r/tXd2z8BorcQyl4zV8qJUclwEp88gWDWQja5NKvKYTZhybFY0flR
+	 3GZ29aeI4ceJ41eLVRVsaNBenyDoqhrE55tXWEQ8ofhHzdI19pRGWX4uawdNpMEif6
+	 PLi/ICcrVGQ8Q==
+Date: Sat, 1 Mar 2025 03:48:35 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 4/6] tpm: add interface to interact with devices
+ based on TCG Simulator
+Message-ID: <Z8JncxQM7Nkit0Q6@kernel.org>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-5-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in header
- file
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250301001610.678223-1-csander@purestorage.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250301001610.678223-1-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228170720.144739-5-sgarzare@redhat.com>
 
-On 3/1/25 00:16, Caleb Sander Mateos wrote:
-> Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
-> other files.
+On Fri, Feb 28, 2025 at 06:07:18PM +0100, Stefano Garzarella wrote:
+> This is primarily designed to support an enlightened driver for the
+
+The commit message is half-way cut.
+
+I.e. it lacks the explanation of "this".
+
+> AMD SVSM based vTPM, but it could be used by any TPM driver which
+> communicates with a TPM device implemented through the TCG TPM reference
+> implementation (https://github.com/TrustedComputingGroup/TPM)
 > 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 > ---
->   io_uring/rsrc.c | 4 ++--
->   io_uring/rsrc.h | 2 ++
->   2 files changed, 4 insertions(+), 2 deletions(-)
+> James, Claudio are you fine with the Cdb, Sob?
+> The code is based to what was in the initial RFC, but I removed the
+> tpm_platform module, moved some code in the header, changed some names,
+> etc.
+> For these reasons I reset the author but added C-o-b.
+> Please, let me know if this is okay or if I need to do anything
+> else (reset the author, etc.)
+> ---
+>  include/linux/tpm_tcgsim.h | 136 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 136 insertions(+)
+>  create mode 100644 include/linux/tpm_tcgsim.h
 > 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 45bfb37bca1e..4c4f57cd77f9 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1066,12 +1066,12 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
->   	}
->   
->   	return 0;
->   }
->   
-> -static inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
-> -						    unsigned issue_flags)
+> diff --git a/include/linux/tpm_tcgsim.h b/include/linux/tpm_tcgsim.h
+> new file mode 100644
+> index 000000000000..bd5b123c393b
+> --- /dev/null
+> +++ b/include/linux/tpm_tcgsim.h
+> @@ -0,0 +1,136 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2023 James.Bottomley@HansenPartnership.com
+> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
+> + *
+> + * Generic interface usable by TPM drivers interacting with devices
+> + * implemented through the TCG Simulator.
+> + */
+> +#ifndef _TPM_TCGSIM_H_
+> +#define _TPM_TCGSIM_H_
+> +
+> +#include <linux/errno.h>
+> +#include <linux/string.h>
+> +#include <linux/types.h>
+> +
+> +/*
+> + * The current TCG Simulator TPM commands we support.  The complete list is
+> + * in the TcpTpmProtocol header:
+> + *
+> + * https://github.com/TrustedComputingGroup/TPM/blob/main/TPMCmd/Simulator/include/TpmTcpProtocol.h
 
-That's a hot path, an extra function call wouldn't be great,
-and it's an internal detail as well. Let's better see what we
-can do with the nop situation.
+We should not be dependent on any out-of-tree headers.
 
-btw, don't forget cover letters for series.
+> + */
+> +
+> +#define TPM_SEND_COMMAND		8
+> +#define TPM_SIGNAL_CANCEL_ON		9
+> +#define TPM_SIGNAL_CANCEL_OFF		10
+> +/*
+> + * Any platform specific commands should be placed here and should start
+> + * at 0x8000 to avoid clashes with the TCG Simulator protocol.  They should
+> + * follow the same self describing buffer format below.
+> + */
+> +
+> +#define TPM_TCGSIM_MAX_BUFFER		4096 /* max req/resp buffer size */
+> +
+> +/**
+> + * struct tpm_req - generic request header for single word command
+> + *
+> + * @cmd:	The command to send
+> + */
+> +struct tpm_req {
+> +	u32 cmd;
+> +} __packed;
+> +
+> +/**
+> + * struct tpm_resp - generic response header
+> + *
+> + * @size:	The response size (zero if nothing follows)
+> + *
+> + * Note: most TCG Simulator commands simply return zero here with no indication
+> + * of success or failure.
+> + */
+> +struct tpm_resp {
+> +	u32 size;
+> +} __packed;
+> +
+> +/**
+> + * struct tpm_send_cmd_req - Structure for a TPM_SEND_COMMAND request
+> + *
+> + * @hdr:	The request header whit the command (must be TPM_SEND_COMMAND)
+> + * @locality:	The locality
+> + * @inbuf_size:	The size of the input buffer following
+> + * @inbuf:	A buffer of size inbuf_size
+> + *
+> + * Note that TCG Simulator expects @inbuf_size to be equal to the size of the
+> + * specific TPM command, otherwise an TPM_RC_COMMAND_SIZE error is
+> + * returned.
+> + */
+> +struct tpm_send_cmd_req {
+> +	struct tpm_req hdr;
+> +	u8 locality;
+> +	u32 inbuf_size;
+> +	u8 inbuf[];
+> +} __packed;
+> +
+> +/**
+> + * struct tpm_send_cmd_req - Structure for a TPM_SEND_COMMAND response
+> + *
+> + * @hdr:	The response header whit the following size
+> + * @outbuf:	A buffer of size hdr.size
+> + */
+> +struct tpm_send_cmd_resp {
+> +	struct tpm_resp hdr;
+> +	u8 outbuf[];
+> +} __packed;
+> +
+> +/**
+> + * tpm_tcgsim_fill_send_cmd() - fill a struct tpm_send_cmd_req to be sent to the
+> + * TCG Simulator.
+> + * @req: The struct tpm_send_cmd_req to fill
+> + * @locality: The locality
+> + * @buf: The buffer from where to copy the payload of the command
+> + * @len: The size of the buffer
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +static inline int
+> +tpm_tcgsim_fill_send_cmd(struct tpm_send_cmd_req *req, u8 locality,
+> +			 const u8 *buf, size_t len)
+> +{
+> +	if (len > TPM_TCGSIM_MAX_BUFFER - sizeof(*req))
+> +		return -EINVAL;
+> +
+> +	req->hdr.cmd = TPM_SEND_COMMAND;
+> +	req->locality = locality;
+> +	req->inbuf_size = len;
+> +
+> +	memcpy(req->inbuf, buf, len);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * tpm_tcgsim_parse_send_cmd() - Parse a struct tpm_send_cmd_resp received from
+> + * the TCG Simulator
+> + * @resp: The struct tpm_send_cmd_resp to parse
+> + * @buf: The buffer where to copy the response
+> + * @len: The size of the buffer
+> + *
+> + * Return: buffer size filled with the response on success, negative error
+> + * code on failure.
+> + */
+> +static inline int
+> +tpm_tcgsim_parse_send_cmd(const struct tpm_send_cmd_resp *resp, u8 *buf,
+> +			  size_t len)
+> +{
+> +	if (len < resp->hdr.size)
+> +		return -E2BIG;
+> +
+> +	if (resp->hdr.size > TPM_TCGSIM_MAX_BUFFER - sizeof(*resp))
+> +		return -EINVAL;  // Invalid response from the platform TPM
+> +
+> +	memcpy(buf, resp->outbuf, resp->hdr.size);
+> +
+> +	return resp->hdr.size;
+> +}
+> +
+> +#endif /* _TPM_TCGSIM_H_ */
+> -- 
+> 2.48.1
+> 
 
--- 
-Pavel Begunkov
+This commit got me lost tbh.
 
+BR, Jarkko
 
