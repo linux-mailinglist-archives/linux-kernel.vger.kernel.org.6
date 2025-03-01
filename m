@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2151A4AB7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A307A4AB81
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B702A171B21
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F39F171B5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B96713C695;
-	Sat,  1 Mar 2025 14:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928D91DF721;
+	Sat,  1 Mar 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tesgMA8F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTn93ieu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F4A28F5;
-	Sat,  1 Mar 2025 14:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FCC3594D;
+	Sat,  1 Mar 2025 14:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740837763; cv=none; b=e3xvE7KLu0YDNR/gF1bEOkkaSxzCzgoSmgLAFqPewrgTIBVa+RheZ5AysGf7PTUexU7fKzM0UWzi3qOMoiEFHRD0wJd3Frfr+qlUwBadCpUXaCnBVtsBHD85MDMeelRYZt0LuM+OWzPMVm/0ZUtHXP5Ak2M6FbuiDXoljBVC7Vs=
+	t=1740837902; cv=none; b=nUsw/VssbR+2FWBCwy+3eCh1uMQGIaqH1y6AZe0M2IBhd+qiNKNaK72zQv7bj8xjbRVwRJyQ0h+EMfNSuKUe5fhPZx9VYeIQWF3FQRpY86G3jwsJwhrrW2ZsCVXhyjvGL2K+W5ghaQRXLF3loVTFosQDWE+xpAmXoMS+5buNlcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740837763; c=relaxed/simple;
-	bh=tzPeWVqmlqR6dCtoKdzVKM7Fo5aS+MQua2+QiLeXfyU=;
+	s=arc-20240116; t=1740837902; c=relaxed/simple;
+	bh=otYcR5DxmmIrY2CxDxbGUXEpoDBwhEID/0FhtlRBw2g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mfi4pNBAhz3s2IROOH1Q2jThQE6IA8dXsKyerywlvVUNpA1Yw4wkaIrbidGFbePUXcePWHNPQzRTAlcpmREkuS7doBqGx4AAClAthRA0OV3Z+MhvVdELOTFqqjYvqJKsIYyrRK29mtQ2cqHukSja2+QBtVxteZiVzBOI3Vn/QB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tesgMA8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4FBC4CEDD;
-	Sat,  1 Mar 2025 14:02:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=IsVEBGaNvrzk3AfzdFTD4GkBeTuHBX6Y38L8V9rHQSrv0W/3FL0ex/yAKKg+XxPX9UtuQ8Zo75BeWNAo0hjGVipyHp4zrSJLsiAa6+vBUOK7r+pBCLCv6GzJ2arkgPAJx4dCxVAJLs4cu8D8B6HagLcWUQ+s90wLt2BNsfA/6OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTn93ieu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A49C4CEDD;
+	Sat,  1 Mar 2025 14:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740837761;
-	bh=tzPeWVqmlqR6dCtoKdzVKM7Fo5aS+MQua2+QiLeXfyU=;
+	s=k20201202; t=1740837901;
+	bh=otYcR5DxmmIrY2CxDxbGUXEpoDBwhEID/0FhtlRBw2g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tesgMA8FfBZK6yBL2yA1LJC9FfadgdOhJbLK/xoN6cdjVDXEeLI7Ss1YeD1rJzqZx
-	 9VWvirJEcBJXiDrHzrov6WXWcv4VXI9EMmBjX7VtIqQLwcOrmimNz1IwICGoECGedr
-	 UBbiPM8uZghcAJqsj5L0a+IU9Zxw62vANKasxUZ288duQPzLYjTg83ItoGm/Y4xyG0
-	 9qVZt8yHLvXxd4qn2cfowY6h8XGJ3nk373D9TgV7vJ0pRh3h+OXPBHEXG23aNw+Jpt
-	 nXJhkFKyPF5FK2YOEeF9GzePYaSYsYM2l5MJkbc86kEMcS5c0Tlv4YipeoWofL94uI
-	 LdFgNFzjZJk7Q==
-Message-ID: <ac0a2d39-aecb-4f24-8198-906f660edb17@kernel.org>
-Date: Sat, 1 Mar 2025 15:02:35 +0100
+	b=qTn93ieuekWIVHLqNwa7j81ogaV1NVaHb1wy8of8LPdwyhX71nUbO1/gWViiRf82U
+	 4gCKRhdOoKM4l7KoauPEVVCheDzGom9jLaTYa+Q4AOeo9SeilRGBMyTKwYb+tmyjQC
+	 LDz7A54WtEUR14KZyMwby3y5z3O5uS07LKzhCwwXTiHalO/5jRx7PVdccNr+/oIVK2
+	 sFD3/iyKKT9y662TShkv2dSo6+FmFnah0RyYyJKosx3tSZ+T8yum9lO11OFuvOqN/e
+	 MQUQMmaLZhP3wzpE+rJSBO5o7jUN7TYKnrreTJIY1Hkex/Y2Qxbb3c3e0xxaOr1dnQ
+	 gQNJATpxAVC2Q==
+Message-ID: <a95607b3-6f3c-44e8-99f3-7b1deec43270@kernel.org>
+Date: Sat, 1 Mar 2025 15:04:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: amd: Add ISP platform info
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.chan@amd.com
-References: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
-Content-Language: en-US
+Subject: Re: [PATCH v5 1/2] dt-bindings: clock: add clock definitions and
+ documentation for exynos7870 CMU
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
+ <20250301-exynos7870-pmu-clocks-v5-1-715b646d5206@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -100,31 +107,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
+In-Reply-To: <20250301-exynos7870-pmu-clocks-v5-1-715b646d5206@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 18:02, Pratap Nirujogi wrote:
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + * OTHER DEALINGS IN THE SOFTWARE.
+On 01/03/2025 04:57, Kaustabh Chakraborty wrote:
+> Add unique identifiers for exynos7870 clocks for every bank. It adds all
+> clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
+> CMU_PERI. Document the devicetree bindings as well.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
 
-Same comments as for your other patches.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
