@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-539812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA284A4A93A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:16:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC9BA4A943
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590D2168DFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17ADA7AA823
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CFA1C1AB4;
-	Sat,  1 Mar 2025 06:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DFB1C32FF;
+	Sat,  1 Mar 2025 06:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ODYF0Iw1"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0klQzH3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225A5BA3D;
-	Sat,  1 Mar 2025 06:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D6EBA3D
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 06:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740809786; cv=none; b=ZE32iExKKtd/o8wjpCaac1BmRhmcsBcb3n/udwfUWOYrmKfeQfQWFkn/CKTaBVJ6e5QtsEDFDpm2XtIV2tLIH4rSBCOau4n0MkA+wM0lSXPuS2zSIv+PkhAFyN3mKg/YZFaTLoEkcIhWtwLjziArXJoQCjFZNSHTjDSdCsWNM3w=
+	t=1740810230; cv=none; b=RZzdfJrP1Kmc60iSx+4OYfxW/WLijeH+GW9ZwDuqpkuF6XmohTD5XemBxyu9uCuTAQTkKfhMwnDSWOMR0FyDVI0T707rYqw/MBRyGvFo1DJIIfxiRru2WK5IglaMNDP0wRccqfYK2e1D/1XdO180TL4QXqeeCoq7+ioFz12QdbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740809786; c=relaxed/simple;
-	bh=vsxYsFwcXFLXg8RBO9QINa3cWJfwOlTiGobTU6K3gWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NaN6bOMSYodsCsDaj7KGvx+vecH6cnzRcLmxlYJ+n2puggai2LYyDD2FI2AnyY0qkpoDRx3Za3IrLbLLvaEIGUkf40Y3BrjT2+9Tzz4FUbYAv5TLvg1WNiiB7Y1aRHxhCkf/l7Bix2piJKc6TA6oSQq8A6qd+F73YVUpbE4Veq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ODYF0Iw1; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740809775; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=9gxKBBIPgnf181UkMSVqiGrbZyuPBxiu7i13obHKvoI=;
-	b=ODYF0Iw1OgT7xCBEQUMtDej9Q/eZvrOucu0GdAKA0jFa0Es2kl9pHd3Lyo0YYYmxal+iMU1sbDZEdWLP5FDfqrqRE29lXBaLexgb+ZPFv3O9mRiQy/emVt6/S2Gg3EI/bVcXP3JqJgdsmHXqve9w6XsWOfEc4SWjUzAcKR2AsS8=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQRgOvG_1740809772 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 01 Mar 2025 14:16:13 +0800
-Message-ID: <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
-Date: Sat, 1 Mar 2025 14:16:12 +0800
+	s=arc-20240116; t=1740810230; c=relaxed/simple;
+	bh=ykUC0yVuYh8esAQTZSAX9HlvVvWcsQQeaxtZoPbiGnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZLCgrObUOrvGK/fuEClKqpOsuTbJGV8QuOY3IS7pVmMqaPfZG0xC1GHka6Er4qhNYI8QabF+lYpxkfp7fJS+EgzLmEQwlIC+f5yqBoa1o4VP1wDqbhcxCNmAxsYmHJs/NmmYSIvFAEBt0j+6admIQArphP49yWE5Sa4ArQmOnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0klQzH3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E075AC4CEDD;
+	Sat,  1 Mar 2025 06:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740810229;
+	bh=ykUC0yVuYh8esAQTZSAX9HlvVvWcsQQeaxtZoPbiGnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k0klQzH3S/kOg2+U3PiboIBD/0DApyEpcWc51PTaK4+EvuJzkfV3BUZYdKTIFwUhf
+	 a4Y4HtuR9MysUHyVwfojyaz3q4IQQFr7Gim3wrx9z14EDa9QxW1iG/NZufl/bJmPy9
+	 4yeAFqiZcIUsceGrX7TYrmtbDRWS3eYlh0TzucVJIhSgUxaHwbidLpTh98AJx71V4y
+	 xRjouKwn/+BW6MMkj8PUFfXpePFFSNXC5fm8zw5GPKH28Ur7PRM8YsI+R+av9+8Cgh
+	 Qo1l4UcGcc94Lhvz8eka2/gn/ie8siTLrEoPprfy2CqiZiS6YvihIHL8Y02IIBkEms
+	 WyKiFDwDo7X+A==
+Date: Sat, 1 Mar 2025 06:23:44 +0000
+From: Will Deacon <will@kernel.org>
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
+	prime.zeng@hisilicon.com, linuxarm@huawei.com,
+	yangyicong@hisilicon.com, wangyushan12@huawei.com
+Subject: Re: [PATCH 1/9] drivers/perf: hisi: Extend struct hisi_pmu_dev_info
+Message-ID: <20250301062343.GA27700@willie-the-truck>
+References: <20250218092000.41641-1-yangyicong@huawei.com>
+ <20250218092000.41641-2-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
-To: Borislav Petkov <bp@alien8.de>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
- mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
- peterz@infradead.org, jpoimboe@kernel.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-3-xueshuai@linux.alibaba.com>
- <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218092000.41641-2-yangyicong@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-
-在 2025/2/28 20:37, Borislav Petkov 写道:
-> On Mon, Feb 17, 2025 at 02:33:32PM +0800, Shuai Xue wrote:
->> The message in severities is useful for identifying the type of MCE that
->> has occurred; dump it if it is valid.
+On Tue, Feb 18, 2025 at 05:19:52PM +0800, Yicong Yang wrote:
+> From: Junhao He <hejunhao3@huawei.com>
 > 
-> Needs more explanation as to what "useful" means. We already log and report
-> MCEs in gazillion ways.
+> The counter bits and event range may differ from versions of a
+> certain uncore PMU. Make this device specific information into
+> struct hisi_pmu_dev_info. This will help to simplify the
+> initialization process by using a list of struct hisi_pmu_dev_info
+> rather than checking the version.
 > 
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> ---
+>  drivers/perf/hisilicon/hisi_uncore_pmu.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.h b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> index f4fed2544877..777675838b80 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> @@ -72,6 +72,8 @@ struct hisi_uncore_ops {
+>  struct hisi_pmu_dev_info {
+>  	const char *name;
+>  	const struct attribute_group **attr_groups;
+> +	u32 counter_bits;
+> +	u32 check_event;
+>  	void *private;
+>  };
 
-You are right.
+This doesn't really do anything on its own; please just fold it into the
+patch where the new fields are used.
 
-While MCE information is indeed decoded by the EDAC and APEI drivers,
-the decoding is limited to the interpretation of hardware registers
-and lacks the contextual details of the error.
-  
-For instance, it does not specify whether the error occurred in the
-context of IN_KERNEL or IN_KERNEL_RECOV, which are crucial for
-understanding the error's circumstances.
-
-For the regression cases (copy from user) in Patch 3, an error message
-
-     "mce: Action required: data load in error recoverable area of kernel"
-
-will be added if this patch is applied.
-
-I could add more explanations in next version if you have no objection.
-
-Thanks.
-Shuai
+Will
 
