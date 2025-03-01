@@ -1,526 +1,173 @@
-Return-Path: <linux-kernel+bounces-539821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1D0A4A95F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:03:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C364A4A9CD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C867A9B78
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26D0175581
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237C1C68B6;
-	Sat,  1 Mar 2025 07:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08A61C84A9;
+	Sat,  1 Mar 2025 08:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hyLyQ0VK"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="rVP6adPk"
+Received: from barb.cherry.relay.mailchannels.net (barb.cherry.relay.mailchannels.net [23.83.223.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AB31C3306;
-	Sat,  1 Mar 2025 07:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5C1635;
+	Sat,  1 Mar 2025 08:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740812602; cv=fail; b=Gb4yIsH7v5IPWnfoGATjT8WyDvYL1ItWXm5M6HF/MbuuoNnaKUNN4elKVpzoGdGmeMCi7wCzsqTPgCNjJDUpzHw2DVAwQN8ukOG7E7XBNrhZzKd8FSwm/VAU2y8oOUgiaFiSahJGL74Q+uCHtpG0uKljGVRo/Cnz0m0hI1Etc7o=
+	t=1740817955; cv=pass; b=av4bKeAHmfXzdMh56AgUGq9NE4GXBby+nI6tZcUic4Zyxo7ngZ9dKsU0BgYFAe8pKo6RlHpZjdLuVoPipy+LQncVevVpt/BCTeHH1HpUhe+/5hyaU5v4JOOCJ3TtOd0sJSYYQWv6jyLYpGWidswfxWTrix2sB4GeosINGNrDFhs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740812602; c=relaxed/simple;
-	bh=wEaPJm3OUziq3yK5muzwWQZ3p9Z/J/3nhlsneqsvOVo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=toikR5LwCO6VGsXFqCava0nJfO0Wux/N+opaf2tdQaiTQPjw5p4zKvbQb3OfQafOFJxvf50zTmR5O3VhfHjF/+uzygTsgv7o2xTMzV+MydvSzgARSEsljltzwnNuLkOuPoSsaO+OGPS8mx1ZiUEri98cDZbgjwq3HXa14JAmjnE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hyLyQ0VK; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rEei+Lskc3LlDU8odI7krMU7Dd09H1COZQkvcb9maXOC/ujQ5ckPVrMDxzdZ4u7VIq5cix3YSXm8k+W8CNSLQeibe2Kqa/nyEYidJWPJ6XhU2jK8OpX58q3g9s6mG9XiWVVAgU+uUyLOxb0+nlHdMl+e9LiwT1Vu3JtjP1yIPobtre8VES9p8ZQ7ovNZGw+B0MbAD/ZFiL2S7wtgSQ2tI0uDO+X2oHKXP0GqzeNhGcQB34q7/Apzn4AtrywcIC96QveootmWREHL5XalOuQyU3Xgvqe/8QALIq/HJKoKTGCiGJZ2tyeVpFBNb7DiU8qAhdgu6MMvPeNxbTOptxspLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ybx1wxdjG2oelSKO5Rnka7+5SwRuRhbxXOp7pMvtri4=;
- b=g89oEgClQzjL1K6D0F4ZMoe92quc4VnSnXYlhmxmvYECuWTu7KmMUwJYFmmkZ1LitIaklsxnIYKEwsMmyJGgl6xEq9AJMaqDBHiEe49uLwU0ofphtp4U5r0zYxBMivyZ6iwdJ9GBI6BlS3dX04V7jyss1f3rRKHjwBkORrpCzjpSn4AnuwSgfBHWa5gn52humUAspgOaxZXT2Lj/tYmG7tciuFyZKwe/O3BELpkgWaJGh7iwf30HpOh9ZAFEKONPo14Dcd67j+7lcYI6qv6cSQ1pLiB5HKg062w6waL0adlyuiT1a2EeJ98MOQLyPMn0XD5AcWYO9vFdKRKuwwekQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ybx1wxdjG2oelSKO5Rnka7+5SwRuRhbxXOp7pMvtri4=;
- b=hyLyQ0VKmBcn6SUPCUZBHsispXuyhPk9ZHqSJhXEnCGVMw0AzfqeXf91vhjCn7IXeAkGhwSrqCFa1LyA7ZmFbBRCRDumWxqNKgebh3C6R/InV4Y4lH62aHLJr5iw0fz/P7XmqCA5G9Sv0SJuKiWQXrS/xBnMjouPtbjm3HDn+qg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by DS7PR12MB9474.namprd12.prod.outlook.com (2603:10b6:8:252::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Sat, 1 Mar
- 2025 07:03:19 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8489.025; Sat, 1 Mar 2025
- 07:03:18 +0000
-Message-ID: <451e4beb-4485-4405-9c69-741a44c9d13c@amd.com>
-Date: Sat, 1 Mar 2025 12:33:13 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/19] cpufreq/amd-pstate: Rework CPPC enabling
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250226074934.1667721-1-superm1@kernel.org>
- <20250226074934.1667721-18-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20250226074934.1667721-18-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0207.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e9::18) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	s=arc-20240116; t=1740817955; c=relaxed/simple;
+	bh=ioB2nISzPeluWv9jfPb9Yvprv8YRjalG8AoqtA+W8BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aQDxaLrz79IbygJAco+2x5Y2ys5Bm/uTshRu8mhR35DceqRJ7eHflxJTZtocT0k/JDi/IlV9Oh+RCmWAz2D6vjcCpzYsnGd3fvs4zaflGRIHXLuL3MjUab05vu7uatxtN4g0EKiqJFNXaJy0Ui+YRBmQUA/KNMJ9zLqgN8ERroM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=rVP6adPk; arc=pass smtp.client-ip=23.83.223.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 392058A31D8;
+	Sat,  1 Mar 2025 03:20:55 +0000 (UTC)
+Received: from pdx1-sub0-mail-a310.dreamhost.com (trex-1.trex.outbound.svc.cluster.local [100.105.230.78])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id C03448A3FB2;
+	Sat,  1 Mar 2025 03:20:54 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1740799254; a=rsa-sha256;
+	cv=none;
+	b=6nsRzhaV2KMNAkc9mJSpdW3hlDHspqknwS+MDxThIBKjmlR7E+jY+g45qE8xBiQSf1VzX9
+	vYrExQ1Lqj/qxiyc/VasvCSHMzidF5Nt5voyFx+zl3IXd+BZ3TInrfxJ5bBIp1lADwUwMx
+	FbSSQv1Pm5YBb8ZFF9Di6Mv0d2j3qRxMQ322fZ5t9DFYhk7csKw4734u1kzrv+kK8hnufq
+	cCmc6EywpL2aOGmK9innin1NYgp9T8SLPEst3Oab/VsZq2rTMVDFGVB1KmXKzgIxC2nshW
+	APsXRmVFE8Gy/q2k97Ssy6QRJ2alT9W12S2+YmPVHBJZQ7+ZwgW947Ga9ucCBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1740799254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=TOF8EoDBPkgQOuWlYGr996yYxGzhWlzyrqszfM/Cblc=;
+	b=s1TY/0+FwG9eKaD/85WmkgDz9F+rlirgxhbqJ1IfxjKQk23lu+/UakfjFE3Sj1epewupp/
+	IuuUxvpL2NxF/+MotFXlR92AaQL/b2HdJp41r93HTY5QPIIxOTS3cEfBiZE9pWb0r9qZy/
+	VkHPEtCIMVJivp8evUokg7NStxuq6OJEVfMZ7fWnf3Tee2PyC+jeMr4TaFUUSP/GEAcGJo
+	PFpnM/Q+dVjKqW0mWvkWxthRDIftwnfKd1TQ36E0KVPraEPBwf6MD9RobXxs8kHHa0D3I4
+	cjIvuHLoJ641KTciV5TRgxLK9HqNyM0WlKo3hGNsdQ0MYfqZeImPlnI5Q2MGtg==
+ARC-Authentication-Results: i=1;
+	rspamd-7878b47b55-ndwfl;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Bad
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Decisive-Power: 6c5d186c60f78e9d_1740799255062_535815330
+X-MC-Loop-Signature: 1740799255062:2179686445
+X-MC-Ingress-Time: 1740799255062
+Received: from pdx1-sub0-mail-a310.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.105.230.78 (trex/7.0.2);
+	Sat, 01 Mar 2025 03:20:55 +0000
+Received: from [172.16.32.88] (unknown [198.232.126.202])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a310.dreamhost.com (Postfix) with ESMTPSA id 4Z4Vhj4038zM9;
+	Fri, 28 Feb 2025 19:20:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1740799254;
+	bh=TOF8EoDBPkgQOuWlYGr996yYxGzhWlzyrqszfM/Cblc=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=rVP6adPkMEcSvt6gI3S03II0l/k9WOLXifmOks/DkimE1I1Lfl/NIcKyFCI8yyZDA
+	 oCGf7C4NlOYl9QyUjXeq81Vm5AC9l1I4x8SjBDm762oV5Tq+cXQ0cTXS2mIDQECnl5
+	 mIBUQKfAv+6FYHQ9JWAncNVeBPLgB8vf7NRttktw55wVAHmdj/6x9uye1GZChB+xmS
+	 +x/qy3t+zpKaDAC//eC2MZfU6+pwqKvEyqvow+kZD4c6VCHE9YIfdIwnTH8ECBsO3I
+	 Yg+3bblfHwwbuDghtfvV3NHMPHAkTcoOwmgB2XJLRtH7MErKZJry8+mPQxbevf4k4x
+	 3BsI8juBJDueg==
+Message-ID: <2f96dcff-421b-4ff2-a24e-ab67d81ef698@landley.net>
+Date: Fri, 28 Feb 2025 21:20:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|DS7PR12MB9474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51cdaf37-84d9-4953-b485-08dd588f2554
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGQvRTJZNkdmQXNiRUhGQjA5TEIxODlXbjJ4algxRG1iVGpNTVE4YXVCUFNN?=
- =?utf-8?B?M0VCbS9OT3RwL3ovZDJ2N0cxU2hFM3hWRGZiQTVMRU9xYVpSN0NYTnVNQkE2?=
- =?utf-8?B?ME5hQ1gvczZHQnhWOWJ1Ym4wSHRxTHlUM3RSMnZPaTI3ZS9tN1FGSkNjU3RR?=
- =?utf-8?B?OWtZZGFnMDQzZC8rNHoyTDJaR2JBLzRuT3plYmJSZG9BUEpRT2pqUVp1SkVT?=
- =?utf-8?B?azlOaGpVajUzWHJKSnQ2YlNZR25rMGtwQlNDbHVyUEM0d2NyOE4za2Y2TUZP?=
- =?utf-8?B?bkpGYnBVRDlWbi9rdFo5Tm5LanB2U2lDMVBkR3dVbXVwNWgwdUticm5SNkhw?=
- =?utf-8?B?d3VWd2R5SlA2dnY3aDlTTUFrd2FPWGlPYzRPRkhsRTBTRm0vWmlYc1JPVGlr?=
- =?utf-8?B?bmpIaGdJa3NhbzZjRFA0YjVOTm1mTmNsVzVSaXZ0Q0JIUGJKQXkwaUtlTndD?=
- =?utf-8?B?b3I3QmlmVUxmaGd5dC9nQXA2MTNVbWRoeUlqc1NRTTk4NlRFL0RhS2pndWFD?=
- =?utf-8?B?d2ZTS09hdEFSUVNQbGp6ZVg2L0lUdWNZK2NSQ0xYTk1rM09mYjBYRE9hNVVa?=
- =?utf-8?B?VDRxQ0MvSVh4emtBcmFBSmd5YTRZSno1a1dJYlB3QUJFOGE2bnVwbzVGUldP?=
- =?utf-8?B?emNyN0pPc2M5eUQ0ZVFCeEQvNjc0OVd1MmZ0T0pLUTRDeGpiZEhGcjFoVkl0?=
- =?utf-8?B?ZXgxQlZ4Y3pOeXovbTg4R0hGdW1QYWZSSS9WTTBDQVprSjhqcmoxOFNweGFJ?=
- =?utf-8?B?aDA3Um9jSmJOUElINzZIVllUSms3bS9TeGFMU2NCbEZqRm9DY1dkd0tUSXJa?=
- =?utf-8?B?NkVnYS9pYkFENnAvR1N1elpqZm1lQTd6a1dXL25YNDJPbEFrL2NQT0pBZ0VR?=
- =?utf-8?B?ay9Eb2Q0Y0ovUDlCaEF6K2VzUjRTMzB1cTFqYmIrYkt2UmV0emJXeVdMcnVl?=
- =?utf-8?B?SS9BOEJMQzk0czJQRmZqWFpoVU90RlBhQ0w3UzBTbUpqY3JkZnhKMEdpcWVk?=
- =?utf-8?B?Umh2b0wxV2d0UDlxMW1MQ0crdHl2VjA3bEFNZzh2dGhRaTczVlZ4UDZHSDVj?=
- =?utf-8?B?R0NsNE4zNGQzQVFGZU02MG5INktReEo5SHRlbTErYldzdVZHdXI2WDVJYVVD?=
- =?utf-8?B?dzE0TWY5cmdLSXlXNGpZN3dTVVA1aHpnZjFZZER2bzY5RE9NVlJuMCtUcjV5?=
- =?utf-8?B?VzZ4cU00Wm5sK1l6L1BPeWE3YXNYQjQ2MTY0MVE5ZHhYTEJrbXBDRWh5UnRa?=
- =?utf-8?B?V0gxTmUwMXpWOXc3OFVBVGcwNEZFZm9XOXQ1SDV6YnFIVmJqUjkrKy9GMkk5?=
- =?utf-8?B?QkVRKzRzUDlhRDg2R1l3dGRGSmgwZ3gxNjlaekhkbVdQYWRESnYxSkRoOUQ1?=
- =?utf-8?B?Tm5oK3crcU4vYVJCT2gxeFMrVGwwZXZKc3JWd1g4ZU9yLzdQQm42Wlo5b0pj?=
- =?utf-8?B?anRvdHNOaXdTdUEvcnZrWTRaZ1VPa2FsWXBNR05oQUZmQU55VGxIR0lTM1Rx?=
- =?utf-8?B?eklRK1RTTlFocUZoVWVOMy9BTFVVakc5blFRMnpnb0loN0RNTzA3bkpVQjVY?=
- =?utf-8?B?cG53NFpaWHFsZmZVeThIaFlNWlZReTV4bUlFNnRQRHAzWUxPVHZzK0JHejNV?=
- =?utf-8?B?NUZGbkZXVzlUUmI5SjNPOVBSeFg2cWRNV05ReWVTNjUrN1FzM1NCcW1pRFJ6?=
- =?utf-8?B?VjVGakFXUEdlN2lURGZhcnI5ZVRnRDhvWjMwZ3pKQjU4TTZPdlIwcVc2eXNn?=
- =?utf-8?B?TnQ5dXZJSjZka1RwQUxRWEgvSUVUOERreU1pQjdhNUdqYzJsanE4a0RMZVNo?=
- =?utf-8?B?NGpyYlZkVEVqcTc4dEtLMGNwdndtaVMwZkJKRzJucGFaRFc0UkQ0Vm9qV3k2?=
- =?utf-8?Q?U09gumFbREVvP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bG10aC9JQ2RzMGtHV2Q3OERvMCtZMEhpcjZ3Mk9kclZIczl6eFRLSmNvUEVG?=
- =?utf-8?B?S3lrZlRwSk9qaDFMbHdidStwTjQveU5VVjRxVE81UWVLejJBOWxpcldHMXR3?=
- =?utf-8?B?U3VTODY2V0xjSzFZZFlrQ0o1Y1VCL2tFU3ErOHVwWVdmSlZ5RUQ1UGxnZ0Y5?=
- =?utf-8?B?SjRrMEZaMUNxK2pGUC9lbHZEeG02YnNGdkxkVXFjR0hyL0VwdXdqZGNrdnFO?=
- =?utf-8?B?OTBuMWRLeHhMd1BTTHBqeGMvNG9nYldaRXd2SjRQN1lTQ2VkK3lmRDE2eG1F?=
- =?utf-8?B?OGhZeXY0R0lSdDVLK2VjUlpEUDFlU3Q1MGMrUlJqZ0FITmhLSUJkUU5Ydm1j?=
- =?utf-8?B?MHVrVDVERGxURUpaUkdaRkJiTlR4eHIvR21FUVpJaVMvbXl1eEZlUElyVUY2?=
- =?utf-8?B?Tnk2VkxVaTFXQ1dvNlNUd2hRdTIxcDl5M0I2aEVBZk5uMFk4bThOYW8vUXkr?=
- =?utf-8?B?endTd1pHdCtnbzN2bzdEdDNGS2FtanZGcktzZ1J1RUhmNkl3aXVCSHd1Z1Vl?=
- =?utf-8?B?em1vMnpjM01jaEgvTk9sUDRpd25QMFVjc2l0dkNIbll5dnRZczg4TU1pa2l6?=
- =?utf-8?B?OStrUEpaMG5TNjFlZlFlTDdlWm1aRjBZbnZyc01hZVU2RklJd3B1bUVhN0xI?=
- =?utf-8?B?TjRmWDAxYVZteklvSGFLZWpvM0JQeERnKyttSDFCeTMyR05KanFvb09xRSsw?=
- =?utf-8?B?SGhuZUdZU1lCSTNhL0pJSWpnU0xPaDNBUjluM2pOUm1TakRzaWE1dkxPNjhN?=
- =?utf-8?B?RVdoUTJUc09nZHN5dFRzOGg0N3NoSklkMW9KbmFPRnlVSGJHc2ZNcVd4NU9N?=
- =?utf-8?B?clk1YmtmZHByQjF6bzUvNk8wcUE5N2tmN2RGTmMvcXFwMENJSERSK0V2cTA2?=
- =?utf-8?B?QytNVVdjTll4aTFmK3A4KytpaTdRSlpBVitEUlNSRDhBeDhHK3NFY0RvaEwy?=
- =?utf-8?B?RkVWRC83VTJ6QnNtdko5a3JqUFVYNWV1QTgvcy9KQXlSQWU2emRJeHdZLzk2?=
- =?utf-8?B?a3BIQWV3R3B2S05SR3RsajVmaXZmMmdlYW5kMlJBTWNwQy9GNTJPY01GaVlt?=
- =?utf-8?B?N0R2dEx2RGNldEluUzRMa2JRd1JEaXlnVVBheEcybjVqK2RkTzRNY1gwYXNY?=
- =?utf-8?B?OFNGaTJZQW5xYTRkNHJUaHdRckFOdzVxUDVSNXF6SFFHcnZyVW44Y2hKSkxL?=
- =?utf-8?B?Y2VzZ3VEeEVvTVRKNU1zTUJFTXE5YTJZUWlNaUdqVjFZV1B1UDhDWm80YjlM?=
- =?utf-8?B?RGM0YkVkWGI3dXNKUzF2cmt0ZnF3dDJpN0lJeTI2UDB4bzBFSjg1RTlsUzBk?=
- =?utf-8?B?bGFJNnhCL3JxUlVXRmdycis5bHYwaC8zQ1hCbjlUU3RSMUlUV0F0OHMwQTZu?=
- =?utf-8?B?bXlXcXhKK1k1dEo3d3lCa3d4VVdNc2t4dXNZUDdWR3VYRjFncEVWWVBGM2ow?=
- =?utf-8?B?ZkZQb29Eb3pkODNzbkNSN0NnakNIUGRuV1MyemdrekxUZHhjVExwU0FLcDNJ?=
- =?utf-8?B?NTFQYTErN1FHdkVweW5qcnlka0xpaFR5Sk9WZDBzaVhCK2txZWJlNUdzRzFn?=
- =?utf-8?B?RDBEVGFNUzc2R09OZFBUNkkxSVJEU3pPcW1NV2xlMmxCZlIyZjFlYzEwWGJa?=
- =?utf-8?B?UnJNRjJIeVhVeU1WUTNabkI3dWw1RTFpd0NsMUVLb0VZUWsyNlpoeXZIVVFP?=
- =?utf-8?B?UWJ3ZmxpRTRSNmswZkxhS3c0ODlFV1lKdlNFbnEyV3haazRFZnQzei9NaWVy?=
- =?utf-8?B?Z3lFYnRqMkMxOXI1ZzdQcEJ3TjVwcnNKSktZNXJPZldySkNGbE9LNEsySHBE?=
- =?utf-8?B?ZEhJazZ3aVVLelVIT1hwbWZSMlBNbDd1MWw1b2ZxSkZ4Y3lBYzY3VU5MV2dY?=
- =?utf-8?B?R0FrRkEwQnk1UXJBWHNxVGdyUmdGd3hkb0RnUUZaQVZoc0xMSlFCM3I2SVg5?=
- =?utf-8?B?V2luOGJobjdYbi9UZ1MyL1FudWFGSUx2d3pVMm43SmJieURtYjhZZTZ1cWs2?=
- =?utf-8?B?Ni9ZTWZnQzdOek9rdHpydnBoVjE5WGtXOXI2cmdUR2lEeDlsTDRNWmdsL3Bh?=
- =?utf-8?B?RkJEL2JJdHdWQUQ3MXl6YUN5WE9OY2JxQWZzUHpITHNXUTYrNHExTVlxT0hL?=
- =?utf-8?Q?ssEyZS855BhATReItfstq19c7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51cdaf37-84d9-4953-b485-08dd588f2554
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2025 07:03:18.9241
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LusJmALnqM849V0U5ke+/nGHFCWmRrbclx4DPn24Er5y7+SN2gJkDYZHl0xf+pen4qnWTTteWSuPDB4KrWxs9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9474
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Artur Rojek <contact@artur-rojek.eu>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "D . Jeff Dionne" <jeff@coresemi.io>, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
+ <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
+ <48881e2d8efa9d7df8156f5f81cd662c2286e597.camel@physik.fu-berlin.de>
+ <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
+ <a917c1183f85bad8af1312994d330f141c57db04.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <a917c1183f85bad8af1312994d330f141c57db04.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2/26/2025 1:19 PM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+On 2/28/25 16:34, John Paul Adrian Glaubitz wrote:
+> Hi,
 > 
-> The CPPC enable register is configured as "write once".  That is
-> any future writes don't actually do anything.
+> On Fri, 2025-02-28 at 16:19 -0600, Rob Landley wrote:
+>> The march 2024 rebuild was in response to that Feb 2024 bugfix, so it
+>> _should_ have the fix? (I'm waiting for another musl release to rebuild
+>> them again...)
+>>
+>> I just downloaded the toolchain currently at that URL and built mkroot
+>> and it worked for me:
+>>
+>> Run /init as init process
+>> sntp: time.google.com:123: Try again
+>> Type exit when done.
+>> $ cat /proc/version
+>> Linux version 6.14.0-rc3 (landley@driftwood) (sh2eb-linux-muslfdpic-cc
+>> (GCC) 11.2.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Fri Feb 28 15:47:36
+>> CST 2025
 > 
-> Because of this, all the cleanup paths that currently exist for
-> CPPC disable are non-effective.
-> 
-> Rework CPPC enable to only enable after all the CAP registers have
-> been read to avoid enabling CPPC on CPUs with invalid _CPC or
-> unpopulated MSRs.
-> 
-> As the register is write once, remove all cleanup paths as well.
-> 
+> Is that on Toybox git HEAD?
 
-LGTM now,
+Yes. Commit b4fd71d18f84.
 
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-
-Thanks,
-Dhananjay
-
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v5:
->  * Drop unnecessary extra code in shmem_cppc_enable()
->  * Remove redundant tracing in store_energy_performance_preference()
->  * Add missing call to amd_pstate_cppc_enable() in passive case
->  * Leave cpudata->suspended alone in amd_pstate_epp_cpu_online()
->  * Drop spurious whitespace
-> v4:
->  * Remove unnecessary amd_pstate_update_perf() call during online
->  * Remove unnecessary if (ret) ret.
->  * Drop amd_pstate_cpu_resume()
->  * Drop unnecessary derefs
-> v3:
->  * Fixup for suspend/resume issue
-> ---
->  drivers/cpufreq/amd-pstate.c | 179 +++++++----------------------------
->  1 file changed, 35 insertions(+), 144 deletions(-)
+>> And the failure _without_ the fix was deterministic rather than
+>> intermittent, so...
+>>
+>> Keep in mind the init script has a 3 second timeout trying to call sntp
+>> to set the clock, which will fail if the ethernet isn't connected (or no
+>> driver, or no internet...)
 > 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index f0d9ee62cb30d..89e6d32223c9b 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -85,7 +85,6 @@ static struct cpufreq_driver *current_pstate_driver;
->  static struct cpufreq_driver amd_pstate_driver;
->  static struct cpufreq_driver amd_pstate_epp_driver;
->  static int cppc_state = AMD_PSTATE_UNDEFINED;
-> -static bool cppc_enabled;
->  static bool amd_pstate_prefcore = true;
->  static struct quirk_entry *quirks;
->  
-> @@ -371,89 +370,21 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
->  	return ret;
->  }
->  
-> -static int amd_pstate_set_energy_pref_index(struct cpufreq_policy *policy,
-> -					    int pref_index)
-> +static inline int msr_cppc_enable(struct cpufreq_policy *policy)
->  {
-> -	struct amd_cpudata *cpudata = policy->driver_data;
-> -	u8 epp;
-> -
-> -	if (!pref_index)
-> -		epp = cpudata->epp_default;
-> -	else
-> -		epp = epp_values[pref_index];
-> -
-> -	if (epp > 0 && cpudata->policy == CPUFREQ_POLICY_PERFORMANCE) {
-> -		pr_debug("EPP cannot be set under performance policy\n");
-> -		return -EBUSY;
-> -	}
-> -
-> -	return amd_pstate_set_epp(policy, epp);
-> -}
-> -
-> -static inline int msr_cppc_enable(bool enable)
-> -{
-> -	int ret, cpu;
-> -	unsigned long logical_proc_id_mask = 0;
-> -
-> -       /*
-> -        * MSR_AMD_CPPC_ENABLE is write-once, once set it cannot be cleared.
-> -        */
-> -	if (!enable)
-> -		return 0;
-> -
-> -	if (enable == cppc_enabled)
-> -		return 0;
-> -
-> -	for_each_present_cpu(cpu) {
-> -		unsigned long logical_id = topology_logical_package_id(cpu);
-> -
-> -		if (test_bit(logical_id, &logical_proc_id_mask))
-> -			continue;
-> -
-> -		set_bit(logical_id, &logical_proc_id_mask);
-> -
-> -		ret = wrmsrl_safe_on_cpu(cpu, MSR_AMD_CPPC_ENABLE,
-> -				enable);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	cppc_enabled = enable;
-> -	return 0;
-> +	return wrmsrl_safe_on_cpu(policy->cpu, MSR_AMD_CPPC_ENABLE, 1);
->  }
->  
-> -static int shmem_cppc_enable(bool enable)
-> +static int shmem_cppc_enable(struct cpufreq_policy *policy)
->  {
-> -	int cpu, ret = 0;
-> -	struct cppc_perf_ctrls perf_ctrls;
-> -
-> -	if (enable == cppc_enabled)
-> -		return 0;
-> -
-> -	for_each_present_cpu(cpu) {
-> -		ret = cppc_set_enable(cpu, enable);
-> -		if (ret)
-> -			return ret;
-> -
-> -		/* Enable autonomous mode for EPP */
-> -		if (cppc_state == AMD_PSTATE_ACTIVE) {
-> -			/* Set desired perf as zero to allow EPP firmware control */
-> -			perf_ctrls.desired_perf = 0;
-> -			ret = cppc_set_perf(cpu, &perf_ctrls);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -	}
-> -
-> -	cppc_enabled = enable;
-> -	return ret;
-> +	return cppc_set_enable(policy->cpu, 1);
->  }
->  
->  DEFINE_STATIC_CALL(amd_pstate_cppc_enable, msr_cppc_enable);
->  
-> -static inline int amd_pstate_cppc_enable(bool enable)
-> +static inline int amd_pstate_cppc_enable(struct cpufreq_policy *policy)
->  {
-> -	return static_call(amd_pstate_cppc_enable)(enable);
-> +	return static_call(amd_pstate_cppc_enable)(policy);
->  }
->  
->  static int msr_init_perf(struct amd_cpudata *cpudata)
-> @@ -1069,6 +1000,10 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
->  							      cpudata->nominal_freq,
->  							      perf.highest_perf);
->  
-> +	ret = amd_pstate_cppc_enable(policy);
-> +	if (ret)
-> +		goto free_cpudata1;
-> +
->  	policy->boost_enabled = READ_ONCE(cpudata->boost_supported);
->  
->  	/* It will be updated by governor */
-> @@ -1116,28 +1051,6 @@ static void amd_pstate_cpu_exit(struct cpufreq_policy *policy)
->  	kfree(cpudata);
->  }
->  
-> -static int amd_pstate_cpu_resume(struct cpufreq_policy *policy)
-> -{
-> -	int ret;
-> -
-> -	ret = amd_pstate_cppc_enable(true);
-> -	if (ret)
-> -		pr_err("failed to enable amd-pstate during resume, return %d\n", ret);
-> -
-> -	return ret;
-> -}
-> -
-> -static int amd_pstate_cpu_suspend(struct cpufreq_policy *policy)
-> -{
-> -	int ret;
-> -
-> -	ret = amd_pstate_cppc_enable(false);
-> -	if (ret)
-> -		pr_err("failed to disable amd-pstate during suspend, return %d\n", ret);
-> -
-> -	return ret;
-> -}
-> -
->  /* Sysfs attributes */
->  
->  /*
-> @@ -1229,8 +1142,10 @@ static ssize_t show_energy_performance_available_preferences(
->  static ssize_t store_energy_performance_preference(
->  		struct cpufreq_policy *policy, const char *buf, size_t count)
->  {
-> +	struct amd_cpudata *cpudata = policy->driver_data;
->  	char str_preference[21];
->  	ssize_t ret;
-> +	u8 epp;
->  
->  	ret = sscanf(buf, "%20s", str_preference);
->  	if (ret != 1)
-> @@ -1240,7 +1155,17 @@ static ssize_t store_energy_performance_preference(
->  	if (ret < 0)
->  		return -EINVAL;
->  
-> -	ret = amd_pstate_set_energy_pref_index(policy, ret);
-> +	if (!ret)
-> +		epp = cpudata->epp_default;
-> +	else
-> +		epp = epp_values[ret];
-> +
-> +	if (epp > 0 && policy->policy == CPUFREQ_POLICY_PERFORMANCE) {
-> +		pr_debug("EPP cannot be set under performance policy\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	ret = amd_pstate_set_epp(policy, epp);
->  
->  	return ret ? ret : count;
->  }
-> @@ -1273,7 +1198,6 @@ static ssize_t show_energy_performance_preference(
->  
->  static void amd_pstate_driver_cleanup(void)
->  {
-> -	amd_pstate_cppc_enable(false);
->  	cppc_state = AMD_PSTATE_DISABLE;
->  	current_pstate_driver = NULL;
->  }
-> @@ -1307,14 +1231,6 @@ static int amd_pstate_register_driver(int mode)
->  
->  	cppc_state = mode;
->  
-> -	ret = amd_pstate_cppc_enable(true);
-> -	if (ret) {
-> -		pr_err("failed to enable cppc during amd-pstate driver registration, return %d\n",
-> -		       ret);
-> -		amd_pstate_driver_cleanup();
-> -		return ret;
-> -	}
-> -
->  	/* at least one CPU supports CPB */
->  	current_pstate_driver->boost_enabled = cpu_feature_enabled(X86_FEATURE_CPB);
->  
-> @@ -1554,11 +1470,15 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->  	policy->cpuinfo.max_freq = policy->max = perf_to_freq(perf,
->  							      cpudata->nominal_freq,
->  							      perf.highest_perf);
-> +	policy->driver_data = cpudata;
-> +
-> +	ret = amd_pstate_cppc_enable(policy);
-> +	if (ret)
-> +		goto free_cpudata1;
->  
->  	/* It will be updated by governor */
->  	policy->cur = policy->cpuinfo.min_freq;
->  
-> -	policy->driver_data = cpudata;
->  
->  	policy->boost_enabled = READ_ONCE(cpudata->boost_supported);
->  
-> @@ -1650,31 +1570,11 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
->  	return 0;
->  }
->  
-> -static int amd_pstate_epp_reenable(struct cpufreq_policy *policy)
-> -{
-> -	int ret;
-> -
-> -	ret = amd_pstate_cppc_enable(true);
-> -	if (ret)
-> -		pr_err("failed to enable amd pstate during resume, return %d\n", ret);
-> -
-> -
-> -	return amd_pstate_epp_update_limit(policy);
-> -}
-> -
->  static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
->  {
-> -	struct amd_cpudata *cpudata = policy->driver_data;
-> -	int ret;
-> -
-> -	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
-> +	pr_debug("AMD CPU Core %d going online\n", policy->cpu);
->  
-> -	ret = amd_pstate_epp_reenable(policy);
-> -	if (ret)
-> -		return ret;
-> -	cpudata->suspended = false;
-> -
-> -	return 0;
-> +	return amd_pstate_cppc_enable(policy);
->  }
->  
->  static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
-> @@ -1692,11 +1592,6 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
->  static int amd_pstate_epp_suspend(struct cpufreq_policy *policy)
->  {
->  	struct amd_cpudata *cpudata = policy->driver_data;
-> -	int ret;
-> -
-> -	/* avoid suspending when EPP is not enabled */
-> -	if (cppc_state != AMD_PSTATE_ACTIVE)
-> -		return 0;
->  
->  	/* invalidate to ensure it's rewritten during resume */
->  	cpudata->cppc_req_cached = 0;
-> @@ -1704,11 +1599,6 @@ static int amd_pstate_epp_suspend(struct cpufreq_policy *policy)
->  	/* set this flag to avoid setting core offline*/
->  	cpudata->suspended = true;
->  
-> -	/* disable CPPC in lowlevel firmware */
-> -	ret = amd_pstate_cppc_enable(false);
-> -	if (ret)
-> -		pr_err("failed to suspend, return %d\n", ret);
-> -
->  	return 0;
->  }
->  
-> @@ -1717,8 +1607,12 @@ static int amd_pstate_epp_resume(struct cpufreq_policy *policy)
->  	struct amd_cpudata *cpudata = policy->driver_data;
->  
->  	if (cpudata->suspended) {
-> +		int ret;
-> +
->  		/* enable amd pstate from suspend state*/
-> -		amd_pstate_epp_reenable(policy);
-> +		ret = amd_pstate_epp_update_limit(policy);
-> +		if (ret)
-> +			return ret;
->  
->  		cpudata->suspended = false;
->  	}
-> @@ -1733,8 +1627,6 @@ static struct cpufreq_driver amd_pstate_driver = {
->  	.fast_switch    = amd_pstate_fast_switch,
->  	.init		= amd_pstate_cpu_init,
->  	.exit		= amd_pstate_cpu_exit,
-> -	.suspend	= amd_pstate_cpu_suspend,
-> -	.resume		= amd_pstate_cpu_resume,
->  	.set_boost	= amd_pstate_set_boost,
->  	.update_limits	= amd_pstate_update_limits,
->  	.name		= "amd-pstate",
-> @@ -1901,7 +1793,6 @@ static int __init amd_pstate_init(void)
->  
->  global_attr_free:
->  	cpufreq_unregister_driver(current_pstate_driver);
-> -	amd_pstate_cppc_enable(false);
->  	return ret;
->  }
->  device_initcall(amd_pstate_init);
+> I'll try again this weekend. Also, I will review and pick up the fix.
 
+Ok. (I'm available Saturday if you need to poke me, but traveling sunday.)
+
+>> P.S. Speaking of intermittent, I hit that hang after "clocksource:
+>> Switched to clocksource jcore_pit_cs" on one attempt just now. I should
+>> sit down with the engineers next time I'm in japan and try to root cause
+>> it. The scheduler fires reliably, so it's _probably_ not a hardware
+>> issue? We've had Linux uptime of over a year, not just idle but running
+>> an energy monitoring app, so it's pretty stable in our systems...
+> 
+> I thought it was a software issue?
+
+I agree. That's why I said it's probably not a hardware issue. (The 
+config has NO_HZ_IDLE so if the PIT didn't fire reliably when 
+reprogrammed the scheduler would flake, and it's not, so...)
+
+> Adrian
+
+Rob
 
