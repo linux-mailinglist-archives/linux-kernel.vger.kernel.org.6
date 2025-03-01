@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-540080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C211A4AD67
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:44:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2160BA4AD6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58FF1704F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC537A47B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE6A1E5B81;
-	Sat,  1 Mar 2025 18:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125711E3769;
+	Sat,  1 Mar 2025 18:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k+8qDxWv"
-Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JQMXtY2L"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E464223F37C;
-	Sat,  1 Mar 2025 18:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7F3249F9;
+	Sat,  1 Mar 2025 18:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740854657; cv=none; b=aeTa3hDl9BsH/rH4t+2V21/v8dXeZovFSMRanGO+G5E2XNmrsooafXwuTcHUTO1WMLDulCrKokmBF2qOR3SHSf1TOiA9zcu4Ej8ncauSaoX8/OVpLG3gB8UTRYgBkchFWSkmPsOpjmjtlT57a8EDbe0rLHqHsZT3621ca4JoAkA=
+	t=1740854881; cv=none; b=S4KoIDyhWOQP2eqJINVFqqZRcNavMMSdBn8wZ7bdmrCr399W4jr+eHzGgkLk91WfN/Xx7lRnsr4Y+9ftFvsFddQb/WektRXSk4txZV5WZbX3D86T+OUbJpSavAfBlK+kplHOhauarxsdG4GVHKf5SeS7f7aiea5bGJD5ACAf9u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740854657; c=relaxed/simple;
-	bh=T433eUfkMrUo1Wprk9rrV953OoJLM5qrhVCq/CAQvvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E6rCKDQSlDIwifyJfdGXgoaArQBQ+fCktdmDs14Q645+ws1ImjUZ+PHEvblHrCVng0rzBohAwP9/dG+gm9lVnCkNt0TLCM7LOCy0SFWEmhYooBupQvHAQOg8Ykv0htMAOZQkr3axozY1mmHL5bNw/nn2BuB1ntnVAsFgy26DypQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=k+8qDxWv; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id oRndttkZclzKeoRngtwIir; Sat, 01 Mar 2025 19:43:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740854583;
-	bh=kivS0j5YlRBr/NK4eTwHFGgQZng6nDYYZFuu6CKvKgs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=k+8qDxWvuRHPkPZSB2Uaccu3gZfp77O4E/sYM+P8NRjnFIP9uUEBpkZnnl8u2eLb0
-	 6u9jmR90VAlyT42PfnGwq6/ow/Z5G8leuU/sJcLobMZQx7EKgn0EA9NJl0a98hrIaj
-	 p1Kqk2pAh6hBPiyiz3pUYbck45ud5clerjXjAjZtW6nZTk/z+CObM5SUXuZ0am009R
-	 RM3PoxRvMxQ4c/cRkX8hVZsZS0jATFscJ65ZBBss8PWxXV1QxgSEsR/8wQ1ICC1vb2
-	 u1uEdqniDswEcUwN1sor0UR1reugBes7qeTI2cA7mwsIEOAbVFoO10SmEw786nALoz
-	 ob14oIapN5qpw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 01 Mar 2025 19:43:03 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Shawn Guo <shawn.guo@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jianguo Sun <sunjianguo1@huawei.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: histb: Fix an error handling path in histb_pcie_probe()
-Date: Sat,  1 Mar 2025 19:42:54 +0100
-Message-ID: <8301fc15cdea5d2dac21f57613e8e6922fb1ad95.1740854531.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740854881; c=relaxed/simple;
+	bh=efDsyWtQ79yh+glCJAxW/XDwXPgyVjWRh+dsAy5Dd/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KItvSgaQ9brf9wdcv0KwdVu8iARVJPh7cAQKU3ONp7OMJUPihxFU0VLtPrsG6/FfELcOiZSR4KytnliSUMcwyedDCPD2Iq+HdEVoNu8XekHXusjU2ldpdjk9VvuzHYk+1gGRqDodhjBTeRMJfSDcPjvwVXG2TpAq4iMm5ezv9WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JQMXtY2L; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ADA4740E0173;
+	Sat,  1 Mar 2025 18:47:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iIcm_nZK5oGm; Sat,  1 Mar 2025 18:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740854868; bh=l71h9KXcCuDFU+fj0zNN0wy4uU4tSQfRahhqWOcy5yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JQMXtY2Lxgk1ihOvpFWTuQR6nmFfH4WvcJSzINNVCY4tVIkMAcEKpP56oGL33LX0Y
+	 UM+YZzhvXhpWpVDCGLiqFcSZTufYO4UNSLznub0PXKkSZpBTrZIqvvhLXcBy3vMeo5
+	 a4jPOyOIW4Ol+VYOZvQVbbnAn1Yzhd+DVJ/0KflWTCgq1u7A0aPI3iyLa9wEyCyTmr
+	 PUYlpTrJTOyaNmxBpu/EcBzjd3KTAAvro9tASGZDnbgxC9RXVsTp7bSczc7/3oy4mG
+	 3ZNf4YsLZJ2OfjakKmfrPZbMw4gbbCVTDCWSX9Ldfb924KjNGGN0UK251jO8d+iNQs
+	 hpx4PUukCdqbOWAwFhd67hLJT4BkaSRhe+t/lrXx2MMqvDNsGyF968qyPlGiQHU6N5
+	 PYqywEf1u03V4Z42V1K22uymdSvJilh6eJJbyIeCGwDtL4I6+v+HxNRgw0MoXlV117
+	 B3aBpMkXIX0ACIcUwKvT/c9OPpghNBpxgEmCnw43rqKUgxhsKsamIhNwRa2dNIhRlE
+	 RTs1Kl6dMYsGwbQywCqxxPJPLDvx1eT+PbUr6nkGakURVt3Elf+0K/Wxse2hsuFte6
+	 bwaQtBxEiiAqSUnL8F5awrQnm55aGsfgsa6nD5jvY1EMfjXDrGmTVp6tQOBjmrzkn1
+	 2xhyl/IQsGjBaK3wCZPaIViE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2045B40E0028;
+	Sat,  1 Mar 2025 18:47:31 +0000 (UTC)
+Date: Sat, 1 Mar 2025 19:47:24 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
+Message-ID: <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-3-xueshuai@linux.alibaba.com>
+ <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
+ <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
+ <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
+ <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
 
-If an error occurs after a successful phy_init() call, then phy_exit()
-should be called.
+On Sat, Mar 01, 2025 at 10:03:13PM +0800, Shuai Xue wrote:
+> (By the way, Cenots/Redhat build kernel without CONFIG_RAS_CEC set, becase
+> it breaks EDAC decoding. We do not use CEC in production at all for the same
+> reasion.)
 
-Add the missing call, as already done in the remove function.
+It doesn't "break" error decoding - it collects every correctable DRAM error
+and puts it in "leaky" bucket of sorts. And when a certain error address
+generates too many errors, it memory_failure()s the page and poisons it.
 
-Fixes: bbd11bddb398 ("PCI: hisi: Add HiSilicon STB SoC PCIe controller driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only.
+You do not use it in production because you want to see every error, collect
+it, massage it and perhaps decide when DIMMs go bad and you can replace
+them... or whatever you do.
 
-It is also completly speculative. Review with care.
----
- drivers/pci/controller/dwc/pcie-histb.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+All the others who enable it and we can sleep properly, without getting
+unnecessarily upset about a correctable error.
 
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index 615a0e3e6d7e..63b701881357 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -409,16 +409,22 @@ static int histb_pcie_probe(struct platform_device *pdev)
- 	ret = histb_pcie_host_enable(pp);
- 	if (ret) {
- 		dev_err(dev, "failed to enable host\n");
--		return ret;
-+		goto err_exit_phy;
- 	}
- 
- 	ret = dw_pcie_host_init(pp);
- 	if (ret) {
- 		dev_err(dev, "failed to initialize host\n");
--		return ret;
-+		goto err_exit_phy;
- 	}
- 
- 	return 0;
-+
-+err_exit_phy:
-+	if (hipcie->phy)
-+		phy_exit(hipcie->phy);
-+
-+	return ret;
- }
- 
- static void histb_pcie_remove(struct platform_device *pdev)
+> Yes, we collect all kernel message from host, parse the logs and predict panic
+> with AI tools. The more details we collect, the better the performance of
+> the AI model.
+
+LOL.
+
+We go the great effort of going a MCE tracepoint which gives a *structured*
+error record, show an example how to use
+it in rasdaemon and you go and do the crazy hard and, at the same time, silly
+thing and parse dmesg?!??!
+
+This is priceless. Oh boy.
+
+> Agreed, tracepoint is a more elegant way. However, it does not include error
+> context, just some hardware registers.
+
+The error context is in the behavior of the hw. If the error is fatal, you
+won't see it - the machine will panic or do something else to prevent error
+propagation. It definitely won't run any software anymore.
+
+If you see the error getting logged, it means it is not fatal enough to kill
+the machine.
+
+> > Besides, this message is completely useless as it has no concrete info about
+> > the error and what is being done about it.
+> 
+> I don't think so,
+
+I think so and you're not reading my mail.
+
+>     "mce: Uncorrected hardware memory error in user-access at 3b116c400"
+
+Ask yourself: what can you do when you see a message like that?
+
+Exactly *nothing* because there's not nearly enough information to recover
+from it or log it or whatever. That error message is *totally useless* and
+you're upsetting your users unnecessarily and even if they report it to you,
+you can't help them.
+
 -- 
-2.48.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
