@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-539876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2412A4AA2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:04:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A39AA4AA33
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:18:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAEF1897FBA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEAD173264
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38391D6DA9;
-	Sat,  1 Mar 2025 10:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CAC1D90C8;
+	Sat,  1 Mar 2025 10:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtO2Qlm+"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wFEEFKU2"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D91D63F7
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 10:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0461C1F21;
+	Sat,  1 Mar 2025 10:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740823445; cv=none; b=uf/TcxuDNCAGJx1BKl+5yf0sbGS0zRoMn125lIhwFumGzFu+V34v2COi+JynCqw7ZdjS7gR61QmbdP4xv12pzDuk6QiyMtrILCNDshT3O2GLgy55sHJ5fAKzf7v7gYEaJ5mV2MsgzhwJKVdYxFcGoxWZeRe7yB47ssqWX2XPWnU=
+	t=1740824318; cv=none; b=NUTBNqcAIDfpd+bg/i5mwniDtQMVOt64VKMH+ad6KmNbtRrP/vsIO9TDS4lBRWQIwk0hxdEsu/0eNesAOZ36UQmMDFmMIjU1DLGEVqCD+4LXSHZ6bswbMnCsT1nMJXwXkyklnj1KxnQuUmneiBbcLu9BAA4DKT4tgiLw5V0MsBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740823445; c=relaxed/simple;
-	bh=ed0rxhmjszvCD6sXc1nM0sLqEzWbX15UwVBTYrlX7o8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=paGwE0z9RWhuewri+bJzwanRUuBfxfLFPihLyJOL0X/PQYUjVmg0oQVEqW3wy3vqqWCwgyM52Ez6TsdlcTuO4tiwl/VSTejbrwCsW513qkdeRHsOxydEY7te04d+7OeS7Jyko0Ha4HCEo94AQlxuISaZKLepiGrnjLyPVGMnPyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtO2Qlm+; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54298ec925bso4374174e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 02:04:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740823441; x=1741428241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=76ANipvR3P/jVIpgRlnkUUgAgrkLoL0o+K6EABpA1ek=;
-        b=gtO2Qlm+B0LgpLMulFjM9s9gA+B6U+wBaztr+IB7HA/g7HxQKk1OUUVw9R4eYoZKlQ
-         GV7PysK1TweGty+29iQnzmBZ9NdZWKnj+Yb65LptAjQ/gI3abn381Uk0Z809Cj5UvS4P
-         Z1VwGjWLt4G93ulkvgZeQuIe0CXbYsbr1JoOjciuO13Vc3zMsOv7L6WefflM8kX5ItVw
-         QgcAjVN0VtDngXIv4T3f3QrepcLuZDNDQTUJICqt5Mm/xkARc3Z+/Imd1iY88H7lzYgE
-         719Po/9MPExADEDfT/IU+RXmxI/Ll6+9655IsH0U4bA4EXcML60029J0O3DJfvfJiDkj
-         Y9LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740823441; x=1741428241;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=76ANipvR3P/jVIpgRlnkUUgAgrkLoL0o+K6EABpA1ek=;
-        b=rLvZWR6mxCr9Flwiw4EbSl2FUmSMq5spEPoS7WQEuK8cDnlt4YTkRRiCLiYyMeLU2B
-         DZ0cjOGl3shrmjsOzOxdk0M2QtAX5BUC3/xgQbDBwNGlJ+vpVB4IARu5IgiP/8Jr3YEk
-         KQKYchogWvE/V8ZSEUuMuTJOpMHweRSAHgW57g+LzreVt8i0KLtmprCwHn8nV9Gp9Qdl
-         9Ta21G2a+pJh8Nhk/sbDKPqI9lQR62IUPWzNCKAploKTWfERbMFpR7F2lGrMmdI4oNWL
-         lE3QP2YfYCIWjEuorPBwrQK2QObNp+VSAvWTSHOITVql8p6rSYWig1eoAh/GmAnDcW3v
-         QuUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUqhSqHU0p2nv6NuBCwJj/m64MoJNpSTXvauSiKDozC9KgoDKHZgcXsic7JtL5BVTV/c/kuj9DWPzO1qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMe1jioJVn0F2rDl+HXxMLayU94rrP+RDYOvsA72dN34vn3p8i
-	dZMRLJED3liGiQg66Ug6ynijPlIbQdXjqGOAviyxdj0rFZgY0y0Ka7cAcyMZYYkOmn8qJwgeNLb
-	HkMo=
-X-Gm-Gg: ASbGnct129yP7an0wijBxe7nenORHZvqLSKBvj8qpup4RLmtTCkamlVWVLgpNx/J4UF
-	GfrROU9Flpsnabz821vZOqkR2ZCxJ8Rjvf6RqQnRhxGddGU2QKC7JJ6lGe0gQS3m+Wt9jbLTL6e
-	oFogx8wz0E2WK/tNCB+cz9ohnSVfmUhluGCpZVI7GTM2hqug71P/cYCQ65uJycNOQDz6LHO6p/1
-	t6Ll/oByFlmRv8luV5nCx+GOr07Iwd/PFLUKbRsQ0fVUiRX8GNVwvsbu1AJjaNF5lO4vyBIdUOd
-	glK/AtuoJ8adeJn339dVSke2UakssSAdoo32Ufc4t3laXeY3MvYAZ67ujRiJ7DzJ0F3Ug1zoLfX
-	PlGyj/ytl+LuH
-X-Google-Smtp-Source: AGHT+IFuYzubuDyf6X5ei2oE/n7MHEB/XJ+jimftn4XgARTj9v/mjL84XjfF68VTOLYEok0MXR5YaA==
-X-Received: by 2002:a05:6512:3f1d:b0:545:aa5:d44a with SMTP id 2adb3069b0e04-5494c33304bmr2297080e87.42.1740823441381;
-        Sat, 01 Mar 2025 02:04:01 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494f8bdde9sm463722e87.148.2025.03.01.02.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 02:04:00 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	deller@gmx.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux@treblig.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] gpu: ipu-v3: Remove unused functions
-Date: Sat,  1 Mar 2025 12:03:57 +0200
-Message-ID: <174082343297.2941786.11452976094065423321.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20241226022752.219399-1-linux@treblig.org>
-References: <20241226022752.219399-1-linux@treblig.org>
+	s=arc-20240116; t=1740824318; c=relaxed/simple;
+	bh=Tih7/m1jCU6zo9dbLTjV9xhUlYXnOFqFkJ/TPENNJOs=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=C8Qhs4OzNqR6/Xu18EtodO/f07/Od9wFfqyEU6wt1smPdcf1q0v8xvKW0jRUiyer7kvwL2bH48uwcHq7NBmjOvfCI6NIaAlpdpbC6dd7lOpjgCDMeHTvh8/q84kvWafHjjrbEdStnDN078dI8XHsu0l++yVUmkytr8jr1K0kqpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wFEEFKU2; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740824314; x=1741429114; i=markus.elfring@web.de;
+	bh=JqgvWhDeBxn3+761cHTwCzYRQ8hleuaweJ38cwLMrf0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wFEEFKU2thEBQiFzEdHl8tSvuoTMkCt4bE7IlLwC5/aw5mYmakxzlTGLctD/gH/+
+	 V+um6iDS0uxVctT6lrXfnaF396XIgNe+DvcV6+kWjgfkcjp8qiGTvNdgPcYa3lOr6
+	 F3aEEzGX3Gl7zIiV9reYkvarbvIVd233PqFV7Q8RszxUV5CxFr0WchP738yWW9EAW
+	 Js4YhG19aZ9uqQ9Qwse7DngX+3nOs7jdwY13qNSp+P9j80sR+jkfy8GnOkXnBtN47
+	 w/hXnkx0CeRPsL7ip8I7Q83xJYg57YUULq9wzgA2/yo4tBFODCfhZRAlUhYWCLvYe
+	 AdEzBQg16Ltv6ZR/iw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.42]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McZnl-1tIXmj0VbR-00hdl0; Sat, 01
+ Mar 2025 11:12:44 +0100
+Message-ID: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
+Date: Sat, 1 Mar 2025 11:12:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Brett Creeley <brett.creeley@amd.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Shannon Nelson <shannon.nelson@amd.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH net-next] ionic: Simplify maximum determination in
+ ionic_adminq_napi()
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Qasim Ijaz <qasdev00@gmail.com>, Natalie Vock <natalie.vock@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iAZ5wQXshMe1auUfVTMOjSnfhKROyESDT79eO6OuARkv2ggeQ7p
+ +3J7+DAdHZZOHg1Gufq6YUBoZZSyZpqvkPlcUzpVDhNv3vyT5SnSarfmOkbmzrcDM6S+yGL
+ 2suFLHJOTPMXsEuNNRtjvACJuDX810LCHyiLLt32NCJZARpKZtKfZLPldGXFhld3xqGGxGd
+ hKpHlT36i5IFJ3IV+CpiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1RdTme0JumA=;zJ7GmkLyjP0ZpFdUxYl5KacwGZk
+ fyCTfDztGHJ3Iis9Xpdlwpi00SkJ6h0VLeVIXOo0mRpPd3yl53AyCwbYpNVP/oSwOcpNwkZtN
+ uIXXf4efz7/SkhSyB2UVnOpRsxN4DW/sPlJg/dnDdamTVudT6UiPzebbIGKPT16/HKDCSzz7E
+ A8i4H8nKAJA2qQWlIowbzm4LLT91Zw0Zus0Uv2IoNb+seBQrO3oQHxuj9+X6G7xW0C0IXzCnc
+ 7oAYcKHoC/f40b+Rs/FJPLN1AfBBjRSxCPYmck+yoquyBI8FMCnHejiBtwmASR7zDWVi1BEyI
+ XhZ/WhC81zR38+WA03bTSDM0EauaKqmwo1N6t52+CSe9L7P9QKpvjeS6OUgxgEd0K3LkTZQkj
+ LS/KYpQa1FQuQ0kKyLaYPDXK6MDY6pbExgf7xV3IUXxWqkK02uxjMSXTJbyXWIzTVi5afDuGy
+ NZfBXzbFV7bmNtdtaEVluSIC9+0sKEMKcVRmVb04Vk/iWYGIKPB78HqUekKqUwJ+NfCM9q28J
+ 4uOrijAWYTQ7TmATwoC98HkADkoAaLAtCJMJzAMYs46hMZkCg2CumnWpKSx9tcTogddL8vjWK
+ X0+DXdIRgeTCJ1oKgoDtxDmTVQgTqaSieHtrUt80UymLv+kkCQeeLykpEerjEPLund4Mw/oJI
+ u8AOsk5cdh3GDinjDKMuAZ4AS/tDAur/tMRJoV/Z1vfKKspmX6+J2P4yCVl1Zfxs9qJEoHHvD
+ XqBU7LSKycjsIN8ghdX0/kTw03OrZR1tC1CzTINu4p5k5jYPyuFzRDFr4ee33udfM+WXtbBaL
+ EgnVcKSQV+Vh6rYtig1Uxb1FZTSA56oz1O8lYhbhXM7DoDuc4dw0qx4HSCdgH7gWtoS9hG5K+
+ WxpOkz1mNEmd/ouy0bhuGlSxTneyfad8EWPFu8DHv6K1yORXUezI5Me/KfY8X7oWDEFOekdpB
+ MsQ0Zw7FvzwUZIlbx39gmHV8aF7UL130bYW5qLBPp/Zu0UCYe/ikzVXlWG5yK+m33Rwjf5euy
+ lZI6NSxWVVAq3pA/HhJGog/a4dS4VHe9qQiNWR6mJTQdbGC/V76ro4z1iEP2hIHQ41BZV5vRL
+ UYPBiqWXid2TRtUYHYwd2C6BJCZkteSscrD/IXhnQgpV0p1HAR+uBk/6StGeXDsuZw7+iFpM3
+ dGMTCUAAagqUuBH3WlAquJmzrprLezi/RXauFB27rdKUl6ZnNOAygcPAJIrzTVxGT4ulQq328
+ mzbEWfYzG+j4hsmnTmzu9p/KQWClTwLRzPozq5NYc3Itbh7r5+1qUkjJwP/b9snb27hZTFRgd
+ w5aCCI9g3H9x9/inkqdDsuz9DfcbxOixuebb4tntFQnQX7UuOpqre64KQHrQ0BNzbxrg9+2aM
+ sLoKyWcGsAhkiDdZPadFi25ALJv8TJheeYe7d02I+Q/RG5F3If5QpF3EFtb3PYaYctzDwDcy0
+ IvWciIA==
 
-On Thu, 26 Dec 2024 02:27:45 +0000, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Hi,
->   This set removes a bunch of functions in ipu-v3 that
-> have been unused for a long time (since 2012-2017).
-> 
->   No changes to functions are made, just full deletions.
-> 
-> [...]
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Mar 2025 11:01:28 +0100
 
-Applied to drm-misc-next, thanks!
+Reduce nested max() calls by a single max3() call in this
+function implementation.
 
-[1/7] gpu: ipu-v3: ipu-ic: Remove unused ipu_ic_task_graphics_init
-      commit: 16e3bf497fb2d379f3d461fa0c85d14de0a3d183
-[2/7] gpu: ipu-v3: Remove unused ipu_rot_mode_to_degrees
-      commit: a52ba18c254c0a3819e632e6371554f1c6f5bd16
-[3/7] gpu: ipu-v3: Remove unused ipu_idmac_channel_busy
-      commit: 4f9c64e95c3510f4a5192bd401de5611c1dd5637
-[4/7] gpu: ipu-v3: Remove unused ipu_image_convert_* functions
-      commit: 96e9d754b35e87a5be2de7dce3c810ffdd769c84
-[5/7] gpu: ipu-v3: Remove unused ipu_vdi_unsetup
-      commit: 27985c86e283e1e5ac8a9809f189f03643a6f5f2
-[6/7] gpu: ipu-v3: ipu-csi: Remove unused functions
-      commit: c687c3147d5de801ed835b077802b68fe85d8a3d
-[7/7] gpu: ipu-v3 ipu-cpmem: Remove unused functions
-      commit: 2800028d5bdee8e9a3cda2fec782dadc32225d8d
+The source code was transformed by using the Coccinelle software.
 
-Best regards,
--- 
-With best wishes
-Dmitry
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net=
+/ethernet/pensando/ionic/ionic_lif.c
+index 7707a9e53c43..85c4b02bd054 100644
+=2D-- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -1242,7 +1242,7 @@ static int ionic_adminq_napi(struct napi_struct *nap=
+i, int budget)
+ 	if (lif->hwstamp_txq)
+ 		tx_work =3D ionic_tx_cq_service(&lif->hwstamp_txq->cq, budget, !!budget=
+);
+
+-	work_done =3D max(max(n_work, a_work), max(rx_work, tx_work));
++	work_done =3D max3(n_work, a_work, max(rx_work, tx_work));
+ 	if (work_done < budget && napi_complete_done(napi, work_done)) {
+ 		flags |=3D IONIC_INTR_CRED_UNMASK;
+ 		intr->rearm_count++;
+=2D-
+2.48.1
 
 
