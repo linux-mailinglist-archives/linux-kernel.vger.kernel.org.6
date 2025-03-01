@@ -1,319 +1,132 @@
-Return-Path: <linux-kernel+bounces-539667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95878A4A70B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0167A4A714
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7DE3B3B34
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FF23B9D8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28514F6C;
-	Sat,  1 Mar 2025 00:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52517C91;
+	Sat,  1 Mar 2025 00:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hQgdwNKW"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3Bkb1oP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98468F5B
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED5922EE4;
+	Sat,  1 Mar 2025 00:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789376; cv=none; b=bw8XxvniPXyrrXEocOZRmD7sYRaCb7mK+jQBDzZFamO5Sxj4IKr6U7JBmplpXe0RNh5F3IyqVgyqDH0R5WV7aLUz3D/VOdldso0gaHEVzYAiTyOXZHqvcwfiXupcSHlE2L5BxYK2WLon2WGwl9y3Nk9/y4HMRVQTiYSXoBj0bic=
+	t=1740789461; cv=none; b=t0ZmMZce8bXpDnDoewDBi7TAHZF/kimq6wKbJjCw/pjiEUy++RcdA3dQGCnIlJs2x/L/5nNBfRuXOtJdcLd9Zf3amkzr/hRZL6bEcHOJH3U7zOP2f4Lbq1Q3bGv9XwgEMtXQ7g+FWzD1hXdBfS2+vS/XuGd1vbE8DxU+CMYuXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789376; c=relaxed/simple;
-	bh=2BrZxxNprGoxzLNC8/zcwyN9B35uloLJtrb+1opII4M=;
+	s=arc-20240116; t=1740789461; c=relaxed/simple;
+	bh=jwfc1ahgCiuzX7wkEu5HLzWqIBHpgdtoIiFrmHSt8/s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NONeWWTk4O1Adn44Ta5f1GTV41M3YwfnekWIjLv8TEGj/yS6zGO8HMKA2nx9r3r1LlNyXT9mM7IXZfLIvg9b4IlWSyh7LUYwNGa1c8gdy3w4N/79EaQvrRV2sVej2ZdUkhdaXc6SwsIC5pZDCSG3V9Xh0i45jjD74b5KFpCfPV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hQgdwNKW; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2237a32c03aso33735ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740789374; x=1741394174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nhZuBN/9mPGzSLbve08MvU9t9kKFyaph33uC3d3/RVo=;
-        b=hQgdwNKW82yV5eCuyXHNuHgecbQ2P+5ROODqnbBCQZK/TVElnVbFuMB1II7RKOspeZ
-         5z0yOr0Z1bKaZcRY7H8ZSVA82n2M1Y2YpqE5i7dXhHso7Ghb4mCz5SfOhddhdHyqCCmv
-         qZLyjpAlTmrc6DlEGDChuP6UI6COZPR6O6eiSxYhhh0pT8oZWGiL6bNIU7W4E2Urqns2
-         qTed/b0rzIb7DOSAIUi+b7vJtrhZc48XqUvVUmLxvtjcE5tiGSahTCaMyqIeDU2Vvnrs
-         ZpAwxC0bJD/JBp85zuVdnK5+rjScVor9SpR1Ui6Y8uKEmNvCq5ELb8ax/pVKvNlprKU+
-         bGtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740789374; x=1741394174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nhZuBN/9mPGzSLbve08MvU9t9kKFyaph33uC3d3/RVo=;
-        b=Gs1QkYHFpc/g+BGyEUT09Yxd3Tci13RRMiAmzI3MnLgp+DGywSINf51CTtw3E3jQ4z
-         rYpzOUrGYMsboP3KG24ONMhfTTY8asPsEjJjgxtjqz8idZB8t9BzJkhyyeDYXuezeQ6+
-         H7OZAMeb8tt34x0hISkEsGfIvbIXoJ72uE2c14k8w5w54XALS1egN3xO7t7BNGLH/h+1
-         Egl217ZhCe3zkGD808fRSWUthjXHShZIwRQZe4gAtJ/vlV5NzhBINbbZwj5eWk2wssq/
-         X4bHaZlcohqUl46dbE5Gqti3zOT5Y8SSYKuO+AwYV1La1VbN76ep1bSEJxG3aMqFBcEM
-         X/Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPZMaL87eRr1ANfzwskkOrYhOuXby9yk8rIy0SQ45NJaL4HLb3q/TNRNsnYP/OAS+AcfmCIwHO/SL5Ah4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNUmyYCttD8+/zbOnUCLhr07OZTPiA+rnPca9SxMQNFjECnCni
-	9YsPGb5+xh5Z5iIgTwpp42FaPvruNmMDD1ZpKRmczKfzAg/av0eg5/Q5miLrrN6Z5Hj8y1NVk/l
-	39rqE/2srs2pH8Ki3bE8kc6hiWXkf0h1lCJbO
-X-Gm-Gg: ASbGncsWVLBSBooHJFsHDRd7idJJHWP5G4uuEN4meTeC4CfqYLQ84d4hiLwjHtaUEUG
-	f70tGPsy+/cC7IkmYgauwNVuGAucDdpw84rUXb2N62XuGPAOjI9hus6dcTlWqQ55Xjv0qsxb3bf
-	yUpw1zw967GRjg/iydtGqFFmm2ro4=
-X-Google-Smtp-Source: AGHT+IH6/MjikxHqgtWJQlJWlCRLE9/MgRb8A6dWMHQRW5SnmhLBv0G/33lLfpQgGnGpA2izds5R7swz/srEB5Hwek8=
-X-Received: by 2002:a17:903:44d:b0:223:7f8f:439b with SMTP id
- d9443c01a7336-22385a296a5mr498795ad.29.1740789373454; Fri, 28 Feb 2025
- 16:36:13 -0800 (PST)
+	 To:Cc:Content-Type; b=Qh0MI5xRXfJP3kUsWC9VW9yDL28HBhOyNJPqIlW0QbTPVF+9aSEBCvOO4K4xNDAquB7V1sm8A60+lnp6EPwW0hbPWaIakdn5Havn0JNwLsG4YdwmJDqSTfjBJ0kFiD5Z1+Ng1QPOnd7v9iexjfB+3k/pxeHHa2z2wm2SF7/w8Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3Bkb1oP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B95C4CEE7;
+	Sat,  1 Mar 2025 00:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740789461;
+	bh=jwfc1ahgCiuzX7wkEu5HLzWqIBHpgdtoIiFrmHSt8/s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=C3Bkb1oP8uqqMvX/ckArxbGIfZ8FywegE9C0lfYY9zPtWyff5LmUA7XsVzqS2dE2u
+	 ry7m1s+d7yPr/D5/fbw+i81XvmyzmuRTaYhf30Bv/XkzBCdv057EqrlakZlrP3ZHSi
+	 WqbUhe5bNZG7eyZKlbXD7XTwUUd7zbVJMFBVUtC9fkvrAVLkn8BRSHOesUUL8jhyCh
+	 aaYK5X56L1i3AdLABEqxog3HRrn1e1+D/KCtO56oNS/ifHrGMiP+Q82nk6b8qLLedm
+	 8foNToR4b5dGvZispxL5aijpJlAnUeeQIZt8UTY5Bo+LEl+NAdQyx/2gAs8OqqXKmp
+	 xHPVCbIMLjQ+g==
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d2b3811513so11712505ab.1;
+        Fri, 28 Feb 2025 16:37:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+5Qqs0B79Q0niGY8JONPuk46Y9bTmLhCNVDpcNYQX6CErj7mKN60O8fAFNAM1bLCPC9E=@vger.kernel.org, AJvYcCWBj1QL8ziINBbn6KSmyRuZGs5FmFLJmcPHWenTOp1Nt9+vujqBvIbeIp01zQX1+HGn0IV2E416x31lfhV3@vger.kernel.org, AJvYcCX5IWIlORUjNiMJ+kdXGjLEm3Orjnhc3BCcryCYBMvBbErwg2xSdwRJB30wqrCt6Sp1LaWkL7Y6Zw==@vger.kernel.org, AJvYcCXoDQQmldPSaVNoth8URxGxNKkn91idRenGJeQgPsUhr+ejLmVNP8ubailWy1uOSer0LYMlqv5wPxpx8CL7yOzyNkLeEPE8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXDdnos9gVvzg/4+vWnQRwfnALxzQ1/buEmes+Gbn8faQKEKTF
+	tsC72Sr/ZRtdVmAPe7m5ZNv8b0OQvXsFOmesOMFVdVMOcZ17wRSaVDk6ShsrtB/8sVaoRotSITH
+	wbx8aa3FQylClM5xYBDRmyP9+7I8=
+X-Google-Smtp-Source: AGHT+IEvAO8t6XcTK7ehgVX1Cb5AI/CSDL/k9ZfYTeArTEPsP00ZZVVzFUSsiBhttHJf01azIqdBs3Jb+2eedTxZHVA=
+X-Received: by 2002:a05:6e02:1a09:b0:3d1:84ad:165e with SMTP id
+ e9e14a558f8ab-3d3dd2d3a29mr102153535ab.7.1740789460403; Fri, 28 Feb 2025
+ 16:37:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228062241.303309-1-tmricht@linux.ibm.com> <Z8JRC2oSs8i53t_s@google.com>
-In-Reply-To: <Z8JRC2oSs8i53t_s@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 28 Feb 2025 16:36:02 -0800
-X-Gm-Features: AQ5f1Jo27S9_o_sqEYMlEN5u8ZrPMA3seerGcVGPfEDIZhYh_atDNzd8GgwU5_8
-Message-ID: <CAP-5=fUqs=mxdgQX0Vx=D0weQSitXh6a8DcW2FycDEk6J-=RtA@mail.gmail.com>
-Subject: Re: [PATCH] perf/test: Skip leader sampling for s390
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-	linux-s390@vger.kernel.org, linux-perf-users@vger.kernel.org, acme@kernel.org, 
-	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
-	hca@linux.ibm.com
+References: <20250228165322.3121535-1-bboscaccy@linux.microsoft.com> <20250228165322.3121535-2-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250228165322.3121535-2-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 28 Feb 2025 16:37:29 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4bsiD56PivQRLs6jrWGpiWt+4vfcdQ4YA-KWONxLYv9g@mail.gmail.com>
+X-Gm-Features: AQ5f1JpfUDxDNGOOtYDiDeO6Tz4qbi76Krj7-XIzmH3zU3hT980dijVDfbDRf_Q
+Message-ID: <CAPhsuW4bsiD56PivQRLs6jrWGpiWt+4vfcdQ4YA-KWONxLYv9g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: Propagate caller information in bpf hooks
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 4:13=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+On Fri, Feb 28, 2025 at 8:53=E2=80=AFAM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> Hello,
+> Certain bpf syscall subcommands are available for usage from both
+> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> need to take a different course of action depending on whether or not
+> a BPF syscall originated from the kernel or userspace.
 >
-> On Fri, Feb 28, 2025 at 07:22:41AM +0100, Thomas Richter wrote:
-> > In tree linux-next
-> > the perf test case 114 'perf record tests' has a subtest
-> > named 'Basic leader sampling test' which always fails on s390.
-> > Root cause is this invocation
-> >
-> >  # perf record -vv -e '{cycles,cycles}:Su' -- perf test -w brstack
-> >
-> >  ...
-> >  In the debug output the following 2 event are installed:
-> >
-> >  ------------------------------------------------------------
-> >  perf_event_attr:
-> >   type                             0 (PERF_TYPE_HARDWARE)
-> >   size                             136
-> >   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
-> >   { sample_period, sample_freq }   4000
-> >   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFI=
-ER
-> >   read_format                      ID|GROUP|LOST
-> >   disabled                         1
-> >   exclude_kernel                   1
-> >   exclude_hv                       1
-> >   freq                             1
-> >   sample_id_all                    1
-> >  ------------------------------------------------------------
-> >  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 =3D 5
-> >  ------------------------------------------------------------
-> >  perf_event_attr:
-> >   type                             0 (PERF_TYPE_HARDWARE)
-> >   size                             136
-> >   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
-> >   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFI=
-ER
-> >   read_format                      ID|GROUP|LOST
-> >   exclude_kernel                   1
-> >   exclude_hv                       1
-> >   sample_id_all                    1
-> >  ------------------------------------------------------------
-> >  sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8 =3D 6
-> >  ...
-> >
-> > The first event is the group leader and is installed as sampling event.
-> > The secound one is group member and is installed as counting event.
-> >
-> > Namhyung Kim confirms this observation:
-> > > Yep, the syntax '{event1,event2}:S' is for group leader sampling whic=
+> Additionally, some of the bpf_attr struct fields contain pointers to
+> arbitrary memory. Currently the functionality to determine whether or
+> not a pointer refers to kernel memory or userspace memory is exposed
+> to the bpf verifier, but that information is missing from various LSM
+> hooks.
+>
+> Here we augment the LSM hooks to provide this data, by simply passing
+> a boolean flag indicating whether or not the call originated in the
+> kernel, in any hook that contains a bpf_attr struct that corresponds
+> to a subcommand that may be called from the kernel.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  include/linux/lsm_hook_defs.h |  6 +++---
+>  include/linux/security.h      | 12 ++++++------
+>  kernel/bpf/syscall.c          | 10 +++++-----
+>  security/security.c           | 17 ++++++++++-------
+>  security/selinux/hooks.c      |  6 +++---
+>  5 files changed, 27 insertions(+), 24 deletions(-)
+
+tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+has a BPF program for security_bpf(), please also update it.
+
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
 h
-> > > reduces the overhead of PMU interrupts.  The idea is that those event=
-s
-> > > are scheduled together so sampling is enabled only for the leader
-> > > (usually the first) event and it reads counts from the member events
-> > > using PERF_SAMPLE_READ.
-> > >
-> > > So they should have the same counts if it uses the same events in a
-> > > group.
-> >
-> > However this does not work on s390. s390 has one dedicated sampling PMU
-> > which supports only one event. A different PMU is used for counting.
-> > Both run concurrently using different setups and frequencies.
-> >
-> > On s390x a sampling event is setup using a preset trigger and a large
-> > buffer. The hardware
-> >  - writes a samples (64 bytes) into this buffer
-> >    when a given number of CPU instructions has been executed.
-> >  - and triggers an interrupt when the buffer gets full.
-> > The trigger has just a few possible values.
-> >
-> > On s390x the counting event cycles is used to read out the numer of
-> > CPU cycles executed.
-> >
-> > On s390 above invocation created 2 events executed on 2 different
-> > PMU and the result are diffent values from two independently running
-> > PMUs which do not match in a consistent and reliably as on Intel:
-> >
-> >  # ./perf record  -e '{cycles,cycles}:Su' -- perf test -w brstack
+> index e2f1ce37c41ef..25f4e74c173be 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -426,14 +426,14 @@ LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void =
+*lsmrule)
+>  #endif /* CONFIG_AUDIT */
+>
+>  #ifdef CONFIG_BPF_SYSCALL
+> -LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, bool is_kernel, uns=
+igned int size)
 
-Hi Thomas,
-
-Thanks for reporting this! Could you try adding --count=3D100000 so that
-we're not using frequency mode and we expect the counts to look like
-100,000. For example, on my x86 laptop:
-```
-$ perf record --count=3D100000 -e '{cycles,cycles}:Su' -- perf test -w brst=
-ack
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.047 MB perf.data (712 samples) ]
-$ perf script
-            perf  635952 290271.436115:     100007 cycles:
-ffffffffada00080 [unknown] ([unknown])
-           perf  635952 290271.436115:     100007 cycles:
-ffffffffada00080 [unknown] ([unknown])
-           perf  635952 290271.436650:     100525 cycles:
-7f86352b01b3 _dl_map_object_from_fd+0x553
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.436650:     100525 cycles:
-7f86352b01b3 _dl_map_object_from_fd+0x553
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437088:      99866 cycles:
-7f86352cb827 strchr+0x27
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437088:      99866 cycles:
-7f86352cb827 strchr+0x27
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437376:      99912 cycles:
-7f86352cba74 strcmp+0x54
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437376:      99912 cycles:
-7f86352cba74 strcmp+0x54
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437509:     100279 cycles:
-7f86352cba3a strcmp+0x1a
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437509:     100279 cycles:
-7f86352cba3a strcmp+0x1a
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437559:      99760 cycles:
-7f86352bc39f _dl_check_map_versions+0x50f
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-           perf  635952 290271.437559:      99760 cycles:
-7f86352bc39f _dl_check_map_versions+0x50f
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-...
-```
-I'm particularly concerned if we see the cycles count very deviant
-from the 100000.
-
-> >    ...
-> >  # ./perf script
-> >    perf 2799437 92568.845118:  5508000 cycles:  3ffbcb898b6 do_lookup_x=
-+0x196
-> >    perf 2799437 92568.845119:  1377000 cycles:  3ffbcb898b6 do_lookup_x=
-+0x196
-> >    perf 2799437 92568.845120:  4131000 cycles:  3ffbcb897e8 do_lookup_x=
-+0xc8
-> >    perf 2799437 92568.845121:  1377000 cycles:  3ffbcb8a37c _dl_lookup_=
-symbol
-> >    perf 2799437 92568.845122:  1377000 cycles:  3ffbcb89558 check_match=
-+0x18
-> >    perf 2799437 92568.845123:  2754000 cycles:  3ffbcb89b2a do_lookup_x=
-+0x40a
-> >    perf 2799437 92568.845124:  1377000 cycles:  3ffbcb89b1e do_lookup_x=
-+0x3fe
-> >
-> > As can be seen the result match very often but not all the time
-> > make this test on s390 failing very, very often.
-
-Actually this is much more deviation than I'd expect. If we use
-task-clock softer/timer based event I see:
-```
-$ perf record --count=3D100000 -e '{task-clock,task-clock}:Su' -- perf
-test -w brstack
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.047 MB perf.data (712 samples) ]
-$ perf script
-            perf  636643 290571.807049:     801858 task-clock:
-7fdf48643439 _dl_map_object_from_fd+0x7d9
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-            perf  636643 290571.807049:     804012 task-clock:
-7fdf48643439 _dl_map_object_from_fd+0x7d9
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-            perf  636643 290571.807549:     499833 task-clock:
-7fdf4863eb9b _dl_map_object_deps+0x3eb
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-            perf  636643 290571.807549:     498236 task-clock:
-7fdf4863eb9b _dl_map_object_deps+0x3eb
-(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
-```
-So the count deviates by a few hundred, but your output seems to
-deviate by 4 million.
-
-So, I think the test needs to be more tolerant that should help your
-case. As Namhyung mentions I think there may be another bug lurking.
+I think we should add is_kernel to the end of the argument list. This will =
+cause
+fewer issues for existing users.
 
 Thanks,
-Ian
-
-> > This patch bypasses this test on s390.
-> >
-> > Output before:
-> >  # ./perf test 114
-> >  114: perf record tests                       : FAILED!
-> >  #
-> >
-> > Output after:
-> >  # ./perf test 114
-> >  114: perf record tests                       : Ok
-> >  #
-> >
-> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
->
-> Thanks for the fix.  I think Ian saw the same problem on other archs
-> too.  Maybe we need to enable it on supported archs only.
->
-> Thanks,
-> Namhyung
->
-> > ---
-> >  tools/perf/tests/shell/record.sh | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/=
-record.sh
-> > index ba8d873d3ca7..98b69820bc5f 100755
-> > --- a/tools/perf/tests/shell/record.sh
-> > +++ b/tools/perf/tests/shell/record.sh
-> > @@ -231,6 +231,12 @@ test_cgroup() {
-> >
-> >  test_leader_sampling() {
-> >    echo "Basic leader sampling test"
-> > +  if [ "$(uname -m)" =3D s390x ]
-> > +  then
-> > +    echo "Leader sampling skipped"
-> > +    ((skipped+=3D1))
-> > +    return
-> > +  fi
-> >    if ! perf record -o "${perfdata}" -e "{cycles,cycles}:Su" -- \
-> >      perf test -w brstack 2> /dev/null
-> >    then
-> > --
-> > 2.45.2
-> >
+Song
 
