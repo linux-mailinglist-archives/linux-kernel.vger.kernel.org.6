@@ -1,130 +1,319 @@
-Return-Path: <linux-kernel+bounces-539665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274CDA4A708
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:35:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95878A4A70B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2DA67A81FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7DE3B3B34
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7421BC58;
-	Sat,  1 Mar 2025 00:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28514F6C;
+	Sat,  1 Mar 2025 00:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FY2PJpq3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hQgdwNKW"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC689101DE;
-	Sat,  1 Mar 2025 00:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98468F5B
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789309; cv=none; b=ivteBFSz97Sh26qEz1QjB3Wnx72wijCq5TrJRPdx7vNaPfHTRZn64HXmc1BI2s2f7E1R/KbnzNxhCl7nmVyjuh1vH5eA7L97Du3Qqfp9k5GD4UX4+UMpDfHQrADQgpSD3X58aJI+CYR8+VccxiaCkBRgzMka8kGwPERufDwtYhw=
+	t=1740789376; cv=none; b=bw8XxvniPXyrrXEocOZRmD7sYRaCb7mK+jQBDzZFamO5Sxj4IKr6U7JBmplpXe0RNh5F3IyqVgyqDH0R5WV7aLUz3D/VOdldso0gaHEVzYAiTyOXZHqvcwfiXupcSHlE2L5BxYK2WLon2WGwl9y3Nk9/y4HMRVQTiYSXoBj0bic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789309; c=relaxed/simple;
-	bh=oO08XvxDvh9yXZMbXQYj3VQi37rW9n2zZIw9YiEE7Uk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BH6hgBQi9Hox2hDQInPboKGVZALKQf0fj++ZROFkpapAzOqWTYlxRxIUj9Tr+CGIvzzKStWVzLbMmQ5kNw1JLWxvQ+rk5vF6uwd3DuWrKa+l/6UvL3QCxJl6zXEf8MYiFJaRi18UTJMR8RpHqk4XT2yQWsq+nWXJtUrfv8Xq11I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FY2PJpq3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51SNkXwb003483;
-	Sat, 1 Mar 2025 00:35:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3u5iOjHH37gAJGo3OjTOw3DnWB0/L8G20x0zyhLilkc=; b=FY2PJpq3Ojcp2nef
-	sqNjTjqaWCfaSR1HIm+EF3X370TDHpBbAp7XCjzLXjIQJyQc0bOUx5RaMqHi/ExZ
-	4emqoxCY22nub/dN07skdJvrEJlmOZG8NYlxFSjiBgYQDf/Ekiby2FOHXJ4cG2qF
-	3+jVssulAzlyaTuitOXWQgVUsujgrUjdm/KBr5HMj0NFxiQVGCJARsBtVEgkDxTZ
-	uelb1pFFPeYA1XgMnuQ3Ek1HDi3pH2xcP9lW/OQh/M8YTyTcaYuFSkFpEhyeBctN
-	KdhW+EHXeGhoNuMaLpPnXNfihKWOMbzSzhA49JSUQKX50EYCw8UJ8Yrp08u22xZr
-	O1Si5Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453cg3su5n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Mar 2025 00:35:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5210Z3kI008398
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 1 Mar 2025 00:35:03 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Feb 2025 16:35:03 -0800
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH 2/2] usb: gadget: udc: Update USB gadget state during soft disconnect
-Date: Fri, 28 Feb 2025 16:34:52 -0800
-Message-ID: <20250301003452.2675360-3-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250301003452.2675360-1-quic_wcheng@quicinc.com>
-References: <20250301003452.2675360-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1740789376; c=relaxed/simple;
+	bh=2BrZxxNprGoxzLNC8/zcwyN9B35uloLJtrb+1opII4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NONeWWTk4O1Adn44Ta5f1GTV41M3YwfnekWIjLv8TEGj/yS6zGO8HMKA2nx9r3r1LlNyXT9mM7IXZfLIvg9b4IlWSyh7LUYwNGa1c8gdy3w4N/79EaQvrRV2sVej2ZdUkhdaXc6SwsIC5pZDCSG3V9Xh0i45jjD74b5KFpCfPV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hQgdwNKW; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2237a32c03aso33735ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:36:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740789374; x=1741394174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nhZuBN/9mPGzSLbve08MvU9t9kKFyaph33uC3d3/RVo=;
+        b=hQgdwNKW82yV5eCuyXHNuHgecbQ2P+5ROODqnbBCQZK/TVElnVbFuMB1II7RKOspeZ
+         5z0yOr0Z1bKaZcRY7H8ZSVA82n2M1Y2YpqE5i7dXhHso7Ghb4mCz5SfOhddhdHyqCCmv
+         qZLyjpAlTmrc6DlEGDChuP6UI6COZPR6O6eiSxYhhh0pT8oZWGiL6bNIU7W4E2Urqns2
+         qTed/b0rzIb7DOSAIUi+b7vJtrhZc48XqUvVUmLxvtjcE5tiGSahTCaMyqIeDU2Vvnrs
+         ZpAwxC0bJD/JBp85zuVdnK5+rjScVor9SpR1Ui6Y8uKEmNvCq5ELb8ax/pVKvNlprKU+
+         bGtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740789374; x=1741394174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nhZuBN/9mPGzSLbve08MvU9t9kKFyaph33uC3d3/RVo=;
+        b=Gs1QkYHFpc/g+BGyEUT09Yxd3Tci13RRMiAmzI3MnLgp+DGywSINf51CTtw3E3jQ4z
+         rYpzOUrGYMsboP3KG24ONMhfTTY8asPsEjJjgxtjqz8idZB8t9BzJkhyyeDYXuezeQ6+
+         H7OZAMeb8tt34x0hISkEsGfIvbIXoJ72uE2c14k8w5w54XALS1egN3xO7t7BNGLH/h+1
+         Egl217ZhCe3zkGD808fRSWUthjXHShZIwRQZe4gAtJ/vlV5NzhBINbbZwj5eWk2wssq/
+         X4bHaZlcohqUl46dbE5Gqti3zOT5Y8SSYKuO+AwYV1La1VbN76ep1bSEJxG3aMqFBcEM
+         X/Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPZMaL87eRr1ANfzwskkOrYhOuXby9yk8rIy0SQ45NJaL4HLb3q/TNRNsnYP/OAS+AcfmCIwHO/SL5Ah4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNUmyYCttD8+/zbOnUCLhr07OZTPiA+rnPca9SxMQNFjECnCni
+	9YsPGb5+xh5Z5iIgTwpp42FaPvruNmMDD1ZpKRmczKfzAg/av0eg5/Q5miLrrN6Z5Hj8y1NVk/l
+	39rqE/2srs2pH8Ki3bE8kc6hiWXkf0h1lCJbO
+X-Gm-Gg: ASbGncsWVLBSBooHJFsHDRd7idJJHWP5G4uuEN4meTeC4CfqYLQ84d4hiLwjHtaUEUG
+	f70tGPsy+/cC7IkmYgauwNVuGAucDdpw84rUXb2N62XuGPAOjI9hus6dcTlWqQ55Xjv0qsxb3bf
+	yUpw1zw967GRjg/iydtGqFFmm2ro4=
+X-Google-Smtp-Source: AGHT+IH6/MjikxHqgtWJQlJWlCRLE9/MgRb8A6dWMHQRW5SnmhLBv0G/33lLfpQgGnGpA2izds5R7swz/srEB5Hwek8=
+X-Received: by 2002:a17:903:44d:b0:223:7f8f:439b with SMTP id
+ d9443c01a7336-22385a296a5mr498795ad.29.1740789373454; Fri, 28 Feb 2025
+ 16:36:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SlKe0RimQaAk4_6b7_mQieH1ZutVW6kU
-X-Proofpoint-ORIG-GUID: SlKe0RimQaAk4_6b7_mQieH1ZutVW6kU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-28_07,2025-02-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- spamscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 bulkscore=0 impostorscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503010002
+References: <20250228062241.303309-1-tmricht@linux.ibm.com> <Z8JRC2oSs8i53t_s@google.com>
+In-Reply-To: <Z8JRC2oSs8i53t_s@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 28 Feb 2025 16:36:02 -0800
+X-Gm-Features: AQ5f1Jo27S9_o_sqEYMlEN5u8ZrPMA3seerGcVGPfEDIZhYh_atDNzd8GgwU5_8
+Message-ID: <CAP-5=fUqs=mxdgQX0Vx=D0weQSitXh6a8DcW2FycDEk6J-=RtA@mail.gmail.com>
+Subject: Re: [PATCH] perf/test: Skip leader sampling for s390
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-perf-users@vger.kernel.org, acme@kernel.org, 
+	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
+	hca@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the soft disconnect scenarios, the USB connection will be lost
-momentarily, so the proper gadget state should be reflected during the time
-the connection is unavailable.  Add a flush_work() call, to ensure that
-gadget->work is completed before continuing with the UDC unbind sequence.
-Since usb_gadget_set_state() queues work to a workqueue, depending on when
-the queue is scheduled, this avoids a possible use after freed scenario as
-the USB gadget will most likely be freed shortly after the UDC driver is
-unbounded.
+On Fri, Feb 28, 2025 at 4:13=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> On Fri, Feb 28, 2025 at 07:22:41AM +0100, Thomas Richter wrote:
+> > In tree linux-next
+> > the perf test case 114 'perf record tests' has a subtest
+> > named 'Basic leader sampling test' which always fails on s390.
+> > Root cause is this invocation
+> >
+> >  # perf record -vv -e '{cycles,cycles}:Su' -- perf test -w brstack
+> >
+> >  ...
+> >  In the debug output the following 2 event are installed:
+> >
+> >  ------------------------------------------------------------
+> >  perf_event_attr:
+> >   type                             0 (PERF_TYPE_HARDWARE)
+> >   size                             136
+> >   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
+> >   { sample_period, sample_freq }   4000
+> >   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFI=
+ER
+> >   read_format                      ID|GROUP|LOST
+> >   disabled                         1
+> >   exclude_kernel                   1
+> >   exclude_hv                       1
+> >   freq                             1
+> >   sample_id_all                    1
+> >  ------------------------------------------------------------
+> >  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 =3D 5
+> >  ------------------------------------------------------------
+> >  perf_event_attr:
+> >   type                             0 (PERF_TYPE_HARDWARE)
+> >   size                             136
+> >   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
+> >   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFI=
+ER
+> >   read_format                      ID|GROUP|LOST
+> >   exclude_kernel                   1
+> >   exclude_hv                       1
+> >   sample_id_all                    1
+> >  ------------------------------------------------------------
+> >  sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8 =3D 6
+> >  ...
+> >
+> > The first event is the group leader and is installed as sampling event.
+> > The secound one is group member and is installed as counting event.
+> >
+> > Namhyung Kim confirms this observation:
+> > > Yep, the syntax '{event1,event2}:S' is for group leader sampling whic=
+h
+> > > reduces the overhead of PMU interrupts.  The idea is that those event=
+s
+> > > are scheduled together so sampling is enabled only for the leader
+> > > (usually the first) event and it reads counts from the member events
+> > > using PERF_SAMPLE_READ.
+> > >
+> > > So they should have the same counts if it uses the same events in a
+> > > group.
+> >
+> > However this does not work on s390. s390 has one dedicated sampling PMU
+> > which supports only one event. A different PMU is used for counting.
+> > Both run concurrently using different setups and frequencies.
+> >
+> > On s390x a sampling event is setup using a preset trigger and a large
+> > buffer. The hardware
+> >  - writes a samples (64 bytes) into this buffer
+> >    when a given number of CPU instructions has been executed.
+> >  - and triggers an interrupt when the buffer gets full.
+> > The trigger has just a few possible values.
+> >
+> > On s390x the counting event cycles is used to read out the numer of
+> > CPU cycles executed.
+> >
+> > On s390 above invocation created 2 events executed on 2 different
+> > PMU and the result are diffent values from two independently running
+> > PMUs which do not match in a consistent and reliably as on Intel:
+> >
+> >  # ./perf record  -e '{cycles,cycles}:Su' -- perf test -w brstack
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- drivers/usb/gadget/udc/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi Thomas,
 
-diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-index 4b3d5075621a..7e401cb5a265 100644
---- a/drivers/usb/gadget/udc/core.c
-+++ b/drivers/usb/gadget/udc/core.c
-@@ -775,8 +775,10 @@ static int usb_gadget_disconnect_locked(struct usb_gadget *gadget)
- 	}
- 
- 	ret = gadget->ops->pullup(gadget, 0);
--	if (!ret)
-+	if (!ret) {
- 		gadget->connected = 0;
-+		usb_gadget_set_state(gadget, USB_STATE_NOTATTACHED);
-+	}
- 
- 	mutex_lock(&udc_lock);
- 	if (gadget->udc->driver)
-@@ -1669,6 +1671,7 @@ static void gadget_unbind_driver(struct device *dev)
- 		synchronize_irq(gadget->irq);
- 	mutex_unlock(&udc->connect_lock);
- 
-+	flush_work(&gadget->work);
- 	udc->driver->unbind(gadget);
- 
- 	mutex_lock(&udc->connect_lock);
+Thanks for reporting this! Could you try adding --count=3D100000 so that
+we're not using frequency mode and we expect the counts to look like
+100,000. For example, on my x86 laptop:
+```
+$ perf record --count=3D100000 -e '{cycles,cycles}:Su' -- perf test -w brst=
+ack
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.047 MB perf.data (712 samples) ]
+$ perf script
+            perf  635952 290271.436115:     100007 cycles:
+ffffffffada00080 [unknown] ([unknown])
+           perf  635952 290271.436115:     100007 cycles:
+ffffffffada00080 [unknown] ([unknown])
+           perf  635952 290271.436650:     100525 cycles:
+7f86352b01b3 _dl_map_object_from_fd+0x553
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.436650:     100525 cycles:
+7f86352b01b3 _dl_map_object_from_fd+0x553
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437088:      99866 cycles:
+7f86352cb827 strchr+0x27
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437088:      99866 cycles:
+7f86352cb827 strchr+0x27
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437376:      99912 cycles:
+7f86352cba74 strcmp+0x54
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437376:      99912 cycles:
+7f86352cba74 strcmp+0x54
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437509:     100279 cycles:
+7f86352cba3a strcmp+0x1a
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437509:     100279 cycles:
+7f86352cba3a strcmp+0x1a
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437559:      99760 cycles:
+7f86352bc39f _dl_check_map_versions+0x50f
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+           perf  635952 290271.437559:      99760 cycles:
+7f86352bc39f _dl_check_map_versions+0x50f
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+...
+```
+I'm particularly concerned if we see the cycles count very deviant
+from the 100000.
+
+> >    ...
+> >  # ./perf script
+> >    perf 2799437 92568.845118:  5508000 cycles:  3ffbcb898b6 do_lookup_x=
++0x196
+> >    perf 2799437 92568.845119:  1377000 cycles:  3ffbcb898b6 do_lookup_x=
++0x196
+> >    perf 2799437 92568.845120:  4131000 cycles:  3ffbcb897e8 do_lookup_x=
++0xc8
+> >    perf 2799437 92568.845121:  1377000 cycles:  3ffbcb8a37c _dl_lookup_=
+symbol
+> >    perf 2799437 92568.845122:  1377000 cycles:  3ffbcb89558 check_match=
++0x18
+> >    perf 2799437 92568.845123:  2754000 cycles:  3ffbcb89b2a do_lookup_x=
++0x40a
+> >    perf 2799437 92568.845124:  1377000 cycles:  3ffbcb89b1e do_lookup_x=
++0x3fe
+> >
+> > As can be seen the result match very often but not all the time
+> > make this test on s390 failing very, very often.
+
+Actually this is much more deviation than I'd expect. If we use
+task-clock softer/timer based event I see:
+```
+$ perf record --count=3D100000 -e '{task-clock,task-clock}:Su' -- perf
+test -w brstack
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.047 MB perf.data (712 samples) ]
+$ perf script
+            perf  636643 290571.807049:     801858 task-clock:
+7fdf48643439 _dl_map_object_from_fd+0x7d9
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+            perf  636643 290571.807049:     804012 task-clock:
+7fdf48643439 _dl_map_object_from_fd+0x7d9
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+            perf  636643 290571.807549:     499833 task-clock:
+7fdf4863eb9b _dl_map_object_deps+0x3eb
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+            perf  636643 290571.807549:     498236 task-clock:
+7fdf4863eb9b _dl_map_object_deps+0x3eb
+(/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+```
+So the count deviates by a few hundred, but your output seems to
+deviate by 4 million.
+
+So, I think the test needs to be more tolerant that should help your
+case. As Namhyung mentions I think there may be another bug lurking.
+
+Thanks,
+Ian
+
+> > This patch bypasses this test on s390.
+> >
+> > Output before:
+> >  # ./perf test 114
+> >  114: perf record tests                       : FAILED!
+> >  #
+> >
+> > Output after:
+> >  # ./perf test 114
+> >  114: perf record tests                       : Ok
+> >  #
+> >
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+>
+> Thanks for the fix.  I think Ian saw the same problem on other archs
+> too.  Maybe we need to enable it on supported archs only.
+>
+> Thanks,
+> Namhyung
+>
+> > ---
+> >  tools/perf/tests/shell/record.sh | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/=
+record.sh
+> > index ba8d873d3ca7..98b69820bc5f 100755
+> > --- a/tools/perf/tests/shell/record.sh
+> > +++ b/tools/perf/tests/shell/record.sh
+> > @@ -231,6 +231,12 @@ test_cgroup() {
+> >
+> >  test_leader_sampling() {
+> >    echo "Basic leader sampling test"
+> > +  if [ "$(uname -m)" =3D s390x ]
+> > +  then
+> > +    echo "Leader sampling skipped"
+> > +    ((skipped+=3D1))
+> > +    return
+> > +  fi
+> >    if ! perf record -o "${perfdata}" -e "{cycles,cycles}:Su" -- \
+> >      perf test -w brstack 2> /dev/null
+> >    then
+> > --
+> > 2.45.2
+> >
 
