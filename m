@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-540146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE191A4AE61
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:42:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470B6A4AE74
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:43:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF2816F2B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23073AFAC4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F01DE2B5;
-	Sat,  1 Mar 2025 23:42:46 +0000 (UTC)
-Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A511E9B37;
+	Sat,  1 Mar 2025 23:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwJGGqM9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6435B1D63E1
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 23:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EE51DB546;
+	Sat,  1 Mar 2025 23:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740872566; cv=none; b=Gf/EB3KcEo3epbzLD1/WuTkP0c2t70qYLd+vzp2HvEy3bzIaqWNQGbcuyxF6ICAHs5yxkZjK0ym+1l6n0YPl+nCcQkm2I/YmkGI3H2bzQeB5dLQSZw8zYne6wuSbd0xybH5kzxmBqnOGS0fJ26+ptEl2PML1XjTeB6SFR4RRn2E=
+	t=1740872605; cv=none; b=XP+gmBwlu+xupUJZRNDIHpCLwPjtPyMAcvKXWjTxNDCAlcUSI+XQLal9F1N6PuDfgu9DUX9ZMA0yp5S+fCrU8O9YuRvTenSY3v+yVNi+HI9nB76h+RwwtVAcIkGMiqZexivM/+wQp8NfnyGXwCgO8VZNRm7jZNGfqZyzXlXEoB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740872566; c=relaxed/simple;
-	bh=CPzAXfmab4Y3sxL5bWqWkwAx2PvvCf7JXcILW1YZxg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AHmJfiqYwwddNAOzQ+qSErRYgPrj39lRVjclV38ettUWmzzePgX9/+d4uqyNClCwmaeL9tkwnRMZQgSll5N3IrOySBe8x55knIq1VA4RBQwrrIYRnRR6UZ6Fg4BWpaymkLR5UHz4cQeG8LHxY9mbDdIbeZMHngWUD7WAABQ81f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([61.141.101.248])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67C39AD700005CF7; Sat, 2 Mar 2025 07:40:10 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7909233408239
-X-SMAIL-UIID: AF0716336E1348D7A05097F0E70EBEE2-20250302-074010-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] kernel BUG in try_to_unmap_one
-Date: Sun,  2 Mar 2025 07:40:01 +0800
-Message-ID: <20250301234002.2893-1-hdanton@sina.com>
-In-Reply-To: <67c38d10.050a0220.dc10f.016d.GAE@google.com>
-References: 
+	s=arc-20240116; t=1740872605; c=relaxed/simple;
+	bh=K9r+CeRz9jBowVrKSobN2M/+LfenUmgb4FvoMordLq4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c5d+/TcQITI+DtzIJ5Sb6ITa7o6wsPF7vV64SwYp5yNs6Ii8gfu7yeVcV2aqWJgBjEkyh2Sl0WaVCFa1SHRF7piPhN7293UAlcrcHcWtuzXi8YrdtWE4jZm+bhWTy9AwukA4lEsNCHxuBcLqT0e+sNkXKo1cP5BaxRTqFad7Tks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwJGGqM9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 55CBAC4CEDD;
+	Sat,  1 Mar 2025 23:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740872604;
+	bh=K9r+CeRz9jBowVrKSobN2M/+LfenUmgb4FvoMordLq4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=KwJGGqM9zIz5uDWkc9bJ2sPJWcUbMl5OSO3a/lwLsHw0KC62Pw4tnrDhW7absHTL/
+	 eWNHbkUHg+ZRk5ufAGFX2x1eZ5rT9/NCmHlDDE17aPOEnx5zYdzGp/Z+yuvbTIbZxD
+	 8o2SyW+l/EOlLbLNF2rm4fzlrCDOK+MKFG2flRnK5V78pPT4g2lNcnesz5xkpUAOqx
+	 erIIpTmaSdnYAiYecSYEZCdzO2jce+sDZXL/A+0jBkAXlzBymLQ0Wxrqi8rAdfxRgF
+	 7Ziwsx1N3KUVRr6RJeCIItgSt9zhL79XKT4g9gsMIyHuSXZYazcpW6SL0NfhYBVyVl
+	 sKytPvQdW2wrg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE21C021B8;
+	Sat,  1 Mar 2025 23:43:24 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Subject: [PATCH v3 0/4] Add Xiaomi Poco F1 touchscreen support
+Date: Sat, 01 Mar 2025 17:43:06 -0600
+Message-Id: <20250301-pocof1-touchscreen-support-v3-0-af01c3b30b55@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIqbw2cC/43QwW7DIAwG4FeJOI8JnBBCT3uPaQdwnIWqDRkQ1
+ Krqu4+0h12maTf/tvRZ9o0lip4SOzQ3Fqn45MNSQ/vSMJzt8kncjzUzENBJITRfA4ZJ8hw2nBN
+ GooWnbV1DzBy1Ait7wBGBVWCNNPnLA3//qHn2KYd4fewqcu/+iy2SCz66VjqQgxxQvR0DnRKdi
+ o32+IrhzHa9wI8IYvhThCoq25PWraGp+028Pw+I9LXVp+TnFczZRLzOzz4fGhTketWZjpQZzdB
+ 2dtLo7F72YMgIqR0oKyt2/wYyMb/xaQEAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Joel Selvaraj <foss@joelselvaraj.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740872603; l=2644;
+ i=foss@joelselvaraj.com; s=20241007; h=from:subject:message-id;
+ bh=K9r+CeRz9jBowVrKSobN2M/+LfenUmgb4FvoMordLq4=;
+ b=h5QRTpLlN5FZdTNMPQYqVJJpB7q3bFovbFwyIclaQOZoTTn2kogF5215WuTOkS4aWVdMwa6kH
+ lErUZiNdq5nBzhIYgZlxtqYfyHx50a1jqG6l6QYNVpv5tWb2fAaLTCI
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=pqYvzJftxCPloaoUbVsfQE7Gwv8bynZPy8mjYohwMCc=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20241007 with
+ auth_id=238
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-On Sat, 01 Mar 2025 14:41:20 -0800
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12faf7f8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=fb86166504f57eff29d7
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com
-> 
->  evict+0x4e8/0x9a0 fs/inode.c:806
->  __dentry_kill+0x20d/0x630 fs/dcache.c:660
->  dput+0x19f/0x2b0 fs/dcache.c:902
->  __fput+0x60b/0x9f0 fs/file_table.c:472
->  task_work_run+0x24f/0x310 kernel/task_work.c:227
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
->  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ------------[ cut here ]------------
-> kernel BUG at mm/rmap.c:1858!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 6053 Comm: syz.4.27 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-> RIP: 0010:try_to_unmap_one+0x3d0d/0x3fa0 mm/rmap.c:1858
-> Code: c7 c7 80 93 c3 8e 48 89 da e8 ef f3 19 03 e9 68 ca ff ff e8 b5 12 ab ff 48 8b 7c 24 20 48 c7 c6 80 17 36 8c e8 94 d2 f5 ff 90 <0f> 0b e8 9c 12 ab ff 48 8b 7c 24 18 48 c7 c6 40 1c 36 8c e8 7b d2
-> RSP: 0018:ffffc9000b1be9c0 EFLAGS: 00010246
-> RAX: 367eb4645686ad00 RBX: 00000000f4000000 RCX: ffffc9000b1be503
-> RDX: 0000000000000004 RSI: ffffffff8c2aaf60 RDI: ffffffff8c8156e0
-> RBP: ffffc9000b1bedf0 R08: ffffffff903da477 R09: 1ffffffff207b48e
-> R10: dffffc0000000000 R11: fffffbfff207b48f R12: 8000000053c008e7
-> R13: dffffc0000000000 R14: ffffea00014f0000 R15: ffffea00014f0030
-> FS:  00007f4d2783e6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000110c465fa1 CR3: 000000002a1f6000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __rmap_walk_file+0x420/0x5f0 mm/rmap.c:2774
->  try_to_unmap+0x219/0x2e0
->  unmap_folio+0x183/0x1f0 mm/huge_memory.c:3053
->  __folio_split+0x849/0x16d0 mm/huge_memory.c:3696
->  truncate_inode_partial_folio+0x9b1/0xdc0 mm/truncate.c:234
->  shmem_undo_range+0x82f/0x1820 mm/shmem.c:1143
+In the first patch, I have updated the edt-ft5x06 touchscreen binding 
+documentation. In Xiaomi Poco F1(qcom/sdm845-xiaomi-beryllium-ebbg.dts),
+the FocalTech FT8719 touchscreen is integrally connected to the display 
+panel (EBBG FT8719) and thus should be power sequenced together with 
+display panel for proper functioning using the panel property. Since the
+edt-ft5x06 touchscreen binding uses almost all the properties present in 
+touchscreen.yaml, let's remove additionalProperties: false and use 
+unevaluatedProperties to include all the properties, including the needed
+panel property.
 
-Given folio_test_hugetlb(folio) [1], what is weird is hugetlb page in a
-shmem mapping.
+In the second patch, I have enabled the qupv3_id_1 and gpi_dma1 as they
+are required for configuring touchscreen. Also added the pinctrl
+configurations. These are common for both the Poco F1 Tianma and EBBG
+panel variant.
 
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/mm/rmap.c?id=e5d3fd687aac#n1851
+In the subsequent patches, I have enabled support for the Novatek NT36672a
+touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+Tianma and EBBG panel variant respectively.
 
->  shmem_truncate_range mm/shmem.c:1237 [inline]
->  shmem_fallocate+0x431/0xf20 mm/shmem.c:3663
->  vfs_fallocate+0x623/0x7a0 fs/open.c:338
->  madvise_remove mm/madvise.c:1034 [inline]
->  madvise_vma_behavior mm/madvise.c:1263 [inline]
->  madvise_walk_vmas mm/madvise.c:1505 [inline]
->  madvise_do_behavior+0x1ec6/0x3b90 mm/madvise.c:1657
->  do_madvise mm/madvise.c:1755 [inline]
->  __do_sys_madvise mm/madvise.c:1763 [inline]
->  __se_sys_madvise mm/madvise.c:1761 [inline]
->  __x64_sys_madvise+0x11b/0x140 mm/madvise.c:1761
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+---
+Changes in v3:
+- Fix SoB email id mismatch (suggested by Krzysztof Kozlowski)
+- Use unevaluatedProperties instead additionalProperties in dt-binding (suggested by Krzysztof Kozlowski)
+- Link to v2: https://lore.kernel.org/r/20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com
+
+Changes in v2:
+- Fixed the missing "panel" property dt-binding error reported by Rob Herring's bot.
+- Change the "input-enable" property to "output-disable" in qcom/sdm845-xiaomi-beryllium-common.dtsi
+  (Based on a patch suggested by Konrad Dybcio).
+- Link to v1: https://lore.kernel.org/r/20241007-pocof1-touchscreen-support-v1-0-db31b21818c5@joelselvaraj.com
+
+---
+Joel Selvaraj (4):
+      dt-bindings: input: touchscreen: edt-ft5x06: use unevaluatedProperties
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-common: add touchscreen related nodes
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma: introduce touchscreen support
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-ebbg: introduce touchscreen support
+
+ .../bindings/input/touchscreen/edt-ft5x06.yaml     |  9 +----
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   | 39 ++++++++++++++++++++++
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-ebbg.dts | 23 +++++++++++++
+ .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 +++++++++++++
+ 4 files changed, 86 insertions(+), 8 deletions(-)
+---
+base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+change-id: 20241007-pocof1-touchscreen-support-c752a162cdc2
+
+Best regards,
+-- 
+Joel Selvaraj <foss@joelselvaraj.com>
+
+
 
