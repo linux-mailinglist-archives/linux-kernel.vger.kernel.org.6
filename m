@@ -1,164 +1,178 @@
-Return-Path: <linux-kernel+bounces-540131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFEA1A4AE1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:06:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A91A4AE1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D72D3B4FBB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925E916ED2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC641E8335;
-	Sat,  1 Mar 2025 22:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E631E98F3;
+	Sat,  1 Mar 2025 22:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWrWeOu8"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hma9DBHL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8C516F271;
-	Sat,  1 Mar 2025 22:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5042B2DA;
+	Sat,  1 Mar 2025 22:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740866768; cv=none; b=YSfnAutsy/Su7afi41o0DYIMx7YCCdDllV+aHebgzGYwPMD2i2FUq3A2Kxp1Q1wGkPFK+DvvB/D153JXSqCB/ICaZE93WVpUW5QTVNgH5LvBKHHhGE1jQVWTdSnOaPpuAE+HYxwyauU+BHHXlyVcB9gWizCNaAvAoDKIh4P+kho=
+	t=1740866958; cv=none; b=he6OH4YecrNQoXAtdmOVXhG3rb4HAtDprN5Xj9qx2nPc191dnxev14DAPW3R2bS4uxio1GaBvSV20r7gRn4ma64aEfC50VYCz+GIY6F2jJfpfCYtUxial+KsKZPzBXmG3inF2DYIn1OlnI8NY5NL4yzaG4zV4sc+7SuUohAirIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740866768; c=relaxed/simple;
-	bh=k0IF4TI1s27h+CuL7qGATdK6mdl2VzdYKRR18nSNV4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Safk/JyVx+zBERx+h3xByTWv8Yy48LEsLAw424b+1lGE44wdDvvpYI9G30f/EcxpuF7wbMjIFcx37Ow0pcz9cP6IsX4XkNYeuV0LNAQoG3tAuWP4Due6nqouo8wZQ1OOvUmLwN9BSR66+Vf7ZJm+iJpuz0+cIZQU/xTt6Gze0yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWrWeOu8; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46c8474d8daso29282511cf.3;
-        Sat, 01 Mar 2025 14:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740866765; x=1741471565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kgbfyzwgi4YaDDp7Z2cDbzPB9by/mlp/Ew++4xg1OP4=;
-        b=jWrWeOu8fcYohFzfOUkZ7j3lijnQJBVcOc2SintVVkxPoKqdNozQF89s2gvvUqG1HW
-         5NFwrqv4cs1QRzjiKSp7tVi1auHXlJQSa1JyrFB1X2WdaSC2l4d+YO8UWYCfqh2RzYYs
-         NiVREbhPSTm3JqjwAfPEj6S4izneC/MUrgu7JNT/WuPOGrYadGM4IgpyNK20f4FOKmXI
-         O5dZZgqhe8lNJ+zZhlWhynUd3HAewYGp5REWqR2nyPc/cWK5dvt8Mr+56aOEM1H07nhS
-         qysqNU8sMGlNBWZfpQ4Sgyiw/2xALZN+CupuIYrnJtMCnmYKO2DDVloBLNJa3yPyMfDH
-         agfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740866765; x=1741471565;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kgbfyzwgi4YaDDp7Z2cDbzPB9by/mlp/Ew++4xg1OP4=;
-        b=TI+dVC9OSQVWSGdeT5tSU1K4lO4Z5EsQAtv3xhLzCivqg1c3/jExti7+OhMkYxIApn
-         2yJG3FHe+uAwvVc4vBwGxXCrb/DHZ75IHG+sweTKmeGZ4ZEB+6UemcRz9pTOZUXnXjJq
-         zQlKXoPaL8m4BOEqbNwg48Nnh+uuIEX0rK50y4c1ywgrrmhzf76jFeHxlRa+qTz8nqAz
-         R1Rx1lmA2oHqxR89KYLgO/B8/pqN4HG7yIGvnmQN/7jbCVmRvpJoFR03CaGwKimeOXJq
-         RCCAZdLfrhDhgpCHc5etV0L6h+p1yuxcuZ6zdIe1yEI+MQ0hjd+T2yRWNk68Va4mh0/Q
-         UhHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUayXaeLIlutyGGLeq2Vuz4gYgTj4xvMGuempqga2G0K4pC74LuD9I3aFmBxx55RvQLbv20f4xn96k0zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz75X1XIksfTlPXhDIwiCjQD9zgFpSvq0ToRDW2tAlaDfYSnFHM
-	LByHCPRejYJ1wSZr4UnEFkh880wAPrJ8HqUMZn5L9uQXLWZlIIhF
-X-Gm-Gg: ASbGnctgnb4ZOWHUtEoQAilhoyQETh2JL74H8mc4jCJvi+v4AXenuctJ7iYOJpYaXU/
-	fPS5Sx/18kVzazENm9mwqdlRYe6yhdv1YlVfarF+5jwjOVkUmsXRvjkQrdX3Klr8ttoFFw+GRSh
-	AC9FlKLZrQJclPupECWJCVVQ/Z7/6pDYbJM2C4P6VPW7r2POZcET6hW4/nUd46jDziU/EZp3bQQ
-	dWXCxZiDHA3P0tyThosWF5SFQDIkknwQH/79jPxRdNLGajaTIkSOKzs53TK0pBr2TBBWlDP8dys
-	nEm/2pef14EKGh8KG4uE/He8CdkKAHsY2Xu+ZHGzlQ4yhA==
-X-Google-Smtp-Source: AGHT+IERib8erINFgErq49CXeKJmSuKuQ7NCMtX/7SMSnrTvjs7UzYWAhGUNb1ifruF+bJ9bv1JRDQ==
-X-Received: by 2002:a05:6214:2aad:b0:6e8:9feb:76e6 with SMTP id 6a1803df08f44-6e8a0d2c8f1mr140249656d6.16.1740866765463;
-        Sat, 01 Mar 2025 14:06:05 -0800 (PST)
-Received: from iman-pc.home ([142.198.73.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ec158sm36549756d6.119.2025.03.01.14.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 14:06:05 -0800 (PST)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Seyediman Seyedarab <ImanDevel@gmail.com>
-Subject: [PATCH] kbuild: fix argument parsing to properly handle --file
-Date: Sat,  1 Mar 2025 17:07:02 -0500
-Message-ID: <20250301220702.16055-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740866958; c=relaxed/simple;
+	bh=uHtN/VWPtcnOkEo25Y7vtTV3AjhF+AbqcDWtH/62Pyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQvaQBywhlXGIgNhGb6TvwuliWOqbQYUxyBCqFOclm3drLnb86Yo3+1apXjGe2aOVTbZbBnGeZz6ep/J7V5CJgT2HL2FPbu3sMrVgue0hoO5sBYX5oxTU6y2dZs3nZbhXjsU9IlLsO4b1O9tg7POl6fdt7svnmZiLzZPJoruoxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hma9DBHL; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740866956; x=1772402956;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uHtN/VWPtcnOkEo25Y7vtTV3AjhF+AbqcDWtH/62Pyc=;
+  b=Hma9DBHL2gHR01zanHENH9r4wuo6ke49pYw15ToBOhPtuYX8IxwMprc4
+   oto9zn2kyhHXqt7he4s52qzjYvHPcFYk6sIl1JdvHucJZOwRtQUPe6KPO
+   YpXpLZkKSnj0olaIN6Bpqcsq4NH27JPR7+ysOiVdpPVQ5ABPBORnrXF+v
+   lVR/gl8ROGd06r7JyO1qmiBIM13YT4XjYwVJXLhIyBe37Dz98Qqxuyt80
+   dADrEHHUcvx06bDAOUcLyqjCHTmh8+1GwqtLFVgnqI4rIWRZs9TZ+euT3
+   hlBLFBrUGvqKO+U2M0eY8bQ+eCcIGlQJky1UhbtPBNjFHx0Ze4Gl+gRdv
+   Q==;
+X-CSE-ConnectionGUID: pCpEc7r2Q9+/i2SvemWH4g==
+X-CSE-MsgGUID: uZzoarOHTLqyI4MwiDrXJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="59185852"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="59185852"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 14:09:16 -0800
+X-CSE-ConnectionGUID: joFekOF/Tw+4gQQOZiONUA==
+X-CSE-MsgGUID: /My03QWvQ/eg9mZBHYEqZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154820830"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 01 Mar 2025 14:09:14 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toV1E-000GlW-10;
+	Sat, 01 Mar 2025 22:09:12 +0000
+Date: Sun, 2 Mar 2025 06:08:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, linus.walleij@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
+	Pratap Nirujogi <pratap.nirujogi@amd.com>
+Subject: Re: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
+Message-ID: <202503020508.tSquVmjP-lkp@intel.com>
+References: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 
-The script previously assumed --file was always the first argument,
-which caused issues when it appeared later. This patch updates the
-parsing logic to scan all arguments to find --file, sets the config
-file correctly, and resets the argument list with the remaining
-commands.
+Hi Pratap,
 
-It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=$FN
-to make oldconfig.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
----
- scripts/config | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+[auto build test ERROR on linusw-pinctrl/devel]
+[also build test ERROR on linusw-pinctrl/for-next linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/scripts/config b/scripts/config
-index ff88e2faefd3..ea475c07de28 100755
---- a/scripts/config
-+++ b/scripts/config
-@@ -32,6 +32,7 @@ commands:
-                              Disable option directly after other option
- 	--module-after|-M beforeopt option
-                              Turn option into module directly after other option
-+	--refresh            Refresh the config using old settings
- 
- 	commands can be repeated multiple times
- 
-@@ -124,16 +125,22 @@ undef_var() {
- 	txt_delete "^# $name is not set" "$FN"
- }
- 
--if [ "$1" = "--file" ]; then
--	FN="$2"
--	if [ "$FN" = "" ] ; then
--		usage
-+FN=.config
-+CMDS=()
-+while [[ $# -gt 0 ]]; do
-+	if [ "$1" = "--file" ]; then
-+		if [ "$2" = "" ]; then
-+			usage
-+		fi
-+		FN="$2"
-+		shift 2
-+	else
-+		CMDS+=("$1")
-+		shift
- 	fi
--	shift 2
--else
--	FN=.config
--fi
-+done
- 
-+set -- "${CMDS[@]}"
- if [ "$1" = "" ] ; then
- 	usage
- fi
-@@ -217,9 +224,8 @@ while [ "$1" != "" ] ; do
- 		set_var "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
- 		;;
- 
--	# undocumented because it ignores --file (fixme)
- 	--refresh)
--		yes "" | make oldconfig
-+		yes "" | make oldconfig KCONFIG_CONFIG=$FN
- 		;;
- 
- 	*)
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/pinctrl-amd-isp411-Add-amdisp-GPIO-pinctrl/20250301-011050
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20250228165749.3476210-1-pratap.nirujogi%40amd.com
+patch subject: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
+config: arc-randconfig-002-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020508.tSquVmjP-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020508.tSquVmjP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020508.tSquVmjP-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/pinctrl/pinctrl-amdisp.c: In function 'amdisp_gpiochip_add':
+>> drivers/pinctrl/pinctrl-amdisp.c:196:13: error: 'struct gpio_chip' has no member named 'of_node'; did you mean 'fwnode'?
+     196 |         gc->of_node             = pdev->dev.of_node;
+         |             ^~~~~~~
+         |             fwnode
+   In file included from drivers/pinctrl/pinctrl-amdisp.c:42:
+   drivers/pinctrl/pinctrl-amd.h: At top level:
+>> drivers/pinctrl/pinctrl-amd.h:1478:34: warning: 'pmx_functions' defined but not used [-Wunused-const-variable=]
+    1478 | static const struct amd_function pmx_functions[] = {
+         |                                  ^~~~~~~~~~~~~
+>> drivers/pinctrl/pinctrl-amd.h:882:30: warning: 'kerncz_groups' defined but not used [-Wunused-const-variable=]
+     882 | static const struct pingroup kerncz_groups[] = {
+         |                              ^~~~~~~~~~~~~
+>> drivers/pinctrl/pinctrl-amd.h:111:38: warning: 'kerncz_pins' defined but not used [-Wunused-const-variable=]
+     111 | static const struct pinctrl_pin_desc kerncz_pins[] = {
+         |                                      ^~~~~~~~~~~
+
+
+vim +196 drivers/pinctrl/pinctrl-amdisp.c
+
+   173	
+   174	static int amdisp_gpiochip_add(struct platform_device *pdev,
+   175				       struct amdisp_pinctrl *pctrl)
+   176	{
+   177		struct gpio_chip *gc = &pctrl->gc;
+   178		struct pinctrl_gpio_range *grange = &pctrl->gpio_range;
+   179		int ret;
+   180	
+   181		gc->label		= dev_name(pctrl->dev);
+   182		gc->owner		= THIS_MODULE;
+   183		gc->parent		= &pdev->dev;
+   184		gc->names		= amdisp_range_pins_name;
+   185		gc->request		= gpiochip_generic_request;
+   186		gc->free		= gpiochip_generic_free;
+   187		gc->get_direction	= amdisp_gpio_get_direction;
+   188		gc->direction_input	= amdisp_gpio_direction_input;
+   189		gc->direction_output	= amdisp_gpio_direction_output;
+   190		gc->get			= amdisp_gpio_get;
+   191		gc->set			= amdisp_gpio_set;
+   192		gc->set_config		= amdisp_gpio_set_config;
+   193		gc->base		= -1;
+   194		gc->ngpio		= ARRAY_SIZE(amdisp_range_pins);
+   195	#if defined(CONFIG_OF_GPIO)
+ > 196		gc->of_node		= pdev->dev.of_node;
+   197		gc->of_gpio_n_cells	= 2;
+   198	#endif
+   199	
+   200		grange->id		= 0;
+   201		grange->pin_base	= 0;
+   202		grange->base		= 0;
+   203		grange->pins		= amdisp_range_pins;
+   204		grange->npins		= ARRAY_SIZE(amdisp_range_pins);
+   205		grange->name		= gc->label;
+   206		grange->gc		= gc;
+   207	
+   208		ret = devm_gpiochip_add_data(&pdev->dev, gc, pctrl);
+   209		if (ret)
+   210			return ret;
+   211	
+   212		pinctrl_add_gpio_range(pctrl->pctrl, grange);
+   213	
+   214		dev_info(&pdev->dev, "register amdisp gpio controller\n");
+   215		return 0;
+   216	}
+   217	#endif
+   218	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
