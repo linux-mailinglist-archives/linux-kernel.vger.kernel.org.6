@@ -1,244 +1,366 @@
-Return-Path: <linux-kernel+bounces-539761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525E0A4A83B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:06:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1945DA4A83F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECAB17220F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318963BBCE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782611A7264;
-	Sat,  1 Mar 2025 03:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964541ADFFE;
+	Sat,  1 Mar 2025 03:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6RrAPlQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/IDfKql"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E9A258A;
-	Sat,  1 Mar 2025 03:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07CB1CD15;
+	Sat,  1 Mar 2025 03:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740798401; cv=none; b=RGuhnpbLFAqvw+717v6jVHCEqI1t7cREu1ivqaSrzU3FymdtclTkzyfNRcrK7qjS1YTX7ITYuyqkz/LZ/2ouVKs9JeZoFla5eknt95oo4qwgldyd4DEhg3rN14jWW1XzG1jBC09OUpI7W2bCm8pBHPqTsmM6BfsSxmenDa95pPg=
+	t=1740799165; cv=none; b=JGZTqFT5zDD2vCC6ont+/gOWeMyw75vxmbRx1rAqGhlwfMCE0P+KL4OmzfUYU8CdhfdKseC0PIe8IZ++NDVSNrcU6rPxQoXKgxJE2IvRPzuhMH2OackMKjMZ5wUajkl4OGNaXDQGX5BQBXhtby3VN70iVrL7vgGZKIjkBLfVMjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740798401; c=relaxed/simple;
-	bh=d4fr13w6NqBDZnKtfIoJruFH/zIQdAD23l+WW0qbwcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nq4ak+yAglqJSur2zEYFQWeR4yyHoE38ddgu0Wm9pT1n3EHRNnhM+4uH8JKEibQiSzq9JDShme0uES30X79Dj6yvSRqEj/OYiWA1YcPMdttFAyXCSC7Agc7VaNjLM1ybJReq6j3xmipXzfuyKO7ZhA5dwp9zuOzUtAeCHrr3M+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6RrAPlQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E61DC4CED6;
-	Sat,  1 Mar 2025 03:06:31 +0000 (UTC)
+	s=arc-20240116; t=1740799165; c=relaxed/simple;
+	bh=lXFbo+xebaWaz7QOpw2/VTgRUhFSs4wztLMasViZqZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dCdrk40R19YcELbG/hUUFMdkjzK9HYCA3QLP8O5SDAM4EWKSsaxPaW6XNy+Bt24a1/A08BET1AsjGcb9tY9CNUrjscs73Dfx7+4aSzdeMMQnxws0BOpO1c/saTeD1f3ywlx+Q/xuE+zhx4sQW9sXsoBM+qS6UVzb5EChR42Xr3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/IDfKql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3183C4CED6;
+	Sat,  1 Mar 2025 03:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740798401;
-	bh=d4fr13w6NqBDZnKtfIoJruFH/zIQdAD23l+WW0qbwcg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n6RrAPlQON/vV+L9tp2VbGXYcXIrNNCs66VcFCEEr1iHS8Ul3fWnWzaRWy8nvj4ob
-	 /H5LDlStxLwK+YnGedk3KJzjRFbf8xhuUOYMlndIbHPOwzaIOYcof9b3c4StlsW1U/
-	 4Upw7BNKycO3dbDKFOS19fnnqBfww2PYKGdOBpSlwvqiVKIUuTtBg4g5ZbJaDcquSH
-	 11W/0gUkW7IGOTAVQjLnrc1H/uS0cdsMrbjAL05U9BzoFdA5AeP0CCZbsPNjtY32D6
-	 03Kv7fkQXto2cMQjhqr1Ea54Kcs9rU0LiBuISJs31gvXly51ZTd7ICXocJyMAnNlln
-	 Utj4osVN4V5wA==
-Date: Sat, 1 Mar 2025 03:06:25 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 9/9] iio: adc: ti-ads7924: Respect device tree config
-Message-ID: <20250301030625.54c43d37@jic23-huawei>
-In-Reply-To: <3279aa9348e7149bfbd433daaa201f2eb5873e1f.1739967040.git.mazziesaccount@gmail.com>
-References: <cover.1739967040.git.mazziesaccount@gmail.com>
-	<3279aa9348e7149bfbd433daaa201f2eb5873e1f.1739967040.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1740799165;
+	bh=lXFbo+xebaWaz7QOpw2/VTgRUhFSs4wztLMasViZqZA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y/IDfKqlQ1eziUuyagJNGzLMnpvXItT4S82p5Nk0/IXYoobxnEduBbDtVKkGsugO2
+	 ejm0Q8JCEroQLHgFAcsj7TKsTRgUgqCWmP9knK8LONepjsJILOyYz2Pus2QQI2Sxs1
+	 aI7zqI0vTk202FeXq2+UiuMgeHEt9EvcxJoUF6SdRJOvR7IhI4QYGK4bReeD7BiIpC
+	 JpMjEby9nKAa0HuwtQ4mOXVmjFHnNGrHR2mGkgO85avN03JHeouzDy8yrIMUCc/spo
+	 hLAfFMx/0jATx+MQ4tjFMwehwqsSQgU2kT5IKzLcMoP438uy7JZG3um86MKmllErE6
+	 po5nd0xoq2ctg==
+Message-ID: <6f56571a-3090-4323-a29d-008b916abf39@kernel.org>
+Date: Fri, 28 Feb 2025 21:19:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ACPI: platform_profile: Add support for hidden
+ choices
+To: Kurt Borja <kuurtb@gmail.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
+References: <20250228170155.2623386-1-superm1@kernel.org>
+ <20250228170155.2623386-2-superm1@kernel.org>
+ <D84F6QF8EU3D.3RUI1PKXP2DZ3@gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <D84F6QF8EU3D.3RUI1PKXP2DZ3@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 19 Feb 2025 14:32:23 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On 2/28/2025 16:08, Kurt Borja wrote:
+> Hi Mario,
+> 
+> On Fri Feb 28, 2025 at 12:01 PM -05, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> When two drivers don't support all the same profiles the legacy interface
+>> only exports the common profiles.
+>>
+>> This causes problems for cases where one driver uses low-power but another
+>> uses quiet because the result is that neither is exported to sysfs.
+>>
+>> To allow two drivers to disagree, add support for "hidden choices".
+>> Hidden choices are platform profiles that a driver supports to be
+>> compatible with the platform profile of another driver.
+>>
+>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers")
+>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
+>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> Cc: "Luke D. Jones" <luke@ljones.dev>
+>>   drivers/acpi/platform_profile.c  | 94 +++++++++++++++++++++++++-------
+>>   include/linux/platform_profile.h |  3 +
+>>   2 files changed, 76 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+>> index 2ad53cc6aae53..ef9444482db19 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -21,9 +21,15 @@ struct platform_profile_handler {
+>>   	struct device dev;
+>>   	int minor;
+>>   	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>> +	unsigned long hidden_choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>>   	const struct platform_profile_ops *ops;
+>>   };
+>>   
+>> +struct aggregate_choices_data {
+>> +	unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>> +	int count;
+>> +};
+>> +
+>>   static const char * const profile_names[] = {
+>>   	[PLATFORM_PROFILE_LOW_POWER] = "low-power",
+>>   	[PLATFORM_PROFILE_COOL] = "cool",
+>> @@ -73,7 +79,7 @@ static int _store_class_profile(struct device *dev, void *data)
+>>   
+>>   	lockdep_assert_held(&profile_lock);
+>>   	handler = to_pprof_handler(dev);
+>> -	if (!test_bit(*bit, handler->choices))
+>> +	if (!test_bit(*bit, handler->choices) && !test_bit(*bit, handler->hidden_choices))
+>>   		return -EOPNOTSUPP;
+>>   
+>>   	return handler->ops->profile_set(dev, *bit);
+>> @@ -239,21 +245,44 @@ static const struct class platform_profile_class = {
+>>   /**
+>>    * _aggregate_choices - Aggregate the available profile choices
+>>    * @dev: The device
+>> - * @data: The available profile choices
+>> + * @arg: struct aggregate_choices_data
+>>    *
+>>    * Return: 0 on success, -errno on failure
+>>    */
+>> -static int _aggregate_choices(struct device *dev, void *data)
+>> +static int _aggregate_choices(struct device *dev, void *arg)
+>>   {
+>> +	unsigned long tmp[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>> +	struct aggregate_choices_data *data = arg;
+>>   	struct platform_profile_handler *handler;
+>> -	unsigned long *aggregate = data;
+>>   
+>>   	lockdep_assert_held(&profile_lock);
+>>   	handler = to_pprof_handler(dev);
+>> -	if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
+>> -		bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
+>> +	bitmap_or(tmp, handler->choices, handler->hidden_choices, PLATFORM_PROFILE_LAST);
+>> +	if (test_bit(PLATFORM_PROFILE_LAST, data->aggregate))
+>> +		bitmap_copy(data->aggregate, tmp, PLATFORM_PROFILE_LAST);
+>>   	else
+>> -		bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LAST);
+>> +		bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LAST);
+>> +	data->count++;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * _remove_hidden_choices - Remove hidden choices from aggregate data
+>> + * @dev: The device
+>> + * @arg: struct aggregate_choices_data
+>> + *
+>> + * Return: 0 on success, -errno on failure
+>> + */
+>> +static int _remove_hidden_choices(struct device *dev, void *arg)
+>> +{
+>> +	struct aggregate_choices_data *data = arg;
+>> +	struct platform_profile_handler *handler;
+>> +
+>> +	lockdep_assert_held(&profile_lock);
+>> +	handler = to_pprof_handler(dev);
+>> +	bitmap_andnot(data->aggregate, handler->choices,
+>> +		      handler->hidden_choices, PLATFORM_PROFILE_LAST);
+>>   
+>>   	return 0;
+>>   }
+>> @@ -270,22 +299,31 @@ static ssize_t platform_profile_choices_show(struct device *dev,
+>>   					     struct device_attribute *attr,
+>>   					     char *buf)
+>>   {
+>> -	unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>> +	struct aggregate_choices_data data = {
+>> +		.aggregate = { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] = ~0UL },
+>> +		.count = 0,
+>> +	};
+>>   	int err;
+>>   
+>> -	set_bit(PLATFORM_PROFILE_LAST, aggregate);
+>> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+>>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>   		err = class_for_each_device(&platform_profile_class, NULL,
+>> -					    aggregate, _aggregate_choices);
+>> +					    &data, _aggregate_choices);
+>>   		if (err)
+>>   			return err;
+>> +		if (data.count == 1) {
+>> +			err = class_for_each_device(&platform_profile_class, NULL,
+>> +						    &data, _remove_hidden_choices);
+>> +			if (err)
+>> +				return err;
+>> +		}
+>>   	}
+>>   
+>>   	/* no profile handler registered any more */
+>> -	if (bitmap_empty(aggregate, PLATFORM_PROFILE_LAST))
+>> +	if (bitmap_empty(data.aggregate, PLATFORM_PROFILE_LAST))
+>>   		return -EINVAL;
+>>   
+>> -	return _commmon_choices_show(aggregate, buf);
+>> +	return _commmon_choices_show(data.aggregate, buf);
+>>   }
+>>   
+>>   /**
+>> @@ -373,7 +411,10 @@ static ssize_t platform_profile_store(struct device *dev,
+>>   				      struct device_attribute *attr,
+>>   				      const char *buf, size_t count)
+>>   {
+>> -	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>> +	struct aggregate_choices_data data = {
+>> +		.aggregate = { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] = ~0UL },
+>> +		.count = 0,
+>> +	};
+>>   	int ret;
+>>   	int i;
+>>   
+>> @@ -381,13 +422,13 @@ static ssize_t platform_profile_store(struct device *dev,
+>>   	i = sysfs_match_string(profile_names, buf);
+>>   	if (i < 0 || i == PLATFORM_PROFILE_CUSTOM)
+>>   		return -EINVAL;
+>> -	set_bit(PLATFORM_PROFILE_LAST, choices);
+>> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+>>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>   		ret = class_for_each_device(&platform_profile_class, NULL,
+>> -					    choices, _aggregate_choices);
+>> +					    &data, _aggregate_choices);
+>>   		if (ret)
+>>   			return ret;
+>> -		if (!test_bit(i, choices))
+>> +		if (!test_bit(i, data.aggregate))
+>>   			return -EOPNOTSUPP;
+>>   
+>>   		ret = class_for_each_device(&platform_profile_class, NULL, &i,
+>> @@ -453,12 +494,15 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>>    */
+>>   int platform_profile_cycle(void)
+>>   {
+>> +	struct aggregate_choices_data data = {
+>> +		.aggregate = { [0 ... BITS_TO_LONGS(PLATFORM_PROFILE_LAST) - 1] = ~0UL },
+>> +		.count = 0,
+>> +	};
+>>   	enum platform_profile_option next = PLATFORM_PROFILE_LAST;
+>>   	enum platform_profile_option profile = PLATFORM_PROFILE_LAST;
+>> -	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>>   	int err;
+>>   
+>> -	set_bit(PLATFORM_PROFILE_LAST, choices);
+>> +	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+>>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>   		err = class_for_each_device(&platform_profile_class, NULL,
+>>   					    &profile, _aggregate_profiles);
+>> @@ -470,14 +514,14 @@ int platform_profile_cycle(void)
+>>   			return -EINVAL;
+>>   
+>>   		err = class_for_each_device(&platform_profile_class, NULL,
+>> -					    choices, _aggregate_choices);
+>> +					    &data, _aggregate_choices);
+>>   		if (err)
+>>   			return err;
+>>   
+>>   		/* never iterate into a custom if all drivers supported it */
+>> -		clear_bit(PLATFORM_PROFILE_CUSTOM, choices);
+>> +		clear_bit(PLATFORM_PROFILE_CUSTOM, data.aggregate);
+>>   
+>> -		next = find_next_bit_wrap(choices,
+>> +		next = find_next_bit_wrap(data.aggregate,
+>>   					  PLATFORM_PROFILE_LAST,
+>>   					  profile + 1);
+>>   
+>> @@ -532,6 +576,14 @@ struct device *platform_profile_register(struct device *dev, const char *name,
+>>   		return ERR_PTR(-EINVAL);
+>>   	}
+>>   
+>> +	if (ops->hidden_choices) {
+>> +		err = ops->hidden_choices(drvdata, pprof->hidden_choices);
+>> +		if (err) {
+>> +			dev_err(dev, "platform_profile hidden_choices failed\n");
+>> +			return ERR_PTR(err);
+>> +		}
+>> +	}
+>> +
+>>   	guard(mutex)(&profile_lock);
+>>   
+>>   	/* create class interface for individual handler */
+>> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
+>> index 8ab5b0e8eb2c1..8c9df7dadd5d3 100644
+>> --- a/include/linux/platform_profile.h
+>> +++ b/include/linux/platform_profile.h
+>> @@ -33,6 +33,8 @@ enum platform_profile_option {
+>>    * @probe: Callback to setup choices available to the new class device. These
+>>    *	   choices will only be enforced when setting a new profile, not when
+>>    *	   getting the current one.
+>> + * @hidden_choices: Callback to setup choices that are not visible to the user
+>> + *		    but can be set by the driver.
+>>    * @profile_get: Callback that will be called when showing the current platform
+>>    *		 profile in sysfs.
+>>    * @profile_set: Callback that will be called when storing a new platform
+>> @@ -40,6 +42,7 @@ enum platform_profile_option {
+>>    */
+>>   struct platform_profile_ops {
+>>   	int (*probe)(void *drvdata, unsigned long *choices);
+>> +	int (*hidden_choices)(void *drvdata, unsigned long *choices);
+>>   	int (*profile_get)(struct device *dev, enum platform_profile_option *profile);
+>>   	int (*profile_set)(struct device *dev, enum platform_profile_option profile);
+>>   };
+> 
+> This approach works really well for the PMF driver because the
+> profile_get callback retrieves the raw profile that the profile_set
+> callback cached. However this is not the case for quite a few drivers,
+> which usually just retrieve the current profile from WMI for example.
+> 
+> This means that writing a profile to the legacy platform_profile
+> attribute, which a driver has selected as a "hidden choice" may result
+> in the operation succeeding, but if the user were to immediately read
+> from platform_profile it would display "custom", because the profiles
+> for different handlers may be unsynchronized.
 
-> The ti-ads7924 driver ignores the device-tree ADC channel specification
-> and always exposes all 4 channels to users whether they are present in
-> the device-tree or not. Additionally, the "reg" values in the channel
-> nodes are ignored, although an error is printed if they are out of range.
-> 
-> Register only the channels described in the device-tree, and use the reg
-> property as a channel ID.
+I guess we need to think about how many other drivers would really need 
+hidden choices added.
 
-No to this one in it's current form.  The nodes are just there to provide
-the labels.  Maybe it is fine if we fallback to registering them all if
-none are provided.
+Is it just PMF?
 
 > 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> This makes me wonder if the added complexity this patch brings, is
+> really worth it.
 > 
-> ---
-> Revision history:
-> v2 => v3: New patch
+> IMHO we should do what Armin suggested in the patch proposed by Antheas.
+> In fact, I would suggest an even simpler version:
 > 
-> Please note that this is potentially breaking existing users if they
-> have wrong values in the device-tree. I believe the device-tree should
-> ideally be respected, and if it says device X has only one channel, then
-> we should believe it and not register 4. Well, we don't live in the
-> ideal world, so even though I believe this is TheRightThingToDo - it may
-> cause havoc because correct device-tree has not been required from the
-> day 1. So, please review and test and apply at your own risk :)
+>    1. The legacy platform_profile_choices should aggregate `choices`
+>       with bitmap_or instead of bitmap_and. i.e. It should display all
+>       available choices
+>    2. When writing a profile to the legacy platform_profile, if a handler
+>       doesn't support it, we simply ignore it without failing and
+>       continue to the next
 > 
-> As a side note, this might warrant a fixes tag but the adc-helper -stuff
-> is hardly worth to be backported... (And I've already exceeded my time
-> budget with this series - hence I'll leave crafting backportable fix to
-> TI people ;) )
+> I believe this works well with power-profiles-daemon, but I'm not
+> entirely sure. Maybe you know more about it.
 > 
-> This has only been compile tested! All testing is highly appreciated.
-> ---
->  drivers/iio/adc/ti-ads7924.c | 80 +++++++++++++++++-------------------
->  1 file changed, 37 insertions(+), 43 deletions(-)
+> This of course has the problem that profiles would be unsync and
+> platform_profile might display "custom" immediately after setting a
+> profile, but this patch has the same "issue".
 > 
-> diff --git a/drivers/iio/adc/ti-ads7924.c b/drivers/iio/adc/ti-ads7924.c
-> index b1f745f75dbe..a5b8f7c81b8a 100644
-> --- a/drivers/iio/adc/ti-ads7924.c
-> +++ b/drivers/iio/adc/ti-ads7924.c
-> @@ -22,6 +22,7 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  
-> +#include <linux/iio/adc-helpers.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/types.h>
->  
-> @@ -119,15 +120,12 @@
->  #define ADS7924_TOTAL_CONVTIME_US (ADS7924_PWRUPTIME_US + ADS7924_ACQTIME_US + \
->  				   ADS7924_CONVTIME_US)
->  
-> -#define ADS7924_V_CHAN(_chan, _addr) {				\
-> -	.type = IIO_VOLTAGE,					\
-> -	.indexed = 1,						\
-> -	.channel = _chan,					\
-> -	.address = _addr,					\
-> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), 		\
-> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> -	.datasheet_name = "AIN"#_chan,				\
-> -}
-> +static const struct iio_chan_spec ads7924_chan_template = {
-> +	.type = IIO_VOLTAGE,
-> +	.indexed = 1,
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-> +};
->  
->  struct ads7924_data {
->  	struct device *dev;
-> @@ -182,13 +180,6 @@ static const struct regmap_config ads7924_regmap_config = {
->  	.writeable_reg = ads7924_is_writeable_reg,
->  };
->  
-> -static const struct iio_chan_spec ads7924_channels[] = {
-> -	ADS7924_V_CHAN(0, ADS7924_DATA0_U_REG),
-> -	ADS7924_V_CHAN(1, ADS7924_DATA1_U_REG),
-> -	ADS7924_V_CHAN(2, ADS7924_DATA2_U_REG),
-> -	ADS7924_V_CHAN(3, ADS7924_DATA3_U_REG),
-> -};
-> -
->  static int ads7924_get_adc_result(struct ads7924_data *data,
->  				  struct iio_chan_spec const *chan, int *val)
->  {
-> @@ -251,32 +242,38 @@ static const struct iio_info ads7924_info = {
->  	.read_raw = ads7924_read_raw,
->  };
->  
-> -static int ads7924_get_channels_config(struct device *dev)
-> +static const struct iio_adc_props ads7924_chan_props = {
-> +	.required = IIO_ADC_CHAN_PROP_TYPE_REG,
-> +};
-> +
-> +static int ads7924_get_channels_config(struct iio_dev *indio_dev,
-> +				       struct device *dev)
->  {
-> -	struct fwnode_handle *node;
-> -	int num_channels = 0;
-> +	struct iio_chan_spec *chan_array;
-> +	int num_channels = 0, i;
->  
-> -	device_for_each_child_node(dev, node) {
-> -		u32 pval;
-> -		unsigned int channel;
-> +	num_channels = devm_iio_adc_device_alloc_chaninfo(dev,
-> +					&ads7924_chan_template, &chan_array,
-> +					&ads7924_chan_props);
->  
-> -		if (fwnode_property_read_u32(node, "reg", &pval)) {
-> -			dev_err(dev, "invalid reg on %pfw\n", node);
-> -			continue;
-> -		}
-> +	if (num_channels < 0)
-> +		return num_channels;
->  
-> -		channel = pval;
-> -		if (channel >= ADS7924_CHANNELS) {
-> -			dev_err(dev, "invalid channel index %d on %pfw\n",
-> -				channel, node);
-> -			continue;
-> -		}
-> +	if (!num_channels)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < num_channels; i++) {
-> +		static const char * const datasheet_names[] = {
-> +			"AIN0", "AIN1", "AIN2", "AIN3"
-> +		};
-> +		int ch_id = chan_array[i].channel;
->  
-> -		num_channels++;
-> +		chan_array[i].address = ADS7924_DATA0_U_REG + ch_id;
-> +		chan_array[i].datasheet_name = datasheet_names[ch_id];
->  	}
->  
-> -	if (!num_channels)
-> -		return -EINVAL;
-> +	indio_dev->channels = chan_array;
-> +	indio_dev->num_channels = num_channels;
->  
->  	return 0;
->  }
-> @@ -370,18 +367,15 @@ static int ads7924_probe(struct i2c_client *client)
->  
->  	mutex_init(&data->lock);
->  
-> -	indio_dev->name = "ads7924";
-> -	indio_dev->modes = INDIO_DIRECT_MODE;
-> -
-> -	indio_dev->channels = ads7924_channels;
-> -	indio_dev->num_channels = ARRAY_SIZE(ads7924_channels);
-> -	indio_dev->info = &ads7924_info;
-> -
-> -	ret = ads7924_get_channels_config(dev);
-> +	ret = ads7924_get_channels_config(indio_dev, dev);
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret,
->  				     "failed to get channels configuration\n");
->  
-> +	indio_dev->name = "ads7924";
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &ads7924_info;
-> +
->  	data->regmap = devm_regmap_init_i2c(client, &ads7924_regmap_config);
->  	if (IS_ERR(data->regmap))
->  		return dev_err_probe(dev, PTR_ERR(data->regmap),
+> For me this "custom" issue, is not really an issue. The legacy interface
+> should be deprecated in favor of the class interface, and new/old
+> user-space tools should use/migrate to that instead.
+> 
+> Let me know what you think!
 
+I don't really like that profiles can get out of sync, this is asking 
+for a non-deterministic behavior that can be difficult to diagnose 
+issues and also difficult for userspace to work with.
 
