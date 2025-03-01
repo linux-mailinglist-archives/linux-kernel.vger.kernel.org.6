@@ -1,200 +1,313 @@
-Return-Path: <linux-kernel+bounces-540153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CC4A4AE79
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:47:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6244A4AE78
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:46:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35198189502E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA48B7A4DF8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977C1E9901;
-	Sat,  1 Mar 2025 23:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671EB1E4928;
+	Sat,  1 Mar 2025 23:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ORiGV1xY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/Ph5Bxk"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9931E51F3
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 23:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C34D23DE;
+	Sat,  1 Mar 2025 23:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740872807; cv=none; b=BRZUzj6lOMVrtnR7Rg0OwILj6bZdcTb8F5ShnSyPcLMXzytPDf24YOcRPbwkO2lZAhvxPnxh8ZyLGw9EL/vHnQxst7xBGeavM/cvoKtHqCyJlw88n5+Qm+EVJNse8dsqRhZBX0NMtpKibVLz8nHMbs4KeBj9TGOiORFdy/3gTTo=
+	t=1740872803; cv=none; b=tEkCoBCn6VBEsbiW7WCmvYURQX+QvqDB2bcfnzuzv43x7ULsyxfWIL9oTf78xUCNdeQ3yq7pLdTmTZ9NLLt3HJkofJRuONk7d7MuAeuEds5vi/HOzp8B5lqHxzqWsRuEGKgP8VAxAWz7zf82hVwodlTLfNXj1Ry3+nQH3WFJmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740872807; c=relaxed/simple;
-	bh=GO8/mVDF9FRG3bqnjIKRLOqWg1VBrOkzr/i5h5BP9UA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VQOaILFYb86KJbfuXvI/ib/ufsH81a5GaYIquDb91or72y5qupmErl0yeWz2kHQ393fExIjlTlNf/2RGlQ5+MIPxnKR7xQ0jB+BSWVwYpyxsyR/mj2wOvzcQ9A/+vKNq/5t4H2e9Y9BqcZvLNKQ2AQs8TJnYqC+Mm2Ojv9oLV5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ORiGV1xY; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740872804; x=1772408804;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GO8/mVDF9FRG3bqnjIKRLOqWg1VBrOkzr/i5h5BP9UA=;
-  b=ORiGV1xYzJarzBJC6xnlAJ5Q4QmOV7ErhxHat29NBzhEl14oIXDc9Hj5
-   8xiD452TSlEii46vEvBt3CwkkybwAJB1XCPzuQJk7wQUNgil98zq4D/ex
-   RtCm9f/L0Vn88o61r88mMqycYz5qLYqDsagZAEtt/LuTChYfnlPaT6Yzm
-   UbrSt6ZdYbMJDMewsfTbV/xlv6rMb0mD0AuskCSjX2c5NlFBD+ABE4QgZ
-   ae0EGPmQtpgc8SKzOio3dF77imFPLvCD8iBlgM9NX7QpnBcNV2FNOe/tl
-   ypWey5YxChgvLcF6DN2HluVxDkrZ8AUWMG1pcnF04KLQqhW6Ac4MnIfQN
-   A==;
-X-CSE-ConnectionGUID: AJBE/3npRxiqMkTc3dqfog==
-X-CSE-MsgGUID: vm5krdt2QQeBDpdUTBekDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41659047"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41659047"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 15:46:44 -0800
-X-CSE-ConnectionGUID: 5/Lo6Cy6S/eDd/F77LQD6w==
-X-CSE-MsgGUID: XThP7gBJSomXhTA16dOTyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="118342487"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 01 Mar 2025 15:46:43 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toWXY-000Gqa-2E;
-	Sat, 01 Mar 2025 23:46:40 +0000
-Date: Sun, 2 Mar 2025 07:46:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: lib/test_bitmap.c:1269:2: error: call to '__compiletime_assert_315'
- declared with 'error' attribute: BUILD_BUG_ON failed:
- !__builtin_constant_p(res)
-Message-ID: <202503020721.LqaunSM9-lkp@intel.com>
+	s=arc-20240116; t=1740872803; c=relaxed/simple;
+	bh=siOE6IpkHu8CmLrzsx0HF1NUPlP5KTEAkzZCk4d5hwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l1ci1hLqhoJ2ANumcVBc8v61fJsqfXNWCM7kzkLPN/1KuHTo5mmvhjY8Jv2qgylUebCQ94iCigToa+6LJ72j3bX02Pg6NFoW4OdU/xyZau8VttNR5ggdRs9RUAyRr7a8ytM1bvbMJWNx8g7su44vW8e20H6xgd92s8gj3Om0b/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/Ph5Bxk; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30795988ebeso36201491fa.3;
+        Sat, 01 Mar 2025 15:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740872800; x=1741477600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MEt2k7989x5yE6ObIXJKt9GP7mYl/bSZRL2jBwszNcI=;
+        b=O/Ph5BxkdGLxKdievpvIzxKmgdfnT8iAwUj7m/G2icv0hnQcX//HRxO23ySCbf2L4O
+         ZmKFXF8uDzD4WjKSSA4LEtlnW3tymLmtgZowc1Trnx9O1D9xFECSPTcDSI7P29wb7TR8
+         YqBdpAlGfyzZQ5l3dycABmYIPPPMStEss2Owi1xYNZTyct6oVtdztupddZcBY/xVVh0H
+         G3yDKD7qW4R81bxnQ8eOXrFX48+m940cdRCg++CB3O79enMkfxg02KcomGda7jpu96QM
+         ITjD4DQzCX5QmNy25sssyyC0Tsol6mJfRsWCuq9cZzvp6ZST7/L6W76C1biDthV9WwLG
+         K94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740872800; x=1741477600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MEt2k7989x5yE6ObIXJKt9GP7mYl/bSZRL2jBwszNcI=;
+        b=VQju9YB0G0Wbq2DusdjDIDHl5CsP9nTzMN67/RuWhhjo65ZrSgB8LxiR61np3qLkmT
+         qPnT3RREVSAG0m7Wt8C7jnah5mIqFpl0vLn6pzISw6ekl66GkJfQLZAsdbSZJpNPm91W
+         kS87r31H6ncdvfiykWS4RNfcQ5RBySjUxvmSPpyAv/omX7vGOKs6qtlUedXahp7BpGou
+         t2FYsBCifl4k5LryM43wBPHgQhcTbyOw9jLHqUZi3FMm/IwHL2SqpbwAWKfQGAC8iCmk
+         dFSNyrx2IC4MR5I/Vj86mvSo/AITu2x/wNfmyhHeW18JTN2PhXFcOUBkKjWBbg8pt3I5
+         uB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1XgrjVZlCkqlsEGhxkF5qy8OvwktMsYNMv3W/fSn7249fdLyIrfFYy6VGcrtPrxlUf9M6CxfQsxRX@vger.kernel.org, AJvYcCW2VzmD3JFXI1pVk7m6g70kl055QYsp8KH+w1tPeDyzRKVkY5tzQDEoXDwXntX9zRVrxnN0WJp/fzXttdSF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx18oys+P+b5enqd+ZmcAgZ4yd9zDWOeS6aCxDIliW8V5W869kY
+	i+LJp5GJWqVowco9M4QzkIVHJUg8mIvj4cZ1IUCKyLQby/9mQCqv1FB+g1dWoAAKx8UW8ySJbUE
+	TC2kFPKPlXh5EnyUg8vmWhxtJCI8=
+X-Gm-Gg: ASbGncu1zlHe6Nsqvxpkrf3iCBCRh6Si327iDY6cR1i+BMnQkiEMXPHQMIElWMF8f7v
+	ymPmdFiXP921Ma7GdGtodhPZKRA8TTjHIbNYXn/Y/4zDy4QYfe+IUHp/pUeXZtnDXSBC5IaOVRB
+	xVS7xppJvqtqNMd6qk4J5NKtchmuk7uSDkiIexIWQjM9NkB4ItGkH3mPgO3StI
+X-Google-Smtp-Source: AGHT+IH6zu7Liq6af25Lvda/e90+Z+oabnotgxoE4Iy77QomhdmjoGpy4haMQrKCrdKzihm2Rn2Ftpv8gaB8oIu5WK0=
+X-Received: by 2002:a05:6512:3b0c:b0:549:39ca:13fc with SMTP id
+ 2adb3069b0e04-5494c39011amr3475943e87.49.1740872799297; Sat, 01 Mar 2025
+ 15:46:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+In-Reply-To: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 1 Mar 2025 17:46:27 -0600
+X-Gm-Features: AQ5f1Jo-TcMpCDd1mt5gInAtB8m-Aq_V5ESxjl_nKowzPsnPgKcByHT332S7fgM
+Message-ID: <CAH2r5mstBkj5-aHcXLpb8YzrDHS+nWhW+i_Kf8eJK15sFmJx8A@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: Fix netns refcount imbalance causing leaks
+ and use-after-free
+To: Wang Zhaolong <wangzhaolong1@huawei.com>
+Cc: tom@talpey.com, kuniyu@amazon.com, ematsumiya@suse.de, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Johannes,
+I was looking at this patch in more detail, and it does look important
+but I wanted to clarify a few things.  In your detailed description
+you mention that the retry on port 139 is missing a call put_net(0
 
-FYI, the error/warning still remains.
+>         ip_connect
+>           generic_ip_connect /* Try port 445 */
+>             get_net()
+>             ->connect() /* Failed */
+>             put_net()
+>           generic_ip_connect /* Try port 139 */
+>             get_net() /* Missing matching put_net() for this get_net().*/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9d20040d71ede4c0e5fc6ae7aaa92788de1e713a
-commit: 53585f9ea40a9466ab9c1151f15984513eb542f7 um: enable UBSAN
-date:   8 months ago
-config: um-randconfig-002-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020721.LqaunSM9-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020721.LqaunSM9-lkp@intel.com/reproduce)
+but I found this confusing because generic_ip_connect() doesn't seem
+to treat the port 445 vs. port 139 differently (there are only two
+places the function does put_net() and the latter on line 3421 looks
+like the only one that matters for your example).  Here is the snippet
+from generic_ip_connect().  Could you explain why the retry on port
+139 example is different here?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020721.LqaunSM9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> lib/test_bitmap.c:1269:2: error: call to '__compiletime_assert_315' declared with 'error' attribute: BUILD_BUG_ON failed: !__builtin_constant_p(res)
-           BUILD_BUG_ON(!__builtin_constant_p(res));
-           ^
-   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
-           BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-           ^
-   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
-   #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                       ^
-   include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
-           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-           ^
-   include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ^
-   include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
-                           prefix ## suffix();                             \
-                           ^
-   <scratch space>:206:1: note: expanded from here
-   __compiletime_assert_315
-   ^
-   1 error generated.
+        rc =3D kernel_connect(socket, saddr, slen,
+                            server->noblockcnt ? O_NONBLOCK : 0);
+        /*
+         * When mounting SMB root file systems, we do not want to block in
+         * connect. Otherwise bail out and then let cifs_reconnect() perfor=
+m
+         * reconnect failover - if possible.
+         */
+        if (server->noblockcnt && rc =3D=3D -EINPROGRESS)
+                rc =3D 0;
+        if (rc < 0) {
+                cifs_dbg(FYI, "Error %d connecting to server\n", rc);
+                trace_smb3_connect_err(server->hostname,
+server->conn_id, &server->dstaddr, rc);
+                put_net(cifs_net_ns(server));
+                sock_release(socket);
+                server->ssocket =3D NULL;
+                return rc;
+        }
 
 
-vim +1269 lib/test_bitmap.c
 
-291f93ca339f5b Barry Song        2021-08-06  1227  
-2356d198d2b4dd Yury Norov        2023-07-17  1228  /*
-2356d198d2b4dd Yury Norov        2023-07-17  1229   * FIXME: Clang breaks compile-time evaluations when KASAN and GCOV are enabled.
-2356d198d2b4dd Yury Norov        2023-07-17  1230   * To workaround it, GCOV is force-disabled in Makefile for this configuration.
-2356d198d2b4dd Yury Norov        2023-07-17  1231   */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1232  static void __init test_bitmap_const_eval(void)
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1233  {
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1234  	DECLARE_BITMAP(bitmap, BITS_PER_LONG);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1235  	unsigned long initvar = BIT(2);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1236  	unsigned long bitopvar = 0;
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1237  	unsigned long var = 0;
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1238  	int res;
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1239  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1240  	/*
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1241  	 * Compilers must be able to optimize all of those to compile-time
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1242  	 * constants on any supported optimization level (-O2, -Os) and any
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1243  	 * architecture. Otherwise, trigger a build bug.
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1244  	 * The whole function gets optimized out then, there's nothing to do
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1245  	 * in runtime.
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1246  	 */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1247  
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1248  	/* Equals to `unsigned long bitmap[1] = { GENMASK(6, 5), }` */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1249  	bitmap_clear(bitmap, 0, BITS_PER_LONG);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1250  	if (!test_bit(7, bitmap))
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1251  		bitmap_set(bitmap, 5, 2);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1252  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1253  	/* Equals to `unsigned long bitopvar = BIT(20)` */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1254  	__change_bit(31, &bitopvar);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1255  	bitmap_shift_right(&bitopvar, &bitopvar, 11, BITS_PER_LONG);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1256  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1257  	/* Equals to `unsigned long var = BIT(25)` */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1258  	var |= BIT(25);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1259  	if (var & BIT(0))
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1260  		var ^= GENMASK(9, 6);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1261  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1262  	/* __const_hweight<32|64>(GENMASK(6, 5)) == 2 */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1263  	res = bitmap_weight(bitmap, 20);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1264  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1265  	BUILD_BUG_ON(res != 2);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1266  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1267  	/* !(BIT(31) & BIT(18)) == 1 */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1268  	res = !test_bit(18, &bitopvar);
-dc34d5036692c6 Alexander Lobakin 2022-06-24 @1269  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1270  	BUILD_BUG_ON(!res);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1271  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1272  	/* BIT(2) & GENMASK(14, 8) == 0 */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1273  	res = initvar & GENMASK(14, 8);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1274  	BUILD_BUG_ON(!__builtin_constant_p(res));
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1275  	BUILD_BUG_ON(res);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1276  
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1277  	/* ~BIT(25) */
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1278  	BUILD_BUG_ON(!__builtin_constant_p(~var));
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1279  	BUILD_BUG_ON(~var != ~BIT(25));
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1280  
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1281  	/* ~BIT(25) | BIT(25) == ~0UL */
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1282  	bitmap_complement(&var, &var, BITS_PER_LONG);
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1283  	__assign_bit(25, &var, true);
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1284  
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1285  	/* !(~(~0UL)) == 1 */
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1286  	res = bitmap_full(&var, BITS_PER_LONG);
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1287  	BUILD_BUG_ON(!__builtin_constant_p(res));
-7adaf37f7f104a Alexander Lobakin 2024-03-27  1288  	BUILD_BUG_ON(!res);
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1289  }
-dc34d5036692c6 Alexander Lobakin 2022-06-24  1290  
 
-:::::: The code at line 1269 was first introduced by commit
-:::::: dc34d5036692c614eef23c1130ee42a201c316bf lib: test_bitmap: add compile-time optimization/evaluations assertions
+On Tue, Feb 18, 2025 at 8:34=E2=80=AFAM Wang Zhaolong <wangzhaolong1@huawei=
+.com> wrote:
+>
+> Commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
+> namespace.") attempted to fix a netns use-after-free issue by manually
+> adjusting reference counts via sk->sk_net_refcnt and sock_inuse_add().
+>
+> However, a later commit e9f2517a3e18 ("smb: client: fix TCP timers deadlo=
+ck
+> after rmmod") pointed out that the approach of manually setting
+> sk->sk_net_refcnt in the first commit was technically incorrect, as
+> sk->sk_net_refcnt should only be set for user sockets. It led to issues
+> like TCP timers not being cleared properly on close. The second commit
+> moved to a model of just holding an extra netns reference for
+> server->ssocket using get_net(), and dropping it when the server is torn
+> down.
+>
+> But there remain some gaps in the get_net()/put_net() balancing added by
+> these commits. The incomplete reference handling in these fixes results
+> in two issues:
+>
+> 1. Netns refcount leaks[1]
+>
+> The problem process is as follows:
+>
+> ```
+> mount.cifs                        cifsd
+>
+> cifs_do_mount
+>   cifs_mount
+>     cifs_mount_get_session
+>       cifs_get_tcp_session
+>         get_net()  /* First get net. */
+>         ip_connect
+>           generic_ip_connect /* Try port 445 */
+>             get_net()
+>             ->connect() /* Failed */
+>             put_net()
+>           generic_ip_connect /* Try port 139 */
+>             get_net() /* Missing matching put_net() for this get_net().*/
+>       cifs_get_smb_ses
+>         cifs_negotiate_protocol
+>           smb2_negotiate
+>             SMB2_negotiate
+>               cifs_send_recv
+>                 wait_for_response
+>                                  cifs_demultiplex_thread
+>                                    cifs_read_from_socket
+>                                      cifs_readv_from_socket
+>                                        cifs_reconnect
+>                                          cifs_abort_connection
+>                                            sock_release();
+>                                            server->ssocket =3D NULL;
+>                                            /* Missing put_net() here. */
+>                                            generic_ip_connect
+>                                              get_net()
+>                                              ->connect() /* Failed */
+>                                              put_net()
+>                                              sock_release();
+>                                              server->ssocket =3D NULL;
+>           free_rsp_buf
+>     ...
+>                                    clean_demultiplex_info
+>                                      /* It's only called once here. */
+>                                      put_net()
+> ```
+>
+> When cifs_reconnect() is triggered, the server->ssocket is released
+> without a corresponding put_net() for the reference acquired in
+> generic_ip_connect() before. it ends up calling generic_ip_connect()
+> again to retry get_net(). After that, server->ssocket is set to NULL
+> in the error path of generic_ip_connect(), and the net count cannot be
+> released in the final clean_demultiplex_info() function.
+>
+> 2. Potential use-after-free
+>
+> The current refcounting scheme can lead to a potential use-after-free iss=
+ue
+> in the following scenario:
+>
+> ```
+>  cifs_do_mount
+>    cifs_mount
+>      cifs_mount_get_session
+>        cifs_get_tcp_session
+>          get_net()  /* First get net */
+>            ip_connect
+>              generic_ip_connect
+>                get_net()
+>                bind_socket
+>                  kernel_bind /* failed */
+>                put_net()
+>          /* after out_err_crypto_release label */
+>          put_net()
+>          /* after out_err label */
+>          put_net()
+> ```
+>
+> In the exception handling process where binding the socket fails, the
+> get_net() and put_net() calls are unbalanced, which may cause the
+> server->net reference count to drop to zero and be prematurely released.
+>
+> To address both issues, this patch ties the netns reference counting to
+> the server->ssocket and server lifecycles. The extra reference is now
+> acquired when the server or socket is created, and released when the
+> socket is destroyed or the server is torn down.
+>
+> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=3D219792
+>
+> Fixes: ef7134c7fc48 ("smb: client: Fix use-after-free of network namespac=
+e.")
+> Fixes: e9f2517a3e18 ("smb: client: fix TCP timers deadlock after rmmod")
+> Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
+> ---
+>  fs/smb/client/connect.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index f917de020dd5..0d454149f3b4 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -300,6 +300,7 @@ cifs_abort_connection(struct TCP_Server_Info *server)
+>                          server->ssocket->flags);
+>                 sock_release(server->ssocket);
+>                 server->ssocket =3D NULL;
+> +               put_net(cifs_net_ns(server));
+>         }
+>         server->sequence_number =3D 0;
+>         server->session_estab =3D false;
+> @@ -3115,8 +3116,12 @@ generic_ip_connect(struct TCP_Server_Info *server)
+>                 /*
+>                  * Grab netns reference for the socket.
+>                  *
+> -                * It'll be released here, on error, or in clean_demultip=
+lex_info() upon server
+> -                * teardown.
+> +                * This reference will be released in several situations:
+> +                * - In the failure path before the cifsd thread is start=
+ed.
+> +                * - In the all place where server->socket is released, i=
+t is
+> +                *   also set to NULL.
+> +                * - Ultimately in clean_demultiplex_info(), during the f=
+inal
+> +                *   teardown.
+>                  */
+>                 get_net(net);
+>
+> @@ -3132,10 +3137,8 @@ generic_ip_connect(struct TCP_Server_Info *server)
+>         }
+>
+>         rc =3D bind_socket(server);
+> -       if (rc < 0) {
+> -               put_net(cifs_net_ns(server));
+> +       if (rc < 0)
+>                 return rc;
+> -       }
+>
+>         /*
+>          * Eventually check for other socket options to change from
+> @@ -3181,9 +3184,6 @@ generic_ip_connect(struct TCP_Server_Info *server)
+>         if (sport =3D=3D htons(RFC1001_PORT))
+>                 rc =3D ip_rfc1001_connect(server);
+>
+> -       if (rc < 0)
+> -               put_net(cifs_net_ns(server));
+> -
+>         return rc;
+>  }
+>
+> --
+> 2.34.3
+>
+>
 
-:::::: TO: Alexander Lobakin <alexandr.lobakin@intel.com>
-:::::: CC: Yury Norov <yury.norov@gmail.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Thanks,
+
+Steve
 
