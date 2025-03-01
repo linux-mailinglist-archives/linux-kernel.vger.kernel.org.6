@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-539779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43954A4A873
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:16:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033D0A4A890
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0B818997C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468B9189C187
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420A91AF4E9;
-	Sat,  1 Mar 2025 04:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FB91BEF6D;
+	Sat,  1 Mar 2025 04:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dqxEFTN4"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87BB1519BE
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 04:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Tic0cecF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B8A1519BE;
+	Sat,  1 Mar 2025 04:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740802575; cv=none; b=EHB5H82C9gHXfUmI/fi0Lghz/49sW3Dv8PpNyE9JvOngKh8MAxLQjNydosyDYLCOEYsoZMA9otcUB+Ej2SOy50Ig+vsTLTTUSPRey873/DXmS7XfrZMn7nWzqTYaYxrnJAwG+qVUipTwUUDno3X4t05udpu9FS7c0Pp8R4MrLpo=
+	t=1740802986; cv=none; b=EGXKrEZ84nErlhBBHHNQU3nbl8WMm5yawvS0+QGnhC57+vZCX+h1LFUAIKyk+VJemveMXqwp39JyW6mfu4nwzyFytyUb1WlFVS9ydLrVQoy7suwk6qQMfItIGY7G7QDAO/WXXJ9gJp2IXYPDINJaWzS1EWpZIW0rPN8aIY2lhy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740802575; c=relaxed/simple;
-	bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DUqVxM491GwLRhwGx0SYyUmUr8cilM8zFEKc6XUcT9tUSxCztOGMrC99yxS04RUmp60X7A7Ou5W2gsuHSCd4nmECbB56V20pLwDGe3X/huNqfuF2W+CdkEm//Rv17BgucW3U0GBe4DVTRI6mVEL/cEFJr8KgWcvyr/mw64IUO9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dqxEFTN4; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54298ec925bso4138423e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:16:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740802572; x=1741407372; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
-        b=dqxEFTN4T+LXT8b/WGkWy3B6mb3egi21CVMTXjvbd8GUrkJEp4RsQLMXzwFjABlnys
-         EyWGxaN8RxwDJgmT4Ho4J9wQdn5NhnLVV/r6vvH21ehUIR1OdbpsdWZYh9g6Zi+9qQp+
-         LYUBFiMTHCdALkboNfGsDFdVXQRS5dZg7VaS4v8L7prSDQbwV6Mg58oFUfDhv0PUyNLl
-         8R3nmWcgPsJWIDG/19gPv0zOU5YJwwMDVbJRXQi0GChfB8BxkFjNiDnZzaR48PIQN5zG
-         OFhGRLmJiA5uyelk2i5G8lfVUjLjyARxh65oE9aanbQjYy0WMzwgMYwcrkSGtSeedAGo
-         KwLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740802572; x=1741407372;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
-        b=nHADhTFrbSQgJBhVkjQhUQXDRHnuFkgEIQVK62gTQA0EtNavadJ4fE3B9HLkyrlA2o
-         Fdz6wLcc5jy9OapKIjECrPnetftQlwdn5lI1nSjCTvnQtAU35jTkiB3f4+ysR0Th4hdK
-         qgpBQ2QB34TMiX6+Hf/Z7OGNfYktMp2+KNMXsvOoFxR2hovnvupgkAJW2yQuh/CgImxK
-         4lyxCFQBoB6HRf8hshbAcI16K8rK43ztJfOXEZkRaEoyh7muuC3Jra2Yu3l8vpzU8oQZ
-         gEk3dpALRt0CXmcyLoe/FuJdonl64ghBB1zyUNhN35WhQFPVfuRAWtfPC9O5nLIa3TI6
-         pu1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7uwwaCMAwniN1B8AGgSP6p09m2+45YxvJPsBnD7IOCaJog1auSl+Q0gF+m34gjcbCPagcosbwmYov5KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZhfNxK4usD1uGfB3yAXDGS3wdlywGS8CK8S9pOxRcIrfl71WH
-	SRDcjz+w0h86xUFAceEopsfPh228Lua9dv0hs+SC+PII9JbLfEvQxcxiavReAVh7oZfQgtJPKf9
-	6dElv85sH9DZOYsmjmJ+IOLDqVk6zKGrR0xYTrUAgElUkb37R+//xj9Nt
-X-Gm-Gg: ASbGnct4plmNx0HKvs1P2tgT/sd964zUyqmv/mWy5xtHGwA8mLWULUhtVMlwkFhzCkX
-	70xs4/fSfpi5WHf6R1qxgOtMuRTnh3tMjw27vcYT+vPCSqdBw/kqLt9UpaTuOIyZgv5tffkF2d7
-	OYnOpV81yvGlmJYRNpD/QOuMDkl/xXixE=
-X-Google-Smtp-Source: AGHT+IFP5aCHULz6zpIiPlJszPYhhIKQa4bjgAfv6H6nwuK5koq1iQ2nHbNDaxSV+n8l900FUXdJNFmIzAGeKlhCAx4=
-X-Received: by 2002:a05:6512:693:b0:545:b28:2fa9 with SMTP id
- 2adb3069b0e04-5494c122af7mr2774025e87.16.1740802571668; Fri, 28 Feb 2025
- 20:16:11 -0800 (PST)
+	s=arc-20240116; t=1740802986; c=relaxed/simple;
+	bh=yseNamwDxaZtO0KtuMWvy0i8Osu9fsrGhdEX7PvrknE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JCs1hDPjygsX4YZp9RhGh8B5PiT/mlqGdc2iAB4FFeyl23n+qnB97fYOqeg7XlPcNu/4QvmTLnWip3SPHATS25bmPOG6wYCeYXmmqhpZB7gIZEPXsjrRTXcRQU1W0AocbXOP0hdj/gZCPVz4tDMbbF1Pzxn5DkinREhHEBJW1O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Tic0cecF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3AA842038A25;
+	Fri, 28 Feb 2025 20:23:04 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AA842038A25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740802984;
+	bh=PgYb7240sgPq/L5w2oKC7klJ5k6Fow9TNpoUkzNGK1k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Tic0cecF/21Kg594q1CO/eg5+QgiwPz4LgD/n3MMHP2O9FfWF99KZzvmupgYjfLmY
+	 kKC2iohVgVPu30uDrBrUvlKGueIlVHYFXCQHgQjO2hELzw+/4iCNbOl8VIVFWOPAzC
+	 WINPoDOvtacWuCzAjkiPENuSeaZYK/qJx1E103wU=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH v4 0/2] Converge on using secs_to_jiffies() part two
+Date: Sat, 01 Mar 2025 04:22:51 +0000
+Message-Id: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740504232.git.nicolinc@nvidia.com>
-In-Reply-To: <cover.1740504232.git.nicolinc@nvidia.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Sat, 1 Mar 2025 12:16:00 +0800
-X-Gm-Features: AQ5f1Jq1aPPNEUtuYw2bvAu1XDeZv-PKWUyrHeAmpxtPMb0nHo1DtYawDISk28E
-Message-ID: <CABQgh9FYqzoUxjR246QBPGW9jqngK1JpgfACvBTLTHq-mBBCJg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/14] iommufd: Add vIOMMU infrastructure (Part-3: vEVENTQ)
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org, 
-	joro@8bytes.org, suravee.suthikulpanit@amd.com, robin.murphy@arm.com, 
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
-	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org, 
-	mshavit@google.com, shameerali.kolothum.thodi@huawei.com, smostafa@google.com, 
-	ddutile@redhat.com, yi.l.liu@intel.com, praan@google.com, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJuLwmcC/43OsW4DIRAE0F+xqLPWsnBwdpX/iFIQbomJ4sMCQ
+ hxZ9+/h3CSNpStnijdzE4Vz5CKOu5vI3GKJae5BP+2EP7n5nSFOPQtC0pKkBZ/mxrn3hX2BmuA
+ jhtAFuLhcoX4nCFqjtM6ZYKzoziVziNf7xstrz6dYaso/98km13bVB5Q0btCbBISDM+wDvpHC8
+ fkzzl/X/Tn6nEoKde/TWaw7jf5sQrXFpm5PFofRoQwT8mNb/bNp2GKrbjutDsayMn588HtZll8
+ Wd1FLlAEAAA==
+X-Change-ID: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
+ Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Easwar Hariharan <eahariha@linux.microsoft.com>
+X-Mailer: b4 0.14.2
 
-On Wed, 26 Feb 2025 at 01:33, Nicolin Chen <nicolinc@nvidia.com> wrote:
->
-> As the vIOMMU infrastructure series part-3, this introduces a new vEVENTQ
-> object. The existing FAULT object provides a nice notification pathway to
-> the user space with a queue already, so let vEVENTQ reuse that.
->
-> Mimicing the HWPT structure, add a common EVENTQ structure to support its
-> derivatives: IOMMUFD_OBJ_FAULT (existing) and IOMMUFD_OBJ_VEVENTQ (new).
->
-> An IOMMUFD_CMD_VEVENTQ_ALLOC is introduced to allocate vEVENTQ object for
-> vIOMMUs. One vIOMMU can have multiple vEVENTQs in different types but can
-> not support multiple vEVENTQs in the same type.
->
-> The forwarding part is fairly simple but might need to replace a physical
-> device ID with a virtual device ID in a driver-level event data structure.
-> So, this also adds some helpers for drivers to use.
->
-> As usual, this series comes with the selftest coverage for this new ioctl
-> and with a real world use case in the ARM SMMUv3 driver.
->
-> This is on Github:
-> https://github.com/nicolinc/iommufd/commits/iommufd_veventq-v8
-> Paring QEMU branch for testing:
-> https://github.com/nicolinc/qemu/commits/wip/for_iommufd_veventq-v8
+This is the second series (part 1*) that converts users of msecs_to_jiffies() that
+either use the multiply pattern of either of:
+- msecs_to_jiffies(N*1000) or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-Thanks Nico
+where N is a constant or an expression, to avoid the multiplication.
 
-Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+The conversion is made with Coccinelle with the secs_to_jiffies() script
+in scripts/coccinelle/misc. Attention is paid to what the best change
+can be rather than restricting to what the tool provides.
 
-After rebase on your branch
-https://github.com/Linaro/linux-kernel-warpdrive/tree/iommufd_veventq-v8
-https://github.com/Linaro/qemu/tree/for_iommufd_veventq-v8
+Andrew has kindly agreed to take the series through mm.git modulo the
+patches maintainers want to pick through their own trees.
 
-Tested with multi-device in guests, with io page faults happen.
+This series is based on next-20250225
 
-Thanks
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+
+* https://lore.kernel.org/all/20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com/
+
+---
+Changes in v4:
+- Restore correct range checks for rbd and libceph (Christophe J)
+- Link to v3: https://lore.kernel.org/r/20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com
+
+Changes in v3:
+- Change commit message prefix from libata: zpodd to ata: libata-zpodd: in patch 8 (Damien)
+- Split up overly long line in patch 9 (Christoph)
+- Fixup unnecessary line break in patch 14 (Ilpo)
+- Combine v1 and v2
+- Fix some additional hunks in patch 2 (scsi: lpfc) which the more concise script missed
+- msecs_to_jiffies -> msecs_to_jiffies() in commit messages throughout
+- Bug in secs_to_jiffies() uncovered by LKP merged in 6.14-rc2: bb2784d9ab4958 ("jiffies: Cast to unsigned long in secs_to_jiffies() conversion")
+- Link to v2: https://lore.kernel.org/r/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com
+
+Changes in v2:
+- Remove unneeded range checks in rbd and libceph. While there, convert some timeouts that should have been fixed in part 1. (Ilya)
+- Fixup secs_to_jiffies.cocci to be a bit more verbose
+- Link to v1: https://lore.kernel.org/r/20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com
+
+---
+Easwar Hariharan (2):
+      rbd: convert timeouts to secs_to_jiffies()
+      libceph: convert timeouts to secs_to_jiffies()
+
+ drivers/block/rbd.c          |  8 ++++----
+ include/linux/ceph/libceph.h | 12 ++++++------
+ net/ceph/ceph_common.c       | 18 ++++++++----------
+ net/ceph/osd_client.c        |  3 +--
+ 4 files changed, 19 insertions(+), 22 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+
+Best regards,
+-- 
+Easwar Hariharan <eahariha@linux.microsoft.com>
+
 
