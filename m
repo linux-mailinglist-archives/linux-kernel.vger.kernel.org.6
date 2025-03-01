@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-540132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A91A4AE1D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C19A4AE21
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925E916ED2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912BC16F284
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E631E98F3;
-	Sat,  1 Mar 2025 22:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2271E8335;
+	Sat,  1 Mar 2025 22:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hma9DBHL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTRBEODa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5042B2DA;
-	Sat,  1 Mar 2025 22:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C8189BB0
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 22:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740866958; cv=none; b=he6OH4YecrNQoXAtdmOVXhG3rb4HAtDprN5Xj9qx2nPc191dnxev14DAPW3R2bS4uxio1GaBvSV20r7gRn4ma64aEfC50VYCz+GIY6F2jJfpfCYtUxial+KsKZPzBXmG3inF2DYIn1OlnI8NY5NL4yzaG4zV4sc+7SuUohAirIY=
+	t=1740867687; cv=none; b=WCccrLey7eN/Ol2BqBwf5Pc+Rj+6vMEPsD5NIYM8fHToUv3na7MajId2FHKcecK9hVGK6yg8syBKRQue98g44YgTPoYXb9nZP/BigLsf9eLXsuozAQt4SyyP1u4/LMIRckdNlx7CqEFT2hOhZaLWwYJ9q6nmVZP/RrkUSc7ATyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740866958; c=relaxed/simple;
-	bh=uHtN/VWPtcnOkEo25Y7vtTV3AjhF+AbqcDWtH/62Pyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQvaQBywhlXGIgNhGb6TvwuliWOqbQYUxyBCqFOclm3drLnb86Yo3+1apXjGe2aOVTbZbBnGeZz6ep/J7V5CJgT2HL2FPbu3sMrVgue0hoO5sBYX5oxTU6y2dZs3nZbhXjsU9IlLsO4b1O9tg7POl6fdt7svnmZiLzZPJoruoxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hma9DBHL; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1740867687; c=relaxed/simple;
+	bh=/kr/iiN+6mWFEvfTzLn/BSJFlMOee4GjMK9oB8NIYCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZgQ9zMIJVOcmdah4BtKqPz1MFuP2iRvFF/EUfPPh4Pc2RA8msNrTlVqN1R/5nErGONBiVoM/Se38FjztvZg6SPoW9mOlnsu7ioIMpV3K33SiWmEUFQbFxTN03mAuuFc2S8Ao+GL1lVX1Cp8omJE8Ua56lLZsahJ0m/8ozVSmPhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTRBEODa; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740866956; x=1772402956;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uHtN/VWPtcnOkEo25Y7vtTV3AjhF+AbqcDWtH/62Pyc=;
-  b=Hma9DBHL2gHR01zanHENH9r4wuo6ke49pYw15ToBOhPtuYX8IxwMprc4
-   oto9zn2kyhHXqt7he4s52qzjYvHPcFYk6sIl1JdvHucJZOwRtQUPe6KPO
-   YpXpLZkKSnj0olaIN6Bpqcsq4NH27JPR7+ysOiVdpPVQ5ABPBORnrXF+v
-   lVR/gl8ROGd06r7JyO1qmiBIM13YT4XjYwVJXLhIyBe37Dz98Qqxuyt80
-   dADrEHHUcvx06bDAOUcLyqjCHTmh8+1GwqtLFVgnqI4rIWRZs9TZ+euT3
-   hlBLFBrUGvqKO+U2M0eY8bQ+eCcIGlQJky1UhbtPBNjFHx0Ze4Gl+gRdv
-   Q==;
-X-CSE-ConnectionGUID: pCpEc7r2Q9+/i2SvemWH4g==
-X-CSE-MsgGUID: uZzoarOHTLqyI4MwiDrXJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="59185852"
+  t=1740867685; x=1772403685;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/kr/iiN+6mWFEvfTzLn/BSJFlMOee4GjMK9oB8NIYCk=;
+  b=aTRBEODacebNxZYIjACBPGBS1/t1p8fDY0Y//mX68tLj5yfa5CGPAfa0
+   RyUu3cOB/Yg4TC/bXo6QqPPFJo0b85TnbdO07jQY+A0KXZpX0ceW68+sp
+   nS0k/DvePLiCcFvE235wlUaJcXr/ZtoeZViRw9t9Tf8yZ0/W5NNslobj8
+   m0iAXqmAJGijr9Blv9t8MniD3onea6LplPKbvXnPcJurPOZK1ImyGwxhz
+   /ai4BtFedtvzxCJeTf8DFZOSk+1hO+JuAJnfFxY3ED223kfwGXZyQEtYf
+   vW+7mftZFTSuJ47lfidoEK0qldlmJZbjNx27spxpGU8XgnQXP31aTK4yG
+   w==;
+X-CSE-ConnectionGUID: cKT0Fa5fSEeu6xIhp2OPXw==
+X-CSE-MsgGUID: G9xG/Ld4Shax5SOCcZtmqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="44590853"
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="59185852"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 14:09:16 -0800
-X-CSE-ConnectionGUID: joFekOF/Tw+4gQQOZiONUA==
-X-CSE-MsgGUID: /My03QWvQ/eg9mZBHYEqZA==
+   d="scan'208";a="44590853"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 14:21:24 -0800
+X-CSE-ConnectionGUID: EYT6N8NcRiGashzEsgUFFw==
+X-CSE-MsgGUID: HXzo8lDLSXeR96Wdb8LBug==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="154820830"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="117837338"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 01 Mar 2025 14:09:14 -0800
+  by fmviesa008.fm.intel.com with ESMTP; 01 Mar 2025 14:21:23 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1toV1E-000GlW-10;
-	Sat, 01 Mar 2025 22:09:12 +0000
-Date: Sun, 2 Mar 2025 06:08:54 +0800
+	id 1toVCz-000GmI-0N;
+	Sat, 01 Mar 2025 22:21:21 +0000
+Date: Sun, 2 Mar 2025 06:21:00 +0800
 From: kernel test robot <lkp@intel.com>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, linus.walleij@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>
-Subject: Re: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
-Message-ID: <202503020508.tSquVmjP-lkp@intel.com>
-References: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
+ parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
+Message-ID: <202503020637.6SBId7IR-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,99 +77,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 
-Hi Pratap,
+Hi Peng,
 
-kernel test robot noticed the following build errors:
+FYI, the error/warning still remains.
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/pinctrl-amd-isp411-Add-amdisp-GPIO-pinctrl/20250301-011050
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20250228165749.3476210-1-pratap.nirujogi%40amd.com
-patch subject: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
-config: arc-randconfig-002-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020508.tSquVmjP-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020508.tSquVmjP-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   df87d843c6eb4dad31b7bf63614549dd3521fe71
+commit: 40df0a91b2a5228ded8e5f75b80d28c96c6831cd remoteproc: add is_iomem to da_to_va
+date:   4 years ago
+config: arm-randconfig-c041-20230507 (https://download.01.org/0day-ci/archive/20250302/202503020637.6SBId7IR-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020637.6SBId7IR-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020508.tSquVmjP-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020637.6SBId7IR-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   drivers/pinctrl/pinctrl-amdisp.c: In function 'amdisp_gpiochip_add':
->> drivers/pinctrl/pinctrl-amdisp.c:196:13: error: 'struct gpio_chip' has no member named 'of_node'; did you mean 'fwnode'?
-     196 |         gc->of_node             = pdev->dev.of_node;
-         |             ^~~~~~~
-         |             fwnode
-   In file included from drivers/pinctrl/pinctrl-amdisp.c:42:
-   drivers/pinctrl/pinctrl-amd.h: At top level:
->> drivers/pinctrl/pinctrl-amd.h:1478:34: warning: 'pmx_functions' defined but not used [-Wunused-const-variable=]
-    1478 | static const struct amd_function pmx_functions[] = {
-         |                                  ^~~~~~~~~~~~~
->> drivers/pinctrl/pinctrl-amd.h:882:30: warning: 'kerncz_groups' defined but not used [-Wunused-const-variable=]
-     882 | static const struct pingroup kerncz_groups[] = {
-         |                              ^~~~~~~~~~~~~
->> drivers/pinctrl/pinctrl-amd.h:111:38: warning: 'kerncz_pins' defined but not used [-Wunused-const-variable=]
-     111 | static const struct pinctrl_pin_desc kerncz_pins[] = {
-         |                                      ^~~~~~~~~~~
+>> drivers/remoteproc/omap_remoteproc.c:732: warning: Function parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
 
 
-vim +196 drivers/pinctrl/pinctrl-amdisp.c
+vim +732 drivers/remoteproc/omap_remoteproc.c
 
-   173	
-   174	static int amdisp_gpiochip_add(struct platform_device *pdev,
-   175				       struct amdisp_pinctrl *pctrl)
-   176	{
-   177		struct gpio_chip *gc = &pctrl->gc;
-   178		struct pinctrl_gpio_range *grange = &pctrl->gpio_range;
-   179		int ret;
-   180	
-   181		gc->label		= dev_name(pctrl->dev);
-   182		gc->owner		= THIS_MODULE;
-   183		gc->parent		= &pdev->dev;
-   184		gc->names		= amdisp_range_pins_name;
-   185		gc->request		= gpiochip_generic_request;
-   186		gc->free		= gpiochip_generic_free;
-   187		gc->get_direction	= amdisp_gpio_get_direction;
-   188		gc->direction_input	= amdisp_gpio_direction_input;
-   189		gc->direction_output	= amdisp_gpio_direction_output;
-   190		gc->get			= amdisp_gpio_get;
-   191		gc->set			= amdisp_gpio_set;
-   192		gc->set_config		= amdisp_gpio_set_config;
-   193		gc->base		= -1;
-   194		gc->ngpio		= ARRAY_SIZE(amdisp_range_pins);
-   195	#if defined(CONFIG_OF_GPIO)
- > 196		gc->of_node		= pdev->dev.of_node;
-   197		gc->of_gpio_n_cells	= 2;
-   198	#endif
-   199	
-   200		grange->id		= 0;
-   201		grange->pin_base	= 0;
-   202		grange->base		= 0;
-   203		grange->pins		= amdisp_range_pins;
-   204		grange->npins		= ARRAY_SIZE(amdisp_range_pins);
-   205		grange->name		= gc->label;
-   206		grange->gc		= gc;
-   207	
-   208		ret = devm_gpiochip_add_data(&pdev->dev, gc, pctrl);
-   209		if (ret)
-   210			return ret;
-   211	
-   212		pinctrl_add_gpio_range(pctrl->pctrl, grange);
-   213	
-   214		dev_info(&pdev->dev, "register amdisp gpio controller\n");
-   215		return 0;
-   216	}
-   217	#endif
-   218	
+34ed5a33b1218e Ohad Ben-Cohen 2011-10-20  716  
+530a1b57e8590f Suman Anna     2020-03-24  717  /**
+530a1b57e8590f Suman Anna     2020-03-24  718   * omap_rproc_da_to_va() - internal memory translation helper
+530a1b57e8590f Suman Anna     2020-03-24  719   * @rproc: remote processor to apply the address translation for
+530a1b57e8590f Suman Anna     2020-03-24  720   * @da: device address to translate
+530a1b57e8590f Suman Anna     2020-03-24  721   * @len: length of the memory buffer
+530a1b57e8590f Suman Anna     2020-03-24  722   *
+530a1b57e8590f Suman Anna     2020-03-24  723   * Custom function implementing the rproc .da_to_va ops to provide address
+530a1b57e8590f Suman Anna     2020-03-24  724   * translation (device address to kernel virtual address) for internal RAMs
+530a1b57e8590f Suman Anna     2020-03-24  725   * present in a DSP or IPU device). The translated addresses can be used
+530a1b57e8590f Suman Anna     2020-03-24  726   * either by the remoteproc core for loading, or by any rpmsg bus drivers.
+530a1b57e8590f Suman Anna     2020-03-24  727   *
+530a1b57e8590f Suman Anna     2020-03-24  728   * Return: translated virtual address in kernel memory space on success,
+530a1b57e8590f Suman Anna     2020-03-24  729   *         or NULL on failure.
+530a1b57e8590f Suman Anna     2020-03-24  730   */
+40df0a91b2a522 Peng Fan       2021-03-06  731  static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+530a1b57e8590f Suman Anna     2020-03-24 @732  {
+530a1b57e8590f Suman Anna     2020-03-24  733  	struct omap_rproc *oproc = rproc->priv;
+530a1b57e8590f Suman Anna     2020-03-24  734  	int i;
+530a1b57e8590f Suman Anna     2020-03-24  735  	u32 offset;
+530a1b57e8590f Suman Anna     2020-03-24  736  
+530a1b57e8590f Suman Anna     2020-03-24  737  	if (len <= 0)
+530a1b57e8590f Suman Anna     2020-03-24  738  		return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  739  
+530a1b57e8590f Suman Anna     2020-03-24  740  	if (!oproc->num_mems)
+530a1b57e8590f Suman Anna     2020-03-24  741  		return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  742  
+530a1b57e8590f Suman Anna     2020-03-24  743  	for (i = 0; i < oproc->num_mems; i++) {
+530a1b57e8590f Suman Anna     2020-03-24  744  		if (da >= oproc->mem[i].dev_addr && da + len <=
+530a1b57e8590f Suman Anna     2020-03-24  745  		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
+530a1b57e8590f Suman Anna     2020-03-24  746  			offset = da - oproc->mem[i].dev_addr;
+530a1b57e8590f Suman Anna     2020-03-24  747  			/* __force to make sparse happy with type conversion */
+530a1b57e8590f Suman Anna     2020-03-24  748  			return (__force void *)(oproc->mem[i].cpu_addr +
+530a1b57e8590f Suman Anna     2020-03-24  749  						offset);
+530a1b57e8590f Suman Anna     2020-03-24  750  		}
+530a1b57e8590f Suman Anna     2020-03-24  751  	}
+530a1b57e8590f Suman Anna     2020-03-24  752  
+530a1b57e8590f Suman Anna     2020-03-24  753  	return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  754  }
+530a1b57e8590f Suman Anna     2020-03-24  755  
+
+:::::: The code at line 732 was first introduced by commit
+:::::: 530a1b57e8590f2ebbb6a35effa0efa988aabf6c remoteproc/omap: Add the rproc ops .da_to_va() implementation
+
+:::::: TO: Suman Anna <s-anna@ti.com>
+:::::: CC: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 -- 
 0-DAY CI Kernel Test Service
