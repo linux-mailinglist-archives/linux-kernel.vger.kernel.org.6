@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-540066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6128A4AD32
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:02:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7312A4AD34
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C50189461E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC52170ACF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E6D1E5B7A;
-	Sat,  1 Mar 2025 18:01:51 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D201E1A33;
+	Sat,  1 Mar 2025 18:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="osXgXLC9"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570A8BF8;
-	Sat,  1 Mar 2025 18:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08BF1E572A
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740852111; cv=none; b=Tbc+7cbQXv4+NmmjlU5lZhfvsOU1vdf+3GPRqCyGG4DqCWKFlzdAReIXhcSefckVsMwaKu8x8YnYc3WtdCQFS8qs1ljFpejsePly1J6uDP0YmoIAzGRlCoNwRqVp7S3hrUiOvFHHpX7VzFABNfjum9wlY8ZpErq9wIWKbvIgRAg=
+	t=1740852174; cv=none; b=Mxe6FsPb0FjVKEBfPURJd1C6xvC1Jmrvjj5iYtKpnKziQgVcgjRh4pL44efUXrQXh9RZLW6cbfNbV14GPiftwm5I0uCh7QHroTg9mKSiHadWcAjrumqcEGDn7hJPMLpz3YlXdzOe85CHFrFmJsXzVdsisoUO6FcE/qMJbnglHxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740852111; c=relaxed/simple;
-	bh=klqCN48Ny/H3BoJ3S0qc0BU0Owh8CJ6llnu/vJfC6BI=;
+	s=arc-20240116; t=1740852174; c=relaxed/simple;
+	bh=PMZphVDkAF5aPMon3qh5vtfYZi7nELusLHYh4ZNi3yo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9o8FeIGVgcSpcJWlXIJZJCAS9kuxGYt9nmQxxWGpu9engGSYC+iGhRhBQAF46IQXE6mDqzcN2IOb/0zqOX8DS+fsngSjCoXynw5fcQoknlECpJsQBhbiaA4TdJ8eng+tvMgr1ss79tIm3JqKR3hYp6J65Xy/1IKobMfeMM5FZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 4A030280C374E;
-	Sat,  1 Mar 2025 19:01:39 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 347955E0BCC; Sat,  1 Mar 2025 19:01:39 +0100 (CET)
-Date: Sat, 1 Mar 2025 19:01:39 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	bhelgaas@google.com, Jonathan.Cameron@huawei.com,
-	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org,
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
-	wilfred.mallawa@wdc.com, aliceryhl@google.com, ojeda@kernel.org,
-	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
-	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
- authenticated
-Message-ID: <Z8NLgxmDbcC9_C3F@wunner.de>
-References: <20250227030952.2319050-1-alistair@alistair23.me>
- <20250227030952.2319050-10-alistair@alistair23.me>
- <2025022717-dictate-cortex-5c05@gregkh>
- <Z8DqZlE5ccujbJ80@wunner.de>
- <2025022748-flock-verbalize-b66a@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPHNMv8QnbmA9KwUBPA1YT4YO9XCuKZ8H3xcLGN9b0pxa/qD6f/FCq+mdnsN1OCzEXIDqmVdVNUh+psvyeyoHuCmyIo58EpjPBvW2VFTrMdTePJb053I7fRVN7+ZkAG+Iya5bK7GOIlR42CXFMlcyhDlYy2yBkrjgJyRkfG/Tq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=osXgXLC9; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 15599 invoked from network); 1 Mar 2025 19:02:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1740852161; bh=72eOQ/MqtKm4OU9kul9+dWtDYSCW8AaG4vLVBVfVUzs=;
+          h=From:To:Cc:Subject;
+          b=osXgXLC9pJX8RfrLXisZ8+LebRpXM+m9zvsTerBwTA7JyQOodLGIBZjLpJzi1mMqF
+           TqO+SF0hTyeR60ieHyM2m4nNQv7nxH+mAuJg5REGofU1BTYF3z/6PFDuKOAXQCm3G+
+           ytYrfSOvhqzRpJbW97mx4NWpg5T8dulhrS9mhhqbEoOjMjQR8Dxqg6/6/tJ7gDcm/R
+           FH3TlHnB3eeO2xuRdnwFeJ6bMMrxcq57IpKoZnjdL2Z9PFqXWW1hirIzYZPXjeX0Pj
+           yTOlqidswEh3PNGcnb7AKznqPXEcZ4U43sOnYqKVIQ8Cs8l8MJKaufc0HP7lei2eNc
+           EoC0vtyg1B0+A==
+Received: from 89-64-0-97.dynamic.chello.pl (HELO localhost) (stf_xl@wp.pl@[89.64.0.97])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <arnd@arndb.de>; 1 Mar 2025 19:02:41 +0100
+Date: Sat, 1 Mar 2025 19:02:40 +0100
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Kalle Valo <kvalo@kernel.org>, Ben Hutchings <ben@decadent.org.uk>,
+	linux <linux@treblig.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with
+ DEBUG_FS=n
+Message-ID: <20250301180240.GA61229@wp.pl>
+References: <20250225145359.1126786-1-arnd@kernel.org>
+ <20250301122834.GA55739@wp.pl>
+ <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
+ <20250301133652.GA60453@wp.pl>
+ <7e472cbe-bf29-432b-93da-d1fc87630939@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,180 +69,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025022748-flock-verbalize-b66a@gregkh>
+In-Reply-To: <7e472cbe-bf29-432b-93da-d1fc87630939@app.fastmail.com>
+X-WP-MailID: 31fa1973e68bfed795e2c0e3bcfcda2b
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [oaOU]                               
 
-On Thu, Feb 27, 2025 at 05:39:53PM -0800, Greg KH wrote:
-> On Thu, Feb 27, 2025 at 11:42:46PM +0100, Lukas Wunner wrote:
-> > On Thu, Feb 27, 2025 at 03:16:40AM -0800, Greg KH wrote:
-> > > I don't like this "if it's present we still don't know if the device
-> > > supports this", as that is not normally the "sysfs way" here.  Why must
-> > > it be present in those situations?
-> > 
-> > That's explained above.
+On Sat, Mar 01, 2025 at 02:49:38PM +0100, Arnd Bergmann wrote:
+> On Sat, Mar 1, 2025, at 14:36, Stanislaw Gruszka wrote:
+> > On Sat, Mar 01, 2025 at 01:38:16PM +0100, Arnd Bergmann wrote:
+> >> On Sat, Mar 1, 2025, at 13:28, Stanislaw Gruszka wrote:
+> >> > On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
+> >> >
+> >> > But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
+> >> > case, it does compile for me:
+> >> >
+> >> > -  22475	   1160	      0	  23635	   
+> >> > 5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+> >> > +  23008	   1168	      0	  24176	   
+> >> > 5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+> >> 
+> >> Very strange, this really shouldn't happen. Which symbols
+> >> exactly do you see the compiler fail to drop with my patch,
+> >
+> > nm 4965-rs.o diffrence before and after patch:
 > 
-> Not really, you just say "downgrade attacks", which is not something
-> that we need to worry about, right?
-
-A downgrade attack means duping the victim into believing that only
-a weaker security mode is supported.  E.g. only sha1, but not sha256.
-
-In this context, downgrade attack means duping the kernel or user
-into believing that SPDM authentication is unsupported, even though it is.
-
-https://en.wikipedia.org/wiki/Downgrade_attack
-
-That's definitely something we need to be aware of and guard against,
-otherwise what's the point of authenticating in the first place.
-
-
-> > Unfortunately there is no (signed) bit in Config Space which tells us
-> > whether authentication is supported by a PCI device.  Rather, it is
-> > necessary to exchange several messages with the device through a
-> > DOE mailbox in config space to determine that.  I'm worried that an
-> > attacker deliberately "glitches" those DOE exchanges and thus creates
-> > the appearance that the device does not support authentication.
+> >  00000000000000dd t il4965_rs_alloc_sta.cold
+> > -0000000000001810 t il4965_rs_collect_tx_data.isra.0
+> > -00000000000012b0 t il4965_rs_fill_link_cmd
+> > -0000000000000495 t il4965_rs_fill_link_cmd.cold
+> > +0000000000001850 t il4965_rs_collect_tx_data.isra.0
+> > +0000000000000e90 t il4965_rs_dbgfs_set_mcs.isra.0
+> > +00000000000002f6 t il4965_rs_dbgfs_set_mcs.isra.0.cold
+> > +0000000000001340 t il4965_rs_fill_link_cmd
+> > +0000000000000518 t il4965_rs_fill_link_cmd.cold
+> >  00000000000002a0 t il4965_rs_free
 > 
-> That's a hardware glitch, and if that happens, then it will show a 0 and
-> that's the same as not being present at all, right?
-
-No, the "authenticated" attribute is not present in sysfs if authentication
-is unsupported.
-
-The downgrade attack protection comprises exposing the attribute if it
-could not be determined whether authentication is supported or not,
-and returning an error (ENOTTY) on read or write.
-
-User space applications need to check anyway whether read() or write()
-failed for some reason.  E.g. if the device is hot-removed concurrently,
-the read() system call returns ENODEV.  So returning ENOTTY is just
-another error that can occur on access to the attribute.
-
-The idea is that user space typically wants to check whether the attribute
-contains "1", signifying that the device was authenticated successfully.
-Hence a return value of "0" or any error code signifies that the device
-is not authenticated.
-
-And if user space wants to check whether authentication is supported at all,
-it checks for presence of the sysfs attribute.  Hence exposing the attribute
-if support could not be determined is a safety net to not mislead user space
-that the device does not support authentication.
-
-For PCIe, glitching the hardware (the electric signals exchanged with
-the device) is indeed one way to disrupt the DOE and SPDM exchanges.
-
-However the SPDM protocol has not only been adopted by PCIe, but also
-other buses, in particular SCSI and ATA.  And in those cases, glitching
-the SPDM exchanges may be a pure software thing.  (Think iSCSI communication
-with storage devices in a remote rack or data center.)
-
-Damien Le Moal has explicitly requested that the user space ABI for SPDM
-is consistent across buses.  So the downgrade attack protection can be
-taken advantage of by those other buses as well.
-
-
-> > Let's say the user's policy is to trust legacy devices which do not
-> > support authentication, but require authentication for newer NVMe drives
-> > from a certain vendor.  An attacker may manipulate an authentication-capable
-> > NVMe drive from that vendor, whereupon it will fail authentication.
-> > But the attacker can trick the user into trusting the device by glitching
-> > the DOE exchanges.
+> Ah, so the debugfs files get eliminated, but
+> il4965_rs_dbgfs_set_mcs() does not.
 > 
-> Again, are we now claiming that Linux needs to support "hardware
-> glitching"?  Is that required somewhere?
-
-Required?  It's simply prudent to protect users from being duped into
-thinking the device doesn't support authentication.
-
-
-> I think if the DOE exchanges
-> fail, we just trust the device as we have to trust something, right?
-
-If the DOE exchanges fail, something fishy is going on.
-Why should we hide that fact from the user?
-
-
-> > The device needs to be re-enumerated by the PCI core to retry
-> > determining its authentication capability.  That's why the
-> > sysfs documentation says the user may exercise the "remove"
-> > and "rescan" attributes to retry authentication.
+> I think this should do it:
 > 
-> But how does it know that?
-
-Because reads and writes to the attribute return ENOTTY.
-
-> remove and recan is a huge sledgehammer, and
-> an amazing one if it even works on most hardware.  Don't make it part of
-> any normal process please.
-
-It's not a normal process.  It's manual recovery in case of a
-potential attack.  The user can also choose to unplug the device
-or reboot the machine.  That's arguably a bigger sledgehammer.
-
-
-> It's the error, don't do that.  If an error is going to happen, then
-> don't have the file there.  That's the way sysfs works, it's not a
-> "let's add all possible files and then make userspace open them all and
-> see if an error happens to determine what really is present for this
-> device" model.  It's a "if a file is there, that attribute is there and
-> we can read it".
-
-The point is that if the file isn't there even though the device might
-support authentication, we're creating a false and dangerous illusion.
-This is different from other attributes which don't have that quality.
-
-
-> > > > Alternatively, authentication success might be signaled to user space
-> > > > through a uevent, whereupon it may bind a (blacklisted) driver.
-> > > 
-> > > How will that happen?
-> > 
-> > The SPDM library can be amended to signal a uevent when authentication
-> > succeeds or fails and user space can then act on it.  I imagine systemd
-> > or some other daemon might listen to such events and do interesting things,
-> > such as binding a driver once authentication succeeds.
+> --- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+> +++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+> @@ -2495,6 +2495,9 @@ il4965_rs_dbgfs_set_mcs(struct il_lq_sta *lq_sta, u32 * rate_n_flags, int idx)
+>         u8 valid_tx_ant;
+>         u8 ant_sel_tx;
+>  
+> +       if (!IS_ENABLED(CONFIG_MAC80211_DEBUGFS))
+> +               return;
+> +
+>         il = lq_sta->drv;
+>         valid_tx_ant = il->hw_params.valid_tx_ant;
+>         if (lq_sta->dbg_fixed_rate) {
 > 
-> That's a new user/kernel api and should be designed ONLY if you actually
-> need it and have a user.  Otherwise let's just wait for later for that.
+> or possibly il4965_rs_dbgfs_set_mcs() can stay in the #ifdef
+> if you prefer.
 
-Of course.  Again, the commit message makes suggestions for future
-extensions to justify the change.  Those are just ideas.  Whether
-and how they are implemented remains to be seen.  Signaling a uevent
-on authentication success or failure seems like an obvious idea,
-hence I included it in the commit message.
+I'm ok with this solution. The size stays the same with above
+change.
 
-I fear if I don't include those ideas in the commit message, someone
-will come along and ask "why do you need this at all?", thus putting
-into question the whole set of authentication patches.
+Regards
+Stanislaw
 
-
-> > > If an attacker can consume kernel memory to cause this to happen you
-> > > have bigger problems.  That's not the kernel's issue here at all.
-> > > 
-> > > And "disable communication" means "we just don't support it as the
-> > > device doesn't say it does", so again, why does that matter?
-> > 
-> > Reacting to potential attacks sure is the kernel's business.
-> 
-> Reacting to real, software attacks is the kernel's business.  Reacting
-> to possible hardware issues that are just theoretical is not.
-
-We have fundamental disagreement whether certain attacks need to be taken
-seriously.  Which reminds me of...
-
-   "the final topic on the agenda was the corporate attempt at
-    security consciousness raising; a shouting match ensued,
-    in the course of which several and various reputations
-    were sullied, certain paranoid reactions were taken less
-    than seriously, and no great meeting of the minds was met."
-
-   [minutes of the uucp-lovers interest group, 20 April 1983,
-    from "A Quarter Century of UNIX" (1994) page 113]
-    https://wiki.tuhs.org/lib/exe/fetch.php?media=publications:qcu.pdf
-
-Looks like we're just upholding the time honored tradition of
-UNIX security disagreements!
-
-Thanks,
-
-Lukas
 
