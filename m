@@ -1,110 +1,136 @@
-Return-Path: <linux-kernel+bounces-539930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDFAA4AAF5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:38:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8011A4AAF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3545018976E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2193B3F27
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D3F1DE4D2;
-	Sat,  1 Mar 2025 12:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282EA1DED71;
+	Sat,  1 Mar 2025 12:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Hhx/cgP0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d9WjBtFl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m2kl+B2U"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96711DE4C5
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 12:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4C11D8A0B;
+	Sat,  1 Mar 2025 12:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740832711; cv=none; b=kPTb94e9LJuJWuo2I3k3Bp9NkLuGocFj5PIn7I5QsKgXJR08/q3pTAsiJnRMDeVVEF2x10wsLyyiQGYt+IDDaeOPQtQecIKJ61ykeHYHQzcAaiaPdWFXIjVXIqKfGjnNJZMQUsod7B8VL4L6OpmRL/5ZUiV4JOM7v5fVVmO5hOQ=
+	t=1740832721; cv=none; b=AACZj84qHqL7Cki4swxR8Ra5Mxiw4AyNJROdTe4LmaI2npBFOpUS8S4bt1MKlINxFi6WOO51mFAvT4+mCPAjh6FTDzTuwCOXRHq9lr2D7rvjF2a2JhVa3wMIQPYCX+BWPJgPw+p2kKl7JsRIYslI5azUGWQS2LqlfFtmXYMWhcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740832711; c=relaxed/simple;
-	bh=/MAYFdTg2s1JIn+YeMQLNYPys6T0G0qZaPWu6aGY+Hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3iRyROynGoeP2DyBAUJ/OZ1p4+P9o36ZM5QxLKtC0Nme42JhF0/BQRK28cqfs215FkmdmfzRCc0cduvd4pofaV3x43oK7MFXA/l2/JYvQOjz67YaCMQI/5Vo4SHhg3w4S8Gdz9VTVb/mXA5qCGpHUbJXRkUr0XOebkPaTinmGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Hhx/cgP0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9474D40E0177;
-	Sat,  1 Mar 2025 12:38:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8FIDxid9khlg; Sat,  1 Mar 2025 12:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740832697; bh=l3U5Q56h0Pc9dYo8E9WbSuPE5G7BzgNui4LMlQOWpYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hhx/cgP0bRWH+dVf84Zm34VzdOzQKLTy/rmp4n4Z8i6A5gKV5lCmh8LrURK7zHUQ5
-	 x26tiCj4U7Y6xiTjxuZzU0JotrnBMDQtQE9TyiE1z2hCOGSL8sFeaJsyVnQzT2ji83
-	 ax85mQW1PCljRZ3vEm/wjLohOEj/CvS9YOy/SfrMp48apQySAB5ZPszBNE0VWgU0dx
-	 DklqMdS1TkQrKxO+yHOyVZzAteNpgmXSQcoB+JUFaf/oBBHmTIK4YMoQthra1KgNi7
-	 GOS4OHZq31KPzffippMYUeDbmgJZbWJVDCUUTD1+odTS0i/tFPh3V2KYtD8vfI1NAQ
-	 RQmFgG9WDMzA5nk1RdIGtzhhGV2oZk3wmh3NWnEMBUAxCA8KCvrRHJXPWyLDJNNyoc
-	 FcmKkRbRmjwldsPNlKrJtiLdzdwhxUebu7ZHdtg+50/UrGIHp4ShSYkKtetFcEtA7f
-	 r+zLh0SRMCLXU4NkHqvvTy7sDjhxvqd6e4ofCNLporJwt9zncOa3/6ZkVXrA/YPVv9
-	 mdfJiE5TdGD/jdft6p+SMtt8MWMk2IadJjBQPuMuuK8ZwTf6DZJZ0MNNxLWMrs7OYS
-	 ZEjFXTnJqWdCTpFRg34ZSvjEfBPaL+/30xlxWoLlsgvB/d4p82bWPD0LA2rVwAzeC1
-	 4Z865wfuZYp8vdPUjzLrfdyA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BEBE840E015F;
-	Sat,  1 Mar 2025 12:38:07 +0000 (UTC)
-Date: Sat, 1 Mar 2025 13:38:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-Message-ID: <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local>
-References: <20250228123825.2729925-1-ubizjak@gmail.com>
- <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
- <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
- <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
- <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+	s=arc-20240116; t=1740832721; c=relaxed/simple;
+	bh=rrGNkFrv3f5CmhlRM+Joi7hAYrfRQG7h7GhOvXiAyM8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=P3Utfz1/ljLnJ8sONMyQKO9Im5CKRIP286VExYsNo8xCFc851oy2scl3XOWhiZ+Xhbzde9hL0er+5Ji9dBdKY6xoHgVRtslouqH6tS3lUPTVCEsoyWOh5QpZ5JmrMAzP+toUJiri0TePwwW32HGcU+Px5JJJuHgKsNM5yl8xOh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d9WjBtFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m2kl+B2U; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 858D21140100;
+	Sat,  1 Mar 2025 07:38:37 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Sat, 01 Mar 2025 07:38:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740832717;
+	 x=1740919117; bh=tjeEIDFBTv0qw01qPUrH5f6Cwruc5eD9G/E2Cffx1vw=; b=
+	d9WjBtFl/SGX449KuGzSDcog2c4nuPXOGlzsuIlTJhrR7JqBbHMfgM51fMNGC9a5
+	1iHv0GQnrhTEqqDJP39/MIMgxC6BKwbQa66anD1EAUHEoFJPJQPCdtSO5lVgxZ87
+	IRovlOKhLhb9BNVcJZR53TLiX/LDSuoM4C4UJReLAqgxE54FoFg8icE8MR3Wg7W2
+	bIRK6VQbPQd2eTfYiHnjd76MWbV+BBHq4Q39uReET3NFci/QZzi9NOi8D9EkBeXx
+	lb0zHNDlvaBqxJNgYK7uQzZ2cQDF2mEU+G5amKyW+YY+WGJtTmFOxxtW8KjAqizF
+	Gs4I+7GDImNh5IR1UQRdyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740832717; x=
+	1740919117; bh=tjeEIDFBTv0qw01qPUrH5f6Cwruc5eD9G/E2Cffx1vw=; b=m
+	2kl+B2UmzqKjszI6BZVkxRDpeOm5s2+BfERL1redhPBOkRMjRq+CA9k4ruXf9ro9
+	RuyLRfw1uigTxWGgr5zIoHrXIp9uiKXxnigvQ8GGn6Zjos4pHQrekjzJ462Ds5YJ
+	vSoyX7XTjLL+zE6/uYifInvG0y5nefKflmMrq3j64zbsf3HLePhPBpd+kJEyZd59
+	sTVu+HgHhOSaf+OqV8me9c//bYQu5QvUD0XVYkL3Wb0EulDucJX94pCN9UQH3X8F
+	Nizg3qaEX3b63Je7OG0zlIjCxmpKnEsiDdFOs/GRJILMvLgekGL2lTmqCEHNLDJC
+	OeXywMaHVYXl1XS5doNnQ==
+X-ME-Sender: <xms:zP_CZ1OWu5WI8zETg8KQm-IqFWfLVuTaKcyKChLPjhmiCf7SQf3Bsw>
+    <xme:zP_CZ3-vZyAmYFLqbKPpLdvr7aw-ecF1acaEhq7vhV-OFMrCnrdyz0fRBhbqUYgH5
+    9Rp6Qa0ShbPRdNR8AA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelfeefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnseguvggtrgguvghnthdroh
+    hrghdruhhkpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehguhhsthgrvhhorghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhvrghloh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhgrnhhnvghssehsihhpshholhhu
+    thhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigsehtrhgvsghlihhgrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepshhtfhgpgihlseifphdrphhl
+X-ME-Proxy: <xmx:zP_CZ0QrRtZQjU55u5UbdpqUANRnsA1AkYAmdL7V-cE7KT8w-v-7Eg>
+    <xmx:zP_CZxvwUmZsVblgf8Un_wuVROzAhaWqTmBdmxXAojpbvNec9KriEQ>
+    <xmx:zP_CZ9dBMBSj_WT2SfWyIK_BUUvGyXn8B8ixX8GzYMEwZ6ozyKhJkA>
+    <xmx:zP_CZ93OzZh-u1-R0xAj1F79i26s2psWyhdO6CE7z48STvKJYvu1_g>
+    <xmx:zf_CZ8xspkblI34gXURum3Zsi6wELjUiCFWHx3GCp2C9SbAa7Xl1OGfD>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BE2B52220072; Sat,  1 Mar 2025 07:38:36 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+Date: Sat, 01 Mar 2025 13:38:16 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stanislaw Gruszka" <stf_xl@wp.pl>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Johannes Berg" <johannes@sipsolutions.net>,
+ "Kalle Valo" <kvalo@kernel.org>, "Ben Hutchings" <ben@decadent.org.uk>,
+ linux <linux@treblig.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
+In-Reply-To: <20250301122834.GA55739@wp.pl>
+References: <20250225145359.1126786-1-arnd@kernel.org>
+ <20250301122834.GA55739@wp.pl>
+Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with DEBUG_FS=n
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 01, 2025 at 10:05:56AM +0100, Uros Bizjak wrote:
-> OTOH, -Os, where different code size/performance heuristics are used, now
-> performs better w.r.t code size.
+On Sat, Mar 1, 2025, at 13:28, Stanislaw Gruszka wrote:
+> On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
+>
+> But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
+> case, it does compile for me:
+>
+> -  22475	   1160	      0	  23635	   
+> 5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+> +  23008	   1168	      0	  24176	   
+> 5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
 
-Did anything change since:
+Very strange, this really shouldn't happen. Which symbols
+exactly do you see the compiler fail to drop with my patch,
+and which compiler version are you using?
 
-281dc5c5ec0f ("Give up on pushing CC_OPTIMIZE_FOR_SIZE")
-3a55fb0d9fe8 ("Tell the world we gave up on pushing CC_OPTIMIZE_FOR_SIZE")
+> How about moving  
+> static const struct il_rate_mcs_info il_rate_mcs[RATE_COUNT]
+> under CONFIG_MAC80211_DEBUGFS ? Maybe inside the function that use it ? 
 
-wrt -Os?
+It's not supposed to make a difference, let's try to figure
+out if there is a compiler bug or a mistake in my patch first
+and then fix it in the right place.
 
-Because if not, we still don't love -Os and you can drop the -Os argument.
-
-And without any perf data showing any improvement, this patch does nothing but
-enlarge -O2 size...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+     Arnd
 
