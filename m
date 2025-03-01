@@ -1,167 +1,186 @@
-Return-Path: <linux-kernel+bounces-540133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F04A4AE20
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:20:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E69A4AE25
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EB07A6A4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35003B212F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7941E5B79;
-	Sat,  1 Mar 2025 22:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4Xns9mL"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F98E1D5178;
+	Sat,  1 Mar 2025 22:41:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABED189BB0;
-	Sat,  1 Mar 2025 22:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694CE1C3BEB
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 22:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740867644; cv=none; b=HiPh3UHi/wqSKvWVm6tndUxYNWSz51471QxayPam7y3UsTeMgSxgGOMtVn5ysQDaR32TWZaoM9BUYu6UU6X2QILgbVsrzjPIiYhJp1rm34OXFbFNvolCWNri8hRFX+fLouEJy2IvdBoG2RuLiKeJ1l2bebBMMPVU7OkcKdis/Vc=
+	t=1740868883; cv=none; b=k9Nzd4OxqUP6+ihee6I7zCqYy+vrwerV/MTplqlk+Uv5MRBbdAEzqzOMc7W+L2S2Ny/7gi9FNJ3kxWrFFrtgrz/JEdrlVdQ3AKO1ZH4kpSy6KefKOCEN8Sofk9/Luhadf1PpbDi2rjdikrhjll0x5ooF4adqgQDuefCaoNCccIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740867644; c=relaxed/simple;
-	bh=bWi5F8JskvMUXwDgg6TYargD0S/3onvbWna1Z9b1pt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LnQHvitFZPsXfFMUjp8gb47oksZ+CWFGJv/6C8Yl56zwPjoEIvGBc8EpwcjPZ8ELk4uSu/cewvIaK5hEJGV1uymtuXg4+3NGJATshdaRcz3gfnpXVAGKxAA3AnxRMUTO64zoFSZ9c0q9slzR7XqORQatLx94MeIsEm3G9KNq318=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4Xns9mL; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47208e35f9cso39753131cf.3;
-        Sat, 01 Mar 2025 14:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740867641; x=1741472441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w2JFrSTKfau8m6kxQWUnIa48KZ7ucuFBY64RIjU9F4I=;
-        b=P4Xns9mLIB/r9QqIXWMpx+yYJTOCzWHKWK7GC2VI0y7V+GBHE96SKbY1paM5ly5Kma
-         YMV75WfY014Fm4H4TIV8nUjqklFo+knAjIxy5njBc+G4ZN85VYBMEMI7Q8JoijEZhcuw
-         jhowRc78296+SjpVE8CR7070N/rM1zEuHEYw4LUsvKRq3ibe7sGFpMcJXxdigP4zGmbt
-         0MtOE8FHEsWixMHNIrBZJESBIBdh9ieyfg+MKSN/0NrWlEOcJY++UgJfrRpnDgtN1XeY
-         eZHa1b/y16zPayzwGRpddvr4UptqJxU5JMqw7Q0xq+Sf4q0V4JbOwFF55OpG2Tw1mB1B
-         /66w==
+	s=arc-20240116; t=1740868883; c=relaxed/simple;
+	bh=vDcEx24vqT0AfT7EG5VwgT7BG9mHvImBOsL7mxNPtek=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EtPGQknMjndcItB3apvAPikzIIyHMoDCI7cwFt1juTtwq2eChGGb/FNW7ePse9sOpeJI/+/+/V3TdLgo1djrXrUt6qdYUjHzu3nqne33T/D+OKVdrJj1NNfpL7bcScokYgub3grh5g8tX9rPykVkKzb+QIQQivii+sh0uiJFVO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d3dee8d31aso24257385ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 14:41:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740867641; x=1741472441;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w2JFrSTKfau8m6kxQWUnIa48KZ7ucuFBY64RIjU9F4I=;
-        b=M3WbOXQX7Bwfh/er5ddlSR6MaaD1JrXC0bW62KlA7KIiOORLLyS1/dplgsSekzpx06
-         2krvihMaASXi0XgYu3oo4/c/0u8nbn7uaS6recuSvf2qqiDWeo3W1pnqzh4C+6PHzNwk
-         4isubELjPMG9rQlhQdzgqvZypvm5FSa5hO5M7I3f+XFa4dsQZzn6FcZX9h0RLkj6O/1o
-         8Kro9ZRRuLRnUU33f1fZbcHK/ROtP7VKaFpE8dwEFP53SUVWTGwpmQsknkNVHmyDQNXy
-         U3resDYS//BjRbeIqb4K7VMkPggjmfalq882VwtNlJgTp+3TjJaWE64NyFyE0ibYqDkV
-         73QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRRWvH6c7bQzqfUBbucize+s27XMdcwClwHvOeoAqtS+Fa7BpwOfkPpx9NPvCY/f3cUuAMU8h+uRGkwas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuL8bRF7QEkXdGDFutcT83My5TfL/M19qb2N/oHuPAyW7nsqhm
-	N7zFolJK+ZjwUcwHUghfey6NnFDHpKE6soahk/zqnYtWkLEtkmEF
-X-Gm-Gg: ASbGnct2F8p4+TpRFBhhfUQTDw/8bL83KFiUf/pdsLSLuXmFWd047QD+PmLcqMjQk/L
-	pNTh/8wyhP9e7aANwsjEXe6WnLz+3Iqlm1w8X9YgAsc+Evac/qhAMENtHsXW3abAjj4qNljLLnJ
-	5zQCNYkrMvujyyZF1Y/6dZWBxY85ai+b//5Txv/WKzF8t+P03rHhNsuICjpPMJwayET29iOdFJH
-	ISqPYkqrZxAeDWp4sCqVuMvLaNzIlZmlXevZv5elGB/lcC2id+9W90b/DlomZ2YKt/5Hs71uEa7
-	xLYxry4XmEZJsQqpCa0FtMkLmcdsPREErWADV/ABRM44HA==
-X-Google-Smtp-Source: AGHT+IGAPwp+ISQn26o9aqiS0lxaAntODE0R4hb1MMh8gugmxccnoljIhp8g8WWDVGlv0CoUEvB+aw==
-X-Received: by 2002:a05:6214:226b:b0:6e6:668a:a27f with SMTP id 6a1803df08f44-6e8a0cfff83mr134583676d6.17.1740867641363;
-        Sat, 01 Mar 2025 14:20:41 -0800 (PST)
-Received: from iman-pc.home ([142.198.73.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976346fcsm36843696d6.14.2025.03.01.14.20.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 14:20:41 -0800 (PST)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Seyediman Seyedarab <ImanDevel@gmail.com>
-Subject: [PATCH v2] kbuild: fix argument parsing in scripts/config
-Date: Sat,  1 Mar 2025 17:21:37 -0500
-Message-ID: <20250301222137.18617-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1740868880; x=1741473680;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9B8/zfMdfkQ3k3aRblXLcyzbx8Oe8hfPyvYJjlHdxjI=;
+        b=UawAbbVkE2SyzjSEBJlfdDzjliZNhi8pKnwo+d3Wrq+8vyzzautLfU5D9dthbi4V6Z
+         Q/BwplLKoJR1/KhiQoF6zTqbVVF4Y1s58THF0oQ83n9rLJ2faaLHUm3i7oatNmRvJfoZ
+         u08IGvX6gKS6uYaXqIBZiOXlPmHUDLRTXjn3iOGEY6iCrYqj1sNKk5hGWT12GJHNkp7Z
+         AlozMjRLRi4YR9Eri4YobOEGY2xqMLVCGcqmkfLolEapqLqv7Syg9hS2isec3NYB6Kz0
+         y9c+UA6/vhaI89mfuRYLryEOVEkQSVyS9ohC33RExCirhUKGLLexdE3NEun3Ye4lnKTU
+         S5Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW21vnstcDCfk9CpHChfRHxmeV9Clc2fiTNyvKNP4nKWr0/M55P5XIH3+ItxZ7E5mm6W0yd4IeGLvxJaaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzSde1nlBIs7WiWteT9aiKeNazGVsuz4+zaXPLkOFA3qvhVghJ
+	2DvQlIc+2PMT8DM1jhR+1ziKW50in91bZzL079fQZS0iETY2VMDV5Nh6JwuVR1AbePP2h/70cg7
+	M+ckglLzX+75bKW1vmUtCOXbH+CoEdvkyR90T3GNFicDn6CevOb3BKHM=
+X-Google-Smtp-Source: AGHT+IGernXN8o0yiyimwGLP8P9VkFk7znEzFCjP/2TLuJpSZZsWVTckg5VvKTIFDLSltwaFPURlG6Gm0kj7IQhspUGegLHOrK3b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1849:b0:3d3:ced4:db9b with SMTP id
+ e9e14a558f8ab-3d3e6e22d00mr92491635ab.5.1740868880588; Sat, 01 Mar 2025
+ 14:41:20 -0800 (PST)
+Date: Sat, 01 Mar 2025 14:41:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c38d10.050a0220.dc10f.016d.GAE@google.com>
+Subject: [syzbot] [mm?] kernel BUG in try_to_unmap_one
+From: syzbot <syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The script previously assumed --file was always the first argument,
-which caused issues when it appeared later. This patch updates the
-parsing logic to scan all arguments to find --file, sets the config
-file correctly, and resets the argument list with the remaining
-commands.
+Hello,
 
-It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=$FN
-to make oldconfig.
+syzbot found the following issue on:
 
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12faf7f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=fb86166504f57eff29d7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com
+
+ evict+0x4e8/0x9a0 fs/inode.c:806
+ __dentry_kill+0x20d/0x630 fs/dcache.c:660
+ dput+0x19f/0x2b0 fs/dcache.c:902
+ __fput+0x60b/0x9f0 fs/file_table.c:472
+ task_work_run+0x24f/0x310 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+------------[ cut here ]------------
+kernel BUG at mm/rmap.c:1858!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6053 Comm: syz.4.27 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:try_to_unmap_one+0x3d0d/0x3fa0 mm/rmap.c:1858
+Code: c7 c7 80 93 c3 8e 48 89 da e8 ef f3 19 03 e9 68 ca ff ff e8 b5 12 ab ff 48 8b 7c 24 20 48 c7 c6 80 17 36 8c e8 94 d2 f5 ff 90 <0f> 0b e8 9c 12 ab ff 48 8b 7c 24 18 48 c7 c6 40 1c 36 8c e8 7b d2
+RSP: 0018:ffffc9000b1be9c0 EFLAGS: 00010246
+RAX: 367eb4645686ad00 RBX: 00000000f4000000 RCX: ffffc9000b1be503
+RDX: 0000000000000004 RSI: ffffffff8c2aaf60 RDI: ffffffff8c8156e0
+RBP: ffffc9000b1bedf0 R08: ffffffff903da477 R09: 1ffffffff207b48e
+R10: dffffc0000000000 R11: fffffbfff207b48f R12: 8000000053c008e7
+R13: dffffc0000000000 R14: ffffea00014f0000 R15: ffffea00014f0030
+FS:  00007f4d2783e6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c465fa1 CR3: 000000002a1f6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __rmap_walk_file+0x420/0x5f0 mm/rmap.c:2774
+ try_to_unmap+0x219/0x2e0
+ unmap_folio+0x183/0x1f0 mm/huge_memory.c:3053
+ __folio_split+0x849/0x16d0 mm/huge_memory.c:3696
+ truncate_inode_partial_folio+0x9b1/0xdc0 mm/truncate.c:234
+ shmem_undo_range+0x82f/0x1820 mm/shmem.c:1143
+ shmem_truncate_range mm/shmem.c:1237 [inline]
+ shmem_fallocate+0x431/0xf20 mm/shmem.c:3663
+ vfs_fallocate+0x623/0x7a0 fs/open.c:338
+ madvise_remove mm/madvise.c:1034 [inline]
+ madvise_vma_behavior mm/madvise.c:1263 [inline]
+ madvise_walk_vmas mm/madvise.c:1505 [inline]
+ madvise_do_behavior+0x1ec6/0x3b90 mm/madvise.c:1657
+ do_madvise mm/madvise.c:1755 [inline]
+ __do_sys_madvise mm/madvise.c:1763 [inline]
+ __se_sys_madvise mm/madvise.c:1761 [inline]
+ __x64_sys_madvise+0x11b/0x140 mm/madvise.c:1761
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4d2698d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4d2783e038 EFLAGS: 00000246 ORIG_RAX: 000000000000001c
+RAX: ffffffffffffffda RBX: 00007f4d26ba5fa0 RCX: 00007f4d2698d169
+RDX: 0000000000000009 RSI: 0000000000040000 RDI: 00004000001c1000
+RBP: 00007f4d26a0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f4d26ba5fa0 R15: 00007ffda9fdc678
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:try_to_unmap_one+0x3d0d/0x3fa0 mm/rmap.c:1858
+Code: c7 c7 80 93 c3 8e 48 89 da e8 ef f3 19 03 e9 68 ca ff ff e8 b5 12 ab ff 48 8b 7c 24 20 48 c7 c6 80 17 36 8c e8 94 d2 f5 ff 90 <0f> 0b e8 9c 12 ab ff 48 8b 7c 24 18 48 c7 c6 40 1c 36 8c e8 7b d2
+RSP: 0018:ffffc9000b1be9c0 EFLAGS: 00010246
+RAX: 367eb4645686ad00 RBX: 00000000f4000000 RCX: ffffc9000b1be503
+RDX: 0000000000000004 RSI: ffffffff8c2aaf60 RDI: ffffffff8c8156e0
+RBP: ffffc9000b1bedf0 R08: ffffffff903da477 R09: 1ffffffff207b48e
+R10: dffffc0000000000 R11: fffffbfff207b48f R12: 8000000053c008e7
+R13: dffffc0000000000 R14: ffffea00014f0000 R15: ffffea00014f0030
+FS:  00007f4d2783e6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c465fa1 CR3: 000000002a1f6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-Changes in v2:
-Specified the script name in the commit message.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- scripts/config | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/scripts/config b/scripts/config
-index ff88e2faefd3..ea475c07de28 100755
---- a/scripts/config
-+++ b/scripts/config
-@@ -32,6 +32,7 @@ commands:
-                              Disable option directly after other option
- 	--module-after|-M beforeopt option
-                              Turn option into module directly after other option
-+	--refresh            Refresh the config using old settings
- 
- 	commands can be repeated multiple times
- 
-@@ -124,16 +125,22 @@ undef_var() {
- 	txt_delete "^# $name is not set" "$FN"
- }
- 
--if [ "$1" = "--file" ]; then
--	FN="$2"
--	if [ "$FN" = "" ] ; then
--		usage
-+FN=.config
-+CMDS=()
-+while [[ $# -gt 0 ]]; do
-+	if [ "$1" = "--file" ]; then
-+		if [ "$2" = "" ]; then
-+			usage
-+		fi
-+		FN="$2"
-+		shift 2
-+	else
-+		CMDS+=("$1")
-+		shift
- 	fi
--	shift 2
--else
--	FN=.config
--fi
-+done
- 
-+set -- "${CMDS[@]}"
- if [ "$1" = "" ] ; then
- 	usage
- fi
-@@ -217,9 +224,8 @@ while [ "$1" != "" ] ; do
- 		set_var "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
- 		;;
- 
--	# undocumented because it ignores --file (fixme)
- 	--refresh)
--		yes "" | make oldconfig
-+		yes "" | make oldconfig KCONFIG_CONFIG=$FN
- 		;;
- 
- 	*)
--- 
-2.48.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
