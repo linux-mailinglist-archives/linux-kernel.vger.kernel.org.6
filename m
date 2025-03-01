@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-539981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4660A4AB93
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:13:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79F0A4AB97
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69E343AD56D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:13:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EBF27A90AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07E01E008B;
-	Sat,  1 Mar 2025 14:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B191E0B70;
+	Sat,  1 Mar 2025 14:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qW5sj1wN"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qhP+mQhd"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2BB1DFE1C
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 14:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C4F1DF992
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 14:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740838414; cv=none; b=Wj9rkMftuww4P3F/2/N9/p4GTu1VPUi5wVhf5KKThBDeoC9jWy1LZhbyw3481BFO1A5Uxd5ySgts1GfmMJu9AuyFxBSXIIeE5xkTpvBc+70uUAINodfTRfeFWWn47uTit3gafLfuSf+N8NMjJQWe4qkWv8/qB1mmAD5GJiZwJpQ=
+	t=1740838416; cv=none; b=ILE2J9xCkPQghIRpl8bYC1YLI4MIgrBTRUnILuGFDQifOZmhns+HisjD07tGy8MFMto4kra2/hiNcFdPCjX1mTO+Jwmf6JG5aGJn4sSQbI90SMbCyk6j0U0rMd58965N0mRC3BLNrqB/Xpfk7TeKkhq3lwQlMX2Xc3phEWqaBzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740838414; c=relaxed/simple;
-	bh=3OnlkhqkOzm83q2muEV8j1QVdQCjg4YiqkJ/xDPT168=;
+	s=arc-20240116; t=1740838416; c=relaxed/simple;
+	bh=d50HSxD/PimQmQ45XW3+Ssx/aRWrlXekJzuR2G9oxOk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lcP4eyL+CJd90hJS8LgQTy2gliiVW06DLZiylz/C0lPqedYGZPAV+HEdnfcmMnbx0MtMTGda/mce8nN/8Nq6neCScLhhp/3rW4NRIjK0auSrhHSipIv68B2vTMDx0FwjCNR+sxZzlclZPDwMUyGU5sp8mIzcQmOFv/vUI0YRUT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qW5sj1wN; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version:Content-Type; b=ImJ+fP2fnKvIolIpZaJrDM3qBoKUnWtRo0Yy27aVrOkpTiYKZ9DduEfGeJIGwXg+W0UYDx86hLkjDvPzv/X0641q9LCApsHuOviiJmo1P10XTYd05f8A19XojUZsC9JhWSUFPbrBEp0iniJMf9W2RWkKZXNusUJBlOjITwcfXlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qhP+mQhd; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abb9e81c408so66870666b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 06:13:30 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf5f2e4482so5464766b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 06:13:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740838409; x=1741443209; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740838412; x=1741443212; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BnbdHsHTQ86fPzgXCuKmjr1fO3E1oZYk9t9Lff4ycVM=;
-        b=qW5sj1wNqR1fQD3JbyyY0DzqLPpOoyjHNyqJEzFiwafE2kGVFQwequKWKRIci7/Zr8
-         Xq+H5hOyW39pMKT945DaA6B/vndn7teU/9vso1YqM0LMel1/Rv4VyaEqztA/cgoGc1n5
-         uwGvjdJIIXcAWiSoeurByXkZfTDQTu5sVbM9gu6c76tCwePNr40DD7wFtTpBWBPYv0Mo
-         /K1hWvd7jxX3zewOTJBRkYUJCxh4k9bUlfOqNsLtD9q31f7eO2JW18Lf9MGr5mSBecJU
-         LIfHhR8FXuKzvDPDd29x5U0EWWrXmS2QjB2goMtOWJCaLlxskL5N02LJAy/6gXR4kB6W
-         XEFQ==
+        bh=B6+VMXcyt281MB6S0PILXj/mc3+AiyRry5Dl88JFAmU=;
+        b=qhP+mQhdLTmkv9Ku7kQdEZOo2vx7eIDcFaxyctd9gwCcSJOz1CsfudQBDnECcPjtZk
+         KrS8MxElReSfdG8JA4gWWGEuE1m33Nri1WoPsRqOzPt2Mdtn4Ak+zs6/LkHIoE5T/UF4
+         pioTugZMIxyRA7qEuN/pEPSBeX85d7a6iT67zJ2cGhxJJIDQghq7lpJIw5K7Iff4riYc
+         GEIMmxJHH11vgX40J0QO2arOp8kYU3rlFfhCxRd1VHs6uVr8hwK171EJXv2tMUtpkv+r
+         bWEcjQvv0sI5XDDfw4nxxADTN+Gbux/bFJYQ9+2OVakO4yLFVi2Giqr0/ypsdO0abMOS
+         ob0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740838409; x=1741443209;
+        d=1e100.net; s=20230601; t=1740838412; x=1741443212;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BnbdHsHTQ86fPzgXCuKmjr1fO3E1oZYk9t9Lff4ycVM=;
-        b=ULECPb82ao5YuXAGgGqcTQymQ/oOMuAWruYBWrt3we6Hs3Q1/0zLvxplpWSiY22MWy
-         uFYSg8T/wWw+VhORjIcvdni2iWSgmf8AMGFRNLkpMTTunH/+s93RSI/vAX90awwGmzqC
-         yld5HdaS8SB+J6J2tu9wcS5mnLsOATO6idLxWmmez701mNbONR1qfblBcXj7kAGkml+y
-         QZ4rNEGVABA+Qd5hN8ANSBwJ1jvTvgQWg3vKr8LhMBvtlJg7gSuF34oO1hLtLT8EMSZg
-         yzF46CVQu/o13zjZwYOWYRcR4LOd05FoFo2NYSE4/sjSKmtVSAQWDakzVh6yZI3RGKAH
-         XGsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV54crfD56E0M4I6y8YrebSexRJSOKhEV0gQl7AOJmLIjaztXNaACZohmap0oB0jON+W59q3ZL9Df8OPuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvCUucm21DlRU8bfuhiaz5g8E+QdOvURrVIesCnDFIXuSRCDgv
-	jYgz8eMkebD8ShMJKxiO0XvMA0inndZrhUiOkfWDSxAvkB/f1JXEAo3ojyih3ok=
-X-Gm-Gg: ASbGncuTEEM0z8QdBzqU8peH9inEorLbxkk0WwdpitKu/R84+Hm1Ioeux3AqGPAO3AG
-	ryC0Ns7ABPcT563fFrA56WlZkhFzMkEtvZecngHuJ6+KJNOqL9F7Dkv1L7fAPw53hwqLqubdb9Z
-	nwbD1uYTB7vliqEqi8RUHwXgN7FVakessg1gdfdi6ZxvFzLo1ydrv5KRUmgEvwT3kfy2/28u31x
-	NRrpqgwTMenF6IJNgguaTbEZJyocNzE82e/D2ogq3U2uQlAUMOnC+qUhb7TRqoieGgZ90zvhnUo
-	RfBZQrfwWHP+Ulziw6RfTFYNP98pQo47Y2h5OwZ/Jjktrehru7MyGJrQaU/w
-X-Google-Smtp-Source: AGHT+IFbAre7Y2ts6f+9wyz3jeSARqJEVou9IA7TgraYYXlc+RIXaNzzDk7QN2b0NMZOmmxJ3LBOAg==
-X-Received: by 2002:a17:907:3203:b0:ab6:6176:9dff with SMTP id a640c23a62f3a-abf25b120f2mr310555266b.0.1740838409375;
-        Sat, 01 Mar 2025 06:13:29 -0800 (PST)
+        bh=B6+VMXcyt281MB6S0PILXj/mc3+AiyRry5Dl88JFAmU=;
+        b=ssB6scgFvtixrhAuZmZ7z/hmDqxpTW/3tFxzkyBTVVCW4ibISRh557AabgKkZqo8/A
+         HRbuojtArQEJpr5COp42xOFpb4i0M6AB8d/OvNB7Laga4ggHHtwlUeiuAk1B5mjYYFiL
+         XAhkitXpdm/hvWCg6nkHwkoHSyCmpQHj+krXA2YEIQ9Hwu0gIS0UOHUm3U4Vqqi6gMHw
+         GNvJM7cn1o+Zo0kPx/8h89pquSSQPJGl/tOkDaEPQQB+mWBHl7MAqCv+09h1YJsu1x+S
+         Kq56QTWLKa5a0Nly8xk1bOgVYDEVRf9VqzY10Wbu7kUKkCIEkHVrRccsMuhjefvjB2B8
+         A2Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUN+/vg15f98zHjMaBN0oiRsb/SO31bRNoYSX7zLJgqg8zvxohh0utfPmBodgVHLCkTKWXn9i3t+wKuISk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV6kd3/lAog0ywwq9rLN3yRjcd2vh3EeAmRlX/LGfKnrNv+BFu
+	oBW12JrN0rZ2GFbJZpEXSJ/4vJ7Rmp2ZOpmJAb+uLm/7BeLbgj26wX8Lujh4GeI=
+X-Gm-Gg: ASbGncvoqoT8YlavmJN5Bah/zKyCak/YJMs4wX72/IErkC2KmYRBUpLCiDcinp7nDUJ
+	kzefvXRGvt+Wpz0hPRqcd4ZukIq2m1KHlj7xn9FUjIAGwA7/PRdYaQ2qPM8uh4spbQ4WW7LW5ud
+	iQSj/fqa5h9l7DK1DKuFB8FnxkZZYBtYakYjhqfWrptGylBrWzH20c0I58oPGJNzuDp4a3aYc8d
+	FbVns4xtXfD9UuPeyLpOYMkC7TxRg0XGB7baOkULb0C91cHtmr1OiXgE08VmtxwFLdXVPBIfAid
+	2yVkRnFryxvHc5tFp+nNCC0C4oiHn8pNYqaTzrFxpG0R+0HgBRQkiotEOshn
+X-Google-Smtp-Source: AGHT+IFpPIcRFdEEfoNRMXs9IiWLSrC8PzKuk8Eq3BxzR7HGMfJRXaPfAjNFS/RvB4XMH80jRhalrg==
+X-Received: by 2002:a17:907:7285:b0:ab7:cd83:98bb with SMTP id a640c23a62f3a-abf25fc79abmr339769466b.5.1740838412580;
+        Sat, 01 Mar 2025 06:13:32 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9cbfsm485532366b.14.2025.03.01.06.13.26
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9cbfsm485532366b.14.2025.03.01.06.13.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 06:13:27 -0800 (PST)
+        Sat, 01 Mar 2025 06:13:31 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
@@ -82,13 +82,13 @@ To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250223115601.723886-3-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250223115601.723886-4-ivo.ivanov.ivanov1@gmail.com>
 References: <20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223115601.723886-3-ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: (subset) [PATCH v2 2/3] clk: samsung: clk-pll: add support for
- pll_4311
-Message-Id: <174083840636.17657.13627418806102780540.b4-ty@linaro.org>
-Date: Sat, 01 Mar 2025 15:13:26 +0100
+ <20250223115601.723886-4-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: (subset) [PATCH v2 3/3] clk: samsung: introduce Exynos2200
+ clock driver
+Message-Id: <174083840951.17657.11144069313199701338.b4-ty@linaro.org>
+Date: Sat, 01 Mar 2025 15:13:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,20 +100,29 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Sun, 23 Feb 2025 13:55:59 +0200, Ivaylo Ivanov wrote:
-> pll4311 (also known in the vendor kernel as frd_4311_rpll) is a PLL used
-> in the Exynos2200 SoC. It's an integer/fractional PLL with mid frequency
-> FVCO (650 to 3500Mhz).
+On Sun, 23 Feb 2025 13:56:00 +0200, Ivaylo Ivanov wrote:
+> CMU_TOP is the top level clock management unit which contains PLLs,
+> muxes, dividers and gates that feed the other clock management units.
 > 
-> The PLL is functionally similar enough to pll531x, so the same code can
-> handle both.
+> CMU_ALIVE provides clocks for SPMI, the new MCT and other clock
+> management units
+> 
+> CMU_CMGP provides clocks for USI blocks
+> CMU_HSI0 provides clocks for USB
+> CMU_PERIC0 provides clocks for USI4 and I3C blocks
+> CMU_PERIC1 provides clocks for USI blocks
+> CMU_PERIC2 provides clocks for USI and I3C blocks
+> CMU_PERIS provides clocks for GIC and the legacy MCT
+> CMU_UFS provides clocks for UFS
+> CMU_VTS provides clocks for other clock management units
+> like CMU_AUD, which will be added in the future.
 > 
 > [...]
 
 Applied, thanks!
 
-[2/3] clk: samsung: clk-pll: add support for pll_4311
-      https://git.kernel.org/krzk/linux/c/f33807c30664d2b134ba17f2ae0740acbe91986a
+[3/3] clk: samsung: introduce Exynos2200 clock driver
+      https://git.kernel.org/krzk/linux/c/11fd259b7a9c386179f4bb9657c7597c8e8de067
 
 Best regards,
 -- 
