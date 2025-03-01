@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-539928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C531CA4AAF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23466A4AAF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA1A4171C26
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:33:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C012171CD9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EAF1DED5B;
-	Sat,  1 Mar 2025 12:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6657E1DE8AA;
+	Sat,  1 Mar 2025 12:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LvYGjVPW"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8871DC9B8;
-	Sat,  1 Mar 2025 12:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="f/ye+d10"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B123F372;
+	Sat,  1 Mar 2025 12:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740832422; cv=none; b=SOpl5gj+fQaaO0sl+qxYTCeGK1z5iBPNINdHQsz7ZMvyDrjsA02wEhVkIKX0578hdsvMEceXde31HFrTHfxP/K9PkHW5w0fPD2HD+c70/pk4vvs8pXUSIpCVCjwP6HItKWwyDV7S5f7NqOmZwz/3MSjOGLUbIMzNryAygjmvKEY=
+	t=1740832574; cv=none; b=tx6CPyWvClYWdZyoYb5pa/pP9zmVswTpBFcVW6aObMfNxJeZc0QUw76tPxZGwjzNJL+KjIPv2Ez2GbgaEEE8YZxqCeNd5oSUveoa/qMZWvOY1+F8WCvvVPtCnCFvFmD+r+5CgVfG/DQuT/ULfK3tFWThnPIaPvdHyBKJImW/ReU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740832422; c=relaxed/simple;
-	bh=hoGNaw66zY8elanyRVHpxhV8nLjZzs6d48q/6IGCYRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qz+Pk3F7f9lG3i0YCewAtE2smvxDUxKIt1gIOQulKbPVDL4mYefYs92gPBbGOGY97fsvoFk3rWlb43SjUCdKjAxk0rx7So/dQbcjZSUEua7Z+jJ7TyK5P/hA0hsaATlvDqspldn5b3UR9jbArN7OSZmeH+8ienh2sCfPrER8elc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LvYGjVPW; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=wBylOp52gRDZlcE3b5o2vywR841Y7DslpTMCW7/aVEk=;
-	b=LvYGjVPW9LxIRoxeVoY9wsd01P6g598BBDfreqgXLE7RunTIFuwMPRdjVqHOz3
-	siFgPwmUzFR2EVmn59FLzgsdUevma6xFuIUx7ZicQ56PSCZP4CZs00nsNep2OvVm
-	hAUz5aOFqi4GiXGdh7RzfDuJtvCWpeEL2DSClMwJxK2R8=
-Received: from [192.168.71.45] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDHb0p8_sJnWOTyOw--.24838S2;
-	Sat, 01 Mar 2025 20:33:01 +0800 (CST)
-Message-ID: <1f4b46a9-e71f-4201-a55f-41cc26d3ba66@163.com>
-Date: Sat, 1 Mar 2025 20:33:01 +0800
+	s=arc-20240116; t=1740832574; c=relaxed/simple;
+	bh=tQYPuG6Ii/l98cVIkI3pivmYR2x8MKY/gWKoA8SUagA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biqYjVM6S+U+BIwLRo1Ic78tvE2LDt+OJC4L1W5p+oEJrEp+dMrd1UXDC0elnOGNDP+c0MW/vZPZ3ZLoWUsU7azmCJuU4vEZNBiGTXWpEQmi2ruyCICFzYDVbldfWcslZxWs8qp2aTM3IIy7h4k0L9j14G9nHkUtmcoQXPdXyak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=f/ye+d10; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=P3/qjrfLtWYJDebvoDnNBB0jTi3XIrdnZ0O+aHW2BIM=; b=f/ye+d10lC3QiYvG
+	pHW+c2INfQEuEYy1KkYauJBXMemdAujPqVC2eLg3iSKWj7XTsI+cNoLpTAYkJ+3RmUhZGIRIIM929
+	K6GXPQ/Ls+1Lg994KqWr2jaxKvAZvstaMENOdvBCSlzmq7zyFi8KAdm3VZULsPfd/dAZnmqh8pERt
+	DWYhubypGNXQIgSwx+q2uVk1/s9+0fgnJEhoG9m2iMbzVd4V54SlWxwIgz+GBniDhJtcaKUVrKOJ/
+	pHu9Rm80WS2FJVeZkZEU9c7n+6TC4FK5WSKA4k4uZC1hmiTMaNddm87x++XfqJKK6nmsIMeG2EQFv
+	FYdB29KiD8dOQXYUIg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1toM4S-001pv8-2I;
+	Sat, 01 Mar 2025 12:35:56 +0000
+Date: Sat, 1 Mar 2025 12:35:56 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch,
+	deller@gmx.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] gpu: ipu-v3: Remove unused functions
+Message-ID: <Z8L_LOkOfRXUAKN6@gallifrey>
+References: <20241226022752.219399-1-linux@treblig.org>
+ <174082343297.2941786.11452976094065423321.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
-To: Thomas Gleixner <tglx@linutronix.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
- cassel@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227162821.253020-1-18255117159@163.com>
- <20250227163937.wv4hsucatyandde3@thinkpad> <877c5be0no.ffs@tglx>
- <251ce5c0-8c10-4b29-9ffb-592e908187fd@163.com> <874j0ee2ds.ffs@tglx>
- <86d23e69-e6e5-476b-9582-28352852ea94@163.com> <87v7suc4yb.ffs@tglx>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <87v7suc4yb.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDHb0p8_sJnWOTyOw--.24838S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWrKF43Gw1rJr47uF1xZFW7XFb_yoW8JF1UpF
-	Z8JFsrGrW7X3WjvF4Ig3WDX34akFs8tr1jy345KF13Aw4kA3sakF10ga17CF9xZF1akr1U
-	A3W5WwnrWrs8CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_hLnUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwkDo2fC+MxS1QAAsw
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <174082343297.2941786.11452976094065423321.b4-ty@linaro.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 12:35:40 up 296 days, 23:49,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+* Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
+> On Thu, 26 Dec 2024 02:27:45 +0000, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > Hi,
+> >   This set removes a bunch of functions in ipu-v3 that
+> > have been unused for a long time (since 2012-2017).
+> > 
+> >   No changes to functions are made, just full deletions.
+> > 
+> > [...]
+> 
+> Applied to drm-misc-next, thanks!
 
+Thanks!
 
-On 2025/3/1 02:14, Thomas Gleixner wrote:
-> On Fri, Feb 28 2025 at 23:17, Hans Zhang wrote:
->> I'm very sorry that I didn't understand what you meant at the
->> beginning.
-> 
-> No problem.
-> 
->>
->> +static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
->> +                                 struct irq_data *irqd, int ind)
->> +{
->> +       struct msi_desc *desc;
->> +       bool is_msix;
->> +
->> +       desc = irq_get_msi_desc(irqd->irq);
->> +       if (!desc)
->> +               return;
->> +
->> +       is_msix = desc->pci.msi_attrib.is_msix;
->> +       seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
->> +       seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "",
->> +                  desc->msg.address_hi);
-> 
-> No need for these line breaks. You have 100 characters available.
-> 
+Dave
 
-Will change.
-
-Best regards
-Hans
-
->> +       seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "",
->> +                  desc->msg.address_lo);
->> +       seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "",
->> +                  desc->msg.data);
->> +}
->> +
->>    static const struct irq_domain_ops msi_domain_ops = {
->>           .alloc          = msi_domain_alloc,
->>           .free           = msi_domain_free,
->>           .activate       = msi_domain_activate,
->>           .deactivate     = msi_domain_deactivate,
->>           .translate      = msi_domain_translate,
->> +       .debug_show     = msi_domain_debug_show,
->>    };
+> [1/7] gpu: ipu-v3: ipu-ic: Remove unused ipu_ic_task_graphics_init
+>       commit: 16e3bf497fb2d379f3d461fa0c85d14de0a3d183
+> [2/7] gpu: ipu-v3: Remove unused ipu_rot_mode_to_degrees
+>       commit: a52ba18c254c0a3819e632e6371554f1c6f5bd16
+> [3/7] gpu: ipu-v3: Remove unused ipu_idmac_channel_busy
+>       commit: 4f9c64e95c3510f4a5192bd401de5611c1dd5637
+> [4/7] gpu: ipu-v3: Remove unused ipu_image_convert_* functions
+>       commit: 96e9d754b35e87a5be2de7dce3c810ffdd769c84
+> [5/7] gpu: ipu-v3: Remove unused ipu_vdi_unsetup
+>       commit: 27985c86e283e1e5ac8a9809f189f03643a6f5f2
+> [6/7] gpu: ipu-v3: ipu-csi: Remove unused functions
+>       commit: c687c3147d5de801ed835b077802b68fe85d8a3d
+> [7/7] gpu: ipu-v3 ipu-cpmem: Remove unused functions
+>       commit: 2800028d5bdee8e9a3cda2fec782dadc32225d8d
 > 
-> Looks about right.
+> Best regards,
+> -- 
+> With best wishes
+> Dmitry
 > 
-> Thanks,
 > 
->          tglx
-
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
