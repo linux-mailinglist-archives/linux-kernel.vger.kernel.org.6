@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-539881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242A1A4AA3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:39:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC19A4AA47
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B5E172421
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD00189A699
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BB01D88D7;
-	Sat,  1 Mar 2025 10:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A63B1DA10C;
+	Sat,  1 Mar 2025 10:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KqrgluW3"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EZiQOsYq"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196BE1E49F;
-	Sat,  1 Mar 2025 10:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C12D1C5D79;
+	Sat,  1 Mar 2025 10:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740825537; cv=none; b=hlqc+0TpHZSghemcQlAUn53jUzJzMTCAIpp975JQWws5CwbxlDoM+COx+trC4kZi88UYE0rzKKSlEnKIt1aRy/UGR0j8qVlN7uWUUa35OCRekcc8FhMLThXLuSOojsm9PgnqvU/lzbLkejPvhr+a5XDsWO0Qe6bcfWAic06ZgOk=
+	t=1740825809; cv=none; b=iDWrdiXoWN1cb1ZYFnl8p7OCapdHprVMdAQyPXUNj35qwHD0YnYhuZ8XcbcrWe2wRljwrc6dmn5mOlSzjZC5wNGFsvbVpIm8IROiZGEUSPzAst8ssjFtjdXc95WPiR1u+JV/ZFhM8Es00WgFS9VqtQl+fs4xKyxcpAEh/PxLw2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740825537; c=relaxed/simple;
-	bh=JQTs9bUhqydxLMWgj3vjSgvpLViqdm/Zd29g09a7KWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FnUrzCMG2XTb6zL7unkJpsx1dLC6vxLZASoVWYShvz2FTt1Nsx7p2gSYHRin+mYBMUAWv9sW1bN1UbRaZXwe360N/I8z60n+nnBs+jXWNIZnrbaR9TAN44nDchnP1A0U6ccZaHZfWj/Mhhb7y/kUyXNR0VX57NaeZiIa4IURIN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KqrgluW3; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7478E43319;
-	Sat,  1 Mar 2025 10:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740825527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jnlxC8ZW/CfqDjl5QKxrbPd8VoYU7dt7zFWgQ1CDGLw=;
-	b=KqrgluW3hC8SfIGrUKkMKKLadJ1eu2tJh+1OKwN8pLZ5ENFClQlIrao6JGWw2C3gsdpNQu
-	0G7xW9aXdBnDd6Et46S01DCo2N+WTw4OHKnjhpY+QoR/dwU0Va3ov3eB0RvImmMpm47fSv
-	NYsUh0Klq7BvPIULXisXYYyG8RGPqMZgOINXbBEYG2wnpbyvD85Ej6rsrjatSn2R/RbiBh
-	GjL8kPHVxYxwBb2f65GC0aNe2Rug8j2bEzOaJKqH17t1M3GRSZ271Ktmo8xpZvtjT3N/2F
-	DD5faTJSD49wgxQns2R+Q2GacNNIr+DBmk7PNSvRpEDuMVU5wjaoPmjYysr5gQ==
-Date: Sat, 1 Mar 2025 11:38:43 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Parthiban Veerasooran
- <parthiban.veerasooran@microchip.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>, Piergiorgio Beruto
- <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net 2/2] net: ethtool: netlink: Pass a context for
- default ethnl notifications
-Message-ID: <20250301113843.3b9df0fe@fedora.home>
-In-Reply-To: <20250228182440.3c7f4709@kernel.org>
-References: <20250227182454.1998236-1-maxime.chevallier@bootlin.com>
-	<20250227182454.1998236-3-maxime.chevallier@bootlin.com>
-	<20250228182440.3c7f4709@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740825809; c=relaxed/simple;
+	bh=WnMErFQKGyzYsxdI0ujG7rvJaR/CFTazd4MxR3w0Rdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gf7TeyppEUS0ZXfIo/g9BsvfkGjP7xmDokjNdGnGg+Xz8K1etJHEbOcaYu8yN7vqvL4Pk+9jiEG/xoEqGPHNV+fPSz1hsVyzJto9K98/Ty79atIUSEGSF8Oe6dJB1hPPWCoqAK4NXAzptr1R5nHJUQGP8pB6K2sm/1FVlTwtSWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EZiQOsYq; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 2D81B25DBB;
+	Sat,  1 Mar 2025 11:43:24 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id EC3Mny1iksiZ; Sat,  1 Mar 2025 11:43:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740825802; bh=WnMErFQKGyzYsxdI0ujG7rvJaR/CFTazd4MxR3w0Rdw=;
+	h=From:To:Cc:Subject:Date;
+	b=EZiQOsYqB3kMpB6EpYaGSf8co4UUq1tvB9+SYpPqC6XHSQA2L4QNRzW8yl7nB72f1
+	 GqPDxGQz6ElTk0i6U7eFTdWU6EOm+DDiuw9lksbmJdZtNiPXzRzUjpmCNiF386isKQ
+	 putn946KHxayUU9Iym2nHZmjGtKacKO6izBgYIcU5nACc5Nlk7XAkhNhfWpCbCFY2q
+	 jzTUVsCic9/AI8mtLUaErntianqZUvhp7mLy/Z258dmNF1/2yWN0LbcPt3t60cfgOs
+	 vytP3zPP1Q9+6lpX5hhgQf9wWxE02zFKufcVkWxAbyrSa5bMgZOLcs++jzOL8lrOMV
+	 /0CQyjINCzeAg==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/8] Support SD/SDIO controllers on RK3528
+Date: Sat,  1 Mar 2025 10:42:42 +0000
+Message-ID: <20250301104250.36295-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelfedtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegvughum
- hgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehprghrthhhihgsrghnrdhvvggvrhgrshhoohhrrghnsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Feb 2025 18:24:40 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+RK3528 features two SDIO controllers and one SD/MMC controller. This
+series adds essential support for their tuning clocks, document the
+controller in dt-bindings and bring the SD/MMC one up on Radxa E20C
+board with pinctrl set up by the previous bootloader. Both HS and SDR104
+mode are verified.
 
-> On Thu, 27 Feb 2025 19:24:52 +0100 Maxime Chevallier wrote:
-> > The only relevant user for now is PLCA, and it very likely that we never
-> > ended-up in a situation where the follow-up notif wasn't targeting the
-> > correct PHY as :  
-> 
-> PLCA uses the ethnl_default_* handlers but it seems to operate on PHYs
-> now. How does the dump work? Shoehorning the PHY support into
-> the ethnl_default_* handlers is starting to look pretty messy.
+Yao Zi (8):
+  dt-bindings: soc: rockchip: Add RK3528 VO GRF syscon
+  dt-bindings: soc: rockchip: Add RK3528 VPU GRF syscon
+  dt-bindings: mmc: rockchip-dw-mshc: Add compatible string for RK3528
+  dt-bindings: clock: Add GRF clock definition for RK3528
+  clk: rockchip: Support MMC clocks in GRF region
+  clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+  arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
+  arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
 
-Thinking more about this, this patch shouldn't have targetted -net in
-the first place, as no usecase regressed yet (we don't have any
-multi-PHY PLCA setup that exists). The DUMP keeps working as it did
-before for that command, in that we dump the PLCA info for
-netdev->phydev.
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |  1 +
+ .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 14 +++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 62 +++++++++++++++++++
+ drivers/clk/rockchip/clk-mmc-phase.c          | 24 +++++--
+ drivers/clk/rockchip/clk-rk3528.c             | 56 +++++++++++++++--
+ drivers/clk/rockchip/clk.c                    | 42 +++++++++++++
+ drivers/clk/rockchip/clk.h                    | 23 ++++++-
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  6 ++
+ 9 files changed, 220 insertions(+), 10 deletions(-)
 
-That DUMP / notify situation needs to be addressed as tome point thouh,
-before the multi-PHY support through muxes lands (haven't sent it yet,
-I'm still on the preliminary series for phy_ports).
+-- 
+2.48.1
 
-So I think that indeed, I'll resend patch 1, and find a more graceful
-solution for the phy-targetting commands in a separate series.
-
-Maxime
 
