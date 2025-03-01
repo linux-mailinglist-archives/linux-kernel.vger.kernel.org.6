@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-540125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9167A4ADFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:20:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5D9A4AE04
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431E616FFF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDD33ACB5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D5A1D2F53;
-	Sat,  1 Mar 2025 21:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510361D2F53;
+	Sat,  1 Mar 2025 21:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="bpnWkhbr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeRktjRs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DF733E1
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 21:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740863995; cv=pass; b=t+L6gzRkVXolooGuac0CoQgMNCodGa2hCn+ME/Bw/d06qjUn+A7ljdwVeCTP9NjJP9+oI/qjYz7hTscJix2otAUusLR07IkWU4byXfu3qwkx3wcojHeZlTDvswSVkNA415Gf0sPArRBgl0d36D4P64A/XoVrJqworXa0HOaw90E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740863995; c=relaxed/simple;
-	bh=DiBsetxv/W6ON55bF1Fy2sUWrQIdKNTGci0bZBHTxGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiXtP/RNl7iSEX8IBVrdm8abxtk3jd2ppFutBdgIwDEP3+ahwCkG17YGKizoZv+YzsuptvR/nrU1amlALAIcJmpb4T4aWoX3ppsOzVIvF45JYGTAMpsAXGOImm7J2W2FpEwDupoW+DgSL4dawpTZk/bIWJ/3Q0bU1eKsIvNEufQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=bpnWkhbr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740863974; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JvNY9li9MKQNIVqh5YEVHVYfZj9Is0hV5BsrCAUBI7lHP9z+U8mF2RIUcLUStlqdCtTMAVCl6U1j89Sk5G1MaoPCf5qosBp05WdLbbq3Gs0xV4hkFeMlZ14Tk4s13nMkguhleoUtSO0Dpj9doIes/a4L7zmj+QEpH53zkJBd0nE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740863974; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=DiBsetxv/W6ON55bF1Fy2sUWrQIdKNTGci0bZBHTxGQ=; 
-	b=aF/WsvSwyRIxFvd8jUS4ijrunje55nfeKoWlFlfPr4lNZOpFmpnBs1xJz22RW3bsgBFd0U80vCIn1QoRrbF+JVZwU4cDUGT3HNK0KC4UDlWR5iQpzgh8VeyFX4KBV5NJEyVj+pbNMG0VSNBWqxHOAtPktx1nwxir/iagRCBXCeQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740863974;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=DiBsetxv/W6ON55bF1Fy2sUWrQIdKNTGci0bZBHTxGQ=;
-	b=bpnWkhbrTRYhxpm40pXBs6bMBb5UqeqHWZKNswZ7cscZ6QsnIPyW+9gPMNL13nBU
-	PKe7mz93oHi84P/d3tNLFrZLwCpNROTDNcABCrCEEfZCiGPZuzDHQJqvIQxFvFwD567
-	ojxK800IEhXFl4GW/0Oj4RmioxhKgTmdz9lHmHEI=
-Received: by mx.zohomail.com with SMTPS id 1740863972988230.42996635404586;
-	Sat, 1 Mar 2025 13:19:32 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 4037118361F; Sat, 01 Mar 2025 22:19:28 +0100 (CET)
-Date: Sat, 1 Mar 2025 22:19:28 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v2 2/2] phy: rockchip: usbdp: re-init the phy on
- orientation-change
-Message-ID: <dkjpudmzuuxvaotz4mx46yx7iacof7q6ck746j3rrqvlgbq3hk@6vtvy3gy3kff>
-References: <20250226103810.3746018-1-heiko@sntech.de>
- <20250226103810.3746018-3-heiko@sntech.de>
- <02757b21-7599-4ee7-9f97-247b04ba646a@cherry.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F5E33E1
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 21:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740864081; cv=none; b=j+yDIq4pp7H3i+nlly6Zk9Fkc9Ku86LzWZTiDh282b8IbkaSNsW7c7mOL+vq+l55ADkPSQ3NlnahAkmeinCt8bDjoGnvEpkXuUvOaa27UGlEvfSIM3PuYt08HiSptBtggfWfEL5YxFqtNheBue1SnESScMbNkVS9+ilPslbkFa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740864081; c=relaxed/simple;
+	bh=Er7lTRaEi35ienkDUi7oOPwdYCL796Gg4xtCpcd7D7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WyPSXNnM9ZUWEEUR01Jd8PonTD0KeDcsgDr8m1SHxuGHAAVIpjgflgpkehqyzSlWDPxSBkNi0VGnzIPzx2RLPCwZ4XrMR0SEqn7RpIgW9+k5rEdsFRdfQwAyBes0/sKRpWAfsH2mrhlQQTaL5umSg7LAjJAymexHHyarXsNGcmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeRktjRs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6D8C4CEE6;
+	Sat,  1 Mar 2025 21:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740864081;
+	bh=Er7lTRaEi35ienkDUi7oOPwdYCL796Gg4xtCpcd7D7g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BeRktjRsdbEjxlK7vbinucOO3Ieg9/CMfVhjOVX5R9hzuCsRcoEweJol9Gkaphypq
+	 3kyWLkNB3jHYCs0tAelo8GJeiLQuQ7j9RLPYa4xSumoAuAU+Q/CJa4d4d/tW4v8I57
+	 6WJj868T85KCSTE26r/AnntsM/k2Du//TUvojyPJQJHCiv+uRNJgbAX0Kq0cADU8Ww
+	 GCbvKeYZ2E90JiBk5j1zUcTz5lz+HfiG9F6nYVxmX5tEAVjJi2IdqlE14bGva7L3Ec
+	 3xj5yMNKrD/fR6kOpYBeNAl+gND2OzQ5cKhybe9L8CrarFuXw4L/tQvlKLRqUEzUQv
+	 qMHAv3vuoEOpA==
+Date: Sat, 1 Mar 2025 21:21:16 +0000
+From: Will Deacon <will@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	ryan.roberts@arm.com, akpm@linux-foundation.org
+Subject: [GIT PULL] arm64 fixes for -rc5
+Message-ID: <20250301212116.GA29069@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xtfa7lnnqa7aoiia"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02757b21-7599-4ee7-9f97-247b04ba646a@cherry.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.839.39
-X-ZohoMailClient: External
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
+Hi Linus,
 
---xtfa7lnnqa7aoiia
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] phy: rockchip: usbdp: re-init the phy on
- orientation-change
-MIME-Version: 1.0
+Ryan's been hard at work finding and fixing mm bugs in the arm64 code,
+so here's a small crop of fixes for -rc5. The main changes are to fix
+our zapping of non-present PTEs for hugetlb entries created using the
+contiguous bit in the page-table rather than a block entry at the level
+above. Prior to these fixes, we were pulling the contiguous bit back out
+of the PTE in order to determine the size of the hugetlb page but this
+is clearly bogus if the thing isn't present and consequently both the
+clearing of the PTE(s) and the TLB invalidation were unreliable.
 
-Hello Quentin,
+Although the problem was found by code inspection, we really don't want
+this sitting around waiting to trigger and the changes are CC'd to stable
+accordingly.
 
-On Wed, Feb 26, 2025 at 01:38:10PM +0100, Quentin Schulz wrote:
-> Unrelated to this patch (but may be triggered by this patch?), I'm wonder=
-ing
-> how flip is really handled.
->=20
-> It seems like we have flip store the orientation of the cable, but also if
-> rockchip,dp-lane-mux is set to <0 1>. But wouldn't that break if we ignore
-> that initial flipped lane-mux whenever a USB-C cable is inserted in rever=
-se?
-> Basically, shouldn't a reserve orientation of the cable when
-> rockchip,dp-lane-mux is set to <0 1> mean "normal mux"?
+Note that the diffstat looks a lot worse than it really is;
+huge_ptep_get_and_clear() now takes a size argument from the core code
+and so all the arch implementations of that have been updated in a
+pretty mechanical fashion. The patches have been in linux-next without
+problems and Andrew is aware that they're coming via arm64 [1].
 
-If a USB-C connector is involved, the TypeC controller is supposed to
-setup the lane muxing based on the connector orientation. This
-happens via the typec API and in this hardware setup the PHY should
-not have the rockchip,dp-lane-mux DT property set.
+Cheers, and please pull.
 
-The rockchip,dp-lane-mux property is required if no USB-C connector
-is involved. For example if the lanes are routed to a Displayport
-connector. In that case the lane setup is fixed in hardware and
-there is no TypeC controller involved, which could do any setup ;)
+Will
 
--- Sebastian
+[1] https://lore.kernel.org/all/20250205235219.3c3a4b968087d1386d708b04@linux-foundation.org/
 
---xtfa7lnnqa7aoiia
-Content-Type: application/pgp-signature; name="signature.asc"
+--->8
 
------BEGIN PGP SIGNATURE-----
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfDedUACgkQ2O7X88g7
-+poznA//SMzDIpD1hxgbwfDNoKyme+1D1x5wcO9dBkilNby+zQ5rkx37r6ZuO1o2
-ZiQYGRi2EFS7S41Ow5UF5Xc1venVA20Y9Rb/dPMn8HET80HDQPvWrAq5NawLq2s1
-wNc/O8vh0ztjBIL4oTiy+YnV1UnY3YApoyu2ZCh9KkkilOkiquB4I82VVQ8GOFI8
-y/dbgrOk+4b/2e+6o2libH4vQROza/VLGThae6yi54GfYF1+d70wpyyevEDcQ7Qj
-KKybjoooO+O9IjF+Kfpr0wMzP4mQIeEsYMiAko46iOPPAApsQVxZ8yPnhUw21PEe
-F8ZQ+lvewwsUijUZz8hM+hW9rLCoxQ42s/9EVb5vgeKERphkA22SFj2H0PDPMokj
-vvMvSTTr/84P/F2r+29UfQdB1eebo8sSiFDc+EGG099VFWVlzdLPkKVxsmyRjbXW
-YA8sVFh3PkewDgoJ6nxuJo5UkuJVepX7Xq4bGW2j1DE28oB7IgKBXdXUHOMQajvW
-EuLQl60ndqcDI0TinZYVcI3z/Z+KiuaZtWNAsnQP7fP6o7vHhmDjDi+mfZ+yN+7v
-0oCBpqHk15G/yGHeKj87Yk/hBX19xc11TFSEu6/vG3gAKrVZrlzMHZXqfrEOsnWv
-xxxAsMnKW34k0fD9gFk84UWIxAHC3HoEyYAYWDPfFElS4uCN0Zg=
-=JFVB
------END PGP SIGNATURE-----
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
 
---xtfa7lnnqa7aoiia--
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to eed6bfa8b28230382b797a88569f2c7569a1a419:
+
+  arm64: hugetlb: Fix flush_hugetlb_tlb_range() invalidation level (2025-02-27 17:40:58 +0000)
+
+----------------------------------------------------------------
+arm64 fixes for -rc5
+
+- Fix a sporadic boot failure due to incorrect randomization of the
+  linear map on systems that support it
+
+- Fix the zapping (both clearing the entries *and* invalidating the TLB)
+  of hugetlb PTEs constructed using the contiguous bit
+
+----------------------------------------------------------------
+Ryan Roberts (4):
+      arm64/mm: Fix Boot panic on Ampere Altra
+      mm: hugetlb: Add huge page size param to huge_ptep_get_and_clear()
+      arm64: hugetlb: Fix huge_ptep_get_and_clear() for non-present ptes
+      arm64: hugetlb: Fix flush_hugetlb_tlb_range() invalidation level
+
+ arch/arm64/include/asm/hugetlb.h     | 26 +++++++++++-----
+ arch/arm64/mm/hugetlbpage.c          | 59 +++++++++++++++---------------------
+ arch/arm64/mm/init.c                 |  7 +----
+ arch/loongarch/include/asm/hugetlb.h |  6 ++--
+ arch/mips/include/asm/hugetlb.h      |  6 ++--
+ arch/parisc/include/asm/hugetlb.h    |  2 +-
+ arch/parisc/mm/hugetlbpage.c         |  2 +-
+ arch/powerpc/include/asm/hugetlb.h   |  6 ++--
+ arch/riscv/include/asm/hugetlb.h     |  3 +-
+ arch/riscv/mm/hugetlbpage.c          |  2 +-
+ arch/s390/include/asm/hugetlb.h      | 16 +++++++---
+ arch/s390/mm/hugetlbpage.c           |  4 +--
+ arch/sparc/include/asm/hugetlb.h     |  2 +-
+ arch/sparc/mm/hugetlbpage.c          |  2 +-
+ include/asm-generic/hugetlb.h        |  2 +-
+ include/linux/hugetlb.h              |  4 ++-
+ mm/hugetlb.c                         |  4 +--
+ 17 files changed, 82 insertions(+), 71 deletions(-)
 
