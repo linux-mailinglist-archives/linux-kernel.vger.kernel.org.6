@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE84A4AB7C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:01:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2151A4AB7E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1A91897E0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B702A171B21
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E4E1DE8A8;
-	Sat,  1 Mar 2025 14:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B96713C695;
+	Sat,  1 Mar 2025 14:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXvfrK/g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tesgMA8F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037B28F5;
-	Sat,  1 Mar 2025 14:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F4A28F5;
+	Sat,  1 Mar 2025 14:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740837680; cv=none; b=VNwSEGZ0gyDGZi7na6S50/woB1EhTJLKeG/fqnVAtm2FYr8X1Wl+FcN+GQciHCwEdHMVLYVPX3080bnwCqNV6/yvcjZiXir7Phdj5rnQ1z8+mC8n+lCDtmNsGbaNTIaNuV9xXTyp7cX594wUDWq6TPnsCW59ssN6wSUQRquTeAg=
+	t=1740837763; cv=none; b=e3xvE7KLu0YDNR/gF1bEOkkaSxzCzgoSmgLAFqPewrgTIBVa+RheZ5AysGf7PTUexU7fKzM0UWzi3qOMoiEFHRD0wJd3Frfr+qlUwBadCpUXaCnBVtsBHD85MDMeelRYZt0LuM+OWzPMVm/0ZUtHXP5Ak2M6FbuiDXoljBVC7Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740837680; c=relaxed/simple;
-	bh=TXbkCcmg1DwyJIZptj01ubpFGDFttiAsT9J/gFA2bRc=;
+	s=arc-20240116; t=1740837763; c=relaxed/simple;
+	bh=tzPeWVqmlqR6dCtoKdzVKM7Fo5aS+MQua2+QiLeXfyU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hf0cNjC5oq0Ghy1DYlfFo37rKpd/Zp1mw5hwQpN+Cf9VHa34cgmsRqZi4N7ExRvNNEn27oegpEr0DQ9tDQHBPsZn03sdtzzAci+4LAmG9IqEvKi6MzRvjLKwKwNl2Dq0rahhiURoqgXTzN5Je9dxKAMBGpwqLoizxmGGoS5fzUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXvfrK/g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CE3C4CEDD;
-	Sat,  1 Mar 2025 14:01:14 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=mfi4pNBAhz3s2IROOH1Q2jThQE6IA8dXsKyerywlvVUNpA1Yw4wkaIrbidGFbePUXcePWHNPQzRTAlcpmREkuS7doBqGx4AAClAthRA0OV3Z+MhvVdELOTFqqjYvqJKsIYyrRK29mtQ2cqHukSja2+QBtVxteZiVzBOI3Vn/QB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tesgMA8F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4FBC4CEDD;
+	Sat,  1 Mar 2025 14:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740837680;
-	bh=TXbkCcmg1DwyJIZptj01ubpFGDFttiAsT9J/gFA2bRc=;
+	s=k20201202; t=1740837761;
+	bh=tzPeWVqmlqR6dCtoKdzVKM7Fo5aS+MQua2+QiLeXfyU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DXvfrK/gjEsCPFQhyE97cAMnLM7feY+wlB0Lhh9Kr1qihZEw/Dv9iQHR2EwX6JqaF
-	 9PGfNmzxHFVyjQXGUwdmDDBMTi5ozvNOVNK9u4bSy6K7jOn3qH9V8FHcXcdeLdCLrR
-	 JG4yHK5J9n8sSnevF1h7Ws43T/pUFlhs9ndM30ZrdxJYwZ6hWN19HvkHNsE0RPfou3
-	 smXwK5VC7srVsexJY3ywn9ZyOIPQtX3WhCfXAGkcF/KZB7BJHOf4x18QswYjOLosec
-	 +xM+jyulMMnWwUEwKAtAv+JkXB83N+K/FSccNo0r8eIez567JRUEJZlRK9rQ0050C6
-	 7o8VN9iMeSr3g==
-Message-ID: <8b85be4a-ecd9-4ea4-9cfc-905bb4bd5642@kernel.org>
-Date: Sat, 1 Mar 2025 15:01:12 +0100
+	b=tesgMA8FfBZK6yBL2yA1LJC9FfadgdOhJbLK/xoN6cdjVDXEeLI7Ss1YeD1rJzqZx
+	 9VWvirJEcBJXiDrHzrov6WXWcv4VXI9EMmBjX7VtIqQLwcOrmimNz1IwICGoECGedr
+	 UBbiPM8uZghcAJqsj5L0a+IU9Zxw62vANKasxUZ288duQPzLYjTg83ItoGm/Y4xyG0
+	 9qVZt8yHLvXxd4qn2cfowY6h8XGJ3nk373D9TgV7vJ0pRh3h+OXPBHEXG23aNw+Jpt
+	 nXJhkFKyPF5FK2YOEeF9GzePYaSYsYM2l5MJkbc86kEMcS5c0Tlv4YipeoWofL94uI
+	 LdFgNFzjZJk7Q==
+Message-ID: <ac0a2d39-aecb-4f24-8198-906f660edb17@kernel.org>
+Date: Sat, 1 Mar 2025 15:02:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add Exynos2200 SoC
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] platform/x86: amd: Add ISP platform info
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com
+References: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,30 +100,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/02/2025 12:55, Ivaylo Ivanov wrote:
-> Provide dt-schema documentation for Exynos2200 SoC clock controller.
-> Add device tree clock binding definitions for the following CMU blocks:
-> - CMU_ALIVE
-> - CMU_CMGP
-> - CMU_HSI0
-> - CMU_PERIC0/1/2
-> - CMU_PERIS
-> - CMU_TOP
-> - CMU_UFS
-> - CMU_VTS
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../clock/samsung,exynos2200-cmu.yaml         | 247 ++++++++++
->  .../clock/samsung,exynos2200-cmu.h            | 431 ++++++++++++++++++
->  2 files changed, 678 insertions(+)
+On 28/02/2025 18:02, Pratap Nirujogi wrote:
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + * OTHER DEALINGS IN THE SOFTWARE.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Same comments as for your other patches.
 
 Best regards,
 Krzysztof
