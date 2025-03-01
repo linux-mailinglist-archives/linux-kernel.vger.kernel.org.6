@@ -1,238 +1,251 @@
-Return-Path: <linux-kernel+bounces-539767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C91A4A855
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:34:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E118DA4A859
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58C6D189C580
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCBA7189A40C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4B91B3927;
-	Sat,  1 Mar 2025 03:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33905155C88;
+	Sat,  1 Mar 2025 03:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/gnFiBd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mAdOipA/"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C32CA8;
-	Sat,  1 Mar 2025 03:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F82B2CA8
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 03:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740800087; cv=none; b=sRSqzYprrzm1nx3BsOZyQnPI1KRwehfdwq7+X8roKScg7MFfBrrgEEZPvv0mXqGOu8U/wp59v/KTGg8lvqO/Zfj6NmEwffZmKTx3wCnCK7Af5nVlyQJ9G6Rrj6jp0slSCGHcNmw8HqEEYuhdReTh1gJI3zHFL5HXmFHKPHrodhI=
+	t=1740801011; cv=none; b=AYSbCi7gV5akFb5cx2WulvblOlznXsZfwuZSmYHbTbRDf7P3ZuGG/bL5V8Hb2AGw6MYhpNFzn20d7HRiHXwSNpZYJhmRVXPhamuG8vLkdeXrOx2m4jVdrFmj6TYBxZ00D0DbJt4oNoX0ERdp5MdDi9IRJbbWZNd1PfMLyAnQtQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740800087; c=relaxed/simple;
-	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NujZjFcwn9hNyO8sfkJuYgyaqP0XIhYZc//yDhB3BvuURhWCIQKVXxqCmWcNSXm1fusZCaT5CV7kVpF8WXq5uhd3S7F0UCWUHOE5exHbZouC0Hv+HOwk6w4x+wEXJRFoJsOTnz40NSjcS2rDrAd1nAP8BZZYbCxtvbr0dHXjm3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/gnFiBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0621C4CEDD;
-	Sat,  1 Mar 2025 03:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740800086;
-	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r/gnFiBdbhTk77m8x/7T1N/RoHmTyTOKUTDeoExUeG4jKnOq8Tpg8FFPQuwH3bKao
-	 P3MOpQIAwXjstduqGjiPsGBtNXUMiz9O4bxgOZn9LD7ot1HEIzFwtqAJweK/B0Ak2E
-	 KgdctjEidl/MBfbo1jM58cxjw0Z6jn41DSnRaZVuA2CLsHbpS4j8v0pVXigTgxR2gW
-	 8gQbsAGIq74G5GSAULbsVqYY4RpEeDM3iFRF5dc3ES91q+EuWTKGwN7/YU2KDS+NP8
-	 TSicT6qcMniR2lbbRAFazOug50agdl53DgU/94NEvV3N6ErUh5+47VwJUxsRvM8P5i
-	 Imgfft+VZaVlA==
-Date: Sat, 1 Mar 2025 03:34:28 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250301033428.34b71e4d@jic23-huawei>
-In-Reply-To: <CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
-References: <20250217140336.107476-1-clamor95@gmail.com>
-	<20250217140336.107476-3-clamor95@gmail.com>
-	<20250222125335.177fc746@jic23-huawei>
-	<CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
-	<20250222172536.5fb73658@jic23-huawei>
-	<CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740801011; c=relaxed/simple;
+	bh=xynOytaan/Oe1XyJE8tqbjE+EkDNyqAz463FIVB4Oeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oeGlM7DFcRCuO3y+o9s98RypElX3Cs3nlxQcLjdOAP1NsUro1dXc1D58V8TgyGcIF3+RI9TT5lO1sKtgoKyqIvj0eDDSFvRYtNgoecLwQUyqC7+6xO+jqL8UgL6F9YNiQa40AGAshDbve9yJACMV4jB5gEOrmrwpCCxAi/voku0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mAdOipA/; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1667aa56-e49d-495b-a8ea-8835b2ea7341@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740801005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RmaveweWJCBZM1QdavIDzGtze3/PRZGSe0FfQRYS1xg=;
+	b=mAdOipA/8iGmhQGOfBGr7+PGpCxmAQs0epqmJVXaawrisevF8cXSELosRcx5qgNEdU/nTp
+	vPjnyflOG1cyBlL3GhFKwXkLKRFzZUlfyLNp0qukyEsFrO/QxOb+0bFQLCKUPych14PqhA
+	rHFUwxP8eOKuKnAGkCYKbK+FqMpmkdM=
+Date: Sat, 1 Mar 2025 11:49:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5] sysctl: simplify the min/max boundary check
+To: Joel Granados <joel.granados@kernel.org>,
+ "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Christian Brauner <brauner@kernel.org>, Dave Young <dyoung@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20250105152853.211037-1-wen.yang@linux.dev>
+ <ce2na5wzbkpvrh4tccmrfwi5hukwjnrpkhnggdfgce7ccs5rvq@w2c76uttfxq3>
+ <58da9dcb-a4ea-4d23-a7e5-b7f92293831a@linux.dev>
+ <i5h3sxl34d5pddluwxfhlumkt5fatin3rsqbwpfcm2rceg46ix@w3c2l6ntu2ye>
+ <875xm5o0tx.fsf@email.froward.int.ebiederm.org>
+ <87o6zxmlha.fsf@email.froward.int.ebiederm.org>
+ <ov6x26vw4rq5ekz4fy2t23xbtkh2dkkrfrkzp7dvkhy2djm4vl@2b7batukhrbm>
+ <875xm0gn60.fsf@email.froward.int.ebiederm.org>
+ <xklw53ynxfl3m5ngk4wz6bjgoylbuy2zo6vhzjrfoj4mgkpptr@ja6zq4lldmd7>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <xklw53ynxfl3m5ngk4wz6bjgoylbuy2zo6vhzjrfoj4mgkpptr@ja6zq4lldmd7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 22 Feb 2025 19:27:22 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-> =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 19:25 Jo=
-nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Sat, 22 Feb 2025 14:56:41 +0200
-> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > =20
-> > > =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:5=
-3 Jonathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5: =20
-> > > >
-> > > > On Mon, 17 Feb 2025 16:03:35 +0200
-> > > > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > > > =20
-> > > > > AL3000a is a simple I2C-based ambient light sensor, which is
-> > > > > closely related to AL3010 and AL3320a, but has significantly
-> > > > > different way of processing data generated by the sensor.
-> > > > >
-> > > > > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> > > > > Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
-> > > >
-> > > > Whilst I am confused by earlier statements about not
-> > > > having information on the conversion to illuminance values, I'm
-> > > > going to assume the look up table in here is based on some
-> > > > reasonable data from somewhere and hence that this is a sensor
-> > > > with appropriate filtering of the light to be able to do a non line=
-ar
-> > > > conversion from the value read and standard light curves.
-> > > >
-> > > > As such the IIO_LIGHT channel type is fine for this device.
-> > > > =20
-> > >
-> > > Thank you, but IIO_INTENSITY may be proper channel as well, after your
-> > > explanations. If you wish, I may upload v5 with swapping LIGHT with
-> > > INTENSITY. =20
-> >
-> > Where does the lux_table set of values come from?
-> > That seems to be key question for this driver.
-> > =20
->=20
-> 3.1.10 kernel driver for this device
-Ok. So until we know otherwise let us trust that data as being
-correct.
 
-Jonathan
+On 2025/2/27 22:07, Joel Granados wrote:
+> On Mon, Jan 27, 2025 at 11:51:51AM -0600, Eric W. Biederman wrote:
+>> Joel Granados <joel.granados@kernel.org> writes:
+>>
+>>> On Thu, Jan 23, 2025 at 12:30:25PM -0600, Eric W. Biederman wrote:
+>>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
+>>>>
+>>>>> Joel Granados <joel.granados@kernel.org> writes:
+>>>>>
+>>>>>> On Sun, Jan 19, 2025 at 10:59:21PM +0800, Wen Yang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2025/1/16 17:37, Joel Granados wrote:
+>>>>>>>> On Sun, Jan 05, 2025 at 11:28:53PM +0800, Wen Yang wrote:
+>>>>>>>>> do_proc_dointvec_conv() used the default range of int type, while
+>>>>>>>>> do_proc_dointvec_minmax_conv() additionally used "int * {min, max}" of
+>>>>>>>>> struct do_proc_dointvec_minmax_conv_param, which are actually passed
+>>>>>>>>> in table->extra{1,2} pointers.
+>>> ...
+>>>>>> (if any). And this is why:
+>>>>>> 1. The long and the void* are most likely (depending on arch?) the same
+>>>>>>     size.
+>>>>>> 2. In [1] it is mentioned that, we would still need an extra (void*) to
+>>>>>>     address the sysctl tables that are *NOT* using extra{1,2} as min max.
+>>>>>>     This means that we need a bigger ctl_table (long extra1, long extra2
+>>>>>>     and void* extra). We will need *more* memory?
+>>>>>>
+>>>>>> I would like to be proven wrong. So this is my proposal: Instead of
+>>>>>> trying to do an incremental change, I suggest you remove the sysctl_vals
+>>>>>> shared const array and measure how much memory you actually save. You
+>>>>>> can use the ./scripts/bloat-o-meter in the linux kernel source and
+>>>>>> follow something similar to what we did in [2] to measure how much
+>>>>>> memory we are actually talking about.
+>>>>>>
+>>>>>> Once you get a hard number, then we can move forward on the memory
+>>>>>> saving front.
+>>>
+>>> Hey Eric.
+>>>
+>>> Thx for the clarification. Much appreciated.
+>>>>>
+>>>>> When I originally suggested this my motivation had nothing to do with memory
+>>> That makes a *lot* of sense :).
+>>>
+>>>>> The sysctl_vals memory array is type unsafe and has actively
+>>> Here I understand that they are unsafe because of Integer promotion
+>>> issues exacerbated by the void* variables extra{1,2}. Please correct me
+>>> If I missed the point.
+>>
+>> Not precisely.  It is because the (void *) pointers are silently cast to
+>> either (int *) or (long *) pointers.  So for example passing SYSCTL_ZERO
+>> to proc_do_ulongvec_minmax results in reading sysctl_vals[0] and
+>> sysctl_vals[1] and to get the long value.  Since sysctl_vals[1] is 1
+>> a 0 is not accepted because 0 is below the minimum.
+>>
+>> The minimum value that is accepted depends on which architecture you are
+>> on.  On x86_64 and other little endian architectures the minimum value
+>> accepted is 0x0000000100000000.  On big endian architectures like mips64
+>> the minimum value accepted winds up being 0x0000000000000001.  Or do I
+>> have that backwards?
+>>
+>> It doesn't matter because neither case is what the programmer expected.
+>> Further it means that keeping the current proc_do_ulongvec_minmax and
+>> proc_do_int_minmax methods that it is impossible to define any of the
+>> SYSCTL_XXX macros except SYSCTL_ZERO that will work with both methods.
+>>
+>>> There is also the fact that you can just do a `extra1 = &sysctl_vals[15]`
+>>> and the compiler will not bark at you. At least It let me do that on my
+>>> side.
+>>
+>> All of which in the simplest for has me think the SYSCTL_XXX cleanups
+>> were a step in the wrong direction.
+>>
+>>>>> lead to real world bugs. AKA longs and int confusion.  One example is
+>>>>> that SYSCTL_ZERO does not properly work as a minimum to
+>>>>> proc_do_ulongvec_minmax.
+>>> That is a great example.
+>>>
+>>>>>
+>>>>> Frankly those SYSCTL_XXX macros that use sysctl_vals are just plain
+>>>>> scary to work with.
+>>> I share your feeling :)
+>>>
+>>>>>
+>>>>> So I suggested please making everything simpler by putting unsigned long
+>>>>> min and max in to struct ctl_table and then getting rid of extra1 and
+>>>>> extra2.  As extra1 and extra2 are almost exclusively used to implement
+>>>>> min and max.
+>>> Explicitly specifying the type will help reduce the "unsefeness" but
+>>> with all the ways that there are of using these pointers, I think we
+>>> need to think bigger and maybe try to find a more typesafe way to
+>>> represent all the interactions.
+>>>
+>>> It has always struck me as strange the arbitrariness of having 2 extra
+>>> pointers. Why not just one?
+>>
+>> Which would be the void *data pointer.
+>>
+>>> At the end it is a pointer and can point to
+>>> a struct that holds min, max... I do not have the answer yet, but I
+>>> think what you propose here is part of a bigger refactoring needed in
+>>> ctl_table structure. Would like to hear your thought on it if you have
+>>> any.
+>>
+>> One of the things that happens and that is worth acknowledging is there
+>> is code that wraps proc_doulongvec_minmax and proc_dointvec_minmax.
+>> Having the minmax information separate from the data pointer makes that
+>> wrapping easier.
+>>
+>> Further the min/max information is typically separate from other kinds
+>> of data.  So even when not wrapped it is nice just to take a quick
+>> glance and see what the minimums and maximums are.
+>>
+>> My original suggest was that we change struct ctl_table from:
+>>
+>>> /* A sysctl table is an array of struct ctl_table: */
+>>> struct ctl_table {
+>>> 	const char *procname;		/* Text ID for /proc/sys */
+>>> 	void *data;
+>>> 	int maxlen;
+>>> 	umode_t mode;
+>>> 	proc_handler *proc_handler;	/* Callback for text formatting */
+>>> 	struct ctl_table_poll *poll;
+>>> 	void *extra1;
+>>> 	void *extra2;
+>>> } __randomize_layout;
+>>
+>> to:
+>>
+>>> /* A sysctl table is an array of struct ctl_table: */
+>>> struct ctl_table {
+>>> 	const char *procname;		/* Text ID for /proc/sys */
+>>> 	void *data;
+>>> 	int maxlen;
+>>> 	umode_t mode;
+>>> 	proc_handler *proc_handler;	/* Callback for text formatting */
+>>> 	struct ctl_table_poll *poll;
+>>>        unsigned long min;
+>>>        unsigned long max;
+>>> } __randomize_layout;
+>>
+>> That is just replace extra1 and extra2 with min and max members.  The
+>> members don't have any reason to be pointers.  Without being pointers
+>> the min/max functions can just use long values to cap either ints or
+>> longs, and there is no room for error.  The integer promotion rules
+>> will ensure that even negative values can be stored in unsigned long
+>> min and max values successfully.  Plus it is all bog standard C
+>> so there is nothing special to learn.
+>>
+>> There are a bunch of fiddly little details to transition from where we
+>> are today.  The most straightforward way I can see of making the
+>> transition is to add the min and max members.  Come up with replacements
+>> for proc_doulongvec_minmax and proc_dointvec_minmax that read the new
+>> min and max members.  Update all of the users.  Update the few users
+>> that use extra1 or extra2 for something besides min and max.  Then
+>> remove extra1 and extra2.  At the end it is simpler and requires the
+>> same or a little less space.
+>>
+>> That was and remains my suggestion.
+> Thx for all this. Been putting this off for a month now, but will slowly
+> come back to it. I'll use your and Wen's series to try to come up with
+> something that look good to me.
+> 
 
->=20
-> > > =20
-> > > > Applied patches 1 and 2 to the togreg branch of iio.git.
-> > > > Note that I'll initially push this out as testing to allow
-> > > > the autobuilders to see if they can find any issues that we missed.
-> > > > Patch 3 will need to go via the appropriate SoC tree as normal.
-> > > >
-> > > > Jonathan
-> > > > =20
-> > > > > ---
-> > > > >  drivers/iio/light/Kconfig   |  10 ++
-> > > > >  drivers/iio/light/Makefile  |   1 +
-> > > > >  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++=
-++++++
-> > > > >  3 files changed, 220 insertions(+)
-> > > > >  create mode 100644 drivers/iio/light/al3000a.c
-> > > > >
-> > > > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> > > > > index 29ffa8491927..37f83e1d8893 100644
-> > > > > --- a/drivers/iio/light/Kconfig
-> > > > > +++ b/drivers/iio/light/Kconfig
-> > > > > @@ -43,6 +43,16 @@ config ADUX1020
-> > > > >        To compile this driver as a module, choose M here: the
-> > > > >        module will be called adux1020.
-> > > > >
-> > > > > +config AL3000A
-> > > > > +     tristate "AL3000a ambient light sensor"
-> > > > > +     depends on I2C
-> > > > > +     help
-> > > > > +       Say Y here if you want to build a driver for the Dyna Ima=
-ge AL3000a
-> > > > > +       ambient light sensor.
-> > > > > +
-> > > > > +       To compile this driver as a module, choose M here: the
-> > > > > +       module will be called al3000a.
-> > > > > +
-> > > > >  config AL3010
-> > > > >       tristate "AL3010 ambient light sensor"
-> > > > >       depends on I2C
-> > > > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makef=
-ile
-> > > > > index f14a37442712..03f10786273a 100644
-> > > > > --- a/drivers/iio/light/Makefile
-> > > > > +++ b/drivers/iio/light/Makefile
-> > > > > @@ -7,6 +7,7 @@
-> > > > >  obj-$(CONFIG_ACPI_ALS)               +=3D acpi-als.o
-> > > > >  obj-$(CONFIG_ADJD_S311)              +=3D adjd_s311.o
-> > > > >  obj-$(CONFIG_ADUX1020)               +=3D adux1020.o
-> > > > > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
-> > > > >  obj-$(CONFIG_AL3010)         +=3D al3010.o
-> > > > >  obj-$(CONFIG_AL3320A)                +=3D al3320a.o
-> > > > >  obj-$(CONFIG_APDS9300)               +=3D apds9300.o
-> > > > > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al30=
-00a.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..e2fbb1270040
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/iio/light/al3000a.c
-> > > > > @@ -0,0 +1,209 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > > +#include <linux/array_size.h>
-> > > > > +#include <linux/bitfield.h>
-> > > > > +#include <linux/device.h>
-> > > > > +#include <linux/err.h>
-> > > > > +#include <linux/i2c.h>
-> > > > > +#include <linux/mod_devicetable.h>
-> > > > > +#include <linux/module.h>
-> > > > > +#include <linux/pm.h>
-> > > > > +#include <linux/regmap.h>
-> > > > > +#include <linux/regulator/consumer.h>
-> > > > > +#include <linux/types.h>
-> > > > > +
-> > > > > +#include <linux/iio/iio.h>
-> > > > > +
-> > > > > +#define AL3000A_REG_SYSTEM           0x00
-> > > > > +#define AL3000A_REG_DATA             0x05
-> > > > > +
-> > > > > +#define AL3000A_CONFIG_ENABLE                0x00
-> > > > > +#define AL3000A_CONFIG_DISABLE               0x0b
-> > > > > +#define AL3000A_CONFIG_RESET         0x0f
-> > > > > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
-> > > > > +
-> > > > > +/*
-> > > > > + * These are pre-calculated lux values based on possible output =
-of sensor
-> > > > > + * (range 0x00 - 0x3F)
-> > > > > + */
-> > > > > +static const u32 lux_table[] =3D {
-> > > > > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* =
-0 - 7 */
-> > > > > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* =
-8 - 15 */
-> > > > > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* =
-16 - 23 */
-> > > > > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* =
-24 - 31 */
-> > > > > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* =
-32 - 39 */
-> > > > > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* =
-40 - 47 */
-> > > > > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* =
-48 - 55 */
-> > > > > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* =
-56 - 63 */
-> > > > > +}; =20
-> > > > =20
-> > =20
->=20
+Thanks.
+The following is the latest series, which has been tested for about 20 days:
+
+https://lore.kernel.org/all/cover.1739115369.git.wen.yang@linux.dev/
+
+We look forward to your comments and suggestions.
+
+--
+Best wishes,
+Wen
 
 
