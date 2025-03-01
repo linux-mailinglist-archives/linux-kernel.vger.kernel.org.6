@@ -1,330 +1,198 @@
-Return-Path: <linux-kernel+bounces-540020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E938A4AC77
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:01:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38FAA4AC98
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BA83B5D73
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:01:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CADA3B8E2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8211E2850;
-	Sat,  1 Mar 2025 15:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg+ZWlAO"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6D533E1;
-	Sat,  1 Mar 2025 15:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B446F1E2007;
+	Sat,  1 Mar 2025 15:45:01 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0DC1E25E3;
+	Sat,  1 Mar 2025 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740841293; cv=none; b=of283wWCvNjfaeEsXquccmGpNOwfD2i5U9EW9JHOW6o8wgH1Zg96Iu4Z2wDKD/fV4DokE/uRuRbQQlvEo30Qge/YGffGuf7bd4BPJahfhfr7zQxtJ5b/fSllaWHUYGWCrpZrs9P6fKaHbgz55m/QDfdVLUnhvwD7ud0Y7ek5D5M=
+	t=1740843901; cv=none; b=GphP7A5qN+/rwnWT6qXdUJW4/9a/GGs6eAD/cVHS106cZZH7lapb71Ub9S+yFYgNoaTC/zCqvv99flX6zJb/58VObbGEFjLMPIBDqcuyFErGQAVL80bxukyZdxgA75F5k01q6cAioUz/wPVGAn1yLvwn9J7ln0EwgRTsK/WfcAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740841293; c=relaxed/simple;
-	bh=Q5jvdblVehq0RdjrHDo6V09Q7mjaeGtU1ZwRyVm2Ou8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zc8wHZUcNGLn+UjI6VGWFi55kO7u4Um2Z8PmeNYz78noQKVyqyDen6aUfZ9tS7mMPNyM4rHiXATCd23UhjFzA9yOJ2D9EKJz47QjxR27IBKQBe1yDllDXk1GHUQoGpzTM0uw7J5ijP6rzHTmjUqxs7Qq+ryV1PrYoqm7rLcO5tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qg+ZWlAO; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f5556579so666937f8f.1;
-        Sat, 01 Mar 2025 07:01:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740841290; x=1741446090; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zruMCqCIAH702liaPak4OKHfNTD0n8xmzIbwsUHEDVY=;
-        b=Qg+ZWlAORMaLQyTqvmLWSYODkzQ1JSmghOhFeo9JfGftM2v0xSOz+oAvdoZmtga5oi
-         ZHvAWOK54lw5QSJXGjY8z3SQ4A7ldPsHx1kcAscsL3hxeQVMGBmiJN8p281aoW11cRHr
-         DTbg1uO5ubA3Ohsn5S8e4r9lsVN0CFPZsxJeMoCc/EOgWK2Vuv1+tQxTNt0OF+uy/l8a
-         Ael1Q4deezmKVD1p26mPgjJC81UMsetCFZ0iNuHL5noaC4ebfTcd46ZpCxsRZBWUZhfe
-         xSQtVys0o0KpdLd9mJJY7e8YVV2AvSdvulNc/IWvkFw5B68CmveCV/aceYIxgFehXvWK
-         FdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740841290; x=1741446090;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zruMCqCIAH702liaPak4OKHfNTD0n8xmzIbwsUHEDVY=;
-        b=TJzLuzgVuIQa/zmkZZThseuQo/APId3WL19BY5/kMFZZIk8DyIZjXxlU2GCxiYk2L2
-         ht5zhr9gz1GoYDBiFpvwrzvsY6n1OkuoAptPCNa8KGUMN3gRpaQoxn3jb7uiBaBj+w+z
-         dkyxerG/zHAunKu8B/PTKpndMEJmBALOk0cJQp2H9N6Wf9RKvzkFP15tGGZTUByRKVmm
-         ZOKAZa8IyfLDMsVMD/WYXisaeDfWKebtFg/IV+OPLtWRQBNHKRsWMtmpEXoGoIn/i3dF
-         Y3ONy8zU2+ukYvEBwAaVPxuN46nAEaaO/1vb8SvahinorkZ64vtGdRA60/0gmdqyq1Pp
-         wA0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVv9TjVDeSYqw6lq1SiciCyuvq9ykL/FxX0qTrTtby+lkwKc/3W2QCI4TbW8Ydcy4VY8u+bosdg5H3qaeY=@vger.kernel.org, AJvYcCWiOMWK11qXeetPakeksT7e6QYNwPp3tehsn/Z/Ukka237Yvv7kKoBjAplywImiNDwwD7YF9qhyJdNv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvaoV6G3NrtvE9G/2cP9NJxajWgThzd+F0myZG4KsQA3sncSCW
-	ov566jaz5WHjtmWBmuTZa63tNqddjj6vv1N6nM/pOBt/xNaEMiC3
-X-Gm-Gg: ASbGnctCrEv/9bttOGK3u1Y/PeR5OdtiRaU5+UAcY875zGc4S2juN+xq7Wkw0YOAXpg
-	GiPi13QfBfXhvm9QHrGnMUcCnvPMqfAIJW5u016ijxrut3zPEkXqHI6ScDCJFucXjryin38JSC3
-	x9sNT7UprD0qqqaDaLmi2tWUxoEU050W81onr5VZdf2uA2WHj9fiJ/5O6xfOYzm+O/BzyyHyWq9
-	qNUZ/dUPvLDHvUoVFClLosWGw9BBcPQeUYTNK+UNvpL542LScIavKU9Ri72CfuI6drJkwOOLo/h
-	iXQreQQa0v0tQuC8LQHal2y9eBJ5XlZuaDoM8LsKtzMi5H3TVfNrj48FzuKvHmESvjhuDG8ZDTq
-	a6NKpbd3tEz6t7GALNaAVbAKB5O7tuk9X2RLW3OWwzILr5s0lTwct8ye4nT8m6hd2HOEFQlior6
-	p9o0szIjkGHoG1eXxKWCNwAC3xpAsn3vo=
-X-Google-Smtp-Source: AGHT+IGNt+rcUXXDE2/tSfoeosjfXFmq0hNxVqQmghrCvjV5b5hPC+hZwkVkwDNJVUDNXRC+9bNXPA==
-X-Received: by 2002:a5d:47c2:0:b0:390:e59d:fae9 with SMTP id ffacd0b85a97d-390ec7d2dd4mr5718403f8f.27.1740841289363;
-        Sat, 01 Mar 2025 07:01:29 -0800 (PST)
-Received: from ?IPV6:2a02:3100:a9db:600:159b:603:111e:5ffd? (dynamic-2a02-3100-a9db-0600-159b-0603-111e-5ffd.310.pool.telefonica.de. [2a02:3100:a9db:600:159b:603:111e:5ffd])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-390e47a72d5sm8720211f8f.31.2025.03.01.07.01.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 07:01:28 -0800 (PST)
-Message-ID: <3854b3b6-365c-459e-ae97-ba88c804599e@gmail.com>
-Date: Sat, 1 Mar 2025 16:02:33 +0100
+	s=arc-20240116; t=1740843901; c=relaxed/simple;
+	bh=b4MOibz+eOGYfXh6UPXfRXCu04Wc+IYJ3Q57u09KO+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hacSBp3LkDGeZe/Z+CXZ+HFnw8hbiCCxpvk9YeppAFHRx0yoC8EV2MQTeJaH4co7ry43qOTQx85YdaEZoGjL/SHbLFgSzPIKoQo2KqSMHPZPwEdxZ7R/ebjItL53w+2CMgsvC3w7VtvB5ZRrlpv2fz31XFxZYP6yYV0lZU/uVLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 521B7Zvw018945;
+	Sat, 1 Mar 2025 12:07:35 +0100
+Date: Sat, 1 Mar 2025 12:07:35 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/nolibc: only run constructor tests on nolibc
+Message-ID: <20250301110735.GA18621@1wt.eu>
+References: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
+ <20250216093940.GA2192@1wt.eu>
+ <670b08a4-9bc5-4700-94bb-272fda5c59d7@t-8ch.de>
+ <20250222093851.GA13258@1wt.eu>
+ <b36e1946-fda8-4893-b081-7ac9b4933947@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/3] r8169: enable
- RTL8168H/RTL8168EP/RTL8168FP/RTL8125/RTL8126 LTR support
-To: Hau <hau@realtek.com>, nic_swsd <nic_swsd@realtek.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20250221071828.12323-439-nic_swsd@realtek.com>
- <20250221071828.12323-441-nic_swsd@realtek.com>
- <36d6094d-cc7c-4965-92ce-a271165a400a@gmail.com>
- <1544e50b9e4c4ee6a6d8ba6a777c2f07@realtek.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <1544e50b9e4c4ee6a6d8ba6a777c2f07@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b36e1946-fda8-4893-b081-7ac9b4933947@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 24.02.2025 17:33, Hau wrote:
->>
->> External mail : This email originated from outside the organization. Do not
->> reply, click links, or open attachments unless you recognize the sender and
->> know the content is safe.
->>
->>
->>
->> On 21.02.2025 08:18, ChunHao Lin wrote:
->>> This patch will enable RTL8168H/RTL8168EP/RTL8168FP/RTL8125/RTL8126
->>> LTR support on the platforms that have tested with LTR enabled.
->>>
->>
->> Where in the code is the check whether platform has been tested with LTR?
->>
-> LTR is for L1,2. But L1 will be disabled when rtl_aspm_is_safe() return false. So LTR needs rtl_aspm_is_safe()
-> to return true.
-> 
->>> Signed-off-by: ChunHao Lin <hau@realtek.com>
->>> ---
->>>  drivers/net/ethernet/realtek/r8169_main.c | 108
->>> ++++++++++++++++++++++
->>>  1 file changed, 108 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c
->>> b/drivers/net/ethernet/realtek/r8169_main.c
->>> index 731302361989..9953eaa01c9d 100644
->>> --- a/drivers/net/ethernet/realtek/r8169_main.c
->>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
->>> @@ -2955,6 +2955,111 @@ static void rtl_disable_exit_l1(struct
->> rtl8169_private *tp)
->>>       }
->>>  }
->>>
->>> +static void rtl_set_ltr_latency(struct rtl8169_private *tp) {
->>> +     switch (tp->mac_version) {
->>> +     case RTL_GIGA_MAC_VER_70:
->>> +     case RTL_GIGA_MAC_VER_71:
->>> +             r8168_mac_ocp_write(tp, 0xcdd0, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x8c09);
->>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcde8, 0x887a);
->>> +             r8168_mac_ocp_write(tp, 0xcdea, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdec, 0x8c09);
->>> +             r8168_mac_ocp_write(tp, 0xcdee, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdf0, 0x8a62);
->>> +             r8168_mac_ocp_write(tp, 0xcdf2, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdf4, 0x883e);
->>> +             r8168_mac_ocp_write(tp, 0xcdf6, 0x9003);
->>> +             break;
->>> +     case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_66:
->>> +             r8168_mac_ocp_write(tp, 0xcdd0, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x889c);
->>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x8c30);
->>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcde8, 0x883e);
->>> +             r8168_mac_ocp_write(tp, 0xcdea, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdec, 0x889c);
->>> +             r8168_mac_ocp_write(tp, 0xcdee, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdf0, 0x8C09);
->>> +             r8168_mac_ocp_write(tp, 0xcdf2, 0x9003);
->>> +             break;
->>> +     case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_53:
->>> +             r8168_mac_ocp_write(tp, 0xcdd8, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdda, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcddc, 0x9003);
->>> +             r8168_mac_ocp_write(tp, 0xcdd2, 0x883c);
->>> +             r8168_mac_ocp_write(tp, 0xcdd4, 0x8c12);
->>> +             r8168_mac_ocp_write(tp, 0xcdd6, 0x9003);
->>> +             break;
->>> +     default:
->>> +             break;
->>> +     }
->>> +}
->>> +
->>> +static void rtl_reset_pci_ltr(struct rtl8169_private *tp) {
->>> +     struct pci_dev *pdev = tp->pci_dev;
->>> +     u16 cap;
->>> +
->>> +     pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap);
->>> +     if (cap & PCI_EXP_DEVCTL2_LTR_EN) {
->>> +             pcie_capability_clear_word(pdev, PCI_EXP_DEVCTL2,
->>> +                                        PCI_EXP_DEVCTL2_LTR_EN);
->>> +             pcie_capability_set_word(pdev, PCI_EXP_DEVCTL2,
->>> +                                      PCI_EXP_DEVCTL2_LTR_EN);
->>
->> I'd prefer that only PCI core deals with these registers (functions like
->> pci_configure_ltr()). Any specific reason for this reset? Is it something which
->> could be applicable for other devices too, so that the PCI core should be
->> extended?
->>
-> It is for specific platform. On that platform driver needs to do this to let LTR works.
-> 
->> +Bjorn and PCI list, to get an opinion from the PCI folks.
->>
->>> +     }
->>> +}
->>> +
->>> +static void rtl_enable_ltr(struct rtl8169_private *tp) {
->>> +     switch (tp->mac_version) {
->>> +     case RTL_GIGA_MAC_VER_61 ... RTL_GIGA_MAC_VER_71:
->>> +             r8168_mac_ocp_modify(tp, 0xe034, 0x0000, 0xc000);
->>> +             r8168_mac_ocp_modify(tp, 0xe0a2, 0x0000, BIT(0));
->>> +             r8168_mac_ocp_modify(tp, 0xe032, 0x0000, BIT(14));
->>> +             break;
->>> +     case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_48:
->>> +     case RTL_GIGA_MAC_VER_52 ... RTL_GIGA_MAC_VER_53:
->>> +             r8168_mac_ocp_modify(tp, 0xe0a2, 0x0000, BIT(0));
->>> +             RTL_W8(tp, 0xb6, RTL_R8(tp, 0xb6) | BIT(0));
->>> +             fallthrough;
->>> +     case RTL_GIGA_MAC_VER_51:
->>> +             r8168_mac_ocp_modify(tp, 0xe034, 0x0000, 0xc000);
->>> +             r8168_mac_ocp_write(tp, 0xe02c, 0x1880);
->>> +             r8168_mac_ocp_write(tp, 0xe02e, 0x4880);
->>> +             break;
->>> +     default:
->>> +             return;
->>> +     }
->>> +
->>> +     rtl_set_ltr_latency(tp);
->>> +
->>> +     /* chip can trigger LTR */
->>> +     r8168_mac_ocp_modify(tp, 0xe032, 0x0003, BIT(0));
->>> +
->>> +     /* reset LTR to notify host */
->>> +     rtl_reset_pci_ltr(tp);
->>> +}
->>> +
->>> +static void rtl_disable_ltr(struct rtl8169_private *tp) {
->>> +     switch (tp->mac_version) {
->>> +     case RTL_GIGA_MAC_VER_46 ... RTL_GIGA_MAC_VER_71:
->>> +             r8168_mac_ocp_modify(tp, 0xe032, 0x0003, 0);
->>> +             break;
->>> +     default:
->>> +             break;
->>> +     }
->>> +}
->>> +
->>>  static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp,
->>> bool enable)  {
->>>       u8 val8;
->>> @@ -2971,6 +3076,8 @@ static void rtl_hw_aspm_clkreq_enable(struct
->> rtl8169_private *tp, bool enable)
->>>                   tp->mac_version == RTL_GIGA_MAC_VER_43)
->>>                       return;
->>>
->>> +             rtl_enable_ltr(tp);
->>> +
->>>               rtl_mod_config5(tp, 0, ASPM_en);
->>>               switch (tp->mac_version) {
->>>               case RTL_GIGA_MAC_VER_70:
->>> @@ -4821,6 +4928,7 @@ static void rtl8169_down(struct rtl8169_private
->>> *tp)
->>>
->>>       rtl8169_cleanup(tp);
->>>       rtl_disable_exit_l1(tp);
->>> +     rtl_disable_ltr(tp);
->>
->> Any specific reason why LTR isn't configured just once, on driver load?
->>
-> It is for device compatibility, I will check internally to see if we can remove it.
-> 
-Thanks. Complementing what I wrote before:
-I would understand that reconfiguring LTR may be needed after a hw reset, when chip
-"forgets" settings. But is there a reason to disable the internal LTR config?
-IOW: What could happen if we omit rtl_disable_ltr()?
+Hi Thomas!
 
+On Tue, Feb 25, 2025 at 10:37:24AM +0100, Thomas Weißschuh wrote:
+> > > The tests are written specifically to test for execution order.
+> > > While we can not rely on the order for other libcs, the idea was to
+> > > expect a given order for the nolibc implementation.
+> > 
+> > OK.
+> > 
+> > > > I'm wondering if we shouldn't make the tests more robust:
+> > > >   1) explicitly set linkage_test_constructor_test_value to zero in the
+> > > >      declaration, because here it's not set so we have no guarantee
+> > > >      (we're not in the kernel)
+> > > 
+> > > Ack.
+> > > 
+> > > >   2) only add values to check for cumulated values (e.g. |1 in const1,
+> > > >      |2 in const2) and verify that the result is properly 3
+> > > 
+> > > This would stop validating the order.
+> > 
+> > That was my purpose but OK I got it. Then there's another option which
+> > preserves the order and even gives history:
+> > 
+> >   __attribute__((constructor))
+> >   static void constructor1(void)
+> >   {
+> >       constructor_test_value = constructor_test_value * 0x10 + 1;
+> >   }
+> > 
+> >   __attribute__((constructor))
+> >   static void constructor2(void)
+> >   {
+> >       constructor_test_value = constructor_test_value * 0x10 + 2;
+> >   }
+> >  
+> > Then if executed in the right order, you'll find 0x12. If both
+> > are executed in any order, it will always be >= 0x10. If only one
+> > is executed, it will be < 0x10, and if none is executed, it's 0.
 > 
->>>       rtl_prepare_power_down(tp);
->>>
->>>       if (tp->dash_type != RTL_DASH_NONE)
-> 
+> Sounds good! Do you want to write a patch?
+> It should also add the missing zero-initializion of
+> constructor_test_value.
 
+OK so I've tested the patch below which does what we want, except that
+it reveals that the order is still not granted. Actually I haven't found
+what dictates it. On one machine (gcc-9.5, ld-2.26) I'm getting:
+
+  $ ./nolibc-test|grep cst
+  17 linkage_cst = 0                                              [FAIL]
+  18 linkage_cst_ord = 0                                          [FAIL]
+
+On this same machine, using another toolchain relying on ld-2.27 gives me
+this:
+
+  $ ./nolibc-test|grep cst
+  17 linkage_cst = 1                                                [OK]
+  18 linkage_cst_ord = 33                                          [FAIL]
+
+And I'm getting this as well on another machine with various toolchains
+such as gcc-9.5+ld-2.34. The nolibc toolchains fail similarly on gcc-5.5
+(ld-2.27) and gcc-6.5 (ld-2.32), but work for gcc-7.5 with ld-2.32, while
+other combinations do work:
+
+  $ ./nolibc-test|grep -i cst
+  17 linkage_cst = 1                                                [OK]
+  18 linkage_cst_ord = 18                                           [OK]
+
+All of this is a bit confusing.
+
+I continue not to understand what could guarantee an implicit execution
+order since for me it solely depends on how things are linked, so the
+purpose of the test remains uncertain to me and I think we'd rather not
+try to enforce any ordering that might work only by pure luck.
+
+What do you think ?
+
+Cheers,
+Willy
+
+---
+
+diff --git a/tools/testing/selftests/nolibc/nolibc-test-linkage.c b/tools/testing/selftests/nolibc/nolibc-test-linkage.c
+index 5ff4c8a1db2a4..ebb3eb4208efd 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test-linkage.c
++++ b/tools/testing/selftests/nolibc/nolibc-test-linkage.c
+@@ -11,16 +11,16 @@ void *linkage_test_errno_addr(void)
+ 	return &errno;
+ }
+ 
+-int linkage_test_constructor_test_value;
++int linkage_test_constructor_test_value = 0;
+ 
+ __attribute__((constructor))
+ static void constructor1(void)
+ {
+-	linkage_test_constructor_test_value = 2;
++	linkage_test_constructor_test_value = linkage_test_constructor_test_value * 0x10 + 1;
+ }
+ 
+ __attribute__((constructor))
+ static void constructor2(void)
+ {
+-	linkage_test_constructor_test_value *= 3;
++	linkage_test_constructor_test_value = linkage_test_constructor_test_value * 0x10 + 2;
+ }
+diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+index 6fba7025c5e3c..2b5c30033e5eb 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test.c
++++ b/tools/testing/selftests/nolibc/nolibc-test.c
+@@ -682,14 +682,15 @@ int expect_strtox(int llen, void *func, const char *input, int base, intmax_t ex
+ __attribute__((constructor))
+ static void constructor1(void)
+ {
+-	constructor_test_value = 1;
++	constructor_test_value = constructor_test_value * 0x10 + 1;
+ }
+ 
+ __attribute__((constructor))
+ static void constructor2(int argc, char **argv, char **envp)
+ {
++	constructor_test_value = constructor_test_value * 0x10 + 2;
+ 	if (argc && argv && envp)
+-		constructor_test_value *= 2;
++		constructor_test_value = constructor_test_value * 0x10 + 4;
+ }
+ 
+ int run_startup(int min, int max)
+@@ -728,9 +729,11 @@ int run_startup(int min, int max)
+ 		CASE_TEST(environ_HOME);     EXPECT_PTRNZ(1, getenv("HOME")); break;
+ 		CASE_TEST(auxv_addr);        EXPECT_PTRGT(test_auxv != (void *)-1, test_auxv, brk); break;
+ 		CASE_TEST(auxv_AT_UID);      EXPECT_EQ(1, getauxval(AT_UID), getuid()); break;
+-		CASE_TEST(constructor);      EXPECT_EQ(1, constructor_test_value, 2); break;
++		CASE_TEST(constructor);      EXPECT_NE(1, (constructor_test_value & 0x111) && (constructor_test_value & 0x222), 0); break;
++		CASE_TEST(constructor_ord);  EXPECT_EQ(is_nolibc, constructor_test_value, 0x124); break;
+ 		CASE_TEST(linkage_errno);    EXPECT_PTREQ(1, linkage_test_errno_addr(), &errno); break;
+-		CASE_TEST(linkage_constr);   EXPECT_EQ(1, linkage_test_constructor_test_value, 6); break;
++		CASE_TEST(linkage_cst);      EXPECT_NE(1, (linkage_test_constructor_test_value & 0x11) && (linkage_test_constructor_test_value & 0x22), 0); break;
++		CASE_TEST(linkage_cst_ord);  EXPECT_EQ(is_nolibc, linkage_test_constructor_test_value, 0x12); break;
+ 		case __LINE__:
+ 			return ret; /* must be last */
+ 		/* note: do not set any defaults so as to permit holes above */
 
