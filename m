@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-539824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49BCA4A966
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:06:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C78A4A96B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9080B166BE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C385D16C690
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 07:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD6E1CAA60;
-	Sat,  1 Mar 2025 07:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423611C3C07;
+	Sat,  1 Mar 2025 07:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VH3rpTBI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="KP8jZ2J7"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B801C68B6;
-	Sat,  1 Mar 2025 07:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411371B87D1
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 07:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740812743; cv=none; b=qlDU+XIjIMvopn5qkRvofRXLmqE2eHAGu9X0oWI/5orRBYSwj7mrgBL13ftqq3ECLE9UXxVneDP33JNTmvRbAnfG7PRjMCC5nJcz1cfmjcV89zcIGDI0HskElK8+wFoIw2Nzy9TJe3pOcCmPpHd4NjAuW3pZJDlSd0da+4UoCgk=
+	t=1740813820; cv=none; b=h8Bml5hG5lPOdweZ4jQBWG0QUTHWBJVlIiP0/yYzOdVcvypuxN11RAzx9TrlFzgz/Bt0DxvPpxcaUCiC6gwhg5sGKIXusppa9l9CeY4MHyIS4/CbUvizirK1QOvYSGl/isAgGB3PnIXZk6bGjaKm46heY8Zie2F3Dx4+v7RPpq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740812743; c=relaxed/simple;
-	bh=yVJt2XxPJkXDsYR5/hz24cQxvPQ9Z4yO07rKfmUMNJY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ic2NMJVL2SEdhW1P6DnlGHnscSwn8OE/mMgIODvvkei8+0Uaza7PAFuCRWCUPBpjO4EEAfBgsJsnRhgYcPES0qvpEy2FKSAydSezP8aGiZe0l9vfA39ZwB076AAZE9b4HJH1kSizx0Yww4ORwQVqtlXRPMzeZoeZVCQn9QUfq9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VH3rpTBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B0BFC4CEE2;
-	Sat,  1 Mar 2025 07:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740812742;
-	bh=yVJt2XxPJkXDsYR5/hz24cQxvPQ9Z4yO07rKfmUMNJY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VH3rpTBIKkP/R2U1T2qD724MwzEMKlQXOAG/Gtp+JSs65wiHzAxMvPEe9H8h11/L3
-	 tjbZVBTmBXRjkeuBISMbtIQ+FQRQqR64zOxHzVceyn9Nz1aleiLJerMqdz2MCYztK4
-	 IGNJijQ0azb4dpAfCznqtYtO96BV3smbxw4dmWgV9Alf0JVnjwSKqwz8Mrp3A3Gdcq
-	 N5IKv0Lf1e5FP9pOiyg8kERVuEx3ancrM1PUHbuBsX3yiljSXLy+1YTV4t7ksmKYPd
-	 DN4/ZVa6jX7vlENmu9oQWC2M/9isuaLx4kaz92TITLQZ4tdH90L71R8J25qn/9mkJw
-	 iwNUNXK+Xmnug==
-From: Will Deacon <will@kernel.org>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>
-Subject: Re: [PATCH v7 00/10] arm64: dts: Add Arm Morello support
-Date: Sat,  1 Mar 2025 07:05:26 +0000
-Message-Id: <174070628228.2931531.10306009057184657839.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
-References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1740813820; c=relaxed/simple;
+	bh=TvCTkJjTsZMufM1VvmoUTa6oWgntzd5uJIiigMNn8Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=u67xlNNJKpgmV9RCz+yb2GRfzbAyw4d/UbseO7YIBSetAUEztenzZ85o9xRrstb6D1M/dMIN34ujXs+QeYKUl7sPjUmo4fwgn7jxA0yyhiItuHbppd4Di0RbbL8XMU6l11wkSzo9uIN9QFGAcrvuG/Kbof5/5UPTVgeO/Wsql0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=KP8jZ2J7; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=i3O1YgRzMdiitsQCPUd24V+zejMicSG8nLoWS1cKp7o=; b=KP8jZ2J7rbMFNsnCE16HS6sZvR
+	akjk0wMn6+cInfa4AeL1fuMiLkiiEkYDUdcmC7XS2PalBzfUvhIysIIHVH6COtoLO2xNaVHhJv++/
+	tE+ClaHJuAkS0vSlzMeJ4wWOGXVcqW53Jf1jFUbTib4H/yDK6KvZ01EO2g4yMvADrGqYvOXwrMRv9
+	VA8dytU8aBLLI2koJ7Yw1T5Y4mST3ZRMexLvflqsTGDzIvQZnKMUHwXtxUoSBV7WegwpsyKuPH7HG
+	K1jf09BHSPDS1ocovawuIxsAONwmxLoGud6xeTeoP3k2U3IHXv4xWLFh0d5EwZ+EgV3y2XQVOfqac
+	yFK+DMcg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1toHBb-002mVr-0E;
+	Sat, 01 Mar 2025 15:23:00 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 01 Mar 2025 15:22:59 +0800
+Date: Sat, 1 Mar 2025 15:22:59 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: akpm@linux-foundation.org, yosry.ahmed@linux.dev, hdanton@sina.com,
+	ryncsn@gmail.com, bigeasy@linutronix.de, minchan@kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	senozhatsky@chromium.org
+Subject: Re: [PATCH v9 14/19] zsmalloc: introduce new object mapping API
+Message-ID: <Z8K10w-6fIpDhYc6@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227043618.88380-15-senozhatsky@chromium.org>
+X-Newsgroups: apana.lists.os.linux.kernel
 
-On Fri, 21 Feb 2025 18:03:39 +0000, Vincenzo Frascino wrote:
-> The Morello architecture is an experimental extension to Armv8.2-A,
-> which extends the AArch64 state with the principles proposed in
-> version 7 of the Capability Hardware Enhanced RISC Instructions
-> (CHERI) ISA [1].
-> 
-> This series adds dts support for the Arm Morello System Development
-> Platform.
-> 
-> [...]
+Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
+>
+> New API splits functions by access mode:
+> - zs_obj_read_begin(handle, local_copy)
+>  Returns a pointer to handle memory.  For objects that span two
+>  physical pages a local_copy buffer is used to store object's
+>  data before the address is returned to the caller.  Otherwise
+>  the object's page is kmap_local mapped directly.
 
-Applied PMU driver change to will (for-next/perf), thanks!
+I presume this buffer is always given to the compression algorithm
+to decompress? In that case there should be no need to linearise
+them at all.
 
-[06/10] perf: arm_pmuv3: Add support for ARM Rainier PMU
-        https://git.kernel.org/will/c/0424b1a81a42
+Just return a two-entry SG list, and give it to the Crypto API
+to deal with.  Both software and hardware algorithms can handle
+non-linear input.  Yes software decompression is currently
+linearising all input with a copy, but that is no different
+to the copy that you're making in zsmalloc.
+
+So please change this API to create an SG list instead of copying.
+That way we can then optimise the software decompression to read
+non-linear input directly and skip the copying altogether.
 
 Cheers,
 -- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
