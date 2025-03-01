@@ -1,208 +1,104 @@
-Return-Path: <linux-kernel+bounces-539923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4D9A4AAE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:21:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B3FA4AAE9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0A2167E14
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:21:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EE43B7B84
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F4A1DE885;
-	Sat,  1 Mar 2025 12:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62681DED51;
+	Sat,  1 Mar 2025 12:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SEa8ZM6Z"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6395E1CAA99
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 12:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="S2wcqCYj"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087ED1CAA99;
+	Sat,  1 Mar 2025 12:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740831656; cv=none; b=DIonJADAOOjtBbiO//qVkEtVx72rtjHkHEjlTI/0S/ookbimHz2hoDBRSHoGOefmBW2ZCo1L8z6W1O3rWaqBe5dVH8MOpvIxrLf8VMsufDPL1eeCXmHWviIAA+KxnRPeoHKvSbBGb19S/aADNHV9gZg0a1wW1o82H1RsYZmFxFU=
+	t=1740831947; cv=none; b=HFh/1ZFDEmrx9e6SRt785tvBlk+7mX7z3u4gRosTqWFh74T1MRp+2CiW6vRfwLlcgcSOht92gNnrS27CdjnSGylBxAi9gGLgh6DYZniHWltGFvBxAIm8wavXQGtOOMK5IzQWuMHz/IBDAGFqhnWCcy4e/i0m175mhQL5nlFE+Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740831656; c=relaxed/simple;
-	bh=kz921Cs1XkcZDSEr0ctN/p4JB6f0/L0k5bISSnHlmJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhJu6jbHHcdLT6EM76nYH4kUxcUJeQOx/dCZI4orvhvg7sVg5f/O7tt23xLy5ZlU4bqcFoWepDESlDYLFcSoaXiZPqvkU6Qp3RZC3PeCsorqtJUlVpiYMCrEJNVAFFGBtg0g/fTmKRBjbnZhZK9YHKQDP1pxoTnsRFdQbCbXkvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SEa8ZM6Z; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 306A240E0173;
-	Sat,  1 Mar 2025 12:20:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aAMgY6Qui3vK; Sat,  1 Mar 2025 12:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740831646; bh=2HKI4C6iYTI8d0b77jQiRO2WBjPRZTq44Ez/ai+zb8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SEa8ZM6ZDzgwLG1Sy6X1VKsTnDNPNiDmWVUcx54keQW6LFpqTrkOaJmOSC0ZjxABP
-	 UumLuYDhnxiGSEMB+06g60r5RKI3RJmzefY6DhBxAMAZAgpEr2Dw5lF0bEzn3eNM5K
-	 jTAeWntzw8EJHllnk/lOgzLhkG1cTXIM3T7UyDZLqKwVgYZ36p44S/RDc39IJtxd8l
-	 d4xGpXUbk53A9BDaBCeTWXoRBohC4Oyc1jrh5O4dLogucJCMxwjmg+XmBVleqOgDns
-	 FuUwAEp3hq14jQXuZE1cZEUauWkXWAMPCAtBM4VoPVz3m2vRz3w6Jh/hSPRghc3oKF
-	 OVWof9edTegcqpknaIDt2YWD0AczI6+FXqoqXy5lxO0nVuXrTL0b++oE6pnADETqxb
-	 IlAdrQmT2JQdiZbvfxKN9a9vLRGUTKomYnt/8jCEVMHcfGDUUYrFs223aX/LpSgeBC
-	 vwxxCjLYKwz8of/uAASFk0CphkDYN88JvygkjII1bVWLYd4CjVVuAZ4zmeWTMmV68i
-	 A8FITSN0yo0NjMNlv9BnFeEiyY+7KPrLPbl0DJ44lC1MoyGR0Nyr0tcgUnooKuLHCu
-	 2gxdAR1iWpeGJXMk/g0HPt1dw0fMOo72wGlm+BE8vVu7FaBgOWllAa8b5Q+baef/PY
-	 nT/mGJz88bIstsHanta9E2Qg=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37F6E40E015F;
-	Sat,  1 Mar 2025 12:20:28 +0000 (UTC)
-Date: Sat, 1 Mar 2025 13:20:22 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>, Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 05/13] x86/mm: use INVLPGB in flush_tlb_all
-Message-ID: <20250301122022.GBZ8L7hlwP5cUffJA2@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-6-riel@surriel.com>
- <f57b0b8c-1df4-4c6c-820e-20940aee7d0d@intel.com>
+	s=arc-20240116; t=1740831947; c=relaxed/simple;
+	bh=uk/TVbQmEdhrRriBBk8oaPcQkjOcMSzkB2nVTddFJcY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Jbcp6VPTaTewjz3q3UOmfIudu1mPt0VnxOMFXvRw9yS4awusJX53/UwXY7xnBCVfwkcj7NdFzYggxYvFmuMgaBRK4WdCX47MpkYm5vYHuiO6qxyLnyKZtzxzfzR4pco4q5PM1AKYhzmgzsVUvrxvmkVWSiBL7/vb5flt1unc8eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=S2wcqCYj reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=OoaYmHX0XxMb3ZGRzqhrOqA+8ik0zFy9oaiXUktOM0A=; b=S
+	2wcqCYjrorMjz0J+aoOHGkQMzk1/HZoe378Dg6qq2Bvi3+iWO4pVzMiKlm51zlXM
+	NHUpBgtTGvLaityI1KHr6V/hyQNAdurRMt+4Bx9dU4aTL/rde6dix2eCHPFk5te1
+	ctQ9plpH2Zi2crBPTys9FKRwmlJtjWsvcS+UNB2Vl8=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-107 (Coremail) ; Sat, 1 Mar 2025 20:24:34 +0800 (CST)
+Date: Sat, 1 Mar 2025 20:24:34 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Piotr Oniszczuk" <piotr.oniszczuk@gmail.com>
+Cc: heiko@sntech.de, neil.armstrong@linaro.org,
+	sebastian.reichel@collabora.com, devicetree@vger.kernel.org,
+	hjc@rock-chips.com, mripard@kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, yubing.zhang@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	"Andy Yan" <andy.yan@rock-chips.com>, krzk+dt@kernel.org,
+	robh@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re:Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <AC3DE87B-64B1-4C34-8E1B-3900E2C53AA3@gmail.com>
+References: <20250223113036.74252-1-andyshrk@163.com>
+ <AC3DE87B-64B1-4C34-8E1B-3900E2C53AA3@gmail.com>
+X-NTES-SC: AL_Qu2fAvSYvkAs4imaYekfmkcVgOw9UcO5v/Qk3oZXOJF8jCHpyAceeXBTHlbv/PCDBDqXkAiHVDdI89xeb5lhU4kMvpw71wI8xCMUqheypabd2w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f57b0b8c-1df4-4c6c-820e-20940aee7d0d@intel.com>
+Message-ID: <7b8767fc.3607.19551aa5f74.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:aygvCgA3X+eD_MJna0JzAA--.55803W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hoDXmfC+twJKAABs2
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Feb 28, 2025 at 11:18:04AM -0800, Dave Hansen wrote:
-> We haven't talked at all about the locking rules for
-> invlpgb_flush_all(). It was used once in this series without any
-> explicit preempt twiddling. I assume that was because it was used in a
-> path where preempt is disabled.
-> 
-> If it does need a universal rule about preempt, can we please add an:
-> 
-> 	lockdep_assert_preemption_disabled()
-> 
-> along with a comment about why it needs preempt disabled?
-
-So, after talking on IRC last night, below is what I think we should do ontop.
-
-More specifically:
-
-- I've pushed the preemption guard inside the functions which do
-  INVLPGB+TLBSYNC so that callers do not have to think about it.
-
-- invlpgb_kernel_range_flush() I still don't like and we have to rely there on
-  cant_migrate() in __tlbsync() - I'd like for all of them to be nicely packed
-  but don't have an idea yet how to do that cleanly...
-
-- document what means for bits rax[0:2] being clear when issuing INVLPGB
-
-
-That ok?
-
-Anything I've missed?
-
-If not, I'll integrate this into the patches.
-
-Thx.
-
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index 45d9c7687d61..0d90ceeb472b 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -39,6 +39,10 @@ static inline void invlpg(unsigned long addr)
-  * the first page, while __invlpgb gets the more human readable number of
-  * pages to invalidate.
-  *
-+ * The bits in rax[0:2] determine respectively which components of the address
-+ * (VA, PCID, ASID) get compared when flushing. If neither bits are set, *any*
-+ * address in the specified range matches.
-+ *
-  * TLBSYNC is used to ensure that pending INVLPGB invalidations initiated from
-  * this CPU have completed.
-  */
-@@ -60,10 +64,10 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
- static inline void __tlbsync(void)
- {
- 	/*
--	 * tlbsync waits for invlpgb instructions originating on the
--	 * same CPU to have completed. Print a warning if we could have
--	 * migrated, and might not be waiting on all the invlpgbs issued
--	 * during this TLB invalidation sequence.
-+	 * TLBSYNC waits for INVLPGB instructions originating on the same CPU
-+	 * to have completed. Print a warning if the task has been migrated,
-+	 * and might not be waiting on all the INVLPGBs issued during this TLB
-+	 * invalidation sequence.
- 	 */
- 	cant_migrate();
- 
-@@ -106,6 +110,13 @@ static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
- /* Flush all mappings, including globals, for all PCIDs. */
- static inline void invlpgb_flush_all(void)
- {
-+	/*
-+	 * TLBSYNC at the end needs to make sure all flushes done on the
-+	 * current CPU have been executed system-wide. Therefore, make
-+	 * sure nothing gets migrated in-between but disable preemption
-+	 * as it is cheaper.
-+	 */
-+	guard(preempt)();
- 	__invlpgb(0, 0, 0, 1, 0, INVLPGB_INCLUDE_GLOBAL);
- 	__tlbsync();
- }
-@@ -119,10 +130,7 @@ static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- /* Flush all mappings for all PCIDs except globals. */
- static inline void invlpgb_flush_all_nonglobals(void)
- {
--	/*
--	 * @addr=0 means both rax[1] (valid PCID) and rax[2] (valid ASID) are clear
--	 * so flush *any* PCID and ASID.
--	 */
-+	guard(preempt)();
- 	__invlpgb(0, 0, 0, 1, 0, 0);
- 	__tlbsync();
- }
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index f49627e02311..8cd084bc3d98 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1075,19 +1075,11 @@ void flush_tlb_all(void)
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
- 
- 	/* First try (faster) hardware-assisted TLB invalidation. */
--	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
--		/*
--		 * TLBSYNC at the end needs to make sure all flushes done
--		 * on the current CPU have been executed system-wide.
--		 * Therefore, make sure nothing gets migrated
--		 * in-between but disable preemption as it is cheaper.
--		 */
--		guard(preempt)();
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
- 		invlpgb_flush_all();
--	} else {
-+	else
- 		/* Fall back to the IPI-based invalidation. */
- 		on_each_cpu(do_flush_tlb_all, NULL, 1);
--	}
- }
- 
- /* Flush an arbitrarily large range of memory with INVLPGB. */
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+CkhpIFBpb3RyLAoK5ZyoIDIwMjUtMDMtMDEgMDQ6MzA6MzPvvIwiUGlvdHIgT25pc3pjenVrIiA8
+cGlvdHIub25pc3pjenVrQGdtYWlsLmNvbT4g5YaZ6YGT77yaCj4KPgo+PiBXaWFkb21vxZvEhyBu
+YXBpc2FuYSBwcnpleiBBbmR5IFlhbiA8YW5keXNocmtAMTYzLmNvbT4gdyBkbml1IDIzIGx1dCAy
+MDI1LCBvIGdvZHouIDEyOjMwOgo+PiAKPj4gRnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2st
+Y2hpcHMuY29tPgo+PiAKPj4gCj4+IFRoZXJlIGFyZSB0d28gRFcgRFBUWCBiYXNlZCBEaXNwbGF5
+UG9ydCBDb250cm9sbGVyIG9uIHJrMzU4OCB3aGljaAo+PiBhcmUgY29tcGxpYW50IHdpdGggdGhl
+IERpc3BsYXlQb3J0IFNwZWNpZmljYXRpb24gVmVyc2lvbiAxLjQgd2l0aAo+PiB0aGUgZm9sbG93
+aW5nIGZlYXR1cmVzOgo+PiAKPj4gKiBEaXNwbGF5UG9ydCAxLjRhCj4+ICogTWFpbiBMaW5rOiAx
+LzIvNCBsYW5lcwo+PiAqIE1haW4gTGluayBTdXBwb3J0IDEuNjJHYnBzLCAyLjdHYnBzLCA1LjRH
+YnBzIGFuZCA4LjFHYnBzCj4+ICogQVVYIGNoYW5uZWwgMU1icHMKPj4gKiBTaW5nbGUgU3RyZWFt
+IFRyYW5zcG9ydChTU1QpCj4+ICogTXVsdGlzdHJlYW0gVHJhbnNwb3J0IChNU1QpCj4+ICrvga5U
+eXBlLUMgc3VwcG9ydCAoYWx0ZXJuYXRlIG1vZGUpCj4+ICogSERDUCAyLjIsIEhEQ1AgMS4zCj4+
+ICogU3VwcG9ydHMgdXAgdG8gOC8xMCBiaXRzIHBlciBjb2xvciBjb21wb25lbnQKPj4gKiBTdXBw
+b3J0cyBSQkcsIFlDYkNyNDo0OjQsIFlDYkNyNDoyOjIsIFlDYkNyNDoyOjAKPj4gKiBQaXhlbCBj
+bG9jayB1cCB0byA1OTRNSHoKPj4gKiBJMlMsIFNQRElGIGF1ZGlvIGludGVyZmFjZQo+PiAKPj4g
+VGhlIGN1cnJlbnQgdmVyc2lvbiBvZiB0aGlzIHBhdGNoIHNlcmllcyBvbmx5IHN1cHBvcnRzIGJh
+c2ljIGRpc3BsYXkgb3V0cHV0cy4KPj4gSSBjb25kdWN0ZWQgdGVzdHMgaW4gMTA4MHAgYW5kIDRL
+QDYwIFlDYkNyNDoyOjAgbW9kZXM7IHRoZSBBTFQvVHlwZS1DIG1vZGUKPj4gaGFzbid0IGJlZW4g
+dGVzdGVkIHlldCwgYnV0IEkgc3VzcGVjdCBpdCB3aWxsIGxpa2VseSB3b3JrLiBIRENQIGFuZCBh
+dWRpbwo+PiBmZWF0dXJlcyByZW1haW4gdW5pbXBsZW1lbnRlZC4gRm9yIFJLMzU4OCwgaXQncyBv
+bmx5IHN1cHBvcnQgU1NULCB3aGlsZSBpbgo+PiB0aGUgdXBjb21pbmcgUkszNTc2LCBpdCBjYW4g
+c3VwcG9ydCBNU1Qgb3V0cHV0Lgo+PiAKPgo+QW5keSwKPgo+SXMgdGlzIHNlcmllcyBlbm91Z2gg
+dG8gZ2V0IHVzYmMxL2RwMSB3b3JraW5nIGFzIHZpZGVvIG91dHB1dCA/Cj4oYXNzdW1pbmcgaSB3
+aWxsIGFkZCBuZWNlc3NhcnkgY29kZSBpbiBkdCkgCj4KPnJvY2s1LWl0eCBoYXMgc2Vjb25kIGhk
+bWkgcG9ydCB1c2luZyB1c2JjMS9kcDEgbGFuZXMgMiwzIHRvIHJhNjIwIGRwLT5oZG1pIGNvbnZl
+cnRlcgo+Cj5pcyBpdCB3b3J0aCB0byBwbGF5IHdpdGggdGhpcyBvciBpdCBpcyB0b28gZWFybHk/
+CgpJIHRoaW5rIHlvdSBjb3VsZCBnaXZlIGl0IGEgdHJ5IGlmIGl0IHVzaW5nIHRoZSBTdGFuZGFy
+ZCBEUO+8iG5vbi1BTFQgbW9kZe+8iSBwb3J0IGZvciBvdXRwdXQuIApTaW5jZSBJIGRvbid0IGN1
+cnJlbnRseSBoYXZlIGEgZGV2ZWxvcG1lbnQgYm9hcmQgd2l0aCBEUDEgb3V0cHV0IGF2YWlsYWJs
+ZSwgSSBoYXZlbid0IGJlZW4KYWJsZSB0byB0ZXN0IGl0IHlldC4gQXMgZm9yIHRoZSBUeXBlLUMg
+QWx0ZXJuYXRlIE1vZGUgb3V0cHV0LCBzb21lIHBhdGNoZXMgYXJlIHN0aWxsIHJlcXVpcmVkIApJ
+J2xsICBzZW5kIGl0IHdpdGggVjIgdG9tb3Jyb3cgb3IgbmV4dCB3ZWVrLgpGZWVsIGZyZWUgdG8g
+bGV0IG1lIGtub3cgaWYgSWYgeW91IGVuY291bnRlciBhbnkgaXNzdWVz44CCCgoKPiAK
 
