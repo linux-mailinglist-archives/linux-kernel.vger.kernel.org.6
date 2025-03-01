@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2814DA4AB34
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:27:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C065A4AB36
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FB81895FD9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:27:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F01E7A82CD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F891DF730;
-	Sat,  1 Mar 2025 13:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E414D1DF276;
+	Sat,  1 Mar 2025 13:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqkF2P85"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Kg56qZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E141DEFD4;
-	Sat,  1 Mar 2025 13:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1767979CD;
+	Sat,  1 Mar 2025 13:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740835619; cv=none; b=oiNSXaGYbvAzD1x6UQgUjgyxcjdw18DSgQqBcH42lPmH3wLD0UTij6ofuHHIefpYWgOJJykn8d4Vm9CFVZQ7wxhfc36Hgn8H0Lo+tKOjo/InlYEi4mwX2BnOO91snZeVKDGSXmikpPRHOQfvbe2Tu3do0/FAK5BqsiOSsrYNUAQ=
+	t=1740835817; cv=none; b=nhK38LQPtsBZ6VW8Afp92r/Ra7OQ9XZPDWjfDB7hgZRDUAv/LvWX1d9MbyGdMHPLMyKo+XpHyws3LPvL+UTSahGV2e1F0aMsSBbOVuErWhchVBaG6joEEsOrf+IcVkj+/3MZxIjG4G90s2hhhuerFxDy5c7UNR08Nt1QLbZDtO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740835619; c=relaxed/simple;
-	bh=ZwTNgDBBxGJCBuitaW+0dpjojQHx4mloiV0Kr6EiR5E=;
+	s=arc-20240116; t=1740835817; c=relaxed/simple;
+	bh=SwyPErKy/wkrfdSz6Hn5/KDvLA6mTfMxR9RzDkps5p8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLUW03oPc204ZchxnqWdv8c4Y6+zxQ4A/jwLQ9kHa4wtcIqzNTv0k1V0akWwTAsSO2qTxwadfmL7G3KNlwv386XE8V6OCiUxJIr0+/CPfnNSN00eS6Tk0piBCGzypbnc2eLO+OGu4OQi45xeT9YD4bLpLbxusWRoAi8FWEu15Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqkF2P85; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09629C4CEDD;
-	Sat,  1 Mar 2025 13:26:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=IJLojqsdsYYXO6XQgJ2EuC/7FSz36hqSyHynP5wjyRoeXZE5VChQkjGIA5lbl0lOrDIe5N0uERmPGBkZ2FtEzgV0wkhDyRtj5DKX4AbZwiwHN9Jq2VBtnpQkXN3cyVqra5F005llZPgMEgJFdnFd/fMOb3TxnyoDQ/CkSWtkcQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Kg56qZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08773C4CEDD;
+	Sat,  1 Mar 2025 13:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740835618;
-	bh=ZwTNgDBBxGJCBuitaW+0dpjojQHx4mloiV0Kr6EiR5E=;
+	s=k20201202; t=1740835816;
+	bh=SwyPErKy/wkrfdSz6Hn5/KDvLA6mTfMxR9RzDkps5p8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IqkF2P85T62uujirrXkp2X+nerKvVdOcaKocoB+14OssavobLGVU+hTRjcSkbi1LK
-	 zGKKhCqmpHMm91spJ5kT+lLDED/5lAyaoEP/7KW+mXTzUZljia0xTkMG75K8RWk2Fn
-	 BR77Q9j7YpEt9yJPk7KDebnSrUFY9dawd6xuTzo+0PGP7/5O9yh/7e1kYN3Qg/fxVd
-	 Lp+f5rEYVnL0D+97YiOVGjcGB8O42Rb1hVRu2NSZx1lqTC3F2n57lc1qoCxvsfbOrg
-	 F70u3WSd83h9FkfJlngCUU63iwS5GXdziAdELkxV62inXxHhvnfP9sUcI3syfDC9pv
-	 v4qyENOs2n2xQ==
-Message-ID: <3b2c9842-8910-4ab1-84af-01013289c3b8@kernel.org>
-Date: Sat, 1 Mar 2025 14:26:53 +0100
+	b=U9Kg56qZUmctik01QXLmTJzNAFKcFB6l3pBoWghT31e699On7lAyuXkRsZ1Wtkywb
+	 h6b8uedjZNdj6S+vAYP6z4IFXc9KkuRQnUH7BKGaaKJilLS/CTBD9+qXFvbTx2R1No
+	 wYZDfDbwUpzavOkKERCf8pc7v5J2lABZSx95GGrJETY7HSJLRoKd+rUAM5screheQ6
+	 uTQ146SrQBkajE6DEaliwja0IRBGmzjRnWmLSBPOzGLr40kaoUk9oW2sKr9IYQx4O7
+	 EHjSle9WiFlwGkcEWKbnjBFkVbDX1pg7Wasf2F6yB+1Xc6z0fWOuzmYWCgHOSrDQr4
+	 opy6EUu2oDJhw==
+Message-ID: <03c3e6bf-9688-446d-9b45-5b186a1d5b0e@kernel.org>
+Date: Sat, 1 Mar 2025 14:30:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH] media: i2c: Add OV05C camera sensor driver
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+ laurent.pinchart@ideasonboard.com, dave.stevenson@raspberrypi.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  benjamin.chan@amd.com
-References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+References: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,364 +101,236 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+In-Reply-To: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 17:45, Pratap Nirujogi wrote:
->  config I2C_DESIGNWARE_AMDPSP
->  	bool "AMD PSP I2C semaphore support"
->  	depends on ACPI
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index 1c2a4510abe4..cfe53038df69 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
->  i2c-designware-platform-y 				:= i2c-designware-platdrv.o
->  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
->  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
-> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
->  obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
->  i2c-designware-pci-y					:= i2c-designware-pcidrv.o
->  obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
-> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
+On 28/02/2025 17:53, Pratap Nirujogi wrote:
+> Add driver for OmniVision 5.2M OV05C10 sensor. This driver
+> supports only the full size normal 2888x1808@30fps 2-lane
+> sensor profile.
+> 
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+>  drivers/media/i2c/Kconfig  |   10 +
+>  drivers/media/i2c/Makefile |    1 +
+>  drivers/media/i2c/ov05c.c  | 1031 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1042 insertions(+)
+>  create mode 100644 drivers/media/i2c/ov05c.c
+> 
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index 8ba096b8ebca..fd160feabc41 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -337,6 +337,16 @@ config VIDEO_OG01A1B
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called og01a1b.
+>  
+> +config VIDEO_OV05C
+> +	tristate "OmniVision OV05 sensor support"
+> +	select V4L2_CCI_I2C
+> +	help
+> +	  This is a Video4Linux2 sensor driver for the OmniVision
+> +	  OV05C camera.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called OV05C.
+> +
+>  config VIDEO_OV01A10
+>  	tristate "OmniVision OV01A10 sensor support"
+>  	help
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index fbb988bd067a..08bfc2d59be2 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -80,6 +80,7 @@ obj-$(CONFIG_VIDEO_MT9V011) += mt9v011.o
+>  obj-$(CONFIG_VIDEO_MT9V032) += mt9v032.o
+>  obj-$(CONFIG_VIDEO_MT9V111) += mt9v111.o
+>  obj-$(CONFIG_VIDEO_OG01A1B) += og01a1b.o
+> +obj-$(CONFIG_VIDEO_OV05C) += ov05c.o
+>  obj-$(CONFIG_VIDEO_OV01A10) += ov01a10.o
+>  obj-$(CONFIG_VIDEO_OV02A10) += ov02a10.o
+>  obj-$(CONFIG_VIDEO_OV08D10) += ov08d10.o
+> diff --git a/drivers/media/i2c/ov05c.c b/drivers/media/i2c/ov05c.c
 > new file mode 100644
-> index 000000000000..dc90510a440b
+> index 000000000000..96c4f74af4a9
 > --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
-> @@ -0,0 +1,266 @@
+> +++ b/drivers/media/i2c/ov05c.c
+> @@ -0,0 +1,1031 @@
 > +/* SPDX-License-Identifier: MIT */
 > +/*
-> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
+> + * All Rights Reserved.
 > + *
 > + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
+> + * copy of this software and associated documentation files (the
+> + * "Software"), to deal in the Software without restriction, including
+> + * without limitation the rights to use, copy, modify, merge, publish,
+> + * distribute, sub license, and/or sell copies of the Software, and to
+> + * permit persons to whom the Software is furnished to do so, subject to
+> + * the following conditions:
 > + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
+> + * The above copyright notice and this permission notice (including the
+> + * next paragraph) shall be included in all copies or substantial portions
+> + * of the Software.
 > + *
 > + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 > + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + * OTHER DEALINGS IN THE SOFTWARE.
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDERS, AUTHORS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM,
+> + * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+> + * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+> + * USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Don't add custom license boilerplate.
+What's with AMD? Second patch that day, same issues.
 
+Drop license boilerplate.
 
+> + *
 > + */
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/dmi.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
+> +#include <linux/acpi.h>
 > +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
 > +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +#include <linux/sched.h>
-> +#include <linux/slab.h>
-> +#include <linux/suspend.h>
+> +#include <linux/delay.h>
 > +#include <linux/units.h>
-> +
-> +#include "i2c-designware-core.h"
-> +#include "i2c-designware-amdisp.h"
-> +
-> +#define AMD_ISP_I2C_INPUT_CLK			100 //100 Mhz
-> +
-> +#define to_amd_isp_i2c_dev(dev) \
-> +	((struct amd_isp_i2c_dev *)container_of(dev, struct amd_isp_i2c_dev, dw_dev))
+> +#include <linux/pm_runtime.h>
+> +#include <linux/gpio.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-cci.h>
 
-Why do you need to cast? To drop const? That's poor coding.
+
+...
 
 > +
-> +struct amd_isp_i2c_dev {
-> +	struct dw_i2c_dev	dw_dev;
-> +};
-> +
-> +static void amd_isp_dw_i2c_plat_pm_cleanup(struct dw_i2c_dev *dev)
+> +static int ov05c_probe(struct i2c_client *client)
 > +{
-> +	pm_runtime_disable(dev->dev);
+> +	struct ov05c *ov05c;
+> +	int i, ret;
 > +
-> +	if (dev->shared_with_punit)
-> +		pm_runtime_put_noidle(dev->dev);
-> +}
-> +
-> +static u32 amd_isp_dw_i2c_get_clk_rate(struct dw_i2c_dev *dev)
-> +{
-> +	return AMD_ISP_I2C_INPUT_CLK * 1000;
-> +}
-> +
-> +static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
-> +{
-> +	struct i2c_adapter *adap;
-> +	struct amd_isp_i2c_dev *isp_i2c_dev;
-> +	struct dw_i2c_dev *dev;
-> +	int ret;
-> +
-> +	isp_i2c_dev = devm_kzalloc(&pdev->dev, sizeof(struct amd_isp_i2c_dev),
-
-sizeof(*)
-
-> +				   GFP_KERNEL);
-> +	if (!isp_i2c_dev)
+> +	ov05c = devm_kzalloc(&client->dev, sizeof(*ov05c), GFP_KERNEL);
+> +	if (!ov05c)
 > +		return -ENOMEM;
 > +
-> +	dev = &isp_i2c_dev->dw_dev;
-> +	dev->dev = &pdev->dev;
+> +	client->dev.init_name = DRV_NAME;
 > +
-> +	/**
+> +	/* create sensor enable gpio control */
+> +	ov05c->enable_gpio = devm_gpiod_get(&client->dev, "sensor0_enable", GPIOD_OUT_LOW);
 
-Not a kerneldoc.
 
-Please run standard kernel tools for static analysis, like coccinelle,
-smatch and sparse, and fix reported warnings. Also please check for
-warnings when building with W=1. Most of these commands (checks or W=1
-build) can build specific targets, like some directory, to narrow the
-scope to only your code. The code here looks like it needs a fix. Feel
-free to get in touch if the warning is not clear.
+s/sensor0_enable/enable/
 
-> +	 * Use the polling mode to send/receive the data, because
-> +	 * no IRQ connection from ISP I2C
-> +	 */
-> +	dev->flags |= ACCESS_POLLING;
-> +	platform_set_drvdata(pdev, dev);
+> +	if (IS_ERR_OR_NULL(ov05c->enable_gpio))
+> +		return PTR_ERR(ov05c->enable_gpio);
 > +
-> +	dev->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(dev->base))
-> +		return PTR_ERR(dev->base);
+> +	/* Initialize subdev */
+> +	v4l2_i2c_subdev_init(&ov05c->sd, client, &ov05c_subdev_ops);
 > +
-> +	ret = isp_power_set(true);
-> +	if (ret) {
-> +		dev_err(dev->dev, "unable to turn on the amdisp i2c power:%d\n", ret);
+> +	/* Initialize CCI */
+> +	ov05c->regmap = devm_cci_regmap_init_i2c(client, 8);
+> +	if (IS_ERR(ov05c->regmap)) {
+> +		dev_err(&client->dev, "Failed to initialize CCI\n");
 
-Syntax is return dev_err_probe()
+Syntax is: return dev_err_probe
 
-> +		return ret;
+> +		return PTR_ERR(ov05c->regmap);
 > +	}
 > +
-> +	dev->get_clk_rate_khz = amd_isp_dw_i2c_get_clk_rate;
-> +	ret = i2c_dw_fw_parse_and_configure(dev);
+> +	/* Set default mode to max resolution */
+> +	ov05c->cur_mode = &supported_modes[0];
+> +
+> +	/* Initialize V4L2 controls */
+> +	ret = ov05c_init_controls(ov05c);
 > +	if (ret)
-> +		goto exit;
+> +		return ret;
 > +
-> +	i2c_dw_configure(dev);
+> +	/* Initialize V4L2 subdev */
+> +	ov05c->sd.internal_ops = &ov05c_internal_ops;
+> +	ov05c->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	ov05c->sd.entity.ops = &ov05c_subdev_entity_ops;
+> +	ov05c->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> +	ov05c->sd.entity.name = "OV05C";
 > +
-> +	adap = &dev->adapter;
-> +	adap->owner = THIS_MODULE;
-> +	ACPI_COMPANION_SET(&adap->dev, ACPI_COMPANION(&pdev->dev));
-> +	adap->dev.of_node = pdev->dev.of_node;
-> +	/* arbitrary large number to avoid any conflicts */
-> +	adap->nr = 99;
+> +	/* Initialize source pad */
+> +	for (i = 0; i < NUM_OF_PADS; i++)
+> +		ov05c->pads[i].flags = MEDIA_PAD_FL_SOURCE;
 > +
-> +	if (dev->flags & ACCESS_NO_IRQ_SUSPEND) {
-> +		dev_pm_set_driver_flags(&pdev->dev,
-> +					DPM_FLAG_SMART_PREPARE);
-> +	} else {
-> +		dev_pm_set_driver_flags(&pdev->dev,
-> +					DPM_FLAG_SMART_PREPARE |
-> +					DPM_FLAG_SMART_SUSPEND);
-> +	}
+> +	ret = media_entity_pads_init(&ov05c->sd.entity, NUM_OF_PADS, ov05c->pads);
+> +	if (ret)
+> +		goto error_handler_free;
 > +
-> +	device_enable_async_suspend(&pdev->dev);
+> +	ret = v4l2_async_register_subdev_sensor(&ov05c->sd);
+> +	if (ret)
+> +		goto error_media_entity;
 > +
-> +	/* The code below assumes runtime PM to be disabled. */
-> +	WARN_ON(pm_runtime_enabled(&pdev->dev));
-
-And how it could be enabled? Drop or fix your driver.
-
-> +
-> +	pm_runtime_dont_use_autosuspend(&pdev->dev);
-> +	pm_runtime_set_active(&pdev->dev);
-> +
-> +	if (dev->shared_with_punit)
-> +		pm_runtime_get_noresume(&pdev->dev);
-> +
-> +	pm_runtime_enable(&pdev->dev);
-> +
-> +	ret = i2c_dw_probe(dev);
-> +	if (ret) {
-> +		dev_err(dev->dev, "i2c_dw_probe failed %d\n", ret);
-
-Use dev_err_probe()
-
-> +		goto exit_probe;
-> +	}
-> +
-> +	isp_power_set(false);
-> +	return ret;
-> +
-> +exit_probe:
-> +	amd_isp_dw_i2c_plat_pm_cleanup(dev);
-> +	isp_power_set(false);
-> +exit:
-> +	isp_power_set(false);
-> +	return ret;
-> +}
-> +
-> +static void amd_isp_dw_i2c_plat_remove(struct platform_device *pdev)
-> +{
-> +	struct dw_i2c_dev *dev = platform_get_drvdata(pdev);
-> +
-> +	pm_runtime_get_sync(&pdev->dev);
-> +
-> +	i2c_del_adapter(&dev->adapter);
-> +
-> +	i2c_dw_disable(dev);
-> +
-> +	pm_runtime_dont_use_autosuspend(&pdev->dev);
-> +	pm_runtime_put_sync(&pdev->dev);
-> +	amd_isp_dw_i2c_plat_pm_cleanup(dev);
-> +
-> +	reset_control_assert(dev->rst);
-> +}
-> +
-> +static int amd_isp_dw_i2c_plat_prepare(struct device *dev)
-> +{
 > +	/*
-> +	 * If the ACPI companion device object is present for this device, it
-> +	 * may be accessed during suspend and resume of other devices via I2C
-> +	 * operation regions, so tell the PM core and middle layers to avoid
-> +	 * skipping system suspend/resume callbacks for it in that case.
+> +	 * Device is already turned on by i2c-core with ACPI domain PM.
+> +	 * Enable runtime PM and turn off the device.
 > +	 */
-> +	return !has_acpi_companion(dev);
-> +}
+> +	pm_runtime_set_active(&client->dev);
+> +	pm_runtime_enable(&client->dev);
+> +	pm_runtime_idle(&client->dev);
 > +
-> +static int amd_isp_dw_i2c_plat_runtime_suspend(struct device *dev)
-> +{
-> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
-> +
-> +	if (i_dev->shared_with_punit)
-> +		return 0;
-> +
-> +	i2c_dw_disable(i_dev);
-> +	i2c_dw_prepare_clk(i_dev, false);
+> +	dev_info(&client->dev, "%s success", __func__);
+
+Drop, useless. Kernel has infrastructure for simple function exit
+debugging. For probing as well.
+
 > +
 > +	return 0;
+> +
+> +error_media_entity:
+> +	media_entity_cleanup(&ov05c->sd.entity);
+> +
+> +error_handler_free:
+> +	ov05c_free_controls(ov05c);
+> +
+> +	return ret;
 > +}
 > +
-> +static int amd_isp_dw_i2c_plat_suspend(struct device *dev)
+> +static void ov05c_remove(struct i2c_client *client)
 > +{
-> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct ov05c *ov05c = to_ov05c(sd);
 > +
-> +	i2c_mark_adapter_suspended(&i_dev->adapter);
+> +	v4l2_async_unregister_subdev(sd);
+> +	media_entity_cleanup(&sd->entity);
+> +	ov05c_free_controls(ov05c);
 > +
-> +	return amd_isp_dw_i2c_plat_runtime_suspend(dev);
+> +	pm_runtime_disable(&client->dev);
+> +	pm_runtime_set_suspended(&client->dev);
 > +}
 > +
-> +static int amd_isp_dw_i2c_plat_runtime_resume(struct device *dev)
-> +{
-> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
-> +
-> +	if (!i_dev->shared_with_punit)
-> +		i2c_dw_prepare_clk(i_dev, true);
-> +
-> +	i_dev->init(i_dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int amd_isp_dw_i2c_plat_resume(struct device *dev)
-> +{
-> +	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
-> +
-> +	amd_isp_dw_i2c_plat_runtime_resume(dev);
-> +	i2c_mark_adapter_resumed(&i_dev->adapter);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops amd_isp_dw_i2c_dev_pm_ops = {
-> +	.prepare = pm_sleep_ptr(amd_isp_dw_i2c_plat_prepare),
-> +	LATE_SYSTEM_SLEEP_PM_OPS(amd_isp_dw_i2c_plat_suspend, amd_isp_dw_i2c_plat_resume)
-> +	RUNTIME_PM_OPS(amd_isp_dw_i2c_plat_runtime_suspend, amd_isp_dw_i2c_plat_runtime_resume, NULL)
+> +static const struct i2c_device_id ov05c_id[] = {
+> +	{"ov05c", 0 },
+> +	{ }
 > +};
 > +
-> +/* Work with hotplug and coldplug */
-> +MODULE_ALIAS("platform:amd_isp_i2c_designware");
+> +MODULE_DEVICE_TABLE(i2c, ov05c_id);
 > +
-> +static struct platform_driver amd_isp_dw_i2c_driver = {
-> +	.probe = amd_isp_dw_i2c_plat_probe,
-> +	.remove = amd_isp_dw_i2c_plat_remove,
-> +	.driver		= {
-> +		.name	= "amd_isp_i2c_designware",
-> +		.pm	= pm_ptr(&amd_isp_dw_i2c_dev_pm_ops),
+> +static struct i2c_driver ov05c_i2c_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
 > +	},
+> +	.id_table = ov05c_id,
+> +	.probe = ov05c_probe,
+> +	.remove = ov05c_remove,
 > +};
 > +
-> +static int __init amd_isp_dw_i2c_init_driver(void)
-> +{
-> +	return platform_driver_register(&amd_isp_dw_i2c_driver);
-> +}
-> +subsys_initcall(amd_isp_dw_i2c_init_driver);
-
-Why this cannot be standard module initcall? This is ISP, not a critical
-boot component.
-
-> +
-> +static void __exit amd_isp_dw_i2c_exit_driver(void)
-> +{
-> +	platform_driver_unregister(&amd_isp_dw_i2c_driver);
-> +}
-> +module_exit(amd_isp_dw_i2c_exit_driver);
+> +module_i2c_driver(ov05c_i2c_driver);
 > +
 > +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
 > +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
-> +MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter in AMD ISP");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("I2C_DW");
-> +MODULE_IMPORT_NS("I2C_DW_COMMON");
+> +MODULE_DESCRIPTION("OmniVision OV05C sensor driver");
+> +MODULE_ALIAS("ov05c");
+
+Drop, not correct alias.
+
 > +MODULE_LICENSE("GPL and additional rights");
-> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.h b/drivers/i2c/busses/i2c-designware-amdisp.h
-> new file mode 100644
-> index 000000000000..f98661fdaedf
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-designware-amdisp.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + * OTHER DEALINGS IN THE SOFTWARE.
 
-Don't add custom license boilerplate.
-
-> + */
-> +
-> +int isp_power_set(int on);
+No, use proper license and matching tag. Your top said this is not GPL!
 
 
 Best regards,
