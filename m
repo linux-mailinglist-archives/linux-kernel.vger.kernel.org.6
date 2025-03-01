@@ -1,211 +1,173 @@
-Return-Path: <linux-kernel+bounces-539963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6118FA4AB5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:49:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1EEA4AB5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459DE1897AAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C50F167EC1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295FB1DED5A;
-	Sat,  1 Mar 2025 13:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CED1DEFE6;
+	Sat,  1 Mar 2025 13:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqwv1xUJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wgys34JL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678932FC23;
-	Sat,  1 Mar 2025 13:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962121DE895
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836955; cv=none; b=RlEYVWSJaJYWS6+sMhzKDQzVkm+lLPfXG0FZdOme4/T47744Mu4XJbPYwLmMOnwpQs3PBAPhj3Ey5F/op/FiC7BlO6YGAPLrjBhICfCqVr6nnEFLB2Fl4FtjGX8mI2Dga9ZZ0F+/+hG/1/JcnFnhZW9bOibfqL45e2vlYtMSlBQ=
+	t=1740836972; cv=none; b=uQaOoSQ5knvpO0hEBfavhz2WjWb1JUhk3ChvXxIAi1hRhEuSln2+0RTk0Erq+Aa7YledFlIrntOm9F5Zf0CwMf/2+zE/iWiWSACZOG2/i6XFSacWr9Z4Dt8xOXzdzpoarRyMYXnc/2MuOJWWyI0R/9xDDNa/QlQYTgHc+vX/4mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836955; c=relaxed/simple;
-	bh=+7BkRCaAMc58KXpPqobpivf31lnIl3j+4Emd+l300nk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=olm0/NcixasupP1Qw1ONg6efD2JUGjjpTIkRCvDxX/7npc2f0PPyjwxAnw3QH3NqVrUwHQZacfCMOg7H9ipVx4326keKiK2301uOwj/IdAPYh0m0OmfL+vvIyfyAf2DQZdk0G+8iqi4l95EgwehR+eqSOX0YBzwHP3/LvYcGPuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqwv1xUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D19BC4CEDD;
-	Sat,  1 Mar 2025 13:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740836954;
-	bh=+7BkRCaAMc58KXpPqobpivf31lnIl3j+4Emd+l300nk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=uqwv1xUJNLzBJ1t/hU5t0tEi03hedao4PSnQpep+U31PEUwmomlVrYQDhxMiQ2IX3
-	 aSGYQTc5/kwE874DucxsVcSDX9vnvIa0xsqP7fmhGg1RW6VTSu53LR9OTBOhb763s9
-	 xR6dNiFs2skx2Xw+1F9GkAFheG2IwlFr8Y/i9Eya4FO+WbTzsei1/HBEy0LKUGwAOr
-	 Js874oreIerHFSk74MTLDXu1I+8l9E4mih8Zyer+MTaJE0mlKSAlCg09H3Oy9xsHr3
-	 lrUNxsnZgjUsO+Wq5CpnCoYtLrgZ0wMG+YAdeRUnQk+COyF5aMCBFCQSzl6PDjMpC4
-	 FurCXC3Wf+d7w==
-Message-ID: <20946ee0-4973-4831-bc77-4d9942f1a348@kernel.org>
-Date: Sat, 1 Mar 2025 14:49:07 +0100
+	s=arc-20240116; t=1740836972; c=relaxed/simple;
+	bh=TdQrSsfUqsgjam5ayWXfQx9MiC0CEceDz3qNAdJSGZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDZj9Gy47RcT7onk/kHdSSWyeoIW+rb0IoMSAadgL9ZGwhUf3ooe26y1Hu9WfBant5hMizsa7Eh3Z7UgG4gFDgXMPfyefzY1170FYtndvl8HovGeRsW+x1BALtWaB2TrMSFQMcMoq4YgYby2Gqh+Cx5rdPWZz/wPbTICXNog3/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wgys34JL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740836968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yX8SsUhxK1pBuuAliUfaXKNUpsQ+odkuNQ8838vLa54=;
+	b=Wgys34JLFuQ0P8FSx5EK3e+M2th002YskSeQIcWugE6aANnLy0BCqskES4nlII3IfOMRwn
+	SpLWEH9S4uOqKcxkwfz57oerhM2bUYfat5EOw5COd4K/Ey3QJKDX8LwmVRSK85g3brgXG/
+	Kd6IsyylQZR3qFCuG3PAaO1REPAIM3Y=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-UsM1OL0dN9Cwo8BktjiVqw-1; Sat,
+ 01 Mar 2025 08:49:25 -0500
+X-MC-Unique: UsM1OL0dN9Cwo8BktjiVqw-1
+X-Mimecast-MFC-AGG-ID: UsM1OL0dN9Cwo8BktjiVqw_1740836964
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E263180034A;
+	Sat,  1 Mar 2025 13:49:23 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.3])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F35E519560AD;
+	Sat,  1 Mar 2025 13:49:17 +0000 (UTC)
+Date: Sat, 1 Mar 2025 21:49:11 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring/ublk: report error when unregister operation
+ fails
+Message-ID: <Z8MQV0EGSFpiHwUC@fedora>
+References: <20250228231432.642417-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add
- reset controller node
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Wilson Ding <dingwei@marvell.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
- "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
- "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- Sanghoon Lee <salee@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>
-References: <20250227192536.2426490-1-dingwei@marvell.com>
- <20250227192536.2426490-4-dingwei@marvell.com>
- <d085c34a-fdbf-4950-a2e3-b3d25a1c0145@kernel.org>
- <BY3PR18MB46730C150D4CB9619B3B05FBA7CC2@BY3PR18MB4673.namprd18.prod.outlook.com>
- <050ae833-10b5-4d80-9856-8bc2f434a74f@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <050ae833-10b5-4d80-9856-8bc2f434a74f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228231432.642417-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 01/03/2025 14:46, Krzysztof Kozlowski wrote:
->>>> Signed-off-by: Wilson Ding <dingwei@marvell.com>
->>>> ---
->>>>  arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
->>> b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
->>>> index 161beec0b6b0..c27058d1534e 100644
->>>> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
->>>> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
->>>> @@ -226,6 +226,8 @@ CP11X_LABEL(rtc): rtc@284000 {
->>>>  		CP11X_LABEL(syscon0): system-controller@440000 {
->>>>  			compatible = "syscon", "simple-mfd";
->>>>  			reg = <0x440000 0x2000>;
->>>> +			#address-cells = <1>;
->>>> +			#size-cells = <1>;
->>>>
->>>>  			CP11X_LABEL(clk): clock {
->>>
->>> Wait, no unit address here.
->>
->> This subnode came from the existing code. I didn't touch this subnode
->> in my patch. As you can see, the system-controller has a wide address
->> range, which includes clock, GPIO registers as well as the unit-softreset
->> register.
->>
->>>
->>>>  				compatible = "marvell,cp110-clock";
->>>> @@ -273,6 +275,12 @@ CP11X_LABEL(gpio2): gpio@140 {
->>>>  					 <&CP11X_LABEL(clk) 1 17>;
->>>>  				status = "disabled";
->>>>  			};
->>>> +
->>>> +			CP11X_LABEL(swrst): reset-controller@268 {
->>>
->>>
->>> So why here it appeared? This is wrong and not even necessary. Entire
->>> child should be folded into parent, so finally you will fix the
->>> incomplete parent compatible.
->>
->> We do need the reset-controller as a subnode under system-controller node
->> for the following reasons:
->>
->> - We need to have 'reg' property in this subnode so that we can get the offset
->>   to system-controller register base defined in parent node. This is suggested
->>   by Rob in V2 comments. 
->>   And we need to know the register size to calculate the number of reset lines.
->>   This is suggested by Philipp in V1 comments.
+On Fri, Feb 28, 2025 at 04:14:31PM -0700, Caleb Sander Mateos wrote:
+> Indicate to userspace applications if a UBLK_IO_UNREGISTER_IO_BUF
+> command specifies an invalid buffer index by returning an error code.
+> Return -EINVAL if no buffer is registered with the given index, and
+> -EBUSY if the registered buffer is not a kernel bvec.
 > 
-> You do not need and you received that comment as well. It is implied by
-> compatible.
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  drivers/block/ublk_drv.c     |  3 +--
+>  include/linux/io_uring/cmd.h |  4 ++--
+>  io_uring/rsrc.c              | 18 ++++++++++++++----
+>  3 files changed, 17 insertions(+), 8 deletions(-)
 > 
->>
->> - We also need to define the 'reset-cells' in this subnode. And the consumer of
->>   the reset controller uses the label of this subnode for the phandle and reset
->>   specifier pair. 
-> 
-> reset-cells will be in the parent once you fold it.
-> 
->>
->> As I mentioned in my reply to the first comment, the reset-controller is not the
->> only device within the system-controller register spaces. Do you still think I
-> 
-> You provided very little hardware description of the device. So based on
-> hardware description you provided: yes.
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index b5cf92baaf0f..512cbd456817 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -1785,12 +1785,11 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
+>  
+>  static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
+>  				  const struct ublksrv_io_cmd *ub_cmd,
+>  				  unsigned int issue_flags)
+>  {
+> -	io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
+> -	return 0;
+> +	return io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
+>  }
+>  
+>  static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+>  			       unsigned int issue_flags,
+>  			       const struct ublksrv_io_cmd *ub_cmd)
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> index cf8d80d84734..05d7b6145731 100644
+> --- a/include/linux/io_uring/cmd.h
+> +++ b/include/linux/io_uring/cmd.h
+> @@ -127,9 +127,9 @@ static inline struct io_uring_cmd_data *io_uring_cmd_get_async_data(struct io_ur
+>  }
+>  
+>  int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+>  			    void (*release)(void *), unsigned int index,
+>  			    unsigned int issue_flags);
+> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
+> -			       unsigned int issue_flags);
+> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
+> +			      unsigned int issue_flags);
+>  
+>  #endif /* _LINUX_IO_URING_CMD_H */
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 45bfb37bca1e..29c0c31092eb 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -975,30 +975,40 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
+>  	io_ring_submit_unlock(ctx, issue_flags);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
+>  
+> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
+> -			       unsigned int issue_flags)
+> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
+> +			      unsigned int issue_flags)
+>  {
+>  	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
+>  	struct io_rsrc_data *data = &ctx->buf_table;
+>  	struct io_rsrc_node *node;
+> +	int ret = 0;
+>  
+>  	io_ring_submit_lock(ctx, issue_flags);
+> -	if (index >= data->nr)
+> +	if (index >= data->nr) {
+> +		ret = -EINVAL;
+>  		goto unlock;
+> +	}
+>  	index = array_index_nospec(index, data->nr);
+>  
+>  	node = data->nodes[index];
+> -	if (!node || !node->buf->is_kbuf)
+> +	if (!node) {
+> +		ret = -EINVAL;
+>  		goto unlock;
+> +	}
+> +	if (!node->buf->is_kbuf) {
+> +		ret = -EBUSY;
+> +		goto unlock;
+> +	}
 
-and to clarify - by device I mean the parent node, the system controller.
+Good catch, otherwise, ublk request may never get completed if unreg
+command fails, which can happen really as one uring_cmd.
 
-Your commit even mentions driver, not the hardware:
-"Add device-tree binding documentation for the Armada8K reset driver..."
-not hardware, so you will get the review as good as you describe things.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Bindings are about hardware so if you disagree with the review here,
-please provide arguments in terms of hardware.
+Thanks,
+Ming
 
-> 
->> should fold it into the parent node. And what I proposed is exactly same as
->> that the armada_thermal driver did (See below). I wonder why what was accepted
->> in the past become not accepted now. 
-> 
-> We did not discuss here drivers, but if you insist talking about
-> "marvell,armada-cp110-thermal" then point me to review or ack from DT
-> people. You claim it was accepted so how did we accept it?
-> 
-> It was 2013 so that's another answer: many things done 12 years ago were
-> done not according to best practices. Also best practices evolved.
-
-
-
-Best regards,
-Krzysztof
 
