@@ -1,86 +1,184 @@
-Return-Path: <linux-kernel+bounces-540142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDA4A4AE57
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:17:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63688A4AE60
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 00:29:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25AF47A8AE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455881894610
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8AA1EA7C9;
-	Sat,  1 Mar 2025 23:16:13 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617CA1E7C1C;
+	Sat,  1 Mar 2025 23:29:51 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E651D7982;
-	Sat,  1 Mar 2025 23:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991778BF8;
+	Sat,  1 Mar 2025 23:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740870973; cv=none; b=cRCMcRUFMTsLg937f2soi9rBx/nwAj+SFaEvjeJt/9IutKJTQ6D29i5wWma8o2GbkY3sB+hlYuFqyGQSh2oYdGZYae1CmAcRKEA+30gRYOY49gusj3Yba9evadFHyCYx/wr+8YwTR5F2Rv/UYC5K0r5auwuTXrE8xphBeCBRESk=
+	t=1740871791; cv=none; b=VGffhfaZHhxt0hAOVnijHCY9kdaUU/CGUWh6JVzJje+ti8muwH+X7EyvL+/8BIwOoMY0gZ1SiVLkDvtj/EeKEBnpMXYqzk0d29+yvMD9rozNpLQw4ON1alzHPXAKEuXDZZqrN/2K1ok1WZaigGRp8lBvpMGBTC4veKz+gtCbZT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740870973; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7PThw5pmu/hcz/EamG3w77TXcZL+WR3Owy3gpcq2iYwDD8z8wGHVhNJbI0mN7Ao7BOiPHZgex2T3njMbvtXc2Oh2atgSHmFvV2kgjZCnoYznX6yKGvv6wrTqjkPEXPjNzVDQ/ti1Kot71Y9VYnMZ115y3wTJHQ/ih3mlV0dWME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so1552464f8f.2;
-        Sat, 01 Mar 2025 15:16:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740870968; x=1741475768;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=FzUSJ2xu6pUSmUF0zAFFDG74KhvMoJEJR4X/h/5D5GdaCmOOBAJN3TAzlJOQobLMdU
-         xV2cRxWYqkC56j9q7/zgEv3fp+dhhRey/IMZ/vfBONVgiYnjJfQJ/owEx64CBXLWrUTM
-         N2C++sz/OaYX9tR+PVSUiF7WWSdr2MvLyZQhx4LUnimV3zSMtQLa6Go8XWbYFr3x+fc3
-         YsAi9hMxCXtDUrWGvEIpMwUritnrpB5pWO4R+74K/r4TNeNz3/t/EkaOYflvTfUbfg5r
-         w4M+Vj+dXIpJvUs2xgq9t/94tkzxA5KFOY3Ggda2G9HQTBbSk1x6wUyBgQB2d5uR5nu9
-         rs0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRw2HecGows7BpKk6dZdVyFJvo4tu6RdBJkHYriTIgSLMO1UWp+nAaoa5pJSBpkkaaFu1mThp6h97jQN2taF0=@vger.kernel.org, AJvYcCXPmV0Unxgs33OVqwTWuOsXrJaIFAtpU7w/OG2yP4nO+JrD7/020K8EMziUd42fOiExLw6WuTQ0VlVtjfX3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxyOS+70M9SfuefSlVR9wQYhp+zzHid8ZmlMnP6/iCzadCm/z7
-	+k9awMyZq0ATwATYoHZK8AcZiXuHnqjeuCl+MpPJIRgdMFdxNLY9
-X-Gm-Gg: ASbGncuyUz9RLjlDW+W2KOhPEeUDYreotN868JWTtpEQcmWoORJ/1bRV+g3DCf2Y9GU
-	N/pX+i79qebscmP788RvgzEmbL8SOoVrsN9k37TE9EDQ9nJh+d9rK3oxva/k8zgiuYGd+NZxgTg
-	6HEhDmNj8am52m3FCOfv41lPzjSxyNzi5qZuQH1B+D9RrHL9eXQ7Nln5WI8g2nJqYkSMxlYD5cl
-	0fKZC9HwI2Sc6SsrHMNtMz5EpR/nleLqtgRJni4uEBt/RIwYb6f0EvCUHQ+dyTdUn6oB9DC/ad7
-	D15toy33d6IbSkxxm6vPkxkNS94FFGyYmK3YAJhTwQjyrSonwlBO1nNh4ALs30ACFhij/IVZheN
-	XC7G3
-X-Google-Smtp-Source: AGHT+IHPLd9+jiab01w985BywzrEuE99VxuwkdCg02g97bwTjyXFL7H2etMm7iPNU0L9KED/95Jb5g==
-X-Received: by 2002:a5d:64a6:0:b0:390:e48a:3869 with SMTP id ffacd0b85a97d-390ec7c8e54mr8198941f8f.11.1740870967855;
-        Sat, 01 Mar 2025 15:16:07 -0800 (PST)
-Received: from [10.100.102.74] (89-138-75-149.bb.netvision.net.il. [89.138.75.149])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965e8sm9428853f8f.1.2025.03.01.15.16.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 15:16:07 -0800 (PST)
-Message-ID: <ddc3b589-909e-43ea-a02b-7d0b26d730ec@grimberg.me>
-Date: Sun, 2 Mar 2025 01:16:05 +0200
+	s=arc-20240116; t=1740871791; c=relaxed/simple;
+	bh=XoA9oReb6CJth7thsqapf840HIXHfr+rBAqbIplUdrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2gq36C063wDF6Qs3jKTHxz0FhQreMdKHGqfAAhZwNaSBGbRrosjairinJn8oaxa1L3sTJd2R6FXqlHPWIRG17R/pEmCi5UA0BnUn5I5avHEbN7hN0IMH3DMsgezU8kvFRiqr1a0jCDsdUCLvIL8ald+iQJ6uMOO7sJEH/mJFwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 8A58A343152;
+	Sat, 01 Mar 2025 23:29:48 +0000 (UTC)
+Date: Sat, 1 Mar 2025 23:29:44 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] gpiolib: support parsing gpio three-cell
+ interrupts scheme
+Message-ID: <20250301232944-GYA55471@gentoo>
+References: <20250302-04-gpio-irq-threecell-v2-0-34f13ad37ea4@gentoo.org>
+ <20250302-04-gpio-irq-threecell-v2-2-34f13ad37ea4@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-tcp: fix signedness bug in
- nvme_tcp_init_connection()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302-04-gpio-irq-threecell-v2-2-34f13ad37ea4@gentoo.org>
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Hi Linus, Thomas:
+
+On 07:15 Sun 02 Mar     , Yixun Lan wrote:
+> gpio irq which using three-cell scheme should always call
+> instance_match() function to find the correct irqdomain.
+> 
+> The select() function will be called with !DOMAIN_BUS_ANY,
+> so for specific gpio irq driver, it need to set bus token
+> explicitly, something like:
+>   irq_domain_update_bus_token(girq->domain, DOMAIN_BUS_WIRED);
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+>  drivers/gpio/gpiolib-of.c |  8 ++++++++
+>  drivers/gpio/gpiolib-of.h |  6 ++++++
+>  drivers/gpio/gpiolib.c    | 23 +++++++++++++++++++----
+>  3 files changed, 33 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 2e537ee979f3e2b6e8d5f86f3e121a66f2a8e083..e19904569fb1b71c1fff237132d17050ef02b074 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -1187,3 +1187,11 @@ void of_gpiochip_remove(struct gpio_chip *chip)
+>  {
+>  	of_node_put(dev_of_node(&chip->gpiodev->dev));
+>  }
+> +
+> +bool of_gpiochip_instance_match(struct gpio_chip *gc, unsigned int index)
+> +{
+> +	if (gc->of_node_instance_match)
+> +		return gc->of_node_instance_match(gc, index);
+> +
+> +	return false;
+> +}
+> diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
+> index 16d6ac8cb156c02232ea868b755bbdc46c78e3c7..3eebfac290c571e3b90e4437295db8eaacb021a3 100644
+> --- a/drivers/gpio/gpiolib-of.h
+> +++ b/drivers/gpio/gpiolib-of.h
+> @@ -22,6 +22,7 @@ struct gpio_desc *of_find_gpio(struct device_node *np,
+>  			       unsigned long *lookupflags);
+>  int of_gpiochip_add(struct gpio_chip *gc);
+>  void of_gpiochip_remove(struct gpio_chip *gc);
+> +bool of_gpiochip_instance_match(struct gpio_chip *gc, unsigned int index);
+>  int of_gpio_count(const struct fwnode_handle *fwnode, const char *con_id);
+>  #else
+>  static inline struct gpio_desc *of_find_gpio(struct device_node *np,
+> @@ -33,6 +34,11 @@ static inline struct gpio_desc *of_find_gpio(struct device_node *np,
+>  }
+>  static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
+>  static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+> +static inline bool of_gpiochip_instance_match(struct gpio_chip *gc,
+> +					      unsigned int index)
+> +{
+> +	return false;
+> +}
+>  static inline int of_gpio_count(const struct fwnode_handle *fwnode,
+>  				const char *con_id)
+>  {
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 679ed764cb143c4b3357106de1570e8d38441372..266be465b9103c17861a0d76f2dfbf1f1de3a073 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1449,10 +1449,9 @@ static int gpiochip_hierarchy_irq_domain_translate(struct irq_domain *d,
+>  						   unsigned long *hwirq,
+>  						   unsigned int *type)
+>  {
+> -	/* We support standard DT translation */
+> -	if (is_of_node(fwspec->fwnode) && fwspec->param_count == 2) {
+> -		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
+> -	}
+> +	/* We support standard DT translation up to three cells */
+> +	if (is_of_node(fwspec->fwnode))
+> +		return irq_domain_translate_cells(d, fwspec, hwirq, type);
+
+I'm not sure if you like this way for calling generic cells parser here,
+as it should work for 1, 2, 3 cells model, which save a few lines meanwhile
+
+otherwise we end something like
+
+	if (is_of_node(fwspec->fwnode) {
+		if (fwspec->param_count == 2) {
+			return irq_domain_translate_twocell(d, fwspec, hwirq, type);
+		if (fwspec->param_count == 3) {
+			return irq_domain_translate_threecell(d, fwspec, hwirq, type);
+	}
+>  
+>  	/* This is for board files and others not using DT */
+>  	if (is_fwnode_irqchip(fwspec->fwnode)) {
+> @@ -1754,9 +1753,25 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+>  	irq_set_chip_data(irq, NULL);
+>  }
+>  
+> +static int gpiochip_irq_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+> +			enum irq_domain_bus_token bus_token)
+> +{
+> +	struct fwnode_handle *fwnode = fwspec->fwnode;
+> +	struct gpio_chip *gc = d->host_data;
+> +	unsigned int index = fwspec->param[0];
+> +
+> +	if (fwspec->param_count == 3 && is_of_node(fwnode))
+> +		return of_gpiochip_instance_match(gc, index);
+> +
+> +	/* Fallback for twocells */
+> +	return ((fwnode != NULL) && (d->fwnode == fwnode) &&
+> +		(d->bus_token == bus_token));
+> +}
+> +
+>  static const struct irq_domain_ops gpiochip_domain_ops = {
+>  	.map	= gpiochip_irq_map,
+>  	.unmap	= gpiochip_irq_unmap,
+> +	.select	= gpiochip_irq_select,
+>  	/* Virtually all GPIO irqchips are twocell:ed */
+>  	.xlate	= irq_domain_xlate_twocell,
+>  };
+> 
+> -- 
+> 2.48.1
+> 
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
