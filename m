@@ -1,219 +1,280 @@
-Return-Path: <linux-kernel+bounces-539907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BE6A4AAAF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:37:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2A0A4AAB3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 514EC7A58DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:36:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7221D1899134
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5F31DE891;
-	Sat,  1 Mar 2025 11:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CAD1DE8AB;
+	Sat,  1 Mar 2025 11:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4YkjQGX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cgn2hhu1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACD81CEAC3;
-	Sat,  1 Mar 2025 11:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311A1DE3AA
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829039; cv=none; b=uIc28j42mnQRbpP+dFuiz33I8XDGH23/RtBVz0mlZjJJQU2UqwHWxKbLZmizkw6zoLj5JB5+B/tY5rlE9cWMp/8jWEbFLYxWqzeEleh1Ldp3Y9LdRi4x9vZ5+4BHzK+VjeHuxboZQIsdDVjiOKtUvU1FHE36uHe/3LdFoE2mrvQ=
+	t=1740829369; cv=none; b=IX4PXpR1mcmihPKfdzsVMuYfy7RJY6pLBCIklCZqfOdHlk7fxJ2X8VwalcYy2DuPOFHiB+9cacgBCc5xpKK2vypJDsDIWoD64R3COG2AA8TQ7/XQjZ1gztJ+bdyTlamUulCJPmzkHc0WHMWJvm9sJcsP1kAUUM+9Cu2qkx5XUd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829039; c=relaxed/simple;
-	bh=dT1M1OX+ylPajgi5Td8FsnYT9PqPEbMJ8aqpho8rjqg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f5tTayQWvl83Lm1moGzPOHS2jJdhwG7tlpGZfFyj6C10wa32ATpFNK94YzLJWQQC1tnj1rVZbFOKJKS4tRxwAZ+Q7XTP/qGqO147id7Jhp8TGLgW21nyVnvhiaVcnjfQ9M4nf3EUnlAcfG40vJZdl6olJXuT5OGrGQzJjROVlNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4YkjQGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65B4C4CEDD;
-	Sat,  1 Mar 2025 11:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740829038;
-	bh=dT1M1OX+ylPajgi5Td8FsnYT9PqPEbMJ8aqpho8rjqg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C4YkjQGX6x6uoqD6Yp0dQzTZmmjynM5ZIjQO1YdQc/B25rqm+rh5x1Bvsl3Dj58HK
-	 YScw9Ja1tcJ+UlVcN96f3Jy3ZvCLC1oGKJxQcwbyNt5yXICRQyar9NwH56rNV0topG
-	 jrVpGwESZOOLk5ipIfxlDX5vS8c+mUKwL0v88GwfqX20dXbetBND2cLR2SEdaQhU4k
-	 IITTb+dvnaHe598YW8cwOLVdH9RtR9jrl1Il7lpAqzLA/77pRVd8khTcG878nI227d
-	 QMiaFy+Li24BsLTa+GTXdBejTqgQ+27pLw8Y1XEw33fAy0FBukYnULAwheiuenQiU9
-	 unJQ/MU58slxQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1toL9f-009LZ4-9D;
-	Sat, 01 Mar 2025 11:37:15 +0000
-Date: Sat, 01 Mar 2025 11:37:14 +0000
-Message-ID: <86o6ylouc5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
- <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
- <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
- <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
- <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
- Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
- <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
- Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
- <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 04/15] irqchip/gic-v3-its: Add support for device tree msi-map and msi-mask
-In-Reply-To: <20250211-ep-msi-v15-4-bcacc1f2b1a9@nxp.com>
-References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
-	<20250211-ep-msi-v15-4-bcacc1f2b1a9@nxp.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1740829369; c=relaxed/simple;
+	bh=pdl/RZTv2T1vX9tzslQwxxDs8Xn0N+aU6EcFHnJHdO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geprmDzsp1O4scmdm56XIKrpbbtFOh+UEIQuEe2CFKPSQvLLSOSm+hRbLc9kEE5R6MfCt6ArZp02Dqmp0bBTRjI2M2wh2ifc4pnA/EERzACEvFvcrDjtvVFNuLwZxNikCTmftGPaEq3IQ2cBU5/Mgg1Fg8gwb0hWb6vt3ueciXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cgn2hhu1; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740829368; x=1772365368;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pdl/RZTv2T1vX9tzslQwxxDs8Xn0N+aU6EcFHnJHdO4=;
+  b=cgn2hhu1Dp9JRzC4rlmVARIQTwYjM3ffrco0S2o/9DuSWWlHcJh7cdk5
+   kUikrW7+RezS+5P6QQPwWiKkxhKcJoy9WleAqfplW8UO4QuC5pURrCyqS
+   GEjyiNFOGWv4WC0H5lIZFHGTdVPHhcvsE+rwd07eettq0AG10YLa7o9N5
+   ndI5REyIJMCLQblM2UMyedC73EArPjcfz/sPD5un0e9fryxOZBM9SBJF0
+   2YrX2v5mC03640RWjsHxVP8/yFmMPZjomDu0BrRPSxJ8WUyBfDqz6P7rH
+   IyvLptGMZr4AI7W31ijt9vGviADPO9vGY8I0bAiN38l/Blq7Lb7ZvFzHm
+   A==;
+X-CSE-ConnectionGUID: uP5bVq4PTpi2zL6DcO1c3Q==
+X-CSE-MsgGUID: HJwZmGo9SzO49BgVOS2TAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45403481"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="45403481"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 03:42:48 -0800
+X-CSE-ConnectionGUID: o8kHYd3nTyiE6XcvOUQ8/A==
+X-CSE-MsgGUID: FS7Yx1TGS72LbeL6GhHfUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154739828"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 01 Mar 2025 03:42:45 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toLEw-000GCY-2J;
+	Sat, 01 Mar 2025 11:42:42 +0000
+Date: Sat, 1 Mar 2025 19:42:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: xiaopeitux@foxmail.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: Re: [PATCH] driver core: Split devres APIs to device/devres.h
+Message-ID: <202503011920.E8wPk3yy-lkp@intel.com>
+References: <tencent_66CF9C91EB4A4417F70E9511649A57DEC906@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Frank.Li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_66CF9C91EB4A4417F70E9511649A57DEC906@qq.com>
 
-On Tue, 11 Feb 2025 19:21:57 +0000,
-Frank Li <Frank.Li@nxp.com> wrote:
->=20
-> Some platform devices create child devices dynamically and require the
-> parent device's msi-map to map device IDs to actual sideband information.
->=20
-> A typical use case is using ITS as a PCIe Endpoint Controller(EPC)'s
-> doorbell function, where PCI hosts send TLP memory writes to the EP
-> controller. The EP controller converts these writes to AXI transactions
-> and appends platform-specific sideband information.  See below figure.
->=20
->                =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=90
->                =E2=94=82                                =E2=94=82
->                =E2=94=82     PCI Endpoint Controller    =E2=94=82
->                =E2=94=82                                =E2=94=82
->                =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=90   =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=90     =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=90 =E2=94=82
->     PCI Bus    =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
-=82     =E2=94=82     =E2=94=82 =E2=94=82
->     =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=96=BA =E2=94=82  =E2=94=82Func1=E2=94=82   =E2=94=82Func2=
-=E2=94=82 ... =E2=94=82Func =E2=94=82 =E2=94=82
->     TLP Memory =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
-=82     =E2=94=82<n>  =E2=94=82 =E2=94=82
->     Write Push =E2=94=82  =E2=94=82     =E2=94=82   =E2=94=82     =E2=94=
-=82     =E2=94=82     =E2=94=82 =E2=94=82
->     DoorBell   =E2=94=82  =E2=94=94=E2=94=80=E2=94=AC=E2=94=80=E2=94=AC=
-=E2=94=80=E2=94=98   =E2=94=94=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=
-=E2=94=98     =E2=94=94=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=
-=98 =E2=94=82
->                =E2=94=82    =E2=94=82 =E2=94=82        =E2=94=82         =
-  =E2=94=82    =E2=94=82
->                =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=BC=E2=
-=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=BC=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=98
->         sideband    =E2=94=82 =E2=94=82 Address=E2=94=82           =E2=94=
-=82
->         information =E2=96=BC =E2=96=BC /Data  =E2=96=BC           =E2=96=
-=BC
->                    =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=90
->                    =E2=94=82    MSI Controller      =E2=94=82
->                    =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=98
->
+Hi,
 
-Please stop using these figures in commit messages. I don't think they
-help, and they are not in consistent with the way the commit messages
-are managed.
+kernel test robot noticed the following build errors:
 
-> EPC's DTS will provide such information by msi-map and msi-mask. A
-> simplified dts as
->=20
-> pcie-ep@10000000 {
-> 	...
-> 	msi-map =3D <0 &its 0xc 8>;
->                           ^^^ 0xc is implement defined sideband informati=
-on,
-> 			      which append to AXI write transaction.
-> 	           ^ 0 is function index.
+[auto build test ERROR on next-20250227]
+[cannot apply to linus/master v6.14-rc4 v6.14-rc3 v6.14-rc2 v6.14-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-What does this sideband field represent? How is the ITS driver
-supposed to use that data? Is it the full devid as presented to the
-ITS? Something combined with the "function index"? Is the "function
-index" a full RID, as defined in the documentation?
+url:    https://github.com/intel-lab-lkp/linux/commits/xiaopeitux-foxmail-com/driver-core-Split-devres-APIs-to-device-devres-h/20250228-172012
+base:   next-20250227
+patch link:    https://lore.kernel.org/r/tencent_66CF9C91EB4A4417F70E9511649A57DEC906%40qq.com
+patch subject: [PATCH] driver core: Split devres APIs to device/devres.h
+config: arm64-randconfig-004-20250301 (https://download.01.org/0day-ci/archive/20250301/202503011920.E8wPk3yy-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503011920.E8wPk3yy-lkp@intel.com/reproduce)
 
-Also, msi-map is so far reserved to a PCIe RC, not this sort of wonky
-contraption. This needs to be documented.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503011920.E8wPk3yy-lkp@intel.com/
 
->=20
-> 	msi-mask =3D <0x7>
-> }
->=20
-> Check msi-map if msi-parent missed to keep compatility with existed syste=
-m.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v14 to v15
-> - none
->=20
-> change from v13 to v14
-> new patch
-> ---
->  drivers/irqchip/irq-gic-v3-its-msi-parent.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchi=
-p/irq-gic-v3-its-msi-parent.c
-> index e150365fbe892..6c7389bb84a4a 100644
-> --- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-> +++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-> @@ -118,6 +118,14 @@ static int of_pmsi_get_dev_id(struct irq_domain *dom=
-ain, struct device *dev,
->  		index++;
->  	} while (!ret);
-> =20
-> +	if (ret) {
-> +		struct device_node *np =3D NULL;
-> +
-> +		ret =3D of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &n=
-p, dev_id);
-> +		if (np)
-> +			of_node_put(np);
-> +	}
-> +
->  	return ret;
->  }
-> =20
->=20
+All error/warnings (new ones prefixed by >>):
 
-Thanks,
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:10:
+>> include/linux/device/devres.h:182:6: error: variable has incomplete type 'void'
+     182 | void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
+         |      ^
+   include/linux/compiler_types.h:60:19: note: expanded from macro '__percpu'
+      60 | # define __percpu       __percpu_qual BTF_TYPE_TAG(percpu)
+         |                         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:10:
+>> include/linux/device/devres.h:182:15: error: expected ';' after top level declarator
+     182 | void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
+         |               ^
+>> include/linux/device/devres.h:184:57: error: expected ')'
+     184 | void devm_free_percpu(struct device *dev, void __percpu *pdata);
+         |                                                         ^
+   include/linux/device/devres.h:184:22: note: to match this '('
+     184 | void devm_free_percpu(struct device *dev, void __percpu *pdata);
+         |                      ^
+>> include/linux/device/devres.h:184:48: error: 'void' must be the first and only parameter if specified
+     184 | void devm_free_percpu(struct device *dev, void __percpu *pdata);
+         |                                                ^
+   include/linux/compiler_types.h:60:19: note: expanded from macro '__percpu'
+      60 | # define __percpu       __percpu_qual BTF_TYPE_TAG(percpu)
+         |                         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:10:
+>> include/linux/device/devres.h:186:25: warning: declaration of 'struct attribute_group' will not be visible outside of this function [-Wvisibility]
+     186 |                                        const struct attribute_group *grp);
+         |                                                     ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                                       ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+      99 |                         set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
+     101 |                 return (set->sig[1] | set->sig[0]) == 0;
+         |                         ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
+   In file included from include/linux/fs.h:34:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                          ^         ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from drivers/iio/imu/st_lsm9ds0/st_lsm9ds0_i2c.c:13:
+   In file included from include/linux/i2c.h:13:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/arm64/include/asm/elf.h:141:
 
-	M.
 
---=20
-Without deviation from the norm, progress is not possible.
+vim +/void +182 include/linux/device/devres.h
+
+   148	
+   149	int __devm_add_action(struct device *dev, void (*action)(void *), void *data, const char *name);
+   150	#define devm_add_action(dev, action, data) \
+   151		__devm_add_action(dev, action, data, #action)
+   152	
+   153	static inline int __devm_add_action_or_reset(struct device *dev, void (*action)(void *),
+   154						     void *data, const char *name)
+   155	{
+   156		int ret;
+   157	
+   158		ret = __devm_add_action(dev, action, data, name);
+   159		if (ret)
+   160			action(data);
+   161	
+   162		return ret;
+   163	}
+   164	#define devm_add_action_or_reset(dev, action, data) \
+   165		__devm_add_action_or_reset(dev, action, data, #action)
+   166	
+   167	/**
+   168	 * devm_alloc_percpu - Resource-managed alloc_percpu
+   169	 * @dev: Device to allocate per-cpu memory for
+   170	 * @type: Type to allocate per-cpu memory for
+   171	 *
+   172	 * Managed alloc_percpu. Per-cpu memory allocated with this function is
+   173	 * automatically freed on driver detach.
+   174	 *
+   175	 * RETURNS:
+   176	 * Pointer to allocated memory on success, NULL on failure.
+   177	 */
+   178	#define devm_alloc_percpu(dev, type)      \
+   179		((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
+   180							      __alignof__(type)))
+   181	
+ > 182	void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
+   183					   size_t align);
+ > 184	void devm_free_percpu(struct device *dev, void __percpu *pdata);
+   185	int __must_check devm_device_add_group(struct device *dev,
+ > 186					       const struct attribute_group *grp);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
