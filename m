@@ -1,263 +1,117 @@
-Return-Path: <linux-kernel+bounces-539698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085FDA4A787
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:38:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1055DA4A78D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D456F16379A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4982A1890E82
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0056A14B08A;
-	Sat,  1 Mar 2025 01:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7918FDAB;
+	Sat,  1 Mar 2025 01:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ct7rcUPZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD07182D7
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VBJyQn4I"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3A2182D7;
+	Sat,  1 Mar 2025 01:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740793064; cv=none; b=pFQJUQyORsXA85V+88sjuc3SVx1AJsYNaS66kQ+Kd5FAs/dK1xaAdIXW4M+YyGERNm8c3QOEaDMaeDs14WaP/S8f9iq1c0QTYHAmXOeP238W4MSsEDVFiSp33K6MG4jiJTJ1wCqRRf+ZqM4KVamGQMaeP4iBWd0TFRvu7kJVKuM=
+	t=1740793086; cv=none; b=YWdiJ2/obK+GnJn9j19Jmt/NaPqI78gYWn+OLuH640PUwMntFweGU1F22evfSlt6JjSowqaazi6ekjMOnR932byeRIsCqif41lcKFDRfKQgW7tSxnFNhcV8CO0A2TTJZvUXUjmZ2tULl4Zy24yo4xjLlnYKkDRi1jWyX4xJwk/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740793064; c=relaxed/simple;
-	bh=qESiWLtNg8pNT3kw9CM9EvlGat+N9UabGQzZ8rlbcZ0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QpyV29pG8zude9KBn/KaSQfCXVjaEzq3fAwqiz+GFkvkjeldaoKwbsvMUZU+FEinLm1d5XwRb6gLSGXydtruIUYJJYllwG1/xSMNiIoWBV3gCkjm2bNN21qQcHhPApNJM2iZwDgst1vP7UY5iS8Fqu4EiWVD2PNBkIbl5ohm5cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ct7rcUPZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740793061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbjFTBlv9o3OEhDfHME1jza4oVL1Cr86+PPTD5t1xQQ=;
-	b=ct7rcUPZm23OmChXYdR0iY6Ii/4u4RHSt2zkRmPVei7nuKiVQEkm3eOeWd7kCXrG8YosZ4
-	VwFyZhBRCHjtQDROt3SNk5pEg9HtAwwQ6vzot7wS4RqBz//aS5cv52YlgDUMfATPkVURQR
-	otg2hssn1NWJJSr31xSlDis0MY56KSA=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-AeCiADu5PIidPf_1Baz0Gg-1; Fri, 28 Feb 2025 20:37:39 -0500
-X-MC-Unique: AeCiADu5PIidPf_1Baz0Gg-1
-X-Mimecast-MFC-AGG-ID: AeCiADu5PIidPf_1Baz0Gg_1740793059
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8a1eb7148so27694656d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:37:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740793059; x=1741397859;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wbjFTBlv9o3OEhDfHME1jza4oVL1Cr86+PPTD5t1xQQ=;
-        b=O3CxyGVD0ds/nzspmH/rtBVZ6UrPZlGCkFj3idRAI4CbDTVMpsfauDlbxHJRhGYg6g
-         0AdzWqxnWPMtBWCrhr42pBsJ862EQyu/WeJg7llkZgyuWBsM+szrK66O8B6XsU+n0F8D
-         K22xUha6vlcP8hNbtUkYGcCPlIDA/lv7DiRQtsbIRxs7cKEuAMRo7NnN8uYaEDPsXdKw
-         EF4Dt6oy7DCEVUe6swJfpzPcQ87s6Vx4/5+B86o7PUGsNRIEy76/vv3fcEJcpJXhaQgJ
-         0bbuSV+WN1Z8oe7NFvzLwbkThFEYt0vqNr20/dTjjajvLSxd5Z1ecRWzXxat1tX9yuTe
-         nHJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSsqO04L1QEiOD9MvmGu+WLhPXf6rE71RugwpBHnKzY3FWyt99u7n+KkCW+0p5d747kDIPfodFgsEsD/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz13mDAUxOLW/8RwH72bXqDYqmucZJYIL1ub25gSsck5b9WZM8X
-	B90CvFaigW48V6NzKXDqlzKLZecjHmr2xbFX6IGMjKONLyDnDf9m+ONs434jT8lQFWc4+JNdEtm
-	KeTpjRHySpVYks27VThVo2W+50F1SxkiyCzGqWFTpd6DJASLSYPX/VL4DkYlxAA==
-X-Gm-Gg: ASbGncuRipLnurssTyVVkmhgmVs+sYoO6RZT5+mWOwHQ81Nq+qynaDEfxciGd+ACKIF
-	nHolsq/o3w/abXoV+VroLPS7u8o6n3ClVJB4aHJZxlG6lYeMNUCffihNEvErKDKHYuYrojQhsR5
-	eM4iL4N2KSYSleKHXMNmaClPppK9Qun/zzC4uA00VDKx9bwBiWLtYWWI09PXrT4ZO8XaVFTtuUg
-	odYfgSIuagYjNrw84oKuOp5LwyqV8t5sMYEzm/+O+Xrqjhs/5aEUOp6qTGfaUFGnOdZyn0Q0I40
-	LT6OaOPIOPvSfYY=
-X-Received: by 2002:a05:6214:2aad:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6e8a0d77582mr80862736d6.15.1740793059328;
-        Fri, 28 Feb 2025 17:37:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF/lGF35E66itIC4CFSpT1I377Q3SynkjXqLrgBB1/PVXtshkzQ3dnZsGHaeAFgJuaumO6MxQ==
-X-Received: by 2002:a05:6214:2aad:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6e8a0d77582mr80862566d6.15.1740793058991;
-        Fri, 28 Feb 2025 17:37:38 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976347acsm28205876d6.4.2025.02.28.17.37.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 17:37:38 -0800 (PST)
-Message-ID: <974185d11c41c8019036e153e95a96e0c2712d6c.camel@redhat.com>
-Subject: Re: [RFC PATCH 04/13] KVM: SVM: Introduce helpers for updating
- TLB_CONTROL
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 20:37:37 -0500
-In-Reply-To: <20250205182402.2147495-5-yosry.ahmed@linux.dev>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
-	 <20250205182402.2147495-5-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1740793086; c=relaxed/simple;
+	bh=MRySq0VswusZ4YKSZr5pKh3kiER+G1pU5MqAUOj/Jtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cQdMS6gnHjTXESwSpONQNTfvFcru6vds8706fVgMH9RaYVQq4tQkepkqOmdS747SY9FsaVx2xy8ADN2+aACcWa967IhEUulTva/6Z19GzLKED9Mq0WP9MjXUzrKiuO6WMffyNpQp7z19PZvFU1/jz1fuERZpAz20Jtl9JNWEQ3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VBJyQn4I; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id EABF02038A20;
+	Fri, 28 Feb 2025 17:38:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EABF02038A20
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740793084;
+	bh=SwI2RPp0lc2nI+b9PwlTDvKqHyEE6M7HzsQHovIJa8k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VBJyQn4In+Z6OoD5b3tU9zACXIqUuuGyTy9YFEoBwVxvJ8gxMvk7GLb1YfVzwFMNa
+	 MZ8P4/K9yMIFqxYCeT9cetKxvXCUpEfmrHCnZy1M1IRPhUWK6daGHv6lNZ/YA/J8gg
+	 mlyLZ5ytzxYgjDEsIlhr6XLI37+XeT9ZA3oJ/ehw=
+Message-ID: <bcb300dd-762f-495d-9d07-16b81ff70602@linux.microsoft.com>
+Date: Fri, 28 Feb 2025 17:38:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+To: Roman Kisel <romank@linux.microsoft.com>, linux-hyperv@vger.kernel.org,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
+ joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> Introduce helpers for updating TLB_CONTROL in the VMCB instead of
-> directly setting it. Two helpers are introduced:
+On 2/27/2025 10:50 AM, Roman Kisel wrote:
 > 
-> - svm_add_tlb_ctl_flush(): Combines a new TLB_CONTROL value with the
->   existing one.
 > 
-> - svm_clear_tlb_ctl_flush(): Clears the TLB_CONTROL field.
 > 
-> The goal is to prevent overwriting a TLB_CONTROL value with something
-> that results in less TLB entries being flushed. This does not currently
-> happen as KVM only sets TLB_CONTROL_FLUSH_ASID when servicing a flush
-> request, and TLB_CONTROL_FLUSH_ALL_ASID when allocating a new ASID. The
-> latter always happens after the former so no unsafe overwrite happens.
+> On 2/26/2025 3:08 PM, Nuno Das Neves wrote:
+>> Provide a set of IOCTLs for creating and managing child partitions when
+>> running as root partition on Hyper-V. The new driver is enabled via
+>> CONFIG_MSHV_ROOT.
+>>
 > 
-> However, future changes may result in subtle bugs where the TLB_CONTROL
-> field is incorrectly overwritten. The new helpers prevent that.
+> [...]
 > 
-> A separate helper is used for clearing the TLB flush because it is
-> semantically different. In this case, KVM knowingly ignores the existing
-> value of TLB_CONTROL. Also, although svm_add_tlb_ctl_flush() would just
-> work for TLB_CONTROL_DO_NOTHING, the logic becomes inconsistent (use the
-> biggest hammer unless no hammer at all is requested).
 > 
-> Opportunistically move the TLB_CONTROL_* definitions to
-> arch/x86/kvm/svm/svm.h as they are not used outside of
-> arch/x86/kvm/svm/.
+> As I understood, the changes fall into these buckets:
 > 
-> No functional change intended.
+> 1. Partition management (VPs and memory). Built of the top of fd's which
+>    looks as the right approach. There is ref counting etc.
+> 2. Scheduling. Here, there is the mature KVM and Xen code dto find
+>    inspiration in. Xen being the Type 1 hypervisor should likely be
+>    closer to MSHV in my understanding.
+> 3. IOCTL code allocation. Not sure how this is allocated yet given that
+>    the patch series has been through a multi-year review, that must be
+>    settled by now.
+> 4. IOCTLs themselves. The majority just marshals data to the
+>    hypervisor.
 > 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/include/asm/svm.h |  6 ------
->  arch/x86/kvm/svm/nested.c  |  2 +-
->  arch/x86/kvm/svm/sev.c     |  2 +-
->  arch/x86/kvm/svm/svm.c     |  6 +++---
->  arch/x86/kvm/svm/svm.h     | 29 +++++++++++++++++++++++++++++
->  5 files changed, 34 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-> index 2b59b9951c90e..e6bccf8f90982 100644
-> --- a/arch/x86/include/asm/svm.h
-> +++ b/arch/x86/include/asm/svm.h
-> @@ -169,12 +169,6 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
->  	};
->  };
->  
-> -
-> -#define TLB_CONTROL_DO_NOTHING 0
-> -#define TLB_CONTROL_FLUSH_ALL_ASID 1
-> -#define TLB_CONTROL_FLUSH_ASID 3
-> -#define TLB_CONTROL_FLUSH_ASID_LOCAL 7
-> -
->  #define V_TPR_MASK 0x0f
->  
->  #define V_IRQ_SHIFT 8
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 2eba36af44f22..0e9b0592c1f83 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -690,7 +690,7 @@ static void nested_vmcb02_prepare_control(struct vcpu_svm *svm,
->  	/* Done at vmrun: asid.  */
->  
->  	/* Also overwritten later if necessary.  */
-> -	vmcb02->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +	svm_clear_tlb_ctl_flush(vmcb02);
->  
->  	/* nested_cr3.  */
->  	if (nested_npt_enabled(svm))
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index b0adfd0537d00..3af296d6c04f6 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3481,7 +3481,7 @@ void pre_sev_run(struct vcpu_svm *svm, int cpu)
->  		return;
->  
->  	sd->sev_vmcbs[asid] = svm->vmcb;
-> -	svm->vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
-> +	svm_add_tlb_ctl_flush(svm->vmcb, TLB_CONTROL_FLUSH_ASID);
->  	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
->  }
->  
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 2108b48ba4959..a2d601cd4c283 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1985,7 +1985,7 @@ static void new_asid(struct vcpu_svm *svm, struct svm_cpu_data *sd)
->  	if (sd->next_asid > sd->max_asid) {
->  		++sd->asid_generation;
->  		sd->next_asid = sd->min_asid;
-> -		svm->vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ALL_ASID;
-> +		svm_add_tlb_ctl_flush(svm->vmcb, TLB_CONTROL_FLUSH_ALL_ASID);
->  		vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
->  	}
->  
-> @@ -3974,7 +3974,7 @@ static void svm_flush_tlb_asid(struct kvm_vcpu *vcpu, struct kvm_vmcb_info *vmcb
->  	 * VM-Exit (via kvm_mmu_reset_context()).
->  	 */
->  	if (static_cpu_has(X86_FEATURE_FLUSHBYASID))
-> -		vmcb->ptr->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
-> +		svm_add_tlb_ctl_flush(vmcb->ptr, TLB_CONTROL_FLUSH_ASID);
->  	else
->  		vmcb->asid_generation--;
->  }
-> @@ -4317,7 +4317,7 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->  		svm->nested.nested_run_pending = 0;
->  	}
->  
-> -	svm->vmcb->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +	svm_clear_tlb_ctl_flush(svm->vmcb);
->  	vmcb_mark_all_clean(svm->vmcb);
->  
->  	/* if exit due to PF check for async PF */
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index ebbb0b1a64676..6a73d6ed1e428 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -611,6 +611,35 @@ void svm_set_x2apic_msr_interception(struct vcpu_svm *svm, bool disable);
->  void svm_complete_interrupt_delivery(struct kvm_vcpu *vcpu, int delivery_mode,
->  				     int trig_mode, int vec);
->  
-> +#define TLB_CONTROL_DO_NOTHING 0
-> +#define TLB_CONTROL_FLUSH_ALL_ASID 1
-> +#define TLB_CONTROL_FLUSH_ASID 3
-> +#define TLB_CONTROL_FLUSH_ASID_LOCAL 7
-> +
-> +/*
-> + * Clearing TLB flushes is done separately because combining
-> + * TLB_CONTROL_DO_NOTHING with others is counter-intuitive.
-> + */
-> +static inline void svm_add_tlb_ctl_flush(struct vmcb *vmcb, u8 tlb_ctl)
-> +{
-> +	if (WARN_ON_ONCE(tlb_ctl == TLB_CONTROL_DO_NOTHING))
-> +		return;
-> +
-> +	/*
-> +	 * Apply the least targeted (most inclusive) TLB flush. Apart from
-> +	 * TLB_CONTROL_DO_NOTHING, lower values of tlb_ctl are less targeted.
-> +	 */
-> +	if (vmcb->control.tlb_ctl == TLB_CONTROL_DO_NOTHING)
-> +		vmcb->control.tlb_ctl = tlb_ctl;
-> +	else
-> +		vmcb->control.tlb_ctl = min(vmcb->control.tlb_ctl, tlb_ctl);
-> +}
-> +
-> +static inline void svm_clear_tlb_ctl_flush(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +}
-> +
->  /* nested.c */
->  
->  #define NESTED_EXIT_HOST	0	/* Exit handled on host level */
+This is a good summary, thanks.
 
-
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-
-Best regards,
-	Maxim Levitsky
-
+> Despite the rather large size of the patch, I spot-checked the places
+> where I have the chance to make an informed decision, and could not find
+> anything that'd stand out as suspicious to me. Going to extrapolate that
+> the patch itself should be good enough. Given that this code has been in
+> development and validation for a few years, I'd vote to merge it. That
+> will also enable upstreaming the rest of the VTL mode code that powers
+> Azure Boost (https://github.com/microsoft/OHCL-Linux-Kernel)
+> 
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> 
 
 
