@@ -1,142 +1,286 @@
-Return-Path: <linux-kernel+bounces-539754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377B2A4A825
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:36:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1ABA4A826
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:37:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3B2189C4D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C66277A4B85
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65229135A53;
-	Sat,  1 Mar 2025 02:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PidTmRfc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127FC135A53;
+	Sat,  1 Mar 2025 02:37:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C9179BC
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 02:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863E523C9
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 02:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740796560; cv=none; b=G3fyF8GPJDGH4o6d55irokF2J25G/2juKtxVBuAxASNJ4qLTT3Gwf7BL9z0sd/hjrE16esKTngR+e07fcc4l5M3EgOQvt/rMQTZkzW5jIjZXSGA/WTi2oEUFIKOSYreH5ekqQXzqw7MAkhBxdVS7nhxV5vWpdRDCcnw4IljFBkk=
+	t=1740796648; cv=none; b=kvqnl4B5MZYUfWKxHbn15qS393YxX8UrrX70/V4fcF15GT9Ezh6LFov3DAdsW+lTQia7S90/Beyn8BDgx4DKzlhBbzsTBGflaJSCayhIAbVqWpxCXBm+Swt23IvaZYBxIl+QLPsXRUFyEc6NISMaZaDLrDTdhsNKDmJV4ofCT68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740796560; c=relaxed/simple;
-	bh=CQ+IcRYoRr0+g0t8Yj4bfF+X7kUz6gHhiAllHH9+SGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2K90GswbxDi69gWIQSY9i3uEBlvmvVDjpF78ts3nVfTBLi40LUYz2CwVCQio1UAFN4RcD2WLLtituqxD6l3asTIT7dVJwE8DxDykx1AUj40OCyqHd6bYjCyp4ovtyJXCG9Oe1zIdb5lIhCqeuPryHeXvul69dlraLxWbRAuvqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PidTmRfc; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740796559; x=1772332559;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CQ+IcRYoRr0+g0t8Yj4bfF+X7kUz6gHhiAllHH9+SGg=;
-  b=PidTmRfcwkEf7H0ITazX7uzJ5SsWRjLMonYfVaDo9vAb/gYFr/xMwTLp
-   fJH1rbGV9lWQNXPIJR3juRuGlqIe9OPdxhKoW9gPNflCq4cpCPvb+zCBj
-   G6yh9DHK0lA52NKZDnBeCzGzZTAErKJ/Piuv98dOm1RJzeEbXEhMfqRe9
-   uxBky05MD2wmNOcqlYU/0El3op6r4gCFIvINGcImsK18tIQo/8fjxMz7r
-   /UfQZ8wuAvGVkeb/zkbhrjTt6/UbUvbbeSOtREYtLcgsOV38bq1WW1zcJ
-   u03hDXVYr2Tw72BpsLZqK0OMCK6jISa+YFSE4xu+uWeywitT+v5eqtaiv
-   Q==;
-X-CSE-ConnectionGUID: 2Gma+uxRRr6Pe9o+sTRAdg==
-X-CSE-MsgGUID: r2XD1BzcQG+lRmbe2uikzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41763582"
-X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
-   d="scan'208";a="41763582"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 18:35:59 -0800
-X-CSE-ConnectionGUID: sgLjp767QeOnRsa5dUaytw==
-X-CSE-MsgGUID: 8pAyXkpbSxmeXRM8nE/JRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="154673257"
-Received: from mderakhs-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.171])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 18:35:59 -0800
-Date: Fri, 28 Feb 2025 18:35:58 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] x86/speculation: Add a conditional CS prefix to
- CALL_NOSPEC
-Message-ID: <20250228-call-nospec-v3-2-96599fed0f33@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20250228-call-nospec-v3-0-96599fed0f33@linux.intel.com>
+	s=arc-20240116; t=1740796648; c=relaxed/simple;
+	bh=cTGPlx7pw6RIp8KSQT6BuCHfpEYmkepudlGmEEz51Ik=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CuIUKvL+tein/o7HtyZU5ls58aXwrP9OJZE/Izy/iZFYbi406zy+tytuTqnGlXi+6Q1O+7G+McBpe9i7dz9LOSTB4jR59VbHl+Nqq4nnYbfomxscsnN30MsCVdRyGbyuLfUq371yerHbCzRgNcsI8SnOHGs1NI2bqvQ82ZftQGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b6d933c1so50351725ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:37:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740796645; x=1741401445;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KCt8WYLGPXzaOcIY+HeTQ3rXzOz4MRgxVUe/NkPCXPA=;
+        b=DWkBUZo+WKmoe1gtVcbUxmeVYyVW2y2yEeVGpcasKTYpVG27d84BTc8LRnLHMJpGQy
+         5SQzjEgSvLXUpDkIG2uO8nVvyJQkMKxaxflKWF0qtq9LyX1EpZGVUKjGBMOHzk4mClCx
+         NdVbt2NKfZwBekOV/N658RUGFq9SJiRKpbAdtW/w1NKaGpfKvEQ/JpRI5b9SO+oQvONk
+         bf8E2v+PXsKBMx/cSf03PLdqu46ZsnJBBGWX03TF7zvBd3dmyO0n5yhWaW8SePrtOSr+
+         lKUUmbrT131SAvQIDdGJG96CAf79LqErfgezXOnVjCPF2qe74nQdYM8pC6irFBKG7PA8
+         93Zg==
+X-Gm-Message-State: AOJu0YwL6FpC+ES46mpGgWqJBVJg8zmVJQ1E/sp9MS/JkkNYM+4CayAE
+	TjFMDOavT9fE91uPBcNlCxyMnmmy9j2sdewjwTjptyLfLFV8QW2nF1weXPwYkN1w8D2oiRO/DxS
+	o8wK10t88XDkpSi9bt8inIrukDg6RgsGtbF8PKqJay4fL0JR3IAocaLXceQ==
+X-Google-Smtp-Source: AGHT+IGiFd/UGDzTZZkUgVY/g2QjAZHGl8ItGLWRcWiifbfFjrn4Xps15mUfmqrKQVmbmM85FZ5Oz3ZzrqGBH1vXEeuFj6GkX3Ui
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228-call-nospec-v3-0-96599fed0f33@linux.intel.com>
+X-Received: by 2002:a05:6e02:1d87:b0:3d1:980a:6a7c with SMTP id
+ e9e14a558f8ab-3d3e6e736dfmr62211305ab.8.1740796645694; Fri, 28 Feb 2025
+ 18:37:25 -0800 (PST)
+Date: Fri, 28 Feb 2025 18:37:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c272e5.050a0220.dc10f.0159.GAE@google.com>
+Subject: [syzbot] [sound?] BUG: sleeping function called from invalid context
+ in snd_card_locked
+From: syzbot <syzbot+4cb9fad083898f54c517@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
+	syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-Retpoline mitigation for spectre-v2 uses thunks for indirect branches. To
-support this mitigation compilers add a CS prefix with
--mindirect-branch-cs-prefix. For an indirect branch in asm, this needs to
-be added manually.
+Hello,
 
-CS prefix is already being added to indirect branches in asm files, but not
-in inline asm. Add CS prefix to CALL_NOSPEC for inline asm as well. There
-is no JMP_NOSPEC for inline asm.
+syzbot found the following issue on:
 
-Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e3d7a4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f2f8fb6ad08b539
+dashboard link: https://syzkaller.appspot.com/bug?extid=4cb9fad083898f54c517
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-d082ecbc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f7cfa9bd3468/vmlinux-d082ecbc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d47dd7c3fc5d/bzImage-d082ecbc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4cb9fad083898f54c517@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:562
+in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1167, name: kworker/0:1H
+preempt_count: 0, expected: 0
+RCU nest depth: 0, expected: 0
+2 locks held by kworker/0:1H/1167:
+ #0: ffff88801b089148 ((wq_completion)events_highpri){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3211
+ #1: ffffc900061f7d18 ((work_completion)(&timer->task_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3212
+irq event stamp: 1044
+hardirqs last  enabled at (1043): [<ffffffff8b59c523>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+hardirqs last  enabled at (1043): [<ffffffff8b59c523>] _raw_spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+hardirqs last disabled at (1044): [<ffffffff8b59c2c2>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (1044): [<ffffffff8b59c2c2>] _raw_spin_lock_irqsave+0x52/0x60 kernel/locking/spinlock.c:162
+softirqs last  enabled at (204): [<ffffffff817c131b>] softirq_handle_end kernel/softirq.c:407 [inline]
+softirqs last  enabled at (204): [<ffffffff817c131b>] handle_softirqs+0x5bb/0x8f0 kernel/softirq.c:589
+softirqs last disabled at (183): [<ffffffff817c17e9>] __do_softirq kernel/softirq.c:595 [inline]
+softirqs last disabled at (183): [<ffffffff817c17e9>] invoke_softirq kernel/softirq.c:435 [inline]
+softirqs last disabled at (183): [<ffffffff817c17e9>] __irq_exit_rcu+0x109/0x170 kernel/softirq.c:662
+CPU: 0 UID: 0 PID: 1167 Comm: kworker/0:1H Not tainted 6.14.0-rc4-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_highpri snd_timer_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ __might_resched+0x3c0/0x5e0 kernel/sched/core.c:8767
+ __mutex_lock_common kernel/locking/mutex.c:562 [inline]
+ __mutex_lock+0x108/0xb10 kernel/locking/mutex.c:730
+ class_mutex_constructor include/linux/mutex.h:201 [inline]
+ snd_card_locked+0x1b/0x60 sound/core/init.c:399
+ snd_request_card+0x14/0x70 sound/core/sound.c:62
+ snd_seq_client_use_ptr+0x375/0x3c0 sound/core/seq/seq_clientmgr.c:152
+ get_event_dest_client sound/core/seq/seq_clientmgr.c:533 [inline]
+ snd_seq_deliver_single_event+0xdb/0x6e0 sound/core/seq/seq_clientmgr.c:663
+ snd_seq_deliver_event+0x291/0x4b0 sound/core/seq/seq_clientmgr.c:822
+ snd_seq_dispatch_event+0x117/0x580 sound/core/seq/seq_clientmgr.c:897
+ snd_seq_check_queue+0x248/0x510 sound/core/seq/seq_queue.c:256
+ snd_seq_timer_interrupt+0x2e3/0x390 sound/core/seq/seq_timer.c:153
+ snd_timer_process_callbacks+0x217/0x2e0 sound/core/timer.c:785
+ snd_timer_work+0xa9/0x100 sound/core/timer.c:815
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+================================
+WARNING: inconsistent lock state
+6.14.0-rc4-syzkaller #0 Tainted: G        W         
+--------------------------------
+inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+kworker/0:1H/1167 [HC0[0]:SC0[0]:HE1:SE1] takes:
+ffff8880236dc148 (&timer->lock){?.-.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ffff8880236dc148 (&timer->lock){?.-.}-{3:3}, at: snd_timer_process_callbacks+0x227/0x2e0 sound/core/timer.c:786
+{IN-HARDIRQ-W} state was registered at:
+  lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+  spin_lock include/linux/spinlock.h:351 [inline]
+  class_spinlock_constructor include/linux/spinlock.h:559 [inline]
+  snd_hrtimer_callback+0x53/0x400 sound/core/hrtimer.c:38
+  __run_hrtimer kernel/time/hrtimer.c:1801 [inline]
+  __hrtimer_run_queues+0x20a/0xae0 kernel/time/hrtimer.c:1865
+  hrtimer_interrupt+0x392/0x8e0 kernel/time/hrtimer.c:1927
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+  __sysvec_apic_timer_interrupt+0x10f/0x400 arch/x86/kernel/apic/apic.c:1055
+  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+  sysvec_apic_timer_interrupt+0x9f/0xc0 arch/x86/kernel/apic/apic.c:1049
+  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+  _raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:194
+  class_raw_spinlock_irqsave_destructor include/linux/spinlock.h:551 [inline]
+  try_to_wake_up+0x949/0x1490 kernel/sched/core.c:4214
+  wake_up_process kernel/sched/core.c:4463 [inline]
+  wake_up_q+0x9c/0x160 kernel/sched/core.c:1075
+  raw_spin_unlock_irqrestore_wake include/linux/sched/wake_q.h:96 [inline]
+  __mutex_unlock_slowpath+0x231/0x6a0 kernel/locking/mutex.c:933
+  device_unlock include/linux/device.h:1045 [inline]
+  hub_event+0xc5f/0x4e10 drivers/usb/core/hub.c:5954
+  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+  process_scheduled_works kernel/workqueue.c:3317 [inline]
+  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+  kthread+0x3af/0x750 kernel/kthread.c:464
+  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+irq event stamp: 1197
+hardirqs last  enabled at (1197): [<ffffffff8b59c5b2>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (1197): [<ffffffff8b59c5b2>] _raw_spin_unlock_irqrestore+0x52/0x80 kernel/locking/spinlock.c:194
+hardirqs last disabled at (1196): [<ffffffff8b59c2c2>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (1196): [<ffffffff8b59c2c2>] _raw_spin_lock_irqsave+0x52/0x60 kernel/locking/spinlock.c:162
+softirqs last  enabled at (1156): [<ffffffff817c131b>] softirq_handle_end kernel/softirq.c:407 [inline]
+softirqs last  enabled at (1156): [<ffffffff817c131b>] handle_softirqs+0x5bb/0x8f0 kernel/softirq.c:589
+softirqs last disabled at (1047): [<ffffffff817c17e9>] __do_softirq kernel/softirq.c:595 [inline]
+softirqs last disabled at (1047): [<ffffffff817c17e9>] invoke_softirq kernel/softirq.c:435 [inline]
+softirqs last disabled at (1047): [<ffffffff817c17e9>] __irq_exit_rcu+0x109/0x170 kernel/softirq.c:662
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&timer->lock);
+  <Interrupt>
+    lock(&timer->lock);
+
+ *** DEADLOCK ***
+
+2 locks held by kworker/0:1H/1167:
+ #0: ffff88801b089148 ((wq_completion)events_highpri){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3211
+ #1: ffffc900061f7d18 ((work_completion)(&timer->task_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3212
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 1167 Comm: kworker/0:1H Tainted: G        W          6.14.0-rc4-syzkaller #0
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_highpri snd_timer_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_usage_bug.part.0+0x3fb/0x680 kernel/locking/lockdep.c:4040
+ print_usage_bug kernel/locking/lockdep.c:4008 [inline]
+ valid_state kernel/locking/lockdep.c:4054 [inline]
+ mark_lock_irq kernel/locking/lockdep.c:4265 [inline]
+ mark_lock+0x92d/0xc60 kernel/locking/lockdep.c:4751
+ mark_usage kernel/locking/lockdep.c:4660 [inline]
+ __lock_acquire+0x98e/0x3c40 kernel/locking/lockdep.c:5182
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ snd_timer_process_callbacks+0x227/0x2e0 sound/core/timer.c:786
+ snd_timer_work+0xa9/0x100 sound/core/timer.c:815
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+------------[ cut here ]------------
+raw_local_irq_restore() called with IRQs enabled
+WARNING: CPU: 0 PID: 1167 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x29/0x30 kernel/locking/irqflag-debug.c:10
+Modules linked in:
+CPU: 0 UID: 0 PID: 1167 Comm: kworker/0:1H Tainted: G        W          6.14.0-rc4-syzkaller #0
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_highpri snd_timer_work
+RIP: 0010:warn_bogus_irq_restore+0x29/0x30 kernel/locking/irqflag-debug.c:10
+Code: 90 f3 0f 1e fa 90 80 3d f9 a7 f3 04 00 74 06 90 c3 cc cc cc cc c6 05 ea a7 f3 04 01 90 48 c7 c7 c0 e6 6c 8b e8 58 df 22 f6 90 <0f> 0b 90 90 eb df 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900061f7c18 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8880236dc130 RCX: ffffffff817a1229
+RDX: ffff888028238000 RSI: ffffffff817a1236 RDI: 0000000000000001
+RBP: 0000000000000286 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 61636f6c5f776172 R12: ffff8880236dc000
+R13: ffff8880236dc1b0 R14: 0000000000000000 R15: ffff88801b09d800
+FS:  0000000000000000(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fecdd000218 CR3: 0000000031f9c000 CR4: 0000000000352ef0
+DR0: 0000000000000002 DR1: fffffffffffffffb DR2: 0000000000010001
+DR3: 0000000000000004 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+ _raw_spin_unlock_irqrestore+0x74/0x80 kernel/locking/spinlock.c:194
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ class_spinlock_irqsave_destructor include/linux/spinlock.h:572 [inline]
+ snd_timer_work+0xbe/0x100 sound/core/timer.c:814
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- arch/x86/include/asm/nospec-branch.h | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 1e6b915ce956..aee26bb8230f 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -198,9 +198,8 @@
- .endm
- 
- /*
-- * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
-- * to the retpoline thunk with a CS prefix when the register requires
-- * a RAX prefix byte to encode. Also see apply_retpolines().
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-  */
- .macro __CS_PREFIX reg:req
- 	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15
-@@ -420,12 +419,24 @@ static inline void call_depth_return_thunk(void) {}
- 
- #ifdef CONFIG_X86_64
- 
-+/*
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-+ */
-+#define __CS_PREFIX(reg)				\
-+	".irp rs,r8,r9,r10,r11,r12,r13,r14,r15\n"	\
-+	".ifc \\rs," reg "\n"				\
-+	".byte 0x2e\n"					\
-+	".endif\n"					\
-+	".endr\n"
-+
- /*
-  * Inline asm uses the %V modifier which is only in newer GCC
-  * which is ensured when CONFIG_MITIGATION_RETPOLINE is defined.
-  */
- #ifdef CONFIG_MITIGATION_RETPOLINE
--#define CALL_NOSPEC	"call __x86_indirect_thunk_%V[thunk_target]\n"
-+#define CALL_NOSPEC	__CS_PREFIX("%V[thunk_target]")	\
-+			"call __x86_indirect_thunk_%V[thunk_target]\n"
- #else
- #define CALL_NOSPEC	"call *%[thunk_target]\n"
- #endif
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
