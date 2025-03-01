@@ -1,171 +1,162 @@
-Return-Path: <linux-kernel+bounces-539939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3E7A4AB10
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:01:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E593DA4AB14
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0768A7A81C1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA77416C4F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4DD1DF276;
-	Sat,  1 Mar 2025 13:01:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5968B1DF255;
+	Sat,  1 Mar 2025 13:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="weLrExoW"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115521DF265
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A547E1DED49
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740834076; cv=none; b=Iu+bqsEtrEOFXbXtQ9alZ2PtB2ypos7eRGVpwiq4B9yFX7oasOC4K32yUGYGjLloftfic3tEBMqO3t4G9tLAPrzPgWJZOPiCd+nLjqmeUsNYa22Tp1WplOPolmAP0Ibwv2nMdoYdnaZWx8jYRn4Q+Ef8O3xuc7a21BC4vl3BQx4=
+	t=1740834083; cv=none; b=W62nkFZTHUDtLYwAjB0FUD4HXuKO8CUJ4otPeGOJiQgfdxLdMK1yHtOWXthyyJlmhyg802LXhVodxcszN23gv3RdFpO3xgEXau/i1oBRkYRl0v4n9D67c1Qa/Sfk0AixMF6D/7pqf3tHvOtz1+Q8KPSnUu9tTta2SuoTKJcxCh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740834076; c=relaxed/simple;
-	bh=mKLPjyiZUnld6i3DaHnwwGaNNhqCVD5Nat+a58bVjWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BtGjyeSoZO4BiVWY1cElo0QCdyMGY8LroJ7WNFueR7TK5l+9Y/37TgZ2x7Ya9eob2Ae4I9GZw0EVvmVK3G/48P28amomwnyfsAnfsPzPII/wRQ9y3TOjL/CiSIXBFx08UygJHKvLGVkQ9obw9XAya9BPolclve6SRHi/oHHuu9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1toMSU-0003w3-PV; Sat, 01 Mar 2025 14:00:46 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1toMSR-003Sv8-2F;
-	Sat, 01 Mar 2025 14:00:43 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1toMSR-007APN-1n;
-	Sat, 01 Mar 2025 14:00:43 +0100
-Date: Sat, 1 Mar 2025 14:00:43 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
- evaluation strategies
-Message-ID: <Z8ME-90Xg46-pNhA@pengutronix.de>
-References: <20250224134522.1cc36aa3@kernel.org>
- <20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
- <20250225174752.5dbf65e2@kernel.org>
- <Z76t0VotFL7ji41M@pengutronix.de>
- <Z76vfyv5XoMKmyH_@pengutronix.de>
- <20250226184257.7d2187aa@kernel.org>
- <Z8AW6S2xmzGZ0y9B@pengutronix.de>
- <20250227155727.7bdc069f@kmaincent-XPS-13-7390>
- <Z8CVimyMj261wc7w@pengutronix.de>
- <20250227192640.20df155d@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1740834083; c=relaxed/simple;
+	bh=9R505GuXCUgZibhXev+FfmDNPeBOSs3xDQi+XM/lnoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xc64Dz2fnxr0ihVlGQp44tq/iUdFJsYbekaXrO8m5mAZqq0+KOicWTD3Da60stVj1+ex+dWK8yNwywe7H6guNd741xYt+nYBbR0T74YkGpnRNkqTDqXsFgalpcJjWvpGBKGxbtzsrQEmW80Lx2Y353qbrh/WEwDOl8dZfPPiWrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=weLrExoW; arc=none smtp.client-ip=121.127.44.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740834074;
+ bh=9mCWNbcP5IQDd/FsJf4daDu5xuhSLsVfWH9gMluMv00=;
+ b=weLrExoWL72K9p5bFJMPXLySLvsElVRUL8wrMkRaK145pcKTjerJ8zh35bHgoMnwl95XfueXR
+ kAu7w+4oOgnS7WIc9LTo/mOQ54pv3uN6wC7vSnfZsPjTKOrhCbTvs/FB7/fpQETIYWGMib7Yrq2
+ swV784/9lRimUWZJH/zs7jP+x2urWi2hJ/12gYh5MERvcEKP9MvNWCvwHBcJ9UVR/K8RfyV/QzZ
+ vO1hunvAh/my8QD75BoMLohjg//hS/g/Tul4eBI7CC73fvRmYhza2bRs9v97vwKGZ4cBs17xe21
+ aETKriUDC0dTTVAJyLnYfPox2V2X8xdeNqUvbW5S2HJQ==
+X-Forward-Email-ID: 67c3051690cf55d47dbe9027
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.59
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
+Date: Sat, 1 Mar 2025 14:01:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250227192640.20df155d@kmaincent-XPS-13-7390>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+To: Yao Zi <ziyao@disroot.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104835.36439-1-ziyao@disroot.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250301104835.36439-1-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 07:26:40PM +0100, Kory Maincent wrote:
-> On Thu, 27 Feb 2025 17:40:42 +0100
-> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Hi,
+
+On 2025-03-01 11:48, Yao Zi wrote:
+> SD-card is available on Radxa E20C board.
 > 
-> > On Thu, Feb 27, 2025 at 03:57:27PM +0100, Kory Maincent wrote:
-> > > On Thu, 27 Feb 2025 08:40:25 +0100
-> > > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> > >   
-> > > > On Wed, Feb 26, 2025 at 06:42:57PM -0800, Jakub Kicinski wrote:  
-> >  [...]  
-> >  [...]  
-> >  [...]  
-> > > > 
-> > > > Ok, I see. @Köry, can you please provide regulator_summary with some
-> > > > inlined comments to regulators related to the PSE components and PSE
-> > > > related outputs of ethtool (or what ever tool you are using).
-> > > > 
-> > > > I wont to use this examples to answer.  
-> > > 
-> > > On my side, I am not close to using sysfs. As we do all configurations
-> > > through ethtool I have assumed we should continue with ethtool.  
-> > 
-> > Yes, I agree. But it won't be possible to do it for all components.
-> > 
-> > > I think we should set the port priority through ethtool.  
-> > 
-> > ack
-> > 
-> > > but indeed the PSE  power domain method get and set could be moved to
-> > > sysfs as it is not something  relative to the port but to a group of
-> > > ports.  
-> > 
-> > I would prefer to have it in the for of devlink or use regulator netlink
-> > interface. But, we do not need to do this discussion right now.
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> If we want to report the method we should discuss it now. We shouldn't add
-> BUDGET_EVAL_STRAT uAPI to ethtool if we use another way to get and set the
-> method later.
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> index d2cdb63d4a9d..473065aa4228 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> @@ -12,6 +12,10 @@ / {
+>  	model = "Radxa E20C";
+>  	compatible = "radxa,e20c", "rockchip,rk3528";
+>  
+> +	aliases {
+> +		mmc0 = &sdmmc;
 
-Ok, I assume we are talking about different things. I mean - not port
-specific configurations and diagnostic, will have different interface.
+Suggest using mmc1 for sd-card because the e20c typically have onboard
+emmc, compared to removable sd-card.
 
-BUDGET_EVAL_STRAT is port specific. HP and Cisco implement it as port
-specific. PD692x0 Protocol manual describe it as port specific too:
-3.3.6 Set BT Port Parameters
- Bits [3..0]—BT port PM mode
-  0x0: The port power that is used for power management purposes is
-       dynamic (Iport x Vmain).
-  0x1: The port power that is used for power management purposes is port
-       TPPL_BT.
-  0x2: The port power that is used for power management purposes is
-       dynamic for non LLDP/CDP/Autoclass ports and TPPL_BT for LLDP/CDP/Autoclass ports.
-  0xF: Do not change settings.
+> +	};
+> +
+>  	chosen {
+>  		stdout-path = "serial0:1500000n8";
+>  	};
+> @@ -20,3 +24,13 @@ chosen {
+>  &uart0 {
+>  	status = "okay";
+>  };
+> +
+> +&sdmmc {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	cap-sd-highspeed;
+> +	disable-wp;
+> +	rockchip,default-sample-phase = <90>;
+> +	sd-uhs-sdr104;
 
-> We could also not report the method for now and assume the user knows it for
-> the two controllers currently supported.
+Are you sure uhs-sdr104 works as is should? Vendor kernel use a
+different "v2" tuning and this is also missing the vccio_sd vqmmc-supply
+to switch between 3v3 and 1v8.
 
-On one side: it is not just status, but also active configuration. By
-implementing the interface we may break default configuration and user
-expectations.
+You could add following regulator for sdmmc:
 
-On other side: PD692x0 seems to need more then just setting prios to
-manage them correctly. For example power bank limits should be set,
-otherwise internal firmware won't be able to perform budget calculations.
+	vccio_sd: regulator-vccio-sd {
+		compatible = "regulator-gpio";
+		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
+		regulator-name = "vccio_sd";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <3300000>;
+		states = <1800000 0x0>, <3300000 0x1>;
+	};
 
-So, I assume, critical components are missing anyway.
+and following pinctrl:
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+	sdmmc {
+		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+add then the power supplies to the sdmmc node:
+
+	vmmc-supply = <&vcc_3v3>;
+	vqmmc-supply = <&vccio_sd>;
+
+That matches the schematics for e20c, and works when testing non-uhs modes.
+
+Regards,
+Jonas
+
+> +	status = "okay";
+> +};
+
 
