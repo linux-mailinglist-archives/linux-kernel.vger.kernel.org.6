@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-540024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7981CA4AC92
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFBEA4AC93
 	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3061E189476C
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EAE189487A
 	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4F51E261F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725131E32A2;
 	Sat,  1 Mar 2025 15:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UqgGu0t/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YgO+8i/j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C91DE8A2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629561CA84
 	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 15:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740843234; cv=none; b=RkYrQOSFBICrkkLfBLqa0T8LQHGESpdAzsIV6ZBrc6EB7tpbTSYK0DqSkNa03T7yLKF7hsX3vUhHYWAypCiwMOWVdjSh5dLfez5oTLfwfkX3mdXBQ4Kv4jU+PzsLEvG80f/TElnMKZcWIggZcCGeFVzDsoZpknK/7WII//vsfVg=
+	t=1740843234; cv=none; b=h+8Hq/shNBRB7+rVxT/4DqW1+dGNiGMkeBjFcMTvy/qGuk02lH0EZ4zHMhpVSOcTCekeOBhhOAOQOwywQaDQt/jXu+i+85koIHbWg3rMkI7pCYrFVvcQP+TlSgz6Rn6qm+xG5gAjgZVC9JSwLmj6axt+WKz49xy7raVe+Y+pG2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740843234; c=relaxed/simple;
-	bh=EsmjMzGpSxgt+NlHjTE5WglbpyDbwvkjJBEmg3iN2Dc=;
+	bh=/Wa82sRIS4meqVQ0zPKfnmjCvc3iD/6q5M3ZuhuebJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+rO4fdstBA9TgW0dn4hE6/pFzk4sPFmFY2blZViVe/KDTdtBJbNyGJg/H+RUJJZzi9QjalPj7E23uxuRkLi/mLNw3nYvnGlc0nw9WYSbVXlTpZxALgZ5AjfBmBtSCf74sp7BTeM7ptv+eWKCcKLEna35Lg3aPOU8r1QEYelpho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UqgGu0t/; arc=none smtp.client-ip=192.198.163.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYuIG91+WyaIk3q/otJoUgk1yZWhLqmgyTDf0is2nK+5+2EuSBwli7X5F11PgRn7SXMZsP2wauKIgrtvbn4QoB6sfZUzNY+vIX3aSKH1+D6zzXExWmglOJUOTWt2Clzpq7J+gxqMjCumi045ZqmjLD/d5fNuqPGtpsPdZ1BUDiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YgO+8i/j; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740843233; x=1772379233;
+  t=1740843232; x=1772379232;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=EsmjMzGpSxgt+NlHjTE5WglbpyDbwvkjJBEmg3iN2Dc=;
-  b=UqgGu0t/H0MWjLSNKy4SN8xIiQKkQ/njYAtHAxG7pS5wc8LSEuS0ZDry
-   0u52zo0AJMnVc4XykuJzxkjRMPXQiubQ0JxLlUlAHwte/hcoWS6ps7TMJ
-   CyWRSC6ZkHVyJBGDU8W9ZSwEhpwRvZ1ddgNYcRZR35nrdvUhqapSGOwdo
-   5VmQ8nyntWoxyC+sXIC9PAs7tMrmWoYDgSzIwc1JgJtAjzTpcw5utQiEa
-   mJBHBbLpw+BeKbMq9yBI2ITm0Di4wnm4253yR5fyjrDM2b2w1EX821MIm
-   X35HNmkwe5AzIWhm8ABrVjcrFiEdUJQFRTmhJA3XVIDDYnJM0IKaHtKvz
-   w==;
-X-CSE-ConnectionGUID: bo+N23dgTFqQ85zO/8wiDA==
-X-CSE-MsgGUID: QoTvO6nHQrSbnPdIFnHzrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="40999775"
+  bh=/Wa82sRIS4meqVQ0zPKfnmjCvc3iD/6q5M3ZuhuebJU=;
+  b=YgO+8i/jmvkXfBml1iM7G0xh47RKKkVYVzIeiOdM/tT0/fMku+/TiLEH
+   wCgu2ZXlmG1hk03ds6Vwtdr604/1j3yDpNnFB8H83FyVLddNdEUdgtPBf
+   1HFUSrj53KU+DD5IV0nEswVtM95BQdo6GHfiDMWosIsEO1vRvtiokfvqw
+   zDY+DcxNk+1kmdVcAVEGNQjuOeW3+iMFcKPJ9ndPCyOxNsQI0dAcEkWXW
+   3JN0NYfDipe5dH37QvdhKbwxD3nfnqY9wAfe63YKGbQB/1ELgy7Sl7I3f
+   IOb3TeYBUN1KkYN2yOSsTjvH0bEHm5Pj2Ra4V/sdviIpfFxYXzF6SHDxr
+   A==;
+X-CSE-ConnectionGUID: ldrdWB4aRfqEP91um9PEfA==
+X-CSE-MsgGUID: 1tdy5TH1SMiLfc0J6e7Wng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41608105"
 X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="40999775"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 07:33:52 -0800
-X-CSE-ConnectionGUID: hPIjqxm4Qnu+r1y8roqm3Q==
-X-CSE-MsgGUID: waxqjX+8QFuOCRxrSQPldQ==
+   d="scan'208";a="41608105"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 07:33:51 -0800
+X-CSE-ConnectionGUID: wE4e8c/HR3ugNf1atDH9DA==
+X-CSE-MsgGUID: ++mvu00YTHyVfeNGYEsx6A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="148405680"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="148519588"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 01 Mar 2025 07:33:47 -0800
+  by fmviesa001.fm.intel.com with ESMTP; 01 Mar 2025 07:33:47 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1toOqW-000GNm-2Z;
+	id 1toOqW-000GNo-2e;
 	Sat, 01 Mar 2025 15:33:44 +0000
-Date: Sat, 1 Mar 2025 23:33:06 +0800
+Date: Sat, 1 Mar 2025 23:33:07 +0800
 From: kernel test robot <lkp@intel.com>
 To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
 	peterz@infradead.org, juri.lelli@redhat.com,
@@ -69,12 +69,12 @@ To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
 	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
 	rafael.j.wysocki@intel.com, pierre.gondois@arm.com,
 	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, qyousef@layalina.io,
-	hongyan.xia2@arm.com, christian.loehle@arm.com,
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com,
 	luis.machado@arm.com, qperret@google.com,
 	Vincent Guittot <vincent.guittot@linaro.org>
 Subject: Re: [PATCH 5/7 v3] sched/fair: Add push task mechanism for EAS
-Message-ID: <202503012314.oQzjTBLS-lkp@intel.com>
+Message-ID: <202503012344.WKL9UWX1-lkp@intel.com>
 References: <20250228134000.1226665-6-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -100,58 +100,39 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Guittot/sched-fai
 base:   tip/sched/core
 patch link:    https://lore.kernel.org/r/20250228134000.1226665-6-vincent.guittot%40linaro.org
 patch subject: [PATCH 5/7 v3] sched/fair: Add push task mechanism for EAS
-config: arc-randconfig-002-20250301 (https://download.01.org/0day-ci/archive/20250301/202503012314.oQzjTBLS-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503012314.oQzjTBLS-lkp@intel.com/reproduce)
+config: i386-buildonly-randconfig-001-20250301 (https://download.01.org/0day-ci/archive/20250301/202503012344.WKL9UWX1-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503012344.WKL9UWX1-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503012314.oQzjTBLS-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503012344.WKL9UWX1-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> kernel/sched/fair.c:8957:13: error: conflicting types for 'fair_remove_pushable_task'; have 'void(struct cfs_rq *, struct task_struct *)'
+>> kernel/sched/fair.c:8957:13: error: conflicting types for 'fair_remove_pushable_task'
     8957 | static void fair_remove_pushable_task(struct cfs_rq *cfs_rq, struct task_struct *p) {}
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c:7054:13: note: previous declaration of 'fair_remove_pushable_task' with type 'void(struct rq *, struct task_struct *)'
+         |             ^
+   kernel/sched/fair.c:7054:13: note: previous declaration is here
     7054 | static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/sched/fair.c: In function 'pick_next_task_fair':
->> kernel/sched/fair.c:9152:40: error: passing argument 1 of 'fair_add_pushable_task' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         |             ^
+>> kernel/sched/fair.c:9152:26: error: incompatible pointer types passing 'struct rq *' to parameter of type 'struct cfs_rq *' [-Werror,-Wincompatible-pointer-types]
     9152 |                 fair_add_pushable_task(rq, prev);
          |                                        ^~
-         |                                        |
-         |                                        struct rq *
-   kernel/sched/fair.c:8958:58: note: expected 'struct cfs_rq *' but argument is of type 'struct rq *'
+   kernel/sched/fair.c:8958:58: note: passing argument to parameter 'cfs_rq' here
     8958 | static inline void fair_add_pushable_task(struct cfs_rq *cfs_rq, struct task_struct *p) {}
-         |                                           ~~~~~~~~~~~~~~~^~~~~~
-   kernel/sched/fair.c: In function 'put_prev_task_fair':
-   kernel/sched/fair.c:9231:32: error: passing argument 1 of 'fair_add_pushable_task' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         |                                                          ^
+   kernel/sched/fair.c:9231:25: error: incompatible pointer types passing 'struct rq *' to parameter of type 'struct cfs_rq *' [-Werror,-Wincompatible-pointer-types]
     9231 |         fair_add_pushable_task(rq, prev);
          |                                ^~
-         |                                |
-         |                                struct rq *
-   kernel/sched/fair.c:8958:58: note: expected 'struct cfs_rq *' but argument is of type 'struct rq *'
+   kernel/sched/fair.c:8958:58: note: passing argument to parameter 'cfs_rq' here
     8958 | static inline void fair_add_pushable_task(struct cfs_rq *cfs_rq, struct task_struct *p) {}
-         |                                           ~~~~~~~~~~~~~~~^~~~~~
-   kernel/sched/fair.c: In function '__set_next_task_fair':
->> kernel/sched/fair.c:13518:35: error: passing argument 1 of 'fair_remove_pushable_task' from incompatible pointer type [-Werror=incompatible-pointer-types]
-   13518 |         fair_remove_pushable_task(rq, p);
-         |                                   ^~
-         |                                   |
-         |                                   struct rq *
-   kernel/sched/fair.c:8957:54: note: expected 'struct cfs_rq *' but argument is of type 'struct rq *'
-    8957 | static void fair_remove_pushable_task(struct cfs_rq *cfs_rq, struct task_struct *p) {}
-         |                                       ~~~~~~~~~~~~~~~^~~~~~
-   kernel/sched/fair.c: At top level:
->> kernel/sched/fair.c:7054:13: warning: 'fair_remove_pushable_task' used but never defined
-    7054 | static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+         |                                                          ^
+   3 errors generated.
 
 
-vim +8957 kernel/sched/fair.c
+vim +/fair_remove_pushable_task +8957 kernel/sched/fair.c
 
   8945	
   8946	static int
