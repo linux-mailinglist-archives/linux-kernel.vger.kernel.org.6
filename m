@@ -1,233 +1,97 @@
-Return-Path: <linux-kernel+bounces-539864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31522A4AA0B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:35:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A2FA4AA0D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34CC1174692
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:35:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092F57A9D9C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16B2191F77;
-	Sat,  1 Mar 2025 09:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12FE1CB51B;
+	Sat,  1 Mar 2025 09:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5yxeZuZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VO4lrwRj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5yxeZuZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VO4lrwRj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LwQ4VI4v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FD51B423C
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 09:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BCA1E49F;
+	Sat,  1 Mar 2025 09:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740821697; cv=none; b=IlhsSJIPEWWSym4TZSryERTCMSevTYOZtvm5S6sBhm/ypPZor4v2cijW7P8VelYdW248vv3dHudJrPE5Jm7pS0D79iFLm4X2797Vl95safrHHJBEUCJ21S80sdqshu4ARs5+GY7+ty1IfpdzLEukiVyq0/TFVYx9DJaAzs9IWh0=
+	t=1740822037; cv=none; b=mRJh457ybEBJDIVBAen/P4jf6jN72AlpP9kF0ra6PF9hgU4mSThZxpTDDnteMCBe4zeL3Af3AHMv97wAmk2xGoSlw8tYC0aW7slmxDmKLDWS7dS4yrVJ6JX3kU5bxMJSiQRnq1wbqq4cdQw95Yx4sEJauj0MUYuDpmkdSNZhUvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740821697; c=relaxed/simple;
-	bh=wCba9nahI57MMTK0vbGc+KKYaVW7hTyrYhqdZzfBs+U=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rl8c1KwHwLZXJLmhaOjAHM4oYMQwEsVLofR8iOKOBlMN9D/J9Tr3UwprzQRaPahPgK9wi/WlhqBKpFfuV5E1AyoH98apr2mR6CAuZRrfpu3sOeW1oRTevoY+DLED+neFm7PLbIaRT26Wk+WGyMaejcPA+1xUmTlz98FEXjoyDdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5yxeZuZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VO4lrwRj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5yxeZuZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VO4lrwRj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 76A831F390;
-	Sat,  1 Mar 2025 09:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740821692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KnCrz2WA0v4asIfqGDapvyiv7URFfA90YDxbZ5jGd0=;
-	b=T5yxeZuZK6jcq19fF3MwlFk/vROEn7WYFg8JXsfs3Tnvhfl0fWZH4SdRcHypNosWZKWi1v
-	ZGnIKFFmbHBh+B5hCgmKeFXT7+W6smuxlt5kdAy5Xus0t4CKqpW6dZWBGW0ONF27WIGKeV
-	stovdl0EK1Fr2tP0C3y5xQ30MgHuSas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740821692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KnCrz2WA0v4asIfqGDapvyiv7URFfA90YDxbZ5jGd0=;
-	b=VO4lrwRjl6sc/GE2q4nSu2UzT5oP/wN2F+HLXKFXrVDeO2HTwQ1pB58v2yqpABgpC7TIj0
-	EdEBSC/WnAdED+Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=T5yxeZuZ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VO4lrwRj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740821692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KnCrz2WA0v4asIfqGDapvyiv7URFfA90YDxbZ5jGd0=;
-	b=T5yxeZuZK6jcq19fF3MwlFk/vROEn7WYFg8JXsfs3Tnvhfl0fWZH4SdRcHypNosWZKWi1v
-	ZGnIKFFmbHBh+B5hCgmKeFXT7+W6smuxlt5kdAy5Xus0t4CKqpW6dZWBGW0ONF27WIGKeV
-	stovdl0EK1Fr2tP0C3y5xQ30MgHuSas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740821692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KnCrz2WA0v4asIfqGDapvyiv7URFfA90YDxbZ5jGd0=;
-	b=VO4lrwRjl6sc/GE2q4nSu2UzT5oP/wN2F+HLXKFXrVDeO2HTwQ1pB58v2yqpABgpC7TIj0
-	EdEBSC/WnAdED+Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 321A713A53;
-	Sat,  1 Mar 2025 09:34:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SnBrCrzUwmcLGwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 01 Mar 2025 09:34:52 +0000
-Date: Sat, 01 Mar 2025 10:34:51 +0100
-Message-ID: <87y0xp9jr8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: <syzbot+4cb9fad083898f54c517@syzkaller.appspotmail.com>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>,
-	<perex@perex.cz>,
-	<syzkaller-bugs@googlegroups.com>,
-	<tiwai@suse.com>
-Subject: Re: [syzbot] [sound?] BUG: sleeping function called from invalid context in snd_card_locked
-In-Reply-To: <6610cdb8-072e-47fe-b9bc-f4f5b9a79f8e@quicinc.com>
-References: <6610cdb8-072e-47fe-b9bc-f4f5b9a79f8e@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1740822037; c=relaxed/simple;
+	bh=PVtjqg7V6hVzbns1e2Ylsht4bjRtweQTzIYjEsn412g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D270k+l5guZwHkl8UpKsib/ZriEFWHi5Ibh8r9OciKvIRUFp4oBfDgLbG6uyvdYXdMoRcr7K1ZN+heSfqU7m5gyXx9HBRMv5Gtu/GDQM9fJhshcZvdCcsCPIWaRDAuL/94sENq0U7jb1LN68xp+tC95e8vapG0k4VDCtB1/Vo9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LwQ4VI4v; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740822036; x=1772358036;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PVtjqg7V6hVzbns1e2Ylsht4bjRtweQTzIYjEsn412g=;
+  b=LwQ4VI4vzmrf6CSRe5EnqjNr2vjkYJudce+R4WTqaMSIj8hb037dVV41
+   EE1HDHmqUvG7lQATMlmFIxTrmapJ4xicxQudeC40BDINdS9GGAdMV9FA3
+   LJUV6IJgj/EqzeGRvylEGJRmAkux+NsmmLYUdMSpJMtBeWcLxRfrhuJYA
+   1YKBJEA7iRVC1HUPt1VAABPCKcoJpMY6/g/aO5t5u4SChJhHkVYA0NekO
+   97bXHRO0xEOuVbNp77FgrRlNRtsThc/ey67l4+GK8ll1+yLJaw2AMmXX8
+   SB9P/2AE3HQPe+dd859lQfdkRddBe1JPavBN1iLm7i0aYexx/ifMOIN17
+   w==;
+X-CSE-ConnectionGUID: RsMkOppdRK+qmnwWO3I4/A==
+X-CSE-MsgGUID: TEDj0L5nRPqmNTZeYDc6vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="59163365"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="59163365"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 01:40:36 -0800
+X-CSE-ConnectionGUID: f++ZMiK+Q12LESZOQPk02w==
+X-CSE-MsgGUID: +oSGjjpyTimK4Fx3bMtc8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="122163655"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa005.fm.intel.com with ESMTP; 01 Mar 2025 01:40:33 -0800
+Date: Sat, 1 Mar 2025 17:38:34 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fpga: versal: remove incorrect of_match_ptr annotation
+Message-ID: <Z8LVmt9LCrhF6n1Y@yilunxu-OptiPlex-7050>
+References: <20250225163510.4168911-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 76A831F390
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8f2f8fb6ad08b539];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TAGGED_RCPT(0.00)[4cb9fad083898f54c517];
-	ARC_NA(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -1.01
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225163510.4168911-1-arnd@kernel.org>
 
-On Sat, 01 Mar 2025 10:25:55 +0100,
-Zhongqiu Han wrote:
+On Tue, Feb 25, 2025 at 05:35:07PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14e3d7a4580000
-> > kernel config:
-> https://syzkaller.appspot.com/x/.config?x=8f2f8fb6ad08b539
-> > dashboard link:
-> https://syzkaller.appspot.com/bug?extid=4cb9fad083898f54c517
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils
-> for Debian) 2.40
+> Building with W=1 shows a warning about versal_fpga_of_match being unused when
+> CONFIG_OF is disabled:
 > 
+>     drivers/fpga/versal-fpga.c:62:34: error: unused variable 'versal_fpga_of_match' [-Werror,-Wunused-const-variable]
 > 
-> BUG: sleeping function called from invalid context and
-> raw_local_irq_restore() called with IRQs enabled seems can be
-> fixed by below change. if it is valid, will arise the PATCH.
+> Acked-by: Xu Yilun <yilun.xu@intel.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-snd_timer_process_callbacks() gets called from two places, one from
-snd_timer_work() and another from snd_timer_interrupt() where both
-caller cover already with guard(spinlock_irqsave).  That is, it's a
-nested lock, hence without _irqsave().
+Sorry, I thought someone would take the whole series.
 
-IMO, the question is rather why the check of "!in_interrupt()" in 
-snd_seq_client_use_ptr() passed in this call path.
+Applied to for-next.
 
-
-thanks,
-
-Takashi
-
-> 
-> #syz test:
-> 
-> diff --git a/sound/core/timer.c b/sound/core/timer.c
-> index fbada79380f9..5290c1b9f2b8 100644
-> --- a/sound/core/timer.c
-> +++ b/sound/core/timer.c
-> @@ -767,6 +767,7 @@ static void snd_timer_process_callbacks(struct
-> snd_timer *timer,
->  {
->         struct snd_timer_instance *ti;
->         unsigned long resolution, ticks;
-> +       unsigned long flags;
-> 
->         while (!list_empty(head)) {
->                 ti = list_first_entry(head, struct snd_timer_instance,
-> @@ -780,10 +781,10 @@ static void snd_timer_process_callbacks(struct
-> snd_timer *timer,
->                         ti->pticks = 0;
->                         resolution = ti->resolution;
->                         ti->flags |= SNDRV_TIMER_IFLG_CALLBACK;
-> -                       spin_unlock(&timer->lock);
-> +                       spin_unlock_irqrestore(&timer->lock, flags);
->                         if (ti->callback)
->                                 ti->callback(ti, resolution, ticks);
-> -                       spin_lock(&timer->lock);
-> +                       spin_lock_irqsave(&timer->lock, flags);
->                         ti->flags &= ~SNDRV_TIMER_IFLG_CALLBACK;
->                 }
->         }
-> @@ -805,14 +806,16 @@ static void snd_timer_clear_callbacks(struct
-> snd_timer *timer,
->  static void snd_timer_work(struct work_struct *work)
->  {
->         struct snd_timer *timer = container_of(work, struct snd_timer,
-> task_work);
-> +       unsigned long flags;
-> 
->         if (timer->card && timer->card->shutdown) {
->                 snd_timer_clear_callbacks(timer, &timer->sack_list_head);
->                 return;
->         }
-> 
-> -       guard(spinlock_irqsave)(&timer->lock);
-> +       spin_lock_irqsave(&timer->lock, flags);
->         snd_timer_process_callbacks(timer, &timer->sack_list_head);
-> +       spin_unlock_irqrestore(&timer->lock, flags);
->  }
-> 
->  /*
-> 
-> 
-> 
-> 
-> 
-> Thanks
-> Zhongqiu Han
+Thanks,
+Yilun
 
