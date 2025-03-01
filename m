@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-539745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46740A4A811
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:24:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA96A4A814
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CCEF177E3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11D6189D361
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF521BEF71;
-	Sat,  1 Mar 2025 02:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875681E49F;
+	Sat,  1 Mar 2025 02:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="So5E9MlT"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqOPMblY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218C41B423B
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 02:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07352BD11;
+	Sat,  1 Mar 2025 02:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740795824; cv=none; b=ujE00knV1zzyJKgKmbTu+qBQx65jRLCrTfZtH/4AAf2g64fLhcnj9dGJT3d+VEG0NOkNlUAqh0eVXFlHsIRlg0EYct06AY/2Lh7tyfX4L6uBST5Jk1UogDk/24oWt83dXVAgmfkvPdry8PL0PK70Kh6Ln+5b+sx+qnpBap2T3Mg=
+	t=1740795883; cv=none; b=OLQ0Oa5DCqhlb3onPFsiX0hVKq+N7Su8Nb+lqLGioG3+wCuU4DniLIo+PVoX5w8h6odlYSOWgYljPC/BgW4402z7weqDU95oGGBdvRD/89WBRHHK5iYtTnOLR2mUnUwr3SfO0X/ZXM0+smvh/QRIfGFdHL5mLP4CbeD2pTOfJf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740795824; c=relaxed/simple;
-	bh=xY/UISVIf1atfvS7OMuZEMjN7lkQ/iikiRcjhdY1uUg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CfPAOxV9I82tR9ixBZ4rKAFlwJaSUhn8u9aRXZCPU1K3cQEdcD03h7p2h4hnnmUxMhCN/Db6w/GCOSdTsemB3NjWcs6hR9J1cX2nZAn9wvWoALFgfjpXFnr8poGos8IKLesp4bMPh4bVYgIK/16kaarNSZjsUytL7FfSBMpgja8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=So5E9MlT; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fd3b6a6a24so18526757b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 18:23:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740795822; x=1741400622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfDYi42gjS+u1iz1GYPicfPXnoYEpE1W6/kuhPU/S5Q=;
-        b=So5E9MlTlRzDmw0c+Z4XM5pR02TWjJnGjE8CZXyLYRLmebSsbsoyvn3pKFKGmET1kR
-         sALd7G0wtFM8fLOSwdwrksR/jGxMCtqIqkmKIqhP+PNsGMpu3pkK/niTppJhl+cRT/Pp
-         uxtSFNS53wGjqbOzPSZ+sKJ3SyyXqjxhIsDwcVhAMoXJlVY5OLg3NKQc4wWderLrfUA2
-         HI/u+NGSLEFmcW+Ur2yC7SdbTzaC0+WEik9f3xYNNJO9geDlSuhYOsN4EEwVZynCHLJm
-         Gis1J7py7xM9Jm7KBQ80IDMawiTPMGGFgocDebvZg4nCE+Z0jdWWkbbkpzdm+rs5BQWp
-         38xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740795822; x=1741400622;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VfDYi42gjS+u1iz1GYPicfPXnoYEpE1W6/kuhPU/S5Q=;
-        b=kkhPnAs/KFeolBD6vYodz4xTZLZbMVbB8EwBRKlbvyHu7efrbHWscRbKcO8xXZ2Kt9
-         Td6ouzFFstOm2fE9R0Whjx1Y0wogXYQ24kAzrLSncAd0Y7/DxIzT6sAEHQvJ1NFgrEfx
-         pe6tac9FhI0g5qKMM4MyvuYWDNsCu8HUISsVZyK4xw58nByBaVBfosR7o0pf6y0LzqqW
-         160oY14eSSK8ATG++6X7qOmHr+MJcd0/ck4FdSMMBiMy+Xex6R0ZS9rg5d0rxoU5yMuQ
-         NEihphAZ5Tl4Dgj9AVwuYywpAWlq1hcNKk1baMdJsKdLTKhvk4wBW1vy9ltl+7aA2iVG
-         lvBg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ByHQSWTd2NqZWyLj1z+9XmHG9RzyzaWPbUvM4YtmQsG72db4B5ry8Uef2R/H6jT8jNSlUa1jEEwKzPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIKlhGtlhNZNtdzsve5RYWD4KAYjL5vV/0SgjZV6xTZz4EYaKB
-	6SwVHhL2FASm3KNEPXTlULx0/XSZV3BFICC0z2aPewDxU+6yBtkQ3BOFS/aaYms=
-X-Gm-Gg: ASbGncs21iJqbLnMLXkW+6HJBD+FPy7TvWcvoAIojth1bfdPxa+5ZEg3nVfi9CWX5vP
-	ZXcTV7MOmhElFrCbX+hEK9qTUhh3l9mGNvfDgAthHnn6ftFzKo0c4EyeY+wjEv9Fe9/muKHcuQc
-	IbyymudX64tWw2OJe0+ynq4ymyP8KH9YTORaaZN0891c2IPZ/okAvi3kiNdsL/MSYXdXibkHzDA
-	ISOlRwDPSbhvvLZVNqxERxSr03FPBcFlOjIbPwgDI2OQbynIdNqDQcSVWrVrBcH348qEQzhY+wO
-	eHqWibH/t+XatkoAHJx5ccU3lgOH/Zvpq7uMPD8=
-X-Google-Smtp-Source: AGHT+IEBXBECUiYtnJB7xtAXg6I/62QADZwXGKn1Rg9EBrqtWsNXbyRRrltHVGhBDMtUTvfcTG7yjw==
-X-Received: by 2002:a05:690c:4b8c:b0:6fd:47b7:9730 with SMTP id 00721157ae682-6fd49fb60a6mr78166737b3.12.1740795822147;
-        Fri, 28 Feb 2025 18:23:42 -0800 (PST)
-Received: from [127.0.0.1] ([207.222.175.10])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3cb7e02dsm10175307b3.84.2025.02.28.18.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 18:23:41 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250301001610.678223-1-csander@purestorage.com>
-References: <20250301001610.678223-1-csander@purestorage.com>
-Subject: Re: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in
- header file
-Message-Id: <174079582102.2596794.10638072394312089078.b4-ty@kernel.dk>
-Date: Fri, 28 Feb 2025 19:23:41 -0700
+	s=arc-20240116; t=1740795883; c=relaxed/simple;
+	bh=X4A2P0pAL5w+zEE9x8XbTmTjGewsrBxr+F1DGFTT8Jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YiFYKLQfvmRdG/UZUSUlEC2UVh6JpDbif3F9sIhT8U7S5vlFfFgDTDhNBANHxuJplRW1DWwYQ5e/x9/X6VnoBNRPuMlWVx1qnXZCTXSARqd/zpKAYfcFCI+QFjXEUIHfE4Z4FmXoPnjjopcibptFp3kt8eo1ZvU3N9Uw8IUv3YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqOPMblY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1D9C4CED6;
+	Sat,  1 Mar 2025 02:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740795882;
+	bh=X4A2P0pAL5w+zEE9x8XbTmTjGewsrBxr+F1DGFTT8Jk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SqOPMblYHxWBy67SUWSrGjjjiQUJFZN5EZ/kkbU8ho8C3apRfWXcy1prcKCZHr7SG
+	 MKHBs8IzsTlZiHrGdl0bGeD3qYY9bzu2cETN8EOoTinC4ZHKCIDHMk8z6rZOqq3nQh
+	 rEpKNhke6shCtG8QqAqWEoQEp/d8vYn/HZ/Xeyruz1IEzNUgLE+Ql7l9nMiSjRDpoC
+	 bTgg4+PupGZYjEP52NnwKFZqCj6SHpC5sD7EJ688AodWFUHVACVWLXa28+b5h6eci3
+	 Rt2xFZxzrn+HesWhjeutzl4rLwrWBdbLhUBk0RU5Pm9LqALqus+XV7aHSjIjZgXxgN
+	 0XNuN/Wv+U9OQ==
+Date: Fri, 28 Feb 2025 18:24:40 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Parthiban Veerasooran
+ <parthiban.veerasooran@microchip.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net 2/2] net: ethtool: netlink: Pass a context for
+ default ethnl notifications
+Message-ID: <20250228182440.3c7f4709@kernel.org>
+In-Reply-To: <20250227182454.1998236-3-maxime.chevallier@bootlin.com>
+References: <20250227182454.1998236-1-maxime.chevallier@bootlin.com>
+	<20250227182454.1998236-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
 
+On Thu, 27 Feb 2025 19:24:52 +0100 Maxime Chevallier wrote:
+> The only relevant user for now is PLCA, and it very likely that we never
+> ended-up in a situation where the follow-up notif wasn't targeting the
+> correct PHY as :
 
-On Fri, 28 Feb 2025 17:16:07 -0700, Caleb Sander Mateos wrote:
-> Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
-> other files.
-> 
-> 
-
-Applied, thanks!
-
-[1/2] io_uring/rsrc: declare io_find_buf_node() in header file
-      commit: 98ddbefafecf270d51902cabfe289df10a702cef
-[2/2] io_uring/nop: use io_find_buf_node()
-      commit: 15d86dd9019c7a97bd8c5b6880870b97e7cc74ea
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+PLCA uses the ethnl_default_* handlers but it seems to operate on PHYs
+now. How does the dump work? Shoehorning the PHY support into
+the ethnl_default_* handlers is starting to look pretty messy.
 
