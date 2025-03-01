@@ -1,179 +1,125 @@
-Return-Path: <linux-kernel+bounces-539966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17095A4AB63
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:50:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369D2A4AB66
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78443189778E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:50:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B77A16D1E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445CD1DF75D;
-	Sat,  1 Mar 2025 13:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE541DF73B;
+	Sat,  1 Mar 2025 13:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0fHVrJH"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="oM2ogdSr"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA881DED51;
-	Sat,  1 Mar 2025 13:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51C1E522;
+	Sat,  1 Mar 2025 13:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740837032; cv=none; b=qLWTwmBwdoTtIvRU9U1uwXcJqvqkWOwaCZMRPMZt7Jbp0LuYnBPE1vYIHbIZRe+qcJp8FeT05rHzjIf1trP/KPjWp2/hWXmtu2uO5VCX/oXWQ6SHc9Ev3e0qSRJen1gfeIcPW8P6z6oPfpU9BWv6tCv0pUZJHMpP+BumDS7Ib40=
+	t=1740837105; cv=none; b=kWezfzcjvRojxyFaSAH/kt00BlzvMXd17U181TPRIiqN7rgWPmV/puAyidal2tO4KglfXH2WmpI6372mAxlweitprd2eMrE6r3g18Bcf/u3HmR+oEe77zFL+vC8suBCer1i0qM0lsFCD//GcKxX8Zi386ia5w48B3XxIypURG18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740837032; c=relaxed/simple;
-	bh=ME5xNwEUvmZIhrCna/NGeAum7nG3bjJMPxsf3gI42Bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANzOm52PokiTjx1yBkvvsrshBlGP8YG16G0TtWpph9rDf43gNfJkW33oF5nN9t1nweCJ+6yoOrt9tMlDUlTkfpVsD9jMQEDpL3i/KCbmUL80v0q97q6ydWkaYVJvcVIzE9XFTQ9M1P3joYJw2sVMW88b5+guL5l96/jALh52zns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0fHVrJH; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-22113560c57so59084025ad.2;
-        Sat, 01 Mar 2025 05:50:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740837030; x=1741441830; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pJgxQ9kTw71K96V2pNjoEy9ewjLpxCqdEPFpCMMN/U4=;
-        b=R0fHVrJH2Ms/6/iKsBK4NeJNQjyIXmFB6B9L4AarEAsS4eZ20pbaFImTy+TkRObknG
-         Zf/INMiGF6NJfZS1OhneR48y4QLpc0uM9btq8bFKvA6zkkzS9ydWW3Gj58ZNP76JfoUE
-         +eicF6T4hBFsHN5n05K7pVVRAF1jD1GLt/gNsLHfRAecUPCtt40UcWy0NmIxFtOt8Fo3
-         n6vqMjRg6tpFoFhcXNPgHbaBewVw+TB+oFGMw/vAn7fbZpqhLwr0cOMQ2nt0YAj6+mGF
-         3R6GCZ+BW5bPmVWoaHORgQ6GM5dAX77/cplkZ+AvJXxJgkWFoXNAIpa7jgVs8UjRhuBy
-         Rtig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740837030; x=1741441830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJgxQ9kTw71K96V2pNjoEy9ewjLpxCqdEPFpCMMN/U4=;
-        b=dGMYXNGhvPWID0N6aessuO6+fBR+UgG7+HDDts8sldG1c3Pn8elZPBqyzy254P1nRI
-         L5VaVwPJO6qcDwvbYmGt5c2AWKXcfxHkENr1Xznit7J2BSS3yZdtFaIyCuWDAuC4COHo
-         2cFQSt+ANRxjbXqhD6I2KS2B2V+rUODDNN9hhhcMqBAuRGFyPRo9Z0Q0XSmKspJiLwxQ
-         cYO1k4JCAKWLuqMZg4tzJDyjMZlDG+ngM/zWXE7f4GwdBiq6E8h3sfC+CCDxRnLKFNho
-         77T3i/n1wDSOS63bSn+MvCxTuECf55YNYZMqleyPEBMO18K8WheLlmtEdiZ5BIZZgSb4
-         YWdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW1sRmtZY25fdaiHE/asicouqQ4d+mbisyV4s1tng6R/bp9lA/VjwTGqOriaofQqJPCY9smZ8W+b0WSXOz@vger.kernel.org, AJvYcCWR6O3z0/p2UsP9323KKWo0Lop2esRIMoQKYnKqNW5NC+yF11oXMqL7ivyACW5GF8fRNQOv2Oms@vger.kernel.org, AJvYcCX7z4RNFIwJhJ+oYKHXD2RaAsM6ZCWNZKcCnb/Gv4FEfsfd4HICVSk+9/f7s4vqy8aDgMfLE1GdRppWx3I=@vger.kernel.org, AJvYcCXUyUaZRc8JiI1vciBBvR/1zrrdbVFC9TDXuDk0o5A5zLN+vo8vOqokirhTEAFTJyjaR3qHnNm9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhxRXvzL4mUvEFqao8JoYToVzf2sIpuL8LR9ALt/x7Fa68pKhL
-	6UoJ4NgqMtiVHB7tW2vCg3mNZ7hHbLVY1DFCvgxgzWFhs3iogInD
-X-Gm-Gg: ASbGncuPhgaVfc2VGjJBvzwxDTIFzK0DT4EcB8gBQUJiTnVF1oswPEbex/ZFKOsG3Fh
-	VUHrL3Z0fUlRyWERk/GtjOrm5gi6bX7IllPj08MOLEzyXjA38pQiyA8y4gJDjK9+b8Nv2dHazbD
-	oxiKiQ1UeM18x7bXjEdfgKk5EqNnqTcBOoEXsh9zjWvv7Jsg8LNR0w8CG2Vqmi1KUbDdQ+Ed+R6
-	S3sBrI6ONYYCDNsEYsOJqlew2imWsLE7DaHVIxqDEWiXGWd+O6bu/6SDX+UUfM1IgsACmiEJDel
-	kuLQYUlJmtfHJuSeAGP+vII8RACNTnidN9JAgevyEPv5G5up3zHJOhbuUH/TYxs6zi7VxRowKnD
-	A5A9FPT0sV22rVnmL0OZ9uP/AMafsdEKK
-X-Google-Smtp-Source: AGHT+IHaL4hbyWgR+iPuNLWB5nxuPIRAPj7rx5fVWakRllPjjwrCtFNjMmeB9yAzirq0UbQe6nIUbQ==
-X-Received: by 2002:a17:902:fc87:b0:223:6744:bfb9 with SMTP id d9443c01a7336-22369247768mr116255305ad.41.1740837030212;
-        Sat, 01 Mar 2025 05:50:30 -0800 (PST)
-Received: from ?IPV6:2409:8a55:301b:e120:3c9b:1380:5d8c:26d0? ([2409:8a55:301b:e120:3c9b:1380:5d8c:26d0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235052005fsm48280085ad.227.2025.03.01.05.50.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 05:50:29 -0800 (PST)
-Message-ID: <cc3034c6-2589-4e9a-97af-a7879998d7d8@gmail.com>
-Date: Sat, 1 Mar 2025 21:49:55 +0800
+	s=arc-20240116; t=1740837105; c=relaxed/simple;
+	bh=YTJP23WW41o2PbQVahhPiI+u5spBFJhoWa1lqhO5P7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Syn2bFbH1uIqeUBqxvIdKkhR5uFfOQlH4xCiWJmFgEAp4Cx1Of7x/bm7EPnqZ0MLcjg/EE2zuIyHTqW+wqD7lXUpjFqZSCmFTc/f/FiFzDK07DKgMHc7uPsipyfaJLOv1MuYK3Msu8WRa1UIRgEoRKgDQDlIuaBc28gZHf6yutk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=oM2ogdSr; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id D77412E08F4A;
+	Sat,  1 Mar 2025 15:51:38 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740837100;
+	bh=SdcCq4Bn8BvVfkKQrC7rH6P6W4SeLi+Ts1tELGCaJBM=;
+	h=Received:From:Subject:To;
+	b=oM2ogdSrFcgOqM5eaZiCKf+/mV9840yyalOrmuxdeEXgo3h9sRNfz8yAR24geFWRc
+	 1kCrpHR8uHpDuktLxowkbTfLFZWdUvKbS65RNicCrarF4zVceoj+eA6RJzNSsvz/iP
+	 J3of5qpiZqyjDCVjoItAERijgXqMsN3jxcjLfKzc=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.173) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f173.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f173.google.com with SMTP id
+ 38308e7fff4ca-30797730cbdso29156411fa.3;
+        Sat, 01 Mar 2025 05:51:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUHGddIVlLeDuNbc/+HpF/wKukqew/WQHwowabl4aK4waZmZgUKS1WNSO3bvsx0QJfm+28ZyWQ3WuRtGGZi@vger.kernel.org,
+ AJvYcCWR2SDsejv5MlbO3TNHwVxHuBHhnQ5g5PzOQJV7w61WWjQAgmGOjgfltziY4NFbr2Yma+dJsIG7HEPoQsdG20AK2NjdDg==@vger.kernel.org,
+ AJvYcCXVLHgToWL7/k2q4WqzxYoyCi6R5JqEIIfqrtloXaS37hxcSU8Pn8hDV9lrfMdVKWysp4Sy5XM4k9Sg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSAnXL6JSNMUEztnVQQyf00Kw+vtbrQ/eS4UmpFM+Eih+9dIQC
+	+WU0OCeugEdl1bPC5m//27Rt2GmoqNW0WHLKO54kVbGpfPtRgHKTMz1OgZQmopnWTD5X2Uvd/h6
+	Oo5dzzy4eLhvMA+OKuV5X229eUdg=
+X-Google-Smtp-Source: 
+ AGHT+IEg8CoQtxbP5TzTnoUS6Iqm6WraDWNIBrPuQd1JEZXlkk9IzsHlW6KJaar5lSeKBdBbMgXbKF3LZ+IzJDzDDIw=
+X-Received: by 2002:a2e:be15:0:b0:300:26bc:4311 with SMTP id
+ 38308e7fff4ca-30b9326afc7mr34766591fa.18.1740837098219; Sat, 01 Mar 2025
+ 05:51:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: page_frag: Fix refill handling in
- __page_frag_alloc_align()
-To: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org,
- akpm@linux-foundation.org, linux-mm@kvack.org
-Cc: decui@microsoft.com, kys@microsoft.com, paulros@microsoft.com,
- olaf@aepfle.de, vkuznets@redhat.com, davem@davemloft.net,
- wei.liu@kernel.org, longli@microsoft.com, linux-kernel@vger.kernel.org,
- linyunsheng@huawei.com, stable@vger.kernel.org, netdev@vger.kernel.org,
- Alexander Duyck <alexander.duyck@gmail.com>
-References: <1740794613-30500-1-git-send-email-haiyangz@microsoft.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <1740794613-30500-1-git-send-email-haiyangz@microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250228170155.2623386-1-superm1@kernel.org>
+ <CAGwozwFoqUPiZjozj5MHV5-4dVF3Ef0Wy-Sn5v38keHp2BfStQ@mail.gmail.com>
+ <8ae80eef-ce73-401a-97ae-cc62416bd2a7@kernel.org>
+In-Reply-To: <8ae80eef-ce73-401a-97ae-cc62416bd2a7@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sat, 1 Mar 2025 14:51:26 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwEBYD144ZTzhB7dFMkTb1cxL6Xw4zm=RPKsF0BXzxOG7Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JpHha3Cr21Qgp7GtV-gNQ6OaekouYABlHKKjwOlNrzBGgSX6gQ4koIe8Mk
+Message-ID: 
+ <CAGwozwEBYD144ZTzhB7dFMkTb1cxL6Xw4zm=RPKsF0BXzxOG7Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add support for hidden choices to platform_profile
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174083709969.7533.15084913044942707860@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-+cc netdev ML & Alexander
+On Sat, 1 Mar 2025 at 14:44, Mario Limonciello <superm1@kernel.org> wrote:
+>
+> On 3/1/25 05:09, Antheas Kapenekakis wrote:
+> > I just tested this. The behavior of this patch series matches mine
+> > 1-1. Feel free to add a tested-by.
+>
+> I understand your intent, but can you please explicitly type out your
+> tag?  This is especially important because maintainers often use 'b4' to
+> pull all tags out of an email thread when accepting patches.
 
-On 3/1/2025 10:03 AM, Haiyang Zhang wrote:
-> In commit 8218f62c9c9b ("mm: page_frag: use initial zero offset for
-> page_frag_alloc_align()"), the check for fragsz is moved earlier.
-> So when the cache is used up, and if the fragsz > PAGE_SIZE, it won't
-> try to refill, and just return NULL.
-> I tested it with fragsz:8192, cache-size:32768. After the initial four
-> successful allocations, it failed, even there is plenty of free memory
-> in the system.
+Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-Hi, Haiyang
-It seems the PAGE_SIZE is 4K for the tested system?
-Which drivers or subsystems are passing the fragsz being bigger than
-PAGE_SIZE to page_frag_alloc_align() related API?
+> >
+> > IMO it is a bit cleaner/thought through than my series, so I am fine
+> > with dropping mine. Should be as it is essentially a V3
+> >
+> >
+>
+> <strip>
+>
+> Also; Rafael mentioned this in another thread, but please refrain from
+> top posting when possible [1].
+>
+> [1]
+> https://www.kernel.org/doc/html/v6.14-rc4/process/submitting-patches.html#use-trimmed-interleaved-replies-in-email-discussions
 
-> To fix, revert the refill logic like before: the refill is attempted
-> before the check & return NULL.
-
-page_frag API is not really for allocating memory being bigger than
-PAGE_SIZE as __page_frag_cache_refill() will not try hard enough to
-allocate order 3 compound page when calling __alloc_pages() and will
-fail back to allocate base page as the discussed in below:
-https://lore.kernel.org/all/ead00fb7-8538-45b3-8322-8a41386e7381@huawei.com/
-
-> 
-> Cc: linyunsheng@huawei.com
-> Cc: stable@vger.kernel.org
-> Fixes: 8218f62c9c9b ("mm: page_frag: use initial zero offset for page_frag_alloc_align()")
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-> ---
->   mm/page_frag_cache.c | 26 +++++++++++++-------------
->   1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index d2423f30577e..82935d7e53de 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -119,19 +119,6 @@ void *__page_frag_alloc_align(struct page_frag_cache *nc,
->   	size = PAGE_SIZE << encoded_page_decode_order(encoded_page);
->   	offset = __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
->   	if (unlikely(offset + fragsz > size)) {
-> -		if (unlikely(fragsz > PAGE_SIZE)) {
-> -			/*
-> -			 * The caller is trying to allocate a fragment
-> -			 * with fragsz > PAGE_SIZE but the cache isn't big
-> -			 * enough to satisfy the request, this may
-> -			 * happen in low memory conditions.
-> -			 * We don't release the cache page because
-> -			 * it could make memory pressure worse
-> -			 * so we simply return NULL here.
-> -			 */
-> -			return NULL;
-> -		}
-> -
->   		page = encoded_page_decode_page(encoded_page);
->   
->   		if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
-> @@ -149,6 +136,19 @@ void *__page_frag_alloc_align(struct page_frag_cache *nc,
->   		/* reset page count bias and offset to start of new frag */
->   		nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->   		offset = 0;
-> +
-> +		if (unlikely(fragsz > size)) {
-> +			/*
-> +			 * The caller is trying to allocate a fragment
-> +			 * with fragsz > size but the cache isn't big
-> +			 * enough to satisfy the request, this may
-> +			 * happen in low memory conditions.
-> +			 * We don't release the cache page because
-> +			 * it could make memory pressure worse
-> +			 * so we simply return NULL here.
-> +			 */
-> +			return NULL;
-> +		}
->   	}
->   
->   	nc->pagecnt_bias--;
-
+Ack
 
