@@ -1,116 +1,244 @@
-Return-Path: <linux-kernel+bounces-539760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6FDA4A832
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:00:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525E0A4A83B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2AFB1897436
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECAB17220F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 03:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1006B7DA9C;
-	Sat,  1 Mar 2025 03:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782611A7264;
+	Sat,  1 Mar 2025 03:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="VV6Tye0s"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6RrAPlQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F421DFFC;
-	Sat,  1 Mar 2025 03:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740798024; cv=pass; b=V5F3LVY1fDowRDqB1aD+WH1LaOmuUb/cScQeY+FNcuaa39gohdUDwNJyzR1tkYMVN3FZ+O2rZdF3v9mPMAFR0Z+2/yaKrO8tjgTynfvPEsPP93ydT5aPEboiRdMJ8Suxj0RBWFTlSwWvh14Iz7C84zkRlaYNWzWUhPmHvJNT6f8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740798024; c=relaxed/simple;
-	bh=s6wHvNcoVBg3+4pdzsn5oRlUN88czm5v5BrRXH0Ufrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XD7NTEGyEhrgk6j+sMzK8pCtMqBFKCa/ZQ3ki1Vb7fNsxTpGVjTdMD4c0xs4HaIpfRks/pLzLtUKhYjNoLg2gbZpUW3oRrE/CMJWXmuuN70HxBgUiWvDGZEbLNqcd64+uge0FMzHSJ6riFehoa7aDSL9CIszYS3IoS3PwWlDmyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=VV6Tye0s; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740798005; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l3mJJ0oizngCiWR5yk6Mi2hwhDS67xmdGw3OK5dwJ+62wrsoUM3/x5e8h3q2cdQGo/H249vrhSde3XdQOhbw+7NFxusJ7Cii84HvakMvbwQK1EcHeW5q2e1D3fP4hMhBVzYZG/K3f4MmFsPTAaQ7eW3LO6TuG4ZUHHT95UkEGKI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740798005; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=cZF6XzsvCR1XR8oqjw3BHQdejOWrm4ZSbzyxGwvVlH8=; 
-	b=kgkwGgQ2ZHgzj+lJP23vGkZX7h2ZqMKuz/h3laAxR7U+mEGZ3I16udU6x6x5vjiwyxV7a8lYlTukXf7ClAKn4G5TT/iO9yqr+EyoAmEwUnTA12J47h8CV23Q6H+73tLzC3TDxd6g8MOJ0ixb5QBm/VXXJfHmUgPIe1cSkl7Klrg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740798005;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=cZF6XzsvCR1XR8oqjw3BHQdejOWrm4ZSbzyxGwvVlH8=;
-	b=VV6Tye0swami4jGO/829GSCGko9XYWdG1JsqhP8vXw9n+yf9G5mNSkRy65Ep6B9V
-	6foS5BtxBpcv02TGOkj4jPG55CrMd1KH4/Krtzs81vuSgrnVnUO0rd256v3HlJcCXU/
-	Yw8HXweZo7x8zoVYFXF/xkeGVll/4klZMfSwryTo=
-Received: by mx.zohomail.com with SMTPS id 1740798002751500.5632278646382;
-	Fri, 28 Feb 2025 19:00:02 -0800 (PST)
-Message-ID: <d11bd4d3-2e8c-4e2f-9b2f-6bbe424058d3@zohomail.com>
-Date: Sat, 1 Mar 2025 11:00:01 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E9A258A;
+	Sat,  1 Mar 2025 03:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740798401; cv=none; b=RGuhnpbLFAqvw+717v6jVHCEqI1t7cREu1ivqaSrzU3FymdtclTkzyfNRcrK7qjS1YTX7ITYuyqkz/LZ/2ouVKs9JeZoFla5eknt95oo4qwgldyd4DEhg3rN14jWW1XzG1jBC09OUpI7W2bCm8pBHPqTsmM6BfsSxmenDa95pPg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740798401; c=relaxed/simple;
+	bh=d4fr13w6NqBDZnKtfIoJruFH/zIQdAD23l+WW0qbwcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nq4ak+yAglqJSur2zEYFQWeR4yyHoE38ddgu0Wm9pT1n3EHRNnhM+4uH8JKEibQiSzq9JDShme0uES30X79Dj6yvSRqEj/OYiWA1YcPMdttFAyXCSC7Agc7VaNjLM1ybJReq6j3xmipXzfuyKO7ZhA5dwp9zuOzUtAeCHrr3M+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6RrAPlQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E61DC4CED6;
+	Sat,  1 Mar 2025 03:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740798401;
+	bh=d4fr13w6NqBDZnKtfIoJruFH/zIQdAD23l+WW0qbwcg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=n6RrAPlQON/vV+L9tp2VbGXYcXIrNNCs66VcFCEEr1iHS8Ul3fWnWzaRWy8nvj4ob
+	 /H5LDlStxLwK+YnGedk3KJzjRFbf8xhuUOYMlndIbHPOwzaIOYcof9b3c4StlsW1U/
+	 4Upw7BNKycO3dbDKFOS19fnnqBfww2PYKGdOBpSlwvqiVKIUuTtBg4g5ZbJaDcquSH
+	 11W/0gUkW7IGOTAVQjLnrc1H/uS0cdsMrbjAL05U9BzoFdA5AeP0CCZbsPNjtY32D6
+	 03Kv7fkQXto2cMQjhqr1Ea54Kcs9rU0LiBuISJs31gvXly51ZTd7ICXocJyMAnNlln
+	 Utj4osVN4V5wA==
+Date: Sat, 1 Mar 2025 03:06:25 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 9/9] iio: adc: ti-ads7924: Respect device tree config
+Message-ID: <20250301030625.54c43d37@jic23-huawei>
+In-Reply-To: <3279aa9348e7149bfbd433daaa201f2eb5873e1f.1739967040.git.mazziesaccount@gmail.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+	<3279aa9348e7149bfbd433daaa201f2eb5873e1f.1739967040.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
- parsing
-To: Dan Williams <dan.j.williams@intel.com>,
- Alison Schofield <alison.schofield@intel.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227103251.390147-1-ming.li@zohomail.com>
- <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
- <4c97ec3a-3435-4e79-8265-6a82ae930c3e@zohomail.com>
- <Z8IBuE714QNscgfJ@aschofie-mobl2.lan>
- <67c24a88bb358_1a7729481@dwillia2-xfh.jf.intel.com.notmuch>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <67c24a88bb358_1a7729481@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227d46a6e82f5a9e6e01583c3d70000e9db9a12217fdf05a65132789f6dea16da2d72dc7f14fa9d30:zu0801122783ef9dae2e8277d6e44d144500004c79635f8fc426a1a4d391c2c55b4f5649275bd484c4301695:rf0801122d9b87e4d4b1754ae2d76601e80000502543d7623ddec995aabde8ac9bb1ea608cebcb8670dbe0e2abecfc5a5b79:ZohoMail
-X-ZohoMailClient: External
 
-On 3/1/2025 7:45 AM, Dan Williams wrote:
-> Alison Schofield wrote:
->> On Fri, Feb 28, 2025 at 10:47:12AM +0800, Li Ming wrote:
->>> On 2/28/2025 5:47 AM, Alison Schofield wrote:
->>>> On Thu, Feb 27, 2025 at 06:32:51PM +0800, Li Ming wrote:
->>>>> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
->>>>> decoder capability, But according to the implementation of
->>>>> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
->>>> How does a check against the spec maximums benefit this driver? Is there
->>>> a bad path we avoid by checking and quitting at this point.
->>>
->>> My understanding is that no a bad path on driver side if the decoder_count is greater than the maximum number spec defines.
->>>
->>> Driver just allocates cxl decoders on the port based on the value of decoder_count. But I am not sure if hardware will have other potential problems when it didn't follow the spec.
->> I had the general thought that the driver is not responsible for
->> compliance checking the device, unless it affects function. Excessive
->> decoder_count's sound like they cause needless allocations, so let's
->> stop doing that - as best we can. 
-> Only if we see a device in the wild that causes an actual problem.
-> Otherwise this is a losing theoretical game of adding checks for things
-> that will likely never be violated. The way to address devices that
-> violate spec expectations *and* cause end user visible pain is to add
-> quirks. The allocation of a few extra decoders is does not amount to
-> that standard.
->
-> Lets not add checks for benign issues "just because", or "just in case".
-> If the check is cheap and we need to do it for the driver's own internal
-> sanity, fine, but if it's just being strict for strictness sake, please
-> no.
+On Wed, 19 Feb 2025 14:32:23 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Got it, thanks for explanation.
+> The ti-ads7924 driver ignores the device-tree ADC channel specification
+> and always exposes all 4 channels to users whether they are present in
+> the device-tree or not. Additionally, the "reg" values in the channel
+> nodes are ignored, although an error is printed if they are out of range.
+> 
+> Register only the channels described in the device-tree, and use the reg
+> property as a channel ID.
 
+No to this one in it's current form.  The nodes are just there to provide
+the labels.  Maybe it is fine if we fallback to registering them all if
+none are provided.
 
-Ming
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> Revision history:
+> v2 => v3: New patch
+> 
+> Please note that this is potentially breaking existing users if they
+> have wrong values in the device-tree. I believe the device-tree should
+> ideally be respected, and if it says device X has only one channel, then
+> we should believe it and not register 4. Well, we don't live in the
+> ideal world, so even though I believe this is TheRightThingToDo - it may
+> cause havoc because correct device-tree has not been required from the
+> day 1. So, please review and test and apply at your own risk :)
+> 
+> As a side note, this might warrant a fixes tag but the adc-helper -stuff
+> is hardly worth to be backported... (And I've already exceeded my time
+> budget with this series - hence I'll leave crafting backportable fix to
+> TI people ;) )
+> 
+> This has only been compile tested! All testing is highly appreciated.
+> ---
+>  drivers/iio/adc/ti-ads7924.c | 80 +++++++++++++++++-------------------
+>  1 file changed, 37 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-ads7924.c b/drivers/iio/adc/ti-ads7924.c
+> index b1f745f75dbe..a5b8f7c81b8a 100644
+> --- a/drivers/iio/adc/ti-ads7924.c
+> +++ b/drivers/iio/adc/ti-ads7924.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  
+> +#include <linux/iio/adc-helpers.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/types.h>
+>  
+> @@ -119,15 +120,12 @@
+>  #define ADS7924_TOTAL_CONVTIME_US (ADS7924_PWRUPTIME_US + ADS7924_ACQTIME_US + \
+>  				   ADS7924_CONVTIME_US)
+>  
+> -#define ADS7924_V_CHAN(_chan, _addr) {				\
+> -	.type = IIO_VOLTAGE,					\
+> -	.indexed = 1,						\
+> -	.channel = _chan,					\
+> -	.address = _addr,					\
+> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), 		\
+> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> -	.datasheet_name = "AIN"#_chan,				\
+> -}
+> +static const struct iio_chan_spec ads7924_chan_template = {
+> +	.type = IIO_VOLTAGE,
+> +	.indexed = 1,
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+> +};
+>  
+>  struct ads7924_data {
+>  	struct device *dev;
+> @@ -182,13 +180,6 @@ static const struct regmap_config ads7924_regmap_config = {
+>  	.writeable_reg = ads7924_is_writeable_reg,
+>  };
+>  
+> -static const struct iio_chan_spec ads7924_channels[] = {
+> -	ADS7924_V_CHAN(0, ADS7924_DATA0_U_REG),
+> -	ADS7924_V_CHAN(1, ADS7924_DATA1_U_REG),
+> -	ADS7924_V_CHAN(2, ADS7924_DATA2_U_REG),
+> -	ADS7924_V_CHAN(3, ADS7924_DATA3_U_REG),
+> -};
+> -
+>  static int ads7924_get_adc_result(struct ads7924_data *data,
+>  				  struct iio_chan_spec const *chan, int *val)
+>  {
+> @@ -251,32 +242,38 @@ static const struct iio_info ads7924_info = {
+>  	.read_raw = ads7924_read_raw,
+>  };
+>  
+> -static int ads7924_get_channels_config(struct device *dev)
+> +static const struct iio_adc_props ads7924_chan_props = {
+> +	.required = IIO_ADC_CHAN_PROP_TYPE_REG,
+> +};
+> +
+> +static int ads7924_get_channels_config(struct iio_dev *indio_dev,
+> +				       struct device *dev)
+>  {
+> -	struct fwnode_handle *node;
+> -	int num_channels = 0;
+> +	struct iio_chan_spec *chan_array;
+> +	int num_channels = 0, i;
+>  
+> -	device_for_each_child_node(dev, node) {
+> -		u32 pval;
+> -		unsigned int channel;
+> +	num_channels = devm_iio_adc_device_alloc_chaninfo(dev,
+> +					&ads7924_chan_template, &chan_array,
+> +					&ads7924_chan_props);
+>  
+> -		if (fwnode_property_read_u32(node, "reg", &pval)) {
+> -			dev_err(dev, "invalid reg on %pfw\n", node);
+> -			continue;
+> -		}
+> +	if (num_channels < 0)
+> +		return num_channels;
+>  
+> -		channel = pval;
+> -		if (channel >= ADS7924_CHANNELS) {
+> -			dev_err(dev, "invalid channel index %d on %pfw\n",
+> -				channel, node);
+> -			continue;
+> -		}
+> +	if (!num_channels)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < num_channels; i++) {
+> +		static const char * const datasheet_names[] = {
+> +			"AIN0", "AIN1", "AIN2", "AIN3"
+> +		};
+> +		int ch_id = chan_array[i].channel;
+>  
+> -		num_channels++;
+> +		chan_array[i].address = ADS7924_DATA0_U_REG + ch_id;
+> +		chan_array[i].datasheet_name = datasheet_names[ch_id];
+>  	}
+>  
+> -	if (!num_channels)
+> -		return -EINVAL;
+> +	indio_dev->channels = chan_array;
+> +	indio_dev->num_channels = num_channels;
+>  
+>  	return 0;
+>  }
+> @@ -370,18 +367,15 @@ static int ads7924_probe(struct i2c_client *client)
+>  
+>  	mutex_init(&data->lock);
+>  
+> -	indio_dev->name = "ads7924";
+> -	indio_dev->modes = INDIO_DIRECT_MODE;
+> -
+> -	indio_dev->channels = ads7924_channels;
+> -	indio_dev->num_channels = ARRAY_SIZE(ads7924_channels);
+> -	indio_dev->info = &ads7924_info;
+> -
+> -	ret = ads7924_get_channels_config(dev);
+> +	ret = ads7924_get_channels_config(indio_dev, dev);
+>  	if (ret < 0)
+>  		return dev_err_probe(dev, ret,
+>  				     "failed to get channels configuration\n");
+>  
+> +	indio_dev->name = "ads7924";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &ads7924_info;
+> +
+>  	data->regmap = devm_regmap_init_i2c(client, &ads7924_regmap_config);
+>  	if (IS_ERR(data->regmap))
+>  		return dev_err_probe(dev, PTR_ERR(data->regmap),
 
 
