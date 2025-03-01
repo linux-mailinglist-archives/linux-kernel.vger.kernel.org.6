@@ -1,157 +1,193 @@
-Return-Path: <linux-kernel+bounces-539718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB16FA4A7BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:58:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E98A4A7C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABD1172304
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E34E3BA629
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D199A19007D;
-	Sat,  1 Mar 2025 01:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F04C17A2F0;
+	Sat,  1 Mar 2025 01:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f3fHT3md"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZB+v+4Ok"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011038.outbound.protection.outlook.com [52.103.68.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8500F185B62
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740794291; cv=none; b=n7w4hWAtEm7bk1PrCe+CWevoJo/NtoUR/SkObfwPdskE3KYx6r956EHdCszr3pd2fIqiL+D6CLOqS7aoZQHh+PyXn33qQlNaiKobfBLislcYI1brknODLr8juNB9DbS6Dm3vgt02qFu8A/s5O/PUjOj4lJ54Tj06ABv7io9hSVA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740794291; c=relaxed/simple;
-	bh=kEDclhow7/2dMewcPPCcm8KpJgAP5iy4v8Dp4xuatyY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ly362D/s4NO1rPKEAqpMefp70ZoHpZf02uJuqfN+pSaSNCdn8SeYELlnfsy6f3oM3PZHvk82PpY1UGmWRvnV7eI7eSyAze57IsBr39oXSyVJQYZB8Ti7z8jayqmgXRP8c4+C2450lUgMgeiSd8na84dFj/q/w4o0ep5ud1NIDBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f3fHT3md; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740794288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KrUFtURkrk23cDvKk5L+52QjpEx0HNlammbx4W6zE+s=;
-	b=f3fHT3mdDcAHZLwPhJu2cMzj0bSxVrgqbGfdna/nPPKmbxhM/f5726aEmH7B63Iswr4fut
-	ZYn9P9C/96xdTor3I4HzKbP7QyGJYhVi10qiKVXATQcwI8d/sTJsHgnFOH9VH0/x00+pKt
-	O9onn3U1YrE1m6mMse+BL/Q9f/8AyOc=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-VTCQUevrMsaaQ6AC37WEgw-1; Fri, 28 Feb 2025 20:58:06 -0500
-X-MC-Unique: VTCQUevrMsaaQ6AC37WEgw-1
-X-Mimecast-MFC-AGG-ID: VTCQUevrMsaaQ6AC37WEgw_1740794286
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c0a3568f4eso300163185a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:58:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740794286; x=1741399086;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KrUFtURkrk23cDvKk5L+52QjpEx0HNlammbx4W6zE+s=;
-        b=k8rOZWuHGt+bZ0NPvmIRHXGsksejWZHV/GvYQrAnJ4VlcC+zQIJysREqJvgESUuzG/
-         RjvTCRrl8vx7uImrkJ1JUmout8CFuspKhW2PftsqE0rwSowuncTOw7ExCvORWTD012aD
-         S4GbxfjnzL8bJepqeemPCroOZapmo3SMm5p5gNnfw/BALwALc+qHhFN4o6PJZj+twp4m
-         0j7sOf459IcW+BcC8OwTgJ5LrV9uJJn7Zag0fWWr6VC3pnd5LYy2n3B+rxMh91u6eyF9
-         1yITiVFqI/P7ZPypfA0RGYasjW4VAjQpCWOLWLQCsqy3UCLiu2d8PvIfbVHk1W8xYBlK
-         9qmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcjhQNtI9gSwPnpgR7u2YY8HMgJNV0wjxSk3nTuT8/Zl4JECFYwUlT0RoYgSTouuvDi2dDolFD7QTSbN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvW7xHy63FHmW5lGuG1Tz20WPcXa6ZlBRkSz5O6WFN2z6wduSN
-	dHdSZm2dZXmcrWzKfHVtMhBpj69UedI3HgE3aUuLXfsGLMKzWRkGdlfyRL6L/yVh/PO2Moa5VCv
-	OuFDlR35FeMWlZ10h6Uquji++0edQvkNLet9Q7EQ2l09p3jcMSuoPvwgE85Cmhg==
-X-Gm-Gg: ASbGncvo571P5qKX4hUCxO+Gq+e9P36Ot13ju55nJtSOHfb6Scm5B8EQp9JFL5RTipu
-	NgGB1cX7sgBhNk7CBHYjHjGLG1euJAfBEwXGp0gOYit7ghOKkxAeviTxhNlbSgJITGx5pcfg2a6
-	bEXZ5y6DNhXaY5V9jBnPD1JEKKtfOe+Z/UjRxM87/p91VPd3Uct9o7MWtQ+1G4DvQWOUlsVJYKZ
-	NQpkZvS6xbw+tzHyzynFnMSuM370L/THdYz+7lBYsJvqn5/cyYeyCDwi5F8i5BgcC7k4QVCnpjR
-	nXbuU1k4XbU/HZQ=
-X-Received: by 2002:a05:6214:2f03:b0:6e8:af1d:b12 with SMTP id 6a1803df08f44-6e8af1d0b31mr35061336d6.19.1740794286008;
-        Fri, 28 Feb 2025 17:58:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZPZ6v2IkGLfObb5MGs0WXLJy4Yw5NYy7QNF0RxkrMEW8so/B2hqlKmCYl/y+iZKPFdiRb3w==
-X-Received: by 2002:a05:6214:2f03:b0:6e8:af1d:b12 with SMTP id 6a1803df08f44-6e8af1d0b31mr35061116d6.19.1740794285665;
-        Fri, 28 Feb 2025 17:58:05 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976608f2sm28476866d6.53.2025.02.28.17.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 17:58:05 -0800 (PST)
-Message-ID: <0ca86313d7fc0360009888243b1493c2bd44fb7b.camel@redhat.com>
-Subject: Re: [RFC PATCH 08/13] KVM: nSVM: Flush both L1 and L2 ASIDs on
- KVM_REQ_TLB_FLUSH
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 20:58:04 -0500
-In-Reply-To: <20250205182402.2147495-9-yosry.ahmed@linux.dev>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
-	 <20250205182402.2147495-9-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF1285C5E;
+	Sat,  1 Mar 2025 01:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740794319; cv=fail; b=ht5SJk93CLIJByXw0O2BkgcSiMyltn7+SNhwGtfE15nLaboFxG2elX6gukFElzyOmPAR5O2ZIhtFgkfovrzYEYzNu+aFc0Fcd1lR6dTMjaSSx+R5UdrtZQ8vGI4SGPgf6LnFnz0BP9Q44LOPd37o07N9AJCRXVtvsPxYCNLb960=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740794319; c=relaxed/simple;
+	bh=hdeKCfEI42cdHcKbpd334bYRQIlS78BUpKeq87FGAnc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lmpTbkvK5B2DNpANbvn5dnfaDESS7WHFHmGa4g3cINCgwUTa/1+sZL/fKoAYeecEfQ9IKVyqoKl+Qwma9Qab1N3ata02MYqgJygtJYCntQn5twd0PSlMXeipbnAmggbWfbuYsPOftGZ4uTJw+yUNeo3Z4CIwW0Xmot+qKkG2b0U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZB+v+4Ok; arc=fail smtp.client-ip=52.103.68.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ctBNgsHlVkh6iOKDtnQWCGtrHmzfyzJbcXaR95LO8meaIPqu94sG+i5HiVSrtrmM06Ju1UhLwCnAv/t32fGbcLzy1FbHNctVZked6ekcFhfeM+mF4JKAk0unOuAOjf3Wk0qb3kNQiDV0TmoHWpDaCcnI3bta67pio+C9JE0yveJKzc+ndE/xoU818SjIxYRoEVqaz0iNukufiASSRqLJROFRk5PZ4rPQxRPXATa/btNsiavW0+CWdZE6VIlwgJnyAs+VmQa5tj97IBCnjQTMWxe2v2I5oEURmYLiupHgcGjl4Fp6+YFWXWE3Xxd2AIDQ93lv3WXjFsUIW+9/uybeTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SQmxoVjg+8/QMFEBFschOWaWX0CTsAVlSzF/CK/y9K0=;
+ b=fpBbJDr2guX7VKTz5exSoenM6Ib+qGeKg8auePZC227AhGMCtGQKXzvjdNyg9wAHSRt6PM9KmNqcIBYXRgrbHHbBF+mAkIQYJA9WAsRWYBBL4A0bi84a04HI51XF1pcx/o5GSofbXAJWboBBbPw1vSqN2+moSbn0d6QzOTNYYKSMJnIpPuMI29wqmrgLzyviIBCx58npFtriZZxgDvfLK3yy7FuM6gIOSVXldpsb4fq03jLyEF7uMSLk71VzA2u0vHOvLItBjQF32ynpjddZn7hg9zwkCNRbi7F1hJeOGs6OaIwCw0SkjrVnJZbiFNXgXkLH0l9cfK9l4x5F4VLmHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SQmxoVjg+8/QMFEBFschOWaWX0CTsAVlSzF/CK/y9K0=;
+ b=ZB+v+4OkbhNv/Sqc1wupjzxFdyzl5FPxZuRjqX/g8m2mWwaBf1zXa4LvCUJu4U28BhF/FZj8e4AAl6U+FCqy0J6vCIvptASxi5BJygXl5UNGsdkjTzRGJgE2igf9jSXhJ/feyhIa1dsMIkVcKDxGY4N1zlzFyVfDs4OkYg6Hir0aTX/ystAQPs/cMfChe6UXrzITSpizexBbRyLDrq0WXhRVJSXGrjZNkdzT5SgaPRj5TegBRaIk/lP6pekIr3v23dsphTy1vZ3mFiSwx73fOm38xOECX0sxkCHAdCS/0xFsYuxXzdLTNwxEk+cDCJf81hdyyfZlqn75IAkKlY3cYA==
+Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:1eb::14) by PN0PR01MB9098.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:161::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.24; Sat, 1 Mar
+ 2025 01:58:30 +0000
+Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::1b4f:5587:7637:c5a5]) by PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::1b4f:5587:7637:c5a5%6]) with mapi id 15.20.8489.023; Sat, 1 Mar 2025
+ 01:58:29 +0000
+Message-ID:
+ <PN0PR01MB103937D1C23820E0FC43BEA33FECF2@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
+Date: Sat, 1 Mar 2025 09:58:24 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] riscv: sophgo: dts: Add spi controller for SG2042
+To: Conor Dooley <conor@kernel.org>, Zixian Zeng <sycamoremoon376@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@outlook.com>,
+ Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ sophgo@lists.linux.dev, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com
+References: <20250228-sfg-spi-v2-1-8bbf23b85d0e@gmail.com>
+ <20250228-factual-rage-0e1e1e48b009@spud>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20250228-factual-rage-0e1e1e48b009@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR06CA0004.apcprd06.prod.outlook.com
+ (2603:1096:4:186::20) To PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:1eb::14)
+X-Microsoft-Original-Message-ID:
+ <9a7bc5ea-5448-4970-be58-40705e183c45@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN0PR01MB10393:EE_|PN0PR01MB9098:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5c1a7c7-1035-46f2-2b65-08dd58648fc9
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|6090799003|19110799003|8060799006|15080799006|7092599003|461199028|1602099012|10035399004|440099028|3412199025|4302099013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?akV3QTFZUFVCK1ExanhFTkp0amRRK25qMERxQ0pDdTRrMU9ZQ2E2TExsWDQ1?=
+ =?utf-8?B?SmhjYjVaVS9rVldSL0JjdUVGdVF5VStzMW9keERKSHV1SjJwWHdhaVRTWlds?=
+ =?utf-8?B?M1d5dWdUNVY4c0puTkEwU3pvZndib3RPR1NyeWdWR3VZZDhxcWxEN0VRZ29P?=
+ =?utf-8?B?a0J0Z1k0Q3VYeWpwcW9BcjhvOWlOYWtESjVFd2l0Qk5ndmxSajhIbGdmVDhF?=
+ =?utf-8?B?VXFDNTQ5TEp5TmdnZThPeUpjQXJZZjJZdnhMaDRMay9JU2JEandQS2Q3M2FM?=
+ =?utf-8?B?NENERDQ1K2h6T3diSnNyZU5CWUErUkpSSUd5UjIxTUFZWG93SmJNcnhtMjJC?=
+ =?utf-8?B?Uzg5QUM1dHZoM3hLc2s5bHYxS0QwWWJ0aWh4MmZoNk4xK1BjZGoxVHVLQmE2?=
+ =?utf-8?B?TjFrQlFkckU3dW9CZlN3Q1BPTndzM1NSTCs4K3RGaDIyTk5SVDFrcXpNMHhj?=
+ =?utf-8?B?STlwbjlkRzBiTU1tSlZha3ZNY1R3V2hubHp6VWdNYm1CaWhLcXVZVFEwcG1z?=
+ =?utf-8?B?d2FJY1NCemNoSzJwWGNKd05KVXhPc2VWbHUvaHVuRjVYMUozTzNMcGFkZ0Q4?=
+ =?utf-8?B?dTVDcUMyUGhRWklMdHhpcWoyOHlBRnFVbGFHbktzNFMwQTB6QVQxbUJjV1RD?=
+ =?utf-8?B?azlEeE5ieDJXQzhsV3FBMmp2RDhqK1B3MnBxTGpmTFZSTTJCSnRlRzZqTkl0?=
+ =?utf-8?B?Wkw4cnl6Ky9LdnE0NGVsdWVmMWVIOTZNLzNFSUJOL1lLZ2R4U2p6QUxRSXZI?=
+ =?utf-8?B?TzJDRGFEN1BKZ1J5cktZSHdqR3VRVjZBR3kxNmpuWFdXZUhYTHJjbzBqOFZh?=
+ =?utf-8?B?aE51VDNMMWJLcEc0a1NtTUUrMVFQeDRualZmWjBFMHNYOUJ4TG9iSkJtTm10?=
+ =?utf-8?B?Z0xmeHRSd1BJOFFqTlMrVjJnbmJEakhJa1BwVnBucXBEZVJJSmpMdTBiZ2ZX?=
+ =?utf-8?B?a3h6cFl1czdNK3NZUEhHT1F5SE9PZHlhb2YvVFJZT2RHK3B1YTMyMHZMUVNm?=
+ =?utf-8?B?bSs4ZERlcWlqa1B5d0szSFdQcldUZEFJc2pyc2FHcUt5WVhkRnhoN3VlUW5a?=
+ =?utf-8?B?VEtHRGNnSUR1NXpmbHVkVlBnU21rYXM5aHlKdEp5eE5jRmFLZkl1SUIzbWRD?=
+ =?utf-8?B?TTdub0ZxNVNxZG4zSjdmdFduZXNhb3Z1VDZXNzgyRHQvUElwQ1FPU3d1eGNV?=
+ =?utf-8?B?TWJkU0Vvc0hHdmNvaFpzVDA1KzJXRW1nT0RIOGFQb0RwdVZXUnM0bG1tNkxB?=
+ =?utf-8?B?ak9aYWRjckZnOWJPbnJpVi9XSnB2V3NuN1JlMlZwdWlMRDNpY1pJVlFFZlBW?=
+ =?utf-8?B?NElTMnV3SjB0UGNoMG5Tb0V6YjBiU1dyU01KWVBoZlVsc1FuNzMrV0RsY1Ar?=
+ =?utf-8?B?Q3V0RzlST1J0S1lBRGhjRmlUSi9kNi9EV0xHSmJBckRoNXZidWx5VExEdnc5?=
+ =?utf-8?B?T3kwVldKbnltN1NKVVZzUkhWSC96TDFDcTN3V3ZVbit4RExFWW9FQTNMUFVH?=
+ =?utf-8?B?L3Nsb2t6ekdMaS9aNC9QSm5haWNlekJmOUtYY2MyRFdLQ2NIZkgrblFocVRk?=
+ =?utf-8?B?cld5N2s2cmlxNjNoYXZKWldmRnVLZ2s0WU5Ma1VORXNaazFkdmNKb1hTL2VN?=
+ =?utf-8?B?YmNFbW9IVHlwR1NudXRYZnlkemhNbXNnM1BmS3JOdCs0eDhzK0p3QmJJQXg3?=
+ =?utf-8?B?NnkxM3VJbWZkWS8vaUlFNGZvODd6YTdhSEVhL0RzNzhkNmtBcFcxZjl3PT0=?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NE9Jemh1SFZvK2w4a0hzRDlEYnRtckJqSTJjSTVQQlY0VHV5WWhoV2FYZGdG?=
+ =?utf-8?B?WnlQZVJaMzNFc0JSdlJIMnhIN2hYL2ozNUkzQk9kR05MbUNjU0VDYnIxaS83?=
+ =?utf-8?B?VmhoNE5lRDVRZ2UwOUNyRnZVT0grWXFyTU51U3BCcFZxYjdvMEpFYWJ3NGps?=
+ =?utf-8?B?enFtdkQvbEk1TjUzZy84YnArdU5RNEhSNm80Q1p3Wkd1N0Z6cW9TdkVBc3lk?=
+ =?utf-8?B?SVU3VVNzT1JEV1hYYnhCT0kyT1hzMG9aR1BlNHg0c2pYUENZeUkxRytKNXpI?=
+ =?utf-8?B?Rkk5eEZDSFhDRGpDNW02bmFjMzVUc0hxSnhlQ3lVaExaOWZRYmdHMDFmakdn?=
+ =?utf-8?B?MlIrVDVtMTE0STY2RE5ta3dhdFBRMHBka2loZnVUSFhNbW9NcUU1STh3Z2Jh?=
+ =?utf-8?B?ckNaYy9iT2RIQ0hHOGRIbjArSm9ocTN0RTlwZkZzY1ZERUZ1amFCMkw5YVY1?=
+ =?utf-8?B?bzIrRTF1dW1VZnRKc1phV0lzMHVRYS9ISnRLNGtTL0JvS1k5NFhKRS9ua3Nn?=
+ =?utf-8?B?UlVqT1BnaUFOdmEwczEvdS9JdUtXcUVURGlxYlNtWWxoQndDOFRUYzN1L24y?=
+ =?utf-8?B?TCtxQW5ndGo5VXV0NzluUXo1M055SEhzeXh1OHNFRkZEWDI2OGxDdnhYdVNW?=
+ =?utf-8?B?UUVxbzhnWFY5bU5qdFAxVmlaVWpVMHROV2REUmVSUnN5YzVhV3RSYW5LTW5k?=
+ =?utf-8?B?Y05VM0RaV1BzbWtSSGlKa1A2UHhNZnM1a1JzKzZtQ1JtblFFanltYzl2VS9a?=
+ =?utf-8?B?aUxaU044MHByU2F0U0xwZ2t4Wlc3OGF2cG5CZ3h0ZFp2WC9teFhHY24wZ3pH?=
+ =?utf-8?B?V0ozQ1N2bFRWNFpwVVpDem1qYlV0RXZud1FSUHdkMGt5dEFFdEcvSVdaNUZh?=
+ =?utf-8?B?TzI1RzhScVA2SHV6d2FZN25RWllZVTZNbXR5NTlSRzk2QVgzb002N00rY1U0?=
+ =?utf-8?B?WmdJOEp0RWNMdFdXZUp6dDVVZ1RCZU4wNWdhb0I4QktBQlBCOHZUTk85ZzRu?=
+ =?utf-8?B?bHRSbXVVc2w1d2pVNysybXI0d25LdVJCazV1UHdNWFpvMlk2UmxCeFBWNUxi?=
+ =?utf-8?B?aFBTdXdYN3V5NUkraFFMOXBlS3VnV2RlWFZVSEZKUUFVQ1pIRERrRnZ1Mlhn?=
+ =?utf-8?B?OHFFZEFTYVJKa3MyRmVBS1NXM3hidFhlRWJ4a0VQYmJwZEVLMFRWQVZoTW9T?=
+ =?utf-8?B?Q3VzZlJWVXcxSTl0VFIzTVFEWFpVZTJsOEs4cDlVa0d1UUVNVS9yQU1YYjhS?=
+ =?utf-8?B?bm51RXN1ejhuMERmOVVYSUNZdUpWWDd6b1RXNVlxeUZDMVlQcHRxN3lqa0RD?=
+ =?utf-8?B?eHlMcFh2SW1JdGlOWFhRN0ZGRFdBajhEaVF0azY0VG1MZ29PQTArakNTVEgz?=
+ =?utf-8?B?M1UvYUxXK0lsbzhTVHVLNGd5alZDSjROTklSWWUwR2s5ZnFLVmRHa2N6aFZy?=
+ =?utf-8?B?MkR3L1lkczdwMzdhVGoveXZTOEgyRXBQU09iSGR0WWVnZHcvL2JrWTBHUURL?=
+ =?utf-8?B?TWRKRmtHMWFYL1c5ZzNJa0FaU3JvVk5SaHpYU1FPRzh3Y1AwTm42MHZkb3l2?=
+ =?utf-8?B?UW5HZUYzM29LQXZVMHFSY1FGQk9KSUFacHFQTXpkM3dOL0I5dGR5ZTQvZUR0?=
+ =?utf-8?B?RG4zbmxSRFJCdmdYYmZkeGtjZkZWTzlCNnRaY3dWVTRTSStwWnNLbTNHRmV0?=
+ =?utf-8?B?dHh6OEo2WnJ4ZmZWWUliMFFtdUdvbDNrbThqcTIvQmV5YzR4c2pRd0VzK2Zq?=
+ =?utf-8?Q?jMT/ByEUYmEcrvJZHOcpxXNHPJIFT+Z68wWwVO9?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5c1a7c7-1035-46f2-2b65-08dd58648fc9
+X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2025 01:58:29.4010
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9098
 
-On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> KVM_REQ_TLB_FLUSH is used to flush all TLB entries for all contexts
-> (e.g. in kvm_flush_remote_tlbs()). Flush both L1 and L2 ASIDs in
-> svm_flush_tlb_all() to handle it appropriately.
-> 
-> This is currently not required as nested transitions do unconditional
-> TLB flushes, but this is a step toward eliminating that.
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/kvm/svm/nested.c | 1 -
->  arch/x86/kvm/svm/svm.c    | 4 +++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 0e9b0592c1f83..0735177b95a1d 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -491,7 +491,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
->  	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
->  	 * things to fix before this can be conditional:
->  	 *
-> -	 *  - Flush TLBs for both L1 and L2 remote TLB flush
->  	 *  - Honor L1's request to flush an ASID on nested VMRUN
->  	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
->  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 9e29f87d3bd93..8342c7eadbba8 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4044,7 +4044,9 @@ static void svm_flush_tlb_all(struct kvm_vcpu *vcpu)
->  	if (WARN_ON_ONCE(svm_hv_is_enlightened_tlb_enabled(vcpu)))
->  		hv_flush_remote_tlbs(vcpu->kvm);
->  
-> -	svm_flush_tlb_asid(vcpu, svm->current_vmcb);
-> +	svm_flush_tlb_asid(vcpu, &svm->vmcb01);
-> +	if (svm->nested.initialized)
-> +		svm_flush_tlb_asid(vcpu, &svm->nested.vmcb02);
->  }
 
-This makes sense.
+On 2025/3/1 2:22, Conor Dooley wrote:
+[......]
+>> +
+>> +		spi0: spi@7040004000 {
+>> +			compatible = "snps,dw-apb-ssi";
+> I thought were were dropping the use of "snps,dw-abp-ssi" in isolation,
+> and starting to require soc-specific compatibles now.
+>
+> Rob, Krzysztof?
+I'm also very interested to know why we can't just use 
+"snps,dw-abp-ssi", maybe I missed some discussion ...
+I googled examples of soc-specific defined in the code, and it doesn't 
+seem to be much, only arch/mips/boot/dts/mscc/ocelot.dtsi and 
+arch/riscv/boot/dts/thead/th1520.dtsi.
+Specially, I looked at the commits for th1520 and saw this 
+https://lore.kernel.org/linux-riscv/20240703-garbage-explicit-bd95f8deb716@wendy/. 
+It tells if the fallback works identically, then the specific compatible 
+is not needed.
 
-Note that this doesn't really flush the ASID used, but rather ensures
-that we will flush it on next entry via that vmcb. (because of new asid,
-that will be picked, or because we set tlb_ctl in that vmcb)
+This makes me more confused :)
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Regards,
 
-Best regards,
-	Maxim Levitsky
-
->  
->  static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
+Chen
 
 
 
