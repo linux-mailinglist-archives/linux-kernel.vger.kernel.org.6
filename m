@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-539919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C278A4AADD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:02:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CD8A4AAE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95ABC172A8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310271896528
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004341DED40;
-	Sat,  1 Mar 2025 12:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E531DE4F6;
+	Sat,  1 Mar 2025 12:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpMHOMcT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hb559znq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BCC2E630;
-	Sat,  1 Mar 2025 12:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638391D7E3E
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740830538; cv=none; b=k96zrUo1AOMgBn4HPjFpcDI5FF41LWyF5iIhTjmAXxL6MCFWcuGD8p5xv2hlTWbiNNDeE0TqrxRltH0rwaw0QSWap/NzEoSVd+zZKlCi4myUylnh9+R6lVcfEOxHeN0xYvdIFbscXGz+6/fEm9DrotQto3O8xT4aiBRq9kN2UQk=
+	t=1740831467; cv=none; b=sCCv5CQhSpksa7vzku74u2W4NU7ZMzBqJrDzgkMlBDQVmFaI/lnAvlxTcQp6g9ckmJlXm/BMXs6jdohTvpTX8saOTUBlsb0TSwm/6QWnrORNeBs0wD+S+dEos/g6UCX6k0KcUxIzWzvDcTHoUvqCpoHHeN9AMdOPVAUzgxpeJ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740830538; c=relaxed/simple;
-	bh=+AAMJB/7hTU30KZCU4oBLcGkEpeVOQ4Sdqlumm+i4rs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkK8rmIRzxR4BSVtx3e98G5gHFbQLvkKaecArYG6uxHK87utM/VFCfdb6EpR41QBSN3iseUhwYQZMCu6wp2wpSYAmLt+G4dwTdWyxF6os+5LSA2XA0/DEoiwrFCv6xdM2teEur9ZnNBzt3Syv5ybIRECH6jiQokrArkiAIMFfbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpMHOMcT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998A0C4CEDD;
-	Sat,  1 Mar 2025 12:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740830533;
-	bh=+AAMJB/7hTU30KZCU4oBLcGkEpeVOQ4Sdqlumm+i4rs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mpMHOMcTcDaKO8h/RY95ri0hmyp0V2BRYqCtoAoZhlW308RiMhWVVrWPqvb2zxTY2
-	 NkRJUqvIAazSb/Wad3cMHGvQ/z6YBnZ9ruhVp2GLiaKLa5Gu/8sUz+cft6Tg13pNs4
-	 50dWvVx31LiV3qaxNDKXDEjX+nETxREDjJJ6QZzVcMeqTn1DzDLI07fcwABz+MSoLM
-	 vH1DaL5LsobXo1P+EEs9TymdimdYFFIs0ZMv8Om58JpIQnW5+cC9L9kA7TQw1+fHwG
-	 buxM27vmpfCwvGxjeLUyHQcvyo8H+YiOQpv6UzBPANnkYfD7yRs6+eUwIrJLOirD4b
-	 aEdabd4Sen7hQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1toLXn-009LnL-Bp;
-	Sat, 01 Mar 2025 12:02:11 +0000
-Date: Sat, 01 Mar 2025 12:02:09 +0000
-Message-ID: <86ldtpot6m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
- <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
- <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
- <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
- <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
- Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
- <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
- Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
- <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 00/15] PCI: EP: Add RC-to-EP doorbell with platform MSI controller
-In-Reply-To: <Z7eKBsxrmthtElpz@lizhi-Precision-Tower-5810>
-References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
-	<Z7eKBsxrmthtElpz@lizhi-Precision-Tower-5810>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1740831467; c=relaxed/simple;
+	bh=i1lk9xKe/JXz4c6AB/M8fEa5DbGBkJjeN3ZRRa0J1/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=o03SJg7odVILEGwbzjtYNc/mIr2CA7aPF/7CJDPBe1wtAw/fR+HHg3Gh3KrJpdbYYxkyvUmSfrUWhmR6UmuoyzvwKzA21Lz1iVbAy+wTJ4JFTiU4rqjQmgeZbpgG3aWtdgiXLd10YebxhktRkF8UNPuDk4MYoIrASadga3e4q98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hb559znq; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740831464; x=1772367464;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=i1lk9xKe/JXz4c6AB/M8fEa5DbGBkJjeN3ZRRa0J1/8=;
+  b=Hb559znqEF4qF0I9UVp/1Nw/gkp04XN6v2hIlkkTSEc/BcA0MVfwvzSY
+   +nomLMxeUE1WcDMJAcAUhty8n8Tp0YrMndddO1O/hWLMzRAAmoWmLfvpT
+   onNafvj/RiAY2Siq9MWTwiIv8xOZvR6qkBKpKJCjH12Sv7xB5Yncc0qpQ
+   2RjYAgCOm+AOkTk0H4Jn0F8sgWjtZ2oMgQlHKt1lbqoLiZChUpdUNkPDu
+   OIfsL+bp5ONw5yRalLEn+Ro+5qZoOYzLZFNfpVVXUlFVZDxWqcGIDM199
+   x0HecLIavmE8bR7PXpe+4QwKqbEnt31P7qIGpM+p6hU8u2xt+z2wzvZPd
+   w==;
+X-CSE-ConnectionGUID: ijXG08qBTnqJSOuKZdlwmA==
+X-CSE-MsgGUID: T4s7ZwE3T36Rgmb0h/0t6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45537168"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="45537168"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 04:17:44 -0800
+X-CSE-ConnectionGUID: nC1fbvG+Qoa80CvOsJCgNA==
+X-CSE-MsgGUID: 6I3/OGJFQb2QAeAFikkCNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="122574664"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 01 Mar 2025 04:17:43 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toLmh-000GEM-0H;
+	Sat, 01 Mar 2025 12:17:36 +0000
+Date: Sat, 1 Mar 2025 20:17:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: arch/powerpc/boot/decompress.c:132:15: error: implicit declaration
+ of function '__decompress'
+Message-ID: <202503012033.HCudrbsD-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Frank.li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 20 Feb 2025 20:01:10 +0000,
-Frank Li <Frank.li@nxp.com> wrote:
-> 
-> On Tue, Feb 11, 2025 at 02:21:53PM -0500, Frank Li wrote:
-> 
-> Thomas Gleixner and Marc Zyngier:
-> 
-> 	Do you have any comments about irq/msi part?
+Hi Arnd,
 
-It certainly looks better and less invasive than the previous
-incarnations. Things to fix:
+First bad commit (maybe != root cause):
 
-- Documentation: the msi-map property usage is undefined outside of a
-  PCIe RC, and the way you describe its use is so vague I read
-  anything in it. Please update
-  Documentation/devicetree/bindings/pci/pci-msi.txt to reflect the new
-  use case.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   03d38806a902b36bf364cae8de6f1183c0a35a67
+commit: 45cfade303335c486300b81e62caefffa843f585 drm/xe/xe2: fix 64-bit division in pte_update_size
+date:   12 months ago
+config: powerpc-randconfig-r132-20250301 (https://download.01.org/0day-ci/archive/20250301/202503012033.HCudrbsD-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250301/202503012033.HCudrbsD-lkp@intel.com/reproduce)
 
-- This IMMUTABLE thing serves no purpose, because you don't randomly
-  plug this end-point block on any MSI controller. They come as part
-  of an SoC.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503012033.HCudrbsD-lkp@intel.com/
 
-Thanks,
+All errors (new ones prefixed by >>):
 
-	M.
+   arch/powerpc/boot/decompress.c: In function 'partial_decompress':
+>> arch/powerpc/boot/decompress.c:132:15: error: implicit declaration of function '__decompress' [-Wimplicit-function-declaration]
+     132 |         ret = __decompress(inbuf, input_size, NULL, flush, outbuf,
+         |               ^~~~~~~~~~~~
+
+
+vim +/__decompress +132 arch/powerpc/boot/decompress.c
+
+1b7898ee276b39e Oliver O'Halloran 2016-09-22   97  
+1b7898ee276b39e Oliver O'Halloran 2016-09-22   98  /**
+1b7898ee276b39e Oliver O'Halloran 2016-09-22   99   * partial_decompress - decompresses part or all of a compressed buffer
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  100   * @inbuf:       input buffer
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  101   * @input_size:  length of the input buffer
+930a77c3ad79c30 Zhang Jianhua     2021-05-10  102   * @outbuf:      output buffer
+930a77c3ad79c30 Zhang Jianhua     2021-05-10  103   * @output_size: length of the output buffer
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  104   * @skip         number of output bytes to ignore
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  105   *
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  106   * This function takes compressed data from inbuf, decompresses and write it to
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  107   * outbuf. Once output_size bytes are written to the output buffer, or the
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  108   * stream is exhausted the function will return the number of bytes that were
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  109   * decompressed. Otherwise it will return whatever error code the decompressor
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  110   * reported (NB: This is specific to each decompressor type).
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  111   *
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  112   * The skip functionality is mainly there so the program and discover
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  113   * the size of the compressed image so that it can ask firmware (if present)
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  114   * for an appropriately sized buffer.
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  115   */
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  116  long partial_decompress(void *inbuf, unsigned long input_size,
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  117  	void *outbuf, unsigned long output_size, unsigned long _skip)
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  118  {
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  119  	int ret;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  120  
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  121  	/*
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  122  	 * The skipped bytes needs to be included in the size of data we want
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  123  	 * to decompress.
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  124  	 */
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  125  	output_size += _skip;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  126  
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  127  	decompressed_bytes = 0;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  128  	output_buffer = outbuf;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  129  	limit = output_size;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  130  	skip = _skip;
+1b7898ee276b39e Oliver O'Halloran 2016-09-22  131  
+1b7898ee276b39e Oliver O'Halloran 2016-09-22 @132  	ret = __decompress(inbuf, input_size, NULL, flush, outbuf,
+
+:::::: The code at line 132 was first introduced by commit
+:::::: 1b7898ee276b39e54d870dc4ef3374f663d0b426 powerpc/boot: Use the pre-boot decompression API
+
+:::::: TO: Oliver O'Halloran <oohall@gmail.com>
+:::::: CC: Michael Ellerman <mpe@ellerman.id.au>
 
 -- 
-Without deviation from the norm, progress is not possible.
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
