@@ -1,282 +1,229 @@
-Return-Path: <linux-kernel+bounces-539686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B398A4A75C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C098A4A75A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E681A188DF2A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0F216A04F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA4B7B3E1;
-	Sat,  1 Mar 2025 01:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113EF22318;
+	Sat,  1 Mar 2025 01:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGt236Ax"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkN/2Stl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258C14A82;
-	Sat,  1 Mar 2025 01:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73163A9
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792237; cv=none; b=o9oktXGP5+TPKrQmnj3erOxXfocdAoneNBKbfrjOmrorZkHddtYMdFrGR8lEc3XkAM5qpvQTjqSKswJm96h4mtEq9+TLRyLw9oXDm3/pZ1J0C6LZeHoq9Z9qLJG0JL6JG99RSm/WJuHp8oHNKmo1e04FC4FR6iX74c+Cb/eIfl4=
+	t=1740792235; cv=none; b=tRZlW3KBNZR3C6I018k+VCBBBzWWYCL99DD80GpMuGJ2d4MlsjafGDwwLWEFUbWYVinFrcZ3Xzy5RcEphWidnOCAEKajDFz/A9cQsNrjLZg5b3Q8h13wgrZL98SLtvmM8pjH7/pEulDMyJkYbxncthslt6zY5LjenIMAhUC/vxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792237; c=relaxed/simple;
-	bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQ6Oky2cLM0/40OugCp8TKKtWBcwSILidKtr0A0yoQ18hoBRRdLr0WRTDjHLh/QjX5m3vPyyyBoHjx/VKDeU8aWyhrlIsYm1svXbjGLPsyoOzHmT27EWGibyeEaxdCnoN+iFAn6OxfRIQVFi3HKrCu+WQjE2XzCkzofLgDYrqWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGt236Ax; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-abbdf897503so675123966b.0;
-        Fri, 28 Feb 2025 17:23:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740792233; x=1741397033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
-        b=dGt236AxLNuo4WLjgp5ssqIsG2ZpNQcRNuVhaQBSQX8N+6Cl7uzzqqRS1Tw6eR5cD2
-         /g57MMFC6Eg7xtu0HHmt2h7dQOi67QuZ6RBHniWVV/ReWqtKW5HWGVBnp3ZD5tOf8WEo
-         7u0HHLoFf1/g74uiFedmb4xufLfHk2uJ7mb4n5F2HfnbzG8o7JAb/BxeslTgIOoRwgfi
-         dekScUWvqGxVYloomw//zAqZ5hA+OVA/mP3xZTqO0QzVaJLH+mjL0TLWOfwYHNDBg2LJ
-         4lJIPH13QjJoz7n9pf0mu46y/ylktG+J6pFIDEppPIX3/fWgebUec6hoj9o9KOn5UOZ2
-         Qjag==
+	s=arc-20240116; t=1740792235; c=relaxed/simple;
+	bh=o1p+ne+HAvY4DDZ63M6vfhpNc3u5cYCy3IlSrcF7C2I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E5lMWqUwc2/Tm6/jPxmCHcfRb0z/snSGqBJ70oP7tZQkZWZaP3LnyFJeO51g3wNzwXgVqNOm/knaaiB+qXVdOA1kpnTXAKASHMSIFQh3j1DP+OIzzrhSjrSBlsgPVnYevn9W0UMBLUEUNK1i04ymFH6g30qg7bTrCukROK2FZgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkN/2Stl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740792232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OAJrklYzp8/r3g4lixGYj7CZWiatxwAHqPRLaD3+jg=;
+	b=CkN/2StlvJ8SJ7paAQakChOdKvQcNe4IJ6Stfe6FMg7Vj4xhMTxrBTWY7zYjI5WGVMeGR2
+	43DZSn+i78/TCzKpGZ82zQLe6Xt4bPQcfEU7EJhg5pFgHe4hxoFGvF+QZWrL+GQKUGqNMS
+	HpRjSCt58c2hrtZqVKF5hmq1ickecJY=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-kWmq9q2nMZmvYMRLtw6hvQ-1; Fri, 28 Feb 2025 20:23:50 -0500
+X-MC-Unique: kWmq9q2nMZmvYMRLtw6hvQ-1
+X-Mimecast-MFC-AGG-ID: kWmq9q2nMZmvYMRLtw6hvQ_1740792230
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471f1b00de4so56211081cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:23:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740792233; x=1741397033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b/oJdm6bjXZe85c9GwsNJLs7S7eyWrYSfVj/xJk++Ig=;
-        b=DZDRTY0RTRWpnYZdIibupYPs5dxqqKUVSYNKk/Krow0E883vkjSjDUabC6e86dK+25
-         w8D50p4flMm9VDcI+j629FeCYBEuvuFC9QYTwIszkzogH1NVwjkNqATCKrYyUOGz7OVU
-         BwKzox9oVbLmWnJnkO2R0tsByUWW1b/alfYet4VRGuWH+rOkv05poTSMOupi4kMXKmrJ
-         mL1vC6EJaiupEZZN1qmgNpcGM/VVlcZnfN7KFq2DjTv5NYONgzlQPc3w4jiVR4g6fSbx
-         rXN7UnkX7tCeKzUpfPPXlldfih2uiA4I79CiG+Iv24qctfj8pnvVeo9VniuV7cXC8D7K
-         vwpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWEZ+2vCLQPx9HZJ2jFyuvNc4nH9Wpiw67EzmUSwkG7gYF+kgRvaMh+q2SKmXDpCVPlHM=@vger.kernel.org, AJvYcCVwVs8f8aG9lXdOnuxosVoIsLWGlVIQT1VIc8K+odCKhpJGlxpxKzvE/gqRmkmWQ9hGTVsDt11jtp6GbLKl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8OmiO4Pco4o73EGmoHlWofipDu8IggllWqvgmgySARZzWVbCd
-	rgveXdlm5zOvhU9oE386D8XErxf6Uqbkl6BC5G/X6q4ub6baauJ9xhAVXi2R71+mPkjaOYwTy2U
-	A1NEW6ipX/NxySKFBrgFyHvRDqf0=
-X-Gm-Gg: ASbGnctO02B70Cp7q/1RbrPqoIyP93sJ6MuKc3kFAdcUhGD9jh925uqXQJPQ6s8asGl
-	KazDo2qhhVhrbxG0sMSjLQ9K5vpiZx5K4HbMwFy0xmDToxlJqsBeYyBel6ZLK1G6lYox0KOHa3s
-	+hu6Qvg5682OlanuJk3iZaR6yu7Bo=
-X-Google-Smtp-Source: AGHT+IFKObYM3YgueqkWMDolNhSPNwztcgIsG4jMhFoy5JPSqsEUqCIb3ihURn8O+dY9SQmWbENCzXA8blCQQc67NyI=
-X-Received: by 2002:a17:907:7fa6:b0:ab7:798:e16e with SMTP id
- a640c23a62f3a-abf2656df67mr466577466b.15.1740792233075; Fri, 28 Feb 2025
- 17:23:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740792230; x=1741397030;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8OAJrklYzp8/r3g4lixGYj7CZWiatxwAHqPRLaD3+jg=;
+        b=P19CZEW7/j64/ed59j+OewlQOZjlQVNvFjPphF0pb177FItoYIGeoJQk7ozy8HN1wG
+         Yf/C/uWCJUcTgn8cLRiB8emFgcvnMI/zM0OJBfP5NxvQ8C3rNKt08qLuTjpyP9RzGeCU
+         lwpN/Kt8oBqg0OeNIbfYPClPwj1Xf4mQof23tf0e+imbRd+7Eh1qIHnKRBBiJT9ZLxIX
+         oymvA43oWTE6CUn7ZKAlAzNcoXWw2cQuqNCFukWFGzTT0l4ELse771QuUHnWnsexuEv4
+         mbDZ4tF37jnNH6UZQZcnST7cm0FoPSJ/KEgDpUe+MG3CKxPkUz9z69YWAXRGLGMmFbgJ
+         YWfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ/G4Xc1maTvbCMjdqowprc7VQU/gNLeD0TTWepf9AGCE+qACKjT9Zzem/wHUiG1hIZKSu7GPyXRNncDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydkMJBDzyS840vC5PwELhnAigmJZ86M45RQuknn7Y1BeXmpG97
+	K7CJN0hgdaWsrnokOWxS2EP2xueyVWJQXLFlcEPq3u4B765wnaAuwmlmFOt/46nka4Ng5B8QjKl
+	RgpLYAtTd9DPeF4gIdcZ4B9yb28T7jsT48vfb9yPWP5PwhufntbMM25rFqN7TRw==
+X-Gm-Gg: ASbGncsAodnfTMTT4m5jXcjJ/kphrvNTTh1mOcc4F3S2c+szIo7x9k6mZhOI/2b+kdk
+	7XGVsgUpHiSdMLuXcmJERKlTHbGmp6TR3ZYZOcoDq/dAPmjO3XhiPmizd9DNLVcV8cKOz/FjAyP
+	pdzR4gMw/B6AZ4vtxRRN0Y9lVDLoQh/Rg9pZWFGxZxy6kEIxNJfIsDzFWTuAE2BfWvRaxXlwUiD
+	XXBOSJr2evfCU/gDbDFXzjyv/nFKFSjKOmEvw237gOSHnEGogdhn37KgQdppPFptTcuSMaPOQ+a
+	VmKxDQohhcw1Mo8=
+X-Received: by 2002:ad4:574c:0:b0:6e6:64e8:28e7 with SMTP id 6a1803df08f44-6e8a0d0895amr88661486d6.15.1740792230268;
+        Fri, 28 Feb 2025 17:23:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGqrmNkALLpnsrIVr0ZBViMhrVD8kVQJKE0j3X/XcwAt87q8J9yjv80JpSGnSy0+3KHJEeJbA==
+X-Received: by 2002:ad4:574c:0:b0:6e6:64e8:28e7 with SMTP id 6a1803df08f44-6e8a0d0895amr88661316d6.15.1740792229955;
+        Fri, 28 Feb 2025 17:23:49 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ccbefsm27878336d6.85.2025.02.28.17.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 17:23:49 -0800 (PST)
+Message-ID: <7addde721e3f67bfa8ec5c9671f51d131f84bc6b.camel@redhat.com>
+Subject: Re: [RFC PATCH 01/13] KVM: nSVM: Track the ASID per-VMCB
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
+ <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 28 Feb 2025 20:23:48 -0500
+In-Reply-To: <20250205182402.2147495-2-yosry.ahmed@linux.dev>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+	 <20250205182402.2147495-2-yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
- <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQ+TzLc=Z_Rp-UC6s9gg5hB1byd_w7oT807z44NuKC_TxA@mail.gmail.com>
- <AM6PR03MB508026B637117BD9E13C2F9299CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQ+cokog6j5RjO7qNwBWswXTbu-x2j4EoQEt405-2i5jXw@mail.gmail.com> <AM6PR03MB5080FC54F845102C913B596599CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB5080FC54F845102C913B596599CC2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Sat, 1 Mar 2025 02:23:16 +0100
-X-Gm-Features: AQ5f1JrRwwDAnpo9fm4HMTRfwiSniLMv1ZduTyuzbO3dYdt1Tw1gVs6R2Ary14s
-Message-ID: <CAP01T76m7OP_u8C1hJMrpVqJGf77W00DE9qB-8Yq6Cd-BMQ=7g@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
- runtime acquire/release
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Feb 2025 at 20:00, Juntong Deng <juntong.deng@outlook.com> wrote=
-:
->
-> On 2025/2/28 03:34, Alexei Starovoitov wrote:
-> > On Thu, Feb 27, 2025 at 1:55=E2=80=AFPM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> I have an idea, though not sure if it is helpful.
-> >>
-> >> (This idea is for the previous problem of holding references too long)
-> >>
-> >> My idea is to add a new KF_FLAG, like KF_ACQUIRE_EPHEMERAL, as a
-> >> special reference that can only be held for a short time.
-> >>
-> >> When a bpf program holds such a reference, the bpf program will not be
-> >> allowed to enter any new logic with uncertain runtime, such as bpf_loo=
-p
-> >> and the bpf open coded iterator.
-> >>
-> >> (If the bpf program is already in a loop, then no problem, as long as
-> >> the bpf program doesn't enter a new nested loop, since the bpf verifie=
-r
-> >> guarantees that references must be released in the loop body)
-> >>
-> >> In addition, such references can only be acquired and released between=
- a
-> >> limited number of instructions, e.g., 300 instructions.
-> >
-> > Not much can be done with few instructions.
-> > Number of insns is a coarse indicator of time. If there are calls
-> > they can take a non-trivial amount of time.
->
-> Yes, you are right, limiting the number of instructions is not
-> a good idea.
->
-> > People didn't like CRIB as a concept. Holding a _regular_ file refcnt f=
-or
-> > the duration of the program is not a problem.
-> > Holding special files might be, since they're not supposed to be held.
-> > Like, is it safe to get_file() userfaultfd ? It needs in-depth
-> > analysis and your patch didn't provide any confidence that
-> > such analysis was done.
-> >
->
-> I understand, I will try to analyze it in depth.
->
-> > Speaking of more in-depth analysis of the problem.
-> > In the cover letter you mentioned bpf_throw and exceptions as
-> > one of the way to terminate the program, but there was another
-> > proposal:
-> > https://lpc.events/event/17/contributions/1610/
-> >
-> > aka accelerated execution or fast-execute.
-> > After the talk at LPC there were more discussions and follow ups.
-> >
-> > Roughly the idea is the following,
-> > during verification determine all kfuncs, helpers that
-> > can be "speed up" and replace them with faster alternatives.
-> > Like bpf_map_lookup_elem() can return NULL in the fast-execution versio=
-n.
-> > All KF_ACQUIRE | KF_RET_NULL can return NULL to.
-> > bpf_loop() can end sooner.
-> > bpf_*_iter_next() can return NULL,
-> > etc
-> >
-> > Then at verification time create such a fast-execute
-> > version of the program with 1-1 mapping of IPs / instructions.
-> > When a prog needs to be cancelled replace return IP
-> > to IP in fast-execute version.
-> > Since all regs are the same, continuing in the fast-execute
-> > version will release all currently held resources
-> > and no need to have either run-time (like this patch set)
-> > or exception style (resource descriptor collection of resources)
-> > bookkeeping to release.
-> > The program itself is going to release whatever it acquired.
-> > bpf_throw does manual stack unwind right now.
-> > No need for that either. Fast-execute will return back
-> > all the way to the kernel hook via normal execution path.
-> >
-> > Instead of patching return IP in the stack,
-> > we can text_poke_bp() the code of the original bpf prog to
-> > jump to the fast-execute version at corresponding IP/insn.
-> >
-> > The key insight is that cancellation doesn't mean
-> > that the prog stops completely. It continues, but with
-> > an intent to finish as quickly as possible.
-> > In practice it might be faster to do that
-> > than walk your acquired hash table and call destructors.
-> >
-> > Another important bit is that control flow is unchanged.
-> > Introducing new edge in a graph is tricky and error prone.
-> >
-> > All details need to be figured out, but so far it looks
-> > to be the cleanest and least intrusive solution to program
-> > cancellation.
-> > Would you be interested in helping us design/implement it?
->
-> This is an amazing idea.
->
-> I am very interested in this.
->
-> But I think we may not need a fast-execute version of the bpf program
-> with 1-1 mapping.
->
-> Since we are going to modify the code of the bpf program through
-> text_poke_bp, we can directly modify all relevant CALL instructions in
-> the bpf program, just like the BPF runtime hook does.
+On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
+> The ASID is currently tracked per-vCPU, because the same ASID is used by
+> L1 and L2. That ASID is flushed on every transition between L1 and L2.
+> 
+> Track the ASID separately for each VMCB (similar to the
+> asid_generation), giving L2 a separate ASID. This is in preparation for
+> doing fine-grained TLB flushes on nested transitions instead of
+> unconditional full flushes.
+> 
+> The ASIDs are still not fully maintained (e.g. a remote flush will only
+> flush the current ASID), so keep the TLB flush on every transition until
+> this is sorted out.
+> 
+> L1's ASID will be flushed on KVM_REQ_TLB_FLUSH_GUEST if it is the
+> active context, so remove the TODO in nested_svm_transition_tlb_flush()
+> about it.
+> 
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  arch/x86/kvm/svm/nested.c |  1 -
+>  arch/x86/kvm/svm/sev.c    |  2 +-
+>  arch/x86/kvm/svm/svm.c    | 12 +++++++-----
+>  arch/x86/kvm/svm/svm.h    |  2 +-
+>  4 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> index 04c375bf1ac2a..bbe4f3ac9f250 100644
+> --- a/arch/x86/kvm/svm/nested.c
+> +++ b/arch/x86/kvm/svm/nested.c
+> @@ -495,7 +495,6 @@ static void nested_svm_transition_tlb_flush(struct kvm_vcpu *vcpu)
+>  	 *  - Honor L1's request to flush an ASID on nested VMRUN
+>  	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
+>  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
+> -	 *  - Flush L1's ASID on KVM_REQ_TLB_FLUSH_GUEST
+>  	 *
+>  	 * [*] Unlike nested EPT, SVM's ASID management can invalidate nested
+>  	 *     NPT guest-physical mappings on VMRUN.
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 799f8494b599c..b0adfd0537d00 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3468,7 +3468,7 @@ void pre_sev_run(struct vcpu_svm *svm, int cpu)
+>  	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
+>  
+>  	/* Assign the asid allocated with this SEV guest */
+> -	svm->asid = asid;
+> +	svm->current_vmcb->asid = asid;
+>  
+>  	/*
+>  	 * Flush guest TLB:
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 7640a84e554a6..08340ae57777b 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -1335,8 +1335,10 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
+>  		save->g_pat = vcpu->arch.pat;
+>  		save->cr3 = 0;
+>  	}
+> -	svm->current_vmcb->asid_generation = 0;
+> -	svm->asid = 0;
+> +	svm->vmcb01.asid_generation = 0;
+> +	svm->vmcb01.asid = 0;
+> +	svm->nested.vmcb02.asid_generation = 0;
+> +	svm->nested.vmcb02.asid = 0;
+>  
+>  	svm->nested.vmcb12_gpa = INVALID_GPA;
+>  	svm->nested.last_vmcb12_gpa = INVALID_GPA;
+> @@ -1988,7 +1990,7 @@ static void new_asid(struct vcpu_svm *svm, struct svm_cpu_data *sd)
+>  	}
+>  
+>  	svm->current_vmcb->asid_generation = sd->asid_generation;
+> -	svm->asid = sd->next_asid++;
+> +	svm->current_vmcb->asid = sd->next_asid++;
+>  }
+>  
+>  static void svm_set_dr6(struct vcpu_svm *svm, unsigned long value)
+> @@ -4235,8 +4237,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+>  
+>  	sync_lapic_to_cr8(vcpu);
+>  
+> -	if (unlikely(svm->asid != svm->vmcb->control.asid)) {
+> -		svm->vmcb->control.asid = svm->asid;
+> +	if (unlikely(svm->current_vmcb->asid != svm->vmcb->control.asid)) {
+> +		svm->vmcb->control.asid = svm->current_vmcb->asid;
+>  		vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+>  	}
+>  	svm->vmcb->save.cr2 = vcpu->arch.cr2;
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 9d7cdb8fbf872..ebbb0b1a64676 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -133,6 +133,7 @@ struct kvm_vmcb_info {
+>  	unsigned long pa;
+>  	int cpu;
+>  	uint64_t asid_generation;
+> +	u32 asid;
+>  };
+>  
+>  struct vmcb_save_area_cached {
+> @@ -247,7 +248,6 @@ struct vcpu_svm {
+>  	struct vmcb *vmcb;
+>  	struct kvm_vmcb_info vmcb01;
+>  	struct kvm_vmcb_info *current_vmcb;
+> -	u32 asid;
+>  	u32 sysenter_esp_hi;
+>  	u32 sysenter_eip_hi;
+>  	uint64_t tsc_aux;
 
-Cloning the text allows you to not make the modifications globally
-visible, in case we want to support cancellations local to a CPU.
-So there is a material difference
-
-You can argue for and against local/global cancellations, therefore it
-seems we should not bind early to one specific choice and keep options
-open.
-It is tied to how one views BPF program execution.
-Whether a single execution of the program constitutes an isolated
-invocation, or whether all invocations in parallel should be affected
-due to a cancellation event.
-The answer may lie in how the cancellation was triggered.
-
-Here's an anecdote:
-At least when I was (or am) using this, and when I have assertions in
-the program (to prove some verification property, some runtime
-condition, or simply for my program logic), it was better if the
-cancellation was local (and triggered synchronously on a throw). In
-comparison, when I did cancellations on page faults into arena/heap
-loads, the program is clearly broken, so it seemed better to rip it
-out (but in my case I still chose to do that as a separate step, to
-not mess with parallel invocations of the program that may still be
-functioning correctly).
-
-Unlike user space which has a clear boundary against the kernel, BPF
-programs have side effects and can influence the kernel's control
-flow, so "crashing" them has a semantic implication for the kernel.
-
->
-> For example, when we need to cancel the execution of a bpf program,
-> we can "live patch" the bpf program and replace the target address
-> in all CALL instructions that call KF_ACQUIRE and bpf_*_iter_next()
-> with the address of a stub function that always returns NULL.
->
-> During the JIT process, we can record the locations of all CALL
-> instructions that may potentially be "live patched".
->
-> This seems not difficult to do. The location (ip) of the CALL
-> instruction can be obtained by image + addrs[i - 1].
->
-> BPF_CALL ip =3D ffffffffc00195f1, kfunc name =3D bpf_task_from_pid
-> bpf_task_from_pid return address =3D ffffffffc00195f6
->
-> I did a simple experiment to verify the feasibility of this method.
-> In the above results, the return address of bpf_task_from_pid is
-> the location after the CALL instruction (ip), which means that the
-> ip recorded during the JIT process is correct.
->
-> After I complete a full proof of concept, I will send out the patch
-> series and let's see what happens.
-
-We should also think about whether removing the exceptions support makes se=
-nse.
-Since it's not complete upstream (in terms of releasing held resources), it
-hasn't found much use (except whatever I tried to use it for).
-There would be some exotic use cases (like using it to prove to the
-verifier some precondition on some kernel resource), but that wouldn't
-be a justification to keep it around.
-
-One of the original use cases was asserting that a map return value is not =
-NULL.
-The most pressing case is already solved by making the verifier
-smarter for array maps.
-
-As such there may not be much value, so it might be better to just
-drop that code altogether and simplify the verifier if this approach
-seems viable and lands.
-Since it's all exposed through kfuncs, there's no UAPI constraint.
+Hi,
 
 
->
-> But it may take some time as I am busy with my university
-> stuff recently.
+I think it should be possible to eliminate separate ASID field (current_vmcb->asid/svm->asid)
+completely and instead just use the value stored in the vmcb.
+
+When there is a need to update it, KVM can also set the corresponding dirty bit
+as done in svm_vcpu_run (new_asid also already does this when the asid generation increases)
+
+Also KVM already sets the tlb_ctl directly in the vmcb.
+
+What do you think?
+
+Best regards,
+	Maxim Levitsky
+
+
+
+
+
 
