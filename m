@@ -1,146 +1,188 @@
-Return-Path: <linux-kernel+bounces-539916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62BBA4AACE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:45:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFF5A4AAD0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D084D172909
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64EE1897BDC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4A1DED4B;
-	Sat,  1 Mar 2025 11:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6DD1D90AD;
+	Sat,  1 Mar 2025 11:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUgeLJyJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fNqntUkY"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E624C1DE2D8;
-	Sat,  1 Mar 2025 11:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257BA23F37D
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829494; cv=none; b=GftTOswTJQyiNa4qTdgQ1M+5KbXL8EUVwNWHE7htdk2D1sqAwACXsFgG5H5aIpUxUljoBDQYADGzDNK5UWit+DqyeGsVy3OnZf3uRMOVyEuNtByYFDPuu1HdkcC5o3BKi4miNvHzUimq0GxUOHqbYFRlvUNvU983DtDZBGRdo7g=
+	t=1740829544; cv=none; b=bnGQu6cGzDq4MORcOC69dPxUSkWOVDpL7jyUH0dTrH7jZKKSyOqslBHXAk/gp5fJMNZjwzXEhsIWJM8DCqh1s4S1sTGyNX/1eABWDlfvZZJYmXQNJ0oZ31vjDzQtDClSg4PF058xxBl2OS2cFVSkwJjKAuIViznax/NmXpQf4r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829494; c=relaxed/simple;
-	bh=bDBsRUkAcZO02Q5u156/Y9EgZnHcH5+wGnYr5yxlUMU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ob6TnopTmYY1f57to+M24uDNEhVXDuWLR7lxu2xJoYbjbeeUOpVwMpL5ojzeChxX9JeSj664j2szkL3x0M/EFnQqDP8Dq71KkTqDuv+7pSHeS9enhhFtUyCz3HrluvxF0kCCb4jib6Ibe/K4Y35nDmH9txYrMpaNEqhJF8IwjpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUgeLJyJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54273C4CEDD;
-	Sat,  1 Mar 2025 11:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740829493;
-	bh=bDBsRUkAcZO02Q5u156/Y9EgZnHcH5+wGnYr5yxlUMU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NUgeLJyJUL439NXL4ufMy1ioW0tAbo0T0VAbBijQxH6qFMe9Hdycj0x5Do5Ihra/a
-	 lVW/ZgjOZqFjB8vJOtr4FEvujsIkMMFhWrvIcXfOwBbW1zIZv6xFTdkIttZCvTbIcz
-	 tvFWeLbGRt9RoW8heZ8vsJ34B7M9ZztwVn7oRocCmXI6GSWCceEMcw35C/CrugcwUf
-	 IksoF9wjBBHOLPsoZCruczrLaXunZSM0y2/RAQqw2VzimDskW5i1VPeLnWmw2bs3MZ
-	 t0FuTYVTxewXwlB3B55tnd6tiM4Y3PsbqpUQsY5+bcnlPhQrhxEy2Ca/Ot+R9iNJmP
-	 G0h+OXk3yk64Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1toLH1-009Leu-3R;
-	Sat, 01 Mar 2025 11:44:51 +0000
-Date: Sat, 01 Mar 2025 11:44:50 +0000
-Message-ID: <86mse5otzh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
- <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
- <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
- <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
- <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
- Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
- <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
- Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
- <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 07/15] PCI: endpoint: pci-ep-msi: Add MSI address/data pair mutable check
-In-Reply-To: <20250211-ep-msi-v15-7-bcacc1f2b1a9@nxp.com>
-References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
-	<20250211-ep-msi-v15-7-bcacc1f2b1a9@nxp.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1740829544; c=relaxed/simple;
+	bh=bQNngq3YUR6OHOaixcCrFhLENfwp9TaNS4P5nWNQzNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iJJbPVzD+6wQ7/7IS5G52xO6/SvHBV2D+aHcVjiphG2XlpEg1G0AMo9hqWY+v3luXjMT0kUbrDiHdzC+xuixwQx9bA4K5CaNXg44pj29DccbGrJqWPh48yhs+a/PnxjMfdac+B/8PeRn485580vD8Wer9NiuKZYgKyS18pAXXOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fNqntUkY; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ca9a3425so26788597b3.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:45:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740829541; x=1741434341; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wPdFtRIcEJljlyiH4UNQ0Wo6ovomIZEN33SfT6PWHDw=;
+        b=fNqntUkY8M1FPYu34RwteDdQrrzJRWBltTk2Uz3RfwkGbFuwZpODSZvO1c0r6qbu8g
+         mGT8YgAHZwaFITsNXU4LZ2aidBGPYhjHI2v4mRvMmKImw5w7OW3F+VFAe/SrMtDDGQrp
+         7NXOBCmfPjs01F2LRXM1vq2vtXVOZgwU6HpUmlCDonB6vHeqIrAn3gaQ6AJ12ejRGd2d
+         Qt017y4HM0SyfGGnmeD0iz6LxkCpO5s2iv+bpCtRkGWOERLqeBaTH68ukygt+juLj3tm
+         00xsDe2/vqf9EW+W0ZsnjIxIrIwMfOSlwp3wNt+hv1hKYzDCy4iqml4A2KzuZ4msEY2T
+         6/mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740829541; x=1741434341;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wPdFtRIcEJljlyiH4UNQ0Wo6ovomIZEN33SfT6PWHDw=;
+        b=B1rW0Pi1WnfMHrQq4fucVxkIuAi1YFh0sZA8F/PTDTh9D5sB0Cb2YM0+BE/UbdBIFj
+         ItsBHmM0lv7bv2fdEAWSXrEEKdl9lilvaNPxg0P4wCYgTCvwBn1LwhIeXtNBDl4b19YW
+         GMMoJmDzkcA4hkxPN/sPd352h5J/EAbddMSfLMt8w8D3+LmqssEmMf6mHd00h8OgOks4
+         HJs/fBgKVquZqqCeT/ynvFLX1IK4jUqCWfPlPGTJRzA3qY9UZZf5yYhSjymSLbN8N/FK
+         PgZk/OZWCiQPezL+l6+1v2ioD7+IR39fxmCNtThlkfstGKf2Epo+Cg9uEeyT++OV/fD7
+         vQow==
+X-Forwarded-Encrypted: i=1; AJvYcCULXce1kCShu6wZs7msf4qc3qypDLTGK+2D4qTcfjXGItTCBpSGbTsDIyrsm6lk4rwziGGGff1S8qyFQlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW0kUYodluJPVSwEpY/uNT4D6m+9anATEKO58gXFgW+d3yUq7W
+	9HKVU1ZesWYR4CDlWpRxgSHHilWhgpM/pg7oDaYCekltPg10PMdq8j1zNV/BrjiK+9xnvJS73hI
+	M531wRJ/DKjOe9YxCb68eBDNpGMMGrKB5qNF04g==
+X-Gm-Gg: ASbGncvf43aRQQQEKYyBArNaz52JfNhgaYSBJ42lt+rowbAdWEloJI5NdEn7Q+h7CFS
+	3cWY3fHYG3WGalO7+Lx3wDOUaDLzns8AKyIvNRVM/shyHEsH4UJN2/G3AlriQJC5LsJM85l9OZC
+	gKJYcum1H1jidOppVfUgE/uFiLeDxqMmW7FU5Us2Jx
+X-Google-Smtp-Source: AGHT+IHgRqqiTqKK9xWzlnJl9nuXClN9+LmtvWVEfm6elxrtnetY9R0eCj0ZsKS6jravLjWFcCumIH9iOwPR7gur47c=
+X-Received: by 2002:a05:6902:98e:b0:e57:346f:5b12 with SMTP id
+ 3f1490d57ef6-e60b2eacc43mr6998903276.18.1740829541019; Sat, 01 Mar 2025
+ 03:45:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Frank.Li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
+ <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com> <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
+ <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com> <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
+ <5af62fa9-e71b-412f-8640-502f03fcaa52@huawei.com> <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
+ <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com> <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
+ <6506e448-3851-436f-9354-42f9ef844d27@huawei.com> <njnz5hxumrvqrgsfq7zlunle3jgfan3be34ao5xtkmzczpi6af@waywds2ww6qw>
+ <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
+In-Reply-To: <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 1 Mar 2025 13:45:30 +0200
+X-Gm-Features: AQ5f1JovDIdMFleM78uUNt49Eq12cxxY-CMeDTA14F_begq8E4NvDwe6hIZMAW4
+Message-ID: <CAA8EJpo71m_ae9siT7f4Tsfr0C4XeoraqPYPsPp0gz-N+oMOjw@mail.gmail.com>
+Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
+	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
+	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 11 Feb 2025 19:22:00 +0000,
-Frank Li <Frank.Li@nxp.com> wrote:
-> 
-> Some MSI controller change address/data pair when irq_set_affinity().
-> Current PCI endpoint can't support this type MSI controller. So add flag
-> MSI_FLAG_MUTABLE in include/linux/msi.h and check it when allocate
-> doorbell.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v14 to v15
-> - none
-> 
-> change from  v13 to v14
-> - bring v10 back
-> 
-> Change from v9 to v10
-> - new patch
-> ---
->  drivers/pci/endpoint/pci-ep-msi.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
-> index 549b55b864d0e..c0e2d806ee658 100644
-> --- a/drivers/pci/endpoint/pci-ep-msi.c
-> +++ b/drivers/pci/endpoint/pci-ep-msi.c
-> @@ -44,6 +44,14 @@ int pci_epf_alloc_doorbell(struct pci_epf *epf, u16 num_db)
->  
->  	dev_set_msi_domain(dev, dom);
->  
-> +	if (!irq_domain_is_msi_parent(dom))
-> +		return -EINVAL;
-> +
-> +	if (!irq_domain_is_msi_immutable(dom)) {
-> +		dev_err(dev, "Can't support mutable address/data pair MSI controller\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	msg = kcalloc(num_db, sizeof(struct pci_epf_doorbell_msg), GFP_KERNEL);
->  	if (!msg)
->  		return -ENOMEM;
-> 
+On Sat, 1 Mar 2025 at 11:54, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>
+>
+> > On Sat, Mar 01, 2025 at 04:45:40PM +0800, Yongbang Shi wrote:
+> >>> On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
+> >>>>> On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
+> >>>>>>> On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
+> >>>>>>>>> On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
+> >>>>>>>>>>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
+> >>>>>>>>>>>> +{
+> >>>>>>>>>>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
+> >>>>>>>>>>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
+> >>>>>>>>>>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
+> >>>>>>>>>>>> +  int ret;
+> >>>>>>>>>>>> +
+> >>>>>>>>>>>> +  if (dp->hpd_status) {
+> >>>>>>>>>>>> +          hibmc_dp_hpd_cfg(&priv->dp);
+> >>>>>>>>>>>> +          ret = hibmc_dp_prepare(dp, mode);
+> >>>>>>>>>>>> +          if (ret)
+> >>>>>>>>>>>> +                  return ret;
+> >>>>>>>>>>>> +
+> >>>>>>>>>>>> +          hibmc_dp_display_en(dp, true);
+> >>>>>>>>>>>> +  } else {
+> >>>>>>>>>>>> +          hibmc_dp_display_en(dp, false);
+> >>>>>>>>>>>> +          hibmc_dp_reset_link(&priv->dp);
+> >>>>>>>>>>>> +  }
+> >>>>>>>>>>> If I understand this correctly, you are using a separate drm_client to
+> >>>>>>>>>>> enable and disable the link & display. Why is it necessary? Existing
+> >>>>>>>>>>> drm_clients and userspace compositors use drm framework, they should be
+> >>>>>>>>>>> able to turn the display on and off as required.
+> >>>>>>>>>>>
+> >>>>>>>>>> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
+> >>>>>>>>>> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
+> >>>>>>>>>> the different video modes into DP registers.
+> >>>>>>>>> Why? The link training and mode programming should happen during
+> >>>>>>>>> pre_enable / enable stage (legacy or atomic).
+> >>>>>>>> Hi Dmitry,
+> >>>>>>>>
+> >>>>>>>> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
+> >>>>>>>> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
+> >>>>>>> It should be userspace, who triggers the enable/disable (or it should
+> >>>>>>> be the in-kernel fbdev / fbcon, which interface through the generic
+> >>>>>>> drm_fbdev client).
+> >>>>>> Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
+> >>>>>> by user, but it won't call when HPD triggered .
+> >>>>> - Is HPD even properly delivered to userspace? What kind of compsitor
+> >>>>>      are you using? Is .detect working properly and reporting a correct
+> >>>>>      plug-in state?
+> >>>> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
+> >>>> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
+> >>>> I use Xorg, and the display service is GDM.
+> >>>> The .detect is called and the getting modes info is correct.
+> >>>> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
+> >>> You can go to the display settings in GDM. It would be interesting to
+> >>> observe if it notes the second monitor or not. Last, but not least, you
+> >>> can use a simple tool like 'xrandr' under your XOrg session to set the
+> >>> display resolution.
+> >> Thank you for your advice!
+> >> Right, there are DP and VGA two monitors. I tried to totally remove the vga connector in driver, the problem is gone.
+> >> So do I need to clear the vga connector, if dp is plugged in?
+> > Unless your hardware can not manage two outputs at the same time, no,
+> > you don't have to. Just check how it behaves on x86 systems. Ideally
+> > your driver should have the same behaviour.
+>
+> Our hardware cannot support two outputs with different timing, so I used the one crtc and one plane that DP and VGA share. And just add a new DP connector
+> with a encoder, just like the previous VGA's code logic. But the HPD problem makes me feel confused, should I change the framwork structure to slove this problem?
 
-I really don't think this brings much to the table. These systems are
-not built by picking up random bits that can be put together by hand.
-They are integrated in an SoC, and I can't imagine that the MSI
-controller is picked randomly.
+I think registering a single CRTC is a correct way. Then it is logical
+that there is no mode set on the DP when you connect it. The userspace
+can not output any data. However if you disconnect VGA and connect DP
+then it should become active and should output your desktop
+environment.
 
-So my conclusion is that this is either *designed* to work, or it
-doesn't exist, and that this code is just dead code.
+>
+> And also, I will check whether this driver works good on the x86 server. Right now, I'm testing on arm64 server.
+>
+> >> And also, I used xrandr to set modes after 'startx'. Changing resolutions works,
+> >> but there are errs when set some low resolutions.
+> > That's a separate topic, most likely related to timing or to some other
+> > issues. You can fix that separately (but please do, switching modes
+> > should work).
+>
+> Okay!
+>
+>
 
-Thanks,
-
-	M.
 
 -- 
-Without deviation from the norm, progress is not possible.
+With best wishes
+Dmitry
 
