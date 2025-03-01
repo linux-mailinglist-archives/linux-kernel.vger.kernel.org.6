@@ -1,78 +1,120 @@
-Return-Path: <linux-kernel+bounces-540078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF05A4AD61
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:36:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C211A4AD67
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45D81896DB6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58FF1704F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19A31E5B6B;
-	Sat,  1 Mar 2025 18:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE6A1E5B81;
+	Sat,  1 Mar 2025 18:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRRedVIp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k+8qDxWv"
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B66D1519BE;
-	Sat,  1 Mar 2025 18:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E464223F37C;
+	Sat,  1 Mar 2025 18:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740854211; cv=none; b=Gwy0Qt9P36gWcKBfuabk0ZJmkXeoeFB8c1uMURCJQwoAr862T5j+5vEL8M4NKoqwLpP1XNVTvdafZWGveOgO/Nfzv+KGRR/+XXL7mTUacFpIh3mdiXmc4JcS4X9guee755L95GHivA5sJHZ0guuSslBALU5ycvwbMNYO8jxc85o=
+	t=1740854657; cv=none; b=aeTa3hDl9BsH/rH4t+2V21/v8dXeZovFSMRanGO+G5E2XNmrsooafXwuTcHUTO1WMLDulCrKokmBF2qOR3SHSf1TOiA9zcu4Ej8ncauSaoX8/OVpLG3gB8UTRYgBkchFWSkmPsOpjmjtlT57a8EDbe0rLHqHsZT3621ca4JoAkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740854211; c=relaxed/simple;
-	bh=dI2Hwo9CzpygTTeDzcXIP5UB49yjMzR6X0UUh+yvk9E=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Vktgsey47qDnGMUH+PDTW511VS7SEMpmEPH+tyoKe9Eg391fX+2HFMXGiqL822jBP/gvYWATUeWEvyYT7xBtuVl1CMQSc8WtRz3XrmhYvT6KVORQ0dyeFVIx2UqZt8UENvmfTfJLh3LFhZn+DNLSrmLB1IrMc1NQ2IeW4kthAso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRRedVIp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0D5C4CEDD;
-	Sat,  1 Mar 2025 18:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740854211;
-	bh=dI2Hwo9CzpygTTeDzcXIP5UB49yjMzR6X0UUh+yvk9E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XRRedVIpDIWzU5mLH7oeZrBLpsJSpiZCDodhuLBAWWUvLwDelf+Quk7Mba86lGonT
-	 4tX60m7Hm7W32rgU8tUEG5OjRk5w/ByQfEM7ezd0063hEdNrNELaU3wnegzi3JadO8
-	 pbDrHLk7mODCvVnRK2akJRFxJy0h4jsZJ5iwbEOctSLNrRs/GCI0oQyru+PmBn6rxW
-	 koRcjmcZstBZecrw/uh+tic39FNH8FdOIHUKVso1Hgpv7oixBKvg1Vq2tNkepIM+k7
-	 ydterO/b1CIthc04qspt2Yaj6+kmakZTXA6NOqjFMCyKMQCP6J9orUEovUufB4gv6W
-	 evZuijefSBjVA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCE1380AACF;
-	Sat,  1 Mar 2025 18:37:24 +0000 (UTC)
-Subject: Re: [GIT PULL] KVM fixes for Linux 6.14-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250301075732.2438425-1-pbonzini@redhat.com>
-References: <20250301075732.2438425-1-pbonzini@redhat.com>
-X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250301075732.2438425-1-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-X-PR-Tracked-Commit-Id: 916b7f42b3b3b539a71c204a9b49fdc4ca92cd82
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 209cd6f2ca94fab1331b9aa58dc9a17c7fc1f550
-Message-Id: <174085424333.2484297.2895064618693734305.pr-tracker-bot@kernel.org>
-Date: Sat, 01 Mar 2025 18:37:23 +0000
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+	s=arc-20240116; t=1740854657; c=relaxed/simple;
+	bh=T433eUfkMrUo1Wprk9rrV953OoJLM5qrhVCq/CAQvvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E6rCKDQSlDIwifyJfdGXgoaArQBQ+fCktdmDs14Q645+ws1ImjUZ+PHEvblHrCVng0rzBohAwP9/dG+gm9lVnCkNt0TLCM7LOCy0SFWEmhYooBupQvHAQOg8Ykv0htMAOZQkr3axozY1mmHL5bNw/nn2BuB1ntnVAsFgy26DypQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=k+8qDxWv; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id oRndttkZclzKeoRngtwIir; Sat, 01 Mar 2025 19:43:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740854583;
+	bh=kivS0j5YlRBr/NK4eTwHFGgQZng6nDYYZFuu6CKvKgs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=k+8qDxWvuRHPkPZSB2Uaccu3gZfp77O4E/sYM+P8NRjnFIP9uUEBpkZnnl8u2eLb0
+	 6u9jmR90VAlyT42PfnGwq6/ow/Z5G8leuU/sJcLobMZQx7EKgn0EA9NJl0a98hrIaj
+	 p1Kqk2pAh6hBPiyiz3pUYbck45ud5clerjXjAjZtW6nZTk/z+CObM5SUXuZ0am009R
+	 RM3PoxRvMxQ4c/cRkX8hVZsZS0jATFscJ65ZBBss8PWxXV1QxgSEsR/8wQ1ICC1vb2
+	 u1uEdqniDswEcUwN1sor0UR1reugBes7qeTI2cA7mwsIEOAbVFoO10SmEw786nALoz
+	 ob14oIapN5qpw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 01 Mar 2025 19:43:03 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: histb: Fix an error handling path in histb_pcie_probe()
+Date: Sat,  1 Mar 2025 19:42:54 +0100
+Message-ID: <8301fc15cdea5d2dac21f57613e8e6922fb1ad95.1740854531.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Sat,  1 Mar 2025 02:57:32 -0500:
+If an error occurs after a successful phy_init() call, then phy_exit()
+should be called.
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Add the missing call, as already done in the remove function.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/209cd6f2ca94fab1331b9aa58dc9a17c7fc1f550
+Fixes: bbd11bddb398 ("PCI: hisi: Add HiSilicon STB SoC PCIe controller driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only.
 
-Thank you!
+It is also completly speculative. Review with care.
+---
+ drivers/pci/controller/dwc/pcie-histb.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index 615a0e3e6d7e..63b701881357 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -409,16 +409,22 @@ static int histb_pcie_probe(struct platform_device *pdev)
+ 	ret = histb_pcie_host_enable(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to enable host\n");
+-		return ret;
++		goto err_exit_phy;
+ 	}
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize host\n");
+-		return ret;
++		goto err_exit_phy;
+ 	}
+ 
+ 	return 0;
++
++err_exit_phy:
++	if (hipcie->phy)
++		phy_exit(hipcie->phy);
++
++	return ret;
+ }
+ 
+ static void histb_pcie_remove(struct platform_device *pdev)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.48.1
+
 
