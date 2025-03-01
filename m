@@ -1,229 +1,155 @@
-Return-Path: <linux-kernel+bounces-539685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C098A4A75A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EB3A4A75E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0F216A04F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7603E169E04
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113EF22318;
-	Sat,  1 Mar 2025 01:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE2E1BC3F;
+	Sat,  1 Mar 2025 01:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkN/2Stl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CnfgnKyk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73163A9
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF2A935
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792235; cv=none; b=tRZlW3KBNZR3C6I018k+VCBBBzWWYCL99DD80GpMuGJ2d4MlsjafGDwwLWEFUbWYVinFrcZ3Xzy5RcEphWidnOCAEKajDFz/A9cQsNrjLZg5b3Q8h13wgrZL98SLtvmM8pjH7/pEulDMyJkYbxncthslt6zY5LjenIMAhUC/vxE=
+	t=1740792291; cv=none; b=mu+2QTFmu+B9z7IPUqihLivxKHTbn36wppjTLsk7pCNf1+4kpFkHPSKmU3skijyqWWUtqIZL83i9d0bcCxTWv+jqPtorF4zg57g1+VpbK87E6mUZLp/dW/JLDvLCnawcShofjhTSnLVuVxPdtG+Z76fCGShi6mrZkwYB9vWfmnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792235; c=relaxed/simple;
-	bh=o1p+ne+HAvY4DDZ63M6vfhpNc3u5cYCy3IlSrcF7C2I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E5lMWqUwc2/Tm6/jPxmCHcfRb0z/snSGqBJ70oP7tZQkZWZaP3LnyFJeO51g3wNzwXgVqNOm/knaaiB+qXVdOA1kpnTXAKASHMSIFQh3j1DP+OIzzrhSjrSBlsgPVnYevn9W0UMBLUEUNK1i04ymFH6g30qg7bTrCukROK2FZgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkN/2Stl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740792232;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8OAJrklYzp8/r3g4lixGYj7CZWiatxwAHqPRLaD3+jg=;
-	b=CkN/2StlvJ8SJ7paAQakChOdKvQcNe4IJ6Stfe6FMg7Vj4xhMTxrBTWY7zYjI5WGVMeGR2
-	43DZSn+i78/TCzKpGZ82zQLe6Xt4bPQcfEU7EJhg5pFgHe4hxoFGvF+QZWrL+GQKUGqNMS
-	HpRjSCt58c2hrtZqVKF5hmq1ickecJY=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-kWmq9q2nMZmvYMRLtw6hvQ-1; Fri, 28 Feb 2025 20:23:50 -0500
-X-MC-Unique: kWmq9q2nMZmvYMRLtw6hvQ-1
-X-Mimecast-MFC-AGG-ID: kWmq9q2nMZmvYMRLtw6hvQ_1740792230
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471f1b00de4so56211081cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:23:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740792230; x=1741397030;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8OAJrklYzp8/r3g4lixGYj7CZWiatxwAHqPRLaD3+jg=;
-        b=P19CZEW7/j64/ed59j+OewlQOZjlQVNvFjPphF0pb177FItoYIGeoJQk7ozy8HN1wG
-         Yf/C/uWCJUcTgn8cLRiB8emFgcvnMI/zM0OJBfP5NxvQ8C3rNKt08qLuTjpyP9RzGeCU
-         lwpN/Kt8oBqg0OeNIbfYPClPwj1Xf4mQof23tf0e+imbRd+7Eh1qIHnKRBBiJT9ZLxIX
-         oymvA43oWTE6CUn7ZKAlAzNcoXWw2cQuqNCFukWFGzTT0l4ELse771QuUHnWnsexuEv4
-         mbDZ4tF37jnNH6UZQZcnST7cm0FoPSJ/KEgDpUe+MG3CKxPkUz9z69YWAXRGLGMmFbgJ
-         YWfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ/G4Xc1maTvbCMjdqowprc7VQU/gNLeD0TTWepf9AGCE+qACKjT9Zzem/wHUiG1hIZKSu7GPyXRNncDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydkMJBDzyS840vC5PwELhnAigmJZ86M45RQuknn7Y1BeXmpG97
-	K7CJN0hgdaWsrnokOWxS2EP2xueyVWJQXLFlcEPq3u4B765wnaAuwmlmFOt/46nka4Ng5B8QjKl
-	RgpLYAtTd9DPeF4gIdcZ4B9yb28T7jsT48vfb9yPWP5PwhufntbMM25rFqN7TRw==
-X-Gm-Gg: ASbGncsAodnfTMTT4m5jXcjJ/kphrvNTTh1mOcc4F3S2c+szIo7x9k6mZhOI/2b+kdk
-	7XGVsgUpHiSdMLuXcmJERKlTHbGmp6TR3ZYZOcoDq/dAPmjO3XhiPmizd9DNLVcV8cKOz/FjAyP
-	pdzR4gMw/B6AZ4vtxRRN0Y9lVDLoQh/Rg9pZWFGxZxy6kEIxNJfIsDzFWTuAE2BfWvRaxXlwUiD
-	XXBOSJr2evfCU/gDbDFXzjyv/nFKFSjKOmEvw237gOSHnEGogdhn37KgQdppPFptTcuSMaPOQ+a
-	VmKxDQohhcw1Mo8=
-X-Received: by 2002:ad4:574c:0:b0:6e6:64e8:28e7 with SMTP id 6a1803df08f44-6e8a0d0895amr88661486d6.15.1740792230268;
-        Fri, 28 Feb 2025 17:23:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGqrmNkALLpnsrIVr0ZBViMhrVD8kVQJKE0j3X/XcwAt87q8J9yjv80JpSGnSy0+3KHJEeJbA==
-X-Received: by 2002:ad4:574c:0:b0:6e6:64e8:28e7 with SMTP id 6a1803df08f44-6e8a0d0895amr88661316d6.15.1740792229955;
-        Fri, 28 Feb 2025 17:23:49 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ccbefsm27878336d6.85.2025.02.28.17.23.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 17:23:49 -0800 (PST)
-Message-ID: <7addde721e3f67bfa8ec5c9671f51d131f84bc6b.camel@redhat.com>
-Subject: Re: [RFC PATCH 01/13] KVM: nSVM: Track the ASID per-VMCB
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 20:23:48 -0500
-In-Reply-To: <20250205182402.2147495-2-yosry.ahmed@linux.dev>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
-	 <20250205182402.2147495-2-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1740792291; c=relaxed/simple;
+	bh=5nOsIwHbbcbLoA3xmRhsRYuQAs3fWV0c4VOuHUGKw3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VExHNwyX8km5JTfx9gp0+eQMQlui5WIFo4IVa6xDiMnRv7BqKHHvCfg0ShRE9DY0AQwEvYhfaHUHaN+WGww/F79s0GzIKzl27PzReJnso1VqReAIf+JkLirPNmKc5XAFv28f/YbQIfJYYvtvojpk08SwJN6l9U375jsVdISB3BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CnfgnKyk; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740792290; x=1772328290;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=5nOsIwHbbcbLoA3xmRhsRYuQAs3fWV0c4VOuHUGKw3o=;
+  b=CnfgnKyk5JtaaGbvJ0+UYV2PC0RuhiVD8QfvMFN7IjS+JIMyJPsgNFCB
+   C48Qh/Lg5quWtir8BoxzQ5L74UhAf7XpNsr4KlwbViUqMdRUu/E28QgSb
+   dFwpczJwlIPKyjwoA48h3S0r563RxqFAny7p3CHnqPIqQ3tY49oOKWZ0n
+   nBKnFFDmYYcv5E+WqXKxYA71/ODlejl+ekeflz8u3etkup2ApsvsOfPiC
+   NdBbA2wzI7Akffw2TvXliKvSWXsORIHaKWz2qr76gvTFsntJNCIgMibpT
+   G8z1UMHXf6ML3x9bW6dtC+Bxzq2UmAysmxdFOacHSTc1xD8e81c4YOPuV
+   Q==;
+X-CSE-ConnectionGUID: yENmr0CZTiWfepYIm7q4ow==
+X-CSE-MsgGUID: GJyTNsP1Tl2tdA1WN717iQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41619043"
+X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
+   d="scan'208";a="41619043"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 17:24:49 -0800
+X-CSE-ConnectionGUID: x8x86C9qS+C/yhTEgObFDA==
+X-CSE-MsgGUID: 6mj10fIJQsKTP8yTF4UhHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
+   d="scan'208";a="122097547"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 28 Feb 2025 17:24:47 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toBau-000FiI-39;
+	Sat, 01 Mar 2025 01:24:44 +0000
+Date: Sat, 1 Mar 2025 09:24:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huang Ying <ying.huang@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: kernel/resource.c:1838:43: warning: implicit conversion from
+ 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value
+ from 68719476735 to 4294967295
+Message-ID: <202503010926.R1fZJVo3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> The ASID is currently tracked per-vCPU, because the same ASID is used by
-> L1 and L2. That ASID is flushed on every transition between L1 and L2.
-> 
-> Track the ASID separately for each VMCB (similar to the
-> asid_generation), giving L2 a separate ASID. This is in preparation for
-> doing fine-grained TLB flushes on nested transitions instead of
-> unconditional full flushes.
-> 
-> The ASIDs are still not fully maintained (e.g. a remote flush will only
-> flush the current ASID), so keep the TLB flush on every transition until
-> this is sorted out.
-> 
-> L1's ASID will be flushed on KVM_REQ_TLB_FLUSH_GUEST if it is the
-> active context, so remove the TODO in nested_svm_transition_tlb_flush()
-> about it.
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/kvm/svm/nested.c |  1 -
->  arch/x86/kvm/svm/sev.c    |  2 +-
->  arch/x86/kvm/svm/svm.c    | 12 +++++++-----
->  arch/x86/kvm/svm/svm.h    |  2 +-
->  4 files changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 04c375bf1ac2a..bbe4f3ac9f250 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -495,7 +495,6 @@ static void nested_svm_transition_tlb_flush(struct kvm_vcpu *vcpu)
->  	 *  - Honor L1's request to flush an ASID on nested VMRUN
->  	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
->  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
-> -	 *  - Flush L1's ASID on KVM_REQ_TLB_FLUSH_GUEST
->  	 *
->  	 * [*] Unlike nested EPT, SVM's ASID management can invalidate nested
->  	 *     NPT guest-physical mappings on VMRUN.
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 799f8494b599c..b0adfd0537d00 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3468,7 +3468,7 @@ void pre_sev_run(struct vcpu_svm *svm, int cpu)
->  	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
->  
->  	/* Assign the asid allocated with this SEV guest */
-> -	svm->asid = asid;
-> +	svm->current_vmcb->asid = asid;
->  
->  	/*
->  	 * Flush guest TLB:
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 7640a84e554a6..08340ae57777b 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1335,8 +1335,10 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
->  		save->g_pat = vcpu->arch.pat;
->  		save->cr3 = 0;
->  	}
-> -	svm->current_vmcb->asid_generation = 0;
-> -	svm->asid = 0;
-> +	svm->vmcb01.asid_generation = 0;
-> +	svm->vmcb01.asid = 0;
-> +	svm->nested.vmcb02.asid_generation = 0;
-> +	svm->nested.vmcb02.asid = 0;
->  
->  	svm->nested.vmcb12_gpa = INVALID_GPA;
->  	svm->nested.last_vmcb12_gpa = INVALID_GPA;
-> @@ -1988,7 +1990,7 @@ static void new_asid(struct vcpu_svm *svm, struct svm_cpu_data *sd)
->  	}
->  
->  	svm->current_vmcb->asid_generation = sd->asid_generation;
-> -	svm->asid = sd->next_asid++;
-> +	svm->current_vmcb->asid = sd->next_asid++;
->  }
->  
->  static void svm_set_dr6(struct vcpu_svm *svm, unsigned long value)
-> @@ -4235,8 +4237,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->  
->  	sync_lapic_to_cr8(vcpu);
->  
-> -	if (unlikely(svm->asid != svm->vmcb->control.asid)) {
-> -		svm->vmcb->control.asid = svm->asid;
-> +	if (unlikely(svm->current_vmcb->asid != svm->vmcb->control.asid)) {
-> +		svm->vmcb->control.asid = svm->current_vmcb->asid;
->  		vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
->  	}
->  	svm->vmcb->save.cr2 = vcpu->arch.cr2;
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index 9d7cdb8fbf872..ebbb0b1a64676 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -133,6 +133,7 @@ struct kvm_vmcb_info {
->  	unsigned long pa;
->  	int cpu;
->  	uint64_t asid_generation;
-> +	u32 asid;
->  };
->  
->  struct vmcb_save_area_cached {
-> @@ -247,7 +248,6 @@ struct vcpu_svm {
->  	struct vmcb *vmcb;
->  	struct kvm_vmcb_info vmcb01;
->  	struct kvm_vmcb_info *current_vmcb;
-> -	u32 asid;
->  	u32 sysenter_esp_hi;
->  	u32 sysenter_eip_hi;
->  	uint64_t tsc_aux;
+Hi Huang,
 
-Hi,
+FYI, the error/warning still remains.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5c44ddaf7df3a06391684dde65083a092e06052b
+commit: 99185c10d5d9214d0d0c8b7866660203e344ee3b resource, kunit: add test case for region_intersects()
+date:   6 months ago
+config: arm-randconfig-001-20241228 (https://download.01.org/0day-ci/archive/20250301/202503010926.R1fZJVo3-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503010926.R1fZJVo3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503010926.R1fZJVo3-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/resource.c:1838:43: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
+                   end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
+   #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
+                                                               ^
+   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
+   #define min_t(type, x, y) __cmp_once(min, type, x, y)
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^~
+   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
+           __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
+           ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+                                  ~~    ^
+   kernel/resource.c:1855:45: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
+                   addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
+   #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
+                                                               ^
+   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
+   #define min_t(type, x, y) __cmp_once(min, type, x, y)
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^~
+   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
+           __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
+           ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+                                  ~~    ^
+   2 warnings generated.
 
 
-I think it should be possible to eliminate separate ASID field (current_vmcb->asid/svm->asid)
-completely and instead just use the value stored in the vmcb.
+vim +1838 kernel/resource.c
 
-When there is a need to update it, KVM can also set the corresponding dirty bit
-as done in svm_vcpu_run (new_asid also already does this when the asid generation increases)
+  1831	
+  1832	static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+  1833					 resource_size_t align, unsigned long flags)
+  1834	{
+  1835		if (flags & GFR_DESCENDING) {
+  1836			resource_size_t end;
+  1837	
+> 1838			end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
+  1839			return end - size + 1;
+  1840		}
+  1841	
+  1842		return ALIGN(max(base->start, align), align);
+  1843	}
+  1844	
 
-Also KVM already sets the tlb_ctl directly in the vmcb.
-
-What do you think?
-
-Best regards,
-	Maxim Levitsky
-
-
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
