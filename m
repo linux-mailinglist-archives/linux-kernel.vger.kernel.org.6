@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-539662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F680A4A702
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:32:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0DFA4A703
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9D37A2851
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701F6189D017
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C16D2FB;
-	Sat,  1 Mar 2025 00:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5489017580;
+	Sat,  1 Mar 2025 00:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQc7DycX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP6usaP8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160DA29A0;
-	Sat,  1 Mar 2025 00:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A022512B73
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789163; cv=none; b=JIvgwoff0LmO9ym0J+4X4f99qPJhQQEIn6GeOtWzCpfwec4Q1e6SRo5qZTFvaSIqPB5pB9TcTO4Hv88I8wlIDwKrI6o9GOQNnelOp1jZx1DHirp0s4/98xiD2mPpz/p/0+JPHa+scb9Cd3np1ZRLLj6jQ5gCbESRHoppwyQJugo=
+	t=1740789203; cv=none; b=Cru7qqrIWVSlnklhhhT6NJRYdU6DpnylSyqp5234CfZbDvGxLeXpGdQP9Sn0sPGateIcFEoZTHU9u+tX+bMRvWUqs8dsxu9niWFcfoJVgAc7Q5XS6QtPMilxVNR21KYDgH/eR3EIXwXuwHsnPTuIq+mvVge8w1uvtYTXrIOk4Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789163; c=relaxed/simple;
-	bh=YYGWRotQBIR904/KZbLEgl+tXRHyUJjSFNpbZZ8EKx4=;
+	s=arc-20240116; t=1740789203; c=relaxed/simple;
+	bh=zWKzoDryyg6Rn7A17K2agTJJZfVSssFh1IkiOhO/i/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrpU2MLngwc9Wo0iU5tm3OWKgHYCf+yNfPQXtXNJ0ijFbpC7N0Omd4JauRfV5bX3ls3NAag2/uQWD/Y5MEFA9j9sXANL8xP5xsg2FNibxVFo24aTkzT2/m1B8zxEMKZueE77zkoGfkuylrYQN9MtxTzhROndo8AQv6xdYV619NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQc7DycX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE707C4CED6;
-	Sat,  1 Mar 2025 00:32:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uv65CqUgrxUsSLLoBF10bEim1i3eOtxa48owxoc19O5tv+b+6J79XI81Xu553XDanOkENJodkox41sCaybZpLLVb558xpt8wjnG8IATnQMMLhcu2cQUAAX4M5ArYWREK95POQsbLJMPZvByZiTENOv7ELNJXn13YJkqc/+2TwRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP6usaP8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742B7C4CED6;
+	Sat,  1 Mar 2025 00:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740789162;
-	bh=YYGWRotQBIR904/KZbLEgl+tXRHyUJjSFNpbZZ8EKx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KQc7DycXDhNyceAsfpQkHrLGKzIBYDu6MylfZs471lYqKu4PMlI8eZpT+9lO1QVm8
-	 BLqyYcxZCFMbHP8Pw2Mciut7AzYkzxVWWQJPg3MdwpS9Fl5Si/f3HH0YS7SR7y4yw+
-	 l5hni5Pv8qPXevj9I6rohKl9OhkQo/6iDaHx5Sg0tGncrhsdfNxkk8r7GopxqoEfkc
-	 0mOeVwSxpLK7PS5Rq0syWX9OEwkz4sMvlW4Fa3j+TfG7AoWsm7UFLFOyOSZx1f/TNA
-	 /2ckfLLliIsdQaDGZ7lc3e7JZwptIMLUuR68jBNgmz8fkSBSc4MqvcRss0xVqMg1eJ
-	 UIa4aQ4UvQXoQ==
-Date: Fri, 28 Feb 2025 16:32:40 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
-	dvyukov@google.com, ak@linux.intel.com, james.clark@linaro.org,
-	christophe.leroy@csgroup.eu, ben.gainey@arm.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf record: Add 8-byte aligned event type
- PERF_RECORD_COMPRESSED2
-Message-ID: <Z8JVqOZbFE6QwDv9@google.com>
-References: <20250227053738.788153-1-ctshao@google.com>
- <CAP-5=fUU05CJhXJuSPt61+H8jC07YuVtkCZwf9Dcawa0AGffSg@mail.gmail.com>
- <Z8AjtizjixQb3qB6@google.com>
- <CAJpZYjXm9BrSwTSri3qvoj0JarAgUqH6w_4PjanTsLTTNanZYQ@mail.gmail.com>
+	s=k20201202; t=1740789203;
+	bh=zWKzoDryyg6Rn7A17K2agTJJZfVSssFh1IkiOhO/i/g=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=uP6usaP8CuqzJGSax/Zzw5t0b/nUiDA/HSvW/iO7XCoxXZiUTB5+EOiYuTu7FkVWX
+	 i4VeejKxS4Pe1nS5k8CXZlROBjDrDkeDierSm2DzDsb5mxX1j1FQDRmEZkIHpkOF17
+	 nJtuvjs3KVl6Ula64hyrdeW1LvbhrXuyr/U2ct/uzMkj9biwH5dfKpJ/Y/GSgZemdf
+	 NBExFTA7DouP3FTxO3wA8Z78RORCjS33ngshEP2kaBJdcSU/7OUdMkE6y22OJ4j3JW
+	 lXDhen3ejzPuekukB6I4fBwXr/Fg++gaC0qPtum3D3IERvLGwelmlfHj6ozRBdpisr
+	 JtYrflvQJj2xQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0E017CE0DEB; Fri, 28 Feb 2025 16:33:23 -0800 (PST)
+Date: Fri, 28 Feb 2025 16:33:23 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: patryk.wlazlyn@linux.intel.com, artem.bityutskiy@linux.intel.com,
+	dave.hansen@linux.intel.com, gautham.shenoy@amd.com,
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, peterz@infradead.org
+Subject: Re: [BUG objtool,x86] Missing __noreturn annotation in
+ acpi_processor_ffh_play_dead()
+Message-ID: <25592ab5-5d8a-46ed-86a2-a0c58eed9f60@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <9a09eebe-f8fa-4993-83c1-7d58abac28af@paulmck-laptop>
+ <20250228191213.7drb265s7jrrjf7b@jpoimboe>
+ <35dfcb6b-ccdf-4ac2-a44b-94edd72ed302@paulmck-laptop>
+ <20250228220039.tjimagjqkswzooi4@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,302 +66,153 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJpZYjXm9BrSwTSri3qvoj0JarAgUqH6w_4PjanTsLTTNanZYQ@mail.gmail.com>
+In-Reply-To: <20250228220039.tjimagjqkswzooi4@jpoimboe>
 
-On Thu, Feb 27, 2025 at 10:21:38AM -0800, Chun-Tse Shao wrote:
-> On Thu, Feb 27, 2025 at 12:35 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 11:12:37PM -0800, Ian Rogers wrote:
-> > > On Wed, Feb 26, 2025 at 9:37 PM Chun-Tse Shao <ctshao@google.com> wrote:
-> > > >
-> > > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
-> > > > asan runtime error:
-> > > >
-> > > >   # Build with asan
-> > > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
-> > > >   # Test success with many asan runtime errors:
-> > > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
-> > > >    83: Zstd perf.data compression/decompression:
-> > > >   ...
-> > > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
-> > > >   0x7f69e3f99653: note: pointer points here
-> > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > >                 ^
-> > > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
-> > > >   0x7f69e3f99653: note: pointer points here
-> > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > >                 ^
-> > > >   ...
-> > > >
-> > > > Since there is no way to align compressed data in zstd compression, this
-> > > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
-> > > > `data_size` to specify the actual compressed data size. The
-> > > > `header.size` contains the total record size, including the padding at
-> > > > the end to make it 8-byte aligned.
-> > > >
-> > > > Tested with `Zstd perf.data compression/decompression`
-
-Do you mean `perf test Zstd`?
-
-> > > >
-> > > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > > > ---
-> > > >  tools/lib/perf/Documentation/libperf.txt      |  1 +
-> > > >  tools/lib/perf/include/perf/event.h           | 12 ++++++++++
-> > > >  .../Documentation/perf.data-file-format.txt   | 17 +++++++++++---
-> > > >  tools/perf/builtin-record.c                   | 23 +++++++++++++++----
-> > > >  tools/perf/util/event.c                       |  1 +
-> > > >  tools/perf/util/session.c                     |  5 +++-
-> > > >  tools/perf/util/tool.c                        | 11 +++++++--
-> > > >  7 files changed, 59 insertions(+), 11 deletions(-)
-> > > >
-> > > > diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
-> > > > index 59aabdd3cabf..4072bc9b7670 100644
-> > > > --- a/tools/lib/perf/Documentation/libperf.txt
-> > > > +++ b/tools/lib/perf/Documentation/libperf.txt
-> > > > @@ -210,6 +210,7 @@ SYNOPSIS
-> > > >    struct perf_record_time_conv;
-> > > >    struct perf_record_header_feature;
-> > > >    struct perf_record_compressed;
-> > > > +  struct perf_record_compressed2;
-> > > >  --
-> > > >
-> > > >  DESCRIPTION
-> > > > diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
-> > > > index 37bb7771d914..09b7c643ddac 100644
-> > > > --- a/tools/lib/perf/include/perf/event.h
-> > > > +++ b/tools/lib/perf/include/perf/event.h
-> > > > @@ -457,6 +457,16 @@ struct perf_record_compressed {
-> > > >         char                     data[];
-> > > >  };
-> > > >
-> > > > +/*
-> > > > + * `header.size` includes the padding we are going to add while writing the record.
-> > > > + * `data_size` only includes the size of `data[]` itself.
-> > > > + */
-> > > > +struct perf_record_compressed2 {
-> > > > +       struct perf_event_header header;
-> > > > +       __u64                    data_size;
-> > > > +       char                     data[];
-> > >
-> > > Just to note that data_size has to be u16 or smaller due to
-> > > header.size, so I think you can save some bytes by using a u16 or u8
-> > > (for the u8 you could just count the amount of padding and: data_size
-> > > = header.size - padding_size).
-> >
-> > I was about to suggest using the header.misc in the existing
-> > perf_record_compress.  As the padding is up to 7 byte, we could
-> >
-> >   header.type = PERF_RECORD_COMPRESS;
-> >   header.size = PERF_ALIGN(real_size, 8);
-> >   header.misc = header.size - real_size;
-> >
-> > Assuming the old data doesn't set the misc field and have 0.  Then it
-> > would be compatible with old data and get the real size in new data.
+On Fri, Feb 28, 2025 at 02:00:39PM -0800, Josh Poimboeuf wrote:
+> On Fri, Feb 28, 2025 at 11:51:26AM -0800, Paul E. McKenney wrote:
+> > On Fri, Feb 28, 2025 at 11:12:13AM -0800, Josh Poimboeuf wrote:
+> > > On Fri, Feb 28, 2025 at 11:00:07AM -0800, Paul E. McKenney wrote:
+> > > > Hello!
+> > > > 
+> > > > My recent -next testing hits this objtool complaint:
+> > > > 
+> > > > vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
+> > > > 
+> > > > My attempts to silence this by adding the suggested __noreturn annotations
+> > > > didn't help, and often got me compiler warnings about __noreturn functions
+> > > > actually returning.  So I bisected, which converges on this innocent-looking
+> > > > commit:
+> > > > 
+> > > > a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
+> > > > 
+> > > > Several runs verified that this really is the commit that objtool is
+> > > > complaining about.  Unfortunately, this commit does not revert cleanly.
+> > > > 
+> > > > This is from builds using clang version 19.1.5 (CentOS 19.1.5-2.el9).
+> > > > 
+> > > > Help?
+> > > 
+> > > I can take a look.  Is it LLVM defconfig?  Otherwise can you send the
+> > > .config?
+> > 
+> > Thank you!  And rcutorture modifies whatever defconfig it gets. so please
+> > see below for the full .config.
 > 
-> I was thinking the same way and realized the uninitialized `misc`
-> problem while I was testing this implementation.
-> Also I think it would be good to have a new type, at least if
-> something wrong happens unexpectedly, we know that it is caused by old
-> or new compressed event.
-
-Ok, makes sense.
-
+> With your config I actually get a different warning:
 > 
-> >
-> > But unfortunately, I found process_comp_header() didn't reset the misc
-> > field so it may have garbage in old data.  Then the above won't work. :(
-> >
-> > Thanks,
-> > Namhyung
-> >
-> > >
-> > > Thanks,
-> > > Ian
-> > >
-> > > > +};
-> > > > +
-> > > >  enum perf_user_event_type { /* above any possible kernel type */
-> > > >         PERF_RECORD_USER_TYPE_START             = 64,
-> > > >         PERF_RECORD_HEADER_ATTR                 = 64,
-> > > > @@ -478,6 +488,7 @@ enum perf_user_event_type { /* above any possible kernel type */
-> > > >         PERF_RECORD_HEADER_FEATURE              = 80,
-> > > >         PERF_RECORD_COMPRESSED                  = 81,
-> > > >         PERF_RECORD_FINISHED_INIT               = 82,
-> > > > +       PERF_RECORD_COMPRESSED2                 = 83,
-> > > >         PERF_RECORD_HEADER_MAX
-> > > >  };
-> > > >
-> > > > @@ -518,6 +529,7 @@ union perf_event {
-> > > >         struct perf_record_time_conv            time_conv;
-> > > >         struct perf_record_header_feature       feat;
-> > > >         struct perf_record_compressed           pack;
-> > > > +       struct perf_record_compressed2          pack2;
-> > > >  };
-> > > >
-> > > >  #endif /* __LIBPERF_EVENT_H */
-> > > > diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-> > > > index 010a4edcd384..f5faceb0e248 100644
-> > > > --- a/tools/perf/Documentation/perf.data-file-format.txt
-> > > > +++ b/tools/perf/Documentation/perf.data-file-format.txt
-> > > > @@ -604,6 +604,10 @@ contain information that otherwise would be in perf.data file's header.
-> > > >
-> > > >         PERF_RECORD_COMPRESSED                  = 81,
-> > > >
-> > > > +The header is followed by compressed data frame that can be decompressed
-> > > > +into array of perf trace records. The size of the entire compressed event
-> > > > +record including the header is limited by the max value of header.size.
+>         vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
+> 
+> The below patch should fix both, can you confirm it fixes yours?
+> 
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> Subject: [PATCH] x86/smp: Fix __noreturn annotations for mwait_play_dead() and
+>  acpi_processor_ffh_play_dead()
+> 
+> mwait_play_dead() doesn't return, but only has a partial __noreturn
+> annotation.
+> 
+> acpi_processor_ffh_play_dead() also doesn't return due to its
+> unconditional calling of mwait_play_dead().
+> 
+> Fix the annotations for both functions.
+> 
+> This fixes the following warnings:
+> 
+>   vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
+>   vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
+> 
+> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Fixes: a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
+> Fixes: 541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-Maybe we can say it's deprecated now.  New files should use COMPRESSED2
-to guarantee 8-byte alignment.
+Aha!  The tools/objtool/noreturns.h is either new to me or was forgotten
+by me.  ;-)
 
-Thanks,
-Namhyung
+This does indeed handle the objtool warnings for CONFIG_SMP=y builds,
+so thank you!
 
-> > > > +
-> > > >  struct compressed_event {
-> > > >         struct perf_event_header        header;
-> > > >         char                            data[];
-> > > > @@ -618,10 +622,17 @@ This is used, for instance, to 'perf inject' events after init and before
-> > > >  regular events, those emitted by the kernel, to support combining guest and
-> > > >  host records.
-> > > >
-> > > > +       PERF_RECORD_COMPRESSED2                 = 83,
-> > > >
-> > > > -The header is followed by compressed data frame that can be decompressed
-> > > > -into array of perf trace records. The size of the entire compressed event
-> > > > -record including the header is limited by the max value of header.size.
-> > > > +8-byte aligned version of `PERF_RECORD_COMPRESSED`. `header.size` indicates the
-> > > > +total record size, including padding for 8-byte alignment, and `data_size`
-> > > > +specifies the actual size of the compressed data.
-> > > > +
-> > > > +struct perf_record_compressed2 {
-> > > > +       struct perf_event_header        header;
-> > > > +       __u64                           data_size;
-> > > > +       char                            data[];
-> > > > +};
-> > > >
-> > > >  Event types
-> > > >
-> > > > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > > > index 9af3f21fd015..d07ad670daa7 100644
-> > > > --- a/tools/perf/builtin-record.c
-> > > > +++ b/tools/perf/builtin-record.c
-> > > > @@ -648,14 +648,27 @@ static int record__pushfn(struct mmap *map, void *to, void *bf, size_t size)
-> > > >         struct record *rec = to;
-> > > >
-> > > >         if (record__comp_enabled(rec)) {
-> > > > +               struct perf_record_compressed2 *event = map->data;
-> > > > +               size_t padding = 0;
-> > > > +               u8 pad[8] = {0};
-> > > >                 ssize_t compressed = zstd_compress(rec->session, map, map->data,
-> > > >                                                    mmap__mmap_len(map), bf, size);
-> > > >
-> > > >                 if (compressed < 0)
-> > > >                         return (int)compressed;
-> > > >
-> > > > -               size = compressed;
-> > > > -               bf   = map->data;
-> > > > +               bf = event;
-> > > > +               thread->samples++;
-> > > > +
-> > > > +               /*
-> > > > +                * The record from `zstd_compress` is not 8 bytes aligned, which would cause asan
-> > > > +                * error. We make it aligned here.
-> > > > +                */
-> > > > +               event->data_size = compressed - sizeof(struct perf_record_compressed2);
-> > > > +               event->header.size = PERF_ALIGN(compressed, sizeof(u64));
-> > > > +               padding = event->header.size - compressed;
-> > > > +               return record__write(rec, map, bf, compressed) ||
-> > > > +                      record__write(rec, map, &pad, padding);
-> > > >         }
-> > > >
-> > > >         thread->samples++;
-> > > > @@ -1534,7 +1547,7 @@ static void record__adjust_affinity(struct record *rec, struct mmap *map)
-> > > >
-> > > >  static size_t process_comp_header(void *record, size_t increment)
-> > > >  {
-> > > > -       struct perf_record_compressed *event = record;
-> > > > +       struct perf_record_compressed2 *event = record;
-> > > >         size_t size = sizeof(*event);
-> > > >
-> > > >         if (increment) {
-> > > > @@ -1542,7 +1555,7 @@ static size_t process_comp_header(void *record, size_t increment)
-> > > >                 return increment;
-> > > >         }
-> > > >
-> > > > -       event->header.type = PERF_RECORD_COMPRESSED;
-> > > > +       event->header.type = PERF_RECORD_COMPRESSED2;
-> > > >         event->header.size = size;
-> > > >
-> > > >         return size;
-> > > > @@ -1552,7 +1565,7 @@ static ssize_t zstd_compress(struct perf_session *session, struct mmap *map,
-> > > >                             void *dst, size_t dst_size, void *src, size_t src_size)
-> > > >  {
-> > > >         ssize_t compressed;
-> > > > -       size_t max_record_size = PERF_SAMPLE_MAX_SIZE - sizeof(struct perf_record_compressed) - 1;
-> > > > +       size_t max_record_size = PERF_SAMPLE_MAX_SIZE - sizeof(struct perf_record_compressed2) - 1;
-> > > >         struct zstd_data *zstd_data = &session->zstd_data;
-> > > >
-> > > >         if (map && map->file)
-> > > > diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> > > > index c23b77f8f854..80c9ea682413 100644
-> > > > --- a/tools/perf/util/event.c
-> > > > +++ b/tools/perf/util/event.c
-> > > > @@ -77,6 +77,7 @@ static const char *perf_event__names[] = {
-> > > >         [PERF_RECORD_HEADER_FEATURE]            = "FEATURE",
-> > > >         [PERF_RECORD_COMPRESSED]                = "COMPRESSED",
-> > > >         [PERF_RECORD_FINISHED_INIT]             = "FINISHED_INIT",
-> > > > +       [PERF_RECORD_COMPRESSED2]               = "COMPRESSED2",
-> > > >  };
-> > > >
-> > > >  const char *perf_event__name(unsigned int id)
-> > > > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> > > > index 60fb9997ea0d..db2653322f9f 100644
-> > > > --- a/tools/perf/util/session.c
-> > > > +++ b/tools/perf/util/session.c
-> > > > @@ -1400,7 +1400,9 @@ static s64 perf_session__process_user_event(struct perf_session *session,
-> > > >         int err;
-> > > >
-> > > >         perf_sample__init(&sample, /*all=*/true);
-> > > > -       if (event->header.type != PERF_RECORD_COMPRESSED || perf_tool__compressed_is_stub(tool))
-> > > > +       if ((event->header.type != PERF_RECORD_COMPRESSED &&
-> > > > +            event->header.type != PERF_RECORD_COMPRESSED2) ||
-> > > > +           perf_tool__compressed_is_stub(tool))
-> > > >                 dump_event(session->evlist, event, file_offset, &sample, file_path);
-> > > >
-> > > >         /* These events are processed right away */
-> > > > @@ -1481,6 +1483,7 @@ static s64 perf_session__process_user_event(struct perf_session *session,
-> > > >                 err = tool->feature(session, event);
-> > > >                 break;
-> > > >         case PERF_RECORD_COMPRESSED:
-> > > > +       case PERF_RECORD_COMPRESSED2:
-> > > >                 err = tool->compressed(session, event, file_offset, file_path);
-> > > >                 if (err)
-> > > >                         dump_event(session->evlist, event, file_offset, &sample, file_path);
-> > > > diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-> > > > index 3b7f390f26eb..37bd8ac63b01 100644
-> > > > --- a/tools/perf/util/tool.c
-> > > > +++ b/tools/perf/util/tool.c
-> > > > @@ -43,8 +43,15 @@ static int perf_session__process_compressed_event(struct perf_session *session,
-> > > >                 decomp->size = decomp_last_rem;
-> > > >         }
-> > > >
-> > > > -       src = (void *)event + sizeof(struct perf_record_compressed);
-> > > > -       src_size = event->pack.header.size - sizeof(struct perf_record_compressed);
-> > > > +       if (event->header.type == PERF_RECORD_COMPRESSED) {
-> > > > +               src = (void *)event + sizeof(struct perf_record_compressed);
-> > > > +               src_size = event->pack.header.size - sizeof(struct perf_record_compressed);
-> > > > +       } else if (event->header.type == PERF_RECORD_COMPRESSED2) {
-> > > > +               src = (void *)event + sizeof(struct perf_record_compressed2);
-> > > > +               src_size = event->pack2.data_size;
-> > > > +       } else {
-> > > > +               return -1;
-> > > > +       }
-> > > >
-> > > >         decomp_size = zstd_decompress_stream(session->active_decomp->zstd_decomp, src, src_size,
-> > > >                                 &(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
-> > > > --
-> > > > 2.48.1.658.g4767266eb4-goog
-> > > >
+But for CONFIG_SMP=n builds, I get the following:
+
+arch/x86/kernel/acpi/cstate.c: In function ‘acpi_processor_ffh_play_dead’:
+arch/x86/kernel/acpi/cstate.c:216:1: error: ‘noreturn’ function does return [-Werror
+
+And in this build configuration, it does look like mwait_play_dead is an
+empty static inline function.  I could imagine making that __noreturn be
+a CPP macro, but I could also imagine making mwait_play_dead() refrain
+from returning.
+
+Thoughts?
+
+							Thanx, Paul
+
+> ---
+>  arch/x86/include/asm/smp.h    | 2 +-
+>  arch/x86/kernel/acpi/cstate.c | 2 +-
+>  include/acpi/processor.h      | 2 +-
+>  tools/objtool/noreturns.h     | 2 ++
+>  4 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+> index 80f8bfd83fc7..9c7ae0a214dc 100644
+> --- a/arch/x86/include/asm/smp.h
+> +++ b/arch/x86/include/asm/smp.h
+> @@ -114,7 +114,7 @@ void wbinvd_on_cpu(int cpu);
+>  int wbinvd_on_all_cpus(void);
+>  
+>  void smp_kick_mwait_play_dead(void);
+> -void mwait_play_dead(unsigned int eax_hint);
+> +void __noreturn mwait_play_dead(unsigned int eax_hint);
+>  
+>  void native_smp_send_reschedule(int cpu);
+>  void native_send_call_func_ipi(const struct cpumask *mask);
+> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+> index 86c87c01d23d..d25584255ab8 100644
+> --- a/arch/x86/kernel/acpi/cstate.c
+> +++ b/arch/x86/kernel/acpi/cstate.c
+> @@ -206,7 +206,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
+>  
+> -void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+> +void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+>  {
+>  	unsigned int cpu = smp_processor_id();
+>  	struct cstate_entry *percpu_entry;
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index 63a37e72b721..86b6b17b0f70 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -280,7 +280,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+>  				    struct acpi_processor_cx *cx,
+>  				    struct acpi_power_register *reg);
+>  void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
+> -void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
+> +void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
+>  #else
+>  static inline void acpi_processor_power_init_bm_check(struct
+>  						      acpi_processor_flags
+> diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
+> index b2174894f9f7..5a4aec4c4639 100644
+> --- a/tools/objtool/noreturns.h
+> +++ b/tools/objtool/noreturns.h
+> @@ -16,6 +16,7 @@ NORETURN(__tdx_hypercall_failed)
+>  NORETURN(__ubsan_handle_builtin_unreachable)
+>  NORETURN(__x64_sys_exit)
+>  NORETURN(__x64_sys_exit_group)
+> +NORETURN(acpi_processor_ffh_play_dead)
+>  NORETURN(arch_cpu_idle_dead)
+>  NORETURN(bch2_trans_in_restart_error)
+>  NORETURN(bch2_trans_restart_error)
+> @@ -34,6 +35,7 @@ NORETURN(kunit_try_catch_throw)
+>  NORETURN(machine_real_restart)
+>  NORETURN(make_task_dead)
+>  NORETURN(mpt_halt_firmware)
+> +NORETURN(mwait_play_dead)
+>  NORETURN(nmi_panic_self_stop)
+>  NORETURN(panic)
+>  NORETURN(panic_smp_self_stop)
+> -- 
+> 2.48.1
+> 
 
