@@ -1,77 +1,91 @@
-Return-Path: <linux-kernel+bounces-540113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D431EA4ADCA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF59A4ADD2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765C33B3432
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8A33AE6EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ACC1E0B66;
-	Sat,  1 Mar 2025 20:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976501E98E8;
+	Sat,  1 Mar 2025 20:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e9hKi0gX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6VBYz5p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369275258
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 20:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C9182D7;
+	Sat,  1 Mar 2025 20:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740860423; cv=none; b=ZYp5uN14Yw60qpbjsL8TsqvTkvsK98BEMA3pLMcZPxXYoiHqv10XB4w/02bW34Ubg52eYT/bn3s+QWtM1eBiHCShuFw8iEdB7EfudzaCb8rm//y46izB7vUj9QlFeV+x7oMGja7HkRFGYPm8HLpLt9bBW98LFmNu4rg/jd3nqD4=
+	t=1740861148; cv=none; b=c6eyYnwrLkWeA6bmP/wHwd4l0/UP/NYkmyHkW+yz9ZEcZvRUW7R7ceEA5L1wn6Xxk2WeIN2KR4ya6j2kM1hkCF5AqbrZNJHOUNCniUPvDsKIluNNFXbP1nB8bwASOcwSLukBFPQSFeHeBOThNhqyAmA/vQvuyowdjyQleOyi9EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740860423; c=relaxed/simple;
-	bh=8ROBKw30EjUc/+X+mVyqk68aM0a7JOfRmZ9KbnzYzwU=;
+	s=arc-20240116; t=1740861148; c=relaxed/simple;
+	bh=wBg5evaKt2ua+JSREx6VTzJBkp8N1lCxgbzNDRsoVo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRUxzHcftktgwCCa79Mpju0DyugUwJDnx2GNW2EIFJO6yb+vKv6vXUyuSeH/qEza+oPQJMjYJBAgZJHSYDMw+79Hhyb1hg0FrA8RMnXKdKtBIpsqgQ+Vs7K4p/nx22m8gZe4eDcRC5K/V8NhyLqa5VKqAeJ0NqNeEuyEEIkiJhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e9hKi0gX; arc=none smtp.client-ip=192.198.163.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxGYIP+TQu1vaMW+wXs4G4mhj+tAHHEVWKM1ECUfced8Oe57SFb+92VfK8wWxRwVN5Jq1BeORRc0PGbaVWMTd1H39Mrw4ExSjljTcXify9lbf3O/N/HdjSZfUr7A1P461exKWOLlAK+0xnNjib1VSFEWd774456miMdcXbg0Eis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6VBYz5p; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740860422; x=1772396422;
+  t=1740861147; x=1772397147;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=8ROBKw30EjUc/+X+mVyqk68aM0a7JOfRmZ9KbnzYzwU=;
-  b=e9hKi0gXGeYNfhsHSHrd7r4nu3b/owghra6fY5rM+uexTWS3awQmT4UB
-   EqidRV9pCvRNPE8CF3wOoTwZlRshzqtlPKHbppt+k88OrJuB7cD7WFxa9
-   wFSrDtkzypCJGMz/no+ZpsUU5Dlefr+t29cn0tf4/oSDYqRAzH4JPvmf9
-   Fj/hob6GMQkSHMPWyI8JLF1VhcEkCCn3Jm1xAxxu09LdU1l2MXiBHRQAK
-   8aMCXai2uChoZXnA6uvOObdbqSnZFm267k6hEjonzB/xdnujviRHQ7lW8
-   bdejnG9TCYPCcwh5qY7+Q22Dp4HdJ0ovczKPNrTBXU2s2puMl0v5uFz8u
+  bh=wBg5evaKt2ua+JSREx6VTzJBkp8N1lCxgbzNDRsoVo4=;
+  b=R6VBYz5pp3bnUhaR6PIxY3wHf9DinLizZYHkg/MM6oAxZKUvQcWDdm6k
+   WyealKEFq5jnLGDADeaRA8LVuNMp1wvdQGh5sWjckNkPjUVTw0Nh2BKII
+   qxg7bJRnpjoWRNRcap3CWhsOGDq5stX9Pdjad74UaOs5jODRzxdCXFvIB
+   b5pxQ/RtfFWUOyLKTNoaSP5eTbgZN8/o42wg6nueOMl9H/5UUj46GxREl
+   VVeZBTjfhVwExfmcN3UlpJ/ZdrlIhhk2IXl67MbA3RHabAPFpkeEdvWId
+   6IYBxNRpI3O3G1jcwmytPa1T6u/oQcgM/D4nK2JkLeNYluYG+UCtDRWvx
    g==;
-X-CSE-ConnectionGUID: sHOmqKhUQp+0EkLBbFTW1Q==
-X-CSE-MsgGUID: XKM7dEJbQEK3+KkWuIfL7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="52411929"
+X-CSE-ConnectionGUID: ih6OA1alSQuDYJdBB20Gww==
+X-CSE-MsgGUID: uInj0QL6QQSsOYbEUUw9tA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41009976"
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="52411929"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 12:20:21 -0800
-X-CSE-ConnectionGUID: Vrq4h9hFRiewzVzLJWCzKQ==
-X-CSE-MsgGUID: 6Mdxhje5Q46laCrsGGIymw==
+   d="scan'208";a="41009976"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 12:32:26 -0800
+X-CSE-ConnectionGUID: /I33WU5TQPCIw+82ZeJT1Q==
+X-CSE-MsgGUID: BSv1HP4jSiq/0Ee+64SyZA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117389237"
+   d="scan'208";a="122590873"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 01 Mar 2025 12:20:18 -0800
+  by orviesa003.jf.intel.com with ESMTP; 01 Mar 2025 12:32:20 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1toTJl-000Gf8-0w;
-	Sat, 01 Mar 2025 20:20:13 +0000
-Date: Sun, 2 Mar 2025 04:19:59 +0800
+	id 1toTVL-000Gft-2i;
+	Sat, 01 Mar 2025 20:32:13 +0000
+Date: Sun, 2 Mar 2025 04:31:48 +0800
 From: kernel test robot <lkp@intel.com>
-To: zihan zhou <15645113830zzh@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, bsegall@google.com,
-	dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org, mgorman@suse.de, mingo@redhat.com,
-	peterz@infradead.org, rostedt@goodmis.org,
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Subject: Re: [PATCH V1 2/4] sched: Do predict load
-Message-ID: <202503020410.hBcraNw8-lkp@intel.com>
-References: <20250221085051.32468-1-15645113830zzh@gmail.com>
+To: Romain Gantois <romain.gantois@bootlin.com>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH v8 9/9] misc: add FPC202 dual port controller driver
+Message-ID: <202503020450.UW2PuA6X-lkp@intel.com>
+References: <20250227-fpc202-v8-9-b7994117fbe2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,38 +94,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221085051.32468-1-15645113830zzh@gmail.com>
+In-Reply-To: <20250227-fpc202-v8-9-b7994117fbe2@bootlin.com>
 
-Hi zihan,
+Hi Romain,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on tip/sched/core]
-[also build test ERROR on akpm-mm/mm-nonmm-unstable brauner-vfs/vfs.all peterz-queue/sched/core linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test ERROR on 2014c95afecee3e76ca4a56956a936e23283f05b]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/zihan-zhou/sched-Add-kconfig-of-predict-load/20250221-165850
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/20250221085051.32468-1-15645113830zzh%40gmail.com
-patch subject: [PATCH V1 2/4] sched: Do predict load
-config: x86_64-randconfig-076-20250301 (https://download.01.org/0day-ci/archive/20250302/202503020410.hBcraNw8-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020410.hBcraNw8-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Romain-Gantois/dt-bindings-misc-Describe-TI-FPC202-dual-port-controller/20250227-182532
+base:   2014c95afecee3e76ca4a56956a936e23283f05b
+patch link:    https://lore.kernel.org/r/20250227-fpc202-v8-9-b7994117fbe2%40bootlin.com
+patch subject: [PATCH v8 9/9] misc: add FPC202 dual port controller driver
+config: sparc-randconfig-r051-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020450.UW2PuA6X-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020450.UW2PuA6X-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020410.hBcraNw8-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020450.UW2PuA6X-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
->> ld.lld: error: undefined symbol: set_in_predict_no_preempt
-   >>> referenced by fair.c:5628 (kernel/sched/fair.c:5628)
-   >>>               vmlinux.o:(dequeue_entity)
-   >>> referenced by fair.c:5767 (kernel/sched/fair.c:5767)
-   >>>               vmlinux.o:(put_prev_entity)
+   drivers/misc/ti_fpc202.c: In function 'fpc202_read':
+>> drivers/misc/ti_fpc202.c:104:15: error: implicit declaration of function 'i2c_smbus_read_byte_data' [-Wimplicit-function-declaration]
+     104 |         val = i2c_smbus_read_byte_data(priv->client, reg);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/misc/ti_fpc202.c: In function 'fpc202_write':
+>> drivers/misc/ti_fpc202.c:110:16: error: implicit declaration of function 'i2c_smbus_write_byte_data' [-Wimplicit-function-declaration]
+     110 |         return i2c_smbus_write_byte_data(priv->client, reg, value);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/misc/ti_fpc202.c: At top level:
+>> drivers/misc/ti_fpc202.c:433:1: warning: data definition has no type or storage class
+     433 | module_i2c_driver(fpc202_driver);
+         | ^~~~~~~~~~~~~~~~~
+>> drivers/misc/ti_fpc202.c:433:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Wimplicit-int]
+>> drivers/misc/ti_fpc202.c:433:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+>> drivers/misc/ti_fpc202.c:424:26: warning: 'fpc202_driver' defined but not used [-Wunused-variable]
+     424 | static struct i2c_driver fpc202_driver = {
+         |                          ^~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for I2C_ATR
+   Depends on [n]: I2C [=n]
+   Selected by [y]:
+   - TI_FPC202 [=y]
+
+
+vim +/i2c_smbus_read_byte_data +104 drivers/misc/ti_fpc202.c
+
+    99	
+   100	static int fpc202_read(struct fpc202_priv *priv, u8 reg)
+   101	{
+   102		int val;
+   103	
+ > 104		val = i2c_smbus_read_byte_data(priv->client, reg);
+   105		return val;
+   106	}
+   107	
+   108	static int fpc202_write(struct fpc202_priv *priv, u8 reg, u8 value)
+   109	{
+ > 110		return i2c_smbus_write_byte_data(priv->client, reg, value);
+   111	}
+   112	
 
 -- 
 0-DAY CI Kernel Test Service
