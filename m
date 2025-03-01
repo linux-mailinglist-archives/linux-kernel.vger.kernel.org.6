@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-539940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E593DA4AB14
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:01:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3389A4AB20
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA77416C4F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C6FE7A850C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5968B1DF255;
-	Sat,  1 Mar 2025 13:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3DE1DF252;
+	Sat,  1 Mar 2025 13:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="weLrExoW"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpXhEZzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A547E1DED49
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14051E4AB;
+	Sat,  1 Mar 2025 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740834083; cv=none; b=W62nkFZTHUDtLYwAjB0FUD4HXuKO8CUJ4otPeGOJiQgfdxLdMK1yHtOWXthyyJlmhyg802LXhVodxcszN23gv3RdFpO3xgEXau/i1oBRkYRl0v4n9D67c1Qa/Sfk0AixMF6D/7pqf3tHvOtz1+Q8KPSnUu9tTta2SuoTKJcxCh4=
+	t=1740834647; cv=none; b=K+BjN6lP+APpyFguqlmJpTSgHLF2Lx6mYYLgvDNDTIVtvX7zWHEL7FcTKUSUp0BnI9zWtpK6G2DcahdWgGQaoXo9emDlHQBFnFSCxMhUjxRphH6LemG1E3HltNGLk3zUkpa43REOTaFw390pw4fXlvOhSa90hl5tLHATb4LKJYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740834083; c=relaxed/simple;
-	bh=9R505GuXCUgZibhXev+FfmDNPeBOSs3xDQi+XM/lnoQ=;
+	s=arc-20240116; t=1740834647; c=relaxed/simple;
+	bh=dhn3QybKzy5AjNFBtu98HuvsYEj6NZ75fjhG99G+VBI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xc64Dz2fnxr0ihVlGQp44tq/iUdFJsYbekaXrO8m5mAZqq0+KOicWTD3Da60stVj1+ex+dWK8yNwywe7H6guNd741xYt+nYBbR0T74YkGpnRNkqTDqXsFgalpcJjWvpGBKGxbtzsrQEmW80Lx2Y353qbrh/WEwDOl8dZfPPiWrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=weLrExoW; arc=none smtp.client-ip=121.127.44.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1740834074;
- bh=9mCWNbcP5IQDd/FsJf4daDu5xuhSLsVfWH9gMluMv00=;
- b=weLrExoWL72K9p5bFJMPXLySLvsElVRUL8wrMkRaK145pcKTjerJ8zh35bHgoMnwl95XfueXR
- kAu7w+4oOgnS7WIc9LTo/mOQ54pv3uN6wC7vSnfZsPjTKOrhCbTvs/FB7/fpQETIYWGMib7Yrq2
- swV784/9lRimUWZJH/zs7jP+x2urWi2hJ/12gYh5MERvcEKP9MvNWCvwHBcJ9UVR/K8RfyV/QzZ
- vO1hunvAh/my8QD75BoMLohjg//hS/g/Tul4eBI7CC73fvRmYhza2bRs9v97vwKGZ4cBs17xe21
- aETKriUDC0dTTVAJyLnYfPox2V2X8xdeNqUvbW5S2HJQ==
-X-Forward-Email-ID: 67c3051690cf55d47dbe9027
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.59
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
-Date: Sat, 1 Mar 2025 14:01:05 +0100
+	 In-Reply-To:Content-Type; b=OThQ8sTpcltNWq808UrhattFZ/h0r/L5KBS5pMmTdJXT3Ml93rdb0BDeIMdsUthRTus18i6tK0q4qNrW9ZMSUv4fLuPNaGRlMFTOiQxGZcn8hrP6wTXirnfnS9aOekjr8TdsL7X8LRJSMIkh0/vGn66LxCwCw4+CP3fB84t+Xw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpXhEZzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F7DC4CEDD;
+	Sat,  1 Mar 2025 13:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740834647;
+	bh=dhn3QybKzy5AjNFBtu98HuvsYEj6NZ75fjhG99G+VBI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LpXhEZzimrtFnAxfMU+dJlEZ558N7FlFd5I+djzGP5TIe+vFWRAoJ3zmZwSgKYmbY
+	 nRy3wqsVS/n0V53Ug8j9Uriq0CMgfcMnOkUFR9A1poLLALVnAynwx48YNkSJYkHvBe
+	 Q+4OczDyKeNOsVFI2XUVfKuZasbBiaPgMNFur2jfcHmGezkM583qm2ueTNvdDov2Tu
+	 rl6DxNG0YQHSkmsKf59il8xs2gYMZsYgL9/+oyzfy01G6dS3oJU3CUYgPsNNS1nHmZ
+	 J+Ex2loyMwKOHYfO+IWHiGhItPXZjPqBo1rrHIipzDVL2dcHsgftVU92RKoz+0bsLh
+	 aUWK3/ohqn+aw==
+Message-ID: <cf8b754e-f4b1-40f2-86df-e1f0cbf07189@kernel.org>
+Date: Sat, 1 Mar 2025 14:10:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,106 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-To: Yao Zi <ziyao@disroot.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
- Shresth Prasad <shresthprasad7@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104835.36439-1-ziyao@disroot.org>
+Subject: Re: [v4 1/3] dt-bindings: vendor-prefix: Add prefix for Efinix, Inc.
+To: iansdannapel@gmail.com, linux-fpga@vger.kernel.org
+Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+ Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Aradhya Bhatia <a-bhatia1@ti.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250228094732.54642-1-iansdannapel@gmail.com>
+ <20250228094732.54642-2-iansdannapel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250301104835.36439-1-ziyao@disroot.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250228094732.54642-2-iansdannapel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 2025-03-01 11:48, Yao Zi wrote:
-> SD-card is available on Radxa E20C board.
+On 28/02/2025 10:47, iansdannapel@gmail.com wrote:
+> From: Ian Dannapel <iansdannapel@gmail.com>
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Add entry for Efinix, Inc. (https://www.efinixinc.com/)
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> index d2cdb63d4a9d..473065aa4228 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> @@ -12,6 +12,10 @@ / {
->  	model = "Radxa E20C";
->  	compatible = "radxa,e20c", "rockchip,rk3528";
->  
-> +	aliases {
-> +		mmc0 = &sdmmc;
+> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
 
-Suggest using mmc1 for sd-card because the e20c typically have onboard
-emmc, compared to removable sd-card.
+<form letter>
+This is a friendly reminder during the review process.
 
-> +	};
-> +
->  	chosen {
->  		stdout-path = "serial0:1500000n8";
->  	};
-> @@ -20,3 +24,13 @@ chosen {
->  &uart0 {
->  	status = "okay";
->  };
-> +
-> +&sdmmc {
-> +	bus-width = <4>;
-> +	cap-mmc-highspeed;
-> +	cap-sd-highspeed;
-> +	disable-wp;
-> +	rockchip,default-sample-phase = <90>;
-> +	sd-uhs-sdr104;
+It looks like you received a tag and forgot to add it.
 
-Are you sure uhs-sdr104 works as is should? Vendor kernel use a
-different "v2" tuning and this is also missing the vccio_sd vqmmc-supply
-to switch between 3v3 and 1v8.
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
 
-You could add following regulator for sdmmc:
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
 
-	vccio_sd: regulator-vccio-sd {
-		compatible = "regulator-gpio";
-		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
-		regulator-name = "vccio_sd";
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <3300000>;
-		states = <1800000 0x0>, <3300000 0x1>;
-	};
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
-and following pinctrl:
-
-	sdmmc {
-		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
-			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-add then the power supplies to the sdmmc node:
-
-	vmmc-supply = <&vcc_3v3>;
-	vqmmc-supply = <&vccio_sd>;
-
-That matches the schematics for e20c, and works when testing non-uhs modes.
-
-Regards,
-Jonas
-
-> +	status = "okay";
-> +};
-
+Best regards,
+Krzysztof
 
