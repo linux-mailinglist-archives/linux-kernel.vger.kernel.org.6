@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-539849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5F9A4A9DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:54:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EADDA4A9E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 10:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7214718989F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14E067AA706
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C661D5141;
-	Sat,  1 Mar 2025 08:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C171C5D79;
+	Sat,  1 Mar 2025 09:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WsBzM9Ml";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aS7+W9kV"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IXJ1eOGu"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2711C07F3;
-	Sat,  1 Mar 2025 08:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39871A317C
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 09:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740819247; cv=none; b=qjy3+aSyrCVOLtFmNc1MAYMbfSPZvou/x81HAeeES3Kb+5wHZsy9sH+gfj0v0dzJ7kXrz59CxfxKrCNi7yRaRulwmq6Ed1kJ+7Bh0I57aDJIlaS85Jc4wtZwCO7LofJGzC00x7cuWG5jdouEHP9fuXuatLLjLKsCJ68UajpkozA=
+	t=1740819960; cv=none; b=e5MjtOW59oG3Gbf3sLVUNKWfw5p09r18/i16kYxa9WzgUi6bRXu95PhUThnXZ/T9Sk28JnPSMUfSw+8feY5JjDF9sOt5iJAOBEvesvdbZqXLg+Do4x/E253U864q5DslzTfGgFMKlsuhltdQ4dnWh1rKCGbP5zsi6AItMBtw+/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740819247; c=relaxed/simple;
-	bh=voNSdIhjURkfHoQz4ym/UQ+upP4h1eT5bAope5OQ7ag=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YBgH3EVcAdlK2tvcetdSgfKEB1SmqqkDW63OIlIMheD3ChDpyv8ihz2b0Y21fJJsZcB8nT7TVvwpb94WstpjQz8klLOspRTF9ko3+9MkjjXD1H8eTYD3hpgkNJsyBUAedYafmF/UOOGjHv5EiyMd8PJJsmio5h99co2W9nMC4vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WsBzM9Ml; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aS7+W9kV; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z4f5121t7z9sm9;
-	Sat,  1 Mar 2025 09:53:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740819237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+LnG1NVteNtt+rxjTEBs450MCL50ipK7PqPJFPKafjY=;
-	b=WsBzM9MlMCpuYSYjhKRDkIWK0i83vSZAKR+IpboebeZNpTMEKeL+ZLvvSxjBg2MrqZh1Fw
-	iaxBvHdQ2PY5a9QxNlYr0Ud7FsA6wzaO83MopK3Mz4m2IiGmYocsjLfqe99Rb2nm4wNM7H
-	mWwYBi9tZr+BjWrRXAhGy8ddI8zzENP/kmfyMPw/ohXt5JkK4dLnSZoBKcR0yK9uwAoRyh
-	wElToJ8hSFUhP9innB77VmqlcPmq/S4AZ0eJUfIi00sRWAj97yNPCey+YCgoPCPw6nyrgQ
-	6GNOCyFWGjghlYeRL7frIAUTWp7uP73+0azUZv8Tz5pTo2yTScjykuRp6vGFmQ==
-From: Maurice Hieronymus <mhi@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740819235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+LnG1NVteNtt+rxjTEBs450MCL50ipK7PqPJFPKafjY=;
-	b=aS7+W9kVHRyPRyltYKU6JXR0q2nGl63LZd+p4CfjyTseW4+rTlUJnhOoauapb6Zli+ibSW
-	tFUcJbK10ucXMZan0I4rSc+avwoCrGKV+Z3cpEKFm8PW6o/ULkolH8059lqE/kHDv85A0h
-	BNBqIx6laklEfvBjwDhw1NcF1Lo5khoA6sgMG0Q9kkTyhkqzSwaQvnrIIvNNj8Lyo43P81
-	RmejnD2kQoC4ikWAZz913Sc0UBEVIYSfVVXr8xwca1Cv0qmoE/vCJsTSGFvWNQI04laCoX
-	kX2itjBA3xYz5jXIaEyBDRRxq+UDAJtlKw4MU5dfClliidz2NYUdX5O1IP4JRQ==
-Date: Sat, 01 Mar 2025 09:53:39 +0100
-Subject: [PATCH RESEND] Input: elantech: Retry ETP_FW_VERSION_QUERY on
- Lenovo Thinkpad E14 Gen2
+	s=arc-20240116; t=1740819960; c=relaxed/simple;
+	bh=1PxuCO5m03ueYu2+f2xDHAB1PjA0h8RGsA23gtoYqno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=STksDaafmsKizgI1r/SaSlWF+sWRR+SD9H+WoCb/LRxrwxSAP5NcJR2V3nZQxPeWckpVlnHQ1T8dlg5arJmUzzQEw87fSYpkLa8ClhVc/73VSHPkwrqxHX/F5YvuTQ5wy8Z5WXqNAhwCJGpE1qy/2XLKPHCa8zC1bE24KkwEyqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IXJ1eOGu; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30a2cdb2b98so29223621fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 01:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740819957; x=1741424757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXFzqgX4NRG3gCXz7PgzcgJLn75U3QR8MBIw9FMuNWQ=;
+        b=IXJ1eOGupMRz+T5MY3+9NbPixSefIjk4FevgIy5KMljMOSmu4/UdBBk+VCCBIKUi6c
+         7CKlS97JZ6Q8zRMIxJC/XmcPANp6512AXsRfdUdG2VnvkWaOtfjP+EEh5avkS/0sgorv
+         589hFKlXV3xYhsXhPTr90cLFuU7ARKPbnz3RVxf5WyXu+fwVNd/OlQhCMxnwLrmLhGp1
+         heNalX0v65u/9BFDUgncJVHhvBmcdbPwvWi9mXi4di/GWSUvgLsZyZkSxy/+0FtArX9b
+         K/NVywGItJu3YbuBIunXAVKQROyYeyK7DcjBYQ4QpdhCF/s97lL0IZ4T3myHXUo64WIN
+         KHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740819957; x=1741424757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QXFzqgX4NRG3gCXz7PgzcgJLn75U3QR8MBIw9FMuNWQ=;
+        b=Jsq2mB1PxPOo9X1x2buvTIah6Sp4K0u2YNO3nv/DO6hewdxdlhd4fl4UTeI1pweWHN
+         EqXyU5ToerRUv0Z3o9kTs7xklo7a1Kj03hWcOCBf8D2YsTKU6EZTH4LHWHP4qdqrYWhH
+         P8VAZSc9kyKWlizPnGZUe8JC/nOKDqJSP17cwM828mQYOgD8nf8Yk0i2oae50hTO1X2F
+         9WwkFhlxI0X86BSjL8TjW6lUlYSOmtK4vce7yC5QMJ93CB3JfKjpm/QivmWAoUz2N1Cl
+         78Qh9Rk3I6eLsJBl5VR64L3Mo/aVKbTmjNXo2IwAQy2ibi8KzlS3FdhkJaoU/OYJsjzQ
+         wAlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKWjNF1CNmnW9OmGGGH1EFSECVKI2dgXzapoWrwRs6xNmmSkOck/Igs6Ez8YQwkKo1YO6H/Q0zGQ2Bx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzvbNhoExEKAGaikMhB6tOrNvUp87pLdRRFfbR2gbQh0sIuh0l
+	2azUYn+sOF/2n3gERkjy+Grn07QVuRE4RBSyaUdI5oZg4dVVS7aT6nyXchrf7yc9egqAs0vPQlQ
+	tsKh3akaSsdNR0BM6YcavWS1Td+M=
+X-Gm-Gg: ASbGncsXe+05TuVYaDstOXjPgAt1c4z7zKPT6uMYk5wRLfL3rCkMu9d+vqIzPruDA97
+	Lxteai2Jkl/73Nf68pLt9vYVxBQttZaBqdJ/o4ydZ9pwgJO5l0dm12E36GmA+hakGMLGfwKmKWO
+	wzfdAhncDmGKYYMrCCV3VmMUb2CA==
+X-Google-Smtp-Source: AGHT+IEfr2ALblo6ivzHzVxryVhL2Y6DvxdWA+1rUutSX56BH3/164bb0YM5U0fvsd39WgPksoB3amqN9ZEPRiyrlEk=
+X-Received: by 2002:a05:651c:501:b0:308:f75f:457 with SMTP id
+ 38308e7fff4ca-30b9322fd96mr22270111fa.12.1740819956669; Sat, 01 Mar 2025
+ 01:05:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250301-fix-elantech-firmware-query-v1-1-35d2e8aa78d9@mailbox.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Maurice Hieronymus <mhi@mailbox.org>
-X-MBO-RS-META: 5qyfhe3r1r6dtaw6wt9dx1ye5kpo8twx
-X-MBO-RS-ID: 5e7eac056ab126a60da
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com> <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+In-Reply-To: <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Sat, 1 Mar 2025 10:05:56 +0100
+X-Gm-Features: AQ5f1JroxjHaZHeLCcl3c8W5zsMU1FzNdQrLNCSclG0JFHgf944aIZJVtNsB34o
+Message-ID: <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On the ThinkPad E14 Gen2, the touchpad occasionally fails to respond to
-the ETP_FW_VERSION_QUERY during initialization at boot. As a result, the
-touchpad is detected as a generic mouse. Reloading the `psmouse` kernel
-module after startup resolves the issue, suggesting a timing-related
-problem.
+On Fri, Feb 28, 2025 at 11:58=E2=80=AFPM Dave Hansen <dave.hansen@intel.com=
+> wrote:
+>
+> On 2/28/25 14:31, Uros Bizjak wrote:
+> > On Fri, Feb 28, 2025 at 5:48=E2=80=AFPM Dave Hansen <dave.hansen@intel.=
+com> wrote:
+> >>
+> >> On 2/28/25 04:35, Uros Bizjak wrote:
+> >>> The code size of the resulting x86_64 defconfig object file increases
+> >>> for 33.264 kbytes, representing 1.2% code size increase:
+> >>>
+> >>>    text    data     bss     dec     hex filename
+> >>> 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
+> >>> 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
+> >>
+> >> So, first of all, thank you for including some objective measurement o=
+f
+> >> the impact if your patches. It's much appreciated.
+> >>
+> >> But I think the patches need to come with a solid theory of why they'r=
+e
+> >> good. The minimum bar for that, I think, is *some* kind of actual
+> >> real-world performance test. I'm not picky. Just *something* that spen=
+ds
+> >> a lot of time in the kernel and ideally where a profile points at some
+> >> of the code you're poking here.
+> >>
+> >> I'm seriously not picky: will-it-scale, lmbench, dbench, kernel
+> >> compiles. *ANYTHING*. *ANY* hardware. Run it on your laptop.
+> >>
+> >> But performance patches need to come with performance *numbers*.
+> >
+> > I don't consider this patch a performance patch, it is more a patch
+> > that fixes a correctness issue. The compiler estimates the number of
+> > instructions in the asm template wrong, so the patch instructs the
+> > compiler that everything in the template in fact results in a single
+> > instruction, no matter the pseudos there. The correct estimation then
+> > allows the compiler to do its job better (e.g. better scheduling,
+> > better inlining decisions, etc...).
+>
+> Why does it matter if the compiler does its job better?
 
-This patch retries the ETP_FW_VERSION_QUERY command if it fails. This
-allows the touchpad more time to initialize and respond during firmware
-version queries.
+Please read the long thread [1], especially part [1.1], that was the
+reason for gcc to implement asm inline [2].
 
-Signed-off-by: Maurice Hieronymus <mhi@mailbox.org>
----
-On the Lenovo ThinkPad E12 Gen2, the touchpad does not respond to scrolling
-gestures after startup. The kernel log (`dmesg`) reveals the following:
+[1] https://lore.kernel.org/lkml/20181003213100.189959-1-namit@vmware.com/
+[1.1] https://lore.kernel.org/lkml/20181007091805.GA30687@zn.tnic/
+[2] https://gcc.gnu.org/pipermail/gcc-patches/2018-December/512349.html
 
-[1.439036] psmouse serio1: elantech: synaptics_send_cmd query 0x01 failed.
-[1.801802] input: PS/2 Logitech Wheel Mouse as /devices/platform/i8042/serio1/input/input6
+Accurate inline decisions are just one of compiler optimizations that
+depend on code growth factor, tail duplication [3] is another one,
+there are also code hoisting, function cloning, block reordering,
+basic block copying, to name a few from the top of my head.
 
-A command failure causes the touchpad to be recognized as a generic mouse.
-Reloading the `psmouse` kernel module resolves the issue:
+[3] https://gcc.gnu.org/projects/sched-treegion.html
 
-[158.928793] psmouse serio1: elantech: assuming hardware version 4 (with firmware version 0x5f3001)
-[158.941924] psmouse serio1: elantech: Synaptics capabilities query result 0x90, 0x18, 0x0d.
-[158.968111] psmouse serio1: elantech: Elan ic body: 0x11, current fw version: 0x4
-[159.084746] input: ETPS/2 Elantech Touchpad as /devices/platform/i8042/serio1/input/input15
+These all work better with accurate input data. These optimizations
+are also the reason for 1% code growth with -O2: additional code
+blocks now fall under the code size threshold that enables the
+mentioned optimizations, under the assumption of -O2 code
+size/performance tradeoffs. OTOH, -Os, where different code
+size/performance heuristics are used, now performs better w.r.t code
+size.
 
-Enabling debug logging revealed that the driver fails to query the firmware
-version of the touchpad during initialization:
-
-[1.435339] libps2:ps2_sliced_command: psmouse serio1: 01 - -5
-[1.436523] psmouse:elantech_detect: psmouse serio1: elantech: failed to query firmware version.
-
-The issue appears to be a timing problem, where the touchpad is not fully
-initialized during the firmware query. Interestingly, enabling debug
-logging reduces the frequency of the issue, giving the touchpad more time
-to initialize.
-
-This patch introduces a retry mechanism for PS/2 sliced commands during
-firmware queries, similar to the retry logic in `elantech_ps2_command`.
-Testing over several weeks confirms that this change resolves the issue
-reliably on my hardware.
----
- drivers/input/mouse/elantech.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index 79ad98cc1e799c5acf7212c2d952d766f6a0a1a2..202150443209f66fdb736949b38db2188224350d 100644
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -44,6 +44,30 @@ static int synaptics_send_cmd(struct psmouse *psmouse, unsigned char c,
- 	return 0;
- }
- 
-+/*
-+ * A retrying version of synaptics_send_cmd
-+ */
-+static int synaptics_send_cmd_retry(struct psmouse *psmouse, unsigned char c,
-+				unsigned char *param)
-+{
-+	int rc;
-+	int tries = ETP_PS2_COMMAND_TRIES;
-+
-+	do {
-+		rc = synaptics_send_cmd(psmouse, c, param);
-+		if (rc == 0)
-+			break;
-+		tries--;
-+		psmouse_dbg(psmouse, "%s retrying query 0x%02x (%d).\n", __func__, c, tries);
-+		msleep(ETP_PS2_COMMAND_DELAY);
-+	} while (tries > 0);
-+
-+	if (rc)
-+		psmouse_err(psmouse, "%s query 0x%02x with retry failed.\n", __func__, c);
-+
-+	return rc;
-+}
-+
- /*
-  * V3 and later support this fast command
-  */
-@@ -1432,7 +1456,7 @@ int elantech_detect(struct psmouse *psmouse, bool set_properties)
- 	 * value to avoid mis-detection. Logitech mice are known to respond
- 	 * to Elantech magic knock and there might be more.
- 	 */
--	if (synaptics_send_cmd(psmouse, ETP_FW_VERSION_QUERY, param)) {
-+	if (synaptics_send_cmd_retry(psmouse, ETP_FW_VERSION_QUERY, param)) {
- 		psmouse_dbg(psmouse, "failed to query firmware version.\n");
- 		return -1;
- 	}
-@@ -1718,7 +1742,7 @@ static int elantech_query_info(struct psmouse *psmouse,
- 	/*
- 	 * Do the version query again so we can store the result
- 	 */
--	if (synaptics_send_cmd(psmouse, ETP_FW_VERSION_QUERY, param)) {
-+	if (synaptics_send_cmd_retry(psmouse, ETP_FW_VERSION_QUERY, param)) {
- 		psmouse_err(psmouse, "failed to query firmware version.\n");
- 		return -EINVAL;
- 	}
-
----
-base-commit: 08bd5b7c9a2401faabdaa1472d45c7de0755fd7e
-change-id: 20250101-fix-elantech-firmware-query-07619912f603
-
-Best regards,
--- 
-Maurice Hieronymus <mhi@mailbox.org>
-
+Uros.
 
