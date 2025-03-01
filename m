@@ -1,188 +1,129 @@
-Return-Path: <linux-kernel+bounces-539917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFF5A4AAD0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:45:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C94AA4AAD6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64EE1897BDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:45:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 543057A79AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6DD1D90AD;
-	Sat,  1 Mar 2025 11:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3975F1DE4F1;
+	Sat,  1 Mar 2025 11:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fNqntUkY"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SMj5dZzr"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257BA23F37D
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D61D5CD6
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829544; cv=none; b=bnGQu6cGzDq4MORcOC69dPxUSkWOVDpL7jyUH0dTrH7jZKKSyOqslBHXAk/gp5fJMNZjwzXEhsIWJM8DCqh1s4S1sTGyNX/1eABWDlfvZZJYmXQNJ0oZ31vjDzQtDClSg4PF058xxBl2OS2cFVSkwJjKAuIViznax/NmXpQf4r4=
+	t=1740829885; cv=none; b=fk3WPeaoqPAxYIFjjPXDSYUBlzSVo2j6xPMcwP4EPbDZ32TO2VNJCVzAFHKGOAiLNZ9c4kYG/Z4yaHyEXGdpNYvHa2yBj3CfuiTPHaOZKx9WgyDxB0Thf6TOOjgt5fVgB0ReKv3U44Ofwt7eRjrcYa0TxwLaWHlF9REQnyl5Dk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829544; c=relaxed/simple;
-	bh=bQNngq3YUR6OHOaixcCrFhLENfwp9TaNS4P5nWNQzNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJJbPVzD+6wQ7/7IS5G52xO6/SvHBV2D+aHcVjiphG2XlpEg1G0AMo9hqWY+v3luXjMT0kUbrDiHdzC+xuixwQx9bA4K5CaNXg44pj29DccbGrJqWPh48yhs+a/PnxjMfdac+B/8PeRn485580vD8Wer9NiuKZYgKyS18pAXXOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fNqntUkY; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ca9a3425so26788597b3.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:45:41 -0800 (PST)
+	s=arc-20240116; t=1740829885; c=relaxed/simple;
+	bh=MauIs/YOHxA/fbRsi/ga9gpR3qWx7c1ccfDZObnWkYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/WGeJ8H8klSSieqBagUWaMpub9ZOTiImKPiSpntPmS94+LKQVLJszK1nA7I/aW+/OgZxTe1QWfiAxf/xf1rJL+an94q6PnuO8a/XXxRnnLaUKHKoSN+qeAXd7Cna7Sf834elYk8M0cacELjXCJEfS80Nd5R0elvyjpmkp2Moz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=SMj5dZzr; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so4896752a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740829541; x=1741434341; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPdFtRIcEJljlyiH4UNQ0Wo6ovomIZEN33SfT6PWHDw=;
-        b=fNqntUkY8M1FPYu34RwteDdQrrzJRWBltTk2Uz3RfwkGbFuwZpODSZvO1c0r6qbu8g
-         mGT8YgAHZwaFITsNXU4LZ2aidBGPYhjHI2v4mRvMmKImw5w7OW3F+VFAe/SrMtDDGQrp
-         7NXOBCmfPjs01F2LRXM1vq2vtXVOZgwU6HpUmlCDonB6vHeqIrAn3gaQ6AJ12ejRGd2d
-         Qt017y4HM0SyfGGnmeD0iz6LxkCpO5s2iv+bpCtRkGWOERLqeBaTH68ukygt+juLj3tm
-         00xsDe2/vqf9EW+W0ZsnjIxIrIwMfOSlwp3wNt+hv1hKYzDCy4iqml4A2KzuZ4msEY2T
-         6/mw==
+        d=amarulasolutions.com; s=google; t=1740829882; x=1741434682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NdjO+gXNbFswOlU5mvEFI+zF9XideHYOKEcG+ZI2j5U=;
+        b=SMj5dZzrKdEBcHTS50/xlfiuWXPsi/bIsTx5SP+4vTQPrWAqBg+ltM2bbt+JxE/x+a
+         4KtRssv3WblAGk3OGjCg5xJzlaOTI1nLuSTBoHNEPLXFq0ROYf3bZGfZ778lbcNwxZkQ
+         IZa42tIodheplbYqyhDeoI/aEtALAS/KX9t0Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740829541; x=1741434341;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740829882; x=1741434682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wPdFtRIcEJljlyiH4UNQ0Wo6ovomIZEN33SfT6PWHDw=;
-        b=B1rW0Pi1WnfMHrQq4fucVxkIuAi1YFh0sZA8F/PTDTh9D5sB0Cb2YM0+BE/UbdBIFj
-         ItsBHmM0lv7bv2fdEAWSXrEEKdl9lilvaNPxg0P4wCYgTCvwBn1LwhIeXtNBDl4b19YW
-         GMMoJmDzkcA4hkxPN/sPd352h5J/EAbddMSfLMt8w8D3+LmqssEmMf6mHd00h8OgOks4
-         HJs/fBgKVquZqqCeT/ynvFLX1IK4jUqCWfPlPGTJRzA3qY9UZZf5yYhSjymSLbN8N/FK
-         PgZk/OZWCiQPezL+l6+1v2ioD7+IR39fxmCNtThlkfstGKf2Epo+Cg9uEeyT++OV/fD7
-         vQow==
-X-Forwarded-Encrypted: i=1; AJvYcCULXce1kCShu6wZs7msf4qc3qypDLTGK+2D4qTcfjXGItTCBpSGbTsDIyrsm6lk4rwziGGGff1S8qyFQlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW0kUYodluJPVSwEpY/uNT4D6m+9anATEKO58gXFgW+d3yUq7W
-	9HKVU1ZesWYR4CDlWpRxgSHHilWhgpM/pg7oDaYCekltPg10PMdq8j1zNV/BrjiK+9xnvJS73hI
-	M531wRJ/DKjOe9YxCb68eBDNpGMMGrKB5qNF04g==
-X-Gm-Gg: ASbGncvf43aRQQQEKYyBArNaz52JfNhgaYSBJ42lt+rowbAdWEloJI5NdEn7Q+h7CFS
-	3cWY3fHYG3WGalO7+Lx3wDOUaDLzns8AKyIvNRVM/shyHEsH4UJN2/G3AlriQJC5LsJM85l9OZC
-	gKJYcum1H1jidOppVfUgE/uFiLeDxqMmW7FU5Us2Jx
-X-Google-Smtp-Source: AGHT+IHgRqqiTqKK9xWzlnJl9nuXClN9+LmtvWVEfm6elxrtnetY9R0eCj0ZsKS6jravLjWFcCumIH9iOwPR7gur47c=
-X-Received: by 2002:a05:6902:98e:b0:e57:346f:5b12 with SMTP id
- 3f1490d57ef6-e60b2eacc43mr6998903276.18.1740829541019; Sat, 01 Mar 2025
- 03:45:41 -0800 (PST)
+        bh=NdjO+gXNbFswOlU5mvEFI+zF9XideHYOKEcG+ZI2j5U=;
+        b=ioPmEylY64S7hfFoJ38HZoVWR8wMwf2BXbQBJnX2UJoUfbsnZ6HgEl4vnid8pid4lL
+         dv/DKxPYV1pYhlr/qAOaNheFL8+NNp5TBsATtNu8juGy4j4SLdDLb+GJlwcy6UHAcM74
+         uKED2y9QV2uMj5mz2Q9hWdPIbBAXtxEKqIH2lIlW0bM5MR2YIGdGdQzcbcUbIEaq1QJd
+         efAmy3Bw+dCpcZw4yuERA6ULSd7N2ShDoh/uES6Nwpr28LteehVG5buZ/IYfRsuqdovu
+         BzzK+z1QajQRFkphc/9DVuQItogd2I/p8f2+zEHmjy6IhF8gAwutMJJaToK6UvBZw8SO
+         B8yA==
+X-Gm-Message-State: AOJu0Yz8ZCc4GI0HcAC4kLnTaRPQGdwADm41KRtnKfWRAktexxedL6Ip
+	Xp1gdXjf+hOfS1DTK590t0JXBDn8PsHM+wYSyZDjprkAn5CWxU2FU+/H8GGTttCsYyDOpkVsltd
+	U
+X-Gm-Gg: ASbGncsGePdxg5VDrErwEQlPjVdwoGeDYYnZjB1kCsuDk2gVOFhNsB3OVUVqE5inmR7
+	XGv6vhxKmXgJrwqZFSWbrT1u51DVFo6y7xLO+Pjz9FApTneNX27S6tc7m67fR89fBaqjQ8kiYq7
+	vnOBlLmlbus1ZZNHk7MDvl4ng/KRLh0vUbWP/4dgWV4JXzPZNvXtVXhhFGLitxr1S8UuU8ZDFgF
+	NTVcUQmQiWzrB0bpbEVqWLhLOPOJiX1Og3dZDcMXXxLaorvebWJ6658UaWM8mFLbnPOt1T1KTr2
+	vpOruwhmU8YfXpu5EP07aDhZ1i5AZpa62a1Uv3tNbwy4+iaZ21cfR1NcAEOUI0f3w3iuiW9OIGY
+	3JwlTTjWg1YwhU3r1ka/i/WA4bwnjdFKZZRA9jh7ob3HnlwyUWAF2iDEXL8XFs5Ip4vJV4cxzEp
+	nk7saS0gPFY23a8A==
+X-Google-Smtp-Source: AGHT+IFx+Y86kAQg3tCp+lkyRYenJ1ns51tOtXrb2wDfJ/ON7EhmhRzo9A+jgX7mXFnhM4YOd6kA8g==
+X-Received: by 2002:a17:907:96a2:b0:abe:eebf:ae54 with SMTP id a640c23a62f3a-abf25fdbdb3mr715780466b.20.1740829881379;
+        Sat, 01 Mar 2025 03:51:21 -0800 (PST)
+Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-25-102-201.retail.telecomitalia.it. [79.25.102.201])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75d8e8sm460994866b.146.2025.03.01.03.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 03:51:20 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH] ARM: dts: stm32: use IRQ_TYPE_EDGE_FALLING on stm32mp157c-dk2
+Date: Sat,  1 Mar 2025 12:51:09 +0100
+Message-ID: <20250301115116.2862353-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
- <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com> <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
- <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com> <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
- <5af62fa9-e71b-412f-8640-502f03fcaa52@huawei.com> <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
- <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com> <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
- <6506e448-3851-436f-9354-42f9ef844d27@huawei.com> <njnz5hxumrvqrgsfq7zlunle3jgfan3be34ao5xtkmzczpi6af@waywds2ww6qw>
- <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
-In-Reply-To: <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 1 Mar 2025 13:45:30 +0200
-X-Gm-Features: AQ5f1JovDIdMFleM78uUNt49Eq12cxxY-CMeDTA14F_begq8E4NvDwe6hIZMAW4
-Message-ID: <CAA8EJpo71m_ae9siT7f4Tsfr0C4XeoraqPYPsPp0gz-N+oMOjw@mail.gmail.com>
-Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
-	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
-	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 1 Mar 2025 at 11:54, Yongbang Shi <shiyongbang@huawei.com> wrote:
->
->
-> > On Sat, Mar 01, 2025 at 04:45:40PM +0800, Yongbang Shi wrote:
-> >>> On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
-> >>>>> On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
-> >>>>>>> On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
-> >>>>>>>>> On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
-> >>>>>>>>>>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
-> >>>>>>>>>>>> +{
-> >>>>>>>>>>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
-> >>>>>>>>>>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
-> >>>>>>>>>>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
-> >>>>>>>>>>>> +  int ret;
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +  if (dp->hpd_status) {
-> >>>>>>>>>>>> +          hibmc_dp_hpd_cfg(&priv->dp);
-> >>>>>>>>>>>> +          ret = hibmc_dp_prepare(dp, mode);
-> >>>>>>>>>>>> +          if (ret)
-> >>>>>>>>>>>> +                  return ret;
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +          hibmc_dp_display_en(dp, true);
-> >>>>>>>>>>>> +  } else {
-> >>>>>>>>>>>> +          hibmc_dp_display_en(dp, false);
-> >>>>>>>>>>>> +          hibmc_dp_reset_link(&priv->dp);
-> >>>>>>>>>>>> +  }
-> >>>>>>>>>>> If I understand this correctly, you are using a separate drm_client to
-> >>>>>>>>>>> enable and disable the link & display. Why is it necessary? Existing
-> >>>>>>>>>>> drm_clients and userspace compositors use drm framework, they should be
-> >>>>>>>>>>> able to turn the display on and off as required.
-> >>>>>>>>>>>
-> >>>>>>>>>> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
-> >>>>>>>>>> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
-> >>>>>>>>>> the different video modes into DP registers.
-> >>>>>>>>> Why? The link training and mode programming should happen during
-> >>>>>>>>> pre_enable / enable stage (legacy or atomic).
-> >>>>>>>> Hi Dmitry,
-> >>>>>>>>
-> >>>>>>>> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
-> >>>>>>>> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
-> >>>>>>> It should be userspace, who triggers the enable/disable (or it should
-> >>>>>>> be the in-kernel fbdev / fbcon, which interface through the generic
-> >>>>>>> drm_fbdev client).
-> >>>>>> Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
-> >>>>>> by user, but it won't call when HPD triggered .
-> >>>>> - Is HPD even properly delivered to userspace? What kind of compsitor
-> >>>>>      are you using? Is .detect working properly and reporting a correct
-> >>>>>      plug-in state?
-> >>>> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
-> >>>> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
-> >>>> I use Xorg, and the display service is GDM.
-> >>>> The .detect is called and the getting modes info is correct.
-> >>>> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
-> >>> You can go to the display settings in GDM. It would be interesting to
-> >>> observe if it notes the second monitor or not. Last, but not least, you
-> >>> can use a simple tool like 'xrandr' under your XOrg session to set the
-> >>> display resolution.
-> >> Thank you for your advice!
-> >> Right, there are DP and VGA two monitors. I tried to totally remove the vga connector in driver, the problem is gone.
-> >> So do I need to clear the vga connector, if dp is plugged in?
-> > Unless your hardware can not manage two outputs at the same time, no,
-> > you don't have to. Just check how it behaves on x86 systems. Ideally
-> > your driver should have the same behaviour.
->
-> Our hardware cannot support two outputs with different timing, so I used the one crtc and one plane that DP and VGA share. And just add a new DP connector
-> with a encoder, just like the previous VGA's code logic. But the HPD problem makes me feel confused, should I change the framwork structure to slove this problem?
+Replace the number 2 with the appropriate numerical constant defined in
+dt-bindings/interrupt-controller/irq.h.
 
-I think registering a single CRTC is a correct way. Then it is logical
-that there is no mode set on the DP when you connect it. The userspace
-can not output any data. However if you disconnect VGA and connect DP
-then it should become active and should output your desktop
-environment.
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
->
-> And also, I will check whether this driver works good on the x86 server. Right now, I'm testing on arm64 server.
->
-> >> And also, I used xrandr to set modes after 'startx'. Changing resolutions works,
-> >> but there are errs when set some low resolutions.
-> > That's a separate topic, most likely related to timing or to some other
-> > issues. You can fix that separately (but please do, switching modes
-> > should work).
->
-> Okay!
->
->
+---
 
+ arch/arm/boot/dts/st/stm32mp157c-dk2.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
+index 5f9c0160a9c4..dcf17c493022 100644
+--- a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
++++ b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
+@@ -11,6 +11,7 @@
+ #include "stm32mp15-pinctrl.dtsi"
+ #include "stm32mp15xxac-pinctrl.dtsi"
+ #include "stm32mp15xx-dkx.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "STMicroelectronics STM32MP157C-DK2 Discovery Board";
+@@ -67,7 +68,7 @@ &i2c1 {
+ 	touchscreen@38 {
+ 		compatible = "focaltech,ft6236";
+ 		reg = <0x38>;
+-		interrupts = <2 2>;
++		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+ 		interrupt-parent = <&gpiof>;
+ 		touchscreen-size-x = <480>;
+ 		touchscreen-size-y = <800>;
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
