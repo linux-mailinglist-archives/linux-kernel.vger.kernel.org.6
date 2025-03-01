@@ -1,54 +1,86 @@
-Return-Path: <linux-kernel+bounces-539908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BBAA4AAB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE55A4AAAA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F2A3B9ED1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A363B9E85
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960531DE885;
-	Sat,  1 Mar 2025 11:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471641DD525;
+	Sat,  1 Mar 2025 11:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sijftE7s"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R1WRrfQY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21DE1C5D40;
-	Sat,  1 Mar 2025 11:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E511CEAC3
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829319; cv=none; b=R8vN8R6znQnoOi9qgghLyBUdJ9HAZPJnuwULSVmvKxd+sp8rGYp3OMsLvMbgTDDLV4sLg6IoXDYsydzTx6X++Vvj65TPDnv2Bue0Gfk0FqSTtF/KqDNSo2A5k7lNwwVZS2Umlhah/IwROtBOM42m+hEGZowEFNPsqPmudXWjuoc=
+	t=1740829007; cv=none; b=a8+cKzuctf9xMPLHBc4/0DErhvmcQ70eGc0JglGeZJYVjUxOvI/IfLxbt07heMWQkDMyr1KBf1C8kAB/pcpJxya6ykGMgo0ZuIEWLJ0O5EKmmMjQQDhe7NGdvxIfVl9z2QNwnvv+IRdESJVCUEBPGkzP5QrmpDs4U/Gn/duehwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829319; c=relaxed/simple;
-	bh=jP7i8EhtTmiP4K0NJmZjXXlHvGIOyh0IDiAXjKJ3vWM=;
+	s=arc-20240116; t=1740829007; c=relaxed/simple;
+	bh=1N0XJWm2DllF8RnfekMenla1Kf7ixW0UheHRRT6WGPU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CS240yRsPzI+qtQHaZ2dtglCsJ5zA1wGS3wUhjBvAcYXR9abutEvHu57JWwWocIfGo+IXKgRs/lLzSpnOQsznJpLRAOx1miyBRk72d5PuFqSGXep93G8515+Re8Sx7PUD2Aoygu3Cr8la/HrBQvWSnO561nfpOH8RVrDfRUh6Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sijftE7s; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id oL54tXbKXfIwSoL58tBTRu; Sat, 01 Mar 2025 12:32:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740828763;
-	bh=kF+JmnmWEiXFKVYF48g4gqnqY3PNBaqivGj7uEXTqjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sijftE7skR2XXW93IzejiQEjIf6j3bZOOuIfOzFNxkJk00z852jVrEJlxhc9Xlijp
-	 TdG5ozCCQElD/YyGrXfsmO+pbWIwhsi6XXJPdQvPNPOyX1d0fsPys98UKZekt3/aPX
-	 wLse4WGD63nYRqyKBt0dJUbrt/mzlyoMhb8zWH9hCZYHQQ0DtxcYYL3r60ZcL/nPQj
-	 A2ISimlk9d7CY+Uh42g43BFR8/edYcw1hAZ+5hiQM2FcKcOIXDLHpHWwl+XGA6KX89
-	 WyTv6JMYlNnKl9H4O0MCBvamko6qypWBWZ4ve4Bx2xXRZcMOqbQMvPulEiBNbBTpxa
-	 IS29Qxv0Ksq+Q==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 01 Mar 2025 12:32:43 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <cff4d412-abbf-44b5-9705-ba14dff7d5d0@wanadoo.fr>
-Date: Sat, 1 Mar 2025 12:32:30 +0100
+	 In-Reply-To:Content-Type; b=UYJ37z3wcVrZAbjrY95JG10H/rTOFQGO145QwNY5O/LT4Y/Mr7IqK9f+MXIiDw+Z+0Pk+AupDLbRk8KYi7BPO1BVoqFQuTzfICXTIhS2AiAXSAYJDNSNt68gpacdrcTWcDSLbxo2YETTLjFPWNixLBJYYt57OTbGcSb9Q1BXOEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R1WRrfQY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740829004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbORu6qgQcd6DUt/THQ0CSEvNH/qSwH/OAlOYxx8xys=;
+	b=R1WRrfQYq57Zo1gSD7GDi0YfiD0BcFd81BzorJbsEQMlpZpE7qHqpjERqB32R6OiMnz8If
+	aOkLAfRPLynuinnk52fQAdhyG2yMwj8elggNI4idQkX6Ii9esDtLmq3oNmIDHFPJ/8Y4Uc
+	Jvqc7FY7MCZlT7y0d9Iy+PwtaaXZ4m4=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-kmdUGAj_M7SrTCXy6_fw5g-1; Sat, 01 Mar 2025 06:36:43 -0500
+X-MC-Unique: kmdUGAj_M7SrTCXy6_fw5g-1
+X-Mimecast-MFC-AGG-ID: kmdUGAj_M7SrTCXy6_fw5g_1740829002
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abf46dba035so90653566b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:36:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740829002; x=1741433802;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fbORu6qgQcd6DUt/THQ0CSEvNH/qSwH/OAlOYxx8xys=;
+        b=jVAcFhYJQuDDmtxSY4wR0DmJBpS27B1nRPiRgRVmHk35yuAuAeFZP9XQyg+8kPaUyp
+         wR7aDQptVqwToTmvflq7hswCp561DcY3p0IMma7yJnniaA3l4wsXNSbSjaLj54f892Mc
+         JEW0K4wNPBYVkJ8z3pP6TlmXilf0erqAHM44rNjIfU885FjyZkLIAXih0xldMAMJtJTL
+         Xt127hAbx2iTYHvzDJ3so9Ye4d+PhtcL519q4h7PorlyD+aQhGAuzY8Bl5HsstJ7B4jU
+         gHv2EJGzpOCjfmzg2jLD3Iw7zqYQM8a2wwClXZ1wp3Liv7wppPkNMtJAvv7uTCVjSerZ
+         XnFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+JNQpMl4FGEb/QMq0pQh00PzQwRVbWlJmmqLLeFSmrysagj+LFnM5LN0f1xgOoKDI9rWAQiQZktqAjRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO4Pt8L7PV3oElrfTkDOOdbL9DHqREa2JgaYvXSl4zeeWVqhoD
+	5uOX7NtvYtV38tAVq2xXIsgyTm/CdySib3WgS6wNSohMzOpB/PnGUMF2bWRkyBJ/vw35vLTrYcg
+	Uvl650h1krhOFfwPXMMHbHbFUFBhDr9TVfbPb+hyJk1s2KOr5+BTxLDk3klj0yA==
+X-Gm-Gg: ASbGncsGjtGzakLHIvK7QI5Ib3klR8PHeIzB8t5IVaY++kUkjwRfAG+Wep8/bhYyRV6
+	s9/4FK47lCjNt7+KCScmbuYj9729yLE85p/tlJOt9pQTO6qeF0UG3djIVi6jWMHjrqhV3Z4vTZ8
+	618roCE6gGn5iyE8OnkVqnssWY2Ef434TYBJB/9KDmBSc7WlKvEY8IchlI6uQToXmjiTZcwNHB2
+	eSNfZ+S53ED681/1TXsA9QhrZKcF4/LXsofi9up9Elmg81AOHR3mq06StFmUS8NC46SVThMeAeI
+	MYkbn1N9hA4p66zsqfvF/YcWa3NjmGzsBzmyv2mewEqasEtWM7lXPCTsxqai2/vrvfyHKAxYu+J
+	g2tx09QFW2P68b+k01vnIN6/QCaQ4FjM95IOcy1AyEPlCRGVwgjnNaoF4F/03MNUnpA==
+X-Received: by 2002:a17:907:7285:b0:abf:2b4:c6fb with SMTP id a640c23a62f3a-abf2686a09amr843681266b.57.1740829002221;
+        Sat, 01 Mar 2025 03:36:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHPCf2wWBViuMG6idxiK+1QfLm7qmZEGg/zDdM1CgqlrIMVKlaPktbzXdcY8xCu+LIzOF/c0g==
+X-Received: by 2002:a17:907:7285:b0:abf:2b4:c6fb with SMTP id a640c23a62f3a-abf2686a09amr843679466b.57.1740829001798;
+        Sat, 01 Mar 2025 03:36:41 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b92d3sm463900866b.12.2025.03.01.03.36.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Mar 2025 03:36:41 -0800 (PST)
+Message-ID: <72619870-bf83-47f9-9b66-6678e245364c@redhat.com>
+Date: Sat, 1 Mar 2025 12:36:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,57 +88,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: cec: avoid wraparound in timer interval
- calculation
-To: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>,
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Jani Nikula <jani.nikula@intel.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20250301111053.2661-1-v.shevtsov@mt-integration.ru>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250301111053.2661-1-v.shevtsov@mt-integration.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [QUESTION] Plans for GDIX1003 Support in Goodix Touchscreen
+ Driver
+To: Weikang Guo <guoweikang.kernel@gmail.com>
+Cc: Bastien Nocera <hadess@hadess.net>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org
+References: <CAOm6qnnhR9++REgtjhZpqNXkBbBAZsGAY8Oy89cXUF9S=Vy-9Q@mail.gmail.com>
+ <8c7b5560-27d0-42bc-8f25-0797500fb889@redhat.com>
+ <CAOm6qnmYSQz_YVaWw1c-fMm3NCVV9MoQhLQ0XGzK9o2RybLHmw@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CAOm6qnmYSQz_YVaWw1c-fMm3NCVV9MoQhLQ0XGzK9o2RybLHmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 01/03/2025 à 12:09, Vitaliy Shevtsov a écrit :
-> [Why]
-> The timer function code may have an integer wraparound issue. Since both
-> pin->tx_custom_low_usecs and pin->tx_custom_high_usecs can be set to up to
-> 9999999 from the user space via cec_pin_error_inj_parse_line(), this may
-> cause usecs to be overflowed when adap->monitor_pin_cnt is zero and usecs
-> is multiplied by 1000.
-> 
-> [How]
-> Fix this by casting usecs to u64 when it is being converted from
-> microseconds to nanoseconds.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Fixes: 865463fc03ed ("media: cec-pin: add error injection support")
-> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-> ---
->   drivers/media/cec/core/cec-pin.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
-> index a70451d99ebc..f15ed5c67a65 100644
-> --- a/drivers/media/cec/core/cec-pin.c
-> +++ b/drivers/media/cec/core/cec-pin.c
-> @@ -1021,7 +1021,7 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
->   		pin->wait_usecs = 0;
->   		pin->timer_ts = ktime_add_us(ts, usecs);
->   		hrtimer_forward_now(timer,
-> -				ns_to_ktime(usecs * 1000));
-> +				ns_to_ktime((u64)usecs * 1000));
+Hi WeiKang,
 
-Or maybe us_to_ktime() to be less verbose?
+On 27-Feb-25 12:36 PM, Weikang Guo wrote:
+> Hi, Hans
+> 
+> On Tue, 25 Feb 2025 at 20:09, Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi WeiKang,
+>>
+>> On 25-Feb-25 3:04 AM, Weikang Guo wrote:
+>>> Hi Bastien, Hans, Dmitry,
+>>>
+>>> I am currently working on the Ayaneo Flip DS device, which I installed Kali
+>>> Linux with kernel version 6.8.11-amd. This device has two touchscreens,
+>>> but only one is functional. After investigating, I found that the second
+>>> touchscreen has the device ID GDIX1003(confirmed by exporting the results
+>>> through acpidump), and upon comparing with the current driver, I noticed
+>>> that only GDIX1001, GDIX1002, and GDX9110 are supported.
+>>>
+>>> I have also reviewed the ACPI description and can provide the details if
+>>> needed. Any guidance or updates on this would be greatly appreciated.
+>>
+>> I think this might just work with the existing goodix driver, just
+>> add the new GDIX1003 HID to the goodix_acpi_match table:
+>>
+>> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+>> index a3e8a51c9144..4b497540ed2d 100644
+>> --- a/drivers/input/touchscreen/goodix.c
+>> +++ b/drivers/input/touchscreen/goodix.c
+>> @@ -1519,6 +1519,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
+>>  static const struct acpi_device_id goodix_acpi_match[] = {
+>>         { "GDIX1001", 0 },
+>>         { "GDIX1002", 0 },
+>> +       { "GDIX1003", 0 },
+>>         { "GDX9110", 0 },
+>>         { }
+>>  };
+>>
+>> Note I'm not sure this will work, but is worth a try.
+>>
+> 
+> It works, thank you very much.
 
-CJ
+Thank you for testing.
 
->   		return HRTIMER_RESTART;
->   	}
->   	pin->wait_usecs = usecs - 100;
+I've submitted a patch upstream to add this new hardware-ID
+to the kernel:
+
+https://lore.kernel.org/linux-input/20250301113525.6997-1-hdegoede@redhat.com/
+
+Regards,
+
+Hans
+
+
 
 
