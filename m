@@ -1,100 +1,118 @@
-Return-Path: <linux-kernel+bounces-539934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CD2A4AAFF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:45:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D81A4AB07
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846F918981B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EEA168D59
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2351DF24D;
-	Sat,  1 Mar 2025 12:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8151DEFC5;
+	Sat,  1 Mar 2025 12:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UPUrbH4Z"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7745323F372;
-	Sat,  1 Mar 2025 12:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="C5bnyU29"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C217923F372;
+	Sat,  1 Mar 2025 12:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740833102; cv=none; b=i76szmMfo/AC3HzzsLYWbVccp3mtR/3u6JjQ+j9hGIcS3m1ItBBUas599I9I/q8uQ9Q8CvNUte7SJOHhznfV8nET0uEm2h1qQs61Wa7V2mPr8wL7pCCCgWK8qdRpWOGQZfaX0nc03PPlm5QvlAxLGtDrkq3tqslL0HFNNtD8OkM=
+	t=1740833480; cv=none; b=Zx3XNcj4bsTkoVPUOB25JF8WYc4X4WeGcEBQNzppVY6BRo3eYeL4f0fQ7tqAcRE4yQcv3HpIM0N3EcR3oT/0o3hgf8UYTXQEOG+90+cXQ4YRqnpftG+gcUGQbeazzEmHq6eKBiQCYzovWc9QNM1Zsuz4afUblRXKDhniHOTUx1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740833102; c=relaxed/simple;
-	bh=L0mpe55eMmldTcY+TI4GJoQofUNmY83l2376LcHT7M8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mi9mhq7ZbQZ1hmP6OTT4m39MF7omj17ZDiyUoUleBC1FzWlZKoeQFRbTuvRDsrZEO1ZOksF1ogdT1D9m3nBUPuN1qFWFUat6+DoRg1PNG20hK59JdWTs696/ks2oFl3osU1n4PQBzdZdUhJvi0mxu/Sx49yhXKJCz/hXE2FPDng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UPUrbH4Z; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=D1450
-	5eoFP/0xHq7p3qPv0wbvi5mxm7mCJIYN+BDc8k=; b=UPUrbH4Zthn4+DjdRvzse
-	ssMCpzDyYbK6N8TkwONaCcgAD8LvxjkrvnmDubHzZmUerSOrsfnSNlZoltr0ys88
-	0Itp7a1gMMZxNuhcWc5vobDb3bo+ROiBB7GFTCvrII6TYypZFcoTq3XFei2bN49p
-	4LhoEVFty2XeWBX+OFPrI4=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnbz4qAcNntfNcPg--.2910S2;
-	Sat, 01 Mar 2025 20:44:27 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org
-Cc: kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	s-vadapalli@ti.com,
-	thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rockswang7@gmail.com,
-	"Hans Zhang" <18255117159@163.com>
-Subject: [RESEND] PCI: cadence: Fix runtime atomic count underflow.
-Date: Sat,  1 Mar 2025 20:44:18 +0800
-Message-Id: <20250301124418.291980-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740833480; c=relaxed/simple;
+	bh=JG9TJ2L/zACNt5mQUh/jkFvy1Qa2TfFfH4f4dtsjYRI=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DGV6CSAnWa/lJ0vPPvHV9Xpct7R99vWxrKGa5zXUrGIr3AUgGXJf3b69uptKDWVEBQ45eV0YsxWOviWjmpSacN5qA4RJwOVdv7DI4POGRE2mFxFgwVZuPMapgVQ3tEkWuxwgJM0WL8rVgUi8slybJ0xZGDsioLQnk/u6Y6pTVTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=C5bnyU29; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 521AZo96011094;
+	Sat, 1 Mar 2025 13:50:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	JG9TJ2L/zACNt5mQUh/jkFvy1Qa2TfFfH4f4dtsjYRI=; b=C5bnyU29jfv1dGHc
+	Mkz6xW6Qc+ZTWsNX33wJs2piEgGT3bRtxBa+NLFA8vMm1puc1yZfthmUV+pK/sGr
+	OwfCmEg1qgxrK1I95qlpaWBNxO/4APnsieL7nAgtZ1DDGRlahwWy7C5PZsZntx9+
+	CDfp/OA96bMyZzSf9DeS55BImW3Oqv7VIyTFbEITQUBs8v1wnd67vmy7IXg6meCp
+	Fu1CX+qDR2JtBIoPQd/NawJKSvPBh+8jPFiMDL76Gy79AeD6PQGsESRKKv46urmq
+	9nTTuiPTKwNo4EGUHSzVGLKGZTe57+bdkqU2j/0VR9eZJlI9lZTMHd9LmJr+f9yr
+	LDpakw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 453tc4avpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Mar 2025 13:50:48 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 875A6400B0;
+	Sat,  1 Mar 2025 13:49:26 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E5CE586DBE;
+	Sat,  1 Mar 2025 13:45:13 +0100 (CET)
+Received: from [192.168.8.15] (10.252.9.148) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 1 Mar
+ 2025 13:45:11 +0100
+Message-ID: <1ae59b115cb2e4570c6e77a01bcdac11dff03ae1.camel@foss.st.com>
+Subject: Re: [Linux-stm32] [PATCH] ARM: dts: stm32: use
+ IRQ_TYPE_EDGE_FALLING on stm32mp157c-dk2
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        <linux-kernel@vger.kernel.org>
+CC: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        <linux-amarula@amarulasolutions.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date: Sat, 1 Mar 2025 13:45:08 +0100
+In-Reply-To: <20250301115116.2862353-1-dario.binacchi@amarulasolutions.com>
+References: <20250301115116.2862353-1-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnbz4qAcNntfNcPg--.2910S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFyfKF4kJryfuF4fZFyxXwb_yoWDWFc_u3
-	ZYvF4IyFs0gr9Ikayay3WrXryDZa4jqw4jgan3tF43AF1xtw1DW3WkZF98ZF1kG3Z8JFyj
-	yw1qv3ZrCF9rAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRWHqcUUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxIDo2fC+rxaxQAAsV
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-01_05,2025-02-28_01,2024-11-22_01
 
-From: "Hans Zhang" <18255117159@163.com>
-
-If the pci_host_probe fails to be executed and run one time
-pm_runtime_put_sync. Run pm_runtime_put_sync or pm_runtime_put again in
-cdns_plat_pcie_probe or j721e_pcie_probe. Finally, it will print log
-"runtime PM usage count underflow!".
-
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/cadence/pcie-cadence-host.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
-index 8af95e9da7ce..fe0b8d76005e 100644
---- a/drivers/pci/controller/cadence/pcie-cadence-host.c
-+++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
-@@ -576,8 +576,6 @@ int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
- 
- 	return 0;
- 
-- err_init:
--	pm_runtime_put_sync(dev);
--
-+err_init:
- 	return ret;
- }
-
-base-commit: bb066fe812d6fb3a9d01c073d9f1e2fd5a63403b
--- 
-2.47.1
+T24gU2F0LCAyMDI1LTAzLTAxIGF0IDEyOjUxICswMTAwLCBEYXJpbyBCaW5hY2NoaSB3cm90ZToK
+PiBSZXBsYWNlIHRoZSBudW1iZXIgMiB3aXRoIHRoZSBhcHByb3ByaWF0ZSBudW1lcmljYWwgY29u
+c3RhbnQgZGVmaW5lZCBpbgo+IGR0LWJpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL2lycS5o
+Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IERhcmlvIEJpbmFjY2hpIDxkYXJpby5iaW5hY2NoaUBhbWFy
+dWxhc29sdXRpb25zLmNvbT4KPiAKPiAtLS0KPiAKPiDCoGFyY2gvYXJtL2Jvb3QvZHRzL3N0L3N0
+bTMybXAxNTdjLWRrMi5kdHMgfCAzICsrLQo+IMKgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
+cygrKSwgMSBkZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9z
+dC9zdG0zMm1wMTU3Yy1kazIuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3Qvc3RtMzJtcDE1N2Mt
+ZGsyLmR0cwo+IGluZGV4IDVmOWMwMTYwYTljNC4uZGNmMTdjNDkzMDIyIDEwMDY0NAo+IC0tLSBh
+L2FyY2gvYXJtL2Jvb3QvZHRzL3N0L3N0bTMybXAxNTdjLWRrMi5kdHMKPiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9zdC9zdG0zMm1wMTU3Yy1kazIuZHRzCj4gQEAgLTExLDYgKzExLDcgQEAKPiDC
+oCNpbmNsdWRlICJzdG0zMm1wMTUtcGluY3RybC5kdHNpIgo+IMKgI2luY2x1ZGUgInN0bTMybXAx
+NXh4YWMtcGluY3RybC5kdHNpIgo+IMKgI2luY2x1ZGUgInN0bTMybXAxNXh4LWRreC5kdHNpIgo+
+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvaXJxLmg+Cj4gwqAK
+PiDCoC8gewo+IMKgwqDCoMKgwqDCoMKgwqBtb2RlbCA9ICJTVE1pY3JvZWxlY3Ryb25pY3MgU1RN
+MzJNUDE1N0MtREsyIERpc2NvdmVyeSBCb2FyZCI7Cj4gQEAgLTY3LDcgKzY4LDcgQEAgJmkyYzEg
+ewo+IMKgwqDCoMKgwqDCoMKgwqB0b3VjaHNjcmVlbkAzOCB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gImZvY2FsdGVjaCxmdDYyMzYiOwo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnID0gPDB4Mzg+Owo+IC3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBpbnRlcnJ1cHRzID0gPDIgMj47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoGludGVycnVwdHMgPSA8MiBJUlFfVFlQRV9FREdFX0ZBTExJTkc+Owo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaW50ZXJydXB0LXBhcmVudCA9IDwmZ3Bpb2Y+Owo+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdG91Y2hzY3JlZW4tc2l6ZS14ID0gPDQ4
+MD47Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB0b3VjaHNjcmVlbi1zaXplLXkg
+PSA8ODAwPjsKClRoYW5rcyEKClJldmlld2VkLWJ5OiBBbnRvbmlvIEJvcm5lbyA8YW50b25pby5i
+b3JuZW9AZm9zcy5zdC5jb20+Cg==
 
 
