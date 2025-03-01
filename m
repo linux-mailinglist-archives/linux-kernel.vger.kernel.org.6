@@ -1,169 +1,93 @@
-Return-Path: <linux-kernel+bounces-539669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2383AA4A718
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:38:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407C6A4A71D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB537189D039
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA6D3B3F5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262617C91;
-	Sat,  1 Mar 2025 00:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915FA20326;
+	Sat,  1 Mar 2025 00:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="duIgKnzi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E8DD2FB;
-	Sat,  1 Mar 2025 00:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wx7qpfWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CCCD2FB;
+	Sat,  1 Mar 2025 00:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789504; cv=none; b=Tt9HlsbIYDItXnvaD+iozmdgdKbS90JgFMD3qq1mPPD7urweoMEZbC4RBQCdneeX0IHzaCJ7CgEVzBYOPAOVF3tvFpKroIw+n8y9ETuWn32awY0KzUaOmle3APD4BXh0n8Z/4xpnb1vBL84wMCCbpX+59gAAiQA9t/QsX49lL8Q=
+	t=1740789529; cv=none; b=doLtjz8NVtsgkoguyLciOBruQK3/eXtI3UldYkY5DJ84EsGXBO8N2DHSwJVzv5abET92FAkH8rA8pL/xBmf1Y7kw84d1OmmyP/IYpwNoP6N7tE5gDOcK8/PlyVQFaClj64F2FAiQguZLHOHF9rNcDxErLy84r1R1X+0KhCn7jjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789504; c=relaxed/simple;
-	bh=n6zaxksd6Q1NUg/ohWVJeoMwMSB2pFa01Kpp7ynuDkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bVG4WkUaxc93p30oX/JhJ26KJnRlOTBsVTmQVm9bgRWU2bjbe/uN2LKkd77M5kM0eqKNZh3tdBuomOcE/m0zCA9+wpxBH1VzOHKjIcbg3UI6a+vYIOxKskLP7ua2zjQlj6SJ9sCgvEPWf2LKceu82KOuE1ftFqiPIl6U5I/AnI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=duIgKnzi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 297612038A22;
-	Fri, 28 Feb 2025 16:38:22 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 297612038A22
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740789502;
-	bh=KckT26d6nP7QZ+/ykn1bui1INDXn2fKcmCtw1s0XLcA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=duIgKnzi0YqTq8nTW9lxdfwU+lhdDZ68Vr54Cm+FjinsQ//tXQ7RD7UbvDDOFpnVx
-	 sYy/xwGAy3qPvhtmpRTpd5Dfusaj2uSOkBm0IIB6rTEsHLeoFoJdheCAczw3nq9Pta
-	 L5r2XPnSPzFfbwnylYl8fKpNlQQ9xS/sED3vuer0=
-Message-ID: <7de9b06d-9a32-48b5-beda-2e19b36ae9c9@linux.microsoft.com>
-Date: Fri, 28 Feb 2025 16:38:19 -0800
+	s=arc-20240116; t=1740789529; c=relaxed/simple;
+	bh=cmEKSxw5aeNZwvCuEFEfP9uDWkInDxdoU9TEsCWxJek=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ri7aOQHrgn8GVdxwYLMnV4OThbeJg66LU9p+emlQnEaZ65cfcUMQ3AmGOEurhXvDrZAIBJB6nY/yEMuScD/jBzL0SxkZ9AGfc4XSfTcG/hLY9u6WAE7EWUCna9xQJ/dOSMnxGhTtpHpqjFrebpY4bukZJYMNiW0YT3oVcxFFiJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wx7qpfWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C15C4CED6;
+	Sat,  1 Mar 2025 00:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740789528;
+	bh=cmEKSxw5aeNZwvCuEFEfP9uDWkInDxdoU9TEsCWxJek=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Wx7qpfWJvYWHknPi9Aun0tomKq5sp4voC+U+ORaApPCm2IgZqdxBBIEcpWCLtDRdW
+	 6EiOpd+nJhMAImD6p2Rc85gRB6+X5OOVMzfQdmDpubtWCqfwtvaP98gLUr4mrbJQdv
+	 /XFDpoPC9RdKXd0mrMfIQQs3M56mG0T0nNWzakp7NXoDnEWl4EHeNdIq8ly/P7Et9m
+	 q+5pxa36GxuvLqbyyJEexBfEp2MUEixM2uohZA8HHAxo9LsddhVHpC/7zzNOykHDam
+	 4dq9f5Yr0rZgv/rIJyvhqoeOiQAH5ZrbrmGfplYxFGj2jShF7JTSqIUIWT+Vsp52gV
+	 Vm9YCNerdDN9A==
+Date: Fri, 28 Feb 2025 16:38:46 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, Donald
+ Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, "Eugenio =?UTF-8?B?UMOpcmV6?="
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, Stefano
+ Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v6 1/8] net: add get_netmem/put_netmem support
+Message-ID: <20250228163846.0a59fb40@kernel.org>
+In-Reply-To: <20250227041209.2031104-2-almasrymina@google.com>
+References: <20250227041209.2031104-1-almasrymina@google.com>
+	<20250227041209.2031104-2-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/10] x86: hyperv: Add mshv_handler irq handler and
- setup function
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
- decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- mrathor@linux.microsoft.com, ssengar@linux.microsoft.com,
- apais@linux.microsoft.com, Tianyu.Lan@microsoft.com,
- stanislav.kinsburskiy@gmail.com, gregkh@linuxfoundation.org,
- vkuznets@redhat.com, prapal@linux.microsoft.com, muislam@microsoft.com,
- anrayabh@linux.microsoft.com, rafael@kernel.org, lenb@kernel.org,
- corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-9-git-send-email-nunodasneves@linux.microsoft.com>
- <Z7-nDUe41XHyZ8RJ@skinsburskii.>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <Z7-nDUe41XHyZ8RJ@skinsburskii.>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/26/2025 3:43 PM, Stanislav Kinsburskii wrote:
-> On Wed, Feb 26, 2025 at 03:08:02PM -0800, Nuno Das Neves wrote:
->> This will handle SYNIC interrupts such as intercepts, doorbells, and
->> scheduling messages intended for the mshv driver.
->>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> Reviewed-by: Wei Liu <wei.liu@kernel.org>
->> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
->> ---
->>  arch/x86/kernel/cpu/mshyperv.c | 9 +++++++++
->>  drivers/hv/hv_common.c         | 5 +++++
->>  include/asm-generic/mshyperv.h | 1 +
->>  3 files changed, 15 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
->> index 0116d0e96ef9..616e9a5d77b4 100644
->> --- a/arch/x86/kernel/cpu/mshyperv.c
->> +++ b/arch/x86/kernel/cpu/mshyperv.c
->> @@ -107,6 +107,7 @@ void hv_set_msr(unsigned int reg, u64 value)
->>  }
->>  EXPORT_SYMBOL_GPL(hv_set_msr);
->>  
->> +static void (*mshv_handler)(void);
->>  static void (*vmbus_handler)(void);
->>  static void (*hv_stimer0_handler)(void);
->>  static void (*hv_kexec_handler)(void);
->> @@ -117,6 +118,9 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
->>  	struct pt_regs *old_regs = set_irq_regs(regs);
->>  
->>  	inc_irq_stat(irq_hv_callback_count);
->> +	if (mshv_handler)
->> +		mshv_handler();
-> 
-> Can mshv_handler be defined as a weak symbol doing nothing instead
-> of defining it a null pointer?
-> This should allow to simplify this code and get rid of
-> hv_setup_mshv_handler, which looks redundant.
-> 
-Interesting, I tested this and it does seems to work! It seems like
-a good change, thanks.
+On Thu, 27 Feb 2025 04:12:02 +0000 Mina Almasry wrote:
+>  static inline void __skb_frag_ref(skb_frag_t *frag)
+>  {
+> -	get_page(skb_frag_page(frag));
+> +	get_netmem(skb_frag_netmem(frag));
+>  }
 
-> Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> 
->> +
->>  	if (vmbus_handler)
->>  		vmbus_handler();
->>  
->> @@ -126,6 +130,11 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
->>  	set_irq_regs(old_regs);
->>  }
->>  
->> +void hv_setup_mshv_handler(void (*handler)(void))
->> +{
->> +	mshv_handler = handler;
->> +}
->> +
->>  void hv_setup_vmbus_handler(void (*handler)(void))
->>  {
->>  	vmbus_handler = handler;
->> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->> index 2763cb6d3678..f5a07fd9a03b 100644
->> --- a/drivers/hv/hv_common.c
->> +++ b/drivers/hv/hv_common.c
->> @@ -677,6 +677,11 @@ void __weak hv_remove_vmbus_handler(void)
->>  }
->>  EXPORT_SYMBOL_GPL(hv_remove_vmbus_handler);
->>  
->> +void __weak hv_setup_mshv_handler(void (*handler)(void))
->> +{
->> +}
->> +EXPORT_SYMBOL_GPL(hv_setup_mshv_handler);
->> +
->>  void __weak hv_setup_kexec_handler(void (*handler)(void))
->>  {
->>  }
->> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
->> index 1f46d19a16aa..a05f12e63ccd 100644
->> --- a/include/asm-generic/mshyperv.h
->> +++ b/include/asm-generic/mshyperv.h
->> @@ -208,6 +208,7 @@ void hv_setup_kexec_handler(void (*handler)(void));
->>  void hv_remove_kexec_handler(void);
->>  void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
->>  void hv_remove_crash_handler(void);
->> +void hv_setup_mshv_handler(void (*handler)(void));
->>  
->>  extern int vmbus_interrupt;
->>  extern int vmbus_irq;
->> -- 
->> 2.34.1
->>
+Silently handling types of memory the caller may not be expecting
+always worries me. Why do we need this? 
 
+In general, I'm surprised by the lack of bug reports for devmem.
+Can you think of any way we could expose this more to syzbot?
+First thing that comes to mind is a simple hack in netdevsim,
+to make it insert a netmem handle (allocated locally, not a real
+memory provider), every N packets (controllable via debugfs).
+Would that work?
 
