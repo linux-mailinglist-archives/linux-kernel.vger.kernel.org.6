@@ -1,195 +1,145 @@
-Return-Path: <linux-kernel+bounces-539649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F805A4A6E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:13:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CD3A4A6E5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A28116B682
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:13:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED7027ABC2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FDF28EA;
-	Sat,  1 Mar 2025 00:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFD9179BC;
+	Sat,  1 Mar 2025 00:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouyXZ+R/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="X4uQgNFp"
+Received: from mail-qt1-f226.google.com (mail-qt1-f226.google.com [209.85.160.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FBD2F56;
-	Sat,  1 Mar 2025 00:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3E5AD2F
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740787981; cv=none; b=ZJSiLW0mw7TCj6ejkRFJ5dRooK1Il6hU8yXbxrHFPaU8UQZMWTGtnxbSiNd5dHXYPB0AMMH1F+r1ZpaEuBBoFiBFcZEGAs/0FbzYx5GTh9H8HQMCPGs7e5V5mSVzZzxRFke/pN44PE9TwVUCTlbINkyT4W6urCMtDvKC+Qj8B6A=
+	t=1740788177; cv=none; b=GhVGW5Lnm1B9wnKKVcfpNks7nKoM14+jMQFBLYCZILtDSXk2OAS6lEqYnlR81dcD0M40oQTq2WBco0ncSDigVRrJ2E7ZUQOJXbDDH3x+iU6Ze6wJnHgp8eGxOMIh7v/PGQcv6UyVOAgZ1tNnpTAsyqd9koscR+qzawolVGcoLO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740787981; c=relaxed/simple;
-	bh=Z3A7/rpc5BUBrXAJwq7DKAz8PCU08h3SYsMUlwDbyxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnGs9SI+5vWY/xR295wIRhFBSWEtQ3ACSP0TBJ16DlAujiCE+sdQjz3WIxraDtuuM9eGgd6T1Ymbw3o81+nGvnHhBaO4gl4SEyrhAJyEihMZgWwy8rU23mmKZhJFZMncP01KfCdN819sTc6K4e0Ql+oEfZyI7xQS1qbHZsygV74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouyXZ+R/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD74AC4CED6;
-	Sat,  1 Mar 2025 00:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740787981;
-	bh=Z3A7/rpc5BUBrXAJwq7DKAz8PCU08h3SYsMUlwDbyxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ouyXZ+R/g0s0kTBPgLUFyyGBFM+6bqwf8koqkMq5O1RcvWKXKU/Lz25cUoenI+Gn1
-	 KmTaEcd5jV7FX/e7I28OC39WingIEFsNEoK0W0CyzKHLCJSVU9smD6xdDd6qnz5Px6
-	 7IlTqmTGzxys99zNrFGagzR9pTlUajbWVbkmDWTzuxvZdBOeTKGWhQs6NhncmhRzgk
-	 x/1g9czHQ6378SQqdsvwsbZByASz7SdvS/ScJunDnweFRGJEa5EBzEg+7FKoJvweFI
-	 HO3hXbwToc4pd0PEmiISOiNKYj8/mih3rNMEQPt6IJ6o8wI3TbNSf+OAWxYyPmlh1F
-	 j3Qx0ZYDa/2pA==
-Date: Fri, 28 Feb 2025 16:12:59 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>, Ian Rogers <irogers@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, acme@kernel.org,
-	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-	hca@linux.ibm.com
-Subject: Re: [PATCH] perf/test: Skip leader sampling for s390
-Message-ID: <Z8JRC2oSs8i53t_s@google.com>
-References: <20250228062241.303309-1-tmricht@linux.ibm.com>
+	s=arc-20240116; t=1740788177; c=relaxed/simple;
+	bh=4hMsOKF8Z/yO+NqEsxZWBSKHFvNbXcp5QYOUrmQ6oIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pcHI2FqnCW5TiurmDZ0tLD5VX5KWIlAbVQ4A8Nk2puIeYPx78RqkVlRLgIc96Ux95xsX3VC3Dj/ii6YFn/OVlTh2O9CHvKUGKpJ5EJKJm+/M9rDR82nEpUEEZcEw4CGFqYkt6sMDWqCXyaSxpbgo86AxY/ne90LxzYus8Ic3s4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=X4uQgNFp; arc=none smtp.client-ip=209.85.160.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qt1-f226.google.com with SMTP id d75a77b69052e-471f2f3326aso2819771cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 16:16:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1740788175; x=1741392975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxj+5zFTIPMH7w6ZRnBk60oQjP9P4xpyjsa1wNR06yU=;
+        b=X4uQgNFpM36XkrCJupHi6XgVebZiTyuEVrFhkG7hSEN2dFG/3g3/j5b19YLFMestgl
+         eZ8LCVFhfs6XBoWVBuf2Bh38pgOPPgm5ype6F9jg7jRKKR3wuPLyXFYZ7yQAJF1o7YAW
+         rG56w5RI1iLJQZBOqj3mTjFmwU09K8IugxuSa2gUBHrvQuPApj5gJmGxzQ/1Il/fBkfE
+         KyP2ZBZHr0oQmbrIL7WmoBQqs4gQZau/4WRRHwurXymGD08pyQn7G4TRY2gzwwSylGI2
+         Yul5UqsjgSEPQIbD4SWF8uVEUjp/wrIBpCGI1wqwBeoPiz9TNqLRCbORJRnfTzR+wUxX
+         x9zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740788175; x=1741392975;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hxj+5zFTIPMH7w6ZRnBk60oQjP9P4xpyjsa1wNR06yU=;
+        b=TXfhfMwwVQh5sB+Pq6zbCYf0eeB90lJj5snYaeIR+eCgr9PGUPaRiWShz6GrPmeMd6
+         L0BTjMXFtFlBTAsF9BIIaRSEVJ2s/qdAVlM4oTKL3XX2ndskZzIGl9hOGuvrTmGeP44A
+         hV3ZE/KlNe77+r0rAqWbGbs0kG8qfR/Ym/WxtPm8aj7rYOR69qFR+5OiV42y31MdrBCO
+         yYckSlORHtNkwx1Tmoly/9rIM+8qeT/Z+1DUcDrJ/cnTkU+tWDVUw86m9NCEdrDcvJhd
+         sz+VZ4TI/+oxA0ARJBZmtxgy/xoCCoNCgHZR4MimsfEgW03GIxEroXtaxtP0a+1YVw8t
+         88VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCNReOY+eQwLZWsNOyfmLdY+gbLNNN7WW/mqEkYPfx59IdSMhmfxB+yyElfEHi2osPj77JAx1EkNalWnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhIxlcGBI6KlF9y2RE/t+tM3xjOnpa/gvBQGAFwG5qFZj2cqAe
+	muAvV185OYrxCZ+QffbcHXrYg+f1i2n+05JSq9aBPcwNyXRxl0FNyPzJFFvJ82gimcSYfoF/QyL
+	x0ZIWYRQM9mT1Bjc3PNRDhNLQOherBZnOD/BEXlKx2dpuxP7t
+X-Gm-Gg: ASbGncv1A8RLSPpugSZByHXLX0O7j9c+M/s5YAltQaB+knp3bG79y1o55SwqGfcipUK
+	hms0crriD56h53nugzl8/Wqtgk7NoF8QNQ6mzwwLCBNwaMFVEaPiElGCSdnmmlftv//VysvKOWm
+	l5EMQgeYkYuBZwrUxSX31h5NYIkzGy/UvPDmKgZ79pUlqOa978+FIiOvSAhFw7UY/I7fWssaROq
+	9vH38mqd6kjV0SF44+xbbBh5FaSvS5o6sd82wjZSjS/pxuQ3SEFgOFhCbEZGPvOHCDsIIq9/jaB
+	/J/Ey9mwSs4aOjHrygEtHotz5X9yc3v5HQ==
+X-Google-Smtp-Source: AGHT+IHguvY06BDl+ZarmWIdL/s0NMRf39nRdnunRIkL+vsRrLv/O43lL6h3pnJa268Y04LlLuKMdVdi0hLj
+X-Received: by 2002:a05:6214:1c4e:b0:6e6:9bd4:82a2 with SMTP id 6a1803df08f44-6e8a0c7da71mr30408066d6.1.1740788174710;
+        Fri, 28 Feb 2025 16:16:14 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-6e897604364sm1893876d6.27.2025.02.28.16.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 16:16:14 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 224FC34028F;
+	Fri, 28 Feb 2025 17:16:13 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 191FCE419EA; Fri, 28 Feb 2025 17:16:13 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in header file
+Date: Fri, 28 Feb 2025 17:16:07 -0700
+Message-ID: <20250301001610.678223-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250228062241.303309-1-tmricht@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
+other files.
 
-On Fri, Feb 28, 2025 at 07:22:41AM +0100, Thomas Richter wrote:
-> In tree linux-next
-> the perf test case 114 'perf record tests' has a subtest
-> named 'Basic leader sampling test' which always fails on s390.
-> Root cause is this invocation
-> 
->  # perf record -vv -e '{cycles,cycles}:Su' -- perf test -w brstack
-> 
->  ...
->  In the debug output the following 2 event are installed:
-> 
->  ------------------------------------------------------------
->  perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   size                             136
->   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
->   { sample_period, sample_freq }   4000
->   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
->   read_format                      ID|GROUP|LOST
->   disabled                         1
->   exclude_kernel                   1
->   exclude_hv                       1
->   freq                             1
->   sample_id_all                    1
->  ------------------------------------------------------------
->  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->  ------------------------------------------------------------
->  perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   size                             136
->   config                           0 (PERF_COUNT_HW_CPU_CYCLES)
->   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
->   read_format                      ID|GROUP|LOST
->   exclude_kernel                   1
->   exclude_hv                       1
->   sample_id_all                    1
->  ------------------------------------------------------------
->  sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8 = 6
->  ...
-> 
-> The first event is the group leader and is installed as sampling event.
-> The secound one is group member and is installed as counting event.
-> 
-> Namhyung Kim confirms this observation:
-> > Yep, the syntax '{event1,event2}:S' is for group leader sampling which
-> > reduces the overhead of PMU interrupts.  The idea is that those events
-> > are scheduled together so sampling is enabled only for the leader
-> > (usually the first) event and it reads counts from the member events
-> > using PERF_SAMPLE_READ.
-> >
-> > So they should have the same counts if it uses the same events in a
-> > group.
-> 
-> However this does not work on s390. s390 has one dedicated sampling PMU
-> which supports only one event. A different PMU is used for counting.
-> Both run concurrently using different setups and frequencies.
-> 
-> On s390x a sampling event is setup using a preset trigger and a large
-> buffer. The hardware
->  - writes a samples (64 bytes) into this buffer
->    when a given number of CPU instructions has been executed.
->  - and triggers an interrupt when the buffer gets full.
-> The trigger has just a few possible values.
-> 
-> On s390x the counting event cycles is used to read out the numer of
-> CPU cycles executed.
-> 
-> On s390 above invocation created 2 events executed on 2 different
-> PMU and the result are diffent values from two independently running
-> PMUs which do not match in a consistent and reliably as on Intel:
-> 
->  # ./perf record  -e '{cycles,cycles}:Su' -- perf test -w brstack
->    ...
->  # ./perf script
->    perf 2799437 92568.845118:  5508000 cycles:  3ffbcb898b6 do_lookup_x+0x196
->    perf 2799437 92568.845119:  1377000 cycles:  3ffbcb898b6 do_lookup_x+0x196
->    perf 2799437 92568.845120:  4131000 cycles:  3ffbcb897e8 do_lookup_x+0xc8
->    perf 2799437 92568.845121:  1377000 cycles:  3ffbcb8a37c _dl_lookup_symbol
->    perf 2799437 92568.845122:  1377000 cycles:  3ffbcb89558 check_match+0x18
->    perf 2799437 92568.845123:  2754000 cycles:  3ffbcb89b2a do_lookup_x+0x40a
->    perf 2799437 92568.845124:  1377000 cycles:  3ffbcb89b1e do_lookup_x+0x3fe
-> 
-> As can be seen the result match very often but not all the time
-> make this test on s390 failing very, very often.
-> 
-> This patch bypasses this test on s390.
-> 
-> Output before:
->  # ./perf test 114
->  114: perf record tests                       : FAILED!
->  #
-> 
-> Output after:
->  # ./perf test 114
->  114: perf record tests                       : Ok
->  #
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/rsrc.c | 4 ++--
+ io_uring/rsrc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks for the fix.  I think Ian saw the same problem on other archs
-too.  Maybe we need to enable it on supported archs only.
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 45bfb37bca1e..4c4f57cd77f9 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1066,12 +1066,12 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+-						    unsigned issue_flags)
++struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
++				      unsigned issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_rsrc_node *node;
+ 
+ 	if (req->flags & REQ_F_BUF_NODE)
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 6fe7b9e615bf..8f912aa6bcc9 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -53,10 +53,12 @@ void io_rsrc_cache_free(struct io_ring_ctx *ctx);
+ struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type);
+ void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node);
+ void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_data *data);
+ int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
+ 
++struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
++				      unsigned issue_flags);
+ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 			u64 buf_addr, size_t len, int ddir,
+ 			unsigned issue_flags);
+ 
+ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg);
+-- 
+2.45.2
 
-Thanks,
-Namhyung
-
-> ---
->  tools/perf/tests/shell/record.sh | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-> index ba8d873d3ca7..98b69820bc5f 100755
-> --- a/tools/perf/tests/shell/record.sh
-> +++ b/tools/perf/tests/shell/record.sh
-> @@ -231,6 +231,12 @@ test_cgroup() {
->  
->  test_leader_sampling() {
->    echo "Basic leader sampling test"
-> +  if [ "$(uname -m)" = s390x ]
-> +  then
-> +    echo "Leader sampling skipped"
-> +    ((skipped+=1))
-> +    return
-> +  fi
->    if ! perf record -o "${perfdata}" -e "{cycles,cycles}:Su" -- \
->      perf test -w brstack 2> /dev/null
->    then
-> -- 
-> 2.45.2
-> 
 
