@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-540081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2160BA4AD6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:48:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 185C7A4AD6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC537A47B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16DC3B1004
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125711E3769;
-	Sat,  1 Mar 2025 18:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1881E7C10;
+	Sat,  1 Mar 2025 18:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JQMXtY2L"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MU37R0vz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7F3249F9;
-	Sat,  1 Mar 2025 18:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB7D1DED49;
+	Sat,  1 Mar 2025 18:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740854881; cv=none; b=S4KoIDyhWOQP2eqJINVFqqZRcNavMMSdBn8wZ7bdmrCr399W4jr+eHzGgkLk91WfN/Xx7lRnsr4Y+9ftFvsFddQb/WektRXSk4txZV5WZbX3D86T+OUbJpSavAfBlK+kplHOhauarxsdG4GVHKf5SeS7f7aiea5bGJD5ACAf9u8=
+	t=1740854996; cv=none; b=mR5aKF98K0Q/gwFVt60C1RZ/H8oaMz04D0ns6eVEdKJ+Ns0bZld/i3IPGeuxvs0OAr3nAMCcTjwO7GKcwMcstmBc0TV3HOTmRkVnlKMplSrjF/+dgAnpwcpV6tOie+im84W7/dSPNfwHBDdV3t0cP4wdGkGDB9dvDHqcpY0Yymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740854881; c=relaxed/simple;
-	bh=efDsyWtQ79yh+glCJAxW/XDwXPgyVjWRh+dsAy5Dd/4=;
+	s=arc-20240116; t=1740854996; c=relaxed/simple;
+	bh=IrOfUSH1K4Wm6o+tYeM48yWS/v2GxQKug3+bX3bY5FY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KItvSgaQ9brf9wdcv0KwdVu8iARVJPh7cAQKU3ONp7OMJUPihxFU0VLtPrsG6/FfELcOiZSR4KytnliSUMcwyedDCPD2Iq+HdEVoNu8XekHXusjU2ldpdjk9VvuzHYk+1gGRqDodhjBTeRMJfSDcPjvwVXG2TpAq4iMm5ezv9WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JQMXtY2L; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ADA4740E0173;
-	Sat,  1 Mar 2025 18:47:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iIcm_nZK5oGm; Sat,  1 Mar 2025 18:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740854868; bh=l71h9KXcCuDFU+fj0zNN0wy4uU4tSQfRahhqWOcy5yA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JQMXtY2Lxgk1ihOvpFWTuQR6nmFfH4WvcJSzINNVCY4tVIkMAcEKpP56oGL33LX0Y
-	 UM+YZzhvXhpWpVDCGLiqFcSZTufYO4UNSLznub0PXKkSZpBTrZIqvvhLXcBy3vMeo5
-	 a4jPOyOIW4Ol+VYOZvQVbbnAn1Yzhd+DVJ/0KflWTCgq1u7A0aPI3iyLa9wEyCyTmr
-	 PUYlpTrJTOyaNmxBpu/EcBzjd3KTAAvro9tASGZDnbgxC9RXVsTp7bSczc7/3oy4mG
-	 3ZNf4YsLZJ2OfjakKmfrPZbMw4gbbCVTDCWSX9Ldfb924KjNGGN0UK251jO8d+iNQs
-	 hpx4PUukCdqbOWAwFhd67hLJT4BkaSRhe+t/lrXx2MMqvDNsGyF968qyPlGiQHU6N5
-	 PYqywEf1u03V4Z42V1K22uymdSvJilh6eJJbyIeCGwDtL4I6+v+HxNRgw0MoXlV117
-	 B3aBpMkXIX0ACIcUwKvT/c9OPpghNBpxgEmCnw43rqKUgxhsKsamIhNwRa2dNIhRlE
-	 RTs1Kl6dMYsGwbQywCqxxPJPLDvx1eT+PbUr6nkGakURVt3Elf+0K/Wxse2hsuFte6
-	 bwaQtBxEiiAqSUnL8F5awrQnm55aGsfgsa6nD5jvY1EMfjXDrGmTVp6tQOBjmrzkn1
-	 2xhyl/IQsGjBaK3wCZPaIViE=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2045B40E0028;
-	Sat,  1 Mar 2025 18:47:31 +0000 (UTC)
-Date: Sat, 1 Mar 2025 19:47:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
-Message-ID: <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-3-xueshuai@linux.alibaba.com>
- <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
- <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
- <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
- <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vfd/9FpMM6Bcw4uhofiaVM0dkqNy3p/b3+HkPb/OJyNr7S0s9NJ6HYKbPdvD7raVIwynbyI6lyq4TgMSltocQo1rjvaBbNpXzxEdzCTrZmQv9xrB/ZF2p8tbE+ndTDOxxLUlmil2WUt7t7sTcHfQ2tHve+2VbK+nDGFBimlogk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MU37R0vz; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740854995; x=1772390995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IrOfUSH1K4Wm6o+tYeM48yWS/v2GxQKug3+bX3bY5FY=;
+  b=MU37R0vziI2F0WXwAd0FysrG4Rr6DhWDDatjEatdlEGsVW10w+DTCnog
+   T7ycmlkBDFJbFgtRYiODVe80Vj1pCCOeLMm5T2kLCDeWhNy7Rrv+3lP3a
+   NHGacTF9SZ7nQdhsqqtSYb6BtM55H6akcNmIgYFzM9Z87nsAlkVhQ+S+h
+   ybaEmhoXpxCtUuTGZje3QJOam9CW3GQaVPU8WkwdS6taLp2O7ikh5qVkU
+   95CLEcHBb1/G+ycihNTlr7TCHDVbSxU5o7SrfeSmXySrca7q8pd2G8/7Y
+   I+rhJ3FOb4RARqWXqZ9qatO4uXLOYXi96TTfzITAe+nKusjTJl8iK5fuY
+   Q==;
+X-CSE-ConnectionGUID: ZSLOAQSRTV2ySDupv9U61Q==
+X-CSE-MsgGUID: la4zOVq9QT+7aYHLcYH4dA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="45416189"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="45416189"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 10:49:54 -0800
+X-CSE-ConnectionGUID: wWza1SZPTz+XF7JHCbsrcg==
+X-CSE-MsgGUID: iL/GJJIYQ8m57G17eAFtBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="122762859"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 01 Mar 2025 10:49:50 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toRuG-000GaG-1A;
+	Sat, 01 Mar 2025 18:49:48 +0000
+Date: Sun, 2 Mar 2025 02:49:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aditya Garg <gargaditya08@live.com>,
+	"castet.matthieu@free.fr" <castet.matthieu@free.fr>,
+	"stf_xl@wp.pl" <stf_xl@wp.pl>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"b-liu@ti.com" <b-liu@ti.com>,
+	"johan@kernel.org" <johan@kernel.org>,
+	"heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+	"valentina.manea.m@gmail.com" <valentina.manea.m@gmail.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"i@zenithal.me" <i@zenithal.me>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] usb: replace strcpy() with strscpy()
+Message-ID: <202503020226.3yStuXZ8-lkp@intel.com>
+References: <DEF7EF73-12C4-4F30-BC14-DD829F0C6884@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
+In-Reply-To: <DEF7EF73-12C4-4F30-BC14-DD829F0C6884@live.com>
 
-On Sat, Mar 01, 2025 at 10:03:13PM +0800, Shuai Xue wrote:
-> (By the way, Cenots/Redhat build kernel without CONFIG_RAS_CEC set, becase
-> it breaks EDAC decoding. We do not use CEC in production at all for the same
-> reasion.)
+Hi Aditya,
 
-It doesn't "break" error decoding - it collects every correctable DRAM error
-and puts it in "leaky" bucket of sorts. And when a certain error address
-generates too many errors, it memory_failure()s the page and poisons it.
+kernel test robot noticed the following build errors:
 
-You do not use it in production because you want to see every error, collect
-it, massage it and perhaps decide when DIMMs go bad and you can replace
-them... or whatever you do.
+[auto build test ERROR on usb/usb-testing]
+[also build test ERROR on usb/usb-next usb/usb-linus johan-usb-serial/usb-next johan-usb-serial/usb-linus linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-All the others who enable it and we can sleep properly, without getting
-unnecessarily upset about a correctable error.
+url:    https://github.com/intel-lab-lkp/linux/commits/Aditya-Garg/usb-replace-strcpy-with-strscpy/20250228-230839
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/DEF7EF73-12C4-4F30-BC14-DD829F0C6884%40live.com
+patch subject: [PATCH] usb: replace strcpy() with strscpy()
+config: csky-randconfig-002-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020226.3yStuXZ8-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020226.3yStuXZ8-lkp@intel.com/reproduce)
 
-> Yes, we collect all kernel message from host, parse the logs and predict panic
-> with AI tools. The more details we collect, the better the performance of
-> the AI model.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020226.3yStuXZ8-lkp@intel.com/
 
-LOL.
+All errors (new ones prefixed by >>):
 
-We go the great effort of going a MCE tracepoint which gives a *structured*
-error record, show an example how to use
-it in rasdaemon and you go and do the crazy hard and, at the same time, silly
-thing and parse dmesg?!??!
+   In file included from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/usb/atm/ueagle-atm.c:15:
+   drivers/usb/atm/ueagle-atm.c: In function 'cmvs_file_name':
+>> include/linux/compiler.h:197:62: error: static assertion failed: "must be array"
+     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                              ^~~~~~~~~~~~~~
+   include/linux/compiler.h:202:33: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
+     202 | #define __must_be_array(a)      __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:80:47: note: in expansion of macro '__must_be_array'
+      80 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +    \
+         |                                               ^~~~~~~~~~~~~~~
+   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
+      25 | #define __CONCAT(a, b) a ## b
+         |                        ^
+   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
+      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
+         |                           ^~~~~~~~
+   include/linux/string.h:114:9: note: in expansion of macro 'CONCATENATE'
+     114 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+         |         ^~~~~~~~~~~
+   drivers/usb/atm/ueagle-atm.c:1574:9: note: in expansion of macro 'strscpy'
+    1574 |         strscpy(cmv_name, FW_DIR);
+         |         ^~~~~~~
 
-This is priceless. Oh boy.
 
-> Agreed, tracepoint is a more elegant way. However, it does not include error
-> context, just some hardware registers.
+vim +197 include/linux/compiler.h
 
-The error context is in the behavior of the hw. If the error is fatal, you
-won't see it - the machine will panic or do something else to prevent error
-propagation. It definitely won't run any software anymore.
-
-If you see the error getting logged, it means it is not fatal enough to kill
-the machine.
-
-> > Besides, this message is completely useless as it has no concrete info about
-> > the error and what is being done about it.
-> 
-> I don't think so,
-
-I think so and you're not reading my mail.
-
->     "mce: Uncorrected hardware memory error in user-access at 3b116c400"
-
-Ask yourself: what can you do when you see a message like that?
-
-Exactly *nothing* because there's not nearly enough information to recover
-from it or log it or whatever. That error message is *totally useless* and
-you're upsetting your users unnecessarily and even if they report it to you,
-you can't help them.
+230fa253df6352 Christian Borntraeger 2014-11-25  193  
+cb7380de9e4cbc Kees Cook             2025-02-05  194  #ifdef __CHECKER__
+cb7380de9e4cbc Kees Cook             2025-02-05  195  #define __BUILD_BUG_ON_ZERO_MSG(e, msg) (0)
+cb7380de9e4cbc Kees Cook             2025-02-05  196  #else /* __CHECKER__ */
+cb7380de9e4cbc Kees Cook             2025-02-05 @197  #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+cb7380de9e4cbc Kees Cook             2025-02-05  198  #endif /* __CHECKER__ */
+cb7380de9e4cbc Kees Cook             2025-02-05  199  
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
