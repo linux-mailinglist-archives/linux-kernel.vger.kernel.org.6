@@ -1,193 +1,184 @@
-Return-Path: <linux-kernel+bounces-539953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D724FA4AB45
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:36:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ADDA4AB46
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC353B5AF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD1C18965C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA2C1DF737;
-	Sat,  1 Mar 2025 13:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBBB1D54F4;
+	Sat,  1 Mar 2025 13:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQmyFtbt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="h1bQVUEG"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9578579CD;
-	Sat,  1 Mar 2025 13:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE2B1DE4F6
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836183; cv=none; b=aKfjzYm9DFnd/O9b0MyLSVc6NSIX17iWMVhJKVb5jBnvvrlRE2YteR0R54FsUbptgbZhsDyPJ5Xj8zjO7sRzzXtbVnx0e19na3zRGfAw2quaZq6rUp3Ulbybfqz55pTj9wqTwUJCNvKeI9DaCvPUBrU8Ei+gUl98scxx25JzP4s=
+	t=1740836220; cv=none; b=TOgmvBRFJfRj17qmKG6BlGsqLgSVkEShpa9BGAbPuME2GwlDHKlJdZq5ER7ZXnnjfD61zap9e+2v57R4Bc+TLRf1HvI5fXzFTlJ2ZPyCzUkukod6Q/l9nNYtZJj/ZoDvxxjox77ioXzFHPVfwX43PkaAUiwuJZnAtt1nywMgtik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836183; c=relaxed/simple;
-	bh=+9olZMe927bo25HXvSSkBgPAgO3eFw27jWtLQ6l/+eU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UzvFN0YSXf+zJx/cohFlVKQ0veI/7Vg2kIXz8y0Y6Wq15JXV/Kfm2ZUR3iIlWbLsYaJNtusWCsLokZyQAbvLmeDfo/iYBDNziT4gcuiJi1HXKNG8eYVQOqkDRvqesOXVof5W86RBV0rswclbKf2HX1QRjCzssiSTNhjrmvELkSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQmyFtbt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA96DC4CEDD;
-	Sat,  1 Mar 2025 13:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740836183;
-	bh=+9olZMe927bo25HXvSSkBgPAgO3eFw27jWtLQ6l/+eU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kQmyFtbtDyuo5bbqrr2PvxVxV4WLJ0eUsGg2Vf9cxH8PryGo4faSy7B022DLbwJjU
-	 2MkQwpATxW/D213tvfHM1CNNOtt0uxvH7T1fDkrI0VvceeVnCoAMC/UkU62+4CtaM6
-	 JAhttLlCy6z5u2VlVuXQeFqRfRuunExO0zt6Ct3qbTzd8VeZwA1h1pli53/PIq1yIN
-	 MPhFGA4hzatxFdXZF3h1LtfU/vyo7cPcksPJfBBblhdoZsQ6Bs+X/7dxH65S1Sv6sY
-	 M1MWqxx2XrRVqDSokvJJdlsG02ZfSdFNjn3yUGBNe3AjqzgryIyHR9pNYXsy2NlsTK
-	 qoEUXpx03IIrQ==
-Message-ID: <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
-Date: Sat, 1 Mar 2025 14:36:17 +0100
+	s=arc-20240116; t=1740836220; c=relaxed/simple;
+	bh=LapoCgKb7rpfKJfF20IZl7hsT2Euatqkb1ZMHZXrBLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWPI887zxRGQSLqWimeAR269ykjmGxm84++zD7ct/A5zwypFV2yqxDduZm3oqQH71ruNxEEbYFge4SiWTNOuKzC7alW2XCuBv9SCV7ZDSDFxO81627u7A3j8+Rf2svvcChqzPo1IORFmLyDAV3Q0/sZxJvTIMTE2msOoSZmipKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=h1bQVUEG; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 15989 invoked from network); 1 Mar 2025 14:36:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1740836213; bh=aRiFh+RnguF32GhIHTChLBANgiv5uAT2Dw8NdRyvRj4=;
+          h=From:To:Cc:Subject;
+          b=h1bQVUEGMNTUKae/W7vCi/u1TvVyU1xwrMft7ayL9P4r3CIEB2ZoSF/NYpjZjWNro
+           X4eNtKTyrDqgx7KP4TnECypWCVjsdNOPUjtM460l1ulP6n6i8q1C0iT9TJazBjaFe3
+           yAYV4wDaRqtsCM879tQFQAPJPUFTGdQvAwd0mRSjHiGGEuJYchsYTvwQC0v74y1y8P
+           OR8tDQKLBUSGLKu86RV7jQn0Qvq8RAYzsyOENlTbMI3cu4+0OXMOmd2CsLYj55fr3b
+           7pHEn8OlnTi4BDdlkha2iMXTPHvRc94Y1RX2TxkyNGLp8hTmDXOPDwQIscSQMDMHq+
+           6aPvj9zdFgq1Q==
+Received: from 89-64-0-97.dynamic.chello.pl (HELO localhost) (stf_xl@wp.pl@[89.64.0.97])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <arnd@arndb.de>; 1 Mar 2025 14:36:53 +0100
+Date: Sat, 1 Mar 2025 14:36:52 +0100
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Kalle Valo <kvalo@kernel.org>, Ben Hutchings <ben@decadent.org.uk>,
+	linux <linux@treblig.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with
+ DEBUG_FS=n
+Message-ID: <20250301133652.GA60453@wp.pl>
+References: <20250225145359.1126786-1-arnd@kernel.org>
+ <20250301122834.GA55739@wp.pl>
+ <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-To: Bjorn Andersson <andersson@kernel.org>,
- Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
- <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
- <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
- <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
+X-WP-MailID: 2470ba4e58919c2f21eb6df4d58800ac
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [McMU]                               
 
-On 28/02/2025 15:14, Bjorn Andersson wrote:
-> On Fri, Feb 28, 2025 at 11:01:16AM +0530, Yuvaraj Ranganathan wrote:
->> On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
->>> On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
->>>> The initial QCE node change is reverted by the following patch 
->>>
->>> s/is/was/
->>>
->>>> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
->>>> because of the build warning,
->>>>
->>>>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->>>>     ...
->>>>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
->>>>
->>>> Add the QCE node back that fix the warnings.
->>>>
->>>
->>> Are you saying that adding this node back will fix the warning?
->>>
->>> I'd expect that you would say something like "The changes to the
->>> Devicetree binding has accepted, so add the node back".
->>>
->>> Regards,
->>> Bjorn
->>>
->>>> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
->>>>  1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> index 23049cc58896..b0d77b109305 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
->>>>  				 <&apps_smmu 0x481 0x00>;
->>>>  		};
->>>>  
->>>> +		crypto: crypto@1dfa000 {
->>>> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
->>>> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
->>>> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
->>>> +			dma-names = "rx", "tx";
->>>> +			iommus = <&apps_smmu 0x480 0x00>,
->>>> +				 <&apps_smmu 0x481 0x00>;
->>>> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
->>>> +					 &mc_virt SLAVE_EBI1 0>;
->>>> +			interconnect-names = "memory";
->>>> +		};
->>>> +
->>>>  		stm: stm@4002000 {
->>>>  			compatible = "arm,coresight-stm", "arm,primecell";
->>>>  			reg = <0x0 0x4002000 0x0 0x1000>,
->>>> -- 
->>>> 2.34.1
->>>>
->>
->> DeviceTree bindings were accepted but the comptabile string does not
->> properly bind to it. Hence, adding the correct binding string in the
->> compatible has resolved the issue.
->>
+On Sat, Mar 01, 2025 at 01:38:16PM +0100, Arnd Bergmann wrote:
+> On Sat, Mar 1, 2025, at 13:28, Stanislaw Gruszka wrote:
+> > On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
+> >
+> > But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
+> > case, it does compile for me:
+> >
+> > -  22475	   1160	      0	  23635	   
+> > 5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+> > +  23008	   1168	      0	  24176	   
+> > 5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
 > 
-> Please then write that in the commit message.
-> 
-> 
-> That said, what did you base this patch on? While I have picked
-> Krzysztof's two reverts in my local tree, I have not yet published them.
-> So your patch is not even based on v6.14-rc1, which now is 4 weeks old.
-> 
-> Patches sent upstream should be built and tested on a suitable upstream
-> branch!
+> Very strange, this really shouldn't happen. Which symbols
+> exactly do you see the compiler fail to drop with my patch,
 
-I sent reverts because author, even though pinged more than once (!),
-ignored reported problems.
+nm 4965-rs.o diffrence before and after patch:
 
-It seems that reverting the code gets some attention, so maybe author
-will fix the original issue and my reverts can be dropped/ignored.
+                  U ieee80211_rate_control_register
+                  U ieee80211_rate_control_unregister
+                  U ieee80211_start_tx_ba_session
+                  U ieee80211_stop_tx_ba_session
+ 0000000000000010 t il4965_hwrate_to_plcp_idx
+-00000000000043b0 T il4965_rate_control_register
+-00000000000043e0 T il4965_rate_control_unregister
++00000000000043f0 T il4965_rate_control_register
++0000000000004420 T il4965_rate_control_unregister
+ 00000000000002e0 t il4965_rate_n_flags_from_tbl
+ 0000000000000000 t il4965_rate_n_flags_from_tbl.cold
+ 0000000000000270 t il4965_rs_alloc
+ 0000000000000710 t il4965_rs_alloc_sta
+ 00000000000000dd t il4965_rs_alloc_sta.cold
+-0000000000001810 t il4965_rs_collect_tx_data.isra.0
+-00000000000012b0 t il4965_rs_fill_link_cmd
+-0000000000000495 t il4965_rs_fill_link_cmd.cold
++0000000000001850 t il4965_rs_collect_tx_data.isra.0
++0000000000000e90 t il4965_rs_dbgfs_set_mcs.isra.0
++00000000000002f6 t il4965_rs_dbgfs_set_mcs.isra.0.cold
++0000000000001340 t il4965_rs_fill_link_cmd
++0000000000000518 t il4965_rs_fill_link_cmd.cold
+ 00000000000002a0 t il4965_rs_free
+ 0000000000000e40 t il4965_rs_free_sta
+ 000000000000028d t il4965_rs_free_sta.cold
+@@ -173,31 +184,31 @@
+ 0000000000000a20 t il4965_rs_get_best_rate
+ 0000000000000bb0 t il4965_rs_get_rate
+ 0000000000000209 t il4965_rs_get_rate.cold
+-0000000000001180 t il4965_rs_get_tbl_info_from_mcs.isra.0
+-0000000000003bd0 T il4965_rs_rate_init
+-0000000000000d5f t il4965_rs_rate_init.cold
++0000000000001210 t il4965_rs_get_tbl_info_from_mcs.isra.0
++0000000000003c10 T il4965_rs_rate_init
++0000000000000de4 t il4965_rs_rate_init.cold
+ 00000000000002c0 t il4965_rs_rate_init_stub
+ 0000000000000760 t il4965_rs_set_expected_tpt_table
+ 0000000000000490 t il4965_rs_stay_in_table
+ 0000000000000088 t il4965_rs_stay_in_table.cold
+-0000000000001000 t il4965_rs_switch_to_mimo2.isra.0
+-00000000000003c3 t il4965_rs_switch_to_mimo2.isra.0.cold
+-0000000000000e90 t il4965_rs_switch_to_siso.isra.0
+-00000000000002f6 t il4965_rs_switch_to_siso.isra.0.cold
++0000000000001090 t il4965_rs_switch_to_mimo2.isra.0
++0000000000000446 t il4965_rs_switch_to_mimo2.isra.0.cold
++0000000000000f20 t il4965_rs_switch_to_siso.isra.0
++0000000000000379 t il4965_rs_switch_to_siso.isra.0.cold
+ 00000000000000d0 t il4965_rs_tl_rm_old_stats
+ 00000000000001a0 t il4965_rs_toggle_antenna
+-0000000000001970 t il4965_rs_tx_status
+-00000000000004d4 t il4965_rs_tx_status.cold
++00000000000019b0 t il4965_rs_tx_status
++0000000000000559 t il4965_rs_tx_status.cold
+                  U il_debug_level
+                  U il_is_ht40_tx_allowed
+-0000000000001180 R il_rates
++00000000000012a0 R il_rates
+                  U il_send_lq_cmd
+                  U jiffies
+                  U jiffies_to_msecs
+ 000000000000004b r .LC15
+ 0000000000000070 r .LC9
+-0000000000001100 r rs_4965_ops
+-0000000000001210 r rs_ht_to_legacy
++0000000000001220 r rs_4965_ops
++0000000000001330 r rs_ht_to_legacy
+                  U __stack_chk_fail
+                  U __ubsan_handle_out_of_bounds
+                  U __ubsan_handle_shift_out_of_bounds
 
-Best regards,
-Krzysztof
+> and which compiler version are you using?
+
+It is:
+gcc (GCC) 9.3.1 20200408 (Red Hat 9.3.1-2)
+
+I've checked on other system with
+gcc (GCC) 14.2.1 20240912 (Red Hat 14.2.1-3)
+and there size difference is similar:
+
+-  28876	   4875	      0	  33751	   83d7	drivers/net/wireless/intel/iwlegacy/4965-rs.o
++  29454	   4851	      0	  34305	   8601	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+
+> > How about moving  
+> > static const struct il_rate_mcs_info il_rate_mcs[RATE_COUNT]
+> > under CONFIG_MAC80211_DEBUGFS ? Maybe inside the function that use it ? 
+> 
+> It's not supposed to make a difference, let's try to figure
+> out if there is a compiler bug or a mistake in my patch first
+> and then fix it in the right place.
+
+Regards
+Stanislaw
 
