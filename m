@@ -1,165 +1,165 @@
-Return-Path: <linux-kernel+bounces-540115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF59A4ADD2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:32:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3FFA4ADD4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8A33AE6EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C869416AB32
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976501E98E8;
-	Sat,  1 Mar 2025 20:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AD41E8342;
+	Sat,  1 Mar 2025 20:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6VBYz5p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j0W8ax/u"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C9182D7;
-	Sat,  1 Mar 2025 20:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE1182D7;
+	Sat,  1 Mar 2025 20:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740861148; cv=none; b=c6eyYnwrLkWeA6bmP/wHwd4l0/UP/NYkmyHkW+yz9ZEcZvRUW7R7ceEA5L1wn6Xxk2WeIN2KR4ya6j2kM1hkCF5AqbrZNJHOUNCniUPvDsKIluNNFXbP1nB8bwASOcwSLukBFPQSFeHeBOThNhqyAmA/vQvuyowdjyQleOyi9EQ=
+	t=1740861434; cv=none; b=MRRC/JLqTWAxj9SJDDmv1VaQFHov0QWhPe+Yg9kv1dKSL4DAb+Kk7lGBjZwEeiPG77lmXoQsgST01EwqEEEaKq8VPICLPUHbVtIhlinjtM2yV4vvMn4NWbQA0yrjHBtLmWsNzKQ6g5mt0HZglAyYT7S/KJJQQN/FB1/h3zpmCv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740861148; c=relaxed/simple;
-	bh=wBg5evaKt2ua+JSREx6VTzJBkp8N1lCxgbzNDRsoVo4=;
+	s=arc-20240116; t=1740861434; c=relaxed/simple;
+	bh=bS075K6RDLoIA2kHkCsy0JdsUrdTU7jF2LvyzphOjsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxGYIP+TQu1vaMW+wXs4G4mhj+tAHHEVWKM1ECUfced8Oe57SFb+92VfK8wWxRwVN5Jq1BeORRc0PGbaVWMTd1H39Mrw4ExSjljTcXify9lbf3O/N/HdjSZfUr7A1P461exKWOLlAK+0xnNjib1VSFEWd774456miMdcXbg0Eis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6VBYz5p; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740861147; x=1772397147;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wBg5evaKt2ua+JSREx6VTzJBkp8N1lCxgbzNDRsoVo4=;
-  b=R6VBYz5pp3bnUhaR6PIxY3wHf9DinLizZYHkg/MM6oAxZKUvQcWDdm6k
-   WyealKEFq5jnLGDADeaRA8LVuNMp1wvdQGh5sWjckNkPjUVTw0Nh2BKII
-   qxg7bJRnpjoWRNRcap3CWhsOGDq5stX9Pdjad74UaOs5jODRzxdCXFvIB
-   b5pxQ/RtfFWUOyLKTNoaSP5eTbgZN8/o42wg6nueOMl9H/5UUj46GxREl
-   VVeZBTjfhVwExfmcN3UlpJ/ZdrlIhhk2IXl67MbA3RHabAPFpkeEdvWId
-   6IYBxNRpI3O3G1jcwmytPa1T6u/oQcgM/D4nK2JkLeNYluYG+UCtDRWvx
-   g==;
-X-CSE-ConnectionGUID: ih6OA1alSQuDYJdBB20Gww==
-X-CSE-MsgGUID: uInj0QL6QQSsOYbEUUw9tA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41009976"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41009976"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 12:32:26 -0800
-X-CSE-ConnectionGUID: /I33WU5TQPCIw+82ZeJT1Q==
-X-CSE-MsgGUID: BSv1HP4jSiq/0Ee+64SyZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="122590873"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 01 Mar 2025 12:32:20 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toTVL-000Gft-2i;
-	Sat, 01 Mar 2025 20:32:13 +0000
-Date: Sun, 2 Mar 2025 04:31:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7u0ZDJOAvo3IE1FnSrzxq3Oy6DR2t/ZL2iALZxqIFwcu30JlsFDKZNRu6teK8OOK+PhslePKP4vlTmdU8FKPJoSSckmz6QHb8XUXt8dkRs7zASbK5ROaKaOIu6wH0k5wz8A+FUDpE2JHHvI+8akNTYPgnfVvDzLJ46waFy2Ips=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j0W8ax/u; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C9EDE20453;
+	Sat,  1 Mar 2025 20:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740861424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Acc0tGYBakmOPZLGuJmU2rnhFl+Tc281npjtzbe/74=;
+	b=j0W8ax/uRquO/giWNgJhf4H4p4dxfIxzFW6MO4OZsXaQhJo+e7YlrfmfwuwO8z8CykjSQD
+	0U7Afy7/Ba2WJ6ueUqpasO3bhRsmWK8p1CSKWQJLxASlHZTVaGb200Xak05pxb0hXPgbBk
+	sT9SJIRG4qLHlanaDO5mFlJjeg4NV4xNVcAt6A5IcLajDdg4v3tw1PgIh8R9k5YlEQBuhG
+	dfXSaVruN9RLuzUSlpcs4F7JA1n4iAXoEgtPn0uxly/CwiwCzgGYpZ/+vFDZKpgSjsOMi0
+	+ATKulcM1AzPZZmNwSQMXP1nZ5IL536rUVUy1TzC5EytwvQM/AGNSzQr14PTEA==
+Date: Sat, 1 Mar 2025 21:36:58 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH v8 9/9] misc: add FPC202 dual port controller driver
-Message-ID: <202503020450.UW2PuA6X-lkp@intel.com>
-References: <20250227-fpc202-v8-9-b7994117fbe2@bootlin.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	=?iso-8859-1?Q?T=F3th_J=E1nos?= <gomba007@gmail.com>,
+	Dianlong Li <long17.cool@163.com>, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 00/18] a few rtc driver cleanups
+Message-ID: <20250301203658839d5482@mail.local>
+References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250227-fpc202-v8-9-b7994117fbe2@bootlin.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelgedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveduvefhvdehlefgieelfeetudeugfehgfeugfekleejueefueettdffueetiedvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeejjedrudehtddrvdegiedrvdduheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejjedrudehtddrvdegiedrvdduhedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtoheprghnughrvgdrughrrghsiihikheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptgiftddtrdgthhhoihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhovghlsehjmhhsrdhiugdrrghupdhrtghpthhtoheprghnu
+ ghrvgifsegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhopehulhhlihdrkhhrohhllhesghhoohhglhgvmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Romain,
+On 28/02/2025 14:07:13+0000, André Draszik wrote:
+> Hi,
+> 
+> While looking at RTC, I noticed that various drivers are keeping
+> pointers to data that they're not using themselves throughout their
+> lifetime.
+> 
+> So I took the liberty to drop these pointers and this series is the
+> result.
+> 
+> The last two patches also convert two drivers to using dev_err_probe(),
+> as I looked slightly closer into those two. They don't exactly fit the
+> general subject of removal of unneeded pointers, but I wanted to share
+> them anyway, since they're ready.
+> 
+> All of this was compile-tested only.
+> 
+> Cheers,
+> Andre'
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> André Draszik (18):
+>       rtc: max77686: drop needless struct max77686_rtc_info::rtc member
+>       rtc: s5m: drop needless struct s5m_rtc_info::i2c member
+>       rtc: aspeed: drop needless struct aspeed_rtc::rtc_dev member
+>       rtc: ds2404: drop needless struct ds2404::rtc member
+>       rtc: ep93xx: drop needless struct ep93xx_rtc::rtc member
+>       rtc: ftrtc010: drop needless struct ftrtc010_rtc::rtc_dev member
+>       rtc: m48t86: drop needless struct m48t86_rtc_info::rtc member
+>       rtc: meson: drop needless struct meson_rtc::rtc member
+>       rtc: meson-vrtc: drop needless struct meson_vrtc_data::rtc member
+>       rtc: pl030: drop needless struct pl030_rtc::rtc member
+>       rtc: rx8581: drop needless struct rx8581::rtc member
+>       rtc: s35390a: drop needless struct s35390a::rtc member
+>       rtc: sd2405al: drop needless struct sd2405al::rtc member
+>       rtc: sd3078: drop needless struct sd3078::rtc member
 
-kernel test robot noticed the following build errors:
+My main concern with this is that as soon as we introduce irq support,
+we are going to need the rtc pointer back in the struct. But I guess
+that most of them are old enough to say that nobody is interested in irq
+support.
 
-[auto build test ERROR on 2014c95afecee3e76ca4a56956a936e23283f05b]
+>       rtc: rx8581: drop needless struct rx8581
+>       rtc: sd3078: drop needless struct sd3078
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Romain-Gantois/dt-bindings-misc-Describe-TI-FPC202-dual-port-controller/20250227-182532
-base:   2014c95afecee3e76ca4a56956a936e23283f05b
-patch link:    https://lore.kernel.org/r/20250227-fpc202-v8-9-b7994117fbe2%40bootlin.com
-patch subject: [PATCH v8 9/9] misc: add FPC202 dual port controller driver
-config: sparc-randconfig-r051-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020450.UW2PuA6X-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020450.UW2PuA6X-lkp@intel.com/reproduce)
+I guess you could squash those two with the previous ones touching the
+respective drivers because you are the one removing the last remaining
+struct member.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020450.UW2PuA6X-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/misc/ti_fpc202.c: In function 'fpc202_read':
->> drivers/misc/ti_fpc202.c:104:15: error: implicit declaration of function 'i2c_smbus_read_byte_data' [-Wimplicit-function-declaration]
-     104 |         val = i2c_smbus_read_byte_data(priv->client, reg);
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/misc/ti_fpc202.c: In function 'fpc202_write':
->> drivers/misc/ti_fpc202.c:110:16: error: implicit declaration of function 'i2c_smbus_write_byte_data' [-Wimplicit-function-declaration]
-     110 |         return i2c_smbus_write_byte_data(priv->client, reg, value);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/misc/ti_fpc202.c: At top level:
->> drivers/misc/ti_fpc202.c:433:1: warning: data definition has no type or storage class
-     433 | module_i2c_driver(fpc202_driver);
-         | ^~~~~~~~~~~~~~~~~
->> drivers/misc/ti_fpc202.c:433:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Wimplicit-int]
->> drivers/misc/ti_fpc202.c:433:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
->> drivers/misc/ti_fpc202.c:424:26: warning: 'fpc202_driver' defined but not used [-Wunused-variable]
-     424 | static struct i2c_driver fpc202_driver = {
-         |                          ^~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for I2C_ATR
-   Depends on [n]: I2C [=n]
-   Selected by [y]:
-   - TI_FPC202 [=y]
-
-
-vim +/i2c_smbus_read_byte_data +104 drivers/misc/ti_fpc202.c
-
-    99	
-   100	static int fpc202_read(struct fpc202_priv *priv, u8 reg)
-   101	{
-   102		int val;
-   103	
- > 104		val = i2c_smbus_read_byte_data(priv->client, reg);
-   105		return val;
-   106	}
-   107	
-   108	static int fpc202_write(struct fpc202_priv *priv, u8 reg, u8 value)
-   109	{
- > 110		return i2c_smbus_write_byte_data(priv->client, reg, value);
-   111	}
-   112	
+>       rtc: max77686: use dev_err_probe() where appropriate
+>       rtc: s5m: convert to dev_err_probe() where appropriate
+> 
+>  drivers/rtc/rtc-aspeed.c     | 16 ++++-----
+>  drivers/rtc/rtc-ds2404.c     | 14 ++++----
+>  drivers/rtc/rtc-ep93xx.c     | 16 ++++-----
+>  drivers/rtc/rtc-ftrtc010.c   | 17 +++++----
+>  drivers/rtc/rtc-m48t86.c     | 14 ++++----
+>  drivers/rtc/rtc-max77686.c   | 37 +++++++++----------
+>  drivers/rtc/rtc-meson-vrtc.c | 12 +++----
+>  drivers/rtc/rtc-meson.c      | 16 ++++-----
+>  drivers/rtc/rtc-pl030.c      | 14 ++++----
+>  drivers/rtc/rtc-rx8581.c     | 85 +++++++++++++++++++-------------------------
+>  drivers/rtc/rtc-s35390a.c    | 22 ++++++------
+>  drivers/rtc/rtc-s5m.c        | 58 +++++++++++++-----------------
+>  drivers/rtc/rtc-sd2405al.c   | 16 ++++-----
+>  drivers/rtc/rtc-sd3078.c     | 71 +++++++++++++++---------------------
+>  14 files changed, 183 insertions(+), 225 deletions(-)
+> ---
+> base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+> change-id: 20250228-rtc-cleanups-12c0b5123ea4
+> 
+> Best regards,
+> -- 
+> André Draszik <andre.draszik@linaro.org>
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
