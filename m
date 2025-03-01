@@ -1,204 +1,164 @@
-Return-Path: <linux-kernel+bounces-540130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD264A4AE11
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:01:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEA1A4AE1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 23:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B2016E904
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D72D3B4FBB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A742A1CD1E0;
-	Sat,  1 Mar 2025 22:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC641E8335;
+	Sat,  1 Mar 2025 22:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="wwlElTJ/"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWrWeOu8"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985A16F271
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 22:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8C516F271;
+	Sat,  1 Mar 2025 22:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740866509; cv=none; b=inSLRx4JjN+jRgYkKFPDF+pZuN+11LLTDvoGtWgUFWcdNWRogeDwmp8kHMlxT7BlQjz1HcUoppeRA7c9iXS8RmMN+08xfZrajNUooDmnXL4RAneoBbSPI5dFZEgisVxkBk7PrHPCKL2uFQkH3gwCGoHr5YKsdv/aK3lLhRMkyfk=
+	t=1740866768; cv=none; b=YSfnAutsy/Su7afi41o0DYIMx7YCCdDllV+aHebgzGYwPMD2i2FUq3A2Kxp1Q1wGkPFK+DvvB/D153JXSqCB/ICaZE93WVpUW5QTVNgH5LvBKHHhGE1jQVWTdSnOaPpuAE+HYxwyauU+BHHXlyVcB9gWizCNaAvAoDKIh4P+kho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740866509; c=relaxed/simple;
-	bh=CNmPzzKSc1/mFhUIp7M01VBpwaXdcPou0HFNFhd3+9Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LLLS+5Y7Qa32ZPMuh5APAP3fVFjLQP9iYgRuNumt0Kx/De5e1qbITN+UhtA6OXlDI3cPhqnA3QqBilKiBZ+ltgsY2BuxuB2BB42DXYFZGnrbZP55lpBRgKWKPMsNR73kvOEl9o65KOlKaqygRxlv8jOBrfG5QyWVzZQjUNMzLZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=wwlElTJ/; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1740866503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NzgP9Go8f8M9k87tjvCXZYqbhq/8HV1+vOpCDpxZLk8=;
-	b=wwlElTJ/WgWWArcHqdGT3eO7GxDglBTSwBFHI3sbu+Tr8PMtUsjfzvVHTOZGQj3XA+mw5f
-	RauGy+mjkdkYiypBIgCydNh3+Bfz4fm6TeMXXvoYTKn6lY4I+hmzrW6osl8jJMzy31J/FI
-	9PJukWt88K9ASJIh3v9nSj/k7ACvyiWm+J2YUF0uBPblQtOcWjYbJiZQnYd35zwIhz8Fvr
-	dblWzkzW1zgSMF8ZahKq6m/g5C4MQkR1VZyTsVdoMtEVJkMmmODpL7615l1GL8tRQvi7GX
-	dsB227gOfcuwWXDMWcNg4taLVVmxaNfBPOZKQYx/0D776xVZcx6t1ZgCYyMD0w==
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Date: Sat, 01 Mar 2025 17:01:30 -0500
-Subject: [PATCH v3] drm: add modifiers for Apple GPU layouts
+	s=arc-20240116; t=1740866768; c=relaxed/simple;
+	bh=k0IF4TI1s27h+CuL7qGATdK6mdl2VzdYKRR18nSNV4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Safk/JyVx+zBERx+h3xByTWv8Yy48LEsLAw424b+1lGE44wdDvvpYI9G30f/EcxpuF7wbMjIFcx37Ow0pcz9cP6IsX4XkNYeuV0LNAQoG3tAuWP4Due6nqouo8wZQ1OOvUmLwN9BSR66+Vf7ZJm+iJpuz0+cIZQU/xTt6Gze0yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWrWeOu8; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46c8474d8daso29282511cf.3;
+        Sat, 01 Mar 2025 14:06:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740866765; x=1741471565; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kgbfyzwgi4YaDDp7Z2cDbzPB9by/mlp/Ew++4xg1OP4=;
+        b=jWrWeOu8fcYohFzfOUkZ7j3lijnQJBVcOc2SintVVkxPoKqdNozQF89s2gvvUqG1HW
+         5NFwrqv4cs1QRzjiKSp7tVi1auHXlJQSa1JyrFB1X2WdaSC2l4d+YO8UWYCfqh2RzYYs
+         NiVREbhPSTm3JqjwAfPEj6S4izneC/MUrgu7JNT/WuPOGrYadGM4IgpyNK20f4FOKmXI
+         O5dZZgqhe8lNJ+zZhlWhynUd3HAewYGp5REWqR2nyPc/cWK5dvt8Mr+56aOEM1H07nhS
+         qysqNU8sMGlNBWZfpQ4Sgyiw/2xALZN+CupuIYrnJtMCnmYKO2DDVloBLNJa3yPyMfDH
+         agfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740866765; x=1741471565;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kgbfyzwgi4YaDDp7Z2cDbzPB9by/mlp/Ew++4xg1OP4=;
+        b=TI+dVC9OSQVWSGdeT5tSU1K4lO4Z5EsQAtv3xhLzCivqg1c3/jExti7+OhMkYxIApn
+         2yJG3FHe+uAwvVc4vBwGxXCrb/DHZ75IHG+sweTKmeGZ4ZEB+6UemcRz9pTOZUXnXjJq
+         zQlKXoPaL8m4BOEqbNwg48Nnh+uuIEX0rK50y4c1ywgrrmhzf76jFeHxlRa+qTz8nqAz
+         R1Rx1lmA2oHqxR89KYLgO/B8/pqN4HG7yIGvnmQN/7jbCVmRvpJoFR03CaGwKimeOXJq
+         RCCAZdLfrhDhgpCHc5etV0L6h+p1yuxcuZ6zdIe1yEI+MQ0hjd+T2yRWNk68Va4mh0/Q
+         UhHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUayXaeLIlutyGGLeq2Vuz4gYgTj4xvMGuempqga2G0K4pC74LuD9I3aFmBxx55RvQLbv20f4xn96k0zU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75X1XIksfTlPXhDIwiCjQD9zgFpSvq0ToRDW2tAlaDfYSnFHM
+	LByHCPRejYJ1wSZr4UnEFkh880wAPrJ8HqUMZn5L9uQXLWZlIIhF
+X-Gm-Gg: ASbGnctgnb4ZOWHUtEoQAilhoyQETh2JL74H8mc4jCJvi+v4AXenuctJ7iYOJpYaXU/
+	fPS5Sx/18kVzazENm9mwqdlRYe6yhdv1YlVfarF+5jwjOVkUmsXRvjkQrdX3Klr8ttoFFw+GRSh
+	AC9FlKLZrQJclPupECWJCVVQ/Z7/6pDYbJM2C4P6VPW7r2POZcET6hW4/nUd46jDziU/EZp3bQQ
+	dWXCxZiDHA3P0tyThosWF5SFQDIkknwQH/79jPxRdNLGajaTIkSOKzs53TK0pBr2TBBWlDP8dys
+	nEm/2pef14EKGh8KG4uE/He8CdkKAHsY2Xu+ZHGzlQ4yhA==
+X-Google-Smtp-Source: AGHT+IERib8erINFgErq49CXeKJmSuKuQ7NCMtX/7SMSnrTvjs7UzYWAhGUNb1ifruF+bJ9bv1JRDQ==
+X-Received: by 2002:a05:6214:2aad:b0:6e8:9feb:76e6 with SMTP id 6a1803df08f44-6e8a0d2c8f1mr140249656d6.16.1740866765463;
+        Sat, 01 Mar 2025 14:06:05 -0800 (PST)
+Received: from iman-pc.home ([142.198.73.227])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ec158sm36549756d6.119.2025.03.01.14.06.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 14:06:05 -0800 (PST)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH] kbuild: fix argument parsing to properly handle --file
+Date: Sat,  1 Mar 2025 17:07:02 -0500
+Message-ID: <20250301220702.16055-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250301-apple-twiddled-modifiers-v3-1-4b9bb79825fe@rosenzweig.io>
-X-B4-Tracking: v=1; b=H4sIALmDw2cC/43NTQ6CMBCG4auYrq1ph39X3sO4KHQKkyAlLSkq4
- e4WVsaFcfl+yTyzMI+O0LPzYWEOA3myQ4zkeGBNp4YWOenYDARkAmTJ1Tj2yKeZtO5R87vVZAi
- d50ajVLlJEyEaFs9Hh4YeO329xe7IT9Y9909BbusfaJBc8jLLZK3qNAFpLs56HF4zUnsiyzY4w
- AcG2Q8MItaYvCqgwrIw+Te2rusbMlbWmhEBAAA=
-X-Change-ID: 20250218-apple-twiddled-modifiers-fde1a6f4300c
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- asahi@lists.linux.dev, Faith Ekstrand <faith.ekstrand@collabora.com>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4853; i=alyssa@rosenzweig.io;
- h=from:subject:message-id; bh=CNmPzzKSc1/mFhUIp7M01VBpwaXdcPou0HFNFhd3+9Y=;
- b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnw4PEq4UjR7nsEHxIRJuvr58MdwYdytNM9IyL/
- IRFXF2WgamJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ8ODxAAKCRD+/lBaCvVY
- DRZND/4gKkshoHPmOK939roaIwD2ai07mX/g+62B1U0O/4h9ZI0+Yt6VsY/j1FlZpbaJQJWfCsM
- o9Oz4PahtH2FmMrDggqDxUm3v2NyiEo+hlr6R96pwPtsDIyTa65/Cd6kEWLnJskANcTT1eN+5EU
- cVF2FA8+NRqTqO7wZXCDNG9Qy/WtujdShOB83tsqX0DGD7G1PinLAZKwMQc6/MME2LYxukgb2bR
- SiBReyfkYzbQtKXUrzR4pMGJ1J5epB21I4jAPsFS0+HNkNVup7ofGHcqQsDE756S3Vl37nxS+Yk
- pmtSzJ1gPfNFtz5lj/rn8uaJ3RrFg2kzfYx+SE8VBIxXvV0OvDzcAwoqM3VkAEzbfe5K7rBYe5m
- z5BMFsvdLC7v4OXqk/Btl0U1muzH8Ne5LvLeq2P0zjzJ6LefrRauotqXnYATQbTN3HLMZWr97R1
- PepLP5hUSXWefT4nfMWnbZN+KTmCWIVSB1SV4AFkwB0D7y86wQNErstfqm/u4JP7XMh/eqoiZNI
- Ft7g3baZV4/8ta6+gt5JaJIWHjBsC10d0RmKw3wu8okr692ECDkxxHizG9DA8ADNS1AmDCS2wQn
- MMb0UBsMbT21IIfe9GHq5P6x6vagS5OK+dSLeqhu/16xxgqGTisqzse6MVJ0AT83oNWsinp4+QF
- EW4Cbzo1ADaKAMQ==
-X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
- fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Apple GPUs support various non-linear image layouts. Add modifiers for
-these layouts. Mesa requires these modifiers to share non-linear buffers
-across processes, but no other userspace or kernel support is
-required/expected.
+The script previously assumed --file was always the first argument,
+which caused issues when it appeared later. This patch updates the
+parsing logic to scan all arguments to find --file, sets the config
+file correctly, and resets the argument list with the remaining
+commands.
 
-These layouts are notably not used for interchange across hardware
-blocks (e.g. with the display controller). There are other layouts for
-that but we don't support them either in userspace or kernelspace yet
-(even downstream), so we don't add modifiers here.
+It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=$FN
+to make oldconfig.
 
-Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
 ---
-Changes in v3:
-- Condense comments for clarity and concision.
-- Add text explaining strides and planes with justification.
-- Add table giving tile sizes for GPU tiled images.
-- Tighten up wording.
-- Link to v2: https://lore.kernel.org/r/20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io
+ scripts/config | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-Changes in v2:
-- Rename "Twiddled" to "GPU-tiled" to match what I now believe is the canonical name.
-- Add modifiers for the actual "Twiddled" layouts.
-- Clarify that the body of compressed images are laid out like their
-  uncompressed counterparts.
-- Link to v1: https://lore.kernel.org/r/20250218-apple-twiddled-modifiers-v1-1-8551bab4321f@rosenzweig.io
----
- include/uapi/drm/drm_fourcc.h | 63 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index e41a3cec6a9ed18760f3b0c88ba437c9aba3dd4f..2e21f71c500ec96b55abb04967f20630963f59f8 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -422,6 +422,7 @@ extern "C" {
- #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
- #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
- #define DRM_FORMAT_MOD_VENDOR_MTK     0x0b
-+#define DRM_FORMAT_MOD_VENDOR_APPLE   0x0c
+diff --git a/scripts/config b/scripts/config
+index ff88e2faefd3..ea475c07de28 100755
+--- a/scripts/config
++++ b/scripts/config
+@@ -32,6 +32,7 @@ commands:
+                              Disable option directly after other option
+ 	--module-after|-M beforeopt option
+                              Turn option into module directly after other option
++	--refresh            Refresh the config using old settings
  
- /* add more to the end as needed */
+ 	commands can be repeated multiple times
  
-@@ -1494,6 +1495,68 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
- /* alias for the most common tiling format */
- #define DRM_FORMAT_MOD_MTK_16L_32S_TILE  DRM_FORMAT_MOD_MTK(MTK_FMT_MOD_TILE_16L32S)
+@@ -124,16 +125,22 @@ undef_var() {
+ 	txt_delete "^# $name is not set" "$FN"
+ }
  
-+/*
-+ * Apple GPU layouts.
-+ *
-+ * Apple GPUs support nonlinear tilings with optional lossless compression.
-+ *
-+ * Compressed images pad the body to 128-bytes and are immediately followed by a
-+ * metadata section. The metadata section rounds the image dimensions to
-+ * powers-of-two and contains 8 bytes for each 16x16 compression subtile.
-+ * Subtiles are interleaved (Morton order).
-+ *
-+ * All images are 16-byte aligned.
-+ *
-+ * These layouts fundamentally do not have meaningful strides. No matter how we
-+ * specify strides for these layouts, userspace unaware of Apple image layouts
-+ * will be unable to use correctly the specified stride for any purpose.
-+ * Userspace aware of the image layouts do not use strides. The most "correct"
-+ * convention would be setting the image stride to 0. Unfortunately, some
-+ * software assumes the stride is at least (width * bytes per pixel). We
-+ * therefore require that stride equals (width * bytes per pixel). Since the
-+ * stride is arbitrary here, we pick the simplest convention.
-+ *
-+ * Although containing two sections, compressed image layouts are treated in
-+ * software as a single plane. This is modelled after AFBC, a similar
-+ * scheme. Attempting to separate the sections to be "explicit" in DRM would
-+ * only generate more confusion, as software does not treat the image this way.
-+ *
-+ * For detailed information on the hardware image layouts, see
-+ * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
-+ */
-+
-+/*
-+ * Apple GPU-tiled layouts.
-+ *
-+ * GPU-tiled images are divided into 16KiB tiles:
-+ *
-+ *     Bytes per pixel  Tile size
-+ *     ---------------  ---------
-+ *                   1  128x128
-+ *                   2  128x64
-+ *                   4  64x64
-+ *                   8  64x32
-+ *                  16  32x32
-+ *
-+ * Tiles are raster-order. Pixels within a tile are interleaved (Morton order).
-+ *
-+ * GPU-tiled is the preferred layout (compressed if possible).
-+ */
-+#define DRM_FORMAT_MOD_APPLE_GPU_TILED fourcc_mod_code(APPLE, 1)
-+#define DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED fourcc_mod_code(APPLE, 2)
-+
-+/*
-+ * Apple twiddled layouts.
-+ *
-+ * Twiddled images are padded to power-of-two dimensions. Pixels are interleaved
-+ * (Morton order).
-+ *
-+ * Twiddled layouts are useful for sparse images due to limitation of the
-+ * hardware PBE unit.
-+ */
-+#define DRM_FORMAT_MOD_APPLE_TWIDDLED fourcc_mod_code(APPLE, 3)
-+#define DRM_FORMAT_MOD_APPLE_TWIDDLED_COMPRESSED fourcc_mod_code(APPLE, 4)
-+
- /*
-  * AMD modifiers
-  *
-
----
-base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
-change-id: 20250218-apple-twiddled-modifiers-fde1a6f4300c
-
-Best regards,
+-if [ "$1" = "--file" ]; then
+-	FN="$2"
+-	if [ "$FN" = "" ] ; then
+-		usage
++FN=.config
++CMDS=()
++while [[ $# -gt 0 ]]; do
++	if [ "$1" = "--file" ]; then
++		if [ "$2" = "" ]; then
++			usage
++		fi
++		FN="$2"
++		shift 2
++	else
++		CMDS+=("$1")
++		shift
+ 	fi
+-	shift 2
+-else
+-	FN=.config
+-fi
++done
+ 
++set -- "${CMDS[@]}"
+ if [ "$1" = "" ] ; then
+ 	usage
+ fi
+@@ -217,9 +224,8 @@ while [ "$1" != "" ] ; do
+ 		set_var "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
+ 		;;
+ 
+-	# undocumented because it ignores --file (fixme)
+ 	--refresh)
+-		yes "" | make oldconfig
++		yes "" | make oldconfig KCONFIG_CONFIG=$FN
+ 		;;
+ 
+ 	*)
 -- 
-Alyssa Rosenzweig <alyssa@rosenzweig.io>
+2.48.1
 
 
