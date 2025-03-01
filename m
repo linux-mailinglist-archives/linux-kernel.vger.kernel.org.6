@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-539898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E49BA4AA94
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:11:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50EFA4AA92
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B473B6960
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F0916DD15
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AB51DE3A4;
-	Sat,  1 Mar 2025 11:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E02D1DE3AA;
+	Sat,  1 Mar 2025 11:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CZ9TN39J"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqcJd/cY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9502B1A5B97;
-	Sat,  1 Mar 2025 11:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739FD1A5B97;
+	Sat,  1 Mar 2025 11:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740827457; cv=none; b=ChXea7Pq51jhLTCQOhe8IUNg3AYVRpgYXdYahq/wVSEZlmtLMBrGTKA7BjAkSJvtECCa+oX0Jm5PgkAAeN2pXamqJkdtYtmGLZW4GS8MXpbZrmCXMTf1A2xH5sLKnuxQ3oRXz2jKG7D7UM5jp1hsocPlI/yJ8+j2iooyB6TEpa8=
+	t=1740827441; cv=none; b=nJ0DAY7Z/b6WE/q8k7mPvc9MWPy/HMJ8M7dfF8/qJrVk61Q5hTQG9F5/fa7eZaho9HY8Cm17MJyKnu5jOnOTGuISuPbTVrYYikPplufwJsw80eEwOt8TJrLIseVUw3984xTEsdK+Tu1FvWRVcDXF2SWcjNnSyfRVom9+/T0/qkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740827457; c=relaxed/simple;
-	bh=Y1f5ZrdWlv+BNiOBDoeaQwZINnOmNaj7ivJBlFLwoXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJL7rTvLP+YInS1tRMk9M92JW/yFTTaqJaypqTePbhbziRevywbO5PLy47vwNgTiNjLbPU2QBbiqnN0oG7sW8aWErS0/yjn1g+UNvuPa0xZ5kP+kVkkcGSU5bMII9eP1MlmB/egUPFHtRfRfjZg9ujzX/+dqlvWKvLPcnkv5IPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CZ9TN39J; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E5D2040E0177;
-	Sat,  1 Mar 2025 11:10:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3u-IJD7GA1my; Sat,  1 Mar 2025 11:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740827446; bh=BiSU+Q7ZrfwJRrUo70LXGiUrNSCWo21yGEk9PwKhUrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZ9TN39JBPbtTZ5eEeEUlcUCmId+Boay7JIEaehgfJrmffwTDb8k/bCN414LSOXz/
-	 RYZ2p8lQWiXpz8e5Si0p3q/Pi7S8KgQFgxIGsXFIOl8aXV7BJH7QacMxYd8A0qrafC
-	 HMvKI3olYS5ZkeYWWS1syNz9sKxvX8/Xl2toIWmTDlP3IZN7IsiTlqOOS/teQOoRh5
-	 Q90OJNfLP1DMka37QjWZWkX30D0yBejX5YkzZq8bzMzl5Fu1iixxxcu4WjKIbwFeMC
-	 2V3R51HVY7Y8bgcOmQJ555sku1tzxqWDVA/A+HscxVQUmxnmCeWbpvtWuGsYXLDFAU
-	 4ZX/+kZIo+n4I1e2XIE8lE+7gFSG1F9aj8gkq38OmuOx/vEPxo0cR3SSWuTyirr2jM
-	 xXU1x5sTeSYBqD8nZtkfA6TBbTFF1xSKSJ3qWXzjP+xCpWeCccnQHGH4rL3TJuKz5K
-	 kbxrjOTW6rZOUY7EnT0gw3Piw2HYUfAvV9IgScZ+8ap6m+gjbEIPrGkSyosGrpVrUx
-	 K3pCWHLbJoHqE/ie9Fbe5kB5np/N6ooNUBpPwWfl1XRapXV2v8w4BY4LZsJI0+whUf
-	 njHmnZCZjQNpn4Vg5WN3xVud9BMZ5l/mDV+oobreI2/r4MHLiGCKOd5LiCryb/MxS4
-	 bBobDJZjb77Hl7B0dFqaRICs=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5DC4A40E015F;
-	Sat,  1 Mar 2025 11:10:29 +0000 (UTC)
-Date: Sat, 1 Mar 2025 12:10:22 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
-Message-ID: <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-3-xueshuai@linux.alibaba.com>
- <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
- <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
+	s=arc-20240116; t=1740827441; c=relaxed/simple;
+	bh=nNqG0GMewRObnyRAAVI9p6JFUYawaXI8WiP+ukd2A5o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EwQutLlUhC5d/bIRepbzwDQYS+4msRVN867eRnRlViBd+OY9aQPmzqR2VSzWatfPnFC12zbhhl6UbREKZWEGndqOcV03jvtHFuLvMDJF8GA9ucjEUq2sNZPsshLXe2qHZ61++XYt3xKWpF6aaXADog1LOtlJ90K82fwhGvj4qL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqcJd/cY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E79C4CEDD;
+	Sat,  1 Mar 2025 11:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740827439;
+	bh=nNqG0GMewRObnyRAAVI9p6JFUYawaXI8WiP+ukd2A5o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RqcJd/cYGKltRT9h6KNka1heUSDbeIOA2o7SOUY8yXx1mXGc/buNEIQrzp8usT0R5
+	 oIIAoVNh0/DFsFRbxtgmVt5jIleViLUgMrXRnxLJeOPdu0Fhv6ZiVvg6T7/6vJBl6D
+	 QxEbxiEZeQC53aFcFH2ROVff6XP2uhKcZDO8GUBU/ndaT3+ZdKFvuOGWcf/+NkyIIM
+	 yOr4n7pLdKhjqdyyCBiHm4Pwpm650y90r0D/I6bYgRHAWjMSE7fV7tOKEP39Rb2RnM
+	 WyhQnNBNMTsQdpIlcwxbUoMhjZzG440kCGXu7d/ZX6w82326HJnqQ9NbHvq+EG7t9k
+	 ZI7SN1pmRobeA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1toKjt-009LKs-1e;
+	Sat, 01 Mar 2025 11:10:37 +0000
+Date: Sat, 01 Mar 2025 11:10:35 +0000
+Message-ID: <86plj1ovkk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
+ <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
+ <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
+ <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
+ <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
+ Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
+ <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
+ Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
+ <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 02/15] irqdomain: Add IRQ_DOMAIN_FLAG_MSI_IMMUTABLE and irq_domain_is_msi_immutable()
+In-Reply-To: <20250211-ep-msi-v15-2-bcacc1f2b1a9@nxp.com>
+References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+	<20250211-ep-msi-v15-2-bcacc1f2b1a9@nxp.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Frank.Li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, Mar 01, 2025 at 02:16:12PM +0800, Shuai Xue wrote:
-> For instance, it does not specify whether the error occurred in the
-> context of IN_KERNEL or IN_KERNEL_RECOV, which are crucial for
-> understanding the error's circumstances.
-
-1. Crucial for whom? For you? Or for users?
-
-You need to explain how this error message is going to be used. Because simply
-issuing such a message causes a lot of panicked people calling a lot of admins
-to figure out why their machine is broken. Because they see "mce" and think
-"hw broken, need to replace it immediately."
-
-This is one of the reasons we did the cec.c thing - just to save people from
-panicking unnecessarily and causing expensive and useless maintenance calls.
-
-2. This message goes to dmesg which means something needs to parse it, beside
-   a human. An AI?
-
-3. Dmesg is a ring buffer which gets overwritten and this message is
-   eventually lost
-
-There's a reason why MCEs get logged with the notifiers and through
-a tracepoint - so that agents can act upon them properly.
-
-And we have had this discussion for years now - I'm sorry that you're late to
-the party.
-
-> For the regression cases (copy from user) in Patch 3, an error message
+On Tue, 11 Feb 2025 19:21:55 +0000,
+Frank Li <Frank.Li@nxp.com> wrote:
 > 
->     "mce: Action required: data load in error recoverable area of kernel"
+> Add the flag IRQ_DOMAIN_FLAG_MSI_IMMUTABLE and the API function
+> irq_domain_is_msi_immutable() to check if the MSI controller retains an
+> immutable address/data pair during irq_set_affinity().
+> 
+> Ensure compatibility with MSI users like PCIe Endpoint Doorbell, which
+> require the address/data pair to remain unchanged after setup. Use this
+> function to verify if the MSI controller is immutable.
 
-See above.
+Why is that a requirement? Why should a driver even care?
 
-Besides, this message is completely useless as it has no concrete info about
-the error and what is being done about it.
-
-> I could add more explanations in next version if you have no objection.
-
-All of the above are objections.
-
-Please go into git history and read why we're avoiding dumping useless
-messages instead of proposing silly patches.
+	M.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Without deviation from the norm, progress is not possible.
 
