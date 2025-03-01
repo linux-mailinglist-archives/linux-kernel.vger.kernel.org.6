@@ -1,104 +1,244 @@
-Return-Path: <linux-kernel+bounces-540065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C6EA4AD30
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:51:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6128A4AD32
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90CE018929F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 17:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C50189461E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219A71E5B79;
-	Sat,  1 Mar 2025 17:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXMEyzj6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E6D1E5B7A;
+	Sat,  1 Mar 2025 18:01:51 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BFC8F7D;
-	Sat,  1 Mar 2025 17:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570A8BF8;
+	Sat,  1 Mar 2025 18:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740851485; cv=none; b=J+LJD1VW0qDs5RU2pG2WyAUylBjPe40CqKSmIWX7+jSSKn5r/MPG3CUR9tadAxVTZOQt3Ygjm44mQIXnv9LF1wb0wnCc8oAdKsiINQexyc/OcB/XEQ/Q5tzrb7SSOq/3LSaZtPnq0TiMkfJM3M+q7+8Qih3yJc8WIF8k2llR30Y=
+	t=1740852111; cv=none; b=Tbc+7cbQXv4+NmmjlU5lZhfvsOU1vdf+3GPRqCyGG4DqCWKFlzdAReIXhcSefckVsMwaKu8x8YnYc3WtdCQFS8qs1ljFpejsePly1J6uDP0YmoIAzGRlCoNwRqVp7S3hrUiOvFHHpX7VzFABNfjum9wlY8ZpErq9wIWKbvIgRAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740851485; c=relaxed/simple;
-	bh=2i3x9epA1D/2NaH6/1PZKzalbeifBD7Hd3d25GLxbq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V4QfQiiEGihrsYTI2p7cbVapegNmTm17l4oBTO1gAMUVim0DDT25cHws4h0wVtmLWfLFc4yELrUHu0uhGTGO3kIvKf6FPoF3RYShYkCEAHwL119yVwY71TerGzzsPbN9v+YKIAoV+JUMSr0oR2lGXjue5C91fcqiUE1pMnxj3R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXMEyzj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A742C4CEDD;
-	Sat,  1 Mar 2025 17:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740851484;
-	bh=2i3x9epA1D/2NaH6/1PZKzalbeifBD7Hd3d25GLxbq4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KXMEyzj6/0hdBTRfEU/90hrvZmdCoGagZz6ImVxjAUaB2YZx6xN3EPwmBryyzypGc
-	 5nTaOIgX2h64BXIlZgXidDIpOWCSfFiNnNmKGmk0QK5NNcg1HiOyVRzAycDSXv448H
-	 MmK0w7uD63ooH1KheqyU6vOJ3GyS8qB2mj8ebJVRqeQzOB6okEzTq/3q+WpnYdC/3Q
-	 eAuT4SLJL1eYYdOZ6DgV2BaPbHIOovHym+dKbEPTtR3gEOHBLc/XJYqH/kGOLQlyVk
-	 Z/Dk3d1R+qHxQceRaLDhyepERgBdMsI2ypynubrh8Ti+umMsxPGtOnyDCEXPBzied0
-	 B6z9upLeWlUWQ==
-From: cel@kernel.org
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	NeilBrown <neilb@suse.de>,
-	"J. Bruce Fields" <bfields@fieldses.org>,
-	Arnd Bergmann <arnd@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Simon Horman <horms@kernel.org>,
-	Yang Erkun <yangerkun@huawei.com>,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RESEND] sunrpc: suppress warnings for unused procfs functions
-Date: Sat,  1 Mar 2025 12:51:20 -0500
-Message-ID: <174085145847.10954.136116488472523421.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250225145234.1097985-1-arnd@kernel.org>
-References: <20250225145234.1097985-1-arnd@kernel.org>
+	s=arc-20240116; t=1740852111; c=relaxed/simple;
+	bh=klqCN48Ny/H3BoJ3S0qc0BU0Owh8CJ6llnu/vJfC6BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9o8FeIGVgcSpcJWlXIJZJCAS9kuxGYt9nmQxxWGpu9engGSYC+iGhRhBQAF46IQXE6mDqzcN2IOb/0zqOX8DS+fsngSjCoXynw5fcQoknlECpJsQBhbiaA4TdJ8eng+tvMgr1ss79tIm3JqKR3hYp6J65Xy/1IKobMfeMM5FZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 4A030280C374E;
+	Sat,  1 Mar 2025 19:01:39 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 347955E0BCC; Sat,  1 Mar 2025 19:01:39 +0100 (CET)
+Date: Sat, 1 Mar 2025 19:01:39 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	bhelgaas@google.com, Jonathan.Cameron@huawei.com,
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	wilfred.mallawa@wdc.com, aliceryhl@google.com, ojeda@kernel.org,
+	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
+	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
+ authenticated
+Message-ID: <Z8NLgxmDbcC9_C3F@wunner.de>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me>
+ <2025022717-dictate-cortex-5c05@gregkh>
+ <Z8DqZlE5ccujbJ80@wunner.de>
+ <2025022748-flock-verbalize-b66a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022748-flock-verbalize-b66a@gregkh>
 
-From: Chuck Lever <chuck.lever@oracle.com>
-
-On Tue, 25 Feb 2025 15:52:21 +0100, Arnd Bergmann wrote:
-> There is a warning about unused variables when building with W=1 and no procfs:
+On Thu, Feb 27, 2025 at 05:39:53PM -0800, Greg KH wrote:
+> On Thu, Feb 27, 2025 at 11:42:46PM +0100, Lukas Wunner wrote:
+> > On Thu, Feb 27, 2025 at 03:16:40AM -0800, Greg KH wrote:
+> > > I don't like this "if it's present we still don't know if the device
+> > > supports this", as that is not normally the "sysfs way" here.  Why must
+> > > it be present in those situations?
+> > 
+> > That's explained above.
 > 
-> net/sunrpc/cache.c:1660:30: error: 'cache_flush_proc_ops' defined but not used [-Werror=unused-const-variable=]
->  1660 | static const struct proc_ops cache_flush_proc_ops = {
->       |                              ^~~~~~~~~~~~~~~~~~~~
-> net/sunrpc/cache.c:1622:30: error: 'content_proc_ops' defined but not used [-Werror=unused-const-variable=]
->  1622 | static const struct proc_ops content_proc_ops = {
->       |                              ^~~~~~~~~~~~~~~~
-> net/sunrpc/cache.c:1598:30: error: 'cache_channel_proc_ops' defined but not used [-Werror=unused-const-variable=]
->  1598 | static const struct proc_ops cache_channel_proc_ops = {
->       |                              ^~~~~~~~~~~~~~~~~~~~~~
+> Not really, you just say "downgrade attacks", which is not something
+> that we need to worry about, right?
+
+A downgrade attack means duping the victim into believing that only
+a weaker security mode is supported.  E.g. only sha1, but not sha256.
+
+In this context, downgrade attack means duping the kernel or user
+into believing that SPDM authentication is unsupported, even though it is.
+
+https://en.wikipedia.org/wiki/Downgrade_attack
+
+That's definitely something we need to be aware of and guard against,
+otherwise what's the point of authenticating in the first place.
+
+
+> > Unfortunately there is no (signed) bit in Config Space which tells us
+> > whether authentication is supported by a PCI device.  Rather, it is
+> > necessary to exchange several messages with the device through a
+> > DOE mailbox in config space to determine that.  I'm worried that an
+> > attacker deliberately "glitches" those DOE exchanges and thus creates
+> > the appearance that the device does not support authentication.
 > 
-> [...]
+> That's a hardware glitch, and if that happens, then it will show a 0 and
+> that's the same as not being present at all, right?
 
-Applied to nfsd-testing, thanks!
+No, the "authenticated" attribute is not present in sysfs if authentication
+is unsupported.
 
-[1/1] sunrpc: suppress warnings for unused procfs functions
-      commit: 707f5c1dc5320be41b05d75624fa6423e058f4a8
+The downgrade attack protection comprises exposing the attribute if it
+could not be determined whether authentication is supported or not,
+and returning an error (ENOTTY) on read or write.
 
---
-Chuck Lever
+User space applications need to check anyway whether read() or write()
+failed for some reason.  E.g. if the device is hot-removed concurrently,
+the read() system call returns ENODEV.  So returning ENOTTY is just
+another error that can occur on access to the attribute.
 
+The idea is that user space typically wants to check whether the attribute
+contains "1", signifying that the device was authenticated successfully.
+Hence a return value of "0" or any error code signifies that the device
+is not authenticated.
+
+And if user space wants to check whether authentication is supported at all,
+it checks for presence of the sysfs attribute.  Hence exposing the attribute
+if support could not be determined is a safety net to not mislead user space
+that the device does not support authentication.
+
+For PCIe, glitching the hardware (the electric signals exchanged with
+the device) is indeed one way to disrupt the DOE and SPDM exchanges.
+
+However the SPDM protocol has not only been adopted by PCIe, but also
+other buses, in particular SCSI and ATA.  And in those cases, glitching
+the SPDM exchanges may be a pure software thing.  (Think iSCSI communication
+with storage devices in a remote rack or data center.)
+
+Damien Le Moal has explicitly requested that the user space ABI for SPDM
+is consistent across buses.  So the downgrade attack protection can be
+taken advantage of by those other buses as well.
+
+
+> > Let's say the user's policy is to trust legacy devices which do not
+> > support authentication, but require authentication for newer NVMe drives
+> > from a certain vendor.  An attacker may manipulate an authentication-capable
+> > NVMe drive from that vendor, whereupon it will fail authentication.
+> > But the attacker can trick the user into trusting the device by glitching
+> > the DOE exchanges.
+> 
+> Again, are we now claiming that Linux needs to support "hardware
+> glitching"?  Is that required somewhere?
+
+Required?  It's simply prudent to protect users from being duped into
+thinking the device doesn't support authentication.
+
+
+> I think if the DOE exchanges
+> fail, we just trust the device as we have to trust something, right?
+
+If the DOE exchanges fail, something fishy is going on.
+Why should we hide that fact from the user?
+
+
+> > The device needs to be re-enumerated by the PCI core to retry
+> > determining its authentication capability.  That's why the
+> > sysfs documentation says the user may exercise the "remove"
+> > and "rescan" attributes to retry authentication.
+> 
+> But how does it know that?
+
+Because reads and writes to the attribute return ENOTTY.
+
+> remove and recan is a huge sledgehammer, and
+> an amazing one if it even works on most hardware.  Don't make it part of
+> any normal process please.
+
+It's not a normal process.  It's manual recovery in case of a
+potential attack.  The user can also choose to unplug the device
+or reboot the machine.  That's arguably a bigger sledgehammer.
+
+
+> It's the error, don't do that.  If an error is going to happen, then
+> don't have the file there.  That's the way sysfs works, it's not a
+> "let's add all possible files and then make userspace open them all and
+> see if an error happens to determine what really is present for this
+> device" model.  It's a "if a file is there, that attribute is there and
+> we can read it".
+
+The point is that if the file isn't there even though the device might
+support authentication, we're creating a false and dangerous illusion.
+This is different from other attributes which don't have that quality.
+
+
+> > > > Alternatively, authentication success might be signaled to user space
+> > > > through a uevent, whereupon it may bind a (blacklisted) driver.
+> > > 
+> > > How will that happen?
+> > 
+> > The SPDM library can be amended to signal a uevent when authentication
+> > succeeds or fails and user space can then act on it.  I imagine systemd
+> > or some other daemon might listen to such events and do interesting things,
+> > such as binding a driver once authentication succeeds.
+> 
+> That's a new user/kernel api and should be designed ONLY if you actually
+> need it and have a user.  Otherwise let's just wait for later for that.
+
+Of course.  Again, the commit message makes suggestions for future
+extensions to justify the change.  Those are just ideas.  Whether
+and how they are implemented remains to be seen.  Signaling a uevent
+on authentication success or failure seems like an obvious idea,
+hence I included it in the commit message.
+
+I fear if I don't include those ideas in the commit message, someone
+will come along and ask "why do you need this at all?", thus putting
+into question the whole set of authentication patches.
+
+
+> > > If an attacker can consume kernel memory to cause this to happen you
+> > > have bigger problems.  That's not the kernel's issue here at all.
+> > > 
+> > > And "disable communication" means "we just don't support it as the
+> > > device doesn't say it does", so again, why does that matter?
+> > 
+> > Reacting to potential attacks sure is the kernel's business.
+> 
+> Reacting to real, software attacks is the kernel's business.  Reacting
+> to possible hardware issues that are just theoretical is not.
+
+We have fundamental disagreement whether certain attacks need to be taken
+seriously.  Which reminds me of...
+
+   "the final topic on the agenda was the corporate attempt at
+    security consciousness raising; a shouting match ensued,
+    in the course of which several and various reputations
+    were sullied, certain paranoid reactions were taken less
+    than seriously, and no great meeting of the minds was met."
+
+   [minutes of the uucp-lovers interest group, 20 April 1983,
+    from "A Quarter Century of UNIX" (1994) page 113]
+    https://wiki.tuhs.org/lib/exe/fetch.php?media=publications:qcu.pdf
+
+Looks like we're just upholding the time honored tradition of
+UNIX security disagreements!
+
+Thanks,
+
+Lukas
 
