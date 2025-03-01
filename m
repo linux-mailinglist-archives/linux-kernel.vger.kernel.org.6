@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-540032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F70A4ACAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:54:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DACA4ACBC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 17:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5FF16B499
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D0E16EA0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 16:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E51A1E260A;
-	Sat,  1 Mar 2025 15:54:51 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3CC1E3DCD;
+	Sat,  1 Mar 2025 16:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pkgc1cuW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2317C1E32B7
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 15:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EE31487D1;
+	Sat,  1 Mar 2025 16:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740844490; cv=none; b=hXN3MOGDYBvQdd3mbmn4uDIDSLLJeektg99/qJs4cluEABdKN779q5Z+ty8MFiHiOek0N97bNfNi3wYiS+yW/It9BWls0j3/UlClcfwjJBqLpOsdTY8CPlO1lZ1LwzyA2/kgXWnj+G189dIKyaDbYDXXbX8t7sPuH7nQJetb3Ks=
+	t=1740844995; cv=none; b=uof1r+RfL6l1Er7iTvBiP+rgaD1hsxXHHsW4F8VTH3eqjZaJopIcSIvROqw0+3ohZ8fdu5docxKkaxoEa2oBfQ6nzJR8iT99SmCvyiWGRP6HDrhxtiSWjllYUq7g/Puxdrf1RSMYdYa8dFC0ZIdn2ywcACRdU4JFNE6gmtxcGbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740844490; c=relaxed/simple;
-	bh=QZuiV1Qwmn9HpqZq8sVNjhfWZ1yNZGnymMvZu2zO2MA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TVtzvEwOSlbNDKvf8QABxo8/fszD9jo8T/gRh46wU7+P0mDY1dXAyktXUfIldPIBM7QR8AOUfwWqc4A9+c4T27PiJ3QYZKX/xLSlsrlAUDrWiQh73vjpbg/TlCxWWRDs67Yuc1SU2+ev3vpQoL6v9LMpNe1zpyJ9alMw1tfX5Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1toPAL-0000000086d-3Aoy;
-	Sat, 01 Mar 2025 10:54:13 -0500
-Message-ID: <2b898084a9a2ae2c98f610a5d4a177591ffacf56.camel@surriel.com>
-Subject: Re: [PATCH v14 05/13] x86/mm: use INVLPGB in flush_tlb_all
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, 	mingo@kernel.org
-Date: Sat, 01 Mar 2025 10:54:13 -0500
-In-Reply-To: <20250301122022.GBZ8L7hlwP5cUffJA2@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
-	 <20250226030129.530345-6-riel@surriel.com>
-	 <f57b0b8c-1df4-4c6c-820e-20940aee7d0d@intel.com>
-	 <20250301122022.GBZ8L7hlwP5cUffJA2@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740844995; c=relaxed/simple;
+	bh=eFuOUuXJbMPwC2kemdWKpdpEneyzzQTSTYZreEr9L2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TS0De1hGQR2yYTrU1xv9cMaJox//8czwZeD2b43cqMNe22lu0sBlpBYjGUAbWhjeNt2gLKrthQPDj3tkO/mSVfNEWkgNvBNSGQ8MgkXblAStbQcM2IY2khOXtvtBLnKOtvMLy+dbHQkcnOfuvmUPMJsMdkgIOxX6rOH6CgtYuDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pkgc1cuW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE927C4CEDD;
+	Sat,  1 Mar 2025 16:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740844994;
+	bh=eFuOUuXJbMPwC2kemdWKpdpEneyzzQTSTYZreEr9L2o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pkgc1cuWOPS7Pv9Wu+g3FoX4QxSUT5NP1s7ezesjiN5UR/n8okP9f9A6ESQ525Vsr
+	 aHcP/S2AaMIPGNVCSgI4AuGVRlwlMi/CohWdmchPOWm/A0ogfbXKAVZGxovvp0lWob
+	 FsEj5t4OWgZdb4bzjYA2GDv5M7yTBoohiQVWnfp0iz9z8bXBL++lLMF5qXBv9CPlgn
+	 GML8VQnIBqi93HnAED8jdJur77hrfSKSU6yDUwxisfVFIyLt/wVPPcWxP35roPhP6N
+	 9gbJaqnx3s4sTWU3snk8fqwcbWBA507yQFTslTfDVTNiOKTQLnSvoAMGU4MaDF6lWN
+	 RgYr90Dtxb2sw==
+Message-ID: <59634335-9365-454b-8f07-1b8f564e5f29@kernel.org>
+Date: Sat, 1 Mar 2025 10:03:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ACPI: platform_profile: Add support for hidden
+ choices
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: Kurt Borja <kuurtb@gmail.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Luke D . Jones" <luke@ljones.dev>, Mark Pearson
+ <mpearson-lenovo@squebb.ca>,
+ "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
+References: <20250228170155.2623386-1-superm1@kernel.org>
+ <20250228170155.2623386-2-superm1@kernel.org>
+ <D84F6QF8EU3D.3RUI1PKXP2DZ3@gmail.com>
+ <6f56571a-3090-4323-a29d-008b916abf39@kernel.org>
+ <CAGwozwGFLQxGEQ-nb+d9yrikz=fx+u48mpTYUyUtvgFD-9ypQg@mail.gmail.com>
+ <09674d15-d639-4cb3-837a-9575f0028a76@kernel.org>
+ <CAGwozwFm1HeLNtJNGOdQCe_poWeNNeOB=3EzizFx_p2rB-RXbQ@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAGwozwFm1HeLNtJNGOdQCe_poWeNNeOB=3EzizFx_p2rB-RXbQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2025-03-01 at 13:20 +0100, Borislav Petkov wrote:
->=20
-> So, after talking on IRC last night, below is what I think we should
-> do ontop.
 
-This all looks great! Thank you.
 
---=20
-All Rights Reversed.
+On 3/1/25 08:06, Antheas Kapenekakis wrote:
+> On Sat, 1 Mar 2025 at 14:52, Mario Limonciello <superm1@kernel.org> wrote:
+>>
+>>>>> Let me know what you think!
+>>>>
+>>>> I don't really like that profiles can get out of sync, this is asking
+>>>> for a non-deterministic behavior that can be difficult to diagnose
+>>>> issues and also difficult for userspace to work with.
+>>>
+>>> I agree with Mario here. Imagine two drivers, one with low-power and
+>>> one with quiet. They both begin at performance.
+>>>
+>>> Then, userspace software gets confused (incl. ppd) and sets firmware
+>>> profile to low-power. The latter gets left in performance, causing
+>>> excess drain.
+>>>
+>>> I do not believe the legacy interface should be deprecated. Right now,
+>>> amd-pmf is a NOOP in most devices
+>>
+>> "Most" devices is not accurate.  There are a lot of devices that it does
+>> enable.  In the gaming space right now it's often behaving as a no-op.
+> 
+> That would be a fair description. Can you give some examples of
+> devices that use the interface? Devices with and without vendor
+> software.
+
+Off hand the Framework 13 and 16 AMD both use PMF exclusively.  So do a 
+bunch of HP commercial laptops.
+
+Mark can keep me honest, but I want to say the Strix Thinkpad laptops 
+have both PMF and vendor interface (thinkpad-acpi).
+  >>
+>> "Power mode" is a concept, it doesn't just apply to configuring sPPT and
+>> fPPT.  I envisage that a vendor that actively uses PMF and their own
+>> interface would be changing different things by the different interfaces.
+>>
+>> For "example" PMF may reconfigure sPPT, fPPT, STT and STAPM but their
+>> driver may notify their EC to change a fan curve.
+> 
+> No. If PMF changes these values it also needs to change the fan curve
+> itself via the BIOS notification. Doing otherwise would lead to
+> situations where users do not install the vendor driver and cook their
+> device. 
+
+Fan curves are just that; curves.  They just control how quickly fans 
+ramp up not whether or not they "work".
+
+But in any case; that's a firmware issue not a platform profile design 
+issue.
+
+> So I expect that when PMF controls things it controls
+> everything. I would expect if vendors fallback to the pmf firmware
+> notifications while also providing vendor software there would be some
+> synergy between them, such as changing which fan preset is selected by
+> the PMF interface.
+> 
+
+I can't control what vendors do; it's their decision how to manage their 
+systems.  All I can do is provide infrastructure to help.
 
