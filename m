@@ -1,173 +1,166 @@
-Return-Path: <linux-kernel+bounces-539964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1EEA4AB5D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:49:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E4EA4AB5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C50F167EC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EC9D16F1FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CED1DEFE6;
-	Sat,  1 Mar 2025 13:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EA31DF730;
+	Sat,  1 Mar 2025 13:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wgys34JL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TJAjIFPK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xqYomUpX"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962121DE895
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B86B2FC23;
+	Sat,  1 Mar 2025 13:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836972; cv=none; b=uQaOoSQ5knvpO0hEBfavhz2WjWb1JUhk3ChvXxIAi1hRhEuSln2+0RTk0Erq+Aa7YledFlIrntOm9F5Zf0CwMf/2+zE/iWiWSACZOG2/i6XFSacWr9Z4Dt8xOXzdzpoarRyMYXnc/2MuOJWWyI0R/9xDDNa/QlQYTgHc+vX/4mQ=
+	t=1740837004; cv=none; b=hoUJ95ScdWoNpqs3fScWJOeknXWDSHG06tW2qj73ZRmd/6ayVSuuvDeVWwn9Kc1nqbTM4OlKVRFdqBf2Fr52ZDbLQDapO5p1++8XOJKTl3ocbbAnTHMltLAoYm4HGFuViBYARy+2WwhXh75IiaXDPUOyGo2fQQrXkc18wBidpwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836972; c=relaxed/simple;
-	bh=TdQrSsfUqsgjam5ayWXfQx9MiC0CEceDz3qNAdJSGZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDZj9Gy47RcT7onk/kHdSSWyeoIW+rb0IoMSAadgL9ZGwhUf3ooe26y1Hu9WfBant5hMizsa7Eh3Z7UgG4gFDgXMPfyefzY1170FYtndvl8HovGeRsW+x1BALtWaB2TrMSFQMcMoq4YgYby2Gqh+Cx5rdPWZz/wPbTICXNog3/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wgys34JL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740836968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yX8SsUhxK1pBuuAliUfaXKNUpsQ+odkuNQ8838vLa54=;
-	b=Wgys34JLFuQ0P8FSx5EK3e+M2th002YskSeQIcWugE6aANnLy0BCqskES4nlII3IfOMRwn
-	SpLWEH9S4uOqKcxkwfz57oerhM2bUYfat5EOw5COd4K/Ey3QJKDX8LwmVRSK85g3brgXG/
-	Kd6IsyylQZR3qFCuG3PAaO1REPAIM3Y=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-UsM1OL0dN9Cwo8BktjiVqw-1; Sat,
- 01 Mar 2025 08:49:25 -0500
-X-MC-Unique: UsM1OL0dN9Cwo8BktjiVqw-1
-X-Mimecast-MFC-AGG-ID: UsM1OL0dN9Cwo8BktjiVqw_1740836964
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E263180034A;
-	Sat,  1 Mar 2025 13:49:23 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F35E519560AD;
-	Sat,  1 Mar 2025 13:49:17 +0000 (UTC)
-Date: Sat, 1 Mar 2025 21:49:11 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH] io_uring/ublk: report error when unregister operation
- fails
-Message-ID: <Z8MQV0EGSFpiHwUC@fedora>
-References: <20250228231432.642417-1-csander@purestorage.com>
+	s=arc-20240116; t=1740837004; c=relaxed/simple;
+	bh=sY//qPp22PMpSlwhTwo5L3jRdXujgnSb3V8Mf2jN9X8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hxPcNyrId1wvtuQv72PqMqXUHSvUukaCu1EvHkKKBmnIfZaYoNucVy9jxFCLslRZaF/vvRtwRxe0nSrJ3qP1XJNtEijy8INNotApGt3PbvX+4rYJGTJe1dxSMeFqTHvyWoXOftaOCKd/4bCvkal2sOIcC34Wa+McgOpmRPMfops=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TJAjIFPK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xqYomUpX; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 018671140166;
+	Sat,  1 Mar 2025 08:49:59 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Sat, 01 Mar 2025 08:50:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740836999;
+	 x=1740923399; bh=ihRc8/uUUJkepGXewCKoZVfK5186pYNj66y9b1/NoDI=; b=
+	TJAjIFPKsV3FznpN7aD/TDQgKZJFY9s/9Hfcd9IcTreR23u1ofldF5/Yzkir3fZg
+	d67VHPg1Pl/2dj9NV/0WTqCcd4cfG1ym4m8Ve0lxpTwlTrr6p4x/B0fmOBxdgsCP
+	m6mOUqtwBsZ/gsXmgoXCZ+Y6Xe+0q4ZSZe6Y5Xctk6D6JmETyHN6R3E8k3HwtdtU
+	N9ouwdxliZEiZxotSs/utlHLvZJF4M2u5LLXO3wcVhp/w5zb823oQY0ogRa2WQEC
+	aXQJNc4VL/658fPR5ECN6EnJVcgNGldaJiTCaR/RHaf4CnMZqkT5aVUXSLnnasab
+	73d6dRpmyoIPejDyqURruw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740836999; x=
+	1740923399; bh=ihRc8/uUUJkepGXewCKoZVfK5186pYNj66y9b1/NoDI=; b=x
+	qYomUpXPm15l7GX4VDXk2aURPYYyWHRgh+RprvAIQgk4QlIl19atqgQwJOuQjedy
+	Wiobse3uZ/jQ1vqj0z5Fwls69BrKUin7VO6AXZB6dKxulAZrghFSPuP18esS53S1
+	b1YH9Cpcpwo2aXMM4uUhMDXsyk/u6Is3mXHDArDmFmunPA1XC9apOMdUoVZYlsUc
+	ixkW1sjDpwdT/Kv4yVOIn90Pnw7HfLtO6fFa39yKNgsexunortsXT8f5NvDTEB/M
+	8A7OBbVItqfAC6fXfZunWA9dCoeqzPCZ2cSm6f6iVdpbe9alcBTNOqnAST4jP8vS
+	/DQFJQl8IeK6bkKiCi+yw==
+X-ME-Sender: <xms:hxDDZ3ip4CzrSj31ZDCM1M-QRIyJjSG8J3ZVxtuSBW0JwFXrxB3KeQ>
+    <xme:hxDDZ0AUgIb9JSeOcF4n5ZvKxHx-QRAe2eXtyQgGSKj7y5xHZppi8qJ8UuQFWiz5a
+    ZxSrb7QNO5CvHrKh_k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelfeegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnseguvggtrgguvghnthdroh
+    hrghdruhhkpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehguhhsthgrvhhorghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhvrghloh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhgrnhhnvghssehsihhpshholhhu
+    thhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigsehtrhgvsghlihhgrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepshhtfhgpgihlseifphdrphhl
+X-ME-Proxy: <xmx:hxDDZ3F3Gnkg07VHfsAKyqx_EbWNDfaPl0nCE505LqQ7suhvppU4EQ>
+    <xmx:hxDDZ0TNo7YQxEQiwEAuBW7nI48W68n_uwCzyqqOs1ay3NnpRPdlrw>
+    <xmx:hxDDZ0xCHV131qAuMhIgsMDeZKxH47W_HKGS3-EsZlDYSlbUIVcn1A>
+    <xmx:hxDDZ64e_HUxaPeAVjYxZBzOuGoUgpDW3o-ho2UiLwQ5y43EDvy65w>
+    <xmx:hxDDZzkeiqsVJu5OKgBZBUnY1tE824qgzG3Pg0CiVJkwYlye7BQwFSfv>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 34CB82220072; Sat,  1 Mar 2025 08:49:59 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228231432.642417-1-csander@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Date: Sat, 01 Mar 2025 14:49:38 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stanislaw Gruszka" <stf_xl@wp.pl>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "Johannes Berg" <johannes@sipsolutions.net>, "Kalle Valo" <kvalo@kernel.org>,
+ "Ben Hutchings" <ben@decadent.org.uk>, linux <linux@treblig.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <7e472cbe-bf29-432b-93da-d1fc87630939@app.fastmail.com>
+In-Reply-To: <20250301133652.GA60453@wp.pl>
+References: <20250225145359.1126786-1-arnd@kernel.org>
+ <20250301122834.GA55739@wp.pl>
+ <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
+ <20250301133652.GA60453@wp.pl>
+Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with DEBUG_FS=n
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 04:14:31PM -0700, Caleb Sander Mateos wrote:
-> Indicate to userspace applications if a UBLK_IO_UNREGISTER_IO_BUF
-> command specifies an invalid buffer index by returning an error code.
-> Return -EINVAL if no buffer is registered with the given index, and
-> -EBUSY if the registered buffer is not a kernel bvec.
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  drivers/block/ublk_drv.c     |  3 +--
->  include/linux/io_uring/cmd.h |  4 ++--
->  io_uring/rsrc.c              | 18 ++++++++++++++----
->  3 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index b5cf92baaf0f..512cbd456817 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -1785,12 +1785,11 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
->  
->  static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
->  				  const struct ublksrv_io_cmd *ub_cmd,
->  				  unsigned int issue_flags)
->  {
-> -	io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
-> -	return 0;
-> +	return io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
->  }
->  
->  static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
->  			       unsigned int issue_flags,
->  			       const struct ublksrv_io_cmd *ub_cmd)
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index cf8d80d84734..05d7b6145731 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -127,9 +127,9 @@ static inline struct io_uring_cmd_data *io_uring_cmd_get_async_data(struct io_ur
->  }
->  
->  int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  			    void (*release)(void *), unsigned int index,
->  			    unsigned int issue_flags);
-> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> -			       unsigned int issue_flags);
-> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> +			      unsigned int issue_flags);
->  
->  #endif /* _LINUX_IO_URING_CMD_H */
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 45bfb37bca1e..29c0c31092eb 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -975,30 +975,40 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
->  	io_ring_submit_unlock(ctx, issue_flags);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
->  
-> -void io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> -			       unsigned int issue_flags)
-> +int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
-> +			      unsigned int issue_flags)
->  {
->  	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
->  	struct io_rsrc_data *data = &ctx->buf_table;
->  	struct io_rsrc_node *node;
-> +	int ret = 0;
->  
->  	io_ring_submit_lock(ctx, issue_flags);
-> -	if (index >= data->nr)
-> +	if (index >= data->nr) {
-> +		ret = -EINVAL;
->  		goto unlock;
-> +	}
->  	index = array_index_nospec(index, data->nr);
->  
->  	node = data->nodes[index];
-> -	if (!node || !node->buf->is_kbuf)
-> +	if (!node) {
-> +		ret = -EINVAL;
->  		goto unlock;
-> +	}
-> +	if (!node->buf->is_kbuf) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
+On Sat, Mar 1, 2025, at 14:36, Stanislaw Gruszka wrote:
+> On Sat, Mar 01, 2025 at 01:38:16PM +0100, Arnd Bergmann wrote:
+>> On Sat, Mar 1, 2025, at 13:28, Stanislaw Gruszka wrote:
+>> > On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
+>> >
+>> > But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
+>> > case, it does compile for me:
+>> >
+>> > -  22475	   1160	      0	  23635	   
+>> > 5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+>> > +  23008	   1168	      0	  24176	   
+>> > 5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+>> 
+>> Very strange, this really shouldn't happen. Which symbols
+>> exactly do you see the compiler fail to drop with my patch,
+>
+> nm 4965-rs.o diffrence before and after patch:
 
-Good catch, otherwise, ublk request may never get completed if unreg
-command fails, which can happen really as one uring_cmd.
+>  00000000000000dd t il4965_rs_alloc_sta.cold
+> -0000000000001810 t il4965_rs_collect_tx_data.isra.0
+> -00000000000012b0 t il4965_rs_fill_link_cmd
+> -0000000000000495 t il4965_rs_fill_link_cmd.cold
+> +0000000000001850 t il4965_rs_collect_tx_data.isra.0
+> +0000000000000e90 t il4965_rs_dbgfs_set_mcs.isra.0
+> +00000000000002f6 t il4965_rs_dbgfs_set_mcs.isra.0.cold
+> +0000000000001340 t il4965_rs_fill_link_cmd
+> +0000000000000518 t il4965_rs_fill_link_cmd.cold
+>  00000000000002a0 t il4965_rs_free
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Ah, so the debugfs files get eliminated, but
+il4965_rs_dbgfs_set_mcs() does not.
 
-Thanks,
-Ming
+I think this should do it:
 
+--- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+@@ -2495,6 +2495,9 @@ il4965_rs_dbgfs_set_mcs(struct il_lq_sta *lq_sta, u32 * rate_n_flags, int idx)
+        u8 valid_tx_ant;
+        u8 ant_sel_tx;
+ 
++       if (!IS_ENABLED(CONFIG_MAC80211_DEBUGFS))
++               return;
++
+        il = lq_sta->drv;
+        valid_tx_ant = il->hw_params.valid_tx_ant;
+        if (lq_sta->dbg_fixed_rate) {
+
+or possibly il4965_rs_dbgfs_set_mcs() can stay in the #ifdef
+if you prefer.
+
+      Arnd
 
