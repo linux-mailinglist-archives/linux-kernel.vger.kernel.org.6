@@ -1,245 +1,414 @@
-Return-Path: <linux-kernel+bounces-539807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A54A4A928
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:46:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1A4A4A92F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 06:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA44189C07A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4A13BAB80
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB82B1BD9FA;
-	Sat,  1 Mar 2025 05:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4261BE86E;
+	Sat,  1 Mar 2025 05:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="jKWpntrT"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012052.outbound.protection.outlook.com [52.103.2.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnWgsg43"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADED442C;
-	Sat,  1 Mar 2025 05:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740807989; cv=fail; b=VDUYLvZ09guJ93nRnP7+A4NPncjpQoZgvCayYXFlJpuEOeJcp8fG/55sUnP8BQQaa9MOg0R2JUIsClLfTzLZh9IUpaH19RH2/cMeXwLvndrO4t9z+5eBfVyTM/nH6LQkE3f4DN4Ul9OtGmRVhKKkfHlL49Om66jqcs/eobD7bpA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740807989; c=relaxed/simple;
-	bh=GprdDI0JpLtU9w9tcOavjIZ9FMNk+Us+Nj6A0CiPh18=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DArO/ZdzEeHaE/XrUGPcnktfNCgJiTJWbGs+NKUqC6kbNYopXF+ZhI5CcRkPJL3aM26bd6V0G+9tDUtydPcZgHpaLxkcYQgYCdCy+FFT1/TB+4vW9xF+es1ZxcOYOozl0UtZBimomVIUCbsYeEz2W3wgdHohiESYXR0zO3GaQEw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=jKWpntrT; arc=fail smtp.client-ip=52.103.2.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eiSaeC8NyXlWQaz6mg+NQcKv621xbjdYkxXSjDRoUxTB0L0n2zvenE2Dijc1Q+vDFGTu10a2/0vZ8oGIpWWgnlLw5Ot+jhLbVGSRDPQ8ZaLyGsWSXIahetTdxJGKYpNwPW7gCZxvp+it5APvfeEGTfi7LkrD72ZB1Ms2jBjUGEvSf3YiQOzYmj9TOui1P+A6tGvJYlQVzDD0KIMu3Y5mKJ902zqA9YUdn7Un2uoxYZyJO2ikqep8lOcu1UkRI6whUFcmX8nQgH9WpOOA73OTamWHIP5J2haYNgc3zuyP87aRFJlNwGPCGgBzxGJJ+F4lpDqF8Kfrwn6LXZehGqRRew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uzkC/VSwnAbaZMd/I/KyQQo8/TysW9c9NAVwe+g8oKc=;
- b=vfZN5v0vRqR9o5XuVZATxzZYQrtrakxgXCMz8vO34Oh/UZIq2L0ZftvUHuONfDTBvwH2pYSt/s7KWh68Msv4JrsjXJdNeT6HcytVHuKG75c2/kvZREPON27L2HuoHcREfExh2FTw17TaqNuaUjKjsfeTgjSXWNmgvJeuIoccVQg01qljKWA5KK87BmtCbBJ/0T5zhWOgd3LzP4xLcJF3t8ucrTlkXoJzYInwXngrlFnlifKRjUn9aKGVu3QCFWRWDdU+FgT+2ZJ2CIDB1FeW8HvOtW9fbTM7FrSu4z4PgO3YOQbaqVIuaqt9YdS0RdC8YXAE6SfHbQPTlAN5diGDQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uzkC/VSwnAbaZMd/I/KyQQo8/TysW9c9NAVwe+g8oKc=;
- b=jKWpntrT/hrfbKNHgv2FzrvDlbc3OZMhIuSeUawNt1TfKGfvmd/sLSnJNT98pBwqaOYLCzk/FAWqnHo+tJLofYG75c4dafGZWYsa5Um5mHBMGTSIDk+JUcDusjp/ijIE0ULNXurOBpG2jki4KC1DJzVVGYYcZwAKNSwLcRXUtuk3ZfqKAoO7rHQgcSb6HlmhMBuAKXiJWjRm3aDsWj/nQDoNwH30v9oRWpjbzRqNGdXM02LMMpEJToEZ2dhHRMgONd/G3YohI4zAVuXM/e6hSpLu2O2D+E84UaVLT1kkPGLf1Ur3QP3JecpkHGM+zDnzqrq+2rBPJ+kMFGYlZycJNQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH7PR02MB10037.namprd02.prod.outlook.com (2603:10b6:510:2f1::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Sat, 1 Mar
- 2025 05:46:24 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8466.020; Sat, 1 Mar 2025
- 05:46:24 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Kees Cook <kees@kernel.org>, Venkat Rao Bagalkote
-	<venkat88@linux.vnet.ibm.com>
-CC: Stephen Rothwell <sfr@canb.auug.org.au>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, Miguel
- Ojeda <ojeda@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Marco Elver
-	<elver@google.com>, Alexander Potapenko <glider@google.com>, Tony Ambardar
-	<tony.ambardar@gmail.com>, Jan Hendrik Farr <kernel@jfarr.cc>, Alexander
- Lobakin <aleksander.lobakin@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH v2] compiler.h: Introduce __must_be_noncstr()
-Thread-Topic: [PATCH v2] compiler.h: Introduce __must_be_noncstr()
-Thread-Index: AQHbiggOdBfdZVuP5UCg069MGJGJH7NdxdEw
-Date: Sat, 1 Mar 2025 05:46:24 +0000
-Message-ID:
- <SN6PR02MB4157CA61D04CD12D7CED5E1DD4CF2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250228174130.it.875-kees@kernel.org>
-In-Reply-To: <20250228174130.it.875-kees@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH7PR02MB10037:EE_
-x-ms-office365-filtering-correlation-id: 5b38f8d4-26ba-4484-131d-08dd58846716
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|19110799003|15080799006|8062599003|461199028|10035399004|3412199025|440099028|4302099013|41001999003|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?lGMpLXEtZw6unRg/fuE+BXZgPk4sumOYdijGSrv3Q+AeiN28Oa1DgHMAbVgQ?=
- =?us-ascii?Q?cNFIAoSMDPAptZKsFPIMOVJKY3CyVkyOw1Mi4iUYYcdr/MdxyYUTmCvCha4F?=
- =?us-ascii?Q?uC1oen2lXkasS82JLE/ZCI10qYVem/bi6IR8VfFl5U1kp2YzKM58wuR+sIgR?=
- =?us-ascii?Q?f38uVEq4z4eM6oSu7vfi4/GhKNI6y4NYP6a3FQr6aDg95AmDiUV2v9qteJKG?=
- =?us-ascii?Q?tZcIAtQLTkeAUX2U5aLvOVrbdnno86K+Hx9TxqOVtAt+5I+mAOrfrRGPqJJx?=
- =?us-ascii?Q?zxMCKeiGeVhr5AaeKkBM02/hIlVzDDVLBqDvMIOp0LK24m4OWtnshrN9Vmiq?=
- =?us-ascii?Q?9o9u4up9+/3640wTD1T7eCNt+AQFZgOGPnep71ZzFXS5KXX2fo6PyP3EHZ6K?=
- =?us-ascii?Q?swTei0y5B8Zzmu1VlM6zwGgzwyDs8uQXR0H5q3BqOPgTCOaX9FWoWO8lHb6b?=
- =?us-ascii?Q?5+5N286OW3BOqWOCkd4ztBlw/74rvTs/we+M/ECAWa+nRYtlpdGadfHf/z2O?=
- =?us-ascii?Q?MpzvV2jsBDGakENlOjh2e/81DB1ZnqdcprNXoO9WIGLLHwvfSjqMyknzGBAk?=
- =?us-ascii?Q?B7WVbitg5nNJLMTsPR7yLJanYPaWl//9myTFJTynE0h2yhvft9OHKPU9/EQH?=
- =?us-ascii?Q?VtgkOacY1xl0HunoBj0wujYk2i1+BtzZosPFqBIZ3vDY5gwKluIXp6mR/c2w?=
- =?us-ascii?Q?KWdXaMSNe0js0SqyvBSv1vttp2Q4YqvN2nh43uWXm60/e1MJrMs1GG8OOEqp?=
- =?us-ascii?Q?4A48FmqqaK83PBq5IDUQ4v/BbsefafU9zj/mvx5xKIGjwjWKLw2/SAIgaNbY?=
- =?us-ascii?Q?pZL4uy1V5/dlpri1iKnSpNsR/DCdydyfOIJ14GAINcb1jwYs1qhsqJPV5IrL?=
- =?us-ascii?Q?5RAKrzNVgDANrLSH9RBvedLRhMQmZpGz0dORpaVSrbDHETkbweffBvSLLT0e?=
- =?us-ascii?Q?k+HriVO+4kcafQK3Azht8v2egcDlPOCQ3LxbQc/qaq1BORDFlbxqHxsKtpum?=
- =?us-ascii?Q?I2zLxR4yHroOu9yM1HEnnRAuL70CBUR5TzmgHzWBfs3mfN05hFAEysPqaQx6?=
- =?us-ascii?Q?IA8PcxgmYFqxcD7hLi9KQsqUiB8bV/oMIdSR23I8lSDUz9hKhz+XLlLjN6gV?=
- =?us-ascii?Q?Fb+aAMizqofEv+OakDVbgKIqY2OcAp0ta5sQbLqGS8qpcWvYni7CXvADKgtG?=
- =?us-ascii?Q?R6jR1UOvjfAmMBKuURAo68nT1a9rInIZGGnWCs+kEarsc+FZ8BTWED8j11ms?=
- =?us-ascii?Q?v24wS8KJ/HC8uzkzn+6x?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?B3SbnrBZjpE+QuCYi4Ycu5W4jXaSeavsPZySn8rsSF79FhSlzU2GuA4a6KVO?=
- =?us-ascii?Q?Mf8AEAMKOKAwrqHZrJFDomzsr4jll4zTHCZ33uGDA6LsGrzUHUO1Us176qrs?=
- =?us-ascii?Q?7/wjHEUpdx0NdwWMGns3E/xJa0wZhlCUdVZ2fIOuLhZB9a9AyWG2W80cSxsP?=
- =?us-ascii?Q?O2xMwk0Oq04qi7r+eEspFBN4lNaBfO1foQbR3lQpQDt6HH5U9dyuohGcWy1Q?=
- =?us-ascii?Q?m+67UW7jHMGt0jVR9jP3pnv4a3CRemtT1D62j2zigRlJ16sghQ30l9qWP6+c?=
- =?us-ascii?Q?laF9+mfnzlekaMLyROKmE7yjfXv39ONUhDrNnUAw5sEHyzzkUwmNzyeSyBhE?=
- =?us-ascii?Q?vdIdD6EvOaEDFc/UCJEtyqMEa43hEO8qHcALmIHZAaOWIHcCss4Cus4IPBsz?=
- =?us-ascii?Q?nPBUOctlNcVofZMgo2WmHiR3kyO/N+AFjjETLnztl8cZoLkkX2zRCXAb3oWq?=
- =?us-ascii?Q?fyweu1tgektwkkFdInuSr3R06+7goF8O000tiQx7upEDw//AS/nsAYQ8h6bN?=
- =?us-ascii?Q?8VLmPBPnEFa6u8PkbrolnmBsO+2ywe2XyqU0awJq+LRyVgk4eariejOnlYx1?=
- =?us-ascii?Q?0aHhaBrTLBEzNX9S/y32jt1Gq0Kl6aGxCZ3VFijjFf4q+4s+l7CzdkIAFeoh?=
- =?us-ascii?Q?3vCE0oDs9kGnOZLULGIPsBGtryybwPcf80LaZZgwk26jyOo35GtEWQ+u+LJz?=
- =?us-ascii?Q?r2h/v2MtCiuDatuoIpfoXUAfEoZg/R4uF6Z5I+notTcbUP4IozzBnWvjor4W?=
- =?us-ascii?Q?1fj58G4YmudLAi5TGUEcAHRoT4LeJ/LqaMuHRJfbUmkgw8wZkacHiU59OsCh?=
- =?us-ascii?Q?Q8KfKgsSVl1KjWwR2xDqYxsJ9Hfbx91cQ4eYJNDplWzA9hlCU/cVOLj6rW1A?=
- =?us-ascii?Q?yOJXZ7witQdweDHnwwfB+kS8VzdzRYvmkTG/vJHW6BVnUWZnI4qfeTae2QRx?=
- =?us-ascii?Q?jmvIQpkoUOkvVpv418SUUzpLq+KdeVovdg6LOpUPzarSXRFU4Zh05EAj7ovj?=
- =?us-ascii?Q?24XYkOy6At3m0UAy6s7jnFdD1wy3I0CPPlQEr1VduZ1FYRJLC35JirggVjoE?=
- =?us-ascii?Q?tajcolbimkO6sCBJ1kAW+f7mpmK+t3RQy3WdIkzZJnIkMDzZBTmFiqqCKVQI?=
- =?us-ascii?Q?HvRnh6GgrW7ItUnULbMOLUVwHw/MjUiA4Q98woXbw58o3Bpl8qOQtgEUND98?=
- =?us-ascii?Q?wzjkUBdpoPqfymDmkgWHab0Ga6UfcydvYUWQCBZ7dvQBxPDpSkINrEOboz8?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32739442C
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 05:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740808288; cv=none; b=GjS7Z8s5fjMo12eUeICNmNXPzW7eZjV4tomZAiUfGXuBQbRNfar4VJYts0xaxxbpBaGDc/7tVIP+J0VH7xrMppVK160hP+xqpiqKLLjhMBqT5Bg83otgeftdx349Wb+noUqMS5A0duitURpkyy5akhe9MTzHDX9ONL4uGiZ0mOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740808288; c=relaxed/simple;
+	bh=bodyCRVdZE4POxlNZVm8Guqq4/iBFDEjJaSDGmJJMZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sjqc1Nk3TsQLROGQHXm/qu5muh9wZBbu02JmyuXKJRmNq7g91J3ROHp4pls+cH1ntcyKikFrV9dZLhvvVybaRKahylTO4Yc0pS5Xll5PhCPa1jEBKpN4X61tohXSlDf+Ww9vroWZFi98AJj+GJntWlssg0BZ2bECZSradGPx48E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnWgsg43; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220d132f16dso41155415ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 21:51:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740808286; x=1741413086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNUyRgc07EiQu8LXJQKPgqFJi1DIIn3D02o45kCWFCo=;
+        b=AnWgsg43loBHE3dBEeSG30hJwkqEG+2xKQgUPAGLizuG1hv/RFHEovSOSrat2bBQd9
+         a+y69+lsbdGaeKxVrwzy45irjW8sxvvZ5udv4pdITx2Sbva+HXgM2RCmCb1M4RMqX1be
+         Ftg4nNKOxzxbomgYMohZaE+auWKaV6kkeOV+5O5pXqYkmk7BgGSUmrQLQBxuL8nWQF3V
+         gj5Gk38wyck/Z8PkyWgwQGjfvvBbiZfeWsHecsUEV2MvUqIPYXcW5KNiqJpmC0KX55ZQ
+         QhBq+70NT+wDcE2U2ougkmweGHGrdXMGqBOh+GO1EyNYwcry2q/BntR3xl73JygxomPM
+         ZPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740808286; x=1741413086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PNUyRgc07EiQu8LXJQKPgqFJi1DIIn3D02o45kCWFCo=;
+        b=KZLsKdKRUj+quzPZlcuaNDe/IWmMvSabDV//nhU9BxDXnRkKChuh43exKUahq0Yqm1
+         KqN4oSHUibHeEz/0WV2lx53C6Hc4MoJIdxTl2PTB4dUB97pBI+yv8xRFgKUBfPCGIzxP
+         w9HMNTntzRzPxJ4ENX9KepFLCR/zieDQM4l79P1NMgmjoTYh/CD0qDqCuMXzAwHU1vAJ
+         XV6JHctPlpstERnk0yRgL+xx/LasO3iNP4svSEd32ZJMAchXjnAT1++Aivv1RC7JbuOZ
+         9i/NGPMc961XXl2o9jVvLjwZXueulkW5V7gBP/3IoPyyvXJQDATDAVClTE5+XyoFHDjx
+         Ufkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPfNU7vgv6zvDOCKUC6Vwp6Q36BhzUFdeAm+ECTWzoarqPig9LNtw8CSp7W2UF51kh8kN6cpy03wNFj7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkUnFlaGf50LvdrCXBMDEpCpMLhQe6OQghKQjb1yePsHGmDtGK
+	WpS+dZOduZbW/tYKORZkDb4VI4SaXRtkvgTtoXzNDIRcjL9U05yV
+X-Gm-Gg: ASbGncv4XliQyDZtpPBbemzaUUhICSRxC+uD1/EcOzS+Qq5zrQZLN/b5D6F4TY8OJ6S
+	RwBtkFpdjZWQd00iiAtQgsKs48w1J9HLSWI32eV4rxvOYAJLb5AAidaSONbkrw3Jx+mYlrAWCFl
+	8yQVnrcXQ5navEXkt4LPtJXO/QoH2CTFpEMEt16BKF0hD+KwDf6M69Z1IXV4LHZd6vbikjSKaxb
+	FJlZa57GpLfgUKc0tTPSlVNQ64/5CwxULVwMjEMkY6t5TgA8IYae4h6mDp2FTf7HX6KKDt8TNIw
+	INtKRiTgUYpGU9F924Omq8ef6whuL+9xq04cbqgk+SlPjI60l0RL
+X-Google-Smtp-Source: AGHT+IE8PNiVwHlilyQsJ5/m+NV/A9hjUhu+lNTB0gQm/ZTx3jYHqdyWnYo0CbcoSJrXlRcUp432tg==
+X-Received: by 2002:a17:903:1c3:b0:223:33cb:335f with SMTP id d9443c01a7336-22368fa17fbmr95122695ad.3.1740808286294;
+        Fri, 28 Feb 2025 21:51:26 -0800 (PST)
+Received: from localhost.localdomain ([43.129.202.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5bc6sm41647735ad.126.2025.02.28.21.51.22
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 28 Feb 2025 21:51:25 -0800 (PST)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org,
+	will@kernel.org,
+	peterz@infradead.org,
+	mingo@redhat.com
+Cc: longman@redhat.com,
+	mhiramat@kernel.org,
+	anna.schumaker@oracle.com,
+	boqun.feng@gmail.com,
+	joel.granados@kernel.org,
+	kent.overstreet@linux.dev,
+	leonylgao@tencent.com,
+	linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	senozhatsky@chromium.org,
+	tfiga@chromium.org,
+	Lance Yang <ioworker0@gmail.com>,
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Subject: [PATCH 1/1] hung_task: show the blocker task if the task is hung on semaphore
+Date: Sat,  1 Mar 2025 13:51:02 +0800
+Message-ID: <20250301055102.88746-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b38f8d4-26ba-4484-131d-08dd58846716
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2025 05:46:24.4509
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB10037
+Content-Transfer-Encoding: 8bit
 
-From: Kees Cook <kees@kernel.org> Sent: Friday, February 28, 2025 9:42 AM
->=20
-> In preparation for adding more type checking to the memtostr/strtomem*()
-> helpers, introduce the ability to check for the "nonstring" attribute.
-> This is the reverse of what was added to strscpy*() in commit 559048d156f=
-f
-> ("string: Check for "nonstring" attribute on strscpy() arguments").
->=20
-> Note that __annotated() must be explicitly tested for, as GCC added
-> __builtin_has_attribute() after it added the "nonstring" attribute. Do
-> so here to avoid the !__annotated() test triggering build failures
-> when __builtin_has_attribute() was missing but __nonstring was defined.
-> (I've opted to squash this fix into this patch so we don't end up with
-> a possible bisection target that would leave the kernel unbuildable.)
->=20
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Reported-by: Michael Kelley <mhklinux@outlook.com>
-> Closes: https://lore.kernel.org/all/adbe8dd1-a725-4811-ae7e-76fe770cf096@=
-linux.vnet.ibm.com/=20
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  include/linux/compiler.h       | 18 +++++++++++++++++-
->  include/linux/compiler_types.h |  9 ++++++---
->  2 files changed, 23 insertions(+), 4 deletions(-)
->=20
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 200fd3c5bc70..d5201464c5e6 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -206,9 +206,25 @@ void ftrace_likely_update(struct ftrace_likely_data =
-*f, int val,
->  #define __must_be_byte_array(a)
-> 	__BUILD_BUG_ON_ZERO_MSG(!__is_byte_array(a), \
->  							"must be byte array")
->=20
-> +/*
-> + * If the "nonstring" attribute isn't available, we have to return true
-> + * so the __must_*() checks pass when "nonstring" isn't supported.
-> + */
-> +#if __has_attribute(__nonstring__) && defined(__annotated)
-> +#define __is_cstr(a)		(!__annotated(a, nonstring))
-> +#define __is_noncstr(a)		(__annotated(a, nonstring))
-> +#else
-> +#define __is_cstr(a)		(true)
-> +#define __is_noncstr(a)		(true)
-> +#endif
-> +
->  /* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribut=
-e. */
->  #define __must_be_cstr(p) \
-> -	__BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-
-> terminated)")
-> +	__BUILD_BUG_ON_ZERO_MSG(!__is_cstr(p), \
-> +				"must be C-string (NUL-terminated)")
-> +#define __must_be_noncstr(p) \
-> +	__BUILD_BUG_ON_ZERO_MSG(!__is_noncstr(p), \
-> +				"must be non-C-string (not NUL-terminated)")
->=20
->  #endif /* __KERNEL__ */
->=20
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_type=
-s.h
-> index 981cc3d7e3aa..f59393464ea7 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -446,11 +446,14 @@ struct ftrace_likely_data {
->  #define __member_size(p)	__builtin_object_size(p, 1)
->  #endif
->=20
-> -/* Determine if an attribute has been applied to a variable. */
-> +/*
-> + * Determine if an attribute has been applied to a variable.
-> + * Using __annotated needs to check for __annotated being available,
-> + * or negative tests may fail when annotation cannot be checked. For
-> + * example, see the definition of __is_cstr().
-> + */
->  #if __has_builtin(__builtin_has_attribute)
->  #define __annotated(var, attr)	__builtin_has_attribute(var, attr)
-> -#else
-> -#define __annotated(var, attr)	(false)
->  #endif
->=20
->  /*
-> --
-> 2.34.1
->=20
+Inspired by mutex blocker tracking[1], this patch makes a trade-off to
+balance the overhead and utility of the hung task detector.
 
-Compile tested on x86 with gcc 9.4.0, and it resolves the compile
-problem I was originally seeing with linux-next-20250226.
+Unlike mutexes, semaphores lack explicit ownership tracking, making it
+challenging to identify the root cause of hangs. To address this, we
+introduce a last_holder field to the semaphore structure, which is
+updated when a task successfully calls down() and cleared during up().
 
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+The assumption is that if a task is blocked on a semaphore, the holders
+must not have released it. While this does not guarantee that the last
+holder is one of the current blockers, it likely provides a practical hint
+for diagnosing semaphore-related stalls.
+
+With this change, the hung task detector can now show blocker task's info
+like below:
+
+[Sat Mar  1 02:39:52 2025] INFO: task cat:1437 blocked for more than 122 seconds.
+[Sat Mar  1 02:39:52 2025]       Tainted: G           OE      6.14.0-rc3+ #9
+[Sat Mar  1 02:39:52 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Sat Mar  1 02:39:52 2025] task:cat             state:D stack:0     pid:1437  tgid:1437  ppid:1007   task_flags:0x400000 flags:0x00000004
+[Sat Mar  1 02:39:52 2025] Call trace:
+[Sat Mar  1 02:39:52 2025]  __switch_to+0x1ec/0x380 (T)
+[Sat Mar  1 02:39:52 2025]  __schedule+0xc30/0x44f8
+[Sat Mar  1 02:39:52 2025]  schedule+0xb8/0x3b0
+[Sat Mar  1 02:39:52 2025]  schedule_timeout+0x1d0/0x208
+[Sat Mar  1 02:39:52 2025]  __down_common+0x27c/0x600
+[Sat Mar  1 02:39:52 2025]  __down+0x24/0x50
+[Sat Mar  1 02:39:52 2025]  down+0xe0/0x140
+[Sat Mar  1 02:39:52 2025]  read_dummy+0x3c/0xa0 [hung_task_sem]
+[Sat Mar  1 02:39:52 2025]  full_proxy_read+0xfc/0x1d0
+[Sat Mar  1 02:39:52 2025]  vfs_read+0x1a0/0x858
+[Sat Mar  1 02:39:52 2025]  ksys_read+0x100/0x220
+[Sat Mar  1 02:39:52 2025]  __arm64_sys_read+0x78/0xc8
+[Sat Mar  1 02:39:52 2025]  invoke_syscall+0xd8/0x278
+[Sat Mar  1 02:39:52 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Sat Mar  1 02:39:52 2025]  do_el0_svc+0x4c/0x88
+[Sat Mar  1 02:39:52 2025]  el0_svc+0x44/0x108
+[Sat Mar  1 02:39:52 2025]  el0t_64_sync_handler+0x134/0x160
+[Sat Mar  1 02:39:52 2025]  el0t_64_sync+0x1b8/0x1c0
+[Sat Mar  1 02:39:52 2025] INFO: task cat:1437 blocked on a semaphore likely last held by task cat:1436
+[Sat Mar  1 02:39:52 2025] task:cat             state:S stack:0     pid:1436  tgid:1436  ppid:1007   task_flags:0x400000 flags:0x00000004
+[Sat Mar  1 02:39:52 2025] Call trace:
+[Sat Mar  1 02:39:52 2025]  __switch_to+0x1ec/0x380 (T)
+[Sat Mar  1 02:39:52 2025]  __schedule+0xc30/0x44f8
+[Sat Mar  1 02:39:52 2025]  schedule+0xb8/0x3b0
+[Sat Mar  1 02:39:52 2025]  schedule_timeout+0xf4/0x208
+[Sat Mar  1 02:39:52 2025]  msleep_interruptible+0x70/0x130
+[Sat Mar  1 02:39:52 2025]  read_dummy+0x48/0xa0 [hung_task_sem]
+[Sat Mar  1 02:39:52 2025]  full_proxy_read+0xfc/0x1d0
+[Sat Mar  1 02:39:52 2025]  vfs_read+0x1a0/0x858
+[Sat Mar  1 02:39:52 2025]  ksys_read+0x100/0x220
+[Sat Mar  1 02:39:52 2025]  __arm64_sys_read+0x78/0xc8
+[Sat Mar  1 02:39:52 2025]  invoke_syscall+0xd8/0x278
+[Sat Mar  1 02:39:52 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Sat Mar  1 02:39:52 2025]  do_el0_svc+0x4c/0x88
+[Sat Mar  1 02:39:52 2025]  el0_svc+0x44/0x108
+[Sat Mar  1 02:39:52 2025]  el0t_64_sync_handler+0x134/0x160
+[Sat Mar  1 02:39:52 2025]  el0t_64_sync+0x1b8/0x1c0
+
+[1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com
+
+Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
+---
+ include/linux/sched.h      |  1 +
+ include/linux/semaphore.h  | 15 ++++++++++-
+ kernel/hung_task.c         | 52 ++++++++++++++++++++++++++-----------
+ kernel/locking/semaphore.c | 53 ++++++++++++++++++++++++++++++++++----
+ 4 files changed, 100 insertions(+), 21 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 0cebdd736d44..5dfdca879ac4 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1219,6 +1219,7 @@ struct task_struct {
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	struct mutex			*blocker_mutex;
++	struct semaphore		*blocker_sem;
+ #endif
+ 
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
+index 04655faadc2d..ca8240a5dbfc 100644
+--- a/include/linux/semaphore.h
++++ b/include/linux/semaphore.h
+@@ -16,13 +16,25 @@ struct semaphore {
+ 	raw_spinlock_t		lock;
+ 	unsigned int		count;
+ 	struct list_head	wait_list;
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	atomic_long_t last_holder;
++#endif
+ };
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++#define __LAST_HOLDER_SEMAPHORE_INITIALIZER				\
++	, .last_holder = ATOMIC_LONG_INIT(0)
++#else
++#define __LAST_HOLDER_SEMAPHORE_INITIALIZER
++#endif
++
+ #define __SEMAPHORE_INITIALIZER(name, n)				\
+ {									\
+ 	.lock		= __RAW_SPIN_LOCK_UNLOCKED((name).lock),	\
+ 	.count		= n,						\
+-	.wait_list	= LIST_HEAD_INIT((name).wait_list),		\
++	.wait_list	= LIST_HEAD_INIT((name).wait_list)		\
++	__LAST_HOLDER_SEMAPHORE_INITIALIZER				\
+ }
+ 
+ /*
+@@ -47,5 +59,6 @@ extern int __must_check down_killable(struct semaphore *sem);
+ extern int __must_check down_trylock(struct semaphore *sem);
+ extern int __must_check down_timeout(struct semaphore *sem, long jiffies);
+ extern void up(struct semaphore *sem);
++extern unsigned long sem_last_holder(struct semaphore *sem);
+ 
+ #endif /* __LINUX_SEMAPHORE_H */
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index ccd7217fcec1..332f555a97a9 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -98,30 +98,52 @@ static struct notifier_block panic_block = {
+ static void debug_show_blocker(struct task_struct *task)
+ {
+ 	struct task_struct *g, *t;
+-	unsigned long owner;
+-	struct mutex *lock;
++	unsigned long owner, holder;
++	struct semaphore *sem_lock;
++	struct mutex *mutex_lock;
+ 
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+ 
+-	lock = READ_ONCE(task->blocker_mutex);
+-	if (!lock)
+-		return;
++	mutex_lock = READ_ONCE(task->blocker_mutex);
++	if (mutex_lock) {
++		owner = mutex_get_owner(mutex_lock);
++		if (unlikely(!owner)) {
++			pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
++			       task->comm, task->pid);
++			goto blocker_sem;
++		}
+ 
+-	owner = mutex_get_owner(lock);
+-	if (unlikely(!owner)) {
+-		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+-			task->comm, task->pid);
++		/* Ensure the owner information is correct. */
++		for_each_process_thread(g, t) {
++			if ((unsigned long)t == owner) {
++				pr_err("INFO: task %s:%d is blocked on a mutex likely owned by task %s:%d.\n",
++				       task->comm, task->pid, t->comm, t->pid);
++				sched_show_task(t);
++				return;
++			}
++		}
+ 		return;
+ 	}
+ 
+-	/* Ensure the owner information is correct. */
+-	for_each_process_thread(g, t) {
+-		if ((unsigned long)t == owner) {
+-			pr_err("INFO: task %s:%d is blocked on a mutex likely owned by task %s:%d.\n",
+-				task->comm, task->pid, t->comm, t->pid);
+-			sched_show_task(t);
++blocker_sem:
++	sem_lock = READ_ONCE(task->blocker_sem);
++	if (sem_lock) {
++		holder = sem_last_holder(sem_lock);
++		if (unlikely(!holder)) {
++			pr_err("INFO: task %s:%d is blocked on a semaphore, but the last holder is not found.\n",
++			       task->comm, task->pid);
+ 			return;
+ 		}
++
++		for_each_process_thread(g, t) {
++			if ((unsigned long)t == holder) {
++				pr_err("INFO: task %s:%d blocked on a semaphore likely last held by task %s:%d\n",
++				       task->comm, task->pid, t->comm, t->pid);
++				sched_show_task(t);
++				return;
++			}
++		}
++		return;
+ 	}
+ }
+ #else
+diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
+index 34bfae72f295..5a684c0a3087 100644
+--- a/kernel/locking/semaphore.c
++++ b/kernel/locking/semaphore.c
+@@ -39,6 +39,7 @@ static noinline int __down_interruptible(struct semaphore *sem);
+ static noinline int __down_killable(struct semaphore *sem);
+ static noinline int __down_timeout(struct semaphore *sem, long timeout);
+ static noinline void __up(struct semaphore *sem);
++static inline void __sem_acquire(struct semaphore *sem);
+ 
+ /**
+  * down - acquire the semaphore
+@@ -58,7 +59,7 @@ void __sched down(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		__down(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -82,7 +83,7 @@ int __sched down_interruptible(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_interruptible(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -109,7 +110,7 @@ int __sched down_killable(struct semaphore *sem)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_killable(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -139,7 +140,7 @@ int __sched down_trylock(struct semaphore *sem)
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	count = sem->count - 1;
+ 	if (likely(count >= 0))
+-		sem->count = count;
++		__sem_acquire(sem);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+ 
+ 	return (count < 0);
+@@ -164,7 +165,7 @@ int __sched down_timeout(struct semaphore *sem, long timeout)
+ 	might_sleep();
+ 	raw_spin_lock_irqsave(&sem->lock, flags);
+ 	if (likely(sem->count > 0))
+-		sem->count--;
++		__sem_acquire(sem);
+ 	else
+ 		result = __down_timeout(sem, timeout);
+ 	raw_spin_unlock_irqrestore(&sem->lock, flags);
+@@ -242,10 +243,18 @@ static inline int __sched __down_common(struct semaphore *sem, long state,
+ {
+ 	int ret;
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	WRITE_ONCE(current->blocker_sem, sem);
++#endif
++
+ 	trace_contention_begin(sem, 0);
+ 	ret = ___down_common(sem, state, timeout);
+ 	trace_contention_end(sem, ret);
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	WRITE_ONCE(current->blocker_sem, NULL);
++#endif
++
+ 	return ret;
+ }
+ 
+@@ -274,6 +283,40 @@ static noinline void __sched __up(struct semaphore *sem)
+ 	struct semaphore_waiter *waiter = list_first_entry(&sem->wait_list,
+ 						struct semaphore_waiter, list);
+ 	list_del(&waiter->list);
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	atomic_long_cmpxchg_release(&sem->last_holder, (unsigned long)current,
++				    0UL);
++#endif
++
+ 	waiter->up = true;
+ 	wake_up_process(waiter->task);
+ }
++
++static inline struct task_struct *__holder_task(unsigned long holder)
++{
++	return (struct task_struct *)holder;
++}
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++/* Do not use the return value as a pointer directly. */
++unsigned long sem_last_holder(struct semaphore *sem)
++{
++	unsigned long holder = atomic_long_read(&sem->last_holder);
++
++	return (unsigned long)__holder_task(holder);
++}
++#else
++unsigned long sem_last_holder(struct semaphore *sem)
++{
++	return 0;
++}
++#endif
++
++static inline void __sem_acquire(struct semaphore *sem)
++{
++	sem->count--;
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	atomic_long_set(&sem->last_holder, (unsigned long)current);
++#endif
++}
+-- 
+2.45.2
+
 
