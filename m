@@ -1,358 +1,155 @@
-Return-Path: <linux-kernel+bounces-540074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31947A4AD4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:19:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB10BA4AD57
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343A116D3AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:19:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368FF16EAC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93601E51F2;
-	Sat,  1 Mar 2025 18:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A8C1E3DE5;
+	Sat,  1 Mar 2025 18:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lXIBxqdJ"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFroAZXu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A61519BE
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0F58494
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740853171; cv=none; b=Z316bxAqzP5E5pp/PgPQY3pEIcyBmdeemI5ljaKrGDmFFWWcZQV3R3G88uZKOc0FwbznIlfBh/B1HzrzrCt9ykVaKgqiVKLGN3x3o2OQ350e32qRA+ZkzDEwZOeedU2lLQLDD2LXMYpCwyrI+WASUUzTbj48r9yHLBdAslOlqBM=
+	t=1740853697; cv=none; b=pXycjKpWt2MHUh6YnMtGgkvZZlgY7RUvztsQk0I+ISPSs8RlbilhYRDoRO8hVXI8MV3sfl8KX7wTPWCSG25cXoRb2Xpa5XL9LHhvlEM32mko2U2rT8NQhaVkzdYq9PSVblPBzFf8LJCfYjbt0YjqQVDtvqeIvnz2Ks6BxOnaWeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740853171; c=relaxed/simple;
-	bh=f1Y/83UhEB3w2NOJ3UrPuuj++HCAPY0rig012cBFzxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obXcgQ700DukyBe2PCUdi2brTifi69yhHVXct8bJQnsJpIBHLIkSzzK8b5tI7YqFtw6H8JBzQDNuxByX5Gks9cA+m3bAp4iP5WjxcALSbMsu1PKOd7F2v/EahrVrxbeRDrtBZWnxGkzaXlY4aEdBHU9Qj9kexeA15YibyTN31wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lXIBxqdJ; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bab0ad5a8so3573781fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 10:19:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740853167; x=1741457967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xHVrOp0plJEvKk4wQeeIG01mmBNV7pQdYoH12vmT7VE=;
-        b=lXIBxqdJfy0Lcb687LFq21l9JIP592iBntwhhaFRQaC4y3n7wmI3UwLArtgiTBPMvg
-         awl+jEYB7pUWg/YvMRqHPcIqmPKEwY4rRgCpDK5k+103pH7lvWzEUz5V4JauYamOoBhi
-         B4JPGPJj4mru/RuUYjTjILz8eZMF5rIaYgp69WB9HINLqbt7jb97VnlnxKhtYwR2ysAI
-         hfoQw5QzJe+mCkd1fdorU0hLl8TeaFW128DEFEGaPxgq9toCZSuKuAWfJl/B80h/0Ese
-         TGHOiaKRctjKQNEEHaM59mjV3LgKlB/dWlaO1MQn5ir3jXF+xnbmpS5P8jD71zMCECA8
-         G4Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740853167; x=1741457967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xHVrOp0plJEvKk4wQeeIG01mmBNV7pQdYoH12vmT7VE=;
-        b=dLOLwaPdcw9XU5m5tMVzta06h7SzN2AkGlzL2t7WWqTexS0oqsCtJ4epxF4XiZFjEa
-         TerLfTeoIuXAPpeUdtZ0a61rOMsoxXgJPazKIR7mUeQyMm3QpG71Pb88e6c7Fo1kds9r
-         m3wEiofN3AC9QNaZ3psp1y0fUhR9hxTYjJCsAHaBF5b0o2GfznHTVeQES78IhEq+aBiD
-         /LqqUU2/n+JTYnP2prM/Kwxrt8VR+EbnuKoILhv65C4MjJ3zOMfxn0z3YxcyhPmxeSW+
-         8Wxerj5PRqSoWhQ/IhZ/e70HdvxDIZclKWVLq7jAmMl3D4GRcwDxynWT/NDeGs8mo08y
-         e3HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVBZtm4crngX5CopNVpeQcFJM1kKohQlBq8rwK/pGK9wyd0PHlNuKT46OtlBM9Q8zbxYa0MvBXsnCPV4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydKhVz/V8FxDN5A0KAIXSE1HBhasWCRAgH/jlOnof2BkrnYv8/
-	j9w1lJbUUj1qdWadD4i0juwBDHUidsTSgQG12TigWBBxki6T/HbDIVvK28yBass=
-X-Gm-Gg: ASbGncuinhd4K/n0WgfUTsUTaicn7yX6Oxqx/gR8IAoG3iRzUL9dvaoerObTJIU+4Hk
-	t3L6jRA2JH4rNY8OQubsJAAn98x5d1mhq32/fuseVmdZsXgXu3abquirBezaIGfVpgXXHqdloC7
-	WKNQkq/MNRWEX6c0VlTKqYGHvm013cjSZmIjFXBIHXdhSIAQSo58L5o6qNHkKN398cJADOKIU8N
-	FR5U8bgyJU+2mIWNRWv8eSolSe9ANrjBa0ApQ6t+0gtTZbNNPzie9Fey6PGRNvRpzsDEmz21FdF
-	K5I9bBwlTLfV4SL2Jmt7A7pUjKiWtGWqx8nCVuFFEsZyZC5bh4DbUl3+4XtK36UQ/VDUybC5VUP
-	OgN9WGJClT3t9lELMniSvxyOY
-X-Google-Smtp-Source: AGHT+IFFcVTRvC9YdwZNm8nJgfhwKBjqdfFQxBpzhAJErNH+sMCCiPsq/QOE2ScPNRbYkr86zG7NVg==
-X-Received: by 2002:a2e:be21:0:b0:300:317c:9b75 with SMTP id 38308e7fff4ca-30b93215452mr26847451fa.12.1740853166988;
-        Sat, 01 Mar 2025 10:19:26 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86878855sm8497581fa.95.2025.03.01.10.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 10:19:26 -0800 (PST)
-Date: Sat, 1 Mar 2025 20:19:24 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org, 
-	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, yubing.zhang@rock-chips.com, 
-	krzk+dt@kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	robh@kernel.org, sebastian.reichel@collabora.com, 
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH 3/6] drm/rockchip: Add RK3588 DPTX output support
-Message-ID: <63xbqyzdlv7jssbmvoeicz4gech3di6nr3tsyvhbhxrmvthh3f@tlf73esqcwgt>
-References: <20250223113036.74252-1-andyshrk@163.com>
- <20250223113036.74252-4-andyshrk@163.com>
+	s=arc-20240116; t=1740853697; c=relaxed/simple;
+	bh=dJf+HMWGk7CdzmhSxBAOuYKx6KFCFvhsX21yszjN19k=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=NhJjaTuuO1fHtTTsrcJ7mujaJAg1McQocZH4M0JvI7cf5XwzPDrgwSqJ2uc7jt3PC2jlSiB1X2F6Z4UzHDlis/jNeZ9CNo/ugxU+52ccMGsJIABywP/1DMzMv3V7wJMsBDMbA/YDzQtGABmVbife1VtvZ5F2dEqKYQ3e1aKA5ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFroAZXu; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740853695; x=1772389695;
+  h=date:from:to:cc:subject:message-id;
+  bh=dJf+HMWGk7CdzmhSxBAOuYKx6KFCFvhsX21yszjN19k=;
+  b=gFroAZXu1Z8XUz/KoIeWUFaDGhmBTsSriqhLLO8aQnhUgw/m79reol0N
+   axWcDd15SUguTQ9EpAk08WlW6jwjzCnCrZwzJT1UpNHFRcO6iKxSPMFVR
+   Ubojzl0PzhkbTn+Dktisvnta5+nwXX55XoCxlHJHbME+amjOioWhiDnnU
+   IjF4WXRCy0VDzdB1sP2YPNrAHWLe6z/ZYFRs7VQWzbdB+jnWr2vo4h4HI
+   DZMlfb2ncLHFKK+0Az2/JsqfWqocdTpWDlsdz1H6qMQbMPmvIZCCPRzAg
+   cidgJzisS7ECOdfJL7D6U0TxuBUxaz8L7gtt4iYMtT2dhC22pPSI4Xmku
+   Q==;
+X-CSE-ConnectionGUID: kw8Ay2rqSSmgji6JtrmAsA==
+X-CSE-MsgGUID: +QajHtOOQea22Rfpqz7Uxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="42014952"
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="42014952"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 10:28:14 -0800
+X-CSE-ConnectionGUID: CHwU4Fr6R+6NOcfuEeWBpA==
+X-CSE-MsgGUID: XSSnOCigRgeSGtJCWPEebg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
+   d="scan'208";a="117807785"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 01 Mar 2025 10:28:13 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toRZK-000GYo-31;
+	Sat, 01 Mar 2025 18:28:11 +0000
+Date: Sun, 02 Mar 2025 02:26:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/mm] BUILD SUCCESS
+ fd5935f9c20431eeadd6993fd4d2672e3e17a6b8
+Message-ID: <202503020210.HJ4ExkdY-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223113036.74252-4-andyshrk@163.com>
 
-On Sun, Feb 23, 2025 at 07:30:26PM +0800, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> Add driver extension for Synopsys DesignWare DPTX IP used
-> on Rockchip RK3588 SoC.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> ---
-> 
->  drivers/gpu/drm/rockchip/Kconfig            |   7 +
->  drivers/gpu/drm/rockchip/Makefile           |   1 +
->  drivers/gpu/drm/rockchip/dw_dp-rockchip.c   | 162 ++++++++++++++++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c |   1 +
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.h |   1 +
->  5 files changed, 172 insertions(+)
->  create mode 100644 drivers/gpu/drm/rockchip/dw_dp-rockchip.c
-> 
-> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-> index 26c4410b2407..c8638baf9641 100644
-> --- a/drivers/gpu/drm/rockchip/Kconfig
-> +++ b/drivers/gpu/drm/rockchip/Kconfig
-> @@ -8,6 +8,7 @@ config DRM_ROCKCHIP
->  	select DRM_PANEL
->  	select VIDEOMODE_HELPERS
->  	select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
-> +	select DRM_DW_DP if ROCKCHIP_DW_DP
->  	select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
->  	select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
->  	select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
-> @@ -58,6 +59,12 @@ config ROCKCHIP_CDN_DP
->  	  RK3399 based SoC, you should select this
->  	  option.
->  
-> +config ROCKCHIP_DW_DP
-> +	bool "Rockchip specific extensions for Synopsys DW DP"
-> +	help
-> +	  Choose this option for Synopsys DesignWare Cores DisplayPort
-> +	  transmit controller support on Rockchip SoC.
-> +
->  config ROCKCHIP_DW_HDMI
->  	bool "Rockchip specific extensions for Synopsys DW HDMI"
->  	help
-> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
-> index 2b867cebbc12..097f062399c7 100644
-> --- a/drivers/gpu/drm/rockchip/Makefile
-> +++ b/drivers/gpu/drm/rockchip/Makefile
-> @@ -14,6 +14,7 @@ rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI_QP) += dw_hdmi_qp-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI2) += dw-mipi-dsi2-rockchip.o
-> +rockchipdrm-$(CONFIG_ROCKCHIP_DW_DP) += dw_dp-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_LVDS) += rockchip_lvds.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_RGB) += rockchip_rgb.o
-> diff --git a/drivers/gpu/drm/rockchip/dw_dp-rockchip.c b/drivers/gpu/drm/rockchip/dw_dp-rockchip.c
-> new file mode 100644
-> index 000000000000..b41a41eb74d7
-> --- /dev/null
-> +++ b/drivers/gpu/drm/rockchip/dw_dp-rockchip.c
-> @@ -0,0 +1,162 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
-> + *
-> + * Author: Zhang Yubing <yubing.zhang@rock-chips.com>
-> + * Author: Andy Yan <andy.yan@rock-chips.com>
-> + */
-> +
-> +#include <linux/component.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <drm/bridge/dw_dp.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/drm_probe_helper.h>
-> +#include <drm/drm_simple_kms_helper.h>
-> +
-> +#include <uapi/linux/media-bus-format.h>
-> +#include <uapi/linux/videodev2.h>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
+branch HEAD: fd5935f9c20431eeadd6993fd4d2672e3e17a6b8  x86/mm: Check return value from memblock_phys_alloc_range()
 
-I'd say, include those two headers directly. Rockchip / Synopsys are the
-only drivers including these uapi headers directly.
+elapsed time: 1454m
 
-> +
-> +#include "rockchip_drm_drv.h"
-> +#include "rockchip_drm_vop.h"
-> +
-> +struct rockchip_dw_dp {
-> +	struct dw_dp *base;
-> +	struct device *dev;
-> +	struct rockchip_encoder encoder;
-> +};
-> +
-> +static inline struct rockchip_dw_dp *encoder_to_dp(struct drm_encoder *encoder)
-> +{
-> +	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-> +
-> +	return container_of(rkencoder, struct rockchip_dw_dp, encoder);
-> +}
-> +
-> +static int dw_dp_encoder_atomic_check(struct drm_encoder *encoder,
-> +				      struct drm_crtc_state *crtc_state,
-> +				      struct drm_connector_state *conn_state)
-> +{
-> +	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
-> +	struct drm_atomic_state *state = conn_state->state;
-> +	struct drm_display_info *di = &conn_state->connector->display_info;
-> +	struct drm_bridge *bridge  = drm_bridge_chain_get_first_bridge(encoder);
-> +	struct drm_bridge_state *bridge_state = drm_atomic_get_new_bridge_state(state, bridge);
-> +	u32 bus_format = bridge_state->input_bus_cfg.format;
-> +
-> +	switch (bus_format) {
-> +	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
-> +	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
-> +		s->output_mode = ROCKCHIP_OUT_MODE_YUV420;
-> +		break;
-> +	case MEDIA_BUS_FMT_YUYV10_1X20:
-> +	case MEDIA_BUS_FMT_YUYV8_1X16:
-> +		s->output_mode = ROCKCHIP_OUT_MODE_S888_DUMMY;
-> +		break;
-> +	case MEDIA_BUS_FMT_RGB101010_1X30:
-> +	case MEDIA_BUS_FMT_RGB888_1X24:
-> +	case MEDIA_BUS_FMT_RGB666_1X24_CPADHI:
-> +	case MEDIA_BUS_FMT_YUV10_1X30:
-> +	case MEDIA_BUS_FMT_YUV8_1X24:
-> +	default:
-> +		s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
-> +		break;
-> +	}
-> +
-> +	s->output_type = DRM_MODE_CONNECTOR_DisplayPort;
-> +	s->bus_format = bus_format;
-> +	s->bus_flags = di->bus_flags;
-> +	s->color_space = V4L2_COLORSPACE_DEFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct drm_encoder_helper_funcs dw_dp_encoder_helper_funcs = {
-> +	.atomic_check		= dw_dp_encoder_atomic_check,
-> +};
-> +
-> +static int dw_dp_rockchip_bind(struct device *dev, struct device *master, void *data)
-> +{
-> +	struct dw_dp_plat_data plat_data;
-> +	struct drm_device *drm_dev = data;
-> +	struct rockchip_dw_dp *dp;
-> +	struct drm_encoder *encoder;
-> +	struct drm_connector *connector;
-> +	int ret;
-> +
-> +	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
-> +	if (!dp)
-> +		return -ENOMEM;
-> +
-> +	dp->dev = dev;
-> +	plat_data.max_link_rate = 810000;
-> +	encoder = &dp->encoder.encoder;
-> +	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm_dev, dev->of_node);
-> +	rockchip_drm_encoder_set_crtc_endpoint_id(&dp->encoder, dev->of_node, 0, 0);
-> +
-> +	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+configs tested: 63
+configs skipped: 1
 
-drmm_encoder_init() ? This will allow you to get rid of
-drm_encoder_cleanup() calls.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> +	drm_encoder_helper_add(encoder, &dw_dp_encoder_helper_funcs);
-> +
-> +	dp->base = dw_dp_bind(dev, encoder, &plat_data);
-> +	if (IS_ERR(dp->base)) {
-> +		ret = PTR_ERR(dp->base);
-> +		drm_encoder_cleanup(encoder);
-> +		return ret;
-> +	}
-> +
-> +	connector = drm_bridge_connector_init(drm_dev, encoder);
-> +	if (IS_ERR(connector)) {
-> +		ret = PTR_ERR(connector);
-> +		dev_err(dev, "Failed to init bridge connector: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	drm_connector_attach_encoder(connector, encoder);
-> +
-> +	return 0;
-> +}
-> +
-> +static void dw_dp_rockchip_unbind(struct device *dev, struct device *master, void *data)
-> +{
-> +	struct rockchip_dw_dp *dp = dev_get_drvdata(dev);
-> +
-> +	drm_encoder_cleanup(&dp->encoder.encoder);
-> +}
-> +
-> +static const struct component_ops dw_dp_rockchip_component_ops = {
-> +	.bind = dw_dp_rockchip_bind,
-> +	.unbind = dw_dp_rockchip_unbind,
-> +};
-> +
-> +static int dw_dp_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +
-> +	return component_add(dev, &dw_dp_rockchip_component_ops);
-> +}
-> +
-> +static void dw_dp_remove(struct platform_device *pdev)
-> +{
-> +	struct rockchip_dw_dp *dp = platform_get_drvdata(pdev);
-> +
-> +	component_del(dp->dev, &dw_dp_rockchip_component_ops);
-> +}
-> +
-> +static const struct of_device_id dw_dp_of_match[] = {
-> +	{ .compatible = "rockchip,rk3588-dp", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, dw_dp_of_match);
-> +
-> +struct platform_driver dw_dp_driver = {
-> +	.probe	= dw_dp_probe,
-> +	.remove = dw_dp_remove,
-> +	.driver = {
-> +		.name = "dw-dp",
-> +		.of_match_table = dw_dp_of_match,
-> +	},
-> +};
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> index 9cf311b5dec1..2b245491c71d 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> @@ -529,6 +529,7 @@ static int __init rockchip_drm_init(void)
->  	ADD_ROCKCHIP_SUB_DRIVER(rockchip_dp_driver,
->  				CONFIG_ROCKCHIP_ANALOGIX_DP);
->  	ADD_ROCKCHIP_SUB_DRIVER(cdn_dp_driver, CONFIG_ROCKCHIP_CDN_DP);
-> +	ADD_ROCKCHIP_SUB_DRIVER(dw_dp_driver, CONFIG_ROCKCHIP_DW_DP);
->  	ADD_ROCKCHIP_SUB_DRIVER(dw_hdmi_rockchip_pltfm_driver,
->  				CONFIG_ROCKCHIP_DW_HDMI);
->  	ADD_ROCKCHIP_SUB_DRIVER(dw_hdmi_qp_rockchip_pltfm_driver,
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> index c183e82a42a5..2e86ad00979c 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> @@ -87,6 +87,7 @@ int rockchip_drm_encoder_set_crtc_endpoint_id(struct rockchip_encoder *rencoder,
->  					      struct device_node *np, int port, int reg);
->  int rockchip_drm_endpoint_is_subdriver(struct device_node *ep);
->  extern struct platform_driver cdn_dp_driver;
-> +extern struct platform_driver dw_dp_driver;
->  extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
->  extern struct platform_driver dw_hdmi_qp_rockchip_pltfm_driver;
->  extern struct platform_driver dw_mipi_dsi_rockchip_driver;
-> -- 
-> 2.34.1
-> 
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                  randconfig-001-20250301    gcc-13.2.0
+arc                  randconfig-002-20250301    gcc-13.2.0
+arm                  randconfig-001-20250301    gcc-14.2.0
+arm                  randconfig-002-20250301    gcc-14.2.0
+arm                  randconfig-003-20250301    clang-21
+arm                  randconfig-004-20250301    clang-21
+arm64                randconfig-001-20250301    gcc-14.2.0
+arm64                randconfig-002-20250301    clang-21
+arm64                randconfig-003-20250301    clang-15
+arm64                randconfig-004-20250301    clang-17
+csky                 randconfig-001-20250301    gcc-14.2.0
+csky                 randconfig-002-20250301    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250301    clang-21
+hexagon              randconfig-002-20250301    clang-21
+i386       buildonly-randconfig-001-20250301    clang-19
+i386       buildonly-randconfig-002-20250301    clang-19
+i386       buildonly-randconfig-003-20250301    clang-19
+i386       buildonly-randconfig-004-20250301    clang-19
+i386       buildonly-randconfig-005-20250301    gcc-12
+i386       buildonly-randconfig-006-20250301    clang-19
+loongarch            randconfig-001-20250301    gcc-14.2.0
+loongarch            randconfig-002-20250301    gcc-14.2.0
+nios2                randconfig-001-20250301    gcc-14.2.0
+nios2                randconfig-002-20250301    gcc-14.2.0
+parisc               randconfig-001-20250301    gcc-14.2.0
+parisc               randconfig-002-20250301    gcc-14.2.0
+powerpc              randconfig-001-20250301    clang-17
+powerpc              randconfig-002-20250301    clang-19
+powerpc              randconfig-003-20250301    clang-21
+powerpc64            randconfig-001-20250301    gcc-14.2.0
+powerpc64            randconfig-002-20250301    clang-21
+powerpc64            randconfig-003-20250301    gcc-14.2.0
+riscv                randconfig-001-20250301    gcc-14.2.0
+riscv                randconfig-002-20250301    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250301    clang-15
+s390                 randconfig-002-20250301    gcc-14.2.0
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250301    gcc-14.2.0
+sh                   randconfig-002-20250301    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250301    gcc-14.2.0
+sparc                randconfig-002-20250301    gcc-14.2.0
+sparc64              randconfig-001-20250301    gcc-14.2.0
+sparc64              randconfig-002-20250301    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250301    gcc-12
+um                   randconfig-002-20250301    gcc-12
+x86_64                           allnoconfig    clang-19
+x86_64     buildonly-randconfig-001-20250301    clang-19
+x86_64     buildonly-randconfig-002-20250301    clang-19
+x86_64     buildonly-randconfig-003-20250301    gcc-11
+x86_64     buildonly-randconfig-004-20250301    gcc-12
+x86_64     buildonly-randconfig-005-20250301    gcc-12
+x86_64     buildonly-randconfig-006-20250301    clang-19
+xtensa               randconfig-001-20250301    gcc-14.2.0
+xtensa               randconfig-002-20250301    gcc-14.2.0
 
--- 
-With best wishes
-Dmitry
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
