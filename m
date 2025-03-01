@@ -1,166 +1,161 @@
-Return-Path: <linux-kernel+bounces-539688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8462CA4A761
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:27:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC9CA4A766
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432CD189C986
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934563B4F1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC2822EE4;
-	Sat,  1 Mar 2025 01:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9533EA83;
+	Sat,  1 Mar 2025 01:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MHeGYUMT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0VaiX8p"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5204A935
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBC717BB6
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792413; cv=none; b=ZHgfH4S4X4AQ4Btp2u/qjAMeJFbRMa0sy6/hhdCBCmVtYnJyKZDum8GvNb5YON3GBsIGXFg5+dOjIwSgH7wfn0Nbd4LdIWaZBpXLHzZtpiJvR9Y/m2JjdKA/ekUqht6cGVw5N3TZwddsAY7TmqrzXnWmQmhdzL8FSxQvshykEPw=
+	t=1740792569; cv=none; b=HWmgEBR0qqt+rU6i8MA43PAhumueqnLfWjSHtPDXCOFzQsXFhwMPLSdBkJMxUiwmG/W2EL2U7sQg5M9uox+GoSNWJlxvlE2VuZ56SFaE1uGXlS/RG+NGtMhWi8mQruT2O+p4hJQvFLp92eftgBuUHll167h0BJ0DwewQw+PDJW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792413; c=relaxed/simple;
-	bh=GJRdH7Py2r4TCQURAl8QCe4ysMucIaXY8Z8uqx8/VG8=;
+	s=arc-20240116; t=1740792569; c=relaxed/simple;
+	bh=x30Ghtnf2mwjQ7C24lb6dNTXdFIuMS5fxSzqclDeaDU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LD98aYnSV2aUS4YcA7OhtAgz1PjNOIkOaNuRgOHDs6zOd4OXlN9eTYtiBCLyb2mMtprDIsZ9w+Q/G6CuOc31Rqxv9CxuRff72pWfTo/+JR8r6rrIZi0qu7emN/uJg3pUKBxWmUnIlgqIv1KeFndoC7CQBt5h9MGKBPK7s2qj8dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MHeGYUMT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740792409;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w6dnxp9WYsNQwZ9vI6v1G24aXs3uhHVto8Xb5zEf7MI=;
-	b=MHeGYUMT8DYeJ2c4l/n9g/iKHIWgcSRW8NEA9t5TbLbqMyjSy87c/fF5g1KEAxr4zEBnY3
-	0OMl/YEnJEpWissG1lV/X0+1LmFp7Hib45k1BE4B98Lz9NBcMgi2OKvXu/ey3Wt56g8/yX
-	uJWEYD7pn8S2sxhlBkPuiYmKOUrjOQc=
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
- [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-bPushaAqOKK5GspLSOQMcg-1; Fri, 28 Feb 2025 20:26:48 -0500
-X-MC-Unique: bPushaAqOKK5GspLSOQMcg-1
-X-Mimecast-MFC-AGG-ID: bPushaAqOKK5GspLSOQMcg_1740792407
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-86b4301c07cso1131629241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:26:48 -0800 (PST)
+	 To:Cc:Content-Type; b=RcQDygfnl9/oMHxq7E42se/SEN2Z8czaJka7F/wBIqlxDO0q9YXRqGnRcK2R95hpQR+Y1Hn0ecwUnBvs/VPxbYszAmFVhVZQgh6UJ1QU6HBJJ+EJKxGfqqFvAIpXEjsIAualnXs2AhOEHGKLKMVfk+hFVyeM9woq3c6sBEDb0JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0VaiX8p; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2212222d4cdso71895ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:29:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740792567; x=1741397367; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kc38nFBS6hSU0vji9D+YzzpAjSlnqZ5qJGUo2AO471s=;
+        b=S0VaiX8p5oTZx9ICATxbmh2T98PF+gxmFdn5K7Dqs3yN7BRYfSPZcD7BpIrlV3/JWD
+         g59Bpj5SyQ7kp7GDINxMbFp9sBrVu1zUYCkt5Lx0nWDgUEVBJTiCshbzOXvSvvVNLWK2
+         QWOBISMETj1cm6T+hbYmPck540G8K9T5Jl/QirOuVwzeeRV96vQeKFpCZQR0sU2T2oPo
+         HFPA6k+/LCZc92394kHeB0gnw3Iq3E3m+b88/NeZ/KCobUGJoSVnnqYQ1taIddl9IUlC
+         ciSumnvRSAIPV8TufYdNZM1nIHMj98bEI6Y1XCO41aCpMHKTpuSMdr/C9tPGsu7QYMCX
+         xH5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740792407; x=1741397207;
+        d=1e100.net; s=20230601; t=1740792567; x=1741397367;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w6dnxp9WYsNQwZ9vI6v1G24aXs3uhHVto8Xb5zEf7MI=;
-        b=b/bYppTa/n3OciLR+xEaUBmUPqySNo4VqHokiKoLDbIHXR5xIz/lBwWNUiWZxXT5e4
-         /9nDCoT3Bwmfs0ql/ga10UvrA2n8gC0j06Ag/09o5AyWUSN95/8KRXXhuDO0fUtJ8PD9
-         rKUHEnaa4zPDiAQsWxFkzc0TVJaeW3Z0YK//yehfFAvEbHufnmodIf4FNXmGERt5a++K
-         cMVTmbiQT1pXgPddcu3Ta3FwMB5UeLyeV/upnPV8L41uYSezD9UJ3B/TtJtSZxBiJRPy
-         H/ymjD67bmhT7TxeeOD5rIu8REnyAmweusDTmWwmLnwUjwFJ67qcLybp+y0iZlAjEyMf
-         coHg==
-X-Gm-Message-State: AOJu0Yzsrqm9bxWSK2ybrVEvj7jOYWmDbisFdsea0sztrHIz4iV1raQ6
-	M72T2m6JAXS9lsFiezO/tXDH6MfWVv3Idwwjya0TR9GEpKBiQ2eXGZmo3Jq87F1gdCpbcoqMTQo
-	Oneb/o1AnmDAGDULoPBqdM7rhoATkScx7KM+9rLZIYdetjTPycpjBCuuX259giNVm32Uyty1WPb
-	n4pTT9KuLOmgAXTnTgZiT0aRK12Cl6g9jy/6eOejgLJ2oacRI=
-X-Gm-Gg: ASbGncvnp12zWUzs4kcCCeUcpRDtqVLlgcbE+KPYjQUwrjCK4jSG8PZCNYtTG4uYx+s
-	Mg0w5HAKswIaVdXme/QHmEDUkh/gMrFyZM3tDE8vJ1IUfstw5U6bTiMIrMM50DyOWlZSYEH2a5Q
-	==
-X-Received: by 2002:a05:6122:8293:b0:520:51a4:b819 with SMTP id 71dfb90a1353d-5235b519b28mr3507236e0c.1.1740792407167;
-        Fri, 28 Feb 2025 17:26:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGO3+RRkopwHC744q1bF4z/l7fKpr6okBzyltA/RQWqBy18J327LdjsIFzinZgD1ijE/BP+TkrCT/6/4YPSDv4=
-X-Received: by 2002:a05:6122:8293:b0:520:51a4:b819 with SMTP id
- 71dfb90a1353d-5235b519b28mr3507233e0c.1.1740792406855; Fri, 28 Feb 2025
- 17:26:46 -0800 (PST)
+        bh=Kc38nFBS6hSU0vji9D+YzzpAjSlnqZ5qJGUo2AO471s=;
+        b=uy+Tr2idqUcLaFVeHmoHYZLXG1h2PRCQT6OvfGFqtxTzKEtoM/s2x7AS8K0u7PrJDS
+         +zThRc0VVRx2ILa7niJGzJ4WF8PsVQMaYGLvXZsFFVE4uxQTqkzEbWDUD9aoeQz32V8W
+         KcrGa4k70ZqIhI4WcVjFQ+P8iBGTEUal3UHsnHePQdzsbY9+mS8bROY7yuh6DmKi5rFc
+         yruNqAstqITpVvJxLXp3uXqJPRRHZfcpK6lOFJXP5+kB7j2KBTTsfcOdZ3tdQgvrLwqr
+         pyR+Z4Qxpe4b59NQNPOjolZkP/W7vjOan3rPvm3W4lS4q/bSygw7hZd23uhiHPnhjanY
+         dq2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXu+FwgxgSClDLe+qozx8Yrlsf0rdfmh3LJ7DZ75t/sJArv+Vdqtrtscep93raAiahcboFc/duZmnLK6JU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh13CZykYNUVj0LDaJgNlKLZb8yXuvKf/6kxlcZqYq2noILptI
+	3Ki28D6XR5XwRBE608oi/diK35vl4KmzTVuesODlcwRvqW7NR423J8d8U3QtFzVMdwvASW+uXpS
+	mRm4fPwWjjRl8uvVDblw8evM2QWUe2yHl95B8
+X-Gm-Gg: ASbGncu0pVwhfzW+uiKPOqduE/+gC1dOYZjmncwZm13JRvrRZJr6qJxrNn79A1YihUg
+	abq70xT9LmJlv0wK4xLSAC4wwmjduWxNDJ6VglIKo6+fVcOMNOPWAl7o674KSMQ1+oyDllds4EM
+	Wq6p6Nqh3WU0pHswnRb9uuBs/qcQ==
+X-Google-Smtp-Source: AGHT+IGncPbBhrhz7q7nYtSkG3NCU3eJmen24UIv0X8fbRWFxDMMC/F2mnfn4/23C53PdlyFhZfhFGySOLAkJbQVaoI=
+X-Received: by 2002:a17:902:ccca:b0:220:c905:689f with SMTP id
+ d9443c01a7336-22385a2665emr571665ad.25.1740792566772; Fri, 28 Feb 2025
+ 17:29:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4ae6d363-2f9b-5028-db1a-061b6f1e8fbe@canonical.com> <892c7de5-d257-d4d6-2bfc-62f543965cff@canonical.com>
-In-Reply-To: <892c7de5-d257-d4d6-2bfc-62f543965cff@canonical.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Sat, 1 Mar 2025 09:26:35 +0800
-X-Gm-Features: AQ5f1JrkB2tCsFeunXfn4giFbw2Z7oo7kEk_rkiaUrID7LrQOCtJb0ha_haUg04
-Message-ID: <CAFj5m9JEDW0kLfnDhF4xNFzMTpHBH6Xpdb+XVLf73oq3vzCjQg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] block: fix conversion of GPT partition name to 7-bit
-To: Olivier Gayot <olivier.gayot@canonical.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Daniel Bungert <daniel.bungert@canonical.com>, linux-block <linux-block@vger.kernel.org>
+References: <20250227041209.2031104-1-almasrymina@google.com>
+ <20250227041209.2031104-2-almasrymina@google.com> <20250228163846.0a59fb40@kernel.org>
+In-Reply-To: <20250228163846.0a59fb40@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 28 Feb 2025 17:29:13 -0800
+X-Gm-Features: AQ5f1JqnucwSW-6yoUTgklaGGj9zlmp1rtei3-w0QbA66_zGizdQVdrhRtrAPr0
+Message-ID: <CAHS8izNQnTW7sad_oABtxhy3cHxGR0FWJucrHTSVX7ZAA6jT3Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 1/8] net: add get_netmem/put_netmem support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 23, 2023 at 6:53=E2=80=AFAM Olivier Gayot
-<olivier.gayot@canonical.com> wrote:
+On Fri, Feb 28, 2025 at 4:38=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> The utf16_le_to_7bit function claims to, naively, convert a UTF-16
-> string to a 7-bit ASCII string. By naively, we mean that it:
->  * drops the first byte of every character in the original UTF-16 string
->  * checks if all characters are printable, and otherwise replaces them
->    by exclamation mark "!".
+> On Thu, 27 Feb 2025 04:12:02 +0000 Mina Almasry wrote:
+> >  static inline void __skb_frag_ref(skb_frag_t *frag)
+> >  {
+> > -     get_page(skb_frag_page(frag));
+> > +     get_netmem(skb_frag_netmem(frag));
+> >  }
 >
-> This means that theoretically, all characters outside the 7-bit ASCII
-> range should be replaced by another character. Examples:
->
->  * lower-case alpha (=C9=92) 0x0252 becomes 0x52 (R)
->  * ligature OE (=C5=93) 0x0153 becomes 0x53 (S)
->  * hangul letter pieup (=E3=85=82) 0x3142 becomes 0x42 (B)
->  * upper-case gamma (=C6=94) 0x0194 becomes 0x94 (not printable) so gets
->    replaced by "!"
->
-> The result of this conversion for the GPT partition name is passed to
-> user-space as PARTNAME via udev, which is confusing and feels questionabl=
-e.
->
-> However, there is a flaw in the conversion function itself. By dropping
-> one byte of each character and using isprint() to check if the remaining
-> byte corresponds to a printable character, we do not actually guarantee
-> that the resulting character is 7-bit ASCII.
->
-> This happens because we pass 8-bit characters to isprint(), which
-> in the kernel returns 1 for many values > 0x7f - as defined in ctype.c.
->
-> This results in many values which should be replaced by "!" to be kept
-> as-is, despite not being valid 7-bit ASCII. Examples:
->
->  * e with acute accent (=C3=A9) 0x00E9 becomes 0xE9 - kept as-is because
->    isprint(0xE9) returns 1.
->  * euro sign (=E2=82=AC) 0x20AC becomes 0xAC - kept as-is because isprint=
-(0xAC)
->    returns 1.
->
-> Fixed by using a mask of 7 bits instead of 8 bits before calling
-> isprint.
->
-> Signed-off-by: Olivier Gayot <olivier.gayot@canonical.com>
-> ---
->  block/partitions/efi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-> index 5e9be13a56a8..7acba66eed48 100644
-> --- a/block/partitions/efi.c
-> +++ b/block/partitions/efi.c
-> @@ -682,7 +682,7 @@ static void utf16_le_to_7bit(const __le16 *in, unsign=
-ed int size, u8 *out)
->         out[size] =3D 0;
->
->         while (i < size) {
-> -               u8 c =3D le16_to_cpu(in[i]) & 0xff;
-> +               u8 c =3D le16_to_cpu(in[i]) & 0x7f;
->
->                 if (c && !isprint(c))
->                         c =3D '!';
+> Silently handling types of memory the caller may not be expecting
+> always worries me.
 
-Hello Olivier,
+Sorry, I'm not following. What caller is not expecting netmem? Here
+we're making sure __skb_frag_ref() handles netmem correctly, i.e. we
+were not expecting netmem here before, and after this patch we'll
+handle it correctly.
 
-Looks like you didn't Cc linux-block maillist and Jens, can you
-re-send the patch to
-linux-block for review?
+> Why do we need this?
+>
 
+The MSG_ZEROCOPY TX path takes a page reference on the passed memory
+in zerocopy_fill_skb_from_iter() that kfree_skb() later drops when the
+skb is sent. We need an equivalent for netmem, which only supports pp
+refs today. This is my attempt at implementing a page_ref equivalent
+to net_iov and generic netmem.
+
+I think __skb_frag_[un]ref is used elsewhere in the TX path too,
+tcp_mtu_probe for example calls skb_frag_ref eventually.
+
+> In general, I'm surprised by the lack of bug reports for devmem.
+
+I guess we did a good job making sure we don't regress the page paths.
+
+The lack of support in any driver that qemu will run is an issue. I
+wonder if also the fact that devmem needs some setup is also an issue.
+We need headersplit enabled, udmabuf created, netlink API bound, and
+then a connection referring to created and we don't support loopback.
+I think maybe it all may make it difficult for syzbot to repro. I've
+had it on my todo list to investigate this more.
+
+> Can you think of any way we could expose this more to syzbot?
+> First thing that comes to mind is a simple hack in netdevsim,
+> to make it insert a netmem handle (allocated locally, not a real
+> memory provider), every N packets (controllable via debugfs).
+> Would that work?
+
+Yes, great idea. I don't see why it wouldn't work.
+
+We don't expect mixing of net_iovs and pages in the same skb, but
+netdevsim could create one net_iov skb every N skbs.
+
+I guess I'm not totally sure something is discoverable to syzbot. Is a
+netdevsim hack toggleable via a debugfs sufficient for syzbot? I'll
+investigate and ask.
+
+--
 Thanks,
-Ming
-
+Mina
 
