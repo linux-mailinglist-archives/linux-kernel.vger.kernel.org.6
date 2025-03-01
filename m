@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-540070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B9EA4AD3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:09:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381EBA4AD3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:12:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C5A3B786B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:09:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14DA1895D5A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5410B1E5B87;
-	Sat,  1 Mar 2025 18:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9AD1DE3CA;
+	Sat,  1 Mar 2025 18:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wpczwOyW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bOD5z77+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwNuzjJh"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CC31E49F;
-	Sat,  1 Mar 2025 18:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971231E49F
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740852586; cv=none; b=MLsI8lHCsfOeuXNM2xgcmWl8uK7idwCD0KEqxgcn1H/737z8/ABiSeZztGMvg1q2RFQKooOw2vhWUbBEfIupVQud/YiWPjR0bEe37ACNNwgIsHJLq/HbHvoLxIk2tuTiwyL1lWFQzQwftFZBuo5pLQ0y/nmYjJ/Sgy/aGGWy7J0=
+	t=1740852731; cv=none; b=Npp82g1GGF6sjoarjsGbP+IszMlHmwJTIzE8vjAyKu0b5vTI59W+QuCDg89Sc1al9E4Gym0kogj5gqW/fC2LktiSbKWLUBB0v80ErJU7sjzV+NGTxwivDoIx9nB7FaeGTr1DNpRU3cu2oM3XvYjdDVMBvOK17CtyoGGTSknUEzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740852586; c=relaxed/simple;
-	bh=/1KRbZDrax+HBk2kFcZNxdQJ+mrMRQTrz435zMXn/NY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sx8iOO+QjI2/rOWunInFbVLHmiLfLUrpT0TSPippTwL1LSvDRlgDP+fzv687Zu6qlBMw3upFbv2DJ1SUAnbTphi90fYKGrH81ia8OSyaJAgP3QoF6CWooQHGZUyQzjQdfbbe82/Z+UwRF7Bm9bVXUNlStmuWMA7lnFuBvrAHMQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wpczwOyW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bOD5z77+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740852577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7aAluflwF8uxqGPtsL2kQpy/Mt+z1OejY+ngR/xlVwA=;
-	b=wpczwOyWMsIC5xL2dzr/GEWVo681ybJMAa+f0e7K8fW51ZCfsUYSjDzvjIhWIvq2ud7yW+
-	9VbEDuNAYHIvhW7Xe4XhLYvHHR/YuPwqoL2uKsN58NaK3dLwf/3or9U9jMJBD5r7KJj3dL
-	WozYGrEoI0Q0QucZF5/RohIu1r5+xRbrpV3Oh8RocPpEVrsn+PjYpQmY4TW98MS0v9NwGs
-	cOPceCK9wps63cE0Ah0F2Dw3hGQ+hT4dxWRdeOBj2IF7lE7lvWCEf3CM8GnKCu9C7ifbbB
-	ycoHiW6RLyj+I6mnW4e4PsfoxEsh8Xru4haSb334UuKdXhW03TjurxMEgkEChg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740852577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7aAluflwF8uxqGPtsL2kQpy/Mt+z1OejY+ngR/xlVwA=;
-	b=bOD5z77+FsiaBwISDB+ppOhZwXZLsW93CjTdva9DyZjaS2IgUkbkM357Wb/3WsV+YQlN8Y
-	mMHtAgK+F3jkw3Aw==
-To: Marc Zyngier <maz@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Anup Patel <apatel@ventanamicro.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich
- <dakr@kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Shuah
- Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach
- <l.stach@pengutronix.de>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 00/15] PCI: EP: Add RC-to-EP doorbell with platform
- MSI controller
-In-Reply-To: <86ldtpot6m.wl-maz@kernel.org>
-References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
- <Z7eKBsxrmthtElpz@lizhi-Precision-Tower-5810>
- <86ldtpot6m.wl-maz@kernel.org>
-Date: Sat, 01 Mar 2025 19:09:35 +0100
-Message-ID: <87senwd3mo.ffs@tglx>
+	s=arc-20240116; t=1740852731; c=relaxed/simple;
+	bh=Eg0hFQaD8ycLhbpwZvT+7PAZXueZuxzeChkcp4728Mg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YNIB7GodCsFgEeBAEEJBTwWqEAbwtrd/nbwhSixTe394LBywRIT+yixocrOLBJ6rFkNIfUkvEIfI9oSqUY0JrIb7jW0040NHkNRueSIWo3eWXWd4OiBtbmeEnpbcIN83hH60j81Mc8QEylp6LZclHiNXj/JjCRUGo3sl6i+WNPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LwNuzjJh; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso36626751fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 10:12:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740852728; x=1741457528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eg0hFQaD8ycLhbpwZvT+7PAZXueZuxzeChkcp4728Mg=;
+        b=LwNuzjJhf8t9gZFJEzYdneEttpVvh1M5eiizXXvuG/Jto1lri+V+J2W0n55nuC7flH
+         tPthnUkFlSHBwpcq4OkxyFDhQ6SdBsVOQiWRV26MVkT78mCpTH8MoMMw7Eg3OYrLLYyK
+         cO83MtN0um/VtLfV41ho5z93VBU9jo6q/6fTz8iSy9MfI5b5T1lGFbCIYc5Xoq69WOcu
+         YP2VZ+/AJkWZM1HsOC4x2/Yj/hiUNEA27MYiBBRHwRMPThB8l4rThWVf3PDk6DSal3KY
+         vVgtDJBtNhcu6f3tGIljGTyJTDOoHkLO5eflGtRBkVewkcxs5LqDE8a04oGztKIrhGmf
+         UM4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740852728; x=1741457528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eg0hFQaD8ycLhbpwZvT+7PAZXueZuxzeChkcp4728Mg=;
+        b=urUNf21V/AYVsOhLEB9UOL60spvGixFzucuVQhXBHqpkr0N/KS8mlQmHO5krKe815+
+         wD2GndhO7aI54mKOWpchX9p96MJJsUQTUvVVXHFiCUu/88vQwQ7PQjO5C6qCyftHYm7v
+         u4WCBJ+0G+6Wf/PthS4KBYDmrH9fom2sLl6tmROgat7ritWC0XFkZBCfiZngPfolQ/Z6
+         UsCARdVCej//X5AK1o3upeNe8hobBdKi1s368WKyEGU7xhKQW/xTwe6BivxK+7d12xxM
+         bsogB82fGzZ3OO2Rl4wyI6gzt6wJFWL9UbFrp9sXZ9BexQC7cB6DM/Fl9XoVKXkkDTzb
+         UFnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUo4rhjAcG+51FcXtuHOlh1/G2xDvnpOME3DEP5jjYrU7hIasC4SwPsO4ZsYk0rtbNiz9LLtTBXIIZp0WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyljcZvqRSXWnqW5GHkCjb/XSnRmcrGVCIJNfra1DV9FeL3p5rn
+	NjwjW8jnI5Ew2ePHcwAUQO5xejYjyajkKJc8L3ZJAuAIlkkWJOEh/EYgdm5pSHr2zCnWc5Gjrom
+	QysWhtpXX+ggxK1+XXH9r3siIOgyVdwMNBDe7FD7ji34WtGe1
+X-Gm-Gg: ASbGncuISxUQgVNlwZX1Fgshk8XBhcGPAOICGEcHkOkBKyCKyY0iNGDsi7gw05w3wYz
+	e3FZjbFhAg+cB//ie/PVdq3fk5xbl0A4fGiKeb55KvSbSkQl0H6a81brS3UtEfX/FpbjbCqCen8
+	6SuhWVmBh7L6/dn+K99M6r1xcouw==
+X-Google-Smtp-Source: AGHT+IEH99Tq5urSrvxoc72GqejnsJAsNSDML6g3rnh8KP+Vmtk9gqB7j3gZFHmLs6QHmiQqUlP2gDlbwUBJuyx82iI=
+X-Received: by 2002:a2e:8052:0:b0:307:e368:6bd6 with SMTP id
+ 38308e7fff4ca-30b933037d4mr26808421fa.32.1740852727658; Sat, 01 Mar 2025
+ 10:12:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org> <20250228-rtc-cleanups-v1-10-b44cec078481@linaro.org>
+In-Reply-To: <20250228-rtc-cleanups-v1-10-b44cec078481@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 1 Mar 2025 19:11:56 +0100
+X-Gm-Features: AQ5f1JrUCPCMLG1ATCrGher1b7FQk-JSwRhx_use4qjyzNuoMvAXn5iqo9KhAOA
+Message-ID: <CACRpkdamF4B1y+zr-Y_XB8gAoSv2Q2U4VxuZd+ivZq7KV1Quyw@mail.gmail.com>
+Subject: Re: [PATCH 10/18] rtc: pl030: drop needless struct pl030_rtc::rtc member
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, =?UTF-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>, 
+	Dianlong Li <long17.cool@163.com>, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 01 2025 at 12:02, Marc Zyngier wrote:
-> - This IMMUTABLE thing serves no purpose, because you don't randomly
->   plug this end-point block on any MSI controller. They come as part
->   of an SoC.
+On Fri, Feb 28, 2025 at 3:07=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 
-Yes and no. The problem is that the EP implementation is meant to be a
-generic library and while GIC-ITS guarantees immutability of the
-address/data pair after setup, there are architectures (x86, loongson,
-riscv) where the base MSI controller does not and immutability is only
-achieved when interrupt remapping is enabled. The latter can be disabled
-at boot-time and then the EP implementation becomes a lottery across
-affinity changes.
+> The memory pointed to by the ::rtc member is managed via devres, and
+> no code in this driver uses it past _probe().
+>
+> We can drop it from the structure and just use a local temporary
+> variable, reducing runtime memory consumption by a few bytes.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-That was my concern about this library implementation and that's why I
-asked for a mechanism to ensure that the underlying irqdomain provides a
-immutable address/data pair.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-So it does not matter for GIC-ITS, but in the larger picture it matters.
-
-Thanks,
-
-        tglx
+Yours,
+Linus Walleij
 
