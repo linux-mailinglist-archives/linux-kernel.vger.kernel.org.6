@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FE6A4AB3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D724FA4AB45
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3B33B5754
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC353B5AF3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850B1DED79;
-	Sat,  1 Mar 2025 13:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA2C1DF737;
+	Sat,  1 Mar 2025 13:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4o2HOn9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQmyFtbt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BA879CD;
-	Sat,  1 Mar 2025 13:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9578579CD;
+	Sat,  1 Mar 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836016; cv=none; b=CMmQlDRqI4pd4Okl+Rl/ho/U21DaeOnWjGTugvk4QjJN4e04OubkrLKDqN8m+hwaOfaYh6iAUaZR6u/vUI+Q2rjEqTLQImiuxQimLhU4OE/DJVxnmaWprwgCHBeqGwjLy5/UX4cAwCPnSE/IuFgRz7695hK15nf9aB5xcSrmSiA=
+	t=1740836183; cv=none; b=aKfjzYm9DFnd/O9b0MyLSVc6NSIX17iWMVhJKVb5jBnvvrlRE2YteR0R54FsUbptgbZhsDyPJ5Xj8zjO7sRzzXtbVnx0e19na3zRGfAw2quaZq6rUp3Ulbybfqz55pTj9wqTwUJCNvKeI9DaCvPUBrU8Ei+gUl98scxx25JzP4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836016; c=relaxed/simple;
-	bh=na7Oc5m3ZES7mOLyuPIWWrbAkPeR1a8qIofYaADZ0zA=;
+	s=arc-20240116; t=1740836183; c=relaxed/simple;
+	bh=+9olZMe927bo25HXvSSkBgPAgO3eFw27jWtLQ6l/+eU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U9ECPkAvbULf4DEvTK8onzw22kfjSod3/o1AyhHOOBjYc1bRKPaVJZ9ISGLwV5WC1fPtJ8eoHzeBvc5rFuMXKLPoqx89CoaErBELhQpt43VjDC9sksW5QPemNX0FBgEIZ2kS0MlgBMF1dEV9WV1PvwAQKhNPnsf130UuY+0y19I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4o2HOn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5851C4CEDD;
-	Sat,  1 Mar 2025 13:33:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UzvFN0YSXf+zJx/cohFlVKQ0veI/7Vg2kIXz8y0Y6Wq15JXV/Kfm2ZUR3iIlWbLsYaJNtusWCsLokZyQAbvLmeDfo/iYBDNziT4gcuiJi1HXKNG8eYVQOqkDRvqesOXVof5W86RBV0rswclbKf2HX1QRjCzssiSTNhjrmvELkSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQmyFtbt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA96DC4CEDD;
+	Sat,  1 Mar 2025 13:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740836015;
-	bh=na7Oc5m3ZES7mOLyuPIWWrbAkPeR1a8qIofYaADZ0zA=;
+	s=k20201202; t=1740836183;
+	bh=+9olZMe927bo25HXvSSkBgPAgO3eFw27jWtLQ6l/+eU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A4o2HOn9Zpq1oyZiNOSB39uaRvlcd/3NvlmI+JrCU4R4tVeoR8UDV3NRVamFb4doc
-	 Zo5Xj/IJTX99dVtMaAnYPmRZUASYrtqlB52Dl2Ga10gQ0t9hdPJX82fc4WsCV924Ak
-	 VpbxcT8Klm9bplJc8Lcm/7/h6MbeYQ6049ViYc77JVmhxHN+xfjqjUQe6pkwk/e7DI
-	 ohZrp9fgQOneuMT8f7TisA1Swq0EW7UX4oKvFoI+0Ovv2cTuAhmDiNpn/Omg0RGUEU
-	 JZ5M0Ggj1Xl1hMfPMkcAcshTUJHaXlmm/YrXOnFeUyoGpwR29wx2lxtBIn02wJ6BBL
-	 g6Cq5M5dS49QQ==
-Message-ID: <d5666c26-164b-4b20-ad9e-0e1e5b0d4ebe@kernel.org>
-Date: Sat, 1 Mar 2025 14:33:31 +0100
+	b=kQmyFtbtDyuo5bbqrr2PvxVxV4WLJ0eUsGg2Vf9cxH8PryGo4faSy7B022DLbwJjU
+	 2MkQwpATxW/D213tvfHM1CNNOtt0uxvH7T1fDkrI0VvceeVnCoAMC/UkU62+4CtaM6
+	 JAhttLlCy6z5u2VlVuXQeFqRfRuunExO0zt6Ct3qbTzd8VeZwA1h1pli53/PIq1yIN
+	 MPhFGA4hzatxFdXZF3h1LtfU/vyo7cPcksPJfBBblhdoZsQ6Bs+X/7dxH65S1Sv6sY
+	 M1MWqxx2XrRVqDSokvJJdlsG02ZfSdFNjn3yUGBNe3AjqzgryIyHR9pNYXsy2NlsTK
+	 qoEUXpx03IIrQ==
+Message-ID: <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
+Date: Sat, 1 Mar 2025 14:36:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.chan@amd.com
-References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
+To: Bjorn Andersson <andersson@kernel.org>,
+ Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
+ <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
+ <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
+ <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,107 +105,88 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+In-Reply-To: <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 17:45, Pratap Nirujogi wrote:
-> The camera sensor is connected via ISP I2C bus in AMD SOC
-> architectures. Add new I2C designware driver to support
-> new camera sensors on AMD HW.
+On 28/02/2025 15:14, Bjorn Andersson wrote:
+> On Fri, Feb 28, 2025 at 11:01:16AM +0530, Yuvaraj Ranganathan wrote:
+>> On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
+>>> On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
+>>>> The initial QCE node change is reverted by the following patch 
+>>>
+>>> s/is/was/
+>>>
+>>>> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
+>>>> because of the build warning,
+>>>>
+>>>>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+>>>>     ...
+>>>>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+>>>>
+>>>> Add the QCE node back that fix the warnings.
+>>>>
+>>>
+>>> Are you saying that adding this node back will fix the warning?
+>>>
+>>> I'd expect that you would say something like "The changes to the
+>>> Devicetree binding has accepted, so add the node back".
+>>>
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+>>>> ---
+>>>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>> index 23049cc58896..b0d77b109305 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
+>>>>  				 <&apps_smmu 0x481 0x00>;
+>>>>  		};
+>>>>  
+>>>> +		crypto: crypto@1dfa000 {
+>>>> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
+>>>> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
+>>>> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
+>>>> +			dma-names = "rx", "tx";
+>>>> +			iommus = <&apps_smmu 0x480 0x00>,
+>>>> +				 <&apps_smmu 0x481 0x00>;
+>>>> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
+>>>> +					 &mc_virt SLAVE_EBI1 0>;
+>>>> +			interconnect-names = "memory";
+>>>> +		};
+>>>> +
+>>>>  		stm: stm@4002000 {
+>>>>  			compatible = "arm,coresight-stm", "arm,primecell";
+>>>>  			reg = <0x0 0x4002000 0x0 0x1000>,
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>
+>> DeviceTree bindings were accepted but the comptabile string does not
+>> properly bind to it. Hence, adding the correct binding string in the
+>> compatible has resolved the issue.
+>>
 > 
-> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
-> ---
->  drivers/i2c/busses/Kconfig                 |  10 +
->  drivers/i2c/busses/Makefile                |   1 +
->  drivers/i2c/busses/i2c-designware-amdisp.c | 266 +++++++++++++++++++++
->  drivers/i2c/busses/i2c-designware-amdisp.h |  24 ++
->  4 files changed, 301 insertions(+)
->  create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.c
->  create mode 100644 drivers/i2c/busses/i2c-designware-amdisp.h
+> Please then write that in the commit message.
 > 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index fc438f445771..79448211baae 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -592,6 +592,16 @@ config I2C_DESIGNWARE_PLATFORM
->  	  This driver can also be built as a module.  If so, the module
->  	  will be called i2c-designware-platform.
->  
-> +config I2C_DESIGNWARE_AMDISP
-> +	tristate "Synopsys DesignWare Platform for AMDISP"
-> +	depends on I2C_DESIGNWARE_CORE
-> +	help
-> +	  If you say yes to this option, support will be included for the
-> +	  AMDISP Synopsys DesignWare I2C adapter.
-> +
-> +	  This driver can also be built as a module.  If so, the module
-> +	  will be called amd_isp_i2c_designware.
-> +
->  config I2C_DESIGNWARE_AMDPSP
->  	bool "AMD PSP I2C semaphore support"
->  	depends on ACPI
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index 1c2a4510abe4..cfe53038df69 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -58,6 +58,7 @@ obj-$(CONFIG_I2C_DESIGNWARE_PLATFORM)			+= i2c-designware-platform.o
->  i2c-designware-platform-y 				:= i2c-designware-platdrv.o
->  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_AMDPSP)	+= i2c-designware-amdpsp.o
->  i2c-designware-platform-$(CONFIG_I2C_DESIGNWARE_BAYTRAIL) += i2c-designware-baytrail.o
-> +obj-$(CONFIG_I2C_DESIGNWARE_AMDISP) += i2c-designware-amdisp.o
->  obj-$(CONFIG_I2C_DESIGNWARE_PCI)			+= i2c-designware-pci.o
->  i2c-designware-pci-y					:= i2c-designware-pcidrv.o
->  obj-$(CONFIG_I2C_DIGICOLOR)	+= i2c-digicolor.o
-> diff --git a/drivers/i2c/busses/i2c-designware-amdisp.c b/drivers/i2c/busses/i2c-designware-amdisp.c
-> new file mode 100644
-> index 000000000000..dc90510a440b
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-designware-amdisp.c
-> @@ -0,0 +1,266 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * Copyright 2024-2025 Advanced Micro Devices, Inc.
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + * OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/dmi.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
+> 
+> That said, what did you base this patch on? While I have picked
+> Krzysztof's two reverts in my local tree, I have not yet published them.
+> So your patch is not even based on v6.14-rc1, which now is 4 weeks old.
+> 
+> Patches sent upstream should be built and tested on a suitable upstream
+> branch!
 
-Hm?
+I sent reverts because author, even though pinged more than once (!),
+ignored reported problems.
 
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-
-Drop... or you miss bindings.
-
-Many more headers look not used or even wrong.
+It seems that reverting the code gets some attention, so maybe author
+will fix the original issue and my reverts can be dropped/ignored.
 
 Best regards,
 Krzysztof
