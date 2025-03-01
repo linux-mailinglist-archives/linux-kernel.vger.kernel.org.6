@@ -1,229 +1,187 @@
-Return-Path: <linux-kernel+bounces-539909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D10A4AAB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:42:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BB1A4AABB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E92172810
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE95166224
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 11:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DDD1DE885;
-	Sat,  1 Mar 2025 11:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F6A1DE4E3;
+	Sat,  1 Mar 2025 11:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NyXAoBQI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKAZzmvE"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE7D1D9320
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ED01DE8A2
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 11:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740829368; cv=none; b=TFry9kkJcAoXVJ1A8+5JXzB/oCys7ZuzSBa2QSsaeYw/QmflQclV6rTHwndPnD0e1BFOX5yy7cXAOMfrQkDt+UyPHU6630BFkklLjQnc9ugrjw+qrGthzQvkO4kFxq039zn6cemsvCjnL7ghNELkDZKnYJJuAM0dgIffGC+GDjk=
+	t=1740829427; cv=none; b=oP3XsBF4cpoies10Q2G/P5dVmn3suwY3PZ++Uzr4FBntV+HI32fP0aZeBL1S2DrqfAwfRL3xNNiB7dI70QQuux66MEKBSffKmbLBBzkhU3Cs8jcZyfeySyo85nREuhTHRqwVkkyDiJK0/3SxkCHijHQqH0MhuYLV/ecEsyIKQEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740829368; c=relaxed/simple;
-	bh=loQERbRAMWJK568EC+WB31N7hA3/Rm4J+/jYQDqGYLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jX2rh2CnkCUk/ifmLoki3cE0/tdzwsyCXbavztNS7w/Z4wIia2HqALAJ7/WAJdJ4ZKZhwWReUWSXXRJnkrtXmEf6yhKmsncckLZ+cVCdg/Z1s8lbEo1Z6mnyWoFds40C2hFEG0S03VT5zBaBISW3ZZNoeMOoJ66D9SocsXiuzXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NyXAoBQI; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740829367; x=1772365367;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=loQERbRAMWJK568EC+WB31N7hA3/Rm4J+/jYQDqGYLM=;
-  b=NyXAoBQI46NJW0u0ZppXrmS6k/lN5REGaFD5yb3KcOrXX/xZLT7T+3ra
-   ApfVqgv1dQN+7M2GrFn+rqkFmrpBMS73RhT5P7ccj9cC4+4yGGFmHEAy/
-   +vNtFUP8K9sWSXh5l4maGvsgPCTtjMU9wLsUawpmSfuDIcxmomQEPsNea
-   a+TWiTyrJbFOTuO75Ziebpnvk/0l9wrfz7OylQnVkiVrLAspuoo9rQpmy
-   TX8haIikWhylqWNCIUvbPLZlGaC6M04vRLl4jVG2425SVruqwkUVHCNe+
-   c2lrvF4ermavLTrHe1HTrL+GVkBnZtnpB9wkOfNYN03UCxhQmAHS5h8rn
-   Q==;
-X-CSE-ConnectionGUID: motia6L4SFGyp9TAnNjHxw==
-X-CSE-MsgGUID: taRVuzayQ1GOL908RlXxUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41673266"
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="41673266"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 03:42:46 -0800
-X-CSE-ConnectionGUID: LIFpm2bnT6OP6puLLehvnA==
-X-CSE-MsgGUID: MPA9m5RXRGi2uuacjz6cSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="122710913"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 01 Mar 2025 03:42:45 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toLEw-000GCa-2O;
-	Sat, 01 Mar 2025 11:42:42 +0000
-Date: Sat, 1 Mar 2025 19:42:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:1355:47: warning:
- '%d' directive output may be truncated writing between 1 and 5 bytes into a
- region of size between 1 and 16
-Message-ID: <202503011947.TPDmWEeE-lkp@intel.com>
+	s=arc-20240116; t=1740829427; c=relaxed/simple;
+	bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hnP1IjmZzw4vkhleJh1CVMQfuINNZ/5mGdUN5cL02kkbfzmSXCISlUJJjYc3lD+NZyvBq6+7BR8dqeAv1ICJSG1bgsrYOVTAv2mcEQz53peZYwzgvifLoePJkAzs4KeEsosy4/P+s4N8qm6FQFX2I9/MycvOTg4fvcyExxdYwtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKAZzmvE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390dc0a7605so1583182f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 03:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740829423; x=1741434223; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=BKAZzmvEnRwuhsv9v4/KVlBMZnCpKTqe54ZB754nB34LVLjvwh9yquL6RlB1ZlWf0r
+         F5Fem34fjyR8qWVS9AzF0tjVl3pv0RTfcoatq3z0ORs2iax9g2u/1Ybn9CcJJtvwfsuS
+         q8gTMSyS2C0mcpmuU8I9ZlW4yWcm2RHFef96B0nVLLVnwAJ81ZtKTosArCZLlGxQhGux
+         rkjlkdLAcQUP+wSTE/8PzfkoRTa4aE6tndAn+N1QNJynh5EODK05MxWZMzjSA7sbr6dr
+         KPPpcnj0VvO8TAMH+m5W2WPmOmK+s4aPxqbyVzznxQ7nv7lJdHfYZlB9dBfcoXAgTKYa
+         nlxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740829423; x=1741434223;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=f2mlGlf3bX02qmqkm6eKJagtMcU6KNykilFwu4MmE7jmrYKGa+HP34IDq6pqxkluqK
+         EDdZtzP6xZFH5J8bxLrBr3SJj2tenyJy/wVEPpCq3HhrNPwIl2Z6FTfe8ImkQvtqvgsD
+         rg+dOE58lOcdCOrvu1TQBwsMa7SOXaKoPBcH4IgkHzSyo5SV2CfR6YJ1pOZJGD9+DPEj
+         pnUd/KOGrEakpKIF4UcSv3dXbg6tvYQJIJPI9HwwiVX/E6yTu4XY9PH4/fIR3zBHcF07
+         Woz2d+ccy/mBqYnrqyafzgwyChuq67btp41i/IfAfuQtRLkfU2bwbmsHxFYUIpIuSN9j
+         GtgA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Mks7/JbtPp84TsOgnY3IbSWGXDUjHA28LdiyADP8pP5UzgZH0R6uiOhZZAApVdSyhAqmr9G82457RXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxr12lrJ2hCPM8TxGox6QSI3iDKmWziqZiGUI8mCqUJgI1TGBQ
+	0yzCigB9PpBy+Z3KUdb1/rFvu5FUZwwptqqT7x5pTLo9JZPpJDYsPUH7Un11FTQ=
+X-Gm-Gg: ASbGnctPXOcIi8dZkyeIkvVYQShyu+pgOQv4LkWcHryHXHTwgIywA/+J8j8EHNOvLwx
+	zvERjEv86ODgIy9QgZvfwiQdTPFvc3Pr62rLTj04FYyDJcP7zlEmROMxk3y27x6q9H6wiznxP0H
+	YXnEwPzsAAK3vA+yeWOQsZ8j/CpOSoeUqyXV/KilxeujLaF6srUo1rf3KFgEg7RpYVBJVFUPbDV
+	lHe74YCTpBJUQi6o5N68EBhiHPBZK7TrIJJOCPqR1VzjJFm7ePerQ1yTA76MamfWCHWAQWk1BhJ
+	GrkL14/Rg0UPkX5XWAeq5JBrrTb//AH3L+yutBHLaNR0dLDPGWr7Qsu11ZH1hFUdVHVs6/WXo7k
+	=
+X-Google-Smtp-Source: AGHT+IHj61UYuOocbWw/qWMpr+RAho3zm2+puTeioLvnRLnuw4Nm2xW7pb1mJ8SKDz4411HtZ7isXQ==
+X-Received: by 2002:a05:6000:1a86:b0:38d:dc4d:3473 with SMTP id ffacd0b85a97d-390eca384b1mr5985832f8f.51.1740829423579;
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.23])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796600sm8002871f8f.20.2025.03.01.03.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Sat, 01 Mar 2025 11:43:18 +0000
+Message-Id: <20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANfywmcC/4WNTQ6CMBBGr0Jm7Zj+QFBX3sOwqGWASUhLpkg0p
+ He3cgGX7yXf+3ZIJEwJbtUOQhsnjqGAOVXgJxdGQu4Lg1GmUdooXDj4VWYc5tXHgOmVFgo9Gmu
+ t07b1dV9DGS9CA7+P8KMrPHFao3yOn03/7N/kplEhte1Vqadxl6a+zxycxHOUEbqc8xc35uC0v
+ QAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2738;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnwvLngUxy+MXzTvUcVPQf/Vn4XqYkl8kM3dwFf
+ DmYVxaFXSaJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8Ly5wAKCRDO6LjWAjRy
+ ur9qEACDSxzR9tumJKwuhzgEo08hXMNwYrOiJWy/GhOTxgmk29YjAovMmjaayFfJqUgF7V6beFA
+ RS8OXsLqcO17SXY0d8+7nvES0yXgElnsfTy5oWlfypPngGZBMH+Biq/7EvmLugypVzKweBk1eQL
+ iRIFYE2ni3ce+dpFxDC5nTUXJ0B11DYR9t6EIP8Dct0YsYZ4NaCR9MWefbPleW80/Tk95sAaRdg
+ kbOPiWLJbRUC6OMqxC4wv9KlsjaHY2QnUfMhbX3bekG2kSoZW3pr7oEB5wr1ZQfvzV4BF4rpJWy
+ w/gz8M1oJe+mW43GReWWF1qlsMcmKbVFTbwSGOlnRZlrC7H6XA7MEm73BoNnV/dm4ujVKqez6KA
+ tNTQbdaQz5/Arem/o4eNCTdcR7bAixbuhs59y5uF+iIL2ShlzZGtjYTfhHK3XpvmcS5Clwfws1J
+ PKbznYWGc1YodbsuGi3reJJAAsT8vLDmSWc6HBTpWchXnF4OTcU5aDkMKwJSEvd2KlbNNQac021
+ Xd+aKXq0mvd9gUZZUCUeUrC7itF/yLQNy3yHdDNVR4VJihubXy94XNjCiX58Phmy3rMgSq976Kj
+ M5h01vqEECANqtD0xLX/F6NP9ybFg+t7xohWnoLPZGokCX5v/EcMtf5UFUh5VxBM33oUaPSV+zK
+ CfwOuaI8VtCo3lw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi Rahul,
+Hi folks,
 
-FYI, the error/warning still remains.
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   03d38806a902b36bf364cae8de6f1183c0a35a67
-commit: 2b465ed00f7db9c5b2aca95a91671f86282b1822 cxgb4: add support for mirror Rxqs
-date:   4 years, 8 months ago
-config: x86_64-randconfig-a013-20230508 (https://download.01.org/0day-ci/archive/20250301/202503011947.TPDmWEeE-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503011947.TPDmWEeE-lkp@intel.com/reproduce)
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503011947.TPDmWEeE-lkp@intel.com/
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
 
-All warnings (new ones prefixed by >>):
+regards,
 
-   drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c: In function 'cxgb4_port_mirror_alloc_queues':
->> drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:1355:47: warning: '%d' directive output may be truncated writing between 1 and 5 bytes into a region of size between 1 and 16 [-Wformat-truncation=]
-    1355 |                                  "%s-mirrorrxq%d", dev->name, i);
-         |                                               ^~
-   drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:1355:34: note: directive argument in the range [0, 65534]
-    1355 |                                  "%s-mirrorrxq%d", dev->name, i);
-         |                                  ^~~~~~~~~~~~~~~~
-   drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:1353:25: note: 'snprintf' output between 12 and 31 bytes into a destination of size 26
-    1353 |                         snprintf(mirror_rxq->msix->desc,
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1354 |                                  sizeof(mirror_rxq->msix->desc),
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1355 |                                  "%s-mirrorrxq%d", dev->name, i);
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Peter
 
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
 
-vim +1355 drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
 
-  1315	
-  1316	static int cxgb4_port_mirror_alloc_queues(struct net_device *dev)
-  1317	{
-  1318		struct port_info *pi = netdev2pinfo(dev);
-  1319		struct adapter *adap = netdev2adap(dev);
-  1320		struct sge_eth_rxq *mirror_rxq;
-  1321		struct sge *s = &adap->sge;
-  1322		int ret = 0, msix = 0;
-  1323		u16 i, rxqid;
-  1324		u16 *rss;
-  1325	
-  1326		if (!pi->vi_mirror_count)
-  1327			return 0;
-  1328	
-  1329		if (s->mirror_rxq[pi->port_id])
-  1330			return 0;
-  1331	
-  1332		mirror_rxq = kcalloc(pi->nmirrorqsets, sizeof(*mirror_rxq), GFP_KERNEL);
-  1333		if (!mirror_rxq)
-  1334			return -ENOMEM;
-  1335	
-  1336		s->mirror_rxq[pi->port_id] = mirror_rxq;
-  1337	
-  1338		if (!(adap->flags & CXGB4_USING_MSIX))
-  1339			msix = -((int)adap->sge.intrq.abs_id + 1);
-  1340	
-  1341		for (i = 0, rxqid = 0; i < pi->nmirrorqsets; i++, rxqid++) {
-  1342			mirror_rxq = &s->mirror_rxq[pi->port_id][i];
-  1343	
-  1344			/* Allocate Mirror Rxqs */
-  1345			if (msix >= 0) {
-  1346				msix = cxgb4_get_msix_idx_from_bmap(adap);
-  1347				if (msix < 0) {
-  1348					ret = msix;
-  1349					goto out_free_queues;
-  1350				}
-  1351	
-  1352				mirror_rxq->msix = &adap->msix_info[msix];
-  1353				snprintf(mirror_rxq->msix->desc,
-  1354					 sizeof(mirror_rxq->msix->desc),
-> 1355					 "%s-mirrorrxq%d", dev->name, i);
-  1356			}
-  1357	
-  1358			init_rspq(adap, &mirror_rxq->rspq,
-  1359				  CXGB4_MIRROR_RXQ_DEFAULT_INTR_USEC,
-  1360				  CXGB4_MIRROR_RXQ_DEFAULT_PKT_CNT,
-  1361				  CXGB4_MIRROR_RXQ_DEFAULT_DESC_NUM,
-  1362				  CXGB4_MIRROR_RXQ_DEFAULT_DESC_SIZE);
-  1363	
-  1364			mirror_rxq->fl.size = CXGB4_MIRROR_FLQ_DEFAULT_DESC_NUM;
-  1365	
-  1366			ret = t4_sge_alloc_rxq(adap, &mirror_rxq->rspq, false,
-  1367					       dev, msix, &mirror_rxq->fl,
-  1368					       t4_ethrx_handler, NULL, 0);
-  1369			if (ret)
-  1370				goto out_free_msix_idx;
-  1371	
-  1372			/* Setup MSI-X vectors for Mirror Rxqs */
-  1373			if (adap->flags & CXGB4_USING_MSIX) {
-  1374				ret = request_irq(mirror_rxq->msix->vec,
-  1375						  t4_sge_intr_msix, 0,
-  1376						  mirror_rxq->msix->desc,
-  1377						  &mirror_rxq->rspq);
-  1378				if (ret)
-  1379					goto out_free_rxq;
-  1380	
-  1381				cxgb4_set_msix_aff(adap, mirror_rxq->msix->vec,
-  1382						   &mirror_rxq->msix->aff_mask, i);
-  1383			}
-  1384	
-  1385			/* Start NAPI for Mirror Rxqs */
-  1386			cxgb4_enable_rx(adap, &mirror_rxq->rspq);
-  1387		}
-  1388	
-  1389		/* Setup RSS for Mirror Rxqs */
-  1390		rss = kcalloc(pi->rss_size, sizeof(u16), GFP_KERNEL);
-  1391		if (!rss) {
-  1392			ret = -ENOMEM;
-  1393			goto out_free_queues;
-  1394		}
-  1395	
-  1396		mirror_rxq = &s->mirror_rxq[pi->port_id][0];
-  1397		for (i = 0; i < pi->rss_size; i++)
-  1398			rss[i] = mirror_rxq[i % pi->nmirrorqsets].rspq.abs_id;
-  1399	
-  1400		ret = cxgb4_config_rss(pi, rss, pi->rss_size, pi->viid_mirror);
-  1401		kfree(rss);
-  1402		if (ret)
-  1403			goto out_free_queues;
-  1404	
-  1405		return 0;
-  1406	
-  1407	out_free_rxq:
-  1408		free_rspq_fl(adap, &mirror_rxq->rspq, &mirror_rxq->fl);
-  1409	
-  1410	out_free_msix_idx:
-  1411		cxgb4_free_msix_idx_in_bmap(adap, mirror_rxq->msix->idx);
-  1412	
-  1413	out_free_queues:
-  1414		while (rxqid-- > 0)
-  1415			cxgb4_port_mirror_free_rxq(adap,
-  1416						   &s->mirror_rxq[pi->port_id][rxqid]);
-  1417	
-  1418		kfree(s->mirror_rxq[pi->port_id]);
-  1419		s->mirror_rxq[pi->port_id] = NULL;
-  1420		return ret;
-  1421	}
-  1422	
+---
+Peter Griffin (4):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
 
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 293 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  51 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 321 insertions(+), 197 deletions(-)
+---
+base-commit: f7da3699c901aea6a009d38116d24c67a4c9662e
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Peter Griffin <peter.griffin@linaro.org>
+
 
