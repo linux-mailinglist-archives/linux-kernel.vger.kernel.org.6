@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-539778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA08A4A86F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:03:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43954A4A873
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 05:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAAB7A60B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0B818997C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 04:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21721C1F1F;
-	Sat,  1 Mar 2025 04:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420A91AF4E9;
+	Sat,  1 Mar 2025 04:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvOz6dOT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dqxEFTN4"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1259F1B87F3;
-	Sat,  1 Mar 2025 04:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87BB1519BE
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 04:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740801776; cv=none; b=C53VMjP/LNmyL0ER0R7evhoDIazv9RtO1BG7VPxb7AAkZQ9Eqcs313379NWuCLCEcwXdaQeCW+jSdG7eks/XX84c4kduExql4gYwZ0bpjhgJtv2H2aJKgHuydZycadoHUAQokkjX/WQYj8K53of4OFRt+gmWxFgHxE6XXajxYeA=
+	t=1740802575; cv=none; b=EHB5H82C9gHXfUmI/fi0Lghz/49sW3Dv8PpNyE9JvOngKh8MAxLQjNydosyDYLCOEYsoZMA9otcUB+Ej2SOy50Ig+vsTLTTUSPRey873/DXmS7XfrZMn7nWzqTYaYxrnJAwG+qVUipTwUUDno3X4t05udpu9FS7c0Pp8R4MrLpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740801776; c=relaxed/simple;
-	bh=4e5iV1jyt44+vFhgI8mzweFLermL3m37/dLdNcU2d2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UAIwpRUFAp1+QWD0YUabbOKeu4uImJTbQPpQOhX8RNhql8xydbt73jDOXiSYjB+LeKElGYACdutqZG3ISKKErIYDx8RzzBxVbKT7o3HhsHTaufjOf5CZWrwcYetqkEPx42YMB574zNheUJsBFexjYvY4AKwH4SKPapRtqL7jeLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvOz6dOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B26C4CEE6;
-	Sat,  1 Mar 2025 04:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740801775;
-	bh=4e5iV1jyt44+vFhgI8mzweFLermL3m37/dLdNcU2d2A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OvOz6dOTQ7658+ndf+zgKMBRg26gYWGlCgFa3qPI7oWrsAvt96aGx2ljvuqP7vr95
-	 sBkdEfzb1Vr6VqLD6CNEm5mT0kO9bsWPtCNfsGWjUr7vr5iemk+ssjPZ/iD+q1eI1u
-	 Ji4nTlf1yUeGDXrzpktp/snr1mv60r1t/Wxxbe8BSx+NtlMivkRInY7DA7w1cVseCI
-	 BkCg+rk10b/cMm0MQ2K8fUSrhqozij5HxSamDzatWpvojEEEem3pN9CT2xUAX6iacL
-	 ntkhj0svisdIfDUaZJpIE1ZeZfFvdHAJ2VTgrGx9MP8AdZfAGLRApNSSIf+p5wuhib
-	 TamHgA0vIVpgw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 4/4] perf test: Add trace record and replay test
-Date: Fri, 28 Feb 2025 20:02:52 -0800
-Message-ID: <20250301040252.1586750-5-namhyung@kernel.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-In-Reply-To: <20250301040252.1586750-1-namhyung@kernel.org>
-References: <20250301040252.1586750-1-namhyung@kernel.org>
+	s=arc-20240116; t=1740802575; c=relaxed/simple;
+	bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DUqVxM491GwLRhwGx0SYyUmUr8cilM8zFEKc6XUcT9tUSxCztOGMrC99yxS04RUmp60X7A7Ou5W2gsuHSCd4nmECbB56V20pLwDGe3X/huNqfuF2W+CdkEm//Rv17BgucW3U0GBe4DVTRI6mVEL/cEFJr8KgWcvyr/mw64IUO9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dqxEFTN4; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54298ec925bso4138423e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 20:16:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740802572; x=1741407372; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
+        b=dqxEFTN4T+LXT8b/WGkWy3B6mb3egi21CVMTXjvbd8GUrkJEp4RsQLMXzwFjABlnys
+         EyWGxaN8RxwDJgmT4Ho4J9wQdn5NhnLVV/r6vvH21ehUIR1OdbpsdWZYh9g6Zi+9qQp+
+         LYUBFiMTHCdALkboNfGsDFdVXQRS5dZg7VaS4v8L7prSDQbwV6Mg58oFUfDhv0PUyNLl
+         8R3nmWcgPsJWIDG/19gPv0zOU5YJwwMDVbJRXQi0GChfB8BxkFjNiDnZzaR48PIQN5zG
+         OFhGRLmJiA5uyelk2i5G8lfVUjLjyARxh65oE9aanbQjYy0WMzwgMYwcrkSGtSeedAGo
+         KwLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740802572; x=1741407372;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nRJXVNbZUpNIBtt8TFs13UDH3fN+Tw1tbm1ZW4YHs/4=;
+        b=nHADhTFrbSQgJBhVkjQhUQXDRHnuFkgEIQVK62gTQA0EtNavadJ4fE3B9HLkyrlA2o
+         Fdz6wLcc5jy9OapKIjECrPnetftQlwdn5lI1nSjCTvnQtAU35jTkiB3f4+ysR0Th4hdK
+         qgpBQ2QB34TMiX6+Hf/Z7OGNfYktMp2+KNMXsvOoFxR2hovnvupgkAJW2yQuh/CgImxK
+         4lyxCFQBoB6HRf8hshbAcI16K8rK43ztJfOXEZkRaEoyh7muuC3Jra2Yu3l8vpzU8oQZ
+         gEk3dpALRt0CXmcyLoe/FuJdonl64ghBB1zyUNhN35WhQFPVfuRAWtfPC9O5nLIa3TI6
+         pu1A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7uwwaCMAwniN1B8AGgSP6p09m2+45YxvJPsBnD7IOCaJog1auSl+Q0gF+m34gjcbCPagcosbwmYov5KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZhfNxK4usD1uGfB3yAXDGS3wdlywGS8CK8S9pOxRcIrfl71WH
+	SRDcjz+w0h86xUFAceEopsfPh228Lua9dv0hs+SC+PII9JbLfEvQxcxiavReAVh7oZfQgtJPKf9
+	6dElv85sH9DZOYsmjmJ+IOLDqVk6zKGrR0xYTrUAgElUkb37R+//xj9Nt
+X-Gm-Gg: ASbGnct4plmNx0HKvs1P2tgT/sd964zUyqmv/mWy5xtHGwA8mLWULUhtVMlwkFhzCkX
+	70xs4/fSfpi5WHf6R1qxgOtMuRTnh3tMjw27vcYT+vPCSqdBw/kqLt9UpaTuOIyZgv5tffkF2d7
+	OYnOpV81yvGlmJYRNpD/QOuMDkl/xXixE=
+X-Google-Smtp-Source: AGHT+IFP5aCHULz6zpIiPlJszPYhhIKQa4bjgAfv6H6nwuK5koq1iQ2nHbNDaxSV+n8l900FUXdJNFmIzAGeKlhCAx4=
+X-Received: by 2002:a05:6512:693:b0:545:b28:2fa9 with SMTP id
+ 2adb3069b0e04-5494c122af7mr2774025e87.16.1740802571668; Fri, 28 Feb 2025
+ 20:16:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1740504232.git.nicolinc@nvidia.com>
+In-Reply-To: <cover.1740504232.git.nicolinc@nvidia.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Sat, 1 Mar 2025 12:16:00 +0800
+X-Gm-Features: AQ5f1Jq1aPPNEUtuYw2bvAu1XDeZv-PKWUyrHeAmpxtPMb0nHo1DtYawDISk28E
+Message-ID: <CABQgh9FYqzoUxjR246QBPGW9jqngK1JpgfACvBTLTHq-mBBCJg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/14] iommufd: Add vIOMMU infrastructure (Part-3: vEVENTQ)
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org, 
+	joro@8bytes.org, suravee.suthikulpanit@amd.com, robin.murphy@arm.com, 
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org, 
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com, smostafa@google.com, 
+	ddutile@redhat.com, yi.l.liu@intel.com, praan@google.com, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-It just check trace record and replay could display correct output.
-It uses 'sleep' process and sees there's a clock_nanosleep syscall.
+On Wed, 26 Feb 2025 at 01:33, Nicolin Chen <nicolinc@nvidia.com> wrote:
+>
+> As the vIOMMU infrastructure series part-3, this introduces a new vEVENTQ
+> object. The existing FAULT object provides a nice notification pathway to
+> the user space with a queue already, so let vEVENTQ reuse that.
+>
+> Mimicing the HWPT structure, add a common EVENTQ structure to support its
+> derivatives: IOMMUFD_OBJ_FAULT (existing) and IOMMUFD_OBJ_VEVENTQ (new).
+>
+> An IOMMUFD_CMD_VEVENTQ_ALLOC is introduced to allocate vEVENTQ object for
+> vIOMMUs. One vIOMMU can have multiple vEVENTQs in different types but can
+> not support multiple vEVENTQs in the same type.
+>
+> The forwarding part is fairly simple but might need to replace a physical
+> device ID with a virtual device ID in a driver-level event data structure.
+> So, this also adds some helpers for drivers to use.
+>
+> As usual, this series comes with the selftest coverage for this new ioctl
+> and with a real world use case in the ARM SMMUv3 driver.
+>
+> This is on Github:
+> https://github.com/nicolinc/iommufd/commits/iommufd_veventq-v8
+> Paring QEMU branch for testing:
+> https://github.com/nicolinc/qemu/commits/wip/for_iommufd_veventq-v8
 
-  $ sudo perf test -vv replay
-  108: perf trace record and replay:
-  --- start ---
-  test child forked, pid 1563219
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.077 MB /tmp/temporary_file.w1ApA (242 samples) ]
-       0.686 (1000.068 ms): sleep/1563226 clock_nanosleep(rqtp: 0x7ffc20ffee10, rmtp: 0x7ffc20ffee50)           = 0
-  ---- end(0) ----
-  108: perf trace record and replay                                    : Ok
+Thanks Nico
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/trace_record_replay.sh | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100755 tools/perf/tests/shell/trace_record_replay.sh
+Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
 
-diff --git a/tools/perf/tests/shell/trace_record_replay.sh b/tools/perf/tests/shell/trace_record_replay.sh
-new file mode 100755
-index 0000000000000000..f948a84072b7a9b1
---- /dev/null
-+++ b/tools/perf/tests/shell/trace_record_replay.sh
-@@ -0,0 +1,21 @@
-+#!/bin/sh
-+# perf trace record and replay
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Check that perf trace works with record and replay
-+
-+# shellcheck source=lib/probe.sh
-+. "$(dirname $0)"/lib/probe.sh
-+
-+skip_if_no_perf_trace || exit 2
-+[ "$(id -u)" == 0 ] || exit 2
-+
-+file=$(mktemp /tmp/temporary_file.XXXXX)
-+
-+perf trace record -o ${file} sleep 1 || exit 1
-+if ! perf trace -i ${file} 2>&1 | grep nanosleep; then
-+	echo "Failed: cannot find *nanosleep syscall"
-+	exit 1
-+fi
-+
-+rm -f ${file}
--- 
-2.48.1.711.g2feabab25a-goog
+After rebase on your branch
+https://github.com/Linaro/linux-kernel-warpdrive/tree/iommufd_veventq-v8
+https://github.com/Linaro/qemu/tree/for_iommufd_veventq-v8
 
+Tested with multi-device in guests, with io page faults happen.
+
+Thanks
 
