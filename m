@@ -1,155 +1,151 @@
-Return-Path: <linux-kernel+bounces-540076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB10BA4AD57
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:28:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC36A4AD54
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:26:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368FF16EAC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:28:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C3A1700B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 18:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A8C1E3DE5;
-	Sat,  1 Mar 2025 18:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9350B19D067;
+	Sat,  1 Mar 2025 18:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFroAZXu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fMRzFkOO"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0F58494
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185A38F7D
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 18:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740853697; cv=none; b=pXycjKpWt2MHUh6YnMtGgkvZZlgY7RUvztsQk0I+ISPSs8RlbilhYRDoRO8hVXI8MV3sfl8KX7wTPWCSG25cXoRb2Xpa5XL9LHhvlEM32mko2U2rT8NQhaVkzdYq9PSVblPBzFf8LJCfYjbt0YjqQVDtvqeIvnz2Ks6BxOnaWeU=
+	t=1740853606; cv=none; b=MtPUu9qNgR/tWXuC/j286J/tYsE6cHgIn1iLKhYBeXFdqEyWr4Bdf22e8T64BF9OITtRz/+TKxhS3yFS7APQ4bQGdvHxNZBTk+/5Nw87ccN8NgTN/M4sdsfZTfsmZcY+JA2rYRSdNaaADTwweiAu+NTFsAlG7snaLzvzDtcbqOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740853697; c=relaxed/simple;
-	bh=dJf+HMWGk7CdzmhSxBAOuYKx6KFCFvhsX21yszjN19k=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=NhJjaTuuO1fHtTTsrcJ7mujaJAg1McQocZH4M0JvI7cf5XwzPDrgwSqJ2uc7jt3PC2jlSiB1X2F6Z4UzHDlis/jNeZ9CNo/ugxU+52ccMGsJIABywP/1DMzMv3V7wJMsBDMbA/YDzQtGABmVbife1VtvZ5F2dEqKYQ3e1aKA5ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFroAZXu; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740853695; x=1772389695;
-  h=date:from:to:cc:subject:message-id;
-  bh=dJf+HMWGk7CdzmhSxBAOuYKx6KFCFvhsX21yszjN19k=;
-  b=gFroAZXu1Z8XUz/KoIeWUFaDGhmBTsSriqhLLO8aQnhUgw/m79reol0N
-   axWcDd15SUguTQ9EpAk08WlW6jwjzCnCrZwzJT1UpNHFRcO6iKxSPMFVR
-   Ubojzl0PzhkbTn+Dktisvnta5+nwXX55XoCxlHJHbME+amjOioWhiDnnU
-   IjF4WXRCy0VDzdB1sP2YPNrAHWLe6z/ZYFRs7VQWzbdB+jnWr2vo4h4HI
-   DZMlfb2ncLHFKK+0Az2/JsqfWqocdTpWDlsdz1H6qMQbMPmvIZCCPRzAg
-   cidgJzisS7ECOdfJL7D6U0TxuBUxaz8L7gtt4iYMtT2dhC22pPSI4Xmku
-   Q==;
-X-CSE-ConnectionGUID: kw8Ay2rqSSmgji6JtrmAsA==
-X-CSE-MsgGUID: +QajHtOOQea22Rfpqz7Uxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="42014952"
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="42014952"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 10:28:14 -0800
-X-CSE-ConnectionGUID: CHwU4Fr6R+6NOcfuEeWBpA==
-X-CSE-MsgGUID: XSSnOCigRgeSGtJCWPEebg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="117807785"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 01 Mar 2025 10:28:13 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toRZK-000GYo-31;
-	Sat, 01 Mar 2025 18:28:11 +0000
-Date: Sun, 02 Mar 2025 02:26:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/mm] BUILD SUCCESS
- fd5935f9c20431eeadd6993fd4d2672e3e17a6b8
-Message-ID: <202503020210.HJ4ExkdY-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740853606; c=relaxed/simple;
+	bh=BUyMLGKoaHqFNhbLKEJ58fyXJjdRMGC55aFapC0p4wY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iJXpC7mfk2vw8nQeCZwUloGYuRa+1K8kJY7QLjoOKlGvcgEspUUrHT8QJGBHjagBfGaoVwCrYTjN3zG2ZKLJoJ1k3BOTuXOX59e6FCy4tqvSQpHLaOyWmS+6Yu8XR6x1U8GhP5oPv3sercKx0F4eX4Wf75a4DSqtY+ddqsOlWMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fMRzFkOO; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fea4cc08edso778158a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 10:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1740853604; x=1741458404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
+        b=fMRzFkOOKcMjTTlMfvXI6XW6m//lZz5lzzozKlSLnQjxSkA9qOyrEm1haetQuxpx7c
+         DfT01qDqg36rU8sS/AqFeDnacj3QzixK7JZTum5kXqicb3GGxeqt/XsJU/fOP7zKr1CJ
+         RZsWadzAR0tun23368kJ6MOoWoY7thSwziXsWkyDRuISH4JciN+D7Z6aQ5uXujPne+EM
+         xzdtO+hgf9Gq3lzcghkgO3QYN4/QEn2RDKHXeHN9AuL2oF0nE6kJR0Bp2RwYCir3OGk6
+         GInDlgaxm4qpJAMbzhBb2BcuIGEU8x9VGDyZ+uA6kfnK42NbMlrUCoJnLM8416+3MW2w
+         HPDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740853604; x=1741458404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n1fJlUaLf1gxbdB/IQ3C9C6Fd5Y0TrYQvEpDMwroLec=;
+        b=qd74J2np14lkucpBAImIUr1Fm/vrnblbXK2aDwnJAnCeQmqZuH2QCjADw8PCgkr3/M
+         j+AtY8TTsYP1EU9cYSOxtXFJrsOUPvKji3fASZMpdXvIGAOpZ7M3sJj+gk0Qwz6wM2is
+         sPr414rjv3qlc+Sci9jZ1bf+yiyyjfVzhnXH8z9yZorQyBdbRdK1fNsKP46KP6aLpMTq
+         wF3xEy8FBu9ysvj1wTqG32/FyFrp9DJccQ6w+/rOc7Q7rUTLPg5+PYfN1ylMAftpFXmx
+         CJIllMwrXBIbJQfnvCNxQpe05b0RGu9+YmWE35eeQK+aOsEpKQ3C31cuHignv8qYZMEH
+         EYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGZ8ony6Pm8F7U3oolwXb1iLWSJz63CcI4Tgf4cY/NoZKTOQeJQG0OubEmQXPuodKkk0TTcDEWqnTwW6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywUDi6FBZRM1jOcpUsmv8qXZDxghvv94V/WCZOgW4KPejk1j2n
+	gOxlQmfZxEqEuC1N3LmxLy4FNCUM6045k4tWvoRXvoZMEpV77G295MF7N5U/ffQyRISMuTDrNqP
+	L0xVRl/XuKpN2pOtsSpI9TfXMn9BhNOtqfnlZLeBCoSAtykwn7bo=
+X-Gm-Gg: ASbGncsS3lJVrqKLE6HHXYEqBgDGrJdX9Cyv6L1LTXrE79zOxrVtQp1NCeiInfybk6L
+	ZvFClA05sYQ9/b1FLShIw5iaiSyjVwtNmSnsaDFmffIZRj6rTNLUpmyM8dOMEpQoL3FBwGkDckG
+	/Datwv4XhgZcCtPQ2WhkT5ECHM
+X-Google-Smtp-Source: AGHT+IFldxOK6OJbDdbWpVRrspMM77OA3WhEQBn3nrMDky43Gr52XcLxm7oy/5RrmJlVL3sdDmhBzIRbDFjUTuC7qE4=
+X-Received: by 2002:a17:90b:1d10:b0:2fe:afef:b706 with SMTP id
+ 98e67ed59e1d1-2febac10656mr4566239a91.7.1740853604275; Sat, 01 Mar 2025
+ 10:26:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250228235916.670437-1-csander@purestorage.com>
+ <20250228235916.670437-3-csander@purestorage.com> <f74d6e16-29fb-4a9a-a6aa-9a7170c683ba@gmail.com>
+ <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
+In-Reply-To: <7d64216e-4bf8-4557-b8a8-7285f161a2a7@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sat, 1 Mar 2025 10:26:32 -0800
+X-Gm-Features: AQ5f1JoAnn34QyE_05Wc_hwwFc2GahHIUfSpbqlLvw2hci4HLHC_a_BQDPGL19g
+Message-ID: <CADUfDZqZ794CXKPeXnJ3oX3MrKPg6VtgQATLOTmrMv5wEhucRA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] io_uring/rsrc: call io_free_node() on
+ io_sqe_buffer_register() failure
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
-branch HEAD: fd5935f9c20431eeadd6993fd4d2672e3e17a6b8  x86/mm: Check return value from memblock_phys_alloc_range()
+On Fri, Feb 28, 2025 at 6:23=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2/28/25 6:31 PM, Pavel Begunkov wrote:
+> > On 2/28/25 23:59, Caleb Sander Mateos wrote:
+> >> io_sqe_buffer_register() currently calls io_put_rsrc_node() if it fail=
+s
+> >> to fully set up the io_rsrc_node. io_put_rsrc_node() is more involved
+> >> than necessary, since we already know the reference count will reach 0
+> >> and no io_mapped_ubuf has been attached to the node yet.
+> >>
+> >> So just call io_free_node() to release the node's memory. This also
+> >> avoids the need to temporarily set the node's buf pointer to NULL.
+> >>
+> >> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> >> ---
+> >>   io_uring/rsrc.c | 3 +--
+> >>   1 file changed, 1 insertion(+), 2 deletions(-)
+> >>
+> >> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> >> index 748a09cfaeaa..398c6f427bcc 100644
+> >> --- a/io_uring/rsrc.c
+> >> +++ b/io_uring/rsrc.c
+> >> @@ -780,11 +780,10 @@ static struct io_rsrc_node *io_sqe_buffer_regist=
+er(struct io_ring_ctx *ctx,
+> >>           return NULL;
+> >>         node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
+> >>       if (!node)
+> >>           return ERR_PTR(-ENOMEM);
+> >> -    node->buf =3D NULL;
+> >
+> > It's better to have it zeroed than set to a freed / invalid
+> > value, it's a slow path.
+>
+> Agree, let's leave the clear, I don't like passing uninitialized memory
+> around.
 
-elapsed time: 1454m
+io_rsrc_node_alloc() actually does already zero all of io_rsrc_node's
+fields (file_ptr is in a union with buf):
 
-configs tested: 63
-configs skipped: 1
+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type)
+{
+        struct io_rsrc_node *node;
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+        node =3D io_cache_alloc(&ctx->node_cache, GFP_KERNEL);
+        if (node) {
+                node->type =3D type;
+                node->refs =3D 1;
+                node->tag =3D 0;
+                node->file_ptr =3D 0;
+        }
+        return node;
+}
 
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                  randconfig-001-20250301    gcc-13.2.0
-arc                  randconfig-002-20250301    gcc-13.2.0
-arm                  randconfig-001-20250301    gcc-14.2.0
-arm                  randconfig-002-20250301    gcc-14.2.0
-arm                  randconfig-003-20250301    clang-21
-arm                  randconfig-004-20250301    clang-21
-arm64                randconfig-001-20250301    gcc-14.2.0
-arm64                randconfig-002-20250301    clang-21
-arm64                randconfig-003-20250301    clang-15
-arm64                randconfig-004-20250301    clang-17
-csky                 randconfig-001-20250301    gcc-14.2.0
-csky                 randconfig-002-20250301    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250301    clang-21
-hexagon              randconfig-002-20250301    clang-21
-i386       buildonly-randconfig-001-20250301    clang-19
-i386       buildonly-randconfig-002-20250301    clang-19
-i386       buildonly-randconfig-003-20250301    clang-19
-i386       buildonly-randconfig-004-20250301    clang-19
-i386       buildonly-randconfig-005-20250301    gcc-12
-i386       buildonly-randconfig-006-20250301    clang-19
-loongarch            randconfig-001-20250301    gcc-14.2.0
-loongarch            randconfig-002-20250301    gcc-14.2.0
-nios2                randconfig-001-20250301    gcc-14.2.0
-nios2                randconfig-002-20250301    gcc-14.2.0
-parisc               randconfig-001-20250301    gcc-14.2.0
-parisc               randconfig-002-20250301    gcc-14.2.0
-powerpc              randconfig-001-20250301    clang-17
-powerpc              randconfig-002-20250301    clang-19
-powerpc              randconfig-003-20250301    clang-21
-powerpc64            randconfig-001-20250301    gcc-14.2.0
-powerpc64            randconfig-002-20250301    clang-21
-powerpc64            randconfig-003-20250301    gcc-14.2.0
-riscv                randconfig-001-20250301    gcc-14.2.0
-riscv                randconfig-002-20250301    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250301    clang-15
-s390                 randconfig-002-20250301    gcc-14.2.0
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250301    gcc-14.2.0
-sh                   randconfig-002-20250301    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250301    gcc-14.2.0
-sparc                randconfig-002-20250301    gcc-14.2.0
-sparc64              randconfig-001-20250301    gcc-14.2.0
-sparc64              randconfig-002-20250301    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250301    gcc-12
-um                   randconfig-002-20250301    gcc-12
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20250301    clang-19
-x86_64     buildonly-randconfig-002-20250301    clang-19
-x86_64     buildonly-randconfig-003-20250301    gcc-11
-x86_64     buildonly-randconfig-004-20250301    gcc-12
-x86_64     buildonly-randconfig-005-20250301    gcc-12
-x86_64     buildonly-randconfig-006-20250301    clang-19
-xtensa               randconfig-001-20250301    gcc-14.2.0
-xtensa               randconfig-002-20250301    gcc-14.2.0
+How about I remove the redundant node->buf =3D NULL; in a separate
+patch, since it's not dependent on switching the error path to
+io_free_node()?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Caleb
 
