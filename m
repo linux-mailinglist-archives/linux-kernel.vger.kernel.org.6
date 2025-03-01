@@ -1,231 +1,167 @@
-Return-Path: <linux-kernel+bounces-540007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA82A4AC49
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:35:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2B8A4AC59
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E747A4DCF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132D1188F477
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3304C1E1025;
-	Sat,  1 Mar 2025 14:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AD71E1C1F;
+	Sat,  1 Mar 2025 14:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jq/ql4+6"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXAd3yx5"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9986D63A9;
-	Sat,  1 Mar 2025 14:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CCB1C5D7E;
+	Sat,  1 Mar 2025 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740839721; cv=none; b=ovGcEkLWXVle3m6hlbDiZH92VEbaxiFT5GvixEJcoZGiSxnUQ5tE2uu78/2ZI0X0OppygIq4B+CAHDMJbsauaeTgLIeRHzWvqSmI2zU1ioqrvgGoUi/XGk9IB1q88IjYCjmhSYErfKx+iTfQDeU+EzdjEokC/3IvjR/ukXsZcGo=
+	t=1740840104; cv=none; b=qA2h4R9E/zZaHPHiAf6Lj2eJK+96eDZCd6NlIMWceMrDgxhr2gpZioeY+yjYSKXxekEKZymptk7o8fI5/dneADxvOxASanIBNfiITz0z8sKS6pJ57b9wibk3N+AAmYn6ZLMLgocclktxWX9UuGfafv1NRFn8Q4xU+lQXNKnjRzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740839721; c=relaxed/simple;
-	bh=vOx2aCR711x8XBMo5usk7el1mpTt/EExYD3ss0D/AD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmfcOzvsGhKlNkrtR4Gg/17cB2J/Cvthhh5E+HBzcM8PnXTKXi8VkQI+ByHUd3IyAABJigMqE3o0v6rKLqME7phRigw0p732GxOGMNbH+vrvrGpfu+cgXD74VaTigPpUiC7G2getQPq4k9Rxr8aQ6CRVjExbKQAyIAc2zqa148s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Jq/ql4+6; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BD0DA66B;
-	Sat,  1 Mar 2025 15:33:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740839622;
-	bh=vOx2aCR711x8XBMo5usk7el1mpTt/EExYD3ss0D/AD4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jq/ql4+6oMrO70oDvXDSy6Ow+xYAlNbU24jR2LiPzTBdEHCyHtvtF3d/RRjH8ABr9
-	 HWdKdQljD3upBXq7gO6Ju16cNJzvWBd1ShXvVeTW7d53A5dAMQ1l/lMpecRzghS4tY
-	 PaM30k0UNsah8UYFpXRY8QBHltPiFLTKwLIU9jfo=
-Date: Sat, 1 Mar 2025 16:34:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: rkisp1: Set format defaults based on
- requested color space
-Message-ID: <20250301143453.GJ7342@pendragon.ideasonboard.com>
-References: <20250227114558.3097101-1-stefan.klug@ideasonboard.com>
- <20250227114558.3097101-2-stefan.klug@ideasonboard.com>
- <20250301010252.GI7342@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1740840104; c=relaxed/simple;
+	bh=iVyKzVfxR8LdP5by3NoY8zhrOtkB7jVDbkJlfjDY8OE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i33y+QhGTXfY+eBFUMVdcDqKH90N6ZvAnsxa7pY/0n0pQTNi74Rivh3Bsft9g1TgAuJumlUfif01CMu5UVjRVpEYQSthqTltJ9E3WE1ekV6Wb0osQyK1hi3BSsngAdX9G4c4DalRRtlQ4vn3HR4bp2JQmWl3SOKWBa00EHSIrQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXAd3yx5; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4399d14334aso28178315e9.0;
+        Sat, 01 Mar 2025 06:41:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740840101; x=1741444901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCZ2IYJ2ToIg9/KMdOINj9YW27Hjn4u6ydCp4dWPNz0=;
+        b=cXAd3yx5//5slt2qnIcdo/Rurc/kPrddZ8Irwo8c+AJk3fSviyxjQABZ8ha9wlyg6T
+         XINrSdt2pV+fl2TFmO0RsjpkEibXbLKfugMJJFXGM0ENVhHUMhrSOmnyH7RoyGKI3KF2
+         6p6uOsHM7KAdR7Igsc22AvBpqb+/gnFCwNt1pBV2OqMlXLzkJFSxgT3SZBbCkN5cOjQd
+         Yp5pLRrg4v8y7SNAZBofyOwm376hSDTjTYXO4ALK9N0Mb+GpYSdTi9iLaKx5cZX9Nw5v
+         45wPHD0rUCvf61koT5Yg7TwRJRlkkA79o4oRXx3cijkX+Z9TaZPIZv/BdpiuqOVyERy4
+         nt+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740840101; x=1741444901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XCZ2IYJ2ToIg9/KMdOINj9YW27Hjn4u6ydCp4dWPNz0=;
+        b=JyCPPa58qu8bHmPJEJPVqyVhrZ6neE+VnFRbyBweebi9D/+meTtyYjSmVx8vIemt2y
+         vdvpV7kkczXgDyCAfb/0WRRdCIAtUZI7s02oy4pa7+gThMHjSFGn5iCxsjjrcSaJYghH
+         6iOXL/xsTAs/wRJVfhss78nv1PP8GSCEIwK5c4aLj+Hu26dizbR1wZNWO5hiiyl57oAc
+         tEW95hItHJBIGVXroCCKVRkhcKRx7OMGG4oh7fITGRlMC3Nhhl/KCG8cjaxeWzJWgV8w
+         j3CXu5BpO9xjVGUlK85HmXbx6Vagd4qm68jPhISReaBukVVEFzF1aBP+90cSQPYZmYY9
+         yfrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK6tesC6edEXUDEEBW+F/aAkJCeHUvvVrUIHnQcWGRD8YAvPfED21S/XFJdnL8O8pem2mQYCX5Y6l44Bg=@vger.kernel.org, AJvYcCWvjbgxJ3T27gJ1Jp5Awhy2jhpWtBlBkfKTahnYv9sDeCOhh3FTw0SHz3lyR/pRpMYV89/8Nw3k@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6YnLLf0Xj74THDVBk6GZF4QXniq88r4evqCQwDt2dFJ513Vny
+	8ZRtLlIomQavNDNhFh3tKX63jZIc2HaS9qiZbnRR7XidW90LFh0Q
+X-Gm-Gg: ASbGncv/nZqqXOv9WyIFzo6d2XRZm6FOk1xquCMNrPu4E80x6IPqOcZ+e6cwpp+b6q1
+	UiTCL2SJTj+iozM628lBPcZZ3DA8X+6W4niTmWz+ctdJlovXIIXC2QBCYOiDhbdiCwUQMyRfaEf
+	y1g9T1AehmGviwZWtkZDAR0meRKHYTUw34+Q/PDeylN9p+WKSxC1ml3bIaYO7GK6iWosKqTvMc1
+	zDWsMS+mCHN3rEwpWmWTwJulbb5v0jHKK9MZ/577gm3JGfF7KpHlipR6htXiPHuJtZwFb8uTxs5
+	5xnpeK72wTowe3A9kzhbG5ZH9AN5Lbm10/frNtCDfZ7Jh75loBRFqJBVTqg=
+X-Google-Smtp-Source: AGHT+IE7BqfWKIc6fP9w4TydXM/STuAZnBVGkxNgCzpMCvHzilFb+OhHXakcpD6IR5NJpQlPSJwzCA==
+X-Received: by 2002:a5d:6da3:0:b0:38d:d666:5448 with SMTP id ffacd0b85a97d-390eca52d9bmr7180064f8f.40.1740840100500;
+        Sat, 01 Mar 2025 06:41:40 -0800 (PST)
+Received: from localhost.localdomain ([2a02:c7c:6696:8300:913b:dad9:fe38:d4f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a22sm8572051f8f.74.2025.03.01.06.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 06:41:39 -0800 (PST)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+e41e83af7a07a4df8051@syzkaller.appspotmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ocfs2: Validate chain list bits per cluster to prevent div-by-zero
+Date: Sat,  1 Mar 2025 14:40:37 +0000
+Message-Id: <20250301144037.45920-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250301010252.GI7342@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 01, 2025 at 03:02:54AM +0200, Laurent Pinchart wrote:
-> On Thu, Feb 27, 2025 at 12:44:59PM +0100, Stefan Klug wrote:
-> > When color space JPEG is requested, the ISP sets the quantization
-> > incorrectly to limited range. To fix that, set the xfer_func, ycbcr_enc
-> > and quantization to the defaults for the requested color space if they
-> > are not specified explicitly.
-> 
-> The commit message fails to explain why you're addressing xfer_func and
-> ycbcr_enc to fix the quantization issue.
-> 
-> > Do this only in case we are converting
-> > from RAW to YUV.
-> 
-> And this should explain why.
-> 
-> > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> > ---
-> >  .../media/platform/rockchip/rkisp1/rkisp1-isp.c   | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > index d94917211828..468f5a7d03c7 100644
-> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > @@ -680,10 +680,23 @@ static void rkisp1_isp_set_src_fmt(struct rkisp1_isp *isp,
-> 
-> Adding a bit more context:
-> 
-> 	set_csc = format->flags & V4L2_MBUS_FRAMEFMT_SET_CSC;
-> 
-> 	if (set_csc && src_info->pixel_enc == V4L2_PIXEL_ENC_YUV) {
-> 
-> If V4L2_MBUS_FRAMEFMT_SET_CSC isn't set, the colorspace fields on the
-> source pad will be copied from the sink pad, which doesn't seem right.
+The call trace shows that the div error occurs on the following line where the code sets 
+the e_cpos member of the extent record while dividing bg_bits by the bits per 
+cluster value from the chain list:
 
-Thinking some more about it, it's not wrong either. The colorspace and
-xfer_func fields are not used by the driver, as the related ISP
-processing blocks are configured through ISP parameters. Without
-userspace providing the value of the fields on the source pad, the
-driver can't know what colorspace and xfer_func is produced. Copying the
-values from the sink pad is as good of a guess as we can make.
+		rec->e_cpos = cpu_to_le32(le16_to_cpu(bg->bg_bits) /
+				  le16_to_cpu(cl->cl_bpc));
+				  
+Looking at the code disassembly we see the problem occurred during the divw instruction
+which performs a 16-bit unsigned divide operation. The main ways a divide error can occur is
+if:
 
-The ycbcr_enc and quantization fields are different, as they are taken
-into account by the driver to configure the ISP. Copying ycbcr_enc from
-the sink pad means that it will be set to V4L2_YCBCR_ENC_601 when the
-sink format is bayer and the source format is YUV. As the sink
-colorspace is most likely going to be V4L2_COLORSPACE_RAW in that case,
-that's a fine default, and is identical to what we would get from
-V4L2_MAP_YCBCR_ENC_DEFAULT(). Setting the quantization to
-V4L2_QUANTIZATION_LIM_RANGE also seems fine as a default, and it what
-V4L2_MAP_QUANTIZATION_DEFAULT() would give us.
+1) the divisor is 0
+2) if the quotient is too large for the designated register (overflow).
 
-TL;DR: there's probably no need to change the current behaviour when
-V4L2_MBUS_FRAMEFMT_SET_CSC isn't set.
+Normally the divisor being 0 is the most common cause for a division error to occur.
 
-> It's a separate issue, but fixing both together may lead to better code.
-> 
-> >  		if (sink_info->pixel_enc == V4L2_PIXEL_ENC_BAYER) {
-> >  			if (format->colorspace != V4L2_COLORSPACE_DEFAULT)
-> >  				src_fmt->colorspace = format->colorspace;
-> > -			if (format->xfer_func != V4L2_XFER_FUNC_DEFAULT)
-> > +
-> > +			if (format->xfer_func == V4L2_XFER_FUNC_DEFAULT)
-> 
-> Are you sure the condition should be inverted ?
-> 
-> >  				src_fmt->xfer_func = format->xfer_func;
-> > +			else
-> > +				src_fmt->xfer_func =
-> > +					V4L2_MAP_XFER_FUNC_DEFAULT(format->colorspace);
-> > +
-> >  			if (format->ycbcr_enc != V4L2_YCBCR_ENC_DEFAULT)
-> >  				src_fmt->ycbcr_enc = format->ycbcr_enc;
-> > +			else
-> > +				src_fmt->ycbcr_enc =
-> > +					V4L2_MAP_YCBCR_ENC_DEFAULT(format->colorspace);
-> > +
-> > +			if (format->quantization == V4L2_QUANTIZATION_DEFAULT)
-> > +				src_fmt->quantization =
-> > +					V4L2_MAP_QUANTIZATION_DEFAULT(false,
-> > +						format->colorspace, format->ycbcr_enc);
-> 
-> Shouldn't this use src_fmt instead of format ?
-> 
-> I think quantization handling could be moved below.
-> 
-> >  		}
-> >  
-> >  		if (format->quantization != V4L2_QUANTIZATION_DEFAULT)
+Focusing on the bits per cluster cl->cl_bpc (since it is the divisor) we see that cl is created in
+ocfs2_block_group_alloc(), cl is derived from ocfs2_dinode->id2.i_chain. To fix this issue we should 
+verify the cl_bpc member in the chain list to ensure it is valid and non-zero.
 
-Now I'm wondering if this is right. As far as I can tell, the
-quantization isn't taken into account by the driver when the ISP is
-bypassed (capturing raw bayer data, or capturing YUV data from a YUV
-sensor).
+Looking through the rest of the OCFS2 code it seems like there are other places which could benefit 
+from improved checks of the cl_bpc members of chain lists like the following:
 
-How about something like this ?
+In ocfs2_group_extend():
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-index d94917211828..9c215c9bb30f 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-@@ -659,11 +659,10 @@ static void rkisp1_isp_set_src_fmt(struct rkisp1_isp *isp,
- 		src_fmt->quantization = sink_fmt->quantization;
+	cl_bpc = le16_to_cpu(fe->id2.i_chain.cl_bpc);
+	if (le16_to_cpu(group->bg_bits) / cl_bpc + new_clusters >
+		le16_to_cpu(fe->id2.i_chain.cl_cpg)) {
+		ret = -EINVAL;
+		goto out_unlock;
+	}
 
- 	/*
--	 * Allow setting the source color space fields when the SET_CSC flag is
--	 * set and the source format is YUV. If the sink format is YUV, don't
--	 * set the color primaries, transfer function or YCbCr encoding as the
--	 * ISP is bypassed in that case and passes YUV data through without
--	 * modifications.
-+	 * Allow setting the source color space fields when the SET_CSC flag.
-+	 * This is restricted to the case where the sink format is raw and the
-+	 * source format is YUV, as in other cases the ISP is bypassed and the
-+	 * input data is passed through without modifications.
- 	 *
- 	 * The color primaries and transfer function are configured through the
- 	 * cross-talk matrix and tone curve respectively. Settings for those
-@@ -676,18 +675,30 @@ static void rkisp1_isp_set_src_fmt(struct rkisp1_isp *isp,
- 	 */
- 	set_csc = format->flags & V4L2_MBUS_FRAMEFMT_SET_CSC;
+Reported-by: syzbot <syzbot+e41e83af7a07a4df8051@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=e41e83af7a07a4df8051
+Cc: stable@vger.kernel.org
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ fs/ocfs2/resize.c   | 4 ++--
+ fs/ocfs2/suballoc.c | 5 +++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
--	if (set_csc && src_info->pixel_enc == V4L2_PIXEL_ENC_YUV) {
--		if (sink_info->pixel_enc == V4L2_PIXEL_ENC_BAYER) {
--			if (format->colorspace != V4L2_COLORSPACE_DEFAULT)
--				src_fmt->colorspace = format->colorspace;
--			if (format->xfer_func != V4L2_XFER_FUNC_DEFAULT)
--				src_fmt->xfer_func = format->xfer_func;
--			if (format->ycbcr_enc != V4L2_YCBCR_ENC_DEFAULT)
--				src_fmt->ycbcr_enc = format->ycbcr_enc;
--		}
-+	if (set_csc && sink_info->pixel_enc == V4L2_PIXEL_ENC_BAYER &&
-+	    src_info->pixel_enc == V4L2_PIXEL_ENC_YUV) {
-+		if (format->colorspace != V4L2_COLORSPACE_DEFAULT)
-+			src_fmt->colorspace = format->colorspace;
-+
-+		if (format->xfer_func != V4L2_XFER_FUNC_DEFAULT)
-+			src_fmt->xfer_func = format->xfer_func;
-+		else
-+			src_fmt->xfer_func =
-+				V4L2_MAP_XFER_FUNC_DEFAULT(src_fmt->colorspace);
-+
-+		if (format->ycbcr_enc != V4L2_YCBCR_ENC_DEFAULT)
-+			src_fmt->ycbcr_enc = format->ycbcr_enc;
-+		else
-+			src_fmt->ycbcr_enc =
-+				V4L2_MAP_YCBCR_ENC_DEFAULT(src_fmt->colorspace);
-
- 		if (format->quantization != V4L2_QUANTIZATION_DEFAULT)
- 			src_fmt->quantization = format->quantization;
-+		else
-+			src_fmt->quantization =
-+				V4L2_MAP_QUANTIZATION_DEFAULT(false,
-+							      src_fmt->colorspace,
-+							      src_fmt->ycbcr_enc);
+diff --git a/fs/ocfs2/resize.c b/fs/ocfs2/resize.c
+index b0733c08ed13..22352c027ecd 100644
+--- a/fs/ocfs2/resize.c
++++ b/fs/ocfs2/resize.c
+@@ -329,8 +329,8 @@ int ocfs2_group_extend(struct inode * inode, int new_clusters)
+ 	group = (struct ocfs2_group_desc *)group_bh->b_data;
+ 
+ 	cl_bpc = le16_to_cpu(fe->id2.i_chain.cl_bpc);
+-	if (le16_to_cpu(group->bg_bits) / cl_bpc + new_clusters >
+-		le16_to_cpu(fe->id2.i_chain.cl_cpg)) {
++	if (!cl_bpc || le16_to_cpu(group->bg_bits) / cl_bpc + new_clusters >
++		       le16_to_cpu(fe->id2.i_chain.cl_cpg)) {
+ 		ret = -EINVAL;
+ 		goto out_unlock;
  	}
-
- 	*format = *src_fmt;
-
-Can I let you write a commit message ? :-)
-
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index f7b483f0de2a..844cb36bd7ab 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -671,6 +671,11 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	if (!le16_to_cpu(cl->cl_bpc)) {
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
 -- 
-Regards,
+2.39.5
 
-Laurent Pinchart
 
