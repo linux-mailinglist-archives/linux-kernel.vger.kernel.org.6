@@ -1,160 +1,166 @@
-Return-Path: <linux-kernel+bounces-540084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3A4A4AD75
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:02:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE28A4AD76
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E99518919E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B083B13A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F8A1E5B99;
-	Sat,  1 Mar 2025 19:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA8C1E5B7A;
+	Sat,  1 Mar 2025 19:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJn5bWUI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="aKfmjQ4t"
+Received: from mail-qk1-f225.google.com (mail-qk1-f225.google.com [209.85.222.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634419993D;
-	Sat,  1 Mar 2025 19:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6311B6CFE
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 19:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740855722; cv=none; b=sMZ4dPscbqvOMM4EY3jmMGOnNuC7BAozIZ7RhaRU4vXD6/yGqxnQ+uqn9PnYujh+5wfZKHawfxWJrX3Xi4ufbF2wu7jv8zOfWODSxd/kTIldbifKVzqib/ZSUJQHq+j46F6lpIqbmfqehCKPPxQB7rzMQkaZcKSik6yDqahqIlA=
+	t=1740855803; cv=none; b=R6m4SrmaYUozR2EhHTDyzvJa3ABZvYq5frRS3XDJK3DPn347QVNrh8TwhDQHUH19dsbRRnKE70dgLLzhFAU7v+0pZyQHJB0KWZQ17DQ7vLAgHeY9G9+DwbHZxYm0AeMA5T2hyP4/nITWiedQXuU5Rbf0hB2GmiaYTKJ8ywxw4qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740855722; c=relaxed/simple;
-	bh=lMXy4Mm5N4WPWxUEKOlhMHEGyxhNvffspeCsLxw9/Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZJmeEmAubjErrjywucxb+dcRwzTPNvKZrKtK4KQMdPFSzJk5pggAJ+auFcmvdV0sz2tZN3e+HMlyL6EcrUMnp9lDNTVceklILVnvHglgRHc0VwZPpYKbENyQHVc1N5lazGwcn5Ii2m5zGyy10IaUA7wQ6QJ28m3HPXrR4WXlOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJn5bWUI; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740855720; x=1772391720;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lMXy4Mm5N4WPWxUEKOlhMHEGyxhNvffspeCsLxw9/Ns=;
-  b=HJn5bWUIaY8A9BFxaX4bxP9u9rMVbTEWuauV9Esfw+vwsBJNYYlCfpwi
-   LgRzZiJ6LHie6ZrtFnog73v6Bc+DbQda26cjtgREqa7AS6HnHLWd3+Puo
-   f8Af7wSYYBKjDXsARD8ddmSHLMH10ZPtoct3l0ei98zRPno2GDSmsnQLu
-   eqFmy9j5SYhXcSgBS/yB0AluseXde9EXOnpYsaoJhGz+OUv57pEYFf43p
-   fSCRVodqEdPXiBdsJJ2R4HaH5cCmZwjRXGmK3D07L1sOt+dr3HVCrlQy1
-   viXFHbcJ4SGAkhtSfJlktJrWDOvWTcGvvFbBKH3RhVlPldzuBZrNiyulH
-   A==;
-X-CSE-ConnectionGUID: AsaeRv/sTGm84E6xLHIquw==
-X-CSE-MsgGUID: IM1OC9kVQDKZHyEE/iHhZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="53154313"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="53154313"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 11:01:59 -0800
-X-CSE-ConnectionGUID: slerZluNR+aP4+ASjjT6qQ==
-X-CSE-MsgGUID: apmxOb0fT/OkQwTYM9ch9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117409863"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2025 11:01:54 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toS5L-000Gak-2N;
-	Sat, 01 Mar 2025 19:01:20 +0000
-Date: Sun, 2 Mar 2025 03:00:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"(maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-	Juergen Christ <jchrist@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	"(moderated list:ARM64 PORT (AARCH64 ARCHITECTURE))" <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub,
- add}_return()
-Message-ID: <202503020203.USVBw4Bn-lkp@intel.com>
-References: <20250227221924.265259-3-lyude@redhat.com>
+	s=arc-20240116; t=1740855803; c=relaxed/simple;
+	bh=GRjsFbkbVxXqkass6qIGbhqNaI3PmF5zffUNEdoUW8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8uAISZfJNkO1R9LGZKdGVjzUy5+TDgXmd94shmTO9pFXgwsRd2O0BTVZH4ryE39BZ5Hss8Cpg7cPJj+z75SPBCMGZZMHjJYPBucQJdIHX0qY5AFCQOfUtWCeva3ByIgj+KRFKXoYpxbQrLbn/qkAda86hHUL+IXLVfc7kuf1mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=aKfmjQ4t; arc=none smtp.client-ip=209.85.222.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qk1-f225.google.com with SMTP id af79cd13be357-7c23aede3deso40171085a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 11:03:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1740855800; x=1741460600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPtTyrhHo4Bp34ujcUzSOaIDxgVPVdiOF8KP+yd3nw8=;
+        b=aKfmjQ4tqbwyYMQwDe7Hx3zxDJa0Yp2/H53VRGCAuCtCIgHCS+gX6K0lyL69kgyCt0
+         3Vv7K7wN708YiheapACyMkcFfqTfxrtEyi+c0g7jlPUNXjY3Ap4hUOYGA/lqDOAvj8od
+         RGQVPZz6Iizb+/KYYNIql95FgpmjXVPXq+gJ9i46oAbrqXkZff8KdkoHo51ZpRAjRlDX
+         0yZYxn9EKycyIt/mzUWi1awqUbEQL5W0NTM5KBSQDqGv8Wj1oQer9MBAiJmG8KpLD10p
+         wMQbxwEDcmxUUI0SMdpURCYVknme0qrhYNuerFNtCL6l1mfMRPyRVDrh6slJTEXAFpE3
+         51pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740855800; x=1741460600;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zPtTyrhHo4Bp34ujcUzSOaIDxgVPVdiOF8KP+yd3nw8=;
+        b=TVLmyUetlW78LnzCJOMB99DrIRYHYx6H/CN9uoyTAUI/CWQgStAQ1PDmaKT6AWSEAK
+         FeFgdG2TiuE4nhiX0bhetmE5OWtrLbz2WQxZ/O7xWa8JpIgxMZ/dYo5rxcRmwCh9Gcle
+         b8+eROeaUtUamdiQyvxPuzUQEnYO2MEUPD1ZTV9uxq0NuXJu5qJuLHnH8BQB4Kh7dlAl
+         Iuj3S6mmjjAb5Kep7FXD9J6PpgivVP0biZqSQcst4Ci2A/KjgDhgLyfKoLkl3SSk7/2u
+         lglDp2sz9Zo6ara0jV2PDBvhw7etD8JIYQivG8dT913SBM918D/78f43PA4YN7S4lD7W
+         O6NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpiiEuppXPlcWorfXkElqbwX2DN1Y2orSBySZHcEBvTkjvouo823t3tJH1Im1sBon8RfhIi/2jyJZQRJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6QJL8JSTXpe2Hlx8U2ZgsKKw8cu86ZR1kKAJLWAluxoWTIxK2
+	BxZeno17W1Fe78hA++6oEeGZ2u4bzbv5Td+Kdvtm+P+gZC/2jsrUmqKAH5gMWuB1EAn2O99unC+
+	Dj7BfLr+F4S4vhrq8JurJipx1uGh+j/+pG/YI6OmznhLnW1wm
+X-Gm-Gg: ASbGncs8nppFVHj1jRUVcQez1MEf9RHhdWsrZGdPTKripokzTTcNSanrRHwKl4ov0PE
+	x4yNTCuzzYcUfHDBLF+TDuHEZQ5VgYHxOGi7gf/N+/mCZVhpLHVzai2Vey+nSvgtZ+R3sYVrybt
+	HOOVYtWv30pENU2iUw2kG+pViFyR2WUk2nbGidMdIAF+58PReYCJOKfX59O8jpXBGB045zY3Z/6
+	VPeSe6dnby/6wKviO2vsCQnwtYPWB9gPOIAbPyVAyu4ZvDcfHMMJKIbWYhWWJzddd+j7YWG3/Qr
+	bPv+uFDeWHn50RxwJUAC68bJg9Os9HO/tw==
+X-Google-Smtp-Source: AGHT+IHT7qGAIK+FkEaSknbOU0OApb1ysNsvmSnrt6XPcK/Su4fAh06kTZ1i9H3Vw3B4+jE1gchSfRbEcxz6
+X-Received: by 2002:a05:620a:410b:b0:7c0:b43c:b36c with SMTP id af79cd13be357-7c39c4bebdcmr470979485a.6.1740855800384;
+        Sat, 01 Mar 2025 11:03:20 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-6e8b0f85d4bsm812006d6.5.2025.03.01.11.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 11:03:20 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E2EBC340314;
+	Sat,  1 Mar 2025 12:03:18 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id DCDEAE4164A; Sat,  1 Mar 2025 12:03:18 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ublk: don't cast registered buffer index to int
+Date: Sat,  1 Mar 2025 12:03:16 -0700
+Message-ID: <20250301190317.950208-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227221924.265259-3-lyude@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Lyude,
+io_buffer_register_bvec() takes index as an unsigned int argument, but
+ublk_register_io_buf() casts ub_cmd->addr (a u64) to int. Remove the
+misleading cast and instead pass index as an unsigned value to
+ublk_register_io_buf() and ublk_unregister_io_buf().
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ drivers/block/ublk_drv.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-[auto build test ERROR on 2014c95afecee3e76ca4a56956a936e23283f05b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lyude-Paul/preempt-Introduce-HARDIRQ_DISABLE_BITS/20250228-062508
-base:   2014c95afecee3e76ca4a56956a936e23283f05b
-patch link:    https://lore.kernel.org/r/20250227221924.265259-3-lyude%40redhat.com
-patch subject: [PATCH v9 2/9] preempt: Introduce __preempt_count_{sub, add}_return()
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250302/202503020203.USVBw4Bn-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020203.USVBw4Bn-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020203.USVBw4Bn-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/preempt.h:85,
-                    from include/linux/alloc_tag.h:11,
-                    from include/linux/percpu.h:5,
-                    from include/linux/context_tracking_state.h:5,
-                    from include/linux/hardirq.h:5,
-                    from include/linux/kvm_host.h:7,
-                    from arch/s390/kernel/asm-offsets.c:11:
-   arch/s390/include/asm/preempt.h: In function '__preempt_count_add_return':
->> arch/s390/include/asm/preempt.h:109:38: error: void value not ignored as it ought to be
-     109 |                         return val + __atomic_add_const(val, &get_lowcore()->preempt_count);
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:102: arch/s390/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1264: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +109 arch/s390/include/asm/preempt.h
-
-   100	
-   101	static __always_inline int __preempt_count_add_return(int val)
-   102	{
-   103		/*
-   104		 * With some obscure config options and CONFIG_PROFILE_ALL_BRANCHES
-   105		 * enabled, gcc 12 fails to handle __builtin_constant_p().
-   106		 */
-   107		if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES)) {
-   108			if (__builtin_constant_p(val) && (val >= -128) && (val <= 127)) {
- > 109				return val + __atomic_add_const(val, &get_lowcore()->preempt_count);
-   110			}
-   111		}
-   112		return val + __atomic_add(val, &get_lowcore()->preempt_count);
-   113	}
-   114	
-
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 512cbd456817..af5a4ff4bd3d 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -1760,16 +1760,15 @@ static void ublk_io_release(void *priv)
+ 	ublk_put_req_ref(ubq, rq);
+ }
+ 
+ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
+ 				struct ublk_queue *ubq, unsigned int tag,
+-				const struct ublksrv_io_cmd *ub_cmd,
+-				unsigned int issue_flags)
++				unsigned int index, unsigned int issue_flags)
+ {
+ 	struct ublk_device *ub = cmd->file->private_data;
+-	int index = (int)ub_cmd->addr, ret;
+ 	struct request *req;
++	int ret;
+ 
+ 	req = __ublk_check_and_get_req(ub, ubq, tag, 0);
+ 	if (!req)
+ 		return -EINVAL;
+ 
+@@ -1782,14 +1781,13 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
+ 
+ 	return 0;
+ }
+ 
+ static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
+-				  const struct ublksrv_io_cmd *ub_cmd,
+-				  unsigned int issue_flags)
++				  unsigned int index, unsigned int issue_flags)
+ {
+-	return io_buffer_unregister_bvec(cmd, ub_cmd->addr, issue_flags);
++	return io_buffer_unregister_bvec(cmd, index, issue_flags);
+ }
+ 
+ static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+ 			       unsigned int issue_flags,
+ 			       const struct ublksrv_io_cmd *ub_cmd)
+@@ -1840,13 +1838,13 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+ 		goto out;
+ 
+ 	ret = -EINVAL;
+ 	switch (_IOC_NR(cmd_op)) {
+ 	case UBLK_IO_REGISTER_IO_BUF:
+-		return ublk_register_io_buf(cmd, ubq, tag, ub_cmd, issue_flags);
++		return ublk_register_io_buf(cmd, ubq, tag, ub_cmd->addr, issue_flags);
+ 	case UBLK_IO_UNREGISTER_IO_BUF:
+-		return ublk_unregister_io_buf(cmd, ub_cmd, issue_flags);
++		return ublk_unregister_io_buf(cmd, ub_cmd->addr, issue_flags);
+ 	case UBLK_IO_FETCH_REQ:
+ 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
+ 		if (ublk_queue_ready(ubq)) {
+ 			ret = -EBUSY;
+ 			goto out;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
 
