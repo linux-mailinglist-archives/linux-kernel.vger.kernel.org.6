@@ -1,316 +1,125 @@
-Return-Path: <linux-kernel+bounces-539978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFAAA4AB88
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:11:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D0EA4AB8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 15:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B5A3B9986
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFF97A6A20
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45F51DF96E;
-	Sat,  1 Mar 2025 14:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDAE1DF985;
+	Sat,  1 Mar 2025 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Wr21Ju86"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBjpVbat"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F72E1DED5A;
-	Sat,  1 Mar 2025 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915081DDC3A
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 14:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740838282; cv=none; b=PlrKhbahfIvE24A3L7JXjbRBY6KrBYIu0ep1lgulCK7mOQOA2ewPo2c7HCs8dASX1RFDJmPsL2jhCMiho796D/lT0IyVe8rGikZrzOPP5WC3ZGGHeSDLwPypCN+avGKHeBdAewWL5mmX/w0UbxPzLyrkTWLD2j0C40fyjhtF5Jo=
+	t=1740838406; cv=none; b=B/FJObxrBf4ziDrkGIXAu47oBkcoDTBmU9i58HIu/N9VLWpho2opHzKRryoj/zRmNB5fmydbJM8iUTDIOgr7rTraOMcaQE0dFqrLOlrzLStfoPn6k86t0B7UGfJljZASdoUPbTocSHbnYJVIlReLnx7J7nKpNDmOMMfOqMtYc3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740838282; c=relaxed/simple;
-	bh=AswYZNkHo+Cu7mTOivQG5MxzgFbEE5CkE/SmqJv0IMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r26nnpT+IkRyWeXdwDBHcVN9BoYG211uwFtEUmDH7igpqL4IkfrXEyR+gs5iTe3QYN9k/SkPzsyiLkkUyAdrQ3PUjjtpqM8E+pg1tZoZbtG3bHTPuOPaQCphkf3pq9FV5Q+LOH7CbxBNA6vszFYK27H3+xKEmtsgI2tCbZQBSJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Wr21Ju86; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30CC743315;
-	Sat,  1 Mar 2025 14:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740838277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gxxrA5TGUbh+xCz1QfWoVv9hBkCa7QJfvAHDsjuob1g=;
-	b=Wr21Ju86aahNvOxsQKgm/dmyd7gTFvapYwF7CMccXs7tJxrVHUkKQix+jnHC/IdBUst2jO
-	SAaEGu4mlRX14a7rp/nz8z3974E+LZIkplH3KWO1XE0a+Mwe7QtvqsMHqBKPJqtZGjrQdD
-	CMdi+CoMSAldwMQKiwKxzL2XP5uMfHzTDUQa5y2A5ZtZRSeOlWHUCceLlpj5oWimNqB27U
-	ex2H8Ukc92yyhcgs4luiaKO0zmHTW5rit2f3ay43SNZvMRhCd4Mur9LwT8pMswiyj2NK29
-	pqNeNxGfOEg75Kw3NdIaA+lwmUo5jakU2M0yrlPXzBvkBXWl1v7uKhXLaW2X3w==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: [PATCH net v2] net: ethtool: netlink: Allow NULL nlattrs when getting a phy_device
-Date: Sat,  1 Mar 2025 15:11:13 +0100
-Message-ID: <20250301141114.97204-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740838406; c=relaxed/simple;
+	bh=jiT2JUaC/QAsy28BOMROpUvqNfVZo9Bo2xs780cMecE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EelQ8S1wB/bfSseUlh97zKlqIwT0Iwejlc0eVTI1er/qNKjpLMfXT2zfHyAlr3Qcht4VQdyRGbioj/8BClAvEpFO0gnW2eapjO2cVfVZX9Gec8VvmoqxkIXbcRofw+S39LcTezuwyUSixlXqobxdR4v3oX1nxT01qPBoMRsYXzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBjpVbat; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dc5a32c313so508707a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Mar 2025 06:13:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740838403; x=1741443203; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hIMmXa+05o7cFUzmMY0oE5JLkS5yaur+8NGSr9bhuis=;
+        b=IBjpVbatbcjKVLmf6CvUmzmS+uHgTWROXMEu3RIB/VmsnvYnDVGxWpkGvq38uQtV7Z
+         t1XaciXjApqJai78XgeHW6H2uNFmpOxaVR0zqxuEcTFoWvlSzP2teiHDrdVaMhm3BcDf
+         CpRGpTXNORHjs6N2jV8Q5XKLuhjOkBeNOuSRVMzoOT7Wg2cMyp8EtkFVdkLOW7OdkQYo
+         YRI61pGaOyDYXka2XLFfSBs5trPfH+9n6pFSfBp1X9Y1P7ecNId3ajouI2vQQchVTXhy
+         DH/FI/aRiN/+Mkp4AUscWMzrXq8nolB6SieQJdHiSCBfpKIZ1J9KmatpcVid/noyUubB
+         V0xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740838403; x=1741443203;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hIMmXa+05o7cFUzmMY0oE5JLkS5yaur+8NGSr9bhuis=;
+        b=leZWcsHFydtltlEp3Ub1mS3Vned5RxqyhtJwyqE7p5MSvD9jjQCYnYUH+V/f/uaRhU
+         24QUom7NVLe3ZG69GmZRvB1hISP0kGaZDvY6nQiX+7eUKhn+q83PGy+9F7HAUwVcgPag
+         x0aJ3peW2+yYiQ++C4mFEwv6TbaSt56ViTjH44rsUbCthHgROzt9ORaxIkaA6ZVZqOTq
+         tLPk/PTQCN7tZD4y11M7JmeJrZ2d8LISrDSioEUzndTLeB0ZKLlDAqtfUB3z5739a1J8
+         WOvsxNdc6Gn9La45r0OqYuAikdeMHP7H8Ms8VJAMoo/ernQhdQyGiisVnIPOncJnz9QX
+         5IOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT1274fEpn7tST8QX9/uG70Yp9Od3UdqFyx/3O4/sG09UUrFHtVyNgB2Tp3RC/0AFvhU8bbGH872U1cTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkVVE7/cAvvND3X8gXIiKI3y4iq8hSRt6IoNJ9bR2Ex1nR7ZS4
+	KWphdd+4rfLlndWtK7sIFS7uLfdi7DLr/X4SmGDdj4EpJ/LAtrYruP+dLHYxV1M=
+X-Gm-Gg: ASbGncuinpTNSul92ZSFZxym4I7UoZKrqsvedXBnihByshUaaoGApEd/qoB0OizJ61O
+	ZXIC3kwErV4IHIPmYwoUKoC3t3cG6n4wtx9N5FLRV7CWt3oEf3jFwVijcLGDXS2Y+yRhUP33WZi
+	dh/APi1YsjqPtvMNbZY8hBiEy0676eVHxpNAGxq2vyvgGwnzZt9gE+K0zFQ5gvS014ClgAH6Pog
+	5h99Im3Lm7zNha9gKsheIqR9nfOjy38iY/cv3V9k/W3t2a3qxKN/qifemzUxPjUtMRjkA/6rDsH
+	0jRDE+BSZiB5E11eoYczLIfkwuRAl7XXQcRmwI3tnCbsBYVqabaKoT3bkZno
+X-Google-Smtp-Source: AGHT+IHamdT8SxBWV4TfuLdPou3W8IVb0ZsVqTsHbzvccKkfVKbSEv939NC7kdF+ka7ZD+Wv5iaqLA==
+X-Received: by 2002:a17:906:d542:b0:aa6:ab00:7b9d with SMTP id a640c23a62f3a-abf27360ac8mr179019166b.4.1740838402656;
+        Sat, 01 Mar 2025 06:13:22 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9cbfsm485532366b.14.2025.03.01.06.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 06:13:21 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
+References: <20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: (subset) [PATCH v2 1/3] dt-bindings: clock: add Exynos2200 SoC
+Message-Id: <174083840012.17657.16502862587559253626.b4-ty@linaro.org>
+Date: Sat, 01 Mar 2025 15:13:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelfeehtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfelieehgfffiefftdffiedvheefteehkedukefgteffteevffeuueejiedtveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgrrhhthhhisggrnhdrvhgvvghrrghsohhorhgrnhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-ethnl_req_get_phydev() is used to lookup a phy_device, in the case an
-ethtool netlink command targets a specific phydev within a netdev's
-topology.
 
-It takes as a parameter a const struct nlattr *header that's used for
-error handling :
+On Sun, 23 Feb 2025 13:55:58 +0200, Ivaylo Ivanov wrote:
+> Provide dt-schema documentation for Exynos2200 SoC clock controller.
+> Add device tree clock binding definitions for the following CMU blocks:
+> - CMU_ALIVE
+> - CMU_CMGP
+> - CMU_HSI0
+> - CMU_PERIC0/1/2
+> - CMU_PERIS
+> - CMU_TOP
+> - CMU_UFS
+> - CMU_VTS
+> 
+> [...]
 
-       if (!phydev) {
-               NL_SET_ERR_MSG_ATTR(extack, header,
-                                   "no phy matching phyindex");
-               return ERR_PTR(-ENODEV);
-       }
+Applied, thanks!
 
-In the notify path after a ->set operation however, there's no request
-attributes available.
+[1/3] dt-bindings: clock: add Exynos2200 SoC
+      https://git.kernel.org/krzk/linux/c/6662c09c0ddf10ef97b430533bb9e2f0a8fbe471
 
-The typical callsite for the above function looks like:
-
-	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_XXX_HEADER],
-				      info->extack);
-
-So, when tb is NULL (such as in the ethnl notify path), we have a nice
-crash.
-
-It turns out that there's only the PLCA command that is in that case, as
-the other phydev-specific commands don't have a notification.
-
-This commit fixes the crash by passing the cmd index and the nlattr
-array separately, allowing NULL-checking it directly inside the helper.
-
-Fixes: c15e065b46dc ("net: ethtool: Allow passing a phy index for some commands")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-
-V2: Send this patch as a standalone fix instead of including it in a
-series [1] containing patches that don't belong to net. No modifications
-were made besides a rebase on -net.
-
-[1]: https://lore.kernel.org/netdev/20250227182454.1998236-1-maxime.chevallier@bootlin.com/
-
- net/ethtool/cabletest.c | 8 ++++----
- net/ethtool/linkstate.c | 2 +-
- net/ethtool/netlink.c   | 6 +++---
- net/ethtool/netlink.h   | 5 +++--
- net/ethtool/phy.c       | 2 +-
- net/ethtool/plca.c      | 6 +++---
- net/ethtool/pse-pd.c    | 4 ++--
- net/ethtool/stats.c     | 2 +-
- net/ethtool/strset.c    | 2 +-
- 9 files changed, 19 insertions(+), 18 deletions(-)
-
-diff --git a/net/ethtool/cabletest.c b/net/ethtool/cabletest.c
-index f22051f33868..84096f6b0236 100644
---- a/net/ethtool/cabletest.c
-+++ b/net/ethtool/cabletest.c
-@@ -72,8 +72,8 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
- 	dev = req_info.dev;
- 
- 	rtnl_lock();
--	phydev = ethnl_req_get_phydev(&req_info,
--				      tb[ETHTOOL_A_CABLE_TEST_HEADER],
-+	phydev = ethnl_req_get_phydev(&req_info, tb,
-+				      ETHTOOL_A_CABLE_TEST_HEADER,
- 				      info->extack);
- 	if (IS_ERR_OR_NULL(phydev)) {
- 		ret = -EOPNOTSUPP;
-@@ -339,8 +339,8 @@ int ethnl_act_cable_test_tdr(struct sk_buff *skb, struct genl_info *info)
- 		goto out_dev_put;
- 
- 	rtnl_lock();
--	phydev = ethnl_req_get_phydev(&req_info,
--				      tb[ETHTOOL_A_CABLE_TEST_TDR_HEADER],
-+	phydev = ethnl_req_get_phydev(&req_info, tb,
-+				      ETHTOOL_A_CABLE_TEST_TDR_HEADER,
- 				      info->extack);
- 	if (IS_ERR_OR_NULL(phydev)) {
- 		ret = -EOPNOTSUPP;
-diff --git a/net/ethtool/linkstate.c b/net/ethtool/linkstate.c
-index af19e1bed303..05a5f72c99fa 100644
---- a/net/ethtool/linkstate.c
-+++ b/net/ethtool/linkstate.c
-@@ -103,7 +103,7 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
- 	struct phy_device *phydev;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_LINKSTATE_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_LINKSTATE_HEADER,
- 				      info->extack);
- 	if (IS_ERR(phydev)) {
- 		ret = PTR_ERR(phydev);
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index b4c45207fa32..734849a57369 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -211,7 +211,7 @@ int ethnl_parse_header_dev_get(struct ethnl_req_info *req_info,
- }
- 
- struct phy_device *ethnl_req_get_phydev(const struct ethnl_req_info *req_info,
--					const struct nlattr *header,
-+					struct nlattr **tb, unsigned int header,
- 					struct netlink_ext_ack *extack)
- {
- 	struct phy_device *phydev;
-@@ -225,8 +225,8 @@ struct phy_device *ethnl_req_get_phydev(const struct ethnl_req_info *req_info,
- 		return req_info->dev->phydev;
- 
- 	phydev = phy_link_topo_get_phy(req_info->dev, req_info->phy_index);
--	if (!phydev) {
--		NL_SET_ERR_MSG_ATTR(extack, header,
-+	if (!phydev && tb) {
-+		NL_SET_ERR_MSG_ATTR(extack, tb[header],
- 				    "no phy matching phyindex");
- 		return ERR_PTR(-ENODEV);
- 	}
-diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-index ff69ca0715de..ec6ab5443a6f 100644
---- a/net/ethtool/netlink.h
-+++ b/net/ethtool/netlink.h
-@@ -275,7 +275,8 @@ static inline void ethnl_parse_header_dev_put(struct ethnl_req_info *req_info)
-  * ethnl_req_get_phydev() - Gets the phy_device targeted by this request,
-  *			    if any. Must be called under rntl_lock().
-  * @req_info:	The ethnl request to get the phy from.
-- * @header:	The netlink header, used for error reporting.
-+ * @tb:		The netlink attributes array, for error reporting.
-+ * @header:	The netlink header index, used for error reporting.
-  * @extack:	The netlink extended ACK, for error reporting.
-  *
-  * The caller must hold RTNL, until it's done interacting with the returned
-@@ -289,7 +290,7 @@ static inline void ethnl_parse_header_dev_put(struct ethnl_req_info *req_info)
-  *	   is returned.
-  */
- struct phy_device *ethnl_req_get_phydev(const struct ethnl_req_info *req_info,
--					const struct nlattr *header,
-+					struct nlattr **tb, unsigned int header,
- 					struct netlink_ext_ack *extack);
- 
- /**
-diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
-index ed8f690f6bac..e067cc234419 100644
---- a/net/ethtool/phy.c
-+++ b/net/ethtool/phy.c
-@@ -125,7 +125,7 @@ static int ethnl_phy_parse_request(struct ethnl_req_info *req_base,
- 	struct phy_req_info *req_info = PHY_REQINFO(req_base);
- 	struct phy_device *phydev;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_PHY_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_PHY_HEADER,
- 				      extack);
- 	if (!phydev)
- 		return 0;
-diff --git a/net/ethtool/plca.c b/net/ethtool/plca.c
-index d95d92f173a6..e1f7820a6158 100644
---- a/net/ethtool/plca.c
-+++ b/net/ethtool/plca.c
-@@ -62,7 +62,7 @@ static int plca_get_cfg_prepare_data(const struct ethnl_req_info *req_base,
- 	struct phy_device *phydev;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_PLCA_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_PLCA_HEADER,
- 				      info->extack);
- 	// check that the PHY device is available and connected
- 	if (IS_ERR_OR_NULL(phydev)) {
-@@ -152,7 +152,7 @@ ethnl_set_plca(struct ethnl_req_info *req_info, struct genl_info *info)
- 	bool mod = false;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_info, tb[ETHTOOL_A_PLCA_HEADER],
-+	phydev = ethnl_req_get_phydev(req_info, tb, ETHTOOL_A_PLCA_HEADER,
- 				      info->extack);
- 	// check that the PHY device is available and connected
- 	if (IS_ERR_OR_NULL(phydev))
-@@ -211,7 +211,7 @@ static int plca_get_status_prepare_data(const struct ethnl_req_info *req_base,
- 	struct phy_device *phydev;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_PLCA_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_PLCA_HEADER,
- 				      info->extack);
- 	// check that the PHY device is available and connected
- 	if (IS_ERR_OR_NULL(phydev)) {
-diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
-index 2819e2ba6be2..4f6b99eab2a6 100644
---- a/net/ethtool/pse-pd.c
-+++ b/net/ethtool/pse-pd.c
-@@ -64,7 +64,7 @@ static int pse_prepare_data(const struct ethnl_req_info *req_base,
- 	if (ret < 0)
- 		return ret;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_PSE_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_PSE_HEADER,
- 				      info->extack);
- 	if (IS_ERR(phydev))
- 		return -ENODEV;
-@@ -261,7 +261,7 @@ ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
- 	struct phy_device *phydev;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_info, tb[ETHTOOL_A_PSE_HEADER],
-+	phydev = ethnl_req_get_phydev(req_info, tb, ETHTOOL_A_PSE_HEADER,
- 				      info->extack);
- 	ret = ethnl_set_pse_validate(phydev, info);
- 	if (ret)
-diff --git a/net/ethtool/stats.c b/net/ethtool/stats.c
-index 038a2558f052..3ca8eb2a3b31 100644
---- a/net/ethtool/stats.c
-+++ b/net/ethtool/stats.c
-@@ -138,7 +138,7 @@ static int stats_prepare_data(const struct ethnl_req_info *req_base,
- 	struct phy_device *phydev;
- 	int ret;
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_STATS_HEADER],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_STATS_HEADER,
- 				      info->extack);
- 	if (IS_ERR(phydev))
- 		return PTR_ERR(phydev);
-diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c
-index 6b76c05caba4..f6a67109beda 100644
---- a/net/ethtool/strset.c
-+++ b/net/ethtool/strset.c
-@@ -309,7 +309,7 @@ static int strset_prepare_data(const struct ethnl_req_info *req_base,
- 		return 0;
- 	}
- 
--	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_HEADER_FLAGS],
-+	phydev = ethnl_req_get_phydev(req_base, tb, ETHTOOL_A_HEADER_FLAGS,
- 				      info->extack);
- 
- 	/* phydev can be NULL, check for errors only */
+Best regards,
 -- 
-2.48.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
