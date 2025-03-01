@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-539960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B12A4AB55
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:46:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E5A4AB56
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BF21717E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13AA03B847F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AFC1DEFDC;
-	Sat,  1 Mar 2025 13:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ixfCo152"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939241DE890;
+	Sat,  1 Mar 2025 13:48:07 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598F92FC23
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4073E2FC23
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 13:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836813; cv=none; b=tQ6bJ9SMgJwr4I7uksQtPWbGsBp/esjd8IWw8Ho/qnUnrF6YQRXuMD7sfXJa3Jip/UQkoXchg9YiwZBvKAEf9FNVxyX5QBquj6qqS5sfdx7isVwM+WyZj2ycecsWSU3QKJp4jS310e2PnsydQTzhT+ZoBQZa8F/LznNMjoR3yzY=
+	t=1740836887; cv=none; b=Hl93ycDxr5Qdq9j33R3FbxBS2moumXZwKi8r3nnFZOGEuN5sktSmu7qBH9UXmm/DYcTDPuKuO557dFRREsy/AWdeyu8uJ0wjK1pGUzCHtevwrSHANiAnwcdCzikSOV0JeefHOzGvtyQot0zr15X+mep0zCkFgJn2fYWv0KGgFJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836813; c=relaxed/simple;
-	bh=AVBWkyZ3LMxgKkSczZAawyXgVQNArhDYT2iwv3Msc5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z745qdxG4u2QpsYksh58UPC5pB6ptT405YwJSUb0XgNTHDtjPUgdWoX82JuYXui3OBEcIRmgZicmf9x/hJjMO0hgNu95YzMWxTxN2aEkVmRdpa8kQWw9LRayOX+IXrVsS4DjV3QYRg0KFn96bqB4I+tOjDgBNM787k9z6VEZeak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ixfCo152; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740836810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DQGzwDx59Gq1VVsGiIVi022MkT/gIDUdTTMFq5L87I4=;
-	b=ixfCo152L7s4GbNT+sF7l8cC4HZqf9c1241gOdmyGfn+d5e2MLgKa3P9m632Do7PNwsMjI
-	6TQbS11vZbNFRlSIp2zmPI3uG0qTUdjLOvRyVkmwPQfZlPPlTVitxK7YWtT+E5hE7ykDm+
-	nDnZvcWA0wicAJ6AICVXJbmwGFxts9s=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-TIaTt3fwP4i4agqURAwcHQ-1; Sat,
- 01 Mar 2025 08:46:47 -0500
-X-MC-Unique: TIaTt3fwP4i4agqURAwcHQ-1
-X-Mimecast-MFC-AGG-ID: TIaTt3fwP4i4agqURAwcHQ_1740836806
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 708671944D69;
-	Sat,  1 Mar 2025 13:46:45 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC48818009AE;
-	Sat,  1 Mar 2025 13:46:40 +0000 (UTC)
-Date: Sat, 1 Mar 2025 21:46:35 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Mike Christie <michael.christie@oracle.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ublk: enforce ublks_max only for unprivileged devices
-Message-ID: <Z8MPux2zzjcr7ipo@fedora>
-References: <20250228-ublks_max-v1-1-04b7379190c0@purestorage.com>
+	s=arc-20240116; t=1740836887; c=relaxed/simple;
+	bh=cGgzjxm4Hol7XNW5a4HkXD8Sz4P0IRzUGnK4Ch1H758=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j81/nESsLwSNNgEKQF2LtjJo0ONMQ8+y2/a/YJ1QE4MMaTEsCHXn3TNaG2rAeu6YFO4UUKz7wW+Kz5UHQNRK7dQZ7nsxnFNpzjHHg9VW4PWIuzJKAJi/61JJuWf0D1memCcqn4l0E8JQsg5NS8dkp2qYyirfNH+BtzUH3oge0y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.49.41])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67C3100600001E76; Sat, 1 Mar 2025 21:47:52 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4989658913198
+X-SMAIL-UIID: 9DFB72EE445947908EF935066F9C962C-20250301-214752-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+9b145229d11aa73e4571@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in loop_set_status
+Date: Sat,  1 Mar 2025 21:47:39 +0800
+Message-ID: <20250301134743.2874-1-hdanton@sina.com>
+In-Reply-To: <67c2deef.050a0220.dc10f.0164.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228-ublks_max-v1-1-04b7379190c0@purestorage.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 09:31:48PM -0700, Uday Shankar wrote:
-> Commit 403ebc877832 ("ublk_drv: add module parameter of ublks_max for
-> limiting max allowed ublk dev"), claimed ublks_max was added to prevent
-> a DoS situation with an untrusted user creating too many ublk devices.
-> If that's the case, ublks_max should only restrict the number of
-> unprivileged ublk devices in the system. Enforce the limit only for
-> unprivileged ublk devices, and rename variables accordingly. Leave the
-> external-facing parameter name unchanged, since changing it may break
-> systems which use it (but still update its documentation to reflect its
-> new meaning).
+On Sat, 01 Mar 2025 02:18:23 -0800
+> syzbot has found a reproducer for the following issue on:
 > 
-> As a result of this change, in a system where there are only normal
-> (non-unprivileged) devices, the maximum number of such devices is
-> increased to 1 << MINORBITS, or 1048576. That ought to be enough for
-> anyone, right?
-> 
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> HEAD commit:    276f98efb64a Merge tag 'block-6.14-20250228' of git://git...
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f2c864580000
 
-Looks fine,
+#syz test
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
-
-Thanks,
-Ming
-
+--- x/drivers/block/loop.c
++++ y/drivers/block/loop.c
+@@ -1286,17 +1286,16 @@ loop_set_status(struct loop_device *lo,
+ 	lo->lo_flags &= ~LOOP_SET_STATUS_CLEARABLE_FLAGS;
+ 	lo->lo_flags |= (info->lo_flags & LOOP_SET_STATUS_SETTABLE_FLAGS);
+ 
+-	if (size_changed) {
+-		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
+-					   lo->lo_backing_file);
+-		loop_set_size(lo, new_size);
+-	}
+-
+ 	/* update the direct I/O flag if lo_offset changed */
+ 	loop_update_dio(lo);
+ 
+ out_unfreeze:
+ 	blk_mq_unfreeze_queue(lo->lo_queue, memflags);
++	if (!err && size_changed) {
++		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
++					   lo->lo_backing_file);
++		loop_set_size(lo, new_size);
++	}
+ 	if (partscan)
+ 		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
+ out_unlock:
+--
 
