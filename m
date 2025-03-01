@@ -1,143 +1,78 @@
-Return-Path: <linux-kernel+bounces-540127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A47A4AE07
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:29:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046C6A4AE0E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 22:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA79616FFB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1693AEC3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3430D1E7C16;
-	Sat,  1 Mar 2025 21:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD51E1E9912;
+	Sat,  1 Mar 2025 21:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="LW/zRCI+"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vhhydm+N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF681C5D77;
-	Sat,  1 Mar 2025 21:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3312C1B0F33;
+	Sat,  1 Mar 2025 21:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740864552; cv=none; b=ZldefX/NjuVr+SvgJUHPnv9vUwGzCkkNX0PrlWXqCgRFmQeLobtiH0xR98TDMo0ThqocsobmRVYdQM1p4niq9ZliNbQGxNUkrZmqkG6t0nwvDki5Vwk97UXnAUxRmKBfNBJZaBj+9D4GVumXnHAh7Y3NhZ+EPIqA9E0mcfdBnds=
+	t=1740865661; cv=none; b=W76ElFE7C/aJEweThvoeaksjJjwuDHF7AX5+TGFYGSTIcmJR6Keyj9XXwxCbUXhcuRAsP+vUIpT1Q92VtewjuEis3XUC0QK2iH5vCIdmBZMlDLZTaCECKonUsu6gA7upX1sStPa+oufZN/zJoYEBP/QExeAEOpACDaUdOkg+dW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740864552; c=relaxed/simple;
-	bh=wFgpVcZMA4A8ClRtG/vzZVjhAkeeOQo5hLUQI3mB5pk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WvcM4vHrMX2YOnkwClcGg4xChj2+MJB2ZwHPf/yiOb3tfx4Si6FM60aKnLB5HC7vps4WvPx5alTP1jBDN/dGge2ipnQI++DxAxuvJN81cFHX8J5k7fm86BexX/ch5LF4QvMpfpVuD20wbdefKojSVRKxM4z1+SoADZkjTnrdzt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=LW/zRCI+; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 5764EC0003;
-	Sun,  2 Mar 2025 00:29:05 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 5764EC0003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1740864545; bh=un2XxHMkLbWAbgAQ+YeQnD9PaPLgmGvd7W1AjDGV6bw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=LW/zRCI+aMORVpjUySsaQ9gur+lP7aOyWYKMPDCJ2M0AK1cFGKBwiblqGblZbBYNS
-	 pFFLrEqy91i/QPj+Ryr1jWmZFGHxI6qMlhXvHGCRQ8IwcnYOahKpDOwdoP2yVWW3Vh
-	 J6coptL9HUJcBfV/Wr5hW6o08ma44qtUrBthkpm65IIGjeotFDWGfICQILaFF1AOhd
-	 tfw6LT8uERXS8EL2cHZagjxTwHTY1LaRUri1dq+S5srU4cwccrq2Od548V63aBhYxW
-	 HisluPnNiV1QmaGRV61YfCUSFJADMmeevCnvEwuMyqZ3E6WdT8GLT9cLt7FsPHJIc3
-	 kRb3xuRJydhCg==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Sun,  2 Mar 2025 00:29:05 +0300 (MSK)
-Received: from localhost (5.1.51.90) by mmail-p-exch01.mt.ru (81.200.124.61)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Sun, 2 Mar 2025
- 00:29:04 +0300
-Date: Sun, 2 Mar 2025 02:28:06 +0500
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: Re: [PATCH] media: cec: avoid wraparound in timer interval
- calculation
-Message-ID: <20250302022806.e66f4f2903748b9bc63289c2@mt-integration.ru>
-In-Reply-To: <cff4d412-abbf-44b5-9705-ba14dff7d5d0@wanadoo.fr>
-References: <20250301111053.2661-1-v.shevtsov@mt-integration.ru>
-	<cff4d412-abbf-44b5-9705-ba14dff7d5d0@wanadoo.fr>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64--netbsd)
+	s=arc-20240116; t=1740865661; c=relaxed/simple;
+	bh=M9dexXCJtbVRn0YCtzcpNf2w7iXguRU2kv+Yh+Cu2xs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=byDPHhr42w6qeaoZRRQVhjG+BXXFy8Mon4GKR1cz4cKVxaja2XL2k8n4A0CCQtfq8kOVAqJQ0bczk6M/BIRkfzZL2SRp39+7xdyfPQOkz8EO3KfXLexqs5GNwl3jP/Q+GoMX4FVt+HWNrDzt7t0lSzIejBRRRJuJ7H2j+NJ3ms8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vhhydm+N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9383BC4CEDD;
+	Sat,  1 Mar 2025 21:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740865659;
+	bh=M9dexXCJtbVRn0YCtzcpNf2w7iXguRU2kv+Yh+Cu2xs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Vhhydm+NP8L3CHJE/BYKW5xBmFDZe9mMwHMrf/sgGH1a9Mq4CAj4Kpquz3ACkZnzn
+	 Lgq/1J2PutKXHuPpYCd+NQV3BPzh5MwHAmdvMLNN+tOvMnYDQVHEutft3INXzBQ++Y
+	 S/+Eto0w04qRXe1wTgcr5sUhbpbVokBwNA6iVUAWuiX3RUzbhqww2t/s+sTU7qRGdw
+	 bMhIxc/+cT3fCYq8ITwoPTrNDP8vr8Z4Btg+fVenCjoIswN1vBE9Cc1eFSiBfVzlIV
+	 b7HGbR8LJILd+VOpexdFNyXzyqGiVTxKJiOdyozNZqPpghsBTZqoIEP7akAuAQeE9g
+	 RhghDDySmMwhg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FCF380AACF;
+	Sat,  1 Mar 2025 21:48:13 +0000 (UTC)
+Subject: Re: [PULL REQUEST] i2c-for-6.14-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z8NigAMM76-HMpin@ninjato>
+References: <Z8NigAMM76-HMpin@ninjato>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z8NigAMM76-HMpin@ninjato>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc5
+X-PR-Tracked-Commit-Id: 911c288f9e662458fad969ea64ed1a206ca7229f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b4b215cf3333bef6a95c84efb38580217e86a2d2
+Message-Id: <174086569177.2508762.2641941417683948911.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Mar 2025 21:48:11 +0000
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Prob_CN_TRASH_MAILERS}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191402 [Mar 01 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 40
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/01 18:37:00 #27521468
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-On Sat, 1 Mar 2025 12:32:30 +0100, Christophe JAILLET wrote:
+The pull request you sent on Sat, 1 Mar 2025 20:39:44 +0100:
 
-> Le 01/03/2025 à 12:09, Vitaliy Shevtsov a écrit :
-> > [Why]
-> > The timer function code may have an integer wraparound issue. Since both
-> > pin->tx_custom_low_usecs and pin->tx_custom_high_usecs can be set to up to
-> > 9999999 from the user space via cec_pin_error_inj_parse_line(), this may
-> > cause usecs to be overflowed when adap->monitor_pin_cnt is zero and usecs
-> > is multiplied by 1000.
-> > 
-> > [How]
-> > Fix this by casting usecs to u64 when it is being converted from
-> > microseconds to nanoseconds.
-> > 
-> > Found by Linux Verification Center (linuxtesting.org) with Svace.
-> > 
-> > Fixes: 865463fc03ed ("media: cec-pin: add error injection support")
-> > Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-> > ---
-> >   drivers/media/cec/core/cec-pin.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
-> > index a70451d99ebc..f15ed5c67a65 100644
-> > --- a/drivers/media/cec/core/cec-pin.c
-> > +++ b/drivers/media/cec/core/cec-pin.c
-> > @@ -1021,7 +1021,7 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
-> >   		pin->wait_usecs = 0;
-> >   		pin->timer_ts = ktime_add_us(ts, usecs);
-> >   		hrtimer_forward_now(timer,
-> > -				ns_to_ktime(usecs * 1000));
-> > +				ns_to_ktime((u64)usecs * 1000));
-> 
-> Or maybe us_to_ktime() to be less verbose?
-> 
-> CJ
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc5
 
-That makes sense but let me check first. I will send a new one soon.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b4b215cf3333bef6a95c84efb38580217e86a2d2
 
-> >   		return HRTIMER_RESTART;
-> >   	}
-> >   	pin->wait_usecs = usecs - 100;
-> 
-
+Thank you!
 
 -- 
-Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
