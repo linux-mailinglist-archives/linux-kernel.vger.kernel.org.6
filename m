@@ -1,188 +1,94 @@
-Return-Path: <linux-kernel+bounces-539673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282E9A4A732
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:45:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65149A4A733
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B9857A40E6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C17817073A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 00:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC75C1BC3F;
-	Sat,  1 Mar 2025 00:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06255A923;
+	Sat,  1 Mar 2025 00:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KI54OpKv"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Av7Y55fq"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AC781E;
-	Sat,  1 Mar 2025 00:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A24F23F379
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 00:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740789925; cv=none; b=TiiybJCMAbBLlFSMd6ij2KERW0MW9GPigpTBxyYkmlBuLQGUC8CBz8nkvcWx7SHfRsAff74uho2lFlGppD45x8kbp0IqdKGPeg1vaCZJiK8JocSh87lh5qMzgr0y32UETsryfMt2hFQhY7G/X8iElII88W4XM2KPIu11Ea41eyw=
+	t=1740790003; cv=none; b=mRAn3P4Cug++Z86tpsmsQ1jBnyrPRXvjLUcoxi8xCFVLFA25hgdFUHrzTB8/F3yNzhCrSvFlhe+RPN1pmNWt5ylqmEl+vgZrHhqwk1wJ00xYWa/C+bhkncUh62FBP/Y9zPkLljov+3ZmnTxmbG23c7T13cOQ/e1Kpg2tlTeD21A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740789925; c=relaxed/simple;
-	bh=u4ER5VeMCS9Y7zQdcDvvTBan6ITLcL5eE830Y0FQJIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NquTdk++EfKDl23tCy+pQHE/AfDtRvTAu0GtSYxvGQtDy3EouvIGhkG1ypv3Wgdy8/5ZpNRRsj8u3M42jsqKM4DMXYa7LZ7yBbUyx/oO46r5nZ3Xp+IxP8fypmtwuRYt2a4iI0KExc+rnmk3YgJitUs1fdzpjWjpNhDmL12CaqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KI54OpKv; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F3F02520;
-	Sat,  1 Mar 2025 01:43:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740789832;
-	bh=u4ER5VeMCS9Y7zQdcDvvTBan6ITLcL5eE830Y0FQJIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KI54OpKvOnqhvdSQL777/pI91DKMeoYS/ct2HGIH8pWIicPzYlz/lxiqGe2kreyfo
-	 MMijQhGer5J0VnWs9/aZdnjoDSoLFwi7pvKfQup5cMIZZVVeALxqDi0oskiuTvSCbF
-	 p4v6gQwTHyKabqbrhHTdX4c851wCQ17iaHvEAvL8=
-Date: Sat, 1 Mar 2025 02:45:02 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] media: rkisp1: Fix the quantization settings of CPROC
-Message-ID: <20250301004502.GH7342@pendragon.ideasonboard.com>
-References: <20250227114558.3097101-1-stefan.klug@ideasonboard.com>
- <20250227114558.3097101-3-stefan.klug@ideasonboard.com>
+	s=arc-20240116; t=1740790003; c=relaxed/simple;
+	bh=pk65AtbUTNKqbltqv+/SNRRJE2Z9gQlUxZRq+L9paM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OdDkgEuBKuV4wALpZH0OL41DmrA6DMCZ88gxx+zYSxj7OJxnyXwbmE7DEAol1KP8c41KaSPNcNY3U+zM9gUp9djNqjT3IgZsgnksEX/gv/+vb8TO1n4J5rUju5bd1sr3DJ01LoKWMubBrvyydzaPgZYOC9TKtqQdQ2HRK7dWuDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Av7Y55fq; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=06eEerUNQ87zy8PJuQn7SSDXVVXGI3HgHMuZidWzrqc=; b=Av7Y55fqfsOfhv2Dc+qg/07+Ly
+	A9nNAWDVAqEaqTbyYUbNMFHTlWSpurDMB8zj1qkz3BV16P4hoqvWPWyeyjtonDpeiTpwGpfpSsK37
+	+IT1W3WO6CdbcY2dCAzO0jmFBIP7cd2I7da3rFt8kvAva4gKM2YeB6HgVlWe1Q0S+JEBHy8jTCISO
+	HnDrw6C6MwTXvTg30J1yz8y+TTksBy+eRE8Qzu0yLSUiltGl92aXyV71lqUedAp2qMx+aHGIC8Bnc
+	x62siMvxfrpIJLLu20NJ2YVfsAA59WicatRDra1simgTLxrX6WKXHorOeXi3SVozwhDXjxfQE0O77
+	UziIiiOA==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1toAzp-002Jx5-TB; Sat, 01 Mar 2025 01:46:32 +0100
+Message-ID: <2c45f480-b693-4d22-ad7d-4a0bf523c0c5@igalia.com>
+Date: Sat, 1 Mar 2025 09:46:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227114558.3097101-3-stefan.klug@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched_ext: Add trace point to track sched_ext core
+ events
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrea Righi <arighi@nvidia.com>, void@manifault.com,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+References: <20250228085944.19451-1-changwoo@igalia.com>
+ <Z8GKCkWNVN_Pbcc0@gpd3> <Z8Hy6qu8shpYOR83@slm.duckdns.org>
+ <86a6c5c7-47b7-49af-af57-b1d2171ba97c@igalia.com>
+ <Z8JLzOBMGvvAtu54@slm.duckdns.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z8JLzOBMGvvAtu54@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Stefan,
 
-Thank you for the patch.
 
-On Thu, Feb 27, 2025 at 12:45:00PM +0100, Stefan Klug wrote:
-> On the imx8mp the Image Effect module is not supported.
-
-Could you please include a patch that adds a feature flag for this, and
-disables the feature on i.MX8MP ? That requires:
-
-- Clearing the module update bits based on the feature flag in
-  rkisp1_isp_isr_other_config(), as done for BLS.
-- Marking the RKISP1_EXT_PARAMS_BLOCK_TYPE_IE entry in
-  rkisp1_ext_params_handler with the new feature flag.
-
-> In my case the
-> effect variable had an uninitialized default value of 0x700 leading to
-> limited YUV range in all cases (effects were never touched from user
-> space).
-
-I don't think the value of an uninitialized variable is relevant :-)
-
-> The effects configuration is as far is I understand completely
-> independent of CPROC.
-
-I agree the CPROC and IMGEFF blocks are most likely separate, but they
-both need to be configured according to the selected quantization.
-
-Quantization is applied by the CSM (CSC) block, configured in
-rkisp1_csm_config(). The CPROC module follows, and its
-RKISP1_CIF_C_PROC_CTRL register needs to take quantization into account.
-It has one bit to indicate whether its input data (produced by the CSM
-block) is in full or limited range, and two bits to set the range of
-output data (separately for luma and chroma, I have no idea why).
-
-The rkisp1_cproc_config() function assumes that the input and output
-quantization of the CPROC are always the same. It sets or clears all
-three configuration bits based on the quantization value. As you've
-noticed, it will also hardcode limited range when an image effect is
-selected. That seems wrong indeed.
-
-Note that the CPROC quantization bits only controls the Y offset
-(subtracted on the input side and added on the output side) and the Y
-and C clipping (on the output side). If we were to have different
-quantization on the input and output, the scaling factor to adjust the
-range seems to be something that userspace needs to take into account
-when calculating values for the other CPROC registers.
-
-Then, the IE (IMGEFF) block processes the data, and also needs to be
-configured based on the quantization range. The control register has a
-single bit that selects limited or full range. It is set in
-rkisp1_ie_config():
-
-	if (params->quantization == V4L2_QUANTIZATION_FULL_RANGE)
-		eff_ctrl |= RKISP1_CIF_IMG_EFF_CTRL_YCBCR_FULL;
-
-There's a note in the documentation of the RKISP1_CIF_IMG_EFF_CTRL
-register in the RK3399 registers manual that states
-
-  Note: full_range for image effects is supported in ISP M5_v6, M5_v7 only
-
-The ISP version in the RK3399 seems to be M14_v2. This may be why the
-code disables full range quantization in rkisp1_cproc_config() when a
-image effect is selected.
-
-All of this is a mess, and to make it worse, the implementation in the
-driver is quite broken. The effect is selected by the
-RKISP1_CIF_IMG_EFF_CTRL register, written in rkisp1_ie_config(), and the
-rkisp1_ie_enable() function then rewrites the whole register to enable
-the module, overwriting the selected effect. Only when userspace sets
-the effect without updating the module enable bit does the driver seem
-to handle things correctly.
-
-Now, how do we handle this ? I think this patch is fine, but the commit
-message needs a rewrite to summarize the above, and explain that the
-CPROC never changes quantization. A corresponding comment in
-rkisp1_cproc_config() would be useful.
-
-Regarding the image effect configuration, I think we can consider that
-it should only be enabled by userspace when using limited range, if
-running on a device that doesn't support full range for image effects.
-The driver doesn't need to protect against this in my opinion. A comment
-in rkisp1_ie_config() could also be useful to explain that.
-
-> Completely remove that check. This fixes full
-> range mode on imx8mp and possibly others.
->
-> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> ---
->  drivers/media/platform/rockchip/rkisp1/rkisp1-params.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
+On 25. 3. 1. 08:50, Tejun Heo wrote:
+> Hello,
 > 
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> index b28f4140c8a3..8d61e21ad475 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-> @@ -764,11 +764,6 @@ static void rkisp1_aec_config_v12(struct rkisp1_params *params,
->  static void rkisp1_cproc_config(struct rkisp1_params *params,
->  				const struct rkisp1_cif_isp_cproc_config *arg)
->  {
-> -	struct rkisp1_cif_isp_isp_other_cfg *cur_other_cfg =
-> -		container_of(arg, struct rkisp1_cif_isp_isp_other_cfg, cproc_config);
-> -	struct rkisp1_cif_isp_ie_config *cur_ie_config =
-> -						&cur_other_cfg->ie_config;
-> -	u32 effect = cur_ie_config->effect;
->  	u32 quantization = params->quantization;
->  
->  	rkisp1_write(params->rkisp1, RKISP1_CIF_C_PROC_CONTRAST,
-> @@ -778,8 +773,7 @@ static void rkisp1_cproc_config(struct rkisp1_params *params,
->  	rkisp1_write(params->rkisp1, RKISP1_CIF_C_PROC_BRIGHTNESS,
->  		     arg->brightness);
->  
-> -	if (quantization != V4L2_QUANTIZATION_FULL_RANGE ||
-> -	    effect != V4L2_COLORFX_NONE) {
-> +	if (quantization != V4L2_QUANTIZATION_FULL_RANGE) {
->  		rkisp1_param_clear_bits(params, RKISP1_CIF_C_PROC_CTRL,
->  					RKISP1_CIF_C_PROC_YOUT_FULL |
->  					RKISP1_CIF_C_PROC_YIN_FULL |
+> On Sat, Mar 01, 2025 at 08:33:36AM +0900, Changwoo Min wrote:
+> ...
+>> You might have two options here: 1) returning per-CPU event
+>> counter or 2) returning aggregated event counter. The first opion
+>> will be fast but less meaningful from user's point of view
+>> compared to the second option. Assuming the tracepoint are not in
+>> the hot path, I think the second option will be better choice.
+>> I will add an @event field and a special version of
+>> scx_bpf_events() for faster aggregation.
+> 
+> Ah, right, let's forget about printing aggregate for now. That's not
+> difficult for anyone to find out if necessary after all.
 
--- 
-Regards,
+Okay. I will send a new version with __s64 changes.
 
-Laurent Pinchart
+Thanks!
 
