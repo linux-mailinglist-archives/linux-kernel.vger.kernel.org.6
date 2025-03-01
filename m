@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-539931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8011A4AAF7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:38:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94B2A4AAFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2193B3F27
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19F01706EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282EA1DED71;
-	Sat,  1 Mar 2025 12:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AD41DEFE1;
+	Sat,  1 Mar 2025 12:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d9WjBtFl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m2kl+B2U"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4C11D8A0B;
-	Sat,  1 Mar 2025 12:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TuayS3Q0"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172051DC9B8;
+	Sat,  1 Mar 2025 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740832721; cv=none; b=AACZj84qHqL7Cki4swxR8Ra5Mxiw4AyNJROdTe4LmaI2npBFOpUS8S4bt1MKlINxFi6WOO51mFAvT4+mCPAjh6FTDzTuwCOXRHq9lr2D7rvjF2a2JhVa3wMIQPYCX+BWPJgPw+p2kKl7JsRIYslI5azUGWQS2LqlfFtmXYMWhcw=
+	t=1740832882; cv=none; b=OLncte9vXqpsgjKMishGWOJxc9V6rcxJPiP+wPUQkskrGoWTrVKK4pI1mJ3wts7dPcX3398EvV14HhVscGSHFlW1cHhw1cP4B878N5jFlFUrBQBvgISHMIBIUzpUpm5Fj6AFJLiP2tZxbnfKBxT087MzWmbdsgB6rf1e4rVxXyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740832721; c=relaxed/simple;
-	bh=rrGNkFrv3f5CmhlRM+Joi7hAYrfRQG7h7GhOvXiAyM8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=P3Utfz1/ljLnJ8sONMyQKO9Im5CKRIP286VExYsNo8xCFc851oy2scl3XOWhiZ+Xhbzde9hL0er+5Ji9dBdKY6xoHgVRtslouqH6tS3lUPTVCEsoyWOh5QpZ5JmrMAzP+toUJiri0TePwwW32HGcU+Px5JJJuHgKsNM5yl8xOh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d9WjBtFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m2kl+B2U; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 858D21140100;
-	Sat,  1 Mar 2025 07:38:37 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-09.internal (MEProxy); Sat, 01 Mar 2025 07:38:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740832717;
-	 x=1740919117; bh=tjeEIDFBTv0qw01qPUrH5f6Cwruc5eD9G/E2Cffx1vw=; b=
-	d9WjBtFl/SGX449KuGzSDcog2c4nuPXOGlzsuIlTJhrR7JqBbHMfgM51fMNGC9a5
-	1iHv0GQnrhTEqqDJP39/MIMgxC6BKwbQa66anD1EAUHEoFJPJQPCdtSO5lVgxZ87
-	IRovlOKhLhb9BNVcJZR53TLiX/LDSuoM4C4UJReLAqgxE54FoFg8icE8MR3Wg7W2
-	bIRK6VQbPQd2eTfYiHnjd76MWbV+BBHq4Q39uReET3NFci/QZzi9NOi8D9EkBeXx
-	lb0zHNDlvaBqxJNgYK7uQzZ2cQDF2mEU+G5amKyW+YY+WGJtTmFOxxtW8KjAqizF
-	Gs4I+7GDImNh5IR1UQRdyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740832717; x=
-	1740919117; bh=tjeEIDFBTv0qw01qPUrH5f6Cwruc5eD9G/E2Cffx1vw=; b=m
-	2kl+B2UmzqKjszI6BZVkxRDpeOm5s2+BfERL1redhPBOkRMjRq+CA9k4ruXf9ro9
-	RuyLRfw1uigTxWGgr5zIoHrXIp9uiKXxnigvQ8GGn6Zjos4pHQrekjzJ462Ds5YJ
-	vSoyX7XTjLL+zE6/uYifInvG0y5nefKflmMrq3j64zbsf3HLePhPBpd+kJEyZd59
-	sTVu+HgHhOSaf+OqV8me9c//bYQu5QvUD0XVYkL3Wb0EulDucJX94pCN9UQH3X8F
-	Nizg3qaEX3b63Je7OG0zlIjCxmpKnEsiDdFOs/GRJILMvLgekGL2lTmqCEHNLDJC
-	OeXywMaHVYXl1XS5doNnQ==
-X-ME-Sender: <xms:zP_CZ1OWu5WI8zETg8KQm-IqFWfLVuTaKcyKChLPjhmiCf7SQf3Bsw>
-    <xme:zP_CZ3-vZyAmYFLqbKPpLdvr7aw-ecF1acaEhq7vhV-OFMrCnrdyz0fRBhbqUYgH5
-    9Rp6Qa0ShbPRdNR8AA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelfeefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnseguvggtrgguvghnthdroh
-    hrghdruhhkpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehguhhsthgrvhhorghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhvrghloh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhgrnhhnvghssehsihhpshholhhu
-    thhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigsehtrhgvsghlihhgrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepshhtfhgpgihlseifphdrphhl
-X-ME-Proxy: <xmx:zP_CZ0QrRtZQjU55u5UbdpqUANRnsA1AkYAmdL7V-cE7KT8w-v-7Eg>
-    <xmx:zP_CZxvwUmZsVblgf8Un_wuVROzAhaWqTmBdmxXAojpbvNec9KriEQ>
-    <xmx:zP_CZ9dBMBSj_WT2SfWyIK_BUUvGyXn8B8ixX8GzYMEwZ6ozyKhJkA>
-    <xmx:zP_CZ93OzZh-u1-R0xAj1F79i26s2psWyhdO6CE7z48STvKJYvu1_g>
-    <xmx:zf_CZ8xspkblI34gXURum3Zsi6wELjUiCFWHx3GCp2C9SbAa7Xl1OGfD>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BE2B52220072; Sat,  1 Mar 2025 07:38:36 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740832882; c=relaxed/simple;
+	bh=fH8zFdJMTFhGVX0V/1Yw10rbmIh+sDhnt/L2hdG9Swk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AoV14r/3iyYlUkwn/0cTQOMtGhx7gR4VT0p/pW+aX2CLs1dTHrW8yUUMZ5dCmy3/9tEDqjqd1zNJOGFkK/2RuT5rGiF2M/xNL6Wt3I7plz/ZVwUgHcFL37TFsPUnvwMelPGhryPCiGPpsTYqWflUbZ/g2g50mxkGb2seceA81Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TuayS3Q0; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=+qSBU
+	FwKZK//BSLhdYUxhoKJBzrOrxn+r2oFPLui4bw=; b=TuayS3Q07Z/s/yQ5jxuXQ
+	jE1uu5qTf2xi82VAmCftDIQcjMelsYSOmlmwT7FqtNai7ZmNPY90023WRwRqTqdc
+	VtlEvSDrLDLJQq3mHE9/Y5rPmKPYEli6Hq6iSkBFc0hjPnlA67VKKLenvLCNwxhY
+	xVrEXUqf049pzFFJO8MNGk=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD379A7AMNnbQlkOw--.37453S2;
+	Sat, 01 Mar 2025 20:40:28 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: tglx@linutronix.de
+Cc: manivannan.sadhasivam@linaro.org,
+	kw@linux.com,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	Frank.Li@nxp.com,
+	cassel@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [v2] genirq/msi: Add the address and data that show MSI/MSIX
+Date: Sat,  1 Mar 2025 20:39:53 +0800
+Message-Id: <20250301123953.291675-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 01 Mar 2025 13:38:16 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stanislaw Gruszka" <stf_xl@wp.pl>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Johannes Berg" <johannes@sipsolutions.net>,
- "Kalle Valo" <kvalo@kernel.org>, "Ben Hutchings" <ben@decadent.org.uk>,
- linux <linux@treblig.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <994e4827-0e16-4e05-be7c-1ca7a86e4daf@app.fastmail.com>
-In-Reply-To: <20250301122834.GA55739@wp.pl>
-References: <20250225145359.1126786-1-arnd@kernel.org>
- <20250301122834.GA55739@wp.pl>
-Subject: Re: [PATCH] [v2] iwlegacy: don't warn for unused variables with DEBUG_FS=n
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD379A7AMNnbQlkOw--.37453S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF45Ww4rAFyfKw47Ar43ZFb_yoWrJw4rpF
+	yUKF47Gr4xJr1Utw47G3WUW34Yya4qyF17t3sFqr1fArZ5Ww1kKFyjgay2gF13tF1jqr1F
+	y3W8Xa4FgrZ8CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_NtxDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiugMDo2fC92OKywAAsp
 
-On Sat, Mar 1, 2025, at 13:28, Stanislaw Gruszka wrote:
-> On Tue, Feb 25, 2025 at 03:53:53PM +0100, Arnd Bergmann wrote:
->
-> But then the code will be compiled for !CONFIG_MAC80211_DEBUGFS
-> case, it does compile for me:
->
-> -  22475	   1160	      0	  23635	   
-> 5c53	drivers/net/wireless/intel/iwlegacy/4965-rs.o
-> +  23008	   1168	      0	  24176	   
-> 5e70	drivers/net/wireless/intel/iwlegacy/4965-rs.o
+The debug_show() callback function is implemented in the MSI core code.
+And assign it to the domain ops::debug_show() creation.
 
-Very strange, this really shouldn't happen. Which symbols
-exactly do you see the compiler fail to drop with my patch,
-and which compiler version are you using?
+cat /sys/kernel/debug/irq/irqs/msi_irq_num, the address and data stored
+in the MSI capability or the address and data stored in the MSIX vector
+table will be displayed.
 
-> How about moving  
-> static const struct il_rate_mcs_info il_rate_mcs[RATE_COUNT]
-> under CONFIG_MAC80211_DEBUGFS ? Maybe inside the function that use it ? 
+e.g.
+root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
+ 85:          0          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 75497472 Edge      PCIe PME, aerdrv
+ 86:          0         30          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021760 Edge      nvme0q0
+ 87:        287          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021761 Edge      nvme0q1
+ 88:          0        265          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021762 Edge      nvme0q2
+ 89:          0          0        177          0          0          0          0          0          0          0          0          0   ITS-MSI 76021763 Edge      nvme0q3
+ 90:          0          0          0         76          0          0          0          0          0          0          0          0   ITS-MSI 76021764 Edge      nvme0q4
+ 91:          0          0          0          0        161          0          0          0          0          0          0          0   ITS-MSI 76021765 Edge      nvme0q5
+ 92:          0          0          0          0          0        991          0          0          0          0          0          0   ITS-MSI 76021766 Edge      nvme0q6
+ 93:          0          0          0          0          0          0        194          0          0          0          0          0   ITS-MSI 76021767 Edge      nvme0q7
+ 94:          0          0          0          0          0          0          0         94          0          0          0          0   ITS-MSI 76021768 Edge      nvme0q8
+ 95:          0          0          0          0          0          0          0          0        148          0          0          0   ITS-MSI 76021769 Edge      nvme0q9
+ 96:          0          0          0          0          0          0          0          0          0        261          0          0   ITS-MSI 76021770 Edge      nvme0q10
+ 97:          0          0          0          0          0          0          0          0          0          0        127          0   ITS-MSI 76021771 Edge      nvme0q11
+ 98:          0          0          0          0          0          0          0          0          0          0          0        317   ITS-MSI 76021772 Edge      nvme0q12
+root@root:/sys/kernel/debug/irq/irqs#
+root@root:/sys/kernel/debug/irq/irqs# cat 87
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31600200
+            IRQD_ACTIVATED
+            IRQD_IRQ_STARTED
+            IRQD_SINGLE_TARGET
+            IRQD_AFFINITY_MANAGED
+            IRQD_AFFINITY_ON_ACTIVATE
+            IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 0
+effectiv: 0
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+ hwirq:   0x4880001
+ chip:    ITS-MSI
+  flags:   0x20
+             IRQCHIP_ONESHOT_SAFE
+ msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data:   0x00000001
+ parent:
+    domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+     hwirq:   0x2002
+     chip:    ITS
+      flags:   0x0
+     parent:
+        domain:  :soc@0:interrupt-controller@0e001000-1
+         hwirq:   0x2002
+         chip:    GICv3
+          flags:   0x15
+                     IRQCHIP_SET_TYPE_MASKED
+                     IRQCHIP_MASK_ON_SUSPEND
+                     IRQCHIP_SKIP_SET_WAKE
 
-It's not supposed to make a difference, let's try to figure
-out if there is a compiler bug or a mistake in my patch first
-and then fix it in the right place.
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+Changes since v1:
+https://lore.kernel.org/linux-pci/20250227162821.253020-1-18255117159@163.com/
 
-     Arnd
+- According to Thomas(tglx), the debug_show() callback should be added
+  to the MSI core code.
+---
+ kernel/irq/msi.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index 396a067a8a56..7dc786360172 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -756,12 +756,30 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
+ 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
+ }
+ 
++static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
++				  struct irq_data *irqd, int ind)
++{
++	struct msi_desc *desc;
++	bool is_msix;
++
++	desc = irq_get_msi_desc(irqd->irq);
++	if (!desc)
++		return;
++
++	is_msix = desc->pci.msi_attrib.is_msix;
++	seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
++	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
++	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
++	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
++}
++
+ static const struct irq_domain_ops msi_domain_ops = {
+ 	.alloc		= msi_domain_alloc,
+ 	.free		= msi_domain_free,
+ 	.activate	= msi_domain_activate,
+ 	.deactivate	= msi_domain_deactivate,
+ 	.translate	= msi_domain_translate,
++	.debug_show     = msi_domain_debug_show,
+ };
+ 
+ static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
+
+base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
+-- 
+2.25.1
+
 
