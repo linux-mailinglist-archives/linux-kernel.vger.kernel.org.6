@@ -1,270 +1,135 @@
-Return-Path: <linux-kernel+bounces-539714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F435A4A7B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:51:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3E5A4A7B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09181712F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 013407A7F03
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836541531E3;
-	Sat,  1 Mar 2025 01:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A91A185B62;
+	Sat,  1 Mar 2025 01:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8/52ggW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="12JGXXTz"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA285C5E;
-	Sat,  1 Mar 2025 01:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E372814A098
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740793910; cv=none; b=Tqu/Osqsxeef3n27ex4t1WxYJq68UsNygvFJVA8P8Dl8GBV3m5mi6vgZcwfDJzxLCTa3bKHieGJrOBUi6+AaI0i8W5WNCjzTPTeGktuhIAXm6du5gx6Rvr27N0ehrJGapHU8YPm3mt7sUffFfTz4WZpsG8OUhebrWoKad6QiRqU=
+	t=1740794019; cv=none; b=k3zDJj+313dXbDotiuS0cYLmPkYBOQgg7ZuSatjTdkRIPhg73taCJAMnZeEPrFfVqYNNdxgg7Rh5OG+QHB9QqcUuFqLLa8eUfq/pIcVO/RaZi3OWwo3a+lXnhutfTX+DW0N8ZUJkJxoYC6eBxHBcVxtlb5G2Y4DXd4idW8RwGFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740793910; c=relaxed/simple;
-	bh=15rONcc9qjiLlXXjyOVHoZ0qnj2RwvIUpFjoXyrBmGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6jYJj28WrK+3ORVGiRLF6qiGU+rZVXux+glI7O/Wud4FOJOxL38464lS081xij3ICJ6U1fnMRVW/36V4ZAtUd26bRAr6x3keJaae7lhOjM8SjhCxOYFCjsnWQnC3Lij1kccrEtnP2bjFi8De1AphsSoNzQZmJs+/bVT0BSipcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8/52ggW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14188C4CED6;
-	Sat,  1 Mar 2025 01:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740793910;
-	bh=15rONcc9qjiLlXXjyOVHoZ0qnj2RwvIUpFjoXyrBmGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q8/52ggWgJNPhmS80YqYZ58UsUa3X4jBdgZLeettP1hCEx6P4onovGuGO8T3t/2kR
-	 isYSYn4dLofVrkFu4WWYJLtNvVNpMaOrRaT8Pt7+jq0jifkl3koLN0nyt19ztBJKcD
-	 ldNWN4o/UhQGumDFlmKx10tcQ3lhu35AuzvUsr3o0bIqIzuCh1a4QoBGGIy91SAllR
-	 L/f/uTCD+ai6aOXmQeqdRNLcmbmxMK8vIDQjXwPU5WBif0b9lnGINSCVrBWpvExYK4
-	 YWK2OIY1OTDAX5ksx5KO0GW+g4dZTf9OxpyVrrEnf+Tok9j7Tpq+Vapq8Nc+fS1Quz
-	 SlhrWgjXKPewQ==
-Date: Sat, 1 Mar 2025 03:51:46 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 5/6] tpm: add SNP SVSM vTPM driver
-Message-ID: <Z8JoMrUm9Dnoqgoi@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-6-sgarzare@redhat.com>
+	s=arc-20240116; t=1740794019; c=relaxed/simple;
+	bh=EKuULC55HQ3nbCCUfqRw7VZYjnjWI4RwxZ9r8CX/fpE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SXz3Ajy2KSsonw/pnBPgBBEBcGwNaYw2Lb3T4nFmQ3+DC19gTzzsRujaR+/hLl5D3p8d+2Bffym1hKzOAQA3MTDV6Yq+8XUStnZerMGMroTvjzlFzrw+RWAFjO38dsBaoI0BEdPD5KwJYJEEqa8HVXKSQTF4FCBZjVa1/a4zWmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=12JGXXTz; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223722270b7so39745ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:53:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740794017; x=1741398817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLgNKvgK3MF8wXxYtxDEojHg1VBQZqgwWDhEQT1JUUI=;
+        b=12JGXXTzsoc1iWgXyyRLnXMhsEoyiBf7P4LYJpBLEopDJB65evcVNnxu4b/FentsI7
+         dEifDNpjnqiviO4Z39pUdSLcRf1n652uhmWi2UNYIlbakFEG+sXGFhuagq/IeprMIK2N
+         NTmIE7F6hCTn82toJrPrXXSvn34Ln12A6rkla+rBL4ZK5by+lyArMDy9P6rO/1Ogi4YC
+         UF4dgBogJYgcBy45T4v0A70WpJKCV+CNftJuwvHAfix0pMe3S+xz7ANAwmzmvq3iA0tD
+         FxoLcGgHuyHUjMYuYm0yHABNzUMlHIiS1aEJqQQTr1hAKwrtcd4YM0CQgmFXgayZ4ekc
+         mzIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740794017; x=1741398817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RLgNKvgK3MF8wXxYtxDEojHg1VBQZqgwWDhEQT1JUUI=;
+        b=YH+JXmSygPl+HbfoCMKlZTzVfxamVsKcdZzaKXbgRaiNhHR3CEIYq6a1zOEVvRaaKq
+         LMI7V7zdVJrB2pkZqxHTasf5QK8aBoHg78VbELHVo3bOz6pblsTK4PAImEm2hR3frEeP
+         A/ER4F+/gbmYJbVYDZvRIOYLK9/Z0/lb2FUGL+Ouq1ozgpJTZku+crOcC91+1noU0P4B
+         jv8y5+0CgYwPIXPMWmn1llS0qvT+X5NgA6Xm9UZJ0iueA+p4S/6eZTUEZ+EoE9OqZbfx
+         r5t3VQtJeDLQI3gjNqoSzi1pQLDx9QVzJ33tUGiDRsA1QuXwCnQ+6p4JlCFAFCzcBYLl
+         qakw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwIw27prXZJ+WbRKlhbqshwCjEpyr6j/PCWxWujHUM2zQwWDA1b7184yRpdOBDB5dA/pGcn12vpDoOFCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZda1VEctXPkKdJjB4dCX6qAgzlTh91usZPZt+dn6nalGp8JP0
+	6K4kVqneJ099UmYf9hoqOS/wohmOo3Mdw+jVFhB0YAZhWfq1u7Qw3h37oMYiseC0O/F9dsjUtJ7
+	lGC+AdW4uEw7QgxO/Qb6ueDdFZAP+HWwRiZ5d
+X-Gm-Gg: ASbGncuX/Q81kfdEinltQ0SBSZ4cWppGY+U8812N1FWKgNwAiGZTzoP6aqERIo3Hdhf
+	h3W8iSw6PbApuPvEnu4eyitR1qbzmN8/TIs3aRyU4U+4RXwvJkWdmsk6gHkU54KuYt5cMBAWf0X
+	cUbzPCzO1KRp4OlvvWjuDBXMxKDA==
+X-Google-Smtp-Source: AGHT+IHKl2PLDaPwJZ72jov+1EwCLnYkzTru1UwRQte3i8ZHKbDpflK/NcgLRYMjS26dyimEoNSydoGDDo9IEsABteE=
+X-Received: by 2002:a17:902:d4c5:b0:215:9327:5aed with SMTP id
+ d9443c01a7336-22383684e49mr1174475ad.20.1740794016936; Fri, 28 Feb 2025
+ 17:53:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228170720.144739-6-sgarzare@redhat.com>
+References: <20250227041209.2031104-1-almasrymina@google.com>
+ <20250227041209.2031104-8-almasrymina@google.com> <20250228164301.07af6753@kernel.org>
+In-Reply-To: <20250228164301.07af6753@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 28 Feb 2025 17:53:24 -0800
+X-Gm-Features: AQ5f1JqJZCsnxITjcDH7bL98xxwfM9Akmi35L149mBq-r5HqPUJRq4YCYmUnRBY
+Message-ID: <CAHS8izO-N4maVtjhgH7CFv5D-QEtjQaYKSrHUrth=aJje4NZgg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 7/8] net: check for driver support in netmem TX
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 06:07:19PM +0100, Stefano Garzarella wrote:
-> Add driver for the vTPM defined by the AMD SVSM spec [1].
-> 
-> The specification defines a protocol that a SEV-SNP guest OS can use to
-> discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
-> in the guest context, but at a more privileged level (VMPL0).
-> 
-> The new tpm-svsm platform driver uses two functions exposed by x86/sev
-> to verify that the device is actually emulated by the platform and to
-> send commands and receive responses.
-> 
-> The vTPM is emulated through the TCG reference implementation, so this
-> driver leverages tpm_tcgsim.h to fill commands and parse responses.
+On Fri, Feb 28, 2025 at 4:43=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Thu, 27 Feb 2025 04:12:08 +0000 Mina Almasry wrote:
+> > +     if (!skb_frags_readable(skb) && !dev->netmem_tx)
+>
+> How do you know it's for _this_ device tho?
 
-Why? Please don't.
+Maybe a noob question, but how do we end up here with an skb that is
+not targeted for the 'dev' device? We are checking in
+tcp_sendmsg_locked that we're targeting the appropriate device before
+creating the skb. Is this about a packet arriving on a dmabuf bound to
+a device and then being forwarded through another device that doesn't
+own the mapping, bypassing the check?
 
-> 
-> The device cannot be hot-plugged/unplugged as it is emulated by the
-> platform, so we can use module_platform_driver_probe(). The probe
-> function will only check whether in the current runtime configuration,
-> SVSM is present and provides a vTPM.
-> 
-> [1] "Secure VM Service Module for SEV-SNP Guests"
->     Publication # 58019 Revision: 1.00
->     https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
-> 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  drivers/char/tpm/tpm_svsm.c | 120 ++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/Kconfig    |  10 +++
->  drivers/char/tpm/Makefile   |   1 +
->  3 files changed, 131 insertions(+)
->  create mode 100644 drivers/char/tpm/tpm_svsm.c
-> 
-> diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
-> new file mode 100644
-> index 000000000000..1c34133990c5
-> --- /dev/null
-> +++ b/drivers/char/tpm/tpm_svsm.c
-> @@ -0,0 +1,120 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
-> + *
-> + * Driver for the vTPM defined by the AMD SVSM spec [1].
-> + *
-> + * The specification defines a protocol that a SEV-SNP guest OS can use to
-> + * discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
-> + * in the guest context, but at a more privileged level (usually VMPL0).
-> + *
-> + * The vTPM is emulated through the TCG reference implementation, so this
-> + * driver leverages tpm_tcgsim.h to fill commands and parse responses.
-> + *
-> + * [1] "Secure VM Service Module for SEV-SNP Guests"
-> + *     Publication # 58019 Revision: 1.00
-> + *     https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
-> + */
-> +
-> +#include <asm/sev.h>
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/tpm_tcgsim.h>
-> +
-> +#include "tpm.h"
-> +
-> +struct tpm_svsm_priv {
-> +	u8 buffer[TPM_TCGSIM_MAX_BUFFER];
-> +	u8 locality;
-> +};
-> +
-> +static int tpm_svsm_send_recv(struct tpm_chip *chip, u8 *buf, size_t buf_len,
-> +			      size_t to_send)
-> +{
-> +	struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
-> +	int ret;
-> +
-> +	ret = tpm_tcgsim_fill_send_cmd((struct tpm_send_cmd_req *)priv->buffer,
-> +				       priv->locality, buf, to_send);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = snp_svsm_vtpm_send_command(priv->buffer);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return tpm_tcgsim_parse_send_cmd((struct tpm_send_cmd_resp *)priv->buffer,
-> +					 buf, buf_len);
-> +}
-> +
-> +static struct tpm_class_ops tpm_chip_ops = {
-> +	.flags = TPM_OPS_AUTO_STARTUP,
-> +	.send_recv = tpm_svsm_send_recv,
-> +};
-> +
-> +static int __init tpm_svsm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct tpm_svsm_priv *priv;
-> +	struct tpm_chip *chip;
-> +	int err;
-> +
-> +	if (!snp_svsm_vtpm_probe())
-> +		return -ENODEV;
-> +
-> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * FIXME: before implementing locality we need to agree what it means
-> +	 * for the SNP SVSM vTPM
-> +	 */
-> +	priv->locality = 0;
-> +
-> +	chip = tpmm_chip_alloc(dev, &tpm_chip_ops);
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	dev_set_drvdata(&chip->dev, priv);
-> +
-> +	err = tpm2_probe(chip);
-> +	if (err)
-> +		return err;
-> +
-> +	err = tpm_chip_register(chip);
-> +	if (err)
-> +		return err;
-> +
-> +	dev_info(dev, "SNP SVSM vTPM %s device\n",
-> +		 (chip->flags & TPM_CHIP_FLAG_TPM2) ? "2.0" : "1.2");
-> +
-> +	return 0;
-> +}
-> +
-> +static void __exit tpm_svsm_remove(struct platform_device *pdev)
-> +{
-> +	struct tpm_chip *chip = platform_get_drvdata(pdev);
-> +
-> +	tpm_chip_unregister(chip);
-> +}
-> +
-> +/*
-> + * tpm_svsm_remove() lives in .exit.text. For drivers registered via
-> + * module_platform_driver_probe() this is ok because they cannot get unbound
-> + * at runtime. So mark the driver struct with __refdata to prevent modpost
-> + * triggering a section mismatch warning.
-> + */
-> +static struct platform_driver tpm_svsm_driver __refdata = {
-> +	.remove = __exit_p(tpm_svsm_remove),
-> +	.driver = {
-> +		.name = "tpm-svsm",
-> +	},
-> +};
-> +
-> +module_platform_driver_probe(tpm_svsm_driver, tpm_svsm_probe);
-> +
-> +MODULE_DESCRIPTION("SNP SVSM vTPM Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:tpm-svsm");
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index 0fc9a510e059..fc3f1d10d31d 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -225,5 +225,15 @@ config TCG_FTPM_TEE
->  	help
->  	  This driver proxies for firmware TPM running in TEE.
->  
-> +config TCG_SVSM
-> +	tristate "SNP SVSM vTPM interface"
-> +	depends on AMD_MEM_ENCRYPT
-> +	help
-> +	  This is a driver for the AMD SVSM vTPM protocol that a SEV-SNP guest
-> +	  OS can use to discover and talk to a vTPM emulated by the Secure VM
-> +	  Service Module (SVSM) in the guest context, but at a more privileged
-> +	  level (usually VMPL0).  To compile this driver as a module, choose M
-> +	  here; the module will be called tpm_svsm.
-> +
->  source "drivers/char/tpm/st33zp24/Kconfig"
->  endif # TCG_TPM
-> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> index 9bb142c75243..52d9d80a0f56 100644
-> --- a/drivers/char/tpm/Makefile
-> +++ b/drivers/char/tpm/Makefile
-> @@ -44,3 +44,4 @@ obj-$(CONFIG_TCG_XEN) += xen-tpmfront.o
->  obj-$(CONFIG_TCG_CRB) += tpm_crb.o
->  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
->  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
-> +obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
-> -- 
-> 2.48.1
-> 
+> The driver doesn't seem to check the DMA mapping belongs to it either.
+>
+> Remind me, how do we prevent the unreadable skbs from getting into the
+> Tx path today?
 
-OK, so this is like ARM's driver architecture using SMC, and I think
-tpm_ftpm_tee is probably one great reflection for this overall. Is this
-correct analysis, or not?
+I'm not sure if this is about forwarding, or if there is some other
+way for unreadable skbs to end up in the XT path that you have in
+mind. At some point in this thread[1] we had talked about preventing
+MP bound devices from being lower devices at all to side step this
+entirely but you mentioned that may not be enough, and we ended up
+sidestepping only XDP entirely.
 
-BR, Jarkko
+[1] https://lore.kernel.org/bpf/20240821153049.7dc983db@kernel.org/
+
+
+--
+Thanks,
+Mina
 
