@@ -1,117 +1,78 @@
-Return-Path: <linux-kernel+bounces-539699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1055DA4A78D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:38:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAC1A4A791
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4982A1890E82
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BE116AC31
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7918FDAB;
-	Sat,  1 Mar 2025 01:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E656735962;
+	Sat,  1 Mar 2025 01:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VBJyQn4I"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3A2182D7;
-	Sat,  1 Mar 2025 01:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NipXy2HG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ECA182D2
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740793086; cv=none; b=YWdiJ2/obK+GnJn9j19Jmt/NaPqI78gYWn+OLuH640PUwMntFweGU1F22evfSlt6JjSowqaazi6ekjMOnR932byeRIsCqif41lcKFDRfKQgW7tSxnFNhcV8CO0A2TTJZvUXUjmZ2tULl4Zy24yo4xjLlnYKkDRi1jWyX4xJwk/4=
+	t=1740793227; cv=none; b=egG+0zhEZq8cuZfOxbbZ70blMadpq/Q33eRD1QNkR9ca5x2XQPsrupoawYGJrPEwpgRyelisTJi9l6dJ64ODydcJLMWXOn82vsxC0McRPI2VYkEtmfRY3bzqHSCWKLBW2X5T9b5m4hvj7acJVBtFz3FKiLmVKC8WO+9+ypS5hug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740793086; c=relaxed/simple;
-	bh=MRySq0VswusZ4YKSZr5pKh3kiER+G1pU5MqAUOj/Jtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQdMS6gnHjTXESwSpONQNTfvFcru6vds8706fVgMH9RaYVQq4tQkepkqOmdS747SY9FsaVx2xy8ADN2+aACcWa967IhEUulTva/6Z19GzLKED9Mq0WP9MjXUzrKiuO6WMffyNpQp7z19PZvFU1/jz1fuERZpAz20Jtl9JNWEQ3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VBJyQn4I; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EABF02038A20;
-	Fri, 28 Feb 2025 17:38:03 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EABF02038A20
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740793084;
-	bh=SwI2RPp0lc2nI+b9PwlTDvKqHyEE6M7HzsQHovIJa8k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VBJyQn4In+Z6OoD5b3tU9zACXIqUuuGyTy9YFEoBwVxvJ8gxMvk7GLb1YfVzwFMNa
-	 MZ8P4/K9yMIFqxYCeT9cetKxvXCUpEfmrHCnZy1M1IRPhUWK6daGHv6lNZ/YA/J8gg
-	 mlyLZ5ytzxYgjDEsIlhr6XLI37+XeT9ZA3oJ/ehw=
-Message-ID: <bcb300dd-762f-495d-9d07-16b81ff70602@linux.microsoft.com>
-Date: Fri, 28 Feb 2025 17:38:00 -0800
+	s=arc-20240116; t=1740793227; c=relaxed/simple;
+	bh=FM7BRiC8845ZKZGeuMaBWEgLyC+AmQvgkYrzx8BmPh8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qXHx0I4mQ1ICw/o/Et9F8LMF//aBST36Udmag17m1xTExjmmxsInBSrcNS3sKFP3SGIyrkbck6ninteh34JBPkXKzZAuiZ/1UffZtUexuzabGdUGsr6D/lZaBEwciNvedJ28rKXWLWB2NqQ59X6XwDvgUF1Hc77CUBlnwNs8Hbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NipXy2HG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EBA3C4CED6;
+	Sat,  1 Mar 2025 01:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740793227;
+	bh=FM7BRiC8845ZKZGeuMaBWEgLyC+AmQvgkYrzx8BmPh8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=NipXy2HGwo0ut390Yz2fjf5B+YPv5PQiCqaeErtQnFT204swCT7E5fbFM46AjWLJJ
+	 6iNZj2AvkZHzc+mPScsxNBeW/09KqwxJuiVU1mRv2wS4Q6rwcY2AqbUmV3nsbHh2ZP
+	 G/sspnPorBC/7CQZYZPY6/mGEwZsXnvAfZudT+jKIZGLtx6xYAwH4h8OR5nQWZ212D
+	 sc+Ruy2JhCA5idC9WtbWlhC6OJRQQAhQggAIAxWC+yyfTuwYL2qlmN8i6OOa9COm50
+	 qfcX1RNRPOwE/rK6euG3E1/ouvkIFh+cAFr5Rx61+XfvDtstx0IoqojQDVTFDUZGcd
+	 H2pHn2wRQoudQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2D5380CFF1;
+	Sat,  1 Mar 2025 01:41:00 +0000 (UTC)
+Subject: Re: [GIT PULL] locking fix
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z8IITcV7pyylQLdb@gmail.com>
+References: <Z8IITcV7pyylQLdb@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z8IITcV7pyylQLdb@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-2025-02-28
+X-PR-Tracked-Commit-Id: b9a49520679e98700d3d89689cc91c08a1c88c1d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 405a41d7599be266ae6880e73252ca41770760fe
+Message-Id: <174079325924.2333772.13618018208300696109.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Mar 2025 01:40:59 +0000
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
- expose /dev/mshv to VMMs
-To: Roman Kisel <romank@linux.microsoft.com>, linux-hyperv@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-acpi@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
- <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 2/27/2025 10:50 AM, Roman Kisel wrote:
-> 
-> 
-> 
-> On 2/26/2025 3:08 PM, Nuno Das Neves wrote:
->> Provide a set of IOCTLs for creating and managing child partitions when
->> running as root partition on Hyper-V. The new driver is enabled via
->> CONFIG_MSHV_ROOT.
->>
-> 
-> [...]
-> 
-> 
-> As I understood, the changes fall into these buckets:
-> 
-> 1. Partition management (VPs and memory). Built of the top of fd's which
->    looks as the right approach. There is ref counting etc.
-> 2. Scheduling. Here, there is the mature KVM and Xen code dto find
->    inspiration in. Xen being the Type 1 hypervisor should likely be
->    closer to MSHV in my understanding.
-> 3. IOCTL code allocation. Not sure how this is allocated yet given that
->    the patch series has been through a multi-year review, that must be
->    settled by now.
-> 4. IOCTLs themselves. The majority just marshals data to the
->    hypervisor.
-> 
-This is a good summary, thanks.
+The pull request you sent on Fri, 28 Feb 2025 20:02:37 +0100:
 
-> Despite the rather large size of the patch, I spot-checked the places
-> where I have the chance to make an informed decision, and could not find
-> anything that'd stand out as suspicious to me. Going to extrapolate that
-> the patch itself should be good enough. Given that this code has been in
-> development and validation for a few years, I'd vote to merge it. That
-> will also enable upstreaming the rest of the VTL mode code that powers
-> Azure Boost (https://github.com/microsoft/OHCL-Linux-Kernel)
-> 
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-2025-02-28
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/405a41d7599be266ae6880e73252ca41770760fe
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
