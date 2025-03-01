@@ -1,167 +1,141 @@
-Return-Path: <linux-kernel+bounces-539845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484CAA4A9D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:37:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D7AA4A9D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 09:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC11517568D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:37:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F8C3B8E22
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 08:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D2B1D5154;
-	Sat,  1 Mar 2025 08:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BiD2yQP4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AAD1C6F70;
+	Sat,  1 Mar 2025 08:45:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3478D1C5F08;
-	Sat,  1 Mar 2025 08:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8D1B2194
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 08:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740818222; cv=none; b=qwWe5gqi83ZN0UxqgPRlUtQSWD4OtCw58Es77p9+nw8sUI496U6SUO/15Jq8iP5tr9Ff9Kos4O5LKIR9gB147yTVyEbWPj+ATcKuZQLx33GtYQ4pWoG1cyYFG6B8FP4WTdm79x9kRMMIBl6rsacQzeyrUvbkAg/+afWed0c+Kx4=
+	t=1740818748; cv=none; b=nG2+pMf92DWOoWosoUDpRYPAxTbw/LFKUdTezkyQThn28a4UjjhqLTdxGomYkNSk1FOxrZtr8+lKZU6QIXr19goTFz0aPzvJwQcOfjyA5LP9frzbOFBZgxn9Le2FOGMG2uBiO5OBMBEJYZKqS9jgdtXfF2TjQ4NmUqnsUR+qXcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740818222; c=relaxed/simple;
-	bh=ILiRyf+7LGFCo6GR2fvwMOED+UnCtYqI6Fm7BMRzSQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqkAgEVcYvWLfCIUKjt5vj5WOnWnv37btqVYw074/IC2XXW4nHLZOHyN84it1H5dry0w1qInfbXGw6hqxoqXbDBQ+FeCEBxXrLireuDtR/s96aanpdecnggICm1eg7Rskt+QjTZYSbc6kOqUMrGaXJy3uYygqmHUWWyBjxFtiIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BiD2yQP4; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740818220; x=1772354220;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ILiRyf+7LGFCo6GR2fvwMOED+UnCtYqI6Fm7BMRzSQ0=;
-  b=BiD2yQP4hUZTLZSFhAnB4j0vIdNtvMfDaF9jdejvt3eNnFVbqenp5a6T
-   gxVabXNDXssVUZW0E7Ni8WCMKyWLBOWYhWVu/9uNgHCRl9hm9OGg+JiKD
-   JiVXnVByRFP7fbMq4sAker7b46ldjXRNyw9L77bSuPCMzobHJlZB652Qc
-   Fz0gr6voSGhJKLC751bmtrDUaV1zty054NkLfBrNpLl1ijNrnI5Wc8oSd
-   gEQZzTmzcAprLKmyULp639C24b9nXzVX8b7qbAmIFuFw4BoJeqgURyDx4
-   nwO4zoJJt3Xa0mgc9SMXFr2yZbkq9+L3ZQcoF1mekjcfmUuZoBVkTMGEw
-   g==;
-X-CSE-ConnectionGUID: NYGFvdvURTy/eXKvENeKXA==
-X-CSE-MsgGUID: 3fSPUHUgQi6HpdYB+edPkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="41632186"
-X-IronPort-AV: E=Sophos;i="6.13,324,1732608000"; 
-   d="scan'208";a="41632186"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 00:36:59 -0800
-X-CSE-ConnectionGUID: lW8G4db8QjWNavqxlTHDNg==
-X-CSE-MsgGUID: 48i6mZFCSCmI1LJ6hl7Sqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148458821"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 01 Mar 2025 00:36:57 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toIL8-000G3C-2o;
-	Sat, 01 Mar 2025 08:36:54 +0000
-Date: Sat, 1 Mar 2025 16:36:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Leilk Liu <leilk.liu@mediatek.com>, Mark Brown <broonie@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Leilk Liu <leilk.liu@mediatek.com>
-Subject: Re: [PATCH v1] spi: mt65xx: add PM QoS support
-Message-ID: <202503011637.9HYajsft-lkp@intel.com>
-References: <20250228062246.24186-1-leilk.liu@mediatek.com>
+	s=arc-20240116; t=1740818748; c=relaxed/simple;
+	bh=nLxEc6zu28Bu+eBW/a0EfLQhAwkIHSjeW9RQLQdjpl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ofRBiy1jX9cPFaP+xdjAACF6YEZ7+styisjsocUnW2Y916umwLvKY/cvDx+KiSBvqVyfjAAkO/V6Xp4Qqt0akVyRRmsspk3jJk9LGRZJO3eX22ymsGPl64YWqyq3CNpzRD9HgUyfZ4Pltt8VC2ZM8QYZLOLLyYj8VrbVkEhIWiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z4dqV6B47zCs6g;
+	Sat,  1 Mar 2025 16:42:14 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id C029C140203;
+	Sat,  1 Mar 2025 16:45:42 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 1 Mar 2025 16:45:41 +0800
+Message-ID: <6506e448-3851-436f-9354-42f9ef844d27@huawei.com>
+Date: Sat, 1 Mar 2025 16:45:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228062246.24186-1-leilk.liu@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250222025102.1519798-1-shiyongbang@huawei.com>
+ <20250222025102.1519798-8-shiyongbang@huawei.com>
+ <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
+ <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com>
+ <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
+ <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com>
+ <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
+ <5af62fa9-e71b-412f-8640-502f03fcaa52@huawei.com>
+ <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
+ <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com>
+ <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-Hi Leilk,
 
-kernel test robot noticed the following build warnings:
+> On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
+>>> On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
+>>>>> On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>>>>>>> On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
+>>>>>>>>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
+>>>>>>>>>> +{
+>>>>>>>>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
+>>>>>>>>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
+>>>>>>>>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
+>>>>>>>>>> +  int ret;
+>>>>>>>>>> +
+>>>>>>>>>> +  if (dp->hpd_status) {
+>>>>>>>>>> +          hibmc_dp_hpd_cfg(&priv->dp);
+>>>>>>>>>> +          ret = hibmc_dp_prepare(dp, mode);
+>>>>>>>>>> +          if (ret)
+>>>>>>>>>> +                  return ret;
+>>>>>>>>>> +
+>>>>>>>>>> +          hibmc_dp_display_en(dp, true);
+>>>>>>>>>> +  } else {
+>>>>>>>>>> +          hibmc_dp_display_en(dp, false);
+>>>>>>>>>> +          hibmc_dp_reset_link(&priv->dp);
+>>>>>>>>>> +  }
+>>>>>>>>> If I understand this correctly, you are using a separate drm_client to
+>>>>>>>>> enable and disable the link & display. Why is it necessary? Existing
+>>>>>>>>> drm_clients and userspace compositors use drm framework, they should be
+>>>>>>>>> able to turn the display on and off as required.
+>>>>>>>>>
+>>>>>>>> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
+>>>>>>>> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
+>>>>>>>> the different video modes into DP registers.
+>>>>>>> Why? The link training and mode programming should happen during
+>>>>>>> pre_enable / enable stage (legacy or atomic).
+>>>>>> Hi Dmitry,
+>>>>>>
+>>>>>> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
+>>>>>> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
+>>>>> It should be userspace, who triggers the enable/disable (or it should
+>>>>> be the in-kernel fbdev / fbcon, which interface through the generic
+>>>>> drm_fbdev client).
+>>>> Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
+>>>> by user, but it won't call when HPD triggered .
+>>> - Is HPD even properly delivered to userspace? What kind of compsitor
+>>>     are you using? Is .detect working properly and reporting a correct
+>>>     plug-in state?
+>> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
+>> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
+>> I use Xorg, and the display service is GDM.
+>> The .detect is called and the getting modes info is correct.
+>> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
+> You can go to the display settings in GDM. It would be interesting to
+> observe if it notes the second monitor or not. Last, but not least, you
+> can use a simple tool like 'xrandr' under your XOrg session to set the
+> display resolution.
 
-[auto build test WARNING on broonie-spi/for-next]
-[also build test WARNING on linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Leilk-Liu/spi-mt65xx-add-PM-QoS-support/20250228-142359
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20250228062246.24186-1-leilk.liu%40mediatek.com
-patch subject: [PATCH v1] spi: mt65xx: add PM QoS support
-config: sh-randconfig-002-20250301 (https://download.01.org/0day-ci/archive/20250301/202503011637.9HYajsft-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250301/202503011637.9HYajsft-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503011637.9HYajsft-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/spi/spi-mt65xx.c:177: warning: Function parameter or struct member 'qos_request' not described in 'mtk_spi'
+Thank you for your advice!
+Right, there are DP and VGA two monitors. I tried to totally remove the vga connector in driver, the problem is gone.
+So do I need to clear the vga connector, if dp is plugged in?
+And also, I used xrandr to set modes after 'startx'. Changing resolutions works,
+but there are errs when set some low resolutions.
 
 
-vim +177 drivers/spi/spi-mt65xx.c
-
-a568231f463225 Leilk Liu                  2015-08-07  132  
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  133  /**
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  134   * struct mtk_spi - SPI driver instance
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  135   * @base:		Start address of the SPI controller registers
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  136   * @state:		SPI controller state
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  137   * @pad_num:		Number of pad_sel entries
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  138   * @pad_sel:		Groups of pins to select
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  139   * @parent_clk:		Parent of sel_clk
-cae1578847e60a Yang Yingliang             2023-08-23  140   * @sel_clk:		SPI host mux clock
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  141   * @spi_clk:		Peripheral clock
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  142   * @spi_hclk:		AHB bus clock
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  143   * @cur_transfer:	Currently processed SPI transfer
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  144   * @xfer_len:		Number of bytes to transfer
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  145   * @num_xfered:		Number of transferred bytes
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  146   * @tx_sgl:		TX transfer scatterlist
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  147   * @rx_sgl:		RX transfer scatterlist
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  148   * @tx_sgl_len:		Size of TX DMA transfer
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  149   * @rx_sgl_len:		Size of RX DMA transfer
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  150   * @dev_comp:		Device data structure
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  151   * @spi_clk_hz:		Current SPI clock in Hz
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  152   * @spimem_done:	SPI-MEM operation completion
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  153   * @use_spimem:		Enables SPI-MEM
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  154   * @dev:		Device pointer
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  155   * @tx_dma:		DMA start for SPI-MEM TX
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  156   * @rx_dma:		DMA start for SPI-MEM RX
-3c5cd2e23fe4c8 AngeloGioacchino Del Regno 2022-04-07  157   */
-a568231f463225 Leilk Liu                  2015-08-07  158  struct mtk_spi {
-a568231f463225 Leilk Liu                  2015-08-07  159  	void __iomem *base;
-a568231f463225 Leilk Liu                  2015-08-07  160  	u32 state;
-37457607ecaffe Leilk Liu                  2015-10-26  161  	int pad_num;
-37457607ecaffe Leilk Liu                  2015-10-26  162  	u32 *pad_sel;
-a740f4e684c020 Leilk Liu                  2022-03-21  163  	struct clk *parent_clk, *sel_clk, *spi_clk, *spi_hclk;
-a568231f463225 Leilk Liu                  2015-08-07  164  	struct spi_transfer *cur_transfer;
-a568231f463225 Leilk Liu                  2015-08-07  165  	u32 xfer_len;
-00bca73bfca4fb Peter Shih                 2018-09-10  166  	u32 num_xfered;
-a568231f463225 Leilk Liu                  2015-08-07  167  	struct scatterlist *tx_sgl, *rx_sgl;
-a568231f463225 Leilk Liu                  2015-08-07  168  	u32 tx_sgl_len, rx_sgl_len;
-a568231f463225 Leilk Liu                  2015-08-07  169  	const struct mtk_spi_compatible *dev_comp;
-b0677bc0b5f41e Leilk Liu                  2025-02-28  170  	struct pm_qos_request qos_request;
-162a31effc4182 Mason Zhang                2021-06-29  171  	u32 spi_clk_hz;
-9f763fd20da7d8 Leilk Liu                  2022-03-21  172  	struct completion spimem_done;
-9f763fd20da7d8 Leilk Liu                  2022-03-21  173  	bool use_spimem;
-9f763fd20da7d8 Leilk Liu                  2022-03-21  174  	struct device *dev;
-9f763fd20da7d8 Leilk Liu                  2022-03-21  175  	dma_addr_t tx_dma;
-9f763fd20da7d8 Leilk Liu                  2022-03-21  176  	dma_addr_t rx_dma;
-a568231f463225 Leilk Liu                  2015-08-07 @177  };
-a568231f463225 Leilk Liu                  2015-08-07  178  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
