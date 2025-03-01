@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-540110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3283CA4ADB7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:09:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070EBA4ADB8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 21:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30323B45E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E094162B94
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2AD1EDA01;
-	Sat,  1 Mar 2025 20:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7CD1EDA3B;
+	Sat,  1 Mar 2025 20:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jno5oH6h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CSCKSw/s"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3XTCNgrx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oCEVFBb8"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BEC1EB189;
-	Sat,  1 Mar 2025 20:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9D11EB1A4;
+	Sat,  1 Mar 2025 20:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740859660; cv=none; b=eUsOLewRTgPEiTCHDxYrI+5LezmHo5izXYDthh3kedwglegqbRkd+Hw+e7US/TrEh1mz6KXSZU2iMqZmE4chlPpgKHXBx/cWFZ5Z9FYFZ8Q3yRX+M8DhLmSI3ThIR+VaaD7NwdIz/7g9jmgehZFTZk3xdA3GMa0o+6HE6Qkvf0w=
+	t=1740859660; cv=none; b=GohcTmsktEeH04nuKCJ2fdGf6nyINMf4gUZq3qlTx3R/LNQfIVlXji3UtMhQgvhBGFTEAWJ4KHSA1RN8+jrhN73JavYcVaiT5th0NBqXezjfSFhKdBACdBsTbff4e9jUrOMdkI0cNs+FHPzn5iBd+2Vis2l+xmbDLLbeXMcXQGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740859660; c=relaxed/simple;
-	bh=p8o3PWQtWmPtFDkHAAQxG/XJMp7eWGSISkXdEbgDFqQ=;
+	bh=ufjprtPPhLU+bcy2qWX0Rj8P8BRtOtMQxI0pZq5Qffo=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IR3od8YshsYP4Sm7K51e4h/rYvSsrExc+plcknPhl/vZN6pgrAiGMFiSjSUF3OSKwFOVzuckFahKCRkP3QMWX8g1RJ2/mrEocB5Puva1CijcvToDNfpVnre+3n5GWvKz7MXtO1AK+8GNtq5fROkitZhBb24j7j6DA3/x/wQ0dZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jno5oH6h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CSCKSw/s; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=hwGhAWwdrAu1CIio7fMM+eVdQUc8YSPJAgUZLb7D8sThD9qCUAgp774aFzM/PwiWwvkiWkE0AFESFS4blUyWPlix2MjGQRVLaNZ5X6g5aHp8XSGMUCvwkqHYtQO4IiJniTVNWq2Pj2QbJt9u2NEOCxlzPR0k4jMyHo1JFw2r0rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3XTCNgrx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oCEVFBb8; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 01 Mar 2025 20:07:35 -0000
+Date: Sat, 01 Mar 2025 20:07:36 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740859656;
+	s=2020; t=1740859657;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/+O9V5hZoDolv8Pv7rfBdJAP5SmAhQaf5EsXd9Hyw7s=;
-	b=jno5oH6hPKxpA7tpKC+ZZdn81RR6LHdHHvKkc1WWrV7hUNuXcSfNig0sd3ixx9qAKZFdvf
-	tRu7qHsfPZ/sF9BARKo6dYw8fp26c8SKvXO6XyN2Km0op+/4+fK3WvGkYNZ0C2NUiPhZVI
-	oFNXWFxjsyG91GydAoe27mfuUqPv8VtQNQPyCDiftqPKYp3CgnaEJs4u/6j6JQ7P51dr6w
-	Qq9A06cdDj+N9VdPZP0Syq/rowRyOyWRpui2FLmeFpnw15Xv+lJGwrPHvBCuZisi1OWrZx
-	+79jyx4AFwLwZI+xXF80Xd0OF5fHcoWNqPtYuXxwL9akEVoQitu57iuctSknzw==
+	bh=OeBFiowq0SP6g/5Eqem9bvvyJhVV8o2rXBAhTMOhlks=;
+	b=3XTCNgrxheP0sjxgHeM80heQzzkC57kHaTYXi+0iF/Is1wUrpklZL3Au6gRso9hUy+XSFt
+	wAztOjm636m0eiN891/mqfGlkOQpuDj7KvaGUYxdTl+oqlPh/w3f7DM0IWC0bfw0kCEI/K
+	cduN3n0eQU1R2N8p65Ya4bIF2bxZxHFW7Y76ypU9VSXpZFOEONfakkGeyG5tsYsRHTAk/V
+	0dh91vzFp1sSZwUxiYD2K3EK3O75Ba75zogV5D7OV84OFq4cYkOlaPruaEHRpo8NEatDqr
+	5tio7CdSEugFcM4WyoveDoJf/PQuWBHoq+b8D92+O/YgawyIjvTZfMwM0jAWsQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740859656;
+	s=2020e; t=1740859657;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/+O9V5hZoDolv8Pv7rfBdJAP5SmAhQaf5EsXd9Hyw7s=;
-	b=CSCKSw/s/aragAPyoZXxGdRHz2BlpnUEsWzaVJv1UOV0iu4VXSvE2iFv/D5UELy6Wy7o2P
-	sj894xIM/4ZBLdAQ==
+	bh=OeBFiowq0SP6g/5Eqem9bvvyJhVV8o2rXBAhTMOhlks=;
+	b=oCEVFBb8VgvcvcTA2gVyFtEX6D6pgFVPcFbUOtr74arcfAE/7g4BJ1OnmOfewOtwfqrkhy
+	hpvfEE3DR7btk+AA==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf/core: Fix perf_pmu_register() vs. perf_init_event()
+Subject: [tip: perf/core] perf/core: Fix pmus_lock vs. pmus_srcu ordering
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241104135517.858805880@infradead.org>
-References: <20241104135517.858805880@infradead.org>
+In-Reply-To: <20241104135517.679556858@infradead.org>
+References: <20241104135517.679556858@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174085965591.10177.639630120769943871.tip-bot2@tip-bot2>
+Message-ID: <174085965644.10177.4731104673562903630.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,101 +80,58 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     003659fec9f6d8c04738cb74b5384398ae8a7e88
-Gitweb:        https://git.kernel.org/tip/003659fec9f6d8c04738cb74b5384398ae8a7e88
+Commit-ID:     2565e42539b120b81a68a58da961ce5d1e34eac8
+Gitweb:        https://git.kernel.org/tip/2565e42539b120b81a68a58da961ce5d1e34eac8
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 04 Nov 2024 14:39:12 +01:00
+AuthorDate:    Mon, 04 Nov 2024 14:39:11 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Sat, 01 Mar 2025 19:38:42 +01:00
 
-perf/core: Fix perf_pmu_register() vs. perf_init_event()
+perf/core: Fix pmus_lock vs. pmus_srcu ordering
 
-There is a fairly obvious race between perf_init_event() doing
-idr_find() and perf_pmu_register() doing idr_alloc() with an
-incompletely initialized PMU pointer.
+Commit a63fbed776c7 ("perf/tracing/cpuhotplug: Fix locking order")
+placed pmus_lock inside pmus_srcu, this makes perf_pmu_unregister()
+trip lockdep.
 
-Avoid by doing idr_alloc() on a NULL pointer to register the id, and
-swizzling the real struct pmu pointer at the end using idr_replace().
+Move the locking about such that only pmu_idr and pmus (list) are
+modified while holding pmus_lock. This avoids doing synchronize_srcu()
+while holding pmus_lock and all is well again.
 
-Also making sure to not set struct pmu members after publishing
-the struct pmu, duh.
-
-[ introduce idr_cmpxchg() in order to better handle the idr_replace()
-  error case -- if it were to return an unexpected pointer, it will
-  already have replaced the value and there is no going back. ]
-
+Fixes: a63fbed776c7 ("perf/tracing/cpuhotplug: Fix locking order")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20241104135517.858805880@infradead.org
+Link: https://lore.kernel.org/r/20241104135517.679556858@infradead.org
 ---
- kernel/events/core.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 11793d6..823aa08 100644
+index 6364319..11793d6 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -11830,6 +11830,21 @@ free_dev:
- static struct lock_class_key cpuctx_mutex;
- static struct lock_class_key cpuctx_lock;
- 
-+static bool idr_cmpxchg(struct idr *idr, unsigned long id, void *old, void *new)
-+{
-+	void *tmp, *val = idr_find(idr, id);
-+
-+	if (val != old)
-+		return false;
-+
-+	tmp = idr_replace(idr, new, id);
-+	if (IS_ERR(tmp))
-+		return false;
-+
-+	WARN_ON_ONCE(tmp != val);
-+	return true;
-+}
-+
- int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+@@ -11939,6 +11939,8 @@ void perf_pmu_unregister(struct pmu *pmu)
  {
- 	int cpu, ret, max = PERF_TYPE_MAX;
-@@ -11856,7 +11871,7 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 	if (type >= 0)
- 		max = type;
+ 	mutex_lock(&pmus_lock);
+ 	list_del_rcu(&pmu->entry);
++	idr_remove(&pmu_idr, pmu->type);
++	mutex_unlock(&pmus_lock);
  
--	ret = idr_alloc(&pmu_idr, pmu, max, 0, GFP_KERNEL);
-+	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
- 	if (ret < 0)
- 		goto free_pdc;
+ 	/*
+ 	 * We dereference the pmu list under both SRCU and regular RCU, so
+@@ -11948,7 +11950,6 @@ void perf_pmu_unregister(struct pmu *pmu)
+ 	synchronize_rcu();
  
-@@ -11864,6 +11879,7 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+ 	free_percpu(pmu->pmu_disable_count);
+-	idr_remove(&pmu_idr, pmu->type);
+ 	if (pmu_bus_running && pmu->dev && pmu->dev != PMU_NULL_DEV) {
+ 		if (pmu->nr_addr_filters)
+ 			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
+@@ -11956,7 +11957,6 @@ void perf_pmu_unregister(struct pmu *pmu)
+ 		put_device(pmu->dev);
+ 	}
+ 	free_pmu_context(pmu);
+-	mutex_unlock(&pmus_lock);
+ }
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
  
- 	type = ret;
- 	pmu->type = type;
-+	atomic_set(&pmu->exclusive_cnt, 0);
- 
- 	if (pmu_bus_running && !pmu->dev) {
- 		ret = pmu_dev_alloc(pmu);
-@@ -11912,14 +11928,22 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 	if (!pmu->event_idx)
- 		pmu->event_idx = perf_event_idx_default;
- 
-+	/*
-+	 * Now that the PMU is complete, make it visible to perf_try_init_event().
-+	 */
-+	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu))
-+		goto free_context;
- 	list_add_rcu(&pmu->entry, &pmus);
--	atomic_set(&pmu->exclusive_cnt, 0);
-+
- 	ret = 0;
- unlock:
- 	mutex_unlock(&pmus_lock);
- 
- 	return ret;
- 
-+free_context:
-+	free_percpu(pmu->cpu_pmu_context);
-+
- free_dev:
- 	if (pmu->dev && pmu->dev != PMU_NULL_DEV) {
- 		device_del(pmu->dev);
 
