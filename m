@@ -1,171 +1,173 @@
-Return-Path: <linux-kernel+bounces-539696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1262EA4A777
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:34:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FF1A4A789
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3296C3ADCFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:34:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F26B3B6C48
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB39322318;
-	Sat,  1 Mar 2025 01:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD267082E;
+	Sat,  1 Mar 2025 01:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i765qmnR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="hJTPRl2T"
+Received: from alln-iport-4.cisco.com (alln-iport-4.cisco.com [173.37.142.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641BDB676
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 01:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C1182D7;
+	Sat,  1 Mar 2025 01:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740792867; cv=none; b=NKqK1eWwIwdFmDguLC8YcFDSNLMip25kF4mla4Or+24tHmYFKHnG8+fcdrZTyCX2WljeyQntcRubIm8j4G8yfGKLVdMuiXIHib9iU0crW5+avztPAmmL40j9ejTd87xJZ4n33t+VH/FznjH7mJfras40tNv7s8FF/eduqpsUwZc=
+	t=1740793053; cv=none; b=CqIqTHTA7fMXIELZUhku51gj1Lccr9qMeA0NawSdxfkK0rQ+zcMJTmlCI9pVrwkyjGZQr/i6t9VTyoub2wxCarWYI3ExqMY5Vh4TAWQgJouOxWrRoCtwX0Rih9YwjylfwIxT677MXTRj13whpuN2CJoxpFxiFZCM/c0kA3Hq9G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740792867; c=relaxed/simple;
-	bh=fnh3fwq5HR0yTHAmHdMT421sbicofsP0HTiVsJhWt6g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HW5TWvkB0N7M9JY5CjCrM0pJoa/8kZDDqxPmljQZc5SSjh4VsYAzG91sxWPdQr3WIC31ZxXOwu7KqNXM9a3JtPHQeKne8ZxYwdsy9k+e/XCdVnDWvQtZ6taag7Kc4NggqE4pQXpnSKMxX5lx9UGMCF8O7UXSJ/85GeBxXBLfAAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i765qmnR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740792864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yL+DXeBooPzKSt9J+mbcjwBug/6vCcWna4sgw9dm4c=;
-	b=i765qmnRevRFAW0omjrDW9ujElHHYZvdiPmFRZPbty0d+FMTqToGUjccYRHPrXqr97Pn9J
-	jlDK2pa+CHN+kwFk+LUzIjAdxMCy/VVArFJOIiceqWIQuA4PSJkaanxkXRZciKkx/95GGi
-	omLWw6Dy7Uz2AKA6NnxNCwj04XtNTj4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-S7U9QRlmNrObDxHksXYRWQ-1; Fri, 28 Feb 2025 20:34:22 -0500
-X-MC-Unique: S7U9QRlmNrObDxHksXYRWQ-1
-X-Mimecast-MFC-AGG-ID: S7U9QRlmNrObDxHksXYRWQ_1740792862
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0a7b2905cso459914185a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2025 17:34:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740792862; x=1741397662;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9yL+DXeBooPzKSt9J+mbcjwBug/6vCcWna4sgw9dm4c=;
-        b=ftSXnSuuu+1AolIn16MuDrJdMRq3XdJhmgRMC44Ug2Qjm8didQ9gvfBZYE/THHKgZm
-         rvCm6gJyGX91QtI50Q0+oNVN++FxxwEyrOoba1wdZLm6V/s7gnR0Q48YuJk0w1jZRXi7
-         SvwRh5iFz4ld7ZgeW0I41Wz+KasxvZc7P7xb1pYxg7X4fZHKHYcNtfj9N+HqxGLJkPpV
-         MlsQqFAGOW3V7oAw7MPixgkQKkTj82FqWM6LOspYjYrrbddmq4FBNxfCT0JKHPR7SiAb
-         uRn+FpedSxwIfF6+XkFWleQ4vXl2qnDDr+VGQwDMhixS7Sge9O2mJ2BC2p1vIWM44b18
-         o5gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpl3LvVy0a8wfjV1omGZgbydEMXLuV/rCRGVXbGHMV0goqPiAwUcBQJ9609sTlc+uV4K/r1D/ek/pz990=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOE5PdJ6ngtx0eAzdEklRx+rbTbfWBx/kAYUgeUOA+sEaJCrMg
-	K149M0uTXLHh7XsI27unIDtpPtyVkJ77FIy/IAQp/yXCcys95DBh7Z7S6LIRp8klOD7avo/C26D
-	zzbX7joyp0pS2z+UeKTU1GVMTnAPTod8oUIFARpY1SAgY/reP1t5gwjRpzCUgyw==
-X-Gm-Gg: ASbGncsShvQanTvzJlBZYn8DzB/vokcmfoybN72QhwhEMjilzkRQ6LjLOd0L8sgyGc3
-	bBHZRUX7QGkW3wcTxgYmbOoYYNIZIL5IzcK174qZUOJldbdfDGQY1gCKk3zJ/N2x8T8MgOy5STn
-	g5ivQ/EEbDOpVOQjohnC8IkkMQXKQsSZ+zsbTutc6BuQ7MTxqxCrbNUOb/fT8Img8SrTGAqhvJX
-	qcHKDCvGikJf+cII6V+3gAE3aiKig4I6Ejg/ExDrwiSqebSZsczUeiuyvEA9pVuyBBjDZQuW6Va
-	UXfWmNeavh+PxOw=
-X-Received: by 2002:a05:620a:6082:b0:7c3:9d34:e666 with SMTP id af79cd13be357-7c39d34e743mr862874185a.15.1740792861822;
-        Fri, 28 Feb 2025 17:34:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZOSNDJhIJKTBsRU1jV9sv/N+QSCwUc/hKZOGRqdOLDg5v3mfrAbcVJB8Is74143ja5GmkIg==
-X-Received: by 2002:a05:620a:6082:b0:7c3:9d34:e666 with SMTP id af79cd13be357-7c39d34e743mr862872485a.15.1740792861546;
-        Fri, 28 Feb 2025 17:34:21 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9e32dsm317624985a.74.2025.02.28.17.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 17:34:21 -0800 (PST)
-Message-ID: <de4a5000d03a4697a419231d766f95dfd1cbe7c6.camel@redhat.com>
-Subject: Re: [RFC PATCH 03/13] KVM: nSVM: Split
- nested_svm_transition_tlb_flush() into entry/exit fns
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 28 Feb 2025 20:34:20 -0500
-In-Reply-To: <20250205182402.2147495-4-yosry.ahmed@linux.dev>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
-	 <20250205182402.2147495-4-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1740793053; c=relaxed/simple;
+	bh=/mVb1cWmahOS0hdzk0lGF9RbsSLIIt2giyY6mwneQAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O52CG54y05ePCh00i5tzkjCUmj6X/CzZ8jzIvWHXzp0KBXC6HoSetWTu5Veq813Umsdzx+x2mqj1V3RyIS/Sn9LlD/EcKgqBh7Mi7CgwesLKJrE1xeMSe64Jt7ftL6jPsjfTe99RmqTfdtdshCrv7Pgd+aht8VyoyPwWyuxMDG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=hJTPRl2T; arc=none smtp.client-ip=173.37.142.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=2219; q=dns/txt;
+  s=iport01; t=1740793051; x=1742002651;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3MonZo2jXloOtsIh/XS4/JCVgUFE8L/wLWsGXbbJe80=;
+  b=hJTPRl2T0yS93PBlexISXZw0UA52s/2Rr/70fcn5E8cAgGXFy2GZivRm
+   L4qWLw3hfvWEPL+4MefBfBo6h40XpWhf36rGc60+5uDzPjcVeH3cg1pmI
+   nT5denCjfIGfap/HZzjTWejNMZuz63fsjrfP8J9GM3cMcVT5Ex40s0MVs
+   GwieM5wt5ZjcFnj51teCjCfYPgXj112WgmoIg3Fn91ZQNGBTZbogKipq+
+   5aOI4AR620PufuCqcaj5v/BXmlTSB6mWHou3lgWAMAAp7GzfqiPONwRbw
+   BmcuVzhPi0Ny6FdgDCIbdjGmPCuxIKCC8e0jtNhNeOafOzpTOudWmdYlt
+   A==;
+X-CSE-ConnectionGUID: HQQu1CCeRtOrcrLvWmUdVA==
+X-CSE-MsgGUID: Di+iL8DbTZC+tfWpAyJIpQ==
+X-IPAS-Result: =?us-ascii?q?A0AFAAC3Y8Jn/4//Ja1aGgEBAQEBAQEBAQEDAQEBARIBA?=
+ =?us-ascii?q?QEBAgIBAQEBgX8FAQEBAQsBgkqBT0MZL4xyp2qBJQNWDwEBAQ9EBAEBhQeLF?=
+ =?us-ascii?q?gImNAkOAQIEAQEBAQMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGCIZdK?=
+ =?us-ascii?q?wsBRoFQgwKCZQOvD4F5M4EB3jSBboFIAY1KcIR3JxUGgUlEhH2BUoM+hXcEh?=
+ =?us-ascii?q?1aoYUiBIQNZLAFVEw0KCwcFgXEDNQwLLhWBRkM3gkVpSToCDQI1gh58giuEV?=
+ =?us-ascii?q?IRDhECFUoIRizeFBkADCxgNSBEsNxQbBj5uB6B7PIQ9gQ4UgiwpOqUToQaEJ?=
+ =?us-ascii?q?aFIGjOqVi6YT6kxgWc8gVkzGggbFYMiUhkPji0WzAolMjwCBwsBAQMJkWUBA?=
+ =?us-ascii?q?Q?=
+IronPort-Data: A9a23:d+fhyKgjvJVwGGoVshRJ5uKeX161SxEKZh0ujC45NGQN5FlHY01je
+ htvW2DXOP2KYmv9etBxbNmw8xgPvp+Ex4BhTABqqC1kEXxjpJueD7x1DKtf0wB+jyHnZBg6h
+ ynLQoCYdKjYdleF+FH1dOCn9SQkvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
+ vus5ZSEULOZ82QsaD9MsPra8EoHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
+ 87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
+ Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqU4w99qWEpl+
+ MYEDyoGdDSduOeLzIySH7wEasQLdKEHPasFsX1miDWcBvE8TNWbHePB5MRT23E7gcUm8fT2P
+ pVCL2EwKk6dPlsWZgx/5JEWxI9EglH8eidEqVacpoI84nPYy0p6172F3N/9JofVH5wLwR/Jz
+ o7A10j4QRA+ZPCV9QiusW6iuffmjAHaQLtHQdVU8dYv2jV/3Fc7BBQQE1Cyu+G0jFKzQfpbK
+ kod4C1oqrI9nGSpQ9v3dxm5pmOU+B8WXpxbFOhSwASE0LbV5UCBC3QJVCVMbvQhrsY9QTFs3
+ ViM9/vtBDpyoPiWRGib+7O8szy/I24WIHUEaCtCShEKi/HnoYcunlfURc1iOLC6g8ezGjzqx
+ T2O6i8kiN0uYdUjza63+xXDxjmrvJWMFlBz7QTMVWXj5QR8DGK4W7GVBZHgxa4oBO6kopOp5
+ RDoR+D2ADgyMKyw
+IronPort-HdrOrdr: A9a23:cygtsqEdFPuAOGf6pLqE28eALOsnbusQ8zAXPo5KJSC9Ffbo9f
+ xG88506faZslwssRIb6LO90cu7IE80nKQdieIs1NyZMzUO1lHEEKhSqaP/3jztHDD//OZB2a
+ olT7JzE7TLfD1HZL7BgDVR170bsb66GGfCv5a780tQ
+X-Talos-CUID: 9a23:oSrr826zahtUFhzzINss1HctB5kOWXDn0FDKKFWcF1lsdbGrYArF
+X-Talos-MUID: 9a23:pGbF+ApELj0pgfTZz+Eezx1jd8ZMs4ikNHIm0okIhNGtJA5RIw7I2Q==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.13,324,1732579200"; 
+   d="scan'208";a="437216719"
+Received: from rcdn-l-core-06.cisco.com ([173.37.255.143])
+  by alln-iport-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 01 Mar 2025 01:37:24 +0000
+Received: from fedora.cisco.com (unknown [10.188.102.227])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by rcdn-l-core-06.cisco.com (Postfix) with ESMTPSA id 29DBA18000256;
+	Sat,  1 Mar 2025 01:37:23 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v2 1/2] scsi: fnic: Replace fnic->lock_flags with local flags
+Date: Fri, 28 Feb 2025 17:37:11 -0800
+Message-ID: <20250301013712.3115-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.188.102.227, [10.188.102.227]
+X-Outbound-Node: rcdn-l-core-06.cisco.com
 
-On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> The handling for the entry and exit TLB flushes will diverge
-> significantly in the following changes. Instead of adding an 'is_vmenter'
-> argument like nested_vmx_transition_tlb_flush(), just split the function
-> into two variants for 'entry' and 'exit'.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/kvm/svm/nested.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index bbe4f3ac9f250..2eba36af44f22 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -482,7 +482,7 @@ static void nested_save_pending_event_to_vmcb12(struct vcpu_svm *svm,
->  	vmcb12->control.exit_int_info = exit_int_info;
->  }
->  
-> -static void nested_svm_transition_tlb_flush(struct kvm_vcpu *vcpu)
-> +static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
->  {
->  	/* Handle pending Hyper-V TLB flush requests */
->  	kvm_hv_nested_transtion_tlb_flush(vcpu, npt_enabled);
-> @@ -503,6 +503,16 @@ static void nested_svm_transition_tlb_flush(struct kvm_vcpu *vcpu)
->  	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
->  }
->  
-> +static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
-> +{
-> +	/* Handle pending Hyper-V TLB flush requests */
-> +	kvm_hv_nested_transtion_tlb_flush(vcpu, npt_enabled);
-> +
-> +	/* See nested_svm_entry_tlb_flush() */
-> +	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> +	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
-> +}
-> +
->  /*
->   * Load guest's/host's cr3 on nested vmentry or vmexit. @nested_npt is true
->   * if we are emulating VM-Entry into a guest with NPT enabled.
-> @@ -645,7 +655,7 @@ static void nested_vmcb02_prepare_control(struct vcpu_svm *svm,
->  	u32 pause_count12;
->  	u32 pause_thresh12;
->  
-> -	nested_svm_transition_tlb_flush(vcpu);
-> +	nested_svm_entry_tlb_flush(vcpu);
->  
->  	/* Enter Guest-Mode */
->  	enter_guest_mode(vcpu);
-> @@ -1131,7 +1141,7 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
->  
->  	kvm_vcpu_unmap(vcpu, &map);
->  
-> -	nested_svm_transition_tlb_flush(vcpu);
-> +	nested_svm_exit_tlb_flush(vcpu);
->  
->  	nested_svm_uninit_mmu_context(vcpu);
->  
+Replace fnic->lock_flags with local variable for usage with spinlocks
+in fdls_schedule_oxid_free_retry_work.
 
-Looks reasonable,
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: a63e78eb2b0f ("scsi: fnic: Add support for fabric based solicited requests and responses")
+Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+Reviewed-by: Arun Easi <aeasi@cisco.com>
+Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+---
+ drivers/scsi/fnic/fdls_disc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-
-Best regards,
-	Maxim Levitsky
+diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
+index 3a41e92d5fd6..8843d9486dbb 100644
+--- a/drivers/scsi/fnic/fdls_disc.c
++++ b/drivers/scsi/fnic/fdls_disc.c
+@@ -308,23 +308,24 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+ 	struct fnic *fnic = iport->fnic;
+ 	struct reclaim_entry_s *reclaim_entry;
+ 	unsigned long delay_j = msecs_to_jiffies(OXID_RECLAIM_TOV(iport));
++	unsigned long flags;
+ 	int idx;
+ 
+-	spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
++	spin_lock_irqsave(&fnic->fnic_lock, flags);
+ 
+ 	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
+ 
+ 		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+ 			"Schedule oxid free. oxid idx: %d\n", idx);
+ 
+-		spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ 		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
+-		spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
++		spin_lock_irqsave(&fnic->fnic_lock, flags);
+ 
+ 		if (!reclaim_entry) {
+ 			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
+ 				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
+-			spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ 			return;
+ 		}
+ 
+@@ -339,7 +340,7 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+ 		}
+ 	}
+ 
+-	spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ }
+ 
+ static bool fdls_is_oxid_fabric_req(uint16_t oxid)
+-- 
+2.47.1
 
 
