@@ -1,153 +1,159 @@
-Return-Path: <linux-kernel+bounces-539920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CD8A4AAE1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:17:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D09EA4AAE5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310271896528
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7310E172B3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 12:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E531DE4F6;
-	Sat,  1 Mar 2025 12:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9931DE4F6;
+	Sat,  1 Mar 2025 12:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hb559znq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhPy5+fO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638391D7E3E
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Mar 2025 12:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19DF1D5AB6;
+	Sat,  1 Mar 2025 12:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740831467; cv=none; b=sCCv5CQhSpksa7vzku74u2W4NU7ZMzBqJrDzgkMlBDQVmFaI/lnAvlxTcQp6g9ckmJlXm/BMXs6jdohTvpTX8saOTUBlsb0TSwm/6QWnrORNeBs0wD+S+dEos/g6UCX6k0KcUxIzWzvDcTHoUvqCpoHHeN9AMdOPVAUzgxpeJ/w=
+	t=1740831472; cv=none; b=Qka4uR4zs19JsvggL7Q9J/hwKU6ARAdO9cMwPbdBhQWFRWl3KRiSV4s/2putT8acmLzMoMx9u8rmojSb/dv4Hiaq14DytLuaDkBtkK63OX78G1M2Qn/WqIR7vP4OjJQLnmECidtV+lheqVcc1xpDr4YzX++F0LMoocnLsasLrKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740831467; c=relaxed/simple;
-	bh=i1lk9xKe/JXz4c6AB/M8fEa5DbGBkJjeN3ZRRa0J1/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=o03SJg7odVILEGwbzjtYNc/mIr2CA7aPF/7CJDPBe1wtAw/fR+HHg3Gh3KrJpdbYYxkyvUmSfrUWhmR6UmuoyzvwKzA21Lz1iVbAy+wTJ4JFTiU4rqjQmgeZbpgG3aWtdgiXLd10YebxhktRkF8UNPuDk4MYoIrASadga3e4q98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hb559znq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740831464; x=1772367464;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=i1lk9xKe/JXz4c6AB/M8fEa5DbGBkJjeN3ZRRa0J1/8=;
-  b=Hb559znqEF4qF0I9UVp/1Nw/gkp04XN6v2hIlkkTSEc/BcA0MVfwvzSY
-   +nomLMxeUE1WcDMJAcAUhty8n8Tp0YrMndddO1O/hWLMzRAAmoWmLfvpT
-   onNafvj/RiAY2Siq9MWTwiIv8xOZvR6qkBKpKJCjH12Sv7xB5Yncc0qpQ
-   2RjYAgCOm+AOkTk0H4Jn0F8sgWjtZ2oMgQlHKt1lbqoLiZChUpdUNkPDu
-   OIfsL+bp5ONw5yRalLEn+Ro+5qZoOYzLZFNfpVVXUlFVZDxWqcGIDM199
-   x0HecLIavmE8bR7PXpe+4QwKqbEnt31P7qIGpM+p6hU8u2xt+z2wzvZPd
-   w==;
-X-CSE-ConnectionGUID: ijXG08qBTnqJSOuKZdlwmA==
-X-CSE-MsgGUID: T4s7ZwE3T36Rgmb0h/0t6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45537168"
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="45537168"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 04:17:44 -0800
-X-CSE-ConnectionGUID: nC1fbvG+Qoa80CvOsJCgNA==
-X-CSE-MsgGUID: 6I3/OGJFQb2QAeAFikkCNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,325,1732608000"; 
-   d="scan'208";a="122574664"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 01 Mar 2025 04:17:43 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toLmh-000GEM-0H;
-	Sat, 01 Mar 2025 12:17:36 +0000
-Date: Sat, 1 Mar 2025 20:17:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: arch/powerpc/boot/decompress.c:132:15: error: implicit declaration
- of function '__decompress'
-Message-ID: <202503012033.HCudrbsD-lkp@intel.com>
+	s=arc-20240116; t=1740831472; c=relaxed/simple;
+	bh=A8PdxtCizk6PgunyHAGQsWVRlwM9EY3+12Tc6z3znSM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ggn1lM/jdaS9lNuDoirpGjWhtzSpVaufRfb/sPUPDhLFgkXvtFy3AvdyXfjsC2GSEnKmb1wueCE2DxEn5uOvI2hQHozLELVOgCB2O4DI+jQN4/zhDsjaEse7cTru5kiKz2+8BYG7AjMVBlOSBgRL0H89xrVG99G8RxxnLinuI1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhPy5+fO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D36C4CEDD;
+	Sat,  1 Mar 2025 12:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740831471;
+	bh=A8PdxtCizk6PgunyHAGQsWVRlwM9EY3+12Tc6z3znSM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nhPy5+fOugQVe9poY7fQwjki9+P9S5nAFF7/0COxLPJun7AgwHNF1TsOHcKCUswYj
+	 UKVBh311X/Qk27ZtNHK3Tehk193k3QgTaCn5jQ3M2X6JXObmTolINnm2sYP/28HImG
+	 +oX+sz5e+NfyVqK0jK8c2+4f5uPYOx9Hxn6uVdx7NyV2eSQirUq8oOgrPLE8rL/vwS
+	 /O+CaBOIXSBZA05VOfTXyj9iNLyad0/43WHOcEBCWq4PGn/nCLeYnV7yoAz54teeWE
+	 /RUxG/sphEsuVn3x0lOlKMXtIZVJ0h3FR1Un1qjr0MrofAosyShEgeeQVTRkFG0SGi
+	 VphvI9rWcvJbw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1toLmu-009Ltj-1q;
+	Sat, 01 Mar 2025 12:17:48 +0000
+Date: Sat, 01 Mar 2025 12:17:47 +0000
+Message-ID: <86jz99osgk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,	"Rafael J. Wysocki"
+ <rafael@kernel.org>,	Thomas Gleixner <tglx@linutronix.de>,	Anup Patel
+ <apatel@ventanamicro.com>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,	Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Bjorn Helgaas <bhelgaas@google.com>,	Arnd Bergmann
+ <arnd@arndb.de>,	Shuah Khan <shuah@kernel.org>,	Richard Zhu
+ <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,	Lorenzo
+ Pieralisi <lpieralisi@kernel.org>,	Rob Herring <robh@kernel.org>,	Shawn Guo
+ <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
+ Kernel Team <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,	Conor Dooley
+ <conor+dt@kernel.org>,	Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org,	jdmason@kudzu.us,	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,	imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 01/15] platform-msi: Add msi_remove_device_irq_domain() in platform_device_msi_free_irqs_all()
+In-Reply-To: <20250211-ep-msi-v15-1-bcacc1f2b1a9@nxp.com>
+References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+	<20250211-ep-msi-v15-1-bcacc1f2b1a9@nxp.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Frank.Li@nxp.com, kishon@kernel.org, rafael@kernel.org, tglx@linutronix.de, apatel@ventanamicro.com, gregkh@linuxfoundation.org, dakr@kernel.org, manivannan.sadhasivam@linaro.org, kw@linux.com, bhelgaas@google.com, arnd@arndb.de, shuah@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Arnd,
+On Tue, 11 Feb 2025 19:21:54 +0000,
+Frank Li <Frank.Li@nxp.com> wrote:
+> 
+> The follow steps trigger kernel dump warning and
+> platform_device_msi_init_and_alloc_irqs() return false.
+> 
+> 1: platform_device_msi_init_and_alloc_irqs();
+> 2: platform_device_msi_free_irqs_all();
+> 3: platform_device_msi_init_and_alloc_irqs();
+> 
+> [   76.713677] WARNING: CPU: 3 PID: 134 at kernel/irq/msi.c:1028 msi_create_device_irq_domain+0x1bc/0x22c
+> [   76.723010] Modules linked in:
+> [   76.726082] CPU: 3 UID: 0 PID: 134 Comm: kworker/3:1H Not tainted 6.13.0-rc1-00015-gd60b98003b43-dirty #57
+> [   76.735741] Hardware name: NXP i.MX95 19X19 board (DT)
+> [   76.740883] Workqueue: kpcitest pci_epf_test_cmd_handler
+> [   76.746212] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   76.753172] pc : msi_create_device_irq_domain+0x1bc/0x22c
+> [   76.758586] lr : msi_create_device_irq_domain+0x104/0x22c
+> [   76.763988] sp : ffff800083f43be0
+> [   76.767313] x29: ffff800083f43be0 x28: 0000000000000000 x27: ffff8000827a7000
+> [   76.774466] x26: ffff00008085f400 x25: ffff00008000b180 x24: ffff000080fc6410
+> [   76.781624] x23: ffff000085704cc0 x22: ffff8000811c8828 x21: ffff000085704cc0
+> [   76.788774] x20: ffff000082814000 x19: 0000000000000000 x18: ffffffffffffffff
+> [   76.795933] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> [   76.803083] x14: 0000000000000000 x13: 0000000f00000000 x12: 0000000000000000
+> [   76.810233] x11: 0000000000000000 x10: 000000000000002d x9 : ffff800083f43ba0
+> [   76.817383] x8 : 00000000ffffffff x7 : 0000000000000019 x6 : ffff0000857e443a
+> [   76.824533] x5 : 0000000000000000 x4 : ffffffffffffffff x3 : ffff000085704ce8
+> [   76.831683] x2 : ffff000080835640 x1 : 0000000000000213 x0 : ffff0000877189c0
+> [   76.838840] Call trace:
+> [   76.841287]  msi_create_device_irq_domain+0x1bc/0x22c (P)
+> [   76.846701]  msi_create_device_irq_domain+0x104/0x22c (L)
+> [   76.852118]  platform_device_msi_init_and_alloc_irqs+0x6c/0xb8
+> 
+> Do below two things in platform_device_msi_init_and_alloc_irqs().
+> - msi_create_device_irq_domain()
+> - msi_domain_alloc_irqs_range()
+> 
+> But only call msi_domain_free_irqs_all() in
+> platform_device_msi_free_irqs_all(), which missed call
+> msi_remove_device_irq_domain(). This cause above kernel dump when call
+> platform_device_msi_init_and_alloc_irqs() again.
 
-First bad commit (maybe != root cause):
+I don't think this commit message makes much sense, and doesn't
+explain the essential problem, which is the lack of symmetry. I'd
+suggest something like:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   03d38806a902b36bf364cae8de6f1183c0a35a67
-commit: 45cfade303335c486300b81e62caefffa843f585 drm/xe/xe2: fix 64-bit division in pte_update_size
-date:   12 months ago
-config: powerpc-randconfig-r132-20250301 (https://download.01.org/0day-ci/archive/20250301/202503012033.HCudrbsD-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250301/202503012033.HCudrbsD-lkp@intel.com/reproduce)
+"platform_device_msi_init_and_alloc_irqs() performs two tasks:
+allocating the MSI domain for a platform device, and allocate a number
+of MSIs in that domain.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503012033.HCudrbsD-lkp@intel.com/
+platform_device_msi_free_irqs_all() only frees the MSIs, and leaves
+the MSI domain alive.
 
-All errors (new ones prefixed by >>):
+Given that platform_device_msi_init_and_alloc_irqs() is the sole tool
+a platform device has to allocate platform MSIs, it would make sense
+for platform_device_msi_free_irqs_all() to teardown the MSI domain at
+the same time as the MSIs.
 
-   arch/powerpc/boot/decompress.c: In function 'partial_decompress':
->> arch/powerpc/boot/decompress.c:132:15: error: implicit declaration of function '__decompress' [-Wimplicit-function-declaration]
-     132 |         ret = __decompress(inbuf, input_size, NULL, flush, outbuf,
-         |               ^~~~~~~~~~~~
+This also avoids warnings and unexpected behaviours when a driver
+repeatedly allocates and frees MSIs."
 
+With that:
 
-vim +/__decompress +132 arch/powerpc/boot/decompress.c
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-1b7898ee276b39e Oliver O'Halloran 2016-09-22   97  
-1b7898ee276b39e Oliver O'Halloran 2016-09-22   98  /**
-1b7898ee276b39e Oliver O'Halloran 2016-09-22   99   * partial_decompress - decompresses part or all of a compressed buffer
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  100   * @inbuf:       input buffer
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  101   * @input_size:  length of the input buffer
-930a77c3ad79c30 Zhang Jianhua     2021-05-10  102   * @outbuf:      output buffer
-930a77c3ad79c30 Zhang Jianhua     2021-05-10  103   * @output_size: length of the output buffer
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  104   * @skip         number of output bytes to ignore
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  105   *
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  106   * This function takes compressed data from inbuf, decompresses and write it to
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  107   * outbuf. Once output_size bytes are written to the output buffer, or the
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  108   * stream is exhausted the function will return the number of bytes that were
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  109   * decompressed. Otherwise it will return whatever error code the decompressor
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  110   * reported (NB: This is specific to each decompressor type).
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  111   *
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  112   * The skip functionality is mainly there so the program and discover
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  113   * the size of the compressed image so that it can ask firmware (if present)
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  114   * for an appropriately sized buffer.
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  115   */
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  116  long partial_decompress(void *inbuf, unsigned long input_size,
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  117  	void *outbuf, unsigned long output_size, unsigned long _skip)
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  118  {
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  119  	int ret;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  120  
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  121  	/*
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  122  	 * The skipped bytes needs to be included in the size of data we want
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  123  	 * to decompress.
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  124  	 */
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  125  	output_size += _skip;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  126  
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  127  	decompressed_bytes = 0;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  128  	output_buffer = outbuf;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  129  	limit = output_size;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  130  	skip = _skip;
-1b7898ee276b39e Oliver O'Halloran 2016-09-22  131  
-1b7898ee276b39e Oliver O'Halloran 2016-09-22 @132  	ret = __decompress(inbuf, input_size, NULL, flush, outbuf,
-
-:::::: The code at line 132 was first introduced by commit
-:::::: 1b7898ee276b39e54d870dc4ef3374f663d0b426 powerpc/boot: Use the pre-boot decompression API
-
-:::::: TO: Oliver O'Halloran <oohall@gmail.com>
-:::::: CC: Michael Ellerman <mpe@ellerman.id.au>
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
