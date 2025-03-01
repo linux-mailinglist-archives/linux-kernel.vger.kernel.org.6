@@ -1,195 +1,231 @@
-Return-Path: <linux-kernel+bounces-540091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43E7A4AD8D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C31A4AD92
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 20:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A35C16FC33
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22FC16FCE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 19:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A10D1E8331;
-	Sat,  1 Mar 2025 19:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E321E5711;
+	Sat,  1 Mar 2025 19:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LD1Tu4N6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLa0zLtg"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8FB1BD01F;
-	Sat,  1 Mar 2025 19:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424391BD01F;
+	Sat,  1 Mar 2025 19:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740858355; cv=none; b=hVYuRWvJ9rbnrmxFyu2CvzkfvTTmycopxIUmwQct4Uqanu+B5AWXjSJAgocwcev7lJWLGQxH+3eHutCQzcTyJD3cr9ZN5kCjylowSIOsd+ums/M34XPdzI+BNRWpr9/ncDKQQaFIL7mSFwwCzhyH/YNZzHz4Cw78dZ/AW19+c24=
+	t=1740858577; cv=none; b=QjsIXfWROzyJ0XvliOBWZBPJhxShi4ILK9NclFxWx0hZ2yHJ2tgdWPhAjdERpbDm2chbSkAslhEwi4H/NMEC+kngmQxgta5Pp8u7mJ7WmWHc1+P4SCTFFAtW9rJnKErxFTuIqXpdJ00PM1BY/JdL7jkLvNlLX0mLofKRlom5pjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740858355; c=relaxed/simple;
-	bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXtptTX+ScuU9ZIUPhlsl2+ngCpPLo9TUD/yaIVywqeTmMVNhEMW0gF4QVM1S2Z2dzbX8x1ws54MG65YxcsTbGENK50OV/lYmt/iVxaQFdWkWJAJLQZt1guLdYvXeXJZZ1A/jliXwKuWyTwZZ92T5W4hh01cLKk70EOAFbCg2M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LD1Tu4N6; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740858353; x=1772394353;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
-  b=LD1Tu4N6P9GKcX+uwaRHoW2/FLc4MX7zs0thsEVBtMr9i69PuwP6zC8Z
-   SC1OjyGMe6RtXp6z73ZrUK3sNZbXY+DgE7LnUXu6lzx2e3lCBMRNuUqGi
-   mP4M9QeLKFqc4iLeAqDmfrcDzM/MJZzmDLTWsBCgsASyqBHgF9yyYcGdt
-   aLqX+b05OGgW0Hg+WWw6KSK5PEeRIsZ4+jqHQpEC0WSRtF10LRndSNHGP
-   S9wbnDeIjG1GOCfUFkEVjUXQFwwrmRU2//0RodovI18wcgktLCt7T9SDj
-   DAcebzo0iUBbKjAFuGjOuo0uFahq5O0+8sWTQdmpp/PARb8+nt9ulBeW1
-   Q==;
-X-CSE-ConnectionGUID: 73fVMWznTBqZ8aKW7vU9AA==
-X-CSE-MsgGUID: /dfF785cQKOU6UzEhrR9dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41795675"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41795675"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 11:45:52 -0800
-X-CSE-ConnectionGUID: DPGE4HeRQOum/28skPyxlQ==
-X-CSE-MsgGUID: 0B5sZDrTRqCYBgUdNpzkhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117415055"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2025 11:45:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toSmL-000GdC-0S;
-	Sat, 01 Mar 2025 19:45:41 +0000
-Date: Sun, 2 Mar 2025 03:44:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
-Message-ID: <202503020355.fr9QWxQJ-lkp@intel.com>
-References: <20250227180813.1553404-9-john.g.garry@oracle.com>
+	s=arc-20240116; t=1740858577; c=relaxed/simple;
+	bh=9odiYJC9DPemt6LxEsKMW4Rhg8ObrgW4I1OHQ0BcBpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JiPzcOyGV98wT8XqZP6yfmLkiJPqJI7OQX5ll/ow9FMQkj3qU6ZK+qN0zsh/VFyq+lSkFV14nPad7FxOeQzmOG2bW2dewEwc7Y4OOkBNGmjAYWlS9NSl7C7cstWgn+aXtO9dPzRwQgP+5Qpjxx1E1UvRGEvtWc95pfAKY3Pxij0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLa0zLtg; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2feb867849fso3779175a91.3;
+        Sat, 01 Mar 2025 11:49:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740858575; x=1741463375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m40WT/R1Hk9XjcXHYp23RySZqhVIaD/d4See+TNH5ng=;
+        b=GLa0zLtgzNBJTrHfPNzzsEGhaT714bBFF6rlhFW72e+CHxMtWBgsc4GlXXJpvNRbNJ
+         Hgijy5fWt6tUQMeahPBA0X/ZnCvj2gjP3wovi6Y4tcRyhly54dvCQ25dtyBc1JYKJJqP
+         h530LcHKqjQBy3MQhPU0yFX9r3HFNPUZRv7SJkhW6MAmpSBPrSQb4x8LKJUkZb6Vi9sm
+         TDLqG2kI+waxQWLZ1Z5Entkl436lTvcALDOk8i060BQrWQG79UaFxVgmf2Y64Lyw0g63
+         HHBbQcUzSXOwmsxt77uMj5EKKLw8HbpUmOWk3sHvPw80WkKDzb9SRci+paHcv9rjeUE6
+         Cv0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740858575; x=1741463375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m40WT/R1Hk9XjcXHYp23RySZqhVIaD/d4See+TNH5ng=;
+        b=UFzZVdXqXSuV2GKMiPQbEIXBGrHLbBLcMywKcHdPf8DeBjLb3SJIGi5l7MPOFpHnNo
+         D8HKpQGFHYEAQi7mjP2UrujbDFzzloD0NNgYiszUZMEPLhPcv8eitklVbB0h6xozcsik
+         ZbsupjNnSs4iEMpM0gka90KuIE46BC2HAbDo400tkc0zthDXF1AqskuFfCPQc5i8FyVm
+         l2cRUGg83V+DEvqkCU9pWU2Z97Ffl4fpyma8mighSATYvgHdfkC2LH/j2b/0Bu5ABFxH
+         ruBuXhgJtz0E4ALPKIN/Wch/7vb/5wmIikElEKEXQtZtbxYUCR3j+SHVEuZ97ld/kxqo
+         Ubdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWuPf2TragQzpU5C/NhHnaPJ/4xs9/p8FNTCzYuKEB5x9FeHKVYUTuJ0LYPS7ngUI2jV2ArcSOWGj0@vger.kernel.org, AJvYcCXx9mJxIA8Qu0DLhWdnUBgFi9WQ+haCzISvQixaJBBiAY7ihg+I/8ywDoJqrS9bOI2wxuI7WR+7/+cnWEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL1lcGl7FE0roF72GFtLnU5Zu8mbJ7yiZoQXhIJW0MkIhW+ruD
+	FPMZL5rzmPFEuAaCBhC9l/W2sNEl7SiVbo8/cxqQ5sAqcweZk/sc1TAPuyZoePGE22MDLt+O5Gf
+	L2/NTEsHfA/hdXb5H8yJJsYtBg/0=
+X-Gm-Gg: ASbGncusFdoqPJPmuDaKavB+h+wqXPQ2QJEM0qTYfj4lnfaJhnU+7eqbyBxDHods8rx
+	nHxFTVpuj6Y08wKHPLz8j+VBqGATpsjyGrfD5F5a3/xaO7uyUVGG3TJua/+UgvAKVTmUJJ4766+
+	arhvaf8sGl5MBpQ6ADLYbQJkJ0XSA=
+X-Google-Smtp-Source: AGHT+IG6VIaqEiLWSNudy9fvUgj2q/O4B65YH3aD9+BudKFfhKZtSgF1Q6oGItRLDasMJpxPlIqDkJhsAoCNQM+4oAY=
+X-Received: by 2002:a17:90b:1b47:b0:2ee:c04a:4276 with SMTP id
+ 98e67ed59e1d1-2febab2eea1mr11010484a91.5.1740858575254; Sat, 01 Mar 2025
+ 11:49:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227180813.1553404-9-john.g.garry@oracle.com>
+References: <874k0bf7f7.wl-maz@kernel.org> <20250226215001.GA556020@bhelgaas>
+In-Reply-To: <20250226215001.GA556020@bhelgaas>
+From: =?UTF-8?B?THXDrXMgTWVuZGVz?= <luis.p.mendes@gmail.com>
+Date: Sat, 1 Mar 2025 19:49:23 +0000
+X-Gm-Features: AQ5f1JqPCWHmgRYiAV51ne0zUw7IIgk6c2vpYfvdZjevZ7Cydlxsc9mtbXskS3k
+Message-ID: <CAEzXK1qtSRVS0TYAwMHTYh=7edO604iRKuXMQNMO_MC+-hunQg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: mvebu: Use devm_request_irq() for registering
+ interrupt handler
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi everyone,
 
-kernel test robot noticed the following build warnings:
+First of all I have to admire your work maintaining so many systems
+and architectures and in particular the mvebu platform and I would
+like to offer my help for testing the patches with your guidance.
 
-[auto build test WARNING on xfs-linux/for-next]
-[also build test WARNING on tytso-ext4/dev linus/master v6.14-rc4]
-[cannot apply to brauner-vfs/vfs.all next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I have essentially five working Armada A388 systems, one from solidrun
+and the other four are my own creation, a mini-DTX board that I
+designed and built for my home use, although at some point I planned
+to sell those boards, but it did workout due to my PhD that consumed
+too much time. I am now planning to do some NAS units with it and
+possibly sell them. In any way, long story short I've read in some
+threads about mvebu that PCIe is broken, and I say that it is not, the
+secret to have PCIe working is to use a good u-boot bootloader. Many
+recent u-boot versions cause the PCIe not to work on boot and I
+haven't figured out why yet. In fact my A388 systems are working with
+the amdgpu driver and an AMD Polaris, a RX 550 with 4GB VRAM. I have
+been succesfully using PCIe with this old u-boot version:
+https://github.com/SolidRun/u-boot-armada38x repo and branch
+u-boot-2013.01-15t1-clearfog. The system has 2GB of RAM and I am able
+to use the Ubuntu desktop and even navigate the web with Firefox, or
+watch 4K H265 videos with Kodi. The amdgpu driver works stable for
+several weeks in a row of power-up time, although since a year ago
+there is a regression in drm_buddy that freezes 32-bits systems on
+boot, but I have reverted that patch locally and have it working with
+kernel Vanilla 6.9.6. Yes, I know I should have reported it to the
+amdgpu team, but I have been very busy during this period. I hope to
+do it soon, would like to debug it better even with OpenOCD and a
+remote GDB for the kernel code.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/John-Garry/xfs-Pass-flags-to-xfs_reflink_allocate_cow/20250228-021818
-base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
-patch link:    https://lore.kernel.org/r/20250227180813.1553404-9-john.g.garry%40oracle.com
-patch subject: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
-config: hexagon-randconfig-001-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/reproduce)
+Please let me know if I can be of help.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020355.fr9QWxQJ-lkp@intel.com/
+Thanks & best regards,
+Luis Mendes
 
-All warnings (new ones prefixed by >>):
-
->> fs/xfs/xfs_iomap.c:1029:8: warning: variable 'iomap_flags' set but not used [-Wunused-but-set-variable]
-    1029 |         u16                     iomap_flags = 0;
-         |                                 ^
-   1 warning generated.
-
-
-vim +/iomap_flags +1029 fs/xfs/xfs_iomap.c
-
-  1011	
-  1012	static int
-  1013	xfs_atomic_write_sw_iomap_begin(
-  1014		struct inode		*inode,
-  1015		loff_t			offset,
-  1016		loff_t			length,
-  1017		unsigned		flags,
-  1018		struct iomap		*iomap,
-  1019		struct iomap		*srcmap)
-  1020	{
-  1021		struct xfs_inode	*ip = XFS_I(inode);
-  1022		struct xfs_mount	*mp = ip->i_mount;
-  1023		struct xfs_bmbt_irec	imap, cmap;
-  1024		xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-  1025		xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
-  1026		int			nimaps = 1, error;
-  1027		unsigned int		reflink_flags;
-  1028		bool			shared = false;
-> 1029		u16			iomap_flags = 0;
-  1030		unsigned int		lockmode = XFS_ILOCK_EXCL;
-  1031		u64			seq;
-  1032	
-  1033		if (xfs_is_shutdown(mp))
-  1034			return -EIO;
-  1035	
-  1036		reflink_flags = XFS_REFLINK_CONVERT | XFS_REFLINK_ATOMIC_SW;
-  1037	
-  1038		/*
-  1039		 * Set IOMAP_F_DIRTY similar to xfs_atomic_write_iomap_begin()
-  1040		 */
-  1041		if (offset + length > i_size_read(inode))
-  1042			iomap_flags |= IOMAP_F_DIRTY;
-  1043	
-  1044		error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-  1045		if (error)
-  1046			return error;
-  1047	
-  1048		error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
-  1049				&nimaps, 0);
-  1050		if (error)
-  1051			goto out_unlock;
-  1052	
-  1053		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-  1054				&lockmode, reflink_flags);
-  1055		/*
-  1056		 * Don't check @shared. For atomic writes, we should error when
-  1057		 * we don't get a COW mapping
-  1058		 */
-  1059		if (error)
-  1060			goto out_unlock;
-  1061	
-  1062		end_fsb = imap.br_startoff + imap.br_blockcount;
-  1063	
-  1064		length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
-  1065		trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
-  1066		if (imap.br_startblock != HOLESTARTBLOCK) {
-  1067			seq = xfs_iomap_inode_sequence(ip, 0);
-  1068			error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0, seq);
-  1069			if (error)
-  1070				goto out_unlock;
-  1071		}
-  1072		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
-  1073		xfs_iunlock(ip, lockmode);
-  1074		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, IOMAP_F_SHARED, seq);
-  1075	
-  1076	out_unlock:
-  1077		if (lockmode)
-  1078			xfs_iunlock(ip, lockmode);
-  1079		return error;
-  1080	}
-  1081	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Wed, Feb 26, 2025 at 9:50=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
+wrote:
+>
+> On Thu, Jun 23, 2022 at 09:31:40PM +0100, Marc Zyngier wrote:
+> > On Thu, 23 Jun 2022 17:49:42 +0100,
+> > Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > On Thu, Jun 23, 2022 at 06:32:40PM +0200, Pali Roh=C3=A1r wrote:
+> > > > On Thursday 23 June 2022 11:27:47 Bjorn Helgaas wrote:
+> > > > > On Tue, May 24, 2022 at 02:28:17PM +0200, Pali Roh=C3=A1r wrote:
+> > > > > > Same as in commit a3b69dd0ad62 ("Revert "PCI: aardvark:
+> > > > > > Rewrite IRQ code to chained IRQ handler"") for pci-aardvark
+> > > > > > driver, use devm_request_irq() instead of chained IRQ
+> > > > > > handler in pci-mvebu.c driver.
+> > > > > >
+> > > > > > This change fixes affinity support and allows to pin
+> > > > > > interrupts from different PCIe controllers to different CPU
+> > > > > > cores.
+> > > > >
+> > > > > Several other drivers use irq_set_chained_handler_and_data().
+> > > > > Do any of them need similar changes?
+> > > >
+> > > > I do not know. This needs testing on HW which use those other
+> > > > drivers.
+> > > >
+> > > > > The commit log suggests that using chained IRQ handlers breaks
+> > > > > affinity support.  But perhaps that's not the case and the
+> > > > > real culprit is some other difference between mvebu and the
+> > > > > other drivers.
+> > > >
+> > > > It is possible. But similar patch (revert; linked below) was
+> > > > required for aardvark. I tested same approach on mvebu and it
+> > > > fixed affinity support.
+> > >
+> > > This feels like something we should understand better.  If
+> > > irq_set_chained_handler_and_data() is a problem for affinity, we
+> > > should fix it across the board in all the drivers at once.
+> > >
+> > > If the real problem is something different, we should figure that
+> > > out and document it in the commit log.
+> > >
+> > > I cc'd Marc in case he has time to educate us.
+> >
+> > Thanks for roping me in.
+> >
+> > The problem of changing affinities for chained (or multiplexing)
+> > interrupts is, to make it short, that it breaks the existing
+> > userspace ABI that a change in affinity affects only the interrupt
+> > userspace acts upon, and no other. Which is why we don't expose any
+> > affinity setting for such an interrupt, as by definition changing
+> > its affinity affects all the interrupts that are muxed onto it.
+> >
+> > By turning a chained interrupt into a normal handler, people work
+> > around the above rule and break the contract the kernel has with
+> > userspace.
+> >
+> > Do I think this is acceptable? No. Can something be done about this?
+> > Maybe.
+> >
+> > Marek asked this exact question last month[1], and I gave a detailed
+> > explanation of what could be done to improve matters, allowing this
+> > to happen as long as userspace is made aware of the effects, which
+> > means creating a new userspace ABI.
+> >
+> > I would rather see people work on a proper solution than add bad
+> > hacks that only work in environments where the userspace ABI can be
+> > safely ignored, such as on an closed, embedded device.
+> >
+> > [1] https://lore.kernel.org/all/20220502102137.764606ee@thinkpad/
+>
+> OK, this patch [2] has languished forever, and I don't know how to
+> move forward.
+>
+> The patch basically changes mvebu_pcie_irq_handler() from a chained
+> IRQ handler to a handler registered with devm_request_irq() so it can
+> be pinned to a CPU.
+>
+> How are we supposed to decide whether this is safe?  What should we
+> look at in the patch?
+>
+> IIUC on mvebu, there's a single IRQ (port->intx_irq, described by a DT
+> "intx" in interrupt-names) that invokes mvebu_pcie_irq_handler(),
+> which loops through and handles INTA, INTB, INTC, and INTD.
+>
+> I think if port->intx_irq is pinned to CPU X, that means INTA, INTB,
+> INTC, and INTD are all pinned to that same CPU.
+>
+> I assume changing to devm_request_irq() means port->intx_irq will
+> appear in /proc/interrupts and can be pinned to a CPU.  Is it a
+> problem if INTA, INTB, INTC, and INTD for that controller all
+> effectively share intx_irq and are pinned to the same CPU?
+>
+> AFAICT we currently have three PCI host controllers with INTx handlers
+> that are registered with devm_request_irq(), which is what [2]
+> proposes to do:
+>
+>   advk_pcie_irq_handler()
+>   xilinx_pl_dma_pcie_intx_flow()
+>   xilinx_pcie_intr_handler()
+>
+> Do we assume that these are mistakes that shouldn't be emulated?
+>
+> [2] https://lore.kernel.org/r/20220524122817.7199-1-pali@kernel.org
+>
 
