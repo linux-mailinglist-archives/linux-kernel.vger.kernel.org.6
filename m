@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-539968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52695A4AB69
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:52:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7F7A4AB6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA181897744
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918251897DEB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3191DF74F;
-	Sat,  1 Mar 2025 13:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434A01E522;
+	Sat,  1 Mar 2025 13:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwDH8z8O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="BEW/bnui"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8231E522;
-	Sat,  1 Mar 2025 13:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5971DED51;
+	Sat,  1 Mar 2025 13:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740837140; cv=none; b=ZGevIo7FxDJX70XF54z50P4qvzc/UgSXj9HawKlpLvihbrTH8oZrtok2HPr00eH9wX1izrSFIru7hsyuwriSyoQK3wdTq7vbHpsuYgJmR18hnODClueE/vxEFxsEGwqQkip2BYgxoxZRunA7gku7NOlKgM0y6JvilLLU2hcejog=
+	t=1740837346; cv=none; b=n5OdOoLo0uGcGtPToCcar/Mz4af7qx/UENE9kSIEwaipbA7Mz5+SU7/hSbtXYucF20mQw8bRaIVHnYSr9dYtcPgwM4SKPWey23w2aZR4Yt7uZSpkjBbHe4f57Juq60l5LZfgk8vYxU7sOz4FhiIVKMWafNc+WmaPlTUgunxczWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740837140; c=relaxed/simple;
-	bh=6Bih9s9N8cIQd39nOyUIaKyFZAl5RW/d0MiIvTb1BN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcuPRCZUhI5YLOX0KplHDE3K8H6GgUCC1rrD/xYQQscKLiLk3iA+KswnSHRtFKl0mqXUVsQV9UJPnwCT7R8ftsqMVnO1QVcQDKb4orTcvzMDpz8Qd30pryNBned/HSDIiRmn4+KqRoeJ1ygOC6VgX14v1gM6Y6o6LzOse+0ruhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwDH8z8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D41C4CEDD;
-	Sat,  1 Mar 2025 13:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740837139;
-	bh=6Bih9s9N8cIQd39nOyUIaKyFZAl5RW/d0MiIvTb1BN8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gwDH8z8OahVL4xJA79BSFzl7HEPM7doRZjfSKnxZoU3kMzB88v6kMiOVpXDcpFdJh
-	 zs6W07NQU7AzganEDppq2f1uCUY58tpTK/I9Z47WpICjT2jLgGwX7ZpVlHfzxKNApJ
-	 nGNFq4BEUatEqqM2QD3AssKKV7ZXQLYLZmQHgx/0B2gqhzqmXyfsxn5+LsOruDVzkg
-	 XkMn9rM866oirhkmt0sRNbw2PKuzs82YlG8ksdSUtA92Ee+5b1K2ZlV/msHFfkjEVP
-	 FedWp37l2KN3BSG9vQec8hZhCCxbV4o2y/I2soiRGLD7W262fUpWjO9T+ap+W67o0L
-	 ikCxpsnK+lzjw==
-Message-ID: <09674d15-d639-4cb3-837a-9575f0028a76@kernel.org>
-Date: Sat, 1 Mar 2025 07:52:15 -0600
+	s=arc-20240116; t=1740837346; c=relaxed/simple;
+	bh=57gmoHzKyTCBUERGazEXy7Bv1xyBc1syqfKuwhNym28=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n6wix7Gm4CJjqlD4o+wGQQkAF3ydqd5HRmFaXAU8oZRoyk+E56G9HN/t+S3uFb8fngCG5G/z7/NhoEPPSjv7ZMlnv6PacDlTWtWjRjmBmokpp/w73cUJ44Y6zj13lCF+hCZljKU8QYDy/absblEgSxCF6/SA7rVXYdHF/FLZ2NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=BEW/bnui; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-172-162.tugraz.at (vra-172-162.tugraz.at [129.27.172.162])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z4mmk5Xw8z3wN4;
+	Sat,  1 Mar 2025 14:55:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740837320;
+	bh=vnR2UEaXdNo+YU9oMSVTVtceAtP9umT32kThn9x3Ib8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=BEW/bnuif+W1TwRnOhs5KRi6YUJYW0I2uo8RC1jkYKdBuDw/SVb9o59162tpA2mrK
+	 V+vrEf0V4IRn6OoX3YXyRnrkLYHqT4tIQhTD5QleRZYKGOWGJBEFQCy5OPAI3sEsAm
+	 iG1shSHQIhSqacP6/vXIUiiRqqHyMIKWZt9VauB0=
+Message-ID: <9ebf721647624d2474818384355ad1e6e2567426.camel@tugraz.at>
+Subject: Re: Rust kernel policy
+From: Martin Uecker <uecker@tugraz.at>
+To: Askar Safin <safinaskar@zohomail.com>, dan.carpenter@linaro.org
+Cc: airlied@gmail.com, boqun.feng@gmail.com, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+	rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
+Date: Sat, 01 Mar 2025 14:55:13 +0100
+In-Reply-To: <20250301132229.3115698-1-safinaskar@zohomail.com>
+References: <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+	 <20250301132229.3115698-1-safinaskar@zohomail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ACPI: platform_profile: Add support for hidden
- choices
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: Kurt Borja <kuurtb@gmail.com>, Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Luke D . Jones" <luke@ljones.dev>, Mark Pearson
- <mpearson-lenovo@squebb.ca>,
- "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch,
- Denis Benato <benato.denis96@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
-References: <20250228170155.2623386-1-superm1@kernel.org>
- <20250228170155.2623386-2-superm1@kernel.org>
- <D84F6QF8EU3D.3RUI1PKXP2DZ3@gmail.com>
- <6f56571a-3090-4323-a29d-008b916abf39@kernel.org>
- <CAGwozwGFLQxGEQ-nb+d9yrikz=fx+u48mpTYUyUtvgFD-9ypQg@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAGwozwGFLQxGEQ-nb+d9yrikz=fx+u48mpTYUyUtvgFD-9ypQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
 
->>> Let me know what you think!
->>
->> I don't really like that profiles can get out of sync, this is asking
->> for a non-deterministic behavior that can be difficult to diagnose
->> issues and also difficult for userspace to work with.
-> 
-> I agree with Mario here. Imagine two drivers, one with low-power and
-> one with quiet. They both begin at performance.
-> 
-> Then, userspace software gets confused (incl. ppd) and sets firmware
-> profile to low-power. The latter gets left in performance, causing
-> excess drain.
-> 
-> I do not believe the legacy interface should be deprecated. Right now,
-> amd-pmf is a NOOP in most devices 
+Am Samstag, dem 01.03.2025 um 16:22 +0300 schrieb Askar Safin:
+> Hi, Martin Uecker and Dan Carpenter.
+>=20
+> > No, this absolutely is useful.  This is what UBSan does now
+>=20
+> > BTW: Another option I am investigating it to have UBsan insert traps
+> > into the code and then have the compiler emit a warning only when
+>=20
+> Clang sanitizers should not be enabled in production.
+> See https://www.openwall.com/lists/oss-security/2016/02/17/9 for details
 
-"Most" devices is not accurate.  There are a lot of devices that it does 
-enable.  In the gaming space right now it's often behaving as a no-op.
+"There is a minimal UBSan runtime available suitable for use in production
+environments."
 
-> so there is actually 0 reason for
-> generic power handlers to move to the new API. Just extra work. So
-> lets make sure the legacy endpoint works properly for the foreseeable
-> future.
-> 
-> Also, when power handlers start moving to the new interface, they will
-> hardcode choices based on the name. As they should. TDP needs to be
-> customized per device/manufacturer. So moving handlers between
-> low-power and quiet will not be possible.
-> 
-> @Mario: I do not have a device with an amd-pmf integration. All of
-> mine have stub handlers. I would expect that a properly configured pmf
-> handler for e.g., Asus would do the same as the armoury interface, so
-> that users do not have to rely to vendor software on WIndows. Then
-> power profiles would be synced between windows and armoury. In that
-> case, we have a problem of setting the power mode twice. What would be
-> the mitigation for something like that?
-> 
-> Antheas
+https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 
-"Power mode" is a concept, it doesn't just apply to configuring sPPT and 
-fPPT.  I envisage that a vendor that actively uses PMF and their own 
-interface would be changing different things by the different interfaces.
 
-For "example" PMF may reconfigure sPPT, fPPT, STT and STAPM but their 
-driver may notify their EC to change a fan curve.
+But I recommend to also read the rest of my email above,=C2=A0
+because this is not relevant to what I wrote.
 
-If we really end up with a situation that vendor interface and PMF do 
-the same thing we can cross that bridge then.
+Martin
+
+
+
 
