@@ -1,79 +1,127 @@
-Return-Path: <linux-kernel+bounces-539709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC17EA4A7A5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:45:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8239DA4A7A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 02:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC20C3B09ED
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67899189A432
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 01:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950F413AD3F;
-	Sat,  1 Mar 2025 01:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87085C5E;
+	Sat,  1 Mar 2025 01:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVDe5RQ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iK9uMKT1"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC687101C8;
-	Sat,  1 Mar 2025 01:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D919461;
+	Sat,  1 Mar 2025 01:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740793515; cv=none; b=jf6BX2VnGCttqTpWVWJkVysjxs9+JgV5O/RcqUNXPhOXWLE7TMIcYyR7nboFAOmSpsbewuWvC4xTPZk9T1mEP9DYcqRBckwjDDRbOPyVub0g+qcc2P+ajhN1IQ+H7lT1oXRZHKnAyJ/AyDTUGBdn/27gqHqVzWOwJ9/WeIa5V1c=
+	t=1740793554; cv=none; b=QL2GkiCDCWnTc4Eqh6M55h5YE9HQc5ymSq1W4zpuZtxjAZCgyt5dcd/nBoOw2Llhy4hxIYjqV8ptf3Oo+/rCgQNmNpqUwAinkgMZoyXLqOu1MrTmMmFNegMyBV6/G0TB+MXOJy9UHlJnd80090DNA33SVI/800GDk/onI8zHX6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740793515; c=relaxed/simple;
-	bh=0Elztxno2Wh5dEC0H+MhvIWJ2BKl3os0U6qKe03LeG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W46j3oYI6gsR+DGCpDVAJQ7IHUWTUpFLdYuL1epdMWZZlCHiRqCu3M6AcH5+CjxiDftw8x679swz1IEk2y7iWXjkSzbe4afY3cLwp88g1Ya+gcW3ripaSKj10jg3d04E8EWOh5Kg8ksFxWpMBNGkZMVxvL/vxCrIqNXUM7XeJLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVDe5RQ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA55C4CED6;
-	Sat,  1 Mar 2025 01:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740793514;
-	bh=0Elztxno2Wh5dEC0H+MhvIWJ2BKl3os0U6qKe03LeG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVDe5RQ/h1jln2AQ0P6LEwQN/NhtLmB10XtR1QDduwYNfd0NpgHRUOazNgTfnFLAM
-	 Zp1a5vq3oTok1S56+moZyVy+SMxZrEjEuaPzoxJ+b3MiPsSIn5zzoEJZ/NL7RWflCa
-	 wSMXDVcAbrq2sN2BjFL6HM5y1KHvZzuwi6O6UugNG9mE0UZ0+hbVv+JOuQWvymN3ad
-	 xpUHNWEim474l5uB3gJ4rBa2ICVzBSLkCog5rGAtwoiaq2KuM3NjAHDs4MNxyw9aMu
-	 WqXauNphcdKLwfXFWXq4eoW5zj2htHvHBmOPL4m8fKC/cPB6szw6xSEFq7naOBJlR4
-	 Aqq7a46dLzMaQ==
-Date: Sat, 1 Mar 2025 03:45:10 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <Z8Jmps6AF_geaHUw@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
+	s=arc-20240116; t=1740793554; c=relaxed/simple;
+	bh=3TDkV+2SC8MLKusalhQ+6g069yP2i+Xbndn0TmtRGLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TBF+KmD1eRkal2EI3cmD1GYFkelFMSqQo+HP9ICWWAvSOHhOPWmDHIByPyo6gaZO8aqN24WFIarJ+bo4qncGDsRTc1n7pVNPhG37gkqSeIfr7Vt9/BQKVJZz1aV/7mtujaCDFonX0kKBft6KTVQB4ZDU2YziWrN2O3gB5akZBro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iK9uMKT1; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf48293ad0so104802766b.0;
+        Fri, 28 Feb 2025 17:45:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740793551; x=1741398351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gqZyxdu6NvwN5cQicbg3iM4jvo3YwMEvAbDEez2B+m8=;
+        b=iK9uMKT1diBAccYHsC/szD72SkSMPXoCIY5yEsxKNvbOv8stQ80QcMRs8pdG7bUk58
+         V9a+NDn9aHh3GG5HFOWTQWfOq2uiMxmVZ5rgdg3chHlQrBuPXLXoGtIos8MQ4u+R8kLW
+         jZ2htutd9yH70QoHT4gIvSR1NpRxpE5K2+JBzEftEwrNpVBv+Q2Yy2rxOnrGnMvoHz52
+         +P/G9+GO+vut9Snm/cX/y0U8pW80FWGqLgGG7UDoRCBhc2NaVj5qwYtUbx9WMn5Ed3/h
+         D+1mhKgzsLzbPw/RABXgE0rOvmwOEcjoa9qDdJzFlDCJONuqZOTEIAGHe35QZ+eTaTZM
+         MNSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740793551; x=1741398351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gqZyxdu6NvwN5cQicbg3iM4jvo3YwMEvAbDEez2B+m8=;
+        b=Y0geK7XMs8n6CGXbfr/gBlq5JwMd1UAr8/o0Zu4147PGLrTNLB1CYo7L4+UH/DdRwT
+         InKwOIogxNe/8aEo/DwujMafQtIuGJiN1JjAtrb/+n3CMS1iJZy/RslR/0F8CaAQWkQg
+         G7jbss3r9ePXK36iA2sqNXFZeuyS5KuCro4y48EzD4JD/eMZC5UXwG66NLH4vAQxGJtR
+         MrBrAOi+s9SQZBMv3Y7nK9P6frRigMsEGr03+sSnlwHD2wGOemqWkAEFHBbhU/3h4xsA
+         SbvSCjIBKFQiqHjM5oUgzPw8iAwUQJOgEbyHVzDbJqj/MpBdZeGRCr9u0TiCu2ef9ava
+         jp2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVw5pjBOCyf+ALH0m7qgOnuBRg7ByYPZ+OQnjCtejMO852qJQNVjBYopnqD/BlOBK5zBbfTQrXaW6d6xfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx1w10CuLbdHKmnKf7h/4SxtNaXC0kFybZUKhZuzVkBuIH1fDb
+	sD/A89nBmlVhlamNR4yfET7xkEkcoGPKCvAcgPARNRKU6ykYOJ4M
+X-Gm-Gg: ASbGncs8aM+rEle4oAuPqYXW04cVMM4cf74t7rUJ+A9s21xWVxZNcVVOzlPcy8MMZtN
+	dyjYZcEJ3D4w6jHt0mqDp1q26xADc8yGhCgNlvrEmD5OippSdQzuMO8H2mmaQa/duzBFDtSi/SC
+	uXeV/qq9olTqTlfpvo6tJ3FZM6F8Gl3VTdb/N3M9R2IiWbnJYSZol3WxX1lE6syPHaDpj9YGiaD
+	5MvHsOZC8p3yReCmPjyey0pCCJBHHF7NnHEGU+lCi2JG8VZkpm/v999YZvvl9MsZMdU3Dcn8bCu
+	WWWjHD41o0dfAOAPvEr/V2VvjVLuyX4K8gioH0xl1xcqU54yG0vxtl0=
+X-Google-Smtp-Source: AGHT+IG5Mfv6RupWeEFxXVmnzOHffxMoautW2BMU+YRo2ZuUcbZZ42i1X7oc9F9dPx3LMUrjqR4b0Q==
+X-Received: by 2002:a17:906:a389:b0:abf:486a:5e0e with SMTP id a640c23a62f3a-abf486a6354mr183904666b.22.1740793550844;
+        Fri, 28 Feb 2025 17:45:50 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.144.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75e499sm383413266b.149.2025.02.28.17.45.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 17:45:50 -0800 (PST)
+Message-ID: <86d5f210-d70f-4854-8ecf-eb771f26685a@gmail.com>
+Date: Sat, 1 Mar 2025 01:46:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228170720.144739-4-sgarzare@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] io_uring/rsrc: declare io_find_buf_node() in header
+ file
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250301001610.678223-1-csander@purestorage.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250301001610.678223-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 06:07:17PM +0100, Stefano Garzarella wrote:
-> +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
-> +			 size_t to_send);
+On 3/1/25 00:16, Caleb Sander Mateos wrote:
+> Declare io_find_buf_node() in io_uring/rsrc.h so it can be called from
+> other files.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>   io_uring/rsrc.c | 4 ++--
+>   io_uring/rsrc.h | 2 ++
+>   2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 45bfb37bca1e..4c4f57cd77f9 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1066,12 +1066,12 @@ static int io_import_fixed(int ddir, struct iov_iter *iter,
+>   	}
+>   
+>   	return 0;
+>   }
+>   
+> -static inline struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+> -						    unsigned issue_flags)
 
-Please describe the meaning and purpose of to_send.
+That's a hot path, an extra function call wouldn't be great,
+and it's an internal detail as well. Let's better see what we
+can do with the nop situation.
 
-BR, Jarkko
+btw, don't forget cover letters for series.
+
+-- 
+Pavel Begunkov
+
 
