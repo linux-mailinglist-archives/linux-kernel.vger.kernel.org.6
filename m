@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-539949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-539950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C065A4AB36
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:30:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1C9A4AB38
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 14:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F01E7A82CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 162E817150E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Mar 2025 13:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E414D1DF276;
-	Sat,  1 Mar 2025 13:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75C51DEFE7;
+	Sat,  1 Mar 2025 13:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Kg56qZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+kBdduh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1767979CD;
-	Sat,  1 Mar 2025 13:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1159679CD;
+	Sat,  1 Mar 2025 13:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740835817; cv=none; b=nhK38LQPtsBZ6VW8Afp92r/Ra7OQ9XZPDWjfDB7hgZRDUAv/LvWX1d9MbyGdMHPLMyKo+XpHyws3LPvL+UTSahGV2e1F0aMsSBbOVuErWhchVBaG6joEEsOrf+IcVkj+/3MZxIjG4G90s2hhhuerFxDy5c7UNR08Nt1QLbZDtO8=
+	t=1740835948; cv=none; b=XGJWoBgXYPdgc0mVQS/f9dVsmVihaajahpZk2svZaMfio2H5TcAnZnAGs9ZKM4FntvcyX2k5ydqypCoj/n7qr/aqzfDxGg78t5GTx7HrFp5qbeXSs3U0K8XdYVjfYDLUw/92FdzcBRNlrebf2OTNPbt3SHSt6hHUpaC5JK0p9RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740835817; c=relaxed/simple;
-	bh=SwyPErKy/wkrfdSz6Hn5/KDvLA6mTfMxR9RzDkps5p8=;
+	s=arc-20240116; t=1740835948; c=relaxed/simple;
+	bh=a8sSWALZJp0voKvpOq/O9Tg6TzzuHl7HNst/Ok4tmD0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IJLojqsdsYYXO6XQgJ2EuC/7FSz36hqSyHynP5wjyRoeXZE5VChQkjGIA5lbl0lOrDIe5N0uERmPGBkZ2FtEzgV0wkhDyRtj5DKX4AbZwiwHN9Jq2VBtnpQkXN3cyVqra5F005llZPgMEgJFdnFd/fMOb3TxnyoDQ/CkSWtkcQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Kg56qZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08773C4CEDD;
-	Sat,  1 Mar 2025 13:30:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qI9Uasbkl+BMMFl9dHQfCWN34N7I4mSYKlM4/XgEIGwKqCw2GN3HHON+/pvW5kyZsRtBTwa2i1O39fy9GzMdD53wj0LnVuGiCmzaLiNPM9TBFY3qO9KZOgsMRscKCmab1JWAKYhUb8VHRDRqTIfkZnLkWT5pa9z/VOgCRPPazr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+kBdduh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A047AC4CEDD;
+	Sat,  1 Mar 2025 13:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740835816;
-	bh=SwyPErKy/wkrfdSz6Hn5/KDvLA6mTfMxR9RzDkps5p8=;
+	s=k20201202; t=1740835947;
+	bh=a8sSWALZJp0voKvpOq/O9Tg6TzzuHl7HNst/Ok4tmD0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U9Kg56qZUmctik01QXLmTJzNAFKcFB6l3pBoWghT31e699On7lAyuXkRsZ1Wtkywb
-	 h6b8uedjZNdj6S+vAYP6z4IFXc9KkuRQnUH7BKGaaKJilLS/CTBD9+qXFvbTx2R1No
-	 wYZDfDbwUpzavOkKERCf8pc7v5J2lABZSx95GGrJETY7HSJLRoKd+rUAM5screheQ6
-	 uTQ146SrQBkajE6DEaliwja0IRBGmzjRnWmLSBPOzGLr40kaoUk9oW2sKr9IYQx4O7
-	 EHjSle9WiFlwGkcEWKbnjBFkVbDX1pg7Wasf2F6yB+1Xc6z0fWOuzmYWCgHOSrDQr4
-	 opy6EUu2oDJhw==
-Message-ID: <03c3e6bf-9688-446d-9b45-5b186a1d5b0e@kernel.org>
-Date: Sat, 1 Mar 2025 14:30:10 +0100
+	b=c+kBdduhw94SUPEGOTGTnYvs/Hz0cvWr7sVxVlzJVIgLo4+FL4xa0jcNnoCX0aV1T
+	 qjARMMJmmq5zTWOo2+HWFLVrI1E8wukPaX3FlfzghLwM69ulEny4lVLWK8sPZV7bFB
+	 KYmGbodjlDYounEPQB7DuNVharEMmb1IEfAviGdnEVPu0ezWZWYcrmNmIUFbMo6DTe
+	 7gOEQfHgWN2jpad20+IzSkHLM409R4z8u5eFp3jcWNhp7L5+OFsk+WvIWLudhs5ySc
+	 xKL4f0DgCYb6Tal4n4+KTVd4UuBVC4uG37yNamgx6+Imuhkr1oJxboIFAx37LOI0JF
+	 pjvnXibmN7gRA==
+Message-ID: <a2aceff9-5b44-405c-814a-0ad71da28168@kernel.org>
+Date: Sat, 1 Mar 2025 14:32:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: Add OV05C camera sensor driver
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
- laurent.pinchart@ideasonboard.com, dave.stevenson@raspberrypi.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
  benjamin.chan@amd.com
-References: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
+References: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,62 +99,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
+In-Reply-To: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 17:53, Pratap Nirujogi wrote:
-> Add driver for OmniVision 5.2M OV05C10 sensor. This driver
-> supports only the full size normal 2888x1808@30fps 2-lane
-> sensor profile.
-> 
-> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
-> ---
->  drivers/media/i2c/Kconfig  |   10 +
->  drivers/media/i2c/Makefile |    1 +
->  drivers/media/i2c/ov05c.c  | 1031 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 1042 insertions(+)
->  create mode 100644 drivers/media/i2c/ov05c.c
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 8ba096b8ebca..fd160feabc41 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -337,6 +337,16 @@ config VIDEO_OG01A1B
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called og01a1b.
+On 28/02/2025 17:57, Pratap Nirujogi wrote:
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index fba1c56624c0..ac27e88677d1 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
+>  obj-$(CONFIG_OF)		+= devicetree.o
 >  
-> +config VIDEO_OV05C
-> +	tristate "OmniVision OV05 sensor support"
-> +	select V4L2_CCI_I2C
-> +	help
-> +	  This is a Video4Linux2 sensor driver for the OmniVision
-> +	  OV05C camera.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called OV05C.
-> +
->  config VIDEO_OV01A10
->  	tristate "OmniVision OV01A10 sensor support"
->  	help
-> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> index fbb988bd067a..08bfc2d59be2 100644
-> --- a/drivers/media/i2c/Makefile
-> +++ b/drivers/media/i2c/Makefile
-> @@ -80,6 +80,7 @@ obj-$(CONFIG_VIDEO_MT9V011) += mt9v011.o
->  obj-$(CONFIG_VIDEO_MT9V032) += mt9v032.o
->  obj-$(CONFIG_VIDEO_MT9V111) += mt9v111.o
->  obj-$(CONFIG_VIDEO_OG01A1B) += og01a1b.o
-> +obj-$(CONFIG_VIDEO_OV05C) += ov05c.o
->  obj-$(CONFIG_VIDEO_OV01A10) += ov01a10.o
->  obj-$(CONFIG_VIDEO_OV02A10) += ov02a10.o
->  obj-$(CONFIG_VIDEO_OV08D10) += ov08d10.o
-> diff --git a/drivers/media/i2c/ov05c.c b/drivers/media/i2c/ov05c.c
+>  obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
+> +obj-$(CONFIG_PINCTRL_AMDISP)	+= pinctrl-amdisp.o
+>  obj-$(CONFIG_PINCTRL_APPLE_GPIO) += pinctrl-apple-gpio.o
+>  obj-$(CONFIG_PINCTRL_ARTPEC6)	+= pinctrl-artpec6.o
+>  obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
+> diff --git a/drivers/pinctrl/pinctrl-amdisp.c b/drivers/pinctrl/pinctrl-amdisp.c
 > new file mode 100644
-> index 000000000000..96c4f74af4a9
+> index 000000000000..659406586cb2
 > --- /dev/null
-> +++ b/drivers/media/i2c/ov05c.c
-> @@ -0,0 +1,1031 @@
+> +++ b/drivers/pinctrl/pinctrl-amdisp.c
+> @@ -0,0 +1,290 @@
 > +/* SPDX-License-Identifier: MIT */
 > +/*
 > + * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
@@ -170,10 +135,6 @@ On 28/02/2025 17:53, Pratap Nirujogi wrote:
 > + * permit persons to whom the Software is furnished to do so, subject to
 > + * the following conditions:
 > + *
-> + * The above copyright notice and this permission notice (including the
-> + * next paragraph) shall be included in all copies or substantial portions
-> + * of the Software.
-> + *
 > + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 > + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 > + * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
@@ -181,156 +142,173 @@ On 28/02/2025 17:53, Pratap Nirujogi wrote:
 > + * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 > + * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 > + * USE OR OTHER DEALINGS IN THE SOFTWARE.
+> + *
+> + * The above copyright notice and this permission notice (including the
+> + * next paragraph) shall be included in all copies or substantial portions
+> + * of the Software.
 
-What's with AMD? Second patch that day, same issues.
-
-Drop license boilerplate.
+Same problems as with rest of AMD patches.
 
 > + *
 > + */
 > +
-> +#include <linux/acpi.h>
-> +#include <linux/i2c.h>
 > +#include <linux/module.h>
-> +#include <linux/delay.h>
-> +#include <linux/units.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/gpio.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-fwnode.h>
-> +#include <media/v4l2-cci.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 
+Where do you use it?
+
+> +#include <linux/platform_device.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/pinctrl/machine.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/interrupt.h>
+
+Where do you use half of these headers?
+
+> +#include "core.h"
+> +#include "pinctrl-utils.h"
+> +#include "pinctrl-amd.h"
+> +#include "pinctrl-amdisp.h"
+> +
+> +#define DRV_NAME		"amdisp-pinctrl"
+> +#define GPIO_CONTROL_PIN	4
+> +#define GPIO_OFFSET_0		0x0
+> +#define GPIO_OFFSET_1		0x4
+> +#define GPIO_OFFSET_2		0x50
 
 ...
 
-> +
-> +static int ov05c_probe(struct i2c_client *client)
+> +static int amdisp_gpiochip_add(struct platform_device *pdev,
+> +			       struct amdisp_pinctrl *pctrl)
 > +{
-> +	struct ov05c *ov05c;
-> +	int i, ret;
+> +	struct gpio_chip *gc = &pctrl->gc;
+> +	struct pinctrl_gpio_range *grange = &pctrl->gpio_range;
+> +	int ret;
 > +
-> +	ov05c = devm_kzalloc(&client->dev, sizeof(*ov05c), GFP_KERNEL);
-> +	if (!ov05c)
-> +		return -ENOMEM;
+> +	gc->label		= dev_name(pctrl->dev);
+> +	gc->owner		= THIS_MODULE;
+> +	gc->parent		= &pdev->dev;
+> +	gc->names		= amdisp_range_pins_name;
+> +	gc->request		= gpiochip_generic_request;
+> +	gc->free		= gpiochip_generic_free;
+> +	gc->get_direction	= amdisp_gpio_get_direction;
+> +	gc->direction_input	= amdisp_gpio_direction_input;
+> +	gc->direction_output	= amdisp_gpio_direction_output;
+> +	gc->get			= amdisp_gpio_get;
+> +	gc->set			= amdisp_gpio_set;
+> +	gc->set_config		= amdisp_gpio_set_config;
+> +	gc->base		= -1;
+> +	gc->ngpio		= ARRAY_SIZE(amdisp_range_pins);
+> +#if defined(CONFIG_OF_GPIO)
+> +	gc->of_node		= pdev->dev.of_node;
+> +	gc->of_gpio_n_cells	= 2;
+> +#endif
 > +
-> +	client->dev.init_name = DRV_NAME;
+> +	grange->id		= 0;
+> +	grange->pin_base	= 0;
+> +	grange->base		= 0;
+> +	grange->pins		= amdisp_range_pins;
+> +	grange->npins		= ARRAY_SIZE(amdisp_range_pins);
+> +	grange->name		= gc->label;
+> +	grange->gc		= gc;
 > +
-> +	/* create sensor enable gpio control */
-> +	ov05c->enable_gpio = devm_gpiod_get(&client->dev, "sensor0_enable", GPIOD_OUT_LOW);
-
-
-s/sensor0_enable/enable/
-
-> +	if (IS_ERR_OR_NULL(ov05c->enable_gpio))
-> +		return PTR_ERR(ov05c->enable_gpio);
-> +
-> +	/* Initialize subdev */
-> +	v4l2_i2c_subdev_init(&ov05c->sd, client, &ov05c_subdev_ops);
-> +
-> +	/* Initialize CCI */
-> +	ov05c->regmap = devm_cci_regmap_init_i2c(client, 8);
-> +	if (IS_ERR(ov05c->regmap)) {
-> +		dev_err(&client->dev, "Failed to initialize CCI\n");
-
-Syntax is: return dev_err_probe
-
-> +		return PTR_ERR(ov05c->regmap);
-> +	}
-> +
-> +	/* Set default mode to max resolution */
-> +	ov05c->cur_mode = &supported_modes[0];
-> +
-> +	/* Initialize V4L2 controls */
-> +	ret = ov05c_init_controls(ov05c);
+> +	ret = devm_gpiochip_add_data(&pdev->dev, gc, pctrl);
 > +	if (ret)
 > +		return ret;
 > +
-> +	/* Initialize V4L2 subdev */
-> +	ov05c->sd.internal_ops = &ov05c_internal_ops;
-> +	ov05c->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	ov05c->sd.entity.ops = &ov05c_subdev_entity_ops;
-> +	ov05c->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-> +	ov05c->sd.entity.name = "OV05C";
+> +	pinctrl_add_gpio_range(pctrl->pctrl, grange);
 > +
-> +	/* Initialize source pad */
-> +	for (i = 0; i < NUM_OF_PADS; i++)
-> +		ov05c->pads[i].flags = MEDIA_PAD_FL_SOURCE;
-> +
-> +	ret = media_entity_pads_init(&ov05c->sd.entity, NUM_OF_PADS, ov05c->pads);
-> +	if (ret)
-> +		goto error_handler_free;
-> +
-> +	ret = v4l2_async_register_subdev_sensor(&ov05c->sd);
-> +	if (ret)
-> +		goto error_media_entity;
-> +
-> +	/*
-> +	 * Device is already turned on by i2c-core with ACPI domain PM.
-> +	 * Enable runtime PM and turn off the device.
-> +	 */
-> +	pm_runtime_set_active(&client->dev);
-> +	pm_runtime_enable(&client->dev);
-> +	pm_runtime_idle(&client->dev);
-> +
-> +	dev_info(&client->dev, "%s success", __func__);
+> +	dev_info(&pdev->dev, "register amdisp gpio controller\n");
 
-Drop, useless. Kernel has infrastructure for simple function exit
-debugging. For probing as well.
+Drop
 
-> +
 > +	return 0;
-> +
-> +error_media_entity:
-> +	media_entity_cleanup(&ov05c->sd.entity);
-> +
-> +error_handler_free:
-> +	ov05c_free_controls(ov05c);
-> +
-> +	return ret;
 > +}
+> +#endif
 > +
-> +static void ov05c_remove(struct i2c_client *client)
+> +static int amdisp_pinctrl_probe(struct platform_device *pdev)
 > +{
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct ov05c *ov05c = to_ov05c(sd);
+> +	struct amdisp_pinctrl *pctrl;
+> +	struct resource *res;
+> +	int ret;
 > +
-> +	v4l2_async_unregister_subdev(sd);
-> +	media_entity_cleanup(&sd->entity);
-> +	ov05c_free_controls(ov05c);
+> +	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+> +	if (!pctrl)
+> +		return -ENOMEM;
 > +
-> +	pm_runtime_disable(&client->dev);
-> +	pm_runtime_set_suspended(&client->dev);
+> +	pdev->dev.init_name = DRV_NAME;
+> +#ifdef CONFIG_GPIOLIB
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
+> +
+> +	pctrl->gpiobase = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(pctrl->gpiobase))
+> +		return PTR_ERR(pctrl->gpiobase);
+> +#endif
+> +	platform_set_drvdata(pdev, pctrl);
+> +
+> +	pctrl->dev = &pdev->dev;
+> +	pctrl->data = &amdisp_pinctrl_data;
+> +	pctrl->desc.owner = THIS_MODULE;
+> +	pctrl->desc.pctlops = &amdisp_pinctrl_ops;
+> +	pctrl->desc.pmxops = NULL;
+> +	pctrl->desc.name = dev_name(&pdev->dev);
+> +	pctrl->desc.pins = pctrl->data->pins;
+> +	pctrl->desc.npins = pctrl->data->npins;
+> +	ret = devm_pinctrl_register_and_init(&pdev->dev, &pctrl->desc,
+> +					     pctrl, &pctrl->pctrl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pinctrl_enable(pctrl->pctrl);
+> +	if (ret)
+> +		return ret;
+> +
+> +#ifdef CONFIG_GPIOLIB
+> +	ret = amdisp_gpiochip_add(pdev, pctrl);
+> +	if (ret)
+> +		return ret;
+> +#endif
+> +	dev_info(&pdev->dev, "amdisp pinctrl init successful\n");
+
+Drop, useless. Not mentioning that drivers should be silent on success.
+
+> +	return 0;
 > +}
 > +
-> +static const struct i2c_device_id ov05c_id[] = {
-> +	{"ov05c", 0 },
-> +	{ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i2c, ov05c_id);
-> +
-> +static struct i2c_driver ov05c_i2c_driver = {
+> +static struct platform_driver amdisp_pinctrl_driver = {
 > +	.driver = {
 > +		.name = DRV_NAME,
 > +	},
-> +	.id_table = ov05c_id,
-> +	.probe = ov05c_probe,
-> +	.remove = ov05c_remove,
+> +	.probe = amdisp_pinctrl_probe,
 > +};
 > +
-> +module_i2c_driver(ov05c_i2c_driver);
+> +static int __init amdisp_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&amdisp_pinctrl_driver);
+> +}
+> +arch_initcall(amdisp_pinctrl_init);
 > +
-> +MODULE_AUTHOR("Venkata Narendra Kumar Gutta <vengutta@amd.com>");
+> +static void __exit amdisp_pinctrl_exit(void)
+> +{
+> +	platform_driver_unregister(&amdisp_pinctrl_driver);
+> +}
+> +module_exit(amdisp_pinctrl_exit);
+> +
+> +MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
 > +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
-> +MODULE_DESCRIPTION("OmniVision OV05C sensor driver");
-> +MODULE_ALIAS("ov05c");
-
-Drop, not correct alias.
-
+> +MODULE_DESCRIPTION("AMDISP pinctrl driver");
 > +MODULE_LICENSE("GPL and additional rights");
 
-No, use proper license and matching tag. Your top said this is not GPL!
+No, that's not true. Just like in other patch...
+
+> +MODULE_ALIAS("platform:" DRV_NAME);
+
 
 
 Best regards,
