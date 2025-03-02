@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-540613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12561A4B2E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:09:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28A9A4B2E5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2943AECE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE1C189218D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282791EC01E;
-	Sun,  2 Mar 2025 16:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18B1E9B28;
+	Sun,  2 Mar 2025 16:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="dUvVRk5r"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="msLWUylx"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8E1EB9F6;
-	Sun,  2 Mar 2025 16:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE41EB9EF;
+	Sun,  2 Mar 2025 16:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931638; cv=none; b=cr9u2nylqGOOlxyWYCwRiYMYRNSSJj3T3H+Nt1Do8GhsJ/41ifHx10jZYRpW+GNPAY9GMFaunjt3pjT0lOF2iqL+Gl/TqvHrJ9Vr3/ViVJg7BUm4q2fdb/oSJTrWXy442pVyCQ2aGWx2SEnCCVQ4fke/HtvHcZaDNUWFzQy5Zlc=
+	t=1740931637; cv=none; b=KaXgUIPxQfASbcfyemA3BxwmtNrXi6NV1cLE3qM15jBCY6wL8V1ADOMcE6Av130tWxxdBpIEz9h0sp5fkzvy1mDGcNxKdJjyy39EwmyEvIhBHCxVR/zx/Pdi7BN0XYWFV0WQF5WonhQnaSdFbgcp5DxVIA7aIp9Vz+7xqYpKl8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931638; c=relaxed/simple;
-	bh=gFOJT0wB0FSlXbGcMSMgBV5jMo2IV+QAp/xG5QWZs4U=;
+	s=arc-20240116; t=1740931637; c=relaxed/simple;
+	bh=MRV1BzXFzVKuXXCzfT8MZMYwjH+JUp8WlpwQIsq6O88=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QbdbeIxogxkQXNurYv/GiDvzcGkoDWOX16Q1Ez2ehDEOx+9oioayRrrYyeoSOQOp+WnkzpEfN7YNqhiBWWT5ZNr/j2SPP6CDtNdFKioQKBH73QSjbnEGaP458Ye5xN9xRBERK22rgBWzLBrI+Bk4ELsOX4lVxydnQY8ur/JwXow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=dUvVRk5r; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=lxkUli/Z6yaa0S36/EjBivt5qVvYP73bOPuDORUaNbXuAyOPdqycJboSxIHm8OwdxEYOmpxcbr6gejanJDX5MP6Dk8WcQ4ukaWmA/OYUmmwsLsNxEzZDqQP50UeMMjs4jgS7KrRZyTRg/RVaHj30UvaHDxwPAo08viMPRBgyjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=msLWUylx; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931632;
+	s=2023072701; t=1740931634;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ci2qYk+Y1xa6/y45CJ+sIl/Sp1TENvs4r3jA8ONoz3c=;
-	b=dUvVRk5rsMES5GBkWhhKkXaw+xPN53mb+fYciIN3XGf5bDpEl7+9mczP3DBrL1InukvxKK
-	b0dTreVkc3Zxdv3jDxO5zcTH1n9l8R9sY5BXlcHTtL8khofEs3ILoWQMspSNMue63EzBYU
-	+YwZiQJDnQ+1PVyao3dSz3wGNpQEGWeTOgQcaAP1oVgJcWFaFgGeQO1jXp4uy79BtzcCuu
-	6U7B98CQ1jWs+w8FVp+HATHqVbw91duaAg8CJoUC8yHNZfQi5bJ30eFRU3jYSb299OwaC6
-	Um4+yVux8blZva5BIDm9YuDZQt9EsTVae9ZKAG2GSDJZptbEionJH8VsaJnOeg==
+	bh=KRfdkDgvTkBq7bn29Gpn8MyAqWDeCH+tjzpw5UYm82I=;
+	b=msLWUylxKZrkZloeSFN5bZFcbLSbFE1cttvSkO/sbcFYzOZMJ7QrfX7q/KeJKDTCCqgTwE
+	Cmy7gxyKITqqPUSpsCS7G1MqMRTPEE0rGESChTm4bdOm11qcFfU19VdeWkGdCDRk2erDxx
+	kDdrSiGJC8bqVFfFWelDM4gaS0EX1FJAHjToIV4v7qro8N7Udd/eU2b50vvHw4+nCCyDVp
+	iMV4JdyinVFOmyN1MzYoME93xKcoQ8EPz6PyS8U/d1Bw/PaS5g5Ib0iiqfD+QrZDeUyCFv
+	aH0d4JvaWftIryzqqBPR8zUxtU31fm2LuQe5b2oX22cLwFz/FOLen82uN8NLOQ==
 To: 
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Serge Hallyn <serge@hallyn.com>,
@@ -53,18 +53,17 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	cocci@inria.fr,
-	Eric Dumazet <edumazet@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org
-Subject: [PATCH v2 08/11] ipv4: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:44 +0100
-Message-ID: <20250302160657.127253-7-cgoettsche@seltendoof.de>
+	Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v2 09/11] fs: reorder capability check last
+Date: Sun,  2 Mar 2025 17:06:45 +0100
+Message-ID: <20250302160657.127253-8-cgoettsche@seltendoof.de>
 In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -96,25 +95,27 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
- net/ipv4/tcp.c | 4 ++--
+ fs/fhandle.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 57df7c1d2faa..9828bc5712b7 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3419,8 +3419,8 @@ EXPORT_SYMBOL(tcp_disconnect);
- 
- static inline bool tcp_can_repair_sock(const struct sock *sk)
- {
--	return sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN) &&
--		(sk->sk_state != TCP_LISTEN);
-+	return (sk->sk_state != TCP_LISTEN) &&
-+	       sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN);
- }
- 
- static int tcp_repair_set_window(struct tcp_sock *tp, sockptr_t optbuf, int len)
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 3e092ae6d142..5b77b38f0510 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -303,9 +303,9 @@ static inline int may_decode_fh(struct handle_to_path_ctx *ctx,
+ 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS;
+ 	else if (is_mounted(root->mnt) &&
++		 !has_locked_children(real_mount(root->mnt), root->dentry) &&
+ 		 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
+-			    CAP_SYS_ADMIN) &&
+-		 !has_locked_children(real_mount(root->mnt), root->dentry))
++			    CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
+ 	else
+ 		return -EPERM;
 -- 
 2.47.2
 
