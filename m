@@ -1,294 +1,120 @@
-Return-Path: <linux-kernel+bounces-540723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB3FA4B437
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:56:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC419A4B43B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411FB16D1A3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182B716D148
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237341EB9FD;
-	Sun,  2 Mar 2025 18:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E03B1EB9FF;
+	Sun,  2 Mar 2025 18:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd9IjvFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zgr8VpMs"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA16AD39;
-	Sun,  2 Mar 2025 18:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBE8AD39;
+	Sun,  2 Mar 2025 18:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740941810; cv=none; b=C21EaNGotR62zPa4PFZR4d1OFfr+4p7qFscwF0BQc2bVppZCXwAD5ZuVcjdTEY7Kk/ZL7B/LdmVoPB7BlKsY776ROlOLYgHBFpXouGMOiqtCAQVIMYlUrj8vOdImvWp9XETwi77CLWXQXJPLp+H1lcuH19KO84xgUBA+ZVzImh0=
+	t=1740941879; cv=none; b=mrl6R7Mj21khkl84hkT4GuqX+CDgE7OB9rGkMfucMDcQojywLYrZplYQGr4aTS+oX9l5ccZBcQoPKCrd71y5sZyLqhCKX+PyQls9R0ZQVioPxySu9ZCUE0x3hREUuugzRl2VdI7vtiQIvhn0sIDF4KRD5njJfZ6cZ4SPvdBumvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740941810; c=relaxed/simple;
-	bh=DTcCsDl3YelRsQhkIZb+/zokvSAEsX2KGI4N1591F4M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SbCLDEN+gf7/d1eHCnl+zTT/KxbqmsZeDwT+Zdd1ybuGckNUFaCfCtNvC8hdtGAPC4r+GTOicDbeVHNR2C11vMSZmSfCDZkThDx+70qIMurb2QDb3O1AZVJ0+I9ink7EsISrFGZWRtuxBc2ZrMeh9/a8b8o8+XAJtApWiJ3t+HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd9IjvFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0EEC4CED6;
-	Sun,  2 Mar 2025 18:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740941809;
-	bh=DTcCsDl3YelRsQhkIZb+/zokvSAEsX2KGI4N1591F4M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nd9IjvFOUXZ+RLxOgZhmCkp8QM3VbjdqTzRbSZBE68IrpG6IPMsTP1yRSHtgP2xT1
-	 4DVchWwrJvsEchapv0jduNp/rnQqvM3j5ja3IjL8fQUY70TpcSCd7LKgkihoFE1EIK
-	 GY7Z8gjygFKhF6t/DRXpDfM9CIzUPNPs7HUalFwIVrts4LtbipnIG5MEVsdIcbu9eP
-	 eScjGANA1gTJz+9M5lEPl245qo6LR6sPDfLPH6NEQ2+l4zMFIn+yXU4Eco25bfj1n1
-	 CzSyjqxoJJPNTVDdsRUOGXjJUE3CNmAS4N9Cg69JR7Y+AkaKYyDTtR3U1gENnjyrCW
-	 /f4LOUShUa8ig==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org, Zhihang
- Shao <zhihang.shao.iscas@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- Xiao Wang <xiao.w.wang@intel.com>, Charlie Jenkins <charlie@rivosinc.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: Re: [PATCH 0/4] RISC-V CRC optimizations
-In-Reply-To: <20250224180614.GA11336@google.com>
-References: <20250216225530.306980-1-ebiggers@kernel.org>
- <20250224180614.GA11336@google.com>
-Date: Sun, 02 Mar 2025 19:56:46 +0100
-Message-ID: <87ikorl0r5.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1740941879; c=relaxed/simple;
+	bh=6f3nE4+hMUhuJGhAonwOZkstOaLpys8RfLEpGJOsxFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tyXCVEH3akaZeRkjK6fTqFYJKNGg/hMGik6rCTyVccgMN1YqFpczU+A0W7/jR4nwOJuKGFVKjPac5EJ1K6sg/zNfEeJ505m26hdvIofAR/W9O1x6Zrvhh9DdSHxqWFgGaNR5O4ll5a7xAb7r/z2xnYbSWIlNKSWLjMD2myKFAmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zgr8VpMs; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pPjgLLKWy2wvQvaiR+uGJguXDw1skCmohUdLq/bT13M=; b=zgr8VpMs2oAvmtSCdLZNlyiimz
+	8LpNFXehoTksa2gEf3aQkohP09ro+0qaqjvYXaQu+KxZB+sIKlyUbvUikUssDkhX7/7AP7k3KfEaz
+	CAyKltObROv4gAMOa6xExAlm0l0aEKhoX+c9Pu1qTiFRRCfGJmEIJqtREfcq73tx7Ws1YbwXRGKdw
+	WnzTTKVSCtKDSdIL8G1CshPaA0/1AhvPCLPnbygN/m2VtmmRPHGF/nWchoU07/hqyZW/BJqwtS6iH
+	00V1WJLr3B0KvowzlMahZEFATeTzBlelY/WUcLfEdDewwy1pfGP6nsBKk3XlXNJTeRn5QvR3q8al7
+	Q/n2u9kw==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tooVb-0004sB-28; Sun, 02 Mar 2025 19:57:51 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ derek.foreman@collabora.com, detlev.casanova@collabora.com,
+ daniel@fooishbar.org, robh@kernel.org, sebastian.reichel@collabora.com,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>
+Subject:
+ Re: [PATCH v15 07/13] drm/rockchip: vop2: Register the primary plane and
+ overlay plane separately
+Date: Sun, 02 Mar 2025 19:57:50 +0100
+Message-ID: <2759797.BddDVKsqQX@diego>
+In-Reply-To: <20250218112744.34433-8-andyshrk@163.com>
+References:
+ <20250218112744.34433-1-andyshrk@163.com>
+ <20250218112744.34433-8-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Eric!
+Hi Andy,
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Am Dienstag, 18. Februar 2025, 12:27:34 MEZ schrieb Andy Yan:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> In the upcoming VOP of rk3576, a Window cannot attach to all Video Ports,
+> so make sure all VP find it's suitable primary plane, then register the
+> remain windows as overlay plane will make code easier.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
+> Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+> 
+> ---
 
-> On Sun, Feb 16, 2025 at 02:55:26PM -0800, Eric Biggers wrote:
->> This patchset is a replacement for
->> "[PATCH v4] riscv: Optimize crct10dif with Zbc extension"
->> (https://lore.kernel.org/r/20250211071101.181652-1-zhihang.shao.iscas@gm=
-ail.com/).
->> It adopts the approach that I'm taking for x86 where code is shared
->> among CRC variants.  It replaces the existing Zbc optimized CRC32
->> functions, then adds Zbc optimized CRC-T10DIF and CRC64 functions.
->>=20
->> This new code should be significantly faster than the current Zbc
->> optimized CRC32 code and the previously proposed CRC-T10DIF code.  It
->> uses "folding" instead of just Barrett reduction, and it also implements
->> Barrett reduction more efficiently.
->>=20
->> This applies to crc-next at
->> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?=
-h=3Dcrc-next.
->> It depends on other patches that are queued there for 6.15, so I plan to
->> take it through there if there are no objections.
->>=20
->> Tested with crc_kunit in QEMU (set CONFIG_CRC_KUNIT_TEST=3Dy and
->> CONFIG_CRC_BENCHMARK=3Dy), both 32-bit and 64-bit.  I don't have real Zbc
->> capable hardware to benchmark this on, but the new code should work very
->> well; similar optimizations work very well on other architectures.
->
-> Any feedback on this series from the RISC-V side?
+patches 7-9 look good to go, but ...
 
-I have not reviewed your series, but I did a testrun the Milk-V Jupiter
-which sports a Spacemit K1 that has Zbc.
+this needs a rebase to adapt to
+"drm/rockchip: vop2: Consistently use dev_err_probe()" [0]
 
-I based the run on commit 1973160c90d7 ("Merge tag
-'gpio-fixes-for-v6.14-rc5' of
-git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux"), plus your
-crc-next branch (commit a0bd462f3a13 ("x86/crc: add ANNOTATE_NOENDBR to
-suppress objtool warnings")) merged:
-
-  | --- base1.txt	2025-03-02 18:31:16.169438876 +0000
-  | +++ eric.txt	2025-03-02 18:35:58.683017223 +0000
-  | @@ -11,7 +11,7 @@
-  |      # crc16_benchmark: len=3D127: 153 MB/s
-  |      # crc16_benchmark: len=3D128: 153 MB/s
-  |      # crc16_benchmark: len=3D200: 153 MB/s
-  | -    # crc16_benchmark: len=3D256: 153 MB/s
-  | +    # crc16_benchmark: len=3D256: 154 MB/s
-  |      # crc16_benchmark: len=3D511: 154 MB/s
-  |      # crc16_benchmark: len=3D512: 154 MB/s
-  |      # crc16_benchmark: len=3D1024: 155 MB/s
-  | @@ -20,94 +20,94 @@
-  |      # crc16_benchmark: len=3D16384: 155 MB/s
-  |      ok 2 crc16_benchmark
-  |      ok 3 crc_t10dif_test
-  | -    # crc_t10dif_benchmark: len=3D1: 48 MB/s
-  | -    # crc_t10dif_benchmark: len=3D16: 125 MB/s
-  | -    # crc_t10dif_benchmark: len=3D64: 136 MB/s
-  | -    # crc_t10dif_benchmark: len=3D127: 138 MB/s
-  | -    # crc_t10dif_benchmark: len=3D128: 138 MB/s
-  | -    # crc_t10dif_benchmark: len=3D200: 138 MB/s
-  | -    # crc_t10dif_benchmark: len=3D256: 138 MB/s
-  | -    # crc_t10dif_benchmark: len=3D511: 139 MB/s
-  | -    # crc_t10dif_benchmark: len=3D512: 139 MB/s
-  | -    # crc_t10dif_benchmark: len=3D1024: 139 MB/s
-  | -    # crc_t10dif_benchmark: len=3D3173: 140 MB/s
-  | -    # crc_t10dif_benchmark: len=3D4096: 140 MB/s
-  | -    # crc_t10dif_benchmark: len=3D16384: 140 MB/s
-  | +    # crc_t10dif_benchmark: len=3D1: 28 MB/s
-  | +    # crc_t10dif_benchmark: len=3D16: 236 MB/s
-  | +    # crc_t10dif_benchmark: len=3D64: 450 MB/s
-  | +    # crc_t10dif_benchmark: len=3D127: 480 MB/s
-  | +    # crc_t10dif_benchmark: len=3D128: 540 MB/s
-  | +    # crc_t10dif_benchmark: len=3D200: 559 MB/s
-  | +    # crc_t10dif_benchmark: len=3D256: 600 MB/s
-  | +    # crc_t10dif_benchmark: len=3D511: 613 MB/s
-  | +    # crc_t10dif_benchmark: len=3D512: 635 MB/s
-  | +    # crc_t10dif_benchmark: len=3D1024: 654 MB/s
-  | +    # crc_t10dif_benchmark: len=3D3173: 665 MB/s
-  | +    # crc_t10dif_benchmark: len=3D4096: 669 MB/s
-  | +    # crc_t10dif_benchmark: len=3D16384: 673 MB/s
-  |      ok 4 crc_t10dif_benchmark
-  |      ok 5 crc32_le_test
-  |      # crc32_le_benchmark: len=3D1: 31 MB/s
-  | -    # crc32_le_benchmark: len=3D16: 456 MB/s
-  | -    # crc32_le_benchmark: len=3D64: 682 MB/s
-  | -    # crc32_le_benchmark: len=3D127: 620 MB/s
-  | -    # crc32_le_benchmark: len=3D128: 744 MB/s
-  | -    # crc32_le_benchmark: len=3D200: 768 MB/s
-  | -    # crc32_le_benchmark: len=3D256: 777 MB/s
-  | -    # crc32_le_benchmark: len=3D511: 758 MB/s
-  | -    # crc32_le_benchmark: len=3D512: 798 MB/s
-  | -    # crc32_le_benchmark: len=3D1024: 807 MB/s
-  | -    # crc32_le_benchmark: len=3D3173: 807 MB/s
-  | -    # crc32_le_benchmark: len=3D4096: 814 MB/s
-  | -    # crc32_le_benchmark: len=3D16384: 816 MB/s
-  | +    # crc32_le_benchmark: len=3D16: 439 MB/s
-  | +    # crc32_le_benchmark: len=3D64: 1209 MB/s
-  | +    # crc32_le_benchmark: len=3D127: 1067 MB/s
-  | +    # crc32_le_benchmark: len=3D128: 1616 MB/s
-  | +    # crc32_le_benchmark: len=3D200: 1739 MB/s
-  | +    # crc32_le_benchmark: len=3D256: 1951 MB/s
-  | +    # crc32_le_benchmark: len=3D511: 1855 MB/s
-  | +    # crc32_le_benchmark: len=3D512: 2174 MB/s
-  | +    # crc32_le_benchmark: len=3D1024: 2301 MB/s
-  | +    # crc32_le_benchmark: len=3D3173: 2347 MB/s
-  | +    # crc32_le_benchmark: len=3D4096: 2407 MB/s
-  | +    # crc32_le_benchmark: len=3D16384: 2440 MB/s
-  |      ok 6 crc32_le_benchmark
-  |      ok 7 crc32_be_test
-  | -    # crc32_be_benchmark: len=3D1: 27 MB/s
-  | -    # crc32_be_benchmark: len=3D16: 258 MB/s
-  | -    # crc32_be_benchmark: len=3D64: 388 MB/s
-  | -    # crc32_be_benchmark: len=3D127: 402 MB/s
-  | -    # crc32_be_benchmark: len=3D128: 424 MB/s
-  | -    # crc32_be_benchmark: len=3D200: 438 MB/s
-  | -    # crc32_be_benchmark: len=3D256: 444 MB/s
-  | -    # crc32_be_benchmark: len=3D511: 449 MB/s
-  | -    # crc32_be_benchmark: len=3D512: 455 MB/s
-  | -    # crc32_be_benchmark: len=3D1024: 461 MB/s
-  | -    # crc32_be_benchmark: len=3D3173: 463 MB/s
-  | -    # crc32_be_benchmark: len=3D4096: 465 MB/s
-  | -    # crc32_be_benchmark: len=3D16384: 466 MB/s
-  | +    # crc32_be_benchmark: len=3D1: 25 MB/s
-  | +    # crc32_be_benchmark: len=3D16: 251 MB/s
-  | +    # crc32_be_benchmark: len=3D64: 458 MB/s
-  | +    # crc32_be_benchmark: len=3D127: 496 MB/s
-  | +    # crc32_be_benchmark: len=3D128: 547 MB/s
-  | +    # crc32_be_benchmark: len=3D200: 569 MB/s
-  | +    # crc32_be_benchmark: len=3D256: 605 MB/s
-  | +    # crc32_be_benchmark: len=3D511: 621 MB/s
-  | +    # crc32_be_benchmark: len=3D512: 637 MB/s
-  | +    # crc32_be_benchmark: len=3D1024: 657 MB/s
-  | +    # crc32_be_benchmark: len=3D3173: 668 MB/s
-  | +    # crc32_be_benchmark: len=3D4096: 671 MB/s
-  | +    # crc32_be_benchmark: len=3D16384: 674 MB/s
-  |      ok 8 crc32_be_benchmark
-  |      ok 9 crc32c_test
-  |      # crc32c_benchmark: len=3D1: 31 MB/s
-  | -    # crc32c_benchmark: len=3D16: 457 MB/s
-  | -    # crc32c_benchmark: len=3D64: 682 MB/s
-  | -    # crc32c_benchmark: len=3D127: 620 MB/s
-  | -    # crc32c_benchmark: len=3D128: 744 MB/s
-  | -    # crc32c_benchmark: len=3D200: 769 MB/s
-  | -    # crc32c_benchmark: len=3D256: 779 MB/s
-  | -    # crc32c_benchmark: len=3D511: 758 MB/s
-  | -    # crc32c_benchmark: len=3D512: 797 MB/s
-  | -    # crc32c_benchmark: len=3D1024: 807 MB/s
-  | -    # crc32c_benchmark: len=3D3173: 806 MB/s
-  | -    # crc32c_benchmark: len=3D4096: 813 MB/s
-  | -    # crc32c_benchmark: len=3D16384: 816 MB/s
-  | +    # crc32c_benchmark: len=3D16: 446 MB/s
-  | +    # crc32c_benchmark: len=3D64: 1188 MB/s
-  | +    # crc32c_benchmark: len=3D127: 1066 MB/s
-  | +    # crc32c_benchmark: len=3D128: 1600 MB/s
-  | +    # crc32c_benchmark: len=3D200: 1727 MB/s
-  | +    # crc32c_benchmark: len=3D256: 1941 MB/s
-  | +    # crc32c_benchmark: len=3D511: 1854 MB/s
-  | +    # crc32c_benchmark: len=3D512: 2164 MB/s
-  | +    # crc32c_benchmark: len=3D1024: 2300 MB/s
-  | +    # crc32c_benchmark: len=3D3173: 2345 MB/s
-  | +    # crc32c_benchmark: len=3D4096: 2402 MB/s
-  | +    # crc32c_benchmark: len=3D16384: 2437 MB/s
-  |      ok 10 crc32c_benchmark
-  |      ok 11 crc64_be_test
-  | -    # crc64_be_benchmark: len=3D1: 64 MB/s
-  | -    # crc64_be_benchmark: len=3D16: 144 MB/s
-  | -    # crc64_be_benchmark: len=3D64: 154 MB/s
-  | -    # crc64_be_benchmark: len=3D127: 156 MB/s
-  | -    # crc64_be_benchmark: len=3D128: 156 MB/s
-  | -    # crc64_be_benchmark: len=3D200: 156 MB/s
-  | -    # crc64_be_benchmark: len=3D256: 156 MB/s
-  | -    # crc64_be_benchmark: len=3D511: 157 MB/s
-  | -    # crc64_be_benchmark: len=3D512: 157 MB/s
-  | -    # crc64_be_benchmark: len=3D1024: 157 MB/s
-  | -    # crc64_be_benchmark: len=3D3173: 158 MB/s
-  | -    # crc64_be_benchmark: len=3D4096: 158 MB/s
-  | -    # crc64_be_benchmark: len=3D16384: 158 MB/s
-  | +    # crc64_be_benchmark: len=3D1: 29 MB/s
-  | +    # crc64_be_benchmark: len=3D16: 264 MB/s
-  | +    # crc64_be_benchmark: len=3D64: 476 MB/s
-  | +    # crc64_be_benchmark: len=3D127: 499 MB/s
-  | +    # crc64_be_benchmark: len=3D128: 558 MB/s
-  | +    # crc64_be_benchmark: len=3D200: 576 MB/s
-  | +    # crc64_be_benchmark: len=3D256: 611 MB/s
-  | +    # crc64_be_benchmark: len=3D511: 621 MB/s
-  | +    # crc64_be_benchmark: len=3D512: 638 MB/s
-  | +    # crc64_be_benchmark: len=3D1024: 659 MB/s
-  | +    # crc64_be_benchmark: len=3D3173: 667 MB/s
-  | +    # crc64_be_benchmark: len=3D4096: 671 MB/s
-  | +    # crc64_be_benchmark: len=3D16384: 674 MB/s
-  |      ok 12 crc64_be_benchmark
-  |      ok 13 crc64_nvme_test
-  | -    # crc64_nvme_benchmark: len=3D1: 64 MB/s
-  | -    # crc64_nvme_benchmark: len=3D16: 144 MB/s
-  | -    # crc64_nvme_benchmark: len=3D64: 154 MB/s
-  | -    # crc64_nvme_benchmark: len=3D127: 156 MB/s
-  | -    # crc64_nvme_benchmark: len=3D128: 156 MB/s
-  | -    # crc64_nvme_benchmark: len=3D200: 156 MB/s
-  | -    # crc64_nvme_benchmark: len=3D256: 156 MB/s
-  | -    # crc64_nvme_benchmark: len=3D511: 157 MB/s
-  | -    # crc64_nvme_benchmark: len=3D512: 157 MB/s
-  | -    # crc64_nvme_benchmark: len=3D1024: 157 MB/s
-  | -    # crc64_nvme_benchmark: len=3D3173: 158 MB/s
-  | -    # crc64_nvme_benchmark: len=3D4096: 158 MB/s
-  | -    # crc64_nvme_benchmark: len=3D16384: 158 MB/s
-  | +    # crc64_nvme_benchmark: len=3D1: 36 MB/s
-  | +    # crc64_nvme_benchmark: len=3D16: 479 MB/s
-  | +    # crc64_nvme_benchmark: len=3D64: 1340 MB/s
-  | +    # crc64_nvme_benchmark: len=3D127: 1179 MB/s
-  | +    # crc64_nvme_benchmark: len=3D128: 1766 MB/s
-  | +    # crc64_nvme_benchmark: len=3D200: 1965 MB/s
-  | +    # crc64_nvme_benchmark: len=3D256: 2201 MB/s
-  | +    # crc64_nvme_benchmark: len=3D511: 2087 MB/s
-  | +    # crc64_nvme_benchmark: len=3D512: 2464 MB/s
-  | +    # crc64_nvme_benchmark: len=3D1024: 2331 MB/s
-  | +    # crc64_nvme_benchmark: len=3D3173: 2673 MB/s
-  | +    # crc64_nvme_benchmark: len=3D4096: 2745 MB/s
-  | +    # crc64_nvme_benchmark: len=3D16384: 2782 MB/s
-  |      ok 14 crc64_nvme_benchmark
-  |  # crc: pass:14 fail:0 skip:0 total:14
-  |  # Totals: pass:14 fail:0 skip:0 total:14
-
-That's a significant speed up for this popular SoC, and it would be
-great to get this series in for the next merge window! Thank you!
-
-Tested-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b06d1ef3355571383cdb463cf0195b7a02efdfbf
 
 
-Bj=C3=B6rn
+> -		if (win->type == DRM_PLANE_TYPE_PRIMARY) {
+> -			vp = find_vp_without_primary(vop2);
+> -			if (vp) {
+> +			if (vop2_is_mirror_win(win))
+> +				continue;
+> +
+> +			if (win->type == DRM_PLANE_TYPE_PRIMARY) {
+>  				possible_crtcs = BIT(nvp);
+>  				vp->primary_plane = win;
+> +				ret = vop2_plane_init(vop2, win, possible_crtcs);
+> +				if (ret) {
+> +					drm_err(vop2->drm, "failed to init primary plane %s: %d\n",
+> +						win->data->name, ret);
+
+should also use dev_err_probe
+
+
+Heiko
+
+
 
