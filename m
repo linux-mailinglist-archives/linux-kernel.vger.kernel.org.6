@@ -1,114 +1,284 @@
-Return-Path: <linux-kernel+bounces-540540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CA0A4B1F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22772A4B1FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49073188FB7A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4141188FE50
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DC41E3DF4;
-	Sun,  2 Mar 2025 13:53:41 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BCA1E5B99;
+	Sun,  2 Mar 2025 14:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sq3dsIiq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E38F9D6
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 13:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE0A23F36D;
+	Sun,  2 Mar 2025 14:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740923621; cv=none; b=uNX0/LO21CvJKMmoxwoK2hqq6E0Gi/i+ytjajMLn0qDXbF0XTyAYEbqUJXZR5m4i4rTfp9s9Yi4E4FD86BlM2lSop6dQ1czc8HY1Vb0mleaoCBLe0kPtyzriz+Tc/4hXA8b3ytFPRNXSjwLMCCxQqgNca7cdV7jfM+vbShU02Zw=
+	t=1740924092; cv=none; b=fA/GF0YUUTgqUvS6hS5yC7j2PHNswezCh5yYR6onNk4xmgy5w9Z0dF9qsm031MlVmMyHMDYZvtB/bP7JZC1MrfGKtwW9uw5/QqF3ZRTszk7SmBfLfs/SWONmyMQKtfiYQBrUwK+Rhb9Sb44NJQ1FfGgN8FQSHN0aIeSxiuoI250=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740923621; c=relaxed/simple;
-	bh=rYEMtaAqhcl0W6Na9iyomnGyNe8dbzqmMmV9bEHBkQM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UeKAiEiwevWfV3U/F7lpSZ7G4pDrIyPn/wuAZSptMJHz6gKoHHDw8w+oZTfvjzwFB8eFsej82s41yWKuvJuezgFHQrnEw099V6uwq/5vDAyR6ihLzMqY70gylwGd3NwWjqpBVpc2t4VGw0sJIB0n9fMCAVxcsSu5awHrG+dbB64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tojkk-000000005wN-3mFJ;
-	Sun, 02 Mar 2025 08:53:10 -0500
-Message-ID: <683d34253e2bdef9f74d8c44b2eff7ae9cfea5f9.camel@surriel.com>
-Subject: Re: [PATCH v14 09/13] x86/mm: global ASID process exit helpers
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, 	mingo@kernel.org
-Date: Sun, 02 Mar 2025 08:53:10 -0500
-In-Reply-To: <20250302123838.GKZ8RRTgRxvBSry6mk@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
-	 <20250226030129.530345-10-riel@surriel.com>
-	 <20250302123838.GKZ8RRTgRxvBSry6mk@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740924092; c=relaxed/simple;
+	bh=bTV7+x8UNyjpkw5uWuSg3TKlageT3ncj5wk/ovRFjc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2tURSLuYU+qFE/+HBaAU5giQbMVztctMxB3DstNGbEVOHKREhyNboNZKc5EvjrmKPOzsmYl66em9ZfgKNtPTm5CFI/Tws7va94IjCRHLWlM9uCqnuqEVHP1vnETT37ksIoeDEGGd676hUzTHEc+mg0Yty8uR03UL/qHPttg/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sq3dsIiq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4510B670;
+	Sun,  2 Mar 2025 14:59:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740923998;
+	bh=bTV7+x8UNyjpkw5uWuSg3TKlageT3ncj5wk/ovRFjc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sq3dsIiqHa67eUS5TRCzPWkqRkVEinxtGskHh4uzdQVnvPyyKtVU+ydKknmzANQGU
+	 T8DvmSIXiAv+cxg6Y5Vs9Gr4DvTpYa1dYkfhwSBGKgEGl0I2PFL+oJLlpq5SJHWjqO
+	 kkyCqvGdwOXjoc12hwBqb0YDFTniDMRqa/M4UVTY=
+Date: Sun, 2 Mar 2025 16:01:10 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] media: vsp1: rwpf: Support RAW Bayer and ISP
+ config
+Message-ID: <20250302140110.GM18557@pendragon.ideasonboard.com>
+References: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
+ <20250224-v4h-iif-v2-5-0305e3c1fe2d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250224-v4h-iif-v2-5-0305e3c1fe2d@ideasonboard.com>
 
-On Sun, 2025-03-02 at 13:38 +0100, Borislav Petkov wrote:
-> On Tue, Feb 25, 2025 at 10:00:44PM -0500, Rik van Riel wrote:
-> > A global ASID is allocated for the lifetime of a process.
-> >=20
-> > Free the global ASID at process exit time.
-> >=20
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > ---
-> > =C2=A0arch/x86/include/asm/mmu_context.h | 12 ++++++++++++
-> > =C2=A01 file changed, 12 insertions(+)
->=20
-> So I don't like the ifdeffery and tried removing it, see below.
->=20
-> So I added helpers.
->=20
-> Then I entered the include hell.
->=20
-> And then I caught a bug with the DISABLED_FEATURE stuff.
+Hi Jacopo,
 
-I've been there. Repeatedly :)
+Thank you for the patch.
 
-Thank you for these changes, it does look better
-than before now.
+On Mon, Feb 24, 2025 at 09:19:45PM +0100, Jacopo Mondi wrote:
+> With the forthcoming support for VSPX the r/wpf unit will be used
+> to perform memory access on the behalf of the ISP units.
+> 
+> Prepare to support reading from external memory images in RAW Bayer
+> format and ISP configuration parameters by expanding the list
+> of supported media bus codes.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/renesas/vsp1/vsp1_rwpf.c | 97 +++++++++++++++++++++++--
+>  1 file changed, 92 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
+> index 93b0ed5fd0da0c6a182dbbfe1e54eb8cfd66c493..aef7b3d53a2171cda028a272f587641b4a8f85dc 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_rwpf.c
+> @@ -10,18 +10,102 @@
+>  #include <media/v4l2-subdev.h>
+>  
+>  #include "vsp1.h"
+> +#include "vsp1_pipe.h"
 
+I don't think this is needed.
 
---=20
-All Rights Reversed.
+>  #include "vsp1_rwpf.h"
+>  #include "vsp1_video.h"
+>  
+>  #define RWPF_MIN_WIDTH				1
+>  #define RWPF_MIN_HEIGHT				1
+>  
+> +struct vsp1_rwpf_codes {
+> +	const u32 *codes;
+> +	unsigned int num_codes;
+> +};
+> +
+>  static const u32 rwpf_mbus_codes[] = {
+>  	MEDIA_BUS_FMT_ARGB8888_1X32,
+>  	MEDIA_BUS_FMT_AHSV8888_1X32,
+>  	MEDIA_BUS_FMT_AYUV8_1X32,
+>  };
+>  
+> +static const struct vsp1_rwpf_codes rwpf_codes = {
+> +	.codes = rwpf_mbus_codes,
+> +	.num_codes = ARRAY_SIZE(rwpf_mbus_codes),
+> +};
+> +
+> +static const u32 vspx_rpf0_mbus_codes[] = {
+> +	MEDIA_BUS_FMT_SBGGR8_1X8,
+> +	MEDIA_BUS_FMT_SGBRG8_1X8,
+> +	MEDIA_BUS_FMT_SGRBG8_1X8,
+> +	MEDIA_BUS_FMT_SRGGB8_1X8,
+> +	MEDIA_BUS_FMT_SBGGR10_1X10,
+> +	MEDIA_BUS_FMT_SGBRG10_1X10,
+> +	MEDIA_BUS_FMT_SGRBG10_1X10,
+> +	MEDIA_BUS_FMT_SRGGB10_1X10,
+> +	MEDIA_BUS_FMT_SBGGR12_1X12,
+> +	MEDIA_BUS_FMT_SGBRG12_1X12,
+> +	MEDIA_BUS_FMT_SGRBG12_1X12,
+> +	MEDIA_BUS_FMT_SRGGB12_1X12,
+> +	MEDIA_BUS_FMT_SBGGR16_1X16,
+> +	MEDIA_BUS_FMT_SGBRG16_1X16,
+> +	MEDIA_BUS_FMT_SGRBG16_1X16,
+> +	MEDIA_BUS_FMT_SRGGB16_1X16,
+
+Same comment as in 1/6,
+
+	MEDIA_BUS_FMT_Y8_1X8,
+	MEDIA_BUS_FMT_Y10_1X10,
+	MEDIA_BUS_FMT_Y12_1X12,
+	MEDIA_BUS_FMT_Y16_1X16,
+
+> +	MEDIA_BUS_FMT_METADATA_FIXED
+> +};
+> +
+> +static const struct vsp1_rwpf_codes vspx_rpf0_codes = {
+> +	.codes = vspx_rpf0_mbus_codes,
+> +	.num_codes = ARRAY_SIZE(vspx_rpf0_mbus_codes),
+> +};
+> +
+> +static const u32 vspx_rpf1_mbus_codes[] = {
+> +	MEDIA_BUS_FMT_SBGGR8_1X8,
+> +	MEDIA_BUS_FMT_SGBRG8_1X8,
+> +	MEDIA_BUS_FMT_SGRBG8_1X8,
+> +	MEDIA_BUS_FMT_SRGGB8_1X8,
+> +	MEDIA_BUS_FMT_SBGGR10_1X10,
+> +	MEDIA_BUS_FMT_SGBRG10_1X10,
+> +	MEDIA_BUS_FMT_SGRBG10_1X10,
+> +	MEDIA_BUS_FMT_SRGGB10_1X10,
+> +	MEDIA_BUS_FMT_SBGGR12_1X12,
+> +	MEDIA_BUS_FMT_SGBRG12_1X12,
+> +	MEDIA_BUS_FMT_SGRBG12_1X12,
+> +	MEDIA_BUS_FMT_SRGGB12_1X12,
+> +	MEDIA_BUS_FMT_SBGGR16_1X16,
+> +	MEDIA_BUS_FMT_SGBRG16_1X16,
+> +	MEDIA_BUS_FMT_SGRBG16_1X16,
+> +	MEDIA_BUS_FMT_SRGGB16_1X16,
+
+Here too.
+
+> +};
+> +
+> +static const struct vsp1_rwpf_codes vspx_rpf1_codes = {
+> +	.codes = vspx_rpf1_mbus_codes,
+> +	.num_codes = ARRAY_SIZE(vspx_rpf1_mbus_codes),
+> +};
+> +
+> +static const struct vsp1_rwpf_codes *vsp1_rwpf_codes(struct v4l2_subdev *sd)
+> +{
+> +	struct vsp1_rwpf *rwpf = to_rwpf(sd);
+> +	struct vsp1_entity *ent = &rwpf->entity;
+> +
+> +	/* Only VSPX supports reading Bayer formats. */
+> +	if (!vsp1_feature(ent->vsp1, VSP1_HAS_IIF))
+> +		return &rwpf_codes;
+> +
+> +	if (ent->type == VSP1_ENTITY_RPF) {
+> +		switch (ent->index) {
+> +		case 0:
+> +			/* VSPX RPF0 supports ISP config data too. */
+> +			return &vspx_rpf0_codes;
+> +		case 1:
+> +			return &vspx_rpf1_codes;
+> +		default:
+
+This should never happen. See below for a proposal on how to handle it.
+
+> +			return &rwpf_codes;
+> +		}
+> +	}
+> +
+> +	return &rwpf_codes;
+
+You could lower indentation with
+
+	if (ent->type != VSP1_ENTITY_RPF)
+		return &rwpf_codes;
+
+	/* Only VSPX supports reading Bayer formats. */
+	if (!vsp1_feature(ent->vsp1, VSP1_HAS_IIF))
+		return &rwpf_codes;
+
+	switch (ent->index) {
+	case 0:
+		/* VSPX RPF0 supports ISP config data too. */
+		return &vspx_rpf0_codes;
+	case 1:
+		return &vspx_rpf1_codes;
+	default:
+		return &rwpf_codes;
+	}
+
+> +}
+
+Would it make sense to call this function at init time, and store the
+const struct vsp1_rwpf_codes pointer in the vsp1_rwpf structure ? You
+could rename vsp1_rwpf_init_ctrls() to vsp1_rwpf_init() (or add a
+vsp1_rwpf_init() function that calls vsp1_rwpf_init_ctrls()) and handle
+the format initialization there. If the RPF index is > 1,
+vsp1_rwpf_init() should return an error (callers should be fixed to
+handle the error, that's a patch that can be applied on its own
+already).
+
+> +
+>  /* -----------------------------------------------------------------------------
+>   * V4L2 Subdevice Operations
+>   */
+> @@ -30,10 +114,12 @@ static int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
+>  				    struct v4l2_subdev_state *sd_state,
+>  				    struct v4l2_subdev_mbus_code_enum *code)
+>  {
+> -	if (code->index >= ARRAY_SIZE(rwpf_mbus_codes))
+> +	const struct vsp1_rwpf_codes *codes = vsp1_rwpf_codes(subdev);
+> +
+> +	if (code->index >= codes->num_codes)
+>  		return -EINVAL;
+>  
+> -	code->code = rwpf_mbus_codes[code->index];
+> +	code->code = codes->codes[code->index];
+>  
+>  	return 0;
+>  }
+> @@ -54,6 +140,7 @@ static int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
+>  				struct v4l2_subdev_state *sd_state,
+>  				struct v4l2_subdev_format *fmt)
+>  {
+> +	const struct vsp1_rwpf_codes *codes = vsp1_rwpf_codes(subdev);
+>  	struct vsp1_rwpf *rwpf = to_rwpf(subdev);
+>  	struct v4l2_subdev_state *state;
+>  	struct v4l2_mbus_framefmt *format;
+> @@ -69,11 +156,11 @@ static int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
+>  	}
+>  
+>  	/* Default to YUV if the requested format is not supported. */
+> -	for (i = 0; i < ARRAY_SIZE(rwpf_mbus_codes); ++i) {
+> -		if (fmt->format.code == rwpf_mbus_codes[i])
+> +	for (i = 0; i < codes->num_codes; ++i) {
+> +		if (fmt->format.code == codes->codes[i])
+>  			break;
+>  	}
+> -	if (i == ARRAY_SIZE(rwpf_mbus_codes))
+> +	if (i == codes->num_codes)
+>  		fmt->format.code = MEDIA_BUS_FMT_AYUV8_1X32;
+
+This isn't a valid format for the VSP-X. I would pick codes->codes[0] as
+a default.
+
+>  
+>  	format = v4l2_subdev_state_get_format(state, fmt->pad);
+> 
+
+-- 
+Regards,
+
+Laurent Pinchart
 
