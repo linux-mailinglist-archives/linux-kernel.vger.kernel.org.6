@@ -1,136 +1,188 @@
-Return-Path: <linux-kernel+bounces-540708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E07A4B40D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:24:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9D2A4B410
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A91188BC09
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B127A3B06DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896F51EC01D;
-	Sun,  2 Mar 2025 18:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D81C1CD1E1;
+	Sun,  2 Mar 2025 18:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="X7G5ZBWv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0mR329K3"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JhEE6Sy9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cnsHIUzQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21D418BBA8;
-	Sun,  2 Mar 2025 18:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07191B87EE;
+	Sun,  2 Mar 2025 18:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740939862; cv=none; b=CyTXd6kL4unbKtgnZyXCJwlXKpFQwuHnVd4OMZVodpzKL6hiecYW2Xg7+mdwJT017vTK+S+z39h+fwWWRVYsfHHKppyMGHFTkKwl1EcUja0cwgZaDhFiitDJxf20TRapRzbT3or7S3W3AX0Ya4ouI+qwL3V8UKTINzhj1RSdOJA=
+	t=1740940212; cv=none; b=f3TOs2ff1DxL8BhqlfazkqdZQyeqahtuUCyz9RwirS+ryVVElu9NclsQdI1umedufVM8m/Kk5j/eafWFFnmCvee2M7jR3SLPXP8i2Qm4bdWLgjqFdy3xN3htoUjyAgDMr9ECz/gjlvtBhCdYojO64r/7so4vBmwnYoSQuUN8kLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740939862; c=relaxed/simple;
-	bh=RTb9Ohk7mRbGTgMtcH0ebJfOQQb87PiScFc/UMSe3RM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6vwF2mb3z/Y4em3SntGDlnD7QUEkovuKOzjslVcCyoxAoddwWuRjq/vQiqa8BbPWzwc0fudv2dph039Da9rf3KYRb/f+cjkdroirjv1rsrCJjw7rXJUeeU59ns5ZVot7REkQ+tQoO6FA8re1YU+CIDX2O0VJeXj30HOB8DPV/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=X7G5ZBWv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0mR329K3; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3CD9D1140144;
-	Sun,  2 Mar 2025 13:24:18 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sun, 02 Mar 2025 13:24:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1740939858; x=
-	1741026258; bh=vbDBbOj0P076q30CuM2H8hrlu1dzNSJq+H1MlcuN+n8=; b=X
-	7G5ZBWvVYtgL92wliiWQLOoPPLEsbW6qvxPWOWO2L31SI2Pn7pzCn0OtHcoGbeQ0
-	U5uY9d4JrMYQ0SnV1t8edjWN2DIljmb3gBWSLAyVzUNunqCgsc2Nz2Gs/WAxVoLJ
-	ZrrvjIUINpe4gBFFOzM9nBlxqfC8leKTvJRzZEk8ntcfqFzpA+zAhasoRhYNkx75
-	qtocaZNWFahYOa8cUdxWDqRZjvoo0O35fAJ7B9ljE6EfjoENW+vTMjBSjWOTJehw
-	uIIfxdEHpgeLDHc5tT5TRFLMpzhUQoHh0HiERDMRTSnmDxUHDr8eYFbCLTU4D39u
-	hHBPQCe1Kd2Lh8wUUJJgg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740939858; x=1741026258; bh=vbDBbOj0P076q30CuM2H8hrlu1dzNSJq+H1
-	MlcuN+n8=; b=0mR329K3REKRIgKSPebDDB7SQ8XsB6tAX39yW10+XOQKOvXZ7RT
-	/jtwbNHWyieMjKUmEvhVL1eNRETQcshMdOcJnZMfuf2fJXAXav6/s58G1PJBm9He
-	WFDoS8Lp2B0/TY4k5UMZ6gdCZinIIktATJh2jk0koAzdLYy4TZ8NscFaeQ/kr8UM
-	MDwGX9s6mbPdxcYSmiftk8EM/S0J6SfEZf5IgKK9R4xX3cKFWMFej8zvc3XXIgt9
-	WdR0JYIsARDeKO3Ap5O/F7vuDYcbLy/QQ0Lc+Tx/1gLz/5K68TkGSM/MtdT5sobh
-	PRrIBR6QVjhqRCbfJinkPjZ5j62IPEpx9PQ==
-X-ME-Sender: <xms:UaLEZ5J6oaOLtF1CkeIhG95QfTi44C0aKfmBrhMrqE1Zw1rvUMz0xw>
-    <xme:UaLEZ1J4bqLz34XyeRHS4uoPBRwyCbUY_xbO7i7r5QtRrH5asGUuST-EtEsG29KLd
-    nlLWeswwWEuAtl7XXM>
-X-ME-Received: <xmr:UaLEZxs_G2jDjvfowvvzPZ6rq6ya_0IOJzKdhL6ihfE3mko2xtn7e_LgTW2a>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelieelvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
-    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefh
-    keegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgs
-    pghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtoh
-    hnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
-    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvg
-    hrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpth
-    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:UaLEZ6aME6pA6a_NQ89RWNsBp6blRqjrQSSkYaZGkHhQbDdArBNrcg>
-    <xmx:UaLEZwbL-9P45mrNHenV1Q8xo2a9C154d5xvs3VahbM_Kyfb7hUSBA>
-    <xmx:UaLEZ-BxC1mNMqbd-s_BT2rjghXA8XFmMJprXM3dJ5hiz8IbruMFig>
-    <xmx:UaLEZ-ZNTN9t1eEaL4QnOUURDC6PDw-lPSZjHiVs_24nPRcuajSpkw>
-    <xmx:UqLEZwp-BRLoq-FXlmkkvUDDqPnypzR4VeAsfLaCZCP3WKwIog6hKgR6>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Mar 2025 13:24:16 -0500 (EST)
-Date: Sun, 2 Mar 2025 19:24:14 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v20 20/25] ovpn: implement peer
- add/get/dump/delete via netlink
-Message-ID: <Z8SiTgEmj2Vr-p-E@hog>
-References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
- <20250227-b4-ovpn-v20-20-93f363310834@openvpn.net>
+	s=arc-20240116; t=1740940212; c=relaxed/simple;
+	bh=bY35PyefGpfNSi+6VAM8+WPE41caGN+ArZK2Kj84gcA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mFkEDhS0lKgaqFtRbOW4uziyU9KPORB4PwfUgvHUfkD9B4tLL+UF2FSpcI8P6wsTfmyMjAbDasLWQFRwie977neWZNsgCjh5WVp4KhDPBqguAcOydD/SCzpgA8nkSvNGjS2YP/UQXR5DOjDRQ+D/KsPJ5wt8sxM3mvgFAh/ZB4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JhEE6Sy9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cnsHIUzQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740940203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OggkcNn0CKOnNyjOJiAOPJdtTYiXPnknmr72FoMHxZc=;
+	b=JhEE6Sy92xvRpi//F5igT/6cPmqXPmLe/QshCEQQ3REbTHsRQr4nre5lJ1WCun3DjdYG6F
+	KKyg66ToZ42msupKberz8GFdM+QuLl7DrvgjQY7DV1+SiEHf4s6QbegDwAhbpuTCn53t77
+	uMM9hRM4LQDfabTuG1cflmukMKaY6b+ktMTdz6iE5RlbwufQvMsh6TBM1nAVO+KR3Sm7Ta
+	AkSCREWwwElbR6MwrDG9v6Unet7jv8Y95sBSmAYR6p7BV4y3pQQsafOYfGSd/I9iiTq2jA
+	B4e9PNywJsvTy9RL4o9DHsaHLGd3QA+/XeMkJDaUQQoe7TSZdxotOy+sVIsfxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740940203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OggkcNn0CKOnNyjOJiAOPJdtTYiXPnknmr72FoMHxZc=;
+	b=cnsHIUzQ8LaG99IMzMzRq3TW5s/YJNrrnQrjXdu6MZqsbYBoGVwGrCgqcGvwd0dlwP1LmQ
+	xSlaxbgGOJWtvdBQ==
+To: Yixun Lan <dlan@gentoo.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, Yixun Lan
+ <dlan@gentoo.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] irqdomain: support three-cell scheme interrupts
+In-Reply-To: <20250302-04-gpio-irq-threecell-v2-1-34f13ad37ea4@gentoo.org>
+References: <20250302-04-gpio-irq-threecell-v2-0-34f13ad37ea4@gentoo.org>
+ <20250302-04-gpio-irq-threecell-v2-1-34f13ad37ea4@gentoo.org>
+Date: Sun, 02 Mar 2025 19:30:02 +0100
+Message-ID: <87jz97cml1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227-b4-ovpn-v20-20-93f363310834@openvpn.net>
+Content-Type: text/plain
 
-2025-02-27, 02:21:45 +0100, Antonio Quartulli wrote:
-> @@ -1310,9 +1329,12 @@ void ovpn_peer_keepalive_work(struct work_struct *work)
->  	if (next_run > 0 && ovpn->registered) {
->  		netdev_dbg(ovpn->dev,
->  			   "scheduling keepalive work: now=%llu next_run=%llu delta=%llu\n",
-> -			   next_run, now, next_run - now);
-> +			   next_run, now, next_run - now ?: 0);
+On Sun, Mar 02 2025 at 07:15, Yixun Lan wrote:
+> The is a prerequisite patch to support parsing three-cell
+> interrupts which encoded as <instance hwirq irqflag>,
+> the translate function will always retrieve irq number and
+> flag from last two cells.
+>
+> In this patch, we introduce a generic interrupt cells translation
+> function, others functions will be inline version.
 
-nit: I don't think this "?: 0" does anything
+Please read:
 
-> +		/* due to the waiting above, the next_run deadline may have
-> +		 * passed: in this case we reschedule the worker immediately
-> +		 */
->  		schedule_delayed_work(&ovpn->keepalive_work,
-> -				      (next_run - now) * HZ);
-> +				      (next_run - now) * HZ ?: 0);
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+  https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-changes
 
-nit: same here
+> +int irq_domain_translate_cells(struct irq_domain *d,
+> +			       struct irq_fwspec *fwspec,
+> +			       unsigned long *out_hwirq,
+> +			       unsigned int *out_type);
 
--- 
-Sabrina
+Please get rid of the extra line breaks. You have 100 (99) characters available.
+
+> +static inline int irq_domain_translate_onecell(struct irq_domain *d,
+> +					       struct irq_fwspec *fwspec,
+> +					       unsigned long *out_hwirq,
+> +					       unsigned int *out_type)
+> +{
+> +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> +}
+> +
+> +static inline int irq_domain_translate_twocell(struct irq_domain *d,
+> +					       struct irq_fwspec *fwspec,
+> +					       unsigned long *out_hwirq,
+> +					       unsigned int *out_type)
+> +{
+> +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> +}
+> +
+> +static inline int irq_domain_translate_threecell(struct irq_domain *d,
+> +						 struct irq_fwspec *fwspec,
+> +						 unsigned long *out_hwirq,
+> +						 unsigned int *out_type)
+> +{
+> +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> +}
+
+What's this for? It's not used. The onecell/twocell wrappers are just
+there to keep the current code working.
+  
+> +int irq_domain_translate_cells(struct irq_domain *d,
+> +			       struct irq_fwspec *fwspec,
+> +			       unsigned long *out_hwirq,
+> +			       unsigned int *out_type)
+
+Please remove the extra line breaks.
+
+int irq_domain_translate_cells(struct irq_domain *d, struct irq_fwspec *fwspec,
+			       unsigned long *out_hwirq, unsigned int *out_type)
+
+is perfectly fine.
+
+>  {
+> -	if (WARN_ON(fwspec->param_count < 1))
+> -		return -EINVAL;
+> -	*out_hwirq = fwspec->param[0];
+> -	*out_type = IRQ_TYPE_NONE;
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(irq_domain_translate_onecell);
+> +	unsigned int cells = fwspec->param_count;
+>  
+> -/**
+> - * irq_domain_translate_twocell() - Generic translate for direct two cell
+> - * bindings
+> - * @d:		Interrupt domain involved in the translation
+> - * @fwspec:	The firmware interrupt specifier to translate
+> - * @out_hwirq:	Pointer to storage for the hardware interrupt number
+> - * @out_type:	Pointer to storage for the interrupt type
+> - *
+> - * Device Tree IRQ specifier translation function which works with two cell
+> - * bindings where the cell values map directly to the hwirq number
+> - * and linux irq flags.
+> - */
+> -int irq_domain_translate_twocell(struct irq_domain *d,
+> -				 struct irq_fwspec *fwspec,
+> -				 unsigned long *out_hwirq,
+> -				 unsigned int *out_type)
+> -{
+> -	if (WARN_ON(fwspec->param_count < 2))
+> +	switch (cells) {
+> +	case 1:
+> +		*out_hwirq = fwspec->param[0];
+> +		*out_type = IRQ_TYPE_NONE;
+> +		return 0;
+> +	case 2 ... 3:
+
+I have second thoughts about this when looking deeper.
+
+The current one/two cell implementations validate that param_count is at
+least the number of parameters. Which means that the parameter count
+could be larger, but only evaluates the first one or the first two.
+
+I have no idea whether this matters or not, but arguably a two cell
+fwspec could be successfully fed into translate_onecell(), no?
+
+And that triggers a related question.
+
+Why is the three cell translation not following the one/two cell scheme
+and has the parameters at the same place (index 0,1), i.e. adding the
+extra information at the end? That makes sense to me as the extra cell
+is obviously not directly related to the interrupt mapping.
+
+Thanks,
+
+        tglx
 
