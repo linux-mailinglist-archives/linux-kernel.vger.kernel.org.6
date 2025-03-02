@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-540611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F82A4B2E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:08:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12561A4B2E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067D018909DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2943AECE9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744991EB1B9;
-	Sun,  2 Mar 2025 16:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282791EC01E;
+	Sun,  2 Mar 2025 16:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="L00+6xuu"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="dUvVRk5r"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0041EB5CB;
-	Sun,  2 Mar 2025 16:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8E1EB9F6;
+	Sun,  2 Mar 2025 16:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931634; cv=none; b=G2huzP06wyHtke+YS2KXTAZRSr+Md4HmyJDazz2HAnpc6WSJ44nLj2wraIR/8pr5ABfE+lxx7XbQejrx/lTGnCXyYXt5P+Ej+8wxYbm2S5aY6zhVHL4E5Ysa70trtwC8loYLJbgXX1SZwd9/RUy+x9ieIZKCs3qOdQIZ3gF8KL0=
+	t=1740931638; cv=none; b=cr9u2nylqGOOlxyWYCwRiYMYRNSSJj3T3H+Nt1Do8GhsJ/41ifHx10jZYRpW+GNPAY9GMFaunjt3pjT0lOF2iqL+Gl/TqvHrJ9Vr3/ViVJg7BUm4q2fdb/oSJTrWXy442pVyCQ2aGWx2SEnCCVQ4fke/HtvHcZaDNUWFzQy5Zlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931634; c=relaxed/simple;
-	bh=0EFiP6ygydcKWyW6csJHAZmx3Qp2y0CPOFwjWwSjus4=;
+	s=arc-20240116; t=1740931638; c=relaxed/simple;
+	bh=gFOJT0wB0FSlXbGcMSMgBV5jMo2IV+QAp/xG5QWZs4U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IZxztj8K6itAjEnAQQWLvhYNxg4kk/vECKfKwLR4zQqmNnIuNEZmqDS8Zn+pGrzIYF/HGDUe/Kmtv4VUal0e5Yzm7oKy0p7Zn/eNy4dtHfNCee6XVyzcbD3Rw5tQTHhEceJJt2cFPWy2W3O/RYuvVrSC/rP5GnIOXVcK7MPIz1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=L00+6xuu; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=QbdbeIxogxkQXNurYv/GiDvzcGkoDWOX16Q1Ez2ehDEOx+9oioayRrrYyeoSOQOp+WnkzpEfN7YNqhiBWWT5ZNr/j2SPP6CDtNdFKioQKBH73QSjbnEGaP458Ye5xN9xRBERK22rgBWzLBrI+Bk4ELsOX4lVxydnQY8ur/JwXow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=dUvVRk5r; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931630;
+	s=2023072701; t=1740931632;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m7tEjDSgKvohdvK6pTN+ndS8THOOnhPlPkLJOHpGmuo=;
-	b=L00+6xuuwiWduCv+ixkmgNqzMue8FepzjU+fPTpLl3F5QZOO27bk7M9wmhhWU8jT4crfSL
-	M/7o09GRptVOm+HsIO9YOzFhbaHCvz9w2ZOEuXxwGv+gKYE2NJQPPMme+A8tlGmNwEs9Hc
-	zPxhTr1xrvSbV+1FwKr4ooR3KG+Nuqah7c8wXDMWW23rsD/wuGMhE+XSSuxU6acEaBKxjU
-	SMoreM+GacqhtPwtqg8XONVAirj0PqdKl+b+IaRgbRc9E8o6K0amJ1WFuaGVHcfzBkbpnz
-	CSZFhosDGBLKiF2l0uokkI6/gp4rmRVY4ARa7sYCKIATyzRBtNmg19WhoyltuQ==
+	bh=ci2qYk+Y1xa6/y45CJ+sIl/Sp1TENvs4r3jA8ONoz3c=;
+	b=dUvVRk5rsMES5GBkWhhKkXaw+xPN53mb+fYciIN3XGf5bDpEl7+9mczP3DBrL1InukvxKK
+	b0dTreVkc3Zxdv3jDxO5zcTH1n9l8R9sY5BXlcHTtL8khofEs3ILoWQMspSNMue63EzBYU
+	+YwZiQJDnQ+1PVyao3dSz3wGNpQEGWeTOgQcaAP1oVgJcWFaFgGeQO1jXp4uy79BtzcCuu
+	6U7B98CQ1jWs+w8FVp+HATHqVbw91duaAg8CJoUC8yHNZfQi5bJ30eFRU3jYSb299OwaC6
+	Um4+yVux8blZva5BIDm9YuDZQt9EsTVae9ZKAG2GSDJZptbEionJH8VsaJnOeg==
 To: 
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Serge Hallyn <serge@hallyn.com>,
@@ -53,18 +53,18 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	cocci@inria.fr,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 07/11] drm/panthor: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:43 +0100
-Message-ID: <20250302160657.127253-6-cgoettsche@seltendoof.de>
+	Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 08/11] ipv4: reorder capability check last
+Date: Sun,  2 Mar 2025 17:06:44 +0100
+Message-ID: <20250302160657.127253-7-cgoettsche@seltendoof.de>
 In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -96,26 +96,25 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 ---
-v2: split from previous patch with unrelated subsystem
----
- drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 08136e790ca0..76a10121f8a8 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
- 		return 0;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 57df7c1d2faa..9828bc5712b7 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3419,8 +3419,8 @@ EXPORT_SYMBOL(tcp_disconnect);
  
- 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
- 		return 0;
+ static inline bool tcp_can_repair_sock(const struct sock *sk)
+ {
+-	return sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN) &&
+-		(sk->sk_state != TCP_LISTEN);
++	return (sk->sk_state != TCP_LISTEN) &&
++	       sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN);
+ }
  
- 	return -EACCES;
+ static int tcp_repair_set_window(struct tcp_sock *tp, sockptr_t optbuf, int len)
 -- 
 2.47.2
 
