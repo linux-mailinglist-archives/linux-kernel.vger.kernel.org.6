@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-540659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5163CA4B368
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:35:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126F6A4B357
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475111890DD6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC144166A40
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DF41F130F;
-	Sun,  2 Mar 2025 16:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E031EF397;
+	Sun,  2 Mar 2025 16:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gMRm2RCw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efzTdWvg"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A951EB1BF;
-	Sun,  2 Mar 2025 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158A51EC009;
+	Sun,  2 Mar 2025 16:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740933172; cv=none; b=kALCtawNTA/0Nxkh9fSV8VcUpYUaI31BH0qNWyIc5TiOhCmidQpnXdw9VQTvZ/RjwturpbjUi1XTeh1gGAb4yZQ6qlzLkzeRPqhYuC5kG6BLuhQFydJw4/znnhtqc89U8YmVqv5/OMH0RS8ZvWVO/iUMA/eAtQtirUqQzBMixXQ=
+	t=1740933143; cv=none; b=L0hgfLMkWtu8SvlaystDLkGbOTvCYsFV7lT3osdlPztx791SjFQPquiAFKzhMdi40PHQk5mmnrmrNaUOHc0uwUs769sZuHb0Vbj5uos41hOg5cBLz+10AqQIoKy0GFcbS1Jrjsl4iLXqnvGAirPGc8ENakPR3SVMS74w6CZAlf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740933172; c=relaxed/simple;
-	bh=vy7W4XMABxoxejxdW3NIH5jjNnEdXu3h8szhJ30eV5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YYZcggLbzoUnQP+rqYfBxLtV4dcak8PZ9o4L+nohlnziKU4400y2VSIw39rScDHZ6DweYHCxwNlDE9J5B9DBUcO9gyB+gNvqOzj6Wd8l/z+ofvVhkFFXRL/PuVlQRacSqeORgqBx9By5IwfxgfL8DRpkZF7xFQtDfN4TID34TWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gMRm2RCw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740933169;
-	bh=vy7W4XMABxoxejxdW3NIH5jjNnEdXu3h8szhJ30eV5s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gMRm2RCwsPFGw7WJ7Tn7/ZFH8fpan3ZHxSy5CkP7HU11qyYX9nHj0STvUe93UMPFX
-	 iTpEwzTB+MhioplZOqrgARamas0vuKGEDyKkCJpp0AcCGVX2WA6hf15W96A2IWG3wN
-	 nCCrWqoU0i0w0nyLef8wgC0YkAymZpWGEhP4a2mUpUQRXom7covdScFFnOxFUED4V+
-	 YZsFqHg2ul7FW7Bpk10AoVEJiWeWGGZrIb/nQ/nAJn1w622V52pfn9fjegxSN3YrlS
-	 A1GT3YZR4bS/4OJjkgBrSKsg8fuMnxUct//F45XNmdebYq7N/oxdVKGzGkUSOrj96/
-	 FLSc+gCOFZ5JQ==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1002])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A570517E023F;
-	Sun,  2 Mar 2025 17:32:44 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Sun, 02 Mar 2025 13:30:59 -0300
-Subject: [PATCH v2 20/20] arm64: defconfig: Enable MT6359 ACCDET
+	s=arc-20240116; t=1740933143; c=relaxed/simple;
+	bh=cK73xlcnwoxldEkGmD4EFh8XODiKSi9jYby1FTeTsVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4p6VGP0gk4Dr2Jg1IcMjQLJxQXMWM2ow3N8332yT80J8MJS7ecBJQlHu96VDOu4AsHG8TOmt7dxi7Fc8lG1/7vScSGi9Mydo9hujw09t6SygEzaQjQy+gpe0oYTTstxSwBiRBa7FxcjtuehCionexiZUwdtu5bDg4AirsNx8Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efzTdWvg; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223a7065ff8so9300795ad.0;
+        Sun, 02 Mar 2025 08:32:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740933141; x=1741537941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O5QRhJ4JsspC82Pv8p4aZzdxcDW7s51WKS+5ABEU2ns=;
+        b=efzTdWvggNeZ3PRmctf2Vn7drCRvtcmeRudtJvyHwHiuXS1OPka4ZaXezvSVNrvxTi
+         llNbkdU10mGtu+JTIEoR2/T4ZQ4SurU5LOUA+2Pg1I3btzY2wSVcxfjt28kuNFnzQXkI
+         BAUrpcHbteG0W1+zJ4BDBF2mYHQkdzO7dRMTPwSv9O1CymwEuLIgpCzb4HzbIwQxOOH0
+         DMie+StCbaxCWqvWX9c2bFQ6HdPAJoF3RQ6RlgP32ybE+3wrQXWmVA+5Vvl6Qcn/tkqY
+         CrKB9Z/4FwftEcYSeyhmCUASxe0O64CgQFv+YR6qYKAbyBQVh1XMACJZ67euqqQkEubL
+         yWFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740933141; x=1741537941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O5QRhJ4JsspC82Pv8p4aZzdxcDW7s51WKS+5ABEU2ns=;
+        b=AKoMY5JMOmsJ50vCFje/ExfR1lpVQfm0yGMtjSzm5kqsXleqaxBQA9NIJwrJBb1APp
+         AEltUcLfzp2HgckkQrJW4rA///1zbyDMD0THDb/Zd9j8Yz1dpK8FBOBXaZwrf+3lt7rD
+         80Olb/3JIgEBAZyXklzoBh821Z3xMUSUOT5EzmBAzEPv+Xcn3sDknIpIYkZZx2x+yPFx
+         UahyQDN/Kzk7Ckar+h5I0+y4ELpeu/IC8NvR880XDROgMSxLYhlKZ/tv7TbAH5FSUlQR
+         q1AmS2b12m0XqDitlIJLh2Eq6O1pU+0u9BzkidT2srXV29x0BQTb1qaTa1fsiHmrLGyI
+         eY/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqQjUSnpOSLZm9G6M7guJcoB7mN6PdKAwV5CO3YJJ1CMnd68irUjQcoTZLSdk/0me7zncO94NSiRWXbVnC@vger.kernel.org, AJvYcCVl6Fty/v1JsnFZa3H67gJGbNgIyECz/3gjVJMPfGf1mQS+/iCbcd0YrXysQS2dR9RVWXZLo6GdyHXf@vger.kernel.org, AJvYcCXze3oIbWYeqHpqEXgELEwFn/EIu3POB1F0jT5qFqLXNHO2WULcYhhV1JkRSIq5IzekSSjnhLaAvbFtuUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt/6LL8gKKvXyBCRogwgzc0wqbjNjg1j9ZWMZ64qh60NmlL4eB
+	aBzQAazi9amdgt54zlQbOhb2j2d8OBt0R+Uhf3Z5onn/cyX25rX/
+X-Gm-Gg: ASbGncv3RzJFYl35Q6W+7WX6mIS9Vw6whK04KrqeBdkk2Ve1AXFoGvHebwhbqJDz/uh
+	3WxHI7l1CGFZiS8eEXFixP6qjQdYzzL5gVfRJlPUJdkAJk+gxF67SSp5P6zQsiCH6Y6Vj9t1Oi2
+	nFd/m1x/x8gfyOJPtYZj+H+VjsInvjJecnBS0u3K1iAq2Igfk0NVUpYz8FQq9Pnnsk6bOo/uILg
+	sapLUDcKTbKPeHpDoUoYVKyMdpQOEfHAoFmTNqEijqO1fZk8Mo2iU2qQQ1oxXc+9BzXKjGSAU0L
+	JFwWuZmnPzHEQXQRwQlyYJb+Z4kmhCh7rDDIAF6XPtbcuFHnbfjF2HBcmw==
+X-Google-Smtp-Source: AGHT+IEDANnttZAPBaCcKyUFiBfmVbgwHH2uQfeXbhWXWdLRJgTKpojDnBFAU+XDPaNmK9ksSx2caQ==
+X-Received: by 2002:a17:902:f548:b0:223:6180:1bf7 with SMTP id d9443c01a7336-2236925874cmr137212745ad.42.1740933141138;
+        Sun, 02 Mar 2025 08:32:21 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501faff7sm63080445ad.75.2025.03.02.08.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 08:32:20 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 2 Mar 2025 08:32:19 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: maudspierings@gocontroll.com
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Joseph McNally <jmcna06@gmail.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] hwmon: (ntc_thermistor) Fix module name in the
+ Kconfig
+Message-ID: <f0e34ec5-5c6a-4518-8c5e-da2b95ae2af2@roeck-us.net>
+References: <20250227-ntc_thermistor_fixes-v1-0-70fa73200b52@gocontroll.com>
+ <20250227-ntc_thermistor_fixes-v1-1-70fa73200b52@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250302-mt6359-accdet-dts-v2-20-5bd633ee0d47@collabora.com>
-References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
-In-Reply-To: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227-ntc_thermistor_fixes-v1-1-70fa73200b52@gocontroll.com>
 
-Enable support for the ACCDET block in the MT6359 PMIC, which provides
-jack detection capabilities to MediaTek platforms.
+On Thu, Feb 27, 2025 at 01:57:51PM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
+> 
+> The module name is incorrectly stated with a hyphen while it is an
+> underscore.
+> 
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Applied.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e675bedbc170ccb191f4991e348e36b5de0707a7..dec4708d5e946fc890751cab8de2cf3f302e9447 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1065,6 +1065,7 @@ CONFIG_SND_SOC_WM8978=m
- CONFIG_SND_SOC_WSA881X=m
- CONFIG_SND_SOC_WSA883X=m
- CONFIG_SND_SOC_WSA884X=m
-+CONFIG_SND_SOC_MT6359_ACCDET=m
- CONFIG_SND_SOC_NAU8822=m
- CONFIG_SND_SOC_LPASS_WSA_MACRO=m
- CONFIG_SND_SOC_LPASS_VA_MACRO=m
-
--- 
-2.48.1
-
+Thanks,
+Guenter
 
