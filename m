@@ -1,196 +1,172 @@
-Return-Path: <linux-kernel+bounces-540694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C70A4B3D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0315CA4B3DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7923B0F99
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB233B183A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7098D1EB1AF;
-	Sun,  2 Mar 2025 17:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1D71EB5DD;
+	Sun,  2 Mar 2025 17:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBNrKCib"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YV2dAXQo"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88DA433D9;
-	Sun,  2 Mar 2025 17:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A38433D9;
+	Sun,  2 Mar 2025 17:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740937185; cv=none; b=peC+J5Nws3C2LHuHN2VsMEVO0Y4dZ3CUHLZ3pPzb50oioI70tHhyaTRfzwOir8Bb7WtPG5w/0uowJMC4vwa5pvpgw4wXFvacEz9ygFZqWJZJtYjazeKLQGMbB8BJu/4Z3akOVLLqoCIlc4J7zXaNX22VXJCqMZIM9hsjxTR6+Gk=
+	t=1740937289; cv=none; b=npOSzgNnZcjsRv0MvUsZ4jqY9cgSdJon9a143lvta/X2zHtnB7VAzIzLMDSC4E18ynlHzCY+ixfYlddSYOCBaiovU/9fgdpUInlt9Y2XARSqpTpBruCNHW5oKutpWOPoZ6TaJLqNt0YcSLDBVhRWtklcR0lA6NW7hO4UOLl0HKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740937185; c=relaxed/simple;
-	bh=7e9ji4XsLmPzo38zMA9WI7OmWmr48fhIOD+WeN0TUgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tk8h9G+J3K0lZiVkLQ4ATFBTqWw5V49yrOuBG12UtXEv6dqKM8N97JoLKdYSx3mUxQzwz4zzOY+xFDZ2ir6ydf7/jCBBH9K09+7lxALaB8+9DrNtk5YvSYmH+P2aFJFlN7YuWu3uHyJolbRI3kpVZ/ESjnX4KLbrDsbDyuFdPTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBNrKCib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105D2C4CED6;
-	Sun,  2 Mar 2025 17:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740937185;
-	bh=7e9ji4XsLmPzo38zMA9WI7OmWmr48fhIOD+WeN0TUgg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=NBNrKCibXDw3vAa+0cpfqe4U6Rpnt3ljj7P9JgVecNDY8e8z8INyFsFVTGvNISw5l
-	 xy6mjBpiFDf0Dd5dTZOrA7BWcVHdBkTqh6WjtIVJ0y8MbmXAApaYrMqbdDbHer99ng
-	 LcdpV37Ad9/rvVjxzEIia3b2f6w0lHAAZwwFFte/uo56pw187HRwcYWb4gWND0DqVv
-	 eP15HQ8n3aQ8MXYIv1mpKCOEMuYWswsg0OcXRZRpDskLu3zfty7+F15F8U+TK6uS7d
-	 02NCVPcjbtxLQ6FtyGwhKqEgzy68DJh3H5nGXp+CzdCjVxA31JbIAUP0xuznHjPLi8
-	 kziLxwe1oCFzQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A742FCE05B1; Sun,  2 Mar 2025 09:39:44 -0800 (PST)
-Date: Sun, 2 Mar 2025 09:39:44 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <d90bd6d9-d15c-4b9b-8a69-95336e74e8f4@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <Z8Ckb6spK35-Ez4U@pc636>
- <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
- <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <Z8QwwBCoWb4J3_Xv@pc636>
+	s=arc-20240116; t=1740937289; c=relaxed/simple;
+	bh=hHE+6EVRSD5+ga32lPvDEwP6UWEMeOO/+K63/3FuKZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FCNnrNHWuI3u0upNmcs9sCxPeHxTnyu3t19zK9pPvpEFxCBW+E1hhQbDTjV0Kd8S66ZL2YBZdy3YreWwBIBatDVfjP78kol+B7Ev6rS9f5Ljc8kjvEv9jzMENlKrWTBrtnrQSygESYHMshKsmq4OEFD8mUcaUXgCComGcvndsI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YV2dAXQo; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740937276; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=KZ9077j2t/O7npcJX5TWpK77XthXqhjTIeAzp6ONbxg=;
+	b=YV2dAXQonl3uo7k4KcC9RF1a7ALO4HBs3z4ASwAzQ6NeWdsdlIHUQur2kQzW2qW9AXyQSkoBQQcKj/0/OBsBCpi/xnXrtjx/Fub3c3JFrH5tx9fVoNCLEXCCkb5Jk7CCG2I5Y6JRA2xU5P0GTQzS3aH3f/Zg3JL/nhOQAllzLLI=
+Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQVZhGy_1740937265 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Mar 2025 01:41:14 +0800
+Message-ID: <fb801c0f-105e-4aa7-80e2-fcf622179446@linux.alibaba.com>
+Date: Mon, 3 Mar 2025 01:41:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8QwwBCoWb4J3_Xv@pc636>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 1/2] erofs: handle overlapped pclusters out of crafted
+ images properly
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Alexey Panov <apanov@astralinux.ru>
+Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Max Kellermann <max.kellermann@ionos.com>, lvc-project@linuxtesting.org,
+ syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com,
+ syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com,
+ Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+ Yue Hu <huyue2@coolpad.com>,
+ syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>,
+ linux-erofs@lists.ozlabs.org
+References: <20250228165103.26775-1-apanov@astralinux.ru>
+ <20250228165103.26775-2-apanov@astralinux.ru>
+ <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 02, 2025 at 11:19:44AM +0100, Uladzislau Rezki wrote:
-> On Fri, Feb 28, 2025 at 05:08:49PM -0800, Paul E. McKenney wrote:
-> > On Fri, Feb 28, 2025 at 11:59:55AM -0800, Paul E. McKenney wrote:
-> > > On Fri, Feb 28, 2025 at 08:12:51PM +0100, Uladzislau Rezki wrote:
-> > > > Hello, Paul!
-> > > > 
-> > > > > > > > > 
-> > > > > > > > > Except that I got this from overnight testing of rcu/dev on the shared
-> > > > > > > > > RCU tree:
-> > > > > > > > > 
-> > > > > > > > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> > > > > > > > > 
-> > > > > > > > > I see this only on TREE05.  Which should not be too surprising, given
-> > > > > > > > > that this is the scenario that tests it.  It happened within five minutes
-> > > > > > > > > on all 14 of the TREE05 runs.
-> > > > > > > > > 
-> > > > > > > > Hm.. This is not fun. I tested this on my system and i did not manage to
-> > > > > > > > trigger this whereas you do. Something is wrong.
-> > > > > > > 
-> > > > > > > If you have a debug patch, I would be happy to give it a go.
-> > > > > > > 
-> > > > > > I can trigger it. But.
-> > > > > > 
-> > > > > > Some background. I tested those patches during many hours on the stable
-> > > > > > kernel which is 6.13. On that kernel i was not able to trigger it. Running
-> > > > > > the rcutorture on the our shared "dev" tree, which i did now, triggers this
-> > > > > > right away.
-> > > > > 
-> > > > > Bisection?  (Hey, you knew that was coming!)
-> > > > > 
-> > > > Looks like this: rcu: Fix get_state_synchronize_rcu_full() GP-start detection
-> > > > 
-> > > > After revert in the dev, rcutorture passes TREE05, 16 instances.
-> > > 
-> > > Huh.  We sure don't get to revert that one...
-> > > 
-> > > Do we have a problem with the ordering in rcu_gp_init() between the calls
-> > > to rcu_seq_start() and portions of rcu_sr_normal_gp_init()?  For example,
-> > > do we need to capture the relevant portion of the list before the call
-> > > to rcu_seq_start(), and do the grace-period-start work afterwards?
-> > 
-> > I tried moving the call to rcu_sr_normal_gp_init() before the call to
-> > rcu_seq_start() and got no failures in a one-hour run of 200*TREE05.
-> > Which does not necessarily mean that this is the correct fix, but I
-> > figured that it might at least provide food for thought.
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 48384fa2eaeb8..d3efeff7740e7 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -1819,10 +1819,10 @@ static noinline_for_stack bool rcu_gp_init(void)
-> >  
-> >  	/* Advance to a new grace period and initialize state. */
-> >  	record_gp_stall_check_time();
-> > +	start_new_poll = rcu_sr_normal_gp_init();
-> >  	/* Record GP times before starting GP, hence rcu_seq_start(). */
-> >  	rcu_seq_start(&rcu_state.gp_seq);
-> >  	ASSERT_EXCLUSIVE_WRITER(rcu_state.gp_seq);
-> > -	start_new_poll = rcu_sr_normal_gp_init();
-> >  	trace_rcu_grace_period(rcu_state.name, rcu_state.gp_seq, TPS("start"));
-> >  	rcu_poll_gp_seq_start(&rcu_state.gp_seq_polled_snap);
-> >  	raw_spin_unlock_irq_rcu_node(rnp);
-> >
-> Running this 24 hours already. TREE05 * 16 scenario. I do not see any
-> warnings yet. There is a race, indeed. The gp_seq is moved forward,
-> wheres clients can still come until rcu_sr_normal_gp_init() places a
-> dummy-wait-head for this GP.
+Hi Fedor,
+
+On 2025/3/2 18:56, Fedor Pchelkin wrote:
+> On Fri, 28. Feb 19:51, Alexey Panov wrote:
+>> From: Gao Xiang <hsiangkao@linux.alibaba.com>
+>>
+>> commit 9e2f9d34dd12e6e5b244ec488bcebd0c2d566c50 upstream.
+>>
+>> syzbot reported a task hang issue due to a deadlock case where it is
+>> waiting for the folio lock of a cached folio that will be used for
+>> cache I/Os.
+>>
+>> After looking into the crafted fuzzed image, I found it's formed with
+>> several overlapped big pclusters as below:
+>>
+>>   Ext:   logical offset   |  length :     physical offset    |  length
+>>     0:        0..   16384 |   16384 :     151552..    167936 |   16384
+>>     1:    16384..   32768 |   16384 :     155648..    172032 |   16384
+>>     2:    32768..   49152 |   16384 :  537223168.. 537239552 |   16384
+>> ...
+>>
+>> Here, extent 0/1 are physically overlapped although it's entirely
+>> _impossible_ for normal filesystem images generated by mkfs.
+>>
+>> First, managed folios containing compressed data will be marked as
+>> up-to-date and then unlocked immediately (unlike in-place folios) when
+>> compressed I/Os are complete.  If physical blocks are not submitted in
+>> the incremental order, there should be separate BIOs to avoid dependency
+>> issues.  However, the current code mis-arranges z_erofs_fill_bio_vec()
+>> and BIO submission which causes unexpected BIO waits.
+>>
+>> Second, managed folios will be connected to their own pclusters for
+>> efficient inter-queries.  However, this is somewhat hard to implement
+>> easily if overlapped big pclusters exist.  Again, these only appear in
+>> fuzzed images so let's simply fall back to temporary short-lived pages
+>> for correctness.
+>>
+>> Additionally, it justifies that referenced managed folios cannot be
+>> truncated for now and reverts part of commit 2080ca1ed3e4 ("erofs: tidy
+>> up `struct z_erofs_bvec`") for simplicity although it shouldn't be any
+>> difference.
+>>
+>> Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+>> Reported-by: syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com
+>> Reported-by: syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com
+>> Tested-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+>> Closes: https://lore.kernel.org/r/0000000000002fda01061e334873@google.com
+>> Fixes: 8e6c8fa9f2e9 ("erofs: enable big pcluster feature")
+>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>> Link: https://lore.kernel.org/r/20240910070847.3356592-1-hsiangkao@linux.alibaba.com
+>> [Alexey: minor fix to resolve merge conflict]
 > 
-> Thank you for testing Paul and looking to this :)
+> Urgh, it doesn't look so minor indeed. Backward struct folio -> struct
+> page conversions can be tricky sometimes. Please see several comments
+> below.
 
-Very good!  This is a bug in this commit of mine:
+I manually backported it for Linux 6.6.y, see
+https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=1bf7e414cac303c9aec1be67872e19be8b64980c
 
-012f47f0f806 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+Actually I had a very similiar backport for Linux 6.1.y,
+but I forgot to send it out due to other ongoing stuffs.
 
-Boqun, could you please fold this into that commit with something like
-this added to the commit log just before the paragraph starting with
-"Although this fixes 91a967fd6934"?
+I think this backport patch is all good, but you could
+also mention it follows linux 6.6.y conflict changes
+instead of "minor fix to resolve merge conflict".
 
-	However, simply changing get_state_synchronize_rcu_full() function
-	to use rcu_state.gp_seq instead of the root rcu_node structure's
-	->gp_seq field results in a theoretical bug in kernels booted
-	with rcutree.rcu_normal_wake_from_gp=1 due to the following
-	sequence of events:
+> 
+>> Signed-off-by: Alexey Panov <apanov@astralinux.ru>
+>> ---
+>> Backport fix for CVE-2024-47736
+>>
+>>   fs/erofs/zdata.c | 59 +++++++++++++++++++++++++-----------------------
+>>   1 file changed, 31 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+>> index 94e9e0bf3bbd..ac01c0ede7f7 100644
+> 
+> I'm looking at the diff of upstream commit and the first thing it does
+> is to remove zeroing out the folio/page private field here:
+> 
+>    // upstream commit 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
+>    @@ -1450,7 +1451,6 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
+>             * file-backed folios will be used instead.
+>             */
+>            if (folio->private == (void *)Z_EROFS_PREALLOCATED_PAGE) {
+>    -               folio->private = 0;
+>                    tocache = true;
+>                    goto out_tocache;
+>            }
+> 
+> while in 6.1.129 the corresponding fragment seems untouched with the
+> backport patch. Is it intended?
 
-	o	The rcu_gp_init() function invokes rcu_seq_start()
-		to officially start a new grace period.
+Yes, because it was added in
+commit 2080ca1ed3e4 ("erofs: tidy up `struct z_erofs_bvec`")
+and dropped again.
 
-	o	A new RCU reader begins, referencing X from some
-		RCU-protected list.  The new grace period is not
-		obligated to wait for this reader.
+But for Linux 6.6.y and 6.1.y, we don't need to backport
+2080ca1ed3e4.
 
-	o	An updater removes X, then calls synchronize_rcu(),
-		which queues a wait element.
-
-	o	The grace period ends, awakening the updater, which
-		frees X while the reader is still referencing it.
-
-	The reason that this is theoretical is that although the
-	grace period has officially started, none of the CPUs are
-	officially aware of this, and thus will have to assume that
-	the RCU reader pre-dated the start of the grace period.
-
-	Except for kernels built with CONFIG_PROVE_RCU=y, which use the
-	polled grace-period APIs, which can and do complain bitterly when
-	this sequence of events occurs.  Not only that, there might be
-	some future RCU grace-period mechanism that pulls this sequence
-	of events from theory into practice.  This commit therefore
-	also pulls the call to rcu_sr_normal_gp_init() to precede that
-	to rcu_seq_start().
-
-I will let you guys decide whether the call to rcu_sr_normal_gp_init()
-needs a comment, and, if so, what that comment should say.  ;-)
-
-							Thanx, Paul
+Thanks,
+Gao Xiang
 
