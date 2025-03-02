@@ -1,101 +1,59 @@
-Return-Path: <linux-kernel+bounces-540203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3347A4AF70
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:41:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2255A4AF72
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1846E188FF95
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 06:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90DC416BC45
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 06:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EEE1D5146;
-	Sun,  2 Mar 2025 06:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B415C1D5CC6;
+	Sun,  2 Mar 2025 06:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="f/oMS9Qc"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C323F36D;
-	Sun,  2 Mar 2025 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VGLBopo0"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC40E1C2DB2
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 06:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740897663; cv=none; b=asCB3MflncCyLdpci124twkKaVtjR+NVp1/ASLgzxynqHqM47DG0k60X3imvt6mAUUH+JPcx6SK0Wos+uVu/qeFnqNI9CQF/llEjoALT+PqvGFsQfI7UnHoeTa4xTGDLPF4EVpPNMSHJnX5F12vMGmGhOH4Bq92035TZCr8UPac=
+	t=1740897835; cv=none; b=SzMZAzLW6GfTOc/n6WnsgGJ30m2FQmDfRVm7cuUksiVRWQJoiA1OUv0Ig9WaAaZHFtOWaFjyhWGKvr+bTOJThX7caTmCfKNfdPE//MW/r7YTb4FSgbMiokhA6iIvU0DzJgZaWW9aP4p8pGeoKUaz7G2LkTQBapTsNlXmEgKru6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740897663; c=relaxed/simple;
-	bh=yxq4X3IfJINbbbYLJR6PKFBSfpb5xyESOM5xNISaKZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=dz0TNH/MYShN1oq9wIYJjmuO2eDJkg51Wx19X4DngMfohoylrV4mkzEvDdcQqrBRZKD9KC7Ud8XHDmGQ5ANjSQJO4aiVgN0nknyGMFVsE71Bx7cObgdI5s5CdZT3LhWDLxVEXhFILMiYRtu+3w4bXiB1Gwa7urTUny4sQuEBDZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=f/oMS9Qc; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
-	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oJ6rtl0wk9Sb31dv82nKyLaT80n6BvewvPmU67I/T9A=; b=f/oMS9QcItfgmEptN+PliM+xk8
-	iUoZA2+Fp5cVMNLb1sipyBxkuqgfRUudFsszwQ76woXKTtjwrKUftDTo7kP8/eEYRiQplU63db0sD
-	AzK38m4Kvc/sjQKX+uMMe2VgM1RkALHjm4OzJuXqha79ifg1eHdkGU3BOp3qUp/K98UrOOSOXQ/fB
-	I9HxTOdm1NIcqn88KRZiwXaU7FXiixzAJudn75HHqVCT64sf15hIbp7t9qc8VK8UhQjXPy09kV221
-	/8oWe+HF3pjCK6z8pfCv+8o67/g0n/1S37teA/F/fJJal9RIzLgqrlalWQfe/NQ0TtHS3jHlHosgj
-	QZd1PgVg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tod0S-002zYy-0G;
-	Sun, 02 Mar 2025 14:40:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 02 Mar 2025 14:40:56 +0800
-Date: Sun, 2 Mar 2025 14:40:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Akinobu Mita <akinobu.mita@gmail.com>, Tejun Heo <htejun@gmail.com>
-Subject: Re: [PATCH v3 04/19] crypto: scatterwalk - add new functions for
- copying data
-Message-ID: <Z8P9eIGDlT3fs1gS@gondor.apana.org.au>
+	s=arc-20240116; t=1740897835; c=relaxed/simple;
+	bh=ImIq5E+yzSMuk5VQu4015FnEeU4ZkIfZhZtOrHrX2Ew=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Type:Message-Id:Date; b=iKovZlZ5HAtbH1ugW4G5vwTtRWpEtSSgfcuzxvIlH8cUGGzLH6n0fIUUnTokaslxYTmY2nf1FywLk8dkTSF0jtvLs4jvSbq3/R9OBc/l9CP+CFeC0pz4xUyt9lQwHEvFgq0bT8dkO8oO3xz7XrKfkFla0AInncrtizQ43/kyYYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VGLBopo0; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:MIME-Version:Content-Type:Message-Id:
+	Date; bh=ImIq5E+yzSMuk5VQu4015FnEeU4ZkIfZhZtOrHrX2Ew=; b=VGLBopo
+	0BcVGCb6hq2p3rw0y9Nrsi1hRj0yTcfAewRAkuo1L/ym1u3J+vU7acCN3A2FtFZM
+	Cv2+YaE2NIF9sbMbA3QwlA6kFQLAWk6NXAt1mtdigqBNJF4mSZ4IuEuJT5csghDo
+	qyRxs3pcTm4HH5Nx/cG2QsfhHorIy2xMh90A=
+Received: from localhost (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSkvCgD3D_ge_sNnY0JhBQ--.53149S2;
+	Sun, 02 Mar 2025 14:43:42 +0800 (CST)
+From: adam_smystery@126.com
+To: linux-kernel@vger.kernel.org
+Cc: 
+Subject: Hello! Rust is better than Typescript
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219182341.43961-5-ebiggers@kernel.org>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel,apana.lists.os.linux.netdev
+Content-Type: text/plain; charset=UTF-8
+X-CM-TRANSID:PSkvCgD3D_ge_sNnY0JhBQ--.53149S2
+Message-Id:<67C3FE1E.0B5A63.19577@m16.mail.126.com>
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUaRpBUUUUU
+Date: Sun, 2 Mar 2025 14:43:42 +0800 (CST)
+X-CM-SenderInfo: 5dgdzspvp123xhu1qiyswou0bp/1tbiOhQEumfD7AnxrQAAsN
 
-Eric Biggers <ebiggers@kernel.org> wrote:
->
-> +void memcpy_from_sglist(void *buf, struct scatterlist *sg,
-> +                       unsigned int start, unsigned int nbytes)
-> {
->        struct scatter_walk walk;
-> -       struct scatterlist tmp[2];
-> 
-> -       if (!nbytes)
-> +       if (unlikely(nbytes == 0)) /* in case sg == NULL */
->                return;
-> 
-> -       sg = scatterwalk_ffwd(tmp, sg, start);
-> +       scatterwalk_start_at_pos(&walk, sg, start);
-> +       memcpy_from_scatterwalk(buf, &walk, nbytes);
-> +}
-> +EXPORT_SYMBOL_GPL(memcpy_from_sglist);
-> +
-> +void memcpy_to_sglist(struct scatterlist *sg, unsigned int start,
-> +                     const void *buf, unsigned int nbytes)
+Hello! Rust is better than Typescript
 
-These functions duplicate sg_copy_buffer.  Of course scatterwalk
-in general duplicates SG miter which came later IIRC.
-
-What's your plan for eliminating this duplication?
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
