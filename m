@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-540802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23942A4B510
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:52:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE76A4B517
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F9E3A4F42
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:52:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2BC87A6E82
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BA91EE7D6;
-	Sun,  2 Mar 2025 21:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6171EEA2A;
+	Sun,  2 Mar 2025 22:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RJgmhFLy"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kL2MSUia"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE32A1CAA87;
-	Sun,  2 Mar 2025 21:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2B41EB9EF;
+	Sun,  2 Mar 2025 22:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740952330; cv=none; b=GMLT68lm2NyIFF/2Tsul6da5Es/VGuYpk26PbFE5p9oyg2SgSiSmKEfkU8vxNbnNcVzM0lg7n9ohM6ZUHivNXyd07LT8QS6gl1p3vWgTZS3/0BoGpWHi4nSaajJV0G5x+IaOniWHigrDi9rdOsGHgD7AXN7Bt88aUglLuVKyngo=
+	t=1740952995; cv=none; b=lZgKHX/ya3k37211I62rWC4A16gm+3DDQJCbymi3F8jqtNYWvFFAG8hHzxEEaWnudyRexKq8vApGOtnNpqCtuoZC4Dej0UW21eFR55YIr1ay0t/2gzJmIWEmHJnmThP8kginKsxqpqkEBpAUwevefObvd0Q0NAty/doyy8zODHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740952330; c=relaxed/simple;
-	bh=E6aT3RAqfDUZdhGyVCc36/yU58LfwfpgiylgMxfv6FY=;
+	s=arc-20240116; t=1740952995; c=relaxed/simple;
+	bh=X3Oi7SmifOfnACnk6HXp/r98e88xQlGHmGmpB5IQCA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4GRxCTYsoqTKUj0CHLZusYg1xkSXgV3ws8uwMRaBh1JnlJ3PYVFOpuChFXC2oF4X6bEwZwXr49SUCPBryqG1jl8Lk4MTuypS4LO3/XZ4grR7umJyF4EJIN870fGkKznBvjBKHdDidK7GKuqhJwGNdChlg/TxhJ8jkRpWL50ao8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RJgmhFLy; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rnQLU9GNxRFDxnGFVHo2NvgWIKdzeFNTssrY1D684qo=; b=RJgmhFLy2TVQQSytMunnV4dB7F
-	3tVmcpNNZhWcL5uu2v02kgUzp09ubCmW2QDD69rJNzbWR/TXynKPk4BKpietSvINfrYEtZ6Xbxa/u
-	S3BYZQKfGtTr0QzeVAPNYvC4pUosGvaL6dof5QhMOIQfTXTxePHw3a2ylMy6CMcu2Ita/coV64mSi
-	P6vy/ERRQv2GwmwFDCmZLKCX5CpjmYbFXruye2sv762H8iHEv4WHdLCYrqba0g8uesd3NRnWATv8V
-	FwMLPTerlbP1BYQ2vhIjN8Y6YGKE15M/soRNx93DSM/7vfeoYP58ygGMU0teJQT1XVZ5Jej5L6h85
-	yA580i2Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42352)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1torE3-0007KS-2z;
-	Sun, 02 Mar 2025 21:51:55 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1torE0-00037t-2P;
-	Sun, 02 Mar 2025 21:51:52 +0000
-Date: Sun, 2 Mar 2025 21:51:52 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] dt-bindings: net: Document GBETH bindings for
- Renesas RZ/V2H(P) SoC
-Message-ID: <Z8TS+CsLa/uF36Xv@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <c5a75f20-9b61-448e-941b-1106cd06ea04@lunn.ch>
- <CA+V-a8sCMn+v5y5v9CyyV2VsRmLj-Uyowt61tTS9dWN43CD0_A@mail.gmail.com>
- <Z8THE2hpybzP74bH@shell.armlinux.org.uk>
- <CA+V-a8up3Kv08sNarvC3gWLRpik3=_aKb3JCTGkxyGYMcj4Wbg@mail.gmail.com>
- <86f41f06-d544-42f5-b2c0-6c4a76ad9eac@lunn.ch>
- <CA+V-a8tjOmn4BAamr6BrniTiyMxNYMCRrnZaqzEs_Xr=359Rvg@mail.gmail.com>
- <Z8TSgxLqNwZ6zc3V@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfFskYWA7ys1jn6v508NV1TDEVLqWm5Z4gW2UeeQYzK7djSM++he8QTt9/uboERkNiCGR4V7llk8Ux7xchfVZdtAqUdYqxxc0A21wzg7kvsF4hkNjljizvLpfACSI0hzhFI9qllSzIA/0JnMPgjvOXTd9oiutxA6AaXZTW90WMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kL2MSUia; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1740952561;
+	bh=X3Oi7SmifOfnACnk6HXp/r98e88xQlGHmGmpB5IQCA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kL2MSUiaL7zWpljLHyDr5g51GmjgO8dtCUftGCBzQ7uoq3DWHCC1/WgMpzfj2T6Qe
+	 TW6UqcO3fpULW9yoavs2cVzpSboP9ZSkX9SSDKLNi64g9kl2fNJjt5eA/m3gwi/5fd
+	 vNxJGU89eQDSq6Chl9EDOac9bGUNKP9IE5rOK0Zg=
+Date: Sun, 2 Mar 2025 22:56:01 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/nolibc: only run constructor tests on nolibc
+Message-ID: <8dde4be5-0b37-4e45-bea3-8cdadeb23e7a@t-8ch.de>
+References: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
+ <20250216093940.GA2192@1wt.eu>
+ <670b08a4-9bc5-4700-94bb-272fda5c59d7@t-8ch.de>
+ <20250222093851.GA13258@1wt.eu>
+ <b36e1946-fda8-4893-b081-7ac9b4933947@t-8ch.de>
+ <20250301110735.GA18621@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8TSgxLqNwZ6zc3V@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250301110735.GA18621@1wt.eu>
 
-On Sun, Mar 02, 2025 at 09:49:55PM +0000, Russell King (Oracle) wrote:
-> On Sun, Mar 02, 2025 at 09:43:47PM +0000, Lad, Prabhakar wrote:
-> > On Sun, Mar 2, 2025 at 9:39 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > > Your SoC designer really implemented the 0° and 180° as two separate
-> > > > > independently controllable clocks?
-> > > > >
-> > > > Yes there are separate bits to turn ON/OFF the 0° and 180° clocks.
-> > >
-> > > Do you know what the clock tree actually looks like? I can think of
-> > > two different ways this could be implemented:
-> > >
-> > > ----+----------on/off---
-> > >     |
-> > >     +----not---on/off---
-> > >
-> > > or
-> > >
-> > > -------on/off-+------------------
-> > >               |
-> > >               +---not---on/off---
-> > >
-> > > In the first, the clocks are siblings. In the second there is
-> > > parent/child relationship.
-> > >
-> > It's the first case in this SoC.
-> 
-> Umm, okay. I'll just pick my jaw up off the floor. :D
-> 
-> Given that, then yes, go with your existing clock binding, because
-> that's the most sensible.
-> 
-> However, what would be useful for future maintenance is to put some
-> commentry at the top of the new glue file describing this (pictorially)
-> so that when someone looks at this later we know why it is this way.
-> It'll be useful information if someone else does the same because then
-> we can say "hey, we already have a binding for this situation!"
+Hi Willy!
 
-Additionally, it would probably be useful to include it in the dt
-binding commit description because that will probably assist the
-review of that patch.
+On 2025-03-01 12:07:35+0100, Willy Tarreau wrote:
+> [..]
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> OK so I've tested the patch below which does what we want, except that
+> it reveals that the order is still not granted. Actually I haven't found
+> what dictates it. On one machine (gcc-9.5, ld-2.26) I'm getting:
+> 
+>   $ ./nolibc-test|grep cst
+>   17 linkage_cst = 0                                              [FAIL]
+>   18 linkage_cst_ord = 0                                          [FAIL]
+
+Apparently no constructors are executed at all.
+Can you show the default linkerscript used?
+
+gcc -static -o /dev/null /dev/null -Wl,--verbose
+
+> On this same machine, using another toolchain relying on ld-2.27 gives me
+> this:
+> 
+>   $ ./nolibc-test|grep cst
+>   17 linkage_cst = 1                                                [OK]
+>   18 linkage_cst_ord = 33                                          [FAIL]
+> 
+> And I'm getting this as well on another machine with various toolchains
+> such as gcc-9.5+ld-2.34. The nolibc toolchains fail similarly on gcc-5.5
+> (ld-2.27) and gcc-6.5 (ld-2.32), but work for gcc-7.5 with ld-2.32, while
+> other combinations do work:
+> 
+>   $ ./nolibc-test|grep -i cst
+>   17 linkage_cst = 1                                                [OK]
+>   18 linkage_cst_ord = 18                                           [OK]
+> 
+> All of this is a bit confusing.
+> 
+> I continue not to understand what could guarantee an implicit execution
+> order since for me it solely depends on how things are linked, so the
+> purpose of the test remains uncertain to me and I think we'd rather not
+> try to enforce any ordering that might work only by pure luck.
+
+I don't think anything guarantees the order. 
+It is just what happened to work in my tests so far.
+
+> What do you think ?
+
+Let's get rid of the validation.
+
+
+Thomas
 
