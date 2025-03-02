@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-540503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EAEA4B164
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABDEA4B166
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804837A74BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7736D18930B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A48F1DE4DB;
-	Sun,  2 Mar 2025 12:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CF81E0E0C;
+	Sun,  2 Mar 2025 12:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIqG+LXX"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKPhAY2g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACDA4C85
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 12:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38E4C85;
+	Sun,  2 Mar 2025 12:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740917136; cv=none; b=dmEzRlZHr1hChqzhacOyT71gRTfTOWX2BtHxwnm6Or6PnLUZDD7wsb86cKrlrC9GQPjLEzUwz8xml3jQA7QBPnSmhxGqlRZmv0+FTZAhl0Sa6lNDufL2oRfFF5+UhURmK0IyAsX/gXem2t4DMvC4CsaR+dZZKM2vFT1uOVm5Zfk=
+	t=1740917233; cv=none; b=HBKx/9dise6SvPd/IwPTXbJyPJ9uJY2Im/YRQKssAmsrhC7jfNw+hi3/gDm66CPmG27kcYRf7prSJYYkAnrTj4w9UbPcg0s+LgxghO+zWtr5pyOrwaEKLf3Nv5L9Pb98vEHIw/WVmmBAuUUFZ+wguYGeGmkzlLR/BQ6EVp5k7dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740917136; c=relaxed/simple;
-	bh=WqlKFQcVw+Lfm9hYhhqS23MfZS8h4pABQVvw5R895RI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=METVN+326VNxWrMjv+T0qX5pDwZ/nPfF/YmhC1DXAu/V2NlqWzfylPNsRZVwwqBthhdg4w5gp6NFEpxWZq7DV1k6G6+9jx6DMwiItQBL8gj579YnJrXoprlsli5JeVcPQw+gCAXvYsDoXg/dShcLq8FLlPJXE2PJcaC9u2FSCAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIqG+LXX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-439a331d981so32509875e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 04:05:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740917133; x=1741521933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fjMLeo04bIYhQ94Fj02g3fKCePES0s/2xaBjMPeWzQ=;
-        b=lIqG+LXXg0DkIqzgdbsfWzU9lXqtnIV6MkvklR1caDf01UCORo9Go3pOXZ2Gs9RuNW
-         9BeYbbYMa4sWe8bB6Sv9NGwHIo1HFFvk2ZI6KiT7UETn00FYLov6i6A/ar2Pt26h+EzN
-         GPsXsTOU3k3SDXlA4UfutEkupDdgcs5ODp869xHyfjETFcVRNY8FjnhT20KSp6BPelxo
-         W0zqsa41we0LBhUwmA9x/79LeIvfIPVfoqWJ+nrZPmP2IMEIcL+i8YksQ6vIoULK+7Vk
-         skxEkOx8dVfkoxhzrNi/5JDCr3w3oXPsKNPz4Qv/Yn6VSY6AUIbBXZg7UhwJ9LioaAoh
-         7PnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740917133; x=1741521933;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3fjMLeo04bIYhQ94Fj02g3fKCePES0s/2xaBjMPeWzQ=;
-        b=YVzbfh579DFpteP+Ss4+CjHTHt1q1A2fAzNWIQcRPE5qaAPYc9wydx5ej8Rl8AvpWi
-         jc5Gyqws88f56fiZWaBWVxWd5pGQhC63SFzx5nYmJa6Uhlc7MxvwMmHxIPb4KZnTqLyo
-         cuVpWLKg2ailWhU/+9E7NAj5wz1oTtpVtJqpym/XtnuoXIXA3i/ixZlbsOcdSVouAC8M
-         yAJKIBEveUZbDm1HM61E0K5uD4gW7Rre6qxriOihKy/uQJR0ydi8GKyftywqadZ8t3AR
-         NNTeXNpGiAttOYtYteZZhM/4pzqtP4knqyiHempI2tWk2nguqde1yZUnbX1dr/gcM7+8
-         Abeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOOdaJ9J0T/wt36PqEbHHHbeEKj+3V3n/LXmddHfHO+/HTW0S/MOdEetOktgBKdwBsF4Hwth6y9+i4RMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy19IPC+orXo+WElKWiOwdXtrzeD3UbNGaYCNxu+axQ6ZKMQEY
-	pEfPB+wI4nZxQlGN1SsI65YfvY5LWbSKIkqUxICjweMaT5iX7Rz1
-X-Gm-Gg: ASbGncsdoeHh9tOXZpmaGmzGxj9+mY3UV1tj4aWU5vnRVkWZUz/K+aqYk76L2B3YJuv
-	MldzlLjg1SAaU+HhfjPNmERd5jxe4zCq+mZuxen/iiOcBZYDmvWWAJC9GgNCdkQzr/A/d6kE1c/
-	durxI/URl5hs8moESaY7+B4wbhm46LLsbCRqUENEkxcOztIN5C+0xganXoW73Xy/xZJyrAcCbmJ
-	wrXFCWaFTNcy319drJFAimtgFYj3VfXOCTiSaeEJvEpqJUJIHyIV3pAd6HvY4smcBVHDkmiPv4i
-	LJUuc8F38rDhwRMUgDN1YhIHauxgf+3UPl6bgGV8JL2OfgAfk9sahXq3qxyYS7/v2YuV/1zT03g
-	8lppwsgY=
-X-Google-Smtp-Source: AGHT+IGY0hUG4zVDzWm2dkE9A/l3FxJe8HuG4Cm9vUxX7B+CpWy/LUU44R7Xq+9khhnKmqWTTo5FfA==
-X-Received: by 2002:a05:600c:5494:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-43ba6703bd2mr78789305e9.9.1740917132236;
-        Sun, 02 Mar 2025 04:05:32 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbb15841dsm16541775e9.1.2025.03.02.04.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 04:05:31 -0800 (PST)
-Date: Sun, 2 Mar 2025 12:05:30 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Attila Fazekas <afazekas@redhat.com>
-Cc: qyousef@layalina.io, dietmar.eggemann@arm.com, frederic@kernel.org,
- jstultz@google.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
- mingo@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
- saravanak@google.com, tglx@linutronix.de, vincent.guittot@linaro.org
-Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
-Message-ID: <20250302120530.1e742e06@pumpkin>
-In-Reply-To: <20250228103304.302289-1-afazekas@redhat.com>
-References: <20250210001915.123424-1-qyousef@layalina.io>
-	<20250228103304.302289-1-afazekas@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1740917233; c=relaxed/simple;
+	bh=/RSBfQEI2zdhlk9ejfT59kdi9zLXsGuCWOXvxKkgj6k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dfztuAj6tMdfEec5HRgL4al4xR6m5uIIxu+mOaZ+w++tQQSgVtgv/MAC9MVkZOmPNxH/+csLQhpnwms9EgogNRWyfEs0OtcENsVy32+HFjlp1priKy7/3KGdyUUlaS1c/PWeW2Eg5PJiv/sqSMZlXiIX4xclWBlpBaQg4MCD0/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKPhAY2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEAB0C4CED6;
+	Sun,  2 Mar 2025 12:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740917233;
+	bh=/RSBfQEI2zdhlk9ejfT59kdi9zLXsGuCWOXvxKkgj6k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=WKPhAY2gIEL3spzazA+gsqb3n18Uw4oProuVSqIsp/3j34ZlFa/hxcLX+FVS/mJ0/
+	 7SAdeurCPP7dA2K0nAzomEl7hGAtBuiVvXFOnzvQJIhZ9qMvB0zb0PAB2CgA21MWSF
+	 6XCkZj4l6i/v6Hf9hrqaIuMd5iZdaK0pJgeMijnnN+JGbZpHYwoRaFk5+eK6ekSbqy
+	 VNB5qt4RTzEX3GRiINwb7bvvd0LgzhS83GbSEADKTHpf5e46ebxkVYescknRTG5iuN
+	 37jf2pPJQxfHCeyBE40y5SwqjIFlvaLkYO4Y3jMOhG4s4b/fAzEM9x0xiKM2f2HHOc
+	 iYyL6WePMG0mg==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>, 
+ Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Parav Pandit <parav@nvidia.com>, Maher Sanalla <msanalla@nvidia.com>, 
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250227165420.3430301-1-roman.gushchin@linux.dev>
+References: <20250227165420.3430301-1-roman.gushchin@linux.dev>
+Subject: Re: [PATCH] RDMA/core: don't expose hw_counters outside of init
+ net namespace
+Message-Id: <174091722955.677839.2203678675814984398.b4-ty@kernel.org>
+Date: Sun, 02 Mar 2025 07:07:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Fri, 28 Feb 2025 11:33:04 +0100
-Attila Fazekas <afazekas@redhat.com> wrote:
 
-> The 250Hz was set as a middle ground.
+On Thu, 27 Feb 2025 16:54:20 +0000, Roman Gushchin wrote:
+> Commit 467f432a521a ("RDMA/core: Split port and device counter sysfs
+> attributes") accidentally almost exposed hw counters to non-init net
+> namespaces. It didn't expose them fully, as an attempt to read any of
+> those counters leads to a crash like this one:
 > 
-> There are still workloads which sensitive to cache misses
-> and to the time spent in ticks.
+> [42021.807566] BUG: kernel NULL pointer dereference, address: 0000000000000028
+> [42021.814463] #PF: supervisor read access in kernel mode
+> [42021.819549] #PF: error_code(0x0000) - not-present page
+> [42021.824636] PGD 0 P4D 0
+> [42021.827145] Oops: 0000 [#1] SMP PTI
+> [42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded Tainted: G S      W I        XXX
+> [42021.841697] Hardware name: XXX
+> [42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
+> [42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
+> [42021.873931] RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287
+> [42021.879108] RAX: ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
+> [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI: ffff940c7517aef0
+> [42021.893230] RBP: ffff97fe90f03e70 R08: ffff94085f1aa000 R09: 0000000000000000
+> [42021.900294] R10: ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
+> [42021.907355] R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
+> [42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000) knlGS:0000000000000000
+> [42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [42021.928130] CR2: 0000000000000028 CR3: 00000042dcfb8003 CR4: 00000000003726f0
+> [42021.935194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [42021.949324] Call Trace:
+> [42021.951756]  <TASK>
+> [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
+> [42021.959030]  [<ffffffff86c58468>] ? __die+0x78/0xc0
+> [42021.963874]  [<ffffffff86c9ef75>] ? page_fault_oops+0x2b5/0x3b0
+> [42021.969749]  [<ffffffff87674b92>] ? exc_page_fault+0x1a2/0x3c0
+> [42021.975549]  [<ffffffff87801326>] ? asm_exc_page_fault+0x26/0x30
+> [42021.981517]  [<ffffffffc0775680>] ? __pfx_show_hw_stats+0x10/0x10 [ib_core]
+> [42021.988482]  [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
+> [42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
+> [42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
+> [42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
+> [42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
+> [42022.017058]  [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
+> [42022.022073]  [<ffffffff8766f1ca>] do_syscall_64+0x6a/0xa0
+> [42022.027441]  [<ffffffff8780013b>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
 > 
-> You still can loose ~1% performance with higher Hz,
-> It might not sound much, but if you are running thousands
-> of servers 1% loss can be a high cost.
-> 
-> There are many workloads out there where 100Hz is the better choice.
+> [...]
 
-Are there are real issues with changing HZ to 1000, but adding an option
-for the timer tick interval (in ms).
-So 'jiffies' would always count milliseconds.
-That would make is easy to make the actual 'clock tick' be boot time
-selectable (or run-time if you get brave!).
-The 'timer wheel' code would really need to work on actual ticks,
-but I doubt nothing else cares.
+Applied, thanks!
 
-That would allow HZ be the same for all architectures, even though
-m68k might really want a 50Hz interrupt.
+[1/1] RDMA/core: don't expose hw_counters outside of init net namespace
+      https://git.kernel.org/rdma/rdma/c/57b9340c0728b0
 
-That is much better than any plan to make HZ a variable - which will
-bloat code (and with divisions) and not be valid for static initialisers.
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
 
-	David
 
