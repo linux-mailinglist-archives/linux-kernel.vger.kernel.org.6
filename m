@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-540814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C68A4B551
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:37:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7C0A4B552
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:38:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B50216C7D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463CA3B03F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613311E7C32;
-	Sun,  2 Mar 2025 22:37:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14661EEA4A;
+	Sun,  2 Mar 2025 22:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUqkDUAQ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6D61EB9E1
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 22:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CCA13AF2
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 22:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740955044; cv=none; b=hgf2rM/ZHNpQgw01G1fk4ho6bU5TImZcFTHPAp/vk7XTbvL0P+mPAOzwhqf52jEx3jClBj5xw60tsmD3K6fm/Z9hEaHqkmGgT/8gnTh4DqaXx8oxAZiV6SSSwa+FBakR1xpxDb4dTCnlb1m/KYQnCLDcylSaioKh+pzZy5WE7U4=
+	t=1740955097; cv=none; b=l3Y5d87wathldOle9TmQkeiBYzMTkbSWyHWP/fkNWOyU59XxTPeuxniJ7jvx7enRnwwXzapFuy45URdRPBDYAqSpVKq3sHk5+DWmUNd8niDWcRrdbEWt/2UAFFx3EWywM0VxqUSPK+/Lj3EdBUHJFyoatdagYQjOpr2QmsU0ozI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740955044; c=relaxed/simple;
-	bh=0DwsUAsSJO5UQn4bmGPqqVWlWH5R2lmMZ64UhyrEuAE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=c9VHViG/cSQoMYUtH/LzMeNf0BnvECdRHX1WbAO90j69ONgXFxL8lJTCQHHrp/ZT5H412ggL01pA1+JrrewyE67y5sTKuoU6/Tlq+aDHUM1SOzvOJuSLtbT0rNreYU2qlChBtq7ZM7I75WYa+8b7U0Vx3lxqCOFac2nRu/1OWBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso37376355ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 14:37:22 -0800 (PST)
+	s=arc-20240116; t=1740955097; c=relaxed/simple;
+	bh=CxvF3eRuZDm/cgzY+K9oc9vLrSB0MRYleZdARx8lXjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jaU97bW91JvKOjKAL2hdLLN/2vmPaPPMAmfrwfWOzcu5NGDOKXfwvtctSREVu7pRUEQWkzLMxkuVcAESmOSdjJlnxpdUOfzmLNZGkmiNn8Fa3n/KIRMSK1NYjQ1tC0/mMfCXePtCG+k0usVfLv4k4Dbm82jJUe/HilGMTsbEEyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUqkDUAQ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abffb7b9619so42805666b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 14:38:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740955094; x=1741559894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aw+dL3ih9Ru5ocXdzNTtXnWXwIbaMQzi5SPDYTk7tLs=;
+        b=JUqkDUAQ7Px9boIK0MG5LksdmRcUK1/hFGQdqbgS73escwcac+b8Xg6AT7qRcd34eK
+         W9SFeGSCeTx4SCVK0kHhnzmJ+vLfI/67A6bM7iMm14oaiupr7ergX2GxKssNWhl8KUSA
+         BdSgLxBGS05pVnZaNAyxwSbtpYhUK2Fa+mT6899D/o26FnRkDFI/e3f7quCwqJrZ5s0U
+         IJB/Nx6qTtdafF61LpzF0efHT3jRepCzC809ZEsymJ7CHm63HJMPCCuXm8HZW1dQsd80
+         HFAovgKlf19k3oWyYfTbc6YLrG1eUdrnccJNxv49GXvTGRTw8Rr/yqxOk7PzOeFG4hod
+         vYlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740955041; x=1741559841;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=utamXc6I+xnosmBsdnrUmah40k48pr1hjvzaM3mHGis=;
-        b=kxQv8QKdfuzhmqqLmvBvNYxLgn8HUnGHcMsdMcu2m+XAEgFgY7LOPBSdYWy9bqWpuK
-         hk+V5SoxMens7XrnsIMr9TgW6aJ+TW0UIASULhFEzMm4K0bow+VFLNTGl8aYL2cBayYK
-         LmlIw5eMyMhkRKjVN54F6rEqCHjGdsYnLEaZX1JEISEmfCuRCPIyTwStO1uo+xlY7eQb
-         vIKKXqoXoHs5LeeaUg6VDQyblp5/KlxESEmRObqRBrjsZr199ms8xB3/aQty51ksORv6
-         v6w/Xy7YN1+v2JbwScVUSN0kmKx4QQYcbmtf9Io29fr7No/wSkNO1481sHcNCTWmTdIl
-         y/Fw==
-X-Gm-Message-State: AOJu0YyiPlzxQahLFdX4UcO8XRdfa8AyujgjKHqPkWvhKfMfWXqbBsA/
-	NUBIHSgk/g3NzDsBxDGIooGwwZFtdmBNe9z6B/sa4QTn9Pe53M8EorXIEpi9E4rcTiqxyxg8ogP
-	Iq+Ik4L0ksyAik29mJg2rbp82IjOO4FrZOdbM/PfClm5kWyFvhDLPjsQ=
-X-Google-Smtp-Source: AGHT+IGg5TxX+8ogMdxKRe/mR0oKCCW7kVQPBosty+8SM4ulIsEmTFJiDcgxtPaN1YTH2wFl/E8vYvuxOyzrsGbXTQRfUSpa5b0U
+        d=1e100.net; s=20230601; t=1740955094; x=1741559894;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aw+dL3ih9Ru5ocXdzNTtXnWXwIbaMQzi5SPDYTk7tLs=;
+        b=tlU5BRr1tkZuIulovrdcrv0hmtpFZ+QnzLGEJGuj+ABgSrha/RQ8DGRMx+x+RmYU0I
+         JcYj/WYUiAObxE6ApiRSLB5fdkYzxr4Beo281pmb12SFyic4vAdqnuBriz1BR0ISN5Nl
+         maOFAdZzhsq/wr6sTg9QtJUkv46BkCrMFvfpuL2c5oIeNSijh8ECCtS7EcSTOwf57RHl
+         j6RCAHnxRV/NV2GJVE3BrRfiNHUOdhytUAc4z3946wgl4Esq+Eo0hsu4ynnR5gIETwhP
+         KdBQA7nzV6stjp6heFmeIQ04VnCJlFUhobffggInMUELn5S8QyCLw4bjJZz5ui/TAozN
+         Iyjw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4f4/UEDB4+wTzR5pyTaquj+I8kmQQDE6douGzRscoHfW3TYeC66Wj6LKRdS9x7Lt4dn0RW+rRb4H2eT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJyIoQVe6BGMvKFrSfHoTRd3uwci73ObVBat3VoCRxBvaHRiMZ
+	eKz6m+2rL0w1G+pXo+RQPBBXnvRhtcg55YNE7lRAc1hfzMO/s0Hr
+X-Gm-Gg: ASbGncvnSjZtRi1v3bxS6Bago5y6HI5MvYFY4h8lAb5BrsfZx1sZCUQ08WsEWptLfEN
+	biPIEIlItWKyvwEVPrmafH47yLQMLAeRZfX2TMO9wJNTil2UWbv3wfKri6Vo8bQ4zvmC/wgw7J9
+	l1rPabM16YVEAVhCGXdbuJwYdvc/QD5WlFFOPwu3vnFzaasipMDoQEXtM2tH318cpsh7klmZxyL
+	s8lAe58ZZvsBDJcjAwcxpHhGmZAco3G2/uevyqv+d2QRKTQVVZHABFSSq87mBEiGwWB/mKNzQCy
+	BF0Q81SCXnmE55UhBrFHcqXP2j+JhtUqiuolGI3GRC2ZF+39R5Tf/ENr1RdukCzbeAasovpBQvo
+	+IU1t+Ew=
+X-Google-Smtp-Source: AGHT+IESXLdNXUeU8vHSEFoGyD+7dwYAf35LUDTPywZbGoKmPGIwyW2ehDuBvDVJfwhz26dqjrDkJg==
+X-Received: by 2002:a17:906:4fd5:b0:abf:73ba:fd60 with SMTP id a640c23a62f3a-abf73bb00b5mr250603666b.29.1740955093593;
+        Sun, 02 Mar 2025 14:38:13 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf40a603b7sm462758466b.170.2025.03.02.14.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 14:38:12 -0800 (PST)
+Date: Sun, 2 Mar 2025 22:38:11 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: yury.norov@gmail.com, anshuman.khandual@arm.com, arnd@arndb.de,
+ linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+ skhan@linuxfoundation.org, mka@chromium.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v3 RESEND] uapi: Revert "bitops: avoid integer overflow
+ in GENMASK(_ULL)"
+Message-ID: <20250302223811.1a54deec@pumpkin>
+In-Reply-To: <20250226065623.1567363-1-richard120310@gmail.com>
+References: <20250226065623.1567363-1-richard120310@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24c:0:b0:3d3:d067:7409 with SMTP id
- e9e14a558f8ab-3d3e6e940ddmr103456735ab.11.1740955041629; Sun, 02 Mar 2025
- 14:37:21 -0800 (PST)
-Date: Sun, 02 Mar 2025 14:37:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c4dda1.050a0220.1dee4d.009e.GAE@google.com>
-Subject: [syzbot] Monthly rdma report (Mar 2025)
-From: syzbot <syzbot+listc59baa9b4f1dc791b29d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello rdma maintainers/developers,
+On Wed, 26 Feb 2025 14:56:23 +0800
+I Hsin Cheng <richard120310@gmail.com> wrote:
 
-This is a 31-day syzbot report for the rdma subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/rdma
+> This patch reverts 'commit c32ee3d9abd2("bitops: avoid integer overflow in
+>  GENMASK(_ULL)")'.
+> 
+> The code generation can be shrink by over 1KB by reverting this commit.
+> Originally the commit claimed that clang would emit warnings using the
+> implementation at that time.
+...
+> The results of code size reduction are summarized in the following table.
+> The code size changes for clang are all zero across different versions,
+> so they're not listed in the table.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 10 issues are still open and 62 have already been fixed.
+I've been looking at the object changes.
 
-Some of the still happening issues:
+I think all the big differences are due to the compiler changing the 'inline'
+decision for some functions.
+This is most obvious when the functions bloat-o-meter generates differ.
+But I've seen odd things like seeing an inlined (IIRC) pud_val() immediately
+followed by call to the wrapper (which is just an indirect call).
+(The kernel I'm building is for the machine I'm building it on and has pretty
+much all the mitigations compiled out for speed.)
 
-Ref Crashes Repro Title
-<1> 309     No    INFO: task hung in rdma_dev_change_netns
-                  https://syzkaller.appspot.com/bug?extid=73c5eab674c7e1e7012e
-<2> 155     Yes   WARNING in rxe_pool_cleanup
-                  https://syzkaller.appspot.com/bug?extid=221e213bf17f17e0d6cd
-<3> 78      Yes   possible deadlock in sock_set_reuseaddr
-                  https://syzkaller.appspot.com/bug?extid=af5682e4f50cd6bce838
-<4> 66      No    INFO: task hung in add_one_compat_dev (3)
-                  https://syzkaller.appspot.com/bug?extid=6dee15fdb0606ef7b6ba
-<5> 45      No    INFO: task hung in rdma_dev_exit_net (6)
-                  https://syzkaller.appspot.com/bug?extid=3658758f38a2f0f062e7
+I suspect the +1/-1 and extra negates all depend on subtleties in the compiler
+and whether it is doing |= GENMASK() or &= ~GENMASK().
+Some of the differences are also in for_each_set_bit() which used GENMASK()
+with variables - plausibly it needs a specific implementation.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Sometimes you win, sometimes you lose.
+But simplicity is a good win, and the current version is anything but.
+(It is also broken for ASM because _UL(x) and _ULL(x) are both just (x)
+so GENMASK() and GENMASK_ULL() can't both be right.)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+	David
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
