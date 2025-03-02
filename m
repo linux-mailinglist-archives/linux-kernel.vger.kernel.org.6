@@ -1,183 +1,123 @@
-Return-Path: <linux-kernel+bounces-540511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B659A4B18C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:23:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D36A4B18F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718CD188E173
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF66E16C663
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3D21E3774;
-	Sun,  2 Mar 2025 12:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7A1E32BE;
+	Sun,  2 Mar 2025 12:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ddwnze2/"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIgbTX2n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A865258;
-	Sun,  2 Mar 2025 12:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FC45258;
+	Sun,  2 Mar 2025 12:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740918182; cv=none; b=REB+lbpzXCE/eRfIQYaSKyE0XYQKbYfDU0QPjhaGrjh+zynhVJOp8bye9AfLDVLYiKuQEEYAomc7DJxUHiiW7ujUvRGMivPpCcueI0HjXdsryRMCkiw7hw54oHGvu9/iBWH+4/OfyzcTrlz/bskDAnRWHeQGaaTk41a5SCdaVGI=
+	t=1740918300; cv=none; b=tmlXGUUOgw2FFA7YOzIZe+vWS849htyxMVxm9X7dlo1cRnI9IH/6ouYySmOx4O1bL89crI5D5A7mUUuIt/U4+bWMGYAPnaEpvPwzQa2iss4yVkT4ESHRWdWxGFd8mEfI/+IO3Zr/cBp62uZ3z9Mlpf/6Z4oJgXZM2X6ZE5LULN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740918182; c=relaxed/simple;
-	bh=hKBTReK3pH8mU/iYRfyBVCfJp0R5KMbvtZlOdcY8Wf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWzqzqVnwQNhviyMgJNOPb+yCEYL233GZKluLLLur90A6Pm/AdOf4HvzRiVJAZ+PIcIxuv+SgD7qbRe1FpqC9L8iaAz4igAoALzzKtyjwzdCpXfRk7NZ7KyKbqVF7gxJVS7gr5hSYQsWBLN8KKJh7Jqhylb6CESCv5o36NBMjcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ddwnze2/; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5494bc4d741so2831941e87.2;
-        Sun, 02 Mar 2025 04:22:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740918178; x=1741522978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fEnnc1dXj5lNrYUNbaQiHP03Z2g3b2VRGVuLnQpfuiI=;
-        b=Ddwnze2/71sSuaH7gOaWV+JhcmO5h91/BNntYcNLnfsriUabwpi22vE9ENV+BgRacl
-         Hkbzt9J0q9qIoW0jeSnQP66n3afZ7CrEq6iBV7LoNvl4+9+G09UBMnqLTVyjfJWXTHm1
-         TAmVDREzdOWJf0e0+awRYSsSNqC2ACqpuGb/bLNZsgBWiMjiApyZM4yj4fJkzbOAD653
-         7PuyfxOGJLn5v7GyAXt5H/4lLEKLlbOnj2auNqIAeN/9BO4Wo7OswjqwX0mXK5aKHWrM
-         5kBU0XfgVackkPaa51tOF9NKqWySxTmA6q0IDdEntdqEGH2VKT7CMpedkGKbIne13ZFC
-         aazA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740918178; x=1741522978;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fEnnc1dXj5lNrYUNbaQiHP03Z2g3b2VRGVuLnQpfuiI=;
-        b=n6RiTy8XWc5Sg6jg89TJ+SWJOaPbVV9NX75JCZaUyeQ5f6ZrUpAiu4pGc9BfyKnSci
-         Qfomh9a3IhSjtbjOq0KVrcd9Uo/kCPyPXNvYh0yJmKstaV501rRA1LaH0h35k0c173/d
-         lxoOhh4p78Z5+ccxAZW/2gWt3abvbxcBY79PolVDNtzKDVvWPJZkWdu8lrR4dfokbUaM
-         PYNIyFawLM51ct4x5eadnn49fW8+q06BBiE1IOeXpPt98AvcqIbMS4K9KnQTT/h79q3p
-         gNRp3B3Ba0Ej/XoAzGvoKkMEksgPzs61/m+LZ6xIYU+Q72bMd8XW0M0LSvLIfzU6cekP
-         xQEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR9z3yZCWImDzRL7V6LrpweHqwcfX82r99nYILMtR2kG+Qsl/ivlCevJ8uQUTtqneBx0oNQ/bEAjbZ@vger.kernel.org, AJvYcCVEf9S1KGPYnq/ILxlijcbV1Aj88ULVdouwUmdJiYFRYZodPl/JtQ4XBPJuZ4adeTVq+0/PT0ddbXy7TcGx@vger.kernel.org, AJvYcCWOQ3u051Uw+IoP5iqvjypFCbnz4WAc58EzXRoVkEwRVZ5iQlm994HhQZxnpiCMuC5Iq60aoxce44XeSQ==@vger.kernel.org, AJvYcCWf/EazPo9nWIIFits7C0Ei7yLTEzNcbfBQyWPvKzAi1aNZJmgtxVuBbgi2EzMO9iJfUHG04bnb+jsGI1MPiDjvfXg=@vger.kernel.org, AJvYcCXCqoq1/N/48l3Z7xnLazd2EOyomsoFX7ULbsDs+8Jg8PgJFSrWrIGv2vByoGm7wrjSp8IuBMre+NrM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN2Ps7HvfY3D+i7jO3fyRXtAKmI/QJ8kGMRuhAqkoXIQOVrvpV
-	MZfZhMRnKz09d6B5sp1NHkbWF9/lBVwPvV9tqAccDYEIurCBUxzm
-X-Gm-Gg: ASbGnct61DVI/m5TijTOPHVCoJ5vS7Nm+vfXfgCF0pKpDnO8lbD+9Ck5mUUucK80M20
-	jlNLSg7hDU/L2zfg0ZPe77VlYCkYWy7rhkPqo9gRVeiwVySftpNbgKL7I8coyehpNpGRrUgVhMS
-	UPakwNOcgB2xeWWBOmypsW02fZcKUeMLZi+afnip/VpoTWVu8ZHZFR9EfFOE/govNB46OlxqzXA
-	GYik2j5axQybc2RX7R94jNTFoiUpOstR+qELYgrKK/nGJwUr6rpjACZMazj7AYCch33k5B24HXi
-	DZNzC2ZOimYvEiPkc4yDF9hLTc+rEpJP8JoHmiGSOkIRqGQfTzrG+5QOQLaTrxiBSFl4vSnwN7W
-	FKvN4cfJr7k9pdo8WYsNvyVZCqg==
-X-Google-Smtp-Source: AGHT+IGzZOd1/B02IxZfr4aBje6krfoPxLPc1fsPRoUlTQWF7jrLAwZCd5QWTmq/yw9opL1lzwKo7Q==
-X-Received: by 2002:a05:6512:1044:b0:543:baa3:87ab with SMTP id 2adb3069b0e04-5494c354581mr4068349e87.47.1740918178086;
-        Sun, 02 Mar 2025 04:22:58 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bb1098ef6sm2276001fa.42.2025.03.02.04.22.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 04:22:57 -0800 (PST)
-Message-ID: <44b1cc7f-a5e1-4c61-8b9c-1ba0c51e6343@gmail.com>
-Date: Sun, 2 Mar 2025 14:22:55 +0200
+	s=arc-20240116; t=1740918300; c=relaxed/simple;
+	bh=GEa3fmIdqUVuzfQanlaEG+LJph7mxlci3BXP0ERpIJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcQWZWS+RUo7/qbtf0NObqfxhqO5kpFvzzMRcUdkvSY4n8Un3QjZT1C9ICZ8DG0dVFbDtVTYe0A/bQVfwxsmMMvWUpQstHoTd4A+ej63ABT6LnE/5h8vHfB5cgixOXxE9U9DBXpHsP4tbl7KZMUo076eqj4T6MVkVuIHujWu4Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIgbTX2n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2312AC4CED6;
+	Sun,  2 Mar 2025 12:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740918300;
+	bh=GEa3fmIdqUVuzfQanlaEG+LJph7mxlci3BXP0ERpIJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SIgbTX2n/h8eMfmwirzeUbariF6JWOmF5h924QuvyUgH46g1AEEZH8PY75RQWOJtL
+	 4UnZQKTwhlcgrpSVPs5UCScEHRAU+8fJrxyBR2/p4UfQp76+Jhe/1wUvT2dU/H+dlG
+	 RNasa3lnlPLkVbd9jjTgYm1iVR6BKvZXcwl3Bp2s6okjZbspVJUAHnAZmIByTFB5S8
+	 VFguBtprqiFxNIbRxPGbHbDLcqPXLdUmH8LsbO7ZHWJH0FPT9Inhja57K9CzuzUWD/
+	 HQrxs14m4gw8SYEOofLhIW4NFN9ZOgFPxPFiuhl1K3RuTuOpEl4i+f4xNitdGyHkhn
+	 n5N2Zvw9DkjGA==
+Received: by pali.im (Postfix)
+	id D83037B3; Sun,  2 Mar 2025 13:24:46 +0100 (CET)
+Date: Sun, 2 Mar 2025 13:24:46 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] cifs: Handle all name surrogate reparse points
+Message-ID: <20250302122446.dpqd6hlpfmy3fo3l@pali>
+References: <20241222145845.23801-1-pali@kernel.org>
+ <20250223222306.plgy3bpy5mjojfve@pali>
+ <CAH2r5mv_+ZarrSPEhDjgEYPzqkvdqL-K7NjDsE0sXtrhx65G7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/10] property: Add
- device_get_child_node_count_named()
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
- <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAL_Jsq+av-fptMQqBeVieKwA9c7+uUCaqZMLGu-RVJzWZ_7+Vg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mv_+ZarrSPEhDjgEYPzqkvdqL-K7NjDsE0sXtrhx65G7A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-On 28/02/2025 19:07, Rob Herring wrote:
-> On Mon, Feb 24, 2025 at 12:33 PM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
->>
->> There are some use-cases where child nodes with a specific name need to
->> be parsed. In a few cases the data from the found nodes is added to an
->> array which is allocated based on the number of found nodes. One example
->> of such use is the IIO subsystem's ADC channel nodes, where the relevant
->> nodes are named as channel[@N].
->>
->> Add a helper for counting device's sub-nodes with certain name instead
->> of open-coding this in every user.
->>
->> Suggested-by: Jonathan Cameron <jic23@kernel.org>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> Revision history:
->> v3 => v4:
->>   - New patch as suggested by Jonathan, see discussion in:
->> https://lore.kernel.org/lkml/20250223161338.5c896280@jic23-huawei/
->> ---
->>   drivers/base/property.c  | 28 ++++++++++++++++++++++++++++
->>   include/linux/property.h |  2 ++
->>   2 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/base/property.c b/drivers/base/property.c
->> index c1392743df9c..3f85818183cd 100644
->> --- a/drivers/base/property.c
->> +++ b/drivers/base/property.c
->> @@ -945,6 +945,34 @@ unsigned int device_get_child_node_count(const struct device *dev)
->>   }
->>   EXPORT_SYMBOL_GPL(device_get_child_node_count);
->>
->> +/**
->> + * device_get_child_node_count_named - number of child nodes with given name
->> + *
->> + * Scan device's child nodes and find all the nodes with a specific name and
->> + * return the number of found nodes. Potential '@number' -ending for scanned
->> + * names is ignored. Eg,
->> + * device_get_child_node_count(dev, "channel");
->> + * would match all the nodes:
->> + * channel { }, channel@0 {}, channel@0xabba {}...
->> + *
->> + * @dev: Device to count the child nodes for
->> + *
->> + * Return: the number of child nodes with a matching name for a given device.
->> + */
->> +unsigned int device_get_child_node_count_named(const struct device *dev,
->> +                                              const char *name)
+On Sunday 23 February 2025 18:48:50 Steve French wrote:
+> On Sun, Feb 23, 2025 at 4:23 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > Hello Steve, I see that you have merged first two changes (1/4 and 2/4)
+> > from this patch series, but the remaining (3/4 and 4/4). Is there any
+> > reason why 3/4 and 4/4 was not taken?
 > 
-> I think this should be implemented as
-> fwnode_get_child_node_count_named() with the device variant being just
-> a wrapper.
+> Mainly because I wasn't able to easily test it, and didn't get test
+> feedback for anyone else
+> on those two who had tried it.
+> 
+> I am ok with looking at them again - and thx for rebasing.
 
-I thought of that but it'll mean we had two very little used APIs 
-instead of just one. Well, perhaps we see new users though so I'll 
-follow this suggestion for v5.
+Ok, when you have a time, please look at them.
 
-Yours,
-	-- Matti
+> There are some of the 41 patches in your updated cifs branch that do look suitable or rc5
+
+There is "cifs: Change translation of STATUS_DELETE_PENDING to -EBUSY"
+which stops returning -ENOENT for directory entry which still exists.
+
+> 
+> > On Sunday 22 December 2024 15:58:41 Pali Rohár wrote:
+> > > Name surrogate reparse point represents another named entity in the system.
+> > >
+> > > If the name surrogate reparse point is not handled by Linux SMB client
+> > > and it is of directory type then treat it as a new mount point.
+> > >
+> > > Cleanup code for all explicit surrogate reparse points (like reparse
+> > > points with tag IO_REPARSE_TAG_MOUNT_POINT) as they are handled by
+> > > generic name surrogate reparse point code.
+> > >
+> > > Pali Rohár (4):
+> > >   cifs: Throw -EOPNOTSUPP error on unsupported reparse point type from
+> > >     parse_reparse_point()
+> > >   cifs: Treat unhandled directory name surrogate reparse points as mount
+> > >     directory nodes
+> > >   cifs: Remove explicit handling of IO_REPARSE_TAG_MOUNT_POINT in
+> > >     inode.c
+> > >   cifs: Improve handling of name surrogate reparse points in reparse.c
+> > >
+> > >  fs/smb/client/inode.c    | 17 +++++++++++++----
+> > >  fs/smb/client/reparse.c  | 24 ++++++++++--------------
+> > >  fs/smb/common/smbfsctl.h |  3 +++
+> > >  3 files changed, 26 insertions(+), 18 deletions(-)
+> > >
+> > > --
+> > > 2.20.1
+> > >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
