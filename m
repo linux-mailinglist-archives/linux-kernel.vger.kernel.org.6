@@ -1,164 +1,95 @@
-Return-Path: <linux-kernel+bounces-540500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234DAA4B160
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:03:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9900A4B15E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:02:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322B416E17F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:03:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB77A703D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E651DF980;
-	Sun,  2 Mar 2025 12:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE4A1E1A17;
+	Sun,  2 Mar 2025 12:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XdBo32ZB"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800578F52;
-	Sun,  2 Mar 2025 12:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D60Ysl43"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251C54C85;
+	Sun,  2 Mar 2025 12:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740916978; cv=none; b=OrkEDn51Neolhsg1vW6VH0CwBzUhwu8w1b3n6d7bes5UyzEHVaqmnBPGGjMRjEj5HTBtLiXSQaxApIlRV5deUuw/UVISzK59WqN62/ChXQ+ARS8kbyHTfBXbsG/npLF4fKzOswTLJ2BpQ1JUdd/fH3fADfdQKyHcB7LecA/fBts=
+	t=1740916930; cv=none; b=RLMPDyJTo9kj0nrI+B/keBom3F/W7X26/30QD+1wTE3+iydjDUUmT1h+2QOqsexdn3slpemH4Hn5uUfZSfH8MWtYECABmwZUSsa6Vv4iOkIjYi00T2iECapvZqYOyAZy3qJRlpkN/6ObIShOLZ+fiX1gvzihj/baWyp9+Jlgpi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740916978; c=relaxed/simple;
-	bh=39MxM1B4HeWZSmhqBph62QZlp8ZxkNtCPHJUrx3LvfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=QpFLKibif1YKbv3e0rdaYGMdsaF8HsmcSBsRVqEBNvwyPxN29t4odsiTBAXWbBAc6soh57GBDGmbGFz0vJ8YLs+BC8W8lw9ZjuC0YeSGj1F/h0P4eNxoWC0nhkwO1gKi6HhLpkA6qguYPcAzAtpMTvMeOgvmO+rw++BS1DOrJ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XdBo32ZB reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=CePzbd+CX3HgbOK+991LEAme74qqSiFJ32u1Wyf45pw=; b=X
-	dBo32ZBPK0ZMGVgL01iYlesmZrpK5GvQvFtqoIVqabRP7rPsT+xIqDudzsCXWcJn
-	Fs2upZjEpmKKju+HJo6H7pnTd0+AHBYZo4mTwZwngzru61PqLX4/214PK88wJmPO
-	06B5wCs8pkWEuDNy1xlh5z9XlmI1EoTG9HrpeYzi0Q=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-100 (Coremail) ; Sun, 2 Mar 2025 20:01:38 +0800 (CST)
-Date: Sun, 2 Mar 2025 20:01:38 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
-	detlev.casanova@collabora.com, daniel@fooishbar.org, robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	"Andy Yan" <andy.yan@rock-chips.com>
-Subject: Re:[PATCH v15 00/13] VOP Support for rk3576
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250218112744.34433-1-andyshrk@163.com>
-References: <20250218112744.34433-1-andyshrk@163.com>
-X-NTES-SC: AL_Qu2fAvWauUAi7iaZY+kfmkcVgOw9UcO5v/Qk3oZXOJF8jCrp+T4yXHBTF1zd3fCDBzi2nQiHVRZJ0dhgcY1zcacMtdZUeGnwJHgmS/Glbgh3rg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1740916930; c=relaxed/simple;
+	bh=Y3d7CHbHk2BzsQCQyKY7Nf+rLRsp9ec6zmoDZApfv5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kmk1gxo/5c1HEwdPoayYAfIpBa2C0PV9K+A0CusZHViemMiJxxO2U6os6JBg6WnzP5/ndjaLujpvcW4cV68Nk6/0YKZIgqPb0gTMUEgwW0aLjgHyJSPDB8YKVySui5Mf0WiMBrAYchv1I7g2a32JtidvCXhy53yYPP/oSyn4QOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D60Ysl43; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD480C4CED6;
+	Sun,  2 Mar 2025 12:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740916929;
+	bh=Y3d7CHbHk2BzsQCQyKY7Nf+rLRsp9ec6zmoDZApfv5k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D60Ysl43z/0MKvjnd/kbCdNYe6NrWnRFmZbjOK3suODd78knB62P0ORUyv0oLDdpJ
+	 qUuG/maYghNwJ3GdpY7IjGWpOE6b4SFXyaXMgP7SFbOTEYIsTAxzVvYbgkDaMmxZnp
+	 13w5oeoQzNO3GW8+tg4GrdRniSqji79FzCNlnbsl1Ez6/cL6n+yv4Qj5EqbrVPQTbJ
+	 itcpBjpNGuBtoGcpxpDJB1C110C98H1ZVdKu/R8Z2c3k0VHrrHEU+rQWcwqHZPGl77
+	 cUT55K9a0Dz87bcAlrcXZG25gDWSXvqMuTQDdWo67UMqG+yHvxidqCliBtyTDbJIjM
+	 Q8f5ek4NklFqw==
+From: Christian Brauner <brauner@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] cred: Fix RCU warnings in override/revert_creds
+Date: Sun,  2 Mar 2025 13:01:49 +0100
+Message-ID: <20250302-fazit-pillen-3e7500ee5fbf@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <Z8QGQGW0IaSklKG7@gondor.apana.org.au>
+References: <Z8QGQGW0IaSklKG7@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5302ddd1.2591.19556bbbb3d.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZCgvCgCnbV+iSMRnWqQZAA--.15048W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0g0EXmfER7QEwwACsQ
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1120; i=brauner@kernel.org; h=from:subject:message-id; bh=Y3d7CHbHk2BzsQCQyKY7Nf+rLRsp9ec6zmoDZApfv5k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf8dhdezhrevDz3Avu7jMnBAmKrli/hXP+7Dj1a4l7i x862qfad5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk2EFGhrtBoqt+lHbvtnLh 8rx9RrfcwH5mXMlLO76fN92UJp8O/MvIML0pU0HZl/HNTY0+DbkdZx7cXZblxXrzzZcbt9+vSi3 pYwUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-CkhlbGxvIEhlaWtv77yMCiAgICAgQXQgeW91ciBlYXJsaWVzdCBjb252ZW5pZW5jZSwgY291bGQg
-eW91IGtpbmRseSBoYXZlIGEgbG9vayB3aGV0aGVyIHRoaXMgcGF0Y2ggc2VyaWVzIGlzIGN1cnJl
-bnRseSBlbGlnaWJsZSBmb3IgbWVyZ2UgPyAKICAgIEkgc3RpbGwgaG9wZSBpdCBjYW4gbGFuZCBM
-aW51eCA2LjE1IG1lcmdlIHdpbmRvdy4gUGxlYXNlIGxldCBtZSBrbm93IGlmIGkgbmVlZCBkbyBz
-b21lIGZpeCBvciByZWJhc2UiCiAgCkF0IDIwMjUtMDItMTggMTk6Mjc6MjcsICJBbmR5IFlhbiIg
-PGFuZHlzaHJrQDE2My5jb20+IHdyb3RlOgo+RnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2st
-Y2hpcHMuY29tPgo+Cj4KPlBBVENIIDF+OSBhcmUgcHJlcGFyYXRpb25zIGZvciByazM1NzYgc3Vw
-cG9ydAo+UEFUQ0ggMTB+MTMgYXJlIHJlYWwgc3VwcG9ydCBmb3IgcmszNzYKPgo+SSB0ZXN0IGl0
-IHdpdGggYSAxMDgwUC80SyBIRE1JIG91dHB1dCB3aXRoIG1vZGV0ZXN0IGFuZCB3ZXN0b24KPm91
-dHB1dC4KPgo+SWYgdGhlcmUgYXJlIHNvbWUgb25lIHdhbnQgdG8gaGF2ZSBhIHRyeSwgSSBoYXZl
-IGEgdHJlZSBiYXNlZCBvbgo+TGludXggNi4xNC1yYzEgaGVyZVswXQo+Cj5bMF1odHRwczovL2dp
-dGh1Yi5jb20vYW5keXNocmsvbGludXgvdHJlZS9yazM1NzYtdm9wMi11cHN0cmVhbS12MTQKPgo+
-Cj5DaGFuZ2VzIGluIHYxNToKPi0gUmVtb3ZlIEFGQkMvQUZCQ0QgcHJlZml4IG9mIFRSQU5TRk9S
-TV9PRkZTRVQgcmVnaXN0ZXIKPi0gUmVtb3ZlIHJlZHVuZGFudCBibGFuayBsaW5lIGJlZm9yZSBm
-dW5jdGlvbiB2b3AyX2xvY2sKPi0gRml4IG5yX3JlZ3MgYXJndW1lbnRzIGZvciBzbWFydCB3aW5k
-b3dzIHJlZ2lzdGVyLgo+LSBMaW5rIHRvIHYxNDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGlu
-dXgtcm9ja2NoaXAvMjAyNTAyMTIwOTM1MzAuNTI5NjEtMS1hbmR5c2hya0AxNjMuY29tLwo+Cj5D
-aGFuZ2VzIGluIHYxNDoKPi0gUmViYXNlIG9uIGRybS1taXNjLW5leHQKPi0gU2V0IG1heEl0ZW1z
-IGNvbnN0cmFpbnQgb2YgY2xvY2tzIGZvciByazM1ODggdG8gOSBhcyBhIHJlY2VudGx5Cj4gIG1l
-cmdlZCBwYXRjaCBhZGRlZCB0d28gb3B0aW9uYWwgY2xvY2tzWzBdOgo+ICBbMF1odHRwczovL3Bh
-dGNod29yay5mcmVlZGVza3RvcC5vcmcvcGF0Y2gvbXNnaWQvMjAyNTAyMDQtdm9wMi1oZG1pMC1k
-aXNwLW1vZGVzLXYzLTEtZDcxYzZhMTk2ZTU4QGNvbGxhYm9yYS5jb20KPgo+Q2hhbmdlcyBpbiB2
-MTM6Cj4tIEFkZCBtYXhJdGVtcyBjb25zdHJhaW50IGZvciBjbG9ja3MKPi0gUmVtb3ZlIGNvbnN0
-cmFpbnQgZm9yIGludGVycnVwdHMgaW4gYWxsT2YgYmxvY2ssIGFzIHRoZSBjdXJyZW50Cj4gIG1h
-eEl0ZW1zIGlzIGFscmVhZHkgMS4KPi0gdHlwbyBmaXgKPi0gRXhwbGFpbiB0aGUgZnVuY3Rpb24g
-b2YgdGhpcyBwcm9wZXJ0eS4KPi0gVXNlIG1heEl0ZW1zIGNvbnN0cmFpbnQgZm9yIGNsb2NrcyBp
-biBhbGxPZiBibG9jawo+Cj5DaGFuZ2VzIGluIHYxMjoKPi0gT25seSBjaGFuZ2UgdGhlIGRlc2Ny
-aXB0aW9uIG1ldGhvZCBmb3IgZXhpc3RpbmcgU29DLgo+LSBTcGxpdCBmcm9tIHBhdGNoIDEwLzEz
-Cj4tIFNwbGl0IGZyb20gcGF0Y2ggMTAvMTMKPgo+Q2hhbmdlcyBpbiB2MTE6Cj4tIFJlbW92ZSBy
-ZWR1bmRhbnQgbWluL21heEl0ZW1zIGNvbnN0cmFpbnQKPi0gUmVtb3ZlIHJlZHVuZGFudCBtaW4v
-bWF4SXRlbXMgY29uc3RyYWludAo+Cj5DaGFuZ2VzIGluIHYxMDoKPi0gTW92ZSBpbnRlcnJ1cHQt
-bmFtZXMgYmFjayB0byB0b3AgbGV2ZWwKPi0gQWRkIGNvbnN0cmFpbnQgb2YgaW50ZXJydXB0cyBm
-b3IgYWxsIHBsYXRmb3JtCj4tIEFkZCBjb25zdHJhaW50IGZvciBhbGwgZ3JmIHBoYW5kbGVzCj4t
-IFJlb3JkZXIgc29tZSBwcm9wZXJ0aWVzCj4tIE1vdmUgaW50ZXJydXB0LW5hbWVzIGJhY2sgdG8g
-dG9wIGxldmVsCj4tIEFkZCBjb25zdHJhaW50IG9mIGludGVycnVwdHMgZm9yIGFsbCBwbGF0Zm9y
-bQo+LSBBZGQgY29uc3RyYWludCBmb3IgYWxsIGdyZiBwaGFuZGxlcwo+LSBSZW9yZGVyIHNvbWUg
-cHJvcGVydGllcwo+Cj5DaGFuZ2VzIGluIHY5Ogo+LSBEcm9wICd2b3AtJyBwcmVmaXggb2YgaW50
-ZXJydXB0LW5hbWVzLgo+LSBBZGQgYmxhbmsgbGluZSBiZXR3ZWVuIERUIHByb3BlcnRpZXMKPi0g
-UmVtb3ZlIGxpc3QgaW50ZXJydXB0LW5hbWVzIGluIHRvcCBsZXZlbAo+LSBEcm9wICd2b3AtJyBw
-cmVmaXggb2YgaW50ZXJydXB0LW5hbWVzLgo+LSBBZGQgYmxhbmsgbGluZSBiZXR3ZWVuIERUIHBy
-b3BlcnRpZXMKPi0gUmVtb3ZlIGxpc3QgaW50ZXJydXB0LW5hbWVzIGluIHRvcCBsZXZlbAo+LSBE
-cm9wICd2b3AtJyBwcmVmaXggb2YgaW50ZXJydXB0LW5hbWVzLgo+Cj5DaGFuZ2VzIGluIHY4Ogo+
-LSBSZW1vdmUgcmVkdW5kYW50IGJsYW5rIGxpbmUgYmVmb3JlIGRybV9idXNfZm9ybWF0X2VudW1f
-bGlzdAo+LSBBZGQgYSBibGFuayBsaW5lIGJlZm9yZSBEUk1fRU5VTV9OQU1FX0ZOCj4tIEZpeCBk
-dF9iaW5kaW5nX2NoZWNrIGVycm9ycwo+LSBvcmRlcmVkIGJ5IHNvYyBuYW1lCj4tIExpbmsgdG8g
-dGhlIHByZXZpb3VzIHZlcnNpb246Cj4gIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJv
-Y2tjaGlwLzZwbjNxanhvdGR0cHp1Y3B1bDI0eXJvN3BwZGRlend1aXpuZW92cXZtZ2R3eXYyajdw
-QHp0ZzRtcXlpcW1qZi9ULyN1Cj4tIEZpeCBkdF9iaW5kaW5nX2NoZWNrIGVycm9ycwo+LSBvcmRl
-cmVkIGJ5IHNvYyBuYW1lCj4tIExpbmsgdG8gdGhlIHByZXZpb3VzIHZlcnNpb246Cj4gIGh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwLzZwbjNxanhvdGR0cHp1Y3B1bDI0eXJv
-N3BwZGRlend1aXpuZW92cXZtZ2R3eXYyajdwQHp0ZzRtcXlpcW1qZi9ULyN1Cj4KPkNoYW5nZXMg
-aW4gdjc6Cj4tIEZpeCByazM1ODggZHArZHNpIG1heGNsayB2ZXJpZmljYXRpb24KPgo+Q2hhbmdl
-cyBpbiB2NjoKPi0gQWRkIGEgYmxhbmsgbGluZSBhZnRlciBoYXJkd2FyZSB2ZXJzaW9uIGNoZWNr
-IGNvZGUKPi0gIE1vcmUgc3BlY2lmaWMgZXhwbGFuYXRpb24gYWJvdXQgdGhlIEFYSV9CVVNfSUQg
-cmVnaXN0ZXIgYml0IG9mCj4gICBjbHVzdGVyIHdpbmRvdy4KPgo+Q2hhbmdlcyBpbiB2NToKPi0g
-QWRkIGF4aSBpZCBjb25maWd1cmF0aW9uCj4tIFJlbW92ZSB0aGUgbm9uLWV4aXN0ZW50IENCQ1Ig
-c2NhbGUgcmVnaXN0ZXIuCj4KPkNoYW5nZXMgaW4gdjQ6Cj4tIFR5cG8gZml4OiBzZWxldC0+c2Vs
-ZWN0Cj4tIGRlc2NyaWJlIGNvbnN0cmFpbnQgU09DIGJ5IFNPQywgYXMgaW50ZXJydXB0cyBvZiBy
-azM1NzYgaXMgdmVyeQo+ICBkaWZmZXJlbnQgZnJvbSBvdGhlcnMKPi0gRHJvcCBLcnp5c3p0b2Yn
-cyBSZXZpZXdlZC1ieSwgYXMgdGhpcyB2ZXJzaW9uIGNoYW5nZWQgYSBsb3QuCj4tIGRlc2NyaWJl
-IGNvbnN0cmFpbnQgU09DIGJ5IFNPQywgYXMgaW50ZXJydXB0cyBvZiByazM1NzYgaXMgdmVyeQo+
-ICBkaWZmZXJlbnQgZnJvbSBvdGhlcnMKPi0gRHJvcCBLcnp5c3p0b2YncyBSZXZpZXdlZC1ieSwg
-YXMgdGhpcyB2ZXJzaW9uIGNoYW5nZWQgYSBsb3QuCj4KPkNoYW5nZXMgaW4gdjM6Cj4tIEFkZCBj
-b21tZW50cyBmb3Igd2h5IHdlIHNob3VsZCB0cmVhdCByazM1NjYgd2l0aCBzcGVjaWFsIGNhcmUu
-Cj4tIEFkZCBoYXJkd2FyZSB2ZXJzaW9uIGNoZWNrCj4tIEFkZCBjb21tZW50cyBmb3Igd2h5IHdl
-IHNob3VsZCB0cmVhdCByazM1NjYgd2l0aCBzcGVjaWFsIGNhcmUuCj4tIG9yZGVyZWQgYnkgc29j
-IG5hbWUKPi0gQWRkIGRlc2NyaXB0aW9uIGZvciBuZXdseSBhZGRlZCBpbnRlcnJ1cHQKPi0gb3Jk
-ZXJlZCBieSBzb2MgbmFtZQo+LSBBZGQgZGVzY3JpcHRpb24gZm9yIG5ld2x5IGFkZGVkIGludGVy
-cnVwdAo+LSBTaGFyZSB0aGUgYWxwaGEgc2V0dXAgZnVuY3Rpb24gd2l0aCByazM1NjgKPi0gcmVj
-b2RlciB0aGUgY29kZSBibG9jayBieSBzb2MKPgo+Q2hhbmdlcyBpbiB2MjoKPi0gQWRkIHBsYXRm
-b3JtIHNwZWNpZmljIGNhbGxiYWNrCj4tIEludHJvZHVjZSB2b3AgaGFyZHdhcmUgdmVyc2lvbgo+
-LSBBZGQgZHQgYmluZGluZ3MKPi0gQWRkIGR0IGJpbmRpbmdzCj4tIEFkZCBwbGF0Zm9ybSBzcGVj
-aWZpYyBjYWxsYmFjawo+Cj5BbmR5IFlhbiAoMTIpOgo+ICBkcm0vcm9ja2NoaXA6IHZvcDI6IFJl
-bW92ZSBBRkJDIGZyb20gVFJBTlNGT1JNX09GRlNFVCByZWdpc3RlciBtYWNybwo+ICBkcm0vcm9j
-a2NoaXA6IHZvcDI6IEFkZCBwbGF0Zm9ybSBzcGVjaWZpYyBjYWxsYmFjawo+ICBkcm0vcm9ja2No
-aXA6IHZvcDI6IE1lcmdlIHZvcDJfY2x1c3Rlci9lc21hcnRfaW5pdCBmdW5jdGlvbgo+ICBkcm0v
-cm9ja2NoaXA6IHZvcDI6IFN1cHBvcnQgZm9yIGRpZmZlcmVudCBsYXllciBzZWxlY3QgY29uZmln
-dXJhdGlvbgo+ICAgIGJldHdlZW4gVlBzCj4gIGRybS9yb2NrY2hpcDogdm9wMjogSW50cm9kdWNl
-IHZvcCBoYXJkd2FyZSB2ZXJzaW9uCj4gIGRybS9yb2NrY2hpcDogdm9wMjogUmVnaXN0ZXIgdGhl
-IHByaW1hcnkgcGxhbmUgYW5kIG92ZXJsYXkgcGxhbmUKPiAgICBzZXBhcmF0ZWx5Cj4gIGRybS9y
-b2NrY2hpcDogdm9wMjogU2V0IHBsYW5lIHBvc3NpYmxlIGNydGNzIGJ5IHBvc3NpYmxlIHZwIG1h
-c2sKPiAgZHJtL3JvY2tjaGlwOiB2b3AyOiBBZGQgdXYgc3dhcCBmb3IgY2x1c3RlciB3aW5kb3cK
-PiAgZHQtYmluZGluZ3M6IGRpc3BsYXk6IHZvcDI6IGRlc2NyaWJlIGNvbnN0cmFpbnQgU29DIGJ5
-IFNvQwo+ICBkdC1iaW5kaW5nczogZGlzcGxheTogdm9wMjogQWRkIG1pc3Npbmcgcm9ja2NoaXAs
-Z3JmIHByb3BlcnR5IGZvcgo+ICAgIHJrMzU2Ni84Cj4gIGR0LWJpbmRpbmdzOiBkaXNwbGF5OiB2
-b3AyOiBBZGQgcmszNTc2IHN1cHBvcnQKPiAgZHJtL3JvY2tjaGlwOiB2b3AyOiBBZGQgc3VwcG9y
-dCBmb3IgcmszNTc2Cj4KPkhlaWtvIFN0dWVibmVyICgxKToKPiAgZHJtL3JvY2tjaGlwOiB2b3Ay
-OiB1c2UgZGV2bV9yZWdtYXBfZmllbGRfYWxsb2MgZm9yIGNsdXN0ZXItcmVncwo+Cj4gLi4uL2Rp
-c3BsYXkvcm9ja2NoaXAvcm9ja2NoaXAtdm9wMi55YW1sICAgICAgIHwgICA5OSArLQo+IGRyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jICB8IDE0NzIgKysrLS0tLS0t
-LS0tLS0KPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuaCAgfCAg
-Mjc3ICsrLQo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF92b3AyX3JlZy5jICB8
-IDE3OTggKysrKysrKysrKysrKysrKy0KPiA0IGZpbGVzIGNoYW5nZWQsIDIzNzcgaW5zZXJ0aW9u
-cygrKSwgMTI2OSBkZWxldGlvbnMoLSkKPgo+LS0gCj4yLjM0LjEK
+On Sun, 02 Mar 2025 15:18:24 +0800, Herbert Xu wrote:
+> Fix RCU warnings in override_creds and revert_creds by turning
+> the RCU pointer into a normal pointer using rcu_replace_pointer.
+> 
+> These warnings were previously private to the cred code, but due
+> to the move into the header file they are now polluting unrelated
+> subsystems.
+> 
+> [...]
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] cred: Fix RCU warnings in override/revert_creds
+      https://git.kernel.org/vfs/vfs/c/e04918dc5946
 
