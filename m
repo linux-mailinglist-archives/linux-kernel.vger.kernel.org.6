@@ -1,162 +1,115 @@
-Return-Path: <linux-kernel+bounces-540664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E70A4B37D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:40:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB33A4B37B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF1116CDE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD7F71891949
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBDB1EB5DD;
-	Sun,  2 Mar 2025 16:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A401EB190;
+	Sun,  2 Mar 2025 16:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hufJx0N4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="As6qQBMV"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F681EB1BC;
-	Sun,  2 Mar 2025 16:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F291E9B1D;
+	Sun,  2 Mar 2025 16:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740933604; cv=none; b=YYkc78dRQIvp1klP4jKbRhUzOhhl/B8MwJ0wb0fqDp0wKv/bdEpMVpSullO9AIfc89Ve5Dt/ziitDfR7mwNvpa//8oTrnAZsz+PHeEg+0BmGvaYkTscJafWlRDpHZ2Rr4o10//sSM63tCSUHRLtPvrl5LPvbHfengMeH9mWRB5w=
+	t=1740933601; cv=none; b=mrSk8GbfncqDWE8IrZjub+Wb1wkblQNblv8yjr/YBUQ01c4wC55H1iiOPKDQvgN2uW+F33/yDYoJgTxuUPr7/HasWYm5Lzau583e7ls6W7Qxs0vmgWluaoDvq6S1UGSsZtMhYm/9HFeIV6poWSDtiw7o8VKHq1Jqq31jeujo8qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740933604; c=relaxed/simple;
-	bh=NEeg3Rzg4iVhgFfkKQDTPV/BcBGgtllUpSTfPO0yAfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ODlcgbnXn64cTL3BBNw/5Wr9U3loK0kjMdcRA/qUN6gOmRdwyoiin5gAmA9ai/3FUsBqqrTFfuZduXf2+YNTBLuJZ9IM+g9R9ZKZHSVOooCmWQJXvBsXfzfpJoNfxJpxz0kWF0vmSXCuf4ukEN8Ba1KLAGET8/0Ui7O5dtButT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hufJx0N4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E44CEC4CED6;
-	Sun,  2 Mar 2025 16:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740933603;
-	bh=NEeg3Rzg4iVhgFfkKQDTPV/BcBGgtllUpSTfPO0yAfY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hufJx0N4c0G84oJQEpXi/WveiqfZbijHQtkmbyWub7mvpTzjKFNWgyGwXqK/WWRWd
-	 xgFh4fHprEyIq1JQp/RhIpfFLjoos9b3ejAKXILIlkBivg1KOtWul7Q4nmZlSDLN1n
-	 FaVGpXx4/DhInLxFQWQ/ms7kYHyd+pcieIU3yeC6bRg/z9+oYKfTKN2q7L1IOWHoxe
-	 xy0If8qlopPvlBicKlIXdrNEhrSg569EDzHSKIXyicJZ+HXPbGis9Z6lAYWhaMBkSm
-	 vBP6zBvXlLOcx+NOv2IGjV9M+dmwx36CePkNy/Xuk84T6Xsbj5z8lmc3g/ae6W8cUJ
-	 x9aLR3ribmy5g==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bae572157so8543451fa.3;
-        Sun, 02 Mar 2025 08:40:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUTpYHRzqpfLb83yjMoVUDJVVwSbTRiGUOHMiakgyJVJCCYR5DX4mprYYVk7Zs63ER3lMNpLDeNLBDsjac=@vger.kernel.org, AJvYcCWszcKuHHZYFWHTcLznMsn/OIWjmbSUfWY3o1mhNlbPuqtdZ5wouBdt0xsRwp7/4a4P1AWcZycDOYZb+0KO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ZNu4+SLx+DBeZnCmQNcA0nMgnHDI3Ysc/Z2Ktq/qLGTTv903
-	zpcUQm32zRzWTFOU8nmyQT1256GfMO3cBqQ+gjaHumdKPvBP3YBsZ7go/JPH/u16eye7KnXmyVx
-	wWCgyLU4gLkAFhf3a7jgx+VNRffM=
-X-Google-Smtp-Source: AGHT+IF15yal6+bEvY5jhnNcanqgWka40b7JrgueD5ZuzAyJAl6y+S6WZMIJKOhOBJUHpF3vniRofuLSOVjy525/zc4=
-X-Received: by 2002:a05:651c:505:b0:30b:a187:516e with SMTP id
- 38308e7fff4ca-30ba187518dmr25563241fa.13.1740933602612; Sun, 02 Mar 2025
- 08:40:02 -0800 (PST)
+	s=arc-20240116; t=1740933601; c=relaxed/simple;
+	bh=kIkFM2FnSYhcuZP+xngaQrkrnntx4kvvYD0QqaLQZeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q01/WaUKjeQ3qG0ZfZ088l58aieNg+T0Ixzj7Q25f77WXGwMkjjFq7+42w1TnRuNoUqR1/i6WjiXwwUz5cfNrqAf4gkK1vRhJh7Ifcy2MHsfkKkvvIXppM8a7YrlQXQnYiyy/soLj3e38ewP2WfTyTgtLrOCfFAT1gpaZ+nsQMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=As6qQBMV; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2234e5347e2so72359595ad.1;
+        Sun, 02 Mar 2025 08:39:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740933599; x=1741538399; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+jynVsTZDGE0JJ1A+9XYqEFiqc805kC8QjiGCQ3kbyw=;
+        b=As6qQBMVHjzVdKUbtnFm8Ljya0+FYQQprhxIBL1QoQmJGKVqq/7vBPK1Z0NP+LAKR0
+         gl03yDBZ+0o/Sk1nmBM4bRprFow1+JwWPZW6CrOUaxsSzLMjLhRi2U7cAznaHZUJgBwV
+         Woa7JKcYjZjPMcLvusywCzQugNwtb0tOsMAJiYAGgRNVfJQ/4rly+1FT8fsZU82iDv75
+         oO/VRd+sofTPzDDyG0OhKTO6ESQEmr+I5ViSb17bh6PKFALfeY6h3McxkH7o2DoFccGn
+         xd2tnDua1QCwTXZUccWxbKl5O6SbD20UAcXhfcqjibQVxga/tlcQ240WHMM1JRV/AWTA
+         se7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740933599; x=1741538399;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+jynVsTZDGE0JJ1A+9XYqEFiqc805kC8QjiGCQ3kbyw=;
+        b=H0fK4pHpon/lnq4bakZMBF9T2HNIvOrG6basV69u/v64nwJHBCRTwIz7Cyz2IDJMLh
+         Yw4Jbz3TYQnBmOiv3QEY5XItpbJyhvAaSGXlPSvQoLoT1Imn1eX4SsPh2Mv8PzpkThIQ
+         G/NnzT4oW5Ax+ix3DF5DSQFVlbUJ+7pvq6JTDS+MWzZEdT04rd13AT8eZXHgMUDRkoiv
+         /ztW+2WnOVMXeeRKZy+dkH8sbAQrUYNvFYFIHw/gNMBi9g6kZgYbv10RH3funWabR/UV
+         Na+MrwoPsp/AxFs09ZPFFmeMufQYyMlKt3wmvlxN4MB5Mk5uL8HhaPRN6fx6JajGnq7+
+         OKDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKygMzgwYWeiaIRBYCt3OQBSs6y8u/ccdWiN4TG14na3BSnGrbtNNHhJHtom7wdV0u4VswMqxtwa9g@vger.kernel.org, AJvYcCVTfRjiaa7cYcpmpxhkHA0b2eC0G2CQNqKffwrBwXH3kslOxOrDnNP8tT/0JsTD1SYPhmjQbYyiIp+P+ss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlb0VTVL+eXNaNnruaIC2ZVi8zHEfAdlYwXO7V7IEIAy2asI2O
+	twdRUITR51Bt7VcWsy/oXuj2vGMArvMuZWeXtfZ9Iw9IgjBAYZ1R
+X-Gm-Gg: ASbGncsFVn7gUrFUUG8JpB8j3O08KGgVK+OsmMAvAIAh+H4byCiReZ5h/aBOR6IuD6f
+	bF7eZgBcLY21AoRA1EdvcBdd6WcydhGWorxWTETlt6MzIJ3g07sI2E0q280f4MBhHRBxf/r+he1
+	yM8/dAG5Iz3k1qBsnCYOvrxzkpYpXAUdusaVA02kXN3puEOqGoalQsiqvrC2edAl9FpkL8ITo8u
+	xuH9CojGQlrfabVVxIEiLVVhkskU7k9SPmgR+F6FaxFCAYlIN6D/lTJiG0GzHmYrX8zHdSj697X
+	0A5CW6EitgaZ2ggVYlTCFEY3VnaScU/JexM0hYJuYmq1sXCKHAbXBVkTlA==
+X-Google-Smtp-Source: AGHT+IE+Jyy8Tx/mENn01VEkJrjrGhp2+KJuLyhoBiUomCRHPrUc0boTpd0srOX2HCbUWZ0Be8BRZw==
+X-Received: by 2002:a17:903:2ca:b0:215:acb3:3786 with SMTP id d9443c01a7336-22368f94723mr165695975ad.19.1740933599084;
+        Sun, 02 Mar 2025 08:39:59 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea6985226sm7196911a91.40.2025.03.02.08.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 08:39:58 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 2 Mar 2025 08:39:57 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
+	git@xilinx.com, Jonathan Stroud <jonathan.stroud@amd.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Jim Wright <wrightj@linux.vnet.ibm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: hwmon: Add UCD90320 gpio description
+Message-ID: <68b60e48-4ba3-496c-bd24-4af81d163168@roeck-us.net>
+References: <662a050f3f8160fe7c80d4f19e45eb4fac0f2f0a.1740384385.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250301222137.18617-1-ImanDevel@gmail.com>
-In-Reply-To: <20250301222137.18617-1-ImanDevel@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 3 Mar 2025 01:39:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASjGwDOmmv9eowHaNXj3YcFSCThVYLGZ-F=v+4gZF1+3Q@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo6rb6YIRu-v40v3RfLPZUE09xpzXF5y5MriW7Tpi_eN_Qpp-_2L-QvxsQ
-Message-ID: <CAK7LNASjGwDOmmv9eowHaNXj3YcFSCThVYLGZ-F=v+4gZF1+3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: fix argument parsing in scripts/config
-To: Seyediman Seyedarab <imandevel@gmail.com>
-Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <662a050f3f8160fe7c80d4f19e45eb4fac0f2f0a.1740384385.git.michal.simek@amd.com>
 
-On Sun, Mar 2, 2025 at 7:20=E2=80=AFAM Seyediman Seyedarab <imandevel@gmail=
-.com> wrote:
->
-> The script previously assumed --file was always the first argument,
-> which caused issues when it appeared later. This patch updates the
-> parsing logic to scan all arguments to find --file, sets the config
-> file correctly, and resets the argument list with the remaining
-> commands.
->
-> It also fixes --refresh to respect --file by passing KCONFIG_CONFIG=3D$FN
-> to make oldconfig.
->
-> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
-> ---
+On Mon, Feb 24, 2025 at 09:06:26AM +0100, Michal Simek wrote:
+> From: Jonathan Stroud <jonathan.stroud@amd.com>
+> 
+> Add optional gpio device tree bindings to the UCD90320.
+> The binding's description is already mentioning the number of GPIOs but
+> without actual gpio controller description.
+> 
+> Signed-off-by: Jonathan Stroud <jonathan.stroud@amd.com>
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Applied to linux-kbuild.
-Thanks.
+Applied.
 
-
-
-> Changes in v2:
-> Specified the script name in the commit message.
->
->  scripts/config | 26 ++++++++++++++++----------
->  1 file changed, 16 insertions(+), 10 deletions(-)
->
-> diff --git a/scripts/config b/scripts/config
-> index ff88e2faefd3..ea475c07de28 100755
-> --- a/scripts/config
-> +++ b/scripts/config
-> @@ -32,6 +32,7 @@ commands:
->                               Disable option directly after other option
->         --module-after|-M beforeopt option
->                               Turn option into module directly after othe=
-r option
-> +       --refresh            Refresh the config using old settings
->
->         commands can be repeated multiple times
->
-> @@ -124,16 +125,22 @@ undef_var() {
->         txt_delete "^# $name is not set" "$FN"
->  }
->
-> -if [ "$1" =3D "--file" ]; then
-> -       FN=3D"$2"
-> -       if [ "$FN" =3D "" ] ; then
-> -               usage
-> +FN=3D.config
-> +CMDS=3D()
-> +while [[ $# -gt 0 ]]; do
-> +       if [ "$1" =3D "--file" ]; then
-> +               if [ "$2" =3D "" ]; then
-> +                       usage
-> +               fi
-> +               FN=3D"$2"
-> +               shift 2
-> +       else
-> +               CMDS+=3D("$1")
-> +               shift
->         fi
-> -       shift 2
-> -else
-> -       FN=3D.config
-> -fi
-> +done
->
-> +set -- "${CMDS[@]}"
->  if [ "$1" =3D "" ] ; then
->         usage
->  fi
-> @@ -217,9 +224,8 @@ while [ "$1" !=3D "" ] ; do
->                 set_var "${CONFIG_}$B" "${CONFIG_}$B=3Dm" "${CONFIG_}$A"
->                 ;;
->
-> -       # undocumented because it ignores --file (fixme)
->         --refresh)
-> -               yes "" | make oldconfig
-> +               yes "" | make oldconfig KCONFIG_CONFIG=3D$FN
->                 ;;
->
->         *)
-> --
-> 2.48.1
->
-
-
---
-Best Regards
-Masahiro Yamada
+Thanks,
+Guenter
 
