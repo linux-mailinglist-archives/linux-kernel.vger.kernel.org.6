@@ -1,181 +1,150 @@
-Return-Path: <linux-kernel+bounces-540765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B511A4B4A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:27:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E0AA4B4AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 214A3169F3B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227DF189053E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B111EBA08;
-	Sun,  2 Mar 2025 20:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDACB1EE017;
+	Sun,  2 Mar 2025 20:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b="GrSDVLRe"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KjHb07zs"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682F81B0406
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 20:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB384288B1;
+	Sun,  2 Mar 2025 20:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740947243; cv=none; b=YyDLCg1Qq41LiY7uka1XjjyrwBXTEcM8rfhp9v3riRx//SFxrm8jTsmea3FzXHaxkYxkw+FMZX4/OPHqfqUokGmQLlSUVIVzAbRhtONKA0vQ+E0Eiq0dgc2hb5zuDhCmTS+fViy/dwOGi9COb+VW9eovtO/M/SYeNDQpXNoPAEo=
+	t=1740947437; cv=none; b=I5Gje6zcz9Rhi6b84MxrL9leUifBAFxlqPJL+LvqlfEC0fAFJgBLnlt8XjYZcpdw+zgN3jk6mv4Xp4yngszk7nr857bcuHNmuqy2ijm0QMZGqvaNR0XCfhNEOt+FwLx2QnOsQqhMnN0czH8aCRs0v2nrVlkudUyuxcXXFneEMeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740947243; c=relaxed/simple;
-	bh=FoAngoI/MZZsdcjDEJuPOT1p8rOyhmYEoGGRxCCCKtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CPa87DkGcZlAyfoHeKgVH1/GFYDgchHnlMUPwGrl2YYkNnNYSlhoClFUuqVkqxWX03L+/vRAGCu6iMhgErl0eyMr7PDR/zMDOOVPjWMno6XkLPm2X6KsM8pya1JgrLll1e3ghYotb5eiDF562mKHEqyHGdO3aV0UPdVNvA69220=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu; spf=none smtp.mailfrom=kragniz.eu; dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b=GrSDVLRe; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kragniz.eu
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390dc0a7605so2001691f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 12:27:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kragniz.eu; s=google; t=1740947240; x=1741552040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Toe+H3M/fPbLKjUPwqPGSh5JqM5rSp09PnBJvQRrlzo=;
-        b=GrSDVLRe36b6HQCzwZgF4YuFk7zyjDG+svju8FtfgEhRmJ/pnSSKG1TqKmocX14mUn
-         sXfNyTBOH6QjxTOc8ZMlIqECPJAj6dqIscg+ur65fypchIT/njIYmJWBYgU6F4ZMUpdq
-         4n2L5INBXfbkFnt2Ul5jQSbdIiZHWJ9Z/Fom0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740947240; x=1741552040;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Toe+H3M/fPbLKjUPwqPGSh5JqM5rSp09PnBJvQRrlzo=;
-        b=b0aONhk+YI+XqtBz4CsRKRQOA+EMVaZs0BnDJCBL4tqa45C//zTSTOuZ4zF2lUpyeZ
-         eECUvYlK6FB0KBXq6Lpqeeh0zK8OCLr3zvE5mnzokTldMaBg2duUgoYA8wPyHy/LmOBa
-         ZMzhsyUs4/CDnsJUP3gimbeigFTgmu5m7BxZC+JOE/P9Kzgagjz17qqvmqOSGMEo9F9g
-         jLbqGEgPfnPi/NeDE2x0B8fSFMOoA8PukBAc4I1/26KmNycBfyjQbifDgH337NJzKIho
-         p20Rg6uYc3jTK+8U1MEGGYnC4y/V60Le/OOIgE2XVUHeW9TRaJwlY08xIA203vGq8OP7
-         9j1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXDphVsr7MYEDVKCtB4icqaSYf2YNupsFoQYTh/MLAzbiQuICCnwEbAUNxt77bV4qMs5lQVFAbC6llnOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAb5fT7sMg7wU7A+YYUZe41tapKYk7e2U1cF3hzGbB5jvsSPfC
-	JUISWS0qQMi1qSDrjeeHcwt0ollRBkLbtAPhEuVN4MDdTXcbOF/Pch4meKeWU6c=
-X-Gm-Gg: ASbGnctv44955VGMqtKSbkuTJhHEc4IHTjjA+Ik1Rz9DUanahDw9sPp8XDcX5fz9WXL
-	R+Hc4j1qmZ3oh4PhnfWmfVAxPpdLqc27s2mH6K9V9hZ22Wl1u1xu7oyhWF2Uj3FyArWHDDCSs5c
-	goPDPYUpZHuGfhziKQV+vWQAFAd7Ibh3/eH8mxdR8TcxbNxRcuDWh+f+zOk9P4NVY3AsMTVfAJ9
-	GN88wrOuo91wQdba/DbRdfGe9r34+wz9tXl16GDf+8d8ZQm398g9FeKCAtdGtghMWAUTOERORMz
-	lBc6J5GEEBykBvqOKSZMnfnuX9Rwt+zkqXy12Rz4IrFFTlnfMNDpMsO2Z4S6+3BlmWlUvBH/iNY
-	FUJXa0w==
-X-Google-Smtp-Source: AGHT+IHs9J8Ly/fXvEU8Y5V9qY4tcCR+glMwH6IFLDwq0w/R5uvEyofQymw0Rg1+CP7r0YIBRunl9g==
-X-Received: by 2002:a05:600c:1d0e:b0:439:88bb:d020 with SMTP id 5b1f17b1804b1-43ba66e1dafmr93255355e9.8.1740947239536;
-        Sun, 02 Mar 2025 12:27:19 -0800 (PST)
-Received: from localhost.localdomain (161.26.169.217.in-addr.arpa. [217.169.26.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73703caesm133585295e9.12.2025.03.02.12.27.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 12:27:19 -0800 (PST)
-From: Louis Taylor <louis@kragniz.eu>
-To: Willy Tarreau <w@1wt.eu>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Louis Taylor <louis@kragniz.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] tools/nolibc: add support for openat(2)
-Date: Sun,  2 Mar 2025 20:25:23 +0000
-Message-ID: <20250302202528.4169024-1-louis@kragniz.eu>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1740947437; c=relaxed/simple;
+	bh=qu5KI8fMONBhzkGxAIHlBQNJ7CFJHqifoEwRmhHdgvA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PZWSzLLcmAhLQU4EYspFGdVYbq/IPMfrJH2uF6nwQgp5ayiTy3VxpseqbOmc8Iw9UK8B9yf+SDzQC3f/fH40H+7hyNFB55ub6KEC+2XocEsLotOZtwfPLMBI/j703a0JEeRz+iVl7x8H5T/w4EC28Y/kibZ2F99ieVh1Z7TJE4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KjHb07zs; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740947430; x=1741552230; i=markus.elfring@web.de;
+	bh=t03/rLM9FaNUTzDcuwCiZRSRsDm9yDnbuOT4YqKcuUI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KjHb07zsBfKJpgfl64Y7NEN2CovaV+QPdTEU3U5b8HypgSfj/LY1GmhfBqm1U2Od
+	 Q+CZVrXWjRGvt+0Lrq/cmXontkm5Xm/+zgMeotWeBWGITbZrvLNLFD67UfYe4PJfs
+	 fXvUutsoj13p4l6Qj/TJ7kx/D9edZWZut4SG/D10Lxosg5nJ4RIt44Jl2vKt3KdZA
+	 IJq4hIn1GZEBOJ6d5qHQohUp1Gb4g3zekpuYCy40x0/QeMstPIaVZSpNZjL1XwG1s
+	 bVx42f9+UiC/EhWxidBedJ1zceEWKPtdPXqcLwMDHx9UbgyKQubJZx5egdpuOWfWe
+	 STH2lqbmZ9c3ZbAbVQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOlwp-1tdb8T1ROh-00Uw3f; Sun, 02
+ Mar 2025 21:30:30 +0100
+Message-ID: <08fe8fc3-19c3-4324-8719-0ee74b0f32c9@web.de>
+Date: Sun, 2 Mar 2025 21:30:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?=5BPATCH_RESEND=5D_tipc=3A_Reduce_scope_for_the_variable_?=
+ =?UTF-8?B?4oCcZmRlZnHigJ0gaW4gdGlwY19saW5rX3RubF9wcmVwYXJlKCk=?=
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jon Maloy <jmaloy@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Tuong Lien <tuong.t.lien@dektech.com.au>,
+ Ying Xue <ying.xue@windriver.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <624fb730-d9de-ba92-1641-f21260b65283@web.de>
+Content-Language: en-GB
+In-Reply-To: <624fb730-d9de-ba92-1641-f21260b65283@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/FibXadHneYGmAU6eIftjav2n1PX9JJV/0o1094/4mzs4YX73ZT
+ RGDGo8GNthY0AZ8lx8FIHi6QHRC/guk94wbYT6BXKibSlqnB6AoZviyXW4tvaywOIzIXZfG
+ FtG59s7INUZYU+nE6n5o548/Qmj3uN//G2fzNVngxWNNRJcMf1vlVohaGe642J0H90g+28u
+ zAFXpRpACnEKLFSZgJY5Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HfsN25LJsaA=;VIrrRgS4ncXO7iy+hD6iUtBt+bN
+ BUe1tb8yhRkBVWsE8D/CuIWzfW1zSZQ0RcExrmpuBHM4ZKOH6lIkq/yYujLP/wAruqJ7eHRiX
+ 2duxGSXMYciSixYEG73TCtvxMMfKcBsxNKCVM7AVQ9EYgOxKLskUA0ah+LSGhUGPSM8I4vuLz
+ Q73MjDowI4jFHWD37W6zC/QfDivAyWPL/sOkKzOleWZ52TkfQTn4smEpidzsQVrfBpIbWeBJ1
+ 9SFTt3713LPLRXnBA8vglR38wWI20PDlSLqEvMr7uYwt5B/yFhwEO1t5eXps2IvxrnHsvDo7R
+ nFuSrcnNJpBCH4WyvpAyr9f6XbumAbgnPQci3RIrGMlX+c4eoea8jK7zQmKYrSGL0xoJEhqB8
+ 7Z1af6JDSMUKzQkPONBvDm5F5G+Qk+UPbOUso2T55MLzM9pBbOZzSYtxSQOr8ejbnPllGoMd7
+ D56PYHHFdkrN4CxTZ0Nt2gHR2RV249BvcRhI/NA7G5xOmwTBzNTDor9fz0d+7oOLLBhiORj0d
+ oJwONMxqg4Aqj9clb5R0su7jd8S7MEBaNqjJGWYAEApB4qEsvIo4NjE+oz52KpSvZL12ROjz+
+ 9CKcuRycUSXcpqaMcHU4FLEwAQKey/XVKNAjwq2at7LnvI8/ADlUuycOXmoWS0X0u5iXl6D1N
+ emFVvN8e5bJUmmgGBWCR2TJ3/w71ZmreC16T6t6DVok8zuoEQCunliY8v1uYySa8+ylBXI7Ue
+ /b+RpX7oVqRA8Bhp2AXXtuBTstPpzmUmDC3ObfvLpTRLWGqEIDRzbD1+A/0HuRpaYm7eskikZ
+ uXek1qEgN/JpUqZit7eZM5y4ts3DMR2Tl6gnGrXtq1WgXaseBwWPUcYkLkCwN+wECm2p+8IB6
+ 5aBthztPX2MWRYfUDejWEhlkUnCeQXczvy+Z3B9iR1qWJJUNGz0WPHctm7hC1BZaTqvNvXlWy
+ g3OcShZigPrxrXXvcT2s2uyamUnHxAHrKjFKHVcPGNG3T/g+UFc5SxDd4Kh9qoksdALBBKOsz
+ mzB7qZfPo8zyBydGhe6a60Tn4O2HEZ2PRyKLgfGYqgp99lQpb5J4T5s/oYdF9lb20eu8dykCF
+ Q8NBcjX9hbUM3qz9IfaF19KCnuXQVOxecGrscPRbo9wMwWvC4TEjxnAa3+Z+qwbE371MwrMtz
+ R/R+A2amH5pWDC+a5zt6BlZGhs6zqlkUVRrRuBJNbnXVsQhVRU1LbURl+j4ij3KVn/Wh8o+YW
+ UnPxrN2PL1U7crglFAS/tZzE7RLUjWI1HMlPo1BWDgp8REKeUCZnYpks5PAmFNONZWs6kLBUG
+ Y1MSyuzPvwMh3VAUgvlD5zwdgXdrmcv0SNjQsOd+tzGPGLKjSXMr2noo/PVwomcgHonbi3hle
+ PN9FR0h276FnYqe0bby0PGGStSD1RqJiu1oQRJfajILkAUsSm0vFCM9F/OJAcSk81Qdb8eX9e
+ biNvoqhd3JcmXpE1UQIIRoB4ZPj4=
 
-openat is useful to avoid needing to construct relative paths, so expose
-a wrapper for using it directly.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Apr 2023 17:00:11 +0200
 
-Signed-off-by: Louis Taylor <louis@kragniz.eu>
----
- tools/include/nolibc/sys.h                   | 29 ++++++++++++++++++++
- tools/testing/selftests/nolibc/nolibc-test.c | 22 +++++++++++++++
- 2 files changed, 51 insertions(+)
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Ctipc_link_tnl_prepare=E2=80=9D.
 
-diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
-index 8f44c33b1213..e5ff34df4aee 100644
---- a/tools/include/nolibc/sys.h
-+++ b/tools/include/nolibc/sys.h
-@@ -765,6 +765,35 @@ int mount(const char *src, const char *tgt,
- 	return __sysret(sys_mount(src, tgt, fst, flags, data));
- }
- 
-+/*
-+ * int openat(int dirfd, const char *path, int flags[, mode_t mode]);
-+ */
+Thus avoid the risk for undefined behaviour by moving the definition
+for the local variable =E2=80=9Cfdefq=E2=80=9D into an if branch at the en=
+d.
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: 58ee86b8c775 ("tipc: adapt link failover for new Gap-ACK algorithm"=
+)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ net/tipc/link.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index b3ce24823f50..5aa645e3cb35 100644
+=2D-- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -1973,7 +1973,6 @@ void tipc_link_create_dummy_tnl_msg(struct tipc_link=
+ *l,
+ void tipc_link_tnl_prepare(struct tipc_link *l, struct tipc_link *tnl,
+ 			   int mtyp, struct sk_buff_head *xmitq)
+ {
+-	struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
+ 	struct sk_buff *skb, *tnlskb;
+ 	struct tipc_msg *hdr, tnlhdr;
+ 	struct sk_buff_head *queue =3D &l->transmq;
+@@ -2100,6 +2099,8 @@ void tipc_link_tnl_prepare(struct tipc_link *l, stru=
+ct tipc_link *tnl,
+ 	tipc_link_xmit(tnl, &tnlq, xmitq);
+
+ 	if (mtyp =3D=3D FAILOVER_MSG) {
++		struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
 +
-+static __attribute__((unused))
-+int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
-+{
-+#ifdef __NR_openat
-+	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
-+#else
-+	return __nolibc_enosys(__func__, dirfd, path, flags, mode);
-+#endif
-+}
-+
-+static __attribute__((unused))
-+int openat(int dirfd, const char *path, int flags, ...)
-+{
-+	mode_t mode = 0;
-+
-+	if (flags & O_CREAT) {
-+		va_list args;
-+
-+		va_start(args, flags);
-+		mode = va_arg(args, int);
-+		va_end(args);
-+	}
-+
-+	return __sysret(sys_openat(dirfd, path, flags, mode));
-+}
- 
- /*
-  * int open(const char *path, int flags[, mode_t mode]);
-diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-index 79c3e6a845f3..97ded6c76f99 100644
---- a/tools/testing/selftests/nolibc/nolibc-test.c
-+++ b/tools/testing/selftests/nolibc/nolibc-test.c
-@@ -1028,6 +1028,26 @@ int test_rlimit(void)
- 	return 0;
- }
- 
-+int test_openat(void)
-+{
-+	int dev;
-+	int null;
-+
-+	dev = openat(AT_FDCWD, "/dev", O_DIRECTORY);
-+	if (dev < 0)
-+		return -1;
-+
-+	null = openat(dev, "null", 0);
-+	if (null < 0) {
-+		close(dev);
-+		return -1;
-+	}
-+
-+	close(dev);
-+	close(null);
-+
-+	return 0;
-+}
- 
- /* Run syscall tests between IDs <min> and <max>.
-  * Return 0 on success, non-zero on failure.
-@@ -1116,6 +1136,8 @@ int run_syscall(int min, int max)
- 		CASE_TEST(mmap_munmap_good);  EXPECT_SYSZR(1, test_mmap_munmap()); break;
- 		CASE_TEST(open_tty);          EXPECT_SYSNE(1, tmp = open("/dev/null", 0), -1); if (tmp != -1) close(tmp); break;
- 		CASE_TEST(open_blah);         EXPECT_SYSER(1, tmp = open("/proc/self/blah", 0), -1, ENOENT); if (tmp != -1) close(tmp); break;
-+		CASE_TEST(openat_fdcwd);      EXPECT_SYSNE(1, tmp = openat(AT_FDCWD, "/dev/null", 0), -1); if (tmp != -1) close(tmp); break;
-+		CASE_TEST(openat_dir);        EXPECT_SYSNE(1, test_openat(), -1); break;
- 		CASE_TEST(pipe);              EXPECT_SYSZR(1, test_pipe()); break;
- 		CASE_TEST(poll_null);         EXPECT_SYSZR(1, poll(NULL, 0, 0)); break;
- 		CASE_TEST(poll_stdout);       EXPECT_SYSNE(1, ({ struct pollfd fds = { 1, POLLOUT, 0}; poll(&fds, 1, 0); }), -1); break;
--- 
-2.45.2
+ 		tnl->drop_point =3D l->rcv_nxt;
+ 		tnl->failover_reasm_skb =3D l->reasm_buf;
+ 		l->reasm_buf =3D NULL;
+=2D-
+2.40.0
 
 
