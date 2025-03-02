@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-540169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3327A4AEBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:23:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D3FA4AEC5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719EA18936CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:23:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D3E3B3922
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081F84502F;
-	Sun,  2 Mar 2025 02:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9ADF70821;
+	Sun,  2 Mar 2025 02:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMtthqq7"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq+B1Vpc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E9B3597E;
-	Sun,  2 Mar 2025 02:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BBB13AF2;
+	Sun,  2 Mar 2025 02:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740882192; cv=none; b=AYSXVcpqHmqBqb/nDhD4RA9W3p5n4D+wZr6y0m0arRJ1TQXgBLSrYSXfi/0XJsg7rdpeVgjC3/qqzveal/DkU5EduoSOrs4p8ZA2QaCLL3buwnRyM86EzMUqRwyXRb/aTTGD/uJLxioLimz0bVFVhFl28o/UellvYtxiHOxxabE=
+	t=1740883493; cv=none; b=Je8B8XEAOGQ7bDnP4O+A3UZunFAjjNLlR6myW94KemevGqEd8UR18uAwx9M6ZJdZXNpm2TzEafB+zOBd+b0zoiVBCM54jDXcSZ7OG9p+TROV12FYovygNUV6kX9w/Ao86f+F4gnFLzE85eFOwVm7mo10gbKuD11B8mcD9xhis7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740882192; c=relaxed/simple;
-	bh=Ms35D6rpVAm4Wn+iz7v3jU9bT3pFycygdKwhAA7LcRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lbuSYUMh1vZruxOqy5/I62xMNNj/Vl5eL4WfmUU3yFiEL8QkSyI5foTi8cKrBLPCXjeN+iZ5HjJ8PVPUoxO97EyLC4iPbY6hF5RCsnoQHHsx4swjXpqNZ1KPrwHFhX4yG09Ma8LMd1NtXwnDHBuM7FZ7n5DNCLemw9gwruPMpf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMtthqq7; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-219f8263ae0so61659455ad.0;
-        Sat, 01 Mar 2025 18:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740882190; x=1741486990; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bIgb5oCKHg0d8J0ugu6ecAoU1ogbWalfHnz6Q8BvygU=;
-        b=iMtthqq7phxR3YYoFkGoonSvIJ+zvpHwH5kXEAIjE+GGCuMRAJc3FEnqmz26LmiUN3
-         oQbDbljuMXtv0VlqO5hbmccMaljd2rOOYm2mHmumeqO54s8akCuktuOHsLIeKNT61DB/
-         H6GrZsniQqUMAFUYDEm4kyel3WXQL9QkfQpFneNw+Gu6jimXa/yJHZawsbvAhteBsmwb
-         YfnZYtBp8wOjZckEvA3r8/xjRZMa1OriFQtcisbvxPGBnjgNamoUjfo6Hw36Fp/WBDPc
-         UoRqSNjZ5/O1rCnlLLkGMBuiaGi/Kfr610kKn+GgPYxpWhpzkXo3Wv7NUo0Vx++ujche
-         Othw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740882190; x=1741486990;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bIgb5oCKHg0d8J0ugu6ecAoU1ogbWalfHnz6Q8BvygU=;
-        b=LkSI6KYRpa6VdGNDtjutnURdxCATtKw7BuaoyqOpSROCNpFAJ3Ja2r5I7vKlPy+O7J
-         0T1sapcacCGL7waKgnSFRCNRnJyVL4rSWnp+rCbF4gqdUobGQqcpIZJ4znJkx8L4xSl+
-         0AKUtU1lT2ZfSFrb/i+5ZHv6PdgK3pgcrdUpoNhYLqsg33JqfPCNoDrFav7hjJIEEXKc
-         ZM5jBHGJd2q/BZ5eTCEkt2lEl2BXpTMT+4y/w62BQXyK2/18VoKpY++kAXtoEUSePK3j
-         hJMB6pkviDjHcZ+RMaSjFH/ztioNpmqb43eVTkQF0wHlGAsZ0tlA2x8exr+bxNtz8WRP
-         wJMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU51lBzm7fGxqqFpLMRBmBufMirNPbI4GGxa8fNLc6LPVxK8a6ggz08tCefElm8bNaBjGCbXSj+@vger.kernel.org, AJvYcCUG/ICcZPB6Yh/lNNNeoNXF34mjXRG06u+WqGcfovRXM0BuwkqiqoWcfWKiYn/LXBPCX+fomm1mx1i17k0=@vger.kernel.org, AJvYcCWswqTJGPR9i9jJTh2XRjS36/CHtzsWZW/2z7lGSTc9jrVTfT0sNk1mAFXNgktv+ph1JInvVgPGrbm2/swU@vger.kernel.org, AJvYcCXoI5BtzhWpZtN090WPIMQd8fbg+gX4nh2a/vy66gkveY2+2FBHJShDRcBwQLU5G6CtJsStsKkQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvxY7ypRO2S36UKKbaoD8HF1CGcIHa+dsqT1EZs+YGUsssZvsb
-	44rplZAmFjQcw60vpjxFt0tGfZHZ4h3tDPEXGsNWb+p72AtYFDX2
-X-Gm-Gg: ASbGncux1RXzrZq+PjoXOTMqvJhXugg5G6JwegoslTKkpc4Ix/tTncFoFkhhMql1IBV
-	Re0TlvYhgYJT8AEDn7mxXL4cWfzpJ+qymbb9NDdDPf2P2nBcbbKNe5/RpSBDL6uE9FYezEhoG2J
-	wsKXPPidk3bqQxO0BSYawOKS+qHTJdqA8hnK6SGaB0C+V9XfA+/ZRlod6vrjkuklUwIiJtHAk3e
-	gFMO00hFxFjnnvX7hW4J2DA5d9I7nA0DZcTKyInWFOgRlLGFC9SLpofphrYwZyYsZJSh+xNx9li
-	LMAnpo6SOU7ttD69Nv9/oW1ntA00FqtCWnwgTUFgHs7ez7FFwguQhJZ/4jFl8RT6Pm/jmpciz/B
-	gX/eGKbD9Z+fQlqdsR1nBoXfm+t7I7h8D
-X-Google-Smtp-Source: AGHT+IF7Tj08QU1/XlQt1s/pvFZTEEH8FOsLcUTfASRUZhpzzuMZ+JW2GadNl6cju1yKvhSSnz94fA==
-X-Received: by 2002:a05:6a21:110:b0:1ee:e655:97ea with SMTP id adf61e73a8af0-1f2f4e4e782mr15784551637.41.1740882189968;
-        Sat, 01 Mar 2025 18:23:09 -0800 (PST)
-Received: from ?IPV6:2409:8a55:301b:e120:3115:39d1:77ff:54d2? ([2409:8a55:301b:e120:3115:39d1:77ff:54d2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7dedea46sm4862492a12.67.2025.03.01.18.23.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 18:23:09 -0800 (PST)
-Message-ID: <68f83951-881f-49a6-8599-e47956b984fe@gmail.com>
-Date: Sun, 2 Mar 2025 10:22:59 +0800
+	s=arc-20240116; t=1740883493; c=relaxed/simple;
+	bh=G+2alXcQQeJKiXQVDp+o+8OioV+7Id2VP5GpWYu+a+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KxdwVV0KqV7rd9X2TGZqHyKRsstumquLrJAaSYVxmzsuwqYMqhp6wXIrRe3k7LxJFuv8AIMRBOX54TRB0O+LTommpVNCPVuhRHoQeG70+tWl3UcWhP6wEDvlMjbbMrdYbqwFAQyFpGK7UYirDKeB0N9/MZyMQzQ6zD34gAffhus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq+B1Vpc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F6FC4CEDD;
+	Sun,  2 Mar 2025 02:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740883492;
+	bh=G+2alXcQQeJKiXQVDp+o+8OioV+7Id2VP5GpWYu+a+s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Aq+B1VpcOnZfU4uix8FTan/0Ovik/EeAEUfJRZeJ4Z5L8EscdTZ8Lo6IMYKCFxYnO
+	 JNcwXmtwldEpVrxL/S/I7HKm8BMECtD34/PDeMzIb9eybaHhU3IdcJEUNA594h+YXp
+	 Rmnhl4cYlSNj9U4B+8OxYNnYOL8GKNan87gpkpbW0QfKLai456n8PGHNV0NYGC5MNo
+	 LTf1jJ9gsDCfqz4soGGQI51VUmMSCnXoh/LS1zqiU6TWAMzdk/bIqdoj1ZiPeuRfHZ
+	 PrFlvfId4gYEq58Ih9PZgiIg99QgDNSw1mJ0gGzvr6Qk4zJsIFhrmkdrAR32fLuuRW
+	 3macoJteXhUEQ==
+Date: Sun, 2 Mar 2025 02:44:34 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 3/9] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250302024434.67ef4c90@jic23-huawei>
+In-Reply-To: <125ab96e-1e92-4022-95fe-324cd47ce1d9@gmail.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+	<67b7713724d7591f6321a8f5dfef8cd711f38d34.1739967040.git.mazziesaccount@gmail.com>
+	<20250223162807.41960b6b@jic23-huawei>
+	<125ab96e-1e92-4022-95fe-324cd47ce1d9@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH] mm: page_frag: Fix refill handling in
- __page_frag_alloc_align()
-To: Haiyang Zhang <haiyangz@microsoft.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-Cc: Dexuan Cui <decui@microsoft.com>, KY Srinivasan <kys@microsoft.com>,
- Paul Rosswurm <paulros@microsoft.com>, "olaf@aepfle.de" <olaf@aepfle.de>,
- vkuznets <vkuznets@redhat.com>, "davem@davemloft.net" <davem@davemloft.net>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, Long Li <longli@microsoft.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linyunsheng@huawei.com" <linyunsheng@huawei.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Alexander Duyck <alexander.duyck@gmail.com>
-References: <1740794613-30500-1-git-send-email-haiyangz@microsoft.com>
- <cc3034c6-2589-4e9a-97af-a7879998d7d8@gmail.com>
- <MN0PR21MB3437E18AA793762F242BE795CACF2@MN0PR21MB3437.namprd21.prod.outlook.com>
- <MN0PR21MB3437DB9A18F1C354963C5EF3CACF2@MN0PR21MB3437.namprd21.prod.outlook.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <MN0PR21MB3437DB9A18F1C354963C5EF3CACF2@MN0PR21MB3437.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 3/2/2025 7:16 AM, Haiyang Zhang wrote:
+On Mon, 24 Feb 2025 08:14:23 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-...
-
->> We are already aware of this, and have error checking in place for the
->> failover
->> case to "base page".
->>
->>  From the discussion thread above, there are other drivers using
->> page_frag_alloc_align() for over PAGE_SIZE too. If making the page_frag
->> API
->> support only fragsz <= PAGE_SIZE is desired, can we create another API?
->> One
->> keeps the existing API semantics (allowing > PAGE_SIZE), the other uses
->> your new code. By the way, it should add an explicit check and fail ALL
->> requests
->> for fragsz > PAGE_SIZE. Currently your code successfully allocates big
->> frags
->> for a few times, then fail. This is not a desired behavior. It's also a
->> breaking change for our MANA driver, which can no longer run Jumbo frames.
-
-It seems there was some memory corruption problem that may caused by
-reuse of the previously allocated frag cache memory by following a
-LARGER allocations before 'using initial zero offset'.
-
-https://lore.kernel.org/netdev/b711ca5f-4180-d658-a330-89bd5dcb0acb@gmail.com/T/#m12ebdefb8ee653b281d477d2310218b4ac138cde
-
-'using initial zero offset' seems to just make the API misuse problem
-more obvious.
-
->>
->> @Andrew Morton <akpm@linux-foundation.org>
->> And other maintainers, could you please also evaluate the idea above?
->>
+> On 23/02/2025 18:28, Jonathan Cameron wrote:
+> > On Wed, 19 Feb 2025 14:30:43 +0200
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> >   
+> >> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> >> an automatic measurement mode, with an alarm interrupt for out-of-window
+> >> measurements. The window is configurable for each channel.
+> >>
+> >> The I2C protocol for manual start of the measurement and data reading is
+> >> somewhat peculiar. It requires the master to do clock stretching after
+> >> sending the I2C slave-address until the slave has captured the data.
+> >> Needless to say this is not well suopported by the I2C controllers.
+> >>
+> >> Thus the driver does not support the BD79124's manual measurement mode
+> >> but implements the measurements using automatic measurement mode relying
+> >> on the BD79124's ability of storing latest measurements into register.
+> >>
+> >> The driver does also support configuring the threshold events for
+> >> detecting the out-of-window events.
+> >>
+> >> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> >> out of the configured window. Thus the driver masks the received event
+> >> for a fixed duration (1 second) when an event is handled. This prevents
+> >> the user-space from choking on the events
+> >>
+> >> The ADC input pins can be also configured as general purpose outputs.
+> >> Those pins which don't have corresponding ADC channel node in the
+> >> device-tree will be controllable as GPO.
+> >>
+> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> >>  
+> > Hi Matti,
+> > 
+> > Some fairly superficial review follows. I'm travelling for next few weeks
+> > so not sure when I'll get time to take a more thorough look.  
 > 
-> And, quote from current doc 6.14.0-rc4:
-> "A page fragment is an arbitrary-length arbitrary-offset area of memory
-> which resides within a 0 or higher order compound page."
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/mm/page_frags.rst
-> 
-> So, it is designed to be *arbitrary-length* within a 0 or higher order
-> compound page.
-> 
-> If the commit 8218f62c9c9b ("mm: page_frag: use initial zero offset for
-> page_frag_alloc_align()") intended to change the existing API semantics
-> to be Page Frag Length <= PAGE_SIZE, the document and all breaking drivers
-> need to be updated.
+> Yeah, unfortunately people are allowed to have other life beyond the 
+> ROHM drivers :D
+> Enjoy your journey(s) ;)
 
-Yes, updating the Documemntation to make it more obvious seems like the
-right thing to do.
+So far so good.  Hi from Shenzhen.  Obligatory pilgrimage to SEG market
+done ;)
 
+> >> +	/* Set no channels to be manually measured */
+> >> +	ret = regmap_write(data->map, BD79124_REG_MANUAL_CHANNELS, 0x0);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	/* Set the measurement interval to 0.75 mS */
+> >> +	regval = FIELD_PREP(BD79124_MASK_AUTO_INTERVAL, BD79124_INTERVAL_075);
+> >> +	ret = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> >> +			BD79124_MASK_AUTO_INTERVAL, regval);  
+> > 
+> > Where it doesn't make any other difference, align after (
+> > 
+> > If you are going shorter, single tab only.  
 > 
-> Thanks,
-> - Haiyang
+> Single tab only? You mean like:
 > 
+> ret = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> 	BD79124_MASK_AUTO_INTERVAL, regval);
+> 
+> Do you prefer that even if the variable holding the return value was 
+> longer than 8 chars? To me it looks odd if arguments on the next line 
+> begin earlier than the function on previous line:
+> 
+> longvariable = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> 	BD79124_MASK_AUTO_INTERVAL, regval);
+> 
+> (Just ensuring I understood your preference).
+It's hard to come up with an absolute policy / preference on this but
+whilst I agree it looks a bit odd, I think it's easier to say one
+tab as 'default' choice.  Obviously if it's really hideous for some
+reason feel free to do something else ;)
 
+Jonathan
 
