@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-540411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F26A4B048
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:27:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7AAA4B04E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51B117B00B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:22:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E7927A426C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1421E5732;
-	Sun,  2 Mar 2025 07:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="a3fcY/iO"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF531D516C;
+	Sun,  2 Mar 2025 07:30:15 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1641E492D;
-	Sun,  2 Mar 2025 07:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E151C1420DD;
+	Sun,  2 Mar 2025 07:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740899916; cv=none; b=Y5TA8FznzDOA+Ru6bobyl9/8WDArEg6DKCcl2vRT/1QYpiRziJALEIbrjmWMaDr0Gs22t2t1I1i0zVllHXOng6PBjeVGrEVhSi6AVXN9Z0MtrotivSF3JMz4eewC0bJSjaBNhgOT4Lh0d9+DCZ3zbxuaJYMvAscK8HhmlVZTmJM=
+	t=1740900614; cv=none; b=JREa/mGNqaT1oinP08N3t4hL+2xPHnYrGq8j1BGTanCtNZfoD+N7jCTtWHZscQhOYw2HMOq8Kv90VJssWHuv44Pp6uWvVZMxS2w1F0yoGE8n6xJ442yyzImGbX9N16s1Qbl0246apRVyNumczMnl1DR+OPC4WoLJkl1baLXuIgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740899916; c=relaxed/simple;
-	bh=Q00tCGFagJqhJIqtMW6Th3WlIVSLLIlf2Ut0vWjxY0E=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SFv1quyue5b1sQNkFi14OXGlDg0XSFFjMX5daWw8ehoeBpwe+mVnE2wXKMbWnOV33SIdK9wwdYp3sFKdxqlbmk8Yx+MAXjZs19eBmoWwAK/THXvl9YvehX5Xcx9VbgR3/90skQSCu9TeV/QV/b8Yj/KIXS6UUb1PcVD73FhcomY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=a3fcY/iO; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=f3DdERWXQrNySF6gvU6vinSO8q+qr1NUAtHdetDqJf4=; b=a3fcY/iONa33Ud5dQN0oQ3c0gf
-	yDD75wEvhxl2aTZ2rDvDseIJ5EyhCdCJ+C0m8eIFf3NlZP28u5SHk7RtaW/UOBQbDdu+PuiO4evfo
-	TPoBXIvZD5tF6i2j0JFtMlF9elpGl3C+YsBI7wvjpbFnHPyHikNt15dBNiHX5bI/nxZejVEBAYLNE
-	zohytRJ+9SRo3ksFsXB596vLCJcm+O0IMfoXuQO7vIDuYz2MowNxrQLmRJXpNSAFgM45ay030+HNo
-	gdz4qGRAYKsToUUV2206CDJHVlnXtfcwXlK3TMEPM3T7AnU4gW6JHVXPZwruE32bh3o6CpT5E1azX
-	iJNcInUw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1todai-0030I5-0I;
-	Sun, 02 Mar 2025 15:18:25 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 02 Mar 2025 15:18:24 +0800
-Date: Sun, 2 Mar 2025 15:18:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] cred: Fix RCU warnings in override/revert_creds
-Message-ID: <Z8QGQGW0IaSklKG7@gondor.apana.org.au>
+	s=arc-20240116; t=1740900614; c=relaxed/simple;
+	bh=d7NlhC7hvLuzq9JoF9qYrayoB11kqa8d/MrYlOXyNz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c2mQip92PjGjyGoANMv99HKHxMv1LMYVxLp9Awf0f12BBwovDv54NFJbxSDFCcH0slnViAi+HyqkJLeyytW5cKieCrSKGBcO1KU3Za6pZOjEtZFT5vJ9keo6SQVrdWDWxEEKUB7ezVCYdG1oepXc2WD2lpXZkAmY5WcR+B+O4MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z5D691jQ6z21p0m;
+	Sun,  2 Mar 2025 15:26:57 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8E8AB1A0188;
+	Sun,  2 Mar 2025 15:30:03 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 2 Mar 2025 15:30:03 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 2 Mar
+ 2025 15:30:02 +0800
+Message-ID: <05e7a220-7886-77ad-af58-7847c679579a@huawei.com>
+Date: Sun, 2 Mar 2025 15:30:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] mailbox: pcc: Fix can't clear level interrupt of type3 in
+ cornor case
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jassisinghbrar@gmail.com>, <liuyonglong@huawei.com>
+References: <20250227072341.28693-1-lihuisong@huawei.com>
+ <Z8HlHDAUWqQOjrCH@bogus>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <Z8HlHDAUWqQOjrCH@bogus>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-Fix RCU warnings in override_creds and revert_creds by turning
-the RCU pointer into a normal pointer using rcu_replace_pointer.
 
-These warnings were previously private to the cred code, but due
-to the move into the header file they are now polluting unrelated
-subsystems.
+在 2025/3/1 0:32, Sudeep Holla 写道:
+> On Thu, Feb 27, 2025 at 03:23:41PM +0800, Huisong Li wrote:
+>> The mbox_chan_received_data() will call Rx callback of mbox client driver
+>> using type3 to set the flag of command completion. Then driver can continue
+>> to do something like sending a new command. In this case, the rest of the
+>> interrupt handler function may be concurrent with pcc_send_data().
+>>
+> Understood and valid issue/bug.
+>
+>> The 'chan_in_use' flag of a channel is true after sending a command. And
+>> the flag of the new command may be cleared by the running interrupt handler
+>> in cornor case. As a result, the interrupt being level triggered can't be
+>> cleared in pcc_mbox_irq() and it will be disabled after the number of
+>> handled times exceeds the specified value. The error log is as follows:
+>>
+>> [519082.811553] kunpeng_hccs HISI04B2:00: PCC command executed timeout!
+>     ^^^^
+> These timestamps are useless, needs to be dropped.
+Got it. Thanks.
+>
+>> [519082.828532] kunpeng_hccs HISI04B2:00: get port link status info failed, ret = -110.
+>> [519082.833438] irq 13: nobody cared (try booting with the "irqpoll" option)
+>> [519082.844622] CPU: 304 PID: 15206 Comm: systemd-journal Kdump: loaded Tainted: G           OE     5.10.0 #5
+>> [519082.854959] Hardware name: To be filled by O.E.M. To be filled by O.E.M./To be filled by O.E.M., BIOS Nezha B800 V3.1.0 01/02/2024
+> "To be filled by O.E.M." interesting. Either as silicon vendor, some prefer
+> to leave it this way to ensure the O.E.M fill them correctly or the firmware
+> engineers are not bothered to get these right as nothing breaks without
+> these.
+>
+> Anyways, good example of what not to have in the products, as it is completely
+> useless.
+>
+> [...]
+Thanks for pointing it out.
+Please ignore this. will drop the line.
+>
+>> To solve this issue, pcc_mbox_irq() clear 'chann_in_use' flag immediately
+>> after clearing interrupt ack register.
+>>
+> This may be correct way of fixing the issue here, but I am questioning the
+> existence of this flag now. I have some rework on this file. I will pick
+This flag is for shared interrupt case on type3. please see:
+3db174e478cb ("mailbox: pcc: Support shared interrupt for multiple 
+subspaces")
 
-Fixes: 49dffdfde462 ("cred: Add a light version of override/revert_creds()")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+We may need to fix it first before your refactoring this file. After 
+all, it's an issue.
+A little modification is more easily to backport and merge.
+If it's ok for you, I'll update this commit log.
+> this up if I think this is needed as it may conflict with my changes or
+> we will drop the flag completely. Give a week or so, will post the changes
+> and we can take it from there.
+>
+Looking forward to your rework.
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 0c3c4b16b469..5658a3bfe803 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -172,18 +172,12 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
- 
- static inline const struct cred *override_creds(const struct cred *override_cred)
- {
--	const struct cred *old = current->cred;
--
--	rcu_assign_pointer(current->cred, override_cred);
--	return old;
-+	return rcu_replace_pointer(current->cred, override_cred, 1);
- }
- 
- static inline const struct cred *revert_creds(const struct cred *revert_cred)
- {
--	const struct cred *override_cred = current->cred;
--
--	rcu_assign_pointer(current->cred, revert_cred);
--	return override_cred;
-+	return rcu_replace_pointer(current->cred, revert_cred, 1);
- }
- 
- /**
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+/Huisong
+
+>
+> .
 
