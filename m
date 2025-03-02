@@ -1,269 +1,325 @@
-Return-Path: <linux-kernel+bounces-540189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3305CA4AF34
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 05:04:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7778A4AF3B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 05:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02C9F18943A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0788116EC4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487063597E;
-	Sun,  2 Mar 2025 04:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59291ADC94;
+	Sun,  2 Mar 2025 04:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IaUcrp4A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRAQ/Bpr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E6943AA8
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 04:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3298632E;
+	Sun,  2 Mar 2025 04:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740888284; cv=none; b=YhkvfcD0JJ32/RgP4G3Z4MZOWVJ/efardzonJy/WrOpzg9+Bj9xAFllen1xasB+MdfdxGDDOBafPa8ehcvsY14XQI38yd9ZzWKAVXAb5Cg2uGn0lfKER8q5AtYjDEMT9MzS27x+U3y1xtFXs9NuRUP8dKhfD5T/xAkcRX0B9gqw=
+	t=1740888671; cv=none; b=MfuSaHB1j0BCBT+W14vfbdXh+3htUDFEAO7afvHX4PnRA2QIFRnn1TMqkkvZCf1GeQ6WGDFapDIBaXHF3WZeeVArvyaCQH9y72NE8wF7mIgfjVol55tr2hjgjnjlJbJ+v4SvOQA2pTozPlxHWpqtp3Tdpn+vcR9+48pFr9xvKXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740888284; c=relaxed/simple;
-	bh=5mRBW99w39JHihBLu8i4fPbCOxBc6yKzJEWiiCwM5hE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RADgMB6xDqakVFxosf6uCjY9KQV1pD3FKtlx1pwEEn2TjLwTQ2PjQ4I4P1NIJUuyBKdfFs6igDaRZ1PonUeHhzbwmY/B28W06rr6jy22/Cmhf/NKpSt04MPdslLXixGU5tHq6uHoDhpFk9TkygP8JAWBO5LBaMK3vstxS+pYr14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IaUcrp4A; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740888282; x=1772424282;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=5mRBW99w39JHihBLu8i4fPbCOxBc6yKzJEWiiCwM5hE=;
-  b=IaUcrp4AvyMqiDsShLjRkXF/dfcK5MuzGZwLW6MFj3ZFGhRb+WWCOePa
-   5u6lkJveaeYzc98cQ/DHj7wl+DXmIQfv/zVtI7WJ513zUai4FY7MPLytJ
-   8iXIGhIL9bngEu5B37Hk5FPNemcAbGCN+R73r2S6GJoTnnofaUqAyg4uD
-   N7dJ52GggTP389BqSLk85RihgW8NKtEBWVVn9bfGehghiyK/pn40AaPh8
-   bWeJj2tHFFgUyo5DDNbbQtyfbsrLooAvJm+WPXDu1J/ZxSIS4Nwe1i9kB
-   lrXcVQpFfh30Z9NgtyxOls9fMA+xydCb41tFN3t08MEihG5nMzR4R/mhM
-   Q==;
-X-CSE-ConnectionGUID: AsC70kJ0QCCBR8i/lCWuWw==
-X-CSE-MsgGUID: nIqWq86MRkSppss3JA/XtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="52767101"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="52767101"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 20:04:41 -0800
-X-CSE-ConnectionGUID: 046djxKSRpa803PK4OM00w==
-X-CSE-MsgGUID: fvgsJSjYT3WxlR4cUTdSag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="122699651"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 01 Mar 2025 20:04:40 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toaZB-000H1u-2Y;
-	Sun, 02 Mar 2025 04:04:37 +0000
-Date: Sun, 2 Mar 2025 12:04:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: drivers/staging/gpib/eastwood/fluke_gpib.c:1013:28: error: implicit
- declaration of function 'ioremap'; did you mean 'iounmap'?
-Message-ID: <202503021157.kNEEt0fK-lkp@intel.com>
+	s=arc-20240116; t=1740888671; c=relaxed/simple;
+	bh=mhZ4GEcprVucdPj/c25y003/+abJiOOGAR1e9Cvo/NY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m6eoQPPkN8Q6+TPi8lubXjoJA0yDK8DSsqnn/OOijCaB6Rb8gIuPyQ3ScD0Sv+X+h67mCZt2JAQAsW1BLd78AA6MKcWnp1vo6QMBx3FQRERDHrk/PPHKTOry1PXDDTc6UxsRgPQ76V7sA187loklDcoAV6Q+2ooeaCdOpS4w9Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRAQ/Bpr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D712C4CED6;
+	Sun,  2 Mar 2025 04:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740888670;
+	bh=mhZ4GEcprVucdPj/c25y003/+abJiOOGAR1e9Cvo/NY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uRAQ/BprkT/fcETMQ/nvto5l6d/mJi22o7WvOY6UsRwn/nB2zaUFub9c4e4HutEhR
+	 FxSc2yd6nJX6ms2tv+vIeelPkGLRoo997BrggpXhZINTGueJF4UWmioOzWaawkqEB2
+	 pTkMX3nkEoGq8HGmAaqik5NYczg2WLPMmBOgR9o6jw4SdLBzJRFCFUGq7yuxo4HtZn
+	 sf2e9Miao8Q7EQkyrF8dkhDWkuN5/64M/VSrdAfByWm15HcEcKb77ZsQsl96Xg2LTV
+	 wvcCxNrLi9itzebjiUPrMZKaWvF1pi8/VqyLlkyZKbM70Q8ddZou8wJ54NLQpP8xPv
+	 dje10SlihUoLg==
+Date: Sun, 2 Mar 2025 04:10:46 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols
+ <gstols@baylibre.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru
+ Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Ramona Alexandra Nechita
+ <ramona.nechita@analog.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, Linus
+ Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 08/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250302041046.7fde3c68@jic23-huawei>
+In-Reply-To: <4d1bf5df8f3b0f760422b6b67fcc8245ebf520e0.1740421249.git.mazziesaccount@gmail.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+	<4d1bf5df8f3b0f760422b6b67fcc8245ebf520e0.1740421249.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dave,
+On Mon, 24 Feb 2025 20:34:30 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-First bad commit (maybe != root cause):
+> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> an automatic measurement mode, with an alarm interrupt for out-of-window
+> measurements. The window is configurable for each channel.
+> 
+> The I2C protocol for manual start of the measurement and data reading is
+> somewhat peculiar. It requires the master to do clock stretching after
+> sending the I2C slave-address until the slave has captured the data.
+> Needless to say this is not well suopported by the I2C controllers.
+> 
+> Thus the driver does not support the BD79124's manual measurement mode
+> but implements the measurements using automatic measurement mode relying
+> on the BD79124's ability of storing latest measurements into register.
+> 
+> The driver does also support configuring the threshold events for
+> detecting the out-of-window events.
+> 
+> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> out of the configured window. Thus the driver masks the received event
+> for a fixed duration (1 second) when an event is handled. This prevents
+> the user-space from choking on the events
+> 
+> The ADC input pins can be also configured as general purpose outputs.
+> Those pins which don't have corresponding ADC channel node in the
+> device-tree will be controllable as GPO.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Some minor stuff inline.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ece144f151ac7bf8bb5b98f7d4aeeda7a2eed02a
-commit: 165e8cc3cfec9ef51f3376b0d49b115294f34f3b staging: gpib: Add KBUILD files for GPIB drivers
-date:   5 months ago
-config: s390-randconfig-r064-20250302 (https://download.01.org/0day-ci/archive/20250302/202503021157.kNEEt0fK-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503021157.kNEEt0fK-lkp@intel.com/reproduce)
+Thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503021157.kNEEt0fK-lkp@intel.com/
+Jonathan
 
-All errors (new ones prefixed by >>):
+> +
+> +#define BD79124_REG_SYSTEM_STATUS	0x0
+> +#define BD79124_REG_GEN_CFG		0x01
+> +#define BD79124_REG_OPMODE_CFG		0x04
+> +#define BD79124_REG_PINCFG		0x05
+> +#define BD79124_REG_GPO_VAL		0x0B
+> +#define BD79124_REG_SEQUENCE_CFG	0x10
+> +#define BD79124_REG_MANUAL_CHANNELS	0x11
+> +#define BD79124_REG_AUTO_CHANNELS	0x12
+> +#define BD79124_REG_ALERT_CH_SEL	0x14
+> +#define BD79124_REG_EVENT_FLAG		0x18
+> +#define BD79124_REG_EVENT_FLAG_HI	0x1a
+> +#define BD79124_REG_EVENT_FLAG_LO	0x1c
+> +#define BD79124_REG_HYSTERESIS_CH0	0x20
+> +#define BD79124_REG_EVENTCOUNT_CH0	0x22
+> +#define BD79124_REG_RECENT_CH0_LSB	0xa0
+> +#define BD79124_REG_RECENT_CH7_MSB	0xaf
+> +
+> +#define BD79124_ADC_BITS 12
+> +#define BD79124_MASK_CONV_MODE GENMASK(6, 5)
+> +#define BD79124_MASK_AUTO_INTERVAL GENMASK(1, 0)
+> +#define BD79124_CONV_MODE_MANSEQ 0
+> +#define BD79124_CONV_MODE_AUTO 1
+> +#define BD79124_INTERVAL_075 0
 
-   drivers/staging/gpib/eastwood/fluke_gpib.c: In function 'fluke_line_status':
-   drivers/staging/gpib/eastwood/fluke_gpib.c:196:30: warning: variable 'nec_priv' set but not used [-Wunused-but-set-variable]
-     196 |         struct nec7210_priv *nec_priv;
-         |                              ^~~~~~~~
-   drivers/staging/gpib/eastwood/fluke_gpib.c: In function 'fluke_attach_impl':
->> drivers/staging/gpib/eastwood/fluke_gpib.c:1013:28: error: implicit declaration of function 'ioremap'; did you mean 'iounmap'? [-Wimplicit-function-declaration]
-    1013 |         nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-         |                            ^~~~~~~
-         |                            iounmap
->> drivers/staging/gpib/eastwood/fluke_gpib.c:1013:26: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    1013 |         nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-         |                          ^
-   drivers/staging/gpib/eastwood/fluke_gpib.c:1050:40: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    1050 |         e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
-         |                                        ^
-   In file included from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
-   drivers/staging/gpib/eastwood/fluke_gpib.h: At top level:
-   drivers/staging/gpib/eastwood/fluke_gpib.h:140:18: warning: 'fluke_num_regs' defined but not used [-Wunused-const-variable=]
-     140 | static const int fluke_num_regs = 8;
-         |                  ^~~~~~~~~~~~~~
-   In file included from drivers/staging/gpib/include/nec7210.h:17,
-                    from drivers/staging/gpib/eastwood/fluke_gpib.h:13:
-   drivers/staging/gpib/include/nec7210_registers.h:21:18: warning: 'nec7210_num_registers' defined but not used [-Wunused-const-variable=]
-      21 | static const int nec7210_num_registers = 8;
-         |                  ^~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/staging/gpib/include/gpib_types.h:16,
-                    from drivers/staging/gpib/include/nec7210.h:16:
-   drivers/staging/gpib/uapi/gpib_user.h:344:18: warning: 'request_service_bit' defined but not used [-Wunused-const-variable=]
-     344 | static const int request_service_bit = 0x40;
-         |                  ^~~~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:264:18: warning: 'gpib_addr_max' defined but not used [-Wunused-const-variable=]
-     264 | static const int gpib_addr_max = 30;    /* max address for primary/secondary gpib addresses */
-         |                  ^~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:212:22: warning: 'gpib_command_mask' defined but not used [-Wunused-const-variable=]
-     212 | static const uint8_t gpib_command_mask = 0x7f;
-         |                      ^~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:53:18: warning: 'board_status_mask' defined but not used [-Wunused-const-variable=]
-      53 | static const int board_status_mask = ERR | TIMO | END | CMPL | SPOLL |
-         |                  ^~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:52:18: warning: 'device_status_mask' defined but not used [-Wunused-const-variable=]
-      52 | static const int device_status_mask = ERR | TIMO | END | CMPL | RQS;
-         |                  ^~~~~~~~~~~~~~~~~~
+Can we make these units in these explicit?
+#define BD79124_INTERVAL_MS_0_75 
+maybe?  Nice to avoid need for comments on what the units are where
+you use these.
+
+> +#define BD79124_INTERVAL_150 1
+> +#define BD79124_INTERVAL_300 2
+> +#define BD79124_INTERVAL_600 3
+
+> +
+> +static int bd79124_enable_event(struct bd79124_data *data,
+> +		enum iio_event_direction dir, unsigned int channel)
+> +{
+> +	int dir_bit = BIT(dir);
+> +	int reg;
+> +	u16 *limit;
+> +	int ret;
+> +
+> +	guard(mutex)(&data->mutex);
+> +	/* Set channel to be measured */
+> +	ret = bd79124_start_measurement(data, channel);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->alarm_monitored[channel] |= dir_bit;
+> +
+> +	/* Add the channel to the list of monitored channels */
+> +	ret = regmap_set_bits(data->map, BD79124_REG_ALERT_CH_SEL,
+> +			      BIT(channel));
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (dir == IIO_EV_DIR_RISING) {
+> +		limit = &data->alarm_f_limit[channel];
+> +		reg = BD79124_GET_HIGH_LIMIT_REG(channel);
+> +	} else {
+> +		limit = &data->alarm_f_limit[channel];
+> +		reg = BD79124_GET_LOW_LIMIT_REG(channel);
+> +	}
+> +	/* Don't write the new limit to the hardware if we are in the
+> +	 * rate-limit period. The timer which re-enables the event will set
+> +	 * the limit.
+> +	 */
+/*
+ * Don't
+
+Check for other cases of this...
 
 
-vim +1013 drivers/staging/gpib/eastwood/fluke_gpib.c
+> +static void bd79124_re_enable_hi(struct bd79124_data *data, unsigned int channel)
+> +{
+> +	int ret, evbit = BIT(IIO_EV_DIR_RISING);
+> +
+> +	if (!(data->alarm_suppressed[channel] & evbit))
+> +		return;
+> +
+> +	data->alarm_suppressed[channel] &= (~evbit);
 
-55936779f49612 Dave Penkler 2024-09-18   973  
-55936779f49612 Dave Penkler 2024-09-18   974  static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *config,
-55936779f49612 Dave Penkler 2024-09-18   975  			     unsigned int handshake_mode)
-55936779f49612 Dave Penkler 2024-09-18   976  {
-55936779f49612 Dave Penkler 2024-09-18   977  	struct fluke_priv *e_priv;
-55936779f49612 Dave Penkler 2024-09-18   978  	struct nec7210_priv *nec_priv;
-55936779f49612 Dave Penkler 2024-09-18   979  	int isr_flags = 0;
-55936779f49612 Dave Penkler 2024-09-18   980  	int retval;
-55936779f49612 Dave Penkler 2024-09-18   981  	int irq;
-55936779f49612 Dave Penkler 2024-09-18   982  	struct resource *res;
-55936779f49612 Dave Penkler 2024-09-18   983  	dma_cap_mask_t dma_cap;
-55936779f49612 Dave Penkler 2024-09-18   984  
-55936779f49612 Dave Penkler 2024-09-18   985  	if (!fluke_gpib_pdev) {
-55936779f49612 Dave Penkler 2024-09-18   986  		pr_err("No gpib platform device was found, attach failed.\n");
-55936779f49612 Dave Penkler 2024-09-18   987  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18   988  	}
-55936779f49612 Dave Penkler 2024-09-18   989  
-55936779f49612 Dave Penkler 2024-09-18   990  	retval = fluke_generic_attach(board);
-55936779f49612 Dave Penkler 2024-09-18   991  	if (retval)
-55936779f49612 Dave Penkler 2024-09-18   992  		return retval;
-55936779f49612 Dave Penkler 2024-09-18   993  
-55936779f49612 Dave Penkler 2024-09-18   994  	e_priv = board->private_data;
-55936779f49612 Dave Penkler 2024-09-18   995  	nec_priv = &e_priv->nec7210_priv;
-55936779f49612 Dave Penkler 2024-09-18   996  	nec_priv->offset = fluke_reg_offset;
-55936779f49612 Dave Penkler 2024-09-18   997  	board->dev = &fluke_gpib_pdev->dev;
-55936779f49612 Dave Penkler 2024-09-18   998  
-55936779f49612 Dave Penkler 2024-09-18   999  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 0);
-55936779f49612 Dave Penkler 2024-09-18  1000  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1001  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for cb7210 gpib\n");
-55936779f49612 Dave Penkler 2024-09-18  1002  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1003  	}
-55936779f49612 Dave Penkler 2024-09-18  1004  
-55936779f49612 Dave Penkler 2024-09-18  1005  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1006  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1007  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1008  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1009  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1010  	}
-55936779f49612 Dave Penkler 2024-09-18  1011  	e_priv->gpib_iomem_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1012  
-55936779f49612 Dave Penkler 2024-09-18 @1013  	nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1014  				   resource_size(e_priv->gpib_iomem_res));
-55936779f49612 Dave Penkler 2024-09-18  1015  	pr_info("gpib: iobase %lx remapped to %p, length=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1016  		(unsigned long)e_priv->gpib_iomem_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1017  		nec_priv->iobase, (int)resource_size(e_priv->gpib_iomem_res));
-55936779f49612 Dave Penkler 2024-09-18  1018  	if (!nec_priv->iobase) {
-55936779f49612 Dave Penkler 2024-09-18  1019  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
-55936779f49612 Dave Penkler 2024-09-18  1020  		return -ENOMEM;
-55936779f49612 Dave Penkler 2024-09-18  1021  	}
-55936779f49612 Dave Penkler 2024-09-18  1022  
-55936779f49612 Dave Penkler 2024-09-18  1023  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 1);
-55936779f49612 Dave Penkler 2024-09-18  1024  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1025  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for gpib dma port\n");
-55936779f49612 Dave Penkler 2024-09-18  1026  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1027  	}
-55936779f49612 Dave Penkler 2024-09-18  1028  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1029  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1030  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1031  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1032  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1033  	}
-55936779f49612 Dave Penkler 2024-09-18  1034  	e_priv->dma_port_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1035  
-55936779f49612 Dave Penkler 2024-09-18  1036  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 2);
-55936779f49612 Dave Penkler 2024-09-18  1037  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1038  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for write transfer counter\n");
-55936779f49612 Dave Penkler 2024-09-18  1039  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1040  	}
-55936779f49612 Dave Penkler 2024-09-18  1041  
-55936779f49612 Dave Penkler 2024-09-18  1042  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1043  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1044  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1045  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1046  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1047  	}
-55936779f49612 Dave Penkler 2024-09-18  1048  	e_priv->write_transfer_counter_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1049  
-55936779f49612 Dave Penkler 2024-09-18  1050  	e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1051  						 resource_size(e_priv->write_transfer_counter_res));
-55936779f49612 Dave Penkler 2024-09-18  1052  	pr_info("gpib: write transfer counter %lx remapped to %p, length=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1053  		(unsigned long)e_priv->write_transfer_counter_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1054  		e_priv->write_transfer_counter,
-55936779f49612 Dave Penkler 2024-09-18  1055  		(int)resource_size(e_priv->write_transfer_counter_res));
-55936779f49612 Dave Penkler 2024-09-18  1056  	if (!e_priv->write_transfer_counter) {
-55936779f49612 Dave Penkler 2024-09-18  1057  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
-55936779f49612 Dave Penkler 2024-09-18  1058  		return -ENOMEM;
-55936779f49612 Dave Penkler 2024-09-18  1059  	}
-55936779f49612 Dave Penkler 2024-09-18  1060  
-55936779f49612 Dave Penkler 2024-09-18  1061  	irq = platform_get_irq(fluke_gpib_pdev, 0);
-55936779f49612 Dave Penkler 2024-09-18  1062  	pr_info("gpib: irq %d\n", irq);
-55936779f49612 Dave Penkler 2024-09-18  1063  	if (irq < 0) {
-55936779f49612 Dave Penkler 2024-09-18  1064  		dev_err(&fluke_gpib_pdev->dev, "fluke_gpib: request for IRQ failed\n");
-55936779f49612 Dave Penkler 2024-09-18  1065  		return -EBUSY;
-55936779f49612 Dave Penkler 2024-09-18  1066  	}
-55936779f49612 Dave Penkler 2024-09-18  1067  	retval = request_irq(irq, fluke_gpib_interrupt, isr_flags, fluke_gpib_pdev->name, board);
-55936779f49612 Dave Penkler 2024-09-18  1068  	if (retval) {
-55936779f49612 Dave Penkler 2024-09-18  1069  		dev_err(&fluke_gpib_pdev->dev,
-55936779f49612 Dave Penkler 2024-09-18  1070  			"cannot register interrupt handler err=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1071  			retval);
-55936779f49612 Dave Penkler 2024-09-18  1072  		return retval;
-55936779f49612 Dave Penkler 2024-09-18  1073  	}
-55936779f49612 Dave Penkler 2024-09-18  1074  	e_priv->irq = irq;
-55936779f49612 Dave Penkler 2024-09-18  1075  
-55936779f49612 Dave Penkler 2024-09-18  1076  	dma_cap_zero(dma_cap);
-55936779f49612 Dave Penkler 2024-09-18  1077  	dma_cap_set(DMA_SLAVE, dma_cap);
-55936779f49612 Dave Penkler 2024-09-18  1078  	e_priv->dma_channel = dma_request_channel(dma_cap, gpib_dma_channel_filter, NULL);
-55936779f49612 Dave Penkler 2024-09-18  1079  	if (!e_priv->dma_channel) {
-55936779f49612 Dave Penkler 2024-09-18  1080  		pr_err("fluke_gpib: failed to allocate a dma channel.\n");
-55936779f49612 Dave Penkler 2024-09-18  1081  		// we don't error out here because unaccel interface will still
-55936779f49612 Dave Penkler 2024-09-18  1082  		// work without dma
-55936779f49612 Dave Penkler 2024-09-18  1083  	}
-55936779f49612 Dave Penkler 2024-09-18  1084  
-55936779f49612 Dave Penkler 2024-09-18  1085  	return fluke_init(e_priv, board, handshake_mode);
-55936779f49612 Dave Penkler 2024-09-18  1086  }
-55936779f49612 Dave Penkler 2024-09-18  1087  
+No brackets around the ~evbit.
+Check for other cases of this.
+Otherwise we'll get some script written 'cleanup'.
 
-:::::: The code at line 1013 was first introduced by commit
-:::::: 55936779f4961299efa99a6843c8ff3b019d3858 staging: gpib: Add Fluke cda based cards GPIB driver
 
-:::::: TO: Dave Penkler <dpenkler@gmail.com>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +
+> +	if (!(data->alarm_monitored[channel] & evbit))
+> +		return;
+> +
+> +	ret = bd79124_write_int_to_reg(data, BD79124_GET_HIGH_LIMIT_REG(channel),
+> +				       data->alarm_r_limit[channel]);
+> +	if (ret)
+> +		dev_warn(data->dev, "High limit enabling failed for channel%d\n",
+> +			 channel);
+> +}
+> +
+> +static void bd79124_alm_enable_worker(struct work_struct *work)
+> +{
+> +	int i;
+> +	struct bd79124_data *data = container_of(work, struct bd79124_data,
+> +						 alm_enable_work.work);
+> +
+> +	guard(mutex)(&data->mutex);
+> +	/*
+> +	 * We should not re-enable the event if user has disabled it while
+> +	 * rate-limiting was enabled.
+> +	 */
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Is this comment suggesting something that isn't done or referring to specific
+code?  I think it wants to be in the function above where the decision is made.
+
+> +	for (i = 0; i < BD79124_MAX_NUM_CHANNELS; i++) {
+> +		bd79124_re_enable_hi(data, i);
+> +		bd79124_re_enable_lo(data, i);
+> +	}
+> +}
+> +
+
+> +
+
+> +static irqreturn_t bd79124_event_handler(int irq, void *priv)
+> +{
+> +	int ret, i_hi, i_lo, i;
+> +	struct iio_dev *iio_dev = priv;
+> +	struct bd79124_data *data = iio_priv(iio_dev);
+> +
+> +	/*
+> +	 * Return IRQ_NONE if bailing-out without acking. This allows the IRQ
+> +	 * subsystem to disable the offending IRQ line if we get a hardware
+> +	 * problem. This behaviour has saved my poor bottom a few times in the
+> +	 * past as, instead of getting unusably unresponsive, the system has
+> +	 * spilled out the magic words "...nobody cared".
+> +	 */
+> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_HI, &i_hi);
+> +	if (ret)
+> +		return IRQ_NONE;
+> +
+> +	ret = regmap_read(data->map, BD79124_REG_EVENT_FLAG_LO, &i_lo);
+> +	if (ret)
+> +		return IRQ_NONE;
+> +
+> +	if (!i_lo && !i_hi)
+> +		return IRQ_NONE;
+> +
+> +	for (i = 0; i < BD79124_MAX_NUM_CHANNELS; i++) {
+> +		u64 ecode;
+> +
+> +		if (BIT(i) & i_hi) {
+> +			ecode = IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, i,
+
+> +					IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING);
+Align this to less tabs as per discussion on previous version.
+
+> +
+> +
+> +struct bd79124_reg_init {
+> +	int reg;
+> +	int val;
+> +};
+
+Not used any more.
+
+> +
+> +static int bd79124_chan_init(struct bd79124_data *data, int channel)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(data->map, BD79124_GET_HIGH_LIMIT_REG(channel), 4095);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(data->map, BD79124_GET_LOW_LIMIT_REG(channel), 0);
+> +}
+
+> +
+> +static int bd79124_init_mux(struct bd79124_data *data, int gpio_pins)
+> +{
+> +	return regmap_write(data->map, BD79124_REG_PINCFG, gpio_pins);
+
+Maybe squash this inline.  Doesn't seem to add a lot to have the helper.
+
+> +}
+> +
+> +static int bd79124_hw_init(struct bd79124_data *data, int gpio_pins)
+> +{
+...
+
+> +
+> +	/* Set the measurement interval to 0.75 mS */
+
+This lead me to comment on defines.  I'd rather code was fully self
+documenting and remove the comment if we can.  Makes for less chance of it
+becoming out of sync over time.
+
+> +	regval = FIELD_PREP(BD79124_MASK_AUTO_INTERVAL, BD79124_INTERVAL_075);
+> +	ret = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> +				 BD79124_MASK_AUTO_INTERVAL, regval);
+> +	if (ret)
+> +		return ret;
+
+
+
+
 
