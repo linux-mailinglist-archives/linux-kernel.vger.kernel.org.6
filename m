@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-540543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6DDA4B1FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:05:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA78A4B205
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C7A16BB63
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:05:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806723B1C35
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9188A1E5B6C;
-	Sun,  2 Mar 2025 14:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43781E7C03;
+	Sun,  2 Mar 2025 14:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="feia/f3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YEiDu79Q"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63CB1DE2D7;
-	Sun,  2 Mar 2025 14:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE081E0B9C;
+	Sun,  2 Mar 2025 14:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740924304; cv=none; b=ilkWYZg+x0HW37db0AkqWnCZSTlyAjn4Rbcck5SW7penHqAxt8WNNUUPgQMueDWlAqfR58II7P6bUVpy4qoVzv5J3GBdr/hqgQRE98gqb9PX0ygYMi6il2ZJVAoqzShPhG6b4dS72+HEtPZHq1Qj3RRYqqMJvUepvXXndDVp3bg=
+	t=1740924476; cv=none; b=ZdAu0CKyM6j6pgWfbcYTIDhcwwJsz1X4tcWgmuXmcpZKrLwmwwSTljS7tfXU+i1Dnu51a9yx2wOm3CIvwZHTMp8oeAanQQiM7gSI8BOszTrKwXO4/HapIKbFY48HcNOxQ+LBg+wWDwR/s2mKlGWvmoRlgt52k9JO9X30qGgS67U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740924304; c=relaxed/simple;
-	bh=ACEiqu9VyNmqiDL7jDGjoGE0f92hgXDBZVuSdlhL6c4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3UhycMJIHxgsFWl3gcMRut40cxqL3xzQOUmIkL25wHebxA6xW5Sdb6lS6MYpLFyFJmjtfEFe5LoeS+MYBku0UT+JUgczwF+X8/O8WchIlefTPLsDz9P6hcXzhZLi5uxbj1OeguzXTBK2eqTsjjKznoUhd9ItNYwSHwTCYey9Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=feia/f3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58488C4CED6;
-	Sun,  2 Mar 2025 14:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740924303;
-	bh=ACEiqu9VyNmqiDL7jDGjoGE0f92hgXDBZVuSdlhL6c4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=feia/f3NOUJDjs0K1SnCGswU3g3gzbBeIKSDA/ChWT6xKyWlnHs1ayaXRl/uZKfAv
-	 wf3u3MtYT+Es8Kmf5uUW5gxsZhrz5HH5MheS4CMuI4943Dk+vhGJg7dAoX3WQRKgWZ
-	 pHmCZEgOmgahdTDdMoXMgwHs8uGJgCKF31NlvS52VP7Bcysu+9cElBpMmdccCjtITo
-	 xPGo0TWs4hfxm/yXi5Gnt7wTCbMRgsgid/X+PUU+OfBIgeZEtlCOiE8OxvMhD8sEwz
-	 3UmxWbsJuH8txJHlOLpFjk9S1oc5cpvU4U4jlLdceGdrCitabASCPgMyHcRWiU+dIF
-	 EpUe0sHVWhSpg==
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2feb9076a1cso5270792a91.0;
-        Sun, 02 Mar 2025 06:05:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0ctyRU1oOd9kP9SQ5jFcJQP+XtBDDK2k3mrKHka0taPYhkqCX+fkoJJn94EwDOWnvcPEEbgeHHaVW@vger.kernel.org, AJvYcCVUkazRPvX2j/qbTIdNdvXmIPC3AHNvwmXNDzgcIvDLTpsiipM0L7vdN/th7jnGTqPIXVoKutHepkqLkzYu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiM6VPbWOHYkLkejziHvK/DpHBrlUagX5iTwMVPv/RFEJ1CHha
-	g+jn3vEcewS0nmSV+j9Gse0qeE4HBoyARZft3W2XyCPNIpnI57ouPE+uQzF5+ht+J0M+NznYzpN
-	BoKPGgo0w8Ph+IyrXhgOw5EaByg==
-X-Google-Smtp-Source: AGHT+IG16EEdJJHvm6Oj64x4u72JISQwLPN9kfN5w5LtdjSW9aGHHuRsWNMb8JRAz2CRhaPVGvxVlY/s8nFADdCz3Og=
-X-Received: by 2002:a17:90b:4fd0:b0:2ee:aed6:9ec2 with SMTP id
- 98e67ed59e1d1-2febab5e11dmr17308029a91.14.1740924302962; Sun, 02 Mar 2025
- 06:05:02 -0800 (PST)
+	s=arc-20240116; t=1740924476; c=relaxed/simple;
+	bh=xRi/VtBmjy7VGAxEHebrRxUL6EARF7T0KosgVwz4ubU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gd01dWlQJTrKStWT0Hg3oey+pky5BaEjgQukDGNBMt4jYFWPUtXKff5EnKVNKpzc44li4fid1Y7YnAWlMOhP8CLamvuFOe/XAv8mqidS50vHzaV/VUNqnd/5QvFzUOnhE/MmKq6BZZdfxamYHR15Rrsci7rahNdrsg0MfvHCwds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YEiDu79Q; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F4712D5;
+	Sun,  2 Mar 2025 15:06:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740924382;
+	bh=xRi/VtBmjy7VGAxEHebrRxUL6EARF7T0KosgVwz4ubU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YEiDu79Q0f12zm1UxwsJP8JTuUfg4hi9BHPxUZo5DuGlSHny4RwXsLcXwhwoZy9ad
+	 u8iKNNIzzxrtCfETVcPGbXhcY1euvKj+RnCiRyVCnsCIkpKIBZoKa79ekk7sJ9eDi4
+	 GQOFhnPrpHH6ulg8tVjN9htAgY/BwFYFWYJfpF48=
+Date: Sun, 2 Mar 2025 16:07:34 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: renesas: vsp1: Add support for VSPX
+Message-ID: <20250302140734.GA27177@pendragon.ideasonboard.com>
+References: <20241220-v4-vspx-id-v2-1-5cf05c7352df@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com> <20250217154836.108895-10-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250217154836.108895-10-angelogioacchino.delregno@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Sun, 2 Mar 2025 22:05:50 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__zrRM9oyDtuDAzJ+ddOU2as2-vy9FkGs_Wzqjo_==RvA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoTySmTRsktldIsbqAg0MJ_QRQyHKP457TZ4jFIH5MH1bn0tYelMK9Vy-I
-Message-ID: <CAAOTY__zrRM9oyDtuDAzJ+ddOU2as2-vy9FkGs_Wzqjo_==RvA@mail.gmail.com>
-Subject: Re: [PATCH v7 09/43] drm/mediatek: mtk_dpi: Explicitly manage TVD
- clock in power on/off
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com, 
-	jie.qiu@mediatek.com, junzhi.zhao@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com, 
-	ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com, 
-	jason-jh.lin@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241220-v4-vspx-id-v2-1-5cf05c7352df@ideasonboard.com>
 
-Hi, Angelo:
+Hi Jacopo,
 
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
-=BC
-2025=E5=B9=B42=E6=9C=8817=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8811:=
-49=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> In preparation for adding support for MT8195's HDMI reserved
-> DPI, add calls to clk_prepare_enable() / clk_disable_unprepare()
-> for the TVD clock: in this particular case, the aforementioned
-> clock is not (and cannot be) parented to neither pixel or engine
-> clocks hence it won't get enabled automatically by the clock
-> framework.
->
-> Please note that on all of the currently supported MediaTek
-> platforms, the TVD clock is always a parent of either pixel or
-> engine clocks, and this means that the common clock framework
-> is already enabling this clock before the children.
-> On such platforms, this commit will only increase the refcount
-> of the TVD clock without any functional change.
-
-Applied to mediatek-drm-next [1], thanks.
-
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.=
-git/log/?h=3Dmediatek-drm-next
-
-Regards,
-Chun-Kuang.
-
->
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On Fri, Dec 20, 2024 at 10:22:01AM +0100, Jacopo Mondi wrote:
+> Add support for VSPX to the vsp1 driver.
+> 
+> VSPX is an instance of Renesas VSP2 IP found on R-Car gen4 SoCs
+> that performs external memory access on behalf of the ISP.
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 > ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediate=
-k/mtk_dpi.c
-> index e12dc73ed79c..ee952785866c 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -499,6 +499,7 @@ static void mtk_dpi_power_off(struct mtk_dpi *dpi)
->
->         mtk_dpi_disable(dpi);
->         clk_disable_unprepare(dpi->pixel_clk);
-> +       clk_disable_unprepare(dpi->tvd_clk);
->         clk_disable_unprepare(dpi->engine_clk);
->  }
->
-> @@ -515,6 +516,12 @@ static int mtk_dpi_power_on(struct mtk_dpi *dpi)
->                 goto err_refcount;
->         }
->
-> +       ret =3D clk_prepare_enable(dpi->tvd_clk);
-> +       if (ret) {
-> +               dev_err(dpi->dev, "Failed to enable tvd pll: %d\n", ret);
-> +               goto err_engine;
-> +       }
-> +
->         ret =3D clk_prepare_enable(dpi->pixel_clk);
->         if (ret) {
->                 dev_err(dpi->dev, "Failed to enable pixel clock: %d\n", r=
-et);
-> @@ -524,6 +531,8 @@ static int mtk_dpi_power_on(struct mtk_dpi *dpi)
->         return 0;
->
->  err_pixel:
-> +       clk_disable_unprepare(dpi->tvd_clk);
-> +err_engine:
->         clk_disable_unprepare(dpi->engine_clk);
->  err_refcount:
->         dpi->refcount--;
-> --
-> 2.48.1
->
+> Add an vsp1_device_info entry for Gen4 VSPX.
+> 
+> VSPX will likely need custom features, hence do no set any feature
+> for the time being to prepare to expand later on.
+
+Now that you've posted "[PATCH v2 0/6] media: renesas: vsp1: Add support
+for IIF", this patch should be rebased on top, and set the VSP1_HAS_IIF
+feature. You can include it in v3 of the IIF support series.
+
+> ---
+> Changes in v2:
+> - Changed the patch authorship to my +renesas address
+> - Collect tags
+> - Link to v1: https://lore.kernel.org/r/20241219-v4-vspx-id-v1-1-e45225b02bf3@ideasonboard.com
+> ---
+>  drivers/media/platform/renesas/vsp1/vsp1_drv.c  | 10 ++++++++++
+>  drivers/media/platform/renesas/vsp1/vsp1_regs.h |  1 +
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> index 9fc6bf624a520ae38e9c5f30dfa4dfa412eec38e..4dfc5e1640264f23772964f2b48c66d76599cb70 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> @@ -835,6 +835,16 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+>  		.uif_count = 2,
+>  		.wpf_count = 1,
+>  		.num_bru_inputs = 5,
+> +	}, {
+> +		.version = VI6_IP_VERSION_MODEL_VSPX_GEN4,
+> +		.model = "VSP2-X",
+> +		.gen = 4,
+> +		.features = 0,
+> +		.lif_count = 0,
+> +		.rpf_count = 2,
+> +		.uif_count = 0,
+> +		.wpf_count = 0,
+> +		.num_bru_inputs = 2,
+>  	},
+>  };
+>  
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> index 7eca82e0ba7ec5e02a5f3b9a30ccdcb48db39ed2..75e064429f4e231ecd2e291a10c09931e8096a97 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> @@ -791,6 +791,7 @@
+>  #define VI6_IP_VERSION_MODEL_VSPDL_GEN3	(0x19 << 8)
+>  #define VI6_IP_VERSION_MODEL_VSPBS_GEN3	(0x1a << 8)
+>  #define VI6_IP_VERSION_MODEL_VSPD_GEN4	(0x1c << 8)
+> +#define VI6_IP_VERSION_MODEL_VSPX_GEN4	(0x1d << 8)
+>  /* RZ/G2L SoCs have no version register, So use 0x80 as the model version */
+>  #define VI6_IP_VERSION_MODEL_VSPD_RZG2L	(0x80 << 8)
+>  
+> 
+> ---
+> base-commit: 50d451b19cc58cf374160e30cbf72a5ed5b1b129
+> change-id: 20241219-v4-vspx-id-1dd2bb4aedfd
+
+-- 
+Regards,
+
+Laurent Pinchart
 
