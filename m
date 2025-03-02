@@ -1,304 +1,214 @@
-Return-Path: <linux-kernel+bounces-540523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432B5A4B1C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:12:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E03BA4B1CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3973B26F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B233B2784
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2951E51EE;
-	Sun,  2 Mar 2025 13:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37D31E5B87;
+	Sun,  2 Mar 2025 13:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bUO4AwwE";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dNIyDKcc"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9KzrJON"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D9B189BB0
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 13:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740921142; cv=fail; b=Z9MhvE+GUDrdx0OoMGvgVCp94EyVvIU1ZpxoTkCkea+Ot/NSxrcPKx+2mJpFLMZvx4aIciksxGfqV2LZ7dsDT0Tx+MQneG8JQTzIr8PKFdZ+f/MEVkmv/Js5l0+XTaFsi+lmztrxCj9SRJs+Kt1mGOBTQsQPiRRjc+WQ0+UP5bw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740921142; c=relaxed/simple;
-	bh=4YKNvqTGKjhwORqlSYxcQzm+fSJfEviJjJg6pTWxGck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Lmi/jGop0tE5GulraGKFufV641LckRbyTG3xWmBRyb1VM7Js95BXRq0ouewcFWms5X1yQmIHD4aRao1SR1HclLouzQiyJ2wlaWGt+fuzkFGg3M4oe4p7d8Olac/KurCfzxqTzjOxgoxs5FyHKG9TJJ/Fo+EfOKEPjnKDAIS5Vqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bUO4AwwE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dNIyDKcc; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522BU2Qh024092;
-	Sun, 2 Mar 2025 13:11:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=SxomTDo+L3k6j2sM3JPK2JiP6EcT57DnPQlJ8ymp7Rg=; b=
-	bUO4AwwE71ITQVPz4l5VXLUgc+kLYVWNDXhBWjAMFUiVGclrBzKUAcYcAI/5TPk7
-	18KV6NTePB/hxTAcIVX2/QXrNaeUJ6Dq+alqSUhCjmpUQS4IBdeL4YZYpxK3TWQ2
-	W4DORIOc2fu5l4OPFhQb0co25uPPpdTgYIeBwGZqQEAJ9EmO8Dn7KYHPiPA8tP1v
-	g9xbywc5Q8b5PHzEIniLNEbWXZ9mMOWxLdtLIm7yoM9lo8IJPQbyEg+kCNORmmFP
-	nTL8iDHQxxYrfps2myQo1Rl7HHtWQXocJYeqMj54ofCMu+IWt7HynbN90cXjt6/W
-	Zi2oQOWcNYqgfzsTioropw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u9q9bnv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 02 Mar 2025 13:11:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5229k1J0040400;
-	Sun, 2 Mar 2025 13:11:45 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 453rpcs9mg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 02 Mar 2025 13:11:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tYEH4HPhbCj0YJPTwjU/X111MSPOzb9Y3Z+DN2pYYFq2QCFNEY1TMzZxNRpV4IlavGGEZtEKWbZK4d4rGG37uBHHYZOzNctX+WquyIpacXpE7YgWy7GpcShwTxyBPgNI9pYyHwHjWYAb61BFzJ+p6PJpzxaw8we4o9DXhBFLlxTG7Ou1SjDX6N26/BT8Yf8ep09cW+71oi8WaeF41q+QGlHBT2gcUIsS3b4wB2lALL47PBp5KpYocM0MZxHnjzDsf8U+oYTgqulomxw2lbua7cEm/eB/jguP3XKQYMhG1Tv5gkf1u7QgmaS5HzDQH2DVlWZ7V+T7SWxpm4p/2JxvLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SxomTDo+L3k6j2sM3JPK2JiP6EcT57DnPQlJ8ymp7Rg=;
- b=yIZt+DY7ATTv+1jmr8khfL1FafkIJD8URojo7eknaGMg5H5Xbp6jtcZC/uNvu3NKa1CGN+DtjP7CT0TZQoNOWBmO26JhTrAtY6MAwgINICp9alamH60G2YxGYHFsONsQ4ZO8L91GSUA0kI6JbmPv3XNLficPFFTzZpb3szGlHMJIC/i48zIfrJJYnv44lxdEXFDpBfGs21vAkT6Ymq55HaGsvPVaKS0hXqsLcFOkBOB8KoSMTa0yVkBykuEwQ9YbO6XRsVQ0msBINFAuNIPp59hzeQGDe1xflCq+vqofO//PZJRilQilPE5cgc1s/VOGVtBpjfUhmGNN5EQd578T9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CA01EB3D;
+	Sun,  2 Mar 2025 13:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740921353; cv=none; b=gnO0TC/5Kq+zXJkfgYxTPVOJl3fDHX50k80qgt3fWI8srB2vt1tv4XOfrURTxOcfTxm+/LukwttuT6oxi1CNOjYdtyRaSDwUvXZBj3bRqAPOn+Pg2A+ahZpeiZwRLSmxielXWOJ+oSfAzXq6Jq24XbWHzEiBpvthMPt6NytB4w4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740921353; c=relaxed/simple;
+	bh=E+tf5gJ3h3w6HycF9ratLCSZSX3tCmqhgj6Hu+c132g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VU6VHz7QHmHJ8+4slBH13+tMDvfr8kIkZRJYz787jm12CkmbwFwJpLCSxZHQxtuXp/KiatRZDJ0/V7O2ClWgcRoTTJuzx5wU9whQ8vebMBtGgqtmf4zmZV54mU1I40iTlFPUXrh9/d6+r8sOQJ9C0NQBwHFanB+hjC1okd0ngjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9KzrJON; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5496301c6afso430207e87.0;
+        Sun, 02 Mar 2025 05:15:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SxomTDo+L3k6j2sM3JPK2JiP6EcT57DnPQlJ8ymp7Rg=;
- b=dNIyDKccjoaPbTAoEEEFqH5iKVM8jKQQjQLHwZHj/cihmi3zRRs89hbQG19mk7nmW/7sCL9zxAPR6msXNni5inK3v42ah5IvdDvNezSpvkDqkf8iZoAaDgXDWKHRthgiSw+XJg7m49mqYHmpzp7+Sok+Z6SYLYDi+Y22t06GqKg=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by SJ0PR10MB4496.namprd10.prod.outlook.com (2603:10b6:a03:2d5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Sun, 2 Mar
- 2025 13:11:43 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%6]) with mapi id 15.20.8489.025; Sun, 2 Mar 2025
- 13:11:42 +0000
-Date: Sun, 2 Mar 2025 22:11:35 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Lilith Gkini <lilithpgkini@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slub: Fix Off-By-One in the While condition in
- on_freelist()
-Message-ID: <Z8RZB-Adxp9Lgo0t@harry>
-References: <Z7DHXVNJ5aVBM2WA@Arch>
- <Z7blsPJiOPTFWEL2@harry>
- <Z7b0CvTvcS47o7ie@harry>
- <Z7iUVJA-luvNaIac@Arch>
- <Z7lLXCZB2IXth7l8@harry>
- <Z7mX6PFxUptwX0mW@Arch>
- <Z7u2jgDadOwceYeN@harry>
- <Z7xiHTN0Q5yI-UmP@Arch>
- <Z72WiUlhxOGnrXFb@harry>
- <Z8CVcNMGa7pTZvGB@Arch>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8CVcNMGa7pTZvGB@Arch>
-X-ClientProxiedBy: SL2PR01CA0017.apcprd01.prod.exchangelabs.com
- (2603:1096:100:41::29) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+        d=gmail.com; s=20230601; t=1740921349; x=1741526149; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOHZ9RwHYzXMQ8jAnz//sM4ODepJhiFxm1L6Ef+fj6g=;
+        b=O9KzrJON0LzVM31vgWB8WQ3c5Brf2G/3wH2LEHYGvPa+BQS8ZX9LbyU3bVspGnUTJ8
+         ZznodpclX5qfIwRQ70z62i7wsuJ7Sds7KZeTYj58Mv+3KvV9Oa4pvVIJ2PRq3Ktsqj4L
+         5CIK4A+REn6YmDDVcNtpbXcDYOb73klHUPqGJ0+hgCdxH80aQRbsROoGMWeeNleuZYEN
+         zmGXZ0LxfvdlLpIZyfY2WiYYxTMINm5RuKK9OnAw3peKE8nQgoSm36eovte8CwciNz6G
+         oAVYD8vNW7+YLrEdVtMy0Ui/cX580VjgHp+M8OFUVIqU4yY3G4S0k68m5QF3Pqjms0ys
+         x1Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740921349; x=1741526149;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aOHZ9RwHYzXMQ8jAnz//sM4ODepJhiFxm1L6Ef+fj6g=;
+        b=oF0GnePiJ9Q6pI2JQ1hric0NAZc3l1xcHtF/mYxFoLf9iiIjzbYCSo7Gvrsy/15nRQ
+         98rUqOj+cmeFaaYC8JGO7aVx2t2zo/iMqcZeD7zA0ubc1cTJOKVshNI5956MXbTpj3zo
+         uq4hQATm21q3aaL/Yoi41lmSlqP9G7uUgAGY0bqbnjYBXq91zQk3F8CC1WQ8YUhjCiWe
+         ON27P2iYOi4ulPs/PRH1VDTLBYqWZZGbHwCxyp73Qj5/RMIZNgCNmXQuaBuMOf6bVLsT
+         5v9mWDIeDrrbDuK8q0j4KPtlp/gyGjjngyGOs7N7MuwmFAWGpOBzBHDdjcAZDKJElHPH
+         WJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1JuJJdPFXYJoUFybw3iJKfSFwp7FlpgYW+ieIstDzAyKRVTjf8hIk+5WaAKouhtnSjlt9nCLNIlIN5sSr@vger.kernel.org, AJvYcCUraNMxFgpCGzKgFLpVWHk4zOt9mmnc2fUJ9ZO2ApI04u7AqxlCmx+QwW3Kv4eQi8X4YxOzLvjATiEvkXtz+P4kjuA=@vger.kernel.org, AJvYcCViX9XTffEhUw5lEnGhLIlLAtCNs/yoynmFuI68Cua3SNIP/R4O3kr6NEPhZ09yHBQRjNa/++P/HrLr@vger.kernel.org, AJvYcCVwnOAS8ui9Gg4Rjy672a4g4L7QnyvFP/zI3fkPVKGajFxBJ1jLZvLJRSdEN3dROOyGueiucUCKrhdO@vger.kernel.org, AJvYcCWZtcz/m9DX2ut8nkN0MzWRKwZpvUAj09YPw+QE9BoKwcSK0J6KlTt0tykh9GNC7FO05jK8FOtt5uqqMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt+r1TbGKLg1+JdqUFmwk8m6d8wkt7OFY1932FSo3E2iZLmzdz
+	0kqZCFQRueXQZnh1eFw1tBo4bfS6H8YpOkHj0m/pH1Rp753VzjZg
+X-Gm-Gg: ASbGncuGi7YL8Aqh0BVpMRa2lRnV42DqRFDsVW2Ay26nZxitu4nEGYFRIU4LFIhI9yz
+	X4JmGDlwtcFlUmkGZQ99DKtINqcSA/wG9oIrtc3YLt6Gi6zzJ0s9nDMRMkiq5Oe99tGT/qUqrJj
+	Wmc9qwnUF+TWe/XpQag71hVcAjFlO8pf6K3x7z8F34Dk7/8inqujgSi7z/kvsQwyw0TbdrNdlf6
+	M8dtPVJ2ZZMu95K8tDouKr3cs3j0CRIkBCSRl3GFkGNhua/cI1/mWM5r+5IdBGiysPSROl8T14/
+	vAK3UA9PQRqYSl6echjj00JYsqzvYjfARcIh7eKWwE3AiLuLSuRZCDuug/qg871nyuVfraqskXb
+	X7QZ6bVrKknLULqBLkxyzX/tUjQ==
+X-Google-Smtp-Source: AGHT+IGHFptw3pHDNvEkh6S8B9YASLA7Mxg1Ob35UR3qFEC4CECgPhwErw/f4EuhZrqOLOxsFMYCdA==
+X-Received: by 2002:a05:6512:3a90:b0:545:a70:74c5 with SMTP id 2adb3069b0e04-5494c320d67mr3708996e87.13.1740921348639;
+        Sun, 02 Mar 2025 05:15:48 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495bc78d51sm353840e87.27.2025.03.02.05.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 05:15:48 -0800 (PST)
+Message-ID: <ccac509c-d063-42f4-a092-bee4014ec9da@gmail.com>
+Date: Sun, 2 Mar 2025 15:15:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|SJ0PR10MB4496:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9318ca5-7d3a-494e-3133-08dd598bc678
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWw1UW1JcW4wMUdLY3RPb3M4TDc3M3J5bkpkNEpGZmZTN1ZKbktqVnhLdUp4?=
- =?utf-8?B?S1hKSXpRUmdRdEViaE9KeXN5bFFRREExSUpyd3JGV2J0d29LRmRsMWJkMHdW?=
- =?utf-8?B?eGpoS2Q5ZHRQMFZQNUdJMkIvRVB4UTU5MnY3cUxWK2U5S05OZ2c2YVlZTFZw?=
- =?utf-8?B?dm83MkdHRjF5N1FzK21YdVVlNUNPWkFrL2xWUFdtSnUxbnhWZE8xV0J1RWtv?=
- =?utf-8?B?UUJqRGJvV2lPaU1nbW92Q3FmbVRDUEdkcVZKN2JQR2ZKVVR1bW9LZWFlTEt0?=
- =?utf-8?B?cms0MjhPY2c2bzREY2lzbDdnYVlOb3VMMXdvZGM1eW5OM1BYc3NQUDlhT292?=
- =?utf-8?B?cm45YXk5Tm9HYmx3eUxQYzVlbUpxa2QvdHVlanVlaHBsM08vRXRsQjZLN1VR?=
- =?utf-8?B?TkJRNjU3K2wyNW5KYlFOTDdHYndtZU05QzhmZ2kwd0lORlhyTGpWZ1JBSkEy?=
- =?utf-8?B?b3I5TUpLUnoxMFNlNktkZDhqRDBWY1V6VHZ2VjFubTdaMEFTdWJKWkMyR0JN?=
- =?utf-8?B?c0hNS3V4SVNrcHpvblNocXdlZFlRV1psNmsvVjI5dEx1MHAzOXdYUlFRZ2tr?=
- =?utf-8?B?ZDRwcEhwZ2lrTkdKdllJWFpMYU0vZ0RGVU80Q3NGQnpON3N2WVFqVk1iWGhp?=
- =?utf-8?B?dkphN0QzTzI3YUdRWGY3L1pSUyt0ZHFvclc0Rk93Q29HL2FQWm5PS29wc2hx?=
- =?utf-8?B?SFA4SUFyVU5jUDAvVTJKQnUvdWtiM3lsaGNXTUpFVlk5UEVYQlo0Ums4NWFO?=
- =?utf-8?B?TVpVUzVEMHplZzlJQmQ2R0RXcGlmd01pZ04xYmc2NEJNM3pOcldIMDhua28v?=
- =?utf-8?B?OHZwRzRSUUxKcyswQ0t0d3hNYlk3djNFd1dreUlxZWVJZjRuT3ZIVWl6dTha?=
- =?utf-8?B?allJTzVSeDYyUmpUVXQrdGJSTlRjb3N1Zk14M3d6MlhmY0pUeTc4czJkZW5W?=
- =?utf-8?B?UFJHTmVodGk3YlFISEFVWGh1cTBPRW5QYXNpYkZJRlpMMlNoVnNNamdYRzVq?=
- =?utf-8?B?d0pacXdsYmdjZk1OQjdGQk1taWRmWkg3VWdrTUVqMWEvWW9DT2NQeHZPM3Q1?=
- =?utf-8?B?YmNhSXhYRzMvWFA2MHprdTErUnRKQ1loeVUxa213ZWZyMk9PZkw2SEtCZFNq?=
- =?utf-8?B?cDRXM01SUTd2R2cyU0R2Q1A4TEZnZ2dJK2l5UC8yQisvYmN6T0N2Nkl3dnlI?=
- =?utf-8?B?UlVTK1pSbjNHUHJmdHRmTVNjdFR4Mlduak9McU5DMmdnenlqK2ZqWG9tZ2dj?=
- =?utf-8?B?SDVVSGdoTjM2WFlqRXZnb3p3RzJCUExEcUNrRkFOaFNoandoUnFaWWpxZWJH?=
- =?utf-8?B?end3MUpGeFh2REYyVWFCamVvbHFkQ2FpdTJWYnZRNW1YM2I0aHpOb0VBTVhG?=
- =?utf-8?B?cGd4dDREQlhzWlVXYmtTenNtUVkxZW9nTVRkRnBpTEwzWEt6dW1ta2daOSsv?=
- =?utf-8?B?T0JwdGNXV0orVm1RTUtyc2tKb2laeTZ6cDYyUVNNU0ZZWWljaDdtOVhpWGZO?=
- =?utf-8?B?SDdXVmJ5YXdHNTZrMUJTdytLRHhXZ2lpNnQyQ3RqQ2ZTVndYNXJjR0w2NjA3?=
- =?utf-8?B?MXJtai9nM21YUVhjbXpVRmxBQUh5MXVZUzRmQWFoQ1g3RmRUU2lEU0YvK0hH?=
- =?utf-8?B?VWxBMlpXcHU0eFVBQ1o2THE1OFl2bTRoUXpvalprZnNFU1p0a1U4d1I4Skda?=
- =?utf-8?B?ZHVRbW1tWGh4cU9FZSt4WDVXUlRmbTJ6ZUMrM09rZW45K09YUm9GUjh2N21t?=
- =?utf-8?B?NC8rTFpoQnV6QXZsMnFhVDVONkY2T0dXOU5GNHhtaHRjK3BHTDViaGw1QUoz?=
- =?utf-8?B?M0ZLRUVyck9iS2dQcDdqNHBoa1l1Rkl1czFYbnBnZXlmdEdkbjhnNDNMWEtR?=
- =?utf-8?Q?jS0ohs4WeU6Ds?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VEx4RE50WmJXcHF5R2dVL0o3SkNWZFRhOWhSVGI1aHlKalM2SmVCM2NhQlkr?=
- =?utf-8?B?enA4ejZnN0hXNlZQR1ptUlZsZ1p0NGl3d3pTZy9HaVp0ZGc0VTJ1bE00YnJY?=
- =?utf-8?B?WlpkdjhtMm51M1h5VFg0cUdDenRoV3Z0d3FORTVqQUNFR3p1NTJYR0ZaM1Fv?=
- =?utf-8?B?b2RzemxLNkRlbnJYQWVIdnlJU0ljRmR6NHZ1VWIzY2VtNWVhSU9UajBINUsv?=
- =?utf-8?B?U1hHZ21CSk5reWgzd1pZUUxTbDE4SjA0S2tFOThBVmZJd0JPT205R3lmNDI5?=
- =?utf-8?B?b0RIdHlVYVhRaW9ldnpybHp5bWRYK2ZXRTdjSks0WHkvV1RXT3ZOK0pLbk11?=
- =?utf-8?B?MmpaY3h0OUdmblNGa2pybWRaay9vMVZxNnF6SHh6aUNWTm4rZ05NVGg1N2Vw?=
- =?utf-8?B?MU4raUlMS0xabFFHZitzczlUd1hLbnMyZ09DZkdYWVMwUlBEek9sS3Fid0hF?=
- =?utf-8?B?VXA5MG9LeXZzMnpIdzJMRk1VY0p1RE90dWErYmVNMEhZWVE1Um12R2FseDV5?=
- =?utf-8?B?MTJ2bHZZRzUxejZFS20reGliUU1WM3lQQUFHUHpnNjNNUlVzRGNmZVhSMS9t?=
- =?utf-8?B?YUNRaG4wNGFITXdjT2ZkQVBGVlhmSnNtM2JYRG5QMmlWTzU2cTlpK0FkVkI4?=
- =?utf-8?B?YkFFVGEvYmJ4ODlLYnJ6bFRidEM0ZFBQUEd0bENncFVTSW5mbXgwcVNsQ2Vj?=
- =?utf-8?B?R2JsaXowaFE0Tjk1OGdoS21oWnZBZXlGT2VtMWNZU2VxVkFrV2Rhc2RCNW1U?=
- =?utf-8?B?OGhrYXNHRytFdDBnN29UeTZsckZOS1orNGJEeUIvY00zWlBGU0pkM2xZN1ZS?=
- =?utf-8?B?UTFWb2FnWmkySDZwYzNpNXUyMnRNeUNDa09pM1JTSjBMUVE0V0hseVJVWEJw?=
- =?utf-8?B?REV1ZUFwcXdSaDV4UkRSc0JKYWNPZkRPNk10Z2pibTFhVm1LV1hObWtFYWVw?=
- =?utf-8?B?Vmc0RWNNRGRlTHBsNTdJaFpsQ2pWQVVzOXhjYTJNTmk3TktzZHhEWWdWMldv?=
- =?utf-8?B?YXR2eDVDU2k2MjNLMkVUTHpXVmd2enRHYWgvWkxnVWg1a3lvOXp5WEY2NE4z?=
- =?utf-8?B?MXdxRWQvemFWNlN2N0NJT21ySDhCZ3VBOG9lMzkrbzMwKzU0RE9aMHc2czd0?=
- =?utf-8?B?bUJIL3B1VjZHcnNlVW1VSndHYXRlbStqaldUWTJ5L3RHbGxrdjlwUHRlRmJQ?=
- =?utf-8?B?VTI5QnkzNWMzVmN2dlhWY2NjaUgxVWlHY3ZZcm44WjNpbDNOOFZpTENaNlln?=
- =?utf-8?B?SlNTQkMxMjh6TUhtZ3BVdHJ0czczeWpkeVpnM3FrdmVzeXZkRVk2NkVnOEo0?=
- =?utf-8?B?L1V3YnZlbmZHQ3Z4V0FFbHpqdzhBMC9YaStCVEs4RWtKb29rTzZpVG01Qnc4?=
- =?utf-8?B?dHZHRVBVUlZ2K3R2a3NERUI3QThjS0xFZzJ2S0J3TjJCVzNiNEw0V0k3dDJE?=
- =?utf-8?B?bGl2SnFFTUcreHRHUHY5aU5tMFlxUlFBTi9XallPbDN4SllSMUR0NmFYRHk4?=
- =?utf-8?B?K2gyWW9uUG5GMmdHTE1iM2VZNU5HaWZwMnRsRm0yNzlHRlYzY1NxR1phRGx4?=
- =?utf-8?B?QmRzN0R0cUxmc0g3bUxqTXhyZEt5UkN5dFp3QXRIZjFWN2lqZ1BiSCs3Q2Z1?=
- =?utf-8?B?LzFiQ24vb1picnM5SlMvb005SG1BM3RwUktLaTYvL3BZMWhKeU9RU0creHA0?=
- =?utf-8?B?eW1JNGhKMTM2bTdXanFVSExJWGQveHpNWEF1azBCcDllMVU4NFNlTTZSdWw3?=
- =?utf-8?B?em5FdERZUnBtZjhjUHZadDdjeEZOTWN6aC9jSXdxekQ1NWdLU1dnYzVJYlRx?=
- =?utf-8?B?VFprNjlRRGpWSmNQZUNoZjlnQWJjVkVEaStoK0tIaWd0ZjRvTFFSQjZmUkY1?=
- =?utf-8?B?aEY2WGw3a1NIZXBSQy95T1hVRTBMWGUyQThUd3pLNnV3dm5UZjlzellJdkFu?=
- =?utf-8?B?VnYrSEIxaHprdzloYWFXK0ZXeFhnSDhaWGloUDBGVkpmMTRxZ1NvL2pCRE9a?=
- =?utf-8?B?N0ZNa1g4VFBEM2NwTHNZMTR5MXBPVitvNHBTQlZOOFpwUERFOTFjODkraWxU?=
- =?utf-8?B?SStxaG91OWZRRE1sMDFtODFJWU1HcUQvclFWSWZJTFV1U0hPNVd6TE4yeDZj?=
- =?utf-8?Q?UlW6D+D2DROSHIPCWa4pn7rT/?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ONaz3B+0B3UnSJAhVmKJaGZSeWuVLmu10DvCCJhtVRVZC1X2KikSaBN19JOAog7MQ3U0jQfNReNVhzvo3OiO38vuuufqBJix+dwmn4lO+xZIr4ICJcRuswH50v0/zOf9YHieF9joQ/KhEbprNpTp6J8FtgWW52pHQomASEZshxIpDIsCczvJS3pIR8LGYi7L9f8YB2ryELDx3jgiwmw/869Sn69kSndijON69bCUV1tfd3bo2g6fnsOhaXO+7MJd5bJLooXRhQPMq73N+HkGm+SUFfM4/ILvdusMljB218Gz2OoIVT9kKEGjzo/Yt9sQSqXog61JSpAsN31oxyR+JtQ0WzC5/Ue6fhfMY71zwbofewHE0o1YcCF2wl4kBUdJeC7RlUAGISN/k+CVA7I8HwukH/FsDyEGH5JYwhEkCdsDesrPrfkVLDYP4rmN2bKB+edbKX+YlaKS6GUr37Ig7JE5y1lgQYLBHWF69HDaciu/5inAkngvKAINxMJ6YLTZSc81vtaDaH4U7IV3kbM8dRZH/WOTyFUG4bCYXq+Lto7AVKhvkExHb7EcOCWXRhCfyr1okruMUGzoLSJSCk8HnD7x0oi8a9MlyO7PfAuBmzI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9318ca5-7d3a-494e-3133-08dd598bc678
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2025 13:11:42.5096
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9S0fwttA3kQSn2UCFGy83PQt0lkWVnUBgferYqK+YvWwtVBVlih1d2D4EQ14/OaxDz45LLk6t3mK20w6gS4lrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4496
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-02_03,2025-02-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503020107
-X-Proofpoint-ORIG-GUID: dSRE_0MgbGK2BcVbeAfAumovU0bbJok0
-X-Proofpoint-GUID: dSRE_0MgbGK2BcVbeAfAumovU0bbJok0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/10] iio: adc: Support ROHM BD79124 ADC
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+ <4d1bf5df8f3b0f760422b6b67fcc8245ebf520e0.1740421249.git.mazziesaccount@gmail.com>
+ <20250302041046.7fde3c68@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250302041046.7fde3c68@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 06:40:16PM +0200, Lilith Gkini wrote:
-> Hey, Harry.
+On 02/03/2025 06:10, Jonathan Cameron wrote:
+> On Mon, 24 Feb 2025 20:34:30 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
-> > Yes. but do we care about the return value of on_freelist()
-> > when the freelist is corrupted? (we don't know if it was null-terminated
-> > or not because it's corrupted.)
-> 
-> Oh! So we shouldn't care about the return value of on_freelist() if the
-> freelist is corrupted? My thinking was that if the check_valid_pointer()
-> detects a corrupted freelist and fixes it by setting the freepointer to
-> NULL it fixes it, so we would care about the result. But maybe if the
-> whole object_err() triggers, I think that causes an OOPs if I recall, we
-> should consider this as corrupted and we shouldn't care about what it
-> returns, cause something went terribly wrong?
-> 
-> I guess that sounds like a sound logic.
-> 
-> If that is how we should do this then yeah, my second suggested line is
-> moot and in my later patch I shouldn't include it.
+>> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+>> an automatic measurement mode, with an alarm interrupt for out-of-window
+>> measurements. The window is configurable for each channel.
+>>
+>> The I2C protocol for manual start of the measurement and data reading is
+>> somewhat peculiar. It requires the master to do clock stretching after
+>> sending the I2C slave-address until the slave has captured the data.
+>> Needless to say this is not well suopported by the I2C controllers.
+>>
+>> Thus the driver does not support the BD79124's manual measurement mode
+>> but implements the measurements using automatic measurement mode relying
+>> on the BD79124's ability of storing latest measurements into register.
+>>
+>> The driver does also support configuring the threshold events for
+>> detecting the out-of-window events.
+>>
+>> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+>> out of the configured window. Thus the driver masks the received event
+>> for a fixed duration (1 second) when an event is handled. This prevents
+>> the user-space from choking on the events
+>>
+>> The ADC input pins can be also configured as general purpose outputs.
+>> Those pins which don't have corresponding ADC channel node in the
+>> device-tree will be controllable as GPO.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Some minor stuff inline.
 
-I think either way is fine, as both are not 100% accurate anyway if the
-freelist is corrupted.
- 
-> > Two falses because when the freepointer of the tail object
-> > is corrupted, the loop stops when nr equals slab->objects?
+...
+
+>> +#define BD79124_INTERVAL_075 0
 > 
-> Yeah! Since the freelist pointer is corrupted and doesn't end in NULL
-> on_freelist() won't find a NULL, and in the case of the tail having
-> garbage that the check_valid_pointer() would normally catch, the code
-> won't catch it, because it's at the tail which would exceed the
-> slab->objects and the While loop will exit before that, since the
-> freelist* (not slab, as you pointed out) is full.
+> Can we make these units in these explicit?
+> #define BD79124_INTERVAL_MS_0_75
+> maybe?  Nice to avoid need for comments on what the units are where
+> you use these.
 > 
-> > This is true because for partial slabs, the number of objects
-> > plus 1 for the garbage, does not exceed slab->objects?
+
+Sure, thanks.
+
+>> +#define BD79124_INTERVAL_150 1
+>> +#define BD79124_INTERVAL_300 2
+>> +#define BD79124_INTERVAL_600 3
+
+...
+
 > 
-> Yeah. That goes back to that second line I suggested in the previous
-> email. If the number of objects in the freelist is less than the
-> slab->objects and the corrupted freelist has some garbage address that
-> the check_valid_pointer() will catch, it will set it to NULL instead, and
-> as I said since the freelist now includes a NULL, my thinking was that
-> on_freelist() should return true if we were searching for NULL.
+>> +static void bd79124_re_enable_hi(struct bd79124_data *data, unsigned int channel)
+>> +{
+>> +	int ret, evbit = BIT(IIO_EV_DIR_RISING);
+>> +
+>> +	if (!(data->alarm_suppressed[channel] & evbit))
+>> +		return;
+>> +
+>> +	data->alarm_suppressed[channel] &= (~evbit);
 > 
-> But if thats not how on_freelist() should work in a case of a corrupted
-> freelist and we don't add my second line that nulls the "fp" then this
-> will return false instead.
+> No brackets around the ~evbit.
+> Check for other cases of this.
+> Otherwise we'll get some script written 'cleanup'.
+
+Sigh. I had a lengthy discussion about this with Andy explaining why I 
+like having the parenthesis to avoid any confusion. Well, I suppose I 
+have no options if you're strongly opposing them.
+
+...
+
+>> +static void bd79124_alm_enable_worker(struct work_struct *work)
+>> +{
+>> +	int i;
+>> +	struct bd79124_data *data = container_of(work, struct bd79124_data,
+>> +						 alm_enable_work.work);
+>> +
+>> +	guard(mutex)(&data->mutex);
+>> +	/*
+>> +	 * We should not re-enable the event if user has disabled it while
+>> +	 * rate-limiting was enabled.
+>> +	 */
 > 
-> > If you don't mind, could you please avoid bottom posting and
-> > reply with inline comments like how I reply to you?
-> > It makes it easier to follow the conversation.
-> 
-> Hopefully I did that correctly this time. Should I always include all
-> the previous messages in the reply chain? It was getting rather long and
-> I thought it would look messy.
+> Is this comment suggesting something that isn't done or referring to specific
+> code?  I think it wants to be in the function above where the decision is made.
 
-You can omit some parts of the email if you're not replying to it.
+I have to take another look but it seems it got misplaced during the 
+road. Thanks!
 
-Also, you don't have to copy and paste parts of the message when replying.
-You can break the original message into into smaller sections and add
-your comments in between—just like I do.
+Agreeing with all the rest, thanks!
 
-> > You can either send a new email or reply to this email with
-> > In-Reply-To header. And please cc SLAB ALLOCATOR folks in MAINTAINERS file
-> > including me—I recently changed my name and email (previously Hyeonggon Yoo).
-> 
-> Oh! You are one of the maintainers? That explains a lot, haha.
-
-Not a maintainer (M:) but a reviewer (R:) :-)
-
-> I just assumed you were someone from the mailing list who happened to be
-> really passionate about SLUB.
-
-Many people start by being curious and passionate about a specific
-subsystem.
-
-Anyway, as we discussed major concerns, (I think you can either add or not
-add the second suggested line), could you please send a patch with a
-nice commit message?
-
--- 
-Cheers,
-Harry
+Yours,
+	-- Matti
 
