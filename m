@@ -1,264 +1,276 @@
-Return-Path: <linux-kernel+bounces-540798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF41A4B4FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:42:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44A7A4B4FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FE907A6399
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747B83AB57A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6AA1EEA27;
-	Sun,  2 Mar 2025 21:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6A61EE034;
+	Sun,  2 Mar 2025 21:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KRJlufjS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TttXo9gk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE441EDA3E;
-	Sun,  2 Mar 2025 21:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7054E1EDA1B;
+	Sun,  2 Mar 2025 21:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740951732; cv=none; b=mWBTsvDDM3tBdeFr0qTLKo8/Jgk+GfKPR5eWY1AGe522LlJ71XGcoYsZ92BfCVHa6wRCOIQ/DtPOf4WC4OJt5BpcsvodpIAa4TgnMyP1i4Zraih8Xd60HLz72v3ncRTtegIQMhK7oIfvI7LFOXHTcB3YHkQLrwwuJ90RrUskgY8=
+	t=1740951709; cv=none; b=iamOcv1QCRgpUQ5p3N4d3QOVlDcgT3FodmNiNYCHjdkmnOV/PoQsBGUMSu9gVOfPPcYjp6Pm6grO/KwfaufOJ3tFxGpzgYRcOjd7b8imnLOEb5Zm4ms1Wzib8NBZzjQriB6rtuHoQOJIbAchj/B2mJr5jOBuqPh50/jLzoTJe34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740951732; c=relaxed/simple;
-	bh=n/owQeef8/mE5carj3xBdBe6w8LTQcNKNkp7SRvPV2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hp5IXCTjb/xFzLgv5v6+jY6OdKzU/x6n0yYtHVz8qACdeoYuAkEV3H5koNAKGSURz+lzYciGq09EBjFJwt/5F2Vf7/FpIVnP3S6ssjyNVqQ9KNTtfIX6BgG/6nnULrLBpKimxpP32XE8o3LGRv58XP6BdJLl5gj9f4JoghpRn7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KRJlufjS; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740951729; x=1772487729;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n/owQeef8/mE5carj3xBdBe6w8LTQcNKNkp7SRvPV2Q=;
-  b=KRJlufjSBwa+dRekb9oR8DBEsAFivisx5QqL2QMIEW2YNnCMqLaLs4vU
-   i8ZBf4uPtPkm2aRbYg2fzIqnPQx1+fxdWlcN7wWxoIBBlG86kUiK97J4r
-   cKFPsRJ77jr3wM8xjBKTvlT3p0PZ7suvduzn1JNOFbpzMY8qM4ao567Hp
-   KAi/hvaI6gzFAMTguD7Vr6ZhTGKtGVUfQs4BkaHomY76NQKIb0LZPOjDT
-   jb7BNz/hME4d9PEKUzCK50/t40jw9utUatnokhxfQZHNe6m3CljwbVdaT
-   Z+8bofPLUFMqndjbkIwM7rVAtCsD8Qp7AcYo4P/jnLZywj+CwhiOXHvNK
-   g==;
-X-CSE-ConnectionGUID: i2FIyX/MTLmiNrej+I9iNg==
-X-CSE-MsgGUID: RQdIoFyPQlyihTNz3+iXnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="44635253"
-X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
-   d="scan'208";a="44635253"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 13:42:08 -0800
-X-CSE-ConnectionGUID: 0gt7opgCTXa/4+gP2U28LQ==
-X-CSE-MsgGUID: qmuQWeQaR0mgSJtWt/kOVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
-   d="scan'208";a="118321297"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Mar 2025 13:42:05 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tor4R-000Hes-1e;
-	Sun, 02 Mar 2025 21:42:00 +0000
-Date: Mon, 3 Mar 2025 05:41:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, m.szyprowski@samsung.com,
-	andrzej.hajda@intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
-	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
-	aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	Aakarsh Jain <aakarsh.jain@samsung.com>
-Subject: Re: [PATCH] media: s5p-mfc: Support for handling RET_ENC_BUFFER_FULL
- interrupt
-Message-ID: <202503030529.ccd21udL-lkp@intel.com>
-References: <20250228065952.14375-1-aakarsh.jain@samsung.com>
+	s=arc-20240116; t=1740951709; c=relaxed/simple;
+	bh=TS5/fPL3sXyZQnxMiq4LqF/VK8bO7BSw0sx1YR3h7Vs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d+5de/98CCh7CtoD3VCDmYBghQiSbfhFWRkBrmT3Kf5LbFS454Rqgvleh1cDBl2zkDWv2pRGonK5GXS0M3G20DAN57vW5f6kGoUYM4a2Yf/o+RxZq8LqrOg0voNmY9C25cFjwZxFIX6f1s/sbnT4QF84fQ/HbZm/mkSpXf4TeyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TttXo9gk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E3EC4CED6;
+	Sun,  2 Mar 2025 21:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740951708;
+	bh=TS5/fPL3sXyZQnxMiq4LqF/VK8bO7BSw0sx1YR3h7Vs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TttXo9gkQNCoAOvkUFlZhP6Czz37aVz8zjMAUTRK8TEeCU/x5JUlzBuUhw9BtwsNb
+	 s+w8ycZVIfcFf/cA+81UVBkbTM62j9KWhDFTlJuJDB7gM/6JGWfdLRxgFJyyTbUSrl
+	 LlixIYEL1VVYx7LGzqy1kA+D0y1LtqONKyE/ZB3gEAHZKcmkFOozko1ZYDnPNa2UWy
+	 YmZ9spENNpYD13fTU+ewQ/k9WX1dGW8AiFHsxn4TiVZ92UTGmuSiHGoLzVOZMmWGLT
+	 5djAus+nQk3KzNyzdRTzAP55HFHsExeWHQn5QRxX8KCU/kJ6uaoEgfaMutlXIAiBo6
+	 Rihq6ATzTBfbA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 03/13] mm/damon/core: make damon_set_attrs() be safe to be called from damon_call()
+Date: Sun,  2 Mar 2025 13:41:45 -0800
+Message-Id: <20250302214145.356806-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250226063651.513178-4-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228065952.14375-1-aakarsh.jain@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Aakarsh,
+On Tue, 25 Feb 2025 22:36:41 -0800 SeongJae Park <sj@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> Currently all DAMON kernel API callers do online DAMON parameters commit
+> from damon_callback->after_aggregation because only those are safe place
+> to call the DAMON monitoring attributes update function, namely
+> damon_set_attrs().
+> 
+> Because damon_callback hooks provides no synchronization, the callers
+> works in asynchronous ways or implement their own inefficient and
+> complicated synchronization mechanisms.  It also means online DAMON
+> parameters commit can take up to one aggregation interval.  On large
+> systems having long aggregation intervals, that can be too slow.  The
+> synchronization can be done in more efficient and simple way while
+> removing the latency constraint if it can be done using damon_call().
+> 
+> The fact that damon_call() can be executed in the middle of the
+> aggregation makes damon_set_attrs() unsafe to be called from it, though.
+> Two real problems can occur in the case.  First, converting the not yet
+> completely aggregated nr_accesses for new user-set intervals can
+> arguably degrade the accuracy or at least make the logic complicated.
+> Second, kdamond_reset_aggregated() will not be called after the
+> monitoring results update, so next aggregation starts from unclean
+> state.  This can result in inconsistent and unexpected nr_accesses.
+> 
+> Make it safe as follows.  Catch the middle-of-the-aggregation case from
+> damon_set_attrs() and pass the information to nr_accesses conversion
+> logic.  The logic works as before if this is not the case (called after
+> the current aggregation is completed).  If not, it drops the nr_accesses
+> information that so far aggregated, and make the status same to the
+> beginning of this aggregation, but as if the last aggregation was ran
+> with the updated sampling/aggregation intervals.
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linuxtv-media-pending/master linus/master sailus-media-tree/streams sailus-media-tree/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This itself has no problem.  But this can cause a problem when this is applied
+on top of DAMON monitoring intervals auto-tune patch[1], which makes
+damon_set_attrs() can also be called from if-caluse for aggregated information
+sharing and reset.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aakarsh-Jain/media-s5p-mfc-Support-for-handling-RET_ENC_BUFFER_FULL-interrupt/20250228-175738
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20250228065952.14375-1-aakarsh.jain%40samsung.com
-patch subject: [PATCH] media: s5p-mfc: Support for handling RET_ENC_BUFFER_FULL interrupt
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250303/202503030529.ccd21udL-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030529.ccd21udL-lkp@intel.com/reproduce)
+The problematic case happens when damon_set_attrs() from kdamond_call() and
+kdamond_tune_intervals() in same iteration.  It means it is the last iteration
+of the current aggregation.  damon_set_attrs() that called from kdamond_call()
+understands the aggregation is finished and updates aggregation information
+correctly.  But, it also updates damon_ctx->next_aggregation_sis.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503030529.ccd21udL-lkp@intel.com/
+When damon_set_attrs() is called again from kdamond_tune_intervals(), it shows
+the prior damon_set_attrs() invocation updated ->next_aggregation_sis and think
+this is in the middle of the aggregation.  Hence it further resets the
+aggregated information.  Now, kdamond_reset_aggregated() is called after the
+second invocation of damon_set_attrs() in the same kdamond main loop iteration,
+and corrupts the aggregated information of regions.  Particularly, this can mad
+the pseudo-moving-sum access frequency information broken.
 
-All errors (new ones prefixed by >>):
+Simplest fix would be resetting the prior damon_set_attrs() updated
+->next_intervals_tune_sis, like below diff.
 
-   drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c: In function 's5p_mfc_irq':
->> drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c:742:14: error: 'S5P_MFC_R2H_CMD_ENC_BUFFER_FULL_RET' undeclared (first use in this function); did you mean 'S5P_MFC_R2H_CMD_ENC_BUFFER_FUL_RET'?
-     742 |         case S5P_MFC_R2H_CMD_ENC_BUFFER_FULL_RET:
-         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |              S5P_MFC_R2H_CMD_ENC_BUFFER_FUL_RET
-   drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c:742:14: note: each undeclared identifier is reported only once for each function it appears in
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -2538,6 +2538,24 @@ static int kdamond_fn(void *data)
+                        if (ctx->attrs.intervals_goal.aggrs &&
+                                        ctx->passed_sample_intervals >=
+                                        ctx->next_intervals_tune_sis) {
++                               /*
++                                * ctx->next_aggregation_sis might be updated
++                                * from kdamond_call().  In the case,
++                                * damon_set_attrs() which will be called from
++                                * kdamond_tune_interval() may wrongly think
++                                * this is in the middle of the current
++                                * aggregation, and make aggregation
++                                * information reset for all regions.  Then,
++                                * following kdamond_reset_aggregated() call
++                                * will make the region information invalid,
++                                * particularly for ->nr_accesses_bp.
++                                *
++                                * Reset ->next_aggregation_sis to avoid that.
++                                * It will anyway correctly updated after this
++                                * if caluse.
++                                */
++                               ctx->next_aggregation_sis =
++                                       next_aggregation_sis;
+                                ctx->next_intervals_tune_sis +=
+                                        ctx->attrs.aggr_samples *
+                                        ctx->attrs.intervals_goal.aggrs;
+
+I will add the change to this patch or the autotune patch, depending on their
+submission order.
+
+[1] https://lore.kernel.org/20250228220328.49438-3-sj@kernel.org
 
 
-vim +742 drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+Thanks,
+SJ
 
-   645	
-   646	/* Interrupt processing */
-   647	static irqreturn_t s5p_mfc_irq(int irq, void *priv)
-   648	{
-   649		struct s5p_mfc_dev *dev = priv;
-   650		struct s5p_mfc_ctx *ctx;
-   651		unsigned int reason;
-   652		unsigned int err;
-   653	
-   654		mfc_debug_enter();
-   655		/* Reset the timeout watchdog */
-   656		atomic_set(&dev->watchdog_cnt, 0);
-   657		spin_lock(&dev->irqlock);
-   658		ctx = dev->ctx[dev->curr_ctx];
-   659		/* Get the reason of interrupt and the error code */
-   660		reason = s5p_mfc_hw_call(dev->mfc_ops, get_int_reason, dev);
-   661		err = s5p_mfc_hw_call(dev->mfc_ops, get_int_err, dev);
-   662		mfc_debug(1, "Int reason: %d (err: %08x)\n", reason, err);
-   663		switch (reason) {
-   664		case S5P_MFC_R2H_CMD_ERR_RET:
-   665			/* An error has occurred */
-   666			if (ctx->state == MFCINST_RUNNING &&
-   667				(s5p_mfc_hw_call(dev->mfc_ops, err_dec, err) >=
-   668					dev->warn_start ||
-   669					err == S5P_FIMV_ERR_NO_VALID_SEQ_HDR ||
-   670					err == S5P_FIMV_ERR_INCOMPLETE_FRAME ||
-   671					err == S5P_FIMV_ERR_TIMEOUT))
-   672				s5p_mfc_handle_frame(ctx, reason, err);
-   673			else
-   674				s5p_mfc_handle_error(dev, ctx, reason, err);
-   675			clear_bit(0, &dev->enter_suspend);
-   676			break;
-   677	
-   678		case S5P_MFC_R2H_CMD_SLICE_DONE_RET:
-   679		case S5P_MFC_R2H_CMD_FIELD_DONE_RET:
-   680		case S5P_MFC_R2H_CMD_FRAME_DONE_RET:
-   681			if (ctx->c_ops->post_frame_start) {
-   682				if (ctx->c_ops->post_frame_start(ctx))
-   683					mfc_err("post_frame_start() failed\n");
-   684	
-   685				if (ctx->state == MFCINST_FINISHING &&
-   686							list_empty(&ctx->ref_queue)) {
-   687					s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   688					s5p_mfc_handle_stream_complete(ctx);
-   689					break;
-   690				}
-   691				s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   692				WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
-   693				s5p_mfc_clock_off(dev);
-   694				wake_up_ctx(ctx, reason, err);
-   695				s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-   696			} else {
-   697				s5p_mfc_handle_frame(ctx, reason, err);
-   698			}
-   699			break;
-   700	
-   701		case S5P_MFC_R2H_CMD_SEQ_DONE_RET:
-   702			s5p_mfc_handle_seq_done(ctx, reason, err);
-   703			break;
-   704	
-   705		case S5P_MFC_R2H_CMD_OPEN_INSTANCE_RET:
-   706			ctx->inst_no = s5p_mfc_hw_call(dev->mfc_ops, get_inst_no, dev);
-   707			ctx->state = MFCINST_GOT_INST;
-   708			goto irq_cleanup_hw;
-   709	
-   710		case S5P_MFC_R2H_CMD_CLOSE_INSTANCE_RET:
-   711			ctx->inst_no = MFC_NO_INSTANCE_SET;
-   712			ctx->state = MFCINST_FREE;
-   713			goto irq_cleanup_hw;
-   714	
-   715		case S5P_MFC_R2H_CMD_SYS_INIT_RET:
-   716		case S5P_MFC_R2H_CMD_FW_STATUS_RET:
-   717		case S5P_MFC_R2H_CMD_SLEEP_RET:
-   718		case S5P_MFC_R2H_CMD_WAKEUP_RET:
-   719			if (ctx)
-   720				clear_work_bit(ctx);
-   721			s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   722			clear_bit(0, &dev->hw_lock);
-   723			clear_bit(0, &dev->enter_suspend);
-   724			wake_up_dev(dev, reason, err);
-   725			break;
-   726	
-   727		case S5P_MFC_R2H_CMD_INIT_BUFFERS_RET:
-   728			s5p_mfc_handle_init_buffers(ctx, reason, err);
-   729			break;
-   730	
-   731		case S5P_MFC_R2H_CMD_COMPLETE_SEQ_RET:
-   732			s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   733			ctx->int_type = reason;
-   734			ctx->int_err = err;
-   735			s5p_mfc_handle_stream_complete(ctx);
-   736			break;
-   737	
-   738		case S5P_MFC_R2H_CMD_DPB_FLUSH_RET:
-   739			ctx->state = MFCINST_RUNNING;
-   740			goto irq_cleanup_hw;
-   741	
- > 742		case S5P_MFC_R2H_CMD_ENC_BUFFER_FULL_RET:
-   743			ctx->state = MFCINST_NAL_ABORT;
-   744			s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   745			set_work_bit(ctx);
-   746			WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
-   747			s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-   748			break;
-   749	
-   750		case S5P_MFC_R2H_CMD_NAL_ABORT_RET:
-   751			ctx->state = MFCINST_ERROR;
-   752			s5p_mfc_cleanup_queue(&ctx->dst_queue, &ctx->vq_dst);
-   753			s5p_mfc_cleanup_queue(&ctx->src_queue, &ctx->vq_src);
-   754			goto irq_cleanup_hw;
-   755	
-   756		default:
-   757			mfc_debug(2, "Unknown int reason\n");
-   758			s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   759		}
-   760		spin_unlock(&dev->irqlock);
-   761		mfc_debug_leave();
-   762		return IRQ_HANDLED;
-   763	irq_cleanup_hw:
-   764		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-   765		ctx->int_type = reason;
-   766		ctx->int_err = err;
-   767		ctx->int_cond = 1;
-   768		if (test_and_clear_bit(0, &dev->hw_lock) == 0)
-   769			mfc_err("Failed to unlock hw\n");
-   770	
-   771		s5p_mfc_clock_off(dev);
-   772		clear_work_bit(ctx);
-   773		wake_up(&ctx->queue);
-   774	
-   775		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-   776		spin_unlock(&dev->irqlock);
-   777		mfc_debug(2, "Exit via irq_cleanup_hw\n");
-   778		return IRQ_HANDLED;
-   779	}
-   780	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/core.c             | 38 ++++++++++++++++++++++++++-----------
+>  mm/damon/tests/core-kunit.h |  6 +++---
+>  2 files changed, 30 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index 0578e89dff13..5b807caaec95 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+> @@ -602,11 +602,25 @@ static unsigned int damon_nr_accesses_for_new_attrs(unsigned int nr_accesses,
+>  }
+>  
+>  static void damon_update_monitoring_result(struct damon_region *r,
+> -		struct damon_attrs *old_attrs, struct damon_attrs *new_attrs)
+> +		struct damon_attrs *old_attrs, struct damon_attrs *new_attrs,
+> +		bool aggregating)
+>  {
+> -	r->nr_accesses = damon_nr_accesses_for_new_attrs(r->nr_accesses,
+> -			old_attrs, new_attrs);
+> -	r->nr_accesses_bp = r->nr_accesses * 10000;
+> +	if (!aggregating) {
+> +		r->nr_accesses = damon_nr_accesses_for_new_attrs(
+> +				r->nr_accesses, old_attrs, new_attrs);
+> +		r->nr_accesses_bp = r->nr_accesses * 10000;
+> +	} else {
+> +		/*
+> +		 * if this is called in the middle of the aggregation, reset
+> +		 * the aggregations we made so far for this aggregation
+> +		 * interval.  In other words, make the status like
+> +		 * kdamond_reset_aggregated() is called.
+> +		 */
+> +		r->last_nr_accesses = damon_nr_accesses_for_new_attrs(
+> +				r->last_nr_accesses, old_attrs, new_attrs);
+> +		r->nr_accesses_bp = r->last_nr_accesses * 10000;
+> +		r->nr_accesses = 0;
+> +	}
+>  	r->age = damon_age_for_new_attrs(r->age, old_attrs, new_attrs);
+>  }
+>  
+> @@ -619,7 +633,7 @@ static void damon_update_monitoring_result(struct damon_region *r,
+>   * ->nr_accesses and ->age of given damon_ctx's regions for new damon_attrs.
+>   */
+>  static void damon_update_monitoring_results(struct damon_ctx *ctx,
+> -		struct damon_attrs *new_attrs)
+> +		struct damon_attrs *new_attrs, bool aggregating)
+>  {
+>  	struct damon_attrs *old_attrs = &ctx->attrs;
+>  	struct damon_target *t;
+> @@ -634,7 +648,7 @@ static void damon_update_monitoring_results(struct damon_ctx *ctx,
+>  	damon_for_each_target(t, ctx)
+>  		damon_for_each_region(r, t)
+>  			damon_update_monitoring_result(
+> -					r, old_attrs, new_attrs);
+> +					r, old_attrs, new_attrs, aggregating);
+>  }
+>  
+>  /*
+> @@ -661,10 +675,10 @@ static bool damon_valid_intervals_goal(struct damon_attrs *attrs)
+>   * @ctx:		monitoring context
+>   * @attrs:		monitoring attributes
+>   *
+> - * This function should be called while the kdamond is not running, or an
+> - * access check results aggregation is not ongoing (e.g., from
+> - * &struct damon_callback->after_aggregation or
+> - * &struct damon_callback->after_wmarks_check callbacks).
+> + * This function should be called while the kdamond is not running, an access
+> + * check results aggregation is not ongoing (e.g., from &struct
+> + * damon_callback->after_aggregation or &struct
+> + * damon_callback->after_wmarks_check callbacks), or from damon_call().
+>   *
+>   * Every time interval is in micro-seconds.
+>   *
+> @@ -675,6 +689,8 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
+>  	unsigned long sample_interval = attrs->sample_interval ?
+>  		attrs->sample_interval : 1;
+>  	struct damos *s;
+> +	bool aggregating = ctx->passed_sample_intervals <
+> +		ctx->next_aggregation_sis;
+>  
+>  	if (!damon_valid_intervals_goal(attrs))
+>  		return -EINVAL;
+> @@ -695,7 +711,7 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
+>  	ctx->next_ops_update_sis = ctx->passed_sample_intervals +
+>  		attrs->ops_update_interval / sample_interval;
+>  
+> -	damon_update_monitoring_results(ctx, attrs);
+> +	damon_update_monitoring_results(ctx, attrs, aggregating);
+>  	ctx->attrs = *attrs;
+>  
+>  	damon_for_each_scheme(s, ctx)
+> diff --git a/mm/damon/tests/core-kunit.h b/mm/damon/tests/core-kunit.h
+> index 532c6a6f21f9..be0fea9ee5fc 100644
+> --- a/mm/damon/tests/core-kunit.h
+> +++ b/mm/damon/tests/core-kunit.h
+> @@ -348,19 +348,19 @@ static void damon_test_update_monitoring_result(struct kunit *test)
+>  
+>  	new_attrs = (struct damon_attrs){
+>  		.sample_interval = 100, .aggr_interval = 10000,};
+> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
+> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
+>  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 15);
+>  	KUNIT_EXPECT_EQ(test, r->age, 2);
+>  
+>  	new_attrs = (struct damon_attrs){
+>  		.sample_interval = 1, .aggr_interval = 1000};
+> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
+> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
+>  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 150);
+>  	KUNIT_EXPECT_EQ(test, r->age, 2);
+>  
+>  	new_attrs = (struct damon_attrs){
+>  		.sample_interval = 1, .aggr_interval = 100};
+> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
+> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
+>  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 150);
+>  	KUNIT_EXPECT_EQ(test, r->age, 20);
+>  
+> -- 
+> 2.39.5
 
