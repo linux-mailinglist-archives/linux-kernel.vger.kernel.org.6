@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-540160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD6DA4AEA4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:13:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB299A4AEA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BE33B1BC7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 01:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3EC3B300E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 01:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A1A2AE84;
-	Sun,  2 Mar 2025 01:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75561C69D;
+	Sun,  2 Mar 2025 01:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FqPBaaIR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hpeHDizI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A51FC0E;
-	Sun,  2 Mar 2025 01:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD09EB673;
+	Sun,  2 Mar 2025 01:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740877959; cv=none; b=Wlo1B9lC9VftAckh3IHokALjvBx+XZ1hUd5sJiQpwB+eo+92qN5eK+LO6LtKoY2DE5sMh7mBHm33ybNEA9XfK4Sj4k21G5fTdD/xQKu1SSF7u1AOBM44ZXAPXreR88rFYqQjFNatdwZ+rvItQHXfKsuqUVDgd3iO8G0bFAlUy/A=
+	t=1740878618; cv=none; b=bY67kJUnNTif3cvhS2V7Jne+E0P+g2gN72iwzS+M2tZvTDWoSJ7abNrGdqAxiuEQB7zCPIkQfj9+EUysj42iuKolRRmRbnTkb8ivk0PAB0AR9yR4b0qFMVBoM5ZnfYAkNLB8bHBL+qPqcNtxI/CrZRkCRqcYzTzD2PvDDOAM63A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740877959; c=relaxed/simple;
-	bh=aVx2loBUNf2ComRdrhJLPSjK5wr4/lMc9xmmvBjHxu8=;
+	s=arc-20240116; t=1740878618; c=relaxed/simple;
+	bh=YOcy/8klnGRYLn8ngegq1opCqISbl0ggVdu/BhnATqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJSUoj00JVf7fD/29Pr7XdmyaDe6U2mFO3j73wK2+5NTcPXN2FOAEN9Pugy9U4xWdJeVBXOLp5hJPGS6inuSOlg+geQFu7+tt0pS1oUBT9zJ1cT6k2n7C/UmOCWmKqq+msHyVO03POijw6hj/1D5BmhexD3xaEPcAO+BXkVbqOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FqPBaaIR; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdh8h+IhbsN/K9eGHgg6d9LlkGOXYHAb+OmfVJ7y4JAk52TnVYyZopDs86XpTYsoYYFCbk3Sqvt4jvk0cnXmbmMKVy4RN/rHmhxRYrjpqJW7nUy+4zGalWSS9cWptqkIlLzXv0WvwKEKxGoJ0ItHIIT8yFPRkhVjXiaug44ufTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hpeHDizI; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740877959; x=1772413959;
+  t=1740878617; x=1772414617;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=aVx2loBUNf2ComRdrhJLPSjK5wr4/lMc9xmmvBjHxu8=;
-  b=FqPBaaIRFM4Mf4HJ5rNZZ7GyVA/8bZK8uTt68R6vkhHTn6K+s+hCpKtf
-   IB8ugEM1AYY4TW+WdIyb6mEZgnQdMm9efFo6ez0fKigCcT/a/jnl6QovO
-   V6VngWjciVMOt2Zpk/wUzLWw1nVUXKcccj0Z9SOSj+PKnMugYUzwjPCuL
-   5gwTHX24sYHlUW1t8UVWdb9XLB/T1C1JLYe4yw/JH2P1bx1NroY1fWaVe
-   0I4tecmGro2+AIy1z6ajOoerS7Xu3gX7Uz8gqMegrb66isBgTnIjMFcXb
-   XFwyEQ/+PtMsLv3mSUjt2Kc/xpYBlugyOT/JaDVhmumkuGPUIy0XfAEZE
+  bh=YOcy/8klnGRYLn8ngegq1opCqISbl0ggVdu/BhnATqw=;
+  b=hpeHDizIGT4h+PZhmHXWU5VBdDxtMqyWiJ0cOeQpC1pihmAdBRDQWiAy
+   SjA2nQEL08jZf3kjV9C5cKPiM2Jl9k55hqYp5sa7TSwmLm+j7J+KZg8T1
+   Az2x+dCGl61Kh3AMHl2TcUxbCwjcv1VTDpv2hoYKJPWIgkKIm9AEzsoGe
+   7LdkbgY71wFs7rsLrVNSqpktI1CiAK8HdHSFB+rFTDwhUuAviN3Yzm2iT
+   pdlfLGMMgtiyvLjDeY7B7aw9Pana1Mgxq1Cs+YScp2mH70gGY/xGHKloI
+   U1r4l9ZXmaPvjX33CINf486nizwd/GrR44hZB/13Y/UzcFFtXHqHY1jGd
    w==;
-X-CSE-ConnectionGUID: vv2jnehXTz64ML85BIqncA==
-X-CSE-MsgGUID: IzMvZwl3Sea8DY7OCmzCPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41475833"
+X-CSE-ConnectionGUID: uQhmiGpFTwis6NmhoL/55g==
+X-CSE-MsgGUID: ASYL5WDVToWDJ35hBZuFqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="67147906"
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41475833"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 17:12:36 -0800
-X-CSE-ConnectionGUID: XExDBhaWRxmaGYPy4JIckQ==
-X-CSE-MsgGUID: TnSuplBQSOSxUV1wBVnj6A==
+   d="scan'208";a="67147906"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 17:23:36 -0800
+X-CSE-ConnectionGUID: 7P+6Ri1cTcOSUcoaGJW3TQ==
+X-CSE-MsgGUID: ijp9/h/7S5S77VTE4DJcWg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="122278013"
+   d="scan'208";a="117665765"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 01 Mar 2025 17:12:33 -0800
+  by fmviesa007.fm.intel.com with ESMTP; 01 Mar 2025 17:23:34 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1toXsc-000GvE-1z;
-	Sun, 02 Mar 2025 01:12:30 +0000
-Date: Sun, 2 Mar 2025 09:12:05 +0800
+	id 1toY3I-000Gva-13;
+	Sun, 02 Mar 2025 01:23:32 +0000
+Date: Sun, 2 Mar 2025 09:22:40 +0800
 From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, tglx@linutronix.de
-Cc: oe-kbuild-all@lists.linux.dev, manivannan.sadhasivam@linaro.org,
-	kw@linux.com, kwilczynski@kernel.org, bhelgaas@google.com,
-	Frank.Li@nxp.com, cassel@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
-Subject: Re: [v2] genirq/msi: Add the address and data that show MSI/MSIX
-Message-ID: <202503020807.c3MhmbJh-lkp@intel.com>
-References: <20250301123953.291675-1-18255117159@163.com>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, linus.walleij@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
+	Pratap Nirujogi <pratap.nirujogi@amd.com>
+Subject: Re: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
+Message-ID: <202503020937.17QhMxc9-lkp@intel.com>
+References: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,78 +78,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250301123953.291675-1-18255117159@163.com>
+In-Reply-To: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 
-Hi Hans,
+Hi Pratap,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on 76544811c850a1f4c055aa182b513b7a843868ea]
+[auto build test ERROR on linusw-pinctrl/devel]
+[also build test ERROR on linusw-pinctrl/for-next linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/genirq-msi-Add-the-address-and-data-that-show-MSI-MSIX/20250301-204332
-base:   76544811c850a1f4c055aa182b513b7a843868ea
-patch link:    https://lore.kernel.org/r/20250301123953.291675-1-18255117159%40163.com
-patch subject: [v2] genirq/msi: Add the address and data that show MSI/MSIX
-config: x86_64-buildonly-randconfig-003-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020807.c3MhmbJh-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020807.c3MhmbJh-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/pinctrl-amd-isp411-Add-amdisp-GPIO-pinctrl/20250301-011050
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20250228165749.3476210-1-pratap.nirujogi%40amd.com
+patch subject: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
+config: hexagon-randconfig-r072-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020937.17QhMxc9-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020937.17QhMxc9-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020807.c3MhmbJh-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020937.17QhMxc9-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   kernel/irq/msi.c: In function 'msi_domain_debug_show':
->> kernel/irq/msi.c:770:9: error: implicit declaration of function 'seq_printf'; did you mean 'bstr_printf'? [-Werror=implicit-function-declaration]
-     770 |         seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-         |         ^~~~~~~~~~
-         |         bstr_printf
-   kernel/irq/msi.c: At top level:
->> kernel/irq/msi.c:782:10: error: 'const struct irq_domain_ops' has no member named 'debug_show'
-     782 |         .debug_show     = msi_domain_debug_show,
-         |          ^~~~~~~~~~
->> kernel/irq/msi.c:782:27: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
-     782 |         .debug_show     = msi_domain_debug_show,
-         |                           ^~~~~~~~~~~~~~~~~~~~~
-   kernel/irq/msi.c:782:27: note: (near initialization for 'msi_domain_ops')
-   kernel/irq/msi.c:782:27: error: initialization of 'int (*)(struct irq_domain *, unsigned int,  unsigned int,  void *)' from incompatible pointer type 'void (*)(struct seq_file *, struct irq_domain *, struct irq_data *, int)' [-Werror=incompatible-pointer-types]
-   kernel/irq/msi.c:782:27: note: (near initialization for 'msi_domain_ops.alloc')
-   kernel/irq/msi.c:782:27: warning: initialized field overwritten [-Woverride-init]
-   kernel/irq/msi.c:782:27: note: (near initialization for 'msi_domain_ops.alloc')
-   cc1: some warnings being treated as errors
+>> drivers/pinctrl/pinctrl-amdisp.c:196:6: error: no member named 'of_node' in 'struct gpio_chip'; did you mean 'fwnode'?
+     196 |         gc->of_node             = pdev->dev.of_node;
+         |             ^~~~~~~
+         |             fwnode
+   include/linux/gpio/driver.h:421:24: note: 'fwnode' declared here
+     421 |         struct fwnode_handle    *fwnode;
+         |                                  ^
+   1 error generated.
 
 
-vim +770 kernel/irq/msi.c
+vim +196 drivers/pinctrl/pinctrl-amdisp.c
 
-   758	
-   759	static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-   760					  struct irq_data *irqd, int ind)
-   761	{
-   762		struct msi_desc *desc;
-   763		bool is_msix;
-   764	
-   765		desc = irq_get_msi_desc(irqd->irq);
-   766		if (!desc)
-   767			return;
-   768	
-   769		is_msix = desc->pci.msi_attrib.is_msix;
- > 770		seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-   771		seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
-   772		seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
-   773		seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
-   774	}
-   775	
-   776	static const struct irq_domain_ops msi_domain_ops = {
-   777		.alloc		= msi_domain_alloc,
-   778		.free		= msi_domain_free,
-   779		.activate	= msi_domain_activate,
-   780		.deactivate	= msi_domain_deactivate,
-   781		.translate	= msi_domain_translate,
- > 782		.debug_show     = msi_domain_debug_show,
-   783	};
-   784	
+   173	
+   174	static int amdisp_gpiochip_add(struct platform_device *pdev,
+   175				       struct amdisp_pinctrl *pctrl)
+   176	{
+   177		struct gpio_chip *gc = &pctrl->gc;
+   178		struct pinctrl_gpio_range *grange = &pctrl->gpio_range;
+   179		int ret;
+   180	
+   181		gc->label		= dev_name(pctrl->dev);
+   182		gc->owner		= THIS_MODULE;
+   183		gc->parent		= &pdev->dev;
+   184		gc->names		= amdisp_range_pins_name;
+   185		gc->request		= gpiochip_generic_request;
+   186		gc->free		= gpiochip_generic_free;
+   187		gc->get_direction	= amdisp_gpio_get_direction;
+   188		gc->direction_input	= amdisp_gpio_direction_input;
+   189		gc->direction_output	= amdisp_gpio_direction_output;
+   190		gc->get			= amdisp_gpio_get;
+   191		gc->set			= amdisp_gpio_set;
+   192		gc->set_config		= amdisp_gpio_set_config;
+   193		gc->base		= -1;
+   194		gc->ngpio		= ARRAY_SIZE(amdisp_range_pins);
+   195	#if defined(CONFIG_OF_GPIO)
+ > 196		gc->of_node		= pdev->dev.of_node;
+   197		gc->of_gpio_n_cells	= 2;
+   198	#endif
+   199	
+   200		grange->id		= 0;
+   201		grange->pin_base	= 0;
+   202		grange->base		= 0;
+   203		grange->pins		= amdisp_range_pins;
+   204		grange->npins		= ARRAY_SIZE(amdisp_range_pins);
+   205		grange->name		= gc->label;
+   206		grange->gc		= gc;
+   207	
+   208		ret = devm_gpiochip_add_data(&pdev->dev, gc, pctrl);
+   209		if (ret)
+   210			return ret;
+   211	
+   212		pinctrl_add_gpio_range(pctrl->pctrl, grange);
+   213	
+   214		dev_info(&pdev->dev, "register amdisp gpio controller\n");
+   215		return 0;
+   216	}
+   217	#endif
+   218	
 
 -- 
 0-DAY CI Kernel Test Service
