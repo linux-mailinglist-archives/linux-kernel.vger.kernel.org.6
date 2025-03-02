@@ -1,180 +1,211 @@
-Return-Path: <linux-kernel+bounces-540617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DDDA4B2F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:10:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B05A4B2F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6666B16F642
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:09:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86593AEFF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1631E9B26;
-	Sun,  2 Mar 2025 16:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D161E9B1A;
+	Sun,  2 Mar 2025 16:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="jYb+tFVV"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edUiJpT2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152481E9B18;
-	Sun,  2 Mar 2025 16:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7166B1E8327
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 16:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931764; cv=none; b=iIoGkJenBSe1jtU4/oOUoLATbdztNVu9LCyGKu0F4FOz5HD8hkwdNlHjini/abHHeHV6acPLgv6QBLbvY30BtBpQAgeIUJPGTq5/4GAh6fNZ/lt3v0TNjIHvk+0WVK7Hj+TXRCH6rAnDrIcDK8S7jOpDp6KWbED4vByXRHJCcq0=
+	t=1740932008; cv=none; b=E0Hv6B6z9YRFHjoL1xwKxCjBtz1V26XfASOrjMlKDZej6mNJQOZ/35V0IH6dV4wHRi042jFkhFOjPzYS5oKQNTZwv9BOWXrF7quUrHUkcUVdK9gxK6zkOaeQx8aKssGE8WkEemxl6vpZko5A4Wt+vrd4F2U0wdR8VSb47ntHRHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931764; c=relaxed/simple;
-	bh=SuCW7erPuPRWso4GqZRpWS+3gl1BI6ZPagbPAaY4PKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dui2A1qjqRiragVJhtZ/l3lxW0WHHBizq64Qj7wYJcps6BtNesRXvGjdwJa2fpyqpEkl8lcyeMmeO7uXjdTxVYcriyIWdnB37VMmj/Zroj2gM8b6peJk4Trz3umbgmhZGA9KWIA5OErDWEPnxlQSn/msN8k8Q6NTzbdwCqECObY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=jYb+tFVV; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id ED48C20746;
-	Sun,  2 Mar 2025 17:09:19 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id viBQlnlcbeEl; Sun,  2 Mar 2025 17:09:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740931755; bh=SuCW7erPuPRWso4GqZRpWS+3gl1BI6ZPagbPAaY4PKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jYb+tFVVVYmJwA66Yg/pXiup5NL0cltofMdg5DTZnjV9xaIOWy24o1bTjj2wdVs7a
-	 lDQkbqjVfoZ3GIOiETO6LrOmk2D9ssn1q/2SwweEmwTG27FXPnDRNd1scetAqtQe9J
-	 fJUwG58qBhgcVgXNJ/p/v7GDDjH6VeQdH9k3VjBu7AGfcr7X0wuI4QJrIfv34jFDsz
-	 WFwOak66AoS0NZiR+5pQhOBbNxqKBOJF98sWjc1R1Ch+BSbpxqzz24vicYsNzQ8aj8
-	 2ta4xRx2THhrzsg6nKxjgYhSUxlqUbQcw9JPvogdtzkr8EmK4RpYJSn53PUlo0ESUf
-	 S5LhLFJBGT15g==
-Date: Sun, 2 Mar 2025 16:09:01 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1740932008; c=relaxed/simple;
+	bh=PV6oVIGTRiwqi6gFLFuw1fsCjgG5hJ20Qxe6K/Kot0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqP+7oNLECjRSzWKSflUKO9F2u01zTYXOncB22CsqugwGoyOt4xckAMjqNO4++OvF7jA6PhiYXNcmu4eBnJJeQpIOOd4QNsbnL+Ul7Uyjd0ydsh6GSQHRDtkYfYszojiIy3wMZLz2hDsYToNNpEvR0PZccaqOlUtLDPDwI8HwmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edUiJpT2; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43948021a45so33754675e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 08:13:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740932005; x=1741536805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wE0p5aMJXldGt4TuBoVBJ0A6lnlehsp8A8NK2iQSZBQ=;
+        b=edUiJpT2CSanuOqFvMbOroL/2T8zmTKnAiWqbGBd7oozerLUTSJzWbXUX5yli606eg
+         6tIlfn8dqd4tZgsYbuaWLAhS8r1+lLV6t4JUZLOdO20iFnVC5/4aEJ+amBHyuftqTZAy
+         HPlPmUM30xDM3GMvPYa1Ml0qpYcTjBNUzoMx8mVCojAp7e+hAfKnVnBmK//6ys/LIdcS
+         rer5bsiWA8ny7J8kf7dPv5zX3ReaVA7OQj+M1kjMHgeQD5lu1GIGYpXvN1/UGxV53Wuw
+         WEpHXP2Bvqd0LCzEgvpZYPl37YYZUgOFMJoMTrPsal9BmokfhX/pNIGx2njaM0iethmO
+         SpqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740932005; x=1741536805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wE0p5aMJXldGt4TuBoVBJ0A6lnlehsp8A8NK2iQSZBQ=;
+        b=uBxqX3lt3vnLeGa4wUp8ikMpW4tAL1wBJxbLC9iFf0ijp/iemxGaHEO3J957XJG+r+
+         eiFM/ghKBwK7mPOzfaMNgvZ6tf00Ow0lwQ1Go2ucsz3Q1bAxtaCNmsCbt0gGBY8W5s+5
+         +zA72IeWED5P7WeKnw2+B5ZfFIGpdhpFLUwImvw4V8vI+hM0Zq8deSo3ysfsWyx93Lhe
+         5BLX3m7ubfMNva6fKC1T+FTeyYX0AcmKCE1J7p89GPrBHsEJoNdxxGbYDHwHJcJ0l2fd
+         4ClS1SHJSZwLMYKvs+s1sqeLCKych4OP6zlDczw1WhQKszWg7KLz07a23n0baZNGJ6qL
+         vCYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzy5CW6a1aiCRU2KOg5hc/WQjMLlb35drLrqvT65OMYiZo8eWvusB9mCe1mnBs+kXg/LIk5bpftVmI64I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKRoJwJjBuisYUp4G9s0feLjl0tjyIq5dX7H1eiikG6Vo3g68w
+	qGF1XRr16ZzeligOrwvgDUp5BD2RlmnAY1vqtr3hKDKRG9zhj663fhywxU3zHMo=
+X-Gm-Gg: ASbGncs8GZBFdkihmhUxiM6JxltPGPFX5svJ8OQIKsZ6Mm5kQKLQAD3w0Y2wcHAQzTS
+	APz7sTiJQzb2QqwO3QPETuxVIFy+bzWktp9tZRB7oEWJWMttVqhiXlAzfOgXFGPWEFFJXJkBE+9
+	X59kAyoMeejIUBs+g56ZoLCIYs+5gjeN2NrD/HtgO33sRKiVf9ErpIKCZChuQdt4gCgZqPEx8uG
+	WrfLJdI00rustYWt4SJqU338tnlpBlf1DdBLtutoaPFi8Mv9UF4h3FTeOXcpTElN9HfYBov67pG
+	eAlpsWPlwU72EfCtZYs769KDCxzUD9x8w6uMuxz+xq3Sf5v4hYCI
+X-Google-Smtp-Source: AGHT+IHxViuvCK0YVjoP0xuMqSbVWC3/pfmkgsLys6zB51mFHA5DKivqFURFvtwHjCGL23FJlIT9Ig==
+X-Received: by 2002:a05:600c:c09:b0:439:87d2:b0fd with SMTP id 5b1f17b1804b1-43ba74908b3mr82628955e9.12.1740932004621;
+        Sun, 02 Mar 2025 08:13:24 -0800 (PST)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:cbb1:d64:4932:5446])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bb767a977sm25530245e9.18.2025.03.02.08.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 08:13:23 -0800 (PST)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com,
+	pierre.gondois@arm.com,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for
- RK3528
-Message-ID: <Z8SCnfZxH-H0iGwf@pie.lan>
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
- <Z8GT3rUEyXrTUgtJ@pie.lan>
- <3f0cd767-1fd8-4c65-b8b4-e948288cd02a@kwiboo.se>
- <116104909.nniJfEyVGO@diego>
+Cc: qyousef@layalina.io,
+	hongyan.xia2@arm.com,
+	christian.loehle@arm.com,
+	luis.machado@arm.com,
+	qperret@google.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 0/7 v4] sched/fair: Rework EAS to handle more cases
+Date: Sun,  2 Mar 2025 17:13:14 +0100
+Message-ID: <20250302161321.1476139-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <116104909.nniJfEyVGO@diego>
 
-On Sun, Mar 02, 2025 at 12:52:18PM +0100, Heiko Stübner wrote:
-> Am Sonntag, 2. März 2025, 12:14:48 MEZ schrieb Jonas Karlman:
-> > Hi Yao Zi,
-> > 
-> > On 2025-02-28 11:46, Yao Zi wrote:
-> > > On Fri, Feb 28, 2025 at 06:40:10AM +0000, Jonas Karlman wrote:
-> > >> Add pinctrl and gpio nodes for RK3528 and import rk3528-pinctrl.dtsi
-> > >> from vendor linux-6.1-stan-rkr5 kernel with the hdmi-pins-idle node
-> > >> removed due to missing label reference to pcfg_output_low_pull_down.
-> > >>
-> > >> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > >> ---
-> > >> This was mostly imported from vendor kernel, however the main commit [1]
-> > >> list 28 signed-off-by tags, unclear who I should use as author and what
-> > >> signed-off-by tags to include.
-> > >>
-> > >> [1] https://github.com/rockchip-linux/kernel/commit/c17d6325959f0ec1af901e8a17919163454190a2
-> > >> ---
-> > >>  .../boot/dts/rockchip/rk3528-pinctrl.dtsi     | 1397 +++++++++++++++++
-> > >>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   82 +
-> > >>  2 files changed, 1479 insertions(+)
-> > >>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-pinctrl.dtsi
-> > >>
-> > > 
-> > >> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > >> index 0fb90f5c291c..d3e2a64ff2d5 100644
-> > >> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > >> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > >> @@ -4,8 +4,10 @@
-> > >>   * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
-> > >>   */
-> > >>  
-> > >> +#include <dt-bindings/gpio/gpio.h>
-> > >>  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > >>  #include <dt-bindings/interrupt-controller/irq.h>
-> > >> +#include <dt-bindings/pinctrl/rockchip.h>
-> > >>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
-> > >>  #include <dt-bindings/reset/rockchip,rk3528-cru.h>
-> > >>  
-> > >> @@ -17,6 +19,11 @@ / {
-> > >>  	#size-cells = <2>;
-> > >>  
-> > >>  	aliases {
-> > >> +		gpio0 = &gpio0;
-> > >> +		gpio1 = &gpio1;
-> > >> +		gpio2 = &gpio2;
-> > >> +		gpio3 = &gpio3;
-> > >> +		gpio4 = &gpio4;
-> > >>  		serial0 = &uart0;
-> > >>  		serial1 = &uart1;
-> > >>  		serial2 = &uart2;
-> > >> @@ -166,6 +173,11 @@ cru: clock-controller@ff4a0000 {
-> > >>  			#reset-cells = <1>;
-> > >>  		};
-> > >>  
-> > >> +		ioc_grf: syscon@ff540000 {
-> > >> +			compatible = "rockchip,rk3528-ioc-grf", "syscon";
-> > >> +			reg = <0x0 0xff540000 0x0 0x40000>;
-> > >> +		};
-> > >> +
-> > >>  		uart0: serial@ff9f0000 {
-> > >>  			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
-> > >>  			reg = <0x0 0xff9f0000 0x0 0x100>;
-> > >> @@ -264,5 +276,75 @@ saradc: adc@ffae0000 {
-> > >>  			#io-channel-cells = <1>;
-> > >>  			status = "disabled";
-> > >>  		};
-> > >> +
-> > >> +		pinctrl: pinctrl {
-> > >> +			compatible = "rockchip,rk3528-pinctrl";
-> > >> +			rockchip,grf = <&ioc_grf>;
-> > >> +			#address-cells = <2>;
-> > >> +			#size-cells = <2>;
-> > >> +			ranges;
-> > > 
-> > > I doubt whether the pincontroller should be placed under simple-bus:
-> > > without a reg property, it doesn't look like a MMIO device.
-> > > 
-> > > Actually it is, although all the registers stay in the ioc grf. Maybe
-> > > it should be considered as child of the grf.
-> > 
-> > This follows how pinctrl was added for RK3576 and what is proposed for
-> > RK3562 [2]. I have too little knowledge to know if this needs to change
-> > or if this should follow similar SoCs.
-> > 
-> > [2] https://lore.kernel.org/r/20250227111913.2344207-15-kever.yang@rock-chips.com
-> 
-> The reg address shouldn't matter here I think.
-> 
-> The "soc"-bus describes the elements contained in the soc (surrounding the
-> cpu cores) and the pinctrl controller definitly is part of the soc itself.
-> 
-> So when looking at the scope, it does belong there and also the
->  gpio-controller elements do have mmio addresses :-)
+The current Energy Aware Scheduler has some known limitations which have
+became more and more visible with features like uclamp as an example. This
+serie tries to fix some of those issues:
+- tasks stacked on the same CPU of a PD
+- tasks stuck on the wrong CPU.
 
-Thanks for the explanation, it makes sense to me.
+Patch 1 fixes the case where a CPU is wrongly classified as overloaded
+whereas it is capped to a lower compute capacity. This wrong classification
+can prevent periodic load balancer to select a group_misfit_task CPU
+because group_overloaded has higher priority.
 
-> Heiko
-> 
+Patch 2 creates a new EM interface that will be used by Patch 3
 
-Best regards,
-Yao Zi
+Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
+others might be a better choice. feec() looks for the CPU with the highest
+spare capacity in a PD assuming that it will be the best CPU from a energy
+efficiency PoV because it will require the smallest increase of OPP.
+This is often but not always true, this policy filters some others CPUs
+which would be as efficients because of using the same OPP but with less
+running tasks as an example.
+In fact, we only care about the cost of the new OPP that will be
+selected to handle the waking task. In many cases, several CPUs will end
+up selecting the same OPP and as a result having the same energy cost. In
+such cases, we can use other metrics to select the best CPU with the same
+energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
+and then the most performant CPU between CPUs. At now, this only tries to
+evenly spread the number of runnable tasks on CPUs but this can be
+improved with other metric like the sched slice duration in a follow up
+series.
+
+perf sched pipe on a dragonboard rb5 has been used to compare the overhead
+of the new feec() vs current implementation.
+
+9 iterations of perf bench sched pipe -T -l 80000
+                ops/sec  stdev 
+tip/sched/core  16634    (+/- 0.5%)
++ patches 1-3   17434    (+/- 1.2%)  +4.8%
+
+
+Patch 4 removed the now unused em_cpu_energy()
+
+Patch 5 solves another problem with tasks being stuck on a CPU forever
+because it doesn't sleep anymore and as a result never wakeup and call
+feec(). Such task can be detected by comparing util_avg or runnable_avg
+with the compute capacity of the CPU. Once detected, we can call feec() to
+check if there is a better CPU for the stuck task. The call can be done in
+2 places:
+- When the task is put back in the runnnable list after its running slice
+  with the balance callback mecanism similarly to the rt/dl push callback.
+- During cfs tick when there is only 1 running task stuck on the CPU in
+  which case the balance callback can't be used.
+
+This push callback mecanism with the new feec() algorithm ensures that
+tasks always get a chance to migrate on the best suitable CPU and don't
+stay stuck on a CPU which is no more the most suitable one. As examples:
+- A task waking on a big CPU with a uclamp max preventing it to sleep and
+  wake up, can migrate on a smaller CPU once it's more power efficient.
+- The tasks are spread on CPUs in the PD when they target the same OPP.
+
+Patch 6 adds task misfit migration case in the cfs tick and push callback
+mecanism to prevent waking up an idle cpu unnecessarily.
+
+Patch 7 removes the need of testing uclamp_min in cpu_overutilized to
+trigger the active migration of a task on another CPU.
+
+Compared to v3:
+- Fixed the empty functions
+
+Compared to v2:
+- Renamed the push and tick functions to ease understanding what they do.
+  Both are kept in the same patch as they solve the same problem.
+- Created some helper functions
+- Fixing some typos and comments
+- The task_stuck_on_cpu() condition remains unchanged. Pierre suggested to
+  take into account the min capacity of the CPU but the is not directly
+  available right now. It can trigger feec() when uclamp_max is very low
+  compare to the min capacity of the CPU but the feec() should keep 
+  returning the same CPU. This can be handled in a follow on patch
+
+Compared to v1:
+- The call to feec() even when overutilized has been removed
+from this serie and will be adressed in a separate series. Only the case
+of uclamp_min has been kept as it is now handled by push callback and
+tick mecanism.
+- The push mecanism has been cleanup, fixed and simplified.
+
+This series implements some of the topics discussed at OSPM [1]. Other
+topics will be part of an other serie
+
+[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+
+Vincent Guittot (7):
+  sched/fair: Filter false overloaded_group case for EAS
+  energy model: Add a get previous state function
+  sched/fair: Rework feec() to use cost instead of spare capacity
+  energy model: Remove unused em_cpu_energy()
+  sched/fair: Add push task mechanism for EAS
+  sched/fair: Add misfit case to push task mecanism for EAS
+  sched/fair: Update overutilized detection
+
+ include/linux/energy_model.h | 111 ++----
+ kernel/sched/fair.c          | 721 ++++++++++++++++++++++++-----------
+ kernel/sched/sched.h         |   2 +
+ 3 files changed, 518 insertions(+), 316 deletions(-)
+
+-- 
+2.43.0
 
 
