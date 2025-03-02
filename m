@@ -1,112 +1,294 @@
-Return-Path: <linux-kernel+bounces-540722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C05A4B435
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB3FA4B437
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:56:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E821890106
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411FB16D1A3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAE31EB9FD;
-	Sun,  2 Mar 2025 18:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237341EB9FD;
+	Sun,  2 Mar 2025 18:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="OdR0dY61"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd9IjvFO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D309AD39
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 18:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA16AD39;
+	Sun,  2 Mar 2025 18:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740941531; cv=none; b=DMnITNksmi45UfY7crENu03bgUZIIaKdCg3YOCOJGSDhSrBRf0QKx3ij6PCf7Ouvv4wjG923FD3NDJZPyGNJwzEkQHx5PgZgZl3K4AA18C0ps87BoqDrKzFsCJWY2I7B0fy8ryyLNByhym9Ox9wF5FDTUZ4pYDR7doPwvzj/fiw=
+	t=1740941810; cv=none; b=C21EaNGotR62zPa4PFZR4d1OFfr+4p7qFscwF0BQc2bVppZCXwAD5ZuVcjdTEY7Kk/ZL7B/LdmVoPB7BlKsY776ROlOLYgHBFpXouGMOiqtCAQVIMYlUrj8vOdImvWp9XETwi77CLWXQXJPLp+H1lcuH19KO84xgUBA+ZVzImh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740941531; c=relaxed/simple;
-	bh=2YMARwFzpT/2fxXckH/UHsQeqc+WpNlGXz87LpMaUd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ic2ow8jCqULQp1WDZEzWh+wBb+ol5LorB6+dh+F0kj2fUJ3BvNuYJaaZCAIFnEvW9RSHCAoO6TLiWl7VReGuyKmHtoGIq2/lpE7p+xAShSmZLEJcKHj39jdhYuEx/+9piDpq7K7d/xmY5wLO2oPqUr1SrhoVAg+sZN0ZbEo/ncg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=OdR0dY61; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d2b3811513so14629035ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 10:52:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1740941528; x=1741546328; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B7l7zFCEphXv5rcB1xTH7E9WWTKLPr1rVfyP4hQcYq8=;
-        b=OdR0dY61TX5AJXZhlonjpCk1JIgVFFxqwClSDjuHlNrLbhwDKGADhJYbTUTb7sE1+5
-         TsraLkBGn5nBVt2Ozn3J1q4LdUraaoQyd6t8+HTdGAhUkQ4ZuxmbQ2QHDVwsNHqX0EV2
-         /cHB8KhgnalUvlDxl2W0aC9R5R91lKzZsy4yE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740941528; x=1741546328;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B7l7zFCEphXv5rcB1xTH7E9WWTKLPr1rVfyP4hQcYq8=;
-        b=A2xhptySVDizOvfRqRkzVuCUwBYoNrUiu2RAp3ki3+IRpVDfm2xLZJeuXsmUqrRPpo
-         A8Nj/+gBkZxDvifP5eK0lxeUxmrfkRctrHTuX6bCasvQ7gZSK9akG6/QwzOzPjQcE9VF
-         tBn5wloZ4SlvnpLd+ZuA6mkj0rVIjaTCZsik7h1Rb1uPw5l2/dt5UtOcY4npDep8KVCV
-         35nQYMWgyCo4eaNybVxZMZrAAb+8h8BC3Nn8uABv6Vq8f6xd05Rqb0chY4jd+isgNhrs
-         f58eaoahDST64usyEOnMpVzp6UuzYIcB9qNvWk3xotn4u95FVJmhEo2bOiKjW0jxeEN1
-         dVog==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ0kYddKtCQZtGX5eXZGozlfRWf5gwmA7SYHvIc25OztjWkutB1u95NfmL6eUn9XAUQBVMDEd9rT1Yhss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbkjL584nQXhSvuQ8n78HCBoqq61AKTXKGYiN/REYp+d8KvUVk
-	zoXdJXNYxv2u3+rtCk+3A5Wr0TkTEbaCyREsXkRQbarOt0VYc4W47O7hJ7YseA==
-X-Gm-Gg: ASbGncv1IR3yMdcbWGQ57AHnCmeh1lMpMmO3gCZagTtuSDfhZg7WkqnlxPgw7fl1WlM
-	B7MvgLW4zDgKai6IyhU6Kko8QJ8B84tQFU5aZXs/rQm5TnYH3QTSQTGaH+cKYI26XwZ256ApsHM
-	WsOmzEpqQn7+O1Zo283zQRX66eFznKZoDLPc7oxf4X3CatMDyZ1qo927NhCvLQrzTZkPCQlJ3Yb
-	bqA4BzqjagWBjBVbUGGmDUCIGRzLz1mqdm/R9jKZFaBRsN/CfiwuS5bLsdN6e6gz/BkdfPzhr0n
-	mvlgmlDTm+IsgYNX5lvS97NHUuSVeQ8ah0AeEt1SHaCiiDBPJ3iQQZBxbc3lLhYIqYsut3kaYBZ
-	MqerJ0A6APdRd
-X-Google-Smtp-Source: AGHT+IGaYwptaiL4qcE0O0nJBy5S6QCvEaXlN2oaucVjj+jdPUcbQMj/htRswkhfxl61JYv1Owe54A==
-X-Received: by 2002:a05:6e02:1d87:b0:3d3:f72c:8fd8 with SMTP id e9e14a558f8ab-3d3f72c907bmr39999795ab.6.1740941528462;
-        Sun, 02 Mar 2025 10:52:08 -0800 (PST)
-Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d3dee70df6sm20104735ab.36.2025.03.02.10.52.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 10:52:06 -0800 (PST)
-Message-ID: <16588001-9fac-4508-87f8-026acfee8b34@ieee.org>
-Date: Sun, 2 Mar 2025 12:52:04 -0600
+	s=arc-20240116; t=1740941810; c=relaxed/simple;
+	bh=DTcCsDl3YelRsQhkIZb+/zokvSAEsX2KGI4N1591F4M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SbCLDEN+gf7/d1eHCnl+zTT/KxbqmsZeDwT+Zdd1ybuGckNUFaCfCtNvC8hdtGAPC4r+GTOicDbeVHNR2C11vMSZmSfCDZkThDx+70qIMurb2QDb3O1AZVJ0+I9ink7EsISrFGZWRtuxBc2ZrMeh9/a8b8o8+XAJtApWiJ3t+HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd9IjvFO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0EEC4CED6;
+	Sun,  2 Mar 2025 18:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740941809;
+	bh=DTcCsDl3YelRsQhkIZb+/zokvSAEsX2KGI4N1591F4M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nd9IjvFOUXZ+RLxOgZhmCkp8QM3VbjdqTzRbSZBE68IrpG6IPMsTP1yRSHtgP2xT1
+	 4DVchWwrJvsEchapv0jduNp/rnQqvM3j5ja3IjL8fQUY70TpcSCd7LKgkihoFE1EIK
+	 GY7Z8gjygFKhF6t/DRXpDfM9CIzUPNPs7HUalFwIVrts4LtbipnIG5MEVsdIcbu9eP
+	 eScjGANA1gTJz+9M5lEPl245qo6LR6sPDfLPH6NEQ2+l4zMFIn+yXU4Eco25bfj1n1
+	 CzSyjqxoJJPNTVDdsRUOGXjJUE3CNmAS4N9Cg69JR7Y+AkaKYyDTtR3U1gENnjyrCW
+	 /f4LOUShUa8ig==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org, Zhihang
+ Shao <zhihang.shao.iscas@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Xiao Wang <xiao.w.wang@intel.com>, Charlie Jenkins <charlie@rivosinc.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: Re: [PATCH 0/4] RISC-V CRC optimizations
+In-Reply-To: <20250224180614.GA11336@google.com>
+References: <20250216225530.306980-1-ebiggers@kernel.org>
+ <20250224180614.GA11336@google.com>
+Date: Sun, 02 Mar 2025 19:56:46 +0100
+Message-ID: <87ikorl0r5.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Fixes for IPA v4.7
-To: Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@kernel.org>
-Cc: Luca Weiss <luca.weiss@fairphone.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- phone-devel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
- <20250228145246.7b24987e@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250228145246.7b24987e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2/28/25 4:52 PM, Jakub Kicinski wrote:
-> On Thu, 27 Feb 2025 11:33:39 +0100 Luca Weiss wrote:
->> couldn't be tested much back then due to missing features in tqftpserv
->> which caused the modem to not enable correctly.
->>
->> Especially the last commit is important since it makes mobile data
->> actually functional on SoCs with IPA v4.7 like SM6350 - used on the
->> Fairphone 4. Before that, you'd get an IP address on the interface but
->> then e.g. ping never got any response back.
-> 
-> Hi Alex, would you be able to review this?
+Eric!
 
-Yes I will.  Sorry, I've been sick this week.  I'm
-feeling better now.
+Eric Biggers <ebiggers@kernel.org> writes:
 
-					-Alex
+> On Sun, Feb 16, 2025 at 02:55:26PM -0800, Eric Biggers wrote:
+>> This patchset is a replacement for
+>> "[PATCH v4] riscv: Optimize crct10dif with Zbc extension"
+>> (https://lore.kernel.org/r/20250211071101.181652-1-zhihang.shao.iscas@gm=
+ail.com/).
+>> It adopts the approach that I'm taking for x86 where code is shared
+>> among CRC variants.  It replaces the existing Zbc optimized CRC32
+>> functions, then adds Zbc optimized CRC-T10DIF and CRC64 functions.
+>>=20
+>> This new code should be significantly faster than the current Zbc
+>> optimized CRC32 code and the previously proposed CRC-T10DIF code.  It
+>> uses "folding" instead of just Barrett reduction, and it also implements
+>> Barrett reduction more efficiently.
+>>=20
+>> This applies to crc-next at
+>> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?=
+h=3Dcrc-next.
+>> It depends on other patches that are queued there for 6.15, so I plan to
+>> take it through there if there are no objections.
+>>=20
+>> Tested with crc_kunit in QEMU (set CONFIG_CRC_KUNIT_TEST=3Dy and
+>> CONFIG_CRC_BENCHMARK=3Dy), both 32-bit and 64-bit.  I don't have real Zbc
+>> capable hardware to benchmark this on, but the new code should work very
+>> well; similar optimizations work very well on other architectures.
+>
+> Any feedback on this series from the RISC-V side?
+
+I have not reviewed your series, but I did a testrun the Milk-V Jupiter
+which sports a Spacemit K1 that has Zbc.
+
+I based the run on commit 1973160c90d7 ("Merge tag
+'gpio-fixes-for-v6.14-rc5' of
+git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux"), plus your
+crc-next branch (commit a0bd462f3a13 ("x86/crc: add ANNOTATE_NOENDBR to
+suppress objtool warnings")) merged:
+
+  | --- base1.txt	2025-03-02 18:31:16.169438876 +0000
+  | +++ eric.txt	2025-03-02 18:35:58.683017223 +0000
+  | @@ -11,7 +11,7 @@
+  |      # crc16_benchmark: len=3D127: 153 MB/s
+  |      # crc16_benchmark: len=3D128: 153 MB/s
+  |      # crc16_benchmark: len=3D200: 153 MB/s
+  | -    # crc16_benchmark: len=3D256: 153 MB/s
+  | +    # crc16_benchmark: len=3D256: 154 MB/s
+  |      # crc16_benchmark: len=3D511: 154 MB/s
+  |      # crc16_benchmark: len=3D512: 154 MB/s
+  |      # crc16_benchmark: len=3D1024: 155 MB/s
+  | @@ -20,94 +20,94 @@
+  |      # crc16_benchmark: len=3D16384: 155 MB/s
+  |      ok 2 crc16_benchmark
+  |      ok 3 crc_t10dif_test
+  | -    # crc_t10dif_benchmark: len=3D1: 48 MB/s
+  | -    # crc_t10dif_benchmark: len=3D16: 125 MB/s
+  | -    # crc_t10dif_benchmark: len=3D64: 136 MB/s
+  | -    # crc_t10dif_benchmark: len=3D127: 138 MB/s
+  | -    # crc_t10dif_benchmark: len=3D128: 138 MB/s
+  | -    # crc_t10dif_benchmark: len=3D200: 138 MB/s
+  | -    # crc_t10dif_benchmark: len=3D256: 138 MB/s
+  | -    # crc_t10dif_benchmark: len=3D511: 139 MB/s
+  | -    # crc_t10dif_benchmark: len=3D512: 139 MB/s
+  | -    # crc_t10dif_benchmark: len=3D1024: 139 MB/s
+  | -    # crc_t10dif_benchmark: len=3D3173: 140 MB/s
+  | -    # crc_t10dif_benchmark: len=3D4096: 140 MB/s
+  | -    # crc_t10dif_benchmark: len=3D16384: 140 MB/s
+  | +    # crc_t10dif_benchmark: len=3D1: 28 MB/s
+  | +    # crc_t10dif_benchmark: len=3D16: 236 MB/s
+  | +    # crc_t10dif_benchmark: len=3D64: 450 MB/s
+  | +    # crc_t10dif_benchmark: len=3D127: 480 MB/s
+  | +    # crc_t10dif_benchmark: len=3D128: 540 MB/s
+  | +    # crc_t10dif_benchmark: len=3D200: 559 MB/s
+  | +    # crc_t10dif_benchmark: len=3D256: 600 MB/s
+  | +    # crc_t10dif_benchmark: len=3D511: 613 MB/s
+  | +    # crc_t10dif_benchmark: len=3D512: 635 MB/s
+  | +    # crc_t10dif_benchmark: len=3D1024: 654 MB/s
+  | +    # crc_t10dif_benchmark: len=3D3173: 665 MB/s
+  | +    # crc_t10dif_benchmark: len=3D4096: 669 MB/s
+  | +    # crc_t10dif_benchmark: len=3D16384: 673 MB/s
+  |      ok 4 crc_t10dif_benchmark
+  |      ok 5 crc32_le_test
+  |      # crc32_le_benchmark: len=3D1: 31 MB/s
+  | -    # crc32_le_benchmark: len=3D16: 456 MB/s
+  | -    # crc32_le_benchmark: len=3D64: 682 MB/s
+  | -    # crc32_le_benchmark: len=3D127: 620 MB/s
+  | -    # crc32_le_benchmark: len=3D128: 744 MB/s
+  | -    # crc32_le_benchmark: len=3D200: 768 MB/s
+  | -    # crc32_le_benchmark: len=3D256: 777 MB/s
+  | -    # crc32_le_benchmark: len=3D511: 758 MB/s
+  | -    # crc32_le_benchmark: len=3D512: 798 MB/s
+  | -    # crc32_le_benchmark: len=3D1024: 807 MB/s
+  | -    # crc32_le_benchmark: len=3D3173: 807 MB/s
+  | -    # crc32_le_benchmark: len=3D4096: 814 MB/s
+  | -    # crc32_le_benchmark: len=3D16384: 816 MB/s
+  | +    # crc32_le_benchmark: len=3D16: 439 MB/s
+  | +    # crc32_le_benchmark: len=3D64: 1209 MB/s
+  | +    # crc32_le_benchmark: len=3D127: 1067 MB/s
+  | +    # crc32_le_benchmark: len=3D128: 1616 MB/s
+  | +    # crc32_le_benchmark: len=3D200: 1739 MB/s
+  | +    # crc32_le_benchmark: len=3D256: 1951 MB/s
+  | +    # crc32_le_benchmark: len=3D511: 1855 MB/s
+  | +    # crc32_le_benchmark: len=3D512: 2174 MB/s
+  | +    # crc32_le_benchmark: len=3D1024: 2301 MB/s
+  | +    # crc32_le_benchmark: len=3D3173: 2347 MB/s
+  | +    # crc32_le_benchmark: len=3D4096: 2407 MB/s
+  | +    # crc32_le_benchmark: len=3D16384: 2440 MB/s
+  |      ok 6 crc32_le_benchmark
+  |      ok 7 crc32_be_test
+  | -    # crc32_be_benchmark: len=3D1: 27 MB/s
+  | -    # crc32_be_benchmark: len=3D16: 258 MB/s
+  | -    # crc32_be_benchmark: len=3D64: 388 MB/s
+  | -    # crc32_be_benchmark: len=3D127: 402 MB/s
+  | -    # crc32_be_benchmark: len=3D128: 424 MB/s
+  | -    # crc32_be_benchmark: len=3D200: 438 MB/s
+  | -    # crc32_be_benchmark: len=3D256: 444 MB/s
+  | -    # crc32_be_benchmark: len=3D511: 449 MB/s
+  | -    # crc32_be_benchmark: len=3D512: 455 MB/s
+  | -    # crc32_be_benchmark: len=3D1024: 461 MB/s
+  | -    # crc32_be_benchmark: len=3D3173: 463 MB/s
+  | -    # crc32_be_benchmark: len=3D4096: 465 MB/s
+  | -    # crc32_be_benchmark: len=3D16384: 466 MB/s
+  | +    # crc32_be_benchmark: len=3D1: 25 MB/s
+  | +    # crc32_be_benchmark: len=3D16: 251 MB/s
+  | +    # crc32_be_benchmark: len=3D64: 458 MB/s
+  | +    # crc32_be_benchmark: len=3D127: 496 MB/s
+  | +    # crc32_be_benchmark: len=3D128: 547 MB/s
+  | +    # crc32_be_benchmark: len=3D200: 569 MB/s
+  | +    # crc32_be_benchmark: len=3D256: 605 MB/s
+  | +    # crc32_be_benchmark: len=3D511: 621 MB/s
+  | +    # crc32_be_benchmark: len=3D512: 637 MB/s
+  | +    # crc32_be_benchmark: len=3D1024: 657 MB/s
+  | +    # crc32_be_benchmark: len=3D3173: 668 MB/s
+  | +    # crc32_be_benchmark: len=3D4096: 671 MB/s
+  | +    # crc32_be_benchmark: len=3D16384: 674 MB/s
+  |      ok 8 crc32_be_benchmark
+  |      ok 9 crc32c_test
+  |      # crc32c_benchmark: len=3D1: 31 MB/s
+  | -    # crc32c_benchmark: len=3D16: 457 MB/s
+  | -    # crc32c_benchmark: len=3D64: 682 MB/s
+  | -    # crc32c_benchmark: len=3D127: 620 MB/s
+  | -    # crc32c_benchmark: len=3D128: 744 MB/s
+  | -    # crc32c_benchmark: len=3D200: 769 MB/s
+  | -    # crc32c_benchmark: len=3D256: 779 MB/s
+  | -    # crc32c_benchmark: len=3D511: 758 MB/s
+  | -    # crc32c_benchmark: len=3D512: 797 MB/s
+  | -    # crc32c_benchmark: len=3D1024: 807 MB/s
+  | -    # crc32c_benchmark: len=3D3173: 806 MB/s
+  | -    # crc32c_benchmark: len=3D4096: 813 MB/s
+  | -    # crc32c_benchmark: len=3D16384: 816 MB/s
+  | +    # crc32c_benchmark: len=3D16: 446 MB/s
+  | +    # crc32c_benchmark: len=3D64: 1188 MB/s
+  | +    # crc32c_benchmark: len=3D127: 1066 MB/s
+  | +    # crc32c_benchmark: len=3D128: 1600 MB/s
+  | +    # crc32c_benchmark: len=3D200: 1727 MB/s
+  | +    # crc32c_benchmark: len=3D256: 1941 MB/s
+  | +    # crc32c_benchmark: len=3D511: 1854 MB/s
+  | +    # crc32c_benchmark: len=3D512: 2164 MB/s
+  | +    # crc32c_benchmark: len=3D1024: 2300 MB/s
+  | +    # crc32c_benchmark: len=3D3173: 2345 MB/s
+  | +    # crc32c_benchmark: len=3D4096: 2402 MB/s
+  | +    # crc32c_benchmark: len=3D16384: 2437 MB/s
+  |      ok 10 crc32c_benchmark
+  |      ok 11 crc64_be_test
+  | -    # crc64_be_benchmark: len=3D1: 64 MB/s
+  | -    # crc64_be_benchmark: len=3D16: 144 MB/s
+  | -    # crc64_be_benchmark: len=3D64: 154 MB/s
+  | -    # crc64_be_benchmark: len=3D127: 156 MB/s
+  | -    # crc64_be_benchmark: len=3D128: 156 MB/s
+  | -    # crc64_be_benchmark: len=3D200: 156 MB/s
+  | -    # crc64_be_benchmark: len=3D256: 156 MB/s
+  | -    # crc64_be_benchmark: len=3D511: 157 MB/s
+  | -    # crc64_be_benchmark: len=3D512: 157 MB/s
+  | -    # crc64_be_benchmark: len=3D1024: 157 MB/s
+  | -    # crc64_be_benchmark: len=3D3173: 158 MB/s
+  | -    # crc64_be_benchmark: len=3D4096: 158 MB/s
+  | -    # crc64_be_benchmark: len=3D16384: 158 MB/s
+  | +    # crc64_be_benchmark: len=3D1: 29 MB/s
+  | +    # crc64_be_benchmark: len=3D16: 264 MB/s
+  | +    # crc64_be_benchmark: len=3D64: 476 MB/s
+  | +    # crc64_be_benchmark: len=3D127: 499 MB/s
+  | +    # crc64_be_benchmark: len=3D128: 558 MB/s
+  | +    # crc64_be_benchmark: len=3D200: 576 MB/s
+  | +    # crc64_be_benchmark: len=3D256: 611 MB/s
+  | +    # crc64_be_benchmark: len=3D511: 621 MB/s
+  | +    # crc64_be_benchmark: len=3D512: 638 MB/s
+  | +    # crc64_be_benchmark: len=3D1024: 659 MB/s
+  | +    # crc64_be_benchmark: len=3D3173: 667 MB/s
+  | +    # crc64_be_benchmark: len=3D4096: 671 MB/s
+  | +    # crc64_be_benchmark: len=3D16384: 674 MB/s
+  |      ok 12 crc64_be_benchmark
+  |      ok 13 crc64_nvme_test
+  | -    # crc64_nvme_benchmark: len=3D1: 64 MB/s
+  | -    # crc64_nvme_benchmark: len=3D16: 144 MB/s
+  | -    # crc64_nvme_benchmark: len=3D64: 154 MB/s
+  | -    # crc64_nvme_benchmark: len=3D127: 156 MB/s
+  | -    # crc64_nvme_benchmark: len=3D128: 156 MB/s
+  | -    # crc64_nvme_benchmark: len=3D200: 156 MB/s
+  | -    # crc64_nvme_benchmark: len=3D256: 156 MB/s
+  | -    # crc64_nvme_benchmark: len=3D511: 157 MB/s
+  | -    # crc64_nvme_benchmark: len=3D512: 157 MB/s
+  | -    # crc64_nvme_benchmark: len=3D1024: 157 MB/s
+  | -    # crc64_nvme_benchmark: len=3D3173: 158 MB/s
+  | -    # crc64_nvme_benchmark: len=3D4096: 158 MB/s
+  | -    # crc64_nvme_benchmark: len=3D16384: 158 MB/s
+  | +    # crc64_nvme_benchmark: len=3D1: 36 MB/s
+  | +    # crc64_nvme_benchmark: len=3D16: 479 MB/s
+  | +    # crc64_nvme_benchmark: len=3D64: 1340 MB/s
+  | +    # crc64_nvme_benchmark: len=3D127: 1179 MB/s
+  | +    # crc64_nvme_benchmark: len=3D128: 1766 MB/s
+  | +    # crc64_nvme_benchmark: len=3D200: 1965 MB/s
+  | +    # crc64_nvme_benchmark: len=3D256: 2201 MB/s
+  | +    # crc64_nvme_benchmark: len=3D511: 2087 MB/s
+  | +    # crc64_nvme_benchmark: len=3D512: 2464 MB/s
+  | +    # crc64_nvme_benchmark: len=3D1024: 2331 MB/s
+  | +    # crc64_nvme_benchmark: len=3D3173: 2673 MB/s
+  | +    # crc64_nvme_benchmark: len=3D4096: 2745 MB/s
+  | +    # crc64_nvme_benchmark: len=3D16384: 2782 MB/s
+  |      ok 14 crc64_nvme_benchmark
+  |  # crc: pass:14 fail:0 skip:0 total:14
+  |  # Totals: pass:14 fail:0 skip:0 total:14
+
+That's a significant speed up for this popular SoC, and it would be
+great to get this series in for the next merge window! Thank you!
+
+Tested-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+
+
+Bj=C3=B6rn
 
