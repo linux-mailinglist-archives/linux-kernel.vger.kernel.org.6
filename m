@@ -1,88 +1,144 @@
-Return-Path: <linux-kernel+bounces-540561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D49CA4B235
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:27:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B012A4B23A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A23AB8A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5EB7A6BEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7551E3761;
-	Sun,  2 Mar 2025 14:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32711E8338;
+	Sun,  2 Mar 2025 14:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H8ymg5Q8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KonF0Rv9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99391519BE
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 14:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A7236AF5
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 14:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740925624; cv=none; b=imOKZLJI2sZyAOo2mdFHm+gbG2A6EGTdTaVZui6Q3sZ0UKxCxf6LRQaZuESAnzKnTCbK4Zkmqu+jR26eRCUw7n6GGbuqg9GuxKfkxhv2+9Zxyigv/Nd1wqW6XXmAV3H8oIN9K135xePjcRXR5BsXQMdz0jxjJGhtXUpBxujeKgM=
+	t=1740926014; cv=none; b=OQe+kufo2am2Y/JQBaM8oi/F8WH+bpiiTmuJJ6hPJLj+8Qf85naZtYmEaT8nR+oxQJRiEtuQsFhje4Rgi7tJYXnX7/JAa5OEWZjn2oDUOFiPOGwoKUKf14K3lVvZIguRSYrGCnRrMN4Jd5Q4E/skmDDKZp8oAs6mHv8MQ391c3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740925624; c=relaxed/simple;
-	bh=aKaIxUY0VRW52Ui8iC6HgHNpx18yvJM6J9k61Z/ZbQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o0Fq6EUu8OqhP1Xtg4bR6JAHnukBkK0h0RvaLJogJi/oZWeElMGvC8QcOQ9Tn1ejVBeThbquNW6hCNfy6/Zqu0OZpepGB6qXGzdXYG6sufRqnIvJfPhxi6b40SKiKFlL1ESF1HB7D1F6pxLsDN+aTeZElIDHBw8cf3yp3qiRSro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H8ymg5Q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AF3C4CED6;
-	Sun,  2 Mar 2025 14:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740925623;
-	bh=aKaIxUY0VRW52Ui8iC6HgHNpx18yvJM6J9k61Z/ZbQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H8ymg5Q8bIdFt93m2U5HK15vHs5s9VHwJLvssNBmSdTgto4kT8YyHKGg5EfGXcC20
-	 O5lYoo62RjrJMbBbD7UJrfoqoV6m2+6r7KlF1Z9YU2ScjF+mtlB7YPDAJuQXqr680c
-	 nump01TzP46udHSDNQMEwEbRWRYsh6thp384BZ54=
-Date: Sun, 2 Mar 2025 15:25:50 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2025-21818: x86/xen: fix xen_hypercall_hvm() to not clobber
- %rbx
-Message-ID: <2025030236-item-coral-d4b3@gregkh>
-References: <2025022710-CVE-2025-21818-27ee@gregkh>
- <f78c7925-8057-4503-93ec-c50386a63862@suse.com>
+	s=arc-20240116; t=1740926014; c=relaxed/simple;
+	bh=5A8Pz3pMwh9UoelkS2AbKkUE/4GZ7PZqwfjnsFbWfZY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=aVvpDb5nYNEWAhvLTYpqWKnpZIn/TO8PBwpgbIVV18s3yf2YfL0dpkttL2rv8OIdV6pTJIKYhFbahl5JF8hccg7Db0YPxzWmU0Rv9H2QVo1vYXUyg/CHkdL2Ekiv0fJ8MI7pvYm1mbPiXShhAcoNR4wuEtLBMJOQrupzbrbjiRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KonF0Rv9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740926011;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7j2K5a1YoG1AaUdqSBrB7rnRQcl6BL0ziicJNzchzQQ=;
+	b=KonF0Rv9FBKgu5YJOqO/pT74Vm52Eni5gGtUW5eUYr3UATWttD84zK8FlYUOVPnDy5aV5p
+	Zha26PIem39yFzgX1819QDtAYWrj9Ghpt5Yv0QcYpLNpD5WBo2OhtAkPxUFNYoVyDA5d06
+	roaBIK6Rv5BHq4w374eyGRNkNvpXO14=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-_CeCGF50MwmXtU-MEZFW9g-1; Sun,
+ 02 Mar 2025 09:33:15 -0500
+X-MC-Unique: _CeCGF50MwmXtU-MEZFW9g-1
+X-Mimecast-MFC-AGG-ID: _CeCGF50MwmXtU-MEZFW9g_1740925994
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FBCC19560B5;
+	Sun,  2 Mar 2025 14:33:13 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.49])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D0A5F1800359;
+	Sun,  2 Mar 2025 14:33:08 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: lulu@redhat.com,
+	jasowang@redhat.com,
+	mst@redhat.com,
+	michael.christie@oracle.com,
+	sgarzare@redhat.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v7 0/8] vhost: Add support of kthread API
+Date: Sun,  2 Mar 2025 22:32:02 +0800
+Message-ID: <20250302143259.1221569-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f78c7925-8057-4503-93ec-c50386a63862@suse.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Feb 28, 2025 at 08:28:48AM +0100, Juergen Gross wrote:
-> On 27.02.25 21:03, Greg Kroah-Hartman wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > x86/xen: fix xen_hypercall_hvm() to not clobber %rbx
-> > 
-> > xen_hypercall_hvm(), which is used when running as a Xen PVH guest at
-> > most only once during early boot, is clobbering %rbx. Depending on
-> > whether the caller relies on %rbx to be preserved across the call or
-> > not, this clobbering might result in an early crash of the system.
-> > 
-> > This can be avoided by using an already saved register instead of %rbx.
-> > 
-> > The Linux kernel CVE team has assigned CVE-2025-21818 to this issue.
-> 
-> Please revoke this CVE.
-> 
-> There is no way an unprivileged user can trigger this issue at will.
-> The issue is guest local and will either happen very early at boot or
-> it won't happen at all.
-> 
-> So no security issue.
+In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),   
+the vhost now uses vhost_task and operates as a child of the   
+owner thread. This aligns with containerization principles.   
+However, this change has caused confusion for some legacy   
+userspace applications. Therefore, we are reintroducing   
+support for the kthread API. 
 
-Now rejected, thanks for the review.
+In this series, a new UAPI is implemented to allow   
+userspace applications to configure their thread mode.
 
-greg k-h
+Changelog v2:
+ 1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
+ 2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+
+Changelog v3:
+ 1. Change the module_param's name to inherit_owner_default, and the default value is true.
+ 2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
+ 3. device will have their own inherit_owner in struct vhost_dev
+ 4. Address other comments
+
+Changelog v4:
+ 1. remove the module_param, only keep the UAPI
+ 2. remove the structure for task function; change to use the function pointer in vhost_worker
+ 3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+ 4. Address other comments
+
+Changelog v5:
+ 1. Change wakeup and stop function pointers in struct vhost_worker to void.
+ 2. merging patches 4, 5, 6 in a single patch
+ 3. Fix spelling issues and address other comments.
+
+Changelog v6:
+ 1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
+ 2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM_OWNER
+ 3. reuse the function __vhost_worker_flush
+ 4. use a ops sturct to support worker relates function
+ 5. reset the value of inherit_owner in vhost_dev_reset_owner s.
+ 
+Changelog v7: 
+ 1. add a KConfig knob to disable legacy app support
+ 2. Split the changes into two patches to separately introduce the ops and add kthread support.
+ 3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
+ 4. Rebased on the latest kernel
+ 5. Address other comments
+  
+Tested with QEMU with kthread mode/task mode/kthread+task mode
+
+Cindy Lu (8):
+  vhost: Add a new parameter in vhost_dev to allow user select kthread
+  vhost: Reintroduce vhost_worker to support kthread
+  vhost: Add the cgroup related function
+  vhost: Introduce vhost_worker_ops in vhost_worker
+  vhost: Reintroduce kthread mode support in vhost
+  vhost: uapi to control task mode (owner vs kthread)
+  vhost: Add check for inherit_owner status
+  vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
+
+ drivers/vhost/Kconfig      |  15 +++
+ drivers/vhost/vhost.c      | 227 +++++++++++++++++++++++++++++++++----
+ drivers/vhost/vhost.h      |  21 ++++
+ include/uapi/linux/vhost.h |  15 +++
+ 4 files changed, 259 insertions(+), 19 deletions(-)
+
+-- 
+2.45.0
+
 
