@@ -1,45 +1,40 @@
-Return-Path: <linux-kernel+bounces-540409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9DBA4B041
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:25:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAE9A4B046
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EA18896C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B85A167481
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E771E1A17;
-	Sun,  2 Mar 2025 07:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4291E3774;
+	Sun,  2 Mar 2025 07:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DWCNcg2g"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Aqh6ofGa"
+Received: from mail-m3293.qiye.163.com (mail-m3293.qiye.163.com [220.197.32.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CCA1DE3C0;
-	Sun,  2 Mar 2025 07:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA6D1E2823;
+	Sun,  2 Mar 2025 07:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740899704; cv=none; b=BGEWJ2ri91+nbMgcNC/pg3aWy6vwytp/Vy6taDD/ETUzttP/EjxvTWKYpgfv+6sk2OLLF0Dgz7DUwWwfvNX/7aP+RidVpJqjItfNV2qvAkstgTHvuZvxNQSconoOUJizfjV4lJRPUrEqs0dBv3X7J2LNgUnDdqqlLtsdjcyupBc=
+	t=1740899746; cv=none; b=d5RB7Riaykei2xhMnH0EAoSrOBCkr5aSTHxDnMmc+Y1cX5yxBUK+gHXpUd8S6t4GOi0qfH00T6ONB6WoB8TQuAjVzS91TYL+Ig7DWSGkSJ8glU8NQ4z8dDtSqKcBzzCwxLvWW4/7pNdv1xrTUQOskOr8J8FtaxOgK5+5dcVpT8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740899704; c=relaxed/simple;
-	bh=dDTZtxtMP+ASRgLGhbT+WUH+lROdEMNi84C84Y2oI6Q=;
+	s=arc-20240116; t=1740899746; c=relaxed/simple;
+	bh=ziDod9pTnCx8VqIh/26uIBZKiuRQeyCD6/ciVFEaAs8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjDrkHHGsHVQPRtwXYa611eIfuOYMMY5RfS0Kj+vvt7h2VdUCTx7grbqYE+eSBcBAAxbmRKRVoYyvsAXTUXWfSe0LZ/+kFKX9mSnXSqTQSq3osUHn6lIY4OTWnjlIUzvpNgbIR82Tyfgv5eP/RYs8N64fXNOWgtcjGHpYDnltlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DWCNcg2g; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740899696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=v69h+SOeTjqXpJtalLZZCoQPIBTBXQ3ns0RzzvJWsFw=;
-	b=DWCNcg2gCQe1KgQu3n1JrBv7DPoMbTQ/GnWyqwMSt8WY+h9hmpuvcHJLg6nhqbdb079CLXeanSB+lBMbPHXjwd/EcDP66sweVHbx3psJOUJcHbGPkPg54AtsaQE4zyJ2mUXbY6bGqtru8PY3jd47CWBiH4dbeNLYyqyF7Bn1Iqs=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQUXm6t_1740899693 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 02 Mar 2025 15:14:54 +0800
-Message-ID: <7eddced6-bf45-44c8-abbf-7d0d541511ab@linux.alibaba.com>
-Date: Sun, 2 Mar 2025 15:14:52 +0800
+	 In-Reply-To:Content-Type; b=fgPbGeIR4i0zUFyZA6ltgmYoPHnzyXNZvm9n6Dkd+d9YE+lsd+fgw86HiiGUGSO6CrJMHYEZ8/ysWxKKplQ2vtwlJo02Nix5YJwCfygu4v/jpI8iIoJwBmy3ymOcnlw0DB0rWWFlOIplsr0r6wHTjBfbOQTNmqYYdf4zYXbAuVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Aqh6ofGa; arc=none smtp.client-ip=220.197.32.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id ca138e88;
+	Sun, 2 Mar 2025 15:15:30 +0800 (GMT+08:00)
+Message-ID: <f835a852-24b8-4279-8e4b-42517d694493@rock-chips.com>
+Date: Sun, 2 Mar 2025 15:15:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,116 +42,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
-To: Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>
-Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linmiaohe@huawei.com, akpm@linux-foundation.org, peterz@infradead.org,
- jpoimboe@kernel.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-3-xueshuai@linux.alibaba.com>
- <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
- <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
- <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
- <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
- <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
+Subject: Re: [PATCH v7 04/15] drm/bridge: analogix_dp: Remove the unnecessary
+ calls to clk_disable_unprepare() during probing
+To: Doug Anderson <dianders@chromium.org>
+Cc: heiko@sntech.de, andy.yan@rock-chips.com, hjc@rock-chips.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, dmitry.baryshkov@linaro.org,
+ sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com,
+ boris.brezillon@collabora.com, l.stach@pengutronix.de,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250224081325.96724-1-damon.ding@rock-chips.com>
+ <20250224081325.96724-5-damon.ding@rock-chips.com>
+ <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUhPQlYZTx9PSh0YTx4ZSUJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9555b5c2df03a3kunmca138e88
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pjo6Lgw6CzIKHUsaFQsLF0tL
+	OBUKCU9VSlVKTE9LQ0JCTEhKQ01CVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJS0hJNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=Aqh6ofGacuT+B/WiOkyQRxEZYkd5NWw7bNn++OmrLNSFR5Y2zQSQ6S4knhbwrlYkwPve/ppWG4WrEx6B3hdO/jgE+1l3hEYxMT3Ah6BXdq2v3svwOMcgcj3L9US+GjHWVgNzBiTwKuNOceJpI6UFEEg1IWwgUjUnBrgLUK7S/mM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=8d5ejZu4ZY9Y9Zh2+eVlwxl7XvRzlgNDw9s/Y5LNOs0=;
+	h=date:mime-version:subject:message-id:from;
 
+Hi Doug,
 
-
-在 2025/3/2 02:47, Borislav Petkov 写道:
-> On Sat, Mar 01, 2025 at 10:03:13PM +0800, Shuai Xue wrote:
->> (By the way, Cenots/Redhat build kernel without CONFIG_RAS_CEC set, becase
->> it breaks EDAC decoding. We do not use CEC in production at all for the same
->> reasion.)
+On 2025/2/25 9:40, Doug Anderson wrote:
+> Hi,
 > 
-> It doesn't "break" error decoding - it collects every correctable DRAM error
-> and puts it in "leaky" bucket of sorts. And when a certain error address
-> generates too many errors, it memory_failure()s the page and poisons it.
-> 
-> You do not use it in production because you want to see every error, collect
-> it, massage it and perhaps decide when DIMMs go bad and you can replace
-> them... or whatever you do.
-> 
-> All the others who enable it and we can sleep properly, without getting
-> unnecessarily upset about a correctable error.
-
-Yes, we want to see event CE error and use the CE pattern (e.g. correctable
-error-bit)[1][2] to  predict whether a row fault is prone to UEs or not.
-And we are not upset to CE error, becasue it have corrected by hardware :)
-
-[1]https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/fault-aware-prediction-guide.pdf
-[2]https://arxiv.org/html/2312.02855v2
-
-> 
->> Yes, we collect all kernel message from host, parse the logs and predict panic
->> with AI tools. The more details we collect, the better the performance of
->> the AI model.
-> 
-> LOL.
-> 
-> We go the great effort of going a MCE tracepoint which gives a *structured*
-> error record, show an example how to use
-> it in rasdaemon and you go and do the crazy hard and, at the same time, silly
-> thing and parse dmesg?!??!
-> 
-> This is priceless. Oh boy.
-> 
->> Agreed, tracepoint is a more elegant way. However, it does not include error
->> context, just some hardware registers.
-> 
-> The error context is in the behavior of the hw. If the error is fatal, you
-> won't see it - the machine will panic or do something else to prevent error
-> propagation. It definitely won't run any software anymore.
-> 
-> If you see the error getting logged, it means it is not fatal enough to kill
-> the machine.
-
-Agreed.
-
-> 
->>> Besides, this message is completely useless as it has no concrete info about
->>> the error and what is being done about it.
+> On Mon, Feb 24, 2025 at 12:14 AM Damon Ding <damon.ding@rock-chips.com> wrote:
 >>
->> I don't think so,
+>> With the commit f37952339cc2 ("drm/bridge: analogix_dp: handle clock via
+>> runtime PM"), the PM operations can help enable/disable the clock. The
+>> err_disable_clk label and clk_disable_unprepare() operations are no
+>> longer necessary because the analogix_dp_resume() will not be called
+>> during probing.
+>>
+>> Fixes: f37952339cc2 ("drm/bridge: analogix_dp: handle clock via runtime PM")
 > 
-> I think so and you're not reading my mail.
+> When possible "Fixes" should be pushed to the start of your series so
+> it's obvious they have no dependencies when being picked to stable
+> kernels. That should be possible here.
 > 
->>      "mce: Uncorrected hardware memory error in user-access at 3b116c400"
-
-It is the current message in kill_me_maybe(), not added by me.
-
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   .../gpu/drm/bridge/analogix/analogix_dp_core.c | 18 +++++-------------
+>>   1 file changed, 5 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index e23af674d91c..d9dafb038e7a 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -1608,10 +1608,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+>>          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>
+>>          dp->reg_base = devm_ioremap_resource(&pdev->dev, res);
 > 
-> Ask yourself: what can you do when you see a message like that?
+> There is a context conflict when I apply to drm-misc-next because of
+> commit 43c00fb1a518 ("drm/bridge: analogix_dp: Use
+> devm_platform_ioremap_resource()"). You probably should rebase and
+> re-apply.
 > 
-> Exactly *nothing* because there's not nearly enough information to recover
-> from it or log it or whatever. That error message is *totally useless* and
-> you're upsetting your users unnecessarily and even if they report it to you,
-> you can't help them.
+> Aside from the context conflict, this looks great to me:
+> 
+> Suggested-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> 
 > 
 
-I believe we are approaching this issue from different perspectives.
-As a cloud service provider, I need to address the following points:
+After rebasing, I found the conflict. I will move this patch to a 
+separate series and ensure it has no dependencies.
 
-1. I must be able to explain to end users why the MCE has occurred.
-2. It is important to determine whether there are any kernel bugs that could
-    compromise the overall stability of the cloud platform.
-3. We need to identify and implement potential improvements.
+Best regards
+Damon
 
-"mce: Uncorrected hardware memory error in user-access at 3b116c400"
-
-is *nothing* but
-
-"mce: Action required: data load in error recoverable area of kernel"
-
-helps.
-
-
-Thanks for your time.
-Shuai
 
