@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-540733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D98A4B45F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:28:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4262FA4B461
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D92218884A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5309F16A4CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDA41EC017;
-	Sun,  2 Mar 2025 19:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EBD1EC00F;
+	Sun,  2 Mar 2025 19:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Hl41ejlz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="rf6c+1nl"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986D1DF26F;
-	Sun,  2 Mar 2025 19:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E62B3597E;
+	Sun,  2 Mar 2025 19:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740943717; cv=none; b=WIELmUx0k8SK5m536H/SmH1WHzj747bKDCclW+4CzEkr4bgfnwCrCk3Q07z1BAa454axwYNQxR5RlrAbTuTLHPjTVLR/D/vNFVv9s0AS4u+IVwjGcmYb4ISwt32PYDVrqzElE1mcvigZTW97lizWlPx7XmqG5FZeW7lWZpA4M+I=
+	t=1740943741; cv=none; b=Qnc4YfrrvMRZyrDMB6YqK1uRGpUKqlPOf/AfBq9SoGrbG2YO8Q8ekDyl7KGx70UQmj2a52YpzSYkYDJ5aT9/vrx6boSIlRxe6wcJRmGZoCegcr4wtNnlqZEgy2Z59wRbOj26CuTXhfZ0SpTkWVqoqxBDpepG6NzyGwT0LFgbxE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740943717; c=relaxed/simple;
-	bh=Fdnn7tH2jo2mvmW1J9Vif5efjIzGHkbPVUFAvcTLSU4=;
+	s=arc-20240116; t=1740943741; c=relaxed/simple;
+	bh=o79N5Awt3V5gZlY4O7Vz3tTzMEESQb1ok1NmG4v1UVI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7hmkuDKkvw9Au4bQHGSVe5+9JSc9xHgEnk9PTRjurlM1ZLi8qepwAo5HMxAsbcoKJEc/UO/lNJHxwLGT7oCV+8wrze/+IRMdM3tzJ1ixVMREeWOexJSMEf0WYsQjmceKpZgOCQhMTL9+wTBUc6g5nee35wiyoDgbSkO5GyE1Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Hl41ejlz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=P1+SolrjFRxzUjJxkQb/KRh9HBG2DaWmNEJ2h60N+/k=; b=Hl41ejlzNAsfk3+UvO+7OLb9Eb
-	mS8fIPXcRG8CxGuvIQfjxQcoX/MnoNTDig6Rm/nh9F32nOHB+xAzFI/IGd1TIb4L/PdGCqdhZsvJx
-	qjlJ8FHkPznLpEIUvUGrkXqe/29DpdPsjrtgTEOnDmmJtGxeRXZjxOn3iXvJwhTN14v2FB15+NkhF
-	r3Agrso8RLXU9mT6GfKsrkFu1h+ka520PJecniEzL8lilCf1zR2dwNey4FjA48aFcukb9ZFDsrY9l
-	oyDYgijzhDwUMRmWlIULZIRy3fYlultAwzZVonrOOMkx6dfBLud2ekK08FAx2C75Ii3Q6kxkd6W4C
-	Sy+dXukQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52148)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tooz1-00073r-1Q;
-	Sun, 02 Mar 2025 19:28:15 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tooyv-00030T-1q;
-	Sun, 02 Mar 2025 19:28:09 +0000
-Date: Sun, 2 Mar 2025 19:28:09 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] dt-bindings: net: Document GBETH bindings for
- Renesas RZ/V2H(P) SoC
-Message-ID: <Z8SxSU9lOgbNf0he@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <a1dbb3e8-4a52-4cc2-8e7b-cf240f726d5e@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgrKTnB3nuUrjOxuS+UuOAGg6AI7FActknZBiz4vaTPndGFtFerJOy2cV7pyFz+kx4AXo5e+2HCB55Oy01pTMPHIPbOF4tS4SInimA2QoaSOuf9EkNQxb6G04r9ZKR9NdNYN/Ch6GGXqW/gLifnksDJaZyBriC3lYQ+ZaTRkxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=rf6c+1nl; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-ID:Content-Description;
+	bh=a8hjUpRMJeEgoLFm8QSk6Wp5JPgQATrXtWJpep9pL9M=; b=rf6c+1nlfIOO9K0d0NOWtS1iPY
+	ZEP5/+997LwwZghgT6DniDikjGrqQ7DBoTLxkT0GEDc4EuFgvnM58K2/rqMHqYiKnR0ydJKWBniIZ
+	3JR7gOkjcms97lE7bGvvB3zXj/AhY0XRfSiUCxhQjJBCXySLpLKyE0lh6VqSZ3yUlgPmhp+/WZ8ip
+	gZVkgLRmOgS2dG5IqyMK/Fwp89u3P9C5+JQ0cBAJf88Dza+ncq0sbJbvrmixw8ZH49i/zsTlDoGsw
+	UBO9D54AhCGg/EctSfd1fwfilA1Ar/gizbme1HKSIn+1tqOIlbmspqcsJUdAvmRS0wTJjQS1yszm0
+	1nWtDthQ==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1toozM-002ULU-Pt; Sun, 02 Mar 2025 19:28:37 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 9C711BE2DE0; Sun, 02 Mar 2025 20:28:35 +0100 (CET)
+Date: Sun, 2 Mar 2025 20:28:35 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Niklas Cassel <cassel@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>,
+	Eric Degenetais <eric.4.debian@grabatoulnz.fr>,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, linux-ide@vger.kernel.org,
+	Daniel Baumann <daniel@debian.org>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z8SxY0Lb7o3iAtDN@eldamar.lan>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a1dbb3e8-4a52-4cc2-8e7b-cf240f726d5e@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8SBZMBjvVXA7OAK@eldamar.lan>
+X-Debian-User: carnil
 
-On Sun, Mar 02, 2025 at 08:10:26PM +0100, Andrew Lunn wrote:
-> > +  interrupts:
-> > +    items:
-> > +      - description: Subsystem interrupt
-> > +      - description: The interrupt to manage the remote wake-up packet detection
-> > +      - description: The interrupt that occurs when Tx/Rx enters/exits the LPI state
-> > +      - description: Per-channel transmission-0 completion interrupt
-> > +      - description: Per-channel transmission-1 completion interrupt
-> > +      - description: Per-channel transmission-2 completion interrupt
-> > +      - description: Per-channel transmission-3 completion interrupt
-> > +      - description: Per-channel receive-0 completion interrupt
-> > +      - description: Per-channel receive-1 completion interrupt
-> > +      - description: Per-channel receive-2 completion interrupt
-> > +      - description: Per-channel receive-3 completion interrupt
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: macirq
-> > +      - const: eth_wake_irq
-> > +      - const: eth_lpi
-> > +      - const: tx0
-> > +      - const: tx1
-> > +      - const: tx2
-> > +      - const: tx3
-> > +      - const: rx0
-> > +      - const: rx1
-> > +      - const: rx2
-> > +      - const: rx3
+On Sun, Mar 02, 2025 at 05:03:48PM +0100, Salvatore Bonaccorso wrote:
+> Hi Mario et al,
 > 
-> There has already been a discussion about trying to make the clock
-> names more uniform. But what about interrupts? Which of these are in
-> the IP databook? What names does the databook use for these
-> interrupts?
+> Eric Degenetais reported in Debian (cf. https://bugs.debian.org/1091696) for
+> his report, that after 7627a0edef54 ("ata: ahci: Drop low power policy  board
+> type") rebooting the system fails (but system boots fine if cold booted).
+> 
+> His report mentions that the SSD is not seen on warm reboots anymore.
+> 
+> Does this ring some bell which might be caused by the above bisected[1] commit?
+> 
+> #regzbot introduced: 7627a0edef54
+> #regzbot link: https://bugs.debian.org/1091696
+> 
+> What information to you could be helpful to identify the problem?
 
-From a quick look, I haven't found anything that suggests the above
-is possible, but it clearly is... so I'll look more tomorrow.
+Additional information from the reporter: The SSD is:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+$ sudo smartctl -i /dev/disk/by-id/ata-Samsung_SSD_870_QVO_2TB_S5RPNF0T419459E
+smartctl 7.4 2023-08-01 r5530 [x86_64-linux-6.12.12-amd64] (local build)
+Copyright (C) 2002-23, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Samsung based SSDs
+Device Model:     Samsung SSD 870 QVO 2TB
+Serial Number:    S5RPNF0T419459E
+LU WWN Device Id: 5 002538 f4243493c
+Firmware Version: SVQ02B6Q
+User Capacity:    2 000 398 934 016 bytes [2,00 TB]
+Sector Size:      512 bytes logical/physical
+Rotation Rate:    Solid State Device
+Form Factor:      2.5 inches
+TRIM Command:     Available, deterministic, zeroed
+Device is:        In smartctl database 7.3/5528
+ATA Version is:   ACS-4 T13/BSR INCITS 529 revision 5
+SATA Version is:  SATA 3.3, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is:    Sun Mar  2 18:46:44 2025 CET
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+So this might be the same issue aimed to be addressed by cc77e2ce187d
+("ata: libata-core: Add ATA_QUIRK_NOLPM for Samsung SSD 870 QVO
+drives"), but which got reverted with a2f925a2f622 ("Revert "ata:
+libata-core: Add ATA_QUIRK_NOLPM for Samsung SSD 870 QVO drives"") as
+it introduces other problems.
+
+So I'm adding as well Daniel Baumann into the loop as this seems
+related.
+
+FTR, thanks Christian Heusel for the other comments an input!
+
+Regards,
+Salvatore
 
