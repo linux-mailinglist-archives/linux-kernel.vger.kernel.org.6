@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-540632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05871A4B313
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:22:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E66EA4B317
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B52F188B2FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD05164565
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10CA1E9B19;
-	Sun,  2 Mar 2025 16:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91D33594F;
+	Sun,  2 Mar 2025 16:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FHv+LKRi"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WYvIgtEx"
 Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A2EAD39
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 16:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8131DF25C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 16:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740932522; cv=none; b=P792ueb3GDoY4XBM8nzx/jlPykr39t9DAsx/B3y2kKPm+jwMW3yvF955PoNXKek4Uo03+xGf9yXhwn3E4LxxaPtujH6wigeqYJIycqV655NDpHJ76BfAbho84HiakV44b3DyEdsSsC2tm03QNZ40Nn3C0hkx5VijniJokwEANyU=
+	t=1740932583; cv=none; b=FQLfycLmBoOXjM2ja2TucB+8TJ6187Hzd1dEhOlpN6zhfCLK1J1ZWe70y04wQm6IhPUvaLK0fV4qgMe1S2YZaiW1KPqTVsPCHG8ZkQOcOMRd7/b1fUb5oa90eOMhOykvbnIDu3haWs6tnLSwxCGF7TNb8z0PhwdORqRMkjygy0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740932522; c=relaxed/simple;
-	bh=IjiqYfOaFT/5bcZk8bWzCldlSR2W+8zYw0RxG3snBeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IxKMgAFlTTP5BcF+ADqV6Ks0pEmHvX2lvXjnp3+FfYAZzrCtt8s12O4mvyDLSADhPlzRNvrs0Mzggqg4YZdc5SyzbSXiLSleVsCu4wG1MbZ0yZCAVYV1cbQzuEI7w6EAwpLmVGN8xuNGPJ3IvNMmMId3u6I6zAshu7gUXP8vfD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FHv+LKRi; arc=none smtp.client-ip=80.12.242.22
+	s=arc-20240116; t=1740932583; c=relaxed/simple;
+	bh=09g6Coqei+13CyCYJ1cI+TQVdeRHgvvBgjZGZ/PPO4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bsg+xaeafUgFe2cW+dKvNJW1YpEUmAOMjWUwQ/UgRM+yqZtf46wYDwdnkl7eIbgNXo5VsYW3UM/SLNmLuhxG3i/YW9zGsI2lytKjnW/q/8PTbZ2NLz1rt/iYfBOE9I5sM/JdXEkl5orn8KEu/rvg+OhuEWqgZswgTpo9E2QMs6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=WYvIgtEx; arc=none smtp.client-ip=80.12.242.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id om4YtTJnYVX8Kom4btOvoD; Sun, 02 Mar 2025 17:21:50 +0100
+	id om4YtTJnYVX8Kom4ltOvuI; Sun, 02 Mar 2025 17:21:59 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740932510;
-	bh=iipt5Yn3YiPOXNMgfxQ8YWRnO9V/lrPEOyeJI1wMlbY=;
+	s=t20230301; t=1740932519;
+	bh=IGEa4U+OHLF8eysA8nCuOd6RrVGeAMmuutlPlvEww+0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FHv+LKRiGR6lZ+NPxG9FsMoGQDc4hl+YDqaTSvO5ym240lMZXEu4ax7mz5cGl7FIC
-	 UC40eL+bsSFicmSFH/DxOtIkjdPktO/02UssrVWWlgt7fb0N+rVKib1BXMKFrVRC/n
-	 CTLwl1P3pRCMY52ndBh/TgcbFtjfObZUHZlxz9ft7/se4NPyDiJmp51QfsBPuTIrZQ
-	 OkET8rq2EMnNjZWDjXVEXXJy6k9WX9ELhZRVvy6IAb+Mct2mc2Ovhao1MAZZGh8Ad9
-	 Wtt0NLoKKPlZdtBGokikHSZRBbC2bKC4ppAk3Q+17p98n7puYLhvmug4OQvBnJ6WlC
-	 6wS+NiJxWDrrg==
+	b=WYvIgtExkiwYK9SxP67B5vDLTXJK2gxMuJ0CeYnZFr0XH7aktim432IADDboUQzTC
+	 i1/y4rElfza+Iedg+IO4dFFGelDI0QZdEswkvtub2Lttf6jKnzDoN5yq+GEkiMHINB
+	 KeuRYevyH9bmeKE7iHj8UJD+Yc1/eSnpcjqwSNnW5YNp+8P3k50cs2+cprQOPqZ586
+	 wKCHxpU+35MRXDmPHfxsohwjO7x2jNhNulLEcKeOFP5Ggm8m322DUMd6cHeAGNrluZ
+	 yGb+s3/PEHtyGIqgqBUp0aUuP8ThqQlT88pn2696G3eiu2XqDAbz+588XFYaisQW6Q
+	 aTrpRb9YTTseQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Mar 2025 17:21:50 +0100
+X-ME-Date: Sun, 02 Mar 2025 17:21:59 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: andersson@kernel.org,
@@ -55,10 +56,12 @@ Cc: linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/2] bus: qcom-ssc-block-bus:  Fix some error handling paths
-Date: Sun,  2 Mar 2025 17:21:33 +0100
-Message-ID: <cover.1740932040.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] bus: qcom-ssc-block-bus: Remove some duplicated iounmap() calls
+Date: Sun,  2 Mar 2025 17:21:34 +0100
+Message-ID: <efd06711b126e761a06eb5ef82daf9ad4e116a10.1740932040.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1740932040.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1740932040.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,33 +70,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Patch 1 should be straight forward. It removes some ioumap() from
-resources allocated with devm_ioremap_resource().
+reg_mpm_sscaon_config[01] are allocated with devm_ioremap_resource(). So,
+they will be unmapped automatically by the manage resource framework.
 
-Patch 2 is more speculative. It releases some resources in the error
-handling path of the probe, as done in the .remove() function.
+Remove the incorrect explicit iounmap() calls from the remove function.
 
+Fixes: 97d485edc1d9 ("bus: add driver for initializing the SSC bus on (some) qcom SoCs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/bus/qcom-ssc-block-bus.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Finally, the .remove() function also has some 
-	pm_runtime_disable(&pdev->dev);
-	pm_clk_destroy(&pdev->dev);
-calls.
-
-Usually pm_runtime_disable() is paired with pm_runtime_enable() and I
-would expect some pm_clk_add(() calls related to pm_clk_destroy().
-Neither exists.
-
-So I wonder if these 2 calls are correct in the .remove() function.
-Thought?
-
-Christophe JAILLET (2):
-  bus: qcom-ssc-block-bus: Remove some duplicated iounmap() calls
-  bus: qcom-ssc-block-bus: Fix the error handling path of
-    qcom_ssc_block_bus_probe()
-
- drivers/bus/qcom-ssc-block-bus.c | 34 ++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/bus/qcom-ssc-block-bus.c b/drivers/bus/qcom-ssc-block-bus.c
+index 85d781a32df4..c95a985e3498 100644
+--- a/drivers/bus/qcom-ssc-block-bus.c
++++ b/drivers/bus/qcom-ssc-block-bus.c
+@@ -356,9 +356,6 @@ static void qcom_ssc_block_bus_remove(struct platform_device *pdev)
+ 
+ 	qcom_ssc_block_bus_deinit(&pdev->dev);
+ 
+-	iounmap(data->reg_mpm_sscaon_config0);
+-	iounmap(data->reg_mpm_sscaon_config1);
+-
+ 	qcom_ssc_block_bus_pds_disable(data->pds, data->num_pds);
+ 	qcom_ssc_block_bus_pds_detach(&pdev->dev, data->pds, data->num_pds);
+ 	pm_runtime_disable(&pdev->dev);
 -- 
 2.48.1
 
