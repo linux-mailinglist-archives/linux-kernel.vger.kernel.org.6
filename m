@@ -1,174 +1,171 @@
-Return-Path: <linux-kernel+bounces-540496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DF6A4B156
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:58:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A9BA4B159
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8F41892073
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:58:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756FF16E023
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5E1E0E0C;
-	Sun,  2 Mar 2025 11:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0140F1E230E;
+	Sun,  2 Mar 2025 11:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="EpekGFJv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H36YEWhv"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DVL1tmc2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F54E1D5CDE
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CE41DC07D;
+	Sun,  2 Mar 2025 11:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740916696; cv=none; b=KDcQoqBlbTyuIRpoqBQp+Gh1uX0XjXNEOUfLs1tfJ2hM+BiJBbKQdkR+E/gIzH5fUid2LzycEkuR0zxHJscmBZcxba7MRXgZToK5j5x3OdA9wiVFFSc5og9T37nvxyNb8tn/kSB+r7fe0sE0Rp3wga29rX7+wuNhiV1B9oEjQu0=
+	t=1740916733; cv=none; b=nkmH20Fsu8YQYRVbDMDRS4uOoJSwpcgHYpFiSsbkzrj7QsScDs8apB1lp8b7yAOGt7Q9hb8VAyGYhxCup012zL4JX91puZP4M/fkSgaauwiheHVmCHFK9sb7VesfU5GT89eg2CiNvsPLn0Tg4k8PiZCtm0sQxxcipCa1ltouY7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740916696; c=relaxed/simple;
-	bh=nWGi7cfqhp9mA4Uz0WOPpEi/Lcd5mG7GIiDgPrI/IsM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BIr2d+Vw8NIwJFkruQMiB/6jvrMyfH/DHYH4aNUIWVIL4EX4MPffQL2RVanynSKTrD9HiTJ7Tkkpt0uyj8fzSJjb2Guvs/3H2YyndiOdFJZSQHZuVP3bguLxTnUGM8PlFS2GR39ltO4QcMtIQVqIigIJJpB2+TXqou6guc/7Mxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=EpekGFJv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H36YEWhv; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 2BE6211400D3;
-	Sun,  2 Mar 2025 06:58:13 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 02 Mar 2025 06:58:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm2; t=1740916693; x=1741003093; bh=Y3u4DWgtOR
-	alPu24x88ZUnj6vgWYBg8l4GEw4QA6sbA=; b=EpekGFJvrLGE+03/WtqX5UWDM+
-	6X3NJ8AdTKF8ZsLhrw7FL3yzJ6OHBGezB4ihLraOYyYK0wcmlVRVPj3uXCCDsk0e
-	YjHpoHp+BpM3ThdHq8RwYkfD1ULr6svs/llcbUKVLkTEZSKbqRU4T8hmkt3icZtY
-	/8k+JamQtyyAmGRiwX5tynoDdo67Qh7Jmxg0fbPFNckFUQ97T0a7/2Xpc0bzT+VY
-	efaiZxY+1vS4USYcNHJeUCw+PV92EnnyFaRTVJX6VL5qi4M7LBAXKUM/33nzWkr7
-	RcJKrNVoC/n2gm81sEIx7bCsLi3UCFQFmJa4apyaLatkImmpRgQVhQn83NZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740916693; x=1741003093; bh=Y3u4DWgtORalPu24x88ZUnj6vgWYBg8l4GE
-	w4QA6sbA=; b=H36YEWhvfvvslR5HJbOH7bTx18EJhND4/C3v+1Hl0c9W3AmJUlH
-	IetkbzI6sILc2h0SB7EV/90ZaDYQHPmyrYyy6+bQHaNPWZoL7NAOTAI1/HdFyB1p
-	spegx9cqIQTo9OV1jg5XEf/scOO+Aib6ZdGXmcz22Yyws7yn/jf2a1SCtf5+L+WV
-	L5x9BmF2jw+jK0PYuiEfTwC5P1HjSPU9jMTKrJ0LwPEkpo3aoNVtcISjHIu+fmvA
-	JFcezBjQOEIXY2GldMdyJrVmmF/pyPGFgZULk1ROfs3nkHOOQ8K1G8YN4h4HOO2i
-	o9FhjXKmwm77gGx6hK1Mi0OZ4N7rRvNNzuQ==
-X-ME-Sender: <xms:1EfEZ-3e0_h6TTVnwpNGplagjkyd8iKqQ5DC5ItdHMwEpIr8_AZxQw>
-    <xme:1EfEZxH18JxFq296P4Stq60EdMR5LaFw9kTfmov2xOFVouiaGRzcU0erN1LeGNhim
-    N80gF-yzTQhujta_oQ>
-X-ME-Received: <xmr:1EfEZ2720e9C3IIvC6rYvpN9lxuM8kExdW5dyd8l6ak0tOjK5YoM3Z-1stM9jBvFX3_nwmCsXWNkU8xiDWkzUKeEN3N1-4Oqf7egZTdQoryBWIiC-_NOYc1b59imz5w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelieduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvve
-    fufffkofgggfestdekredtredttdenucfhrhhomhepufhvvghnucfrvghtvghruceoshhv
-    vghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtffrrghtthgvrhhnpeejleevffdvfe
-    egueetfeeuteeggefhleevveehueegffdtleeluedufeevhfeileenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggv
-    vhdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsh
-    hotgeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopegrshgrhhhisehlihhs
-    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvg
-    hlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:1EfEZ_0sGJZhlPKZ67zooJnFfl8O0hZz24Va5r-pgXW6qc797FK2Ow>
-    <xmx:1EfEZxE6NrxmExxnqYi-Ok4zlpkAva3xHq2z0oocNGS9CR0PRWevhA>
-    <xmx:1EfEZ4-b1KF07u4Y_1ewjxECA6sSprdGXepPNa8ru5x3DIz4RCHKxw>
-    <xmx:1EfEZ2lHuseW8anZf92RBHmIH3VYyhNTuC-IcYKClsMW23y_5VcfKw>
-    <xmx:1UfEZ1j6e09AJOwlb1054JA8DWo55C8YRH3BN5hE4RDjahzXvEkcJpd_>
-Feedback-ID: i51094778:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Mar 2025 06:58:11 -0500 (EST)
-From: Sven Peter <sven@svenpeter.dev>
-To: soc@lists.linux.dev
-Cc: asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Second batch of Apple SoC DT updates for v6.15
-Date: Sun,  2 Mar 2025 12:58:08 +0100
-Message-Id: <20250302115808.59172-1-sven@svenpeter.dev>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1740916733; c=relaxed/simple;
+	bh=dfZhNz/vQKL0f30bzuxXzK40XE/QNdhkHWdLhAzlVgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r2YklqVFt8FEQP6+Ej6RQmrb+kUDua66RtID0SEzYK6ovxT3E0IoXXMIFY4P5XGCRkh03YOFIPPTnbZ2eY+HI+cWcfFARr9AouGlkX4s9smBXM2bD0l59A4PWPf5+PjEVKBazFj+3irZVqcX9aw6jiA79Lq5J6iu3Y1V8NsZ49I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DVL1tmc2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522Bm7XD024209;
+	Sun, 2 Mar 2025 11:58:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VuML3wkEE0XvJn393R3V2Ul5uMaKfz+p2L0gk9SYgUU=; b=DVL1tmc2akgiLz2Y
+	B8P2Zt+xEzghm8WOd5YQLVeZHbqCSUtz1Q+z6gLsG6ALja1tqP42P+dPKBXV6oxF
+	BL2WEgq9JqTPRKv6AdRF4N/pTR2Rt/Yhvw5IKdBxTT5xIVPsPbG/RKULCyvmz7kc
+	hXuwSPzjL7h2XX3L21YLzYGuu8GoGSO7kM0bQfeBimjBOWiC49F1wXRwdLimfWtR
+	53SMW7ciSWVCtUX7OVnQX9kQb24SBVxGAuWIHBismESa9ACdAyI330L2kRF/LOxB
+	P/JWye/DZhYyLkyDdJUTMz7mAGeIaiq/ZFe14I9r/V2ChU4LT6B74+91C4B4cNZR
+	OIo6nQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t9929rd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Mar 2025 11:58:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 522BwXg8002933
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Mar 2025 11:58:33 GMT
+Received: from [10.50.60.31] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Mar 2025
+ 03:58:31 -0800
+Message-ID: <7bf1aeaa-e1bd-412b-90fc-eda30b5f5b37@quicinc.com>
+Date: Sun, 2 Mar 2025 17:28:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] venus driver fixes to avoid possible OOB read
+ access
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com>
+ <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
+Content-Language: en-US
+From: Vedang Nagar <quic_vnagar@quicinc.com>
+In-Reply-To: <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iAoQJ-xCzA94z79URgWm-cPIoWWjTmd0
+X-Proofpoint-GUID: iAoQJ-xCzA94z79URgWm-cPIoWWjTmd0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-02_03,2025-02-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 spamscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503020096
 
-Hi,
+Hi Bryan,
 
-this is the second batch of device tree updates for Apple SoCs based
-on the first PR sent earlier [1].
-This one adds nodes for SPI controller, SPI NOR flash and NVRAM partitions
-for M1 and M2 devices. The SPI controller driver has been merged for a while
-already and we just forgot to pick the device tree changes up.
-It also adds the touchbar digitizer nodes. The corresponding driver and
-dt-bindings are already in -next and should be part of the 6.15 merge window
-as well.
+On 2/16/2025 9:33 PM, Bryan O'Donoghue wrote:
+> On 15/02/2025 17:19, Vedang Nagar wrote:
+>> This series primarily adds check at relevant places in venus driver
+>> where there are possible OOB accesses due to unexpected payload
+>> from venus firmware. The patches describes the specific OOB possibility.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> ---
+>> Changes in v2:
+>> - Decompose sequence change event function.
+>> - Fix repopulating the packet .with the first read during read_queue.
+>> - Link to v1: https://lore.kernel.org/r/20250104-venus-security-fixes- 
+>> v1-0-9d0dd4594cb4@quicinc.com
+>>
+>> ---
+>> Vedang Nagar (2):
+>>        media: venus: fix OOB read issue due to double read
+>>        media: venus: fix OOB access issue while reading sequence 
+>> changed events
+>>
+>>   drivers/media/platform/qcom/venus/hfi_msgs.c  | 72 +++++++++++++++++ 
+>> ++++++----
+>>   drivers/media/platform/qcom/venus/hfi_venus.c |  1 +
+>>   2 files changed, 63 insertions(+), 10 deletions(-)
+>> ---
+>> base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
+>> change-id: 20241211-venus-security-fixes-50c22e2564d5
+>>
+>> Best regards,
+> 
+> Could you please address the feedback I gave you / questions posited in 
+> these two messages ?
+> 
+> 4cfc1fe1-2fab-4256-9ce2-b4a0aad1069e@linaro.org
+> 
+> 0eab7323-ce86-40c7-9737-06eedcdf492d@linaro.org
+> 
+> The basic question : what is the lifetime of the data from RX interrupt 
+> to consumption by another system agent, DSP, userspace, whatever ?
+As mentioned in [1], With the regular firmware, after RX interrupt the 
+data can be considered as valid until next interrupt is raised, but with 
+the rouge firmware, data can get invalid during the second read and our 
+intention is to avoid out of bound access read because of such issues.
 
+[1]: 
+https://lore.kernel.org/lkml/4cfc1fe1-2fab-4256-9ce2-b4a0aad1069e@linaro.org/T/#m5f1737b16e68f8b8fc1d75517356b6566d0ec619
+> 
+> Why is it in this small specific window that the data can change but not 
+> later ? What is the mechanism the data can change and how do the changes 
+> you propose here address the data lifetime problem ?
+Currently this issue has been discovered by external researchers at this 
+point, but if any such OOB issue is discovered at later point as well 
+then we shall fix them as well.
 
-Best,
+Also, with rougue firmware we cannot fix the data lifetime problem in my 
+opinion, but atleast we can fix the out of bound issues.
+> 
+> Without that context, I don't believe it is really possible to validate 
+> an additional memcpy() here and there in the code as fixing anything.
+There is no additional memcpy() now in the v2 patch, but as part of the 
+fix, we are just trying to retain the length of the packet which was 
+being read in the first memcpy() to avoid the OOB read access.
 
-Sven
+Please let me know if you have any other suggestions.
 
+Regards,
+Vedang Nagar
+> 
+> ---
+> bod
 
-[1] https://lore.kernel.org/soc/20250209135558.8243-1-sven@svenpeter.dev/
-
-The following changes since commit ca96d759d8d24d90b1726c2cc7c568ff4728bb42:
-
-  arm64: dts: apple: t8015: Add cpufreq nodes (2025-02-09 11:50:13 +0000)
-
-are available in the Git repository at:
-
-  https://github.com/AsahiLinux/linux.git tags/asahi-soc-dt-6.15-v2
-
-for you to fetch changes up to 44db68dee1f77260d7037319e911e9883a6ffe0e:
-
-  arm64: dts: apple: Add touchbar digitizer nodes (2025-02-26 15:33:46 +0000)
-
-----------------------------------------------------------------
-Apple SoC DT updates for 6.15, second batch:
-
-- Added a missing p-state for iPad mini 4
-- Added SPI controller nodes for M1 and M2 devices
-- Added SPI NOR flash nodes and NVRAM partitions
-- Added touchbar digitizer nodes for M1 and M2 devices
-
-----------------------------------------------------------------
-Hector Martin (1):
-      arm64: dts: apple: t8103: Fix spi4 power domain sort order
-
-Janne Grunau (4):
-      arm64: dts: apple: t8103: Add spi controller nodes
-      arm64: dts: apple: t8112: Add spi controller nodes
-      arm64: dts: apple: t600x: Add spi controller nodes
-      arm64: dts: apple: Add SPI NOR nvram partition to all devices
-
-Nick Chan (1):
-      arm64: dts: apple: t7000: Add missing CPU p-state 7 for J96 and J97
-
-Sasha Finkelstein (1):
-      arm64: dts: apple: Add touchbar digitizer nodes
-
- arch/arm64/boot/dts/apple/spi1-nvram.dtsi      | 39 +++++++++++++
- arch/arm64/boot/dts/apple/t600x-common.dtsi    |  7 +++
- arch/arm64/boot/dts/apple/t600x-die0.dtsi      | 28 ++++++++++
- arch/arm64/boot/dts/apple/t600x-gpio-pins.dtsi | 14 +++++
- arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi |  2 +
- arch/arm64/boot/dts/apple/t600x-j375.dtsi      |  2 +
- arch/arm64/boot/dts/apple/t7000-mini4.dtsi     |  4 ++
- arch/arm64/boot/dts/apple/t7000.dtsi           |  6 ++
- arch/arm64/boot/dts/apple/t8103-j293.dts       | 27 +++++++++
- arch/arm64/boot/dts/apple/t8103-jxxx.dtsi      |  2 +
- arch/arm64/boot/dts/apple/t8103-pmgr.dtsi      | 18 +++---
- arch/arm64/boot/dts/apple/t8103.dtsi           | 76 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t8112-j493.dts       | 23 ++++++++
- arch/arm64/boot/dts/apple/t8112-jxxx.dtsi      |  2 +
- arch/arm64/boot/dts/apple/t8112.dtsi           | 44 ++++++++++++++-
- 15 files changed, 284 insertions(+), 10 deletions(-)
- create mode 100644 arch/arm64/boot/dts/apple/spi1-nvram.dtsi
 
