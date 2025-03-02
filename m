@@ -1,78 +1,205 @@
-Return-Path: <linux-kernel+bounces-540164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF76A4AEAE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A76B3A4AEB0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181B118949E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 01:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F78418920EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC471EEF9;
-	Sun,  2 Mar 2025 01:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0E128E37;
+	Sun,  2 Mar 2025 02:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b="QQ30Wmtd"
-Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA8610E0;
-	Sun,  2 Mar 2025 01:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NAMSCCGL"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487255258;
+	Sun,  2 Mar 2025 02:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740879986; cv=none; b=CtB+m19xnJEcjSMTBqO+639Jkp8a3EZ+lorIUAhfvMGdJQ33vd3y4lpcc+lvaZFpgOEPlrbGzYM8H7JdAJv71KMYhVIbgUfZK23vj5j8ifj2CBl6HSBNkRdFYIPzEm6cYJR//uTd6ryiTnkImpIJNQ575+oNQoEyFFUSCA/x+8s=
+	t=1740881059; cv=none; b=WGs+omir1v1StK075utBG4mzi65aMzDGlT3A7MoF49y2ccDvPUKqvGqE6ndRuVGn6wqD0xgHuAMROeUVohnvKzCi4+/4exqzmX0lPY2OeGsBny7OWpP0EckaAGzZtU4zE5cplIBYv2kyhSdjHjtt0lYVR4VxE43Kpp3/XxpfOmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740879986; c=relaxed/simple;
-	bh=3GqPO31FGZWylXIBWZlFqiXJn64tDQp/uxLxEV/sSZw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hb1l2cWD+Ltx9dTQ3gyE33MUgAeUs25C6ijmKFVw4hQWwqEWq0B1JXCHah0lDUZkgekkWZQvWzacr7jX7BQ8oCpu1eFoiWfrEoPgxe8fq1GGYOxPgumsT2kTkvyygwZdggzFWX30AsI31Il6vImqNpmoDC8xNti2NW1ewI2Qs9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com; spf=pass smtp.mailfrom=joelselvaraj.com; dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b=QQ30Wmtd; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelselvaraj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=joelselvaraj.com;
-	s=protonmail2; t=1740879976; x=1741139176;
-	bh=3GqPO31FGZWylXIBWZlFqiXJn64tDQp/uxLxEV/sSZw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=QQ30WmtdBd6PGvPPx75aBwQscCiYlcCiUqkziqxVWBLmjSisKPk0yyLhX1YZ31Kk0
-	 031fwvlLYUwLFlrNK6iviaWrdvhLVbf51gVC/4kLm6ahEJM/Nj8NmNz4S4kVDlmWBi
-	 CDb6g+sArBGpgMfLr4/ronvpHF9p3hzS/3B0X0baOLqAi/DuOYavTyrR7i1V18m6y5
-	 +kLUOECi9xwZRciq3cvqI4OkSNFeUEsGlQIHyZDB5fO38efGevctMazNcfvjI7i87A
-	 UrREbXntI3kHXm2yV5Oy9lL9HSUGOonux7U1t4EuWs4B86c8o7q+oGN85J/kK/aCr7
-	 IavIrxdbSaIJQ==
-Date: Sun, 02 Mar 2025 01:46:11 +0000
-To: foss@joelselvaraj.com
-From: Joel Selvaraj <foss@joelselvaraj.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: edt-ft5x06: use unevaluatedProperties
-Message-ID: <SKrYrlFtmyV2rIOqOxQhPVbJu00CkMwKn-mKlu029SA5yLk82dMfAcpzgzsYRS7mL4AS-Dp-acyx5ECPUPri_T7kIt0hgxsuGU3nLAlTLfg=@joelselvaraj.com>
-In-Reply-To: <20250301-pocof1-touchscreen-support-v3-1-af01c3b30b55@joelselvaraj.com>
-References: <20250301-pocof1-touchscreen-support-v3-0-af01c3b30b55@joelselvaraj.com> <20250301-pocof1-touchscreen-support-v3-1-af01c3b30b55@joelselvaraj.com>
-Feedback-ID: 113812696:user:proton
-X-Pm-Message-ID: 8d4e6b79038e1123b273a6307568856477e399c8
+	s=arc-20240116; t=1740881059; c=relaxed/simple;
+	bh=0yXndCNsH9f8oLn41DENZOR0XdWB4ODrrFcC83BClxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sPBFUbVIGQ9VbFK934ZSPjSLZq5bZzUTj3MwbKNqe1SQrbJG4gM9wJHWlfU6WcRBpA7rEi7M6YAsd10JxYEfGkLWbwC2ivJ4P/R7ROlZl/C1YPeB0yric9RU7QQauMp9bs4wogFGJJDr/FKtGiYVFSLCUSnTYAxJaQ46561O+zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NAMSCCGL; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qGexB
+	0WEdkqPFWppHBpKIuAC5rAO6YhYQJoJifpTg3M=; b=NAMSCCGLBS+iQS0h/L5p8
+	yh31KYj9CNVFM8Pg6GvlKt75Vhe9tszmWiANKkhNAGgvlyME8zDq7SR8wkpkBOtT
+	nM/wSUI4k5HaGO1Xq3f9hyC5zgFPvATyikPkUX1IOh/0Rn5PrJVUOL5ZrqXBq2VQ
+	ctHPE7k7sVYrmnSLhbGd4s=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBnAhRyvMNnh3tBPw--.17630S2;
+	Sun, 02 Mar 2025 10:03:31 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: tglx@linutronix.de
+Cc: manivannan.sadhasivam@linaro.org,
+	kw@linux.com,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	Frank.Li@nxp.com,
+	cassel@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [v3] genirq/msi: Add the address and data that show MSI/MSIX
+Date: Sun,  2 Mar 2025 10:03:28 +0800
+Message-Id: <20250302020328.296523-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBnAhRyvMNnh3tBPw--.17630S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF45Ww4rAFyfKw47Ar43ZFb_yoWruF4DpF
+	WjkF47Gr4xJr17tw47G3W7u345ta4qvF12y3srtw1fArZ0qw1kKFyvga12gr1ayF1jgw1F
+	ya4UXa4kKrW5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_0eHDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiugEEo2fDtxFlRwAAs8
 
-On Saturday, March 1st, 2025 at 5:43 PM, Joel Selvaraj via B4 Relay <devnul=
-l+foss.joelselvaraj.com@kernel.org> wrote:
-> ...clipped...
-> Since the touchscreen controller uses almost all the properties present i=
-n touchscreen.yaml...
+The debug_show() callback function is implemented in the MSI core code.
+And assign it to the domain ops::debug_show() creation.
 
-Sorry, should have been "Since the edt-ft5x06 touchscreen binding document =
-uses almost all the properties...".
-I will wait for further review by others and will fix it v4. Or if it is ac=
-ceptable with current commit message,
-let me know.
+cat /sys/kernel/debug/irq/irqs/msi_irq_num, the address and data stored
+in the MSI capability or the address and data stored in the MSIX vector
+table will be displayed.
 
-Thanks,
-Joel Selvaraj
+e.g.
+root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
+ 85:          0          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 75497472 Edge      PCIe PME, aerdrv
+ 86:          0         30          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021760 Edge      nvme0q0
+ 87:        287          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021761 Edge      nvme0q1
+ 88:          0        265          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021762 Edge      nvme0q2
+ 89:          0          0        177          0          0          0          0          0          0          0          0          0   ITS-MSI 76021763 Edge      nvme0q3
+ 90:          0          0          0         76          0          0          0          0          0          0          0          0   ITS-MSI 76021764 Edge      nvme0q4
+ 91:          0          0          0          0        161          0          0          0          0          0          0          0   ITS-MSI 76021765 Edge      nvme0q5
+ 92:          0          0          0          0          0        991          0          0          0          0          0          0   ITS-MSI 76021766 Edge      nvme0q6
+ 93:          0          0          0          0          0          0        194          0          0          0          0          0   ITS-MSI 76021767 Edge      nvme0q7
+ 94:          0          0          0          0          0          0          0         94          0          0          0          0   ITS-MSI 76021768 Edge      nvme0q8
+ 95:          0          0          0          0          0          0          0          0        148          0          0          0   ITS-MSI 76021769 Edge      nvme0q9
+ 96:          0          0          0          0          0          0          0          0          0        261          0          0   ITS-MSI 76021770 Edge      nvme0q10
+ 97:          0          0          0          0          0          0          0          0          0          0        127          0   ITS-MSI 76021771 Edge      nvme0q11
+ 98:          0          0          0          0          0          0          0          0          0          0          0        317   ITS-MSI 76021772 Edge      nvme0q12
+root@root:/sys/kernel/debug/irq/irqs#
+root@root:/sys/kernel/debug/irq/irqs# cat 87
+handler:  handle_fasteoi_irq
+device:   0000:91:00.0
+status:   0x00000000
+istate:   0x00004000
+ddepth:   0
+wdepth:   0
+dstate:   0x31600200
+            IRQD_ACTIVATED
+            IRQD_IRQ_STARTED
+            IRQD_SINGLE_TARGET
+            IRQD_AFFINITY_MANAGED
+            IRQD_AFFINITY_ON_ACTIVATE
+            IRQD_HANDLE_ENFORCE_IRQCTX
+node:     0
+affinity: 0
+effectiv: 0
+domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
+ hwirq:   0x4880001
+ chip:    ITS-MSI
+  flags:   0x20
+             IRQCHIP_ONESHOT_SAFE
+ msix:
+  address_hi: 0x00000000
+  address_lo: 0x0e060040
+  msg_data:   0x00000001
+ parent:
+    domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
+     hwirq:   0x2002
+     chip:    ITS
+      flags:   0x0
+     parent:
+        domain:  :soc@0:interrupt-controller@0e001000-1
+         hwirq:   0x2002
+         chip:    GICv3
+          flags:   0x15
+                     IRQCHIP_SET_TYPE_MASKED
+                     IRQCHIP_MASK_ON_SUSPEND
+                     IRQCHIP_SKIP_SET_WAKE
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503020812.PKZf7JBa-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202503020807.c3MhmbJh-lkp@intel.com/
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+Changes since v2:
+https://lore.kernel.org/linux-pci/20250301123953.291675-1-18255117159@163.com/
+
+- Fix implicit declaration of function 'seq_printf'.
+- Fix 'const struct irq_domain_ops' has no member named 'debug_show'.
+
+Changes since v1:
+https://lore.kernel.org/linux-pci/20250227162821.253020-1-18255117159@163.com/
+
+- According to Thomas(tglx), the debug_show() callback should be added
+  to the MSI core code.
+---
+ kernel/irq/msi.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index 396a067a8a56..b1c7fd3b8243 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -15,6 +15,7 @@
+ #include <linux/mutex.h>
+ #include <linux/pci.h>
+ #include <linux/slab.h>
++#include <linux/seq_file.h>
+ #include <linux/sysfs.h>
+ #include <linux/types.h>
+ #include <linux/xarray.h>
+@@ -756,12 +757,34 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
+ 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
+ }
+ 
++#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
++static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
++				  struct irq_data *irqd, int ind)
++{
++	struct msi_desc *desc;
++	bool is_msix;
++
++	desc = irq_get_msi_desc(irqd->irq);
++	if (!desc)
++		return;
++
++	is_msix = desc->pci.msi_attrib.is_msix;
++	seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
++	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
++	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
++	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
++}
++#endif
++
+ static const struct irq_domain_ops msi_domain_ops = {
+ 	.alloc		= msi_domain_alloc,
+ 	.free		= msi_domain_free,
+ 	.activate	= msi_domain_activate,
+ 	.deactivate	= msi_domain_deactivate,
+ 	.translate	= msi_domain_translate,
++#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
++	.debug_show     = msi_domain_debug_show,
++#endif
+ };
+ 
+ static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
+
+base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
+-- 
+2.25.1
+
 
