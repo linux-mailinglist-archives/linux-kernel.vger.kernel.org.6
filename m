@@ -1,376 +1,385 @@
-Return-Path: <linux-kernel+bounces-540162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9145A4AEA8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:34:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB04A4AEAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2C616F40B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 01:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58FEA189498B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 01:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C75117993;
-	Sun,  2 Mar 2025 01:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2F818EAB;
+	Sun,  2 Mar 2025 01:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEaX2DyB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="SLa9TLL8"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010012.outbound.protection.outlook.com [52.103.68.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC6FAD23
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 01:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740879282; cv=none; b=FWq9yJ4Yk4LqnzqJIRtXhZE54fsdUhOASZPIDojtNHdULfQdeviBJ1hiKrqM5J/NwWaEIK+I4PXIXUDsxD49smnaBNgiXco0GZX6XTfB1AYwa29wIDCxwMuo7X/ka6V9PQVabwUaPWo7caIAh5QVIX2eE0GOgNVpB42RoYxo+FM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740879282; c=relaxed/simple;
-	bh=epkB9s8vOlPHXktQhcFRp+I2HPyWk9cVVXZmeKkxdGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fh1xNJsWTXF6V3RB9Sywi1XPk53VCkCu+e73Lczt1qpdBfbCOfzG5qZXz6NH63F5F0IYNh3ToTfx2OjYbxGH3A6BWjqTXTA3mP/uhfPZjcfK0UMXpLM3hSZOYYDhnC/biPX3F7Zx597ViAhzFLkW0I63UhfLcTF2YoNM0UchwFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEaX2DyB; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740879279; x=1772415279;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=epkB9s8vOlPHXktQhcFRp+I2HPyWk9cVVXZmeKkxdGg=;
-  b=SEaX2DyB0XRG0plBcj6enZ45b2ZyvEL/NIgNkGiQTSymQ+Pb5boVFDcJ
-   KEqeBdM1hLILzt1pKsAQtj731z6iMVQKRS9vXF2TWbnzjPhTfCqcd3/rg
-   aSLoZPAszOJCF+uFNkFVzBbGJVGEgQ44E6ZRe5IS5SOsn81QUnJaWYKZF
-   o6nhLd09UE57kHPABYkFqk5/LvZl4DuZyksZililsF0Kw3RedBG+ufj5v
-   VVTPEdemhLtkhCfsI8dZ3YoS03u+EbaVzGBP3jwZDrdxRO7G1Nc2RLW5p
-   5MY85vpV7oenSyHGI8wNQ79oAL904CQ56OmS9OugWc6Tw0J9XIZ3MKSAU
-   g==;
-X-CSE-ConnectionGUID: 0JL+Bj2gQNqv81R111/fKw==
-X-CSE-MsgGUID: fDORRu+hR42OmwKDtdGpFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41696428"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41696428"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 17:34:38 -0800
-X-CSE-ConnectionGUID: PqpQS20qRO2XbG8GYLBbNw==
-X-CSE-MsgGUID: NKkBgSETQdq/H9SUIjrQyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117692474"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 01 Mar 2025 17:34:36 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toYDx-000Gvu-2K;
-	Sun, 02 Mar 2025 01:34:33 +0000
-Date: Sun, 2 Mar 2025 09:33:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akshata Jahagirdar <akshata.jahagirdar@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>
-Subject: drivers/gpu/drm/xe/xe_migrate.c:304:52: error: result of comparison
- of constant 274877906944 with expression of type 'resource_size_t' (aka
- 'unsigned int') is always true
-Message-ID: <202503020941.v2tsAyAB-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395FDA31;
+	Sun,  2 Mar 2025 01:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740879799; cv=fail; b=qPic7vE6ZgBbVbyKm3mA1aCuucOV8skz4ibdXbnFl51oeP1iuN+m0jUNHM/y8Jng9uvEqWuKOdnkECrRs4EHupbSf0vAaHSjC8MkK4KedE1jgEp4Jrc3NP7uv1cb/bS/Lov1WOvY6toTchCESLXa8TeHQDt59NyLRUWpFLLQce8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740879799; c=relaxed/simple;
+	bh=y26SmxpjBQYYty/qbU0d98ay508bK9k+V+YQ6sQ100s=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CicK0TT9MQG8ZHqmq1Qmg9TbBAh84H70bofok9c102HuWex6DfRH4G6Fhay98KNyCWdcPkvIYr7QayaNGvpgvPqjcUf1ifbbOkJa/r1w3Eiwif3L5O1ChQCVyY3YOfvPgIWHiD1lZDa8irE3/7pjmxxRrrl3BNhSOMN6gbY9YjQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=SLa9TLL8; arc=fail smtp.client-ip=52.103.68.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=poMUw+V4pPIrzo99ZND+tUmH24qG600ovogFYpqIuvAUa7AXmE1ZO1aCXXmk+IZvKBGtEZl5TJSD4mnI/1pm/ixWvTH89Ycv731dYMgIRqtCA09vyGz/tWm2TvGlGKaTTSlg97VgroJbCoeQg2C7DUBmgGrptIJ+B4IIKMeSs4gi6eDz9gKL7jSp2KznbOpjfKLp7o/15UN4LBxVxwHuOK2sTYD5+su+TnLo0KPq73PVwTiJtYmPS65VWSQsb8D6ieHp2S3JTI6b6FrI82F6UmC3zC8jdP2j49gGTh4v++95cFioJVA/TAyYAPqNKsV6Xby9woNsSk349o8oeqH8/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I18/k0/QAOM0yZvx8EtlknGHY7DJpck0VrqLlZQ09D0=;
+ b=qbe3HAlJW+OfQ2+BOhGCcLD09whwu80GPNIJoAfbRfI3SI25N4j0WQDXg7CUvCUeGxwnBP7xFA2VVyAfAPKs2Y97agaqqvnPMzfGaKDT+l0d3ACpiPuMP7EyN8FfNEoT1yiTKrJnH4Q/p7t0Woa9tIrBF56oH4zkHOPqZPHd86JlOb1afnhGZrXYqXiZtV8+UtpzhVR8tzJ/lGhW0lHDYWDJFzz1lkOeRf7E724PPABbkzfRlR7TCrGMPB3M6FSKHYJpXSNBTuyf+L4MAMVCabCHXcjmxW1AoN8C7PwIZbK7w6JFIDcP+LEZoWdW+NyCXgIU9TGp/EkdAexVyALq3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I18/k0/QAOM0yZvx8EtlknGHY7DJpck0VrqLlZQ09D0=;
+ b=SLa9TLL8n4Tb+xTRU3Ofh8e09q+kB/66t7t1GkifNgC5fCskG8xo47fV6Tna5TWXWHl5b/vZsjl0vRZ1DB/7GYIeV/But1sNqLeuaGxND4FvyCWj1k3Afcyce3utYj1uE7d4VA1Gv2FVObl0mA1RUTtmAiv6/iT981s/pi9jbHIIEnc34NBGLqLtML41Rh995duVKT2KK9wvInsfaQS9/w9XDL1pA93CjGocvTV/MC88sSS2F49oAU1AkMCqCLjuJu8H2ybV6q9byZAh9rmjkX1xuk3Qy0XMbkoNHUcWmCS9aZrQaYY+kbGNl8oHvDTUIBffWNaBOLR8/6a212gyOQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN1PPF2C9F37535.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c04:1::40c) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Sun, 2 Mar
+ 2025 01:43:09 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.025; Sun, 2 Mar 2025
+ 01:43:09 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, "senozhatsky@chromium.org"
+	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+	<akpm@linux-foundation.org>, "apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>, "dwaipayanray1@gmail.com"
+	<dwaipayanray1@gmail.com>, "lukas.bulwahn@gmail.com"
+	<lukas.bulwahn@gmail.com>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Hector Martin
+	<marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, Janne Grunau
+	<j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Asahi Linux Mailing
+ List <asahi@lists.linux.dev>
+Subject: [PATCH v6] lib/vsprintf: Add support for generic FourCCs by extending
+ %p4cc
+Thread-Topic: [PATCH v6] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Thread-Index: AQHbixRzZz86BudIMkS/mPowpM+2/w==
+Date: Sun, 2 Mar 2025 01:43:08 +0000
+Message-ID: <1A03A5B4-93AC-4307-AE6A-4A4C4B7E9472@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN1PPF2C9F37535:EE_
+x-ms-office365-filtering-correlation-id: dae2ba1f-59da-4bf1-c932-08dd592b95d6
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|8060799006|19110799003|8062599003|461199028|7092599003|3412199025|440099028|41001999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?B9iKStvVzrDUHwm/LpAHjmbH4pdTkxACfvJfPPoRVfx55qpRdg8120TwVT2V?=
+ =?us-ascii?Q?N9IzYhDnJq/3XBIm23PILmertAqzbeZ54e0NzNG6BUtzZ9Imr/wLv2aSZ2dN?=
+ =?us-ascii?Q?gQXrUB8/yrVg76NRvmP5ZeQrknk8Fp/f5BYZULFK8arArccE8XY/cIYj/TCO?=
+ =?us-ascii?Q?FBy+fvYw2LNzEfz3k9CuOFAamB+bTsPh0hcAdGTJ57ksUPgv96hcUK01GiNM?=
+ =?us-ascii?Q?CkP/RBOxvIZileLVbb8SM9zIqVz7aDNUd958O7A9VDnlOr6MKVnGUQYyw9jh?=
+ =?us-ascii?Q?+Saa3MMGcXI/LDT+ybWMpIq6skIJUfqpIl1g5Zw/8PahoXRcDM8WodB3/omW?=
+ =?us-ascii?Q?EFt8PSyEZiB+Vv+nYtUwhTd/1zoWBOTKPxnN/bAqnHKrUTv6UTVF1ZKJxfAa?=
+ =?us-ascii?Q?Oytkx3Cie5ExCSgqipUZq95Xc+fmYL/kN0j1o5eJ9XeFKhrsVdMvv5y7Gih1?=
+ =?us-ascii?Q?PWkX8mwVSdW/obC7yL5YtgQswjRdwI+AYznM02b8V3zFUJNjgmNfX8AUgw3U?=
+ =?us-ascii?Q?hdZHMfEYLxtZjNI9L4yi3WiueiAkliTmT4VoUiRkqGYS/lZ5dNLvVxQyxqOS?=
+ =?us-ascii?Q?yxLwPvXyaoYrOTWI5IauN9c8MdGqehsIBYdeXrb1iKGKuIRlCyjo2IwrTMAI?=
+ =?us-ascii?Q?lIAVFKf9YLSf37OY58HCc7isRyFeciybsjyGuUPnDjlb9MsR2m2aDR425Lpd?=
+ =?us-ascii?Q?AlKuZZEuc2YNff1lqr60JSLtWCcOTFTMpIGewwU/cvoIsQYk9Y1UCF+xlhVT?=
+ =?us-ascii?Q?2Q22oBMNmud/aYHrWEJHsvP3VP5Zuw3kKtoSRFGJi3nVW5N8CfTFrCuqiyVA?=
+ =?us-ascii?Q?t+PhGOxEPglrdbkxPc/dPkukoI1OAzMUo8Iy2bKa29F6e/AS7NlA2MG98bo9?=
+ =?us-ascii?Q?W0DpEphBF2MasYAxVnKV4uKlOFJmkc5IPRwxDiUfuuwQ2NkinFXfvGyHzgdz?=
+ =?us-ascii?Q?gnQ7BD2BxaMdcCxn0XC0YCgc48B2P6bLh1syp3D4iP4f9Jt1hDDgipKKIpRR?=
+ =?us-ascii?Q?wNFw8L19zclJp3ATcPpyzw4qrDxuGRRxkuTm5M7vRqmdy3D89dy/ZRCUsBGw?=
+ =?us-ascii?Q?k3j7ZtOY2EURsBSyAPU442NIPkwTcWgRYOFZdavZXGEVoYrEzDM=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?NTI7YRVuPyEOy00+6UQ4R7ap4FOxFdSL5apSP9EZgcu/w5LJxnECgF3ovfeQ?=
+ =?us-ascii?Q?2J7+TMVwtZx8ewhWrExbtplch3V8k0tWufXKt2c8b/ApZ66Igwcjyr02bE8k?=
+ =?us-ascii?Q?gq/uJ8MKbHHJqWD56go/7gszE5ZuXrXy0tzocVYOLMScaioN1zL+dmxUcw7/?=
+ =?us-ascii?Q?LEWfZgWSlzcVIzznHyo2sowAh5xjJ4vk+wWosSot8L72BI9JUTAlHNZa4G99?=
+ =?us-ascii?Q?5kAmLmHncv6YVtyf+U1VHdsw+0nn6+xdQTEtI7TW5Bn3SfDScHI50stUHh64?=
+ =?us-ascii?Q?sNTpfhCVeiiJk7aXXVNtUnoipteLrV7USQO9pvS45tMXUC3cxzh8SdITuJpb?=
+ =?us-ascii?Q?hDmNMKnWgy+QL4D2P3oVlCFhEdegNQHLMRbvBSfK3oP7oM5FOmzxT80aEQl5?=
+ =?us-ascii?Q?TgSLOczgBnyM1bLn4EFZsemev10btdhxrGzYHoO6XIMdZT2Bc9i3vBMyflD8?=
+ =?us-ascii?Q?f9qMa3aBmJiulvENaIg27knT6dJ/ZK00Uli1DrB7h0iVHvBIlkbYeT48u/H8?=
+ =?us-ascii?Q?2TiXsASuGVkFCYoZO4zrf4MmulIjuqf+lb6ZhMMFr37XSzZ/4Nb7RAWsOaE3?=
+ =?us-ascii?Q?75c2fQcRBX1A/2fTPuYbNQFqmkHFrTup5K+HJxIX+A4t4rufzd44Z7yzHFzT?=
+ =?us-ascii?Q?El+tu3F1mG5t1hJ704U86fKIugbwsvVr5L7xkcxRobVUzG66gCXAj9pkDnnJ?=
+ =?us-ascii?Q?29R+PfgiNZMgZGPsMX/MlXCRFJguewysZ8YT8Rc84sxTNmUEORcl4TeRVaE+?=
+ =?us-ascii?Q?v/0+WCSy5M7WT0uXKH+RtesS6Cqhumytrrfrgm9qg5igJk1msU5HI4hwS7um?=
+ =?us-ascii?Q?pXKePnhAspfyGuaHDKlsYyCNUzhkpyCYzOOT9h540+ijGB9mPmZIABo9axsI?=
+ =?us-ascii?Q?K/x+KgSV7OqhHHUrhmvgNW0p3qwKo18a4f4IUxjK2JU0UJLoYAfECzf6i7AF?=
+ =?us-ascii?Q?vvGXgNa1pYQoKlbl497MNi2c5UqOeO3je8o/p+166TTv1tH6bsewSuANMDH4?=
+ =?us-ascii?Q?eDhgNF7XQcU2b3O7NLnwHAkDLVu1RN6zbgfQNdyzsJIz42eDlQq6gdYQRfiq?=
+ =?us-ascii?Q?ASFZb1sKn/m3GlA5LpL9Jw+MxeQUBVJpKhpJP5N5+v2vZ5ccdaVnBsZetXVZ?=
+ =?us-ascii?Q?PJfDfbnMuHvfRTeMvMFpXUUeGCL8ZBLRRqq7u03Bf2hK4so6dter7+BcfWFM?=
+ =?us-ascii?Q?uZgDz0Mvs/X4UwMw8lbfM0Lm0Kw7mlxF7+UzlEKAs8FkdMlZAayxcad+v9Vk?=
+ =?us-ascii?Q?yz1fuecimP5GMvQDogBB2AdC8bEHH1686VoA9qDxTVwAD1tbgp0qco2nP1bw?=
+ =?us-ascii?Q?OErF82T7VR8/1G6jmwbrWOn7?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FF2E2D899D4D4E47B9CBD456BFAC7896@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: dae2ba1f-59da-4bf1-c932-08dd592b95d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2025 01:43:08.8532
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN1PPF2C9F37535
 
-Hi Akshata,
+From: Hector Martin <marcan@marcan.st>
 
-FYI, the error/warning still remains.
+%p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+it's useful to be able to print generic 4-character codes formatted as
+an integer. Extend it to add format specifiers for printing generic
+32-bit FourCCs with various endian semantics:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9d20040d71ede4c0e5fc6ae7aaa92788de1e713a
-commit: 8d79acd567db183e675cccc6cc737d2959e2a2d9 drm/xe/migrate: Add helper function to program identity map
-date:   8 months ago
-config: i386-randconfig-013-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020941.v2tsAyAB-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020941.v2tsAyAB-lkp@intel.com/reproduce)
+%p4ch	Host byte order
+%p4cn	Network byte order
+%p4cl	Little-endian
+%p4cb	Big-endian
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020941.v2tsAyAB-lkp@intel.com/
+The endianness determines how bytes are interpreted as a u32, and the
+FourCC is then always printed MSByte-first (this is the opposite of
+V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+allow printing LSByte-first FourCCs stored in host endian order
+(other than the hex form being in character order, not the integer
+value).
 
-All errors (new ones prefixed by >>):
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+v2 ->
+- Add this patch to appletbdrm patchset
 
-   In file included from drivers/gpu/drm/xe/xe_migrate.c:12:
-   In file included from include/drm/ttm/ttm_tt.h:30:
-   In file included from include/linux/pagemap.h:8:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/gpu/drm/xe/xe_migrate.c:304:52: error: result of comparison of constant 274877906944 with expression of type 'resource_size_t' (aka 'unsigned int') is always true [-Werror,-Wtautological-constant-out-of-range-compare]
-     304 |                 xe_assert(xe, (xe->mem.vram.actual_physical_size <= SZ_256G));
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   drivers/gpu/drm/xe/xe_assert.h:108:54: note: expanded from macro 'xe_assert'
-     108 | #define xe_assert(xe, condition) xe_assert_msg((xe), condition, "")
-         |                                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   drivers/gpu/drm/xe/xe_assert.h:111:24: note: expanded from macro 'xe_assert_msg'
-     111 |         __xe_assert_msg(__xe, condition,                                                        \
-         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     112 |                         "platform: %s subplatform: %d\n"                                        \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     113 |                         "graphics: %s %u.%02u step %s\n"                                        \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     114 |                         "media: %s %u.%02u step %s\n"                                           \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     115 |                         msg,                                                                    \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     116 |                         __xe->info.platform_name, __xe->info.subplatform,                       \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     117 |                         __xe->info.graphics_name,                                               \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     118 |                         __xe->info.graphics_verx100 / 100,                                      \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     119 |                         __xe->info.graphics_verx100 % 100,                                      \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     120 |                         xe_step_name(__xe->info.step.graphics),                                 \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     121 |                         __xe->info.media_name,                                                  \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     122 |                         __xe->info.media_verx100 / 100,                                         \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     123 |                         __xe->info.media_verx100 % 100,                                         \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     124 |                         xe_step_name(__xe->info.step.media),                                    \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     125 |                         ## arg);                                                                \
-         |                         ~~~~~~~
-   drivers/gpu/drm/xe/xe_assert.h:84:31: note: expanded from macro '__xe_assert_msg'
-      84 |         (void)drm_WARN(&(xe)->drm, !(condition), "[" DRM_NAME "] Assertion `%s` failed!\n" msg, \
-         |               ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      85 |                        __stringify(condition), ## arg);                                         \
-         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/drm/drm_print.h:635:7: note: expanded from macro 'drm_WARN'
-     635 |         WARN(condition, "%s %s: [drm] " format,                         \
-         |         ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     636 |                         dev_driver_string((drm)->dev),                  \
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     637 |                         dev_name((drm)->dev), ## arg)
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/bug.h:132:25: note: expanded from macro 'WARN'
-     132 |         int __ret_warn_on = !!(condition);                              \
-         |                                ^~~~~~~~~
-   In file included from drivers/gpu/drm/xe/xe_migrate.c:1494:
-   drivers/gpu/drm/xe/tests/xe_migrate.c:404:12: error: too many arguments to function call, expected 10, have 11
-     402 |                 batch_size += pte_update_size(m, src_is_vram, src_is_vram, src, &src_it, &src_L0,
-         |                               ~~~~~~~~~~~~~~~
-     403 |                                               &src_L0_ofs, &src_L0_pt, 0, 0,
-     404 |                                               avail_pts);
-         |                                               ^~~~~~~~~
-   drivers/gpu/drm/xe/xe_migrate.c:490:12: note: 'pte_update_size' declared here
-     490 | static u32 pte_update_size(struct xe_migrate *m,
-         |            ^               ~~~~~~~~~~~~~~~~~~~~~
-     491 |                            bool is_vram,
-         |                            ~~~~~~~~~~~~~
-     492 |                            struct ttm_resource *res,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~
-     493 |                            struct xe_res_cursor *cur,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~
-     494 |                            u64 *L0, u64 *L0_ofs, u32 *L0_pt,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     495 |                            u32 cmd_size, u32 pt_ofs, u32 avail_pts)
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/xe/xe_migrate.c:1494:
-   drivers/gpu/drm/xe/tests/xe_migrate.c:408:23: error: too many arguments to function call, expected 10, have 11
-     406 |                 batch_size += pte_update_size(m, dst_is_vram, dst_is_vram, dst, &dst_it, &src_L0,
-         |                               ~~~~~~~~~~~~~~~
-     407 |                                               &dst_L0_ofs, &dst_L0_pt, 0,
-     408 |                                               avail_pts, avail_pts);
-         |                                                          ^~~~~~~~~
-   drivers/gpu/drm/xe/xe_migrate.c:490:12: note: 'pte_update_size' declared here
-     490 | static u32 pte_update_size(struct xe_migrate *m,
-         |            ^               ~~~~~~~~~~~~~~~~~~~~~
-     491 |                            bool is_vram,
-         |                            ~~~~~~~~~~~~~
-     492 |                            struct ttm_resource *res,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~
-     493 |                            struct xe_res_cursor *cur,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~
-     494 |                            u64 *L0, u64 *L0_ofs, u32 *L0_pt,
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     495 |                            u32 cmd_size, u32 pt_ofs, u32 avail_pts)
-         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   4 errors generated.
+v3 ->
+- Make array static
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for FB_IOMEM_HELPERS
-   Depends on [n]: HAS_IOMEM [=y] && FB_CORE [=n]
-   Selected by [m]:
-   - DRM_XE_DISPLAY [=y] && HAS_IOMEM [=y] && DRM [=m] && DRM_XE [=m] && DRM_XE [=m]=m [=m]
+v4 ->
+- Fix code error
+- Fix sparse warnings
+- Make this patch separate from drm
 
+v5 ->
+- Improve documentation
+- Use better logic to assign value of val
+- Use 'n' instead of 'r' for reverse endian
+- Use ARRAY_SIZE() instead of hardcoding 1
 
-vim +304 drivers/gpu/drm/xe/xe_migrate.c
+v6 ->
+- Replace spaces with tabs
+- Add missing []
+- Use host byte order and network byte order terms
+- Fix sparse warning in test_printf.c
 
-   177	
-   178	static int xe_migrate_prepare_vm(struct xe_tile *tile, struct xe_migrate *m,
-   179					 struct xe_vm *vm)
-   180	{
-   181		struct xe_device *xe = tile_to_xe(tile);
-   182		u16 pat_index = xe->pat.idx[XE_CACHE_WB];
-   183		u8 id = tile->id;
-   184		u32 num_entries = NUM_PT_SLOTS, num_level = vm->pt_root[id]->level,
-   185		    num_setup = num_level + 1;
-   186		u32 map_ofs, level, i;
-   187		struct xe_bo *bo, *batch = tile->mem.kernel_bb_pool->bo;
-   188		u64 entry, pt30_ofs;
-   189	
-   190		/* Can't bump NUM_PT_SLOTS too high */
-   191		BUILD_BUG_ON(NUM_PT_SLOTS > SZ_2M/XE_PAGE_SIZE);
-   192		/* Must be a multiple of 64K to support all platforms */
-   193		BUILD_BUG_ON(NUM_PT_SLOTS * XE_PAGE_SIZE % SZ_64K);
-   194		/* And one slot reserved for the 4KiB page table updates */
-   195		BUILD_BUG_ON(!(NUM_KERNEL_PDE & 1));
-   196	
-   197		/* Need to be sure everything fits in the first PT, or create more */
-   198		xe_tile_assert(tile, m->batch_base_ofs + batch->size < SZ_2M);
-   199	
-   200		bo = xe_bo_create_pin_map(vm->xe, tile, vm,
-   201					  num_entries * XE_PAGE_SIZE,
-   202					  ttm_bo_type_kernel,
-   203					  XE_BO_FLAG_VRAM_IF_DGFX(tile) |
-   204					  XE_BO_FLAG_PINNED);
-   205		if (IS_ERR(bo))
-   206			return PTR_ERR(bo);
-   207	
-   208		/* PT31 reserved for 2M identity map */
-   209		pt30_ofs = bo->size - 2 * XE_PAGE_SIZE;
-   210		entry = vm->pt_ops->pde_encode_bo(bo, pt30_ofs, pat_index);
-   211		xe_pt_write(xe, &vm->pt_root[id]->bo->vmap, 0, entry);
-   212	
-   213		map_ofs = (num_entries - num_setup) * XE_PAGE_SIZE;
-   214	
-   215		/* Map the entire BO in our level 0 pt */
-   216		for (i = 0, level = 0; i < num_entries; level++) {
-   217			entry = vm->pt_ops->pte_encode_bo(bo, i * XE_PAGE_SIZE,
-   218							  pat_index, 0);
-   219	
-   220			xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64, entry);
-   221	
-   222			if (vm->flags & XE_VM_FLAG_64K)
-   223				i += 16;
-   224			else
-   225				i += 1;
-   226		}
-   227	
-   228		if (!IS_DGFX(xe)) {
-   229			/* Write out batch too */
-   230			m->batch_base_ofs = NUM_PT_SLOTS * XE_PAGE_SIZE;
-   231			for (i = 0; i < batch->size;
-   232			     i += vm->flags & XE_VM_FLAG_64K ? XE_64K_PAGE_SIZE :
-   233			     XE_PAGE_SIZE) {
-   234				entry = vm->pt_ops->pte_encode_bo(batch, i,
-   235								  pat_index, 0);
-   236	
-   237				xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64,
-   238					  entry);
-   239				level++;
-   240			}
-   241			if (xe->info.has_usm) {
-   242				xe_tile_assert(tile, batch->size == SZ_1M);
-   243	
-   244				batch = tile->primary_gt->usm.bb_pool->bo;
-   245				m->usm_batch_base_ofs = m->batch_base_ofs + SZ_1M;
-   246				xe_tile_assert(tile, batch->size == SZ_512K);
-   247	
-   248				for (i = 0; i < batch->size;
-   249				     i += vm->flags & XE_VM_FLAG_64K ? XE_64K_PAGE_SIZE :
-   250				     XE_PAGE_SIZE) {
-   251					entry = vm->pt_ops->pte_encode_bo(batch, i,
-   252									  pat_index, 0);
-   253	
-   254					xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64,
-   255						  entry);
-   256					level++;
-   257				}
-   258			}
-   259		} else {
-   260			u64 batch_addr = xe_bo_addr(batch, 0, XE_PAGE_SIZE);
-   261	
-   262			m->batch_base_ofs = xe_migrate_vram_ofs(xe, batch_addr);
-   263	
-   264			if (xe->info.has_usm) {
-   265				batch = tile->primary_gt->usm.bb_pool->bo;
-   266				batch_addr = xe_bo_addr(batch, 0, XE_PAGE_SIZE);
-   267				m->usm_batch_base_ofs = xe_migrate_vram_ofs(xe, batch_addr);
-   268			}
-   269		}
-   270	
-   271		for (level = 1; level < num_level; level++) {
-   272			u32 flags = 0;
-   273	
-   274			if (vm->flags & XE_VM_FLAG_64K && level == 1)
-   275				flags = XE_PDE_64K;
-   276	
-   277			entry = vm->pt_ops->pde_encode_bo(bo, map_ofs + (u64)(level - 1) *
-   278							  XE_PAGE_SIZE, pat_index);
-   279			xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE * level, u64,
-   280				  entry | flags);
-   281		}
-   282	
-   283		/* Write PDE's that point to our BO. */
-   284		for (i = 0; i < map_ofs / PAGE_SIZE; i++) {
-   285			entry = vm->pt_ops->pde_encode_bo(bo, (u64)i * XE_PAGE_SIZE,
-   286							  pat_index);
-   287	
-   288			xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE +
-   289				  (i + 1) * 8, u64, entry);
-   290		}
-   291	
-   292		/* Set up a 1GiB NULL mapping at 255GiB offset. */
-   293		level = 2;
-   294		xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE * level + 255 * 8, u64,
-   295			  vm->pt_ops->pte_encode_addr(xe, 0, pat_index, level, IS_DGFX(xe), 0)
-   296			  | XE_PTE_NULL);
-   297		m->cleared_mem_ofs = (255ULL << xe_pt_shift(level));
-   298	
-   299		/* Identity map the entire vram at 256GiB offset */
-   300		if (IS_DGFX(xe)) {
-   301			u64 pt31_ofs = bo->size - XE_PAGE_SIZE;
-   302	
-   303			xe_migrate_program_identity(xe, vm, bo, map_ofs, 256, pat_index, pt31_ofs);
- > 304			xe_assert(xe, (xe->mem.vram.actual_physical_size <= SZ_256G));
-   305		}
-   306	
-   307		/*
-   308		 * Example layout created above, with root level = 3:
-   309		 * [PT0...PT7]: kernel PT's for copy/clear; 64 or 4KiB PTE's
-   310		 * [PT8]: Kernel PT for VM_BIND, 4 KiB PTE's
-   311		 * [PT9...PT27]: Userspace PT's for VM_BIND, 4 KiB PTE's
-   312		 * [PT28 = PDE 0] [PT29 = PDE 1] [PT30 = PDE 2] [PT31 = 2M vram identity map]
-   313		 *
-   314		 * This makes the lowest part of the VM point to the pagetables.
-   315		 * Hence the lowest 2M in the vm should point to itself, with a few writes
-   316		 * and flushes, other parts of the VM can be used either for copying and
-   317		 * clearing.
-   318		 *
-   319		 * For performance, the kernel reserves PDE's, so about 20 are left
-   320		 * for async VM updates.
-   321		 *
-   322		 * To make it easier to work, each scratch PT is put in slot (1 + PT #)
-   323		 * everywhere, this allows lockless updates to scratch pages by using
-   324		 * the different addresses in VM.
-   325		 */
-   326	#define NUM_VMUSA_UNIT_PER_PAGE	32
-   327	#define VM_SA_UPDATE_UNIT_SIZE		(XE_PAGE_SIZE / NUM_VMUSA_UNIT_PER_PAGE)
-   328	#define NUM_VMUSA_WRITES_PER_UNIT	(VM_SA_UPDATE_UNIT_SIZE / sizeof(u64))
-   329		drm_suballoc_manager_init(&m->vm_update_sa,
-   330					  (size_t)(map_ofs / XE_PAGE_SIZE - NUM_KERNEL_PDE) *
-   331					  NUM_VMUSA_UNIT_PER_PAGE, 0);
-   332	
-   333		m->pt_bo = bo;
-   334		return 0;
-   335	}
-   336	
+ Documentation/core-api/printk-formats.rst | 32 +++++++++++++++++++
+ lib/test_printf.c                         | 39 +++++++++++++++++++----
+ lib/vsprintf.c                            | 35 ++++++++++++++++----
+ scripts/checkpatch.pl                     |  2 +-
+ 4 files changed, 94 insertions(+), 14 deletions(-)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core=
+-api/printk-formats.rst
+index ecccc0473..bd420e8aa 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -648,6 +648,38 @@ Examples::
+ 	%p4cc	Y10  little-endian (0x20303159)
+ 	%p4cc	NV12 big-endian (0xb231564e)
+=20
++Generic FourCC code
++-------------------
++
++::
++	%p4c[hnlb]	gP00 (0x67503030)
++
++Print a generic FourCC code, as both ASCII characters and its numerical
++value as hexadecimal.
++
++The generic FourCC code is always printed in the big-endian format,
++the most significant byte first. This is the opposite of V4L/DRM FourCCs.
++
++The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
++endianness is used to load the stored bytes. The data might be interpreted
++using the host byte order, network byte order, little-endian, or big-endia=
+n.
++
++Passed by reference.
++
++Examples for a little-endian machine, given &(u32)0x67503030::
++
++	%p4ch	gP00 (0x67503030)
++	%p4cn	00Pg (0x30305067)
++	%p4cl	gP00 (0x67503030)
++	%p4cb	00Pg (0x30305067)
++
++Examples for a big-endian machine, given &(u32)0x67503030::
++
++	%p4ch	gP00 (0x67503030)
++	%p4cn	00Pg (0x30305067)
++	%p4cl	00Pg (0x30305067)
++	%p4cb	gP00 (0x67503030)
++
+ Rust
+ ----
+=20
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 59dbe4f9a..4019de09e 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -776,21 +776,46 @@ static void __init fwnode_pointer(void)
+ 	software_node_unregister_node_group(group);
+ }
+=20
++struct fourcc_struct {
++	u32 code;
++	const char *str;
++};
++
++static void __init fourcc_pointer_test(const struct fourcc_struct *fc, siz=
+e_t n,
++				       const char *fmt)
++{
++	size_t i;
++
++	for (i =3D 0; i < n; i++)
++		test(fc[i].str, fmt, &fc[i].code);
++}
++
+ static void __init fourcc_pointer(void)
+ {
+-	struct {
+-		u32 code;
+-		char *str;
+-	} const try[] =3D {
++	static const struct fourcc_struct try_cc[] =3D {
+ 		{ 0x3231564e, "NV12 little-endian (0x3231564e)", },
+ 		{ 0xb231564e, "NV12 big-endian (0xb231564e)", },
+ 		{ 0x10111213, ".... little-endian (0x10111213)", },
+ 		{ 0x20303159, "Y10  little-endian (0x20303159)", },
+ 	};
+-	unsigned int i;
++	static const struct fourcc_struct try_ch[] =3D {
++		{ 0x41424344, "ABCD (0x41424344)", },
++	};
++	static const struct fourcc_struct try_cn[] =3D {
++		{ 0x41424344, "DCBA (0x44434241)", },
++	};
++	static const struct fourcc_struct try_cl[] =3D {
++		{ (__force u32)cpu_to_le32(0x41424344), "ABCD (0x41424344)", },
++	};
++	static const struct fourcc_struct try_cb[] =3D {
++		{ (__force u32)cpu_to_be32(0x41424344), "ABCD (0x41424344)", },
++	};
+=20
+-	for (i =3D 0; i < ARRAY_SIZE(try); i++)
+-		test(try[i].str, "%p4cc", &try[i].code);
++	fourcc_pointer_test(try_cc, ARRAY_SIZE(try_cc), "%p4cc");
++	fourcc_pointer_test(try_ch, ARRAY_SIZE(try_ch), "%p4ch");
++	fourcc_pointer_test(try_cn, ARRAY_SIZE(try_cn), "%p4cn");
++	fourcc_pointer_test(try_cl, ARRAY_SIZE(try_cl), "%p4cl");
++	fourcc_pointer_test(try_cb, ARRAY_SIZE(try_cb), "%p4cb");
+ }
+=20
+ static void __init
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 56fe96319..56511a994 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1781,27 +1781,50 @@ char *fourcc_string(char *buf, char *end, const u32=
+ *fourcc,
+ 	char output[sizeof("0123 little-endian (0x01234567)")];
+ 	char *p =3D output;
+ 	unsigned int i;
++	bool pixel_fmt =3D false;
+ 	u32 orig, val;
+=20
+-	if (fmt[1] !=3D 'c' || fmt[2] !=3D 'c')
++	if (fmt[1] !=3D 'c')
+ 		return error_string(buf, end, "(%p4?)", spec);
+=20
+ 	if (check_pointer(&buf, end, fourcc, spec))
+ 		return buf;
+=20
+ 	orig =3D get_unaligned(fourcc);
+-	val =3D orig & ~BIT(31);
++	switch (fmt[2]) {
++	case 'h':
++		break;
++	case 'n':
++		orig =3D swab32(orig);
++		break;
++	case 'l':
++		orig =3D (__force u32)cpu_to_le32(orig);
++		break;
++	case 'b':
++		orig =3D (__force u32)cpu_to_be32(orig);
++		break;
++	case 'c':
++		/* Pixel formats are printed LSB-first */
++		pixel_fmt =3D true;
++		break;
++	default:
++		return error_string(buf, end, "(%p4?)", spec);
++	}
++
++	val =3D pixel_fmt ? swab32(orig & ~BIT(31)) : orig;
+=20
+ 	for (i =3D 0; i < sizeof(u32); i++) {
+-		unsigned char c =3D val >> (i * 8);
++		unsigned char c =3D val >> ((3 - i) * 8);
+=20
+ 		/* Print non-control ASCII characters as-is, dot otherwise */
+ 		*p++ =3D isascii(c) && isprint(c) ? c : '.';
+ 	}
+=20
+-	*p++ =3D ' ';
+-	strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
+-	p +=3D strlen(p);
++	if (pixel_fmt) {
++		*p++ =3D ' ';
++		strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
++		p +=3D strlen(p);
++	}
+=20
+ 	*p++ =3D ' ';
+ 	*p++ =3D '(';
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 7b28ad331..5595a0898 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6904,7 +6904,7 @@ sub process {
+ 					    ($extension eq "f" &&
+ 					     defined $qualifier && $qualifier !~ /^w/) ||
+ 					    ($extension eq "4" &&
+-					     defined $qualifier && $qualifier !~ /^cc/)) {
++					     defined $qualifier && $qualifier !~ /^c[hnlbc]/)) {
+ 						$bad_specifier =3D $specifier;
+ 						last;
+ 					}
+--=20
+2.47.1
+
 
