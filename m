@@ -1,103 +1,237 @@
-Return-Path: <linux-kernel+bounces-540481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F75A4B12E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:29:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41F1A4B130
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1093F188FBD4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4F01890511
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706191DEFD2;
-	Sun,  2 Mar 2025 11:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BF41DE4CE;
+	Sun,  2 Mar 2025 11:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqAliAIv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="zPitsCZV"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC51B23F362;
-	Sun,  2 Mar 2025 11:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DEC1B6CFE
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740914977; cv=none; b=B6bq6fmY3cL9yMVmvdz8d5HKebde4gDYajxwX/TSZ2qnuMWSGa7skIrfjV6CI2wv+ApH8DX+9LtjkafsSec5cu35Em+4Xs1kJCccD8zJ3l1vq6tPjXn6eqrgB+gvr/yuiW9aI9KJmMx06B9toV04HZFIR+VOs7RxQEVK0MeZ6no=
+	t=1740915245; cv=none; b=uVSADe3XHWyGEVRf7nDSmHL165dcfnoJ19U6H0sZhVC7SZJCdN34wT36acnui2hOgtO9+t+SDkZt24JqsyU9huaZVsdm9Za8wj6E37akYC0FtpWzI+nkX/YVYYHTr07adgVflbfyqgqEvm2ljjtBWQ8WXliWppOdO2XpItMMr6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740914977; c=relaxed/simple;
-	bh=B+82VRcZq/EEV89XyWjuZ2cHYEmSHbv/QFGz7kK+HZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PnlgFHLO/yJTCKsFw6Ayn8SghJON4yM2aX2J0ONy5cD765pDGsyVRrSI5pBrBGTkbRJWe//ns7kMwfge4KODw9ygEXy5G0vxP7RxNbB+OK3a9V0fr5MnYTTzAHdvKY8CWk/xLlUdzjs3OU6YJHR/p5zZkn2uWpCb2J07IkUDcpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqAliAIv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971EEC4CED6;
-	Sun,  2 Mar 2025 11:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740914977;
-	bh=B+82VRcZq/EEV89XyWjuZ2cHYEmSHbv/QFGz7kK+HZo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RqAliAIvw9YffV5O5kOf6BZzvEG+YJmUV2df9DA/N6MCFPUaxyw1bqFLMLg/7enWX
-	 IM6AE9AyFQgUTR0N0LmIQtAPKnIJBvUfDoGpLVttO/1L2/3N5/6cWB/NTzALTYqMtJ
-	 ksRt0k7p5m2duElNUveqT2e4/eY07JzvFX+g1bHfpHxmCfQYPeZfcG0eBZ9etbd/1x
-	 GOKenucw+eIXB4dDXFgd4uH4p0tXEFdd0oPvm0Ri7XVu7Igjxod2nzEId0bERQuz4u
-	 rZxKGi9Lj6kkCb+Rfy5m7D67oc7JWglMqNAH3BxXV9HkV6HwgSAFyaKMTVC8LSNqJ1
-	 ERXsv/KA9qwDg==
-Date: Sun, 2 Mar 2025 11:29:25 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] BMI270 data ready interrupt support
-Message-ID: <20250302112925.05d3e593@jic23-huawei>
-In-Reply-To: <20250228-bmi270-irq-v2-0-3f97a4e8f551@gmail.com>
-References: <20250228-bmi270-irq-v2-0-3f97a4e8f551@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740915245; c=relaxed/simple;
+	bh=xV9ruAhVw/6avwA3fLN4Q5jp+kOcE/pwQnVQktM2J+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsP54Ffs0DuWHVn7NFXAKBGIDM4A2rwjW5jUYmxyh0fnkvXEjWnWoDKVhGyVqHu8IR039MGzx0vJJvDFkatK7MtKncLpST9qpABmO6kLt3B903oMtmweQFzO6j6JbS8Dtv2AU0BfcCgbCdGH/smH20iar0bru3KuMZZFZ7o/6pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=zPitsCZV; arc=none smtp.client-ip=121.127.44.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740915243;
+ bh=2rZnsvHwyI+sU9+EF0i7TafNRHUGql1r6Nc38HeeaK4=;
+ b=zPitsCZVDDz/gdJrhV059oOWSuq6Jiy0u/Zq7EHM16UYHpxIP2dPBThsoIWawdn9zHAQMc4Fr
+ g1kR6j2FKNG0Xq6Seh9+hIspyed2NWETVrbeIbCGR/yAmCRI8VWL1hgEMrwgKxiixu/JCks6a5a
+ EYDVEbcNmAXtjQ5B6L0M1e4Y+l5d/iaYfMEhI1GobJ4i5HA7lFSalmZ/o7xpbKqCJ3CAEfvOCRV
+ 1wP746xLApt0dufYRnrZyxeULBrFx/ErzIOYzI6K5Hh/EctcavP5AABZn/68gbsVLN869ahlgYy
+ WPfuY42Ri7B5XcvhcXyuyPLizakkZZtg7y+Hg1jzZC0A==
+X-Forward-Email-ID: 67c442264a29b97c03d4df09
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.59
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <b92c0f59-c721-4e91-ac41-267a81758916@kwiboo.se>
+Date: Sun, 2 Mar 2025 12:33:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for
+ RK3528
+To: Yao Zi <ziyao@disroot.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104749.36423-1-ziyao@disroot.org>
+ <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se> <Z8MMm7X31p_CrStZ@pie>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8MMm7X31p_CrStZ@pie>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Feb 2025 20:03:47 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
+Hi Yao Zi,
 
-> This series adds support for data ready interrupt to the BMI270 driver
-> using one of the available interrupt pins.
+On 2025-03-01 14:33, Yao Zi wrote:
+> On Sat, Mar 01, 2025 at 01:47:47PM +0100, Jonas Karlman wrote:
+>> Hi,
+>>
+>> On 2025-03-01 11:47, Yao Zi wrote:
+>>> RK3528 features two SDIO controllers and one SD/MMC controller, describe
+>>> them in devicetree. Since their sample and drive clocks are located in
+>>> the VO and VPU GRFs, corresponding syscons are added to make these
+>>> clocks available.
+>>>
+>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>>> ---
+>>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
+>>>  1 file changed, 62 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> index 5b334690356a..078c97fa1d9f 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> @@ -7,6 +7,7 @@
+>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+>>> +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
+>>>  
+>>>  / {
+>>>  	compatible = "rockchip,rk3528";
+>>> @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
+>>>  			#interrupt-cells = <3>;
+>>>  		};
+>>>  
+>>> +		vpu_grf: syscon@ff340000 {
+>>> +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+>>
+>> vpu_grf is also used for gmac1, so should possible be a "syscon",
+>> "simple-mfd", or have I misunderstood when to use simple-mfd ?
 > 
-> Additionally, this series includes some cleanups to simplify and improve
-> consistency across the driver.
+> Just as Heiko explained, "simple-mfd" is only required when the child
+> nodes should be populated automatically. Here these two GRFs are only
+> referenced and have no child, thus "simple-mfd" compatible isn't useful.
+
+Thanks for the explanations.
+
 > 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-I'd already picked up patch 1 from v1, so applied 2 and 3 from this.
-
-Applied to the togreg branch of iio.git but I'll push out briefly as
-testing to let 0-day take an initial look.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Changes in v2:
-> - Patch 2: Updated the commit message to clarify that the variable
->   'bmi270_data::data' has also been renamed.
-> - Patch 2: Fixed some line wraps after renaming variables.
-> - Link to v1: https://lore.kernel.org/r/20250219-bmi270-irq-v1-0-145d02bbca3b@gmail.com
+>>> +			reg = <0x0 0xff340000 0x0 0x8000>;
+>>> +		};
+>>> +
+>>> +		vo_grf: syscon@ff360000 {
+>>> +			compatible = "rockchip,rk3528-vo-grf", "syscon";
+>>
+>> similar here, vo_grf is also used for gmac0.
+>>
+>>> +			reg = <0x0 0xff360000 0x0 0x10000>;
+>>> +		};
+>>> +
+>>>  		cru: clock-controller@ff4a0000 {
+>>>  			compatible = "rockchip,rk3528-cru";
+>>>  			reg = <0x0 0xff4a0000 0x0 0x30000>;
+>>> @@ -251,5 +262,56 @@ uart7: serial@ffa28000 {
+>>>  			reg-shift = <2>;
+>>>  			status = "disabled";
+>>>  		};
+>>> +
+>>> +		sdio0: mmc@ffc10000 {
+>>> +			compatible = "rockchip,rk3528-dw-mshc",
+>>> +				     "rockchip,rk3288-dw-mshc";
+>>> +			reg = <0x0 0xffc10000 0x0 0x4000>;
+>>> +			clocks = <&cru HCLK_SDIO0>,
+>>> +				 <&cru CCLK_SRC_SDIO0>,
+>>> +				 <&cru SCLK_SDIO0_DRV>,
+>>> +				 <&cru SCLK_SDIO0_SAMPLE>;
+>>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+>>> +			fifo-depth = <0x100>;
+>>> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			max-frequency = <150000000>;
+>>> +			resets = <&cru SRST_H_SDIO0>;
+>>> +			reset-names = "reset";
+>>> +			status = "disabled";
+>>> +		};
+>>> +
+>>> +		sdio1: mmc@ffc20000 {
+>>> +			compatible = "rockchip,rk3528-dw-mshc",
+>>> +				     "rockchip,rk3288-dw-mshc";
+>>> +			reg = <0x0 0xffc20000 0x0 0x4000>;
+>>> +			clocks = <&cru HCLK_SDIO1>,
+>>> +				 <&cru CCLK_SRC_SDIO1>,
+>>> +				 <&cru SCLK_SDIO1_DRV>,
+>>> +				 <&cru SCLK_SDIO1_SAMPLE>;
+>>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+>>> +			fifo-depth = <0x100>;
+>>> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			max-frequency = <150000000>;
+>>> +			resets = <&cru SRST_H_SDIO1>;
+>>> +			reset-names = "reset";
+>>> +			status = "disabled";
+>>> +		};
+>>> +
+>>> +		sdmmc: mmc@ffc30000 {
+>>> +			compatible = "rockchip,rk3528-dw-mshc",
+>>> +				     "rockchip,rk3288-dw-mshc";
+>>> +			reg = <0x0 0xffc30000 0x0 0x4000>;
+>>> +			clocks = <&cru HCLK_SDMMC0>,
+>>> +				 <&cru CCLK_SRC_SDMMC0>,
+>>> +				 <&cru SCLK_SDMMC_DRV>,
+>>> +				 <&cru SCLK_SDMMC_SAMPLE>;
+>>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+>>> +			fifo-depth = <0x100>;
+>>> +			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			max-frequency = <150000000>;
+>>> +			resets = <&cru SRST_H_SDMMC0>;
+>>> +			reset-names = "reset";
+>>
+>> Suggest adding default pinctrl props here:
+>>
+>>   pinctrl-names = "default";
+>>   pinctrl-0 = <&sdmmc_bus4>, <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_det>;
+>>
+>> And possible also for sdio0 and sdio1.
+>>
+>> Regards,
+>> Jonas
 > 
-> ---
-> Gustavo Silva (3):
->       iio: imu: bmi270: move private struct declaration to source file
->       iio: imu: bmi270: rename variable bmi270_device to data
->       iio: imu: bmi270: add support for data ready interrupt trigger
+> It makes sense. As mentioned in the cover letter, I depended on the
+> bootloader to setup pinctrl, to minimize dependency of the series.
+
+BootROM typically setup pinctrl for the storage media when probing for
+idblock and mainline U-Boot will setup pinctrl based on the board device
+tree synced from Linux. Adding pinctrl early in Linux will help avoid a
+need for using workarounds in U-Boot.
+
+For RK3528 there only seem to be one option for sdmmc/sdio pins, adding
+a default to soc dtsi should help reduce duplication in future board
+device trees.
+
 > 
->  drivers/iio/imu/bmi270/bmi270.h      |  17 +-
->  drivers/iio/imu/bmi270/bmi270_core.c | 332 +++++++++++++++++++++++++++++------
->  2 files changed, 283 insertions(+), 66 deletions(-)
-> ---
-> base-commit: c0f115a8d97599623294c8e9ec28530e19c1e85b
-> change-id: 20250219-bmi270-irq-9a2bc41faee3
+> Will complete the pinctrl properties in next version.
+
+Thanks :-)
+
+Regards,
+Jonas
+
+> 
+>>> +			status = "disabled";
+>>> +		};
+>>>  	};
+>>>  };
+>>
 > 
 > Best regards,
+> Yao Zi
 
 
