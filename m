@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-540816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AE4A4B55A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:58:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E65A4B567
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 00:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852E3188D8A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C3B188A928
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480FF1EF09B;
-	Sun,  2 Mar 2025 22:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557E21EF094;
+	Sun,  2 Mar 2025 23:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q3ju93UX"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KFCuaIPm"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF7E1EDA33
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 22:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833EC1D6195
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 23:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740956307; cv=none; b=RNAzDj5Zxj7VbpLbm4BzcnHd/5O6q9EzsU+6Aok3BpGHa1iAkJkmM3g4gf9mLKSLP5EYR/Ev4WBEjMzNLYHuHwq8WIKz93dm1pRsLvPtB9rbnIg7cTFve6KsSIYwAZR0PhO4LFtB4YiCDnndho7RawyhO6dCQamt4VCzWb8P9+k=
+	t=1740956408; cv=none; b=BHwStFfwAMTldZCpVXoDLgkJWqhJS6QqRyFmbIPcFcHujGmsN5WPj3R2beGlC8vf+ukocN6VGM6uzpPO72RsyG685zzqJzqqQiVK1bTaUkDkuNK0JrhcodR5VMT7rgwDUK+xIrEzsveSeLQpDKZ3essy1rGQmc5wNTyUUDW4n/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740956307; c=relaxed/simple;
-	bh=tYFixfIY3u81D/Jr0PjpNV7f2Q8NfNfO3Pr54h2gbS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PEcBCXUsBXo4EywwnOBYIQ7LK6Ip0GLbqbB5l6fUGIo48xANEebWlpVS/oZEk9XqdgZZrysfljwjL5F55qEIPBqTYbe6kgrmTPVJTUO3RoN8vj1JBEmIGB7Qzh5fK08W5n1OD3An1Oa5hY38fKIeUzTIyee3fDcE8xPWrACxvKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q3ju93UX; arc=none smtp.client-ip=91.218.175.183
+	s=arc-20240116; t=1740956408; c=relaxed/simple;
+	bh=8xX8lbiW+5RQ+wFxa3JghYTzhMpaR5RIrDRPY8soEFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HWnWSuOQ4aJVmofu4snG5uxYJEq/v740aQK0/ino4tzSYC3GsZMlQtfiWYcpDa7XyUzt3nKLzfqt1qJoOvZFYPQTGHXRiB+JHpfmdcpauclhUVR0T8ieb2kdqx9u1Y5yCykJP4JVBuI8lgDa90x9EAgh4OJN43KY3GVIy2RSc/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KFCuaIPm; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740956293;
+	t=1740956393;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=jtykvtmmT4SBJVkNfvIH1V/KR8RNUn2kl39LnxHTA7o=;
-	b=q3ju93UXezxv/lLOF7wlqHfY97Ijzc1rKEmJ+cmwRSouAAZmrtJyrWTBCaOmHHxtpo6Vlc
-	OtYeTYBnFaV6K9fwttSa9jbF6WvWG3cCYUJnl70CIOxHkn1TpC9Ko2aisHjOx4nJbhR8Pl
-	RDdRFouZ5t5CrIgxz6DHxBpwyzbivtQ=
+	bh=9ZqF8FngRBwwLVOgM6/1uD7/Y5CAfT801f3ud25fkUA=;
+	b=KFCuaIPmd13ybDYCHp+sSPU7HHo9wt9W0jWX5EnmXe4UfJn/SSkPBGLGraL5ojTNQZ26qa
+	bdwn0i3YIzCVRtG+Z3wiqQflKrGwb7H8iEOcjJkufxt/Teo1OEQY25aYqM/RfE4wSMHPjs
+	245ntXw/wAV/sFegitdGvTqNRkRcd8k=
 From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sameer Pujar <spujar@nvidia.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Sheetal <sheetal@nvidia.com>,
+	Ritu Chaudhary <rituc@nvidia.com>
 Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scsi: target: Replace deprecated strncpy() with strscpy()
-Date: Sun,  2 Mar 2025 23:56:41 +0100
-Message-ID: <20250302225641.245127-2-thorsten.blum@linux.dev>
+Subject: [RESEND PATCH] ASoC: tegra: Fix ADX S24_LE audio format
+Date: Sun,  2 Mar 2025 23:59:25 +0100
+Message-ID: <20250302225927.245457-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,68 +67,43 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-strncpy() is deprecated for NUL-terminated destination buffers; use
-strscpy() instead. The destination buffer db_root is only used with "%s"
-format strings and must therefore be NUL-terminated, but not NUL-padded.
+Commit 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
+added support for the S24_LE audio format, but duplicated S16_LE in
+OUT_DAI() for ADX instead.
 
-Use scnprintf() because snprintf() could return a value >= DB_ROOT_LEN
-and lead to an out-of-bounds access. This doesn't happen because count
-is explicitly checked against DB_ROOT_LEN before. However, scnprintf()
-always returns the number of characters actually written to the string
-buffer, which is always within the bounds of db_root_stage, and should
-be preferred over snprintf().
-
-The size parameter of strscpy() is optional and since DB_ROOT_LEN is the
-size of the destination buffer, it can be removed. Remove it to simplify
-the code.
+Fix this by adding support for the S24_LE audio format.
 
 Compile-tested only.
 
-Link: https://github.com/KSPP/linux/issues/90
-Link: https://github.com/KSPP/linux/issues/105
-Cc: linux-hardening@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
-Changes in v2:
-- Improve the commit message and replace another strncpy() as suggested
-  by Kees Cook
-- Replace snprintf() with scnprintf()
-- Link to v1: https://lore.kernel.org/r/20250226121003.359876-1-thorsten.blum@linux.dev/
----
- drivers/target/target_core_configfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/tegra/tegra210_adx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-index c40217f44b1b..66804bf1ee32 100644
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@ -123,7 +123,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
- 		goto unlock;
- 	}
- 
--	read_bytes = snprintf(db_root_stage, DB_ROOT_LEN, "%s", page);
-+	read_bytes = scnprintf(db_root_stage, DB_ROOT_LEN, "%s", page);
- 	if (!read_bytes)
- 		goto unlock;
- 
-@@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
- 	}
- 	filp_close(fp, NULL);
- 
--	strncpy(db_root, db_root_stage, read_bytes);
-+	strscpy(db_root, db_root_stage);
- 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
- 
- 	r = read_bytes;
-@@ -3664,7 +3664,7 @@ static void target_init_dbroot(void)
- 	}
- 	filp_close(fp, NULL);
- 
--	strncpy(db_root, db_root_stage, DB_ROOT_LEN);
-+	strscpy(db_root, db_root_stage);
- 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
- }
- 
+diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
+index 3e6e8f51f380..0aa93b948378 100644
+--- a/sound/soc/tegra/tegra210_adx.c
++++ b/sound/soc/tegra/tegra210_adx.c
+@@ -264,7 +264,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
+-				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.capture = {					\
+@@ -274,7 +274,7 @@ static const struct snd_soc_dai_ops tegra210_adx_out_dai_ops = {
+ 			.rates = SNDRV_PCM_RATE_8000_192000,	\
+ 			.formats = SNDRV_PCM_FMTBIT_S8 |	\
+ 				   SNDRV_PCM_FMTBIT_S16_LE |	\
+-				   SNDRV_PCM_FMTBIT_S16_LE |	\
++				   SNDRV_PCM_FMTBIT_S24_LE |	\
+ 				   SNDRV_PCM_FMTBIT_S32_LE,	\
+ 		},						\
+ 		.ops = &tegra210_adx_out_dai_ops,		\
 -- 
 2.48.1
 
