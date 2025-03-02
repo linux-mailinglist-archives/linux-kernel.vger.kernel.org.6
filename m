@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-540652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126F6A4B357
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:34:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C6CA4B35D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC144166A40
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E271890BE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E031EF397;
-	Sun,  2 Mar 2025 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efzTdWvg"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8861F03EF;
+	Sun,  2 Mar 2025 16:32:34 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158A51EC009;
-	Sun,  2 Mar 2025 16:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FE01F03D8
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 16:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740933143; cv=none; b=L0hgfLMkWtu8SvlaystDLkGbOTvCYsFV7lT3osdlPztx791SjFQPquiAFKzhMdi40PHQk5mmnrmrNaUOHc0uwUs769sZuHb0Vbj5uos41hOg5cBLz+10AqQIoKy0GFcbS1Jrjsl4iLXqnvGAirPGc8ENakPR3SVMS74w6CZAlf4=
+	t=1740933153; cv=none; b=KcSfdY7lzk+XHG3skL8cBMqkyAM/xsik4YYb2tPkKdYrWlsPZCSBcd3lURjKNmkk83K5+WsfLqgT8M/bPvsU/WJddBuIyr8gkSATUvO7m6rycV//kQxyhTo5i72ZC+1QDPgwM4pVSTftvqG8FCd2n6M6Iy3GXURh6hiPjDW06Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740933143; c=relaxed/simple;
-	bh=cK73xlcnwoxldEkGmD4EFh8XODiKSi9jYby1FTeTsVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4p6VGP0gk4Dr2Jg1IcMjQLJxQXMWM2ow3N8332yT80J8MJS7ecBJQlHu96VDOu4AsHG8TOmt7dxi7Fc8lG1/7vScSGi9Mydo9hujw09t6SygEzaQjQy+gpe0oYTTstxSwBiRBa7FxcjtuehCionexiZUwdtu5bDg4AirsNx8Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efzTdWvg; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223a7065ff8so9300795ad.0;
-        Sun, 02 Mar 2025 08:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740933141; x=1741537941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O5QRhJ4JsspC82Pv8p4aZzdxcDW7s51WKS+5ABEU2ns=;
-        b=efzTdWvggNeZ3PRmctf2Vn7drCRvtcmeRudtJvyHwHiuXS1OPka4ZaXezvSVNrvxTi
-         llNbkdU10mGtu+JTIEoR2/T4ZQ4SurU5LOUA+2Pg1I3btzY2wSVcxfjt28kuNFnzQXkI
-         BAUrpcHbteG0W1+zJ4BDBF2mYHQkdzO7dRMTPwSv9O1CymwEuLIgpCzb4HzbIwQxOOH0
-         DMie+StCbaxCWqvWX9c2bFQ6HdPAJoF3RQ6RlgP32ybE+3wrQXWmVA+5Vvl6Qcn/tkqY
-         CrKB9Z/4FwftEcYSeyhmCUASxe0O64CgQFv+YR6qYKAbyBQVh1XMACJZ67euqqQkEubL
-         yWFQ==
+	s=arc-20240116; t=1740933153; c=relaxed/simple;
+	bh=57P+tNcbnfNXnT7hnuH21I1R3f0eQBHiddVU+5F7Ds0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MO9LXjujzoje9imFsADLI+8dwqiLRY4F0urIED8gd9gfyWnDUCM8sPp0iAp6S38lKgGA74wHSpfHnH9yHXMbO5ah5EYkOZX4lvwfEFaZSAVavw7ZxYiIrRQTqA8GaPgt64fE7jsp7rNKQWtsz4/O5RlgdjUCnmzHxzja49cuDTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d3e63256abso57817675ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 08:32:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740933141; x=1741537941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O5QRhJ4JsspC82Pv8p4aZzdxcDW7s51WKS+5ABEU2ns=;
-        b=AKoMY5JMOmsJ50vCFje/ExfR1lpVQfm0yGMtjSzm5kqsXleqaxBQA9NIJwrJBb1APp
-         AEltUcLfzp2HgckkQrJW4rA///1zbyDMD0THDb/Zd9j8Yz1dpK8FBOBXaZwrf+3lt7rD
-         80Olb/3JIgEBAZyXklzoBh821Z3xMUSUOT5EzmBAzEPv+Xcn3sDknIpIYkZZx2x+yPFx
-         UahyQDN/Kzk7Ckar+h5I0+y4ELpeu/IC8NvR880XDROgMSxLYhlKZ/tv7TbAH5FSUlQR
-         q1AmS2b12m0XqDitlIJLh2Eq6O1pU+0u9BzkidT2srXV29x0BQTb1qaTa1fsiHmrLGyI
-         eY/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUqQjUSnpOSLZm9G6M7guJcoB7mN6PdKAwV5CO3YJJ1CMnd68irUjQcoTZLSdk/0me7zncO94NSiRWXbVnC@vger.kernel.org, AJvYcCVl6Fty/v1JsnFZa3H67gJGbNgIyECz/3gjVJMPfGf1mQS+/iCbcd0YrXysQS2dR9RVWXZLo6GdyHXf@vger.kernel.org, AJvYcCXze3oIbWYeqHpqEXgELEwFn/EIu3POB1F0jT5qFqLXNHO2WULcYhhV1JkRSIq5IzekSSjnhLaAvbFtuUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt/6LL8gKKvXyBCRogwgzc0wqbjNjg1j9ZWMZ64qh60NmlL4eB
-	aBzQAazi9amdgt54zlQbOhb2j2d8OBt0R+Uhf3Z5onn/cyX25rX/
-X-Gm-Gg: ASbGncv3RzJFYl35Q6W+7WX6mIS9Vw6whK04KrqeBdkk2Ve1AXFoGvHebwhbqJDz/uh
-	3WxHI7l1CGFZiS8eEXFixP6qjQdYzzL5gVfRJlPUJdkAJk+gxF67SSp5P6zQsiCH6Y6Vj9t1Oi2
-	nFd/m1x/x8gfyOJPtYZj+H+VjsInvjJecnBS0u3K1iAq2Igfk0NVUpYz8FQq9Pnnsk6bOo/uILg
-	sapLUDcKTbKPeHpDoUoYVKyMdpQOEfHAoFmTNqEijqO1fZk8Mo2iU2qQQ1oxXc+9BzXKjGSAU0L
-	JFwWuZmnPzHEQXQRwQlyYJb+Z4kmhCh7rDDIAF6XPtbcuFHnbfjF2HBcmw==
-X-Google-Smtp-Source: AGHT+IEDANnttZAPBaCcKyUFiBfmVbgwHH2uQfeXbhWXWdLRJgTKpojDnBFAU+XDPaNmK9ksSx2caQ==
-X-Received: by 2002:a17:902:f548:b0:223:6180:1bf7 with SMTP id d9443c01a7336-2236925874cmr137212745ad.42.1740933141138;
-        Sun, 02 Mar 2025 08:32:21 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501faff7sm63080445ad.75.2025.03.02.08.32.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 08:32:20 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 2 Mar 2025 08:32:19 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: maudspierings@gocontroll.com
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Joseph McNally <jmcna06@gmail.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] hwmon: (ntc_thermistor) Fix module name in the
- Kconfig
-Message-ID: <f0e34ec5-5c6a-4518-8c5e-da2b95ae2af2@roeck-us.net>
-References: <20250227-ntc_thermistor_fixes-v1-0-70fa73200b52@gocontroll.com>
- <20250227-ntc_thermistor_fixes-v1-1-70fa73200b52@gocontroll.com>
+        d=1e100.net; s=20230601; t=1740933150; x=1741537950;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ujfoa9e7plnZ+Zb6IhbOn1wyIhQ3U/5af6ykQUmzi5g=;
+        b=KsN03BE67STXp+/Z/S0n4JA+N2kvoIcWj1tr5wB9bmbbhYWwgfdGYYQC+OI8KPQBGK
+         X8/ld3Mx3Y52rvq3rKfJOKodBwYtjSa10EF0HzxEe6a0QSuMLAV1a3g2IkrZnIkVnC+e
+         BKsjCfuABs4ZlMNC5JDxkY/wMXCkrWb5ZcTgSZWmQDnrHABtfDjKuxqwL8cs3yWi6v3E
+         tKXKR62KEvAKT5MpeD39lH5pUYF+F8oVpbNOCUivxWXrUcfTjJDw6bEMWISAjWko3uMi
+         XlOq/UCip5nIoc3YpCNyRPUoi19o+7AQxhCVMyktJQiQ3OPg0teISAEJpIBBpGr4Dl1M
+         t9Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUszisWXfIlFeX42mpEQmnEwVDCeHsjhSs51LvuNqPM7ZZKiG/hHxDw+CLij9YbKflbZQW6iWe0kIhpEpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhTVaAQ7tpgwO2yDNGcHhswrT0UOgciojbRQqB6Kuv50CpTnJG
+	rvN8hLLJkFmuxWVw4EtVnP0ulnAiAcBXebkBw/kQWRG945Bvx6AQyY0/XeOd7/XUlw0r5q0TI8w
+	Ne/7rmXpywWq65f7g4xoWlyBeX8ACQO2epWwr6Msp23YMod2aUmDGgeQ=
+X-Google-Smtp-Source: AGHT+IGnsZcdzsCEkoV8H0T67CnG8PAHWQbjdFSkr/L2AIw2HlQEEmxCAdCaA/avNPrDqgQDo8zaUYK62e97nnU6FDpRWXYowuaY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227-ntc_thermistor_fixes-v1-1-70fa73200b52@gocontroll.com>
+X-Received: by 2002:a05:6e02:138d:b0:3d3:dd60:bc37 with SMTP id
+ e9e14a558f8ab-3d3e6fadcb1mr102772425ab.22.1740933150327; Sun, 02 Mar 2025
+ 08:32:30 -0800 (PST)
+Date: Sun, 02 Mar 2025 08:32:30 -0800
+In-Reply-To: <67a487f7.050a0220.19061f.05fc.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+From: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, amir73il@gmail.com, axboe@kernel.dk, 
+	brauner@kernel.org, cem@kernel.org, chandan.babu@oracle.com, 
+	djwong@kernel.org, jack@suse.cz, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 27, 2025 at 01:57:51PM +0100, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
-> 
-> The module name is incorrectly stated with a hyphen while it is an
-> underscore.
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+syzbot has found a reproducer for the following issue on:
 
-Applied.
+HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f61864580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+dashboard link: https://syzkaller.appspot.com/bug?extid=7229071b47908b19d5b7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162aba97980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f61864580000
 
-Thanks,
-Guenter
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4ea12659f0c0/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=1584cfb8580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
+
+XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+XFS (loop0): Ending clean mount
+XFS (loop0): Quotacheck needed: Please wait.
+XFS (loop0): Quotacheck: Done.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+Modules linked in:
+CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+sp : ffff8000a42569d0
+x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
+x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
+x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
+x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
+x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
+x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
+x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
+Call trace:
+ fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (P)
+ filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+ xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+ __do_fault+0xf8/0x498 mm/memory.c:4988
+ do_read_fault mm/memory.c:5403 [inline]
+ do_fault mm/memory.c:5537 [inline]
+ do_pte_missing mm/memory.c:4058 [inline]
+ handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+ __handle_mm_fault mm/memory.c:6043 [inline]
+ handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+ do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+ do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+ do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+ el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+ el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:510
+ el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+ __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (P)
+ fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+ fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+ iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+ iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
+ xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+ xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x704/0xa9c fs/read_write.c:679
+ ksys_pwrite64 fs/read_write.c:786 [inline]
+ __do_sys_pwrite64 fs/read_write.c:794 [inline]
+ __se_sys_pwrite64 fs/read_write.c:791 [inline]
+ __arm64_sys_pwrite64+0x188/0x220 fs/read_write.c:791
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp:
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
