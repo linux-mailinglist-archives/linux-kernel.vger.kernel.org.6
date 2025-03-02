@@ -1,175 +1,157 @@
-Return-Path: <linux-kernel+bounces-540628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E13A4B30A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:17:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC653A4B30D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0999716EAC7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC55A3B1251
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65A1E9B26;
-	Sun,  2 Mar 2025 16:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7736A1E9B29;
+	Sun,  2 Mar 2025 16:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="K1qDYU19"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="xeawaxqr"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212AAD39;
-	Sun,  2 Mar 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38B6AD39;
+	Sun,  2 Mar 2025 16:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740932218; cv=none; b=D/QrnF/4ndMcl6zDZkFsBJWrA0AyEQhT2ueyHctXdMKnWF4lHn6nif1fcORhGj2cDd8J4ZYCpaCUM1sBxazlNYl8UeZT+2v13hP14apJrv2JkOUP3Sb2+wDGV4NRuVDnlR/9ALxCHyIRGvpFPk3JK6cbExzYPQJ+1ZCsDOVNe24=
+	t=1740932468; cv=none; b=KgbEStVayZ0qro/B6zxLjVEI0XBLdGuQ6sn430JRXlQ/oOnfO1JAEXt4YUbtis6I/IZEosSoWNgD7XmaC9csIXWBSphd2A+tFhg2xl/8IROiqJ6IKZGYfDVTN2PpwzjznMhtI1v6WYXyYutX2VbXjoFXq61+TEd6s8+PK4M/2mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740932218; c=relaxed/simple;
-	bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
+	s=arc-20240116; t=1740932468; c=relaxed/simple;
+	bh=XeFvcYO1xW0RYoDygaY65NVeElg+tDGA2A5xaMtjw1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqto+fPvqbpI91dZdVOB09lAqDGxqYX+0gGKFPTwLJwoIgo5AJJk/IeK9Sqz3qQ4idAv+h4Epyo5O3bTu2MCU/abKdA+WXfkr0dG2ZKYhA5fXSyjFVCpegDIqJmJLrsOJzNLS1i1k2K9K/yOtGfClSXI3Tu80H3799ssNP9Ulbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=K1qDYU19; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B59DD25286;
-	Sun,  2 Mar 2025 17:16:54 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id K8mzO5PnjFYc; Sun,  2 Mar 2025 17:16:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740932213; bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=K1qDYU19UIJxtbJclJuBESKTf/+cG2z3j4fCzAWLSJ9qrzXbEly5vnmFqOixyoZfL
-	 0YPsoEXi3eeNwH4/i/1i1RNlVaQMXfmRDqO/i1dBqMQacCT6F8bDcT7Hc0vun21Ny2
-	 N+XPzWaSuRmyvo1zfibKrIh+YWmsRFm2vMMNp4rTXSqqMv352pA7lnEo+6bkCIb1l1
-	 AW7Cb3a5kG7vtkED73cKZ2x5E9CxGarKuG77IBb1zvY1z447ghKpySnuSaWUwo52ev
-	 yQMAJ7Rj4YQyrAao7Beif4DJi0VdjqFuzXaGZci0YY91a6k8HdZuX0FGztJptwfRhE
-	 Bxtu6nu9FtxqA==
-Date: Sun, 2 Mar 2025 16:16:36 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>, FUKAUMI Naoki <naoki@radxa.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-Message-ID: <Z8SEZOoQWiS4jl7n@pie.lan>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104835.36439-1-ziyao@disroot.org>
- <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
- <Z8MklJfFz2EA6oNS@pie.lan>
- <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5sZha+YbV+cYEHfg30Cm5MvBgZB6vnfkLnLB0qBlUJtzHb5ucSb1MO+IHY5kvgsLBdQ8GtoNsvNQsnwfcpGmCXT9E3I3CoNDuFSl2Ha+UXbOKPQDu9B4/mGnGBhVmDDMv6XPn0NrNE81qQz69obtGvt7wbpaSB7/Ryofn4qw3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=xeawaxqr; arc=none smtp.client-ip=212.227.17.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1740932451; x=1741537251; i=christian@heusel.eu;
+	bh=wxjlczYOeQ0Rz29XrBvQbZzg4RqcGxTX6uX/8F3WtWU=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=xeawaxqrLxrXQpOMkEv1/G8CJmSkkICX3BNiWfOknqzcq08wXfee0kUR0NjEzXB6
+	 KNfIMAcPOwVvFsXbtgBZGm0TNFj37XzwuCnbFAFQXEixTzAbCv7JGYbHNyyXk11p+
+	 k0woMuihukObMyRwDymDXXL/ssxWQ30jvlCNWAwfN+YCymyej1i/1U8UfadRsC0Ld
+	 AIGk3P+imMf973pTKU6J8o16QEmof/VWY3LjR6r7WAVuKVyYqSA/OFG20OTSa9C7S
+	 6MIU7y8PP7tjklH5FLpmRdVMA4F0mPCHSfp60zLyBSxQ7pQ3/GKHCiW7HJrj0QhV8
+	 NXvI0sE9DqEU7fQK7g==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue106
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1M3UEW-1tpKHw3JBa-007gKk; Sun, 02
+ Mar 2025 17:20:50 +0100
+Date: Sun, 2 Mar 2025 17:20:48 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+	Niklas Cassel <cassel@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Jian-Hong Pan <jhp@endlessos.org>, Eric Degenetais <eric.4.debian@grabatoulnz.fr>, 
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	linux-ide@vger.kernel.org
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <17cd263d-c659-4cf6-b73d-61233bbe1951@heusel.eu>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nygsacke7dq24rl7"
 Content-Disposition: inline
-In-Reply-To: <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
+In-Reply-To: <Z8SBZMBjvVXA7OAK@eldamar.lan>
+X-Provags-ID: V03:K1:0TtLKfLPGP8HsvgRDdBnMD25bi1sxQt93OUz7fdNdrGuGCLOxSt
+ UfxvfPyFbK/2a6519HI/kjJ25qXwE25K3JSlx6fFXTib+Ph63qf2v9lNKnPoAHcB8BKO6zQ
+ uz8kMYBRZRUppDkBTqmRfFpeFQBbuXc4L3/Tt0GDHoqH+Atnx4IVQ3lpLahsKQIMbjczfH3
+ 7M6xvSIoK2O5p0XT1bFtg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:on5VDJ4shog=;Uf05YSP+qw7CwpBjnwHGUTFU84j
+ ZNckiZmzM3IQgy/XcKpkxOWeWDWXw61JpuNG5XxW55BJucU2Zt0XPIAwwroKYsyyK7VUIGymA
+ KAl/nQxp+6UtwYHi4NglI6R2a6PvjZy3qGvs1K+0gzylftKlUA4CODDbCYcETLCl/rUJCnv4W
+ c5ShRHuOP5MtqL1805Q3feWVpTuAHEBH6cEJsZLXvDuuDZcbGvIIC8HHf1QbKacglMmvRmOyI
+ wgqOowRAL2tOFaYv9Tv5N0xwtEsmckUS03KlbhpjQEm+r3RDHYnv0DmOC0NK3pspxCqs2hNdl
+ f73sZ2QzxBP6eDQ6sbiBCqA0JYhdW0C9lgvzW7zTlEVZJlEkAiiAg53+QbBT+ehrWCNRwn7kZ
+ LLXKMAnZ+kYB03+AH4nP+JBSP+Q1FdWyB0eaU2Q6ORNLFAfN255QYoPoN713ZktI3ewgJH2o0
+ BdWqUexI0tJE85d4XqmcdJeovGuUhZGLGsFO1XDfJCFIIp1GasLiw09y/vHGM77CcPC8vJy00
+ oS9RQSTnpMtivPFizuPkCtVsuLyu/RJPRArRFhuv1Bm30W5vyEkjLMPy2oyhf97shjpVu5HsU
+ rGiUwg1BaJXyeUYx4mfwYKCHb9tEziQTeFjdw5oxOrSbTOAyZEqPh4qIsQOGS23xr7Q9XPj8f
+ nWnYaGZj4kc2vqOSGQgToLOwYkr4uaNWzkhyLo4L0CMIjbIDtigRqYU4R7MzHuvR2v0olZspZ
+ zLzVGXevqFdbQG/7YRd4uRnNEnQDVjo+pSgBqgqdog+9ZrmKm6UmwbR8nuyLM8HZ7lDmgzc9j
+ f2SzOJ1YHb73tvpmvUgfYTwAET+ReyARLC2uDdZ+k36ybqzVsMYSwFCwL6jA27+niJWo4WVmx
+ 5/n4ZAQM21d17OBqVLdGoPbZt6EWUWs+ZZch8ho4B0vScW3+ebsoDxK9ZLEZGpi3Y7UfloW9V
+ NYZSMTkE7j9BRdSyC7/8tv2yYLUMbWNvtQaiqiX8oeNc2n6twuHN4USk8wtlCxl6cZDUnQlbK
+ BSSTbMtKVvJk0V/kcDG8VfDJ5xrTFq58qMIjJEFJhAkiv+WorqsJOPCD0RmxE3PL/1bnM+Ysy
+ 3tlsEKSuoOP99+NFK2om+LJQTWVsxXgC0EqklgnskrQiPCON3FHkcPoDIwSlgOAvPFi8CwHT8
+ AswfzW1r9olXt4bYf/t4qQz6weWNLDfNgmw2oR1dMV/WG/rgao64Yngo74FE9EbU3kJh7gTqs
+ +pVEIIjgKnVpCP2WupcOnPYAG0FVvZ6uxDqIGcMg+e37kcol0sJXvbZkS5gmLI4JYIE8+nGJh
+ m7DBBrPWnO71PvBBGak8qndaIkSENgRp1pNCdPCAhDO+zmePWPt9dx+qg9KdHYry6HSGOwy/i
+ 5CM8nVEH/KZATQ1g==
 
-On Sun, Mar 02, 2025 at 12:56:42PM +0100, Jonas Karlman wrote:
-> Hi Yao Zi,
-> 
-> On 2025-03-01 16:15, Yao Zi wrote:
-> > On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
-> >> Hi,
-> >>
-> >> On 2025-03-01 11:48, Yao Zi wrote:
-> >>> SD-card is available on Radxa E20C board.
-> >>>
-> >>> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> >>> ---
-> >>>  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
-> >>>  1 file changed, 14 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> index d2cdb63d4a9d..473065aa4228 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> @@ -12,6 +12,10 @@ / {
-> >>>  	model = "Radxa E20C";
-> >>>  	compatible = "radxa,e20c", "rockchip,rk3528";
-> >>>  
-> >>> +	aliases {
-> >>> +		mmc0 = &sdmmc;
-> >>
-> >> Suggest using mmc1 for sd-card because the e20c typically have onboard
-> >> emmc, compared to removable sd-card.
-> > 
-> > My board doesn't have an eMMC: it's optional as well, but all variants
-> > of Radxa E20C come with an SD-card interface. The vendor devicetree sets
-> > sdmmc as mmc0 as well[1].
-> 
-> This is strange as Radxa typically want to align with mmc0=emmc and
-> mmc1=sd-card, as seen in [3] and [4].
-> 
->   Align with other Radxa products.
->   - mmc0 is eMMC
->   - mmc1 is microSD
-> 
-> Also mainline U-Boot for Rockchip SoCs typically always treat mmc0 as
-> emmc and mmc1 as sd-card, and for most SoCs it will even override the
-> board aliases to have some predictability across boards.
-> 
-> > 
-> > I won't insist on it and am willing to take the change if you still
-> > consider mmc0 is better.
-> 
-> Yes, my position is that we should use following:
 
-Ack. I got your point but there's a typo (s/mmc0/mmc1) in my reply.
+--nygsacke7dq24rl7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+MIME-Version: 1.0
 
->   mmc0 = &sdhci;
->   mmc1 = &sdmmc;
-> 
-> I will send out a short sdhci series based on top of v2 of this series.
-> Driver changes was not needed to get basic sdhci working on RK3528 and
-> is only required to get HS400 modes working.
-> 
-> [3] https://lore.kernel.org/r/20240620224435.2752-1-naoki@radxa.com
-> [4] https://lore.kernel.org/r/20240619050047.1217-2-naoki@radxa.com
-> 
-> > 
-> >>> +	};
-> >>> +
-> >>>  	chosen {
-> >>>  		stdout-path = "serial0:1500000n8";
-> >>>  	};
-> >>> @@ -20,3 +24,13 @@ chosen {
-> >>>  &uart0 {
-> >>>  	status = "okay";
-> >>>  };
-> >>> +
-> >>> +&sdmmc {
-> 
-> This node should be placed above &uart0 to be in alphabetical order.
-> 
+On 25/03/02 05:03PM, Salvatore Bonaccorso wrote:
+> Hi Mario et al,
 
-The original patch keeps the order of nodes in the SoC devicetree
-(sorted by MMIO address), but alphabetical order seems more common. Will
-fix in v2, thanks.
+Hey Salvatore,
 
-> >>> +	bus-width = <4>;
-> >>> +	cap-mmc-highspeed;
-> >>> +	cap-sd-highspeed;
-> >>> +	disable-wp;
-> >>> +	rockchip,default-sample-phase = <90>;
-> >>> +	sd-uhs-sdr104;
- 
-Thanks,
-Yao Zi
+> Eric Degenetais reported in Debian (cf. https://bugs.debian.org/1091696) =
+for
+> his report, that after 7627a0edef54 ("ata: ahci: Drop low power policy  b=
+oard
+> type") rebooting the system fails (but system boots fine if cold booted).
+>=20
+> His report mentions that the SSD is not seen on warm reboots anymore.
+>=20
+> Does this ring some bell which might be caused by the above bisected[1] c=
+ommit?
+
+just FYI that we have recently bisected an issue to the same commit:
+https://lore.kernel.org/all/e2be6f70-dff6-4b79-bd49-70ec7e27fc1c@heusel.eu/
+
+> What information to you could be helpful to identify the problem?
+
+The other thread also has some debugging steps that could be interesting
+for this problem aswell!
+
+Cheers,
+Chris
+
+--nygsacke7dq24rl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmfEhWAACgkQwEfU8yi1
+JYUJkg//U53jsCXbUJR7e4TgedGCsg1qdL/P3/J//zCliiZXYQh9FiaJH/VzLdUd
+XFaes0H1FT2iym6nTiXg3ez+ewYRDhdyj+fY8vfnNOtO39W5eURoS/uvW2DU88h2
+/+F+yHsSvTzuyKgO4jUozX4ydpQD3YChE4GzOGtkLEKp3452bSYFH/uOA7rTyo0j
+iwVrnoS4FaQnWngXzBxUt8a9wLXFNBd0sd24gVNjQYwIJnUfwY9cD0mGhKr2Q5qj
+BkkjQ8ype3YOmWJjvHK2hMicCLKyYqUnKDcJ2/5vnRTVJlBixSh/h+9BjXwF6k55
+se8JZY4JqhYnmYw/dlbFPmvSNbQB/LoMHmDSYtc4byuxorkgL9miWFQ1w5B4zGkK
+htLTcEj4J+Kq7TYKY0FSjJfjqnmu0y59BGkpZBiCjvPLIX44eppx8WdZBPaFMSlq
+Ac0kqCaSI224QuVyLxNVReVJStPSaiWpy5zQedkSl6j7/32uCIQEa4CWD0B2b0Ff
+quK1+sk/rJdIEv6dcW50Z4X4p6Siev7fkklp2ZT7NQRnyHTrFBxgOlkGXBmE7B+n
+pMhHvpIsM9gC5RQG0m8mvFdqPV9OMt/f4PaI8Kmbu9fTXzgKyxCjl711CxfZAW9V
+rI+XQHAsVSQxkc/3Ra+m0zi6NuWG0Mc1Dd9xU0jVb/vtEzeYM48=
+=5XFo
+-----END PGP SIGNATURE-----
+
+--nygsacke7dq24rl7--
 
