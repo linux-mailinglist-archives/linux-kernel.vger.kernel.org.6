@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-540688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08B6A4B3BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:20:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A03A4B3C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA73D1891E02
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D641891F50
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F9B1EB187;
-	Sun,  2 Mar 2025 17:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32C51EB182;
+	Sun,  2 Mar 2025 17:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W9gDWLy0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEoIfIkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F18322E
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 17:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40658322E
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 17:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740936029; cv=none; b=B/n6B7wfDz3yADf7lWvZaaa0RYPgylqjzwtBovsKp+h0nJ8e+Hql1QXTekIckpluQrwsLuqv5ovSRsJb0nc0cfAnNB60bJ1PhRFYHQ+aBcFbFn4nEwzR0+mYf0b1RiongdsE4AEY2acWCsF/Z1X8AnCYG3PrZ13hz/iK8rw8sGI=
+	t=1740936510; cv=none; b=iXkkqtZCyl+05USgSoqTjS6tuiB0l4fCgHufzWRkiSrZLrQVQjFEH66LJLjOM9AOQb/XPyTQz4031v9/hlXecjorcpJvaAmjUBIPLWScvbf1jSwcDBOg7AGB3Z2xLFrbzcUzdANBcNPHi7/6/mt9AZ2od5xlhHiltcuW1ArSeRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740936029; c=relaxed/simple;
-	bh=ZngZ0Ou/fnr6OvPe5mlLf/lYsuR34A6vTyTwNTnP1UA=;
+	s=arc-20240116; t=1740936510; c=relaxed/simple;
+	bh=344tpUiQBJ45K7bj51oZkk3raMe3/Q1YpUVApGBC8Lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZVNXoJi6nuVf1e2gZBRwEPTPKHgGX4kodpz+7y1CuE9kEvYYeWaD30yIrKhcSsT6BzFXi1qFO3ZnCXtj+471Bx90bKgVy62whXlivNRX0V6b9QJruNvdyraSsTfR6KR2lmfeN5/jTWjh48WjRJ+t8zjEqmJGhVljNEyoTa9pVV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W9gDWLy0; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740936026; x=1772472026;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZngZ0Ou/fnr6OvPe5mlLf/lYsuR34A6vTyTwNTnP1UA=;
-  b=W9gDWLy0oqGWC9ZKm4VnHX2BbnDQHJM/ODbgKchlYroo6gFf+sKy+8Aw
-   gM9cMys4nOdtKjuyHmXa8AGWMUgZYkmN2VUYucWe2hAbl6GQ4jIVjC9a3
-   SbmvtFSji61GPPLtaYwJ+Ep+Mk2riiK3OErXFZ1GfVgwElQTyj6bvnQZL
-   Lv5saaJWaGWunSCTkqiUBKyGpPz7WUG3eOOOh2YiQZNtR8HtYcYk1cWLq
-   k7zly0GDY9OvTIJOyVI8GZxPqI23anWte87Z64rmxcWwQDfxuK/Z3KKgg
-   u+DWvVMxtuqo1Vf35hJ7a6EKmYSyS+kpZrJYAwdgjWcGdoGUoZl7lIHf4
-   g==;
-X-CSE-ConnectionGUID: 4upSKGdOTFCa0QksVIrg+g==
-X-CSE-MsgGUID: roaYmJpRS2egdmg9BZUXoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="44626299"
-X-IronPort-AV: E=Sophos;i="6.13,327,1732608000"; 
-   d="scan'208";a="44626299"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 09:20:26 -0800
-X-CSE-ConnectionGUID: jDtsdxTrSBO/VVteZE106w==
-X-CSE-MsgGUID: MpZiLuGJRaW9S7DlSCqQ7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121930311"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Mar 2025 09:20:25 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tomzH-000HTu-0F;
-	Sun, 02 Mar 2025 17:20:23 +0000
-Date: Mon, 3 Mar 2025 01:19:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: arch/parisc/kernel/pdt.c:65:6: warning: no previous prototype for
- 'arch_report_meminfo'
-Message-ID: <202503030123.GrzZ1SpJ-lkp@intel.com>
+	 Content-Disposition; b=cmxPWwMBaXoT5Th8z7kuX6IT7e2oXvXWaDUvl81Aqd7K4DM832dhdyS6K78Umikn8XR6Whz3STyB8HKucOS34HePLUU4LvF5lR6OOxUMXTTlXl/lArRBNmk4qa9RaZhjZGmgVSlyfs0a+r/VO05EW+4eDYihq7maIPClodpuPO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEoIfIkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D18C4CED6;
+	Sun,  2 Mar 2025 17:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740936509;
+	bh=344tpUiQBJ45K7bj51oZkk3raMe3/Q1YpUVApGBC8Lo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZEoIfIkAFrmbG1HlpUYEnvnd8NDTyDhDl3doLut03zGhZXvH89x0N54l0CyqTgLLx
+	 22oY2a4cw2jCoyXYtYinybkgbhfeSkho+SQfp2d6VaqmGjaidx2P8xUyVmoUHvTJBY
+	 VrUbYlwVAt+NEkbgOHMX/MMxRN2qQ3JwCL3MzpQeKUvvqCp9JMtK47OStFTBgcrUAN
+	 tZ2D1SKymW+ZmFFlPUESQej/p6Ck1jL3aqOmukJTWG8J51mf4inafIWf+YKkMmT8ty
+	 ACDB+hPqJq8I19SOV/HEELHrkg6YgGnPQztzO+qqRa39O5O2xHAZ89arGzeY3chcJk
+	 c5flbAK5D869A==
+Date: Sun, 2 Mar 2025 22:58:25 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: Generic phy subsytem fixes for v6.14
+Message-ID: <Z8SVOYTISnuFWxKF@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/rmDJrnBT5Z+hM73"
 Content-Disposition: inline
 
-Hi Arnd,
 
-FYI, the error/warning still remains.
+--/rmDJrnBT5Z+hM73
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1973160c90d7886c523e52e1f56164e6a74f0474
-commit: ef104443bffa004f631729dfc924f0b84abbd602 procfs: consolidate arch_report_meminfo declaration
-date:   1 year, 10 months ago
-config: parisc-randconfig-r016-20230411 (https://download.01.org/0day-ci/archive/20250303/202503030123.GrzZ1SpJ-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030123.GrzZ1SpJ-lkp@intel.com/reproduce)
+Hey Linus,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503030123.GrzZ1SpJ-lkp@intel.com/
+Please pull to receive a bunch of small fixes for Generic phy
+subsystem. Small driver fixes in bunch of drivers for this cycle.
 
-All warnings (new ones prefixed by >>):
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
->> arch/parisc/kernel/pdt.c:65:6: warning: no previous prototype for 'arch_report_meminfo' [-Wmissing-prototypes]
-      65 | void arch_report_meminfo(struct seq_file *m)
-         |      ^~~~~~~~~~~~~~~~~~~
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
+are available in the Git repository at:
 
-vim +/arch_report_meminfo +65 arch/parisc/kernel/pdt.c
+  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
+fixes-6.14
 
-c9c2877d08d9aa Helge Deller 2017-05-11  63  
-c9c2877d08d9aa Helge Deller 2017-05-11  64  /* report PDT entries via /proc/meminfo */
-c9c2877d08d9aa Helge Deller 2017-05-11 @65  void arch_report_meminfo(struct seq_file *m)
-c9c2877d08d9aa Helge Deller 2017-05-11  66  {
-c9c2877d08d9aa Helge Deller 2017-05-11  67  	if (pdt_type == PDT_NONE)
-c9c2877d08d9aa Helge Deller 2017-05-11  68  		return;
-c9c2877d08d9aa Helge Deller 2017-05-11  69  
-c9c2877d08d9aa Helge Deller 2017-05-11  70  	seq_printf(m, "PDT_max_entries: %7lu\n",
-c9c2877d08d9aa Helge Deller 2017-05-11  71  			pdt_status.pdt_size);
-c9c2877d08d9aa Helge Deller 2017-05-11  72  	seq_printf(m, "PDT_cur_entries: %7lu\n",
-c9c2877d08d9aa Helge Deller 2017-05-11  73  			pdt_status.pdt_entries);
-c9c2877d08d9aa Helge Deller 2017-05-11  74  }
-c9c2877d08d9aa Helge Deller 2017-05-11  75  
+for you to fetch changes up to 55f1a5f7c97c3c92ba469e16991a09274410ceb7:
 
-:::::: The code at line 65 was first introduced by commit
-:::::: c9c2877d08d9aa0ca0a5c227ac795fbb76269300 parisc: Add Page Deallocation Table (PDT) support
+  phy: tegra: xusb: reset VBUS & ID OVERRIDE (2025-02-14 18:03:05 +0530)
 
-:::::: TO: Helge Deller <deller@gmx.de>
-:::::: CC: Helge Deller <deller@gmx.de>
+----------------------------------------------------------------
+phy fixes for 6.14
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ - rockchip phy kconfig dependency fix with USB_COMMON and regression fix
+   for old DT
+ - stm32 phy overflow assertion fix
+ - exonysfs phy refclk masks fix and power gate on exit fix
+ - freescale fix for clock dividor valid range
+ - TI regmap syscon register fix
+ - tegra reset registers on init fix
+
+----------------------------------------------------------------
+Andrew Davis (1):
+      phy: ti: gmii-sel: Do not use syscon helper to build regmap
+
+Andr=E9 Draszik (1):
+      phy: exynos5-usbdrd: gs101: ensure power is gated to SS phy in phy_ex=
+it()
+
+Arnd Bergmann (1):
+      phy: rockchip: fix Kconfig dependency more
+
+BH Hsieh (1):
+      phy: tegra: xusb: reset VBUS & ID OVERRIDE
+
+Christian Bruel (1):
+      phy: stm32: Fix constant-value overflow assertion
+
+Chukun Pan (1):
+      phy: rockchip: naneng-combphy: compatible reset with old DT
+
+Kaustabh Chakraborty (1):
+      phy: exynos5-usbdrd: fix MPLL_MULTIPLIER and SSC_REFCLKSEL masks in r=
+efclk
+
+Pei Xiao (1):
+      phy: freescale: fsl-samsung-hdmi: Limit PLL lock detection clock divi=
+der to valid range
+
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c       | 13 ++++++--
+ drivers/phy/rockchip/Kconfig                       |  1 +
+ drivers/phy/rockchip/phy-rockchip-naneng-combphy.c |  5 ++-
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 25 +++++++-------
+ drivers/phy/st/phy-stm32-combophy.c                | 38 ++++++++++--------=
+----
+ drivers/phy/tegra/xusb-tegra186.c                  | 11 +++++++
+ drivers/phy/ti/phy-gmii-sel.c                      | 15 ++++++++-
+ 7 files changed, 73 insertions(+), 35 deletions(-)
+
+--=20
+~Vinod
+
+--/rmDJrnBT5Z+hM73
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmfElTkACgkQfBQHDyUj
+g0djYhAAuVrff46p3VLXRVt67YyTU3oQ1L+NFp/4W/ItdLBxeynya9X5seavgltP
+fZFiEbXQ2dmUixBV9KpPwvSatW0qkOK4QnZbfs67qYAtriu4FFbp012NKmxdLIQh
+uuNS3V6o4VayVBRbgWh9wUROclClX8KIpx0Pka5YB8HAufYJ+9mnzpav62fWaE77
+LoG3vWwa3GbNC5IhlLGORr8NfwNIHjHOWzOyNwEuVgRour/d9FQUfQabGh2RM5EV
+uuFdphV459+86kezvRzMTCsGmkXNkqLGv+jwt6Kdk1xW19zLFZbrjHEhuX1TkTGf
+PId4v6HW6jHH+3ybTdvVudmRiIu+ktbynO0oS8DtuMJDACy+lg0wWziqdrK2Wxtn
+DctiDYRzq+6mxNw/+qT6jQND4TadAL9XqkUhSeZEyKXojcOWpB5FXM/nz5aNuBam
++Xx8dKA7KE1+vP1c+wu1PTtGmZy49lbpBq+YYELPLG/UmWbS9domENW0DBa8+ssa
+5kn5Q0vlPCH7YTNpRCvvvYzlKWlDXDQjsnUkaG+Q/LVEpr9L61YiHu+zKgsmeRfh
+JNQbjIGKKYdAGVoSmSF4Fymh8V8+wXMfO9gGblsmR7VMT79Ntog/zkaltG/fLz3O
+Pyiz71C+4gJWz+mLzp5spAl3iKyG5unJ/l3ENlbHMKsY4WN9DeQ=
+=9fSI
+-----END PGP SIGNATURE-----
+
+--/rmDJrnBT5Z+hM73--
 
