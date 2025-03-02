@@ -1,146 +1,158 @@
-Return-Path: <linux-kernel+bounces-540772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594AEA4B4BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:55:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA216A4B4C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88ED3AF908
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FE5189108D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622BD1EDA27;
-	Sun,  2 Mar 2025 20:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9791EE002;
+	Sun,  2 Mar 2025 20:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPfFltjt"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fHY9471d"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68646169397;
-	Sun,  2 Mar 2025 20:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651AD3597E;
+	Sun,  2 Mar 2025 20:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740948913; cv=none; b=sg/DKEtRLsNn8BDU2CkPCIEZhVRSqhSEmjQNNquga2+0BLXgDJIZWOn/YEa7foyC5zKgh1e5/QrkZ8o2rkp5EQx0gTJMrLy8xtP9BWJlYo3HenHGic26GzzChdS3Wt9m4Vig8136Ky5boK7QRbKui0e7WikDirNeGLcdAdbgvwY=
+	t=1740948974; cv=none; b=Tn0h6zvBIuHfYAKpv2Nmwm7xl2nxBm+myLEer4OZCyjrvB+hnr2zv0gUJBSqpCbK4LBFRMtFJ/jrFwFXFrWzrQLUjyhKKjDa4Upi+qJ08Qlg9Yt/5NJHMq/PNmWm6JLJB1vz41kdvIr91PBGWJIV2kZ2AQMs3zHDQn8DFNrRvvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740948913; c=relaxed/simple;
-	bh=XWliiERbbyy8Bn8E0PLv+IscOFrLx/XXgkzvZBh61Bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joNV/kVWEmaMsInqXMmoJGz+cgJsb82H+45QBCyD0MGkbuinekF4VB5UNV1NiWdcZ30N4EiNnIHfsbAYpiLxEm5W3nYHGIFjUIr6P+6EG4yPIL5JQ63lTsRG3upcoQtEXsD4kq6xlr2NDQ7Os/feciD5fMJ6gN39bBs6Znidc1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPfFltjt; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22334203781so74372725ad.0;
-        Sun, 02 Mar 2025 12:55:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740948912; x=1741553712; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MIsANlbpemSAvYUJATI1txmsltRT9pBM1JA1DBKa+PY=;
-        b=JPfFltjtk+Ph38qdoerDglJIJ22a/4t+E9Tcbje97b/bHcaDR1fhRNNIpfcpd5GVKK
-         rxjSGC16GEfqDWExTZnydyvcazMBFiDo8c8bC0/hsmAmd88Yqk85PSrE/yDSJtr6k1/m
-         3lQ5LfKgGlxN7ozstWAmxHMxMxxjXQ29waPRTw1M45prgvoT0FLchhIDac88Qsvx6FER
-         NsR2gnQ6KiPzQWM1kcvUYk7czR7IR+QiA+fsXVfRgtz9S6PTcp0oFwY8Ng4GD7MehH3y
-         vBIMcmH3dAEFAjuBM2hOKo6aucDbgB6tWaN+5GJLoZAmKHakkcYZZRcK56CqZFWcdJ3W
-         bpfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740948912; x=1741553712;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIsANlbpemSAvYUJATI1txmsltRT9pBM1JA1DBKa+PY=;
-        b=Rp673uInXrPoG7MlnA8ZiHksebg52CjZANrKsLmEv/49NrW5Fv7HwooARLkzmRpxil
-         NtS7xRJEDmmlHtZn+mHFhrOOhFzU0FmikFTRfilYo61yZqwEIx53Az918xs4z9NTGMM0
-         CXaUYFl2tlY5ZsKGl1bp+sGfpb3TnhiiUeitaFv+igpRA+0TV9XyZR9cHPVaoVQe/7o+
-         DRr7mubym6oF0FOQ6i0d2XI3xnNzNJMQXHUym1AnCABRFRK3tKVxa3GHWXZ++dwllo3O
-         E0xyo7G3+QIkaXKKTe42aHcCSOLBnKT3d78SD+VXKZ19HiMqo/RZ9EvbaWxZc8o3ssQ+
-         UWgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNN25LHUdzpZTHDpLOnMmoYFZ9L4jVcyXs7fvPJ4jfhMloyeVdphqL7z5vZ8DGP0XAD7ioidd4P5QLdK+N@vger.kernel.org, AJvYcCVEq5r1jEZEzBcGkTAxkSeskra9tIZvwkbUSlZ5fDA1Pg8OukxtDl4Z8r2jVPgItGZR6yyvV/4y@vger.kernel.org, AJvYcCXsK740zS6DTYUUdadrUItktXwwMS05rSlnNW6CZpBDBmekOwTG0nbF1omhWIy5OSdG2LbJZ/fQMO5V@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM1CpdN8Hl6NTaAXeTn0e7BRsqMjwX/ZYNTIhPW5q/EVJojCtq
-	nD138PIm2b+FPTqWtfh8WrHI9/iHHqu1M6uEQ/Us/ceLFjUyLvn/
-X-Gm-Gg: ASbGncs2Y8zdsJylg0QZ6jvz3Ui3AIoa0ujTZI/kUIAxTIOTEwzW2j5dROPyzW1+ljj
-	V+Wcs9/m+3DY5s2xZG3Oz3vSEZGa7uAiy4z2akGyG4mzcALjkhnVS9EiyydTCPDxHIiF5NUOrmU
-	SIW7Y7XiINJP8iDCxBdYDbkOk9jAY5dXLP4sOpl1khSX1YjE/JJ+5QvLigN3i2/l4FO17xajsqL
-	lsj43pxup0FN+111drC7+NEZYjxwMEUvupns+Cr2sLhs7ooYrOCEYvt3DmLFVo3HKHBH/vPy3rC
-	UoyOjMt59rKZ8Az6SuPQFzYk3Mqauk5IUHpHk6azutnupogx1WdQgmdwQt8W3FrG
-X-Google-Smtp-Source: AGHT+IH8H2yZhQg9G95kh4tg6980t5/bY9s3kFnyXMrNWDbrZpJnUQOLGgkQpAxZPwXXpcTbBSwCgA==
-X-Received: by 2002:a05:6a21:730e:b0:1f3:20be:c18a with SMTP id adf61e73a8af0-1f320bec3demr3511925637.10.1740948911651;
-        Sun, 02 Mar 2025 12:55:11 -0800 (PST)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7dec49fcsm6812512a12.50.2025.03.02.12.55.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 12:55:10 -0800 (PST)
-Date: Sun, 2 Mar 2025 12:55:08 -0800
-From: Richard Cochran <richardcochran@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tianfei Zhang <tianfei.zhang@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Philipp Stanner <pstanner@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: Re: [PATCH] RFC: ptp: add comment about register access race
-Message-ID: <Z8TFrPv1oajA3H4V@hoboy.vegasvil.org>
-References: <20250227141749.3767032-1-arnd@kernel.org>
- <Z8CDhIN5vhcSm1ge@smile.fi.intel.com>
+	s=arc-20240116; t=1740948974; c=relaxed/simple;
+	bh=p6syizpmJ76lC1s5B/Bojjtqe0nJEKWlGClU5qNt4hA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ut1T4offmgqhaoCG28kPg78mR0EcnkTrWc5ibZRt6pwJZZE6FPxKVbIxQaR/QNOr7+bF8A9DTpNHESsVgCEyjfCZ2AkTF1ph31/GbjPUHn7vGh58lSB7k5g/0ttfPCQUbVL4G9ay4AIeQYsmTmsfEv8KoCt1ZWlCRQf6DxbydE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fHY9471d; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740948962; x=1741553762; i=markus.elfring@web.de;
+	bh=mGq/gU9aiLC9wUlZmOgz0EtXdzSoBZk03x6MS/EQwvY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fHY9471ddlM03q0Z3Z3datTM3jBbdpRS22zBeKT8ZliBajHIdlhHQvGGEo6+58c/
+	 aW/Veu4zpHaWYtpfla1mnxKePDKXcoTsODUenhZTQeA2VCMi3DsQD0MuTyIoBTl/i
+	 4gZwYLSC4+E+9PgGeTXl1FGO7fuOpxUE+IsEHRBsrMFejAJoZMM/1ldkENDxTfguL
+	 hFmR3HsGN8XJESDazCiRHCYD3LEVdr89EL+QKiKUQt9uHfNCVgShdvN0ZpzDAwpu+
+	 hgArzZXRhJl6XDfjpzygg9k84ChZb6Vy1mdhpjn0l+k6vq6Am/oX/hnj4dSo4qnmn
+	 VcnftArw3ZeAqk/ifg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzmv-1tXRvX2K49-00Mg55; Sun, 02
+ Mar 2025 21:56:02 +0100
+Message-ID: <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
+Date: Sun, 2 Mar 2025 21:56:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8CDhIN5vhcSm1ge@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] drm/msm/dpu: Delete a variable initialisation before a
+ null pointer check in two functions
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, freedreno@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Archit Taneja <architt@codeaurora.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jeykumar Sankaran <jsanka@codeaurora.org>,
+ Jordan Crouse <jordan@cosmicpenguin.net>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+Content-Language: en-GB
+In-Reply-To: <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZXKKocm9YimrPH2Ai0mrevWkO84hjFpKhemYZk0/ziXAXy6/WRt
+ MVT16mJFRDXIppSjxv77pPSQJFitb+KAakBf3ndC0onKZSiEhxx92Rw7fKew5iXRUWM/kbA
+ NXlThqdMLWdKw4ICz/gOgP2zk7b1y5j85NjdlXYP0URExCPCbJ/ep3jYrenWGue6Bouz2qL
+ Apu5N46AkpQFobLYGONFA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kuP3KBswb/c=;sypnX5yZi7yu/vG/c6hJxyLA9sm
+ 4FFHfcQSG4QIpCBVcJ4623jDYFkTg7UBOSCc/c5lbAK880V3IIjOf932Ji3oe2JigEZlU+Lxu
+ V/GEr8r/L6g8jm+hd53cinFUfMb/ZXxOJk0ZkJkSZUhjMiaOkGW6HWWIp+eLOCrEq6F+WVejU
+ P1Y3iPVu/tOvw5Sb36cnOWDEbooRvc+76ttxhKGLioRNgQN9pINxdWGZXe9mkfhvUVFutjQbH
+ +YQIDirHQMSXh/KGmFgbyuM8gJiypXUJjTrm7WutWHQ1gmWbGCaXKUTN+PdD6op7sacXpwrDj
+ 88skEnupulUC2wRnSHi/T6g/v47xUaU4zHStF5l3EdtBWxR7EuZ8WJQGT5FvkyPuE8Nj5/isy
+ ESGdZNQ6ONGI14/6O5q6N9gch8qRMHIQr0ecpdVJt7Lh+Vv5jjTsvjItas1eF+M2v0zOlvP0b
+ sMQYoRWmY7jtnzjOLEhCQ8X+O0RbShmqNetrvMMQSOnp/aQPM6i9Rluhf5L6cScZIdnTgTP2t
+ d5e7dAk++hwUcRx7LtipOyZcVFtK1yMv+CnGD/L4s8dvIkbS/lQQgqzgtH6vZnKOm3928+cj7
+ tpH7QjfcZvpOiWNkRlKvynX+IXQAs2plsiyvJBrN/NbNpwBWNhW+aEXa6ES+tuWyeUmcwlztm
+ kS2zd+BHBiB1dWloIP2bIcUaaJzrCmHeKNrSJKCPNpPkLwpyGO+mUkSa3h5PHvXuyGVuPpkRS
+ s2LsvkXgh1IkirHLe48B1kje4OSStHoUULlBWPS2q/FBEt16rXqn3RbYNRv6tZbdYz6AdXlJJ
+ UIchkTLxZJgZDsjpzbDfagbNvB6kSctp/c1NfxTkQ9chfgnaaBSt6JQ1cez9LgNudeJbrNU84
+ gbmMcs0iwvnJGmRs1ODQoBEl6kOU6ILn4X4pKd7kBGPswj87DNqn1QrZDMSI3Tbr6K+YEnzGz
+ ViMRFwe7916RUnYV70lMOrYJTQBE8CO8FOe1PdPAqgu9++58oQD6zjCxXqMVTIBU1s4VNEaIO
+ S6pTuSYmvHFttfd37kKiqikzJCCw+fl90dYNuQK+XaMKIOMc8IkuJFi/SEHwsYDYnL74SkRuM
+ 8fDQQT0ASTWwBv+86LV2vv01kwBoVHZOf+rJR2Wlo4aWUrhXN1sCnysVPVrEoRJVYRsnOOB/B
+ RF+M2H/sOdKNAfbCCGn0CpFIEHRl/X2ngW139q8RnABV/B/ImcIjh6Tt+9++OcAYQWmG3tdFt
+ 8w0CVuB6bu5iFPGeBjfAp87r/t3+qi/l/RKg0d2cCEYRhqy5Lj/dCIX1A4xRTequnnSWsbbqk
+ T5G+5TerQFlj4fBrOPJ8pkaiPZVlawL+pAl0e8RtUG15k16LCPfRx7j7B1SGEaB7DSBMSl/Kl
+ PpTcXuUSKKZA8sBfxaV4TM5OHBPjRd9xAslXujSz6RfP5fgcsq6G/jQ06rZJQrUdh2s1cegqs
+ WID3uCQ==
 
-On Thu, Feb 27, 2025 at 05:23:48PM +0200, Andy Shevchenko wrote:
-> On Thu, Feb 27, 2025 at 03:17:27PM +0100, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > While reviewing a patch to the ioread64_hi_lo() helpers, I noticed
-> > that there are several PTP drivers that use multiple register reads
-> > to access a 64-bit hardware register in a racy way.
-> > 
-> > There are usually safe ways of doing this, but at least these four
-> > drivers do that.  A third register read obviously makes the hardware
-> > access 50% slower. If the low word counds nanoseconds and a single
-> > register read takes on the order of 1µs, the resulting value is
-> > wrong in one of 4 million cases, which is pretty rare but common
-> > enough that it would be observed in practice.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2023 18:24:24 +0200
 
-If the hardware does NOT latch the registers together, then the driver must do:
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdpu_hw_pp=
+_get_vsync_info=E2=80=9D.
 
-  1. hi1 = read hi
-  2. low = read lo
-  3. hi2 = read h1
-  4. if (hi2 == hi1 return (hi1 << 32) | low;
-  5. goto step 1.
+Thus avoid the risk for undefined behaviour by removing extra
+initialisations for the variable =E2=80=9Cc=E2=80=9D (also because it was =
+already
+reassigned with the same value behind this pointer check).
 
-This for correctness, and correctness > performance.
+This issue was detected by using the Coccinelle software.
 
-> > Sorry I hadn't sent this out as a proper patch so far. Any ideas
-> > what we should do here?
+Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Need to have driver authors check the data sheet because ...
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c b/drivers/gpu=
+/drm/msm/disp/dpu1/dpu_hw_pingpong.c
+index 0fcad9760b6f..870ab3ebbc94 100644
+=2D-- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c
+@@ -176,7 +176,7 @@ static int dpu_hw_pp_enable_te(struct dpu_hw_pingpong =
+*pp, bool enable)
+ static int dpu_hw_pp_connect_external_te(struct dpu_hw_pingpong *pp,
+ 		bool enable_external_te)
+ {
+-	struct dpu_hw_blk_reg_map *c =3D &pp->hw;
++	struct dpu_hw_blk_reg_map *c;
+ 	u32 cfg;
+ 	int orig;
 
-> Actually this reminds me one of the discussion where it was some interesting
-> HW design that latches the value on the first read of _low_ part (IIRC), but
-> I might be mistaken with the details.
-> 
-> That said, it's from HW to HW, it might be race-less in some cases.
+@@ -221,7 +221,7 @@ static int dpu_hw_pp_get_vsync_info(struct dpu_hw_ping=
+pong *pp,
 
-... of this.
+ static u32 dpu_hw_pp_get_line_count(struct dpu_hw_pingpong *pp)
+ {
+-	struct dpu_hw_blk_reg_map *c =3D &pp->hw;
++	struct dpu_hw_blk_reg_map *c;
+ 	u32 height, init;
+ 	u32 line =3D 0xFFFF;
 
-Thanks,
-Richard
+=2D-
+2.40.0
+
 
