@@ -1,240 +1,292 @@
-Return-Path: <linux-kernel+bounces-540178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00486A4AF06
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:10:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021B5A4AF0C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:21:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EBA916EE77
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:10:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11FE7A82E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56771531C5;
-	Sun,  2 Mar 2025 03:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EC4154426;
+	Sun,  2 Mar 2025 03:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aP8FiN+6"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncDCdnwR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B4AA944;
-	Sun,  2 Mar 2025 03:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7CA23F383;
+	Sun,  2 Mar 2025 03:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740885026; cv=none; b=jnInRAJ9+lWtqLo0Stv1bF6t8X9Yv9BmQuTtxqJZvFgi/j2ibgr8gPwpcOR87M4QyJdb0wTKxioYCqoNSRojq7a6Z7sM8T5xcTBt6VOyegFRmKGcIkGbHtz6aF5bnIBEmxnUmDQzzAfg5H0t1N+vHIUBctfsbJcR9+ylBcIa10A=
+	t=1740885677; cv=none; b=svsvCs+MgE8/DLCgoRj3YlR2sZyPlpKvqLNl2Sxjz/a72lXjw6YdDQHXq4/iOyYE0vOGq18G43fq/AC4ubqp1Mo7V6mX82isdH+NW0asmnFLJrR2Z54McdlkIlAomD/GZLxcqDKImhyI6t3q5myCcmZt1SBQEt/mpRC/qEFKqgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740885026; c=relaxed/simple;
-	bh=GfVA9iYjHO8XmgappW8jDQpwvJ712gVxe73p2a1Wyq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzh32sx/liWbb4DfR9vKx0j0bfrp+eIMKC4FIwMoTyfYwwXdmre9o0eHSy9Rw4G2z4u46W+H35EgjEmwO3Pe343VUeNITLYm3S0K99PsnPsERjqwdsi9W/EJNqdhcYakY3FMTI/Bf7h+or9ry1RQeWK0bXH2zhPoZ7DJGSu/GjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aP8FiN+6; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6fd5a24a8d8so10823717b3.1;
-        Sat, 01 Mar 2025 19:10:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740885024; x=1741489824; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LbN5fYyUHQt3Ti89i5IrvWdlm9UYzm7rEomie5t+cc=;
-        b=aP8FiN+6DzcA/R8Iq7Ni+fzBMbE02fMUhwsW7ph3YRnZtct6+VS9+G7bjd/Sce0xNR
-         Tlqv3E4XyuUENeY4hXUXpT60iQOVAnPYusgrVwHQ6JIuZ6nRCWusSxLWIIpwKmgOZoHY
-         kHvqI83E/ez7J9AZI4xubsgJO7rIxYntfXJCGhhW8rjO7SglfH2N1rV7Iumxo61sS2rz
-         HT/5b5CBElZZI0qSM1cCp1w0o/Bvsh3tKzOJzEOoVg6ToTX5DVYmmTQh0tzDr+HQ5pkD
-         R52zu8eG+KkolVRICvFRmWw9DbxdCsiuP1nd+XqxmV+TQ6VWTKcnFzlIdL+uzH9f546+
-         K6lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740885024; x=1741489824;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4LbN5fYyUHQt3Ti89i5IrvWdlm9UYzm7rEomie5t+cc=;
-        b=FF7jRWTTwgsBL8iBQ0XoO+84RgoaFH4756o+47LEdVz/Ll28sM49a+bry0youadyds
-         FjsR9c4es64Q56+/QVqhjWXKGgMcRylmh4nHLKbI2Ksowd+fHs0PvK1r0XO8+0vXZtgo
-         aB7fiFDOWRd6Ehnm+Kyp69NVzjCCGJmOvQUsIppXVS+ueNnq/k2bK3xK1TY3QK71F9UW
-         UkwUcFfgy1ICGr4I/adwC4OVDxOghQYHm6MCkFMdRuhxatcUODEqBCR0sU24i8Lpa8U2
-         OrQ0qsiviF+Gzk/e8Q3ktGAEibDvd60HtLToiNNEY71DuSLJeXMBzo3BxbZHVNhUZ1Cj
-         jrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvgHHlOROPfy417MvznPgThn1XsayAYj6A97m/bubaIhAwJzRzULDYZWbGi2CGUTROJ2OmE7umPPoIfc3K@vger.kernel.org, AJvYcCWLQrWs3aosqLafWlzRaYlL0thsPLxHJG2WAtM4ZXde++cpEgCE1Vz8WN9GL1UHeHmpjWcZiLCqpxavBow=@vger.kernel.org, AJvYcCWXb7dDkoKWYLasvTV/HsWyliF813vB7Qn8YYoyDL71MFSTo4Ax0RAmjoUGRRSMCeRz+SxAlVFtnwNONb0=@vger.kernel.org, AJvYcCX4OaqZy0sc5fPo+IyEYahpOt1bSVgbSKjBIwo5d6k3K1gCnJ6QUgLo0gz8AKEcro8yuts=@vger.kernel.org, AJvYcCXE5bLHyey3rju9G/ceeiL54zMIs3naCKPN5BY/Be/CkxVr0oEU2UZ6w7YiOBVWg7t0mS05IBsO@vger.kernel.org, AJvYcCXV5KF9GsUcDNqXAAcaG9rftfA7Tlb2ArwDPI513W2Wv3p9mhGdE/nkUxkJizORqIPalQZpkezv62X7YWypoh8=@vger.kernel.org, AJvYcCXh3q353AZlTupjo01BAraT0ws4EgJrI8YJZfKgRg8PxgQLCQZT1eiR47Qd++iuMP7WZaXHDg/uXNQiYd9T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3N9Jcu8DHASSKddK6RLPCGML8T1/uns2KZBRbonj1fOjaL8su
-	crjplkCosc49rT4zVhrKMw66v2DkG7TjU4CunlicpYbf/lBAjhHa
-X-Gm-Gg: ASbGncvPShCKLwgvKZBwtzReaLityn5is4F1+cQmVLxHkoEupn0DrVxFFPD9xsbGGXD
-	oaZIo4skHgeZa52mU6YliaBWj84iF5I4Rv7JvHc8ma5tOhalH4Ij8ZddLIoh5obi48rdN1qEUjd
-	389ujoaaHJ78zujhXrQF6S4dh/ySsmHW0tgcQu9iOkF5C+0JKljbdvtkhnjJKiwFMdzzL5nMlgU
-	Vku8Pk6ccvumui5Dn+tes5/xEdUSkIQPJU1iMlF+bSL1tOfquG+tkifgSo2gQGquvUdGN69/pM1
-	MUG4sa/7w+AcvUUYec1XdiPzR6BFHxGeshb0pPyDjy9aiZUKiIDLs9rFYWkFuLlP8t64lTVm/s7
-	NJ+xr
-X-Google-Smtp-Source: AGHT+IEy03FjYEvkbsUi6/ttRTlOKe4T1PD9HCNrsgjQ3AH1f8i6gR4SnirQZ7DNyXo/QUPkw2L8/g==
-X-Received: by 2002:a05:690c:4b12:b0:6fb:9450:b0c3 with SMTP id 00721157ae682-6fd4a02b0d8mr124121857b3.19.1740885024067;
-        Sat, 01 Mar 2025 19:10:24 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3cb9dac4sm13986657b3.102.2025.03.01.19.10.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Mar 2025 19:10:22 -0800 (PST)
-Date: Sat, 1 Mar 2025 22:10:20 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
-	joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dmitry.torokhov@gmail.com, mchehab@kernel.org,
-	awalls@md.metrocast.net, hverkuil@xs4all.nl,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	louis.peens@corigine.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
-	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
-	alistair@popple.id.au, linux@rasmusvillemoes.dk,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
-	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	oss-drivers@corigine.com, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
-	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
-	david.laight.linux@gmail.com, andrew.cooper3@citrix.com,
-	Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH v2 01/18] lib/parity: Add __builtin_parity() fallback
- implementations
-Message-ID: <Z8PMHLYHOkCZJpOh@thinkpad>
-References: <20250301142409.2513835-1-visitorckw@gmail.com>
- <20250301142409.2513835-2-visitorckw@gmail.com>
+	s=arc-20240116; t=1740885677; c=relaxed/simple;
+	bh=O/MA92hB3AkjNrf7z/VXmgx/ltMRoX0rGgcUffwbu9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=djELSwm/4jimIydtGGeKxFBKeLoA3CINinK0XicypcpRCw18/pK7dHWEVQSkZ29LlhaXXQMEU6PyoJIdEArd8ZgdhOdneQsCrML+m4X/7QT7NlxViKZxSN35cHI6cxzz9IDTZ1/4QAXmbSeAPTSHBV3u/6XlPGtZgd/xpfr2ezA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncDCdnwR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AB1C4CEE2;
+	Sun,  2 Mar 2025 03:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740885677;
+	bh=O/MA92hB3AkjNrf7z/VXmgx/ltMRoX0rGgcUffwbu9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ncDCdnwRP5zOoDVILCciSwRQ/NSzgjHe27I7RjLy7tc5fZcfBKv8Ywn00WK3+9j4L
+	 A0zD0DXY+mB8HLZHFzIX7EYJ0hk+vFxDvMu7kRJ4/U6B9iIzalpTDSJhHFc6oYM3Je
+	 sq5FyrzZtBi8FZzJxgibZCmcDLgs5Kidhk1tKF4A0JksvqLe5AyVCvY1XdE6imIPrJ
+	 y08Teu/YAMhRIG0C2fR8xei8nl5sEPNmivs7U2N+KXxmyGIp7RNNgdtf0kBQTEjb1h
+	 +ZqQV/992sV7KnJ8QupGmjA+vHzYfrqBuM18zz/KSraEa6Fuffn2CE3SeQgzHur7NK
+	 uQOY4iTFo0Lkg==
+Date: Sun, 2 Mar 2025 03:20:54 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>, AngeloGioacchino Del
+ Regno <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v4 03/10] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <20250302032054.1fb8a011@jic23-huawei>
+In-Reply-To: <9180ff11-888b-453d-9617-4b3a0fb38d91@gmail.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+	<23f5ee3e3bf7179930d66c720d5c4c33cdbe8366.1740421248.git.mazziesaccount@gmail.com>
+	<0de7b0ac-eca5-49ba-b1b3-f249655f3646@baylibre.com>
+	<1b308a10-9622-47f9-b489-bd969fbdfc34@gmail.com>
+	<6f6e6550-5246-476f-9168-5e24151ab165@baylibre.com>
+	<9180ff11-888b-453d-9617-4b3a0fb38d91@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250301142409.2513835-2-visitorckw@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 01, 2025 at 10:23:52PM +0800, Kuan-Wei Chiu wrote:
-> Add generic C implementations of __paritysi2(), __paritydi2(), and
-> __parityti2() as fallback functions in lib/parity.c. These functions
-> compute the parity of a given integer using a bitwise approach and are
-> marked with __weak, allowing architecture-specific implementations to
-> override them.
-> 
-> This patch serves as preparation for using __builtin_parity() by
-> ensuring a fallback mechanism is available when the compiler does not
-> inline the __builtin_parity().
-> 
-> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> ---
->  lib/Makefile |  2 +-
->  lib/parity.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 49 insertions(+), 1 deletion(-)
->  create mode 100644 lib/parity.c
-> 
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 7bab71e59019..45affad85ee4 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -51,7 +51,7 @@ obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
->  	 bsearch.o find_bit.o llist.o lwq.o memweight.o kfifo.o \
->  	 percpu-refcount.o rhashtable.o base64.o \
->  	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
-> -	 generic-radix-tree.o bitmap-str.o
-> +	 generic-radix-tree.o bitmap-str.o parity.o
->  obj-y += string_helpers.o
->  obj-y += hexdump.o
->  obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
-> diff --git a/lib/parity.c b/lib/parity.c
-> new file mode 100644
-> index 000000000000..a83ff8d96778
-> --- /dev/null
-> +++ b/lib/parity.c
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * lib/parity.c
-> + *
-> + * Copyright (C) 2025 Kuan-Wei Chiu <visitorckw@gmail.com>
-> + * Copyright (C) 2025 Yu-Chun Lin <eleanor15x@gmail.com>
-> + *
-> + * __parity[sdt]i2 can be overridden by linking arch-specific versions.
-> + */
-> +
-> +#include <linux/export.h>
-> +#include <linux/kernel.h>
-> +
-> +/*
-> + * One explanation of this algorithm:
-> + * https://funloop.org/codex/problem/parity/README.html
+On Thu, 27 Feb 2025 09:46:06 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-I already asked you not to spread this link. Is there any reason to
-ignore it?
+> On 26/02/2025 18:10, David Lechner wrote:
+> > On 2/26/25 12:28 AM, Matti Vaittinen wrote: =20
+> >> Hi David,
+> >>
+> >> Thanks for taking a look at this :)
+> >>
+> >> On 26/02/2025 02:26, David Lechner wrote: =20
+> >>> On 2/24/25 12:33 PM, Matti Vaittinen wrote: =20
+>=20
+> ...
+>=20
+> >> =20
+> >>> Similarly, on several drivers we added recently that make use of adc.=
+yaml
+> >>> (adi,ad7380, adi,ad4695) we wrote the bindings with the intention that
+> >>> if a channel was wired in the default configuration, then you would j=
+ust
+> >>> omit the channel node for that input pin. Therefore, this helper coul=
+dn't
+> >>> be used by these drivers since we always have a fixed number of chann=
+els
+> >>> used in the driver regardless of if there are explicit channel nodes =
+in
+> >>> the devicetree or not. =20
+> >>
+> >> I think this works with the ICs where channels, indeed, always are the=
+re. But this is not the case with _all_ ICs. And in order to keep the consi=
+stency I'd actually required that if channels are listed in the DT, then _a=
+ll_ the channels must be listed. Else it becomes less straightforward for p=
+eople to understand how many channels there are based on the device tree. I=
+ believe this was also proposed by Jonathan during the v1 review:
+> >> =20
+> >>>> Hmm. That'd mean the ADC channels _must_ be defined in DT in order t=
+o be
+> >>>> usable(?) Well, if this is the usual way, then it should be well kno=
+wn
+> >>>> by users. Thanks. =20
 
-> + */
-> +int __weak __paritysi2(u32 val);
-> +int __weak __paritysi2(u32 val)
-> +{
-> +	val ^= val >> 16;
-> +	val ^= val >> 8;
-> +	val ^= val >> 4;
-> +	return (0x6996 >> (val & 0xf)) & 1;
-> +}
-> +EXPORT_SYMBOL(__paritysi2);
-> +
-> +int __weak __paritydi2(u64 val);
-> +int __weak __paritydi2(u64 val)
-> +{
-> +	val ^= val >> 32;
-> +	val ^= val >> 16;
-> +	val ^= val >> 8;
-> +	val ^= val >> 4;
-> +	return (0x6996 >> (val & 0xf)) & 1;
-> +}
-> +EXPORT_SYMBOL(__paritydi2);
-> +
-> +int __weak __parityti2(u64 val);
-> +int __weak __parityti2(u64 val)
-> +{
-> +	val ^= val >> 32;
-> +	val ^= val >> 16;
-> +	val ^= val >> 8;
-> +	val ^= val >> 4;
-> +	return (0x6996 >> (val & 0xf)) & 1;
-> +}
-> +EXPORT_SYMBOL(__parityti2);
+So there is some history here that complicates things.
 
-OK, it seems I wasn't clear enough on the previous round, so I'll try
-to be very straightforward now.
+1) Originally we always provided all channels.  Easy case :)
+2) Along came SoC ADC users who were unhappy with this not so much because
+   of the case Matti hit where the channel can be something else but more
+   because it's not unusual to either not wire up some pins on an SoC
+   or there are multiple packages that we don't otherwise distinguish
+   (as no software differences really) in which some internal pins never
+   reach the ones on the package.   Various solutions initially existed
+   for this (you can find things like xxx,channels properties in some bindi=
+ngs.)
+3) Then along came devices where we wanted per channel config.
+   There were some 'interesting' bindings for that as well for a while but
+   eventually we decided on channel nodes when needed.  Those always allowed
+   drivers to supply extra channels that didn't have nodes though (that's
+   a driver /binding choice and motivated somewhat by whether the unwired
+   pin thing matters - there are ADC package variants where this happens
+   but it is rare unlike for SoCs where it seems to be common).
+   From this discussion it occurs to me that we maybe want to make sure
+   that binding docs state what is expected here clearly.  If there is
+   a concept of a 'default' for missing channel nodes then we need to say
+   what it is.  Property defaults will give us most of that but don't cover
+   everything.
+4) Now we had channel nodes we can also use them for (2).  In those cases
+   on a device specific case we allow for channels that don't have nodes
+   to be hidden.   There is often a fallback for this which is more about
+   how bindings evolved (sure they shouldn't evolve but they do unfortunate=
+ly).
+   In those cases, no channel nodes =3D=3D all channel nodes with default s=
+ettings.
 
-To begin with, the difference between __parityti2 and __paritydi2 
-doesn't exist. I'm seriously. I put them side by side, and there's
-no difference at all.
 
-Next, this all is clearly an overengineering. You bake all those weak,
-const and (ironically, missing) high-efficient arch implementations.
-But you show no evidence that:
- - it improves on code generation,
- - the drivers care about parity()'s performance, and
- - show no perf tests at all.
+> >>>
+> >>> Yes. We basically have two types of binding wrt to channels.
+> >>> 1) Always there - no explicit binding, but also no way to describe
+> >>>  =C2=A0=C2=A0=C2=A0 anything specific about the channels.
+> >>> 2) Subnode per channel with stuff from adc.yaml and anything device
+> >>>  =C2=A0=C2=A0=C2=A0 specific.=C2=A0 Only channels that that have a no=
+de are enabled.
+> >>> =20
+> >=20
+> > Hmm... does that mean we implemented it wrong on ad7380 and ad4695? =20
+>=20
+> I believe this is a question to Jonathan. With my ADC-driver experience=20
+> I am not the person to answer this :)
+>=20
+> _If_ I commented something to this, I would say that: "I believe, this=20
+> question is a good example of why providing helpers is so powerful. In=20
+> my experience, when we provide helpers, then there will be a 'de facto'=20
+> way of doing things, which improves consistency". But as I feel I'm on=20
+> the verge of stepping on someones toes (and I am really the novice on=20
+> this area), I won't say that comment out loud.
 
-So you end up with +185/-155 LOCs.
+Problem is always 'history'.  We already have a bunch of drivers
+doing what the parts David called out do.  The bindings are clear and
+ultimately it is a bit device specific to whether missing nodes logically
+should default to default parameters or be hidden. In some cases there are
+natural defaults, in others not even close as we have fully flexible
+MUXes in front of differential ADCs and can in theory configure far more
+combinations than we even have pins for.
 
-Those +30 lines add no new functionality. You copy-paste the same
-algorithm again and again in very core kernel files. This is a no-go
-for a nice consolidation series.
+So today the situation is we have all the options in tree and we aren't
+really in a position to drop any of them:
 
-In the previous round reviewers gave you quite a few nice suggestions.
-H. Peter Anvin suggested to switch the function to return a boolean, I
-suggested to make it a macro and even sent you a patch, Jiri and David
-also spent their time trying to help you, and became ignored.
+a) custom bindings to configure channels - lots of these :(
+b) everything on if no channel nodes.  Maybe everything on always.
+c) channel nodes necessary for a channel to exist.
 
-Nevertheless. NAK for the series. Whatever you end up, if it comes to
-v3, please make it simple, avoid code duplication and run checkpatch.
+If I were starting all this again we'd probably reduce the options but
+too late now :(
 
-Thanks,
-Yury
+Only thing I'd request is if a binding uses channel nodes at all.
+It should be possible to provide all nodes - whether or not some are
+just the defaults.  That way we can advise writers of bindings to
+provide all the channels they want to use.  The other cases then
+become a case of whether they get more channels than expected, but
+never that some they want aren't there!  A binding that didn't do
+this wouldn't be wrong, it would just mean the writer read the binding
+doc more carefully and knows what is expected for this device rather
+than more generally.
+
+There are some 'interesting' is it broken ABI backwards compatibility
+questions when we retrofit channel nodes into a binding.  In those cases
+we can't hide non specified nodes as it would mean channels disappear that
+in an earlier kernel were present.  In theory that should never be a
+problem but not all userspace code is going to be sufficient careful
+to not be disrupted by channel number changes.  Even this I think we
+broke once or twice because of cases like the one Matti has where they
+are multipurpose pins on some chip variant we didn't know about when
+the driver was written.
+
+Jonathan
+
+>=20
+> >>> There are a few drivers that for historical reasons support both
+> >>> options with 'no channels' meaning 'all channels'. =20
+> >>
+> >> https://lore.kernel.org/all/20250201162631.2eab9a9a@jic23-huawei/
+> >> =20
+> >>> In my experience, the only time we don't populate all available chann=
+els
+> >>> on an ADC, even if not used, is in cases like differential chips where
+> >>> any two inputs can be mixed and matched to form a channel. Some of th=
+ese,
+> >>> like adi,ad7173-8 would have 100s or 1000s of channels if we tried to
+> >>> include all possible channels. In those cases, we make an exception a=
+nd
+> >>> use a dynamic number of channels based on the devicetree. But for chi=
+ps
+> >>> that have less than 20 total possible channels or so we've always
+> >>> provided all possible channels to userspace. It makes writing userspa=
+ce
+> >>> software for a specific chip easier if we can always assume that chip
+> >>> has the same number of channels. =20
+> >>
+> >> In any exception to this rule of describing all channels in DT should =
+just avoid using these helpers and do things as they're done now. No one is=
+ forced to use them. But I am not really sure why would you not describe al=
+l the channels in the device-tree for ICs with less than 20 channels? I'd a=
+ssume that if the channels are unconditionally usable in the hardware, then=
+ they should be in DT as well(?) =20
+> >=20
+> > I devicetree, I think the tendency is to be less verbose and only add
+> > properties/nodes when there is something that is not the usual case.
+> > Default values are chosen to be the most usual case so we don't have
+> > to write so much in the .dts. =20
+>=20
+> On the other hand, I've received comments from the DTS people to expose=20
+> all HW blocks in the bindings. AFAIR, for example, marking=20
+> power-supplies as 'optional' in bindings is frowned upon, because they=20
+> are in the HW whether the SW needs to control them or not. Hence I think=
+=20
+> marking either all or no channels in dt should be the way to go - but my=
+=20
+> thinking is not done based on the years of experience on ADCs!
+
+Even for power supplies there is a difference between the binding doc
+saying they are there and what we do if they aren't (which is assume
+a stub regulator representing an non controllable / unknowable power supply
+is sufficient).    Also for power supplies there isn't really a 'default'
+to use so it doesn't really work as a comparison.
+
+Hindsight is a wonderful thing.  I'm not sure on what policy we should have
+gone for, but now we are kind of stuck with this slightly messy situation.
+
+Helper wise if it expands usefulness we may want a bool parameter to say
+if we skip the missing or not + make sure a max expected channel is provided
+(might already be - I didn't check!)
+
+Jonathan
+
+>=20
+> >>>> Add couple of helper functions which can be used to retrieve the cha=
+nnel
+> >>>> information from the device node.
+> >>>>
+> >>>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> >>>> =20
+> >>
+> >> Yours,
+> >>  =C2=A0=C2=A0=C2=A0=C2=A0-- Matti =20
+> >  =20
+>=20
+
 
