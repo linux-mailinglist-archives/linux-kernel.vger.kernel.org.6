@@ -1,105 +1,175 @@
-Return-Path: <linux-kernel+bounces-540626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A11DA4B300
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:15:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E13A4B30A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E60C1894FD3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0999716EAC7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CA81EA7EB;
-	Sun,  2 Mar 2025 16:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65A1E9B26;
+	Sun,  2 Mar 2025 16:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="qok9IWfG"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="K1qDYU19"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6EE1EA7D2;
-	Sun,  2 Mar 2025 16:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212AAD39;
+	Sun,  2 Mar 2025 16:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740932037; cv=none; b=qLe5EzZl8LNMualteFE4g84cGeZLHYZgbJq28vQ5SAuQDclnD51Q3jG8O/d6SRnwfuIg0ydj3MP9v2XLFP6cPLFSvmyUHM5oLbv5b54fOW9QQ7xb3jB8ge8p7aFruxC8I9Dcn2CcOMmrfayZ6+Nt3hamTVb9qY7r3bQrdtzNOCc=
+	t=1740932218; cv=none; b=D/QrnF/4ndMcl6zDZkFsBJWrA0AyEQhT2ueyHctXdMKnWF4lHn6nif1fcORhGj2cDd8J4ZYCpaCUM1sBxazlNYl8UeZT+2v13hP14apJrv2JkOUP3Sb2+wDGV4NRuVDnlR/9ALxCHyIRGvpFPk3JK6cbExzYPQJ+1ZCsDOVNe24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740932037; c=relaxed/simple;
-	bh=R44zS5UstGW/mbwuvd3eia/RIOCoDdVVzI52z01wnuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vg0PWBXVnVvQNPy2uCBAB32iARD5bPX/cVCV6K82WQ081J26Dn2p50VVmuWAq+Obby+mokUX/R1h2n1x4Fp936NukHVVlIPL8d2iviNqD4pHx0IDNJaUJXvrzm0I0zGazAWHj5IY4Yo6H8sHd/ALGtSghXdeHdXaSNie3bzf46U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=qok9IWfG; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [192.168.126.122] (ip72-219-82-239.oc.oc.cox.net [72.219.82.239])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z5Rp76ZvVz49rv;
-	Sun,  2 Mar 2025 11:13:51 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1740932033; bh=R44zS5UstGW/mbwuvd3eia/RIOCoDdVVzI52z01wnuE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=qok9IWfGHF/F7P/onSSsmeJCBeB78J/opqxwNdyzCWIhiV9yQzAky+sb41aREomKx
-	 w7JI6ATSTJ8p2nve7jFMPmNSq9FcS2R0RIYATEi0mPb9d+C0lAqUQ/dXGW+ObaUI7B
-	 kRofCB2aPbCOaFw/cqjt/JqcRukI/TzG6ItPb1tQ=
-Message-ID: <e5badaa8-20e2-4160-be20-75e174d241bc@panix.com>
-Date: Sun, 2 Mar 2025 08:13:51 -0800
+	s=arc-20240116; t=1740932218; c=relaxed/simple;
+	bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqto+fPvqbpI91dZdVOB09lAqDGxqYX+0gGKFPTwLJwoIgo5AJJk/IeK9Sqz3qQ4idAv+h4Epyo5O3bTu2MCU/abKdA+WXfkr0dG2ZKYhA5fXSyjFVCpegDIqJmJLrsOJzNLS1i1k2K9K/yOtGfClSXI3Tu80H3799ssNP9Ulbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=K1qDYU19; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id B59DD25286;
+	Sun,  2 Mar 2025 17:16:54 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id K8mzO5PnjFYc; Sun,  2 Mar 2025 17:16:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740932213; bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=K1qDYU19UIJxtbJclJuBESKTf/+cG2z3j4fCzAWLSJ9qrzXbEly5vnmFqOixyoZfL
+	 0YPsoEXi3eeNwH4/i/1i1RNlVaQMXfmRDqO/i1dBqMQacCT6F8bDcT7Hc0vun21Ny2
+	 N+XPzWaSuRmyvo1zfibKrIh+YWmsRFm2vMMNp4rTXSqqMv352pA7lnEo+6bkCIb1l1
+	 AW7Cb3a5kG7vtkED73cKZ2x5E9CxGarKuG77IBb1zvY1z447ghKpySnuSaWUwo52ev
+	 yQMAJ7Rj4YQyrAao7Beif4DJi0VdjqFuzXaGZci0YY91a6k8HdZuX0FGztJptwfRhE
+	 Bxtu6nu9FtxqA==
+Date: Sun, 2 Mar 2025 16:16:36 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>, FUKAUMI Naoki <naoki@radxa.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+Message-ID: <Z8SEZOoQWiS4jl7n@pie.lan>
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104835.36439-1-ziyao@disroot.org>
+ <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
+ <Z8MklJfFz2EA6oNS@pie.lan>
+ <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Kenneth Crudup <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
- <b6eff06e-1a8c-48c3-b536-39b567015d0c@panix.com>
- <5c131927-87c1-4e21-90f8-8e3a34cd6dbf@panix.com>
- <20250228104925.GO3713119@black.fi.intel.com>
- <1f214d95-61c0-4be9-8b19-5aef76631c0e@panix.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <1f214d95-61c0-4be9-8b19-5aef76631c0e@panix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
 
+On Sun, Mar 02, 2025 at 12:56:42PM +0100, Jonas Karlman wrote:
+> Hi Yao Zi,
+> 
+> On 2025-03-01 16:15, Yao Zi wrote:
+> > On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
+> >> Hi,
+> >>
+> >> On 2025-03-01 11:48, Yao Zi wrote:
+> >>> SD-card is available on Radxa E20C board.
+> >>>
+> >>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> >>> ---
+> >>>  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
+> >>>  1 file changed, 14 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> >>> index d2cdb63d4a9d..473065aa4228 100644
+> >>> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> >>> @@ -12,6 +12,10 @@ / {
+> >>>  	model = "Radxa E20C";
+> >>>  	compatible = "radxa,e20c", "rockchip,rk3528";
+> >>>  
+> >>> +	aliases {
+> >>> +		mmc0 = &sdmmc;
+> >>
+> >> Suggest using mmc1 for sd-card because the e20c typically have onboard
+> >> emmc, compared to removable sd-card.
+> > 
+> > My board doesn't have an eMMC: it's optional as well, but all variants
+> > of Radxa E20C come with an SD-card interface. The vendor devicetree sets
+> > sdmmc as mmc0 as well[1].
+> 
+> This is strange as Radxa typically want to align with mmc0=emmc and
+> mmc1=sd-card, as seen in [3] and [4].
+> 
+>   Align with other Radxa products.
+>   - mmc0 is eMMC
+>   - mmc1 is microSD
+> 
+> Also mainline U-Boot for Rockchip SoCs typically always treat mmc0 as
+> emmc and mmc1 as sd-card, and for most SoCs it will even override the
+> board aliases to have some predictability across boards.
+> 
+> > 
+> > I won't insist on it and am willing to take the change if you still
+> > consider mmc0 is better.
+> 
+> Yes, my position is that we should use following:
 
-On 2/28/25 08:04, Kenneth Crudup wrote:
+Ack. I got your point but there's a typo (s/mmc0/mmc1) in my reply.
 
-> Don't worry about the printk()s WRT to the code; a couple of weeks ago 
-> I'd seen an NPE on resume in __tb_path_deactivate_hop so threw in a 
-> bunch of tb_port_info(port, "%s(): %d\n", __func__, __LINE__); so I 
-> could get an idea of where the crash was.
+>   mmc0 = &sdhci;
+>   mmc1 = &sdmmc;
+> 
+> I will send out a short sdhci series based on top of v2 of this series.
+> Driver changes was not needed to get basic sdhci working on RK3528 and
+> is only required to get HS400 modes working.
+> 
+> [3] https://lore.kernel.org/r/20240620224435.2752-1-naoki@radxa.com
+> [4] https://lore.kernel.org/r/20240619050047.1217-2-naoki@radxa.com
+> 
+> > 
+> >>> +	};
+> >>> +
+> >>>  	chosen {
+> >>>  		stdout-path = "serial0:1500000n8";
+> >>>  	};
+> >>> @@ -20,3 +24,13 @@ chosen {
+> >>>  &uart0 {
+> >>>  	status = "okay";
+> >>>  };
+> >>> +
+> >>> +&sdmmc {
+> 
+> This node should be placed above &uart0 to be in alphabetical order.
+> 
 
-I've started a separate E-mail about this, but I'd determined those 
-crashes were due to d6d458d42e1 ("Handle DisplayPort tunnel activation 
-asynchronously").
+The original patch keeps the order of nodes in the SoC devicetree
+(sorted by MMIO address), but alphabetical order seems more common. Will
+fix in v2, thanks.
 
-Since reverting 9d573d1954 and d6d458d42e1 I've been testing several 
-resume scenarios (NVMe connected/disconnected and/or external 
-DP-tunneled monitor connected/disconnected and have yet to have a resume 
-or hibernate failure over several cycles.
-
-Now, how do I help you guys go about fixing these commits?
-
--K
-
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
-
+> >>> +	bus-width = <4>;
+> >>> +	cap-mmc-highspeed;
+> >>> +	cap-sd-highspeed;
+> >>> +	disable-wp;
+> >>> +	rockchip,default-sample-phase = <90>;
+> >>> +	sd-uhs-sdr104;
+ 
+Thanks,
+Yao Zi
 
