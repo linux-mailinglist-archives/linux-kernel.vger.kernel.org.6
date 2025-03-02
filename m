@@ -1,135 +1,174 @@
-Return-Path: <linux-kernel+bounces-540489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97592A4B145
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:50:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D98A4B161
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE53A7A6A96
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984493A49B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C691DB546;
-	Sun,  2 Mar 2025 11:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAE81DE4DB;
+	Sun,  2 Mar 2025 12:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9DoiiXY"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="z3Rip9CW"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72EB1CDFD4
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A4F4C85
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 12:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740916197; cv=none; b=FViSphYEsCT1YOoGs694mcFSEwosn14cDrIbzHbYPbsT8O0U9xogeCW4T9edIlCn6TU8rKUuyf5W1GNomB0xK00P6smXtLOTLJhOzy0BdyxfEhHsYGRWZywbsRRvJV4q3wf+dZMjoGzZEHvEl1VRtGBhuYEIC7blOF9y3rNDQ0g=
+	t=1740917047; cv=none; b=BAtXhUKdUPqulXLgIPraVBf8NlZyheSHHSGcWibi2iriB7hTWVAPZNZWtShVbKkF7NRybw/wU25gMOk0FMEJ+wxDjfqQ233FSfEteOzNpI47+RyyCDgU7aTCZeOBcGcmRJsRFnOvSBvAyYARb7vgWKgThO1SShJ/qpf97ymgOug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740916197; c=relaxed/simple;
-	bh=OtMTbuA4NxLyHUjpiNS+T+VVw/aoRfyUeABT54Ua6XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b4WPw5QMr1EwSnh+K9GoCKhH5atsQIGdnzrlvRR5uFGtEicjG+GnVtRnDOB1iE3VxoZGd03GiJ+5b/oZzzf4higNe7fRIpM9lXUH4ur5I7wX3QWlCo7dCn+4u2cKIDZliTyxWLF3oaPUaBEl6F7X3stHmfaQkBt67y/tUUDcCug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9DoiiXY; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a823036so33618875e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 03:49:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740916193; x=1741520993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDWzcbxIvlIvGTw93dXaxSEzESqsRSQBbR/NvExKmkg=;
-        b=j9DoiiXYR8witZeQKu6StkYz2DokyTkb1TMz5q6cY954XLYYopL0Lhz38nd3t90t+v
-         0lftmlSVVIF+1/sGO2xPYrgyiyvg42edMybACNJBFTJr9Y74cQvtNHk+5yXrYNeyh8Vi
-         6ivSKOnHI4BiWZ6ryunWSrQowOTFk88CPq9kcB0LVAy1lcWj9N8siCWvyW1CsB8yl9iy
-         lZejMR+eYwP2fx616VFLAwJ6qdl14dTtzqVDyIln8tLp4owPo3MPs8rKCzik7Weg1mcZ
-         ncRLGKVbF7iqDEaV3++/ho38wD75vVdKOeRhqLpGNUEZVHscunWxeLUiSNqOuqKJlK3u
-         unFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740916193; x=1741520993;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PDWzcbxIvlIvGTw93dXaxSEzESqsRSQBbR/NvExKmkg=;
-        b=gN/mEiII4tIzr0kO38s8B6ZYaWR99gKW8k6gB6cM0hfztL3rVlczSsL0TJqg4+e/oK
-         HRWjtObirZE4MhhDwgRw20TmnJKYsKRPkYf8fZPD+Xw34vL8wasP/82baE1RckC+bQSu
-         C8b7DlGXZqKbdqJWZbAMOQ7MwTyrOi8GN0jurm5eEiXjm7jebBHbkGAHN9qZ8bVVU95W
-         nkISm0jPR+LblCdVlLAdodnM52l4QWxDuqfiu/RaaDsAiDXZm2jRNHJfX7WWHIlZoxn7
-         9bIs/XcOXrZmAuU05qGodGGsZHjwrjmeibkcQrUP2af8zZR7A7zW2TKn7S228QEHnsHX
-         d7fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzOcZWEcrqpWMAC6YXc5gCpwLeO4vQfmeEARIEG5VQPi/yrwgBMT8WCSeSNbSAemh9G9f8QCWzFZqyAhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAF64Uds2urfMRxHYZS4dPWFeTisVoREDo65zHIOqE6kgihKO9
-	KXv35vp6Gmp9b8fgN2Wxggy5lv8DIedoz35IKKnmv8dqrjbNr0LH
-X-Gm-Gg: ASbGncs2qF99mdN2tWwh8S/2DefFWOipuwd1tpGHUTP328HLG36D9BbRQ48yrF3GstB
-	GZgKdB7vtom6OYFZC2AS44l062B9JQeXqRny5bG6BFfbn8fP7L/kUjlYPkPDRQDCKt4ezXibjaX
-	FnD21qZgjNjeJK56nI+iZ732MnPh5tYcat5PG6cFXpCHuX6MECOYlwwMpLNcm19RZMJeccBKBB2
-	C8A4ZnxQsK0BQ2fywiXHBSrmXHxcqUAJlxdbV+uQwIX40DXdNIGELL9JMu8bt5W6nrmsopCJjwn
-	23h+K0xzBhuElxIzMaxfjQJva7H9kC1yKsZQRjer9s7PMNGfhjJHvw8/slVYzvf9HMnpxPKti6+
-	XxLmcc74=
-X-Google-Smtp-Source: AGHT+IFSnVl3KaEQhdVggHE4Q1aPuMVBXNtHqEHxvCXcB1KPL9q/eBkWt8pH6VwwowmoXs0mVYntEw==
-X-Received: by 2002:a05:600c:138e:b0:439:9a43:dd62 with SMTP id 5b1f17b1804b1-43ba675a8fbmr67558155e9.24.1740916192800;
-        Sun, 02 Mar 2025 03:49:52 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b694524c6sm125935285e9.0.2025.03.02.03.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 03:49:52 -0800 (PST)
-Date: Sun, 2 Mar 2025 11:49:51 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>, Sagi
- Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet-tcp: switch to using the crc32c library
-Message-ID: <20250302114951.6eff96d7@pumpkin>
-In-Reply-To: <20250226190122.GA3949421@google.com>
-References: <20250226062841.60688-1-ebiggers@kernel.org>
-	<03dad20d-1293-47d1-a55d-8430fcefc0bb@suse.de>
-	<20250226190122.GA3949421@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1740917047; c=relaxed/simple;
+	bh=rUSK+MPqWK7JW6t+Kl156HmvY1C0gKinUp6cPdJpfY8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=pZJmt2v55M7cDpwfYOA/C6q9KZo0+FOsjbYBgf551w/9n6XacQgqcYhKkg7GvGtw1k+nMFDfxuWXsgBVhUmot4UXHP6QWI3mlydMnu7AnUSGbVkJIpTsvhZNy+tPDz2Q4RiHj48TkXRChYITTavvktYre05EtRLbmcdsEaFnARo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=z3Rip9CW; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1740916738; bh=MP9cTQS18F1Nay+dJn0ruW2FP+4xeNvoNS0Kd03Zylk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=z3Rip9CW2RC7xF2B8NiDp0eUWN1emUBLUAWRKGIg+fdiqRj5Uf5UWW20sF/BozdCm
+	 L0Wco+eIihMqZtQAsLbaDjfZ3iGdlNTrfzzmCBICoLLoJVSQ8h2baxmnSqRHnESG08
+	 x5is8BkBBSYIMi7OZZKcXDmbF5pNyzObaSK/y6DY=
+Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020.. ([240e:3b1:d00c:8e21:ca33:76fa:6eaa:ba4e])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id CEEA88A1; Sun, 02 Mar 2025 19:51:46 +0800
+X-QQ-mid: xmsmtpt1740916306tzgkvdr02
+Message-ID: <tencent_E9A9DFA5B2C6059DAF39777A40FB86753606@qq.com>
+X-QQ-XMAILINFO: MJf32pulH481pe77k9pFMDKMt8LQXajXPlG3FPBFZ+6X9Gh4bexTU+KoZf1uVP
+	 eCg1IPJA5xFTOpQdvkJRlJr0HcarFPKF3IFP2kFOK75DJ6JxXrzfMGxMElqsO2H0RfEi/rLr9H4m
+	 xdYxfFJ5mTtO+zEhmPLH8wnwiDcZFJi3Xq+8GpAkLEcmEwh+VLlQ107L3Tzt21Cj5HCrTB450XY0
+	 qPxHcGwJGtbKfBjGCyDqj8lga/izpeHTnsr65DFJFzt85eYLGypiiQnFLRV6kaB1VdVV+t2DczBR
+	 3xFQCvHCWS4GXmVFh1jOWpqL/waUKfzqz0LBBeExGpItERE/S3NYIWbkw9SjA3zbWlkrzr+qABTD
+	 KcW1W1uvW/ibuLNcjPRLEGUjPD7KLWSFG+IyBvQpa4E+562vYw1u1nIFockyMYYvAWImXFg3gPwG
+	 ph1pFiiuI/rJ4RDgFgE3g+z7iOuepEJ7M2ls60DO0I3YMhnqU/GoaC8EjNB8Ho8U8PAVoWX42DQl
+	 GE6pMf/qYxF+aHbeHiU5GpAqCfKtj/5SPUPJo7Giu7PKn4NPTYN3eUpGJBYDoKIO2TtfWxB8efNF
+	 +lo9n0fHqGwRxwh245Kff7hrW5La/kLe2TV44No1EqxyWbaQYVzMx5sTnsdnfXN9ycVEmYosSgWH
+	 lj/7szLldexy8FT3hAdrpoBkKwC1ZaiweuOfhlgT3mkDa2gLAAYvaP/Hokxiif9o3yjMQwbGkaF8
+	 Vqon7xl/d7LWshH1XrbmWyd/E0uqI20ChinC4uuu3FYwGbMbq9p0scNiurpKcsWs9XJIIDJ0DF0I
+	 wmCayHc20zJK3GqFQm59pLXVuez7mRDhAEyjUy6Ds+etO4Y7aOpDf89tvgxRiVy81MgdlobjKMHR
+	 GdfMS7JDUydaaH2HbZUM17KS6fVTlHbnWIHnDmk+UiiRVjEgHB1fRq37/mja1GjMyLUKHTqYwGp0
+	 Crd7jglu1cSjnSdoKYbnaZ2ihxi2KJcAy5YJWLuue0/wuzymq3+Q==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Guangbo Cui <2407018371@qq.com>
+To: lyude@redhat.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	linux-kernel@vger.kernel.org,
+	longman@redhat.com,
+	mingo@redhat.com,
+	ojeda@kernel.org,
+	peterz@infradead.org,
+	rust-for-linux@vger.kernel.org,
+	tglx@linutronix.de,
+	tmgross@umich.edu,
+	wedsonaf@gmail.com,
+	will@kernel.org
+Subject: Re: [PATCH v9 6/9] rust: sync: Add SpinLockIrq
+Date: Sun,  2 Mar 2025 19:51:46 +0800
+X-OQ-MSGID: <20250302115146.59946-1-2407018371@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250227221924.265259-7-lyude@redhat.com>
+References: <20250227221924.265259-7-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 19:01:22 +0000
-Eric Biggers <ebiggers@kernel.org> wrote:
+> +/// A kernel `spinlock_t` lock backend that is acquired in interrupt disabled contexts.
+> +pub struct SpinLockIrqBackend;
+> +
+> +/// A [`Guard`] acquired from locking a [`SpinLockIrq`] using [`lock()`].
+> +///
+> +/// This is simply a type alias for a [`Guard`] returned from locking a [`SpinLockIrq`] using
+> +/// [`lock_with()`]. It will unlock the [`SpinLockIrq`] and decrement the local processor's
+> +/// interrupt disablement refcount upon being dropped.
+> +///
+> +/// [`Guard`]: super::Guard
+> +/// [`lock()`]: SpinLockIrq::lock
+> +/// [`lock_with()`]: SpinLockIrq::lock_with
+> +pub type SpinLockIrqGuard<'a, T> = super::Guard<'a, T, SpinLockIrqBackend>;
+> +
+> +// SAFETY: The underlying kernel `spinlock_t` object ensures mutual exclusion. `relock` uses the
+> +// default implementation that always calls the same locking method.
+> +unsafe impl super::Backend for SpinLockIrqBackend {
+> +    type State = bindings::spinlock_t;
+> +    type GuardState = ();
+> +
+> +    unsafe fn init(
+> +        ptr: *mut Self::State,
+> +        name: *const crate::ffi::c_char,
+> +        key: *mut bindings::lock_class_key,
+> +    ) {
+> +        // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
+> +        // `key` are valid for read indefinitely.
+> +        unsafe { bindings::__spin_lock_init(ptr, name, key) }
+> +    }
+> +
+> +    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
+> +        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
+> +        // memory, and that it has been initialised before.
+> +        unsafe { bindings::spin_lock_irq_disable(ptr) }
+> +    }
+> +
+> +    unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
+> +        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
+> +        // caller is the owner of the spinlock.
+> +        unsafe { bindings::spin_unlock_irq_enable(ptr) }
+> +    }
+> +
+> +    unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
+> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
+> +        let result = unsafe { bindings::spin_trylock_irq_disable(ptr) };
+> +
+> +        if result != 0 {
+> +            Some(())
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +
+> +    unsafe fn assert_is_held(ptr: *mut Self::State) {
+> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
+> +        unsafe { bindings::spin_assert_is_held(ptr) }
+> +    }
+> +}
 
-...
-> I have patches for nvme-tls almost ready too.  Just been taking my time since
-> I've been updating all other users of "crc32" and "crc32c" in the kernel too.
-> And I need to decide what to do about skb_copy_and_hash_datagram_iter().
+It would be nice to add `SpinLockIrqBackend` to `global_lock`.
 
-I've wondered if any of the 'copy and xxx' functions are actually worth the
-extra complexity they add.
+---
+ rust/kernel/sync/lock/global.rs | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The (non-Atom) Intel cpu will copy at 32 bytes/clock provided the destination
-is 32 byte aligned (so for an skb copy you may want to copy a few bytes of
-'headroom' to align the copy) (I'm not sure how any other cpu behave).
+diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
+index 480ee724e3..60b88f362b 100644
+--- a/rust/kernel/sync/lock/global.rs
++++ b/rust/kernel/sync/lock/global.rs
+@@ -298,4 +298,7 @@ macro_rules! global_lock_inner {
+     (backend SpinLock) => {
+         $crate::sync::lock::spinlock::SpinLockBackend
+     };
++    (backend SpinLockIrq) => {
++        $crate::sync::lock::spinlock::SpinLockIrqBackend
++    };
+ }
+-- 
 
-The 'and xxx' algorithm is likely to run faster without having to worry
-about writes. May cpu can do more than 1 read/clock, but only one write.
+Best regards,
+Guangbo Cui
 
-I guess the main benefit is for buffers that are larger than the l1-cache
-(or half the cache size if you do the copy first).
-
-It is likely worse for the 'iter' functions (which scatter-gather copy a
-linear kernel buffer). They have to allow for the unusual case of multiple
-fragments - and I'd guess the initial fragments are likely to be short.
-
-Although I'm not at all sure of the point of doing the IP checksum with
-the user copy. My guess is it helped NFS (8k UDP datagrams).
-These days most high performance ethernet hardware supports checksum offload.
-So RX UDP datagrams (which probably rarely matter) have a valid checksum
-and there is no point making send() checksum the transmit data.
-
-I ought to double check that the TX data is always checksummed in send()
-I don't remember a conditional - and you pretty much never need it.
-UDP TX are going to be short (no userspace NFS) and the normal path transmits
-on the callers stack - so the data is likely to be in the right cache if
-the checksum is needed.
-
-	David
 
