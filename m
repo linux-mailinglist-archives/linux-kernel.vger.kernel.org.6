@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-540504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABDEA4B166
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:07:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63024A4B16A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7736D18930B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD281892ED8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CF81E0E0C;
-	Sun,  2 Mar 2025 12:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CA81E231E;
+	Sun,  2 Mar 2025 12:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKPhAY2g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcPRjs03"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38E4C85;
-	Sun,  2 Mar 2025 12:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE381D7E35;
+	Sun,  2 Mar 2025 12:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740917233; cv=none; b=HBKx/9dise6SvPd/IwPTXbJyPJ9uJY2Im/YRQKssAmsrhC7jfNw+hi3/gDm66CPmG27kcYRf7prSJYYkAnrTj4w9UbPcg0s+LgxghO+zWtr5pyOrwaEKLf3Nv5L9Pb98vEHIw/WVmmBAuUUFZ+wguYGeGmkzlLR/BQ6EVp5k7dY=
+	t=1740917424; cv=none; b=I1vki+LExNoYWjqrVCWQs9yPs91Zq6rXBgHaBKzwg3Jny1GnX0WCIZuWFTEbKheC8gLf3QkNtWlfDzlsT982bnwpVmczR8MTvQxMdJDu4UguhSoVWSw3eGaCJhVFWvhhhoXGgn9k3MTg93jxTP4zaTX85mza1Ao/0jpiN+62nn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740917233; c=relaxed/simple;
-	bh=/RSBfQEI2zdhlk9ejfT59kdi9zLXsGuCWOXvxKkgj6k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dfztuAj6tMdfEec5HRgL4al4xR6m5uIIxu+mOaZ+w++tQQSgVtgv/MAC9MVkZOmPNxH/+csLQhpnwms9EgogNRWyfEs0OtcENsVy32+HFjlp1priKy7/3KGdyUUlaS1c/PWeW2Eg5PJiv/sqSMZlXiIX4xclWBlpBaQg4MCD0/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKPhAY2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEAB0C4CED6;
-	Sun,  2 Mar 2025 12:07:12 +0000 (UTC)
+	s=arc-20240116; t=1740917424; c=relaxed/simple;
+	bh=NqkKPwOotaxSVDY087pDD3/wAOA19WW3XbYhp4Usg+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E2m0W8oLLLZ8ycko0qLR8Xz/CB7zyowOx4It0oQs8Kx4l3V2C78r2kV8eX64oF3sLM3svzdODW8JiK2EwKjm06KhIaj9dNGWWs6CvxjfNMLbOT+JG0/7Vgf3VOUvhQeW2U+k5M0BYv7u0vx5bLWAK7vmJchhimCjQ0FTRBFKm8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcPRjs03; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447E1C4CED6;
+	Sun,  2 Mar 2025 12:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740917233;
-	bh=/RSBfQEI2zdhlk9ejfT59kdi9zLXsGuCWOXvxKkgj6k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WKPhAY2gIEL3spzazA+gsqb3n18Uw4oProuVSqIsp/3j34ZlFa/hxcLX+FVS/mJ0/
-	 7SAdeurCPP7dA2K0nAzomEl7hGAtBuiVvXFOnzvQJIhZ9qMvB0zb0PAB2CgA21MWSF
-	 6XCkZj4l6i/v6Hf9hrqaIuMd5iZdaK0pJgeMijnnN+JGbZpHYwoRaFk5+eK6ekSbqy
-	 VNB5qt4RTzEX3GRiINwb7bvvd0LgzhS83GbSEADKTHpf5e46ebxkVYescknRTG5iuN
-	 37jf2pPJQxfHCeyBE40y5SwqjIFlvaLkYO4Y3jMOhG4s4b/fAzEM9x0xiKM2f2HHOc
-	 iYyL6WePMG0mg==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, 
- Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Parav Pandit <parav@nvidia.com>, Maher Sanalla <msanalla@nvidia.com>, 
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250227165420.3430301-1-roman.gushchin@linux.dev>
-References: <20250227165420.3430301-1-roman.gushchin@linux.dev>
-Subject: Re: [PATCH] RDMA/core: don't expose hw_counters outside of init
- net namespace
-Message-Id: <174091722955.677839.2203678675814984398.b4-ty@kernel.org>
-Date: Sun, 02 Mar 2025 07:07:09 -0500
+	s=k20201202; t=1740917423;
+	bh=NqkKPwOotaxSVDY087pDD3/wAOA19WW3XbYhp4Usg+U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qcPRjs03EXkwAqczsSCXpYbwP/WmclNohmndLm5uYWzF3H6iO6igUeY6qKdGTayJL
+	 8h2OT9R323MBgPyveYxcOx8G5aDPxorfeRiwfBygaVYaxZSaZZ3sSlAP54oJ9iH53M
+	 CSQZzenz9/+x6nXQGv14batbstatgSCjdIEdZoJ/D0GzGqpg3r+ggvWwxIKjrKnizg
+	 vBCS2YglNfgFJx3Xg9ZKKanaj9s+HPEspMI8HN61NvNn14CyHzQ4Hj6gMBpAHMEwDt
+	 1m1nPQtwgcnZh68v5k4xA8k6cH1qI2/tCaMtFhs3TaNL0I5q12sR2a7w9IybXz7VaW
+	 cVzttCJgjwYag==
+Date: Sun, 2 Mar 2025 12:10:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v3 04/15] iio: accel: adxl345: use regmap cache for INT
+ mapping
+Message-ID: <20250302121012.0227a117@jic23-huawei>
+In-Reply-To: <20250302114503.26cbcd97@jic23-huawei>
+References: <20250220104234.40958-1-l.rubusch@gmail.com>
+	<20250220104234.40958-5-l.rubusch@gmail.com>
+	<20250302114503.26cbcd97@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
 
+On Sun, 2 Mar 2025 11:45:03 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-On Thu, 27 Feb 2025 16:54:20 +0000, Roman Gushchin wrote:
-> Commit 467f432a521a ("RDMA/core: Split port and device counter sysfs
-> attributes") accidentally almost exposed hw counters to non-init net
-> namespaces. It didn't expose them fully, as an attempt to read any of
-> those counters leads to a crash like this one:
+> On Thu, 20 Feb 2025 10:42:23 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
 > 
-> [42021.807566] BUG: kernel NULL pointer dereference, address: 0000000000000028
-> [42021.814463] #PF: supervisor read access in kernel mode
-> [42021.819549] #PF: error_code(0x0000) - not-present page
-> [42021.824636] PGD 0 P4D 0
-> [42021.827145] Oops: 0000 [#1] SMP PTI
-> [42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded Tainted: G S      W I        XXX
-> [42021.841697] Hardware name: XXX
-> [42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
-> [42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
-> [42021.873931] RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287
-> [42021.879108] RAX: ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
-> [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI: ffff940c7517aef0
-> [42021.893230] RBP: ffff97fe90f03e70 R08: ffff94085f1aa000 R09: 0000000000000000
-> [42021.900294] R10: ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
-> [42021.907355] R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
-> [42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000) knlGS:0000000000000000
-> [42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [42021.928130] CR2: 0000000000000028 CR3: 00000042dcfb8003 CR4: 00000000003726f0
-> [42021.935194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [42021.949324] Call Trace:
-> [42021.951756]  <TASK>
-> [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
-> [42021.959030]  [<ffffffff86c58468>] ? __die+0x78/0xc0
-> [42021.963874]  [<ffffffff86c9ef75>] ? page_fault_oops+0x2b5/0x3b0
-> [42021.969749]  [<ffffffff87674b92>] ? exc_page_fault+0x1a2/0x3c0
-> [42021.975549]  [<ffffffff87801326>] ? asm_exc_page_fault+0x26/0x30
-> [42021.981517]  [<ffffffffc0775680>] ? __pfx_show_hw_stats+0x10/0x10 [ib_core]
-> [42021.988482]  [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
-> [42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
-> [42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
-> [42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
-> [42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
-> [42022.017058]  [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
-> [42022.022073]  [<ffffffff8766f1ca>] do_syscall_64+0x6a/0xa0
-> [42022.027441]  [<ffffffff8780013b>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > Use regmap cache to replace maintaining the member variable intio
+> > for the interrupt mapping state. The interrupt mapping is initialized
+> > when the driver is probed, and it is perfectly cacheable.
+> > 
+> > The patch will still leave the function set_interrupts(). A follow up
+> > patch takes care of it, when cleaning up the INT enable register
+> > variable.
+> > 
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > ---
+> >  drivers/iio/accel/adxl345.h      |  4 ++
+> >  drivers/iio/accel/adxl345_core.c | 63 ++++++++++++++++++++------------
+> >  drivers/iio/accel/adxl345_i2c.c  |  2 +
+> >  drivers/iio/accel/adxl345_spi.c  |  2 +
+> >  4 files changed, 48 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
+> > index bc6d634bd85c..a2a81caa292a 100644
+> > --- a/drivers/iio/accel/adxl345.h
+> > +++ b/drivers/iio/accel/adxl345.h
+> > @@ -8,6 +8,8 @@
+> >  #ifndef _ADXL345_H_
+> >  #define _ADXL345_H_
+> >  
+> > +#include <linux/regmap.h>  
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] RDMA/core: don't expose hw_counters outside of init net namespace
-      https://git.kernel.org/rdma/rdma/c/57b9340c0728b0
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+> Why add this include?
+> 
+> The file should have a forwards def of
+> struct regmap;
+> which is currently missing.  If you clean that up in this patch that
+> is fine (mention it in the patch description though as it isn't
+> directly related) but I don't see a reason to include regmap.h here.
+> 
+> Given rest if fine I'll tweak this whilst applying. Applied to the
+> togreg branch of iio.git, pushed out for now as testing for 0-day
+> to poke at it.
+> 
+> Also move to a newer kernel tree. The changes in export symbol
+> should be causing you build errors for this path. I'll fix that up.
+> Quotes now needed around IIO_ADXL345 in the EXPORT_SYMBOL_NS_GPL()
+> calls. I fixed that up.
+Dropped again after reviewing later patch.  I think the volatile
+stuff should specify all registers that are volatile from the start
+not add them as we go.
+> 
+> Jonathan
 
 
