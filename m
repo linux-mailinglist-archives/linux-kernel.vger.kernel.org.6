@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-540666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B2BA4B380
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:45:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54553A4B385
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 969CE16C661
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581891891B05
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D6D1EB191;
-	Sun,  2 Mar 2025 16:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4F01EA7EC;
+	Sun,  2 Mar 2025 16:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h55b3OvM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNeTWvmO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FB7111AD;
-	Sun,  2 Mar 2025 16:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0170F1E5B9F;
+	Sun,  2 Mar 2025 16:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740933909; cv=none; b=n3rKkWKX+pgfd8vCGHnCINpaomFbA0c9y4aHrkHuXUGcHTPVvXNWZ5SQ7HkP0L7SWDp5za8OIvW1st1Zd9zEAdgHO3bw0lMhPmpxFokIbppqtENuZfl5e1z/9V/DjfRgRwyo6NuuYXKxGXTvOdVgNHfF6821Js19DCbZFZnpgp0=
+	t=1740934228; cv=none; b=LFzvbZrGscVh+5doFeXqHQ6Sv/PcBIiIvlHd/mpfADAsRyTUsftjMZk+7Pu02/sNXIl9tpHbnXlf6CXeqlV6UbWfCiuGlqwLPiAsWR2Rc3yX6sVBHXhuYcUj9nc7mQGPJeXEDMWU5lwG0QcZL2qdlIL3VlF0m5m7BD5vG8SlVs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740933909; c=relaxed/simple;
-	bh=fyvk8brOtPy7mtmxHExxgWFpdiLm50+TwUU678uaZAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B8lFbQhNAtRgSSvdfQEt4Rr23ILunjaobNX2AnkQPcP78FVFM+26lDn2cOK5oMA7oRHgvoYL28Gtv1CSCc4hpseCbq3+x4jl/H+J2QSr1tFtSZnaNw1nQ8uMm/hGe90wX5rv9Dg6Hb68ZVKahavKHGJaA4gw2U3XVwxOUq1W4Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h55b3OvM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC58CC4CED6;
-	Sun,  2 Mar 2025 16:45:05 +0000 (UTC)
+	s=arc-20240116; t=1740934228; c=relaxed/simple;
+	bh=6niMakNmxQ42IQ7lLQeVf3Z8esUZUgPAraWkiGzNLgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUcWm0xGFUCG+tnmmdPNQX8C55D+xTPpil/hte95z/CZAzH1K/XMG212kamr4pk0gxrXoZYfibC/zFSvI6mTayeHw6McJxhRc916Ak20UkBhBp/qAUzHXkvxyiKasVzAM0bkaOVb71cVOYZ/0Gxq7zuKMrXycHtxsc9EzE3eoTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNeTWvmO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6053C4CED6;
+	Sun,  2 Mar 2025 16:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740933908;
-	bh=fyvk8brOtPy7mtmxHExxgWFpdiLm50+TwUU678uaZAs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h55b3OvMjVkeBm/UBIRTQdYXYksfsLWIge0I3UkwCMGaI6x2JIlCTj7otBUkwKSbY
-	 SB1vLm+/5iztyFnglDJUZCzood6ELlrUB+EQfDiheL/Ar7v24rJJ/LiIMQkOw1W2B8
-	 JoBvQu+9c7LNvEQZwinpPI8t9LIDDVRucdBL0p1NOCRYKlrD6JDECuVVZSasEtwn2w
-	 lEl1BOVdL4oad2lKK9o3dM0ZAfg8vwr0WQUwBVRNQBvR91p6mLmFEI3odW8Ir/UBYE
-	 kl6jHwiI8GIax+t71tHWsUUNa9kqKGd0p2bLMDqzEkXW7fSwj6Nq2L8AOUwAXzVXbE
-	 UJDVzITGERvgA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	HONG Yifan <elsk@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH] Revert "kheaders: Ignore silly-rename files"
-Date: Mon,  3 Mar 2025 01:42:54 +0900
-Message-ID: <20250302164459.100265-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1740934227;
+	bh=6niMakNmxQ42IQ7lLQeVf3Z8esUZUgPAraWkiGzNLgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZNeTWvmOBG+e9QTaXxEf/O2mdaTSldTRwrGlX36XLJy907Jvtf3noPrQKUs3enZ5i
+	 lz+e2LmqkIkEMS5tzuScZyo5gvMZmL4rx9YsvrZN6IwpjVpr/RH5YjcH5kWkDbKsan
+	 rd1FDkDXubsTffR1t9UEZgHKNHa2UwVNg5zloVxaivebjcawKR6m/OHrBcqZUAYLoz
+	 AGIuQO700jKig9ZQOGsVhf2TfRgUo29WFfqqWplrHOOt8j12vC8hiTSKUhzOg7bGoT
+	 9mOdzuRo5tSZ4/RgS1lEV2v4yAexdURNENLUbYvQ8hVvSi424wMmGlG9aBae1oPqKE
+	 T9SR+w+rNV3ig==
+Date: Sun, 2 Mar 2025 18:50:22 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Jocelyn Falempe <jfalempe@redhat.com>,
+	Thomas =?iso-8859-1?Q?B=F6hler?= <witcher@wiredspace.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	dri-devel@lists.freedesktop.org, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH 2/2] drm/panic: fix overindented list items in
+ documentation
+Message-ID: <Z8SMTiWzTDjIwGfO@kernel.org>
+References: <20250301231602.917580-1-ojeda@kernel.org>
+ <20250301231602.917580-2-ojeda@kernel.org>
+ <CANiq72=69XAOapYBurbwsQOEaw2uamZ6ta=DT6cC-om9XK3dvA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=69XAOapYBurbwsQOEaw2uamZ6ta=DT6cC-om9XK3dvA@mail.gmail.com>
 
-This reverts commit 973b710b8821c3401ad7a25360c89e94b26884ac.
+On Sun, Mar 02, 2025 at 07:54:00AM +0100, Miguel Ojeda wrote:
+> On Sun, Mar 2, 2025 at 12:17 AM Miguel Ojeda <ojeda@kernel.org> wrote:
+> >
+> > Starting with the upcoming Rust 1.86.0 (to be released 2025-04-03),
+> > Clippy warns:
+> >
+> >     error: doc list item overindented
+> >        --> drivers/gpu/drm/drm_panic_qr.rs:914:5
+> >         |
+> >     914 | ///    will be encoded as binary segment, otherwise it will be encoded
+> >         |     ^^^ help: try using `  ` (2 spaces)
+> >         |
+> >         = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#doc_overindented_list_items
+> >
+> > The overindentation is slightly hard to notice, since all the items
+> > start with a backquote that makes it look OK, but it is there.
+> >
+> > Thus fix it.
+> >
+> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+> Cc: stable@vger.kernel.org # Needed in 6.12.y and 6.13.y only (Rust is
+> pinned in older LTSs).
 
-As I mentioned in the review [1], I do not believe this was the correct
-fix.
+(cosmetic) Nit:
 
-Commit 41a00051283e ("kheaders: prevent `find` from seeing perl temp
-files") addressed the root cause of the issue. I asked David to test
-it but received no response.
+I think you could just:
 
-Commit 973b710b8821 ("kheaders: Ignore silly-rename files") merely
-worked around the issue by excluding such files, rather than preventing
-their creation.
+Cc: stable@vger.kernel.org # v6.12+
 
-[1]: https://lore.kernel.org/lkml/CAK7LNAQndCMudAtVRAbfSfnV+XhSMDcnP-s1_GAQh8UiEdLBSg@mail.gmail.com/
+> 
+> Cheers,
+> Miguel
+> 
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- kernel/gen_kheaders.sh | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-index 00529c81cc40..c9e5dc068e85 100755
---- a/kernel/gen_kheaders.sh
-+++ b/kernel/gen_kheaders.sh
-@@ -89,7 +89,6 @@ rm -f "${tmpdir}.contents.txt"
- 
- # Create archive and try to normalize metadata for reproducibility.
- tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
--    --exclude=".__afs*" --exclude=".nfs*" \
-     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
-     -I $XZ -cf $tarfile -C "${tmpdir}/" . > /dev/null
- 
--- 
-2.43.0
-
+BR, Jarkko
 
