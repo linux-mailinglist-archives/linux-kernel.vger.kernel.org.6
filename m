@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-540766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E0AA4B4AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:30:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C198BA4B4B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227DF189053E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F5B3A42C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDACB1EE017;
-	Sun,  2 Mar 2025 20:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724861EE002;
+	Sun,  2 Mar 2025 20:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KjHb07zs"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b="FgGwZzQc"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB384288B1;
-	Sun,  2 Mar 2025 20:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17EA2E630;
+	Sun,  2 Mar 2025 20:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740947437; cv=none; b=I5Gje6zcz9Rhi6b84MxrL9leUifBAFxlqPJL+LvqlfEC0fAFJgBLnlt8XjYZcpdw+zgN3jk6mv4Xp4yngszk7nr857bcuHNmuqy2ijm0QMZGqvaNR0XCfhNEOt+FwLx2QnOsQqhMnN0czH8aCRs0v2nrVlkudUyuxcXXFneEMeY=
+	t=1740947545; cv=none; b=qx7UTUQWR4BxSY6h+jZ5ApnMXADvL/TFWzGNSId9agObjX3MCTh+IVhmyOj3B8yj+EXBKj2y5jdxogqaqoHa4QKfJLVndzNvsLoamlhDF5o9fwG6V0jRHn0VB1Z0d3dvCwvs65S9tuGW0gIr1EJ6mrpjsAoyqdlKMI5AfzF+NRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740947437; c=relaxed/simple;
-	bh=qu5KI8fMONBhzkGxAIHlBQNJ7CFJHqifoEwRmhHdgvA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PZWSzLLcmAhLQU4EYspFGdVYbq/IPMfrJH2uF6nwQgp5ayiTy3VxpseqbOmc8Iw9UK8B9yf+SDzQC3f/fH40H+7hyNFB55ub6KEC+2XocEsLotOZtwfPLMBI/j703a0JEeRz+iVl7x8H5T/w4EC28Y/kibZ2F99ieVh1Z7TJE4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KjHb07zs; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740947430; x=1741552230; i=markus.elfring@web.de;
-	bh=t03/rLM9FaNUTzDcuwCiZRSRsDm9yDnbuOT4YqKcuUI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KjHb07zsBfKJpgfl64Y7NEN2CovaV+QPdTEU3U5b8HypgSfj/LY1GmhfBqm1U2Od
-	 Q+CZVrXWjRGvt+0Lrq/cmXontkm5Xm/+zgMeotWeBWGITbZrvLNLFD67UfYe4PJfs
-	 fXvUutsoj13p4l6Qj/TJ7kx/D9edZWZut4SG/D10Lxosg5nJ4RIt44Jl2vKt3KdZA
-	 IJq4hIn1GZEBOJ6d5qHQohUp1Gb4g3zekpuYCy40x0/QeMstPIaVZSpNZjL1XwG1s
-	 bVx42f9+UiC/EhWxidBedJ1zceEWKPtdPXqcLwMDHx9UbgyKQubJZx5egdpuOWfWe
-	 STH2lqbmZ9c3ZbAbVQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOlwp-1tdb8T1ROh-00Uw3f; Sun, 02
- Mar 2025 21:30:30 +0100
-Message-ID: <08fe8fc3-19c3-4324-8719-0ee74b0f32c9@web.de>
-Date: Sun, 2 Mar 2025 21:30:27 +0100
+	s=arc-20240116; t=1740947545; c=relaxed/simple;
+	bh=WgBZ0EUGu5LbJPsp1TumVU8UKT0UY2GPhCUt6jzcPDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nRoQnWyyJGsWcHCBmmjEf85Y9Mvhg4sPg9/tVBjnw+wM4Rz2LYXPi2ArNQW8OvdcO5oaphsEYO5Yg466s9YkGzYTDCCHTNV38l6IGTtZVBZGTDwvQPh2k/UWNq9uSk1dLFeRpgM3cVBkboinjb64un4/iIbtUxtXaIqgv4LNKMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr; spf=pass smtp.mailfrom=grabatoulnz.fr; dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b=FgGwZzQc; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grabatoulnz.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 138A241B5F;
+	Sun,  2 Mar 2025 20:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grabatoulnz.fr;
+	s=gm1; t=1740947534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RAj8Bui5A168/ZUm/f+SKzndhklrmdcxeEf7EOra8qo=;
+	b=FgGwZzQcglmWcu3KKXkfNsjGm1BMs/HLhWKY/8Ux92yeRoTWW05x8qRsFJJgoe66gfLuYp
+	IvFQ4FHKnyljez78QaIQG1RpsLNsEwQdoKGtI1Ig9+cW9WHk5aqRp03lASAdbZqVkxPvX3
+	UZl4zW1LtBBd3VOkwHgLjF5L+3uX05ExwIwIsgZI7uDtiOXW1muVX+Q8SYwlGuZ4R4xIza
+	V4IieWfbUSOP2am63hBgoWRje4SA1fhyfIMHFcKsBtpt7uAVF0Q/wUNdRdsJSk/6BUIb1V
+	SBXEcE5SQ1j3zh6Xdx97+iVzuq/xHNjjLDgzZp7v4/XNTDc2UjeDjKkq/F2nzA==
+Message-ID: <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+Date: Sun, 2 Mar 2025 21:32:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,95 +53,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?=5BPATCH_RESEND=5D_tipc=3A_Reduce_scope_for_the_variable_?=
- =?UTF-8?B?4oCcZmRlZnHigJ0gaW4gdGlwY19saW5rX3RubF9wcmVwYXJlKCk=?=
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Jon Maloy <jmaloy@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Tuong Lien <tuong.t.lien@dektech.com.au>,
- Ying Xue <ying.xue@windriver.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <624fb730-d9de-ba92-1641-f21260b65283@web.de>
-Content-Language: en-GB
-In-Reply-To: <624fb730-d9de-ba92-1641-f21260b65283@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/FibXadHneYGmAU6eIftjav2n1PX9JJV/0o1094/4mzs4YX73ZT
- RGDGo8GNthY0AZ8lx8FIHi6QHRC/guk94wbYT6BXKibSlqnB6AoZviyXW4tvaywOIzIXZfG
- FtG59s7INUZYU+nE6n5o548/Qmj3uN//G2fzNVngxWNNRJcMf1vlVohaGe642J0H90g+28u
- zAFXpRpACnEKLFSZgJY5Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HfsN25LJsaA=;VIrrRgS4ncXO7iy+hD6iUtBt+bN
- BUe1tb8yhRkBVWsE8D/CuIWzfW1zSZQ0RcExrmpuBHM4ZKOH6lIkq/yYujLP/wAruqJ7eHRiX
- 2duxGSXMYciSixYEG73TCtvxMMfKcBsxNKCVM7AVQ9EYgOxKLskUA0ah+LSGhUGPSM8I4vuLz
- Q73MjDowI4jFHWD37W6zC/QfDivAyWPL/sOkKzOleWZ52TkfQTn4smEpidzsQVrfBpIbWeBJ1
- 9SFTt3713LPLRXnBA8vglR38wWI20PDlSLqEvMr7uYwt5B/yFhwEO1t5eXps2IvxrnHsvDo7R
- nFuSrcnNJpBCH4WyvpAyr9f6XbumAbgnPQci3RIrGMlX+c4eoea8jK7zQmKYrSGL0xoJEhqB8
- 7Z1af6JDSMUKzQkPONBvDm5F5G+Qk+UPbOUso2T55MLzM9pBbOZzSYtxSQOr8ejbnPllGoMd7
- D56PYHHFdkrN4CxTZ0Nt2gHR2RV249BvcRhI/NA7G5xOmwTBzNTDor9fz0d+7oOLLBhiORj0d
- oJwONMxqg4Aqj9clb5R0su7jd8S7MEBaNqjJGWYAEApB4qEsvIo4NjE+oz52KpSvZL12ROjz+
- 9CKcuRycUSXcpqaMcHU4FLEwAQKey/XVKNAjwq2at7LnvI8/ADlUuycOXmoWS0X0u5iXl6D1N
- emFVvN8e5bJUmmgGBWCR2TJ3/w71ZmreC16T6t6DVok8zuoEQCunliY8v1uYySa8+ylBXI7Ue
- /b+RpX7oVqRA8Bhp2AXXtuBTstPpzmUmDC3ObfvLpTRLWGqEIDRzbD1+A/0HuRpaYm7eskikZ
- uXek1qEgN/JpUqZit7eZM5y4ts3DMR2Tl6gnGrXtq1WgXaseBwWPUcYkLkCwN+wECm2p+8IB6
- 5aBthztPX2MWRYfUDejWEhlkUnCeQXczvy+Z3B9iR1qWJJUNGz0WPHctm7hC1BZaTqvNvXlWy
- g3OcShZigPrxrXXvcT2s2uyamUnHxAHrKjFKHVcPGNG3T/g+UFc5SxDd4Kh9qoksdALBBKOsz
- mzB7qZfPo8zyBydGhe6a60Tn4O2HEZ2PRyKLgfGYqgp99lQpb5J4T5s/oYdF9lb20eu8dykCF
- Q8NBcjX9hbUM3qz9IfaF19KCnuXQVOxecGrscPRbo9wMwWvC4TEjxnAa3+Z+qwbE371MwrMtz
- R/R+A2amH5pWDC+a5zt6BlZGhs6zqlkUVRrRuBJNbnXVsQhVRU1LbURl+j4ij3KVn/Wh8o+YW
- UnPxrN2PL1U7crglFAS/tZzE7RLUjWI1HMlPo1BWDgp8REKeUCZnYpks5PAmFNONZWs6kLBUG
- Y1MSyuzPvwMh3VAUgvlD5zwdgXdrmcv0SNjQsOd+tzGPGLKjSXMr2noo/PVwomcgHonbi3hle
- PN9FR0h276FnYqe0bby0PGGStSD1RqJiu1oQRJfajILkAUsSm0vFCM9F/OJAcSk81Qdb8eX9e
- biNvoqhd3JcmXpE1UQIIRoB4ZPj4=
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+To: Niklas Cassel <cassel@kernel.org>,
+ Salvatore Bonaccorso <carnil@debian.org>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-ide@vger.kernel.org,
+ Dieter Mummenschanz <dmummenschanz@web.de>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan> <Z8SyVnXZ4IPZtgGN@ryzen>
+Content-Language: en-US
+From: Eric <eric.4.debian@grabatoulnz.fr>
+In-Reply-To: <Z8SyVnXZ4IPZtgGN@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeljedukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefgrhhitgcuoegvrhhitgdrgedruggvsghirghnsehgrhgrsggrthhouhhlnhiirdhfrheqnecuggftrfgrthhtvghrnhephfdtieeulefgudeuffeiueejgfetgfehueejgeekteeiheefffelkedujeekteegnecuffhomhgrihhnpeguvggsihgrnhdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegrudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegruddphhgvlhhopeglkffrggeimedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegrudgnpdhmrghilhhfrhhomhepvghrihgtrdegrdguvggsihgrnhesghhrrggsrghtohhulhhniidrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptggrrhhni
+ hhlseguvggsihgrnhdrohhrghdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhkrgdrfigvshhtvghrsggvrhhgsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepughlvghmohgrlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhhphesvghnughlvghsshhoshdrohhrghdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghv
+X-GND-Sasl: eric.degenetais@grabatoulnz.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2023 17:00:11 +0200
+Hi Niklas,
 
-The address of a data structure member was determined before
-a corresponding null pointer check in the implementation of
-the function =E2=80=9Ctipc_link_tnl_prepare=E2=80=9D.
+Le 02/03/2025 à 20:32, Niklas Cassel a écrit :
+> On Sun, Mar 02, 2025 at 05:03:48PM +0100, Salvatore Bonaccorso wrote:
+>> Hi Mario et al,
+>>
+>> Eric Degenetais reported in Debian (cf. https://bugs.debian.org/1091696) for
+>> his report, that after 7627a0edef54 ("ata: ahci: Drop low power policy  board
+>> type") rebooting the system fails (but system boots fine if cold booted).
+>>
+>>
+For what it's worth, before getting these replies I tested the 
+ahci.mobile_lpm_policy=1 kernel parameter, which did work around the 
+problem.
+> The model and fw version of the SSD.
+>
+> Anyway, I found it in the bug report:
+> Device Model:     Samsung SSD 870 QVO 2TB
+> Firmware Version: SVQ02B6Q
+>
+> The firmware for this SSD is not great, and has caused us a lot of pain
+> recently:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/ata?id=cc77e2ce187d26cc66af3577bf896d7410eb25ab
+> https://lore.kernel.org/linux-ide/Z7xk1LbiYFAAsb9p@ryzen/T/#m831645f6cf2e6b528a8d531fa9b9f929dbf3d602
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/ata?id=a2f925a2f62254119cdaa360cfc9c0424bccd531
+>
+>
+> Basically, older firmware versions for this SSD have broken LPM, but from
+> user reports, the latest firmware version (which Eric is using) is
+> apparently working:
+> https://bugzilla.kernel.org/show_bug.cgi?id=219747
+> https://lore.kernel.org/stable/93c10d38-718c-459d-84a5-4d87680b4da7@debian.org/
+>
+>
+> Eric is using the latest SSD fimware version. So from other peoples reports,
+> I would expect things to work for him as well.
+>
+> However, no one has reported that their UEFI does not detect their SSD.
+> This seems to be either SSD firmware bug or UEFI bug.
+>
+> I would expect your UEFI to send a COMRESET even during a reboot, and a
+> according to AHCI spec a COMRESET shall take the decide out of sleep states.
+>
+> Considering that no one else seems to have any problem when using the latest
+> firmware version for this SSD, this seems to be a problem specific to Eric.
+> So... UEFI bug?
+>
+> Have you tried updating your BIOS?
 
-Thus avoid the risk for undefined behaviour by moving the definition
-for the local variable =E2=80=9Cfdefq=E2=80=9D into an if branch at the en=
-d.
+I had not tried to update my bios (bit shy on this due to a problem long 
+ago with a power failure during bios update which left me with an 
+unbootable machine).
 
-This issue was detected by using the Coccinelle software.
+However, as far as I see, there is no newer version of it :
 
-Fixes: 58ee86b8c775 ("tipc: adapt link failover for new Gap-ACK algorithm"=
-)
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- net/tipc/link.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+My mobo model is :
 
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index b3ce24823f50..5aa645e3cb35 100644
-=2D-- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -1973,7 +1973,6 @@ void tipc_link_create_dummy_tnl_msg(struct tipc_link=
- *l,
- void tipc_link_tnl_prepare(struct tipc_link *l, struct tipc_link *tnl,
- 			   int mtyp, struct sk_buff_head *xmitq)
- {
--	struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
- 	struct sk_buff *skb, *tnlskb;
- 	struct tipc_msg *hdr, tnlhdr;
- 	struct sk_buff_head *queue =3D &l->transmq;
-@@ -2100,6 +2099,8 @@ void tipc_link_tnl_prepare(struct tipc_link *l, stru=
-ct tipc_link *tnl,
- 	tipc_link_xmit(tnl, &tnlq, xmitq);
+sudo dmidecode -t 2
 
- 	if (mtyp =3D=3D FAILOVER_MSG) {
-+		struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
-+
- 		tnl->drop_point =3D l->rcv_nxt;
- 		tnl->failover_reasm_skb =3D l->reasm_buf;
- 		l->reasm_buf =3D NULL;
-=2D-
-2.40.0
+# dmidecode 3.4
+Getting SMBIOS data from sysfs.
+SMBIOS 2.7 present.
+
+Handle 0x0002, DMI type 2, 15 bytes
+Base Board Information
+     Manufacturer: ASUSTeK COMPUTER INC.
+     Product Name: M5A99X EVO R2.0
+     Version: Rev 1.xx
+
+
+ From asus's website I get that the latest bios version for this model 
+is version
+
+M5A99X EVO R2.0 BIOS 2501
+Version 2501
+3.06 MB
+2014/05/14
+
+And I appear to already use it :
+
+sudo dmidecode -s bios-version
+2501
+
+>
+>
+> Kind regards,
+> Niklas
+
+kind regards,
+
+Eric
 
 
