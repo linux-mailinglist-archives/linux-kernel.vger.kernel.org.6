@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-540410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAE9A4B046
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:26:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F26A4B048
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B85A167481
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:21:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51B117B00B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4291E3774;
-	Sun,  2 Mar 2025 07:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1421E5732;
+	Sun,  2 Mar 2025 07:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Aqh6ofGa"
-Received: from mail-m3293.qiye.163.com (mail-m3293.qiye.163.com [220.197.32.93])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="a3fcY/iO"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA6D1E2823;
-	Sun,  2 Mar 2025 07:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1641E492D;
+	Sun,  2 Mar 2025 07:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740899746; cv=none; b=d5RB7Riaykei2xhMnH0EAoSrOBCkr5aSTHxDnMmc+Y1cX5yxBUK+gHXpUd8S6t4GOi0qfH00T6ONB6WoB8TQuAjVzS91TYL+Ig7DWSGkSJ8glU8NQ4z8dDtSqKcBzzCwxLvWW4/7pNdv1xrTUQOskOr8J8FtaxOgK5+5dcVpT8U=
+	t=1740899916; cv=none; b=Y5TA8FznzDOA+Ru6bobyl9/8WDArEg6DKCcl2vRT/1QYpiRziJALEIbrjmWMaDr0Gs22t2t1I1i0zVllHXOng6PBjeVGrEVhSi6AVXN9Z0MtrotivSF3JMz4eewC0bJSjaBNhgOT4Lh0d9+DCZ3zbxuaJYMvAscK8HhmlVZTmJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740899746; c=relaxed/simple;
-	bh=ziDod9pTnCx8VqIh/26uIBZKiuRQeyCD6/ciVFEaAs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgPbGeIR4i0zUFyZA6ltgmYoPHnzyXNZvm9n6Dkd+d9YE+lsd+fgw86HiiGUGSO6CrJMHYEZ8/ysWxKKplQ2vtwlJo02Nix5YJwCfygu4v/jpI8iIoJwBmy3ymOcnlw0DB0rWWFlOIplsr0r6wHTjBfbOQTNmqYYdf4zYXbAuVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Aqh6ofGa; arc=none smtp.client-ip=220.197.32.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id ca138e88;
-	Sun, 2 Mar 2025 15:15:30 +0800 (GMT+08:00)
-Message-ID: <f835a852-24b8-4279-8e4b-42517d694493@rock-chips.com>
-Date: Sun, 2 Mar 2025 15:15:30 +0800
+	s=arc-20240116; t=1740899916; c=relaxed/simple;
+	bh=Q00tCGFagJqhJIqtMW6Th3WlIVSLLIlf2Ut0vWjxY0E=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SFv1quyue5b1sQNkFi14OXGlDg0XSFFjMX5daWw8ehoeBpwe+mVnE2wXKMbWnOV33SIdK9wwdYp3sFKdxqlbmk8Yx+MAXjZs19eBmoWwAK/THXvl9YvehX5Xcx9VbgR3/90skQSCu9TeV/QV/b8Yj/KIXS6UUb1PcVD73FhcomY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=a3fcY/iO; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=f3DdERWXQrNySF6gvU6vinSO8q+qr1NUAtHdetDqJf4=; b=a3fcY/iONa33Ud5dQN0oQ3c0gf
+	yDD75wEvhxl2aTZ2rDvDseIJ5EyhCdCJ+C0m8eIFf3NlZP28u5SHk7RtaW/UOBQbDdu+PuiO4evfo
+	TPoBXIvZD5tF6i2j0JFtMlF9elpGl3C+YsBI7wvjpbFnHPyHikNt15dBNiHX5bI/nxZejVEBAYLNE
+	zohytRJ+9SRo3ksFsXB596vLCJcm+O0IMfoXuQO7vIDuYz2MowNxrQLmRJXpNSAFgM45ay030+HNo
+	gdz4qGRAYKsToUUV2206CDJHVlnXtfcwXlK3TMEPM3T7AnU4gW6JHVXPZwruE32bh3o6CpT5E1azX
+	iJNcInUw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1todai-0030I5-0I;
+	Sun, 02 Mar 2025 15:18:25 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 02 Mar 2025 15:18:24 +0800
+Date: Sun, 2 Mar 2025 15:18:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] cred: Fix RCU warnings in override/revert_creds
+Message-ID: <Z8QGQGW0IaSklKG7@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/15] drm/bridge: analogix_dp: Remove the unnecessary
- calls to clk_disable_unprepare() during probing
-To: Doug Anderson <dianders@chromium.org>
-Cc: heiko@sntech.de, andy.yan@rock-chips.com, hjc@rock-chips.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, dmitry.baryshkov@linaro.org,
- sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com,
- boris.brezillon@collabora.com, l.stach@pengutronix.de,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250224081325.96724-1-damon.ding@rock-chips.com>
- <20250224081325.96724-5-damon.ding@rock-chips.com>
- <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <CAD=FV=X7iWOyAvdfRDyFA9kdr+utU_aAaJ5F7nAsaHp2fMQgVw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUhPQlYZTx9PSh0YTx4ZSUJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9555b5c2df03a3kunmca138e88
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pjo6Lgw6CzIKHUsaFQsLF0tL
-	OBUKCU9VSlVKTE9LQ0JCTEhKQ01CVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJS0hJNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=Aqh6ofGacuT+B/WiOkyQRxEZYkd5NWw7bNn++OmrLNSFR5Y2zQSQ6S4knhbwrlYkwPve/ppWG4WrEx6B3hdO/jgE+1l3hEYxMT3Ah6BXdq2v3svwOMcgcj3L9US+GjHWVgNzBiTwKuNOceJpI6UFEEg1IWwgUjUnBrgLUK7S/mM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=8d5ejZu4ZY9Y9Zh2+eVlwxl7XvRzlgNDw9s/Y5LNOs0=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Doug,
+Fix RCU warnings in override_creds and revert_creds by turning
+the RCU pointer into a normal pointer using rcu_replace_pointer.
 
-On 2025/2/25 9:40, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Feb 24, 2025 at 12:14 AM Damon Ding <damon.ding@rock-chips.com> wrote:
->>
->> With the commit f37952339cc2 ("drm/bridge: analogix_dp: handle clock via
->> runtime PM"), the PM operations can help enable/disable the clock. The
->> err_disable_clk label and clk_disable_unprepare() operations are no
->> longer necessary because the analogix_dp_resume() will not be called
->> during probing.
->>
->> Fixes: f37952339cc2 ("drm/bridge: analogix_dp: handle clock via runtime PM")
-> 
-> When possible "Fixes" should be pushed to the start of your series so
-> it's obvious they have no dependencies when being picked to stable
-> kernels. That should be possible here.
-> 
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   .../gpu/drm/bridge/analogix/analogix_dp_core.c | 18 +++++-------------
->>   1 file changed, 5 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index e23af674d91c..d9dafb038e7a 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1608,10 +1608,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
->>          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>
->>          dp->reg_base = devm_ioremap_resource(&pdev->dev, res);
-> 
-> There is a context conflict when I apply to drm-misc-next because of
-> commit 43c00fb1a518 ("drm/bridge: analogix_dp: Use
-> devm_platform_ioremap_resource()"). You probably should rebase and
-> re-apply.
-> 
-> Aside from the context conflict, this looks great to me:
-> 
-> Suggested-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> 
+These warnings were previously private to the cred code, but due
+to the move into the header file they are now polluting unrelated
+subsystems.
 
-After rebasing, I found the conflict. I will move this patch to a 
-separate series and ensure it has no dependencies.
+Fixes: 49dffdfde462 ("cred: Add a light version of override/revert_creds()")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Best regards
-Damon
-
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 0c3c4b16b469..5658a3bfe803 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -172,18 +172,12 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
+ 
+ static inline const struct cred *override_creds(const struct cred *override_cred)
+ {
+-	const struct cred *old = current->cred;
+-
+-	rcu_assign_pointer(current->cred, override_cred);
+-	return old;
++	return rcu_replace_pointer(current->cred, override_cred, 1);
+ }
+ 
+ static inline const struct cred *revert_creds(const struct cred *revert_cred)
+ {
+-	const struct cred *override_cred = current->cred;
+-
+-	rcu_assign_pointer(current->cred, revert_cred);
+-	return override_cred;
++	return rcu_replace_pointer(current->cred, revert_cred, 1);
+ }
+ 
+ /**
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
