@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-540455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4261A4B0C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 10:01:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13947A4B0D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 10:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C828188F2F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 09:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E36616BF69
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 09:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D41D6DC8;
-	Sun,  2 Mar 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12471D86C3;
+	Sun,  2 Mar 2025 09:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GypIFtvj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="alBn7Xau"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ttqw2z0I"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32D5FC0E;
-	Sun,  2 Mar 2025 09:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEBEFC0E;
+	Sun,  2 Mar 2025 09:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740906067; cv=none; b=Q906tMTYjM3Ns1lWwhRSnlUqTi8JKQK3GZCnkC3mRpN1TFAbX5sfowk7fQ7zADBqgVmrfzKa0MR4L6AMVSPxvU4z9jM9AODV/bWtbZWsignGRyiRBSDwHb24xkDTz/1d5L5xLBT/ctJvnuprZ3UgD0o2cRdPUhw1kkOX7+A4KEI=
+	t=1740907123; cv=none; b=C6nZGxrtq+1rtFS4vIx/6PmKJYLlUcmv7nqvadEJCpR3zJgL08dkuUiMUVSQ5yjlSQeotDmE/onGDviU/6zCXkaMtflAF+IYSaJxSWa+lmhMoFX8ddNrLkqnNnjr+X0RCRPMdFqqS/bPQAEh/Weo41nZtRsdHAwCIKtvccg7Eg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740906067; c=relaxed/simple;
-	bh=C6tq+Dlkj8fuLHJjs2IpPWa9ylx/Xwa5aOmduQBT0QI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g+UhO0SFcpyyWr55WyPDNHuBguWZeePcf+pUK/AgDUHB+GOlMNtztT9Eb6CMnfZb8AyfAwWG5gHGIGyhKPLGmr6WmTVO+9L6BXWiqWUh9v5lxx0qamddbfSKsHGjbz3JdWBKZCsQ4GMgJ9wQk8flpkI7m+bZXGoqpSvzQLCrVSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GypIFtvj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=alBn7Xau; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740906062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQYzc6zsy7BVJfHkAaJxgxJ42ZnaVDHORnyS6oWMR/k=;
-	b=GypIFtvj3hxRXzg7f8uxJTd52Tn5hUkbAILZHWdGc2vHbWpaw6NpWWfSbgWnE8quXPII6/
-	gooHMVln+coU69y9knIULoUTv3E8LdXyRbm87xVjfl+GDduSXt+L3ZNTSRnNmN47EqhQZV
-	mskF0OYBAW7FkMeXlOpq6nluBUIHI7FSBpdTFU2omB0xE/HWoCb1rLNKrlyqUzjCbqBjew
-	yTkTTWsqB9z7khIWAv2tTPWK7NCSzWzCHANdWLG3Ve9pMxLjgSV1XYDrtSCtgErWGkosW3
-	4I9MwwglCLo6jaPxEmAADvaWXZsnO2wU3j6/VGVRJQoZcsYtVpAk9zCtu7I2gw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740906062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQYzc6zsy7BVJfHkAaJxgxJ42ZnaVDHORnyS6oWMR/k=;
-	b=alBn7XauSzoChXOicRdwxPVSOUm7GhEbHyOG/HgPcSK7ruhmsetRdi9lXLNO1ttKxBOIB7
-	M25JGqeVZFo1WtCA==
-To: Hans Zhang <18255117159@163.com>
-Cc: manivannan.sadhasivam@linaro.org, kw@linux.com, kwilczynski@kernel.org,
- bhelgaas@google.com, Frank.Li@nxp.com, cassel@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Zhang
- <18255117159@163.com>
-Subject: Re: [v2] genirq/msi: Add the address and data that show MSI/MSIX
-In-Reply-To: <20250301123953.291675-1-18255117159@163.com>
-References: <20250301123953.291675-1-18255117159@163.com>
-Date: Sun, 02 Mar 2025 10:01:02 +0100
-Message-ID: <87plizdcxd.ffs@tglx>
+	s=arc-20240116; t=1740907123; c=relaxed/simple;
+	bh=BCWIzUYPr0otBX9N7K29gGEj0nj94luEgQ1uEfs4Ipc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vg9fNN3uR374Tpk9HExoqwH4sgl429S4VmCWuNrjMGBANM1qaY31x4i96FymiCzVJViLTYcUr/Jj6jDYisoMhnPzmKo81gtN4v72ERYdV2cWfOTzQTloReyd4rF1P1MhJUamQiBCb8ubM8/XXJmabu/ziYwoCNX7e1Fcl0o+UIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ttqw2z0I; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740907109; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=HzSBbXwNMGob2tgfp9EcarAihO9UwDHktg0BwdEeoQ4=;
+	b=ttqw2z0IDaQ7Tism7KboxGBIu5o0lJPcHane+hQkoCQggp4YH/eJ/qAwwXrpGMLV3WnCvVEG86IqHF+2XNTtIatLEpWZt8lR8pSvWsSik/NA1RCa5E0SUPIrJoZ1nNNwb3dn6CwN+iH65M49wHou7Xf+EdMlDIroGOepWj2uzy8=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQUlzlk_1740906787 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 02 Mar 2025 17:13:08 +0800
+Message-ID: <0fb57eb8-ae5b-4909-9afb-2104766e59e8@linux.alibaba.com>
+Date: Sun, 2 Mar 2025 17:13:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
+To: Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>
+Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linmiaohe@huawei.com, akpm@linux-foundation.org, peterz@infradead.org,
+ jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-3-xueshuai@linux.alibaba.com>
+ <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
+ <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
+ <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
+ <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
+ <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
+ <7eddced6-bf45-44c8-abbf-7d0d541511ab@linux.alibaba.com>
+ <20250302073711.GBZ8QKp1QstGaVGqBR@fat_crate.local>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250302073711.GBZ8QKp1QstGaVGqBR@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hans!
 
-On Sat, Mar 01 2025 at 20:39, Hans Zhang wrote:
-> The debug_show() callback function is implemented in the MSI core code.
-> And assign it to the domain ops::debug_show() creation.
->
-> cat /sys/kernel/debug/irq/irqs/msi_irq_num, the address and data stored
-> in the MSI capability or the address and data stored in the MSIX vector
-> table will be displayed.
 
-So this explains what the patch is doing and what the output is. But it
-fails to explain the _why_. Documentation gives proper guidance:
+在 2025/3/2 15:37, Borislav Petkov 写道:
+> On Sun, Mar 02, 2025 at 03:14:52PM +0800, Shuai Xue wrote:
+>>>>       "mce: Uncorrected hardware memory error in user-access at 3b116c400"
+>>
+>> It is the current message in kill_me_maybe(), not added by me.
+> 
+> Doesn't change the fact that it is not really helpful when it comes to logging
+> all errors properly.
+> 
+>    [ Properly means using a structured log format with the tracepoint and not
+>      dumping it into dmesg. ]
+> 
+> And figuring out what hw is failing so that it can be replaced. No one has
+> come with a real need for making it better, more useful.
+> 
+> You're coming with what I think is such a need and I'm trying to explain to
+> you what needs to be done. But you want to feed your AI with dmesg and solve
+> it this way.
+> 
+> If you wanna do it right, we can talk. Otherwise, have fun.
 
- https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
- https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-changes
+I see. So I am just curious why we define `msg` in `severities`?
 
-> e.g.
-> root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
->  85:          0          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 75497472 Edge      PCIe PME, aerdrv
->  86:          0         30          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021760 Edge      nvme0q0
->  87:        287          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021761 Edge      nvme0q1
->  88:          0        265          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021762 Edge      nvme0q2
->  89:          0          0        177          0          0          0          0          0          0          0          0          0   ITS-MSI 76021763 Edge      nvme0q3
->  90:          0          0          0         76          0          0          0          0          0          0          0          0   ITS-MSI 76021764 Edge      nvme0q4
->  91:          0          0          0          0        161          0          0          0          0          0          0          0   ITS-MSI 76021765 Edge      nvme0q5
->  92:          0          0          0          0          0        991          0          0          0          0          0          0   ITS-MSI 76021766 Edge      nvme0q6
->  93:          0          0          0          0          0          0        194          0          0          0          0          0   ITS-MSI 76021767 Edge      nvme0q7
->  94:          0          0          0          0          0          0          0         94          0          0          0          0   ITS-MSI 76021768 Edge      nvme0q8
->  95:          0          0          0          0          0          0          0          0        148          0          0          0   ITS-MSI 76021769 Edge      nvme0q9
->  96:          0          0          0          0          0          0          0          0          0        261          0          0   ITS-MSI 76021770 Edge      nvme0q10
->  97:          0          0          0          0          0          0          0          0          0          0        127          0   ITS-MSI 76021771 Edge      nvme0q11
->  98:          0          0          0          0          0          0          0          0          0          0          0        317   ITS-MSI 76021772 Edge      nvme0q12
+I perfer to use structured log format with the tracepoint, and we do use it in
+production, but it lacks of process context.
 
-How is this relevant to describe the patch?
+AMD folks add error message for panic errors[1] to help debugging
+in which the EDAC driver is not able to decode.
 
-> root@root:/sys/kernel/debug/irq/irqs#
-> root@root:/sys/kernel/debug/irq/irqs# cat 87
-> handler:  handle_fasteoi_irq
-> device:   0000:91:00.0
-> status:   0x00000000
-> istate:   0x00004000
-> ddepth:   0
-> wdepth:   0
-> dstate:   0x31600200
->             IRQD_ACTIVATED
->             IRQD_IRQ_STARTED
->             IRQD_SINGLE_TARGET
->             IRQD_AFFINITY_MANAGED
->             IRQD_AFFINITY_ON_ACTIVATE
->             IRQD_HANDLE_ENFORCE_IRQCTX
-> node:     0
-> affinity: 0
-> effectiv: 0
-> domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
->  hwirq:   0x4880001
->  chip:    ITS-MSI
+For non-fatal errors, is it reasonable to assume that all users are using
+tracepoint-based tools like Rasdaemon?
 
-This output is from a pre 6.11 kernel...
+[1]https://lore.kernel.org/all/20220405183212.354606-1-carlos.bilbao@amd.com/
 
->   flags:   0x20
->              IRQCHIP_ONESHOT_SAFE
->  msix:
->   address_hi: 0x00000000
->   address_lo: 0x0e060040
->   msg_data:   0x00000001
+> 
+>> 3. We need to identify and implement potential improvements.
+>>
+>> "mce: Uncorrected hardware memory error in user-access at 3b116c400"
+>>
+>> is *nothing* but
+>>
+>> "mce: Action required: data load in error recoverable area of kernel"
+>>
+>> helps.
+> 
+> I don't think you've read what I wrote but that's ok. If you think it helps,
+> you can keep it in your kernels.
+> 
 
-For demonstration it's enough to stop here, no?
-  
-> +static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-> +				  struct irq_data *irqd, int ind)
-> +{
-> +	struct msi_desc *desc;
-> +	bool is_msix;
-> +
-> +	desc = irq_get_msi_desc(irqd->irq);
+Fine, I could drop patch 1 and 2 in next version.
 
-Move this up to the declaration.
-
-> +	if (!desc)
-> +		return;
-> +
-> +	is_msix = desc->pci.msi_attrib.is_msix;
-
-That's not valid for non PCI MSI interrupts.
-
-This function is used for all types of MSI interrupts. So for non PCI
-MSI interrupts this will output random garbage. Just print the address
-and be done with it. The MSI variant is visible from the chip name on
-current kernels. It's either ITS-PCI-MSI or ITS-PCI-MSIX and not
-ITS-MSI.
-
-> +	seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-> +	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
-> +	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
-> +	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
-> +}
-> +
->  static const struct irq_domain_ops msi_domain_ops = {
->  	.alloc		= msi_domain_alloc,
->  	.free		= msi_domain_free,
->  	.activate	= msi_domain_activate,
->  	.deactivate	= msi_domain_deactivate,
->  	.translate	= msi_domain_translate,
-> +	.debug_show     = msi_domain_debug_show,
-
-This does not build when CONFIG_GENERIC_IRQ_DEBUGFS=n.
-
-Thanks,
-
-        tglx
+Thanks.
+Shuai
 
