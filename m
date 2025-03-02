@@ -1,174 +1,176 @@
-Return-Path: <linux-kernel+bounces-540501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D98A4B161
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:04:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDBAA4B148
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984493A49B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:04:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2B47A6A56
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAE81DE4DB;
-	Sun,  2 Mar 2025 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A861DE3BC;
+	Sun,  2 Mar 2025 11:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="z3Rip9CW"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jNFLVHYG"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A4F4C85
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 12:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC82623F362;
+	Sun,  2 Mar 2025 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740917047; cv=none; b=BAtXhUKdUPqulXLgIPraVBf8NlZyheSHHSGcWibi2iriB7hTWVAPZNZWtShVbKkF7NRybw/wU25gMOk0FMEJ+wxDjfqQ233FSfEteOzNpI47+RyyCDgU7aTCZeOBcGcmRJsRFnOvSBvAyYARb7vgWKgThO1SShJ/qpf97ymgOug=
+	t=1740916354; cv=none; b=ddwvfllA8vIP1duhkREtPx4zmEP2/yInQxGq5fLE0klOurMcaBD7G2xRnSe921ZXzr59r/M2qrXaQfapol1os2WMRSDI2ZmuyA2DwcpAzJLj+MQtpM/RHVurrJRumaPD9m9O6ONRIptrfJu9GQgJJ1khL4Uf2Lufd5NOiJl5O1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740917047; c=relaxed/simple;
-	bh=rUSK+MPqWK7JW6t+Kl156HmvY1C0gKinUp6cPdJpfY8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pZJmt2v55M7cDpwfYOA/C6q9KZo0+FOsjbYBgf551w/9n6XacQgqcYhKkg7GvGtw1k+nMFDfxuWXsgBVhUmot4UXHP6QWI3mlydMnu7AnUSGbVkJIpTsvhZNy+tPDz2Q4RiHj48TkXRChYITTavvktYre05EtRLbmcdsEaFnARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=z3Rip9CW; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740916738; bh=MP9cTQS18F1Nay+dJn0ruW2FP+4xeNvoNS0Kd03Zylk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=z3Rip9CW2RC7xF2B8NiDp0eUWN1emUBLUAWRKGIg+fdiqRj5Uf5UWW20sF/BozdCm
-	 L0Wco+eIihMqZtQAsLbaDjfZ3iGdlNTrfzzmCBICoLLoJVSQ8h2baxmnSqRHnESG08
-	 x5is8BkBBSYIMi7OZZKcXDmbF5pNyzObaSK/y6DY=
-Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020.. ([240e:3b1:d00c:8e21:ca33:76fa:6eaa:ba4e])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id CEEA88A1; Sun, 02 Mar 2025 19:51:46 +0800
-X-QQ-mid: xmsmtpt1740916306tzgkvdr02
-Message-ID: <tencent_E9A9DFA5B2C6059DAF39777A40FB86753606@qq.com>
-X-QQ-XMAILINFO: MJf32pulH481pe77k9pFMDKMt8LQXajXPlG3FPBFZ+6X9Gh4bexTU+KoZf1uVP
-	 eCg1IPJA5xFTOpQdvkJRlJr0HcarFPKF3IFP2kFOK75DJ6JxXrzfMGxMElqsO2H0RfEi/rLr9H4m
-	 xdYxfFJ5mTtO+zEhmPLH8wnwiDcZFJi3Xq+8GpAkLEcmEwh+VLlQ107L3Tzt21Cj5HCrTB450XY0
-	 qPxHcGwJGtbKfBjGCyDqj8lga/izpeHTnsr65DFJFzt85eYLGypiiQnFLRV6kaB1VdVV+t2DczBR
-	 3xFQCvHCWS4GXmVFh1jOWpqL/waUKfzqz0LBBeExGpItERE/S3NYIWbkw9SjA3zbWlkrzr+qABTD
-	 KcW1W1uvW/ibuLNcjPRLEGUjPD7KLWSFG+IyBvQpa4E+562vYw1u1nIFockyMYYvAWImXFg3gPwG
-	 ph1pFiiuI/rJ4RDgFgE3g+z7iOuepEJ7M2ls60DO0I3YMhnqU/GoaC8EjNB8Ho8U8PAVoWX42DQl
-	 GE6pMf/qYxF+aHbeHiU5GpAqCfKtj/5SPUPJo7Giu7PKn4NPTYN3eUpGJBYDoKIO2TtfWxB8efNF
-	 +lo9n0fHqGwRxwh245Kff7hrW5La/kLe2TV44No1EqxyWbaQYVzMx5sTnsdnfXN9ycVEmYosSgWH
-	 lj/7szLldexy8FT3hAdrpoBkKwC1ZaiweuOfhlgT3mkDa2gLAAYvaP/Hokxiif9o3yjMQwbGkaF8
-	 Vqon7xl/d7LWshH1XrbmWyd/E0uqI20ChinC4uuu3FYwGbMbq9p0scNiurpKcsWs9XJIIDJ0DF0I
-	 wmCayHc20zJK3GqFQm59pLXVuez7mRDhAEyjUy6Ds+etO4Y7aOpDf89tvgxRiVy81MgdlobjKMHR
-	 GdfMS7JDUydaaH2HbZUM17KS6fVTlHbnWIHnDmk+UiiRVjEgHB1fRq37/mja1GjMyLUKHTqYwGp0
-	 Crd7jglu1cSjnSdoKYbnaZ2ihxi2KJcAy5YJWLuue0/wuzymq3+Q==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Guangbo Cui <2407018371@qq.com>
-To: lyude@redhat.com
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	benno.lossin@proton.me,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	linux-kernel@vger.kernel.org,
-	longman@redhat.com,
-	mingo@redhat.com,
-	ojeda@kernel.org,
-	peterz@infradead.org,
-	rust-for-linux@vger.kernel.org,
-	tglx@linutronix.de,
-	tmgross@umich.edu,
-	wedsonaf@gmail.com,
-	will@kernel.org
-Subject: Re: [PATCH v9 6/9] rust: sync: Add SpinLockIrq
-Date: Sun,  2 Mar 2025 19:51:46 +0800
-X-OQ-MSGID: <20250302115146.59946-1-2407018371@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250227221924.265259-7-lyude@redhat.com>
-References: <20250227221924.265259-7-lyude@redhat.com>
+	s=arc-20240116; t=1740916354; c=relaxed/simple;
+	bh=ZZoLR+4gRG2huYnIBWUOHqpuRemTLVgz35uxJX22fXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kHQbXH9fGSnEa+2lAZSt+fJqnqVhsZ3TkWW0arN3Y8CmK4xLR00/Pr9A5IeVGZ2ytTzPB+CysUPcXOAKUc4wRykBOaJ0UeUMJGJqGIhjLdbFC1l1n+eBnY6iQI9mUjkg0F7IZkCXodHAJ5XSGmw8VYnvXlI6DkRFYrkdjdCGkyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jNFLVHYG; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=p1wO1tJNUWST5/aSO5B+d0Qst9czfwzaKgHwJnlCm8U=; b=jNFLVHYGlFE6ZGeuKX7kSTL6m3
+	5TMkL2oYxZW/PF9kfo2/t7Y52OJYoAjimFiuALIFyeHLYGC12FOM+bUmkSUcdqN9UUTYStk3sfM6q
+	b3oqJHViq35eiD9g0VW6Fw+LOSBBX4KP/ffom4beXhI7HjykR3uWdLTXtc+BW7sTCrTob9yWo/tAR
+	RCRFF4z8ZmEzqN1pjrpqUR1LYCZYklM15XDvRED48m8dlTMsuKhOMeynb/TbkDwqEyU5WVgPo0dV0
+	1+rfixyDTntDyfH+0m7LPAmDfduBwJm+BiloqDrdr4DaDfHDwfSo3qjHSpjyslEq9kF/ZhWFhOn0R
+	rYzKOOAA==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tohrn-0001yN-P2; Sun, 02 Mar 2025 12:52:19 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Yao Zi <ziyao@disroot.org>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for RK3528
+Date: Sun, 02 Mar 2025 12:52:18 +0100
+Message-ID: <116104909.nniJfEyVGO@diego>
+In-Reply-To: <3f0cd767-1fd8-4c65-b8b4-e948288cd02a@kwiboo.se>
+References:
+ <20250228064024.3200000-1-jonas@kwiboo.se> <Z8GT3rUEyXrTUgtJ@pie.lan>
+ <3f0cd767-1fd8-4c65-b8b4-e948288cd02a@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-> +/// A kernel `spinlock_t` lock backend that is acquired in interrupt disabled contexts.
-> +pub struct SpinLockIrqBackend;
-> +
-> +/// A [`Guard`] acquired from locking a [`SpinLockIrq`] using [`lock()`].
-> +///
-> +/// This is simply a type alias for a [`Guard`] returned from locking a [`SpinLockIrq`] using
-> +/// [`lock_with()`]. It will unlock the [`SpinLockIrq`] and decrement the local processor's
-> +/// interrupt disablement refcount upon being dropped.
-> +///
-> +/// [`Guard`]: super::Guard
-> +/// [`lock()`]: SpinLockIrq::lock
-> +/// [`lock_with()`]: SpinLockIrq::lock_with
-> +pub type SpinLockIrqGuard<'a, T> = super::Guard<'a, T, SpinLockIrqBackend>;
-> +
-> +// SAFETY: The underlying kernel `spinlock_t` object ensures mutual exclusion. `relock` uses the
-> +// default implementation that always calls the same locking method.
-> +unsafe impl super::Backend for SpinLockIrqBackend {
-> +    type State = bindings::spinlock_t;
-> +    type GuardState = ();
-> +
-> +    unsafe fn init(
-> +        ptr: *mut Self::State,
-> +        name: *const crate::ffi::c_char,
-> +        key: *mut bindings::lock_class_key,
-> +    ) {
-> +        // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
-> +        // `key` are valid for read indefinitely.
-> +        unsafe { bindings::__spin_lock_init(ptr, name, key) }
-> +    }
-> +
-> +    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
-> +        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
-> +        // memory, and that it has been initialised before.
-> +        unsafe { bindings::spin_lock_irq_disable(ptr) }
-> +    }
-> +
-> +    unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-> +        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
-> +        // caller is the owner of the spinlock.
-> +        unsafe { bindings::spin_unlock_irq_enable(ptr) }
-> +    }
-> +
-> +    unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
-> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
-> +        let result = unsafe { bindings::spin_trylock_irq_disable(ptr) };
-> +
-> +        if result != 0 {
-> +            Some(())
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +
-> +    unsafe fn assert_is_held(ptr: *mut Self::State) {
-> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
-> +        unsafe { bindings::spin_assert_is_held(ptr) }
-> +    }
-> +}
+Am Sonntag, 2. M=C3=A4rz 2025, 12:14:48 MEZ schrieb Jonas Karlman:
+> Hi Yao Zi,
+>=20
+> On 2025-02-28 11:46, Yao Zi wrote:
+> > On Fri, Feb 28, 2025 at 06:40:10AM +0000, Jonas Karlman wrote:
+> >> Add pinctrl and gpio nodes for RK3528 and import rk3528-pinctrl.dtsi
+> >> from vendor linux-6.1-stan-rkr5 kernel with the hdmi-pins-idle node
+> >> removed due to missing label reference to pcfg_output_low_pull_down.
+> >>
+> >> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> >> ---
+> >> This was mostly imported from vendor kernel, however the main commit [=
+1]
+> >> list 28 signed-off-by tags, unclear who I should use as author and what
+> >> signed-off-by tags to include.
+> >>
+> >> [1] https://github.com/rockchip-linux/kernel/commit/c17d6325959f0ec1af=
+901e8a17919163454190a2
+> >> ---
+> >>  .../boot/dts/rockchip/rk3528-pinctrl.dtsi     | 1397 +++++++++++++++++
+> >>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   82 +
+> >>  2 files changed, 1479 insertions(+)
+> >>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-pinctrl.dtsi
+> >>
+> >=20
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boo=
+t/dts/rockchip/rk3528.dtsi
+> >> index 0fb90f5c291c..d3e2a64ff2d5 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> >> @@ -4,8 +4,10 @@
+> >>   * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> >>   */
+> >> =20
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >>  #include <dt-bindings/interrupt-controller/irq.h>
+> >> +#include <dt-bindings/pinctrl/rockchip.h>
+> >>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+> >>  #include <dt-bindings/reset/rockchip,rk3528-cru.h>
+> >> =20
+> >> @@ -17,6 +19,11 @@ / {
+> >>  	#size-cells =3D <2>;
+> >> =20
+> >>  	aliases {
+> >> +		gpio0 =3D &gpio0;
+> >> +		gpio1 =3D &gpio1;
+> >> +		gpio2 =3D &gpio2;
+> >> +		gpio3 =3D &gpio3;
+> >> +		gpio4 =3D &gpio4;
+> >>  		serial0 =3D &uart0;
+> >>  		serial1 =3D &uart1;
+> >>  		serial2 =3D &uart2;
+> >> @@ -166,6 +173,11 @@ cru: clock-controller@ff4a0000 {
+> >>  			#reset-cells =3D <1>;
+> >>  		};
+> >> =20
+> >> +		ioc_grf: syscon@ff540000 {
+> >> +			compatible =3D "rockchip,rk3528-ioc-grf", "syscon";
+> >> +			reg =3D <0x0 0xff540000 0x0 0x40000>;
+> >> +		};
+> >> +
+> >>  		uart0: serial@ff9f0000 {
+> >>  			compatible =3D "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> >>  			reg =3D <0x0 0xff9f0000 0x0 0x100>;
+> >> @@ -264,5 +276,75 @@ saradc: adc@ffae0000 {
+> >>  			#io-channel-cells =3D <1>;
+> >>  			status =3D "disabled";
+> >>  		};
+> >> +
+> >> +		pinctrl: pinctrl {
+> >> +			compatible =3D "rockchip,rk3528-pinctrl";
+> >> +			rockchip,grf =3D <&ioc_grf>;
+> >> +			#address-cells =3D <2>;
+> >> +			#size-cells =3D <2>;
+> >> +			ranges;
+> >=20
+> > I doubt whether the pincontroller should be placed under simple-bus:
+> > without a reg property, it doesn't look like a MMIO device.
+> >=20
+> > Actually it is, although all the registers stay in the ioc grf. Maybe
+> > it should be considered as child of the grf.
+>=20
+> This follows how pinctrl was added for RK3576 and what is proposed for
+> RK3562 [2]. I have too little knowledge to know if this needs to change
+> or if this should follow similar SoCs.
+>=20
+> [2] https://lore.kernel.org/r/20250227111913.2344207-15-kever.yang@rock-c=
+hips.com
 
-It would be nice to add `SpinLockIrqBackend` to `global_lock`.
+The reg address shouldn't matter here I think.
 
----
- rust/kernel/sync/lock/global.rs | 3 +++
- 1 file changed, 3 insertions(+)
+The "soc"-bus describes the elements contained in the soc (surrounding the
+cpu cores) and the pinctrl controller definitly is part of the soc itself.
 
-diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
-index 480ee724e3..60b88f362b 100644
---- a/rust/kernel/sync/lock/global.rs
-+++ b/rust/kernel/sync/lock/global.rs
-@@ -298,4 +298,7 @@ macro_rules! global_lock_inner {
-     (backend SpinLock) => {
-         $crate::sync::lock::spinlock::SpinLockBackend
-     };
-+    (backend SpinLockIrq) => {
-+        $crate::sync::lock::spinlock::SpinLockIrqBackend
-+    };
- }
--- 
+So when looking at the scope, it does belong there and also the
+ gpio-controller elements do have mmio addresses :-)
 
-Best regards,
-Guangbo Cui
+
+Heiko
+
 
 
