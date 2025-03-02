@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-540476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DDCA4B120
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:15:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2399A4B122
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502FD3A4167
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3190C1889F96
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4711DF735;
-	Sun,  2 Mar 2025 11:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E10C1C5485;
+	Sun,  2 Mar 2025 11:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="G2oeUQ0S"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X2euvqAU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD92179BC
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D66E1CAA90
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740914095; cv=none; b=ue3+twPAjdCZuS6QN1dfWOn5JTnHCfT1plpfD1mBfQlXybqZYuX6ClgH2BC5z8eg4JS8AJ20dv1Gqay6VYY5woIF6MPf/38wmVJif8E8YEbLjflYJ7IZ3KycI5bCN2m2ZgMMuWS2Vgzez220MB/2f/3pT4r05vHIPPcmteRAa88=
+	t=1740914327; cv=none; b=tlnQu+wyouPX9uW3WCSG6SwyDv38s3ls6hS+/aQGb3UFsXULuaJPwb96WMzHqwQvGW6hMH+lXWa+jwrwf3Tz8pMnjyxK1iA4l1Gr98k/8ymGBrWGe8avL9rXWe7mrR8peYIh4/7LBlUNAhy3CpznPSU89LfYYYoXr8iGLkp/9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740914095; c=relaxed/simple;
-	bh=yCZBPiZpi5kycYTBGCYambADW5e5sm0mo0hX/9w6Gc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImKXvqfh4bl9QzX5FFFq00pOLgbM1EFEVESUg3B9GbRCtfc7Efe4MTh82of8r/uRjBdf61ZrlCNYe8jemP05HGU6S1tC2uaq3zGJ93fdRIHfcK0xXwOe9tISVJbtlpF4UnEzTC0FMRAsSgiAW84B/YUu59N090zu2hcCSrMxMRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=G2oeUQ0S; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1740914093;
- bh=4aAL9kjHi8d7xZ8Th1ELQbazXnG5IgJFjgkhzp2InRQ=;
- b=G2oeUQ0SRsoK5jDzK8rxqS06+Y/hg/uasvwkzyfD4Zw3YMe/T8WHvOGwWDfo4oTOla6FAohM3
- dv3pQh1bTBb5++h/gVO7AgQP9ZCxP7QJvqcWW2zucmUywcVBH+9SuQUrZ5IpOfMJpWrWuHXm0OE
- tQqH4NqVy/qGCslzQ9Psg+1M5unJYkL6OQlwAkHzvU/T2r28XhzE/I4tLU8f3ZUeHdf4iZxKvyP
- MKhj1e3APpTIiVOuSyt9lJPvmlBgk+e1UOwAEkfLoyYv8y88bJ0xdfVoXqGCDA93ZE98b2bbE6k
- 38QhLCmusARlihg9Ie0AbNkR1u1XbF3HQ7va4rmbH2XA==
-X-Forward-Email-ID: 67c43dac4a29b97c03d4dc5d
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <3f0cd767-1fd8-4c65-b8b4-e948288cd02a@kwiboo.se>
-Date: Sun, 2 Mar 2025 12:14:48 +0100
+	s=arc-20240116; t=1740914327; c=relaxed/simple;
+	bh=MZzFYQuosliF1iyzElLVnlzpUwr2kwZXUyaXkHxYMig=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=onIFIFVpvxfzawnajUXuApHPLK+gXU5/qEeW0HQte36kfSyWAp8RmAzv/vLVTm6Qx9N+HaWirRcUuTGOtOBmZuM76Xe88oDUHUScQe71HtDq6hBOubXf/qIJ7ok+H9knOyE9oE0upz9/sc5AVALmm3ZfCtafeL1FUhmodul0mw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X2euvqAU; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740914327; x=1772450327;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=MZzFYQuosliF1iyzElLVnlzpUwr2kwZXUyaXkHxYMig=;
+  b=X2euvqAUr9pTTafyGQeFVaCTaofJxOrViHXc70mOK24LnrflkpCH9KGO
+   TwjCS8l3KTGz7jjx7uKV5InAaVkAXxR8eylWXSA4Jwy+FPuoEBC+WqCoJ
+   VPwzNp9XjPc1W9TzY0QF9KouhLnKO9ZxET21iComKIhWKfo/LDVw13kpk
+   cCckX0ErTb8jSxsUT+aZmFT9uyWCi1LLA4qC1KZh4V+1sXeJ2GhEGkPqQ
+   WMIYMHB0WUcp46QEKa/W1u3mGfi4ejC21OENaajxr+vyaBc/M2PVehwKh
+   XDz1WU67wgm05GKK1hRL3Aj+p8rtNTUShJDVifu/dt6GEuQjd8g/YYGlm
+   Q==;
+X-CSE-ConnectionGUID: RXX1wH6ER6qYdQ4B2/9PNA==
+X-CSE-MsgGUID: ZuG/k+HpQHOdqHcetPFZBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41496324"
+X-IronPort-AV: E=Sophos;i="6.13,327,1732608000"; 
+   d="scan'208";a="41496324"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 03:18:46 -0800
+X-CSE-ConnectionGUID: Qx5FlSpeS5KsKDR155XR5Q==
+X-CSE-MsgGUID: IiidHD+rSGCyF81i/2LEUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118293338"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 02 Mar 2025 03:18:44 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tohL4-000HH8-2N;
+	Sun, 02 Mar 2025 11:18:35 +0000
+Date: Sun, 2 Mar 2025 19:18:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
+	Michael Kelley <mikelley@microsoft.com>
+Subject: drivers/hv/channel.c:597: warning: Function parameter or struct
+ member 'size' not described in 'request_arr_init'
+Message-ID: <202503021934.wH1BERla-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for
- RK3528
-To: Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
- <20250228064024.3200000-5-jonas@kwiboo.se> <Z8GT3rUEyXrTUgtJ@pie.lan>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <Z8GT3rUEyXrTUgtJ@pie.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Yao Zi,
+Hi Saurabh,
 
-On 2025-02-28 11:46, Yao Zi wrote:
-> On Fri, Feb 28, 2025 at 06:40:10AM +0000, Jonas Karlman wrote:
->> Add pinctrl and gpio nodes for RK3528 and import rk3528-pinctrl.dtsi
->> from vendor linux-6.1-stan-rkr5 kernel with the hdmi-pins-idle node
->> removed due to missing label reference to pcfg_output_low_pull_down.
->>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->> This was mostly imported from vendor kernel, however the main commit [1]
->> list 28 signed-off-by tags, unclear who I should use as author and what
->> signed-off-by tags to include.
->>
->> [1] https://github.com/rockchip-linux/kernel/commit/c17d6325959f0ec1af901e8a17919163454190a2
->> ---
->>  .../boot/dts/rockchip/rk3528-pinctrl.dtsi     | 1397 +++++++++++++++++
->>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   82 +
->>  2 files changed, 1479 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-pinctrl.dtsi
->>
-> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> index 0fb90f5c291c..d3e2a64ff2d5 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
->> @@ -4,8 +4,10 @@
->>   * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
->>   */
->>  
->> +#include <dt-bindings/gpio/gpio.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>  #include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/pinctrl/rockchip.h>
->>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
->>  #include <dt-bindings/reset/rockchip,rk3528-cru.h>
->>  
->> @@ -17,6 +19,11 @@ / {
->>  	#size-cells = <2>;
->>  
->>  	aliases {
->> +		gpio0 = &gpio0;
->> +		gpio1 = &gpio1;
->> +		gpio2 = &gpio2;
->> +		gpio3 = &gpio3;
->> +		gpio4 = &gpio4;
->>  		serial0 = &uart0;
->>  		serial1 = &uart1;
->>  		serial2 = &uart2;
->> @@ -166,6 +173,11 @@ cru: clock-controller@ff4a0000 {
->>  			#reset-cells = <1>;
->>  		};
->>  
->> +		ioc_grf: syscon@ff540000 {
->> +			compatible = "rockchip,rk3528-ioc-grf", "syscon";
->> +			reg = <0x0 0xff540000 0x0 0x40000>;
->> +		};
->> +
->>  		uart0: serial@ff9f0000 {
->>  			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
->>  			reg = <0x0 0xff9f0000 0x0 0x100>;
->> @@ -264,5 +276,75 @@ saradc: adc@ffae0000 {
->>  			#io-channel-cells = <1>;
->>  			status = "disabled";
->>  		};
->> +
->> +		pinctrl: pinctrl {
->> +			compatible = "rockchip,rk3528-pinctrl";
->> +			rockchip,grf = <&ioc_grf>;
->> +			#address-cells = <2>;
->> +			#size-cells = <2>;
->> +			ranges;
-> 
-> I doubt whether the pincontroller should be placed under simple-bus:
-> without a reg property, it doesn't look like a MMIO device.
-> 
-> Actually it is, although all the registers stay in the ioc grf. Maybe
-> it should be considered as child of the grf.
+First bad commit (maybe != root cause):
 
-This follows how pinctrl was added for RK3576 and what is proposed for
-RK3562 [2]. I have too little knowledge to know if this needs to change
-or if this should follow similar SoCs.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ece144f151ac7bf8bb5b98f7d4aeeda7a2eed02a
+commit: f83705a51275ed29117d46e1d68e8b16dcb40507 Driver: VMBus: Add Devicetree support
+date:   1 year, 11 months ago
+config: x86_64-buildonly-randconfig-004-20241224 (https://download.01.org/0day-ci/archive/20250302/202503021934.wH1BERla-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503021934.wH1BERla-lkp@intel.com/reproduce)
 
-[2] https://lore.kernel.org/r/20250227111913.2344207-15-kever.yang@rock-chips.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503021934.wH1BERla-lkp@intel.com/
 
-Regards,
-Jonas
+All warnings (new ones prefixed by >>):
 
-> 
-> Best regards,
-> Yao Zi
+>> drivers/hv/channel.c:597: warning: Function parameter or struct member 'size' not described in 'request_arr_init'
 
+
+vim +597 drivers/hv/channel.c
+
+3e7ee4902fe6996 drivers/staging/hv/Channel.c Hank Janssen   2009-07-13  588  
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  589  /**
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  590   * request_arr_init - Allocates memory for the requestor array. Each slot
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  591   * keeps track of the next available slot in the array. Initially, each
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  592   * slot points to the next one (as in a Linked List). The last slot
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  593   * does not point to anything, so its value is U64_MAX by default.
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  594   * @size The size of the array
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  595   */
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  596  static u64 *request_arr_init(u32 size)
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09 @597  {
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  598  	int i;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  599  	u64 *req_arr;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  600  
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  601  	req_arr = kcalloc(size, sizeof(u64), GFP_KERNEL);
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  602  	if (!req_arr)
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  603  		return NULL;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  604  
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  605  	for (i = 0; i < size - 1; i++)
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  606  		req_arr[i] = i + 1;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  607  
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  608  	/* Last slot (no more available slots) */
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  609  	req_arr[i] = U64_MAX;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  610  
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  611  	return req_arr;
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  612  }
+e8b7db38449ac5b drivers/hv/channel.c         Andres Beltran 2020-11-09  613  
+
+:::::: The code at line 597 was first introduced by commit
+:::::: e8b7db38449ac5b950a3f00519171c4be3e226ff Drivers: hv: vmbus: Add vmbus_requestor data structure for VMBus hardening
+
+:::::: TO: Andres Beltran <lkmlabelt@gmail.com>
+:::::: CC: Wei Liu <wei.liu@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
