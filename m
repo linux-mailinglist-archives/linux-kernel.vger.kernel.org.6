@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-540185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABF7A4AF26
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:44:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14707A4AF36
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 05:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3480C7A800D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9143B4AE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 04:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BC71581F8;
-	Sun,  2 Mar 2025 03:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE21187554;
+	Sun,  2 Mar 2025 04:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hY8T9ApX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ZRqsLXIo"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594F62B2D7;
-	Sun,  2 Mar 2025 03:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6837F2AE74;
+	Sun,  2 Mar 2025 04:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740887061; cv=none; b=kBJc2ue46cRdPwcbP15sxW2vrDXRNpa3yizOlAg5I3+/AoZ7oh4i6WhDOLRz7aUqwc5fEyVN+Cqpq15RdwDdLfVy9xaOaS4qKL8Ex7nnzgYkFnDdzap7kPzckADPereOS+/8czc26E9VvvqhyQhm0sgmLP9qRwrcb6/Cifern1w=
+	t=1740888584; cv=none; b=eQumugZqqGrIfqxvtH2NxOFoJRcpZ4rtENIUrh2vmKvFaAQ1M6hJkJYEqB+AC/fj/golp/HJ7INB7LthS21THzcA69E6zWn5o39NUjfgpa/QJ6NBEoO2dchWVjU8actIzBsUyXxaec+2rlyR60n7atGXf8TBt5a6iuhYj+Ijj+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740887061; c=relaxed/simple;
-	bh=m3N4VQ/oe6q2C/cxszgUZu9Og5nAv5g4t/VlK/KxkVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbq253OW6sWbnrTNQCVLCZjdW3ovSVsKluMcZ0Iw8yFBC452A1ixLUzX7h555eQp9pWfh4vMFGm3vfZNbXMm53SnP8551qctqhTU1jSDtxxhgDyb6Ke8lP0kmotyW/9V1C4768WZ2uzwZSiboxuaxUDgY7ImIppbeMHLD1YbkAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hY8T9ApX; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740887059; x=1772423059;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=m3N4VQ/oe6q2C/cxszgUZu9Og5nAv5g4t/VlK/KxkVI=;
-  b=hY8T9ApXGsQafUP6wOMdO2jH29agq74h7F9KcVPAVt0j4/5R3i9uxYKh
-   b6xpPsD7/T+SuGcMRYIEIsunMWrVYB8xAzpQx7YGYoHnTCCnMyHnTgnB1
-   wtOo/dRUCNDSgcf2aFKay6AbOhidfZ/yrs+m7/qEzFlWNVbFuD1Kj3uD2
-   zvnOMzxWwTLxdGnMcTgchdVzY1exp44jx4ftr6Yyh4j35kG5ITPygu7J2
-   s6hwk4aOHmjSicxE8iOLCS19dz+TDfZ54G6j8wN6XpsEFtNA1XrVhvkNP
-   SrpXgt3ABYA/eTxLwxznQ4OHWe34cQ+qmsVxSqLsVuqhPgI6sPJZSAOmx
-   w==;
-X-CSE-ConnectionGUID: UBpKiwJKTmipPfzZHeNIZw==
-X-CSE-MsgGUID: RqKUJ26KRryq2x2I7Air2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41905486"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41905486"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 19:44:18 -0800
-X-CSE-ConnectionGUID: HXhVAiSRSJqyyC01ZRIg1A==
-X-CSE-MsgGUID: wEDPsAapQt+6rQTrafEGGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="118371674"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 01 Mar 2025 19:44:14 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toaFA-000H0c-0N;
-	Sun, 02 Mar 2025 03:44:03 +0000
-Date: Sun, 2 Mar 2025 11:42:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, linus.walleij@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>
-Subject: Re: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
-Message-ID: <202503021137.LAkq3bMU-lkp@intel.com>
-References: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
+	s=arc-20240116; t=1740888584; c=relaxed/simple;
+	bh=rUYI6KbrqNMFcVdgzh0uXQDar/zw7KHU+wXGfZAj9mM=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=ULDKU5b4opCfbqoqiT8DpFRT7GXVd/RJ8nHkuwXbKtTcGRIga0mDYj8vr3+CvjBhb63QRboqhNEzL217KWpYbb6Ici/1Wx2l7qVUMRrDgtW8VfLEGjzqI+gj0THQFSi1gNUjegtwVacx5Qsfid7NV5pYSkkXQ9hznTLgK9tUuAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ZRqsLXIo; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1740888569;
+	bh=/oNzA+rBYGRKTr9cqHP8TnoIYKLYQLPKVdnjgQ3dPGk=;
+	h=From:To:Cc:Subject:Date;
+	b=ZRqsLXIoJdo9VZvcZD2WO6KROWiBwcoSW0G6Hwl3ZVAOrtNA6iLqkjGWiz3Hlo1NE
+	 6rxBdo2LtCTCuAAqsI8r0o0T2QV1XPCtD8qDTvVt5SG9zrjsjXQEqQoK37JARMAF8h
+	 W/I0c2DNSTbesSW9CvZ6nodnQtT5eSSzliOJxhtQ=
+Received: from localhost.localdomain ([223.74.103.43])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id AF389E6A; Sun, 02 Mar 2025 11:43:51 +0800
+X-QQ-mid: xmsmtpt1740887031tewsm34x2
+Message-ID: <tencent_370DBB5BD8EF699EC030ACA74BCB440FFA0A@qq.com>
+X-QQ-XMAILINFO: Nte9/BsRzcszFGXiHFU7artbynl1ZqkwsV/bllGV/PxA5wYl9JeHhHD6rUydvW
+	 MHJZJoiwrOpWzFqLSbrxr7O7RqW2zD/Oo6VoopAAQdeAm8ciXebcRkidioBnyrTeVIxL+d+tTEHH
+	 Xy++PpPVkFnuQVzhvq80oWu01Fuz1Yo9LB2kVBQWr+RPsuLq1fmFXdGPc/nHnx//+UQqg4p3goOI
+	 nbx09QlJ7oa8QXAnOqDWlZ7g5AN/KdErg6C6lX4abxhsD9UbXlN6zRYkyLcEKmswpovs3t+/xBor
+	 yK9sajG0qLDpzhQN74xyzmrbwFWJqdzgjx5HRFRmWaf0Tt/Bl3qBHNsT7o8ymrsCcolaOFSTcURS
+	 5uzux2OiPscFcxmJvW0mi2ExI+qDbItNs37zUkeX4uxibsYaMeYz0rirEHeJE8eOZ6bplLWuvtxU
+	 ZUB2lr93sVzifIveYeb60/jbYMpq7LQ3GHICHwpldlRRM9WMzjinL7Bi2f1XdtZA22vHsvkLL5Ef
+	 6fN4gCBuRg5uDDpHVy7cQ42YdfyvjhTIX8i2R7TJcD7UZ8G5LWwqyZRoT5qCb7DpSVR/gnqFzl3K
+	 h30zsWj4Hnmu0bsfcn98X0hq4O7HleMxHtWWK3cb/34Rr/DeWBOPq+VQsPOUx/C6jMzCU/OFGKcp
+	 KhrcDBPtwk72LTE+uaxXWI2f/XXsZYNoRznWnlHk9ifMjFvemHrMsVS43ky4QbuFLQ1jj4xvPT54
+	 JxXe1MQq0Vz8eK2tBWyBb3EIqOhTdUej/WRVPlzmdWr9Hkow1ybUApKtM4/9h/vNRgIvu3zhHxlq
+	 77MfpBjwJdLsdkAdzcbZQtxkqMt+XDA18WMJAdjAzHY/tHlMmUOEp7Rovelqne0x6sJl616fX0ak
+	 I20H8UTAvtJV1WfL07wZrBAful948b7pFQOpWLX6qAsvBrj/cW65zxozx0NpPAINeRPlbnsDtH2J
+	 5288X2klnJG9obwnMf3eWXDKqYyr/KPu+H+ti7cdOcxWtZrFDohv5DocsHuGwErxC1rxhgtIYNkU
+	 DGTdY0VSJZa+K0aQpy7GpxClmwBGOZeCQMIeyLhgpEaDDlGWDR
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: xinghuo.chen@foxmail.com
+To: jdelvare@suse.com
+Cc: linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jingfelix@hust.edu.cn,
+	Xinghuo Chen <xinghuo.chen@foxmail.com>
+Subject: [PATCH] hwmon: fix a NULL vs IS_ERR() check in xgene_hwmon_probe()
+Date: Sat,  1 Mar 2025 22:43:39 -0500
+X-OQ-MSGID: <20250302034339.49430-1-xinghuo.chen@foxmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228165749.3476210-1-pratap.nirujogi@amd.com>
 
-Hi Pratap,
+From: Xinghuo Chen <xinghuo.chen@foxmail.com>
 
-kernel test robot noticed the following build warnings:
+The devm_memremap() function returns error pointers on error,
+it doesn't return NULL.
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next linus/master v6.14-rc4 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Xinghuo Chen <xinghuo.chen@foxmail.com>
+---
+ drivers/hwmon/xgene-hwmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/pinctrl-amd-isp411-Add-amdisp-GPIO-pinctrl/20250301-011050
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20250228165749.3476210-1-pratap.nirujogi%40amd.com
-patch subject: [PATCH] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
-config: um-randconfig-r112-20250302 (https://download.01.org/0day-ci/archive/20250302/202503021137.LAkq3bMU-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503021137.LAkq3bMU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503021137.LAkq3bMU-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pinctrl/pinctrl-amdisp.c:113:26: sparse: sparse: symbol 'amdisp_pinctrl_ops' was not declared. Should it be static?
-
-vim +/amdisp_pinctrl_ops +113 drivers/pinctrl/pinctrl-amdisp.c
-
-   112	
- > 113	const struct pinctrl_ops amdisp_pinctrl_ops = {
-   114		.get_groups_count	= amdisp_get_groups_count,
-   115		.get_group_name		= amdisp_get_group_name,
-   116		.get_group_pins		= amdisp_get_group_pins,
-   117	};
-   118	
-
+diff --git a/drivers/hwmon/xgene-hwmon.c b/drivers/hwmon/xgene-hwmon.c
+index 1e3bd129a922..4fe30198bae8 100644
+--- a/drivers/hwmon/xgene-hwmon.c
++++ b/drivers/hwmon/xgene-hwmon.c
+@@ -706,7 +706,7 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
+ 			goto out;
+ 		}
+ 
+-		if (!ctx->pcc_comm_addr) {
++		if (IS_ERR(ctx->pcc_comm_addr)) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to ioremap PCC comm region\n");
+ 			rc = -ENOMEM;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
 
