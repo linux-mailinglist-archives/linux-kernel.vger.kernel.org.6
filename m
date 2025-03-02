@@ -1,208 +1,245 @@
-Return-Path: <linux-kernel+bounces-540493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07190A4B14E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:56:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E024A4B152
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42D31891FE1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01D4A7A6AD6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CB81D89E3;
-	Sun,  2 Mar 2025 11:56:31 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BD51DE3B1;
+	Sun,  2 Mar 2025 11:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="qZwcdK9O"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B651D88BE
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6651DBB0C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740916591; cv=none; b=WD8wPjM8HrkFvba/BJijq2fQU3JhYWEv5wUyDdth5jW0xGfPUTJKHkA1etTm5uCmtslwEz2WAbLw6auyL8iYQAATzZ04RYvJHm7nExSmrJFqUUqgUU/3Ookc+BnbHi8VOCLqv/PujSf7bNPlXGTR6I479y/RbtFcCzEfKebT6M0=
+	t=1740916615; cv=none; b=f1ehx/tIpXXNBBBAd3mVMfROrjzb95UCiiKJKp/beJmfHx7/iH4Xy3vPQOhi0j5d9hmDsYcWFt5l+4MSKBjktR/b2KshgT0r70zZYxF5Ygbq69IhJFG/hzYBix8n3yUEODuKcQdX4Ik8F4dPXS7+gGnGgnv1RhXvSpC+2fYRndo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740916591; c=relaxed/simple;
-	bh=e/8NPDdl/C/KSXMToHEJfdK6HDA3izRuXWUlU+92O0I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dDjP97C005RmAaPobKBQ4sjA8j3N+4oH2aYUrhpbAM72JXNl8fuhsjpcdVmp0WOPaHl6BGBQM2fB07CxTqIeChvV6+3Rhy8cSnd5JqPgFx/TGd1czTjwVGB0/AJKj1Ammch6KKeY6qeZlCPIg3g7+fKeNzJLTdVLpNuxpfP0tjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so86707295ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 03:56:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740916588; x=1741521388;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nNGiguucKv36XtMhASonsxGpIptdKPoI8VZ3oCZc80s=;
-        b=H6AIh5+4rncHed0L/0TZxco7F/Fuh6CRJT0skGM5ve+YIWxkR8x+pCrYnwWGsGGNrp
-         fV1yvcZ7mg9N6C6G3SjRql8IE4b0gardX8rHkcNUzCAYrlWojXbzZSf13PBXemeAqRW6
-         9ReL/EwjpxWCLAizvf99kT1c5P/d/3KtK/qD0Bt/aYoxezMOwwS39Pm46apuO0K1P4mV
-         hvjJHKoNQpwuz1HADUcI0IqmGe9HDaOMUzmnrKi6/vroQHoNMfhQugDlMsTI60eWV3xM
-         HFFJZODIfHqPXF8BUTqzcnrafK5IWxvjOjGDHBcacERwGQKGQJatvNm0xJhfspyJ2zbW
-         J8hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuqzxKO+/QnMonIEPTCU90yDU24JKoNkTxOK/ec7GVnCxkY9uy28wsfVnrr5PcKS30mVJf7ee25w1cK4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzXaBGjAeAEq72vqu/Fa4Brmt75KjTAlfY0kJlPOu+Ay+3hWl1
-	P5gZ82OT6rLfWtPgH2eci4YIlBGlqE65qXZIJnJYQOq9lTJRnTXhixdc/MBexlkd35t2wGnQw5u
-	LFD/SJL10uIwxRCRlZenILuhIboxskUWs7xBSg7T6cFvccq/NXNQSbYE=
-X-Google-Smtp-Source: AGHT+IG/AxJ/rdapw6H25dl5mizA7wEBrjLdBPtMjUpEus6mGgvC4bTWY9Q58kHEpiOt4mqX6lw3sq8PW1WoYpXB7BBgzuEScVye
+	s=arc-20240116; t=1740916615; c=relaxed/simple;
+	bh=LeU1/j2GyN8/R98di9cex4/Y8KIZ4qEiGtA3Wac87iQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rix2Cg2t3a6Nr4yDQyeFm8gN+4BE3gxLENxG8k3Wu0W0E9uJG3qpFwmEaTZoaI+KPXU8gCr1AG9CC/lDSmJIoVU5GHN5XW8iKhxM1aY6GaVlSblGQFUyW0FFRi/YCbSy1a2nd9duxSlApEsGN4KdPSiKxALqsdGE096NIymOgRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=qZwcdK9O; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740916613;
+ bh=29q7YvoaMhP8FsAjh3s2NLiuI28mnOHAXYyx1jVG3xA=;
+ b=qZwcdK9OgAaWmtaOxZICtPqN3qBB9l5A2NtYfJ93xXpqVXAOrZLPH3Ekx6E7xCPHlmS+ZNjf6
+ cU6KDHedYoB7iy2YSO2KNHDG5YLeC+drLmlqvqTyPkaU56jT12aCsrIO1yNT14rA6ngvj75wx+H
+ CksmzK2eJ6Ca4IBX4lvkQ/b7Tkq6PHOKeYyGcjJjDI3TRKwZeQ5l5DTgwe9vO/g1ONzc6utTmek
+ lj4OEsJKuvmmBGnkyTk7F5as0LS0+MmtMrUmN/QSDKPnIvBO2kmltAvFbf7xwb4g16WTdfLhvdY
+ gNNVrAme0b8vWRKh4j8aFEf9jyRjWZF3j2mzuIM06SmQ==
+X-Forward-Email-ID: 67c447804a29b97c03d4e25b
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
+Date: Sun, 2 Mar 2025 12:56:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180f:b0:3d3:de8a:630e with SMTP id
- e9e14a558f8ab-3d3e6f9b14fmr97696255ab.16.1740916588609; Sun, 02 Mar 2025
- 03:56:28 -0800 (PST)
-Date: Sun, 02 Mar 2025 03:56:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c4476c.050a0220.1dee4d.002e.GAE@google.com>
-Subject: [syzbot] [cgroups?] [mm?] [ntfs3?] KASAN: global-out-of-bounds Read
- in get_mem_cgroup_from_mm
-From: syzbot <syzbot+7687c9b2316f07027b29@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
-	cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
-	ntfs3@lists.linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+To: Yao Zi <ziyao@disroot.org>, FUKAUMI Naoki <naoki@radxa.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104835.36439-1-ziyao@disroot.org>
+ <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se> <Z8MklJfFz2EA6oNS@pie.lan>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8MklJfFz2EA6oNS@pie.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi Yao Zi,
 
-syzbot found the following issue on:
+On 2025-03-01 16:15, Yao Zi wrote:
+> On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
+>> Hi,
+>>
+>> On 2025-03-01 11:48, Yao Zi wrote:
+>>> SD-card is available on Radxa E20C board.
+>>>
+>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>>> ---
+>>>  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
+>>>  1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+>>> index d2cdb63d4a9d..473065aa4228 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+>>> @@ -12,6 +12,10 @@ / {
+>>>  	model = "Radxa E20C";
+>>>  	compatible = "radxa,e20c", "rockchip,rk3528";
+>>>  
+>>> +	aliases {
+>>> +		mmc0 = &sdmmc;
+>>
+>> Suggest using mmc1 for sd-card because the e20c typically have onboard
+>> emmc, compared to removable sd-card.
+> 
+> My board doesn't have an eMMC: it's optional as well, but all variants
+> of Radxa E20C come with an SD-card interface. The vendor devicetree sets
+> sdmmc as mmc0 as well[1].
 
-HEAD commit:    03d38806a902 Merge tag 'thermal-6.14-rc5' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d6a864580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5b4c41bdaeea1964
-dashboard link: https://syzkaller.appspot.com/bug?extid=7687c9b2316f07027b29
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144528b7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036a864580000
+This is strange as Radxa typically want to align with mmc0=emmc and
+mmc1=sd-card, as seen in [3] and [4].
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-03d38806.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/67cb2018261a/vmlinux-03d38806.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a6169e75b74a/bzImage-03d38806.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/b184f3480c95/mount_0.gz
+  Align with other Radxa products.
+  - mmc0 is eMMC
+  - mmc1 is microSD
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7687c9b2316f07027b29@syzkaller.appspotmail.com
+Also mainline U-Boot for Rockchip SoCs typically always treat mmc0 as
+emmc and mmc1 as sd-card, and for most SoCs it will even override the
+board aliases to have some predictability across boards.
 
-ntfs3(loop0): Failed to initialize $Extend.
-overlayfs: upper fs does not support tmpfile.
-overlayfs: upper fs does not support RENAME_WHITEOUT.
-==================================================================
-BUG: KASAN: global-out-of-bounds in __lock_acquire+0x78/0x2100 kernel/locking/lockdep.c:5091
-Read of size 8 at addr ffffffff8eb38f9f by task syz-executor682/7971
+> 
+> I won't insist on it and am willing to take the change if you still
+> consider mmc0 is better.
 
-CPU: 0 UID: 0 PID: 7971 Comm: syz-executor682 Not tainted 6.14.0-rc4-syzkaller-00248-g03d38806a902 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- __lock_acquire+0x78/0x2100 kernel/locking/lockdep.c:5091
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- get_mem_cgroup_from_mm+0x55/0x2a0 mm/memcontrol.c:943
- __mem_cgroup_charge+0x16/0x80 mm/memcontrol.c:4504
- mem_cgroup_charge include/linux/memcontrol.h:644 [inline]
- filemap_add_folio+0xb7/0x380 mm/filemap.c:976
- __filemap_get_folio+0x52b/0xae0 mm/filemap.c:1980
- ntfs_get_frame_pages+0xbe/0x4b0 fs/ntfs3/file.c:945
- ntfs_compress_write+0x1154/0x2170 fs/ntfs3/file.c:1101
- ntfs_file_write_iter+0x697/0x7f0 fs/ntfs3/file.c:1266
- iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- ovl_copy_up_file+0x5ed/0x7e0 fs/overlayfs/copy_up.c:349
- ovl_copy_up_data+0x216/0x290 fs/overlayfs/copy_up.c:654
- ovl_copy_up_workdir fs/overlayfs/copy_up.c:796 [inline]
- ovl_do_copy_up fs/overlayfs/copy_up.c:1001 [inline]
- ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
- ovl_copy_up_flags+0x1e86/0x47e0 fs/overlayfs/copy_up.c:1257
- ovl_open+0x139/0x310 fs/overlayfs/file.c:211
- do_dentry_open+0xdec/0x1960 fs/open.c:956
- vfs_open+0x3b/0x370 fs/open.c:1086
- dentry_open+0x61/0xa0 fs/open.c:1109
- ima_calc_file_hash+0x16b/0x1b30 security/integrity/ima/ima_crypto.c:553
- ima_collect_measurement+0x529/0xb20 security/integrity/ima/ima_api.c:293
- process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:375
- ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:603
- security_file_post_open+0xb9/0x280 security/security.c:3130
- do_open fs/namei.c:3832 [inline]
- path_openat+0x2cca/0x3590 fs/namei.c:3989
- do_filp_open+0x27f/0x4e0 fs/namei.c:4016
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f492e5d8d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f492e58f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f492e6806a8 RCX: 00007f492e5d8d19
-RDX: 0000000000000083 RSI: 0000400000000000 RDI: 00000000ffffff9c
-RBP: 00007f492e6806a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f492e64c920
-R13: 0000400000000000 R14: 0000400000000140 R15: 0030656c69662f2e
- </TASK>
+Yes, my position is that we should use following:
 
-The buggy address belongs to the variable:
- rcu_expedited_nesting+0x1f/0x20
+  mmc0 = &sdhci;
+  mmc1 = &sdmmc;
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xeb38
-flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002000 ffffea00003ace08 ffffea00003ace08 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
+I will send out a short sdhci series based on top of v2 of this series.
+Driver changes was not needed to get basic sdhci working on RK3528 and
+is only required to get HS400 modes working.
 
-Memory state around the buggy address:
- ffffffff8eb38e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9
- ffffffff8eb38f00: f9 f9 f9 f9 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9
->ffffffff8eb38f80: 04 f9 f9 f9 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9
-                            ^
- ffffffff8eb39000: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 00 00 00 00
- ffffffff8eb39080: 00 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 00 00 00 00
-==================================================================
+[3] https://lore.kernel.org/r/20240620224435.2752-1-naoki@radxa.com
+[4] https://lore.kernel.org/r/20240619050047.1217-2-naoki@radxa.com
 
+> 
+>>> +	};
+>>> +
+>>>  	chosen {
+>>>  		stdout-path = "serial0:1500000n8";
+>>>  	};
+>>> @@ -20,3 +24,13 @@ chosen {
+>>>  &uart0 {
+>>>  	status = "okay";
+>>>  };
+>>> +
+>>> +&sdmmc {
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This node should be placed above &uart0 to be in alphabetical order.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>> +	bus-width = <4>;
+>>> +	cap-mmc-highspeed;
+>>> +	cap-sd-highspeed;
+>>> +	disable-wp;
+>>> +	rockchip,default-sample-phase = <90>;
+>>> +	sd-uhs-sdr104;
+>>
+>> Are you sure uhs-sdr104 works as is should?
+> 
+> In fact yes, tuning succeeds at 148.5MHz and results in 66MB/s reading
+> speed.
+> 
+>> Vendor kernel use a different "v2" tuning
+> 
+> This isn't a problem. IMHO V2 tuning is more like a quick path, which
+> tries inheritting the phase from firmware and then re-tunes roughly.
+> Fine tunning is still a fallback here in case of failure, see the commit
+> message in the downstream kernel[2]. And testing proves it's okay for
+> RK3528 to issue fine-tuning always.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks for this information, I did not inspect exactly what the v2
+tuning meant, only observed that vendor kernel (incorrectly) used a DT
+prop to indicate when v2 tuning should be used.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+>> and this is also missing the vccio_sd vqmmc-supply to switch between
+>> 3v3 and 1v8.
+> 
+> But this is a problem, thanks for catching it! Somehow my card managed
+> to run at 148.5MHz with 3v3 voltage level, but it's definitely a
+> compatiblity issue. I'm surprised that the driver doesn't complain when
+> switching to SDR modes without a regulator configured.
+> 
+>> You could add following regulator for sdmmc:
+>>
+>> 	vccio_sd: regulator-vccio-sd {
+>> 		compatible = "regulator-gpio";
+>> 		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+>> 		pinctrl-names = "default";
+>> 		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
+>> 		regulator-name = "vccio_sd";
+>> 		regulator-min-microvolt = <1800000>;
+>> 		regulator-max-microvolt = <3300000>;
+>> 		states = <1800000 0x0>, <3300000 0x1>;
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+This should also have something like:
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+  vin-supply = <&vcc5v0_sys>;
 
-If you want to undo deduplication, reply with:
-#syz undup
+>> 	};
+>>
+>> and following pinctrl:
+>>
+>> 	sdmmc {
+>> 		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
+>> 			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+>> 		};
+>> 	};
+>>
+>> add then the power supplies to the sdmmc node:
+>>
+>> 	vmmc-supply = <&vcc_3v3>;
+>> 	vqmmc-supply = <&vccio_sd>;
+>>
+>> That matches the schematics for e20c, and works when testing non-uhs modes.
+> 
+> Thanks for the hints. Will rebase on your pinctrl series and get
+> regulators and pinctrl settings applied in the next version.
+
+Thanks :-)
+
+Regards,
+Jonas
+
+> 
+>> Regards,
+>> Jonas
+>>
+>>> +	status = "okay";
+>>> +};
+>>
+> 
+> Cheers,
+> Yao Zi
+> 
+> [1]: https://github.com/radxa/kernel/blob/2b0c8de7dc4c68947cda206dcc2e457e9677e426/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts#L22-L26
+> [2]: https://github.com/rockchip-linux/kernel/commit/795e052cc8610aa59a64b104f975cc4a45493d5d
+
 
