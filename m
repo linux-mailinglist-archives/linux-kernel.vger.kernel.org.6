@@ -1,120 +1,179 @@
-Return-Path: <linux-kernel+bounces-540724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC419A4B43B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:58:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8BCA4B43E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182B716D148
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B643AE3A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E03B1EB9FF;
-	Sun,  2 Mar 2025 18:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB61F1EBFF8;
+	Sun,  2 Mar 2025 18:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zgr8VpMs"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="hlSHkZmx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bj8DWwQI"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBE8AD39;
-	Sun,  2 Mar 2025 18:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85611EB1B8;
+	Sun,  2 Mar 2025 18:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740941879; cv=none; b=mrl6R7Mj21khkl84hkT4GuqX+CDgE7OB9rGkMfucMDcQojywLYrZplYQGr4aTS+oX9l5ccZBcQoPKCrd71y5sZyLqhCKX+PyQls9R0ZQVioPxySu9ZCUE0x3hREUuugzRl2VdI7vtiQIvhn0sIDF4KRD5njJfZ6cZ4SPvdBumvc=
+	t=1740941967; cv=none; b=bb/Kelv5O42XDP4LjWNVWyiMiCSfBfIGDa4SYYYq7oIY1ienZF1HwDTdbN+bmbx4ubs17xQ0HBioxUWjJkhvTleKndoHMJFII+BDuKRQ/qD/P9ovkhvsEpn5G6jua46DFUwQTz8r83k/IMwOjL4ig8RasjasJUmc0ZcsTnBcFTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740941879; c=relaxed/simple;
-	bh=6f3nE4+hMUhuJGhAonwOZkstOaLpys8RfLEpGJOsxFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tyXCVEH3akaZeRkjK6fTqFYJKNGg/hMGik6rCTyVccgMN1YqFpczU+A0W7/jR4nwOJuKGFVKjPac5EJ1K6sg/zNfEeJ505m26hdvIofAR/W9O1x6Zrvhh9DdSHxqWFgGaNR5O4ll5a7xAb7r/z2xnYbSWIlNKSWLjMD2myKFAmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zgr8VpMs; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pPjgLLKWy2wvQvaiR+uGJguXDw1skCmohUdLq/bT13M=; b=zgr8VpMs2oAvmtSCdLZNlyiimz
-	8LpNFXehoTksa2gEf3aQkohP09ro+0qaqjvYXaQu+KxZB+sIKlyUbvUikUssDkhX7/7AP7k3KfEaz
-	CAyKltObROv4gAMOa6xExAlm0l0aEKhoX+c9Pu1qTiFRRCfGJmEIJqtREfcq73tx7Ws1YbwXRGKdw
-	WnzTTKVSCtKDSdIL8G1CshPaA0/1AhvPCLPnbygN/m2VtmmRPHGF/nWchoU07/hqyZW/BJqwtS6iH
-	00V1WJLr3B0KvowzlMahZEFATeTzBlelY/WUcLfEdDewwy1pfGP6nsBKk3XlXNJTeRn5QvR3q8al7
-	Q/n2u9kw==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tooVb-0004sB-28; Sun, 02 Mar 2025 19:57:51 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- derek.foreman@collabora.com, detlev.casanova@collabora.com,
- daniel@fooishbar.org, robh@kernel.org, sebastian.reichel@collabora.com,
- Andy Yan <andy.yan@rock-chips.com>,
- Michael Riesch <michael.riesch@wolfvision.net>
-Subject:
- Re: [PATCH v15 07/13] drm/rockchip: vop2: Register the primary plane and
- overlay plane separately
-Date: Sun, 02 Mar 2025 19:57:50 +0100
-Message-ID: <2759797.BddDVKsqQX@diego>
-In-Reply-To: <20250218112744.34433-8-andyshrk@163.com>
-References:
- <20250218112744.34433-1-andyshrk@163.com>
- <20250218112744.34433-8-andyshrk@163.com>
+	s=arc-20240116; t=1740941967; c=relaxed/simple;
+	bh=UYb319UmdfGOCWVEJRBhTzQpIvhNbQXAbWaVXUu8ZwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMiQv+IZ67pI8AdcufHF6YXru/HAc+x2jQ4QIOUtnxkU6bFf4N4t5x0Kzc8xtDSf58bx1Z7WF3zZCVqMI01f5+az4vBjtNtAU/akNem3mOhaefGMEyT2KSKmeVmqgxk/VUFMq0UpPN1Yj5Ry1/e4u+cqx1RdKFYK4zVqszObtDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=hlSHkZmx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bj8DWwQI; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 8AB97254018B;
+	Sun,  2 Mar 2025 13:59:23 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sun, 02 Mar 2025 13:59:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1740941963; x=
+	1741028363; bh=ByETV/vKdhAC0W6D+ZlHSo+SPgq3hi6yYES5IcYx+80=; b=h
+	lSHkZmxSo/bJJB3bMrtPl8i1LvnY3dCCmMUBe7ZgO5WVNwuWCiwZGzCYjhvO73XB
+	TyxUJEJtsYDTqbUe6b4mezwVdofWOL8lPFEyO2v9R0KHnL6fJ0uuXK1KKEixrNuA
+	/kmHLWsgwVv+8P0F+sXzNMgXurnqZcrihl5yx8KepxJoTPtKY8YXiEO9jJqtOBi3
+	dAB785QSNi+tb8PGdPxHDYAAOFcta+muDApRn1Usy1ZTir8RirDK/rq7UfJcHFLa
+	JOsVsnQ48vUjzAy2KjJLxOhhn1Rd02PC6TEVQaxE89FGNpD8rz3wsz63AQ8Wn9LB
+	k3WkFoLeAALyJtjbYZdBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740941963; x=1741028363; bh=ByETV/vKdhAC0W6D+ZlHSo+SPgq3hi6yYES
+	5IcYx+80=; b=bj8DWwQIzQY8vH95wDZuDtp9o2nrxQe0tMolt0o7gFPYfEeWnhL
+	4O1SrIJ2zLvPik0FrDoeiOgR+t1djCrq6VTMxY73wDCca0pjt20MzSjgYzWdb/sB
+	5HPvlxyq6atZMINuu1DhcBsx4zRIuIzc78ZyTUXKP8w4qBmJ7fF2yxp3bum5amNb
+	COd2FAHW4cIJRSZRJYYxCvBokPHiGBRDvF0izD6j59KQv8LDnvmE629L6yRKi+G4
+	CMn8QwxVcr9DjBVgsUr9h+wv7C2PazcalgZ+H5v6VeJJqA1Txphu+LnZDyTXVTgC
+	DhJcqIloQNKocekcJMq46MRQFqyqTAWHQvA==
+X-ME-Sender: <xms:iqrEZ3NJDbn1bYS-a0Eh1dZfsWfWcGv6jfOC1a2a_m2iKhxIQCmAVw>
+    <xme:iqrEZx-0n3IWI4rjwOUgoUKjAqYBEUg1qas4B58-_Y3W6mkDAJAQogDLmCwa-CPU5
+    _T_6LkyIzg2OBfOuQs>
+X-ME-Received: <xmr:iqrEZ2Tjxy9k0Bejz88-q_4DiOYgp2SgTmHRoNQfLgXQPoZMypzQida9rBYB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelieellecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
+    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefh
+    keegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgs
+    pghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtoh
+    hnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
+    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvg
+    hrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpth
+    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-ME-Proxy: <xmx:iqrEZ7sVe4tDvW961QRgG9Qo6g1iLM-e3H9rCplRT7ti_g6SDiTolQ>
+    <xmx:iqrEZ_cGlmcfBYChseWwVCw7Ja28oW3TdiJWayszuzMXxpEgZ5gQdA>
+    <xmx:iqrEZ319vQNjXX2Wu8FtzXUWfAmqzPnBd8yEo0gGwfwm9_f3EOst9A>
+    <xmx:iqrEZ79NRl4sx90F6knyNDgFqFLXoY51pDFlU8YuVKwM4sXGRJsjgg>
+    <xmx:i6rEZ60TqJSyQgwN7xRfqD9KF6PVsNVUjBWdyOWynUlu9ZRBQeIPz7ps>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 2 Mar 2025 13:59:22 -0500 (EST)
+Date: Sun, 2 Mar 2025 19:59:20 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+	David Ahern <dsahern@kernel.org>
+Subject: Re: [PATCH net-next v20 12/25] ovpn: implement TCP transport
+Message-ID: <Z8SqiJedxrFhGuB9@hog>
+References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
+ <20250227-b4-ovpn-v20-12-93f363310834@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227-b4-ovpn-v20-12-93f363310834@openvpn.net>
 
-Hi Andy,
+2025-02-27, 02:21:37 +0100, Antonio Quartulli wrote:
+> Moreover export tcp_release_cb by means of EXPORT_SYMBOL instead of
+> EXPORT_IPV6_MOD, so that other modules can use it, even if IPV6 is
+> not compiled in.
 
-Am Dienstag, 18. Februar 2025, 12:27:34 MEZ schrieb Andy Yan:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> In the upcoming VOP of rk3576, a Window cannot attach to all Video Ports,
-> so make sure all VP find it's suitable primary plane, then register the
-> remain windows as overlay plane will make code easier.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-> Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
-> 
-> ---
+Is that really needed? You're saving tcp.sk_cb.prot, so you could just
+call peer->tcp.sk_cb.prot->release_cb? (with a bit of care since it's
+called after peer_put)
 
-patches 7-9 look good to go, but ...
-
-this needs a rebase to adapt to
-"drm/rockchip: vop2: Consistently use dev_err_probe()" [0]
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b06d1ef3355571383cdb463cf0195b7a02efdfbf
+[I don't know what the maintainers' preference is wrt "re-exporting"
+symbols that got moved to EXPORT_IPV6_MOD]
 
 
-> -		if (win->type == DRM_PLANE_TYPE_PRIMARY) {
-> -			vp = find_vp_without_primary(vop2);
-> -			if (vp) {
-> +			if (vop2_is_mirror_win(win))
-> +				continue;
+[...]
+> +static void ovpn_tcp_send_sock(struct ovpn_peer *peer, struct sock *sk)
+> +{
+> +	struct sk_buff *skb = peer->tcp.out_msg.skb;
 > +
-> +			if (win->type == DRM_PLANE_TYPE_PRIMARY) {
->  				possible_crtcs = BIT(nvp);
->  				vp->primary_plane = win;
-> +				ret = vop2_plane_init(vop2, win, possible_crtcs);
-> +				if (ret) {
-> +					drm_err(vop2->drm, "failed to init primary plane %s: %d\n",
-> +						win->data->name, ret);
+> +	if (!skb)
+> +		return;
+> +
+> +	if (peer->tcp.tx_in_progress)
+> +		return;
+> +
+> +	peer->tcp.tx_in_progress = true;
+> +
+> +	do {
+> +		int ret = skb_send_sock_locked(sk, skb,
+> +					       peer->tcp.out_msg.offset,
+> +					       peer->tcp.out_msg.len);
+> +		if (unlikely(ret < 0)) {
+> +			if (ret == -EAGAIN)
+> +				goto out;
+> +
+> +			net_warn_ratelimited("%s: TCP error to peer %u: %d\n",
+> +					     netdev_name(peer->ovpn->dev),
+> +					     peer->id, ret);
+> +
+> +			/* in case of TCP error we can't recover the VPN
+> +			 * stream therefore we abort the connection
+> +			 */
+> +			ovpn_peer_del(peer,
+> +				      OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
 
-should also use dev_err_probe
+I don't think this works:
+
+ovpn_peer_del -> unlock_ovpn -> ovpn_socket_release -> might_sleep
+
+but we can get to ovpn_tcp_send_sock in a few contexts that are not
+allowed to sleep:
+
+ovpn_tcp_send_skb -> ovpn_tcp_send_sock_skb -> ovpn_tcp_send_sock
+__sk_flush_backlog -> release_cb = ovpn_tcp_release -> ovpn_tcp_send_sock_skb
+release_sock       -> release_cb = ovpn_tcp_release -> ovpn_tcp_send_sock_skb
 
 
-Heiko
+(I checked all other paths leading to unlock_ovpn/ovpn_socket_release,
+this is the only one I could find that is not allowed to sleep. So it
+would likely be easier to push this peer_del (or even just the
+handling of release_list) into some other sleepable context than
+trying to reshuffle all the other paths)
 
-
+-- 
+Sabrina
 
