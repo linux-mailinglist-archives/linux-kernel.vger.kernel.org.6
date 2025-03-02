@@ -1,64 +1,76 @@
-Return-Path: <linux-kernel+bounces-540678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05330A4B3A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:04:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C19A4B3A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5AD16CD4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FED7188AE28
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD5A1EB198;
-	Sun,  2 Mar 2025 17:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1525B1EB190;
+	Sun,  2 Mar 2025 17:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VAih4qmY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="A27Xk7AY"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339A13594F;
-	Sun,  2 Mar 2025 17:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE82B1D7995
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 17:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740935050; cv=none; b=PQkeJEQLCfRpmhgVqfjPFihYcB52FFR/SryTBXXUOtYDo9pokiU0bvjM0UY4ycpJN2Xd15W8Ergmh8xV1BuX9OUsp108LAB6pTN2/49LoKkeofGvNWLZEHwKEo8LxarqFXkIrisPgIe69412Z1za2fkOjVIfay9SDCtrP20jm+s=
+	t=1740935138; cv=none; b=DtDQmJRqpzhAPXijpFn6Vf8upFOK0yY+NlIcPq+IEWo1pKislUevOwVnT8WI/j0u843soBSByu7JLX6Kz9dNBmsofcS3on5FTEXh5yY7E/BJs9swKBmxZQu7zpdLficnjxP9PE2q1v2fnNLu/yTpqRnsN+cXUg/W8IGfH+g0E+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740935050; c=relaxed/simple;
-	bh=J9WBrmbAU7OZTDteavgUdtEXlaP4WWdhY19sHgVOTlk=;
+	s=arc-20240116; t=1740935138; c=relaxed/simple;
+	bh=tq+tb9mWzkFwIXw8weGXsxYG+EMkyMy6nxkcqujk91k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnW8MSG96u36/mVJaDuyxNEVnnlpwdLAxyy22Th6Ju/Xoi3M6LDjnVYkkbvi1QgXEJ1zKSvP5yE0qZO8URLThUOi8j1G7kxfoOr726gEhQbWTEVK8U3f+eCKe3fErQsatWchz11+oif9mtzTpVqH0n2LtfINCLRPWmat47oCT20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VAih4qmY; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740935050; x=1772471050;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=J9WBrmbAU7OZTDteavgUdtEXlaP4WWdhY19sHgVOTlk=;
-  b=VAih4qmYRbz8aWevqobU94g2ArhUGQQ5MX8/BosT8CBTLJqutagsbg1o
-   +Q9O33PBBj2CVgHNMZpNtz6bS9qUq27yZAIC0/9bdFwS0krAVb0FZVrta
-   WSrke+d+/KqGsUOf/b0nkR69/fTNYda8diuoOARg6Bk1gFcbVMfHIok4F
-   fKpkNTZgFnbd/s0KQQ9ToLaXp0s2X6A+Sx6ahBQuEq3kRaG9YpZAu2FAs
-   DV2G5MFCUZ3IKvkXVrBuxRl6CZ9ILeXqd0qwuPvroPLP7wwyQpuI1dt2d
-   yzVuiyRnsRC2hmZAATSawpWZamjz+m3FwuGMR9FF6ISKMMXyxor/tTow9
-   A==;
-X-CSE-ConnectionGUID: M2wA+ZceTJC2M+v8G2w/Ww==
-X-CSE-MsgGUID: g9fzfQaDTvatsFS7ONYDiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41840151"
-X-IronPort-AV: E=Sophos;i="6.13,327,1732608000"; 
-   d="scan'208";a="41840151"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 09:04:09 -0800
-X-CSE-ConnectionGUID: g8BnP3FxTqCP/X5Onneb9g==
-X-CSE-MsgGUID: DtrXSek3Q0WDsht5gUoWwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,327,1732608000"; 
-   d="scan'208";a="117821264"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 09:04:07 -0800
-Message-ID: <338901b6-4d10-480d-bd0a-0db8ec4afad5@intel.com>
-Date: Mon, 3 Mar 2025 01:03:53 +0800
+	 In-Reply-To:Content-Type; b=Gzgo9M39cn/P2ONJYkSu09n9KS4WxL5HANpVjrFwojRoyCci5h6Kraw2/qfV2VTvcXzIJS7MDhnmPXZ5l/srWf/nIaLNW2TdywkDwU2Z6t6u+ZE49ZbziLaHzoJHb6JNcMPlFJ7TCr/IMf0zywfLbBhX6CjHaIgEP0UtdXxolTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=A27Xk7AY; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-471f4909650so34337781cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 09:05:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1740935135; x=1741539935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Volk3/gaWZQ4nGW5XDowkVlOnh1MBl+g/WndjtrTRJ8=;
+        b=A27Xk7AYO9xolo6eas5c4/6UoHPcBtwNze2X/Yyak1IJ8GR/c+mvFl1f4NaSF91Ual
+         dbQ06r+B1JYi3CLAojzATrzmKn3UPNPd/Qfx+4j4RBxhGfg7IRQwiB5HS/Pu2E92goEv
+         JQcoiNJLAwuq41VTZRMZ7BWXeMU5fpKiyxp2E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740935135; x=1741539935;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Volk3/gaWZQ4nGW5XDowkVlOnh1MBl+g/WndjtrTRJ8=;
+        b=RExTB58eBX2wKA8ew9fXtK0kwj4OsMb4mxEt7uh7KyuPpGzcghMwSEYYqgOsNgj9Zx
+         uvrrHdHsmoFkFD1cNGK43Oc8Afnc6YLlbiRf73jiCQZSAMTFZ+vPsnzEBL/zq0j+7Ryu
+         gWh20iMTWrGUdrmOuT7wElmlpy61bfBVP/9pqdIdexgnL+DGsaRPjwBf6+4KCjXKu+mR
+         HaBekWAmy1nVqMpx4MrGuAYT4OtDRdSpQ5A8mlVensbVqwlJhXY1jt1/MqkPn2xo+GkB
+         4pkSMY3VdB1nttfJEjEWItTl3EGplHLkF5liGoA9NRjWlUDkJ77i47p+2IRVLzSXASul
+         htkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw91S5s62JLvpOaAXtPvoWQg8VvJzDXElKJPLjkZSUjW1wrBoNFFlgEPk3QJTy2JIIfwmKMG4vDQaOZXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSQago/wkNDLe9z2TjnhcSp5JbUHLz6tDaEc/ONaQmqmTAIW0F
+	OqNi5R4LuRVMAYtXPU57chyN+D1tbee4a9VKnM6/cR+0/kdSnYlAWORVeD9zMw==
+X-Gm-Gg: ASbGnct6jRCR/TL9RpBfsQB5bNTGU8wkNTnPGhPzKkpIwRFf+VZdAJGnuuVVWJWjJL3
+	4IwkOEWhDKnwXT2OC0tby6SYT4W1MQtpPGoEINwS8L/sKfGTjMfkb/ioK5I9KdF5Q+Ei5to+EWU
+	PH58MI3+XprzR/4lMp8/h4925R44mjFIbMKUl6oZse0OOd55JSD09hnK92U0lGR+GEbsoUhBIv2
+	SwM6CBMbJnFwzZOgQFMwijTtz9sPgBN6rLmxi54M8f7zUvIhSYmXQ7+SSuJLhuzCvCJ/GAcLO3W
+	Fz1/0NpVqNWg4FMHHo20WPV6kR9ybZbEpQe+PsoEi2Tx07iHfmy8SlqoD7DvLiSsRZ3pYm1a3kZ
+	zwCqcDoJrnuLf
+X-Google-Smtp-Source: AGHT+IFCVL8dUckc3tcfOXNUOugPLac8vXar2W9wMgC8Vy7gv057oCeMT6yYo4ZcjXN88Q0pYKnU5w==
+X-Received: by 2002:a05:622a:11d5:b0:472:12f1:ba4a with SMTP id d75a77b69052e-474bc051974mr162542241cf.4.1740935134638;
+        Sun, 02 Mar 2025 09:05:34 -0800 (PST)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-474691a1ff3sm48374241cf.7.2025.03.02.09.05.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 09:05:33 -0800 (PST)
+Message-ID: <4c4b3d6f-64b7-4ba3-8d2e-d8b1f1a03a53@ieee.org>
+Date: Sun, 2 Mar 2025 11:05:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,82 +78,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] KVM: TDX: Always honor guest PAT on TDX enabled
- platforms
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: seanjc@google.com, yan.y.zhao@intel.com
-References: <20250301073428.2435768-1-pbonzini@redhat.com>
- <20250301073428.2435768-5-pbonzini@redhat.com>
+Subject: Re: [PATCH v4 1/2] rbd: convert timeouts to secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
+ Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
+ <20250301-converge-secs-to-jiffies-part-two-v4-1-c9226df9e4ed@linux.microsoft.com>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250301073428.2435768-5-pbonzini@redhat.com>
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250301-converge-secs-to-jiffies-part-two-v4-1-c9226df9e4ed@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/1/2025 3:34 PM, Paolo Bonzini wrote:
-> From: Yan Zhao <yan.y.zhao@intel.com>
+On 2/28/25 10:22 PM, Easwar Hariharan wrote:
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
 > 
-> Always honor guest PAT in KVM-managed EPTs on TDX enabled platforms by
-> making self-snoop feature a hard dependency for TDX and making quirk
-> KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT not a valid quirk once TDX is enabled.
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
 > 
-> The quirk KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT only affects memory type of
-> KVM-managed EPTs. For the TDX-module-managed private EPT, memory type is
-> always forced to WB now.
+> @depends on patch@ expression E; @@
 > 
-> Honoring guest PAT in KVM-managed EPTs ensures KVM does not invoke
-> kvm_zap_gfn_range() when attaching/detaching non-coherent DMA devices;
-> this would cause mirrored EPTs for TDs to be zapped, as well as incorrect
-> zapping of the private EPT that is managed by the TDX module.
+> -msecs_to_jiffies(E * 1000)
+> +secs_to_jiffies(E)
 > 
-> As a new platform, TDX always comes with self-snoop feature supported and has
-> no worry to break old not-well-written yet unmodifiable guests. So, simply
-> force-disable the KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT quirk for TDX VMs.
+> @depends on patch@ expression E; @@
 > 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> Message-ID: <20250224071039.31511-1-yan.y.zhao@intel.com>
-> [Use disabled_quirks instead of supported_quirks. - Paolo]
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> +secs_to_jiffies(E)
+> 
+> Change the check for range to check against HZ.
+> 
+> Acked-by: Ilya Dryomov <idryomov@gmail.com>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+
+I think what you've done in the last hunk below should not be
+done that way.  I also suggest something to the (related, but
+not part of this series) secs_to_jiffies() implementation.
+
 > ---
->   arch/x86/kvm/vmx/tdx.c | 6 ++++++
->   1 file changed, 6 insertions(+)
+>   drivers/block/rbd.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index b6f6f6e2f02e..4450fd99cb4c 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -624,6 +624,7 @@ int tdx_vm_init(struct kvm *kvm)
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..1c406b17f3cee741b7bdd9f742958b3f1d5b1bbe 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
+>   #define RBD_OBJ_PREFIX_LEN_MAX	64
 >   
->   	kvm->arch.has_protected_state = true;
->   	kvm->arch.has_private_mem = true;
-> +	kvm->arch.disabled_quirks |= KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT;
-
-This doesn't present userspace from dropping the 
-KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT bit by updating
-kvm->arch.disabled_quirk via KVM_CAP_DISABLE_QUIRKS.
-
-I think we can make inapplicable_quirks per VM in Patch 1 and set
-
-     kvm->arch.inapplicable_quirks |= KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT;
-
-for TDX VMs.
-
+>   #define RBD_NOTIFY_TIMEOUT	5	/* seconds */
+> -#define RBD_RETRY_DELAY		msecs_to_jiffies(1000)
+> +#define RBD_RETRY_DELAY		secs_to_jiffies(1)
 >   
->   	/*
->   	 * Because guest TD is protected, VMM can't parse the instruction in TD.
-> @@ -3470,6 +3471,11 @@ int __init tdx_bringup(void)
->   		goto success_disable_tdx;
+>   /* Feature bits */
+>   
+> @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *work)
+>   		dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+>   		     rbd_dev);
+>   		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+> -		    msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
+> +		    secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
 >   	}
+>   }
 >   
-> +	if (!cpu_feature_enabled(X86_FEATURE_SELFSNOOP)) {
-> +		pr_err("Self-snoop is required for TDX\n");
-> +		goto success_disable_tdx;
-> +	}
-> +
->   	if (!cpu_feature_enabled(X86_FEATURE_TDX_HOST_PLATFORM)) {
->   		pr_err("tdx: no TDX private KeyIDs available\n");
->   		goto success_disable_tdx;
+> @@ -6283,9 +6283,9 @@ static int rbd_parse_param(struct fs_parameter *param,
+>   		break;
+>   	case Opt_lock_timeout:
+>   		/* 0 is "wait forever" (i.e. infinite timeout) */
+> -		if (result.uint_32 > INT_MAX / 1000)
+
+Previously, the above line was verifying that the multiplication
+done below would not overflow.  It was unrelated to whatever
+msecs_to_jiffies() did.
+
+> +		if (result.uint32 > INT_MAX / HZ)
+
+Here you are assuming something about what secs_to_jiffies()
+does.  It's a very reasonable assumption, but you are encoding
+this in unrelated code, which you shouldn't do.
+
+Just do the direct conversion as you've done above:
+
+		if (result.uint32 > INT_MAX)
+
+>   			goto out_of_range;
+> -		opt->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->lock_timeout = secs_to_jiffies(result.uint_32);
+
+Unfortunately, secs_to_jiffies() does not implement the clamp
+operation that msecs_to_jiffies() does.  If you look at
+__msecs_to_jiffies() you see that the unsigned value provided
+is limited to MAX_JIFFY_OFFSET if it's negative when interpreted
+as a signed int (i.e., if its high bit is set).
+
+I think the secs_to_jiffies() implementation could benefit
+from the use of an overflow check.  This might not be
+exactly right, but it gives the idea:
+
+#define secs_to_jiffies(_secs)					\
+	({							\
+		unsigned long _result;				\
+								\
+		if (check_mul_overflow(_secs, HZ, &_result))	\
+			_result = MAX_JIFFY_OFFSET;		\
+		(_result);					\
+	})
+
+					-Alex
+
+
+>   		break;
+>   	case Opt_pool_ns:
+>   		kfree(pctx->spec->pool_ns);
+> 
 
 
