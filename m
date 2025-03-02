@@ -1,177 +1,124 @@
-Return-Path: <linux-kernel+bounces-540672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16A4A4B395
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:55:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F991A4B392
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F178B1891AF8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:56:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C51E3AA8CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F8E1EB199;
-	Sun,  2 Mar 2025 16:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7801EB195;
+	Sun,  2 Mar 2025 16:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IR7sbD9D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biZXxSik"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEDD1E9B37;
-	Sun,  2 Mar 2025 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F6D111AD;
+	Sun,  2 Mar 2025 16:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740934547; cv=none; b=MKUxyltXjEtqLCFmav4AyPdCkhrbQe8Qps9TTNDnupAyUpsRS+34Qm3Ro/V8EfR9bBnvjGybKzUQvGDmr3VbLUtwbV67OCOc3jIPZwDR0UcxxD6mdcYbcr69D1rVvn258u600uCcXrIZF5sz3Pgu3k7RrxfXf1FSVLEe7fgaMY4=
+	t=1740934532; cv=none; b=XYMlcUr+jJ8jf6Jk1MhmAZENf0XgxDKS/qdrZtU3pXn3GETX4Mpg7qe42dv7egzqi1mtFMLpG9WI0HWZWNhpzczsVpJ12hykDNLWNpmzpec80cgihY37o9I04buWwlQ8E052wprilW3st4K5zqVYxqLhYjkRNaOTY26vLXzUAtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740934547; c=relaxed/simple;
-	bh=Kl0inhhtEAKWdVtE/zCPaKAPdeGtThGTJyS6Kz/l8Do=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4GgA3SxOTe8FohyZmRuTlSND541PBiH/A6cp30TtPmph94Ejkf5+Z2gfNYqr4aUEO3GM0RTMiq1uARbbLCmtGGkUjEv6l+7381bsvoJ2O8nxCR+hj1G/JWLYGrRq3N2rb+dSZkm7pBElY/sYGmGEWcwnltG7ezOnWHBBL3veYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IR7sbD9D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D7DC4CEE7;
-	Sun,  2 Mar 2025 16:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740934546;
-	bh=Kl0inhhtEAKWdVtE/zCPaKAPdeGtThGTJyS6Kz/l8Do=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IR7sbD9D5egv6m7XFSyET5KnqcwtWhGm1oDAx6LgC0wlcNGZF2JvfiKvm4OO2rvCr
-	 8hrf3kJbhxSdVDoYxP1BvI3FiKZ+jsBACUshqmGrSFkaOmeY27ybdOnave5WrRX0dq
-	 CFOxXfxsaPYD1YavM/0+Ju0nYYdyoOe74HUuCnERZRvBe+/oBHRVRRwvQ5V8XGtlJe
-	 l6GgeefA0+ZVBIs3B2TJAqLvbhs7lkU7PuhN1HJGw8RiZoMA9cs6PuzrG/q+e310ws
-	 oopyy4kHcIt67s4mkvkYpqRtCD63t4ZlBSca12ex9sEOSY54E5iKU7Hd9a9xfDQKU0
-	 Njl6+ohEUc0cQ==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30a3092a9ebso38822821fa.1;
-        Sun, 02 Mar 2025 08:55:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwlxjvvUMPLMhorA0xyDB2S4/YGqN/jbEh0px8U4LNusV1HoTjcCPe90n6a/18cvd2LmGVCm0MfoQ=@vger.kernel.org, AJvYcCXTWR81QDVjUdr5e+y7ezdMmatGp/o77bxKxCJeVVFJE4hePgsxX500mWM4Zltf5Jk5OmiMXVutDrnEqwUC@vger.kernel.org, AJvYcCXoigmYuE2ZY96wuoffxGZlU3W26Yu9R41uL05nPLBEPkTj070z76hTtzxmbBC09bF0sR7HleoNYOGrd4xv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7G8V/VvwY4m18pZoZwD7oQzHkMtgElHUXtkhrSLpu6FAFeL5p
-	srps6QktviWT09vFmU+PbEnO1m+rM6uMJPdmjV0cRyWjxE2g3Ak8YhdN4ALIquy8YEsO6qRCSzz
-	HkEoCHXf3kt0eRlA4CzJwrkwlSjo=
-X-Google-Smtp-Source: AGHT+IEUrIYv2C81q0rOFaATaJ4eplo7J+QccedNmN+bPBghMPugHldB8iC/IN5TxaxhdIrZG+xIlO/ATI79ji747KY=
-X-Received: by 2002:a2e:9a8f:0:b0:30b:9813:afff with SMTP id
- 38308e7fff4ca-30b9813b525mr26913941fa.31.1740934545569; Sun, 02 Mar 2025
- 08:55:45 -0800 (PST)
+	s=arc-20240116; t=1740934532; c=relaxed/simple;
+	bh=Ls/rpZuCyqqWDk2PpTIfMMqrhIRRyngTtHe2Gg9FGtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3IM/SqMG56RMDkuUJZAip33rrQJ3En2QAEA4tsrWx8laD2DiZGqQ+qT2tewjvfhALx4XGvIiJy3aajn3m8FoU9IwqlSDmf8HxQzG7sRPZw19CtW+INYgT5oHCraZj0sugd7n4QldKm3m/mPdLPCxgvNlJrkWDfWVMFlFfT+/QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biZXxSik; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223378e2b0dso51823365ad.0;
+        Sun, 02 Mar 2025 08:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740934530; x=1741539330; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WNhRIRChntze82/L4ktasbBRAu7Ns3w1vjLsBJ7Qi7A=;
+        b=biZXxSikksVlOu+zhZ9sSWDBXuuyv9uGaGbGyX8pgovZkssb3uOTZa26Skmbv4zXft
+         AZQ91HwTABNgRlptqQ1nnQBlhWbLP7fojrRsYfieX4aRX84B7fSVNutRmzriySF1PZqp
+         xStRCFUlNyte5ZhFZGaiH/Eoaqb3oSiAldwt/JTXL3lAogF8uyub2P0a/oFjv3BmM+OY
+         Q2ToWZZSHiof74yMuFo+Q2SHt5zSV0/kM7NX/oysfYm8CCWmWaJ/Qe5D8BMq9VKWgmXD
+         Hnf9KiLsz5IeHEXzkomdxRqvRyCTIMTPs/J5y33FAb3+sKVw5Ki94ThTGJcYyDRRxIb4
+         66rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740934530; x=1741539330;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WNhRIRChntze82/L4ktasbBRAu7Ns3w1vjLsBJ7Qi7A=;
+        b=IWRI6mDKG10ToeWpl4pL3ubMkD9JR+i4licMhUs8rwD4gHn0Bx+KmKATGqj7pjdxo+
+         NJmlClkLp4KjRzSx7IEXf1C97SsOx7ntUqc6XkBbX3OZPpcZdu2xH2n/rNKyMwhl3UUe
+         iL+G03SmcBZXTJOy7xyELbImnNRye5Ui0M8iamVW1iFrM+kKgGKl2u1k7erRn8bcaT3S
+         OecpywM9v5LTwhX+EjjePRoNCPMoVvMWtG3V2hPRx19Zjuo54zAaj2Uo7RWDxPkHHCC8
+         ZSoG2CXOjse0+hc2BgX2kiF5memzTebZ37Zpe7qyU20dtUZR8LxGPdzfQgGl5pTdbt/o
+         BPkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUco7PbqzX8Ehz7kF+Mn8gp1Ax5jQ248yok6mfYopn/sBubMDIaAuTTb1iT1fSCXT4/nYVKuYkk030ViJc=@vger.kernel.org, AJvYcCXPdmksCOTK8hLPHpEBCxvZen4ntRSSusEALSKvG18D/8MI8PgJEkEvhLnryTkrxyaYi+mbDDKt0JPcYTU3@vger.kernel.org, AJvYcCXfqb/BeQMOdiHjIGsftawRjqNrEtHaQUKsS5nG3zUh826Kwm3vrUJdXaZvO48l7mgPOL6kjV7qZS9S@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTWiQl0u/Hp9gG2McZN79t7lbzkq5LophCFALTgKRHf8NqRrv5
+	GqVKCf/XE6HklwnbSjpR+a5vds0hARSOgSL/ZWHh7ZpBflN2JvYajYlSkg==
+X-Gm-Gg: ASbGncunVGqH0dXIaWKZyOX5E4EqYs8OJRXluo4mJUghWj6Sm7Hrq3yxQ745khOQNqV
+	YWAZzBi6f+y2YI9wEkP2Sl7sspvCUZO7LdCKldbT6RZLPGrFPEuVfqMkOoiwrPVhuwvUXa4+67+
+	TSGylPslARrywycIiJClvoJrxvpanXKhDNmuWZFRjXujkHl/KPGRQb5yHtJM0jPTNHvsjpUH9Pp
+	ErYUUbA5WgE9XaweSMq077rodotaV3G7OKVAuSJHwUw0mD5G4CiDXFNPqSwybud6UeDeu0DJGbB
+	wvdVWRU7Dk7Fap9MiszM837UMjTBJXFodijTUN4yxKwgihx3iO+FLEl41A==
+X-Google-Smtp-Source: AGHT+IFFo1wG9lJxaIlR0ENetrO1ZrsYddgIGAvX1cZgJb5zhAAIMhfG8hI+9sd/l8gFDPF3BtaXiA==
+X-Received: by 2002:a05:6a00:8d2:b0:736:50d1:fc84 with SMTP id d2e1a72fcca58-73650d1ff4cmr1660775b3a.21.1740934530173;
+        Sun, 02 Mar 2025 08:55:30 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe2b322sm7414594b3a.14.2025.03.02.08.55.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 08:55:29 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 2 Mar 2025 08:55:28 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] hwmon: (gpio-fan) Remove unnecessary comment
+Message-ID: <124ddf04-f9f9-478d-8bb7-0148a464af79@roeck-us.net>
+References: <20250210145934.761280-1-alexander.stein@ew.tq-group.com>
+ <20250210145934.761280-5-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217113153.161476-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250217113153.161476-1-krzysztof.kozlowski@linaro.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 3 Mar 2025 01:55:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASHmbeYya5fPdktBtdJiXGWHeVRq00qRFMOhseKir=yvQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JowERnkbuGR3wCvYYHBkWAEZ-YeACq7gGskOLL0h2IzoFG8rFmOoj0IGaI
-Message-ID: <CAK7LNASHmbeYya5fPdktBtdJiXGWHeVRq00qRFMOhseKir=yvQ@mail.gmail.com>
-Subject: Re: [PATCH v3] docs: kconfig: Mention IS_REACHABLE as way for
- optional dependency
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210145934.761280-5-alexander.stein@ew.tq-group.com>
 
-On Mon, Feb 17, 2025 at 8:32=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Several drivers express optional Kconfig dependency with FOO || !FOO,
-> but for many choices this is not suitable: lack of stubs for !FOO
-> like in HWMON.  Describe the second, less favorable way of optional
-> dependency with IS_REACHABLE by moving the code from "imply" chapter to
-> "Optional dependencies".
->
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
+On Mon, Feb 10, 2025 at 03:59:32PM +0100, Alexander Stein wrote:
+> __set_fan_ctrl() is only called by set_fan_speed(), which ensures
+> fan_data->lock is held already.
+> 
 
-Applied to linux-kbuild. Thanks.
+The comment is still valid, and it does not hurt to have it.
 
-For consistency with the existing documentation,
-I replaced two spaces between sentences.
+Guenter
 
-
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > ---
->
-> Changes in v3:
-> 1. Significant rewrite to mark IS_REACHABLE as less favorable.
->
-> Changes in v2:
-> 1. Replace FOO->BAR
-> 2. Instead of referencing earlier "imply", move the code here and add
->    more text (Masahiro)
-> ---
->  Documentation/kbuild/kconfig-language.rst | 29 ++++++++++++++---------
->  1 file changed, 18 insertions(+), 11 deletions(-)
->
-> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kb=
-uild/kconfig-language.rst
-> index 2619fdf56e68..c8c20a34525e 100644
-> --- a/Documentation/kbuild/kconfig-language.rst
-> +++ b/Documentation/kbuild/kconfig-language.rst
-> @@ -194,16 +194,6 @@ applicable everywhere (see syntax).
->    ability to hook into a secondary subsystem while allowing the user to
->    configure that subsystem out without also having to unset these driver=
-s.
->
-> -  Note: If the combination of FOO=3Dy and BAZ=3Dm causes a link error,
-> -  you can guard the function call with IS_REACHABLE()::
-> -
-> -       foo_init()
-> -       {
-> -               if (IS_REACHABLE(CONFIG_BAZ))
-> -                       baz_register(&foo);
-> -               ...
-> -       }
-> -
->    Note: If the feature provided by BAZ is highly desirable for FOO,
->    FOO should imply not only BAZ, but also its dependency BAR::
->
-> @@ -588,7 +578,9 @@ uses the slightly counterintuitive::
->         depends on BAR || !BAR
->
->  This means that there is either a dependency on BAR that disallows
-> -the combination of FOO=3Dy with BAR=3Dm, or BAR is completely disabled.
-> +the combination of FOO=3Dy with BAR=3Dm, or BAR is completely disabled. =
- The BAR
-> +module must provide all the stubs for !BAR case.
-> +
->  For a more formalized approach if there are multiple drivers that have
->  the same dependency, a helper symbol can be used, like::
->
-> @@ -599,6 +591,21 @@ the same dependency, a helper symbol can be used, li=
-ke::
->    config BAR_OPTIONAL
->         def_tristate BAR || !BAR
->
-> +Much less favorable way to express optional dependency is IS_REACHABLE()=
- within
-> +the module code, useful for example when the module BAR does not provide
-> +!BAR stubs::
-> +
-> +       foo_init()
-> +       {
-> +               if (IS_REACHABLE(CONFIG_BAR))
-> +                       bar_register(&foo);
-> +               ...
-> +       }
-> +
-> +IS_REACHABLE() is generally discouraged, because the code will be silent=
-ly
-> +discarded, when CONFIG_BAR=3Dm and this code is built-in.  This is not w=
-hat users
-> +usually expect when enabling BAR as module.
-> +
->  Kconfig recursive dependency limitations
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> --
-> 2.43.0
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+>  drivers/hwmon/gpio-fan.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
+> index 322b161d5ca1f..4614d0ad86b3a 100644
+> --- a/drivers/hwmon/gpio-fan.c
+> +++ b/drivers/hwmon/gpio-fan.c
+> @@ -100,7 +100,6 @@ static int fan_alarm_init(struct gpio_fan_data *fan_data)
+>   * Control GPIOs.
+>   */
+>  
+> -/* Must be called with fan_data->lock held, except during initialization. */
+>  static void __set_fan_ctrl(struct gpio_fan_data *fan_data, int ctrl_val)
+>  {
+>  	int i;
 
