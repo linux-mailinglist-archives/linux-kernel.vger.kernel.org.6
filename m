@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-540769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BBFA4B4B6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:42:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D65A4B4B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC6297A6E90
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30C61890B67
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0A81EE01B;
-	Sun,  2 Mar 2025 20:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCC11E9B0B;
+	Sun,  2 Mar 2025 20:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRB2mT3q"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yp2DeGSP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A07F2033A;
-	Sun,  2 Mar 2025 20:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8147C2AD13
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 20:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740948129; cv=none; b=M7AlS14lOzgKQWUhOvHfwltenbqimrx21lFQ0DV1GjeYMdNxiBbKl2RoUBJuQBTyuLcTp3NElMdFv9WPFA4pHlIyE9t87EqTxMiSbnXNntTJRGohCyQAld4VXbZa9DnmmMrJrk3DwicWONcc7Q7Oi5Muur+oKCMbqC53ejnsRzQ=
+	t=1740948616; cv=none; b=eK3Zv6jGnWCDie4XzjHyUqjsco7RBXhXAaJdRkEz1D2mjh1mWn/CkjIF7WCXFvnX/h4evF+Dv1K1pSiEaajxk2l8w5i/iwx5TRuM8YNqA1nUgWo9KkXl9T+kybd2wgBD72EYWu52Bui6XuBL9jRAe4RKvUfZAQpqvyG4ExDIBN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740948129; c=relaxed/simple;
-	bh=8ek+3E25/WDKCG1eDsWVbtpNweae1sQM/k3cm/YTLfk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L02Rw/OycFIrbkscGv9G9ww89K3efPhY294S5vfBcLn4wiuszH3n9ChPVN/dvIr5Ng9GQjcb53ti1yzi/iD8w6QDdl/wAk0Bdg1c34A5Jhp+LgRUvYjnVpKJ+6g9z0X9e1HdZUQ/KWPrFYGD6wDiYi8pATp1RLiZsoS+QdR2RI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRB2mT3q; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52361a772e7so2110976e0c.1;
-        Sun, 02 Mar 2025 12:42:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740948125; x=1741552925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7vwG3XWzx1oXEY5NJ5MaRENhhhKbU+wooyHo2x3jYFY=;
-        b=lRB2mT3qzTZLAcok2Ck6u2eT6WJT3Lo+ZKQ2TmAEDONMogYRQVWQw1jkCKF3IDkVwt
-         OKZn8LB7kSCwtWuMHvnQg0Bn/fYKWyhu2WcBVLy6lyPkbBQJ7puTpDvIZNgBmxyjOEY9
-         wTCLeB5Q1nOYres+/bUVGKwPDGDPElurBrB2B4ZToCb1Fqx1JMxpodGKBmLUNQVFRKlV
-         MVVW8ID8RU2nMIUGEU16iB1cynlUsFSWXe+oxfPgesYlWLezM6x9zCf+1kYrjoOswsB5
-         y5QBqxRtfaOUVa1uYu7GxboideHwEjLTw5BtbKfE17yuDNV9DuV33ygRUsaPyyfnffIH
-         88Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740948125; x=1741552925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7vwG3XWzx1oXEY5NJ5MaRENhhhKbU+wooyHo2x3jYFY=;
-        b=OA39YVIOX2YgP49cf1+5GcF9FStrJrAF4bm82rLY1/QPybQBVOmBgrGu60nS2uHr3D
-         VQTLgHIrz/xTxoFlWE+4vamUbiONEXaQ/INyDSMPH9KhibksAZGsZ392cUvFO6d+Kbyr
-         LeOqHyxM8WgJpJSgL652rug/yLJw+QKvveaCovmLzF+jz2b7NFG0RK+RUO6falKitZiB
-         IFOEZMGxlCaJOiCDiY/HM+9Hq2inFk76lg53RjgSATMddAX3IFBLgFgG11WMtv0pWn1F
-         oWZBemB7ufAtFdzs2xgF5JbCB0Ezex2nAIDegknunWr9nZZLzq6qJsVQA5WDRzCYN6U8
-         /Djw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUiBFR3+HAP8KIGYvHuXLvXLAkD4YA0gfx7Ka63N6+Q+IyUga7T3ogzplocH2h/Xl2ZBsL9GJl@vger.kernel.org, AJvYcCUuckFt6x/Mlk+GCOsW33ijuukM1TpMrXo6c9qAacW24xk+k520IFtY0lRcykfGi8ZKDYyUAjbem0fHJydG@vger.kernel.org, AJvYcCWoOpbvrpHc919GTp0i7Na/DI3cmuARytpAgJorbMVInIqePjTkwlS0w5Qs74PWojlNGvzKnOvt0DfS@vger.kernel.org, AJvYcCXucMqtAvY9vH226jqITDIQKCmi4sfNizOvIeKTuTbpZb6gzvMWsy8uSAG2oMQsb43vaeO4/wZipR4qYME5Q0Ckn0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTMP8L+k7Ny24VwqymCCetYb9ri5sLmcf4vniGDVFwnE2kzMk+
-	1V1QAy6mKZbFAByALTFHeqmyhgJ/y0ojveJ7Hz1aTo04jp6qVNOeK41SbXL+YQWt18Px4bUudSz
-	czvRD9+pXijteW88U/FO67p2+4Bk=
-X-Gm-Gg: ASbGncuBRT63XEQvXZcCvLd3l51yQgUgsnlzY0CX1PvlPxiitucU0iFjJDYwLzcTaNu
-	m6Tu5Aylfj9jVU5etpZBmRebIfw4yiWoqvNEGnYyJar7EF+GpMevILfFdgXmg6RT4uaNBIZQr46
-	nqB8dmPgIyIxP01AFOIRjXUkDJcw==
-X-Google-Smtp-Source: AGHT+IHULVvVzy6eAlunOVty1COthJ1Jepa3LyHBbL5NNVzmQNI732/9q1C0CKv2xgLX+/1vQD8xyF5EmMq76ICjUXU=
-X-Received: by 2002:a05:6122:8c01:b0:50d:39aa:7881 with SMTP id
- 71dfb90a1353d-52358de4ec8mr6748750e0c.0.1740948125174; Sun, 02 Mar 2025
- 12:42:05 -0800 (PST)
+	s=arc-20240116; t=1740948616; c=relaxed/simple;
+	bh=iKKiULY4FrHKeHfEkzQVmNq5MpBQvJcZT6hoXQtN69s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYDjyfDfVrht058d6rxT8Py6YojTLOxNUpg4AvpCajzgD2GZ0GTjLJXJbAJBT+GYcpUVRNQRRKBw8EXJbDOsuhdXela03fU3gO+4yHSufPNXwMBtnU+63iXBBfAd4n/k02MLv/HK3cIEzw9ELxo+8kD9TLth4XhM+1Z8kbKdebQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yp2DeGSP; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740948615; x=1772484615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iKKiULY4FrHKeHfEkzQVmNq5MpBQvJcZT6hoXQtN69s=;
+  b=Yp2DeGSPqF8zw86mLgcB1R1AKp7yxx1pDqEdj84oIrYEv4cpKWIIMKtk
+   3QufjFTbXeET1h4Cv9oKi+xwgyYefjpEzyHtlansD5He+cSN7SARyzSqc
+   behnERujRG6dowzkyhwa7QXx9m+qebGNTiy0YQEJUan2d5fExA/O9d4pm
+   isXHQztwdNmp7cnoQytBltC10HFuaqP5sVmG1D8686LgyI4alJ4JiLLLG
+   DTwf+Rq2rjQTFMhEbU/eD8AT81cvXeNsdIKqR54ERv6OBO9f1ALx/FSql
+   giWsivFzbUWLayDlW9piMkv1ysheZGQlV+dpLM28di6T2BrN38qTh/D1+
+   g==;
+X-CSE-ConnectionGUID: 77M7UnPMRL6j5MgZSWJXzw==
+X-CSE-MsgGUID: 3hrvNXrPS/GH+bayseEd2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="52461093"
+X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
+   d="scan'208";a="52461093"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 12:50:14 -0800
+X-CSE-ConnectionGUID: hsh7De5aRaqhCoc8UibPvg==
+X-CSE-MsgGUID: RdcPx0RwRfay3N2DQ3ZppQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
+   d="scan'208";a="118019499"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Mar 2025 12:50:10 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toqG3-000HcQ-08;
+	Sun, 02 Mar 2025 20:50:05 +0000
+Date: Mon, 3 Mar 2025 04:49:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com, pierre.gondois@arm.com,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, qyousef@layalina.io,
+	hongyan.xia2@arm.com, christian.loehle@arm.com,
+	luis.machado@arm.com, qperret@google.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 6/7 v4] sched/fair: Add misfit case to push task mecanism
+ for EAS
+Message-ID: <202503030443.zgft6lMb-lkp@intel.com>
+References: <20250302161321.1476139-7-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <c5a75f20-9b61-448e-941b-1106cd06ea04@lunn.ch>
-In-Reply-To: <c5a75f20-9b61-448e-941b-1106cd06ea04@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sun, 2 Mar 2025 20:41:39 +0000
-X-Gm-Features: AQ5f1JoWaBBZzpnBw9lvvBJNa6x5tpLyvwpF6S_ewU0TkWngdPMjjbvjmNy-gTg
-Message-ID: <CA+V-a8sCMn+v5y5v9CyyV2VsRmLj-Uyowt61tTS9dWN43CD0_A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: net: Document GBETH bindings for Renesas
- RZ/V2H(P) SoC
-To: Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302161321.1476139-7-vincent.guittot@linaro.org>
 
-Hi Andrew,
+Hi Vincent,
 
-On Sun, Mar 2, 2025 at 7:25=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > +  clock-names:
-> > +    items:
-> > +      - const: stmmaceth
-> > +      - const: pclk
-> > +      - const: ptp_ref
-> > +      - const: tx
-> > +      - const: rx
-> > +      - const: tx-180
-> > +      - const: rx-180
->
-> As Russell said in an older thread, tx and tx-180 are effectively the
-> same clock, but with an inverter added. You should be able to arrange
-> the clock tree that if you enable tx, it also enables tx-180 as a
-> parent/sibling relationship.
->
-I can certainly do that, but not sure in the DT we will be describing
-the HW correctly then. I'll have to hide *-180  clocks In the DT and
-handle and turning on/off these clocks in the clock driver.
+kernel test robot noticed the following build errors:
 
-Currently
-eth0: ethernet@15c30000 {
-             compatible =3D "renesas,r9a09g057-gbeth", "renesas,rzv2h-gbeth=
-",
-                               "snps,dwmac-5.20";
-             reg =3D <0 0x15c30000 0 0x10000>;
-             interrupts =3D <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
-                               <GIC_SPI 745 IRQ_TYPE_LEVEL_HIGH>;
-             interrupt-names =3D "macirq", "eth_wake_irq", "eth_lpi",
-                                         "tx0", "tx1", "tx2", "tx3",
-                                         "rx0", "rx1", "rx2", "rx3";
-             clocks =3D  <&cpg CPG_MOD 0xbd>,
-                            <&cpg CPG_MOD 0xbc>,
-                            <&cpg CPG_CORE R9A09G057_GBETH_0_CLK_PTP_REF_I>=
-,
-                            <&cpg CPG_MOD 0xb8>,
-                            <&cpg CPG_MOD 0xb9>,
-                            <&cpg CPG_MOD 0xba>,
-                            <&cpg CPG_MOD 0xbb>;
-             clock-names =3D "stmmaceth", "pclk", "ptp_ref",
-                                "tx", "rx", "tx-180", "rx-180";
-             resets =3D <&cpg 0xb0>;
-             .....
-};
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on peterz-queue/sched/core linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Cheers,
-Prabhakar
+url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Guittot/sched-fair-Filter-false-overloaded_group-case-for-EAS/20250303-001556
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20250302161321.1476139-7-vincent.guittot%40linaro.org
+patch subject: [PATCH 6/7 v4] sched/fair: Add misfit case to push task mecanism for EAS
+config: riscv-randconfig-002-20250303 (https://download.01.org/0day-ci/archive/20250303/202503030443.zgft6lMb-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030443.zgft6lMb-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503030443.zgft6lMb-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/sched/fair.c: In function 'check_pushable_task':
+>> kernel/sched/fair.c:8964:21: error: expected ';' before '}' token
+    8964 |         return false
+         |                     ^
+         |                     ;
+    8965 | }
+         | ~                    
+
+
+vim +8964 kernel/sched/fair.c
+
+  8952	
+  8953	static int
+  8954	balance_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+  8955	{
+  8956		if (sched_fair_runnable(rq))
+  8957			return 1;
+  8958	
+  8959		return sched_balance_newidle(rq, rf) != 0;
+  8960	}
+  8961	#else
+  8962	static inline bool check_pushable_task(struct task_struct *p, struct rq *rq)
+  8963	{
+> 8964		return false
+  8965	}
+  8966	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
