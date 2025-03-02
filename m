@@ -1,175 +1,175 @@
-Return-Path: <linux-kernel+bounces-540541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73359A4B1FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:00:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491DEA4B203
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 857DB7A5CCA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F573B2399
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C024E1E570E;
-	Sun,  2 Mar 2025 14:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114E21E7C10;
+	Sun,  2 Mar 2025 14:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McIGGuoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="krIMDmk9"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5E223F36D;
-	Sun,  2 Mar 2025 14:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7131E008B;
+	Sun,  2 Mar 2025 14:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740924030; cv=none; b=tqKUTHV5zCL6/SVa64u2vSIztCcoTlgMgJXfgu4locAb1SkhgmJnqQ91YIftGhXsV/7ZwCRjY3M7uEg9Jj7VAAizU/o57XnhBBZejW9+9jGNfUNr1mk3fZkxCe54Es19xnBJhrbLgu/ja+NBb683S5AlSPECYNGtMvQSwr7+xG0=
+	t=1740924330; cv=none; b=NqOs4DNVYqR2Luyn/Yn7Nkp2PjhkNrxz1QMSTx27EjcD+OmI9u1TBZiuzjxeZLElwb6fBwUrjRBIEwAUC0YXEYMklgK2Z9HUhubqzb05WCOB0wRJL7M5e6HcOI5BM85Ue82ln15OgmLPi7h05TEA5dCVwPnhLX+aISVCRaIwC8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740924030; c=relaxed/simple;
-	bh=Av/PzBkOyruXRWKNi7XdeiMIEbdI1P2Bm67kdtg1gjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MpXqcel3aaImxjoFrXxJd/BloG6NC9ps1eYiQ5zKbmOknu7tvXOZxZujq5eUpfcs/QlePhEk8U5AvRDKFNZacGpo7x9IyU627H9iPPvHEie4gp7+D0cJ9VGQ8QlHrURoNxbUha0tde3aFL/osvMVlw2oxF9vQenOVFzdPO24sPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McIGGuoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A02C4CEEB;
-	Sun,  2 Mar 2025 14:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740924029;
-	bh=Av/PzBkOyruXRWKNi7XdeiMIEbdI1P2Bm67kdtg1gjg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=McIGGuoZ7gMk2Glgi+BCFR2gGNhEJVNnMtxtb7FuX2X0QS1okoEknf61jVDXoKwNn
-	 0nXZNH4n0Hpw4bRx3eyjRFFcF7EgEfBpg4uKzmjNYeB0JZuRxWWmNW0flo+PSESd23
-	 ztxe4Hw3qOelY7Gk8DnI5p1dH69WjRuOjVbGpmDty5zBYI/mFQEQzT2/F8qlZeyO+F
-	 1ymkoVUztYhkV2Ji7jOVozFBNwTvJilnMIOVRltO/p5JsSVPOXsxop3m5J2AZp+US8
-	 U1r5Igo4WtrAV+Nowb+QnB8neIzzYFnkX+l2S1ARK2cnpywKVgWZOf5RH2pGHc7vAs
-	 KsWaqJKxxnP3w==
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2238e884f72so11881075ad.3;
-        Sun, 02 Mar 2025 06:00:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW77skBb2CT60NrKOovQFwja2n1hojbNS57g8dxO+dm5lENgWXpo4AXLjLNLjN6FYwutaDJCjjqnqHfJLZB@vger.kernel.org, AJvYcCXhtCv6ymNQcdq21xbM7X31EgENYQh6MDbh8wuTSIA4TH1vQJFkZXJ34FvtsJxoRBOOEWAYYfz6DOj9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPWjSb8hFVvInkZkPKn3U5l1zQhBwgjZvcS67vTYLToPFsp9T6
-	s0griNk/7HPfScAPlfdMLkb80sA5Psszk7r4KV4BmoSmgJliSba65te1aYa6G9gIdcHlvX1JpCH
-	8u2dKKTdmcEYz7Q6FNyHe0cVvXQ==
-X-Google-Smtp-Source: AGHT+IG1UW/aTlTM1yyIsxH6m8pGtzQb2LXGDtI6T8t/hEX8x0qb7qhCvRhbTMRAi2KttaGOcJDuH66GaQNNrad3F3Y=
-X-Received: by 2002:a17:903:244d:b0:216:6901:d588 with SMTP id
- d9443c01a7336-22368f75980mr127122725ad.15.1740924028832; Sun, 02 Mar 2025
- 06:00:28 -0800 (PST)
+	s=arc-20240116; t=1740924330; c=relaxed/simple;
+	bh=hw8I/WRR6FZFtRKEDJVVXsvf0y2KaAdSHISslHB68sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r63IhsGdR8uv0+5kGZaDzp7gLE/RsdLJfRhhj8F9j23QzuMtrK7T7ALB4n/iHtp6CsrOEKeCy8JqhY+MtWou9iXkNo78GdO2zeGD2kWE9f5SdpYH+0KhveEA/Nf7Us/mfBS8BzwMJ2UaFaTIXAc6u8prJNn8AwlsMCTL/JK5uEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=krIMDmk9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0DAE2D5;
+	Sun,  2 Mar 2025 15:03:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740924236;
+	bh=hw8I/WRR6FZFtRKEDJVVXsvf0y2KaAdSHISslHB68sM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=krIMDmk9FqRwwpYykiRJKGSDjQR1RtGOYWBz4UloPYMN33Ve+fIdnQEaPtyWoCwqE
+	 IebwpHCtJwt6Wvw0UE6a7/IVyEi5eeqT8qpaR8kXjjlP1D/f/tgHwKqb02fmNeEj3g
+	 7aoqLnsdMV3Gh+WT+tZdb6UaFcioP0sMT1gKgdDY=
+Date: Sun, 2 Mar 2025 16:05:09 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] media: vsp1: rwpf: Support operations with IIF
+Message-ID: <20250302140509.GN18557@pendragon.ideasonboard.com>
+References: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
+ <20250224-v4h-iif-v2-6-0305e3c1fe2d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
- <20250217154836.108895-9-angelogioacchino.delregno@collabora.com> <CAAOTY_8kxxaj+jum6CkJGHKrpjiX_cNt4FT345yET8GWR2QSFA@mail.gmail.com>
-In-Reply-To: <CAAOTY_8kxxaj+jum6CkJGHKrpjiX_cNt4FT345yET8GWR2QSFA@mail.gmail.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Sun, 2 Mar 2025 22:01:15 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_9tjf8xw8n9euVK1OH7LLopNYwx5qzLJpQyQ+sKfVH6og@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo2Tbkh_sgx6kIGT6QdCzyACy__75IjpU71fY-nThmkgmTkCzBPqTB7-MQ
-Message-ID: <CAAOTY_9tjf8xw8n9euVK1OH7LLopNYwx5qzLJpQyQ+sKfVH6og@mail.gmail.com>
-Subject: Re: [PATCH v7 08/43] drm/mediatek: mtk_dpi: Support AFIFO 1T1P output
- and conversion
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, p.zabel@pengutronix.de, 
-	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com, 
-	jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com, 
-	ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com, 
-	jason-jh.lin@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250224-v4h-iif-v2-6-0305e3c1fe2d@ideasonboard.com>
 
-Chun-Kuang Hu <chunkuang.hu@kernel.org> =E6=96=BC 2025=E5=B9=B43=E6=9C=882=
-=E6=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=887:29=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Hi, Angelo:
->
-> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=
-=96=BC
-> 2025=E5=B9=B42=E6=9C=8817=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=881=
-1:49=E5=AF=AB=E9=81=93=EF=BC=9A
-> >
-> > On some SoCs, like MT8195 and MT8188, the DPI's FIFO controller
-> > (afifo) supports outputting either one or two pixels per round
-> > regardless of the input being 1T1P or 1T2P.
-> >
-> > Add a `output_1pixel` member to struct mtk_dpi_conf which, if
-> > set, will enable outputting one pixel per clock.
-> >
-> > In case the input is two pixel per clock (1T2P), the AFIFO HW
-> > will automatically (and internally) convert it to 1T1P.
->
-> Applied to mediatek-drm-next [1], thanks.
->
-> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linu=
-x.git/log/?h=3Dmediatek-drm-next
+Hi Jacopo,
 
-Fix build error then apply. Be care of patch quality.
+Thank you for the patch.
 
+On Mon, Feb 24, 2025 at 09:19:46PM +0100, Jacopo Mondi wrote:
+> When the RPF/WPF units are used for ISP interfacing through
+> the IIF, the set of accessible registers is limited compared to
+> the regular VSPD operations.
+> 
+> Support ISP interfacing in the rpf and wpf drivers by checking if
+
+s/drivers/entities/ maybe
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> the pipe features an IIF instance and writing only the relevant
+> registers.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/renesas/vsp1/vsp1_rpf.c | 11 +++++++++--
+>  drivers/media/platform/renesas/vsp1/vsp1_wpf.c | 14 ++++++++++----
+>  2 files changed, 19 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> index e10ed836153633c4fe27224d0df39c77d4c8ab89..dae94129a105a646917353dba0181f9c93327132 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> @@ -84,7 +84,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+>  	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
+>  	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
+>  
+> -	infmt = VI6_RPF_INFMT_CIPM
+> +	infmt = (pipe->iif ? 0 : VI6_RPF_INFMT_CIPM)
+>  	      | (fmtinfo->hwfmt << VI6_RPF_INFMT_RDFMT_SHIFT);
+>  
+>  	if (fmtinfo->swap_yc)
+> @@ -98,7 +98,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+>  	vsp1_rpf_write(rpf, dlb, VI6_RPF_INFMT, infmt);
+>  	vsp1_rpf_write(rpf, dlb, VI6_RPF_DSWAP, fmtinfo->swap);
+>  
+> -	if (entity->vsp1->info->gen == 4) {
+> +	if (entity->vsp1->info->gen == 4 && !pipe->iif) {
+>  		u32 ext_infmt0;
+>  		u32 ext_infmt1;
+>  		u32 ext_infmt2;
+> @@ -174,6 +174,13 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+>  		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
+>  		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
+>  
+> +	/* No further configuration for VSPX. */
+> +	if (pipe->iif) {
+> +		/* VSPX wants alpha_sel to be set to 0. */
+> +		vsp1_rpf_write(rpf, dlb, VI6_RPF_ALPH_SEL, 0);
+> +		return;
+> +	}
+> +
+>  	/*
+>  	 * On Gen2 use the alpha channel (extended to 8 bits) when available or
+>  	 * a fixed alpha value set through the V4L2_CID_ALPHA_COMPONENT control
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> index f176750ccd9847fdb8d51f7f51a6bd5092b70197..88db60596f0f2f459eddbbc2ea7247620d675dd8 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> @@ -247,8 +247,11 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+>  	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
+>  	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
+>  
+> -	/* Format */
+> -	if (!pipe->lif || wpf->writeback) {
+> +	/*
+> +	 * Format configuration. Skip for IIF (VSPX) or if the pipe doesn't
+> +	 * write to memory.
+> +	 */
+> +	if (!pipe->iif && (!pipe->lif || wpf->writeback)) {
+>  		const struct v4l2_pix_format_mplane *format = &wpf->format;
+>  		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
+>  
+> @@ -291,7 +294,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+>  	 * Sources. If the pipeline has a single input and BRx is not used,
+>  	 * configure it as the master layer. Otherwise configure all
+>  	 * inputs as sub-layers and select the virtual RPF as the master
+> -	 * layer.
+> +	 * layer. For VSPX configure the enabled sources as masters.
+>  	 */
+>  	for (i = 0; i < vsp1->info->rpf_count; ++i) {
+>  		struct vsp1_rwpf *input = pipe->inputs[i];
+> @@ -299,7 +302,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+>  		if (!input)
+>  			continue;
+>  
+> -		srcrpf |= (!pipe->brx && pipe->num_inputs == 1)
+> +		srcrpf |= (pipe->iif || (!pipe->brx && pipe->num_inputs == 1))
+>  			? VI6_WPF_SRCRPF_RPF_ACT_MST(input->entity.index)
+>  			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
+>  	}
+> @@ -316,6 +319,9 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+>  	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(index),
+>  			   VI6_WPF_IRQ_ENB_DFEE);
+>  
+> +	if (pipe->iif)
+> +		return;
+> +
+>  	/*
+>  	 * Configure writeback for display pipelines (the wpf writeback flag is
+>  	 * never set for memory-to-memory pipelines). Start by adding a chained
+
+-- 
 Regards,
-Chun-Kuang.
 
->
-> Regards,
-> Chun-Kuang.
->
-> >
-> > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
-llabora.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_dpi.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/media=
-tek/mtk_dpi.c
-> > index 9f83e82437dd..e12dc73ed79c 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > @@ -147,6 +147,8 @@ struct mtk_dpi_factor {
-> >   * @edge_cfg_in_mmsys: If the edge configuration for DPI's output need=
-s to be set in MMSYS.
-> >   * @clocked_by_hdmi: HDMI IP outputs clock to dpi_pixel_clk input cloc=
-k, needed
-> >   *                  for DPI registers access.
-> > + * @output_1pixel: Enable outputting one pixel per round; if the input=
- is two pixel per
-> > + *                 round, the DPI hardware will internally transform i=
-t to 1T1P.
-> >   */
-> >  struct mtk_dpi_conf {
-> >         const struct mtk_dpi_factor *dpi_factor;
-> > @@ -168,6 +170,7 @@ struct mtk_dpi_conf {
-> >         u32 pixels_per_iter;
-> >         bool edge_cfg_in_mmsys;
-> >         bool clocked_by_hdmi;
-> > +       bool output_1pixel;
-> >  };
-> >
-> >  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32=
- mask)
-> > @@ -653,7 +656,13 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi=
- *dpi,
-> >         if (dpi->conf->support_direct_pin) {
-> >                 mtk_dpi_config_yc_map(dpi, dpi->yc_map);
-> >                 mtk_dpi_config_2n_h_fre(dpi);
-> > -               mtk_dpi_dual_edge(dpi);
-> > +
-> > +               /* DPI can connect to either an external bridge or the =
-internal HDMI encoder */
-> > +               if (dpi->conf->output_1pixel)
-> > +                       mtk_dpi_mask(dpi, DPI_CON, DPI_OUTPUT_1T1P_EN, =
-DPI_OUTPUT_1T1P_EN);
-> > +               else
-> > +                       mtk_dpi_dual_edge(dpi);
-> > +
-> >                 mtk_dpi_config_disable_edge(dpi);
-> >         }
-> >         if (dpi->conf->input_2p_en_bit) {
-> > --
-> > 2.48.1
-> >
+Laurent Pinchart
 
