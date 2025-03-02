@@ -1,185 +1,169 @@
-Return-Path: <linux-kernel+bounces-540475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224EEA4B11D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DDCA4B120
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:15:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0193B07D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502FD3A4167
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE651DEFF3;
-	Sun,  2 Mar 2025 11:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4711DF735;
+	Sun,  2 Mar 2025 11:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2PYUixk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="G2oeUQ0S"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B64179BC;
-	Sun,  2 Mar 2025 11:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD92179BC
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740914042; cv=none; b=NZUmWXmWM1XB3B5mzKQhY4Ri/IjBwCFF3apaJeG/7tRiafwdmZEFibfcnKA5Y7Yya93vBOZnahu4+3ZT20QxUkQ+KjZsPaonpbjLGbyA7sbOSBPcherYo+fgLvmcmz1xFx2Lq81n9Cn35kT+nolwoI9lUVDbAtCCWZDNCEAe7X0=
+	t=1740914095; cv=none; b=ue3+twPAjdCZuS6QN1dfWOn5JTnHCfT1plpfD1mBfQlXybqZYuX6ClgH2BC5z8eg4JS8AJ20dv1Gqay6VYY5woIF6MPf/38wmVJif8E8YEbLjflYJ7IZ3KycI5bCN2m2ZgMMuWS2Vgzez220MB/2f/3pT4r05vHIPPcmteRAa88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740914042; c=relaxed/simple;
-	bh=v/ma3IQHSnM+5ud0dShiwB+ncbp4M9rgz628up8ZOkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cMhX7j+PU1DiSpKEgLxUP2ZJnmzErQNbwSmNjZMsJoX9TJt69iZop2/jdKRIBdr7lCOtOHNBcVfHQZvekUJ21Fqog/f1SY09i2NQHX8BAree4LPniO2+iG9PA0/h6n7JaoQws0WQeJj9mpXCR0yzrSoCxei3aCDuujWoOfqxKqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2PYUixk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E565EC4CEED;
-	Sun,  2 Mar 2025 11:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740914041;
-	bh=v/ma3IQHSnM+5ud0dShiwB+ncbp4M9rgz628up8ZOkA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p2PYUixk1Am9QalwwYyF2GaEFbCYaqRVuPbfG+n8JuQ59p/aG1I0T8htcVMF8hoUb
-	 lPmDYHN/tiQbjOEbChNi4BbmFmqD4wxwaMW26lC+JiBPKs2fWqQLfdRSIDicix3Ouy
-	 gPfC0KYV9i5g6r1oie50EYE/tu2V2RDj1JUChuafhKEIb0mQP+jiiRDFV8X6FvMU27
-	 r/eJyCjoLdCPUGAPdNSxCIQ4hgRXyQhDcKb1DzEaWXFiBtLfXBc+TwE/t4BQM8HOTc
-	 YJlaPJKB3YpBzGThPPK3aPqZcvDZo1roa92em+YvsqpRMOGc5a3hrmJ2pggQe4+ehO
-	 fQyTqz7Dgardw==
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fea795bafeso5247061a91.1;
-        Sun, 02 Mar 2025 03:14:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX1bqBYEQRZmy5GI1x3Xk9/G8jZdjJwwM7FDe606Ao42ekdKVIzHYGV1BJdb7z9XWpOwd5mGlj3Dck/GUmu@vger.kernel.org, AJvYcCXOm6wCmmOwZI78TZiBbJnpAdx0HWPwphxdz312rvUe92C+5ZahJ+tc7BS924DfiDcqbbKfQsjnvvQm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbdWkkQ0vbm3mtWziSFOUi9VXLsZ3s4nKg/PHaMYvCzEDcEEQL
-	0/6daeqs+Vj34uvs6ZYyz0U2PcqR6DP/PVnPNIFdUiH7BY9JDACjYFZp8NwSTopyZldbNz1kBbk
-	cEr/PWU26TPzb4LWDO9heIKhcvA==
-X-Google-Smtp-Source: AGHT+IGZksfSFwIbEcmNOhwDcGlaG+7/hc4R9GwB7WRzfYExI+bHgZUCSKMFME5+ViazM2T3gLoc2AcWZathoQG804E=
-X-Received: by 2002:a17:90b:5550:b0:2fa:6793:e860 with SMTP id
- 98e67ed59e1d1-2fea0c70b0emr22779361a91.0.1740914041329; Sun, 02 Mar 2025
- 03:14:01 -0800 (PST)
+	s=arc-20240116; t=1740914095; c=relaxed/simple;
+	bh=yCZBPiZpi5kycYTBGCYambADW5e5sm0mo0hX/9w6Gc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ImKXvqfh4bl9QzX5FFFq00pOLgbM1EFEVESUg3B9GbRCtfc7Efe4MTh82of8r/uRjBdf61ZrlCNYe8jemP05HGU6S1tC2uaq3zGJ93fdRIHfcK0xXwOe9tISVJbtlpF4UnEzTC0FMRAsSgiAW84B/YUu59N090zu2hcCSrMxMRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=G2oeUQ0S; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740914093;
+ bh=4aAL9kjHi8d7xZ8Th1ELQbazXnG5IgJFjgkhzp2InRQ=;
+ b=G2oeUQ0SRsoK5jDzK8rxqS06+Y/hg/uasvwkzyfD4Zw3YMe/T8WHvOGwWDfo4oTOla6FAohM3
+ dv3pQh1bTBb5++h/gVO7AgQP9ZCxP7QJvqcWW2zucmUywcVBH+9SuQUrZ5IpOfMJpWrWuHXm0OE
+ tQqH4NqVy/qGCslzQ9Psg+1M5unJYkL6OQlwAkHzvU/T2r28XhzE/I4tLU8f3ZUeHdf4iZxKvyP
+ MKhj1e3APpTIiVOuSyt9lJPvmlBgk+e1UOwAEkfLoyYv8y88bJ0xdfVoXqGCDA93ZE98b2bbE6k
+ 38QhLCmusARlihg9Ie0AbNkR1u1XbF3HQ7va4rmbH2XA==
+X-Forward-Email-ID: 67c43dac4a29b97c03d4dc5d
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3f0cd767-1fd8-4c65-b8b4-e948288cd02a@kwiboo.se>
+Date: Sun, 2 Mar 2025 12:14:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com> <20250217154836.108895-7-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250217154836.108895-7-angelogioacchino.delregno@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Sun, 2 Mar 2025 19:14:48 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8ztRjpES-JVYeznG6ZjutYiifQSX3poyZoSqbqXYJ+aw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqxhG4uqsABhT4weE72XZJ0MWxPfONUK4l6x3goUDKT1KHLjbb0-IMiCn0
-Message-ID: <CAAOTY_8ztRjpES-JVYeznG6ZjutYiifQSX3poyZoSqbqXYJ+aw@mail.gmail.com>
-Subject: Re: [PATCH v7 06/43] drm/mediatek: mtk_dpi: Move the input_2p_en bit
- to platform data
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com, 
-	jie.qiu@mediatek.com, junzhi.zhao@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com, 
-	ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com, 
-	jason-jh.lin@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for
+ RK3528
+To: Yao Zi <ziyao@disroot.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250228064024.3200000-1-jonas@kwiboo.se>
+ <20250228064024.3200000-5-jonas@kwiboo.se> <Z8GT3rUEyXrTUgtJ@pie.lan>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8GT3rUEyXrTUgtJ@pie.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Angelo:
+Hi Yao Zi,
 
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
-=BC
-2025=E5=B9=B42=E6=9C=8817=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8811:=
-49=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> In preparation for adding support for MT8195's HDMI reserved DPI
-> instance, move the input_2p_en bit for DP_INTF to platform data.
->
-> While at it, remove the input_2pixel member from platform data as
-> having this bit implies that the 2pixel feature must be enabled.
+On 2025-02-28 11:46, Yao Zi wrote:
+> On Fri, Feb 28, 2025 at 06:40:10AM +0000, Jonas Karlman wrote:
+>> Add pinctrl and gpio nodes for RK3528 and import rk3528-pinctrl.dtsi
+>> from vendor linux-6.1-stan-rkr5 kernel with the hdmi-pins-idle node
+>> removed due to missing label reference to pcfg_output_low_pull_down.
+>>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>> ---
+>> This was mostly imported from vendor kernel, however the main commit [1]
+>> list 28 signed-off-by tags, unclear who I should use as author and what
+>> signed-off-by tags to include.
+>>
+>> [1] https://github.com/rockchip-linux/kernel/commit/c17d6325959f0ec1af901e8a17919163454190a2
+>> ---
+>>  .../boot/dts/rockchip/rk3528-pinctrl.dtsi     | 1397 +++++++++++++++++
+>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   82 +
+>>  2 files changed, 1479 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-pinctrl.dtsi
+>>
+> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> index 0fb90f5c291c..d3e2a64ff2d5 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> @@ -4,8 +4,10 @@
+>>   * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+>>   */
+>>  
+>> +#include <dt-bindings/gpio/gpio.h>
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/pinctrl/rockchip.h>
+>>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+>>  #include <dt-bindings/reset/rockchip,rk3528-cru.h>
+>>  
+>> @@ -17,6 +19,11 @@ / {
+>>  	#size-cells = <2>;
+>>  
+>>  	aliases {
+>> +		gpio0 = &gpio0;
+>> +		gpio1 = &gpio1;
+>> +		gpio2 = &gpio2;
+>> +		gpio3 = &gpio3;
+>> +		gpio4 = &gpio4;
+>>  		serial0 = &uart0;
+>>  		serial1 = &uart1;
+>>  		serial2 = &uart2;
+>> @@ -166,6 +173,11 @@ cru: clock-controller@ff4a0000 {
+>>  			#reset-cells = <1>;
+>>  		};
+>>  
+>> +		ioc_grf: syscon@ff540000 {
+>> +			compatible = "rockchip,rk3528-ioc-grf", "syscon";
+>> +			reg = <0x0 0xff540000 0x0 0x40000>;
+>> +		};
+>> +
+>>  		uart0: serial@ff9f0000 {
+>>  			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+>>  			reg = <0x0 0xff9f0000 0x0 0x100>;
+>> @@ -264,5 +276,75 @@ saradc: adc@ffae0000 {
+>>  			#io-channel-cells = <1>;
+>>  			status = "disabled";
+>>  		};
+>> +
+>> +		pinctrl: pinctrl {
+>> +			compatible = "rockchip,rk3528-pinctrl";
+>> +			rockchip,grf = <&ioc_grf>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges;
+> 
+> I doubt whether the pincontroller should be placed under simple-bus:
+> without a reg property, it doesn't look like a MMIO device.
+> 
+> Actually it is, although all the registers stay in the ioc grf. Maybe
+> it should be considered as child of the grf.
 
-Remember to run check patch, after fix check patch error, applied to
-mediatek-drm-next [1], thanks.
+This follows how pinctrl was added for RK3576 and what is proposed for
+RK3562 [2]. I have too little knowledge to know if this needs to change
+or if this should follow similar SoCs.
 
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.=
-git/log/?h=3Dmediatek-drm-next
+[2] https://lore.kernel.org/r/20250227111913.2344207-15-kever.yang@rock-chips.com
 
 Regards,
-Chun-Kuang.
+Jonas
 
->
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediate=
-k/mtk_dpi.c
-> index bb1a17f1384b..9a6c0f75f764 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -135,14 +135,14 @@ struct mtk_dpi_factor {
->   * @is_ck_de_pol: Support CK/DE polarity.
->   * @swap_input_support: Support input swap function.
->   * @support_direct_pin: IP supports direct connection to dpi panels.
-> - * @input_2pixel: Input pixel of dp_intf is 2 pixel per round, so enable=
- this
-> - *               config to enable this feature.
->   * @dimension_mask: Mask used for HWIDTH, HPORCH, VSYNC_WIDTH and VSYNC_=
-PORCH
->   *                 (no shift).
->   * @hvsize_mask: Mask of HSIZE and VSIZE mask (no shift).
->   * @channel_swap_shift: Shift value of channel swap.
->   * @yuv422_en_bit: Enable bit of yuv422.
->   * @csc_enable_bit: Enable bit of CSC.
-> + * @input_2p_en_bit: Enable bit for input two pixel per round feature.
-> +                     If present, implies that the feature must be enable=
-d.
->   * @pixels_per_iter: Quantity of transferred pixels per iteration.
->   * @edge_cfg_in_mmsys: If the edge configuration for DPI's output needs =
-to be set in MMSYS.
->   */
-> @@ -157,12 +157,12 @@ struct mtk_dpi_conf {
->         bool is_ck_de_pol;
->         bool swap_input_support;
->         bool support_direct_pin;
-> -       bool input_2pixel;
->         u32 dimension_mask;
->         u32 hvsize_mask;
->         u32 channel_swap_shift;
->         u32 yuv422_en_bit;
->         u32 csc_enable_bit;
-> +       u32 input_2p_en_bit;
->         u32 pixels_per_iter;
->         bool edge_cfg_in_mmsys;
->  };
-> @@ -651,9 +651,9 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *d=
-pi,
->                 mtk_dpi_dual_edge(dpi);
->                 mtk_dpi_config_disable_edge(dpi);
->         }
-> -       if (dpi->conf->input_2pixel) {
-> -               mtk_dpi_mask(dpi, DPI_CON, DPINTF_INPUT_2P_EN,
-> -                            DPINTF_INPUT_2P_EN);
-> +       if (dpi->conf->input_2p_en_bit) {
-> +               mtk_dpi_mask(dpi, DPI_CON, dpi->conf->input_2p_en_bit,
-> +                            dpi->conf->input_2p_en_bit);
->         }
->         mtk_dpi_sw_reset(dpi, false);
->
-> @@ -1121,12 +1121,12 @@ static const struct mtk_dpi_conf mt8195_dpintf_co=
-nf =3D {
->         .output_fmts =3D mt8195_output_fmts,
->         .num_output_fmts =3D ARRAY_SIZE(mt8195_output_fmts),
->         .pixels_per_iter =3D 4,
-> -       .input_2pixel =3D true,
->         .dimension_mask =3D DPINTF_HPW_MASK,
->         .hvsize_mask =3D DPINTF_HSIZE_MASK,
->         .channel_swap_shift =3D DPINTF_CH_SWAP,
->         .yuv422_en_bit =3D DPINTF_YUV422_EN,
->         .csc_enable_bit =3D DPINTF_CSC_ENABLE,
-> +       .input_2p_en_bit =3D DPINTF_INPUT_2P_EN,
->  };
->
->  static int mtk_dpi_probe(struct platform_device *pdev)
-> --
-> 2.48.1
->
+> 
+> Best regards,
+> Yao Zi
+
 
