@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-540681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65690A4B3AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:08:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74258A4B3B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3308E7A21ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BA816CE09
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1D31EB1A8;
-	Sun,  2 Mar 2025 17:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E891EB5E9;
+	Sun,  2 Mar 2025 17:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljKHUN3E"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="Cl1vbqz/"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678375661;
-	Sun,  2 Mar 2025 17:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C981ADC6D
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 17:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740935268; cv=none; b=fbWUmtrVJzRhcJJ/AWX/Q6BVx0apqS/hfPYHa7ai5zHO7SVAPlISB7Bl3VWXhjDwLWlPjcLiu5p6qCDMwK2BeNQmGdig+7AkmgoqvTf3RmsfRl1lcy+stf597swKCcb6OWxgm9U8Hg6IhPSeJ8HqO/Fd9xABxp7+9x0mu7xK+WU=
+	t=1740935369; cv=none; b=Tq/73veVz90ts0EBSOG3wH59Ox1OIGt9NMtp4/j4YxCigGN08DZhKKzTKS1Dy8DKZUfix55qRiTQ3yLe7etTmbfjPfVSli9a3FEKPMZlIJO3Ae9Fr6GWeVCWjnOdIXATSHtVKQTgtBATg+vBPwJsksZ/flMz8jjrxc/r2R5xt8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740935268; c=relaxed/simple;
-	bh=9ZK9nEE+88bbn8BxWZJCEqofWkZwAIwcSU3NiUZjeRc=;
+	s=arc-20240116; t=1740935369; c=relaxed/simple;
+	bh=JIAhYck11nGcAiDBQuwWiz9DeZpPcCOijT+w0rjV84A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=khKRSwAgX50AQZTx0poLt7dgZyLEZe+f4zrekIMjCH2phyPr8Tel2kmFpQho4WdUZ3hUsZTqrinNO+8FMgY82+1HjQmsvzCAIW/UQN3ZwpnTaGCDA9H1F7sU1eIbz9aw0hYFMcKb6Wrly4yLzLVilrI+g+mAPmnFAbcoBhESonE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljKHUN3E; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaec111762bso678974866b.2;
-        Sun, 02 Mar 2025 09:07:46 -0800 (PST)
+	 In-Reply-To:Content-Type; b=AT33hEMmhQzgsC1KcNW4mKu06grMIhGfhgLmdDj7wvV1aOTUmugzZlOLpmC2ekMTaSlIyTy4tPTXP1YzBnSsi1pCYUkh42WhQd/TJmfEEHX/QNMr91hkujTemK9MTT/CfQotHayJBlCaoUGsCOaf73TUJA7eMVfU++jgqA4E8c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=Cl1vbqz/; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4720cfc35e9so63056861cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 09:09:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740935265; x=1741540065; darn=vger.kernel.org;
+        d=ieee.org; s=google; t=1740935365; x=1741540165; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hclPygd79ZpX9T3xc/SleAjV4UonSIgrdhTmCTiVktk=;
-        b=ljKHUN3EQnHpPY/RNPAbK+tGlxnAI0cuh3pqQngIG4o21EFqTF2XMJUQnz8f5Rl4ce
-         rZnVbCAhZ3abdpb9ij11x6REsruyCAhxueHVQqEwnrguQujPe3DAhsTEFAkESLRSIlQG
-         D6fbRFh0OQfxNNHlan8aGiJJhoCwtyEUixykpDDA/zpocZhFJMZ1Vep0MygpO1b+ZPoL
-         8XYXh3hf+5ok8nUfIEY7JixzfTaFfY6DUw/UfSi2tikfPOa5TMvcHBjr4w/QMt/6/qrI
-         vCkWg8Lse80NBrsp70SgG1FD0xPP0YaTxCq+Hgh5+RiJQE6W0FCge8IZXLRiWcLcIfSL
-         ZcpQ==
+        bh=CXK0kHg3zC5EDYKPmvPzJo0TDy9CNyg2uim5Oy2DqB4=;
+        b=Cl1vbqz/gUvfXvIpa4u1QpcZjIlKask++c09Vwz5DFvdpp4jESGRiN8jeyn7VLZ0zG
+         MAMQaWRzyhgh05RP+jAlHJ3nQ/CaUAPzInAdDTsmiLfJagfHnjReJNBa5KowXiv1HIxN
+         oYrpN4qpibgs178ZFT3F+L1/vKBeiFYU7Qb3c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740935265; x=1741540065;
+        d=1e100.net; s=20230601; t=1740935365; x=1741540165;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hclPygd79ZpX9T3xc/SleAjV4UonSIgrdhTmCTiVktk=;
-        b=MU239nXGjveTGwGcjZZAcN8Epttfzot/6zkmyrnOfykFf4eCtGzh4rO9V1pv0+lkoa
-         tg/KOcf6Qo71oGWwz9U6eSXwoLUElrW3xE/SbQQ/tBYyaJbP+Ncywblv2AxFAEARkpps
-         T2Or5hJOgMBPkm41NTIQwFqu2afwABmMiUTLNpaB2xhlciM7HYNsfsptfE7xrFbPPGRJ
-         vdxoYSRoZci2H1W/6fsMHzkZdNGpF65zjOXynJyU8MFF6Rr7xrB244K1m0u5SZYZJoz0
-         uB++6ctMXSTq2wHswOSyZijJ+ddSnfEyLTz16DzqJ/FnZQp3KDrBMktK77dZP9ndrIbm
-         kftA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN+uVIz0zLHvwfIIODTph5TO1YvvaX3p8nTKSh6srkchskVROQ8aRcZETUqG82gq07/iL3ZsAcbSvwmE3+w8Q=@vger.kernel.org, AJvYcCWG3Jyup/LU+l6Y/5QCzbyrGNz5+oxIhVRGuN8buKr25KFciVOncE4p9By4FdZxsG2OVBlUAivzEgQOPCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjgtUDXBmPBaQVxM+gdpmsuR+d3z5ITdhte2kj+UjQfbbDDUwB
-	X208pqoeI0eVqV35LLLD/YZhykd+1+u+1gtApS/SY4tI1ql1fJOH
-X-Gm-Gg: ASbGncvQtwkT2IPUbn96s2a7NcqSHGJ96EkYkRdzAFewxcL1KoGDA0yTgsaCbYyMTd5
-	yWdlD8grUYZhzBYNIbZQRIjzB/CpLGPskkDLjT9FNxkQkN79JobwuVydJn4Yhm1jJcXuFm6ASXt
-	O3iGTt0lE9uHlIwKbQJAZRjCJXZiuXhT6HmopJq9DbCPRseD8dezGFGkkq/Gf8nlOI1kR0/wgxZ
-	giOcS6UAFfsLVbzFamQckInJyFZoijOXuGiZ4vFILctGoiRUFzxJVhixvZY6Lsaninb2FM4EEDV
-	GTo8JhMjWfOO3bu0UGW64JBiKONun0gztsy8LbhF6NX4RHnbgDjtO3b9MJznE9wvKjl7TAmxZBf
-	MMTNpYSqet8umbY9Zd0ScfgQqci3uXXnbRSVhWK6iZMsc61/TzGPD5aW/PaTTT3SX6xUfh8+tyF
-	74
-X-Google-Smtp-Source: AGHT+IEmEEaztzHiGUWqOpzzlr3OvI0JM85UImed4RrFbsBSCjZx3aGNuOMfvcpxfqFXpmAORLA0nw==
-X-Received: by 2002:a17:907:3fa4:b0:ab6:d7c5:124 with SMTP id a640c23a62f3a-abf265e8ed2mr1056722666b.43.1740935264569;
-        Sun, 02 Mar 2025 09:07:44 -0800 (PST)
-Received: from ?IPV6:2003:df:bf03:a200:eeb1:4cf6:acf1:a130? (p200300dfbf03a200eeb14cf6acf1a130.dip0.t-ipconnect.de. [2003:df:bf03:a200:eeb1:4cf6:acf1:a130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf75481eb4sm94031366b.83.2025.03.02.09.07.43
+        bh=CXK0kHg3zC5EDYKPmvPzJo0TDy9CNyg2uim5Oy2DqB4=;
+        b=ShHsav30ZRExeyd909MjIJqoIORQFmvHgDc3KFUxtgIYU7YN7d3PB3h0sMrpCHWaYM
+         nhcngeuQo1JVAHmI6qgNy7w14EO/66RozUwKluvzmaYA9IQOAP2xpPZbJQV9SkOc3guX
+         /Cx81wwmYJAJEWIdd+o3STiObtgswkZ3rDGuY/QL7o/tCyW7OP0Bho2SSDkcs/WcQYEC
+         L4rauNcgrhNwLYzhWHOppiRKImuqb7qQ3FyjUgXRtqoQ4ZKkUdDgfYWHxDSHfojTxqqZ
+         C9i+hEm9ezK9PneR5itXy68Zu7Zo7oL5BSZQgd7LBKlq50b+uoVrPXi+t6UXtRLaReKB
+         y2yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVS8F6ynz7igf1VuZrgAYB2l+ONRsghE5OC3NyuBKeXJUXgLF2m9QLPtmxTQ8jDkDiN9jxdR2R7ujQAMAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznpjMyUcuZPphbffAYfDSzEnYW198OXNXNOeAQ0o8D+mJ4HlJi
+	fge2oSFc1s4cuJ37C5Uew8lz1QSbaEVTipRTfUCOQSe4Go5mtREdF8IJy1WsfAXmrYcA2dOppJ8
+	=
+X-Gm-Gg: ASbGncuIWpMUo/6I60CIvdmynbOoGGp9vrcb0v7vR26HSunWdJwZqgS57M5egTd4NBG
+	1vafhQ6xsOCw0fg5AuRccW7yQ9aXU9DL6nd8gufve27kktxsDPXWizu+NCZE1DlQIEIkdX6hTs/
+	eL3f2ZFW+fhV+4SBiB03/I7LoaLs+nW47P4WGhNYoDgXkTGB/0PhsNmPoZKm3jefW/61MIOy8Kn
+	JJs+0ifKZhybrBaHN03clC5j5c+xe1ydiHhlHAT/SbpI8jQuXfW1U82W81Ib4uj3gfgtAqPITPb
+	D981d/E9RWyl40PUBtkhFeZWTVHa39J7fowIlN3p5/YjGQ/K5+yVzCo4tXMh5ExwBu14utodVfD
+	i7VIHH/DenJQG
+X-Google-Smtp-Source: AGHT+IEkYCzQCrsbOZDD0xNfmEvExmAH5gSqt2/yzeJomeGsRxZOKC9EFtrYiJrgVGYVspIagyTp8w==
+X-Received: by 2002:a05:622a:1887:b0:474:e4bd:830 with SMTP id d75a77b69052e-474e4bd0b9bmr25937391cf.11.1740935365158;
+        Sun, 02 Mar 2025 09:09:25 -0800 (PST)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-474691a1f8asm48409861cf.12.2025.03.02.09.09.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 09:07:44 -0800 (PST)
-Message-ID: <7026deb6-6e35-47f6-9462-0880a5b47509@gmail.com>
-Date: Sun, 2 Mar 2025 18:07:43 +0100
+        Sun, 02 Mar 2025 09:09:24 -0800 (PST)
+Message-ID: <cc17e0d8-2909-4c01-906c-941700beecd6@ieee.org>
+Date: Sun, 2 Mar 2025 11:09:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,146 +79,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/9] rust: sync: Add SpinLockIrq
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250227221924.265259-1-lyude@redhat.com>
- <20250227221924.265259-7-lyude@redhat.com>
+Subject: Re: [PATCH v4 2/2] libceph: convert timeouts to secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
+ Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
+ <20250301-converge-secs-to-jiffies-part-two-v4-2-c9226df9e4ed@linux.microsoft.com>
 Content-Language: en-US
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <20250227221924.265259-7-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250301-converge-secs-to-jiffies-part-two-v4-2-c9226df9e4ed@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27.02.25 23:10, Lyude Paul wrote:
-> A variant of SpinLock that is expected to be used in noirq contexts, so
-> lock() will disable interrupts and unlock() (i.e. `Guard::drop()` will
-> undo the interrupt disable.
+On 2/28/25 10:22 PM, Easwar Hariharan wrote:
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
 > 
-> [Boqun: Port to use spin_lock_irq_disable() and
-> spin_unlock_irq_enable()]
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Co-Developed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> @depends on patch@ expression E; @@
+> 
+> -msecs_to_jiffies(E * 1000)
+> +secs_to_jiffies(E)
+> 
+> @depends on patch@ expression E; @@
+> 
+> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> +secs_to_jiffies(E)
+> 
+> Change the checks for range to check against HZ.
+> 
+> Acked-by: Ilya Dryomov <idryomov@gmail.com>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+
+Much of this is fine, but I have the same comment on the changes
+where you bring HZ into the checks, which is wrong.  Just
+convert the code more directly, factoring out 1000 *only*.
+
 > ---
->  rust/kernel/sync.rs               |   4 +-
->  rust/kernel/sync/lock/spinlock.rs | 141 ++++++++++++++++++++++++++++++
->  2 files changed, 144 insertions(+), 1 deletion(-)
+>   include/linux/ceph/libceph.h | 12 ++++++------
+>   net/ceph/ceph_common.c       | 18 ++++++++----------
+>   net/ceph/osd_client.c        |  3 +--
+>   3 files changed, 15 insertions(+), 18 deletions(-)
 > 
-...
-> diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-> index ab2f8d0753116..ac66493f681ce 100644
-> --- a/rust/kernel/sync/lock/spinlock.rs
-> +++ b/rust/kernel/sync/lock/spinlock.rs
-> @@ -139,3 +139,144 @@ unsafe fn assert_is_held(ptr: *mut Self::State) {
->          unsafe { bindings::spin_assert_is_held(ptr) }
->      }
->  }
-> +
-> +/// Creates a [`SpinLockIrq`] initialiser with the given name and a newly-created lock class.
-> +///
-> +/// It uses the name if one is given, otherwise it generates one based on the file name and line
-> +/// number.
-> +#[macro_export]
-> +macro_rules! new_spinlock_irq {
-> +    ($inner:expr $(, $name:literal)? $(,)?) => {
-> +        $crate::sync::SpinLockIrq::new(
-> +            $inner, $crate::optional_name!($($name)?), $crate::static_lock_class!())
-> +    };
-> +}
-> +pub use new_spinlock_irq;
-> +
-> +/// A spinlock that may be acquired when local processor interrupts are disabled.
-> +///
-> +/// This is a version of [`SpinLock`] that can only be used in contexts where interrupts for the
-> +/// local CPU are disabled. It can be acquired in two ways:
-> +///
-> +/// - Using [`lock()`] like any other type of lock, in which case the bindings will ensure that
-> +///   interrupts remain disabled for at least as long as the [`SpinLockIrqGuard`] exists.
+> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> index 733e7f93db66a7a29a4a8eba97e9ebf2c49da1f9..5f57128ef0c7d018341c15cc59288aa47edec646 100644
+> --- a/include/linux/ceph/libceph.h
+> +++ b/include/linux/ceph/libceph.h
+> @@ -72,15 +72,15 @@ struct ceph_options {
+>   /*
+>    * defaults
+>    */
+> -#define CEPH_MOUNT_TIMEOUT_DEFAULT	msecs_to_jiffies(60 * 1000)
+> -#define CEPH_OSD_KEEPALIVE_DEFAULT	msecs_to_jiffies(5 * 1000)
+> -#define CEPH_OSD_IDLE_TTL_DEFAULT	msecs_to_jiffies(60 * 1000)
+> +#define CEPH_MOUNT_TIMEOUT_DEFAULT	secs_to_jiffies(60)
+> +#define CEPH_OSD_KEEPALIVE_DEFAULT	secs_to_jiffies(5)
+> +#define CEPH_OSD_IDLE_TTL_DEFAULT	secs_to_jiffies(60)
+>   #define CEPH_OSD_REQUEST_TIMEOUT_DEFAULT 0  /* no timeout */
+>   #define CEPH_READ_FROM_REPLICA_DEFAULT	0  /* read from primary */
+>   
+> -#define CEPH_MONC_HUNT_INTERVAL		msecs_to_jiffies(3 * 1000)
+> -#define CEPH_MONC_PING_INTERVAL		msecs_to_jiffies(10 * 1000)
+> -#define CEPH_MONC_PING_TIMEOUT		msecs_to_jiffies(30 * 1000)
+> +#define CEPH_MONC_HUNT_INTERVAL		secs_to_jiffies(3)
+> +#define CEPH_MONC_PING_INTERVAL		secs_to_jiffies(10)
+> +#define CEPH_MONC_PING_TIMEOUT		secs_to_jiffies(30)
+>   #define CEPH_MONC_HUNT_BACKOFF		2
+>   #define CEPH_MONC_HUNT_MAX_MULT		10
+>   
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55b6323f4b9d93b5d4837cd4ec880c..ee701b39960e1c9778db91936ac7503467ee1162 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -527,29 +527,27 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+>   
+>   	case Opt_osdkeepalivetimeout:
+>   		/* 0 isn't well defined right now, reject it */
+> -		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
+> +		if (result.uint_32 < 1 || result.uint32 > INT_MAX / HZ)
 
-The [`lock_with()`] below states "interrupt state will not be
-touched". Should the [`lock()`] part above mention that the interrupt
-state *is* touched, then? Like in the comment in the example below
-("... e.c.lock();  // interrupts are disabled now")? For example:
+		if (!result.uint32 || result.uint32 > INT_MAX)
 
-... the bindings will ensure that interrupts are disabled and remain
-disabled ...
+>   			goto out_of_range;
+> -		opt->osd_keepalive_timeout =
+> -		    msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->osd_keepalive_timeout = secs_to_jiffies(result.uint_32);
+>   		break;
+>   	case Opt_osd_idle_ttl:
+>   		/* 0 isn't well defined right now, reject it */
+> -		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
+> +		if (result.uint_32 < 1 || result.uint32 > INT_MAX / HZ)
 
-?
+		if (!result.uint32 || result.uint32 > INT_MAX)
 
-Dirk
+>   			goto out_of_range;
+> -		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
+>   		break;
+>   	case Opt_mount_timeout:
+>   		/* 0 is "wait forever" (i.e. infinite timeout) */
+> -		if (result.uint_32 > INT_MAX / 1000)
 
+And so on.
 
-> +/// - Using [`lock_with()`] in contexts where a [`LocalInterruptDisabled`] token is present and
-> +///   local processor interrupts are already known to be disabled, in which case the local interrupt
-> +///   state will not be touched. This method should be preferred if a [`LocalInterruptDisabled`]
-> +///   token is present in the scope.
-> +///
-> +/// For more info on spinlocks, see [`SpinLock`]. For more information on interrupts,
-> +/// [see the interrupt module](kernel::interrupt).
-> +///
-> +/// # Examples
-> +///
-> +/// The following example shows how to declare, allocate initialise and access a struct (`Example`)
-> +/// that contains an inner struct (`Inner`) that is protected by a spinlock that requires local
-> +/// processor interrupts to be disabled.
-> +///
-> +/// ```
-> +/// use kernel::sync::{new_spinlock_irq, SpinLockIrq};
-> +///
-> +/// struct Inner {
-> +///     a: u32,
-> +///     b: u32,
-> +/// }
-> +///
-> +/// #[pin_data]
-> +/// struct Example {
-> +///     #[pin]
-> +///     c: SpinLockIrq<Inner>,
-> +///     #[pin]
-> +///     d: SpinLockIrq<Inner>,
-> +/// }
-> +///
-> +/// impl Example {
-> +///     fn new() -> impl PinInit<Self> {
-> +///         pin_init!(Self {
-> +///             c <- new_spinlock_irq!(Inner { a: 0, b: 10 }),
-> +///             d <- new_spinlock_irq!(Inner { a: 20, b: 30 }),
-> +///         })
-> +///     }
-> +/// }
-> +///
-> +/// // Allocate a boxed `Example`
-> +/// let e = KBox::pin_init(Example::new(), GFP_KERNEL)?;
-> +///
-> +/// // Accessing an `Example` from a context where interrupts may not be disabled already.
-> +/// let c_guard = e.c.lock(); // interrupts are disabled now, +1 interrupt disable refcount
-> +/// let d_guard = e.d.lock(); // no interrupt state change, +1 interrupt disable refcount
-> +///
-> +/// assert_eq!(c_guard.a, 0);
-> +/// assert_eq!(c_guard.b, 10);
-> +/// assert_eq!(d_guard.a, 20);
-> +/// assert_eq!(d_guard.b, 30);
-> +///
-> +/// drop(c_guard); // Dropping c_guard will not re-enable interrupts just yet, since d_guard is
-> +///                // still in scope.
-> +/// drop(d_guard); // Last interrupt disable reference dropped here, so interrupts are re-enabled
-> +///                // now
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +///
-> +/// [`lock()`]: SpinLockIrq::lock
-> +/// [`lock_with()`]: SpinLockIrq::lock_with
-> +pub type SpinLockIrq<T> = super::Lock<T, SpinLockIrqBackend>;
+					-Alex
+
+> +		if (result.uint32 > INT_MAX / HZ)
+>   			goto out_of_range;
+> -		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->mount_timeout = secs_to_jiffies(result.uint_32);
+>   		break;
+>   	case Opt_osd_request_timeout:
+>   		/* 0 is "wait forever" (i.e. infinite timeout) */
+> -		if (result.uint_32 > INT_MAX / 1000)
+> +		if (result.uint32 > INT_MAX / HZ)
+>   			goto out_of_range;
+> -		opt->osd_request_timeout =
+> -		    msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->osd_request_timeout = secs_to_jiffies(result.uint_32);
+>   		break;
+>   
+>   	case Opt_share:
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index b24afec241382b60d775dd12a6561fa23a7eca45..ba61a48b4388c2eceb5b7a299906e7f90191dd5d 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -4989,8 +4989,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
+>   	linger_submit(lreq);
+>   	ret = linger_reg_commit_wait(lreq);
+>   	if (!ret)
+> -		ret = linger_notify_finish_wait(lreq,
+> -				 msecs_to_jiffies(2 * timeout * MSEC_PER_SEC));
+> +		ret = linger_notify_finish_wait(lreq, secs_to_jiffies(2 * timeout));
+>   	else
+>   		dout("lreq %p failed to initiate notify %d\n", lreq, ret);
+>   
+> 
 
 
