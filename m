@@ -1,156 +1,112 @@
-Return-Path: <linux-kernel+bounces-540721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77DCA4B431
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:48:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C05A4B435
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2F216C3DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E821890106
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C8F1EDA05;
-	Sun,  2 Mar 2025 18:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAE31EB9FD;
+	Sun,  2 Mar 2025 18:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="TAV7YFMC"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="OdR0dY61"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6115F1BF33F;
-	Sun,  2 Mar 2025 18:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D309AD39
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 18:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740941304; cv=none; b=p0IujvCYzVPTbwB8+6HZjYtCdiTNR8njbm2X9CYSLDS8ABMD4Scln4VjHQDgWQUug5v11BPfew5CavFrLDGVJ7Wo5T31Nto7QW1Ygv6YRjEYdULyex3Z2Ev1Wun+ik8Gnjk7d4FfFCxRRa/GGyfACrqXtL38we5JhtJPZ5uiGuA=
+	t=1740941531; cv=none; b=DMnITNksmi45UfY7crENu03bgUZIIaKdCg3YOCOJGSDhSrBRf0QKx3ij6PCf7Ouvv4wjG923FD3NDJZPyGNJwzEkQHx5PgZgZl3K4AA18C0ps87BoqDrKzFsCJWY2I7B0fy8ryyLNByhym9Ox9wF5FDTUZ4pYDR7doPwvzj/fiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740941304; c=relaxed/simple;
-	bh=18FfI+dsLifwhDLg5jKLgUcJyAh3mhlLFVvCSd4rWPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HcJ3GszgbBSDf/aWmM0HvHQ1d0G8RxHcmFpu83CtBrkaY5rJOOb5kNpCpByr1QL497POPMDNYg2r/px8iRDBa0UhKffh1lpHT6lqkGK4GVfc+f5vape7EPN8uHvZ17yE2eMNlbF+jHPKrhS/cLB+eYHuj37LTMWKaDVtgtD9ams=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=TAV7YFMC; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1740941294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3wYKQ9B1StVQbxu+s2BMJr618h1KoB+cCRUMH1wITk=;
-	b=TAV7YFMCSlqOGO9FnrQugJPHf9F5Ltie6z22xZZbPnZfr/1PPud07X1M1BVMiLb3iuBxv3
-	pTraaR4biBaK7AL9kRh6HZDUlFipSAziMM/9zJh1kX3/J4M2Q0sa65FbGZzOTUswh9OMFC
-	6rD+0PcykRn6UgyVylMtFHTvHwiVrIyxM7V9LvbTx+rqYJnl4G3VL/inJMAcv4t1M71Xx3
-	UCjvhkV9aVpUs20sdR5SAU9U7lu5SBTEKdAHjN1OwJ/l0wfmRrokE9VyQzjZjqHlt2ZK7e
-	g+uJ1k3Dgr0YObo1xgu/oHVijjyzl+0Mf2CSQ9L99Wxi16zQsJn2vkSzbiN9Yg==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	didi.debian@cknow.org,
-	chris@z9.de,
-	stable@vger.kernel.org,
-	Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
-	Peter Geis <pgwipeout@gmail.com>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: Add missing PCIe supplies to RockPro64 board dtsi
-Date: Sun,  2 Mar 2025 19:48:04 +0100
-Message-Id: <b39cfd7490d8194f053bf3971f13a43472d1769e.1740941097.git.dsimic@manjaro.org>
-In-Reply-To: <cover.1740941097.git.dsimic@manjaro.org>
-References: <cover.1740941097.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1740941531; c=relaxed/simple;
+	bh=2YMARwFzpT/2fxXckH/UHsQeqc+WpNlGXz87LpMaUd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ic2ow8jCqULQp1WDZEzWh+wBb+ol5LorB6+dh+F0kj2fUJ3BvNuYJaaZCAIFnEvW9RSHCAoO6TLiWl7VReGuyKmHtoGIq2/lpE7p+xAShSmZLEJcKHj39jdhYuEx/+9piDpq7K7d/xmY5wLO2oPqUr1SrhoVAg+sZN0ZbEo/ncg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=OdR0dY61; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d2b3811513so14629035ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 10:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1740941528; x=1741546328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B7l7zFCEphXv5rcB1xTH7E9WWTKLPr1rVfyP4hQcYq8=;
+        b=OdR0dY61TX5AJXZhlonjpCk1JIgVFFxqwClSDjuHlNrLbhwDKGADhJYbTUTb7sE1+5
+         TsraLkBGn5nBVt2Ozn3J1q4LdUraaoQyd6t8+HTdGAhUkQ4ZuxmbQ2QHDVwsNHqX0EV2
+         /cHB8KhgnalUvlDxl2W0aC9R5R91lKzZsy4yE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740941528; x=1741546328;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B7l7zFCEphXv5rcB1xTH7E9WWTKLPr1rVfyP4hQcYq8=;
+        b=A2xhptySVDizOvfRqRkzVuCUwBYoNrUiu2RAp3ki3+IRpVDfm2xLZJeuXsmUqrRPpo
+         A8Nj/+gBkZxDvifP5eK0lxeUxmrfkRctrHTuX6bCasvQ7gZSK9akG6/QwzOzPjQcE9VF
+         tBn5wloZ4SlvnpLd+ZuA6mkj0rVIjaTCZsik7h1Rb1uPw5l2/dt5UtOcY4npDep8KVCV
+         35nQYMWgyCo4eaNybVxZMZrAAb+8h8BC3Nn8uABv6Vq8f6xd05Rqb0chY4jd+isgNhrs
+         f58eaoahDST64usyEOnMpVzp6UuzYIcB9qNvWk3xotn4u95FVJmhEo2bOiKjW0jxeEN1
+         dVog==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ0kYddKtCQZtGX5eXZGozlfRWf5gwmA7SYHvIc25OztjWkutB1u95NfmL6eUn9XAUQBVMDEd9rT1Yhss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbkjL584nQXhSvuQ8n78HCBoqq61AKTXKGYiN/REYp+d8KvUVk
+	zoXdJXNYxv2u3+rtCk+3A5Wr0TkTEbaCyREsXkRQbarOt0VYc4W47O7hJ7YseA==
+X-Gm-Gg: ASbGncv1IR3yMdcbWGQ57AHnCmeh1lMpMmO3gCZagTtuSDfhZg7WkqnlxPgw7fl1WlM
+	B7MvgLW4zDgKai6IyhU6Kko8QJ8B84tQFU5aZXs/rQm5TnYH3QTSQTGaH+cKYI26XwZ256ApsHM
+	WsOmzEpqQn7+O1Zo283zQRX66eFznKZoDLPc7oxf4X3CatMDyZ1qo927NhCvLQrzTZkPCQlJ3Yb
+	bqA4BzqjagWBjBVbUGGmDUCIGRzLz1mqdm/R9jKZFaBRsN/CfiwuS5bLsdN6e6gz/BkdfPzhr0n
+	mvlgmlDTm+IsgYNX5lvS97NHUuSVeQ8ah0AeEt1SHaCiiDBPJ3iQQZBxbc3lLhYIqYsut3kaYBZ
+	MqerJ0A6APdRd
+X-Google-Smtp-Source: AGHT+IGaYwptaiL4qcE0O0nJBy5S6QCvEaXlN2oaucVjj+jdPUcbQMj/htRswkhfxl61JYv1Owe54A==
+X-Received: by 2002:a05:6e02:1d87:b0:3d3:f72c:8fd8 with SMTP id e9e14a558f8ab-3d3f72c907bmr39999795ab.6.1740941528462;
+        Sun, 02 Mar 2025 10:52:08 -0800 (PST)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d3dee70df6sm20104735ab.36.2025.03.02.10.52.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 10:52:06 -0800 (PST)
+Message-ID: <16588001-9fac-4508-87f8-026acfee8b34@ieee.org>
+Date: Sun, 2 Mar 2025 12:52:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Fixes for IPA v4.7
+To: Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@kernel.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ phone-devel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
+ <20250228145246.7b24987e@kernel.org>
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250228145246.7b24987e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add missing "vpcie0v9-supply" and "vpcie1v8-supply" properties to the "pcie0"
-node in the Pine64 RockPro64 board dtsi file.  This eliminates the following
-warnings from the kernel log:
+On 2/28/25 4:52 PM, Jakub Kicinski wrote:
+> On Thu, 27 Feb 2025 11:33:39 +0100 Luca Weiss wrote:
+>> couldn't be tested much back then due to missing features in tqftpserv
+>> which caused the modem to not enable correctly.
+>>
+>> Especially the last commit is important since it makes mobile data
+>> actually functional on SoCs with IPA v4.7 like SM6350 - used on the
+>> Fairphone 4. Before that, you'd get an IP address on the interface but
+>> then e.g. ping never got any response back.
+> 
+> Hi Alex, would you be able to review this?
 
-  rockchip-pcie f8000000.pcie: supply vpcie1v8 not found, using dummy regulator
-  rockchip-pcie f8000000.pcie: supply vpcie0v9 not found, using dummy regulator
+Yes I will.  Sorry, I've been sick this week.  I'm
+feeling better now.
 
-These additions improve the accuracy of hardware description of the RockPro64
-and, in theory, they should result in no functional changes to the way board
-works after the changes, because the "vcca_0v9" and "vcca_1v8" regulators are
-always enabled. [1][2]  However, extended reliability testing, performed by
-Chris, [3] has proven that the age-old issues with some PCI Express cards,
-when used with a Pine64 RockPro64, are also resolved.
-
-Those issues were already mentioned in the commit 43853e843aa6 (arm64: dts:
-rockchip: Remove unsupported node from the Pinebook Pro dts, 2024-04-01),
-together with a brief description of the out-of-tree enumeration delay patch
-that reportedly resolves those issues.  In a nutshell, booting a RockPro64
-with some PCI Express cards attached to it caused a kernel oops. [4]
-
-Symptomatically enough, to the commit author's best knowledge, only the Pine64
-RockPro64, out of all RK3399-based boards and devices supported upstream, has
-been reported to suffer from those PCI Express issues, and only the RockPro64
-had some of the PCI Express supplies missing in its DT.  Thus, perhaps some
-weird timing issues exist that caused the "vcca_1v8" always-on regulator,
-which is part of the RK808 PMIC, to actually not be enabled before the PCI
-Express is initialized and enumerated on the RockPro64, causing oopses with
-some PCIe cards, and the aforementioned enumeration delay patch [4] probably
-acted as just a workaround for the underlying timing issue.
-
-Admittedly, the Pine64 RockPro64 is a bit specific board by having a standard
-PCI Express slot, allowing use of various standard cards, but pretty much
-standard PCI Express cards have been attached to other RK3399 boards as well,
-and the commit author is unaware ot such issues reported for them.
-
-It's quite hard to be sure that the PCI Express issues are fully resolved by
-these additions to the DT, without some really extensive and time-consuming
-testing.  However, these additions to the DT can result in good things and
-improvements anyway, making them perfectly safe from the standpoint of being
-unable to do any harm or cause some unforeseen regressions.
-
-Shuffle and reorder the "vpcie*-supply" properties a bit, so they're sorted
-alphanumerically, which is a bit more logical and more useful than having
-these properties listed in their strict alphabetical order.
-
-These changes apply to the both supported hardware revisions of the Pine64
-RockPro64, i.e. to the production-run revisions 2.0 and 2.1. [1][2]
-
-[1] https://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
-[2] https://files.pine64.org/doc/rockpro64/rockpro64_v20-SCH.pdf
-[3] https://z9.de/hedgedoc/s/nF4d5G7rg#reboot-tests-for-PCIe-improvements
-[4] https://lore.kernel.org/lkml/20230509153912.515218-1-vincenzopalazzodev@gmail.com/T/#u
-
-Fixes: bba821f5479e ("arm64: dts: rockchip: add PCIe nodes on rk3399-rockpro64")
-Cc: stable@vger.kernel.org
-Cc: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
-Cc: Peter Geis <pgwipeout@gmail.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>
-Reported-by: Diederik de Haas <didi.debian@cknow.org>
-Tested-by: Chris Vogel <chris@z9.de>
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
-index 47dc198706c8..41ee381ff81f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
-@@ -673,8 +673,10 @@ &pcie0 {
- 	num-lanes = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pcie_perst>;
--	vpcie12v-supply = <&vcc12v_dcin>;
-+	vpcie0v9-supply = <&vcca_0v9>;
-+	vpcie1v8-supply = <&vcca_1v8>;
- 	vpcie3v3-supply = <&vcc3v3_pcie>;
-+	vpcie12v-supply = <&vcc12v_dcin>;
- 	status = "okay";
- };
- 
+					-Alex
 
