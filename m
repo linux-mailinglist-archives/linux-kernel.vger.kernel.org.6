@@ -1,255 +1,169 @@
-Return-Path: <linux-kernel+bounces-540516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BC9A4B199
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:39:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E62A4B1A9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE62B3B05EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:39:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CA316BF00
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EDB1DF733;
-	Sun,  2 Mar 2025 12:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FCF1E501C;
+	Sun,  2 Mar 2025 12:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LaTpfNMt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuMRNsog"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845D3FC0E
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 12:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826871DBB38;
+	Sun,  2 Mar 2025 12:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740919161; cv=none; b=S7x+zINr8TJpo1UrcFnF88HWz22H7mrMmS+dWGP4OxfGv3ReQSZVvElZueJ3E0CrRxQ84WJkREj1DwoBgrn+v8ezpvCRxz8eD8UcU5IpgYIXNFReiAX+2u1PhARLu8tySTfi1uOmqfA51JxCJedvP6pXUnUOZxUGudjD9koGVnk=
+	t=1740920062; cv=none; b=eoITOD42a9FhfUc6v3SPZovg4pEWveKlzcgm+fKkJ7T7cjHIvKzPrI/lAnoheqnRqFxbrvNHBSvuH3hbyPt4lIKB5lKUS+fpviP6cwm8zXJPE4yd4ltRnCgiDQRFfGmDNvY6el/ULSHxCWixNtC5RF87ruFo6fzkgKR/bKD2Ndk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740919161; c=relaxed/simple;
-	bh=HG9KM8Ao12+9rVu116d9LaoaDZKJ1fcaUPZTeFiSFrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7RqbdAqFcORh/wOX1+MAStT2pH0kd1zAzk/cz7oJlnR9UUx9LLOTfxPIqMMDhita/g2vMTTlo7l5lGlmRt3KjoTkzpQwf6tyRS9Pxig2/H5xjMiET/j1lvdgpQ8CEvXg/W4Tm+S4imQ/QUnayJj98GYRzQrQy0SVOd8qjOEo1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LaTpfNMt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9717340E0173;
-	Sun,  2 Mar 2025 12:39:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id B2qApUVk9KQI; Sun,  2 Mar 2025 12:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740919142; bh=YqpmSp/8nDQKww323mMJ1c1TGuRr+68wTo8FomD32pU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LaTpfNMtmFGHxlGMTdWV8zk9bBy7zNdaQXA2QwRaCfQhx/r7jY8VRaGp0vlXYN64e
-	 R9dhi06wuFr5UufJSsebzgOtpTK8vA972WtjoZUgLQfgH7ac9+XqdJbuZ1FUCizXTt
-	 rbqMS6F+zm4TFBAuXsRUTScMsHOJuR+lqjpIlLKMSrdMGuAuiGxHzt5NcAZic1zUs1
-	 H3k48TyRV8eb32lNziF82wdl/SnWLqJIb7i+9ate1+HMrIDR2+/JCIi8NCpjuNH2zR
-	 ariWtoiTxcnZXCPzcRir0xKxIylIn+WigL1GaSkY+Ar/fl6xu681Sp0P6jWZ1How3Q
-	 Rn/AjUhwd85Wlvm2HGmuAMhMyI9Qv8WDijcg3bm9D6GXd6m9tgmSpSMrDdHgdKO6KV
-	 mXffLhmGgMCo0KClwUaIc69nFtVIRRM9pGQxa0/1ZUlRX2lifMW+Lq57kovMgKlj3R
-	 QCVaxDl5vpWr6GBOrMjte0QnOLl5i4OUYlF8gpldT3cdkQnzd70G0v13cayEgzYyyz
-	 Yc3ojXvbABdFkDXR/wgmt+ZBj6oFHhAmuEaRYE3jScASe+q5MPRUMHjf6t8c8aJNWs
-	 lW1HyE6HE2sKc0QpA63qcjI/8vz0E5upSO+n0tJ72QUnYgaybcIhai1SbTKhuxi1sm
-	 nT1z6MCrqBhg/A2w+9iRiB44=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5FBF440E0028;
-	Sun,  2 Mar 2025 12:38:45 +0000 (UTC)
-Date: Sun, 2 Mar 2025 13:38:38 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 09/13] x86/mm: global ASID process exit helpers
-Message-ID: <20250302123838.GKZ8RRTgRxvBSry6mk@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-10-riel@surriel.com>
+	s=arc-20240116; t=1740920062; c=relaxed/simple;
+	bh=VKIyH1CTs59Hr7vr+2y5gBC/sPB4SNStOV47/070Lb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MosUSVeEwwcxFckh2Uz5GNVGpYj6+D90EAkgqdBqHPxQR5EYosVOvAxD4bUAhW1ngx2ho8XSnnARuwNxbi01wLhS9YmEUVVgvFDpUZpK5YM+BoRJQ1Kqyj3zyd/QS8Ib/Wit2u9gphmJho9vSHGU8X91qOibA0u6B7RIXOF8+3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuMRNsog; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a3092a9ebso37654411fa.1;
+        Sun, 02 Mar 2025 04:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740920058; x=1741524858; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=phXyydY7gGfZlc5DxydLzP5lRJMditp6NpQC5fmMcrY=;
+        b=SuMRNsogXWMEJ0/Fj5Hjtq8B5qhNdbEqDfVWDRtZtX0Mlz+2NAFdOahaQYjdvgyIBX
+         E1QDHDsGbkT9vd0x8o5vzpNdjifhGp3s0gj0HXRCVZ+MjlItjDTZo1+3AFNPYnMQvMH8
+         3yOxh9C54SS4uXJRR8kOCShUzS+rl/2/AU5DwUEcYbcLPzZNjl/28RH4yaqQMPLZ4oxQ
+         vC7gYltNsvILUhMsGW+91sJNniN8EWPTJtmLc/n8WB/fWNNq9d9klTni5SUmHS0QWmsT
+         DHbxsB0lq2eJCgCQk7eF0gLStr9l7xBmBB2pBDPvbgpvxzX05LtLYxFmXmVdt6j4lqAA
+         WRzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740920058; x=1741524858;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=phXyydY7gGfZlc5DxydLzP5lRJMditp6NpQC5fmMcrY=;
+        b=F31OVGyJvA9+6zy3gGOur5C0NrwUxAF+BMZCIiS8TNtiFcENAaU38kVKzJkXEnL60S
+         vam94livD5DlcV9y2FGWMCOCup6Mc5VUdmGLBKhgI/4B2c0JUWQxDthish/nVO+zU1ez
+         yYw2VSD3X3ykHWak76nu94r+5SOh6/iD72WSYw1K6i+HHEm0XnxkqYZ3oAF8nksDft/y
+         IH8FoAsGRin8wojpB/+82YHG/qi+HmiL8KfTfZMOfJZtGz8yVIisWEt4xg7PJWSFEOST
+         05Vxuy1R6piZNLEGfmKTzoePm20dRsj9OzhtMM2xENY5qJXjZ4YJ7qBTB2N7hwSZYgnl
+         F1+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWLno0pNk7lX4HILSgVPXp1SYZa5J+QvFMMMrmMz4qmjDNhasLOZwd8uGQwgOWAU6dB290aEDbb9AFeA==@vger.kernel.org, AJvYcCVw4fNIQ4j0DCHKGXlMTBc0rtCQsZKsbANrMShg6N5evT33n+2pz5d4ur8lph2oqBjMzQTJTwM5YcUXwqtYA5Of1Cg=@vger.kernel.org, AJvYcCW3UJeSnnHsNa+vIPtCKO3G0OY+2NIHKFR3VX/jUCHqd2hao5hesVLaKUE4weV3/9ynKX46IwzggTAbQfdM@vger.kernel.org, AJvYcCX5CijtzHmp9O9HskiupWJqWuXx6PG2d9x8wMrBGwuIRXLxKk/vtIJ2xQye63DRShx8I91hsr5Pb0tq@vger.kernel.org, AJvYcCXyAGuq2IUxmTekbiPyfIpD+k7a65zqUaAB7eci7EywzpTvRU6tGQ+D573POjQFtGt9rf1T/PQNhuhZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw60wK4dhB1zzGiSWAKM43wcaKKuiguYL418rlmg2iA6Hiq6GEM
+	hF5ZMXlxQQ6ZB12ZvxvEpz8+lQ/RY+fdD/6n5rVJG/tN+wsGh/y/
+X-Gm-Gg: ASbGncsQbTS3hNXxS2WE9W+VYH6ymWrYJTKgpzH4jpgUBULhVyUxoZBrm8YmSW3ncyU
+	7qftEj2/PK5A8Mboqlmu9cknQkdyjqVAacR7Efr9cu427dnrXbVaEvU1ziuP2norZyspoaB7dW/
+	nSkZijwCiBpbFdAbHS5W2L05kbiIXR9o9WwW2N2q4218HbT+rBYOvJtwv8htqkWRQuX96J+GieS
+	1ea9mwEjCEAzzKReC/N9LsDU6peIhyn+Qq1abvYcZ3ZgOIe8m6vMKyK4UIN5bup8Taf9TSTBm4+
+	R0UlG1wqjNT+qSmptfth+/dEBJPbbRUvmpO3wyfeka/thHXUknGAnnJKYJpgysp3zi8D/iGdBHv
+	pdjAwo6OVHacqy+uXraJOYXPgBQ==
+X-Google-Smtp-Source: AGHT+IEJN/8WgRnH6T4J4ZG7JcpCuAO5jHwOEQHkq0uxIoxZ3O+QiARmgECict5SIiXPtktkXgM2tQ==
+X-Received: by 2002:a05:651c:501:b0:30b:b28d:f0a6 with SMTP id 38308e7fff4ca-30bb28df3f5mr7934721fa.8.1740920058224;
+        Sun, 02 Mar 2025 04:54:18 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bae88c37dsm2568041fa.37.2025.03.02.04.54.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 04:54:17 -0800 (PST)
+Message-ID: <eaede287-658d-4c23-b217-5bc8053e64ed@gmail.com>
+Date: Sun, 2 Mar 2025 14:54:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226030129.530345-10-riel@surriel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/10] iio: adc: add helpers for parsing ADC nodes
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+ <23f5ee3e3bf7179930d66c720d5c4c33cdbe8366.1740421248.git.mazziesaccount@gmail.com>
+ <0de7b0ac-eca5-49ba-b1b3-f249655f3646@baylibre.com>
+ <1b308a10-9622-47f9-b489-bd969fbdfc34@gmail.com>
+ <6f6e6550-5246-476f-9168-5e24151ab165@baylibre.com>
+ <9180ff11-888b-453d-9617-4b3a0fb38d91@gmail.com>
+ <20250302032054.1fb8a011@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250302032054.1fb8a011@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 10:00:44PM -0500, Rik van Riel wrote:
-> A global ASID is allocated for the lifetime of a process.
+On 02/03/2025 05:20, Jonathan Cameron wrote:
+> On Thu, 27 Feb 2025 09:46:06 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
-> Free the global ASID at process exit time.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> ---
->  arch/x86/include/asm/mmu_context.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>> On 26/02/2025 18:10, David Lechner wrote:
+>>> On 2/26/25 12:28 AM, Matti Vaittinen wrote:
 
-So I don't like the ifdeffery and tried removing it, see below.
+...
 
-So I added helpers.
+> So today the situation is we have all the options in tree and we aren't
+> really in a position to drop any of them:
 
-Then I entered the include hell.
+Sure. I am only really interested whether we want to prefer some 
+approach for (majority of) new drivers. Furthermore, I believe there 
+will always be corner cases and oddities which won't fit to the 'de 
+facto' model. That doesn't mean we shouldn't help those which don't have 
+such 'oddities' to work with some generic code.
 
-And then I caught a bug with the DISABLED_FEATURE stuff.
+> Hindsight is a wonderful thing.  I'm not sure on what policy we should have
+> gone for, but now we are kind of stuck with this slightly messy situation.
 
-Anyway, see below. It builds the allno-, defconfig and mine I use on this
-machine so more testing is definitely needed. But the end result looks a lot
-better now.
+Sorry if my comments came out as criticism. It was not intention, I just 
+try to justify the helpers by trying to think what new drivers should 
+prefer.
 
-I'll integrate the other changes into the respective patches and I probably
-should push my branch somewhere as we have accumulated a lot of changes by now
-so tracking them over mail is getting not that easy anymore.
+> Helper wise if it expands usefulness we may want a bool parameter to say
+> if we skip the missing or not + make sure a max expected channel is provided
+> (might already be - I didn't check!)
 
-Will do so on Monday.
+This far it only had (optional) maximum channel ID for sanity checking 
+(useful for callers which use the ID to index an array). The bool 
+parameter would also require a parameter specifying the number of 
+expected channels. That'd make 3 parameters which may be used or unused.
 
-diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-index f9af51205f07..3207e5546438 100644
---- a/arch/x86/Kconfig.cpufeatures
-+++ b/arch/x86/Kconfig.cpufeatures
-@@ -196,6 +196,6 @@ config X86_DISABLED_FEATURE_SEV_SNP
- 	def_bool y
- 	depends on !KVM_AMD_SEV
- 
--config X86_DISABLED_FEATURE_BROADCAST_TLB_FLUSH
-+config X86_DISABLED_FEATURE_INVLPGB
- 	def_bool y
- 	depends on !X86_BROADCAST_TLB_FLUSH
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index a2c70e495b1b..2398058b6e83 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -2,7 +2,6 @@
- #ifndef _ASM_X86_MMU_CONTEXT_H
- #define _ASM_X86_MMU_CONTEXT_H
- 
--#include <asm/desc.h>
- #include <linux/atomic.h>
- #include <linux/mm_types.h>
- #include <linux/pkeys.h>
-@@ -13,6 +12,7 @@
- #include <asm/paravirt.h>
- #include <asm/debugreg.h>
- #include <asm/gsseg.h>
-+#include <asm/desc.h>
- 
- extern atomic64_t last_mm_ctx_id;
- 
-@@ -139,6 +139,9 @@ static inline void mm_reset_untag_mask(struct mm_struct *mm)
- #define enter_lazy_tlb enter_lazy_tlb
- extern void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
- 
-+#define mm_init_global_asid mm_init_global_asid
-+extern void mm_init_global_asid(struct mm_struct *mm);
-+
- extern void mm_free_global_asid(struct mm_struct *mm);
- 
- /*
-@@ -163,6 +166,8 @@ static inline int init_new_context(struct task_struct *tsk,
- 		mm->context.execute_only_pkey = -1;
- 	}
- #endif
-+
-+	mm_init_global_asid(mm);
- 	mm_reset_untag_mask(mm);
- 	init_new_context_ldt(mm);
- 	return 0;
-@@ -172,6 +177,7 @@ static inline int init_new_context(struct task_struct *tsk,
- static inline void destroy_context(struct mm_struct *mm)
- {
- 	destroy_context_ldt(mm);
-+	mm_free_global_asid(mm);
- }
- 
- extern void switch_mm(struct mm_struct *prev, struct mm_struct *next,
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 37b735dcf025..01d8a152f04a 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -261,6 +261,14 @@ static inline u16 mm_global_asid(struct mm_struct *mm)
- 	return asid;
- }
- 
-+static inline void mm_init_global_asid(struct mm_struct *mm)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
-+		mm->context.global_asid = 0;
-+		mm->context.asid_transition = false;
-+	}
-+}
-+
- static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
- {
- 	/*
-@@ -272,7 +280,7 @@ static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
- 	smp_store_release(&mm->context.global_asid, asid);
- }
- 
--static inline bool in_asid_transition(struct mm_struct *mm)
-+static inline bool mm_in_asid_transition(struct mm_struct *mm)
- {
- 	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
- 		return false;
-@@ -280,19 +288,10 @@ static inline bool in_asid_transition(struct mm_struct *mm)
- 	return mm && READ_ONCE(mm->context.asid_transition);
- }
- #else
--static inline u16 mm_global_asid(struct mm_struct *mm)
--{
--	return 0;
--}
--
--static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
--{
--}
--
--static inline bool in_asid_transition(struct mm_struct *mm)
--{
--	return false;
--}
-+static inline u16 mm_global_asid(struct mm_struct *mm) { return 0; }
-+static inline void mm_init_global_asid(struct mm_struct *mm) { }
-+static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid) { }
-+static inline bool mm_in_asid_transition(struct mm_struct *mm) { return false; }
- #endif
- 
- #ifdef CONFIG_PARAVIRT
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index cb43ab08ea4a..c2167b331bbe 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -396,6 +396,9 @@ static void use_global_asid(struct mm_struct *mm)
- 
- void mm_free_global_asid(struct mm_struct *mm)
- {
-+	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
-+		return;
-+
- 	if (!mm_global_asid(mm))
- 		return;
- 
-@@ -1161,7 +1164,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cpumask *cpumask,
- 	 * up on the new contents of what used to be page tables, while
- 	 * doing a speculative memory access.
- 	 */
--	if (info->freed_tables || in_asid_transition(info->mm))
-+	if (info->freed_tables || mm_in_asid_transition(info->mm))
- 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
- 	else
- 		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
--- 
-2.43.0
+I don't think I saw existing code which would have used these 
+parameters. It might be cleaner to add new APIs when we get such 
+use-cases. That should simplify the use for current cases.
 
--- 
-Regards/Gruss,
-    Boris.
+Thank You for the long explanation of current system + the history :) I 
+appreciate your guidance!
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Yours,
+	-- Matti
 
