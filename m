@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-540712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC8A4B419
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:34:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEA6A4B41F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D19516CA1E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90863B0701
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E281EB1B8;
-	Sun,  2 Mar 2025 18:33:55 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345E11EB1B8;
+	Sun,  2 Mar 2025 18:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Jsm3b1oD"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1AB192B84;
-	Sun,  2 Mar 2025 18:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F16192B84;
+	Sun,  2 Mar 2025 18:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740940435; cv=none; b=X++vvQQ802B8Fj6pnhCdvQEFz4O5WzlwFT/RE8jhj/Qv6QNiZ42XZgRznFXXU2YeO43ggIoILHUg/7tggQH2I46tDNTMMq4ALesDMI5CsO7LClE4SW4rSylAerAQr82IJucRsMFYmS2B7f+2mJeovlWNf3S3fWBzI+KM9qOIy3s=
+	t=1740940523; cv=none; b=IKOd14dPmMdQyf8PVe0+ZdTlmwF4EM4hJ1L4atMv/CO+BtsRM5FeS2fBIS5d6bNEIhlGBcyeIANow9rx6+AIUGbEESoDnV8jyMwZPLLcoykv73iHgtEyeFMISel0MfAX4JmXr+RtnY0AY5HLViVFaEA/tDDwWhFtA+MkBo3gmI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740940435; c=relaxed/simple;
-	bh=Iarv2jNCOut6VEhOawNBIhN6SW8ZEQmOf3JJE9Gq8xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eiJREA7PgHD6voyPLQurw5Xh1leeL2ScXNsfUtumqE32rfeARerJFXjkwnrcs+t71JSYI5TwIVZijwxrjXseKo3K+6s6qKcgPaOl1mMkpSJSbvfwk6rdasy3Tces7G5IShn3hyMUHyUGTkg1jaSX8ENzjg4Gc2UJ3YRNp22ODFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223480ea43aso92523535ad.1;
-        Sun, 02 Mar 2025 10:33:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740940433; x=1741545233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Yh9rplRggc5FxJ1RIvi4crO+++OZizbZK7ALVaIzps=;
-        b=lmqj8hh3e1UoHtFNHbEShdJqSKhRp1YJz1ZrfGy6JjLC+oh18YaB1Qus3AxxfNPCMU
-         KZcaJOKWscBXknJb5ynfnsXbhNCXpSxawR4qC/W8SRCGqreU+/T44G+9SWuvThnVV/vD
-         msCWJRvoqqHzn1xbczIIaHGpqW6yfy1pgvL2PfEBkwMznPM8c06xfM/f7HJzvwjX8PcF
-         qwXuVbyfMeOc6dwr895dmpLl8PaHfKA3ch7q7mkAwzzwnJnL23Kp8p35VU6MJA1lnUQ4
-         TNMK8vmw6obAIVqbslLepHzDDZFGECBaIWvXNRAigvsuYw4keQSQrJoj/IrPaf7j66KM
-         YfHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUc2iaZHeAMTHYUFl+dfTL1+kmIrhhyyxmyp5kx8r8q629+xXFJt6deRU2sRTUm7NCHqEFQBSCZhR5dENFc@vger.kernel.org, AJvYcCVGLW9RPWF3cBmWHpzOCQE077h1bKgZ/8nCZDoZ/pp6Y0KgqapkcEIAXvt7t6ZFQ/BivZemOYxDEUsA@vger.kernel.org, AJvYcCWuLLRw3ZsA14lCJ0Coc0T579vo53hbtnKGBf6xNf15X6Ek4zO0ynBJENkWRocS6nZUjsIn4zMUTeHb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeFsbDXTflIyA/h6eUp+nTaE0BJIubv3XcmGfZpM5uTuDHzTj7
-	pZFvrlYgUYI0wGs/Ny4nDPVTNSVmiJ6YacBPK/XxiKr2en2PyZsR
-X-Gm-Gg: ASbGncu3/mYshkAdrTBZL4Cv0xmX8GplQg0sZILoH7GhuPXI8k9oPnRomc8IhAdLf2G
-	0hktKiPqg7fhhs+RMQR5uj75LGJ5N6LLDlOaOD17DhyyAwa6VGSpcNt5nw8NsnrRC5dxtBzOb0p
-	V393XKtjMVj+p8qPzwZhVPBbT3AmlCSS4ctWPnD2f/yWW0gtasO56aik8eDmmYXqnpDJ74EIWSa
-	mCyFK8RewDPKnVmaaoa/GiW4xwszxh0oVhAD4Em4QwILEhAL8fpVZhG4JHtwZVo5E5Knm6tpxfN
-	XFJBn0fCp1qCLmDrHem0Ofug2VzCVbPXs/HrqzEpJN8XRwTOoBBdtE3uSVbK2gDXjUmTEHo2Q5w
-	TsKc=
-X-Google-Smtp-Source: AGHT+IG4xlsabfC3ueoNUtYFxno9MpU1Nic1e92boNt4POmPhSK1me9MOsW0k4qITZedwQCtc6SBJQ==
-X-Received: by 2002:a05:6a20:2588:b0:1ee:c598:7a93 with SMTP id adf61e73a8af0-1f2f4e4e608mr16937275637.42.1740940433018;
-        Sun, 02 Mar 2025 10:33:53 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aee7de19d71sm6662123a12.19.2025.03.02.10.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 10:33:52 -0800 (PST)
-Date: Mon, 3 Mar 2025 03:33:50 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
-	jingoohan1@gmail.com
-Subject: Re: [PATCH v15 0/3] Add support for AMD MDB IP as Root Port
-Message-ID: <20250302183350.GB3374376@rocinante>
-References: <20250228093351.923615-1-thippeswamy.havalige@amd.com>
+	s=arc-20240116; t=1740940523; c=relaxed/simple;
+	bh=GX2+FqbazjHK+whmUo8wOBW/FAeofe1frRMLtOnDPC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V6hKfjsaf9AACn/b4kF/QykVfBAbU74D+60ACa/qkOnMWBtxcL4T1PLT3Xnc5HRofKuehuPpxUahwwxEQFHWPmblx8JJI6um4bYdo53nDyTSxOPGNil3yHbjBk2o+kl0/urmwOcMotBnd/GBYjw4gk7tp5BGOHEG6AbCVNJDJ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Jsm3b1oD; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cZ/DoE1yc97NpsQpvLoLxdu9zmvqzr+lgS2ZIi9J6sU=; b=Jsm3b1oDc70U9C/3D7TLrx3JRr
+	jCsY8BfacHx/Z1nUEUfvhKDiTCSutyqnPtxicC4BQnAiQtxIJoVWZ/IY5e0ROIdPweu0njw3HNoys
+	Vh9s0LtE7LPkTGiAQMDCuHgHVkAJ219RDxkpZxqKBgwbxOtd91jIvG3Ml0DLg/IM/OnKZ7MxMSNUv
+	gXLgcZJi6DHjySSevZLkkwmLZZf5RHFTOpYtM6Wv0fsZBmgdKX+Vce/J9WdgI9GvwWumGStIqXVqm
+	3sLNR8ToSvENHcCtY7dIf01oJgsfn8JUiN/k8xJFW951ulY03VWr6yLPqBcdTT8qsSXF9dmy1Jcii
+	vbDtfIjw==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1too9a-0004l5-8Z; Sun, 02 Mar 2025 19:35:06 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	detlev.casanova@collabora.com,
+	daniel@fooishbar.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: (subset) [PATCH v15 00/13] VOP Support for rk3576
+Date: Sun,  2 Mar 2025 19:34:56 +0100
+Message-ID: <174094048722.1377102.8343744540534603918.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250218112744.34433-1-andyshrk@163.com>
+References: <20250218112744.34433-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228093351.923615-1-thippeswamy.havalige@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-> This series of patch add support for AMD MDB IP as Root Port.
+On Tue, 18 Feb 2025 19:27:27 +0800, Andy Yan wrote:
+> PATCH 1~9 are preparations for rk3576 support
+> PATCH 10~13 are real support for rk376
 > 
-> The AMD MDB IP support's 32 bit and 64bit BAR's at Gen5 speed.
-> As Root Port it supports MSI and legacy interrupts.
+> I test it with a 1080P/4K HDMI output with modetest and weston
+> output.
+> 
+> If there are some one want to have a try, I have a tree based on
+> Linux 6.14-rc1 here[0]
+> 
+> [...]
 
-Applied to controller/amd-mdb, thank you!
+Applied, thanks!
 
-	Krzysztof
+[01/13] drm/rockchip: vop2: use devm_regmap_field_alloc for cluster-regs
+        commit: ff0b6c031ed3ed31024618340c795523a86e6688
+[02/13] drm/rockchip: vop2: Remove AFBC from TRANSFORM_OFFSET register macro
+        commit: 838a871a4d51b59fe56ac0422b97443203bfa55c
+[03/13] drm/rockchip: vop2: Add platform specific callback
+        commit: 328e6885996ca2c6eb8b07d3c9bb1439fdcb088f
+[04/13] drm/rockchip: vop2: Merge vop2_cluster/esmart_init function
+        commit: 145c9b36892a07bf5e2525b4938e1a6cc9b41b7a
+[05/13] drm/rockchip: vop2: Support for different layer select configuration between VPs
+        commit: 5439c4f3cb0ec11a3f3cb70be2b019770f6d183c
+[06/13] drm/rockchip: vop2: Introduce vop hardware version
+        commit: 301618ed1d8ab7cfaec39b107eded9f263da2299
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
