@@ -1,205 +1,213 @@
-Return-Path: <linux-kernel+bounces-540165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76B3A4AEB0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:04:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EA8A4AEB4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 03:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F78418920EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306353B129C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 02:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0E128E37;
-	Sun,  2 Mar 2025 02:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D7B35979;
+	Sun,  2 Mar 2025 02:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NAMSCCGL"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487255258;
-	Sun,  2 Mar 2025 02:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtK3+Hr6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824E288CC;
+	Sun,  2 Mar 2025 02:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740881059; cv=none; b=WGs+omir1v1StK075utBG4mzi65aMzDGlT3A7MoF49y2ccDvPUKqvGqE6ndRuVGn6wqD0xgHuAMROeUVohnvKzCi4+/4exqzmX0lPY2OeGsBny7OWpP0EckaAGzZtU4zE5cplIBYv2kyhSdjHjtt0lYVR4VxE43Kpp3/XxpfOmY=
+	t=1740881346; cv=none; b=TS6f+umKwfvtS12ErMyp3YDf72uYRbjqMXj3pUzjv5Zt7QSsn8ZmhTCAw/JbELzTyHP9OTq80sNs3m4AyfBk6y/0VidTAFIMg0LfZWkm4FSTaGUnni/Lm7rtJEEbPHyHcdorOgQL+PohfGXkkDtEHkZh4C4z7gk2WJJidYtA34g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740881059; c=relaxed/simple;
-	bh=0yXndCNsH9f8oLn41DENZOR0XdWB4ODrrFcC83BClxs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sPBFUbVIGQ9VbFK934ZSPjSLZq5bZzUTj3MwbKNqe1SQrbJG4gM9wJHWlfU6WcRBpA7rEi7M6YAsd10JxYEfGkLWbwC2ivJ4P/R7ROlZl/C1YPeB0yric9RU7QQauMp9bs4wogFGJJDr/FKtGiYVFSLCUSnTYAxJaQ46561O+zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NAMSCCGL; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qGexB
-	0WEdkqPFWppHBpKIuAC5rAO6YhYQJoJifpTg3M=; b=NAMSCCGLBS+iQS0h/L5p8
-	yh31KYj9CNVFM8Pg6GvlKt75Vhe9tszmWiANKkhNAGgvlyME8zDq7SR8wkpkBOtT
-	nM/wSUI4k5HaGO1Xq3f9hyC5zgFPvATyikPkUX1IOh/0Rn5PrJVUOL5ZrqXBq2VQ
-	ctHPE7k7sVYrmnSLhbGd4s=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBnAhRyvMNnh3tBPw--.17630S2;
-	Sun, 02 Mar 2025 10:03:31 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: tglx@linutronix.de
-Cc: manivannan.sadhasivam@linaro.org,
-	kw@linux.com,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	Frank.Li@nxp.com,
-	cassel@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [v3] genirq/msi: Add the address and data that show MSI/MSIX
-Date: Sun,  2 Mar 2025 10:03:28 +0800
-Message-Id: <20250302020328.296523-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740881346; c=relaxed/simple;
+	bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTySZq4jiQbUDh00nXqwqwnrpLuVRaQ3YNR0kuaQQUIMSlZKEAGgTpLI9wK+HHtwrBAHOOvqrcKx09bzEvNK0SnrMj1cxyFCEo688YiXvud4r4vK0N2xlmnZatccMU3RVk+mfUaLAAeAOeMMal8kmEFAVrGWWhJucUIRT6/hb7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtK3+Hr6; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740881345; x=1772417345;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N6bdO5ufvOU4UlMfcbW1V2iVFg9S7pViFB0B1Dp885U=;
+  b=VtK3+Hr6GoB1APXb8wX6bO63AhRY6CZQrgfh2SRMToX2nLi5wRuXPPFP
+   cxsYaH6aUkh19WXgCC7jeUEu/M9zUNUlei9KSnc9E8z9cCPHGiIVZ3BZZ
+   9LrolL3jTZZ0nYL5mLh20ifASIsS4/DMGRljwjVcfbBNS7fP1R0tmdW/0
+   Gy6C+/vJHnKJJfuHHM5wmESDznZmuIOvVqbMmBei1WW9s7DCtC/R3uKxv
+   EObSEc4IdvznWoNOlpiEblrvYrAGgweEoZAvN/tcSbNWYT9GpkMG9IScz
+   pEoEvnBZeJ8iv66P5iB2LkSwa1WDdbOYT9YoCupOYyiBO9GPEofxWFTHA
+   g==;
+X-CSE-ConnectionGUID: Xfh2t+UaQQeNsX3APORpbA==
+X-CSE-MsgGUID: T1iRVskiQNSRuvs6R9mLnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="44596033"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="44596033"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 18:09:04 -0800
+X-CSE-ConnectionGUID: kJyzAyBiQCmiU86YmGf5mA==
+X-CSE-MsgGUID: EX0HUutsR06iMNtitEBQkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="117696253"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 01 Mar 2025 18:09:00 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toYlF-000GxG-1r;
+	Sun, 02 Mar 2025 02:08:57 +0000
+Date: Sun, 2 Mar 2025 10:08:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
+Message-ID: <202503020920.Kw0H8Acs-lkp@intel.com>
+References: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnAhRyvMNnh3tBPw--.17630S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF45Ww4rAFyfKw47Ar43ZFb_yoWruF4DpF
-	WjkF47Gr4xJr17tw47G3W7u345ta4qvF12y3srtw1fArZ0qw1kKFyvga12gr1ayF1jgw1F
-	ya4UXa4kKrW5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_0eHDUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiugEEo2fDtxFlRwAAs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com>
 
-The debug_show() callback function is implemented in the MSI core code.
-And assign it to the domain ops::debug_show() creation.
+Hi Ivaylo,
 
-cat /sys/kernel/debug/irq/irqs/msi_irq_num, the address and data stored
-in the MSI capability or the address and data stored in the MSIX vector
-table will be displayed.
+kernel test robot noticed the following build warnings:
 
-e.g.
-root@root:/sys/kernel/debug/irq/irqs# cat /proc/interrupts | grep ITS
- 85:          0          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 75497472 Edge      PCIe PME, aerdrv
- 86:          0         30          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021760 Edge      nvme0q0
- 87:        287          0          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021761 Edge      nvme0q1
- 88:          0        265          0          0          0          0          0          0          0          0          0          0   ITS-MSI 76021762 Edge      nvme0q2
- 89:          0          0        177          0          0          0          0          0          0          0          0          0   ITS-MSI 76021763 Edge      nvme0q3
- 90:          0          0          0         76          0          0          0          0          0          0          0          0   ITS-MSI 76021764 Edge      nvme0q4
- 91:          0          0          0          0        161          0          0          0          0          0          0          0   ITS-MSI 76021765 Edge      nvme0q5
- 92:          0          0          0          0          0        991          0          0          0          0          0          0   ITS-MSI 76021766 Edge      nvme0q6
- 93:          0          0          0          0          0          0        194          0          0          0          0          0   ITS-MSI 76021767 Edge      nvme0q7
- 94:          0          0          0          0          0          0          0         94          0          0          0          0   ITS-MSI 76021768 Edge      nvme0q8
- 95:          0          0          0          0          0          0          0          0        148          0          0          0   ITS-MSI 76021769 Edge      nvme0q9
- 96:          0          0          0          0          0          0          0          0          0        261          0          0   ITS-MSI 76021770 Edge      nvme0q10
- 97:          0          0          0          0          0          0          0          0          0          0        127          0   ITS-MSI 76021771 Edge      nvme0q11
- 98:          0          0          0          0          0          0          0          0          0          0          0        317   ITS-MSI 76021772 Edge      nvme0q12
-root@root:/sys/kernel/debug/irq/irqs#
-root@root:/sys/kernel/debug/irq/irqs# cat 87
-handler:  handle_fasteoi_irq
-device:   0000:91:00.0
-status:   0x00000000
-istate:   0x00004000
-ddepth:   0
-wdepth:   0
-dstate:   0x31600200
-            IRQD_ACTIVATED
-            IRQD_IRQ_STARTED
-            IRQD_SINGLE_TARGET
-            IRQD_AFFINITY_MANAGED
-            IRQD_AFFINITY_ON_ACTIVATE
-            IRQD_HANDLE_ENFORCE_IRQCTX
-node:     0
-affinity: 0
-effectiv: 0
-domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-3
- hwirq:   0x4880001
- chip:    ITS-MSI
-  flags:   0x20
-             IRQCHIP_ONESHOT_SAFE
- msix:
-  address_hi: 0x00000000
-  address_lo: 0x0e060040
-  msg_data:   0x00000001
- parent:
-    domain:  :soc@0:interrupt-controller@0e001000:its@0e050000-5
-     hwirq:   0x2002
-     chip:    ITS
-      flags:   0x0
-     parent:
-        domain:  :soc@0:interrupt-controller@0e001000-1
-         hwirq:   0x2002
-         chip:    GICv3
-          flags:   0x15
-                     IRQCHIP_SET_TYPE_MASKED
-                     IRQCHIP_MASK_ON_SUSPEND
-                     IRQCHIP_SKIP_SET_WAKE
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.14-rc4 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503020812.PKZf7JBa-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202503020807.c3MhmbJh-lkp@intel.com/
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
-Changes since v2:
-https://lore.kernel.org/linux-pci/20250301123953.291675-1-18255117159@163.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-phy-rename-qcom-snps-eusb2-phy-binding-to-snps-eusb2-phy/20250223-202709
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250223122227.725233-6-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v2 5/8] phy: phy-snps-eusb2: make repeater optional
+config: microblaze-randconfig-r123-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250302/202503020920.Kw0H8Acs-lkp@intel.com/reproduce)
 
-- Fix implicit declaration of function 'seq_printf'.
-- Fix 'const struct irq_domain_ops' has no member named 'debug_show'.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020920.Kw0H8Acs-lkp@intel.com/
 
-Changes since v1:
-https://lore.kernel.org/linux-pci/20250227162821.253020-1-18255117159@163.com/
+sparse warnings: (new ones prefixed by >>)
+>> drivers/phy/phy-snps-eusb2.c:464:59: sparse: sparse: Using plain integer as NULL pointer
 
-- According to Thomas(tglx), the debug_show() callback should be added
-  to the MSI core code.
----
- kernel/irq/msi.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+vim +464 drivers/phy/phy-snps-eusb2.c
 
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067a8a56..b1c7fd3b8243 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/pci.h>
- #include <linux/slab.h>
-+#include <linux/seq_file.h>
- #include <linux/sysfs.h>
- #include <linux/types.h>
- #include <linux/xarray.h>
-@@ -756,12 +757,34 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
- 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
- }
- 
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-+				  struct irq_data *irqd, int ind)
-+{
-+	struct msi_desc *desc;
-+	bool is_msix;
-+
-+	desc = irq_get_msi_desc(irqd->irq);
-+	if (!desc)
-+		return;
-+
-+	is_msix = desc->pci.msi_attrib.is_msix;
-+	seq_printf(m, "%*s%s:", ind, "", is_msix ? "msix" : "msi");
-+	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
-+	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
-+	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
-+}
-+#endif
-+
- static const struct irq_domain_ops msi_domain_ops = {
- 	.alloc		= msi_domain_alloc,
- 	.free		= msi_domain_free,
- 	.activate	= msi_domain_activate,
- 	.deactivate	= msi_domain_deactivate,
- 	.translate	= msi_domain_translate,
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+	.debug_show     = msi_domain_debug_show,
-+#endif
- };
- 
- static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
+   398	
+   399	static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
+   400	{
+   401		struct device *dev = &pdev->dev;
+   402		struct device_node *np = dev->of_node;
+   403		struct snps_eusb2_hsphy *phy;
+   404		struct phy_provider *phy_provider;
+   405		struct phy *generic_phy;
+   406		const struct snps_eusb2_phy_drvdata *drv_data;
+   407		int ret, i;
+   408		int num;
+   409	
+   410		phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
+   411		if (!phy)
+   412			return -ENOMEM;
+   413	
+   414		drv_data = of_device_get_match_data(dev);
+   415		if (!drv_data)
+   416			return -EINVAL;
+   417		phy->data = drv_data;
+   418	
+   419		phy->base = devm_platform_ioremap_resource(pdev, 0);
+   420		if (IS_ERR(phy->base))
+   421			return PTR_ERR(phy->base);
+   422	
+   423		phy->phy_reset = devm_reset_control_get_exclusive(dev, NULL);
+   424		if (IS_ERR(phy->phy_reset))
+   425			return PTR_ERR(phy->phy_reset);
+   426	
+   427		phy->clks = devm_kcalloc(dev,
+   428					 phy->data->num_clks,
+   429					 sizeof(*phy->clks),
+   430					 GFP_KERNEL);
+   431		if (!phy->clks)
+   432			return -ENOMEM;
+   433	
+   434		for (int i = 0; i < phy->data->num_clks; ++i)
+   435			phy->clks[i].id = phy->data->clk_names[i];
+   436	
+   437		ret = devm_clk_bulk_get(dev, phy->data->num_clks,
+   438					phy->clks);
+   439		if (ret)
+   440			return dev_err_probe(dev, ret,
+   441					     "failed to get phy clock(s)\n");
+   442	
+   443		phy->ref_clk = NULL;
+   444		for (int i = 0; i < phy->data->num_clks; ++i) {
+   445			if (!strcmp(phy->clks[i].id, "ref")) {
+   446				phy->ref_clk = phy->clks[i].clk;
+   447				break;
+   448			}
+   449		}
+   450	
+   451		if (IS_ERR_OR_NULL(phy->ref_clk))
+   452			return dev_err_probe(dev, PTR_ERR(phy->ref_clk),
+   453					     "failed to get ref clk\n");
+   454	
+   455		num = ARRAY_SIZE(phy->vregs);
+   456		for (i = 0; i < num; i++)
+   457			phy->vregs[i].supply = eusb2_hsphy_vreg_names[i];
+   458	
+   459		ret = devm_regulator_bulk_get(dev, num, phy->vregs);
+   460		if (ret)
+   461			return dev_err_probe(dev, ret,
+   462					     "failed to get regulator supplies\n");
+   463	
+ > 464		phy->repeater = devm_of_phy_optional_get(dev, np, 0);
+   465		if (IS_ERR(phy->repeater))
+   466			return dev_err_probe(dev, PTR_ERR(phy->repeater),
+   467					     "failed to get repeater\n");
+   468	
+   469		generic_phy = devm_phy_create(dev, NULL, &snps_eusb2_hsphy_ops);
+   470		if (IS_ERR(generic_phy)) {
+   471			dev_err(dev, "failed to create phy %d\n", ret);
+   472			return PTR_ERR(generic_phy);
+   473		}
+   474	
+   475		dev_set_drvdata(dev, phy);
+   476		phy_set_drvdata(generic_phy, phy);
+   477	
+   478		phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+   479		if (IS_ERR(phy_provider))
+   480			return PTR_ERR(phy_provider);
+   481	
+   482		dev_info(dev, "Registered Snps-eUSB2 phy\n");
+   483	
+   484		return 0;
+   485	}
+   486	
 
-base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
