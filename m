@@ -1,185 +1,684 @@
-Return-Path: <linux-kernel+bounces-540809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04839A4B539
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:09:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE91A4B543
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 23:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B074316A6F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A64188FA97
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA751EEA35;
-	Sun,  2 Mar 2025 22:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360981EEA51;
+	Sun,  2 Mar 2025 22:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SZ61vA7R"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2088.outbound.protection.outlook.com [40.107.236.88])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UALP+DcG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344681DB933
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 22:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740953353; cv=fail; b=TwxHjcnKSC5S0m/bhyED4FSCzObNIhGd09q92as8piAD5i5mHwfXPMTH+bIkFPB48iMNS0peYIlp99omCag+4wcmMnLPSlh8P2cc+93vHESx9xa8N7WgLi1CPTNdJx3RQBeBBVBLAVpp7zugW3wKIWwETTpo1mDwRBksz3pc3VY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740953353; c=relaxed/simple;
-	bh=bByVcMN5aYjiTRQ7FI+kn2cigonDRELt88aepnEHc74=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KjIFaAfFu7LG4nEtCh4huJW3aj5WjEXfTGyEcInZta5s4dG+Wf8SgpUdEFDSIfhuU+/RNgdLU4c4zsfE+XL1Z5kGiSehWLHc0crJGrz6okIfWVOCizgplZXTGDxLxhlexgT+lokpHnXWRraMCH59TteTGDr3BLhKMNK1q4US2c4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SZ61vA7R; arc=fail smtp.client-ip=40.107.236.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=twKRcLqq+Yzh3Yzf02oVr11C4T1cAm3kcw5MCjd/UEHnvkPzpk4a5ItUIGv2nA/BghFDIGjxzisbdhrCUK1U7ICA21jyKIFdIGRK9gv28NWKJEVGgGIdXxLSb6dVvfFYYOaZwXUg0APPQ+WoxBbtgxGKyCJtC/EIv09WRRM/y7W49ZD8aWsaD7qWDQmUaGUGchbmfzuB4xVeRpQNqr7Rje/+DBsNN6Sy/70AdwzX5N3MqoLwd62ZawpmTCHm9r1glScy7XvrFHQmT5nw+WzrA/xIDtemgiVEGhbHFvlHkPEXVXoDcIIq3QkZV1cq/B3seaCMzHM2iA1mShWPmxYv3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AXfVH66K9TQhSPr+LezfAV05o9iM4tFGOPjIow972wY=;
- b=ZVV/qfzVHLFec9rApKLDOwKS9AxxPAYEOlx2BZk7GX9NZJjjUs8T0JO8wq/mHB0OmIQPvtU7A/vOhkxwnp5vSEXG8zYK64jqDGOX26DXQGjLzmgWRFRWn3N5qS78OjeedwVeK1hcDTg9LMxvTpOkPdOt7d7M9BbQLeKTZsyhmiBBUUCqO+2NHeD7rREqNsOTxYq2ct08tsOpqrzTesJOpmudxMQ3vgWNhCy7SUVd1JWIen0rJNFqNMHq1CfAEnzg5bbeMb/82xttiXNG4cqzvP0TXf9Sdie6NKGfgitKUd+nIyF7PPE9FyvfnPRKiej3PQ0cGmeTA02xL8v3exk+Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXfVH66K9TQhSPr+LezfAV05o9iM4tFGOPjIow972wY=;
- b=SZ61vA7RuN9vddrYKi5XSY94sZaxNL+UQZwTLeVPXFxe7yQEBOD/0+P4Fc46YO+W4waKn/tyBU308Vv2Tcqk09Tt5/DRr2N2a6Sokiydm90oSJf9w23AdyqIAJgALYEsIGXlxXLGiliVZg2HFrRKIzwgkrjN37XHJ70dM+6ieT5dJXbmWoVDwNcjhS+/a012hXK2NeuhFWnqh+U3BD3HUyqSMmE83AlZo1EVtNYsxmsoaYuVxiaz727sYtTAdGmJvoZgyd1ctbSOF00jGTFm34wXnP4B8YPQ9fzyGtFpeLa5wUDpk5EFL9ZCpk1VjbKm3Ex6gabyLHHrCYR32pD0PQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Sun, 2 Mar
- 2025 22:09:09 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8489.025; Sun, 2 Mar 2025
- 22:09:08 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: Validate prev_cpu in scx_bpf_select_cpu_dfl()
-Date: Sun,  2 Mar 2025 23:09:03 +0100
-Message-ID: <20250302220903.54001-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO0P123CA0015.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:354::12) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE9A1C5D50
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 22:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740954275; cv=none; b=LeJEDR7gNAm3C80TAbi+/SVVEQ0Ecb4/TP3V9GsO45OBM7pgF2rHmcCi8F4tZIbYO85kSXdhvCkaAFyQtb9FMg6CoOB9HoL5znNRFIzMQTfoPakVyI3orjzGfhN/ojAtllqmgVXafOS7XaCs7JDP8E+z+STQvVP87JBNCyu2XoM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740954275; c=relaxed/simple;
+	bh=gWhrY+dgKT08hc4CNnDYn7RoRvEP/QAz6z/9BcCiB4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgtsL8ojx9uJO1hYoOenm1cLbfizDXGTvYfxQI4sz8XGKLNexIykFOclTYXA9Mms8LA01vjhs7LNrK96cRl8bsdAHcZKRoQNd9qdli3mms3WYHLZ4ZhpDphUtGXr2FrJgBk+akoczC5BEbpS12yIuQNybK+60ohHt9VvvUMmVnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UALP+DcG; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740954273; x=1772490273;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gWhrY+dgKT08hc4CNnDYn7RoRvEP/QAz6z/9BcCiB4U=;
+  b=UALP+DcGuGEgNCzoipAdZydLxrTMuAlACjJal+Ry8aiNsoifTmWnKXiT
+   hIeY7ijN7TXPPZO6NfuX5tTOCiaHzXLAFX6weBlj+kmYwvzuijVT08pZV
+   Z5YpuhZQzwvBmWbWK4yZ/5AcD4x6NF1IEGHdfKmUhFs5Jsf14bvUkt41U
+   JuyLtmrYMCxTl+99lNgsuXI0NY2qOAElbcUGfL2+4rf0LkuS37ak4VRq9
+   WkBJ0LooF9lGZW0aXXel0J59LmQTN9rob4hLk3VwusGlzOFvOs76cf8Q4
+   e9DPcXJZbY3Ppb3avotNP+qS7jC2gmR/NGVFJ+R3Vy1+OJNuxWYmX1G3Q
+   g==;
+X-CSE-ConnectionGUID: KFbD5UQrRPiZIl681A8pBQ==
+X-CSE-MsgGUID: 0APUYJkGTiWWveHqpcNWug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42076489"
+X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
+   d="scan'208";a="42076489"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 14:24:32 -0800
+X-CSE-ConnectionGUID: BptH+XKfT2uJlXj0CNETJA==
+X-CSE-MsgGUID: 5Z7VeKH0Q26Jp3TPhr2XcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118378754"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 02 Mar 2025 14:24:30 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1torjX-000Hgw-2S;
+	Sun, 02 Mar 2025 22:24:27 +0000
+Date: Mon, 3 Mar 2025 06:23:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, shaggy@kernel.org,
+	jfs-discussion@lists.sourceforge.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: Re: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with
+ xt_getpage() function
+Message-ID: <202503030642.jn4Teav7-lkp@intel.com>
+References: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|IA0PR12MB8906:EE_
-X-MS-Office365-Filtering-Correlation-Id: 798b34a8-4872-4f6a-61c4-08dd59d6da69
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dGDeZxHOkvq/PhTjgIespZIH1evJVU/b7zGn2aExWzCjSidUcmfY2KdagsfS?=
- =?us-ascii?Q?B5tLH5ajJ1HyntgkytPnpfOsCtI1Ydy6E/OYY2Zp5omq89gA1F0CjDsk+eCN?=
- =?us-ascii?Q?bYFJRsDbqTwJuAt1I8Gm+TPjmtNNamySnq7pLte/zXJqOgCW/0+vn4O20xw9?=
- =?us-ascii?Q?gzBXgXikCaRBALcpSFiIGiI/RKQTf+2BR7HEJyXslGlK8QEkPL0jZ1S/0mQR?=
- =?us-ascii?Q?AqGGxx7WWyVYCR8VrmwgDUGuP8MxmY9w7HUdwqdenTBW2HSbd37xkRYW1/Co?=
- =?us-ascii?Q?AX2Bc7g/BHWSRc6YRn9E6Mu1uvNDih0K9Stz9VCxAwvCJ7b+NfR9E3ucpUYf?=
- =?us-ascii?Q?yo9Je7yO1p34lVfu9OXdJVO6I5nPc2RcjhX4BrGAPXWYYgU33L2hm8S3ciyG?=
- =?us-ascii?Q?VATNgcVbR/71Kp+Srz5Sb4s12DJ+lf2u5wZ25JETc9/eDBNmNPyRRwaIoEFJ?=
- =?us-ascii?Q?M4YSgEHuLGTlaWnID40Sd5q0DDiiEnWJE61zS8KN7AAoWFzooyzTAqnwMQm+?=
- =?us-ascii?Q?s7gf32lhRWk4lnLuSJoLj4mADCnPjlRnOeinDYprpK3GALQ2+QcmdlDFqAt9?=
- =?us-ascii?Q?2+akggkoy6u1ZgPcQF3S4Jnw8yIuTNuu9JrYl620HyNC2smT+fiQPtIg9Q4w?=
- =?us-ascii?Q?RgTa8S2+2FNHYqo2FVtdUyukmtZliqNxZvGksxl+WRpRT/bun2AEV9DK7IF2?=
- =?us-ascii?Q?7MJ8NouyhQqPQFHbSv+3HNkLWRVfaMqUK/j53JoGOZaBUZg5ZNagQumF0zg4?=
- =?us-ascii?Q?wSvlrH0deD5WdtZEl0UVgPf2CgRxhqAC1BeyGNtH0plADhbJQuqlQ4PaIiGC?=
- =?us-ascii?Q?VFj/J1Qd8N2i7Kupexub6ITBgzwOwa0eIKJksM0uviJ+mngkA6SokOSyBd5E?=
- =?us-ascii?Q?6Fe47zOWXggMubj5nhALNlIEtveanf9LEf3NiaCXtDFD//uDfjUBa8ToWOdr?=
- =?us-ascii?Q?pthbSgscaASsVnp58TrU4TIeYxJ7flHL43nWgtE2t5casglXwT8k5uZRuQBO?=
- =?us-ascii?Q?APhbPtyJuV00OhcgZR1KvyYOeYZFakTCcCQzhHczA3OsgTihNKyg6HgIAiwi?=
- =?us-ascii?Q?YgOgupF8otagcTnjTFSf+/UHK6lDZq7GPgLoQDuQhhQYARerf5p/9U/upzHB?=
- =?us-ascii?Q?eg7gznzyuFDnc+GwO+5pvVmXXhh5axixAQTWRAgFrUu55hntct63wunEBCgI?=
- =?us-ascii?Q?q/fA7lzJwr/7r5/D36Cm5ZKk8twevR0x4S+g7n73XulELKWwPSCxSDAl6u0W?=
- =?us-ascii?Q?Kzp5RwfHjfcxup8ljVQ29s1vCwnHrmPqRhu7qe9n7HW4bR3RJmHNeNogO9fO?=
- =?us-ascii?Q?KYJk+lrHqUbW9r4QkbTcbHFWC2mYMxuau3KOOBnKYNbB+xf8wPqmNc2vMHG3?=
- =?us-ascii?Q?zDtcEqvyGwzpKaTlayRKdoLoi0p/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1UTMyZxMa43nQl1Ksa5zlD3dnPUb9lajLK1TAv1znLm4sEzsK0BA4IdxhMzz?=
- =?us-ascii?Q?yqISAJ/cL1aIjnzfcsbVq0gjVRUyLG7Ks0PIWiKVJe0UsJW211ZwcJltkLlk?=
- =?us-ascii?Q?W2F3q5rChCx4S+ImWzU6AShbyPHOT8xJR3JPPGinhpQ/od4MiJ+1ohBx0Yc3?=
- =?us-ascii?Q?+ooFI3vvpde7W8syABJPyEW679POIu2qSM4b3z3RzHrWnOXsAIHKXYyG1O6G?=
- =?us-ascii?Q?dwpuGFIkp9f2yBjcXRs14ikJYrYciPFfMtdoUaVRJLqcrrMzO3YihWBvaaYD?=
- =?us-ascii?Q?H8JTLE6zisMhwcNFFb4ZHnT6Pc5Vtj3WUZeNDMJlbL5lP9w0K2gTZYnU0Uyy?=
- =?us-ascii?Q?KASrqUQCGT6VAZkOYnJdobyvLgsgfGV0kNk/CMK/VEX1D8iU49LRZP1JpI4E?=
- =?us-ascii?Q?9R0NwvoOrIRuqYYII6zIL8V5am9wAz2GM6ohU+1u0M6mChm/1K7hmEoIZH64?=
- =?us-ascii?Q?lu6j9XMXTQ12Hpo6a2FIT02pGDwkgXvRnVwrJFcTPU5TfdtBFEW0nHovhA6+?=
- =?us-ascii?Q?kfPZEWv8lkjgt8daLN5b6glidIHoS7KzxrO7oCQXtuReRPzVIXzpfhYl/0o4?=
- =?us-ascii?Q?PpZW70dzT0mZz/OEAfM/iT9OlfW4Oxqwy8UVYXr2bVXw0NLKrq5J8N5NY6G0?=
- =?us-ascii?Q?MmUl/wxFQEYZKhbvFEOYWthZZV/KoXxc3pRYfU4TkEi5WiaKaenxXpX25jTG?=
- =?us-ascii?Q?or8g/w2SyLPMpW+DY7Va9xW6ZEa/BFTIrWLaAxGTmrzA/whj/vUxxH50bFaU?=
- =?us-ascii?Q?My0EifYWG6VuqXLGFnKycNuFJ6HE9Mky+OHeetRkHrbzpv0HPhpqHHK2eRLM?=
- =?us-ascii?Q?KIIXCStMTV9aelsSt0Z8OYigtrRLGOP4Uo2qIc+CMnrUXyvaSmj/neIGn5pX?=
- =?us-ascii?Q?wU22YFetcdWOe+BuVxyJqqiOunK7piJBSLZEFTe1FEjOtvaG981umwrgFXFN?=
- =?us-ascii?Q?yDNruUm/yZnr0lHd5K6F63qHUSGURzXTvHbD2y+0Zg2tH2ktPD54xeB92OWB?=
- =?us-ascii?Q?UNwtHzTCsXVGpWAjGcUfxMGB7l2FjaVLlWTeAQNbr43UsacOshQaRwEYM5rI?=
- =?us-ascii?Q?d0FQiI6xr1J51+BpN6BDTFGiTmT/D1Z7Vw/SPQlzMznEkMaQVKUIkJtFBNF4?=
- =?us-ascii?Q?gcXOtiUkgnO6Hj3z3hXi54ytQlVoHVpS98cLKwh7tM/YpfMeeBMD193TwRfT?=
- =?us-ascii?Q?7tL1HDqBRY/yTYa3BfAw/2mhXfRfDYWFut0do7+X6ETiNGxH1KATESEQ60dY?=
- =?us-ascii?Q?vC4prylEKffqXtckuvO+jUzd/O4mc9B+TeajenS/DLFVwLgFx4Vr0HqroHEW?=
- =?us-ascii?Q?1k39Re7xC9DaQCdYkbzuLaVvA7ZZfZRL4sUZEZHWOwt+PyuBTEU19xJwmBRI?=
- =?us-ascii?Q?gZyUo5wwt/aCdsaadKcybxgzXdg3JxJVctd8K79l+Yun907N0EtJfni0UnCY?=
- =?us-ascii?Q?N5/goeDBVHH6+oZjbocWLRmJYndTle2KoHvkaN8eXgy2ZO0HgBN29sqrjeSw?=
- =?us-ascii?Q?Wm0UgLDAqdA/CA0u53siUC4mWGJSOSL9zOduUvP39vFIY6Rj5BydXIn0uIFo?=
- =?us-ascii?Q?qpl3fHryi7u6SZ5wuFUkpZ/jTnJkvNo7jX4jrWF2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 798b34a8-4872-4f6a-61c4-08dd59d6da69
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2025 22:09:08.0044
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i0neddGNNEY3xMcDr7o9sHRzfwvTyi5F5uv50K12lqUlnG236PbOJFZlUYcE2Tn7l+RWU/5+QdduHm27EuKvIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8906
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
 
-If a BPF scheduler provides an invalid CPU (outside the nr_cpu_ids
-range) as prev_cpu to scx_bpf_select_cpu_dfl() it can cause a kernel
-crash.
+Hi Suchit,
 
-To prevent this, validate prev_cpu in scx_bpf_select_cpu_dfl() and
-trigger an scx error if an invalid CPU is specified.
+kernel test robot noticed the following build errors:
 
-Fixes: f0e1a0643a59b ("sched_ext: Implement BPF extensible scheduler class")
-Cc: stable@vger.kernel.org # v6.12+
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 5 +++++
- 1 file changed, 5 insertions(+)
+[auto build test ERROR on kleikamp-shaggy/jfs-next]
+[also build test ERROR on linus/master v6.14-rc5 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 0f1da199cfc7c..88b2ea58ff942 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -6422,6 +6422,11 @@ static bool check_builtin_idle_enabled(void)
- __bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
- 				       u64 wake_flags, bool *is_idle)
- {
-+	if (!ops_cpu_valid(prev_cpu, NULL)) {
-+		prev_cpu = cpumask_any(p->cpus_ptr);
-+		goto prev_cpu;
-+	}
-+
- 	if (!check_builtin_idle_enabled())
- 		goto prev_cpu;
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Suchit-Karunakaran/jfs-jfs_xtree-replace-XT_GETPAGE-macro-with-xt_getpage-function/20250303-031811
+base:   https://github.com/kleikamp/linux-shaggy jfs-next
+patch link:    https://lore.kernel.org/r/20250302191558.47180-1-suchitkarunakaran%40gmail.com
+patch subject: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with xt_getpage() function
+config: arm-randconfig-001-20250303 (https://download.01.org/0day-ci/archive/20250303/202503030642.jn4Teav7-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030642.jn4Teav7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503030642.jn4Teav7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/jfs/jfs_xtree.c:118:13: error: incompatible pointer types passing 'struct inode **' to parameter of type 'struct inode *'; dereference with * [-Werror,-Wincompatible-pointer-types]
+           BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+                      ^~
+                      *
+   fs/jfs/jfs_btree.h:58:35: note: expanded from macro 'BT_GETPAGE'
+                   MP = (struct metapage *)&JFS_IP(IP)->bxflag;\
+                                                   ^~
+   fs/jfs/jfs_incore.h:205:59: note: passing argument to parameter 'inode' here
+   static inline struct jfs_inode_info *JFS_IP(struct inode *inode)
+                                                             ^
+>> fs/jfs/jfs_xtree.c:118:13: error: incompatible pointer types passing 'struct inode **' to parameter of type 'struct inode *'; dereference with * [-Werror,-Wincompatible-pointer-types]
+           BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+                      ^~
+                      *
+   fs/jfs/jfs_btree.h:59:23: note: expanded from macro 'BT_GETPAGE'
+                   P = (TYPE *)&JFS_IP(IP)->ROOT;\
+                                       ^~
+   fs/jfs/jfs_incore.h:205:59: note: passing argument to parameter 'inode' here
+   static inline struct jfs_inode_info *JFS_IP(struct inode *inode)
+                                                             ^
+   fs/jfs/jfs_xtree.c:118:2: error: incompatible pointer types passing 'struct inode **' to parameter of type 'struct inode *'; dereference with * [-Werror,-Wincompatible-pointer-types]
+           BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/jfs/jfs_btree.h:64:22: note: expanded from macro 'BT_GETPAGE'
+                   MP = read_metapage((IP), BN, SIZE, 1);\
+                        ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+   fs/jfs/jfs_metapage.h:55:18: note: expanded from macro 'read_metapage'
+            __get_metapage(inode, lblock, size, absolute, false)
+                           ^~~~~
+   fs/jfs/jfs_metapage.h:50:54: note: passing argument to parameter 'inode' here
+   extern struct metapage *__get_metapage(struct inode *inode,
+                                                        ^
+>> fs/jfs/jfs_xtree.c:126:16: error: member reference base type 'struct inode *' is not a structure or union
+                           jfs_error(ip->i_sb, "xt_getpage: xtree page corrupt\n");
+                                     ~~^ ~~~~
+>> fs/jfs/jfs_xtree.c:273:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:828:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1083:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, nextbn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1438:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1454:20: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                           ^~
+                                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1732:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1748:20: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                           ^~
+                                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1809:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1885:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:1902:20: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                           ^~
+                                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:2289:18: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                           ^~
+                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:2527:18: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                           ^~
+                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:2812:19: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+                   rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                                   ^~
+                                   &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   fs/jfs/jfs_xtree.c:2857:18: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct inode **'; take the address with & [-Werror,-Wincompatible-pointer-types]
+           rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+                           ^~
+                           &
+   fs/jfs/jfs_xtree.c:113:45: note: passing argument to parameter 'ip' here
+   static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+                                               ^
+   18 errors generated.
+
+
+vim +118 fs/jfs/jfs_xtree.c
+
+    79	
+    80	
+    81	/*
+    82	 * forward references
+    83	 */
+    84	static int xtSearch(struct inode *ip, s64 xoff, s64 *next, int *cmpp,
+    85			    struct btstack * btstack, int flag);
+    86	
+    87	static int xtSplitUp(tid_t tid,
+    88			     struct inode *ip,
+    89			     struct xtsplit * split, struct btstack * btstack);
+    90	
+    91	static int xtSplitPage(tid_t tid, struct inode *ip, struct xtsplit * split,
+    92			       struct metapage ** rmpp, s64 * rbnp);
+    93	
+    94	static int xtSplitRoot(tid_t tid, struct inode *ip,
+    95			       struct xtsplit * split, struct metapage ** rmpp);
+    96	
+    97	/*
+    98	 *	xt_getpage()
+    99	 *
+   100	 * function:	get the page buffer for a specified block address.
+   101	 *
+   102	 * parameters:
+   103	 *	ip      - pointer to the inode
+   104	 *	bn      - block number (s64) of the xtree page to be retrieved;
+   105	 *	mp      - pointer to a metapage pointer where the page buffer is returned;
+   106	 *	size    - size parameter to pass to BT_GETPAGE;
+   107	 *	p       - pointer to an xtpage_t pointer mapping the page's data.
+   108	 *
+   109	 * returns:
+   110	 *	0 on success, or -EIO if the page is corrupt or an error occurs.
+   111	 */
+   112	
+   113	static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+   114				unsigned int size, xtpage_t **p)
+   115	{
+   116		int rc;
+   117	
+ > 118		BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+   119	
+   120		if (!rc) {
+   121			if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) ||
+   122				(le16_to_cpu((*p)->header.nextindex) >
+   123					le16_to_cpu((*p)->header.maxentry)) ||
+   124				(le16_to_cpu((*p)->header.maxentry) >
+   125					((bn == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) {
+ > 126				jfs_error(ip->i_sb, "xt_getpage: xtree page corrupt\n");
+   127				BT_PUTPAGE(*mp);
+   128				*mp = NULL;
+   129				rc = -EIO;
+   130			}
+   131		}
+   132		return rc;
+   133	}
+   134	
+   135	/*
+   136	 *	xtLookup()
+   137	 *
+   138	 * function: map a single page into a physical extent;
+   139	 */
+   140	int xtLookup(struct inode *ip, s64 lstart,
+   141		     s64 llen, int *pflag, s64 * paddr, s32 * plen, int no_check)
+   142	{
+   143		int rc = 0;
+   144		struct btstack btstack;
+   145		int cmp;
+   146		s64 bn;
+   147		struct metapage *mp;
+   148		xtpage_t *p;
+   149		int index;
+   150		xad_t *xad;
+   151		s64 next, size, xoff, xend;
+   152		int xlen;
+   153		s64 xaddr;
+   154	
+   155		*paddr = 0;
+   156		*plen = llen;
+   157	
+   158		if (!no_check) {
+   159			/* is lookup offset beyond eof ? */
+   160			size = ((u64) ip->i_size + (JFS_SBI(ip->i_sb)->bsize - 1)) >>
+   161			    JFS_SBI(ip->i_sb)->l2bsize;
+   162			if (lstart >= size)
+   163				return 0;
+   164		}
+   165	
+   166		/*
+   167		 * search for the xad entry covering the logical extent
+   168		 */
+   169	//search:
+   170		if ((rc = xtSearch(ip, lstart, &next, &cmp, &btstack, 0))) {
+   171			jfs_err("xtLookup: xtSearch returned %d", rc);
+   172			return rc;
+   173		}
+   174	
+   175		/*
+   176		 *	compute the physical extent covering logical extent
+   177		 *
+   178		 * N.B. search may have failed (e.g., hole in sparse file),
+   179		 * and returned the index of the next entry.
+   180		 */
+   181		/* retrieve search result */
+   182		XT_GETSEARCH(ip, btstack.top, bn, mp, p, index);
+   183	
+   184		/* is xad found covering start of logical extent ?
+   185		 * lstart is a page start address,
+   186		 * i.e., lstart cannot start in a hole;
+   187		 */
+   188		if (cmp) {
+   189			if (next)
+   190				*plen = min(next - lstart, llen);
+   191			goto out;
+   192		}
+   193	
+   194		/*
+   195		 * lxd covered by xad
+   196		 */
+   197		xad = &p->xad[index];
+   198		xoff = offsetXAD(xad);
+   199		xlen = lengthXAD(xad);
+   200		xend = xoff + xlen;
+   201		xaddr = addressXAD(xad);
+   202	
+   203		/* initialize new pxd */
+   204		*pflag = xad->flag;
+   205		*paddr = xaddr + (lstart - xoff);
+   206		/* a page must be fully covered by an xad */
+   207		*plen = min(xend - lstart, llen);
+   208	
+   209	      out:
+   210		XT_PUTPAGE(mp);
+   211	
+   212		return rc;
+   213	}
+   214	
+   215	/*
+   216	 *	xtSearch()
+   217	 *
+   218	 * function:	search for the xad entry covering specified offset.
+   219	 *
+   220	 * parameters:
+   221	 *	ip	- file object;
+   222	 *	xoff	- extent offset;
+   223	 *	nextp	- address of next extent (if any) for search miss
+   224	 *	cmpp	- comparison result:
+   225	 *	btstack - traverse stack;
+   226	 *	flag	- search process flag (XT_INSERT);
+   227	 *
+   228	 * returns:
+   229	 *	btstack contains (bn, index) of search path traversed to the entry.
+   230	 *	*cmpp is set to result of comparison with the entry returned.
+   231	 *	the page containing the entry is pinned at exit.
+   232	 */
+   233	static int xtSearch(struct inode *ip, s64 xoff,	s64 *nextp,
+   234			    int *cmpp, struct btstack * btstack, int flag)
+   235	{
+   236		struct jfs_inode_info *jfs_ip = JFS_IP(ip);
+   237		int rc = 0;
+   238		int cmp = 1;		/* init for empty page */
+   239		s64 bn;			/* block number */
+   240		struct metapage *mp;	/* page buffer */
+   241		xtpage_t *p;		/* page */
+   242		xad_t *xad;
+   243		int base, index, lim, btindex;
+   244		struct btframe *btsp;
+   245		int nsplit = 0;		/* number of pages to split */
+   246		s64 t64;
+   247		s64 next = 0;
+   248	
+   249		INCREMENT(xtStat.search);
+   250	
+   251		BT_CLR(btstack);
+   252	
+   253		btstack->nsplit = 0;
+   254	
+   255		/*
+   256		 *	search down tree from root:
+   257		 *
+   258		 * between two consecutive entries of <Ki, Pi> and <Kj, Pj> of
+   259		 * internal page, child page Pi contains entry with k, Ki <= K < Kj.
+   260		 *
+   261		 * if entry with search key K is not found
+   262		 * internal page search find the entry with largest key Ki
+   263		 * less than K which point to the child page to search;
+   264		 * leaf page search find the entry with smallest key Kj
+   265		 * greater than K so that the returned index is the position of
+   266		 * the entry to be shifted right for insertion of new entry.
+   267		 * for empty tree, search key is greater than any key of the tree.
+   268		 *
+   269		 * by convention, root bn = 0.
+   270		 */
+   271		for (bn = 0;;) {
+   272			/* get/pin the page to search */
+ > 273			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+   274			if (rc)
+   275				return rc;
+   276	
+   277			/* try sequential access heuristics with the previous
+   278			 * access entry in target leaf page:
+   279			 * once search narrowed down into the target leaf,
+   280			 * key must either match an entry in the leaf or
+   281			 * key entry does not exist in the tree;
+   282			 */
+   283	//fastSearch:
+   284			if ((jfs_ip->btorder & BT_SEQUENTIAL) &&
+   285			    (p->header.flag & BT_LEAF) &&
+   286			    (index = jfs_ip->btindex) <
+   287			    le16_to_cpu(p->header.nextindex)) {
+   288				xad = &p->xad[index];
+   289				t64 = offsetXAD(xad);
+   290				if (xoff < t64 + lengthXAD(xad)) {
+   291					if (xoff >= t64) {
+   292						*cmpp = 0;
+   293						goto out;
+   294					}
+   295	
+   296					/* stop sequential access heuristics */
+   297					goto binarySearch;
+   298				} else {	/* (t64 + lengthXAD(xad)) <= xoff */
+   299	
+   300					/* try next sequential entry */
+   301					index++;
+   302					if (index <
+   303					    le16_to_cpu(p->header.nextindex)) {
+   304						xad++;
+   305						t64 = offsetXAD(xad);
+   306						if (xoff < t64 + lengthXAD(xad)) {
+   307							if (xoff >= t64) {
+   308								*cmpp = 0;
+   309								goto out;
+   310							}
+   311	
+   312							/* miss: key falls between
+   313							 * previous and this entry
+   314							 */
+   315							*cmpp = 1;
+   316							next = t64;
+   317							goto out;
+   318						}
+   319	
+   320						/* (xoff >= t64 + lengthXAD(xad));
+   321						 * matching entry may be further out:
+   322						 * stop heuristic search
+   323						 */
+   324						/* stop sequential access heuristics */
+   325						goto binarySearch;
+   326					}
+   327	
+   328					/* (index == p->header.nextindex);
+   329					 * miss: key entry does not exist in
+   330					 * the target leaf/tree
+   331					 */
+   332					*cmpp = 1;
+   333					goto out;
+   334				}
+   335	
+   336				/*
+   337				 * if hit, return index of the entry found, and
+   338				 * if miss, where new entry with search key is
+   339				 * to be inserted;
+   340				 */
+   341			      out:
+   342				/* compute number of pages to split */
+   343				if (flag & XT_INSERT) {
+   344					if (p->header.nextindex ==	/* little-endian */
+   345					    p->header.maxentry)
+   346						nsplit++;
+   347					else
+   348						nsplit = 0;
+   349					btstack->nsplit = nsplit;
+   350				}
+   351	
+   352				/* save search result */
+   353				btsp = btstack->top;
+   354				btsp->bn = bn;
+   355				btsp->index = index;
+   356				btsp->mp = mp;
+   357	
+   358				/* update sequential access heuristics */
+   359				jfs_ip->btindex = index;
+   360	
+   361				if (nextp)
+   362					*nextp = next;
+   363	
+   364				INCREMENT(xtStat.fastSearch);
+   365				return 0;
+   366			}
+   367	
+   368			/* well, ... full search now */
+   369		      binarySearch:
+   370			lim = le16_to_cpu(p->header.nextindex) - XTENTRYSTART;
+   371	
+   372			/*
+   373			 * binary search with search key K on the current page
+   374			 */
+   375			for (base = XTENTRYSTART; lim; lim >>= 1) {
+   376				index = base + (lim >> 1);
+   377	
+   378				XT_CMP(cmp, xoff, &p->xad[index], t64);
+   379				if (cmp == 0) {
+   380					/*
+   381					 *	search hit
+   382					 */
+   383					/* search hit - leaf page:
+   384					 * return the entry found
+   385					 */
+   386					if (p->header.flag & BT_LEAF) {
+   387						*cmpp = cmp;
+   388	
+   389						/* compute number of pages to split */
+   390						if (flag & XT_INSERT) {
+   391							if (p->header.nextindex ==
+   392							    p->header.maxentry)
+   393								nsplit++;
+   394							else
+   395								nsplit = 0;
+   396							btstack->nsplit = nsplit;
+   397						}
+   398	
+   399						/* save search result */
+   400						btsp = btstack->top;
+   401						btsp->bn = bn;
+   402						btsp->index = index;
+   403						btsp->mp = mp;
+   404	
+   405						/* init sequential access heuristics */
+   406						btindex = jfs_ip->btindex;
+   407						if (index == btindex ||
+   408						    index == btindex + 1)
+   409							jfs_ip->btorder = BT_SEQUENTIAL;
+   410						else
+   411							jfs_ip->btorder = BT_RANDOM;
+   412						jfs_ip->btindex = index;
+   413	
+   414						return 0;
+   415					}
+   416					/* search hit - internal page:
+   417					 * descend/search its child page
+   418					 */
+   419					if (index < le16_to_cpu(p->header.nextindex)-1)
+   420						next = offsetXAD(&p->xad[index + 1]);
+   421					goto next;
+   422				}
+   423	
+   424				if (cmp > 0) {
+   425					base = index + 1;
+   426					--lim;
+   427				}
+   428			}
+   429	
+   430			/*
+   431			 *	search miss
+   432			 *
+   433			 * base is the smallest index with key (Kj) greater than
+   434			 * search key (K) and may be zero or maxentry index.
+   435			 */
+   436			if (base < le16_to_cpu(p->header.nextindex))
+   437				next = offsetXAD(&p->xad[base]);
+   438			/*
+   439			 * search miss - leaf page:
+   440			 *
+   441			 * return location of entry (base) where new entry with
+   442			 * search key K is to be inserted.
+   443			 */
+   444			if (p->header.flag & BT_LEAF) {
+   445				*cmpp = cmp;
+   446	
+   447				/* compute number of pages to split */
+   448				if (flag & XT_INSERT) {
+   449					if (p->header.nextindex ==
+   450					    p->header.maxentry)
+   451						nsplit++;
+   452					else
+   453						nsplit = 0;
+   454					btstack->nsplit = nsplit;
+   455				}
+   456	
+   457				/* save search result */
+   458				btsp = btstack->top;
+   459				btsp->bn = bn;
+   460				btsp->index = base;
+   461				btsp->mp = mp;
+   462	
+   463				/* init sequential access heuristics */
+   464				btindex = jfs_ip->btindex;
+   465				if (base == btindex || base == btindex + 1)
+   466					jfs_ip->btorder = BT_SEQUENTIAL;
+   467				else
+   468					jfs_ip->btorder = BT_RANDOM;
+   469				jfs_ip->btindex = base;
+   470	
+   471				if (nextp)
+   472					*nextp = next;
+   473	
+   474				return 0;
+   475			}
+   476	
+   477			/*
+   478			 * search miss - non-leaf page:
+   479			 *
+   480			 * if base is non-zero, decrement base by one to get the parent
+   481			 * entry of the child page to search.
+   482			 */
+   483			index = base ? base - 1 : base;
+   484	
+   485			/*
+   486			 * go down to child page
+   487			 */
+   488		      next:
+   489			/* update number of pages to split */
+   490			if (p->header.nextindex == p->header.maxentry)
+   491				nsplit++;
+   492			else
+   493				nsplit = 0;
+   494	
+   495			/* push (bn, index) of the parent page/entry */
+   496			if (BT_STACK_FULL(btstack)) {
+   497				jfs_error(ip->i_sb, "stack overrun!\n");
+   498				XT_PUTPAGE(mp);
+   499				return -EIO;
+   500			}
+   501			BT_PUSH(btstack, bn, index);
+   502	
+   503			/* get the child page block number */
+   504			bn = addressXAD(&p->xad[index]);
+   505	
+   506			/* unpin the parent page */
+   507			XT_PUTPAGE(mp);
+   508		}
+   509	}
+   510	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
