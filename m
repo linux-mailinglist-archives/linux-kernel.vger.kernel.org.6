@@ -1,159 +1,185 @@
-Return-Path: <linux-kernel+bounces-540450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107BCA4B0B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 09:31:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A754A4B0B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 09:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA90170553
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40CC93B526F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F271D5AD4;
-	Sun,  2 Mar 2025 08:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="UmkPCIU3"
-Received: from mail-m1973196.qiye.163.com (mail-m1973196.qiye.163.com [220.197.31.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17351D7E35;
+	Sun,  2 Mar 2025 08:34:23 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A9515530C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 08:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63B6192D96;
+	Sun,  2 Mar 2025 08:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740904278; cv=none; b=Rnev2bfjqzUEczKz1buAE2ZPxgrARhtwI2sVUlgweIcpydzxujxfdJMfs3Fzsch9ns6o+U/iNQyu7A74MuZJFRsKXfO/3Ok/+k/4X2snKvbEFufE/VT7SINBVzuUXs9MQK4OgT+n90+eNWpWZWp5/ypFbT+912JmcHJA8Ohgp9Y=
+	t=1740904463; cv=none; b=p+ESFzbktlJvWUXeyhjl0StJx3EFHzi8QboDOq69ciySwf5GZ1I7KpgmOeHKiWN731oQ2sFqrP37YDWhqbNYe9Co8eQOd8DUCcC7EYgJEg21bNB8BXkqH14Turfchv13DBZBSphM/7WZMjKrPQGUWHaKHGMsPCp6H2FcH+VtlI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740904278; c=relaxed/simple;
-	bh=y1zWYMbvmH6Q9HIkd78pj6ScAKngrDjKJZbio6waGfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=psQzVotIsAQwFp5At+xUSHGRVPSDJi6Fi16qmlbzQo3Fxvg+DK7A2ksDjmsRlnk5poRznU7hFbPgkMRPZ3j1vGgBfMYi2Vg+pUh/g9QcK1heT1tCfkkgIAa9d8qEGKUThUlfqWRJtAyIZdq999jtHBJl1sTucFlcTkMXubsG5Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=UmkPCIU3; arc=none smtp.client-ip=220.197.31.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id ca1e3b0a;
-	Sun, 2 Mar 2025 16:31:02 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: dianders@chromium.org,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: dmitry.baryshkov@linaro.org,
-	andy.yan@rock-chips.com,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	l.stach@pengutronix.de,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v8] drm/bridge: analogix_dp: Remove the unnecessary calls to clk_disable_unprepare() during probing
-Date: Sun,  2 Mar 2025 16:30:43 +0800
-Message-Id: <20250302083043.3197235-1-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740904463; c=relaxed/simple;
+	bh=5JJ8bWxyJ41/8t713l8MUHmkyDaXWeaPKkyDIdKnQCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qczLvtYglpaiXNmzupqDTM1RlrexvcQvVQZQPxbME3XCMieHX2IObT+1GDOz5yIa6nbFZzgeBazrsFgk09tLRe4t7VatlmQf9ggAIq9YUUN2YCBmhid5gcfDYkMVwwtYhGb6FiAhRNmiaN8UzOAq21bgnkH7xWj9ih9jkTf0hw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id A56EC343175;
+	Sun, 02 Mar 2025 08:34:20 +0000 (UTC)
+Date: Sun, 2 Mar 2025 08:34:16 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 0/2] riscv: spacemit: add i2c support to K1 SoC
+Message-ID: <20250302083416-GYA56903@gentoo>
+References: <20250302-k1-i2c-master-v5-0-fd77ad3c7e18@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkNKSFYfTUxCGkodHR5KQ0JWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9555faec2603a3kunmca1e3b0a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PS46Fyo*GjIIP0sXFEsQPAMD
-	GjwaCR9VSlVKTE9LQktPSU1PSUpJVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTEtPNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=UmkPCIU3194/fdIScDFyGJqmuyaoD1Wy6JprV81qNtT2lopbChW3FNhogW3p0vJNrzW+8Ixe7Qb728+YAJQ2uZkHqxnrdtl7BVAL5xgDyNxGOIGlqYvOqEurRXBD5ZZpkVyI+e1OXBXhx7E9van9kwmWemfzUXUMQjNiKs17ISQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=1tSwbwgHgUYZS7h3tpCBw0paLu32oYZDiVorjRMVmIs=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302-k1-i2c-master-v5-0-fd77ad3c7e18@gmail.com>
 
-With the commit f37952339cc2 ("drm/bridge: analogix_dp: handle clock via
-runtime PM"), the PM operations can help enable/disable the clock. The
-err_disable_clk label and clk_disable_unprepare() operations are no
-longer necessary because the analogix_dp_resume() will not be called
-during probing.
+Hi Troy:
 
-Fixes: f37952339cc2 ("drm/bridge: analogix_dp: handle clock via runtime PM")
-Suggested-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+I'd like to have all spacemit patches Cc to its mailinglist[1]
+Can you do a resend version with "RESEND" prefix? no need to increase
+the version number, but should state the reason, thanks
 
----
+Link: https://lore.kernel.org/all/20250128-k1-maintainer-1-v1-1-e5dec4f379eb@gentoo.org [1]
 
-Picked from:
-https://patchwork.kernel.org/project/linux-rockchip/list/?series=936932
+On 12:51 Sun 02 Mar     , Troy Mitchell wrote:
+> Hi all,
+> 
+> This patch implements I2C driver for the SpacemiT K1 SoC,
+> providing basic support for I2C read/write communication which
+> compatible with standard I2C bus specifications.
+> 
+> In this version, the driver defaults to use fast-speed-mode and
+> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
+> 
+> The docs of I2C can be found here, in chapter 16.1 I2C [1]
+> 
+> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
+> ---
+> Change in v5:
+> - Path #1:
+>         - Add `clock-names` property
+>         - Modify the clock property into two
+> - Path #2:
+>         - Enable the APB clock
+>         - Fix comment and code styles
+>         - Fix typo and drop unnecessary description in Kconfig
+>         - Prefix all macro definitions with SPACEMIT_
+>         - Rename `spacemit_i2c_bus_reset` to `spacemit_i2c_conditionally_reset_bus`
+>         - Remove all `unlikely` and `likely`
+>         - Remove unused register and bit macros
+>         - Remove the "err" field, as it only contains a subset of the status field
+>         - Retrieve `clock-frequency` from the device tree instead of using a macro
+>         - Use a local variable to track the current message
+>         - Use `i2c->read` to represent read and write statuses instead of `i2c->dir`
+> 
+> Link to v4:
+> https://lore.kernel.org/all/20241125-k1-i2c-master-v4-0-0f3d5886336b@gmail.com/
+> 
+> Change in v4:
+> - Patch #1:
+> 	- Change the default value of clock-frequency from 100000 to
+> 	  400000. This is to correspond to the driver's default value.
+> 	- Drop the minimum of clock-frequency
+> 	- Modify the description of clock-frequency
+> - Patch #2:
+> 	- Drop the `inline` qualifier from the `spacemit_i2c_xfer_core` function
+> 	- Drop the initialization of `ret` to 0 in `spacemit_i2c_xfer_core` function
+> 	- Drop useless wrap
+> Link to v3:
+> https://lore.kernel.org/all/20241112-k1-i2c-master-v3-0-5005b70dc208@gmail.com/
+> 
+> Change in v3:
+> - Patch #1:
+> 	- Change the maxItems of reg from 2 to 1 in properties
+> 	- Modify reg in dts example
+> 	- Changed the enum selection for clock-frequency to a range,
+> 	  setting a minimum value of 1 and a maximum value of 3,300,000.
+> - Patch #2:
+> 	- Drop unused judgement in `spacemit_i2c_xfer_msg`
+> 	- Fix the dangling else warning in `spacemit_i2c_is_last_msg`
+> 	- Fix the error check for `i2c->base`
+> 	- Modify Kconfig dependencies
+> Link to v2:
+> https://lore.kernel.org/all/20241028053220.346283-1-TroyMitchell988@gmail.com/
+> 
+> Change in v2:
+> - Patch #1:
+> 	- Change the maxItems of reg from 1 to 2 in properties
+> 	- Change 'i2c' to 'I2C' in the commit message.
+> 	- Drop fifo-disable property
+> 	- Drop alias in dts example
+> 	- Move `unevaluatedProperties` after `required:` block
+> - Patch #2:
+> 	- Alphabetize Makefile and Kconfig
+> 	- Change `.remove_new` to `.remove` in `struct platform_driver`
+> 	- Change `dev_alert` to `dev_warn_ratelimited` in `spacemit_i2c_bus_reset`
+> 	- Change `spacemit_i2c_read/write_reg` to `read/writel`
+> 	- Change `spacemit_i2c_dt_match` to `spacemit_i2c_of_match`
+> 	- Clean up code flow
+> 	- Fix unnecessary line wraps
+> 	- Move `spacemit_i2c_handle_err` to a suitable location
+> 	- Modify Kconfig dependencies
+> 	- Use `PTR_ERR(i2c->base)` directly as the `dev_err_probe` parameter instead of
+> 	  the intermediate variable
+> Link to v1:
+> https://lore.kernel.org/all/20241015075134.1449458-1-TroyMitchell988@gmail.com/
+> 
+> ---
+> Troy Mitchell (2):
+>       dt-bindings: i2c: spacemit: add support for K1 SoC
+>       i2c: spacemit: add support for SpacemiT K1 SoC
+> 
+>  .../devicetree/bindings/i2c/spacemit,k1-i2c.yaml   |  59 ++
+>  drivers/i2c/busses/Kconfig                         |  19 +
+>  drivers/i2c/busses/Makefile                        |   1 +
+>  drivers/i2c/busses/i2c-k1.c                        | 617 +++++++++++++++++++++
+>  4 files changed, 696 insertions(+)
+> ---
+> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+> change-id: 20241031-k1-i2c-master-fe7f7b0dce93
+> prerequisite-change-id: 20240626-k1-01-basic-dt-1aa31eeebcd2:v5
+> prerequisite-patch-id: 47dcf6861f7d434d25855b379e6d7ef4ce369c9c
+> prerequisite-patch-id: 77787fe82911923aff15ccf565e8fa451538c3a6
+> prerequisite-patch-id: b0bdb1742d96c5738f05262c3b0059102761390b
+> prerequisite-patch-id: 3927d39d8d77e35d5bfe53d9950da574ff8f2054
+> prerequisite-patch-id: a98039136a4796252a6029e474f03906f2541643
+> prerequisite-patch-id: c95f6dc0547a2a63a76e3cba0cf5c623b212b4e6
+> prerequisite-patch-id: 66e750e438ee959ddc2a6f0650814a2d8c989139
+> prerequisite-patch-id: 29a0fd8c36c1a4340f0d0b68a4c34d2b8abfb1ab
+> prerequisite-patch-id: 0bdfff661c33c380d1cf00a6c68688e05f88c0b3
+> prerequisite-patch-id: 99f15718e0bfbb7ed1a96dfa19f35841b004dae9
+> 
+> Best regards,
+> -- 
+> Troy Mitchell <TroyMitchell988@gmail.com>
+> 
 
-Changes in v8:
-- Fix the conflict because of commit 43c00fb1a518 ("drm/bridge:
-  analogix_dp: Use devm_platform_ioremap_resource()")
----
- .../gpu/drm/bridge/analogix/analogix_dp_core.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index f6e4bdc05ba0..817070613b03 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1605,10 +1605,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 	}
- 
- 	dp->reg_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(dp->reg_base)) {
--		ret = PTR_ERR(dp->reg_base);
--		goto err_disable_clk;
--	}
-+	if (IS_ERR(dp->reg_base))
-+		return ERR_CAST(dp->reg_base);
- 
- 	dp->force_hpd = of_property_read_bool(dev->of_node, "force-hpd");
- 
-@@ -1620,8 +1618,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 	if (IS_ERR(dp->hpd_gpiod)) {
- 		dev_err(dev, "error getting HDP GPIO: %ld\n",
- 			PTR_ERR(dp->hpd_gpiod));
--		ret = PTR_ERR(dp->hpd_gpiod);
--		goto err_disable_clk;
-+		return ERR_CAST(dp->hpd_gpiod);
- 	}
- 
- 	if (dp->hpd_gpiod) {
-@@ -1641,8 +1638,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 
- 	if (dp->irq == -ENXIO) {
- 		dev_err(&pdev->dev, "failed to get irq\n");
--		ret = -ENODEV;
--		goto err_disable_clk;
-+		return ERR_PTR(-ENODEV);
- 	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
-@@ -1651,15 +1647,11 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 					irq_flags, "analogix-dp", dp);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to request irq\n");
--		goto err_disable_clk;
-+		return ERR_PTR(ret);
- 	}
- 	disable_irq(dp->irq);
- 
- 	return dp;
--
--err_disable_clk:
--	clk_disable_unprepare(dp->clock);
--	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_probe);
- 
 -- 
-2.34.1
-
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
