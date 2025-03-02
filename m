@@ -1,84 +1,122 @@
-Return-Path: <linux-kernel+bounces-540198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC38A4AF5F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:03:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217D6A4AF64
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B07716C8C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 06:03:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5A916E084
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 06:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849B21AAA23;
-	Sun,  2 Mar 2025 06:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95DC1CAA8F;
+	Sun,  2 Mar 2025 06:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b="pukX7f0n"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ER9PnGbj"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CE123C9
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 06:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662315A8;
+	Sun,  2 Mar 2025 06:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740895377; cv=none; b=P4sPGfxtEA5K4h2MMDEKlXiZ47rq+k3fEMaoeAXE2L/d+btG93svrUjBLo3jJaePgjW/5Y6ZAv+tO7Zk26IrVrOZT8HYnwNAeoO7mZGcaJSJzT3M7+7ho6s5Qv2Xwg3qlc9gJEDDZpcdlnLSfKe6cmQ40HcdkS7UrYeZCN7/vYU=
+	t=1740895834; cv=none; b=jqyEEcDHxJz3fn/HDfcXSTki6ZwVFNK8EshpZo25nZMc8dksmfm3MKzbwHc1kyEfxNrj0Rox0bUqm6tfPn6jq4Nzueo2GZTdKZBCfcZXDWJ6d1N+1YcIRqEjy5pnZUpq/USYTipcKH58hQZ/hDQ74rW7pwKBx+MUrx93CDNvAOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740895377; c=relaxed/simple;
-	bh=Umzj/IL2JJCQpaSoY9ofBZ3j8e2BVso9RQ5uwThh+3c=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=lVrlLfh+fs+wmlqXwvU9uA6TPOPfvGzejr3fDnd4dbMikKfILbvxlMydZuNIQo07grMr5J+4Jm6gInmz0cGwxXs8QFtesSyeUrGr7eRwQuzD0VT+Z7OEPZ74Y9hYL9TyolugzUt4SBGHO4krK1gAeNjmu+2trhqvz+dHENDmG/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net; spf=pass smtp.mailfrom=bit-philosophy.net; dkim=pass (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b=pukX7f0n; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-philosophy.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=bit-philosophy.net; s=ds202411; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Cs+OKmRyRdDH03pJQ+3R7IAqgJnZaAOY/CFMWif1gvU=; b=pukX7f0nl7RA1CU+URsgk8lEHx
-	yZVzS/bWZmv6Zk/LP3f3IEu5t8mZIhgdKzA41aukjnkY3xS7WJIcq+2nubSXyB1CvuPayqS/lzL1Y
-	+qtczHKoV+0J6G0jb0B2APpu02B/0wpNn2cp36o/AadryPDKdN7XS3pxOXLxPL4KcSskhD4XtTQZZ
-	4omTxZWY6idJSNXXi8TMfCHQcx1ojKRDse5j1t0RJKzQPB9lDqXps8o8asI+duXyJq0nAWzk+Dayb
-	5YQe/R2WPs6DnivB3D47pK8ICDu94UyJjciMZ/8OH+NqjjJoDcSWrF5sudqU7wO/VrvUWiwwnbgag
-	Ldz8Q3wg==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1tobp7-00A1HN-0B
-	for linux-kernel@vger.kernel.org;
-	Sun, 02 Mar 2025 06:25:09 +0100
-Message-ID: <7a2be273-dfcd-430f-abfe-b2ff752c1a20@bit-philosophy.net>
-Date: Sun, 2 Mar 2025 06:25:09 +0100
+	s=arc-20240116; t=1740895834; c=relaxed/simple;
+	bh=JoCwhW2kedYhm5VZxvqYJTAzDu/galJk+5XSV8Q/EsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvPFOu6v9u1vPZSl74EFa57x9bRviwHJ8kXN9hwkRDVjJ0yC4KlNsA2XnpBlAI8f8exdVxKygmSgruitbrhhs5Fy7IthHm3nXszoVzP0l2w/gSTDpEIrWT3r2gd7f3zvYmMWFSRKT8ibsHMTwHeFSfNGGQ2e+srp1XZchFB6eB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ER9PnGbj; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4JDdLgOIRKP6MkDwL0d2OG9t1NrXyqQHEitlHLvr074=; b=ER9PnGbjfRxn1mAt7YKFNq8TmC
+	orXqJlek/iL3VRobrFCqBXwW9DvB3DORKVURCZ8VI4u1M7CZ7MZ1jSZgP3I5JLpcOU6uc9e3VLPqn
+	f5QrUwu8LVaxvFub0uNGhuIjnAo5Q6IAVUe5JnaxHOAe1Zk5ZvgWoLavvejX28kg5dsf8uIkIRqBr
+	3rfwraq9sBcRmfhQY0J1qA8dTtlgW2CBued7o2KKMCzckQZyneO0XfgxtS2QEV2tq3qg435eUWpdZ
+	UdwMKnf+Tmh2ONUorVluZRyoIIbJG4ryJog6cyqs2vQ8ex1xerrL1QnuY4RleK/x+iHDCCqvN/jvH
+	LvtlOnmA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tocWN-002zOO-0v;
+	Sun, 02 Mar 2025 14:09:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 02 Mar 2025 14:09:51 +0800
+Date: Sun, 2 Mar 2025 14:09:51 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] crypto: Add Kerberos crypto lib
+Message-ID: <Z8P2L6nZGUEUiNwS@gondor.apana.org.au>
+References: <3193936.1740736547@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe@bit-philosophy.net>
-Subject: Bit X Philosophy (more transparency) (was Low Jitter, Fair Pay)
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3193936.1740736547@warthog.procyon.org.uk>
 
-I updated to use Qud as the main concept of Ud, as is the word here.
+On Fri, Feb 28, 2025 at 09:55:47AM +0000, David Howells wrote:
+> Hi Herbert,
+> 
+> Could you pull this into the crypto tree please?  It does a couple of
+> things:
+> 
+>  (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
+>      driver, but that hashes the plaintext, not the ciphertext.  This was
+>      made a separate module rather than just being a part of the authenc
+>      driver because it has to do all of the constituent operations in the
+>      opposite order - which impacts the async op handling.
+> 
+>      Testmgr data is provided for AES+SHA2 and Camellia combinations of
+>      authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
+>      provided as the RFCs don't contain usable test vectors.
+> 
+>  (2) Provide a Kerberos 5 crypto library.  This is an extract from the
+>      sunrpc driver as that code can be shared between sunrpc/nfs and
+>      rxrpc/afs.  This provides encryption, decryption, get MIC and verify
+>      MIC routines that use and wrap the crypto functions, along with some
+>      functions to provide layout management.
+> 
+>      This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
+> 
+>      Self-testing is provided that goes further than is possible with
+>      testmgr, doing subkey derivation as well.
+> 
+> The patches were previously posted here:
+> 
+>     https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
+> 
+> as part of a larger series, but the networking guys would prefer these to
+> go through the crypto tree.  If you want them reposting independently, I
+> can do that.
 
-This seems optimal, and resonantes with earlier monotheism, and also 
-Iran, which also seems good.
+I tried pulling it but it's not based on the cryptodev tree so
+it will create a mess when I push this upstream.  If you want me
+to pull it through cryptodev please rebase it on my tree.
 
-It is the muslo (translated) side, who wants a good OS. (Crescent Moon 
-and Star also resonantes with this.)
-
-(Winos System = christianity, particulary "Lord", which is unused by me.)
-
-Qud, Arc of All, The Real, The Right. (as my translation goes).
-
-Which would be enligthenment in Buddhism.
-
-Light.
-Ywe.
-https://bit-philosophy.net/
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
