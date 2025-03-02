@@ -1,179 +1,177 @@
-Return-Path: <linux-kernel+bounces-540725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8BCA4B43E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:59:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5742FA4B445
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B643AE3A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CF01690EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB61F1EBFF8;
-	Sun,  2 Mar 2025 18:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F61EB9F3;
+	Sun,  2 Mar 2025 19:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="hlSHkZmx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bj8DWwQI"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vzRlOXqs"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85611EB1B8;
-	Sun,  2 Mar 2025 18:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E242E630;
+	Sun,  2 Mar 2025 19:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740941967; cv=none; b=bb/Kelv5O42XDP4LjWNVWyiMiCSfBfIGDa4SYYYq7oIY1ienZF1HwDTdbN+bmbx4ubs17xQ0HBioxUWjJkhvTleKndoHMJFII+BDuKRQ/qD/P9ovkhvsEpn5G6jua46DFUwQTz8r83k/IMwOjL4ig8RasjasJUmc0ZcsTnBcFTw=
+	t=1740942601; cv=none; b=FnnvXPmO/fCbFXNxw+g9dDjJ/q+T8M5DktZvZvuVp5rEWin19P3zg5KbtARnCYFBL5agGwQe89P8+kT5LBX4PV3PquNtd46B1VQSzhKOaqLiC1LQ952akO881PdBOKQg/nNwZGsbRB8WhzIb1g7W4dsxisHevwbb6+t7U0EhXTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740941967; c=relaxed/simple;
-	bh=UYb319UmdfGOCWVEJRBhTzQpIvhNbQXAbWaVXUu8ZwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMiQv+IZ67pI8AdcufHF6YXru/HAc+x2jQ4QIOUtnxkU6bFf4N4t5x0Kzc8xtDSf58bx1Z7WF3zZCVqMI01f5+az4vBjtNtAU/akNem3mOhaefGMEyT2KSKmeVmqgxk/VUFMq0UpPN1Yj5Ry1/e4u+cqx1RdKFYK4zVqszObtDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=hlSHkZmx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bj8DWwQI; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 8AB97254018B;
-	Sun,  2 Mar 2025 13:59:23 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 02 Mar 2025 13:59:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1740941963; x=
-	1741028363; bh=ByETV/vKdhAC0W6D+ZlHSo+SPgq3hi6yYES5IcYx+80=; b=h
-	lSHkZmxSo/bJJB3bMrtPl8i1LvnY3dCCmMUBe7ZgO5WVNwuWCiwZGzCYjhvO73XB
-	TyxUJEJtsYDTqbUe6b4mezwVdofWOL8lPFEyO2v9R0KHnL6fJ0uuXK1KKEixrNuA
-	/kmHLWsgwVv+8P0F+sXzNMgXurnqZcrihl5yx8KepxJoTPtKY8YXiEO9jJqtOBi3
-	dAB785QSNi+tb8PGdPxHDYAAOFcta+muDApRn1Usy1ZTir8RirDK/rq7UfJcHFLa
-	JOsVsnQ48vUjzAy2KjJLxOhhn1Rd02PC6TEVQaxE89FGNpD8rz3wsz63AQ8Wn9LB
-	k3WkFoLeAALyJtjbYZdBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740941963; x=1741028363; bh=ByETV/vKdhAC0W6D+ZlHSo+SPgq3hi6yYES
-	5IcYx+80=; b=bj8DWwQIzQY8vH95wDZuDtp9o2nrxQe0tMolt0o7gFPYfEeWnhL
-	4O1SrIJ2zLvPik0FrDoeiOgR+t1djCrq6VTMxY73wDCca0pjt20MzSjgYzWdb/sB
-	5HPvlxyq6atZMINuu1DhcBsx4zRIuIzc78ZyTUXKP8w4qBmJ7fF2yxp3bum5amNb
-	COd2FAHW4cIJRSZRJYYxCvBokPHiGBRDvF0izD6j59KQv8LDnvmE629L6yRKi+G4
-	CMn8QwxVcr9DjBVgsUr9h+wv7C2PazcalgZ+H5v6VeJJqA1Txphu+LnZDyTXVTgC
-	DhJcqIloQNKocekcJMq46MRQFqyqTAWHQvA==
-X-ME-Sender: <xms:iqrEZ3NJDbn1bYS-a0Eh1dZfsWfWcGv6jfOC1a2a_m2iKhxIQCmAVw>
-    <xme:iqrEZx-0n3IWI4rjwOUgoUKjAqYBEUg1qas4B58-_Y3W6mkDAJAQogDLmCwa-CPU5
-    _T_6LkyIzg2OBfOuQs>
-X-ME-Received: <xmr:iqrEZ2Tjxy9k0Bejz88-q_4DiOYgp2SgTmHRoNQfLgXQPoZMypzQida9rBYB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelieellecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
-    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefh
-    keegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgs
-    pghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtoh
-    hnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
-    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvg
-    hrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpth
-    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:iqrEZ7sVe4tDvW961QRgG9Qo6g1iLM-e3H9rCplRT7ti_g6SDiTolQ>
-    <xmx:iqrEZ_cGlmcfBYChseWwVCw7Ja28oW3TdiJWayszuzMXxpEgZ5gQdA>
-    <xmx:iqrEZ319vQNjXX2Wu8FtzXUWfAmqzPnBd8yEo0gGwfwm9_f3EOst9A>
-    <xmx:iqrEZ79NRl4sx90F6knyNDgFqFLXoY51pDFlU8YuVKwM4sXGRJsjgg>
-    <xmx:i6rEZ60TqJSyQgwN7xRfqD9KF6PVsNVUjBWdyOWynUlu9ZRBQeIPz7ps>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Mar 2025 13:59:22 -0500 (EST)
-Date: Sun, 2 Mar 2025 19:59:20 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	David Ahern <dsahern@kernel.org>
-Subject: Re: [PATCH net-next v20 12/25] ovpn: implement TCP transport
-Message-ID: <Z8SqiJedxrFhGuB9@hog>
-References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
- <20250227-b4-ovpn-v20-12-93f363310834@openvpn.net>
+	s=arc-20240116; t=1740942601; c=relaxed/simple;
+	bh=goHEOgt6VKQLca6XUQdBBoD0f7uZKf9N8C9Pj+hERok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GB9o5wV6NIRaGvpfsHwpZ8KNWcRNo4EkBv9amGTxvCmb0ez9e6Tb8CDElhrwe5wF5R3PrfLzzVmX9pwimLWspdH5nfWoRQxyHq5dl7yL4OkSEEtUf2TYwk9cT4/WAkzJDs1KB8Fg+J7u2XYJ9iRCXAqYL/+mDa50wzZteoBytcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vzRlOXqs; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1uDnGle22h4BGQTP/aXxCDgxelViDKMg5h+i1dNf/tU=; b=vzRlOXqsyFZrCrhDIO02maxr2m
+	omB8tmfEYAsY04MiP87NnpI1TbiyyV8E1x7FLNVfzrIs2UYDSxfpr70QEEzywvjPSTkYLsreROz68
+	XLrzItSGERbXNB0qtnKy1nBVCzlBXMDZiBfjnZLT58tw05VyrCa+8BIYd9JXSTFFL456CI2L73fjq
+	Jjl5VbLCDLwxoApqRdX/I+Jtq+PT+qGhFNuqNhHYuy5znQM0HnGFPw9gihS7h6HJGdRX0O7YDhqyi
+	nfc2TBbQV7JDAIushfCoPTm+0M4oCpnA+01NMcF/KUYAtym3kGlLw0lXrtssdfm5tZExuCYRSRkXr
+	pBz1nfFg==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1toohF-0004vx-Im; Sun, 02 Mar 2025 20:09:53 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ derek.foreman@collabora.com, detlev.casanova@collabora.com,
+ daniel@fooishbar.org, robh@kernel.org, sebastian.reichel@collabora.com,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>
+Subject: Re: [PATCH v15 13/13] drm/rockchip: vop2: Add support for rk3576
+Date: Sun, 02 Mar 2025 20:09:52 +0100
+Message-ID: <2764042.X9hSmTKtgW@diego>
+In-Reply-To: <20250218112901.34564-1-andyshrk@163.com>
+References:
+ <20250218112744.34433-1-andyshrk@163.com>
+ <20250218112901.34564-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227-b4-ovpn-v20-12-93f363310834@openvpn.net>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-2025-02-27, 02:21:37 +0100, Antonio Quartulli wrote:
-> Moreover export tcp_release_cb by means of EXPORT_SYMBOL instead of
-> EXPORT_IPV6_MOD, so that other modules can use it, even if IPV6 is
-> not compiled in.
+Hi Andy,
 
-Is that really needed? You're saving tcp.sk_cb.prot, so you could just
-call peer->tcp.sk_cb.prot->release_cb? (with a bit of care since it's
-called after peer_put)
+Am Dienstag, 18. Februar 2025, 12:28:58 MEZ schrieb Andy Yan:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> VOP2 on rk3576:
+> Three video ports:
+> VP0 Max 4096x2160
+> VP1 Max 2560x1600
+> VP2 Max 1920x1080
+> 
+> 2 4K Cluster windows with AFBC/RFBC, line RGB and YUV
+> 4 Esmart windows with line RGB/YUV support:
+> Esmart0/1: 4K
+> Esmart2/3: 2k, or worked together as a single 4K plane at shared
+> line buffer mode.
+> 
+> Compared to the previous VOP, another difference is that each VP
+> has its own independent vsync interrupt number.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
+> Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-[I don't know what the maintainers' preference is wrt "re-exporting"
-symbols that got moved to EXPORT_IPV6_MOD]
+some minor style things, but overall looks really good
 
 
-[...]
-> +static void ovpn_tcp_send_sock(struct ovpn_peer *peer, struct sock *sk)
+> @@ -2665,6 +2721,32 @@ static int vop2_bind(struct device *dev, struct device *master, void *data)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (vop2->version >= VOP_VERSION_RK3576) {
+> +		struct drm_crtc *crtc;
+> +
+> +		drm_for_each_crtc(crtc, drm) {
+> +			struct vop2_video_port *vp = to_vop2_video_port(crtc);
+> +			int vp_irq;
+> +			const char *irq_name = devm_kasprintf(dev, GFP_KERNEL, "vp%d", vp->id);
+> +
+> +			if (!irq_name)
+> +				return -ENOMEM;
+> +
+> +			vp_irq = platform_get_irq_byname(pdev, irq_name);
+> +			if (vp_irq < 0) {
+> +				DRM_DEV_ERROR(dev, "cannot find irq for vop2 vp%d\n", vp->id);
+
+return dev_err_probe
+
+> +				return vp_irq;
+> +			}
+> +
+> +			ret = devm_request_irq(dev, vp_irq, rk3576_vp_isr, IRQF_SHARED, irq_name,
+> +					       vp);
+> +			if (ret) {
+> +				DRM_DEV_ERROR(dev, "request irq for vop2 vp%d failed\n", vp->id);
+
+return dev_err_probe
+
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+>  	ret = vop2_find_rgb_encoder(vop2);
+>  	if (ret >= 0) {
+>  		vop2->rgb = rockchip_rgb_init(dev, &vop2->vps[ret].crtc,
+
+
+> +static void rk3576_vop2_setup_overlay(struct vop2_video_port *vp)
 > +{
-> +	struct sk_buff *skb = peer->tcp.out_msg.skb;
+> +	struct vop2 *vop2 = vp->vop2;
+> +	struct drm_crtc *crtc = &vp->crtc;
+> +	struct drm_plane *plane;
 > +
-> +	if (!skb)
+> +	vp->win_mask = 0;
+> +
+> +	drm_atomic_crtc_for_each_plane(plane, crtc) {
+> +		struct vop2_win *win = to_vop2_win(plane);
+> +
+> +		win->delay = win->data->dly[VOP2_DLY_MODE_DEFAULT];
+> +
+
+nit: we probably don't need this empty line
+
+> +		vp->win_mask |= BIT(win->data->phys_id);
+> +
+> +		if (vop2_cluster_window(win))
+> +			vop2_setup_cluster_alpha(vop2, win);
+> +	}
+> +
+> +	if (!vp->win_mask)
 > +		return;
 > +
-> +	if (peer->tcp.tx_in_progress)
-> +		return;
-> +
-> +	peer->tcp.tx_in_progress = true;
-> +
-> +	do {
-> +		int ret = skb_send_sock_locked(sk, skb,
-> +					       peer->tcp.out_msg.offset,
-> +					       peer->tcp.out_msg.len);
-> +		if (unlikely(ret < 0)) {
-> +			if (ret == -EAGAIN)
-> +				goto out;
-> +
-> +			net_warn_ratelimited("%s: TCP error to peer %u: %d\n",
-> +					     netdev_name(peer->ovpn->dev),
-> +					     peer->id, ret);
-> +
-> +			/* in case of TCP error we can't recover the VPN
-> +			 * stream therefore we abort the connection
-> +			 */
-> +			ovpn_peer_del(peer,
-> +				      OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
-
-I don't think this works:
-
-ovpn_peer_del -> unlock_ovpn -> ovpn_socket_release -> might_sleep
-
-but we can get to ovpn_tcp_send_sock in a few contexts that are not
-allowed to sleep:
-
-ovpn_tcp_send_skb -> ovpn_tcp_send_sock_skb -> ovpn_tcp_send_sock
-__sk_flush_backlog -> release_cb = ovpn_tcp_release -> ovpn_tcp_send_sock_skb
-release_sock       -> release_cb = ovpn_tcp_release -> ovpn_tcp_send_sock_skb
+> +	rk3576_vop2_setup_layer_mixer(vp);
+> +	vop2_setup_alpha(vp);
+> +	rk3576_vop2_setup_dly_for_windows(vp);
+> +}
 
 
-(I checked all other paths leading to unlock_ovpn/ovpn_socket_release,
-this is the only one I could find that is not allowed to sleep. So it
-would likely be easier to push this peer_del (or even just the
-handling of release_list) into some other sleepable context than
-trying to reshuffle all the other paths)
+Heiko
 
--- 
-Sabrina
+
 
