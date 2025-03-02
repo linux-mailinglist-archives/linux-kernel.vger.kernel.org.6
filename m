@@ -1,130 +1,150 @@
-Return-Path: <linux-kernel+bounces-540636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1561AA4B325
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32325A4B32C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32FB216BCD4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA6D188FCB1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373781E9B36;
-	Sun,  2 Mar 2025 16:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03F31E9B26;
+	Sun,  2 Mar 2025 16:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3pHjfQG"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HXgX21fR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCDE339A8;
-	Sun,  2 Mar 2025 16:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A9208A7;
+	Sun,  2 Mar 2025 16:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740932983; cv=none; b=U6X1+aXW8l1Ua5Zh9p/G5MJFlfF9B0xcykeGXK3rIvMfuxv2dFb/uNJdtSje5S0yo97kYRKkkvYp9q74qz1CqEQMadtWNPlvDdQoGcxnymMlTNlr730pciPIHJwOK7YoTigOYAKc7sVgYNmutK+m44UYey5KKfTCxTDIlbz/TnY=
+	t=1740933068; cv=none; b=ZBdupR4HkfCriOsOViMcXx2BE/xVM3LtqGLq55btCrFwONS4gEGqV4mUQ/+lS/UkW7GuhOqbKQ/16XJW0rNc+jyAxBIlavafgT3HT7PIWKFQuZkZenoGlvUVZeaaJfZziyrRw89KL5Zo/vCXrzT0b2lQxzqjOMRx1p7D3lTnLVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740932983; c=relaxed/simple;
-	bh=PKwQKCnzQxLCormRajg+fE/7G6f26nk0otMh6ZrCHZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJ8YREbCIzxtSymkleB510r/LtQuFjiWa5B9TUKufMcyV/pkwMtxexiuE2qgIXyc8pKnP379I6Z7hUs1eTegQc6n86LIn51cle8a0AGR7Q0dAwZ/joKVt2UdAvZMvkzZdYdrQkQVX2u4EMu0h/nUm9ZEl4if8/8XNmIRgja+K0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3pHjfQG; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22349bb8605so70224395ad.0;
-        Sun, 02 Mar 2025 08:29:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740932981; x=1741537781; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dijfl36fdLRwpTIccWWKkVNKprn4Lw0LAYubF3gjRP0=;
-        b=d3pHjfQGP2YWe8/Pzb79Nq2iIkhpOj8YxxfejXN3ZqEuj7TbpqNCU4Ztdd9touAeWV
-         7F6H3FdLuMsx8lhnx3nk2hCfQ6cnmMxB3L6DSZSCTrJvvQfxaLWETEApjFzP4Vj59Q7r
-         /QS3t+YKo6JnlyZMitt4iZkl5GVtnz1qTzvyuK/kBTOXbzUVFK6n43jCFla3MzxG4OLI
-         ohHsOx/urLmKFVw0e1aY67zDYs6BLj5vPN/xAH4uvNSJ9z1jSdlqlSWr9W1K/P+hCPqc
-         WNO1Iw7Z3IZCN0v8jV8O/b/8R5xurhTW7v7DBandihNiA8gMQszO1RfaJTrrBakY7+bI
-         frcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740932981; x=1741537781;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dijfl36fdLRwpTIccWWKkVNKprn4Lw0LAYubF3gjRP0=;
-        b=JnwBGkZdMMFZh87gXNl9OjKehLLbXMpM1wlY/nfhCfR0uHQlKQ1VNJb/hDm4RS4xj8
-         NO9UbCXTdnxgQ4/zqysOiSgklK18yFUYiioNGHwxBGqP9oRaEZvuyeocWV2zQBE+0s/F
-         mOr/PF54Zdu07MCCME312JW1obKJMX0OLoU4KMPHqnJEEQHC0lHD+soOgC3xUnLUffY6
-         ChqTX6zdmhbj5HrP3l8m9UHtEGgRCVdWpxidunnLk4bNn+MZs1cCn8jRfvDErhxzP9c0
-         rfT+MX73P8PeTqilURjLd+ik9yX6eO7zY8F37Q8P10rA4wk0h0ENrWeDBc08/GmEe33I
-         JM6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/3IZzIJgIyMaE78eyeDPzLoTMAsqjnnJ/ducHBZYhM/dT375qSAZ/AffAtg4MHey5cvI1/Z03XiyCdS4s@vger.kernel.org, AJvYcCX5bKoy4pCs+5on8j6p1q0MpHrTAXpJ4NaSvERtnnp4xKXSecr5nou2TWf262bdheTwNfC2qHmidtFuAAyNbao=@vger.kernel.org, AJvYcCXiC2ir7rr7u1gvq0xwFH0WbU/wi/5nH/1t3VDOmh/QdI/xHqU2sH/Ti+SBBsJmRVbr0VM6LuYYi2u801k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsDDLJKAjST3LmjlJ1ev0xQtbitHyf94jLu708oqVCUSImYHoz
-	/vLluN4oBXKj5LQZJ8M20Iyx4C9cibrIcDgmY/jEu45gT7fgWJda
-X-Gm-Gg: ASbGncvJs1Xsn1DSOzEjW2k8heYXOM+Seg37cCwHY39qSuHKoP3+JeKKmrD36vA85NL
-	hy2T70yB6n5Dcnzvna0PNElF8AnQ2APHoUL4rzlEQGMoDNslDTer+9L8X1Ot9hLnpoqjGr4ACB5
-	tIlUbwEECJiz77qFsrOSUlX6FXrHmRDoDOGgyb0vUywyATkNbd0DhiswAX26r3qSjUrZWj6PkZu
-	4Rxq0Blq+jIWWt6p9ynUNFzAGrjaaLyryOKnCxhAeanMClFo8ICE0w1Jen8f3tmcm4S9hVAES81
-	FWtIdOrpqYJaeCFS7diWqvYYzAHFMFveBBiHBi3qPf1ENT12g4b5/0CsVA==
-X-Google-Smtp-Source: AGHT+IF6hF9DfgJ6mhdNwGPBvt/piqg2Vn2ngBFN07q2c805TexmxJLP9SkGMhbT5HAO5Hpm+YqGPg==
-X-Received: by 2002:a17:903:32cf:b0:223:66bc:f1e6 with SMTP id d9443c01a7336-22368f61b58mr189470385ad.5.1740932981456;
-        Sun, 02 Mar 2025 08:29:41 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d33ecsm62676175ad.37.2025.03.02.08.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 08:29:40 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 2 Mar 2025 08:29:40 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jean Delvare <jdelvare@suse.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	Patryk Biel <pbiel7@gmail.com>, Ninad Palsule <ninad@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	linux-hardening@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (pmbus/core) Replace deprecated strncpy() with
- strscpy()
-Message-ID: <f5b67a83-205c-42a5-a59f-cb5df877df99@roeck-us.net>
-References: <20250227173936.7746-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740933068; c=relaxed/simple;
+	bh=Te/+ghmA/RZrMtfC1LsnoUqBiFhdUI71MOZB0VoMZmw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UcVb6PRfSxZzmzoS8OXjNaMkRDzoWNysUSm+qh+DIceYt5+6IHqk8pa2Zhc2BcA4Ufhtv11crECmrEboS1NOb/6xg8xkE/tCcMk76kMK+aFJIV6MFBGOxhgr5DkabFk6S9XU4yomfPutkoeutK9pUSxz7AItB9xAX3X/a306oUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HXgX21fR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740933057;
+	bh=Te/+ghmA/RZrMtfC1LsnoUqBiFhdUI71MOZB0VoMZmw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HXgX21fRjHhEcq3b8BHzM6FFUGjiTu9fBYysFL0Z6qFQVu8vtMQTx/vtSR4ukAQ8C
+	 IK+HT77hYQTAlrY7wOvabnyxM2QKUZSbZtQBeyR3zXbprnRExQxu0yDbwoE+w0xArf
+	 +vkEbxYDTEIWk/LtPbW1RamznK1t9wsjSmcjg6+FP6vGiLTIq+gwJO6KqZ+4vR2uz2
+	 lrycjkHQldzeSIJTmOTuSQBIF/3TlWr2RkB6DsaHExCh+FDH3/A8quZbmPi8DF848h
+	 fiDK6ir/eHRfFWy8kVaUI6dFI4ijrm7jWDCY7+21l6V0nMCl/fNHUnK+Yu7+0K+dWH
+	 pR7ad5GiRbLmg==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1002])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A2B4B17E07F8;
+	Sun,  2 Mar 2025 17:30:52 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 00/20] Get mt6359-accdet ready for usage in Devicetree
+Date: Sun, 02 Mar 2025 13:30:39 -0300
+Message-Id: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227173936.7746-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK+HxGcC/32NSwrDIBRFtxLeuK+oMb+Ouo+Sgb6YRkhiUZGW4
+ N5rs4AOz4F77gHBeGsC3KoDvEk2WLcXEJcKaFH706CdCoNgomGCS9xiWzcDKqLJRJxiQMY074d
+ ednNNUHYvb2b7PpuPsfBiQ3T+c14k/rP/aokjw7brFG+4HrSkO7l1Vdp5dSW3wZhz/gIMsO1lt
+ gAAAA==
+X-Change-ID: 20250214-mt6359-accdet-dts-00b189847f3c
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+ Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Andrew Perepech <andrew.perepech@mediatek.com>
+X-Mailer: b4 0.14.2
 
-On Thu, Feb 27, 2025 at 06:39:33PM +0100, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers; use
-> strscpy() instead.
-> 
-> Compile-tested only.
-> 
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+This series prepares the MT6359 ACCDET for actual usage in the
+Devicetree. Patches 1 and 2 add the required DT bindings, patches 3 and
+4 get the mt6359-accdet driver probing, patches 5-18 clean up code
+related to DT property parsing, patch 19 adds the node in the
+Devicetree and patch 20 enables the kconfig for the driver.
 
-Applied.
+Together with the series "Allow retrieving accessory detection reference
+on MT8188" [1], and one extra patch on top enabling it on the
+genio-700-evk DT, this series was tested on the Genio 700 EVK to get
+audio jack detection working on it.
 
-> ---
->  drivers/hwmon/pmbus/pmbus_core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-> index 787683e83db6..cdde8b03a6e9 100644
-> --- a/drivers/hwmon/pmbus/pmbus_core.c
-> +++ b/drivers/hwmon/pmbus/pmbus_core.c
-> @@ -1470,8 +1470,7 @@ static int pmbus_add_label(struct pmbus_data *data,
->  	snprintf(label->name, sizeof(label->name), "%s%d_label", name, seq);
->  	if (!index) {
->  		if (phase == 0xff)
-> -			strncpy(label->label, lstring,
-> -				sizeof(label->label) - 1);
-> +			strscpy(label->label, lstring);
+[1] https://lore.kernel.org/all/20250214-mt8188-accdet-v1-0-6bbd5483855b@collabora.com
 
-I added a note explaining that strscpy() uses sizeof(label->label) if the
-length of the destination buffer is not provided.
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Removed all DT-binding properties except for EINT polarity one
+  (mediatek,eint-level-pol / mediatek,hp-eint-high)
+  - Added patches 12-18 to make those settings internal to driver
+- Renamed mediatek,eint-level-pol to mediatek,hp-eint-high and made it
+  bool
+- Added patch 20 to enable the MT6359 ACCDET Kconfig in the defconfig
+- Removed unused btn_type variable as part of "Drop dead code for button
+  detection" patch.
+- Link to v1: https://lore.kernel.org/r/20250214-mt6359-accdet-dts-v1-0-677a151b9b4c@collabora.com
 
-Guenter
+---
+Andrew Perepech (2):
+      mfd: mt6397-core: Add mfd_cell for mt6359-accdet
+      ASoC: mediatek: mt6359-accdet: Implement HP_EINT polarity configuration
+
+Nícolas F. R. A. Prado (18):
+      ASoC: dt-bindings: Add document for mt6359-accdet
+      dt-bindings: mfd: mediatek: mt6397: Add accdet subnode
+      ASoC: mediatek: mt6359-accdet: Add compatible property
+      ASoC: mediatek: mt6359-accdet: Handle hp-eint-high property
+      ASoC: mediatek: mt6359-accdet: Drop dead code for EINT/GPIO IRQ handling
+      ASoC: mediatek: mt6359-accdet: Drop dead code for EINT trigger setting
+      ASoC: mediatek: mt6359-accdet: Drop dead code for button detection
+      ASoC: mediatek: mt6359-accdet: Drop dead code for plugout-debounce
+      ASoC: mediatek: mt6359-accdet: Drop unused moisture variables
+      ASoC: mediatek: mt6359-accdet: Always use internal resistor
+      ASoC: mediatek: mt6359-accdet: Make PWM debounce settings internal
+      ASoC: mediatek: mt6359-accdet: Always use eint detect mode 4
+      ASoC: mediatek: mt6359-accdet: Always set micbias1 to 2.8V
+      ASoC: mediatek: mt6359-accdet: Always configure hardware as mic-mode 2
+      ASoC: mediatek: mt6359-accdet: Always set comp-vth to 1.6V
+      ASoC: mediatek: mt6359-accdet: Always use EINT0 IRQ
+      arm64: dts: mt6359: Add accessory detect node
+      arm64: defconfig: Enable MT6359 ACCDET
+
+ .../devicetree/bindings/mfd/mediatek,mt6397.yaml   |   7 +
+ .../bindings/sound/mediatek,mt6359-accdet.yaml     |  42 ++
+ arch/arm64/boot/dts/mediatek/mt6359.dtsi           |   4 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/mfd/mt6397-core.c                          |  12 +
+ sound/soc/codecs/mt6359-accdet.c                   | 599 +++++----------------
+ sound/soc/codecs/mt6359-accdet.h                   |  55 +-
+ 7 files changed, 196 insertions(+), 524 deletions(-)
+---
+base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+change-id: 20250214-mt6359-accdet-dts-00b189847f3c
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
