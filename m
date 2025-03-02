@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-540736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE5CA4B46A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:33:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A20A4B46D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3E27A628D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236A316B286
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C53A1EC012;
-	Sun,  2 Mar 2025 19:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE131EBA09;
+	Sun,  2 Mar 2025 19:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XMiFu5Q5"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s34lyGOq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DD81E1A08;
-	Sun,  2 Mar 2025 19:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850DC1C5D59;
+	Sun,  2 Mar 2025 19:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740944005; cv=none; b=M0ZQxqftVqJWUFtx8bnEV2OimgjYh0888RlKSof/u6oGEounHCPWYo9UvAMjT5qf8AxL+tLZC556dU4gDZz6+Wv7mYjrbrGce+SSUevnJPPBcX4T3EFbok6O2ZI2uDP7aWW5XBvyoIcR1MInZMcSti3pAMAdEljAfh+6sK9Aiss=
+	t=1740944044; cv=none; b=RN0ZK+3ll8JCOpZnuvaCaPKy9v6tMi8ePZ0JUkQhqJo/nIxBcCochGYLSgQDSSVZMQ1RdhIMmVUN6dmGV/GdYA0ED22gJ2MgLERFVEdEmwXH4qvoNm6fVMq510jGVvcmOxmnB+xxPIsxxIwFXUiHKKTuZJFePO67FwPqrGif7Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740944005; c=relaxed/simple;
-	bh=XHYRSAm4M2ld3p9O6V343foNQyXByWOceS45B7y36Kc=;
+	s=arc-20240116; t=1740944044; c=relaxed/simple;
+	bh=jRIZ66izVEc6x6rr0wMoZknqyuXGoVKgcubPBYG3ou4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FA9m1UvPWGx597HY2s1vj5X5zvwo43iAZKQEtZPrZ80sCqCTtCb0ADcKnqsGMPkJBKUC65x1QDVrF2JqUYYThe+VCb6UfUcbz7tzKM9Auu4ILn8m6O9hjgEM7/M6QrI+Jr2Z4x/YYo7pvWT7o2kCq2V/fNfQnfo4qH2rrVfNDow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XMiFu5Q5; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=du+ZXY9U7ped2ODAI60TrmZmm0v5NBy9O3dw/M6vUbA=; b=XMiFu5Q5AU+1pQJXWn9Ub/fN3J
-	3x+r8iXiUsL5EdkF+YcWxELux3j/4jJpkGwaK1A0YCxhg/EIU47lcHq/YpHRl4TCduf39xqPx5F/Y
-	Bydr4ifl1d03wgLiW0jJ/ntPYbp8xIyATkk48WZxwuqXtsVK5OJJNy4KXXm241cJ3KQ19IquZ68n/
-	sxLzd4u5bpDz/pGr8h6ukADmPTDIHRUdn1eT3VXHKZCNhzW9h1E13aSURK90Ylf4q+VHLe5XTtla8
-	iYyyefJTqmjkVHVi9HIaSsHxSrjR0g0aJexNXiezsuJWxiets5jlC8C2Z0mO60EgeI+P9/IBnDqbc
-	zq/LhEnw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52282)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1top3p-00074a-1j;
-	Sun, 02 Mar 2025 19:33:13 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1top3m-00030i-20;
-	Sun, 02 Mar 2025 19:33:10 +0000
-Date: Sun, 2 Mar 2025 19:33:10 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aqdoe0w2pQarVi1za2ET7rNdIJsMXCI0Y8v2+ENCbP16blUwB7uwkhlF2lKNVXGt5yqn/DxiolNOEmMmMbcXk/nkxFjnV/IoE3+koRF7HStNITZ1nV2G0IMZ2hdoyuKwb2G/OGRbr2ZN4l4GQZwmhBKe33SsLP4cQ2NAj8JcXNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s34lyGOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741ECC4CED6;
+	Sun,  2 Mar 2025 19:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740944044;
+	bh=jRIZ66izVEc6x6rr0wMoZknqyuXGoVKgcubPBYG3ou4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s34lyGOq77q3oqDIZISqWpUoe+18jRlmRBAbEZON22EJgCMD2v3/5RBJNP/1U5PGk
+	 A12xwB8rBm2i1bwWvsYB2sMxux27v4n3Vvk8Ru4b5oRImkeTi6G/napSKXKo98XRuR
+	 hAmblV+JMpATlH7mJtajpxRkfTAzXsILwsDogxVZzwszkLjF5o931PLOGPaJ30ft30
+	 DMyApiNdEm+7OXpLT2aMlKa6cRn+xdpuuTJvOloW0VROqt1gRWLyDRwIsDnQjlDwXu
+	 UnDMiu9qRlXZdyfa/lN04Lot5M7LwYWAQ7dG8vI+R3JzLtKByu/Whtcs8lM9MLm6Z2
+	 oyTyhH5zvEVIw==
+Date: Sun, 2 Mar 2025 21:33:59 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Add support for the TPM FF-A start method
+Message-ID: <Z8SypwnbJR4g8Bho@kernel.org>
+References: <20250217224946.113951-1-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,37 +57,188 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250217224946.113951-1-stuart.yoder@arm.com>
 
-On Sun, Mar 02, 2025 at 06:18:08PM +0000, Prabhakar wrote:
-> +	gbeth->dev = dev;
-> +	gbeth->regs = stmmac_res.addr;
-> +	plat_dat->bsp_priv = gbeth;
-> +	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
+On Mon, Feb 17, 2025 at 04:49:41PM -0600, Stuart Yoder wrote:
+> Firmware Framework for Arm A-profile (FF-A) is a messaging framework
+> for Arm-based systems, and in the context of the TPM CRB driver is used
+> to signal 'start' to a CRB-based TPM service which is hosted in an
+> FF-A secure partition running in TrustZone.
+> 
+> These patches add support for the CRB FF-A start method defined
+> in the TCG ACPI specification v1.4 and the FF-A ABI defined
+> in the Arm TPM Service CRB over FF-A (DEN0138) specification:
+> https://developer.arm.com/documentation/den0138/latest/
+> 
+> The first patch adds an FF-A driver to handle the FF-A messaging when
+> communicating with a CRB-based TPM secure partition built on FF-A.
+> The driver is probed when the TPM secure partition is discovered by
+> the Linux FF-A infrastructure.
+> 
+> The second patch consolidates the check for idle support in the CRB
+> driver to one place.
+> 
+> The third patch defines the new ACPI start method enumeration for
+> CRB over FF-A.
+> 
+> The fourth patch adds support for the FF-A ACPI start method to
+> the TPM crb driver.
+> 
+> The fifth patch adds documentation explaining how the CRB driver
+> and FF-A relate.
+> 
+> Version 4
+> -fix warning from kernel test robot in patch 1
+> -fix warnings from checkpatch.pl --strict
+> -clean up unecessary parenthesis usage
+> -update variable declaration to be reverse tree order
+> -document exported functions in tpm_crb_ffa driver
+> -remove unnecessary author and maintainer info in tpm_crb_ffa driver
+> -fix declaration of variables to be in reverse tree order
+> 
+> Version 3
+> -changed prefixes used throughout patch series to tpm_crb_ffa*
+> 
+> Version 2
+> -updates to cover letter to define FF-A
+> -added new patch with documentation
+> -created pull request in ACPIA and added link to the patch
+>  updating actbl3.h
+> -added tpm_ prefix to the FF-A CRB driver
+> 
+> Stuart Yoder (5):
+>   tpm_crb: implement driver compliant to CRB over FF-A
+>   tpm_crb: clean-up and refactor check for idle support
+>   ACPICA: add start method for Arm FF-A
+>   tpm_crb: add support for the Arm FF-A start method
+>   Documentation: tpm: add documentation for the CRB FF-A interface
+> 
+>  Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
+>  drivers/char/tpm/Kconfig                   |   9 +
+>  drivers/char/tpm/Makefile                  |   1 +
+>  drivers/char/tpm/tpm_crb.c                 | 105 +++++--
+>  drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
+>  drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
+>  include/acpi/actbl3.h                      |   1 +
+>  7 files changed, 535 insertions(+), 19 deletions(-)
+>  create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
+>  create mode 100644 drivers/char/tpm/tpm_crb_ffa.c
+>  create mode 100644 drivers/char/tpm/tpm_crb_ffa.h
+> 
+> -- 
+> 2.34.1
+> 
 
-Thanks for using that!
+checkpatch.pl --strict reported me some issues.
 
-> +	plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
-> +			   STMMAC_FLAG_EN_TX_LPI_CLOCKGATING |
+The first one is:
 
-I would like to know what value tx_clk_stop is in
-stmmac_mac_enable_tx_lpi() for your setup. Ideally, stmmac should
-use the capability report from the PHY to decide whether the
-transmit clock can be gated, but sadly we haven't had any support
-in phylib/phylink for that until recently, and I haven't modified
-stmmac to allow use of that. However, it would be good to gain
-knowledge in this area.
+WARNING: please write a help paragraph that fully describes the config symbol
+#41: FILE: drivers/char/tpm/Kconfig:213:
++config TCG_ARM_CRB_FFA
++       tristate "TPM CRB over Arm FF-A Transport"
++       depends on ARM_FFA_TRANSPORT
++       default y if (TCG_CRB && ARM_FFA_TRANSPORT)
++       help
++         If the Arm FF-A transport is used to access the TPM say Yes.
++         To compile this driver as a module, choose M here; the module
++         will be called tpm_crb_ffa.
++
 
-> +			   STMMAC_FLAG_RX_CLK_RUNS_IN_LPI |
+To be totally honest with I've never fully grabbed what checkpatch means
+by that message, i.e. what is the threshold for "fully described" :-)
 
-What is the reason for setting this flag? If it's because of suspend/
-resume failures, does my "net: stmmac: fix resume failures due to
-RX clock" series solve this for you without requiring this flag?
+So if someone can give advice on this, awesome, and let's do +1 round
+of the patch, but with my limited knowledge I have no legit reason to
+block this.
 
-Thanks.
+Nit: checkpatch could improve a bit that error message because "fully
+describe" is not unambiguous terminology.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The second issue:
+
+CHECK: Alignment should match open parenthesis
+#378: FILE: drivers/char/tpm/tpm_crb_ffa.c:309:
++       if (tpm_crb_ffa->major_version != CRB_FFA_VERSION_MAJOR ||
++          (tpm_crb_ffa->minor_version > 0 &&
+
+if (tpm_crb_ffa->major_version != CRB_FFA_VERSION_MAJOR ||
+    (tpm_crb_ffa->minor_version > 0 &&
+
+I think it should be like this.
+
+The final issue reported:
+
+WARNING: line length of 102 exceeds 100 columns
+#764: FILE: drivers/char/tpm/tpm_crb.c:821:
++                               FW_BUG "TPM2 ACPI table has wrong size %u for start method type %d\n",
+
+You could put that into two separate lines but maybe it would
+even make sense to create helper for the branch given the deep
+levels of nesting.
+
+I.e. maybe it would make sense to encapsulate this into a helper:
+
+		if (buf->header.length < (sizeof(*buf) + sizeof(*crb_ffa))) {
+			dev_err(dev,
+				FW_BUG "TPM2 ACPI table has wrong size %u for start method type %d\n",
+				buf->header.length,
+				ACPI_TPM2_CRB_WITH_ARM_FFA);
+			rc = -EINVAL;
+			goto out;
+		}
+		crb_ffa = ACPI_ADD_PTR(struct tpm2_crb_ffa, buf, sizeof(*buf));
+		priv->ffa_flags = crb_ffa->flags;
+		priv->ffa_attributes = crb_ffa->attributes;
+		rc = tpm_crb_ffa_init();
+		if (rc) {
+			if (rc == -ENOENT) {  // FF-A driver is not available yet
+				rc = -EPROBE_DEFER;
+			}
+			goto out;
+		}
+
+
+I looked at tpm_crb_ffa_init() too, and it's somewhat trivial, not very
+useful and has only single call site in kernel:
+
+/**
+ * tpm_crb_ffa_init - called by the CRB driver to do any needed initialization
+ *
+ * This function is called by the tpm_crb driver during the tpm_crb
+ * driver's initialization. If the tpm_crb_ffa has not been probed
+ * yet, returns -ENOENT in order to force a retry.  If th ffa_crb
+ * driver had been probed  but failed with an error, returns -ENODEV
+ * in order to prevent further retries.
+ *
+ * Return: 0 on success, negative error code on failure.
+ */
+int tpm_crb_ffa_init(void)
+{
+	if (!tpm_crb_ffa)
+		return -ENOENT;
+
+	if (IS_ERR_VALUE(tpm_crb_ffa))
+		return -ENODEV;
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+
+
+Some questions arise here:
+
+1. Wouldn't it be better idea to implement the code block residing
+   in tpm_crb here?
+2. Why it needs to be exported? Why it is not in the same compilation
+   unit with tpm_crb? Cross-compilation unit calls extrapolates
+   complexity and should have strong reasoning behind...
+
+So yeah, this is area where we definitely need some rework. Sorry
+about this boomerang. Sometimes checkpatch opens up new thoughts
+and ideas :-) It's better to take step back always and do right
+thing right. It's much more time consuming for all of us to fixup
+things and backport fixes etc.
+
+BR,  Jarkko
 
