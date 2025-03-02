@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-540612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28A9A4B2E5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:08:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCEDA4B2EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE1C189218D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40841643A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18B1E9B28;
-	Sun,  2 Mar 2025 16:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1BD1E9B2D;
+	Sun,  2 Mar 2025 16:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="msLWUylx"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="k54U/7Dd"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE41EB9EF;
-	Sun,  2 Mar 2025 16:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009DA1EBFED;
+	Sun,  2 Mar 2025 16:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931637; cv=none; b=KaXgUIPxQfASbcfyemA3BxwmtNrXi6NV1cLE3qM15jBCY6wL8V1ADOMcE6Av130tWxxdBpIEz9h0sp5fkzvy1mDGcNxKdJjyy39EwmyEvIhBHCxVR/zx/Pdi7BN0XYWFV0WQF5WonhQnaSdFbgcp5DxVIA7aIp9Vz+7xqYpKl8o=
+	t=1740931639; cv=none; b=Ef3982hmblbtJyAH7H6ef/j9Y1+IBeVhSXBDxZKxCvvE8OD/PgjUrZ9OCSk2Dl0x4wUdUqZ/tEyq7mI/tiAdDAbRm+DjNMxZmy0LyDRoGP5qhzRck2Q7DP6EpjlfE2rNpHNsdWU3yQ2WB75xmNcMmTr8oNieJnc4dF4chhOY5tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931637; c=relaxed/simple;
-	bh=MRV1BzXFzVKuXXCzfT8MZMYwjH+JUp8WlpwQIsq6O88=;
+	s=arc-20240116; t=1740931639; c=relaxed/simple;
+	bh=RN76k8ewK6+gsyTcan9ooTB7HAoL+bwmZL7k3n+IX8Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lxkUli/Z6yaa0S36/EjBivt5qVvYP73bOPuDORUaNbXuAyOPdqycJboSxIHm8OwdxEYOmpxcbr6gejanJDX5MP6Dk8WcQ4ukaWmA/OYUmmwsLsNxEzZDqQP50UeMMjs4jgS7KrRZyTRg/RVaHj30UvaHDxwPAo08viMPRBgyjWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=msLWUylx; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=AEzCQdliDIj9ktUJ5HtRkLR3imIwOwW8sZMGdyUFq7M4pGesLvi894T95E8bveyEwhzWi2A4F1Ss8cRy6ZvUol2Sxt880K5a7i3sDu1/p19yd3Rv8h+M1RUwokRFAtYiIbU2Yz5GWfatK9ptCpR1o6M/qCbm8lZOAQS58wvbHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=k54U/7Dd; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931634;
+	s=2023072701; t=1740931636;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KRfdkDgvTkBq7bn29Gpn8MyAqWDeCH+tjzpw5UYm82I=;
-	b=msLWUylxKZrkZloeSFN5bZFcbLSbFE1cttvSkO/sbcFYzOZMJ7QrfX7q/KeJKDTCCqgTwE
-	Cmy7gxyKITqqPUSpsCS7G1MqMRTPEE0rGESChTm4bdOm11qcFfU19VdeWkGdCDRk2erDxx
-	kDdrSiGJC8bqVFfFWelDM4gaS0EX1FJAHjToIV4v7qro8N7Udd/eU2b50vvHw4+nCCyDVp
-	iMV4JdyinVFOmyN1MzYoME93xKcoQ8EPz6PyS8U/d1Bw/PaS5g5Ib0iiqfD+QrZDeUyCFv
-	aH0d4JvaWftIryzqqBPR8zUxtU31fm2LuQe5b2oX22cLwFz/FOLen82uN8NLOQ==
+	bh=fpiJeKuvGtt7uxh2hFS+dsziMi5lwoHgf9YFZ4de7gM=;
+	b=k54U/7DdT6xtoAVoeM2idgM1EIL6B5xU5Evn3d7IbnrfCB2uh2H/qmdz55n6qzYx70t3uH
+	0p35FZeateL7Ag1b3jOl59aFVU3uNUOoOaGtOoNKxNo3iH9LD7LNawzzrdlfxamMZoAHC1
+	T4vS4zw8LYD9l4XzCHBQ9dNgv8JAvXRo428TjONJUaI0xQTyFQMJX+VS52vdyUL23crlYb
+	+J4Sv/UqlrVYkluFgPUsjHozs8BE3AiLiM8Q1M8DmCmIduSNhFqN/T0n9qRtUf54yqrNCd
+	+sYwCjsV5cLzQ5txbqd95Gy8aMLJSbY4fHiroYyecsj9apwFsLeTUQqV7hOD+w==
 To: 
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Serge Hallyn <serge@hallyn.com>,
@@ -53,17 +53,21 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	cocci@inria.fr,
-	Christian Brauner <brauner@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH v2 09/11] fs: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:45 +0100
-Message-ID: <20250302160657.127253-8-cgoettsche@seltendoof.de>
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Christian Hopps <chopps@labn.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 10/11] skbuff: reorder capability check last
+Date: Sun,  2 Mar 2025 17:06:46 +0100
+Message-ID: <20250302160657.127253-9-cgoettsche@seltendoof.de>
 In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -95,27 +99,23 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fhandle.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/skbuff.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 3e092ae6d142..5b77b38f0510 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -303,9 +303,9 @@ static inline int may_decode_fh(struct handle_to_path_ctx *ctx,
- 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
- 		ctx->flags = HANDLE_CHECK_PERMS;
- 	else if (is_mounted(root->mnt) &&
-+		 !has_locked_children(real_mount(root->mnt), root->dentry) &&
- 		 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
--			    CAP_SYS_ADMIN) &&
--		 !has_locked_children(real_mount(root->mnt), root->dentry))
-+			    CAP_SYS_ADMIN))
- 		ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
- 	else
- 		return -EPERM;
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index b1c81687e9d8..7ed538e15b56 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1566,7 +1566,7 @@ int mm_account_pinned_pages(struct mmpin *mmp, size_t size)
+ 	unsigned long max_pg, num_pg, new_pg, old_pg, rlim;
+ 	struct user_struct *user;
+ 
+-	if (capable(CAP_IPC_LOCK) || !size)
++	if (!size || capable(CAP_IPC_LOCK))
+ 		return 0;
+ 
+ 	rlim = rlimit(RLIMIT_MEMLOCK);
 -- 
 2.47.2
 
