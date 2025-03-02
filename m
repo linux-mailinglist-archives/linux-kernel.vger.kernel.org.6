@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-540408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55089A4B045
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:25:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9DBA4B041
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5B017AE10
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EA18896C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81B71D63F2;
-	Sun,  2 Mar 2025 07:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E771E1A17;
+	Sun,  2 Mar 2025 07:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zs8748UP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DWCNcg2g"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191CF1BD9E3
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 07:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CCA1DE3C0;
+	Sun,  2 Mar 2025 07:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740899253; cv=none; b=qVm60ASlwb9D0qMH1HN4e0YUkz3U9Re2O4qRAi8ZJp2GuUD5mrib50yj8YO6cG/5mY+sOx8eke4EdbDfuysq+RnzTutxGF/Bs5oZEn3jsSz+WBw1W+a9e+M5263/1c9RVcDlbgvBca8XvKsaDzTHMOcKJrMOJn1qyWl+Zkp42us=
+	t=1740899704; cv=none; b=BGEWJ2ri91+nbMgcNC/pg3aWy6vwytp/Vy6taDD/ETUzttP/EjxvTWKYpgfv+6sk2OLLF0Dgz7DUwWwfvNX/7aP+RidVpJqjItfNV2qvAkstgTHvuZvxNQSconoOUJizfjV4lJRPUrEqs0dBv3X7J2LNgUnDdqqlLtsdjcyupBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740899253; c=relaxed/simple;
-	bh=+3qEYLnSS9czAH8h44V1EoDDldIGHaoxlI5rRWPHjJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOCx//cKZXpwBZdFOm0ZLxQQsSwr1+aajevDfu/SNLEUHQEFTSX2wTI1XWyGKSZ6BctdWWljLAgO0syxMCfhfiGABNj60BD3nomnzCCH5kNyFyOH66ooJQ7uKPmV7yK88mI5Y3JJSPRtBVmXV7sit/oS4AGftTiUqHdDMMLV/Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zs8748UP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0BD7140E0184;
-	Sun,  2 Mar 2025 07:07:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zckmVIv14FMa; Sun,  2 Mar 2025 07:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740899239; bh=lLba2xpQGx6FAfKVazzHChORkszDX51lkuKQTDG7Akg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zs8748UPnshe6GtiTQWeuLHy5ng1We7LaExBf/jGuiyPyWPp62J5kkR3rlhZR/a2c
-	 onxeX2pvvgNT14rN00u/x56bOWhCmtYeYfyiBgWsGAsARKNodblUAscQXIXr6tfVDz
-	 CAxhWT9Dljs6SBVrSXkGFQoHZRvAKnNTpg+28WgUMcYXcjGhzxsh08rG0lxThDY6c6
-	 LypqZxu57DHkcR4/aFYUtaPa9MGCtVkmai3NLg/MYfv1HcvGsUpJnQ5SbgS0nJYC6N
-	 zayRGFJl9y6IRoE0E9fmn0kitxfp7D8tlfMcse12oHETgHqvzyiFjO//Ljlu2nBiou
-	 jLA5NAkJ0MVYRGbmwokqay/PIxQa/dmr6JQ25N8hI8QEC8yXT+XM2g08//9vP2XjAq
-	 7yR3LpXFE4aPhsvD0Ycy9+rI8l0LOi5gEfl/DGwlggQ7ddRMQtZKEo6Kte+uPKNF0V
-	 rlnqkZEklDUP5z2aANHyHAWFfCRIKNJlleZeXeTmhQfShVmbeuUC9lBF71NG1+WY36
-	 jOL6zlz0GfydCwNmiAR4XTN8TyjS49D+yC1exN+soSQb0dcbpb5Xfq8T6dmyzSVt6S
-	 ckcXca2DFWHaralm8VLFFCEb3vkDzSpwreESDCwARigJ88lZQbS5AnctDNHt+OYZxe
-	 86Kp84DGJWw3oA4R6jq6iI6g=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C62F240E0028;
-	Sun,  2 Mar 2025 07:07:01 +0000 (UTC)
-Date: Sun, 2 Mar 2025 08:06:54 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 07/13] x86/mm: add global ASID allocation helper
- functions
-Message-ID: <20250302070654.GIZ8QDjih21cExg35g@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-8-riel@surriel.com>
+	s=arc-20240116; t=1740899704; c=relaxed/simple;
+	bh=dDTZtxtMP+ASRgLGhbT+WUH+lROdEMNi84C84Y2oI6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjDrkHHGsHVQPRtwXYa611eIfuOYMMY5RfS0Kj+vvt7h2VdUCTx7grbqYE+eSBcBAAxbmRKRVoYyvsAXTUXWfSe0LZ/+kFKX9mSnXSqTQSq3osUHn6lIY4OTWnjlIUzvpNgbIR82Tyfgv5eP/RYs8N64fXNOWgtcjGHpYDnltlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DWCNcg2g; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740899696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=v69h+SOeTjqXpJtalLZZCoQPIBTBXQ3ns0RzzvJWsFw=;
+	b=DWCNcg2gCQe1KgQu3n1JrBv7DPoMbTQ/GnWyqwMSt8WY+h9hmpuvcHJLg6nhqbdb079CLXeanSB+lBMbPHXjwd/EcDP66sweVHbx3psJOUJcHbGPkPg54AtsaQE4zyJ2mUXbY6bGqtru8PY3jd47CWBiH4dbeNLYyqyF7Bn1Iqs=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQUXm6t_1740899693 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 02 Mar 2025 15:14:54 +0800
+Message-ID: <7eddced6-bf45-44c8-abbf-7d0d541511ab@linux.alibaba.com>
+Date: Sun, 2 Mar 2025 15:14:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226030129.530345-8-riel@surriel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] x86/mce: dump error msg from severities
+To: Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>
+Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linmiaohe@huawei.com, akpm@linux-foundation.org, peterz@infradead.org,
+ jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-3-xueshuai@linux.alibaba.com>
+ <20250228123724.GDZ8GuBOuDy5xeHvjc@fat_crate.local>
+ <cf9ef89c-ca91-476a-895d-2af50616242f@linux.alibaba.com>
+ <20250301111022.GAZ8LrHkal1bR4G1QR@fat_crate.local>
+ <dee8d758-dd65-4438-8e42-251fb1a305a7@linux.alibaba.com>
+ <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250301184724.GGZ8NWPI2Ys_BX-w2F@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 10:00:42PM -0500, Rik van Riel wrote:
-> Add functions to manage global ASID space. Multithreaded processes that
-> are simultaneously active on 4 or more CPUs can get a global ASID,
-> resulting in the same PCID being used for that process on every CPU.
+
+
+在 2025/3/2 02:47, Borislav Petkov 写道:
+> On Sat, Mar 01, 2025 at 10:03:13PM +0800, Shuai Xue wrote:
+>> (By the way, Cenots/Redhat build kernel without CONFIG_RAS_CEC set, becase
+>> it breaks EDAC decoding. We do not use CEC in production at all for the same
+>> reasion.)
 > 
-> This in turn will allow the kernel to use hardware-assisted TLB flushing
-> through AMD INVLPGB or Intel RAR for these processes.
+> It doesn't "break" error decoding - it collects every correctable DRAM error
+> and puts it in "leaky" bucket of sorts. And when a certain error address
+> generates too many errors, it memory_failure()s the page and poisons it.
 > 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-> Tested-by: Brendan Jackman <jackmanb@google.com>
-> Tested-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  arch/x86/include/asm/mmu.h         |  11 +++
->  arch/x86/include/asm/mmu_context.h |   2 +
->  arch/x86/include/asm/tlbflush.h    |  43 +++++++++
->  arch/x86/mm/tlb.c                  | 146 ++++++++++++++++++++++++++++-
->  4 files changed, 199 insertions(+), 3 deletions(-)
+> You do not use it in production because you want to see every error, collect
+> it, massage it and perhaps decide when DIMMs go bad and you can replace
+> them... or whatever you do.
+> 
+> All the others who enable it and we can sleep properly, without getting
+> unnecessarily upset about a correctable error.
 
-Some small touchups ontop:
+Yes, we want to see event CE error and use the CE pattern (e.g. correctable
+error-bit)[1][2] to  predict whether a row fault is prone to UEs or not.
+And we are not upset to CE error, becasue it have corrected by hardware :)
 
---- /tmp/current.patch	2025-03-02 07:33:13.913105249 +0100
-+++ /tmp/0001-x86-mm-Add-global-ASID-allocation-helper-functions.patch	2025-03-02 08:05:23.613262232 +0100
- diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
--index 3b496cdcb74b..edb5942d4829 100644
-+index 3b496cdcb74b..7fbefea5fdae 100644
- --- a/arch/x86/include/asm/mmu.h
- +++ b/arch/x86/include/asm/mmu.h
-@@ -35,6 +38,7 @@ index 3b496cdcb74b..edb5942d4829 100644
- +	 * hardware-assisted remote TLB invalidation like AMD INVLPGB.
- +	 */
- +	u16 global_asid;
-++
- +	/* The process is transitioning to a new global ASID number. */
- +	bool asid_transition;
- +#endif
-@@ -251,7 +255,12 @@ index 1cc25e83bd34..9b1652c02452 100644
- +	if (mm_global_asid(mm))
- +		return;
- +
--+	/* The last global ASID was consumed while waiting for the lock. */
-++	/*
-++	 * The last global ASID was consumed while waiting for the lock.
-++	 *
-++	 * If this fires, a more aggressive ASID reuse scheme might be
-++	 * needed.
-++	 */
- +	if (!global_asid_available) {
- +		VM_WARN_ONCE(1, "Ran out of global ASIDs\n");
- +		return;
-@@ -284,5 +293,5 @@ index 1cc25e83bd34..9b1652c02452 100644
-   * Given an ASID, flush the corresponding user ASID.  We can delay this
-   * until the next time we switch to it.
- -- 
+[1]https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/fault-aware-prediction-guide.pdf
+[2]https://arxiv.org/html/2312.02855v2
 
--- 
-Regards/Gruss,
-    Boris.
+> 
+>> Yes, we collect all kernel message from host, parse the logs and predict panic
+>> with AI tools. The more details we collect, the better the performance of
+>> the AI model.
+> 
+> LOL.
+> 
+> We go the great effort of going a MCE tracepoint which gives a *structured*
+> error record, show an example how to use
+> it in rasdaemon and you go and do the crazy hard and, at the same time, silly
+> thing and parse dmesg?!??!
+> 
+> This is priceless. Oh boy.
+> 
+>> Agreed, tracepoint is a more elegant way. However, it does not include error
+>> context, just some hardware registers.
+> 
+> The error context is in the behavior of the hw. If the error is fatal, you
+> won't see it - the machine will panic or do something else to prevent error
+> propagation. It definitely won't run any software anymore.
+> 
+> If you see the error getting logged, it means it is not fatal enough to kill
+> the machine.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Agreed.
+
+> 
+>>> Besides, this message is completely useless as it has no concrete info about
+>>> the error and what is being done about it.
+>>
+>> I don't think so,
+> 
+> I think so and you're not reading my mail.
+> 
+>>      "mce: Uncorrected hardware memory error in user-access at 3b116c400"
+
+It is the current message in kill_me_maybe(), not added by me.
+
+> 
+> Ask yourself: what can you do when you see a message like that?
+> 
+> Exactly *nothing* because there's not nearly enough information to recover
+> from it or log it or whatever. That error message is *totally useless* and
+> you're upsetting your users unnecessarily and even if they report it to you,
+> you can't help them.
+> 
+
+I believe we are approaching this issue from different perspectives.
+As a cloud service provider, I need to address the following points:
+
+1. I must be able to explain to end users why the MCE has occurred.
+2. It is important to determine whether there are any kernel bugs that could
+    compromise the overall stability of the cloud platform.
+3. We need to identify and implement potential improvements.
+
+"mce: Uncorrected hardware memory error in user-access at 3b116c400"
+
+is *nothing* but
+
+"mce: Action required: data load in error recoverable area of kernel"
+
+helps.
+
+
+Thanks for your time.
+Shuai
 
