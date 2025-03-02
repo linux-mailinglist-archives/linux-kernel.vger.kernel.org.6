@@ -1,276 +1,147 @@
-Return-Path: <linux-kernel+bounces-540797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44A7A4B4FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:41:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E87A4B502
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 22:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747B83AB57A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F17593A4592
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 21:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6A61EE034;
-	Sun,  2 Mar 2025 21:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF9B1EE7D3;
+	Sun,  2 Mar 2025 21:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TttXo9gk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtAJBxym"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7054E1EDA1B;
-	Sun,  2 Mar 2025 21:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F636A94A;
+	Sun,  2 Mar 2025 21:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740951709; cv=none; b=iamOcv1QCRgpUQ5p3N4d3QOVlDcgT3FodmNiNYCHjdkmnOV/PoQsBGUMSu9gVOfPPcYjp6Pm6grO/KwfaufOJ3tFxGpzgYRcOjd7b8imnLOEb5Zm4ms1Wzib8NBZzjQriB6rtuHoQOJIbAchj/B2mJr5jOBuqPh50/jLzoTJe34=
+	t=1740951856; cv=none; b=mnZ23kwJbB6LK1jRLXjxXodO8hfaUzUAMsrO36pL6QggwPfNsdy6xT4ye9DTNYJc/GpabUEXvtRoelT5CxYw/YHiXSzuT9itoZX0Qy+9WKvjZfcXnsGMgZ88gpQBbbiaS/UIp/YHJI+Rnh52lYrozIt1CZPjx82N4w3XWlGgJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740951709; c=relaxed/simple;
-	bh=TS5/fPL3sXyZQnxMiq4LqF/VK8bO7BSw0sx1YR3h7Vs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d+5de/98CCh7CtoD3VCDmYBghQiSbfhFWRkBrmT3Kf5LbFS454Rqgvleh1cDBl2zkDWv2pRGonK5GXS0M3G20DAN57vW5f6kGoUYM4a2Yf/o+RxZq8LqrOg0voNmY9C25cFjwZxFIX6f1s/sbnT4QF84fQ/HbZm/mkSpXf4TeyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TttXo9gk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E3EC4CED6;
-	Sun,  2 Mar 2025 21:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740951708;
-	bh=TS5/fPL3sXyZQnxMiq4LqF/VK8bO7BSw0sx1YR3h7Vs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TttXo9gkQNCoAOvkUFlZhP6Czz37aVz8zjMAUTRK8TEeCU/x5JUlzBuUhw9BtwsNb
-	 s+w8ycZVIfcFf/cA+81UVBkbTM62j9KWhDFTlJuJDB7gM/6JGWfdLRxgFJyyTbUSrl
-	 LlixIYEL1VVYx7LGzqy1kA+D0y1LtqONKyE/ZB3gEAHZKcmkFOozko1ZYDnPNa2UWy
-	 YmZ9spENNpYD13fTU+ewQ/k9WX1dGW8AiFHsxn4TiVZ92UTGmuSiHGoLzVOZMmWGLT
-	 5djAus+nQk3KzNyzdRTzAP55HFHsExeWHQn5QRxX8KCU/kJ6uaoEgfaMutlXIAiBo6
-	 Rihq6ATzTBfbA==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 03/13] mm/damon/core: make damon_set_attrs() be safe to be called from damon_call()
-Date: Sun,  2 Mar 2025 13:41:45 -0800
-Message-Id: <20250302214145.356806-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250226063651.513178-4-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1740951856; c=relaxed/simple;
+	bh=Pt1/1ePhSuiFjsZY3MAubYmQ37RO3s1+FP9MwI1YvUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fwv0cm/wXEEDpmh0Kot5mFV3mpRGKfJpXY9rMZLg8tWyaQJ0JlrHtSNB9OoSUBuAEpUfaellBA1GL0JZh28tB87Q5v5EqM6F2I9Vm4+iMDXBN8fzGlt0lw6YrEvy9CLNjUlNnLDMYWH0mn8DJUClDZnlhIhvCuy5x3JUvThdjGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtAJBxym; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-520a80b1015so1433412e0c.2;
+        Sun, 02 Mar 2025 13:44:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740951854; x=1741556654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h5JwVMCZre6uhLIEdVMmxlAbiSgu8NDx8d4H7p526V0=;
+        b=RtAJBxymMfthdFOi7GQ0RyFOIyO85RZMQbttdxGDYOEeJKTu2VXMvrJgWHIYG9ASgA
+         8RYsKKiSVaVGfzGbt1nJZA9djsREa+uqY1iFJpvN5oWrCI5SjPZ2ewaQ3asIXgGYXKyd
+         6ZVQdqnGcVINCQ/rHTcHm28uXwngGbb2s6XFRUFDO0PJeZRGCWLRaR63FK0uuDO3YfBq
+         IZVlW/WiUmRV01niBKGkXOgIP59DoATFDfQ5wUHPl8Q7j50HUTp8xw7n7pzyoYYk+q/N
+         pzawXtFIpHo4sUCA4nk2zGG/Ur0990t49rVeorJIrRLNZAVSK46i+NgVNH9Riaty6j9L
+         UYsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740951854; x=1741556654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h5JwVMCZre6uhLIEdVMmxlAbiSgu8NDx8d4H7p526V0=;
+        b=QTaEmnGi35Y5wBlOHFu7u0KoIAogD9CyyYwn8AQgWLz+YLiAOqye6iUN8CtUza+wgp
+         Rur3kI68dpzJBFKd9BP8/vHj2RAfewR4CrGollcj1zTMbRc1p5HDnktbw08H4ufTCv8e
+         HPWTxF+M1eCUoTKmgMjmF0PKNsU5loD5sswzjJwhWpAQYV424bSgDTU4uPPOYzVMU+BF
+         mGckB/pOmc0JkPuhcIPt/YFxsQFfZIEqWeo2BxgviFUv8lbU5wG1vJ564i93SLqLwo+M
+         aupN6PtTWRAoza1oaRHHFn3kbK088dnn57lTXDfNE49T4DvGmudX4EmI9wvQLv1ZIHN8
+         52qA==
+X-Forwarded-Encrypted: i=1; AJvYcCU18/PHv2AzZUdFAUsK4ApM3WaqZ1VyhA+pdyjv8XCQBpZtPF7ZZxovCx9yWXoZW3wajOY1fhhEqKIz@vger.kernel.org, AJvYcCVnHTZP48vJJlXWp83o0OjkHtGQj+7XE0dEnw8BxtiDdODGjoVfztXiPCSzWMRChvHHvvpGedx3@vger.kernel.org, AJvYcCWPQoFsRJqOB2rCqrkqadAqBsZ+Nv6CLnkqTJERyTqCd0/S0ewIVw1k1wQFWwvlrdf+pGMUEi6sIvjvClZZC6FKpUA=@vger.kernel.org, AJvYcCX2dUChzu2hKnkXtKqgwiZvT5EkqL2B2y2/b+T8n8vMNTc7O8T4cl1VQAS9Fx0/ZybnEg9vjOf69C5jItwt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB/BR2ARi+3R0+UyuvfCdew70GGmfXn7GmPX2V27qC/dq0qnBi
+	AzPBHm/9ShqtZceq7gJbGCg/rodsIupUUxIoaebGBMZ7vt1laIduJQ8FNZ0hOsgjP9wM2pj1RLd
+	v6ZADpszaT6cWbIesRiCrKnz+SGU=
+X-Gm-Gg: ASbGnct7WyCZzrqPkx2Aq+wUs44uXPFayJkfJP4J/HoJ+Qkt5WDuiRKj6RiBourKbVJ
+	KbUC6xheMc7ijy9mH36b3jzVqm44rZJQMxxWy5dMCzy+y9WP5cTgwbKjVS2eUC/fR5rVrWqBwzM
+	C88IZIxm4tAROO6GU0mSgmUzaETw==
+X-Google-Smtp-Source: AGHT+IGndDDGmewKWDtmUxTydeztNKHvUvtibFqnwg0VQdtrGbzuWY9J+Y50s372cumJA719pYtTZRxuFo7lSV70GIQ=
+X-Received: by 2002:a05:6122:d9e:b0:520:5a87:66ed with SMTP id
+ 71dfb90a1353d-5235b89104amr5937291e0c.5.1740951853948; Sun, 02 Mar 2025
+ 13:44:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <c5a75f20-9b61-448e-941b-1106cd06ea04@lunn.ch> <CA+V-a8sCMn+v5y5v9CyyV2VsRmLj-Uyowt61tTS9dWN43CD0_A@mail.gmail.com>
+ <Z8THE2hpybzP74bH@shell.armlinux.org.uk> <CA+V-a8up3Kv08sNarvC3gWLRpik3=_aKb3JCTGkxyGYMcj4Wbg@mail.gmail.com>
+ <86f41f06-d544-42f5-b2c0-6c4a76ad9eac@lunn.ch>
+In-Reply-To: <86f41f06-d544-42f5-b2c0-6c4a76ad9eac@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Sun, 2 Mar 2025 21:43:47 +0000
+X-Gm-Features: AQ5f1Jq3Z7ZO6g5lBzU3kpAHiehZldhn7eFDOeje-QGKpm-wiETBBFjOy2VPBa4
+Message-ID: <CA+V-a8tjOmn4BAamr6BrniTiyMxNYMCRrnZaqzEs_Xr=359Rvg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: net: Document GBETH bindings for Renesas
+ RZ/V2H(P) SoC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025 22:36:41 -0800 SeongJae Park <sj@kernel.org> wrote:
+On Sun, Mar 2, 2025 at 9:39=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > > > I can certainly do that, but not sure in the DT we will be describi=
+ng
+> > > > the HW correctly then. I'll have to hide *-180  clocks In the DT an=
+d
+> > > > handle and turning on/off these clocks in the clock driver.
+> > > ...
+> > > >              clocks =3D  <&cpg CPG_MOD 0xbd>,
+> > > >                             <&cpg CPG_MOD 0xbc>,
+> > > >                             <&cpg CPG_CORE R9A09G057_GBETH_0_CLK_PT=
+P_REF_I>,
+> > > >                             <&cpg CPG_MOD 0xb8>,
+> > > >                             <&cpg CPG_MOD 0xb9>,
+> > > >                             <&cpg CPG_MOD 0xba>,
+> > > >                             <&cpg CPG_MOD 0xbb>;
+> > >
+> > > Your SoC designer really implemented the 0=C2=B0 and 180=C2=B0 as two=
+ separate
+> > > independently controllable clocks?
+> > >
+> > Yes there are separate bits to turn ON/OFF the 0=C2=B0 and 180=C2=B0 cl=
+ocks.
+>
+> Do you know what the clock tree actually looks like? I can think of
+> two different ways this could be implemented:
+>
+> ----+----------on/off---
+>     |
+>     +----not---on/off---
+>
+> or
+>
+> -------on/off-+------------------
+>               |
+>               +---not---on/off---
+>
+> In the first, the clocks are siblings. In the second there is
+> parent/child relationship.
+>
+It's the first case in this SoC.
 
-> Currently all DAMON kernel API callers do online DAMON parameters commit
-> from damon_callback->after_aggregation because only those are safe place
-> to call the DAMON monitoring attributes update function, namely
-> damon_set_attrs().
-> 
-> Because damon_callback hooks provides no synchronization, the callers
-> works in asynchronous ways or implement their own inefficient and
-> complicated synchronization mechanisms.  It also means online DAMON
-> parameters commit can take up to one aggregation interval.  On large
-> systems having long aggregation intervals, that can be too slow.  The
-> synchronization can be done in more efficient and simple way while
-> removing the latency constraint if it can be done using damon_call().
-> 
-> The fact that damon_call() can be executed in the middle of the
-> aggregation makes damon_set_attrs() unsafe to be called from it, though.
-> Two real problems can occur in the case.  First, converting the not yet
-> completely aggregated nr_accesses for new user-set intervals can
-> arguably degrade the accuracy or at least make the logic complicated.
-> Second, kdamond_reset_aggregated() will not be called after the
-> monitoring results update, so next aggregation starts from unclean
-> state.  This can result in inconsistent and unexpected nr_accesses.
-> 
-> Make it safe as follows.  Catch the middle-of-the-aggregation case from
-> damon_set_attrs() and pass the information to nr_accesses conversion
-> logic.  The logic works as before if this is not the case (called after
-> the current aggregation is completed).  If not, it drops the nr_accesses
-> information that so far aggregated, and make the status same to the
-> beginning of this aggregation, but as if the last aggregation was ran
-> with the updated sampling/aggregation intervals.
-
-This itself has no problem.  But this can cause a problem when this is applied
-on top of DAMON monitoring intervals auto-tune patch[1], which makes
-damon_set_attrs() can also be called from if-caluse for aggregated information
-sharing and reset.
-
-The problematic case happens when damon_set_attrs() from kdamond_call() and
-kdamond_tune_intervals() in same iteration.  It means it is the last iteration
-of the current aggregation.  damon_set_attrs() that called from kdamond_call()
-understands the aggregation is finished and updates aggregation information
-correctly.  But, it also updates damon_ctx->next_aggregation_sis.
-
-When damon_set_attrs() is called again from kdamond_tune_intervals(), it shows
-the prior damon_set_attrs() invocation updated ->next_aggregation_sis and think
-this is in the middle of the aggregation.  Hence it further resets the
-aggregated information.  Now, kdamond_reset_aggregated() is called after the
-second invocation of damon_set_attrs() in the same kdamond main loop iteration,
-and corrupts the aggregated information of regions.  Particularly, this can mad
-the pseudo-moving-sum access frequency information broken.
-
-Simplest fix would be resetting the prior damon_set_attrs() updated
-->next_intervals_tune_sis, like below diff.
-
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -2538,6 +2538,24 @@ static int kdamond_fn(void *data)
-                        if (ctx->attrs.intervals_goal.aggrs &&
-                                        ctx->passed_sample_intervals >=
-                                        ctx->next_intervals_tune_sis) {
-+                               /*
-+                                * ctx->next_aggregation_sis might be updated
-+                                * from kdamond_call().  In the case,
-+                                * damon_set_attrs() which will be called from
-+                                * kdamond_tune_interval() may wrongly think
-+                                * this is in the middle of the current
-+                                * aggregation, and make aggregation
-+                                * information reset for all regions.  Then,
-+                                * following kdamond_reset_aggregated() call
-+                                * will make the region information invalid,
-+                                * particularly for ->nr_accesses_bp.
-+                                *
-+                                * Reset ->next_aggregation_sis to avoid that.
-+                                * It will anyway correctly updated after this
-+                                * if caluse.
-+                                */
-+                               ctx->next_aggregation_sis =
-+                                       next_aggregation_sis;
-                                ctx->next_intervals_tune_sis +=
-                                        ctx->attrs.aggr_samples *
-                                        ctx->attrs.intervals_goal.aggrs;
-
-I will add the change to this patch or the autotune patch, depending on their
-submission order.
-
-[1] https://lore.kernel.org/20250228220328.49438-3-sj@kernel.org
-
-
-Thanks,
-SJ
-
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  mm/damon/core.c             | 38 ++++++++++++++++++++++++++-----------
->  mm/damon/tests/core-kunit.h |  6 +++---
->  2 files changed, 30 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index 0578e89dff13..5b807caaec95 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -602,11 +602,25 @@ static unsigned int damon_nr_accesses_for_new_attrs(unsigned int nr_accesses,
->  }
->  
->  static void damon_update_monitoring_result(struct damon_region *r,
-> -		struct damon_attrs *old_attrs, struct damon_attrs *new_attrs)
-> +		struct damon_attrs *old_attrs, struct damon_attrs *new_attrs,
-> +		bool aggregating)
->  {
-> -	r->nr_accesses = damon_nr_accesses_for_new_attrs(r->nr_accesses,
-> -			old_attrs, new_attrs);
-> -	r->nr_accesses_bp = r->nr_accesses * 10000;
-> +	if (!aggregating) {
-> +		r->nr_accesses = damon_nr_accesses_for_new_attrs(
-> +				r->nr_accesses, old_attrs, new_attrs);
-> +		r->nr_accesses_bp = r->nr_accesses * 10000;
-> +	} else {
-> +		/*
-> +		 * if this is called in the middle of the aggregation, reset
-> +		 * the aggregations we made so far for this aggregation
-> +		 * interval.  In other words, make the status like
-> +		 * kdamond_reset_aggregated() is called.
-> +		 */
-> +		r->last_nr_accesses = damon_nr_accesses_for_new_attrs(
-> +				r->last_nr_accesses, old_attrs, new_attrs);
-> +		r->nr_accesses_bp = r->last_nr_accesses * 10000;
-> +		r->nr_accesses = 0;
-> +	}
->  	r->age = damon_age_for_new_attrs(r->age, old_attrs, new_attrs);
->  }
->  
-> @@ -619,7 +633,7 @@ static void damon_update_monitoring_result(struct damon_region *r,
->   * ->nr_accesses and ->age of given damon_ctx's regions for new damon_attrs.
->   */
->  static void damon_update_monitoring_results(struct damon_ctx *ctx,
-> -		struct damon_attrs *new_attrs)
-> +		struct damon_attrs *new_attrs, bool aggregating)
->  {
->  	struct damon_attrs *old_attrs = &ctx->attrs;
->  	struct damon_target *t;
-> @@ -634,7 +648,7 @@ static void damon_update_monitoring_results(struct damon_ctx *ctx,
->  	damon_for_each_target(t, ctx)
->  		damon_for_each_region(r, t)
->  			damon_update_monitoring_result(
-> -					r, old_attrs, new_attrs);
-> +					r, old_attrs, new_attrs, aggregating);
->  }
->  
->  /*
-> @@ -661,10 +675,10 @@ static bool damon_valid_intervals_goal(struct damon_attrs *attrs)
->   * @ctx:		monitoring context
->   * @attrs:		monitoring attributes
->   *
-> - * This function should be called while the kdamond is not running, or an
-> - * access check results aggregation is not ongoing (e.g., from
-> - * &struct damon_callback->after_aggregation or
-> - * &struct damon_callback->after_wmarks_check callbacks).
-> + * This function should be called while the kdamond is not running, an access
-> + * check results aggregation is not ongoing (e.g., from &struct
-> + * damon_callback->after_aggregation or &struct
-> + * damon_callback->after_wmarks_check callbacks), or from damon_call().
->   *
->   * Every time interval is in micro-seconds.
->   *
-> @@ -675,6 +689,8 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
->  	unsigned long sample_interval = attrs->sample_interval ?
->  		attrs->sample_interval : 1;
->  	struct damos *s;
-> +	bool aggregating = ctx->passed_sample_intervals <
-> +		ctx->next_aggregation_sis;
->  
->  	if (!damon_valid_intervals_goal(attrs))
->  		return -EINVAL;
-> @@ -695,7 +711,7 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
->  	ctx->next_ops_update_sis = ctx->passed_sample_intervals +
->  		attrs->ops_update_interval / sample_interval;
->  
-> -	damon_update_monitoring_results(ctx, attrs);
-> +	damon_update_monitoring_results(ctx, attrs, aggregating);
->  	ctx->attrs = *attrs;
->  
->  	damon_for_each_scheme(s, ctx)
-> diff --git a/mm/damon/tests/core-kunit.h b/mm/damon/tests/core-kunit.h
-> index 532c6a6f21f9..be0fea9ee5fc 100644
-> --- a/mm/damon/tests/core-kunit.h
-> +++ b/mm/damon/tests/core-kunit.h
-> @@ -348,19 +348,19 @@ static void damon_test_update_monitoring_result(struct kunit *test)
->  
->  	new_attrs = (struct damon_attrs){
->  		.sample_interval = 100, .aggr_interval = 10000,};
-> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
-> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
->  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 15);
->  	KUNIT_EXPECT_EQ(test, r->age, 2);
->  
->  	new_attrs = (struct damon_attrs){
->  		.sample_interval = 1, .aggr_interval = 1000};
-> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
-> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
->  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 150);
->  	KUNIT_EXPECT_EQ(test, r->age, 2);
->  
->  	new_attrs = (struct damon_attrs){
->  		.sample_interval = 1, .aggr_interval = 100};
-> -	damon_update_monitoring_result(r, &old_attrs, &new_attrs);
-> +	damon_update_monitoring_result(r, &old_attrs, &new_attrs, false);
->  	KUNIT_EXPECT_EQ(test, r->nr_accesses, 150);
->  	KUNIT_EXPECT_EQ(test, r->age, 20);
->  
-> -- 
-> 2.39.5
+Cheers,
+Prabhakar
 
