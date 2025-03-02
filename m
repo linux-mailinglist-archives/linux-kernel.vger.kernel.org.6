@@ -1,298 +1,154 @@
-Return-Path: <linux-kernel+bounces-540470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DF7A4B107
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:56:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5381BA4B10C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 12:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726823B383F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 10:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5115118932CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 11:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62481DB92C;
-	Sun,  2 Mar 2025 10:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7203E1DEFF5;
+	Sun,  2 Mar 2025 11:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="opBRFkNa"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="F6SZ35Qc"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F254C9D;
-	Sun,  2 Mar 2025 10:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68A7146593
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 11:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740913004; cv=none; b=K1Jx2uQ8R98Et4AAzmf8tSioaWa69r3bBGqweYl+nr6BGWyYgsXQQD9h/YvlueZgec5MRkOzxCutd/zTMCW4XImHtXgFVYxLTme//4CdotdAsN/GegnkaGrr+WS6ggI5u1ucioIWNREJvgU2eoh7R7TRq/SW3kEAQt/ksDQCPxE=
+	t=1740913307; cv=none; b=DyBEg3skncoa3Y0JA+45AGbBBGhkdCTaYGenLWMazS3t8h+aaN1uM323SdAah6bIDA+0i9HYZRsNf18JhhlP/oEGsbXy/Fn2j0qHNQ5GCKNmyRxYMxE/DayohFDEYK5Qq/DQm/thwvDLKhBK40E/84S20hFydRh4mxZGnOYlwts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740913004; c=relaxed/simple;
-	bh=tnrWE+Qu78UCMKOnpv53TGvFD3VldTuH5738JgYW1fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUm0yX8mnUr9v0xJPCDF1m9uhMqMVu/RYdsZAl24+rLjwub10UCZhnAgURk7L4dxB4HwKrjGO0iLfdAZM+UONMhglZ8uyLr+bP8qCbSdcH+3+iypipSP+A6qvzNBh+knJo5yeFf8IbBguMNz8SX/+uPGDCXoSWzgzvvHuwcKYLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=opBRFkNa; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.4])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 231AF40CE192;
-	Sun,  2 Mar 2025 10:56:30 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 231AF40CE192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1740912990;
-	bh=2kCk9L1M5nLgpEnWXF5cxI7FaXOo7IflqASoYLhoPLI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=opBRFkNan+maB5S8Bm6tAv9NjAPFFP37BvfEaTOkAZal9qzErsuhBqBfccffyFwlA
-	 2mFYgXOhqLNAjSGWu3G2n2RvRtv8bsP9kFJBWIe8/oXfwUL3MBEBSSVYD7z4uqHuC0
-	 Lg9vqWPNJXzDGG6URHHltSsf2/roRq0MMrm6JU1k=
-Date: Sun, 2 Mar 2025 13:56:29 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Alexey Panov <apanov@astralinux.ru>
-Cc: stable@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Max Kellermann <max.kellermann@ionos.com>, 
-	lvc-project@linuxtesting.org, syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com, 
-	syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com, Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, 
-	Yue Hu <huyue2@coolpad.com>, syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Gao Xiang <hsiangkao@linux.alibaba.com>, 
-	Gao Xiang <xiang@kernel.org>, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH 6.1 1/2] erofs: handle overlapped pclusters out of
- crafted images properly
-Message-ID: <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
-References: <20250228165103.26775-1-apanov@astralinux.ru>
- <20250228165103.26775-2-apanov@astralinux.ru>
+	s=arc-20240116; t=1740913307; c=relaxed/simple;
+	bh=KUnys3Xiy1jo/gO60D3Flc66sLahi2ZFD78MfTjqu5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dJU5Mm4bABWtrgz3RB1V1vk5gezNkEtKLeGwcIV5nV+SoKjnAu9b2pXkmwRZDw8+sPJj+aCyALhmxScknblt/CB56C+x7EgbrEp3wrB9p4pyuzlAeHsl/b3ImJdlt+vUxmWMBZNTbaDghijHlNnQd4KB1zVMr+lzWRxMaDQWLE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=F6SZ35Qc; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740913304;
+ bh=5yKjuNQgVLhguVs5lWSzRacCXnEfMSyFuE69y4uYr1E=;
+ b=F6SZ35QcmEoxitylcaFYi8C/E0sWLYAmOhZr6J11xvy/xVu1+xf4qFWm5OOvjGZgAgOAjBPax
+ EM6HirQPBC55PzMh49Wsz3ZMKw1geHKYmwJ+EhOgEIT4nwEiep6MOAMERvMia7FeCbzACPdxG5r
+ 57k59CfxTi7oySNM8h2MARO1abFtHfgs5khALP5LzAoS6goVVR0+OR7BC1JhS8imTMrdtZYk6vr
+ OPEqBuwYNLAP+SudlBrzGTw4xhS3SKBWvFErGS0e4JrFa6+Pc/xfSovwwAWt388IoqqtIPoXJDN
+ Bb4ox3LL0QVEDAQXpI/4POft/yHn8Qd4ixexuR5JuiJA==
+X-Forward-Email-ID: 67c43a8f4a29b97c03d4da98
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3cb87f70-1838-4492-b78e-0cd98457cb83@kwiboo.se>
+Date: Sun, 2 Mar 2025 12:01:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250228165103.26775-2-apanov@astralinux.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for
+ RK3528
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104749.36423-1-ziyao@disroot.org>
+ <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se> <3574922.QJadu78ljV@diego>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <3574922.QJadu78ljV@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28. Feb 19:51, Alexey Panov wrote:
-> From: Gao Xiang <hsiangkao@linux.alibaba.com>
+Hi Heiko,
+
+On 2025-03-01 13:55, Heiko Stübner wrote:
+> Hey Joas,
 > 
-> commit 9e2f9d34dd12e6e5b244ec488bcebd0c2d566c50 upstream.
+> Am Samstag, 1. März 2025, 13:47:47 MEZ schrieb Jonas Karlman:
+>> On 2025-03-01 11:47, Yao Zi wrote:
+>>> RK3528 features two SDIO controllers and one SD/MMC controller, describe
+>>> them in devicetree. Since their sample and drive clocks are located in
+>>> the VO and VPU GRFs, corresponding syscons are added to make these
+>>> clocks available.
+>>>
+>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>>> ---
+>>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
+>>>  1 file changed, 62 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> index 5b334690356a..078c97fa1d9f 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> @@ -7,6 +7,7 @@
+>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+>>> +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
+>>>  
+>>>  / {
+>>>  	compatible = "rockchip,rk3528";
+>>> @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
+>>>  			#interrupt-cells = <3>;
+>>>  		};
+>>>  
+>>> +		vpu_grf: syscon@ff340000 {
+>>> +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+>>
+>> vpu_grf is also used for gmac1, so should possible be a "syscon",
+>> "simple-mfd", or have I misunderstood when to use simple-mfd ?
 > 
-> syzbot reported a task hang issue due to a deadlock case where it is
-> waiting for the folio lock of a cached folio that will be used for
-> cache I/Os.
+> simple-mfd is needed when the additional device is completely contained
+> inside the particular syscon.
 > 
-> After looking into the crafted fuzzed image, I found it's formed with
-> several overlapped big pclusters as below:
+> For example, the usb2phy0 on rk3588 is completely living inside the
+> usb2phy0-grf.
 > 
->  Ext:   logical offset   |  length :     physical offset    |  length
->    0:        0..   16384 |   16384 :     151552..    167936 |   16384
->    1:    16384..   32768 |   16384 :     155648..    172032 |   16384
->    2:    32768..   49152 |   16384 :  537223168.. 537239552 |   16384
-> ...
+> Similarly the power-domains are living inside the rk3588 pmugrf.
+> But the pmugrf also contains more stuff, so the power-domains are a
+> subset of the pmugrf.
 > 
-> Here, extent 0/1 are physically overlapped although it's entirely
-> _impossible_ for normal filesystem images generated by mkfs.
+> Both of these above are a case for a simple-mfd.
 > 
-> First, managed folios containing compressed data will be marked as
-> up-to-date and then unlocked immediately (unlike in-place folios) when
-> compressed I/Os are complete.  If physical blocks are not submitted in
-> the incremental order, there should be separate BIOs to avoid dependency
-> issues.  However, the current code mis-arranges z_erofs_fill_bio_vec()
-> and BIO submission which causes unexpected BIO waits.
 > 
-> Second, managed folios will be connected to their own pclusters for
-> efficient inter-queries.  However, this is somewhat hard to implement
-> easily if overlapped big pclusters exist.  Again, these only appear in
-> fuzzed images so let's simply fall back to temporary short-lived pages
-> for correctness.
+> Similarly, gmac1 on rk3588 is ethernet@fe1c0000 , so a completely separate
+> io-memory area, but references both the sysgrf as well as the php-grf
+> as syscons for additional settings.
 > 
-> Additionally, it justifies that referenced managed folios cannot be
-> truncated for now and reverts part of commit 2080ca1ed3e4 ("erofs: tidy
-> up `struct z_erofs_bvec`") for simplicity although it shouldn't be any
-> difference.
+> So here the syscon does not need to be a simple-mfd.
 > 
-> Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
-> Reported-by: syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com
-> Reported-by: syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com
-> Tested-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/r/0000000000002fda01061e334873@google.com
-> Fixes: 8e6c8fa9f2e9 ("erofs: enable big pcluster feature")
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> Link: https://lore.kernel.org/r/20240910070847.3356592-1-hsiangkao@linux.alibaba.com
-> [Alexey: minor fix to resolve merge conflict]
-
-Urgh, it doesn't look so minor indeed. Backward struct folio -> struct
-page conversions can be tricky sometimes. Please see several comments
-below.
-
-> Signed-off-by: Alexey Panov <apanov@astralinux.ru>
-> ---
-> Backport fix for CVE-2024-47736
 > 
->  fs/erofs/zdata.c | 59 +++++++++++++++++++++++++-----------------------
->  1 file changed, 31 insertions(+), 28 deletions(-)
+> Hope that helps a bit
+
+Thanks for this explanation, it helped me better understand the meaning
+of simple-mfd :-)
+
+Regards,
+Jonas
+
+> Heiko
 > 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 94e9e0bf3bbd..ac01c0ede7f7 100644
+> 
 
-I'm looking at the diff of upstream commit and the first thing it does
-is to remove zeroing out the folio/page private field here:
-
-  // upstream commit 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
-  @@ -1450,7 +1451,6 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
-           * file-backed folios will be used instead.
-           */
-          if (folio->private == (void *)Z_EROFS_PREALLOCATED_PAGE) {
-  -               folio->private = 0;
-                  tocache = true;
-                  goto out_tocache;
-          }
-
-while in 6.1.129 the corresponding fragment seems untouched with the
-backport patch. Is it intended?
-
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -1346,14 +1346,13 @@ static struct page *pickup_page_for_submission(struct z_erofs_pcluster *pcl,
->  		goto out;
->  
->  	lock_page(page);
-> -
-> -	/* only true if page reclaim goes wrong, should never happen */
-> -	DBG_BUGON(justfound && PagePrivate(page));
-> -
-> -	/* the page is still in manage cache */
-> -	if (page->mapping == mc) {
-> +	if (likely(page->mapping == mc)) {
->  		WRITE_ONCE(pcl->compressed_bvecs[nr].page, page);
->  
-> +		/*
-> +		 * The cached folio is still in managed cache but without
-
-Are the comments worth to be adapted as well? I don't think the "folio"
-stuff would be useful while reading 6.1 source code.
-
-> +		 * a valid `->private` pcluster hint.  Let's reconnect them.
-> +		 */
->  		if (!PagePrivate(page)) {
->  			/*
->  			 * impossible to be !PagePrivate(page) for
-> @@ -1367,22 +1366,24 @@ static struct page *pickup_page_for_submission(struct z_erofs_pcluster *pcl,
->  			SetPagePrivate(page);
->  		}
->  
-> -		/* no need to submit io if it is already up-to-date */
-> -		if (PageUptodate(page)) {
-> -			unlock_page(page);
-> -			page = NULL;
-> +		if (likely(page->private == (unsigned long)pcl)) {
-> +			/* don't submit cache I/Os again if already uptodate */
-> +			if (PageUptodate(page)) {
-> +				unlock_page(page);
-> +				page = NULL;
-> +
-> +			}
-> +			goto out;
->  		}
-> -		goto out;
-> +		/*
-> +		 * Already linked with another pcluster, which only appears in
-> +		 * crafted images by fuzzers for now.  But handle this anyway.
-> +		 */
-> +		tocache = false;	/* use temporary short-lived pages */
-> +	} else {
-> +		DBG_BUGON(1); /* referenced managed folios can't be truncated */
-> +		tocache = true;
->  	}
-> -
-> -	/*
-> -	 * the managed page has been truncated, it's unsafe to
-> -	 * reuse this one, let's allocate a new cache-managed page.
-> -	 */
-> -	DBG_BUGON(page->mapping);
-> -	DBG_BUGON(!justfound);
-> -
-> -	tocache = true;
->  	unlock_page(page);
->  	put_page(page);
->  out_allocpage:
-
-There is a whole bunch of out path handling changes done for this function
-in upstream commit, like
-
-  // upstream commit 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
-   out_allocfolio:
-  -       zbv.page = erofs_allocpage(&f->pagepool, gfp | __GFP_NOFAIL);
-  +       page = erofs_allocpage(&f->pagepool, gfp | __GFP_NOFAIL);
-          spin_lock(&pcl->obj.lockref.lock);
-  -       if (pcl->compressed_bvecs[nr].page) {
-  -               erofs_pagepool_add(&f->pagepool, zbv.page);
-  +       if (unlikely(pcl->compressed_bvecs[nr].page != zbv.page)) {
-  +               erofs_pagepool_add(&f->pagepool, page);
-                  spin_unlock(&pcl->obj.lockref.lock);
-                  cond_resched();
-                  goto repeat;
-          }
-  -       bvec->bv_page = pcl->compressed_bvecs[nr].page = zbv.page;
-  -       folio = page_folio(zbv.page);
-  -       /* first mark it as a temporary shortlived folio (now 1 ref) */
-  -       folio->private = (void *)Z_EROFS_SHORTLIVED_PAGE;
-  +       bvec->bv_page = pcl->compressed_bvecs[nr].page = page;
-  +       folio = page_folio(page);
-          spin_unlock(&pcl->obj.lockref.lock);
-   out_tocache:
-          if (!tocache || bs != PAGE_SIZE ||
-  -           filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp))
-  +           filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp)) {
-  +               /* turn into a temporary shortlived folio (1 ref) */
-  +               folio->private = (void *)Z_EROFS_SHORTLIVED_PAGE;
-                  return;
-  +       }
-          folio_attach_private(folio, pcl);
-          /* drop a refcount added by allocpage (then 2 refs in total here) */
-          folio_put(folio);
-
-
-These changes are probably not relevant for the 6.1.y but this fact is
-still usually worth a brief mentioning in the backporter's comment.
-
-
-> @@ -1536,16 +1537,11 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
->  		end = cur + pcl->pclusterpages;
->  
->  		do {
-> -			struct page *page;
-> -
-> -			page = pickup_page_for_submission(pcl, i++, pagepool,
-> -							  mc);
-> -			if (!page)
-> -				continue;
-> +			struct page *page = NULL;
->  
->  			if (bio && (cur != last_index + 1 ||
->  				    last_bdev != mdev.m_bdev)) {
-> -submit_bio_retry:
-> +drain_io:
->  				submit_bio(bio);
->  				if (memstall) {
->  					psi_memstall_leave(&pflags);
-> @@ -1554,6 +1550,13 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
->  				bio = NULL;
->  			}
->  
-> +			if (!page) {
-> +				page = pickup_page_for_submission(pcl, i++,
-> +						pagepool, mc);
-> +				if (!page)
-> +					continue;
-> +			}
-> +
->  			if (unlikely(PageWorkingset(page)) && !memstall) {
->  				psi_memstall_enter(&pflags);
->  				memstall = 1;
-> @@ -1574,7 +1577,7 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
->  			}
->  
->  			if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
-> -				goto submit_bio_retry;
-> +				goto drain_io;
->  
->  			last_index = cur;
->  			bypass = false;
-> -- 
-> 2.39.5
 
