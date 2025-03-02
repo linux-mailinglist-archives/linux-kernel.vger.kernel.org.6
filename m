@@ -1,91 +1,59 @@
-Return-Path: <linux-kernel+bounces-540316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E04A4AFDA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:02:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6E6A4AFEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 08:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EE9C7AB7F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBFC883E14
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 07:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523B82253B2;
-	Sun,  2 Mar 2025 06:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18971E7C0B;
+	Sun,  2 Mar 2025 06:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rljYv7Fu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A18222594;
-	Sun,  2 Mar 2025 06:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="EBJyF006"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8441CAA7F
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 06:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740898211; cv=none; b=VsL+OUg/R6D5F2Js9olO+6qXAwbVf9NOEeORqH7GXE9RQk9fwefm5q8H5O0h5eYpHc8c1ALUr9kvUnRqc4EVFuSEF7xoRyR+nDfwH5dB/TDVC4QCi2AvD6klEwSDrWwXKSGexHUOTsne3b8EaozZg5WIhiVE+DEYSFDwaB62yu8=
+	t=1740897864; cv=none; b=SWvsqK6JfnTUQQbbDWOe+EHtqErg0F4MCpzItpy4HJdoRmVsE2wrytVoMKxKrEtsGN5/ctXzLkYjkbd5W2xZk2ZaQUFWm6wdoGsOgo6s87EZe4cf/x1gPoziArXJx7MFemP6uZWWFMxTmqcVbPK5DivLWneWbqE5kpxEC1Vpo4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740898211; c=relaxed/simple;
-	bh=fRzbSestC72BknEy98C8wapiwmRnJyoLyRuCn42wXtw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=mX4aazMD9b6QkRN7C5CYP9CWxhx8X4aojPMoJr1lb40OdaZyTSEkB/CP8CNSoFL7NsAYB8nDiSdtdTOGJkv7Obu4/D76P853d4tTRQ7zwWS4Ca5+XzadhNzlcc7sy0nW44grLiLLGHEB2RBAhG7FCGTkGnnr345NaDr1SZXA4Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rljYv7Fu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D53C4CED6;
-	Sun,  2 Mar 2025 06:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740898211;
-	bh=fRzbSestC72BknEy98C8wapiwmRnJyoLyRuCn42wXtw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=rljYv7Fuc8OCRqmu47SYvOI9GLcoqbN+BfYRnL78AzIlFP4mQqHSPHWxyy93SNzic
-	 YnCmGe50B3iaWixssM8sRWWHADx88YWxn1aytb2v9J3ZNp/0JFkJVMbnAHABKhoejO
-	 ovB2nSaY8aXNqzmRzdcl1sPeM+V8UBumM5W+Zfy8nCcXJmXwKL7LVVcA0jzPUMinEC
-	 WeBCv0MBZ6hmjZuMORVV/xdM8RjW1LCCZipTSFuKeApII3bVmCMI62yg1Esmzsdi0N
-	 2RHDqhZLPA2l+D9ptof5sFVn+6vVvNOwPXgjEPMjHf3qj6c8yFgbYoJ8g36PGDGDNn
-	 a978+dEPNcXkA==
-Date: Sat, 01 Mar 2025 22:50:06 -0800
-From: Kees Cook <kees@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>, uecker@tugraz.at,
- dan.carpenter@linaro.org
-CC: airlied@gmail.com, boqun.feng@gmail.com, gregkh@linuxfoundation.org,
- hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: Rust kernel policy
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250301132229.3115698-1-safinaskar@zohomail.com>
-References: <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at> <20250301132229.3115698-1-safinaskar@zohomail.com>
-Message-ID: <68D70981-9BEE-4286-8D91-330E91EEA79F@kernel.org>
+	s=arc-20240116; t=1740897864; c=relaxed/simple;
+	bh=ImIq5E+yzSMuk5VQu4015FnEeU4ZkIfZhZtOrHrX2Ew=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Type:Message-Id:Date; b=LwgUJUwlxJgAsveojfTfO/SInyJDY97TyCQVcmba0zozgTI+8QAcYDtYl8SLAQ3PVVzm/O8Lqz5JKkIfd1L67wKtU1Obmk7fLmlu1CztFhDNK2zBEhNQrUNy7OG+sNkjhJ6SsbJ3v6/0S4E4QkF7UFJyWlMhiMVyU8OX++S/gGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=EBJyF006; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:MIME-Version:Content-Type:Message-Id:
+	Date; bh=ImIq5E+yzSMuk5VQu4015FnEeU4ZkIfZhZtOrHrX2Ew=; b=EBJyF00
+	6iIdGFrRp0kxSb3mxfOmSFXUy4QNFYGr9TfjCu0bF8XNWTV+ycbvW8VTnHdNmJaJ
+	yZ1vzSYZ9sJPdSWg28MAZj9omj+z9M5VPnpNWbaljaRGZxfW8DcsmGAQVh8Ob/bb
+	YpGAO6+lKWMaA9PB94IXkv/59X/Mwbjrn56U=
+Received: from localhost (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCkvCgBnNxVD_sNnP3zdBA--.5475S2;
+	Sun, 02 Mar 2025 14:44:20 +0800 (CST)
+From: adam_smystery@126.com
+To: linux-kernel@vger.kernel.org
+Cc: 
+Subject: Hello! Rust is better than Typescript
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-CM-TRANSID:PCkvCgBnNxVD_sNnP3zdBA--.5475S2
+Message-Id:<67C3FE44.0F01B7.16940@m16.mail.126.com>
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUq5x6UUUUU
+Date: Sun, 2 Mar 2025 14:44:20 +0800 (CST)
+X-CM-SenderInfo: 5dgdzspvp123xhu1qiyswou0bp/1tbiOgQEumfD7AnzwgAAsw
 
+Hello! Rust is better than Typescript
 
-
-On March 1, 2025 5:22:29 AM PST, Askar Safin <safinaskar@zohomail=2Ecom> w=
-rote:
->Hi, Martin Uecker and Dan Carpenter=2E
->
->> No, this absolutely is useful=2E  This is what UBSan does now
->
->> BTW: Another option I am investigating it to have UBsan insert traps
->> into the code and then have the compiler emit a warning only when
->
->Clang sanitizers should not be enabled in production=2E
->See https://www=2Eopenwall=2Ecom/lists/oss-security/2016/02/17/9 for deta=
-ils
-
-This is about ASan, in userspace, from almost a decade ago=2E Kernel UBSan=
- and HW-KASan are used in production for a long time now=2E Take a look at =
-Android and Chrome OS kernels since almost 5 years ago=2E Ubuntu and Fedora=
- use the bounds sanitizer by default too=2E *Not* using the bounds sanitize=
-r in production would be the mistake at this point=2E :)
-
--Kees
-
---=20
-Kees Cook
 
