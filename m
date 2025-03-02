@@ -1,58 +1,45 @@
-Return-Path: <linux-kernel+bounces-540697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406A9A4B3DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:51:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F439A4B3E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 18:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B95D07A7359
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F6EA7A69D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49FE1EB9E1;
-	Sun,  2 Mar 2025 17:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0131EB1A9;
+	Sun,  2 Mar 2025 17:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seznam.cz header.i=@seznam.cz header.b="Dzin1JeI"
-Received: from mxd.seznam.cz (mxd.seznam.cz [77.75.76.210])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="d7bOxsyb"
+Received: from out199-11.us.a.mail.aliyun.com (out199-11.us.a.mail.aliyun.com [47.90.199.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0A1C174A;
-	Sun,  2 Mar 2025 17:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF8C13B;
+	Sun,  2 Mar 2025 17:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740937863; cv=none; b=uVBFVLdve3o2zwgYF+2pFh2IyvbLsCy8pBUoXlEi5+O3WupX5WlhzSpDXLmSZ0XEDEyjBLzHqLZtuL3DEQpN3z7oKN9SQVsI2OsHNKMVuUOuFAzLfo+/wk1/4Co0ynAM9SqK9ODzfjFRJ2thZZa7JqjlMgh7uKcIkqWb03x7IiQ=
+	t=1740938203; cv=none; b=ZC4qHFMNqYvMUx3XjG8KF1blHGVI99vjRp4CRzmLGG+uph7HJUiZWLuUKce89dOv0mTUqs+szGBtovkKv01Jx/JP5w9E5bUD9eEZtZXcbZ1ujepb2fGdDT6LLg8gwbL4GPwouptZ/8spw6pPox8Il9ZZu5N5advn1jpfg4OR9ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740937863; c=relaxed/simple;
-	bh=ICAxiJHnVQwCRmL5zZ4EFvYM72/ECGdWdm5L5gBE8Gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szfl7rs54JIbI5Sgkc8hjCNx+bnnavEWW7+dUjb2jY3p1bdLRxvxZeOoSscukDu/uK6hJy6r9ctabrh4IFnPy1pzUou9mLshkVbdvVmkGgVxQ1RSo8NIn3kfeis28Dtvp9C7byn4NY/m0Im1xLjfAkx06+XL3pgxL9Yc//ONbdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seznam.cz; spf=pass smtp.mailfrom=seznam.cz; dkim=pass (2048-bit key) header.d=seznam.cz header.i=@seznam.cz header.b=Dzin1JeI; arc=none smtp.client-ip=77.75.76.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seznam.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seznam.cz
-Received: from email.seznam.cz
-	by smtpc-mxd-6786f7f9fd-wrmb6
-	(smtpc-mxd-6786f7f9fd-wrmb6 [2a02:598:96:8a00::1200:712])
-	id 2d0c3500760261692ca5f95e;
-	Sun, 02 Mar 2025 18:50:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz;
-	s=szn20221014; t=1740937856;
-	bh=WkqVeVDjwGLX/zODAkt/FUNn6SDbwu2B0XHW4KyKjSE=;
-	h=Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:Content-Type:Content-Transfer-Encoding;
-	b=Dzin1JeIU49gZzMI7noPE/iBmf/IOlq2D3GM+WC4CYBD8VQXmypyE9EeKGiSsLrK9
-	 tWQYxWDgmC6v+mxiedrqtuBaDXPq84W8qcYy1TT3cirJCGdpylJbA/kCYCPfIgNXno
-	 +c+Do4ieFp07PQ7SNYRhF6VUDNc0/AXu6eZKmalYhIgTj4RB4qzs0rRVKdAECgrwSw
-	 LtuM+lmLD1y/26PemPr8brza44jbarZdHRiMD9YKK3QsA5C0E70AwIVLtBE9rBLbjJ
-	 UXYk74JZlCeKZq572jaSLts9fdoS81JGxlN8Jzy3jK3QdSnlOzU8TkwC5/z4JzNGEx
-	 eDq/WHJV28/5Q==
-Received: from [192.168.0.240] (ip-111-27.static.ccinternet.cz
-	[147.161.27.111])
-	by smtpd-relay-dd695557-59gb8 (szn-email-smtpd/2.0.31) with ESMTPA
-	id 6deb8026-90ad-450f-828a-6caf96f3825f;
-	Sun, 02 Mar 2025 18:48:52 +0100
-Message-ID: <164b21fb-2ba9-42a4-9964-5e4f051df37a@seznam.cz>
-Date: Sun, 2 Mar 2025 18:46:37 +0100
+	s=arc-20240116; t=1740938203; c=relaxed/simple;
+	bh=6xeh4z1GWYiTwe66l53zKe3JqYsQcYUK/DFrKO4xKV0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hQsng8QqrUIObmCXTQiUZzMlkYJUZo7qFoGToXKS6zo+zyV/yS6iyta1bGVczW4XZGWdACBZGXh/eRojLorPXNKQoyHgWxptfmIn4nZ78wWon06n1U+DjETVRRwmX/kGUx/lJYiYNqWXqWv8nMdJHYSzECEXy0oPDEGi4mrD6TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=d7bOxsyb; arc=none smtp.client-ip=47.90.199.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740938181; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=yzXmjFQ4bX2wV3j1beZ3CSsEAZKv6dTZuPoBn8yv2HA=;
+	b=d7bOxsybGbbcGmhp+rZUS6BYUoA5M09UtodD0+32JzBCyNwnhFLykuwcFfLfd8AaEPD7ozLzk+yAayRDiWCaziy7nAS+dOfnMkkehAbFKyOgSJObk6zJD3wRU7l9+ffkMpRSZChEp5nIamtvkSTgawcPKCHj/CIChLmysBKX4r8=
+Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQVhkCH_1740938169 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Mar 2025 01:56:19 +0800
+Message-ID: <131cd204-036d-4d78-ae80-4ff5b8aedb09@linux.alibaba.com>
+Date: Mon, 3 Mar 2025 01:56:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,97 +47,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] bus: qcom-ssc-block-bus: Fix the error handling path
- of qcom_ssc_block_bus_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, andersson@kernel.org,
- konradybcio@kernel.org, jeffrey.l.hugo@gmail.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <cover.1740932040.git.christophe.jaillet@wanadoo.fr>
- <1b89ec7438c9a893c09083e8591772c8ad3cb599.1740932040.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Michael Srba <Michael.Srba@seznam.cz>
-In-Reply-To: <1b89ec7438c9a893c09083e8591772c8ad3cb599.1740932040.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 6.1 1/2] erofs: handle overlapped pclusters out of crafted
+ images properly
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Alexey Panov <apanov@astralinux.ru>
+Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Max Kellermann <max.kellermann@ionos.com>, lvc-project@linuxtesting.org,
+ syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com,
+ syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com,
+ Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+ Yue Hu <huyue2@coolpad.com>,
+ syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>,
+ linux-erofs@lists.ozlabs.org
+References: <20250228165103.26775-1-apanov@astralinux.ru>
+ <20250228165103.26775-2-apanov@astralinux.ru>
+ <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
+ <fb801c0f-105e-4aa7-80e2-fcf622179446@linux.alibaba.com>
+In-Reply-To: <fb801c0f-105e-4aa7-80e2-fcf622179446@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-iirc it took me quite a long time to figure out the correct sequence for the bus to come up, so I'd be careful with that indeed. Sadly I can't easily test this on the original device right now, when I have time I want to upstream support for sdm845 which I could test more easily, but the sdm845 case is simpler so idk if testing on that would be sufficient.
 
-On 02. 03. 25 17:21, Christophe JAILLET wrote:
-> If qcom_ssc_block_bus_pds_enable() fails, the previous call to
-> qcom_ssc_block_bus_pds_attach() must be undone, as already done in the
-> remove function.
->
-> In order to do that, move the code related to the power domains management
-> to the end of the function, in order to avoid many changes in all the error
-> handling path that would need to go through the new error handling path.
->
-> Fixes: 97d485edc1d9 ("bus: add driver for initializing the SSC bus on (some) qcom SoCs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
->
-> It is also speculative. Power management interaction can be sometimes
-> tricky and I'm not 100% sure that moving this code in fine.
->
-> Review with care.
-> ---
->   drivers/bus/qcom-ssc-block-bus.c | 31 +++++++++++++++++++------------
->   1 file changed, 19 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/bus/qcom-ssc-block-bus.c b/drivers/bus/qcom-ssc-block-bus.c
-> index c95a985e3498..7f5fd4e0940d 100644
-> --- a/drivers/bus/qcom-ssc-block-bus.c
-> +++ b/drivers/bus/qcom-ssc-block-bus.c
-> @@ -264,18 +264,6 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
->   
->   	platform_set_drvdata(pdev, data);
->   
-> -	data->pd_names = qcom_ssc_block_pd_names;
-> -	data->num_pds = ARRAY_SIZE(qcom_ssc_block_pd_names);
-> -
-> -	/* power domains */
-> -	ret = qcom_ssc_block_bus_pds_attach(&pdev->dev, data->pds, data->pd_names, data->num_pds);
-> -	if (ret < 0)
-> -		return dev_err_probe(&pdev->dev, ret, "error when attaching power domains\n");
-> -
-> -	ret = qcom_ssc_block_bus_pds_enable(data->pds, data->num_pds);
-> -	if (ret < 0)
-> -		return dev_err_probe(&pdev->dev, ret, "error when enabling power domains\n");
-> -
->   	/* low level overrides for when the HW logic doesn't "just work" */
->   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config0");
->   	data->reg_mpm_sscaon_config0 = devm_ioremap_resource(&pdev->dev, res);
-> @@ -343,11 +331,30 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
->   
->   	data->ssc_axi_halt = halt_args.args[0];
->   
-> +	/* power domains */
-> +	data->pd_names = qcom_ssc_block_pd_names;
-> +	data->num_pds = ARRAY_SIZE(qcom_ssc_block_pd_names);
-> +
-> +	ret = qcom_ssc_block_bus_pds_attach(&pdev->dev, data->pds, data->pd_names, data->num_pds);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret, "error when attaching power domains\n");
-> +
-> +	ret = qcom_ssc_block_bus_pds_enable(data->pds, data->num_pds);
-> +	if (ret < 0) {
-> +		dev_err_probe(&pdev->dev, ret, "error when enabling power domains\n");
-> +		goto err_detach_pds_bus;
-> +	}
-> +
->   	qcom_ssc_block_bus_init(&pdev->dev);
->   
->   	of_platform_populate(np, NULL, NULL, &pdev->dev);
->   
->   	return 0;
-> +
-> +err_detach_pds_bus:
-> +	qcom_ssc_block_bus_pds_detach(&pdev->dev, data->pds, data->num_pds);
-> +
-> +	return ret;
->   }
->   
->   static void qcom_ssc_block_bus_remove(struct platform_device *pdev)
 
+On 2025/3/3 01:41, Gao Xiang wrote:
+> Hi Fedor,
+> 
+> On 2025/3/2 18:56, Fedor Pchelkin wrote:
+>> On Fri, 28. Feb 19:51, Alexey Panov wrote:
+>>> From: Gao Xiang <hsiangkao@linux.alibaba.com>
+>>>
+>>> commit 9e2f9d34dd12e6e5b244ec488bcebd0c2d566c50 upstream.
+>>>
+>>> syzbot reported a task hang issue due to a deadlock case where it is
+>>> waiting for the folio lock of a cached folio that will be used for
+>>> cache I/Os.
+>>>
+>>> After looking into the crafted fuzzed image, I found it's formed with
+>>> several overlapped big pclusters as below:
+>>>
+>>>   Ext:   logical offset   |  length :     physical offset    |  length
+>>>     0:        0..   16384 |   16384 :     151552..    167936 |   16384
+>>>     1:    16384..   32768 |   16384 :     155648..    172032 |   16384
+>>>     2:    32768..   49152 |   16384 :  537223168.. 537239552 |   16384
+>>> ...
+>>>
+>>> Here, extent 0/1 are physically overlapped although it's entirely
+>>> _impossible_ for normal filesystem images generated by mkfs.
+>>>
+>>> First, managed folios containing compressed data will be marked as
+>>> up-to-date and then unlocked immediately (unlike in-place folios) when
+>>> compressed I/Os are complete.  If physical blocks are not submitted in
+>>> the incremental order, there should be separate BIOs to avoid dependency
+>>> issues.  However, the current code mis-arranges z_erofs_fill_bio_vec()
+>>> and BIO submission which causes unexpected BIO waits.
+>>>
+>>> Second, managed folios will be connected to their own pclusters for
+>>> efficient inter-queries.  However, this is somewhat hard to implement
+>>> easily if overlapped big pclusters exist.  Again, these only appear in
+>>> fuzzed images so let's simply fall back to temporary short-lived pages
+>>> for correctness.
+>>>
+>>> Additionally, it justifies that referenced managed folios cannot be
+>>> truncated for now and reverts part of commit 2080ca1ed3e4 ("erofs: tidy
+>>> up `struct z_erofs_bvec`") for simplicity although it shouldn't be any
+>>> difference.
+>>>
+>>> Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+>>> Reported-by: syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com
+>>> Reported-by: syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com
+>>> Tested-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+>>> Closes: https://lore.kernel.org/r/0000000000002fda01061e334873@google.com
+>>> Fixes: 8e6c8fa9f2e9 ("erofs: enable big pcluster feature")
+>>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>>> Link: https://lore.kernel.org/r/20240910070847.3356592-1-hsiangkao@linux.alibaba.com
+>>> [Alexey: minor fix to resolve merge conflict]
+>>
+>> Urgh, it doesn't look so minor indeed. Backward struct folio -> struct
+>> page conversions can be tricky sometimes. Please see several comments
+>> below.
+> 
+> I manually backported it for Linux 6.6.y, see
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=1bf7e414cac303c9aec1be67872e19be8b64980c
+> 
+> Actually I had a very similiar backport for Linux 6.1.y,
+> but I forgot to send it out due to other ongoing stuffs.
+> 
+> I think this backport patch is all good, but you could
+> also mention it follows linux 6.6.y conflict changes
+> instead of "minor fix to resolve merge conflict".
+> 
+>>
+>>> Signed-off-by: Alexey Panov <apanov@astralinux.ru>
+>>> ---
+>>> Backport fix for CVE-2024-47736
+>>>
+>>>   fs/erofs/zdata.c | 59 +++++++++++++++++++++++++-----------------------
+>>>   1 file changed, 31 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+>>> index 94e9e0bf3bbd..ac01c0ede7f7 100644
+>>
+>> I'm looking at the diff of upstream commit and the first thing it does
+>> is to remove zeroing out the folio/page private field here:
+>>
+>>    // upstream commit 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
+>>    @@ -1450,7 +1451,6 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
+>>             * file-backed folios will be used instead.
+>>             */
+>>            if (folio->private == (void *)Z_EROFS_PREALLOCATED_PAGE) {
+>>    -               folio->private = 0;
+>>                    tocache = true;
+>>                    goto out_tocache;
+>>            }
+>>
+>> while in 6.1.129 the corresponding fragment seems untouched with the
+>> backport patch. Is it intended?
+> 
+> Yes, because it was added in
+> commit 2080ca1ed3e4 ("erofs: tidy up `struct z_erofs_bvec`")
+> and dropped again.
+> 
+> But for Linux 6.6.y and 6.1.y, we don't need to backport
+> 2080ca1ed3e4.
+
+Oh, it seems that I missed this part when backporting
+for 6.6.y, but it has no actual difference because
+`page->private` will be updated in `goto out_tocache`.
+
+so `set_page_private(page, 0);` was actual a redundant
+logic, you could follow the upstream to discard
+`set_page_private(page, 0);`.
+
+Thanks,
+Gao Xiang
 
