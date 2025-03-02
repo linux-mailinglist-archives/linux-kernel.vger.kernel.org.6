@@ -1,144 +1,140 @@
-Return-Path: <linux-kernel+bounces-540599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FC2A4B2B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:47:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EE6A4B2BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 16:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EE6165BEE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C61A1891F6F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B151E7C1C;
-	Sun,  2 Mar 2025 15:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EB01E9B18;
+	Sun,  2 Mar 2025 15:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="H2w7pm/x"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMfnxGBl"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F213AAD5A;
-	Sun,  2 Mar 2025 15:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD52BB04;
+	Sun,  2 Mar 2025 15:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740930459; cv=none; b=lNTRafMObCtnu/ujuKEXK0zqn+JljOUnp1zYuy/Sr0p1YqD9Ugu0jLgXDkTNNIEzwjNCl+iDJ6xbJo1NOfinkw8yBU4EDaWEB9u5Zz+/QtZ16VgSH89qtuqi0a9psZjHjl+B7lXEUpGqkFujrTwZVkKpSKnnwPyB7XclV23JB8E=
+	t=1740930467; cv=none; b=Pvath3FPrtdO9D+lGDdqfMwqw/2JrmSRc51TLE0FMcn2h06lEs6Hhqw8Pjwu9BGw/A2m68TTDQ3ckRsEvvAUqj5lhq5+RmTBFbz3k2GtGyEcY6qU1QzZoexLkFLE2VjvUSJyBvKrDzOvuLzazr2krIKPYcn4ENvwZFQnSeB2RLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740930459; c=relaxed/simple;
-	bh=n4tNp56tq6z5EW0Qy91aYPbEKWEtOFMdSPmch9pmErE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5nAbGdYzINHyN9kcBPuH9av8VSgrMMJRGZ9yoEJc4IJXzHJboBFPN2ViSWXdP+Ed6YzVZ6J94an/MSNqg8Lm3HezdOiedYNZpuoHqupaerpaf+SDhxYHAKequMwNXsBuraspBANO5rtvSXvT+vLn3omOyHnM7EFis7B2pslfTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=H2w7pm/x; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fd64eea9c1so7382587b3.2;
-        Sun, 02 Mar 2025 07:47:37 -0800 (PST)
+	s=arc-20240116; t=1740930467; c=relaxed/simple;
+	bh=Okh8B31yIedOwS+wAZPKlNc0foFVtviDzKYErsu9Gw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jlJQwn/runmiaoAOR6rkpC5BDhlkGFzG9K4RUCKCPQqJbL+Clir5G5rmiUFG3FfZvQ1Iy9yEjP3y1JHvLwC+qPknWdt3zi+VQA624G8B7dVTrHq7KcGCcZ7oRTBkNpKCaaCR0qVSMEp+kphgkw4USoUzGGFbVwWP8u9/zH0Y0bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMfnxGBl; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f9625c0fccso32353137b3.1;
+        Sun, 02 Mar 2025 07:47:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740930457; x=1741535257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hL+Pb6+3LP0e5E6K/WXHBL7Tetw+ktOPyQjrugSsppc=;
-        b=H2w7pm/x9XezxJONaS75/tZamde1+TI8b225uYfCTsXBQ4heOv3MiO2/XiVjkYbMY+
-         S2a53nsHGm8XXohXvDqQtjOiIEv5rGD/sOfifqOQPEYvr8Sz3KwIE2O1IlbLmiBDIm+F
-         2HAkI5/MTwiE86DpZUCbrYfDNzpB9aB4AO5nrP8kRQjpn5wDPjVtm8ztIxE6YVHP6ZNS
-         h6fyp+sfgNxe/So73bnSZgPXe6rO15PBJHwtKJaezTXOvtNUh2hpYBifHKa3XI0tAZBa
-         ILnuGoCXNE+H6lsEl162yfEXQyMUWfa4H71zBzdtTMNRmcpoKAAySf6No5ezvVwoz5JY
-         SbIA==
+        d=gmail.com; s=20230601; t=1740930464; x=1741535264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCT1sTVFptoP0GXpHD4z8aJ9CCOqcWh1+88rLPDB2Qo=;
+        b=PMfnxGBlhlGGxwz2h+aXIC6YqSfvnS1XUurUVHPm4UGZf9dDm3GlEU23BIE2VrRXDG
+         em4az6zxVD3GZUGNl24U2SSnlHofnpgFOdCApMfn09qo1ZBO1DG2ylf9dzIe3n08+2j3
+         UOzsOoDz5UAmOH/DQnmzYkIaw6kGY4N/d2s+UkSef7bCeY7dN40E8wIkFaMe87Xc1sGo
+         1TZixxTHNK8RrnXqLdSyHwFPATmjCPj3YRUzwJOxH9NTsld1NUTbdfcSptZACmpr8saP
+         jdNTU6Oce/qr7r6Kraa3fFd7jpu6kq6+eeRE5xxuqKaAz7uhXxPmO80Jqt8Rtjw1Crvw
+         rKHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740930457; x=1741535257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hL+Pb6+3LP0e5E6K/WXHBL7Tetw+ktOPyQjrugSsppc=;
-        b=pCMdlsRqoRgMBU0I16d7B6qvnaPmrN9nO1euknXakutARd6dyAsO+XV0OyZiDKYRvC
-         BwDg9u6xaAbENRdkmSzmtXPZ+2zuoRGfSe8jD5aI8AS0e21i4VBsq8Ghdokh+GmPMkt9
-         IaZqUPn7r/9sQ6BphwmxOSWaruCnaMMkLxTrTyxLupks9mZKnBhi57o83VYii6YIp7wZ
-         RUtrdZkMDHVazTtcoxvknVNxy9bouatQKKOkv72Gvsuw/i9foPNUtYhRlVqPOPOllCJx
-         StAtRHnXga8ej5tCX9np28D1lJ+CnOmM+tZzUQUKRb+8AOqJy2y15G8A0+UoRa4ZtZgB
-         /uNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKjJMM3UJSP0Z0RiD8AVUST1OHktmnaTYDS31ij6LaaMYPE9wFUPNgjJgL8ayG9gkzY2ZQazKyik8SmUk=@vger.kernel.org, AJvYcCWiiM2zMtow4qc6v9fwRVJ+P4aUbu/c5d8diu7wpm1Yobd3gshcExqymfnWKnK4SDkLxnRT/eF7eaGxAgOxJCfx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFgI3vzOqs8mMN7aSOAo3wlh4B46BdRMFmbTRysq+lTav7LAhN
-	0Ydr8YoRxdJ3cYNwmvY1vaJpEjxYGh0uma4CZvzlNu55mMwgo95//Rcwo7eF3ATVHqYf4vkwii6
-	QF0PWSvYw0Y1LGGPTc0d6MCC8yyU=
-X-Gm-Gg: ASbGncvN9ofwM7gDF+NNlewLMdqenHFFu4sZ4CTleeo0uwTU1RrpTAdTulDJ6in5Pyy
-	RGlDR/VM6LYK2vF8kF/U8txOe/ZLfBu/hIiV8rvGwmmqsyJ2B4YqimEHHCZRgAmzwdAlxqYZT7U
-	aBhoyvdLNVF1fPdoDSeB+mfEgt
-X-Google-Smtp-Source: AGHT+IECfeIaLvATjf7x+fKIEl9KKhtoIMwfOdbC/luMAZVqtF6DjvXHnsacHL30hRniywMWTxjOHNruJyO4D9foBM4=
-X-Received: by 2002:a05:690c:360d:b0:6fb:1c5a:80ea with SMTP id
- 00721157ae682-6fd4a15e96amr135680557b3.32.1740930456795; Sun, 02 Mar 2025
- 07:47:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740930464; x=1741535264;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CCT1sTVFptoP0GXpHD4z8aJ9CCOqcWh1+88rLPDB2Qo=;
+        b=vhR3pOWyYz4V/+Wdw5/YOQwWLuIZavdUNhXCnJd1BJ4eGL2uiN3g1TUDQ7EJ7H2IdF
+         5TwqSp5WZeRjwznkDDwacTC6V9nYzPt4etAo9wCUQnOVspUnLrYUJgI5xbJ7b0JY3HY3
+         aHfw1hQ0tj8nvUVyn5X9a1bPIOETsUYkhV840E8Z0+23wYJV59o3McJvUOxFbCphqlWw
+         TKp1RY3Y02GijL8TUL9mR+Mp1q2RPC2fSJAy/TM+6o234cATXfwDX01Axd93bMVOW0pH
+         anXAOP9YbMaTWhMlTyHay0mhtOmHpoz493VUN8XAK3NiGTeSRtGsqEwjXi5NhLZ1ITbB
+         ij4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWr0wyCyah+rwxfpfRIe+sKglWNKlDK42Nu/u51+2KB6ANUgsU6Xd9vhRASzYwgcY+kCM=@vger.kernel.org, AJvYcCUePBVRT66mL+A1aGciRfT2JvHfZ1TA5VP1ZBdHW4MOupTflyimkGdwGdkWSF8JgGizCaDO8/uhoEV8oR4=@vger.kernel.org, AJvYcCW+2Bskq7NxoeJxof5/6ZfHqwj04pc8+CipZBFJQDtkLi3VuOssXaXhhSi+8zafuAkmsnEf893FaR2P8TA=@vger.kernel.org, AJvYcCW0Xtak2/fSL594EjznaL9728kXo/mwNHNlT925LUvPHlqzy61YytPpqQOfQFrrx259R+m5486A@vger.kernel.org, AJvYcCWejiRdfQTQTwO3BAfSWGRRFLbkhNCi9k4VtdFRNrKvyj8q++xC1gGZ45jiCvQXEeF7FNvy6ZEQOj3oLOIs@vger.kernel.org, AJvYcCXp17dnTaH8ntXrOBaySMauXtqbj0RFJLr384dTePFT+wifzomJ+MR39IFZKjrq/VbslBnkRqPqlUH/DmX3SFg=@vger.kernel.org, AJvYcCXr2+WP5+oBvajdRi3iUak9xXXYqDWY5ZVlFNODcl0AYXUpCs78midKUkas8HJj2S9NipauFBddcW8RTOOu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlmb59CQbQJmBg6Nv1dor3kGs+nYFvronikTEytzaN2SQG6HMr
+	Hz9VmcYokAbFKTt0K8ZuabZ2AXVFqKb/Zj+bNh31F/B/kNL6WEHP
+X-Gm-Gg: ASbGnculKKr02cpjQ4ZzjbjhKt59QlPna/hNZeM8CBFUweIMyVfqIeSxZvaKZxlDoFb
+	pS+397zQe/muoC1y1lcym+8jN0x6we2liIU/DJzDsxtGeY/Otjp/vy/kMwtwgn+SMRyNSRiD2Z3
+	b1hX3b2mtpfdq7TQCPU+hrn5KPxVXc/73AIv0gcNL1/UymxZLZuPaISNZIxkYOrdx8mLv+j+AMC
+	NGuyjHga9SSoXGy5fxD5QKkaD/oFZkQOqtRTUObdC0Scs0R2ZlZ8Y9rGjuafWYt96jpCGc5Y02e
+	tVn2rIlZwV2YLMZls5YbS/9Plq743ZoERI+A8Wlx028zVvGZfhw0V2IMln20FgD8gGleh/WtI+7
+	+t4WM
+X-Google-Smtp-Source: AGHT+IEfQ39kTql5XsYDhHYJ6TV6j9haA6dlCxpju/Rqc4ygrtquBMosdzic0x4c9/qeMrvSjUoEBQ==
+X-Received: by 2002:a05:690c:6301:b0:6fd:4485:9255 with SMTP id 00721157ae682-6fd4a122c2amr115575717b3.24.1740930464153;
+        Sun, 02 Mar 2025 07:47:44 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd3ca41e81sm16218887b3.29.2025.03.02.07.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 07:47:43 -0800 (PST)
+Date: Sun, 2 Mar 2025 10:47:41 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+	alistair@popple.id.au, linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
+Message-ID: <Z8R9nQmfeVvfDiOn@thinkpad>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-3-visitorckw@gmail.com>
+ <Z7zIBwH4aUA7G9MY@thinkpad>
+ <20250226222911.22cb0c18@pumpkin>
+ <Z8CpaaHv0ahHFVuK@thinkpad>
+ <20250227215741.1c2e382f@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125105240.44219-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125105240.44219-1-cgoettsche@seltendoof.de>
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Sun, 2 Mar 2025 16:47:26 +0100
-X-Gm-Features: AQ5f1Jo4-nZ2PKhNgmOMUX9U6MF0Mz3tvRHEWQV-RQnSBNgDnFm30mQewFKZxuU
-Message-ID: <CAJ2a_Dc1-KSsV9aS8P0x4SePRrjO228wRF=4=5f18wAk0G+AAQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: constify return of string literals
-To: cgzones@googlemail.com
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227215741.1c2e382f@pumpkin>
 
-On Tue, 26 Nov 2024 at 12:36, Christian G=C3=B6ttsche
-<cgoettsche@seltendoof.de> wrote:
->
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> The function kunit_status_to_ok_not_ok() returns string literals, thus
-> declare the return value as such.
->
-> Reported by clang:
->
->     ./include/kunit/test.h:143:10: warning: returning 'const char[3]' fro=
-m a function with result type 'char *' discards qualifiers [-Wincompatible-=
-pointer-types-discards-qualifiers]
->       143 |                 return "ok";
->           |                        ^~~~
->     ./include/kunit/test.h:145:10: warning: returning 'const char[7]' fro=
-m a function with result type 'char *' discards qualifiers [-Wincompatible-=
-pointer-types-discards-qualifiers]
->       145 |                 return "not ok";
->           |                        ^~~~~~~~
->     ./include/kunit/test.h:147:9: warning: returning 'const char[8]' from=
- a function with result type 'char *' discards qualifiers [-Wincompatible-p=
-ointer-types-discards-qualifiers]
->       147 |         return "invalid";
->           |                ^~~~~~~~~
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+On Thu, Feb 27, 2025 at 09:57:41PM +0000, David Laight wrote:
+> > It's still unclear to me that this parity thing is used in hot paths.
+> > If that holds, it's unclear that your hand-made version is better than
+> > what's generated by GCC.
+> 
+> I wasn't seriously considering doing that optimisation.
+> Perhaps just hoping is might make a compiler person think :-)
 
-Kindly ping.
+David, can you suggest only things you're seriously considered to do?
+Random suggestions distract my contributors and make them doing unneeded
+work and experiments.
 
-> ---
->  include/kunit/test.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/kunit/test.h b/include/kunit/test.h
-> index 34b71e42fb10..ae1b57578476 100644
-> --- a/include/kunit/test.h
-> +++ b/include/kunit/test.h
-> @@ -135,7 +135,7 @@ struct kunit_case {
->         struct string_stream *log;
->  };
->
-> -static inline char *kunit_status_to_ok_not_ok(enum kunit_status status)
-> +static inline const char *kunit_status_to_ok_not_ok(enum kunit_status st=
-atus)
->  {
->         switch (status) {
->         case KUNIT_SKIPPED:
-> --
-> 2.45.2
->
+In the other thread you asked I Hsin to try your approach to GENMASK()
+macro, saying you're lazy. I don't think this is the right way to
+communicate, not mentioning that if you're lazy to try your own
+approach, it doesn't sound nice to ask someone else to try it.
+
+Thanks for understanding,
+Yury
 
