@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-540528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84800A4B1D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2208AA4B1DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E3A165939
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C99188B0D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8B51E5B6F;
-	Sun,  2 Mar 2025 13:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182F21E5B6D;
+	Sun,  2 Mar 2025 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KVQrDe3N"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fhfsseeQ"
 Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009E41EB3D;
-	Sun,  2 Mar 2025 13:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E441DF735;
+	Sun,  2 Mar 2025 13:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740921570; cv=none; b=Ysg77lof1raciydcQzParkQ8NS4oyUb20Q4OZcKMUivIfyu0mO5FiMhUdr1zCqbXD2XwM/hmdFfBu0khg1AQeTgPhD4W+3jy7F2fOrhPkWj5ep772zC2SCSV4QsIrtjZxPO+/CLJiEih2O34sBT+YEkxzYK0nogymYtVN/Svhj4=
+	t=1740921586; cv=none; b=AuR1yxVTlqf432t/UxoK+Dnm5SBP7Cw4KocFNbLwEZJcalVe88Bv84CAElROdoUWKjCTwAugDbZd50tjZEnqDyYZ5q3o8QEaSxQno3IJqcoqDiJGReKMsSPXdq8Biii9sS3jdfxAtHHMbLUHQFPDp9SBLuMgoxCFZ2TCFNkdTJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740921570; c=relaxed/simple;
-	bh=fpsUf7qagNA43+t2AgJEz/2jXEI1D8GrzdCPihZ1iVw=;
+	s=arc-20240116; t=1740921586; c=relaxed/simple;
+	bh=N93N8sbr9pYjQhBhkTre3vmbvaZaJScZk7m/IxhXYvw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m8JO4nSHgTqO2xZBPaKCNfHxMvKq8Uisln63buoSa1tkyGcv+BQgo/WwsW00vnV2mmExeBGAHNQ5YunpsdvZtFHx8spDTPtebnP0y9wL59CHHilyfNLkOTJL3n2oE7Cx9KhhZm+uzMj7b1bxSW4q9nFoqxrsdBtfVJEX/guGLOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KVQrDe3N; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=uuBpCzb1raRWzFRoGvki7ZDMmzOw6T2LypuKsxd3aB8YILRcxxhoM+xIgeA9AQ2KwOtF39PiOXj7rdkeJR4iquqCx8g7cWsIxlLxtuwXhIgA46OYpzupamYBCBZelHyfIACrzG3akvcAWq/G+kLu1Qtyw05hRUDO2SmwAJ0v1Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fhfsseeQ; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 522DJFpX2461592
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 522DJdTk2461655
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 2 Mar 2025 07:19:15 -0600
+	Sun, 2 Mar 2025 07:19:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740921555;
-	bh=fY/MmG+5flypk7XKV4+Mu6hbOrp0aC0XssiUPIU93SA=;
+	s=ti-com-17Q1; t=1740921579;
+	bh=c/wwbEqTWYhVHr/BOInsu6yf96NR5fVapiEtbZi2/Ww=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=KVQrDe3N7LSSebcTlE6EAlmSYGskSe3DXaAIQw5Z4FR0LYHOO+44Uo3KFYJ4haqRC
-	 TNRyTt4icftIpYFQsVezVPxI+P1vCpI9JuJY6oriLmUoCpLNfW4HBe4CMZRmt0uXl6
-	 sYunb9DYv4Wnj7nRZjOmFlSTlSHrQHB+4AYfJDk8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 522DJFu2010697
+	b=fhfsseeQQzDzObkHWqS3PTuZ6mp5L6USofy+tlldwD8tTJXruLkoymjQ5qxy18qSH
+	 ul7y5UdqoFn8TNYUP36PW3HntntflwdfSYG77XjHa5ywPPCNo4Ys30MmsblR97Ndi7
+	 HKdx3LbldyR/7VYov0gt43c+ZIZk96e6/IHVzwVU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 522DJdlA017472
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 2 Mar 2025 07:19:15 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+	Sun, 2 Mar 2025 07:19:39 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 2
- Mar 2025 07:19:15 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2025 07:19:39 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 2 Mar 2025 07:19:15 -0600
+ Frontend Transport; Sun, 2 Mar 2025 07:19:39 -0600
 Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 522DJBWT116974;
-	Sun, 2 Mar 2025 07:19:12 -0600
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 522DJZmc117215;
+	Sun, 2 Mar 2025 07:19:36 -0600
 From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <robh+dt@kernel.org>, <nm@ti.com>, <conor+dt@kernel.org>,
-        <kristo@kernel.org>, <krzk+dt@kernel.org>, Keerthy <j-keerthy@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
-Date: Sun, 2 Mar 2025 18:49:08 +0530
-Message-ID: <174092143355.3272913.10095422286018964990.b4-ty@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <s-vadapalli@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <c-vankar@ti.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-evm-quad-port-eth-exp1: Remove duplicate hogs
+Date: Sun, 2 Mar 2025 18:49:33 +0530
+Message-ID: <174092143352.3272913.15934714323142045116.b4-ty@ti.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218052248.4734-1-j-keerthy@ti.com>
-References: <20250218052248.4734-1-j-keerthy@ti.com>
+In-Reply-To: <20250110105753.223049-1-j-choudhary@ti.com>
+References: <20250110105753.223049-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,23 +78,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Keerthy,
+Hi Jayesh Choudhary,
 
-On Tue, 18 Feb 2025 10:52:48 +0530, Keerthy wrote:
-> Currently we get the warning:
+On Fri, 10 Jan 2025 16:27:53 +0530, Jayesh Choudhary wrote:
+> The j784s4-evm board dts now has the gpio hogs for MUX2 after integration
+> of audio support. Remove duplicate gpio-hogs from the overlay dtso to
+> prevent mux probe failures leading to can-phy3 deferred probe:
+> 'gpio-mux mux-controller: probe with driver gpio-mux failed with error -16'
 > 
-> "GICv3: [Firmware Bug]: GICR region 0x0000000001900000 has
-> overlapping address"
 > 
-> As per TRM GICD is 64 KB. Fix it by correcting the size of GICD.
-> 
-> [...]
 
 I have applied the following to branch ti-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
-      commit: 398898f9cca1a19a83184430c675562680e57c7b
+[1/1] arm64: dts: ti: k3-j784s4-evm-quad-port-eth-exp1: Remove duplicate hogs
+      commit: 8a3629a6a9e52b30c55910b26c9c0dbc376f9d29
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
