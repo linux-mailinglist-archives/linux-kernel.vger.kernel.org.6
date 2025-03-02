@@ -1,61 +1,50 @@
-Return-Path: <linux-kernel+bounces-540578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69557A4B267
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:57:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E093DA4B26C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D924A3B169F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C9A16AB22
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108051E7C11;
-	Sun,  2 Mar 2025 14:56:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342141E9B0F;
-	Sun,  2 Mar 2025 14:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC101E5B9C;
+	Sun,  2 Mar 2025 14:58:37 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92B71D61BB;
+	Sun,  2 Mar 2025 14:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740927381; cv=none; b=SaSDHVxtDx02R7eUxcuwr22UTwOUT293mm1Rzoj7wgCFdhD7LgS7QLBN+H3yFntWbnkSo6Oc4eesBSsnJ8EAQRuc8SGMLR21qnbyMh0OqLenYCXZS9N354vXnGAEnYRW6Fs5tXLv5QUBpmuBHz9zPmD1BRz5fCp636n0p5gfFHI=
+	t=1740927517; cv=none; b=D5rS6caeBfjSWgiNNqUC68ZAsi3XOsBH5RcDWfS8YQ6eh50ouq5zpBk3dIVtnx3w9Oe3hM8a3gCW9RPnsniktcEtUWpEUvcm3Cg0RdfKuzH1JJAyXeNvTnBwq4gennyk/VR3WNiAPkSHmyOt7qt0xf0wfzU3xMZ3cnDgT4ZtYuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740927381; c=relaxed/simple;
-	bh=gkwezS/qGz/I3SC4gYkhlAvY8ERWPwpAABKLlKZT2ec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fy7HpR4PAmj+pX8hxchOwYfKG8cdGqPh+kPxmuigXuinmjFUN7Gbp30lrom+e0XpM6O6lLberxkze4OtjiwmVJCJxT4ydI2yLfgNW/e2E88B/yoPfpxxXbhMrQK9A+kzt/mGqNyFz2d2+SWCYoCTR753D2YGuAlEFc2u+zyxPb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B79A16F8;
-	Sun,  2 Mar 2025 06:56:33 -0800 (PST)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB8B43F5A1;
-	Sun,  2 Mar 2025 06:56:16 -0800 (PST)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-mm@kvack.org,
-	sparclinux@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] Revert "x86/xen: allow nesting of same lazy mode"
-Date: Sun,  2 Mar 2025 14:55:54 +0000
-Message-ID: <20250302145555.3236789-5-ryan.roberts@arm.com>
+	s=arc-20240116; t=1740927517; c=relaxed/simple;
+	bh=LeEMDPxI1ATJTE3OiKu7NT5rcQV6cwKsotz8B5qc6OM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P/OKrZjNvSed2cQXHMFTZ1X0vbdYo3CvZ34VPfNdhompB6DyLntY9BVO5CtqMvlPJhqjnCFbcYdf5hCJ5j8G8yx+zc1Tjya6uWY0lNjFd9/i4lj3UFV0r5xL2vfo+RE7giIMJPzEImHWG+4QR0Y3VjpyajxmuQ6x7rgXw72ZUFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Sun, 2 Mar
+ 2025 17:58:27 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Sun, 2 Mar 2025
+ 17:58:27 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Shuah Khan <skhan@linuxfoundation.org>, Kieran Bingham
+	<kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: [PATCH v2] media: vimc: skip .s_stream() for stopped entities
+Date: Sun, 2 Mar 2025 17:58:25 +0300
+Message-ID: <20250302145827.1600172-1-n.zhandarovich@fintech.ru>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250302145555.3236789-1-ryan.roberts@arm.com>
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,87 +52,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-Commit 49147beb0ccb ("x86/xen: allow nesting of same lazy mode") was
-added as a solution for a core-mm code change where
-arch_[enter|leave]_lazy_mmu_mode() started to be called in a nested
-manner; see commit bcc6cc832573 ("mm: add default definition of
-set_ptes()").
+Syzbot reported [1] a warning prompted by a check in call_s_stream()
+that checks whether .s_stream() operation is warranted for unstarted
+or stopped subdevs.
 
-However, now that we have fixed the API to avoid nesting, we no longer
-need this capability in the x86 implementation.
+Add a simple fix in vimc_streamer_pipeline_terminate() ensuring that
+entities skip a call to .s_stream() unless they have been previously
+properly started.
 
-Additionally, from code review, I don't believe the fix was ever robust
-in the case of preemption occurring while in the nested lazy mode. The
-implementation usually deals with preemption by calling
-arch_leave_lazy_mmu_mode() from xen_start_context_switch() for the
-outgoing task if we are in the lazy mmu mode. Then in
-xen_end_context_switch(), it restarts the lazy mode by calling
-arch_enter_lazy_mmu_mode() for an incoming task that was in the lazy
-mode when it was switched out. But arch_leave_lazy_mmu_mode() will only
-unwind a single level of nesting. If we are in the double nest, then
-it's not fully unwound and per-cpu variables are left in a bad state.
+[1] Syzbot report:
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5933 at drivers/media/v4l2-core/v4l2-subdev.c:460 call_s_stream+0x2df/0x350 drivers/media/v4l2-core/v4l2-subdev.c:460
+Modules linked in:
+CPU: 0 UID: 0 PID: 5933 Comm: syz-executor330 Not tainted 6.13.0-rc2-syzkaller-00362-g2d8308bf5b67 #0
+...
+Call Trace:
+ <TASK>
+ vimc_streamer_pipeline_terminate+0x218/0x320 drivers/media/test-drivers/vimc/vimc-streamer.c:62
+ vimc_streamer_pipeline_init drivers/media/test-drivers/vimc/vimc-streamer.c:101 [inline]
+ vimc_streamer_s_stream+0x650/0x9a0 drivers/media/test-drivers/vimc/vimc-streamer.c:203
+ vimc_capture_start_streaming+0xa1/0x130 drivers/media/test-drivers/vimc/vimc-capture.c:256
+ vb2_start_streaming+0x15f/0x5a0 drivers/media/common/videobuf2/videobuf2-core.c:1789
+ vb2_core_streamon+0x2a7/0x450 drivers/media/common/videobuf2/videobuf2-core.c:2348
+ vb2_streamon drivers/media/common/videobuf2/videobuf2-v4l2.c:875 [inline]
+ vb2_ioctl_streamon+0xf4/0x170 drivers/media/common/videobuf2/videobuf2-v4l2.c:1118
+ __video_do_ioctl+0xaf0/0xf00 drivers/media/v4l2-core/v4l2-ioctl.c:3122
+ video_usercopy+0x4d2/0x1620 drivers/media/v4l2-core/v4l2-ioctl.c:3463
+ v4l2_ioctl+0x1ba/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl fs/ioctl.c:892 [inline]
+ __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2b85c01b19
+...
 
-So the correct solution is to remove the possibility of nesting from the
-higher level (which has now been done) and remove this x86-specific
-solution.
-
-Fixes: 49147beb0ccb ("x86/xen: allow nesting of same lazy mode")
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Reported-by: syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5bcd7c809d365e14c4df
+Fixes: adc589d2a208 ("media: vimc: Add vimc-streamer for stream control")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 ---
- arch/x86/include/asm/xen/hypervisor.h | 15 ++-------------
- arch/x86/xen/enlighten_pv.c           |  1 -
- 2 files changed, 2 insertions(+), 14 deletions(-)
+v1 -> v2: Use v4l2_subdev_is_streaming() instead of directly reading
+->s_stream_enabled field to determine to check streaming status.
 
-diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
-index a9088250770f..bd0fc69a10a7 100644
---- a/arch/x86/include/asm/xen/hypervisor.h
-+++ b/arch/x86/include/asm/xen/hypervisor.h
-@@ -72,18 +72,10 @@ enum xen_lazy_mode {
- };
- 
- DECLARE_PER_CPU(enum xen_lazy_mode, xen_lazy_mode);
--DECLARE_PER_CPU(unsigned int, xen_lazy_nesting);
- 
- static inline void enter_lazy(enum xen_lazy_mode mode)
- {
--	enum xen_lazy_mode old_mode = this_cpu_read(xen_lazy_mode);
--
--	if (mode == old_mode) {
--		this_cpu_inc(xen_lazy_nesting);
--		return;
--	}
--
--	BUG_ON(old_mode != XEN_LAZY_NONE);
-+	BUG_ON(this_cpu_read(xen_lazy_mode) != XEN_LAZY_NONE);
- 
- 	this_cpu_write(xen_lazy_mode, mode);
- }
-@@ -92,10 +84,7 @@ static inline void leave_lazy(enum xen_lazy_mode mode)
- {
- 	BUG_ON(this_cpu_read(xen_lazy_mode) != mode);
- 
--	if (this_cpu_read(xen_lazy_nesting) == 0)
--		this_cpu_write(xen_lazy_mode, XEN_LAZY_NONE);
--	else
--		this_cpu_dec(xen_lazy_nesting);
-+	this_cpu_write(xen_lazy_mode, XEN_LAZY_NONE);
- }
- 
- enum xen_lazy_mode xen_get_lazy_mode(void);
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 5e57835e999d..919e4df9380b 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -99,7 +99,6 @@ struct tls_descs {
- };
- 
- DEFINE_PER_CPU(enum xen_lazy_mode, xen_lazy_mode) = XEN_LAZY_NONE;
--DEFINE_PER_CPU(unsigned int, xen_lazy_nesting);
- 
- enum xen_lazy_mode xen_get_lazy_mode(void)
- {
--- 
-2.43.0
+ drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/drivers/media/test-drivers/vimc/vimc-streamer.c b/drivers/media/test-drivers/vimc/vimc-streamer.c
+index 807551a5143b..15d863f97cbf 100644
+--- a/drivers/media/test-drivers/vimc/vimc-streamer.c
++++ b/drivers/media/test-drivers/vimc/vimc-streamer.c
+@@ -59,6 +59,12 @@ static void vimc_streamer_pipeline_terminate(struct vimc_stream *stream)
+ 			continue;
+ 
+ 		sd = media_entity_to_v4l2_subdev(ved->ent);
++		/*
++		 * Do not call .s_stream() to stop an already
++		 * stopped/unstarted subdev.
++		 */
++		if (!v4l2_subdev_is_streaming(sd))
++			continue;
+ 		v4l2_subdev_call(sd, video, s_stream, 0);
+ 	}
+ }
 
