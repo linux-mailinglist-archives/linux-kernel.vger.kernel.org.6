@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-540580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0DDA4B26E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:59:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64C6A4B26F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C95A16D87F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 14:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82B91881F86
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 15:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200C41E7C25;
-	Sun,  2 Mar 2025 14:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6081E8823;
+	Sun,  2 Mar 2025 14:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N5rXtFnP"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MBsne84T"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8BF1D61BB
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 14:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C761E7660
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Mar 2025 14:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740927581; cv=none; b=H0emH3rZsVchqdeV09sdwR1QWOkdEYWXDqkUlcmWvIDKD31xw2OocOgO9mtvKwHFhy13j6AzYg03Wc7EWfWEZqQqwGJTpSmRVHXsFv5zHDW1fin2t5nbdTGqLa82B+dG9yLlOpFE3tOetvH/5haMgrTWAjgiwRlVXlr7l7mxMeE=
+	t=1740927582; cv=none; b=RH6HCIWxYtkL52w4vBi+NFevjJfh1ENLFTMRDB7xDaXshCQbVjO+mii5I97KPJb2TPvlE4pgFAWdw/qQiVrYbV979BFuh5X+61FcEcHnjxyIdxrCckNZBeFVY9f4+3R1ntzwbelYXiyOtPH01KsVh8V9ZLBmbpJCHjEVseYxOTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740927581; c=relaxed/simple;
-	bh=vG5djXaFhKK3CzDRSFtUV0aHIyTlukv5vBOR74eFVik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oGoIP9Gkkg0d2IyLzNTZ9DDhPNLOj7nK64IZFGAnSZKgbg+QxMQl1aAFwc7y5+3HqARMjdwYVVFgSsV1ZQDjxD2devrQzcROv+e2xuKrtXKR9VAIOz6oFTIwk4nwwLJ6w0JrLdKhIrGz5Pb7pjeHaWeP8sYUW9SbTCjO1DVhJhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N5rXtFnP; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1740927582; c=relaxed/simple;
+	bh=FngX9NDA7j3IY+OdMmDca2IogBcJc4D0V3OHsPIPnrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uFriwqO6U8olBGt4kHvxpZD2de/P0AGFjz4W9B/J/tjIwYF6oA43tTxCabpQ3rGwdZ9wS9RF49vkJZhog30UBGOUESORoS6Uzvz/Fdz3Vokc9nb2YFY33s5vZsAB3vts9HCXYiV97fxzol99PIHyeGqfnT8HlJyNP91gfTgMU44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MBsne84T; arc=none smtp.client-ip=80.12.242.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id okmqtJVk70yWRokmut9O82; Sun, 02 Mar 2025 15:59:29 +0100
+	id okmqtJVk70yWRokn4t9OHq; Sun, 02 Mar 2025 15:59:39 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740927569;
-	bh=CHITz2+YWVCqZNH8zM0mCk4OaRmTsJ9xq+F0/7AL1r0=;
+	s=t20230301; t=1740927579;
+	bh=7m8X2HCaZAYsFWSmtyiQM+IwxWQ2FTT2RuVDQw5Wmz8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=N5rXtFnPdciX4yYY/+OAbDtQWCPVFXb0Q7ZwJp8RQBxYKLhiMBfbZELmQBspi2cz1
-	 UQfhmOdjvcCKk8TTVQw3QfKhcIjwpXFb15L44d4zDcZYuBJTEK7MFXW2pCFKjXAzEe
-	 cKfqVLg6T7j+bKTKCacfO0894mvXRItoyqSZ1g1o9VfvgmqHCef9O9EUCkv+Orl6Tu
-	 kPikree9OBxPQRsJkIMX31J6B4IZUIQWWkmEb0fDkWhYRi8rUCNLBZ2LG4lbPcRT1S
-	 7XITGjy/ij66aTeP0D4yYEFD8PvqSHCBm+EEM8FpQBDp/8wCUKI6iMIACeYJh0ei05
-	 BGeJgUR0rJwkQ==
+	b=MBsne84TkdsRHqfUbFe5BPJjnldQEWEA9Xqy7Wj9R4KQIbAr0rCx+jYiaYT7AxYNX
+	 Z0GJnimiD/aK+L0gL5zooz1nui+83vDbVo3Nigiw1VpJdLi81Uc7hVzUBjHWyMBNtR
+	 6e9SKa2/dbQQ0kwBex9GVNIjf8gJav/HFX+feV8ydI5pUULz1piZ9Gk8jAuLcbDeii
+	 /cTrSbyjlD5/QmVKVd+BmjTlneUUTcjDw7vBjlFfR7jMq649WE2fuvM+DjX1zsmN63
+	 zLJKvpSWLyLMrGhm87gKpNC+22QrfbBUl8lPYnLAtoEB95Vcqt4fm6ywQ385Pul4D5
+	 4G/gkDfIBzcyw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Mar 2025 15:59:29 +0100
+X-ME-Date: Sun, 02 Mar 2025 15:59:39 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: maddy@linux.ibm.com,
@@ -56,10 +57,12 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/2] powerpc: gpio_mdio: Simplify gpio_mdio_probe()
-Date: Sun,  2 Mar 2025 15:59:14 +0100
-Message-ID: <cover.1740926808.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] powerpc: gpio_mdio: Use devm_mdiobus_alloc_size()
+Date: Sun,  2 Mar 2025 15:59:15 +0100
+Message-ID: <2d02da3bebb2273782e535201cc9512f3cdbccab.1740926808.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1740926808.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1740926808.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,26 +71,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While wondering if it was correct to call mdiobus_free() in the remove
-function and only kfree() in the error handling of the probe, I
-arrived at the conclusion that the code could be simpler here.
+Use mdiobus_alloc_size() instead of a hand written mdiobus_alloc() +
+kzalloc().
 
-Patch 1 uses mdiobus_alloc_size() instead of a hand written
-mdiobus_alloc() + kzalloc(). it also uses the devm_ version in order to
-save some LoC (and answer my initial question)
+This is less verbose and more robust. It also reduces memory fragmentation
+and saves a few bytes of memory.
 
-Patch 2 uses devm_of_mdiobus_register() to completly remove the .remove()
-function and save some more LoC.
+While at it, switch to devm_mdiobus_alloc_size() for extra simplification.
 
-Both patches are compile tested only.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only.
 
-Christophe JAILLET (2):
-  powerpc: gpio_mdio: Use devm_mdiobus_alloc_size()
-  powerpc: gpio_mdio: Use devm_of_mdiobus_register()
+Some memory is saved because pahole states, on a x86_64,  that:
 
- arch/powerpc/platforms/pasemi/gpio_mdio.c | 41 ++++-------------------
- 1 file changed, 6 insertions(+), 35 deletions(-)
+struct mii_bus {
+	...
+	/* size: 3640, cachelines: 57, members: 23 */
+	/* sum members: 3633, holes: 2, sum holes: 7 */
+	/* member types with holes: 3, total: 4, bit paddings: 1, total: 1 bit */
+	/* paddings: 1, sum paddings: 3 */
+	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
+	/* last cacheline: 56 bytes */
+}
 
+Because of the way allocation works, 4096 bytes are allocated. When
+mdiobus_alloc_size() is used, struct gpio_priv fits in this "wasted" space
+and so is available "for free".
+---
+ arch/powerpc/platforms/pasemi/gpio_mdio.c | 26 +++++------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
+
+diff --git a/arch/powerpc/platforms/pasemi/gpio_mdio.c b/arch/powerpc/platforms/pasemi/gpio_mdio.c
+index e4538d471256..2c54f5f063b7 100644
+--- a/arch/powerpc/platforms/pasemi/gpio_mdio.c
++++ b/arch/powerpc/platforms/pasemi/gpio_mdio.c
+@@ -213,15 +213,11 @@ static int gpio_mdio_probe(struct platform_device *ofdev)
+ 	const unsigned int *prop;
+ 	int err;
+ 
+-	err = -ENOMEM;
+-	priv = kzalloc(sizeof(struct gpio_priv), GFP_KERNEL);
+-	if (!priv)
+-		goto out;
+-
+-	new_bus = mdiobus_alloc();
+-
++	new_bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
+ 	if (!new_bus)
+-		goto out_free_priv;
++		return -ENOMEM;
++
++	priv = new_bus->priv;
+ 
+ 	new_bus->name = "pasemi gpio mdio bus";
+ 	new_bus->read = &gpio_mdio_read;
+@@ -230,7 +226,6 @@ static int gpio_mdio_probe(struct platform_device *ofdev)
+ 
+ 	prop = of_get_property(np, "reg", NULL);
+ 	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%x", *prop);
+-	new_bus->priv = priv;
+ 
+ 	prop = of_get_property(np, "mdc-pin", NULL);
+ 	priv->mdc_pin = *prop;
+@@ -246,17 +241,10 @@ static int gpio_mdio_probe(struct platform_device *ofdev)
+ 	if (err != 0) {
+ 		pr_err("%s: Cannot register as MDIO bus, err %d\n",
+ 				new_bus->name, err);
+-		goto out_free_irq;
++		return err;
+ 	}
+ 
+ 	return 0;
+-
+-out_free_irq:
+-	kfree(new_bus);
+-out_free_priv:
+-	kfree(priv);
+-out:
+-	return err;
+ }
+ 
+ 
+@@ -267,10 +255,6 @@ static void gpio_mdio_remove(struct platform_device *dev)
+ 	mdiobus_unregister(bus);
+ 
+ 	dev_set_drvdata(&dev->dev, NULL);
+-
+-	kfree(bus->priv);
+-	bus->priv = NULL;
+-	mdiobus_free(bus);
+ }
+ 
+ static const struct of_device_id gpio_mdio_match[] =
 -- 
 2.48.1
 
