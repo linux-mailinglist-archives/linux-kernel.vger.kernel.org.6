@@ -1,72 +1,55 @@
-Return-Path: <linux-kernel+bounces-540728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE22A4B44F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FF8A4B452
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 20:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DDE1691CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D858A3B0FA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Mar 2025 19:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCEB1EBA16;
-	Sun,  2 Mar 2025 19:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3007B2E630;
+	Sun,  2 Mar 2025 19:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B6urSYUr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2f68+Nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108531C5F3B;
-	Sun,  2 Mar 2025 19:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8518C1D79A6;
+	Sun,  2 Mar 2025 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740942645; cv=none; b=Q38uxAkHFo/AMrNFt2gQxNVPgON6PNxb1hJdrdnF65QZcgL5OZ3EZS7c7SjRXYceYwgMt1WkmV708LVsq10uaVHq1KkeNMagfLDXomKGD2i+ph5+VxuYIsGSJrbEVFfr7CCTujB9A3UuY2vmwbV54kgYnlzhUEEIPnl9M5Cuyvo=
+	t=1740942692; cv=none; b=YsINh4mZS2e/tzU4nQuunYpReT0U1C9Y0t0WWoWwmaNfzHhTLndW3c1i+YpJGDbHartT06BW/K3JacgPC/Rpu5p852cVNpaH8khttiHMRx/LwCxgrZpCXu0yC38y4vgEwf+H3+Aupx8W8TIhMt5exCj3TumpVhbp5dv3jJuH2jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740942645; c=relaxed/simple;
-	bh=JcZ+vMl+zjXx8xup6J9H0ZAOoYMsQu0rU+fdJTwpaBQ=;
+	s=arc-20240116; t=1740942692; c=relaxed/simple;
+	bh=XZV369gKHSeDsDgsRRK780FOKNoHFAEPdkxGBRpva7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRn6TBdmJ1AyFYPEFSMbyiPPk8Hg40SHAl2lbFXkAdo5ncb8nJACQRGIjF45T0t8GVawhtLj90/65m/DC9jM4BtjRCkp0v6Y0ZVVyN8wsKbCaRJ1EVkGQ2wt5cSiY7djUR52w0Dd4dfcKE00piSXertDT+ByNc/LRh8wt6nLtWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B6urSYUr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=IXF/lf9RkTF+j5lpFGM8UfHTw5xM20aqNxmAtRUwCzw=; b=B6urSYUrW1kGOkKWa8yrFzgQFz
-	i7bW8dVlm4httBvPnSc8962fMMtl2HE2UYGVNLiWBhDfaV0vCeHJ575n9ruOggIFzCTj/+Uc7VMn3
-	20WbnWJ5smlSyqLEBuAAxCaXeY4Vuiv7BpTYcTjq0brUw5V/BMFxAgGgfjBd0YDJkCcY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1toohm-001aK9-IT; Sun, 02 Mar 2025 20:10:26 +0100
-Date: Sun, 2 Mar 2025 20:10:26 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] dt-bindings: net: Document GBETH bindings for
- Renesas RZ/V2H(P) SoC
-Message-ID: <a1dbb3e8-4a52-4cc2-8e7b-cf240f726d5e@lunn.ch>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JzvXR5vcqkndTUvYP696GggBcQhTA78o9u87nm9R5LbOmKlwbfb9HJaymic1SE7damr/cN544fxsaoIJlZz6nFiqsvd7lpbKMwRo4UMhicUny9BnuPVEa+cTLoSsIZNCQfgzu1omRVfj6sjguN3cyCjAAFiCqBQ1SpHpHSVnqyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2f68+Nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6636CC4CED6;
+	Sun,  2 Mar 2025 19:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740942691;
+	bh=XZV369gKHSeDsDgsRRK780FOKNoHFAEPdkxGBRpva7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U2f68+Ndzfu+Y4MZCvf08RK6JG1U3c0VjsGyrfgWobqKPw70akKWS986eYuJ0gLzL
+	 85TL8lXrBhltygr6z/TWneIKSneEUaeq66vT/8q6eIU6UYGRolUIgDZIYcTguFgf/G
+	 SQUTgvaO110AmBcBP5urGcyAXZY5T9Exy+BZyFq7vdVmah8XWnrrB0e/bU/Di/CiKw
+	 uiJ08O4CQcHxZMnDh+6ySlo7mRZ1Q2KCcozq+DjZ57vdWOgIolPpUU87UxiVL1+/Ao
+	 HzfoB0dsgTO1PZgjh6KKFSfMuqPit8nydQijOWr8QtNs34TIFJwWqXjY+LDBbdzow9
+	 UPpkBRqg8HlBQ==
+Date: Sun, 2 Mar 2025 21:11:27 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: ftpm_tee: remove incorrect of_match_ptr annotation
+Message-ID: <Z8StX2KM24wQNdjA@kernel.org>
+References: <20250225163718.4169649-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,40 +58,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250302181808.728734-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250225163718.4169649-1-arnd@kernel.org>
 
-> +  interrupts:
-> +    items:
-> +      - description: Subsystem interrupt
-> +      - description: The interrupt to manage the remote wake-up packet detection
-> +      - description: The interrupt that occurs when Tx/Rx enters/exits the LPI state
-> +      - description: Per-channel transmission-0 completion interrupt
-> +      - description: Per-channel transmission-1 completion interrupt
-> +      - description: Per-channel transmission-2 completion interrupt
-> +      - description: Per-channel transmission-3 completion interrupt
-> +      - description: Per-channel receive-0 completion interrupt
-> +      - description: Per-channel receive-1 completion interrupt
-> +      - description: Per-channel receive-2 completion interrupt
-> +      - description: Per-channel receive-3 completion interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: macirq
-> +      - const: eth_wake_irq
-> +      - const: eth_lpi
-> +      - const: tx0
-> +      - const: tx1
-> +      - const: tx2
-> +      - const: tx3
-> +      - const: rx0
-> +      - const: rx1
-> +      - const: rx2
-> +      - const: rx3
+On Tue, Feb 25, 2025 at 05:37:15PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Building with W=1 shows a warning about of_ftpm_tee_ids being unused when
+> CONFIG_OF is disabled:
+> 
+>     drivers/char/tpm/tpm_ftpm_tee.c:356:34: error: unused variable 'of_ftpm_tee_ids' [-Werror,-Wunused-const-variable]
+> 
+> Drop the unnecessary of_match_ptr().
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> An earlier version had this combined with other changes, I made it
+> a separate patch now
+> ---
+>  drivers/char/tpm/tpm_ftpm_tee.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+> index 139556b21cc6..8d9209dfc384 100644
+> --- a/drivers/char/tpm/tpm_ftpm_tee.c
+> +++ b/drivers/char/tpm/tpm_ftpm_tee.c
+> @@ -362,7 +362,7 @@ MODULE_DEVICE_TABLE(of, of_ftpm_tee_ids);
+>  static struct platform_driver ftpm_tee_plat_driver = {
+>  	.driver = {
+>  		.name = "ftpm-tee",
+> -		.of_match_table = of_match_ptr(of_ftpm_tee_ids),
+> +		.of_match_table = of_ftpm_tee_ids,
+>  	},
+>  	.shutdown = ftpm_plat_tee_shutdown,
+>  	.probe = ftpm_plat_tee_probe,
+> -- 
+> 2.39.5
+> 
 
-There has already been a discussion about trying to make the clock
-names more uniform. But what about interrupts? Which of these are in
-the IP databook? What names does the databook use for these
-interrupts?
+It's now in my master (back from holidays)
 
-	Andrew
+BR, Jarkko
 
