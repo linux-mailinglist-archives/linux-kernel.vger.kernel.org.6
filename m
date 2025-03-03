@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-545298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6414A4EB60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9627A4EA5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AC8171A6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0732417DC7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5072857EA;
-	Tue,  4 Mar 2025 18:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC71290BAC;
+	Tue,  4 Mar 2025 17:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AgGcwQpK"
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="V2VWHjdH"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018B528151F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6968227817E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111561; cv=pass; b=Sxf1CPgATq3hspm02X+y+3Hg3P3yLQWrPLDA49T66wMAAtFg3DdzcU+EV0BkgnJaK7M6t0uHJyyWQCk/7g1UJ64De3K8rjHvsrOqspO23/57psFANuYNQOUgk+JcfjaHbjbLviwVqOS6iWnrZUY15yad4goM8R0F5i7MIOpT/jo=
+	t=1741109841; cv=pass; b=FSUbOcsJFr1ZQkKaSgjxUoRkgYyrRiQJfSQaLajDKjKodL7RttGpwV2xV3V1t6EuGWR3yNlJK4Tc7PrvvrmfBLLA+6alUpMMoEd2fV8SX6FusTAcchZ1rztCmIe0v8Vsz1gi2cnYiB/P22Lvjs9EBSdSqMbwLCHJXRX4gkBbl+k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111561; c=relaxed/simple;
-	bh=N3wQh8T8R+oyQquFXErkUP6hlk+nCAPLdOcYJoj+EBQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cXfVksVreOW8tAhfiBT3NCxZhYnIOoVHWbT/CDoNYhaaLMBOWEY2TgRIBgXRh53BoqYQcaTqC5X2OQhsUL4ch+hExgccXi37qvyby8RNNmU9qdEC33/JrSmvp1ssqqoojoBjsoQutKFHVN7Svg4nEiqxTdYgyjyhwyJ98O6+l20=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AgGcwQpK; arc=none smtp.client-ip=209.85.128.42; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	s=arc-20240116; t=1741109841; c=relaxed/simple;
+	bh=AMDQ9eFx0aMl37aNjAdud2rQll+8S9hW7w2yT459u9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qc7Tb9myMMTfX7ZZWkksqurj4/BCeUv/V2wbK+Gz05ShR2AOMtmBB8QQUTNPTtdV+AfCvFfxysMFsOqkQSsuACstZczilWdTiCX4HCzHYmtjHdd+1OHjWr1rX/5161CfoqNoICGfaf175qnhlm4cxzb0+6aSohyl0lgj+754KOI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH; arc=none smtp.client-ip=94.124.121.26; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 4B12040D1F47
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:05:58 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id CB32C40CEC97
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:37:16 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=AgGcwQpK
+	dkim=pass (2048-bit key, unprotected) header.d=protonic.nl header.i=@protonic.nl header.a=rsa-sha256 header.s=202111 header.b=V2VWHjdH
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fM40YgqzFygj
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:13:04 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dN60R0YzFwlM
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:54 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id CBA564273C; Tue,  4 Mar 2025 18:12:51 +0300 (+03)
+	id B2A4E400C6; Tue,  4 Mar 2025 17:28:34 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AgGcwQpK
-X-Envelope-From: <linux-kernel+bounces-541790-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH
+X-Envelope-From: <linux-kernel+bounces-541784-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AgGcwQpK
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 5C4274205A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:21:28 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id E71D33063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:21:27 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 15B8041AD7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:20:07 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id BE722305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:20:06 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E59B3A9C34
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151D116E48C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D503D214A73;
-	Mon,  3 Mar 2025 13:18:52 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A35213E92;
+	Mon,  3 Mar 2025 13:18:48 +0000 (UTC)
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC512139D7
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4F120F093
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007928; cv=none; b=gKb+tkE5t6+ByNrh254dClXTzEp+k9YVf3uiqjV2reC0cCDraOWz51jvU6+7BAjLV6GfTzDTAgdZ3SwP/qiqCJw9RO9gkZPy+4yirabA3WXQKn3ssSWjLTvUM+NBx8jLgzUdOLUekQG6DK31k0apXKZe8JWyyNBm+LP+o158U7Y=
+	t=1741007923; cv=none; b=fKuBsotT/r/oTKUFj/dRXPtxU+rpDz1sXecsgbthSSum4WnvtaweEnsiRiNBKsJ7MT4jTCi9LGYyxnKRLhoj3halOojX/8Qnk+hopDxobi+qd6rJeim4gsdbOxOP8Pkb/nQ1obZe0V200wcs+TTJB+6P5L1xEXI/imZXnNzY2GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007928; c=relaxed/simple;
-	bh=N3wQh8T8R+oyQquFXErkUP6hlk+nCAPLdOcYJoj+EBQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GjWa8RcUlPjvKnXmG5e7fJ9vTrs/JiR1YBFrbiHuWUOtbDblINTHxImByn6k9hKkLqAOreq6jJN+3ENjFNRV/oPCMMCo6Cmwov1kzup0cGKG0mxmxW8MAglq5FN90EPLOAGv0sYpKmS75fm91BQhwwKsj3o9mb2Ww4XNX92/IEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AgGcwQpK; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso30219925e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:18:46 -0800 (PST)
+	s=arc-20240116; t=1741007923; c=relaxed/simple;
+	bh=AMDQ9eFx0aMl37aNjAdud2rQll+8S9hW7w2yT459u9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7ywlUY++JYkYwDOiJ6lnVZaFRwVQK5h6Mr/TGzRn0DBWxwKy3EBYMmQiYtcQBfyEgANCtFB/ZfJ7SQOJZ0mG6+WkiQ1C1BOiS7uMsOLYAWKIW/t+sfjbkOULDLcVxXSjWkFd+l4D85juZwALB3+IfKbDBCyNQLXKVRqqWczII4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741007925; x=1741612725; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gz+znbWREsKmtzW3OBAmXUrUOCp/yw4x3Y/d/8vV1Bs=;
-        b=AgGcwQpKYe+mQ1azxQmPmDBCxDUX1YZ41OESIfHlHsHcCiMMBuvhlABAUiLe7ck8kG
-         ayw1+7AO2ztPuGvgC7c1nS3pal0slKg9CevHYN4nl6ULPqqohgw/0VDLU3ImCWRpPVK/
-         N2i36bnaEkZP0ogUl+DlbN1xZnuIM3RK5L/XP96WIBklAhC6ipuwEUJaMHAssgKmI38Q
-         nrLsX1mkqIRuguYTuDp6+9o1FV6s1/jzUCt+iscnuTqDV5a8VFH6dzd5JvGhNIQgt3uz
-         PWCfn6b+0uvosNuA8L+mj/7CtgrZGVJMR/Nsw9toc2HYtkFpmnKe8EtPlH0l+SnhgNky
-         4/yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741007925; x=1741612725;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gz+znbWREsKmtzW3OBAmXUrUOCp/yw4x3Y/d/8vV1Bs=;
-        b=EO/S4MxrLud8HMdS/ZLW958EVPYukpYSPK3wAkuWRRRdzwbnwvXNLgs+S9go02x+gw
-         aFyp5yT7WG5RLfv5BKrN9yZrQKcdnc8Uv6/B4FztkqpLLU+s65AjmOgfxT7Z1K/SyWEK
-         CH2DzbeIVDbDkxWCY1dDK3g4axqRMUWZv07iNA0kdIepFLurpsGAug10PVCcCmzRdTYR
-         4/GlOoQXCSYrAaOcQGKTL2GbILp9YaZt1zjCFPr5oYYlBjIFMh9lNHjt9Of3IUfd1XaS
-         Ghi2xqeYEBTQzq0M5mEvx7iz70gKnk/+WSfomOMvSIVpTSA7PAHDwrMioQPuwr+Y4CbK
-         lXrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKQt0Z+aRoJoE6gQmGrSefZ0ZPeXGPu146KN408Pi7CbbzISOP0mKmzwVP6QVWW9cYrD2uC7PE0N8P9vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZtgsngE2QiZ8LlJrXr5Q8T3oMtJDHRiNA4hNtUANUwFjQWYrE
-	WKWMu2NVqHeNtOrNugPOoGAF7VaiV27G51OFhJu2sIqMD+ylhzTqZ3fxjtSkbDs=
-X-Gm-Gg: ASbGncsWB3j4M4DXZboUp+bd/Z0Pb9j0swnQRUGmQqp8tO92b0EVSdC9kpi79Sy1yC3
-	bN/DVd2T0C0bLnPnW8vJw6DDHpBqdLwRnsKLUdQaSiWj1kgxFe0ChMP8CWLD4xGiUabyDoQl6Q7
-	/gHCChTavVmWfK+pQMeTOMiAw2AXIEtXpPS3ZOcupUaMERsSElDHHwrFh7ICaW1/pLYBtnzDfGF
-	JqlKD8yfotp8KV82oDsrkyBqFwJiiIRVBxTJM7vrnwmRgooletAMhUCab2mnZdwwwIfa/qsKqcT
-	WvgWsdLLwsvb8FcRs9qpFYpCnJLeaPV7YeYVjw==
-X-Google-Smtp-Source: AGHT+IEQW7YZHCrSLWSEknFmca2KCALoGeG/H70z0XerHtGSCpqthigF58jSy3FNcBdb29iDiMLtqA==
-X-Received: by 2002:a05:600c:5493:b0:43b:c3af:3304 with SMTP id 5b1f17b1804b1-43bc3af34c2mr18251825e9.28.1741007925218;
-        Mon, 03 Mar 2025 05:18:45 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:664a:9e92:6aa8:6007])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba538b9fsm194821915e9.17.2025.03.03.05.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:18:44 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 03 Mar 2025 14:18:32 +0100
-Subject: [PATCH 07/15] gpio: altera-a10sr: use new line value setter
- callbacks
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=07jHBQ0Ocr20eMkBHU7wCv3Kb+u8M2gSl1jHl4Krjyw=;
+	b=V2VWHjdH50wFOAzqiqTCz4ucfQSAqCESzCrmKnlGDokUdrXyVCjY95wGlKxQEqab88IbyapJ8HitR
+	 HhPCkTVbdTVmITlaPVwF3DF45rsjZ8KKS9QR1QgL9Z9ZJ5PpeqMyb4Z4Br1b1QGHaU9XuSjwQA5XjL
+	 A9EK9KrVHqZcBBGpkCbhwHNy2zuIXnCvY+Yqh6IJUonUEaNniEQT+LOJaiv8qIBYHv/lxzT4aRN+2w
+	 0Ycn1oeGVIj2B/QPxKjK8H50uESCFnozuiYgwKdA25We/6ZDtA7Zez1CmVi/IbJCfJ/OrJ8aJ40Ipn
+	 ZWeXSYlWcX+QRqZW16a2zXBCEZZ+o4g==
+X-MSG-ID: 04a26b70-f832-11ef-a39b-00505681446f
+Date: Mon, 3 Mar 2025 14:18:37 +0100
+From: David Jander <david@protonic.nl>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 6/7] dt-bindings: motion: Add adi,tmc5240 bindings
+Message-ID: <20250303141837.782e57f7@erd003.prtnl>
+In-Reply-To: <CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-7-david@protonic.nl>
+	<7b2a8d71-9d83-4d40-903b-ba7ef1c686f3@baylibre.com>
+	<20250303122253.26fec335@erd003.prtnl>
+	<CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -131,95 +116,266 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-gpiochip-set-conversion-v1-7-1d5cceeebf8b@linaro.org>
-References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-In-Reply-To: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mun Yew Tham <mun.yew.tham@intel.com>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pwm@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1769;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=92motqkZmcdTqKDZ0pbU5Fpe7KR5fxlrz4Z+U7eO+v4=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnxawqQygDSg3gkaKutuN+SS1W5PBDPQ7axtGpJ
- lUog7E6preJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ8WsKgAKCRARpy6gFHHX
- cuH1EACxW2kuBBYKDwQHK83+US5eYzcAEXawXkCLyQoz2XEfFhdxD1QimIFJm1EqYBPUh5CBWOL
- zxkL3aKSAQoJY9jWFS1zvyq4/gZPTJycJKRXlu+HFjzqz/79hvUZXEuHFyTtXR54uhXDFki5Mb0
- 4o2PkqsrKtU6lKxwTvH0+TS2/iEM0KOfbz/v95WtFK1jQdXS3aQ4h8CWtCMk38CElYwAVbvkEin
- FUO2PFSqtIULt6+l0Pz2dCU4CyDlX1gtFbx8WCGsAqEZpCVy8auMyCJxXJKdb+OxQLaHuBviW6t
- WYshDG8yH/A4XF8qXXQVjKun41VUgQERbIG39PWLFzBy57Mt2aPTwQK2+++qcUzuu0WOIRqiuoA
- pX58nz5K2Ygn+zXT35ywaDi1a2P0G8L8+ErRo2EuKTZ8Jb20BR8tf7oeKLNu3Bls/15jxGHfaS1
- mO8QBHt3R0bLpwCpgNeRiBtS6N7cLl3iqAqhdn7k21X7n8mvTszallAnm3vrD7sYz9ocWHaSA4c
- CvGPG6EjE+KhtsbPaTm87Z918cA8JFDaq8Ey0dvM2ITRG/Kw7hUBZw7T61YBjIXYTWgun/siEhN
- QHSXI0VHOtUW40UFWOcUyoi9vM6C3GVuTarMHdLs2kvL7JyDDe/b6yX/ILTUitQx3Bm6dWAdZ33
- MEJlJpdfI9kdwAg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fM40YgqzFygj
+X-ITU-Libra-ESVA-ID: 4Z6dN60R0YzFwlM
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741716252.69123@J1mMuEgkjm7QoWNUei6Bsg
+X-ITU-Libra-ESVA-Watermark: 1741714545.47103@UBeHqGJXNqB24X1TP9xePg
 X-ITU-MailScanner-SpamCheck: not spam
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+Dear David,
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-altera-a10sr.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On Mon, 3 Mar 2025 13:28:35 +0100
+David Lechner <dlechner@baylibre.com> wrote:
 
-diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
-index 11edf1fe6c90..77a674cf99e4 100644
---- a/drivers/gpio/gpio-altera-a10sr.c
-+++ b/drivers/gpio/gpio-altera-a10sr.c
-@@ -35,15 +35,15 @@ static int altr_a10sr_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(val & BIT(offset - ALTR_A10SR_LED_VALID_SHIFT));
- }
- 
--static void altr_a10sr_gpio_set(struct gpio_chip *chip, unsigned int offset,
--				int value)
-+static int altr_a10sr_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			       int value)
- {
- 	struct altr_a10sr_gpio *gpio = gpiochip_get_data(chip);
- 
--	regmap_update_bits(gpio->regmap, ALTR_A10SR_LED_REG,
--			   BIT(ALTR_A10SR_LED_VALID_SHIFT + offset),
--			   value ? BIT(ALTR_A10SR_LED_VALID_SHIFT + offset)
--			   : 0);
-+	return regmap_update_bits(gpio->regmap, ALTR_A10SR_LED_REG,
-+				  BIT(ALTR_A10SR_LED_VALID_SHIFT + offset),
-+				  value ?
-+				  BIT(ALTR_A10SR_LED_VALID_SHIFT + offset) : 0);
- }
- 
- static int altr_a10sr_gpio_direction_input(struct gpio_chip *gc,
-@@ -69,7 +69,7 @@ static const struct gpio_chip altr_a10sr_gc = {
- 	.label = "altr_a10sr_gpio",
- 	.owner = THIS_MODULE,
- 	.get = altr_a10sr_gpio_get,
--	.set = altr_a10sr_gpio_set,
-+	.set_rv = altr_a10sr_gpio_set,
- 	.direction_input = altr_a10sr_gpio_direction_input,
- 	.direction_output = altr_a10sr_gpio_direction_output,
- 	.can_sleep = true,
+> (Sorry if you get this twice. I don't have my regular computer today
+> and didn't realize I was sending HTML the first time. Resending in
+> plain text so the lists pick it up.)
+>=20
+> On Mon, Mar 3, 2025 at 12:22=E2=80=AFPM David Jander <david@protonic.nl> =
+wrote:
+> >
+> >
+> > Dear David,
+> >
+> > On Fri, 28 Feb 2025 16:38:51 -0600
+> > David Lechner <dlechner@baylibre.com> wrote:
+> > =20
+> > > On 2/27/25 10:28 AM, David Jander wrote: =20
+> > > > Add device-tree bindings for Analog Devices TMC5240 stepper control=
+lers.
+> > > >
+> > > > Signed-off-by: David Jander <david@protonic.nl>
+> > > > ---
+> > > >  .../bindings/motion/adi,tmc5240.yaml          | 60 +++++++++++++++=
+++++
+> > > >  1 file changed, 60 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/motion/adi,tm=
+c5240.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/motion/adi,tmc5240.y=
+aml b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..3364f9dfccb1
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > > > @@ -0,0 +1,60 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/motion/adi,tmc5240.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Analog Devices TMC5240 Stepper Motor controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - David Jander <david@protonic>
+> > > > +
+> > > > +description: |
+> > > > +   Stepper motor controller with motion engine and SPI interface. =
+=20
+> > >
+> > > Please include a link to the datasheet. =20
+> >
+> > Will do.
+> > =20
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - adi,tmc5240
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  interrupts:
+> > > > +    maxItems: 1 =20
+> > >
+> > > I assume that this is the overvoltage output (OV pin). Would be nice =
+to have
+> > > a description here saying that. There are also NAO and DIAG0/1 output=
+ pins, so
+> > > it's a bit ambiguous otherwise. =20
+> >
+> > This is the DIAG0 output pin which on this chip has a dual function as =
+either
+> > a STEP output or an interrupt output. The pin name is a bit misleading,=
+ but it
+> > is the "interrupt" function that is meant here. The datasheet documents=
+ all
+> > the different events that can trigger this interrupt.
+> > I will add a description to clarify this.
+> > =20
+>=20
+> If it makes sense that other pins could possibly ever be connected to
+> interrupts then we can add those and also add interrupt-names (but
+> only if there is more than one possible interrupt).
 
--- 
-2.45.2
+AFAIK, only DIAG1 would potentially make sense to be connected to an
+interrupt. It can be programmed to go low when the motor position matches t=
+he
+contents of the X_COMPARE/X_COMPARE_REPEAT register setting.
 
+I will add that one if you agree. It will not be mandatory of course.
+
+In any case, if that pin was connected to an interrupt pin right now, it co=
+uld
+already be used as an IIO trigger for example. Just not (yet) via this driv=
+er.
+
+>[...]
+> > The resistor connected to the IREF pin (Rref) OTOH does have an implica=
+tion to
+> > the software, as it sets the full-range current of the output stage.
+> >
+> > How should we specify that? Is it adequate to add an optional DT proper=
+ty
+> > "rref" or "rref-ohm" with an int32 value in Ohm? The default value if
+> > unspecified is 12000 Ohm. =20
+>=20
+> It looks like there are a few standardized properties, like
+> sense-resistor-ohms if that fits the use case. Otherwise, an
+> vendor-specific ti,rref-ohms would work. FYI, you can find the
+> preferred units at [1].
+>=20
+> [1]: https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schem=
+as/property-units.yaml
+
+Ah, thanks! This is helpful.
+
+Will use this for ti,rref-ohms. I guess in this case that would be easier to
+understand than "sense-resistor-ohms", which is also okay, but would require
+reading the description to know what exactly is meant in this context.
+
+> > > And if there are any pins would make sense to connect to a gpio, we c=
+an add
+> > > those even if the driver doesn't use it currently.
+> > > =20
+> > > > +  clocks:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - interrupts
+> > > > +  - clocks
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > > +  - $ref: /schemas/motion/common.yaml# =20
+> > >
+> > > If we need to know about what is connected to the output of a motor c=
+ontroller
+> > > I would expect it to be done with child node for each output. That wa=
+y each
+> > > output can be unique, if needed. Basically, similar to iio/adc.yaml i=
+s used to
+> > > provide common properties for channel@ child nodes on iio devices. =20
+> >
+> > This controller chip only has one single output for one stepper motor (4
+> > wires). While technically you could connect something else to those 4 w=
+ires, I
+> > don't think it is the scope of LMC to support that. The chip itself isn=
+'t
+> > designed for that purpose and it would clearly go far beyond the intend=
+ed
+> > purpose of this device.
+> >
+> > That being said, your suggestion of supporting child nodes may actually=
+ be a
+> > good idea. Right now, we specify the type of motor (basically nominal- =
+and hold
+> > current settings) in user-space and set the IRUN/IHOLD parameters from
+> > user-space via the sysfs attributes interface. It might make sense to h=
+ave a DT
+> > child node to specify this, although in our current application this is=
+ not
+> > very practical, since there are many motor controllers on one board, an=
+d it is
+> > configurable in software (runtime) which motor is connected to which ou=
+tput.
+> >
+> > But I can imagine a situation where it may be fixed and thus can be des=
+cribed
+> > in the DT of a board.
+> >
+> > Then again I don't know if it would be over-complicating things with so=
+mething
+> > like this:
+> >
+> >         motor-controller@0 {
+> >                 ...
+> >                 motor@0 {
+> >                         compatible =3D "nanotec,st4118s1006";
+> >                         irun-ma =3D <1800>;
+> >                         ihold-ma =3D <270>;
+> >                 };
+> >         };
+> >
+> > where we'd possibly have a stepper-motors.c file with a lot of structs =
+and
+> > matching tables for the different motor types.... sounds like overkill =
+to me,
+> > but maybe not? =20
+>=20
+> A compatible for motors seems too much. I was just thinking along the
+> lines that 1) if we need to so some scaling or something that depends
+> on a motor constant, then it would make sense to put those constants
+> in the DT and 2) if there is a motor controller with more than one
+> output that could be connected to two or more different sizes of
+> motors with different constants, then we either need child nodes or an
+> array to be able to enter the different constants. Either one would
+> work. So maybe simpler to just use an array instead of child nodes now
+> that I'm thinking about it more.
+
+Well, in the case of the TMC5240 there isn't much more than a single motor
+with possibly some fixed setting of irun/ihold in some cases, but like I sa=
+id,
+in our case it is run-time configurable, so not something fixed to the
+hardware-description. Apart from that, there are the speed- and acceleratio=
+n-
+conversion constants, which per default are the constants stated in the
+datasheet. In some rare cases one might want to overrule them, but that can
+already be done.
+
+LMC does als support multi-channel controllers, and in that case I intend to
+make use of child nodes for the different channels, to be able to specify
+those parameters per motor.
+
+So maybe just leave it as it currently is for the tmc5240?
+
+> > > > +
+> > > > +unevaluatedProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    spi {
+> > > > +        #address-cells =3D <1>;
+> > > > +        #size-cells =3D <0>;
+> > > > +
+> > > > +        motor@0 { =20
+> > >
+> > > motor-controller@ or actuator-controller@
+> > >
+> > > The chip is the controller/driver, it is not a motor. =20
+> >
+> > Make sense. Will change this.
+> > =20
+> > > > +            compatible =3D "adi,tmc5240";
+> > > > +            reg =3D <0>;
+> > > > +            interrupts-extended =3D <&gpiok 7 0>;
+> > > > +            clocks =3D <&clock_tmc5240>;
+> > > > +            enable-supply =3D <&stpsleepn>;
+> > > > +            spi-max-frequency =3D <1000000>;
+> > > > +        };
+> > > > +    }; =20
+
+Best regards,
+
+--=20
+David Jander
 
 
