@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-544772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E52A4E669
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:42:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60ACA4E3B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F43886221
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:01:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5BC7A7A89
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2CC27F4E4;
-	Tue,  4 Mar 2025 15:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7556B28FFFB;
+	Tue,  4 Mar 2025 15:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKLFpNCO"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioHZQeae"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCE420DD4C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D41028FFE9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103008; cv=pass; b=slOj9Ok61FDdqhJqqJCH/B5SA11u2UGa2NC2+h3O5Pa62ULJuxJm9NnRIkc8AxntpQ/rdXsQ3zHX30cpvwWBKG8qDjBW7R5EvY1llCi7G3iO1FtTw2szh4aRJHl2nR6vVYXZlKvolvgO7fwqVZupvl/4hqfevMKvjHo7fCqy5Eo=
+	t=1741101896; cv=pass; b=RCqRxiKLjlfOmW3IGYLrMNXwlflwnOKxhXrxsNVOB8NtrKvt1FExX1Bl9QrS5D2LH5tvnfd5tEOqH2oxjiAC6Ha6jj911+njhs723QRAQyFWxW1jn3sJprX2AWnEEIkDD9lQQEDk31mXfv28UAWVhP8q/th6hzNBLvM79PNjrMc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103008; c=relaxed/simple;
-	bh=D4IWbToKWcO62iNyJZD4aj1o1AqbKGWy2Gwm1GpJhGU=;
+	s=arc-20240116; t=1741101896; c=relaxed/simple;
+	bh=Xta72Xtoqtmx6r5+q/pD/V08xqthdy7owZ3Wj5jOESY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULJhkP65E9M9m/4PPYo7KHXNjNtuLzXv5TmH/GsHMwRaUeLXBnzja4JrsGSytncQx4TBaxfLleQAfq5nbaem/3bzgpY5JgRMjFO14b9eh0i5cNS5Yr34QVe72S61l2qwZFIw0LwBPndcynQAlrGplJq72FZQUVDH27JQPELvdk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKLFpNCO; arc=none smtp.client-ip=198.175.65.17; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.115
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgyVEuxz0mgCwdvB+NSniRfoRaXvYZXist5GM3Q/PPzYS+G3V65oaJRdLdnn9JUVq+nxga33AVpR0zsRPlJ+u0jB+fSX2gbnrsYutIwEa0mUwaLma0Yi4kY1uq9qNFs56yaKzD5iIYAd9By1uK3Nizp6d5zQ6wXs5vvrOFC9oTQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioHZQeae; arc=none smtp.client-ip=198.175.65.16; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.117
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id CAA7140D046E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:43:24 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 435DC40CEC8D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:24:51 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nKLFpNCO
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fnm44vRzG0PZ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:32:44 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fZM12zszG0Dj
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:22:51 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 6829D4272D; Tue,  4 Mar 2025 18:32:37 +0300 (+03)
+	id 316E54272E; Tue,  4 Mar 2025 18:22:42 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKLFpNCO
-X-Envelope-From: <linux-kernel+bounces-541112-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioHZQeae
+X-Envelope-From: <linux-kernel+bounces-541114-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKLFpNCO
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioHZQeae
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 7BACA41ABC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:55:22 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 6BA374275E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:59:38 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 5639A3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:55:22 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 441673063EFF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:59:38 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FBE1892730
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6CA1890707
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725261EE7D9;
-	Mon,  3 Mar 2025 07:55:08 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F561EE7D5;
+	Mon,  3 Mar 2025 07:59:26 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317541EB5F7;
-	Mon,  3 Mar 2025 07:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9310E1D63C0;
+	Mon,  3 Mar 2025 07:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740988505; cv=none; b=iyEQs+Ji/B3+puOYt2LpNt0yDiBiWGwQj57p0LUKGghW9Wk7qqPXG1TPf4CZRxlU6q3phQaGU8RDsOoTteGU8qAG+JuBWeKUp4P9vb9JJsVhJcfj6EOiN+UpnIIh7RnDE+5gZRm18uXco6Oesgd8wPF1OgDPYf3KzaUYYkiDeXc=
+	t=1740988763; cv=none; b=cHA4FZVry3usANG40EIUo9Crml2r9fnZpEKVI6pXdxtc4dpRCAnxVmHfTXeYyX5rkuHJTYfSRHWVANnu/gHiNhKqjOL0/GQpzlOqrOKSGkSN0E9lLYVAJdQqXlibki1Cqx/OPmxNA/AXZkppg1cASZRn2Z56QHiF1Q/mQ0ITyv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740988505; c=relaxed/simple;
-	bh=D4IWbToKWcO62iNyJZD4aj1o1AqbKGWy2Gwm1GpJhGU=;
+	s=arc-20240116; t=1740988763; c=relaxed/simple;
+	bh=Xta72Xtoqtmx6r5+q/pD/V08xqthdy7owZ3Wj5jOESY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kou/lrL3beKKSkc6VcdFJDYjR+bWkMM9s73rbkzqMvOjexhRR0b+zxCJyjLEXi4oOhXkkXxiNVoQrdCP3bXTlJePGhQkmoV+YLrvhmFqPu03j4i/IjxEs+d4sADf+nKw2fzpk/pOEHCRg57hZnetYZ7ZUspTQYhhj3ENgY524Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKLFpNCO; arc=none smtp.client-ip=198.175.65.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYftwOjIJBr9p57hWnpLEahwQhn1Nn8IGDE/PIMiujgKDaLafwstC3uGRw3kgFbZzJKqmxsO7R7QFvXnE3QHAu16a7YEkmAzgA5S8eAtX9PusQsTg2TkUeuuHH1Y2O+ATb6Zq93Rs1zqbYlDyJTA/4hVTyNc/BpCaKn3uB9L2uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioHZQeae; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740988504; x=1772524504;
+  t=1740988763; x=1772524763;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=D4IWbToKWcO62iNyJZD4aj1o1AqbKGWy2Gwm1GpJhGU=;
-  b=nKLFpNCO5DBa0w62VEhw0J2DSpnbxN/USOrFFQ06J8oXUCC6qpPx+ME6
-   uaylDHzEcPHsfMMOwEj0c8VtqiPmxHvc/u3PQp8Sd+MIInrinyItOUOji
-   I2upZGsPIBTiTlLKD+dh/L0ewc7Q8f5CzNH3XNeaRrcVuM4FTRNdrl1Q0
-   mPm4XWPXBxZvMtC9VH4Rgo/+JZHiC+i/RjK95/Jr0kxivyi6DBQAEZloO
-   RG7dRbV+T8JY0Vy/JiI2W/rYur5DxrSCOK6nsehc5oorckShN4NpNdogc
-   /GcJaTwy57sM0AIReoK6VkfeyEQhAdbmiTKGvK7BpkCLpoOIRc+fbCUQH
-   w==;
-X-CSE-ConnectionGUID: Dp6eLZEdTFyLn6xKYePi9w==
-X-CSE-MsgGUID: MwLT9vCLQfWjDN66aFWymw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41879056"
+  bh=Xta72Xtoqtmx6r5+q/pD/V08xqthdy7owZ3Wj5jOESY=;
+  b=ioHZQeaer7zaLv6qiwY2bTO9G6gpTectTEVYECkcCVMzFDmvOrtMZtqR
+   Zsu66BqAfcwFbcjNhXonjDWbbsoZ3vtL6WFbotUEi4IkgOKvnheIJSOXU
+   HtJqMjS76aAKzsuszn4oLyuDj9t0942eQJ3ZiMiHM1iiINn/XAEI6lsX7
+   6LohKAmo6Zb1JtQmXxShM/DbX+jGNHkOSrxPS1sHTovb02DvxwFFZ1rBy
+   BpSbYhpSIsCKrNkt5+ogsz5v3YAEzT8X6qVak3WmNAw9DPGQcebgA5/ti
+   NPheqa2exD3HwkG+KKOFJf8Nq8lcQLnXCwwV5vQGDcTTHJERaxr8/HkiR
+   A==;
+X-CSE-ConnectionGUID: OwrjfLUlRW2BztUbRLZfNQ==
+X-CSE-MsgGUID: To3JaBQQTLWkZtQL92UYkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41975215"
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41879056"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 23:55:03 -0800
-X-CSE-ConnectionGUID: WH46JkHPR16UKFzqWVvezA==
-X-CSE-MsgGUID: elgnfmqxQP2ESY7UCfE1cQ==
+   d="scan'208";a="41975215"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 23:59:22 -0800
+X-CSE-ConnectionGUID: tDUV7ep6QcGAfQ+7/1/EYQ==
+X-CSE-MsgGUID: k2oG920CShaV+Co+pDdUHw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="117951499"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 23:55:01 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 9D0EB11F7F0;
-	Mon,  3 Mar 2025 09:54:58 +0200 (EET)
-Date: Mon, 3 Mar 2025 07:54:58 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Shravan.Chippa@microchip.com
-Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor.Dooley@microchip.com, Valentina.FernandezAlanis@microchip.com,
-	Praveen.Kumar@microchip.com
-Subject: Re: [PATCH V6 1/3] media: i2c: imx334: Optimized 4k and 2k mode
- register arrays
-Message-ID: <Z8VgUoNklDUd_jaF@kekkonen.localdomain>
-References: <20250228103332.3647098-1-shravan.chippa@microchip.com>
- <20250228103332.3647098-2-shravan.chippa@microchip.com>
- <Z8GiqSfuyQdUNylt@kekkonen.localdomain>
- <PH0PR11MB5611466B2027B79F7598534B81CF2@PH0PR11MB5611.namprd11.prod.outlook.com>
+   d="scan'208";a="118628401"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa009.fm.intel.com with ESMTP; 02 Mar 2025 23:59:11 -0800
+Date: Mon, 3 Mar 2025 15:57:06 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Yidong Zhang <yidong.zhang@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+	mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
+	lizhi.hou@amd.com, DMG Karthik <Karthik.DMG@amd.com>,
+	Nishad Saraf <nishads@amd.com>,
+	Hayden Laccabue <hayden.laccabue@amd.com>
+Subject: Re: [PATCH V2 1/4] drivers/fpga/amd: Add new driver amd versal-pci
+Message-ID: <Z8Vg0nJ2T9ezHDVf@yilunxu-OptiPlex-7050>
+References: <Z6Q3W2mUw/ZbtnWV@yilunxu-OptiPlex-7050>
+ <796e2826-a423-4d0c-977a-105ed236e067@amd.com>
+ <Z6Vtz/Bb8wsIH0pG@yilunxu-OptiPlex-7050>
+ <7b9bd24f-8f89-4d6c-a079-47c4c0b88a35@amd.com>
+ <Z6WO2Ktc9HoqdUSU@yilunxu-OptiPlex-7050>
+ <e68be2e2-7fdd-4f09-b479-4b0e31af5be5@amd.com>
+ <Z6sT20uzjes7SGzr@yilunxu-OptiPlex-7050>
+ <84281771-52d8-4b1d-8478-1fedb6f31608@amd.com>
+ <Z8LDSjhcXvwnyeiF@yilunxu-OptiPlex-7050>
+ <790910eb-4876-49de-b8eb-0ac50868bc1f@amd.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -133,113 +133,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH0PR11MB5611466B2027B79F7598534B81CF2@PH0PR11MB5611.namprd11.prod.outlook.com>
+In-Reply-To: <790910eb-4876-49de-b8eb-0ac50868bc1f@amd.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fnm44vRzG0PZ
+X-ITU-Libra-ESVA-ID: 4Z6fZM12zszG0Dj
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707170.86313@+a0VKAotQGMaRSQgDI+YXQ
+X-ITU-Libra-ESVA-Watermark: 1741706597.89882@ozYgvtQCrOxyyI7GuuRQgw
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Shravan,
-
-On Sat, Mar 01, 2025 at 12:56:55AM +0000, Shravan.Chippa@microchip.com wrote:
-> Hi Sakari,
+On Sat, Mar 01, 2025 at 11:03:29AM -0800, Yidong Zhang wrote:
 > 
-> > -----Original Message-----
-> > From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Sent: Friday, February 28, 2025 5:19 PM
-> > To: shravan Chippa - I35088 <Shravan.Chippa@microchip.com>
-> > Cc: mchehab@kernel.org; kieran.bingham@ideasonboard.com; linux-
-> > media@vger.kernel.org; linux-kernel@vger.kernel.org; Conor Dooley -
-> > M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -
-> > M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -
-> > I30718 <Praveen.Kumar@microchip.com>
-> > Subject: Re: [PATCH V6 1/3] media: i2c: imx334: Optimized 4k and 2k mode
-> > register arrays
-> > 
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the
-> > content is safe
-> > 
-> > Hi Shravan,
-> > 
-> > On Fri, Feb 28, 2025 at 04:03:30PM +0530, shravan kumar wrote:
-> > > From: Shravan Chippa <shravan.chippa@microchip.com>
-> > >
-> > > Optimized the resolution arrays by integrating a common register array.
-> > >
-> > > Adjusted the register array values for 1920x1080@30 and 3840x2160@30
-> > > resolutions to align with the common register array values.
-> > >
-> > > Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
-> > > ---
-> > >  drivers/media/i2c/imx334.c | 132
-> > > +++++++++----------------------------
-> > >  1 file changed, 31 insertions(+), 101 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> > > index a544fc3df39c..a800f2203592 100644
-> > > --- a/drivers/media/i2c/imx334.c
-> > > +++ b/drivers/media/i2c/imx334.c
-> > > @@ -167,8 +167,8 @@ static const s64 link_freq[] = {
-> > >       IMX334_LINK_FREQ_445M,
-> > >  };
-> > >
-> > > -/* Sensor mode registers for 1920x1080@30fps */ -static const struct
-> > > imx334_reg mode_1920x1080_regs[] = {
-> > > +/* Sensor common mode registers values */ static const struct
-> > > +imx334_reg common_mode_regs[] = {
-> > >       {0x3000, 0x01},
-> > >       {0x3018, 0x04},
-> > >       {0x3030, 0xca},
-> > > @@ -176,26 +176,10 @@ static const struct imx334_reg
-> > mode_1920x1080_regs[] = {
-> > >       {0x3032, 0x00},
-> > >       {0x3034, 0x4c},
-> > >       {0x3035, 0x04},
-> > > -     {0x302c, 0xf0},
-> > > -     {0x302d, 0x03},
-> > > -     {0x302e, 0x80},
-> > > -     {0x302f, 0x07},
-> > > -     {0x3074, 0xcc},
-> > > -     {0x3075, 0x02},
-> > > -     {0x308e, 0xcd},
-> > > -     {0x308f, 0x02},
-> > > -     {0x3076, 0x38},
-> > > -     {0x3077, 0x04},
-> > > -     {0x3090, 0x38},
-> > > -     {0x3091, 0x04},
-> > > -     {0x3308, 0x38},
-> > > -     {0x3309, 0x04},
-> > > -     {0x30C6, 0x00},
-> > > +     {0x30c6, 0x00},
-> > >       {0x30c7, 0x00},
-> > >       {0x30ce, 0x00},
-> > >       {0x30cf, 0x00},
-> > > -     {0x30d8, 0x18},
-> > > -     {0x30d9, 0x0a},
-> > >       {0x304c, 0x00},
-> > >       {0x304e, 0x00},
-> > >       {0x304f, 0x00},
-> > > @@ -210,7 +194,7 @@ static const struct imx334_reg
-> > mode_1920x1080_regs[] = {
-> > >       {0x300d, 0x29},
-> > >       {0x314c, 0x29},
-> > >       {0x314d, 0x01},
-> > > -     {0x315a, 0x06},
-> > > +     {0x315a, 0x0a},
-> > 
-> > We still have this change in the patch that's just supposed to move register
-> > address/value pairs around. :-( Please check the changes yourself before
-> > posting v7.
 > 
-> Do I need to split the patch or drop this change ? in v7
+> On 3/1/25 00:20, Xu Yilun wrote:
+> > Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> > 
+> > 
+> > > My last question for this topic:
+> > > If we decide to upstream both userPF and mgmtPF driver together, could them
+> > > be both within the drivers/fpga/amd as in-tree driver? This will help user
+> > 
+> > I don't look into your full driver stack. Generally, if your drivers are
+> > all about reprogramming, then yes. If they are also about all kinds of
+> > accelaration functions you'd better split them out in different domains.
+> > I may not have enough knowledge to make them correct.
+> > 
+> 
+> The driver has more features than just re-programing. The re-programing is
+> already done in the embedded firmware that's why the mgmtPF driver is just a
+> utility driver.
+> 
+> The userPF driver has features such as:
+>   xdma (already in drivers/xilinx/xdma as platform driver)
+>   qdma (already in drivers/amd/qdma as platform driver)
+>   mailbox and more which have not been upstreamed in linux kernel yet.
+> 
+> The driver architecture is:
+> 
+>   userPF driver (as pci_driver)
+>     qdma (as platform_driver)
+>     ..
+>     mailbox (as platform_driver)
+>        /\
+>        ||
+>        \/
+>     mailbox (as platform_driver)
+>   mgmtPF driver (as pci_driver)
+>        /\
+>        ||
+>        \/
+>     Embedded firmware (re-programing done here)
+> 
+> Right now, I am working on upstreaming the mgmtPF driver as pci_driver.
+> In the future, I think the userPF driver should be fitting into the
+> "drivers/fpga", given that should manage all these platform_drivers and
 
-Either way but it does not belong here.
+No I think userPF driver should manage all these *platform_devices*.
+Platform_drivers could be independent and put into proper domain folders.
 
--- 
-Regards,
+> utilize the fpga_region callbacks to online/offline services due to hardware
 
-Sakari Ailus
+fpga_region should online/offline platform devices. Not services, which is the
+job of each platform_driver.
+
+Thanks,
+Yilun
+
+> changes after re-programing.
+> 
+> Thanks,
+> David
+> 
+> > Thanks,
+> > Yilun
+> > 
+> > > find source code easily.
 
 
