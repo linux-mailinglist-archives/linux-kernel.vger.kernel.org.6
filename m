@@ -1,200 +1,181 @@
-Return-Path: <linux-kernel+bounces-541931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AABFA4C38D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:39:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4863BA4C38A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77833A27F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 234C13AC968
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7F02144C1;
-	Mon,  3 Mar 2025 14:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CBB33F6;
+	Mon,  3 Mar 2025 14:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZB/AvcGO"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V0gwdqmY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBC2214232;
-	Mon,  3 Mar 2025 14:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8804820F086
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012662; cv=none; b=lGaZTdwhxSxRQWjVZCdcMVnqYkKjP+9+XPhclpXBuDloJ7s22vaeraXTsRMyuuDwK26vDr7Ng+M3EqAHyA/CiSad/IwXyC+tR+EAo3n1pOdk5z6VWjGopk1vkUPqC6IqjjPELu6XDRXvSNwyM8lc9J5iojHsdXTr44duvoMDr7Q=
+	t=1741012657; cv=none; b=qrlWzthUdov914symi7IQ/4ndImfvDPaTeOAt3sEE/kf1I9jKiXEi72KxQEYkdwvt/MO0iX5S8jF9NiNWa19kdzdWrnEGH16UsWfF1bX1dvzkqOKt6cryxkfq7BW/Z2Yf30cgN3/beH0+wkdPIWrlXnu3nDG76BqiTz9Pz1Z4Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012662; c=relaxed/simple;
-	bh=TVdfMizijDhx9fFu8L/fgoDGmPdP5RF8aA1SgnGMRs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBfp5FzTFGBrfQTSfmiS5ogMm29UKvmuHphE2V1W2Bgx9Xr6tMIBGrr15+bsTtA8CH1dADQA3y/3BXHrZba778lJzTmIKtoa+lij45HAqtwjBrrF3DkeDqulkIhZ1bv5S9sH4QGsdtijYTPsmbkTw86hR01sI4vVtcP1fx6BY6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZB/AvcGO; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abf64aa2a80so297616066b.0;
-        Mon, 03 Mar 2025 06:37:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741012658; x=1741617458; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tm8Z69nnfULklRz3iB04g6JKiRrew2Mfm5h0+8oieEU=;
-        b=ZB/AvcGO0ZOc9jU/YGo0RqwMUdnHI9ESalIMOGXTsEi9clQ00Z11vL+q6duJT0+IfI
-         I+w4zij+Cmy+3prXtJ5unTGeh0Eh0vrWpn13nP+sypM8/ZA48vs7CUfACLjXyiyKVDRC
-         oKknkFMww2yjARevEofuuWtQsn7be/cj/MCWbZuV23Ry2RSS6u5N7MAnJS+FlIqpa7Ky
-         ItLHi1uch/2iBXpv7fJsJdwbzrDzK21IszqfnF4j+jOsj+qQkQYbNLxoA8bXi5qx99hq
-         kSHhViQkbyKiT9xaZ/Z+ODTsLYQZA0mo7F5U+494+t+fKmW0nOLoqeeXA0IJZavenjYc
-         QIqw==
+	s=arc-20240116; t=1741012657; c=relaxed/simple;
+	bh=TfOXMpBObOpEU6afGJtTBzSD8HAl5um0orBw1XOeFsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XyZ/D68MOmMLYZbYhBHM4BjTjo33j1uQvi4fr8ykTWMAdREfmPjBbxecEfZNwkWonkFrWpM8YzDMXsvBWMv1YM3ELyTyQz9jyHidjMeVKGvDYRDd5GSu3M/4FXczQpjMHzZp2aaSLl4vYaX0H2tromXCAByxxYBrb06iS0rs1no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V0gwdqmY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741012654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9JeGJDQQ0J7/ssTaE+NatAO0lrGt6/z3dtpI/4Izuzo=;
+	b=V0gwdqmYuDN/+HeV5a4VyCqHC5qA0vqNOJd4o+ckne/IP2II8U/DkFzpDF9up2UnYylA2w
+	CVeamopUTVmwiMlYqY3VNUafso6S0pTLWjTJ/VH6NbpllslI9MxdWoUibV3Xt2137XecOw
+	BVN4qhpdP+Xki4/V5v9z5cOwUf6zRss=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-C1sLhwwKNS6pbIPxam78AQ-1; Mon, 03 Mar 2025 09:37:31 -0500
+X-MC-Unique: C1sLhwwKNS6pbIPxam78AQ-1
+X-Mimecast-MFC-AGG-ID: C1sLhwwKNS6pbIPxam78AQ_1741012650
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abf748e5f18so130587566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:37:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741012658; x=1741617458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tm8Z69nnfULklRz3iB04g6JKiRrew2Mfm5h0+8oieEU=;
-        b=m/oRPcWckyMpTOwRbqjfY8E/ZH0Ncfl+8ICNxCHAIE61AZmxQhr1vI/ODDu3Z6YdAE
-         lwpOuIIZ2l7ZCB+DST2sbtmNRKVN7bHwWgaRGCNTJYji2WdMT1/GHv4oWV/6jBEU1P+j
-         7ridp8GL9IUjNXQbUcrUHAyVyOJUc6Tr5D5+FX96hdcTxHkpcTNlTH9EO68adgYGL335
-         e5qQwuQZKdxs63gW46BAVFH2w1nWv0kPgkReq7diY9Oo0m4dAfWcZuHgWJXyH5h+WWLJ
-         VmiUWXkk/R2i2oVW6/a6Kv2I1+pKC3dSK9pE2FZuoh92JZMIqZd8qEJujbeo91rdnJqr
-         4fAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyuQ7Vws3poTlnPuVfwBsvXZ/GGDkkou6Si9Ocleip1Btdmq3ze/JEw+wWvg3WD4tkfqehEObIBN6S26lq@vger.kernel.org, AJvYcCX0AJ/BDsDk9AJbRoq3P0c4X7/KmWiTtkS28eaPGOUmEF61tdQH5RJUvhAsFyvXF/pM09QmZ3tmMVuHaXLi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCBRDkYBvegrOOavn5mbgEXNrU8LO4c0YKvyDe1SLczM4TUl9J
-	yV4FGkz/bPg3NvJWjR0FgUWCR8aWNBaOhknL9MWtQyb031H1U0vn0H7agfNjPp5AQXP2Rz+RDxf
-	b0BaKo7vCWw8tcv91q9ADyqiON4A=
-X-Gm-Gg: ASbGncueRUP7HfF3MZdovVv5KStiYIpym1f3T6gLmGXiMJYCC6r4LCnKDDS40tV8gbJ
-	cXlrtWP/XI8O/Di+yortXnscdJWZVpufcrFO5xQluDOSRa5duITZMMBU5eBe9mGg1HR3N8wqble
-	DPLQ4TlTUtJ1gLsDFb2YE9lq86
-X-Google-Smtp-Source: AGHT+IGQI/GqSVJNN2m1G5pYHxbq7cq1JScEtonBtg7lqRhk25Lp9qrINbJhjmEGIyELLEjYKMTz4EjlVGsuWv2C2KM=
-X-Received: by 2002:a17:907:7213:b0:abf:75b8:cb38 with SMTP id
- a640c23a62f3a-abf75b8cc51mr534971566b.36.1741012658287; Mon, 03 Mar 2025
- 06:37:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741012650; x=1741617450;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9JeGJDQQ0J7/ssTaE+NatAO0lrGt6/z3dtpI/4Izuzo=;
+        b=aBTqWSgIKjNE/kzugu+cATTLXcnHC2rYwGaYcuYCSlLe/3M0Vas0ZVZceI9AZhClFk
+         hZju4ZMl+n48jDkbNN3OvMofnnnRxINssrGT//Cz3wMKrxX6urnbQ/V6xZqEW/0MwIlA
+         k25TzMyZI9SFOB6yVpRXLalyrOFA/1VThZrKdY/sgxPC51JYUjZlQmlnRXBQAi6ehh2S
+         FdPyEkM8g3qcopW4qlfXxaLB0C4mDTZKFgBrrpUeEknn0wfRvrfQw2NTyOVrpfned6P6
+         5ZG2tDwpggTAVs9K5W45wDjAVOzO7ZQIgFnKb1RSBUBc/EyNnCP+vlm+kAMpQBFVtwrM
+         UEbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjMb43/cahMKD1RINKaIat23ES8MAhNOkt/5odBgKNgbA2fIDCrDv5FJ06DNCs6+nbgMMchfdUgpHWnkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ02YBEikLxo0ua4l2NA1c+7ThxBYvp9/llX9Kn6mYf74iNho1
+	fA5MDcfYFUk3GABDO+wYKPV7nw4DZQVc8dei3xW9lwgDHKr9uDdLb/MCm4MWSXLizeuAfw+3A2Z
+	iHbagSJfMcEYcWjouNoPxxQ90lAU+3Lmif+9QJSRCzOkp2gHyi3N9dS1CfBO0EQ==
+X-Gm-Gg: ASbGncuAWka7ptJBcwI/YLhYv7Is4z3WoYw93Evfy66x4CUqsy1fwkV98lstLWHMNeR
+	+iSdYzWCf4hCjhqsv7u01wfjTImGB5FAHciH/bGP7tf4GNEx7iqere2aDJ2wscMHS8Iu6DF5bof
+	tv0QhQaurIrL0LwuZmGFSXZrp3F6DeJcMGxJEAOyFnfHaaVga3tTi+gafQADZrB6yybF2ejlCpc
+	UqNix87xfFq83BMjchTj3F1/io+bQvPWFqPVkjg9YF+PsOYZ42vI44gNuPuQL2e9cD3TJIii+Mg
+	2EmA13sen1oV3Zv10BY=
+X-Received: by 2002:a17:907:60cd:b0:abf:68b5:f78b with SMTP id a640c23a62f3a-abf68b61eabmr536239166b.24.1741012649874;
+        Mon, 03 Mar 2025 06:37:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHa1u+zdvCoDiv3SXFker98na2A8agZhqfoWf/EbLSUWGYSaQKN28uCrbnmaQppxKND+Sj27A==
+X-Received: by 2002:a17:907:60cd:b0:abf:68b5:f78b with SMTP id a640c23a62f3a-abf68b61eabmr536235966b.24.1741012649485;
+        Mon, 03 Mar 2025 06:37:29 -0800 (PST)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e57faa1dsm63669066b.95.2025.03.03.06.37.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:37:28 -0800 (PST)
+Message-ID: <f9246e9e-3905-4bb2-9799-90677f9521de@redhat.com>
+Date: Mon, 3 Mar 2025 15:37:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
- <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com>
- <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com>
- <20250228163347.GB17761@redhat.com> <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
-In-Reply-To: <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 3 Mar 2025 15:37:26 +0100
-X-Gm-Features: AQ5f1JrJn7s8IQtE2vlkTBx3nTSQJtOfIME3uHBWd6UR3A5tFqhSHrJZ5pxLwB0
-Message-ID: <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Manfred Spraul <manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] media: uvcvideo: Make power management granular
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+References: <20250226-uvc-granpower-ng-v4-0-3ec9be906048@chromium.org>
+ <20250226-uvc-granpower-ng-v4-4-3ec9be906048@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250226-uvc-granpower-ng-v4-4-3ec9be906048@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 3, 2025 at 10:46=E2=80=AFAM Sapkal, Swapnil <swapnil.sapkal@amd=
-.com> wrote:
-> But in the meanwhile me and Prateek tried some of the experiments in the =
-weekend.
-> We were able to reproduce this issue on a third generation EPYC system as=
- well as
-> on an Intel Emerald Rapids (2 X INTEL(R) XEON(R) PLATINUM 8592+).
->
-> We tried heavy hammered tracing approach over the weekend on top of your =
-debug patch.
-> I have attached the debug patch below. With tracing we found the followin=
-g case for
-> pipe_writable():
->
->    hackbench-118768  [206] .....  1029.550601: pipe_write: 000000005eea28=
-ff: 0: 37 38 16: 1
->
-> Here,
->
-> head =3D 37
-> tail =3D 38
-> max_usage =3D 16
-> pipe_full() returns 1.
->
+Hi,
 
-AFAICT the benchmark has one reader per fd, but multiple writers.
+On 26-Feb-25 15:23, Ricardo Ribalda wrote:
+> Now that every ioctl takes care of their power management we can remove
+> the "global" power management.
+> 
+> Despite its size, this is a relatively big change. We hope that there
+> are no size effects of it. If there are some specific devices that
+> miss-behave, we can add a small quirk for them.
+> 
+> This patch introduces a behavioral change for the uvc "trigger" button.
+> It will not work unless the camera is streaming. We consider that this
+> the most common (if not the only) usecase and therefore we do not consider
+> it a regression.
 
-Maybe I'm misunderstanding something, but for such a case I think this
-is expected as a possible transient condition and while not ideal, it
-should not lead to the bug at hand.
+You may want to expand this part of the commit message a bit and make it
+clear that before the "trigger" button would work as long as an open has
+/dev/video# open and now it only works when the camera is actually
+streaming.
 
-Suppose there is only one reader and one writer and a wakeup-worthy
-condition showed up. Then both sides perform wakeups *after* dropping
-the pipe mutex, meaning their state is published before whoever they
-intend to wake up gets on CPU. At the same time any new arrivals which
-did not sleep start with taking the mutex.
+I agree that in practice this is not an issue since apps only open
+the /dev/video# node for a longer period at a time (vs short open
+for query/probe) when they actually want to stream.
 
-Suppose there are two or more writers (one of which is blocked) and
-still one reader and the pipe transitions to no longer full. Before
-the woken up writer reaches pipe_writable() the pipe could have
-transitioned to any state an arbitrary number of times, but someone
-had to observe the correct state. In particular it is legitimate for a
-non-sleeping writer to sneak in and fill in the pipe and the reader to
-have time to get back empty it again etc.
+Otherwise the patch looks good to me:
 
-Or to put it differently, if the patch does correct the bug, it needs
-to explain how everyone ends up blocked. Per the above, there always
-should be at least one writer and one reader who make progress -- this
-somehow breaks (hence the bug), but I don't believe the memory
-ordering explains it.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Consequently I think the patch happens to hide the bug, just like the
-now removed spurious wakeup used to do.
+Regards,
 
-> Between reading of head and later the tail, the tail seems to have moved =
-ahead of the
-> head leading to wraparound. Applying the following changes I have not yet=
- run into a
-> hang on the original machine where I first saw it:
->
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index ce1af7592780..a1931c817822 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
->   /* Done while waiting without holding the pipe lock - thus the READ_ONC=
-E() */
->   static inline bool pipe_writable(const struct pipe_inode_info *pipe)
->   {
-> -       unsigned int head =3D READ_ONCE(pipe->head);
-> -       unsigned int tail =3D READ_ONCE(pipe->tail);
->         unsigned int max_usage =3D READ_ONCE(pipe->max_usage);
-> +       unsigned int head, tail;
-> +
-> +       tail =3D READ_ONCE(pipe->tail);
-> +       /*
-> +        * Since the unsigned arithmetic in this lockless preemptible con=
-text
-> +        * relies on the fact that the tail can never be ahead of head, r=
-ead
-> +        * the head after the tail to ensure we've not missed any updates=
- to
-> +        * the head. Reordering the reads can cause wraparounds and give =
-the
-> +        * illusion that the pipe is full.
-> +        */
-> +       smp_rmb();
-> +       head =3D READ_ONCE(pipe->head);
->
->         return !pipe_full(head, tail, max_usage) ||
->                 !READ_ONCE(pipe->readers);
+Hans
+
+
+
+
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
->
-> smp_rmb() on x86 is a nop and even without the barrier we were not able t=
-o
-> reproduce the hang even after 10000 iterations.
->
-> If you think this is a genuine bug fix, I will send a patch for this.
->
+>  drivers/media/usb/uvc/uvc_v4l2.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 1c9ac72be58a..6af93e00b304 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -652,7 +652,6 @@ static int uvc_v4l2_open(struct file *file)
+>  {
+>  	struct uvc_streaming *stream;
+>  	struct uvc_fh *handle;
+> -	int ret = 0;
+>  
+>  	stream = video_drvdata(file);
+>  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+> @@ -662,12 +661,6 @@ static int uvc_v4l2_open(struct file *file)
+>  	if (!handle)
+>  		return -ENOMEM;
+>  
+> -	ret = uvc_pm_get(stream->dev);
+> -	if (ret) {
+> -		kfree(handle);
+> -		return ret;
+> -	}
+> -
+>  	v4l2_fh_init(&handle->vfh, &stream->vdev);
+>  	v4l2_fh_add(&handle->vfh);
+>  	handle->chain = stream->chain;
+> @@ -701,7 +694,6 @@ static int uvc_v4l2_release(struct file *file)
+>  	kfree(handle);
+>  	file->private_data = NULL;
+>  
+> -	uvc_pm_put(stream->dev);
+>  	return 0;
+>  }
+>  
+> 
 
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
