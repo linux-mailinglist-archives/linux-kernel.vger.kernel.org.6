@@ -1,102 +1,92 @@
-Return-Path: <linux-kernel+bounces-545245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE89A4EAB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB21A4EB26
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF227421936
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5751517E44A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557231FCFF8;
-	Tue,  4 Mar 2025 17:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="syaRRWYg"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E0F292F8A;
+	Tue,  4 Mar 2025 17:59:40 +0000 (UTC)
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE18D27CB06
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944D2280A28
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110304; cv=pass; b=Y9Tp4PvfcFyhhFhBR5lVWDf5OZjtLxBAerXSyvYAxeBk1ogDz8BByTpnzTJ8PT0wYvzQWTr0WlGyUn04P7+GYgrjgmrWFU27BhwIj/q5W8+bVe0wdrOaX31zFMcKeQmyR1djGYK9srFDNnhhA6spH36F4hUgTXYbpXDbokXAMpE=
+	t=1741111180; cv=pass; b=u7yRL++pdUE08uxAOJO9KPRxLGbI8eRhBBXQS1KLvy8FUnb7Q7he330QWb274aKbpSBX134Xt9XFDPD54456NMjCu1tiVH2qtKybCxrSueGUdp/rRHxr0ZUD0N8C8TVHAT6dDWAul7syRU3zS2PDYgFXwSJITNk4rOTqOWhVChk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110304; c=relaxed/simple;
-	bh=Gd1dlzOdtFDhJaQmIY23pfMlDTcKoNMpTpwfvcXDjhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hq5/8GtwuNfli+J8J1B+QMTJz5CVeTpgWVb5hqnWpVXkxF/tKgakpOLiw+GCM6ukeh1KmRW0weqD0AQRMsvnC0xiDUj134dATDWybY3jsC1tsY5aWcaf3feh3DMUEuB4BQzYyCsz/fFT6nfiWGafO7MPoXeghpqR+CVtvfxH1kg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=syaRRWYg; arc=none smtp.client-ip=212.227.15.4; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+	s=arc-20240116; t=1741111180; c=relaxed/simple;
+	bh=5w6pA4eYiBnHNqpcmteMeSrZV2g2L1eyHkQ8+j6h8f4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WfV+T6jh14IpN4U2uGdU9GRFrbDxudWhesyHe6WTRzNJwA7i3VRLofu5+cVIAbvbekKKzobXwi2c5enlEKxWrTcm0/UIrTuIuhAeiLjIkKvDKslYTc2FpCUA/VyeAMS1ERe+4jznwUiLsI6Eq5zLgKgqCwGGFvQ7lNbo/ABG/Y8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=209.85.166.70; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 1E8AC40D4DFD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:45:01 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C894C408919A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:59:36 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h0R6rhMzG2kw
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:27:03 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dJK37PWzFw2l
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:25:37 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id DE8C741898; Tue,  4 Mar 2025 19:27:02 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=syaRRWYg
-X-Envelope-From: <linux-kernel+bounces-541397-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=syaRRWYg
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id D310643402
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:37:17 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id AB8652DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:37:17 +0300 (+03)
+	id CA9F842720; Tue,  4 Mar 2025 17:25:34 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541399-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 1093442D20
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:40:52 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 572873063EFF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:40:51 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C846B18833CB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A73C7A70ED
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBA71F37D4;
-	Mon,  3 Mar 2025 10:37:04 +0000 (UTC)
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC6D1F3BBB;
+	Mon,  3 Mar 2025 10:39:32 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36B51F0E44;
-	Mon,  3 Mar 2025 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12E81D7E4C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998221; cv=none; b=BOWZwKCW2x1NufVGcQ1q4D+SiNGXA9PxrGL+8EZUD/rngKMUrtmqUzYl64uuBGZFcCQqglRCsPNUynaROCmlbPi/kHiKXwnSoBfr91xDGQfu5WOc9PG5W/KuozQ/y3KGzQqugrShK8anKpcxZUjX37NLix6dV0nMqrL/OQ8695A=
+	t=1740998370; cv=none; b=a6qD4pcx1QuLVf5xmEIcTQ0vJCi0H/qWzEtSR3pebye7BFrEzckCQMUjH89OyFy8YhJ7RnugMM4pMah0lNg3x1UU5Lob6F+DLemT+5ukdmz75hTsdsIo64sEoooFFs/VV3IjRL03ag4I3/IqyRXWaRdnjhD63vODS1Z61PmW0OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998221; c=relaxed/simple;
-	bh=Gd1dlzOdtFDhJaQmIY23pfMlDTcKoNMpTpwfvcXDjhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U0VDRw/gYgJqDq6BtHMb1Dxw9XaDgBddOszfmmmXofXkb6LvBsZnuQfqQPefHi8cTLx85XfLhzeUztW1m5pvIEQLa1KVzu0TVGNs+D85Pt5Pe/mJwgWbGbdn+tT9U4xykEO5E1QCdpz6OyNavcgO3fkuVUYe4bKJJj9D4EBU7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=syaRRWYg; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740998190; x=1741602990; i=markus.elfring@web.de;
-	bh=3I1wcV88eyEZRxUAaJIlfqeblDAV/oemtgH82LOxxOs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=syaRRWYgiccYmjw9qtXIAxcZR+keMGcrCcJdHVt3VXZv09UXatyFGPrquv2NFk2k
-	 8rkHgHgD2g7XPO0fprbnhkv5tiw9dbQ7kToh8TeUXF2qrzl0gPkszu7S1y9QYT0uJ
-	 EdrUOqUsU3gcsYd0migjTQbC7m89boUFAQ3arY3U+U5KpxRsvuuWXw6Fqn+/vXIJA
-	 /JB1W7WK4mstuz12wAav1C8lfgxLH90kLihkhaM9hRy3pxFLl9ufqxjItLQCiJ9e2
-	 y1+sB5ANVpnTWI2WPIHiytD9OZD1+m6CkUMSnBiYSD9OnWFy50JqU5cd91m+dhzyx
-	 NPWiJzd8UiFK0dXpCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1VL-1tH5qj13Ed-00i7EN; Mon, 03
- Mar 2025 11:36:30 +0100
-Message-ID: <82bce096-271a-43a7-a2cf-95b48669ce3c@web.de>
-Date: Mon, 3 Mar 2025 11:36:28 +0100
+	s=arc-20240116; t=1740998370; c=relaxed/simple;
+	bh=5w6pA4eYiBnHNqpcmteMeSrZV2g2L1eyHkQ8+j6h8f4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dXP1ydEMyrD4mRoOe42tj/q/j4rUMpwRCxgVH7ePN9EnwWx5/IdyRhoKl3LgtOyF6vReBg3ekiHKQid7d3U87Fw0gZdhwQQbKPmM/MEWqUDP7SiTmkJKg3MVeq010fFqwy6cFF2TNX3548UMq6PZIa3vM16T6fSGE9JqzdpfrPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85ae33109f8so34328839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:39:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740998368; x=1741603168;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=94B1AldC1Ra+VOi32bZczZH6eYO+XQiGIIy01bId2WI=;
+        b=V7wOBcRUBkjivfmCcg5LPCuO/xHGIMPKvMjypOrkrtEn/mC9OgKyqWYAu+FjIfmkQ5
+         wF+bUENS2eT8kVqO1jWoxDFwpOThAdewzgklTBh2n6kmQhAhebaUfp/DnS6uymAeBfd0
+         0msHx6D58mqd5EJPVxyKVCQCpaYrjE7OUwAtPLjSiCmoWG8fFUG00+vyoEDHurjC6IdY
+         AlBNCMFTJqZsuWt8RoH5HZT+jK0zXBsMqpXgW1K7Ha4+ewdWLI4ruN1ODYEDC6QARMvn
+         ma7kTrW6scWyC1Hb+fvZi7uRuDqRLcArxweO6qLwMihLFOYe+oqOGT4HDWwiY+tyd/4L
+         LzXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxxWqKPCDuULxJk4KOnXoeOclmuacyDvf9e6lVloIgwH2lamW9Kcz2oP+PbJabwPnDDZTzUI34wH+cXPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwe6C9XMNPU33L0eay22k1x+0rXBJUHvl4wYTQmr3i1hzljIOo
+	5i3KQ+Y0QDiberm7/iFcmn9nDHmGd807zP/1gVHXyx47LlTH+7zQxoqHCtztXhcazFA0QLy3Ba/
+	orx3dKhGluSeFi9fLISZo5pe+6fPZYp3amuPhxDqq9USsniGSx10oQ1M=
+X-Google-Smtp-Source: AGHT+IHXGGfJycEVF1C0NA+tWbF57mYYWAfRa3uH7yonYPLILGd0Xs6oQjnQHhZiPUqQSby7mDcwV8F7CrVZ/77JAIhHK7ysIbjU
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -104,70 +94,59 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: video: au1100fb: Move a variable assignment behind a null pointer
- check in au1100fb_setmode()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Antonino Daplas <adaplas@pol.net>, Helge Deller <deller@gmx.de>,
- Thomas Zimmermann <tzimmermann@suse.de>, Yihao Han <hanyihao@vivo.com>,
- cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
- <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
- <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
- <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
- <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vdcLTwaxRRUTNKgdh3PAdhRaE7ojz7Hr9lnrj+MHgE+1lORdgI3
- LdUTlDAHkrkILlfVtj8Y+FWZ7efdKmsh7dpqRFXHOeHBR7Y2LJkXflzI4TeVUHOA+5S6WK7
- ducSX12HIESWGnfoCyf5qkT0mmHMrzlzrSiA2hi/nzhZG/O60wWcTcMWWLl8EQv29pU76Qj
- NN4uq50yUWCyJv4fhWAoA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6QNZLrdoyzo=;Egynd8vm+A0h2t4Qd75YIb7BLKe
- VujM9TYK15+bBtsLBJI53tpI65Z4qlFAJE3j27GIjFsUKW3YLbe6Ml7tsNYhWq8ZZsczz9FB8
- GMgmVT7galXa2FAsES6Vm4e2mqhxh0T3k8okb1CE+oz0zcBelDXH4X9hHRPZ1WDYzTiQC+1/z
- 7Z5yA++/5VTizt5XBCfRe/Rk8FeecqeV0tcUrfMcbedMFJKyTXkXRBUWvB8jl7wAhKuvOHv28
- wUjJ57e6/oJfNchJKaGwkHrqYalUgvcfgrUav1YLTB/ZErIiAu/InyQjaNaOhNf921AxS1wP5
- KMTvBhrB/jNUGhvB2Vu7g9T0Aa/LponvTTVJb/MjQslfUhKEtB22JiQuRW5QJNgsTqIt9TpGF
- voUzCyoJJ73UnuH0qQiyrQEvJeOt4D6ysgXc0D0T0ejvSXqaFQGThYmdqBzF08OkuAlgTE3FN
- QXyUsQDZYK+Ao9gsml6vzF04hcH9wcN07W8jvrRtE858AYpo9mLff3+MFwSWQZZjbw7IU2Ktq
- sGlcfJn+LLnNRNA6YGrs/gnE1mXZHia8aZKJIroUHOufq12kNdJJ1aOVn8xeE9EPa+2TM9jwF
- u+zQINKT/giAGzWtl9aUo1Y1Q7JiIOCG5IOMB3imAzbWn+uEvxyI/aTdCKRcVMjJ/Jpnb/i09
- ukl/8yYwNFnYUmFcYWwgxhnpdW2QIXRmXNs8gZAAKnZ7H6fhXsKb76SBsMtLek+gUQygi1FYl
- AwMiQuxAFmWA/BoG2wyx81eB2y2oqsRlGOsPB7eN+2/YA9P/XtvoRZHpfQzW9NaJHm2mMJr+E
- d0wLekUgx0m8tzDUOEhzK01OzEb0PpogQ4vbf8/zNshffO+iAHCCwe++RmaEr/NW6DoCJVGGZ
- AKHyuqFG7EsegodcRap+TSO5amIhA8eAvb3iyCEiCX4YEsB+UHKavrceeuvoR5n1yngXui2sV
- hTS4uTTfeGEdC0HARsj/h2tJn4PsmkEv8/pKaZ3SEjCLSNU/I7QnRbUHt++MIoCI94mmOVtEe
- wyLH6sQ8rowX/WWh7heBZrI8klsxOA6k2q+OavDc3UnIdAw9WV7Ob84tjlCdlljYGmNUs2QzN
- FaDVv/RLFHixOjpF72nSHnDzZubHXNSAdJE4rNufcPYv3x8d/W47Xs8T/4HEkG21KwW6dcw8O
- sQY4I8H8lyn+SDBhynfhsFODV7w3PYs8bRWeoBsy4Thg57EEIn1XW1DX9BVp9xzuvRQWr8et1
- gZnVkpmWZt2ChNp1QP5hzUUxp3w80ANE4R7MFUwdqzCcsIsrvT/qmZGAqhkujs3bjZTvU3fN1
- UphLrxY+3rSfMzlIUG7KBA0/qJk7CRVuCSSyYE9I1xX4TovyKtV6Eg0u7YzHHi7u1Cdzr0u2C
- VONrsep64vb7vqsMn4mZSn12IFGLP0O6anM3zoxd0XapdR8G+0iHCECWBHeAXsw1ODFMGcnro
- /v/p4Ag==
+X-Received: by 2002:a05:6e02:3111:b0:3d3:ff5c:287 with SMTP id
+ e9e14a558f8ab-3d3ff5c06f9mr41959675ab.14.1740998368052; Mon, 03 Mar 2025
+ 02:39:28 -0800 (PST)
+Date: Mon, 03 Mar 2025 02:39:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c586e0.050a0220.1dee4d.0124.GAE@google.com>
+Subject: [syzbot] Monthly batman report (Mar 2025)
+From: syzbot <syzbot+list0f38ff37debbbda9dc0b@syzkaller.appspotmail.com>
+To: a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, 
+	linux-kernel@vger.kernel.org, mareklindner@neomailbox.ch, 
+	netdev@vger.kernel.org, sven@narfation.org, sw@simonwunderlich.de, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6h0R6rhMzG2kw
+X-ITU-Libra-ESVA-ID: 4Z6dJK37PWzFw2l
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715003.26822@76W9JVhBsBDTyccy1M40SA
+X-ITU-Libra-ESVA-Watermark: 1741715865.28839@RPXTxlfwr0aOODYTpZawlA
 X-ITU-MailScanner-SpamCheck: not spam
 
-> 	struct fb_info *info =3D &fbdev->info;
->
-> 	if (!fbdev)
-> 		return -EINVAL;
+Hello batman maintainers/developers,
 
-Is such a null pointer check still relevant for the discussed function imp=
-lementation?
+This is a 31-day syzbot report for the batman subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/batman
 
-Regards,
-Markus
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 26 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 555     Yes   INFO: rcu detected stall in batadv_nc_worker (3)
+                  https://syzkaller.appspot.com/bug?extid=69904c3b4a09e8fa2e1b
+<2> 136     No    INFO: rcu detected stall in sys_recvmmsg (3)
+                  https://syzkaller.appspot.com/bug?extid=b079dc0aa6e992859e7c
+<3> 14      Yes   INFO: rcu detected stall in rescuer_thread
+                  https://syzkaller.appspot.com/bug?extid=76e180c757e9d589a79d
+<4> 1       Yes   INFO: rcu detected stall in batadv_bla_periodic_work (2)
+                  https://syzkaller.appspot.com/bug?extid=fc38cf2d6e727d8415c7
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
 
