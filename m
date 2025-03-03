@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-542334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F083FA4C89E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:05:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7ECEA4C8AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DA818836AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8033175108
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE21241677;
-	Mon,  3 Mar 2025 16:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C93241675;
+	Mon,  3 Mar 2025 16:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Onc99M3H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZZSZc5n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5vhqhchG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636FD21C186;
-	Mon,  3 Mar 2025 16:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF628214A6C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019976; cv=none; b=nqxgode0KJ8hPEW6B1KPVe0RXK4u40S59qWJXrdfDkTal5ZbVVriOGu2geN6vgkDpN9e39O0cX58ju0PzXF6NjD8+mYhALCfEyKoMffd96hb0fzLfddAI6Ld3z7nk+SpuHVVeozXzs24ILNrunnEPt12m+M0R5LVMlDAJgLgoyM=
+	t=1741020020; cv=none; b=ZYyche6x1R5TZiIvdK6fhJmC3Me20cyxLZo6zMjLyKYBuDndc+82cs3SRMm1eqj6xI4g/9MH/4HxkjsJErdcRGB3vHthSe0G4PNF/k25aBGedHEYEbpfM4yoTgTHMJaZOWqBTWYiJCb+2EaHs4MFn/kr+rpmZIlb73bz0oubiEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019976; c=relaxed/simple;
-	bh=zwtGLARRnKbqh6KymCpIlBQVR/uzH1mgO7Bo/JUe4BA=;
+	s=arc-20240116; t=1741020020; c=relaxed/simple;
+	bh=QdkxP77BRcAwMbcPIB2MHF28HZIagGB9EjdrZfFXb9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGl2i4baAXnwV0Iu+zcsLUGrULM4Q5Lg42hCwTjf8BGvKGVB+h2vjQne3qGYreH+Qbfvxzj054P/ZPE3OAEVz03QsbgMgoT8cldJHTc35DMOmw7U0R3F3kXH4BM+GwhxWlFQhuKcteOqDj+NyBrrN/rX9M0cX49mOqTFBRnRezg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Onc99M3H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9A7C4CED6;
-	Mon,  3 Mar 2025 16:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019975;
-	bh=zwtGLARRnKbqh6KymCpIlBQVR/uzH1mgO7Bo/JUe4BA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Onc99M3HOtj4PWSLc24/2tOMzX3rWDXGz3ckeBHfIU0L2Kx/ftQMTwST75DC33knk
-	 SrqQpfz11owMFv3jocga3xHpZlHzf4JaUlPUEUHlBnYNDqFAqruWqyGlNKaVD7oaOa
-	 N4icBkVOgChGdxppM1XCsBr4wFfxyFEHZ+g2/8wvtVjlvXjL0EBxPkHP/WDVfi6JJX
-	 Y0tMWvaLZg8XJ98O/kb9stEgg71rvODX+68MC7I0REFzn7B7thNF3SdSSwHRs37Eza
-	 j/d3RvKN1k52jpPorH+10qyHTaZOJGBRDIRuuYWkjdsVv4A9NioJyhuNnjsEgXITh4
-	 UlX6r3JL6AN+w==
-Date: Mon, 3 Mar 2025 08:39:33 -0800
-From: Kees Cook <kees@kernel.org>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, jannh@google.com,
-	torvalds@linux-foundation.org, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, jorgelo@chromium.org,
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org,
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
-	johannes@sipsolutions.net, pedro.falcato@gmail.com,
-	hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de,
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com,
-	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net,
-	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org,
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org,
-	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org,
-	ardb@google.com, enh@google.com, rientjes@google.com,
-	groeck@chromium.org, mpe@ellerman.id.au,
-	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
-Subject: Re: [PATCH v8 5/7] mseal sysmap: uprobe mapping
-Message-ID: <202503030839.6333DA9@keescook>
-References: <20250303050921.3033083-1-jeffxu@google.com>
- <20250303050921.3033083-6-jeffxu@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dE/NGRDNuefxLJoCLvA/YhmqrKkQsXKx947FVa2nzmM3f3JWHq8mBag/Dh9mA1zcDZp/w9aSZgiY6RV2CvGZaRQJWd1LkfIaQ+DQEijmxxsg+EbhigUL3W18vF4z7B4VjGIg0IQO4Zer7w4l2b35zEP1imP/02CVwiilzZQ75bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZZSZc5n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5vhqhchG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 3 Mar 2025 17:40:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741020016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmqmOOmykWxXuSiFE2JPHQqW/PeacKQl+YUmlDiAnxE=;
+	b=IZZSZc5n2KjHMruuBMr93YuvOnFrK7JWoCKL6wt7Dft5LTWwrFP+m6K5JLs36zRUMxfBQN
+	lKiA27+Yayjqd2tMHR830eNUgqHaveh5TWESVP2AMTV0U+wZFITb/xtMkL8lHvZ9Cz9cGw
+	X8Ht6A46LtcBFfOpjHy5wcm7+++0tlBenTNVQIxz3t/oQR9LQLrJDI+uJspGqN5QvFt2Bv
+	b+m2i6DI0qMXc4PJEDJluVPATkTPeGsPK3wTZGmgNsptD29NeDL2UXg6xhOb+KLzaD9qHc
+	qQqp1QAAohJusoGNffmCOGQKvZl62cpidQJeYKx5IXmsBPZ6DzfHWw2mkbU3lw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741020016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmqmOOmykWxXuSiFE2JPHQqW/PeacKQl+YUmlDiAnxE=;
+	b=5vhqhchGQ0/YQsKZyBff7nyRTUugwyksZC+naxgMmc38oROnIf80fYdtsaNZXjc/Bm9toS
+	NFvZV3M0fPfXesCw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
+Message-ID: <20250303164015.HHfy1Ibj@linutronix.de>
+References: <20250225170914.289358-1-bigeasy@linutronix.de>
+ <20250303105416.GY11590@noisy.programming.kicks-ass.net>
+ <20250303141753.tF-FoCm1@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250303050921.3033083-6-jeffxu@google.com>
+In-Reply-To: <20250303141753.tF-FoCm1@linutronix.de>
 
-On Mon, Mar 03, 2025 at 05:09:19AM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
+On 2025-03-03 15:17:55 [+0100], To Peter Zijlstra wrote:
+> > Anyway, the entire stack builds and boots, but is otherwise very much
+> > untested.
+> > 
+> > WDYT?
 > 
-> Provide support to mseal the uprobe mapping.
-> 
-> Unlike other system mappings, the uprobe mapping is not
-> established during program startup. However, its lifetime is the same
-> as the process's lifetime. It could be sealed from creation.
-> 
-> Test was done with perf tool, and observe the uprobe mapping is sealed.
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> well. Let take a look and do a bit of hammering.
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+so you kept the q.drop_hb_ref logic and the reference get. You kept the
+private reference but renamed it and hid it behind the CLASS. I meant to
+do it, just wanted to check if you had another idea regarding it. But
+okay.
 
--- 
-Kees Cook
+You avoided the two states by dropping refcount only there is no !new
+pointer. That should work. 
+
+There is no refcount check in futex_hash_free(). It wouldn't hurt to
+check futex_phash for 0/1, right?
+
+My first few tests succeeded. And I have a few RCU annotations, which I
+post once I complete them and finish my requeue-pi tests.
+
+Sebastian
 
