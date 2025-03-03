@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-545269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3830DA4EB00
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:17:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A924A4E834
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB22422B4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA71C7AA718
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF352E3396;
-	Tue,  4 Mar 2025 17:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D437B296153;
+	Tue,  4 Mar 2025 16:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="CYcVlL/P"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gz50eZ79"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAC62E3371
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D142512F8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110797; cv=fail; b=fUpJHRqDCg/s9qETz9Q/GnF0MelsquvGmRZuj5gq2JS0WKoPqVGKX6Al5QZxpeXFFgxZrxVkogcX0msyGxMlh1WtVDe8D5BHRBqr8p4SNSh1r5xYI+HbXFTsK/YEjyeGhzhRl6EfDeieO0yYJLce2kQUvFpyb/RF+ZoQjvkAhx8=
+	t=1741107047; cv=pass; b=HryKgrbxFK7AfLvEKoFbXqQSqG56lPonVuM0p4VI3gCKl1xq3oCQBFTaQ1WRreyja30WXW6B6iYDBVLA2HR4RLGRmCjf1YsGzjLDRgK79XTB1iakY3koSoCMfm65G+jjk3eRuAygPl54FVPkyd3b4LsN0MbV2TGLpqc8LKeeYq4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110797; c=relaxed/simple;
-	bh=Bw4mDZD4c08//3HY8Hc0y6Y1tAw+C3RLp34KKdro+XU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EUJZ0ybtUAJqQbueik/jovZ0sEos/3pImpded8npEcOZtfHImaE8cf9/utjaUvSkbuZOsm+yic1Wi7lpcl+n0evZ9LWZu21zroVX5UgcNCYQBUFJKP8j3c2f/2CEdIvvPuXM2WgAheDiD23VQ66MErQLm8/Wf+fn9lInSbaROyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=siemens.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=CYcVlL/P reason="signature verification failed"; arc=none smtp.client-ip=185.136.64.227; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=siemens.com
+	s=arc-20240116; t=1741107047; c=relaxed/simple;
+	bh=5Fy1JHZwgirUMzgviaoNnoeqtcdMUPjkKfMSR5S3E1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lKMsHnkU3oKTIS8pki25marLb2L2dxRn6k5VRi4scG9LVy6M6nXMBJ1bUNgPXcFC1O3YnaxSgIUtuPwUrEKMPu07e2K9OxJ7kvWlviPsKokYXDFnR6GB/WSiqk5juXXRQ1dRTFStVQzDfH+3ZirNWNe2FOLFOm5UyrFGA1McXMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz50eZ79; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id C942240D1F47
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:53:11 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id D8786408B65A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:50:43 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=CYcVlL/P
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=gz50eZ79
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hLL0SqZzG3l5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:42:34 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f965HgDzFyHN
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:04:26 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 09D0242736; Tue,  4 Mar 2025 19:42:06 +0300 (+03)
+	id 5F8A342736; Tue,  4 Mar 2025 18:04:14 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=CYcVlL/P
-X-Envelope-From: <linux-kernel+bounces-541102-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz50eZ79
+X-Envelope-From: <linux-kernel+bounces-541110-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=CYcVlL/P
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id EA17641C3C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:47:38 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id C40032DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:47:38 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz50eZ79
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 4E75941C99
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:53:39 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id DF7873064C08
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:53:38 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DB71891C46
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959F83B0ADA
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E28A1EE019;
-	Mon,  3 Mar 2025 07:47:21 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B9F1EE7AD;
+	Mon,  3 Mar 2025 07:53:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228441E9B1B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B334C85;
+	Mon,  3 Mar 2025 07:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740988038; cv=none; b=iV7h2Vu+BuZRM4jft5wB2J6Ta7/0Kd9WwhlHKJPPxR3k/pMM4pZXZzeqGUkGXI8FkbLUxOr9mSITAhPr/1NcQXz4i8iHthM2p8EFyq7k3hmXkwlR0IHFFwfTrlR1KWWbJSg8HKArFYGsLTDpbBE6FYuNndmqJKHPr2J+gNOvGeA=
+	t=1740988402; cv=none; b=Vh+jwNPVrJfzmyUYg+I3+y2uUo4JO++yoO5tAjbWZerpRPYQni1XDB6mwa2RfIfpUEnyN8+If1UGoEVoj4SS28VoFP/9EHDsw+ZsVUpyqbNDomDgHa2KucXHreUnXsK4ju4z9aNDKDSc51Xrux6z+BvJbXYAxcEGhfyfgxlLENU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740988038; c=relaxed/simple;
-	bh=dZjutVIqRkydhliHBlHKI06qmvIDPbtRY2hMGF3LUjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XfUf2VQO2CXzcoZ2Rz/09WfIC+1Qq7POx1BGOe0vPZKnbYBhG9wHcpunH3r9pbLmAiBFyGyhgqpWtXsue0P8xDlhJWHOO9JcJM2YGTo7YEVi+gSej6FvwJ5DC1CZr9metFH7FzhP0zF1eqKf8jafWb2gD2Ho1wrsPqNRXnMsGdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=CYcVlL/P; arc=none smtp.client-ip=185.136.64.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250303074707015f5e560fc291725f
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 03 Mar 2025 08:47:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=zrUY1LdFYD+ZIm9007t+7YM/d7JBcqpKOI6aIegZ2eU=;
- b=CYcVlL/PjL68bJNlRASUCQFR3d/gIjvM8s4AWiorZd6ei35cbjWVNs6MczurZckPUN1Rcs
- iHZ5t/HOJYIxhnroa7iKaNK1OChsV3p0HcM/IK+AJlqz/Bh0kPTHIBJ69rCl3Fe5g7U4F2JF
- pIXIbZVy081/oEQpulGIusFY+b7+6j+EuKJfie3f2YKeQCiyaScowPbnyR6APxUWfNP7ES0z
- MQuc2WdhLii8ZsqxFztRSOL+PjlwH2s2r6+Pcf4FCquunpcwJydjFZ+MhpDWQD2yNesOcYzP
- ZTikariIq1dGzkrS1XGfgIM1tAB3A+rsx4vlwGVyua8NZ0jD3tVlUg0w==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: Roger Quadros <rogerq@kernel.org>,
-	netdev@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH net-next v2] net: ethernet: ti: cpsw_new: populate netdev of_node
-Date: Mon,  3 Mar 2025 08:46:57 +0100
-Message-ID: <20250303074703.1758297-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1740988402; c=relaxed/simple;
+	bh=5Fy1JHZwgirUMzgviaoNnoeqtcdMUPjkKfMSR5S3E1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CuK+X3Wr07BADokO3ayCPDCU+/EyVfJMmWY0OQCnKo4g45e4TgaMUqqI0HTTtA7BSFxMSaYxzcSwTUzqp0n4VDWKhJSt6/zyHF1jysXXbrGfrNMO8YzDqdeP/YeKb0d+kff5P6V3vlcmTvOistIYj44zpJgG1VBmZH9hKqqjdGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz50eZ79; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 05138C4CEE4;
+	Mon,  3 Mar 2025 07:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740988402;
+	bh=5Fy1JHZwgirUMzgviaoNnoeqtcdMUPjkKfMSR5S3E1U=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=gz50eZ79yZpQQ4AlK7w5ZxlkSinjqxwbRqqnh+Ktb9l76fhDJU841cYkRnJvHgluW
+	 AK8NP3k+0DUAn8zZsjJhu3+19L3JLAYNE4qcSuFU4iMnRAsEnd5JljG503MrS5cylW
+	 iJRN7/Yt/vlGkj1TQNSy1+F75kXw4IdBzd2mjmWk9rbgVKQTiQ6gPSB0W6/0741hHo
+	 J2zzjYc7UWJCxpYXzFCj+3H8u27sizt95iE0wGym8mNqiF1FbRQZQvf3+rBY32Pz3E
+	 4Du6Ylb3icoap3+GzS173u7Nn8UXvGQac2QrRyK2+WITeIpBWY3IxQ58/p6SsU6XIC
+	 hMbI/8ku0iMXg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8269C282C5;
+	Mon,  3 Mar 2025 07:53:21 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Mon, 03 Mar 2025 15:53:20 +0800
+Subject: [PATCH] pinctrl: meson: fix pin input property for a4
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -112,48 +100,90 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-fix-a4-pinctl-v1-1-6579888b4272@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAO9fxWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwNj3bTMCt1EE92CzLzkkhxdkyQjQ9M04zRLEwsLJaCegqJUoAKwedG
+ xtbUAl0BJTl8AAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740988400; l=1905;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=8KAlxGwDBrTjecjGM2UBSMoeZW/HVDXc337RfYbdpLs=;
+ b=lSCzkCPO4V0PMaYz3RHyLMVvoDIJFa+ttEleYaHx84tqa5hPPEuIuhBgqPVQxEuCkdXP9TslC
+ bIGD/OzMizrAHgH73PTjU+OBpqW5wF23nSa2kAG3qyHAmbGpcSMfPcW
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hLL0SqZzG3l5
+X-ITU-Libra-ESVA-ID: 4Z6f965HgDzFyHN
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715447.55536@JKoC7Wp6xT0K1q913dj9ig
+X-ITU-Libra-ESVA-Watermark: 1741711730.72292@SsKZU5Ir9DPd4jHvM3yzYw
 X-ITU-MailScanner-SpamCheck: not spam
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-So that of_find_net_device_by_node() can find CPSW ports and other DSA
-switches can be stacked downstream. Tested in conjunction with KSZ8873.
+The register of pin input attribute means the opposite.
+value of reigster meaning is 1 for input and 0 for output.
+So fix it.
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Fixes: 6e9be3abb78c ("pinctrl: Add driver support for Amlogic SoCs")
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
-Changelog:
-v2: cpsw-nuss (am6x or K3 naming) -> CPSW (am33x naming) in commit messag=
-e
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/net/ethernet/ti/cpsw_new.c | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+index a5218e8f1e03..35d5540b8eaa 100644
+--- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
++++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+@@ -775,7 +775,7 @@ static int aml_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+ 	if (ret)
+ 		return ret;
+ 
+-	return BIT(bit) & val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
++	return BIT(bit) & val ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int aml_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
+@@ -785,7 +785,7 @@ static int aml_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
+ 
+ 	aml_gpio_calc_reg_and_bit(bank, AML_REG_DIR, gpio, &reg, &bit);
+ 
+-	return regmap_update_bits(bank->reg_gpio, reg, BIT(bit), 0);
++	return regmap_update_bits(bank->reg_gpio, reg, BIT(bit), BIT(bit));
+ }
+ 
+ static int aml_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+@@ -796,7 +796,7 @@ static int aml_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+ 	int ret;
+ 
+ 	aml_gpio_calc_reg_and_bit(bank, AML_REG_DIR, gpio, &reg, &bit);
+-	ret = regmap_update_bits(bank->reg_gpio, reg, BIT(bit), BIT(bit));
++	ret = regmap_update_bits(bank->reg_gpio, reg, BIT(bit), 0);
+ 	if (ret < 0)
+ 		return ret;
+ 
 
-diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti=
-/cpsw_new.c
-index cec0a90659d94..66713bc931741 100644
---- a/drivers/net/ethernet/ti/cpsw_new.c
-+++ b/drivers/net/ethernet/ti/cpsw_new.c
-@@ -1418,6 +1418,7 @@ static int cpsw_create_ports(struct cpsw_common *cp=
-sw)
- 		ndev->netdev_ops =3D &cpsw_netdev_ops;
- 		ndev->ethtool_ops =3D &cpsw_ethtool_ops;
- 		SET_NETDEV_DEV(ndev, dev);
-+		ndev->dev.of_node =3D slave_data->slave_node;
-=20
- 		if (!napi_ndev) {
- 			/* CPSW Host port CPDMA interface is shared between
---=20
-2.48.1
+---
+base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
+change-id: 20250303-fix-a4-pinctl-4b215f3f9488
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
 
