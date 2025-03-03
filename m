@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-541164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCA6A4B96B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3C9A4B96D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068BC1889AFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5FF188A447
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FFE1EB193;
-	Mon,  3 Mar 2025 08:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6191E9B3D;
+	Mon,  3 Mar 2025 08:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jI/464iD"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="A3W17pDj"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19951E9B31
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A189B1E9B31
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990879; cv=none; b=VveCNNZx/FQbHf/wI8TF3grnuIS3WwhxpO1orA9yKnY7GGx+IyjRa2RXEz2JcMmcMW0lxZY15X64QVc5IEjjFZQcQuSbVCT8gfHu7sdwZZwlNDrxW6FTa3fv89L9z9f6AQPIACeiqdEE8DP7xSyKo6rl/rXHuO0oMoMFr41Mq8Y=
+	t=1740990891; cv=none; b=eBUV59Gbnf8wa589Sf3ciedMVW/G0pBivzx9uJJ7/oPkKAGa8aRG9D20/mu1UQ6cR+ZmV+xKTXJ68Jsf92YYTFjGBS8CvfLm+m/hHNQfkiZowxaLAGvEaxf3j22J/wa2syv4WOAAIdHRdIxRw0Nft5V4nPcsNRShZzu5NJmZu8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990879; c=relaxed/simple;
-	bh=Lp1gbVGcqJ1nXjiXJP86mZY5erZ71tjosxRZXJwFwCw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=NNJG1CZAJFCfMQEA/YkfH/i4V3+J/bFOwyoJ9iJz6GyJGAEJEyR4Wenr54xVTYzs033OLsM9MT7k6USHHl4AhKG/NSWoQOeyET2f48ReC82yflBkukFaMEMsnpT7rPu6U9bQJXrvE6wjmGbE1cinKerRG3VeEjORO3bWwAP0r8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jI/464iD; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223a7065ff8so21328445ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:34:37 -0800 (PST)
+	s=arc-20240116; t=1740990891; c=relaxed/simple;
+	bh=iPFuGbLFPQtPqFzwDENkWUAO61z2GvV5w4cvc2a+t9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bMCbTyX3p+3cXwr2XFA+cZrqT2lWETyfF49x2b0UKjnn43oM4fGOpu+vPh4hO2JCCHrFbsb3vEIaMyt2l+KCDcCJzOTRmE4OiwqWfATSinesTCF6Q0//eAgn5/eqtjDaeTmOFuFEa82bor974w236x2vaWgkNLAdVs/OqKGYq44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=A3W17pDj; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so2132915e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:34:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740990877; x=1741595677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=di2WoUZvURtoNarBPZOzepS2NtA7sut6LRw/YPG0p/I=;
-        b=jI/464iD4dvpOA0hQThxdxjY/L7myA6VNLgZAF9EQ3xFD8hykCr0UTllApnwxxEw87
-         gA8J/kI6r5Y6h/GhKzM0ylckHcIDGnSP5YXTsdOcZIP6KhPmdpZRm1TfVY1ALbCt4+7b
-         IaqaVepxbd/0PptiQRy7s6sVl6Wh3F5RjmEUxmAnpcDmTdJoGNHRIaFj+gNrnot2EAZB
-         waM0vHdiCVBVWcpEhGgAGuQfjGivsHrlut8ygM/VB9JiQ9Pmu6ELM9rl2HRAAJ5LrcSm
-         OXA+jkKrRyzCTS93XcvIN3wYB5YVCYWEJB+s1Q2XHo+HlO77by61smfeqBwPzd3HxPRa
-         xrzQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740990888; x=1741595688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NVro2GWwNaGJu4kXC9WvdopNSLCVYlzQ9STaoYCC7Zk=;
+        b=A3W17pDjYKhgJfA6mmgrR6e1GbMN1Yv6AGv6PlN1rzfHZyMjL9MUnxJrCAif3F8iPg
+         Ngmmh37O6E8Rz2NZeTATj9quKGUNci3fpFf59h/ZhLRHPEeBZ4O6+ywJQYo0rKpJ2KPg
+         FGtusYDHeRtGmZGJKY1VVlBHNd5dPP3HcFKywtohSPlbW5PkPPWcW5IVdBljCMdlFnbH
+         v/A+Qs/9sretcTS7QvpT5axshEI6E/rZg68q1h6WZWs1hB4TOwwvg6ywHDEV1Amp2ckm
+         xxQSNOoyu/RyOGD0S+zigJW+RrBG87bj/iPkbbnkaEJptVcM8vCKoNbX8h6xbR6t2hEt
+         +Rxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740990877; x=1741595677;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=di2WoUZvURtoNarBPZOzepS2NtA7sut6LRw/YPG0p/I=;
-        b=fuhLKQI1hqe4SYI/udXl0bOHjqrr4P9xTSB9JOFTDVP56gmIv19y7TDQhT4meJlIk+
-         o8yNhbN56/HrPXiowaDB1GTm7NN4kqs8t1pL0qGIGI5WQkvnJYGtn/EhD238Qpz6AL62
-         G3RLygFVAIAKM6kvB56X94gEuIV/shY6uayu9DqIJtpWR+zq/BjKyWb6mu3vIcc0kPpZ
-         N833nNWP4ISf8wkEiagzeFQ6W2jaWa/MtBAKli9gU+vSS4d1KbBdV2JTnDpf1LOPJg6I
-         6aQIET1f7ayhyrzTibRPn6pqUjUTqhDGBt3iYcSS9zEQN4kecUu31W8Me16KvmMRaFfM
-         EaIg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6UzFHW+lj4FUPNp1METEZT4vo/i+VpAvWnJxFYxbFWDHkf3zx4AgbXL9G1M+F/8KEP/MVzWlIOLG7kEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Ews36GxDFbtSEVoWFa1ihdIC9sYgTiSJr/cF89nRS6lHtgu+
-	+cJd33LOhJ7Db6IvzXIFViyLh+3aJ202Jd5ScFat+pvAun2eXRJXEkm4vh/p1No=
-X-Gm-Gg: ASbGncuSQ9Co6dZykswmgc1MB7qlCBuPC6Nx7OZy05MdtJs6frfWJpgv+MrsVhI5sEN
-	0FJKWQADq/f/DuXVl0sIFM8zfYIaR1wTqN4Gqta3kEq+1ymFrYAhIh86ZGdUoAW0R8HNiPbIBxw
-	zDSEYs/zVP6xi/VwR9KLF5jYu74cU+LZSUecY4eC5xtRw5sX46xTFE/G8imHA12/tOAn2savlm3
-	XOnFtvgypOYpxCf2DqCRxgY2z/ODHg/vlXee6OZ+ro9cESTQtEOI4TuWAfh+CTeROmKvU7Rtxx5
-	+9SvgqIy3X4gvdeoGEU/12A642LdfLbCL/bvfGlx8wgvfesy9mzsZotd2S5/qWU+U8hnni/xZpj
-	rF1c=
-X-Google-Smtp-Source: AGHT+IEk0WrjnIZ7AWKUanS9IbxIHGJTjqY1Da4XJZVIQYRkq7p3R9SLY1NnZNNc1YpQ+wvncNLDAA==
-X-Received: by 2002:a05:6a20:c891:b0:1ee:c093:e24c with SMTP id adf61e73a8af0-1f2f4ddb73bmr23471716637.30.1740990876998;
-        Mon, 03 Mar 2025 00:34:36 -0800 (PST)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe48882sm8289808b3a.48.2025.03.03.00.34.30
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 03 Mar 2025 00:34:36 -0800 (PST)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: apatel@ventanamicro.com,
-	atishp@rivosinc.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	cuiyunhui@bytedance.com,
-	samuel.holland@sifive.com,
-	alexghiti@rivosinc.com,
-	jassisinghbrar@gmail.com,
-	takakura@valinux.co.jp,
-	valentina.fernandezalanis@microchip.com,
-	ruanjinjie@huawei.com,
-	charlie@rivosinc.com,
-	conor.dooley@microchip.com,
-	haibo1.xu@intel.com,
-	andybnac@gmail.com,
-	ke.zhao@shingroup.cn,
-	tglx@linutronix.de,
-	linux-riscv@lists.infradead.org,
+        d=1e100.net; s=20230601; t=1740990888; x=1741595688;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NVro2GWwNaGJu4kXC9WvdopNSLCVYlzQ9STaoYCC7Zk=;
+        b=bUFr/vwykvKu0iSqv4DXjY06kpEQzWPbAJnWTGDbZV4ebQCyVFLt04c/9Heps/V1ts
+         mdOwX5gf10QyuGOMJfZAswu32PsFqwQNdxAqcp8sRhU2FnUSijqmn5vuUD/suGoeCmsH
+         FcL4CjUa3VTiLbSXtAVom1bVW+OlGlPUj8DRj1ZazB4ZWDDsKJD6Lpir/ZZhnv+3a/L7
+         Mv10RslDlSvMiIDMabNJ5dh/0Ffw4AMMgtOhAk8Yq4BrxLuf3NCCBsBtpCOJZ2RSKu1E
+         kI88GW7P9EnXAzQ0Wru1RBJ8xDGFfxKSt5wZn8DpsDocD1pDPAGDFsvA+gZGDB/IXkN2
+         q+BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmd5HU6A2g0Ls5tncu7mf7T51I2XsdOPICRRdREzFVrUJj6Qxv0YC0uA8V8Mt01O03vSarLEAvr2wcadI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK7wDT5b8iVsbHg5KxBldHrhKtVTngo40dPJE/TnDMQ1eJXzr8
+	EuZqlFVvTNxIORH/oeQUkdug4q/HDxO9VUgXdXtctxo1gLXlnY6v5Xlhl2MP2PChGJ8/5JzpyOh
+	+
+X-Gm-Gg: ASbGncsrsdCn2m8VBXcJOY2ICB1LxD4K3Z92jVH9h/E68pJNRQ1WtI8a80e2PWV85/b
+	fk/KYqTj8mlFfp4PI7ezelWb4j6ZR1qd3AL2sTGp7/v9n++w+yZgqEQ1k33fFX8YLz4HJSfUwhJ
+	oGu30eokVvejcru3Rv4h4Jq6A6RnteDpP4E3WQs2JMaTgcxEb/93Tgpa7Cxn27nekeOPZy9O0bM
+	P36+DWx7+2W6RxUQeXFgZxBSRKuiJ6RW5JRUkqHPiGsiXdyLUxWGstRqp+hnRc1IKBTud81kHJq
+	NkO8MfkZiaCF7OVvGDbpftLhM/dJvDS4PPZVg4mEuaIt
+X-Google-Smtp-Source: AGHT+IGT44pwTNA4nyeYj9rXZTnNHuMSqOpa+cLk5QqeHHwy95CnfW/yr5rAJr2fRMGTOGMJKwU4KA==
+X-Received: by 2002:a05:600c:a4b:b0:439:8185:4ad4 with SMTP id 5b1f17b1804b1-43ba6747082mr94929085e9.27.1740990887605;
+        Mon, 03 Mar 2025 00:34:47 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:664a:9e92:6aa8:6007])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532ba6sm180406115e9.12.2025.03.03.00.34.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 00:34:47 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] riscv: print hartid on bringup
-Date: Mon,  3 Mar 2025 16:34:24 +0800
-Message-Id: <20250303083424.14309-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+Subject: Re: [PATCH 1/2] gpiolib: deprecate gpio_chip::set and gpio_chip::set_multiple
+Date: Mon,  3 Mar 2025 09:34:44 +0100
+Message-ID: <174099088185.13023.4679489992150652346.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250227083748.22400-1-brgl@bgdev.pl>
+References: <20250227083748.22400-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Firmware randomly releases cores, so CPU numbers don't linearly map
-to hartids. When the system has an exception, we care more about hartids.
-Adding "dyndbg="file smpboot.c +p" loglevel=8" to the cmdline can output
-the hartid.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/riscv/kernel/smp.c     | 2 ++
- arch/riscv/kernel/smpboot.c | 4 ++++
- 2 files changed, 6 insertions(+)
 
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index d58b5e751286..e650dec44817 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
- void __init smp_setup_processor_id(void)
- {
- 	cpuid_to_hartid_map(0) = boot_cpu_hartid;
-+
-+	pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid);
- }
- 
- static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index e36d20205bd7..601a321e0f17 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
- 	riscv_ipi_enable();
- 
- 	numa_add_cpu(curr_cpuid);
-+
-+	pr_debug("CPU%u: Booted secondary hartid %lu\n", curr_cpuid,
-+		cpuid_to_hartid_map(curr_cpuid));
-+
- 	set_cpu_online(curr_cpuid, true);
- 
- 	/*
+On Thu, 27 Feb 2025 09:37:47 +0100, Bartosz Golaszewski wrote:
+> We now have setter callbacks that allow us to indicate success or
+> failure using the integer return value. Deprecate the older callbacks so
+> that no new code is tempted to use them.
+> 
+> 
+
+Applied, thanks!
+
+[1/2] gpiolib: deprecate gpio_chip::set and gpio_chip::set_multiple
+      commit: 6224e7fc1ce75edcd03b56a2e0fd4c1765d5888e
+[2/2] gpiolib: update kerneldocs for value setters
+      commit: 9778568dede2166c7bd124d473f9ec365f782935
+
+Best regards,
 -- 
-2.39.2
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
