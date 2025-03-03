@@ -1,358 +1,172 @@
-Return-Path: <linux-kernel+bounces-541346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE53A4BBC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:15:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4DFA4BBC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5D73AB2A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D7A3AA878
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927891EEA40;
-	Mon,  3 Mar 2025 10:15:10 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27781EE017;
-	Mon,  3 Mar 2025 10:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903A11F150A;
+	Mon,  3 Mar 2025 10:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUtUsixN"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04E51DFD95
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996909; cv=none; b=MWY8jo8By8LhzYDLxTMV7/rITEoOQm7jPHVwcFh2b8gCZynih0PdTmysXWEpzueTNbAUGnUNHy0c4qrY8i1N46Q4ThRY08uUeSZthClJUa2kG5inLhLn6MZaYbkzM4BcELbSYRqYAiLj9076+AQmwihi4Gv+EAhFEvHFce2qdvk=
+	t=1740996896; cv=none; b=monXYdi2lIbT+et/Wso9iUT1frcEZL1K6aP7F9bOKuVf/mv5bsWpQvz2WL0ved8okHU4kyUyaOKdFkNgqe9uxC3GjFfzMEQBavTrrZv6dx/TpXp6GGmthpWBKm96tTV1NHl/ZBTF5IbC7Q18t6mpnsGrcHXdztE/s9OcCwifuTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996909; c=relaxed/simple;
-	bh=hmx9uRMd6eYBAZLyd2siW8PPU8dUwCzthn0EugXi2Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0y4rk/OFx/aphRUkh0WSd4xd2swPv5HF8Lc5jnhMkG+jBYmnqjOEvXgik9erH37h7BQ2F8Z3OSx/7IdPEhyL4+lrEJZ2O0QdPiRodLyhM+WeMBwhC4zktMu+uXorArzna2kCBferVYy7L6SWGEf5R15X+y0UcfMPqfAkKliF6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 523AEfSb021531;
-	Mon, 3 Mar 2025 04:14:41 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 523AEZix021529;
-	Mon, 3 Mar 2025 04:14:35 -0600
-Date: Mon, 3 Mar 2025 04:14:35 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-Message-ID: <20250303101435.GA21445@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com> <20250225120114.GA13368@wind.enjellic.com> <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com> <20250227121207.GA15116@wind.enjellic.com> <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
+	s=arc-20240116; t=1740996896; c=relaxed/simple;
+	bh=+nGCzjyR8rgspLDbLXmX9G17MFRKxZXjvbJk+rBSpA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WE3vrXGz7LyfkxpLBfRgOtLW1gToEgH1iWUfYgeHSsFoDOI60tPgmBr6NCXMdAWWmPYDuS73MoynnOIW3NziFxdrqUmIovxEFPqXGfcHWKLmd7dunAs2YjOC8/xxgYbUBn7n+Xu87AkEKecgX1saENq1UzOonxJJ3sZ5hLPDolY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eUtUsixN; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abf45d8db04so331524666b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:14:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740996893; x=1741601693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ilhtkExKi2tY4D8JNLGZRRECs+rUrn5LWH8Gtc8O4iU=;
+        b=eUtUsixNjggmH22ZinByqDiVJL0VhQN71Os/HnbtTG/9Yf8mYSgYovs+L7tXhxDfVj
+         NgWg9hQftwVBsM3+OKVwJ0LmjyGrmBgxbe8qTR17V3SNhBCic5C2S0EjnjAud9tBYjf4
+         qVOnoevbDp5ij7pyDO+spcJV5hhf7axxuCoJqgxH5Cn38LN028t1ZJI6Ud+uMfRauvP9
+         5/vfHZvHfOjZeI1LJQT+4oTPdm0Q+6W8cjFR8wcP/X2qUdwVLVlAxugfN+gMzwJYspWk
+         k5RAuw1pN6d7UCVrbHVZCQ51BchQyEjdAQlnwHgoN8M7Ucy6YKDbZwBJToCc+0i6GBWS
+         Niwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996893; x=1741601693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ilhtkExKi2tY4D8JNLGZRRECs+rUrn5LWH8Gtc8O4iU=;
+        b=TqohfEYPzrHwF1vuWA+0XIzcfNkz52f04FEOcs4uf3eapTVlxSugkjdA+W6u2ezri/
+         /rZXA9hZBHNK4ZclFzh+54eBLRqxKCvDyRWF9JQ1YpcgpXy5ucrVSws+4cc9jKeP9/Cw
+         XXftJnmDO6ZquLiuM7eNI9ciQAfU08jMD8pKoULxdQD1Z0BSKgGxnZAjXqfovtkpnQ5Z
+         U2fqlFetbqopw2gk3RlIIXuCVoK7PRUTa0lgqgLm5BI39IcecFsHgVxoMUx1W6kzjDCc
+         faKMrlyGPsssN17zpa19f8y6KRPHM2gFg/krPa9s+Hp8dCBhx7PRRWYKW4v7ILOhEcXK
+         BjPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKEl0KqtZtpi6xJoVxTj1Va8GbsvjUSNq5kg0nwAlCISAe3uDrIQUtGqOFUbY15KjkledcWhDxR/UIbPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtGWQhXo87KgHrXcwbphWVbc1j1UV+B/RBP0qcKJ8EVpHNo3Og
+	Kre44g0uB2TOOIvZnZAMNwCRt8V08fD3Da9MsiNrHGOiHm7qoYphO2g+9XtD9Us=
+X-Gm-Gg: ASbGnctRqCvCkAc4xE/bud7QaE8n9yCMBIk4FEJkr+O+0L/6UlKhffljX/CsOh+q1RC
+	c1qK4+DF02rS7l9vy+DIdmPFbIRK6lyXly/d1XIGawrMqCdD/t6qXCcv+aGBzRpTsFRSIyiKnLr
+	B5aR0XjMc7UejN5DvUP2ei83xifPMw1TQtu+G7x/y4X8ijo/HqoGWRGaM0tNgej6HZ1XWQKE/A0
+	6pBvZvmnCvXdDmINL8SYO67su/BvmsxX4SrATuq+wk0xHZQyAG0VWY+L4wEltwki6s68KgulWwW
+	VWITUsYarfeyghTZOcJQIk9i8XAAcyxPm08ijikmax5F1RbQJw==
+X-Google-Smtp-Source: AGHT+IFW5wW8s+H3cYQVcYMHCSk5m4LiYMR29KDD3mNnUTMxiFYWqtZIptENOVNp/zPSrPbHfZFy4w==
+X-Received: by 2002:a17:907:7207:b0:abf:769a:d3b7 with SMTP id a640c23a62f3a-abf769ad59cmr416122766b.57.1740996892823;
+        Mon, 03 Mar 2025 02:14:52 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac1e3ef2f9dsm40040166b.45.2025.03.03.02.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:14:52 -0800 (PST)
+Date: Mon, 3 Mar 2025 13:14:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Antonino Daplas <adaplas@pol.net>, Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Yihao Han <hanyihao@vivo.com>, cocci@inria.fr,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] video: au1100fb: Move a variable assignment
+ behind a null pointer check in au1100fb_setmode()
+Message-ID: <15b7c1ee-4541-4732-8189-79397ae45b68@stanley.mountain>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
+ <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
+ <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
+ <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 03 Mar 2025 04:14:41 -0600 (CST)
+In-Reply-To: <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
+
+On Mon, Mar 03, 2025 at 01:08:29PM +0300, Dan Carpenter wrote:
+> Real bugs where we dereference a pointer and then check for NULL don't
+> last long in the kernel.  Most of the stuff Markus is sending is false
+> positives like this.
+
+Maybe I was too optimistic.  Here are the Smatch warnings from the
+Friday's linux-next.
+
+Common false positives are that the pointer can sometimes be NULL but
+there are other ways to determine without checking explicitly.  For
+example, maybe the caller passes a flag which means it's non-NULL.
+
+regards,
+dan carpenter
+
+arch/arm64/kvm/../../../virt/kvm/kvm_main.c:1639 kvm_prepare_memory_region() warn: variable dereferenced before check 'new' (see line 1622)
+arch/x86/kernel/fpu/xstate.c:1567 fpstate_realloc() warn: variable dereferenced before check 'curfps' (see line 1546)
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:1639 kvm_prepare_memory_region() warn: variable dereferenced before check 'new' (see line 1622)
+drivers/base/dd.c:696 really_probe() warn: variable dereferenced before check 'dev->bus' (see line 640)
+drivers/base/dd.c:720 really_probe() warn: variable dereferenced before check 'dev->bus' (see line 640)
+drivers/block/drbd/drbd_worker.c:588 make_resync_request() warn: variable dereferenced before check 'peer_device' (see line 587)
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:12341 parse_edid_displayid_vrr() warn: variable dereferenced before check 'edid_ext' (see line 12337)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn21/rn_clk_mgr.c:775 rn_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 743)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn301/vg_clk_mgr.c:734 vg_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 720)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn314/dcn314_clk_mgr.c:899 dcn314_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 838)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c:715 dcn315_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 654)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c:655 dcn316_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 634)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c:789 dcn31_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 728)
+drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:1380 dcn35_clk_mgr_construct() warn: variable dereferenced before check 'ctx->dc_bios->integrated_info' (see line 1307)
+drivers/gpu/drm/i915/gem/i915_gem_shmem.c:174 shmem_sg_alloc_table() warn: variable dereferenced before check 'sg' (see line 163)
+drivers/gpu/drm/i915/gt/gen6_ppgtt.c:274 gen6_ppgtt_cleanup() warn: variable dereferenced before check 'ppgtt->base.pd' (see line 271)
+drivers/gpu/drm/i915/gt/intel_execlists_submission.c:3649 rcu_virtual_context_destroy() warn: variable dereferenced before check 've->base.sched_engine' (see line 3623)
+drivers/gpu/drm/nouveau/nouveau_dp.c:494 nouveau_dp_irq() warn: variable dereferenced before check 'outp' (see line 489)
+drivers/hid/hid-debug.c:3727 hid_debug_events_read() warn: variable dereferenced before check 'list->hdev' (see line 3713)
+drivers/net/ethernet/amd/pcnet32.c:1923 pcnet32_probe1() warn: variable dereferenced before check 'pdev' (see line 1843)
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c:267 xgene_enet_tx_completion() warn: variable dereferenced before check 'skb' (see line 243)
+drivers/net/ethernet/natsemi/ns83820.c:884 rx_irq() warn: variable dereferenced before check 'skb' (see line 883)
+drivers/net/ethernet/pensando/ionic/ionic_txrx.c:205 ionic_rx_build_skb() warn: variable dereferenced before check 'buf_info->page' (see line 188)
+drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c:1236 iwl_setup_interface() warn: variable dereferenced before check 'priv->lib->bt_params' (see line 1229)
+drivers/net/wireless/intel/iwlwifi/dvm/main.c:1114 iwl_init_drv() warn: variable dereferenced before check 'priv->lib->bt_params' (see line 1109)
+drivers/net/wireless/mediatek/mt76/mt76_connac_mac.c:307 mt76_connac2_mac_tx_rate_val() warn: variable dereferenced before check 'conf' (see line 300)
+drivers/net/wireless/mediatek/mt76/mt7925/mac.c:851 mt7925_tx_check_aggr() warn: variable dereferenced before check 'sta' (see line 847)
+drivers/nvme/host/ioctl.c:173 nvme_map_user_request() warn: variable dereferenced before check 'bio' (see line 162)
+drivers/platform/mellanox/mlxreg-lc.c:903 mlxreg_lc_probe() warn: variable dereferenced before check 'data->notifier' (see line 828)
+drivers/scsi/aacraid/commsup.c:2344 aac_command_thread() warn: variable dereferenced before check 'dev->queues' (see line 2332)
+drivers/scsi/aic7xxx/aic79xx_osm.c:1837 ahd_done() warn: variable dereferenced before check 'cmd' (see line 1793)
+drivers/scsi/csiostor/csio_mb.c:932 csio_fcoe_vnp_alloc_init_mb() warn: variable dereferenced before check 'vnport_wwnn' (see line 929)
+drivers/scsi/ips.c:2560 ips_next() warn: variable dereferenced before check 'scb->scsi_cmd' (see line 2554)
+drivers/scsi/ips.c:2568 ips_next() warn: variable dereferenced before check 'scb->scsi_cmd' (see line 2554)
+drivers/scsi/ips.c:2593 ips_next() warn: variable dereferenced before check 'scb->scsi_cmd' (see line 2554)
+drivers/scsi/libsas/sas_scsi_host.c:119 sas_scsi_task_done() warn: variable dereferenced before check 'sc' (see line 110)
+drivers/scsi/lpfc/lpfc_bsg.c:1332 lpfc_bsg_hba_get_event() warn: variable dereferenced before check 'evt_dat' (see line 1299)
+drivers/slimbus/qcom-ngd-ctrl.c:884 qcom_slim_ngd_xfer_msg() warn: variable dereferenced before check 'txn->msg' (see line 808)
+drivers/spi/spi-offload.c:186 spi_offload_trigger_get() warn: variable dereferenced before check 'trigger->ops' (see line 176)
+drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ia_css_output.host.c:58 ia_css_output_config() warn: variable dereferenced before check 'from->info' (see line 53)
+drivers/usb/gadget/udc/tegra-xudc.c:2681 tegra_xudc_handle_transfer_completion() warn: variable dereferenced before check 'ep->desc' (see line 2679)
+drivers/usb/musb/musb_core.c:964 musb_handle_intr_disconnect() warn: variable dereferenced before check 'musb->hcd' (see line 963)
+fs/bcachefs/journal.c:1187 __bch2_set_nr_journal_buckets() warn: variable dereferenced before check 'c' (see line 1184)
+fs/efs/inode.c:299 efs_map_block() warn: variable dereferenced before check 'bh' (see line 292)
+fs/efs/inode.c:304 efs_map_block() warn: variable dereferenced before check 'bh' (see line 292)
+fs/efs/inode.c:309 efs_map_block() warn: variable dereferenced before check 'bh' (see line 292)
+fs/nfs/write.c:808 nfs_inode_remove_request() warn: variable dereferenced before check 'folio' (see line 805)
+fs/ocfs2/dlm/dlmrecovery.c:1590 dlm_mig_lockres_worker() warn: variable dereferenced before check 'res' (see line 1563)
+fs/ocfs2/move_extents.c:322 ocfs2_defrag_extent() warn: variable dereferenced before check 'context->data_ac' (see line 279)
+fs/ocfs2/namei.c:1455 ocfs2_rename() warn: variable dereferenced before check 'newfe_bh' (see line 1452)
+fs/ocfs2/namei.c:1637 ocfs2_rename() warn: variable dereferenced before check 'old_dir_bh' (see line 1618)
+fs/smb/client/file.c:3085 cifs_oplock_break() warn: variable dereferenced before check 'inode' (see line 3056)
+lib/reed_solomon/decode_rs.c:315 decode_rs16() warn: variable dereferenced before check 'par' (see line 81)
+net/core/failover.c:85 failover_slave_register() warn: variable dereferenced before check 'fops' (see line 66)
+net/mpls/mpls_iptunnel.c:156 mpls_xmit() warn: variable dereferenced before check 'out_dev' (see line 56)
 
-On Thu, Feb 27, 2025 at 08:47:43AM -0800, Casey Schaufler wrote:
-
-Good morning, I hope the week is starting well for everyone.
-
-> On 2/27/2025 4:12 AM, Dr. Greg wrote:
-> > On Tue, Feb 25, 2025 at 07:48:31AM -0800, Casey Schaufler wrote:
-> >
-> > Good morning, I hope this note finds the week going well for everyone.
-> >
-> >> On 2/25/2025 4:01 AM, Dr. Greg wrote:
-> >>> On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
-> >>>
-> >>> For the record, further documentation of our replies to TSEM technical
-> >>> issues.
-> >>>
-> >>> ...
-> >>>
-> >>> Further, TSEM is formulated on the premise that software teams,
-> >>> as a by product of CI/CD automation and testing, can develop precise
-> >>> descriptions of the security behavior of their workloads.
-
-> >> I've said it before, and I'll say it again. This premise is
-> >> hopelessly naive. If it was workable you'd be able to use SELinux
-> >> and audit2allow to create perfect security, and it would have been
-> >> done 15 years ago.  The whole idea that you can glean what a
-> >> software system is *supposed* to do from what it *does* flies
-> >> completely in the face of basic security principles.
-
-> > You view our work as hopelessly naive because you, and perhaps
-> > others, view it through a 45+ year old lens of classic
-> > subject/object mandatory controls that possess only limited
-> > dimensionality.
-
-> I view your work as hopelessly naive because I've seen the basic idea
-> fail spectacularly so many times. That includes things I have written,
-> such as the Datastate LSM.
-> 
-> ... and don't play the stodgy old fart card on me. I've been working
-> on making the LSM more available to new security models for years.
-
-I'm not playing any cards, I am simply advocating that TSEM needs to
-be viewed through the lens of multi-dimensional numerical modeling, a
-framework that you are uncomfortable with.
-
-To that end.
-
-One of our project advisors, who manages a large containerized
-microservices shop, has been following all of this.  He phoned me and
-questioned if the problem could be that you were viewing TSEM as a
-whole system solution rather than a modeling solution based on
-limited scope modeling.
-
-Just for the record, is it clear that we are working on limited scope
-modeling environments?
-
-With respect to this failing before, could you give us a literature
-citation that we could review that discusses the failure of previous
-systems that were using generative functions to uniquely label each
-security event based on the cryptographic identity of the executable
-code that is generating the event?
-
-To support further discussion, it would be helpful if you could
-document the spectacular failure mode you would anticipate in the
-framework of classical security discussion.
-
-TSEM, like other security architectures, has basically two failure
-modes:
-
-1.) False positives.
-
-2.) False negatives.
-
-3.) Implementation complexity failures.
-
-False negatives are arguably the most dangerous.  Something was
-allowed to occur that should not have been allowed to occur.
-
-When a workload is trained, either a security coefficient for a
-security behavior is generated or it is not.  Thus, when the model is
-enforced, generated coefficients either exist or do not exist in the
-outcome set.
-
-If the coefficient does not exist, there is a chance that this is a
-false positive due to insufficient training coverage.  The correction
-is the same as in other architectures, fold the false positive back
-into the training set.  Until that happens the behavior is constrained
-from occurring.
-
-By definition there are no false negatives, ie. an event that did
-occur but should not have occured, since the only coefficients in the
-training sets are those that are consistent with the training
-behavior.
-
-Implementation complexity focuses on the ability of the technology to
-either be deployed at all, or more importantly, deployed properly due
-to lack of industry skills or infrastructure support.
-
-We would look forward to elaborations on the specific failure modes
-that would occur.
-
-> > We view it through a lens of 10+ years of developing new multi-scale
-> > methods for modeling alpha2-adrenergic receptor antagonists... :-)
-
-> Which is relevant how?
-
-In industry it is referred to as the application of tanslational
-technologies.  The notion that advances beyond current practice in a
-field can achieved by the novel application of methods from other
-technology disciplines.
-
-See my 2017 invited presentation at the NSA's High Confidence Software
-Systems conference.
-
-Also, see the impact of the application of Singular Value
-Decomposition on machine learning and classification.
-
-> > We don't offer this observation just in jest.  If people don't
-> > understand what we mean by this, they should consider the impact that
-> > Singular Value Decomposition methods had when they were brought over
-> > from engineering and applied to machine learning and classification.
-> >
-> > A quote from John von Neumann, circa 1949, would seem appropriate:
-> >
-> > "It would appear that we have reached the limits of what is
-> >  possible to achieve with computer technology, although one should be
-> >  careful with such statements, as they tend to sound pretty silly in 5
-> >  years."
-
-> New good ideas can shatter old conceptions. Old bad ideas with a
-> fresh coat of paint and impressive new terminology fail to impress.
-
-Once again, as we noted above, if you could, please forward to the
-list citations that specifically reference failure modes of numerical
-modeling of security events to assist further discussion.
-
-> > If anyone spends time understanding the generative functions that we
-> > are using, particularly the task identity model, they will find that
-> > the coefficients that define the permitted behaviors have far more
-> > specificity, with respect to classifying what a system is *supposed*
-> > to do, than the two, possibly three dimensions of classic
-> > subject/object controls.
-
-> Squirrels are funny rodents. If you model their behavior you will
-> declare that they are herbivores. In California (where many strange
-> and wonderful things happen) squirrels have begun to eat voles, a
-> very carnivorous behavior. If you believe in modeling as a way to
-> identify correct behavior, you have to say that these furry
-> creatures that eat voles are not squirrels.  If, on the other hand,
-> you look at the environment they live in you can see that the loss
-> of native habitat has reduced the available fat calories to the
-> point where survival requires changed behavior. They're still
-> squirrels, and no amount of modeling is going to change that.
-
-Personally, I never thought it would come down to this but here you
-go:
-
-I have a pet squirrel named Rocky that I have owned since it was a pup
-and its mother was killed crossing Douglas County Road 7 in front of
-our house.  He lives in a small kennel in our house.
-
-Every day I take Rocky outside and open the door to his kennel.  Rocky
-runs around the yard twice and then up an oak tree and loads his
-cheeks with acorns.  He comes back to his kennel, eats his acorns and
-falls asleep until the next day.
-
-One night Jay Evil sneaks into the house, abducts Rocky and replaces
-him with his evil squirrel Rabid, who looks exactly like Rocky but
-fell out of a tree on his head when he missed a jump from one branch
-to another and hasn't been right since.
-
-As usual, the next day I take what I think is Rocky out into the front
-yard and open the kennel door.  The faux Rocky runs out into the yard,
-chases down, attacks, kills and begins to eat our German Shepherd
-Max.
-
-Conclusion, this squirrel's behavior is suspicious and should be
-remediated.
-
-TSEM, as a high granularity modeling architecture, would interrupt the
-process when the squirrel began to chase Max.
-
-> > More specifically to the issues you raise.
-> >
-> > Your SeLinux/audit2allow analogy is flawed and isn't a relevant
-> > comparison to what we are implementing.  audit2allow is incapable of
-> > defining a closed set of allowed security behaviors that are
-> > *supposed* to be exhibited by a workload.
-> >
-> > The use of audit2allow only generates what can be considered as
-> > possible permitted exceptions to a security model, after the model has
-> > failed and hopefully before people have simply turned off the
-> > infrastructure in frustration because they needed a working system.
-
-> It's a poor workman who blames his tools. Why haven't audit and
-> audit2allow been enhanced to provide the information necessary to
-> create your analysis?  I suggest that it's because the value has
-> been recognized as unimportant.
-
-You suggest or you have proof?
-
-Once again, audit2allow is a tool for folding false positives back
-into a security model.  Mathematically, it is designed to provide the
-row and column definition of a false positive security violation in an
-access vector matrix.
-
-TSEM creates a high precision bounded training set of known good
-security behaviors from a high dimensionality basis set.  This
-training set is used to constrain subsequent executions of the
-workload on which it was trained.
-
-audit2allow was a tool that was implemented to compensate for
-complexity induced limitations of SeLinux.
-
-TSEM is designed to eliminate the need for such a tool.
-
-> > Unit testing of a workload under TSEM produces a closed set of
-> > high resolution permitted behaviors generated by the normal
-> > functioning of that workload, in other words all of the security
-> > behaviors that are exibited when the workload is doing what it is
-> > *supposed* to do.  TSEM operates under default deny criteria, so
-> > if workload testing is insufficient in coverage, any unexpressed
-> > behaviors will be denied, thus blocking or alerting on any
-> > undesired security behaviors.
-
-> And how is that different from running SELinux in permissive mode?
-
-SeLinux in permissive mode operates after the fact to correct a model
-that was incorrect in its design.
-
-TSEM is designed to produce a high precision definition of what a
-workload should do.  High precision definitions are less prone to
-false positives that have historically proven to be the reason that
-security controls are disabled and thus rendered ineffective, despite
-their technical superiority.
-
-> > I believe our team is unique in these conversations in being the only
-> > group that has ever compiled a kernel with TSEM enabled and actually
-> > spent time running and testing its performance with the trust
-> > orchestrators and modeling tools we provide.  That includes unit
-> > testing of workloads and then running the models developed from those
-> > tests against kernels and application stacks with documented
-> > vulnerabilities.  To determine whether the models can detect
-> > deviations generated by an exploit of those vulnerabilities, from what
-> > the workload is *supposed* to be doing.
-> >
-> > If anyone is interested in building and testing TSEM and can
-> > demonstrate that security behaviors, undesired from its training set,
-> > can escape detection we would certainly embrace an example so we can
-> > review why it is occurring and integrate it into our testing and
-> > development framework.
-
-> Sigh. You keep coming back to a train of logic that is based on a
-> flawed assumption. If you accept that observed behavior describes
-> intended behavior the arguments that follow may be convincing. I,
-> for one, do not accept that assumption.
-
-As I noted above, you operate from a mindset of classic subject/object
-mandatory access controls rather than from the notion of numerically
-modeled security behavior.
-
-Future students of technology will note that Linux moved through three
-phases of security architecture development:
-
-Subject/object based mandatory access controls.
-
-Pathname based controls.
-
-Model based controls.
-
-TSEM is the the first major implementation of the latter type of
-control for the Linux kernel.  We accept resistance to the appearance
-of these types of controls, the same thing happened with pathname
-based controls.  The resistance doesn't mean the technology is
-invalid.
-
-The technology industry is moving towards model based security
-controls, for a variety of reasons, too numerous to be litigated in
-this context, so lets consider just one.
-
-Without question, SeLinux is world class security technology.
-However, by virtue statements of individuals like Kyle Moffett, it is
-designed, by experts, to be implemented, by experts.  That model is
-inconsistent with the world we find ourselves in, both from a
-personnel and a technology context.
-
-Companies that can run well tuned SeLinux implementations, for free,
-turn it off and instead install security solutions, based on behavior
-observation and modeling, that they have to pay significant amounts of
-money for.
-
-TSEM is designed to provide better and more trouble free access to the
-data needed to drive model based workload controls.  Nothing we do
-constrains the ability of anyone to implement an alternate security
-model of their choosing.
-
-Have a good week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
 
