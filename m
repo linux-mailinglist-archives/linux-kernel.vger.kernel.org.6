@@ -1,194 +1,277 @@
-Return-Path: <linux-kernel+bounces-545177-lists+linux-kernel=lfdr.de@vger.kernel.org>
-X-Original-To: lists+linux-kernel@lfdr.de
-Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60414A4E9FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:53:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88BFE17CDD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:48:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F812C2CD7;
-	Tue,  4 Mar 2025 17:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDE7Vziq"
+Return-Path: <linuxppc-dev+bounces-6709-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
+X-Original-To: lists+linuxppc-dev@lfdr.de
+Delivered-To: lists+linuxppc-dev@lfdr.de
+Received: from lists.ozlabs.org (lists.ozlabs.org [112.213.38.117])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A22A4E948
+	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 18:38:14 +0100 (CET)
+Received: from boromir.ozlabs.org (localhost [127.0.0.1])
+	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6jZW4wcHz30Tc;
+	Wed,  5 Mar 2025 04:38:11 +1100 (AEDT)
+X-Original-To: linuxppc-dev@lists.ozlabs.org
+Authentication-Results: lists.ozlabs.org; arc=pass smtp.remote-ip=160.75.25.115 arc.chain=subspace.kernel.org
+ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741109891;
+	cv=pass; b=MHnjkRjYDAduwX+AJ0C+u5nNpBaAKz54Ay25wBqVIKQVxRi0sTFyefFkQNzrERe+mc9xc26VUxyD2QpvM0XKx36PUOw7e6nFMpu2RUllLX5QczLxahClGpFTfG82gt+SSNTTM8P0z1ZpvRI7eUV5hP/SLtcEk9s5+jjfA/EHc8UW6xoqxvzC0D8JEnX2LzLjs26SqtocXrOgeIJA03MBSDRNvkOiYsIIdT3+gmAU9xvKidZinYCGIycV9T1FRRkixp/iiCK56wM4QcLTOSAUZGZ+5naVTAhG4Cydm2svg2iKmLUX14XcDjl/2DwDaVggm38Nmahqo7nDRj1gSl1Vbg==
+ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
+	t=1741109891; c=relaxed/relaxed;
+	bh=P7gGiZwjzyL+/+VA6we4MZXQRYxqsjECLv81vWaVcmo=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NC9ALCCzQCLm3Lu7mtOcfguM8x4WSx9qGEzLMaUM0EClkyB1rHPtFlPpf4HHAzIQ/0bUuwOM06DR+hNlwy4AAKSjPflWIICxolSXbvjG0BJOHkRYpCsRiEqv4unAdd7mR8d2ownVMUBniV7j0EA7d91qUnO4PNZraeQVLHU4Jq8s6S6TvtYuo7hZdW3IwC2ktSMCMjOxlmpCpi06lBWYbJOhMI0/S7+pMB6rM/VHRg6bASZUJ+mdDD8hr/SZWOlCwx+LLmBZtBPcF1eEQJJq4IF8kJzAOKXyYUiWZ45o899H3iV+Hi9qtbGxJHO80Ad+VEpCvXCv5K+Q/WOxbxev+Q==
+ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=none (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
+Authentication-Results: lists.ozlabs.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AAF2C2CB1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109128; cv=fail; b=Br4fcCsaobLoPryWJ+3iJtxlyzbEjMvYnLy2QmmaO1icVhuCtUeiquOAXD3ppoaQImrjQ8zsaDLb02C2XaZANTpE6EKfn2Bu+YpzuKWoTiG4Zl4aBRwr1VtJkBoDkNnRSZBzyE+8MvDGfgfA+Ja00NjpAKx86r6vZ9XNw2eR/VA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109128; c=relaxed/simple;
-	bh=ZV0hyenL1Gr6zkBxI10zjtT9BOF6hJs4mewvNXd8do4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O04GvsCic1Csa6miWCmmSPGGTm18B0ehdNxxdpg1iqF8JcXBfu/1qxKDJ+E0o1OHt2m7VSipByBYSsQPR16nZoeuzvhnvXkmZf9rE3Q5BAX6Lwz6pTZUvOJdR7GdX+Ssu7AyEW/A3EVAQfISSPG3VX2O77jQNStgAai5yvRqnao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
+	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6jZT6bsVz2yMD
+	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 04:38:09 +1100 (AEDT)
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id D843C40D977D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:25:24 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id A9AB2408B642
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 20:37:37 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dtM2pmbzFxLw
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:51:39 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g4Y0gvXzG0gs
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 18:45:33 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id A5A894273A; Tue,  4 Mar 2025 17:51:25 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq
-X-Envelope-From: <linux-kernel+bounces-541866-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 3A16641CC5
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:00:40 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id CA0B62DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:00:39 +0300 (+03)
+	id 0AD6342740; Tue,  4 Mar 2025 18:45:19 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541870-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 906CD41F7D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:27 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 45DEF305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:27 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654EF3A89E9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF1C162B5D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E163F2135B9;
-	Mon,  3 Mar 2025 14:00:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0A02135CE;
+	Mon,  3 Mar 2025 14:03:15 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443818489;
-	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9142212FAD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010423; cv=none; b=TLl5Nx3N/EGjJzLzX8AgfxnYh/Z9hNoRhHBdZK2TMf1cBBVwV33jsSeLlJyiP8SYEqQYc03i3Z4MhCk+NyD+d7QnrKUorfu84+aeOK68IPdsPgFawkMHItUmg90fTSi40gmPw00GZcsxTAZN+2pm+dMU8SbKACaGJrE6J+lKSM8=
+	t=1741010593; cv=none; b=NXbKe2cBCytbfucu6Yn328680fPZyPXjnsIeAcWSM8cXzONeDb9Rm5tuCmcRQ7tH1lQf1iwcWo3LSw2jPQvaTCU322DoUaDD9LIJmoBkdMvg+45mJ/k/JWw+ODqlX06op89czIChfMoMRB4g2uikbMeo7tRlmHJRjIcoOXulCLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010423; c=relaxed/simple;
-	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4dOf+svt5Ia4GXZkAt6JeWK79X8QOvHg8GDDFjuXwyrES1W64+mvRpS/BM3+78wbuuZtZG1o2vrb4nAs/tm3mHy2KZa4CpZMhZTa/X2iLoWZFlTPC1GWPg3NOVUOQYssiTDrws1+bWKtzOl+88EuVLi7c92jzCGlbB6Qa26cgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C4AC4CED6;
-	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741010422;
-	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LDE7VziqE8Z5eAcLy1ADJtkYPvmnQ1FWgShTdhPsi0Jp00/5H4ih7eFkudyTpV6Ey
-	 vzUekJexEEcxmdtofMzZn68/GabGTmMLoyDmPxm2kdElEPPLV3qZha5Aib/AxkKR7v
-	 m/mOgM3NliygKNSm4cdkNZYbDU4CUHy7o2nUsiBNydIculfOZE9XJX6vA2Cx8O7TEs
-	 nqGWAiDj2LY2VHmrB5jeTqSMkAWpR8/oVe9f3U39KoH0vSV+sGksApEvY4YbqOUYgD
-	 MEbgvDOyAHF9gVrkOu+yiC5BM/+QxMgNexT3mwUVWIsR0RWjNldR9e1Z2gFqBmOcaC
-	 wYe+elLtbMKhQ==
-Date: Mon, 3 Mar 2025 08:00:21 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Richard Weinberger <richard@nod.at>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Crystal Wood <oss@buserror.net>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linux-mtd@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: nand: Add fsl,elbc-fcm-nand
-Message-ID: <20250303140021.GA1732495-robh@kernel.org>
-References: <20250226-ppcyaml-elbc-v3-0-a90ed71da838@posteo.net>
- <20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net>
- <174059551678.3319332.12055848852503108874.robh@kernel.org>
-Precedence: bulk
+	s=arc-20240116; t=1741010593; c=relaxed/simple;
+	bh=wcIcOFvvWo6Y4MEIL4E+cU4GzfeBSRYrLktn6eT9DcY=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k6xXMKILIxA2Wq94XwtUT321uuLrE0hCmUSTHWuFmyXl1LWGVp6h+06g2jwYSdLQHk6ALAT1o80wyKQBV8QfBvxQhjBZU8poMPx/nTsmwQLur4CCkyPiIoe2byNJiG/i4oHtbSx/Da5UmNf1ckFFY/DEoeusaDP/4kUTu9Ajkno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z60lz518fz1ltYp;
+	Mon,  3 Mar 2025 21:58:55 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id C0B1318001B;
+	Mon,  3 Mar 2025 22:03:05 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:03:04 +0800
+CC: <dave.hansen@linux.intel.com>, <bp@alien8.de>, <mingo@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <yangyicong@hisilicon.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, <sudeep.holla@arm.com>,
+	<pierre.gondois@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-3-yangyicong@huawei.com>
+ <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <21e74021-fb68-0003-f0f4-7f54dd674b9d@huawei.com>
+Date: Mon, 3 Mar 2025 22:03:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+X-Mailing-List: linuxppc-dev@lists.ozlabs.org
+List-Id: <linuxppc-dev.lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
+List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
+  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
+List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <174059551678.3319332.12055848852503108874.robh@kernel.org>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dtM2pmbzFxLw
+X-ITU-Libra-ESVA-ID: 4Z6g4Y0gvXzG0gs
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741713789.19946@jy/o0WCPBk9Ugzx6Nj1Zbg
+X-ITU-Libra-ESVA-Watermark: 1741714518.92269@AzW/OzGYO2aSmRP68G8Y+w
 X-ITU-MailScanner-SpamCheck: not spam
+X-Spam-Status: No, score=-1.1 required=5.0 tests=ARC_SIGNED,ARC_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_NONE autolearn=disabled version=4.0.0
+X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
-On Wed, Feb 26, 2025 at 12:45:17PM -0600, Rob Herring (Arm) wrote:
->=20
-> On Wed, 26 Feb 2025 18:01:41 +0100, J. Neusch=E4fer wrote:
-> > Formalize the binding already supported by the fsl_elbc_nand.c driver
-> > and used in several device trees in arch/powerpc/boot/dts/.
-> >=20
-> > raw-nand-chip.yaml is referenced in order to accommodate situations i=
-n
-> > which the ECC parameters settings are set in the device tree. One suc=
-h
-> > example is in arch/powerpc/boot/dts/turris1x.dts:
-> >=20
-> > 	/* MT29F2G08ABAEAWP:E NAND */
-> > 	nand@1,0 {
-> > 		compatible =3D "fsl,p2020-fcm-nand", "fsl,elbc-fcm-nand";
-> > 		reg =3D <0x1 0x0 0x00040000>;
-> > 		nand-ecc-mode =3D "soft";
-> > 		nand-ecc-algo =3D "bch";
-> >=20
-> > 		partitions { ... };
-> > 	};
-> >=20
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: J. Neusch=E4fer <j.ne@posteo.net>
-> > ---
-> >=20
-> > V3:
-> > - remove unnecessary #address/size-cells from nand node in example
-> > - add Frank Li's review tag
-> > - add missing end of document marker (...)
-> > - explain choice to reference raw-nand-chip.yaml
-> >=20
-> > V2:
-> > - split out from fsl,elbc binding patch
-> > - constrain #address-cells and #size-cells
-> > - add a general description
-> > - use unevaluatedProperties=3Dfalse instead of additionalProperties=3D=
-false
-> > - fix property order to comply with dts coding style
-> > - include raw-nand-chip.yaml instead of nand-chip.yaml
-> > ---
-> >  .../devicetree/bindings/mtd/fsl,elbc-fcm-nand.yaml | 68 ++++++++++++=
-++++++++++
-> >  1 file changed, 68 insertions(+)
-> >=20
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings=
-/mtd/fsl,elbc-fcm-nand.example.dtb: nand@1,0: $nodename:0: 'nand@1,0' doe=
-s not match '^nand@[a-f0-9]$'
-> 	from schema $id: http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.y=
-aml#
+On 2025/2/28 19:11, Dietmar Eggemann wrote:
+> On 18/02/2025 15:10, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> On building the topology from the devicetree, we've already
+>> gotten the SMT thread number of each core. Update the largest
+>> SMT thread number and enable the SMT control by the end of
+>> topology parsing.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
+> 
+> 1/max_thread_number stands for '1 or max_thread_number', right ?
+> 
+> Aren't the two interfaces:
+> 
+> (a) /sys/devices/system/cpu/smt/active
+> (b) /sys/devices/system/cpu/smt/control
+> 
+> and you write 1) or 2) (or 'forceoff') into (b)?
 
-Drop the unit address in raw-nand-chip.yaml. So:=20
+yes you're correct. "active" is a RO file for status only so not for this interface.
+Let me explicitly mention the /sys/devices/system/cpu/smt/control here in the commit.
 
-properties:
-  $nodename:
-    pattern: "^nand@"
+> 
+>> If a system have more than one SMT thread number the 2) may
+> 
+> s/have/has
+> 
+>> not handle it well, since there're multiple thread numbers in the
+> 
+> multiple thread numbers other than 1, right?
+
+according to the pr_warn_once() we implemented below it also includes the case
+where the system have one type of SMT cores and non-SMT cores (the thread number is 1):
+- 1 thread
+- X (!= 1) threads
+
+Discussion made in [1] and I thought we have agreement (hope I understood correctly)
+that all the asymmetric cases need to notify. Do you and Sudeep think we should not
+warn in such case?
+
+[1] https://lore.kernel.org/linux-arm-kernel/10082e64-b00a-a30b-b9c5-1401a54f6717@huawei.com/
+
+> 
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+> 
+> This paragraph seems to be about heterogeneous systems. Maybe mention this?
+> 
+> Heterogeneous system with SMT only on a subset of cores (like Intel
+> Hybrid): This one works (N threads per core with N=1 and N=2) just fine.
+> 
+> But on Arm64 (default) we would still see:
+> 
+> [0.075782] Heterogeneous SMT topology is partly supported by SMT control
+> 
+
+more clearer, will add it. Thanks.
+
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>  drivers/base/arch_topology.c | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index 3ebe77566788..23f425a9d77a 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/cleanup.h>
+>>  #include <linux/cpu.h>
+>>  #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>  #include <linux/device.h>
+>>  #include <linux/of.h>
+>>  #include <linux/slab.h>
+>> @@ -506,6 +507,10 @@ core_initcall(free_raw_capacity);
+>>  #endif
+>>  
+>>  #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+>> +
+>> +/* Maximum SMT thread number detected used to enable the SMT control */
+> 
+> maybe shorter ?
+> 
+> /* used to enable SMT control */
+> 
+
+sure.
+
+>> +static unsigned int max_smt_thread_num;
+>> +
+>>  /*
+>>   * This function returns the logic cpu number of the node.
+>>   * There are basically three kinds of return values:
+>> @@ -565,6 +570,16 @@ static int __init parse_core(struct device_node *core, int package_id,
+>>  		i++;
+>>  	} while (1);
+>>  
+>> +	/*
+>> +	 * If max_smt_thread_num has been initialized and doesn't match
+>> +	 * the thread number of this entry, then the system has
+>> +	 * heterogeneous SMT topology.
+>> +	 */
+>> +	if (max_smt_thread_num && max_smt_thread_num != i)
+>> +		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+>> +	max_smt_thread_num = max_t(unsigned int, max_smt_thread_num, i);
+>> +
+>>  	cpu = get_cpu_for_node(core);
+>>  	if (cpu >= 0) {
+>>  		if (!leaf) {
+>> @@ -677,6 +692,18 @@ static int __init parse_socket(struct device_node *socket)
+>>  	if (!has_socket)
+>>  		ret = parse_cluster(socket, 0, -1, 0);
+>>  
+>> +	/*
+>> +	 * Notify the CPU framework of the SMT support. Initialize the
+>> +	 * max_smt_thread_num to 1 if no SMT support detected or failed
+>> +	 * to parse the topology. A thread number of 1 can be handled by
+>> +	 * the framework so we don't need to check max_smt_thread_num to
+>> +	 * see we support SMT or not.
+> 
+> Not sure whether the last sentence is needed here?
+> 
+
+We always need to call cpu_smt_set_num_threads() to notify the framework
+of the thread number even if SMT is not supported. In which case the
+thread number is 1 but the framework can handle this well. I worry readers
+may get confused for notifying a thread number of 1 so add this comment this.
+
+Will get rid of this if thought redundant.
+
+Thanks.
+
 
 
 
