@@ -1,47 +1,85 @@
-Return-Path: <linux-kernel+bounces-541880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C150A4C2D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:07:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4ED7A4C2DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB0627A084A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 198C93A7C66
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D98B2139D4;
-	Mon,  3 Mar 2025 14:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED2D213257;
+	Mon,  3 Mar 2025 14:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyqxOXPF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hq/H2Whv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2022212B0A;
-	Mon,  3 Mar 2025 14:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A08D21322F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010833; cv=none; b=W5RfAskR4c/NWRZXTbpajebB8fj/kqRMX0LPtY5cq9uxrQiVy/IKp1HaLxWBv0mRcYhvQ5woKtFOO+1Fuj4lHtpY//ekSNn+NWtWqENck5bEpC0ImqJcf39WCTEWDl1qNWAfhg4lBaa1WtuloyFKt9c4tS6Nq8pGGsfXoM4PAmI=
+	t=1741010850; cv=none; b=Fi0PgKe3zmBjQpsZma8XDd/MBhOY0RtLmQMCIZemR1GESiXpWdFt7sN7SVQZhR0XUtFgdwehU1VyeqUDlL5uYk0MT0xl1/W+mCvtXuZIT+/b+OJOPbta1rOwPMYoMdQ6U1ulpQLMnKPIt3md8AeJkfLGPJGwCwIiqnJUXBGic7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010833; c=relaxed/simple;
-	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
+	s=arc-20240116; t=1741010850; c=relaxed/simple;
+	bh=8sxbX5O26w5xPQxkxTSVAiTsZlfgUWGK53dYCGtXYu4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8H5C1QK4ZnC76a/vdQeWMSg9MOrd3nzaFZXjrfFgLssOrWdks4SCA5qodA5mhNWvx6cf5rb/x2Rta34zm2/ZpdihWFqZmreiwwLOQ10K1M7S8+H0bLf/5hEegeEycUFuXL3nvrVyPolG9fMWUqQmZkuJcOMEgeA4NjxDd5CKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF78C4CEE6;
-	Mon,  3 Mar 2025 14:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741010833;
-	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lyqxOXPFsF9x17qZNcmlg/aMg5WJcN3dEmFdqOUp5TKVY2X9vYws8CtZpeYV15+xI
-	 yb6xay/8CPcpToj+RmlgZ7fStV71XpSEtKtxmGFNz1pHa6QaL0zwgiAG86jJ98ZjnL
-	 LivAuVHNTYJpNEd6zv/A4I5FTFMD/FYWfIc3LUipTFR3lDjRhdeZfu+NigDKfa981O
-	 HVSdH3bcPmFY8rKBgN3p+FKcfvJ+Apx+VA4r3z9kl2IDcGLFMjLH2gJn1wsY85T1sf
-	 pH58Mald0DF0MaX0hznMWrCg72fFrNTZ4+vemz+ODOBB5V97qeQhkoJBWQ7VcTgFPC
-	 XpAAtoqRP6hxQ==
-Message-ID: <16e6d822-97c1-4dcf-b538-04b6d8881d32@kernel.org>
-Date: Mon, 3 Mar 2025 15:07:00 +0100
+	 In-Reply-To:Content-Type; b=I2LqzwLHqPjFcnj//4MJy8hz0RHoV3VbztlUouOWNWS8aUzLfhR+PNkUOoXx3KDBp0Q3SGEPY9pmOg8yYFD9qYSO05CBdKTGFlp7H0KtjpuPkhveZV/a7zWyQKa+eUrjiveejERGjjSenzodnNYqYFTx3swG2s+W2oI7IL+DVGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hq/H2Whv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741010847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B/jz82WLxz2AXnyirtjFiRLnkqi5Gdqp332HU/uapU0=;
+	b=hq/H2WhvxDO9aejvt3V1914vBiUD7ec9sUR0OJtww8DwJtUKbdMbPiHK+KIxG5XO3y4Gtw
+	bAZFxbQeQHGvko4cBs4SJhyUdVfYJcbFVZyRXf9JP2ef2JBZ0ZT7FByoELeOiwHHnqTkeV
+	RkV1YsYaduHz6AHWDXyrJkb7jhuf93g=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-127-2nLfUmA9OQeeUS8OSpprcQ-1; Mon, 03 Mar 2025 09:07:25 -0500
+X-MC-Unique: 2nLfUmA9OQeeUS8OSpprcQ-1
+X-Mimecast-MFC-AGG-ID: 2nLfUmA9OQeeUS8OSpprcQ_1741010845
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac1e109f006so81479566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:07:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741010844; x=1741615644;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/jz82WLxz2AXnyirtjFiRLnkqi5Gdqp332HU/uapU0=;
+        b=nygLAK21FTGrQueje0QunqPEdNh2y9EQF6a7K5V45tGwhShAzcWDNOoAqETUvVfHRP
+         YYhVDqkAAjx0avuDgRHczGU8Rv4lGcnKIL/mROOR8ZiXhNNbMCe0aqcn5xzhjq1czt8n
+         im5sUU3zkIt9cGSNeErkGxM4Y0yUzxh7ulhtatwEra4tS0KXnG8pRjAlvANkOkU3NnXO
+         L90QT1YPHb2PeH2d+LJhxcQjR89Gw8am6qsoWKiKI7ig/qD/4qW/U5dOm/CUyLSvzuX4
+         4H4yIkkJzqeVzpD/7yyuthArmNeeq8+4oalNTRoW8sNRI7T/0MxKb9h9Jq/R6O75Teeg
+         BD8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWSzZ+/aC4nbEiisKuzs2HjJijN/AJhD2DWO++FFdmrSjlmd0B1ClAvYEzC6jSuQlluo4bhqtc36ynyedc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZZuepASpfTiB0Ul1RFQD9e9Lbk0HKMjBw1/vqsqL1pcDJxb5c
+	DSxs45ol9ZbZS3vHH9zpaaXlm8RMXuf8THUDiH2Y0xCOtgB6PwtYu1dNqtXKvt0j+FwOYtB/xvB
+	h7HBnFPZfTNio2vtNe1jkx86u2JAOYqCfFv9/3UpIaPYc89mRmdSYWmUmSJp6aQ==
+X-Gm-Gg: ASbGncv+my6/ej7b+eWwbXM2LRWC9tJ31kEGOC+m6kRx1d/9P7A/tmmuGloXVJ+4C4I
+	V8eSBsQ4n2kxLokDKW8icbCr+47y/N72+mVoIjO8r2E2eA5KpWGWLB38NBtwX3IDWwz934Weq0Z
+	f3yztdX5PEHrOzVBdzzSkC5+apz0lnDi7ZLkpS7oxqRLP8up49VSdKR1/ZY0N9i0f6Xg0LQ01PB
+	zX3IeeMfsHRiUpqgxh2vOSlI0Wfw+o4MQ0XKXTc4IWbYB39fXmkKhbiX/xwg/QHYr1je+mdD2+O
+	O8iGU79V7pryV4tw6hg=
+X-Received: by 2002:a17:907:3f9a:b0:ab7:8079:78ae with SMTP id a640c23a62f3a-abf265e9bcfmr1589132466b.44.1741010844560;
+        Mon, 03 Mar 2025 06:07:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBD8Aj0BpxaGnvRgtUOdfzwUMqZL2wprJlFC35LC4uCN781yYjf3zsY7UYORaHX540v0YrEw==
+X-Received: by 2002:a17:907:3f9a:b0:ab7:8079:78ae with SMTP id a640c23a62f3a-abf265e9bcfmr1589125666b.44.1741010844028;
+        Mon, 03 Mar 2025 06:07:24 -0800 (PST)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf6348394dsm357844666b.63.2025.03.03.06.07.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:07:23 -0800 (PST)
+Message-ID: <3b64dbbb-d5b4-4813-9dce-aa6e361133cf@redhat.com>
+Date: Mon, 3 Mar 2025 15:07:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,106 +87,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
- property
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
- wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
- matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
- m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
- <20250219140239.1378758-10-m.wilczynski@samsung.com>
- <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
- <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
- <df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
- <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
+Subject: Re: [PATCH v4 1/5] media: uvcvideo: Keep streaming state in the file
+ handle
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+References: <20250226-uvc-granpower-ng-v4-0-3ec9be906048@chromium.org>
+ <20250226-uvc-granpower-ng-v4-1-3ec9be906048@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250226-uvc-granpower-ng-v4-1-3ec9be906048@chromium.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 10:55, Michal Wilczynski wrote:
-> 
-> 
-> On 3/3/25 09:52, Krzysztof Kozlowski wrote:
->> On 03/03/2025 09:42, Michal Wilczynski wrote:
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            const: thead,th1520-clk-vo
->>>>> +    then:
->>>>> +      required:
->>>>> +        - resets
->>>>
->>>> else:
->>>> ? What's there? Also reset or no?
->>>
->>> If the else: case the reset is not required, as it's only required in
->>> the th1520clk-vo, so there is no need for else:.
->> That's not the question. I know it is not required, I can read code.
->> What is in the hardware?
-> 
-> I noticed the register SW_GMAC1_GRST_N in section 5.4.2.2.66 of the
-> manual (GMAC1_SWRST [2]), which indicates a GMAC1 CLKGEN soft reset.
-> Although this could theoretically reset part of the AP clock, it is not
-> actually used by the AP clock driver or needed for initialization.
+Hi,
 
-Thanks, this answers here.
+On 26-Feb-25 15:23, Ricardo Ribalda wrote:
+> Add a variable in the file handle state to figure out if a camera is in
+> the streaming state or not. This variable will be used in the future for
+> power management policies.
+> 
+> Now that we are at it, make use of guards to simplify the code.
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Best regards,
-Krzysztof
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 18 +++++++++++++-----
+>  drivers/media/usb/uvc/uvcvideo.h |  1 +
+>  2 files changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 93c6cdb23881..f9cd6db759c5 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -835,11 +835,18 @@ static int uvc_ioctl_streamon(struct file *file, void *fh,
+>  	if (!uvc_has_privileges(handle))
+>  		return -EBUSY;
+>  
+> -	mutex_lock(&stream->mutex);
+> +	guard(mutex)(&stream->mutex);
+> +
+> +	if (handle->is_streaming)
+> +		return 0;
+> +
+>  	ret = uvc_queue_streamon(&stream->queue, type);
+> -	mutex_unlock(&stream->mutex);
+> +	if (ret)
+> +		return ret;
+>  
+> -	return ret;
+> +	handle->is_streaming = true;
+> +
+> +	return 0;
+>  }
+>  
+>  static int uvc_ioctl_streamoff(struct file *file, void *fh,
+> @@ -851,9 +858,10 @@ static int uvc_ioctl_streamoff(struct file *file, void *fh,
+>  	if (!uvc_has_privileges(handle))
+>  		return -EBUSY;
+>  
+> -	mutex_lock(&stream->mutex);
+> +	guard(mutex)(&stream->mutex);
+> +
+>  	uvc_queue_streamoff(&stream->queue, type);
+> -	mutex_unlock(&stream->mutex);
+> +	handle->is_streaming = false;
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 5e388f05f3fc..bc87e1f2c669 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -618,6 +618,7 @@ struct uvc_fh {
+>  	struct uvc_streaming *stream;
+>  	enum uvc_handle_state state;
+>  	unsigned int pending_async_ctrls;
+> +	bool is_streaming;
+>  };
+>  
+>  struct uvc_driver {
+> 
+
 
