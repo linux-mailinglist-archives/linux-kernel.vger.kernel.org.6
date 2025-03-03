@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-544381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A355AA4E09E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ED1A4E1BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4D818843FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E4518957DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3F52045A2;
-	Tue,  4 Mar 2025 14:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7461209689;
+	Tue,  4 Mar 2025 14:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdPyp7wY"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="nai7Wcce"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB1E2040A6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC00F20A5DA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097935; cv=pass; b=CloOX+FLnoHD66Ft9odoqTf1PjhXVi6QNUDzyLfbHncbsnk2iHjodFK/yzciheB/NcoIFCgDS6OHyUb+akBTKFw6OpVbbmBk7x9w6s0oOIku4ItuiMX/lz1HbuJlfmmsxI+gYix0hEAo4Y3ecgR7BqzRjmANOev/2YIusaiEI3M=
+	t=1741099468; cv=fail; b=taEeQtC4Rc9i9BIZFs63rMh032RslkD2ysbnxIrss288pkGmaldsOKpDg6gFyPdClc3V6kUDnFuvA/YrhYIGA29v2I3I/eWiROd9qiIr3lDe45qL9P1fkcK4Sqx/PEGPfiVo8+Rn4/REYtdkbzlpGfGUYAwod2C+nG3PluE44i4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097935; c=relaxed/simple;
-	bh=hWKhorvWNU5jIlxY+oXqSYlO0FKSzqJ4UxdwFEyxyzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rz93yHbH9WRBH2NbgINvGbLrZJ3JpeAE+rKlNES0uww2AJccle9utsp+/HSawbrMxCXKIBUBhvwP8SpWTDHW4DhGdltGt5/VCvyvOzUec4lx+SppaLe+zcu7JNSsOxcOHgJT9rUcsd6pFv7rocaox1eAaV4ynH16XuqqOhT6yWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdPyp7wY; arc=none smtp.client-ip=198.175.65.12; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+	s=arc-20240116; t=1741099468; c=relaxed/simple;
+	bh=YMx7qLuWP6vg/7a5/BEOE9nZt/RJpQmS9nMIn5RykNc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNjIS+CXJfvvh0JESB1fsn3wfV/2R3JnOPA7AucR5u1fbCJ6iUfwr2rTHMlwCwrsKR8bZ6ngwI7HeVUHqa9G2sTGpS3XhfnmdHOg/SrSjAkSqIQ3KTb6yu3wR3+ZJpzt5532L3u3ywgZJcWNhThQnL/oKyGt7Hv0b2E1BEf3+ys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=ispras.ru; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce reason="signature verification failed"; arc=none smtp.client-ip=83.149.199.84; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 5630740CCF38
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:18:52 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 104D040D0C45
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:44:24 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hdPyp7wY
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=ispras.ru header.i=@ispras.ru header.a=rsa-sha256 header.s=default header.b=nai7Wcce
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d615zGHzFw3v
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:16:41 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dhC154zzFx0l
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:42:51 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id E85BB42741; Tue,  4 Mar 2025 17:16:21 +0300 (+03)
+	id AC2EC41898; Tue,  4 Mar 2025 17:42:41 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdPyp7wY
-X-Envelope-From: <linux-kernel+bounces-541867-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce
+X-Envelope-From: <linux-kernel+bounces-541868-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdPyp7wY
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 026F441E71
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:02:06 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id CE9933063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:02:06 +0300 (+03)
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 2C04442195
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:03:31 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 6DA442DCE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:03:30 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351611894257
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:02:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800A77A5B0D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF442135B9;
-	Mon,  3 Mar 2025 14:01:53 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340FE2139C4;
+	Mon,  3 Mar 2025 14:02:59 +0000 (UTC)
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198098489;
-	Mon,  3 Mar 2025 14:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BF1F4167;
+	Mon,  3 Mar 2025 14:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010510; cv=none; b=SYxw29mDeSGtb+iDjAlAlplK/CJp8Z52B410bnNLjz5aD075ngY068vlQqaJOH25eOHgRDSvdTMs6SSAfjNFF47xJPP48lehcslqwF1KG8xC4tJ+IXGqkjZuyiuaavHHV8gdKe+XRAeJgDNdud8oukSgmdpcbci0xvx0+qAk4pY=
+	t=1741010576; cv=none; b=ocSCzbdzChZFOjmwAzWMUEbbIJvE76tKUKqNp4ssxEiOGIemvQ/CeEBqIPVUIypx/VP7zMOUXxeiN3LVNAo+Qx9iZ82Mo8dI6IQ63VZ6P5al8qedhl+3kQShBFRF843DlRwAoHjklQ4cBDFfCVfb+5xyU2csXteWmMJbY6fmo04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010510; c=relaxed/simple;
-	bh=hWKhorvWNU5jIlxY+oXqSYlO0FKSzqJ4UxdwFEyxyzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmnLWjFEug5vuByJYJQe1kahQlOZm6H635aSCVEHO16OVx3GbhuyP1BONwu1wRsQwXfc1YvVA9MSO2h2otpq2hp2H3bfoTykegwOgeoWBsfhHnZOKjpBIkF0xI3btqFStKOjyFaXV6BjG+1HfqG9wLb3l5NrV1RP8GPqhY+t6gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdPyp7wY; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741010509; x=1772546509;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hWKhorvWNU5jIlxY+oXqSYlO0FKSzqJ4UxdwFEyxyzg=;
-  b=hdPyp7wYGiRUiUN2VK0TOMK1+VK4B80SyMMldacConT1k6y9rcEXqmCc
-   mBsM8sctFZQvRdY8d1noQFmymwhLIZ9XgsoRh+gUlHKU1kpygV7IV/TJo
-   YvkGrba5ulMy5rGjsOg6R+4L5ax9i+mbHP+0agRTGA+XXwpRs7zGTqfHo
-   euL/9Cf3hQXNruSXWdVkg1zzGKi1dcMv9wzxT1n/pN9WxY7+4UJqsADdU
-   iGuh4cpKQaJNu4sTt9v6qMZxgGhtOMTdAktVPTn2TdtMY2pLU2pznuF+H
-   W0d2y0RxyBZdxoi7vDuC0vTvpsCkFtFB00VBmkr8WxgfI+lA8dpDCbkn+
-   A==;
-X-CSE-ConnectionGUID: bFv6T7M1TFKwUecT8PnN8Q==
-X-CSE-MsgGUID: nFo5nh2gS86uiCgdo5sOGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53277544"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="53277544"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:01:48 -0800
-X-CSE-ConnectionGUID: BAgAY12/QnmN45QMtoC30A==
-X-CSE-MsgGUID: KPOP2WG6T+6khWCYU8FLxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="122974866"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:01:46 -0800
-Date: Mon, 3 Mar 2025 16:01:43 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
- MFD_INTEL_EHL_PSE_GPIO
-Message-ID: <Z8W2R0DUS6lctU8v@black.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-3-raag.jadav@intel.com>
- <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
- <Z8WUpzDHbhp0aMoN@black.fi.intel.com>
- <Z8WWNHL1rZKV4c4o@smile.fi.intel.com>
- <Z8Wc73OytMx3khP_@black.fi.intel.com>
- <Z8We4_FJvxTxegpN@smile.fi.intel.com>
- <Z8WkoPVk2SsSj5aR@black.fi.intel.com>
- <Z8WsfXV1vMlRxzLi@smile.fi.intel.com>
+	s=arc-20240116; t=1741010576; c=relaxed/simple;
+	bh=un//m18e0EyZu6pJVZ/eIwmeKA7wLXFC7L5MaYP//fo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dqG/N64ukZ7Mt8pQsyOjVoMm6sPa7UzB7BwfL2HiVUZaJ0CSJwOJHPmACnAIZpx1aul4TirJugN2bGd2WiY9OYIW2v3xCBcOyk4IA9VQffa7A8/zcxu/zqbqQXHN4fEo/MR1XiLQEkk+H16A0BBhCqMIYy3NrZ8mGZ/tZZ4LY/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 02E6340CE182;
+	Mon,  3 Mar 2025 14:02:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 02E6340CE182
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1741010564;
+	bh=vqgSkFlCQVJ4CaUUmVwPWsAun4vxgHbAxdBt/2bRvcU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nai7WcceMGUZcGUxKsLVw+ByZ0zB426L99V6BXimgqOYhZ0gpVanAUZ6qjH6bN2NQ
+	 JPdn355SI9GJztXnYg9j9JJcOl8euBD3CbkJPzwu8husGgSvIqsokUvUxf07nI7x8M
+	 QOwFvGitGwy4NiKVWp8R2jIDFXoYzmRY26HJDwZA=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Johan Hovold <johan@kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] rtc: at91sam9: fix call balance of rtc->sclk handling routines
+Date: Mon,  3 Mar 2025 17:02:29 +0300
+Message-Id: <20250303140229.642959-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -131,50 +114,111 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8WsfXV1vMlRxzLi@smile.fi.intel.com>
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6d615zGHzFw3v
+X-ITU-Libra-ESVA-ID: 4Z6dhC154zzFx0l
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741702633.91785@T5so2RX3K05VwO9ZpgQBYQ
+X-ITU-Libra-ESVA-Watermark: 1741704184.12481@EkyVn/FKdClfZjKgNqguAg
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 03:19:57PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 03, 2025 at 02:46:24PM +0200, Raag Jadav wrote:
-> > On Mon, Mar 03, 2025 at 02:21:55PM +0200, Andy Shevchenko wrote:
-> > > On Mon, Mar 03, 2025 at 02:13:35PM +0200, Raag Jadav wrote:
-> > > > On Mon, Mar 03, 2025 at 01:44:52PM +0200, Andy Shevchenko wrote:
-> > > > > On Mon, Mar 03, 2025 at 01:38:15PM +0200, Raag Jadav wrote:
-> > > > > > On Mon, Mar 03, 2025 at 10:21:13AM +0200, Andy Shevchenko wrote:
-> > > > > > > On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
+If rtc->sclk was enabled in at91_rtc_probe(), it must be disabled in
+all error paths to ensure proper cleanup. However, if
+devm_rtc_register_device() returns an error in at91_rtc_probe(), the
+rtc->sclk clock will not be disabled.
 
-...
+Use the devm_clk_get_enabled() helper function to ensure proper call
+balance for rtc->sclk.
 
-> > > > Better CI coverage?
-> > > 
-> > > How? I do not see the difference, can you elaborate?
-> > > (Assuming that CIs are using the merge_config.sh approach or alike)
-> > 
-> > That is my understanding of it.
-> > 
-> > config COMPILE_TEST
-> >         bool "Compile also drivers which will not load"
-> >         depends on HAS_IOMEM
-> >         help
-> >           Some drivers can be compiled on a different platform than they are
-> >           intended to be run on. Despite they cannot be loaded there (or even
-> >           when they load they cannot be used due to missing HW support),
-> >           developers still, opposing to distributors, might want to build such
-> >           drivers to compile-test them.
-> 
-> Yes, and how does my suggestion prevent from this happening?
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-Nothing's preventing it, but since we have an opportunity to allow
-a wider build test (even without arch or mfd dependency), shouldn't
-we allow it?
+Fixes: a975f47f6e9a ("rtc: at91sam9: use clk API instead of relying on AT=
+91_SLOW_CLOCK")
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/rtc/rtc-at91sam9.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-Raag
+diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+index 38991cca5930..f4b7cf37397f 100644
+--- a/drivers/rtc/rtc-at91sam9.c
++++ b/drivers/rtc/rtc-at91sam9.c
+@@ -375,21 +375,16 @@ static int at91_rtc_probe(struct platform_device *p=
+dev)
+ 		return -ENOMEM;
+ 	}
+=20
+-	rtc->sclk =3D devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(rtc->sclk))
++	rtc->sclk =3D devm_clk_get_enabled(&pdev->dev, NULL);
++	if (IS_ERR(rtc->sclk)) {
++		dev_err(&pdev->dev, "Could not get and enable slow clock\n");
+ 		return PTR_ERR(rtc->sclk);
+-
+-	ret =3D clk_prepare_enable(rtc->sclk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Could not enable slow clock\n");
+-		return ret;
+ 	}
+=20
+ 	sclk_rate =3D clk_get_rate(rtc->sclk);
+ 	if (!sclk_rate || sclk_rate > AT91_RTT_RTPRES) {
+ 		dev_err(&pdev->dev, "Invalid slow clock rate\n");
+-		ret =3D -EINVAL;
+-		goto err_clk;
++		return -EINVAL;
+ 	}
+=20
+ 	mr =3D rtt_readl(rtc, MR);
+@@ -405,10 +400,8 @@ static int at91_rtc_probe(struct platform_device *pd=
+ev)
+ 	rtt_writel(rtc, MR, mr);
+=20
+ 	rtc->rtcdev =3D devm_rtc_allocate_device(&pdev->dev);
+-	if (IS_ERR(rtc->rtcdev)) {
+-		ret =3D PTR_ERR(rtc->rtcdev);
+-		goto err_clk;
+-	}
++	if (IS_ERR(rtc->rtcdev))
++		return PTR_ERR(rtc->rtcdev);
+=20
+ 	rtc->rtcdev->ops =3D &at91_rtc_ops;
+ 	rtc->rtcdev->range_max =3D U32_MAX;
+@@ -419,7 +412,7 @@ static int at91_rtc_probe(struct platform_device *pde=
+v)
+ 			       dev_name(&rtc->rtcdev->dev), rtc);
+ 	if (ret) {
+ 		dev_dbg(&pdev->dev, "can't share IRQ %d?\n", rtc->irq);
+-		goto err_clk;
++		return ret;
+ 	}
+=20
+ 	/* NOTE:  sam9260 rev A silicon has a ROM bug which resets the
+@@ -433,11 +426,6 @@ static int at91_rtc_probe(struct platform_device *pd=
+ev)
+ 			 dev_name(&rtc->rtcdev->dev));
+=20
+ 	return devm_rtc_register_device(rtc->rtcdev);
+-
+-err_clk:
+-	clk_disable_unprepare(rtc->sclk);
+-
+-	return ret;
+ }
+=20
+ /*
+@@ -450,8 +438,6 @@ static void at91_rtc_remove(struct platform_device *p=
+dev)
+=20
+ 	/* disable all interrupts */
+ 	rtt_writel(rtc, MR, mr & ~(AT91_RTT_ALMIEN | AT91_RTT_RTTINCIEN));
+-
+-	clk_disable_unprepare(rtc->sclk);
+ }
+=20
+ static void at91_rtc_shutdown(struct platform_device *pdev)
+--=20
+2.25.1
+
 
 
