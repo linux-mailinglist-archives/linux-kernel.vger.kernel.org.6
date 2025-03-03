@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-540954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC45A4B6EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:45:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84840A4B6E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974F83ACDC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50B7A16C995
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169A61E1A31;
-	Mon,  3 Mar 2025 03:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E25D1DED40;
+	Mon,  3 Mar 2025 03:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="i2wqGaTI"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E688B1DB124;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CA7EffsL"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD6770805;
 	Mon,  3 Mar 2025 03:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740973517; cv=none; b=rB+YilYUPJNvUfT8j1EVFJxJU/5PxeThA4SL0NMal/CcpnorP7INNw/z6ep2tDaooM7ABa9y6FGxEsKoIzwLSRN8BJd9GSa/HWKrXl4Cdhg5LU11XbcxwensZMgVuYB4WdavZmpA9ZShiNbNHEMDSkLg6UGxAnhJrnOzJigDPno=
+	t=1740973517; cv=none; b=rxtfMmAIO/qvdwZNZQcTQ4t1DEn4YC92SsEk/rCTGS15Ex9D+Zoe12rrRs9VMIjD8gSSKlOUnT+lQddenfRd84XzDhNXwHglgkCb1C2bloWqn4QePoSqnlO+XrT1PWp2Ly9LuXPlKJW+EYaykY0gau+7YO4//DcnqqnE0/N1o5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740973517; c=relaxed/simple;
-	bh=BQB4o5upyiHwOrq1ELkOKKwsTrjMz8B0lfGnMRuyQ1Q=;
+	bh=djWsWjg0S9oMhoI7aouvBl77d3FEFDIiyx3E6y9FBcY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uf9vkG6NREVy7D3ICYSFKOQCb8RxrOiyYYyQsKcb5DKztbcO5Dj9FjWPlx1coSmHIpeTwqds4IOH2HxC/LNQXgAWakhWOn5p2c9OLSEuVVBdKOHcteblxZdYzDMlsH0Vbfo8n7twjNK7P9V8nv+HiCcIf8E2rxb/U30EVyau5v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=i2wqGaTI; arc=none smtp.client-ip=220.197.31.5
+	 MIME-Version; b=nxHKHtbNs25FvZzPJxuA9YrRtPG25LficHZSXKKsYtqgMicDesZYBmjxfRXB5iOSpQX06nyNqIvcNAk8op3M1mTCKNGppLhAa/KIYIkPlH+GKbha6XmO9MW0zcupV6YlqTSfTpDICQlGFpv5KSLy7dxcC/zYQWrkcclh4tezpjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CA7EffsL; arc=none smtp.client-ip=220.197.31.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hqUIo
-	3mPnUIyqguQPvXUfr2S5iboamQqTtFzA4Iiu08=; b=i2wqGaTITJc8AO41uGbZ4
-	GYIhYfAbVS357WCjX0pGTnlcDDeMviUgCn6GtHGO4lma1p5kO/5loJpOU1fx6YZH
-	qwdz+HTQbrxJBw5UXbGiJ8S+PkbhYIZwJdHtSaHYk14DmTakYSBKKXX/5tWlJ8Fc
-	n6xMwpZw/3EwFrLvMfoLAY=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=x5wpq
+	KJUmSg4bQV96jwM4c9cPSXvq7N01GUYeXUKlfk=; b=CA7EffsLWpedAONWrpiKw
+	EGFJh76138yfLmZ3tK1S4h7TKKMsE6zWfHm/znJ5gFtpUYZKuc9R5GUdm5RzivDz
+	MbLgduQXrf33Abzsuwc1UHGEMqJAvBtq+gtHSlt6AQydtxt2H/LHUiBNkZWJ9IzQ
+	QPADEAYo4KweVp1pWWGjKo=
 Received: from ProDesk.. (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgC3Oc2lJcVnaJliJg--.43523S6;
-	Mon, 03 Mar 2025 11:44:46 +0800 (CST)
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgC3Oc2lJcVnaJliJg--.43523S7;
+	Mon, 03 Mar 2025 11:44:48 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -52,9 +52,9 @@ Cc: hjc@rock-chips.com,
 	sebastian.reichel@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v16 4/7] dt-bindings: display: vop2: describe constraint SoC by SoC
-Date: Mon,  3 Mar 2025 11:44:18 +0800
-Message-ID: <20250303034436.192400-5-andyshrk@163.com>
+Subject: [PATCH v16 5/7] dt-bindings: display: vop2: Add missing rockchip,grf property for rk3566/8
+Date: Mon,  3 Mar 2025 11:44:19 +0800
+Message-ID: <20250303034436.192400-6-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250303034436.192400-1-andyshrk@163.com>
 References: <20250303034436.192400-1-andyshrk@163.com>
@@ -65,155 +65,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgC3Oc2lJcVnaJliJg--.43523S6
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZF4UWFyDtryDuw43JFyftFb_yoW5uryfpa
-	97Cas8X3ykGr1UWw4ktF1fAw4SqF9xJw4UJrn7t3W7Ga1DKF4UGw4agw1DAr9xWFsFvaya
-	9F45Cr15Jw42vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UN0edUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAcFXmfFIcOAVgAAsa
+X-CM-TRANSID:PSgvCgC3Oc2lJcVnaJliJg--.43523S7
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF4fZw43KFWxury3JF43KFg_yoW8Gr43pa
+	93CFWDWay0gr12qw1DtFn5Cr4v9F97Ca1UJFs3G3WIywnIgFn8Ka4agrn8XF4UGF4xZFWf
+	ua1Ygry5trs2vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jz0PfUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gMFXmfFIit2JAAAsz
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-As more SoCs variants are introduced, each SoC brings its own
-unique set of constraints, describe this constraints SoC by
-SoC will make things easier.
+The clock polarity of RGB signal output is controlled by GRF, this
+property is already being used in the current device tree, but
+forgot to describe it as a required property in the binding file.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
-(no changes since v14)
-
-Changes in v14:
-- Set maxItems constraint of clocks for rk3588 to 9 as a recently
-  merged patch added two optional clocks[0]:
-  [0]https://patchwork.freedesktop.org/patch/msgid/20250204-vop2-hdmi0-disp-modes-v3-1-d71c6a196e58@collabora.com
+(no changes since v13)
 
 Changes in v13:
-- Add maxItems constraint for clocks
-- Remove constraint for interrupts in allOf block, as the current
-  maxItems is already 1.
+- typo fix
+- Explain the function of this property.
 
 Changes in v12:
-- Only change the description method for existing SoC.
+- Split from patch 10/13
 
-Changes in v11:
-- Remove redundant min/maxItems constraint
-
-Changes in v10:
-- Move interrupt-names back to top level
-- Add constraint of interrupts for all platform
-- Add constraint for all grf phandles
-- Reorder some properties
-
-Changes in v9:
-- Drop 'vop-' prefix of interrupt-names.
-- Add blank line between DT properties
-- Remove list interrupt-names in top level
-
-Changes in v8:
-- Fix dt_binding_check errors
-- ordered by soc name
-- Link to the previous version:
-  https://lore.kernel.org/linux-rockchip/6pn3qjxotdtpzucpul24yro7ppddezwuizneovqvmgdwyv2j7p@ztg4mqyiqmjf/T/#u
-
-Changes in v4:
-- describe constraint SOC by SOC, as interrupts of rk3576 is very
-  different from others
-- Drop Krzysztof's Reviewed-by, as this version changed a lot.
-
-Changes in v3:
-- ordered by soc name
-- Add description for newly added interrupt
-
-Changes in v2:
-- Add dt bindings
-
- .../display/rockchip/rockchip-vop2.yaml       | 40 ++++++++++++-------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ .../devicetree/bindings/display/rockchip/rockchip-vop2.yaml   | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-index 46d956e63338..a5771edd83b5 100644
+index a5771edd83b5..083eadcf0588 100644
 --- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
 +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-@@ -14,6 +14,7 @@ description:
- maintainers:
-   - Sandy Huang <hjc@rock-chips.com>
-   - Heiko Stuebner <heiko@sntech.de>
-+  - Andy Yan <andyshrk@163.com>
- 
- properties:
-   compatible:
-@@ -124,43 +125,54 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: rockchip,rk3588-vop
-+            enum:
-+              - rockchip,rk3566-vop
-+              - rockchip,rk3568-vop
-     then:
-       properties:
-         clocks:
--          minItems: 7
-+          maxItems: 5
-+
-         clock-names:
--          minItems: 7
-+          maxItems: 5
- 
-         ports:
-           required:
-             - port@0
-             - port@1
-             - port@2
--            - port@3
- 
--      required:
--        - rockchip,grf
--        - rockchip,vo1-grf
--        - rockchip,vop-grf
--        - rockchip,pmu
--
--    else:
--      properties:
-         rockchip,vo1-grf: false
+@@ -146,6 +146,9 @@ allOf:
          rockchip,vop-grf: false
          rockchip,pmu: false
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3588-vop
-+    then:
-+      properties:
-         clocks:
--          maxItems: 5
-+          minItems: 7
-+          maxItems: 9
-+
-         clock-names:
--          maxItems: 5
-+          minItems: 7
-+          maxItems: 9
- 
-         ports:
-           required:
-             - port@0
-             - port@1
-             - port@2
-+            - port@3
-+
 +      required:
 +        - rockchip,grf
-+        - rockchip,vo1-grf
-+        - rockchip,vop-grf
-+        - rockchip,pmu
- 
- additionalProperties: false
- 
++
+   - if:
+       properties:
+         compatible:
+@@ -200,6 +203,7 @@ examples:
+                               "dclk_vp1",
+                               "dclk_vp2";
+                 power-domains = <&power RK3568_PD_VO>;
++                rockchip,grf = <&grf>;
+                 iommus = <&vop_mmu>;
+                 vop_out: ports {
+                     #address-cells = <1>;
 -- 
 2.34.1
 
