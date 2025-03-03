@@ -1,97 +1,94 @@
-Return-Path: <linux-kernel+bounces-541741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBC2A4C10A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:56:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5ABA4C10E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784093A3CB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B90163908
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E130920FAB7;
-	Mon,  3 Mar 2025 12:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115F3210F6A;
+	Mon,  3 Mar 2025 12:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQgWRqwK"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IM1ITgS5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1E73BBD8;
-	Mon,  3 Mar 2025 12:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3C420FAB9;
+	Mon,  3 Mar 2025 12:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006575; cv=none; b=BGtR7lQsIbcWbfXcssCCdUVcVeLFDDPLdIY0y0/hQlA3BAA53hLC0gc2a0C1kUtUeeWGozS+4mcU+/kLcs/FWU2c6Bj7+TyKajy4jAN6fgmd5xwHPZJWXoS00OCFO6TD9CDXn/W1x+AaGnpILqAPk90YlipxwFOUm3ztwPl6eSc=
+	t=1741006604; cv=none; b=e8UsQpMHenxwHhulhSLjDr1EN1DwsCMw44dsa3d8EkAAQujedQXMrCFfs+T36rdGb6OIRz7XXTMP7acQR1iBNZfYbiUhgAj8Nb8DNiXRDNlZz2B6Je5yoABWwsLcIs6+GEFk8zTTwOKXsoNNsQl1AEfRJzqNmBDsZG7KCE/zF8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006575; c=relaxed/simple;
-	bh=Ev5SKxfHjDqDzCGwE0MrQkmFFNsf+Ifg6zSxPrf9e4c=;
+	s=arc-20240116; t=1741006604; c=relaxed/simple;
+	bh=zBpdfr05Ho1fS7EiczKuumrPUmBYTKjWBPWuy/77H+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEfY4MwppZmFrVOIBSRzbGizJiDyFMJ8jZxNijRkNIvVPN+PO6fKCk4OMcIX06tlxvTbESewme3/n/TnRP8h8SerdYk1VJwG8HWD5tLo0OZSfBXewvAQlx+LzrXX1RbgiC+RJy9fgZijIHgGMpL1d9ma6U2PWSSu1j8U/YhT7Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQgWRqwK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB27BC4CED6;
-	Mon,  3 Mar 2025 12:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741006574;
-	bh=Ev5SKxfHjDqDzCGwE0MrQkmFFNsf+Ifg6zSxPrf9e4c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKdIKRtI7+O9FuTh665EUdMp4GvXKO8MuywCGz8/N77YKsL1S6ceIPhqogYr9m2FytXJN6zD31MTl+3Q95fU5QazvuQDTu29YM9fSwxQusZDJVbybChs6ipcerczn1KSDfqrL7YswnP/O1kZsKD3vUOofC+ufxBtgO8JtyB8sT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IM1ITgS5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E696C4CED6;
+	Mon,  3 Mar 2025 12:56:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741006603;
+	bh=zBpdfr05Ho1fS7EiczKuumrPUmBYTKjWBPWuy/77H+I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nQgWRqwKuT1Oo2+hzyUjZaaBeHxS+JzswVkZ3IcpxM+0txxGFd09xfUYwQdAAldMJ
-	 3dxfDjO0/g0d5TI1ztufEITw41xWhqqNNpUf8L0xZ7Wvlivx+O3mY+IuTDFm7libiQ
-	 wj58t/ZQu3Kbx4xnbqecGbW/T2Tt/sPxeErUViGiKe+XyhgTAvx7LoxGZn5NjgOo2Q
-	 rkUoqBsdhVBRmDqHHbcUX3Xh35YRskMrkC+06fWOVf6LERp/KY4ZMM2JfjrRAXNVVc
-	 NSVm9SHGlGvXk82LSYrsI24e0GObX3xEpSGRKd2ew0NAamCwyqorOXXPyD4am65Twu
-	 BUKwepksALVTQ==
-Date: Mon, 3 Mar 2025 12:56:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: lgirdwood@gmail.com, peda@axentia.se, andrei.simion@microchip.com,
-	nuno.sa@analog.com, paul@crapouillou.net, oder_chiou@realtek.com,
-	kiseok.jo@irondevice.com, shenghao-ding@ti.com, kevin-lu@ti.com,
-	baojun.xu@ti.com, srinivas.kandagatla@linaro.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH 11/12] ASoC: Tidy up SOC_DOUBLE_R_* helpers
-Message-ID: <5b319436-cf3e-4fd6-89a6-87e1afcf1ee1@sirena.org.uk>
-References: <20250226153137.2791938-1-ckeepax@opensource.cirrus.com>
- <20250226153137.2791938-12-ckeepax@opensource.cirrus.com>
+	b=IM1ITgS5ZODPLmGIgbVJnVplYiRlss2mC9jCTrj9YNAC40yHKVNYXbMufpYsvaKRO
+	 h2XILlNtqXI3nOCPtVJXjSLCNp71WeQ/8Kmg2mE4R2JIhZONky7QfScKcveFM2MKjk
+	 EIzsefVdOb/2W3GJYK+IydJawPbeV1xxc7fll4M8=
+Date: Mon, 3 Mar 2025 13:56:40 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Saalim Quadri <danascape@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: iio: ad5933: Fix CamelCase naming
+Message-ID: <2025030301-niece-evacuate-0f05@gregkh>
+References: <20250303125246.342704-1-danascape@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RoR8hd1BzWUnIGTH"
-Content-Disposition: inline
-In-Reply-To: <20250226153137.2791938-12-ckeepax@opensource.cirrus.com>
-X-Cookie: No purchase necessary.
-
-
---RoR8hd1BzWUnIGTH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250303125246.342704-1-danascape@gmail.com>
 
-On Wed, Feb 26, 2025 at 03:31:36PM +0000, Charles Keepax wrote:
-> Re-implement SOC_DOUBLE_R_VALUE() in terms of SOC_DOUBLE_R_S_VALUE().
-> SOC_DOUBLE_R_S_VALUE() already had a minimum value so add this to
-> SOC_DOUBLE_R_VALUE() as well, which makes SOC_DOUBLE_R_RANGE_VALUE()
-> redundant, so its usage is replaced.
+On Mon, Mar 03, 2025 at 06:22:46PM +0530, Saalim Quadri wrote:
+> Reported by checkpatch:
+> 
+> CHECK: Avoid CamelCase
+> 
+> Signed-off-by: Saalim Quadri <danascape@gmail.com>
+> ---
+>  drivers/staging/iio/impedance-analyzer/ad5933.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> index d5544fc2fe98..a1a5eee4f736 100644
+> --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
+> +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> @@ -43,10 +43,10 @@
+>  #define AD5933_CTRL_POWER_DOWN		(0xA << 4)
+>  #define AD5933_CTRL_STANDBY		(0xB << 4)
+>  
+> -#define AD5933_CTRL_RANGE_2000mVpp	(0x0 << 1)
+> -#define AD5933_CTRL_RANGE_200mVpp	(0x1 << 1)
+> -#define AD5933_CTRL_RANGE_400mVpp	(0x2 << 1)
+> -#define AD5933_CTRL_RANGE_1000mVpp	(0x3 << 1)
+> +#define AD5933_CTRL_RANGE_2000MVPP	(0x0 << 1)
+> +#define AD5933_CTRL_RANGE_200MVPP	(0x1 << 1)
+> +#define AD5933_CTRL_RANGE_400MVPP	(0x2 << 1)
+> +#define AD5933_CTRL_RANGE_1000MVPP	(0x3 << 1)
 
-This doesn't apply against current code, please check and resend.
+No, these are units of measurement, the "m" is correct here, right?  If
+you change that to "M" it logically means something a lot different :(
 
---RoR8hd1BzWUnIGTH
-Content-Type: application/pgp-signature; name="signature.asc"
+Please always treat checkpatch.pl as a hint, not as a rule.
 
------BEGIN PGP SIGNATURE-----
+thanks,
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfFpugACgkQJNaLcl1U
-h9AN+Af/fKSNcDYJBdpB2CpuPssT8MvsuizseNovlE8SR67M8irBy34gVRRSEzPQ
-EP+yra221mu+SjIjqlpveqTU3GLfX9gCpbr29lgACZhSeKlB310jtdUOitP7BDB2
-aTxZ2/dkWWQ/CAY2Lf+qE30in5bWSj5CLCXKrDrnqdHIP2UrCxm7O3PIyVVbD+Ow
-aFS7MoPpYasv8AsKpo4CrT/46/Z3blB2K9UwGZqa+yMBEQNJ+v1P5ES6+eQ/4LCr
-57Tb/JsATEmXGCEWgX17X8dVnG9nkhAhZ885xFJorhcMS787R63nr6r27DZQJjWR
-2num4biSZWf0fB8aoK/cCg9455a39g==
-=i4Az
------END PGP SIGNATURE-----
-
---RoR8hd1BzWUnIGTH--
+greg k-h
 
