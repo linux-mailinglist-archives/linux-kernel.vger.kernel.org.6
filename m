@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-544429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67FCA4E113
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 037F8A4E1E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E86A189AFE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9FB1893143
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C650A251784;
-	Tue,  4 Mar 2025 14:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28B8263899;
+	Tue,  4 Mar 2025 14:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="cVRnCZE2"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHSENisG"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FBA2512C9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BE6201023
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098596; cv=pass; b=oBB3oZjQUHCn6kTGG3PYcoGXZFl6m5zHhEQfmYwiWn9y7f/IUTUxEivN74wJR1xLTXz/Odi1Zf0QRJV5pumkKrpySgqMwS8UcAWnXezMDG/z9R0VF4jBOHVPHFQYTk1Wv1z+SRq8UwKPEqBfnsT51Y1wIG95UHqZgTuHaXLFNhk=
+	t=1741099679; cv=pass; b=ZMkqSghJBZpU2jIQZlROEsipCWkoeXXCAVyDzvxSv7vt/BfvmsI3b93cyL3PymwU2DCNpn28ctdaRuyLWzIzPy9V/1/QAoqPa7d1JPSZ/G+pz/bzJ1yUc0zPYtOdZx7mOC4Nli5Fx/K5jRkyEuMTnAryBI7hpd+oTUlmKKLNM+I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098596; c=relaxed/simple;
-	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=f67VeakIQkAiRBO0VmyQCXYt+5yQxI2cquJ2YU9d6KSYLcTpsvNmSkkWXP8XZn8rcPOboHoSlDZgefWe3kfWhSuwYI19zzv5/emvc9mQO3EEkoCnI9impj13MbbdRo0hOkifNaHWFqEWWL1b3BKV1bDs59pj3HDBv3n2hosL0vs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+	s=arc-20240116; t=1741099679; c=relaxed/simple;
+	bh=N9mZl4TD3z0y0yE+U4uxZdByy4waB69DBjZwBEDVK0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKY5gVJdItD/PctzlNGvw5YWFHIh8L4sZL6TUfA5mNtnJF14OcUUIN5EPrvoAg5RsSexUijlK5xLh290ky8YJ7d9/rPDjAkav3oSOk/JYmEsoONo2tAS5Wt8GWbeRmkSw3tHN/rCL2mK8pp7oMVMZ0F/wRBTRpZScEQxb3qtA3k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHSENisG; arc=none smtp.client-ip=192.198.163.17; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 55E8A40D570E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:29:51 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 8CBD340F1CE3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:47:55 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dMl18lpzFwkC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:35 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dmM1hrmzFxdG
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:46:27 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 2E9224272D; Tue,  4 Mar 2025 17:28:31 +0300 (+03)
+	id 0F0994272F; Tue,  4 Mar 2025 17:46:20 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2
-X-Envelope-From: <linux-kernel+bounces-541121-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHSENisG
+X-Envelope-From: <linux-kernel+bounces-541134-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHSENisG
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 15A0142266
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:59 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id B6A7F2DCED
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:58 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 3174B428D6
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:21:36 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 101852DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:21:36 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D214316E3C3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13E518904C9
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299B1EEA46;
-	Mon,  3 Mar 2025 08:09:40 +0000 (UTC)
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEBC1EEA4D;
+	Mon,  3 Mar 2025 08:21:23 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBF813A3F7;
-	Mon,  3 Mar 2025 08:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C51EEA37;
+	Mon,  3 Mar 2025 08:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989378; cv=none; b=ebhlCpCPfQpfGzDxgSTyYtKUxTMM2UpTGNl3Z30US178+dsGLAAIkvu2eOLWxcu8HP6/3RecQdh19km/r9VRIILtojffhePjHEZxvtCOA6+ErstbJbmR1cSctKnu7CJ6tplDR26Z140TT6RLOO4puzpFQrq4M/ENjylh9pH8tkQ=
+	t=1740990080; cv=none; b=gs5fJW50takPlpyW9JaU0qqzeqXxPaRHuFcHnptgENnz85S6G5oQmXHQ5ymzX51I8M6PtmE3GemEXOWrydvwwzVMjT1pTMkXOFYB/FaP1XlM32nE8cBGfWrQnyN2IdPAKyhuGQbduKdKvACJDAO4SM+NSPiOMpVLZ4qRbxlZGbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989378; c=relaxed/simple;
-	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SIFMNuRyKXtPel8BoEZWHTlIuvhtZiJMGDKfkt6lSsDSkFox6djV3uxbpcQYz9xfBh0RHGLHWBAaG9MqiG0jqWdqi1tOr7LyVIak6/cDHr3VgyKcQ8VFT2gU7eSYeJA5Xlt8rB1YrrZMzKvdd7nqm/rs5ERdC0SVITVqZg4YjzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.3])
-	by mail.crpt.ru  with ESMTP id 52388PGD020784-52388PGF020784
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Mon, 3 Mar 2025 11:08:25 +0300
-Received: from EX1.crpt.local (192.168.60.3) by ex1.crpt.local (192.168.60.3)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
- 2025 11:08:25 +0300
-Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
- ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 11:08:25 +0300
-From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Jeff Johnson
-	<jjohnson@kernel.org>, Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>,
-	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>, Govindaraj Saminathan
-	<quic_gsamin@quicinc.com>, Bhagavathi Perumal S <bperumal@codeaurora.org>,
-	Rajkumar Manoharan <rmanohar@codeaurora.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Topic: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Index: AQHbjBNwlu6FEnv6mkuda429t7F2NQ==
-Date: Mon, 3 Mar 2025 08:08:25 +0000
-Message-ID: <20250303080819.48872-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX1.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740990080; c=relaxed/simple;
+	bh=N9mZl4TD3z0y0yE+U4uxZdByy4waB69DBjZwBEDVK0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXWjaz6tBqVMryOVu3hfIC3+AuJFnNlrOjT7PGuIk6L6xou9tQR8VFfW7ABpAm/F/b/ekeranwpNvddmRM5IeuF2SIgxoAq5XSfsfvexc8AKCkmTXL2TOnORrjECgmq/B+x+NO0tM8wNT/Bs890QD9UVgIfMQt47AELVWcHpiHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHSENisG; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740990079; x=1772526079;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N9mZl4TD3z0y0yE+U4uxZdByy4waB69DBjZwBEDVK0s=;
+  b=QHSENisGlf/P1/vlyD6SApEXNHQJkWY20TlJYqH1FZC/Bh9T8nyP4Nft
+   dgTH4OpTZohvcW2Nj19rlcmC7F0+v52HaOLhUuDFLjRuVD0szL8aCmq+s
+   DWf32KIQ6f6DW7tvvmFuMo1BLgqeNdGL4+VqyEuhPARi9ol2mvjJhuRw/
+   qHV8exm9TbSghvvFjh+3aXJqPgJq398MMvxs6zuce0O0kmpC7kTXlGFGk
+   zXNczbuE3vULP4C/omPsTYZG7kgzpDsJPVImEVPylaPUrt1NGbc4tcKcI
+   AAchiUTrG00DW1+TWqod1xpfRv3KfPH7Xvafrgsh7xtNazGztAVp8vS21
+   g==;
+X-CSE-ConnectionGUID: PZlu3JROTVu1UWbU2Mn6Sw==
+X-CSE-MsgGUID: bxck2UHdSAmiEmA5UYIWlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41741002"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41741002"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:21:18 -0800
+X-CSE-ConnectionGUID: 97up0/dCQbWEIlFstbw+Gg==
+X-CSE-MsgGUID: VKhMROqeTjyq46TDp4kIKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="122947971"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:21:17 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp133-0000000Gkip-2FPH;
+	Mon, 03 Mar 2025 10:21:13 +0200
+Date: Mon, 3 Mar 2025 10:21:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-3-raag.jadav@intel.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -120,84 +126,36 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.3
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=GXCR2/qllsmPA+9VDf1WpC/D25nO4d0B9V4QL8xXBpM=;
- b=cVRnCZE2yRwZueFBHy4v+SikDM43pylMgfh911GYqPN0IIt3BSzNGN8ZlKb4vq/dq6CY2qpD4sfg
-	8kRyBybkjfO93Vpxt0HV5zMAGEIcdTOmls/gMqxjyK9DRaPFWd8FWIq+bAPIMDLC72Pq0ZafQrM/
-	xkJKWHQtjde+9Y/OdG/WYtLulJ6X7ojMB1n/zUWXkKLUcTvhw0XU4H6EdBz9kmGEvuV5vTpSZH0Y
-	/8kTPSblVtkLGX1AiybAcIR7naqN66Q8716J6HMQGkYdY7HPAzKtmKWHaS7Fy3/hb18+hHkhSGsA
-	qTQuNNn92yGO2ALB9srRBlcPXvw5W4B2bqxLzg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303044745.268964-3-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dMl18lpzFwkC
+X-ITU-Libra-ESVA-ID: 4Z6dmM1hrmzFxdG
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703335.58366@RiD0ddXmMRQEb/JOWWxM4A
+X-ITU-Libra-ESVA-Watermark: 1741704402.992@dj2iGM91a4zTXtN2zAhHlg
 X-ITU-MailScanner-SpamCheck: not spam
 
-From: Andrey Vatoropin <a.vatoropin@crpt.ru>
+On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
+> Now that we have Intel MFD driver for PSE GPIO, depend on it.
 
-Size of variable peer_stats->succ_bytes equals four bytes.
-Size of variable peer_stats->retry_bytes equals four bytes.
+...
 
-The expression peer_stats->succ_bytes+peer_stats->retry_bytes is currently
-being evaluated using 32-bit arithmetic. So during the addition an
-overflow may occur.
+>  config GPIO_ELKHARTLAKE
+>  	tristate "Intel Elkhart Lake PSE GPIO support"
+> -	depends on X86 || COMPILE_TEST
+> +	depends on (X86 && MFD_INTEL_EHL_PSE_GPIO) || COMPILE_TEST
+>  	select GPIO_TANGIER
 
-Since a value of type 'u64' is used to store the eventual he, it is
-necessary to perform the 64-bit arithmetic to avoid overflow during the
-multiplication.
+Looking on how GPIO PMIC drivers are written, I would redo this as
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-      =20
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
----
- drivers/net/wireless/ath/ath11k/debugfs_sta.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+	depends on (X86 || COMPILE_TEST) && MFD_INTEL_EHL_PSE_GPIO
 
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wi=
-reless/ath/ath11k/debugfs_sta.c
-index f56a24b6c8da..982a7add6ea6 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-+++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-@@ -69,26 +69,26 @@ void ath11k_debugfs_sta_add_tx_stats(struct ath11k_sta =
-*arsta,
-=20
- 		if (txrate->flags & RATE_INFO_FLAGS_HE_MCS) {
- 			STATS_OP_FMT(AMPDU).he[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).he[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else if (txrate->flags & RATE_INFO_FLAGS_MCS) {
- 			STATS_OP_FMT(AMPDU).ht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).ht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else {
- 			STATS_OP_FMT(AMPDU).vht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).vht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		}
- 		STATS_OP_FMT(AMPDU).bw[0][bw] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).nss[0][nss] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).gi[0][gi] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).bw[1][bw] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		STATS_OP_FMT(AMPDU).nss[1][nss] +=3D
---=20
-2.43.0
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
 
