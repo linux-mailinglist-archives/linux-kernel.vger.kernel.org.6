@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-544760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FA2A4E47B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:58:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398E7A4E643
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F95E7A81D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F808A267C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347AE2BF3E3;
-	Tue,  4 Mar 2025 15:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B876A24C07F;
+	Tue,  4 Mar 2025 15:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jWlMsxws"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hNwH16HX"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A267F2BF3CB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DCD20A5D9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102772; cv=pass; b=bGezM0N6c4rNXCLiWklgSS+BQWKBgGcmDg82+5RIWnDIqf4MLE0BOLcf4WrQNmfTekZleft5QW8L+da5JWbyhLshs9hKsuQBx8kJcxGVIswypGt2wZ5kkpag9inaRffjbRX+HnGODd/zDiLg0uYcJR0zymAarH0hDn2KT5QP7Rg=
+	t=1741103235; cv=pass; b=IkGIgKPOz5bH4rwnO6xDdjXN7B1CciUiRl6CgKkGK7GUWjCF9FPOjYXzM5knip+ZkC6NKU02Hv+3vgL28fcOrcGvqqhoj7i36dmpWTBr61a9+Ga4tt6GyFN4Sg965gAzI1Hbc59r6FD41u45+bG1c35mqx+42uc2333mF8UJf10=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102772; c=relaxed/simple;
-	bh=ZQkQ0v+LVOjnnddsmiqkVeGvaIQ78BApCBN3whw0Bh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9rk/0pZf5QrG7ACy8PrvgFY3evl+w8BBXG0wFLvehJ8L4uDU5PYyuIJsxW9oSOcIAgfKKpeVrI9JV88FyJFR5Ub5GiqnBsb6amX4ust2J/C9nPqUNKRadvMMDfc4Ki1ysRr/ydxucptPxoqjeGDDU5FCzPwcDDQno91wVl0fNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jWlMsxws; arc=none smtp.client-ip=209.85.218.44; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+	s=arc-20240116; t=1741103235; c=relaxed/simple;
+	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=S+uaQYsZO/qTyF4QOTBPRx4+n7W664EyVz95O1hn0EDdQckxjzuVI+o1SQFtT7yYNAzU4P/NHbHkgq1VZ6wG70acLM0/WkM+xsbki35dl2LLSY/HYbuilp8rKj43Ct4ihhEeunu5U8zhRfD1cqnC/LGBWjdjNw1EbzlgHvraVZs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id B3C2040CF12C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:39:28 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D891340CF4F1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:12 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hNwH16HX
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fvM0TwdzG0wV
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:37:35 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g4W2CBPzG1B2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:31 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 342AF4272C; Tue,  4 Mar 2025 18:37:27 +0300 (+03)
+	id 8F9AF42740; Tue,  4 Mar 2025 18:45:18 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jWlMsxws
-X-Envelope-From: <linux-kernel+bounces-541169-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
+X-Envelope-From: <linux-kernel+bounces-541176-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jWlMsxws
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 83B6142B07
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:37:56 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 4D5F62DCF6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:37:56 +0300 (+03)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 9042B41C5D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:42 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id D13B73063EFF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:41 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4152A188CF0D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:38:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6549D7A4DCF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB991EF0A9;
-	Mon,  3 Mar 2025 08:37:40 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6B1EFFB7;
+	Mon,  3 Mar 2025 08:45:19 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6CA1EB19D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD5B667
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991057; cv=none; b=fTv6MtNAndX9eWP1LDxhkeEEmRJlu8l+1D728psM1oIaY1lhxALFth8A1c2zbBeSEKAcjniEJDJWvopEQaaks/nWQigD9VZ3F/y5jWUQZR5eofGBPchagUuCDENoUMB0/fbciPGGl+1E5rROXNVDv2tpNqddGHmuhboPxo8Qv2A=
+	t=1740991516; cv=none; b=VqGQiqXGAC+TGq4DzMStUb02Iowr4vlSDLMqRKgFVJmwmJuaOxcScnouJzU4kNloxxrnfMVIA7MlLIPQoOAXnLBnI8S4/ubmcklf6Yq93FIneVjHShupZGgvRgi6uCFtPt+43n68+7q9gKjD8LDw+yeJAfhfDBAmt2N0dou3nh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991057; c=relaxed/simple;
-	bh=ZQkQ0v+LVOjnnddsmiqkVeGvaIQ78BApCBN3whw0Bh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BIdxHfuTEM8wMCwK8Q3RleBiPEJ20wgBuYukV+hUYqKJ9obh+Z0x+MMDMLiy/DK2WGOrKN5/NzVBNhI3uU/jgG/gK5tWBZP15kmPHJFiFXDXdeXTRH4wed+jaObTXgMx1RGwrxjlTBY/sQV7asuWk4HENQQarKAkXVoc7wXE6pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jWlMsxws; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf5358984bso254592766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:37:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740991053; x=1741595853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rHzoEXcX3rRgSypgjLl/rpTLfRP49fuHATm+VBKv9lY=;
-        b=jWlMsxwsUDdonJkhTqhHJvmcLaMy1EI8DH1KqPBmYNwOKGbMDZ0YzFUW211ZNRN/bt
-         VSR8XGrNGFpqhlB61NnOUGuH5wSamTWUCcYHbn+BA9TVfRRq4w/SZ4RFddi6W+q9vMBg
-         UyJhH7g1QmdARr7zNXFgwNjp3qI6DvwVxvQnFREZ3joNm2wGQlRq1vIXAwKetKcuVmrI
-         lsZxcOBW0kBCWxm9nbJM7LqpQZGZLDhco/wUt7so4WCsUMNO90+K9483EhLNDdCQ88FO
-         fZ4QIiMjYS9ntnC60o6Db2zG79kWCai7wKYxwG4Ilq7xfAlVwwtZLZMTvadCRpl4gEiC
-         aY3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740991053; x=1741595853;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHzoEXcX3rRgSypgjLl/rpTLfRP49fuHATm+VBKv9lY=;
-        b=qsV/NcEQBkfpANlMRIRVv8Eqh4Of4qTtO0gB6yCc5Q8pNzW7e7Q7SG10HrnAIt0XwN
-         1/W5FHudmNx/wWWYSGIdwTItToWWnmcZWj8wdZcDt5NJKCm3thwtJuklIEvBVuWdZ5PD
-         +80oaL1FvJlHenXh4gKuHxxvYkn/h8tJNiQbjcLXFxjRyl2qYNr7J+4r4stVgapwFbIk
-         UFAfd8oI+/NZ9FeArIvTkexHhx/9p0fuqWE3DD9uBRfP8WyP46tpegmMwyCQ7X31zPyH
-         GWS19yTdk/B+gxlPpjSduvq84FBnrzQS8JMvAglC1SskMwgZbPTvJ8cFNCoyqqfNZQ0r
-         CFWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTvZilf/CfUiR1gtIhJedNuDTofQ5tDFhaQGikTk7DoAFQnfKo1GV88JW6wZLaWdV8QtRdwBPiuMK3GD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzOApEQNRZLKYjrpufDYqb38lTCV1EoS3xCvVxrRR5iUZsCdyz
-	Pfgp+cmKAwYOrFk3/vES3OhO/vWTE/D6D0EzqdIuUvURyxARRJBIhFw5xhQlhTA=
-X-Gm-Gg: ASbGncvWTY/MZf5MFAl4Xo2eXx2KYV/W7MFw/Zh2U2Y4CazX0hK8D+N/mdyHSEaaRBO
-	StGzKGy1U1rkbyGiKHZinoniLGvCavAMt6OR94xTPXtnTYpvNEbDjD6hyljOSK5ghH7T3+yh4dv
-	3RXzgk1mq5FYW2XT6KSsZuHg70/h2gd0zRhxKDzclptd/baCpo7ezrLvjpjVwPty7AoDLzA0+WF
-	5kQNnMzqopDNQhruC3X9baM10rqbO35xFqqg82CBbgOw/4rl2s7rRMGY3zaBoi7ZVkHK0ZDVM1a
-	6yRMiqI6CGdBzYfAFWUgTtbkzKZuemsZNAOe0vC8BczxVOkADfPfCrsg
-X-Google-Smtp-Source: AGHT+IEu4SCH3E4lm5pHLGphX1D/WhBV+YCMGBhWUNyZogIyLMScbPiRPIx0Mz9hoI+7dm2HVL+OtA==
-X-Received: by 2002:a17:907:97cf:b0:abf:38a:6498 with SMTP id a640c23a62f3a-abf26708c88mr1540344766b.55.1740991053091;
-        Mon, 03 Mar 2025 00:37:33 -0800 (PST)
-Received: from [192.168.50.159] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dc601sm780828466b.68.2025.03.03.00.37.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 00:37:32 -0800 (PST)
-Message-ID: <81354810-14e6-4840-9e50-52bdd0e63b95@tuxon.dev>
-Date: Mon, 3 Mar 2025 10:37:33 +0200
+	s=arc-20240116; t=1740991516; c=relaxed/simple;
+	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tX7N8yrf/hjm+iESJf6r5ZFoVAp9J8ThgMA71ARicV90sF2Oelfx6SViy18RC4nP0lOhZcPYth6urIKGyn+U/1KxnGozZ4Wyz8P8+oh/dDU9X6J94QuF0WdYuo7SOrnavFBaosSJZXGQ/6NZuZHp6ZNn9ODzcMKSoJgwJoW7oME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740991513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Mzc0zyxynm1zLc8lCgBdxcnpn7S2dpYemCwQOpKEfuk=;
+	b=hNwH16HX0osTPn/vOpYMc/EhnVJdpc8E1U+FeQUwz8fIiZ14cUZYMJfMW4CVRyt/rq4yde
+	HGeTvQ4QFRjRtr1z6kAj93rZCm1XNV2As+x4z1muHEGJWadGxP24aWbVBvp0AFMgk6WvTg
+	aopWuSjQGuDoynrrrDR/KfpRnKwqiHU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-7wrT26BSMJ6P7gbEEUKlQA-1; Mon,
+ 03 Mar 2025 03:45:00 -0500
+X-MC-Unique: 7wrT26BSMJ6P7gbEEUKlQA-1
+X-Mimecast-MFC-AGG-ID: 7wrT26BSMJ6P7gbEEUKlQA_1740991498
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D019180087C;
+	Mon,  3 Mar 2025 08:44:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E569819560AA;
+	Mon,  3 Mar 2025 08:44:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+cc: David Howells <dhowells@redhat.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S.
+ Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+    linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL v2] crypto: Add Kerberos crypto lib
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -127,97 +129,130 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/21] ARM: at91: pm: add DT compatible support for
- sama7d65
-To: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, sre@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- p.zabel@pengutronix.de
-Cc: linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
- <06b64869f2de4b499835d153411ba30512409168.1740671156.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US
-From: "claudiu beznea (tuxon)" <claudiu.beznea@tuxon.dev>
-In-Reply-To: <06b64869f2de4b499835d153411ba30512409168.1740671156.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3709377.1740991489.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 03 Mar 2025 08:44:49 +0000
+Message-ID: <3709378.1740991489@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fvM0TwdzG0wV
+X-ITU-Libra-ESVA-ID: 4Z6g4W2CBPzG1B2
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707466.76855@NLb8ietUk99P+syIJRtF1Q
+X-ITU-Libra-ESVA-Watermark: 1741707942.20718@K/w4CpzKvqorZU4t5jK/Eg
 X-ITU-MailScanner-SpamCheck: not spam
 
+Hi Herbert,
 
+Could you pull this into the crypto tree please?  v2 is just a rebase onto
+your cryptodev/master branch.  It does a couple of things:
 
-On 2/27/25 17:51, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> Add support for SAMA7D65 new compatible strings in pm.c file for wakeup source
-> IDs and PMC.
-> This is the first bits of PM for this new SoC. PM depends on other patches.
-> 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> [nicolas.ferre@microchip.com: split patch and address only the pm.c changes]
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
->   arch/arm/mach-at91/pm.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index 6c3e6aa22606..39644703244d 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -222,13 +222,16 @@ static const struct of_device_id sam9x60_ws_ids[] = {
->   	{ /* sentinel */ }
->   };
->   
-> -static const struct of_device_id sama7g5_ws_ids[] = {
-> +static const struct of_device_id sama7_ws_ids[] = {
-> +	{ .compatible = "microchip,sama7d65-rtc",	.data = &ws_info[1] },
->   	{ .compatible = "microchip,sama7g5-rtc",	.data = &ws_info[1] },
->   	{ .compatible = "microchip,sama7g5-ohci",	.data = &ws_info[2] },
->   	{ .compatible = "usb-ohci",			.data = &ws_info[2] },
->   	{ .compatible = "atmel,at91sam9g45-ehci",	.data = &ws_info[2] },
->   	{ .compatible = "usb-ehci",			.data = &ws_info[2] },
-> +	{ .compatible = "microchip,sama7d65-sdhci",	.data = &ws_info[3] },
->   	{ .compatible = "microchip,sama7g5-sdhci",	.data = &ws_info[3] },
-> +	{ .compatible = "microchip,sama7d65-rtt",	.data = &ws_info[4] },
->   	{ .compatible = "microchip,sama7g5-rtt",	.data = &ws_info[4] },
->   	{ /* sentinel */ }
->   };
-> @@ -1379,6 +1382,7 @@ static const struct of_device_id atmel_pmc_ids[] __initconst = {
->   	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
->   	{ .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[4] },
->   	{ .compatible = "microchip,sam9x7-pmc", .data = &pmc_infos[4] },
-> +	{ .compatible = "microchip,sama7d65-pmc", .data = &pmc_infos[4] },
+ (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
+     driver, but that hashes the plaintext, not the ciphertext.  This was
+     made a separate module rather than just being a part of the authenc
+     driver because it has to do all of the constituent operations in the
+     opposite order - which impacts the async op handling.
 
-According to the chapter 42.18.3. PMC System Clock Status Register at [1] there 
-is no AT91SAM926x_PMC_UDP for SAMA7D65 (which you are dropping in the next 
-patch). This patch would have to reflect what the documentation say instead of 
-fixing it in patch 12/21.
+     Testmgr data is provided for AES+SHA2 and Camellia combinations of
+     authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
+     provided as the RFCs don't contain usable test vectors.
 
-Thank you,
-Claudiu
+ (2) Provide a Kerberos 5 crypto library.  This is an extract from the
+     sunrpc driver as that code can be shared between sunrpc/nfs and
+     rxrpc/afs.  This provides encryption, decryption, get MIC and verify
+     MIC routines that use and wrap the crypto functions, along with some
+     functions to provide layout management.
 
-[1] 
-https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7D6-Series-Data-Sheet-DS60001851.pdf
+     This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
 
->   	{ .compatible = "microchip,sama7g5-pmc", .data = &pmc_infos[5] },
->   	{ /* sentinel */ },
->   };
-> @@ -1672,7 +1676,7 @@ void __init sama7_pm_init(void)
->   	at91_pm_modes_init(iomaps, ARRAY_SIZE(iomaps));
->   	at91_pm_init(NULL);
->   
-> -	soc_pm.ws_ids = sama7g5_ws_ids;
-> +	soc_pm.ws_ids = sama7_ws_ids;
->   	soc_pm.config_pmc_ws = at91_sam9x60_config_pmc_ws;
->   
->   	soc_pm.sfrbu_regs.pswbu.key = (0x4BD20C << 8);
+     Self-testing is provided that goes further than is possible with
+     testmgr, doing subkey derivation as well.
+
+The patches were previously posted here:
+
+    https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
+
+as part of a larger series, but the networking guys would prefer these to
+go through the crypto tree.  If you want them reposting independently, I
+can do that.
+
+David
+---
+The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
+7:
+
+  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
+0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/crypto-krb5-20250303
+
+for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
+
+  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
+
+----------------------------------------------------------------
+crypto: Add Kerberos crypto lib
+
+----------------------------------------------------------------
+David Howells (17):
+      crypto/krb5: Add API Documentation
+      crypto/krb5: Add some constants out of sunrpc headers
+      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+      crypto/krb5: Test manager data
+      crypto/krb5: Implement Kerberos crypto core
+      crypto/krb5: Add an API to query the layout of the crypto section
+      crypto/krb5: Add an API to alloc and prepare a crypto object
+      crypto/krb5: Add an API to perform requests
+      crypto/krb5: Provide infrastructure and key derivation
+      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
+      crypto/krb5: Provide RFC3961 setkey packaging functions
+      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
+ctions
+      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
+      crypto/krb5: Implement the AES enctypes from rfc3962
+      crypto/krb5: Implement the AES enctypes from rfc8009
+      crypto/krb5: Implement the Camellia enctypes from rfc6803
+      crypto/krb5: Implement crypto self-testing
+
+ Documentation/crypto/index.rst   |   1 +
+ Documentation/crypto/krb5.rst    | 262 +++++++++++++
+ crypto/Kconfig                   |  13 +
+ crypto/Makefile                  |   3 +
+ crypto/krb5/Kconfig              |  26 ++
+ crypto/krb5/Makefile             |  18 +
+ crypto/krb5/internal.h           | 247 ++++++++++++
+ crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
+ crypto/krb5/krb5_kdf.c           | 145 +++++++
+ crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
++++++
+ crypto/krb5/rfc3962_aes.c        | 115 ++++++
+ crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
+ crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
+ crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
+ crypto/krb5/selftest_data.c      | 291 ++++++++++++++
+ crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
+ crypto/testmgr.c                 |  16 +
+ crypto/testmgr.h                 | 351 +++++++++++++++++
+ include/crypto/authenc.h         |   2 +
+ include/crypto/krb5.h            | 160 ++++++++
+ 20 files changed, 4546 insertions(+)
+ create mode 100644 Documentation/crypto/krb5.rst
+ create mode 100644 crypto/krb5/Kconfig
+ create mode 100644 crypto/krb5/Makefile
+ create mode 100644 crypto/krb5/internal.h
+ create mode 100644 crypto/krb5/krb5_api.c
+ create mode 100644 crypto/krb5/krb5_kdf.c
+ create mode 100644 crypto/krb5/rfc3961_simplified.c
+ create mode 100644 crypto/krb5/rfc3962_aes.c
+ create mode 100644 crypto/krb5/rfc6803_camellia.c
+ create mode 100644 crypto/krb5/rfc8009_aes2.c
+ create mode 100644 crypto/krb5/selftest.c
+ create mode 100644 crypto/krb5/selftest_data.c
+ create mode 100644 crypto/krb5enc.c
+ create mode 100644 include/crypto/krb5.h
 
 
 
