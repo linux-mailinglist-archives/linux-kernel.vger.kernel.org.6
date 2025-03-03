@@ -1,148 +1,180 @@
-Return-Path: <linux-kernel+bounces-541727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3BAA4C0C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:46:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504CFA4C0E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EE63AC0EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474B318972B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6692220370D;
-	Mon,  3 Mar 2025 12:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7A72116E5;
+	Mon,  3 Mar 2025 12:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ptfdw4BP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dQV+9IKO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uGlr0zbc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dQV+9IKO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uGlr0zbc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CE9213E6F;
-	Mon,  3 Mar 2025 12:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B61EB18D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005862; cv=none; b=PvNTqLVH/MxXLB7q68o4j/lnq35bEiL3ph4GmhiL5NgfawvsKi4XR0af71fqnPXTPF/jOxzA5mGV6jfkuBQaj4MqANhRiXFn0UEGlLm7LSisdoGJGvhzgG4Xws952bMtWNkHrXk6sqM5Ojbi1KG0H6lxvDfv2IA/IU3isVTWISA=
+	t=1741005917; cv=none; b=jyB/bIPLf0Z/9pZNHnua8ZrxRGyow9lQ5HJhT2ARjERgEA4WN0b/9BW+o3/qVQG4Rj8yqyepTHLG8Hmq5cSgNjfrMQktGXRCclsePSeo4Nnm+LcDNZAwPdL2sX0W3EM6Rno3F4q38o+crVgwdeBfezfI0FJzAMx0MJzBf9YTiM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005862; c=relaxed/simple;
-	bh=Xsf6NHs+Vt5E2SdRC9+nFuuCfj3TzZlIsM8t1rt9ibg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GQFWXgDXPXKZB6jNv7/hRf7fxWCsbqtQ0EsUSgJ65ciFA8cmnXtZwCYg6C8+wskSMYV6Y6587qhiSC/a8moer06/w/2ht1cnykzH8u7H+fuU4kapFSRzXqdTc1mN9W4CXOiL2tPZrjAY8m+h8I81AwjgaCwDVPQY0EJNPMJFTHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ptfdw4BP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523AaaeX026745;
-	Mon, 3 Mar 2025 12:44:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=JS5sicA6bvm
-	B0Zdz8LjesU1ACQpGn5oe0cY1vv54zSg=; b=ptfdw4BPw6QXOjNshnaXkFLiIA9
-	oQJMuYqty33sIHpPrTCN6KTB49oTYmtupVriM3r1tEdslpgyc5w/IS8tNF0uXbiM
-	kzKKyfmKhFluzs6pkfKJGYg5y3wHzC7JPfEch3LsWQ5ugFvnKYpxy1YJzYWYFCf+
-	B+jeVRGNf7sVv2N1A3HXDkS1sa4EAg6Lhx12IrGtxv2Co/VtkKlGFcDJ4xXPihra
-	WqVDG4ZqyEHFK7OstxlaRbRDyLCkRcJWE+I8qwJTttoWUr27Phdcl05ftRePn9l5
-	6A+OOQ8ORhnaMSIBH7McuK0mmeOh/FN4wCyAEBX2Jpqz9VjT/gf1E3uZLxQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453uh74n1q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:44:16 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 523Ci1Dj015173;
-	Mon, 3 Mar 2025 12:44:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 453uakx58a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:44:13 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 523CiDWd015351;
-	Mon, 3 Mar 2025 12:44:13 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 523CiDEe015347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:44:13 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id 9F52F53B; Mon,  3 Mar 2025 18:14:12 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org,
-        johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: [PATCH v3 9/9] serial: qcom-geni: Load UART qup Firmware from linux side
-Date: Mon,  3 Mar 2025 18:13:49 +0530
-Message-Id: <20250303124349.3474185-10-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
-References: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1741005917; c=relaxed/simple;
+	bh=ctXb+Vk4ikF5d2NAAL8/4EeUfcrsXV7pPJi6G8PMurI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rdJc436C590LuulKPVcMhfteX8B+ujU/9QRKEFJk9RaFUGExqPRkkbyKR8xLS72T8VlEiMgwwY1EwStVFx2YNClGtandpm403VMaWxAxR2Uvb8RJriI7hRRByu9PRFprTSMdjC5lgodw+3YIcSzvbBSJy3uTYn0mQWPFv9L3Bqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dQV+9IKO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uGlr0zbc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dQV+9IKO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uGlr0zbc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 46C232116B;
+	Mon,  3 Mar 2025 12:45:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741005914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
+	b=dQV+9IKONC+Zp3RrnURVMKcmZm8YLmoEpBHwLS25gjsxU3wlnugSIwcR/jW+n8rNgnwHxO
+	yPVKTH6lVYrt4VrSXKWOvsvezGx6RFTioqU/U0KSMNL2P4pCCJV6nm1aN6k+pJnxgkMcS/
+	7skmdjfOizTXXiCCRiMyCeI+gInLvmU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741005914;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
+	b=uGlr0zbcdOvJ7MEeSSteK8faUMUrSU8Peqk7EZg3guUJbmWHTgo4+nvBEatk87gfNKv7Ut
+	5KUy6IcDcr5XloCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dQV+9IKO;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uGlr0zbc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741005914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
+	b=dQV+9IKONC+Zp3RrnURVMKcmZm8YLmoEpBHwLS25gjsxU3wlnugSIwcR/jW+n8rNgnwHxO
+	yPVKTH6lVYrt4VrSXKWOvsvezGx6RFTioqU/U0KSMNL2P4pCCJV6nm1aN6k+pJnxgkMcS/
+	7skmdjfOizTXXiCCRiMyCeI+gInLvmU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741005914;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
+	b=uGlr0zbcdOvJ7MEeSSteK8faUMUrSU8Peqk7EZg3guUJbmWHTgo4+nvBEatk87gfNKv7Ut
+	5KUy6IcDcr5XloCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1290713939;
+	Mon,  3 Mar 2025 12:45:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cR3dAlqkxWfzSQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 03 Mar 2025 12:45:14 +0000
+Date: Mon, 03 Mar 2025 13:45:13 +0100
+Message-ID: <87ldtme10m.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Kailang <kailang@realtek.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable PC beep passthrough for HP EliteBook 855 G7
+In-Reply-To: <2fea9fe8-312f-45a0-9bed-455c910fba43@maciej.szmigiero.name>
+References: <7461f695b4daed80f2fc4b1463ead47f04f9ad05.1739741254.git.mail@maciej.szmigiero.name>
+	<87jz9o99ef.wl-tiwai@suse.de>
+	<a02344f2-3b99-41ea-af64-8d2bcb01e435@maciej.szmigiero.name>
+	<87h64s972a.wl-tiwai@suse.de>
+	<6224620265674b09b5762f908b5158f9@realtek.com>
+	<2fea9fe8-312f-45a0-9bed-455c910fba43@maciej.szmigiero.name>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BzNceNcfbAGu42Z79uJP8K0ArH62ooyh
-X-Proofpoint-ORIG-GUID: BzNceNcfbAGu42Z79uJP8K0ArH62ooyh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030098
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 46C232116B
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add provision to load firmware of Serial engine for UART protocol from
-Linux Execution Environment on running on APPS processor.
+On Wed, 19 Feb 2025 12:16:35 +0100,
+Maciej S. Szmigiero wrote:
+> 
+> Hi Kailang,
+> 
+> On 19.02.2025 09:32, Kailang wrote:
+> > 
+> > Hi Maciej S,
+> >     Could you test plug headphone then speaker will mute or not?
+> >     Below was why I close the beep mode.
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=fcf c9f711d1e2fc7876ac12b1b16c509404b9625
+> 
+> 
+> When I plug headphones then both normal sound playback (ALSA) and PC beep move to headphones.
+> The main laptop speaker gets muted indeed.
+> 
+> I'm testing on kernel 6.12 so the Dell patch above is included.
+> 
+> >   Hi Takashi,
+> >     COEF 0x36 bit 13 was the enable bit for pcbeep passthrough for
+> > 0x14.
+> >   If this patch no PM issues and speaker can mute by plug headphone or headset,
+> >   I think this work for me.
+> > 
+> 
+> Nice, thanks for clarifying.
 
-Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
----
-v2 -> v3:
+So, Kailang, is Maciej's patch OK to take from Realtek POV?
 
-- Load firmware only if the protocol is invalid.
+If so, feel free to give an Acked-by tag or such for the upstream
+inclusion.
 
-v2 Link: https://lore.kernel.org/linux-arm-msm/20250124105309.295769-9-quic_vdadhani@quicinc.com/
 
-v1 -> v2:
+thanks,
 
-- No change.
-
-v1 Link: https://lore.kernel.org/linux-arm-msm/20241204150326.1470749-8-quic_vdadhani@quicinc.com/
----
----
- drivers/tty/serial/qcom_geni_serial.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index a80ce7aaf309..ae66c5f673a6 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1145,7 +1145,13 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
- 	int ret;
- 
- 	proto = geni_se_read_proto(&port->se);
--	if (proto != GENI_SE_UART) {
-+	if (proto == GENI_SE_INVALID_PROTO) {
-+		ret = geni_load_se_firmware(&port->se, GENI_SE_UART);
-+		if (ret) {
-+			dev_err(uport->dev, "UART firmware load failed ret: %d\n", ret);
-+			return ret;
-+		}
-+	} else if (proto != GENI_SE_UART) {
- 		dev_err(uport->dev, "Invalid FW loaded, proto: %d\n", proto);
- 		return -ENXIO;
- 	}
--- 
-2.34.1
-
+Takashi
 
