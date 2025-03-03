@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-541335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64CEA4BBA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:05:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3D8A4BBA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE5D1891EC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DEB1892C9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A035C1F1909;
-	Mon,  3 Mar 2025 10:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7684A1F1905;
+	Mon,  3 Mar 2025 10:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a0brHlXU"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="isXIj482"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659A11EE7DF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914A41E9907
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996332; cv=none; b=Fjr0ha59HuP/Qz6+OmzWC3ZutqrwKMn2GEnCrhkhFl9t4RyKCw4VznLtd5PlFaKkHeDh03h+8VH76L+zwq6Eg9z3o+bfRvp6bfCmbXdbtIXSjLNd7TD2sAus3/T8JOIEIsWaS+uNujbDecnWC5GLHdgZedmz0Gx6+PxbBJpvkSg=
+	t=1740996385; cv=none; b=bHA7HxYrDrXm2en2MCVQ1ZAG8SZTYwUSzlNsuI7IXsWF+Z++T65pz2eOESZyKmVR3Ipi2dFl3MpvVuc6y0wp+tvFAwyP5QDoAcWMEaD2xht72aVS0yyEomBo4MLvUoeswX2qACtzV5DHDNYq3BZ7oH1uSK9lk0Cy2ZlhHnmfG9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996332; c=relaxed/simple;
-	bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZy9CBRuE0UlzP6DYm9xON4mfDSklDRFOzPT27mVo108aSoOH9Yo7jeSJsuePomK8sW1wEsC4jLwfoxPVg6HyPBSo23DLpqHyvnQr1Rigg6gnJWW1bNFVSiczfdWFHRGPCmI3WF4ae4f/TolXDoY4xQmVOFjVrS/q4bL9tQInrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a0brHlXU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43690d4605dso26539215e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:05:30 -0800 (PST)
+	s=arc-20240116; t=1740996385; c=relaxed/simple;
+	bh=ryNGzalrzD3yX/2mks/XBFD5n9Vg95McjnPEOR5SisE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dl7Qm2PQpwy+bbvHW8BXQx7hPP2wLX2qimz5xkpVBBwc1OoutoPk6BcrTiTrJBaSfK8Aj9t4122uLG3JnCLN0uaJLY9ssGO6uI8LrSHOo7ZP8XNnhLyog0o+OnArtstb/LbVqtqm2QY1WYJACP/D7rvOB4RJNmadHbUS7L/BW1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=isXIj482; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22385253e2bso37862615ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:06:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740996329; x=1741601129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
-        b=a0brHlXU2on+kl7ovToLUczsXU4U8kwPaZd+PkQlBdcT51KLmbcFyk8WXmNC5Id9JU
-         jVKp424O8JTFpuMgYReujkGEZ4/W9b++mGMryJYsuU62kZRFjPyOJPgIwafLoTu6OJa/
-         aJmVc/6kobfsq5QfM3mV/rvEE6V6ajHMBcyzV7csVOT+sKOKY4B6KkG8EBii153iqjkU
-         VwayvXd/BX/eHY5mH7v3aIFl5CvcOk7H2ALFsCrq26M0+BQEF+Hw3kT2iKB7JS6B7rnk
-         7R27n9fSJHTHui0z6wkapCp2B6KjsOUp/YTE/Eduo1WiYVd/Bcp4ExLmu1VFgqjRvSrA
-         nq0w==
+        d=shopee.com; s=shopee.com; t=1740996384; x=1741601184; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c2xvnbw0JuGYZ3kMUPAj9qebO9ot86k6LgdKqU+QHZM=;
+        b=isXIj482IUNa3GnhIwZTd95MvDzCI0mSIjaXet8n36kTNkUp7DCuv7i0T7Js9p4F9x
+         r7vNnVx95BAmNWQ28tY5Uhw1PtdUJfJT+375bENLF9TaCVj/AmfNbpSrwD6gvCQzpbqV
+         nHeliuOyzA3VcZUHFBUccRjuLhdqz6AMT9qQwzo4j0oV6p1+HqsOSx/RdIDLBIM0sV3r
+         bQ/JmZD/zyeiC0NEOln+eQ/QG9hK2EqL78z6k3YqIAW3arkrL8ML4GhtWY10trZfgBEG
+         Zul27zfcFx/TZYpmQOVasePvoT8BX2VvefyBCfVMAAJwAwr0GTrrKrVhbUCuQQHPLRed
+         AYyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996329; x=1741601129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
-        b=XJMzdO5IfbLklcFnJx7yJB7nsiXGQczV3D+5EwPToq+vO3qQ/fqC7RLnp7n43SUT7p
-         Q4H0mOK2Vg1vVEqckvLlIOxWssZ/qvEFWL5aW7oq0nB2HBRDWNCyxXUW26QuZrhiMHJM
-         xhokgvH8hOtgav8yf73SOKaVwYOfNgi9kqaB1VEGWU+mSRBZ0W7dGdjOvZ4pR0Tr40DN
-         d9HOJiki8S63C7yV5FZ9J4z36VFFx1N9X3kNPYbEiwcTpN99JPNPlwvfv+G9LRhFvtmY
-         RWdjU5c6/sfW2Y2ZXNsubYFx0IN8RNQnbdLqy+D/F5jhKAVFXwkZ12lcBLK3CFBSF4S9
-         1vlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyVnPMLpop/cUyjfl0rVnBmX/vK8tqbS4e74XztUvkDjT0KIs+LO5MRw+5Qz3m0FXLiqd7eP1MrjD0UNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm+rqBWFkC68lxT3rAJDBNEr440adW/1L7Zsb4GWZZa7xpDQA0
-	DZ0IGZeL24Y44q/LFrBePv6SrkYbHpVSWvWf6iDPDT2f/p1FOemAvhVzGUp6fUo5bp+cNcKJkvr
-	A6X9byG8GBQwCoBz7VQm12/iL3p4XcXmozuFB
-X-Gm-Gg: ASbGncvo9qbEZHfiUaKojNM0Y/9Z4JspoaUdAm4VBcyIcVYOzvnJoQCMRhtAcL7WbS2
-	VwOVticNX5QTjsj1olUGzAKinaJRQc+hle6DsaKXB58RdfM9G+KCtWuLMy2e+jqPpBa6bIaqIIX
-	cm5RTakQz/0+BN3eS53Lsvkcbdpwqj6JsEIsbbXXgJkCJClWk0uPCKpD+6
-X-Google-Smtp-Source: AGHT+IFEmyW0EbB6Ka9yQFfGVEPvOJqwYCEl504db3Ko2DygqJYxclr7CKQSdflmS7+pNsrqn4Y5OCDx9d3jRQoSqPk=
-X-Received: by 2002:a5d:64a2:0:b0:390:d6ab:6c49 with SMTP id
- ffacd0b85a97d-390eca138ddmr11915449f8f.35.1740996328672; Mon, 03 Mar 2025
- 02:05:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740996384; x=1741601184;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c2xvnbw0JuGYZ3kMUPAj9qebO9ot86k6LgdKqU+QHZM=;
+        b=gmktKeL1oM9Z32ZmRttFRH9wsaaVXoRei2Y0s8zqaM09AzTASn/gWo8GGTz8GvMdsU
+         Fx1iGyLzB1EiV80lx6zUs6KlRRJkFZz3puMXgjLOcxqXMLyUScRI4eZGoaD7LK25km00
+         ZMhJzIvFnJssxKi3OEuOsNvnS5Xxz4NKOGJCc/ITEqYRe8dY36jJRoWH+7zmCNx2HJHN
+         GUaRVGqXv2/vt0TR1L5Lf4Oo55Ue8v6r5LwUEYbRCSnG9yBunn200ZRXAXySOgJ12P3t
+         XjYsdE70zTa5mLIt1Sq9gikZ/ZCfXgU/dTaD3BpUJfK//WEfO0yVycBztejkqAGBib4L
+         hcNA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3itx+psLLtSsM/aFSJPX8KeS5jn7HsebCo364FtI308wia0LDAuV/JM80LiC8Rz/5khthvd/NISM4v2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhC6W86B1UCO05UCu8DIzQT4jq/J2TltQLUbqYXv9buEwDZZ8u
+	lYuy7ak0wUUJ7Do7j1QYedSUicaT9GVFuwv1aMTCnnyRAD9yCaR6ERnWncMz/1k=
+X-Gm-Gg: ASbGnctXdm0riw+B7Ur28Rx5S30HnuqxZEUbR/9Tl89B5JV4JEZkF8wfYQBHXoZpAZX
+	azIogMJVYAvN1TzHF7fzJ1EnzeTYY+BAoU26wP8iwe2Fx77Q1hHW5P/GrlSavCX0vRkRZ3cOBsj
+	Oocs9X2uAhB8pN3RlnYug90M2HI2ovsIkSHLrYnWJ/xDJHZwrFC/eTjG4N8egkpNaKhF4FUgUoz
+	Upu0W2Wukr40cu+81QgB+HXY+t/Bx1OgJEU9kl2c7NjFco7xvPRhLNn9SLQqeR4IJCPkvDG28WV
+	iOmmlWJrEuC+gqw98oStA+lLRL63ZA==
+X-Google-Smtp-Source: AGHT+IHEynmWuf/VC/tNMisellPQ0994Vlxa4c8xxDyclOEyECs3a2rUWIXx0layqxHXPQw7tF9mhw==
+X-Received: by 2002:a17:903:2ca:b0:216:725c:a12c with SMTP id d9443c01a7336-22368f612dbmr196639065ad.9.1740996383883;
+        Mon, 03 Mar 2025 02:06:23 -0800 (PST)
+Received: from localhost.localdomain ([143.92.64.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350537b47sm74397275ad.251.2025.03.03.02.06.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:06:22 -0800 (PST)
+From: Tang Yizhou <yizhou.tang@shopee.com>
+X-Google-Original-From: Tang Yizhou
+To: tj@kernel.org,
+	jack@suse.cz,
+	brauner@kernel.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	ast@kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tang Yizhou <yizhou.tang@shopee.com>
+Subject: [PATCH RESEND 0/2] Fix calculations in trace_balance_dirty_pages() for cgwb
+Date: Mon,  3 Mar 2025 18:06:15 +0800
+Message-Id: <20250303100617.223677-1-yizhou.tang@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740995194.git.viresh.kumar@linaro.org> <171b6cd811ff4e913880ab33bc11e634f7cdeecb.1740995194.git.viresh.kumar@linaro.org>
-In-Reply-To: <171b6cd811ff4e913880ab33bc11e634f7cdeecb.1740995194.git.viresh.kumar@linaro.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 3 Mar 2025 11:05:16 +0100
-X-Gm-Features: AQ5f1Jo64QlrJ8dyyVG_P39vJUDGWo2eEl4f6vfHkIrvzl7tE2S1Ro0v3PDYRZA
-Message-ID: <CAH5fLgjNE7BF7fC6TxO3NjKV1OHXRxZFKn2Bs6fy8h_0zYd1tg@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] rust: Add clk helpers
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> Non-trivial C macros and inlined C functions cannot be used directly
-> in the Rust code and are used via functions ("helpers") that wrap
-> those so that they can be called from Rust.
->
-> In order to prepare for adding Rust abstractions for the clock APIs,
-> add clock helpers required by the Rust implementation.
->
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+From: Tang Yizhou <yizhou.tang@shopee.com>
 
-Did clk maintainers ask for this to be separate? We normally just add
-helpers in the commit that need them.
+In my experiment, I found that the output of trace_balance_dirty_pages()
+in the cgroup writeback scenario was strange because
+trace_balance_dirty_pages() always uses global_wb_domain.dirty_limit for
+related calculations instead of the dirty_limit of the corresponding
+memcg's wb_domain.
 
-Alice
+The basic idea of the fix is to store the hard dirty limit value computed
+in wb_position_ratio() into struct dirty_throttle_control and use it for
+calculations in trace_balance_dirty_pages().
+
+Tang Yizhou (2):
+  writeback: Let trace_balance_dirty_pages() take struct dtc as
+    parameter
+  writeback: Fix calculations in trace_balance_dirty_pages() for cgwb
+
+ include/linux/writeback.h        | 24 +++++++++++++++++++++
+ include/trace/events/writeback.h | 33 ++++++++++++----------------
+ mm/page-writeback.c              | 37 +++-----------------------------
+ 3 files changed, 41 insertions(+), 53 deletions(-)
+
+-- 
+2.25.1
+
 
