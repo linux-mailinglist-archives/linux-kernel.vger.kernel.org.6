@@ -1,185 +1,209 @@
-Return-Path: <linux-kernel+bounces-542568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0DEA4CB2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:45:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34593A4CB7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7BB1896D8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD783AC36E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA6822D7AF;
-	Mon,  3 Mar 2025 18:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F86215041;
+	Mon,  3 Mar 2025 19:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kDamohvU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ic/HTaWU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DB33F6;
-	Mon,  3 Mar 2025 18:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C6D185E4A;
+	Mon,  3 Mar 2025 19:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027542; cv=none; b=OqWGXH5fHWQhNW9ToyMIGZ1x87Hw3Ad/BgUi28i7lYCBh9pCFomiG8NjW+nFfnXq1+pURw3gYyak7H4i8MjJR73yeC1yrix6rEV65FFJBIW6vpZDkqlf1vT/zYRxk+sXnnRUM6vUCXpFu45mSXUy9Y3h8yyGptxtMGbDJ+IhQKc=
+	t=1741028425; cv=none; b=rPwcWvXYYaQfFnykT0KHeiHt5eSlTIUaE/CPWWmpurwQ2a68gjEcvy+tHaA9aUFsaDBLCxJAOaVOKZYlCBAT6iX4MRX2q9+Iy17Mhe10V5S5IvXitvvqkiPTeOEV9ArFarYCsd08c9hVu+dnrOyWOYqCg7I9qvK/smdHfZQGFYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027542; c=relaxed/simple;
-	bh=jPeQiH0toFpreUmRCsrOJDWxcH9+UAOD8mKxhx9L7NI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fWsiY4vu9rMR4zyfbKMVEI4/KqslNh2x2cSJWGuiMqAvgE7BXmRj/XPSLmLmSnHUqKzCRf7yEBdl9M0RwXTPFD7feJkHlA1CTnNL2kBr6+sME0kNmEXSYSDQhm8IumCVgyPBf2FReCKm8TsWpHLVFPEJnv5kmFVbBvOxhWrh+uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kDamohvU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523A9uTL031419;
-	Mon, 3 Mar 2025 18:45:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0M8tyQHt6d6xbwUpal9/euLBYrHVQcsnzzfrOgUrMxQ=; b=kDamohvUN6Neui0c
-	aEM6wgz266PC2pyTL+Em5tvUV4N1E+qRbXf3Oe4QEsCK9L5N7MJK77wvvJPiTd7x
-	eRaMReS28S7Epv1A5lpgBX9wiRBthpcBeMID2ishivikJb5OrZLSOahMLi2Fhn2p
-	0a25iUSzkFgrTGPOw+ALVWOw4Ki6z4EXs5HQXtyDpOgx18XJBU+zRx4pmgAeG3OQ
-	7zr9/Q17P37BK7MW5IJK/i8f7B+3S4UglSJLAL4HRFD4cRSNbs0Rgsr2abS3YCzX
-	UUrw2dDElW5/HwWs1vTmiX5UrHAIPSfXMZVEOIEKxVUPlI6YiJbtkWF4IY7TMKUn
-	Op2PwA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453uh75j68-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 18:45:20 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523IjKAQ032645
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 18:45:20 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
- 10:45:19 -0800
-Message-ID: <8c727bd6-94f1-4ee3-9bf3-793899038895@quicinc.com>
-Date: Mon, 3 Mar 2025 10:45:19 -0800
+	s=arc-20240116; t=1741028425; c=relaxed/simple;
+	bh=6IoETAqf1lYNIxpmSknIVtPc1X/HzcvHZY26hv7+H9Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fwJb2G9Gv2RK7wz86+iel6ZUneBYii5qA+OW/cRCbzKQnZ/vdVILRYAICc/AF4wcgPvL++JYP/EG+nVV8fZVY14MkamZCu9fAEShNP+qNBHCJcviKnJ9Ij2rHLSyMU+A3ETy7QWhWTIFqSRxYF8SWiiznj62SYsrs9o6pKziB7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ic/HTaWU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A14AC4CEE5;
+	Mon,  3 Mar 2025 19:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741028424;
+	bh=6IoETAqf1lYNIxpmSknIVtPc1X/HzcvHZY26hv7+H9Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ic/HTaWUYKVCi3lcR8Y2tV5gLg6T2u6m2YHcJzUomTnDUggcBW0QpL0TUI9ca1Z47
+	 nnjmszrpNn582cC6Ht6hjQrK3M+hBouKmeBmpEOauEenygEHwY3/U37eEWFPQ3DqLL
+	 sqOA7llucXzCODTFlsDL6M0iqrg7WynjT7xbjyu8tKFZTZ2eJ+VnPJPklxsRUfVnFO
+	 E9m6nxn9a3Orr2OVPqbuD79YeMraBbUl+JM2hFACWznQP+j86EhpRDydEt21U1Lbma
+	 RtwRwzTqK6EpNg7uoUqSpXQWqq8cMa8dbjrQGWngI8GDyDvXDNtAZFHcfIUiDiGW5q
+	 5mic3BumcxwmQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,
+  <dakr@kernel.org>,  <robin.murphy@arm.com>,
+  <rust-for-linux@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Valentin Obst" <kernel@valentinobst.de>,
+  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
+  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
+  <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+In-Reply-To: <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+ (Alice
+	Ryhl's message of "Mon, 03 Mar 2025 16:44:51 +0100")
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+	<20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+	<6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+	<tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+	<3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
+	<87bjuil15w.fsf@kernel.org>
+	<t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+	<CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+	<87ikoqjg1n.fsf@kernel.org>
+	<KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+	<CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 03 Mar 2025 19:45:21 +0100
+Message-ID: <87senuhs1q.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/14] drm/msm/dpu: switch RM to use crtc_id rather
- than enc_id for allocation
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Simona Vetter <simona@ffwll.ch>,
-        Simona Vetter <simona.vetter@ffwll.ch>, <quic_ebharadw@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark
-	<robdclark@chromium.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
-	<ville.syrjala@linux.intel.com>
-References: <20250214-concurrent-wb-v6-0-a44c293cf422@quicinc.com>
- <20250214-concurrent-wb-v6-3-a44c293cf422@quicinc.com>
- <se4b4kzp3vej4b6albecdc2t65ueiuba4kidutwvrv2rcfyjwr@e62fn225jwcr>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <se4b4kzp3vej4b6albecdc2t65ueiuba4kidutwvrv2rcfyjwr@e62fn225jwcr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZtIcWKUeqjG7ejNoY5izMPVQai8eaOuE
-X-Proofpoint-ORIG-GUID: ZtIcWKUeqjG7ejNoY5izMPVQai8eaOuE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_09,2025-03-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030143
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-
-On 2/27/2025 7:07 AM, Dmitry Baryshkov wrote:
-> On Fri, Feb 14, 2025 at 04:14:26PM -0800, Jessica Zhang wrote:
->> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> On Mon, Mar 3, 2025 at 4:21=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
 >>
->> Up to now the driver has been using encoder to allocate hardware
->> resources. Switch it to use CRTC id in preparation for the next step.
+>> "Alice Ryhl" <aliceryhl@google.com> writes:
 >>
->> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->> ---
->> Changes in v6:
->> - Drop duplicate cstate initialization code and unnecessary memset
->> Changes in v5:
->> - Reordered to prevent breaking CI and upon partial application
+>> > On Mon, Mar 3, 2025 at 2:00=E2=80=AFPM Andreas Hindborg <a.hindborg@ke=
+rnel.org> wrote:
+>> >>
+>> >> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>> >>
+>> >> > Hi Benno,
+>> >> >
+>> >>
+>> >> [...]
+>> >>
+>> >> >>> +    /// Writes data to the region starting from `offset`. `offse=
+t` is in units of `T`, not the
+>> >> >>> +    /// number of bytes.
+>> >> >>> +    ///
+>> >> >>> +    /// # Examples
+>> >> >>> +    ///
+>> >> >>> +    /// ```
+>> >> >>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8=
+>) -> Result {
+>> >> >>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+>> >> >>> +    /// let buf: &[u8] =3D &somedata;
+>> >> >>> +    /// alloc.write(buf, 0)?;
+>> >> >>> +    /// # Ok::<(), Error>(()) }
+>> >> >>> +    /// ```
+>> >> >>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+>> >> >>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLO=
+W)?;
+>> >> >>> +        if end >=3D self.count {
+>> >> >>> +            return Err(EINVAL);
+>> >> >>> +        }
+>> >> >>> +        // SAFETY:
+>> >> >>> +        // - The pointer is valid due to type invariant on `Cohe=
+rentAllocation`
+>> >> >>> +        // and we've just checked that the range and index is wi=
+thin bounds.
+>> >> >>> +        // - `offset` can't overflow since it is smaller than `s=
+elfcount` and we've checked
+>> >> >>> +        // that `self.count` won't overflow early in the constru=
+ctor.
+>> >> >>> +        unsafe {
+>> >> >>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cp=
+u_addr.add(offset), src.len())
+>> >> >>
+>> >> >> Why are there no concurrent write or read operations on `cpu_addr`?
+>> >> >
+>> >> > Sorry, can you rephrase this question?
+>> >>
+>> >> This write is suffering the same complications as discussed here [1].
+>> >> There are multiple issues with this implementation.
+>> >>
+>> >> 1) `write` takes a shared reference and thus may be called concurrent=
+ly.
+>> >> There is no synchronization, so `copy_nonoverlapping` could be called
+>> >> concurrently on the same address. The safety requirements for
+>> >> `copy_nonoverlapping` state that the destination must be valid for
+>> >> write. Alice claims in [1] that any memory area that experience data
+>> >> races are not valid for writes. So the safety requirement of
+>> >> `copy_nonoverlapping` is violated and this call is potential UB.
+>> >>
+>> >> 2) The destination of this write is DMA memory. It could be concurren=
+tly
+>> >> modified by hardware, leading to the same issues as 1). Thus the
+>> >> function cannot be safe if we cannot guarantee hardware will not write
+>> >> to the region while this function is executing.
+>> >>
+>> >> Now, I don't think that these _should_ be issues, but according to our
+>> >> Rust language experts they _are_.
+>> >>
+>> >> I really think that copying data through a raw pointer to or from a
+>> >> place that experiences data races, should _not_ be UB if the data is =
+not
+>> >> interpreted in any way, other than moving it.
+>> >>
+>> >>
+>> >> Best regards,
+>> >> Andreas Hindborg
+>> >
+>> > We need to make progress on this series, and it's starting to get late
+>> > in the cycle. I suggest we:
 >>
->> Changes in v4 (due to rebase):
->> - moved *_get_assigned_resources() changes for DSPP and LM from
->>    encoder *_virt_atomic_mode_set() to *_assign_crtc_resources()
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  18 +--
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  10 +-
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |  12 +-
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 189 ++++++++++++++--------------
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h      |   7 +-
->>   5 files changed, 110 insertions(+), 126 deletions(-)
-> 
-> This commit breaks several tests in CI:
-> - sc7180-trogdor-kingoftown:
->    - kms_cursor_crc@cursor-dpms
->    - kms_pipe_crc_basic@disable-crc-after-crtc
-> - sc7180-trogdor-lazor-limozeen
->    - kms_cursor_crc@cursor-dpms
->    - kms_pipe_crc_basic@disable-crc-after-crtc
+>> There is always another cycle.
+>>
+>> >
+>> > 1. Delete as_slice, as_slice_mut, write, and skip_drop.
+>> > 2. Change field_read/field_write to use a volatile read/write.
+>>
+>> Volatile reads/writes that race are OK?
+>
+> I will not give a blanket yes to that. If you read their docs, you
+> will find that they claim to not allow it. But they are the correct
+> choice for DMA memory, and there's no way in practice to get
+> miscompilations on memory locations that are only accessed with
+> volatile operations, and never have references to them created.
+>
+> In general, this will fall into the exception that we've been given
+> from the Rust people. In cases such as this where the Rust language
+> does not give us the operation we want, do it like you do in C. Since
+> Rust uses LLVM which does not miscompile the C part of the kernel, it
+> should not miscompile the Rust part either.
+>
+>> > This will let us make progress now and sidestep this discussion. The
+>> > deleted methods can happen in a follow-up.
+>>
+>> `item_from_index`, the `dma_read` and `dma_write` macros as well, I woul=
+d think?
+>
+> Those are necessary to use field_read/field_write, so I think it's
+> fine to keep those.
 
-Hey Dmitry,
+I misread `item_from_index` as returning a value, but it's just pointer
+arithmetic, so that is fine =F0=9F=91=8D
 
-Thanks for catching this. Looks like this was exposed due to a recent 
-IGT uprev that included  dc2d7fb4f978 ("lib/igt_kms: move setting 
-DRM_CLIENT_CAP_WRITEBACK_CONNECTORS to kms_writeback").
 
-The issue itself is that when DPMS is toggled, it is possible for RM to 
-reserve new HW resources but skip the atomic_enable() due to the checks 
-here [1]. This means that the change in HW block reservation won't be 
-propagated to encoder if DPMS is set to off.
 
-I've posted a fix for this here [2].
+Best regards,
+Andreas Hindborg
 
-Thanks,
-
-Jessica Zhang
-
-[1] 
-https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/gpu/drm/drm_atomic_helper.c#L1502
-[2] https://patchwork.freedesktop.org/series/145735/
-
-> 
-> Corresponding pipeline is available at [1]
-> 
-> As I had to rebase your changes on top of msm-next, corresponding tree
-> is available at [2]. It might be possible that the regression is
-> introduced by my rebase.
-> 
-> [1] https://gitlab.freedesktop.org/drm/msm/-/pipelines/1374165
-> 
-> [2] https://gitlab.freedesktop.org/lumag/msm/-/commits/msm-next-lumag-cwb
-> 
-> -- 
-> With best wishes
-> Dmitry
 
 
