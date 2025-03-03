@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-544963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41F0A4E9A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:45:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0DEA4E95D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873A18E3A11
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AAD179419
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814A29B217;
-	Tue,  4 Mar 2025 16:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zot24OU+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1E0294F05;
+	Tue,  4 Mar 2025 17:08:24 +0000 (UTC)
 Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77AF29614F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E0F294F17
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105766; cv=fail; b=P0TAu/0mc+zTF8HS4jmMUwSqav5IN0QhiVik+jX2IxIF4EQm42WyJO8NISbwUWpXkYgESFgnRY4vVK+i+rAeX7DYxmVeIDqtkkpVz6Exh4E6rvzH3bWuOB+pY9koJe0+pEkwTYouirPCSyhnmchF6J/IeEV8pOz/b92mcj3PP+I=
+	t=1741108103; cv=pass; b=VeSA8Jk06RKkKwepceTaPjLCEcWnK7ZBCvHubJZajPgY0dDa3Q/0R4Tl27F1pQHTdXQOCVHIRCYtMGhD13eBkOsJYJ76fHAWA+AlFoMC/zkLrkaKA9LceywBaV09+i1Jw8P9nMbJRFc/ckuWKB2vVGoK83Tm0i7Lnvx0PukFcVg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105766; c=relaxed/simple;
-	bh=El90SxtaTrUNStwf60IvTjvawdEi0/pk+ae55w6rytc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9vNzSHo+Fu3914EWgb9HJOueG2t0EG4Y/lozMlGLiOg04TED2eCICqdbcRsBt6VFWZrANotqzrd6wiLYVRanlhm7swuqO//zC0ZqB4Q67r6+Bl7otVEW4yil60+EhxS46u48jZrT9LyKxTp/6IiN43IHcV76mF7JzqbOUIY/40=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zot24OU+ reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1741108103; c=relaxed/simple;
+	bh=gCpNNSve1jlt1V5SnYQVpGjhoChNTjthXctFbRk7RpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfeHJYsDtgJWw00ADhbG17qR1jWFznE9Ep1zCsq0uxANrk0zWxAeDcssd4T9TTnMxsKk3DDqGamCTdula8DLV4OCFpkby2T1LTGJfPezFfK9W+Z7pNrZEMMEtvp6+Ft4YU7c0EN3K6qwQRWO92k5q9G3oy53tZxvrftGT80hUgI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gentoo.org; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=140.211.166.183; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id ED90840F1CEA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:29:22 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 65F4040D0B9A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:08:20 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=Zot24OU+
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h156RFQzG3P0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:27:37 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fVt1xSPzG07d
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:19:50 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 6C73E42721; Tue,  4 Mar 2025 19:27:27 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zot24OU+
-X-Envelope-From: <linux-kernel+bounces-541278-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zot24OU+
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id D3A7C433EB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:33:29 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 8DB6F2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:33:29 +0300 (+03)
+	id 9A8FA42735; Tue,  4 Mar 2025 18:19:47 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541280-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 6707843667
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:35:36 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id F3A813064C0E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:35:35 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8410F170DA6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 522F63AE1FB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851821F130D;
-	Mon,  3 Mar 2025 09:33:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6418C1F131A;
+	Mon,  3 Mar 2025 09:35:22 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D1EC4;
-	Mon,  3 Mar 2025 09:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3302C1EE7D3;
+	Mon,  3 Mar 2025 09:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994391; cv=none; b=NiPv1PwMB8LpO+QkLoMMgUM1clrRNYC677k2+6Ru9ESBDOZFIJ67FX2LJveO/m64vGhc15hXltOhFT/gzXoqDwcC4tTgFNUf3k+rBxEFQzAmVxcbDNGOKFiwRJuLyhRQwry/BBFBJebHbLro99Fey6JagYHRtQEfdO+YM+BAGK4=
+	t=1740994520; cv=none; b=RozIdKeZEGnF5PqKuum/jwpZB2zZ0nRL+i5Wists13JEB8NunO6mFnxPQ1OmKFMqYFVtZmBZYf+YjjX0DHXQzq6mGg+C2riPtWDU6udCv9ToVP8Bv2MkM139A0D99qFykBRm3D7EpLpQU78tQR9ea5zVsnytTxNifRdzDbRrQS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994391; c=relaxed/simple;
-	bh=uxWb5weZnx4w75c+cNd9geof+3mOOtF83ztdgamkHZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bw8nVXWp3rynnNr5wgMScj+rpi0MXrSNlRY6bK6POlCnqDt0iwMlosR4r0uF9O8o3pISRLaP0zNU8wjjVLAlhvV1nnZQ6Qla7gGvpS8Juy0fQeY4lKZWzEErtXZfp5wdlx8lE6U8bUf5EkzWffj8GLaKseVMlNWSFofb2xktZko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zot24OU+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E6CC4CED6;
-	Mon,  3 Mar 2025 09:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740994391;
-	bh=uxWb5weZnx4w75c+cNd9geof+3mOOtF83ztdgamkHZc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zot24OU+Kr3IVKlNxS8Ms3Pi6PvMwu9DHSIsqRFgjxP7aaO6HBF+zxguPxwkhaO2a
-	 xrdRh9uBrtzK+Ykgl393iwGLK8grS93jXMrw/M0Jj0oWxBTRY58YtHO+mmTaRseX2I
-	 bwx01tB5PVV+suC6VLbWhT09Tqr1VNPpdd3/9dK4QlGfahn05Hh3Kp5xbqtzv3xwhm
-	 O65rL/CJBPtzWDzv1AOWI5Q5YPz+w3dHiYps7UNc3zVcLGycvh5U026fbDNLbGuWdj
-	 Bnj8SfZx8IFw+vKyH2xq2DVorZGK5IOZDXsua4NUVPxKkq4g9T8Y1Rw4H+/nn9pxqK
-	 tcLnUaY4LNqEQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	=?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] drm/panic: clean Clippy warning
-Date: Mon,  3 Mar 2025 10:32:42 +0100
-Message-ID: <20250303093242.1011790-1-ojeda@kernel.org>
+	s=arc-20240116; t=1740994520; c=relaxed/simple;
+	bh=gCpNNSve1jlt1V5SnYQVpGjhoChNTjthXctFbRk7RpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jG6W0za3fTapzwPCSeztAPnSGKK8+Qsf4cFdpCRHS9f/T75/kTEj0xk7OqueGsAkxhBLBr24e9F8GJ3iUxRJvG1NCJfJvjs+S6TCR7t490Pt6HwyO3yZITG4CvRe8F/FP9PwJnyBvyIacI09068+PySqbPNPoT0YV0H93UgNWBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 06910342FAE;
+	Mon, 03 Mar 2025 09:35:16 +0000 (UTC)
+Date: Mon, 3 Mar 2025 09:35:06 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH RESEND v5 1/2] dt-bindings: i2c: spacemit: add support
+ for K1 SoC
+Message-ID: <20250303093506-GYA58937@gentoo>
+References: <20250303-k1-i2c-master-v5-0-21dfc7adfe37@gmail.com>
+ <20250303-k1-i2c-master-v5-1-21dfc7adfe37@gmail.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -118,53 +99,112 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303-k1-i2c-master-v5-1-21dfc7adfe37@gmail.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6h156RFQzG3P0
+X-ITU-Libra-ESVA-ID: 4Z6fVt1xSPzG07d
 X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-SpamScore: sssss
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710471.43906@LHV8BuHuukxeemQ/egMEvg
-X-ITU-MailScanner-SpamCheck: spam
+X-ITU-Libra-ESVA-Watermark: 1741712767.9665@34T+hebdt31/iuIlwUHRow
+X-ITU-MailScanner-SpamCheck: not spam
 
-Clippy warns:
+On 13:30 Mon 03 Mar     , Troy Mitchell wrote:
+> The I2C of K1 supports fast-speed-mode and high-speed-mode,
+> and supports FIFO transmission.
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
+> ---
+>  .../devicetree/bindings/i2c/spacemit,k1-i2c.yaml   | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..db49f1f473e6f166f534b276c86b3951d86341c3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: I2C controller embedded in SpacemiT's K1 SoC
+> +
+> +maintainers:
+> +  - Troy Mitchell <troymitchell988@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: spacemit,k1-i2c
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+..
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 2
+I'd suggest to give a brief description and explicit clock name here,
+you can consult marvell,mv64xxx-i2c.yaml for example
 
-    error: manual implementation of an assign operation
-       --> drivers/gpu/drm/drm_panic_qr.rs:418:25
-        |
-    418 |                         self.carry =3D self.carry % pow;
-        |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: rep=
-lace it with: `self.carry %=3D pow`
-        |
-        =3D help: for further information visit https://rust-lang.github.=
-io/rust-clippy/master/index.html#assign_op_pattern
+> +
+> +  clock-frequency:
+> +    description: |
+> +      K1 support three different modes which running different frequencies
+> +      standard speed mode: up to 100000 (100Hz)
+> +      fast speed mode    : up to 400000 (400Hz)
+> +      high speed mode    : up to 3300000 (3.3Mhz)
+> +    default: 400000
+> +    maximum: 3300000
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c@d4010800 {
+> +        compatible = "spacemit,k1-i2c";
+> +        reg = <0xd4010800 0x38>;
+> +        interrupt-parent = <&plic>;
+> +        interrupts = <36>;
+> +        clocks = <&ccu 176>, <&ccu 90>;
+> +        clock-names = "apb", "twsi";
+9.1.4.61 TWSI0 CLOCK RESET CONTROL REGISTER(APBC_TWSI0_CLK_RST)
+https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb#part594
+from above docs, there are two clocks 
+bit[1] - FNCLK, TWSI0 Functional Clock Enable/Disable
+bit[0] - APBCLK, TWSI0 APB Bus Clock Enable/Disable
 
-Thus clean it up.
+I'd suggest to name it according to the functionality, thus 'func', 'bus'
+clock, not its source.. which would make it more system wide consistent
 
-Fixes: dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- drivers/gpu/drm/drm_panic_qr.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +        clock-frequency = <100000>;
+> +    };
+> +
+> +...
+> 
+> -- 
+> 2.34.1
+> 
 
-diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_=
-qr.rs
-index 62cb8a162483..3b0dd59781d4 100644
---- a/drivers/gpu/drm/drm_panic_qr.rs
-+++ b/drivers/gpu/drm/drm_panic_qr.rs
-@@ -415,7 +415,7 @@ fn next(&mut self) -> Option<Self::Item> {
-                         self.carry_len -=3D out_len;
-                         let pow =3D u64::pow(10, self.carry_len as u32);
-                         let out =3D (self.carry / pow) as u16;
--                        self.carry =3D self.carry % pow;
-+                        self.carry %=3D pow;
-                         Some((out, NUM_CHARS_BITS[out_len]))
-                     }
-                 }
-
-base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
---=20
-2.48.1
-
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
 
