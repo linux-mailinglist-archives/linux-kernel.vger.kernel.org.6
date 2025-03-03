@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-540841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255CAA4B5B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:01:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045B1A4B5B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2D691680D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:01:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD011890901
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25037D07D;
-	Mon,  3 Mar 2025 01:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8224E7D07D;
+	Mon,  3 Mar 2025 01:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRKP30R8"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="X3kFEqTy"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15514C85;
-	Mon,  3 Mar 2025 01:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17964C85
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 01:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740963676; cv=none; b=YofLK4pKKGrax+9NACCVvrKvlwN8nuWontZe5xYIt9BlVxieHalJiFUX/2kc6WbuT0czRzL1nvkyL/lrWUC+tbToZff4kcMfYfURfyS6f072Nd3rKqo58UifuHewqKdSNnGMU7MuZ4aIh2GW33srpsAMphOGzwMHuJo9nd1muws=
+	t=1740963690; cv=none; b=Cnb+8jjaChsRDRvLI1KqQv1986Mu/EvSxhiLHpSGSVkBWrjUnLSdROue1TlunoXsfNA+tMDVIdFykwVWDcRgjxCxDNi0FSLGNB0vEZlYIg6+j59UXsAn9eoKhwSGTWTeiUFgfZjC6pmS5A6wjvdiVsSeif7hSy1ZkZBGA+YFHKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740963676; c=relaxed/simple;
-	bh=Po9xG9WKX9OTMGJClcDRNvxjusCc1FMhgHLpR7y/5FA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WTn8XSKWVqRvyOH1/CaLusgaE3cSUTpMzCmX68/QA9OGNLh406HPTVTLjR9/JD43VQmx+LHB/wdex5wpTLuOiEEmja8WqaY7mMwxYaIZVkot6QiZVz8zMw708ROmnZgEK9MdOMtKJkgUBNNpQvuhr0cFKYehbUMOJJuuCel7oAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRKP30R8; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5495078cd59so2569252e87.1;
-        Sun, 02 Mar 2025 17:01:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740963673; x=1741568473; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Po9xG9WKX9OTMGJClcDRNvxjusCc1FMhgHLpR7y/5FA=;
-        b=eRKP30R8uYU+tKnKqhC6jxjqbT3SLNomZkeuVMpdmfgoEZXc4ceW33qEXW5RfQu6xr
-         MBPqTQ0YXiIjeZcmVYNij7myDUc7ogUY7mcfPK6Ky6liJzLfttnlacRWQ+KAkdxazibr
-         FRxDIPwBrEtIygU3BO5Zll02gjLpa44eRuYlQ1vpFB1NzU0u7gd607/TLhUwW/A6nGqG
-         McCVSJt5RBMIZwypGGdmwDHVlZGa5Or+D10uEEiRyzo9MV/cDh8JVLM9R7PsiXd4dOdr
-         P1D1EboeW5lhT+IAPcWiSnKkEqi5OcoCXGnsTZXDjwdGOnMLYixecUP53nmKTzXbP2YG
-         Tz4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740963673; x=1741568473;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Po9xG9WKX9OTMGJClcDRNvxjusCc1FMhgHLpR7y/5FA=;
-        b=FYBC6CwnVxW6ExuPNRKdIEdJlsoxk0wtCEEwhzt7f12IhSIq+ZWcV9sOgPmG6J7kop
-         fEskscdhuCeBKYAh9FuTElSM8jKFxOKyPlVC0em+dK0pXtkazDQ/J1TneKHh0XG1fKTZ
-         nOJKCx9ejmEJ1Fm7vB+M/OEtlvHgsGZPBRGyOJSiWiijDiVajhXi4dhTa+8GI+vumkCi
-         rONzjtxvQR8SkICaeskY0bSeW4MR6zFCZ9KC/yv9YK67yG9dfUT5Fves3qgRgU6UQEZQ
-         VZ7wQZWxSWs9B58SbvrmNntxDb/Hvw2JXEp4hso01dM0koQgnDc90hUip86Y/yYsEVix
-         fJ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXV+63JBFY0nWgRweLn/mhjMnWBIEspXRnEU6q0GHrxjlpiFC3FtNCMlvQSIFKyTYsRtoE0S7F+K0tr@vger.kernel.org, AJvYcCXyGRn357Ft8ju7f67pemPR+SCM46tXANBaU6eaIyq5woTCiE2igHN09SgkbDJzz+pYMyrlt6u2RPZFyjEK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCd9VRiHpRIIJOwYYfAoAqNm1dOYJ0RrOx7+Hb2NhSuQsXhZD+
-	G/Y5oJOX1OOQwtU1jRx3hPnh5zQgqTmfWdlJk0F6S5nSpA4/ei/xLlYd6Imjpuv2DnEUjy3nEis
-	+JuMYY800DJ6cLLH9dZzdZtWmMr4=
-X-Gm-Gg: ASbGncuB/AIOREP5jI9kYq6/KU+uO94LhBL94rmeK20xUaicYkdaAA/QlqJaYK6M62A
-	uX2hp3Rv+rz8MRO9vA6JP3yUWYH9cXRHV3Ag8u2r6pAuSrlLOrHpa+K5KlPsczdoquKQGI779TR
-	asMzws0fJCswOJLnAvKFEkexER3ZfHUbJ1VRkUnbkbYSMp8NsHnjn/octtVFc=
-X-Google-Smtp-Source: AGHT+IEnYYiUTYhUxg7YSQ+WTYFU0qTRXKlzxdNz7IbJPrqNX6rwb4Jr5N6QTwE06HlWjhljpLb9IaA9VniiYQt1B8w=
-X-Received: by 2002:a05:6512:3ca1:b0:544:ffbe:cd22 with SMTP id
- 2adb3069b0e04-5494c38bd17mr4149185e87.46.1740963672470; Sun, 02 Mar 2025
- 17:01:12 -0800 (PST)
+	s=arc-20240116; t=1740963690; c=relaxed/simple;
+	bh=YCWiH4a9wz7YH7HsSP4ivcejxGQRvpLZmw5UwsT7TxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sOGn/2wzPSXbD+a4rRjRoNiGeHknXkw+FuBdd/1Lhup/7SIF6qoRJjyDUTU5H3oV5Xv1N4A+6xFFCSRvFTW8Iq9hia7GsRBFwYYrhGsxO0jiKccUqFePphUvBn7D/QVenH6aYK/DfCyUR6i56eY/9AZoUSp/b1/DKGpQxGkJWqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=X3kFEqTy; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=beLmT+Q0XpSHofJbl8JA0ZWYQMSdvEACj+BeRMgvR9M=; b=X3kFEqTy7EVttmF1
+	BjiSg8NPEKtGqBNDbYY88aELRFM2HzSs8c7o7F2zfAdAyZIgVG9piF/6laRRcaa2wocRnyLv5BKP3
+	OKHTEbXyrSollwfdACV1k4Ba0wmNfkatxcCWbviU3TuX+w25Kj0e0a7Tz0OAIQluDXjRiwtkjC6gf
+	mmyFs02JqAUARlrPOcPNgmtkHv6gdFJFwm59RuYt+G/uU7vIGTMe6s8erFNBtNDoIU/tHKBFEzc/O
+	eBrBJKn7iwUFyGPlgBeYFhHQlb7MYmMACwkp0ZU9xhnfumL30EfXc7xhhNUrnMm4kbyHnnxdcCKLU
+	NRXOpAmxUnPt4GGKYw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1touBS-001zdD-1T;
+	Mon, 03 Mar 2025 01:01:26 +0000
+From: linux@treblig.org
+To: linux@dominikbrodowski.net,
+	linux-kernel@vger.kernel.org
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] pcmcia: cs: Remove unused pcmcia_get_socket_by_nr
+Date: Mon,  3 Mar 2025 01:01:25 +0000
+Message-ID: <20250303010125.254587-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241222145845.23801-1-pali@kernel.org> <20250223222306.plgy3bpy5mjojfve@pali>
- <CAH2r5mv_+ZarrSPEhDjgEYPzqkvdqL-K7NjDsE0sXtrhx65G7A@mail.gmail.com> <20250302122446.dpqd6hlpfmy3fo3l@pali>
-In-Reply-To: <20250302122446.dpqd6hlpfmy3fo3l@pali>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 2 Mar 2025 19:01:00 -0600
-X-Gm-Features: AQ5f1JpQ1ZOOH4tIfv5tSkoAPQF2Bd0zKiwL2k4g9xwbWWX_Mz-7cy_2TZf5si8
-Message-ID: <CAH2r5muzB=R2TA2-=XM3juVD1dhic=Wb_JYu71LYr9YyS5cXKA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] cifs: Handle all name surrogate reparse points
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Talpey <tom@talpey.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 2, 2025 at 6:25=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
->
-> On Sunday 23 February 2025 18:48:50 Steve French wrote:
-> > On Sun, Feb 23, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.or=
-g> wrote:
-> > >
-> > > Hello Steve, I see that you have merged first two changes (1/4 and 2/=
-4)
-> > > from this patch series, but the remaining (3/4 and 4/4). Is there any
-> > > reason why 3/4 and 4/4 was not taken?
-> >
-> > Mainly because I wasn't able to easily test it, and didn't get test
-> > feedback for anyone else
-> > on those two who had tried it.
-> >
-> > I am ok with looking at them again - and thx for rebasing.
->
-> Ok, when you have a time, please look at them.
->
-> > There are some of the 41 patches in your updated cifs branch that do lo=
-ok suitable or rc5
->
-> There is "cifs: Change translation of STATUS_DELETE_PENDING to -EBUSY"
-> which stops returning -ENOENT for directory entry which still exists.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-IIRC - there were some objections to this if it could break any
-plausible existing application behavior, but will need to dig into the
-thread from earlier.
+The last use of pcmcia_get_socket_by_nr() was removed in 2010 by
+commit 5716d415f8c5 ("pcmcia: remove obsolete ioctl")
 
-Tom or Paulo,
-Do you remember if this is one that you had mentioned?
+Remove it.
 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/pcmcia/cs.c          | 17 -----------------
+ drivers/pcmcia/cs_internal.h |  1 -
+ 2 files changed, 18 deletions(-)
 
+diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
+index c75f55e1250a..adbc486af2ea 100644
+--- a/drivers/pcmcia/cs.c
++++ b/drivers/pcmcia/cs.c
+@@ -229,23 +229,6 @@ void pcmcia_unregister_socket(struct pcmcia_socket *socket)
+ EXPORT_SYMBOL(pcmcia_unregister_socket);
+ 
+ 
+-struct pcmcia_socket *pcmcia_get_socket_by_nr(unsigned int nr)
+-{
+-	struct pcmcia_socket *s;
+-
+-	down_read(&pcmcia_socket_list_rwsem);
+-	list_for_each_entry(s, &pcmcia_socket_list, socket_list)
+-		if (s->sock == nr) {
+-			up_read(&pcmcia_socket_list_rwsem);
+-			return s;
+-		}
+-	up_read(&pcmcia_socket_list_rwsem);
+-
+-	return NULL;
+-
+-}
+-EXPORT_SYMBOL(pcmcia_get_socket_by_nr);
+-
+ static int socket_reset(struct pcmcia_socket *skt)
+ {
+ 	int status, i;
+diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
+index 02a83ca44e77..5ac810ffda31 100644
+--- a/drivers/pcmcia/cs_internal.h
++++ b/drivers/pcmcia/cs_internal.h
+@@ -116,7 +116,6 @@ extern struct list_head pcmcia_socket_list;
+ extern const struct class pcmcia_socket_class;
+ 
+ int pccard_register_pcmcia(struct pcmcia_socket *s, struct pcmcia_callback *c);
+-struct pcmcia_socket *pcmcia_get_socket_by_nr(unsigned int nr);
+ 
+ void pcmcia_parse_uevents(struct pcmcia_socket *socket, unsigned int events);
+ #define PCMCIA_UEVENT_EJECT	0x0001
+-- 
+2.48.1
 
---=20
-Thanks,
-
-Steve
 
