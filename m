@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-542837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34876A4CE54
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:34:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CBCA4CE58
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA25173312
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D363AA434
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED12356BD;
-	Mon,  3 Mar 2025 22:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BE422DFB6;
+	Mon,  3 Mar 2025 22:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzCGyc0A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LdTRf7fr"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D2E1F130C;
-	Mon,  3 Mar 2025 22:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA51911CA9;
+	Mon,  3 Mar 2025 22:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041235; cv=none; b=FkSOutIlqKgJSM/3+HCu1F3QaFvG6XC3LOYBi/NxApbPOOrGnl9XuwUVMSy0VTBh46s7cqS5dTj6GnsxQOZctAuUH3uOmoKJ/v5LqdXEa9pcFR7n6tGv1ZtCiijm+f9wu/Q1sXkfRqsHelgGFKJ8HWr9o3wPqCvBCaYhkXd1H4o=
+	t=1741041293; cv=none; b=BjuWzi+GbD3w+ziRqn2qZILWyNNvq5d7O3F06z061T+Tk9IM8dUkwPqoYRnSzCjLWFEsElT/G+CQ0k8HJ60gl0M1y8REr+SgtOoXo1ckGsaw87kIpYW5n4jz5CdWl8eNxTiXMK04f/bFUs00zqTPhL+z5fsgXiAJzmdyAdOt6Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041235; c=relaxed/simple;
-	bh=mXqIacAC3RLc1tYiomnB+ph7/jwRad1h/08sQbaQrKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AP5aAmSQe3wnswQYvLf19s6//bekqg8CE/Kq1damqXCd06cVLytIsktzq3HqzSyhADk64w2fcp0hzmgmjRvCj8pywhTK9DQzbGIrS9mbAIQon6EoeK0c56UrA0od1RFo1OYoB1MFHJw/F4/mPAzbW+xS8oQVIfanNHJiKA8mQaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzCGyc0A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73E9C4CED6;
-	Mon,  3 Mar 2025 22:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741041234;
-	bh=mXqIacAC3RLc1tYiomnB+ph7/jwRad1h/08sQbaQrKg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nzCGyc0ACZ4YdrUHbJuOX/zRI9wJJHe9tJrLmln3cGv7f5a4ExHBkfa6nyB0NA4/T
-	 05CadXsIjbbLOjIDu7qJIfi+7SlFPB7Dvyf0gTAYG7NMTPzooHI6WQKaQJeOAtSWVQ
-	 7xckCLhk5n7rPFK/iz1cQ640OhIOfPjdnP85lVp986kRIK6Osx36Oi/l+P2skCcrvQ
-	 iUqTWLdMcwbuBy4H7/YsekYHSoIV4TBphHWU2yHOKUHlI5c952/hZwAWE0KFEfBloj
-	 iiDAljQ5a/aM4CFvHvANKyLa+vibaunMplD1jcsef+oMYzGkf0nGd8w3Vemt8xIdmf
-	 tzzvYxHgeg5Zw==
-Date: Mon, 3 Mar 2025 14:33:53 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn
- <willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko
- <andrew@daynix.com>, Stephen Hemminger <stephen@networkplumber.org>,
- gur.stavi@huawei.com, Lei Yang <leiyang@redhat.com>
-Subject: Re: [PATCH net-next v7 5/6] selftest: tun: Add tests for virtio-net
- hashing
-Message-ID: <20250303143353.42219664@kernel.org>
-In-Reply-To: <0ec77558-bdfb-4471-a44b-0a37a9422f72@daynix.com>
-References: <20250228-rss-v7-0-844205cbbdd6@daynix.com>
-	<20250228-rss-v7-5-844205cbbdd6@daynix.com>
-	<20250228062947.7864a59c@kernel.org>
-	<0ec77558-bdfb-4471-a44b-0a37a9422f72@daynix.com>
+	s=arc-20240116; t=1741041293; c=relaxed/simple;
+	bh=F30QHXKrlOqCuPBKSY4pSSMBNSfxTebs969Cd+lS1F0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=UpcE0xnYC7XQh7TttVFT7bshLgIOuhKjRHe5jg3hnSimkWlvpLzL13f2gB6vxZSZ3f0MH9LBkdVKcRD4p1WmScoTV+6zZs1m9vZr952h+gUDaOxqUEHKI8FPWMquF0leG9NpL3siQ9MCurWlEvt0RxppO2mCIePTXksf3toHdkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LdTRf7fr; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPv6:::1] ([172.59.161.144])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 523MYBht1781244
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Mar 2025 14:34:13 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 523MYBht1781244
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741041254;
+	bh=yQK8hVfe3l9Z3etcB2YNPrMft+SViGKW39OaDCOwqHk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=LdTRf7fr5G4o2XMAm778Q9TDcI6UDgmRTS+1xsfKDq0AhhVcfrmxIoETJZ+nPi8Ow
+	 edcZkGzlKutQJ5cFT2ml5SyYb5Fq2kVyAOFEklcGwPMTjM/FMQy9CAmENYlWQiN9lg
+	 /cp3c1IeXGhDCziFrWBT2XkQcD2zky0Q+Vebz7YytR0WOPvJIXSqa8ZnKcWuz1LTpD
+	 PhX0gcxQ8dt0M3Wm619z42LKad4skAy/WGuUohHsQ2N+T2xDmFQp7EuBwpBWVOvRof
+	 7G61JI0nQmiSEtugXCPHh6lagMiOA87W5D5f85uDSprD0cIrjvqjxhl6wnbK7CaipQ
+	 Kfa0GN0s0epIw==
+Date: Mon, 03 Mar 2025 14:34:05 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "Aithal, Srikanth" <sraithal@amd.com>, "Xin Li (Intel)" <xin@zytor.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, will@kernel.org, peterz@infradead.org,
+        yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
+        namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com,
+        nik.borisov@suse.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_3/5=5D_x86/cpufeatures=3A_Generate?=
+ =?US-ASCII?Q?_a_feature_mask_header_based_on_build_config?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
+References: <20250228082338.73859-1-xin@zytor.com> <20250228082338.73859-4-xin@zytor.com> <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com> <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com> <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
+Message-ID: <BCD39CA4-97F7-4B33-88BF-98BF17775DCA@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 3 Mar 2025 15:20:33 +0900 Akihiko Odaki wrote:
-> > # 5.90 [+0.00] ok 14 tun_vnet_hash.unclassified
-> > # 5.90 [+0.00] #  RUN           tun_vnet_hash.ipv4 ...
-> > # 6.18 [+0.28] # tun.c:669:ipv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), 0, VIRTIO_NET_HASH_REPORT_IPv4, 0x6e45d952) (0)
-> > # 15.09 [+8.92] # ipv4: Test failed
-> > # 15.10 [+0.00] #          FAIL  tun_vnet_hash.ipv4
-> > # 15.10 [+0.00] not ok 15 tun_vnet_hash.ipv4
-> > # 15.10 [+0.00] #  RUN           tun_vnet_hash.tcpv4 ...
-> > # 15.36 [+0.26] # tun.c:689:tcpv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), VIRTIO_NET_HDR_F_DATA_VALID, VIRTIO_NET_HASH_REPORT_TCPv4, 0xfb63539a) (0)
-> > # 24.76 [+9.40] # tcpv4: Test failed
-> > # 24.76 [+0.00] #          FAIL  tun_vnet_hash.tcpv4
-> > # 24.76 [+0.00] not ok 16 tun_vnet_hash.tcpv4
-> > # 24.77 [+0.00] #  RUN           tun_vnet_hash.udpv4 ...
-> > # 25.05 [+0.28] # tun.c:710:udpv4:Expected 0 (0) != tun_vnet_hash_check(self->source_fd, self->dest_fds, &packet, sizeof(packet), VIRTIO_NET_HDR_F_DATA_VALID, VIRTIO_NET_HASH_REPORT_UDPv4, 0xfb63539a) (0)
-> > # 32.11 [+7.06] # udpv4: Test failed
-> > # 32.11 [+0.00] #          FAIL  tun_vnet_hash.udpv4
-> > # 32.11 [+0.00] not ok 17 tun_vnet_hash.udpv4  
-> 
-> I cannot reproduce the failure. What commit did you apply this patch 
-> series on? What architecture did the kernel run on?
+On March 3, 2025 5:25:05 AM PST, Borislav Petkov <bp@alien8=2Ede> wrote:
+>On Mon, Mar 03, 2025 at 04:05:54AM -0800, H=2E Peter Anvin wrote:
+>> "make headers" on an unconfigured tree should presumably only produce t=
+he uapi headers, not kernel-internal ones, one could surmise?
+>
+>Well, that's kinda a question for you guys:
+>
+>cfc7686900a87   (H=2E Peter Anvin (Intel) 2025-02-28 00:23:36 -0800      =
+ 281)archheaders: $(out)/$(featuremasks_hdr)
+>1f57d5d85ba7f   (Ingo Molnar    2015-06-03 18:36:41 +0200       282)    $=
+(Q)$(MAKE) $(build)=3Darch/x86/entry/syscalls all
+>
+>and the headers target has
+>
+>headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archsc=
+ripts
+>
+>as its prereq=2E
+>
+>Judging by
+>
+>59b2bd05f5f4 ("kbuild: add 'headers' target to build up uapi headers in u=
+sr/include")
+>
+>it sure looks like "make headers" should be for uapi headers only=2E
+>
+>Oh, and it should be documented in "make help" output btw=2E
+>
 
-x86 inside vng, see this for exact details:
-https://github.com/linux-netdev/nipa/wiki/How-to-run-netdev-selftests-CI-style
-
-The tests are run on top of net-next + net (the two networking trees
-merged together).
+Yes, it was more of a statement=2E Generating internal headers sans config=
+ is utterly bogus=2E
 
