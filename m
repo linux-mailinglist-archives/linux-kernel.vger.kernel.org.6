@@ -1,165 +1,175 @@
-Return-Path: <linux-kernel+bounces-541055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964A6A4B7E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:25:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6A1A4B7E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009473AB62E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F17D3AB434
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4F91E5B6C;
-	Mon,  3 Mar 2025 06:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56E1E51F8;
+	Mon,  3 Mar 2025 06:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ddOg2Yci"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZuxHgKI8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E573B156237;
-	Mon,  3 Mar 2025 06:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B25156237
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 06:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740983123; cv=none; b=jptR9CLIB1f4bD6ynToC4fW2XOmGdaG/0JNyaHCHFrseuPIlWnkec+Z3pufuJhBzEVTKZ4bTXVAq5EjJWJafECLABPhNgDq4d0QtvgeCDSv3H8850OSl5hPo5lll3iYy/bH5ZbJM4xdBU0Il9kFqaW9ERSAV5HP7qgJCdOoGkpM=
+	t=1740983079; cv=none; b=U6QLM/AZC+hRQQHjAHKhvAq8IoOnEAbh9fgyAypUTDWwMcLugt9TxdZeAJYxb7OANUqBNdS8+FE5jy3ZF4SowBdFuAGuoZXqmTdl/4gZvjn4K1QDP9HUBfdFSL8st+ttthMUdO9g8pJ/qrn/DdmXWZm2XN/pw3eU6ZRbp3lMv5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740983123; c=relaxed/simple;
-	bh=QddSmenzJXUSnQaTPXNrQkvUIido0PcI4/XhapFbIgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/RtzjlEePbYZAFqzdADr20LVsMfTcsiWH2eHRUaELqZYT6qgfmxhl4hZSemQdbPl+Ay2bzcSmuyZRjNtDWtYQyKqTJeqrlo5YV4Tk/lUj+D1BY03CuaDZ/cDDHD6n02xSA1loS6aFU1dOEOrIZrIxg5mVMiR4RfobZQr0RJjlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ddOg2Yci; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740983121; x=1772519121;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QddSmenzJXUSnQaTPXNrQkvUIido0PcI4/XhapFbIgs=;
-  b=ddOg2Yci2CI/3HVVQKAtUnoqkWqdlACHdcDAYbmcDOrFxR/2b70nf4Ay
-   9Q4q8RvMZlduq31hE86gG96U0uw0Cu9HrEBgMr1R+oLxaymq+1m91G1GX
-   XmIjkW2P6cPM/GqoR2gEskD0GX6nAd8km5ALsrUSwtJLsDB76a2XHZ/pE
-   pi+1eR0LzCzPxEVadePOJH1oocG2D84s3DWUAsgt3FJa/SitHPe7zCXVS
-   yBphN9Zy6pGxOF21aIvHMNzSeKIJJNt+ppfn1SNOKdZLgOZWn6djsWsjg
-   JVs/7FILgtgLpcJeLTLGYl1kwcdBFFoaL95gRtCBTVHHBK6bFN6AMWsUs
-   w==;
-X-CSE-ConnectionGUID: TseWQg3+RViOLV7uhMH0eQ==
-X-CSE-MsgGUID: PslcPE0JTF6oPbNdRAX2kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41966654"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41966654"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 22:25:20 -0800
-X-CSE-ConnectionGUID: VhVfEy7fR6607pYneT8zZQ==
-X-CSE-MsgGUID: PiQGcvOfTbSSRhc5EXnUYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="123065041"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 22:25:17 -0800
-Date: Mon, 3 Mar 2025 07:21:28 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Ariel Elior <aelior@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Manish Chopra <manishc@marvell.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ram Amrani <Ram.Amrani@caviumnetworks.com>,
-	Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] qed: Move a variable assignment behind a null
- pointer check in two functions
-Message-ID: <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
- <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+	s=arc-20240116; t=1740983079; c=relaxed/simple;
+	bh=EFHcnY604PxZcDX9hfXViUWhnTcEbotkGUIzzO6QMHA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FBCjgwGjj14PKqu3WDpoeotjhccCnyXiZ7GsxgZE2cpPcKE7m81Fd7BUysnfZNK1qGFW9nflbsZcP+zvN0qvOd1ZWaGS2rPGU22IMI+mTS04NJg6P7VkT/pvPj9ZOYEDJix0VGvu0Ktye7OC8XbY83PrfDOlsUs6GyB9y/5t5MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZuxHgKI8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2239c066347so16633995ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 22:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740983075; x=1741587875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FRPqvj/QlUv2dtShmOMDUHzRRPiCU0B09cpBuKE4KUk=;
+        b=ZuxHgKI8DvZpkH2TiP6TDJGd2ehgbjTxjdCF0v3Cf76ii2+ew6h0Sal1JiYmU5DBvY
+         ydBR2ZHOeK9KQvpq9BOt0VyuugnOdeStViVFbtqdSPLC6nrG22sgIQWOV4ZASzPyT+Cw
+         eVXLJR3t970VickcJMVd3HDBP4YsBwya2wXBlQEkmgoUfCDQlMCzwbESWZOCEkJiNYjl
+         x4SDactqEWqoJww8oEra17T8ymC8JG5uYhRAfr8dwf7r0RUKCoA6ZqqVTQCC8yXhsY00
+         8TVoFKfPoPgqROxtyH6Vb1BLKKE/xSvxVdX8Vh/ZTWwvpaCTJwni8NmQID+vuDqAvSnu
+         HVcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740983075; x=1741587875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FRPqvj/QlUv2dtShmOMDUHzRRPiCU0B09cpBuKE4KUk=;
+        b=f7EIVpwefMIi9YQPt6Vz+O97QoliK8SpqLz0fjO7HlrRRAY8WZ42ITJFI5nYDbT1Wd
+         lBckdE+xz+ws9vPJrvxhPW4+U7WZqCm8GX1JbdmYAZPKhf9MtCn3F18Q6cV3yzuEL4PW
+         33fgkoqYsWeyi+m2HKUgZ5GeAD/+Npw3WoZJzCIi++waKXwm8cfbxdgffL6gi1p85x1Z
+         LbwIdflKJ0O0vK/f7rhG9M0g6oY5IDCGrgsdHJSRTOOL2j5q5Q1/rTapiOI+5AvC6/I/
+         w5YVVpwuj7Ji+S8kYk8VTKflYd3N8/rxT5Di2llyRCF9ZAz3qj1d35iu9s+XApaqiM6Z
+         W4mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs9rVNGlg7bJaFc0NBoS6ft2WYBsN90YZHf5xgtQd86HCBrM8gaLztJrXqURDD7S1wPi3L5qok4tQRNwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEi+NKm4ZPGsmEEHFqZUfIwq6nPREYJoaJ5HFOuyjBO54JlSIo
+	vVFqHO6iuquSLKO/7HtLrwvU1CVoFfK/tjI0bcJKjsvfPMAPIKdzF15VQ0S0Dm8=
+X-Gm-Gg: ASbGncttD5JZZlTGLHeM5Ai+Y14hkVJZwnLQyIDYHiw4BcraLPu1QKu3Os4QJ7dHHGT
+	GiBfmiThqLIf7eVXhLfEZwN7vkATuOp0rIFwEF0pm7WWovBhbUsF3/Pwx3+cqrjqMAojCfPYxC8
+	hQyv/0qM8vomzO4y7VIax+vp5mbARJWuuzeCm6weD0ESR/jk1T35jFgwsCvT25vT88TaWL67+p1
+	0uBb/JLv7Gy+06iXyfj/PTjpvfV0/yYmqFterrd2NqM5Absq2dUhdTmmkllKNpE0JhOCbcfuI3X
+	mVQ/15zz4HlHXvn4C7UthTouu5/wv3D2vwCvvTBwycQ7RH27incO46L6tpZtou5VQiu4E+020dQ
+	mAIb4N3wu
+X-Google-Smtp-Source: AGHT+IESh4grNErcs4++ANOa0SJQc7p6X5v8H9Dq1ufSFbL0K9GWmhRDomZrzfEl3a6jzkJkwrNomg==
+X-Received: by 2002:a17:902:e752:b0:21f:45d:21fb with SMTP id d9443c01a7336-22368f61965mr152240345ad.3.1740983075253;
+        Sun, 02 Mar 2025 22:24:35 -0800 (PST)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d329dsm69791145ad.27.2025.03.02.22.24.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 02 Mar 2025 22:24:34 -0800 (PST)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>,
+	Ethan Zhao <haifeng.zhao@linux.intel.com>
+Subject: [PATCH v3] iommu/vt-d: fix system hang on reboot -f
+Date: Mon,  3 Mar 2025 14:24:21 +0800
+Message-Id: <20250303062421.17929-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
 
-On Sun, Mar 02, 2025 at 05:55:40PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 11 Apr 2023 19:33:53 +0200
-> 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the functions “qed_ll2_rxq_completion” and “qed_ll2_txq_completion”.
-> 
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variables “p_rx” and “p_tx” behind the null pointer check.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 0a7fb11c23c0 ("qed: Add Light L2 support")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/ethernet/qlogic/qed/qed_ll2.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> index 717a0b3f89bd..941c02fccaaf 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> @@ -346,7 +346,7 @@ static void qed_ll2_txq_flush(struct qed_hwfn *p_hwfn, u8 connection_handle)
->  static int qed_ll2_txq_completion(struct qed_hwfn *p_hwfn, void *p_cookie)
->  {
->  	struct qed_ll2_info *p_ll2_conn = p_cookie;
-> -	struct qed_ll2_tx_queue *p_tx = &p_ll2_conn->tx_queue;
-> +	struct qed_ll2_tx_queue *p_tx;
->  	u16 new_idx = 0, num_bds = 0, num_bds_in_packet = 0;
->  	struct qed_ll2_tx_packet *p_pkt;
->  	bool b_last_frag = false;
-> @@ -356,6 +356,7 @@ static int qed_ll2_txq_completion(struct qed_hwfn *p_hwfn, void *p_cookie)
->  	if (!p_ll2_conn)
->  		return rc;
-> 
-> +	p_tx = &p_ll2_conn->tx_queue;
->  	spin_lock_irqsave(&p_tx->lock, flags);
->  	if (p_tx->b_completing_packet) {
->  		rc = -EBUSY;
-> @@ -523,7 +524,7 @@ qed_ll2_rxq_handle_completion(struct qed_hwfn *p_hwfn,
->  static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
->  {
->  	struct qed_ll2_info *p_ll2_conn = (struct qed_ll2_info *)cookie;
-> -	struct qed_ll2_rx_queue *p_rx = &p_ll2_conn->rx_queue;
-> +	struct qed_ll2_rx_queue *p_rx;
->  	union core_rx_cqe_union *cqe = NULL;
->  	u16 cq_new_idx = 0, cq_old_idx = 0;
->  	unsigned long flags = 0;
-> @@ -532,6 +533,7 @@ static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
->  	if (!p_ll2_conn)
->  		return rc;
-> 
-> +	p_rx = &p_ll2_conn->rx_queue;
->  	spin_lock_irqsave(&p_rx->lock, flags);
-> 
->  	if (!QED_LL2_RX_REGISTERED(p_ll2_conn)) {
+We found that executing the command ./a.out &;reboot -f (where a.out is a
+program that only executes a while(1) infinite loop) can probabilistically
+cause the system to hang in the intel_iommu_shutdown() function, rendering
+it unresponsive. Through analysis, we identified that the factors
+contributing to this issue are as follows:
 
-For future submission plase specify the target kernel
-[PATCH net] for fixes, [PATCH net-next] for other.
+1. The reboot -f command does not prompt the kernel to notify the
+application layer to perform cleanup actions, allowing the application to
+continue running.
 
-Looking at the code callback is always set together with cookie (which
-is pointing to p_ll2_conn. I am not sure if this is fixing real issue,
-but maybe there are a cases when callback is still connected and cookie
-is NULL.
+2. When the kernel reaches the intel_iommu_shutdown() function, only the
+BSP (Bootstrap Processor) CPU is operational in the system.
 
-Anyway, with heaving this check for p_ll2_conn it is good to move
-assigment after this check.
+3. During the execution of intel_iommu_shutdown(), the function down_write
+(&dmar_global_lock) causes the process to sleep and be scheduled out.
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+4. At this point, though the processor's interrupt flag is not cleared,
+ allowing interrupts to be accepted. However, only legacy devices and NMI
+(Non-Maskable Interrupt) interrupts could come in, as other interrupts
+routing have already been disabled. If no legacy or NMI interrupts occur
+at this stage, the scheduler will not be able to run.
 
-> --
-> 2.40.0
+5. If the application got scheduled at this time is executing a while(1)-
+type loop, it will be unable to be preempted, leading to an infinite loop
+and causing the system to become unresponsive.
+
+To resolve this issue, the intel_iommu_shutdown() function should not
+execute down_write(), which can potentially cause the process to be
+scheduled out. Furthermore, since only the BSP is running during the later
+stages of the reboot, there is no need for protection against parallel
+access to the DMAR (DMA Remapping) unit. Therefore, the following lines
+could be removed:
+
+down_write(&dmar_global_lock);
+up_write(&dmar_global_lock);
+
+After testing, the issue has been resolved.
+
+Fixes: 6c3a44ed3c55 ("iommu/vt-d: Turn off translations at shutdown")
+Co-developed-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Signed-off-by: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ drivers/iommu/intel/iommu.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index cc46098f875b..47c74b20d342 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -2871,16 +2871,19 @@ void intel_iommu_shutdown(void)
+ 	if (no_iommu || dmar_disabled)
+ 		return;
+ 
+-	down_write(&dmar_global_lock);
++	/*
++	 * All other CPUs were brought down, hotplug interrupts were disabled,
++	 * no lock and RCU checking needed anymore
++	 */
++	list_for_each_entry(drhd, &dmar_drhd_units, list) {
++		iommu = drhd->iommu;
+ 
+-	/* Disable PMRs explicitly here. */
+-	for_each_iommu(iommu, drhd)
++		/* Disable PMRs explicitly here. */
+ 		iommu_disable_protect_mem_regions(iommu);
+ 
+-	/* Make sure the IOMMUs are switched off */
+-	intel_disable_iommus();
+-
+-	up_write(&dmar_global_lock);
++		/* Make sure the IOMMUs are switched off */
++		iommu_disable_translation(iommu);
++	}
+ }
+ 
+ static struct intel_iommu *dev_to_intel_iommu(struct device *dev)
+-- 
+2.39.2
+
 
