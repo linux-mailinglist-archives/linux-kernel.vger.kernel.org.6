@@ -1,334 +1,191 @@
-Return-Path: <linux-kernel+bounces-541063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03200A4B7F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:53:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83BAA4B7FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D1C167BBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81BC3AC729
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91D81E573B;
-	Mon,  3 Mar 2025 06:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B711E8326;
+	Mon,  3 Mar 2025 06:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BX1pFVne"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKD8z0Kt"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B46C4A3C;
-	Mon,  3 Mar 2025 06:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D231CAA4;
+	Mon,  3 Mar 2025 06:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740984806; cv=none; b=ChuzWTcjG6OTN3Lj74YP+8Q3mxdyIIO0/b6+a6rVNTJWMotdaPKUQbqM3tD7JwjUVLDU3kpMs2drWVJgQTkM7L2samX4Wtf7kO9xDnqL+VUABxccXitDPD3BnGmM1lZIrZzZi+hB7G0Xxbk0kjAqHy1nBW6BzKEuOmHbBhsVtQI=
+	t=1740984943; cv=none; b=AYoDa0giarHZ09N80GfUj8ebXt/0KZHekISapJQs1BLMpIh8HFwfy3STxhTzFoIon70RivPN5hflgSRjGNWqEID9G7ywk/tSLJV6/ngaAeSrNZlG+sEi/tpgPDGoKEuqQKGySvXFwyA6kVXGhh9gN/L0lO8ZpqvYCptvvv6yVRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740984806; c=relaxed/simple;
-	bh=EL7sb6RQjjKnZ9p0+ByLm7jviQvd8dJxPXeQMAaME2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iyfxc/ImA5MihALK7JoX2ABChyUaXh1CcbtYABvyuGcCP5PcYwyhrO+s9NBj7GGtNYOUGwWlXVYBiJRnztW590vd4xTXvd7nsOMLjgwYNDx8QR4UC7O4NGpFMt7reiUhY26OrTLKqISfs55iFjoJgkVFRO3hpbdFv38r36467kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BX1pFVne; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1740984943; c=relaxed/simple;
+	bh=dG+GmQJ58+AjwIbzHzg+zHRT5V2GWAAOltkTkMVShO4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rC4px8pqVLWLqItEtasf3A9imUWfNTQknmrYcztobDDd/wkngVREGPiDaRgQKymaHkUKZh5jLm6kxMipXWi2hn6ukTGQio/cBmYRnw695Gy/028lJiiL8TD4U5SvbrQdCKQ5bwhqzWKMpIGZXLaZGnmASfc69adsyMeOoPHxwps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKD8z0Kt; arc=none smtp.client-ip=209.85.216.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2235c5818a3so35764945ad.1;
-        Sun, 02 Mar 2025 22:53:24 -0800 (PST)
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so8505663a91.1;
+        Sun, 02 Mar 2025 22:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740984804; x=1741589604; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0VDfBl/g+euIY5A7idLgNTsyB1EqJtuEAA78H1xpF24=;
-        b=BX1pFVne6UTdwp0FT59Y+Qbv2hzr2SgXKIuBL/fDRcAnKOqehtc6VFXe+nFZ7AXjHO
-         7sMpw8Emfep2moB7uFiCniQzBKeerTDioqWYRuIoIU08BRHgDGxjV/gb02JFwnGzzdgc
-         M2SjnyAAlT6LnXStohPsV780zskmGg0Z1LSsrLE+m4cyb1h83yOnHEsJjErHP+4Af7Ai
-         3AOTTofRr2FBf6306ZjwX32ZgFcveAQHFRvChijVmgsVVbMNjl0EoP2R3VtEAYdsa7Zv
-         Ax/JOlxtNnoNty5cnasgj8FpMnHUyXWIdi4fNERsoGyK/OfSxyDbg8SRuAwb6sjjTMvn
-         VMlA==
+        d=gmail.com; s=20230601; t=1740984942; x=1741589742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRORuk1lZoTaQ72m0hDUrhIZjvt/8jV8y2hi7nR1rH4=;
+        b=RKD8z0Ktm6Mxvgagou4iHrnS6X9Gxg+S1SPU5+OROiCsnLMQcbNcfQqCyBY5N1gRn2
+         fi/xCDm86l+bI8SEaj8QWLjbXoCw1eLjiTSIzSV35dzrEGIjVuj3kf4hpdMJ3tZ1cxG+
+         U7qu5GiCdQnQ/Ld8fGpJ6XiDEVheju9xDIGbo9zopiF/n8t7Hb5cGtWXKBgseqk6Lgq4
+         1sXuR3fdZReyLC13gU3z5RCX3zoaRi6X7NqZeH0nD32b3YnMuItY/hZ7q0//z5Mee5wj
+         DAIsQcdldkqm+qKDm6PYF7xhI+S5CW+a7OCHLa5wM7OEptbAtUCyituWsaWjG2XOVWuo
+         CbxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740984804; x=1741589604;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0VDfBl/g+euIY5A7idLgNTsyB1EqJtuEAA78H1xpF24=;
-        b=orFNqNyRWOeTq2jj8nZ8LvunmzBeYBsjY9k1r8sSm2IF1ZeNJzVErJMYjLxG92g0KS
-         x2xjryN13iJ3U+4LCHxBWI2/vodQ5OWSrDSoU8jIaNIBCkR2kIJP9hifyJo3uUPIFi9F
-         05tfSyxPhz0qckubjroMDjriWf9jk5R+DcHus2n0tdzYjnU/1khRIG0xob2ONHNoiPKm
-         /8IFGmkJnN+4uQE/lt/2SXxTkknNhAhTkCacF0tWMWPGnYq/DqT95D4frueYFSkZsjaJ
-         86VD0eCj0rqYroHeO3cPVcpXrreu4T+pbi9BlqoZnmxOAHWjW/+gJAWlnuyFWzuWqOHF
-         tpnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaG+/TSc1ARydHyr9O1n9c08btTm/ohQG4Ll8Ak4ssg7uPjFnHiuEQ4eT9vZwsUgxWe/SqRi/pBQiE+c4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGhHIU+td36iEAilkKWLhYDM7ni5ABK3MNcV0Rizl1CiYGo1j4
-	rvNIR61668UUGikWg0gUYWq/wz8et/yicVmA98R6JRu92eOBkIVJ
-X-Gm-Gg: ASbGncvrScjqHVOJRIu+Xd0OUSPp0tYJDUj42gzChUKx9XyrXc57yBirP5OdXVU/RPi
-	3++wXuskUKZYuQSM0/n75wM0w8dRlLf5fczT/R64EovOkCtCV1CDuev/MsvemHy6LCWxzFes4Ys
-	W9YXYzZnnhIlHjs/GpvhLQhaX0K8nRixIlPMh5W2/GON8tq8QIsmBYPL84G2SUr47lS4DqTwW+s
-	B11ryS0bw4dLKwcnFj3vvxAodl0pItmceCeMSqnewqirEurYwbq8Ep44RIMEXstKHWLmzkKczv1
-	R07yTbB6xkJvLQI1O+f0XzunkxevOU+DAkWkpxh/2QW8y+heqfLC6fql9isA0nZkQ2HXcbPVXXB
-	rYuvxQnp2BnnUhqTRfZP3ypxA55V+muJf
-X-Google-Smtp-Source: AGHT+IHwrJ0Bmez936adXWPCRV+8RVc6i1HjyAM+ze8/4qWNJCAHMwpEooQ5K33kkR0L8GbXxESxDQ==
-X-Received: by 2002:a05:6a00:2d1d:b0:736:4536:26cc with SMTP id d2e1a72fcca58-73645362c6fmr7093262b3a.23.1740984804256;
-        Sun, 02 Mar 2025 22:53:24 -0800 (PST)
-Received: from ?IPV6:2408:8411:5468:b0:ddf2:d4b5:e1cb:9275? ([2408:8411:5468:b0:ddf2:d4b5:e1cb:9275])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736657f9920sm67659b3a.50.2025.03.02.22.53.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 22:53:23 -0800 (PST)
-Message-ID: <076b12ae-91c7-44a1-b616-f4b6d36f4d5d@gmail.com>
-Date: Mon, 3 Mar 2025 14:53:17 +0800
+        d=1e100.net; s=20230601; t=1740984942; x=1741589742;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mRORuk1lZoTaQ72m0hDUrhIZjvt/8jV8y2hi7nR1rH4=;
+        b=suFwdiyNZA0JbWiEi0TXHf+IvW/ljHBkTfDJQ+2L4UlBrxDBNtc4IlHr+mpm8CIEXD
+         WMGfuY15rS65JXe9FVzJeZgRO20UbSPtlX3qniEIg480H+c6Iuw2j4W/u39sShOcfvg8
+         BHY+EJv5SUMKSkf9V+BT5XAl+TsSpazKZW2GokkmL8cUtY7PRN9aNgkTivyx3rsT3aTJ
+         LfhHP4rVR7aKu+dhETTW7Z4TCP325Qvd3K3CZCYaOlv6Cpkgot85Yv78PLd2PawCJN+E
+         OjgIzW9tJnpohjh1eTvoH/3R55zDuh8kkPxZNMCOfnvwmu++goupNbEKcJj784IaummP
+         vSkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaZ0LDfilroFGotxwUs0Pfwu23itUneKG16UXqhZBx+j22RlJpFBk50THHwJQgqs7FwKopujvCMg3KYSeJ@vger.kernel.org, AJvYcCVd2ZRLuKvEvWhuGEUpy4y40UgSxaCbXgbr/fZAIcNRlbHFnd5Oc8uEUkZiGF5DyHVIhc4=@vger.kernel.org, AJvYcCWLzJ+qic91j3VTUTKcT6wtq9IWpoqTX9o/dIQe2ua8o8yDpM1d1Pp4T/6wqVbYr4vI4GNlaBevdqk8bgaSj7IRvG55@vger.kernel.org, AJvYcCXI+S/wzQB6qwUw0SIhc1Z1+3L5tXeT/FUwz0yN0UeJzona5bR04qq/aXAYtSsdOfZ0QLBjZr/e@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY7fs14CO6IT6mBcyh++PE1n65c3BuzrmMew8tsIaJsMJUb/ne
+	hEDghayiT+g3SxP0ZsrsGEt989NbuhW8X9KCj8PMiBn8buZJSbzs
+X-Gm-Gg: ASbGncszGpdF4dJbPRVDq5RdSBzT473KXgm/jWG4RM85wuM9CXeD3ZqfBvQFLPJKEXi
+	OLveof+iQj+zWaWe2/l17DtQ/MFsllqrs4agk1o/2PKwZa8+rGJA2qhblETps/08p4nMSDdO1ts
+	NOKjs0v7rNC3NCDBTfEtJqJfgINvqON43jCy/fOLKBc7YF7F/dhOgHOIJHF5DdlbixsTWfxz+XO
+	vmpebOanNRxb/HHToaiM0DlE3J296dJt9db+0kG8m316GM3mYAJQmmC75N19qugWDF91JBMcAYA
+	XOFiM1eFI5MITkuS4qeAynOIPamRn7JRB8WXetAj2zHsep7yD6mhg6nLW00mZA==
+X-Google-Smtp-Source: AGHT+IHkrQ6QYFMj0geZ0tfgbyR4QorZaQfQ/7JtrPSfKkhKbt8kMcBnshigR2/4fvzZe6e2RxKkcw==
+X-Received: by 2002:a17:90b:3ec9:b0:2fa:17dd:6afa with SMTP id 98e67ed59e1d1-2febab78721mr21988807a91.17.1740984941579;
+        Sun, 02 Mar 2025 22:55:41 -0800 (PST)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea6769ad2sm8139575a91.11.2025.03.02.22.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 22:55:41 -0800 (PST)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: peterz@infradead.org,
+	rostedt@goodmis.org,
+	mark.rutland@arm.com,
+	alexei.starovoitov@gmail.com
+Cc: catalin.marinas@arm.com,
+	will@kernel.org,
+	mhiramat@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	samitolvanen@google.com,
+	kees@kernel.org,
+	dongml2@chinatelecom.cn,
+	akpm@linux-foundation.org,
+	riel@surriel.com,
+	rppt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH bpf-next v3 0/4] per-function storage support
+Date: Mon,  3 Mar 2025 14:53:41 +0800
+Message-Id: <20250303065345.229298-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] RISC-V CRC optimizations
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org,
- Ard Biesheuvel <ardb@kernel.org>, Xiao Wang <xiao.w.wang@intel.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-References: <20250216225530.306980-1-ebiggers@kernel.org>
- <20250224180614.GA11336@google.com>
- <87ikorl0r5.fsf@all.your.base.are.belong.to.us>
-From: Zhihang Shao <zhihang.shao.iscas@gmail.com>
-In-Reply-To: <87ikorl0r5.fsf@all.your.base.are.belong.to.us>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025/3/3 2:56, Björn Töpel wrote:
+For now, there isn't a way to set and get per-function metadata with
+a low overhead, which is not convenient for some situations. Take
+BPF trampoline for example, we need to create a trampoline for each
+kernel function, as we have to store some information of the function
+to the trampoline, such as BPF progs, function arg count, etc. The
+performance overhead and memory consumption can be higher to create
+these trampolines. With the supporting of per-function metadata storage,
+we can store these information to the metadata, and create a global BPF
+trampoline for all the kernel functions. In the global trampoline, we
+get the information that we need from the function metadata through the
+ip (function address) with almost no overhead.
 
-> Eric!
->
-> Eric Biggers <ebiggers@kernel.org> writes:
->
->> On Sun, Feb 16, 2025 at 02:55:26PM -0800, Eric Biggers wrote:
->>> This patchset is a replacement for
->>> "[PATCH v4] riscv: Optimize crct10dif with Zbc extension"
->>> (https://lore.kernel.org/r/20250211071101.181652-1-zhihang.shao.iscas@gmail.com/).
->>> It adopts the approach that I'm taking for x86 where code is shared
->>> among CRC variants.  It replaces the existing Zbc optimized CRC32
->>> functions, then adds Zbc optimized CRC-T10DIF and CRC64 functions.
->>>
->>> This new code should be significantly faster than the current Zbc
->>> optimized CRC32 code and the previously proposed CRC-T10DIF code.  It
->>> uses "folding" instead of just Barrett reduction, and it also implements
->>> Barrett reduction more efficiently.
->>>
->>> This applies to crc-next at
->>> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next.
->>> It depends on other patches that are queued there for 6.15, so I plan to
->>> take it through there if there are no objections.
->>>
->>> Tested with crc_kunit in QEMU (set CONFIG_CRC_KUNIT_TEST=y and
->>> CONFIG_CRC_BENCHMARK=y), both 32-bit and 64-bit.  I don't have real Zbc
->>> capable hardware to benchmark this on, but the new code should work very
->>> well; similar optimizations work very well on other architectures.
->> Any feedback on this series from the RISC-V side?
-> I have not reviewed your series, but I did a testrun the Milk-V Jupiter
-> which sports a Spacemit K1 that has Zbc.
->
-> I based the run on commit 1973160c90d7 ("Merge tag
-> 'gpio-fixes-for-v6.14-rc5' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux"), plus your
-> crc-next branch (commit a0bd462f3a13 ("x86/crc: add ANNOTATE_NOENDBR to
-> suppress objtool warnings")) merged:
->
->    | --- base1.txt	2025-03-02 18:31:16.169438876 +0000
->    | +++ eric.txt	2025-03-02 18:35:58.683017223 +0000
->    | @@ -11,7 +11,7 @@
->    |      # crc16_benchmark: len=127: 153 MB/s
->    |      # crc16_benchmark: len=128: 153 MB/s
->    |      # crc16_benchmark: len=200: 153 MB/s
->    | -    # crc16_benchmark: len=256: 153 MB/s
->    | +    # crc16_benchmark: len=256: 154 MB/s
->    |      # crc16_benchmark: len=511: 154 MB/s
->    |      # crc16_benchmark: len=512: 154 MB/s
->    |      # crc16_benchmark: len=1024: 155 MB/s
->    | @@ -20,94 +20,94 @@
->    |      # crc16_benchmark: len=16384: 155 MB/s
->    |      ok 2 crc16_benchmark
->    |      ok 3 crc_t10dif_test
->    | -    # crc_t10dif_benchmark: len=1: 48 MB/s
->    | -    # crc_t10dif_benchmark: len=16: 125 MB/s
->    | -    # crc_t10dif_benchmark: len=64: 136 MB/s
->    | -    # crc_t10dif_benchmark: len=127: 138 MB/s
->    | -    # crc_t10dif_benchmark: len=128: 138 MB/s
->    | -    # crc_t10dif_benchmark: len=200: 138 MB/s
->    | -    # crc_t10dif_benchmark: len=256: 138 MB/s
->    | -    # crc_t10dif_benchmark: len=511: 139 MB/s
->    | -    # crc_t10dif_benchmark: len=512: 139 MB/s
->    | -    # crc_t10dif_benchmark: len=1024: 139 MB/s
->    | -    # crc_t10dif_benchmark: len=3173: 140 MB/s
->    | -    # crc_t10dif_benchmark: len=4096: 140 MB/s
->    | -    # crc_t10dif_benchmark: len=16384: 140 MB/s
->    | +    # crc_t10dif_benchmark: len=1: 28 MB/s
->    | +    # crc_t10dif_benchmark: len=16: 236 MB/s
->    | +    # crc_t10dif_benchmark: len=64: 450 MB/s
->    | +    # crc_t10dif_benchmark: len=127: 480 MB/s
->    | +    # crc_t10dif_benchmark: len=128: 540 MB/s
->    | +    # crc_t10dif_benchmark: len=200: 559 MB/s
->    | +    # crc_t10dif_benchmark: len=256: 600 MB/s
->    | +    # crc_t10dif_benchmark: len=511: 613 MB/s
->    | +    # crc_t10dif_benchmark: len=512: 635 MB/s
->    | +    # crc_t10dif_benchmark: len=1024: 654 MB/s
->    | +    # crc_t10dif_benchmark: len=3173: 665 MB/s
->    | +    # crc_t10dif_benchmark: len=4096: 669 MB/s
->    | +    # crc_t10dif_benchmark: len=16384: 673 MB/s
->    |      ok 4 crc_t10dif_benchmark
->    |      ok 5 crc32_le_test
->    |      # crc32_le_benchmark: len=1: 31 MB/s
->    | -    # crc32_le_benchmark: len=16: 456 MB/s
->    | -    # crc32_le_benchmark: len=64: 682 MB/s
->    | -    # crc32_le_benchmark: len=127: 620 MB/s
->    | -    # crc32_le_benchmark: len=128: 744 MB/s
->    | -    # crc32_le_benchmark: len=200: 768 MB/s
->    | -    # crc32_le_benchmark: len=256: 777 MB/s
->    | -    # crc32_le_benchmark: len=511: 758 MB/s
->    | -    # crc32_le_benchmark: len=512: 798 MB/s
->    | -    # crc32_le_benchmark: len=1024: 807 MB/s
->    | -    # crc32_le_benchmark: len=3173: 807 MB/s
->    | -    # crc32_le_benchmark: len=4096: 814 MB/s
->    | -    # crc32_le_benchmark: len=16384: 816 MB/s
->    | +    # crc32_le_benchmark: len=16: 439 MB/s
->    | +    # crc32_le_benchmark: len=64: 1209 MB/s
->    | +    # crc32_le_benchmark: len=127: 1067 MB/s
->    | +    # crc32_le_benchmark: len=128: 1616 MB/s
->    | +    # crc32_le_benchmark: len=200: 1739 MB/s
->    | +    # crc32_le_benchmark: len=256: 1951 MB/s
->    | +    # crc32_le_benchmark: len=511: 1855 MB/s
->    | +    # crc32_le_benchmark: len=512: 2174 MB/s
->    | +    # crc32_le_benchmark: len=1024: 2301 MB/s
->    | +    # crc32_le_benchmark: len=3173: 2347 MB/s
->    | +    # crc32_le_benchmark: len=4096: 2407 MB/s
->    | +    # crc32_le_benchmark: len=16384: 2440 MB/s
->    |      ok 6 crc32_le_benchmark
->    |      ok 7 crc32_be_test
->    | -    # crc32_be_benchmark: len=1: 27 MB/s
->    | -    # crc32_be_benchmark: len=16: 258 MB/s
->    | -    # crc32_be_benchmark: len=64: 388 MB/s
->    | -    # crc32_be_benchmark: len=127: 402 MB/s
->    | -    # crc32_be_benchmark: len=128: 424 MB/s
->    | -    # crc32_be_benchmark: len=200: 438 MB/s
->    | -    # crc32_be_benchmark: len=256: 444 MB/s
->    | -    # crc32_be_benchmark: len=511: 449 MB/s
->    | -    # crc32_be_benchmark: len=512: 455 MB/s
->    | -    # crc32_be_benchmark: len=1024: 461 MB/s
->    | -    # crc32_be_benchmark: len=3173: 463 MB/s
->    | -    # crc32_be_benchmark: len=4096: 465 MB/s
->    | -    # crc32_be_benchmark: len=16384: 466 MB/s
->    | +    # crc32_be_benchmark: len=1: 25 MB/s
->    | +    # crc32_be_benchmark: len=16: 251 MB/s
->    | +    # crc32_be_benchmark: len=64: 458 MB/s
->    | +    # crc32_be_benchmark: len=127: 496 MB/s
->    | +    # crc32_be_benchmark: len=128: 547 MB/s
->    | +    # crc32_be_benchmark: len=200: 569 MB/s
->    | +    # crc32_be_benchmark: len=256: 605 MB/s
->    | +    # crc32_be_benchmark: len=511: 621 MB/s
->    | +    # crc32_be_benchmark: len=512: 637 MB/s
->    | +    # crc32_be_benchmark: len=1024: 657 MB/s
->    | +    # crc32_be_benchmark: len=3173: 668 MB/s
->    | +    # crc32_be_benchmark: len=4096: 671 MB/s
->    | +    # crc32_be_benchmark: len=16384: 674 MB/s
->    |      ok 8 crc32_be_benchmark
->    |      ok 9 crc32c_test
->    |      # crc32c_benchmark: len=1: 31 MB/s
->    | -    # crc32c_benchmark: len=16: 457 MB/s
->    | -    # crc32c_benchmark: len=64: 682 MB/s
->    | -    # crc32c_benchmark: len=127: 620 MB/s
->    | -    # crc32c_benchmark: len=128: 744 MB/s
->    | -    # crc32c_benchmark: len=200: 769 MB/s
->    | -    # crc32c_benchmark: len=256: 779 MB/s
->    | -    # crc32c_benchmark: len=511: 758 MB/s
->    | -    # crc32c_benchmark: len=512: 797 MB/s
->    | -    # crc32c_benchmark: len=1024: 807 MB/s
->    | -    # crc32c_benchmark: len=3173: 806 MB/s
->    | -    # crc32c_benchmark: len=4096: 813 MB/s
->    | -    # crc32c_benchmark: len=16384: 816 MB/s
->    | +    # crc32c_benchmark: len=16: 446 MB/s
->    | +    # crc32c_benchmark: len=64: 1188 MB/s
->    | +    # crc32c_benchmark: len=127: 1066 MB/s
->    | +    # crc32c_benchmark: len=128: 1600 MB/s
->    | +    # crc32c_benchmark: len=200: 1727 MB/s
->    | +    # crc32c_benchmark: len=256: 1941 MB/s
->    | +    # crc32c_benchmark: len=511: 1854 MB/s
->    | +    # crc32c_benchmark: len=512: 2164 MB/s
->    | +    # crc32c_benchmark: len=1024: 2300 MB/s
->    | +    # crc32c_benchmark: len=3173: 2345 MB/s
->    | +    # crc32c_benchmark: len=4096: 2402 MB/s
->    | +    # crc32c_benchmark: len=16384: 2437 MB/s
->    |      ok 10 crc32c_benchmark
->    |      ok 11 crc64_be_test
->    | -    # crc64_be_benchmark: len=1: 64 MB/s
->    | -    # crc64_be_benchmark: len=16: 144 MB/s
->    | -    # crc64_be_benchmark: len=64: 154 MB/s
->    | -    # crc64_be_benchmark: len=127: 156 MB/s
->    | -    # crc64_be_benchmark: len=128: 156 MB/s
->    | -    # crc64_be_benchmark: len=200: 156 MB/s
->    | -    # crc64_be_benchmark: len=256: 156 MB/s
->    | -    # crc64_be_benchmark: len=511: 157 MB/s
->    | -    # crc64_be_benchmark: len=512: 157 MB/s
->    | -    # crc64_be_benchmark: len=1024: 157 MB/s
->    | -    # crc64_be_benchmark: len=3173: 158 MB/s
->    | -    # crc64_be_benchmark: len=4096: 158 MB/s
->    | -    # crc64_be_benchmark: len=16384: 158 MB/s
->    | +    # crc64_be_benchmark: len=1: 29 MB/s
->    | +    # crc64_be_benchmark: len=16: 264 MB/s
->    | +    # crc64_be_benchmark: len=64: 476 MB/s
->    | +    # crc64_be_benchmark: len=127: 499 MB/s
->    | +    # crc64_be_benchmark: len=128: 558 MB/s
->    | +    # crc64_be_benchmark: len=200: 576 MB/s
->    | +    # crc64_be_benchmark: len=256: 611 MB/s
->    | +    # crc64_be_benchmark: len=511: 621 MB/s
->    | +    # crc64_be_benchmark: len=512: 638 MB/s
->    | +    # crc64_be_benchmark: len=1024: 659 MB/s
->    | +    # crc64_be_benchmark: len=3173: 667 MB/s
->    | +    # crc64_be_benchmark: len=4096: 671 MB/s
->    | +    # crc64_be_benchmark: len=16384: 674 MB/s
->    |      ok 12 crc64_be_benchmark
->    |      ok 13 crc64_nvme_test
->    | -    # crc64_nvme_benchmark: len=1: 64 MB/s
->    | -    # crc64_nvme_benchmark: len=16: 144 MB/s
->    | -    # crc64_nvme_benchmark: len=64: 154 MB/s
->    | -    # crc64_nvme_benchmark: len=127: 156 MB/s
->    | -    # crc64_nvme_benchmark: len=128: 156 MB/s
->    | -    # crc64_nvme_benchmark: len=200: 156 MB/s
->    | -    # crc64_nvme_benchmark: len=256: 156 MB/s
->    | -    # crc64_nvme_benchmark: len=511: 157 MB/s
->    | -    # crc64_nvme_benchmark: len=512: 157 MB/s
->    | -    # crc64_nvme_benchmark: len=1024: 157 MB/s
->    | -    # crc64_nvme_benchmark: len=3173: 158 MB/s
->    | -    # crc64_nvme_benchmark: len=4096: 158 MB/s
->    | -    # crc64_nvme_benchmark: len=16384: 158 MB/s
->    | +    # crc64_nvme_benchmark: len=1: 36 MB/s
->    | +    # crc64_nvme_benchmark: len=16: 479 MB/s
->    | +    # crc64_nvme_benchmark: len=64: 1340 MB/s
->    | +    # crc64_nvme_benchmark: len=127: 1179 MB/s
->    | +    # crc64_nvme_benchmark: len=128: 1766 MB/s
->    | +    # crc64_nvme_benchmark: len=200: 1965 MB/s
->    | +    # crc64_nvme_benchmark: len=256: 2201 MB/s
->    | +    # crc64_nvme_benchmark: len=511: 2087 MB/s
->    | +    # crc64_nvme_benchmark: len=512: 2464 MB/s
->    | +    # crc64_nvme_benchmark: len=1024: 2331 MB/s
->    | +    # crc64_nvme_benchmark: len=3173: 2673 MB/s
->    | +    # crc64_nvme_benchmark: len=4096: 2745 MB/s
->    | +    # crc64_nvme_benchmark: len=16384: 2782 MB/s
->    |      ok 14 crc64_nvme_benchmark
->    |  # crc: pass:14 fail:0 skip:0 total:14
->    |  # Totals: pass:14 fail:0 skip:0 total:14
->
-> That's a significant speed up for this popular SoC, and it would be
-> great to get this series in for the next merge window! Thank you!
->
-> Tested-by: Björn Töpel <bjorn@rivosinc.com>
->
->
-> Björn
+Another beneficiary can be ftrace. For now, all the kernel functions that
+are enabled by dynamic ftrace will be added to a filter hash if there are
+more than one callbacks. And hash lookup will happen when the traced
+functions are called, which has an impact on the performance, see
+__ftrace_ops_list_func() -> ftrace_ops_test(). With the per-function
+metadata supporting, we can store the information that if the callback is
+enabled on the kernel function to the metadata.
 
-I am happy to see that crc-t10dif can achieve remarkable performance 
-improvements under the optimization of the ZBC extension. It has been a 
-great honor for me to contribute to such impactful work.
+In the 1st patch, we factor out FINEIBT_INSN_OFFSET and CFI_INSN_OFFSET to
+make fineibt works on the kernel function is 32-bytes aligned.
 
-Zhihang
+In the 2nd patch, we implement the per-function metadata storage by
+storing the index of the metadata to the function padding space.
+
+In the 3rd and 4th patch, we implement the per-function metadata storage
+for x86 and arm64. And in the feature, we can support more arch.
+
+Changes since V2:
+- split the patch into a series.
+- considering the effect to cfi and fineibt and introduce the 1st patch.
+
+Changes since V1:
+- add supporting for arm64
+- split out arch relevant code
+- refactor the commit log
+
+Menglong Dong (4):
+  x86/ibt: factor out cfi and fineibt offset
+  add per-function metadata storage support
+  x86: implement per-function metadata storage for x86
+  arm64: implement per-function metadata storage for arm64
+
+ arch/arm64/Kconfig              |  15 ++
+ arch/arm64/Makefile             |  23 ++-
+ arch/arm64/include/asm/ftrace.h |  34 +++++
+ arch/arm64/kernel/ftrace.c      |  13 +-
+ arch/x86/Kconfig                |  16 +++
+ arch/x86/include/asm/cfi.h      |  12 +-
+ arch/x86/include/asm/ftrace.h   |  54 ++++++++
+ arch/x86/kernel/alternative.c   |  27 +++-
+ arch/x86/net/bpf_jit_comp.c     |  22 +--
+ include/linux/kfunc_md.h        |  25 ++++
+ kernel/Makefile                 |   1 +
+ kernel/trace/Makefile           |   1 +
+ kernel/trace/kfunc_md.c         | 239 ++++++++++++++++++++++++++++++++
+ 13 files changed, 456 insertions(+), 26 deletions(-)
+ create mode 100644 include/linux/kfunc_md.h
+ create mode 100644 kernel/trace/kfunc_md.c
+
+-- 
+2.39.5
 
 
