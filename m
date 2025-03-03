@@ -1,275 +1,211 @@
-Return-Path: <linux-kernel+bounces-544432-lists+linux-kernel=lfdr.de@vger.kernel.org>
-X-Original-To: lists+linux-kernel@lfdr.de
-Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0465DA4E11C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:36:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DFA189EA34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:32:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C052517BC;
-	Tue,  4 Mar 2025 14:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Itw1Q/Vp"
+Return-Path: <linuxppc-dev+bounces-6692-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
+X-Original-To: lists+linuxppc-dev@lfdr.de
+Delivered-To: lists+linuxppc-dev@lfdr.de
+Received: from lists.ozlabs.org (lists.ozlabs.org [112.213.38.117])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC6A4E1D3
+	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 15:53:54 +0100 (CET)
+Received: from boromir.ozlabs.org (localhost [127.0.0.1])
+	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6dwv6tyLz3bmc;
+	Wed,  5 Mar 2025 01:53:51 +1100 (AEDT)
+X-Original-To: linuxppc-dev@lists.ozlabs.org
+Authentication-Results: lists.ozlabs.org; arc=fail smtp.remote-ip=160.75.25.117
+ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741100031;
+	cv=fail; b=lgK9fLlbQr9qivqVmbNkPqVCmmLV2Fru7FvyBUlX4s6syZPNkrHgsPM9j6oqpigHeftNyq7AaAqEf9VjO+j/cQUobSoRnIS7ogDc9Qssz43d6ja1Qgb/mKpuZS/fiRwLS8b0+wzxnTkWHEq5TGTlqVwsvzvNofWYWwKDXe70frxiXb2L5FrrB6DaBXwdzej92OpaWA6BofXSEUAU2/vLDQ3W+b8PXuOj5xmrdEmxtkog/36oNcm812lNeE0b+pWHDJSxbkbUxFmitM0bPXSvfacAyO5yvX2ceDmrDNKkca/tf24Vq2cNAQtueAr2jev41GgnpBGA6vlaKG+gexzx6A==
+ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
+	t=1741100031; c=relaxed/relaxed;
+	bh=i2mJA4xQ6qhUzfIY1k5dkOFTjJhsThp87cU7W6jEn4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwGxhX5ItjwKXq9YWa1Ke3iwMsEwwmfDYbZK3B6I7tkqcwwN7N6IW4JX6KY7pY0baQG5SqaoRAq7AVODC5MNCVjxdv4xzMLcdWuVEcorywUzC61sXAN14Du84vB2gk+jXkp75Oil4HQtLrqSGxoY4VC9ZHh7ow0F9sfacj/iPhyeYlisjq8BSuthy6fX+OngA2N+1jpyAifjHNIVCYhzs/9Ffi0sCuVk2YSbE91XgRcZRCXgSgGuXjVqe70cPbsee2L4nCIl3n7RaHFMvxw6aWLDBMZx3VuYLd0Em0DZqtp3xx7q7cd6i2iFHpF08cdcAXk1rOGvmGQ0fDl8C1doJQ==
+ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; dkim=fail (2048-bit key; unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=LDE7Vziq reason="signature verification failed"; dkim-atps=neutral; spf=none (client-ip=160.75.25.117; helo=beeline3.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
+Authentication-Results: lists.ozlabs.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: lists.ozlabs.org;
+	dkim=fail reason="signature verification failed" (2048-bit key; unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=LDE7Vziq;
+	dkim-atps=neutral
+Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.117; helo=beeline3.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7507823496F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098644; cv=pass; b=TWyLuWOpYwtSWcal/+tb2YGd8oflCGOSPwpqAYR4wOjl+6VKZugLCaiBq/ta3GQkr//eiH9WCIYvSFBgFQ1W/PrefAs5SnjLgNKOo4hsQImkR6v8TIBjDzwoGWkZh93ezo7AnhRj6qLF3LRZH7BYAZsVfgWTxtrNsNvTb4wc8Ko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098644; c=relaxed/simple;
-	bh=GcGZjB4psRJn240loMGAFUQ6PTe1U2vHy+yhCkQHk2c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7iTymEvHtllNWDjqMRMsWVyN4p8AXJ9kFzTsuSsbvx6fRm3nx664laa4zYKzV+my8EFcRBc4yK+NboLXXgZU8iEcTQCNY6CPQsd7Aykk5oYdy/1PAnMxNrHEPEx0YdGbzaN6A1gFywZx1jkxycW8Vvo/PKsavg5AjVhY8y/ziM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Itw1Q/Vp; arc=none smtp.client-ip=52.119.213.152; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6dwv08xvz3bmN
+	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 01:53:50 +1100 (AEDT)
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D571740CEC85
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:30:40 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id F199E40CEC89
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:53:17 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=amazon.com header.i=@amazon.com header.a=rsa-sha256 header.s=amazon201209 header.b=Itw1Q/Vp
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=LDE7Vziq
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dMM3CK3zFwjH
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:15 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dtM2mb3zFxgq
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:51:39 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 25B1742754; Tue,  4 Mar 2025 17:28:08 +0300 (+03)
+	id A5A894273A; Tue,  4 Mar 2025 17:51:25 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Itw1Q/Vp
-X-Envelope-From: <linux-kernel+bounces-541862-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq
+X-Envelope-From: <linux-kernel+bounces-541866-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Itw1Q/Vp
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 14EC741D5C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:57:37 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id E06F5305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:57:36 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 3A16641CC5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:00:40 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id CA0B62DCE4
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:00:39 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91BF1894FC8
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654EF3A89E9
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B83E212FBC;
-	Mon,  3 Mar 2025 13:57:26 +0000 (UTC)
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E163F2135B9;
+	Mon,  3 Mar 2025 14:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDE7Vziq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8F41F3B9E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443818489;
+	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010243; cv=none; b=XKSGSVwAuOwW5QR+cJsL1ARDp4pcUHfdqoy0GzJwqtgYqFbxDhsrVJzdHgXtoti8+hbvQwCNuZBTLExdGmzmy1ETQyymdqg1sCS3I6HiLuBhKA3jYGPQaFPZUTZE8oRKJCn9ZPZEwAzAJpxPY4eWtC54AUtIIAQxgy7xVJC+kwE=
+	t=1741010423; cv=none; b=TLl5Nx3N/EGjJzLzX8AgfxnYh/Z9hNoRhHBdZK2TMf1cBBVwV33jsSeLlJyiP8SYEqQYc03i3Z4MhCk+NyD+d7QnrKUorfu84+aeOK68IPdsPgFawkMHItUmg90fTSi40gmPw00GZcsxTAZN+2pm+dMU8SbKACaGJrE6J+lKSM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010243; c=relaxed/simple;
-	bh=GcGZjB4psRJn240loMGAFUQ6PTe1U2vHy+yhCkQHk2c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2X/cQohFxXWd96qL+otl7a4/42mE3yknrBk9GYYl8zbbgr/gSqrUfE9l4OvGd4OSp8q+3/fCl5aRu3/iw7KXoqfTYVscbRVbOVmhrHHAg8Oda4dwxvyhnplbzBynVREiSefyfqZadP0SkD4tgeNVtMMqZi/JvumP3+aLQVVyWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Itw1Q/Vp; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741010242; x=1772546242;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EcQU7JWqSgBdXG7/K0YCP2UVn+lCPSs4bSrgwB88G3k=;
-  b=Itw1Q/VptXvToxtFulH6HEIvORBgeq3koVI860MoPNbdadMpQh5rkre3
-   SxhgN+KDPkTfELYx0CwwZH8thsQoi0bOXHKGMn9HXy6qkDl3tat26C5br
-   Gs2Wf0ztt3IArm/o0VbCFXFVUByxaKBDV7/YgmA5pLJgRpOmhe2mbqi0J
-   c=;
-X-IronPort-AV: E=Sophos;i="6.13,329,1732579200"; 
-   d="scan'208";a="70793752"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 13:57:19 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:6856]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.36.78:2525] with esmtp (Farcaster)
- id 17630173-f0aa-49ad-a610-76369532b75c; Mon, 3 Mar 2025 13:57:17 +0000 (UTC)
-X-Farcaster-Flow-ID: 17630173-f0aa-49ad-a610-76369532b75c
-Received: from EX19D018EUA002.ant.amazon.com (10.252.50.146) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 3 Mar 2025 13:57:17 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D018EUA002.ant.amazon.com (10.252.50.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 3 Mar 2025 13:57:16 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Mon, 3 Mar 2025 13:57:16 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com [10.253.65.58])
-	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTP id 05F94A006A;
-	Mon,  3 Mar 2025 13:57:16 +0000 (UTC)
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 8F59120DA9; Mon,  3 Mar 2025 13:57:15 +0000 (UTC)
-Date: Mon, 3 Mar 2025 13:57:15 +0000
-From: Hagar Hemdan <hagarhem@amazon.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: <hagarhem@amazon.com>, <abuehaze@amazon.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: BUG Report: Fork benchmark drop by 30% on aarch64
-Message-ID: <20250303135715.GA21308@amazon.com>
-References: <4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com>
- <20250207110754.GA10452@amazon.com>
- <1ca758c7-b6ab-4880-9cc7-217093a30bbb@arm.com>
- <20250210213155.GA649@amazon.com>
- <4b48fd24-6cd5-474c-bed8-3faac096fd58@arm.com>
- <20250211214019.GA15530@amazon.com>
- <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
- <5f92761b-c7d4-4b96-9398-183a5bf7556a@arm.com>
- <20250221064436.GA485@amazon.com>
- <14a2aaac-05d5-4b2e-a8c1-617bb4411659@arm.com>
-Precedence: bulk
+	s=arc-20240116; t=1741010423; c=relaxed/simple;
+	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4dOf+svt5Ia4GXZkAt6JeWK79X8QOvHg8GDDFjuXwyrES1W64+mvRpS/BM3+78wbuuZtZG1o2vrb4nAs/tm3mHy2KZa4CpZMhZTa/X2iLoWZFlTPC1GWPg3NOVUOQYssiTDrws1+bWKtzOl+88EuVLi7c92jzCGlbB6Qa26cgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C4AC4CED6;
+	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741010422;
+	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LDE7VziqE8Z5eAcLy1ADJtkYPvmnQ1FWgShTdhPsi0Jp00/5H4ih7eFkudyTpV6Ey
+	 vzUekJexEEcxmdtofMzZn68/GabGTmMLoyDmPxm2kdElEPPLV3qZha5Aib/AxkKR7v
+	 m/mOgM3NliygKNSm4cdkNZYbDU4CUHy7o2nUsiBNydIculfOZE9XJX6vA2Cx8O7TEs
+	 nqGWAiDj2LY2VHmrB5jeTqSMkAWpR8/oVe9f3U39KoH0vSV+sGksApEvY4YbqOUYgD
+	 MEbgvDOyAHF9gVrkOu+yiC5BM/+QxMgNexT3mwUVWIsR0RWjNldR9e1Z2gFqBmOcaC
+	 wYe+elLtbMKhQ==
+Date: Mon, 3 Mar 2025 08:00:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: Richard Weinberger <richard@nod.at>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Crystal Wood <oss@buserror.net>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linux-mtd@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: nand: Add fsl,elbc-fcm-nand
+Message-ID: <20250303140021.GA1732495-robh@kernel.org>
+References: <20250226-ppcyaml-elbc-v3-0-a90ed71da838@posteo.net>
+ <20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net>
+ <174059551678.3319332.12055848852503108874.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+X-Mailing-List: linuxppc-dev@lists.ozlabs.org
+List-Id: <linuxppc-dev.lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
+List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
+  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
+List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <14a2aaac-05d5-4b2e-a8c1-617bb4411659@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <174059551678.3319332.12055848852503108874.robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dMM3CK3zFwjH
+X-ITU-Libra-ESVA-ID: 4Z6dtM2mb3zFxgq
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703383.3033@+zftj7gdrMERAyPEu5FJkA
+X-ITU-Libra-ESVA-Watermark: 1741704711.86212@gxvqtOIarjAd9472fyqMLQ
 X-ITU-MailScanner-SpamCheck: not spam
+X-Spam-Status: No, score=-0.8 required=5.0 tests=ARC_SIGNED,ARC_VALID,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=disabled
+	version=4.0.0
+X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
-On Mon, Mar 03, 2025 at 11:05:01AM +0100, Dietmar Eggemann wrote:
-> On 21/02/2025 07:44, Hagar Hemdan wrote:
-> > On Mon, Feb 17, 2025 at 11:51:45PM +0100, Dietmar Eggemann wrote:
-> >> On 13/02/2025 19:55, Dietmar Eggemann wrote:
-> >>> On 11/02/2025 22:40, Hagar Hemdan wrote:
-> >>>> On Tue, Feb 11, 2025 at 05:27:47PM +0100, Dietmar Eggemann wrote:
-> >>>>> On 10/02/2025 22:31, Hagar Hemdan wrote:
-> >>>>>> On Mon, Feb 10, 2025 at 11:38:51AM +0100, Dietmar Eggemann wrote:
-> >>>>>>> On 07/02/2025 12:07, Hagar Hemdan wrote:
-> >>>>>>>> On Fri, Feb 07, 2025 at 10:14:54AM +0100, Dietmar Eggemann wrote:
-> >>>>>>>>> Hi Hagar,
-> >>>>>>>>>
-> >>>>>>>>> On 05/02/2025 16:10, Hagar Hemdan wrote:
-> 
-> [...]
-> 
-> >> './Run -c 4 spawn' on AWS instance (m7gd.16xlarge) with v6.13, 'mem=16G
-> >> maxcpus=4 nr_cpus=4' and Ubuntu '22.04.5 LTS':
-> >>
-> >> CFG_SCHED_AUTOGROUP | sched_ag_enabled | eff6c8ce8d4d | Fork (lps)
-> >>
-> >>    	y	             1		   y            21005 (27120 **)
-> >> 	y		     0		   y            21059 (27012 **)
-> >> 	n		     -		   y            21299
-> >> 	y		     1		   n	        27745 *
-> >> 	y		     0		   n	        27493 *
-> >> 	n		     -		   n	        20928
-> >>
-> >> (*) So here the higher numbers are only achieved when
-> >> 'sched_autogroup_exit_task() -> sched_move_task() ->
-> >> sched_change_group() is called for the 'spawn' tasks.
-> >>
-> >> (**) When I apply the fix from
-> >> https://lkml.kernel.org/r/4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com.
-> > Thanks!
-> > Will you submit that fix upstream?
-> 
-> I will, I just had to understand in detail why this regression happens.
-> 
-> Looks like the issue is rather related to 'sgs->group_util' in
-> group_is_overloaded() and group_has_capacity(). If we don't
-> 'deqeue/detach + attach/enqueue' (1) the task in sched_move_task() then
-> sgs->group_util is ~900 (you run 4 CPUs flat in a single MC sched domain
-> so sgs->group_capacity = 1024 and this leads to group_is_overloaded()
-> returning true and group_has_capacity() false much more often as if
-> we would do (1).
-> 
-> I.e. we have much more cases of 'group_is_overloaded' and
-> 'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
-> then (a) returns much more often a CPU != smp_processor_id() (which
-> isn't good for these extremely short running tasks (FORK + EXIT)) and
-> also involves calling sched_balance_find_dst_group_cpu() unnecessary
-> (since we deal with single CPU sched domains). 
-> 
-> select_task_rq_fair(..., wake_flags = WF_FORK)
-> 
->   cpu = smp_processor_id()
-> 
->   new_cpu = sched_balance_find_dst_group(..., cpu, ...)
-> 
->     do {
-> 
->       update_sg_wakeup_stats()
-> 
->         sgs->group_type = group_classify()   
-> 							w/o patch 	w/ patch                   
->           if group_is_overloaded() (*)
->             return group_overloaded /* 6 */		457,141		394
-> 
->           if !group_has_capacity() (**)
->             return group_fully_busy /* 1 */ 	  	816,629		714
-> 
->           return group_has_spare    /* 0 */		1,158,890	3,157,472
-> 
->     } while group 
-> 
->     if local_sgs.group_type > idlest_sgs.group_type	
->       return idlest					351,598		273
-> 
->     case group_has_spare:
-> 
->       if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
->         return NULL 					156,760		788,462
-> 
-> 
-> (*)
-> 
->   if sgs->group_capacity * 100) <			
-> 		sgs->group_util * imbalance_pct		951,705		856
->     return true
-> 
->   sgs->group_util ~ 900 and sgs->group_capacity = 1024 (1 CPU per sched group)
-> 
-> 
-> (**)
-> 
->  if sgs->group_capacity * 100 >
-> 		sgs->group_util * imbalance_pct
->    return true						1,087,555	3,163,152
-> 
->  return false						1,332,974	882
-> 
-> 
-> (*) and (**) are for 'wakeup' and 'load-balance' so they don't
-> match the only wakeup numbers above!
+On Wed, Feb 26, 2025 at 12:45:17PM -0600, Rob Herring (Arm) wrote:
+>=20
+> On Wed, 26 Feb 2025 18:01:41 +0100, J. Neusch=E4fer wrote:
+> > Formalize the binding already supported by the fsl_elbc_nand.c driver
+> > and used in several device trees in arch/powerpc/boot/dts/.
+> >=20
+> > raw-nand-chip.yaml is referenced in order to accommodate situations i=
+n
+> > which the ECC parameters settings are set in the device tree. One suc=
+h
+> > example is in arch/powerpc/boot/dts/turris1x.dts:
+> >=20
+> > 	/* MT29F2G08ABAEAWP:E NAND */
+> > 	nand@1,0 {
+> > 		compatible =3D "fsl,p2020-fcm-nand", "fsl,elbc-fcm-nand";
+> > 		reg =3D <0x1 0x0 0x00040000>;
+> > 		nand-ecc-mode =3D "soft";
+> > 		nand-ecc-algo =3D "bch";
+> >=20
+> > 		partitions { ... };
+> > 	};
+> >=20
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > Signed-off-by: J. Neusch=E4fer <j.ne@posteo.net>
+> > ---
+> >=20
+> > V3:
+> > - remove unnecessary #address/size-cells from nand node in example
+> > - add Frank Li's review tag
+> > - add missing end of document marker (...)
+> > - explain choice to reference raw-nand-chip.yaml
+> >=20
+> > V2:
+> > - split out from fsl,elbc binding patch
+> > - constrain #address-cells and #size-cells
+> > - add a general description
+> > - use unevaluatedProperties=3Dfalse instead of additionalProperties=3D=
+false
+> > - fix property order to comply with dts coding style
+> > - include raw-nand-chip.yaml instead of nand-chip.yaml
+> > ---
+> >  .../devicetree/bindings/mtd/fsl,elbc-fcm-nand.yaml | 68 ++++++++++++=
+++++++++++
+> >  1 file changed, 68 insertions(+)
+> >=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings=
+/mtd/fsl,elbc-fcm-nand.example.dtb: nand@1,0: $nodename:0: 'nand@1,0' doe=
+s not match '^nand@[a-f0-9]$'
+> 	from schema $id: http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.y=
+aml#
 
-Thank you for the detailed explanation. We appreciate your effort and
-will await the fix.
-> 
-> In this test run I got 608,092 new wakeups w/o and 789,572 (~+ 30%)
-> w/ the patch when running './Run -c 4 -i 1 spawn' on AWS instance
-> (m7gd.16xlarge) with v6.13, 'mem=16G maxcpus=4 nr_cpus=4' and
-> Ubuntu '22.04.5 LTS'
-> 
-> > Do you think that this fix is the same as reverting commit eff6c8ce8d4d and
-> > its follow up commit fa614b4feb5a? I mean what does commit eff6c8ce8d4d 
-> > actually improve?
-> 
-> There are occurrences in which 'group == tsk->sched_task_group' and
-> '!(tsk->flags & PF_EXITING)' so there the early bail might help w/o
-> the negative impact on sched benchmarks.
-ok, thanks!
+Drop the unit address in raw-nand-chip.yaml. So:=20
+
+properties:
+  $nodename:
+    pattern: "^nand@"
+
 
 
