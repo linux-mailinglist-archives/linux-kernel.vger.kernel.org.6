@@ -1,94 +1,70 @@
-Return-Path: <linux-kernel+bounces-542464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F401EA4CA0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D89CA4C9F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D4617D197
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0796317BED8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D10223701;
-	Mon,  3 Mar 2025 17:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3023DEB6;
+	Mon,  3 Mar 2025 17:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amwY23J5"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZAR7MSwf"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F7215061;
-	Mon,  3 Mar 2025 17:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0D323C8D5;
+	Mon,  3 Mar 2025 17:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741022580; cv=none; b=gdYhNtGFF/c/RQBLdbP5O6aUbyKAVnUVvDTgWz3vHiX2ll65aTO2eIXeIn2/0HQ76F4UkjrD8zMKQmY9jJP6dT3JIwXKvHJOWpaGoPCEGhRQ0+DC7Rett5nu5nqf520b5Y7y6KPBww91DwEKDq7IFu+FWSTbXiNdy+6J56mVCxQ=
+	t=1741022721; cv=none; b=SaOjEA0mElR4ejfOVysXOwSsT3exVWKURL92iek3YfAeWB3WzM8VH48hWGoKAF/lJ2cDLG28ek8sBjye7SOgx/Tnqu8uKBlf28r8DbNZ9Pl4pvhbALH9GVohAdttawqvqTFy+nTfEgNR7Q7F25N82gcpizgI2JOqieWJy0/nnew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741022580; c=relaxed/simple;
-	bh=BojXVM7TuWbWt/szVo1jrbABw+mVS2arDbx8q9WpoZY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6Mh6R/Y/8K93Luqa1nU3xrzItoPylyRNABwoWgHzdvDMwPTzc/VDq6k3Wqn8gVXzGllOFTgUIouHKps1MYEPVSTS9jDi7zlc4QFaFbUgA/aah08Pj05oWorHhwCjyS2rPQjqiK7VsdNW92V/zPkDQCJOJW3cckX/hI7BZ+gGrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amwY23J5; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22382657540so39851015ad.2;
-        Mon, 03 Mar 2025 09:22:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741022578; x=1741627378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=INEL+mkWEKLq34Mczv2nLd5ND0XQsLg0DNbt4SnzHDQ=;
-        b=amwY23J5gsz1xRWkInms3FLDMAzTeRbTYqN5DBJhjmnjWucir9X3AqhED8a5BqSnOd
-         53prtB6uMxMceCGb9KaSKkiRKphtyu7s1Fc+fBzjfS6KqFn3EoClu67pQmNcg7OfXTJA
-         TuiyHW8Q9WP81zE5i+2H9Ys2mw1ek9JoFkE8Jwohc0YKcyVJowh0wffnhnXmLl+n2i1r
-         8O8WTm+Kbvdx1e0nAQ72+OARKs4zv6TcQxp1l5YT8ozAaGYCNlrdxDvsWdabv2H1Wn3z
-         JzyYTHKlxNPXUQi+jYq7DgdmUlLdg8qZR8bHP6H4VjwwRZtWIgw3UgXfWNV6Qp9pRJMz
-         3zdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741022578; x=1741627378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=INEL+mkWEKLq34Mczv2nLd5ND0XQsLg0DNbt4SnzHDQ=;
-        b=Ozr+CuYyENEPwF2gM2g07QVQ18xWlZUBZDe/3D0zF+UtXkM8w7FcI4zufm4ECEE9RU
-         g9Ahnl75GZEnz8b/XeVHWG8x5k2PFWcM+UPtqEWARPIyNawkDX4fLf4ifjS06GXLQ3Xb
-         ckZ3XKPD+DfuD92qNKbLtBtFwujbFmpS0Z7vFtUTCiQYdhvx9BHaJftSqNkSn27gg82c
-         tmKsnhMKB0f7C46tCJkUXqXhMJZqGr8B+jtmIkJk+LIuZyMAKqRAy3E0OdX1sesg5CTx
-         e8qqlvAWOjn+tm2tDXfqUjVexJ0l2wmMn+ZjEQIE2HxwTQldALqq6d3QznffjNDEJykU
-         HL+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/0mVeBnfLS/VfwooAM7FPAvjGUyIV9sAfPz9Ggi8ycW0hQ5f0MdtHWPY6Bo27+GfPIr5lQIWpmZc=@vger.kernel.org, AJvYcCXcjNMFIdbVct/xi7UDOCbCE2MsDxHluLVKincnYpnms2+U8isLSmHpGRfKP2Zw56v9RN+NZt7rBWYCiGQUKfaKiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOmAQLbMXUnv50uH2pTvF1KapilnUDOJ+AidaSAdN2vVf/M4Fk
-	hrkvzEAdZVi18dwk/H9SkbxIP/EeMeSHn2L8KRldFLXJlslRqumw
-X-Gm-Gg: ASbGncs6u5+3cywXiT3sgoB46YwZcIKk0gKMnIkQM148QSqc0WbIqFQ39X53UmwBxjb
-	SajxXraIvLfmbz52/x/IaXcck+F3cijLD9eMn3Yj/FJ70UhnBxLdMMbAXzYalbDomk0Njfk3HXm
-	SwvHiKImFBlrOaeA+cRNyg8sJ0VEgGx3PuIAiCqLKZ2KlfUs/xwHNQRn/zzdNAOUrA7nOoJpbBO
-	oaVvC9pDmag1NfxfOI7q4DtmM8hYFMUmAcla0O8xnrHjBu2epWf1cnSc55c54i44b1ROaFy7Doc
-	w6W7CC++j14Nzv6P42r0MoyqATQnkg8YSKI5smrp
-X-Google-Smtp-Source: AGHT+IGYNi+2VxBOSdALmg07N0zm4mXQing5p3PqQ+CWp+YUijGcJXrzBi5jiCAbCilBAkdB5b8amA==
-X-Received: by 2002:a17:903:fa5:b0:220:f40c:71e9 with SMTP id d9443c01a7336-22368f71f0dmr184667325ad.9.1741022576289;
-        Mon, 03 Mar 2025 09:22:56 -0800 (PST)
-Received: from debian ([2607:fb90:8e63:c2b3:5405:c8bf:c1d1:41d5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c596esm80333925ad.152.2025.03.03.09.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:22:55 -0800 (PST)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 3 Mar 2025 09:22:50 -0800
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, nifan.cxl@gmail.com,
-	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
-	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
-	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 2/5] PCI: dwc: Add helper to find the Vendor Specific
- Extended Capability (VSEC)
-Message-ID: <Z8XlapjLRfz44hF7@debian>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132029epcas5p1e56dd355e7ac912ceb25325595de0d24@epcas5p1.samsung.com>
- <20250221131548.59616-3-shradha.t@samsung.com>
+	s=arc-20240116; t=1741022721; c=relaxed/simple;
+	bh=p3/tymDo4/JvLzlfxYKvIxPaUSvKEVDopzwI6qnnIMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bI3QBUYxjF5ESTtGDK9rLLr9OJ4OhK9bQKW/NTGWNaCQvZeUbIhn54KcM5+SelbHhMYY9+Pl8dv7RJhsTMg1rPJrz4aheVR67ja/AK1dqZUbneyiovSyi56V6GKFmuInGezx5PGHmQGIW3xgOUCpOq2BIYGwP2qAajImWIknV/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZAR7MSwf; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jhgq5PPF3obuw7CCfJ705oQRORKEx0yZzOBNGPhbknw=; b=ZAR7MSwfpoEh2NsT5v6CjyfOwC
+	02LuzTTpEFDhXi3F0i4ztLwv6JKDYT0BRTqTdMWkPmbnOIXtj/iVdzLser5KS7SDD3/Ctw24ztkqG
+	cuCVjUUJaXafEDbjq/oFlYi8feip6Ad3bFsXzhSJjZFU2cZ7AhuxaOSonHMiTACJO+4vwTt2CvyVY
+	lDJX4rdbW5anIrpSXSt5SPoyDlBSYQQ5NHBdyC5R5ApLuOcXa+ubK0VI1bz0a7hJti4IpUN4XxGh+
+	eHkhUFyov1sHMOD1OfqdqN+HzATG+kn0Ps9EccIdDvCw4Kz2epfuhlu/Hx76O9Aw2A4oTyQPS24qQ
+	LKCfkrBg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33702)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tp9XU-00013W-0G;
+	Mon, 03 Mar 2025 17:25:12 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tp9XS-0003xa-0O;
+	Mon, 03 Mar 2025 17:25:10 +0000
+Date: Mon, 3 Mar 2025 17:25:09 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: phy: dp83826: Add support for straps reading
+Message-ID: <Z8Xl9blPRVXQiOSm@shell.armlinux.org.uk>
+References: <20250303-dp83826-fixes-v1-0-6901a04f262d@yoseli.org>
+ <20250303-dp83826-fixes-v1-2-6901a04f262d@yoseli.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,86 +73,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221131548.59616-3-shradha.t@samsung.com>
+In-Reply-To: <20250303-dp83826-fixes-v1-2-6901a04f262d@yoseli.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Feb 21, 2025 at 06:45:45PM +0530, Shradha Todi wrote:
-> dw_pcie_find_vsec_capability() is used by upcoming DWC APIs to find the
-How are about "Add dw_pcie_find_ext_capability(), which will be used by
-..."
-
-Other than that,
-
-
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
-
-> VSEC capabilities like PTM, RAS etc.
-> 
-> Co-developed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 40 ++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 145e7f579072..a7c0671c6715 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -16,6 +16,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/ioport.h>
->  #include <linux/of.h>
-> +#include <linux/pcie-dwc.h>
->  #include <linux/platform_device.h>
->  #include <linux/sizes.h>
->  #include <linux/types.h>
-> @@ -283,6 +284,45 @@ u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
->  
-> +static u16 __dw_pcie_find_vsec_capability(struct dw_pcie *pci, u16 vendor_id,
-> +					  u16 vsec_id)
-> +{
-> +	u16 vsec = 0;
-> +	u32 header;
+On Mon, Mar 03, 2025 at 06:05:52PM +0100, Jean-Michel Hautbois wrote:
+> +	/* Bit 10: MDIX mode */
+> +	if (val & BIT(10))
+> +		phydev_dbg(phydev, "MDIX mode enabled\n");
 > +
-> +	if (vendor_id != dw_pcie_readw_dbi(pci, PCI_VENDOR_ID))
-> +		return 0;
+> +	/* Bit 9: auto-MDIX disable */
+> +	if (val & BIT(9))
+> +		phydev_dbg(phydev, "Auto-MDIX disabled\n");
 > +
-> +	while ((vsec = dw_pcie_find_next_ext_capability(pci, vsec,
-> +						       PCI_EXT_CAP_ID_VNDR))) {
-> +		header = dw_pcie_readl_dbi(pci, vsec + PCI_VNDR_HEADER);
-> +		if (PCI_VNDR_HEADER_ID(header) == vsec_id)
-> +			return vsec;
+> +	/* Bit 8: RMII */
+> +	if (val & BIT(8)) {
+> +		phydev_dbg(phydev, "RMII mode enabled\n");
+> +		phydev->interface = PHY_INTERFACE_MODE_RMII;
 > +	}
+
+Do all users of this PHY driver support having phydev->interface
+changed?
+
 > +
-> +	return 0;
-> +}
+> +	/* Bit 5: Slave mode */
+> +	if (val & BIT(5))
+> +		phydev_dbg(phydev, "RMII slave mode enabled\n");
 > +
-> +static u16 dw_pcie_find_vsec_capability(struct dw_pcie *pci,
-> +					const struct dwc_pcie_vsec_id *vsec_ids)
-> +{
-> +	const struct dwc_pcie_vsec_id *vid;
-> +	u16 vsec;
-> +	u32 header;
-> +
-> +	for (vid = vsec_ids; vid->vendor_id; vid++) {
-> +		vsec = __dw_pcie_find_vsec_capability(pci, vid->vendor_id,
-> +						      vid->vsec_id);
-> +		if (vsec) {
-> +			header = dw_pcie_readl_dbi(pci, vsec + PCI_VNDR_HEADER);
-> +			if (PCI_VNDR_HEADER_REV(header) == vid->vsec_rev)
-> +				return vsec;
-> +		}
+> +	/* Bit 0: autoneg disable */
+> +	if (val & BIT(0)) {
+> +		phydev_dbg(phydev, "Auto-negotiation disabled\n");
+> +		phydev->autoneg = AUTONEG_DISABLE;
+> +		phydev->speed = SPEED_100;
+> +		phydev->duplex = DUPLEX_FULL;
 > +	}
-> +
-> +	return 0;
-> +}
-> +
->  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->  {
->  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-> -- 
-> 2.17.1
-> 
+
+This doesn't force phylib to disallow autoneg.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
