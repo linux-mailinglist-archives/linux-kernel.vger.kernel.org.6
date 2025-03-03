@@ -1,85 +1,57 @@
-Return-Path: <linux-kernel+bounces-542809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279F4A4CE08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:16:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0696FA4CE31
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 483107A970D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A293173388
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5C02376EC;
-	Mon,  3 Mar 2025 22:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A1720E313;
+	Mon,  3 Mar 2025 22:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNlpbk/b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cMhefseP"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B50215782;
-	Mon,  3 Mar 2025 22:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1342A1DDA3C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040104; cv=none; b=k5dHMC8zgTZilUmJMpMh61frK1Va1tlO5+6+O8Z8XEVSiXWvrrhj+StjWhXNDwurxT3aHdbySOiMovLFfNNfa1+CeErUredXMHdWAOUPQZ/CiqH723FaCOtLVikk6zD33J2WfbCHtkOl6PeiLyKQ5e5rrdQKVNPjGRY+5kprop8=
+	t=1741040523; cv=none; b=gYrS2UvBPylpW7JjKtPO2ZKWlRbc50lbat94BYg3w2EhAq7K3IQulhMwQzPLyXPheFq/WtRSbTbD4K5gqOvs0vNUVc+fQ4FVq2NFTTb74VgzhdAy8LwVgafIRXQ5xhJ1Z28Zu4pxlEB2Tx55By43tQWGqlYFLv1VYc6CHst2lGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040104; c=relaxed/simple;
-	bh=zpPxLelE9Ybujo8zHlA6Bkn57MYTewjeu9jGuzQ7Jtw=;
+	s=arc-20240116; t=1741040523; c=relaxed/simple;
+	bh=AVvde8e9ud7ZCrieN85PrhdPi/SKF2EGfAuEoMezMAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAIy/7gW7ig9wrkTPzcNI1AQoAlEIgKHfNVZ+s5eoEYJdpfqRlQBEvcspgdsFCv2w/lJbFtrx5b9VJM6fLFHCHsKvUrq3iKKk3IKTiIO7irs4OJt/27ZZPerbv+NURfRCuL3Z85jY9POj8n7PxlUQCBElVd67D+KKy3S4InM0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNlpbk/b; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741040103; x=1772576103;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zpPxLelE9Ybujo8zHlA6Bkn57MYTewjeu9jGuzQ7Jtw=;
-  b=nNlpbk/bIxQ/SHA5m21NCB9LMpjYCPNLt1v5nuV8bXsqI1+bmGsZ39JO
-   wePVIHpSBVJjsvl8GTWPQqocEjk+Fq8rCSbDMUEzHwxFxfSA8m1/MZT+T
-   BmbNIJSNEcP5+NxhfmayGTpDHJoPh7SaQhB5JB3DUa4PyxCaukVEgu4ea
-   S/vLUmNFC4qO7GRv6ASp05kG7Q7ed8ZFvaLFB9MnnO2ysj7kQaV2DN8Zc
-   0dAbV90+soXnMbkuznE33pvJ1tcmCW+lmNetjiqLPLqVRXncE5I73fSJf
-   QsbHDu5xy/dOSERGr5iya4O6bjCg54mzCJHd00ORwq3pqgfjtH/MCeIiw
-   A==;
-X-CSE-ConnectionGUID: QjHes+I2ToeNUFLu5kpitg==
-X-CSE-MsgGUID: 4QzwpZm8RUe4dB3xDWcFtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52914242"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="52914242"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:15:02 -0800
-X-CSE-ConnectionGUID: 7OFb8wluTW6tVcy0CNgGPA==
-X-CSE-MsgGUID: xb8BCAlYSYq5R7HwB9qaIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="117909222"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:15:01 -0800
-Date: Mon, 3 Mar 2025 14:21:02 -0800
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org,
-	lenb@kernel.org, kirill.shutemov@linux.intel.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
-	ricardo.neri@intel.com, ravi.v.shankar@intel.com
-Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
- mailbox
-Message-ID: <20250303222102.GA16733@ranerica-svr.sc.intel.com>
-References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
- <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
- <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
- <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
- <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
- <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
- <20240919191725.GA11928@yjiang5-mobl.amr.corp.intel.com>
- <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJQEdlVaTuB/QkmWST20arsqkYMZ9SfYOxrzrdg0ynRbaCc3al76Piy8/QFlRe/SEaIT0hYY4ze+NE3Jkj9RQGvZ8rlq3lnKBZSnkAEPv4mdsBdvT0e4avuFShvIfPmKnStJbNkH9IKI71WK+tuix6A+IiekzsxVQ+Vult3E59g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cMhefseP; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 22:21:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741040509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYrgJBaa1/wGcdat97a1kwri4kikfmUhgip+C5EAWY4=;
+	b=cMhefsePY6VzZS4izliyQG9/8mNX+LztTTLm5CoG1oIuSMilJi9mSEFFe21fL3plsQvCNs
+	0qPAjWNTQCWMkGgOVH1UDIV5AhlkphPhzzqsTtKyGz4thVCafAe6bnYdR0o3vOaAo7Eqmd
+	XTAnb0dNbfXMbSBcCclxCCbXNDKJ+sc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 13/13] KVM: nSVM: Stop bombing the TLB on nested
+ transitions
+Message-ID: <Z8YrdcWd1PD76adM@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-14-yosry.ahmed@linux.dev>
+ <da0b13813b11e5b13f01dced9a629ac07fad27cd.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,96 +60,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <da0b13813b11e5b13f01dced9a629ac07fad27cd.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 20, 2024 at 01:15:41PM +0200, Krzysztof Kozlowski wrote:
-
-[...]
- 
-> enable-method is part of CPUs, so you probably should match the CPUs...
-> I am not sure, I don't have the big picture here.
+On Fri, Feb 28, 2025 at 09:21:54PM -0500, Maxim Levitsky wrote:
+> On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
+> > Now that nested TLB flushes are properly tracked with a well-maintained
+> > separate ASID for L2 and proper handling of L1's TLB flush requests,
+> > drop the unconditional flushes and syncs on nested transitions.
+> > 
+> > On a Milan machine, an L1 and L2 guests were booted, both with a single
+> > vCPU, and pinned to a single physical CPU to maximize TLB collisions. In
+> > this setup, the cpuid_rate microbenchmark [1] showed the following
+> > changes with this patch:
+> > 
+> > +--------+--------+-------------------+----------------------+
+> > > L0     | L1     | cpuid_rate (base) | cpuid_rate (patched) |
+> > +========+========+===================+======================+
+> > > NPT    | NPT    | 256621            | 301113 (+17.3%)      |
+> > > NPT    | Shadow | 180017            | 203347 (+12.96%)     |
+> > > Shadow | Shadow | 177006            | 189150 (+6.86%)      |
+> > +--------+--------+-------------------+----------------------+
+> > 
+> > [1]https://lore.kernel.org/kvm/20231109180646.2963718-1-khorenko@virtuozzo.com/
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >  arch/x86/kvm/svm/nested.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> > index 8e40ff21f7353..45a187d4c23d1 100644
+> > --- a/arch/x86/kvm/svm/nested.c
+> > +++ b/arch/x86/kvm/svm/nested.c
+> > @@ -512,9 +512,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
+> >  		svm->nested.last_asid = svm->nested.ctl.asid;
+> >  		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
+> >  	}
+> > -	/* TODO: optimize unconditional TLB flush/MMU sync */
+> > -	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
+> > -	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
+> >  }
+> >  
+> >  static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
+> > @@ -530,10 +527,6 @@ static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
+> >  	 */
+> >  	if (svm->nested.ctl.tlb_ctl == TLB_CONTROL_FLUSH_ALL_ASID)
+> >  		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
+> > -
+> > -	/* TODO: optimize unconditional TLB flush/MMU sync */
+> > -	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
+> > -	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
+> >  }
+> >  
+> >  /*
 > 
-> Maybe if companies want to push more of bindings for purely virtual
-> systems, then they should first get involved more, instead of relying on
-> us. Provide reviews for your virtual stuff, provide guidance. There is
-> resistance in accepting bindings for such cases for a reason - I don't
-> even know what exactly is this and judging/reviewing based on my
-> practices will no be accurate.
+> 
+> Assuming that all previous patches are correct this one should work as well.
+> 
+> However only a very heavy stress testing, including hyperv, windows guests
+> of various types, etc can give me confidence that there is no some ugly bug lurking
+> somewhere.
 
-Hi Krzysztof,
+I tried booting an L2 and running some workloads like netperf in there.
+I also tried booting an L3.
 
-I am taking over this work from Yunhong.
+I am planning to try and run some testing with a windows L2 guest. I am
+assuming this exercises the hyper-V emulation in L1, which could be
+interesting.
 
-First of all, I apologize for the late reply. I will make sure
-communications are timely in the future.
+I am not sure if I will be able to test more scenarios though,
+especially Windows as an L1 (and something else as an L2).
 
-Our goal is to describe in the device tree a mechanism or artifact to boot
-secondary CPUs.
+Let me know if you have something specific in mind.
 
-In our setup, the firmware puts secondary CPUs to monitor a memory location
-(i.e., the wakeup mailbox) while spinning. From the boot CPU, the OS writes
-in the mailbox the wakeup vector and the ID of the secondary CPU it wants
-to boot. When a secondary CPU sees its own ID it will jump to the wakeup
-vector.
+> 
+> TLB management can be very tricky, so I can't be 100% sure that I haven't missed something.
+> 
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
-This is similar to the spin-table described in the Device Tree
-specification. The key difference is that with the spin-table CPUs spin
-until a non-zero value is written in `cpu-release-addr`. The wakeup mailbox
-uses CPU IDs.
-
-You raised the issue of the lack of a `compatible` property, and the fact
-that we are not describing an actual device.
-
-I took your suggestion of matching by node and I came up with the binding
-below. I see these advantages in this approach:
-
-  * I define a new node with a `compatible` property.
-  * There is precedent: the psci node. In the `cpus` node, each cpu@n has
-    an `enable-method` property that specify `psci`.
-  * The mailbox is a device as it is located in a reserved memory region.
-    This true regardless of the device tree describing bare-metal or
-    virtualized machines.
-
-Thanks in advance for your feedback!
-
-Best,
-Ricardo
-
-(only the relevant sections of the binding are shown for brevity)
-
-properties:
-  $nodename:
-    const: wakeup-mailbox
-
-  compatible:
-    const: x86,wakeup-mailbox
-
-  mailbox-addr:
-    $ref: /schemas/types.yaml#/definitions/uint64
-
-required:
-  - compatible
-  - mailbox-addr
-
-additionalProperties: false
-
-examples:
-  - |
-    wakeup-mailbox {
-      compatible = "x86,wakeup-mailbox";
-      mailbox-addr = <0 0x1c000500>;
-    };
-
-    cpus {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        cpu@0 {
-            device_type = "cpu";
-            reg = <0x00>;
-            enable-method = "wakeup-mailbox";
-        };
-    };
-...
+Thanks!
 
