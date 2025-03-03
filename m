@@ -1,221 +1,158 @@
-Return-Path: <linux-kernel+bounces-541330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6260BA4BB98
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:02:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BEBA4BB9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AD03AA0FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E37169049
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623441F1818;
-	Mon,  3 Mar 2025 10:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5871F0E2C;
+	Mon,  3 Mar 2025 10:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qn4QNugr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S/W8bp7c";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cKcZDKKf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358B1F0E34
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CCC4C85;
+	Mon,  3 Mar 2025 10:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996093; cv=none; b=XcVik8E4E+c/C46o0lB3uDGrY1kuJ5qjKtlZwTLWb9GPGYUlW7Lq/SlHatxZn1iGgYqOxil5VCf0UyCknkWow+JoIv6DhEZwl+peJ0eoGQNd84c7L5IRTwmOmuMoclNOq3fTVQRnhvoRWErpF8D+v2Ksqa8uSgBInCfQaxy77Hs=
+	t=1740996178; cv=none; b=U8rkUL/Jr8tRlH6YesaQoTXB/ADLSUgIX2C/2HQesliOSNj3PoB67GyM23AScpL3CtA3INPMq99T92A+6whaKC270QBPM/ACDGVlmM3FJ8ucIofQ+ujtD4R7hHizc0seiVqxzwth9+1NB5yOaeHpTY1dfpgjEEW0GSaTxWcLB0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996093; c=relaxed/simple;
-	bh=HKeC4SDub9d5vfwCMzMHjqXbSSwontRIFOdhyF5j0eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gCToM0pn4RV79wBtxwMQw8FnuDMqgFoh+2uxhrp9s/JkcJ4GNAg+9YBsYbKSY96Sl9AVjnH7R9qt2uPIX33Qp5lAV2ALGSiKd3KSIPchfGsoZDgun5hYbsbmo/XDVVH4yAF+/tiAv4/s/jhLnW1TN0rKZefDWpyHdKYI1qW7JFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qn4QNugr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740996090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740996178; c=relaxed/simple;
+	bh=Y9LxNlsUM5B8RNuZ1u0khqioumHO6RHYAJPgVjskjlQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=q9onT9pTn7SO7vOBY4qfv9rlvFB2nfajubOyziTmeES5GqukOSCWXy0XUZnjWKXb8VVUcX6k2X1Iqdd6W66bYgWLq9U1W3DGoKjM928uPMR6YfdznPE0Ne2RuJePlPjigQzmgPVNer3WVOAWUQKtNT2oKaGGsRkV6YNRr5KvikE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S/W8bp7c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cKcZDKKf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 10:02:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740996175;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XPMg8qYY6woJwUtyf2x+IAiV5yepPU5ZWaNNfhk/IJY=;
-	b=Qn4QNugr99vvQVT+m1LFe/tRN4Hv0hYLKeVsQnoJdw4uYDJjmYSP58RaF5Lw75KG2OscBY
-	X7oaA071I08uUO6xXYjGTFb09vrPz8i/Y+JosTLEib/16esDvncuYQOLC4jrnIE/+70nEC
-	GQFE/STTk1nhTW0qBoQ4ut5LZ91emqs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-56-JCtK81dCM5KuCLwP4ayBaA-1; Mon, 03 Mar 2025 05:01:28 -0500
-X-MC-Unique: JCtK81dCM5KuCLwP4ayBaA-1
-X-Mimecast-MFC-AGG-ID: JCtK81dCM5KuCLwP4ayBaA_1740996087
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4388eee7073so22241145e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:01:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996087; x=1741600887;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XPMg8qYY6woJwUtyf2x+IAiV5yepPU5ZWaNNfhk/IJY=;
-        b=Op8pwo3j6RCPSIsHihTuqNrpen7tMETFUgibDDI3mWMG8gMSFwjz585X2VlE8lsexF
-         n019HjEIDp1AtMmCQLGQC5IKm2fqxMe4sraMScgA9U2PclaIivVOZVvujtGLyqlmBlPY
-         eTmpuoFB6R3m+b4qpjxW6GHczy5e0DhdFC+uhtm9S373l0nTWZQAX5I31rmBMRR73qeG
-         o6FFsofyv5O1bjyWK/1cQWorwAPp98fmnUjkfCj3TsDFgssmLX+8llUd+90GUX6u3mg0
-         /VKnByzZePRl+qi+hWMMKj4QOBrpPR2VVCyG8GsW45QBhgwNkz1hXJ5dhQ0cjWNRFl04
-         eJiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kEuATmoxICKnRY3hJpAhYuJHjqsb3aOVOKnqpeYit5Z8n6F4qPG6hcrOw0rl2IMLUZ/BoZ8TV/IrE84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa8142nxopXWmi6XUGEYr+xVdaIZSBZTfHmwyLTjHZaL+bIs+i
-	sFvh4FLRsNEnT7U/6ERcbgYJJ4Z7fMoPY9XxZCe6lcjeU//r3gOFxf1pRb2CuOZ1cPZB9RNPvFi
-	/+vZVYoDeItgW3X+3aUbULdJze2ak/3LGGVp7xrN5kYNw34e1I+MxJ7IuXtN9luGT74j9Gn2e
-X-Gm-Gg: ASbGncuyta/ZtvRhddkNS+vZ6O4TLzDbVUjzNJcIG9UVkbxeIHs26sIXzoGn6T0A7I/
-	UPw2ZON4hb6z3Ub4tiSB07KR9JLEH4EaR7/8EvWZVWj6jArIk4jJDfMDDAmUo8Lr6z8KSNlblhh
-	CeU4Ptf718pRo+92/LISFewkzM1Rn8RUk0uv1Ohco6Zl4xtxwT22ia4thUpiJF18EUSCjNr93KR
-	L3rG0ouTw56OSboUym2O6QofjGR+gxVLlgUewTbSFo3xh1OEAjELWASDGFdtVizcH9MRVBXlypv
-	x6VTUq0+cUGgadEhNy1J6YNncWhyqwinCFT+GU0+xElUTyT60ZW378V7oUwgEqz6vUp7qxfcefp
-	xE299kINIp5jTnwQO/zVBs0eJsrUEp095SRcyJpWcX54=
-X-Received: by 2002:a5d:59a2:0:b0:390:ff84:532b with SMTP id ffacd0b85a97d-390ff845589mr3552466f8f.7.1740996087023;
-        Mon, 03 Mar 2025 02:01:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGXZqIa1M7mGR2dYNXiAZ4lWYbl7hOIdDdeUw6ofOE6vBxI8shgA38Lt8+iwmpijQWMi3sT/g==
-X-Received: by 2002:a5d:59a2:0:b0:390:ff84:532b with SMTP id ffacd0b85a97d-390ff845589mr3552443f8f.7.1740996086689;
-        Mon, 03 Mar 2025 02:01:26 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b737043aasm152241565e9.14.2025.03.03.02.01.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 02:01:25 -0800 (PST)
-Message-ID: <78d55e35-6cda-4f5e-8e52-0a54b1e64592@redhat.com>
-Date: Mon, 3 Mar 2025 11:01:24 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=dgh2UvydaTwafIT1lV3r2kTKy4bqzJWHX041N4xlO8c=;
+	b=S/W8bp7cojFlFwQ6mArPQBU6V/FHTSxRXujRE9W7bXko9CzHCNx4qCX0MJ58pIFyL24tib
+	xs7AnVahPDMzBccTiRPpD4ZSSzWVHjSs98lXUGtVhBLcTRpsPmIjBs5UfvRp8FsLx/ycHR
+	cD8kt53Je5cZnlFOq76FQC3KGanPAHw43vdVDci/dJB2ZqZRq1u76bkIgOfcOJtGzRrb3c
+	pA5CtGLOsxIt+RLImd7OQTAVaXKaHL1Pg92aHySxRV7R0x4x/h90xA3DJ9495HhzD2wmaG
+	tsKPvOU3UtkOzrJUtN3dNLTgHue5sFrQE3TCKGWbtSIj5oEa9h6oFydJl7OUtw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740996175;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dgh2UvydaTwafIT1lV3r2kTKy4bqzJWHX041N4xlO8c=;
+	b=cKcZDKKfJlM/ER6zLQD7Kc24wLVa7+H74dLWegGGurV/J1iNc4eYClHiLXXnYsBO7/4tjt
+	jXAjGVCHuT4yCFBw==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
+Cc: kernel test robot <lkp@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250303094911.GL5880@noisy.programming.kicks-ass.net>
+References: <20250303094911.GL5880@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] arm64: mm: Populate vmemmap at the page level if not
- section aligned
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
- catalin.marinas@arm.com
-Cc: will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
- mark.rutland@arm.com, joey.gouly@arm.com, dave.hansen@linux.intel.com,
- akpm@linux-foundation.org, chenfeiyang@loongson.cn, chenhuacai@kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com,
- stable@vger.kernel.org
-References: <20250219084001.1272445-1-quic_zhenhuah@quicinc.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250219084001.1272445-1-quic_zhenhuah@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <174099617138.10177.206551254938966948.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 19.02.25 09:40, Zhenhua Huang wrote:
-> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-> to 27, making one section 128M. The related page struct which vmemmap
-> points to is 2M then.
-> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-> vmemmap to populate at the PMD section level which was suitable
-> initially since hot plug granule is always one section(128M). However,
-> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-> existing arm64 assumptions.
-> 
-> The first problem is that if start or end is not aligned to a section
-> boundary, such as when a subsection is hot added, populating the entire
-> section is wasteful.
-> 
-> The next problem is if we hotplug something that spans part of 128 MiB
-> section (subsections, let's call it memblock1), and then hotplug something
-> that spans another part of a 128 MiB section(subsections, let's call it
-> memblock2), and subsequently unplug memblock1, vmemmap_free() will clear
-> the entire PMD entry which also supports memblock2 even though memblock2
-> is still active.
-> 
-> Assuming hotplug/unplug sizes are guaranteed to be symmetric. Do the
-> fix similar to x86-64: populate to pages levels if start/end is not aligned
-> with section boundary.
-> 
-> Cc: <stable@vger.kernel.org> # v5.4+
-> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> ---
-> Hi Catalin and David,
-> Following our latest discussion, I've updated the patch for your review.
-> I also removed Catalin's review tag since I've made significant modifications.
->   arch/arm64/mm/mmu.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index b4df5bc5b1b8..de05ccf47f21 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -1177,8 +1177,11 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
->   		struct vmem_altmap *altmap)
->   {
->   	WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
-> +	/* [start, end] should be within one section */
-> +	WARN_ON(end - start > PAGES_PER_SECTION * sizeof(struct page));
->   
-> -	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES))
-> +	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) ||
-> +		(end - start < PAGES_PER_SECTION * sizeof(struct page)))
+The following commit has been merged into the x86/core branch of tip:
 
-Indentation should be
+Commit-ID:     73e8079be9e7ae5ed197d074e0ba6c43674c52f7
+Gitweb:        https://git.kernel.org/tip/73e8079be9e7ae5ed197d074e0ba6c43674c52f7
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 03 Mar 2025 10:21:47 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 03 Mar 2025 10:54:11 +01:00
 
-	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) ||
-	    (end - start < PAGES_PER_SECTION * sizeof(struct page)))
+x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
 
+Robot yielded a .config that tripped:
 
-Acked-by: David Hildenbrand <david@redhat.com>
+  vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
 
+This is the result of using __bhi_args[1] in unreachable code; make
+sure the compiler is able to determine this is unreachable and trigger
+DCE.
 
-Thanks!
+Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20250303094911.GL5880@noisy.programming.kicks-ass.net
+---
+ arch/x86/include/asm/cfi.h    | 5 +++++
+ arch/x86/kernel/alternative.c | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
--- 
-Cheers,
-
-David / dhildenb
-
+diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
+index 2f6a01f..3e51ba4 100644
+--- a/arch/x86/include/asm/cfi.h
++++ b/arch/x86/include/asm/cfi.h
+@@ -100,7 +100,12 @@ enum cfi_mode {
+ };
+ 
+ extern enum cfi_mode cfi_mode;
++
++#ifdef CONFIG_FINEIBT_BHI
+ extern bool cfi_bhi;
++#else
++#define cfi_bhi (0)
++#endif
+ 
+ typedef u8 bhi_thunk[32];
+ extern bhi_thunk __bhi_args[];
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 32e4b80..bf82c6f 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -936,7 +936,10 @@ void __init_or_module apply_seal_endbr(s32 *start, s32 *end) { }
+ #endif
+ 
+ enum cfi_mode cfi_mode __ro_after_init = __CFI_DEFAULT;
++
++#ifdef CONFIG_FINEIBT_BHI
+ bool cfi_bhi __ro_after_init = false;
++#endif
+ 
+ #ifdef CONFIG_CFI_CLANG
+ struct bpf_insn;
+@@ -1070,11 +1073,15 @@ static __init int cfi_parse_cmdline(char *str)
+ 				pr_err("Ignoring paranoid; depends on fineibt.\n");
+ 			}
+ 		} else if (!strcmp(str, "bhi")) {
++#ifdef CONFIG_FINEIBT_BHI
+ 			if (cfi_mode == CFI_FINEIBT) {
+ 				cfi_bhi = true;
+ 			} else {
+ 				pr_err("Ignoring bhi; depends on fineibt.\n");
+ 			}
++#else
++			pr_err("Ignoring bhi; depends on FINEIBT_BHI=y.\n");
++#endif
+ 		} else {
+ 			pr_err("Ignoring unknown cfi option (%s).", str);
+ 		}
 
