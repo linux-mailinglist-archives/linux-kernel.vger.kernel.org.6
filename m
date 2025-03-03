@@ -1,249 +1,194 @@
-Return-Path: <linux-kernel+bounces-541020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4787FA4B787
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9792A4B78C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FFA916C0E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2CA816B973
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033E31D7E35;
-	Mon,  3 Mar 2025 05:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932BF1DF721;
+	Mon,  3 Mar 2025 05:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mO58vvOj"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DUbqN4f8"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F7A156C6F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 05:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C6323F383;
+	Mon,  3 Mar 2025 05:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740979395; cv=none; b=Wrjv6cO7GEr9kEMfDb2ZhM4O9kOE8ChhfL/gasPy+r2hOhikFPr0vT4h4CopKTdWT7XoVzHlyDjWPYSAANfbtKc7u/7F2Un/TPf7u6t1LPSAlyTqY7hSMXQfZi8X0eUdzwDZBFm9M4T1DpZ55jwEPxyQ/OZs6zq8jv8AIDGyQvI=
+	t=1740979691; cv=none; b=RWzSFpvhkNcPSwWyGkM7Wsfew+WBg4afR8FCwdFm+yCmGFoz772dTSVVaWstULIMYSXV03NJHd33MxTHOio55GCVCgG9DAaoB5ydFGFb7EL/tnh9zgme9t5LlezDBmIEnQcs9bAuPv0acmFbRKSSUgpfL1WiAbunM3YUoutbEJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740979395; c=relaxed/simple;
-	bh=jJzQK1GmVOXUuQndrSBDWlin2sBxy4koAXCrP5OQAhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nOmzROMxdUrsIlQwo/EkoTz3iYfwimz6AW6R95EfdKtSB0hWWT00LNihkHvCIvQEDRsyp0peCGFp33PGtagofdBQDcdq7YVv1EnOyFdQH5aca5tUBypFq6lLpBzCYFX5M0yFYYfp+LJmv+eozADgVjGZQ5aPOfxJFqdva9qYEvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mO58vvOj; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2feb9076cdcso6306493a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 21:23:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740979393; x=1741584193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQyMj5PE5gUiweDRcbAeh1T6kmfInpXRvaLuaWvbDMA=;
-        b=mO58vvOjcPPW0ZDBBXl1BjJV1aVySqggM1lq50y1fQZQ8lvdvNZ//vqyKJH7O6b6HK
-         mds0JVp4W6r5gbkDjNt1Cou54D+frVTutOTpqdUYAJ7cqFidPSv7xZWsFXyD9JIhScsL
-         gN9YuT7dipSvc9Yb0W9P+t0flamvCOmcb8eGaRH3PSTx+ev0anxvKj+H5l/CaAuu754T
-         a7En3niu4jFCILb/Nx26Za3uWbzHVCFKpP5Xjw++pcvhMMhzYQWJmG8YPXtm5Wdlc7dK
-         8XM2/dd9/QDcanPQGDOpaxeA65h38S0ClFpH+2od+Qh0qKdH6Fn5xgGTlqimDMpiTwPi
-         2JMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740979393; x=1741584193;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nQyMj5PE5gUiweDRcbAeh1T6kmfInpXRvaLuaWvbDMA=;
-        b=rfv+jRK4hEFXAmGecuaHyGSkLIVhnWT4S0xnen5N6OAcOof0zsqQd33Ou23uB99TBk
-         mNEbTOmbRDRNfyfvbuvd+muyBiKR/Gt+QNamh7qdI66EVbnhZzuch4VWp+6wKvbFhVNp
-         knhCOcz3wQsBnCVlFcCdTqAYHX4HAs+z/CidWMNg+CylWQwuMRpxM4JVsJKP6AycapjS
-         IGJnAUHzJ18/iOkWlz2/xWk0x6Lmgq3sPWzBri697LXhHZsY7SVIOpBNAIKA0iBY7d+u
-         bbt5rNNmecT+wVUDvgW6ij4wlWfdZ6tl9tUs9G1KYJPaEYcb0rsVK7U5Kr03RCPwH+np
-         Z5Vw==
-X-Gm-Message-State: AOJu0YxxXV1ZPHIz+ycUGmYUMfGXAX+z4QoyuAX0uPHwcf+7CC1MF7bI
-	Q7J28JxC+jHYAAXAeMan5HMj1FQOFb8ReZLi183DVIgPLepuMAfV
-X-Gm-Gg: ASbGncsg4AiSIKDWVtBjEFQEaVvdOT/ywJ2xjmxDchwQBJEWHFxerkgIfK3XATEK8yw
-	jdQ8QPQkfsmkecxWd5/Ztl7OTH0WuK/2G8Si3AyCGaQhX4l22SA4t0PseZip4yyUWXPgPVXoToa
-	ChsFdZSwp6lynw6a0i8q3pvnIgT7xWHfRQAWyvb3kQLagXjjTKw7ZTz41Pw0bvFRdbTzJbHZbp0
-	bkIKL9GLNGgHcFoP+Uf9nH9r1SWA525vMEWdiXIT4w+vWKSfTKR1Bx2qSHj8/SLfqASMbDLty0b
-	5DRI9vrnhzX9NQi+IEo1SeQXZPEf7bmrJOmeBVqnYaY/j1PKYgB6tw2gynhYBAv8l1NZIFiy
-X-Google-Smtp-Source: AGHT+IFC/BljQb5OFwlkFgIbTVSZBE2FadnD93ug9y5ymH8CspR8zNPlkoaoiAnz+Z+9FwRVDg0IMg==
-X-Received: by 2002:a05:6a20:3d87:b0:1f0:ee68:aab4 with SMTP id adf61e73a8af0-1f2f4d224cemr19344596637.23.1740979392686;
-        Sun, 02 Mar 2025 21:23:12 -0800 (PST)
-Received: from localhost.localdomain ([2401:4900:232d:15b4:ed40:d86a:9957:4de7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de3ad9esm6128503a12.39.2025.03.02.21.23.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 21:23:12 -0800 (PST)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: shaggy@kernel.org,
-	jfs-discussion@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with xt_getpage() function
-Date: Mon,  3 Mar 2025 10:50:34 +0530
-Message-ID: <20250303052034.13420-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740979691; c=relaxed/simple;
+	bh=3SGXOIf3Drc5jxLCFLqX3ju8XNaEf0lpwJGlHy9oFgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E9DlfW/a7U7ybD8sO/dCp4ExS6AUXxcKZpHaMu1PSM8X8DPPpsWtlUEVD5kqhA17GKZEVUMUJ/KmEmQbHemd2/TbqaiPsi/5ZvhtmArMQ7Tte5upwKnff5SE0IXDDe4qyPSNrtd6xJzYafn94lF7NXbqFn3Z2lasvMAtGtaMsGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DUbqN4f8; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740979684; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=wKW2qNL0GYKBXb+KdJ8WKvFoPhdHKIW6tOAlWFUGX9g=;
+	b=DUbqN4f8Y8WV5NeA3MjCaZmo2kp7pIerNdnusjIcBT/j3rNumnAU6ADbZqsfkw+8RUx/peru/lubr/zgIlttebwhhVJc4IAxcwwZM7nphW8US3+TrnjU3hCSWg4hC/tI+cgeBikqsfWeEpSeZs/NUlG6VGC1ovcxCtXdy6e0DP0=
+Received: from localhost(mailfrom:zijie.wei@linux.alibaba.com fp:SMTPD_---0WQYk3HY_1740979359 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Mar 2025 13:22:43 +0800
+From: weizijie <zijie.wei@linux.alibaba.com>
+To: Sean Christopherson <seanjc@google.com>,
+	kai.huang@intel.com,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: weizijie <zijie.wei@linux.alibaba.com>,
+	xuyun <xuyun_xy.xy@linux.alibaba.com>
+Subject: [PATCH v4] KVM: x86: ioapic: Optimize EOI handling to reduce unnecessary VM exits
+Date: Mon,  3 Mar 2025 13:22:25 +0800
+Message-ID: <20250303052227.523411-1-zijie.wei@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
+References: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503030707.dKjJdF6z-lkp@intel.com/
+Configuring IOAPIC routed interrupts triggers KVM to rescan all vCPU's
+ioapic_handled_vectors which is used to control which vectors need to
+trigger EOI-induced VMEXITs. If any interrupt is already in service on
+some vCPU using some vector when the IOAPIC is being rescanned, the
+vector is set to vCPU's ioapic_handled_vectors. If the vector is then
+reused by other interrupts, each of them will cause a VMEXIT even it is
+unnecessary. W/o further IOAPIC rescan, the vector remains set, and this
+issue persists, impacting guest's interrupt performance.
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Both
+
+  commit db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
+
+and
+
+  commit 0fc5a36dd6b3 ("KVM: x86: ioapic: Fix level-triggered EOI and
+IOAPIC reconfigure race")
+
+mentioned this issue, but it was considered as "rare" thus was not
+addressed. However in real environment this issue can actually happen
+in a well-behaved guest.
+
+Simple Fix Proposal:
+A straightforward solution is to record highest in-service IRQ that
+is pending at the time of the last scan. Then, upon the next guest
+exit, do a full KVM_REQ_SCAN_IOAPIC. This ensures that a re-scan of
+the ioapic occurs only when the recorded vector is EOI'd, and
+subsequently, the extra bits in the eoi_exit_bitmap are cleared,
+avoiding unnecessary VM exits.
+
+Co-developed-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 ---
- fs/jfs/jfs_xtree.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/ioapic.c           | 10 ++++++++--
+ arch/x86/kvm/irq_comm.c         |  9 +++++++--
+ arch/x86/kvm/lapic.c            | 13 +++++++++++++
+ 4 files changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-index fb736a06ea58..fa4f77b436f0 100644
---- a/fs/jfs/jfs_xtree.c
-+++ b/fs/jfs/jfs_xtree.c
-@@ -115,7 +115,7 @@ static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
- {
- 	int rc;
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0b7af5902ff7..8c50e7b4a96f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1062,6 +1062,7 @@ struct kvm_vcpu_arch {
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	hpa_t hv_root_tdp;
+ #endif
++	u8 last_pending_vector;
+ };
  
--	BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
-+	BT_GETPAGE(*ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+ struct kvm_lpage_info {
+diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+index 995eb5054360..40252a800897 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -297,10 +297,16 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+ 			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
  
- 	if (!rc) {
- 		if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) ||
-@@ -123,7 +123,7 @@ static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
- 				le16_to_cpu((*p)->header.maxentry)) ||
- 			(le16_to_cpu((*p)->header.maxentry) >
- 				((bn == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) {
--			jfs_error(ip->i_sb, "xt_getpage: xtree page corrupt\n");
-+			jfs_error((*ip)->i_sb, "xt_getpage: xtree page corrupt\n");
- 			BT_PUTPAGE(*mp);
- 			*mp = NULL;
- 			rc = -EIO;
-@@ -270,7 +270,7 @@ static int xtSearch(struct inode *ip, s64 xoff,	s64 *nextp,
- 	 */
- 	for (bn = 0;;) {
- 		/* get/pin the page to search */
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
+ 			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						e->fields.dest_id, dm) ||
+-			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
++						e->fields.dest_id, dm))
+ 				__set_bit(e->fields.vector,
+ 					  ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
++				__set_bit(e->fields.vector,
++					  ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = e->fields.vector >
++					vcpu->arch.last_pending_vector ? e->fields.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
+ 	}
+ 	spin_unlock(&ioapic->lock);
+diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+index 8136695f7b96..1d23c52576e1 100644
+--- a/arch/x86/kvm/irq_comm.c
++++ b/arch/x86/kvm/irq_comm.c
+@@ -426,9 +426,14 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
  
-@@ -825,7 +825,7 @@ xtSplitUp(tid_t tid,
- 		 * insert router entry in parent for new right child page <rp>
- 		 */
- 		/* get/pin the parent page <sp> */
--		rc = xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
-+		rc = xt_getpage(&ip, parent->bn, &smp, PSIZE, &sp);
- 		if (rc) {
- 			XT_PUTPAGE(rcmp);
- 			return rc;
-@@ -1080,7 +1080,7 @@ xtSplitPage(tid_t tid, struct inode *ip,
- 	 * update previous pointer of old next/right page of <sp>
- 	 */
- 	if (nextbn != 0) {
--		rc = xt_getpage(ip, nextbn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, nextbn, &mp, PSIZE, &p);
- 		if (rc) {
- 			XT_PUTPAGE(rmp);
- 			goto clean_up;
-@@ -1435,7 +1435,7 @@ int xtExtend(tid_t tid,		/* transaction id */
- 			return rc;
+ 			if (irq.trig_mode &&
+ 			    (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						 irq.dest_id, irq.dest_mode) ||
+-			     kvm_apic_pending_eoi(vcpu, irq.vector)))
++						 irq.dest_id, irq.dest_mode)))
+ 				__set_bit(irq.vector, ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, irq.vector)) {
++				__set_bit(irq.vector, ioapic_handled_vectors);
++				vcpu->arch.last_pending_vector = irq.vector >
++					vcpu->arch.last_pending_vector ? irq.vector :
++					vcpu->arch.last_pending_vector;
++			}
+ 		}
+ 	}
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index a009c94c26c2..7c540a0eb340 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1466,6 +1466,19 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
+ 	if (!kvm_ioapic_handles_vector(apic, vector))
+ 		return;
  
- 		/* get back old page */
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
- 		/*
-@@ -1451,7 +1451,7 @@ int xtExtend(tid_t tid,		/* transaction id */
- 			XT_PUTPAGE(mp);
- 
- 			/* get new child page */
--			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+			rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 			if (rc)
- 				return rc;
- 
-@@ -1729,7 +1729,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
- 			return rc;
- 
- 		/* get back old page */
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
- 		/*
-@@ -1745,7 +1745,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
- 			XT_PUTPAGE(mp);
- 
- 			/* get new child page */
--			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+			rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 			if (rc)
- 				return rc;
- 
-@@ -1806,7 +1806,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
- 		XT_PUTPAGE(mp);
- 
- 		/* get new right page */
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
- 
-@@ -1882,7 +1882,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
- 			return rc;
- 
- 		/* get back old page */
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
- 
-@@ -1899,7 +1899,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
- 			XT_PUTPAGE(mp);
- 
- 			/* get new child page */
--			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+			rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 			if (rc)
- 				return rc;
- 
-@@ -2286,7 +2286,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
- 	 * first access of each page:
- 	 */
-       getPage:
--	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+	rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 	if (rc)
- 		return rc;
- 
-@@ -2524,7 +2524,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
- 
- 	/* get back the parent page */
- 	bn = parent->bn;
--	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+	rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 	if (rc)
- 		return rc;
- 
-@@ -2809,7 +2809,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
- 		 * first access of each page:
- 		 */
-       getPage:
--		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+		rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 		if (rc)
- 			return rc;
- 
-@@ -2854,7 +2854,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
- 
- 	/* get back the parent page */
- 	bn = parent->bn;
--	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
-+	rc = xt_getpage(&ip, bn, &mp, PSIZE, &p);
- 	if (rc)
- 		return rc;
- 
++	/*
++	 * When there are instances where ioapic_handled_vectors is
++	 * set due to pending interrupts, clean up the record and do
++	 * a full KVM_REQ_SCAN_IOAPIC.
++	 * This ensures the vector is cleared in the vCPU's ioapic_handled_vectors,
++	 * if the vector is reused by non-IOAPIC interrupts, avoiding unnecessary
++	 * EOI-induced VMEXITs for that vector.
++	 */
++	if (apic->vcpu->arch.last_pending_vector == vector) {
++		apic->vcpu->arch.last_pending_vector = 0;
++		kvm_make_request(KVM_REQ_SCAN_IOAPIC, apic->vcpu);
++	}
++
+ 	/* Request a KVM exit to inform the userspace IOAPIC. */
+ 	if (irqchip_split(apic->vcpu->kvm)) {
+ 		apic->vcpu->arch.pending_ioapic_eoi = vector;
 -- 
-2.48.1
+2.43.5
 
 
