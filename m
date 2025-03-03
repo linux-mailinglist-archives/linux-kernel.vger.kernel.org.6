@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-544999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FB4A4E7A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:07:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB85A4EA30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA311881FFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70280188D014
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA779283695;
-	Tue,  4 Mar 2025 16:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2A4205E00;
+	Tue,  4 Mar 2025 17:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvPcDH3O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOgzba7r"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85204255258
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4525B2E3362
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106406; cv=fail; b=EzF0S5EXct+tjXGG9/6aOQYmKnP01SUo/0CJzqgatUSw9gM46lIQSfDF0LNzdWCsJuUV7CPUBcGfNr1/L1qevjZdtvUX2KO7I5ydyvt46k0CuC1LxvAyU2bbSvfHr4WYaBuv7VOOb4Jt1b37b4boPd87fF4zzPfP+MNmT/3KGgw=
+	t=1741109610; cv=pass; b=ILu9n8IyYnEpC+Qfx0XTGVorDo6XuT8cYdVPrlWEAlpmxFam/0wKDcXtTOoJg8yXL37uhxlW1yWwTAKZq/hZmTdgXCCYI6MPKckpDKmF4G9TMm5sAuyIuOsnOrAsHEziJ39ZgmzqDEpVVmXoJcYBDJNGSaEdeDkGEpgHrJgFPj4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106406; c=relaxed/simple;
-	bh=UhAthRHg6IYwAfSvU3dx2/VKpvPRRz10sCz6WTEbYuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HYSC7+SOuop8CIbIxMf7LHIUVdDxjXjGL3mtRjzkNfm7ui3MOkyVDc6k60LsTb4P8Ds408EtTN/E1uKFjILncY7NhtU0qame+EKGrRMNxTbarKYKEGD+3T/FlvzfhhPDU/on0T+QVlK0LTr9d/zgRbXn9+aTSD6vJ6vr4SZSNeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvPcDH3O reason="signature verification failed"; arc=none smtp.client-ip=209.85.167.48; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741109610; c=relaxed/simple;
+	bh=LGkSTeMJSL/cH0aAMd2yE3RYQtg8Y3v4p03/JAj8MYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dBMdnMmBkskaJd8j5YYlTH/wpSzHxvX6s8yOmhgOTtxiwpnUbFF2of9jcURj/wtJxz5oxkcMxjEbZ0kAvYnar1aUPipCtX04e/IbMhFqy5uIPUHaszRSYkxvsvkUrSqNtD26+OGjRIwD31GCydBs9KHJL/OvLhcJJ0tWZkZWpeg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOgzba7r; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 9CAEC40D976E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:40:02 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 786AB40D4DC0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:33:27 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=JOgzba7r
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hFh4BXlzG3fp
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:38:32 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dcW3VnTzFx4j
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:39:39 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id D605642742; Tue,  4 Mar 2025 19:38:25 +0300 (+03)
+	id 6CABB42740; Tue,  4 Mar 2025 17:39:22 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvPcDH3O
-X-Envelope-From: <linux-kernel+bounces-541666-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOgzba7r
+X-Envelope-From: <linux-kernel+bounces-541673-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvPcDH3O
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOgzba7r
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id E43FD42161
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:09:41 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 26CF742549
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:12:18 +0300 (+03)
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 77D962DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:09:41 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id ADFA72DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:12:17 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF093AD8D0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8602F3B1439
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE1120E308;
-	Mon,  3 Mar 2025 12:05:19 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F34320E704;
+	Mon,  3 Mar 2025 12:08:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBF720E6E3;
-	Mon,  3 Mar 2025 12:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC031FFC5D;
+	Mon,  3 Mar 2025 12:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003516; cv=none; b=twetprlRBFWPaGuuAipOsP/oS2jxk/MKw4yjJ2BrbSJ0p43m4dlPQPgZ2zHThoORRaIiznJETH8Twn1uTH31xoJvewxlPtMPMAOcaJ63ubqF2ptjJgA1h4fKoQKvLCBsQLLiQ1P4fPBQZDucKujPmzGUVfcq+SaJPYUbzOLIWxQ=
+	t=1741003725; cv=none; b=i88IRjupga3xLFUMQZrrN6bL3P8maxJ73hwC5dP8uVQzr4rfcZkdLvg//wHprkBWicg02SSSivbftAK1tZMC1bp+Wd4F5CqsBCosKD21T/GS2vZPnhv9jndOlPUUNc0LPQ51w4gRZyk8oMNzM3kRsWZ4S7FRFDGsUNPkEhciwwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003516; c=relaxed/simple;
-	bh=rZikCDv8fD+Rzkk4RfVp7aDtd/aBZpILIsTNbD23F+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N3X9uQA09soplQ2FNaaQ2cIUDFN7LH1hKd5qjED4SxUzWbXycL0ztyrnBVcW02NKQYfElyZrVU70bUQFC5iavrIbf1zGGdMHZM9eCHmrVtBFqNoSI5U/0dnWA+qpU9sQiUd9Uh+uqu19YIph6sivGAJXb2Cyf0scaeBPlA8dcus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvPcDH3O; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-549681574e0so942120e87.2;
-        Mon, 03 Mar 2025 04:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741003513; x=1741608313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q34w3RqR0dtKEGKyYXofcB2jlNCM2LrnhrF1NCKpgfo=;
-        b=HvPcDH3OFQLIiIC/DYfgIeLrzobEl2Gfi/Kdzk+aaRL1u6hLhZAGKIjjI9DQ1tYANb
-         lqQKDdqtViyg6Zrl74/trRYTS8Y4debt8xSCLr7OT+WTfwtC39H1O3XYy+a0GM+GWJk7
-         r3PZ7KXodN9aWcY+4S97zOoJJRWQgiElK4sT619Zxq4ZvI6y7p8hxsZIHuVZzis11l0t
-         2wtSbTWcpfPsuTTgVIJhNz9fqSmpyFQ8/HAO6V0kIED3TLjs9b/UzaNj6qrHzQFA+Q2F
-         Iuuv3XMp+ozHDIOktJm1cMre7Ov1gXwq8JaPD+PUuYLeEDvR4LZWYIx60a1yZ736+i2q
-         /yUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741003513; x=1741608313;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q34w3RqR0dtKEGKyYXofcB2jlNCM2LrnhrF1NCKpgfo=;
-        b=ne8KSlStG3+EYrQvApZViH57fs5r1V5RJNynC/0Qop9D2KorBerj9VMOE09IknCkK6
-         /U9OQaeaAE6zgzjsINvIm2OJHFhxsORh7XcOhKXwJv3rS4u+wR2l5Jhime79j6iSa3I2
-         0CNZeyC/f+WZXHHqnkGLn2JDFtjZLd0s/F9XUJ8pqyeoZ1nix2snmWLdghoHwqzbuIon
-         L+wQmCqlzQxrmxEQH7upIfLphBn/nEeLuoZIwFcxnf6NpFmEZXTXyoyjCcnopvvfEfZ6
-         +SOEj5ht4DXxkAkKU6uOvqZ3bCDE+L0ETgGIO76S/fRZ0PKxfHn5qekhS4vwMnttgCpD
-         u7zg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6u7GNiDw8rasbrpjh2wQznUusm2xQJpSFzVxi+BOG4/MwP04qLST9XeJVGBASzNSd097zyD3ae8dwTQD9@vger.kernel.org, AJvYcCX0N3O1WGvoYD/wWwCEi/ojAE/JzOrW+nmotDYk8hQptHVLesq9LHt93GZ/Ta+7v24Ps+/ZwkhNuc4T@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGJ0i16bTox1/1TEOJJ9zWvSl8upF/814OPBx5ZAbj30vHyfI3
-	td+oG+tN2C0UJs72ddVaLBzg6cHzvpoAgwKc8gue0d6ZfuQwXCeO
-X-Gm-Gg: ASbGnctmB67srvEPskvoNtlLncXGgzHMOj5VJWm3YZDWhyChionGyOhPquiGkx4uAfP
-	4jV8gf+25OYRxZ0iBpG1qKfYgWlfz+DFIZGUo6fhQKr2YmsEc6wcquvSo0pu+xwIWT+fqMeeo27
-	PBzIHycrCFEc015Mq3LyUmXP2kjTfaL7Di5dlZ5OZAJiAO5o9j4ZlCzf0hRQ6V6FjITAsmSvEf0
-	74uIjNGAHbmOnfHdL8uqH/wljfjEC7qyIhQq86rQCeS3MqYpVR+0AYidPj5DXwe5CsMs72cKHrF
-	2uHFhxrNOVDzExgoYYBFp9z6JsuqjCBV1w0/
-X-Google-Smtp-Source: AGHT+IEhfdZku8NOEKgVtX1J/L1drONSMhC8CpobtnAojuGdq2AZu/OuExshcU+3+lZ+0K5xE2WVow==
-X-Received: by 2002:a05:6512:1292:b0:545:c5f:8551 with SMTP id 2adb3069b0e04-5494c3517b6mr5624203e87.35.1741003512681;
-        Mon, 03 Mar 2025 04:05:12 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549576b88d9sm869095e87.12.2025.03.03.04.05.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:05:12 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Maxim Schwalm <maxim.schwalm@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: display: extend the simple bridge with MStar TSUMU88ADT3-LF-1
-Date: Mon,  3 Mar 2025 14:04:54 +0200
-Message-ID: <20250303120455.90156-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250303120455.90156-1-clamor95@gmail.com>
-References: <20250303120455.90156-1-clamor95@gmail.com>
+	s=arc-20240116; t=1741003725; c=relaxed/simple;
+	bh=LGkSTeMJSL/cH0aAMd2yE3RYQtg8Y3v4p03/JAj8MYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TtQqAUozqEZcyDm0hLoeRkht4ipFtGUFOHchKwXVNReYgTuWdkYXkpcNbYGyT0mAsxfCY59FyiSrVCMdEyEWaeEEFnftTS5u85hY1ufRV28NTO3MyzWppCC8Uii+slOwW/CvOW6TmWkpyo32GkLXeT3+womADNsjthLb+SJfRjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOgzba7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C457C4CEE6;
+	Mon,  3 Mar 2025 12:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741003725;
+	bh=LGkSTeMJSL/cH0aAMd2yE3RYQtg8Y3v4p03/JAj8MYo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JOgzba7rumPUUt+3gteK8x9ZNSeO4vmIPUtBm/4n5NiPfAEtAv3KsduFjHVnRBvYP
+	 nOKDVlscMErtbUIi+bBI0VzMzpkAQHIPXoOECKx8/WIUGqxZYjHwUaXGqwyRABKmtM
+	 eAS3WHS5zm87hWMSDLJy8pBIbTsRIxCyZc4mNW/9375L8GqRPDA7O6X632u3avW3WR
+	 mKY8t5FIvStnQXapBFA2toErN72CMdMS0VLnkzij/l/n6irK+NXPlezBgLOXVgxuZt
+	 Uz0ZrSE9IHPnwUOuCiXFzgPgYABFL8qXwEG1xoNx3xytUjlp6eRzhIMVSUufLiP0Wz
+	 /4VIdlGyXpwzA==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f66bf7602eso261605b6e.3;
+        Mon, 03 Mar 2025 04:08:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWQ1/NjUNCSenugMWx7zURmhseK6c1pnsQUTNwlAm7REI0/qRhz6Fyciz5IrDn0irjWkLfeq0dobDE=@vger.kernel.org, AJvYcCWSGvc2TSWxYA01ocw0xcXIvWbuwU++B7/7L2S+Cti9ZBiQhhLZidQZo+uqJzbDYxOgI/4Ymf5t/RnD6/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnf84Yp9MBfH1VShA0ttlt+MHSwH5VmWAsgyi6U6ugoVjljUPI
+	A1vixVv52XlILr/GDnjutGayFnkW0meusftwDj5OTsyJn8EiNj1GvJK1sR1PyadjUKBY1fHtfSJ
+	LnQGien/BhjmoY/uMk1KCPymaqdQ=
+X-Google-Smtp-Source: AGHT+IHUr2H06n1lRN0NwMlgKxCbIFdOobcyUUosrvn5yqSQUt8nL0vKq4fIngd8cXxKK3Bb4uOrL2lghJ9judeG3LM=
+X-Received: by 2002:a05:6808:1dd9:b0:3f6:6cbc:9326 with SMTP id
+ 5614622812f47-3f66cbc9559mr1342832b6e.29.1741003724512; Mon, 03 Mar 2025
+ 04:08:44 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -151,38 +106,106 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAPDyKFoWeZNqODb5VdXfTEhxRJ0azSQPWhM3WCJ+iUeJ3rYQHw@mail.gmail.com>
+In-Reply-To: <CAPDyKFoWeZNqODb5VdXfTEhxRJ0azSQPWhM3WCJ+iUeJ3rYQHw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Mar 2025 13:08:32 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0htK3V2uPvqczirL9WW2Pgip00VP6xd8pqbOKvCUPhSbQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JoHfqGi4iiLMoX4pE-Ttl2wrDwMHPv6jml-d3qFwq9ON_ye9RzblquNiDo
+Message-ID: <CAJZ5v0htK3V2uPvqczirL9WW2Pgip00VP6xd8pqbOKvCUPhSbQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hFh4BXlzG3fp
+X-ITU-Libra-ESVA-ID: 4Z6dcW3VnTzFx4j
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711124.43831@iTDbYgWFMTf6tItROSwdlw
+X-ITU-Libra-ESVA-Watermark: 1741714305.07419@YSRmzQHWQrMVRUaW1j4yXg
 X-ITU-MailScanner-SpamCheck: not spam
 
-A simple bridge used in ASUS Transformer AiO P1801-T.
+On Mon, Mar 3, 2025 at 1:07=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
+ wrote:
+>
+> On Tue, 25 Feb 2025 at 17:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote=
+:
+> >
+> > Hi Everyone,
+> >
+> > Initially, this was an attempt to address the problems described by
+> > Saravana related to spawning async work for any async device upfront
+> > in the resume path:
+> >
+> > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@goo=
+gle.com/
+> >
+> > but then I realized that it could be extended to the suspend path and
+> > used for speeding it up, which it really does.
+> >
+> > Overall, the idea is that instead of starting an async work item for ev=
+ery
+> > async device upfront, which is not very efficient because the majority =
+of
+> > those devices will not be able to make progress due to dependencies any=
+way,
+> > the async handling is only started upfront for the devices that are lik=
+ely
+> > to be able to make progress.  That is, devices without parents in the r=
+esume
+> > path and leaf devices (ie. devices without children or consumers) in th=
+e
+> > suspend path (the underlying observation here is that devices without p=
+arents
+> > are likely to have no suppliers too whereas devices without children th=
+at
+> > have consumers are not unheard of).  This allows to reduce the amount o=
+f
+> > processing that needs to be done to start with.
+> >
+> > Then, after processing every device ("async" or "sync"), "async" proces=
+sing
+> > is started for some devices that have been "unblocked" by it, which are=
+ its
+> > children in the resume path or its parent and its suppliers in the susp=
+end
+> > path.  This allows asynchronous handling to start as soon as it makes s=
+ense
+> > without delaying the "async" devices unnecessarily.
+> >
+> > Fortunately, the additional plumbing needed to implement this is not
+> > particularly complicated.
+>
+> Thanks for the detailed description! Overall, the approach makes
+> perfect sense to me too!
+>
+> I am certainly interested to hear Saravana's thoughts around this too.
+>
+> >
+> > The first two patches in the series are preparatory.
+>
+> For these two, feel free to add:
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> >
+> > Patch [3/5] deals with the resume path for all device resume phases.
+> >
+> > Patch [4/5] optimizes the "suspend" phase which has the most visible ef=
+fect (on
+> > the systems in my office the speedup is in the 100 ms range which is ar=
+ound 20%
+> > of the total device resume time).
+> >
+> > Patch [5/5] extend this to the "suspend late" and "suspend noirq" phase=
+s.
+>
+> I will try to have a closer look at patch 3->5 later in the week.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Robert Foss <rfoss@kernel.org>
----
- .../devicetree/bindings/display/bridge/simple-bridge.yaml        | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/simple-brid=
-ge.yaml b/Documentation/devicetree/bindings/display/bridge/simple-bridge.=
-yaml
-index 43cf4df9811a..441e5e5b27c8 100644
---- a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-@@ -28,6 +28,7 @@ properties:
-       - enum:
-           - adi,adv7123
-           - dumb-vga-dac
-+          - mstar,tsumu88adt3-lf-1
-           - ti,opa362
-           - ti,ths8134
-           - ti,ths8135
---=20
-2.43.0
-
+Thank you and thanks for all of the other reviews!
 
 
