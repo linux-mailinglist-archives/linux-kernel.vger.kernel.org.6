@@ -1,189 +1,304 @@
-Return-Path: <linux-kernel+bounces-542158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34307A4C658
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC6DA4C663
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FC8A18870DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173A21895E03
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AF122425A;
-	Mon,  3 Mar 2025 16:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F5923BF83;
+	Mon,  3 Mar 2025 16:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S5tI4LD1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eU89vQG4"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A16D222594
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF376215F43;
+	Mon,  3 Mar 2025 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017889; cv=none; b=rZZg+Nu5bh5PeuiU56RMw4CGR6ZBXxfzEPLyC2xKL5IyliWmn88YoDBcKOiJgBF/gJ3iccPIccWH8b++RNKFW73JTCZOulg1oPnRkPYiRzSCNlW08VVSz0h2i051YIw9RYHLCFM6jai/WjSXtcPQ1NYu6TdcWMcb4hGZw75fAVY=
+	t=1741017925; cv=none; b=pr8gSBhDVD6iWo9EziAdKaBWBcN3hKJ9/4aHz/PtHhtvg5H2oieK7EXu72NorZZG+jMl+nNDR/nbeqLzEogi2G+A/AYrcAezFFcdZIzr6kubP3tkXbsN2icNgtlZ7MLhmo6UVI7GiDBiU0R4Mh3oU4AJYL+Mm1y5PopqS5hV3zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017889; c=relaxed/simple;
-	bh=+ArXfA3NFKVE7mstrHbZp1HNhefBB5BLsYrGFUrCpe4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8o9w4fmxJqWuqcoul9CQMdRgestmmIymdxylJ3kXWbFiFWzUg/7OX59QMa7e0n5kXxQ5GsWa6skKKhOci4mHVtr0+c8Kri+hVxQxkzIc7YoYLRhHPIswxh34nHXd7m+zceCswNoUKjfLPGgmb722XOLuAYzE4zGJtZrWh2efW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S5tI4LD1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741017886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S24Z2XLjBQceszHvMMBdgNgoldRk+egxEowxBSVQJx0=;
-	b=S5tI4LD1Yui38YDRPKhcLR1PZMLaYYD+tBfqw9yi6oAs3Q0TBEzZXXHscpLLzDVMvGJ0eb
-	1yPkbzdkmzf8/Ocqec9hobaOsTFP4ONVd5VtWJGzGuhm9fJ4k/3wr2D1hbEJmZVHCtv9/3
-	V6OxXSA3jlt8I/JJ1U3Ee9JgEJEkMfs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-322-ljPI1jiFM7Kx9xhsnLSmqA-1; Mon, 03 Mar 2025 11:04:43 -0500
-X-MC-Unique: ljPI1jiFM7Kx9xhsnLSmqA-1
-X-Mimecast-MFC-AGG-ID: ljPI1jiFM7Kx9xhsnLSmqA_1741017882
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so2000375e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:04:43 -0800 (PST)
+	s=arc-20240116; t=1741017925; c=relaxed/simple;
+	bh=o3Vom5u/1XsSjlLPauYQLijGjRjG8HyZS+I8BMFbW0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=deICV4f/JwHrJ5tzdp4NCYQDkqFRUXpkrmpk60cSvmpW2I0CLwMVOJ4FogyXvPnbBGwwHaRZYplMNOZjFiG6qWVKP+L4NS7Vz2sOy7uZIB35Mw0vXV0jPPylCQLd6YnMPMhxckkNeA74q9vN8gCX2MZu1X+22n3Im3H8fsqZYaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eU89vQG4; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-51f22008544so1845697e0c.1;
+        Mon, 03 Mar 2025 08:05:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741017922; x=1741622722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yg9dj5bG2dgxol7z28Zc4Vx4OJ7ZcMf3ke2e1RAfM+w=;
+        b=eU89vQG436O2/oAxgdQR11ZCsTgEcDAhjQD1joUGFmyd2OgJxfW9kXbGiLgzbk8WZ+
+         vSs0c/lZcHQmhvayfMrhye2xC2eO+d6GXqQ4WsY/EiJm1lORBKuuOkx48WMnbUEruaOw
+         hF2VE0Vpy5Dsnht0FVbf8DlWJaSXz1UWQI15nVkvSEy0UmJnT3/TCmQN5AOhVqnVrUMG
+         9e8PYAhb66IoN+KYsIU2inv28F73b+ryRbO0etRt2jL+MkZxs8cZZ67jNGCjAtpgPecD
+         F6IR0lfFEzXgP6U2Nlp5A6NEmbk9+hBUFCzohZwIYGKvKB4R9eJq4eF9cu66Klr6VKVT
+         niZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017882; x=1741622682;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S24Z2XLjBQceszHvMMBdgNgoldRk+egxEowxBSVQJx0=;
-        b=l4rDBPYQ4wECNykxXiM0V0+157F0HvzzW1yXerkq3AzV8HgkAF7s75wwybH0kAZ8Dp
-         fhwG0L+rrwPpasJxdZxR7DXF+4c/T2rXphbM8sPXqR10qBhISKYnDUCNg9FMUFDMRuOr
-         /QE0UbzmQ0VyQE9zg4tvaTV7lXABe0+4iTSVssH8ZjsUziyLr0HzPJwJy/yF+O32pu3G
-         tyvOVdKiGBvmqb0+li89vJlxwc9Yw5+g94+P1dWirC/5ismgD8/W/a4iLPVJN+59L0TT
-         ztBuUwk4GXwAvv8bzlPkXJ/Ajb85sYxHNQ9TAgzA/0PCE80n1nmYgZg6UkHBV1EGOBLk
-         5POw==
-X-Gm-Message-State: AOJu0YxIsT4Huh2ySSU4+RjvzIg3BlZPq1Pcbg8dMFvn5ry9aUjy1/bz
-	YncNf6638XrdC4CH1cllnnYv/XJdVuGWB4g6WgWASlHlbDZkZUr/S80lKz0EKPA//aydbDuP3Pj
-	E7glM3+edZMzTE7V4uaeZjHou2GowJEoBC5WYTRAR2JPnY9AdhehEqXLHLQFXNw==
-X-Gm-Gg: ASbGnctF5R+NHRn1autejkGnY3ThUMxndzaYdAp9ELE2AiYgzfcXdThKG/xIqSEpPlg
-	qvsLqMdpErfrsGoS0rvxxKumaEk6F4WigHHkcwPzDn5JCfhA58r1kpavxGYyOGxbWd4OyDLEa99
-	e0oz0i+Dp6x/wPt/CEnP84BEwvL01J5ci9ChrCSk9Lih9Vz7AD4vYPo0qsg9Kq0wl5d9XChkL/R
-	aApLoYNbhYZbMs46ptgEr0IcUUuBQRJCIMM8FauM6H6BvQ2FGwF11NqYKPcxQNwJ2gCi3htg5lU
-	F1SnJsmsbDSgBgRIcOc=
-X-Received: by 2002:a05:600c:35c6:b0:439:a88f:852a with SMTP id 5b1f17b1804b1-43ba6766afamr107678005e9.23.1741017882396;
-        Mon, 03 Mar 2025 08:04:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESAc+wX0rvxOcIZfq234qfuHB0j658DFjIRUqcr9+kyBhaJQ1jhl3on4TmLYdoOsn3wxZikA==
-X-Received: by 2002:a05:600c:35c6:b0:439:a88f:852a with SMTP id 5b1f17b1804b1-43ba6766afamr107677525e9.23.1741017881940;
-        Mon, 03 Mar 2025 08:04:41 -0800 (PST)
-Received: from [192.168.10.27] ([151.95.119.44])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43bc993abc5sm9812355e9.2.2025.03.03.08.04.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 08:04:40 -0800 (PST)
-Message-ID: <ad542d2a-f4f3-449f-a2b9-3c0dc1d4905f@redhat.com>
-Date: Mon, 3 Mar 2025 17:04:40 +0100
+        d=1e100.net; s=20230601; t=1741017922; x=1741622722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yg9dj5bG2dgxol7z28Zc4Vx4OJ7ZcMf3ke2e1RAfM+w=;
+        b=PDcTIjoCkC3PKCUw1DFYGuXX92FpBruodCbgWzrM9vseVVLW+KCqXuPWyswI09iZkc
+         16LNRRLIxJZ7qLhhZ8toyBN+oHlr4KxJOyp2piP//AjujJH0ISwCO340v945QvsWtJOQ
+         Ny8rtUBYm9jWCEanoNIxHum2p7Hlo0diAg98qvR89fBwrmlqUzy/yQi8sOJ5JsCILYz+
+         tFFRwf7CCWyBaFq44jKqCx5MHdDjQpOayuEJwe+MZSammITtlZddQQIDiVjd2PePLTjH
+         alTjkDILSFzE0wajtwgZ5rzDHpA9BchAbTxzy6k/mO4cOZCRsiySEaNJfMSS09WzyOgj
+         XYcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ZMMNSwFkyOH+m3Frf2H7sF2b6SrvHqW0Lfa9cj3jgVyig3mcH6tcWZugluuytT26Pvq94b4WkDHk7TFA@vger.kernel.org, AJvYcCWFLjCZssiU+HgVnwqlOIe9cKCLUqmsQeAWvCqnLpDEHMcb2bYVd1MKXeRrGsAjzw5cB5O8gfWIw+bt@vger.kernel.org, AJvYcCXCT6KifkfIpTti96dDuYIYJZoKVVORzLgla8lC5TZbOKYocuHuNfYeZHOWGucwXU/jjrtY+/4MABs9X/iHI7jSleQ=@vger.kernel.org, AJvYcCXcwXX7eJkIt0hTCvu5gajYl5HqaUMLfCBepb3b0LPJ+UvJts3Kcd7qH0ybMnCY+svjgbb108lT@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt0Vie6w+sGv0fJarjXFeAYjDkkeZinsKTNJ2VR6PMrEKyUN1n
+	OwnXEmpmFc9dXvgBpRyklPVWE/pDn/Iz2dJq3zKfNNbX7cTB728BhJqCcfgix00bthMmWOG+vD4
+	R/Ozy3qxnRN1MhRMzFNucgeMpBV0=
+X-Gm-Gg: ASbGncviPaXPFL00sBbMsNrgr//vVtIukipQxOnZnYXuZJZEkZyESpc7Tnpy6tLznjR
+	69liSM88GuOlm3RDwW2GfOopNYDEMJ52dhFXufOYjyQE0pSmdHO8lqcEiCok42MoRrTeMXW6BNJ
+	g4KArSLRE1Ssa/3/LpG8Ot28r7iAMeZOPiMrYutEr4ftk++Ya4aaVI4h0xjQ==
+X-Google-Smtp-Source: AGHT+IGZhUGgimEx7Yd4GnJt3PXvVpTgFBQejSjmUmMfJrB0cDHMhFhdBmU2P/auwEr2Sgf0CKJm9gmYseuztTuE4qs=
+X-Received: by 2002:a05:6122:2897:b0:520:3987:ce0b with SMTP id
+ 71dfb90a1353d-5235b519bf9mr8776775e0c.2.1741017922512; Mon, 03 Mar 2025
+ 08:05:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] KVM: x86: Allow vendor code to disable quirks
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, seanjc@google.com
-References: <20250301073428.2435768-1-pbonzini@redhat.com>
- <20250301073428.2435768-2-pbonzini@redhat.com>
- <Z8UCosKAJIUZ5yq/@yzhao56-desk.sh.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <Z8UCosKAJIUZ5yq/@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk> <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
+ <Z8TRQX2eaNzXOzV0@shell.armlinux.org.uk> <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
+ <Z8WQJQo5kW9QV-wV@shell.armlinux.org.uk>
+In-Reply-To: <Z8WQJQo5kW9QV-wV@shell.armlinux.org.uk>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 3 Mar 2025 16:04:55 +0000
+X-Gm-Features: AQ5f1Jo58dfCPSbr_LygSD0HpkN57A-j2nqiiBeRIwww0srAwlBBwXcm7umdJrc
+Message-ID: <CA+V-a8vCqxCaB_UEf-Ysg3biu5VoQ2_0OxWnN97Mdee9Op3YDA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/3/25 02:15, Yan Zhao wrote:
-> On Sat, Mar 01, 2025 at 02:34:25AM -0500, Paolo Bonzini wrote:
->> In some cases, the handling of quirks is split between platform-specific
->> code and generic code, or it is done entirely in generic code, but the
->> relevant bug does not trigger on some platforms; for example,
->> KVM_X86_QUIRK_CD_NW_CLEARED is only applicable to AMD systems.  In that
->> case, allow unaffected vendor modules to disable handling of the quirk.
->>
->> The quirk remains available in KVM_CAP_DISABLE_QUIRKS2, because that API
->> tells userspace that KVM *knows* that some of its past behavior was bogus
->> or just undesirable.  In other words, it's plausible for userspace to
->> refuse to run if a quirk is not listed by KVM_CAP_DISABLE_QUIRKS2.
->>
->> In kvm_check_has_quirk(), in addition to checking if a quirk is not
->> explicitly disabled by the user, also verify if the quirk applies to
->> the hardware.
->>
->> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
->> Message-ID: <20250224070832.31394-1-yan.y.zhao@intel.com>
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->>   arch/x86/kvm/vmx/vmx.c |  1 +
->>   arch/x86/kvm/x86.c     |  1 +
->>   arch/x86/kvm/x86.h     | 12 +++++++-----
->>   3 files changed, 9 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->> index 486fbdb4365c..75df4caea2f7 100644
->> --- a/arch/x86/kvm/vmx/vmx.c
->> +++ b/arch/x86/kvm/vmx/vmx.c
->> @@ -8506,6 +8506,7 @@ __init int vmx_hardware_setup(void)
->>   
->>   	kvm_set_posted_intr_wakeup_handler(pi_wakeup_handler);
->>   
->> +	kvm_caps.inapplicable_quirks = KVM_X86_QUIRK_CD_NW_CLEARED;
-> 
-> As you mentioned, KVM_X86_QUIRK_CD_NW_CLEARED has no effect on Intel's
-> platforms, no matter kvm_check_has_quirk() returns true or false.
-> So, what's the purpose to introduce kvm_caps.inapplicable_quirks?
+Hi Russell,
 
-The purpose is to later mark IGNORE_GUEST_PAT as inapplicable, so that 
-the relevant code does not run on AMD.  However you have a point here:
+On Mon, Mar 3, 2025 at 11:19=E2=80=AFAM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Sun, Mar 02, 2025 at 10:02:15PM +0000, Lad, Prabhakar wrote:
+> > Hi Russell,
+> >
+> > On Sun, Mar 2, 2025 at 9:44=E2=80=AFPM Russell King (Oracle)
+> > <linux@armlinux.org.uk> wrote:
+> > >
+> > > On Sun, Mar 02, 2025 at 09:20:49PM +0000, Lad, Prabhakar wrote:
+> > > > Hi Russell,
+> > > > > What is the reason for setting this flag? If it's because of susp=
+end/
+> > > > > resume failures, does my "net: stmmac: fix resume failures due to
+> > > > > RX clock" series solve this for you without requiring this flag?
+> > > > >
+> > > > Ive set this flag based on the configuration supported by this IP.
+> > > > Unfortunately the platform which I am working on doesn't support s2=
+r
+> > > > yet so I cannot test suspend/resume path yet. But I do see an issue
+> > > > when I unload and load just the glue module the DMA reset fails.
+> > >
+> > > Thanks for that feedback - that's a scenario I hadn't considered.
+> > >
+> > > I was trying to avoid having to disable LPI RX clock-stop on suspend =
+by
+> > > ensuring that it was enabled at resume time. I think that's valid, bu=
+t
+> > > you've brought up another similar scenario:
+> > >
+> > > - device is brought up, configures RX clock stop
+> > > - links with media, negotiates EEE
+> > > - driver is unloaded, link doesn't go down, but due to no traffic goe=
+s
+> > >   into idle, so RX clock is stopped
+> > > - driver reloaded, RX clock still stopped, reset fails
+> > >
+> > > I would like to solve that so we can get the power savings from
+> > > stopping the clock, but still have reset work when necessary.
+> > >
+> > I would be happy to test the patches ;)
+> >
+> > > I'm guessing that the "DMA reset fails" refers to this path:
+> > >
+> > > stmmac_open() -> __stmmac_open() -> stmmac_hw_setup() ->
+> > > stmmac_init_dma_engine() -> stmmac_reset() ?
+> > >
+> > Yes.
+> >
+> > > In other words, when the device is being brought back up
+> > > adminsitratively?
+> > >
+> > > What happens if you (replace $if):
+> > >
+> > > # ip li set dev $if down
+> > > # ip li set dev $if up
+> > >
+> > > Does that also fail without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI set?
+> > >
+> > Logs without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
+> > --------------------------------------------------------------
+> > root@rzv2h-evk-alpha:~# ip li set dev eth1 down
+> > [   33.606549] renesas-gbeth 15c40000.ethernet eth1: Link is Down
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# ip li set dev eth0 down
+> > [   37.356992] renesas-gbeth 15c30000.ethernet eth0: Link is Down
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# ip li set dev eth1 up
+> > [   43.974803] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-0
+> > [   43.983189] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-1
+> > [   43.991155] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-2
+> > [   43.999128] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-3
+> > [   44.072079] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
+> > driver [Microchip KSZ9131 Gigabit PHY] (irq=3DPOLL)
+> > [   44.094605] dwmac4: Master AXI performs fixed burst length
+> > [   44.100138] renesas-gbeth 15c40000.ethernet eth1: No Safety
+> > Features support found
+> > [   44.107748] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
+> > Advanced Timestamp supported
+> > [   44.116725] renesas-gbeth 15c40000.ethernet eth1: registered PTP clo=
+ck
+> > [   44.123352] renesas-gbeth 15c40000.ethernet eth1: configuring for
+> > phy/rgmii-id link mode
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# ip li set dev eth1[   47.207761] renesas-gbeth
+> > 15c40000.ethernet eth1: Link is Up - 1Gbps/Full - flow control off
+> > ^C
+> > root@rzv2h-evk-alpha:~# ^C
+> > root@rzv2h-evk-alpha:~# ip li set dev eth0 up
+> > [   55.636722] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-0
+> > [   55.645139] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-1
+> > [   55.653111] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-2
+> > [   55.661073] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-3
+> > [   55.732087] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
+> > driver [Microchip KSZ9131 Gigabit PHY] (irq=3DPOLL)
+> > [   55.754612] dwmac4: Master AXI performs fixed burst length
+> > [   55.760143] renesas-gbeth 15c30000.ethernet eth0: No Safety
+> > Features support found
+> > [   55.767740] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
+> > Advanced Timestamp supported
+> > [   55.776705] renesas-gbeth 15c30000.ethernet eth0: registered PTP clo=
+ck
+> > [   55.783333] renesas-gbeth 15c30000.ethernet eth0: configuring for
+> > phy/rgmii-id link mode
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# [   58.855844] renesas-gbeth 15c30000.ethernet
+> > eth0: tx_clk_stop=3D1
+> > [   58.861989] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
+> > 1Gbps/Full - flow control rx/tx
+> >
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~#
+> >
+> > Logs with STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
+> > --------------------------------------------------------------
+> > root@rzv2h-evk-alpha:~# ip li set dev eth1 down
+> > [   30.053790] renesas-gbeth 15c40000.ethernet eth1: Link is Down
+> > root@rzv2h-evk-alpha:~# ip li set dev eth0 down
+> > [   35.366935] renesas-gbeth 15c30000.ethernet eth0: Link is Down
+> > root@rzv2h-evk-alpha:~# ip li set dev eth1 up
+> > [   40.448563] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-0
+> > [   40.456725] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-1
+> > [   40.464893] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-2
+> > [   40.472840] renesas-gbeth 15c40000.ethernet eth1: Register
+> > MEM_TYPE_PAGE_POOL RxQ-3
+> > [   40.543895] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
+> > driver [Microchip KSZ9131 Gigabit PHY] (irq=3DPOLL)
+> > [   40.566419] dwmac4: Master AXI performs fixed burst length
+> > [   40.571949] renesas-gbeth 15c40000.ethernet eth1: No Safety
+> > Features support found
+> > [   40.579550] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
+> > Advanced Timestamp supported
+> > [   40.588505] renesas-gbeth 15c40000.ethernet eth1: registered PTP clo=
+ck
+> > [   40.595135] renesas-gbeth 15c40000.ethernet eth1: configuring for
+> > phy/rgmii-id link mode
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# [   43.687551] renesas-gbeth 15c40000.ethernet
+> > eth1: Link is Up - 1Gbps/Full - flow control off
+> >
+> > root@rzv2h-evk-alpha:~# ip li set dev eth0 up
+> > [   49.644479] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-0
+> > [   49.652719] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-1
+> > [   49.660681] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-2
+> > [   49.669059] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-3
+> > [   49.740011] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
+> > driver [Microchip KSZ9131 Gigabit PHY] (irq=3DPOLL)
+> > [   49.762518] dwmac4: Master AXI performs fixed burst length
+> > [   49.768057] renesas-gbeth 15c30000.ethernet eth0: No Safety
+> > Features support found
+> > [   49.775655] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
+> > Advanced Timestamp supported
+> > [   49.784609] renesas-gbeth 15c30000.ethernet eth0: registered PTP clo=
+ck
+> > [   49.791236] renesas-gbeth 15c30000.ethernet eth0: configuring for
+> > phy/rgmii-id link mode
+> > root@rzv2h-evk-alpha:~#
+> > root@rzv2h-evk-alpha:~# [   52.871635] renesas-gbeth 15c30000.ethernet
+> > eth0: tx_clk_stop=3D1
+> > [   52.877777] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
+> > 1Gbps/Full - flow control rx/tx
+>
+> I would like to get to the bottom of why this fails for module removal/
+> insertion, but not for admistratively down/upping the interface.
+>
+> Removal of your module will unregister the netdev, and part of that
+> work will bring the netdev administratively down. When re-inserting
+> the module, that will trigger various userspace events, and it will
+> be userspace bringing the network interface(s) back up. This should
+> be no different from administratively down/upping the interface but
+> it seems you get different behaviour.
+>
+> I'd like to understand why that is, because at the moment I'm wondering
+> whether my patches that address the suspend/resume need further work
+> before I send them - but in order to assess that, I need to work out
+> why your issue only seems to occur in the module removal/insertion
+> and not down/up as well as I'd expect.
+>
+> Please could you investigate this?
+>
+Sure I will look into this. Just wanted to check on your platform does
+unload/load work OK? Also do you know any specific reason why DMA
+reset could be failing so that I can look at it closer.
 
-> One concern is that since KVM_X86_QUIRK_CD_NW_CLEARED is not for Intel
-> platforms, it's unnatural for Intel's code to add it into the
-> kvm_caps.inapplicable_quirks.
-
-So let's instead have kvm-amd.ko clear it from inapplicable_quirks.  And 
-likewise kvm-intel.ko can clear IGNORE_GUEST_PAT.
-
-Paolo
-
+Cheers,
+Prabhakar
 
