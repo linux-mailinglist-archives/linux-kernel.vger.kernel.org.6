@@ -1,54 +1,65 @@
-Return-Path: <linux-kernel+bounces-542557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B21A4CB14
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:37:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BC0A4CB19
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4E43A1639
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92D83AC025
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFA5214A60;
-	Mon,  3 Mar 2025 18:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B6822D4C4;
+	Mon,  3 Mar 2025 18:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkvFLEnA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOE/feWO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7551D89E3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A320FA85;
+	Mon,  3 Mar 2025 18:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027063; cv=none; b=EMreJWAoiUrCTAQCJd+PdEvcJ1wZCmkdSM1J9cH+5d4KRa2mG4enN5s48H1cZEMVvWsq/g9nMBzBlCkY+ADqsFEmG2RHw3dFwRAwFeVoJuFp4KpGCGtJByCr7uNUyCh4TyNMjQ/oAI4WoUINwmA8iwRPKfXYTlAWMfE8t+0wmoI=
+	t=1741027213; cv=none; b=t4+FX73GEr9JC5Laj9Jn46XRqB3i051JlV+87dbmyDp5QVOwFTZCC61sTLi36pp1XLKbMXXTeHID8JzycbsXuPQJ1Y/JFGWh973vb3B28ggaIXJp3IfkCWImb7lYcyCqBiBQuRskcQUVyLfa6VfsD+G8ft+vhXbVBbNs0eAkwpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027063; c=relaxed/simple;
-	bh=4wJnUn6bLZwdXITOKhU51m+BdwQm4p7YtPDTnXGun5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0h8otQaJhiJQtOFqhYwg0aUyXuo8SZTPH+GxcLbMFJ+KJsE4oCQQKteuFWj5FEfwqKsBQ+74ckYtuXC1VvaF9hfRgu9RTuBIwZuDfOvGlc5ZQsDygy4y9INQCIzzQ1SadaaMrW/fUU355XwY5FXfs9kV9y57fdwH/z2Z5CbmQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkvFLEnA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304E0C4CED6;
-	Mon,  3 Mar 2025 18:37:42 +0000 (UTC)
+	s=arc-20240116; t=1741027213; c=relaxed/simple;
+	bh=LMcjnXUMRisPi6cns32MGe0Eh+x3GI+oq769ibqyYQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YZmUUTwi2vSvR9AXiQNoJk+tVMGfjOXqSBNsRosnQDlLXHVSdgJXpPRJgaLx4tRvKstpEd/zJPyRrmqmQPlzHYPNSfWhRoMvVxMTg9DQYlnCBKpfZKhX0zQ0MQwLFYk+eOcU5Q/ePEfGZ2TPbzFGFkEo4aanC07pbiXaH7xXDyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOE/feWO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11B1C4CED6;
+	Mon,  3 Mar 2025 18:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741027062;
-	bh=4wJnUn6bLZwdXITOKhU51m+BdwQm4p7YtPDTnXGun5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CkvFLEnAl7lRgKKUK0kS0vdIg+01ByGjOLqfaJUGUnsc/7FyVFWGybB9CGzN1bYeB
-	 n4vgYPzia1PXh20+M0Fy2SGDDS5XGrAVBSMHJcwXUwWcRTGuZ5PWHrUY9raqYUERn8
-	 mDhjXJZZ5mK0DVWhftg2Ai+ok+Jb2QmtbNkMCKe41smz5Pgi9IKtoEVFXM66MoHie/
-	 94ETebv26NMp8LLiV3X4x/6/AemS3hrOceM3HVett5G9T69MnJg+Y1zVcWSn+Dh0PC
-	 GKZAwJ94IAANn/CWturujOG0QfSvQSpOqBv0U6Bbzd19HvUix/AI2YaigW3OgVsHSG
-	 cHu7sGomQ7oZQ==
-Date: Mon, 3 Mar 2025 10:37:39 -0800
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: lkdtm: Annotate do_nothing()
-Message-ID: <202503031036.079F90AD8@keescook>
-References: <20250303093817.GJ5880@noisy.programming.kicks-ass.net>
- <202503030921.2CD851B31D@keescook>
- <20250303183525.GA15322@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1741027213;
+	bh=LMcjnXUMRisPi6cns32MGe0Eh+x3GI+oq769ibqyYQE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mOE/feWOMI5QBDfGntKwEW2sMwYsBWmxRIxRC0pbaEIRGHtz3KkUOSjnvqNUPrSB/
+	 EdR894U/HftKtEilBcmM+5dxQqBeGiQRHwSaw1sVNyHCYcreVvS8fsGQ97Vtip9AnN
+	 Zm17RQWrm/c4SgwAeRdkwIgWbibmJnaZP1ksgdeSUX1L/fM4MDRSF+effKh8tZTjOd
+	 W2OEYlldiejka6KB+t7hJsNOMYANUYWwEUowhZEe5sSBf3mYNt3GAl+NpoJQSrcRD2
+	 ibsl02/0xTC0YhdB6ZMU278KAl2kMikfDRHcZgBtsweuUzJn1jZu7McpJvYmanl4zO
+	 ofod9s4njvGfw==
+Date: Mon, 3 Mar 2025 12:40:11 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
+ regulator_bulk_get()
+Message-ID: <20250303184011.GA172021@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,70 +68,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303183525.GA15322@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250214173944.47506-5-james.quinlan@broadcom.com>
 
-On Mon, Mar 03, 2025 at 07:35:25PM +0100, Peter Zijlstra wrote:
-> On Mon, Mar 03, 2025 at 09:26:57AM -0800, Kees Cook wrote:
-> > On Mon, Mar 03, 2025 at 10:38:17AM +0100, Peter Zijlstra wrote:
-> > > Hi Kees,
-> > > 
-> > > During my FineIBT testing the other week I stumbled upon the following
-> > > complaint:
-> > > 
-> > >   vmlinux.o: warning: objtool: execute_location+0x4f: relocation to !ENDBR: .text+0x1032008
-> > > 
-> > > I finally got around to looking at it and realized we have means of
-> > > annotating that since 93f16a1ab78c ("x86/boot: Mark start_secondary() with __noendbr")
-> > > (which might still be in tip only).
-> > 
-> > Er, doesn't that mean do_nothing() will lack an ENDBR? Wait, no, that's
-> > __noendbr. What does this annotation mean if the function _does_ have
-> > ENDBR?
-> > 
-> > Note that these tests are explicitly using __nocfi (via the
-> > execute_location() function) since they're testing the Execute bit in
-> > different memory regions. But I would expect BTI to still work (and not
-> > block execution).
-> > 
+On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
+> If regulator_bulk_get() returns an error, no regulators are created and we
+> need to set their number to zero.  If we do not do this and the PCIe
+> link-up fails, regulator_bulk_free() will be invoked and effect a panic.
 > 
-> Argh, I had a definite wake-up juice deficit this morning, and the BTF
-> noise made me miss that the warning wasn't fixed.
+> Also print out the error value, as we cannot return an error upwards as
+> Linux will WARN on an error from add_bus().
 > 
-> For some reason I thought do_nothing() didn't have ENDBR. Looking at the
-> build now, I see it does have, and the actual location pointed to is
-> do_nothing+0x18, which is weird.
+> Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Ooh, I see, the thing looks to have unrolled and inlined that memcpy()
-> like:
-> 
->    156a3:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156aa <execute_location+0x2a>    156a6: R_X86_64_PC32    .text+0x1032024
->    156aa:       48 89 43 38             mov    %rax,0x38(%rbx)
->    156ae:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156b5 <execute_location+0x35>    156b1: R_X86_64_PC32    .text+0x103201c
->    156b5:       48 89 43 30             mov    %rax,0x30(%rbx)
->    156b9:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156c0 <execute_location+0x40>    156bc: R_X86_64_PC32    .text+0x1032014
->    156c0:       48 89 43 28             mov    %rax,0x28(%rbx)
->    156c4:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156cb <execute_location+0x4b>    156c7: R_X86_64_PC32    .text+0x103200c
->    156cb:       48 89 43 20             mov    %rax,0x20(%rbx)
->    156cf:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156d6 <execute_location+0x56>    156d2: R_X86_64_PC32    .text+0x1032004
->    156d6:       48 89 43 18             mov    %rax,0x18(%rbx)
->    156da:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156e1 <execute_location+0x61>    156dd: R_X86_64_PC32    .text+0x1031ffc
->    156e1:       48 89 43 10             mov    %rax,0x10(%rbx)
->    156e5:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156ec <execute_location+0x6c>    156e8: R_X86_64_PC32    .text+0x1031ff4
->    156ec:       48 89 43 08             mov    %rax,0x8(%rbx)
->    156f0:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 156f7 <execute_location+0x77>    156f3: R_X86_64_PC32    .text+0x1031fec
->    156f7:       48 89 03                mov    %rax,(%rbx)
-> 
-> And objtool figures those .text references are an address-taken-of like
-> thing and expects ENDBR at them.
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index e0b20f58c604..56b49d3cae19 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
+>  
+>  		ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
+>  		if (ret) {
+> -			dev_info(dev, "No regulators for downstream device\n");
+> +			dev_info(dev, "Did not get regulators; err=%d\n", ret);
+> +			pcie->sr = NULL;
 
-Ah! It's (quite reasonably) not expecting text reference in memcpy. ;)
+Is alloc_subdev_regulators() buying us something useful?  It seems
+like it would be simpler to have:
 
-> Lovely stuff...
+  struct brcm_pcie {
+    ...
+    struct regulator_bulk_data supplies[3];
+    ...
+  };
+
+I think that's what most callers of devm_regulator_bulk_get() do.
+
+>  			goto no_regulators;
+>  		}
+>  
+> -- 
+> 2.43.0
 > 
-> Anyway, ignore this patch.
-
-Okay! :)
-
--- 
-Kees Cook
 
