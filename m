@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-544446-lists+linux-kernel=lfdr.de@vger.kernel.org>
-X-Original-To: lists+linux-kernel@lfdr.de
-Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58C9A4E189
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:46:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618DA880267
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:35:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C2225D8EB;
-	Tue,  4 Mar 2025 14:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J2PnJ8Er";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GwBc4N7J"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197D325D539
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098809; cv=fail; b=VNRX8+CcstkzvOtGoEVr9RQhfDr4R6CPwivicto3Z5HcPzAK6soXkVNbMttSOBmts8SPXdVjTUWPev7FITjqTo9bDkWmy2rjk2MWlwZVhzdlZkMlk7QixyifY6UWSoixzuBPVC8+X7wJoXh0ZYcccRvx/4nAiKG0W9IB8nvwukE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098809; c=relaxed/simple;
+Return-Path: <linuxppc-dev+bounces-6691-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
+X-Original-To: lists+linuxppc-dev@lfdr.de
+Delivered-To: lists+linuxppc-dev@lfdr.de
+Received: from lists.ozlabs.org (lists.ozlabs.org [112.213.38.117])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E04AA4E1B9
+	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 15:51:15 +0100 (CET)
+Received: from boromir.ozlabs.org (localhost [127.0.0.1])
+	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6dsq4N89z3bmY;
+	Wed,  5 Mar 2025 01:51:11 +1100 (AEDT)
+X-Original-To: linuxppc-dev@lists.ozlabs.org
+Authentication-Results: lists.ozlabs.org; arc=fail smtp.remote-ip=160.75.25.115
+ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741099871;
+	cv=fail; b=jBpYvXBIMnK1VGn0uSWkjMnZsJ+fYLvUlWWtvPgoVgx5JtGnZHyci/OU8tnN+C3nlNdFg/5EB91+4/y/E8FXtBu6Dq/E9Z6OgqHRdTYHHiRWV0EXmKd4Q4c9J/NPMXD9IIUky7jBk30q06ueU9VvhZN4LCxraP0aJ+4Na6M7Il0dpSmoJfrTwumHoiU1YlJDvJXvGhlYfw6TeUdGMM8IlguGheh3novbXza9SQXZbY9e4QW7qcezVwSXlNfZyw78QAiFL6GZkoO8BL4zgJD5W7Wx703WDRfXXAE5DgkeyqzXStqOXAE8Nf5vghbjkzjF8uD0cDH//xzgXx9isQU2PA==
+ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
+	t=1741099871; c=relaxed/relaxed;
 	bh=0xL0F9rdElvB+NQbmj2NrRU9PnlyhTsMf4tikqFVt+Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PdzC8EjhWBhu8tKdkrDQ14bk4UGvZ5tKfl7HZaZuq1Shy/gJn2FxFaQNTWItS0nie26w8iyRJ6FE9Ztcw6ng+Pqqqq/ebn2M5E7k6t+LKCOAdkhbTOUWn4yJFKL1piDEIbVDBKQzD/7Mq++gOKF9pOUAfvwtkQgHJ70ODv5LdPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J2PnJ8Er reason="signature verification failed"; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GwBc4N7J; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
+	 In-Reply-To:To:Cc; b=Ho77owBDFWKMHN6HCc+wX3AFPVtIwHI7/BXu6xzzhnkEzk0whEB/Y7wVi8KkH1Kexwpthr+WCmceRzSzqTeX013Fy+ur8i8FCthoTQ6sR8OejmX07H/4Oy1NBbaYzkzWiMwFwwQUcjEmkehM2CsNvxwsYefv/o0Vprolf0/Xse9oZlAsV+d85P83cNo9p49/UPYmJeK8kVGAsLUskHdhMXc3u6Lzy2Wig1BHlEueuuDaO99Lw06MFX3yy9FbKkPa6/obUEIp5WR3YSe+QQHIixhV9HJesvCKHkSvvc9osDhpPB6avKLnla/JKQAQjaHLs9601YlZTsWHPPyTbx+jGQ==
+ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; dkim=fail (2048-bit key; secure) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er reason="signature verification failed"; dkim=fail header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J reason="signature verification failed"; dkim-atps=neutral; spf=none (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
+Authentication-Results: lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=linutronix.de
+Authentication-Results: lists.ozlabs.org;
+	dkim=fail reason="signature verification failed" (2048-bit key; secure) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er;
+	dkim=fail reason="signature verification failed" header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J;
+	dkim-atps=neutral
+Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6dsp3pkmz3bmN
+	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 01:51:10 +1100 (AEDT)
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 4967D40F1CCA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:33:26 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 3451F40D5704
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:50:38 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
 	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er;
 	dkim=fail reason="signature verification failed" header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dCK4XkXzFw3N
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:21:17 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dCK63pczFwNv
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:21:17 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
 	id 4DBB34278D; Tue,  4 Mar 2025 17:20:58 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
@@ -67,6 +65,9 @@ Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
 	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225271F3FCB;
 	Mon,  3 Mar 2025 11:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J2PnJ8Er";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GwBc4N7J"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -109,11 +110,21 @@ Date: Mon, 03 Mar 2025 12:11:19 +0100
 Subject: [PATCH 17/19] powerpc/vdso: Prepare introduction of struct
  vdso_clock
 Precedence: bulk
-Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+X-Mailing-List: linuxppc-dev@lists.ozlabs.org
+List-Id: <linuxppc-dev.lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
+List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
+  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
+List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Message-Id: <20250303-vdso-clock-v1-17-c1b5c69a166f@linutronix.de>
@@ -147,11 +158,16 @@ X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dCK4XkXzFw3N
+X-ITU-Libra-ESVA-ID: 4Z6dCK63pczFwNv
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703497.49958@EM9aXiU8doKM34Or3PTd/A
+X-ITU-Libra-ESVA-Watermark: 1741704531.13595@FhknzOyuCPBBJy/VBb65MQ
 X-ITU-MailScanner-SpamCheck: not spam
+X-Spam-Status: No, score=-0.8 required=5.0 tests=ARC_SIGNED,ARC_VALID,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=disabled
+	version=4.0.0
+X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
 From: Nam Cao <namcao@linutronix.de>
 
