@@ -1,267 +1,261 @@
-Return-Path: <linux-kernel+bounces-541964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3A7A4C3E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:54:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E276CA4C3F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10908168F86
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:54:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A9016F019
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB99C2139DC;
-	Mon,  3 Mar 2025 14:54:24 +0000 (UTC)
-Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB35E1F428C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45641213E6E;
+	Mon,  3 Mar 2025 14:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PN2MtFey"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848A81F3BA3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013664; cv=none; b=pAwwAzPqc2PrYvlRiQ+e5kNONdlnEe7Va7ZyNudEMg5EvcIkNWr1TREUfvi+EOibcJBJxrgfpITdcz/M1Qif0HZGH4mFmqmV76z2ZnVwKyzhXJyIWZk6NfpUK5Q1B1vFj9TqmYRe8e529iEwhsVqVjZs/wopGTmHeawdfV+NIZA=
+	t=1741013781; cv=none; b=fe/qsvKdksoVV1IRKqQBu8An70bU3gTtRT7UtENhmx+xf5TH3hRhEYgN4Qi5wS0uCBKhD2GgOJB6IaUa2s50obiFzSoOxeJB/EyAjSk/No4CUbNO1u7AFzKAKjOlbQ8YCcxj1csiml7C3RQ3SXYdtSUAS3DPK2n9ynnQhrheBYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013664; c=relaxed/simple;
-	bh=lZSUkXtolBAFyKQwU7h3cLT8LnsUwUxp68+rF8xhmb0=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=eFQjMPkjf3n31o0E0HdvJUJEzue3ijZpKjT2i3b4DP3j1V6RhsdIF4QJIOsZtoXvqiSCY/7o/3FMOKCjSTsj7CBaecZBS6sZ7LA2sp+U3+0utUTan9dU3p7L8WMuXjApe8o0ZAmwR521BbZZq87i/WLSiOlBQg/Fvpmw4C49pPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
-Received: from baishuoran$hrbeu.edu.cn ( [172.83.159.137] ) by
- ajax-webmail-Front (Coremail) ; Mon, 3 Mar 2025 22:54:17 +0800 (GMT+08:00)
-Date: Mon, 3 Mar 2025 22:54:17 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-To: "Andreas Gruenbacher" <agruenba@redhat.com>
-Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Kun Hu" <huk23@m.fudan.edu.cn>
-Subject: KASAN: slab-out-of-bounds Write in gfs2_pin
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
- 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741013781; c=relaxed/simple;
+	bh=lSFrNOYTs2ebMzVPy9mCvDUTf4C+oW1azbWapwfMyGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/8jvanCGnzfiidqRA1hUkBF1mQ9suVGm8VePRqtVmET7zaVpGFe/Wn5jWT7F6CENm6OQmZLcSytB9c5sx4KjGL+HTTvq7sfbMEdcJ1QIvRklOIR7x9An7Dhm/2rpLfOTC21hK13rRsjvjDZLdg8TQ35NHMxQtmp8Hy/wfNY7mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PN2MtFey; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so5965195e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741013778; x=1741618578; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RbOOxP9Odw79YNeXSBNNWZeLoIIK9XfazEkCOs3S38s=;
+        b=PN2MtFeyRN/2FOiMZ6eTv/AGsaMove3HE7zZUKXhBJ0/1vwVyRDDnLEef2OAyN8m1d
+         TSBfhb05CX93ElJAGvJGvv1MHxzujTOHjT9CBkxJjVRpqSqzosEJbBtctB01r2ox4QEx
+         84PTq9NhcCN1cwzE2E54PMzUO0A36Z1tqyicgKDu4GyCiDJcxKvxfI3dMt3ubo66H7Cl
+         rdOeg7vgk1fBlVmnANXsyHwyqJuJdRi8XqUJRSuHTgvBVYvJzqBoXJXGhrS6pJtr0wUt
+         KKI9yEZmP7wIIzGbhpYGIY9+aktBvF1WuUbk80hEbzTQ8Xrd+LoL8H9aok+Sjec0z9uw
+         qjOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741013778; x=1741618578;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RbOOxP9Odw79YNeXSBNNWZeLoIIK9XfazEkCOs3S38s=;
+        b=OBS8MoXIqViVGgpO6APkBr/+0OWDUSF4AsgNTgIyww9+iChsc+URvw0QpnqzNkgvQC
+         CqVSbE24KMan8JL7XQvOFEtnAt1ZVGSF4i05ZVYVjsuBNszamnxVQrphtAOLXfQAThuf
+         nTufBfD+sXDWSrHtL+EFqoApK/mnRQ4TjsLHVacnIbyqaDAAwSTuM42fXZvOUwx0Qrxr
+         oza+K77udF9IAV+rpXnBwmKjLllEVmy7VkvzP8dI1Gre3RKei8cJZJl+W2dw6oi+n8Mx
+         jwuqbPcmlwYhDQLu1cCkH1bFsOtNFjmk+GAkb9pnLHr7qPpmLgminPrjdmXTiurLb8ey
+         ELyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCID72hy45VGTMdvFy2iLqayQGFza6lpr6wdiak0jB8UElDV8Mjw9MyPbITKRnoT3Thk5+jay45QyH07o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx/cqVBUpFEo8l13D3TQUD0Zx1HvWaUwswf7pHU3iU+/oYcMX9
+	+YtC7GLJMD1/OXjNfe7yT4tW4UfsJQSLcYsYf83SnjQdt+KfVKQvWXYdvePXCVA=
+X-Gm-Gg: ASbGncvgkH+UHM09gaziHYYGvudb4KcLJbTxixqrIJz2WwNWmYhKZZTeTuPaHsq+8E8
+	0ef9DXcdwchEezkDLxT5SN4ecdAPiYtksDer2vGUxd5aiqeMLQ6JRzKomRUnnBh1CIoXkK18jFb
+	tV6lR5luYW8uAm39u5wVCBT9HOszQpI6UzeoIqRfvAI6ekah/yC4wONDEy+t9WgpDkk8ALiL8+v
+	rse62yYsFXGx01Jvte4KXSMHT5g0Fs3Arxd/rt6bNzjXGsYQxQu33b7UPZf37Q4LP94L40tlsfF
+	yXpA/QDbadmqHEHGkKlL1nYQTQcZ+/vi1UhdzdHO3OcYTv3UMDBQJCtieAeSst+mUbpfzKWPrEK
+	7Iek8GbT4gQ==
+X-Google-Smtp-Source: AGHT+IHQTE8UgpNl0+iqYndm1kEDyeG8ZC6z7YUg02JZH40XU0wlpeVtikbYwt+M3QrfOEWZgq6wSw==
+X-Received: by 2002:a05:600c:3146:b0:439:8c6d:7ad9 with SMTP id 5b1f17b1804b1-43bb453dedcmr61168635e9.31.1741013777738;
+        Mon, 03 Mar 2025 06:56:17 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2ee361dsm137795585e9.0.2025.03.03.06.56.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:56:17 -0800 (PST)
+Message-ID: <2ac68f21-cea8-400c-8a61-3638e545bac8@linaro.org>
+Date: Mon, 3 Mar 2025 14:56:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2649b4c1.1e0e.1955c802892.Coremail.baishuoran@hrbeu.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:CbB2ygAnZCGZwsVnYhAgAA--.4272W
-X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIKCmfFJVAHmQABsL
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] venus driver fixes to avoid possible OOB read
+ access
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Vedang Nagar <quic_vnagar@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com>
+ <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
+ <7bf1aeaa-e1bd-412b-90fc-eda30b5f5b37@quicinc.com>
+ <19109672-2856-457f-b1f6-305abc6c4434@linaro.org>
+ <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-RGVhciBNYWludGFpbmVycywKCgpXaGVuIHVzaW5nIG91ciBjdXN0b21pemVkIFN5emthbGxlciB0
-byBmdXp6IHRoZSBsYXRlc3QgTGludXgga2VybmVsLCB0aGUgZm9sbG93aW5nIGNyYXNoICg2NnRo
-KXdhcyB0cmlnZ2VyZWQuCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhlZTdi
-N2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDogaHR0cHM6Ly9naXRodWIu
-Y29tL3BnaGsxMy9LZXJuZWwtQnVnL3RyZWUvbWFpbi8wMjE5XzYuMTNyYzdfdG9kby82Ni1LQVNB
-Tl8lMjBzbGFiLW91dC1vZi1ib3VuZHMlMjBXcml0ZSUyMGluJTIwZ2ZzMl9waW4KS2VybmVsIGNv
-bmZpZzogaHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wMjE5
-XzYuMTNyYzdfdG9kby9jb25maWcudHh0CkMgcmVwcm9kdWNlcjpodHRwczovL2dpdGh1Yi5jb20v
-cGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzAyMTlfNi4xM3JjN190b2RvLzY2LUtBU0FOXyUy
-MHNsYWItb3V0LW9mLWJvdW5kcyUyMFdyaXRlJTIwaW4lMjBnZnMyX3Bpbi82NnJlcHJvLmMKU3l6
-bGFuZyByZXByb2R1Y2VyOiBodHRwczovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxv
-Yi9tYWluLzAyMTlfNi4xM3JjN190b2RvLzY2LUtBU0FOXyUyMHNsYWItb3V0LW9mLWJvdW5kcyUy
-MFdyaXRlJTIwaW4lMjBnZnMyX3Bpbi82NnJlcHJvLnR4dAoKT3VyIHJlcHJvZHVjZXIgdXNlcyBt
-b3VudHMgYSBjb25zdHJ1Y3RlZCBmaWxlc3lzdGVtIGltYWdlLiBUaGUgZmlsZSBpbWFnZXMgaW4g
-dGhlIHJlcHJvIGFyZSByYW5kb21seSBjb25zdHJ1Y3RlZCBieSBzeXprYWxsZXIuClRoZSBwb3Rl
-bnRpYWwgaXNzdWUgaW4gdGhlIGBnZnMyX3BpbmAgZnVuY3Rpb24gbWlnaHQgYmUgdGhlIGxpbmUg
-d2hlcmUgYGJkYCBpcyBhZGRlZCB0byB0aGUgbGlzdCB3aXRob3V0IHByb3BlciBpbml0aWFsaXph
-dGlvbi4gVGhpcyBjb3VsZCBsZWFkIHRvIGEgc2xhYi1vdXQtb2YtYm91bmRzIHdyaXRlLgpXZSBo
-YXZlIHJlcHJvZHVjZWQgdGhpcyBpc3N1ZSBzZXZlcmFsIHRpbWVzIG9uIDYuMTQtcmMzIGFnYWlu
-LCBidXQgd2UgZG9uJ3QgaGF2ZSB0b28gbXVjaCBrbm93bGVkZ2UgYWJvdXQgdGhpcyBhcmVhLCBj
-b3VsZCB3ZSB0cm91YmxlIHlvdSB0byBjaGVjayB0aGUgcm9vdCBjYXVzZS4KCklmIHRoaXMgaXNz
-dWUgZG9lc24ndCBoYXZlIGFuIGltcGFjdCwgcGxlYXNlIGlnbm9yZSBpdCDimLouCgoKSWYgeW91
-IGZpeCB0aGlzIGlzc3VlLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dpbmcgdGFnIHRvIHRoZSBjb21t
-aXQ6ClJlcG9ydGVkLWJ5OiBLdW4gSHUgPGh1azIzQG0uZnVkYW4uZWR1LmNuPiwgSmlhamkgUWlu
-IDxqanRhbjI0QG0uZnVkYW4uZWR1LmNuPiwgU2h1b3JhbiBCYWkgPGJhaXNodW9yYW5AaHJiZXUu
-ZWR1LmNuPgoKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09CkJVRzogS0FTQU46IHNsYWItb3V0LW9mLWJvdW5kcyBpbiBpbnN0
-cnVtZW50X2F0b21pY19yZWFkX3dyaXRlIGluY2x1ZGUvbGludXgvaW5zdHJ1bWVudGVkLmg6OTYg
-W2lubGluZV0KQlVHOiBLQVNBTjogc2xhYi1vdXQtb2YtYm91bmRzIGluIGF0b21pY19pbmMgaW5j
-bHVkZS9saW51eC9hdG9taWMvYXRvbWljLWluc3RydW1lbnRlZC5oOjQzNSBbaW5saW5lXQpCVUc6
-IEtBU0FOOiBzbGFiLW91dC1vZi1ib3VuZHMgaW4gZ2V0X2JoIGluY2x1ZGUvbGludXgvYnVmZmVy
-X2hlYWQuaDoyOTYgW2lubGluZV0KQlVHOiBLQVNBTjogc2xhYi1vdXQtb2YtYm91bmRzIGluIGdm
-czJfcGluKzB4MmY1LzB4NjYwIGZzL2dmczIvbG9wcy5jOjYxCldyaXRlIG9mIHNpemUgNCBhdCBh
-ZGRyIGZmMTEwMDAwMjJjMWVhNjAgYnkgdGFzayBzeXotZXhlY3V0b3IvOTYyMwoKCkNQVTogMCBV
-SUQ6IDAgUElEOiA5NjIzIENvbW06IHN5ei1leGVjdXRvciBOb3QgdGFpbnRlZCA2LjE0LXJjNSAj
-MQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAxOTk2KSwg
-QklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0CkNhbGwgVHJhY2U6CiA8VEFTSz4KIF9f
-ZHVtcF9zdGFjayBsaWIvZHVtcF9zdGFjay5jOjk0IFtpbmxpbmVdCiBkdW1wX3N0YWNrX2x2bCsw
-eDExNi8weDFiMCBsaWIvZHVtcF9zdGFjay5jOjEyMAogcHJpbnRfYWRkcmVzc19kZXNjcmlwdGlv
-biBtbS9rYXNhbi9yZXBvcnQuYzozNzggW2lubGluZV0KIHByaW50X3JlcG9ydCsweGNmLzB4NWYw
-IG1tL2thc2FuL3JlcG9ydC5jOjQ4OQoga2FzYW5fcmVwb3J0KzB4OTMvMHhjMCBtbS9rYXNhbi9y
-ZXBvcnQuYzo2MDIKIGNoZWNrX3JlZ2lvbl9pbmxpbmUgbW0va2FzYW4vZ2VuZXJpYy5jOjE4MyBb
-aW5saW5lXQoga2FzYW5fY2hlY2tfcmFuZ2UrMHhmNi8weDFiMCBtbS9rYXNhbi9nZW5lcmljLmM6
-MTg5CiBpbnN0cnVtZW50X2F0b21pY19yZWFkX3dyaXRlIGluY2x1ZGUvbGludXgvaW5zdHJ1bWVu
-dGVkLmg6OTYgW2lubGluZV0KIGF0b21pY19pbmMgaW5jbHVkZS9saW51eC9hdG9taWMvYXRvbWlj
-LWluc3RydW1lbnRlZC5oOjQzNSBbaW5saW5lXQogZ2V0X2JoIGluY2x1ZGUvbGludXgvYnVmZmVy
-X2hlYWQuaDoyOTYgW2lubGluZV0KIGdmczJfcGluKzB4MmY1LzB4NjYwIGZzL2dmczIvbG9wcy5j
-OjYxCiBnZnMyX3RyYW5zX2FkZF9kYXRhKzB4MjhhLzB4NTYwIGZzL2dmczIvdHJhbnMuYzoyMjAK
-IGdmczJfd3JpdGVfYnVmX3RvX3BhZ2UrMHgzZTkvMHhiNzAgZnMvZ2ZzMi9xdW90YS5jOjc3MAog
-Z2ZzMl93cml0ZV9kaXNrX3F1b3RhIGZzL2dmczIvcXVvdGEuYzo4MTggW2lubGluZV0KIGdmczJf
-YWRqdXN0X3F1b3RhKzB4NjMyLzB4ODkwIGZzL2dmczIvcXVvdGEuYzo4ODEKIGRvX3N5bmMrMHg5
-ZWIvMHhkMTAgZnMvZ2ZzMi9xdW90YS5jOjk2MwogZ2ZzMl9xdW90YV9zeW5jKzB4MzAxLzB4NTAw
-IGZzL2dmczIvcXVvdGEuYzoxMzU5CiBnZnMyX3N5bmNfZnMrMHg0NC8weGIwIGZzL2dmczIvc3Vw
-ZXIuYzo2NzAKIHN5bmNfZmlsZXN5c3RlbSBmcy9zeW5jLmM6NTYgW2lubGluZV0KIHN5bmNfZmls
-ZXN5c3RlbSsweDExMC8weDJhMCBmcy9zeW5jLmM6MzAKIGdlbmVyaWNfc2h1dGRvd25fc3VwZXIr
-MHg3NC8weDM4MCBmcy9zdXBlci5jOjYyMQoga2lsbF9ibG9ja19zdXBlcisweDNiLzB4OTAgZnMv
-c3VwZXIuYzoxNzEwCiBnZnMyX2tpbGxfc2IrMHgzNzUvMHg0MjAgZnMvZ2ZzMi9vcHNfZnN0eXBl
-LmM6MTc5MwogZGVhY3RpdmF0ZV9sb2NrZWRfc3VwZXIrMHhiYi8weDEzMCBmcy9zdXBlci5jOjQ3
-MwogZGVhY3RpdmF0ZV9zdXBlciBmcy9zdXBlci5jOjUwNiBbaW5saW5lXQogZGVhY3RpdmF0ZV9z
-dXBlcisweGIxLzB4ZDAgZnMvc3VwZXIuYzo1MDIKIGNsZWFudXBfbW50KzB4Mzc4LzB4NTEwIGZz
-L25hbWVzcGFjZS5jOjEzNzMKIHRhc2tfd29ya19ydW4rMHgxNzMvMHgyODAga2VybmVsL3Rhc2tf
-d29yay5jOjIzOQogcmVzdW1lX3VzZXJfbW9kZV93b3JrIGluY2x1ZGUvbGludXgvcmVzdW1lX3Vz
-ZXJfbW9kZS5oOjUwIFtpbmxpbmVdCiBleGl0X3RvX3VzZXJfbW9kZV9sb29wIGtlcm5lbC9lbnRy
-eS9jb21tb24uYzoxMTQgW2lubGluZV0KIGV4aXRfdG9fdXNlcl9tb2RlX3ByZXBhcmUgaW5jbHVk
-ZS9saW51eC9lbnRyeS1jb21tb24uaDozMjkgW2lubGluZV0KIF9fc3lzY2FsbF9leGl0X3RvX3Vz
-ZXJfbW9kZV93b3JrIGtlcm5lbC9lbnRyeS9jb21tb24uYzoyMDcgW2lubGluZV0KIHN5c2NhbGxf
-ZXhpdF90b191c2VyX21vZGUrMHgyNjEvMHgyNzAga2VybmVsL2VudHJ5L2NvbW1vbi5jOjIxOAog
-ZG9fc3lzY2FsbF82NCsweGQwLzB4MWQwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjg5CiBlbnRy
-eV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmNGMxNTM1
-NTA4YgpDb2RlOiBmZiBmZiBmZiBmNyBkOCA2NCA4OSAwMSA0OCA4MyBjOCBmZiBjMyA2NiA5MCBm
-MyAwZiAxZSBmYSAzMSBmNiBlOSAwNSAwMCAwMCAwMCAwZiAxZiA0NCAwMCAwMCBmMyAwZiAxZSBm
-YSBiOCBhNiAwMCAwMCAwMCAwZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IGM3
-IGMxIGIwIGZmIGZmIGZmIGY3IGQ4IDY0IDg5IDAxIDQ4ClJTUDogMDAyYjowMDAwN2ZmYzg3NWE3
-ZTQ4IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwYTYKUkFYOiAwMDAw
-MDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwMCBSQ1g6IDAwMDA3ZjRjMTUzNTUwOGIK
-UkRYOiAwMDAwN2Y0YzE1MWVmYzUwIFJTSTogMDAwMDAwMDAwMDAwMDAwOSBSREk6IDAwMDA3ZmZj
-ODc1YTdmMTAKUkJQOiAwMDAwN2ZmYzg3NWE3ZjEwIFIwODogMDAwMDdmNGMxNTNjNzA5NSBSMDk6
-IDAwMDA3ZmZjODc1YTdjZDAKUjEwOiAwMDAwMDAwMGZmZmZmZmZiIFIxMTogMDAwMDAwMDAwMDAw
-MDI0NiBSMTI6IDAwMDA3ZjRjMTUzYzcwNzEKUjEzOiAwMDAwN2ZmYzg3NWE4ZmIwIFIxNDogMDAw
-MDU1NTU2MzYwOThmMCBSMTU6IDAwMDA3ZmZjODc1YThmZjAKIDwvVEFTSz4KCgpBbGxvY2F0ZWQg
-YnkgdGFzayA5NjIzOgoga2FzYW5fc2F2ZV9zdGFjaysweDI0LzB4NTAgbW0va2FzYW4vY29tbW9u
-LmM6NDcKIGthc2FuX3NhdmVfdHJhY2srMHgxNC8weDMwIG1tL2thc2FuL2NvbW1vbi5jOjY4CiBw
-b2lzb25fa21hbGxvY19yZWR6b25lIG1tL2thc2FuL2NvbW1vbi5jOjM3NyBbaW5saW5lXQogX19r
-YXNhbl9rbWFsbG9jKzB4YWEvMHhiMCBtbS9rYXNhbi9jb21tb24uYzozOTQKIGthc2FuX2ttYWxs
-b2MgaW5jbHVkZS9saW51eC9rYXNhbi5oOjI2MCBbaW5saW5lXQogX19kb19rbWFsbG9jX25vZGUg
-bW0vc2x1Yi5jOjQyOTggW2lubGluZV0KIF9fa21hbGxvY19ub3Byb2YrMHgxZWYvMHg1NzAgbW0v
-c2x1Yi5jOjQzMTAKIGttYWxsb2Nfbm9wcm9mIGluY2x1ZGUvbGludXgvc2xhYi5oOjkwNSBbaW5s
-aW5lXQoga3phbGxvY19ub3Byb2YgaW5jbHVkZS9saW51eC9zbGFiLmg6MTAzNyBbaW5saW5lXQog
-aWZzX2FsbG9jKzB4MWM5LzB4NDAwIGZzL2lvbWFwL2J1ZmZlcmVkLWlvLmM6MjAyCiBpb21hcF9k
-aXJ0eV9mb2xpbysweGViLzB4MTcwIGZzL2lvbWFwL2J1ZmZlcmVkLWlvLmM6NjUyCiBmb2xpb19t
-YXJrX2RpcnR5KzB4Y2YvMHgxNTAgbW0vcGFnZS13cml0ZWJhY2suYzoyOTIwCiBnZnMyX3Vuc3R1
-ZmZlcl9mb2xpbyBmcy9nZnMyL2JtYXAuYzo4MyBbaW5saW5lXQogX19nZnMyX3Vuc3R1ZmZfaW5v
-ZGUgZnMvZ2ZzMi9ibWFwLmM6MTE5IFtpbmxpbmVdCiBnZnMyX3Vuc3R1ZmZfZGlub2RlKzB4ZTdh
-LzB4MTU2MCBmcy9nZnMyL2JtYXAuYzoxNjYKIGdmczJfYWRqdXN0X3F1b3RhKzB4MTA0LzB4ODkw
-IGZzL2dmczIvcXVvdGEuYzo4NDkKIGRvX3N5bmMrMHg5ZWIvMHhkMTAgZnMvZ2ZzMi9xdW90YS5j
-Ojk2MwogZ2ZzMl9xdW90YV9zeW5jKzB4MzAxLzB4NTAwIGZzL2dmczIvcXVvdGEuYzoxMzU5CiBn
-ZnMyX3N5bmNfZnMrMHg0NC8weGIwIGZzL2dmczIvc3VwZXIuYzo2NzAKIHN5bmNfZmlsZXN5c3Rl
-bSBmcy9zeW5jLmM6NTYgW2lubGluZV0KIHN5bmNfZmlsZXN5c3RlbSsweDExMC8weDJhMCBmcy9z
-eW5jLmM6MzAKIGdlbmVyaWNfc2h1dGRvd25fc3VwZXIrMHg3NC8weDM4MCBmcy9zdXBlci5jOjYy
-MQoga2lsbF9ibG9ja19zdXBlcisweDNiLzB4OTAgZnMvc3VwZXIuYzoxNzEwCiBnZnMyX2tpbGxf
-c2IrMHgzNzUvMHg0MjAgZnMvZ2ZzMi9vcHNfZnN0eXBlLmM6MTc5MwogZGVhY3RpdmF0ZV9sb2Nr
-ZWRfc3VwZXIrMHhiYi8weDEzMCBmcy9zdXBlci5jOjQ3MwogZGVhY3RpdmF0ZV9zdXBlciBmcy9z
-dXBlci5jOjUwNiBbaW5saW5lXQogZGVhY3RpdmF0ZV9zdXBlcisweGIxLzB4ZDAgZnMvc3VwZXIu
-Yzo1MDIKIGNsZWFudXBfbW50KzB4Mzc4LzB4NTEwIGZzL25hbWVzcGFjZS5jOjEzNzMKIHRhc2tf
-d29ya19ydW4rMHgxNzMvMHgyODAga2VybmVsL3Rhc2tfd29yay5jOjIzOQogcmVzdW1lX3VzZXJf
-bW9kZV93b3JrIGluY2x1ZGUvbGludXgvcmVzdW1lX3VzZXJfbW9kZS5oOjUwIFtpbmxpbmVdCiBl
-eGl0X3RvX3VzZXJfbW9kZV9sb29wIGtlcm5lbC9lbnRyeS9jb21tb24uYzoxMTQgW2lubGluZV0K
-IGV4aXRfdG9fdXNlcl9tb2RlX3ByZXBhcmUgaW5jbHVkZS9saW51eC9lbnRyeS1jb21tb24uaDoz
-MjkgW2lubGluZV0KIF9fc3lzY2FsbF9leGl0X3RvX3VzZXJfbW9kZV93b3JrIGtlcm5lbC9lbnRy
-eS9jb21tb24uYzoyMDcgW2lubGluZV0KIHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHgyNjEv
-MHgyNzAga2VybmVsL2VudHJ5L2NvbW1vbi5jOjIxOAogZG9fc3lzY2FsbF82NCsweGQwLzB4MWQw
-IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjg5CiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJh
-bWUrMHg3Ny8weDdmCgoKVGhlIGJ1Z2d5IGFkZHJlc3MgYmVsb25ncyB0byB0aGUgb2JqZWN0IGF0
-IGZmMTEwMDAwMjJjMWVhMDAKIHdoaWNoIGJlbG9uZ3MgdG8gdGhlIGNhY2hlIGttYWxsb2MtOTYg
-b2Ygc2l6ZSA5NgpUaGUgYnVnZ3kgYWRkcmVzcyBpcyBsb2NhdGVkIDE2IGJ5dGVzIHRvIHRoZSBy
-aWdodCBvZgogYWxsb2NhdGVkIDgwLWJ5dGUgcmVnaW9uIFtmZjExMDAwMDIyYzFlYTAwLCBmZjEx
-MDAwMDIyYzFlYTUwKQoKClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIHBoeXNpY2Fs
-IHBhZ2U6CnBhZ2U6IHJlZmNvdW50OjEgbWFwY291bnQ6MCBtYXBwaW5nOjAwMDAwMDAwMDAwMDAw
-MDAgaW5kZXg6MHgwIHBmbjoweDIyYzFlCmFub24gZmxhZ3M6IDB4MTAwMDAwMDAwMDAwMDAwKG5v
-ZGU9MHx6b25lPTEpCnBhZ2VfdHlwZTogZjUoc2xhYikKcmF3OiAwMTAwMDAwMDAwMDAwMDAwIGZm
-MTEwMDAwMDEwM2MyODAgZmZkNDAwMDAwMDg4YWIwMCBkZWFkMDAwMDAwMDAwMDA3CnJhdzogMDAw
-MDAwMDAwMDAwMDAwMCAwMDAwMDAwMDgwMjAwMDIwIDAwMDAwMDAxZjUwMDAwMDAgMDAwMDAwMDAw
-MDAwMDAwMApwYWdlIGR1bXBlZCBiZWNhdXNlOiBrYXNhbjogYmFkIGFjY2VzcyBkZXRlY3RlZAoK
-Ck1lbW9yeSBzdGF0ZSBhcm91bmQgdGhlIGJ1Z2d5IGFkZHJlc3M6CiBmZjExMDAwMDIyYzFlOTAw
-OiBmYSBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYyBmYyBmYyBmYwogZmYxMTAw
-MDAyMmMxZTk4MDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgZmMgZmMgZmMgZmMgZmMg
-ZmMKPmZmMTEwMDAwMjJjMWVhMDA6IDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIGZjIGZj
-IGZjIGZjIGZjIGZjCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBeCiBmZjExMDAwMDIyYzFlYTgwOiBmYSBmYiBmYiBmYiBmYiBmYiBmYiBmYiBm
-YiBmYiBmYiBmYiBmYyBmYyBmYyBmYwogZmYxMTAwMDAyMmMxZWIwMDogZmEgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmMgZmMgZmMgZmMKPT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci0tLS0tLS0tLS0tLVsg
-Y3V0IGhlcmUgXS0tLS0tLS0tLS0tLQpXQVJOSU5HOiBDUFU6IDAgUElEOiA5NjIzIGF0IGZzL2lv
-bWFwL2J1ZmZlcmVkLWlvLmM6MTk5MiBpb21hcF93cml0ZXBhZ2VfbWFwIGZzL2lvbWFwL2J1ZmZl
-cmVkLWlvLmM6MTk5MiBbaW5saW5lXQpXQVJOSU5HOiBDUFU6IDAgUElEOiA5NjIzIGF0IGZzL2lv
-bWFwL2J1ZmZlcmVkLWlvLmM6MTk5MiBpb21hcF93cml0ZXBhZ2VzIGZzL2lvbWFwL2J1ZmZlcmVk
-LWlvLmM6MjA2MSBbaW5saW5lXQpXQVJOSU5HOiBDUFU6IDAgUElEOiA5NjIzIGF0IGZzL2lvbWFw
-L2J1ZmZlcmVkLWlvLmM6MTk5MiBpb21hcF93cml0ZXBhZ2VzKzB4MjU5ZS8weDJlNTAgZnMvaW9t
-YXAvYnVmZmVyZWQtaW8uYzoyMDQ0Ck1vZHVsZXMgbGlua2VkIGluOgpDUFU6IDAgVUlEOiAwIFBJ
-RDogOTYyMyBDb21tOiBzeXotZXhlY3V0b3IgVGFpbnRlZDogRyAgICBCICAgICAgICAgICAgICA2
-LjEzLjAtcmM3ICMxClRhaW50ZWQ6IFtCXT1CQURfUEFHRQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0
-YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAxOTk2KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAw
-NC8wMS8yMDE0ClJJUDogMDAxMDppb21hcF93cml0ZXBhZ2VfbWFwIGZzL2lvbWFwL2J1ZmZlcmVk
-LWlvLmM6MTk5MiBbaW5saW5lXQpSSVA6IDAwMTA6aW9tYXBfd3JpdGVwYWdlcyBmcy9pb21hcC9i
-dWZmZXJlZC1pby5jOjIwNjEgW2lubGluZV0KUklQOiAwMDEwOmlvbWFwX3dyaXRlcGFnZXMrMHgy
-NTllLzB4MmU1MCBmcy9pb21hcC9idWZmZXJlZC1pby5jOjIwNDQKQ29kZTogNDEgYmMgMDAgMTAg
-MDAgMDAgYmQgMDAgMTAgMDAgMDAgZTkgNjUgZjQgZmYgZmYgZTggZjcgZDIgOWUgZmYgOTAgMGYg
-MGIgOTAgNDEgYmMgZmIgZmYgZmYgZmYgZTkgOTUgZmUgZmYgZmYgZTggZTMgZDIgOWUgZmYgOTAg
-PDBmPiAwYiA5MCBlOSBiZCBlMCBmZiBmZiBlOCBkNSBkMiA5ZSBmZiA0OCA4YiA0NCAyNCAxMCA0
-OCA4ZCA3OCAzMApSU1A6IDAwMTg6ZmZhMDAwMDAwMzkwNzM4MCBFRkxBR1M6IDAwMDEwMjQ2ClJB
-WDogMDAwMDAwMDAwMjNlYzAwMCBSQlg6IGZmMTEwMDAwMjJjMWVhNDQgUkNYOiBmZmZmZmZmZjgy
-Y2FhOWRiClJEWDogMDAwMDAwMDBmZjExMDAwMCBSU0k6IGZmMTEwMDAwMmRmODQ2ODAgUkRJOiAw
-MDAwMDAwMDAwMDAwMDAyClJCUDogMDAwMDAwMDBmZjExMDAwMCBSMDg6IGZmZTIxYzAwMDIzZWMw
-MDAgUjA5OiBmZmUyMWMwMDA0NTgzZDQ5ClIxMDogZmZlMjFjMDAwNDU4M2Q0OCBSMTE6IGZmMTEw
-MDAwMjJjMWVhNDcgUjEyOiAwMDAwMDAwMDAwMDAwMDBhClIxMzogZmZkNDAwMDAwMDQ3ZDdjMCBS
-MTQ6IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiBkZmZmZmMwMDAwMDAwMDAwCkZTOiAgMDAwMDU1NTU2
-MzVmNmEwMCgwMDAwKSBHUzpmZjExMDAwMDZhMjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAw
-MDAwMDAKQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpD
-UjI6IDAwMDA3Zjg3ZWQwYTIwYzAgQ1IzOiAwMDAwMDAwMDJjNzNlMDAxIENSNDogMDAwMDAwMDAw
-MDc3MWVmMApQS1JVOiAwMDAwMDAwMApDYWxsIFRyYWNlOgogPFRBU0s+CiBnZnMyX3dyaXRlcGFn
-ZXMrMHgxNTkvMHgyYTAgZnMvZ2ZzMi9hb3BzLmM6MTYxCiBkb193cml0ZXBhZ2VzKzB4MTlkLzB4
-N2QwIG1tL3BhZ2Utd3JpdGViYWNrLmM6MjcwMgogZmlsZW1hcF9mZGF0YXdyaXRlX3diYysweGU5
-LzB4MTIwIG1tL2ZpbGVtYXAuYzozODgKIF9fZmlsZW1hcF9mZGF0YXdyaXRlX3JhbmdlKzB4YzEv
-MHgxMTAgbW0vZmlsZW1hcC5jOjQyMQogZ2ZzMl9vcmRlcmVkX3dyaXRlIGZzL2dmczIvbG9nLmM6
-NzI4IFtpbmxpbmVdCiBnZnMyX2xvZ19mbHVzaCsweDc5YS8weDJjYzAgZnMvZ2ZzMi9sb2cuYzox
-MDk3CiBkb19zeW5jKzB4NTZhLzB4ZDEwIGZzL2dmczIvcXVvdGEuYzo5ODMKIGdmczJfcXVvdGFf
-c3luYysweDMwMS8weDUwMCBmcy9nZnMyL3F1b3RhLmM6MTM1OQogZ2ZzMl9zeW5jX2ZzKzB4NDQv
-MHhiMCBmcy9nZnMyL3N1cGVyLmM6NjcwCiBzeW5jX2ZpbGVzeXN0ZW0gZnMvc3luYy5jOjU2IFtp
-bmxpbmVdCiBzeW5jX2ZpbGVzeXN0ZW0rMHgxMTAvMHgyYTAgZnMvc3luYy5jOjMwCiBnZW5lcmlj
-X3NodXRkb3duX3N1cGVyKzB4NzQvMHgzODAgZnMvc3VwZXIuYzo2MjEKIGtpbGxfYmxvY2tfc3Vw
-ZXIrMHgzYi8weDkwIGZzL3N1cGVyLmM6MTcxMAogZ2ZzMl9raWxsX3NiKzB4Mzc1LzB4NDIwIGZz
-L2dmczIvb3BzX2ZzdHlwZS5jOjE3OTMKIGRlYWN0aXZhdGVfbG9ja2VkX3N1cGVyKzB4YmIvMHgx
-MzAgZnMvc3VwZXIuYzo0NzMKIGRlYWN0aXZhdGVfc3VwZXIgZnMvc3VwZXIuYzo1MDYgW2lubGlu
-ZV0KIGRlYWN0aXZhdGVfc3VwZXIrMHhiMS8weGQwIGZzL3N1cGVyLmM6NTAyCiBjbGVhbnVwX21u
-dCsweDM3OC8weDUxMCBmcy9uYW1lc3BhY2UuYzoxMzczCiB0YXNrX3dvcmtfcnVuKzB4MTczLzB4
-MjgwIGtlcm5lbC90YXNrX3dvcmsuYzoyMzkKIHJlc3VtZV91c2VyX21vZGVfd29yayBpbmNsdWRl
-L2xpbnV4L3Jlc3VtZV91c2VyX21vZGUuaDo1MCBbaW5saW5lXQogZXhpdF90b191c2VyX21vZGVf
-bG9vcCBrZXJuZWwvZW50cnkvY29tbW9uLmM6MTE0IFtpbmxpbmVdCiBleGl0X3RvX3VzZXJfbW9k
-ZV9wcmVwYXJlIGluY2x1ZGUvbGludXgvZW50cnktY29tbW9uLmg6MzI5IFtpbmxpbmVdCiBfX3N5
-c2NhbGxfZXhpdF90b191c2VyX21vZGVfd29yayBrZXJuZWwvZW50cnkvY29tbW9uLmM6MjA3IFtp
-bmxpbmVdCiBzeXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4MjYxLzB4MjcwIGtlcm5lbC9lbnRy
-eS9jb21tb24uYzoyMTgKIGRvX3N5c2NhbGxfNjQrMHhkMC8weDFkMCBhcmNoL3g4Ni9lbnRyeS9j
-b21tb24uYzo4OQogZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzcvMHg3ZgpSSVA6
-IDAwMzM6MHg3ZjRjMTUzNTUwOGIKQ29kZTogZmYgZmYgZmYgZjcgZDggNjQgODkgMDEgNDggODMg
-YzggZmYgYzMgNjYgOTAgZjMgMGYgMWUgZmEgMzEgZjYgZTkgMDUgMDAgMDAgMDAgMGYgMWYgNDQg
-MDAgMDAgZjMgMGYgMWUgZmEgYjggYTYgMDAgMDAgMDAgMGYgMDUgPDQ4PiAzZCAwMSBmMCBmZiBm
-ZiA3MyAwMSBjMyA0OCBjNyBjMSBiMCBmZiBmZiBmZiBmNyBkOCA2NCA4OSAwMSA0OApSU1A6IDAw
-MmI6MDAwMDdmZmM4NzVhN2U0OCBFRkxBR1M6IDAwMDAwMjQ2IE9SSUdfUkFYOiAwMDAwMDAwMDAw
-MDAwMGE2ClJBWDogMDAwMDAwMDAwMDAwMDAwMCBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAw
-MDAwN2Y0YzE1MzU1MDhiClJEWDogMDAwMDdmNGMxNTFlZmM1MCBSU0k6IDAwMDAwMDAwMDAwMDAw
-MDkgUkRJOiAwMDAwN2ZmYzg3NWE3ZjEwClJCUDogMDAwMDdmZmM4NzVhN2YxMCBSMDg6IDAwMDA3
-ZjRjMTUzYzcwOTUgUjA5OiAwMDAwN2ZmYzg3NWE3Y2QwClIxMDogMDAwMDAwMDBmZmZmZmZmYiBS
-MTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAwN2Y0YzE1M2M3MDcxClIxMzogMDAwMDdmZmM4
-NzVhOGZiMCBSMTQ6IDAwMDA1NTU1NjM2MDk4ZjAgUjE1OiAwMDAwN2ZmYzg3NWE4ZmYwCiA8L1RB
-U0s+CmlycSBldmVudCBzdGFtcDogMTQxOTE4NQpoYXJkaXJxcyBsYXN0ICBlbmFibGVkIGF0ICgx
-NDE5MTg1KTogWzxmZmZmZmZmZjhhMmQyODNiPl0gaXJxZW50cnlfZXhpdCsweDNiLzB4OTAga2Vy
-bmVsL2VudHJ5L2NvbW1vbi5jOjM1NwpoYXJkaXJxcyBsYXN0IGRpc2FibGVkIGF0ICgxNDE5MTg0
-KTogWzxmZmZmZmZmZjgyMzBmNmI0Pl0gaGFuZGxlX3NvZnRpcnFzKzB4NmE0LzB4ODcwIGtlcm5l
-bC9zb2Z0aXJxLmM6NTc2CnNvZnRpcnFzIGxhc3QgIGVuYWJsZWQgYXQgKDE0MTg5MTIpOiBbPGZm
-ZmZmZmZmODIzMGY1NTQ+XSBzb2Z0aXJxX2hhbmRsZV9lbmQga2VybmVsL3NvZnRpcnEuYzo0MDcg
-W2lubGluZV0Kc29mdGlycXMgbGFzdCAgZW5hYmxlZCBhdCAoMTQxODkxMik6IFs8ZmZmZmZmZmY4
-MjMwZjU1ND5dIGhhbmRsZV9zb2Z0aXJxcysweDU0NC8weDg3MCBrZXJuZWwvc29mdGlycS5jOjU4
-OQpzb2Z0aXJxcyBsYXN0IGRpc2FibGVkIGF0ICgxNDE4OTAzKTogWzxmZmZmZmZmZjgyMzExMjBl
-Pl0gX19kb19zb2Z0aXJxIGtlcm5lbC9zb2Z0aXJxLmM6NTk1IFtpbmxpbmVdCnNvZnRpcnFzIGxh
-c3QgZGlzYWJsZWQgYXQgKDE0MTg5MDMpOiBbPGZmZmZmZmZmODIzMTEyMGU+XSBpbnZva2Vfc29m
-dGlycSBrZXJuZWwvc29mdGlycS5jOjQzNSBbaW5saW5lXQpzb2Z0aXJxcyBsYXN0IGRpc2FibGVk
-IGF0ICgxNDE4OTAzKTogWzxmZmZmZmZmZjgyMzExMjBlPl0gX19pcnFfZXhpdF9yY3Uga2VybmVs
-L3NvZnRpcnEuYzo2NjIgW2lubGluZV0Kc29mdGlycXMgbGFzdCBkaXNhYmxlZCBhdCAoMTQxODkw
-Myk6IFs8ZmZmZmZmZmY4MjMxMTIwZT5dIGlycV9leGl0X3JjdSsweGVlLzB4MTQwIGtlcm5lbC9z
-b2Z0aXJxLmM6Njc4Ci0tLVsgZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQoKCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQp0aGFua3MsCkt1biBIdQoKCgo=
+On 03/03/2025 13:12, Vikash Garodia wrote:
+> 
+> On 3/2/2025 9:26 PM, Bryan O'Donoghue wrote:
+>> On 02/03/2025 11:58, Vedang Nagar wrote:
+>>>>
+>>>> The basic question : what is the lifetime of the data from RX interrupt to
+>>>> consumption by another system agent, DSP, userspace, whatever ?
+>>> As mentioned in [1], With the regular firmware, after RX interrupt the data
+>>> can be considered as valid until next interrupt is raised, but with the rouge
+>>> firmware, data can get invalid during the second read and our intention is to
+>>> avoid out of bound access read because of such issues.
+>>
+>> This is definitely the part I don't compute.
+>>
+>> 1. RX interrupt
+>> 2. Frame#0 Some amount of time data is always valid
+> This is not correct. Its not the amount of time which determines the validity of
+> the data, its the possibility of rogue firmware which, if incase, puts up the
+> date in shared queue, would always be invalid, irrespective of time.
+> 
+>> 3. RX interrupt - new data
+>> 4. Frame#1 new data delivered into a buffer
+>>
+>> Are you describing a case between RX interrupts 1-3 or a case after 1-4?
+>>
+>> Why do we need to write code for rouge firmware anyway ?
+> It is a way to prevent any possibility of OOB, similar to how any API does check
+> for validity of any arguments passed to it, prior to processing.
+>>
+>> And the real question - if the data can be invalidated in the 1-3 window above
+>> when is the safe time to snapshot that data ?
+>>
+>> We seem to have alot of submissions to deal with 'rouge' firmware without I
+>> think properly describing the problem of the _expected_ data lifetime.
+>>
+>> So
+>>
+>> a) What is the expected data lifetime of an RX buffer between one
+>>     RX IRQ and the next ?
+>>     I hope the answer to this is - APSS owns the buffer.
+>>     This is BTW usually the case in these types of asymmetric setups
+>>     with a flag or some other kind of semaphore that indicates which
+>>     side of the data-exchange owns the buffer.
+>>
+>> b) In this rouge - buggy - firmware case what is the scope of the
+>>     potential race condition ?
+>>
+>>     What I'd really like to know here is why we have to seemingly
+>>     memcpy() again and again in seemingly incongrous and not
+>>     immediately obvious places in the code.
+>>
+>>     Would we not be better advised to do a memcpy() of the entire
+>>     RX frame in the RX IRQ handler path if as you appear to me
+>>     suggesting - the firmware can "race" with the APSS
+>>     i.e. the data-buffer ownership flag either doesn't work
+>>     or isn't respected by one side in the data-exchange.
+>>
+>> Can we please have a detailed description of the race condition here ?
+> Below is the report which the reporter reported leading to OOB, let me know if
+> you are unable to deduce the trail leading to OOB here.
+> 
+> OOB read issue is in function event_seq_changed, please reference below code
+> snippet:
+> 
+> Buggy code snippet:
+> 
+> static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
+>          struct hfi_msg_event_notify_pkt *pkt)
+> ...
+> num_properties_changed = pkt->event_data2; //num_properties_changed is from
+> message and is not validated.
+> ...
+> data_ptr = (u8 *)&pkt->ext_event_data[0];
+> do {
+>   ptype = *((u32 *)data_ptr);
+>   switch (ptype) {
+>   case HFI_PROPERTY_PARAM_FRAME_SIZE:
+>    data_ptr += sizeof(u32);
+>    frame_sz = (struct hfi_framesize *)data_ptr;
+>    event.width = frame_sz->width;
+> ...
+>   }
+>   num_properties_changed--;
+> } while (num_properties_changed > 0);
+> ```
+> There is no validation against `num_properties_changed = pkt->event_data2`, so
+> OOB read occurs.
+>>
+>> I don't doubt the new memcpy() makes sense to you but without this detailed
+>> understanding of the underlying problem its virtually impossible to debate the
+>> appropriate remediation - perhaps this patch you've submitted - or some other
+>> solution.
+>>
+>> Sorry to dig into my trench here but, way more detail is needed.
+>>
+>>> [1]: https://lore.kernel.org/lkml/4cfc1fe1-2fab-4256-9ce2-
+>>> b4a0aad1069e@linaro.org/T/#m5f1737b16e68f8b8fc1d75517356b6566d0ec619
+>>>>
+>>>> Why is it in this small specific window that the data can change but not
+>>>> later ? What is the mechanism the data can change and how do the changes you
+>>>> propose here address the data lifetime problem ?
+>>> Currently this issue has been discovered by external researchers at this
+>>> point, but if any such OOB issue is discovered at later point as well then we
+>>> shall fix them as well.
+>>
+>> Right but, I'm looking for a detailed description of the problem.
+>>
+>> Can you describe from RX interrupt again what the expected data lifetime of the
+>> RX frame is, which I hope we agree is until the next RX interrupt associated
+>> with a given buffer with an ownership flag shared between firmware and APSS -
+>> and then under what circumstances that "software contract" is being violated.
+>>
+>>> Also, with rougue firmware we cannot fix the data lifetime problem in my
+>>> opinion, but atleast we can fix the out of bound issues.
+>>>>
+>>>> Without that context, I don't believe it is really possible to validate an
+>>>> additional memcpy() here and there in the code as fixing anything.
+>>> There is no additional memcpy() now in the v2 patch, but as part of the fix,
+>>> we are just trying to retain the length of the packet which was being read in
+>>> the first memcpy() to avoid the OOB read access.
+>>
+>> I can't make a suggestion because - personally speaking I still don't quite
+>> understand the data-race you are describing.
+> Go through the reports from the reporter, it was quite evident in leading upto
+> OOB case.
+> Putting up the sequence for you to go over the interrupt handling and message
+> queue parsing of the packets from firmware
+> 1.
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_venus.c#L1082
+> 2.
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L816
+> 3. event handling (this particular case)
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L658
+> 4.
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L22
+> 
+> the "struct hfi_msg_event_notify_pkt *pkt" pkt here is having the data read from
+> shared queue.
+> 
+>>
+>> I get that you say the firmware is breaking the contract but, without more
+>> detail on _how_ it breaks that contract I don't think it's really possible to
+>> validate your fix here, fixes anything.
+>>
+>> ---
+>> bod
+> 
+> Regards,
+> Vikash
+
+I'll go through all of these links given here, thanks.
+
+Whatever the result of the review, this detail needs to go into the 
+commit log so that a reviewer can reasonably read the problem 
+description and evaluate against submitted code as a fix.
+
+---
+bod
 
