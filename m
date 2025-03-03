@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-542267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574E4A4C7DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:45:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161FDA4C7E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674E7188296A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E8E1882F40
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C98253B54;
-	Mon,  3 Mar 2025 16:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41670255E54;
+	Mon,  3 Mar 2025 16:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bSjMpwrq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="adEnZ+oQ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB82253352
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADED253B41
 	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019464; cv=none; b=YdL9xRD29wPAbRemx/w5TdtCK3UGESXEKEr4dirZnaOtXyqABlWIW0GW59QPcCz+1D5GPM4Squ41B6xPS8n1vMI9klX+qBkn+W/jprNuNcgBo6eem4VxvJECouG1Ldm/rTblghBE55MiGSQtSGjg1G5Wqwickc0XKgdKdorb/YQ=
+	t=1741019465; cv=none; b=SAjUO3YekfPATmC5jQ//deWX7cJVRx+7iBOUhnh4f4IP7OJsH5t9rWMzedFSel3QKGCQt7QfD3iNOdhiQ/Q6sB+zTD1kAOeLbX0fzw7XCaHVchQwqvHeQ1SSdc2T4tkpoF21YlBhVlS7X3ffw4b+/7wthWY5wnQXaaut2+mtJ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019464; c=relaxed/simple;
-	bh=67PK8pUQYPqYlMZHYSLo+XzRkAgj9tRIuRjTWNQ3VlA=;
+	s=arc-20240116; t=1741019465; c=relaxed/simple;
+	bh=tLoq8V+yWL9uG7J57/fSv64hWMwnlNF56fAlUed9ZyE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q1d/fscWzKwN47tfeWDXYA1mlnlGV08yfhSRJDlcWlmiH9NuJRlIkR+I+gfe8/03bMFgf/eoZUTFrtlnkyVdHaQ1asVSNK2lKIzOLxXdV/x5xLvL73BsiUJAilSIMgvL2y1/y1U3ZiL2+Cc5t0W/FzpGYJoWLXO807w7ul60HN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bSjMpwrq; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=DqoyGkurN2CE5ohQOm6zKOZ/0BNnkRpBH/ds2ytvxpCUPMFhDgNlzbFpha/r0DYKhTCNA8J0rtvDjwNDqpqaIUFAU5AN88ToOlmbXTn/9FcZ04eHvHMcmQ7Z572aFficFfgKbdyszVreE21WcNIr9F7so4KpecAnCuSokG1SJq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=adEnZ+oQ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -36,49 +36,49 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6Ha8UZDq7Lu61upXZpfKkXckZhfouMk5cB7+X6dnx8Y=;
-	b=bSjMpwrqRn3JBCLfX6Dwrf0jtZRPCjND+Vzp1JQCpQMTY9c9ZETjoKBKwXGFHZrlgvn3Uu
-	M9aWRzVS0AQkXM4CTs1zqgbi6Y20fLB72EnRqalwNkZNy0mntBk8HdKh6MkfdnKY9G7BSj
-	4wtlKQDiYeyC75sQG1B6V4Q2zH72DS4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=sbAdVb8IlT1mHMxqkPSZKSMArZKBklKlP7kdJIBKPLI=;
+	b=adEnZ+oQOQvYbLnpMePkt3AlwHZzUy8u1XnpE+Khcr//qvPWEG6mVEfZzs3d4v/LsgOFuq
+	HxrSRrBImPLcfSpVL6OpMs/iS30oKULPr4sMF8icZJQos3uw7oS89DnL4dKC/Vjl5/HXOl
+	duA3gI/gMhk9NS/IJLce5dMhdleakNY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-5WpsaSmmPUOYWnr7_5y0tQ-1; Mon, 03 Mar 2025 11:31:00 -0500
-X-MC-Unique: 5WpsaSmmPUOYWnr7_5y0tQ-1
-X-Mimecast-MFC-AGG-ID: 5WpsaSmmPUOYWnr7_5y0tQ_1741019456
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3910fcca0c7so352113f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:30:56 -0800 (PST)
+ us-mta-398-4hoyK_HnOviYDTjafzi7Pg-1; Mon, 03 Mar 2025 11:30:59 -0500
+X-MC-Unique: 4hoyK_HnOviYDTjafzi7Pg-1
+X-Mimecast-MFC-AGG-ID: 4hoyK_HnOviYDTjafzi7Pg_1741019458
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-390e5214efdso3131546f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:30:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741019456; x=1741624256;
+        d=1e100.net; s=20230601; t=1741019458; x=1741624258;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Ha8UZDq7Lu61upXZpfKkXckZhfouMk5cB7+X6dnx8Y=;
-        b=LSULmLY4UOR/bac+Nis4+EHjv9EOUK8bMi9UNKF0G1gk7vsxatbJaeLHunhCgMSQJc
-         mHtyDwFqvQ8V7EVwZ21L8/g6tfbggeiBgtJInj1UxwaYNQytQ0IKtYFQfFfLVFYzgvT9
-         TMQKoEtRQ+tmn64Gd/URWBNJmlQwZzwQdVGBWYBWrytiNl5XCTxol+fnLnTAHsISk89w
-         2NiepqHOffb7TtcGfqN3mD+W+nXgnFhDe17gmrxz7I/yYAqXReNGBE+93xgcRZ1muCi0
-         ORzRxw63TZD0RTrjzGPWUh41+Ho6fj4SFpxsDQ32zB5pXwscwSkqBiniE0v0bUPFUYlv
-         22zA==
-X-Gm-Message-State: AOJu0YyjyenkLwxXfZxW46XU+kFsShFJ7FwkXra3dHVdZVcxrsFhmW2i
-	fshVwGBKPzP7ySBEXvZjSLseZHa2bXVDh6bpMs0brxHTh1q4LKOuzYXlqGwbt3YhNqrsayKbfq6
-	AI948h2nETzBBGVHBJR7EZmrTjZb6IdsPs6jmSF3pEqRPGO5CA5naAa3bCMUBTs1RCXpehs8fl6
-	UuRyd4U/dddiRoTzx8FRhXy5HxyMYO+K6hNFzHz+Q2vCt0
-X-Gm-Gg: ASbGncv4nQSci34etcHXdn3GNGRsvaULdYikFotW8fpOqy5DVIvQGlrGf/f+RiCGJtk
-	bcJjGoHUbCw1fqeJOdfgILdcXHfKaa/i+v7rS1Z9lJVZKrI9AC7pBXpd+YlCi0SmZSERdBRKTAn
-	cTKxWKO2f6lPE3aHbh7rZPhgKEPOXzm4U1ESF/f0weQ95yexn7g0o4O7iwvBZCCkckEsyzqdcnc
-	ppO3y3DdLuNDY5a5kpfIhVlWMjw5G0dS7xVjWG+xBLqAiWvAOCAt55QSvqOU2KlvQ2T5E5OOwsY
-	vstYcvQzd1gKPy1O2pVRbw5DVXZEN+z7uGQriJcDFDiokZgCfUYMEOtQLqkCZFvquzupX3Py+wO
-	/
-X-Received: by 2002:a5d:64cf:0:b0:390:df6c:591f with SMTP id ffacd0b85a97d-390ec7cd2ddmr9512480f8f.17.1741019455984;
-        Mon, 03 Mar 2025 08:30:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEU1cXWjWugfmabLrmr0XJAbs+GQI7107y37ij+zO9LNUtV9tqHS/ZXKWHCRmLlaLTb16eXbQ==
-X-Received: by 2002:a5d:64cf:0:b0:390:df6c:591f with SMTP id ffacd0b85a97d-390ec7cd2ddmr9512425f8f.17.1741019455528;
-        Mon, 03 Mar 2025 08:30:55 -0800 (PST)
+        bh=sbAdVb8IlT1mHMxqkPSZKSMArZKBklKlP7kdJIBKPLI=;
+        b=rPBg3f1phymDy0Z57GRdvPMv5l8DCBKluBmV8V/XNQzV6XsXFDqJxyhc8eh4jjYNEX
+         VMSHNTUwMHAK6R9ueWPvu0P7zCrGWH+JHCbUFu+JiajRddy7CVFSCmceAE4qpl4EZgVk
+         EUOfO9FolwbDGxNvTb7kFkgeImd4bwgiK/gDgODkgkJobeXXlkWTsPtzL5550g4l35nF
+         O3vjx8gK+8Una8UWjEu43X3G/cKEU4YXAfM+sp8qkNqgQe6gbcbro7TRU5MaqR2E4RTA
+         jCrVyb6sIjdTvCkmxrWCJ44xBfhkVzcmAmTFmAUperPTCI3GteNIK951xIRP01epb+yq
+         y9+A==
+X-Gm-Message-State: AOJu0YyAP5DJnSMGD6MFUyjW93cy1xtZsfu80uqAdg+0OYsUYS8iF4Ue
+	zDMMoMSsXnbR+uNw3osrWaTfQ3HxmQwz1L5XJgwH/HZixoK57ta0qnV72gzKXqHFcfPPX5H0yQC
+	J+ixMdCVFptCNrdcN099KXxDmerZXfgpSKR6d8/8xvKAlvd+udvuoRW/DcrrAwve00gxgpGe+Oe
+	3d5Y/8/pkvwtmZC3BCAx1qXYuoygL2RKGsobm/IqgV8oXa
+X-Gm-Gg: ASbGncvRCbapy5umtLjqLLjVAnn6GMM1dNhd/WWnR8pqb2cxHRNUAhck+ML9ELdo7cf
+	7i9bKSkncTWYGUuDju1YOr45RX6M3mfK6uXF+swFrEh8CQvt0Lm1pILRl7rqVoFW9hB4W//IRfR
+	XZzbidelE7bEaADPdhC76DAEl97qNRR0cI78OPbG6gqrBJSWjscPnnqRUJ4VOoPFDM4y6uNlAew
+	4sL7+o5lSW/q2DTD8f3lt4SIsToSvqRRQPeWd/h2MarWOZEfImIeEI5tBJUopewgYeTd6wz8oQQ
+	LlI54UOpmjNjcDL6NJmapNQPEGi8ln73RWSkGfKV+G8qk+ubmW3igaCxyyIMzxBLjNOSTV1YCdB
+	L
+X-Received: by 2002:a05:6000:156d:b0:38d:e3db:9058 with SMTP id ffacd0b85a97d-390ec7cb945mr10994405f8f.12.1741019457981;
+        Mon, 03 Mar 2025 08:30:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvRr8UGYMtbKKLfF4vYk+epXuFbk91XT0kZhy1XfmXmyE27quXMsv2mgA7hFUbYP+d7m+S+Q==
+X-Received: by 2002:a05:6000:156d:b0:38d:e3db:9058 with SMTP id ffacd0b85a97d-390ec7cb945mr10994345f8f.12.1741019457510;
+        Mon, 03 Mar 2025 08:30:57 -0800 (PST)
 Received: from localhost (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e485ddd1sm15052695f8f.94.2025.03.03.08.30.54
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47a6aabsm14858335f8f.26.2025.03.03.08.30.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 08:30:55 -0800 (PST)
+        Mon, 03 Mar 2025 08:30:57 -0800 (PST)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-doc@vger.kernel.org,
@@ -104,9 +104,9 @@ Cc: linux-doc@vger.kernel.org,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	Jann Horn <jannh@google.com>
-Subject: [PATCH v3 17/20] fs/proc/task_mmu: remove per-page mapcount dependency for PM_MMAP_EXCLUSIVE (CONFIG_NO_PAGE_MAPCOUNT)
-Date: Mon,  3 Mar 2025 17:30:10 +0100
-Message-ID: <20250303163014.1128035-18-david@redhat.com>
+Subject: [PATCH v3 18/20] fs/proc/task_mmu: remove per-page mapcount dependency for "mapmax" (CONFIG_NO_PAGE_MAPCOUNT)
+Date: Mon,  3 Mar 2025 17:30:11 +0100
+Message-ID: <20250303163014.1128035-19-david@redhat.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303163014.1128035-1-david@redhat.com>
 References: <20250303163014.1128035-1-david@redhat.com>
@@ -121,82 +121,57 @@ Content-Transfer-Encoding: 8bit
 Let's implement an alternative when per-page mapcounts in large folios are
 no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
 
-PM_MMAP_EXCLUSIVE will now be set if folio_likely_mapped_shared() is
-true -- when the folio is considered "mapped shared", including when
-it once was "mapped shared" but no longer is, as documented.
+For calculating "mapmax", we now use the average per-page mapcount in
+a large folio instead of the per-page mapcount.
 
-This might result in and under-indication of "exclusively mapped", which
-is considered better than over-indicating it: under-estimating the USS
-(Unique Set Size) is better than over-estimating it.
+For hugetlb folios and folios that are not partially mapped into MMs,
+there is no change.
 
-As an alternative, we could simply remove that flag with
-CONFIG_NO_PAGE_MAPCOUNT completely, but there might be value to it. So,
-let's keep it like that and document the behavior.
+Likely, this change will not matter much in practice, and an alternative
+might be to simple remove this stat with CONFIG_NO_PAGE_MAPCOUNT.
+However, there might be value to it, so let's keep it like that and
+document the behavior.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- Documentation/admin-guide/mm/pagemap.rst | 11 +++++++++++
- fs/proc/task_mmu.c                       | 11 +++++++++--
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.rst | 5 +++++
+ fs/proc/task_mmu.c                 | 7 ++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index d6647daca9122..afce291649dd6 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -38,6 +38,17 @@ There are four components to pagemap:
-    precisely which pages are mapped (or in swap) and comparing mapped
-    pages between processes.
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 09f0aed5a08ba..1aa190017f796 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -686,6 +686,11 @@ Where:
+ node locality page counters (N0 == node0, N1 == node1, ...) and the kernel page
+ size, in KB, that is backing the mapping up.
  
-+   Traditionally, bit 56 indicates that a page is mapped exactly once and bit
-+   56 is clear when a page is mapped multiple times, even when mapped in the
-+   same process multiple times. In some kernel configurations, the semantics
-+   for pages part of a larger allocation (e.g., THP) can differ: bit 56 is set
-+   if all pages part of the corresponding large allocation are *certainly*
-+   mapped in the same process, even if the page is mapped multiple times in that
-+   process. Bit 56 is clear when any page page of the larger allocation
-+   is *maybe* mapped in a different process. In some cases, a large allocation
-+   might be treated as "maybe mapped by multiple processes" even though this
-+   is no longer the case.
++Note that some kernel configurations do not track the precise number of times
++a page part of a larger allocation (e.g., THP) is mapped. In these
++configurations, "mapmax" might corresponds to the average number of mappings
++per page in such a larger allocation instead.
 +
-    Efficient users of this interface will use ``/proc/pid/maps`` to
-    determine which areas of memory are actually mapped and llseek to
-    skip over unmapped regions.
+ 1.2 Kernel data
+ ---------------
+ 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 1162f0e72df2e..f937c2df7b3f4 100644
+index f937c2df7b3f4..5043376ebd476 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -1652,6 +1652,13 @@ static int add_to_pagemap(pagemap_entry_t *pme, struct pagemapread *pm)
- 	return 0;
- }
- 
-+static bool __folio_page_mapped_exclusively(struct folio *folio, struct page *page)
-+{
-+	if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
-+		return folio_precise_page_mapcount(folio, page) == 1;
-+	return !folio_maybe_mapped_shared(folio);
-+}
-+
- static int pagemap_pte_hole(unsigned long start, unsigned long end,
- 			    __always_unused int depth, struct mm_walk *walk)
+@@ -2866,7 +2866,12 @@ static void gather_stats(struct page *page, struct numa_maps *md, int pte_dirty,
+ 			unsigned long nr_pages)
  {
-@@ -1742,7 +1749,7 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
- 		if (!folio_test_anon(folio))
- 			flags |= PM_FILE;
- 		if ((flags & PM_PRESENT) &&
--		    folio_precise_page_mapcount(folio, page) == 1)
-+		    __folio_page_mapped_exclusively(folio, page))
- 			flags |= PM_MMAP_EXCLUSIVE;
- 	}
- 	if (vma->vm_flags & VM_SOFTDIRTY)
-@@ -1817,7 +1824,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 			pagemap_entry_t pme;
+ 	struct folio *folio = page_folio(page);
+-	int count = folio_precise_page_mapcount(folio, page);
++	int count;
++
++	if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
++		count = folio_precise_page_mapcount(folio, page);
++	else
++		count = folio_average_page_mapcount(folio);
  
- 			if (folio && (flags & PM_PRESENT) &&
--			    folio_precise_page_mapcount(folio, page + idx) == 1)
-+			    __folio_page_mapped_exclusively(folio, page))
- 				cur_flags |= PM_MMAP_EXCLUSIVE;
- 
- 			pme = make_pme(frame, cur_flags);
+ 	md->pages += nr_pages;
+ 	if (pte_dirty || folio_test_dirty(folio))
 -- 
 2.48.1
 
