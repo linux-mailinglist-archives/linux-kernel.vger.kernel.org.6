@@ -1,366 +1,215 @@
-Return-Path: <linux-kernel+bounces-541869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08501A4C2B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:03:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FADA4C2B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD5D3A6F58
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:02:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA7A171FE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B21E2135BB;
-	Mon,  3 Mar 2025 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXo6ZpCB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8D721324C;
+	Mon,  3 Mar 2025 14:03:13 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DAE1F4183
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9142212FAD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010577; cv=none; b=MEh6MiuYjDiWWXDTF/LYcJ9ejcme+K686FNIG591nMeYZwHtGYfqudEJV4jd7dO7Cp/FwvGQVt3E4rlLHbyuq8d3cdJN+EO7em7IkNu8u+EQh4gC/FvBsMdhqXr6eHVm5uOf0SNFbf9E8QVmfC9/oHHCQRdFmRVdtPFGe2upF4w=
+	t=1741010593; cv=none; b=NXbKe2cBCytbfucu6Yn328680fPZyPXjnsIeAcWSM8cXzONeDb9Rm5tuCmcRQ7tH1lQf1iwcWo3LSw2jPQvaTCU322DoUaDD9LIJmoBkdMvg+45mJ/k/JWw+ODqlX06op89czIChfMoMRB4g2uikbMeo7tRlmHJRjIcoOXulCLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010577; c=relaxed/simple;
-	bh=8bsnmvfAjGVIH7jOIPIvwYWB4Jv48r1mXeOXEvLWalA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nIkzx1/KZpy5RKP5y/Xz3FsVYTukESaMWgg6bW1fZzd8oa1+n1Y/hm6AMlmZQIe1/MKk/DL6szaL1QtcSnVVCwZKER7Tt2SIwnhk1h1PdjtSFACebiMIBCWXIt+emE2HGMQUQHa3SsCKWCXV2R4C6Z1igFlrM+ImklnQBbnnE9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXo6ZpCB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741010574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJf4/zflZHu3IQNiMQ3lCM++w7NvTFqB4KzbfcfdNWc=;
-	b=eXo6ZpCBdM4wTCNjto6X6xqZ6s7GlLmHcHgtaibm23n0rrJnVRsvOcnIW0cWb4FqpJvQoL
-	pmZqEPXEW0nNlFzNDrV2CX4xoBoINJLQUQqdQtx7iX7+DlD2VVTfjY9lfD5UQDdtUm/IXk
-	ef+DSgHSI5YbP9oilFv31yvAksDxI7E=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-475-CnpfCvq3MsSyvw0Ms34RgA-1; Mon, 03 Mar 2025 09:02:52 -0500
-X-MC-Unique: CnpfCvq3MsSyvw0Ms34RgA-1
-X-Mimecast-MFC-AGG-ID: CnpfCvq3MsSyvw0Ms34RgA_1741010572
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d9e4d33f04so4711761a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:02:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741010572; x=1741615372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJf4/zflZHu3IQNiMQ3lCM++w7NvTFqB4KzbfcfdNWc=;
-        b=c7sibV2kNaLhJxxCvKrs9YAZ3NFlIPRXohNhEGBydyT3/IiG/7+Kf6gMlOU3D98+Cn
-         NHwBImRg4fP27c8d+HvtBLw/aPeKc9w+JcOqaXslgS75Vw77vY2xbyCCFceBnbFpMFjc
-         DFiPk0raKu0j5Ui3tjwHW4qilZCXzqHGpBytymSTM+WIbHmedJs502wNPJTEUs2+sX7S
-         bRJwVUBKcD6w0Bka1WkmFhgj5px12OP2o6rHZHrg1L+Ey5Vmf7UGj+toXBYbBMMmZjl2
-         nxmqQMOfnLIfZnv3XSD/MV/bi4V5EDV3BbXWUKVleTpXhfMDfbMQlUq5c+QmPFbVC0pC
-         wzYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYoKzV1Uv8kQRbG9kiJ/DJfdx59CfOxi172ApwoJSPNDCa9CuB4Q1Z1zyfaAZOpp062Im4aZ7UyPh0XiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWP2xL0FCeRjAULGu4ED9FfFoiP0UmNYTothGYLcz8zm773Qn/
-	50K35AbttX+aVW5QyW0tSkdLuoGX5jEF2dAn7bQPK2vn1Zb8ow7FdGNUnnBvMAHhsSbdJ9D1Oxa
-	Z4hhx0GGOfBdqdirMypRVrmN+13FgHO1GJ0fyFVkb6NdUWjxkojBUBBnSituBzw==
-X-Gm-Gg: ASbGncsHD2DNdpW6dEgvlMn1a3tWCCL1v8CQasUCjntNGDYG0IddYOUEia06FMNj6R0
-	bx4c7JjqNoy2r6qRAUTGjyn8h8K/RCec6vgeK/DQoGN+4UYpJEi7VNzxPabJT49Su8mtmQ8oTge
-	JoYQ1yCF5byLIjmoVEj5cKHA+9ZV6SDlSGexGmxAgE0owdErE7LKkEyGNI8sdzJptG/QLZJC4DA
-	tAwhS4WTAFqHCphOnczefsZupOyOlIuvVn3tmKSy7LAllELdS1ZPOmLjYH9dBIrfmwzdVzDd8NE
-	IKShHTj5uAsZoSrU5bU=
-X-Received: by 2002:a50:cc0c:0:b0:5e4:d75a:573e with SMTP id 4fb4d7f45d1cf-5e4d75a57fcmr11163820a12.32.1741010571399;
-        Mon, 03 Mar 2025 06:02:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEZex1kQMieQKb+N4I4vdhl4budP4Re7r9POsYiHbgSvRvwVYw9B/430caOfAXmTSRcCnWdow==
-X-Received: by 2002:a50:cc0c:0:b0:5e4:d75a:573e with SMTP id 4fb4d7f45d1cf-5e4d75a57fcmr11163779a12.32.1741010570844;
-        Mon, 03 Mar 2025 06:02:50 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b4aa13sm6798255a12.7.2025.03.03.06.02.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:02:50 -0800 (PST)
-Message-ID: <5d229e8e-f4b9-4589-a978-e80848678e38@redhat.com>
-Date: Mon, 3 Mar 2025 15:02:49 +0100
+	s=arc-20240116; t=1741010593; c=relaxed/simple;
+	bh=wcIcOFvvWo6Y4MEIL4E+cU4GzfeBSRYrLktn6eT9DcY=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k6xXMKILIxA2Wq94XwtUT321uuLrE0hCmUSTHWuFmyXl1LWGVp6h+06g2jwYSdLQHk6ALAT1o80wyKQBV8QfBvxQhjBZU8poMPx/nTsmwQLur4CCkyPiIoe2byNJiG/i4oHtbSx/Da5UmNf1ckFFY/DEoeusaDP/4kUTu9Ajkno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z60lz518fz1ltYp;
+	Mon,  3 Mar 2025 21:58:55 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id C0B1318001B;
+	Mon,  3 Mar 2025 22:03:05 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:03:04 +0800
+CC: <dave.hansen@linux.intel.com>, <bp@alien8.de>, <mingo@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <yangyicong@hisilicon.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, <sudeep.holla@arm.com>,
+	<pierre.gondois@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-3-yangyicong@huawei.com>
+ <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <21e74021-fb68-0003-f0f4-7f54dd674b9d@huawei.com>
+Date: Mon, 3 Mar 2025 22:03:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 16/17] media: uvcvideo: implement UVC v1.5 ROI
-To: Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
- <ribalda@chromium.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
-References: <20250203-uvc-roi-v17-0-5900a9fed613@chromium.org>
- <20250203-uvc-roi-v17-16-5900a9fed613@chromium.org>
- <6944a221-b0b4-4042-9d4a-98a0cc806116@xs4all.nl>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <6944a221-b0b4-4042-9d4a-98a0cc806116@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Hi,
-
-On 3-Mar-25 14:32, Hans Verkuil wrote:
-> Hans, Laurent, Yunke,
+On 2025/2/28 19:11, Dietmar Eggemann wrote:
+> On 18/02/2025 15:10, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> On building the topology from the devicetree, we've already
+>> gotten the SMT thread number of each core. Update the largest
+>> SMT thread number and enable the SMT control by the end of
+>> topology parsing.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
 > 
-> On 03/02/2025 12:55, Ricardo Ribalda wrote:
->> From: Yunke Cao <yunkec@google.com>
+> 1/max_thread_number stands for '1 or max_thread_number', right ?
+> 
+> Aren't the two interfaces:
+> 
+> (a) /sys/devices/system/cpu/smt/active
+> (b) /sys/devices/system/cpu/smt/control
+> 
+> and you write 1) or 2) (or 'forceoff') into (b)?
+
+yes you're correct. "active" is a RO file for status only so not for this interface.
+Let me explicitly mention the /sys/devices/system/cpu/smt/control here in the commit.
+
+> 
+>> If a system have more than one SMT thread number the 2) may
+> 
+> s/have/has
+> 
+>> not handle it well, since there're multiple thread numbers in the
+> 
+> multiple thread numbers other than 1, right?
+
+according to the pr_warn_once() we implemented below it also includes the case
+where the system have one type of SMT cores and non-SMT cores (the thread number is 1):
+- 1 thread
+- X (!= 1) threads
+
+Discussion made in [1] and I thought we have agreement (hope I understood correctly)
+that all the asymmetric cases need to notify. Do you and Sudeep think we should not
+warn in such case?
+
+[1] https://lore.kernel.org/linux-arm-kernel/10082e64-b00a-a30b-b9c5-1401a54f6717@huawei.com/
+
+> 
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+> 
+> This paragraph seems to be about heterogeneous systems. Maybe mention this?
+> 
+> Heterogeneous system with SMT only on a subset of cores (like Intel
+> Hybrid): This one works (N threads per core with N=1 and N=2) just fine.
+> 
+> But on Arm64 (default) we would still see:
+> 
+> [0.075782] Heterogeneous SMT topology is partly supported by SMT control
+> 
+
+more clearer, will add it. Thanks.
+
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
 >>
->> Implement support for ROI as described in UVC 1.5:
->> 4.2.2.1.20 Digital Region of Interest (ROI) Control
->>
->> ROI control is implemented using V4L2 control API as
->> two UVC-specific controls:
->> V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
->> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
->>
->> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
->> Signed-off-by: Yunke Cao <yunkec@google.com>
->> Reviewed-by: Yunke Cao <yunkec@google.com>
->> Tested-by: Yunke Cao <yunkec@google.com>
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
 >> ---
->>  drivers/media/usb/uvc/uvc_ctrl.c   | 81 ++++++++++++++++++++++++++++++++++++++
->>  drivers/media/usb/uvc/uvcvideo.h   |  7 ++++
->>  include/uapi/linux/usb/video.h     |  1 +
->>  include/uapi/linux/uvcvideo.h      | 13 ++++++
->>  include/uapi/linux/v4l2-controls.h |  7 ++++
->>  5 files changed, 109 insertions(+)
+>>  drivers/base/arch_topology.c | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
 >>
->> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
->> index 17a7ce525f71..1906ce5b7d50 100644
->> --- a/drivers/media/usb/uvc/uvc_ctrl.c
->> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
->> @@ -358,6 +358,24 @@ static const struct uvc_control_info uvc_ctrls[] = {
->>  		.flags		= UVC_CTRL_FLAG_GET_CUR
->>  				| UVC_CTRL_FLAG_AUTO_UPDATE,
->>  	},
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index 3ebe77566788..23f425a9d77a 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/cleanup.h>
+>>  #include <linux/cpu.h>
+>>  #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>  #include <linux/device.h>
+>>  #include <linux/of.h>
+>>  #include <linux/slab.h>
+>> @@ -506,6 +507,10 @@ core_initcall(free_raw_capacity);
+>>  #endif
+>>  
+>>  #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+>> +
+>> +/* Maximum SMT thread number detected used to enable the SMT control */
+> 
+> maybe shorter ?
+> 
+> /* used to enable SMT control */
+> 
+
+sure.
+
+>> +static unsigned int max_smt_thread_num;
+>> +
+>>  /*
+>>   * This function returns the logic cpu number of the node.
+>>   * There are basically three kinds of return values:
+>> @@ -565,6 +570,16 @@ static int __init parse_core(struct device_node *core, int package_id,
+>>  		i++;
+>>  	} while (1);
+>>  
 >> +	/*
->> +	 * UVC_CTRL_FLAG_AUTO_UPDATE is needed because the RoI may get updated
->> +	 * by sensors.
->> +	 * "This RoI should be the same as specified in most recent SET_CUR
->> +	 * except in the case where the ‘Auto Detect and Track’ and/or
->> +	 * ‘Image Stabilization’ bit have been set."
->> +	 * 4.2.2.1.20 Digital Region of Interest (ROI) Control
+>> +	 * If max_smt_thread_num has been initialized and doesn't match
+>> +	 * the thread number of this entry, then the system has
+>> +	 * heterogeneous SMT topology.
 >> +	 */
->> +	{
->> +		.entity		= UVC_GUID_UVC_CAMERA,
->> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->> +		.index		= 21,
->> +		.size		= 10,
->> +		.flags		= UVC_CTRL_FLAG_SET_CUR | UVC_CTRL_FLAG_GET_CUR
->> +				| UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
->> +				| UVC_CTRL_FLAG_GET_DEF
->> +				| UVC_CTRL_FLAG_AUTO_UPDATE,
->> +	},
->>  };
+>> +	if (max_smt_thread_num && max_smt_thread_num != i)
+>> +		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+>> +	max_smt_thread_num = max_t(unsigned int, max_smt_thread_num, i);
+>> +
+>>  	cpu = get_cpu_for_node(core);
+>>  	if (cpu >= 0) {
+>>  		if (!leaf) {
+>> @@ -677,6 +692,18 @@ static int __init parse_socket(struct device_node *socket)
+>>  	if (!has_socket)
+>>  		ret = parse_cluster(socket, 0, -1, 0);
 >>  
->>  static const u32 uvc_control_classes[] = {
->> @@ -603,6 +621,44 @@ static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
->>  	return out_mapping;
->>  }
->>  
->> +static int uvc_get_rect(struct uvc_control_mapping *mapping, u8 query,
->> +			const void *uvc_in, size_t v4l2_size, void *v4l2_out)
->> +{
->> +	const struct uvc_rect *uvc_rect = uvc_in;
->> +	struct v4l2_rect *v4l2_rect = v4l2_out;
->> +
->> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
->> +		return -EINVAL;
->> +
->> +	if (uvc_rect->left > uvc_rect->right ||
->> +	    uvc_rect->top > uvc_rect->bottom)
->> +		return -EIO;
->> +
->> +	v4l2_rect->top = uvc_rect->top;
->> +	v4l2_rect->left = uvc_rect->left;
->> +	v4l2_rect->height = uvc_rect->bottom - uvc_rect->top + 1;
->> +	v4l2_rect->width = uvc_rect->right - uvc_rect->left + 1;
->> +
->> +	return 0;
->> +}
->> +
->> +static int uvc_set_rect(struct uvc_control_mapping *mapping, size_t v4l2_size,
->> +			const void *v4l2_in, void *uvc_out)
->> +{
->> +	struct uvc_rect *uvc_rect = uvc_out;
->> +	const struct v4l2_rect *v4l2_rect = v4l2_in;
->> +
->> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
->> +		return -EINVAL;
->> +
->> +	uvc_rect->top = min(0xffff, v4l2_rect->top);
->> +	uvc_rect->left = min(0xffff, v4l2_rect->left);
->> +	uvc_rect->bottom = min(0xffff, v4l2_rect->top + v4l2_rect->height - 1);
->> +	uvc_rect->right = min(0xffff, v4l2_rect->left + v4l2_rect->width - 1);
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->>  	{
->>  		.id		= V4L2_CID_BRIGHTNESS,
->> @@ -897,6 +953,28 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->>  		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
->>  		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
->>  	},
->> +	{
->> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_RECT,
->> +		.entity		= UVC_GUID_UVC_CAMERA,
->> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->> +		.size		= sizeof(struct uvc_rect) * 8,
->> +		.offset		= 0,
->> +		.v4l2_type	= V4L2_CTRL_TYPE_RECT,
->> +		.data_type	= UVC_CTRL_DATA_TYPE_RECT,
->> +		.get		= uvc_get_rect,
->> +		.set		= uvc_set_rect,
->> +		.name		= "Region Of Interest Rectangle",
+>> +	/*
+>> +	 * Notify the CPU framework of the SMT support. Initialize the
+>> +	 * max_smt_thread_num to 1 if no SMT support detected or failed
+>> +	 * to parse the topology. A thread number of 1 can be handled by
+>> +	 * the framework so we don't need to check max_smt_thread_num to
+>> +	 * see we support SMT or not.
 > 
-> According to how titles are capitalized in english, this should be lower-case "of".
+> Not sure whether the last sentence is needed here?
 > 
->> +	},
->> +	{
->> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
->> +		.entity		= UVC_GUID_UVC_CAMERA,
->> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->> +		.size		= 16,
->> +		.offset		= 64,
->> +		.v4l2_type	= V4L2_CTRL_TYPE_BITMASK,
->> +		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
->> +		.name		= "Region Of Interest Auto Controls",
-> 
-> Ditto.
-> 
-> This string is also one character too long (the control description string is at
-> most 31 characters). Suggested alternatives:
-> 
-> "Region of Interest Auto Ctrls"
 
-FWIW my vote goes to the above one, rationale:
+We always need to call cpu_smt_set_num_threads() to notify the framework
+of the thread number even if SMT is not supported. In which case the
+thread number is 1 but the framework can handle this well. I worry readers
+may get confused for notifying a thread number of 1 so add this comment this.
 
-1. ROI is unclear
-2. "Ctrls" with the _s_ over "Control" as this is a bitmask which allows
-   multiple options to be set at the same time (so not a menu style control)
- 
-> "ROI Auto Controls"
-> "Region Of Interest Auto Control"
-> 
-> I can make the changes myself, but I need to know which alternative to use for
-> this string.
- 
-Regards,
- 
-	Hans
+Will get rid of this if thought redundant.
 
+Thanks.
 
-
-
-
-> 
->> +	},
->>  };
->>  
->>  /* ------------------------------------------------------------------------
->> @@ -1473,6 +1551,9 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
->>  
->>  static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
->>  {
->> +	if (mapping->v4l2_type == V4L2_CTRL_TYPE_RECT)
->> +		return sizeof(struct v4l2_rect);
->> +
->>  	if (uvc_ctrl_mapping_is_compound(mapping))
->>  		return DIV_ROUND_UP(mapping->size, 8);
->>  
->> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
->> index 6fc1cb9e99d1..b63720e21075 100644
->> --- a/drivers/media/usb/uvc/uvcvideo.h
->> +++ b/drivers/media/usb/uvc/uvcvideo.h
->> @@ -543,6 +543,13 @@ struct uvc_device_info {
->>  	u16	uvc_version;
->>  };
->>  
->> +struct uvc_rect {
->> +	u16 top;
->> +	u16 left;
->> +	u16 bottom;
->> +	u16 right;
->> +} __packed;
->> +
->>  struct uvc_status_streaming {
->>  	u8	button;
->>  } __packed;
->> diff --git a/include/uapi/linux/usb/video.h b/include/uapi/linux/usb/video.h
->> index 526b5155e23c..e1d9f5773187 100644
->> --- a/include/uapi/linux/usb/video.h
->> +++ b/include/uapi/linux/usb/video.h
->> @@ -104,6 +104,7 @@
->>  #define UVC_CT_ROLL_ABSOLUTE_CONTROL			0x0f
->>  #define UVC_CT_ROLL_RELATIVE_CONTROL			0x10
->>  #define UVC_CT_PRIVACY_CONTROL				0x11
->> +#define UVC_CT_REGION_OF_INTEREST_CONTROL		0x14
->>  
->>  /* A.9.5. Processing Unit Control Selectors */
->>  #define UVC_PU_CONTROL_UNDEFINED			0x00
->> diff --git a/include/uapi/linux/uvcvideo.h b/include/uapi/linux/uvcvideo.h
->> index f86185456dc5..cbe15bca9569 100644
->> --- a/include/uapi/linux/uvcvideo.h
->> +++ b/include/uapi/linux/uvcvideo.h
->> @@ -16,6 +16,7 @@
->>  #define UVC_CTRL_DATA_TYPE_BOOLEAN	3
->>  #define UVC_CTRL_DATA_TYPE_ENUM		4
->>  #define UVC_CTRL_DATA_TYPE_BITMASK	5
->> +#define UVC_CTRL_DATA_TYPE_RECT		6
->>  
->>  /* Control flags */
->>  #define UVC_CTRL_FLAG_SET_CUR		(1 << 0)
->> @@ -38,6 +39,18 @@
->>  
->>  #define UVC_MENU_NAME_LEN 32
->>  
->> +/* V4L2 driver-specific controls */
->> +#define V4L2_CID_UVC_REGION_OF_INTEREST_RECT	(V4L2_CID_USER_UVC_BASE + 1)
->> +#define V4L2_CID_UVC_REGION_OF_INTEREST_AUTO	(V4L2_CID_USER_UVC_BASE + 2)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE		(1 << 0)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS			(1 << 1)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE		(1 << 2)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS			(1 << 3)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT		(1 << 4)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK	(1 << 5)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION	(1 << 6)
->> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY		(1 << 7)
->> +
->>  struct uvc_menu_info {
->>  	__u32 value;
->>  	__u8 name[UVC_MENU_NAME_LEN];
->> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
->> index 974fd254e573..72e32814ea83 100644
->> --- a/include/uapi/linux/v4l2-controls.h
->> +++ b/include/uapi/linux/v4l2-controls.h
->> @@ -215,6 +215,13 @@ enum v4l2_colorfx {
->>   */
->>  #define V4L2_CID_USER_THP7312_BASE		(V4L2_CID_USER_BASE + 0x11c0)
->>  
->> +/*
->> + * The base for the uvc driver controls.
->> + * See linux/uvcvideo.h for the list of controls.
->> + * We reserve 64 controls for this driver.
->> + */
->> +#define V4L2_CID_USER_UVC_BASE			(V4L2_CID_USER_BASE + 0x11e0)
->> +
->>  /* MPEG-class control IDs */
->>  /* The MPEG controls are applicable to all codec controls
->>   * and the 'MPEG' part of the define is historical */
->>
-> 
-> 
 
 
