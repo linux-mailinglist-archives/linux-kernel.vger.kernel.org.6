@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-542489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492AEA4CAA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D47A4CA97
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D253A7FA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0BA3ADD75
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BB233127;
-	Mon,  3 Mar 2025 17:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809702356A7;
+	Mon,  3 Mar 2025 17:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="j9pVBoNK"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J29zA2yb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5D230BDC;
-	Mon,  3 Mar 2025 17:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4292222A5;
+	Mon,  3 Mar 2025 17:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023454; cv=none; b=AoztpDGGqqTKtgu4SEB6U9PaUGL1AOchIgKWtoVU/1clGrhgdPrXx2xejTsf+U0JFRzHm+th66GQogXzjb3O0rJaGNIs49e1ernGAo1nbzgJO9PavLKuBcCZ/EsMFzKYhZ9UtZB5nj3OXSmymqjwRg9T8a3Q9PUzXAwfBT6T31w=
+	t=1741023488; cv=none; b=EZ16k1qddj4mOLDaDFOMBgeU3+rozigphIf2CePeqMc2Quau13yb7X3ExoCqczZxdVSyHj6jEZ1R/X85qes4UnJHlRqiaiH/c57Z83H7sJEEaJp8XFjL/WQc4SOsakQIk4o8E1Io8KD515hScCnTRAm9VoA83SGHWVStYv/IvFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023454; c=relaxed/simple;
-	bh=bWBOhaMng64IoA/gra5KEY+BlnSAUyrCpjhL1Fodlu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=atVivjIvvKcGqWTQDhb5MiIRNuGVJMqekncE70Pmm8Ycxr9etHnzRhq+M8X0t0x1bk12isj2KwPXmceBSO3ZdoBJjIvZkK0LIVdWna58JtncI92Ih4F+q0OTVbaCWu2CDQSSh+37F9V0u12qSAOr3UKCIm5V3FijupTkh/t3T0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=j9pVBoNK; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4F3F444404;
-	Mon,  3 Mar 2025 17:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1741023450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u3H6pW4S8PPhnGfrKhhjaR9va9GYV3q8+SK+MUf2Y/Y=;
-	b=j9pVBoNKxtdzfOkTKq4db89Q/jQNSzArtAqfsxCepkh8Bc0mcT2dkl4TVqiWt8YhOsz4X9
-	9Lfq6HW46gzGqssTxxvsSfMLKsS+5LpuOvW+HQq7j2Cq119OJUk9ihxUcuPUxVkE4OC66l
-	L5WaPrfywJo1WkLGRcHurofCJhl/j7ZK+Ce7v1XqNUTOh5mhld7FmsQKULJK6tzIjfjj0p
-	VyQsRYw1yXgE3njNP5DKb65gqxUaXtENwQIqLWfdl4TDim4BTaeqJ7nns5OfVi8zUiRolY
-	segUlRxFxOKGROzAEhxzCXO8uWNmb0cOfFlS38if1lXviA4oeTleSuTGFwecJw==
-Message-ID: <7cd18e37-2d68-4825-bcc4-fc2ac6b9a461@yoseli.org>
-Date: Mon, 3 Mar 2025 18:37:28 +0100
+	s=arc-20240116; t=1741023488; c=relaxed/simple;
+	bh=/uZ1vyZcbGkHg8U1+Qya92Gm+x1msqE71uAh4MvNP5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzsOkPGFl8INMLaPHgisXqRD/bu83dwM7OaI0Jt9tfANRXURLM0f4mvB8Degimjek0L1MCMdE8/qU+8LmdVAu1QnlAKYuChBUmsOqoFlWRFa7hK7cpw8HxfAzYb5g/GaBzpuO4YwInZ2yMRRuyby/lEPcIwv4efCGU+ceFD5ixM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J29zA2yb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE7C7C4CED6;
+	Mon,  3 Mar 2025 17:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741023488;
+	bh=/uZ1vyZcbGkHg8U1+Qya92Gm+x1msqE71uAh4MvNP5I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J29zA2ybXqy+SHwNIvznlLXYreMsURt0KgGc/Tk7RWJcwrAks+zyaaJAlqC+oXVRH
+	 Gd1k4rCqAGG6ZuW74xuSmQlQBFfp7ukc2v9UZcOm6eryBam7UeZymsGVoGHpXuq1uL
+	 yxZ7EF3HuB8Plxvu1Vx5e1YR0pfSSHlfCZhknZW7hIifoG0wjTbu64x5GCWhF/wsj0
+	 iM5JySIB89MbVIpisqNx2EnYSutJF/9tShnsutP/f4Da0GNQI+WGK90Z6oNffm4Oqh
+	 9NfxR0kYLCrB/QN8BBtEbwvrspxdfUUEhXf6/OIRbcbiyjx1W83CJRcb4uy4U6jDQJ
+	 Gi7BHoZexbStQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: [PATCHSET 0/7] perf annotate: Add --code-with-type option
+Date: Mon,  3 Mar 2025 09:38:00 -0800
+Message-ID: <20250303173807.1765098-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] net: phy: dp83826: Add support for straps reading
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Catalin Popescu <catalin.popescu@leica-geosystems.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250303-dp83826-fixes-v1-0-6901a04f262d@yoseli.org>
- <20250303-dp83826-fixes-v1-2-6901a04f262d@yoseli.org>
- <fcc25495-5453-4b15-aece-b01bca3a00ba@lunn.ch>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <fcc25495-5453-4b15-aece-b01bca3a00ba@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepfeeiteeghedvgefggfffteehhefhteekfeehhfegueehteeuffeuieekgfffffetnecukfhppeeluddrudeihedrudeihedrudeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeluddrudeihedrudeihedrudeljedphhgvlhhopegludelvddrudeikedruddriegnpdhmrghilhhfrhhomhepjhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhgl
- hgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrphhophgvshgtuheslhgvihgtrgdqghgvohhshihsthgvmhhsrdgtohhm
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+Hello,
 
-On 03/03/2025 18:20, Andrew Lunn wrote:
-> On Mon, Mar 03, 2025 at 06:05:52PM +0100, Jean-Michel Hautbois wrote:
->> When the DP83826 is probed, read the straps, and apply the default
->> settings expected. The MDI-X is not yet supported, but still read the
->> strap.
-> 
-> What about backwards compatibility? I expect this changes the
-> behaviour of the device, potentially introducing regressions?  Please
-> add an explanation of why this is safe.
+There are roughly two modes in the perf annotate.  One is normal code
+anootation and the other is data type annotation.  I'm proposing a new
+way to combine the code and data annotation together.
 
-I am not certain it is safe. As far as I know that if straps are used on 
-the hardware, then it should be used, and if the behavior has to be 
-different, then userspace can change it (or any other way). Am I wrong ?
+With this option, "# data-type: <name> [offset (field)]" part will be
+adeded when it found a data type for the given instruction.  This is
+for every instruction in the function regardless whether it has a
+sample or not.
 
-How could we make is safer, though ? We somehow need to read those ?
+This will be useful to understand function level data access patterns.
+Currently it only works with --stdio, but I can add it to TUI later.
+
+Here's an example output.
+
+  $ perf annotate --code-with-type --stdio
+  ...
+ Percent |      Source code & Disassembly of elf for cpu/mem-loads,ldlat=30/P (4 samples, percent: local period)
+  ----------------------------------------------------------------------------------------------------------------
+           : 0                0xffffffff81bb7060 <__schedule>:
+      0.00 :   ffffffff81bb7060:        pushq   %rbp              # data-type: (stack operation)
+      0.00 :   ffffffff81bb7061:        movq    %rsp, %rbp
+      0.00 :   ffffffff81bb7064:        pushq   %r15              # data-type: (stack operation)
+      0.00 :   ffffffff81bb7066:        pushq   %r14              # data-type: (stack operation)
+      0.00 :   ffffffff81bb7068:        pushq   %r13              # data-type: (stack operation)
+      0.00 :   ffffffff81bb706a:        pushq   %r12              # data-type: (stack operation)
+      0.00 :   ffffffff81bb706c:        pushq   %rbx              # data-type: (stack operation)
+      0.00 :   ffffffff81bb706d:        movq    $0x33180, %rbx
+      0.00 :   ffffffff81bb7074:        movq    %rbx, %r12
+      0.00 :   ffffffff81bb7077:        subq    $0x38, %rsp
+      0.00 :   ffffffff81bb707b:        movl    %edi, -0x5c(%rbp)         # data-type: unsigned int +0
+      0.00 :   ffffffff81bb707e:        movq    %gs:0x28, %rax            # data-type: (stack canary)
+      0.00 :   ffffffff81bb7087:        movq    %rax, -0x30(%rbp)         # data-type: (stack canary)
+      0.00 :   ffffffff81bb708b:        xorl    %eax, %eax
+      0.00 :   ffffffff81bb708d:        movq    $0x0, -0x58(%rbp)         # data-type: struct rq_flags +0 (flags)
+      0.00 :   ffffffff81bb7095:        movq    $0x0, -0x50(%rbp)         # data-type: struct rq_flags +0x8 (clock_update_flags)
+      0.00 :   ffffffff81bb709d:        callq   0xffffffff81baa100 <debug_smp_processor_id>               # data-type: (stack operation)
+      0.00 :   ffffffff81bb70a2:        cltq
+      0.00 :   ffffffff81bb70a4:        addq    -0x7dcf0500(,%rax,8), %r12                # data-type: long unsigned int[] +0
+      0.00 :   ffffffff81bb70ac:        movq    0x960(%r12), %r13         # data-type: struct rq +0x960 (curr)
+      0.00 :   ffffffff81bb70b4:        movq    0x20(%r13), %rax          # data-type: struct task_struct +0x20 (stack)
+      0.00 :   ffffffff81bb70b8:        cmpq    $0x57ac6e9d, (%rax)
+      0.00 :   ffffffff81bb70bf:        jne     0xffffffff81bb7bca <__schedule+0xb6a>
+      0.00 :   ffffffff81bb70c5:        movl    %gs:0x7e47b87c(%rip), %eax  # 0x32948 <pcpu_hot+0x8>              # data-type: struct pcpu_hot +0x8 (preempt_count)
+      0.00 :   ffffffff81bb70cc:        andl    $0x7fffffff, %eax
+      0.00 :   ffffffff81bb70d1:        cmpl    $0x1, %eax
+      0.00 :   ffffffff81bb70d4:        jne     0xffffffff81bb79de <__schedule+0x97e>
+      0.00 :   ffffffff81bb70da:        nopl    (%rax,%rax)
+      0.00 :   ffffffff81bb70df:        cmpl    $0x2, 0xe86b3a(%rip)  # 0xffffffff82a3dc20 <prof_on>              # data-type: int +0
+      0.00 :   ffffffff81bb70e6:        movq    0x8(%rbp), %rsi
+      0.00 :   ffffffff81bb70ea:        je      0xffffffff81bb7a0b <__schedule+0x9ab>
+      0.00 :   ffffffff81bb70f0:        nopl    (%rax,%rax)
+      0.00 :   ffffffff81bb70f5:        nop
+      ...
+
+The code is also available at 'perf/annotate-code-data-v1' branch in
+git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
 
 Thanks,
-JM
+Namhyung
 
-> 
->      Andrew
-> 
-> ---
-> pw-bot: cr
+
+Namhyung Kim (7):
+  perf annotate-data: Add annotated_data_type__get_member_name()
+  perf annotate: Remove unused len parameter from
+    annotation_line__print()
+  perf annotate: Pass annotation_options to annotation_line__print()
+  perf annotate: Pass hist_entry to annotate functions
+  perf annotate: Factor out __hist_entry__get_data_type()
+  perf annotate: Implement code + data type annotation
+  perf annotate: Add --code-with-type option.
+
+ tools/perf/Documentation/perf-annotate.txt |   4 +
+ tools/perf/builtin-annotate.c              |  19 +-
+ tools/perf/builtin-top.c                   |   2 +-
+ tools/perf/util/annotate-data.c            |  34 +++
+ tools/perf/util/annotate-data.h            |   3 +
+ tools/perf/util/annotate.c                 | 267 +++++++++++++--------
+ tools/perf/util/annotate.h                 |   8 +-
+ tools/perf/util/sort.c                     |  39 +--
+ 8 files changed, 236 insertions(+), 140 deletions(-)
+
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
