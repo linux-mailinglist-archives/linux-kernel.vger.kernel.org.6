@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-541426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD86AA4BCCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:47:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5FDA4BCD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3B2170D0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2773F170CC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65FE1F4176;
-	Mon,  3 Mar 2025 10:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VehcebwA"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12661F2BB5;
-	Mon,  3 Mar 2025 10:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885DE1F461A;
+	Mon,  3 Mar 2025 10:46:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549DE1F37B8;
+	Mon,  3 Mar 2025 10:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998717; cv=none; b=T0/m/yGjqN0K/NQMzKua+5PPQnqDtY8sINYle8cP6OXz0iqoKkgtzGYaBcuxQpif7uauQrePNW3qvMX9sefpx7SzBbFk2UlCrH1gmPIvjAUnF0Vkc95wkiXuZyDW9xL3Zg/WBmNamnUaosA3LPkEppyO272bsgpQLZw3MqFq6/g=
+	t=1740998798; cv=none; b=oD1r5ZNBZoMQB6B590NM5ou4SCp/YdtwfKlZ+atTacwFedNRVnp0TeoriwRJAa/3w+LBpTvapmkfFOasBbe5RZd3qUDPw+YLN37sNADZn2lt+v2R4K0Dpgtv98I//MhX7hBLfdk6xjXZIWQKe7bC4MuJk5KhkIpdmqfGwrN/fTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998717; c=relaxed/simple;
-	bh=epqAmMwiaOESlkR2wS6UCOEtQ+c5h0eTQuRBcxubrtA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KjvTtvqc/eVYQK7Hd3rCB/FVHwL0hyk2LLvVC+C8gv2jP5YRVYVKxB+Xo7UFN10acf+/+aB7h2FCc5rhwnni5fOBVDuGRGSwLO4lrYUBwlavR1DTf7A7YSLTOudA3v1mn5ydm+xrQhrJyDinSrjWql+b407d6wqYuc30PDBP0jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VehcebwA; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8584043426;
-	Mon,  3 Mar 2025 10:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740998713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UruHBjRajISo099N9o0TXvUraPldBWhzjY5wVsDG8p4=;
-	b=VehcebwAWX0cYaujiDhEuwILYKiLexTP7qaBpTLxvqYznFR+lGj328K4N5ti7mQGoHdyzD
-	3Fh17nXRSpHUer0aRq2ALeAg8s+zswHbUlBxEsbjAZ7jL6VwJscrMCWLLd9LAYZYJ8bwgt
-	J9d4dE27yCC6nxQDLmEcH9L+LZ15Mn/mPBO277TKpg3tWGyv/QDBuvfIyH50ryAkWGe7ZN
-	G/2pDKCFZ26y7uwAGddXPLF5DC4j4PYC+fOz5T3BsEZkFVD19uoJx5p4mlTACIWDRPzKp5
-	JJnc6Aui0YJjFX9qSMmNo10fYXoCqUsZbOL24luzrOHKWHC8oco70zmuWtKQaA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: florian.fainelli@broadcom.com, 
- Brian Norris <computersforpeace@gmail.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Masahiro Yamada <yamada.masahiro@socionext.com>, 
- Boris Brezillon <bbrezillon@kernel.org>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Kamal Dasu <kamal.dasu@broadcom.com>
-Cc: stable@vger.kernel.org
-In-Reply-To: <20250227174653.8497-1-kamal.dasu@broadcom.com>
-References: <20250227174653.8497-1-kamal.dasu@broadcom.com>
-Subject: Re: [PATCH v2] mtd: rawnand: brcmnand: fix PM resume warning
-Message-Id: <174099871242.2206965.1027368384612216898.b4-ty@bootlin.com>
-Date: Mon, 03 Mar 2025 11:45:12 +0100
+	s=arc-20240116; t=1740998798; c=relaxed/simple;
+	bh=679jHHpJiH/QrdZhvnaAMRPukFFs582fj75sGybLgHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UsE07TrPtxC6pTyxdHm4jdMkqNYJPpBN+ygi24t+HWnwr6Wqnue3Pxkq6OD1CF0SxRTuTakTimWurc44EescM42xxsUJvUkgdyPHgWNZfhJ2lZMhKsg/Xv0ykbU9Xc1yIXSe2abt79qFsHE/HViMuTQwe3UMDZQHHPpv2nlU48w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BC34113E;
+	Mon,  3 Mar 2025 02:46:49 -0800 (PST)
+Received: from [10.163.38.109] (unknown [10.163.38.109])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C56143F66E;
+	Mon,  3 Mar 2025 02:46:32 -0800 (PST)
+Message-ID: <b665b2b2-e407-4a1f-af34-02b6aeb7ff17@arm.com>
+Date: Mon, 3 Mar 2025 16:16:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepkhgrmhgrlhdruggrshhusegsrhhorggutghomhdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopegtohhmphhuthgvrhhsfhhorhhpvggrtggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehlihhnu
- higqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] selftests/mm/uffd: Rename nr_cpus -> nr_threads
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
+ <20250228-mm-selftests-v3-4-958e3b6f0203@google.com>
+ <b5b1e43d-0298-4772-ba0d-acec63a05149@arm.com> <Z8V6xYvqqkPxULgN@google.com>
+ <18ea9794-3901-4802-875c-b0327984a9d6@arm.com> <Z8WFzISSAmtjtu3L@google.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <Z8WFzISSAmtjtu3L@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 12:46:08 -0500, Kamal Dasu wrote:
-> Fixed warning on PM resume as shown below caused due to uninitialized
-> struct nand_operation that checks chip select field :
-> WARN_ON(op->cs >= nanddev_ntargets(&chip->base)
+
+
+On 03/03/25 4:04 pm, Brendan Jackman wrote:
+> On Mon, Mar 03, 2025 at 03:48:38PM +0530, Dev Jain wrote:
+>>
+>>
+>> On 03/03/25 3:17 pm, Brendan Jackman wrote:
+>>> On Fri, Feb 28, 2025 at 11:06:35PM +0530, Dev Jain wrote:
+>>>> Taking a cursory look at the test, it creates three threads for each cpu.
+>>>> The bounding of the variable is fine but that being the reason to rename the
+>>>> variable is not making sense to me.
+>>>
+>>> Hmm yeah the name needs to be more abstract. Do you think nr_workers
+>>> would be confusing? Or even just "parallelism" or nr_parallel? Or any
+>>> other ideas?
+>>>
+>>> FWIW I briefly looked at just cleaning this up to remove the global
+>>> variable but that's a bigger time investment than I can afford here I
+>>> think. (The local variable in stress() would still need a better name
+>>> anyway).
+>>>
+>>> Thanks for the review BTW!
+>>
+>> Your welcome.
+>>
+>> I personally prefer leaving it as is; unless someone comes up and completely
+>> cleans up the structure, let us save our collective brain cycles for more
+>> meaningful battles than renaming variables :)
 > 
-> [   14.588522] ------------[ cut here ]------------
-> [   14.588529] WARNING: CPU: 0 PID: 1392 at drivers/mtd/nand/raw/internals.h:139 nand_reset_op+0x1e0/0x1f8
-> [   14.588553] Modules linked in: bdc udc_core
-> [   14.588579] CPU: 0 UID: 0 PID: 1392 Comm: rtcwake Tainted: G        W          6.14.0-rc4-g5394eea10651 #16
-> [   14.588590] Tainted: [W]=WARN
-> [   14.588593] Hardware name: Broadcom STB (Flattened Device Tree)
-> [   14.588598] Call trace:
-> [   14.588604]  dump_backtrace from show_stack+0x18/0x1c
-> [   14.588622]  r7:00000009 r6:0000008b r5:60000153 r4:c0fa558c
-> [   14.588625]  show_stack from dump_stack_lvl+0x70/0x7c
-> [   14.588639]  dump_stack_lvl from dump_stack+0x18/0x1c
-> [   14.588653]  r5:c08d40b0 r4:c1003cb0
-> [   14.588656]  dump_stack from __warn+0x84/0xe4
-> [   14.588668]  __warn from warn_slowpath_fmt+0x18c/0x194
-> [   14.588678]  r7:c08d40b0 r6:c1003cb0 r5:00000000 r4:00000000
-> [   14.588681]  warn_slowpath_fmt from nand_reset_op+0x1e0/0x1f8
-> [   14.588695]  r8:70c40dff r7:89705f41 r6:36b4a597 r5:c26c9444 r4:c26b0048
-> [   14.588697]  nand_reset_op from brcmnand_resume+0x13c/0x150
-> [   14.588714]  r9:00000000 r8:00000000 r7:c24f8010 r6:c228a3f8 r5:c26c94bc r4:c26b0040
-> [   14.588717]  brcmnand_resume from platform_pm_resume+0x34/0x54
-> [   14.588735]  r5:00000010 r4:c0840a50
-> [   14.588738]  platform_pm_resume from dpm_run_callback+0x5c/0x14c
-> [   14.588757]  dpm_run_callback from device_resume+0xc0/0x324
-> [   14.588776]  r9:c24f8054 r8:c24f80a0 r7:00000000 r6:00000000 r5:00000010 r4:c24f8010
-> [   14.588779]  device_resume from dpm_resume+0x130/0x160
-> [   14.588799]  r9:c22539e4 r8:00000010 r7:c22bebb0 r6:c24f8010 r5:c22539dc r4:c22539b0
-> [   14.588802]  dpm_resume from dpm_resume_end+0x14/0x20
-> [   14.588822]  r10:c2204e40 r9:00000000 r8:c228a3fc r7:00000000 r6:00000003 r5:c228a414
-> [   14.588826]  r4:00000010
-> [   14.588828]  dpm_resume_end from suspend_devices_and_enter+0x274/0x6f8
-> [   14.588848]  r5:c228a414 r4:00000000
-> [   14.588851]  suspend_devices_and_enter from pm_suspend+0x228/0x2bc
-> [   14.588868]  r10:c3502910 r9:c3501f40 r8:00000004 r7:c228a438 r6:c0f95e18 r5:00000000
-> [   14.588871]  r4:00000003
-> [   14.588874]  pm_suspend from state_store+0x74/0xd0
-> [   14.588889]  r7:c228a438 r6:c0f934c8 r5:00000003 r4:00000003
-> [   14.588892]  state_store from kobj_attr_store+0x1c/0x28
-> [   14.588913]  r9:00000000 r8:00000000 r7:f09f9f08 r6:00000004 r5:c3502900 r4:c0283250
-> [   14.588916]  kobj_attr_store from sysfs_kf_write+0x40/0x4c
-> [   14.588936]  r5:c3502900 r4:c0d92a48
-> [   14.588939]  sysfs_kf_write from kernfs_fop_write_iter+0x104/0x1f0
-> [   14.588956]  r5:c3502900 r4:c3501f40
-> [   14.588960]  kernfs_fop_write_iter from vfs_write+0x250/0x420
-> [   14.588980]  r10:c0e14b48 r9:00000000 r8:c25f5780 r7:00443398 r6:f09f9f68 r5:c34f7f00
-> [   14.588983]  r4:c042a88c
-> [   14.588987]  vfs_write from ksys_write+0x74/0xe4
-> [   14.589005]  r10:00000004 r9:c25f5780 r8:c02002fA0 r7:00000000 r6:00000000 r5:c34f7f00
-> [   14.589008]  r4:c34f7f00
-> [   14.589011]  ksys_write from sys_write+0x10/0x14
-> [   14.589029]  r7:00000004 r6:004421c0 r5:00443398 r4:00000004
-> [   14.589032]  sys_write from ret_fast_syscall+0x0/0x5c
-> [   14.589044] Exception stack(0xf09f9fa8 to 0xf09f9ff0)
-> [   14.589050] 9fa0:                   00000004 00443398 00000004 00443398 00000004 00000001
-> [   14.589056] 9fc0: 00000004 00443398 004421c0 00000004 b6ecbd58 00000008 bebfbc38 0043eb78
-> [   14.589062] 9fe0: 00440eb0 bebfbaf8 b6de18a0 b6e579e8
-> [   14.589065] ---[ end trace 0000000000000000 ]---
+> Hmm, I think that's a false economy on brain cycles. A variable called
+> nr_cpus that isn't a number of CPUs is bound to waste a bunch of
+> mental energy at some point in the future.
 > 
-> [...]
+> Unless you strongly object I'll go for nr_parallel. It's not a great
+> name but, well... I think that probably just suggests it's not a great
+> variable, and I don't have time to fix that.
 
-Applied to nand/next, thanks!
+nr_parallel sounds better for sure. In case you send out a new patch:
 
-[1/1] mtd: rawnand: brcmnand: fix PM resume warning
-      commit: 288573e43712b1e04562de1bb93be01d74aa5f48
-
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
-
-Kind regards,
-Miquèl
+Reviewed-by: Dev Jain <dev.jain@arm.com>
 
 
