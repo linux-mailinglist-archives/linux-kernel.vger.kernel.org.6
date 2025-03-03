@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-544769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B5FA4E4A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:01:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C19A4E5E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A4F7A3510
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FC53BD1C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9428F928;
-	Tue,  4 Mar 2025 15:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fQDbMs8G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44272253B6C;
+	Tue,  4 Mar 2025 15:47:17 +0000 (UTC)
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E9F280CFC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C786237185
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102948; cv=pass; b=A2HNHFYg2DuOueWQle5D0FkvuMJbx0JuktdGSo5IZD4m0Q+aicbpHcwXDAHyTbbt+k7tMyThzt51VhaUKkn5hZYp4Q/2n2ZEi5jFfSIpA5rZOaM5GmU+s8ygWJuyQq11DOgOpJjE/2eDe3hDlQSdzBSn50/yFBzZZdWBLZjCkLk=
+	t=1741103236; cv=pass; b=RpIzxJmI4+5ko8qEAndPD5Jm7s3/c1+xXpWoEcQcwy5+4oZHDBs/lsCM994PApLCV6psnv0nfs5b4IOxL0HOtEY2oUB8qhhPXvkAThBSok0R89XEg/Ws70ChbdM12ogkq7FZ1+pcjuFFMbm+HHAiAI5grDmXqpeScI1JnvgYnCc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102948; c=relaxed/simple;
-	bh=Oul6vhkXR4va+z/+WhoZ0xRll3TSdgvTz5RPoDjs9Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQPqcIZTGquImNkVHHO2UckV+SwT11xQ3Kru33lWsmOY5becS6xOtNX7FC+fCCAYseN9DUwLuOwir3ZOTerxWvEdP3oyM5YgceCQOu6uERNVqOlJL8EhAbdGhE/crNvsizE/OCT5muc+BwT87HrQJu/CHT125vxLuDnzIuY9Ayg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fQDbMs8G; arc=none smtp.client-ip=205.220.180.131; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+	s=arc-20240116; t=1741103236; c=relaxed/simple;
+	bh=wcIcOFvvWo6Y4MEIL4E+cU4GzfeBSRYrLktn6eT9DcY=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DupvATPjDsTu/pXpotYweZduHaT//8Yxkn8O8Iq0pIlgsrd+TUfTtWEQEPZG/fXXtPFhzXFmnBXUBgoxsxzAZU9+CxNu0BnFjurJ5GgwuPNzY8tmkd6DWgD3Ii2WrTR3MLyyhXkS3u07xReqvnyB6W8+UjebIRU1gQXbw20K1Jk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=45.249.212.191; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id D02D240D5725
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:42:24 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id C0BFB40D570C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:12 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=fQDbMs8G
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fzS1qx2zG0pd
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:41:08 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g4f0jmvzG17D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:38 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 36C2142746; Tue,  4 Mar 2025 18:40:42 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fQDbMs8G
-X-Envelope-From: <linux-kernel+bounces-541861-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fQDbMs8G
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 88B3C41CB7
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:57:10 +0300 (+03)
+	id 0AD6342740; Tue,  4 Mar 2025 18:45:19 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541870-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 906CD41F7D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:27 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 3C3C02DCE3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:57:10 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 45DEF305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:27 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8661689E7
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF1C162B5D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E17C2135A5;
-	Mon,  3 Mar 2025 13:56:57 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0A02135CE;
+	Mon,  3 Mar 2025 14:03:15 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE55A212FB3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9142212FAD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010214; cv=none; b=rjUtt5D61v7K7jD5pYLLJ7yGuUSOECtbqS5G2r5c58NhjDz4Cm3lELyG2nVfzrs9+pip+J/f2ntgkVzNJ5qKhhGVcGRDSluRT+Pi3GFo+imRXWjZDny0NlwcZb27B8q7cNjq69U6qLVUZD5zQSe+l7Ah8V3CXaJCJSpgP2dcPjI=
+	t=1741010593; cv=none; b=NXbKe2cBCytbfucu6Yn328680fPZyPXjnsIeAcWSM8cXzONeDb9Rm5tuCmcRQ7tH1lQf1iwcWo3LSw2jPQvaTCU322DoUaDD9LIJmoBkdMvg+45mJ/k/JWw+ODqlX06op89czIChfMoMRB4g2uikbMeo7tRlmHJRjIcoOXulCLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010214; c=relaxed/simple;
-	bh=Oul6vhkXR4va+z/+WhoZ0xRll3TSdgvTz5RPoDjs9Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6UwhjttP03X/m0cbOEZB9e47i645Vf8McJxKoQPS1Alx4bU7UXefz1vwvNPJp7leip9g9LpSo/ZokNWmk0yxv9aCcX8Fbdffe0XhIbl3ZSkLqGmsqboaZTcyi3CSMvzUEfXFSWrR0Ww5bHsqUx7xh2pZIzQ6mrGjUgeblqZdwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fQDbMs8G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523B6x9K030846
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Mar 2025 13:56:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UHuL7NNx8i87z9rx+SL91u+ZQbG95A3iELLmhhDeB5A=; b=fQDbMs8Gkr0StbCH
-	j1Vag3AkItreSFPe4uNsUjhVeTQNecsBYKieSpUdfKaVQd0PtZlw/1Jr4lUh5IGo
-	OXNvHUGqFOHmD1xQ21JYyWhHwf3MFf0YkT7003hJp1kLqYQilF8sT+lbOQeQTVlo
-	1naZwUkfKUwvySmxwzRfhQWLMF4TqfdRfpmVSaKvEtIuG1EP7EccxRmWr7FYoHDB
-	KZH/PXXKzrMYykw3oFScaSuVWxjmerdjZyqArdsB1ajSpWNHp+mNJVDtLCiKOAi6
-	weFw8aXgWhGh64SNsR3uq+/EUC1FbpfokcZoTWo+sSz8BjuMgZIsDmTp7k5WIQuj
-	TrZadw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t88w4df-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 13:56:51 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22331df540aso135183825ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:56:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741010210; x=1741615010;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHuL7NNx8i87z9rx+SL91u+ZQbG95A3iELLmhhDeB5A=;
-        b=hFsjZHfPL9X440nsUqTSVXoiz5p2MzlCPlaCgGLqAugh40MJ7DAzXU63Hno0CUEo+s
-         bJpasj4KvHvFcEFYWHU4iZYEhpM1oPSjvYqwuXgpSK48pvSc7uSBhlA36zbWKrCaUw75
-         FiywaXwMVDF1s7+AyVxAy77c5thv0VYjQJJ7HaHfASzHd5QolrOzKoJD865ENcool3DO
-         lzGGoJGAd8SBZJDcr4QoqcI0PUXmhOMmfKADq6EBF1yxQbAafBRxcIIQU8M166AHD9mE
-         Joeg+m3eypqdIoFxIRtJquQGU8KPklalG+QuGUJ1yz/oDipDKw6Gs8S/QowC+tcDyWtz
-         qtAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtN+qgcmVGfwFb0lIr9uLD1Ad23XRGDUnoCZBVreWzIgOw0ZBiStl71HegG2H7KqQHxOp4keNSFHF2BXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWszmVgKE+VhARvVAmcR25upto0k4CWJxoVZhJsDAPUj/4ilDg
-	MTH9KZzokShlXjeGnGVLI3Crd6ipjKW8fqwcY4T6Jv2Q6AP2FmP8q4uimrQrY9dZQOHxJ8BIlt8
-	iubHco72r8ad/cjdJcQo06RLAQIBxP0W4gljxfCyCucF3j7Mej+FhPJgZqbGXFF4=
-X-Gm-Gg: ASbGncsXsGUNcSVF+6DFKJ147+OZXzv0HDJnxme92avRGw89TblxxrmirfpHsyCo7ZI
-	ATIiJM0FJQ74mlD9nD6/BVHdem0e2GfXHcKBY1N8IkU9FrP2QABnEsXzeTJQazW+sjH/23yP5E+
-	yRHQrA6IkqHcD+ZE/+A8whHVYlPG+95vcet2HSebj7NUbbICAUX08XtCa7zaAGBlBYL5lu5foOJ
-	53oRdxdqS5/miE99Xj2wXqFeNZdIMv02GbybljESaMZH/I8whop/BVdlmwnNZgsNwkhl9gHEWyB
-	BDqVbl0xMrJ8xlB2craxhIxL2D08GJOgHoKxhNKWAw==
-X-Received: by 2002:a05:6a00:1895:b0:736:3be3:3d76 with SMTP id d2e1a72fcca58-7363be33e3emr9864320b3a.17.1741010208484;
-        Mon, 03 Mar 2025 05:56:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEUiUadUO0TJSNEbJpg+ohvZHRFRRVAl7dtA6ZreELy4A3DZdvPJ97GRjZfVWJgUCtgDVhYkw==
-X-Received: by 2002:a05:6a00:1895:b0:736:3be3:3d76 with SMTP id d2e1a72fcca58-7363be33e3emr9864180b3a.17.1741010206632;
-        Mon, 03 Mar 2025 05:56:46 -0800 (PST)
-Received: from [10.218.7.34] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7363d010101sm4064636b3a.115.2025.03.03.05.56.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 05:56:46 -0800 (PST)
-Message-ID: <449712bb-961e-4ccf-bf74-50dd55315abc@oss.qualcomm.com>
-Date: Mon, 3 Mar 2025 19:26:37 +0530
+	s=arc-20240116; t=1741010593; c=relaxed/simple;
+	bh=wcIcOFvvWo6Y4MEIL4E+cU4GzfeBSRYrLktn6eT9DcY=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k6xXMKILIxA2Wq94XwtUT321uuLrE0hCmUSTHWuFmyXl1LWGVp6h+06g2jwYSdLQHk6ALAT1o80wyKQBV8QfBvxQhjBZU8poMPx/nTsmwQLur4CCkyPiIoe2byNJiG/i4oHtbSx/Da5UmNf1ckFFY/DEoeusaDP/4kUTu9Ajkno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z60lz518fz1ltYp;
+	Mon,  3 Mar 2025 21:58:55 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id C0B1318001B;
+	Mon,  3 Mar 2025 22:03:05 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:03:04 +0800
+CC: <dave.hansen@linux.intel.com>, <bp@alien8.de>, <mingo@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <yangyicong@hisilicon.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, <sudeep.holla@arm.com>,
+	<pierre.gondois@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-3-yangyicong@huawei.com>
+ <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <21e74021-fb68-0003-f0f4-7f54dd674b9d@huawei.com>
+Date: Mon, 3 Mar 2025 22:03:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -137,101 +110,157 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/5] iio: adc: Add support for QCOM PMIC5 Gen3 ADC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        agross@kernel.org, andersson@kernel.org, dmitry.baryshkov@linaro.org,
-        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
-        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
-        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
-        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
-        quic_kamalw@quicinc.com, rui.zhang@intel.com, lukasz.luba@arm.com,
-        lars@metafoo.de, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org, quic_skakitap@quicinc.com,
-        neil.armstrong@linaro.org
-References: <20250131183242.3653595-1-jishnu.prakash@oss.qualcomm.com>
- <20250131183242.3653595-5-jishnu.prakash@oss.qualcomm.com>
- <20250201121134.53040aae@jic23-huawei>
- <9e14f58f-e345-4bae-b14e-de25fc28d9a8@oss.qualcomm.com>
- <20250301032519.16e77288@jic23-huawei>
-Content-Language: en-US
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-In-Reply-To: <20250301032519.16e77288@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: NX1dR6-oc6tpjPo9egELKQAiOGfJge2p
-X-Proofpoint-GUID: NX1dR6-oc6tpjPo9egELKQAiOGfJge2p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- impostorscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=793 mlxscore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503030106
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fzS1qx2zG0pd
+X-ITU-Libra-ESVA-ID: 4Z6g4f0jmvzG17D
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707687.33589@+ePtkePncsPH5Glgd1OLvA
+X-ITU-Libra-ESVA-Watermark: 1741707942.21092@y3q85ZVJUGg/q/cnOZIH3A
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Jonathan,
-
-On 3/1/2025 8:55 AM, Jonathan Cameron wrote:
-> On Wed, 26 Feb 2025 14:22:05 +0530
-> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
-> 
-...
->>>> +void adc5_take_mutex_lock(struct device *dev, bool lock)
->>>> +{
->>>> +	struct iio_dev *indio_dev = dev_get_drvdata(dev->parent);
->>>> +	struct adc5_chip *adc = iio_priv(indio_dev);
->>>> +
->>>> +	if (lock)
->>>> +		mutex_lock(&adc->lock);
->>>> +	else
->>>> +		mutex_unlock(&adc->lock);
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(adc5_take_mutex_lock, "QCOM_SPMI_ADC5_GEN3");  
->>>
->>> This is potentially going to make a mess for sparse.  Might be better to split
->>> it in two so you can had __acquires and __releases markings.
->>>
->>> If you don't get any warnings with sparse then I guess we are fine.
->>>   
+On 2025/2/28 19:11, Dietmar Eggemann wrote:
+> On 18/02/2025 15:10, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
 >>
->> I had tried building with sparse in my local workspace and I did not get any errors in this file. Do you think I can keep this unchanged?
->> Also, would any kernel bots run sparse later on this patch, if it's not already done?
+>> On building the topology from the devicetree, we've already
+>> gotten the SMT thread number of each core. Update the largest
+>> SMT thread number and enable the SMT control by the end of
+>> topology parsing.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
 > 
-> Problems around this tend to turn up a bit late in build tests as requires
-> particular combinations of features.  Here you may not see problems because
-> sparse can't see far enough to understand the locking.
+> 1/max_thread_number stands for '1 or max_thread_number', right ?
 > 
-> I would still split this into lock / unlock as that matches better
-> with common syntax for locks.  We can then add markings
-> as necessary later.
+> Aren't the two interfaces:
+> 
+> (a) /sys/devices/system/cpu/smt/active
+> (b) /sys/devices/system/cpu/smt/control
+> 
+> and you write 1) or 2) (or 'forceoff') into (b)?
+
+yes you're correct. "active" is a RO file for status only so not for this interface.
+Let me explicitly mention the /sys/devices/system/cpu/smt/control here in the commit.
+
+> 
+>> If a system have more than one SMT thread number the 2) may
+> 
+> s/have/has
+> 
+>> not handle it well, since there're multiple thread numbers in the
+> 
+> multiple thread numbers other than 1, right?
+
+according to the pr_warn_once() we implemented below it also includes the case
+where the system have one type of SMT cores and non-SMT cores (the thread number is 1):
+- 1 thread
+- X (!= 1) threads
+
+Discussion made in [1] and I thought we have agreement (hope I understood correctly)
+that all the asymmetric cases need to notify. Do you and Sudeep think we should not
+warn in such case?
+
+[1] https://lore.kernel.org/linux-arm-kernel/10082e64-b00a-a30b-b9c5-1401a54f6717@huawei.com/
+
+> 
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+> 
+> This paragraph seems to be about heterogeneous systems. Maybe mention this?
+> 
+> Heterogeneous system with SMT only on a subset of cores (like Intel
+> Hybrid): This one works (N threads per core with N=1 and N=2) just fine.
+> 
+> But on Arm64 (default) we would still see:
+> 
+> [0.075782] Heterogeneous SMT topology is partly supported by SMT control
 > 
 
-OK, I can split this into separate lock and unlock functions.
-And for markings, you mean I should add these:
+more clearer, will add it. Thanks.
 
-    __acquires(&adc->lock)
-    __releases(&adc->lock)
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>  drivers/base/arch_topology.c | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index 3ebe77566788..23f425a9d77a 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/cleanup.h>
+>>  #include <linux/cpu.h>
+>>  #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>  #include <linux/device.h>
+>>  #include <linux/of.h>
+>>  #include <linux/slab.h>
+>> @@ -506,6 +507,10 @@ core_initcall(free_raw_capacity);
+>>  #endif
+>>  
+>>  #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+>> +
+>> +/* Maximum SMT thread number detected used to enable the SMT control */
+> 
+> maybe shorter ?
+> 
+> /* used to enable SMT control */
+> 
 
-under the lock and unlock functions respectively?
+sure.
 
-Thanks,
-Jishnu
+>> +static unsigned int max_smt_thread_num;
+>> +
+>>  /*
+>>   * This function returns the logic cpu number of the node.
+>>   * There are basically three kinds of return values:
+>> @@ -565,6 +570,16 @@ static int __init parse_core(struct device_node *core, int package_id,
+>>  		i++;
+>>  	} while (1);
+>>  
+>> +	/*
+>> +	 * If max_smt_thread_num has been initialized and doesn't match
+>> +	 * the thread number of this entry, then the system has
+>> +	 * heterogeneous SMT topology.
+>> +	 */
+>> +	if (max_smt_thread_num && max_smt_thread_num != i)
+>> +		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+>> +	max_smt_thread_num = max_t(unsigned int, max_smt_thread_num, i);
+>> +
+>>  	cpu = get_cpu_for_node(core);
+>>  	if (cpu >= 0) {
+>>  		if (!leaf) {
+>> @@ -677,6 +692,18 @@ static int __init parse_socket(struct device_node *socket)
+>>  	if (!has_socket)
+>>  		ret = parse_cluster(socket, 0, -1, 0);
+>>  
+>> +	/*
+>> +	 * Notify the CPU framework of the SMT support. Initialize the
+>> +	 * max_smt_thread_num to 1 if no SMT support detected or failed
+>> +	 * to parse the topology. A thread number of 1 can be handled by
+>> +	 * the framework so we don't need to check max_smt_thread_num to
+>> +	 * see we support SMT or not.
+> 
+> Not sure whether the last sentence is needed here?
+> 
 
->>>> +/*  
->>>
->>> Looks like valid kernel doc, so /** and check it builds fine
->>> with the kernel-doc script.
->>>   
+We always need to call cpu_smt_set_num_threads() to notify the framework
+of the thread number even if SMT is not supported. In which case the
+thread number is 1 but the framework can handle this well. I worry readers
+may get confused for notifying a thread number of 1 so add this comment this.
+
+Will get rid of this if thought redundant.
+
+Thanks.
+
 
 
 
