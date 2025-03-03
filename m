@@ -1,90 +1,175 @@
-Return-Path: <linux-kernel+bounces-541687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10747A4C019
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:18:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FDCA4C029
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300AF3ACF38
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C49416FDD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502CB20E6F7;
-	Mon,  3 Mar 2025 12:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066B420FABB;
+	Mon,  3 Mar 2025 12:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3PRnsBg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b="Sk+UKf2H"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17C1F3BAF;
-	Mon,  3 Mar 2025 12:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E6B20F09E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004325; cv=none; b=nghX0oeZkLogR5qJ6NxrmzktZ4pZALh68uT+kA2THGp9VED4ez6TsZEpRIgO5ga1M2G2VjUA1WkTWJbkVXNhQZD5HeW3f+RA4ixhacixxmOPaai46rpSjn5CxXnweE5AtI3/Df5VDLTIspHIveSK4S2eJcrbzlHRyuliCY4oFVE=
+	t=1741004435; cv=none; b=euQKmVCPT+U74pWp4jOQXF23bnieHgG1h0Fe/OuPVGUt5yw1p1s4hG47g3iFsCArba16Veo3sGwYT+qlkRETsLV2Cu8mgxQFEKGu2NrF0Jb45+fp6GaWC94iuP6HNcjqq+oaCl+PiGP0V+QsY1nTFpoTiHu0sGvaKTn3UNtHZLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004325; c=relaxed/simple;
-	bh=WgK8Yzpy8QNBwy1aVpbpb0LnXY+XMuQzRIKXc5Rbt7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuCu59Ht1uGDv42aHYW1BTXvYYrR3mIaeNuHFp/f6ymwqD0GY/tDPWBUvx7SbDUnlU2n6DYsJ9ciAp416mZDhFsTRzSCtL3h1ObjjazOo8SvDH+sy32aB15frOy8qNooKf1ycb2HNCi4hlxDcVz2g4sLp8Cv9nZq/Vg3UxgBYmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3PRnsBg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A4CC4CED6;
-	Mon,  3 Mar 2025 12:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741004324;
-	bh=WgK8Yzpy8QNBwy1aVpbpb0LnXY+XMuQzRIKXc5Rbt7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V3PRnsBgLaj6pEwmo7HqPGydJ/qShWa6trbFXPg9M3gKzVYpXlBGYk3DuE5my7rhC
-	 IRnEDHmp80LuIAVWFxJF8mUsJYI9rzo8WwB20WB99LAVox8f1uaKata1BMo9W/Rlym
-	 EEqeJxjTBHh3geVusvN/8mlZE283MTaHYGBqZhgfKsgS1vIs+BJ0XdcmkYqIzLRP0d
-	 rkK1NW7ESZJmP5Yb7Zk1gXW0kNa65+3NdX1dtXAl/ochG6tD78h235rvJaKl5TjA84
-	 dcbmE75mXOQmEASUMtKaVBzNSkCYGyieS5dG8NLXA9hOGlIkw/ceMYexHDRrxiYMR6
-	 VwgcR0gGOpsbA==
-Date: Mon, 3 Mar 2025 14:18:39 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bernard Metzler <BMT@zurich.ibm.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] RDMA/siw: switch to using the crc32c library
-Message-ID: <20250303121839.GA1665583@unreal>
-References: <20250227051207.19470-1-ebiggers@kernel.org>
- <DM6PR15MB252204B65F9632684EA8B82A99CE2@DM6PR15MB2522.namprd15.prod.outlook.com>
+	s=arc-20240116; t=1741004435; c=relaxed/simple;
+	bh=4vaNmrECdpuE+nItquTFFAmKXEmFwMLgvHiXIQ29GAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PRrkk9mdideu3yiAbwAG2KViXtzkxCIU/BiJ6DpBQeW15wCt4Bs+d2NxhMiRER9wE9ooaP7rOQvpnTTDKPsCQrA+aWby2HTFoUGrLSSfjpD91Nru63Urx0TKpAcC3JfXrJAuW/nSCGEJ9s56SPg8GBziq+dl7PyJZpf7zlDoD7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com; spf=pass smtp.mailfrom=qtec.com; dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b=Sk+UKf2H; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtec.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5239b9120f9so539857e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 04:20:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qtec.com; s=google; t=1741004432; x=1741609232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qiGCJuTjOW1WL+AlkLJto17ISROJENZ2Hmeb3N2a/0=;
+        b=Sk+UKf2HRVMVk4jI/KiPQDdz0hTp3jopj92eaMCSOl1d7JNnRfD7W86ZYkOhya4ZH7
+         nEL1JYE4DWZWXKJjr3ZiR3/CY/4BbFQQJt04rFAj2M87Ez7mxS6uf8+I14El9fDLj+Pf
+         da7Xu9e83LO3DmC8KT9lZ57pVf2gp5pHFTgLgNTrgR37wjgAk9sWA44EpGc9wGYivxJ/
+         xEkngTI2KaRNvUcB/CpaIymXRE53ugeGVxirFe8qYh+zeY0stgvBI2dJPTj74NB2IVC8
+         TEJHHFlK0ff1BOmOWlixlV210WO72ixclfLDF04zvt+GfYsMXujrjtsTThr06Gst5DWv
+         68kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741004432; x=1741609232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qiGCJuTjOW1WL+AlkLJto17ISROJENZ2Hmeb3N2a/0=;
+        b=eIiaeoNzHjLiUXh2F7TVDRlpCZBHHhby3FObVZvQKEz4pKUQV4SRDZQ5TzMYgY+Pl6
+         EJQ/+GtuFKLYD5B3FUW+ZxiOddLMv7dXnf7wpZZZPW4C2q9E2PJnRP+SeAmq2DrWyHf6
+         dH+2oT8Pyk9uYcegttAp9DB1lUP1FIPJPLE1BsI/PVVw8g12ysQfwCMb5U3hOFaNbT1N
+         nC4xnLX1opEL4d6aC1vYas+wnPPqU7kcIYdiJFBvjuOwkEFKQNvJrkid8kOkn9Q1DAX5
+         WAoMhxwoyjttIe/PDqHHRlltiI+ThOuyGDFLrHEGyWcS4Rj1X1HAQU95HA9ZzEKjBTV7
+         BaIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2xJBEi5cM1tm0Q0IttpMWtRkuLgT9K/4SC5YyKS6+FyuJntAHTNnsOZDxgXHsbfwwGpl5fKRNTybVdHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/GtiLP3zcaJv7Aktwm9ghKj0AP4llxcc42Bkr9vD5pk2pIgTg
+	ZTK144fm0hB2lHlyPO+QTv5Zp68QCFEsXcnikW79G+vqAhzzhxM41zcWFymJvKiMWPN2E9JSHvp
+	Fhj6JgwPPuwKWurr0iev00Pvrpd7Psde7LwAM5g==
+X-Gm-Gg: ASbGncvUFXNf9cJ5P8dmtcAk2BeD2Viu/J3C1zIaZEz1uToHs7KPA5aktddGYUl1yrw
+	9ZN1UG1c2k/Zv8gpfzi9GyQHseJDQ5aUrdL9xundMfYs3+SqZLm3tmcUDtVt/kVSgpuc1lzAZTf
+	FQ/7heyqf5xW8Vcx62seOUDQeu
+X-Google-Smtp-Source: AGHT+IEC/vHh7lhfByiJpQpHoysjvMszoqK4nnU6aR9Ze8Weud8WLm71QreZaPK3lTFkwbV0/OLzz6Z5Z5PrNOquPWw=
+X-Received: by 2002:a05:6122:3410:b0:520:3d87:5cdb with SMTP id
+ 71dfb90a1353d-5235bd4a0c4mr7056166e0c.9.1741004431724; Mon, 03 Mar 2025
+ 04:20:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DM6PR15MB252204B65F9632684EA8B82A99CE2@DM6PR15MB2522.namprd15.prod.outlook.com>
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local> <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
+ <Z78uOaPESGXWN46M@gmail.com> <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
+ <Z8WTON2K77Q567Kg@gmail.com>
+In-Reply-To: <Z8WTON2K77Q567Kg@gmail.com>
+From: Rostyslav Khudolii <ros@qtec.com>
+Date: Mon, 3 Mar 2025 13:20:21 +0100
+X-Gm-Features: AQ5f1Jqj87LmMek2lwxlwKr_Zx7BUcuB-tXvcLY_zqrnI1St3EnzrPSCENn2zG8
+Message-ID: <CAJDH93vwqiiNgiUQrw0kqDkHvaUNUcrOfHJW7PGezDHSOb-5Hg@mail.gmail.com>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "tglx@linutronix.de" <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Mar 02, 2025 at 03:11:42PM +0000, Bernard Metzler wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Eric Biggers <ebiggers@kernel.org>
-> > Sent: Thursday, February 27, 2025 6:12 AM
-> > To: Bernard Metzler <BMT@zurich.ibm.com>; Jason Gunthorpe <jgg@ziepe.ca=
->;
-> > Leon Romanovsky <leon@kernel.org>; linux-rdma@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Subject: [EXTERNAL] [PATCH v2] RDMA/siw: switch to using the crc32c lib=
-rary
-> >=20
-> > From: Eric Biggers <ebiggers@google.com>
+* Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Rostyslav Khudolii <ros@qtec.com> wrote:
+>
+> > Hi,
+> >
+> > > Rostyslav, I would like to ask you, do you have patches / updates for
+> > > enabling the EnableCf8ExtCfg bit for AMD 17h+ family? I could try to
+> > > adjust my lspci changes for new machines.
+> >
+> > Pali, sorry for the late reply. Do I understand correctly, that even
+> > though you have access to the ECS via
+> > the MMCFG you still want the legacy (direct IO) to work for the
+> > debugging purposes? I can prepare a
+> > simple patch that will allow you to do so if that's the case.
+> >
+> > >
+> > > So what is the practical impact here? Do things start breaking
+> > > unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled?
+> > > Then I'd suggest fixing that in the Kconfig space, either by adding a
+> > > dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those
+> > > must-have pieces of infrastructure.
+> > >
+> >
+> > Ingo, thank you for the reply.
+> >
+> > The way I understand the access to the PCI ECS (via raw_pci_ext_ops)
+> > works, is the following:
+> > 1. If CONFIG_ACPI_MCFG or CONFIG_PCI_MMCONFIG are enabled - set the
+> > raw_pci_ext_ops to use
+> >     MMCFG to access ECS. See pci_mmcfg_early_init() / pci_mmcfg_late_init();
+> > 2. If CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled - set the
+> > raw_pci_ext_ops to use
+> >     the 'direct' access to ECS. See pci_direct_init(). The direct
+> > access is conditional on the PCI_HAS_IO_ECS
+> >     flag being set.
+> >
+> > On AMD, the kernel enables the ECS IO access via the
+> > amd_bus_cpu_online() and pci_enable_pci_io_ecs().
+> > Except those functions have no desired effect on the AMD 17h+ family
+> > because the register (EnableCf8ExtCfg),
+> > they access, has been moved. What is important though, is that the
+> > PCI_HAS_IO_ECS flag is set unconditionally.
+> > See pci_io_ecs_init() in amd_bus.c
+> >
+> > Therefore I was wondering whether we should add support for the 17h+
+> > family in those functions to have
+> > the direct access work for those families as well.
+>
+> Yeah, I think so, but I'm really just guessing:
+>
+> > Regarding your suggestion to address this in the Kconfig space - I'm
+> > not quite sure I follow, since right now the kernel will use
+> > raw_pci_ext_ops whenever access beyond the first 256 bytes is
+> > requested. Say we want to make that conditional on CONFIG_ACPI_MCFG
+> > and CONFIG_PCI_MMCONFIG, does it also mean then we want to drop
+> > support for the 'direct' PCI IO ECS access altogether?
+>
+> I thought that enabling CONFIG_ACPI_MCFG would solve the problem, and
+> other architectures are selecting it pretty broadly:
+>
+>  arch/arm64/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+>  arch/loongarch/Kconfig: select ACPI_MCFG if ACPI
+>  arch/riscv/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+>
+> While x86 allows it to be user-configured, which may result in
+> misconfiguration, given that PCI_HAS_IO_ECS is being followed
+> unconditionally if a platform provides it?
+>
+> Thanks,
+>
+>         Ingo
 
-<...>
+So it seems that the config option that needs to be enabled is
+CONFIG_PCI_MMCONFIG.
+The MCFG kernel support depends on it (aka not compiled when disabled).
+With that said - the IO ECS question remains. Do we want to support it
+for AMD 17h+ or
+it's not required anymore?
 
-> > 2.48.1
->=20
-> Many thanks!
->=20
-> Acked-by: Bernard Metzler <bmt@zurich.ibm.com>
-
-Updated, but please try to trim your replies next time.
-
-Thanks
+Regards,
+Rostyslav
 
