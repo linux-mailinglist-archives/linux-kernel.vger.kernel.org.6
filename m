@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-544905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B9FA4E7DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:11:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81561A4EA6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D32885580
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:35:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC6BB7A3D59
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057262853E7;
-	Tue,  4 Mar 2025 16:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0902E27CCEF;
+	Tue,  4 Mar 2025 17:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTzEGiFf"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ae/eu6wz"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915332853E2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BF925290A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104872; cv=fail; b=EUYv+ba+anwkOFYezYE+06n5BOVNb9CQBHXfwC3TK/vxgThGzrcfazLEzU3nMKVho6pxuFtiUMrf41d3xiaPscV3ntjr0+XvFPRD2txX7EnSFEqqNOz7UBFp5SN7pmVWtdqtfwO8n3pIAqDMJ/e3fyeZ9/Ipz1XeR0DnekQrvZM=
+	t=1741110246; cv=fail; b=gePiN09gow2mqteFc/143mnvP+DSOa2r79jEOjzMALsKsKkQbiDdomKK7vFkeaqw3a1vH0trpUO6HMHorQtcM7qRW+fwG6HufFLYouF7rW40YWwMfcDz/1uonXIBBLuw5ygIXKBuGYjadCSy2MZh9UM3dyHIgEdOY2MQX2DPHTs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104872; c=relaxed/simple;
-	bh=iaBlcemRdKwSm+foatTJC45/O0WgscPMRwsAY1ldMss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pHWgWdU/kz8SbYtk/ao4bf+aap8/pUD75XFlvKh8DSP6qddC+eRCUmbUyQgYRUaSzqoXV4nc1XJrl5vTVgX+RsKe4a9PksljBuAjiVyng7SOwKUGRzJlZM0PIyl6mEg3lCbd8LEHIaV3v82lIdjd7Isy1yD9U6EcZ1XeUnVMK2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.117
+	s=arc-20240116; t=1741110246; c=relaxed/simple;
+	bh=MKM1MIU6/9VHoob8JgOkMDORxOQtqOHVKjs1ugz6gqk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GAsVj9Y0d8F/1alIvdkQGE4mQnNACTlptqZ1+OVVlHDyZMLCdweo1iFXBNJI1EZLJ3vfpW7SFm3L45RApFy4DeT5PIkBmKUl953l0+2Ww8Nah7jFBebSCA7VXdKL4I+NSLTJcAgFUUhOcpwomsCG9iqKN8ryULR51XMV51joyDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae/eu6wz reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id C1D2940CEC9A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:14:28 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 3294940891A3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:44:03 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gh01bnGzG2Ts
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:12:48 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hRZ6QvDzG45y
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:47:06 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 3D49C42755; Tue,  4 Mar 2025 19:12:34 +0300 (+03)
+	id D5DD942734; Tue,  4 Mar 2025 19:46:49 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf
-X-Envelope-From: <linux-kernel+bounces-541094-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae/eu6wz
+X-Envelope-From: <linux-kernel+bounces-541097-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id BC6A6420F3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:31:51 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 985BD3064C0C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:31:51 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae/eu6wz
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id F176C41CAB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:35:16 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 88DFA2DCE3
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:35:16 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B318917C9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:31:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117403AFEBF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D571EB1B5;
-	Mon,  3 Mar 2025 07:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C9F1EB5E9;
+	Mon,  3 Mar 2025 07:34:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBC714AD2D;
-	Mon,  3 Mar 2025 07:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F441E5B76;
+	Mon,  3 Mar 2025 07:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740987092; cv=none; b=ky5TbUiFvALlMlTaKigdQDLDUk1W1AH8b/MvXagBb0Xk5b5TIUiiItID+KCOXnGO/FZcObnLbedkgXfb+ftAmS7DSkS22QklUVqV4BV6nIGoQvPJgXEgBoZ2vgEJPVqmaIh7lFxE6VDHu+fAPHnBR0ZpQyLX3HUQtBJovb9FZlI=
+	t=1740987292; cv=none; b=EWuLO11zSW+glRwqZVrPpX0V3O/sv3DxKWRnuiOf2JLtRvOSl2qiMZIDSo5apC9l3LjRNUdRWzQ8b2LA6qOblS2erSW3h6dR7ri3Bp3Ohts9ZV08+0g1baacSQto1PRm4OpSB2HbMVKbM9NQjXDfvMZmmRLO/HuvVQy+6TEksmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740987092; c=relaxed/simple;
-	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qs/rqmr1PCo3H0sUZ9KVUfarUOj+NsP1wfjmQLXG0WIKQaeK6qK+/w0+UQD3te/wCKDFiZbRc6rN+Yg4pTVy0sssnopchUbeRiJxphCiNlC7pclhI9TvEdcC++q8C0edegJVN+a8VOs4y6a2Ba5yl/IkOPBqx//O5BB/9CHblbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA799C4CED6;
-	Mon,  3 Mar 2025 07:31:26 +0000 (UTC)
+	s=arc-20240116; t=1740987292; c=relaxed/simple;
+	bh=OdVpAxmtfoalSXyqc+DLAkGnZF5iDT2lNU6C/joqxOA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TfCjdrrRcMu6o6snqI3+kC3FzSUvML6g+CuXSfTC5S0P9c3EPRKlil1lE9n18GxJ3PWuSAU3BGsIKyZ7mp1NJEqsBsgcUyP07sIYt4pQDKSayjjd4hPkH9oClqworMmZ21qU7CppFMnmjFiihyIHD5y0lFFtRrvtTSI5CbtGRZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae/eu6wz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94412C4CED6;
+	Mon,  3 Mar 2025 07:34:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740987091;
-	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HTzEGiFfHLV4w3wmTYdgM1MCufXU4oIQ7PNRV0iGYfH7O1AlC9I9jG8mRefk8kGMk
-	 hHaX3prwYZyBKkE9OkYkGGbfe4+xwGnXulJ7Tn+Yqhbes5R4tmKYP75jte80SDKIrX
-	 ORktdyG6hGNsc+7RzDE68WQt/m9XnfY8ftWGpyWBeQ2r/NSrTW1qY8x8VokwBvGAtf
-	 KwjwSt0LjcHRMPqtg1L3JUujWt3sRkfsY3yO5yyHWKsDWKS3aIcwN+ecSJXmqz/oNX
-	 IH1cwiQLFaJoLuhdLdx/btKuJqw+tg0teun2eDbRAcaZAqjQ2JrgstmwN5S8kQPsss
-	 7blHovP1SNM+A==
-Message-ID: <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
-Date: Mon, 3 Mar 2025 08:31:24 +0100
+	s=k20201202; t=1740987292;
+	bh=OdVpAxmtfoalSXyqc+DLAkGnZF5iDT2lNU6C/joqxOA=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Ae/eu6wzFC+50YktcQuMsFoMEsSip8iy+UoejH9l6iTL+foo31bCfLjUFZFn5COBq
+	 9+SwxdDtT9v2e3n0Rz4tJR4QnZGh7pGvpaga+HBQ5P0t3nsh9z1e9r0WTjYitRScB3
+	 MckHDxDMuCXVtr3pYNcEzCnoRXGoyHuymYWYdqTcRisJbJfffQauC/cp3nWit3Iryl
+	 9nmzPDRdg5Ttnka1VH/LnFW1ar2oS12afA/YFdsnihR2R4J2J5vq19bmQ5Clixcut2
+	 g8NcYKA5YyZOAgXg9naN7yF0/vgJ/A8zIt19AcGTEvrpA5+7k/fe5VVjr7w92ytu5j
+	 HGzLXy+OyWquA==
+Message-ID: <7c720780-03ad-43a1-b89c-8cedd00dd129@kernel.org>
+Date: Mon, 3 Mar 2025 08:34:45 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -99,6 +99,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
  m2m-deinterlace device
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Matthew Majewski <mattwmajewski@gmail.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
  <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -112,7 +113,7 @@ References: <20250214231759.119481-1-mattwmajewski@gmail.com>
  <20250214231759.119481-2-mattwmajewski@gmail.com>
  <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
  <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -157,116 +158,111 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
+In-Reply-To: <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gh01bnGzG2Ts
+X-ITU-Libra-ESVA-ID: 4Z6hRZ6QvDzG45y
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709579.49671@muqBv9gJapEAf8evhCWlhA
+X-ITU-Libra-ESVA-Watermark: 1741714937.91102@L02U762fPs7qFMgJfHI+Sg
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 26/02/2025 23:41, Matthew Majewski wrote:
-> Hi Krzysztof,
->=20
-> On Tue, 2025-02-18 at 09:30 +0100, Krzysztof Kozlowski wrote:
->> On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
->>> Create a new yaml schema file to describe the device tree bindings
->>> for
->>> generic m2m-deinterlace device.
+On 03/03/2025 08:31, Krzysztof Kozlowski wrote:
+> On 26/02/2025 23:41, Matthew Majewski wrote:
+>> Hi Krzysztof,
+>>
+>> On Tue, 2025-02-18 at 09:30 +0100, Krzysztof Kozlowski wrote:
+>>> On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
+>>>> Create a new yaml schema file to describe the device tree bindings
+>>>> for
+>>>> generic m2m-deinterlace device.
+>>>>
+>>>> This device is supported on any hardware that provides a MEM_TO_MEM
 >>>
->>> This device is supported on any hardware that provides a MEM_TO_MEM
+>>> Which device? I don't see here any device name/model.
 >>
->> Which device? I don't see here any device name/model.
->=20
-> By "device" I am referring to the m2m-deinterlace device, which I
-> explained is a quasi-virtual device. If this is confusing wording I can
-> change.=20
->=20
->> I asked to provide here some examples of devices.
->=20
-> As I wrote, supported devices/hardware is anything that provides a
-> MEM_TO_MEM capable dma-controller with interleaved transfer support. I
-> did not list specific devices because the bindings are supposed to be
-> generic, as they are not describing actual silicon. But if you want me
-
-I already told you that no. Bindings are not supposed to be generic.
-
-From where did you get such information?
-
-> to list some devices which provide a compatible dma-controller, here
-> are devices I found in the current mainline kernel:
->=20
-> - TI OMAP Soc Family
-> - TI Davinci Soc Family
-> - TI Keystone Processor Family
-> - IMX27 Processor and variants
-> - Several Microchip Processors (sama5, sam9x7, sam9x60)
-
-That's too generic - you just listed SoCs, which consist of dozen or
-hundred of devices. Which hardware piece is here?
-
-Maybe this is not for a real device, but then this should be marked clear=
-ly.
-
->=20
-> As I mentioned in my original email, I have personally tested on a
-> BeagleBone Black with an AM335X OMAP processor. There are likely many
-> more devices with compatible dma-controllers that could be supported
-> with additional dmaengine driver support.=20
->=20
->=20
->>> capable dma channel with interleaved trasfer support. Device tree
->>> bindings are for providing appropriate dma channel to device.
+>> By "device" I am referring to the m2m-deinterlace device, which I
+>> explained is a quasi-virtual device. If this is confusing wording I ca=
+n
+>> change.=20
 >>
->> Don't describe what DT is, but the hardware.
+>>> I asked to provide here some examples of devices.
 >>
+>> As I wrote, supported devices/hardware is anything that provides a
+>> MEM_TO_MEM capable dma-controller with interleaved transfer support. I
+>> did not list specific devices because the bindings are supposed to be
+>> generic, as they are not describing actual silicon. But if you want me
 >=20
-> Ok, will remove reference to DT.
+> I already told you that no. Bindings are not supposed to be generic.
 >=20
->>> +description: |-
->>> +=C2=A0 A generic memory2memory device for deinterlacing video using
->>> dmaengine. It can
->>> +=C2=A0 convert between interlaced buffer formats and can convert
->>> interlaced to
->>> +=C2=A0 progressive using a simple line-doubling algorithm. This devi=
-ce
->>> can be used on
->>> +=C2=A0 any hardware that provides a MEM_TO_MEM capable dma controlle=
-r
->>> that supports
->>> +=C2=A0 interleaved transfers.
+> From where did you get such information?
+>=20
+>> to list some devices which provide a compatible dma-controller, here
+>> are devices I found in the current mainline kernel:
 >>
->> And how do you program that device to deinterlace? How do you signal
->> end
->> of frame/data when writing to the memory?
->>
->> It still looks all this is for driver :/
->>
+>> - TI OMAP Soc Family
+>> - TI Davinci Soc Family
+>> - TI Keystone Processor Family
+>> - IMX27 Processor and variants
+>> - Several Microchip Processors (sama5, sam9x7, sam9x60)
 >=20
-> All of the deinterlacing is handled by the dma channel. To simplify a
-> bit, m2m-deinterlace basically just translates video format information
-> into appropriate interleaved dma transfers. Everything else (and
-> everything hardware specific) is handled by the dma engine, such as
-> initiation and signaling completion of transfers.=20
-
-
-So the device is the dma controller and maybe all this should be folded
-into that controller bindings.
-
+> That's too generic - you just listed SoCs, which consist of dozen or
+> hundred of devices. Which hardware piece is here?
 >=20
-> I think an appropriate analogy for m2m-deinterlace would be spi-gpio.
-> Since spi-gpio leverages gpio for bitbanging the spi protocol, the
-> bindings do not need to describe any clocks, spi-controller registers,
+> Maybe this is not for a real device, but then this should be marked cle=
+arly.
+>=20
+>>
+>> As I mentioned in my original email, I have personally tested on a
+>> BeagleBone Black with an AM335X OMAP processor. There are likely many
+>> more devices with compatible dma-controllers that could be supported
+>> with additional dmaengine driver support.=20
+>>
+>>
+>>>> capable dma channel with interleaved trasfer support. Device tree
+>>>> bindings are for providing appropriate dma channel to device.
+>>>
+>>> Don't describe what DT is, but the hardware.
+>>>
+>>
+>> Ok, will remove reference to DT.
+>>
+>>>> +description: |-
+>>>> +=C2=A0 A generic memory2memory device for deinterlacing video using
+>>>> dmaengine. It can
+>>>> +=C2=A0 convert between interlaced buffer formats and can convert
+>>>> interlaced to
+>>>> +=C2=A0 progressive using a simple line-doubling algorithm. This dev=
+ice
+>>>> can be used on
+>>>> +=C2=A0 any hardware that provides a MEM_TO_MEM capable dma controll=
+er
+>>>> that supports
+>>>> +=C2=A0 interleaved transfers.
+>>>
+>>> And how do you program that device to deinterlace? How do you signal
+>>> end
+>>> of frame/data when writing to the memory?
+>>>
+>>> It still looks all this is for driver :/
+>>>
+>>
+>> All of the deinterlacing is handled by the dma channel. To simplify a
+>> bit, m2m-deinterlace basically just translates video format informatio=
+n
+>> into appropriate interleaved dma transfers. Everything else (and
+>> everything hardware specific) is handled by the dma engine, such as
+>> initiation and signaling completion of transfers.=20
+>=20
+>=20
+> So the device is the dma controller and maybe all this should be folded
+> into that controller bindings.
 
-Sure, SPI GPIO is Linux driver, not a device and I am asking about it
-all the time.
-
-> etc. All of the hardware specific components are abstracted away by the
-> gpio controller. But the spi-gpio bindings still exist to specify which
-> gpios are used.
-
+Answering myself: obviously no, because interleaved DMA is not relevant
+to this device, so again: there is no device in SoC doing that. You just
+add bindings for specific Linux driver without saying that this is that
+driver and calling it "generic device". There is no device here.
 
 
 Best regards,
