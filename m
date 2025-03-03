@@ -1,166 +1,129 @@
-Return-Path: <linux-kernel+bounces-542218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B44A4C738
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:32:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C55A4C735
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB2A3A87C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9400B188334B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDDD2153EE;
-	Mon,  3 Mar 2025 16:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E1C214234;
+	Mon,  3 Mar 2025 16:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NmAkxmfI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujDpEibk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F112144B8;
-	Mon,  3 Mar 2025 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0129220E32A;
+	Mon,  3 Mar 2025 16:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019332; cv=none; b=nB2XG/Yx5PmhLYZDqSSC9mUgMebDCiDWvxCuG+BWeVL+KUU8I8RQEWqyyaI0sz8XWdhSNuhHIEfT4BA1cz9JRCV/ZynfcLaqPInMFfLG+LWpaEfLEc59M3m55UZtEOHw2ViT8/AbhzRunfidLtSzNewdY0h4r+mJIkAOdCkU+aQ=
+	t=1741019395; cv=none; b=VAlGI848P5HWRPT5BMHRjmU8IvSFCwBYxSMm7i3T02YyIq6zAIHNAwDEyYNQBTgObRcjUjrNiBE/1jZD9GFx7ZYvbcA3ts7shlSE7UMizcZypSTn5j4zR8WmmrIhJyiK1RFf1uG8IO22fTFFwPULrpvZMhjksXqewegZ41S6zxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019332; c=relaxed/simple;
-	bh=6KHbEnd+dBa09GT4KuIxocFx6yEOp05FmWTZQDE5UrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYIYO42EpLd7YyfrZzaIjJvN19pboCuAb8aFeRqCEJXyCGfsB/H+VKKrrCs0GCmaHBVYtsv1iibylC/wfC7DvVi9qfil1Tz6Blo+Bo1grEu3nGKbS+AxP9y1Dfe4zqabttx8UI6DIwR6PkYuVl4JHn2PGXP5YykQzbNK/BpHM5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NmAkxmfI; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741019331; x=1772555331;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6KHbEnd+dBa09GT4KuIxocFx6yEOp05FmWTZQDE5UrA=;
-  b=NmAkxmfIKkO1y919AanuzxcpvgG6kQgXhdbwpAinnOMDzNm3dX0d3TUa
-   sKcf8vApbr4DNsSvh/XC/+aiHSOWsGcFC0FbwlPrHhgP2kM9US7+6Sbsd
-   NNtBqWPB2vpz87z5fi7UN91YACBtDuj9JkrtLlMuZSYQDvKgbqug6RIso
-   JcSuRIgYDQFPxElyYBtR4AwENiIzB4pNqCQiG3eP3wr1YaHSjQvEnsfzt
-   hVlCqIPyMk452sjSw0FKjtqHeZTETgaKM87rQc9jB4KAPDHeEHkYHRPL0
-   tb9U6Bv3Wm6qvmwLH2+Qi32+X2gtlOSFaC4vi1NNL43KlffUC5ZiiUzSA
-   A==;
-X-CSE-ConnectionGUID: Rml07Lq3Q8CpfL1rQGh/yA==
-X-CSE-MsgGUID: Rnd7MM+/RU68YaHsTucEkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52880549"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="52880549"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:28:49 -0800
-X-CSE-ConnectionGUID: pCLQVKJQQwyQWYRlZgGZMg==
-X-CSE-MsgGUID: 0bfJ3ls4TVeDv9y4h6RXuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="118251585"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:28:45 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp8en-0000000Grb1-2iJU;
-	Mon, 03 Mar 2025 18:28:41 +0200
-Date: Mon, 3 Mar 2025 18:28:41 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH net-next v1 2/2] ieee802154: ca8210: Switch to using
- gpiod API
-Message-ID: <Z8XYuY2idCVrAfdm@smile.fi.intel.com>
-References: <20250303150855.1294188-1-andriy.shevchenko@linux.intel.com>
- <20250303150855.1294188-3-andriy.shevchenko@linux.intel.com>
- <8734fu84r8.fsf@bootlin.com>
+	s=arc-20240116; t=1741019395; c=relaxed/simple;
+	bh=PFXJy2FtP1emZFy6QDOvJlok8GqsNsNEQzNpXEqasCc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=seY70L29TOXeHM8BxQpxDPv2Yb+CG/4tKD8r54BlQJSuoU2pk0nxKjgFCz7oN1EsZ7w+fqR+LkfbRUKZ6JRb4nlbzCcWQkkitM86k7+Y9D0P0Zc9c0BsBLeYtfkCjxUeVxEH0hU8mQtxSpzYHjKrh+U9hgqf39Tf35Yw3k2N768=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujDpEibk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318F8C4CED6;
+	Mon,  3 Mar 2025 16:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741019394;
+	bh=PFXJy2FtP1emZFy6QDOvJlok8GqsNsNEQzNpXEqasCc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ujDpEibkKklbcGK/ipfoD+Si4hnuqaPwlw4eZeW4no9X8p3YQ101XO6bEpDkrlNrm
+	 mVgKwbgfhk6JcTy5LcSg+GUSdM1ZeBK/WIGy0sCIVPJeN5RGZ8yuzCwTa/kDbg25gI
+	 C1Uha01qvLEdUSLnfV7SQCblMkstrHgOyaRBRJ9RgnKw0D7htMBDoG6wqmEc6/uqwd
+	 GcALWyNCHExcrzhccAAVJBZiKJBkW7We0nGZJY743H6P8QA1/IsR7H7rWjTlHGLdX1
+	 QO6dbIKxjMZ4Qjhu6lFRCN6TY8SaiC9iLLVClB37JZvD4TvfuDlJ5YjiIGv1nyVmyT
+	 Jy7rkosbAp3UA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Andrew Davis <afd@ti.com>,
+	Nishanth Menon <nm@ti.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	kishon@kernel.org,
+	s-vadapalli@ti.com,
+	krzysztof.kozlowski@linaro.org,
+	rogerq@kernel.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.13 01/17] phy: ti: gmii-sel: Do not use syscon helper to build regmap
+Date: Mon,  3 Mar 2025 11:29:33 -0500
+Message-Id: <20250303162951.3763346-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734fu84r8.fsf@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.5
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 05:20:59PM +0100, Miquel Raynal wrote:
+From: Andrew Davis <afd@ti.com>
 
-...
+[ Upstream commit 5ab90f40121a9f6a9b368274cd92d0f435dc7cfa ]
 
-> > - * @gpio_reset:     gpio number of ca8210 reset line
-> > - * @gpio_irq:       gpio number of ca8210 interrupt line
-> > + * @reset_gpio:     GPIO of ca8210 reset line
-> 
-> What about "CA8210 Reset GPIO line"? Or Just "Reset GPIO line"? Or even
-> "Reset GPIO descriptor" (whatever).
-> 
-> > + * @irq_gpio:       GPIO of ca8210 interrupt line
-> 
-> Same
+The syscon helper device_node_to_regmap() is used to fetch a regmap
+registered to a device node. It also currently creates this regmap
+if the node did not already have a regmap associated with it. This
+should only be used on "syscon" nodes. This driver is not such a
+device and instead uses device_node_to_regmap() on its own node as
+a hacky way to create a regmap for itself.
 
-Sure.
+This will not work going forward and so we should create our regmap
+the normal way by defining our regmap_config, fetching our memory
+resource, then using the normal regmap_init_mmio() function.
 
-[...]
+Signed-off-by: Andrew Davis <afd@ti.com>
+Tested-by: Nishanth Menon <nm@ti.com>
+Link: https://lore.kernel.org/r/20250123182234.597665-1-afd@ti.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/phy/ti/phy-gmii-sel.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-> > -	int ret;
-> > -	struct ca8210_platform_data *pdata = spi->dev.platform_data;
-> > +	struct device *dev = &spi->dev;
-> > +	struct ca8210_platform_data *pdata = dev_get_platdata(dev);
-> 
-> Can you either mention the additional cleanup that you do in the commit
-> log or split it in a separate commit? (splitting is probably not
-> necessary here given that most of the cleanup anyway is related to the
-> actual changes.
-
-Do you mean the platform_data accessors? I can actually split it to a separate
-change as I had done some of that in the past in other drivers.
-
-...
-
-> > -	ret = gpio_direction_output(pdata->gpio_reset, 1);
-> > -	if (ret < 0) {
-> > -		dev_crit(
-> > -			&spi->dev,
-> > -			"Reset GPIO %d did not set to output mode\n",
-> > -			pdata->gpio_reset
-> > -		);
-> > -	}
-> > -
-> > -	return ret;
-> > +	return PTR_ERR_OR_ZERO(pdata->reset_gpio);
-> 
-> This is not a strong request, but in general I think it is preferred to return
-> immediately, so this looks easier to understand:
-
-I used the same logic as in the original flow.
-
-> +	pdata->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(pdata->reset_gpio)) {
-> +		dev_crit(dev, "Reset GPIO did not set to output mode\n");
-> +                return PTR_ERR(pdata->reset_pgio);
-> +       }
-> +
-> +       return 0;
-
-Sure I can do this in v2.
-
-...
-
-> Otherwise the rest lgtm.
-
-Thank you for the review!
-
+diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
+index e0ca59ae31531..ff5d5e29629fa 100644
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -424,6 +424,12 @@ static int phy_gmii_sel_init_ports(struct phy_gmii_sel_priv *priv)
+ 	return 0;
+ }
+ 
++static const struct regmap_config phy_gmii_sel_regmap_cfg = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++};
++
+ static int phy_gmii_sel_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -468,7 +474,14 @@ static int phy_gmii_sel_probe(struct platform_device *pdev)
+ 
+ 	priv->regmap = syscon_node_to_regmap(node->parent);
+ 	if (IS_ERR(priv->regmap)) {
+-		priv->regmap = device_node_to_regmap(node);
++		void __iomem *base;
++
++		base = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(base))
++			return dev_err_probe(dev, PTR_ERR(base),
++					     "failed to get base memory resource\n");
++
++		priv->regmap = regmap_init_mmio(dev, base, &phy_gmii_sel_regmap_cfg);
+ 		if (IS_ERR(priv->regmap))
+ 			return dev_err_probe(dev, PTR_ERR(priv->regmap),
+ 					     "Failed to get syscon\n");
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5
 
 
