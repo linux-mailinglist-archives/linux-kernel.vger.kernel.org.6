@@ -1,128 +1,129 @@
-Return-Path: <linux-kernel+bounces-541635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB6BA4BF5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:52:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8592BA4BF56
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19495188D04F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABE4168446
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57F120C49B;
-	Mon,  3 Mar 2025 11:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB720B81F;
+	Mon,  3 Mar 2025 11:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+O8bjEl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yTbm9ITN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVrHjNYt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3859204F6B;
-	Mon,  3 Mar 2025 11:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E091FF5EB;
+	Mon,  3 Mar 2025 11:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002676; cv=none; b=uPm7dUoOsTh0gV0Rvd2N8deaMCrnz9qLXJsUC3//yudLfhuMIBWpbVw81lZnNWT0P7MKpBZAWT56B9+/jCE1zKvTwhRlmondxL+k+1Q7Xj4PXqtFzd4Gl1YMDkBAbI6EAYeahM6fyxCuLqJQoCd/YM1BM4NL40IuuA2bXnAo/gk=
+	t=1741002674; cv=none; b=BUZdUFInSjdZQcgGUOQd2YRGBGKgUWOOVomMRjnFLF8rsadHvbgewjvlrSbQDicHYI6j+R+C9/karuUccgwuIJvmZ8VMKavIhUTIeGvpsM/0XlU1dEJZyx0mDAH2RQADHNLayIQuJ8Ro/11qPHjaTGcCuluDp53KaqpvmwVneUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002676; c=relaxed/simple;
-	bh=WqIKezHZkO7ZmKx+327v0on4OgffbWwg65hwUsgf0aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5Msm04zowrOeZDtvkpYV1tqVnzAWaaz4ilrPr8zH7IwKlIuo79NEwsF/JSMq+5H7H3IxSY8WMpzlIMOS83O1A7SXhnQa+CGCNcO9WN2rBdB/WhDALP9RrIcge5XTJyP+FlkV7kcpiaKlCc/C1QCzc6emm1nEPpLheYMEFzRCn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+O8bjEl; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741002675; x=1772538675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WqIKezHZkO7ZmKx+327v0on4OgffbWwg65hwUsgf0aA=;
-  b=c+O8bjElb4Tb7fB3QkYCNX72101N28LUT/v0nuwnbsBBRhIHfTDd5zr1
-   VEwaEwN16IKd2UlFenQfG1EIBwgMc1ACNAIO+iNacmQeEuCuInk7LSAai
-   v2JJOBKLaf1uwmiPd0IsOXoVJM/1uJTDBuiO1gzpvUsZjk8e/mSx03qVa
-   pp54hguPOYYbJLQA8R4Hd8RIxmoxhdKfNvmOSLAvIZ6x7cYL5EiSSZJoQ
-   4Gv5fIZRF4biPONCXX0lKKHb0Mk48OW93XETrh3AdsphHq3UygXiFz0V2
-   d9thTqOLbOeWJNDcQXbLA3qCg/l36oXSkloD1mIu33lhXCTwarN3pty4c
-   Q==;
-X-CSE-ConnectionGUID: QQo5mCAKSEiw4E8sZ5yw3w==
-X-CSE-MsgGUID: FXHbyWANTyKqHybRDutf3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42127243"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42127243"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:51:15 -0800
-X-CSE-ConnectionGUID: 3bwOHvTFSnOvwh1JtWxJ8g==
-X-CSE-MsgGUID: EXDMC/eNTIm1xNQT/GlyKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="118021008"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:51:10 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp4KA-0000000Gnqn-1q5u;
-	Mon, 03 Mar 2025 13:51:06 +0200
-Date: Mon, 3 Mar 2025 13:51:06 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH RFC net-next v5 10/10] net: gianfar: Use
- device_get_child_node_count_named()
-Message-ID: <Z8WXqgxgFQC8b8vC@smile.fi.intel.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1741002674; c=relaxed/simple;
+	bh=yVaQgogHVfVgAJCLdmZvRLoWtKzJvI/zw0xzw+t5DZ4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=aJpvebyNiJY8ZriLoUB7imE0lM8u9raaT9VZjfkYfHfI/HuENArZW2TpWmZc/6+PGYOP2uIZ6XRMFNzMc0r4oxEX9WNd1YuEDuEsKkOO+iOQXrqmAo0TnUon/N57rgWha24Um2Z751CzYKbEAykQE2De/ABuQYNvgfOHi1lCxyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTbm9ITN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVrHjNYt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 11:51:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741002671;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oR7C7cB+Rq7amZpDkkyqysh1+OEzoIXxnKJo7bN22Mc=;
+	b=yTbm9ITNJdHz9PuYf17lWUJye0s9uQG5AdXiovnDzNxLQ9DeEwNcVbtHd36zWsUvsLEqHf
+	qmPlcWTuV8XXBWiMQEXgMH2+nZswBqX9KzQt2A5sufuPt0Gz5F6g7y94lwk8juVXkcmf3E
+	pORHfNKuLnY8A/JRDAR28Qa+3OeUkuYD4Ppo4VkU/zUwCBfiT+3kKlhWtaMPYGEHfg0yuf
+	QvB0BnNtoMxUXf3oM6IjRxTqkL9pgICYu+Rfud2nnxj+4B4pS+dWaiXTfrIhYKiO6V6yyQ
+	/T6gQU1wdNZCJMpT4/xsARLE0fjZXBXm++xvnzIagbKgOmSPHfDFgkUe5J1WPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741002671;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oR7C7cB+Rq7amZpDkkyqysh1+OEzoIXxnKJo7bN22Mc=;
+	b=MVrHjNYtJsAkig0GPjSHwUE56yLxrVbeOLlJzc+TaL3REsI98/6qymoHyNI0o2qCK++VDq
+	9nk3FRemGeCJ3pDQ==
+From: "tip-bot2 for Mirsad Todorovac" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] selftests/x86/syscall: Fix coccinelle WARNING
+ recommending the use of ARRAY_SIZE()
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241101111523.1293193-2-mtodorovac69@gmail.com>
+References: <20241101111523.1293193-2-mtodorovac69@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <174100267008.10177.10892664815604328750.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 01:34:49PM +0200, Matti Vaittinen wrote:
-> We can avoid open-coding the loop construct which counts firmware child
-> nodes with a specific name by using the newly added
-> device_get_child_node_count_named().
-> 
-> The gianfar driver has such open-coded loop. Replace it with the
-> device_get_child_node_count_named().
+The following commit has been merged into the x86/cleanups branch of tip:
 
-...
+Commit-ID:     40fc7561013914ec08c200bb7a0805643a23e070
+Gitweb:        https://git.kernel.org/tip/40fc7561013914ec08c200bb7a0805643a23e070
+Author:        Mirsad Todorovac <mtodorovac69@gmail.com>
+AuthorDate:    Fri, 01 Nov 2024 12:15:23 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 12:38:49 +01:00
 
-> It's fair to tell the pros and cons of this patch.
-> The simplification is there, but it's not a big one. It comes with a cost
-> of getting the property.h included in this driver which currently uses
-> exclusively the of_* APIs.
+selftests/x86/syscall: Fix coccinelle WARNING recommending the use of ARRAY_SIZE()
 
-I think it's a good step to the right direction. We might convert the rest
-(at least I don't see much impediments while briefly looking into the code).
+Coccinelle gives WARNING recommending the use of ARRAY_SIZE() macro definition
+to improve the code readability:
 
-...
+  ./tools/testing/selftests/x86/syscall_numbering.c:316:35-36: WARNING: Use ARRAY_SIZE
 
-What about the second loop (in gfar_of_init)?
-I mean perhaps we want to have fwnode_for_each_named_child_node()
-and its device variant that may be also reused in the IIO code and here.
+Fixes: 15c82d98a0f78 ("selftests/x86/syscall: Update and extend syscall_numbering_64")
+Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Link: https://lore.kernel.org/r/20241101111523.1293193-2-mtodorovac69@gmail.com
+---
+ tools/testing/selftests/x86/syscall_numbering.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+diff --git a/tools/testing/selftests/x86/syscall_numbering.c b/tools/testing/selftests/x86/syscall_numbering.c
+index 9915917..41c42b7 100644
+--- a/tools/testing/selftests/x86/syscall_numbering.c
++++ b/tools/testing/selftests/x86/syscall_numbering.c
+@@ -25,6 +25,7 @@
+ #include <sys/mman.h>
+ 
+ #include <linux/ptrace.h>
++#include "../kselftest.h"
+ 
+ /* Common system call numbers */
+ #define SYS_READ	  0
+@@ -313,7 +314,7 @@ static void test_syscall_numbering(void)
+ 	 * The MSB is supposed to be ignored, so we loop over a few
+ 	 * to test that out.
+ 	 */
+-	for (size_t i = 0; i < sizeof(msbs)/sizeof(msbs[0]); i++) {
++	for (size_t i = 0; i < ARRAY_SIZE(msbs); i++) {
+ 		int msb = msbs[i];
+ 		run("Checking system calls with msb = %d (0x%x)\n",
+ 		    msb, msb);
 
